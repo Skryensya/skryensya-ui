@@ -57,7 +57,7 @@ export const avatarContract = {
     /** The image's alt text; React calls this prop `name`. */
     imageName: { type: "string", attr: "alt", prop: "name" },
     src: { type: "string", attr: "src" },
-    /** The group's own accessible name — see `AvatarGroup`'s `role="group"` doc for why it is optional. */
+    /** The group's own accessible name; see `AvatarGroup`'s `role="group"` doc for why it is optional. */
     label: { type: "string", attr: "aria-label" },
   },
 
@@ -120,7 +120,7 @@ export const avatarContract = {
 
     /*
      * `role="group"`: a pile of people is one unit to assistive tech the same way it is one unit
-     * visually — same reasoning as `split-button.ts`'s own `role="group"` doc. `label` is optional
+     * visually. Same reasoning as `split-button.ts`'s own `role="group"` doc. `label` is optional
      * for the same reason it is there: each child avatar already announces its own name, so the
      * group name is a nice-to-have qualifier ("the reviewers"), not the only source of any single
      * avatar's identity.

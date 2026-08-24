@@ -12,7 +12,7 @@
     /*
      * COLOUR IS A STYLING HOOK, like every other tier-3 component's. This one used to hard-code its
      * surface and its ink, so an avatar was the one part of the system a consumer could not re-tint
-     * without overriding properties — which the tier-3 contract exists to make unnecessary. Tinting
+     * without overriding properties, which the tier-3 contract exists to make unnecessary. Tinting
      * avatars per person is the most ordinary thing an app does with them.
      *
      * The ink is `text-primary`, not `text-secondary`: the initials are the avatar's CONTENT, the

@@ -14,7 +14,7 @@ export type RadioValueChangeDetails = {
  * What a CheckboxGroup reports: which children are checked, and the state that leaves the parent in.
  *
  * Both, and not just the values, because `checked` is the part a consumer cannot cheaply recompute
- * without also knowing how many children there are — which is the group's business, not the
+ * without also knowing how many children there are, which is the group's business, not the
  * listener's.
  */
 export type CheckboxGroupValueChangeDetails = {
@@ -166,8 +166,8 @@ export const checkboxContract = {
      * DERIVED rather than authored.
      *
      * The parent is not a fourth option: it holds no `name` and no `value`, submits nothing, and
-     * cannot be set to a value of its own. What it shows is a reading of its children — all, none,
-     * or some — and what a click on it means is "make every child agree with me". That is why
+     * cannot be set to a value of its own. What it shows is a reading of its children. All, none,
+     * or some, and what a click on it means is "make every child agree with me". That is why
      * `defaultIndeterminate` is absent from its options while Checkbox has it: on a lone checkbox
      * indeterminate is a state an author can assert, and here asserting it would be asserting
      * something the children may be about to contradict.

@@ -8,7 +8,7 @@ import { mountMenu } from "./menu.js";
 /*
  * The exact shape `menuPopupTemplate`/`menuItemShape` emit (core/src/menu.ts): a `[data-sk-menu]`
  * root, a trigger, a positioner/content pair, plain-item/checkbox/radio/separator entries, and one
- * nested `[data-sk-menu]` standing in for a submenu entry — a whole menu where an item would be,
+ * nested `[data-sk-menu]` standing in for a submenu entry. A whole menu where an item would be,
  * never a nested list inside one (see that file's header comment on why).
  */
 function markup(): HTMLElement {
@@ -70,12 +70,12 @@ const isOpen = (root: HTMLElement) => getMenuApi(root)?.open ?? false;
 
 /*
  * `@zag-js/dismissable`'s escape/outside-dismiss wiring (Escape, outside pointerdown) attaches its
- * document-level listeners behind `defer: true` — a real `requestAnimationFrame`, not a microtask —
+ * document-level listeners behind `defer: true`. A real `requestAnimationFrame`, not a microtask -
  * and the outside-pointerdown path adds a SECOND deferred layer on top (`@zag-js/interact-outside`'s
  * own `defer` wrapper, then a `setTimeout(0)` before the actual `doc.addEventListener` call). A
  * `flushSync()` alone never reaches any of that: Escape needs one real frame, outside-pointerdown
  * needs two frames plus a macrotask before it will even see the press, then one more frame to react
- * to it. Measured empirically against this exact machine — see the two dismiss tests below.
+ * to it. Measured empirically against this exact machine; see the two dismiss tests below.
  */
 const tick = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
 const macrotask = () => new Promise<void>((r) => setTimeout(r, 0));
@@ -86,7 +86,7 @@ const dismissableReady = async () => {
 };
 
 afterEach(() => {
-  // Submenu roots must be destroyed before their parent — `Menu.svelte`'s own `parent`/`instances`
+  // Submenu roots must be destroyed before their parent: `Menu.svelte`'s own `parent`/`instances`
   // lookup depends on the parent still being registered while a child cleans up.
   document.querySelectorAll<HTMLElement>("[data-sk-menu]").forEach((el) => destroyMount(el));
   document.body.innerHTML = "";
@@ -185,7 +185,7 @@ describe("Menu vanilla enhancer", () => {
     expect(left.hasAttribute("data-checked")).toBe(true);
     expect(right.hasAttribute("data-checked")).toBe(false);
 
-    // Choosing a radio option closes the menu, same as a plain command — reopen for the second pick.
+    // Choosing a radio option closes the menu, same as a plain command. Reopen for the second pick.
     fireEvent.click(trigger(root));
     flushSync();
     fireEvent.click(right);

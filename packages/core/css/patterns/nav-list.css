@@ -49,7 +49,7 @@
     --sk-nav-list-link-current-fg: var(--color-text-accent);
     /* A faux-bold STROKE, not a real weight step: `font-weight` changes a glyph's advance width, so
      * swapping it on `[aria-current]` reflowed the label (and, in the horizontal navbar, every link
-     * after it) the moment a route became current — a CLS a reader never asked to see. Two hairline
+     * after it) the moment a route became current. A CLS a reader never asked to see. Two hairline
      * offsets paint the same glyphs heavier without touching layout at all. */
     --sk-nav-list-link-current-emphasis: 0.02em;
     --sk-nav-list-link-disabled-fg: var(--color-text-disabled);
@@ -57,7 +57,7 @@
     --sk-nav-list-label-opacity: 1;
     --sk-nav-list-trailing-fg: var(--color-text-tertiary);
 
-    /* How far a `NavListLink`'s own nested `NavListGroup` sits from the link that introduces it —
+    /* How far a `NavListLink`'s own nested `NavListGroup` sits from the link that introduces it -
      * its own hook, not `--sk-nav-list-group-label-padding-x`: that one insets a label INSIDE its
      * own row, this one has to read as "one level under the parent link" instead. */
     --sk-nav-list-nested-indent: var(--space-inset-md);
@@ -98,7 +98,7 @@
 
   /* The collapsible variant of the group label: same box the plain `<div>` already has, plus what
    * turning it into a real `<button>` needs reset, plus a disclosure chevron that reads its state
-   * off the SAME `aria-expanded` a screen reader already announces — never a second, JS-only flag
+   * off the SAME `aria-expanded` a screen reader already announces: never a second, JS-only flag
    * that could disagree with it. */
   button.sk-nav-list__group-label {
     inline-size: 100%;
@@ -177,7 +177,7 @@
       background-color var(--motion-feedback-duration) var(--motion-feedback-easing);
   }
 
-  /* And a link may BE a button — Menubar's `nav` trigger (`menubar.ts`), a real control rather
+  /* And a link may BE a button. Menubar's `nav` trigger (`menubar.ts`), a real control rather
    * than something that navigates. Only `<a>` ever carried this class before, so nothing reset
    * native button chrome: border and appearance, the same gap `menu.css` already closed once for
    * `button.sk-menu__item`. */

@@ -3,9 +3,12 @@
  * pide al consumidor. Sin ella el `<dialog>` de la demo cae en el estilo por defecto del navegador. */
 import "@skryensya/core/patterns/vaul.css";
 import "@skryensya/core/components/list.css";
+import "@skryensya/core/components/checkbox.css";
+import "@skryensya/core/components/radio-group.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
+import { VaulDeleteDemo, VaulFiltersDemo, VaulShareDemo } from "../react-demos/vaul";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/vaul.yaml?raw";
 import coreSource from "@core/src/vaul.ts?raw";
@@ -179,7 +182,6 @@ const html = `<button
     </button>
   </footer>
 </dialog>`;
-
 const edges = `
 <dialog class="sk-vaul" data-edge="inline-start">…</dialog>
 <dialog class="sk-vaul" data-edge="inline-end">…</dialog>
@@ -207,6 +209,280 @@ const noDrag = `<dialog
 >
   <!-- ${t("vaulPage.noDragComment")} -->
 </dialog>`;
+const react = `import { useState } from "react";
+import { Button } from "@skryensya/react/button";
+import { Vaul } from "@skryensya/react/vaul";
+
+export function ShareSheet() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>
+        ${t("vaulPage.demoOpenLabel")}
+      </Button>
+      <Vaul
+        open={open}
+        className="demo-vaul"
+        edge="block-end"
+        label="${t("vaulPage.demoTitle")}"
+      >
+        {/* ${t("vaulPage.reactSnippetComment")} */}
+      </Vaul>
+    </>
+  );
+}`;
+
+const deleteHtml = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-sk-vaul-open="demo-vaul-delete"
+  type="button"
+>
+  ${t("vaulPage.deleteOpenLabel")}
+</button>
+
+<dialog
+  class="sk-vaul demo-vaul-delete"
+  id="demo-vaul-delete"
+  data-sk-vaul
+  data-edge="block-end"
+  aria-labelledby="demo-vaul-delete-title"
+>
+  <div
+    class="sk-vaul__handle"
+    data-part="handle"
+    aria-hidden="true"
+  ></div>
+
+  <div class="demo-vaul-delete__body">
+    <h2 class="demo-vaul-delete__title" id="demo-vaul-delete-title" data-flush>
+      ${t("vaulPage.deleteTitle")}
+    </h2>
+    <p class="demo-vaul-delete__desc">${t("vaulPage.deleteDesc")}</p>
+  </div>
+
+  <footer class="demo-vaul-delete__actions">
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-variant="ghost"
+      data-sk-vaul-close
+      type="button"
+    >
+      ${t("vaulPage.deleteCancel")}
+    </button>
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-variant="danger"
+      data-sk-vaul-close
+      type="button"
+    >
+      ${t("vaulPage.deleteConfirm")}
+    </button>
+  </footer>
+</dialog>`;
+
+const deleteReact = `import { useState } from "react";
+import { Button } from "@skryensya/react/button";
+import { Vaul } from "@skryensya/react/vaul";
+
+export function DeleteFileSheet() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>
+        ${t("vaulPage.deleteOpenLabel")}
+      </Button>
+      <Vaul
+        open={open}
+        className="demo-vaul-delete"
+        edge="block-end"
+        label="${t("vaulPage.deleteTitle")}"
+      >
+        {/* ${t("vaulPage.reactSnippetComment")} */}
+      </Vaul>
+    </>
+  );
+}`;
+
+const filtersSortOptions = [
+  { value: "relevance", label: t("vaulPage.filtersSortRelevance") },
+  { value: "price-asc", label: t("vaulPage.filtersSortPriceAsc") },
+  { value: "price-desc", label: t("vaulPage.filtersSortPriceDesc") },
+  { value: "recent", label: t("vaulPage.filtersSortRecent") },
+];
+const filtersCategoryOptions = [
+  { value: "design", label: t("vaulPage.filtersCategoryDesign") },
+  { value: "dev", label: t("vaulPage.filtersCategoryDev") },
+  { value: "research", label: t("vaulPage.filtersCategoryResearch") },
+  { value: "strategy", label: t("vaulPage.filtersCategoryStrategy") },
+  { value: "content", label: t("vaulPage.filtersCategoryContent") },
+  { value: "illustration", label: t("vaulPage.filtersCategoryIllustration") },
+];
+const filtersAvailabilityOptions = [
+  { value: "stock", label: t("vaulPage.filtersAvailabilityStock") },
+  { value: "shipping", label: t("vaulPage.filtersAvailabilityShipping") },
+];
+const filtersDefaultCategories = new Set(filtersCategoryOptions.slice(0, 2).map((item) => item.value));
+
+const radioItemHtml = (item: { value: string; label: string }, checked: boolean) => `      <label class="sk-radio">
+        <input class="sk-radio__input" name="sort" value="${item.value}" type="radio"${checked ? " checked" : ""}>
+        <span class="sk-radio__control" aria-hidden="true">
+          <span class="sk-radio__indicator"></span>
+        </span>
+        <span class="sk-radio__label">${item.label}</span>
+      </label>`;
+
+const checkboxItemHtml = (
+  name: string,
+  item: { value: string; label: string },
+  checked: boolean,
+) => `        <label class="sk-checkbox">
+          <input
+            class="sk-checkbox__input"
+            data-sk-checkbox-group-item
+            name="${name}"
+            value="${item.value}"
+            type="checkbox"${checked ? "\n            checked" : ""}
+          >
+          <span class="sk-checkbox__control sk-interactive" aria-hidden="true">
+            <span class="sk-checkbox__indicator" data-state="checked">
+              <span data-sk-icon="check" data-sk-icon-size="sm"></span>
+            </span>
+            <span class="sk-checkbox__indicator" data-state="indeterminate">
+              <span data-sk-icon="remove" data-sk-icon-size="sm"></span>
+            </span>
+          </span>
+          <span class="sk-checkbox__label">${item.label}</span>
+        </label>`;
+
+const checkboxGroupHtml = (
+  name: string,
+  label: string,
+  items: { value: string; label: string }[],
+  defaultChecked: Set<string>,
+) => `      <div class="sk-checkbox-group" data-sk-checkbox-group role="group" aria-labelledby="demo-vaul-filters-${name}-label">
+        <label class="sk-checkbox">
+          <input class="sk-checkbox__input" data-sk-checkbox-group-all type="checkbox">
+          <span class="sk-checkbox__control sk-interactive" aria-hidden="true">
+            <span class="sk-checkbox__indicator" data-state="checked">
+              <span data-sk-icon="check" data-sk-icon-size="sm"></span>
+            </span>
+            <span class="sk-checkbox__indicator" data-state="indeterminate">
+              <span data-sk-icon="remove" data-sk-icon-size="sm"></span>
+            </span>
+          </span>
+          <span class="sk-checkbox__label" id="demo-vaul-filters-${name}-label">${label}</span>
+        </label>
+        <div class="sk-checkbox-group__items">
+${items.map((item) => checkboxItemHtml(name, item, defaultChecked.has(item.value))).join("\n")}
+        </div>
+      </div>`;
+
+const filtersHtml = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-sk-vaul-open="demo-vaul-filters"
+  type="button"
+>
+  ${t("vaulPage.filtersOpenLabel")}
+</button>
+
+<dialog
+  class="sk-vaul demo-vaul-filters"
+  id="demo-vaul-filters"
+  data-sk-vaul
+  data-edge="block-end"
+  aria-labelledby="demo-vaul-filters-title"
+>
+  <div
+    class="sk-vaul__handle"
+    data-part="handle"
+    aria-hidden="true"
+  ></div>
+
+  <header class="demo-vaul-filters__header">
+    <h2 class="demo-vaul-filters__title" id="demo-vaul-filters-title" data-flush>
+      ${t("vaulPage.filtersTitle")}
+    </h2>
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-variant="ghost"
+      data-icon-only
+      data-sk-vaul-close
+      type="button"
+      aria-label="${t("vaulPage.demoClose")}"
+    >
+      <span data-sk-icon="close"></span>
+    </button>
+  </header>
+
+  <div class="demo-vaul-filters__body">
+    <section class="demo-vaul-filters__section">
+      <div class="sk-radio-group" role="radiogroup" aria-label="${t("vaulPage.filtersSortLabel")}">
+${filtersSortOptions.map((item, index) => radioItemHtml(item, index === 0)).join("\n")}
+      </div>
+    </section>
+    <section class="demo-vaul-filters__section">
+${checkboxGroupHtml("category", t("vaulPage.filtersCategoryLabel"), filtersCategoryOptions, filtersDefaultCategories)}
+    </section>
+    <section class="demo-vaul-filters__section">
+${checkboxGroupHtml("availability", t("vaulPage.filtersAvailabilityLabel"), filtersAvailabilityOptions, new Set())}
+    </section>
+  </div>
+
+  <footer class="demo-vaul-filters__actions">
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-variant="ghost"
+      data-sk-vaul-close
+      type="button"
+    >
+      ${t("vaulPage.filtersClear")}
+    </button>
+    <button
+      class="sk-button sk-interactive"
+      data-sk-button
+      data-sk-vaul-close
+      type="button"
+    >
+      ${t("vaulPage.filtersApply")}
+    </button>
+  </footer>
+</dialog>`;
+
+const filtersReact = `import { useState } from "react";
+import { Button } from "@skryensya/react/button";
+import { CheckboxGroup, RadioGroup } from "@skryensya/react/selection";
+import { Vaul } from "@skryensya/react/vaul";
+
+export function FiltersSheet() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>
+        ${t("vaulPage.filtersOpenLabel")}
+      </Button>
+      <Vaul
+        open={open}
+        className="demo-vaul-filters"
+        edge="block-end"
+        label="${t("vaulPage.filtersTitle")}"
+      >
+        <RadioGroup name="sort" items={sortOptions} aria-label="${t("vaulPage.filtersSortLabel")}" />
+        <CheckboxGroup name="category" items={categoryOptions} label="${t("vaulPage.filtersCategoryLabel")}" />
+        <CheckboxGroup name="availability" items={availabilityOptions} label="${t("vaulPage.filtersAvailabilityLabel")}" />
+        {/* ${t("vaulPage.reactSnippetComment")} */}
+      </Vaul>
+    </>
+  );
+}`;
 
 const sourceFiles = [
   { id: "contracts/semantic/vaul.yaml", source: contractSource, language: "yaml" },
@@ -253,21 +529,92 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("vaulPage.lede")} />
-    <ComponentPreview html={html} label="HTML" viewport="overlay" />
 
-    <h3>{t("vaulPage.whyPatternTitle")}</h3>
-    <p set:html={t("vaulPage.whyPatternBody1")} />
-    <p set:html={t("vaulPage.whyPatternBody2")} />
+    <h3>{t("vaulPage.completeTitle")}</h3>
+    <p set:html={t("vaulPage.completeBody")} />
+    <ComponentPreview
+      html={html}
+      react={react}
+      label={t("vaulPage.completeLabel")}
+      screenScope="local"
+      defaultScreen="mobile"
+      minHeight="760px"
+      scroll
+    >
+      <Fragment slot="react">
+        <VaulShareDemo
+          client:load
+          openLabel={t("vaulPage.demoOpenLabel")}
+          title={t("vaulPage.demoTitle")}
+          meta={t("vaulPage.demoMeta")}
+          closeLabel={t("vaulPage.demoClose")}
+          shareToggle={t("vaulPage.demoShareToggle")}
+          peopleLabel={t("vaulPage.demoPeopleLabel")}
+          owner={t("vaulPage.demoOwner")}
+          canEdit={t("vaulPage.demoCanEdit")}
+          canComment={t("vaulPage.demoCanComment")}
+          readOnly={t("vaulPage.demoReadOnly")}
+          designTeam={t("vaulPage.demoDesignTeam")}
+          designTeamMeta={t("vaulPage.demoDesignTeamMeta")}
+          cancel={t("vaulPage.demoCancel")}
+          share={t("vaulPage.demoShare")}
+        />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3>{t("vaulPage.examplesTitle")}</h3>
+    <p set:html={t("vaulPage.examplesBody")} />
+    <ComponentPreview
+      html={deleteHtml}
+      react={deleteReact}
+      label={t("vaulPage.deleteLabel")}
+      screenScope="local"
+      defaultScreen="mobile"
+      minHeight="760px"
+      scroll
+    >
+      <Fragment slot="react">
+        <VaulDeleteDemo
+          client:load
+          openLabel={t("vaulPage.deleteOpenLabel")}
+          title={t("vaulPage.deleteTitle")}
+          desc={t("vaulPage.deleteDesc")}
+          cancel={t("vaulPage.deleteCancel")}
+          confirm={t("vaulPage.deleteConfirm")}
+        />
+      </Fragment>
+    </ComponentPreview>
+
+    <ComponentPreview
+      html={filtersHtml}
+      react={filtersReact}
+      label={t("vaulPage.filtersLabel")}
+      screenScope="local"
+      defaultScreen="mobile"
+      minHeight="760px"
+      scroll
+    >
+      <Fragment slot="react">
+        <VaulFiltersDemo
+          client:load
+          openLabel={t("vaulPage.filtersOpenLabel")}
+          title={t("vaulPage.filtersTitle")}
+          closeLabel={t("vaulPage.demoClose")}
+          sortLabel={t("vaulPage.filtersSortLabel")}
+          sortOptions={filtersSortOptions}
+          categoryLabel={t("vaulPage.filtersCategoryLabel")}
+          categoryOptions={filtersCategoryOptions}
+          availabilityLabel={t("vaulPage.filtersAvailabilityLabel")}
+          availabilityOptions={filtersAvailabilityOptions}
+          clear={t("vaulPage.filtersClear")}
+          apply={t("vaulPage.filtersApply")}
+        />
+      </Fragment>
+    </ComponentPreview>
 
     <h3>{t("vaulPage.edgeTitle")}</h3>
     <p set:html={t("vaulPage.edgeBody")} />
     <CodeBlock code={edges} label="HTML" />
-
-    <h3 set:html={t("vaulPage.nativeTitle")} />
-    <p set:html={t("vaulPage.nativeBody")} />
-
-    <h3>{t("vaulPage.zagTitle")}</h3>
-    <p set:html={t("vaulPage.zagBody")} />
 
     <h3>{t("vaulPage.dragTitle")}</h3>
     <p set:html={t("vaulPage.dragBody1")} />
@@ -275,21 +622,33 @@ const sourceFiles = [
     <p set:html={t("vaulPage.dragBody2")} />
     <CodeBlock code={noDrag} label={t("vaulPage.noDragLabel")} />
 
-    <h3>{t("vaulPage.resistTitle")}</h3>
-    <p set:html={t("vaulPage.resistBody1")} />
-    <p set:html={t("vaulPage.resistBody2")} />
-    <p set:html={t("vaulPage.resistBody3")} />
-
-    <h3>{t("vaulPage.handleTitle")}</h3>
-    <p set:html={t("vaulPage.handleBody")} />
-
-    <h3>{t("vaulPage.desktopTitle")}</h3>
-    <p set:html={t("vaulPage.desktopBody")} />
-
-    <h3>{t("vaulPage.motionTitle")}</h3>
-    <p set:html={t("vaulPage.motionBody1")} />
-    <p set:html={t("vaulPage.motionBody2")} />
-    <p set:html={t("vaulPage.motionBody3")} />
+    <h3>{t("vaulPage.detailsTitle")}</h3>
+    <div class="docs-vaul-cards">
+      <article class="docs-vaul-card">
+        <h4>{t("vaulPage.nativeTitle")}</h4>
+        <p set:html={t("vaulPage.nativeBody")} />
+      </article>
+      <article class="docs-vaul-card">
+        <h4>{t("vaulPage.whyPatternTitle")}</h4>
+        <p set:html={t("vaulPage.whyPatternBody1")} />
+      </article>
+      <article class="docs-vaul-card">
+        <h4>{t("vaulPage.resistTitle")}</h4>
+        <p set:html={t("vaulPage.resistBody1")} />
+      </article>
+      <article class="docs-vaul-card">
+        <h4>{t("vaulPage.handleTitle")}</h4>
+        <p set:html={t("vaulPage.handleBody")} />
+      </article>
+      <article class="docs-vaul-card">
+        <h4>{t("vaulPage.desktopTitle")}</h4>
+        <p set:html={t("vaulPage.desktopBody")} />
+      </article>
+      <article class="docs-vaul-card">
+        <h4>{t("vaulPage.motionTitle")}</h4>
+        <p set:html={t("vaulPage.motionBody1")} />
+      </article>
+    </div>
   </Fragment>
 
   <Fragment slot="install">
@@ -302,6 +661,39 @@ const sourceFiles = [
      El ancho lo decide el clamp del pattern; el alto lo da el contenido hasta el techo del sheet.
      `is:global`: el HTML autorado vive dentro del srcdoc y no lleva el atributo de scope de Astro;
      el adapter copia esta regla global al frame, una regla scopeada no podría alcanzarlo. */
+
+
+  .docs-vaul-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-inline-md);
+  }
+
+  .docs-vaul-card {
+    display: grid;
+    gap: var(--space-stack-xs);
+    padding: var(--space-inset-md);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-surface);
+    background: var(--color-bg-surface);
+  }
+
+  .docs-vaul-card h4 {
+    font-size: var(--font-size-body);
+  }
+
+  .docs-vaul-card p {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+  }
+
+  @media (max-width: 52rem) {
+    .docs-vaul-step,
+    .docs-vaul-complete,
+    .docs-vaul-cards {
+      grid-template-columns: 1fr;
+    }
+  }
   .demo-vaul {
     --sk-vaul-radius: var(--radius-surface) var(--radius-surface) 0 0;
     min-block-size: min(64dvh, 32rem);
@@ -359,6 +751,92 @@ const sourceFiles = [
     gap: var(--space-inline-sm);
     justify-content: flex-end;
     padding: var(--space-inset-sm) var(--demo-vaul-inset);
+    border-block-start: 1px solid var(--color-border-subtle);
+  }
+
+  /* POCO CONTENIDO: title, description, two buttons; no header, no scroll region needed. */
+  .demo-vaul-delete {
+    --sk-vaul-radius: var(--radius-surface) var(--radius-surface) 0 0;
+  }
+
+  .demo-vaul-delete[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .demo-vaul-delete__body {
+    display: grid;
+    gap: var(--space-stack-xs);
+    padding: var(--space-inset-md);
+  }
+
+  .demo-vaul-delete__title {
+    margin: 0;
+    font-size: var(--font-size-heading-sm);
+    line-height: var(--font-line-height-heading);
+    font-weight: var(--font-weight-heading);
+  }
+
+  .demo-vaul-delete__desc {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+  }
+
+  .demo-vaul-delete__actions {
+    display: flex;
+    gap: var(--space-inline-sm);
+    justify-content: flex-end;
+    padding: var(--space-inset-sm) var(--space-inset-md);
+    border-block-start: 1px solid var(--color-border-subtle);
+  }
+
+  /* MÁS CONTENIDO: three grouped sections, tall enough that the body needs its own scroll. */
+  .demo-vaul-filters {
+    --sk-vaul-radius: var(--radius-surface) var(--radius-surface) 0 0;
+    min-block-size: min(70dvh, 34rem);
+  }
+
+  .demo-vaul-filters[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .demo-vaul-filters__header {
+    display: flex;
+    gap: var(--space-inline-md);
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: var(--space-inset-sm) var(--space-inset-md);
+  }
+
+  .demo-vaul-filters__title {
+    margin: 0;
+    font-size: var(--font-size-heading-sm);
+    line-height: var(--font-line-height-heading);
+    font-weight: var(--font-weight-heading);
+  }
+
+  .demo-vaul-filters__body {
+    flex: 1;
+    min-block-size: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    display: grid;
+    gap: var(--space-stack-md);
+    padding: 0 var(--space-inset-md) var(--space-inset-md);
+  }
+
+  .demo-vaul-filters__section {
+    display: grid;
+    gap: var(--space-stack-xs);
+  }
+
+  .demo-vaul-filters__actions {
+    display: flex;
+    gap: var(--space-inline-sm);
+    justify-content: flex-end;
+    padding: var(--space-inset-sm) var(--space-inset-md);
     border-block-start: 1px solid var(--color-border-subtle);
   }
 </style>

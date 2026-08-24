@@ -11,7 +11,7 @@ export type FeedProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
 };
 
 /*
- * A purely presentational stream — see `feed.ts`'s own banner for why: WAI-ARIA APG says the
+ * A purely presentational stream; see `feed.ts`'s own banner for why: WAI-ARIA APG says the
  * `feed` role has no well-established keyboard convention, so there is no machine here to run.
  */
 export function Feed({ busy = false, children, className, label, ...props }: FeedProps) {
@@ -24,7 +24,7 @@ export function Feed({ busy = false, children, className, label, ...props }: Fee
 
 export type FeedArticleProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   children: ReactNode;
-  /** Names this article — an author, a headline, a timestamp. Rendered, not just referenced. */
+  /** Names this article. An author, a headline, a timestamp. Rendered, not just referenced. */
   label: ReactNode;
   /** This article's 1-based position in the feed. */
   posInset: number;

@@ -1,16 +1,16 @@
 /*
- * FPS / FRAME-TIME METER — reads the TOP document's own paint rate, not each preview iframe's.
+ * FPS / FRAME-TIME METER. Reads the TOP document's own paint rate, not each preview iframe's.
  *
  * Every other check in this panel is a stylesheet rule mirrored into preview iframes by attribute
  * (see `component-preview-frame.ts`'s `rootAttributes`), because painting a REAL element is cheap
  * and correct wherever the attribute lands. A frame-rate reading is different: it is a measurement
  * of ONE document's own compositor, and the number a reader actually wants is "is the page I'm
- * looking at janky right now" — the top document, where the panel itself lives — not an average
+ * looking at janky right now". The top document, where the panel itself lives: not an average
  * blended across a dozen sandboxed demo iframes it would take a second measurement loop per frame to
  * even collect. Reading just this document keeps the cost to one `requestAnimationFrame` callback,
  * the same loop already idle whenever the meter is off.
  *
- * THE BADGE IS A REAL LIGHT-DOM ELEMENT, appended to `document.body` — NOT rendered inside the
+ * THE BADGE IS A REAL LIGHT-DOM ELEMENT, appended to `document.body`. NOT rendered inside the
  * panel's own shadow root the way the checkbox rows are. The panel is a closed affordance (a reader
  * opens it to flip a check, then it is out of the way again); a running frame-rate reading is the
  * opposite, something to glance at continuously while the panel stays shut, so it needs to survive
@@ -47,7 +47,7 @@ export function createFpsMeter() {
   let rafId: number | null = null;
   let badge: HTMLDivElement | null = null;
 
-  /** Smoothed over ~250ms windows, not once a frame — a per-frame delta swings ±dozens of fps on a
+  /** Smoothed over ~250ms windows, not once a frame. A per-frame delta swings ±dozens of fps on a
    *  single hitch and would read as noise, not a signal. */
   function tick(now: number): void {
     frames += 1;

@@ -22,7 +22,7 @@ export function compileDemoScript(source: string): string {
       removeComments: false,
       /*
        * Imports come out exactly as written. Without this, TypeScript ELIDES an import whose binding
-       * it cannot see used — and a page-authored snippet that shows `import { mountCodePreview }`
+       * it cannot see used, and a page-authored snippet that shows `import { mountCodePreview }`
        * beside a string that mentions it would have lost the line it exists to teach, then gained an
        * `export {}` in its place to stay a module.
        */

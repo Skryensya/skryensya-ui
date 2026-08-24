@@ -4,7 +4,7 @@ import type { Translate } from "../i18n";
 /*
  * Two demos for the one contract WAI itself treats as a single pattern: a data grid (plain text
  * cells, the roving stop lands on the cell itself) and a layout grid (each cell holds its own
- * button, the roving stop hands off to THAT instead — see `dataGridFocusableSelector`).
+ * button, the roving stop hands off to THAT instead; see `dataGridFocusableSelector`).
  */
 export const dataGridScoresTree = (t: Translate): UsageTree => ({
   contract: "data-grid",

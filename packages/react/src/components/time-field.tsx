@@ -81,7 +81,7 @@ export type TimeFieldProps = {
   /**
    * Where the picker's own floating listbox is portalled. Defaults to `document.body`, which is
    * right whenever an ancestor might clip it. Pass a ref to keep the content inside a subtree
-   * instead: a preview frame, a dialog — the same `container` prop `Select`/`Combobox` already
+   * instead: a preview frame, a dialog. The same `container` prop `Select`/`Combobox` already
    * carry, for the same reason (`select.tsx`'s own doc on it).
    */
   container?: RefObject<HTMLElement>;
@@ -99,11 +99,11 @@ export type TimeFieldProps = {
   name?: string;
   onValueChange?: (details: TimeFieldValueChangeDetails) => void;
   /**
-   * How far apart the picker's own listbox rows sit, in minutes. Defaults to 30 (48 rows) — enough
+   * How far apart the picker's own listbox rows sit, in minutes. Defaults to 30 (48 rows). Enough
    * to matter, few enough to arrow-key through without scrolling past most of them.
    */
   optionsStep?: number;
-  /** The picker trigger's own accessible name — distinct from the field's own label (WCAG 2.5.3),
+  /** The picker trigger's own accessible name. Distinct from the field's own label (WCAG 2.5.3),
    * since the trigger carries no visible text of its own, only an icon. */
   optionsLabel?: string;
   periodLabel?: string;
@@ -115,7 +115,7 @@ export type TimeFieldProps = {
 /**
  * TIME FIELD: hour, minute, and (in a 12-hour locale) AM/PM as one accessible `role="group"` of
  * `role="spinbutton"` segments (typing), plus a trigger that opens a plain arrow-key-navigable
- * listbox of preset times (browsing) — always both, never one without the other.
+ * listbox of preset times (browsing). Always both, never one without the other.
  *
  * Segment order and separators come from `Intl.DateTimeFormat.formatToParts`, not an assumption:
  * some locales place the day period before the time, and the separator is not always ":". The
@@ -124,18 +124,18 @@ export type TimeFieldProps = {
  *
  * THE PICKER DRIVES `@zag-js/select`'S MACHINE DIRECTLY, not the `Select` component: `Select` (
  * `./select.js`) renders its OWN visible trigger (value text + chevron), and nesting that whole
- * widget inside a second trigger here would mean two clicks to reach the list — icon, then
- * Select's own trigger, THEN the options — the exact "one thing opens another thing" inefficiency
+ * widget inside a second trigger here would mean two clicks to reach the list. Icon, then
+ * Select's own trigger, THEN the options. The exact "one thing opens another thing" inefficiency
  * an earlier version of this picker had with `Combobox`'s search box (`time-field.ts`'s own banner
  * has the fuller history). Driving the machine directly means the field's OWN compact icon button
  * IS the trigger (`pickerApi.getTriggerProps()` spread onto it) and only the LISTBOX part renders
- * (`selectParts.content`/`item`, `@skryensya/core/select` — confirmed self-contained: its own
+ * (`selectParts.content`/`item`, `@skryensya/core/select`. Confirmed self-contained: its own
  * positioner redeclares every CSS custom property it needs, no `.sk-select` root wrapper required).
  * Picking an item closes the listbox on its own (`@zag-js/select`'s normal single-select behavior),
  * so nothing here has to manage that.
  *
  * `aria-labelledby`, CLEARED ON PURPOSE: `getTriggerProps()`/`getContentProps()` both set it,
- * pointing at a `<label>` id that does not exist — this picker has no visible label, only the icon
+ * pointing at a `<label>` id that does not exist. This picker has no visible label, only the icon
  * button's own `aria-label`. Left alone, the accessible name would resolve to nothing; explicitly
  * unsetting it after the spread is what lets `aria-label` win (confirmed reading `@zag-js/select`'s
  * own `connect.js`, not assumed).
@@ -274,7 +274,7 @@ export function TimeField({
   const handleSegmentKeyDown = (type: TimeFieldSegmentType, event: KeyboardEvent<HTMLDivElement>) => {
     if (disabled || readOnly) return;
 
-    // Alt+ArrowDown, the same key `<select>` already opens with — the picker's own trigger button
+    // Alt+ArrowDown, the same key `<select>` already opens with. The picker's own trigger button
     // (rendered below, at the `trailing` part) is Zag's REAL trigger, so `.click()` on it runs the
     // machine's normal open behavior exactly like a real click would, rather than this file
     // reaching into the machine itself. Checked on the SEGMENT rather than the control: the

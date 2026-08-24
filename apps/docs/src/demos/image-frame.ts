@@ -2,13 +2,13 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /**
- * A dummyimage.com placeholder, 800×500 — same measure the old local asset had, so every demo
+ * A dummyimage.com placeholder, 800×500. Same measure the old local asset had, so every demo
  * below that crops/positions it (`imageFrameAspectTree`, `imageFrameFitTree`,
  * `imageFramePositionTree`) keeps the exact same math, only the source pixels changed. It is no
  * longer an intentionally asymmetric photo (a disc top-left, a block bottom-right, drawn specifically
  * so `imageFramePositionTree`'s three crops read as visibly different corners of ONE picture): a flat
  * placeholder generator cannot draw that, so that one demo's three specimens now differ only in
- * label position, not in what part of a photo survived — a real loss, accepted deliberately.
+ * label position, not in what part of a photo survived. A real loss, accepted deliberately.
  */
 export const DEMO_IMAGE_FRAME_SRC = "https://dummyimage.com/800x500/9ca3af/374151.png";
 

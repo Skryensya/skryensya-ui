@@ -12,7 +12,7 @@
     --sk-color-border-subtle: var(--color-border-subtle);
     --sk-color-border-strong: var(--color-border-strong);
     --sk-color-border-selected: var(--color-border-accent);
-    --sk-color-selection-selected: var(--color-action-primary);
+    --sk-color-selection-selected: var(--color-action-accent);
     --sk-color-focus: var(--color-border-focus);
     --sk-color-text-primary: var(--color-text-primary);
     --sk-color-text-secondary: var(--color-text-secondary);

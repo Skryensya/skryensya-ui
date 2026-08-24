@@ -76,7 +76,7 @@ const PRINT_WIDTH = 75;
  * Prettier would have produced for the same file.
  *
  * Measured, not guessed: at 75 the Placeholder demo split two of four sibling `<Placeholder>` tags
- * onto three lines each — one prop, one line of its own — while their shorter siblings stayed inline.
+ * onto three lines each. One prop, one line of its own, while their shorter siblings stayed inline.
  * The breaks came from four characters of indentation, not from anything about the code.
  */
 const JSX_PRINT_WIDTH = 80;
@@ -337,7 +337,7 @@ function renderTemplate(
     return [];
 
   // The ALL-of-them counterpart: `whenItemGiven` names one option, and a node cannot repeat that
-  // key to ask for a second — a breadcrumb crumb that is both `current` and linked still is not a
+  // key to ask for a second. A breadcrumb crumb that is both `current` and linked still is not a
   // link, and that shape needs both presence checks on the SAME node.
   if (
     node.whenItemAllGiven !== undefined &&
@@ -533,8 +533,8 @@ function supplied(
       (option !== undefined && option !== false) ||
       slotItems(filled[name]).length > 0 ||
       // A collection slot's entries are `ItemInput`s, which `slotItems` deliberately excludes (they
-      // are not children); `whenGiven` on a collection slot — MenubarItem's own `items`, gating
-      // whether it has a dropdown at all — needs the other half of the same content to count too.
+      // are not children); `whenGiven` on a collection slot. MenubarItem's own `items`, gating
+      // whether it has a dropdown at all. Needs the other half of the same content to count too.
       collectionItems(filled[name]).length > 0
     );
   });
@@ -874,7 +874,7 @@ function renderSlot(
 }
 
 type InlineBoundary = {
-  /** Neither neighbour is text: an unrelated case — a Stack's children — where the gap between two
+  /** Neither neighbour is text: an unrelated case. A Stack's children, where the gap between two
    *  elements was never a string's to own, so neither emitter touches it. */
   readonly bothElements: boolean;
   /** Neither neighbour wrote a space at this boundary: nothing may render there, in either binding. */
@@ -886,7 +886,7 @@ type InlineBoundary = {
  * than from how they get printed. Shared by both emitters because they agree on every input: whether
  * a boundary is between two elements with nothing textual nearby, and whether either text neighbour
  * already carries a space. They only disagree on what to DO with a boundary that is neither of those
- * — see `joinInlineItems` and `joinJsxInlineItems`.
+ *; see `joinInlineItems` and `joinJsxInlineItems`.
  */
 function inlineBoundary(
   items: readonly (string | UsageTree)[],
@@ -903,12 +903,12 @@ function inlineBoundary(
 }
 
 /**
- * Adjacent slot items that carry no whitespace of their own — a link glued straight to the comma
- * that follows it, say — land on ONE line with nothing between them. A newline the pretty-printer
+ * Adjacent slot items that carry no whitespace of their own. A link glued straight to the comma
+ * that follows it, say. Land on ONE line with nothing between them. A newline the pretty-printer
  * would otherwise put at that boundary is still whitespace, and HTML collapses it into a rendered
  * space exactly like a typed one: the comma ends up floating a space off the word before it, which
  * neither side of the source wrote. A boundary stays safe to break across lines whenever a text
- * neighbour already carries the space HTML would render there anyway — which is every OTHER boundary
+ * neighbour already carries the space HTML would render there anyway, which is every OTHER boundary
  * in a paragraph, so most items keep one line each. Two elements with nothing textual between them
  * are left alone: there the gap was never a string's to own, it is the layout's, and an unrelated
  * array of components (a Stack's children) still reads one per line.
@@ -933,14 +933,14 @@ function joinInlineItems(
 }
 
 /**
- * The same boundaries `joinInlineItems` reads, printed for JSX instead of HTML — where a bare
+ * The same boundaries `joinInlineItems` reads, printed for JSX instead of HTML, where a bare
  * newline is not a substitute for a space, it is whitespace the JSX transform throws away. Babel and
  * TypeScript trim every line of a text run that isn't the FIRST or LAST line of its own run of source
  * text, so a word sandwiched between two tags on its own indented line loses the space on both sides,
  * silently: `Un párrafo con un` and `y otro` came out of a real build with no space before the link
  * that follows, in a snippet that looked, to the eye reading the source, exactly like the one that
  * renders correctly. `{" "}` is not a stylistic choice, it is the only child JSX renders unconditionally
- * regardless of the newlines and indentation around it — the same trick Prettier reaches for on any
+ * regardless of the newlines and indentation around it. The same trick Prettier reaches for on any
  * JSX line broken between two children that need a space. Every text item arrives here pre-trimmed
  * (see the caller): the boundary is the only place a space gets decided, never a string's own edge.
  */
@@ -980,7 +980,7 @@ function joinJsxInlineItems(
 type DataConst = {
   readonly name: string;
   readonly literal: string;
-  /** The contract the collection belongs to, which is not always the tree's root — see `dataModule`. */
+  /** The contract the collection belongs to, which is not always the tree's root; see `dataModule`. */
   readonly contract: string;
 };
 
@@ -1017,7 +1017,7 @@ export type ReactSource = {
 };
 
 /**
- * One tree, as the TSX a person would have written — WHICH IS MORE THAN ONE FILE.
+ * One tree, as the TSX a person would have written. WHICH IS MORE THAN ONE FILE.
  *
  * A collection is data, and data is not written inside a tag. Serialized into the prop, a menu's
  * items came out as one unreadable line of JSON that nobody would type and nobody can edit, and the
@@ -1027,7 +1027,7 @@ export type ReactSource = {
  *
  * And it is ALWAYS a component, whether or not it has data to import. A bare JSX expression is not
  * a file: nothing declares it, nothing renders it, and a reader who copies it has to know to wrap it
- * — which is exactly what the page is supposed to be showing them. One shape for every example on
+ *, which is exactly what the page is supposed to be showing them. One shape for every example on
  * the site also means the eye learns it once: imports, then the component, then its `return`.
  */
 export function emitReactSource(
@@ -1144,7 +1144,7 @@ function joinReact(
 
 /**
  * One import, wrapped one name per line once it passes the measure. A Table demo reaches for eight
- * signatures and its import line ran to 143 characters — three times the width of anything under it,
+ * signatures and its import line ran to 143 characters. Three times the width of anything under it,
  * and the first thing a reader sees. Every formatter breaks this the same way; so does this one.
  */
 function importLines(names: readonly string[], from: string): string[] {
@@ -1230,7 +1230,7 @@ function styleProp(declarations: readonly string[], depth: number): string {
  *       </>
  *     }
  *
- * Flattened, those two buttons were a 202-character line — the composition was there, and unreadable.
+ * Flattened, those two buttons were a 202-character line. The composition was there, and unreadable.
  * The layout depth is decided BEFORE anything is rendered (a lone element sits one level in, several
  * sit inside a fragment two levels in) because rendering is what collects the data modules: doing it
  * twice to measure would collect them twice.
@@ -1299,7 +1299,7 @@ function renderJsx(
         }`,
       );
       /*
-       * ALSO the named prop, under the option's own key — see `render-tree.tsx`'s identical fix
+       * ALSO the named prop, under the option's own key; see `render-tree.tsx`'s identical fix
        * for why: a `styleProperty` option says where the value lands in markup, not how a React
        * component wants it, and a component that takes it as an ordinary prop (Sidebar's
        * `minInlineSize`, DensityScope's `densityFactor`) never saw it here either. The live island
@@ -1333,7 +1333,7 @@ function renderJsx(
    * value)` writes it straight into `style="…"`, valid HTML as-is. React's `style` prop is not a
    * string, it is an object, so that same string, spread in with the same generic
    * `jsxAttribute(name, value)` every other attr uses below, used to come out as
-   * `style="--sk-avatar-bg: …;"` — a JSX prop React throws on at runtime ("the `style` prop expects
+   * `style="--sk-avatar-bg: …;"`: a JSX prop React throws on at runtime ("the `style` prop expects
    * a mapping … not a string"). Parsed into declarations and folded into `optionStyles` instead, it
    * joins whatever `styleProperty` options already contributed there and rides the SAME
    * `style={{…}} as CSSProperties` object below, so authoring an inline style on a tree node works
@@ -1568,7 +1568,7 @@ const JSX_PROP_NAMES: Record<string, string> = {
  * `JSON.stringify` is the obvious way to quote a string and the wrong one here: JSX attribute values
  * are NOT JavaScript string literals and do not process backslash escapes. A value containing a
  * double quote came out as `items="[{\"label\":…}]"`, where the first `\"` ends the attribute and
- * everything after it is garbage — invalid JSX, which Babel refuses with "Unexpected backslash in
+ * everything after it is garbage. Invalid JSX, which Babel refuses with "Unexpected backslash in
  * JSX element". CommandPalette hits this on every render: a usage tree hands it its index as a JSON
  * STRING, because a tree has no channel for anything else.
  *

@@ -2,15 +2,15 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../../i18n";
 
 /*
- * MARKETING LANDING — the "sitio público" shape: a document a stranger scrolls top to bottom, not
+ * MARKETING LANDING. The "sitio público" shape: a document a stranger scrolls top to bottom, not
  * an application someone logs into. What that changes, template to template:
  *
  *   - the page SCROLLS (`.page-shell`, site.css), so the frame is a viewport and the content runs
  *     past it, rather than an app shell whose panes each scroll inside a fixed screen;
  *   - the copy is measured (`Wrapper`), because a line of prose at 1440px is unreadable while an
  *     application's work area legitimately fills its pane; and
- *   - the nav's last item is a CTA `Button`, not a destination — the one place on the page where
- *     the accent is spent.
+ *   - the nav's last item is a CTA `Button`, not a destination. This is the one place on the page
+ *     where the accent is spent.
  *
  * Everything below is a published signature. Nothing here draws its own box.
  */
@@ -126,7 +126,7 @@ export const marketingTree = (t: Translate): UsageTree => ({
               /*
                * HERO. The eyebrow is a `Badge`, not a `Tag`, and the catalogue draws that line
                * itself: a Tag is something the reader can REMOVE (an applied filter, a keyword),
-               * and `Tag.avoidWhen` sends exactly this case away — "es sólo un conteo o un estado
+               * and `Tag.avoidWhen` sends exactly this case away: "es sólo un conteo o un estado
                * que nadie puede tocar; eso es un Badge". A release marker is read, never dismissed.
                * Both render as a capsule, which is precisely why picking by appearance gets it
                * wrong: the difference is whether it can be acted on.

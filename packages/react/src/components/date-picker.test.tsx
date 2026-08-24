@@ -10,7 +10,7 @@ describe("DatePicker", () => {
     fireEvent.click(trigger);
 
     // Matches the WAI reference implementation's own wording style ("Choose {date}"), just in the
-    // locale the component was already told to format dates in — `locale` drove `DateFormatter`
+    // locale the component was already told to format dates in: `locale` drove `DateFormatter`
     // before this fix, and nothing else. A day cell's accessible name is its `aria-label`, not its
     // text content (that's just the day number), so this queries by role.
     await waitFor(() =>

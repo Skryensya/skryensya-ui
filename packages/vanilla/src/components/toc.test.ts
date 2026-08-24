@@ -5,7 +5,7 @@ import { connectToc, mountToc } from "./toc.js";
  * One browser fact the enhancer stands on that jsdom does not ship in a useful form: the observer
  * behind the scroll-spy. The test owns it, so it can say "this heading entered the band" without a
  * layout. The `matchMedia` stub this file used to carry alongside it is gone with the breakpoint
- * switch it existed for — the index is always open now, so there is no media query in the enhancer.
+ * switch it existed for. The index is always open now, so there is no media query in the enhancer.
  */
 type ObserverHandle = {
   callback: IntersectionObserverCallback;
@@ -87,7 +87,7 @@ describe("Toc Vanilla contracts", () => {
   });
 
   /* The shape is the guarantee now: there is no second form to switch into, so what this pins is
-   * that nothing here opens, closes or hides the list — the index is readable the moment it renders,
+   * that nothing here opens, closes or hides the list. The index is readable the moment it renders,
    * before any enhancer runs. */
   it("ships one always-open shape, with nothing to disclose", () => {
     const root = markup(["instalacion", "uso"]);

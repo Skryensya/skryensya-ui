@@ -157,7 +157,7 @@ describe("Calendar Vanilla contracts", () => {
   it("names every accessible string in Spanish by default, not Zag's own English", () => {
     markup('data-locale="es-DO" data-value="2024-03-15"');
 
-    // Zag's `defaultTranslations` (`@zag-js/date-picker`) is English-only, unconditionally — a day
+    // Zag's `defaultTranslations` (`@zag-js/date-picker`) is English-only, unconditionally. A day
     // cell was announced "Choose miércoles, 20 de marzo..." (English verb, Spanish date) before this.
     expect(dayLabelled("20 de marzo de 2024").getAttribute("aria-label")).toMatch(/^Elegir /);
     const next = document.querySelector<HTMLButtonElement>(".sk-calendar__next")!;
@@ -185,7 +185,7 @@ describe("Calendar Vanilla contracts", () => {
     await waitFor(() => expect(document.querySelector(".sk-calendar__year-grid")).toBeTruthy());
 
     // This one is authored directly in `CalendarView.svelte`, not sourced from Zag's `translations`
-    // at all — it had the exact same English-locale gap, just hardcoded the other language.
+    // at all. It had the exact same English-locale gap, just hardcoded the other language.
     expect(viewTrigger().getAttribute("aria-label")).toBe("Back to current month");
   });
 });

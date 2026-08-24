@@ -7,8 +7,8 @@ import { mountFileUpload } from "./file-upload.js";
 /*
  * The exact shape `fileUploadContract`'s template (core/src/file-upload.ts) emits: a labelled root,
  * a non-interactive dropzone, the real (visually hidden) file input, and a trigger button. `clear`
- * is NOT part of that template — it is an author's own opt-in extra the Svelte enhancer only wires
- * when present (see FileUpload.svelte's `if (clear)` guard) — covered by its own test below.
+ * is NOT part of that template. It is an author's own opt-in extra the Svelte enhancer only wires
+ * when present (see FileUpload.svelte's `if (clear)` guard). Covered by its own test below.
  */
 function markup({ clear = false, multiple = true, maxFileSize = "" } = {}): HTMLElement {
   document.body.innerHTML = `<div data-sk-file-upload${maxFileSize ? ` data-max-file-size="${maxFileSize}"` : ""}>
@@ -33,7 +33,7 @@ const parts = (root: HTMLElement) => ({
   clear: root.querySelector<HTMLButtonElement>("[data-sk-file-upload-clear]"),
 });
 
-/** Zag's hidden input reads the selection on `input`, not `change` — same API the React binding's
+/** Zag's hidden input reads the selection on `input`, not `change`. Same API the React binding's
  *  own `file-upload.test.tsx` documents (`getHiddenInputProps().onInput`), same underlying machine. */
 function selectFiles(input: HTMLInputElement, files: File[]) {
   Object.defineProperty(input, "files", { value: files, configurable: true });
@@ -43,7 +43,7 @@ function selectFiles(input: HTMLInputElement, files: File[]) {
 /*
  * `getDropzoneProps()`'s own `openFilePicker` action (checked against the installed
  * `@zag-js/file-upload` machine) forwards the hidden input's `.click()` behind a real
- * `requestAnimationFrame`, not synchronously — the same deferred-action shape `menu.test.ts` and
+ * `requestAnimationFrame`, not synchronously. The same deferred-action shape `menu.test.ts` and
  * `number-field.test.ts` both document for their own machines.
  */
 const tick = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
@@ -57,10 +57,10 @@ afterEach(() => {
 describe("FileUpload vanilla enhancer", () => {
   /*
    * The dropzone holds NO nested interactive descendants (core/file-upload.ts's own doc: a button
-   * cannot contain another interactive control, so the real input/trigger are its SIBLINGS) — but
+   * cannot contain another interactive control, so the real input/trigger are its SIBLINGS). But
    * the dropzone itself is a genuine custom button, not decoration: `role="button"` on a non-native
    * element is only correct WITH keyboard operability (WAI's own Button pattern), so this asserts
-   * both halves — the tab stop and the role — not just the role alone.
+   * both halves. The tab stop and the role: not just the role alone.
    */
   it("wires the dropzone as a real, tabbable button, and the trigger as a native one", () => {
     const root = markup();

@@ -23,19 +23,19 @@ import { expect, test } from "@playwright/test";
  *   pointer highlight             → no ring     a focus ring under the cursor reads as broken focus
  *   pointer walked into a submenu → no ring     the parent trigger KEEPS its highlight here (Zag's
  *                                               `ITEM_POINTERLEAVE` is guarded `not(isTriggerItem)`),
- *                                               so it stops being `:hover` while still highlighted —
+ *                                               so it stops being `:hover` while still highlighted -
  *                                               the shape that most looks like keyboard and is not
  *   keyboard into a submenu       → ring, inner  on the row the arrows reached, not on the trigger
  *
  * THE FIRST THREE run against the real shared canonical stage, both bindings, real clicks/hovers/keys
- * — the same interaction a reader has. The FOURTH (pointer walked into a submenu) runs against a
+ *. The same interaction a reader has. The FOURTH (pointer walked into a submenu) runs against a
  * bare fixture with `menu.css` alone instead: the shared stage renders ninety canonical trees on one
  * very tall page, and this specific case's on-screen box was found, by `elementFromPoint`, to
- * coincide with an unrelated `nav-list` case's link — a pre-existing layout defect in the stage
+ * coincide with an unrelated `nav-list` case's link. A pre-existing layout defect in the stage
  * (`harness/stage.css`'s per-binding `position: relative` gives an open `<dialog>` a containing
  * block, but does nothing for `Menu`'s own `position: fixed` panel), not anything the CSS fix here
  * touches. A real OS pointer aimed at that box hits the wrong element (confirmed: Zag's machine
- * never left `closed`), so no genuine `:hover` can be produced there at all — testing it means
+ * never left `closed`), so no genuine `:hover` can be produced there at all. Testing it means
  * testing the CSS RULE directly, which is the actual claim, and is one file for both bindings anyway
  * (confirmed identical class/attribute output by G2's own symmetry gate). Fixing the stage's own
  * layout is out of scope for a focus-ring fix; flagged here rather than worked around silently.
@@ -66,7 +66,7 @@ for (const binding of BINDINGS) {
     /*
      * The trigger, by its accessible NAME rather than `[data-sk-menu-trigger]`: that attribute is
      * Vanilla's own mount hook (`menu.ts`'s `mount: menuAttrs.trigger`), which the contract never
-     * asks React to carry, and React's own binding does not (checked — zero occurrences in
+     * asks React to carry, and React's own binding does not (checked. Zero occurrences in
      * `menu.tsx`). "Acciones" is the tree's own `slots.trigger` text, so the same locator finds the
      * trigger in both DOMs, the way a reader would: by what it says, not by an implementation hook.
      */
@@ -95,7 +95,7 @@ for (const binding of BINDINGS) {
         .toEqual([{ label: "Renombrar", ring: "none" }]);
     });
 
-    /* And the mirror: arrowing in rings the row the arrows reached, never the trigger behind it —
+    /* And the mirror: arrowing in rings the row the arrows reached, never the trigger behind it -
      * the ring MOVED, it was not duplicated down the path. */
     test("arrowing into a submenu rings the row the arrows reached", async ({ page }) => {
       await trigger(page).focus();
@@ -116,8 +116,8 @@ for (const binding of BINDINGS) {
 /*
  * The fourth case, isolated from the stage's own layout defect (see the file comment). Real
  * `menu.css`, a bare page, two rows shaped exactly like Zag leaves them mid-hover: the parent trigger
- * — highlighted, expanded, no longer `:hover` (the pointer left it for the panel) — and the child row
- * the pointer is actually over — highlighted AND `:hover`. Neither may show a ring: the whole
+ *. Highlighted, expanded, no longer `:hover` (the pointer left it for the panel), and the child row
+ * the pointer is actually over. Highlighted AND `:hover`. Neither may show a ring: the whole
  * interaction was a mouse, at both rows.
  */
 test.describe(`${CASE}: the focus-ring RULE itself, pointer walked into a submenu`, () => {

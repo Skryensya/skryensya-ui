@@ -102,7 +102,7 @@ export function ChangelogEntry({
       {/* `sk-badge` alongside the part class, not instead of it: Badge owns what a status label looks
           like and this component owns where it sits. Same composition as Avatar over ImageFrame. */}
       {/* The tone is READ FROM CORE, never decided here. It is a rendering of `kind` rather than a
-          prop, so there is no way to file a breaking change under a calm badge — and importing the
+          prop, so there is no way to file a breaking change under a calm badge, and importing the
           table instead of restating it is what stops this binding and the contract's `attrsWhen`
           from drifting the day a kind changes colour. */}
       <span className={`${changelogParts.kind} ${badgeParts.root}`} data-tone={changeKindTones[kind]}>

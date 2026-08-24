@@ -65,7 +65,7 @@ const enhancerAttributes = [
    * `core/treegrid.ts`): a `<colgroup>` and a branch row's disclosure button. React re-describes
    * both on every render and needs no marker; the vanilla enhancer re-runs on the same DOM and
    * needs one to avoid inserting a second copy. Not a formal `mount` field (nothing is mounted
-   * ON them, they mark "I already built this"), so `templateMounts` above cannot see them — first
+   * ON them, they mark "I already built this"), so `templateMounts` above cannot see them. First
    * exercised at all once a Treegrid canonical tree existed to find the gap.
    */
   "data-sk-treegrid-colgroup",
@@ -104,7 +104,7 @@ const idReferences = [
  * built: the HTML parser (vanilla's `innerHTML` emission) puts it in `.content`, a DocumentFragment
  * a plain DOM walk never sees; imperative DOM operations (React's own reconciler) put it in the
  * template element's ordinary `.childNodes` instead, which the SAME walk DOES see. Two bindings
- * therefore produce a genuinely different, both CORRECT, shape for the identical markup — not a
+ * therefore produce a genuinely different, both CORRECT, shape for the identical markup: not a
  * divergence this gate exists to catch, a limit of comparing raw DOM shape across two construction
  * methods for the one element the platform treats specially. The accessibility-tree comparison
  * beside this one needs no such exemption: template content is never in the accessible tree either
@@ -276,10 +276,10 @@ async function shapeOf(
     /*
      * Every direct child is walked, anchored or not: `hoist` only ever touches a node's
      * DESCENDANTS, never the node itself, so calling it on a top-level anchored child cannot
-     * double-add that child — it only reaches whatever is nested INSIDE it. Skipping anchored
+     * double-add that child. It only reaches whatever is nested INSIDE it. Skipping anchored
      * children here (the previous shape of this loop) meant a portalled top-level positioner's own
-     * nested submenu positioner — buried in its content, since only React portals the ROOT and
-     * leaves submenus nested (menu.tsx) — was never pulled out, while vanilla's fully inline tree
+     * nested submenu positioner. Buried in its content, since only React portals the ROOT and
+     * leaves submenus nested (menu.tsx). Was never pulled out, while vanilla's fully inline tree
      * always found it. One binding's `anchored` list came out one element short of the other's for
      * every canonical tree with a nested submenu, which read as a content divergence when the two
      * trees actually agreed.

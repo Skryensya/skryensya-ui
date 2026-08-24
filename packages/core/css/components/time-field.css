@@ -1,6 +1,6 @@
 /* TIER 3, TIME FIELD. A segmented time input: hour, minute, and AM/PM as independently
  * steppable/typeable segments in one field, PLUS a trigger (always present, at the `trailing`
- * part) that opens a plain listbox of preset times — the field's own row of segments carries most
+ * part) that opens a plain listbox of preset times. The field's own row of segments carries most
  * of this file's own rules, the picker composes with `select.css`'s own `.sk-select__positioner`/
  * `__content`/`__item*` classes (confirmed self-contained, no `.sk-select` root needed) rather than
  * repeating them here. */
@@ -40,7 +40,7 @@
 
   /*
    * `padding-inline-start` ONLY, not `padding-inline`: the trailing action buttons (clear, the
-   * picker trigger) already carry their own `margin-inline` for touch-target spacing — the same
+   * picker trigger) already carry their own `margin-inline` for touch-target spacing. The same
    * split Combobox's own control uses (`combobox.css`'s `__control` has no end padding either).
    * An end padding here on TOP of that margin pushed the trigger's icon further from the edge
    * than the affordance was meant to sit, reading as mis-placed instead of flush.
@@ -101,7 +101,7 @@
   /*
    * The container-level ring above (`:has(...:focus-visible)`) says "focus is somewhere in this
    * field"; a reader still needs to know WHICH of the three segments, and until this rule the only
-   * answer was the same low-contrast hover tint reused for focus — real per WCAG 2.4.7, but not
+   * answer was the same low-contrast hover tint reused for focus. Real per WCAG 2.4.7, but not
    * "clearly perceivable" per 2.4.11/2.4.13's own bar. `outline`, not a stronger background: it is
    * the one visual channel this system already reserves for focus specifically (`state-layer.css`'s
    * own "FOCUS RING, a separate family on purpose" note), so a segment's ring never gets confused
@@ -152,7 +152,7 @@
   }
 
   /*
-   * THE PICKER'S TRIGGER — always present, at the `trailing` part (`timeFieldParts.trailing`,
+   * THE PICKER'S TRIGGER. Always present, at the `trailing` part (`timeFieldParts.trailing`,
    * `@skryensya/core/time-field`). It lives INSIDE `.sk-time-field__control`, the same anatomy
    * Combobox's own control already has for its trailing clear/chevron buttons, so the field and the
    * picker read as one bordered box, not two controls side by side. The listbox it opens is NOT
@@ -170,13 +170,13 @@
   /*
    * Every action inside the field composes Button's icon-only sm contract, same recipe as the
    * clear trigger above and as Combobox's own trailing actions (`combobox.css`'s equivalent
-   * block) — transparent chrome, Button owns the square, focus ring and expanded hit target.
+   * block). Transparent chrome, Button owns the square, focus ring and expanded hit target.
    *
    * `--color-text-accent`, DELIBERATELY, not the muted `--sk-time-field-affordance-color` the
    * clear button next to it uses: this is the one action that OPENS something (browsing a list of
    * times), not a plain field affordance like clearing a value, and accent is what marks that
    * apart. Written explicitly rather than left to `data-variant="ghost"`'s own default (`--color-
-   * action-quiet-fg`, `button.css` — which happens to resolve to this SAME token today) because
+   * action-quiet-fg`, `button.css`, which happens to resolve to this SAME token today) because
    * that default and this rule sit at EQUAL specificity: a page that imports `button.css` AFTER
    * this file would otherwise let import order silently decide which one wins, the identical class
    * of bug this file's own `--sk-select-content-max-block-size` override already had to guard
@@ -194,7 +194,7 @@
     flex-shrink: 0;
     /* End: reserves exactly the difference between Button's fixed touch target and the sm face it
      * paints at, so the edge and this button's own hit area never overlap. Start: deliberately
-     * SMALLER than that — the clear button right before it is its own square touch target
+     * SMALLER than that. The clear button right before it is its own square touch target
      * already, and the full reserved gap on both sides read as too much air between the two. */
     margin-inline: var(--space-inline-xs) calc((var(--size-touch-target) - var(--size-control-sm)) * 0.5);
   }
@@ -205,7 +205,7 @@
 
   /*
    * The row under keyboard navigation carries `aria-selected="true"` (`state-layer.css`'s own
-   * `[aria-selected="true"]` rung), not real DOM focus — a listbox with `aria-activedescendant`
+   * `[aria-selected="true"]` rung), not real DOM focus. A listbox with `aria-activedescendant`
    * keeps focus on the `<ul>` itself, so `:focus-visible` never matches an `<li>` and the ONLY
    * feedback a keyboard reader got was the "selected" state layer's tint, the same brand/accent
    * color a genuinely CHOSEN row would use. This gives the row being ARROWED THROUGH the same
@@ -234,13 +234,13 @@
    * Shorter than Select's own default (`--sk-select-content-max-block-size: 18rem`, `select.css`):
    * at the default 30-minute step this list is short (48 rows) and never needed that much room,
    * and the taller box made `flip-block` decide there wasn't enough space BELOW on a short
-   * viewport and flip the panel above the field instead — surprising for a field near the top of
+   * viewport and flip the panel above the field instead. Surprising for a field near the top of
    * the page. A shorter cap keeps it below in more viewports; it still scrolls for every row.
    *
    * `.sk-select__positioner.sk-time-field__options-positioner`, BOTH classes in one compound
    * selector, not `.sk-time-field__options-positioner` alone: the positioner carries both classes
    * (`select.css`'s own `.sk-select__positioner` plus this file's), and that rule sets the SAME
-   * custom property at the SAME (0,1,0) specificity — a docs/consumer page that happens to import
+   * custom property at the SAME (0,1,0) specificity. A docs/consumer page that happens to import
    * `select.css` AFTER this file (as `TimeFieldPage.astro` does) would otherwise let source order
    * decide and silently restore 18rem, confirmed by measuring `getComputedStyle` against a live
    * render, not assumed. The compound selector's (0,2,0) wins regardless of import order.
@@ -251,9 +251,9 @@
 
   /*
    * Unlike Combobox's own list (usually short enough that a reader rarely reaches its end), this
-   * one is ALWAYS scrolling — 48 rows at the default step, none of which fit inside the 12rem cap
+   * one is ALWAYS scrolling. 48 rows at the default step, none of which fit inside the 12rem cap
    * above. Without `overscroll-behavior: contain`, wheeling past the LAST row hands the rest of the
-   * gesture to whatever scrolls next — the page behind the open dropdown — which reads as the list
+   * gesture to whatever scrolls next. The page behind the open dropdown, which reads as the list
    * leaking out of its own box mid-scroll. `combobox.css`'s own `.sk-combobox__content` sets the
    * same property for the identical reason; `select.css`'s own `.sk-select__content` does not,
    * because Select's list is ordinarily short too and never needed it.

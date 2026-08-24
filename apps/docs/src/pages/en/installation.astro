@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -11,33 +12,29 @@ const imports = `/* Base: palettes, scale, semantics and state layer. */
 /* Opt-in: Import only the components you ship. */
 @import "@skryensya/core/components/button.css";`;
 
-const usage = `<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-variant="accent"
->
-  Save
-</button>
-<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-variant="neutral"
->
-  Cancel
-</button>
-<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-variant="danger"
->
-  Delete
-</button>`;
-
-const usageReact = `import { Button } from "@skryensya/react/button";
-
-<Button variant="accent">Save</Button>
-<Button variant="neutral">Cancel</Button>
-<Button variant="danger">Delete</Button>;`;
+const usageTree: UsageTree = {
+  contract: "layout",
+  signature: "Inline",
+  children: [
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "accent" },
+      children: "Save",
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      children: "Cancel",
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "danger" },
+      children: "Delete",
+    },
+  ],
+};
 ---
 
 <Base
@@ -64,7 +61,7 @@ const usageReact = `import { Button } from "@skryensya/react/button";
     For static components, the class is enough: the CSS brings the structure and its styling hooks. For machined components, <code>@skryensya/vanilla</code> hydrates the authored HTML and <code>@skryensya/react</code> renders the same contract.
   </p>
 
-  <ComponentPreview html={usage} react={usageReact} label="Button" />
+  <ComponentPreview tree={usageTree} label="Button" />
 
   <h2>Components with behavior</h2>
   <p>

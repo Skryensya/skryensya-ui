@@ -68,7 +68,7 @@ describe("resolveHourCycle", () => {
   });
 
   it("an explicit override always wins, regardless of what the locale would otherwise resolve to", () => {
-    // "es" resolves to h24 on its own (the row above) — forcing h12 here proves the override beats
+    // "es" resolves to h24 on its own (the row above). Forcing h12 here proves the override beats
     // the platform's guess rather than merely agreeing with it by coincidence.
     expect(resolveHourCycle("es", "h12")).toBe("h12");
     expect(resolveHourCycle("en-US", "h24")).toBe("h24");

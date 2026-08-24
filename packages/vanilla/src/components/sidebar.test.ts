@@ -205,7 +205,7 @@ describe("Sidebar resizing", () => {
       connectSidebar(root);
       // The initial bounds probe is deferred one frame past mount (measured: run inline, its own
       // forced reflow leaked into whatever ELSE was also mounting that task, as a real painted
-      // shift of a sibling column — see the git history of this file). One real animation frame
+      // shift of a sibling column; see the git history of this file). One real animation frame
       // is what stands between "mounted" and "probed" now.
       await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
     } finally {
@@ -216,7 +216,7 @@ describe("Sidebar resizing", () => {
     const afterCeiling = reads.slice(reads.findIndex((s) => s.prop === "100000px") + 1);
     // The ceiling is the last forced layout. Without a flush at the restored value while
     // `data-resizing` is still on, that ceiling becomes the width transition's FROM and the
-    // rail animates back — a CLS of everything to its right (docs shell).
+    // rail animates back. A CLS of everything to its right (docs shell).
     expect(afterCeiling.some((s) => s.prop === "" && s.resizing)).toBe(true);
     expect(root.hasAttribute("data-resizing")).toBe(false);
   });

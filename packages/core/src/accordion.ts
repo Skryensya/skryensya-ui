@@ -71,11 +71,11 @@ export const accordionContract = {
     defaultOpen: { type: "boolean", default: false, attr: "data-default-open", trueValue: "", machineInput: true },
     /**
      * The page-outline heading level a trigger announces itself at (`aria-level`, on a wrapper
-     * carrying `role="heading"`, never on the button — a control cannot also claim the heading
+     * carrying `role="heading"`, never on the button. A control cannot also claim the heading
      * role its own interactive one already fills). WAI's Accordion pattern wants this so a
      * screen-reader user navigating by heading lands on every section; without it, sections are
      * reachable only by Tab. Defaults to 3, the level every demo in this codebase already uses for
-     * the same sections rendered as `<details>` (`apps/docs/src/demos/accordion.ts`) — a page that
+     * the same sections rendered as `<details>` (`apps/docs/src/demos/accordion.ts`). A page that
      * needs a different depth overrides it, but "no heading at all" was never the right default.
      */
     headingLevel: { type: "number", default: 3, attr: "aria-level" },
@@ -139,7 +139,7 @@ export const accordionContract = {
       // is on the page outline, and a control cannot also claim the heading role its own
       // interactive one already fills, so the two live on separate elements. The wrapper is
       // `display: contents` (accordion.css), so it never becomes a real box between the section
-      // and its button — the grid gap `.sk-tile` already sets between trigger and content reads
+      // and its button. The grid gap `.sk-tile` already sets between trigger and content reads
       // exactly as before.
       host: { element: "div" },
       parents: ["Accordion.Item"],

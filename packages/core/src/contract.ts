@@ -15,7 +15,7 @@
 
 /**
  * One option a signature takes, and the attribute it lands on. The attribute is the whole point:
- * it is what makes `variant="primary"` and `data-variant="primary"` comparable, and therefore what
+ * it is what makes `variant="accent"` and `data-variant="accent"` comparable, and therefore what
  * makes the two bindings diffable (G2).
  */
 export type ContractOption = {
@@ -90,7 +90,7 @@ export type ContractSlot = {
    * Narrows one of the ITEM's OWN options to a subset of its usual values, while it sits in this
    * slot. The item is still whatever signature `of` allows, just held to a stricter vocabulary here
    * than it is everywhere else: a Button is a full-strength call to action on its own, but the
-   * recovery link inside a Callout must never outrank the page's real primary action, so this slot
+   * recovery link inside a Callout must never outrank the page's real accent action, so this slot
    * narrows its `variant` rather than inventing a second, weaker Button signature to say the same
    * thing. Checked against the item's own contract default when the option is omitted, so leaving
    * `variant` unset does not quietly slip through as the disallowed default.
@@ -301,7 +301,7 @@ export type ContractTemplate = {
    * supplied. A breadcrumb crumb that is both `current` and carries an `href` is still not a link:
    * the current page is the one label the trail exists to answer "where am I", never truncated or
    * muted the way an ancestor link is, so it renders as `Breadcrumb.Current` even though it has
-   * a destination — one entry, a THIRD shape neither `whenItemGiven` (single option) nor a second
+   * a destination. One entry, a THIRD shape neither `whenItemGiven` (single option) nor a second
    * node with its own `whenItemGiven` (fields do not compose across two calls to the same key on
    * one node) can express. `whenGiven` has the equivalent array at the composition level, meaning
    * ANY of them; this is the item-level, ALL-of-them counterpart the plain singular could not say.
@@ -316,7 +316,7 @@ export type ContractTemplate = {
    * option one level up.
    *
    * Only meaningful for a STRING or ENUM item option: a boolean's stored value is the literal JS
-   * `true`/`false`, and `equals` is typed `string`, so it can never match one by strict equality —
+   * `true`/`false`, and `equals` is typed `string`, so it can never match one by strict equality -
    * use `whenItemGiven`/`whenItemMissing` (or `whenItemAllGiven`) for a boolean instead.
    */
   readonly whenItemEquals?: { readonly option: string; readonly equals: string };
@@ -460,7 +460,7 @@ export type ContractSignature = {
   readonly react: { readonly from: string; readonly name: string };
   /**
    * The `data-sk-*` attribute the Vanilla enhancer mounts on. Binding-specific by nature; React
-   * needs no mount point — so it lives here and not in the template, and the symmetry gate
+   * needs no mount point, so it lives here and not in the template, and the symmetry gate
    * normalizes it away rather than reporting the two bindings as different.
    */
   readonly mount?: string;

@@ -97,7 +97,7 @@ export function connectSidebar(root: HTMLElement, options: SidebarOptions = {}):
  * happens with the transition suppressed, and the previous value restored, inside one synchronous
  * block. Restoring the property is not enough on its own: the last layout is the ceiling, and if
  * `data-resizing` comes off before that restored width is flushed, the engine treats the ceiling
- * as the width transition's FROM and the panel animates back — a layout shift of everything to
+ * as the width transition's FROM and the panel animates back. A layout shift of everything to
  * its right. The extra read after the restore is that flush.
  */
 function measureBounds(root: HTMLElement): { min: number; max: number } {
@@ -137,10 +137,10 @@ function connectResize(root: HTMLElement, handle: HTMLElement, options: SidebarO
    * sidebar, so this costs nothing beyond the ARIA value staying blank for one frame.
    *
    * The probe itself waits for that frame on purpose. It is a real, if brief, write-then-read
-   * (0px, then 100000px, then back — `measureBounds`'s own comment) with the transition
+   * (0px, then 100000px, then back: `measureBounds`'s own comment) with the transition
    * suppressed on THIS element, but nothing shields the SIBLING the sidebar's own column pushes
    * on: measured landing inside the same task as everything else mounting (the code preview's
-   * collapse, other enhancers), it read back as a real, painted shift of `.docs-document-pair` —
+   * collapse, other enhancers), it read back as a real, painted shift of `.docs-document-pair` -
    * confirmed by removing the probe entirely, which removed the shift with it. Running it alone,
    * one frame later, is what keeps it from compounding with whatever else that first frame was
    * already doing.

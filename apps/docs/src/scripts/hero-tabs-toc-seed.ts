@@ -1,6 +1,6 @@
 /*
  * The pure-DOM building blocks of the hero-tabs ToC, shared by its two authors: the `is:inline`
- * script right after `<Toc>` in `Base.astro` (the FIRST fill — a hand-written copy of this file,
+ * script right after `<Toc>` in `Base.astro` (the FIRST fill. A hand-written copy of this file,
  * since `is:inline` cannot `import`) and `hero-tabs-toc.ts` (every fill AFTER that, on tab switch,
  * which can afford the import because it only has to be ready by the reader's first click).
  */

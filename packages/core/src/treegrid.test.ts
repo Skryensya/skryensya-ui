@@ -14,7 +14,7 @@ import {
  *   1    Alice     (level 2, leaf)
  *   2    Bob        (level 2, leaf)
  *   3  Drafts      (level 1, branch, collapsed)
- *   4    Untitled   (level 2, leaf — hidden while Drafts is collapsed)
+ *   4    Untitled   (level 2, leaf. Hidden while Drafts is collapsed)
  *   5  Sent        (level 1, leaf)
  */
 const FIXTURE: readonly TreegridRowMeta[] = [
@@ -46,7 +46,7 @@ describe("computeTreegridVisibility", () => {
     expect(computeTreegridVisibility(nested)).toEqual([true, false, false, true]);
   });
 
-  it("a leaf's own `expanded: false` (impossible via the option, but defensive) never hides anything — only isBranch gates it", () => {
+  it("a leaf's own `expanded: false` (impossible via the option, but defensive) never hides anything. Only isBranch gates it", () => {
     const leaves: TreegridRowMeta[] = [
       { level: 1, isBranch: false, expanded: false },
       { level: 1, isBranch: false, expanded: false },
@@ -86,7 +86,7 @@ describe("diffTreegridVisibility", () => {
 
   it("marks every descendant of a newly-collapsed ancestor exiting, however deep", () => {
     // Same nested fixture computeTreegridVisibility's own test above uses, but starting fully
-    // expanded and then collapsing the top-level branch — both its child AND grandchild exit.
+    // expanded and then collapsing the top-level branch. Both its child AND grandchild exit.
     const expanded: TreegridRowMeta[] = [
       { level: 1, isBranch: true, expanded: true },
       { level: 2, isBranch: true, expanded: true },
@@ -100,7 +100,7 @@ describe("diffTreegridVisibility", () => {
   });
 });
 
-/** The fixture's rows AS THEY APPEAR when visible — index 4 (Drafts' child) is absent. */
+/** The fixture's rows AS THEY APPEAR when visible. Index 4 (Drafts' child) is absent. */
 const VISIBLE: readonly TreegridRowMeta[] = [FIXTURE[0]!, FIXTURE[1]!, FIXTURE[2]!, FIXTURE[3]!, FIXTURE[5]!];
 
 const resolve = (key: string, focus: { row: number; col: number | null }, colCount = 3, ctrl = false) =>
@@ -129,14 +129,14 @@ describe("resolveTreegridKey", () => {
     });
 
     it("moves to the parent row when a NESTED row is already collapsed (or is a leaf)", () => {
-      // Alice (row 1, a leaf) is nested one level under Inbox (row 0) — Left goes to that parent.
+      // Alice (row 1, a leaf) is nested one level under Inbox (row 0). Left goes to that parent.
       expect(resolve("ArrowLeft", { row: 1, col: null })).toEqual({ kind: "move", focus: { row: 0, col: null } });
     });
 
     it("does nothing at a TOP-LEVEL row with nowhere left to go, collapsed or not", () => {
-      // Drafts (row 3) is already collapsed but is itself top-level — no ancestor to move to.
+      // Drafts (row 3) is already collapsed but is itself top-level: no ancestor to move to.
       expect(resolve("ArrowLeft", { row: 3, col: null })).toEqual({ kind: "none" });
-      // Sent (row 4) is a top-level leaf — same absence of a parent.
+      // Sent (row 4) is a top-level leaf. Same absence of a parent.
       expect(resolve("ArrowLeft", { row: 4, col: null })).toEqual({ kind: "none" });
     });
 
@@ -196,7 +196,7 @@ describe("resolveTreegridKey", () => {
     });
   });
 
-  it("an unhandled key (Tab included — nothing to intercept in this scope) resolves to none", () => {
+  it("an unhandled key (Tab included: nothing to intercept in this scope) resolves to none", () => {
     expect(resolve("Tab", { row: 0, col: null })).toEqual({ kind: "none" });
     expect(resolve("a", { row: 0, col: null })).toEqual({ kind: "none" });
   });

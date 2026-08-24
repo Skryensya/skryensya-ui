@@ -19,6 +19,21 @@ describe("Tag", () => {
     expect(plain.container.querySelector("button")).toBeNull();
   });
 
+  it("renders a navigable tag as a link and never as dismissible", () => {
+    const ui = render(
+      <Tag href="/topics/design" tone="accent">
+        design
+      </Tag>,
+    );
+    const link = ui.getByRole("link", { name: "design" });
+    expect(link.getAttribute("href")).toBe("/topics/design");
+    expect(link.className).toContain("sk-tag");
+    expect(link.className).toContain("sk-interactive");
+    expect(link.getAttribute("data-tone")).toBe("accent");
+    expect(link.hasAttribute("data-removable")).toBe(false);
+    expect(link.querySelector("button")).toBeNull();
+  });
+
   it("removes with a real small icon-only button, not a lookalike", () => {
     const ui = render(<Tag onRemove={() => {}} removeLabel="Remove tokens">tokens</Tag>);
     const remove = ui.getByLabelText("Remove tokens");

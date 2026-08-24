@@ -32,7 +32,7 @@ export const menuParts = {
   /*
    * Not template parts: the compiler never emits these, they are created imperatively. `safeArea`
    * exists while a submenu is open and the pointer is near its trigger (`menu-safe-area.ts`, and it
-   * is real machinery, not decoration — see that file); the two `intentReadout` parts exist only
+   * is real machinery, not decoration; see that file); the two `intentReadout` parts exist only
    * while `debugSafetyTriangle` is on (`menu-intent-readout.ts`). Named here anyway, same as every
    * other class in this file, so those modules and menu.css share ONE source for the string
    * instead of a hand-typed copy in each.
@@ -105,7 +105,7 @@ import type { ComponentContract, ContractSlot, ContractTemplate } from "./contra
  */
 /**
  * One entry's shape: value, disabled, `kind` (checkbox/radio/separator), the danger `tone`, a label
- * and — recursively — its own `children`, which is what makes an entry a submenu rather than a
+ * and. Recursively. Its own `children`, which is what makes an entry a submenu rather than a
  * command. Exported so Menubar's own dropdown can compose the exact same items (decision: Menubar
  * stopped hand-rolling a poorer parallel item shape and now shares this one, verbatim).
  */
@@ -132,8 +132,8 @@ export const menuItemShape: NonNullable<ContractSlot["item"]> = {
      */
     tone: { type: "enum", values: ["danger"], attr: "data-tone" },
     /**
-     * A destination rather than a command. Presence alone decides the shape — the same `href`
-     * either/or `Breadcrumb`'s own crumb template uses — so the item template below renders it as
+     * A destination rather than a command. Presence alone decides the shape. The same `href`
+     * either/or `Breadcrumb`'s own crumb template uses, so the item template below renders it as
      * a real `<a>` instead of a `<div>` whenever this is given.
      */
     href: { type: "string", attr: "href" },
@@ -149,7 +149,7 @@ export const menuItemShape: NonNullable<ContractSlot["item"]> = {
 /**
  * The popup half: positioner + content + the recursive item/submenu tree, with NO trigger of its
  * own. Menu's own template composes this beside its own trigger button (below); Menubar's
- * `MenubarItem` composes it beside ITS trigger instead — a menubar item's own `role="menuitem"`
+ * `MenubarItem` composes it beside ITS trigger instead. A menubar item's own `role="menuitem"`
  * button, wired to this same popup by also carrying `data-sk-menu-trigger` (see `menubar.ts`).
  * Factored out so there is one popup, described once, not a second one that has to be kept in sync.
  */
@@ -171,7 +171,7 @@ export const menuPopupTemplate: ContractTemplate = {
               name: "entry",
               children: [
                 /*
-                 * A command is a `<div>`; an entry that carries `href` is a real `<a>` instead — the
+                 * A command is a `<div>`; an entry that carries `href` is a real `<a>` instead. The
                  * same either/or Breadcrumb's link-vs-span split already uses (`breadcrumb.ts`). Zag's
                  * own menu machine already special-cases an anchor item on selection (`navigate`,
                  * defaulting to `clickIfLink`), so nothing about `role`/keyboard handling changes here:
@@ -284,12 +284,12 @@ export const menuPopupTemplate: ContractTemplate = {
  * folded into `also` instead.
  *
  * `part` resolves against whichever contract's `parts` map the emitter is CURRENTLY rendering
- * (`emit.ts`'s `contract.parts[node.part]`) — correct when Menu's own contract renders
+ * (`emit.ts`'s `contract.parts[node.part]`). Correct when Menu's own contract renders
  * `menuPopupTemplate`, wrong the instant a DIFFERENT contract embeds the same node tree: Menubar's
  * own `menubarParts` has no "positioner"/"content"/"itemLabel"/etc entries, and where a key happens
  * to collide by name (both contracts have an "item" part) it resolves to the WRONG class silently,
  * rather than failing loudly. Baking the resolved classes in once, here, makes the fragment portable
- * — safe for `MenubarItem` (`menubar.ts`) to embed directly, and for whatever composes one after it.
+ *. Safe for `MenubarItem` (`menubar.ts`) to embed directly, and for whatever composes one after it.
  */
 function withResolvedParts(node: ContractTemplate): ContractTemplate {
   const { also, children, part, ...rest } = node;
@@ -312,39 +312,39 @@ export const menuContract = {
     /** The menu's accessible name: the root's own. An item's name is its label. */
     label: { type: "string", attr: "aria-label" },
     /**
-     * The TRIGGER BUTTON's own accessible name — separate from `label` on purpose. `trigger`
+     * The TRIGGER BUTTON's own accessible name. Separate from `label` on purpose. `trigger`
      * (the slot) is usually visible text, and a button's accessible name already comes from its
      * own content for free; `label` is deliberately a MORE DESCRIPTIVE string for the menu as a
      * whole ("File actions" vs. a terser visible "Actions"), and reusing it here would overwrite
-     * the trigger's own visible text with a DIFFERENT string — a WCAG 2.5.3 "Label in Name"
+     * the trigger's own visible text with a DIFFERENT string. A WCAG 2.5.3 "Label in Name"
      * mismatch between what a sighted user reads and what a screen reader announces.
      *
      * This exists for the case `label` cannot cover: an ICON-ONLY trigger (a real split-button's
-     * dropdown segment, a toolbar's "more actions" `…` button — the pattern industry-wide, no
+     * dropdown segment, a toolbar's "more actions" `…` button. The pattern industry-wide, no
      * visible text at all, `aria-label` alone). Leave `trigger` empty and set this instead; the
      * chevron this template always paints stays the only visible content, and the button still
      * announces a real name.
      */
     triggerLabel: { type: "string", attr: "aria-label" },
     /**
-     * Welds the trigger button's own START (leading) edge flat against a neighbor — for when this
+     * Welds the trigger button's own START (leading) edge flat against a neighbor. For when this
      * Menu sits beside another control on that side, a split button's own dropdown segment being
      * the case that motivated it. The SAME attribute `Button`'s own `weldStart` option writes
-     * (`data-weld-start`) — see `button.ts`'s doc for the mechanism (button.css owns the rule,
+     * (`data-weld-start`); see `button.ts`'s doc for the mechanism (button.css owns the rule,
      * radius AND border color both; a trigger already carries the `.sk-button` class this template
      * composes, so nothing here has to repeat the CSS, only the option that reaches the same
      * attribute). See `weldStart` also for the general "why a class, not a specific component
      * deciding another's radius" reasoning.
      */
     triggerWeldStart: { type: "boolean", default: false, attr: "data-weld-start", trueValue: "" },
-    /** Same idea, the opposite edge — see `triggerWeldStart`'s own doc. */
+    /** Same idea, the opposite edge; see `triggerWeldStart`'s own doc. */
     triggerWeldEnd: { type: "boolean", default: false, attr: "data-weld-end", trueValue: "" },
     /**
-     * Passed straight to the trigger's own `data-variant`/`data-size` — the SAME attributes
+     * Passed straight to the trigger's own `data-variant`/`data-size`. The SAME attributes
      * `Button`'s own `variant`/`size` options write (`button.ts`), so `button.css`'s existing
      * `[data-variant="…"]`/`[data-size="…"]` rules apply to the trigger directly; nothing here
      * repeats their CSS. Untyped (plain string) on purpose: Menu does not own that vocabulary,
-     * `Button` does — whoever composes a Menu as another control's attached segment (a split
+     * `Button` does. Whoever composes a Menu as another control's attached segment (a split
      * button's own dropdown half being the motivating case) is responsible for passing a value
      * `Button` itself would recognize, the same way `SplitButton`'s own `variant`/`size` options
      * already validate against Button's real enum before handing it down here.
@@ -352,11 +352,11 @@ export const menuContract = {
     triggerVariant: { type: "string", attr: "data-variant" },
     triggerSize: { type: "string", attr: "data-size" },
     /**
-     * The SAME attribute `Button`'s own `iconOnly` option writes (`data-icon-only`) — a trigger
+     * The SAME attribute `Button`'s own `iconOnly` option writes (`data-icon-only`). A trigger
      * with no visible `trigger` content (paired with `triggerLabel` for its accessible name) is
      * exactly the icon-only SHAPE Button already has a name for: a control-sized square holding
      * one glyph, zero inline padding. The only thing that still makes it a split-button trigger
-     * and not a bare icon button is `triggerWeldStart` — everything else about its shape comes
+     * and not a bare icon button is `triggerWeldStart`. Everything else about its shape comes
      * from this, unchanged from any other icon-only Button on the page.
      */
     triggerIconOnly: { type: "boolean", default: false, attr: "data-icon-only", trueValue: "" },
@@ -414,7 +414,7 @@ export const menuContract = {
       portals: true,
       slots: {
         /**
-         * What opens it. Text, or a composed control — or nothing at all: an icon-only trigger (the
+         * What opens it. Text, or a composed control, or nothing at all: an icon-only trigger (the
          * real split-button / toolbar-overflow pattern) leaves this empty and names the button with
          * `triggerLabel` instead, since the chevron below is painted either way.
          */
@@ -437,7 +437,7 @@ export const menuContract = {
             also: ["sk-button", "sk-interactive", "sk-anchor"],
             mount: menuAttrs.trigger,
             // Claims every `trigger*` option for ITSELF (each option's own `attr` already says
-            // where — no `optionAttrs` rename needed): the root above never sees any of these, the
+            // where: no `optionAttrs` rename needed): the root above never sees any of these, the
             // same "one option, one element" split `label` (root) already keeps clean.
             options: [
               "triggerLabel",

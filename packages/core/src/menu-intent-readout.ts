@@ -5,7 +5,7 @@ import { menuParts } from "./menu.js";
  *
  * This replaces a badge that used to be appended to `<body>` at `position: fixed` pinned to the
  * top-inline-start corner. In a docs preview frame (`viewport="menu"`, 18rem tall) that corner is
- * exactly where the menu's own trigger sits, so the readout covered the button it was explaining —
+ * exactly where the menu's own trigger sits, so the readout covered the button it was explaining -
  * and it was created once PER OPEN SUBMENU, so a second level stacked another badge on the same
  * coordinates. A readout that hides the thing it reads is worse than no readout.
  *
@@ -35,7 +35,7 @@ const readouts = new WeakMap<HTMLElement, IntentReadoutHandle>();
 
 /**
  * The handle for `root`, created on first use. Both bindings ask the same way: vanilla passes the
- * root it found with `closest()`, React passes the root element it rendered — one readout per menu
+ * root it found with `closest()`, React passes the root element it rendered. One readout per menu
  * either way, with no binding owning the lifetime.
  */
 export function getIntentReadout(
@@ -56,7 +56,7 @@ export function getIntentReadout(
   /*
    * BEFORE the trigger, not after. Space in the layout is not the same as being visible: appended
    * below, the readout sat exactly where the panel opens (`bottom-start`, the menu's own placement),
-   * and a `position: fixed` panel at `--z-popover` covers a static box every time — the readout had
+   * and a `position: fixed` panel at `--z-popover` covers a static box every time. The readout had
    * its own box and still could not be read while the menu was open, which is the only moment it
    * says anything. Above the trigger, the panel grows away from it.
    */

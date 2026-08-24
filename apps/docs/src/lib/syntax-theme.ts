@@ -2,7 +2,7 @@ import { palettes, type PaletteFamily } from "./palettes";
 
 /*
  * The slice of Shiki's `ThemeRegistrationRaw` this module actually produces, typed locally rather
- * than imported from `shiki` — that package is `astro`'s own dependency (used inside
+ * than imported from `shiki`. That package is `astro`'s own dependency (used inside
  * `astro:components`'s `<Code>`), not one `apps/docs` lists itself, and pulling in its types here
  * would mean depending on a package this app never installs.
  */

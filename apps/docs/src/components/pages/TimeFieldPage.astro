@@ -91,7 +91,7 @@ const sourceFiles = [
     {/*
       LAST, on purpose: simplest-to-most-complex top to bottom (segments alone, then a locked-in
       option, then the full segments+picker composition), with the plain platform fallback at the
-      very end — a reader reaches for it only once everything ABOVE it turned out to be more than
+      very end. A reader reaches for it only once everything ABOVE it turned out to be more than
       they needed, so it reads as the exit, not a fourth variant of the same thing.
     */}
     <h3>{t("timeFieldPage.nativeTitle")}</h3>
@@ -99,7 +99,7 @@ const sourceFiles = [
     {
       /*
        * `measure` matches `.sk-time-field`'s own `--sk-time-field-inline-size` (`time-field.css`)
-       * exactly — the STAGE'S width, not the input's: `.sk-input` already fills its container
+       * exactly. The STAGE'S width, not the input's: `.sk-input` already fills its container
        * (`inline-size: 100%`, `input.css`), so capping the stage is what narrows a reader's actual
        * comparison target instead of the field it sits beside. Scoped to this ONE demo on purpose,
        * not to `.sk-input` itself: most native inputs on a real form legitimately want to fill

@@ -7,7 +7,7 @@ import type { ComponentContract } from "./contract.js";
  * component with different semantics.) The fraction is clamped here so the rendered width and the
  * reported aria-valuenow can never disagree, whatever the caller passes.
  */
-/** The tone vocabulary both bar-shaped controls share — `Progress`'s own and `Meter`'s (`meter.ts`),
+/** The tone vocabulary both bar-shaped controls share: `Progress`'s own and `Meter`'s (`meter.ts`),
  *  which reuses this rather than redeclaring the identical four-value union a second time. Not the
  *  same vocabulary Badge or Callout use (`neutral`/`info` have no meaning on a bar), so this stays
  *  its own export rather than a system-wide "tone" type. */

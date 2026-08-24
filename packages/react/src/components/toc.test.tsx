@@ -4,7 +4,7 @@ import { Toc } from "./toc.js";
 
 /*
  * One browser API the component leans on that jsdom does not have, so the test owns it: the observer
- * behind the scroll-spy. Holding its callback is the point — it is the only way to say "this heading
+ * behind the scroll-spy. Holding its callback is the point. It is the only way to say "this heading
  * entered the band". The `matchMedia` stub that used to sit beside it is gone with the disclosure-vs-
  * rail switch it existed for; the index ships one always-open shape now.
  */

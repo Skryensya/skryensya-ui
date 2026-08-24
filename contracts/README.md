@@ -17,7 +17,7 @@ La estructura no está acá: vive en `packages/core/src/<componente>.ts`, que es
 mismo cambio que lo produce. No al final, no en el release: ahí es donde se olvida.
 
 No depende de que alguien se acuerde. Cada `changelog/<id>.yaml` guarda el hash de la **superficie**
-del contrato — opciones, defaults, qué acepta cada slot, qué signatures existen y qué requieren — y
+del contrato. Opciones, defaults, qué acepta cada slot, qué signatures existen y qué requieren. Y
 el compilador **no emite nada** si ese hash dejó de coincidir:
 
 ```

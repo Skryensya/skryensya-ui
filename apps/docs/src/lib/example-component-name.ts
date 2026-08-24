@@ -2,7 +2,7 @@
  * WHAT TO CALL THE COMPONENT IN AN EMITTED REACT SNIPPET.
  *
  * Every snippet is a component now, so every snippet needs a name, and the emitter's own fallback is
- * the tree's ROOT signature — which is right for `menuTree` (a Menu) and wrong for half the
+ * the tree's ROOT signature, which is right for `menuTree` (a Menu) and wrong for half the
  * catalogue: the Placeholder demos are composed inside a Box, the Tabs one inside a Stack, and
  * naming them `BoxExample` and `StackExample` points at the wrapper instead of at the subject.
  *

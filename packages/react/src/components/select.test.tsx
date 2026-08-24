@@ -46,11 +46,11 @@ describe("Select", () => {
       expect(option.hasAttribute("aria-selected")).toBe(false);
 
     // Unlike Combobox's virtual-focus-on-input model, Select moves REAL DOM focus into the
-    // listbox on open (`setInitialFocus`, deferred to `raf`) — arrow keys are dispatched wherever
+    // listbox on open (`setInitialFocus`, deferred to `raf`). Arrow keys are dispatched wherever
     // focus actually landed, not on the trigger. Waiting for "not the trigger" alone is a race:
     // the trigger blurs to `document.body` synchronously, one tick before the deferred `raf`
     // actually lands focus on the listbox, and `not.toBe(trigger)` is already true during that
-    // window — the assertion below then fires the key on `<body>`, which nothing is listening on.
+    // window. The assertion below then fires the key on `<body>`, which nothing is listening on.
     await waitFor(() => expect(document.activeElement?.getAttribute("role")).toBe("listbox"));
     fireEvent.keyDown(document.activeElement!, { key: "ArrowDown" });
 

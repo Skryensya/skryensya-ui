@@ -25,7 +25,7 @@ entries:
       body: >-
         Entra al catálogo con <code>IconStateButton</code>: un botón ícono cuyos estados los declara
         quien lo usa (un <code>faces</code> por instancia, cada uno con su propio nombre e ícono), no
-        el contrato. No decide cuándo cambia el estado activo — quien lo compone escribe ese
+        el contrato. No decide cuándo cambia el estado activo. Quien lo compone escribe ese
         comportamiento (copiar al portapapeles, ciclar un modo de color, lo que sea) y lo aplica
         escribiendo <code>current</code>. Reemplaza a <code>CopyButton</code> y
         <code>ThemeToggle</code>, ambos retirados del catálogo.
@@ -34,7 +34,7 @@ entries:
       body: >-
         It joins the catalogue with <code>IconStateButton</code>: an icon button whose states are
         declared by whoever uses it (one <code>faces</code> entry per instance, each with its own
-        name and icon), not the contract. It does not decide when the active state changes — the
+        name and icon), not the contract. It does not decide when the active state changes. The
         consumer writes that behavior (copy to clipboard, cycle a color mode, whatever it needs) and
         applies it by writing <code>current</code>. Replaces <code>CopyButton</code> and
         <code>ThemeToggle</code>, both retired from the catalogue.

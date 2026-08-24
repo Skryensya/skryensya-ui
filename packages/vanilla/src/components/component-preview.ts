@@ -52,7 +52,7 @@ function publishBinding(binding: ComponentPreviewBinding): void {
  * Move a Segmented widget to `value` from the OUTSIDE: another preview's own change, or the
  * document preference this preview just adopted. Segmented owns its own state (aria-checked, the
  * sliding indicator, roving tabindex) and exposes no external setter, so the one lever this module
- * has is the same one a reader has — clicking the matching option — which lets Segmented's own
+ * has is the same one a reader has. Clicking the matching option, which lets Segmented's own
  * `connectSegmented` do the actual painting instead of a second implementation of it here.
  *
  * A no-op when already correct: without this guard, syncing the instance that INITIATED the
@@ -143,7 +143,7 @@ function publishScreen(screen: ComponentPreviewScreen): void {
 
 /**
  * Screen presets for the stage: a real Segmented (Libre | XL | Tablet | Móvil), the site's global
- * enhancer already knows how to run — this module only reacts to the `sk-value-change` it
+ * enhancer already knows how to run. This module only reacts to the `sk-value-change` it
  * dispatches on itself, the same way `sourceTabs` below reacts to Tabs' own event, rather than
  * re-implementing Segmented's click handling, aria-checked painting or sliding indicator.
  *
@@ -162,6 +162,9 @@ function publishScreen(screen: ComponentPreviewScreen): void {
 function connectScreenTabs(root: HTMLElement): Cleanup {
   const tabs = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.screenTabs));
   if (!stagesOf(root).length) return () => {};
+
+  /** This preview owns its preset outright: never reads or writes the shared/persisted one. */
+  const localScreen = root.hasAttribute(componentPreviewAttrs.screenLocal);
 
   const offersXl = Boolean(
     tabs?.querySelector(`${selector(componentPreviewAttrs.screenOption)}[data-value="xl"]`),
@@ -202,6 +205,10 @@ function connectScreenTabs(root: HTMLElement): Cleanup {
   const onValueChange = (event: Event) => {
     const value = (event as ValueChangeEvent).detail?.value;
     if (!isScreen(value)) return;
+    if (localScreen) {
+      applyScreen(value);
+      return;
+    }
     publishScreen(value);
     applyScreen(value);
   };
@@ -214,16 +221,22 @@ function connectScreenTabs(root: HTMLElement): Cleanup {
   };
 
   tabs?.addEventListener("sk-value-change", onValueChange);
-  document.addEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
+  if (!localScreen) document.addEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
 
   const fromTabs = tabs?.getAttribute("data-value");
-  const rawInitial = readDocumentScreen() ?? sharedScreen ?? (isScreen(fromTabs) ? fromTabs : "free");
+  const rawInitial = localScreen
+    ? isScreen(fromTabs)
+      ? fromTabs
+      : "free"
+    : (readDocumentScreen() ?? sharedScreen ?? (isScreen(fromTabs) ? fromTabs : "free"));
   const initial =
     rawInitial === "xl" && document.documentElement.hasAttribute("data-sk-fullscreen-preview")
       ? "free"
       : rawInitial;
-  sharedScreen = initial;
-  writeDocumentScreen(initial);
+  if (!localScreen) {
+    sharedScreen = initial;
+    writeDocumentScreen(initial);
+  }
   applyScreen(initial);
   // Segmented reads this SAME attribute as ITS OWN initial value once it mounts; a plain write is
   // enough here, no click needed, because nothing has rendered a selection to correct yet.
@@ -236,7 +249,7 @@ function connectScreenTabs(root: HTMLElement): Cleanup {
   return () => {
     resizeObserver?.disconnect();
     tabs?.removeEventListener("sk-value-change", onValueChange);
-    document.removeEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
+    if (!localScreen) document.removeEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
   };
 }
 
@@ -399,7 +412,7 @@ function connectStageResizer(root: HTMLElement): Cleanup {
 /**
  * Opens this preview alone, at its own SHORT, readable URL: `/f/{docs page}/{n}`, where `n` is this
  * card's 1-based index among `[data-sk-component-preview]` on the current page. `/f/…`
- * re-fetches that same page (it is static, already built — see ADR on `output: "static"`) and pulls
+ * re-fetches that same page (it is static, already built; see ADR on `output: "static"`) and pulls
  * the Nth card back out of the FRESH markup itself, rather than this module serializing the
  * card's current DOM into the link: a page path and a number stay short regardless of how large the
  * demo is, where shipping the rendered markup (plus its stylesheets and scripts) does not.

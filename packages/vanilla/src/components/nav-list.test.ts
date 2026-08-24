@@ -68,7 +68,7 @@ describe("NavListGroup collapsible enhancer", () => {
     expect(list().hidden).toBe(true);
   });
 
-  it("Enter/Space toggle it — native <button> behavior, nothing this enhancer has to wire itself", () => {
+  it("Enter/Space toggle it. Native <button> behavior, nothing this enhancer has to wire itself", () => {
     const trigger = markup();
     // A native button already fires a "click" event for Enter/Space; this just confirms the
     // enhancer's own handler is the click listener, not something narrower.
@@ -93,7 +93,7 @@ describe("NavListGroup collapsible enhancer", () => {
   });
 
   it("wires a NavListLink's own nested group independently of its parent group", () => {
-    // A `nested` group sits INSIDE the parent group's <li>, as a sibling of the <a> — the case
+    // A `nested` group sits INSIDE the parent group's <li>, as a sibling of the <a>. The case
     // `connect()`'s `group.querySelector(list-selector)` has to get right: the OUTER trigger must
     // find its own direct <ul>, not the nested one buried inside it.
     document.body.innerHTML = `<nav class="sk-nav-list">

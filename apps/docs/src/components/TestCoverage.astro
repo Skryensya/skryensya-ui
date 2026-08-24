@@ -20,8 +20,8 @@ export type TestGroup = {
 
 interface Props {
   groups: readonly TestGroup[];
-  /** False only for a page with no `contractId` (Card, Primitivas): there is no Referencia tab
-   *  with a SourceViewer for the intro line to point a reader at. */
+  /** False only for a page with no `contractId` (Card, Primitivas): there is no generated
+   *  Referencia tab, so the intro should avoid pointing at one. */
   hasReference?: boolean;
 }
 

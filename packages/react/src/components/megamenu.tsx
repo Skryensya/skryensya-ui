@@ -29,7 +29,7 @@ const OPEN_DELAY_MS = 150;
 const CLOSE_DELAY_MS = 150;
 
 /*
- * MEGAMENU, the React binding — no `@zag-js/*` machine here either (`core/src/megamenu.ts`'s own
+ * MEGAMENU, the React binding: no `@zag-js/*` machine here either (`core/src/megamenu.ts`'s own
  * header comment: activation is native `<button>` semantics, and this component owns no arrow-key
  * vocabulary). `resolveMegamenuEvent` is the only piece of real logic; everything below is wiring it
  * to timers (hover-intent), a click, Escape and a blur-of-the-whole-bar, the same shape
@@ -37,7 +37,7 @@ const CLOSE_DELAY_MS = 150;
  *
  * ONE PHYSICAL PANEL, of CONSTANT height, not one per trigger: `Megamenu` reads every
  * `MegamenuTrigger` child's own `columns` prop directly (they are ordinary elements in `children`,
- * nothing exotic) and renders a SINGLE positioner/content pair, once, portaled from the root — never
+ * nothing exotic) and renders a SINGLE positioner/content pair, once, portaled from the root. Never
  * one inside each trigger. `displayedIndex` is what makes switching read as "the same box, new
  * content" rather than "one box closes while another opens": it only ever moves to a NEW index when
  * one is opened, and is left alone on close, so the exit transition fades out whatever was already
@@ -51,7 +51,7 @@ const CLOSE_DELAY_MS = 150;
  *
  * LINK-TO-IMAGE PREVIEW. A `NavListLink` inside a trigger's columns can carry
  * `megamenuAttrs.preview` (a plain `data-*` prop, forwarded straight to the `<a>` by that
- * signature's own `...props` spread — `nav-list.tsx` needs no change for this): hovering or
+ * signature's own `...props` spread: `nav-list.tsx` needs no change for this): hovering or
  * focusing it swaps that trigger's `ImageFrame` column to the given image, imperatively (the same
  * kind of direct DOM patch `anchored.ts` already does elsewhere in this binding), reverting to the
  * trigger's own authored default the instant neither a preview link nor the image has hover or
@@ -60,7 +60,7 @@ const CLOSE_DELAY_MS = 150;
  * every trigger switch, so a single pair of handlers on its wrapper covers every trigger.
  */
 
-/** A trigger's own `ImageFrame` column, read directly off its element props — `undefined` when
+/** A trigger's own `ImageFrame` column, read directly off its element props: `undefined` when
  *  this trigger has no image column. A plain top-level array walk, not `Children.map`/
  *  `Children.toArray` (see the `columnsByIndex` comment below for why those flatten wrongly here):
  *  `ImageFrame` is always a direct item of `columns`, never nested inside a `NavListGroup`. */
@@ -95,7 +95,7 @@ function useMegamenuContext(component: string): MegamenuContextValue {
 export type MegamenuProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   label: string;
   children: ReactNode;
-  /** Where the panel portals — `Menu`'s own `container`, see its identical doc. */
+  /** Where the panel portals: `Menu`'s own `container`, see its identical doc. */
   container?: RefObject<HTMLElement>;
 };
 
@@ -138,7 +138,7 @@ export function Megamenu({ children, className, container, label, ...props }: Me
   // Content only ever changes on OPEN of a (possibly different) index; closing leaves it alone so
   // the exit transition fades out the content that was actually showing. A layout effect, not a
   // plain one: it must commit before paint, or a true first open would flash one empty frame (the
-  // materialize transition already begun on `data-state`, content still the PREVIOUS — null —
+  // materialize transition already begun on `data-state`, content still the PREVIOUS. Null -
   // `displayedIndex` for one tick otherwise).
   useLayoutEffect(() => {
     if (state.openIndex !== null) setDisplayedIndex(state.openIndex);
@@ -196,13 +196,13 @@ export function Megamenu({ children, className, container, label, ...props }: Me
   // No focus trap, no wraparound (`core/src/megamenu.ts`'s own doc): this only notices when focus
   // has left the WHOLE bar, never redirects it. `rootRef` ALONE is not enough: the panel is
   // portaled to `document.body` (or `container`), so it is not a DOM descendant of `<nav>` even
-  // though it is one in the React tree — without also checking `visiblePanelRef`, every focus move
+  // though it is one in the React tree, without also checking `visiblePanelRef`, every focus move
   // FROM a trigger INTO its own panel (or between two links inside it) read as "left the bar" and
   // closed the menu, breaking Tab navigation through the panel's links entirely.
   //
   // `pointerDownWasInside` covers the OTHER gap `relatedTarget` cannot: a click on something inside
   // the panel that is not itself focusable (the image, a column heading, the padding around them)
-  // blurs whatever WAS focused with no new focus target at all — the browser's own behavior for a
+  // blurs whatever WAS focused with no new focus target at all. The browser's own behavior for a
   // pointer press on a non-focusable element, not a bug. `relatedTarget` is then `null`, which
   // cannot be told apart from "focus actually left the bar" by containment alone, so a click that
   // never left the panel closed the menu anyway. `pointerDownRef` is set on the CAPTURE phase,
@@ -230,7 +230,7 @@ export function Megamenu({ children, className, container, label, ...props }: Me
   // A PLAIN array walk, not `Children.map`/`Children.toArray`: both flatten a child's OWN array-
   // valued props (a trigger's `columns` is 2-4 elements) into the outer traversal, so reading
   // `columnsByIndex[n]` through either came back as "the n-th column across every trigger", not "the
-  // n-th trigger's own columns" — Producto showed only its first column, Recursos showed Producto's
+  // n-th trigger's own columns". Producto showed only its first column, Recursos showed Producto's
   // second. `children` is already a flat list of `MegamenuTrigger` elements once JSX assembles it
   // (the contract's own `children` slot allows nothing else), so a shallow filter is enough and never
   // recurses into anyone's props.
@@ -252,10 +252,10 @@ export function Megamenu({ children, className, container, label, ...props }: Me
    * own doc on `.sk-megamenu__preview-outgoing` has the full reasoning). So this clones the OUTGOING
    * image as an absolutely-positioned copy, updates the REAL `<img>` underneath immediately (already
    * the new picture, just covered by the clone), and lets `@starting-style` carry the clone from
-   * fully opaque to gone — nothing here times or toggles that fade itself. At most one clone at a
+   * fully opaque to gone: nothing here times or toggles that fade itself. At most one clone at a
    * time: a fast pointer sweep across several links removes the PREVIOUS one outright rather than
    * stacking several fades on top of each other. Imperative DOM, same as the rest of this preview
-   * mechanism (`applyPreview`/`resetPreview` already patch `img.src` directly) — React never
+   * mechanism (`applyPreview`/`resetPreview` already patch `img.src` directly). React never
    * re-renders this element on a hover, so there is nothing for it to fight.
    */
   const setPreviewImage = (src: string, alt: string) => {
@@ -300,7 +300,7 @@ export function Megamenu({ children, className, container, label, ...props }: Me
   };
 
   // A pointer/focus LEAVING one preview link often lands on another (adjacent links in the same
-  // list) or on the image itself (hovering down into the swapped picture) — neither should revert
+  // list) or on the image itself (hovering down into the swapped picture). Neither should revert
   // to the default only to immediately swap again; only truly leaving every preview link does.
   const stillOnAPreviewLink = (next: EventTarget | null): boolean =>
     next instanceof Element && next.closest(`[${megamenuAttrs.preview}]`) !== null;
@@ -341,12 +341,12 @@ export function Megamenu({ children, className, container, label, ...props }: Me
           /*
            * Unconditional, matching Vanilla: that binding builds this panel once, at connect, and
            * only ever swaps its CHILDREN (`megamenu.ts`'s own `buildPanel(columnsByIndex[0], …)` at
-           * connect, `visiblePanel.replaceChildren(…)` on open) — it is a permanent fixture, never
+           * connect, `visiblePanel.replaceChildren(…)` on open). It is a permanent fixture, never
            * absent-then-created. Gating this on `displayedIndex !== null` (React never having opened
            * yet) made the panel node itself not exist until the first open, a real DOM-shape
            * divergence G2 caught the moment a canonical tree first rendered this contract: closed
            * and never-opened is still "closed", and the two bindings owe the same markup for it, not
-           * merely the same painted result. Costs nothing extra on screen either way — this panel's
+           * merely the same painted result. Costs nothing extra on screen either way. This panel's
            * whole ancestor (`sharedContent`/`.sk-megamenu__content`) is what `data-state="closed"`
            * hides, same as Vanilla's.
            */
@@ -387,15 +387,15 @@ export function Megamenu({ children, className, container, label, ...props }: Me
 }
 
 export type MegamenuTriggerProps = {
-  /** The category's own name — the contract's `children` slot. */
+  /** The category's own name. The contract's `children` slot. */
   children: ReactNode;
-  /** 2-4 `NavListGroup` elements — the contract's own `columns` slot, see its doc for why the range
+  /** 2-4 `NavListGroup` elements. The contract's own `columns` slot, see its doc for why the range
    *  is a usage guideline rather than something this binding enforces. Read by the parent `Megamenu`
    *  directly off this element's props: the panel that renders it lives there, not here. */
   columns: ReactNode;
 };
 
-/** `index` is injected by the parent `Megamenu` — never author-set. */
+/** `index` is injected by the parent `Megamenu`: never author-set. */
 type InjectedMegamenuTriggerProps = MegamenuTriggerProps & { index: number };
 
 export function MegamenuTrigger(publicProps: MegamenuTriggerProps) {

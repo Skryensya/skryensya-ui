@@ -38,7 +38,7 @@ function tileRootClasses(className: string | undefined, ...parts: readonly strin
 export type TileLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   children?: ReactNode;
   padding?: Space;
-  /** Required: a tile that navigates needs a destination — an `<a>` with no `href` is not one. */
+  /** Required: a tile that navigates needs a destination. An `<a>` with no `href` is not one. */
   href: string;
 };
 

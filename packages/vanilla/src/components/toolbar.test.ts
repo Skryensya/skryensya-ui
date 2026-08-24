@@ -4,7 +4,7 @@ import { destroyMount } from "../runtime/svelte-hydrate.js";
 import { mountToolbar } from "./toolbar.js";
 
 /*
- * No test file existed for this enhancer before — confirmed while auditing against the WAI-ARIA
+ * No test file existed for this enhancer before. Confirmed while auditing against the WAI-ARIA
  * APG toolbar pattern (docs/aria-apg-audit.md). That gap is exactly how a real divergence between
  * this file and the React binding went unnoticed (see toolbar.test.tsx for the bug it caused there).
  */
@@ -46,7 +46,7 @@ describe("Toolbar vanilla enhancer", () => {
     fireEvent.keyDown(root, { key: "ArrowRight" });
     expect(document.activeElement).toBe(byId("italic"));
     fireEvent.keyDown(root, { key: "ArrowRight" });
-    // "disabled-native" is skipped — it never matches `:not([disabled])`.
+    // "disabled-native" is skipped. It never matches `:not([disabled])`.
     expect(document.activeElement).toBe(byId("align-left"));
     fireEvent.keyDown(root, { key: "ArrowLeft" });
     expect(document.activeElement).toBe(byId("italic"));
@@ -76,7 +76,7 @@ describe("Toolbar vanilla enhancer", () => {
   });
 
   /*
-   * WAI's own toolbar example nests a radiogroup and treats it as ONE stop for Left/Right — "moving
+   * WAI's own toolbar example nests a radiogroup and treats it as ONE stop for Left/Right: "moving
    * focus inside the group does not automatically change which button is checked", and only the
    * member with the group's own roving tabindex is a toolbar stop. Confirmed against
    * `@zag-js`-style roving tabindex convention: exactly one member carries tabindex="0".
@@ -95,12 +95,12 @@ describe("Toolbar vanilla enhancer", () => {
     const alignCenter = byId("align-center");
     alignCenter.tabIndex = 0;
     alignCenter.focus();
-    // Target-phase listeners run before the event bubbles to `root`'s own — simulates a nested
+    // Target-phase listeners run before the event bubbles to `root`'s own. Simulates a nested
     // composite (a real Segmented/RadioGroup machine) that already moved focus itself and called
     // preventDefault() before the toolbar's ancestor listener ever sees it.
     alignCenter.addEventListener("keydown", (event) => event.preventDefault());
     fireEvent.keyDown(alignCenter, { key: "ArrowRight" });
-    // Focus does not move to the toolbar's next control — the child owned this keystroke.
+    // Focus does not move to the toolbar's next control. The child owned this keystroke.
     expect(document.activeElement).toBe(alignCenter);
   });
 });

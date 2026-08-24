@@ -10,7 +10,7 @@
      * back instead of repeating the token: lower the inset and the guide follows. Matches
      * nav-list's own `--sk-nav-list-link-padding-x`, the sidebar's other row of this same height. */
     --sk-tree-row-inset: var(--space-inset-sm);
-    /* Space between a row's own columns (indicator, icon, label) — not to be confused with the
+    /* Space between a row's own columns (indicator, icon, label): not to be confused with the
      * gap below it, which is between ROWS. Same `sm` tier as nav-list's `--sk-nav-list-link-gap`. */
     --sk-tree-item-gap: var(--space-inline-sm);
     /* Gap between sibling rows. `stack-xs`, matching nav-list's `--sk-nav-list-gap`: a tree row and

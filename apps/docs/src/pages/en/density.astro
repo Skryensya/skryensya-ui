@@ -1,6 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 
 /* The site remains an honest consumer: input/field needs its authored paint rules. */
@@ -40,17 +41,6 @@ const absoluteDensity = `<section
   <!-- normal component content -->
 </section>`;
 
-const labMarkup = `<section
-  class="sk-box sk-stack"
-  data-sk-density-scope
-  data-surface="surface"
-  data-border="subtle"
-  data-padding="lg"
-  data-gap="sm"
-  style="--sk-density-factor: 0.72"
->
-  <!-- normal component content -->
-</section>`;
 const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEach((lab) => {
   const slider = lab.querySelector("[data-density-slider]");
   const target = lab.querySelector("[data-density-target]");
@@ -63,10 +53,10 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
   if (
     !(slider instanceof HTMLInputElement)
     || !(target instanceof HTMLElement)
-    || !(factorOutput instanceof HTMLOutputElement)
-    || !(effectiveOutput instanceof HTMLOutputElement)
-    || !(paddingOutput instanceof HTMLOutputElement)
-    || !(buttonOutput instanceof HTMLOutputElement)
+    || !(factorOutput instanceof HTMLElement)
+    || !(effectiveOutput instanceof HTMLElement)
+    || !(paddingOutput instanceof HTMLElement)
+    || !(buttonOutput instanceof HTMLElement)
     || !(button instanceof HTMLButtonElement)
   ) return;
 
@@ -91,6 +81,57 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
   render();
 });`;
 
+const densityPreviewTree: UsageTree = {
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "lg" },
+  attrs: { "data-density-lab": "", style: "inline-size: 100%" },
+  children: [
+    {
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "xs" },
+      children: [
+        {
+          contract: "layout",
+          signature: "Inline",
+          options: { gap: "sm", inlineAlign: "baseline" },
+          children: ["Local factor", { contract: "typography", signature: "Code", attrs: { "data-density-factor-output": "" }, children: "1.00×" }],
+        },
+        { contract: "slider", signature: "Slider", options: { value: 72, min: 50, max: 120, step: 1 }, attrs: { id: "density-factor-control", "aria-label": "Local factor", "data-density-slider": "", "aria-valuetext": "0.72 veces la densidad del sistema" } },
+      ],
+    },
+    {
+      contract: "layout",
+      signature: "DensityScope",
+      options: { densityFactor: 0.72 },
+      attrs: { class: "sk-box sk-stack", "data-density-target": "", "data-surface": "surface", "data-border": "subtle", "data-padding": "lg", "data-gap": "sm" },
+      children: [
+        "Order summary",
+        {
+          contract: "form-field",
+          signature: "FormField",
+          slots: {
+            label: "Email",
+            children: { contract: "input", signature: "Input", options: { type: "email" }, attrs: { id: "delivery-email" } },
+          },
+        },
+        { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: "Save changes" },
+        {
+          contract: "layout",
+          signature: "Inline",
+          options: { gap: "sm", inlineAlign: "baseline" },
+          children: [
+            { contract: "button", signature: "Button.action", options: { variant: "ghost" }, children: "Cancel" },
+            { contract: "typography", signature: "Code", attrs: { "data-density-effective-output": "" }, children: "0.72×" },
+            { contract: "typography", signature: "Code", attrs: { "data-density-padding-output": "" }, children: "0px" },
+            { contract: "typography", signature: "Code", attrs: { "data-density-button-output": "" }, children: "44px" },
+          ],
+        },
+      ],
+    },
+  ],
+};
 ---
 
 <Base
@@ -131,58 +172,7 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
   <p>
     Control is out of scope. Drag it: change the padding, gaps and semantic sizes within the summary; the rest of the page does not move.
   </p>
-  <ComponentPreview code={labMarkup} previewScript={densityLabScript} label="Local Scope in action" note="scope and value live inline on the same node">
-    <div class="sk-stack" data-gap="lg" data-density-lab style="inline-size: 100%">
-      <div class="sk-stack" data-gap="xs">
-        <div class="sk-inline" data-gap="sm" data-align="baseline">
-          <label for="density-factor-control"><strong>Factor local</strong></label>
-          <output class="mono" data-density-factor-output>1.00×</output>
-        </div>
-        <input
-          class="sk-slider"
-          data-density-slider
-          id="density-factor-control"
-          type="range"
-          min="50"
-          max="150"
-          step="1"
-          value="100"
-          aria-valuetext="1.00 times the system density"
-          style="--sk-slider-fill: 0.5"
-        />
-        <div class="sk-inline" data-gap="lg" data-align="baseline" aria-live="polite">
-          <span>Densidad efectiva: <output class="mono" data-density-effective-output>1.00×</output></span>
-          <span>Padding inline: <output class="mono" data-density-padding-output>…</output></span>
-          <span>Button: <output class="mono" data-density-button-output>…</output></span>
-        </div>
-      </div>
-
-      <section
-        class="sk-box sk-stack"
-        data-sk-density-scope
-        data-density-target
-        data-surface="surface"
-        data-border="subtle"
-        data-padding="lg"
-        data-gap="sm"
-        style="--sk-density-factor: 1"
-        aria-labelledby="density-component-title"
-      >
-        <header class="sk-inline" data-gap="sm" data-align="baseline">
-          <strong id="density-component-title">Order Summary</strong>
-          <span>3 items</span>
-        </header>
-        <div class="sk-form-field">
-          <label class="sk-form-field__label" for="density-email">Delivery email</label>
-          <input class="sk-input" id="density-email" name="density-email" type="email" placeholder="name@team.com" />
-        </div>
-        <div class="sk-inline" data-gap="sm">
-          <button class="sk-button sk-interactive" data-sk-button data-variant="accent" type="button">Save changes</button>
-          <button class="sk-button sk-interactive" data-sk-button data-variant="ghost" type="button">Cancel</button>
-        </div>
-      </section>
-    </div>
-  </ComponentPreview>
+  <ComponentPreview tree={densityPreviewTree} previewScript={densityLabScript} label="Local Scope in action" note="scope and value live inline on the same node" />
 
   <h2>What changes, and what does not</h2>
   <div class="sk-table-scroll">

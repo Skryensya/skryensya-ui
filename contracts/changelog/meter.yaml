@@ -19,14 +19,14 @@ entries:
         <code>Progress</code> reporta cuánto de una TAREA de duración conocida terminó (siempre
         arranca en 0, a veces indeterminada); <code>Meter</code> reporta una MEDICIÓN que ya tiene
         un valor ahora mismo (uso de disco, nivel de batería, una calificación sobre cinco) y nunca
-        es indeterminada — WAI-ARIA les da roles distintos (<code>meter</code> vs
+        es indeterminada: WAI-ARIA les da roles distintos (<code>meter</code> vs
         <code>progressbar</code>) por esta misma razón. Pintado distinto de <code>Progress</code> a
         propósito: agrega una fila de encabezado con <code>label</code> y <code>valueText</code>
         pintados (no solo anunciados), siguiendo el precedente de la industria (Adobe Spectrum
         <code>sp-meter</code>) de mostrar siempre etiqueta y valor junto a la barra. Opciones:
         <code>value</code>, <code>min</code>, <code>max</code>, <code>valueText</code>,
         <code>tone</code> (<code>accent</code>/<code>success</code>/<code>warning</code>/<code>danger</code>),
-        <code>label</code> (requerida — un medidor sin nombre anuncia un número sobre nada). La hoja
+        <code>label</code> (requerida: un medidor sin nombre anuncia un número sobre nada). La hoja
         es <code>components/meter.css</code>.
     en:
       title: Meter is published as a contract, a measurement within a known range
@@ -39,12 +39,12 @@ entries:
         <code>Progress</code> reports how much of a known-length TASK has finished (always starting
         at 0, sometimes indeterminate); <code>Meter</code> reports a MEASUREMENT that already has a
         value right now (disk usage, battery level, a rating out of five) and is never
-        indeterminate — WAI-ARIA gives them different roles (<code>meter</code> vs
+        indeterminate: WAI-ARIA gives them different roles (<code>meter</code> vs
         <code>progressbar</code>) for exactly this reason. Painted differently from
         <code>Progress</code> on purpose: it grows a header row with <code>label</code> and
         <code>valueText</code> painted, not just announced, following industry precedent (Adobe
         Spectrum's <code>sp-meter</code>) of always showing a visible label and value beside the
         bar. Options: <code>value</code>, <code>min</code>, <code>max</code>, <code>valueText</code>,
         <code>tone</code> (<code>accent</code>/<code>success</code>/<code>warning</code>/<code>danger</code>),
-        <code>label</code> (required — an unnamed meter announces a number about nothing). Its
+        <code>label</code> (required: an unnamed meter announces a number about nothing). Its
         stylesheet is <code>components/meter.css</code>.

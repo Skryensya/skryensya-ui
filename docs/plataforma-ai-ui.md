@@ -4,8 +4,8 @@
 
 | | |
 |---|---|
-| **Estado** | En construcción · F0–F3 y F5 completas; F4 completa salvo las ancladas (46 familias, 86 firmas); F6 en curso (9 recetas, 16 de 349 llamadas convertidas) |
-| **Fecha** | 28 de julio de 2026 |
+| **Estado** | En construcción · F0–F5 verdes; F4 publica 69 familias / 158 firmas; F6 en curso (9 recipes, 29 previews de docs medidos: 29 usan usage tree, 0 siguen autoreados a mano); F7 en curso (red de regresión estática verde; harness de agente vivo recién construido, corrida real pendiente de una API key) |
+| **Fecha** | 24 de agosto de 2026 |
 | **Supersede** | `apps/docs/01_arquitectura_objetivo_skryensya_ai_ui.md` y `apps/docs/02_plan_reconstruccion_desde_cero_skryensya_ai_ui.md`, que quedan como material de origen y no dirigen el trabajo |
 | **Decisiones** | [28](./decisiones/0013-el-contrato-vive-en-core-y-los-frameworks-son-bindings.md) · [29](./decisiones/0014-el-usage-tree-es-la-moneda-unica.md) · [30](./decisiones/0015-la-evidencia-se-renderiza-en-los-dos-bindings.md) · [31](./decisiones/0016-el-catalogo-cabe-en-el-contexto.md) |
 | **Vocabulario** | `CONTEXT.md` → Contract, Binding, Signature, Part template, Usage tree |
@@ -89,7 +89,7 @@ export const buttonContract = {
   parts: buttonParts,                    // { root: "sk-button", interactive: "sk-interactive" }
 
   options: {
-    variant:  { type: "enum", values: ["neutral", "primary", "danger", "ghost"], default: "neutral", attr: "data-variant" },
+    variant:  { type: "enum", values: ["neutral", "subtle", "translucent", "accent", "danger", "ghost"], default: "neutral", attr: "data-variant" },
     size:     { type: "enum", values: ["sm", "md", "lg"], default: "md", attr: "data-size" },
     iconOnly: { type: "boolean", default: false, attr: "data-icon-only", trueValue: "" },
     href:     { type: "string", attr: "href" },
@@ -244,8 +244,8 @@ validate_ui({ tree })            // G0–G3 sobre el árbol; si pasa, devuelve e
 ```
 
 Tres tools. `get_catalog` no toma query: no hay ranker (decisión 31). `validate_ui` devuelve
-`{ valid, problems[], emitted: { vanilla, react } }`: el agente pega lo emitido, nunca lo teclea.
-Toda respuesta lleva `manifestVersion` y `sourceHash`.
+`{ valid, problems[], emitted: { vanilla, react, reactData }, css }`: el agente pega lo emitido,
+nunca lo teclea. Toda respuesta lleva `schemaVersion` y `sourceHash`.
 
 ---
 
@@ -301,7 +301,7 @@ markup escrito a mano en `apps/docs`. Output determinista: mismo input, mismos b
 > - **`mount` salió del template.** `data-sk-button` es la marca de montaje del enhancer: React no la
 >   escribe, así que es del binding, no de la estructura.
 > - **G1 no prohíbe nombrar una opción, prohíbe reescribir sus valores.** `href: string` en las dos
->   ramas de una unión discriminada es cómo se tipea el tag switch; `variant?: "neutral" | "primary"`
+>   ramas de una unión discriminada es cómo se tipea el tag switch; `variant?: "neutral" | "accent"`
 >   es una copia que va a quedar corta. Sin esa distinción el gate daba tres falsos positivos.
 
 ### F3 · Los gates de runtime ✅
@@ -332,16 +332,16 @@ G5 (baseline visual aprobada a ojo, no a ciegas).
 > - **La primera baseline visual era inútil** y sólo se supo mirándola: apuntaba a un `.jpg`
 >   inexistente, y las imágenes rotas la estiraban a 4500px. El fixture ahora lleva la imagen inline.
 
-### F4 · El resto del catálogo: en curso (46 familias, 85 firmas)
+### F4 · El resto del catálogo ✅ en el compilador; vigilado por gates
 Familia por familia: contract completo, overlay, árboles canónicos, gates. Una familia entra al
 manifest cuando pasa; una familia a medias no se publica.
-**Salida:** cobertura acordada, con `ai-coverage.json` diciendo qué falta y por qué.
+**Salida actual:** `ai-index.json` + `ai-manifest.json` publican 69 familias / 158 firmas
+(`sourceHash 68c637b93e1414be`). El compiler, el MCP y los runtime gates completos están verdes.
+Sigue pendiente el artefacto prometido `ai-coverage.json`: hoy la cobertura vive como gate en
+`packages/ai-gates/src/rendered.spec.ts` y falla cuando una firma publicada no aparece en ningún árbol
+canónico.
 
-**Publicadas (46):** `accordion`, `alert`, `avatar`, `badge`, `box`, `breadcrumb`, `button`, `carousel`, `checkbox`, `content`, `empty-state`, `field`, `file-upload`, `flyout`, `icon`, `image-frame`, `input`, `kbd`, `layout`, `list`, `loader`, `media-gradient`, `nav-list`, `navbar`, `number-field`, `pagination`, `placeholder`, `process-list`, `progress`, `radio-group`, `segmented`, `sidebar`, `slider`, `stat`, `steps`, `switch`, `table`, `tabs`, `tag`, `theme-toggle`, `tile`, `time-field`, `toolbar`, `tree-view`, `typography`, `wrapper`.
-
-**Sin publicar:** las **ancladas** (tooltip, popover, menu, select, combobox, date-picker, calendar,
-split-button, ésta última porque compone un Menu) y `copy-button`, que **no tiene binding React**:
-una familia con un solo binding no tiene qué comparar, y publicar media es peor que no publicarla.
+**Publicadas (69):** ver `artifacts/ai-index.json`; es la autoridad que lee el MCP.
 
 > **Lo que el catálogo completo le hizo al modelo**
 >
@@ -579,8 +579,9 @@ publicado. Verificado extremo a extremo: catálogo → contrato → árbol → c
 >   ve bien y está mal.
 
 ### F6 · El sitio y los recipes: en curso
-`ComponentPreview` recibe usage trees ✅. Los recipes están escritos, validados y renderizados ✅. Falta el
-grueso de la conversión de páginas.
+`ComponentPreview` recibe usage trees ✅. Los recipes están escritos, validados, renderizados y pasan
+los runtime gates completos ✅. Medido hoy, las 29 llamadas a `ComponentPreview` en páginas docs usan
+`tree`; ya no queda ningún preview con `html`/`code`/`react` autoreado a mano.
 **Salida:** una página completa se construye desde el catálogo publicado, se renderiza y pasa G2–G5.
 
 **`<ComponentPreview tree={…} />`** emite los tres: el markup autoreado en el escenario vanilla, el TSX al
@@ -593,19 +594,17 @@ una segunda copia en el sitio habría significado un segundo mapa de módulos: l
 la que argumenta todo esto. Ahora el demo que mira un lector y la evidencia que junta G2 son la
 misma llamada.
 
-**Las 26 páginas sin demo React** (no 10, medidas) quedan **fuera de G2**, y por dos razones
-distintas que conviene no mezclar:
-
-| Cuántas | Cuáles | Por qué |
-|---|---|---|
-| 5 | `dialog`, `drawer`, `copy-button`, `command-palette`, `toc` | La familia no está publicada. Dos de ellas (`dialog`, `copy-button`) ni siquiera tienen binding React |
-| 21 | `anclaje`, `densidad`, `iconos`, `scrollbar`, `state-layer`, `styling-hooks`, `vaul`, `nav-list` (× 2 idiomas) | Documentan un patrón CSS, no un componente. No hay componente React que demostrar |
+**Previews pendientes de conversión:** 0. Las páginas que antes eran excepciones (`anclaje`,
+`densidad`, `scrollbar`, `state-layer`, `styling-hooks`) ahora construyen sus demos desde `UsageTree`:
+patterns CSS y overrides siguen mostrando CSS cuando corresponde, pero la estructura renderizada sale
+del contrato publicado.
 
 **Los recipes** viven en `contracts/recipes/` como datos, no como prosa, y son un paquete del
-workspace para que el compilador, los gates y el sitio importen el MISMO módulo: nueve pantallas
+workspace para que el compilador, los gates, el MCP y el sitio importen el MISMO módulo: nueve pantallas
 (`app-shell`, `browse`, `detail`, `form`, `checkout`, `upload`, `data-table`, `settings`,
-`destructive-confirm`), cada una en sus cuatro estados. `checkRecipes` pasa los veinte árboles por el mismo validador que `validate_ui`, y el build
-**no emite nada** si uno falla. `/recetas` los renderiza todos, en los dos bindings.
+`destructive-confirm`), cada una en sus cuatro estados. `checkRecipes` pasa los 36 árboles por el
+mismo validador que `validate_ui`, y el build **no emite nada** si uno falla. `/recetas` los renderiza
+todos, en los dos bindings.
 
 > **Escribir los recipes encontró cuatro bugs de contrato**
 >
@@ -626,14 +625,14 @@ workspace para que el compilador, los gates y el sitio importen el MISMO módulo
 > columna de contenido caía debajo del sidebar en vez de al lado. Válida, renderizada, y la pantalla
 > equivocada.
 
-**Las nueve recetas** cubren **71 de 86 firmas (83%)**. No es el objetivo: una receta existe porque
-una **pantalla** vale la pena enseñarse, no porque a un componente le falte salida. Pero la cobertura
-sí dice qué pantallas reales no se están enseñando: así aparecieron `browse`, `detail`, `checkout` y
-`upload`.
+**Las nueve recetas** cubren pantallas completas, no una matriz artificial de firmas. No es el objetivo
+que cada receta exista para tapar una signature: una receta existe porque una **pantalla** vale la pena
+enseñarse. La cobertura exhaustiva de firmas vive en los árboles canónicos de `packages/ai-gates`;
+si una firma publicada no aparece allí, `rendered.spec.ts` falla antes de llamar completa a F4/F6.
 
-Los **36 árboles pasan por G2, G4 y G5**, derivados de `recipes` en vez de copiados: 72 casos nuevos
-sin un gate nuevo. Más dos chequeos que sólo tienen sentido en una receta, porque un contrato no
-puede pedirlos (un Alert sin acciones es válido, y debe serlo) y sólo son defectos a escala de pantalla:
+Los **36 árboles de recipes** pasan por los runtime gates derivados de `recipes` en vez de copiados:
+son 72 renders de binding (Vanilla + React) sin un segundo origen de datos. Además hay dos chequeos
+que sólo tienen sentido en una receta, porque un contrato no puede pedirlos:
 
 | Chequeo | Dónde | Qué atrapa |
 |---|---|---|
@@ -670,11 +669,9 @@ puede pedirlos (un Alert sin acciones es válido, y debe serlo) y sólo son defe
 > `label` anuncia pero dibuja un spinner, que es justo lo que el esqueleto vino a evitar. Preferible
 > nombrarlo que agregar un spinner arriba de los esqueletos para que un chequeo pase.
 
-**Convertidas hasta ahora (38 de 349 llamadas a `ComponentPreview`):** `tag`, `kbd`, `pagination`,
-`theme-toggle`, `box`, `progress`, `empty-state`, `segmented`, `button` y `list`, cada una en los dos
-idiomas. Las conversiones dejaron sin consumidor a siete `react-demos/*.tsx` enteros, al
-`BoxBasicDemo` de `layout.tsx`, a seis de los siete demos de `button.tsx` y a cinco de los seis de
-`list.tsx`: un demo por página deja de existir cuando el árbol ES el demo.
+**Convertidas hasta ahora:** 29 de 29 llamadas a `ComponentPreview` medidas en páginas docs usan
+`tree`. Las antiguas excepciones de pattern CSS, CSS override y laboratorio con JS propio quedaron
+como árboles con CSS/JS auxiliar, no como markup de kit escrito a mano.
 
 > **Dos escalones que el contrato no puede decir**
 >
@@ -711,15 +708,9 @@ Medido después de compartir: los ocho demos emiten **estructura idéntica** en 
 los dos bindings (mismo esqueleto de tags, clases y `data-*`) y difieren sólo en texto y en atributos
 de label. Que es la propiedad entera, y ahora se cumple por construcción y no por revisión.
 
-**El censo, por dificultad de conversión.** Cada `ComponentPreview` pendiente, clasificado leyendo el markup
-que enseña y preguntándole al manifiesto si ese markup es expresable:
-
-| | Demos | Qué falta |
-|---|---|---|
-| **A · fáciles** | 136 | nada: se convierten hoy |
-| **B · con `js`** | 10 | nada del árbol; el `js` sigue autoreado al lado |
-| **C · bloqueados** | 140 | una firma, una opción o una familia entera |
-| **D · sin markup legible** | 42 | pasan el markup por slot; hay que mirarlos uno a uno |
+**El censo, por dificultad de conversión.** El backlog inmediato de docs quedó vacío: cada
+`ComponentPreview` publicado en páginas docs tiene `tree`. El censo grande de partes/firmas sigue
+sirviendo para trabajo de catálogo, no para previews vivos pendientes.
 
 > **«Es una parte» no es «se puede escribir»**
 >
@@ -758,9 +749,24 @@ publicadas a las que les falta una opción: `data-dot` en Badge (que declara `to
 > React monta en su `[data-sk-react-demo-root]`, cuyo `display: contents` lo saca del layout pero no
 > del selector. Con uno solo, las barras pintaban en Vanilla y seguían colapsadas en React.
 
-### F7 · Evals
-Corpus de intenciones de producto en español e inglés, con las regresiones históricas como casos
-permanentes. Miden la composición final, no la recuperación.
+### F7 · Evals: en curso
+Corpus de intenciones de producto en español e inglés (`evals/`), con las regresiones históricas como
+casos permanentes. Miden la composición final, no la recuperación.
+
+Dos capas, y sólo la primera corre en cada `pnpm check`:
+
+- **`run.ts`**: re-valida el `tree` ya compuesto a mano de cada caso contra G0–G3, en cada
+  `pnpm check`. Atrapa un contrato que rompe una composición que este corpus ya probó, antes de que
+  rompa a un agente. No llama a ningún modelo.
+- **`run-agent.ts`** (`pnpm --filter @skryensya/evals agent`, opt-in, fuera de CI): un modelo real,
+  conectado a las tres tools reales del MCP sobre el server real por stdio (`packages/mcp/dist/index.js`,
+  el mismo binario que arranca `.mcp.json`), recibe sólo el prompt de un caso y compone solo. Se
+  puntúa si su última llamada a `validate_ui` volvió `valid: true`; que su markup emitido coincida
+  con el del árbol de referencia se reporta pero nunca reprueba un caso, porque el árbol de
+  referencia es una composición válida, no la única. Construido sobre TanStack AI
+  (`@tanstack/ai` + `@tanstack/ai-mcp`), agnóstico de proveedor a propósito: la pregunta de G6 es si
+  *un agente* converge en una composición correcta, no si un modelo puntual lo hace.
+
 **Salida:** el corpus pasa de forma reproducible y cada fallo se corrige en el contrato o el overlay
 antes que en el prompt.
 

@@ -8,8 +8,8 @@ import { mountMenubar } from "./menubar.js";
 
 /*
  * A 3-item bar matching WAI's own `menubar-editor` shape: "Archivo" (2 commands), "Editar" (2
- * commands), "Ayuda" (a direct command, no dropdown — the leaf-item case). Each dropdown is now a
- * real `[data-sk-menu]` root — the exact markup `menuPopupTemplate`/`menuItemShape` emit — mounted by
+ * commands), "Ayuda" (a direct command, no dropdown. The leaf-item case). Each dropdown is now a
+ * real `[data-sk-menu]` root. The exact markup `menuPopupTemplate`/`menuItemShape` emit. Mounted by
  * `mountMenu`, the same enhancer any standalone Menu uses. `.svelte.test.ts`, not `.test.ts`: this
  * needs the real Svelte runtime now that a dropdown is Zag-machine-backed, not a plain hidden toggle.
  */
@@ -113,7 +113,7 @@ describe("Menubar vanilla enhancer, dropdowns as real Menu instances", () => {
     expect(isOpen(editar())).toBe(true);
   });
 
-  it("moving to the leaf item (no dropdown) while one was open just closes it — no dropdown to open", () => {
+  it("moving to the leaf item (no dropdown) while one was open just closes it: no dropdown to open", () => {
     const root = markup();
     fireEvent.click(editar());
     flushSync();
@@ -127,7 +127,7 @@ describe("Menubar vanilla enhancer, dropdowns as real Menu instances", () => {
 
   it("Left/Right inside an open dropdown's own item list are the bar's business only via handoff, not item navigation", () => {
     // Sanity check on the new division of labor: the bar's own items are exposed for Menu's machine
-    // to navigate (Down/Up), not this file's concern — verified indirectly by menuItemsOf() finding
+    // to navigate (Down/Up), not this file's concern. Verified indirectly by menuItemsOf() finding
     // the authored items Menu.svelte reads.
     markup();
     expect(menuItemsOf(archivo())).toHaveLength(2);
@@ -137,7 +137,7 @@ describe("Menubar vanilla enhancer, dropdowns as real Menu instances", () => {
 
   /*
    * `menuItemShape`'s `href` (menu.ts) is what a menubar dropdown needs for real navigation
-   * entries — this is Menu's own behavior, not menubar-specific, so it mounts a standalone
+   * entries. This is Menu's own behavior, not menubar-specific, so it mounts a standalone
    * `[data-sk-menu]` (the exact shape `menuPopupTemplate` now emits for an item with `href`)
    * rather than reusing the bar fixture above.
    */
@@ -162,7 +162,7 @@ describe("Menubar vanilla enhancer, dropdowns as real Menu instances", () => {
 
   /*
    * `nav: true` (`menubar.ts`) only swaps the trigger's CLASSES for `nav-list`'s own
-   * (`sk-nav-list__link`/`__label` instead of `sk-button`) — the enhancer's own attachment is
+   * (`sk-nav-list__link`/`__label` instead of `sk-button`). The enhancer's own attachment is
    * class-agnostic (`data-sk-menubar-item`/roles only), so the exact same behavior the plain-bar
    * tests above already cover should hold unchanged on this markup too.
    */

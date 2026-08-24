@@ -8,7 +8,7 @@ export type ProgressProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   max?: number;
   tone?: ProgressTone;
   /**
-   * Accessible name for the bar. Required: `core/progress.ts` requires it too — without one the
+   * Accessible name for the bar. Required: `core/progress.ts` requires it too, without one the
    * `progressbar` role announces a bare number about nothing.
    */
   label: string;

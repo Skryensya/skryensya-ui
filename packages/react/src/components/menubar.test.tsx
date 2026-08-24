@@ -8,7 +8,7 @@ import { Menubar, MenubarItem } from "./menubar.js";
  *
  * `@zag-js/react`'s own `send()` (machine.mjs) schedules its state transition via `queueMicrotask`,
  * so a click's effect on `aria-expanded` lands one microtask AFTER `fireEvent` returns, not
- * synchronously within it — `tick()` flushes that one queued microtask before each assertion.
+ * synchronously within it: `tick()` flushes that one queued microtask before each assertion.
  */
 const tick = () => act(() => Promise.resolve());
 

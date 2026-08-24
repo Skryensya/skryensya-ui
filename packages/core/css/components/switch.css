@@ -21,8 +21,8 @@
     --sk-switch-border-color: var(--color-border-default);
     --sk-switch-border-width: 1px;
     --sk-switch-thumb-bg: var(--color-bg-surface-raised);
-    --sk-switch-selected-bg: var(--color-action-primary);
-    --sk-switch-selected-border-color: var(--color-action-primary);
+    --sk-switch-selected-bg: var(--color-action-accent);
+    --sk-switch-selected-border-color: var(--color-action-accent);
     --sk-switch-selected-thumb-bg: var(--color-text-on-accent);
     --sk-switch-disabled-bg: var(--color-action-disabled);
     --sk-switch-disabled-fg: var(--color-text-disabled);
@@ -73,7 +73,7 @@
     background: var(--sk-switch-bg);
     /* Named properties, never `all`, same split checkbox.css draws: the track's fill and border are
      * the SELECTION (state-change intent, `background-color`/`border-color` snapped instantly
-     * before this — the thumb slid but the track just popped, an unfinished half of the same
+     * before this. The thumb slid but the track just popped, an unfinished half of the same
      * gesture); the press squeeze is FEEDBACK, a faster tempo, because it has to land under the
      * finger. */
     transition:
@@ -107,7 +107,7 @@
      * change-*)` moment, just expressed as a position instead of a color. No local reduced-motion
      * override either, for the same reason checkbox.css has none: `--motion-state-change-duration`
      * already resolves to the same fast value under `prefers-reduced-motion: reduce`
-     * (`_reduced-motion.scss` — Essential motion keeps a short, legible change, it does not remove
+     * (`_reduced-motion.scss`. Essential motion keeps a short, legible change, it does not remove
      * it), so cutting the transition here would make Switch stricter than the token it consumes. */
     transition: transform var(--motion-state-change-duration) var(--motion-state-change-easing);
   }

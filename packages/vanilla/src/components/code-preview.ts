@@ -24,7 +24,7 @@ export function connectCodePreview(root: HTMLElement): Cleanup {
   const plainPanelEl = condensedPanelEl || fullPanelEl ? null : root.querySelector<HTMLElement>(`.${codePreviewParts.viewport}`);
 
   /*
-   * `aria-controls` needs SOME id to point at, and authored/compiled markup never assigns one —
+   * `aria-controls` needs SOME id to point at, and authored/compiled markup never assigns one -
    * the panel is anonymous content the author supplies. Assigned here, once, only if the panel
    * does not already have one, so an author who DID give it an id keeps their own.
    */
@@ -47,7 +47,7 @@ export function connectCodePreview(root: HTMLElement): Cleanup {
   const condensedLines = Number(root.getAttribute(codePreviewAttrs.condensedLines) ?? 0);
   /* The author supplies the sentence with `{count}` still in it; substituting is all this does. The
    * count used to be built here as `${n} líneas`, which put one hardcoded Spanish word in a package
-   * that has no language of its own — and printed it on the English site. */
+   * that has no language of its own, and printed it on the English site. */
   const linesTemplate = toggle?.getAttribute(codePreviewAttrs.linesLabel) ?? "{count}";
   const formatLines = (count: number): string => linesTemplate.replace("{count}", String(count));
 
@@ -73,7 +73,7 @@ export function connectCodePreview(root: HTMLElement): Cleanup {
       if (condensedPanelEl?.id) toggle.setAttribute("aria-controls", condensedPanelEl.id);
     } else {
       more.hidden = !fullCanCollapse;
-      // No density switch here, so `fullLines` is the only count this preview has — the same
+      // No density switch here, so `fullLines` is the only count this preview has. The same
       // reasoning as the `density === "full"` branch above, minus the density condition.
       if (toggleCount && fullLines > 0) toggleCount.textContent = formatLines(fullLines);
       if (plainPanelEl?.id) toggle.setAttribute("aria-controls", plainPanelEl.id);

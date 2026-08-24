@@ -249,7 +249,7 @@
      * same reasoning as Menu and Tooltip) and `--motion-distance-sm`, the distance the token file
      * names for exactly this case ("inline reveals: tooltip, menu, exit") instead of the hardcoded
      * `-2px` the previous `@keyframes` used. These are the CLOSED values: the default, and the exit
-     * target once `[data-state="open"]` stops matching — `allow-discrete` on `display` is what lets
+     * target once `[data-state="open"]` stops matching: `allow-discrete` on `display` is what lets
      * that exit actually play instead of cutting to `display: none` mid-fade. */
     opacity: 0;
     scale: var(--motion-materialize-scale);

@@ -18,7 +18,7 @@
  * Component rules are deliberately unscoped so the same `.sk-toc` inside ComponentPreview
  * becomes the same disclosure. Only grid placement stays scoped to `.shell`. */
 @include bp.down("wide") {
-  /* Same two tracks `.shell` already uses above `wide` (site.css) — this block only needs to restate
+  /* Same two tracks `.shell` already uses above `wide` (site.css). This block only needs to restate
    * them because `down("desktop")` below narrows `.shell` further and CSS cascades forward, not back. */
   .shell {
     grid-template-columns: auto minmax(0, 1fr);
@@ -58,7 +58,7 @@
    * `down("desktop")` below narrows `.shell` further and CSS cascades forward, not back.
    *
    * The rail's OWN placement (and the grid's track list reverting to `sk-layout-grid`'s plain fluid
-   * form) needs nothing here any more — `packages/core/css/patterns/layout.css`'s rail rules are
+   * form) needs nothing here any more: `packages/core/css/patterns/layout.css`'s rail rules are
    * gated behind `(min-width: 72rem)`, the exact breakpoint this mixin compiles to, so both revert
    * to the pattern's own defaults automatically the moment this query stops matching. */
   .docs-document-pair[data-document-layout="grid"] {

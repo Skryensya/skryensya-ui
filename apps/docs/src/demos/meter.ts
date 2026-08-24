@@ -3,7 +3,7 @@ import type { Translate } from "../i18n";
 
 /*
  * Three measurements, one per tone: a rating (non-zero `min`, unlike Progress), disk usage, and
- * battery level. None of them is a task's completion — that's what tells them apart from `Progress`.
+ * battery level. None of them is a task's completion. That's what tells them apart from `Progress`.
  */
 export const meterTree = (t: Translate): UsageTree => ({
   contract: "layout",

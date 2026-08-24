@@ -54,7 +54,7 @@
      * Centring the dot in the LINE BOX puts it visibly high, because a line box is not symmetric
      * about the text inside it: the text's optical centre sits about half an x-height above the
      * baseline, and the line box's centre sits lower than that. Measured on the system's own type at
-     * body size, the difference is around two pixels — which on a 7px dot is a third of a dot, and it
+     * body size, the difference is around two pixels, which on a 7px dot is a third of a dot, and it
      * reads as a dot floating above its own version.
      *
      * There is no way to ask CSS for a baseline offset in a calculation, so this is that difference
@@ -67,7 +67,7 @@
     /*
      * `default` and not `subtle`, and the difference is whether the line is there at all. Measured
      * inside the docs preview, a subtle hairline against that surface was invisible at reading
-     * distance and only showed up in a magnified crop — which for a timeline is the same as not
+     * distance and only showed up in a magnified crop, which for a timeline is the same as not
      * drawing it. `default` still reads as a hairline beside body text; it just also reads.
      */
     --sk-changelog-connector-color: var(--color-border-default);
@@ -95,7 +95,7 @@
      *
      * DECLARED HERE, APPLIED ON THE TEXT, and the split is not tidiness: `ch` resolves against the
      * font size of the element it is USED on. Applied to this root, which is set at body size, it
-     * capped a prose block set at body-sm — and measured, the smaller type fit about a hundred of
+     * capped a prose block set at body-sm, and measured, the smaller type fit about a hundred of
      * its own characters inside a cap meant to allow eighty-five. The cap has to sit on the text it
      * is capping, so `__title` and `__text` are where it lands.
      */
@@ -116,7 +116,7 @@
      * THE GRID LIVES HERE, ON THE WHOLE HISTORY, and that is the one decision the alignment rests on.
      *
      * Three columns: the date's gutter, the rail, and everything that is read. Declared on the ROOT
-     * rather than on each release so all of them share ONE set of column widths — a release measures
+     * rather than on each release so all of them share ONE set of column widths. A release measures
      * its own tracks, so a version with no date would give itself a zero-width first column and its
      * rail would sit further left than every other release's. Dots that do not line up down a
      * timeline is the whole failure this replaces.
@@ -131,8 +131,8 @@
     min-inline-size: 0;
     /*
      * WRAPPING IS BY WORD, and these two declarations are what say so rather than assume it. A page
-     * that sets `word-break: break-all` or `overflow-wrap: anywhere` on a container — which sites do,
-     * to keep long URLs inside a layout — inherits into here and starts hyphenless mid-word breaks
+     * that sets `word-break: break-all` or `overflow-wrap: anywhere` on a container, which sites do,
+     * to keep long URLs inside a layout. Inherits into here and starts hyphenless mid-word breaks
      * in ordinary prose. Restated at the root, the component keeps normal word wrapping wherever it
      * is dropped. `code` overrides this for itself, below, because an identifier has no word breaks
      * to wrap at and would otherwise be the one thing that overflows the measure.
@@ -140,7 +140,7 @@
     word-break: normal;
     overflow-wrap: normal;
     /*
-     * EVERYTHING IS INSIDE THE BOX. The rail used to hang in the margin — a negative
+     * EVERYTHING IS INSIDE THE BOX. The rail used to hang in the margin. A negative
      * `margin-inline-start` of exactly one rail, so the text landed on the container's inline edge
      * and the dots sat outside it, the way a `<ul>` puts its bullets. That bought alignment with
      * surrounding prose and paid for it with a component that painted outside itself, which is only
@@ -167,12 +167,12 @@
    * Two rows of its own: the heading (date, dot, version) and the changes under it.
    *
    * GRID ALSO KEEPS THE TWO BINDINGS IDENTICAL, and that is not a side effect worth losing. Authored
-   * markup and React disagree about whitespace — the emitter pretty-prints past `PRINT_WIDTH`, so a
+   * markup and React disagree about whitespace. The emitter pretty-prints past `PRINT_WIDTH`, so a
    * long date comes out as `<time>\n  29 de julio…\n</time>` where React writes it with none, and in
    * INLINE flow that newline collapses to a painted space (measured: vanilla one space wider than
    * React on the same release). A grid item is a block container and anonymous whitespace between
    * items generates no box at all, so the difference disappears at the layout level rather than by
-   * asking the emitter to stop wrapping — which is a rule about how every snippet in the kit is
+   * asking the emitter to stop wrapping, which is a rule about how every snippet in the kit is
    * printed, not something one component gets to overrule.
    */
   .sk-changelog__release {
@@ -200,7 +200,7 @@
     /*
      * THE TWO ROWS ARE DECLARED, and they have to be: the marker spans `1 / -1`, and `-1` names the
      * end of the EXPLICIT grid. Left implicit, there is no explicit grid for it to name, so the span
-     * silently collapsed to one row — the rail became as tall as the version's own line box, and the
+     * silently collapsed to one row. The rail became as tall as the version's own line box, and the
      * timeline read as a stub next to the dot instead of a line running past the changes. Measured on
      * a 347px release, the line was 12px long.
      */
@@ -221,7 +221,7 @@
 
   /*
    * THE MARKER IS THE RAIL: it spans every row of its release, and the dot and the line are its two
-   * pseudo-elements. That is not decoration hung on a spare element — it is the only box that lives
+   * pseudo-elements. That is not decoration hung on a spare element. It is the only box that lives
    * in the rail COLUMN, and therefore the only thing that knows where the rail actually is. The
    * column's position depends on the date gutter's width, which `auto` decides at layout time, so
    * nothing positioned against the release's own edges could find it.
@@ -259,7 +259,7 @@
    *
    * EVERY release draws one, including the last, and that is the fix for what an earlier version got
    * wrong: written as `:not(:last-child)`, the line existed only BETWEEN dots, so a history with a
-   * single release — which is every changelog in this repo today, all of it unreleased — drew nothing
+   * single release, which is every changelog in this repo today, all of it unreleased. Drew nothing
    * at all. A timeline that appears only once there are two of something is not a timeline.
    */
   .sk-changelog__marker::after {
@@ -304,7 +304,7 @@
    * THE LAST SEGMENT ENDS THE LINE, and it ends by fading rather than stopping.
    *
    * There is no next dot for it to arrive at: cut square, it reads as a line that was truncated, and
-   * a reader looks for what is missing under it. Faded out, it reads as a history that keeps going —
+   * a reader looks for what is missing under it. Faded out, it reads as a history that keeps going -
    * which is what an append-only file with a `-dev` release at the top actually is.
    *
    * It also stops SHORT of the release's bottom edge rather than at it: `100%` is the release box and
@@ -327,7 +327,7 @@
   /*
    * THE VERSION LEADS. A reader scanning a history is looking for a number: the question they
    * arrived with is whether they already have what they are reading about, and only a version
-   * answers it. It is the top of a three-step hierarchy — version, then each change's headline, then
+   * answers it. It is the top of a three-step hierarchy. Version, then each change's headline, then
    * everything else at one secondary colour.
    *
    * `tabular-nums` so a column of versions lines up down the rail instead of shimmering.
@@ -343,7 +343,7 @@
   /*
    * The date is a caption on the heading, not a second heading: set at the size the changes below are
    * set in, one colour step back. `tabular-nums` so a gutter of dates lines up down the timeline
-   * instead of shimmering — which is the entire reason it has a gutter.
+   * instead of shimmering, which is the entire reason it has a gutter.
    */
   .sk-changelog__date {
     color: var(--sk-changelog-date-fg);
@@ -374,7 +374,7 @@
 
   /*
    * THREE ROWS OUT OF ONE WRAPPING FLEX LINE: the badge and its target, then the headline, then the
-   * prose — the last two claim the full width, so they break where they should without a grid or a
+   * prose. The last two claim the full width, so they break where they should without a grid or a
    * row per element.
    *
    * The wrapping row is also what keeps the two bindings identical, and that is not a side effect:
@@ -382,7 +382,7 @@
    * inline flow that paints as a space. As flex items there is no anonymous whitespace box between
    * them at all.
    *
-   * Moving the rail up a level is still what made the entry simple — this is three declarations,
+   * Moving the rail up a level is still what made the entry simple. This is three declarations,
    * where it used to be a two-column grid with an offset computed against the font.
    */
   .sk-changelog__entry {
@@ -397,7 +397,7 @@
   /*
    * THE BADGE IS BADGE'S, entirely: fill, border, radius and caption type all come from `sk-badge`,
    * which the template carries alongside this class and the `@import` at the top of this file brings
-   * in. Nothing is restated here, because there is nothing left for this component to say about it —
+   * in. Nothing is restated here, because there is nothing left for this component to say about it -
    * it shares its line only with the target, and the target brings its own middot and margins.
    */
 
@@ -410,7 +410,7 @@
    * kind of change, and to what" at a glance and the headline gets a clean left edge shared with the
    * prose under it.
    *
-   * Primary colour like the version, but body-sm size, so a release still reads as one version over
+   * Primary text colour like the version, but body-sm size, so a release still reads as one version over
    * a list of changes rather than as a stack of competing headings.
    */
   .sk-changelog__title {
@@ -456,7 +456,7 @@
   }
 
   .sk-changelog__text {
-    /* The whole width, so the prose lands under the badge that labels it rather than beside it —
+    /* The whole width, so the prose lands under the badge that labels it rather than beside it -
        then capped at the measure, which is the constraint that actually decides the line length. */
     flex: 0 0 100%;
     max-inline-size: var(--sk-changelog-measure);
@@ -489,8 +489,8 @@
    *   chore     neutral   nothing reaches you at all
    *
    * The mapping lives in `changeKindTones` in `packages/core/src/changelog.ts`; the CONTRACT derives
-   * `data-tone` from the `kind` option through `attrsWhen`, and Badge — imported at the top of this
-   * file — draws the result. So there is nothing to keep in sync here and no `[data-kind]` rule
+   * `data-tone` from the `kind` option through `attrsWhen`, and Badge. Imported at the top of this
+   * file. Draws the result. So there is nothing to keep in sync here and no `[data-kind]` rule
    * below: a kind that changed colour would change it in one place, and a component that painted its
    * own hues would be a second palette drifting from the first.
    *

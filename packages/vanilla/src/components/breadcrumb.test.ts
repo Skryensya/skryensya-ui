@@ -43,7 +43,7 @@ function labelOf(item: Element): string | null | undefined {
 /**
  * jsdom does no layout, so both read 0 by default. The enhancer measures a CLONE of the list (see
  * breadcrumb.ts's own comment on why: the live list's items are flex-shrinkable, so its own
- * `scrollWidth` would never actually exceed `clientWidth`) — the clone does not exist until mount,
+ * `scrollWidth` would never actually exceed `clientWidth`). The clone does not exist until mount,
  * so its `scrollWidth` is stubbed at the `HTMLOListElement.prototype` level instead of on one
  * instance, restored in `afterEach`.
  */

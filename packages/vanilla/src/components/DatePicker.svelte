@@ -74,7 +74,7 @@
     // Alto de calendario estable entre meses: seis filas siempre, así abrir no reflowea la página.
     fixedWeeks: true,
     /*
-     * Zag's own `defaultTranslations` es sólo en inglés, sin condición de idioma — un date picker en
+     * Zag's own `defaultTranslations` es sólo en inglés, sin condición de idioma. Un date picker en
      * español anunciaba "Choose 15 de agosto" en inglés, mismo gap que se corrigió en el binding React.
      */
     translations: {

@@ -9,7 +9,7 @@ IconStateButton:
     - "el control necesita mostrar uno de N estados con nombre, cada uno con su propio ícono, y quien lo usa va a escribir el comportamiento que decide cuál está activo (copiar, ciclar un modo, lo que sea)"
     - "los estados varían según el uso: no hay un set fijo que un contrato pueda declarar de antemano"
   avoidWhen:
-    - "el comportamiento ya existe hecho: un ciclo de modo de color usa las funciones de @skryensya/core/theme-toggle, un copy-to-clipboard usa writeClipboard de @skryensya/core/copy-button, sobre este mismo primitivo — no hay que reinventar esa parte"
+    - "el comportamiento ya existe hecho: un ciclo de modo de color usa las funciones de @skryensya/core/theme-toggle, un copy-to-clipboard usa writeClipboard de @skryensya/core/copy-button, sobre este mismo primitivo: no hay que reinventar esa parte"
     - "hay un solo estado, o dos que se leen como on/off: eso es un Switch o un Toggle simple, no vale la pena declarar una colección de caras para dos valores"
     - "el ícono es puramente decorativo y no cambia: eso es Icon, sin la anatomía de estados"
   alternatives:

@@ -77,7 +77,7 @@ export function Heading({ as: Component = "h2", children, className, flush = fal
 export type LinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children" | "href"> & {
   children: ReactNode;
   tone?: LinkTone;
-  /** Required: `core/typography.ts` requires it too — an `<a>` with no `href` is not a link. */
+  /** Required: `core/typography.ts` requires it too. An `<a>` with no `href` is not a link. */
   href: string;
 };
 

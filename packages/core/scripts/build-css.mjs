@@ -10,7 +10,7 @@
  *
  * `components/*.css` and `patterns/*.css` already declare their own cross-file dependencies via
  * native `@import url(...)` (calendar imports button, layout imports box/wrapper/image-frame, …), so
- * linking just the files a page uses pulls in exactly what those files need — nothing more. Every
+ * linking just the files a page uses pulls in exactly what those files need: nothing more. Every
  * generated file here is minified: the reader of a linked stylesheet edits their own CSS, not this
  * one, so there is nothing gained by shipping it expanded. `primitives.scss` already includes the
  * public palette set, so the bundle needs no brand selection or attribute. Generated output is never
@@ -68,7 +68,7 @@ const components = readDir("components");
 // One @charset, at the very top, strip any that the parts carry in. Every part's own
 // `@import url("./sibling.css")` also gets stripped here: the bundle already inlines every pattern
 // and every component unconditionally, so the imported file is always present in full elsewhere in
-// this same file, making the `@import` pure dead weight — and, worse, invalid CSS in this position
+// this same file, making the `@import` pure dead weight. And, worse, invalid CSS in this position
 // (an `@import` may only precede other rules, which this bundle's tokens section already emitted).
 const strip = (css) =>
   css.replace(/@charset[^;]*;\s*/gi, "").replace(/^@import\s+url\([^)]*\)\s*;\s*$/gim, "");
@@ -95,7 +95,7 @@ results.push([
 ]);
 
 // The foundation alone, no patterns or components: everything a consumer needs before it links even
-// one component — same ENTRY as the full bundle above (so it stays in lockstep with it), just without
+// one component. Same ENTRY as the full bundle above (so it stays in lockstep with it), just without
 // the two `section(...)` calls that append patterns and components. Published as the no-toolchain
 // baseline a static app can link once before choosing component CSS.
 const foundationCss = `@charset "UTF-8";\n` + strip(tokensCss) + `\n`;
@@ -108,8 +108,8 @@ results.push([
 // The a-la-carte path: tokens compiled standalone, so a page can link just the components it uses
 // instead of the whole bundle. Primitives + semantic only, matching what a bare `@use
 // "@skryensya/core/tokens"` gives a Sass consumer before it opts into modes/dimensions. The three
-// patterns `tokens.scss` ships in base — state-layer, visually-hidden, icon; never opt-in, see that
-// file's own header — are inlined here rather than `@import`-ed: their source `@import
+// patterns `tokens.scss` ships in base. State-layer, visually-hidden, icon; never opt-in, see that
+// file's own header. Are inlined here rather than `@import`-ed: their source `@import
 // url("./patterns/…")` is only valid relative to css/, and this file is published from dist/.
 const TOKENS_ENTRY = `
 @use "primitives";

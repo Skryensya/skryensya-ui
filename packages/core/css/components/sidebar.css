@@ -40,9 +40,9 @@
 
     /*
      * THE FLOOR A FIXED PADDING WOULD OTHERWISE BE. A resizable rail (`SidebarResizeHandle`) can be
-     * dragged well below where `--sk-sidebar-padding` fits twice — a sub-level nav's own
+     * dragged well below where `--sk-sidebar-padding` fits twice. A sub-level nav's own
      * `--sk-sidebar-min-inline-size` can go as low as a bare edge (contracts/semantic/sidebar.yaml:
-     * no icon-only rail exists for it to fall back to) — and a border-box element cannot render
+     * no icon-only rail exists for it to fall back to), and a border-box element cannot render
      * narrower than its own horizontal padding, whatever `min-inline-size:0` says about its CONTENT.
      * Without this, a 10px rail held a 32px region open regardless: the padding alone, not
      * anything inside it. `min()` against a quarter of the panel's OWN current width is what makes
@@ -163,8 +163,8 @@
     overflow: visible;
     /*
      * BOTH width properties, not just `inline-size`. They read the same custom property and were
-     * meant to move together — `max-inline-size` exists only to stop content from stretching the
-     * rail past it (the comment above) — but only naming `inline-size` here left `max-inline-size`
+     * meant to move together: `max-inline-size` exists only to stop content from stretching the
+     * rail past it (the comment above), but only naming `inline-size` here left `max-inline-size`
      * jumping to the new value on the SAME frame the state attribute changed. A transitioning
      * `inline-size` still renders clamped to whatever `max-inline-size` already IS, so the box
      * snapped to its final width immediately and the 320ms `inline-size` animation played invisibly
@@ -269,7 +269,7 @@
   /*
    * A flex item's default `min-width` is `auto`: without this, a title or a brand refuses to
    * shrink past its own content and pushes the ROW wider instead of letting the row's own
-   * `overflow: hidden` do anything — which is what a resizable rail dragged toward
+   * `overflow: hidden` do anything, which is what a resizable rail dragged toward
    * `--sk-sidebar-min-inline-size` needs, since nothing else stops it. Whatever gets past that
    * floor still needs somewhere to go: nowrap plus an ellipsis is what turns "refuses to fit"
    * into "reads as truncated" instead of wrapping one letter per line down the panel.
@@ -331,12 +331,12 @@
   /*
    * THE RESIZE HANDLE, a window splitter that lives INSIDE the panel.
    *
-   * The bar itself — hit region, hairline, hover/focus/active colour, cursor, touch-action, reduced
-   * motion, forced colors — is `patterns/splitter.css`'s `.sk-splitter` (the contract composes it,
+   * The bar itself. Hit region, hairline, hover/focus/active colour, cursor, touch-action, reduced
+   * motion, forced colors. Is `patterns/splitter.css`'s `.sk-splitter` (the contract composes it,
    * `sidebar.ts`'s `also`), the same class Treegrid's column resizer and any Table that wants one
    * now share. What is sidebar-specific, and stays here, is PLACEMENT: inside the panel and not
    * straddling its border, because the root clips (`overflow: hidden`, which is what makes the
-   * collapsed rail cut its labels) — half a handle hanging past the edge would simply not be there.
+   * collapsed rail cut its labels). Half a handle hanging past the edge would simply not be there.
    * It rides over the panel's own inline gutter, so the strip it covers is padding rather than
    * content, and nothing underneath it is unreachable. Its hooks (`--sk-splitter-hit` etc.) are
    * re-declared below at the sidebar's own values, the same override surface every pattern hook uses.
@@ -379,8 +379,8 @@
    * regardless of which legal parent hosts it, and tracks the rail's own edge as it narrows or
    * widens (collapsing, resizing) since the offset is a percentage of that box, not a fixed pixel.
    *
-   * It needs its own surface: once it is floating over whatever sits beside the rail — the shell's
-   * own content, not the rail's chrome — the plain transparent icon-in-a-row treatment would read
+   * It needs its own surface: once it is floating over whatever sits beside the rail. The shell's
+   * own content, not the rail's chrome. The plain transparent icon-in-a-row treatment would read
    * as nothing at all sitting on top of something else.
    */
   .sk-sidebar__trigger[data-floating] {
@@ -405,7 +405,7 @@
   /*
    * DIRECTION, not menu/close: collapsing NARROWS the rail, it never hides it (decision 8), so the
    * icon should read as "push this edge" rather than "open/close a panel". A `chevron-left` authored
-   * once and mirrored on collapse IS a `chevron-right` — the same glyph, geometrically, not a
+   * once and mirrored on collapse IS a `chevron-right`. The same glyph, geometrically, not a
    * second icon to keep in sync or a state the binding has to swap at runtime. Unscoped from
    * `[data-floating]`: any trigger authored with a chevron gets the same behaviour, and a `menu`
    * glyph (symmetric) is untouched by the rotation, so existing triggers see no change at all.

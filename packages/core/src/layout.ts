@@ -11,8 +11,8 @@ export type GridColumns = 1 | 2 | 3 | 4;
  * Named spans a direct LayoutGrid child may request with `data-width`.
  *
  * Omitting the attribute keeps the child in the content span. `"rail"` and `"rail-start"` are
- * not content spans — they are supporting columns (a TOC, contextual navigation) beside the
- * grid rather than a section within its flow — but they earn a value in this same attribute
+ * not content spans. They are supporting columns (a TOC, contextual navigation) beside the
+ * grid rather than a section within its flow, but they earn a value in this same attribute
  * rather than a second one. `"rail"` sits after the content; `"rail-start"` sits before it; a
  * grid may carry both at once.
  */

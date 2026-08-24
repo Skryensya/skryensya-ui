@@ -1,9 +1,9 @@
 /*
  * TIER 3, DATA GRID
  *
- * A 2D keyboard-navigable grid — WAI's pattern covers both tabular data and layout grids with
+ * A 2D keyboard-navigable grid. WAI's pattern covers both tabular data and layout grids with
  * identical roles. The shared baseline makes every grid legible as a bounded matrix: aligned
- * tracks, row dividers and a surface frame. Content remains flexible — the number of cells per row
+ * tracks, row dividers and a surface frame. Content remains flexible. The number of cells per row
  * sets the number of tracks, while cells that hold controls keep the controls' own chrome.
  */
 @layer components {
@@ -58,11 +58,11 @@
 
   /*
    * A cell holding its own interactive widget (a button, a link) shouldn't ALSO look clickable
-   * itself — the state layer belongs to the real control, not the cell around it. Layout alone
+   * itself. The state layer belongs to the real control, not the cell around it. Layout alone
    * (`justify-content`/`padding`/`cursor`) never achieved that: the cell keeps `sk-interactive`
    * unconditionally (`data-grid.ts`'s `also`), and `patterns/state-layer.css`'s own
    * `.sk-interactive:has(:hover)`/`:has(:focus-visible)` rules exist SPECIFICALLY so a WRAPPER
-   * around a hidden native control (Checkbox, Switch) paints when that control is — the exact
+   * around a hidden native control (Checkbox, Switch) paints when that control is. The exact
    * mechanism that, here, made the cell ALSO wash grey the moment its inner button gained focus or
    * a pointer, doubling the real control's own layer with a second one behind it (measured: a full
    * cell-width grey fill sat under the button's own, tighter ring). Forcing the opacity to `0`
@@ -71,10 +71,10 @@
    * one) rather than on which state-layer rule happens to load last.
    *
    * `outline: none` is the SAME fix a second time, for state-layer's OTHER `:has(:focus-visible)`
-   * rule — the "independent focus indicator" block draws its OWN outline on any `sk-interactive`
+   * rule. The "independent focus indicator" block draws its OWN outline on any `sk-interactive`
    * ancestor of a focused descendant, entirely separate from the opacity one above (measured: with
    * only the opacity forced to `0`, the grey wash was gone but a second, cell-wide ring still
-   * doubled the button's own, tighter one — same bug, different property). The real control's ring
+   * doubled the button's own, tighter one. Same bug, different property). The real control's ring
    * is what should be seen; this one exists only because the cell is `sk-interactive` too.
    */
   .sk-data-grid__cell.sk-interactive:has(button, a[href], input, select, textarea) {
@@ -91,7 +91,7 @@
   /*
    * INSET, not `patterns/state-layer.css`'s own default outward ring: that pattern's
    * `outline-offset` is POSITIVE (it draws clear of a normal control's own edge), which is right
-   * for a button sitting in open space but wrong here — `--sk-data-grid-row-gap`/`-cell-gap` are
+   * for a button sitting in open space but wrong here: `--sk-data-grid-row-gap`/`-cell-gap` are
    * both `0`, so a cell's own edge IS the shared row divider / the neighboring cell's edge, and an
    * outward ring bled straight across that line into the next row (measured: two horizontal cuts
    * through the ring, one at each shared border it crossed). Pulling the ring inside the cell's own
@@ -104,7 +104,7 @@
   /*
    * The SAME fix, for the OTHER half of `gridCellFocusTarget`'s split: a cell holding its own
    * control hands the roving stop to that control (`data-grid.ts`'s own header comment), so real
-   * focus never lands on the cell in that case — it lands on the button, whose own ring is
+   * focus never lands on the cell in that case. It lands on the button, whose own ring is
    * `patterns/state-layer.css`'s default outward one again, and the cell around it has `padding: 0`
    * (above), so the button's edge IS the cell's edge IS the shared row/column border once more.
    */

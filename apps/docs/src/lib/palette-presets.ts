@@ -1,7 +1,7 @@
 /*
  * Single source of truth for the header's accent-palette toggle (Base.astro's PALETTE_PRESETS) AND
- * the /presets showcase gallery. Both need the exact same {id, name, accent, tokens} shape — Base
- * to apply it onto :root, presets.astro to render it read-only inside a demo card — so it lives here
+ * the /presets showcase gallery. Both need the exact same {id, name, accent, tokens} shape. Base
+ * to apply it onto :root, presets.astro to render it read-only inside a demo card, so it lives here
  * once and gets imported by both rather than hand-kept in sync in two places.
  *
  * Each preset carries the complete semantic accent bundle as explicit CSS values. Core publishes the
@@ -21,7 +21,7 @@ function accentBundle(hue: string): Record<string, string> {
     "--color-text-link": "var(--color-text-accent)",
     "--color-border-accent": `light-dark(var(--palette-${hue}-600), var(--palette-${hue}-500))`,
     "--color-border-focus": `light-dark(var(--palette-${hue}-600), var(--palette-${hue}-400))`,
-    "--color-action-primary": `light-dark(var(--palette-${hue}-600), var(--palette-${hue}-500))`,
+    "--color-action-accent": `light-dark(var(--palette-${hue}-600), var(--palette-${hue}-500))`,
     /* The component-page hero band (site.css's `--docs-hero-bg`, default blue) rides along with the
      * rest of the bundle: without this key it stayed blue no matter which preset was active, since
      * `--color-bg-accent-subtle`'s own `-50` leg reads as barely-there on a band this large (see that
@@ -37,9 +37,9 @@ function accentBundle(hue: string): Record<string, string> {
  * the original five, rather than dropping red next to orange and cyan next to teal. The showcase
  * gallery at /presets renders this same order top-to-bottom.
  *
- * The hue choice is bounded by one thing: `--color-action-primary` takes the `-600` step, and
+ * The hue choice is bounded by one thing: `--color-action-accent` takes the `-600` step, and
  * `--color-text-on-accent` is white in light mode, so a hue whose `-600` is too light gives a
- * primary button unreadable text. Yellow (68.1% L) and amber (66.6%) are out for that reason; every
+ * action button unreadable text. Yellow (68.1% L) and amber (66.6%) are out for that reason; every
  * hue here sits at or below orange's 64.6%, which is the lightest one this set ships.
  */
 const HUES: { id: string; hue: string; es: string; en: string }[] = [

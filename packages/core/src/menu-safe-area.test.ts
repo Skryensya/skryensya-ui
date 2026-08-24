@@ -35,7 +35,7 @@ describe("safeAreaShape", () => {
     // It reaches the submenu's full height, because the reader may aim at any row in it.
     expect(shape.top).toBe(submenu.top);
     expect(shape.top + shape.height).toBe(submenu.bottom);
-    // Apex bled back INTO the trigger, away from the base — that is what widens the shape at the
+    // Apex bled back INTO the trigger, away from the base. That is what widens the shape at the
     // boundary the pointer actually crosses.
     expect(shape.left).toBe(146);
   });
@@ -71,7 +71,7 @@ describe("safeAreaShape", () => {
   });
 
   it("declines once the pointer has reached the near edge", () => {
-    // Nothing left to bridge — and the side must still come from the RECTS here, or the bleed
+    // Nothing left to bridge, and the side must still come from the RECTS here, or the bleed
     // reverses and the shape gets built on the submenu's side of its own edge.
     const submenu = rect(210, 100, 400, 260);
     expect(safeAreaShape({ x: 210, y: 140 }, trigger, submenu)).toBeNull();

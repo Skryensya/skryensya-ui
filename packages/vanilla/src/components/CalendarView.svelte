@@ -16,7 +16,7 @@
    *
    * No native `<select>` here: the heading IS `api.getViewTriggerProps()`, a button that steps
    * day → month → year on click (Zag's `VIEW.TOGGLE`), and a month/year cell click steps back down.
-   * That round trip — escalate to pick a decade, descend by tapping a cell — is the whole reason to
+   * That round trip. Escalate to pick a decade, descend by tapping a cell. Is the whole reason to
    * drop the two selects.
    */
   const { api, locale }: { api: DatePickerApi; locale: string } = $props();
@@ -26,8 +26,8 @@
    * icon-only attrs come straight from `buttonContract`, not a copy of its values, so a rename in
    * Button's shape shows up here for free instead of drifting out of four hand-typed literals.
    *
-   * Prev/next and the day cell share the SAME `iconOnly` shape — a control-sized square holding one
-   * piece of content, a glyph for prev/next, a day number for the cell — rather than a second "icon
+   * Prev/next and the day cell share the SAME `iconOnly` shape. A control-sized square holding one
+   * piece of content, a glyph for prev/next, a day number for the cell, rather than a second "icon
    * button" contract for what is one shape wearing two kinds of content. Month/year cells stay plain
    * Buttons: their label is a word, not a single glyph, and they stretch to fill their `<td>` instead
    * of collapsing to a square (calendar.css).
@@ -51,7 +51,7 @@
   /*
    * The year view is the top of the escalation (day → month → year, clamped there): clicking the
    * trigger again is normally a no-op, a dead end that still looks clickable. Repurpose it as a
-   * cancel instead — jump straight back to day view on the REAL current month, not wherever the
+   * cancel instead. Jump straight back to day view on the REAL current month, not wherever the
    * decade grid happened to be browsing, since "cancel" should mean "never mind", not "one level
    * down from here".
    */
@@ -84,7 +84,7 @@
 
   /*
    * `Button` (react.tsx) mirrors a `disabled` prop onto `aria-disabled` too, not just the native
-   * attribute — Zag's own `getPrevTriggerProps`/`getNextTriggerProps` only return `disabled`. Every
+   * attribute. Zag's own `getPrevTriggerProps`/`getNextTriggerProps` only return `disabled`. Every
    * trigger here already claims to BE a real Button (this file's own doc above); redone by hand
    * since spreading Zag's props directly onto a bare `<button>` skips whatever a real Button would
    * have added.

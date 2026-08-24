@@ -1,12 +1,12 @@
 /*
  * TIER 3, SPLIT BUTTON: a real Button plus a real Menu trigger, welded flush.
  *
- * Deliberately almost empty, and owns no part class of its own beyond the root — the primary
+ * Deliberately almost empty, and owns no part class of its own beyond the root. The primary
  * segment is whatever the author's own composed `<Button weldEnd>` renders (`.sk-button`, its
  * own `[data-variant]`/`[data-size]`, nothing split-button-specific), and the trigger is Menu's
  * own trigger with `triggerVariant`/`triggerSize`/`triggerWeldStart`/`triggerIconOnly` set
- * (menu.ts) — the same attributes, reached by structure below, never restated as CSS here. The
- * only thing genuinely specific to a SPLIT BUTTON — not to either button alone — is the layout
+ * (menu.ts). The same attributes, reached by structure below, never restated as CSS here. The
+ * only thing genuinely specific to a SPLIT BUTTON: not to either button alone. Is the layout
  * that holds the two flush, and the hairline seam between them.
  */
 @layer components {
@@ -19,38 +19,38 @@
     align-items: stretch;
   }
   /*
-   * Only the START edge of whichever child is NOT first carries the hairline — the seam between
+   * Only the START edge of whichever child is NOT first carries the hairline. The seam between
    * the two halves, not a border AROUND either one; `weldStart`/`weldEnd` (button.css) already
    * erase the touching corner's own rounding AND border color on both sides, and every OTHER edge
    * stays exactly whatever that button's own variant painted. `:not(:first-child)` rather than
    * "the second child is always Menu": the usual composition is `<Button weldEnd>` then a Menu,
-   * but nothing requires that order — a Menu composed FIRST (`triggerWeldEnd` instead of
+   * but nothing requires that order. A Menu composed FIRST (`triggerWeldEnd` instead of
    * `triggerWeldStart`) with a trailing `<Button weldStart>` welds exactly as well, and this rule
    * does not need to know which shape it is looking at, only that it is not the leading one.
    *
    * `.sk-button:not(:first-child)`, not a bare `*:not(:first-child)`: specificity has to beat
-   * `.sk-button[data-weld-start]` (button.css) OUTRIGHT, not tie it — a bare `*` selector here is
+   * `.sk-button[data-weld-start]` (button.css) OUTRIGHT, not tie it. A bare `*` selector here is
    * (0,2,0), the exact same as that attribute selector, and a tie between two DIFFERENT files is
    * exactly the "which stylesheet loaded second" bug this whole component already got bitten by
    * once. Naming the class explicitly adds a third selector component, (0,3,0), so this always
-   * wins regardless of load order — the SAME reasoning `menu.ts`'s own trigger-targeting rules
+   * wins regardless of load order. The SAME reasoning `menu.ts`'s own trigger-targeting rules
    * settled on the last time this exact bug showed up.
    */
   .sk-split-button > .sk-button:not(:first-child) {
     /* `border-inline-start-color`, a LOGICAL property, not a hardcoded physical side: it already
-     * flips to the correct edge under `dir="rtl"` on its own — the corner welding it pairs with
+     * flips to the correct edge under `dir="rtl"` on its own. The corner welding it pairs with
      * (button.css's `weldStart`/`weldEnd`) uses the same logical family for the identical reason,
      * so this file needs no `[dir="rtl"]` rule of its own for either concern. */
     border-inline-start-color: var(--sk-split-button-divider-color);
   }
   /*
-   * A composed Menu is a `<div class="sk-menu">` wrapping its own trigger `<button>` — the rule
+   * A composed Menu is a `<div class="sk-menu">` wrapping its own trigger `<button>`. The rule
    * above only ever matches a DIRECT `.sk-button` child, which a Menu wrapper is not, so this
    * reaches one level deeper into the actual button whenever Menu is not the leading child.
    * Reached by structure, not a class: a composition has no way to hand a class to a control it
    * does not render, the class would belong to Menu, and this file does not own Menu's own
-   * template. `.sk-menu:not(:first-child) > button` is already (0,3,1) — a class, a pseudo-class,
-   * a class, an element — safely above `.sk-button[data-weld-start]`'s own (0,2,0) regardless of
+   * template. `.sk-menu:not(:first-child) > button` is already (0,3,1). A class, a pseudo-class,
+   * a class, an element. Safely above `.sk-button[data-weld-start]`'s own (0,2,0) regardless of
    * load order, no extra `.sk-button` needed here the way the rule above needed it.
    */
   .sk-split-button > .sk-menu:not(:first-child) > button {

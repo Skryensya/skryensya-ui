@@ -44,11 +44,11 @@ import "@skryensya/core/components/tooltip.css";
 import "@skryensya/core/patterns/anchored.css";
 /* Needed for focus-ring.spec.ts (G5): that gate reads a real computed `outline-style` off a
  * highlighted `.sk-menu__item`, which resolves to nothing without this sheet. Confirmed missing
- * before this addition — `menu/with-submenu` was already a canonical tree and rendered, unstyled,
+ * before this addition: `menu/with-submenu` was already a canonical tree and rendered, unstyled,
  * through every existing gate; none of G2/G4/G3's screenshot baseline needed real menu CSS to pass,
  * so the gap went unnoticed until a test needed a computed style. Several other contracts in
  * `trees.ts` (select, combobox, dialog, popover, command-palette, …) have the same gap; out of scope
- * here — this adds only what G5 exercises. */
+ * here. This adds only what G5 exercises. */
 import "@skryensya/core/components/menu.css";
 /* `megamenu/product` (the first canonical tree for this contract) needs this to be genuinely closed
  * at rest: without it, `.sk-megamenu__content`'s unconditional `display: none` default never applies,
@@ -157,7 +157,7 @@ async function stage(): Promise<void> {
    * reason: to compare the two paths, both have to have made the same choice.
    *
    * `mountComponentsWithIcons` is the SAME sequence the docs preview frame boots with (icons, mount,
-   * wait a frame, icons again) — not a second, adjacent implementation of it. A Svelte enhancer that
+   * wait a frame, icons again): not a second, adjacent implementation of it. A Svelte enhancer that
    * finishes its DOM commit after `initComponents()`'s own await resolves used to be a race the docs
    * frame defended against and this gate could not see at all; sharing the sequence is what makes a
    * regression in that race show up here too.

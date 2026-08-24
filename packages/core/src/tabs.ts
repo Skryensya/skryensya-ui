@@ -59,7 +59,7 @@ export const tabsContract = {
     value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
     /**
      * Paint size for the trigger row: height, inline padding, label size. CSS-only, the same
-     * axis Button's `size` is — not a machine input, the roving tabindex and selection behave
+     * axis Button's `size` is: not a machine input, the roving tabindex and selection behave
      * identically at every size. No `lg`: a bigger tab strip has not come up as a real need, and
      * an unused rung is one more thing the surface promises and nobody exercises.
      */

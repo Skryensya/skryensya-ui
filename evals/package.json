@@ -6,11 +6,16 @@
   "description": "F7: a corpus of product intents in Spanish and English, each paired with a hand-composed, MCP-validated usage tree. Re-validates every tree against G0-G3 on every run, so a contract change that breaks a known-good composition fails here first.",
   "scripts": {
     "check": "tsc -p tsconfig.json --noEmit && tsx run.ts",
-    "lint": "tsc -p tsconfig.json --noEmit"
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "agent": "tsx run-agent.ts"
   },
   "dependencies": {
     "@skryensya/ai-compiler": "workspace:*",
-    "@skryensya/core": "workspace:*"
+    "@skryensya/core": "workspace:*",
+    "@tanstack/ai": "^0.49.1",
+    "@tanstack/ai-anthropic": "^0.18.0",
+    "@tanstack/ai-mcp": "^0.3.5",
+    "@tanstack/ai-openai": "^0.22.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

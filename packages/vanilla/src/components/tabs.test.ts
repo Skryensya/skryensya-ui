@@ -39,7 +39,7 @@ describe("Tabs Vanilla contracts", () => {
     expect(security.getAttribute("aria-selected")).toBe("false");
     expect(securityPanel.hidden).toBe(true);
     // WAI-ARIA Tabs: "Each element with role tab has the property aria-controls referring to
-    // its associated tabpanel element" — Zag itself only writes this on the SELECTED trigger
+    // its associated tabpanel element". Zag itself only writes this on the SELECTED trigger
     // (confirmed reading tabs.connect.js), so the UNSELECTED one is corrected here, not just
     // inherited from the machine.
     expect(security.getAttribute("aria-controls")).toBe(securityPanel.id);

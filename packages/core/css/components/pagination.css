@@ -4,7 +4,7 @@
  * A row of page controls. Appearance only, hover / press / focus come from `sk-interactive` and
  * the state layer. The ellipsis is inert text, not a target. Consumer CSS connects these hooks.
  *
- * THE CURRENT PAGE IS A KEY, not a primary button. Solid `--color-action-primary` made "you are
+ * THE CURRENT PAGE IS A KEY, not a action button. Solid `--color-action-accent` made "you are
  * here" look like Submit sitting in a row of ghosts. Same default as Kbd and Segmented: raised
  * surface, primary text, a three-layer bevel. The mix border keeps the chip visible when the
  * page behind it is already raised (white on white).

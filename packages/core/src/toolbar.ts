@@ -18,7 +18,7 @@ export const toolbarAttrs = {
  * buttons are twenty stops and a keyboard user pays for the density.
  *
  * A composite widget inside it (a Segmented, Tabs) already has its own roving tabindex, so the
- * toolbar counts it as one stop rather than N — decision 27, and the reason the enhancer filters by
+ * toolbar counts it as one stop rather than N. Decision 27, and the reason the enhancer filters by
  * `tabindex` instead of by "is focusable".
  */
 export const toolbarContract = {
@@ -90,18 +90,18 @@ export const toolbarContract = {
 } as const satisfies ComponentContract;
 
 /* ------------------------------------------------------------------------------------------------ *
- * Shared behaviour — the pure matcher here, the imperative binding in `@skryensya/vanilla`, the
+ * Shared behaviour. The pure matcher here, the imperative binding in `@skryensya/vanilla`, the
  * declarative one in `@skryensya/react` (the three-way split `hotkey.ts` documents, and the one this
  * contract never adopted until now: both bindings hand-wrote the identical orientation→arrow-key
  * index math, React's own file admitting it "mirrors exactly" vanilla's so the two "can never
- * disagree" — a statement about discipline, not about the code actually being one copy).
+ * disagree". A statement about discipline, not about the code actually being one copy).
  * ------------------------------------------------------------------------------------------------ */
 
 export type ToolbarAction = { readonly kind: "move"; readonly index: number } | { readonly kind: "none" };
 
 /**
  * Which stop a key moves to, given the bar's current shape. DOM querying and the disabled-item
- * filter (`controlsSelector`/`isStop` in each binding) stay there — this only ever sees an
+ * filter (`controlsSelector`/`isStop` in each binding) stay there. This only ever sees an
  * already-filtered list's length and the current position within it, the same division of labor
  * `resolveMenubarKey` (`menubar.ts`) uses between core and its bindings.
  */

@@ -110,7 +110,7 @@ describe("TimeField Vanilla contracts", () => {
   it("waits for a possible second digit in 24-hour form too, e.g. typing 22 as the hour", async () => {
     // `data-hour-cycle` forced explicitly rather than left to `data-locale="es"`'s own guess:
     // `Intl`'s hourCycle resolution for "es" is exactly the kind of thing this option exists to
-    // stop depending on (`resolveHourCycle`'s own doc — confirmed against a real browser, Node and
+    // stop depending on (`resolveHourCycle`'s own doc. Confirmed against a real browser, Node and
     // Chromium disagree on this very locale). Forcing it here is what makes the test deterministic
     // regardless of which engine runs it.
     markup('data-locale="es" data-hour-cycle="h24"');
@@ -126,7 +126,7 @@ describe("TimeField Vanilla contracts", () => {
   });
 
   it("an explicit hour cycle overrides whatever the locale would otherwise resolve to", () => {
-    // en-US resolves to h12 on its own — forcing h24 here proves the override wins, not a
+    // en-US resolves to h12 on its own. Forcing h24 here proves the override wins, not a
     // coincidence of what the locale already wanted.
     const root = markup('data-locale="en-US" data-hour-cycle="h24"');
     expect(types()).toEqual(["hour", "minute"]); // no dayPeriod segment
@@ -225,7 +225,7 @@ describe("TimeField Vanilla contracts", () => {
     await waitFor(() => expect(segment("hour").textContent).toBe("14"));
     expect(segment("minute").textContent).toBe("05");
     expect(hiddenInput().getAttribute("value")).toBe("14:05");
-    // The external write reaches a consumer the exact same way typing would — one event contract,
+    // The external write reaches a consumer the exact same way typing would. One event contract,
     // not two, for "the value changed" regardless of who changed it.
     expect(onChange).toHaveBeenCalledWith({ value: "14:05" });
   });
@@ -253,7 +253,7 @@ describe("TimeField Vanilla contracts", () => {
     expect(children.at(-2)).toBe(control.querySelector(".sk-time-field__clear"));
   });
 
-  it("anchors the picker's own listbox to the CONTROL, not the trigger — so it opens the field's own width, not the icon's", () => {
+  it("anchors the picker's own listbox to the CONTROL, not the trigger, so it opens the field's own width, not the icon's", () => {
     // The bug this guards: anchoring to the small icon-only trigger (`anchor-size(width)`
     // resolving against a 32px square) squeezed the listbox and its rows down to that same 32px,
     // unreadable. The control is the field's own full width.
@@ -274,7 +274,7 @@ describe("TimeField Vanilla contracts", () => {
     expect(items.some((item) => item.textContent?.includes("22:00"))).toBe(true); // h24, never "10:00 PM"
   });
 
-  it("defaults to a 30-minute step when none is given — 48 rows, not 1440", () => {
+  it("defaults to a 30-minute step when none is given. 48 rows, not 1440", () => {
     const root = markup('data-locale="en-US" data-hour-cycle="h24"');
     expect(root.querySelectorAll(".sk-select__item")).toHaveLength(48);
   });
@@ -304,7 +304,7 @@ describe("TimeField Vanilla contracts", () => {
     expect(segment("hour").hasAttribute("aria-valuenow")).toBe(false);
   });
 
-  it("leaves the picker closed on a plain ArrowDown — that key is the segment's own", async () => {
+  it("leaves the picker closed on a plain ArrowDown. That key is the segment's own", async () => {
     const root = markup('data-locale="es"');
     const trigger = root.querySelector<HTMLButtonElement>(".sk-time-field__options-trigger")!;
 
@@ -314,7 +314,7 @@ describe("TimeField Vanilla contracts", () => {
     await waitFor(() => expect(segment("hour").hasAttribute("aria-valuenow")).toBe(true)); // stepped instead
   });
 
-  it("omits the picker trigger entirely while disabled or read-only — nothing to browse to", () => {
+  it("omits the picker trigger entirely while disabled or read-only: nothing to browse to", () => {
     const disabledRoot = markup('data-locale="es" data-disabled');
     expect(disabledRoot.querySelector(".sk-time-field__options-trigger")).toBeNull();
 

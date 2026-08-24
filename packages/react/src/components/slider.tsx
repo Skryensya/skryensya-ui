@@ -51,7 +51,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
 const sliderFillPropertyName = "--sk-slider-fill";
 
 /*
- * Two native range inputs, not WAI's own custom `role="slider"` SVG widget — see `slider.ts`'s own
+ * Two native range inputs, not WAI's own custom `role="slider"` SVG widget; see `slider.ts`'s own
  * "MULTI-THUMB" banner for why. Uncontrolled only, for now: no demo or consumer needs a fully
  * controlled two-thumb slider yet, and `value`/`onChange` on TWO inputs at once (one author-facing
  * value, which one is "the" controlled input?) is a real API question worth deferring to an actual

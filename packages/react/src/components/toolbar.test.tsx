@@ -3,10 +3,10 @@ import { describe, expect, it } from "vitest";
 import { Toolbar } from "./toolbar.js";
 
 /*
- * No test file existed for this binding before — confirmed while auditing against the WAI-ARIA APG
+ * No test file existed for this binding before. Confirmed while auditing against the WAI-ARIA APG
  * toolbar pattern (docs/aria-apg-audit.md). That gap is exactly why this binding had DIVERGED from
  * `toolbar.ts` (vanilla) without anyone noticing: no `event.defaultPrevented` guard, and no
- * `tabindex`-based filtering to treat a nested composite as ONE stop — both fixed in this same
+ * `tabindex`-based filtering to treat a nested composite as ONE stop. Both fixed in this same
  * session, see the file's own comment.
  */
 function Fixture() {
@@ -32,7 +32,7 @@ describe("Toolbar React contracts", () => {
     expect(toolbar.getAttribute("aria-orientation")).toBe("horizontal");
   });
 
-  it("forwards arbitrary attrs to the root, same as ToolbarGroup already did — vanilla always had this via the emitted template", () => {
+  it("forwards arbitrary attrs to the root, same as ToolbarGroup already did. Vanilla always had this via the emitted template", () => {
     const ui = render(
       <Toolbar data-docs-example="true" label="Formato">
         <button type="button">B</button>
@@ -80,7 +80,7 @@ describe("Toolbar React contracts", () => {
     expect(document.activeElement).toBe(ui.getByText("U"));
   });
 
-  it("treats a nested composite (radiogroup) as a SINGLE stop — the bug this session found and fixed", () => {
+  it("treats a nested composite (radiogroup) as a SINGLE stop. The bug this session found and fixed", () => {
     const ui = render(<Fixture />);
     ui.getByText("I").focus();
     fireEvent.keyDown(ui.getByRole("toolbar"), { key: "ArrowRight" });
@@ -89,7 +89,7 @@ describe("Toolbar React contracts", () => {
     expect(document.activeElement).toBe(ui.getByText("U")); // skips ↔/→ entirely, unlike before the fix
   });
 
-  it("defers to a composite child that already handled the key itself (defaultPrevented) — the other half of the bug", () => {
+  it("defers to a composite child that already handled the key itself (defaultPrevented). The other half of the bug", () => {
     const ui = render(<Fixture />);
     const alignCenter = ui.getByText("↔");
     alignCenter.tabIndex = 0;

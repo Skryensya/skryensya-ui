@@ -11,8 +11,8 @@ const longTrail: readonly BreadcrumbItem[] = [
 ];
 
 /**
- * jsdom does no layout, so `nav.clientWidth` and the shadow list's `scrollWidth` — the pair the
- * component actually compares — both read 0 unless a test overrides them.
+ * jsdom does no layout, so `nav.clientWidth` and the shadow list's `scrollWidth`. The pair the
+ * component actually compares. Both read 0 unless a test overrides them.
  */
 function forceOverflow(container: HTMLElement, overflow: boolean): void {
   const nav = container.querySelector<HTMLElement>(".sk-breadcrumb")!;

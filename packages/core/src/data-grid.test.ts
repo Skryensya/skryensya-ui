@@ -13,7 +13,7 @@ const square = (key: string, focus: { row: number; col: number }, opts: { wrapRo
     wrapRows: opts.wrapRows ?? false,
   });
 
-describe("resolveDataGridKey — square grid, no wrap", () => {
+describe("resolveDataGridKey. Square grid, no wrap", () => {
   it("moves one cell per arrow key", () => {
     expect(square("ArrowRight", { row: 0, col: 0 })).toEqual({ kind: "move", focus: { row: 0, col: 1 } });
     expect(square("ArrowLeft", { row: 0, col: 1 })).toEqual({ kind: "move", focus: { row: 0, col: 0 } });
@@ -45,7 +45,7 @@ describe("resolveDataGridKey — square grid, no wrap", () => {
   });
 });
 
-describe("resolveDataGridKey — wrapping", () => {
+describe("resolveDataGridKey. Wrapping", () => {
   it("ArrowRight past the last column wraps into the next row's first cell when wrapCols is on", () => {
     expect(square("ArrowRight", { row: 0, col: 2 }, { wrapCols: true })).toEqual({
       kind: "move",
@@ -80,13 +80,13 @@ describe("resolveDataGridKey — wrapping", () => {
     });
   });
 
-  it("wrapCols and wrapRows are independent — one on, the other off", () => {
+  it("wrapCols and wrapRows are independent. One on, the other off", () => {
     expect(square("ArrowRight", { row: 0, col: 2 }, { wrapCols: false, wrapRows: true })).toEqual({ kind: "none" });
     expect(square("ArrowDown", { row: 2, col: 0 }, { wrapCols: true, wrapRows: false })).toEqual({ kind: "none" });
   });
 });
 
-describe("resolveDataGridKey — ragged rows (different cell counts per row)", () => {
+describe("resolveDataGridKey. Ragged rows (different cell counts per row)", () => {
   const ragged = (key: string, focus: { row: number; col: number }, ctrl = false) =>
     resolveDataGridKey({
       key,

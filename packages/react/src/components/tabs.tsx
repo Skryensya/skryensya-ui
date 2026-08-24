@@ -23,7 +23,7 @@ export type TabsProps = TabsOptions & {
    */
   "aria-label"?: string;
   "aria-labelledby"?: string;
-  /** Paint size for the trigger row. CSS-only, so it is not one of `TabsOptions` — the Zag machine
+  /** Paint size for the trigger row. CSS-only, so it is not one of `TabsOptions`. The Zag machine
    * never sees it, it lands straight on `data-size`. */
   size?: TabsSize;
 };
@@ -60,7 +60,7 @@ export function Tabs({
           <button
             {...api.getTriggerProps({ value: item.value, disabled: item.disabled })}
             // Zag only writes `aria-controls` on the SELECTED trigger (confirmed reading
-            // tabs.connect.js) — the WAI-ARIA Tabs pattern is explicit that EVERY tab has it
+            // tabs.connect.js). The WAI-ARIA Tabs pattern is explicit that EVERY tab has it
             // ("Each element with role tab has the property aria-controls referring to its
             // associated tabpanel element"), selected or not. `getContentProps` already computes
             // each panel's real id regardless of selection, so this overrides with the real one

@@ -18,7 +18,7 @@
     --sk-command-palette-footer-fg: var(--color-text-tertiary);
     /* Mix, not `--color-border-subtle`: on the raised panel that token is the same rung as the
      * fill in dark (stone-800 on stone-800), so the search hairline vanished while the footer
-     * still read — that one is a sunken band, not a line. A bit of primary on this surface is
+     * still read. That one is a sunken band, not a line. A bit of primary on this surface is
      * visible in both modes without climbing back to the HC `--color-border-default` frame. */
     --sk-command-palette-border-color: color-mix(
       in oklab,
@@ -116,7 +116,7 @@
 
   /* aria-selected is the highlight: keyboard-driven, so pointer and arrows never fight.
    * It stands in for FOCUS (the options are not tabbable; aria-activedescendant keeps DOM focus
-   * in the input). Everyday light/dark gets a mix against the raised surface — sunken-on-surface
+   * in the input). Everyday light/dark gets a mix against the raised surface. Sunken-on-surface
    * is 1.00:1 in hc-dark and vanished, which is why a mix of text-on-surface is the tint, not a
    * second fill token. The focus ring is reserved for forced colors and explicit high contrast:
    * painting it in the default mode made every selected row look like a HC target. */

@@ -19,7 +19,7 @@ type AxeViolation = { id: string; impact?: string; nodes: { html: string }[] };
  * Rules that fire from the STAGE, not from the case: `harness/index.html` wraps every canonical
  * tree in `<main id="stage">`, so that element is already the page's one top-level main landmark
  * before any case renders. `layout/main` is the one case whose OWN root is `<main>` (`layout.Main`'s
- * signature: `{ element: "main", host: true }`) — nested inside the stage's own main, and doubled
+ * signature: `{ element: "main", host: true }`). Nested inside the stage's own main, and doubled
  * again by sharing the page with the OTHER binding's copy of the same case. Both violations describe
  * that nesting, not a defect in `Main`: a real app never renders it inside another `<main>`, and this
  * shared stage is the one page that does. Scoped to exactly this case, the same way

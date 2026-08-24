@@ -23,7 +23,7 @@ function featureSlide(
   t: Translate,
   feature: Feature,
   position: Position,
-  /** Adds a real, focusable "Read more" link inside the card — see `carouselFocusableTree` below. */
+  /** Adds a real, focusable "Read more" link inside the card; see `carouselFocusableTree` below. */
   href?: string,
 ): UsageTree {
   return {
@@ -109,7 +109,7 @@ export const carouselAutoplayTree = (t: Translate): UsageTree => ({
 
 /*
  * Every card is ALSO its own destination: WAI-ARIA's Carousel pattern says focus anywhere inside
- * the carousel pauses rotation, "including the next and previous slide elements" — that phrasing
+ * the carousel pauses rotation, "including the next and previous slide elements". That phrasing
  * is easy to read as "only the chrome", so this demo is the case that proves it also covers a
  * slide's OWN content. Tab into "Leer más" on any card and the rotation stops; Tab or Shift+Tab
  * back out and it resumes (unless the mouse happens to be hovering too).

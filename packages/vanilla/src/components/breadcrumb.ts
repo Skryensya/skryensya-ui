@@ -13,17 +13,17 @@ export const mountBreadcrumb = createConnectMount({ key: "breadcrumb", rootSelec
 
 /*
  * BREADCRUMB, the collapse. The compiled markup is already complete on its own (no machine, every
- * item a plain link) — this enhancer only decides, per resize, whether the trail fits on one line
+ * item a plain link). This enhancer only decides, per resize, whether the trail fits on one line
  * and, when it does not, hides the ancestor `<li>`s `collapsibleBreadcrumbRange` marks as
  * collapsible and reveals a "…" trigger that opens the SAME items as a real `Menu` (`core/menu.ts`)
- * — the ARIA menu pattern's own keyboard model (arrow keys, Home/End, typeahead), not a plain list
+ *. The ARIA menu pattern's own keyboard model (arrow keys, Home/End, typeahead), not a plain list
  * of links. The menu markup is built once, from each collapsible item's own label/href, and mounted
  * with `mountMenu` (this package's own Menu enhancer) rather than reinvented: the machine, the
  * positioning, the safe-area, all of it is Menu's, same as `MenubarItem`'s own dropdown composes it.
  *
  * The ellipsis `<li>` is a PERMANENT anchor at position 1, inserted once and only ever hidden (never
- * removed) while collapsing is off. The ORIGINAL crumb `<li>`s never move — collapsing only hides
- * them (`hidden`, same as the ellipsis's own default-hidden state) — so the menu's own item nodes
+ * removed) while collapsing is off. The ORIGINAL crumb `<li>`s never move. Collapsing only hides
+ * them (`hidden`, same as the ellipsis's own default-hidden state), so the menu's own item nodes
  * are the only markup the machine ever attaches to, and re-measuring never has to reconcile two
  * lists' worth of moved DOM.
  */
@@ -42,12 +42,12 @@ export function connectBreadcrumb(root: HTMLElement): Cleanup {
   /*
    * A full-flat CLONE, taken before any of the mutation below, laid out off-screen purely to
    * measure the trail's true, unconstrained width. `.sk-breadcrumb__item` carries `min-inline-size:
-   * 0` (needed so an ancestor LINK's own `text-overflow: ellipsis` can engage at all) — a flex item
+   * 0` (needed so an ancestor LINK's own `text-overflow: ellipsis` can engage at all). A flex item
    * with that set is free to shrink below its content size instead of ever truly overflowing, so
    * once nowrap is on, the live list silently absorbs a too-narrow container by shrinking every
    * crumb rather than its `scrollWidth` ever exceeding `clientWidth`. `position: absolute;
    * inline-size: max-content` gives the clone no imposed width to shrink against, so its children
-   * size to their natural content instead — the same shadow-measurement move the React binding
+   * size to their natural content instead. The same shadow-measurement move the React binding
    * makes for the identical reason.
    */
   const shadow = list.cloneNode(true) as HTMLOListElement;
@@ -63,7 +63,7 @@ export function connectBreadcrumb(root: HTMLElement): Cleanup {
   const collapsedLabel = root.getAttribute("data-collapsed-label") ?? "Mostrar niveles ocultos";
 
   // Also `data-sk-menu`/`sk-menu`: this `<li>` doubles as the Menu's own root, the same move
-  // `MenubarItem`'s wrapper makes (`menubar.ts`) — one element, not an extra wrapper, carrying both
+  // `MenubarItem`'s wrapper makes (`menubar.ts`). One element, not an extra wrapper, carrying both
   // this component's own part class and the `--sk-menu-*` custom properties every menu part below
   // reads.
   const ellipsisItem = document.createElement("li");
@@ -94,7 +94,7 @@ export function connectBreadcrumb(root: HTMLElement): Cleanup {
     const href = link?.getAttribute("href") ?? undefined;
 
     // A destination is a real `<a href>`; the rare case of a collapsible item marked `current`
-    // without an href (no link to give) falls back to a plain, unclickable entry — the same
+    // without an href (no link to give) falls back to a plain, unclickable entry. The same
     // either/or `menuPopupTemplate` itself uses for a command vs. a destination.
     const menuItem = document.createElement(href ? "a" : "div");
     menuItem.className = `${menuParts.item} sk-interactive`;
@@ -115,7 +115,7 @@ export function connectBreadcrumb(root: HTMLElement): Cleanup {
   anchorItem.after(ellipsisItem);
 
   // Synchronous, like every Svelte mount in this runtime (`flushSync` inside `createSvelteMount`):
-  // the menu is fully wired — role, positioning, keyboard handling — before this function returns.
+  // the menu is fully wired. Role, positioning, keyboard handling. Before this function returns.
   mountMenu(ellipsisItem);
 
   const expand = () => {
@@ -128,7 +128,7 @@ export function connectBreadcrumb(root: HTMLElement): Cleanup {
     ellipsisItem.hidden = false;
   };
 
-  // Idempotent either way, so a measurement never needs to undo the other branch first — unlike
+  // Idempotent either way, so a measurement never needs to undo the other branch first. Unlike
   // the live list, the shadow's width never depends on which branch ran last.
   const measure = () => {
     if (shadow.scrollWidth > root.clientWidth) collapse();

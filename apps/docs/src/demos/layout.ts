@@ -204,8 +204,8 @@ export const gridTree = (t: Translate): UsageTree => ({
 /**
  * One card per named width, in the same order the page's own bullet list explains them: narrow,
  * content (the default, so its own child carries no `data-width`), breakout, full-width. Real
- * children throughout — Box and Text, the same contracts every other demo on the site composes
- * with — so what this teaches is exactly what a reader can compose themselves, unlike a page-local
+ * children throughout. Box and Text, the same contracts every other demo on the site composes
+ * with, so what this teaches is exactly what a reader can compose themselves, unlike a page-local
  * mockup with no contract behind it. No heading: the preview's own label already names it, and the
  * page's prose right below carries the same words a heading here would only repeat.
  */
@@ -239,17 +239,17 @@ export const layoutGridTree = (t: Translate): UsageTree => ({
       attrs: { "data-width": "full-width" },
       /* No `padding` (defaults to "none"): a full-bleed band's BACKGROUND has to reach the true
          edge, and the box's own inline padding was fighting the nested content-track inset that
-         already keeps the LABEL readable — the two together read as a band with a stray extra
+         already keeps the LABEL readable. The two together read as a band with a stray extra
          margin on top of its normal one. Vertical breathing room instead comes from the scoped
          `padding-block` rule in the preview's own CSS (LayoutGridPage.astro), which only touches
          this one box rather than every Box on the page.
          `surface: "raised"` still marks it correctly (`data-surface="raised"`), but that token
-         alone reads as flat white next to the page's own canvas in light mode — the same
+         alone reads as flat white next to the page's own canvas in light mode. The same
          near-invisible pairing the stack demo hit earlier. The preview's CSS repaints it with an
          actually visible tint; the attribute stays honest about what the box IS regardless. */
       options: { surface: "raised" },
       /* A `full-width` child becomes its OWN nested `sk-layout-grid` (layout.css), so ITS children
-         need the same default placement rule any other layout-grid content gets — which only ever
+         need the same default placement rule any other layout-grid content gets, which only ever
          matches real elements, not a bare text node. A plain string here left the label with no
          `content-start`/`content-end` assignment at all, so it fell back to grid auto-placement's
          narrowest available track instead of the width the box is meant to demonstrate. */
@@ -265,7 +265,7 @@ export const layoutGridTree = (t: Translate): UsageTree => ({
 /**
  * Rail compositions, kept to the SAME vocabulary as the width-levels demo above: plain Box
  * children, one unlabeled (content measure) and one or two with \`data-width="rail"\` /
- * \`"rail-start"\` — \`sk-layout-grid\`'s own PUBLISHED rail capability
+ * \`"rail-start"\`. \`sk-layout-grid\`'s own PUBLISHED rail capability
  * (\`packages/core/css/patterns/layout.css\`), not page-local CSS. No real \`/componentes/toc\`
  * composition here: this section teaches the GRID's rail mechanism, not Toc's own anatomy.
  *

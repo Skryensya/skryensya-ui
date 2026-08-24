@@ -3,7 +3,7 @@
 The JavaScript a Vanilla demo needs, **written in TypeScript**.
 
 Each file here is real source: `include`d by `tsconfig.json`, so `astro check` type-checks it like
-anything else in the app. That is the whole point of the move — these used to be template literals
+anything else in the app. That is the whole point of the move. These used to be template literals
 inside `demos/*.ts`, where `event.target.closest(…)` and `output.textContent.split(…)` were nobody's
 business to verify, and both are mistakes the compiler catches now.
 
@@ -17,7 +17,7 @@ source, a page hands it to `ComponentPreview`, and the preview does two things w
 ## Rules for a file in here
 
 - **No imports.** The frame runs the script through `Function`, which has no module scope. Type
-  stripping cannot rescue an `import` — it would still be there in the output.
+  stripping cannot rescue an `import`. It would still be there in the output.
 - **No words.** A string a reader can see is a translation, and translations live in the tree. Pass
   it through a `data-` attribute and read it back: see `placeholder-swap.ts`.
 - Reach for `querySelector<T>` and `instanceof` over assertions. The types are only worth having if

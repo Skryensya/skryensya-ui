@@ -84,7 +84,7 @@
    * here it re-declares the appearance hooks plus the one-pixel sink.
    *
    * Neutral stays a keycap: the fill goes sunken and the bevel inverts, so it reads as down without
-   * becoming a brand chip. Accent is the one that takes the action colour — "this shortcut is live"
+   * becoming a brand chip. Accent is the one that takes the action colour: "this shortcut is live"
    * is INFORMATION, which the accent-reach dimension never dials, exactly like a checked checkbox. */
   .sk-kbd[data-pressed] {
     --sk-kbd-bg: var(--color-bg-surface-sunken);
@@ -98,9 +98,9 @@
   }
 
   .sk-kbd[data-tone="accent"][data-pressed] {
-    --sk-kbd-bg: var(--color-action-primary);
+    --sk-kbd-bg: var(--color-action-accent);
     --sk-kbd-fg: var(--color-text-on-accent);
-    --sk-kbd-border-color: var(--color-action-primary);
+    --sk-kbd-border-color: var(--color-action-accent);
     --sk-kbd-shadow: inset 0 1px 2px color-mix(in oklab, var(--color-text-primary) 28%, transparent);
   }
 }

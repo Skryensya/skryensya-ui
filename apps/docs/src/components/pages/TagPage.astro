@@ -3,7 +3,7 @@ import "@skryensya/core/components/tag.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { tagTree } from "../../demos/tag";
+import { tagLinksTree, tagRemovableTree, tagSimpleTree, tagTonesTree } from "../../demos/tag";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/tag.yaml?raw";
 import coreSource from "@core/src/tag.ts?raw";
@@ -35,21 +35,30 @@ const sourceFiles = [
       tests: [
         { name: "carries its tone and label", description: t("tagPage.test1") },
         { name: "exposes a named remove control only when onRemove is given", description: t("tagPage.test2") },
+        { name: "removes with a real small icon-only button, not a lookalike", description: t("tagPage.test3") },
+        { name: "renders a navigable tag as a link and never as dismissible", description: t("tagPage.testLink") },
       ],
     },
   ]}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("tagPage.lede")} />
-    <ComponentPreview tree={tagTree(t)} label="Tag" />
-    <p set:html={t("tagPage.body")} />
+    <h3>{t("tagPage.simpleTitle")}</h3>
+    <p set:html={t("tagPage.simpleBody")} />
+    <ComponentPreview tree={tagSimpleTree(t)} label={t("tagPage.simpleLabel")} />
 
-    <h3>{t("tagPage.xTitle")}</h3>
-    <p set:html={t("tagPage.xBody1")} />
-    <p set:html={t("tagPage.xBody2")} />
-    <p set:html={t("tagPage.xBody3")} />
+    <h3>{t("tagPage.tonesTitle")}</h3>
+    <p set:html={t("tagPage.tonesBody")} />
+    <ComponentPreview tree={tagTonesTree(t)} label={t("tagPage.tonesLabel")} />
 
-    <p set:html={t("tagPage.reactBody")} />
+    <h3>{t("tagPage.linksTitle")}</h3>
+    <p set:html={t("tagPage.linksBody")} />
+    <ComponentPreview tree={tagLinksTree(t)} label={t("tagPage.linksLabel")} />
+
+    <h3>{t("tagPage.removableTitle")}</h3>
+    <p set:html={t("tagPage.removableBody")} />
+    <ComponentPreview tree={tagRemovableTree(t)} label={t("tagPage.removableLabel")} />
+
   </Fragment>
 
   <Fragment slot="install">

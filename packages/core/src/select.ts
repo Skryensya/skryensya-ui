@@ -48,7 +48,7 @@ export type SelectPartClass = (typeof selectParts)[SelectPart];
  * One choice: value, disabled, a required label. The shape `Select`'s own enhanced signature uses
  * verbatim, `Select.native` reuses with only the `value` option's `attr` overridden (a real
  * `<option value>` DOM attribute, not `data-value`), and `Combobox` builds on by adding its own
- * `description` slot — the same "export once, spread where it diverges" precedent `menuItemShape`
+ * `description` slot. The same "export once, spread where it diverges" precedent `menuItemShape`
  * (`menu.ts`) already set, rather than three components hand-writing the same fields three times.
  */
 export const selectableItemShape: NonNullable<ContractSlot["item"]> = {
@@ -111,7 +111,7 @@ export const selectContract = {
           prop: "options",
           /* `selectableItemShape`, with both attrs overridden to real DOM attributes: a native
              `<option value disabled>` reads `value`/`disabled` directly, never `data-value`/
-             `data-disabled` — the browser's own disabling only works on the real attribute. */
+             `data-disabled`: the browser's own disabling only works on the real attribute. */
           item: {
             ...selectableItemShape,
             options: {

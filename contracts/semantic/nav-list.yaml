@@ -12,7 +12,7 @@ NavListGroup:
   useWhen:
     - agrupa destinos bajo un rótulo
     - hace falta el <ul> aunque el grupo no lleve rótulo visible
-    - "con collapsible: la sección se puede ocultar/mostrar — el patrón WAI 'Disclosure (Navigation)'"
+    - "con collapsible: la sección se puede ocultar/mostrar. El patrón WAI 'Disclosure (Navigation)'"
   avoidWhen:
     - hay un solo destino y ningún rótulo: el grupo sigue siendo obligatorio, no es opcional
     - "collapsible sin label: el botón necesita el texto del rótulo para tener algo que mostrar"

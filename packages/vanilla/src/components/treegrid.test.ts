@@ -6,8 +6,8 @@ import { mountTreegrid } from "./treegrid.js";
 
 /*
  * The same fixture shape `treegrid.test.ts` (core) reasons about: Inbox (expanded, two children),
- * Drafts (collapsed, one child that stays hidden), Sent (a top-level leaf). Two columns — Subject,
- * From — the disclosure lives in the first.
+ * Drafts (collapsed, one child that stays hidden), Sent (a top-level leaf). Two columns. Subject,
+ * From. The disclosure lives in the first.
  */
 function markup() {
   document.body.innerHTML = `<table class="sk-treegrid" data-sk-treegrid aria-label="Mensajes" role="treegrid">
@@ -16,7 +16,7 @@ function markup() {
     </thead>
     <tbody>
       <tr data-sk-treegrid-row data-value="inbox" role="row" aria-level="1" aria-setsize="3" aria-posinset="1" aria-expanded="true">
-        <td role="gridcell">Inbox</td><td role="gridcell">—</td>
+        <td role="gridcell">Inbox</td><td role="gridcell">-</td>
       </tr>
       <tr data-sk-treegrid-row data-value="alice" role="row" aria-level="2" aria-setsize="2" aria-posinset="1">
         <td role="gridcell">Reunión</td><td role="gridcell">Alice</td>
@@ -25,13 +25,13 @@ function markup() {
         <td role="gridcell">Almuerzo</td><td role="gridcell">Bob</td>
       </tr>
       <tr data-sk-treegrid-row data-value="drafts" role="row" aria-level="1" aria-setsize="3" aria-posinset="2" aria-expanded="false">
-        <td role="gridcell">Drafts</td><td role="gridcell">—</td>
+        <td role="gridcell">Drafts</td><td role="gridcell">-</td>
       </tr>
       <tr data-sk-treegrid-row data-value="untitled" role="row" aria-level="2" aria-setsize="1" aria-posinset="1">
         <td role="gridcell">Sin título</td><td role="gridcell">Yo</td>
       </tr>
       <tr data-sk-treegrid-row data-value="sent" role="row" aria-level="1" aria-setsize="3" aria-posinset="3">
-        <td role="gridcell">Sent</td><td role="gridcell">—</td>
+        <td role="gridcell">Sent</td><td role="gridcell">-</td>
       </tr>
     </tbody>
   </table>`;
@@ -48,7 +48,7 @@ function resizableMarkup() {
     </thead>
     <tbody>
       <tr data-sk-treegrid-row data-value="inbox" role="row" aria-level="1" aria-setsize="1" aria-posinset="1">
-        <td role="gridcell">Inbox</td><td role="gridcell">—</td><td role="gridcell">Hoy</td>
+        <td role="gridcell">Inbox</td><td role="gridcell">-</td><td role="gridcell">Hoy</td>
       </tr>
     </tbody>
   </table>`;
@@ -74,7 +74,7 @@ describe("Treegrid vanilla enhancer", () => {
     expect(row("alice").hidden).toBe(false);
   });
 
-  it("gives exactly one row a tab stop on mount — the first visible row", () => {
+  it("gives exactly one row a tab stop on mount. The first visible row", () => {
     markup();
     const rows = Array.from(document.querySelectorAll<HTMLTableRowElement>("[data-sk-treegrid-row]"));
     const stops = rows.filter((element) => element.tabIndex === 0);
@@ -97,7 +97,7 @@ describe("Treegrid vanilla enhancer", () => {
     fireEvent.keyDown(root, { key: "ArrowLeft" });
     expect(row("inbox").getAttribute("aria-expanded")).toBe("false");
     // Kept painting through its own exit animation, not hidden the same frame the branch collapses
-    // — jsdom never fires `animationend`, so `TREEGRID_EXIT_FALLBACK_MS` is what settles it.
+    //. Jsdom never fires `animationend`, so `TREEGRID_EXIT_FALLBACK_MS` is what settles it.
     expect(row("alice").hidden).toBe(false);
     expect(row("bob").hidden).toBe(false);
     vi.advanceTimersByTime(TREEGRID_EXIT_FALLBACK_MS + 1);
@@ -175,7 +175,7 @@ describe("Treegrid vanilla enhancer", () => {
     expect(document.activeElement).toBe(row("sent"));
   });
 
-  it("never puts `sk-interactive` on the <tr> itself — its state layer breaks table column alignment", () => {
+  it("never puts `sk-interactive` on the <tr> itself. Its state layer breaks table column alignment", () => {
     markup();
     expect(row("inbox").classList.contains("sk-interactive")).toBe(false);
   });
@@ -212,12 +212,12 @@ describe("Treegrid column resize", () => {
   const cols = () => Array.from(document.querySelectorAll<HTMLTableColElement>("col"));
 
   /** jsdom lays nothing out, so the seed (`measured width ÷ colCount`) clamps every column straight
-   * to `MIN_COLUMN_WIDTH` — a real, but degenerate, 0-length travel range that cannot demonstrate a
+   * to `MIN_COLUMN_WIDTH`. A real, but degenerate, 0-length travel range that cannot demonstrate a
    * resize at all. Tests that need room to move set wider widths directly, the same way a real
    * browser's own initial measurement would have. */
   const widenColumns = (px: number) => cols().forEach((col) => (col.style.width = `${px}px`));
 
-  /** A press, then whatever moves the caller asks for, then the release — same shape as
+  /** A press, then whatever moves the caller asks for, then the release. Same shape as
    * `sidebar.test.ts`'s own `gesture()` helper, against the resizer at `resizerIndex` instead. */
   function gesture(resizerIndex: number, xs: number[], { release = true } = {}) {
     const handle = resizers()[resizerIndex]!;
@@ -237,7 +237,7 @@ describe("Treegrid column resize", () => {
     return handle;
   }
 
-  it("inserts one resizer per column boundary — never after the last column", () => {
+  it("inserts one resizer per column boundary: never after the last column", () => {
     resizableMarkup();
     // Three columns, two boundaries.
     expect(resizers()).toHaveLength(2);

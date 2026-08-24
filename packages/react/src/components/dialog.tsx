@@ -27,7 +27,7 @@ export type DialogProps = DialogHTMLAttributes<HTMLDialogElement> & {
   vaul?: boolean;
   /**
    * Renders as an Alert Dialog: `role="alertdialog"`, `aria-modal` authored explicitly, and
-   * `aria-describedby` pointing at the body — for a message needing the user's IMMEDIATE
+   * `aria-describedby` pointing at the body. For a message needing the user's IMMEDIATE
    * attention (a destructive confirmation, a blocking error), not a dialog that merely contains
    * one. Focus is still the platform's: put `autofocus` on the least destructive action yourself.
    */

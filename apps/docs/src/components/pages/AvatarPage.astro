@@ -17,7 +17,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
 /*
  * Demo photos, as dummyimage.com placeholders painted in the accent fill.
  *
- * The hexes are the DEFAULT brand's `--color-action-primary` / `--color-text-on-accent`: a URL is a
+ * The hexes are the DEFAULT brand's `--color-action-accent` / `--color-text-on-accent`: a URL is a
  * string and cannot hold a var(). `previewScript` re-resolves both tokens inside the frame and
  * rewrites `src`, so the demo follows the reader's mode and brand while the source stays a URL
  * anyone can paste.
@@ -53,7 +53,7 @@ function hexOf(token, fallback) {
 }
 
 function retint() {
-  const bg = hexOf("--color-action-primary", "${ACCENT_HEX}");
+  const bg = hexOf("--color-action-accent", "${ACCENT_HEX}");
   const fg = hexOf("--color-text-on-accent", "${ON_ACCENT_HEX}");
   for (const img of document.querySelectorAll('img[src*="dummyimage.com"]')) {
     // The authored src is the template; keep it, the first repaint would otherwise consume it.

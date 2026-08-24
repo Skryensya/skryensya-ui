@@ -12,12 +12,12 @@ entries:
       title: portals se mueve de MegamenuTrigger a Megamenu
       body: >-
         Marcaba <code>portals: true</code> en <code>MegamenuTrigger</code>, copiado del mismo
-        vocabulario que usan <code>Menu</code>/<code>Menubar</code> — pero ahí cada instancia porta
+        vocabulario que usan <code>Menu</code>/<code>Menubar</code>: pero ahí cada instancia porta
         su propio panel; Megamenu no: un único panel físico, de altura constante, portado UNA vez
         desde la raíz (<code>megamenu.tsx</code>, comentario de cabecera: "ONE PHYSICAL PANEL... never
         one inside each trigger"), para que cambiar de categoría se lea como la misma caja con
         contenido nuevo. El componente React que realmente llama <code>createPortal</code> y acepta
-        <code>container</code> es <code>Megamenu</code>, no <code>MegamenuTrigger</code> — así que el
+        <code>container</code> es <code>Megamenu</code>, no <code>MegamenuTrigger</code>: así que el
         <code>container</code> que un consumidor inyecta a través de un árbol de uso quedaba en el
         signature equivocado, invisible para el componente que de verdad lo necesitaba, y
         <code>Megamenu</code> siempre terminaba en el <code>document.body</code> por defecto.
@@ -26,12 +26,12 @@ entries:
       title: portals moves from MegamenuTrigger to Megamenu
       body: >-
         Marked <code>portals: true</code> on <code>MegamenuTrigger</code>, copied from the same
-        vocabulary <code>Menu</code>/<code>Menubar</code> use — but there each instance portals its
+        vocabulary <code>Menu</code>/<code>Menubar</code> use: but there each instance portals its
         own panel; Megamenu does not: one single physical panel, constant height, portalled ONCE from
         the root (<code>megamenu.tsx</code>'s own header comment: "ONE PHYSICAL PANEL... never one
         inside each trigger"), so switching categories reads as the same box gaining new content. The
         React component that actually calls <code>createPortal</code> and accepts <code>container</code>
-        is <code>Megamenu</code>, not <code>MegamenuTrigger</code> — so the <code>container</code> a
+        is <code>Megamenu</code>, not <code>MegamenuTrigger</code>: so the <code>container</code> a
         consumer injects through a usage tree landed on the wrong signature, invisible to the
         component that actually needed it, and <code>Megamenu</code> always fell back to
         <code>document.body</code>. Found while writing the first canonical tree to render this
@@ -100,7 +100,7 @@ entries:
       title: Nuevo contrato Megamenu
       body: >-
         Una barra de categorías, cada una desplegando un panel borde a borde de 2-4
-        <code>NavListGroup</code> (mismo componente que usa NavList) — deliberadamente distinto de
+        <code>NavListGroup</code> (mismo componente que usa NavList): deliberadamente distinto de
         <code>Menu</code>/<code>Menubar</code>: sin <code>role="menu"</code>, sin flechas ni
         typeahead, patrón WAI-ARIA "Disclosure (Navigation)". Cada trigger es un
         <code>&lt;button aria-expanded&gt;</code>, nunca un enlace: es una categoría, no un destino.
@@ -111,10 +111,10 @@ entries:
       title: New Megamenu contract
       body: >-
         A row of category triggers, each opening an edge-to-edge panel of 2-4
-        <code>NavListGroup</code>s (the same component NavList uses) — deliberately unlike
+        <code>NavListGroup</code>s (the same component NavList uses): deliberately unlike
         <code>Menu</code>/<code>Menubar</code>: no <code>role="menu"</code>, no arrow keys or
         typeahead, the WAI-ARIA "Disclosure (Navigation)" pattern instead. Every trigger is a plain
-        <code>&lt;button aria-expanded&gt;</code>, never a link — it is a category, not a
+        <code>&lt;button aria-expanded&gt;</code>, never a link: it is a category, not a
         destination. Each trigger's panel anchors against the whole BAR (<code>Megamenu</code>
         itself, not the individual trigger), so it measures the same edge-to-edge width regardless of
         which one is open. Composes as a guest of <code>Navbar</code>, alongside <code>NavList</code>.

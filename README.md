@@ -65,7 +65,7 @@ nobody validates.
 A component page can carry a "Tests" tab (`ComponentPageShell`'s `tests` prop, rendered by
 `apps/docs/src/components/TestCoverage.astro`): one short, hand-translated line per test, with a
 success/danger/clock icon that reflects what the test **actually did on its last run**, not a
-decorative or hand-typed status. Wired for 57 component pages so far — effectively every page with a
+decorative or hand-typed status. Wired for 57 component pages so far. Effectively every page with a
 real test file behind it (see `TARGETS` in `scripts/build-test-report.mjs` for the current list).
 
 The chain: `scripts/build-test-report.mjs` runs the real Vitest files listed in its `TARGETS` array
@@ -74,11 +74,11 @@ with `--reporter=json` and writes `artifacts/test-results.json`, keyed
 reads that artifact (same `@artifacts/*`-alias pattern `contract-reference.ts` uses for
 `ai-manifest.json`) and exposes `testStatus(file, name)`. Each `*Page.astro` that uses the tab passes
 `tests={[{ file, tests: [{ name, description }] }]}`, where `name` must match the real `it()` title
-**verbatim** — that's the lookup key.
+**verbatim**. That's the lookup key.
 
 A drift (renamed test, typo in `name`) does not lie or crash: `testStatus` falls back to a neutral
 "not run" clock icon and logs a `console.warn` in the dev-server terminal. The report is not part of
-`turbo check`/`build` on purpose — a stale `test-results.json` should only degrade one tab, not fail
+`turbo check`/`build` on purpose. A stale `test-results.json` should only degrade one tab, not fail
 the whole build. Regenerate it by hand after touching a tracked test file:
 
 ```bash

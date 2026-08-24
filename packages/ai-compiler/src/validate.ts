@@ -368,7 +368,7 @@ function checkSlots(
 
 /**
  * A slot's `restrictOptions` narrows one of the ITEM's own options to a subset of its usual values.
- * Silent when the item's signature does not have that option at all — a Link has no `variant`, so a
+ * Silent when the item's signature does not have that option at all. A Link has no `variant`, so a
  * slot that restricts `variant` says nothing about it, the same way `checkAccessibility` skips a rule
  * keyed on an option this signature never declared.
  *

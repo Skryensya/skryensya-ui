@@ -7,25 +7,25 @@ export const splitButtonMenuItems = (t: Translate): readonly ItemInput[] => [
   { options: { value: "save-template" }, slots: { label: t("demo.splitButton.template") } },
 ];
 
-/** Archive is a lower-emphasis action than Save — pairs with `variant: "subtle"`. */
+/** Archive is a lower-emphasis action than Save. Pairs with `variant: "subtle"`. */
 export const splitButtonSubtleMenuItems = (t: Translate): readonly ItemInput[] => [
   { options: { value: "archive-mute" }, slots: { label: t("demo.splitButton.subtleItem1") } },
   { options: { value: "archive-thread" }, slots: { label: t("demo.splitButton.subtleItem2") } },
 ];
 
-/** Download sits over media — pairs with `variant: "translucent"`, meant for photo/hero backdrops. */
+/** Download sits over media. Pairs with `variant: "translucent"`, meant for photo/hero backdrops. */
 export const splitButtonTranslucentMenuItems = (t: Translate): readonly ItemInput[] => [
   { options: { value: "download-hires" }, slots: { label: t("demo.splitButton.translucentItem1") } },
   { options: { value: "download-original" }, slots: { label: t("demo.splitButton.translucentItem2") } },
 ];
 
-/** Share is chromeless, optional — pairs with `variant: "ghost"`. */
+/** Share is chromeless, optional. Pairs with `variant: "ghost"`. */
 export const splitButtonGhostMenuItems = (t: Translate): readonly ItemInput[] => [
   { options: { value: "share-link" }, slots: { label: t("demo.splitButton.ghostItem1") } },
   { options: { value: "share-email" }, slots: { label: t("demo.splitButton.ghostItem2") } },
 ];
 
-/** Delete is destructive — pairs with `variant: "danger"`. */
+/** Delete is destructive. Pairs with `variant: "danger"`. */
 export const splitButtonDangerMenuItems = (t: Translate): readonly ItemInput[] => [
   { options: { value: "delete-forever" }, slots: { label: t("demo.splitButton.dangerItem1") } },
   { options: { value: "delete-trash" }, slots: { label: t("demo.splitButton.dangerItem2") } },

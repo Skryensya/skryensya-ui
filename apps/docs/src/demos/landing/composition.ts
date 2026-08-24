@@ -6,7 +6,7 @@ import { planItems } from "../data/select";
 /*
  * Composition journey on the landing page: start with a field, add an action, introduce a listbox,
  * collapse into Combobox, then wrap structure (form + dialog). Each stage is a real usage tree so
- * ComponentPreview mounts live behaviour — not a static illustration.
+ * ComponentPreview mounts live behaviour: not a static illustration.
  */
 
 export const compositionInputTree = (t: Translate): UsageTree => ({

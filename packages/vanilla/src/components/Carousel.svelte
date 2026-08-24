@@ -108,13 +108,13 @@
 
   /*
    * WCAG 2.2.2 (Pause, Stop, Hide) y el patrón WAI-ARIA de Carousel piden que la rotación automática
-   * se detenga apenas el mouse pasa por encima O el teclado entra con foco, y se reanude al salir —
+   * se detenga apenas el mouse pasa por encima O el teclado entra con foco, y se reanude al salir -
    * salvo que la OTRA condición siga activa. La máquina de Zag (1.42.0) no implementa ninguna de las
    * dos: su estado `autoplay` no reacciona en absoluto a `VIEWPORT.FOCUS` (confirmado leyendo
    * `carousel.machine.js`), y no existe manejo de mouseenter/mouseleave en todo el paquete.
    *
-   * `desiredPlaying` es la intención explícita del usuario — lo que el botón de pausa/play pidió por
-   * última vez — independiente de la pausa TEMPORAL que hover/foco imponen. Sin esa separación, salir
+   * `desiredPlaying` es la intención explícita del usuario. Lo que el botón de pausa/play pidió por
+   * última vez. Independiente de la pausa TEMPORAL que hover/foco imponen. Sin esa separación, salir
    * con el mouse reanudaría un carrusel que el usuario detuvo a propósito con el botón.
    */
   let hovering = $state(false);
@@ -263,7 +263,7 @@
     {#if wantsAutoplay}
       <!--
         `data-pressed` y `aria-label` NO vienen del spread de Zag (que los deriva de `api.isPlaying`,
-        el estado MOMENTÁNEO — suprimido mientras el mouse o el foco están encima). Vienen de
+        el estado MOMENTÁNEO. Suprimido mientras el mouse o el foco están encima). Vienen de
         `desiredPlaying`, la última elección EXPLÍCITA del usuario: si el botón mostrara "Reanudar"
         sólo porque el hover ya pausó la rotación, un click ahí haría lo contrario de lo que promete
         (reiniciaría en vez de detener). El `onclick` tampoco delega en el de Zag por la misma razón:

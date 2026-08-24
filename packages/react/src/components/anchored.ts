@@ -66,8 +66,8 @@ const serverSupport = () => false;
  * then never PAINTS it, an anchor-positioned element cannot itself be reached as an anchor from
  * inside another anchor-positioned box. `position: fixed` widens which anchors are reachable
  * (`anchored.css`'s own note) but does not fix this doubly-nested case. `false` here keeps the
- * machine's own placement — the already-working fallback this pattern ships for browsers with no
- * engine at all — for exactly the boxes the engine cannot place, instead of a box that is `on` but
+ * machine's own placement. The already-working fallback this pattern ships for browsers with no
+ * engine at all. For exactly the boxes the engine cannot place, instead of a box that is `on` but
  * invisible.
  */
 export function useAnchored(id: string, enabled = true): Anchored {

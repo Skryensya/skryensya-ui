@@ -24,14 +24,14 @@ export const popoverTree = (t: Translate): UsageTree => ({
 
 /*
  * The same contract, past the point where `title`/`description` are enough: a header (who), a body
- * (what) and a footer (what to do about it), all inside `children` — the contract has no dedicated
+ * (what) and a footer (what to do about it), all inside `children`. The contract has no dedicated
  * header/footer slot, and does not need one, `children` already accepts a node, and a node is
  * composition, not prose. Built entirely from published signatures (Inline/Stack for the rows,
  * Avatar.initials, Text, Button.action), not a single hand-rolled class.
  *
  * `Popover.bare`, not `Popover`: `Popover`'s template renders a "Cerrar" button unconditionally,
  * with no `whenGiven` to opt out of it. A footer that already ends in its own dismiss action
- * ("Ignorar") does not need a second, unrelated close control appended under it — light-dismiss and
+ * ("Ignorar") does not need a second, unrelated close control appended under it. Light-dismiss and
  * Escape still close the panel either way, that part of the contract is the platform's, not the
  * button's. `Popover.bare` renders no title, no description and no close button, which is exactly
  * the shape this composition wants.
@@ -107,7 +107,7 @@ export const popoverStructuredTree = (t: Translate): UsageTree => ({
  *
  * Wrapped in two nested, padded `Box`es: the anchor engine flips a placement to the opposite side
  * when its preferred side has no room, and a trigger sitting flush against the preview stage's top
- * edge has no room above it — `block-start` would silently render as if it were `block-end`. One
+ * edge has no room above it: `block-start` would silently render as if it were `block-end`. One
  * `xl` Box (the scale's ceiling, 32px) measured 56px above the trigger against a 58px panel, six
  * pixels short; nesting a second one is real, published space, not a magic number chosen to win a
  * pixel count.

@@ -4,7 +4,7 @@
  * No contract lives here any more (decision 33, reversed): `ThemeToggle` used to be a signature
  * built on these functions plus Icon Toggle faces; now a consumer composes `IconStateButton`
  * itself and calls into this module for the part that IS generic across any app that wants a
- * color-mode control — reading/writing `data-scheme`, cycling the value, resolving `system`
+ * color-mode control. Reading/writing `data-scheme`, cycling the value, resolving `system`
  * against the OS. WHERE the choice persists is still the app's call (a cookie, a user record on a
  * server); `colorModePreference` below is the declaration for the localStorage case, so an app
  * that takes the default does not hand-roll the slot name and the guard.
@@ -81,7 +81,7 @@ export function applyColorMode(root: HTMLElement, mode: ColorMode): void {
   root.style.colorScheme = mode === "system" ? "light dark" : mode;
 }
 
-/** Paint light or dark on a root — never `system`. */
+/** Paint light or dark on a root: never `system`. */
 export function applyAppearance(root: HTMLElement, mode: Appearance): void {
   root.setAttribute("data-scheme", mode);
   root.style.colorScheme = mode;

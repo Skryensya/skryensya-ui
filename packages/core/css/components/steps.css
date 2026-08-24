@@ -87,35 +87,33 @@
   }
 
   .sk-steps__item[data-status="complete"]::after {
-    background: var(--color-action-primary);
+    background: color-mix(in oklab, var(--color-action-accent) 28%, var(--color-border-default));
   }
 
   .sk-steps__item[data-status="complete"] .sk-steps__marker {
-    border-color: transparent;
-    background: var(--color-action-primary);
-    color: var(--color-text-on-accent);
+    border-color: color-mix(in oklab, var(--color-action-accent) 55%, var(--color-border-default));
+    background: var(--color-bg-surface);
+    color: var(--color-text-accent);
   }
 
   .sk-steps__item[data-status="complete"] .sk-steps__label {
     color: var(--color-text-primary);
   }
 
-  /* Current is marked at the MARKER, not by filling the whole step with a card background. The marker
-   * keeps its accent fill and gains a halo: an opaque surface gap that masks the connector behind it,
-   * then a soft accent ring that reads as "you are here", the radio-selected look, without boxing the
-   * step in. The label goes accent to tie the eye to the marker and separate current from the done
-   * steps (which are primary) and the upcoming ones (which are muted). */
+  /* Current is marked at the MARKER, not by filling the whole step with brand colour. The ring and
+   * label carry "you are here"; completed steps keep their checkmark as the non-colour cue. This
+   * keeps the rail readable without turning every past/current marker into an accent badge. */
   .sk-steps__item[data-status="current"] .sk-steps__marker {
-    border-color: var(--color-action-primary);
-    background: var(--color-action-primary);
-    color: var(--color-text-on-accent);
+    border-color: var(--color-action-accent);
+    background: var(--color-bg-surface);
+    color: var(--color-text-accent);
     box-shadow:
       0 0 0 3px var(--color-bg-surface),
-      0 0 0 5px color-mix(in oklab, var(--color-action-primary) 30%, transparent);
+      0 0 0 5px color-mix(in oklab, var(--color-action-accent) 18%, transparent);
   }
 
   .sk-steps__item[data-status="current"] .sk-steps__label {
-    color: var(--color-text-accent);
+    color: var(--color-text-primary);
     font-weight: var(--font-weight-emphasis);
   }
 

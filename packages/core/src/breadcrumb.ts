@@ -23,7 +23,7 @@ export const breadcrumbParts = {
    * The "…" that stands in for the crumbs a narrow trail has no room for. Ancestor levels only,
    * never the first crumb (the trail's anchor) or the current one (the label it exists to show):
    * see `collapsibleBreadcrumbRange` below, the one place that range is computed. What it opens is
-   * a real `Menu` (`core/menu.ts`), not a bespoke panel — there is no `collapsePanel` part here for
+   * a real `Menu` (`core/menu.ts`), not a bespoke panel. There is no `collapsePanel` part here for
    * the same reason there is no second stylesheet for it: the trigger is this component's, the
    * dropdown is Menu's.
    */
@@ -34,13 +34,13 @@ export const breadcrumbParts = {
  * Which item indices a narrow trail may hide behind the "…" disclosure: everything except the
  * first crumb (where the trail starts) and the last one (the page you are on, the one label the
  * trail exists to show in full). Both bindings collapse the SAME range so neither invents its own
- * notion of "middle" — the vanilla enhancer re-derives it from the rendered `<li>` count instead of
+ * notion of "middle". The vanilla enhancer re-derives it from the rendered `<li>` count instead of
  * importing this directly (it works off compiled markup, not the item array), but the rule is this.
  */
 export function collapsibleBreadcrumbRange(
   itemCount: number,
 ): { start: number; end: number } | null {
-  // Fewer than 4 items means at most one crumb sits between first and last — collapsing it would
+  // Fewer than 4 items means at most one crumb sits between first and last. Collapsing it would
   // save no space worth a disclosure, so there is nothing to hide.
   if (itemCount < 4) return null;
   return { start: 1, end: itemCount - 2 };
@@ -110,7 +110,7 @@ export const breadcrumbContract = {
         host: true,
         /*
          * The enhancer's attachment point (`registry.ts`'s `[data-sk-breadcrumb]`). Present on every
-         * trail, not only a long one — the enhancer itself is what decides, per resize, whether
+         * trail, not only a long one. The enhancer itself is what decides, per resize, whether
          * there is anything to collapse; a short trail just never grows the disclosure.
          */
         attrs: { "data-sk-breadcrumb": "" },
@@ -146,7 +146,7 @@ export const breadcrumbContract = {
                    * The current page keeps its `href` as authored data, but it is never rendered as
                    * a link: it is the one label the trail exists to answer "where am I", never
                    * truncated or muted like an ancestor crumb (see breadcrumb.css), and WAI-ARIA's
-                   * Breadcrumb pattern explicitly allows the current item to be plain text — only a
+                   * Breadcrumb pattern explicitly allows the current item to be plain text. Only a
                    * LINK to the current page needs `aria-current="page"`, non-links get it for free
                    * either way. Same `part` as the href-less span above; together the two cover
                    * "not a link" whether or not the author happened to also give it a destination.

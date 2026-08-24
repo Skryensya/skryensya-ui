@@ -5,7 +5,7 @@ import { FileUpload } from "./file-upload.js";
 function selectFiles(input: HTMLInputElement, files: File[]) {
   Object.defineProperty(input, "files", { value: files, configurable: true });
   // Zag's hidden input reads the selection on `input`, not `change` (file-upload.connect.mjs
-  // `getHiddenInputProps().onInput`), and validates it asynchronously — the DOM only settles
+  // `getHiddenInputProps().onInput`), and validates it asynchronously. The DOM only settles
   // after a microtask, which is what `waitFor` below is for.
   fireEvent.input(input);
 }

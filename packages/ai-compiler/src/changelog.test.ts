@@ -42,7 +42,7 @@ function datesOf(dir: string, id: string): readonly string[] {
  * The four text fields an entry owes, indented as YAML.
  *
  * A helper rather than repeated literals because every fixture below needs all four for the entry to
- * survive validation at all — and a fixture that fails for a reason other than the one under test
+ * survive validation at all, and a fixture that fails for a reason other than the one under test
  * proves nothing.
  */
 function text(word: string): string {

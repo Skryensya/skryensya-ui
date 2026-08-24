@@ -1,6 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
@@ -21,50 +22,7 @@ const anatomy = `<!-- The ANCHOR: whatever it is you measure against. Almost alw
   </span>
 </span>`;
 
-const html = `<div class="sk-anclaje-demo">
-  <span class="sk-tooltip" data-sk-anchor data-sk-placement="block-start">
-    <button class="sk-button sk-interactive sk-tooltip__trigger sk-anchor" data-sk-anchor-trigger type="button">
-      block-start
-    </button>
-    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-      <span class="sk-anchored-arrow" aria-hidden="true"></span>
-      <span class="sk-tooltip__content" data-sk-anchor-content>comes out from above</span>
-    </span>
-  </span>
 
-  <span class="sk-tooltip" data-sk-anchor data-sk-placement="block-end">
-    <button class="sk-button sk-interactive sk-tooltip__trigger sk-anchor" data-sk-anchor-trigger type="button">
-      block-end
-    </button>
-    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-      <span class="sk-anchored-arrow" aria-hidden="true"></span>
-      <span class="sk-tooltip__content" data-sk-anchor-content>It comes out from below</span>
-    </span>
-  </span>
-
-  <span class="sk-tooltip" data-sk-anchor data-sk-placement="inline-end">
-    <button class="sk-button sk-interactive sk-tooltip__trigger sk-anchor" data-sk-anchor-trigger type="button">
-      inline-end
-    </button>
-    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-      <span class="sk-anchored-arrow" aria-hidden="true"></span>
-      <span class="sk-tooltip__content" data-sk-anchor-content>Comes out to the side</span>
-    </span>
-  </span>
-
-  <span class="sk-tooltip" data-sk-anchor>
-    <button class="sk-button sk-interactive sk-tooltip__trigger sk-anchor" data-sk-anchor-trigger type="button">
-      no arrow
-    </button>
-    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-      <span class="sk-tooltip__content" data-sk-anchor-content>The arrow is optional</span>
-    </span>
-  </span>
-</div>`;
-
-const js = `import { initComponents } from "@skryensya/vanilla/auto";
-
-initComponents();`;
 
 const escapeHatch = `/* A submenu appears on the side and aligned above: it is not any of the four.
    It is requested by the hook, not by adding a fifth to the public vocabulary. */
@@ -95,6 +53,26 @@ const arrowReact = `<Tooltip arrow content="It keeps itself">
 <Popover arrow trigger="Ver perfil" title="Ada Lovelace">
   Mathematician and writer.
 </Popover>`;
+
+const anchorTree: UsageTree = {
+  contract: "layout",
+  signature: "Inline",
+  attrs: { class: "sk-anclaje-demo" },
+  children: ["block-start", "block-end", "inline-start", "inline-end"].map((placement) => ({
+    contract: "tooltip",
+    signature: "Tooltip",
+    options: { placement, arrow: true },
+    slots: {
+      children: {
+        contract: "button",
+        signature: "Button.action",
+        attrs: { class: "sk-tooltip__trigger" },
+        children: placement,
+      },
+      content: "Tooltip",
+    },
+  })),
+};
 ---
 
 <Base
@@ -107,7 +85,7 @@ const arrowReact = `<Tooltip arrow content="It keeps itself">
     A box placed against <strong>another</strong> element, not against the page: it leaves one side of the anchor, goes to the opposite side when it does not enter, and disappears if the anchor leaves the screen. This is what tooltip, popover, popup, menu and its submenus, select, combobox and date picker do.
   </p>
 
-  <ComponentPreview html={html} js={js} label="HTML" />
+  <ComponentPreview tree={anchorTree} label="HTML" />
 
   <h2>Why is it a pattern and not a component</h2>
   <p>

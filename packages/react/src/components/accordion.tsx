@@ -51,7 +51,7 @@ export type AccordionTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children?: ReactNode;
   /**
    * The page-outline heading level this section announces itself at, on a `role="heading"`
-   * wrapper around the button rather than the button itself — a control cannot also claim the
+   * wrapper around the button rather than the button itself. A control cannot also claim the
    * heading role its own interactive one already fills. Defaults to 3, the level every demo in
    * this codebase already uses for the same sections rendered as `<details>`.
    */

@@ -8,7 +8,7 @@ const items = [
 ];
 
 describe("SplitButton (React)", () => {
-  it("renders a labelled group holding the primary button and the menu's icon-only trigger", () => {
+  it("renders a labelled group holding the action button and the menu's icon-only trigger", () => {
     const ui = render(<SplitButton label="Guardar opciones">Guardar</SplitButton>);
     const group = ui.getByRole("group", { name: "Guardar opciones" });
 
@@ -18,7 +18,7 @@ describe("SplitButton (React)", () => {
     expect(buttons).toHaveLength(2);
   });
 
-  it("clicking the primary button fires onClick, independent of the menu", () => {
+  it("clicking the action button fires onClick, independent of the menu", () => {
     const onClick = vi.fn();
     const ui = render(
       <SplitButton onClick={onClick} menuLabel="Más opciones" menuItems={items}>
@@ -44,7 +44,7 @@ describe("SplitButton (React)", () => {
     await waitFor(() => expect(onSelect).toHaveBeenCalledWith({ value: "export-csv" }));
   });
 
-  it("disables both the primary button and the menu trigger together", () => {
+  it("disables both the action button and the menu trigger together", () => {
     const ui = render(
       <SplitButton disabled menuLabel="Más opciones" menuItems={items}>
         Guardar
@@ -58,12 +58,12 @@ describe("SplitButton (React)", () => {
 
   /*
    * A real, previously-shipped regression (docs/aria-apg-audit.md's own "Menu Button" notes, sixth
-   * amendment): the fallback trigger has to PAIR with the primary button's own `variant`/`size` and
-   * carry the icon-only+welded shape, or the two halves stop reading as one control — the divider
+   * amendment): the fallback trigger has to PAIR with the action button's own `variant`/`size` and
+   * carry the icon-only+welded shape, or the two halves stop reading as one control. The divider
    * between them is CSS keyed to `data-weld-start`/`.sk-button:not(:first-child)`, so a trigger
    * missing any of these renders as two unrelated buttons with a visible gap and a mismatched color.
    */
-  it("pairs the fallback trigger's shape and variant/size with the primary button", () => {
+  it("pairs the fallback trigger's shape and variant/size with the action button", () => {
     const ui = render(
       <SplitButton menuLabel="Más opciones" menuItems={items} variant="danger" size="lg">
         Guardar
@@ -76,16 +76,16 @@ describe("SplitButton (React)", () => {
     expect(trigger.hasAttribute("data-weld-start")).toBe(true);
   });
 
-  it("renders a hand-composed primary and menu verbatim instead of the flat-prop fallback", () => {
+  it("renders a hand-composed action and menu verbatim instead of the flat-prop fallback", () => {
     const ui = render(
       <SplitButton
-        primary={<button type="button">Custom primary</button>}
+        action={<button type="button">Custom action</button>}
         menu={<div data-testid="custom-menu">Custom menu</div>}
       >
         Ignored children
       </SplitButton>,
     );
-    expect(ui.getByRole("button", { name: "Custom primary" })).toBeTruthy();
+    expect(ui.getByRole("button", { name: "Custom action" })).toBeTruthy();
     expect(ui.getByTestId("custom-menu")).toBeTruthy();
     expect(ui.queryByText("Ignored children")).toBeNull();
   });

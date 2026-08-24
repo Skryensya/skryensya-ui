@@ -14,7 +14,7 @@ import { contracts } from "./registry.js";
  *
  * "A binding" used to mean only the React `.tsx` file, which left a one-hop blind spot: a hand-copied
  * enum lived one file upstream, inside the contract's OWN file in core, with the react binding merely
- * importing it by name (fine, by this file's own rule — a `TypeReferenceNode` cannot drift). Core is
+ * importing it by name (fine, by this file's own rule. A `TypeReferenceNode` cannot drift). Core is
  * a source, not a binding, but it can still restate itself: `AccordionType = "single" | "multiple"`
  * sitting beside `accordionContract.options.type` is the same copy this file exists to catch, just
  * with the contract and its restatement in one file instead of two. So every contract's own file is
@@ -24,7 +24,7 @@ import { contracts } from "./registry.js";
  * Drift is not *naming* an option; it is restating its VALUE SET, because that is the thing that can
  * go stale. So the check looks for literal types written by hand:
  *
- *   variant?: "neutral" | "primary"   drift: the contract's enum, copied, and now one short
+ *   variant?: "neutral" | "accent"   drift: the contract's enum, copied, and now one short
  *   size?: ButtonSize                 fine:  ButtonSize is derived FROM the contract
  *   href: string                      fine:  narrowing a string option to required in one branch of
  *                                             a discriminated union is how the tag switch is typed

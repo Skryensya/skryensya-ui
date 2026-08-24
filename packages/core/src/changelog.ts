@@ -9,7 +9,7 @@ import type { ComponentContract } from "./contract.js";
  * gate reads both.
  *
  * ── WHY THESE FIVE WORDS ────────────────────────────────────────────────────
- * They used to be Keep a Changelog's — added, changed, fixed, removed, breaking — which name what
+ * They used to be Keep a Changelog's. Added, changed, fixed, removed, breaking, which name what
  * happened to the FILE. These name what happened to the CONSUMER, which is the only reader a
  * changelog has:
  *
@@ -17,11 +17,11 @@ import type { ComponentContract } from "./contract.js";
  *   `feature`   there is something new they may want to reach for
  *   `bugfix`    something they already use was wrong and now is not
  *   `rework`    the same capability, rebuilt: nothing to do, but it may not look or behave identically
- *   `chore`     nothing reaches them at all — build, deps, internals
+ *   `chore`     nothing reaches them at all. Build, deps, internals
  *
  * FIVE, AND NOT SIX, because Badge ships exactly five tones and every kind is coloured (see the
- * `attrsWhen` on ChangelogEntry). A sixth kind would either share a colour with another — which is
- * the ambiguity colour-coding exists to remove — or force this component to paint hues Badge does
+ * `attrsWhen` on ChangelogEntry). A sixth kind would either share a colour with another, which is
+ * the ambiguity colour-coding exists to remove, or force this component to paint hues Badge does
  * not own, and then a brand that restyles a status pill would restyle four of them.
  *
  * WHAT IS NOT HERE, and where it goes instead. `removed` and `deprecated` are both `breaking`: this
@@ -70,7 +70,7 @@ export const changeKindTones = {
  *
  * It used to be one dot per ENTRY, which meant every entry was a two-column grid, and the connector
  * between two dots had to be masked open at both ends by arithmetic that only worked because every
- * entry was set at one size. All of that was in service of a tick that said WHEN — and the version
+ * entry was set at one size. All of that was in service of a tick that said WHEN, and the version
  * heading says when now, better, because it says it once for a group of changes instead of
  * repeating a date down the side of a page. There is no dot left at all: the rail simply runs
  * thicker beside a version, which is one shape doing both jobs.
@@ -126,7 +126,7 @@ export type ChangelogPartClass = (typeof changelogParts)[ChangelogPart];
  * the same day.
  *
  * A VERSION WITH NO DATE IS ONE THAT HAS NOT SHIPPED, and that is the only thing the contract says
- * about unreleased work — no `status` option, no second vocabulary. The absence IS the fact, so
+ * about unreleased work: no `status` option, no second vocabulary. The absence IS the fact, so
  * there is no way to write a release that claims a ship date and denies it, or the reverse. What a
  * consumer does with it is name the version accordingly (`0.1.0-dev`), and the template hands CSS a
  * `data-unreleased` hook so the rail can run past that version without thickening into a stop.
@@ -261,7 +261,7 @@ export const changelogContract = {
      * EVERY KIND IS COLOURED, one tone each, straight off `changeKindTones`. An earlier version
      * coloured only `breaking` and left the rest grey, on the argument that a page of green reads as
      * a success report; what it produced instead was a page of grey, where the badge column carried
-     * no information at all and the kind had to be READ rather than seen — which is the one job a
+     * no information at all and the kind had to be READ rather than seen, which is the one job a
      * badge has that prose does not. The tones are roles rather than a rainbow, and they sort by how
      * much the reader owes, so scanning the column answers "is any of this for me" before a word is
      * read.
@@ -294,7 +294,7 @@ export const changelogContract = {
             /*
              * `changeKindTones`, written out. Five `equals` branches rather than a loop over the
              * table, because this object is `as const` and a mapped array widens every literal in
-             * it to `string` — the contract would stop type-checking its own attribute values. The
+             * it to `string`. The contract would stop type-checking its own attribute values. The
              * gate that keeps the two in step is exhaustiveness: `kind` has a default, so the
              * emitter always resolves a value, and a kind added to the table without a branch here
              * ships a badge with no `data-tone` at all.

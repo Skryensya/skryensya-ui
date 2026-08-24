@@ -13,7 +13,7 @@ Slider:
 
 SliderRange:
   useWhen:
-    - "el usuario acota un rango entre un mínimo y un máximo — un filtro de precio, una franja de fechas por posición"
+    - "el usuario acota un rango entre un mínimo y un máximo. Un filtro de precio, una franja de fechas por posición"
   avoidWhen:
     - "es un solo valor; eso es Slider"
     - "hace falta precisión exacta en cada extremo; ahí dos campos numéricos (uno de mínimo, uno de máximo) se escriben más rápido"

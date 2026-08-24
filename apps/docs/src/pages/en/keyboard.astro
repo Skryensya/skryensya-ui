@@ -13,7 +13,7 @@ import Base from "../../layouts/Base.astro";
     key does. Keyboard behavior comes from one of two places: the native HTML element (a
     <code>&lt;button&gt;</code>, an <code>&lt;input type="range"&gt;</code>, a <code>&lt;dialog&gt;</code>)
     or a <code>@zag-js/*</code> machine. This page documents the result, component by component,
-    verified by reading the installed code — not assumed from the package name.
+    verified by reading the installed code: not assumed from the package name.
   </p>
 
   <div class="sk-callout" data-tone="info">
@@ -29,8 +29,8 @@ import Base from "../../layouts/Base.astro";
 
   <h2>Real focus and virtual focus</h2>
   <p>
-    Most widgets move real DOM focus from one control to another. A separate group — the ones showing
-    a floating list while the user keeps typing — never move focus at all: it stays on the input, and
+    Most widgets move real DOM focus from one control to another. A separate group. The ones showing
+    a floating list while the user keeps typing: never move focus at all: it stays on the input, and
     the highlighted option is signaled with <code>aria-activedescendant</code>. Confusing the two
     breaks a test (waiting for <code>document.activeElement</code> to change where it does not, or the
     reverse), so they are kept separate from the start.
@@ -60,7 +60,7 @@ import Base from "../../layouts/Base.astro";
     </table>
   </div>
 
-  <h2>Button, link and disclosure — native, no hand-written ARIA</h2>
+  <h2>Button, link and disclosure. Native, no hand-written ARIA</h2>
   <p>
     No shortcut to memorize: these are native elements, and the browser already knows what
     <kbd class="sk-kbd">↵</kbd> and <kbd class="sk-kbd">Space</kbd> do.
@@ -94,7 +94,7 @@ import Base from "../../layouts/Base.astro";
     </table>
   </div>
 
-  <h2>Simple selection — Checkbox, RadioGroup, Switch, Slider, NumberField</h2>
+  <h2>Simple selection. Checkbox, RadioGroup, Switch, Slider, NumberField</h2>
   <p>
     All of these run on a native input (<code>checkbox</code>, <code>radio</code>,
     <code>range</code>) or a Zag machine that replicates the native keymap
@@ -115,20 +115,20 @@ import Base from "../../layouts/Base.astro";
       <tbody class="sk-table__body">
         <tr class="sk-table__row">
           <td class="sk-table__cell">Checkbox, Switch</td>
-          <td class="sk-table__cell">—</td>
+          <td class="sk-table__cell">-</td>
           <td class="sk-table__cell"><kbd class="sk-kbd">Space</kbd> toggles</td>
-          <td class="sk-table__cell">—</td>
+          <td class="sk-table__cell">-</td>
         </tr>
         <tr class="sk-table__row">
           <td class="sk-table__cell">RadioGroup</td>
           <td class="sk-table__cell"><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> moves AND selects at once, with wrap</td>
           <td class="sk-table__cell"><kbd class="sk-kbd">Space</kbd> selects the focused one if not already selected</td>
-          <td class="sk-table__cell">—</td>
+          <td class="sk-table__cell">-</td>
         </tr>
         <tr class="sk-table__row">
           <td class="sk-table__cell">Slider, SliderRange</td>
           <td class="sk-table__cell"><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> ±1 step (native, PageUp/PageDown included for a larger step)</td>
-          <td class="sk-table__cell">—</td>
+          <td class="sk-table__cell">-</td>
           <td class="sk-table__cell"><kbd class="sk-kbd">Home</kbd> / <kbd class="sk-kbd">End</kbd></td>
         </tr>
         <tr class="sk-table__row">
@@ -141,7 +141,7 @@ import Base from "../../layouts/Base.astro";
     </table>
   </div>
 
-  <h2>Single-trigger popup — Menu, Combobox, Select, CommandPalette, DatePicker</h2>
+  <h2>Single-trigger popup. Menu, Combobox, Select, CommandPalette, DatePicker</h2>
   <p>
     A button or input opens a floating surface. <kbd class="sk-kbd">Esc</kbd> closes it and returns
     focus to whoever opened it, across all five. What differs between them is real vs. virtual focus
@@ -187,11 +187,11 @@ import Base from "../../layouts/Base.astro";
     </table>
   </div>
 
-  <h2>Composite bar — Toolbar, Menubar</h2>
+  <h2>Composite bar. Toolbar, Menubar</h2>
   <p>
     One single <kbd class="sk-kbd">Tab</kbd> stop for the whole bar (roving tabindex); inside it,
-    arrow keys move between controls with wrap. A nested composite widget — a RadioGroup inside a
-    Toolbar, say — counts as <strong>one stop</strong>: its own arrow keys move within it, and the bar
+    arrow keys move between controls with wrap. A nested composite widget. A RadioGroup inside a
+    Toolbar, say. Counts as <strong>one stop</strong>: its own arrow keys move within it, and the bar
     never walks its members one by one.
   </p>
   <div class="sk-table-scroll">
@@ -212,13 +212,13 @@ import Base from "../../layouts/Base.astro";
         <tr class="sk-table__row">
           <td class="sk-table__cell">Menubar</td>
           <td class="sk-table__cell"><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> between top-level items; <kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Space</kbd> opens the dropdown (first item); <kbd class="sk-kbd">↑</kbd> opens it on the last</td>
-          <td class="sk-table__cell">Moving to an adjacent item while a dropdown is open <strong>closes and reopens it on the new item</strong>, not just a highlight move — the detail a naive roving-tabindex implementation misses.</td>
+          <td class="sk-table__cell">Moving to an adjacent item while a dropdown is open <strong>closes and reopens it on the new item</strong>, not just a highlight move. The detail a naive roving-tabindex implementation misses.</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <h2>Tree and grid — TreeView, Treegrid, DataGrid</h2>
+  <h2>Tree and grid. TreeView, Treegrid, DataGrid</h2>
   <div class="sk-table-scroll">
     <table class="sk-table">
       <thead class="sk-table__head">
@@ -243,12 +243,12 @@ import Base from "../../layouts/Base.astro";
     </table>
   </div>
 
-  <h2>Modal — Dialog, AlertDialog, Drawer</h2>
+  <h2>Modal. Dialog, AlertDialog, Drawer</h2>
   <p>
     All three are a native <code>&lt;dialog&gt;</code> opened with <code>showModal()</code>. None of
     this is custom code: <kbd class="sk-kbd">Tab</kbd>/<kbd class="sk-kbd">⇧</kbd>+<kbd class="sk-kbd">Tab</kbd>
     stay trapped inside, <kbd class="sk-kbd">Esc</kbd> closes, and focus returns on its own to whoever
-    opened the dialog — standard behavior in modern engines (Chrome/Firefox/Safari), with no line of
+    opened the dialog. Standard behavior in modern engines (Chrome/Firefox/Safari), with no line of
     JS saving or restoring anything by hand. Initial focus (which button is focused on open) is a
     composition choice: whoever assembles the dialog puts <code>autofocus</code> on the least
     destructive action.
@@ -259,11 +259,11 @@ import Base from "../../layouts/Base.astro";
     <li>
       The <strong>DatePicker</strong> popover uses <code>role="application"</code> instead of
       <code>role="dialog"</code> (a decision made by <code>@zag-js/date-picker</code>, not this repo)
-      — it changes how a screen reader walks that subtree, and it can't be validated without a
+     - It changes how a screen reader walks that subtree, and it can't be validated without a
       physical one. Documented, not touched, by the team's explicit decision.
     </li>
     <li>
-      <strong>PageUp/PageDown on NumberField</strong> are not wired up — WAI marks them optional for
+      <strong>PageUp/PageDown on NumberField</strong> are not wired up. WAI marks them optional for
       spinbutton, and the equivalent (a large step) already exists via <kbd class="sk-kbd">⇧</kbd>+arrow.
     </li>
   </ul>

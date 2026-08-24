@@ -8,7 +8,7 @@
  * without learning the pattern is underneath.
  *
  * Which face is active is not a hook: it is `data-active`, written by `selectedBy` at emit time or
- * by whatever runs a click — see `icon-state-button.ts`. Nothing here maps a state value to a face;
+ * by whatever runs a click; see `icon-state-button.ts`. Nothing here maps a state value to a face;
  * that mapping doesn't exist any more, on purpose (it was the CSS ThemeToggle and CopyButton each
  * used to hand-write, one `[data-*-state="x"]` selector per value).
  */

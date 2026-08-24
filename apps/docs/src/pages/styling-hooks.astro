@@ -1,6 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 import ComponentPreview from "../components/ComponentPreview.astro";
 import { tokens } from "../lib/tokens";
 
@@ -22,7 +23,7 @@ const actual = `/* Lo que hacemos: un styling hook, re-declarado por especificid
   --sk-button-bg: var(--color-action-neutral);
 }
 .sk-button[data-variant="accent"] {
-  --sk-button-bg: var(--color-action-primary);
+  --sk-button-bg: var(--color-action-accent);
 }
 .sk-button[data-variant="danger"] {
   --sk-button-bg: var(--color-action-danger);
@@ -30,6 +31,17 @@ const actual = `/* Lo que hacemos: un styling hook, re-declarado por especificid
 
 const consumer = `/* Tu CSS lo lee una vez y nunca ramifica. */
 .sk-button { background: var(--sk-button-bg); }`;
+
+const overrideTree: UsageTree = {
+  contract: "layout",
+  signature: "Inline",
+  attrs: { class: "promo", style: "display: contents" },
+  children: [
+    { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: "Guardar" },
+    { contract: "button", signature: "Button.action", options: { variant: "neutral" }, children: "Cancelar" },
+    { contract: "button", signature: "Button.action", options: { variant: "danger" }, children: "Borrar" },
+  ],
+};
 ---
 
 <Base
@@ -84,15 +96,7 @@ const consumer = `/* Tu CSS lo lee una vez y nunca ramifica. */
     Y no hay pelea de especificidad porque cualquier regla sin layer le gana a todas las layers.
   </p>
 
-  <ComponentPreview code={overrideSource} lang="css" label="src/examples/styling-hook-override.css" note="el override que pinta la demo">
-    {/* `.promo` is the override's scope (`.promo .sk-button`); display:contents keeps the scope while
-        letting the buttons lay out in the ComponentPreview stage's own flow. */}
-    <div class="promo" style="display: contents">
-      <button class="sk-button sk-interactive" data-sk-button data-variant="accent">Guardar</button>
-      <button class="sk-button sk-interactive" data-sk-button data-variant="neutral">Cancelar</button>
-      <button class="sk-button sk-interactive" data-sk-button data-variant="danger">Borrar</button>
-    </div>
-  </ComponentPreview>
+  <ComponentPreview tree={overrideTree} css={overrideSource} label="src/examples/styling-hook-override.css" note="el override que pinta la demo" />
 
   <p>
     Los tres botones de arriba son las mismas variantes de la home. Tres líneas los reestilizaron a

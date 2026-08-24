@@ -19,10 +19,10 @@ const items: MenuItem[] = [
 
 /*
  * `@zag-js/dismissable`'s Escape/outside-press wiring attaches its document-level listeners behind
- * `defer: true` — a real `requestAnimationFrame` — and the outside-press path stacks a SECOND
+ * `defer: true`: a real `requestAnimationFrame`: and the outside-press path stacks a SECOND
  * deferred layer on top (`@zag-js/interact-outside`'s own `defer` wrapper, then a `setTimeout(0)`
  * before the actual `document.addEventListener` call). Firing the dismiss event once, before that
- * chain settles, can land on a listener that doesn't exist yet — and nothing is left afterwards to
+ * chain settles, can land on a listener that doesn't exist yet, and nothing is left afterwards to
  * retry it, so a fixed delay before firing is a guess about frame count that flakes under load.
  * RE-FIRING the event on every `waitFor` poll instead means the assertion only ever passes on an
  * attempt where a real listener was present, immune to how many frames the chain actually took.
@@ -120,7 +120,7 @@ describe("Menu (React)", () => {
 
     const left = await ui.findByRole("menuitemradio", { name: "Left" });
     fireEvent.click(left);
-    // Choosing a radio option closes the menu, same as a plain command — reopen for the second
+    // Choosing a radio option closes the menu, same as a plain command. Reopen for the second
     // pick. Once closed, `[data-sk-menu-content]` goes `hidden` and role queries stop seeing
     // anything inside it, so `left`/`right` are captured element references, not re-queried by role.
     await waitFor(() => expect(trigger.getAttribute("aria-expanded")).toBe("false"));

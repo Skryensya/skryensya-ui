@@ -3,9 +3,9 @@ import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import { type AnchorHTMLAttributes, type ButtonHTMLAttributes, type ReactNode } from "react";
 
 /*
- * A BINDING, not a second declaration (decision 28). Everything below that could be restated here —
+ * A BINDING, not a second declaration (decision 28). Everything below that could be restated here -
  * the variant and size unions, their defaults, the attributes they land on, the classes, and the
- * accessible-name rule — is read from `buttonContract`. Adding a variant is one edit, in Core.
+ * accessible-name rule. Is read from `buttonContract`. Adding a variant is one edit, in Core.
  */
 const {
   variant: variantOption,

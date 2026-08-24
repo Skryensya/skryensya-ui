@@ -5,11 +5,11 @@ import type { DateView, DayTableCellState, IntlTranslations } from "@zag-js/date
 export type { DateValue, DateView, DayTableCellState } from "@zag-js/date-picker";
 
 /*
- * Zag's OWN `defaultTranslations` (`@zag-js/date-picker`) is English-only, unconditionally — every
+ * Zag's OWN `defaultTranslations` (`@zag-js/date-picker`) is English-only, unconditionally. Every
  * accessible name it emits (a day cell's state, "switch to previous month", the view-switch button)
  * comes from that object with no locale check at all. Neither binding overrode it, so a Spanish-
  * locale calendar announced "Choose 15 de agosto de 2026" in English while the DATE inside the
- * string was correctly localized — `locale` already drove `DateFormatter`, just nothing else.
+ * string was correctly localized: `locale` already drove `DateFormatter`, just nothing else.
  *
  * These fill the same keys with locale-aware text and are the DEFAULT `translations` both bindings
  * pass into the machine; a consumer who wants different wording still overrides the matching prop

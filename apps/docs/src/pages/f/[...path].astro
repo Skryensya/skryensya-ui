@@ -2,13 +2,13 @@
 /*
  * The render side of ComponentPreview's "Pantalla completa" menu action: a bare page, no Base
  * layout (no nav/sidebar/footer), that reconstructs ONE preview from a SHORT path
- * (`/f/{docs page}/{n}` — see `openComponentPreviewFullscreen` in
+ * (`/f/{docs page}/{n}`; see `openComponentPreviewFullscreen` in
  * `@skryensya/vanilla/component-preview`). The last segment is the example's 1-based number on
  * that page; nothing travels as a query param.
  *
  * Nothing is server-rendered from those segments: this site is `output: "static"` (no server to run
- * per-request), so the client script below `fetch()`es the docs page ITSELF — a real file, already
- * built, at the SAME url a reader's browser would load — and plucks the Nth card back out of
+ * per-request), so the client script below `fetch()`es the docs page ITSELF. A real file, already
+ * built, at the SAME url a reader's browser would load, and plucks the Nth card back out of
  * that fresh markup. That is what keeps the link short regardless of how large a
  * demo is: the URL carries a pointer, not the rendered card, so it stays readable and small the
  * same way for every preview on the site, and it works for anyone it is shared with, cold, exactly
@@ -17,13 +17,13 @@
  * `getStaticPaths` emits one identical shell per (page, n) so `/f/…/2` is a real file after
  * `astro build`. The shell still does the fetch; the paths exist so the host does not 404.
  *
- * The reconstructed card is ISOLATED in its own `srcdoc` iframe, not injected into THIS document —
+ * The reconstructed card is ISOLATED in its own `srcdoc` iframe, not injected into THIS document -
  * the same realm-isolation the Vanilla stage already relies on (`buildPreviewFrameDocument`, see
  * ComponentPreview.astro's own header comment), for the same reasons: its own module graph, its own
  * globals, nothing it does can reach back into this shell page. This shell stays down to a loader
  * and one iframe, so there is very little to load here beyond the demo's own assets, and the
  * fetched page's dev-tooling scripts (Vite's HMR client, the dev toolbar, the prefetch/router
- * runtime) are filtered out before the iframe ever sees them — this page never navigates and has no
+ * runtime) are filtered out before the iframe ever sees them. This page never navigates and has no
  * toolbar, so running them would be pure cost with nothing to show for it.
  */
 import "@skryensya/core/components/loader.css";
@@ -43,10 +43,10 @@ export function getStaticPaths() {
     <title>Pantalla completa</title>
     {/*
      * Same FOUC-prevention shape as Base.astro's own inline script (one localStorage key, "sk",
-     * one JSON blob keyed by preference slot) — duplicated rather than imported, for the same
+     * one JSON blob keyed by preference slot). Duplicated rather than imported, for the same
      * reason Base.astro's copy is inline: nothing can be awaited before paint. Only styles this
      * SHELL's own loader (the iframe gets its own copy of these same values baked into its `<html>`
-     * tag directly, computed once in the script below — no point running the same localStorage read
+     * tag directly, computed once in the script below: no point running the same localStorage read
      * twice just to end up in two different documents).
      */}
     <script is:inline>
@@ -115,7 +115,7 @@ export function getStaticPaths() {
     <script>
       /*
        * Only the handful of strings this page authors itself (the layout control, the "back to
-       * docs" menu item) — everything else on the card is markup lifted straight from the fetched
+       * docs" menu item). Everything else on the card is markup lifted straight from the fetched
        * page, already in whichever language that page was built in.
        */
       const STRINGS: Record<
@@ -169,10 +169,10 @@ export function getStaticPaths() {
       };
 
       /*
-       * Geometría propia (decisión 15 — see `../icons.ts`'s own contrast/play-pause pairs): a
+       * Geometría propia (decisión 15; see `../icons.ts`'s own contrast/play-pause pairs): a
        * layout switch is not a stable icon role, and importing `../icons` here would pull the
        * whole site icon-set trio into this shell's own tiny bundle for two 24×24 glyphs. Hand-drawn
-       * inline instead, same stroke recipe (`strokeAttrs` in `../icons.ts`) — but still the SAME box
+       * inline instead, same stroke recipe (`strokeAttrs` in `../icons.ts`), but still the SAME box
        * every other glyph in the system wears (`patterns/icon.css`'s own banner):
        * `class="sk-icon"`, no hardcoded width/height. Without that class an svg has no
        * `--sk-icon-size`, no `flex: none`, none of the box this pattern owns, which is exactly why a
@@ -185,7 +185,7 @@ export function getStaticPaths() {
 
       /* Same pair `ContrastToggle.astro` draws (`contrastNormal`/`contrastHigh` in `../icons.ts`):
        * an empty ring, and the same ring with its inner half filled. Hand-drawn here for the same
-       * reason the layout pair above is — this glyph is not a stable role in the published sets. */
+       * reason the layout pair above is. This glyph is not a stable role in the published sets. */
       const ICON_CONTRAST_NORMAL =
         '<svg class="sk-icon" data-size="sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" data-face="normal"><circle cx="12" cy="12" r="10"></circle></svg>';
       const ICON_CONTRAST_HIGH =
@@ -211,8 +211,8 @@ export function getStaticPaths() {
        * Dev-only tooling this fullscreen iframe has no use for: Vite's HMR client (nothing here
        * ever hot-reloads), the dev toolbar (an overlay this page has no room or reason to show), and
        * Astro's client-router/prefetch runtime (this iframe never navigates internally). Everything
-       * else found on the fetched page — the real component CSS, the Vanilla/Svelte enhancers,
-       * `@astrojs/react`'s island runtime — is kept: a demo the codebase itself built is a much safer
+       * else found on the fetched page. The real component CSS, the Vanilla/Svelte enhancers,
+       * `@astrojs/react`'s island runtime. Is kept: a demo the codebase itself built is a much safer
        * default to trust than a hand-picked allowlist that would silently break the first component
        * whose needs this list didn't anticipate.
        */
@@ -225,7 +225,7 @@ export function getStaticPaths() {
       /*
        * Built by concatenation rather than typed as one closing-tag literal: this file's own
        * surrounding script block is plain HTML from the tokenizer's point of view, and it ends a
-       * script element at the first matching close sequence it finds in the raw source TEXT —
+       * script element at the first matching close sequence it finds in the raw source TEXT -
        * comments and JS string quoting included, since it never gets far enough to parse any of
        * that. Splitting the sequence keeps every closing tag the srcdoc string below builds out of
        * the raw source text that would otherwise end this very script early.
@@ -280,7 +280,7 @@ export function getStaticPaths() {
          * The curated accent presets, read off the SAME `#docs-palette-presets` blob Base.astro
          * embeds on every page (see that file's `PALETTE_PRESETS`/`accentBundle()`): this shell
          * never defines its own copy, so the two cannot drift. Presets[0] is the default and
-         * carries no override — a bare `data-sk-fullscreen-preview` iframe already renders it.
+         * carries no override. A bare `data-sk-fullscreen-preview` iframe already renders it.
          */
         let presets: { id: string; name: string; accent: string; tokens: Record<string, string> }[] = [];
         try {
@@ -320,15 +320,15 @@ export function getStaticPaths() {
         }
 
         /*
-         * The stage must fill the row this page's own `<style>` grants it below — the full height
+         * The stage must fill the row this page's own `<style>` grants it below. The full height
          * under the header, never the demo's own (shorter) content height. `fitFrame`
          * (component-preview-frame.ts) writes an explicit `frame.style.height` from measured content
          * on every stage UNLESS it opted into `scroll`, and there is no resizer here to leave a
-         * `resized` frame behind either — so left alone, a short demo (a lone Button, say) would
+         * `resized` frame behind either, so left alone, a short demo (a lone Button, say) would
          * clobber the grid's `1fr` row right back down to a few dozen pixels.
          *
          * `scroll` is baked in twice per stage: once on the outer `<iframe>` (read live, matches every
-         * other `scroll` consumer) and once on the frame's OWN `<body>`, inside the `srcdoc` string —
+         * other `scroll` consumer) and once on the frame's OWN `<body>`, inside the `srcdoc` string -
          * `allowScroll` in the frame runtime reads that body attribute once at module load, so it has
          * to already be there before the iframe is ever set live. Both bindings share the same
          * `.sk-component-preview__stage` class and `srcdoc` shape, so one pass covers Vanilla and
@@ -350,11 +350,11 @@ export function getStaticPaths() {
 
         /*
          * A real split, not an overlay drawer: the stage and its source sit in their own panes
-         * under the header, stage pane FIRST in source order — never a bottom sheet the reader has
+         * under the header, stage pane FIRST in source order: never a bottom sheet the reader has
          * to pry open (and then resize) just to see what the demo emits. `data-layout` on
          * `.sk-fullscreen-preview__body` (stacked | side) is the one thing the header control below
          * writes; both panes' proportions and stacking come from the CSS alone, so there is nothing
-         * left to "decompress" — whichever layout is picked, both panes are fully visible at once.
+         * left to "decompress". Whichever layout is picked, both panes are fully visible at once.
          */
         const stageNodes = [
           ...card.querySelectorAll<HTMLElement>(
@@ -391,7 +391,7 @@ export function getStaticPaths() {
         card.append(splitBody);
 
         // Header controls: a control that isn't a stable icon role or a published contract (decisión
-        // 15 / 33) is authored here, not imported — same call `ContrastToggle`/`ThemeToggle` already
+        // 15 / 33) is authored here, not imported. Same call `ContrastToggle`/`ThemeToggle` already
         // make for chrome that belongs to one page rather than to the design system.
         const actions = card.querySelector(".sk-component-preview__actions");
         if (actions) {
@@ -408,7 +408,7 @@ export function getStaticPaths() {
             /*
              * Each option is a Tooltip root, exactly as the screen presets are on the docs card
              * (see ComponentPreview.astro's own note on that markup): the hint next to an icon-only
-             * button is the SITE's tooltip, not the browser's `title` — one visual language for the
+             * button is the SITE's tooltip, not the browser's `title`. One visual language for the
              * whole header, and one that shows on keyboard focus too, which `title` never does. The
              * `.sk-tooltip` wrapper stays `display: contents` here for free: component-preview.css
              * flattens every `.sk-tooltip` inside `.sk-component-preview__actions .sk-segmented`, so
@@ -437,7 +437,7 @@ export function getStaticPaths() {
 
           /*
            * The accent picker: same markup Base.astro's own button renders, so `.dimensions__palette-toggle`
-           * / `.dimensions__palette-dot` (site.css, already loaded — every docs page carries it) style
+           * / `.dimensions__palette-dot` (site.css, already loaded. Every docs page carries it) style
            * it identically. Seeded to the reader's CURRENT preset (`paletteIndex`, computed above from
            * the same storage the site itself reads) rather than always opening on the default, and its
            * own click handler (bottom `<script>`) writes back to that SAME storage entry: leaving
@@ -465,7 +465,7 @@ export function getStaticPaths() {
            * Same markup `ThemeToggle.astro` renders: `data-sk-theme-toggle` is what
            * `initThemeToggle()` (already bundled into every docs page, see Base.astro) discovers
            * generically, and the three faces are the placeholder spans `IconStateButton`'s own
-           * contract anatomy specifies — `mountIcons`, already running for the demo body, resolves
+           * contract anatomy specifies: `mountIcons`, already running for the demo body, resolves
            * them the same way it resolves every other `data-sk-icon` on the page.
            */
           const themeToggle = parsed.createElement("button");
@@ -510,7 +510,7 @@ export function getStaticPaths() {
         }
 
         // "Ver en la documentación": absent on the docs page's own menu (see ComponentPreview.astro),
-        // added ONLY here — the one context that has actually left that page behind.
+        // added ONLY here. The one context that has actually left that page behind.
         const menuContent = card.querySelector("[data-sk-menu-content]");
         if (menuContent) {
           const link = parsed.createElement("a");
@@ -526,7 +526,7 @@ export function getStaticPaths() {
         }
 
         /*
-         * Stylesheets: BOTH forms the fetched page might use — a production build's real
+         * Stylesheets: BOTH forms the fetched page might use. A production build's real
          * `<link rel="stylesheet">`, and a dev server's CSS-as-a-module `<script type="module"
          * src="*.css">` (Vite serves either request the same way, so both resolve to plain CSS text
          * over the wire regardless of which tag shape the page used to reach it). Read raw attribute
@@ -589,7 +589,7 @@ ${styleTags}
     overflow: hidden;
   }
   /*
-   * The CARD is flush with the viewport — square corners, no chrome radius. Stopping at the
+   * The CARD is flush with the viewport. Square corners, no chrome radius. Stopping at the
    * card itself is load-bearing: a descendant * used to win over .sk-segmented's own
    * --sk-segmented-radius (and every button in the header), so the binding and screen
    * controls painted as square boxes. Those keep the radius they shipped with.
@@ -620,7 +620,7 @@ ${styleTags}
   }
   /*
    * .sk-fullscreen-preview__body fills the card's row-2 (1fr) exactly as the stage alone used
-   * to: a plain flex split, column by default (stage pane first, code pane after — "below", never
+   * to: a plain flex split, column by default (stage pane first, code pane after: "below", never
    * layered over it) and row under the header's layout control. Both panes get a share of that
    * ONE row/column via flex-basis, the same numbers regardless of direction, so switching layout
    * only changes the axis, never which pane is bigger.
@@ -639,7 +639,7 @@ ${styleTags}
   /*
    * The stage pane is a 1×1 grid so the stage iframe and the loading spinner still occupy the
    * SAME cell and overlap exactly as they did as direct grid children of .sk-component-preview
-   * (component-preview.css) — moving them one level deeper must not turn that overlap into two
+   * (component-preview.css). Moving them one level deeper must not turn that overlap into two
    * stacked boxes. Selected by class, not ":scope >": the React binding's stage is several
    * "display: contents" wrappers deep, and CSS descendant selectors reach through those the same
    * way component-preview.css's own class rules already do.
@@ -661,13 +661,13 @@ ${styleTags}
   }
   /*
    * THE LOADER FILLS THE PANE; THE STAGE DOES NOT. This pair used to share an "inline-size: 100%",
-   * and because these rules are UNLAYERED they beat the components layer regardless of specificity —
+   * and because these rules are UNLAYERED they beat the components layer regardless of specificity -
    * including the stage's own "inline-size: min(var(--sk-component-preview-screen-inline-size), 100%)".
    * That is the whole width mechanism behind the screen presets, so tablet/mobile did nothing here:
    * the enhancer still wrote "data-sk-component-preview-screen" and the custom property still
    * resolved (measured: 390px on mobile), but the stage stayed pinned at the full 1440px pane.
    *
-   * Dropping the declaration is the entire fix — there is nothing to re-implement. In the default
+   * Dropping the declaration is the entire fix. There is nothing to re-implement. In the default
    * ("free") state the component already resolves that same property to 100%, so the stage fills the
    * pane exactly as before; at a preset it now narrows, and component-preview.css's own
    * "justify-self: center" (already layered, never overridden here) centres it in the cell.
@@ -680,7 +680,7 @@ ${styleTags}
     inline-size: 100%;
   }
   /*
-   * The mat's placement in THIS pane's grid — the paint itself is component-preview.css's, reached
+   * The mat's placement in THIS pane's grid. The paint itself is component-preview.css's, reached
    * through the "data-sk-component-preview-mat" opt-in on the pane. The pane is a 1x1 grid, so the
    * wall takes the same single cell the stage and the loader already share, and being first in that
    * cell it paints behind both. No bottom border: the card's mat closes the stage row against the
@@ -741,7 +741,7 @@ ${scriptTags}
    * Read-modify-write the SAME "sk" localStorage entry Base.astro's own toggles use
    * (@skryensya/core/storage's STORAGE_KEY): this iframe is srcdoc with no sandbox, so it
    * shares the parent page's origin and therefore its storage. A plain object merge, not the
-   * package's setPreference() — that function lives behind a bare module specifier this
+   * package's setPreference(). That function lives behind a bare module specifier this
    * hand-built document has no import map to resolve.
    */
   function skReadStore() {

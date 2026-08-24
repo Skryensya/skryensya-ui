@@ -4,7 +4,7 @@ import { destroyMount } from "../runtime/svelte-hydrate.js";
 import { mountDataGrid } from "./data-grid.js";
 
 /*
- * A "layout grid" fixture — WAI's own recipient-pill example shape: each row is a name plus its own
+ * A "layout grid" fixture. WAI's own recipient-pill example shape: each row is a name plus its own
  * remove button, so the roving-tabindex unit for that second cell is the BUTTON, not the cell div
  * around it. Row 1 has a THIRD, buttonless cell to exercise a ragged (uneven) grid.
  */
@@ -36,7 +36,7 @@ afterEach(() => {
 });
 
 describe("DataGrid vanilla enhancer", () => {
-  it("gives exactly one unit a tab stop on mount — the first cell", () => {
+  it("gives exactly one unit a tab stop on mount. The first cell", () => {
     markup();
     const stops = Array.from(document.querySelectorAll<HTMLElement>('[role="gridcell"], button'))
       .filter((el) => el.tabIndex === 0);
@@ -47,7 +47,7 @@ describe("DataGrid vanilla enhancer", () => {
     const root = markup();
     cellText("Alice").focus();
     fireEvent.keyDown(root, { key: "ArrowRight" });
-    // The second cell in row 0 is the remove button itself — it, not a wrapping div, gets focus.
+    // The second cell in row 0 is the remove button itself. It, not a wrapping div, gets focus.
     expect(document.activeElement).toBe(removeButton("alice"));
     expect(removeButton("alice").tabIndex).toBe(0);
   });
@@ -60,7 +60,7 @@ describe("DataGrid vanilla enhancer", () => {
     fireEvent.keyDown(root, { key: "ArrowRight" });
     expect(document.activeElement).toBe(cellText("Nota")); // row 1, col 2
     fireEvent.keyDown(root, { key: "ArrowUp" });
-    // Row 0 only has 2 cells — clamped to its last one, not an out-of-range col 2.
+    // Row 0 only has 2 cells. Clamped to its last one, not an out-of-range col 2.
     expect(document.activeElement).toBe(removeButton("alice"));
   });
 

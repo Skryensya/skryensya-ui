@@ -14,7 +14,7 @@
  * `html` has no `scroll-behavior` rule on purpose: that property can't distinguish an anchor click
  * from any other programmatic scroll on the page (Tab landing on an off-screen control, a `focus()`
  * call, `scrollIntoView()` elsewhere), so setting it site-wide would animate scrolls the reader
- * never asked for. The one scroll that should travel — clicking an in-page anchor — is handled by a
+ * never asked for. The one scroll that should travel. Clicking an in-page anchor. Is handled by a
  * `scrollIntoView({ behavior: "smooth" })` call scoped to that click, in Base.astro.
  */
 
@@ -136,7 +136,7 @@ body {
   inline-size: 1.15rem;
   block-size: 1.15rem;
   border-radius: var(--radius-pill);
-  background: var(--swatch, var(--color-action-primary));
+  background: var(--swatch, var(--color-action-accent));
   box-shadow: inset 0 0 0 1px var(--color-border-subtle);
 }
 
@@ -146,7 +146,7 @@ body {
    menu.css), which for this trigger means a panel that starts 24px from the right edge and needs
    ~190px it does not have: measured, the engine shifted it back on screen and left it flush against
    the window, overshooting the header's own gutter. End-aligned instead, so the panel's end edge
-   lines up with the trigger's, exactly the mirror of the default — asked for through the Anclaje
+   lines up with the trigger's, exactly the mirror of the default. Asked for through the Anclaje
    escape hooks (ADR-25), the same two properties menu.css writes for its own submenu case, rather
    than by overriding the pattern's insets.
 
@@ -263,7 +263,7 @@ html:has(dialog:modal) .docs-drawer__content {
 /*
  * Two tracks now: the site index (sidebar), and one flexible area holding everything to its right.
  * `.docs-document-pair` (the document + its toc, as one unit) is centered WITHIN that flexible area
- * rather than the pair's own two columns splitting the spare width themselves — the sidebar stays a
+ * rather than the pair's own two columns splitting the spare width themselves. The sidebar stays a
  * fixed-width column of its own, untouched by any of this.
  *
  * WHY CENTER THE PAIR, not `space-between`. Spare width in the gaps drifts the toc off the prose it
@@ -301,7 +301,7 @@ html:has(dialog:modal) .docs-drawer__content {
  * is not a build-time fact about the PAGE, it is a runtime fact about whichever tab is active
  * (`hero-tabs-toc-seed.ts` toggles it on every switch, since Uso/Referencia/Tests each index their
  * own headings). Letting `:has()` react to that would collapse and restore the rail track on every
- * tab click — a CLS the reader causes by clicking, not a page that genuinely has no TOC. Reserve
+ * tab click. A CLS the reader causes by clicking, not a page that genuinely has no TOC. Reserve
  * the track for the whole session instead; an empty tab just shows an empty rail. */
 .shell:has(.docs-document-pair > .sk-toc[data-empty]):not(:has(.docs-component-hero-tabs)) {
   --docs-toc-inline-size: 0px;
@@ -347,7 +347,7 @@ html:has(dialog:modal) .docs-drawer__content {
    cannot know on its own: the Toc's width (zeroed when the page has no headings, same
    `--docs-toc-inline-size` the empty-toc collapse below already drives) and how many rows `<main>`'s
    own content occupies (`--docs-main-row-count`, computed at build in Base.astro from the same scan
-   that indexes the page's headings — the pattern has no way to know this by itself). */
+   that indexes the page's headings. The pattern has no way to know this by itself). */
 .docs-document-pair[data-document-layout="grid"] {
   justify-self: stretch;
   padding-block-start: var(--space-inset-lg);
@@ -357,7 +357,7 @@ html:has(dialog:modal) .docs-drawer__content {
 }
 
 /* `<main>` generates no box of its own here, so ITS children (the document's own top-level
-   elements, `data-width` and all) become direct grid items of `.docs-document-pair` — exactly the
+   elements, `data-width` and all) become direct grid items of `.docs-document-pair`. Exactly the
    nesting `[data-width="full-width"]` already does one level down (layout.css), just with `<main>`
    as the transparent level instead of an authored wrapper. Modern engines keep the `main` landmark
    in the accessibility tree across `display: contents` (the old Chromium/Firefox bugs that stripped
@@ -384,8 +384,8 @@ main[data-document-layout="grid"] {
  * text-first documentation index, so the auto track simply follows the expanded width hook.
  *
  * ONLY THE DOCS-SPECIFIC DELTA lives here now. This block used to restate the component's own rules
- * as well — `display: flex`, the inline size, the border, `background: var(--sk-sidebar-bg)`, the
- * elevation — alongside copies of its `__separator` and `__footer`. None of it did anything: every
+ * as well: `display: flex`, the inline size, the border, `background: var(--sk-sidebar-bg)`, the
+ * elevation. Alongside copies of its `__separator` and `__footer`. None of it did anything: every
  * one of those declarations reads a `--sk-sidebar-*` hook, the hooks are declared by
  * `components/sidebar.css`, and `Base.astro` never imported that file. They all resolved to nothing,
  * which is why the rail painted transparent and borderless with no padding, indistinguishable from
@@ -662,8 +662,8 @@ h2.docs-nav-section__title {
  */
 .docs-catalog-section {
   /*
-   * Collapses against whatever precedes it — the blurb's own bottom margin when there is one, the
-   * heading's smaller one when there is not — so the gap above the cards reads the same
+   * Collapses against whatever precedes it. The blurb's own bottom margin when there is one, the
+   * heading's smaller one when there is not, so the gap above the cards reads the same
    * `--space-stack-md` either way without this rule needing to know which case it is.
    */
   margin-block-start: var(--space-stack-md);
@@ -692,7 +692,7 @@ h2.docs-catalog-section__title {
  * BOTH HALVES OF THE DIVIDER'S AIR BELONG TO THIS RULE, because the rule sits on the heading and the
  * line is the heading's own top border: `margin` is the space ABOVE that line, `padding` the space
  * below it. It used to declare only the padding, which left the line flush against the last row of
- * cards — measured: 0px above, 40px below. That reads as a lid closing on the group that just ended
+ * cards. Measured: 0px above, 40px below. That reads as a lid closing on the group that just ended
  * rather than as a break between two, and it puts the incoming title nearer to the cards it does NOT
  * describe than to the ones it does. Matching the two puts `--space-stack-xl` on each side. The
  * extra room comes from the side that had none, not from a bigger number: `xl` is already the top of
@@ -756,7 +756,7 @@ h2.docs-catalog-section__title {
  *     that changes one card's footprint (a scale on the card, a shadow, a border that appears)
  *     pushes or overlaps its neighbours, and sixty of them reads as the page twitching under the
  *     pointer. A clipped zoom is the one "grow" that costs the layout nothing.
- *  2. THE CAPTION GETS THE STATE LAYER — `sk-interactive` on the card, the system's own hover
+ *  2. THE CAPTION GETS THE STATE LAYER: `sk-interactive` on the card, the system's own hover
  *     mechanism (`patterns/state-layer.css`), NOT a background-colour transition hand-rolled here,
  *     which is the exact thing that file's own header exists to say no component should re-invent.
  *     The layer spans the whole card, but its `::before` sits below in-flow content (`--z-below`,
@@ -767,14 +767,14 @@ h2.docs-catalog-section__title {
  *
  * TWO TEMPOS, the same split `button.css` draws between its own colour change and its press. The
  * tint is FEEDBACK ("the pointer is here"), 120ms, owned by the pattern. The zoom is a reveal, and
- * at that same 120ms it reads as a twitch instead of as a picture leaning in — `emphasize` (200ms,
+ * at that same 120ms it reads as a twitch instead of as a picture leaning in: `emphasize` (200ms,
  * a front-loaded settle) is the token pair the scale already names for that.
  */
 .docs-catalog__card {
   /*
    * Local, deliberately not a token: how far a docs page's own artwork leans in is a presentation
    * choice for THIS page, not a system-wide motion decision. `1.04` is the smallest step that is
-   * still legible at this card size (~192px wide: ~4px of travel at each edge) — below it the
+   * still legible at this card size (~192px wide: ~4px of travel at each edge). Below it the
    * picture only shimmers, above it the crop visibly loses content on every hover. If a second
    * surface ever wants the same gesture, that is when it earns a real token.
    */
@@ -812,7 +812,7 @@ h2.docs-catalog-section__title {
  *
  * No `gap`: it used to ask for `--space-stack-2xs`, which the scale does not define (`xs` is the
  * smallest stack step). An undefined custom property is invalid at computed-value time, so the
- * declaration was already resolving to the initial `normal` — 0 for a flex box — and the separation
+ * declaration was already resolving to the initial `normal`. 0 for a flex box, and the separation
  * between the title and its description has always come from their own line boxes. Removed rather
  * than left as a landmine: the day someone adds that token, this card would silently grow.
  */
@@ -839,7 +839,7 @@ h2.docs-catalog-section__title {
 }
 
 /* `any-hover`, never a bare `:hover`: WebKit leaves hover STUCK on the last-tapped element after a
-   touch, and a card frozen mid-zoom with no pointer near it reads as "this one is still loading" —
+   touch, and a card frozen mid-zoom with no pointer near it reads as "this one is still loading" -
    the same guard `patterns/state-layer.css` puts on its own hover rung, for the same reason. */
 @media (any-hover: hover) {
   .docs-catalog__card:hover .docs-catalog__image {
@@ -847,8 +847,8 @@ h2.docs-catalog-section__title {
   }
 
   /* Kept from before the picture existed. Colour and motion are both cues a reader may not
-     perceive — a tint that falls under someone's contrast threshold, a zoom removed by the reduced
-     motion query right below — and the underline is the one that survives either of those being
+     perceive. A tint that falls under someone's contrast threshold, a zoom removed by the reduced
+     motion query right below, and the underline is the one that survives either of those being
      missed, on the element that is actually the link's own name. */
   .docs-catalog__card:hover .docs-catalog__title {
     text-decoration: underline;
@@ -873,7 +873,7 @@ h2.docs-catalog-section__title {
 
 /*
  * The zoom is REMOVED here, not merely un-animated. "Reduce" is a request for less movement, and a
- * picture that JUMPS to 104% the instant a pointer touches it is more motion at once, not less —
+ * picture that JUMPS to 104% the instant a pointer touches it is more motion at once, not less -
  * killing only the transition would be the worse of the two outcomes. The state layer's tint (its
  * own reduced-motion rule drops that fade) and the title's underline both still answer the pointer,
  * so the card is not left with no hover at all.
@@ -900,7 +900,7 @@ h2.docs-catalog-section__title {
    * NOT the sidebar's contract, even though it looks like it should be: the sidebar sits beside the
    * whole page and only ever has to clear the navbar. The rail sits inside the content column,
    * exactly where a component page's hero tabs bar sticks too (`.docs-component-hero-tabs`, pinned
-   * below the navbar once scrolled) — so the rail was starting its stick at the header's own edge,
+   * below the navbar once scrolled), so the rail was starting its stick at the header's own edge,
    * under the tab strip, and riding up to sit flush against it (or briefly behind it) as the page
    * scrolled, instead of resting below it from the top of the page onward.
    *
@@ -923,8 +923,8 @@ h2.docs-catalog-section__title {
  * `.shell` IS LOAD-BEARING, and this rule spent its whole life without it while its own comment
  * already said why it needed one: "specific to this shell's runtime-discovered headings, a
  * tree-authored Toc already knows its items". A component preview clones every page stylesheet into
- * its frame, and a previewed Toc is tree-authored — it never carries `data-ready`, which is a docs
- * shell flag — so the unscoped selector matched it and hid its list behind `visibility: hidden`,
+ * its frame, and a previewed Toc is tree-authored. It never carries `data-ready`, which is a docs
+ * shell flag, so the unscoped selector matched it and hid its list behind `visibility: hidden`,
  * reserving 128px of empty band where the index should be. It went unnoticed while the component
  * shipped a closed `<details>`: the list was invisible inside something already collapsed. The
  * moment the index became always-open (see `core/toc.ts`), every Toc preview on the page rendered
@@ -1034,14 +1034,14 @@ main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid {
 }
 
 /*
- * THE OUTER PAIR'S OWN CEILING, same reduced density the tab-panel form above uses — a demo needs
+ * THE OUTER PAIR'S OWN CEILING, same reduced density the tab-panel form above uses. A demo needs
  * room for controls and code, not the whole lg canvas.
  *
  * This USED to also carry a hand-written `grid-template-columns` rewrite for the rail (fixed
- * tracks, no `1fr`, keyed to `--docs-toc-inline-size` directly) — arrived at after three measured
+ * tracks, no `1fr`, keyed to `--docs-toc-inline-size` directly). Arrived at after three measured
  * attempts (fluid gutters read as visibly asymmetric; a non-stretched item's own `calc(100% - …)`
  * ceiling is circular). That whole shape is now `sk-layout-grid`'s own published rail capability
- * (`packages/core/css/patterns/layout.css`, `[data-width="rail"]`) — the SAME fixed-track rewrite,
+ * (`packages/core/css/patterns/layout.css`, `[data-width="rail"]`). The SAME fixed-track rewrite,
  * gated behind `:has(> [data-width="rail"])`, reading `--sk-layout-rail-inline-size` instead of this
  * site's token directly. All that's left here is bridging that one custom property to the site's
  * own (just above), plus this density-only override, which has nothing to do with the rail at all.
@@ -1072,7 +1072,7 @@ main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid > *:not([data
  *
  * `--docs-hero-bar-h` is the third box in that stack and follows the same idiom: it is declared only
  * inside the `@supports`/reduced-motion pair that makes the hero collapse into a pinned bar, so it
- * is 0px wherever that bar does not exist — including a browser with no scroll-driven animations,
+ * is 0px wherever that bar does not exist. Including a browser with no scroll-driven animations,
  * where the hero is not sticky at all.
  */
 .shell .sk-code-preview {
@@ -1118,14 +1118,14 @@ main {
  * A COMPONENT'S OWN HEADING IS NOT PROSE, and naming each one here is the same fence `main a:not(…)`
  * further down already draws for component anchors, for the same reason. These are bare element
  * selectors: they reach every `<h2>`/`<h3>` on the page AND inside every preview frame, which clones
- * these stylesheets — so a part that happens to be a real heading was being repainted as a section
+ * these stylesheets, so a part that happens to be a real heading was being repainted as a section
  * title of the document. Measured on Toc's own caption: 12px/600 as the component defines it, 24px/700
  * with 64px of `--space-section` above it once this rule won, which is what made a previewed Toc look
  * nothing like the one this site runs in its own rail.
  *
  * `data-flush` was the existing escape, and it is the wrong tool for this: it is a DOCS convention, so
  * relying on it means every consumer of a published component has to know a docs-site attribute to get
- * that component's own type back — exactly the coupling `data-sk-toc-rail` was just deleted for. The
+ * that component's own type back. Exactly the coupling `data-sk-toc-rail` was just deleted for. The
  * docs shell's own `Toc.astro` still writes `data-flush`, which is why the rail looked right while
  * every other rendering of the same component did not.
  *
@@ -1175,7 +1175,7 @@ h4:not([data-flush]) {
  * up an extra `--space-stack-sm` under itself: on TOP of a Stack's own `gap`, that reads as far too
  * much space under a name, and inflates the Stack's own measured height enough to throw off
  * `align-items: center` against a sibling avatar. `Text` has no `flush` option the way `Heading`
- * does — a bare class exclusion is the whole fix it needs. */
+ * does. A bare class exclusion is the whole fix it needs. */
 p:not(.sk-text) {
   margin: 0 0 var(--space-stack-sm);
 }
@@ -1202,7 +1202,7 @@ p:not(.sk-text) {
  * THE TWO ENDS OF THE COLLAPSE, declared even on pages that never collapse, because
  * `--docs-hero-collapse` is a registered `<number>` whose initial value is 0: every calc that reads
  * them resolves to the `-max` end until something drives it. A page with no scroll-driven animation
- * — and `/componentes`, which takes this hero without the collapsing shell around it — therefore
+ *, and `/componentes`, which takes this hero without the collapsing shell around it. Therefore
  * paints the band it always painted, off these declarations rather than a second copy of them.
  *
  * ON BOTH BOXES, and that is not redundancy. The header sizes itself from these; the SHELL derives
@@ -1210,7 +1210,7 @@ p:not(.sk-text) {
  * pinned top. A custom property only ever travels DOWNWARD, so declaring them on the header alone
  * left the shell's two calcs referencing nothing. That fails quietly in the worst way: an invalid
  * `animation-range` falls back to `normal`, which hands the animation the entire page to scrub
- * over. Measured that way first — the title took 900px of scroll to shed 7px.
+ * over. Measured that way first. The title took 900px of scroll to shed 7px.
  */
 /*
  * DEFAULT ONLY, at `:root`. `Base.astro`'s live palette picker sets this same custom property as an
@@ -1248,7 +1248,7 @@ p:not(.sk-text) {
   /*
    * IN THE COLUMN, not bled out of it. This used to cancel `<main>`'s inline padding with a negative
    * margin and re-add it as its own, which put the tinted block's edges on main's padding box while
-   * everything under it — the tab strip, the prose — stayed inside that padding. Measured at 1400px:
+   * everything under it. The tab strip, the prose. Stayed inside that padding. Measured at 1400px:
    * the hero started at 256 against tabs at 280, so it read as a band sticking out from under the
    * page rather than as part of it. Sitting in normal flow, its edges line up with the tab strip's.
    *
@@ -1280,11 +1280,11 @@ p:not(.sk-text) {
  * never animates this hero renders the same full-height, fully-opaque eyebrow it always did, with no
  * separate base-case rule to keep in sync.
  *
- * A real "Breadcrumb" — a `nav`/`ol`/`li` trail that flipped into an inline "Componentes / Accordion"
- * row once collapsed — was tried here and undone: the row it settled into read as a second, competing
+ * A real "Breadcrumb". A `nav`/`ol`/`li` trail that flipped into an inline "Componentes / Accordion"
+ * row once collapsed. Was tried here and undone: the row it settled into read as a second, competing
  * bit of navigation appearing mid-scroll, not as the same title getting out of the way. Hiding the
  * label outright is the simpler read: the band keeps its accent tint (that part never depended on
- * this text — see `.docs-component-hero`'s own `background` above), and the eyebrow just isn't part
+ * this text; see `.docs-component-hero`'s own `background` above), and the eyebrow just isn't part
  * of what a reader is here for once they have scrolled past it.
  *
  * All three properties reach zero at the same instant collapse finishes (`--docs-hero-collapse: 1`),
@@ -1325,7 +1325,7 @@ p:not(.sk-text) {
   );
   /* ONE ratio across the whole range, not display-lg's at the top and a heading's at the bottom.
      Interpolating both would make the line box the product of two moving numbers, and the collapse
-     distance below is a sum of linear terms — the two ends would still land right and every frame
+     distance below is a sum of linear terms. The two ends would still land right and every frame
      between them would drift. A single ratio keeps the height exactly linear in the scroll. */
   line-height: var(--font-line-height-display-lg);
 }
@@ -1428,15 +1428,15 @@ p:not(.sk-text) {
 /* ── the hero collapsing onto the tab strip ──────────────────────────────────
  *
  * Scroll down and the masthead becomes a small bar pinned above the tabs: a smaller heading, no
- * eyebrow (it closed with the rest of the band — see its own rule above), the accent band at a
- * fraction of its height. One title, one element — nothing is duplicated into the bar and then
+ * eyebrow (it closed with the rest of the band; see its own rule above), the accent band at a
+ * fraction of its height. One title, one element: nothing is duplicated into the bar and then
  * cross-faded, so there is no second copy for a screen reader to meet and no `aria-hidden` to keep
  * honest.
  *
  * THE HEADER'S LAYOUT HEIGHT NEVER CHANGES, and that is the whole trick. Animating its real height
  * was tried and measured: the tab strip underneath rises at the scroll's rate PLUS every pixel the
  * header gives back, so it hits its own pinned top about twice as fast as the band closes, and the
- * opaque band then covers it for the rest of the range — at 1400px the strip pinned at 100px with
+ * opaque band then covers it for the rest of the range. At 1400px the strip pinned at 100px with
  * the band's edge still down at 173. Solving `s_pin = range` for that geometry gives a range of 24px,
  * which is not a collapse, it is a snap.
  *
@@ -1446,14 +1446,14 @@ p:not(.sk-text) {
  *
  * THE SPACER IS EXACTLY AS TALL AS THE COLLAPSE RANGE, one number doing both jobs: the distance the
  * reader scrolls to close the band is the distance of band there was to close. That is why the title
- * appears to settle rather than to jump — it is anchored to the bar's bottom edge (`flex-end`, with
+ * appears to settle rather than to jump. It is anchored to the bar's bottom edge (`flex-end`, with
  * the tall type simply overflowing upward over the spacer), so only its SIZE changes while its
  * baseline stays put.
  *
  * PROGRESSIVE, and the default is today's page. Everything here lives behind
  * `@supports (animation-timeline: scroll())`: without it there is no way to drive the collapse, and a
  * hero that pinned at full height would sit on a third of the viewport forever. Reduced motion opts
- * out through the same door — text that rescales under the reader's own scroll is motion, and the
+ * out through the same door. Text that rescales under the reader's own scroll is motion, and the
  * page it falls back to is the one that shipped before this block existed.
  */
 @property --docs-hero-collapse {
@@ -1483,7 +1483,7 @@ p:not(.sk-text) {
 
 /* Every selector below is scoped under `.docs-component-head`, and that is load-bearing rather than
    tidiness: `/componentes` renders a `.docs-component-hero` of its own with no collapsing shell
-   around it, and unscoped these rules reached it too — pinning a catalogue masthead that has nothing
+   around it, and unscoped these rules reached it too. Pinning a catalogue masthead that has nothing
    to pin under, squaring its top corners, and dropping it from 212px to 90px because
    `padding-block-start: 0` landed on a box that still wanted its padding. */
 @supports (animation-timeline: scroll()) {
@@ -1495,13 +1495,13 @@ p:not(.sk-text) {
        * itself with them, the spacer takes the range as its height, and the tab strip pins against
        * the bar height.
        *
-       * Restated from the hero's own `-min` ends rather than read off them — those live on
+       * Restated from the hero's own `-min` ends rather than read off them. Those live on
        * `.docs-component-hero` so a hero with no shell around it (`/componentes`) is still
        * self-contained. Keep the two in step.
        *
        * NO EYEBROW TERM in the bar height: by the time collapse reaches 1 the eyebrow's margin,
        * line box and opacity have all closed to zero (see its own rule), so the collapsed bar is
-       * just the title's line box between the two minimum paddings — read off the `-min` tokens
+       * just the title's line box between the two minimum paddings. Read off the `-min` tokens
        * themselves rather than a value restated a third time, so retuning either one keeps this
        * in step automatically.
        */
@@ -1510,7 +1510,7 @@ p:not(.sk-text) {
           var(--font-size-heading-h2) * var(--font-line-height-display-lg)
       );
       /* Expanded minus collapsed, term by term: the two paddings, the eyebrow's whole block (line
-         box plus the margin under it — both close to zero together), and what the title's line box
+         box plus the margin under it. Both close to zero together), and what the title's line box
          loses. */
       --docs-hero-collapse-range: calc(
         (var(--docs-hero-pad-start-max) - var(--docs-hero-pad-start-min)) +
@@ -1540,7 +1540,7 @@ p:not(.sk-text) {
        * CONSTANT, and always the small bar. The expanded look is the spacer above plus type that
        * simply overflows this box upward onto it: `flex-end` pins the content to the bottom edge, so
        * a 66px title in a 42px bar hangs over the top rather than pushing the box open. That
-       * overflow is only ever drawn over the spacer — by the time the bar pins under the navbar the
+       * overflow is only ever drawn over the spacer. By the time the bar pins under the navbar the
        * title is down to its collapsed size and fits inside.
        */
       display: flex;
@@ -1594,7 +1594,7 @@ p:not(.sk-text) {
  * unlayered `a { color }` rule paints every link accent and kills the text-coloured default.
  *
  * SCOPED TO THE DOCUMENT COLUMN, and the scope is the whole point. Unqualified, this rule matched
- * every anchor on the page — including `.sk-nav-list__link` in the sidebar, the drawer and the ToC,
+ * every anchor on the page. Including `.sk-nav-list__link` in the sidebar, the drawer and the ToC,
  * which the nav-list pattern deliberately paints `--color-text-secondary`. Being unlayered, it beat
  * the component every time, so the entire navigation rail rendered brand-blue. `main` is the document
  * column; the rail, the ToC and the navbar normally sit outside it.
@@ -1607,7 +1607,7 @@ p:not(.sk-text) {
  * always about, a bare `<a>` someone typed in a sentence.
  *
  * `.docs-catalog__card` is in the list without shipping as a part, and it has to be for a reason
- * worth spelling out: it is a whole card — a picture, a title, a description — not a phrase in a
+ * worth spelling out: it is a whole card. A picture, a title, a description: not a phrase in a
  * sentence, and it carries `sk-interactive`, whose state layer tints with `currentColor`. Left to
  * match, this rule would repaint that `currentColor` brand-blue and the card's hover wash would come
  * out accent-tinted rather than the sober neutral the catalog wants. The `:not()` list is the fence
@@ -1654,7 +1654,7 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .d
  * The OTHER shape a template can stand in for: a whole PAGE rather than an application.
  *
  * The difference is where the scroll lives, and it is not cosmetic. `.app-shell` is a row of panes
- * that each scroll inside a fixed screen — that is what an app shell IS, and it is why the rail
+ * that each scroll inside a fixed screen. That is what an app shell IS, and it is why the rail
  * stays put while the work area moves. A marketing landing or a checkout has no panes: it is one
  * document that runs past the bottom of the window, so the scroll belongs to the shell itself and
  * the navbar above it scrolls away with everything else, exactly as it would on the real site.
@@ -1682,7 +1682,7 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .d
 
 /*
  * The docs template's third column. `Toc`'s host is already an `<aside>` (a landmark on its own),
- * so this only gives it a width it will not give up and its own scroll — without `flex: none` the
+ * so this only gives it a width it will not give up and its own scroll, without `flex: none` the
  * rail is the first thing a long article squeezes, and a table of contents that wraps every entry
  * onto three lines is worse than no table of contents.
  */
@@ -1722,7 +1722,7 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .d
 }
 
 /* The templates that model a whole page carry their own Navbar INSIDE the frame, so the frame's
-   viewport is what is left after that bar — otherwise the shell alone is a full screen tall and the
+   viewport is what is left after that bar. Otherwise the shell alone is a full screen tall and the
    two together overflow the stage by exactly the navbar's height. */
 .templates__example > .sk-stack:has(> .page-shell) .page-shell {
   block-size: calc(

@@ -76,7 +76,7 @@
 
     /*
      * MATERIALISING, NOT SLIDING: opacity + scale + a short translate + a soft blur settling to
-     * sharp — `--motion-materialize-scale`/`-blur`, the same pair Menu and Tooltip's positioners
+     * sharp: `--motion-materialize-scale`/`-blur`, the same pair Menu and Tooltip's positioners
      * use for their own float-in (`patterns/anchored.css`), named once so a retune is one edit, not
      * three. `translate` reads the intent tokens' OWN distance scale (`--motion-distance-md: 8px`,
      * "things that enter: popover, toast") instead of a hardcoded pixel value the way the previous
@@ -168,7 +168,7 @@
    * (`_reduced-motion.scss`), so the SAME rules above go distance-less for free. `scale` and
    * `filter` are not part of that token-driven distance system (nothing in it describes a scale
    * factor or a blur radius), so they need the explicit override `Dialog` also needs for its own
-   * `scale` — the two components hit the same gap in the same place. What survives is a short
+   * `scale`: the two components hit the same gap in the same place. What survives is a short
    * opacity fade only, matching this codebase's reduced-motion classification for "Helpful"
    * motion (replace the spatial move with a quick fade, do not remove the fade itself). */
   @media (prefers-reduced-motion: reduce) {

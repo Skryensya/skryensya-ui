@@ -13,7 +13,7 @@ entries:
       body: >-
         <code>showModal()</code> le da a la raíz un <code>role="dialog"</code> implícito, la
         piense o no la composición, y Vaul no tenía ningún header propio del que sacar un nombre
-        (a diferencia de <code>Dialog</code>, cuyo <code>title</code> ya es obligatorio) — la
+        (a diferencia de <code>Dialog</code>, cuyo <code>title</code> ya es obligatorio): la
         misma regla de WAI, aplicada al mismo mecanismo de plataforma. La demo de Drawer, que
         hasta ahora pasaba <code>aria-label</code> a mano como <code>attrs</code> crudo porque no
         había otra forma, ahora usa la opción real.
@@ -22,7 +22,7 @@ entries:
       body: >-
         <code>showModal()</code> gives the root an implicit <code>role="dialog"</code> whether or
         not the composition thinks about it, and Vaul had no header of its own to source a name
-        from (unlike <code>Dialog</code>, whose <code>title</code> is already required) — the same
+        from (unlike <code>Dialog</code>, whose <code>title</code> is already required): the same
         WAI rule, applied to the same platform mechanism. The Drawer demo, which used to pass
         <code>aria-label</code> by hand as a raw <code>attrs</code> escape hatch because there was
         no other way, now uses the real option.

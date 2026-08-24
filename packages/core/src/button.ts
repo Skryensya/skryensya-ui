@@ -45,17 +45,17 @@ export const buttonContract = {
       trueValue: "",
     },
     /*
-     * Welds the START (leading) edge flat against a neighbor — a button that has ANOTHER control
+     * Welds the START (leading) edge flat against a neighbor. A button that has ANOTHER control
      * glued to that side (a split button's primary half beside its menu trigger, a segmented
      * group's middle members). Removes BOTH things a round, bordered corner there would get
      * wrong: the corner's own rounding (reads as a gap between two separate controls instead of
      * a seam in one welded shape) AND the edge's own border color (for any variant that paints
-     * one — `neutral`, `subtle`, `translucent` — a visible border sitting right next to whatever
+     * one: `neutral`, `subtle`, `translucent`. A visible border sitting right next to whatever
      * the neighbor paints on ITS OWN touching edge doubles the seam into two competing lines;
      * `primary`/`danger`/`ghost` never had this problem, their own border is already transparent,
      * which is exactly why the bug stayed hidden until an example paired two `neutral` halves).
      * Orthogonal to every other axis: any variant, any size, can be welded. Presence-only, like
-     * `iconOnly`. See `weldEnd` for the opposite edge — a control welded on BOTH sides (a
+     * `iconOnly`. See `weldEnd` for the opposite edge. A control welded on BOTH sides (a
      * segmented group's middle member) sets both at once.
      */
     weldStart: {
@@ -64,7 +64,7 @@ export const buttonContract = {
       attr: "data-weld-start",
       trueValue: "",
     },
-    /** Same idea, the opposite edge — see `weldStart`'s own doc. */
+    /** Same idea, the opposite edge; see `weldStart`'s own doc. */
     weldEnd: {
       type: "boolean",
       default: false,

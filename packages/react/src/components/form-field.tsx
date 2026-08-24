@@ -13,7 +13,7 @@ type FormFieldContextValue = {
 
 /*
  * Lives here rather than beside Input because the wiring belongs to the field, not to whichever
- * control it happens to hold. Exported so that any control can read it — a select, a checkbox group
+ * control it happens to hold. Exported so that any control can read it. A select, a checkbox group
  * or a combobox has the same six ids to honour, and the alternative is each of them growing its own
  * copy of the wiring, which is the drift this contract exists to prevent.
  */

@@ -1,5 +1,5 @@
 /*
- * Debug-only: three rail placements on one LayoutGrid — after (`rail`), before
+ * Debug-only: three rail placements on one LayoutGrid. After (`rail`), before
  * (`rail-start`), and both. Mirrors the vanilla markup on /debug/layout-grid-rail.
  */
 import { Box, LayoutGrid } from "@skryensya/react/layout";

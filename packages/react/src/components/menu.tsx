@@ -42,22 +42,22 @@ export type MenuProps = Pick<
   contextTarget?: ReactNode;
   items: readonly MenuItem[];
   label?: string;
-  /** The TRIGGER button's own accessible name — see `menu.ts`'s identical option doc. For an
+  /** The TRIGGER button's own accessible name; see `menu.ts`'s identical option doc. For an
    *  icon-only trigger (leave `trigger` unset): the chevron below is painted either way, and this
    *  is what makes the button announce something instead of nothing. */
   triggerLabel?: string;
   /** Welds the trigger button's own start/end edge flat against a neighbor (radius AND border
-   *  color both) — see `menu.ts`'s identical option doc. The same attribute (`data-weld-start`/
+   *  color both); see `menu.ts`'s identical option doc. The same attribute (`data-weld-start`/
    *  `-end`) `Button`'s own `weldStart`/`weldEnd` options write; button.css owns the rule, this
    *  only reaches the same attribute. */
   triggerWeldStart?: boolean;
   triggerWeldEnd?: boolean;
-  /** Passed straight to the trigger's own `data-variant`/`data-size` — see `menu.ts`'s identical
+  /** Passed straight to the trigger's own `data-variant`/`data-size`; see `menu.ts`'s identical
    *  option doc. `Button`'s own `[data-variant="…"]`/`[data-size="…"]` rules (button.css) apply to
    *  the trigger directly once these are set; nothing here repeats their CSS. */
   triggerVariant?: string;
   triggerSize?: string;
-  /** The SAME attribute `Button`'s own `iconOnly` option writes — see `menu.ts`'s identical
+  /** The SAME attribute `Button`'s own `iconOnly` option writes; see `menu.ts`'s identical
    *  option doc. */
   triggerIconOnly?: boolean;
   indicator?: ReactNode;
@@ -102,7 +102,7 @@ type MenuListProps = {
 /**
  * The machine half of a top-level Menu, factored out so `MenubarItem` (`menubar.tsx`) can call the
  * exact same hook for its own dropdown instead of a second, hand-copied `useMachine`/`connect` pair.
- * `Menu` itself uses this too — its own render output is unchanged, only where the two calls live.
+ * `Menu` itself uses this too. Its own render output is unchanged, only where the two calls live.
  */
 export function useMenuMachine(props: {
   id: string;
@@ -124,7 +124,7 @@ export function useMenuMachine(props: {
 }
 
 /**
- * The popup half: positioner + content + the item list, portalled — no trigger of its own. Factored
+ * The popup half: positioner + content + the item list, portalled: no trigger of its own. Factored
  * out of `Menu`'s own render for the same reason `useMenuMachine` is: `MenubarItem` composes this
  * beside ITS OWN trigger button instead of `Menu`'s.
  */
@@ -195,7 +195,7 @@ function initialCheckedState(items: readonly MenuItem[]): CheckedState {
   );
 }
 
-/** Any submenu anywhere in the tree — see the note on `useAnchored` in `Menu` below. */
+/** Any submenu anywhere in the tree; see the note on `useAnchored` in `Menu` below. */
 function hasSubmenu(items: readonly MenuItem[]): boolean {
   return items.some((item) => (item.children?.length ?? 0) > 0 || hasSubmenu(item.children ?? []));
 }
@@ -259,7 +259,7 @@ function MenuList({
           });
 
     /*
-     * A destination, not a command: a real `<a href>` instead of a `<div>` — Zag's own selection
+     * A destination, not a command: a real `<a href>` instead of a `<div>`. Zag's own selection
      * path already special-cases an anchor item (`navigate`, defaulting to `clickIfLink`), so the
      * SAME `machineProps` (role, keyboard handling, highlight) apply unchanged either way.
      */
@@ -350,7 +350,7 @@ function Submenu({
      * actually positions THIS submenu now that `useAnchored` is called with `enabled: false` below.
      * `absolute`'s containing block is the nearest positioned ancestor, here the parent menu's own
      * panel, so a submenu measuring past that panel's edge grew ITS `overflow: auto` scrollport
-     * instead of floating free — the exact failure `patterns/anchored.css` already explains
+     * instead of floating free. The exact failure `patterns/anchored.css` already explains
      * choosing `fixed` over `absolute` to avoid for the browser-placed case.
      */
     positioning: { placement: "right-start", gutter: 4, strategy: "fixed" },
@@ -373,7 +373,7 @@ function Submenu({
    * The safe area (core/src/menu-safe-area.ts) belongs to this submenu, mounted on the trigger it
    * hangs off. Created once per mounted trigger rather than per render: it owns a real element and
    * four listeners, and none of that depends on anything React re-renders for. Both refs below are
-   * `useRef` for the same reason — nothing this holds is ever read during render.
+   * `useRef` for the same reason: nothing this holds is ever read during render.
    */
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
@@ -423,14 +423,14 @@ function Submenu({
      *
      * Portalling here (the old approach) put the positioner ahead of its own trigger in DOM order
      * once a THIRD level was involved: React commits a nested `<Portal>` before the parent's own
-     * portal finishes, so `document.body`'s children came out child-first — the deepest submenu's
+     * portal finishes, so `document.body`'s children came out child-first. The deepest submenu's
      * positioner landed on the page before the ancestor tree that contains its trigger button. CSS
      * anchor positioning silently drops a `position-anchor` reference to an anchor that appears
      * LATER in tree order than the query element (measured with a two-node repro: swapping which of
      * two `position: fixed` siblings comes first in markup was the only variable, and the one whose
      * anchor came after it always fell back to the UA default top-left corner, `position-anchor`
      * still reading back the right custom ident and `position-area` still reading back the right
-     * keywords — the computed values lie, only the rendered rect tells the truth). Every submenu
+     * keywords. The computed values lie, only the rendered rect tells the truth). Every submenu
      * beyond the first level shared this exact ordering bug, and "el placement de los segundos
      * niveles" was that: not a wrong `position-area`, an anchor the browser refused to use because
      * of DOM order alone.
@@ -438,7 +438,7 @@ function Submenu({
      * Staying nested keeps trigger-before-positioner true AT EVERY DEPTH by construction: each
      * `Submenu` is one self-contained tree, so there is no portal commit order to fight. `position:
      * fixed` still escapes an ancestor's `overflow: auto` (patterns/anchored.css), so the panel does
-     * not need `document.body` for that either — Vanilla never portals anything and needs none of
+     * not need `document.body` for that either. Vanilla never portals anything and needs none of
      * this. The top-level `Menu` keeps its own `<Portal>`: single level, its trigger renders inline
      * and its positioner reaches `document.body` afterward, so trigger already precedes positioner
      * there and the ordering bug never applied to it.
@@ -555,9 +555,9 @@ export function Menu({
    * only from the submenu itself (see the matching note on `Submenu`'s own `useAnchored` call).
    * Mixing engines one level apart put the two out of the same coordinate space: a submenu's `--x`/
    * `--y` are the machine's own measurement relative to the viewport, but the browser resolves that
-   * submenu's `position: fixed` against the nearest ancestor that is itself anchor-positioned — this
+   * submenu's `position: fixed` against the nearest ancestor that is itself anchor-positioned. This
    * top level's own positioner, which carries `anchor-name` unconditionally whether or not it is
-   * placed via `@supports` — rather than the viewport. Measured against a live nested Menu: a
+   * placed via `@supports`, rather than the viewport. Measured against a live nested Menu: a
    * submenu math-correct in viewport terms rendered offset by roughly this panel's own on-screen
    * position. One engine for the whole tree removes the mismatch.
    */
@@ -586,7 +586,7 @@ export function Menu({
    * A CONTEXT trigger never takes the native-anchor route (see the matching comment in
    * `packages/vanilla/src/components/menu.ts`): the pattern anchors to an ELEMENT, and what matters
    * here is WHERE INSIDE that (possibly page-wide) element the right-click landed, not the element's
-   * own box. The machine already solves exactly this — `getContextTriggerProps` forwards the click's
+   * own box. The machine already solves exactly this: `getContextTriggerProps` forwards the click's
    * point, the machine stores it and hands floating-ui a zero-size anchor rect at that point, so
    * `getPositionerProps()` comes back with a real `style` placing the menu at the pointer with the
    * SAME `bottom-start` default as a trigger button (below, growing toward the inline-end). Both
@@ -596,7 +596,7 @@ export function Menu({
   /*
    * ONE readout for the whole menu, owned by the root and handed down to every `Submenu`: the
    * question it answers ("is the pointer protected right now") is about the menu, not about one
-   * level, and the old badge was created per open submenu — two levels open stacked two of them on
+   * level, and the old badge was created per open submenu. Two levels open stacked two of them on
    * the same fixed coordinates. It mounts into this root, in flow (menu-intent-readout.ts), so a
    * `useState` holding the element is what makes the effect run once the root actually exists.
    */

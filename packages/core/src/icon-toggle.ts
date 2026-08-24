@@ -8,7 +8,7 @@
  * `--sk-icon-toggle-on: 1` on the matching face so paint and runtime stay aligned.
  *
  * It is a pattern and not a component for the same reason as Anclaje (decision 8): a second
- * control already needs this exact structure — until decision 33 that was two components
+ * control already needs this exact structure. Until decision 33 that was two components
  * (ThemeToggle, CopyButton) each hand-writing the same anatomy; now it is the one signature built
  * on it, and whatever a consumer composes on top.
  *

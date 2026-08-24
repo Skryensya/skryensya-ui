@@ -27,7 +27,7 @@ export type FormFieldPartClass = (typeof formFieldParts)[FormFieldPart];
  *
  * A form field is chrome plus a control, and what binds them is six ids: the label points at the
  * control, the control points back at the hint and the error, and each of those carries the id being
- * pointed at. Written by hand — which is what authored markup does today — every one of them is a
+ * pointed at. Written by hand, which is what authored markup does today. Every one of them is a
  * chance to be silently wrong: a mistyped `aria-describedby` shows nothing on screen and breaks every
  * screen reader that reads the form.
  *
@@ -62,7 +62,7 @@ export const formFieldContract = {
         /** Guidance shown before the control. Pointed at by `aria-describedby`. */
         hint: { accepts: "node" },
         /**
-         * The validation message. Its PRESENCE is what makes the field invalid — colour is never the
+         * The validation message. Its PRESENCE is what makes the field invalid. Colour is never the
          * only cue, and there is no separate `invalid` option to fall out of step with it.
          */
         error: { accepts: "node" },

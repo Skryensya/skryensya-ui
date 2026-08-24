@@ -4,7 +4,7 @@ import { Megamenu, MegamenuTrigger } from "./megamenu.js";
 import { ImageFrame } from "./image-frame.js";
 
 /** The hover-intent timers call `setState` outside any React event handler `act()` already wraps
- *  `fireEvent` in — advancing them has to be wrapped explicitly, or the resulting DOM update isn't
+ *  `fireEvent` in. Advancing them has to be wrapped explicitly, or the resulting DOM update isn't
  *  guaranteed to have committed by the time the very next assertion reads it. */
 const advance = (ms: number) => act(() => vi.advanceTimersByTime(ms));
 
@@ -61,7 +61,7 @@ describe("Megamenu (React)", () => {
     expect(trigger(ui, "Products").getAttribute("aria-expanded")).toBe("false");
     expect(trigger(ui, "Resources").getAttribute("aria-expanded")).toBe("false");
     // The Disclosure (Navigation) pattern this component deliberately follows instead of Menu
-    // Button (core/megamenu.ts's own header comment) never carries `aria-haspopup`/`role="menu"` —
+    // Button (core/megamenu.ts's own header comment) never carries `aria-haspopup`/`role="menu"` -
     // a screen reader announces "button, collapsed", never "has a menu", and Tab still walks
     // through the panel's own links in normal document order. Guards against a regression that
     // "helpfully" adds Menu-pattern ARIA here, which would silently break that assumption.
@@ -77,7 +77,7 @@ describe("Megamenu (React)", () => {
     expect(visiblePanel().textContent).toContain("Overview");
   });
 
-  it("clicking the SAME trigger again closes it — a toggle", () => {
+  it("clicking the SAME trigger again closes it. A toggle", () => {
     const ui = render(<Fixture />);
     fireEvent.click(trigger(ui, "Products"));
     fireEvent.click(trigger(ui, "Products"));

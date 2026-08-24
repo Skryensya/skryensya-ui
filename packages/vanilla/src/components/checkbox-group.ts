@@ -8,7 +8,7 @@ import { createConnectMount } from "../runtime/svelte-hydrate.js";
  * platform already keeps on every input, and the group's whole job is one derivation over them plus
  * one assignment back. Reaching for a machine would mean holding a second copy of state the DOM is
  * already holding, and the two would disagree the first time a form reset moved the inputs without
- * telling anyone — which is exactly the bug the `reset` listener below exists to not have.
+ * telling anyone, which is exactly the bug the `reset` listener below exists to not have.
  */
 
 const ALL = "[data-sk-checkbox-group-all]";
@@ -19,7 +19,7 @@ const ITEM = "[data-sk-checkbox-group-item]";
  *
  * `querySelectorAll` reaches through nested groups, and a group inside a group is not hypothetical:
  * a permissions tree is the obvious next thing an author builds out of this. A child claimed by a
- * closer group belongs to that one, so its own parent — not this one — is what it counts toward.
+ * closer group belongs to that one, so its own parent: not this one. Is what it counts toward.
  */
 function ownItems(root: HTMLElement): HTMLInputElement[] {
   return Array.from(root.querySelectorAll<HTMLInputElement>(ITEM)).filter(
@@ -39,7 +39,7 @@ function readState(items: readonly HTMLInputElement[]): CheckedState {
 let uid = 0;
 
 /*
- * `aria-controls` on the parent, naming which children it speaks for — the WAI-ARIA mixed-checkbox
+ * `aria-controls` on the parent, naming which children it speaks for. The WAI-ARIA mixed-checkbox
  * pattern's own relationship attribute, the same idea `aria-describedby` is for FormField's hint and
  * error. It is set here rather than in the contract because there is nothing THERE that could know
  * it: the ids are assigned at runtime, exactly like `indeterminate` two lines up, which has no

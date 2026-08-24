@@ -51,7 +51,7 @@ describe("Combobox", () => {
     fireEvent.change(input, { target: { value: "arg" } });
     fireEvent.click(await ui.findByRole("option", { name: "Argentina" }));
 
-    // The chip carries the answer, so the input is free for the next search — on the whole list.
+    // The chip carries the answer, so the input is free for the next search. On the whole list.
     await waitFor(() => expect(input.value).toBe(""));
     expect(ui.getAllByRole("option")).toHaveLength(items.length);
     expect(ui.getByRole("listitem").textContent).toContain("Argentina");
@@ -70,7 +70,7 @@ describe("Combobox", () => {
     fireEvent.keyDown(input, { key: "ArrowDown" });
 
     await waitFor(() => expect(listbox.dataset.highlightSource).toBe("keyboard"));
-    // The control gives its ring up while an option holds it — one ring on screen at a time.
+    // The control gives its ring up while an option holds it. One ring on screen at a time.
     expect(
       ui.container.querySelector(".sk-combobox")?.hasAttribute("data-virtual-focus"),
     ).toBe(true);
@@ -127,7 +127,7 @@ describe("Combobox", () => {
     fireEvent.keyDown(input, { key: "ArrowDown" });
 
     // Nothing chosen yet: the highlight alone must not produce aria-selected in multiple mode
-    // either — only single-select borrows the highlight for it.
+    // either. Only single-select borrows the highlight for it.
     await waitFor(() =>
       expect(
         ui.getByRole("option", { name: "Argelia" }).hasAttribute("data-highlighted"),

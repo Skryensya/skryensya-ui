@@ -18,7 +18,7 @@ export function Badge({ children, className, tone = "neutral", ...props }: Badge
 
 export type BadgeDotProps = Omit<HTMLAttributes<HTMLSpanElement>, "aria-label"> & {
   tone?: BadgeTone;
-  /** What the dot means ("Unread", "Online") — its only accessible content. */
+  /** What the dot means ("Unread", "Online"). Its only accessible content. */
   label: string;
 };
 

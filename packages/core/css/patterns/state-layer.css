@@ -119,7 +119,7 @@
      * `weldStart`/`weldEnd`, a split button's own seam) sits flush against that exact edge with
      * zero gap. `.sk-interactive` already establishes its own stacking context
      * (`position: relative` + `isolation: isolate`, above), so without an explicit z-index here
-     * the LATER sibling in the DOM — same stacking level, painted second — covers the ring where
+     * the LATER sibling in the DOM. Same stacking level, painted second. Covers the ring where
      * the two overlap. This element only needs to win against its OWN siblings while focused, not
      * escape the page's real layers, which is exactly what `--z-focus` is for: it sits between
      * `--z-base` and `--z-sticky`, high enough to clear a neighbor at the same normal-flow level,

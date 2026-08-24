@@ -172,7 +172,7 @@ describe("emitMarkup", () => {
   /*
    * The current page is never a link, even when the author gives it an `href` alongside `current`:
    * it is the one label the trail exists to answer "where am I", never truncated or muted like an
-   * ancestor crumb. `whenItemAllGiven` is the primitive this needs — a node whose visibility
+   * ancestor crumb. `whenItemAllGiven` is the primitive this needs. A node whose visibility
    * depends on TWO item options both being supplied, which `whenItemGiven` (one option per node)
    * cannot express and `whenItemEquals` cannot either (a boolean's stored value is a literal JS
    * `true`, never the string `"true"` `equals` compares against).
@@ -205,7 +205,7 @@ describe("emitMarkup", () => {
 
   /*
    * `data-sk-breadcrumb` is the vanilla enhancer's attachment point (`registry.ts`), and
-   * `collapsedLabel` is a plain host option like `label` — both are on the root regardless of trail
+   * `collapsedLabel` is a plain host option like `label`. Both are on the root regardless of trail
    * length, since the enhancer, not the compiled markup, is what decides per-resize whether a given
    * trail ever collapses.
    */
@@ -249,7 +249,7 @@ describe("emitMarkup", () => {
 
   /*
    * A menubar item's trigger is `sk-button` by default; `nav: true` swaps it for `nav-list`'s own
-   * link/label classes instead — same either/or as `NavListGroup`'s collapsible-vs-static label.
+   * link/label classes instead. Same either/or as `NavListGroup`'s collapsible-vs-static label.
    */
   it("renders a MenubarItem trigger as a real nav-list link when nav is true", () => {
     const navItem = emitMarkup({
@@ -317,7 +317,7 @@ describe("emitMarkup", () => {
 
   /*
    * A slot's items each get their own line, and HTML collapses the newline between two of them into
-   * a rendered space — which is correct everywhere a text neighbour already wanted one, and wrong at
+   * a rendered space, which is correct everywhere a text neighbour already wanted one, and wrong at
    * a boundary that wanted none: a link glued to the comma right after it would otherwise float a
    * space in front of the punctuation that neither side of the source wrote.
    */
@@ -359,7 +359,7 @@ describe("emitReact", () => {
   /*
    * Every snippet, not only the ones with data to import. A bare expression is not a file: nothing
    * declares it and nothing renders it, and the reader is left to know that a component goes around
-   * it — which is the thing the page is meant to be showing.
+   * it, which is the thing the page is meant to be showing.
    */
   it("is always a component, even with nothing to hold", () => {
     const tsx = emitReact(saveButton);
@@ -441,7 +441,7 @@ describe("emitReact", () => {
    * TypeScript's JSX transform trims BOTH edges of, silently: the source still reads as though the
    * space survived, and only the rendered page shows it did not. `{" "}` is the only child JSX keeps
    * regardless of the newline beside it, which is why a needed space becomes one and a boundary with
-   * none — the comma glued straight to the second link — gets none either.
+   * none. The comma glued straight to the second link. Gets none either.
    */
   it("keeps every space prose needs around an element, and adds none where the source has none", () => {
     const paragraph: UsageTree = {
@@ -552,7 +552,7 @@ describe("a collection is data, and data lives in a file of its own", () => {
     } as never);
 
     /*
-     * Two collections, so no single entry's name would be honest about the file — and named for the
+     * Two collections, so no single entry's name would be honest about the file, and named for the
      * contract that OWNS them, not for the Toolbar they happen to sit in.
      */
     expect(data?.file).toBe("select-data.ts");

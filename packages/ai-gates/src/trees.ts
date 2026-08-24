@@ -331,6 +331,16 @@ const signatureTrees: readonly Canonical[] = [
     },
   },
   {
+    name: "tag/link",
+    enhanced: false,
+    tree: {
+      contract: "tag",
+      signature: "Tag.link",
+      options: { href: "/topics/design", tone: "accent" },
+      children: "Diseño",
+    },
+  },
+  {
     // A named bar: the three aria-value attributes are what make "62 of 100" audible.
     name: "progress/labelled",
     enhanced: false,
@@ -836,7 +846,7 @@ const signatureTrees: readonly Canonical[] = [
     },
   },
   /*
-   * Two faces, `current` set: the copy-to-clipboard shape, minus the click behavior — a consumer's
+   * Two faces, `current` set: the copy-to-clipboard shape, minus the click behavior. A consumer's
    * own script now owns that, this only proves the anatomy both bindings agree on.
    */
   {
@@ -847,7 +857,7 @@ const signatureTrees: readonly Canonical[] = [
       signature: "IconStateButton",
       options: { current: "idle" },
       // The contract itself has no `label`/`aria-label` option (decision 33: genuinely no opinion
-      // about behavior or naming, both are the consumer's) — this is the consumer's own, the same
+      // about behavior or naming, both are the consumer's). This is the consumer's own, the same
       // way a real one (CopyButton.astro's script, say) would author it.
       attrs: { "aria-label": "Copiar" },
       slots: {
@@ -938,8 +948,8 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
-  /* A composition, not a component with a list: both halves are real signatures, `primary` a
-   * Button.action and `menu` a Menu — split-button.ts's own contract, since ae244c7. */
+  /* A composition, not a component with a list: both halves are real signatures, `action` a
+   * Button.action and `menu` a Menu. Split-button.ts's own contract, since ae244c7. */
   {
     name: "split-button/save-and-more",
     enhanced: true,
@@ -947,7 +957,7 @@ const signatureTrees: readonly Canonical[] = [
       contract: "split-button",
       signature: "SplitButton",
       slots: {
-        primary: {
+        action: {
           contract: "button",
           signature: "Button.action",
           options: { variant: "accent", weldEnd: true },
@@ -1780,7 +1790,7 @@ const signatureTrees: readonly Canonical[] = [
    * ── Coverage gate additions ──────────────────────────────────────────────────────────────────
    *
    * `every published signature is reachable from a canonical tree` (rendered.spec.ts) found these
-   * 31 signatures with no canonical tree anywhere — some missing individually from an otherwise
+   * 31 signatures with no canonical tree anywhere. Some missing individually from an otherwise
    * covered family, four (menubar, data-grid, feed, treegrid) with no fixture at all. The same
    * class of gap the file's own header already names for select/menu/table-pager/tooltip, just not
    * caught until the check existed to catch it.
@@ -1868,7 +1878,7 @@ const signatureTrees: readonly Canonical[] = [
   },
   {
     // `NativeInput` has no `label`/`aria-label` OPTION (it is the raw platform control, meant to
-    // sit inside whatever gives it a name — a FormField, an authored sibling `<label>`); `attrs`
+    // sit inside whatever gives it a name. A FormField, an authored sibling `<label>`); `attrs`
     // still reaches the host regardless, same as any consumer would supply one by hand.
     name: "input/native",
     enhanced: false,
@@ -1882,7 +1892,7 @@ const signatureTrees: readonly Canonical[] = [
   {
     /*
      * A blueprint, not a rendered toast: `<template>` content is inert, cloned by script per
-     * notification, so this is the one Toast tree that never appears live as authored — its
+     * notification, so this is the one Toast tree that never appears live as authored. Its
      * CLONE does, which `content/toast-region` already covers. What this proves is that both
      * bindings agree on the blueprint's own shape. Draws nothing for the same reason
      * `loader/status-only` does: template content is never part of the rendered tree.
@@ -1940,7 +1950,7 @@ const signatureTrees: readonly Canonical[] = [
   {
     // One plain command, one dropdown: exercises MenubarItem's two shapes (`items` given or not).
     // The dropdown's `items` is Menu's OWN item shape now (decision: see `menubar.ts`'s header
-    // comment in core) — same shape `menu/with-submenu` above exercises, not a second description.
+    // comment in core). Same shape `menu/with-submenu` above exercises, not a second description.
     name: "menubar/with-dropdown",
     enhanced: true,
     tree: {
@@ -2006,7 +2016,7 @@ const signatureTrees: readonly Canonical[] = [
   },
   {
     /*
-     * FLAT rows, `level`/`setSize`/`posInset` authored, never derived — the contract's own file
+     * FLAT rows, `level`/`setSize`/`posInset` authored, never derived. The contract's own file
      * banner is explicit that a treegrid has no nesting structure of its own. "Documentos" is a
      * branch (authors `expanded`), "informe.pdf" is its child; "Fotos" is a second top-level
      * branch left collapsed, so this case exercises `expanded: false` too.
@@ -2043,7 +2053,7 @@ const signatureTrees: readonly Canonical[] = [
                 options: { level: 1, setSize: 2, posInset: 1, expanded: true, value: "documentos" },
                 children: [
                   { contract: "treegrid", signature: "TreegridCell", children: "Documentos" },
-                  { contract: "treegrid", signature: "TreegridCell", children: "—" },
+                  { contract: "treegrid", signature: "TreegridCell", children: "N/A" },
                 ],
               },
               {
@@ -2061,7 +2071,7 @@ const signatureTrees: readonly Canonical[] = [
                 options: { level: 1, setSize: 2, posInset: 2, expanded: false, value: "fotos" },
                 children: [
                   { contract: "treegrid", signature: "TreegridCell", children: "Fotos" },
-                  { contract: "treegrid", signature: "TreegridCell", children: "—" },
+                  { contract: "treegrid", signature: "TreegridCell", children: "N/A" },
                 ],
               },
             ],
@@ -2071,7 +2081,7 @@ const signatureTrees: readonly Canonical[] = [
     },
   },
   {
-    // The shell region: no options, children optional — an app shell can show chrome and a
+    // The shell region: no options, children optional. An app shell can show chrome and a
     // deliberately empty work area before deciding what goes there, so a heading is content here,
     // not a requirement of the signature.
     name: "layout/main",
@@ -2090,7 +2100,7 @@ const signatureTrees: readonly Canonical[] = [
   {
     /*
      * One trigger, one column: `MegamenuTrigger`'s `columns` slot takes the same `NavListGroup` a
-     * sidebar or navbar already builds with (`nav-list.ts`) — proven live by this very case, which
+     * sidebar or navbar already builds with (`nav-list.ts`). Proven live by this very case, which
      * needed `NavListGroup.parents` to learn `MegamenuTrigger` as a third legal home (see that
      * signature's own comment). `enhanced`: the trigger's `aria-expanded` and the panel's anchored
      * positioning are both machine-driven, same as Menu.

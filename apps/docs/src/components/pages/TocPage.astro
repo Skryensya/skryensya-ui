@@ -85,8 +85,8 @@ const sourceFiles = [
        * `--sk-component-preview-stage-min-block-size` (12rem) while its frame loads and then drops
        * that floor to 0 the moment the frame reports ready, letting the measured content height take
        * over (`component-preview.css`). Measured on this page: these three settle at 152px, 178px and
-       * 178px, so every one of them COLLAPSES out of the 192px reserve once it is ready — the first
-       * by a full 40px — and everything below it jumps up. Declaring a floor is what
+       * 178px, so every one of them COLLAPSES out of the 192px reserve once it is ready. The first
+       * by a full 40px, and everything below it jumps up. Declaring a floor is what
        * `component-preview.css` already keys `[data-sk-component-preview-min-height]` on to keep the
        * reserve after ready, the same way `viewport="menu"`/`"overlay"` keep theirs. `12rem` matches
        * the loading reserve exactly, so the stage is the same height from first paint onward and

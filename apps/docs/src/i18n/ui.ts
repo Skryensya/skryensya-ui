@@ -329,13 +329,13 @@ export const ui = {
     "demo.stack.title": "Resumen",
     "demo.stack.body": "La solicitud está lista para revisar.",
     "demo.stack.action": "Ver detalles",
-    "demo.layoutGrid.narrow": "narrow — resúmenes, formularios de lectura concentrada.",
-    "demo.layoutGrid.content": "content — la medida por defecto para el flujo principal.",
-    "demo.layoutGrid.breakout": "breakout — figuras, tablas o grupos que necesitan más aire lateral.",
-    "demo.layoutGrid.fullWidth": "full-width — fondos o medios que llegan al borde de la grilla.",
-    "demo.layoutGridRail.content": "contenido — main.sk-layout-grid, el flujo principal de la página.",
-    "demo.layoutGridRail.rail": "rail — después del contenido, p. ej. un TOC.",
-    "demo.layoutGridRail.railStart": "rail-start — antes del contenido, p. ej. un índice.",
+    "demo.layoutGrid.narrow": "narrow. Resúmenes, formularios de lectura concentrada.",
+    "demo.layoutGrid.content": "content. La medida por defecto para el flujo principal.",
+    "demo.layoutGrid.breakout": "breakout. Figuras, tablas o grupos que necesitan más aire lateral.",
+    "demo.layoutGrid.fullWidth": "full-width. Fondos o medios que llegan al borde de la grilla.",
+    "demo.layoutGridRail.content": "contenido. Main.sk-layout-grid, el flujo principal de la página.",
+    "demo.layoutGridRail.rail": "rail. Después del contenido, p. ej. un TOC.",
+    "demo.layoutGridRail.railStart": "rail-start. Antes del contenido, p. ej. un índice.",
     "demo.inline.title": "Proyecto Atlas",
     "demo.inline.status": "3 cambios sin publicar",
     "demo.inline.preview": "Vista previa",
@@ -389,7 +389,7 @@ export const ui = {
     "breadcrumb.longLabel": "Breadcrumb con etiquetas largas",
     "breadcrumb.collapseTitle": "Colapsa para entrar",
     "breadcrumb.collapseBody":
-      'Cuando la senda no entra en una sola línea, un enhancer esconde los niveles ancestro — nunca el primero ni la página actual — detrás de un disclosure «…» que abre un <a href="/componentes/menu">Menu</a> real con esos mismos niveles: el patrón de teclado de un menú ARIA (flechas, Home/End, typeahead), no una lista plana. Sin JavaScript, o con menos de cuatro niveles, el markup sigue completo por sí solo.',
+      'Cuando la senda no entra en una sola línea, un enhancer esconde los niveles ancestro. Nunca el primero ni la página actual. Detrás de un disclosure «…» que abre un <a href="/componentes/menu">Menu</a> real con esos mismos niveles: el patrón de teclado de un menú ARIA (flechas, Home/End, typeahead), no una lista plana. Sin JavaScript, o con menos de cuatro niveles, el markup sigue completo por sí solo.',
     "breadcrumb.collapseLabel": "Breadcrumb que colapsa para entrar",
     "breadcrumb.collapseTriggerLabel": "Mostrar niveles ocultos",
     "breadcrumb.contractBody": "Usa nav + ol; el último elemento lleva aria-current=page y no es un enlace.",
@@ -431,7 +431,7 @@ export const ui = {
     "callout.warningLabel": "Callout warning",
     "callout.successTitle": "Success, con un Button translucent",
     "callout.successBody":
-      'Cuando la acción es un <a href="/componentes/button">Button</a>, el slot solo acepta <code>variant="translucent"</code> o <code>variant="danger"</code>; nunca <code>primary</code> ni el default <code>neutral</code>: un Callout no es el lugar de la llamada a la acción principal de la página. Usa <code>translucent</code> para botones que se mezclan con el fondo coloreado del callout, y <code>danger</code> cuando necesites una acción destructiva que destaque visualmente.',
+      'Cuando la acción es un <a href="/componentes/button">Button</a>, el slot solo acepta <code>variant="translucent"</code> o <code>variant="danger"</code>; nunca <code>accent</code> ni el default <code>neutral</code>: un Callout no es el lugar de la llamada a la acción accent de la página. Usa <code>translucent</code> para botones que se mezclan con el fondo coloreado del callout, y <code>danger</code> cuando necesites una acción destructiva que destaque visualmente.',
     "callout.successLabel": "Callout success",
     "callout.anatomyTitle": "Anatomía",
     "callout.anatomyItem1": "<code>sk-callout__icon</code> es decorativo y solo aparece cuando aporta una señal visual.",
@@ -639,7 +639,7 @@ export const ui = {
     "demo.drawer.team": "Equipo",
     "demo.drawer.settings": "Ajustes",
     "demo.drawer.userName": "Ada Kovač",
-    "demo.splitButton.primary": "Guardar",
+    "demo.splitButton.action": "Guardar",
     "demo.splitButton.menuLabel": "Más opciones",
     "demo.splitButton.copy": "Guardar una copia",
     "demo.splitButton.template": "Guardar como plantilla",
@@ -719,14 +719,28 @@ export const ui = {
     "demo.menu.safety.pdfCompressed": "Comprimido",
     "demo.menu.safety.delete": "Eliminar",
     "demo.radioGroup.label": "Plan",
-    "demo.navList.label": "Principal",
-    "demo.navList.group": "Espacio",
-    "demo.navList.home": "Inicio",
-    "demo.navList.reports": "Reportes",
-    "demo.navList.collapsibleNavLabel": "Cuenta",
-    "demo.navList.collapsibleLabel": "Grupo colapsable",
-    "demo.navList.account": "Mi cuenta",
+    "demo.navList.productLabel": "Navegación de producto",
+    "demo.navList.groupWork": "Trabajo",
+    "demo.navList.groupOperate": "Operar",
+    "demo.navList.dashboard": "Panel",
+    "demo.navList.inbox": "Bandeja",
+    "demo.navList.customers": "Clientes",
+    "demo.navList.allCustomers": "Todos los clientes",
+    "demo.navList.segments": "Segmentos",
+    "demo.navList.automations": "Automatizaciones",
     "demo.navList.settings": "Ajustes",
+    "demo.navList.horizontalLabel": "Principal",
+    "demo.navList.overview": "Resumen",
+    "demo.navList.projects": "Proyectos",
+    "demo.navList.reports": "Reportes",
+    "demo.navList.team": "Equipo",
+    "demo.navList.collapsibleNavLabel": "Navegación de documentación",
+    "demo.navList.docs": "Documentación",
+    "demo.navList.start": "Empezar",
+    "demo.navList.components": "Componentes",
+    "demo.navList.tokens": "Tokens",
+    "demo.navList.account": "Cuenta",
+    "demo.navList.profile": "Perfil",
     "demo.navList.billing": "Facturación",
     "demo.navbar.nav": "Principal",
     "demo.navbar.home": "Inicio",
@@ -1297,7 +1311,7 @@ export const ui = {
     "accordion.a11yP1":
       'Cada trigger es un <code>&lt;button&gt;</code> nativo: Enter y Espacio lo activan sin script propio, y su <code>aria-expanded</code> (escrito por la máquina, nunca a mano) es lo único que anuncia el estado. El chevron es <code>aria-hidden="true"</code>: es la misma información dicha dos veces, y solo una debe llegar al lector de pantalla.',
     "accordion.a11yP2":
-      "<kbd>Tab</kbd> y <kbd>Shift</kbd>+<kbd>Tab</kbd> mueven el foco entre triggers en el orden normal de la página: el patrón base que la APG de ARIA describe para un accordion no exige más que eso — flechas, <kbd>Home</kbd> y <kbd>End</kbd> entre triggers son una mejora opcional que este componente no implementa hoy. Abrir un item no le quita el foco a su trigger ni se lo da al contenido: el recorrido con teclado sigue siendo el mismo, igual que con el mouse.",
+      "<kbd>Tab</kbd> y <kbd>Shift</kbd>+<kbd>Tab</kbd> mueven el foco entre triggers en el orden normal de la página: el patrón base que la APG de ARIA describe para un accordion no exige más que eso. Flechas, <kbd>Home</kbd> y <kbd>End</kbd> entre triggers son una mejora opcional que este componente no implementa hoy. Abrir un item no le quita el foco a su trigger ni se lo da al contenido: el recorrido con teclado sigue siendo el mismo, igual que con el mouse.",
     "accordion.a11yP3":
       '{detailsLink} no tiene nada de esto porque no lo necesita: un <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> es una divulgación accesible de la plataforma, con su propio manejo de foco y teclado ya resuelto por el navegador.',
 
@@ -1402,10 +1416,10 @@ export const ui = {
     "sourceViewer.treeAriaLabel": "Archivos fuente de {name}",
     "sourceViewer.resize": "Cambiar el ancho del árbol de archivos",
 
-    /* Resumen de tests: una línea por test, no el código (ya está en Referencia). Sirve para
-       confirmar de un vistazo qué queda cubierto sin tener que leer el archivo de test entero. */
+    /* Resumen de tests: una línea por test. Sirve para confirmar de un vistazo qué queda cubierto
+       sin tener que leer el archivo de test entero. */
     "tests.title": "Tests",
-    "tests.intro": "Qué valida cada test, en una línea. El código completo está en Referencia.",
+    "tests.intro": "Qué valida cada test, en una línea.",
     "tests.introNoReference": "Qué valida cada test, en una línea.",
     "tests.statusPassed": "Pasó",
     "tests.statusFailed": "Falló",
@@ -1442,13 +1456,13 @@ export const ui = {
     "carousel.multiBody1":
       "Slides más angostos entran de a varios por página, y la máquina las cuenta midiendo. Con <code>data-loop</code> el carrusel da la vuelta, con <code>data-autoplay</code> avanza solo (vacío para los 4000 ms por defecto, o un retardo en ms).",
     "carousel.multiBody2":
-      "Con <code>data-autoplay</code> aparece además un <strong>botón de pausa</strong>: algo que se mueve solo tiene que poder detenerse (WCAG 2.2.2), así que la opción y el control son una sola cosa. El botón siempre dice lo que va a hacer según lo último que el usuario pidió: pasar el mouse por encima o llevar el foco de teclado a cualquier parte del carrusel — no sólo a los botones — pausa la rotación mientras dure, y la retoma al salir, salvo que la otra condición siga activa. Un click en el botón manda por encima de todo eso hasta el próximo click. A quien declara <code>prefers-reduced-motion</code> no se le arranca: el carrusel queda quieto y el botón ofrece reproducir. También se pausa solo cuando la pestaña deja de estar visible.",
+      "Con <code>data-autoplay</code> aparece además un <strong>botón de pausa</strong>: algo que se mueve solo tiene que poder detenerse (WCAG 2.2.2), así que la opción y el control son una sola cosa. El botón siempre dice lo que va a hacer según lo último que el usuario pidió: pasar el mouse por encima o llevar el foco de teclado a cualquier parte del carrusel: no sólo a los botones: pausa la rotación mientras dure, y la retoma al salir, salvo que la otra condición siga activa. Un click en el botón manda por encima de todo eso hasta el próximo click. A quien declara <code>prefers-reduced-motion</code> no se le arranca: el carrusel queda quieto y el botón ofrece reproducir. También se pausa solo cuando la pestaña deja de estar visible.",
     "carousel.multiLabel": "Multi-up + autoplay",
     "carousel.multiNote": "Avatar + meta · data-loop · data-autoplay",
     "carousel.focusTitle": "Foco dentro de una tarjeta",
     "carousel.focusLabel": "Foco dentro de una tarjeta",
     "carousel.focusBody1":
-      "El patrón de WAI-ARIA dice que el foco de teclado pausa la rotación \"en cualquier parte del carrusel, incluyendo los elementos de siguiente y anterior slide\" — una frase fácil de leer como \"sólo los botones\". Esta tarjeta agrega un enlace real (\"Leer más\") adentro de cada slide para probar que también cuenta: Tab hacia el enlace pausa el autoplay, Tab o Shift+Tab hacia afuera lo retoma.",
+      "El patrón de WAI-ARIA dice que el foco de teclado pausa la rotación \"en cualquier parte del carrusel, incluyendo los elementos de siguiente y anterior slide\". Una frase fácil de leer como \"sólo los botones\". Esta tarjeta agrega un enlace real (\"Leer más\") adentro de cada slide para probar que también cuenta: Tab hacia el enlace pausa el autoplay, Tab o Shift+Tab hacia afuera lo retoma.",
     "carousel.focusBody2":
       "No hizo falta código nuevo para esto: el listener de foco vive en la raíz del carrusel, y <code>focusin</code>/<code>focusout</code> burbujean desde cualquier descendiente, así que un enlace, un botón o cualquier control dentro de una tarjeta ya queda cubierto.",
     "carousel.focusNote": "Link real por tarjeta · Tab para probar la pausa",
@@ -1849,7 +1863,7 @@ export const ui = {
     "layoutGridPage.description":
       "Layout Grid: un flujo de página con medidas narrow, content, breakout y full-width.",
     "layoutGridPage.lede":
-      "Layout Grid da cuatro anchos nombrados a un único flujo de contenido. El elemento raíz conserva su semántica —puede ser <code>main</code>, <code>article</code> o una sección— y cada hijo directo decide si necesita otra medida con <code>data-width</code>.",
+      "Layout Grid da cuatro anchos nombrados a un único flujo de contenido. El elemento raíz conserva su semántica -puede ser <code>main</code>, <code>article</code> o una sección- y cada hijo directo decide si necesita otra medida con <code>data-width</code>.",
     "layoutGridPage.exampleKicker": "Guía de publicación",
     "layoutGridPage.exampleTitle": "Una guía que se lee de principio a fin",
     "layoutGridPage.exampleIntro":
@@ -1878,7 +1892,7 @@ export const ui = {
       "Un hijo directo <code>full-width</code> se vuelve una grilla con las mismas columnas. Sus hijos directos vuelven a <code>content</code> por defecto, y pueden usar <code>narrow</code>, <code>breakout</code> o <code>full-width</code> otra vez.",
     "layoutGridPage.railTitle": "Rail y contenido centrados juntos",
     "layoutGridPage.railBody":
-      "Un rail de apoyo —TOC, navegación contextual o metadatos— es un hijo directo de la misma <code>sk-layout-grid</code>. <code>data-width=\"rail\"</code> lo sienta después del contenido; <code>data-width=\"rail-start\"</code>, antes; los dos a la vez, uno a cada lado. No es un span de contenido como <code>narrow</code> o <code>breakout</code>: es una columna aparte, fija en ancho (<code>--sk-layout-rail-inline-size</code>), pegada al flujo por <code>--sk-layout-rail-gap</code> — un paso de <code>space-inline</code>, no el track de breakout. Por debajo de <code>72rem</code> no hay espacio para una columna lateral, así que cada rail pasa a ser una fila propia sobre el contenido.",
+      "Un rail de apoyo -TOC, navegación contextual o metadatos- es un hijo directo de la misma <code>sk-layout-grid</code>. <code>data-width=\"rail\"</code> lo sienta después del contenido; <code>data-width=\"rail-start\"</code>, antes; los dos a la vez, uno a cada lado. No es un span de contenido como <code>narrow</code> o <code>breakout</code>: es una columna aparte, fija en ancho (<code>--sk-layout-rail-inline-size</code>), pegada al flujo por <code>--sk-layout-rail-gap</code>: un paso de <code>space-inline</code>, no el track de breakout. Por debajo de <code>72rem</code> no hay espacio para una columna lateral, así que cada rail pasa a ser una fila propia sobre el contenido.",
     "layoutGridPage.railEndTitle": "Después del contenido",
     "layoutGridPage.railStartTitle": "Antes del contenido",
     "layoutGridPage.railBothTitle": "Ambos lados",
@@ -2008,7 +2022,7 @@ export const ui = {
       "<code>sk-input</code> va en el <code>&lt;input&gt;</code> y en el <code>&lt;textarea&gt;</code>: es el mismo control visual, así que es un solo set de hooks. Una segunda clase sería un segundo set que mantener sincronizado con el primero.",
     "inputPage.formFieldTitle": "El rótulo no es del Input",
     "inputPage.formFieldBody":
-      'Los dos demos de arriba están envueltos en un <a href="/componentes/form-field">FormField</a>, y no por costumbre: el rótulo, la ayuda, el mensaje de error y los seis ids que los atan viven ahí. Por eso este contrato no tiene <code>invalid</code> ni <code>id</code> propios — un control que trajera su propio <code>aria-invalid</code> podría contradecir al mensaje que tiene al lado. Un <code>Input</code> fuera de un <code>FormField</code> igual es un control válido, siempre que lleve su <code>aria-label</code>.',
+      'Los dos demos de arriba están envueltos en un <a href="/componentes/form-field">FormField</a>, y no por costumbre: el rótulo, la ayuda, el mensaje de error y los seis ids que los atan viven ahí. Por eso este contrato no tiene <code>invalid</code> ni <code>id</code> propios: un control que trajera su propio <code>aria-invalid</code> podría contradecir al mensaje que tiene al lado. Un <code>Input</code> fuera de un <code>FormField</code> igual es un control válido, siempre que lleve su <code>aria-label</code>.',
     "inputPage.nativeTitle": "NativeInput: el control sin la apariencia",
     "inputPage.nativeBody":
       'La tercera signature del contrato es <code>NativeInput</code>: el mismo elemento sin <code>sk-input</code>, para cuando lo que querés enseñar es el comportamiento que trae el navegador y no la apariencia del sistema. Es lo que usa el demo del <code>&lt;input type="time"&gt;</code> plano en TimeField.',
@@ -2017,7 +2031,7 @@ export const ui = {
     "inputPage.test3": "Escribe el alto en data-size y deja en paz al atributo size nativo.",
 
     "formFieldPage.description":
-      "FormField: el cromo alrededor de cualquier control — rótulo, ayuda, error — y los seis ids que los atan.",
+      "FormField: el cromo alrededor de cualquier control. Rótulo, ayuda, error, y los seis ids que los atan.",
     "formFieldPage.title": "FormField",
     "formFieldPage.lede":
       "Un campo es cromo más un control, y lo que los une son seis ids. Escritos a mano, cada uno es una oportunidad de estar mal en silencio: un <code>aria-describedby</code> con un typo no se ve en pantalla y rompe a todos los lectores de pantalla que leen el formulario.",
@@ -2026,15 +2040,15 @@ export const ui = {
       "El rótulo apunta al control, el control apunta de vuelta a la ayuda y al error, y cada uno de esos carga el id al que lo apuntan. El contrato los deriva todos del id del campo: ningún binding se inventa uno propio, y por eso los ids de React (<code>useId</code>) y los del emisor (un slug) pueden ser distintos sin que la relación cambie.",
     "formFieldPage.independentTitle": "Independiente de Input, a propósito",
     "formFieldPage.independentBody":
-      "<code>sk-form-field</code> es el cromo alrededor de <em>cualquier</em> control: envuelve un select o un textarea igual de bien, como acá abajo. Nombrarlo por el control que más veces sostiene lo volvería mentira la primera vez que sostenga otro — y por eso su slot <code>children</code> acepta cualquier signature y el cableado apunta a <code>\"control\"</code> en vez de a un input.",
+      "<code>sk-form-field</code> es el cromo alrededor de <em>cualquier</em> control: envuelve un select o un textarea igual de bien, como acá abajo. Nombrarlo por el control que más veces sostiene lo volvería mentira la primera vez que sostenga otro: y por eso su slot <code>children</code> acepta cualquier signature y el cableado apunta a <code>\"control\"</code> en vez de a un input.",
     "formFieldPage.errorTitle": "El error es texto, no un color",
     "formFieldPage.errorBody":
       "La <em>presencia</em> del mensaje es lo que invalida el campo: no hay una opción <code>invalid</code> aparte que pueda quedar desfasada de él. <code>--sk-form-field-error-fg</code> tiñe un mensaje que igual tiene que existir, y <code>aria-invalid</code>, que ya escribís para los lectores de pantalla, es lo que sigue el hook <code>--sk-input-border-color</code>. El color nunca es la única señal de error (WCAG 1.4.1).",
     "formFieldPage.avoidTitle": "Cuándo no usarlo",
     "formFieldPage.avoidBody":
-      "Cuando el control no lleva rótulo visible: ahí el control mismo lleva su <code>aria-label</code> y no hay campo. Y cuando el control ya trae su propio rótulo cableado por su máquina — NumberField, TimeField, Combobox — envolverlo agregaría un segundo <code>for</code> compitiendo con el primero.",
+      "Cuando el control no lleva rótulo visible: ahí el control mismo lleva su <code>aria-label</code> y no hay campo. Y cuando el control ya trae su propio rótulo cableado por su máquina: NumberField, TimeField, Combobox: envolverlo agregaría un segundo <code>for</code> compitiendo con el primero.",
     "formFieldPage.reactBody":
-      "En React, <code>FormField</code> hace el cableado que en markup escribís a mano: genera el <code>id</code>, arma el <code>aria-describedby</code> de la ayuda y del error, y pasa <code>required</code> y <code>disabled</code> al control nativo. Se importa desde <code>@skryensya/react/form-field</code>, su propio módulo, y cualquier control puede leer ese contexto — que es la alternativa a que cada uno se haga su copia del cableado.",
+      "En React, <code>FormField</code> hace el cableado que en markup escribís a mano: genera el <code>id</code>, arma el <code>aria-describedby</code> de la ayuda y del error, y pasa <code>required</code> y <code>disabled</code> al control nativo. Se importa desde <code>@skryensya/react/form-field</code>, su propio módulo, y cualquier control puede leer ese contexto: que es la alternativa a que cada uno se haga su copia del cableado.",
     "formFieldPage.a11yBody":
       "El asterisco de <code>required</code> es decorativo (<code>aria-hidden</code>): lo que de verdad lo dice es el atributo <code>required</code> del control, porque «requerido» tiene que sobrevivir a ser leído en voz alta. La ayuda y el error se anuncian por <code>aria-describedby</code> en ese orden, y sólo se apunta a lo que existe: sin error escrito no hay <code>aria-invalid</code>, porque un atributo que apunta a un mensaje que nadie escribió describe algo que no está.",
     "formFieldPage.test1": "Cablea label, hint y error al control que envuelve.",
@@ -2046,14 +2060,14 @@ export const ui = {
     "skipLink.description":
       "SkipLink: el primer enlace del documento, invisible hasta que recibe el foco, para saltear el chrome que se repite.",
     "skipLink.lede":
-      'SkipLink es el <strong>primer enlace del documento</strong> y el único componente cuyo éxito se ve como ausencia: quien navega con mouse no se entera nunca de que está. Toda página abre con el mismo chrome —la marca, la navegación global, el buscador—, y quien lee con teclado lo recorre entero antes de llegar a lo que vino a buscar, en cada página. Eso es lo que la <abbr title="Web Content Accessibility Guidelines">WCAG</abbr> 2.4.1 llama un bloque que hay que poder saltear. Este enlace es el salto, y es el de la plataforma: un <code>href</code> a un id de la misma página, así que funciona antes de que corra un solo script.',
+      'SkipLink es el <strong>primer enlace del documento</strong> y el único componente cuyo éxito se ve como ausencia: quien navega con mouse no se entera nunca de que está. Toda página abre con el mismo chrome -la marca, la navegación global, el buscador-, y quien lee con teclado lo recorre entero antes de llegar a lo que vino a buscar, en cada página. Eso es lo que la <abbr title="Web Content Accessibility Guidelines">WCAG</abbr> 2.4.1 llama un bloque que hay que poder saltear. Este enlace es el salto, y es el de la plataforma: un <code>href</code> a un id de la misma página, así que funciona antes de que corra un solo script.',
     "skipLink.demoContentLabel": "Ir al contenido",
     "skipLink.demoNavLabel": "Ir a la navegación",
     "skipLink.tryItBody":
       'Este sitio usa dos: apretá <kbd class="sk-kbd">Tab</kbd> con el foco al principio de esta página y va a aparecer arriba a la izquierda “Ir al contenido”; otro Tab más y aparece “Ir a la navegación”. En la vista de abajo pasa lo mismo, pero adentro del marco: el enlace está ahí desde el primer render, sólo que mide un píxel hasta que lo enfocás.',
     "skipLink.severalTitle": "Puede haber más de uno, y el orden es la decisión",
     "skipLink.severalBody1":
-      'Una página con un índice permanente razonablemente ofrece dos: uno al contenido y otro a la navegación. No son un grupo ni una lista: son dos enlaces sueltos que resultan ser las dos primeras cosas del documento, y por eso la signature toma <em>un</em> destino en vez de una colección. Con una colección, el caso común —exactamente uno— tendría que escribirse como arreglo, y el orden quedaría adentro de una opción, donde nadie lo mira.',
+      'Una página con un índice permanente razonablemente ofrece dos: uno al contenido y otro a la navegación. No son un grupo ni una lista: son dos enlaces sueltos que resultan ser las dos primeras cosas del documento, y por eso la signature toma <em>un</em> destino en vez de una colección. Con una colección, el caso común -exactamente uno- tendría que escribirse como arreglo, y el orden quedaría adentro de una opción, donde nadie lo mira.',
     "skipLink.severalBody2":
       'El primero es el que recibe todo el mundo, así que tiene que contestar la pregunta con la que llegó la mayoría, y esa pregunta casi siempre es “dejame leer esta página”, no “llevame a otra”. Por eso el contenido va primero. Quien sí quería el índice está a un Tab más; al revés, quien quería la página pagaría varios.',
     "skipLink.severalLabel": "Los dos, en orden",
@@ -2063,17 +2077,17 @@ export const ui = {
     "skipLink.targetBody1":
       'Es la mitad que nadie recuerda y la que decide si el enlace sirve. Seguir un enlace interno hace scroll en todos los navegadores, pero mueve el <em>foco</em> sólo en algunos. Donde no lo mueve, el Tab siguiente sigue desde el enlace y devuelve a quien lee al chrome que acababa de pedir saltear: un enlace de salto que en silencio no hace nada es peor que no tener ninguno, porque ya le dijimos que funcionaba.',
     "skipLink.targetBody2":
-      '<code>tabindex="-1"</code> en el destino cierra ese hueco. Lo saca del <em>orden</em> de tabulación —no agrega una parada nueva— y lo vuelve un blanco válido para el foco. En React viene como valor, <code>skipLinkTarget</code>, y no como una frase en la documentación: una regla escrita en prosa es una regla que alguien copia mal una vez.',
+      '<code>tabindex="-1"</code> en el destino cierra ese hueco. Lo saca del <em>orden</em> de tabulación -no agrega una parada nueva- y lo vuelve un blanco válido para el foco. En React viene como valor, <code>skipLinkTarget</code>, y no como una frase en la documentación: una regla escrita en prosa es una regla que alguien copia mal una vez.',
     "skipLink.hiddenTitle": "Escondido quiere decir recortado, nunca borrado",
     "skipLink.hiddenBody1":
       'Ni <code>display: none</code> ni <code>visibility: hidden</code>: los dos sacan al elemento del árbol de accesibilidad, y lo que está fuera de ese árbol tampoco lo alcanza el Tab, que es lo único que este componente tiene que ser. En reposo es una caja de un píxel recortada con <code>clip-path</code>, exactamente como el patrón <a href="/styling-hooks">visually-hidden</a>.',
     "skipLink.hiddenBody2":
-      'Lo que sí lo separa de ese patrón es una declaración con consecuencia: <code>visually-hidden</code> vuelve a <code>position: static</code> al recibir el foco, así que el enlace entra al layout y todo lo de abajo se mueve, justo cuando quien lee está tratando de entender dónde cayó. Acá la posición es <code>fixed</code> en los dos estados —escondido y visible son la misma caja fuera de flujo—, así que enfocarlo cambia lo que se pinta y nada más. La página no se mueve nunca.',
+      'Lo que sí lo separa de ese patrón es una declaración con consecuencia: <code>visually-hidden</code> vuelve a <code>position: static</code> al recibir el foco, así que el enlace entra al layout y todo lo de abajo se mueve, justo cuando quien lee está tratando de entender dónde cayó. Acá la posición es <code>fixed</code> en los dos estados -escondido y visible son la misma caja fuera de flujo-, así que enfocarlo cambia lo que se pinta y nada más. La página no se mueve nunca.',
     "skipLink.firstTitle": "Va primero, o no es un salto",
     "skipLink.firstBody":
       'Cualquier cosa enfocable antes del enlace es, por definición, un bloque que nadie puede saltear. Por eso el lugar es el principio del <code>&lt;body&gt;</code> y no “arriba de todo visualmente”: las dos cosas coinciden acá porque es <code>fixed</code>, pero la que importa es el orden del documento.',
     "skipLink.contractBody":
-      'Una sola signature y una sola opción, <code>href</code>, requerida: un enlace de salto sin destino no es nada. El contrato no declara reglas <code>a11y</code> y esa ausencia es deliberada —las que tiene (que el destino sea enfocable, que no haya nada enfocable antes, y que el contenido se ofrezca antes que la navegación cuando hay dos) hablan de elementos y de hermanos que el árbol de uso no contiene, y una regla que ninguna máquina puede decidir no debería figurar como si alguien la chequeara.',
+      'Una sola signature y una sola opción, <code>href</code>, requerida: un enlace de salto sin destino no es nada. El contrato no declara reglas <code>a11y</code> y esa ausencia es deliberada -las que tiene (que el destino sea enfocable, que no haya nada enfocable antes, y que el contenido se ofrezca antes que la navegación cuando hay dos) hablan de elementos y de hermanos que el árbol de uso no contiene, y una regla que ninguna máquina puede decidir no debería figurar como si alguien la chequeara.',
     "skipLink.a11yIntro": "Lo que este componente resuelve y lo que sigue siendo tuyo:",
     "skipLink.a11yItem1":
       "<strong>WCAG 2.4.1 (Bypass Blocks), nivel A.</strong> Es el criterio que pide una forma de saltear el contenido que se repite en todas las páginas.",
@@ -2102,7 +2116,7 @@ export const ui = {
       'Una sola tecla (<kbd class="sk-kbd">K</kbd>, <kbd class="sk-kbd">⌘</kbd>, <kbd class="sk-kbd">↑</kbd>) toma un mínimo cuadrado en vez de quedar como una astilla; una etiqueta más larga (<kbd class="sk-kbd">Esc</kbd>, <kbd class="sk-kbd">Enter</kbd>) crece con su texto. El mínimo es <code>--sk-kbd-min-size</code>, relativo a la propia tipografía de la tecla, así que se mantiene cuadrada a cualquier tamaño.',
     "kbdPage.pressedTitle": "El estado apretado",
     "kbdPage.pressedBody1":
-      'Kbd no es un control, no se clickea, así que su único estado <strong>refleja</strong> un evento externo: <code>data-pressed</code>, que lo prende mientras su tecla física está apretada, igual que un componente refleja el <code>data-state</code> de una máquina. Lo escribe quien mira el teclado, no el kbd. Neutral se hunde: el bisel se invierte y el relleno pasa a sunken. Accent, además, toma el color de acción — "este atajo está vivo" es información. La transición usa la intención <code>feedback</code> (<a href="/motion">motion</a>).',
+      'Kbd no es un control, no se clickea, así que su único estado <strong>refleja</strong> un evento externo: <code>data-pressed</code>, que lo prende mientras su tecla física está apretada, igual que un componente refleja el <code>data-state</code> de una máquina. Lo escribe quien mira el teclado, no el kbd. Neutral se hunde: el bisel se invierte y el relleno pasa a sunken. Accent, además, toma el color de acción: "este atajo está vivo" es información. La transición usa la intención <code>feedback</code> (<a href="/motion">motion</a>).',
     "kbdPage.pressedBody2":
       'Pruébalo: aprieta cualquiera de estas y se prende sola; mantén <kbd class="sk-kbd" data-key="meta">⌘</kbd> y suma otra para ver la combinación.',
     "kbdPage.echoAriaLabel": "Teclas que reaccionan al teclado",
@@ -2242,7 +2256,7 @@ export const ui = {
       "Las N posicionadoras autoradas colapsan en un solo panel compartido, dimensionado por una regla oculta con las columnas de cada trigger.",
     "megamenuPage.testVanilla2":
       "Un click abre el panel de ese trigger con sus propias columnas.",
-    "megamenuPage.testVanilla3": "Un click en el MISMO trigger lo cierra — un toggle.",
+    "megamenuPage.testVanilla3": "Un click en el MISMO trigger lo cierra. Un toggle.",
     "megamenuPage.testVanilla4":
       "Un click en un trigger DISTINTO cambia el contenido del panel compartido, de forma excluyente.",
     "megamenuPage.testVanilla5": "Abre por intención de hover recién cuando pasa su demora, no al instante.",
@@ -2261,7 +2275,7 @@ export const ui = {
       "Renderiza un solo panel compartido, dimensionado por una regla oculta con las columnas de cada trigger.",
     "megamenuPage.testReact2":
       "Un click abre el panel de ese trigger con sus propias columnas.",
-    "megamenuPage.testReact3": "Un click en el MISMO trigger lo cierra — un toggle.",
+    "megamenuPage.testReact3": "Un click en el MISMO trigger lo cierra. Un toggle.",
     "megamenuPage.testReact4":
       "Un click en un trigger DISTINTO cambia el contenido del panel compartido, de forma excluyente.",
     "megamenuPage.testReact5": "Abre por intención de hover recién cuando pasa su demora, no al instante.",
@@ -2307,7 +2321,7 @@ export const ui = {
       "<code>data-sk-menu-context-trigger</code> (o <code>contextTarget</code> en React) reemplaza al trigger: el elemento absorbe el evento <code>contextmenu</code> del botón derecho y abre el menú, en vez de necesitar un botón visible.",
     "menuPage.safetyTitle": "Intención del puntero (safety triangle)",
     "menuPage.safetyBody":
-      "Cuando un submenú está abierto, cruzar en diagonal sobre otro item del menú padre no lo resalta ni cierra el submenú. Lo que lo sostiene es un elemento real: el <em>safe area</em>, un triángulo recortado con <code>clip-path</code> que vive DENTRO del trigger y va del puntero al borde cercano del submenú. Mientras el puntero está sobre él, el navegador no dispara <code>pointerleave</code> en el trigger —un descendiente cuenta como el elemento— así que la máquina nunca entra en <code>closing</code> y los items de abajo nunca reciben el <code>pointermove</code> con el que robarían el resaltado. El polígono propio de <code>@zag-js/menu</code> no alcanzaba: sólo puede vetar un cierre temprano durante los 100ms de <code>waitForCloseDelay</code>, no extenderlos, y con el puntero quieto adentro del polígono el submenú igual se cerraba a los ~90ms. Abrí «Compartir» y cruzá diagonalmente hacia el submenú: el triángulo pintado es el mismo elemento que estás tocando, no un dibujo aparte.",
+      "Cuando un submenú está abierto, cruzar en diagonal sobre otro item del menú padre no lo resalta ni cierra el submenú. Lo que lo sostiene es un elemento real: el <em>safe area</em>, un triángulo recortado con <code>clip-path</code> que vive DENTRO del trigger y va del puntero al borde cercano del submenú. Mientras el puntero está sobre él, el navegador no dispara <code>pointerleave</code> en el trigger -un descendiente cuenta como el elemento- así que la máquina nunca entra en <code>closing</code> y los items de abajo nunca reciben el <code>pointermove</code> con el que robarían el resaltado. El polígono propio de <code>@zag-js/menu</code> no alcanzaba: sólo puede vetar un cierre temprano durante los 100ms de <code>waitForCloseDelay</code>, no extenderlos, y con el puntero quieto adentro del polígono el submenú igual se cerraba a los ~90ms. Abrí «Compartir» y cruzá diagonalmente hacia el submenú: el triángulo pintado es el mismo elemento que estás tocando, no un dibujo aparte.",
 
     "menuPage.testVanilla1":
       'El trigger monta con <code class="sk-code">aria-haspopup="menu"</code> y <code class="sk-code">aria-expanded="false"</code>: el menú no abre solo.',
@@ -2352,6 +2366,25 @@ export const ui = {
       "ArrowDown mueve el resaltado por la lista, saltando el item deshabilitado.",
     "menuPage.testReact10":
       "Elegir un item del submenú cierra todo el árbol, padre incluido.",
+
+    "navListPage.description":
+      "Nav list: el pattern para navegación principal o secundaria en sidebar, navbar y drawer.",
+    "navListPage.lede":
+      "Nav list es una lista de <strong>destinos</strong>, no de acciones: <code>&lt;nav&gt;</code>, grupos, links reales, página actual con <code>aria-current</code> y metadata opcional al final.",
+    "navListPage.productTitle": "Como sidebar de producto",
+    "navListPage.productBody":
+      "El caso común no son dos links sueltos: son secciones de trabajo, conteos pendientes y rutas hijas que siguen perteneciendo al mismo destino. La lista no decide el ancho; lo decide el shell que la hospeda.",
+    "navListPage.horizontalTitle": "El mismo patrón en horizontal",
+    "navListPage.horizontalBody":
+      "Navbar no tiene una segunda navegación propia. Cambia <code>orientation</code>, conserva <code>NavListGroup</code> y deja de mostrar iconos cuando el texto ya alcanza.",
+    "navListPage.disclosureTitle": "Grupos colapsables",
+    "navListPage.disclosureBody":
+      "En un drawer o una documentación larga, el rótulo puede ser un botón de disclosure. Sigue sin ser <code>role=&quot;menu&quot;</code>: los hijos son enlaces y el teclado extra es sólo cerrar con Escape.",
+    "navListPage.contractBody":
+      "El grupo no es decorativo: es quien emite el <code>&lt;ul&gt;</code>. Por eso incluso una navegación plana conserva <code>NavListGroup</code>, y los subdestinos se anidan en el slot <code>nested</code> del link, dentro del mismo <code>&lt;li&gt;</code>.",
+    "navListPage.installIntro": "Importa el pattern donde el host vaya a renderizar la navegación.",
+    "navListPage.a11yBody":
+      "Cada <code>NavList</code> es un landmark <code>&lt;nav&gt;</code>. Si hay más de uno en la página, nómbralo con <code>aria-label</code> o <code>aria-labelledby</code>. La página actual se marca con <code>aria-current=&quot;page&quot;</code>; no añadas un estado paralelo.",
 
     "navbarPage.description": "Navbar: la barra, con la lista de navegación como pattern horizontal.",
     "navbarPage.lede":
@@ -2445,7 +2478,7 @@ export const ui = {
     "popoverPage.description": "Contenido no modal con título, descripción y cierre explícito sobre top layer nativo.",
     "popoverPage.structuredTitle": "Contenido estructurado",
     "popoverPage.structuredBody":
-      "El contrato no tiene un slot de <code>header</code> ni de <code>footer</code>, y no le hace falta: <code>children</code> acepta un nodo, así que una fila de encabezado (avatar y nombre) y una fila de acciones al final son composición, hechas con las mismas piezas publicadas (Inline, Stack, Avatar, Text, Button) — nada de marcado propio de esta página.",
+      "El contrato no tiene un slot de <code>header</code> ni de <code>footer</code>, y no le hace falta: <code>children</code> acepta un nodo, así que una fila de encabezado (avatar y nombre) y una fila de acciones al final son composición, hechas con las mismas piezas publicadas (Inline, Stack, Avatar, Text, Button): nada de marcado propio de esta página.",
     "popoverPage.structuredLabel": "Popover con encabezado y pie",
     "popoverPage.placementTitle": "Colocación",
     "popoverPage.placementBody":
@@ -2630,38 +2663,38 @@ export const ui = {
     "sliderPage.test2": "Pinta el relleno inicial desde el valor dentro de [min, max] al montar.",
     "sliderPage.rangeTitle": "Dos pulgares",
     "sliderPage.rangeBody":
-      'Dos <code>&lt;input type="range"&gt;</code> nativos, no el widget SVG a mano que la propia APG de WAI-ARIA publica como único ejemplo para este patrón — cada input ya trae teclado, foco y árbol de accesibilidad gratis de la plataforma, y la propia guía WAI advierte que un widget hecho a mano puede fallar con lectores de pantalla táctiles. Ningún pulgar puede arrastrarse más allá del otro: <code>sliderRangeBounds</code> calcula el límite de cada uno contra dónde está el OTRO en ese momento, nunca contra un mínimo o máximo fijo.',
+      'Dos <code>&lt;input type="range"&gt;</code> nativos, no el widget SVG a mano que la propia APG de WAI-ARIA publica como único ejemplo para este patrón: cada input ya trae teclado, foco y árbol de accesibilidad gratis de la plataforma, y la propia guía WAI advierte que un widget hecho a mano puede fallar con lectores de pantalla táctiles. Ningún pulgar puede arrastrarse más allá del otro: <code>sliderRangeBounds</code> calcula el límite de cada uno contra dónde está el OTRO en ese momento, nunca contra un mínimo o máximo fijo.',
     "sliderPage.rangeLabel": "Rango de precio",
     "sliderPage.testRange1":
       "El máximo del pulgar bajo queda acotado por el valor actual del pulgar alto, y viceversa.",
     "sliderPage.testRange2":
       "Al cambiar un valor, reacota el OTRO pulgar y reporta ambos valores en el cambio.",
     "sliderPage.testRange3":
-      "Ningún pulgar puede superar al otro — el min/max nativo recorta incluso una escritura directa de valor que se pase del límite.",
+      "Ningún pulgar puede superar al otro. El min/max nativo recorta incluso una escritura directa de valor que se pase del límite.",
 
     "splitButtonPage.description": "Acción principal estable y menú adyacente con acciones alternativas.",
-    "splitButtonPage.contractBody": "La acción principal no cambia silenciosamente al elegir el menú. Si no hay una acción dominante, usa Menu.",
+    "splitButtonPage.contractBody": "La acción accent no cambia silenciosamente al elegir el menú. Si no hay una acción dominante, usa Menu.",
     "splitButtonPage.a11yBody": "Son dos botones independientes: uno ejecuta y el otro anuncia y abre las alternativas.",
 
     "splitButtonPage.testReact1":
-      "Renderiza un grupo con nombre que contiene el botón primario y el trigger icon-only del menú.",
+      "Renderiza un grupo con nombre que contiene el botón de acción y el trigger icon-only del menú.",
     "splitButtonPage.testReact2":
-      'Al hacer click en el botón primario dispara <code class="sk-code">onClick</code>, independiente del menú.',
+      'Al hacer click en el botón de acción dispara <code class="sk-code">onClick</code>, independiente del menú.',
     "splitButtonPage.testReact3":
       'Abre el menú de fallback desde su trigger y selecciona un item, disparando <code class="sk-code">onSelect</code>.',
-    "splitButtonPage.testReact4": "disabled deshabilita el botón primario y el trigger del menú juntos.",
+    "splitButtonPage.testReact4": "disabled deshabilita el botón de acción y el trigger del menú juntos.",
     "splitButtonPage.testReact6":
-      'El trigger de fallback empareja su <code class="sk-code">variant</code>/<code class="sk-code">size</code> y forma (icon-only, soldado) con el botón primario.',
+      'El trigger de fallback empareja su <code class="sk-code">variant</code>/<code class="sk-code">size</code> y forma (icon-only, soldado) con el botón de acción.',
     "splitButtonPage.testReact5":
-      "Un primary y un menu compuestos a mano se renderizan tal cual, en vez del fallback de props planas.",
+      "Una acción y un menu compuestos a mano se renderizan tal cual, en vez del fallback de props planas.",
     "splitButtonPage.smallTitle": "Tamaño small",
-    "splitButtonPage.smallBody": "Las dos mitades escalan juntas — <code>size</code> en el Button primario, <code>triggerSize</code> en el trigger del Menu.",
+    "splitButtonPage.smallBody": "Las dos mitades escalan juntas: <code>size</code> en el Button de acción, <code>triggerSize</code> en el trigger del Menu.",
     "splitButtonPage.smallLabel": "SplitButton, tamaño small",
     "splitButtonPage.menuFirstTitle": "El menú primero",
-    "splitButtonPage.menuFirstBody": "Compuesto a mano con <code>Inline</code> en vez del contrato de SplitButton — que siempre ordena la acción antes que el menú, el patrón real de un split button (el trigger va después, y solo pasa a la izquierda por espejado <code>dir=\"rtl\"</code>, nunca como elección autorada en el mismo idioma). Esto demuestra que <code>weldStart</code>/<code>weldEnd</code> funcionan en cualquier orden, no solo en el que arma SplitButton.",
+    "splitButtonPage.menuFirstBody": "Compuesto a mano con <code>Inline</code> en vez del contrato de SplitButton: que siempre ordena la acción antes que el menú, el patrón real de un split button (el trigger va después, y solo pasa a la izquierda por espejado <code>dir=\"rtl\"</code>, nunca como elección autorada en el mismo idioma). Esto demuestra que <code>weldStart</code>/<code>weldEnd</code> funcionan en cualquier orden, no solo en el que arma SplitButton.",
     "splitButtonPage.menuFirstLabel": "SplitButton, menú primero",
     "splitButtonPage.subtleTitle": "Variante subtle",
-    "splitButtonPage.subtleBody": "<code>variant: \"subtle\"</code> en las dos mitades — nunca una variante distinta por lado, para que se lea como un solo control. \"Archivar\" en vez de \"Guardar\": una acción de menor énfasis, el registro que <code>subtle</code> pinta.",
+    "splitButtonPage.subtleBody": "<code>variant: \"subtle\"</code> en las dos mitades: nunca una variante distinta por lado, para que se lea como un solo control. \"Archivar\" en vez de \"Guardar\": una acción de menor énfasis, el registro que <code>subtle</code> pinta.",
     "splitButtonPage.subtleLabel": "SplitButton, variante subtle",
     "splitButtonPage.translucentTitle": "Variante translucent",
     "splitButtonPage.translucentBody": "<code>variant: \"translucent\"</code> en las dos mitades. \"Descargar\": <code>translucent</code> se lee como vidrio sobre una foto o portada, el fondo donde vive esta acción.",
@@ -2750,7 +2783,7 @@ export const ui = {
     "tablePage.stickyHeadLabel": "Fila de encabezado sticky",
     "tablePage.resizableTitle": "Columnas redimensionables",
     "tablePage.resizableBody":
-      'Usa <code>data-resizable-columns</code> en HTML o <code>resizableColumns</code> en React, junto con <code>resizeLabel</code> (obligatoria). El binding inserta un separador real (<code>role="separator"</code>) entre cada par de encabezados — el mismo primitivo compartido, <code>@skryensya/core/splitter</code>, que ya usan el separador de <a href="/componentes/sidebar">Sidebar</a> y el redimensionador de columnas de <a href="/componentes/treegrid">Treegrid</a>. Arrastra el borde de un encabezado, o enfócalo y usa las flechas (Shift para el paso grueso), Home/End para los extremos, Enter o doble click para restablecer el par a un reparto parejo.',
+      'Usa <code>data-resizable-columns</code> en HTML o <code>resizableColumns</code> en React, junto con <code>resizeLabel</code> (obligatoria). El binding inserta un separador real (<code>role="separator"</code>) entre cada par de encabezados: el mismo primitivo compartido, <code>@skryensya/core/splitter</code>, que ya usan el separador de <a href="/componentes/sidebar">Sidebar</a> y el redimensionador de columnas de <a href="/componentes/treegrid">Treegrid</a>. Arrastra el borde de un encabezado, o enfócalo y usa las flechas (Shift para el paso grueso), Home/End para los extremos, Enter o doble click para restablecer el par a un reparto parejo.',
     "tablePage.resizableLabel": "Rendimiento por región, redimensionable",
     "tablePage.pagerTitle": "Con paginación",
     "tablePage.pagerBody":
@@ -2800,17 +2833,27 @@ export const ui = {
 
     "tagPage.description": "Tag: chip de palabra clave opcionalmente removible, con tonos y componente React.",
     "tagPage.lede":
-      'Tag clasifica contenido sobre el que el usuario puede actuar: filtros, facetas, chips. Donde <a href="/componentes/badge">Badge</a> es una etiqueta de estado de solo lectura, Tag es más cuadrado (radio de control, no píldora) para leerse como accionable, y puede llevar un botón de quitar.',
-    "tagPage.body": "Cuando es removible, la etiqueta y el botón de quitar son dos objetivos distintos: el nombre accesible del control nombra el tag que remueve.",
-    "tagPage.xTitle": "La X es un Button, no un dibujo de uno",
-    "tagPage.xBody1":
-      'El control de quitar es un <a href="/componentes/button">Button</a> real (<code>sk-button sk-interactive</code> con <code>data-size="sm"</code>, <code>data-icon-only</code> y <code>data-variant="ghost"</code>) y <code>sk-tag__remove</code> es sólo el modificador que lo encoge al alto de la cápsula. Tag no envía interacción propia.',
-    "tagPage.xBody2":
-      'Lo que se gana es lo que ya no hay que mantener acá: el hover y el press vienen del <a href="/state-layer">state layer</a>, el anillo de foco es el mismo de todos los controles, y el área de toque llega a <strong>44px</strong> por el <code>::after</code> del botón aunque la cara pinte 20px. Antes eran 20px de cara y 20px de blanco útil.',
-    "tagPage.xBody3": "El color sigue siendo <code>currentColor</code>, así que cada tono trae su X en su propio color sin una regla por tono.",
-    "tagPage.reactBody": "El código está en la pestaña <strong>React</strong> del preview. <code>onRemove</code> es opcional.",
+      'Tag clasifica contenido sobre el que el usuario puede actuar: filtros, facetas, chips. Donde <a href="/componentes/badge">Badge</a> es una etiqueta de estado de solo lectura, Tag es más cuadrado (radio de control, no píldora) para leerse como accionable.',
+    "tagPage.simpleTitle": "Tags de palabra clave",
+    "tagPage.simpleBody":
+      "Una etiqueta quieta categoriza contenido sin sugerir estado, alerta o eliminación.",
+    "tagPage.simpleLabel": "Tag simple",
+    "tagPage.tonesTitle": "Tags con tono",
+    "tagPage.tonesBody":
+      "El tono comunica función. Activo, beta, deprecado, pero sigue siendo Tag. Si sólo quieres un estado de lectura, Badge es la pieza correcta.",
+    "tagPage.tonesLabel": "Tonos",
+    "tagPage.linksTitle": "Tags enlace",
+    "tagPage.linksBody":
+      "Un tag enlace navega a una faceta o palabra clave. No puede ser dismissible: si el usuario debe quitar un filtro, usa un tag removible con su botón separado.",
+    "tagPage.linksLabel": "Tags enlace",
+    "tagPage.removableTitle": "Tags removibles",
+    "tagPage.removableBody":
+      "Cuando es removible, la etiqueta y el botón de quitar son dos objetivos distintos. El nombre accesible del control nombra el tag exacto que remueve.",
+    "tagPage.removableLabel": "Tags removibles",
     "tagPage.test1": "Lleva su tono y su etiqueta.",
     "tagPage.test2": "Expone un control de remover nombrado solo cuando se pasa <code>onRemove</code>.",
+    "tagPage.test3": "El control de remover compone Button real: foco, press y área de toque vienen de Button.",
+    "tagPage.testLink": "Renderiza un tag navegable como enlace y nunca como dismissible.",
 
     "textPage.description": "Text: texto de lectura con roles tipográficos y semántica HTML explícita.",
     "textPage.lede": "Text presenta contenido de lectura con roles tipográficos nombrados. Elige el elemento HTML que describe el contenido; Text no crea semántica de encabezado.",
@@ -2830,7 +2873,7 @@ export const ui = {
     "textPage.feedbackLabel": "Mensaje de validación",
     "textPage.contractItem1": "<code>sk-text</code> aporta el estilo base de lectura.",
     "textPage.contractItem2": "<code>data-size</code>: <code>caption</code>, <code>sm</code>, <code>body</code> o <code>lg</code>.",
-    "textPage.contractItem3": "<code>data-tone</code>: <code>primary</code>, <code>secondary</code>, <code>tertiary</code> o <code>danger</code>.",
+    "textPage.contractItem3": "<code>data-tone</code>: <code>action</code>, <code>secondary</code>, <code>tertiary</code> o <code>danger</code>.",
     "textPage.contractItem4": "<code>data-weight</code>: <code>body</code>, <code>emphasis</code> o <code>label</code>.",
     "textPage.contractItem5":
       "<code>data-role</code>: <code>eyebrow</code> (sobretítulo en mayúsculas) o <code>subtitle</code> (bajada bajo un título). Un rol compone varios ejes de una vez; en React se pasa como <code>data-role</code>.",
@@ -2888,7 +2931,7 @@ export const ui = {
 
     "timeFieldPage.description": "Un campo de hora segmentado con un desplegable integrado: hora, minuto y AM/PM como partes editables, más una lista de horarios preestablecidos, todo operable por teclado.",
     "timeFieldPage.lede":
-      'Un campo para una hora de reloj local, sin fecha, sin zona horaria. Hora, minuto y (en un locale de 12 horas) AM/PM son tres segmentos editables independientes en un solo campo, en vez del chrome del propio <code>&lt;input type="time"&gt;</code>, que difiere lo suficiente entre Chrome, Firefox y Safari como para no poder estilarse ni confiar en que se vea igual dos veces. No existe una machine <code>@zag-js/time-picker</code> para esos segmentos, así que esa parte es estado a mano, como Slider y Segmented — pero SÍ hay un desplegable, siempre presente, con una lista simple y navegable con flechas (nada de buscador: para una lista acotada y ordenada, uno de más). Dos cosas se probaron y se descartaron antes de llegar ahí: un selector de ruedas (ni más simple ni más accesible que los segmentos mismos) y una lista con buscador tipo Combobox (demasiada máquina para una lista corta).',
+      'Un campo para una hora de reloj local, sin fecha, sin zona horaria. Hora, minuto y (en un locale de 12 horas) AM/PM son tres segmentos editables independientes en un solo campo, en vez del chrome del propio <code>&lt;input type="time"&gt;</code>, que difiere lo suficiente entre Chrome, Firefox y Safari como para no poder estilarse ni confiar en que se vea igual dos veces. No existe una machine <code>@zag-js/time-picker</code> para esos segmentos, así que esa parte es estado a mano, como Slider y Segmented: pero SÍ hay un desplegable, siempre presente, con una lista simple y navegable con flechas (nada de buscador: para una lista acotada y ordenada, uno de más). Dos cosas se probaron y se descartaron antes de llegar ahí: un selector de ruedas (ni más simple ni más accesible que los segmentos mismos) y una lista con buscador tipo Combobox (demasiada máquina para una lista corta).',
     "timeFieldPage.contractBody":
       "El orden de los segmentos y el separador entre ellos se leen del propio <code>formatToParts</code> de <code>Intl.DateTimeFormat</code>, no se asumen: algunos locales ponen el periodo del día antes de la hora, y el separador no siempre es <code>\":\"</code>. El valor público sigue siendo el string canónico <code>HH:mm</code>, la misma forma que envía un <code>&lt;input type=\"time\"&gt;</code> plano, llevado en un input oculto, así que un formulario detrás de TimeField nunca tiene que parsear un string dependiente del locale. React lo guarda como estado del componente (<code>value</code>/<code>defaultValue</code>, un callback <code>onValueChange</code>). Vanilla hidrata el <code>data-sk-time-field</code> autorado: el consumidor sólo autora la raíz y su label, y el componente genera los segmentos a partir de <code>data-locale</code>.",
     "timeFieldPage.editTitle": "Editar un segmento",
@@ -2903,10 +2946,10 @@ export const ui = {
     "timeFieldPage.nativeLabel": "Input de hora nativo",
     "timeFieldPage.optionsTitle": "El desplegable, con otro paso",
     "timeFieldPage.optionsBody":
-      'El botón de reloj pinta DENTRO de <code>.sk-time-field__control</code> — una sola caja con borde, la misma anatomía que ya tiene el control de Combobox para sus propios botones finales — y abre una lista simple, sin buscador, navegable con flechas: <code>@zag-js/select</code> maneja esa máquina directamente (la misma que usa <code>Select</code>), sin montar el componente <code>Select</code> completo, que trae su propio trigger visible y hubiera significado dos clics para llegar a la lista. La opción <code>optionsStep</code> (30 minutos por defecto, 48 filas) decide cada cuánto aparece una fila; <code>Alt+Flecha-abajo</code> desde cualquier segmento la abre sin pasar por Tab, la misma tecla que ya abre un <code>&lt;select&gt;</code> nativo.',
+      'El botón de reloj pinta DENTRO de <code>.sk-time-field__control</code>: una sola caja con borde, la misma anatomía que ya tiene el control de Combobox para sus propios botones finales: y abre una lista simple, sin buscador, navegable con flechas: <code>@zag-js/select</code> maneja esa máquina directamente (la misma que usa <code>Select</code>), sin montar el componente <code>Select</code> completo, que trae su propio trigger visible y hubiera significado dos clics para llegar a la lista. La opción <code>optionsStep</code> (30 minutos por defecto, 48 filas) decide cada cuánto aparece una fila; <code>Alt+Flecha-abajo</code> desde cualquier segmento la abre sin pasar por Tab, la misma tecla que ya abre un <code>&lt;select&gt;</code> nativo.',
     "timeFieldPage.optionsQuarterHourTitle": "Cada 15 minutos",
     "timeFieldPage.a11yBody":
-      'Cada segmento es <code>role="spinbutton"</code> dentro de un <code>role="group"</code> nombrado por el label del campo: <code>aria-valuenow</code>/<code>aria-valuetext</code> llevan su valor actual (un placeholder amistoso como «hh» antes de fijar nada, no un string vacío), y <code>aria-valuemin</code>/<code>aria-valuemax</code> su rango real: 1–12 para un segmento de hora en un locale de 12 horas, 0–23 en uno de 24. Cada segmento es su propia parada de tabulación, igual que ya funciona un input de fecha nativo de varias partes, así que el uso por teclado no necesita nada más que Tab y las flechas documentadas arriba — más <code>Alt+Flecha-abajo</code> para abrir el desplegable sin llegar hasta su botón, y las flechas/Inicio/Fin/Escape ya provistas por <code>@zag-js/select</code> una vez adentro de la lista.',
+      'Cada segmento es <code>role="spinbutton"</code> dentro de un <code>role="group"</code> nombrado por el label del campo: <code>aria-valuenow</code>/<code>aria-valuetext</code> llevan su valor actual (un placeholder amistoso como «hh» antes de fijar nada, no un string vacío), y <code>aria-valuemin</code>/<code>aria-valuemax</code> su rango real: 1–12 para un segmento de hora en un locale de 12 horas, 0–23 en uno de 24. Cada segmento es su propia parada de tabulación, igual que ya funciona un input de fecha nativo de varias partes, así que el uso por teclado no necesita nada más que Tab y las flechas documentadas arriba: más <code>Alt+Flecha-abajo</code> para abrir el desplegable sin llegar hasta su botón, y las flechas/Inicio/Fin/Escape ya provistas por <code>@zag-js/select</code> una vez adentro de la lista.',
     "timeFieldPage.test1": "Monta una sola vez y nombra el grupo a partir del label autorado.",
     "timeFieldPage.test2": "Deriva los segmentos del locale, no del markup.",
     "timeFieldPage.test3": "Empieza vacío, con placeholders en vez de una hora inventada.",
@@ -2980,9 +3023,9 @@ export const ui = {
     "tocPage.iconsCodeLabel": "enlace con icono",
     "tocPage.railTitle": "Una sola forma",
     "tocPage.railBody1":
-      'El contrato publica UNA forma y no tiene variantes: un índice compacto, siempre abierto. Antes publicaba dos —un <code>&lt;details&gt;</code> cerrado, más un <strong>rail</strong> que un consumidor pedía declarando <code>data-sk-toc-rail</code>— y la costura se veía en el peor lugar posible: toda la apariencia del rail vivía detrás de ese atributo <em>y</em> de un <code>min-width: 72rem</code>, así que esta misma página no podía mostrar la forma sobre la que corre el sitio. Un frame de preview mide 1022px y la compuerta pedía 1152px.',
+      'El contrato publica UNA forma y no tiene variantes: un índice compacto, siempre abierto. Antes publicaba dos -un <code>&lt;details&gt;</code> cerrado, más un <strong>rail</strong> que un consumidor pedía declarando <code>data-sk-toc-rail</code>- y la costura se veía en el peor lugar posible: toda la apariencia del rail vivía detrás de ese atributo <em>y</em> de un <code>min-width: 72rem</code>, así que esta misma página no podía mostrar la forma sobre la que corre el sitio. Un frame de preview mide 1022px y la compuerta pedía 1152px.',
     "tocPage.railBody2":
-      'Lo único que sigue detrás de <code>wide</code> son las dos declaraciones que de verdad necesitan una columna de sobra: <code>position: sticky</code> y el ancho fijo. Un host angosto recibe el mismo índice en flujo normal —una diferencia de layout, no una segunda forma del componente—. Las filas llevan el gutter ellas mismas en vez del contenedor: el destino táctil llega a los dos bordes de la pantalla mientras el texto se queda en el margen del documento.',
+      'Lo único que sigue detrás de <code>wide</code> son las dos declaraciones que de verdad necesitan una columna de sobra: <code>position: sticky</code> y el ancho fijo. Un host angosto recibe el mismo índice en flujo normal -una diferencia de layout, no una segunda forma del componente-. Las filas llevan el gutter ellas mismas en vez del contenedor: el destino táctil llega a los dos bordes de la pantalla mientras el texto se queda en el margen del documento.',
     "tocPage.spaceTitle": "Espacio reservado",
     "tocPage.spaceBody":
       "En este sitio el track del grid es el ancho del TOC (<code>--docs-toc-inline-size</code>). El <code>&lt;aside&gt;</code> está siempre en flujo: antes de <code>data-ready</code> la lista queda invisible con altura mínima, así los enlaces no empujan el layout al aparecer.",
@@ -3117,29 +3160,29 @@ export const ui = {
 
     "treegridPage.description": "Filas jerárquicas con columnas: expande o colapsa una sin perder el resto de sus valores.",
     "treegridPage.lede":
-      'Combina jerarquía y columnas a la vez — el patrón WAI-ARIA <code>treegrid</code>. Úsalo cuando cada fila necesita varios valores independientes ADEMÁS de su lugar en la jerarquía (un mensaje con remitente, un archivo con tamaño y fecha). Para una sola columna de texto jerárquico usa <a href="/componentes/tree-view">TreeView</a>; para columnas sin jerarquía, <a href="/componentes/table">Table</a>.',
+      'Combina jerarquía y columnas a la vez: el patrón WAI-ARIA <code>treegrid</code>. Úsalo cuando cada fila necesita varios valores independientes ADEMÁS de su lugar en la jerarquía (un mensaje con remitente, un archivo con tamaño y fecha). Para una sola columna de texto jerárquico usa <a href="/componentes/tree-view">TreeView</a>; para columnas sin jerarquía, <a href="/componentes/table">Table</a>.',
     "treegridPage.minimalTitle": "Bandeja de entrada",
     "treegridPage.minimalBody":
       "El ejemplo que la propia especificación WAI-ARIA usa: dos columnas (Asunto, De), una carpeta abierta con dos mensajes, una carpeta colapsada cuyo único mensaje queda oculto, y un mensaje suelto en la raíz.",
     "treegridPage.minimalLabel": "Bandeja de entrada de ejemplo",
     "treegridPage.contractItem1":
-      "Casi siempre envuelto en <code>TreegridScroll</code> — misma razón que <code>TableScroll</code>: un flex o un grid le da <code>min-size: auto</code>, y una grilla más ancha que su espacio revienta la superficie si nadie la envuelve.",
+      "Casi siempre envuelto en <code>TreegridScroll</code>: misma razón que <code>TableScroll</code>: un flex o un grid le da <code>min-size: auto</code>, y una grilla más ancha que su espacio revienta la superficie si nadie la envuelve.",
     "treegridPage.contractItem2":
       '<code>Treegrid</code> es un <code>&lt;table role="treegrid"&gt;</code> que EXIGE <code>label</code>: ese <code>role</code> no trae nombre accesible implícito, a diferencia de una tabla nativa.',
     "treegridPage.contractItem3":
-      "<code>TreegridHead</code> / <code>TreegridHeadRow</code> / <code>TreegridColumnHeader</code> son encabezados de columna comunes — la misma forma que ya tiene <code>Table</code>.",
+      "<code>TreegridHead</code> / <code>TreegridHeadRow</code> / <code>TreegridColumnHeader</code> son encabezados de columna comunes: la misma forma que ya tiene <code>Table</code>.",
     "treegridPage.contractItem4":
-      "Cada <code>TreegridRow</code> se autora PLANA, en el orden del documento — nunca anidada dentro de otra fila, un <code>&lt;tr&gt;</code> no puede contener otro <code>&lt;tr&gt;</code>. <code>level</code>, <code>setSize</code> y <code>posInset</code> son hechos propios que el autor ya conoce por escribir la fila en ese orden, no algo que el componente deriva.",
+      "Cada <code>TreegridRow</code> se autora PLANA, en el orden del documento: nunca anidada dentro de otra fila, un <code>&lt;tr&gt;</code> no puede contener otro <code>&lt;tr&gt;</code>. <code>level</code>, <code>setSize</code> y <code>posInset</code> son hechos propios que el autor ya conoce por escribir la fila en ese orden, no algo que el componente deriva.",
     "treegridPage.contractItem5":
-      "<code>expanded</code> sólo se autoría en una fila que TIENE hijos — su ausencia, no un valor <code>false</code>, es lo que marca una fila como hoja. <code>true</code>/<code>false</code> controla si sus descendientes están visibles en este momento.",
+      "<code>expanded</code> sólo se autoría en una fila que TIENE hijos: su ausencia, no un valor <code>false</code>, es lo que marca una fila como hoja. <code>true</code>/<code>false</code> controla si sus descendientes están visibles en este momento.",
     "treegridPage.contractItem6":
-      'Cada <code>TreegridCell</code> es un <code>&lt;td role="gridcell"&gt;</code> común; la primera celda de una fila con hijos gana la sangría por CSS y un botón de apertura real que el binding inserta — nunca autorado, y decorativo para el lector de pantalla (<code>aria-expanded</code> en la fila ya anuncia el estado).',
+      'Cada <code>TreegridCell</code> es un <code>&lt;td role="gridcell"&gt;</code> común; la primera celda de una fila con hijos gana la sangría por CSS y un botón de apertura real que el binding inserta: nunca autorado, y decorativo para el lector de pantalla (<code>aria-expanded</code> en la fila ya anuncia el estado).',
     "treegridPage.contractItem7":
-      '<code>resizableColumns</code> (apagada por defecto) inserta un separador <code>role="separator"</code> real entre cada par de encabezados — el mismo primitivo compartido de <code>@skryensya/core/splitter</code> que usa el separador de <code>Sidebar</code>. Exige <code>resizeLabel</code>: el separador es binding-insertado, así que nada más lo nombra para un lector de pantalla.',
+      '<code>resizableColumns</code> (apagada por defecto) inserta un separador <code>role="separator"</code> real entre cada par de encabezados: el mismo primitivo compartido de <code>@skryensya/core/splitter</code> que usa el separador de <code>Sidebar</code>. Exige <code>resizeLabel</code>: el separador es binding-insertado, así que nada más lo nombra para un lector de pantalla.',
     "treegridPage.hooksBody":
       "La sangría por nivel y el ancho reservado para el glyph de apertura son hooks: <code>--sk-treegrid-indent</code> y <code>--sk-treegrid-indicator-size</code>.",
     "treegridPage.a11yBody":
-      'Cada fila lleva <code>role="row"</code> con <code>aria-level</code>/<code>aria-setsize</code>/<code>aria-posinset</code> — hechos ESTÁTICOS que no cambian al colapsar un hermano, sólo la visibilidad cambia — y <code>aria-expanded</code> únicamente si tiene hijos. Cada celda lleva <code>role="gridcell"</code>. El foco es roving: una sola fila o celda es la parada de tabulación en toda la grilla. <kbd class="sk-kbd">→</kbd> expande una rama colapsada o entra a su primera celda; <kbd class="sk-kbd">←</kbd> colapsa una rama abierta o sube a la fila padre; <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd> mueven entre filas visibles; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> y <kbd class="sk-kbd">Ctrl</kbd>+<kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> saltan al principio/final; <kbd class="sk-kbd">Enter</kbd> alterna una rama con foco de fila o activa cualquier otro foco. Esta versión es fiel al ejemplo base de WAI (<code>treegrid-1</code>): celdas de solo texto, sin control interactivo propio dentro de una celda — por eso <kbd class="sk-kbd">Tab</kbd> siempre sale de la grilla, sin nada que interceptar.',
+      'Cada fila lleva <code>role="row"</code> con <code>aria-level</code>/<code>aria-setsize</code>/<code>aria-posinset</code>: hechos ESTÁTICOS que no cambian al colapsar un hermano, sólo la visibilidad cambia: y <code>aria-expanded</code> únicamente si tiene hijos. Cada celda lleva <code>role="gridcell"</code>. El foco es roving: una sola fila o celda es la parada de tabulación en toda la grilla. <kbd class="sk-kbd">→</kbd> expande una rama colapsada o entra a su primera celda; <kbd class="sk-kbd">←</kbd> colapsa una rama abierta o sube a la fila padre; <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd> mueven entre filas visibles; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> y <kbd class="sk-kbd">Ctrl</kbd>+<kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> saltan al principio/final; <kbd class="sk-kbd">Enter</kbd> alterna una rama con foco de fila o activa cualquier otro foco. Esta versión es fiel al ejemplo base de WAI (<code>treegrid-1</code>): celdas de solo texto, sin control interactivo propio dentro de una celda: por eso <kbd class="sk-kbd">Tab</kbd> siempre sale de la grilla, sin nada que interceptar.',
     "treegridPage.testVanilla1":
       "Al montar, esconde el único hijo de la rama que arranca colapsada.",
     "treegridPage.testVanilla2":
@@ -3154,7 +3197,7 @@ export const ui = {
 
     "treegridPage.stressTitle": "Explorador de archivos (stress test)",
     "treegridPage.stressBody":
-      "Cuatro columnas en vez de dos, contenido largo que fuerza el elipsis en más de una columna, siete niveles de profundidad (los cinco primeros con regla CSS propia, el sexto y el séptimo cayendo al tope compartido), ramas colapsadas en más de un nivel a la vez — incluida una en la raíz — y <code>resizableColumns</code>: arrastra o usa las flechas sobre el borde de un encabezado para redimensionar el par de columnas a los lados.",
+      "Cuatro columnas en vez de dos, contenido largo que fuerza el elipsis en más de una columna, siete niveles de profundidad (los cinco primeros con regla CSS propia, el sexto y el séptimo cayendo al tope compartido), ramas colapsadas en más de un nivel a la vez: incluida una en la raíz: y <code>resizableColumns</code>: arrastra o usa las flechas sobre el borde de un encabezado para redimensionar el par de columnas a los lados.",
     "treegridPage.stressLabel": "Explorador de archivos de ejemplo",
 
     "demo.treegrid.label": "Mensajes",
@@ -3213,9 +3256,9 @@ export const ui = {
     "meterPage.description":
       "Meter: una medición dentro de un rango conocido, nunca el avance de una tarea.",
     "meterPage.lede":
-      'Un valor medido ahora, no una tarea en curso — el rol WAI-ARIA <code>meter</code>, distinto de <code>progressbar</code>. Úsalo para uso de disco, nivel de batería, una calificación sobre una escala. Para el avance de una tarea con inicio y fin, usa <a href="/componentes/progress">Progress</a>.',
+      'Un valor medido ahora, no una tarea en curso: el rol WAI-ARIA <code>meter</code>, distinto de <code>progressbar</code>. Úsalo para uso de disco, nivel de batería, una calificación sobre una escala. Para el avance de una tarea con inicio y fin, usa <a href="/componentes/progress">Progress</a>.',
     "meterPage.body":
-      "A diferencia de Progress, <code>min</code> es un parámetro real y con frecuencia distinto de cero — una calificación de 1 a 5, una temperatura. El relleno se calcula con <code>meterFraction(value, min, max)</code>, no con <code>value / max</code>.",
+      "A diferencia de Progress, <code>min</code> es un parámetro real y con frecuencia distinto de cero: una calificación de 1 a 5, una temperatura. El relleno se calcula con <code>meterFraction(value, min, max)</code>, no con <code>value / max</code>.",
     "meterPage.test1": "Aplica role=meter con los tres atributos aria-value obligatorios.",
     "meterPage.test2":
       "Respeta un min distinto de cero al pintar el relleno, a diferencia de Progress.",
@@ -3232,29 +3275,29 @@ export const ui = {
     "feedPage.description":
       "Feed: un stream de publicaciones independientes, cada una anunciada con su posición.",
     "feedPage.lede":
-      'Un stream desplazable de unidades de contenido independientes (posts, comentarios) — el rol WAI-ARIA <code>feed</code>. Cada <code>FeedArticle</code> declara su propia posición (<code>aria-posinset</code>/<code>aria-setsize</code>), así un lector de pantalla anuncia "2 de 3" sin tener que leer el resto del stream primero.',
+      'Un stream desplazable de unidades de contenido independientes (posts, comentarios): el rol WAI-ARIA <code>feed</code>. Cada <code>FeedArticle</code> declara su propia posición (<code>aria-posinset</code>/<code>aria-setsize</code>), así un lector de pantalla anuncia "2 de 3" sin tener que leer el resto del stream primero.',
     "feedPage.body":
-      'WAI-ARIA es explícito: el rol <code>feed</code> "no está asociado a ninguna convención de teclado bien establecida" — Page Up/Page Down/Ctrl+Home/Ctrl+End son recomendaciones, no requisitos. Esta versión se queda puramente estática: sin máquina, sin manejo de teclado propio.',
+      'WAI-ARIA es explícito: el rol <code>feed</code> "no está asociado a ninguna convención de teclado bien establecida": Page Up/Page Down/Ctrl+Home/Ctrl+End son recomendaciones, no requisitos. Esta versión se queda puramente estática: sin máquina, sin manejo de teclado propio.',
     "feedPage.test1": "Aplica role=feed, lo nombra, y refleja aria-busy.",
     "feedPage.test2":
       "Cada artículo recibe role=article con aria-posinset/aria-setsize y un nombre real enlazado.",
     "feedPage.test3":
       "Permite setSize=-1 para un total indeterminado, por la propia licencia de WAI.",
     "feedPage.a11yBody":
-      'La raíz lleva <code>role="feed"</code> con <code>aria-label</code> (obligatorio, el rol no trae nombre implícito) y <code>aria-busy</code> mientras carga más contenido. Cada <code>FeedArticle</code> es un <code>role="article"</code> con <code>aria-posinset</code>/<code>aria-setsize</code>, nombrado por su propio slot de etiqueta vía <code>aria-labelledby</code> — nunca solo referenciado, siempre renderizado.',
+      'La raíz lleva <code>role="feed"</code> con <code>aria-label</code> (obligatorio, el rol no trae nombre implícito) y <code>aria-busy</code> mientras carga más contenido. Cada <code>FeedArticle</code> es un <code>role="article"</code> con <code>aria-posinset</code>/<code>aria-setsize</code>, nombrado por su propio slot de etiqueta vía <code>aria-labelledby</code>: nunca solo referenciado, siempre renderizado.',
 
     "demo.feed.label": "Actividad reciente",
-    "demo.feed.author1": "María — hace 2 horas",
+    "demo.feed.author1": "María. Hace 2 horas",
     "demo.feed.body1": "Publicó el resumen del sprint.",
-    "demo.feed.author2": "Diego — hace 5 horas",
+    "demo.feed.author2": "Diego. Hace 5 horas",
     "demo.feed.body2": "Comentó en el issue #482.",
-    "demo.feed.author3": "Lucía — ayer",
+    "demo.feed.author3": "Lucía. Ayer",
     "demo.feed.body3": "Cerró tres tickets del backlog.",
 
     "dataGridPage.description":
       "Data Grid: navegación 2D con roving tabindex para datos tabulares o widgets agrupados.",
     "dataGridPage.lede":
-      'La propia especificación WAI-ARIA trata "data grids" y "layout grids" como el mismo patrón — mismos roles, misma mecánica de roving tabindex — así que este es UN contrato, no dos. Úsalo cuando una grilla de celdas necesita navegación 2D: <a href="/componentes/table">Table</a> ya cubre el caso de datos tabulares ESTÁTICOS, sin modelo de teclado propio.',
+      'La propia especificación WAI-ARIA trata "data grids" y "layout grids" como el mismo patrón. Mismos roles, misma mecánica de roving tabindex, así que este es UN contrato, no dos. Úsalo cuando una grilla de celdas necesita navegación 2D: <a href="/componentes/table">Table</a> ya cubre el caso de datos tabulares ESTÁTICOS, sin modelo de teclado propio.',
     "dataGridPage.dataTitle": "Datos tabulares",
     "dataGridPage.dataBody": "Celdas de solo texto: la parada de foco es la celda misma.",
     "dataGridPage.dataLabel": "Puntajes por ronda",
@@ -3263,9 +3306,9 @@ export const ui = {
       "Cada celda contiene su propio botón: la parada de foco se la cede a ESE elemento, la celda nunca compite con su propio contenido interactivo por el roving tabindex.",
     "dataGridPage.layoutLabel": "Acciones rápidas",
     "dataGridPage.contractBody":
-      'Sin máquina <code>@zag-js/*</code> propia — igual que <code>Treegrid</code>, el modelo de teclado está escrito a mano y es puro, compartido por ambos bindings. <code>wrapCols</code>/<code>wrapRows</code> controlan si las flechas envuelven al borde de la grilla; ambos son <code>false</code> por defecto.',
+      'Sin máquina <code>@zag-js/*</code> propia: igual que <code>Treegrid</code>, el modelo de teclado está escrito a mano y es puro, compartido por ambos bindings. <code>wrapCols</code>/<code>wrapRows</code> controlan si las flechas envuelven al borde de la grilla; ambos son <code>false</code> por defecto.',
     "dataGridPage.a11yBody":
-      'La raíz lleva <code>role="grid"</code> con <code>aria-label</code> (obligatorio). Cada fila es <code>role="row"</code>, cada celda <code>role="gridcell"</code>. El foco es roving — una sola celda (o su descendiente interactivo) es la parada de tabulación en toda la grilla. <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> mueven entre celdas, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> dentro de la fila, <kbd class="sk-kbd">Ctrl</kbd>+<kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> saltan al principio/final de la grilla entera.',
+      'La raíz lleva <code>role="grid"</code> con <code>aria-label</code> (obligatorio). Cada fila es <code>role="row"</code>, cada celda <code>role="gridcell"</code>. El foco es roving: una sola celda (o su descendiente interactivo) es la parada de tabulación en toda la grilla. <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> mueven entre celdas, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> dentro de la fila, <kbd class="sk-kbd">Ctrl</kbd>+<kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> saltan al principio/final de la grilla entera.',
     "dataGridPage.testReact1":
       "Le cede la parada de foco al descendiente interactivo PROPIO de la celda, no al div de la celda.",
     "dataGridPage.testReact2":
@@ -3287,20 +3330,20 @@ export const ui = {
     "menubarPage.description":
       "Menubar: una barra horizontal persistente de comandos, algunos con desplegable.",
     "menubarPage.lede":
-      'El patrón WAI-ARIA <code>menubar</code>: <code>menubar-editor</code>, el ejemplo que le da nombre. No es <a href="/componentes/menu">Menu</a> (un solo trigger, un solo popup) — acá son VARIOS ítems en una sola fila de roving tabindex, donde flecha izquierda/derecha mueve entre ellos, y el detalle que una implementación ingenua se pierde: moverse a un ítem adyacente mientras un desplegable está abierto cierra el viejo y abre el nuevo, no solo mueve un resaltado.',
+      'El patrón WAI-ARIA <code>menubar</code>: <code>menubar-editor</code>, el ejemplo que le da nombre. No es <a href="/componentes/menu">Menu</a> (un solo trigger, un solo popup): acá son VARIOS ítems en una sola fila de roving tabindex, donde flecha izquierda/derecha mueve entre ellos, y el detalle que una implementación ingenua se pierde: moverse a un ítem adyacente mientras un desplegable está abierto cierra el viejo y abre el nuevo, no solo mueve un resaltado.',
     "menubarPage.contractBody":
-      'Sin máquina <code>@zag-js/*</code> propia — igual que <code>Treegrid</code>/<code>DataGrid</code>, escrito a mano y compartido por ambos bindings. Alcance de v1, de la BARRA misma: UN desplegable por ítem de nivel superior, y ni siquiera eso lo maneja <code>Menubar</code> a mano — moverse a un ítem vecino con el desplegable abierto cierra el viejo y abre el nuevo, todo vía la propia <code>api.setOpen()</code> de <code>Menu</code>. El CONTENIDO de un desplegable no tiene ese límite: es un <code>Menu</code> real, así que anida submenús tan profundo como <code>Menu</code> permite (ver «Desplegables con submenú» más abajo).',
+      'Sin máquina <code>@zag-js/*</code> propia: igual que <code>Treegrid</code>/<code>DataGrid</code>, escrito a mano y compartido por ambos bindings. Alcance de v1, de la BARRA misma: UN desplegable por ítem de nivel superior, y ni siquiera eso lo maneja <code>Menubar</code> a mano: moverse a un ítem vecino con el desplegable abierto cierra el viejo y abre el nuevo, todo vía la propia <code>api.setOpen()</code> de <code>Menu</code>. El CONTENIDO de un desplegable no tiene ese límite: es un <code>Menu</code> real, así que anida submenús tan profundo como <code>Menu</code> permite (ver «Desplegables con submenú» más abajo).',
     "menubarPage.label": "Barra de menú",
     "menubarPage.submenuTitle": "Desplegables con submenú",
     "menubarPage.submenuBody":
-      'Un ítem del desplegable puede abrir su propio submenú — «Exportar» aquí — porque el desplegable ENTERO es un <code>Menu</code> real, y los submenús arbitrariamente anidados ya son de <code>Menu</code>, no algo que <code>Menubar</code> tenga que reimplementar. El alcance propio de la barra (roving tabindex, un desplegable por ítem de nivel superior) no cambia: sólo el CONTENIDO de un desplegable puede anidar tan profundo como <code>Menu</code> permite.',
+      'Un ítem del desplegable puede abrir su propio submenú: «Exportar» aquí: porque el desplegable ENTERO es un <code>Menu</code> real, y los submenús arbitrariamente anidados ya son de <code>Menu</code>, no algo que <code>Menubar</code> tenga que reimplementar. El alcance propio de la barra (roving tabindex, un desplegable por ítem de nivel superior) no cambia: sólo el CONTENIDO de un desplegable puede anidar tan profundo como <code>Menu</code> permite.',
     "menubarPage.navSkinTitle": "Como nav-list",
     "menubarPage.navSkinBody":
-      'La opción <code>nav</code> del ítem cambia el trigger por el link real de <code>nav-list</code> (<code>sk-nav-list__link</code>/<code>__label</code>) en vez de un <code>Button</code>, y cada entrada del desplegable con <code>href</code> es un <code>&lt;a&gt;</code> real que navega — el ejemplo <code>menubar-navigation</code> de WAI-ARIA. La barra sigue siendo <code>Menubar</code>: roving tabindex, desplegables, todo el comportamiento; lo único que cambia es el elemento y las clases que pinta el trigger.',
+      'La opción <code>nav</code> del ítem cambia el trigger por el link real de <code>nav-list</code> (<code>sk-nav-list__link</code>/<code>__label</code>) en vez de un <code>Button</code>, y cada entrada del desplegable con <code>href</code> es un <code>&lt;a&gt;</code> real que navega: el ejemplo <code>menubar-navigation</code> de WAI-ARIA. La barra sigue siendo <code>Menubar</code>: roving tabindex, desplegables, todo el comportamiento; lo único que cambia es el elemento y las clases que pinta el trigger.',
     "menubarPage.a11yBody":
-      'La raíz lleva <code>role="menubar"</code> con <code>aria-label</code> (obligatorio). Cada ítem de nivel superior es <code>role="menuitem"</code>, con <code>aria-haspopup="menu"</code>/<code>aria-expanded</code> solo si abre un desplegable. El foco es roving — una sola parada en toda la barra. <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> mueven entre ítems (y si un desplegable estaba abierto, abren el del ítem nuevo en vez de solo mover el resaltado); <kbd class="sk-kbd">↓</kbd> abre el desplegable y enfoca su primer ítem, <kbd class="sk-kbd">↑</kbd> el último; dentro de un desplegable abierto, <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd> mueven entre sus comandos; <kbd class="sk-kbd">Escape</kbd> lo cierra y devuelve el foco a su trigger; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> saltan al primer/último ítem (o al primer/último comando si el desplegable está abierto).',
+      'La raíz lleva <code>role="menubar"</code> con <code>aria-label</code> (obligatorio). Cada ítem de nivel superior es <code>role="menuitem"</code>, con <code>aria-haspopup="menu"</code>/<code>aria-expanded</code> solo si abre un desplegable. El foco es roving: una sola parada en toda la barra. <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> mueven entre ítems (y si un desplegable estaba abierto, abren el del ítem nuevo en vez de solo mover el resaltado); <kbd class="sk-kbd">↓</kbd> abre el desplegable y enfoca su primer ítem, <kbd class="sk-kbd">↑</kbd> el último; dentro de un desplegable abierto, <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd> mueven entre sus comandos; <kbd class="sk-kbd">Escape</kbd> lo cierra y devuelve el foco a su trigger; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> saltan al primer/último ítem (o al primer/último comando si el desplegable está abierto).',
     "menubarPage.testCore1":
-      "Al moverse mientras un desplegable estaba abierto, mantiene abierto el del ítem SIGUIENTE — el detalle que un roving tabindex plano se pierde.",
+      "Al moverse mientras un desplegable estaba abierto, mantiene abierto el del ítem SIGUIENTE. El detalle que un roving tabindex plano se pierde.",
     "menubarPage.testReact1":
       "Moverse a la derecha mientras un desplegable está abierto lo cierra y abre el del ítem adyacente.",
     "menubarPage.testReact2": "Escape cierra el desplegable abierto y devuelve el foco a su trigger.",
@@ -3437,11 +3480,11 @@ export const ui = {
     "cardPage.implBody":
       "No hay un import de Card. Importa Box o el Tile semántico elegido, sus estilos y únicamente las piezas de contenido presentes. Esto mantiene cada dependencia y cada contrato visibles en el call site.",
     "cardPage.a11yP1":
-      'La raíz decide su propia semántica, no la card: <code>article</code>/<code>section</code>/<code>div</code> para Box, <code>a[href]</code>/<code>button</code>/<code>input[type=checkbox]</code> para cada Tile — la tabla de la sección "Elige por comportamiento" arriba resume las seis.',
+      'La raíz decide su propia semántica, no la card: <code>article</code>/<code>section</code>/<code>div</code> para Box, <code>a[href]</code>/<code>button</code>/<code>input[type=checkbox]</code> para cada Tile: la tabla de la sección "Elige por comportamiento" arriba resume las seis.',
     "cardPage.a11yP2":
       "El título de cada card usa <code>h3</code> en estos ejemplos porque viven bajo el <code>h2</code> oculto de esta pestaña; en tu página, ajusta el nivel al lugar real que ocupa la card en el esquema de encabezados, no lo copies literal.",
     "cardPage.a11yP3":
-      'El foco visible de <a href="/componentes/tile">Tile</a> cubre toda la superficie interactiva, nunca solo un ícono o un enlace interior; Box jamás recibe <code>tabindex</code> ni un <code>onClick</code> propio — ver Do &amp; Don\'t arriba.',
+      'El foco visible de <a href="/componentes/tile">Tile</a> cubre toda la superficie interactiva, nunca solo un ícono o un enlace interior; Box jamás recibe <code>tabindex</code> ni un <code>onClick</code> propio: ver Do &amp; Don\'t arriba.',
     "cardPage.a11yP4":
       "Una imagen de contenido (guías, casos de estudio, artículos) lleva <code>alt</code> real; el lavado que protege el texto sobre una foto es puramente decorativo y va <code>aria-hidden</code>.",
     "cardPage.a11yP5":
@@ -3462,48 +3505,60 @@ export const ui = {
     "indexPage.searchLabel": "Buscar componentes",
     "indexPage.countSuffix": "componentes",
 
-    "vaulPage.description": "Un pattern: panel modal anclado a un borde del viewport, con drag-to-dismiss opcional.",
+    "vaulPage.description": "Panel modal anclado a un borde del viewport, con variantes de sheet, drawer y gesto.",
     "vaulPage.lede":
-      "Un panel modal anclado a un <strong>borde</strong> del viewport: llega desde ese borde, deja la página inerte detrás de un backdrop, y se va por donde vino. El borde es la idea entera, un Vaul se nombra por de dónde viene, nunca por la forma que hace al llegar.",
-    "vaulPage.whyPatternTitle": "Por qué es un pattern y no un componente",
-    "vaulPage.whyPatternBody1":
-      'La regla es una sola pregunta: <em>¿podría un segundo componente necesitar esta estructura exacta?</em> Aquí la respuesta no es una predicción, ya pasa, hoy, en este repo: <a href="/componentes/drawer">Drawer</a> <strong>es</strong> un Vaul en el borde inline. La opción <a href="/componentes/dialog">Dialog Vaul</a> reutiliza la misma interacción block-end en móvil sin convertir Dialog en un componente Vaul.',
-    "vaulPage.whyPatternBody2":
-      "Así que Vaul envía <strong>hooks y estructura</strong>. Un drawer que reimplementara el panel sería un segundo Vaul con otro nombre.",
-    "vaulPage.edgeTitle": "El borde es un dato, no un componente",
+      "Vaul es la superficie modal que entra desde un borde. La página muestra sus formas principales: sheet de compartir, el mismo contrato en otros bordes, drag táctil opcional y los detalles que evitan duplicar Drawer o Dialog.",
+    "vaulPage.step1Eyebrow": "01 · base",
+    "vaulPage.startTitle": "Un dialog, una clase, un borde",
+    "vaulPage.startBody":
+      "Lo mínimo ya es útil: <code>sk-vaul</code> pinta el panel, <code>data-edge</code> decide desde dónde entra y <code>aria-label</code> nombra el diálogo.",
+    "vaulPage.minimumLabel": "Panel de ejemplo",
+    "vaulPage.step2Eyebrow": "02 · posición",
+    "vaulPage.edgeTitle": "El mismo Vaul en tres bordes",
     "vaulPage.edgeBody":
-      "Tres bordes, un pattern. <code>data-edge</code> elige; nada más cambia. Los bordes inline son lógicos, así que se dan vuelta solos en RTL en vez de clavarse del lado equivocado de la pantalla.",
-    "vaulPage.nativeTitle": "Exige el <code>&lt;dialog&gt;</code> nativo",
-    "vaulPage.nativeBody":
-      "El focus trap, ESC, el fondo inerte, la restauración del foco, el top layer y un <code>::backdrop</code> real son comportamientos que la plataforma ya tiene. Un Vaul sobre un div los reimplementa en JavaScript que habría que enviar, y el top layer y <code>:modal</code> no están disponibles para un div a ningún precio.",
-    "vaulPage.zagTitle": "Zag no se usa aquí, y ese es el hallazgo",
-    "vaulPage.zagBody":
-      "La regla es que Zag entra sólo cuando la coordinación de estado vale su costo. Se revisó el registro antes de escribir una línea: <strong>no existe una máquina de Vaul</strong>. Y lo que Zag sí podría cubrir es exactamente lo que la plataforma ya hace mejor, <code>@zag-js/dialog</code> reimplementaría la modalidad que el <code>&lt;dialog&gt;</code> regala, y <code>@zag-js/presence</code> es redundante contra <code>@starting-style</code>. Que la respuesta sea \"ninguna\" es la regla funcionando, no una excepción.",
-    "vaulPage.dragTitle": "El drag es lo único que cuesta JS",
+      "La diferencia entre sheet inferior y panel lateral es <code>data-edge</code>. Los bordes inline son lógicos, así que siguen RTL sin otro markup.",
+    "vaulPage.step3Eyebrow": "03 · gesto",
+    "vaulPage.dragTitle": "Con drag o sin drag",
     "vaulPage.dragBody1":
-      "Queda <strong>un</strong> comportamiento sin equivalente en la plataforma y sin máquina en Zag: arrastrar el panel hacia su borde para cerrarlo. Ése, y sólo ése, es el enhancer. <strong>Vaul está completo sin él</strong>: sin JS hay panel, slide, backdrop, ESC y click afuera.",
-    "vaulPage.dragBody2":
-      "Se cierra por distancia <strong>o</strong> por velocidad: un flick es una intención, y esperar a que cruce un umbral de distancia es exactamente lo que hace que una hoja se sienta trabada. La velocidad se mide sobre los <strong>últimos milímetros</strong> del gesto, no sobre el promedio: si arrastras despacio, dudas, y solo entonces tiras, el tirón es real, promediado desde que apoyaste el dedo se diluye hasta parecer que no te moviste. Y un flick <em>de vuelta</em> le gana a la distancia: la última palabra de la mano es su palabra.",
+      "Abrir, cerrar, foco, Escape, backdrop y top layer son del <code>&lt;dialog&gt;</code>. El enhancer sólo conecta el gesto táctil de arrastrar para cerrar.",
     "vaulPage.noDragLabel": "sin drag",
-    "vaulPage.resistTitle": "Para el otro lado, resiste",
+    "vaulPage.step4Eyebrow": "04 · composición",
+    "vaulPage.completeTitle": "Sheet de compartir",
+    "vaulPage.completeBody":
+      "Un Vaul puede contener un flujo de producto completo: cabecera, interruptor, lista, acciones y cierre explícito. El preview alterna Vanilla y React porque ambos renderizan el mismo contrato.",
+    "vaulPage.completeLabel": "Compartir archivo",
+    "vaulPage.reactSnippetComment": "mismo contenido que el ejemplo Vanilla",
+    "vaulPage.detailsTitle": "Detalles del contrato",
+    "vaulPage.whyPatternTitle": "Por qué es pattern",
+    "vaulPage.whyPatternBody1":
+      '<a href="/componentes/drawer">Drawer</a> es el mismo Vaul pegado al borde inline. Compartir estructura evita mantener dos sheets casi iguales.',
+    "vaulPage.whyPatternBody2": "Vaul envía hooks y estructura; cada composición decide el contenido.",
+    "vaulPage.nativeTitle": "La modalidad es nativa",
+    "vaulPage.nativeBody":
+      "Focus trap, Escape, fondo inerte, restauración del foco, top layer y <code>::backdrop</code> vienen de la plataforma. Un <code>div</code> no puede comprar eso después.",
+    "vaulPage.zagTitle": "Zag no entra aquí",
+    "vaulPage.zagBody":
+      "No existe máquina de Vaul en Zag, y usar Dialog/Presence duplicaría lo que ya hace <code>&lt;dialog&gt;</code> más <code>@starting-style</code>.",
+    "vaulPage.dragBody2":
+      "El cierre usa distancia o velocidad: un flick corto también es intención. Un flick de vuelta gana aunque el panel haya viajado lejos.",
+    "vaulPage.resistTitle": "Hacia adentro resiste",
     "vaulPage.resistBody1":
-      "Tirar del panel hacia adentro no lo despega de su borde, pero tampoco lo deja clavado: cede arrancando 1∶1 bajo la yema y se curva hasta un tope de unos 12px. Que el dedo se mueva y la cosa de abajo no es el único momento en que una superficie de manipulación directa se delata como un dibujo de una superficie. La asimetría <em>es</em> el mensaje: para ese lado no hay camino.",
+      "Tirar contra el borde no despega el panel: cede unos píxeles y vuelve. La asimetría dice que ese lado no tiene salida.",
     "vaulPage.resistBody2":
-      "Y lo que aparece en ese hueco es <strong>más panel</strong>: el material sigue de largo pasado el borde, así que levantar una hoja revela hoja y no una franja de backdrop. Son dos números distintos a propósito, cuánto cede (<code>--sk-vaul-overpull</code>) y hasta dónde llega el material (<code>--sk-vaul-material</code>), y el segundo se declara como un piso sobre el primero para que ceder no pueda ganarle nunca. El material se pinta <em>encima</em> de la elevación: al revés, la sombra del panel teñía justo la franja que se acaba de descubrir, y una hoja levantada mostraba una banda oscura donde debería estar su propia superficie, que es exactamente el agujero que esto existe para no tener.",
-    "vaulPage.resistBody3": "El backdrop va con eso: su opacidad sigue al drag. Un backdrop a full con el panel a medio salir estaría mintiendo sobre qué es modal.",
-    "vaulPage.handleTitle": "El handle sigue al borde",
+      "<code>--sk-vaul-overpull</code> controla cuánto cede; <code>--sk-vaul-material</code> asegura que el material siga debajo del dedo.",
+    "vaulPage.resistBody3": "La opacidad del backdrop acompaña el drag para no mentir sobre la modalidad.",
+    "vaulPage.handleTitle": "El handle sigue al gesto",
     "vaulPage.handleBody":
-      "No es cosmético: una hoja se tira hacia abajo desde una barra que cruza su techo, y un panel lateral se tira de costado desde una barra por su borde interior. Una píldora horizontal en un drawer anuncia el gesto equivocado, y un affordance que miente es peor que no tener ninguno.",
-    "vaulPage.desktopTitle": "En desktop no se arrastra",
+      "Una hoja inferior muestra una barra horizontal; un panel lateral muestra una barra vertical. El affordance apunta hacia donde se arrastra.",
+    "vaulPage.desktopTitle": "En desktop se queda quieto",
     "vaulPage.desktopBody":
-      "El handle es un affordance <strong>táctil</strong>: una barra que se tira con el pulgar. En un puntero no hay nada que tirar que un click afuera o un ESC no hagan mejor, así que arriba del breakpoint del sistema (<code>52rem</code>, el mismo ancho donde el sidebar se vuelve drawer y el dialog se vuelve hoja) el handle se oculta y el enhancer no cablea el drag. El CSS y el JS hacen el mismo corte, con el mismo <code>matchMedia</code>, así que nunca hay un handle colgando en un ancho donde no arrastra.",
-    "vaulPage.motionTitle": "Motion: llegar, salir y soltar son tres intenciones",
+      "Sobre <code>52rem</code> se oculta el handle y no se cablea el drag. Con puntero, Escape y click afuera son mejores controles.",
+    "vaulPage.motionTitle": "Motion por intención",
     "vaulPage.motionBody1":
-      "Cada una con sus tokens, nunca una duración promediada: entrar se anuncia, salir ya está decidido. Con <code>prefers-reduced-motion</code> el panel <strong>sigue llegando</strong>, se cae el viaje, no el Vaul, y el fade del backdrop es lo que dice que la página quedó inerte. El drag no se toca: es manipulación directa, no motion que el sistema te reproduce.",
+      "Entrar, salir y soltar usan tokens distintos. Con motion reducido cae el viaje decorativo, no la modalidad ni el aterrizaje del panel.",
     "vaulPage.motionBody2":
-      '<a href="/transparencias"><code>prefers-reduced-transparency</code></a> no elimina el backdrop: lo vuelve opaco. La modalidad y la respuesta directa al drag permanecen.',
-    "vaulPage.motionBody3":
-      "<strong>Soltar</strong> es la tercera, y es propia: un panel soltado no está saliendo, está terminando el impulso que la mano ya le dio. Por eso no consume <code>enter</code> ni <code>exit</code>, los dos son cortos porque nadie los espera, sino el intent <code>release</code>, con una duración larga a propósito: cortarla es lo que hace que el panel se frene en seco debajo del dedo en vez de seguir de largo. Un mismo intent para los dos destinos: volver a casa y irse del todo son el mismo tiro con distinto final. Es el único intent que bajo <code>prefers-reduced-motion</code> no puede soltar su viaje, el panel está donde lo dejó el dedo y tiene que llegar a algún lado, así que suelta el lujo y aterriza corto.",
+      '<a href="/transparencias"><code>prefers-reduced-transparency</code></a> vuelve opaco el backdrop; no lo elimina.',
+    "vaulPage.motionBody3": "Soltar tiene su propio intent porque termina el impulso de la mano, no una animación de salida.",
     "vaulPage.demoOpenLabel": "Compartir archivo",
     "vaulPage.demoTitle": "Propuesta comercial Q3",
     "vaulPage.demoMeta": "PDF · 2,4 MB · editado hace 2 h",
@@ -3529,6 +3584,36 @@ export const ui = {
     "vaulPage.test3": "Cierra con un drag lento que llega suficientemente lejos (solo distancia).",
     "vaulPage.test4": "Un flick rápido y corto cierra aunque la distancia sea chica.",
     "vaulPage.test5": "Un flick de vuelta a casa le gana a un drag largo: la dirección le gana a la distancia.",
+    "vaulPage.examplesTitle": "Poco contenido, mucho contenido",
+    "vaulPage.examplesBody":
+      "El mismo panel sostiene una confirmación de una línea y un formulario de varias secciones: el pattern no impone alto, sólo borde, slide y backdrop. Los tres parten en móvil porque es donde vive un Vaul de verdad.",
+    "vaulPage.deleteLabel": "Confirmar eliminación",
+    "vaulPage.deleteOpenLabel": "Eliminar archivo",
+    "vaulPage.deleteTitle": "¿Eliminar este archivo?",
+    "vaulPage.deleteDesc":
+      "Esta acción no se puede deshacer. El archivo se moverá a la papelera por 30 días.",
+    "vaulPage.deleteCancel": "Cancelar",
+    "vaulPage.deleteConfirm": "Eliminar",
+    "vaulPage.filtersLabel": "Filtros de búsqueda",
+    "vaulPage.filtersOpenLabel": "Filtros",
+    "vaulPage.filtersTitle": "Filtros de búsqueda",
+    "vaulPage.filtersSortLabel": "Ordenar por",
+    "vaulPage.filtersSortRelevance": "Relevancia",
+    "vaulPage.filtersSortPriceAsc": "Precio: menor a mayor",
+    "vaulPage.filtersSortPriceDesc": "Precio: mayor a menor",
+    "vaulPage.filtersSortRecent": "Más recientes",
+    "vaulPage.filtersCategoryLabel": "Categoría",
+    "vaulPage.filtersCategoryDesign": "Diseño",
+    "vaulPage.filtersCategoryDev": "Desarrollo",
+    "vaulPage.filtersCategoryResearch": "Investigación",
+    "vaulPage.filtersCategoryStrategy": "Estrategia",
+    "vaulPage.filtersCategoryContent": "Contenido",
+    "vaulPage.filtersCategoryIllustration": "Ilustración",
+    "vaulPage.filtersAvailabilityLabel": "Disponibilidad",
+    "vaulPage.filtersAvailabilityStock": "En stock",
+    "vaulPage.filtersAvailabilityShipping": "Envío gratis",
+    "vaulPage.filtersClear": "Limpiar",
+    "vaulPage.filtersApply": "Aplicar filtros",
 
     "landing.title": "skryensya/ui",
     "landing.description":
@@ -4046,13 +4131,13 @@ export const ui = {
     "demo.stack.title": "Summary",
     "demo.stack.body": "The request is ready for review.",
     "demo.stack.action": "See details",
-    "demo.layoutGrid.narrow": "narrow — summaries, focused-reading forms.",
-    "demo.layoutGrid.content": "content — the default measure for the main flow.",
-    "demo.layoutGrid.breakout": "breakout — figures, tables or groups that need more room to breathe.",
-    "demo.layoutGrid.fullWidth": "full-width — backgrounds or media that reach the grid's edge.",
-    "demo.layoutGridRail.content": "content — main.sk-layout-grid, the page's main flow.",
-    "demo.layoutGridRail.rail": "rail — after the content, e.g. a TOC.",
-    "demo.layoutGridRail.railStart": "rail-start — before the content, e.g. an index.",
+    "demo.layoutGrid.narrow": "narrow. Summaries, focused-reading forms.",
+    "demo.layoutGrid.content": "content. The default measure for the main flow.",
+    "demo.layoutGrid.breakout": "breakout. Figures, tables or groups that need more room to breathe.",
+    "demo.layoutGrid.fullWidth": "full-width. Backgrounds or media that reach the grid's edge.",
+    "demo.layoutGridRail.content": "content. Main.sk-layout-grid, the page's main flow.",
+    "demo.layoutGridRail.rail": "rail. After the content, e.g. a TOC.",
+    "demo.layoutGridRail.railStart": "rail-start. Before the content, e.g. an index.",
     "demo.inline.title": "Project Atlas",
     "demo.inline.status": "3 unpublished changes",
     "demo.inline.preview": "Preview",
@@ -4106,7 +4191,7 @@ export const ui = {
     "breadcrumb.longLabel": "Breadcrumb with long labels",
     "breadcrumb.collapseTitle": "Collapsing to fit",
     "breadcrumb.collapseBody":
-      'When the trail does not fit on one line, an enhancer hides the ancestor levels — never the first one or the current page — behind a "…" disclosure that opens a real <a href="/en/components/menu">Menu</a> holding those same levels: an ARIA menu\'s own keyboard pattern (arrow keys, Home/End, typeahead), not a plain list. Without JavaScript, or under four levels, the markup is still complete on its own.',
+      'When the trail does not fit on one line, an enhancer hides the ancestor levels: never the first one or the current page. Behind a "…" disclosure that opens a real <a href="/en/components/menu">Menu</a> holding those same levels: an ARIA menu\'s own keyboard pattern (arrow keys, Home/End, typeahead), not a plain list. Without JavaScript, or under four levels, the markup is still complete on its own.',
     "breadcrumb.collapseLabel": "Breadcrumb that collapses to fit",
     "breadcrumb.collapseTriggerLabel": "Show hidden levels",
     "breadcrumb.contractBody": "Use nav + ol; the last item carries aria-current=page and is not a link.",
@@ -4130,7 +4215,7 @@ export const ui = {
     "callout.lede1":
       "Callout is an inline message that stays in the layout for as long as its condition holds. Unlike Toast, transient and mounted in a floating region, Callout lives in the flow of content. One visual weight, the bordered panel: tone is the only variable, so two Callouts never compete over which looks more urgent.",
     "callout.lede2":
-      "It is purely informational: it shows something, it runs nothing. It has no dismiss; unlike Toast, a Callout cannot be dismissed, because nothing on the page depends on it going away. The one interactive piece it can carry is a recovery action, and the contract narrows it to <code>translucent</code> or <code>danger</code> so it never competes with the page's real primary action.",
+      "It is purely informational: it shows something, it runs nothing. It has no dismiss; unlike Toast, a Callout cannot be dismissed, because nothing on the page depends on it going away. The one interactive piece it can carry is a recovery action, and the contract narrows it to <code>translucent</code> or <code>danger</code> so it never competes with the page's real accent action.",
     "callout.tonesTitle": "Tones",
     "callout.tonesBody1":
       'The tone decides whether the panel paints with semantic color. <code>info</code>, <code>success</code>, <code>warning</code> and <code>danger</code> color the message. Only <code>danger</code> announces as <code>role="alert"</code> (assertive); the rest use <code>role="status"</code> (polite); it is the minority of cases that truly interrupt, not the component\'s name, that decides that.',
@@ -4148,7 +4233,7 @@ export const ui = {
     "callout.warningLabel": "Warning callout",
     "callout.successTitle": "Success, with a translucent Button",
     "callout.successBody":
-      'When the action is a <a href="/en/components/button">Button</a>, the slot only accepts <code>variant="translucent"</code> or <code>variant="danger"</code>; never <code>primary</code> nor the default <code>neutral</code>: a Callout is not the place for the page\'s main call to action. Use <code>translucent</code> for buttons that blend with the callout\'s colored background, and <code>danger</code> when you need a destructive action to stand out visually.',
+      'When the action is a <a href="/en/components/button">Button</a>, the slot only accepts <code>variant="translucent"</code> or <code>variant="danger"</code>; never <code>accent</code> nor the default <code>neutral</code>: a Callout is not the place for the page\'s main call to action. Use <code>translucent</code> for buttons that blend with the callout\'s colored background, and <code>danger</code> when you need a destructive action to stand out visually.',
     "callout.successLabel": "Success callout",
     "callout.anatomyTitle": "Anatomy",
     "callout.anatomyItem1": "<code>sk-callout__icon</code> is decorative and only appears when it carries a visual signal.",
@@ -4351,7 +4436,7 @@ export const ui = {
     "demo.drawer.team": "Team",
     "demo.drawer.settings": "Settings",
     "demo.drawer.userName": "Ada Kovač",
-    "demo.splitButton.primary": "Save",
+    "demo.splitButton.action": "Save",
     "demo.splitButton.menuLabel": "More options",
     "demo.splitButton.copy": "Save a copy",
     "demo.splitButton.template": "Save as template",
@@ -4431,14 +4516,28 @@ export const ui = {
     "demo.menu.safety.pdfCompressed": "Compressed",
     "demo.menu.safety.delete": "Delete",
     "demo.radioGroup.label": "Plan",
-    "demo.navList.label": "Primary",
-    "demo.navList.group": "Space",
-    "demo.navList.home": "Home",
-    "demo.navList.reports": "Reports",
-    "demo.navList.collapsibleNavLabel": "Account",
-    "demo.navList.collapsibleLabel": "Collapsible group",
-    "demo.navList.account": "My account",
+    "demo.navList.productLabel": "Product navigation",
+    "demo.navList.groupWork": "Work",
+    "demo.navList.groupOperate": "Operate",
+    "demo.navList.dashboard": "Dashboard",
+    "demo.navList.inbox": "Inbox",
+    "demo.navList.customers": "Customers",
+    "demo.navList.allCustomers": "All customers",
+    "demo.navList.segments": "Segments",
+    "demo.navList.automations": "Automations",
     "demo.navList.settings": "Settings",
+    "demo.navList.horizontalLabel": "Primary",
+    "demo.navList.overview": "Overview",
+    "demo.navList.projects": "Projects",
+    "demo.navList.reports": "Reports",
+    "demo.navList.team": "Team",
+    "demo.navList.collapsibleNavLabel": "Documentation navigation",
+    "demo.navList.docs": "Documentation",
+    "demo.navList.start": "Start",
+    "demo.navList.components": "Components",
+    "demo.navList.tokens": "Tokens",
+    "demo.navList.account": "Account",
+    "demo.navList.profile": "Profile",
     "demo.navList.billing": "Billing",
     "demo.navbar.nav": "Primary",
     "demo.navbar.home": "Home",
@@ -4696,7 +4795,7 @@ export const ui = {
       "Badge is a static visual label for statuses, categories or short metadata. It does not communicate selection, a counter or navigation on its own; that semantics belongs to the content or the container.",
     "badge.tagTitle": "Label",
     "badge.tagBody":
-      "The shape with text: a status, a category or a short piece of metadata. Every tone carries a border in its own color, so neutral — whose background is the canvas — never reads as an invisible rectangle.",
+      "The shape with text: a status, a category or a short piece of metadata. Every tone carries a border in its own color, so neutral, whose background is the canvas: never reads as an invisible rectangle.",
     "badge.tagLabel": "Badge",
     "badge.dotTitle": "Dot",
     "badge.dotBody":
@@ -4704,7 +4803,7 @@ export const ui = {
     "badge.dotLabel": "Badge dot",
     "badge.cornerTitle": "In the corner of an element",
     "badge.cornerBody":
-      "Wrap the element in <code>sk-badge-holder</code> and the dot anchors to the top right — a new-activity indicator on a button, a presence indicator on an avatar. A ring in the surface's color lifts it off the content underneath. The dot carries its own <code>aria-label</code> because it means something; the host element does not change.",
+      "Wrap the element in <code>sk-badge-holder</code> and the dot anchors to the top right: a new-activity indicator on a button, a presence indicator on an avatar. A ring in the surface's color lifts it off the content underneath. The dot carries its own <code>aria-label</code> because it means something; the host element does not change.",
     "badge.cornerLabel": "Badge dot in the corner",
     "badge.test1": "Renders its accessible label and forwards semantic attributes.",
     "badge.test2": "Anchors a status dot without adding visible content.",
@@ -5001,7 +5100,7 @@ export const ui = {
     "accordion.a11yP1":
       'Each trigger is a native <code>&lt;button&gt;</code>: Enter and Space activate it with no script of its own, and its <code>aria-expanded</code> (written by the machine, never by hand) is the only thing that announces the state. The chevron is <code>aria-hidden="true"</code>: it is the same information said twice, and only one should reach the screen reader.',
     "accordion.a11yP2":
-      "<kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> move focus between triggers in the page's normal order: the base keyboard pattern the ARIA APG describes for an accordion asks for nothing more — arrow keys, <kbd>Home</kbd> and <kbd>End</kbd> between triggers are an optional enhancement this component does not implement today. Opening an item does not take focus from its trigger or hand it to the content: keyboard traversal stays the same, same as with the mouse.",
+      "<kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> move focus between triggers in the page's normal order: the base keyboard pattern the ARIA APG describes for an accordion asks for nothing more. Arrow keys, <kbd>Home</kbd> and <kbd>End</kbd> between triggers are an optional enhancement this component does not implement today. Opening an item does not take focus from its trigger or hand it to the content: keyboard traversal stays the same, same as with the mouse.",
     "accordion.a11yP3":
       '{detailsLink} has none of this because it does not need it: a <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> is an accessible platform disclosure, with its own focus and keyboard handling already solved by the browser.',
 
@@ -5094,7 +5193,7 @@ export const ui = {
     "sourceViewer.resize": "Resize the file tree",
 
     "tests.title": "Tests",
-    "tests.intro": "What each test checks, in one line. Full code is under Reference.",
+    "tests.intro": "What each test checks, in one line.",
     "tests.introNoReference": "What each test checks, in one line.",
     "tests.statusPassed": "Passed",
     "tests.statusFailed": "Failed",
@@ -5124,13 +5223,13 @@ export const ui = {
     "carousel.multiBody1":
       "Narrower slides fit several per page, and the machine counts them by measuring. With <code>data-loop</code> the carousel wraps around; with <code>data-autoplay</code> it advances on its own (empty for the default 4000ms, or a delay in ms).",
     "carousel.multiBody2":
-      "<code>data-autoplay</code> also brings a <strong>pause button</strong>: anything that moves on its own has to be stoppable (WCAG 2.2.2), so the option and the control are one and the same thing. The button always says what it will do based on what the user last asked for: hovering the mouse over the carousel or moving keyboard focus anywhere inside it — not just the buttons — pauses rotation for as long as that lasts, and resumes it on leaving, unless the other condition is still active. A click on the button overrides all of that until the next click. For anyone who declares <code>prefers-reduced-motion</code>, it never starts: the carousel stays still and the button offers to play. It also pauses on its own once the tab is no longer visible.",
+      "<code>data-autoplay</code> also brings a <strong>pause button</strong>: anything that moves on its own has to be stoppable (WCAG 2.2.2), so the option and the control are one and the same thing. The button always says what it will do based on what the user last asked for: hovering the mouse over the carousel or moving keyboard focus anywhere inside it: not just the buttons: pauses rotation for as long as that lasts, and resumes it on leaving, unless the other condition is still active. A click on the button overrides all of that until the next click. For anyone who declares <code>prefers-reduced-motion</code>, it never starts: the carousel stays still and the button offers to play. It also pauses on its own once the tab is no longer visible.",
     "carousel.multiLabel": "Multi-up + autoplay",
     "carousel.multiNote": "Avatar + meta · data-loop · data-autoplay",
     "carousel.focusTitle": "Focus inside a card",
     "carousel.focusLabel": "Focus inside a card",
     "carousel.focusBody1":
-      "The WAI-ARIA pattern says keyboard focus pauses rotation \"anywhere in the carousel content, including the next and previous slide elements\" — easy to read as \"only the buttons\". This card adds a real link (\"Read more\") inside every slide to prove it also counts: Tab onto the link pauses autoplay, Tab or Shift+Tab away resumes it.",
+      "The WAI-ARIA pattern says keyboard focus pauses rotation \"anywhere in the carousel content, including the next and previous slide elements\". Easy to read as \"only the buttons\". This card adds a real link (\"Read more\") inside every slide to prove it also counts: Tab onto the link pauses autoplay, Tab or Shift+Tab away resumes it.",
     "carousel.focusBody2":
       "No new code was needed for this: the focus listener lives on the carousel's root, and <code>focusin</code>/<code>focusout</code> bubble from any descendant, so a link, a button, or any control inside a card is already covered.",
     "carousel.focusNote": "A real link per card · Tab to test the pause",
@@ -5222,7 +5321,7 @@ export const ui = {
       "The control uses the icon set's <code>check</code> and <code>remove</code> roles, not a CSS stroke. Import <code>@skryensya/core/components/checkbox.css</code> and call <code>initComponents()</code> once.",
     "checkbox.groupTitle": "A checkbox that groups others: CheckboxGroup",
     "checkbox.groupBody1":
-      "<code>indeterminate</code> is not a third value someone can pick: it is what a parent says when <strong>its children disagree</strong>. That is why the glyph is <code>remove</code> rather than a half check, and why the parent submits nothing to the form — the children, which carry <code>name</code> and <code>value</code>, are the ones that do.",
+      "<code>indeterminate</code> is not a third value someone can pick: it is what a parent says when <strong>its children disagree</strong>. That is why the glyph is <code>remove</code> rather than a half check, and why the parent submits nothing to the form: the children, which carry <code>name</code> and <code>value</code>, are the ones that do.",
     "checkbox.groupNote": "three states from two booleans",
     "checkbox.groupBody2":
       "The parent's state is <strong>derived</strong>, never hand-written: it is recalculated from the children on every change. The other way around, a parent with its own state starts lying the moment someone checks a child. That is why the contract gives it no settable <code>checked</code>: which children start checked is per-entry data (<code>defaultChecked</code>), not the group's.",
@@ -5293,7 +5392,7 @@ export const ui = {
     "combobox.a11yBody1":
       "Focus stays on the input while <code>aria-activedescendant</code> points at the active option. Arrow down and up move through results, Enter selects, and Escape closes. <code>hint</code> and <code>error</code> link through <code>aria-describedby</code>; changes in the result count are announced through a status region.",
     "combobox.a11yBody2":
-      "Moving through results by keyboard moves the focus ring to the highlighted item (virtual focus), and the control yields its own: there is one ring on screen, and it travels to the list and back. With the pointer, no ring appears (a ring following the cursor reads as broken focus) — only the state layer.",
+      "Moving through results by keyboard moves the focus ring to the highlighted item (virtual focus), and the control yields its own: there is one ring on screen, and it travels to the list and back. With the pointer, no ring appears (a ring following the cursor reads as broken focus). Only the state layer.",
     "combobox.test1": "Keeps the typed search when the field is left without a selection.",
     "combobox.test2": "Writes the chosen label and reopens on the whole list.",
     "combobox.test3": "In multiple mode, the search is spent on each chip added.",
@@ -5312,7 +5411,7 @@ export const ui = {
     "commandPalette.contractItem5":
       'Closing: a <code>&lt;form method="dialog"&gt;</code> with an IconButton (<code>sk-dialog__close sk-command-palette__close</code>), Esc, or a click on the backdrop.',
     "commandPalette.contractItem6":
-      "<code>entries</code> is a contract option, not part of normal usage: it exists so a tree (like the one above) can seed the demo's index — it is emitted as the <code>&lt;script&gt;</code> itself in Vanilla, and as the (parsed) <code>items</code> prop in React. A real composition still authors its own index.",
+      "<code>entries</code> is a contract option, not part of normal usage: it exists so a tree (like the one above) can seed the demo's index: it is emitted as the <code>&lt;script&gt;</code> itself in Vanilla, and as the (parsed) <code>items</code> prop in React. A real composition still authors its own index.",
     "commandPalette.test1": "Claims nothing at rest: no options and no expanded popup.",
     "commandPalette.test2": "Filters as the reader types and points at the first hit.",
     "commandPalette.test3": "Opens from its trigger and fills the list only then.",
@@ -5530,7 +5629,7 @@ export const ui = {
     "layoutGridPage.description":
       "Layout Grid: one page flow with narrow, content, breakout, and full-width measures.",
     "layoutGridPage.lede":
-      "Layout Grid gives one content flow four named widths. The root keeps its semantics —it can be <code>main</code>, <code>article</code>, or a section— and each direct child chooses another measure only when it needs one with <code>data-width</code>.",
+      "Layout Grid gives one content flow four named widths. The root keeps its semantics -it can be <code>main</code>, <code>article</code>, or a section- and each direct child chooses another measure only when it needs one with <code>data-width</code>.",
     "layoutGridPage.exampleKicker": "Publishing guide",
     "layoutGridPage.exampleTitle": "A guide that reads from start to finish",
     "layoutGridPage.exampleIntro":
@@ -5551,7 +5650,7 @@ export const ui = {
     "layoutGridPage.levelsBody":
       "Without an attribute, every direct child lives in <code>content</code>. Add <code>data-width</code> only when an element needs another measure; there is no wrapper per level.",
     "layoutGridPage.levelNarrow": "Prose, summaries, or forms with a concentrated reading measure.",
-    "layoutGridPage.levelContent": "The default measure for primary content.",
+    "layoutGridPage.levelContent": "The default measure for main content.",
     "layoutGridPage.levelBreakout": "Figures, tables, or groups that need more inline room.",
     "layoutGridPage.levelFullWidth": "Backgrounds, borders, or media that reach the grid edge.",
     "layoutGridPage.fullWidthTitle": "Full width without releasing content",
@@ -5559,7 +5658,7 @@ export const ui = {
       "A direct <code>full-width</code> child becomes a grid with the same columns. Its direct children return to <code>content</code> by default and may use <code>narrow</code>, <code>breakout</code>, or <code>full-width</code> again.",
     "layoutGridPage.railTitle": "Rail and content centered together",
     "layoutGridPage.railBody":
-      "A supporting rail —TOC, contextual navigation, or metadata— is a direct child of the same <code>sk-layout-grid</code>. <code>data-width=\"rail\"</code> sits it after the content; <code>data-width=\"rail-start\"</code>, before; both at once, one on each side. It is not a content span like <code>narrow</code> or <code>breakout</code>: it is a separate column, fixed in width (<code>--sk-layout-rail-inline-size</code>), held to the flow by <code>--sk-layout-rail-gap</code> — one <code>space-inline</code> step, not the breakout track. Below <code>72rem</code> there's no room for a side column, so each rail becomes its own row above the content instead.",
+      "A supporting rail -TOC, contextual navigation, or metadata- is a direct child of the same <code>sk-layout-grid</code>. <code>data-width=\"rail\"</code> sits it after the content; <code>data-width=\"rail-start\"</code>, before; both at once, one on each side. It is not a content span like <code>narrow</code> or <code>breakout</code>: it is a separate column, fixed in width (<code>--sk-layout-rail-inline-size</code>), held to the flow by <code>--sk-layout-rail-gap</code>: one <code>space-inline</code> step, not the breakout track. Below <code>72rem</code> there's no room for a side column, so each rail becomes its own row above the content instead.",
     "layoutGridPage.railEndTitle": "After the content",
     "layoutGridPage.railStartTitle": "Before the content",
     "layoutGridPage.railBothTitle": "Both sides",
@@ -5641,7 +5740,7 @@ export const ui = {
     "iconPage.a11yItem4": "<code>focusable=\"false\"</code> always: an <code>&lt;svg&gt;</code> is not a tab stop.",
     "iconPage.sizeTitle": "Size",
     "iconPage.sizeBody":
-      "Three values off <strong>one</strong> hook. <code>--sk-icon-size</code> is invariant to density: density is spacing; an icon is content beside a glyph — if the text does not shrink, neither does the icon.",
+      "Three values off <strong>one</strong> hook. <code>--sk-icon-size</code> is invariant to density: density is spacing; an icon is content beside a glyph: if the text does not shrink, neither does the icon.",
     "iconPage.sizeLabel": "Icon · sm / md / lg",
     "iconPage.sizeNote": "no numeric prop",
     "iconPage.test1": "Resolves a stable name against the bound set.",
@@ -5689,7 +5788,7 @@ export const ui = {
       "<code>sk-input</code> goes on both the <code>&lt;input&gt;</code> and the <code>&lt;textarea&gt;</code>: it is the same visual control, so it is one set of hooks. A second class would be a second set to keep in sync with the first.",
     "inputPage.formFieldTitle": "The label is not the Input's",
     "inputPage.formFieldBody":
-      'Both demos above are wrapped in a <a href="/en/components/form-field">FormField</a>, and not out of habit: the label, the hint, the error message and the six ids that tie them together all live there. That is why this contract has no <code>invalid</code> and no <code>id</code> of its own — a control carrying its own <code>aria-invalid</code> could contradict the message sitting next to it. An <code>Input</code> outside a <code>FormField</code> is still a valid control, as long as it carries its own <code>aria-label</code>.',
+      'Both demos above are wrapped in a <a href="/en/components/form-field">FormField</a>, and not out of habit: the label, the hint, the error message and the six ids that tie them together all live there. That is why this contract has no <code>invalid</code> and no <code>id</code> of its own: a control carrying its own <code>aria-invalid</code> could contradict the message sitting next to it. An <code>Input</code> outside a <code>FormField</code> is still a valid control, as long as it carries its own <code>aria-label</code>.',
     "inputPage.nativeTitle": "NativeInput: the control without the appearance",
     "inputPage.nativeBody":
       'The contract\'s third signature is <code>NativeInput</code>: the same element without <code>sk-input</code>, for when what you are teaching is the behaviour the browser ships rather than the system\'s appearance. It is what the plain <code>&lt;input type="time"&gt;</code> demo on TimeField uses.',
@@ -5698,7 +5797,7 @@ export const ui = {
     "inputPage.test3": "Writes the height to data-size and leaves the native size attribute alone.",
 
     "formFieldPage.description":
-      "FormField: the chrome around any control — label, hint, error — and the six ids that tie them together.",
+      "FormField: the chrome around any control. Label, hint, error, and the six ids that tie them together.",
     "formFieldPage.title": "FormField",
     "formFieldPage.lede":
       "A field is chrome plus a control, and what binds them is six ids. Written by hand, every one of them is a chance to be silently wrong: a mistyped <code>aria-describedby</code> shows nothing on screen and breaks every screen reader that reads the form.",
@@ -5707,15 +5806,15 @@ export const ui = {
       "The label points at the control, the control points back at the hint and the error, and each of those carries the id being pointed at. The contract derives all of them from the field's own id: neither binding invents one, which is why React's ids (<code>useId</code>) and the emitter's (a slug) can differ without the relationship changing.",
     "formFieldPage.independentTitle": "Independent of Input, on purpose",
     "formFieldPage.independentBody":
-      "<code>sk-form-field</code> is the chrome around <em>any</em> control: it wraps a select or a textarea just as well, as below. Naming it after whichever control it most often holds would turn into a lie the first time it holds another — which is why its <code>children</code> slot accepts any signature and the wiring points at <code>\"control\"</code> rather than at an input.",
+      "<code>sk-form-field</code> is the chrome around <em>any</em> control: it wraps a select or a textarea just as well, as below. Naming it after whichever control it most often holds would turn into a lie the first time it holds another: which is why its <code>children</code> slot accepts any signature and the wiring points at <code>\"control\"</code> rather than at an input.",
     "formFieldPage.errorTitle": "The error is text, not a color",
     "formFieldPage.errorBody":
       "The <em>presence</em> of the message is what makes the field invalid: there is no separate <code>invalid</code> option that could fall out of step with it. <code>--sk-form-field-error-fg</code> tints a message that has to exist anyway, and <code>aria-invalid</code>, which you already write for screen readers, is what the <code>--sk-input-border-color</code> hook follows. Color is never the only error signal (WCAG 1.4.1).",
     "formFieldPage.avoidTitle": "When not to use it",
     "formFieldPage.avoidBody":
-      "When the control carries no visible label: there the control itself carries its <code>aria-label</code> and there is no field. And when the control already brings its own label wired by its machine — NumberField, TimeField, Combobox — wrapping it would add a second <code>for</code> competing with the first.",
+      "When the control carries no visible label: there the control itself carries its <code>aria-label</code> and there is no field. And when the control already brings its own label wired by its machine: NumberField, TimeField, Combobox: wrapping it would add a second <code>for</code> competing with the first.",
     "formFieldPage.reactBody":
-      "In React, <code>FormField</code> does the wiring you write by hand in markup: it generates the <code>id</code>, assembles the <code>aria-describedby</code> for the hint and the error, and passes <code>required</code> and <code>disabled</code> to the native control. It is imported from <code>@skryensya/react/form-field</code>, its own module, and any control can read that context — which is the alternative to each of them growing its own copy of the wiring.",
+      "In React, <code>FormField</code> does the wiring you write by hand in markup: it generates the <code>id</code>, assembles the <code>aria-describedby</code> for the hint and the error, and passes <code>required</code> and <code>disabled</code> to the native control. It is imported from <code>@skryensya/react/form-field</code>, its own module, and any control can read that context: which is the alternative to each of them growing its own copy of the wiring.",
     "formFieldPage.a11yBody":
       "The <code>required</code> asterisk is decorative (<code>aria-hidden</code>): what actually says it is the control's <code>required</code> attribute, because \"required\" has to survive being read aloud. The hint and the error are announced through <code>aria-describedby</code> in that order, and only what exists is pointed at: with no error written there is no <code>aria-invalid</code>, because an attribute pointing at a message nobody wrote describes something that is not there.",
     "formFieldPage.test1": "Wires the label, hint and error to the control it wraps.",
@@ -5727,14 +5826,14 @@ export const ui = {
     "skipLink.description":
       "SkipLink: the first link in the document, invisible until it is focused, for bypassing the chrome that repeats.",
     "skipLink.lede":
-      'SkipLink is the <strong>first link in the document</strong> and the one component whose success looks like absence: someone reading with a pointer never learns it is there. Every page opens with the same chrome — the brand, the global navigation, the search trigger — and someone reading with a keyboard walks through all of it before reaching what they came for, on every page. That is what <abbr title="Web Content Accessibility Guidelines">WCAG</abbr> 2.4.1 calls a block to bypass. This link is the bypass, and it is the platform\'s own: an <code>href</code> to an id on the same page, so it works before a single script has run.',
+      'SkipLink is the <strong>first link in the document</strong> and the one component whose success looks like absence: someone reading with a pointer never learns it is there. Every page opens with the same chrome: the brand, the global navigation, the search trigger: and someone reading with a keyboard walks through all of it before reaching what they came for, on every page. That is what <abbr title="Web Content Accessibility Guidelines">WCAG</abbr> 2.4.1 calls a block to bypass. This link is the bypass, and it is the platform\'s own: an <code>href</code> to an id on the same page, so it works before a single script has run.',
     "skipLink.demoContentLabel": "Go to content",
     "skipLink.demoNavLabel": "Go to navigation",
     "skipLink.tryItBody":
       'This site uses two: press <kbd class="sk-kbd">Tab</kbd> with focus at the top of this page and “Go to content” appears in the upper-left corner; one more Tab and “Go to navigation” takes its place. The same happens in the preview below, inside its frame: the link has been there since the first render, it is just one pixel wide until you focus it.',
     "skipLink.severalTitle": "There may be more than one, and the order is the decision",
     "skipLink.severalBody1":
-      "A page with a persistent index reasonably offers two: one to the content and one to the navigation. They are not a group and not a list: they are two loose links that happen to be the first two things in the document, which is why the signature takes <em>one</em> destination rather than a collection. With a collection, the common case — exactly one — would have to be written as an array, and the order would live inside an option where nobody looks.",
+      "A page with a persistent index reasonably offers two: one to the content and one to the navigation. They are not a group and not a list: they are two loose links that happen to be the first two things in the document, which is why the signature takes <em>one</em> destination rather than a collection. With a collection, the common case. Exactly one. Would have to be written as an array, and the order would live inside an option where nobody looks.",
     "skipLink.severalBody2":
       "The first one is what everybody gets, so it has to answer the question most readers arrived with, and that question is almost always “let me read this page”, not “take me somewhere else”. That is why content comes first. A reader who did want the index is one more Tab away; the other way round, a reader who wanted the page would pay several.",
     "skipLink.severalLabel": "Both, in order",
@@ -5744,17 +5843,17 @@ export const ui = {
     "skipLink.targetBody1":
       "It is the half nobody remembers and the half that decides whether the link works at all. Following an in-page link scrolls in every browser, but it moves <em>focus</em> in only some of them. Where it does not, the next Tab resumes from the link and returns the reader to the chrome they just asked to skip: a skip link that silently does nothing is worse than none, because the reader was told it worked.",
     "skipLink.targetBody2":
-      '<code>tabindex="-1"</code> on the destination closes that gap. It takes the element out of the tab <em>order</em> — it adds no new stop — while making it a valid focus target. In React it arrives as a value, <code>skipLinkTarget</code>, rather than as a sentence in the docs: a rule written in prose is a rule someone copies wrong once.',
+      '<code>tabindex="-1"</code> on the destination closes that gap. It takes the element out of the tab <em>order</em>: it adds no new stop: while making it a valid focus target. In React it arrives as a value, <code>skipLinkTarget</code>, rather than as a sentence in the docs: a rule written in prose is a rule someone copies wrong once.',
     "skipLink.hiddenTitle": "Hidden means clipped, never removed",
     "skipLink.hiddenBody1":
       'Not <code>display: none</code> and not <code>visibility: hidden</code>: both remove the element from the accessibility tree, and what is outside that tree cannot be reached by Tab either, which is the one thing this component has to be. At rest it is a one-pixel box clipped with <code>clip-path</code>, exactly like the <a href="/en/styling-hooks">visually-hidden</a> pattern.',
     "skipLink.hiddenBody2":
-      "What separates it from that pattern is one declaration with a real consequence: <code>visually-hidden</code> returns to <code>position: static</code> when focused, so the element enters the layout and everything below it moves, at the exact moment the reader is trying to work out where they landed. Here the position is <code>fixed</code> in both states — hidden and revealed are the same out-of-flow box — so focusing it changes what is painted and nothing else. The page never moves.",
+      "What separates it from that pattern is one declaration with a real consequence: <code>visually-hidden</code> returns to <code>position: static</code> when focused, so the element enters the layout and everything below it moves, at the exact moment the reader is trying to work out where they landed. Here the position is <code>fixed</code> in both states: hidden and revealed are the same out-of-flow box: so focusing it changes what is painted and nothing else. The page never moves.",
     "skipLink.firstTitle": "It goes first, or it is not a bypass",
     "skipLink.firstBody":
       "Anything focusable before the link is, by definition, a block nobody can bypass. That is why its place is the start of the <code>&lt;body&gt;</code> rather than “visually at the top”: the two coincide here because it is <code>fixed</code>, but the one that matters is document order.",
     "skipLink.contractBody":
-      "One signature and one option, <code>href</code>, required: a skip link with no destination is nothing. The contract declares no <code>a11y</code> rules, and that absence is deliberate — its rules (the destination is focusable, nothing focusable comes before it, and content is offered before navigation when there are two) are about elements and siblings the usage tree does not contain, and a rule no machine can settle should not appear as though something checks it.",
+      "One signature and one option, <code>href</code>, required: a skip link with no destination is nothing. The contract declares no <code>a11y</code> rules, and that absence is deliberate: its rules (the destination is focusable, nothing focusable comes before it, and content is offered before navigation when there are two) are about elements and siblings the usage tree does not contain, and a rule no machine can settle should not appear as though something checks it.",
     "skipLink.a11yIntro": "What this component settles, and what stays yours:",
     "skipLink.a11yItem1":
       "<strong>WCAG 2.4.1 (Bypass Blocks), level A.</strong> The criterion that asks for a way past content repeated across pages.",
@@ -5783,7 +5882,7 @@ export const ui = {
       'A single key (<kbd class="sk-kbd">K</kbd>, <kbd class="sk-kbd">⌘</kbd>, <kbd class="sk-kbd">↑</kbd>) takes a square minimum instead of reading as a sliver; a longer label (<kbd class="sk-kbd">Esc</kbd>, <kbd class="sk-kbd">Enter</kbd>) grows with its text. The minimum is <code>--sk-kbd-min-size</code>, relative to the key\'s own typography, so it stays square at any size.',
     "kbdPage.pressedTitle": "The pressed state",
     "kbdPage.pressedBody1":
-      'Kbd is not a control, it is not clicked, so its one state <strong>reflects</strong> an external event: <code>data-pressed</code>, which turns on while its physical key is held down, the same way a component reflects a machine\'s <code>data-state</code>. Whoever is watching the keyboard writes it, not the kbd. Neutral sinks: the bevel inverts and the fill goes sunken. Accent also takes the action colour — "this shortcut is live" is information. The transition uses the <code>feedback</code> intent (<a href="/en/motion">motion</a>).',
+      'Kbd is not a control, it is not clicked, so its one state <strong>reflects</strong> an external event: <code>data-pressed</code>, which turns on while its physical key is held down, the same way a component reflects a machine\'s <code>data-state</code>. Whoever is watching the keyboard writes it, not the kbd. Neutral sinks: the bevel inverts and the fill goes sunken. Accent also takes the action colour: "this shortcut is live" is information. The transition uses the <code>feedback</code> intent (<a href="/en/motion">motion</a>).',
     "kbdPage.pressedBody2":
       'Try it: press any of these and it lights up on its own; hold <kbd class="sk-kbd" data-key="meta">⌘</kbd> and add another to see the combination.',
     "kbdPage.echoAriaLabel": "Keys that react to the keyboard",
@@ -5801,7 +5900,7 @@ export const ui = {
       "Link keeps <code>&lt;a&gt;</code>'s native semantics: use it to navigate, and give it a valid <code>href</code>. It is a <strong>text link</strong> with a permanent underline, the only treatment WCAG 1.4.1 allows in prose. Hover uses the state layer (<code>sk-interactive</code>), not a color the component invents.",
     "linkPage.tileTitle": "A surface link: TileLink",
     "linkPage.tileBody1":
-      "When a whole surface is a single destination, use <code>TileLink</code>. It also renders an <code>&lt;a&gt;</code>, but it is not <code>sk-link</code>: it keeps Tile's geometry and state layer, because the context — not a prose underline — communicates that the surface is navigable.",
+      "When a whole surface is a single destination, use <code>TileLink</code>. It also renders an <code>&lt;a&gt;</code>, but it is not <code>sk-link</code>: it keeps Tile's geometry and state layer, because the context: not a prose underline: communicates that the surface is navigable.",
     "linkPage.tileBody2": "The authored HTML works with no initialization. <code>createTileLink</code> only creates the anchor when the tree is generated from JavaScript.",
     "linkPage.whyTitle": "Why one shape, not three",
     "linkPage.whyBody1":
@@ -5809,7 +5908,7 @@ export const ui = {
     "linkPage.whyBody2":
       "The second path is fragile: that 3:1 has to be re-measured for every brand and every mode, and whoever is reading a still page, or cannot hover, gets no signal until they touch the link. An underline that only appears on hover leaves resting text with no clue, and with no underline the flat criterion fails. So <code>sk-link</code> has <strong>one</strong> shape, always underlined, and no hook to turn it off: offering <code>hover</code> or <code>none</code> would be offering a way to fail 1.4.1.",
     "linkPage.calloutBody":
-      "<strong>What about links that are not underlined?</strong> A nav item, a breadcrumb, the prev/next in a footer — those are told apart by <em>location</em>, not color, so 1.4.1 does not ask them for an underline. But they are not <code>sk-link</code>: they use the <code>nav-list</code> pattern or a <code>ghost</code> button. <code>sk-link</code> is, by definition, the link <em>inside the text</em>.",
+      "<strong>What about links that are not underlined?</strong> A nav item, a breadcrumb, the prev/next in a footer: those are told apart by <em>location</em>, not color, so 1.4.1 does not ask them for an underline. But they are not <code>sk-link</code>: they use the <code>nav-list</code> pattern or a <code>ghost</code> button. <code>sk-link</code> is, by definition, the link <em>inside the text</em>.",
     "linkPage.toneTitle": "Tone does not change the rule",
     "linkPage.toneBody":
       'By default the link takes the <strong>same color as the text</strong> and relies entirely on the underline. <code>data-tone="accent"</code> paints it in the brand\'s accent color. Either way the underline stays mandatory: without it, the accent tone would be told apart by color alone (a WCAG 1.4.1 failure), and the default would not be told apart from the prose at all.',
@@ -5922,7 +6021,7 @@ export const ui = {
     "megamenuPage.testVanilla1":
       "The N authored positioners collapse into one shared panel, sized by a hidden ruler holding every trigger's columns.",
     "megamenuPage.testVanilla2": "A click opens that trigger's panel with its own columns.",
-    "megamenuPage.testVanilla3": "A click on the SAME trigger closes it — a toggle.",
+    "megamenuPage.testVanilla3": "A click on the SAME trigger closes it. A toggle.",
     "megamenuPage.testVanilla4":
       "A click on a DIFFERENT trigger switches the shared panel's content, exclusively.",
     "megamenuPage.testVanilla5": "Opens on hover intent only once its own delay elapses, not immediately.",
@@ -5940,7 +6039,7 @@ export const ui = {
     "megamenuPage.testReact1":
       "Renders one shared panel, sized by a hidden ruler holding every trigger's columns.",
     "megamenuPage.testReact2": "A click opens that trigger's panel with its own columns.",
-    "megamenuPage.testReact3": "A click on the SAME trigger closes it — a toggle.",
+    "megamenuPage.testReact3": "A click on the SAME trigger closes it. A toggle.",
     "megamenuPage.testReact4":
       "A click on a DIFFERENT trigger switches the shared panel's content, exclusively.",
     "megamenuPage.testReact5": "Opens on hover intent only once its own delay elapses, not immediately.",
@@ -5987,7 +6086,7 @@ export const ui = {
       "<code>data-sk-menu-context-trigger</code> (or <code>contextTarget</code> in React) replaces the trigger: the element absorbs the right-click <code>contextmenu</code> event and opens the menu, instead of needing a visible button.",
     "menuPage.safetyTitle": "Pointer intent (safety triangle)",
     "menuPage.safetyBody":
-      "When a submenu is open, crossing another parent-menu item on a diagonal path does not highlight it or close the submenu. What holds it is a real element: the <em>safe area</em>, a <code>clip-path</code> triangle living INSIDE the trigger and reaching from the pointer to the submenu's near edge. While the pointer is over it the browser fires no <code>pointerleave</code> on the trigger — a descendant counts as the element — so the machine never enters <code>closing</code> and the rows underneath never get the <code>pointermove</code> they would steal the highlight with. <code>@zag-js/menu</code>'s own polygon was not enough: it can only veto an early close during <code>waitForCloseDelay</code>'s 100ms, never extend them, and a pointer parked motionless inside the polygon still lost the submenu at ~90ms. Open \"Share\" and cross diagonally toward the submenu: the painted triangle is the very element you are touching, not a separate drawing of it.",
+      "When a submenu is open, crossing another parent-menu item on a diagonal path does not highlight it or close the submenu. What holds it is a real element: the <em>safe area</em>, a <code>clip-path</code> triangle living INSIDE the trigger and reaching from the pointer to the submenu's near edge. While the pointer is over it the browser fires no <code>pointerleave</code> on the trigger: a descendant counts as the element: so the machine never enters <code>closing</code> and the rows underneath never get the <code>pointermove</code> they would steal the highlight with. <code>@zag-js/menu</code>'s own polygon was not enough: it can only veto an early close during <code>waitForCloseDelay</code>'s 100ms, never extend them, and a pointer parked motionless inside the polygon still lost the submenu at ~90ms. Open \"Share\" and cross diagonally toward the submenu: the painted triangle is the very element you are touching, not a separate drawing of it.",
 
     "menuPage.testVanilla1":
       'The trigger mounts with <code class="sk-code">aria-haspopup="menu"</code> and <code class="sk-code">aria-expanded="false"</code>: the menu never opens on its own.',
@@ -6033,9 +6132,28 @@ export const ui = {
     "menuPage.testReact10":
       "Choosing a submenu item closes the whole tree, parent included.",
 
+    "navListPage.description":
+      "Nav list: the pattern for main or secondary navigation in a sidebar, navbar, and drawer.",
+    "navListPage.lede":
+      "Nav list is a list of <strong>destinations</strong>, not actions: <code>&lt;nav&gt;</code>, groups, real links, the current page through <code>aria-current</code>, and optional trailing metadata.",
+    "navListPage.productTitle": "As product sidebar navigation",
+    "navListPage.productBody":
+      "The common case is not two loose links: it is work sections, pending counts, and child routes that still belong to one destination. The list does not decide width; its host shell does.",
+    "navListPage.horizontalTitle": "The same pattern horizontally",
+    "navListPage.horizontalBody":
+      "Navbar does not own a second navigation shape. It changes <code>orientation</code>, keeps <code>NavListGroup</code>, and drops icons when text is enough.",
+    "navListPage.disclosureTitle": "Collapsible groups",
+    "navListPage.disclosureBody":
+      "In a drawer or long docs rail, the group label can become a disclosure button. It is still not <code>role=&quot;menu&quot;</code>: children are links, and the extra keyboard behavior is only closing with Escape.",
+    "navListPage.contractBody":
+      "The group is not decorative: it emits the <code>&lt;ul&gt;</code>. That is why even flat navigation keeps <code>NavListGroup</code>, and child destinations nest through the link's <code>nested</code> slot, inside the same <code>&lt;li&gt;</code>.",
+    "navListPage.installIntro": "Import the pattern wherever the host renders navigation.",
+    "navListPage.a11yBody":
+      "Each <code>NavList</code> is a <code>&lt;nav&gt;</code> landmark. If a page has more than one, name each with <code>aria-label</code> or <code>aria-labelledby</code>. Mark the current page with <code>aria-current=&quot;page&quot;</code>; do not add a parallel state.",
+
     "navbarPage.description": "Navbar: the bar, with the navigation list as a horizontal pattern.",
     "navbarPage.lede":
-      "Navbar is the <strong>bar</strong>: a surface, a brand mark, and a place for actions. It has no machine and needs none — it is a <code>&lt;header&gt;</code> with links, and the platform ships all of that.",
+      "Navbar is the <strong>bar</strong>: a surface, a brand mark, and a place for actions. It has no machine and needs none: it is a <code>&lt;header&gt;</code> with links, and the platform ships all of that.",
     "navbarPage.linksTitle": "The links do not belong to the navbar",
     "navbarPage.linksBody":
       "They are the <a href=\"/en/nav-list\"><code>nav-list</code></a> pattern, laid out horizontally, the same structure that hosts the sidebar vertically. That two components need this exact structure is what makes it a pattern rather than a component: before, the navbar and the sidebar each had their own list, with the same rules written twice and free to drift apart.",
@@ -6125,7 +6243,7 @@ export const ui = {
     "popoverPage.description": "Non-modal content with a title, description, and explicit close over the native top layer.",
     "popoverPage.structuredTitle": "Structured content",
     "popoverPage.structuredBody":
-      "The contract has no <code>header</code> or <code>footer</code> slot, and does not need one: <code>children</code> accepts a node, so a header row (avatar and name) and an action row at the end are composition, built from the same published pieces (Inline, Stack, Avatar, Text, Button) — no markup of this page's own.",
+      "The contract has no <code>header</code> or <code>footer</code> slot, and does not need one: <code>children</code> accepts a node, so a header row (avatar and name) and an action row at the end are composition, built from the same published pieces (Inline, Stack, Avatar, Text, Button): no markup of this page's own.",
     "popoverPage.structuredLabel": "Popover with a header and footer",
     "popoverPage.placementTitle": "Placement",
     "popoverPage.placementBody":
@@ -6261,7 +6379,7 @@ export const ui = {
     "sidebarPage.widthBody3":
       "For a single bar, <code>minInlineSize</code> and <code>maxInlineSize</code> write those two hooks from the markup or from props, with any CSS length (<code>18rem</code>, <code>30%</code>, <code>min(24rem, 40vw)</code>). They are sugar over the hooks, not a second mechanism: whoever has fifty identical bars still sets the hook once in their stylesheet. The extremes belong to the instance and the expanded width does not, and the split is not arbitrary: the expanded width is the size the bar was designed for, a system decision; the travel depends on the reader's own screen and content.",
     "sidebarPage.widthBody4":
-      "It resizes on a <strong>held</strong> click: pressure alone does nothing, the gesture only starts once the pointer has traveled four pixels. A loose click on the panel's edge does not move the width, does not fire <code>sk-resize-change</code>, and writes nothing to storage — which is what used to freeze a width nobody chose into a reader's browser.",
+      "It resizes on a <strong>held</strong> click: pressure alone does nothing, the gesture only starts once the pointer has traveled four pixels. A loose click on the panel's edge does not move the width, does not fire <code>sk-resize-change</code>, and writes nothing to storage: which is what used to freeze a width nobody chose into a reader's browser.",
     "sidebarPage.widthBody5":
       "It is a full splitter, not just a drag: the arrows move it in small steps (faster with <kbd class=\"sk-kbd\">Shift</kbd>), <kbd class=\"sk-kbd\">Home</kbd> and <kbd class=\"sk-kbd\">End</kbd> jump to the extremes, and a double-click or <kbd class=\"sk-kbd\">Enter</kbd> return the default width. With <code>storageKey</code> the width survives a reload; without it, it lasts the session, which is this preview's case.",
     "sidebarPage.widthBody6":
@@ -6281,7 +6399,7 @@ export const ui = {
       "There is also no <code>prefers-reduced-motion</code> block: the duration comes from the expand/collapse intent tokens, which already shrink themselves. The sidebar lends that intent to the list, so the labels fade in the same time the width moves.",
     "sidebarPage.triggerTitle": "The trigger carries no visible label",
     "sidebarPage.triggerBody":
-      "It measures one icon wide, so its accessible name goes in an <code>aria-label</code> (or visually hidden text): a visible label inside would be text inside a square the width of an icon. The enhancer patches attributes, never content — the name is yours.",
+      "It measures one icon wide, so its accessible name goes in an <code>aria-label</code> (or visually hidden text): a visible label inside would be text inside a square the width of an icon. The enhancer patches attributes, never content: the name is yours.",
     "sidebarPage.htmlTitle": "Authored HTML",
     "sidebarPage.htmlBody1":
       "The enhancer looks for <code>[data-sk-sidebar]</code>, accepts a <code>[data-sk-sidebar-trigger]</code> or a <code>[data-sk-sidebar-resize]</code>, and patches <code>aria-expanded</code>, <code>aria-controls</code>, and <code>data-state</code>. It writes no markup or classes. The full markup is in the preview's <strong>Vanilla</strong> tab.",
@@ -6308,38 +6426,38 @@ export const ui = {
     "sliderPage.test2": "Paints the initial fill from the value within [min, max] on mount.",
     "sliderPage.rangeTitle": "Two thumbs",
     "sliderPage.rangeBody":
-      'Two native <code>&lt;input type="range"&gt;</code> elements, not the hand-rolled SVG widget the WAI-ARIA APG itself publishes as the only example for this pattern — each input already gets keyboard, focus, and an accessibility tree for free from the platform, and WAI\'s own guidance warns that a hand-rolled widget can fail for touch-based screen reader users. Neither thumb can be dragged past the other: <code>sliderRangeBounds</code> computes each one\'s bound against where the OTHER sits right now, never against a fixed min/max.',
+      'Two native <code>&lt;input type="range"&gt;</code> elements, not the hand-rolled SVG widget the WAI-ARIA APG itself publishes as the only example for this pattern: each input already gets keyboard, focus, and an accessibility tree for free from the platform, and WAI\'s own guidance warns that a hand-rolled widget can fail for touch-based screen reader users. Neither thumb can be dragged past the other: <code>sliderRangeBounds</code> computes each one\'s bound against where the OTHER sits right now, never against a fixed min/max.',
     "sliderPage.rangeLabel": "Price range",
     "sliderPage.testRange1":
       "The low thumb's max is bounded by the high thumb's current value, and vice versa.",
     "sliderPage.testRange2":
       "Changing one value re-bounds the OTHER thumb and reports both values on the change.",
     "sliderPage.testRange3":
-      "Neither thumb can exceed the other — native min/max clamps even a direct value write past the bound.",
+      "Neither thumb can exceed the other. Native min/max clamps even a direct value write past the bound.",
 
-    "splitButtonPage.description": "A stable primary action with an adjacent menu of alternative actions.",
-    "splitButtonPage.contractBody": "The primary action never silently changes when the menu is chosen. If there is no dominant action, use Menu.",
+    "splitButtonPage.description": "A stable accent action with an adjacent menu of alternative actions.",
+    "splitButtonPage.contractBody": "The accent action never silently changes when the menu is chosen. If there is no dominant action, use Menu.",
     "splitButtonPage.a11yBody": "They are two independent buttons: one runs the action, and the other announces and opens the alternatives.",
 
     "splitButtonPage.testReact1":
-      "Renders a labelled group holding the primary button and the menu's icon-only trigger.",
+      "Renders a labelled group holding the action button and the menu's icon-only trigger.",
     "splitButtonPage.testReact2":
-      'Clicking the primary button fires <code class="sk-code">onClick</code>, independent of the menu.',
+      'Clicking the action button fires <code class="sk-code">onClick</code>, independent of the menu.',
     "splitButtonPage.testReact3":
       'Opens the fallback menu from its trigger and selects an item, firing <code class="sk-code">onSelect</code>.',
-    "splitButtonPage.testReact4": "disabled disables both the primary button and the menu trigger together.",
+    "splitButtonPage.testReact4": "disabled disables both the action button and the menu trigger together.",
     "splitButtonPage.testReact6":
-      'The fallback trigger pairs its <code class="sk-code">variant</code>/<code class="sk-code">size</code> and shape (icon-only, welded) with the primary button.',
+      'The fallback trigger pairs its <code class="sk-code">variant</code>/<code class="sk-code">size</code> and shape (icon-only, welded) with the action button.',
     "splitButtonPage.testReact5":
-      "A hand-composed primary and menu render verbatim instead of the flat-prop fallback.",
+      "A hand-composed action and menu render verbatim instead of the flat-prop fallback.",
     "splitButtonPage.smallTitle": "Small size",
-    "splitButtonPage.smallBody": "Both halves scale together — <code>size</code> on the primary Button, <code>triggerSize</code> on the Menu's own trigger.",
+    "splitButtonPage.smallBody": "Both halves scale together: <code>size</code> on the action Button, <code>triggerSize</code> on the Menu's own trigger.",
     "splitButtonPage.smallLabel": "SplitButton, small size",
     "splitButtonPage.menuFirstTitle": "The menu, first",
-    "splitButtonPage.menuFirstBody": "Composed by hand with <code>Inline</code> instead of SplitButton's own contract — which always orders the action before the menu, the real split-button pattern (the trigger comes after, and only moves to the left through <code>dir=\"rtl\"</code> mirroring, never as an authored choice in the same language direction). This shows <code>weldStart</code>/<code>weldEnd</code> work in either order, not only the one SplitButton itself assembles.",
+    "splitButtonPage.menuFirstBody": "Composed by hand with <code>Inline</code> instead of SplitButton's own contract: which always orders the action before the menu, the real split-button pattern (the trigger comes after, and only moves to the left through <code>dir=\"rtl\"</code> mirroring, never as an authored choice in the same language direction). This shows <code>weldStart</code>/<code>weldEnd</code> work in either order, not only the one SplitButton itself assembles.",
     "splitButtonPage.menuFirstLabel": "SplitButton, menu first",
     "splitButtonPage.subtleTitle": "Subtle variant",
-    "splitButtonPage.subtleBody": "<code>variant: \"subtle\"</code> on both halves — never a different variant per side, so the two read as one control. \"Archive\" instead of \"Save\": a lower-emphasis action, the register <code>subtle</code> paints.",
+    "splitButtonPage.subtleBody": "<code>variant: \"subtle\"</code> on both halves: never a different variant per side, so the two read as one control. \"Archive\" instead of \"Save\": a lower-emphasis action, the register <code>subtle</code> paints.",
     "splitButtonPage.subtleLabel": "SplitButton, subtle variant",
     "splitButtonPage.translucentTitle": "Translucent variant",
     "splitButtonPage.translucentBody": "<code>variant: \"translucent\"</code> on both halves. \"Download\": <code>translucent</code> reads as glass over a photo or hero backdrop, the background this action actually lives on.",
@@ -6367,7 +6485,7 @@ export const ui = {
 
     "statPage.description": "Stat: a headline metric with a label, a tabular value, and a trend-colored change.",
     "statPage.lede":
-      "Stat is a headline metric: a dim label, a large tabular-mono value, and an optional change. <strong>Trend</strong> colors the change independent of its sign — \"down\" is good for churn and \"up\" is good for revenue, so the consumer decides which direction is positive.",
+      "Stat is a headline metric: a dim label, a large tabular-mono value, and an optional change. <strong>Trend</strong> colors the change independent of its sign. \"down\" is good for churn and \"up\" is good for revenue, so the consumer decides which direction is positive.",
     "statPage.cardTitle": "Stat Card",
     "statPage.cardBody":
       '<a href="/en/components/card#stat-card">Card</a> adds no extra variant to Stat: <a href="/en/components/box">Box</a> supplies the surface and Grid organizes the collection. The arrow points down on cancellations, but <code>trend="up"</code> communicates that the change is favorable.',
@@ -6382,7 +6500,7 @@ export const ui = {
 
     "stepsPage.description": "Steps: a linear progress indicator with complete / current / upcoming states.",
     "stepsPage.lede":
-      "Steps shows progress across an ordered sequence. Every step reports one of three states — <code>complete</code>, <code>current</code>, <code>upcoming</code> — the component displays the sequence; it does not govern which one is active or keep navigation between steps.",
+      "Steps shows progress across an ordered sequence. Every step reports one of three states: <code>complete</code>, <code>current</code>, <code>upcoming</code>: the component displays the sequence; it does not govern which one is active or keep navigation between steps.",
     "stepsPage.body": "In React, <code>current</code> derives the state of steps that declare none of their own; a step can override it with <code>status</code>. <code>description</code> adds context without turning the step into a card.",
     "stepsPage.mobileTitle": "On mobile",
     "stepsPage.mobileBody":
@@ -6401,7 +6519,7 @@ export const ui = {
       "Table keeps native <code>&lt;table&gt;</code> semantics. The overflow wrapper preserves a readable per-column width and scrolls the table instead of compressing it. Sticky header and sticky first column are opt-in and share the same contract on mobile and desktop.",
     "tablePage.scrollTitle": "Horizontal scroll without compressing",
     "tablePage.scrollBody":
-      'Inside <code>.sk-table-scroll</code>, every cell keeps the <code>--sk-table-cell-min-inline-size</code> floor; row headers keep a larger one. A <code>data-layout="fixed"</code> table also uses <code>--sk-table-fixed-min-inline-size</code>. On narrow screens, scroll appears — not 56px columns or letter-by-letter text. The wrapper accepts focus for keyboard scrolling and paints a compact but visible scrollbar.',
+      'Inside <code>.sk-table-scroll</code>, every cell keeps the <code>--sk-table-cell-min-inline-size</code> floor; row headers keep a larger one. A <code>data-layout="fixed"</code> table also uses <code>--sk-table-fixed-min-inline-size</code>. On narrow screens, scroll appears: not 56px columns or letter-by-letter text. The wrapper accepts focus for keyboard scrolling and paints a compact but visible scrollbar.',
     "tablePage.stickyColTitle": "Sticky first column",
     "tablePage.stickyColBody":
       'Use <code>data-sticky-column</code> in HTML or <code>stickyColumn</code> in React. The first cell of each row stays frozen, and its shadow separates the identifier from the data passing underneath. It should be a <code>&lt;th scope="row"&gt;</code>. It does not depend on a breakpoint: it works the same with touch, mouse, zoom, or a narrow window.',
@@ -6412,7 +6530,7 @@ export const ui = {
     "tablePage.stickyHeadLabel": "Sticky header row",
     "tablePage.resizableTitle": "Resizable columns",
     "tablePage.resizableBody":
-      'Use <code>data-resizable-columns</code> in HTML or <code>resizableColumns</code> in React, together with <code>resizeLabel</code> (required). The binding inserts a real separator (<code>role="separator"</code>) between every pair of headers — the same shared primitive, <code>@skryensya/core/splitter</code>, that <a href="/en/components/sidebar">Sidebar</a>\'s own resize handle and <a href="/en/components/treegrid">Treegrid</a>\'s own column resizer already use. Drag a header\'s edge, or focus it and use the arrow keys (Shift for the coarse step), Home/End for the extremes, Enter or double-click to reset the pair to an even split.',
+      'Use <code>data-resizable-columns</code> in HTML or <code>resizableColumns</code> in React, together with <code>resizeLabel</code> (required). The binding inserts a real separator (<code>role="separator"</code>) between every pair of headers: the same shared primitive, <code>@skryensya/core/splitter</code>, that <a href="/en/components/sidebar">Sidebar</a>\'s own resize handle and <a href="/en/components/treegrid">Treegrid</a>\'s own column resizer already use. Drag a header\'s edge, or focus it and use the arrow keys (Shift for the coarse step), Home/End for the extremes, Enter or double-click to reset the pair to an even split.',
     "tablePage.resizableLabel": "Performance by region, resizable",
     "tablePage.pagerTitle": "With pagination",
     "tablePage.pagerBody":
@@ -6468,19 +6586,27 @@ export const ui = {
 
     "tagPage.description": "Tag: an optionally removable keyword chip, with tones and a React component.",
     "tagPage.lede":
-      'Tag classifies content the user can act on: filters, facets, chips. Where <a href="/en/components/badge">Badge</a> is a read-only status label, Tag is more squared (control radius, not a pill) to read as actionable, and can carry a remove button.',
-    "tagPage.body":
-      "When removable, the label and the remove button are two separate targets: the control's accessible name names the tag it removes.",
-    "tagPage.xTitle": "The X is a Button, not a drawing of one",
-    "tagPage.xBody1":
-      'The remove control is a real <a href="/en/components/button">Button</a> (<code>sk-button sk-interactive</code> with <code>data-size="sm"</code>, <code>data-icon-only</code>, and <code>data-variant="ghost"</code>), and <code>sk-tag__remove</code> is only the modifier that shrinks it to the capsule\'s height. Tag ships no interaction of its own.',
-    "tagPage.xBody2":
-      'What that buys is what no longer has to be maintained here: hover and press come from the <a href="/en/state-layer">state layer</a>, the focus ring is the same one every control uses, and the touch target reaches <strong>44px</strong> through the button\'s <code>::after</code> even though the face paints at 20px. It used to be 20px of face and 20px of usable slack.',
-    "tagPage.xBody3":
-      "The color still comes from <code>currentColor</code>, so every tone carries its own X in its own color with no rule per tone.",
-    "tagPage.reactBody": "The code is in the preview's <strong>React</strong> tab. <code>onRemove</code> is optional.",
+      'Tag classifies content the user can act on: filters, facets, chips. Where <a href="/en/components/badge">Badge</a> is a read-only status label, Tag is more squared (control radius, not a pill) to read as actionable.',
+    "tagPage.simpleTitle": "Keyword tags",
+    "tagPage.simpleBody":
+      "A quiet label categorizes content without implying status, warning, or removal.",
+    "tagPage.simpleLabel": "Simple tag",
+    "tagPage.tonesTitle": "Tonal tags",
+    "tagPage.tonesBody":
+      "Tone communicates function. Active, beta, deprecated, but the component is still Tag. If you only need read-only status, Badge is the right piece.",
+    "tagPage.tonesLabel": "Tones",
+    "tagPage.linksTitle": "Link tags",
+    "tagPage.linksBody":
+      "A link tag navigates to a facet or keyword. It cannot be dismissible: if the user needs to remove a filter, use a removable tag with its separate button.",
+    "tagPage.linksLabel": "Link tags",
+    "tagPage.removableTitle": "Removable tags",
+    "tagPage.removableBody":
+      "When removable, the label and the remove button are two separate targets. The control's accessible name names the exact tag it removes.",
+    "tagPage.removableLabel": "Removable tags",
     "tagPage.test1": "Carries its tone and label.",
     "tagPage.test2": "Exposes a named remove control only when onRemove is given.",
+    "tagPage.test3": "The remove control composes a real Button: focus, press, and hit area come from Button.",
+    "tagPage.testLink": "Renders a navigable tag as a link and never as dismissible.",
 
     "textPage.description": "Text: reading text with named typographic roles and explicit HTML semantics.",
     "textPage.lede": "Text presents reading content with named typographic roles. Choose the HTML element that describes the content; Text creates no heading semantics.",
@@ -6500,7 +6626,7 @@ export const ui = {
     "textPage.feedbackLabel": "Validation message",
     "textPage.contractItem1": "<code>sk-text</code> supplies the base reading style.",
     "textPage.contractItem2": "<code>data-size</code>: <code>caption</code>, <code>sm</code>, <code>body</code>, or <code>lg</code>.",
-    "textPage.contractItem3": "<code>data-tone</code>: <code>primary</code>, <code>secondary</code>, <code>tertiary</code>, or <code>danger</code>.",
+    "textPage.contractItem3": "<code>data-tone</code>: <code>action</code>, <code>secondary</code>, <code>tertiary</code>, or <code>danger</code>.",
     "textPage.contractItem4": "<code>data-weight</code>: <code>body</code>, <code>emphasis</code>, or <code>label</code>.",
     "textPage.contractItem5":
       "<code>data-role</code>: <code>eyebrow</code> (uppercase overline) or <code>subtitle</code> (line below a title). A role composes several axes at once; in React it is passed as <code>data-role</code>.",
@@ -6558,7 +6684,7 @@ export const ui = {
 
     "timeFieldPage.description": "A segmented time field with a built-in dropdown: hour, minute, and AM/PM as editable parts, plus a list of preset times, all keyboard-operable.",
     "timeFieldPage.lede":
-      "A field for a local clock time, no date, no timezone. Hour, minute, and (in a 12-hour locale) AM/PM are three independent editable segments in a single field, instead of the native <code>&lt;input type=\"time\"&gt;</code>'s own chrome, which differs enough between Chrome, Firefox, and Safari that it cannot be styled or trusted to look the same twice. There is no <code>@zag-js/time-picker</code> machine for those segments, so that part is hand-rolled state, like Slider and Segmented — but there IS a dropdown, always present, a plain arrow-key-navigable list (no search box: too much machine for a short, ordered list). Two things were tried and dropped on the way there: a wheel picker (neither simpler nor more accessible than the segments themselves) and a searchable Combobox-style list (too much machine for a short list).",
+      "A field for a local clock time, no date, no timezone. Hour, minute, and (in a 12-hour locale) AM/PM are three independent editable segments in a single field, instead of the native <code>&lt;input type=\"time\"&gt;</code>'s own chrome, which differs enough between Chrome, Firefox, and Safari that it cannot be styled or trusted to look the same twice. There is no <code>@zag-js/time-picker</code> machine for those segments, so that part is hand-rolled state, like Slider and Segmented: but there IS a dropdown, always present, a plain arrow-key-navigable list (no search box: too much machine for a short, ordered list). Two things were tried and dropped on the way there: a wheel picker (neither simpler nor more accessible than the segments themselves) and a searchable Combobox-style list (too much machine for a short list).",
     "timeFieldPage.contractBody":
       "The order of the segments and the separator between them are read from <code>Intl.DateTimeFormat</code>'s own <code>formatToParts</code>, never assumed: some locales put the period of day before the hour, and the separator is not always <code>\":\"</code>. The public value stays the canonical <code>HH:mm</code> string, the same shape a plain <code>&lt;input type=\"time\"&gt;</code> sends, carried in a hidden input, so a form behind TimeField never has to parse a locale-dependent string. React keeps it as component state (<code>value</code>/<code>defaultValue</code>, an <code>onValueChange</code> callback). Vanilla hydrates the authored <code>data-sk-time-field</code>: the consumer only authors the root and its label, and the component generates the segments from <code>data-locale</code>.",
     "timeFieldPage.editTitle": "Editing a segment",
@@ -6569,14 +6695,14 @@ export const ui = {
       'Auto-detection (<code>getHourCycle</code>) reads <code>Intl.DateTimeFormat(locale, {hour:"numeric"}).resolvedOptions().hourCycle</code>, and that value turned out to be inconsistent across engines: the same locale string (<code>es</code>/<code>es-AR</code>) resolves to opposite cycles in Node and in a real Chromium. Since the hour segment\'s own max comes straight from that cycle, a wrong guess did not just mislabel the hour: it advanced focus too early on an ambiguous first digit (a "2", which could still become "22"). The <code>hourCycle</code> option overrides the guess when a guaranteed 24-hour field is what you actually need, regardless of browser.',
     "timeFieldPage.nativeTitle": "If you only need the platform's own picker",
     "timeFieldPage.nativeBody":
-      'A plain <code>&lt;input type="time"&gt;</code> still works, needs no CSS or JavaScript, and comes with the operating system\'s own keyboard and picker for free. Move up to TimeField only once that picker\'s cross-browser inconsistency, or the total absence of styling hooks, actually costs you something — the same decision DatePicker makes against a plain <code>type="date"</code>.',
+      'A plain <code>&lt;input type="time"&gt;</code> still works, needs no CSS or JavaScript, and comes with the operating system\'s own keyboard and picker for free. Move up to TimeField only once that picker\'s cross-browser inconsistency, or the total absence of styling hooks, actually costs you something: the same decision DatePicker makes against a plain <code>type="date"</code>.',
     "timeFieldPage.nativeLabel": "Native time input",
     "timeFieldPage.optionsTitle": "The dropdown, at another step",
     "timeFieldPage.optionsBody":
-      'The clock button paints INSIDE <code>.sk-time-field__control</code> — one bordered box, the same anatomy Combobox\'s own control already has for its own trailing buttons — and opens a plain, search-free list, navigable with arrow keys: <code>@zag-js/select</code> drives that machine directly (the same one <code>Select</code> uses), without mounting the full <code>Select</code> component, which carries its own visible trigger and would have meant two clicks to reach the list. The <code>optionsStep</code> option (30 minutes by default, 48 rows) decides how far apart each row sits; <code>Alt+ArrowDown</code> from any segment opens it without tabbing there first, the same key that already opens a native <code>&lt;select&gt;</code>.',
+      'The clock button paints INSIDE <code>.sk-time-field__control</code>: one bordered box, the same anatomy Combobox\'s own control already has for its own trailing buttons: and opens a plain, search-free list, navigable with arrow keys: <code>@zag-js/select</code> drives that machine directly (the same one <code>Select</code> uses), without mounting the full <code>Select</code> component, which carries its own visible trigger and would have meant two clicks to reach the list. The <code>optionsStep</code> option (30 minutes by default, 48 rows) decides how far apart each row sits; <code>Alt+ArrowDown</code> from any segment opens it without tabbing there first, the same key that already opens a native <code>&lt;select&gt;</code>.',
     "timeFieldPage.optionsQuarterHourTitle": "Every 15 minutes",
     "timeFieldPage.a11yBody":
-      "Every segment is a <code>role=\"spinbutton\"</code> inside a <code>role=\"group\"</code> named by the field's label: <code>aria-valuenow</code>/<code>aria-valuetext</code> carry its current value (a friendly placeholder like \"hh\" before anything is set, never an empty string), and <code>aria-valuemin</code>/<code>aria-valuemax</code> carry its real range: 1–12 for an hour segment in a 12-hour locale, 0–23 in a 24-hour one. Every segment is its own tab stop, the same way a native multi-part date input already works, so keyboard use needs nothing beyond Tab and the arrows documented above — plus <code>Alt+ArrowDown</code> to open the dropdown without reaching its own button, and the arrows/Home/End/Escape <code>@zag-js/select</code> already provides once inside the list.",
+      "Every segment is a <code>role=\"spinbutton\"</code> inside a <code>role=\"group\"</code> named by the field's label: <code>aria-valuenow</code>/<code>aria-valuetext</code> carry its current value (a friendly placeholder like \"hh\" before anything is set, never an empty string), and <code>aria-valuemin</code>/<code>aria-valuemax</code> carry its real range: 1–12 for an hour segment in a 12-hour locale, 0–23 in a 24-hour one. Every segment is its own tab stop, the same way a native multi-part date input already works, so keyboard use needs nothing beyond Tab and the arrows documented above: plus <code>Alt+ArrowDown</code> to open the dropdown without reaching its own button, and the arrows/Home/End/Escape <code>@zag-js/select</code> already provides once inside the list.",
     "timeFieldPage.test1": "Mounts once and names the group from the authored label.",
     "timeFieldPage.test2": "Derives the segments from the locale, not from the markup.",
     "timeFieldPage.test3": "Starts empty, with placeholders instead of a made-up time.",
@@ -6591,20 +6717,20 @@ export const ui = {
     "toastPage.emitNote": "Press the button",
     "toastPage.simpleTitle": "Simple",
     "toastPage.simpleBody":
-      'tone="neutral" (the default). In a toast, color should almost never be the primary signal: it already floats and retires. Neutral lets the text carry the notice without painting extra urgency, and it floats over a <strong>raised</strong> surface (<code>--color-bg-surface-raised</code> + <code>--elevation-raised</code>) to read as elevated chrome, not a page panel. See the same rule in <a href="/en/components/callout">Callout</a>.',
+      'tone="neutral" (the default). In a toast, color should almost never be the action signal: it already floats and retires. Neutral lets the text carry the notice without painting extra urgency, and it floats over a <strong>raised</strong> surface (<code>--color-bg-surface-raised</code> + <code>--elevation-raised</code>) to read as elevated chrome, not a page panel. See the same rule in <a href="/en/components/callout">Callout</a>.',
     "toastPage.simpleLabel": "Simple toast",
     "toastPage.statusTitle": "With state",
     "toastPage.statusBody1": 'Status tones color the panel. <code>danger</code> announces as <code>role="alert"</code> (assertive); the rest as <code>role="status"</code> (polite).',
     "toastPage.statusBody2":
-      "The first carries no ✕: it has <code>data-timeout</code>, so it retires on its own. The other two ask something of the person — a rollout to confirm, an error to read — and so they stay until dismissed. The practical rule: <strong>if a toast can close itself, it needs no ✕; if it cannot, the ✕ is mandatory</strong>.",
+      "The first carries no ✕: it has <code>data-timeout</code>, so it retires on its own. The other two ask something of the person: a rollout to confirm, an error to read: and so they stay until dismissed. The practical rule: <strong>if a toast can close itself, it needs no ✕; if it cannot, the ✕ is mandatory</strong>.",
     "toastPage.statusLabel": "Toast with state",
     "toastPage.actionTitle": "With an action",
     "toastPage.actionBody":
-      "<code>sk-callout__actions</code> is a single column: the recovery action and the close control live there, in that order. A toast with an action carries no <code>data-timeout</code> — disappearing before someone can reach \"Undo\" turns the action into decoration.",
+      "<code>sk-callout__actions</code> is a single column: the recovery action and the close control live there, in that order. A toast with an action carries no <code>data-timeout</code>: disappearing before someone can reach \"Undo\" turns the action into decoration.",
     "toastPage.actionLabel": "Toast with an action",
     "toastPage.stackTitle": "Stacked",
     "toastPage.stackBody1":
-      "It is the <strong>default behavior</strong>, not an opt-in setting: four loose toasts eat a quarter of the screen, and nobody asks for that on purpose — a region with several toasts is the normal result of an app reporting what it did. Toasts overlap on the footprint of <strong>one</strong>, the newest in front and the earlier ones peeking out behind; hovering the pointer (or entering focus by keyboard) opens the stack back into a normal list.",
+      "It is the <strong>default behavior</strong>, not an opt-in setting: four loose toasts eat a quarter of the screen, and nobody asks for that on purpose. A region with several toasts is the normal result of an app reporting what it did. Toasts overlap on the footprint of <strong>one</strong>, the newest in front and the earlier ones peeking out behind; hovering the pointer (or entering focus by keyboard) opens the stack back into a normal list.",
     "toastPage.stackBody2":
       "The escape hatch is <code>data-stack=\"off\"</code>, for the rare region whose <em>goal</em> is showing several messages at once. The tones example above uses it: those are three toasts meant to be seen together, not a stack.",
     "toastPage.stackBody3":
@@ -6612,7 +6738,7 @@ export const ui = {
     "toastPage.stackBody4":
       "The only number driving the effect is <strong>depth</strong>, and it comes straight from the DOM: <code>sibling-count() - sibling-index()</code> gives 0 for the newest and one more per toast behind it. The app appends and removes nodes, never keeps an index. Opacity fades out on its own by the fourth (<code>calc(3 - depth)</code> clamps), and where the browser cannot read the sibling index in CSS, the region falls back to the plain list above, which is the honest degradation.",
     "toastPage.stackBody5":
-      "That same depth is the <strong>delay</strong> for each step on open (<code>--sk-toast-cascade</code>): the front one leaves first and each one behind follows a beat later, so the stack unfurls instead of inflating all at once. Returning to flow is a <em>layout</em> change, and layout does not transition — the instant they stop being absolute they are already several rows higher; that cannot be interpolated, so instead of animating the jump, it gets covered: every toast enters with a fade and a few pixels of rise into the spot it just took, on the same cascade. The newest one never participates — it never moved, and it must not flicker.",
+      "That same depth is the <strong>delay</strong> for each step on open (<code>--sk-toast-cascade</code>): the front one leaves first and each one behind follows a beat later, so the stack unfurls instead of inflating all at once. Returning to flow is a <em>layout</em> change, and layout does not transition: the instant they stop being absolute they are already several rows higher; that cannot be interpolated, so instead of animating the jump, it gets covered: every toast enters with a fade and a few pixels of rise into the spot it just took, on the same cascade. The newest one never participates: it never moved, and it must not flicker.",
     "toastPage.stackLabel": "Toast stack",
     "toastPage.stackNote": "Hover to open it",
     "toastPage.stackBody6":
@@ -6621,10 +6747,10 @@ export const ui = {
     "toastPage.closeBody1":
       'The ✕ is built as an icon-only <a href="/en/components/button">Button</a> at <code>sm</code> size (<code>data-size="sm" data-icon-only data-variant="ghost"</code>), not an ad hoc control. That way it inherits what Button already solved: the 32px face, the 44px hit target <code>::after</code> expands past that face, the hover/press state layer, and focus. With no visible text, <code>aria-label</code> is mandatory.',
     "toastPage.closeBody2":
-      "It also carries the <code>sk-toast__dismiss</code> part class — Toast's own, not borrowed from Callout: it is the hook the enhancer looks for to wire up the dismiss, the one that makes the glyph read the tone's own color (<code>currentColor</code>) instead of the accent a normal ghost would paint, and the one that fixes the <strong>optical position</strong>. An icon-only ghost is almost all air: a 16px glyph inside a 32px box, plus the panel's own inset, leaves the ✕ floating in a gap. The part pulls it back half an inset unit, so the <em>glyph</em> lands where the padding says the content's edge is, without the click area losing a single pixel.",
+      "It also carries the <code>sk-toast__dismiss</code> part class: Toast's own, not borrowed from Callout: it is the hook the enhancer looks for to wire up the dismiss, the one that makes the glyph read the tone's own color (<code>currentColor</code>) instead of the accent a normal ghost would paint, and the one that fixes the <strong>optical position</strong>. An icon-only ghost is almost all air: a 16px glyph inside a 32px box, plus the panel's own inset, leaves the ✕ floating in a gap. The part pulls it back half an inset unit, so the <em>glyph</em> lands where the padding says the content's edge is, without the click area losing a single pixel.",
     "toastPage.lifecycleTitle": "The lifecycle belongs to the app",
     "toastPage.lifecycleBody1":
-      'Toast manages no queues and no persistence: those lifecycles belong to the application. The component supplies the region, reuses <a href="/en/components/callout">Callout</a>\'s anatomy — icon, title, description, actions — plus its own dismiss, announces the tone, and signals when it wants to leave.',
+      'Toast manages no queues and no persistence: those lifecycles belong to the application. The component supplies the region, reuses <a href="/en/components/callout">Callout</a>\'s anatomy. Icon, title, description, actions. Plus its own dismiss, announces the tone, and signals when it wants to leave.',
     "toastPage.lifecycleBody2":
       '\nIn Vanilla, <code>data-sk-toast</code> on a <code>sk-callout</code> registers the native dismiss and announces the tone. <code>data-timeout</code> is optional; on expiry it fires <code>sk-dismiss</code> (same as the ✕) with <code>detail.reason</code>, <code>"timeout"</code> or <code>"dismiss"</code>, in case the app distinguishes "it left on its own" from "someone closed it." The component never removes the node: whoever placed it does that.',
     "toastPage.reactBody":
@@ -6650,9 +6776,9 @@ export const ui = {
     "tocPage.iconsCodeLabel": "link with an icon",
     "tocPage.railTitle": "One shape",
     "tocPage.railBody1":
-      "The contract publishes ONE shape and has no variants: a compact index, always open. It used to publish two — a closed <code>&lt;details&gt;</code>, plus a <strong>rail</strong> a consumer asked for by declaring <code>data-sk-toc-rail</code> — and the seam showed in the worst possible place: the rail's entire appearance sat behind that attribute <em>and</em> a <code>min-width: 72rem</code> query, so this very page could not render the form the site itself runs on. A preview frame is 1022px wide and the gate asked for 1152px.",
+      "The contract publishes ONE shape and has no variants: a compact index, always open. It used to publish two: a closed <code>&lt;details&gt;</code>, plus a <strong>rail</strong> a consumer asked for by declaring <code>data-sk-toc-rail</code>: and the seam showed in the worst possible place: the rail's entire appearance sat behind that attribute <em>and</em> a <code>min-width: 72rem</code> query, so this very page could not render the form the site itself runs on. A preview frame is 1022px wide and the gate asked for 1152px.",
     "tocPage.railBody2":
-      "All that stays behind <code>wide</code> are the two declarations that genuinely need a spare column: <code>position: sticky</code> and the fixed inline size. A narrow host gets the same index in normal flow — a layout difference, not a second shape of the component. The rows carry their own gutter instead of the container: the touch target reaches both edges of the screen while the text stays in the document's own margin.",
+      "All that stays behind <code>wide</code> are the two declarations that genuinely need a spare column: <code>position: sticky</code> and the fixed inline size. A narrow host gets the same index in normal flow: a layout difference, not a second shape of the component. The rows carry their own gutter instead of the container: the touch target reaches both edges of the screen while the text stays in the document's own margin.",
     "tocPage.spaceTitle": "Reserved space",
     "tocPage.spaceBody":
       "On this site the grid's track is the TOC's own width (<code>--docs-toc-inline-size</code>). The <code>&lt;aside&gt;</code> always stays in flow: before <code>data-ready</code> the list stays invisible at a minimum height, so the links never push the layout around when they appear.",
@@ -6787,29 +6913,29 @@ export const ui = {
 
     "treegridPage.description": "Hierarchical rows with columns: expand or collapse one without losing the rest of its values.",
     "treegridPage.lede":
-      'Combines hierarchy and columns at once — the WAI-ARIA <code>treegrid</code> pattern. Use it when every row needs several independent values IN ADDITION to its place in the hierarchy (a message with a sender, a file with a size and a date). For a single column of hierarchical text use <a href="/en/components/tree-view">TreeView</a>; for columns with no hierarchy, <a href="/en/components/table">Table</a>.',
+      'Combines hierarchy and columns at once: the WAI-ARIA <code>treegrid</code> pattern. Use it when every row needs several independent values IN ADDITION to its place in the hierarchy (a message with a sender, a file with a size and a date). For a single column of hierarchical text use <a href="/en/components/tree-view">TreeView</a>; for columns with no hierarchy, <a href="/en/components/table">Table</a>.',
     "treegridPage.minimalTitle": "Inbox",
     "treegridPage.minimalBody":
       "The exact example the WAI-ARIA spec itself uses: two columns (Subject, From), a folder that starts open with two messages, a collapsed folder whose one message stays hidden, and a loose message at the root.",
     "treegridPage.minimalLabel": "Sample inbox",
     "treegridPage.contractItem1":
-      "Almost always wrapped in <code>TreegridScroll</code> — the same reason as <code>TableScroll</code>: a flex or grid parent gives it <code>min-size: auto</code>, and a grid wider than its space blows the surface open if nothing wraps it.",
+      "Almost always wrapped in <code>TreegridScroll</code>: the same reason as <code>TableScroll</code>: a flex or grid parent gives it <code>min-size: auto</code>, and a grid wider than its space blows the surface open if nothing wraps it.",
     "treegridPage.contractItem2":
-      '<code>Treegrid</code> is a <code>&lt;table role="treegrid"&gt;</code> that REQUIRES <code>label</code> — that role carries no implicit accessible name, unlike a native table.',
+      '<code>Treegrid</code> is a <code>&lt;table role="treegrid"&gt;</code> that REQUIRES <code>label</code>: that role carries no implicit accessible name, unlike a native table.',
     "treegridPage.contractItem3":
-      "<code>TreegridHead</code> / <code>TreegridHeadRow</code> / <code>TreegridColumnHeader</code> are plain column headers — the same shape <code>Table</code> already has.",
+      "<code>TreegridHead</code> / <code>TreegridHeadRow</code> / <code>TreegridColumnHeader</code> are plain column headers: the same shape <code>Table</code> already has.",
     "treegridPage.contractItem4":
-      "Each <code>TreegridRow</code> is authored FLAT, in document order — never nested inside another row, a <code>&lt;tr&gt;</code> cannot contain a <code>&lt;tr&gt;</code>. <code>level</code>, <code>setSize</code>, and <code>posInset</code> are facts the author already knows from writing the row in that order, not something the component derives.",
+      "Each <code>TreegridRow</code> is authored FLAT, in document order: never nested inside another row, a <code>&lt;tr&gt;</code> cannot contain a <code>&lt;tr&gt;</code>. <code>level</code>, <code>setSize</code>, and <code>posInset</code> are facts the author already knows from writing the row in that order, not something the component derives.",
     "treegridPage.contractItem5":
-      "<code>expanded</code> is only authored on a row that HAS children — its absence, not a <code>false</code> value, is what marks a row a leaf. <code>true</code>/<code>false</code> controls whether its descendants are currently visible.",
+      "<code>expanded</code> is only authored on a row that HAS children: its absence, not a <code>false</code> value, is what marks a row a leaf. <code>true</code>/<code>false</code> controls whether its descendants are currently visible.",
     "treegridPage.contractItem6":
-      'Each <code>TreegridCell</code> is a plain <code>&lt;td role="gridcell"&gt;</code>; the first cell of a row with children gets the indent from CSS and a real disclosure button the binding inserts — never authored, and decorative to a screen reader (the row\'s own <code>aria-expanded</code> already announces the state).',
+      'Each <code>TreegridCell</code> is a plain <code>&lt;td role="gridcell"&gt;</code>; the first cell of a row with children gets the indent from CSS and a real disclosure button the binding inserts: never authored, and decorative to a screen reader (the row\'s own <code>aria-expanded</code> already announces the state).',
     "treegridPage.contractItem7":
-      '<code>resizableColumns</code> (off by default) inserts a real <code>role="separator"</code> between every pair of column headers — the same shared <code>@skryensya/core/splitter</code> primitive Sidebar\'s own separator uses. Requires <code>resizeLabel</code>: the separator is binding-inserted, so nothing else names it for a screen reader.',
+      '<code>resizableColumns</code> (off by default) inserts a real <code>role="separator"</code> between every pair of column headers: the same shared <code>@skryensya/core/splitter</code> primitive Sidebar\'s own separator uses. Requires <code>resizeLabel</code>: the separator is binding-inserted, so nothing else names it for a screen reader.',
     "treegridPage.hooksBody":
       "Per-level indent and the width reserved for the disclosure glyph are hooks: <code>--sk-treegrid-indent</code> and <code>--sk-treegrid-indicator-size</code>.",
     "treegridPage.a11yBody":
-      'Every row carries <code>role="row"</code> with <code>aria-level</code>/<code>aria-setsize</code>/<code>aria-posinset</code> — STATIC facts that never change when a sibling collapses, only visibility does — plus <code>aria-expanded</code> only when it has children. Every cell carries <code>role="gridcell"</code>. Focus is roving: a single row or cell is the tab stop for the whole grid. <kbd class="sk-kbd">→</kbd> expands a collapsed branch or enters its first cell; <kbd class="sk-kbd">←</kbd> collapses an open branch or moves up to the parent row; <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd> move between visible rows; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> and <kbd class="sk-kbd">Ctrl</kbd>+<kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> jump to the start/end; <kbd class="sk-kbd">Enter</kbd> toggles a branch with row focus, or activates any other focus. This version is faithful to WAI\'s base example (<code>treegrid-1</code>): text-only cells, no interactive control of its own inside a cell — which is why <kbd class="sk-kbd">Tab</kbd> always just leaves the grid, with nothing to intercept.',
+      'Every row carries <code>role="row"</code> with <code>aria-level</code>/<code>aria-setsize</code>/<code>aria-posinset</code>: STATIC facts that never change when a sibling collapses, only visibility does: plus <code>aria-expanded</code> only when it has children. Every cell carries <code>role="gridcell"</code>. Focus is roving: a single row or cell is the tab stop for the whole grid. <kbd class="sk-kbd">→</kbd> expands a collapsed branch or enters its first cell; <kbd class="sk-kbd">←</kbd> collapses an open branch or moves up to the parent row; <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd> move between visible rows; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> and <kbd class="sk-kbd">Ctrl</kbd>+<kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> jump to the start/end; <kbd class="sk-kbd">Enter</kbd> toggles a branch with row focus, or activates any other focus. This version is faithful to WAI\'s base example (<code>treegrid-1</code>): text-only cells, no interactive control of its own inside a cell: which is why <kbd class="sk-kbd">Tab</kbd> always just leaves the grid, with nothing to intercept.',
     "treegridPage.testVanilla1":
       "On mount, hides the one child of the branch that starts collapsed.",
     "treegridPage.testVanilla2":
@@ -6824,7 +6950,7 @@ export const ui = {
 
     "treegridPage.stressTitle": "File explorer (stress test)",
     "treegridPage.stressBody":
-      "Four columns instead of two, long content that forces ellipsis in more than one column, seven levels deep (the first five with their own CSS rule, the sixth and seventh falling back to the shared ceiling), collapsed branches at more than one level at once — including one at the root — and <code>resizableColumns</code>: drag or use the arrow keys on a header's edge to resize the pair of columns on either side.",
+      "Four columns instead of two, long content that forces ellipsis in more than one column, seven levels deep (the first five with their own CSS rule, the sixth and seventh falling back to the shared ceiling), collapsed branches at more than one level at once: including one at the root: and <code>resizableColumns</code>: drag or use the arrow keys on a header's edge to resize the pair of columns on either side.",
     "treegridPage.stressLabel": "Sample file explorer",
 
     "demo.treegrid.label": "Messages",
@@ -6883,9 +7009,9 @@ export const ui = {
     "meterPage.description":
       "Meter: a measurement within a known range, never a task's completion.",
     "meterPage.lede":
-      'A value measured right now, not a task in progress — the WAI-ARIA <code>meter</code> role, distinct from <code>progressbar</code>. Use it for disk usage, battery level, a rating on a scale. For a task\'s progress with a start and an end, use <a href="/en/components/progress">Progress</a>.',
+      'A value measured right now, not a task in progress: the WAI-ARIA <code>meter</code> role, distinct from <code>progressbar</code>. Use it for disk usage, battery level, a rating on a scale. For a task\'s progress with a start and an end, use <a href="/en/components/progress">Progress</a>.',
     "meterPage.body":
-      "Unlike Progress, <code>min</code> is a real parameter and often non-zero — a 1-to-5 rating, a temperature. The fill is computed with <code>meterFraction(value, min, max)</code>, not <code>value / max</code>.",
+      "Unlike Progress, <code>min</code> is a real parameter and often non-zero: a 1-to-5 rating, a temperature. The fill is computed with <code>meterFraction(value, min, max)</code>, not <code>value / max</code>.",
     "meterPage.test1": "Sets role=meter with the three required aria-value attributes.",
     "meterPage.test2": "Honors a non-zero min when painting the fill, unlike Progress.",
     "meterPage.a11yBody":
@@ -6901,39 +7027,39 @@ export const ui = {
     "feedPage.description":
       "Feed: a stream of independent posts, each announced with its own position.",
     "feedPage.lede":
-      'A scrollable stream of independent content units (posts, comments) — the WAI-ARIA <code>feed</code> role. Each <code>FeedArticle</code> states its own position (<code>aria-posinset</code>/<code>aria-setsize</code>), so a screen reader announces "2 of 3" without reading the rest of the stream first.',
+      'A scrollable stream of independent content units (posts, comments): the WAI-ARIA <code>feed</code> role. Each <code>FeedArticle</code> states its own position (<code>aria-posinset</code>/<code>aria-setsize</code>), so a screen reader announces "2 of 3" without reading the rest of the stream first.',
     "feedPage.body":
-      'WAI-ARIA is explicit: the <code>feed</code> role "is not associated with any well-established keyboard conventions" — Page Up/Page Down/Ctrl+Home/Ctrl+End are recommendations, not requirements. This version stays purely static: no machine, no keyboard handling of its own.',
+      'WAI-ARIA is explicit: the <code>feed</code> role "is not associated with any well-established keyboard conventions": Page Up/Page Down/Ctrl+Home/Ctrl+End are recommendations, not requirements. This version stays purely static: no machine, no keyboard handling of its own.',
     "feedPage.test1": "Sets role=feed, names it, and reflects aria-busy.",
     "feedPage.test2":
       "Each article gets role=article with aria-posinset/aria-setsize and a real labelled name.",
     "feedPage.test3": "Allows setSize=-1 for an undetermined total, per WAI's own allowance.",
     "feedPage.a11yBody":
-      'The root carries <code>role="feed"</code> with <code>aria-label</code> (required, the role has no implicit name) and <code>aria-busy</code> while more content loads. Each <code>FeedArticle</code> is a <code>role="article"</code> with <code>aria-posinset</code>/<code>aria-setsize</code>, named by its own label slot via <code>aria-labelledby</code> — never just referenced, always rendered.',
+      'The root carries <code>role="feed"</code> with <code>aria-label</code> (required, the role has no implicit name) and <code>aria-busy</code> while more content loads. Each <code>FeedArticle</code> is a <code>role="article"</code> with <code>aria-posinset</code>/<code>aria-setsize</code>, named by its own label slot via <code>aria-labelledby</code>: never just referenced, always rendered.',
 
     "demo.feed.label": "Recent activity",
-    "demo.feed.author1": "María — 2 hours ago",
+    "demo.feed.author1": "María. 2 hours ago",
     "demo.feed.body1": "Posted the sprint summary.",
-    "demo.feed.author2": "Diego — 5 hours ago",
+    "demo.feed.author2": "Diego. 5 hours ago",
     "demo.feed.body2": "Commented on issue #482.",
-    "demo.feed.author3": "Lucía — yesterday",
+    "demo.feed.author3": "Lucía. Yesterday",
     "demo.feed.body3": "Closed three backlog tickets.",
 
     "dataGridPage.description":
       "Data Grid: 2D roving-tabindex navigation for tabular data or grouped widgets.",
     "dataGridPage.lede":
-      'The WAI-ARIA spec itself treats "data grids" and "layout grids" as the same pattern — identical roles, identical roving-tabindex mechanics — so this is ONE contract, not two. Use it when a grid of cells needs 2D navigation: <a href="/en/components/table">Table</a> already covers STATIC tabular data with no keyboard model of its own.',
+      'The WAI-ARIA spec itself treats "data grids" and "layout grids" as the same pattern. Identical roles, identical roving-tabindex mechanics, so this is ONE contract, not two. Use it when a grid of cells needs 2D navigation: <a href="/en/components/table">Table</a> already covers STATIC tabular data with no keyboard model of its own.',
     "dataGridPage.dataTitle": "Tabular data",
     "dataGridPage.dataBody": "Plain text cells: the focus stop is the cell itself.",
     "dataGridPage.dataLabel": "Scores by round",
     "dataGridPage.layoutTitle": "Grouped widgets",
     "dataGridPage.layoutBody":
-      "Each cell holds its own button: the focus stop hands off to THAT element instead — the cell never competes with its own interactive content for the roving tabindex.",
+      "Each cell holds its own button: the focus stop hands off to THAT element instead. The cell never competes with its own interactive content for the roving tabindex.",
     "dataGridPage.layoutLabel": "Quick actions",
     "dataGridPage.contractBody":
-      'No <code>@zag-js/*</code> machine of its own — same as <code>Treegrid</code>, the keyboard model is hand-rolled and pure, shared by both bindings. <code>wrapCols</code>/<code>wrapRows</code> control whether the arrows wrap at the grid\'s edge; both default to <code>false</code>.',
+      'No <code>@zag-js/*</code> machine of its own: same as <code>Treegrid</code>, the keyboard model is hand-rolled and pure, shared by both bindings. <code>wrapCols</code>/<code>wrapRows</code> control whether the arrows wrap at the grid\'s edge; both default to <code>false</code>.',
     "dataGridPage.a11yBody":
-      'The root carries <code>role="grid"</code> with <code>aria-label</code> (required). Each row is <code>role="row"</code>, each cell <code>role="gridcell"</code>. Focus is roving — a single cell (or its interactive descendant) is the tab stop for the whole grid. <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> move between cells, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> within the row, <kbd class="sk-kbd">Ctrl</kbd>+<kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> jump to the start/end of the whole grid.',
+      'The root carries <code>role="grid"</code> with <code>aria-label</code> (required). Each row is <code>role="row"</code>, each cell <code>role="gridcell"</code>. Focus is roving: a single cell (or its interactive descendant) is the tab stop for the whole grid. <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> move between cells, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> within the row, <kbd class="sk-kbd">Ctrl</kbd>+<kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> jump to the start/end of the whole grid.',
     "dataGridPage.testReact1":
       "Hands the roving stop to a cell's OWN interactive descendant, not the cell div.",
     "dataGridPage.testReact2":
@@ -6954,20 +7080,20 @@ export const ui = {
     "menubarPage.description":
       "Menubar: a persistent horizontal bar of commands, some opening a dropdown.",
     "menubarPage.lede":
-      'The WAI-ARIA <code>menubar</code> pattern: <code>menubar-editor</code>, the example it is named after. Not <a href="/en/components/menu">Menu</a> (one trigger, one popup) — here there are SEVERAL items in a single roving-tabindex row, where Left/Right moves between them, and the detail a naive implementation misses: moving to an adjacent item while a dropdown is open closes the old one and opens the new one too, not just moves a highlight.',
+      'The WAI-ARIA <code>menubar</code> pattern: <code>menubar-editor</code>, the example it is named after. Not <a href="/en/components/menu">Menu</a> (one trigger, one popup): here there are SEVERAL items in a single roving-tabindex row, where Left/Right moves between them, and the detail a naive implementation misses: moving to an adjacent item while a dropdown is open closes the old one and opens the new one too, not just moves a highlight.',
     "menubarPage.contractBody":
-      'No <code>@zag-js/*</code> machine of its own — same as <code>Treegrid</code>/<code>DataGrid</code>, hand-rolled and shared by both bindings. v1 scope, of the BAR itself: ONE dropdown per top-level item, and even that is not hand-managed — moving to a neighboring item while a dropdown is open closes the old one and opens the new one through <code>Menu</code>\'s own <code>api.setOpen()</code>. A dropdown\'s own CONTENT has no such limit: it is a real <code>Menu</code>, so it nests submenus exactly as deep as <code>Menu</code> allows (see "Dropdowns with a submenu" below).',
+      'No <code>@zag-js/*</code> machine of its own: same as <code>Treegrid</code>/<code>DataGrid</code>, hand-rolled and shared by both bindings. v1 scope, of the BAR itself: ONE dropdown per top-level item, and even that is not hand-managed: moving to a neighboring item while a dropdown is open closes the old one and opens the new one through <code>Menu</code>\'s own <code>api.setOpen()</code>. A dropdown\'s own CONTENT has no such limit: it is a real <code>Menu</code>, so it nests submenus exactly as deep as <code>Menu</code> allows (see "Dropdowns with a submenu" below).',
     "menubarPage.label": "Menu bar",
     "menubarPage.submenuTitle": "Dropdowns with a submenu",
     "menubarPage.submenuBody":
-      'A dropdown item can open its own submenu — "Export" here — because the WHOLE dropdown is a real <code>Menu</code>, and arbitrarily-nested submenus already belong to <code>Menu</code>, not something <code>Menubar</code> has to reimplement. The bar\'s own scope (roving tabindex, one dropdown per top-level item) does not change: only a dropdown\'s own CONTENT can nest as deep as <code>Menu</code> allows.',
+      'A dropdown item can open its own submenu: "Export" here: because the WHOLE dropdown is a real <code>Menu</code>, and arbitrarily-nested submenus already belong to <code>Menu</code>, not something <code>Menubar</code> has to reimplement. The bar\'s own scope (roving tabindex, one dropdown per top-level item) does not change: only a dropdown\'s own CONTENT can nest as deep as <code>Menu</code> allows.',
     "menubarPage.navSkinTitle": "As nav-list",
     "menubarPage.navSkinBody":
-      "The item's <code>nav</code> option swaps the trigger for <code>nav-list</code>'s own real link (<code>sk-nav-list__link</code>/<code>__label</code>) instead of a <code>Button</code>, and every dropdown entry with an <code>href</code> is a real <code>&lt;a&gt;</code> that navigates — WAI-ARIA's own <code>menubar-navigation</code> example. The bar is still a real <code>Menubar</code>: roving tabindex, dropdowns, every behavior; only the trigger's element and classes change.",
+      "The item's <code>nav</code> option swaps the trigger for <code>nav-list</code>'s own real link (<code>sk-nav-list__link</code>/<code>__label</code>) instead of a <code>Button</code>, and every dropdown entry with an <code>href</code> is a real <code>&lt;a&gt;</code> that navigates: WAI-ARIA's own <code>menubar-navigation</code> example. The bar is still a real <code>Menubar</code>: roving tabindex, dropdowns, every behavior; only the trigger's element and classes change.",
     "menubarPage.a11yBody":
-      'The root carries <code>role="menubar"</code> with <code>aria-label</code> (required). Each top-level item is <code>role="menuitem"</code>, with <code>aria-haspopup="menu"</code>/<code>aria-expanded</code> only if it opens a dropdown. Focus is roving — a single stop for the whole bar. <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> move between items (and if a dropdown was open, open the new item\'s instead of just moving the highlight); <kbd class="sk-kbd">↓</kbd> opens the dropdown and focuses its first item, <kbd class="sk-kbd">↑</kbd> the last; inside an open dropdown, <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd> move between its commands; <kbd class="sk-kbd">Escape</kbd> closes it and returns focus to its trigger; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> jump to the first/last item (or the first/last command if a dropdown is open).',
+      'The root carries <code>role="menubar"</code> with <code>aria-label</code> (required). Each top-level item is <code>role="menuitem"</code>, with <code>aria-haspopup="menu"</code>/<code>aria-expanded</code> only if it opens a dropdown. Focus is roving: a single stop for the whole bar. <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> move between items (and if a dropdown was open, open the new item\'s instead of just moving the highlight); <kbd class="sk-kbd">↓</kbd> opens the dropdown and focuses its first item, <kbd class="sk-kbd">↑</kbd> the last; inside an open dropdown, <kbd class="sk-kbd">↑</kbd>/<kbd class="sk-kbd">↓</kbd> move between its commands; <kbd class="sk-kbd">Escape</kbd> closes it and returns focus to its trigger; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> jump to the first/last item (or the first/last command if a dropdown is open).',
     "menubarPage.testCore1":
-      "Moving while a dropdown was open keeps the NEXT item's dropdown open — the detail a plain roving tabindex misses.",
+      "Moving while a dropdown was open keeps the NEXT item's dropdown open. The detail a plain roving tabindex misses.",
     "menubarPage.testReact1":
       "Moving right while a dropdown is open closes it and opens the adjacent item's dropdown.",
     "menubarPage.testReact2": "Escape closes the open dropdown and returns focus to its trigger.",
@@ -7104,11 +7230,11 @@ export const ui = {
     "cardPage.implBody":
       "There is no Card import. Import Box or the chosen semantic Tile, its styles, and only the content pieces present. This keeps every dependency and every contract visible at the call site.",
     "cardPage.a11yP1":
-      'The root decides its own semantics, not the card: <code>article</code>/<code>section</code>/<code>div</code> for Box, <code>a[href]</code>/<code>button</code>/<code>input[type=checkbox]</code> for each Tile — the table under "Choose by behavior" above summarizes all six.',
+      'The root decides its own semantics, not the card: <code>article</code>/<code>section</code>/<code>div</code> for Box, <code>a[href]</code>/<code>button</code>/<code>input[type=checkbox]</code> for each Tile: the table under "Choose by behavior" above summarizes all six.',
     "cardPage.a11yP2":
       "Each card's title uses <code>h3</code> in these examples because they live under this tab's own hidden <code>h2</code>; on your page, match the level to the card's real place in the heading outline instead of copying it literally.",
     "cardPage.a11yP3":
-      'A <a href="/en/components/tile">Tile</a>\'s visible focus covers the whole interactive surface, never just an icon or an inner link; Box never receives <code>tabindex</code> or an <code>onClick</code> of its own — see Do &amp; Don\'t above.',
+      'A <a href="/en/components/tile">Tile</a>\'s visible focus covers the whole interactive surface, never just an icon or an inner link; Box never receives <code>tabindex</code> or an <code>onClick</code> of its own: see Do &amp; Don\'t above.',
     "cardPage.a11yP4":
       "A content image (guides, case studies, articles) carries a real <code>alt</code>; the wash that protects text over a photo is purely decorative and gets <code>aria-hidden</code>.",
     "cardPage.a11yP5":
@@ -7129,48 +7255,60 @@ export const ui = {
     "indexPage.searchLabel": "Search components",
     "indexPage.countSuffix": "components",
 
-    "vaulPage.description": "A pattern: a modal panel anchored to a viewport edge, with optional drag-to-dismiss.",
+    "vaulPage.description": "A modal panel anchored to a viewport edge, with sheet, drawer, and gesture variants.",
     "vaulPage.lede":
-      "A modal panel anchored to an <strong>edge</strong> of the viewport: it arrives from that edge, leaves the page inert behind a backdrop, and leaves the way it came. The edge is the whole idea — a Vaul is named for where it comes from, never for the shape it takes on arrival.",
-    "vaulPage.whyPatternTitle": "Why it is a pattern, not a component",
-    "vaulPage.whyPatternBody1":
-      'The rule is a single question: <em>could a second component need this exact structure?</em> Here the answer is not a prediction, it already happens, today, in this repo: <a href="/en/components/drawer">Drawer</a> <strong>is</strong> a Vaul on the inline edge. The <a href="/en/components/dialog">Dialog Vaul</a> option reuses that same block-end interaction on mobile without turning Dialog into a Vaul component.',
-    "vaulPage.whyPatternBody2":
-      "So Vaul ships <strong>hooks and structure</strong>. A drawer that reimplemented the panel would just be a second Vaul under another name.",
-    "vaulPage.edgeTitle": "The edge is data, not a component",
+      "Vaul is the modal surface that enters from an edge. This page shows its main shapes: a sharing sheet, the same contract on other edges, optional touch drag, and the details that keep Drawer and Dialog from duplicating it.",
+    "vaulPage.step1Eyebrow": "01 · base",
+    "vaulPage.startTitle": "One dialog, one class, one edge",
+    "vaulPage.startBody":
+      "The minimum is already useful: <code>sk-vaul</code> paints the panel, <code>data-edge</code> chooses where it arrives from, and <code>aria-label</code> names the dialog.",
+    "vaulPage.minimumLabel": "Example panel",
+    "vaulPage.step2Eyebrow": "02 · position",
+    "vaulPage.edgeTitle": "The same Vaul on three edges",
     "vaulPage.edgeBody":
-      "Three edges, one pattern. <code>data-edge</code> picks; nothing else changes. The inline edges are logical, so they flip on their own under RTL instead of sticking to the wrong side of the screen.",
-    "vaulPage.nativeTitle": "It requires the native <code>&lt;dialog&gt;</code>",
-    "vaulPage.nativeBody":
-      "The focus trap, ESC, an inert background, focus restoration, the top layer, and a real <code>::backdrop</code> are all behaviors the platform already has. A Vaul on a div would reimplement them in JavaScript that would have to ship, and the top layer and <code>:modal</code> are not available to a div at any price.",
-    "vaulPage.zagTitle": "Zag is not used here, and that is the finding",
-    "vaulPage.zagBody":
-      "The rule is that Zag only comes in when state coordination is worth its cost. The registry got checked before writing a single line: <strong>no Vaul machine exists</strong>. And whatever Zag could cover here is exactly what the platform already does better: <code>@zag-js/dialog</code> would reimplement the modality <code>&lt;dialog&gt;</code> hands over for free, and <code>@zag-js/presence</code> is redundant against <code>@starting-style</code>. The answer being \"none\" is the rule working, not an exception to it.",
-    "vaulPage.dragTitle": "Drag is the only thing that costs JS",
+      "The difference between a bottom sheet and a side panel is <code>data-edge</code>. Inline edges are logical, so RTL follows without different markup.",
+    "vaulPage.step3Eyebrow": "03 · gesture",
+    "vaulPage.dragTitle": "With drag or without drag",
     "vaulPage.dragBody1":
-      "One behavior remains with no platform equivalent and no Zag machine: dragging the panel toward its edge to dismiss it. That, and only that, is the enhancer. <strong>Vaul is complete without it</strong>: with no JS there is still a panel, slide, backdrop, ESC, and click-outside.",
-    "vaulPage.dragBody2":
-      "It closes by distance <strong>or</strong> by speed: a flick is an intention, and waiting for it to cross a distance threshold is exactly what makes a sheet feel stuck. Speed gets measured over the gesture's <strong>last few millimeters</strong>, not the average: drag slowly, hesitate, and only then pull, and the pull is real — averaged from the moment your finger landed, it would dilute down to looking like you never moved. And a flick <em>back</em> beats distance: the hand's last word is the one that counts.",
+      "Opening, closing, focus, Escape, backdrop, and the top layer all belong to <code>&lt;dialog&gt;</code>. The enhancer only connects the touch drag-to-dismiss gesture.",
     "vaulPage.noDragLabel": "no drag",
-    "vaulPage.resistTitle": "Toward the other side, it resists",
+    "vaulPage.step4Eyebrow": "04 · composition",
+    "vaulPage.completeTitle": "Sharing sheet",
+    "vaulPage.completeBody":
+      "A Vaul can hold a complete product flow: header, switch, list, actions, and explicit close controls. The preview switches between Vanilla and React because both render the same contract.",
+    "vaulPage.completeLabel": "Share file",
+    "vaulPage.reactSnippetComment": "same content as the Vanilla example",
+    "vaulPage.detailsTitle": "Contract details",
+    "vaulPage.whyPatternTitle": "Why it is a pattern",
+    "vaulPage.whyPatternBody1":
+      '<a href="/en/components/drawer">Drawer</a> is the same Vaul pinned to an inline edge. Sharing the structure avoids maintaining two almost-identical sheets.',
+    "vaulPage.whyPatternBody2": "Vaul ships hooks and structure; each composition decides the content.",
+    "vaulPage.nativeTitle": "Modality is native",
+    "vaulPage.nativeBody":
+      "Focus trap, Escape, inert background, focus restoration, the top layer, and <code>::backdrop</code> come from the platform. A <code>div</code> cannot buy that later.",
+    "vaulPage.zagTitle": "Zag stays out",
+    "vaulPage.zagBody":
+      "There is no Vaul machine in Zag, and Dialog/Presence would duplicate what <code>&lt;dialog&gt;</code> plus <code>@starting-style</code> already do.",
+    "vaulPage.dragBody2":
+      "Dismissal uses distance or velocity: a short flick is intent too. A flick back home wins even after the panel has travelled far.",
+    "vaulPage.resistTitle": "Inward, it resists",
     "vaulPage.resistBody1":
-      "Pulling the panel inward does not detach it from its edge, but it does not leave it stuck either: it gives, tracking 1∶1 under the fingertip at first, and curves toward a stop around 12px. A finger moving with nothing underneath responding is not the only moment a direct-manipulation surface gives itself away as a drawing of one. The asymmetry <em>is</em> the message: that side has nowhere to go.",
+      "Pulling against the edge does not detach the panel: it gives a few pixels and returns. The asymmetry says that side has no exit.",
     "vaulPage.resistBody2":
-      "And what shows up in that gap is <strong>more panel</strong>: the material keeps going past the edge, so lifting a sheet reveals more sheet, not a strip of backdrop. Those are two deliberately different numbers — how much it gives (<code>--sk-vaul-overpull</code>) and how far the material reaches (<code>--sk-vaul-material</code>) — and the second is declared as a floor over the first, so give can never outrun it. The material paints <em>over</em> the elevation: the other way around, the panel's own shadow would tint exactly the strip that just got revealed, and a lifted sheet would show a dark band where its own surface should be — precisely the hole this exists to not have.",
-    "vaulPage.resistBody3": "The backdrop moves with it: its opacity follows the drag. A full-strength backdrop with the panel halfway out would be lying about what counts as modal.",
-    "vaulPage.handleTitle": "The handle follows the edge",
+      "<code>--sk-vaul-overpull</code> controls how far it gives; <code>--sk-vaul-material</code> keeps material under the finger.",
+    "vaulPage.resistBody3": "Backdrop opacity follows the drag so modality does not lie.",
+    "vaulPage.handleTitle": "The handle follows the gesture",
     "vaulPage.handleBody":
-      "It is not cosmetic: a bottom sheet gets pulled down from a bar crossing its own ceiling, and a side panel gets pulled sideways from a bar along its inner edge. A horizontal pill on a drawer announces the wrong gesture, and an affordance that lies is worse than having none at all.",
-    "vaulPage.desktopTitle": "On desktop, it does not drag",
+      "A bottom sheet gets a horizontal bar; a side panel gets a vertical bar. The affordance points in the direction you drag.",
+    "vaulPage.desktopTitle": "On desktop, it stays still",
     "vaulPage.desktopBody":
-      "The handle is a <strong>touch</strong> affordance: a bar you pull with a thumb. With a pointer there is nothing to pull that a click outside or an ESC would not do better, so above the system breakpoint (<code>52rem</code>, the same width where the sidebar becomes a drawer and the dialog becomes a sheet) the handle hides and the enhancer never wires up the drag. CSS and JS make the same cut, with the same <code>matchMedia</code>, so there is never a handle dangling at a width where it does not drag.",
-    "vaulPage.motionTitle": "Motion: arriving, leaving, and releasing are three intents",
+      "Above <code>52rem</code>, the handle hides and drag is not wired. With a pointer, Escape and outside-click are better controls.",
+    "vaulPage.motionTitle": "Motion by intent",
     "vaulPage.motionBody1":
-      "Each with its own tokens, never one averaged duration: arriving gets announced, leaving is already decided. Under <code>prefers-reduced-motion</code> the panel <strong>still arrives</strong> — the trip drops, not the Vaul — and the backdrop's fade is what tells you the page went inert. The drag itself is untouched: it is direct manipulation, not motion the system plays back at you.",
+      "Entering, leaving, and releasing use different tokens. With reduced motion, the decorative trip drops; modality and landing remain.",
     "vaulPage.motionBody2":
-      '<a href="/en/transparency"><code>prefers-reduced-transparency</code></a> does not remove the backdrop: it makes it opaque. Modality and the direct drag response both stay.',
-    "vaulPage.motionBody3":
-      "<strong>Releasing</strong> is the third, and its own thing: a released panel is not leaving, it is finishing the momentum the hand already gave it. That is why it consumes neither <code>enter</code> nor <code>exit</code> — both are short because nobody is waiting on them — but the <code>release</code> intent instead, deliberately long: cutting it short is what would make the panel snap to a stop under the finger instead of carrying through. One intent covers both destinations: returning home and leaving entirely are the same throw with a different landing. It is the one intent that, under <code>prefers-reduced-motion</code>, cannot drop its own trip — the panel is wherever the finger left it and still has to land somewhere — so it drops the flourish and lands short instead.",
+      '<a href="/en/transparency"><code>prefers-reduced-transparency</code></a> makes the backdrop opaque; it does not remove it.',
+    "vaulPage.motionBody3": "Release has its own intent because it finishes the hand's momentum, not an exit animation.",
     "vaulPage.demoOpenLabel": "Share file",
     "vaulPage.demoTitle": "Q3 commercial proposal",
     "vaulPage.demoMeta": "PDF · 2.4 MB · edited 2h ago",
@@ -7196,6 +7334,35 @@ export const ui = {
     "vaulPage.test3": "Dismisses on a slow drag that travels far enough (distance alone).",
     "vaulPage.test4": "A fast, short flick closes it even when the distance is small.",
     "vaulPage.test5": "A flick back home overrules a far drag: direction beats distance.",
+    "vaulPage.examplesTitle": "Little content, lots of content",
+    "vaulPage.examplesBody":
+      "The same panel holds a one-line confirmation and a multi-section form: the pattern imposes no height, only edge, slide and backdrop. All three start on mobile because that's where a Vaul actually lives.",
+    "vaulPage.deleteLabel": "Confirm deletion",
+    "vaulPage.deleteOpenLabel": "Delete file",
+    "vaulPage.deleteTitle": "Delete this file?",
+    "vaulPage.deleteDesc": "This cannot be undone. The file moves to trash for 30 days.",
+    "vaulPage.deleteCancel": "Cancel",
+    "vaulPage.deleteConfirm": "Delete",
+    "vaulPage.filtersLabel": "Search filters",
+    "vaulPage.filtersOpenLabel": "Filters",
+    "vaulPage.filtersTitle": "Search filters",
+    "vaulPage.filtersSortLabel": "Sort by",
+    "vaulPage.filtersSortRelevance": "Relevance",
+    "vaulPage.filtersSortPriceAsc": "Price: low to high",
+    "vaulPage.filtersSortPriceDesc": "Price: high to low",
+    "vaulPage.filtersSortRecent": "Most recent",
+    "vaulPage.filtersCategoryLabel": "Category",
+    "vaulPage.filtersCategoryDesign": "Design",
+    "vaulPage.filtersCategoryDev": "Development",
+    "vaulPage.filtersCategoryResearch": "Research",
+    "vaulPage.filtersCategoryStrategy": "Strategy",
+    "vaulPage.filtersCategoryContent": "Content",
+    "vaulPage.filtersCategoryIllustration": "Illustration",
+    "vaulPage.filtersAvailabilityLabel": "Availability",
+    "vaulPage.filtersAvailabilityStock": "In stock",
+    "vaulPage.filtersAvailabilityShipping": "Free shipping",
+    "vaulPage.filtersClear": "Clear",
+    "vaulPage.filtersApply": "Apply filters",
 
     "landing.title": "skryensya/ui",
     "landing.description":

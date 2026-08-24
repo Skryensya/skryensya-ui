@@ -6,7 +6,7 @@ function pointer(type: string, init: { clientX?: number; button?: number } = {})
   return new MouseEvent(type, { bubbles: true, cancelable: true, ...init }) as MouseEvent & { pointerId: number };
 }
 
-/** A press, then whatever moves the caller asks for, then the release — same shape every
+/** A press, then whatever moves the caller asks for, then the release. Same shape every
  * `gesture()` helper in this codebase already uses (`sidebar.test.ts`, `treegrid.test.ts`). */
 function gesture(handle: HTMLElement, xs: number[], { release = true } = {}) {
   handle.setPointerCapture = () => {};
@@ -72,7 +72,7 @@ describe("attachColumnResizer", () => {
 
   it("dragging redistributes width between exactly the pair, total conserved", () => {
     const { handle, widths } = setup();
-    // The move that crosses the threshold measures from there — a third point demonstrates a resize
+    // The move that crosses the threshold measures from there. A third point demonstrates a resize
     // (same reasoning `sidebar.test.ts`'s own gesture comments document).
     gesture(handle, [100, 140, 180]);
     const [before, after] = widths();
@@ -278,7 +278,7 @@ describe("measureColumnContentWidth", () => {
     spy.mockRestore();
   });
 
-  it("never mutates or removes the real cell — it measures a detached clone instead", () => {
+  it("never mutates or removes the real cell. It measures a detached clone instead", () => {
     const table = tableWithColumn(["Header", "Row"]);
     const realCell = table.querySelector("th")!;
     const spy = stubWidthByText({ Header: 999, Row: 999 });

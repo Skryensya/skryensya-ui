@@ -4,7 +4,7 @@ import type { Translate } from "../../i18n";
 /*
  * THE TABS AND THEIR PANELS, kept out of the compositions in `tabs.ts`.
  *
- * An entry here carries both halves of a tab — the label and the panel body it selects — so the
+ * An entry here carries both halves of a tab. The label and the panel body it selects, so the
  * list reads as the content of the demo, and the tree beside it reads as one `Tabs` with an
  * orientation and an activation mode. That separation is the same one the emitted React snippet
  * makes when it writes `tabs-items.ts` next to the component.

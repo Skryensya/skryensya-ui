@@ -3,7 +3,7 @@ import type { Translate } from "../i18n";
 
 /*
  * The control, not the chrome around it. Both trees still sit inside a FormField, because a control
- * without a label is not a thing to document — but what the page is about is what changes between
+ * without a label is not a thing to document, but what the page is about is what changes between
  * them: the element, and the one class both of them carry.
  */
 

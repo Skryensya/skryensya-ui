@@ -119,14 +119,14 @@ export function Select({
                 {...api.getItemProps({ item: option })}
                 /*
                  * Zag's `aria-selected` tracks the COMMITTED value, not the row under
-                 * `aria-activedescendant` — same gap fixed in Combobox (`combobox.tsx`), a
+                 * `aria-activedescendant`: same gap fixed in Combobox (`combobox.tsx`), a
                  * different Zag package (`@zag-js/select`, not `@zag-js/combobox`) with the
                  * identical divergence (confirmed reading `select.connect.js`: `"aria-selected":
                  * itemState.selected`). The WAI reference implementation
                  * (`combobox-autocomplete.js`, `setCurrentOptionStyle`) moves `aria-selected="true"`
                  * onto whichever option is highlighted as you arrow through the list, before Enter
                  * commits anything. Select has no multi-select mode, so this applies unconditionally
-                 * — unlike Combobox, there is no "chosen set" reading to preserve. Placed after the
+                 *. Unlike Combobox, there is no "chosen set" reading to preserve. Placed after the
                  * spread so it wins.
                  */
                 aria-selected={option.value === api.highlightedValue ? "true" : undefined}

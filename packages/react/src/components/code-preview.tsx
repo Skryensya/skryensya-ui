@@ -143,7 +143,7 @@ export function CodePreviewDensity({
   ...rest
 }: CodePreviewDensityProps) {
   // Single source of truth for which panel shows, same as the Vanilla enhancer's
-  // `data-sk-code-preview-density` on the root — the stylesheet keys visibility off that one
+  // `data-sk-code-preview-density` on the root. The stylesheet keys visibility off that one
   // attribute (`code-preview.css`), so this state is what actually makes the switch DO something,
   // not just report a `checked` value nobody reads.
   const [density, setDensity] = useState<"condensed" | "full">("condensed");

@@ -30,7 +30,7 @@ entries:
     es:
       title: LayoutGrid publica una columna de rail
       body: >-
-        <code>data-width="rail"</code> reserva una columna aparte del flujo principal, junto a él —
+        <code>data-width="rail"</code> reserva una columna aparte del flujo principal, junto a él -
         no un span de contenido como <code>narrow</code>/<code>breakout</code>, sino un hijo directo
         de otro tipo, para un TOC, navegación contextual o cualquier otro elemento de apoyo. Fijo en
         ancho (<code>--sk-layout-rail-inline-size</code>, 14rem por defecto) y colapsa a una fila
@@ -40,7 +40,7 @@ entries:
     en:
       title: LayoutGrid publishes a rail column
       body: >-
-        <code>data-width="rail"</code> reserves a column of its own beside the main flow — not a
+        <code>data-width="rail"</code> reserves a column of its own beside the main flow: not a
         content span like <code>narrow</code>/<code>breakout</code>, but a direct child of a
         different kind, for a TOC, contextual navigation, or any other supporting element. Fixed in
         width (<code>--sk-layout-rail-inline-size</code>, 14rem by default) and collapses to its own

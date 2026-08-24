@@ -14,8 +14,8 @@ summary: >-
 ## El problema
 
 Un componente de este sistema se consume de dos maneras. Un consumidor React escribe
-`<Button variant="primary">`; un consumidor de la capa vanilla escribe
-`<button class="sk-button sk-interactive" data-sk-button data-variant="primary">`. Son la misma
+`<Button variant="accent">`; un consumidor de la capa vanilla escribe
+`<button class="sk-button sk-interactive" data-sk-button data-variant="accent">`. Son la misma
 cosa dicha dos veces, y hasta hoy nada lo garantizaba.
 
 Lo que había, medido:

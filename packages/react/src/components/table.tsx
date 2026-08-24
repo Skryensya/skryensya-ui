@@ -34,12 +34,12 @@ type WithChildren<T> = T & { children: ReactNode };
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
 /*
- * `resizableColumns`'s own state, `Table`-scoped context — everything below this point is new; the
+ * `resizableColumns`'s own state, `Table`-scoped context. Everything below this point is new; the
  * REST of this file (TableScroll, TableCaption, TableFoot, TableBody, TableCell) is untouched,
  * because a plain table (the overwhelming default) still renders exactly what it always did. Same
  * shape Treegrid's own context takes: the width array plus a raw setter, never a `resizeColumn(i,
  * delta)` helper, because `TableColumnResizer` needs two different update shapes from the SAME
- * state — incremental from the keyboard, computed fresh against a drag's OWN start snapshot from
+ * state. Incremental from the keyboard, computed fresh against a drag's OWN start snapshot from
  * the pointer.
  */
 type TableContextValue = {
@@ -47,7 +47,7 @@ type TableContextValue = {
   resizeLabel?: string;
   columnWidths: readonly number[];
   setColumnWidths: (widths: readonly number[]) => void;
-  /** `TableColumnResizer`'s own access to the whole table, not just its column pair — measuring
+  /** `TableColumnResizer`'s own access to the whole table, not just its column pair. Measuring
    * "what does THIS column's content need" (`measureColumnContentWidth`, below) reads every row,
    * something the width-pair state alone can never answer. */
   tableRef: RefObject<HTMLTableElement | null>;
@@ -69,14 +69,14 @@ export type TableProps = Omit<TableHTMLAttributes<HTMLTableElement>, "children">
   children: ReactNode;
   /**
    * Opt-in: a `.sk-splitter` drag handle between each pair of column headers, WAI-ARIA APG's
-   * "Window Splitter" pattern — see `table.ts`'s own option doc for why this defaults to off.
+   * "Window Splitter" pattern; see `table.ts`'s own option doc for why this defaults to off.
    */
   resizableColumns?: boolean;
-  /** Required whenever `resizableColumns` is on — see `table.ts`'s `resizeLabel` option doc. */
+  /** Required whenever `resizableColumns` is on; see `table.ts`'s `resizeLabel` option doc. */
   resizeLabel?: string;
   /**
    * The INITIAL share of the table's width each column claims before any drag, one positive number
-   * per column — see `table.ts`'s identical `columnWeights` option and
+   * per column; see `table.ts`'s identical `columnWeights` option and
    * `resolveWeightedColumnWidths` (`@skryensya/core/splitter`). Omitted, every column starts equal,
    * the behaviour before this prop existed.
    */
@@ -117,7 +117,7 @@ export const TableScroll = forwardRef<
 });
 
 /**
- * `Table`'s own head-row column count — walked ONCE, synchronously, off `children`, the same "read
+ * `Table`'s own head-row column count. Walked ONCE, synchronously, off `children`, the same "read
  * the authored tree top-down" shape `Treegrid`'s own `readRows` uses. Only ever matters when
  * `resizableColumns` is on; a plain table never has to pay for this at all (the effect below
  * short-circuits before it runs).
@@ -135,25 +135,25 @@ function readHeadColumnCount(children: ReactNode): number {
 
 /**
  * The natural, single-line width column `columnIndex` needs to show EVERY currently-rendered cell
- * in it without wrapping or truncating — the spreadsheet double-click-the-border convention.
- * Verbatim port of `@skryensya/vanilla/splitter`'s `measureColumnContentWidth` — same technique,
+ * in it without wrapping or truncating. The spreadsheet double-click-the-border convention.
+ * Verbatim port of `@skryensya/vanilla/splitter`'s `measureColumnContentWidth`. Same technique,
  * same reasoning, ported line for line rather than shared, because React and vanilla never share
  * DOM-touching code (only `core/splitter.ts` is common ground between them, see that file's own
  * banner). Two things confirmed against a real table before landing on this approach, not assumed:
- *   - The real cell's own `scrollWidth`, even under `white-space: nowrap`, never moves — a
+ *   - The real cell's own `scrollWidth`, even under `white-space: nowrap`, never moves. A
  *     `table-layout: fixed` cell is held at its `<col>`'s width regardless of its content, so
  *     reading it can only ever answer "what is this column right now", never "what does the
  *     content need" (the very thing this gesture is about to overwrite).
  *   - `overflow: hidden` does not rescue that read: `scrollWidth` is SPECIFIED as
  *     `max(clientWidth, content width)`, so it can reveal content WIDER than the box but can never
- *     report NARROWER — a column already too generous for its content has nothing to "scroll", so
+ *     report NARROWER. A column already too generous for its content has nothing to "scroll", so
  *     `scrollWidth` just echoes `clientWidth` back. Auto-fit needs the shrinking direction too.
- * A clone in a throwaway `table-layout: auto` table (off-screen, `visibility: hidden`, batched —
- * every clone built and attached in ONE pass, only THEN read, one forced layout for the whole
- * column instead of one per cell) sidesteps both: nothing there is held to any `<col>`, so its
- * rendered width is simply what the content needs, either direction. `className` carries over so
+ * A clone in a throwaway `table-layout: auto` table sidesteps both. It is off-screen,
+ * `visibility: hidden`, and batched: every clone is built and attached in one pass, then read in
+ * one forced layout for the whole column instead of one per cell. Its rendered width is simply what
+ * the content needs, either direction. `className` carries over so
  * ancestor selectors like `.sk-table :is(th, td)` still match, and the resizer handle itself is
- * stripped first — `cloneNode(true)` would otherwise duplicate that `position: absolute` child too.
+ * stripped first: `cloneNode(true)` would otherwise duplicate that `position: absolute` child too.
  */
 function measureColumnContentWidth(table: HTMLTableElement, columnIndex: number, min: number): number {
   const cells = Array.from(table.querySelectorAll<HTMLTableRowElement>(":scope > * > tr"))
@@ -200,24 +200,24 @@ export function Table({
     const colCount = readHeadColumnCount(children);
     if (colCount < 2) return; // nothing to resize with fewer than two columns
     /*
-     * Measure the SCROLL WRAPPER, not the table itself — see `treegrid.tsx`'s identical effect for
+     * Measure the SCROLL WRAPPER, not the table itself; see `treegrid.tsx`'s identical effect for
      * the full reasoning: at this exact moment no colgroup exists yet, so `table-layout: fixed` has
      * no column widths to size against and the table reports its own unconstrained CONTENT width.
      *
      * NOT a one-shot read, though: a table can mount while its own ancestor is `display: none`
-     * (measured live — a docs preview panel not yet the selected binding tab reads 0 the whole time
+     * (measured live. A docs preview panel not yet the selected binding tab reads 0 the whole time
      * it stays hidden, exactly like a closed accordion or an inactive tab panel would), and 0 ÷
      * colCount seeds every column at the min floor, permanently. `ResizeObserver` keeps watching
      * until the FIRST real, nonzero width arrives, seeds from it, and disconnects.
      */
     const measured = table.parentElement instanceof HTMLElement ? table.parentElement : table;
-    // `columnWeights`, falling back to an equal split — `resolveWeightedColumnWidths`'s own doc
+    // `columnWeights`, falling back to an equal split: `resolveWeightedColumnWidths`'s own doc
     // (`@skryensya/core/splitter`) explains why an equal split is not always the right seed.
     const weights = columnWeights ?? Array.from({ length: colCount }, () => 1);
     /*
      * CSS's separated-border table model (`border-collapse: separate`, what `.sk-table` uses)
      * paints a table's own border OUTSIDE the width its `width` property/`<col>` sum describes,
-     * regardless of `box-sizing` — confirmed against a real render, not assumed: seeding straight
+     * regardless of `box-sizing`. Confirmed against a real render, not assumed: seeding straight
      * off the wrapper's width rendered the table 2px wider than the wrapper itself (one border
      * width per side), a permanent horizontal scrollbar a resizable table should never carry.
      * Verbatim port of the vanilla enhancer's identical `borderWidth` read (`components/table.ts`).
@@ -226,11 +226,11 @@ export function Table({
       const style = getComputedStyle(table);
       // `|| 0`, not a bare `parseFloat`: an environment with no real stylesheet cascade (this
       // component's own test suite) reports `borderLeftWidth` as `""`, and `parseFloat("")` is
-      // `NaN` — left unguarded, that `NaN` propagates through every width this effect computes.
+      // `NaN`. Left unguarded, that `NaN` propagates through every width this effect computes.
       return (Number.parseFloat(style.borderLeftWidth) || 0) + (Number.parseFloat(style.borderRightWidth) || 0);
     })();
 
-    // Guards against a callback already in flight the instant `disconnect()` is called — a real
+    // Guards against a callback already in flight the instant `disconnect()` is called. A real
     // race, not a hypothetical one, since `ResizeObserver` batches and delivers on the next frame.
     let seeded = false;
     const seedFrom = (rawWidth: number): boolean => {
@@ -240,7 +240,7 @@ export function Table({
       const seeds = resolveWeightedColumnWidths({ total: width, weights, min: MIN_COLUMN_WIDTH });
       setColumnWidths(seeds);
       /*
-       * An explicit pixel WIDTH on the table itself — see `treegrid.tsx`'s identical write for why
+       * An explicit pixel WIDTH on the table itself; see `treegrid.tsx`'s identical write for why
        * `table-layout: fixed` sized `auto`/`100%` is not safe: Chromium's real redistribution
        * algorithm hands any surplus to whichever columns have the most unbreakable `nowrap` content
        * rather than leaving every column at its authored width.
@@ -261,7 +261,7 @@ export function Table({
 
   /*
    * `--sk-splitter-block-size` (the splitter pattern's own opt-in hook, `patterns/splitter.css`),
-   * kept matched to the table's own rendered height for as long as `resizableColumns` stays on —
+   * kept matched to the table's own rendered height for as long as `resizableColumns` stays on -
    * verbatim port of `@skryensya/vanilla/splitter`'s `watchSplitterExtent`. Unlike the width effect
    * above, this never disconnects on its own: resizing a column can change how many lines a cell
    * WRAPS to, which changes the table's own height mid-gesture, so the column line every
@@ -275,7 +275,7 @@ export function Table({
       /*
        * A `<caption>` renders OUTSIDE the table's own grid (`table.css`'s own note) but still
        * inside the `<table>` element's own rendered box, so the table's own full height over-counts
-       * by the caption's — the resizer itself starts at the header row (it lives inside a `<th>`),
+       * by the caption's. The resizer itself starts at the header row (it lives inside a `<th>`),
        * not the caption above it. Measured from the first row down instead, matching the vanilla
        * enhancer's identical `watchSplitterExtent` call verbatim (`@skryensya/vanilla/splitter`).
        */
@@ -327,7 +327,7 @@ export function TableHead({ children, className, ...props }: TableHeadProps) {
   /*
    * `TableRow` is shared by `TableHead`/`TableBody`/`TableFooter` (a row-header pattern authors
    * `TableHeader` inside a BODY row too), so a resizer can only ever belong to a row that is
-   * actually in the head — marked here, the one place that already knows which rows those are,
+   * actually in the head. Marked here, the one place that already knows which rows those are,
    * the same reasoning `TreegridRow`'s own column injection documents.
    */
   const headRows = Children.map(children, (child) =>
@@ -358,14 +358,14 @@ export function TableBody({ children, className, ...props }: TableBodyProps) {
   );
 }
 
-/** `__isHeadRow` is injected by the parent `TableHead`, see the comment there — never author-set. */
+/** `__isHeadRow` is injected by the parent `TableHead`, see the comment there: never author-set. */
 type InjectedTableRowProps = TableRowProps & { __isHeadRow?: boolean };
 
 export function TableRow(publicProps: TableRowProps) {
   const { children, className, __isHeadRow, ...props } = publicProps as InjectedTableRowProps;
   const columnCount = Children.count(children);
   /*
-   * Only a HEAD row's `TableHeader` children get a column index — a row-header inside `TableBody`
+   * Only a HEAD row's `TableHeader` children get a column index. A row-header inside `TableBody`
    * (`<TableHeader scope="row">`) stays exactly as authored, so it never grows a resizer of its own.
    */
   const cells = __isHeadRow
@@ -383,7 +383,7 @@ export function TableRow(publicProps: TableRowProps) {
 }
 
 /** `columnIndex`/`columnCount` are injected by the parent `TableRow` ONLY for a head row, see the
- * comment there — never author-set. */
+ * comment there: never author-set. */
 type InjectedTableHeaderProps = TableHeaderProps & { columnIndex?: number; columnCount?: number };
 
 export function TableHeader(publicProps: TableHeaderProps) {
@@ -391,7 +391,7 @@ export function TableHeader(publicProps: TableHeaderProps) {
     publicProps as InjectedTableHeaderProps;
   const context = useContext(TableContext);
   const headerRef = useRef<HTMLTableCellElement>(null);
-  // Never the LAST column — see `resolveColumnResize`'s own doc: a handle there would have no next
+  // Never the LAST column; see `resolveColumnResize`'s own doc: a handle there would have no next
   // neighbor to redistribute width with.
   const resizable =
     Boolean(context?.resizableColumns) && columnIndex !== undefined && columnCount !== undefined && columnIndex < columnCount - 1;
@@ -404,10 +404,10 @@ export function TableHeader(publicProps: TableHeaderProps) {
 }
 
 /**
- * The drag edge for one column boundary — never authored, `TableHeader` renders one when
+ * The drag edge for one column boundary: never authored, `TableHeader` renders one when
  * `resizableColumns` is on, this header is inside the head row, and it is not the last column.
  * Identical shape to Treegrid's own `TreegridColumnResizer`: same shared primitive
- * (`@skryensya/core/splitter`), same press-vs-drag threshold, RTL sign, keyboard mapping — the two
+ * (`@skryensya/core/splitter`), same press-vs-drag threshold, RTL sign, keyboard mapping. The two
  * differ only in WHERE the width pair lives (this reads/writes `Table`'s own context instead of
  * Treegrid's).
  */
@@ -436,7 +436,7 @@ function TableColumnResizer({
     context.setColumnWidths(resolveColumnResize({ widths: context.columnWidths, index: columnIndex, delta, min: MIN_COLUMN_WIDTH }));
   };
 
-  // Fits the column to its own content — the spreadsheet double-click convention, distinct from
+  // Fits the column to its own content. The spreadsheet double-click convention, distinct from
   // Treegrid's own even-split reset (see `measureColumnContentWidth`'s own doc, above).
   const reset = () => {
     const table = context.tableRef.current;

@@ -10,7 +10,7 @@ entries:
     es:
       title: BadgeDot exige un label y autoría role="status"
       body: >-
-        <code>BadgeDot</code> no tiene contenido visible propio — sin nombre accesible, un lector de
+        <code>BadgeDot</code> no tiene contenido visible propio: sin nombre accesible, un lector de
         pantalla no anuncia nada de lo que el punto comunica (no leído, en línea). Cada uso real ya
         pasaba <code>aria-label</code>/<code>role="status"</code> por fuera del contrato, a mano; ahora
         <code>label</code> es una opción real y <b>obligatoria</b>, y <code>role="status"</code> se
@@ -19,7 +19,7 @@ entries:
     en:
       title: BadgeDot now requires a label and authors role="status"
       body: >-
-        <code>BadgeDot</code> has no visible content of its own — without an accessible name, a screen
+        <code>BadgeDot</code> has no visible content of its own: without an accessible name, a screen
         reader announces nothing of what the dot communicates (unread, online). Every real usage was
         already passing <code>aria-label</code>/<code>role="status"</code> outside the contract, by
         hand; <code>label</code> is now a real, <b>required</b> option, and <code>role="status"</code>

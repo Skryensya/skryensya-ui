@@ -29,7 +29,7 @@ function Fixture({ onActivate, onExpandedChange }: {
       <TreegridBody>
         <TreegridRow value="inbox" level={1} setSize={3} posInset={1} expanded>
           <TreegridCell>Inbox</TreegridCell>
-          <TreegridCell>—</TreegridCell>
+          <TreegridCell>-</TreegridCell>
         </TreegridRow>
         <TreegridRow value="alice" level={2} setSize={2} posInset={1}>
           <TreegridCell>Reunión</TreegridCell>
@@ -41,7 +41,7 @@ function Fixture({ onActivate, onExpandedChange }: {
         </TreegridRow>
         <TreegridRow value="drafts" level={1} setSize={3} posInset={2} expanded={false}>
           <TreegridCell>Drafts</TreegridCell>
-          <TreegridCell>—</TreegridCell>
+          <TreegridCell>-</TreegridCell>
         </TreegridRow>
         <TreegridRow value="untitled" level={2} setSize={1} posInset={1}>
           <TreegridCell>Sin título</TreegridCell>
@@ -49,7 +49,7 @@ function Fixture({ onActivate, onExpandedChange }: {
         </TreegridRow>
         <TreegridRow value="sent" level={1} setSize={3} posInset={3}>
           <TreegridCell>Sent</TreegridCell>
-          <TreegridCell>—</TreegridCell>
+          <TreegridCell>-</TreegridCell>
         </TreegridRow>
       </TreegridBody>
     </Treegrid>
@@ -77,7 +77,7 @@ describe("Treegrid React contracts", () => {
     expect(row(ui, "untitled").hidden).toBe(true);
   });
 
-  it("gives exactly one row a tab stop initially — the first row", () => {
+  it("gives exactly one row a tab stop initially. The first row", () => {
     const ui = render(<Fixture />);
     const rows = ui.container.querySelectorAll<HTMLTableRowElement>("[role='row']");
     const stops = Array.from(rows).filter((element) => element.tabIndex === 0);
@@ -143,7 +143,7 @@ describe("Treegrid React contracts", () => {
     });
   });
 
-  it("never puts `sk-interactive` on the <tr> itself — its state layer breaks table column alignment", () => {
+  it("never puts `sk-interactive` on the <tr> itself. Its state layer breaks table column alignment", () => {
     const ui = render(<Fixture />);
     expect(row(ui, "inbox").classList.contains("sk-interactive")).toBe(false);
   });
@@ -174,7 +174,7 @@ describe("Treegrid React contracts", () => {
   });
 });
 
-/** Three columns, so "no resizer after the LAST column" is distinguishable from "no resizer at all" —
+/** Three columns, so "no resizer after the LAST column" is distinguishable from "no resizer at all" -
  * same shape as the vanilla suite's own `resizableMarkup`. */
 function ResizableFixture() {
   return (
@@ -189,7 +189,7 @@ function ResizableFixture() {
       <TreegridBody>
         <TreegridRow value="inbox" level={1} setSize={1} posInset={1}>
           <TreegridCell>Inbox</TreegridCell>
-          <TreegridCell>—</TreegridCell>
+          <TreegridCell>-</TreegridCell>
           <TreegridCell>Hoy</TreegridCell>
         </TreegridRow>
       </TreegridBody>
@@ -204,9 +204,9 @@ describe("Treegrid column resize", () => {
 
   /*
    * jsdom lays nothing out (`getBoundingClientRect` is always 0,0,0,0), so the mount-time seed
-   * (`measured width ÷ colCount`) would clamp every column straight to `MIN_COLUMN_WIDTH` — a real,
+   * (`measured width ÷ colCount`) would clamp every column straight to `MIN_COLUMN_WIDTH`. A real,
    * but degenerate, 0-length travel range that cannot demonstrate a resize at all. The component
-   * measures its OWN PARENT (the scroll wrapper's width, not the table's own — see `Treegrid`'s own
+   * measures its OWN PARENT (the scroll wrapper's width, not the table's own; see `Treegrid`'s own
    * comment on why), so the stub is on the generic `Element` prototype, not a table-specific one:
    * this fixture renders unwrapped (no `TreegridScroll`), so what gets measured is RTL's own
    * container div, not a `<table>`.
@@ -218,7 +218,7 @@ describe("Treegrid column resize", () => {
     return () => spy.mockRestore();
   };
 
-  it("renders one resizer per column boundary — never after the last column", () => {
+  it("renders one resizer per column boundary: never after the last column", () => {
     const restore = stubTableWidth(600);
     const ui = render(<ResizableFixture />);
     const handles = resizers(ui.container);

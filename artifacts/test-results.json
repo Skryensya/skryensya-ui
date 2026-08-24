@@ -245,7 +245,7 @@
       "renders the native table structure with every stable part class": "passed",
       "defaults headers to columns while preserving explicit row scope": "passed",
       "never renders a column resizer unless `resizableColumns` is on": "passed",
-      "renders one resizer per column boundary — never after the last column, never on a body row-header": "passed",
+      "renders one resizer per column boundary: never after the last column, never on a body row-header": "passed",
       "names each resizer from the shared label plus its OWN column header": "passed",
       "Left/Right resize by a step, Shift+Left/Right by the coarse step": "passed",
       "Home/End jump to the resized pair's min/max extent, total conserved": "passed",
@@ -266,7 +266,8 @@
     "packages/react/src/components/tag.test.tsx": {
       "carries its tone and label": "passed",
       "exposes a named remove control only when onRemove is given": "passed",
-      "removes with a real small icon-only button, not a lookalike": "passed"
+      "removes with a real small icon-only button, not a lookalike": "passed",
+      "renders a navigable tag as a link and never as dismissible": "passed"
     },
     "packages/core/src/theme-toggle.test.ts": {
       "walks system → light → dark → system": "passed",
@@ -346,13 +347,13 @@
       "resyncs its own segments when something ELSE sets data-value after mount": "passed",
       "clears itself when data-value is set to something unparseable": "passed",
       "paints the picker trigger INSIDE the control, one bordered box, after the clear button": "passed",
-      "anchors the picker's own listbox to the CONTROL, not the trigger — so it opens the field's own width, not the icon's": "passed",
+      "anchors the picker's own listbox to the CONTROL, not the trigger, so it opens the field's own width, not the icon's": "passed",
       "lists one option per step across the whole day, formatted in the field's own hour cycle": "passed",
-      "defaults to a 30-minute step when none is given — 48 rows, not 1440": "passed",
+      "defaults to a 30-minute step when none is given. 48 rows, not 1440": "passed",
       "picking an option feeds the chosen time into the segmented input": "passed",
       "opens the picker with Alt+ArrowDown from any segment, leaving plain ArrowDown alone": "passed",
-      "leaves the picker closed on a plain ArrowDown — that key is the segment's own": "passed",
-      "omits the picker trigger entirely while disabled or read-only — nothing to browse to": "passed",
+      "leaves the picker closed on a plain ArrowDown. That key is the segment's own": "passed",
+      "omits the picker trigger entirely while disabled or read-only: nothing to browse to": "passed",
       "describes itself with an authored hint and marks required segments": "passed"
     },
     "packages/react/src/components/dialog.test.tsx": {
@@ -464,7 +465,7 @@
     },
     "packages/vanilla/src/components/treegrid.test.ts": {
       "mounts once and hides the collapsed branch's descendant on connect": "passed",
-      "gives exactly one row a tab stop on mount — the first visible row": "passed",
+      "gives exactly one row a tab stop on mount. The first visible row": "passed",
       "Right Arrow on a collapsed branch's row expands it and reveals its child, without moving focus": "passed",
       "Left Arrow on an expanded branch's row collapses it and hides its child, after its exit animation settles": "passed",
       "Right Arrow on an already-expanded row enters its first cell; Left Arrow returns to the row": "passed",
@@ -473,11 +474,11 @@
       "clicking a branch's first cell toggles it and moves focus to the row": "passed",
       "clicking a non-first cell just moves focus there, without toggling": "passed",
       "Home/End (row focus) jump to the first/last VISIBLE row": "passed",
-      "never puts `sk-interactive` on the <tr> itself — its state layer breaks table column alignment": "passed",
+      "never puts `sk-interactive` on the <tr> itself. Its state layer breaks table column alignment": "passed",
       "inserts a decorative disclosure button into a branch row's first cell, never a leaf's": "passed",
       "clicking the disclosure button itself toggles the row, same as clicking the cell": "passed",
       "never inserts a column resizer unless `data-resizable-columns` is authored": "passed",
-      "inserts one resizer per column boundary — never after the last column": "passed",
+      "inserts one resizer per column boundary: never after the last column": "passed",
       "names each resizer from the shared label plus its OWN column header": "passed",
       "a press that never travels resizes nothing": "passed",
       "dragging redistributes width between exactly the resized pair, total conserved": "passed",
@@ -490,18 +491,18 @@
     "packages/react/src/components/treegrid.test.tsx": {
       "names the grid, sets role=treegrid, and reads each row's authored hierarchy attributes": "passed",
       "honors each row's own initial `expanded`, and hides only a collapsed branch's descendant": "passed",
-      "gives exactly one row a tab stop initially — the first row": "passed",
+      "gives exactly one row a tab stop initially. The first row": "passed",
       "Right Arrow on a collapsed branch expands it and reveals the child, without moving focus": "passed",
       "Left Arrow on an expanded branch collapses it and hides its children": "passed",
       "Down Arrow from a collapsed branch's row skips its hidden child entirely": "passed",
       "Enter activates a focused leaf row": "passed",
       "clicking a branch's first cell toggles it and reports the row's own value": "passed",
       "clicking a non-first cell just moves focus, without toggling": "passed",
-      "never puts `sk-interactive` on the <tr> itself — its state layer breaks table column alignment": "passed",
+      "never puts `sk-interactive` on the <tr> itself. Its state layer breaks table column alignment": "passed",
       "renders a decorative disclosure button in a branch row's first cell, never a leaf's": "passed",
       "clicking the disclosure button itself toggles the row, same as clicking the cell": "passed",
       "never renders a column resizer unless `resizableColumns` is on": "passed",
-      "renders one resizer per column boundary — never after the last column": "passed",
+      "renders one resizer per column boundary: never after the last column": "passed",
       "names each resizer from the shared label plus its OWN column header": "passed",
       "Left/Right resize by a step, Shift+Left/Right by the coarse step": "passed",
       "Home/End jump to the resized pair's min/max extent, total conserved": "passed",
@@ -519,19 +520,19 @@
     },
     "packages/react/src/components/toolbar.test.tsx": {
       "sets role and aria-orientation": "passed",
-      "forwards arbitrary attrs to the root, same as ToolbarGroup already did — vanilla always had this via the emitted template": "passed",
+      "forwards arbitrary attrs to the root, same as ToolbarGroup already did. Vanilla always had this via the emitted template": "passed",
       "Right/Left move between controls, skipping a NATIVELY disabled one": "passed",
       "loops by default from the last control back to the first": "passed",
       "does not loop when loopFocus is false": "passed",
       "Home/End jump to the first/last control": "passed",
-      "treats a nested composite (radiogroup) as a SINGLE stop — the bug this session found and fixed": "passed",
-      "defers to a composite child that already handled the key itself (defaultPrevented) — the other half of the bug": "passed"
+      "treats a nested composite (radiogroup) as a SINGLE stop. The bug this session found and fixed": "passed",
+      "defers to a composite child that already handled the key itself (defaultPrevented). The other half of the bug": "passed"
     },
     "packages/vanilla/src/components/slider-range.test.ts": {
       "bounds each thumb's max/min at the other's CURRENT value on mount": "passed",
       "paints the fill bar's start/end fractions from each thumb's value": "passed",
       "re-narrows the OTHER thumb's bound after a real drag, without losing the true range ends": "passed",
-      "never lets one thumb's value exceed the other — native min/max clamps a direct value write past the bound": "passed"
+      "never lets one thumb's value exceed the other. Native min/max clamps a direct value write past the bound": "passed"
     },
     "packages/react/src/components/slider-range.test.tsx": {
       "names each thumb distinctly and starts at the authored defaults": "passed",
@@ -547,7 +548,7 @@
       "paints no value text when valueText is omitted, unlike the label": "passed"
     },
     "packages/vanilla/src/components/data-grid.test.ts": {
-      "gives exactly one unit a tab stop on mount — the first cell": "passed",
+      "gives exactly one unit a tab stop on mount. The first cell": "passed",
       "hands the roving stop to a cell's OWN interactive descendant, not the cell div around it": "passed",
       "Down Arrow clamps into a shorter row's last real cell (ragged grid)": "passed",
       "does not wrap past the grid's edges by default": "passed",
@@ -569,7 +570,7 @@
       "preserves an authored id instead of generating a second one": "passed",
       "toggles aria-expanded and the list's hidden state on click": "passed",
       "starts hidden when authored with aria-expanded=false": "passed",
-      "Enter/Space toggle it — native <button> behavior, nothing this enhancer has to wire itself": "passed",
+      "Enter/Space toggle it. Native <button> behavior, nothing this enhancer has to wire itself": "passed",
       "Escape closes the open dropdown from anywhere inside it and returns focus to the trigger": "passed",
       "Escape does nothing when the dropdown is already closed": "passed",
       "wires a NavListLink's own nested group independently of its parent group": "passed"
@@ -581,13 +582,13 @@
     },
     "packages/core/src/menubar.test.ts": {
       "moves one item at a time and wraps at both ends": "passed",
-      "keeps the NEXT item's dropdown open when the current one was open — the detail a plain roving tabindex misses": "passed",
+      "keeps the NEXT item's dropdown open when the current one was open. The detail a plain roving tabindex misses": "passed",
       "Down Arrow on a closed dropdown trigger opens it, focusing the FIRST item": "passed",
       "Up Arrow on a closed dropdown trigger opens it, focusing the LAST item": "passed",
       "Down/Up on a LEAF item (no dropdown) do nothing": "passed",
       "Down/Up move within an OPEN dropdown, wrapping at both ends": "passed",
       "opens a closed dropdown trigger, focusing the first item": "passed",
-      "does nothing on a leaf item or an already-open dropdown item — native click/Enter handles activation": "passed",
+      "does nothing on a leaf item or an already-open dropdown item. Native click/Enter handles activation": "passed",
       "closes an open dropdown; does nothing when already closed": "passed",
       "jump to the first/last TOP-LEVEL item when no dropdown is open": "passed",
       "jump to the first/last item WITHIN an open dropdown instead": "passed",
@@ -692,7 +693,7 @@
     "packages/vanilla/src/components/megamenu.test.ts": {
       "collapses the N authored positioners into one shared panel, sized by a hidden ruler": "passed",
       "clicking a trigger opens its panel with that trigger's own columns": "passed",
-      "clicking the SAME trigger again closes it — a toggle": "passed",
+      "clicking the SAME trigger again closes it. A toggle": "passed",
       "clicking a DIFFERENT trigger switches the shared panel's content, exclusively": "passed",
       "opens on hover intent after its delay, not immediately": "passed",
       "cancels the open-intent timer when the pointer leaves before the delay elapses": "passed",
@@ -706,7 +707,7 @@
     "packages/react/src/components/megamenu.test.tsx": {
       "renders one shared panel, sized by a hidden ruler holding every trigger's columns": "passed",
       "clicking a trigger opens its panel with that trigger's own columns": "passed",
-      "clicking the SAME trigger again closes it — a toggle": "passed",
+      "clicking the SAME trigger again closes it. A toggle": "passed",
       "clicking a DIFFERENT trigger switches the shared panel's content, exclusively": "passed",
       "opens on hover intent after its delay, not immediately": "passed",
       "cancels the open-intent timer when the pointer leaves before the delay elapses": "passed",

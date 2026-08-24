@@ -5,7 +5,7 @@ import type { Translate } from "../../i18n";
  * THE NODE MODELS EVERY TREEVIEW DEMO BROWSES.
  *
  * Five demos, three shapes: the tree is the data and the compositions differ only in what they
- * declare ABOUT it — which nodes start expanded, whether selection is multiple, which icons stand
+ * declare ABOUT it, which nodes start expanded, whether selection is multiple, which icons stand
  * beside a branch. Keeping the nodes here is what lets `tree-view.ts` say that in three lines each.
  */
 

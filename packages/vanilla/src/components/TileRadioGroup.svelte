@@ -30,7 +30,7 @@
         label,
         input,
         // The machine names these too, and leaving them unpatched left the option's text with no id
-        // for its own label to point at — invisible on screen, missing in the accessibility tree.
+        // for its own label to point at. Invisible on screen, missing in the accessibility tree.
         text: label.querySelector<HTMLElement>('[data-part="content"]'),
         control: label.querySelector<HTMLElement>('[data-part="indicator"]'),
       };
@@ -68,7 +68,7 @@
       item.input.checked = api.value === item.value;
       // The machine's part names are the radio group's (`item-text`, `item-control`); the tile's
       // vocabulary is `content` and `indicator`, and the CSS reads the tile's. Restored after the
-      // patch, exactly as `data-scope` is — React does the same by writing them after the spread.
+      // patch, exactly as `data-scope` is. React does the same by writing them after the spread.
       if (item.text) {
         applyZagProps(item.text, api.getItemTextProps(props) as DomProps);
         item.text.setAttribute("data-part", "content");

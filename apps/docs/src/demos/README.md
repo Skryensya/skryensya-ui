@@ -24,7 +24,7 @@ only be an identity entry that can rot.
 A demo with no words at all is exported as a plain constant rather than a factory. See `kbd.ts`.
 Nothing to translate, nothing to parameterise.
 
-## `data/` — the entries, not the composition
+## `data/`: the entries, not the composition
 
 A collection slot (`items`, `nodes`, `options`) is **data**, and it lives in `data/<component>.ts`:
 
@@ -43,8 +43,8 @@ export const menuTree = (t: Translate): UsageTree => ({
 
 Fifteen entries inline said almost nothing about the composition they were buried in, which is the
 subject of the page. Split, a tree is one screenful and the list stays a list. It is also what the
-emitter does on the React side — `emitReactSource` writes `menu-items.ts` beside the component and
-the docs page shows it as its own tab — so the demo source and the snippet a reader copies are
+emitter does on the React side: `emitReactSource` writes `menu-items.ts` beside the component and
+the docs page shows it as its own tab, so the demo source and the snippet a reader copies are
 organised the same way.
 
 The playground globs `../demos/*.ts`, one level only, so nothing in `data/` is mistaken for a demo.

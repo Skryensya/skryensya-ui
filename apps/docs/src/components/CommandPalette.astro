@@ -6,7 +6,7 @@
  * openers point at it with `aria-controls`, the JSON index is named by
  * `data-sk-command-palette-index`, and the ⌘K binding is opt-in per instance. That is what lets the
  * site carry more than one: the chrome's palette searches the whole documentation, while the
- * component catalogue's search box opens a palette whose index is only the components — a reader who
+ * component catalogue's search box opens a palette whose index is only the components. A reader who
  * came to that page to find a component is not looking for an ADR.
  *
  * The hotkey stays with the chrome instance. A page-scoped palette is reached from its own button;
@@ -54,7 +54,7 @@ const listId = `${id}-list`;
     <Fragment set:html={searchIcon} />
     {/*
       `aria-expanded` starts false: the listbox is empty until the enhancer fills it on open, and the
-      enhancer is what flips the state. The contract makes the same point — a combobox that claims an
+      enhancer is what flips the state. The contract makes the same point. A combobox that claims an
       expanded popup over an empty list is what axe reports and what a screen reader would act on.
     */}
     <input

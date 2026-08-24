@@ -136,7 +136,7 @@ export const contrastHigh: IconData = {
  * conmutador de idioma es chrome de un sitio TRADUCIDO, no vocabulario del sistema, así que entra
  * por acá en vez de obligar a los tres sets publicados a dibujarlo, igual que play/pause abajo.
  *
- * Un globo con meridiano y ecuador, no una bandera: una bandera es un país y esto son idiomas —
+ * Un globo con meridiano y ecuador, no una bandera: una bandera es un país y esto son idiomas -
  * la misma razón por la que el control anterior mostraba el código y no una bandera.
  */
 export const language: IconData = {

@@ -6,8 +6,8 @@
      * Every file is a module, imports or not. `src/demos/scripts/*.ts` are standalone browser
      * scripts with nothing to import, and without this TypeScript reads them as GLOBAL scripts: four
      * of them declare `const trigger`, which is four redeclarations of one global rather than four
-     * files that each happen to use the name (16 errors, measured). They run in their own scope —
-     * the frame calls each through `Function` — so module is also what they actually are.
+     * files that each happen to use the name (16 errors, measured). They run in their own scope -
+     * the frame calls each through `Function`, so module is also what they actually are.
      */
     "moduleDetection": "force",
     /*

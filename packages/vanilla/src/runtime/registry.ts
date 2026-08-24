@@ -149,7 +149,7 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/treegrid.js")).mountTreegrid,
   },
   {
-    // Scoped to the option's own attribute, not a `data-sk-table` marker every table would carry —
+    // Scoped to the option's own attribute, not a `data-sk-table` marker every table would carry -
     // see `components/table.ts`'s own banner comment for why. `:not([data-sk-treegrid])` matters: a
     // resizable Treegrid is ALSO a `.sk-table` with `data-resizable-columns` (Treegrid's `also:
     // ["sk-table"]`), and without this both selectors would match it and mount it twice.

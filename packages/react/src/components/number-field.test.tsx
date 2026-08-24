@@ -4,7 +4,7 @@ import { NumberField } from "./number-field.js";
 
 /*
  * `@zag-js/number-input`'s triggers are a press-and-hold spinner (`onPointerDown`/`onPointerUp`/
- * `onPointerLeave`, no `onClick` at all — same machine the vanilla binding runs, see that binding's
+ * `onPointerLeave`, no `onClick` at all. Same machine the vanilla binding runs, see that binding's
  * own `number-field.test.ts`). `isLeftClick(event)` also requires `button: 0` explicitly, since
  * jsdom's synthetic PointerEvent leaves `button` undefined by default.
  */
@@ -82,7 +82,7 @@ describe("NumberField (React)", () => {
     fireEvent.input(input, { target: { value: "99" } });
     // The machine writes the DOM value back via its own `syncInputElement`, deferred behind a real
     // `requestAnimationFrame` (see the vanilla binding's `number-field.test.ts` for the same finding)
-    // — blurring before that settles leaves the guard reading a value the DOM hasn't caught up to
+    //. Blurring before that settles leaves the guard reading a value the DOM hasn't caught up to
     // yet, same class of issue as this file's own dismiss-timing notes for Menu.
     await waitFor(() => expect(input.getAttribute("aria-valuenow")).toBe("99"));
     fireEvent.blur(input);
@@ -100,7 +100,7 @@ describe("NumberField (React)", () => {
 
   /*
    * WAI-ARIA APG's Spinbutton pattern (see docs/aria-apg-audit.md's own "Spinbutton" row) is built
-   * around KEYBOARD interaction on the input itself — ArrowUp/ArrowDown/Home/End are the pattern's
+   * around KEYBOARD interaction on the input itself. ArrowUp/ArrowDown/Home/End are the pattern's
    * required behaviors, not an enhancement over the pointer-button pair above. Everything above this
    * only exercises the trigger buttons and blur-commit; without this, a regression that broke the
    * input's own keyboard handling (the primary way a keyboard/screen-reader user actually drives a
@@ -122,7 +122,7 @@ describe("NumberField (React)", () => {
     // The machine only wires ArrowUp/ArrowDown/Home/End inside its "focused" state (checked against
     // the installed `@zag-js/number-input` machine's own state chart), and React's own `onFocus`
     // handler commits that transition through a state update that lands one tick after the
-    // synthetic event — `data-focus` on the root is what `getRootProps()` reflects it onto, so
+    // synthetic event: `data-focus` on the root is what `getRootProps()` reflects it onto, so
     // waiting for it (rather than a fixed delay) is what makes firing the FIRST key deterministic.
     fireEvent.focus(input);
     await waitFor(() => expect(root.hasAttribute("data-focus")).toBe(true));

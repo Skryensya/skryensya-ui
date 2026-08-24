@@ -4,7 +4,7 @@ import { Popover } from "./popover.js";
 
 /*
  * The native Popover API (`showPopover`/`hidePopover`, `:popover-open`, light-dismiss) is not
- * implemented by jsdom — `"showPopover" in document.createElement("div")` is `false` here, so there
+ * implemented by jsdom: `"showPopover" in document.createElement("div")` is `false` here, so there
  * is no way to actually open/close one through jsdom the way a real browser's `popovertarget` click
  * would. This is the same constraint `dialog.test.tsx` accepts for `<dialog>`'s own native
  * `showModal()`: both suites verify the STRUCTURE and ATTRIBUTES this component hands to the
@@ -13,7 +13,7 @@ import { Popover } from "./popover.js";
  *
  * jsdom's UA stylesheet also carries the real `[popover]:not(:popover-open) { display: none }`
  * rule, so the closed content is legitimately hidden from the accessibility tree by default (the
- * same as a real closed popover) — every `getByRole`/`queryByRole` reaching INTO it below passes
+ * same as a real closed popover). Every `getByRole`/`queryByRole` reaching INTO it below passes
  * `{ hidden: true }` for exactly that reason, not to work around a test issue.
  */
 describe("Popover (React)", () => {
@@ -39,7 +39,7 @@ describe("Popover (React)", () => {
   });
 
   /*
-   * `popover="auto"` grants no implicit accessible name the way `<dialog>` at least tries to —
+   * `popover="auto"` grants no implicit accessible name the way `<dialog>` at least tries to -
    * same gap `Dialog` closes for its own title/body (`dialog.tsx`). Without this, a screen reader
    * focusing or announcing the popover gets nothing from its own heading.
    */

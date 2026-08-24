@@ -24,7 +24,7 @@ function plainMarkup() {
   return document.querySelector<HTMLElement>(".sk-table")!;
 }
 
-/** A treegrid is ALSO a `.sk-table` (Treegrid's own `also: ["sk-table"]`) — this markup exists only
+/** A treegrid is ALSO a `.sk-table` (Treegrid's own `also: ["sk-table"]`). This markup exists only
  * to prove `mountTable`'s own selector excludes it, never to exercise treegrid behaviour. */
 function treegridLookalikeMarkup() {
   document.body.innerHTML = `<table class="sk-treegrid sk-table" data-sk-treegrid data-resizable-columns data-resize-label="x" role="treegrid" aria-label="x">
@@ -78,7 +78,7 @@ describe("Table vanilla enhancer", () => {
   it("Left/Right resize by a step, Shift+Left/Right by the coarse step", () => {
     resizableMarkup();
     mountTable(document);
-    // jsdom has no layout, so the seed clamps to the min floor on every column — widen first so
+    // jsdom has no layout, so the seed clamps to the min floor on every column. Widen first so
     // there is real room to demonstrate a resize (same trick `treegrid.test.ts`'s own suite uses).
     for (const col of cols()) col.style.width = "200px";
     const handle = resizers()[0]!;
@@ -104,7 +104,7 @@ describe("Table vanilla enhancer", () => {
     expect(Number.parseFloat(cols()[0]!.style.width)).toBeCloseTo(60);
   });
 
-  it("is idempotent — re-mounting does not duplicate the colgroup or the resizers", () => {
+  it("is idempotent. Re-mounting does not duplicate the colgroup or the resizers", () => {
     resizableMarkup();
     expect(mountTable(document)).toBe(1);
     expect(mountTable(document)).toBe(0);
@@ -117,7 +117,7 @@ describe("Table vanilla enhancer", () => {
     mountTable(document);
     for (const col of cols()) col.style.width = "200px";
     // `measureColumnContentWidth` measures a detached CLONE, never the real cell (its own suite
-    // covers that in full) — this stub answers by text content, the one thing a clone still
+    // covers that in full). This stub answers by text content, the one thing a clone still
     // carries faithfully, so "Nombre" (header) and "index.ts" (body) both resolve to 130 here.
     const spy = vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function (this: Element) {
       const width = this.textContent === "Nombre" || this.textContent === "index.ts" ? 130 : 0;
@@ -127,7 +127,7 @@ describe("Table vanilla enhancer", () => {
 
     fireEvent.dblClick(handle);
     expect(Number.parseFloat(cols()[0]!.style.width)).toBeCloseTo(130);
-    // The pair's total stays conserved — the neighbor absorbs exactly what column 0 gave up.
+    // The pair's total stays conserved. The neighbor absorbs exactly what column 0 gave up.
     expect(Number.parseFloat(cols()[0]!.style.width) + Number.parseFloat(cols()[1]!.style.width)).toBeCloseTo(400);
 
     fireEvent.keyDown(handle, { key: "End" });
@@ -139,13 +139,13 @@ describe("Table vanilla enhancer", () => {
   it("keeps --sk-splitter-block-size matched to the table's height measured from its first row", () => {
     const root = resizableMarkup();
     root.getBoundingClientRect = () => ({ bottom: 240, height: 240 }) as DOMRect;
-    // jsdom's own default rect (all-zero) stands in for the first row's top here — the height above
+    // jsdom's own default rect (all-zero) stands in for the first row's top here. The height above
     // is deliberately NOT what the table itself would report if it had a caption, see the next test.
     mountTable(document);
     expect(root.style.getPropertyValue("--sk-splitter-block-size")).toBe("240px");
   });
 
-  it("excludes a <caption>'s own height — the resizer starts at the header row, not the caption", () => {
+  it("excludes a <caption>'s own height. The resizer starts at the header row, not the caption", () => {
     document.body.innerHTML = `<table class="sk-table" data-resizable-columns data-resize-label="x">
       <caption>Archivos</caption>
       <thead><tr><th scope="col">Nombre</th><th scope="col">Tipo</th></tr></thead>
@@ -173,13 +173,13 @@ describe("Table vanilla enhancer", () => {
     mountTable(document);
     const total = cols().reduce((sum, col) => sum + Number.parseFloat(col.style.width), 0);
     // CSS's separated-border table model paints the table's border OUTSIDE the width its `<col>`
-    // sum describes — seeded straight off the wrapper's 402px would render 2px past it (a
+    // sum describes. Seeded straight off the wrapper's 402px would render 2px past it (a
     // permanent horizontal scrollbar); 400px leaves exactly enough room for the 1px+1px border.
     expect(total).toBeCloseTo(400);
   });
 
   it("never produces NaN widths when the environment reports no computed border at all (an empty string, not \"0px\")", () => {
-    // No inline border set here at all — `getComputedStyle(root).borderLeftWidth` reads `""` in
+    // No inline border set here at all: `getComputedStyle(root).borderLeftWidth` reads `""` in
     // this environment (no real stylesheet cascade), and `parseFloat("")` is `NaN` if unguarded.
     document.body.innerHTML = `<div class="sk-table-scroll"><table class="sk-table" data-resizable-columns data-resize-label="x">
       <thead><tr><th scope="col">A</th><th scope="col">B</th></tr></thead>

@@ -365,6 +365,15 @@ export function getStaticPaths() {
 
         const stagePane = parsed.createElement("div");
         stagePane.className = "sk-fullscreen-preview__stage-pane";
+        /*
+         * This pane is the wall behind a screened stage. Moving the stage in here took it out of
+         * reach of component-preview.css's own ":has(> …)" mat, so tablet/mobile letterboxed against
+         * flat background instead of the halftone the docs cards show. The attribute is the opt-in
+         * that file publishes for exactly this; the paint stays there, this page only places it.
+         * Set unconditionally: the mat's own ":has()" is what decides whether it draws, so there is
+         * no state to keep in sync from here.
+         */
+        stagePane.setAttribute("data-sk-component-preview-mat", "");
         stagePane.append(...stageNodes);
 
         const splitBody = parsed.createElement("div");
@@ -396,10 +405,32 @@ export function getStaticPaths() {
             layoutTabs.setAttribute("data-value", "stacked");
             layoutTabs.setAttribute("role", "radiogroup");
             layoutTabs.setAttribute("aria-label", strings.layoutGroup);
+            /*
+             * Each option is a Tooltip root, exactly as the screen presets are on the docs card
+             * (see ComponentPreview.astro's own note on that markup): the hint next to an icon-only
+             * button is the SITE's tooltip, not the browser's `title` — one visual language for the
+             * whole header, and one that shows on keyboard focus too, which `title` never does. The
+             * `.sk-tooltip` wrapper stays `display: contents` here for free: component-preview.css
+             * flattens every `.sk-tooltip` inside `.sk-component-preview__actions .sk-segmented`, so
+             * the button remains the flex item the indicator math measures.
+             */
+            const layoutOption = (
+              value: string,
+              label: string,
+              icon: string,
+              checked: boolean,
+            ) => `
+              <span class="sk-tooltip" data-sk-anchor>
+                <button class="sk-segmented__option sk-interactive sk-anchor" data-sk-segmented-option data-sk-anchor-trigger data-icon-only data-value="${value}" type="button" role="radio" aria-checked="${checked}" aria-label="${label}">${icon}</button>
+                <div class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+                  <div class="sk-tooltip__content" data-sk-anchor-content role="tooltip">${label}</div>
+                </div>
+              </span>
+            `;
             layoutTabs.innerHTML = `
               <span class="sk-segmented__indicator" aria-hidden="true"></span>
-              <button class="sk-segmented__option sk-interactive" data-sk-segmented-option data-icon-only data-value="stacked" type="button" role="radio" aria-checked="true" aria-label="${strings.layoutStacked}" title="${strings.layoutStacked}">${LAYOUT_ICON_STACKED}</button>
-              <button class="sk-segmented__option sk-interactive" data-sk-segmented-option data-icon-only data-value="side" type="button" role="radio" aria-checked="false" aria-label="${strings.layoutSide}" title="${strings.layoutSide}">${LAYOUT_ICON_SIDE}</button>
+              ${layoutOption("stacked", strings.layoutStacked, LAYOUT_ICON_STACKED, true)}
+              ${layoutOption("side", strings.layoutSide, LAYOUT_ICON_SIDE, false)}
             `;
             actions.insertBefore(layoutTabs, overflowMenu);
           }
@@ -626,8 +657,39 @@ ${styleTags}
     grid-column: 1;
     grid-row: 1;
     block-size: 100%;
-    inline-size: 100%;
     min-block-size: 0;
+  }
+  /*
+   * THE LOADER FILLS THE PANE; THE STAGE DOES NOT. This pair used to share an "inline-size: 100%",
+   * and because these rules are UNLAYERED they beat the components layer regardless of specificity —
+   * including the stage's own "inline-size: min(var(--sk-component-preview-screen-inline-size), 100%)".
+   * That is the whole width mechanism behind the screen presets, so tablet/mobile did nothing here:
+   * the enhancer still wrote "data-sk-component-preview-screen" and the custom property still
+   * resolved (measured: 390px on mobile), but the stage stayed pinned at the full 1440px pane.
+   *
+   * Dropping the declaration is the entire fix — there is nothing to re-implement. In the default
+   * ("free") state the component already resolves that same property to 100%, so the stage fills the
+   * pane exactly as before; at a preset it now narrows, and component-preview.css's own
+   * "justify-self: center" (already layered, never overridden here) centres it in the cell.
+   *
+   * NOTE, and the reason no comment in this block quotes with backticks: everything from the srcdoc
+   * template literal above down to its closing "</html>" is one JS string. A backtick here ends that
+   * string and the page stops compiling.
+   */
+  .sk-fullscreen-preview__stage-pane .sk-component-preview__loading {
+    inline-size: 100%;
+  }
+  /*
+   * The mat's placement in THIS pane's grid — the paint itself is component-preview.css's, reached
+   * through the "data-sk-component-preview-mat" opt-in on the pane. The pane is a 1x1 grid, so the
+   * wall takes the same single cell the stage and the loader already share, and being first in that
+   * cell it paints behind both. No bottom border: the card's mat closes the stage row against the
+   * source tabs under it, and here the split already draws its own divider.
+   */
+  .sk-fullscreen-preview__stage-pane::before {
+    grid-column: 1;
+    grid-row: 1;
+    border-block-end: 0;
   }
   /*
    * component-preview.css hides the loader with :has(> .sk-component-preview__stage),

@@ -21,7 +21,7 @@ import {
   type ColorMode,
   type ThemeToggleChangeDetail,
 } from "@skryensya/core/theme-toggle";
-import { setPreference } from "@skryensya/vanilla/storage";
+import { getPreference, setPreference, subscribePreference } from "@skryensya/vanilla/storage";
 import { colorModePreference } from "../lib/preferences";
 
 const rootAttr = "data-sk-theme-toggle";
@@ -89,4 +89,37 @@ export function initThemeTogglePersistence(): void {
     setPreference(colorModePreference, value);
     document.dispatchEvent(new CustomEvent("sk:dimensions-changed"));
   }) as EventListener);
+}
+
+/*
+ * Mirrors a color-mode change made in ANOTHER tab into this one. `subscribePreference` fires on the
+ * native `storage` event, so this repaints `<html data-scheme>` and every toggle instance directly
+ * rather than routing through `themeToggleEvents.change` + `initThemeTogglePersistence`, which would
+ * just write the same value back to storage it was just read from.
+ *
+ * The `storage` event alone is not enough: Chrome and Safari both defer delivering it to a
+ * BACKGROUNDED tab, so a tab you switch away from and back to can sit stale until something else
+ * repaints it. `visibilitychange`/`pageshow` (the latter for a bfcache restore, which fires no
+ * `storage` events at all while frozen) re-read storage the moment the tab becomes visible again, so
+ * switching tabs is never worse than a reload — and the `storage` listener still wins when the tab
+ * was never backgrounded, or the browser delivers it live anyway.
+ */
+export function initThemeToggleSync(): void {
+  const target = document.documentElement;
+  const applyIfChanged = (mode: ColorMode) => {
+    if (readColorMode(target) === mode) return;
+    applyColorMode(target, mode);
+    document
+      .querySelectorAll<HTMLButtonElement>(`[${rootAttr}]`)
+      .forEach((root) => paint(root, mode));
+    document.dispatchEvent(new CustomEvent("sk:dimensions-changed"));
+  };
+
+  subscribePreference(colorModePreference, applyIfChanged);
+
+  const resync = () => applyIfChanged(getPreference(colorModePreference));
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") resync();
+  });
+  window.addEventListener("pageshow", resync);
 }

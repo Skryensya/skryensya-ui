@@ -46,6 +46,11 @@ import "@skryensya/core/components/tabs.css";
 /* Anclaje: la colocación compartida por tooltip, popover, popup, menu, select, combobox y date picker
  * (decisión 25). Va antes que ellos porque son sus consumidores. */
 import "@skryensya/core/patterns/anchored.css";
+/* El menú de idioma del header (`LanguageMenu.astro`) es el único Menu del chrome, y esta hoja es
+ * opt-in: sin ella el panel no se esconde en reposo (`display: none` vive acá, no en el navegador)
+ * y aparecería desplegado bajo el header. Misma regla que dialog/drawer/sidebar arriba: una hoja
+ * opt-in se importa donde vive el markup que la usa, y este markup vive en el layout. */
+import "@skryensya/core/components/menu.css";
 import "@skryensya/core/components/tooltip.css";
 import "@skryensya/core/components/switch.css";
 import "@skryensya/core/components/table.css";
@@ -76,7 +81,19 @@ import "@skryensya/core/patterns/icon-toggle.css";
 import "../styles/site.css";
 import "../styles/shell.scss";
 
-import LanguageToggle from "../components/LanguageToggle.astro";
+/*
+ * The "Focus order" badge rule, rendered into the head below — see the comment at its `<style>` for
+ * why this is imported rather than re-typed.
+ *
+ * A RELATIVE PATH into the package, not `@skryensya/devtools/focus-order`. Reaching the module
+ * directly skips the exports map, which is the same move `devtools`' own `panel.ts` already makes to
+ * read `core`'s CSS files, and it keeps this import off the package's public surface: nothing here
+ * is asking devtools to publish a second entry point, only to read one file. `focus-order.ts` imports
+ * nothing itself, so this pulls in a string and no graph.
+ */
+import { FOCUS_ORDER_CSS } from "../../../../packages/devtools/src/focus-order";
+import LanguageMenu from "../components/LanguageMenu.astro";
+import CommandPalette from "../components/CommandPalette.astro";
 import ContrastToggle from "../components/ContrastToggle.astro";
 import SidebarNav from "../components/SidebarNav.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
@@ -87,6 +104,7 @@ import VanillaMount from "../components/VanillaMount.astro";
 import { vanillaMounts } from "../lib/vanilla-mounts";
 import { allSets, iconMarkup, siteIconSet } from "../icons";
 import { getGlobalNavigation, getNavigation, type NavigationSection } from "../lib/navigation";
+import { palettePresets } from "../lib/palette-presets";
 import { availableLocales, canonicalPath, getLocale, localizePath, useTranslations } from "../i18n";
 import { skipLinkParts } from "@skryensya/core/skip-link";
 import { STORAGE_KEY } from "@skryensya/core/storage";
@@ -111,6 +129,17 @@ const PREPAINT = {
   screen: componentPreviewScreenPreference.slot,
   palette: palettePreference.slot,
 };
+
+/*
+ * DEV ONLY. `@skryensya/devtools`'s "Components mounted" readout reads this global — see the
+ * `initComponents()` call near the end of `<body>` for where it is written, and that script's own
+ * comment for why a global rather than a DOM attribute.
+ */
+declare global {
+  interface Window {
+    __skDevtoolsComponentCount?: number;
+  }
+}
 
 interface Props {
   title: string;
@@ -296,39 +325,10 @@ const previousIcon = iconMarkup("arrow-left");
 const nextIcon = iconMarkup("arrow-right");
 
 /*
- * Curated accent presets. Each non-default preset carries the complete semantic accent bundle as
- * explicit CSS values. Core publishes the palettes; the docs choose which semantic tokens point at
- * which hue for the live preview.
+ * Curated accent presets — the data itself lives in lib/palette-presets so the /presets showcase
+ * gallery can render the identical set read-only, instead of hand-keeping two copies in sync.
  */
-const accentBundle = (hue: string) => ({
-  "--color-bg-accent-subtle": `light-dark(var(--palette-${hue}-50), var(--palette-${hue}-950))`,
-  "--color-text-accent": `light-dark(var(--palette-${hue}-700), var(--palette-${hue}-300))`,
-  "--color-text-link": "var(--color-text-accent)",
-  "--color-border-accent": `light-dark(var(--palette-${hue}-600), var(--palette-${hue}-500))`,
-  "--color-border-focus": `light-dark(var(--palette-${hue}-600), var(--palette-${hue}-400))`,
-  "--color-action-primary": `light-dark(var(--palette-${hue}-600), var(--palette-${hue}-500))`,
-  /* The component-page hero band (site.css's `--docs-hero-bg`, default blue) rides along with the
-   * rest of the bundle: without this key it stayed blue no matter which preset was active, since
-   * `--color-bg-accent-subtle`'s own `-50` leg reads as barely-there on a band this large (see that
-   * variable's own comment in site.css). */
-  "--docs-hero-bg": `light-dark(var(--palette-${hue}-200), var(--palette-${hue}-950))`,
-});
-const palettePreset = (id: string, name: string, accent: string, hue: string) => ({
-  id,
-  name,
-  accent,
-  tokens: accentBundle(hue),
-});
-const paletteNames = locale === "en"
-  ? { azul: "Blue", violeta: "Violet", teal: "Teal", rosa: "Pink", naranja: "Orange" }
-  : { azul: "Azul", violeta: "Violeta", teal: "Turquesa", rosa: "Rosa", naranja: "Naranja" };
-const PALETTE_PRESETS = [
-  palettePreset("azul", paletteNames.azul, "var(--palette-blue-600)", "blue"),
-  palettePreset("violeta", paletteNames.violeta, "var(--palette-violet-600)", "violet"),
-  palettePreset("teal", paletteNames.teal, "var(--palette-teal-600)", "teal"),
-  palettePreset("rosa", paletteNames.rosa, "var(--palette-pink-600)", "pink"),
-  palettePreset("naranja", paletteNames.naranja, "var(--palette-orange-600)", "orange"),
-];
+const PALETTE_PRESETS = palettePresets(locale);
 ---
 
 <!doctype html>
@@ -431,6 +431,116 @@ const PALETTE_PRESETS = [
         }
       })();
     </script>
+
+    {/*
+      * DEV ONLY, and it has to sit here in `<head>`, not with `@skryensya/devtools`'s own late,
+      * dynamically-imported mount script: a `srcdoc` `<iframe>` starts loading — and running ITS
+      * OWN `component-preview-frame.ts`, which clones this document's `<head>` stylesheets exactly
+      * ONCE, at ITS OWN boot — the moment the element is parsed, which for one already in the
+      * initial HTML can happen before ANY deferred module script this page ships gets a turn to run
+      * at all. `<head>`, parsed and executed before `<body>`'s iframes even exist yet, is the only
+      * place early enough to reliably win that race. The RULE stays inert until the "Hit areas"
+      * checkbox sets the attribute it is scoped behind, so being here unconditionally costs
+      * nothing — this is the CSS text alone, not the toggle: `overlay.ts`'s own
+      * `ensureHitAreaStyleTag()` is a no-op once it finds this same `id` already here, so the panel
+      * mounting later does not duplicate it, it just confirms it.
+      *
+      * `data-sk-menu-debug-intent` (the safety-triangle flag, just below `<body>`) does NOT need
+      * this same early-head treatment: that one is mirrored into each iframe by ATTRIBUTE alone —
+      * `syncRootState()` re-runs on every later attribute change too, not just once at boot — and
+      * it is the attribute a menu's own one-time mount reads, never a stylesheet rule. This flag
+      * has the opposite shape: the ATTRIBUTE already mirrors live and forgives being set late; it
+      * is the STYLESHEET clone that only ever gets one chance.
+      */}
+    {import.meta.env.DEV && (
+      <script is:inline>
+        (function () {
+          if (document.getElementById("sk-devtools-hit-area-style")) return;
+          var style = document.createElement("style");
+          style.id = "sk-devtools-hit-area-style";
+          var tint = "rgba(236, 72, 153, 0.28)";
+          style.textContent =
+            'html[data-sk-devtools-hit-areas] .sk-interactive { background-image: linear-gradient(' + tint + ', ' + tint + '); }' +
+            'html[data-sk-devtools-hit-areas] .sk-interactive::after { background: ' + tint + '; }';
+          document.head.appendChild(style);
+        })();
+      </script>
+    )}
+
+    {/*
+      * DEV ONLY, safety-triangle side effect: `getIntentReadout()` (core/src/menu-intent-readout.ts)
+      * `prepend()`s a real "Pointer routing: …" element onto whatever root it is handed, UNCONDITIONALLY
+      * — there is no option to get the triangle's paint without it. The dedicated example hands it ONE
+      * menu's own root, so the readout lands right beside that one trigger, which is the whole point of
+      * it. Flagging `<html>` instead — so every menu on the page paints, not just one demo — hands it
+      * `<html>` itself, and the readout ends up prepended there: a real block of text rendered above
+      * `<body>`, permanently, the moment any menu mounts. Hiding it is scoped to exactly that shape —
+      * a readout that is a DIRECT CHILD of a flagged `<html>` — so a page's own dedicated example
+      * (flagged on a real `.sk-menu`, several levels down) keeps its readout exactly as intended.
+      */}
+    {import.meta.env.DEV && (
+      <script is:inline>
+        (function () {
+          if (document.getElementById("sk-devtools-safety-triangle-style")) return;
+          var style = document.createElement("style");
+          style.id = "sk-devtools-safety-triangle-style";
+          style.textContent = "html[data-sk-menu-debug-intent] > .sk-menu__intent-readout { display: none; }";
+          document.head.appendChild(style);
+        })();
+      </script>
+    )}
+
+    {/*
+      * DEV ONLY, same early-`<head>` reasoning as the hit-area block above: `@skryensya/devtools`'s
+      * "Slow motion" toggle retunes the `--scale-duration-*` primitives (`motion.ts`'s own header
+      * comment explains why those, not a per-element override), and every preview `srcdoc` iframe
+      * needs this RULE cloned into it exactly once, at its own boot, same as the hit-area tint.
+      * `ensureSlowMoStyleTag()` no-ops once it finds this `id` already here.
+      */}
+    {import.meta.env.DEV && (
+      <script is:inline>
+        (function () {
+          if (document.getElementById("sk-devtools-slow-mo-style")) return;
+          var style = document.createElement("style");
+          style.id = "sk-devtools-slow-mo-style";
+          var factor = 6;
+          style.textContent =
+            "html[data-sk-devtools-slow-mo] {" +
+            "--scale-duration-fast: calc(120ms * " + factor + ");" +
+            "--scale-duration-moderate: calc(200ms * " + factor + ");" +
+            "--scale-duration-slow: calc(320ms * " + factor + ");" +
+            "--scale-duration-deliberate: calc(1600ms * " + factor + ");" +
+            "--scale-duration-cycle-fast: calc(640ms * " + factor + ");" +
+            "--scale-duration-cycle: calc(960ms * " + factor + ");" +
+            "--scale-duration-cycle-slow: calc(1440ms * " + factor + ");" +
+            "}";
+          document.head.appendChild(style);
+        })();
+      </script>
+    )}
+
+    {/*
+      * DEV ONLY, early-`<head>` clone target for `@skryensya/devtools`'s "Focus order" toggle: a
+      * number badge per focusable element, in document order, via CSS counters scoped behind the
+      * attribute. It has to be in the head THIS early because a component-preview `srcdoc` iframe
+      * clones the parent's stylesheets exactly once at its own boot, and some boot lazily, long after
+      * the panel itself has mounted.
+      *
+      * The rule is IMPORTED, not re-typed. This used to be a hand-written copy of `focus-order.ts`'s
+      * own string with a comment admitting it ("kept in sync by hand with FOCUSABLE_SELECTORS") —
+      * two copies of one selector list is a fork that drifts the first time either side moves, and
+      * this one already had: the badge moved off `::before` (it was destroying the state layer, see
+      * that file's header) and this copy would have kept painting the old, broken rule into every
+      * preview frame. `focus-order.ts` imports nothing itself, so pulling it in costs a string and
+      * tree-shakes away in the production build, where this whole branch is dead code.
+      *
+      * A real `<style>` rather than a script that builds one: it needs no execution to take effect,
+      * so it is live at first paint, and `ensureFocusOrderStyleTag()` finds it by this same id and
+      * no-ops when the panel eventually mounts.
+      */}
+    {import.meta.env.DEV && (
+      <style id="sk-devtools-focus-order-style" set:html={FOCUS_ORDER_CSS} />
+    )}
   </head>
 
   <body>
@@ -554,71 +664,32 @@ const PALETTE_PRESETS = [
 
           <ContrastToggle />
 
-          <LanguageToggle />
+          <LanguageMenu />
         </div>
 
       </div>
     </header>
 
     {/*
-      Command Palette is a DS component on Dialog (ADR-19). The site chrome owns one instance: ⌘K via
-      data-sk-command-palette-hotkey, openers via data-sk-command-palette-open + aria-controls, and the
-      nav JSON index. initComponents() mounts the enhancer with the rest of the vanilla surface.
+      Command Palette is a DS component on Dialog (ADR-19). The site chrome owns THE instance that
+      answers ⌘K (data-sk-command-palette-hotkey) and searches the whole documentation: openers via
+      data-sk-command-palette-open + aria-controls, and the nav JSON index. initComponents() mounts
+      the enhancer with the rest of the vanilla surface.
     */}
-    <dialog
-      class="sk-dialog sk-command-palette"
+    <CommandPalette
       id="docs-cmdk"
-      data-sk-command-palette
-      data-sk-command-palette-index="docs-cmdk-index"
-      data-sk-command-palette-hotkey="mod+k"
-      aria-label={t("search.dialog")}
-    >
-      <div class="sk-command-palette__search">
-        <Fragment set:html={searchIcon} />
-        <input
-          class="sk-command-palette__input"
-          id="docs-cmdk-input"
-          type="text"
-          role="combobox"
-          placeholder={t("search.placeholder")}
-          autocomplete="off"
-          autocorrect="off"
-          spellcheck="false"
-          aria-controls="docs-cmdk-list"
-          aria-expanded="true"
-          aria-autocomplete="list"
-          data-sk-command-palette-input
-        />
-        <form method="dialog">
-          <button
-            class="sk-button sk-interactive sk-dialog__close sk-command-palette__close"
-            data-sk-button
-            data-variant="ghost"
-            data-size="sm"
-            data-icon-only
-            type="submit"
-            value="cancel"
-            aria-label={t("action.close")}
-          >
-            <Fragment set:html={closeIcon} />
-          </button>
-        </form>
-      </div>
-      <ul
-        class="sk-command-palette__list sk-scrollbar"
-        id="docs-cmdk-list"
-        role="listbox"
-        aria-label={t("search.results")}
-        data-sk-command-palette-list
-      ></ul>
-      <p class="sk-command-palette__empty" data-sk-command-palette-empty hidden>{t("search.empty")}</p>
-      <footer class="sk-command-palette__footer">
-        <span><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd> {t("search.hintNavigate")}</span>
-        <span><kbd class="sk-kbd">↵</kbd> {t("search.hintOpen")}</span>
-        <span><kbd class="sk-kbd">Esc</kbd> {t("search.hintClose")}</span>
-      </footer>
-    </dialog>
-    <script type="application/json" id="docs-cmdk-index" set:html={JSON.stringify(searchIndex)}></script>
+      entries={searchIndex}
+      label={t("search.dialog")}
+      placeholder={t("search.placeholder")}
+      hotkey="mod+k"
+    />
+    {/*
+      A page that owns a search box of its own puts its palette here rather than in `<slot />`: the
+      catalogue's is scoped to the components. It belongs to the chrome, beside the site palette, and
+      out of the document — `indexDocument()` counts the default slot's top-level elements to size
+      the toc rail's row span, and a closed dialog is not a row.
+    */}
+    <slot name="palette" />
     {/* The cycle order for the palette toggle, read by its module script (which has no define:vars). */}
     <script type="application/json" id="docs-palette-presets" set:html={JSON.stringify(PALETTE_PRESETS)}></script>
 
@@ -1127,7 +1198,7 @@ const PALETTE_PRESETS = [
 
 
     <script>
-      import { setPreference } from "@skryensya/vanilla/storage";
+      import { getPreference, setPreference, subscribePreference } from "@skryensya/vanilla/storage";
       import { contrastPreference } from "../lib/preferences";
 
       const contrastToggles = document.querySelectorAll<HTMLButtonElement>(
@@ -1165,6 +1236,27 @@ const PALETTE_PRESETS = [
             document.dispatchEvent(new CustomEvent("sk:dimensions-changed"));
           });
         });
+
+        // Mirror a contrast change made in another tab: `subscribePreference` fires once immediately
+        // with the current value (a no-op here, since `high` above already matches storage) and again
+        // on every later `storage` event from another tab.
+        const applyIfChanged = (value: string) => {
+          const next = value === "high";
+          if (next === high) return;
+          high = next;
+          paint();
+          document.dispatchEvent(new CustomEvent("sk:dimensions-changed"));
+        };
+        subscribePreference(contrastPreference, applyIfChanged);
+
+        // `storage` events are deferred by the browser for a backgrounded tab (Chrome and Safari
+        // both do this), so re-read the moment this tab becomes visible again rather than trusting
+        // the event alone — see the matching comment in scripts/theme-toggle.ts.
+        const resync = () => applyIfChanged(getPreference(contrastPreference));
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "visible") resync();
+        });
+        window.addEventListener("pageshow", resync);
       }
     </script>
 
@@ -1257,6 +1349,39 @@ const PALETTE_PRESETS = [
     </script>
 
 
+    {/*
+      * DEV ONLY, and it has to run BEFORE `initComponents()` below, not after: `Menu.svelte` reads
+      * `data-sk-menu-debug-intent` off an ancestor ONCE, at each menu's own Svelte setup — a plain
+      * `const`, never re-checked later — so setting the attribute after a menu has already mounted
+      * cannot retroactively turn its safety-triangle visualization on. `@skryensya/devtools`'s own
+      * panel mounts much later (after every other script on this page) for the SAME reason it is
+      * fine everywhere else: the panel is just UI. This one flag is not just UI, so it gets its own
+      * earlier, synchronous, `is:inline` script instead of waiting on the panel's dynamic import —
+      * excluded from production the same way the panel below is, at the template level this time
+      * rather than a runtime branch, since `import.meta.env.DEV` is not valid syntax inside a
+      * non-module `is:inline` script body.
+      *
+      * `<html>`, not a specific menu root: every `Menu.svelte` instance's `root.closest(...)` finds
+      * it as the nearest flagged ancestor regardless of nesting, so the safety triangle paints for
+      * every menu on the page — the one thing actually asked for. `getIntentReadout()` still
+      * `prepend()`s its "Pointer routing: …" badge onto whatever root it is handed, unconditionally
+      * (there is no "just the paint" option in the published mechanism), so flagging `<html>` also
+      * means a readout lands as a direct child of `<html>` — a block of text above `<body>` itself.
+      * That gets hidden by a separate small stylesheet further down, scoped tightly enough that a
+      * page's own dedicated example (flagged on a real `.sk-menu`, not `<html>`) keeps its readout.
+      */}
+    {import.meta.env.DEV && (
+      <script is:inline>
+        try {
+          if (localStorage.getItem("sk-devtools-safety-triangle") === "1") {
+            document.documentElement.setAttribute("data-sk-menu-debug-intent", "");
+          }
+        } catch (e) {
+          /* private mode, quota exceeded — the flag just does not apply this load */
+        }
+      </script>
+    )}
+
     <script>
       /* Icons hydrate the same way a consumer's would: authored `<span data-sk-icon="role">`
        * placeholders swapped for the bound set's <svg>. mountIcons is NOT part of initComponents on
@@ -1270,7 +1395,25 @@ const PALETTE_PRESETS = [
       import { initComponents } from "@skryensya/vanilla/auto";
       import { siteIcons } from "../icons";
       mountIcons(document, siteIcons);
-      await initComponents();
+      const mountedCount = await initComponents();
+      /*
+       * DEV ONLY, read by `@skryensya/devtools`'s "Components mounted" readout. `initComponents()`'s
+       * own return value (`registry.ts`) is already the exact count — every enhancer's `mount(root)`
+       * returns how many instances it just hydrated, summed here — so this is a global to hand that
+       * number to the panel, not a second count.
+       *
+       * BOTH the property AND an event, not just the property: Astro's dev server extracts each
+       * `<script>` in this file into its OWN `type="module" src="...">` tag, and measured, the panel's
+       * own dynamic-import script can start running BEFORE this one's `await initComponents()` above
+       * has resolved — deferred module scripts are ordered relative to when they START, not
+       * guaranteed to finish one before the next begins. The property alone can lose that race; a
+       * `sk:devtools-component-count` event cannot, because `addEventListener` catches an event fired
+       * AFTER it was registered regardless of which script added the listener first.
+       */
+      if (import.meta.env.DEV) {
+        window.__skDevtoolsComponentCount = mountedCount;
+        window.dispatchEvent(new CustomEvent("sk:devtools-component-count", { detail: mountedCount }));
+      }
     </script>
 
     <script>
@@ -1278,11 +1421,12 @@ const PALETTE_PRESETS = [
          is a published contract any more (decision 33): both are docs-local markup + behavior now,
          so their mount calls live here rather than in initComponents(). */
       import { initCopyButtons } from "../scripts/copy-button";
-      import { initThemeToggle, initThemeTogglePersistence } from "../scripts/theme-toggle";
+      import { initThemeToggle, initThemeTogglePersistence, initThemeToggleSync } from "../scripts/theme-toggle";
       import { initDocsBinding } from "../scripts/docs-binding";
       initCopyButtons();
       initThemeToggle();
       initThemeTogglePersistence();
+      initThemeToggleSync();
       initDocsBinding();
     </script>
 

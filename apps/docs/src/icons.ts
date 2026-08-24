@@ -131,6 +131,20 @@ export const contrastHigh: IconData = {
   body: `<circle cx="12" cy="12" r="10" /><path d="M12 6a6 6 0 0 1 0 12z" fill="currentColor" stroke="none" />`,
 };
 
+/*
+ * El selector de idioma del header. No es un rol estable, es geometría propia (decisión 15): un
+ * conmutador de idioma es chrome de un sitio TRADUCIDO, no vocabulario del sistema, así que entra
+ * por acá en vez de obligar a los tres sets publicados a dibujarlo, igual que play/pause abajo.
+ *
+ * Un globo con meridiano y ecuador, no una bandera: una bandera es un país y esto son idiomas —
+ * la misma razón por la que el control anterior mostraba el código y no una bandera.
+ */
+export const language: IconData = {
+  viewBox: "0 0 24 24",
+  attrs: strokeAttrs,
+  body: `<circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" />`,
+};
+
 /* Transporte de reproducción para las muestras de /motion, otro par de dos estados que se
  * cruzan en el mismo hueco. No son roles estables: play/pause es vocabulario de un reproductor,
  * no del sistema, así que entra como geometría propia de la página (decisión 15) en vez de

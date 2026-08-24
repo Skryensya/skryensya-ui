@@ -7,6 +7,7 @@
  * through the shell, with no tab strip underneath it.
  */
 import Base from "../../layouts/Base.astro";
+import CommandPalette from "../CommandPalette.astro";
 import { getLocale, useTranslations } from "../../i18n";
 import { iconMarkup } from "../../icons";
 import { getComponentDescription } from "../../lib/component-catalog";
@@ -18,6 +19,26 @@ if (!componentSection) throw new Error("Missing components navigation section");
 
 const searchIcon = iconMarkup("search");
 const t = useTranslations(locale);
+
+/*
+ * THIS PAGE'S SEARCH IS THE CATALOGUE'S, not the site's. The chrome's ⌘K palette still indexes every
+ * documentation destination and is a keystroke away; a reader who came here and typed into the box
+ * labelled "Buscar componentes" is asking about components, so the palette behind it indexes exactly
+ * what the cards below list — the components navigation section, and nothing from guides or ADRs.
+ * `!todo` mirrors the site index: an entry with no page behind it is not a destination.
+ */
+const componentSearchIndex = componentSection.groups.flatMap((group) =>
+  group.items
+    .filter((item) => !item.todo)
+    .map((item) => ({
+      label: item.label,
+      aliases: item.aliases ?? [],
+      href: item.href,
+      /* Section is constant here, so the context line carries the group alone: "Formularios" beside
+       * a result says something the page's own heading does not repeat. */
+      context: group.group,
+    })),
+);
 
 /*
  * dummyimage SCALES ITS TEXT TO FIT the requested box, so the same placeholder renders "Kbd" huge
@@ -47,19 +68,31 @@ const placeholderSrc = (label: string) => {
 
   <p class="lede" set:html={t("indexPage.lede")} />
 
+  {/*
+    Opens the catalogue's OWN palette (`docs-cmdk-components`), not the chrome's: `aria-controls` is
+    what the enhancer reads to decide which triggers belong to which dialog, so pointing it here is
+    the whole scoping mechanism. No ⌘K badge and no `aria-keyshortcuts` either — that shortcut still
+    belongs to the site-wide palette, and this button is not it.
+  */}
   <button
     class="sk-button sk-interactive docs-catalog-search"
     data-variant="ghost"
     type="button"
-    aria-controls="docs-cmdk"
+    aria-controls="docs-cmdk-components"
     aria-expanded="false"
-    aria-keyshortcuts="Meta+K Control+K"
     data-sk-command-palette-open
   >
     <Fragment set:html={searchIcon} />
     <span class="docs-catalog-search__label">{t("indexPage.searchLabel")}</span>
-    <kbd class="sk-kbd" data-sk-command-palette-hint aria-hidden="true">⌘K</kbd>
   </button>
+
+  <CommandPalette
+    slot="palette"
+    id="docs-cmdk-components"
+    entries={componentSearchIndex}
+    label={t("search.componentsDialog")}
+    placeholder={t("search.componentsPlaceholder")}
+  />
 
   {
     /*

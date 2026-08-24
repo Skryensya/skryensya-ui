@@ -74,10 +74,50 @@ function readEntries(root: HTMLElement): ParsedEntry[] {
     });
 }
 
+/*
+ * Every element in `columns` that carries an `id` — a `NavListGroup`'s own auto-slugged heading id,
+ * say — is rewritten to a fresh one here, in place on the clone this function was just handed, and
+ * every attribute elsewhere IN THE SAME CLONE that referenced the old value follows it. The RULER is
+ * built from the same authored columns every trigger ALSO gets cloned into its own visible panel, so
+ * without this, the id an author's markup gave a heading existed on TWO live elements at once: the
+ * ruler's copy and whichever panel is actually shown — a real, invalid duplicate id, independent of
+ * the ruler's own `aria-hidden`, which exempts it from axe's checks but not from the HTML spec.
+ * Rewriting rather than stripping keeps the ruler's own internal pairing (a heading and the list its
+ * `aria-labelledby` names) intact even though nothing reads it while hidden — the same "correct
+ * regardless of whether anyone is currently checking" standard the rest of this system holds, and it
+ * costs nothing extra a plain removal wouldn't, since nothing OUTSIDE the ruler ever pointed at this
+ * id to begin with. React never hits the duplicate in the first place — `MegamenuTrigger`'s ruler
+ * copy and its one visible panel are two separate `useId()` calls, distinct ids from the start — but
+ * it does the same rewrite in effect, and this keeps Vanilla's ruler shaped the same way: an id
+ * present, just not the SAME id as the visible panel's.
+ */
+function rewriteIds(root: Element, suffix: string): void {
+  const rewritten = new Map<string, string>();
+  const visit = (element: Element): void => {
+    const id = element.getAttribute("id");
+    if (id) {
+      const next = `${id}-${suffix}`;
+      rewritten.set(id, next);
+      element.setAttribute("id", next);
+    }
+    for (const name of ["aria-labelledby", "aria-describedby", "aria-controls", "for"]) {
+      const value = element.getAttribute(name);
+      if (value && rewritten.has(value)) element.setAttribute(name, rewritten.get(value)!);
+    }
+    for (const child of element.children) visit(child);
+  };
+  visit(root);
+}
+
 function buildPanel(columns: readonly Node[], modifier?: string): HTMLElement {
   const panel = document.createElement("div");
   panel.className = modifier ? `${megamenuParts.panel} ${modifier}` : megamenuParts.panel;
-  panel.append(...columns.map((node) => node.cloneNode(true)));
+  const clones = columns.map((node) => node.cloneNode(true));
+  if (modifier !== megamenuParts.panelVisible) {
+    const suffix = uniqueId("sk-megamenu-ruler");
+    for (const clone of clones) if (clone instanceof Element) rewriteIds(clone, suffix);
+  }
+  panel.append(...clones);
   return panel;
 }
 
@@ -103,8 +143,14 @@ function connect(root: HTMLElement): () => void {
   const columnsByIndex: readonly Node[][] = parsed.map(({ content }) => Array.from(content.children));
   const defaultImageByIndex: readonly (PreviewImage | undefined)[] = columnsByIndex.map(findDefaultImage);
 
+  // NOT written back to `root.id`: unlike other enhancers in this codebase that reuse `root.id` as
+  // their own re-entry identity, nothing here ever reads it again — `anchorName` is the only thing
+  // derived from it, and that string already carries everything `bindAnchor` needs on its own.
+  // Writing it to the DOM anyway left an `id` on the bar with no contract behind it (`Megamenu`'s own
+  // template has no id-carrying option, and nothing else's `aria-*` ever points at this root) — a
+  // real divergence from React, which never puts one there either. First caught by
+  // `megamenu/product`, the first canonical tree to render this contract at all.
   const id = root.id || uniqueId("sk-megamenu");
-  root.id = id;
   const anchorName = anchorNameFor(id);
 
   const sharedPositioner = parsed[0]!.positioner;
@@ -119,6 +165,16 @@ function connect(root: HTMLElement): () => void {
 
   const visiblePanel = buildPanel(columnsByIndex[0]!, megamenuParts.panelVisible);
   sharedContent.replaceChildren(ruler, visiblePanel);
+  // Seeded here, not left for the first `apply()`: that function only ever WRITES `data-state` when
+  // `next.openIndex` differs from the current `state.openIndex` (its own early-return guard), and at
+  // connect nothing has happened yet to make them differ — every trigger starts closed. Without this,
+  // the shared content carried no `data-state` at all until the first open/close, which
+  // `megamenu.css`'s `[data-state="open"]` rule never gated against (the unconditional `display: none`
+  // default still hid it), but left the DOM itself disagreeing with React's own render, which sets the
+  // same attribute unconditionally on every paint (`megamenu.tsx`:
+  // `data-state={state.openIndex !== null ? "open" : "closed"}`) — a real divergence G2 caught the
+  // moment a canonical tree first rendered this contract.
+  sharedContent.dataset.state = "closed";
 
   const unbindAnchor = bindAnchor(root, sharedPositioner, anchorName);
 

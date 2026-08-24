@@ -23,8 +23,25 @@
  * visible jump instead: the flicker between the two bindings. `mountReactDemo()` awaits `preload()`
  * before it ever calls `flushSync`, so the tree is already loaded the one time this renders.
  */
+import { menuAttrs } from "@skryensya/core/menu";
 import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
 import { framedIn, type FramedOverrides } from "./framed";
+
+/*
+ * `component-preview-frame.ts` mirrors the devtools "Safety triangle" toggle onto THIS frame's own
+ * `<html>` as `data-sk-menu-debug-intent` (see that file's `rootAttributes` list), the same attribute
+ * `Menu.svelte` reads with `root.closest(...)` at mount to decide its Vanilla debug flag. React's
+ * `debugSafetyTriangle` has no such DOM fallback — it is a controlled prop, by design (see
+ * `menu.tsx`'s doc comment) — so a tree-driven Menu demo never saw the toggle at all. This is the one
+ * place a tree crosses from data into a live render, so it is the one place to fold the mirrored
+ * attribute back in, the same way the tree's own `debugSafetyTriangle: true` (the dedicated safety
+ * demo) already does.
+ */
+function withLiveSafetyTriangle(tree: UsageTree): UsageTree {
+  if (tree.contract !== "menu") return tree;
+  if (!document.documentElement.hasAttribute(menuAttrs.debugSafetyTriangle)) return tree;
+  return { ...tree, options: { ...tree.options, debugSafetyTriangle: true } };
+}
 
 let renderTreeModule: typeof import("@skryensya/react/render-tree") | undefined;
 
@@ -67,5 +84,5 @@ export const TreeDemo = framed(function TreeDemo({ tree }: TreeDemoProps) {
     // some other way, and a loud failure beats a silently empty stage.
     throw new Error("TreeDemo rendered before preload() resolved.");
   }
-  return <>{renderTreeModule.renderTree(tree)}</>;
+  return <>{renderTreeModule.renderTree(withLiveSafetyTriangle(tree))}</>;
 });

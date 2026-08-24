@@ -22,7 +22,7 @@ import CodeBlock from "./CodeBlock.astro";
 import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
 import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
 import { TreeDemo } from "./react-demos/tree";
-import { iconDataMarkup, iconMarkup, screenFullscreen } from "../icons";
+import { iconMarkup } from "../icons";
 import "@skryensya/core/components/component-preview.css";
 import "@skryensya/core/components/loader.css";
 import "@skryensya/core/components/tabs.css";
@@ -205,8 +205,9 @@ const encodedPreviewScript = previewScript
   : "";
 /**
  * A STABLE id, not a random one: the FOUC inline script needs any unique target, and
- * "Ver en la documentación" hashes back to it. `/f/{page}/{n}` finds the card by its 1-based
- * number on this page (`previewN`), not by this id.
+ * "Ver en la documentación" hashes back to it. `/f/{page}/{n}` finds the card by counting
+ * `[data-sk-component-preview]` in DOM order at click time (`openComponentPreviewFullscreen`), not
+ * by this id and not by any number rendered into the card.
  *
  * `Astro.locals` resets once per page render (unlike a module-level counter, which would keep
  * counting across every OTHER page built in the same process): slugging `label` and deduping
@@ -215,7 +216,6 @@ const encodedPreviewScript = previewScript
  */
 const locals = Astro.locals as {
   componentPreviewIds?: Set<string>;
-  componentPreviewCount?: number;
 };
 const previewId = ((): string => {
   const used = locals.componentPreviewIds ?? new Set<string>();
@@ -229,10 +229,6 @@ const previewId = ((): string => {
   }
   used.add(candidate);
   return candidate;
-})();
-const previewN = ((): number => {
-  locals.componentPreviewCount = (locals.componentPreviewCount ?? 0) + 1;
-  return locals.componentPreviewCount;
 })();
 const frameDocument = buildPreviewFrameDocument({
   body: previewHtml,
@@ -252,7 +248,16 @@ const frameDocument = buildPreviewFrameDocument({
  */
 const moreIcon = iconMarkup("more");
 const reloadIcon = iconMarkup("refresh", { size: "sm" });
-const fullscreenIcon = iconDataMarkup("screen-fullscreen", screenFullscreen, { size: "sm" });
+/*
+ * `external-link`, a STABLE role, where this used to draw `screen-fullscreen` as geometry of its own.
+ * The glyph was describing the wrong action: "Ver en pantalla completa" does not put this page into
+ * fullscreen, it calls `window.open(…, "_blank")` (`openComponentPreviewFullscreen`) and launches the
+ * demo alone in a new tab. Corner brackets say "expand in place"; a launch arrow says "this leaves
+ * here", which is what actually happens. Being a stable role also puts it back in reach of the site's
+ * icon-set switch, which skipped the bespoke one (`iconDataMarkup`'s own doc: `applyIconSet` ignores
+ * unknown `data-icon` keys), so this control was the one glyph in the header that never changed set.
+ */
+const launchIcon = iconMarkup("external-link", { size: "sm" });
 /*
  * Screen presets. The name is a stable ROLE, not a device drawing, which is why the accessible
  * name spells out the actual viewport: `screen-tablet` tells you the class of screen, `768 × 1024`
@@ -309,15 +314,26 @@ const screenToggleLabels = Object.fromEntries(
 <div
   class="sk-component-preview"
   data-sk-component-preview
-  data-sk-component-preview-n={previewN}
   data-width={width}
   id={previewId}
   style={minHeight ? `--sk-component-preview-stage-min-block-size: ${minHeight}` : undefined}
 >
   <header class="sk-component-preview__header">
-    <span class="sk-component-preview__title"
-      ><span class="sk-component-preview__n">{previewN}</span>{label}</span
-    >
+    {
+      /*
+       * THE LABEL ALONE. The card used to open with its 1-based position on the page, which was only
+       * ever an implementation detail leaking into the chrome: nothing reads it (see the `previewN`
+       * note that used to sit above — both the fullscreen opener and `/f/{page}/{n}` count DOM order
+       * at click time, never a rendered number), and a reader gets nothing from "this is the third
+       * demo" that the demo's own name does not already tell them better.
+       *
+       * It also poisoned the fullscreen page's title: `/f/…` sets `document.title` from this
+       * element's `textContent` (`pages/f/[...path].astro`), so the tab read "1Texto" rather than
+       * "Texto". Dropping the span fixes the header and that title in one move, because they were
+       * always the same string.
+       */
+    }
+    <span class="sk-component-preview__title">{label}</span>
     {note && <span class="sk-component-preview__note">{note}</span>}
     {/*
       * THREE separate, self-contained controls in a row — not one boxed toolbar holding all of
@@ -436,15 +452,27 @@ const screenToggleLabels = Object.fromEntries(
         </button>
         <div class="sk-menu__positioner sk-anchored" data-sk-menu-positioner data-density="compact">
           <div class="sk-menu__content" data-sk-menu-content>
+            {/*
+              * THE GLYPH TRAILS THE LABEL, in the item's own second grid column
+              * (`.sk-menu__item` is `grid-template-columns: minmax(0, 1fr) auto`, menu.css), rather
+              * than sitting inside the label ahead of the text. Leading icons made the two rows read
+              * as a palette of tools; trailing ones let both labels start on the same left edge and
+              * put the glyph where a menu conventionally answers "and where does this take me".
+              *
+              * NOT `menuParts.itemIndicator`, which is the cell this would otherwise belong in: that
+              * part is the CHECK, `visibility: hidden` unless `[data-state="checked"]` or unless the
+              * item is a `<button>` submenu trigger (menu.css). These items are `<div>` commands, so
+              * borrowing it would render an invisible icon. A plain chrome span in the same cell is
+              * the honest way to sit there without claiming a state this item does not have.
+              */}
             <div
               class="sk-menu__item sk-interactive"
               data-sk-menu-item
               data-value="reload"
               data-sk-component-preview-reload
             >
-              <span class="sk-menu__item-label"
-                ><Fragment set:html={reloadIcon} />{t("preview.reloadAction")}</span
-              >
+              <span class="sk-menu__item-label">{t("preview.reloadAction")}</span>
+              <span class="sk-component-preview__menu-icon"><Fragment set:html={reloadIcon} /></span>
             </div>
             <div
               class="sk-menu__item sk-interactive"
@@ -452,9 +480,8 @@ const screenToggleLabels = Object.fromEntries(
               data-value="fullscreen"
               data-sk-component-preview-fullscreen
             >
-              <span class="sk-menu__item-label"
-                ><Fragment set:html={fullscreenIcon} />{t("preview.fullscreenAction")}</span
-              >
+              <span class="sk-menu__item-label">{t("preview.fullscreenAction")}</span>
+              <span class="sk-component-preview__menu-icon"><Fragment set:html={launchIcon} /></span>
             </div>
             {/*
               * No "Ver en la documentación" item here: on the docs page itself, a link back to the

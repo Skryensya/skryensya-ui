@@ -1808,7 +1808,8 @@
           ],
           "parents": [
             "NavList",
-            "NavListLink"
+            "NavListLink",
+            "MegamenuTrigger"
           ],
           "useWhen": [
             "agrupa destinos bajo un rótulo",
@@ -3623,5 +3624,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "f306dc4383c08987"
+  "sourceHash": "dfd754af9412bcd8"
 }

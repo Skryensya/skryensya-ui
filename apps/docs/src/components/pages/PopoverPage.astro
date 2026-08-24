@@ -10,6 +10,7 @@ import contractSource from "@contracts/semantic/popover.yaml?raw";
 import coreSource from "@core/src/popover.ts?raw";
 import cssSource from "@core/css/components/popover.css?raw";
 import reactSource from "@react/src/components/popover.tsx?raw";
+import reactTestSource from "@react/src/components/popover.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -25,6 +26,7 @@ const sourceFiles = [
   { id: "packages/core/src/popover.ts", source: coreSource, language: "ts" },
   { id: "packages/core/css/components/popover.css", source: cssSource, language: "css" },
   { id: "packages/react/src/components/popover.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/popover.test.tsx", source: reactTestSource, language: "tsx" },
 ] as const;
 ---
 
@@ -36,6 +38,41 @@ const sourceFiles = [
   styleGroups={[
     { file: "components/popover.css", probe: "sk-popover", title: "Popover" },
     { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
+  ]}
+  tests={[
+    {
+      file: "packages/react/src/components/popover.test.tsx",
+      tests: [
+        {
+          name: "links the trigger to its content via popovertarget/id, with popover=auto",
+          description: t("popoverPage.testReact1"),
+        },
+        {
+          name: "renders a title and description in the full (non-bare) anatomy",
+          description: t("popoverPage.testReact2"),
+        },
+        {
+          name: "renders a close button in the full anatomy, wired to popoverTargetAction=hide",
+          description: t("popoverPage.testReact3"),
+        },
+        {
+          name: "omits the title, description and close button entirely in bare mode",
+          description: t("popoverPage.testReact4"),
+        },
+        {
+          name: "renders no arrow by default, and one only when asked",
+          description: t("popoverPage.testReact5"),
+        },
+        {
+          name: "writes the chosen placement onto the content",
+          description: t("popoverPage.testReact6"),
+        },
+        {
+          name: "names an icon-only trigger with triggerLabel",
+          description: t("popoverPage.testReact7"),
+        },
+      ],
+    },
   ]}
 >
   <Fragment slot="usage">

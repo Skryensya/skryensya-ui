@@ -3,8 +3,33 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "1b7a814f425d436e"
+surface: "fb2e7307660ea9d7"
 entries:
+  - date: 2026-08-24
+    kind: feature
+    target: NavListGroup
+    es:
+      title: NavListGroup ahora también vive dentro de un MegamenuTrigger
+      body: >-
+        <code>MegamenuTrigger</code> ya declaraba, en su propio contrato, que su slot
+        <code>columns</code> acepta <code>NavListGroup</code> — un panel de mega-menú es columnas de
+        enlaces, y esas columnas son el mismo grupo que ya arma un rail o un navbar. Lo que faltaba
+        era que <code>NavListGroup</code> lo supiera de vuelta: sus dos hogares legales declarados
+        eran <code>NavList</code> y <code>NavListLink</code>, así que una composición real que
+        anidaba un grupo dentro de un trigger de mega-menú — exactamente la que
+        <code>megamenu.ts</code> ya documentaba como válida — quedaba rechazada por el validador. El
+        template no cambia: este signature nunca supo qué padre lo colocó.
+    en:
+      title: NavListGroup now also lives inside a MegamenuTrigger
+      body: >-
+        <code>MegamenuTrigger</code> already declared, in its own contract, that its <code>columns</code>
+        slot accepts <code>NavListGroup</code> — a mega-menu panel is columns of links, and those
+        columns are the same group that already builds a rail or a navbar. What was missing was
+        <code>NavListGroup</code> knowing it back: its two declared legal homes were
+        <code>NavList</code> and <code>NavListLink</code>, so a real composition nesting a group
+        inside a mega-menu trigger — exactly the one <code>megamenu.ts</code> already documented as
+        valid — was rejected by the validator. The template does not change: this signature never
+        knew which parent placed it.
   - date: 2026-08-20
     kind: feature
     target: heading

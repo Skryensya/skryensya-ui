@@ -5,6 +5,29 @@
 # hash nuevo.
 surface: "a15c388d65d6d42d"
 entries:
+  - date: 2026-08-24
+    kind: bugfix
+    target: item
+    es:
+      title: Navegar el listbox con el teclado ahora muestra dónde estás
+      body: >-
+        Antes no mostraba nada: <code>@zag-js/select</code> marca la fila que las flechas resaltan
+        con <code>data-highlighted</code>, pero ninguna regla de <code>select.css</code> lo leía —
+        ni tinte ni anillo — porque el foco real nunca llega ahí (foco virtual,
+        <code>aria-activedescendant</code>, igual que <code>Menu</code>). Ahora el resaltado se
+        conecta a la capa de estado compartida (mismo mecanismo que <code>Menu</code>/
+        <code>TreeView</code>) y, cuando lo puso el teclado y no el puntero
+        (<code>[data-highlighted]:not(:hover)</code>), pinta además el mismo anillo de foco.
+    en:
+      title: Navigating the listbox by keyboard now shows where you are
+      body: >-
+        It used to show nothing: <code>@zag-js/select</code> marks the row the arrow keys highlight
+        with <code>data-highlighted</code>, but no rule in <code>select.css</code> read it — no
+        tint, no ring — because real focus never reaches it (virtual focus,
+        <code>aria-activedescendant</code>, same as <code>Menu</code>). The highlight now feeds the
+        shared state layer (the same mechanism <code>Menu</code>/<code>TreeView</code> already use)
+        and, when the keyboard put it there rather than the pointer
+        (<code>[data-highlighted]:not(:hover)</code>), also paints the same focus ring.
   - date: 2026-08-11
     kind: feature
     es:

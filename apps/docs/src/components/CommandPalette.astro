@@ -1,0 +1,103 @@
+---
+/*
+ * One Command Palette, authored once and instantiated per INDEX.
+ *
+ * The contract (packages/core/src/command-palette.ts) keys everything to the dialog's own id: the
+ * openers point at it with `aria-controls`, the JSON index is named by
+ * `data-sk-command-palette-index`, and the ⌘K binding is opt-in per instance. That is what lets the
+ * site carry more than one: the chrome's palette searches the whole documentation, while the
+ * component catalogue's search box opens a palette whose index is only the components — a reader who
+ * came to that page to find a component is not looking for an ADR.
+ *
+ * The hotkey stays with the chrome instance. A page-scoped palette is reached from its own button;
+ * ⌘K anywhere on the site keeps meaning "search everything", so the scoped instance renders no ⌘K
+ * badge either (the enhancer fills every `data-sk-command-palette-hint` on the page from whichever
+ * palette owns the hotkey, so a badge here would advertise the wrong palette).
+ */
+import type { CommandPaletteEntry } from "@skryensya/core/command-palette";
+import { getLocale, useTranslations } from "../i18n";
+import { iconMarkup } from "../icons";
+
+interface Props {
+  /** The dialog id: what openers target with `aria-controls`, and what names the index script. */
+  id: string;
+  /** The searchable destinations. Serialized into the JSON island the enhancer reads on mount. */
+  entries: readonly CommandPaletteEntry[];
+  /** Names the dialog for anyone who cannot see it. */
+  label: string;
+  placeholder: string;
+  /** Opt-in, one instance per page: `"mod+k"` binds the shortcut and fills the ⌘K badges. */
+  hotkey?: string;
+}
+
+const { id, entries, label, placeholder, hotkey } = Astro.props;
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+const searchIcon = iconMarkup("search");
+const closeIcon = iconMarkup("close");
+
+const indexId = `${id}-index`;
+const inputId = `${id}-input`;
+const listId = `${id}-list`;
+---
+
+<dialog
+  class="sk-dialog sk-command-palette"
+  id={id}
+  data-sk-command-palette
+  data-sk-command-palette-index={indexId}
+  data-sk-command-palette-hotkey={hotkey}
+  aria-label={label}
+>
+  <div class="sk-command-palette__search">
+    <Fragment set:html={searchIcon} />
+    {/*
+      `aria-expanded` starts false: the listbox is empty until the enhancer fills it on open, and the
+      enhancer is what flips the state. The contract makes the same point — a combobox that claims an
+      expanded popup over an empty list is what axe reports and what a screen reader would act on.
+    */}
+    <input
+      class="sk-command-palette__input"
+      id={inputId}
+      type="text"
+      role="combobox"
+      placeholder={placeholder}
+      autocomplete="off"
+      autocorrect="off"
+      spellcheck="false"
+      aria-controls={listId}
+      aria-expanded="false"
+      aria-autocomplete="list"
+      data-sk-command-palette-input
+    />
+    <form method="dialog">
+      <button
+        class="sk-button sk-interactive sk-dialog__close sk-command-palette__close"
+        data-sk-button
+        data-variant="ghost"
+        data-size="sm"
+        data-icon-only
+        type="submit"
+        value="cancel"
+        aria-label={t("action.close")}
+      >
+        <Fragment set:html={closeIcon} />
+      </button>
+    </form>
+  </div>
+  <ul
+    class="sk-command-palette__list sk-scrollbar"
+    id={listId}
+    role="listbox"
+    aria-label={t("search.results")}
+    data-sk-command-palette-list
+  ></ul>
+  <p class="sk-command-palette__empty" data-sk-command-palette-empty hidden>{t("search.empty")}</p>
+  <footer class="sk-command-palette__footer">
+    <span><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd> {t("search.hintNavigate")}</span>
+    <span><kbd class="sk-kbd">↵</kbd> {t("search.hintOpen")}</span>
+    <span><kbd class="sk-kbd">Esc</kbd> {t("search.hintClose")}</span>
+  </footer>
+</dialog>
+<script type="application/json" id={indexId} set:html={JSON.stringify(entries)}></script>

@@ -21,6 +21,7 @@ import cssSource from "@core/css/components/component-preview.css?raw";
 import vanillaMountSource from "@vanilla/src/components/component-preview.ts?raw";
 import vanillaTestSource from "@vanilla/src/components/component-preview.test.ts?raw";
 import reactSource from "@react/src/components/component-preview.tsx?raw";
+import reactTestSource from "@react/src/components/component-preview.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -290,6 +291,7 @@ const sourceFiles = [
   { id: "packages/vanilla/src/components/component-preview.ts", source: vanillaMountSource, language: "ts" },
   { id: "packages/vanilla/src/components/component-preview.test.ts", source: vanillaTestSource, language: "ts" },
   { id: "packages/react/src/components/component-preview.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/component-preview.test.tsx", source: reactTestSource, language: "tsx" },
 ] as const;
 ---
 
@@ -309,10 +311,31 @@ const sourceFiles = [
         },
         { name: "shares Vanilla | React across every preview on the page", description: t("componentPreview.test2") },
         {
-          name: "cycles free → tablet → mobile → free on click, marking the stage and clearing it for free",
+          name: "selects a preset directly on click, marking the stage and clearing it for free",
           description: t("componentPreview.test3"),
         },
         { name: "reloads the srcdoc stage from the authored document", description: t("componentPreview.test4") },
+      ],
+    },
+    {
+      file: "packages/react/src/components/component-preview.test.tsx",
+      tests: [
+        {
+          name: "renders the title, stage and code in order",
+          description: t("componentPreview.testReact1"),
+        },
+        {
+          name: "renders a note beside the title when given",
+          description: t("componentPreview.testReact2"),
+        },
+        {
+          name: "omits the header entirely when there is neither a title nor a note",
+          description: t("componentPreview.testReact3"),
+        },
+        {
+          name: "keeps the header when only a note is given, with no title text",
+          description: t("componentPreview.testReact4"),
+        },
       ],
     },
   ]}

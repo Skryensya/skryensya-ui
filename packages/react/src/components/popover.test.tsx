@@ -38,6 +38,45 @@ describe("Popover (React)", () => {
     expect(ui.getByText("Elegí una categoría.")).toBeTruthy();
   });
 
+  /*
+   * `popover="auto"` grants no implicit accessible name the way `<dialog>` at least tries to —
+   * same gap `Dialog` closes for its own title/body (`dialog.tsx`). Without this, a screen reader
+   * focusing or announcing the popover gets nothing from its own heading.
+   */
+  it("links the panel to its own title/description via aria-labelledby/aria-describedby", () => {
+    const ui = render(
+      <Popover trigger="Open" title="Filtros" description="Elegí una categoría.">
+        Content
+      </Popover>,
+    );
+    const heading = ui.getByRole("heading", { name: "Filtros", hidden: true });
+    const description = ui.getByText("Elegí una categoría.");
+    const content = ui.container.querySelector("[popover]")!;
+
+    expect(content.getAttribute("aria-labelledby")).toBe(heading.id);
+    expect(content.getAttribute("aria-describedby")).toBe(description.id);
+    expect(heading.id).toBeTruthy();
+    expect(description.id).toBeTruthy();
+  });
+
+  it("carries neither aria-labelledby nor aria-describedby without a title/description to point at", () => {
+    const ui = render(<Popover trigger="Open">Content</Popover>);
+    const content = ui.container.querySelector("[popover]")!;
+    expect(content.hasAttribute("aria-labelledby")).toBe(false);
+    expect(content.hasAttribute("aria-describedby")).toBe(false);
+  });
+
+  it("carries neither aria-labelledby nor aria-describedby in bare mode, even with title/description given", () => {
+    const ui = render(
+      <Popover trigger="Open" title="Filtros" description="Elegí una categoría." bare>
+        Content
+      </Popover>,
+    );
+    const content = ui.container.querySelector("[popover]")!;
+    expect(content.hasAttribute("aria-labelledby")).toBe(false);
+    expect(content.hasAttribute("aria-describedby")).toBe(false);
+  });
+
   it("renders a close button in the full anatomy, wired to popoverTargetAction=hide", () => {
     const ui = render(<Popover trigger="Open">Content</Popover>);
     const close = ui.getByRole("button", { name: "Cerrar", hidden: true });

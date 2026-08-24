@@ -48,11 +48,55 @@ function pointerEvent(type: string, clientY: number): MouseEvent {
 }
 
 function resetBindingState(): void {
+  vi.unstubAllGlobals();
   resetSharedComponentPreviewBinding();
   resetSharedComponentPreviewScreen();
   document.documentElement.removeAttribute("data-sk-component-preview-pref");
   document.documentElement.removeAttribute("data-sk-component-preview-screen-pref");
   document.documentElement.removeAttribute("data-sk-fullscreen-preview");
+}
+
+function mockForcedMobileViewport(matches: boolean): { setMatches: (next: boolean) => void } {
+  let current = matches;
+  const listeners = new Set<(event: MediaQueryListEvent) => void>();
+  const media = "(max-width: 52rem)";
+  const query = {
+    get matches() {
+      return current;
+    },
+    media,
+    onchange: null,
+    addEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => {
+      listeners.add(listener);
+    },
+    removeEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => {
+      listeners.delete(listener);
+    },
+    addListener: (listener: (event: MediaQueryListEvent) => void) => {
+      listeners.add(listener);
+    },
+    removeListener: (listener: (event: MediaQueryListEvent) => void) => {
+      listeners.delete(listener);
+    },
+    dispatchEvent: (event: Event) => {
+      for (const listener of listeners) listener(event as MediaQueryListEvent);
+      return true;
+    },
+  } as MediaQueryList;
+
+  vi.stubGlobal("matchMedia", () => query);
+
+  return {
+    setMatches(next: boolean) {
+      current = next;
+      const event = new Event("change") as MediaQueryListEvent;
+      Object.defineProperties(event, {
+        matches: { value: next },
+        media: { value: media },
+      });
+      query.dispatchEvent(event);
+    },
+  };
 }
 
 describe("ComponentPreview opt-in enhancer", () => {
@@ -430,6 +474,27 @@ describe("ComponentPreview opt-in enhancer", () => {
       expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("mobile");
       expect(tabs.getAttribute("data-value")).toBe("mobile");
       expect(mobileOption.getAttribute("aria-checked")).toBe("true");
+    });
+
+    it("forces mobile on narrow viewports without overwriting the saved desktop preset", () => {
+      resetBindingState();
+      const viewport = mockForcedMobileViewport(true);
+      document.documentElement.setAttribute("data-sk-component-preview-screen-pref", "tablet");
+      screenMarkup();
+      const { tabs, stage } = parts();
+
+      mountAll();
+
+      expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("mobile");
+      expect(tabs.getAttribute("data-value")).toBe("mobile");
+      expect(document.documentElement.getAttribute("data-sk-component-preview-screen-pref")).toBe(
+        "tablet",
+      );
+
+      viewport.setMatches(false);
+
+      expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("tablet");
+      expect(tabs.getAttribute("data-value")).toBe("tablet");
     });
 
     it("keeps a card without the zoomed-desktop option on free when the shared pref is xl", () => {

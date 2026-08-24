@@ -24,18 +24,18 @@ import { MenuPopup, useMenuMachine, type CheckedState } from "./menu.js";
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
 /*
- * MENUBAR, the React binding — now that each item's dropdown is a real `Menu` instance (decision:
+ * MENUBAR, the React binding. Now that each item's dropdown is a real `Menu` instance (decision:
  * see `menubar.ts`'s own header comment in core). `Menubar` owns only what Zag's own machine does
  * NOT: roving tabindex between TOP-LEVEL triggers, and the handoff that closes one item's dropdown
  * and opens the adjacent one. Everything that happens once a dropdown (or a submenu inside it) has
- * focus — Up/Down, Enter, Escape, Home/End within that list, checkbox/radio, nested submenus — is
+ * focus. Up/Down, Enter, Escape, Home/End within that list, checkbox/radio, nested submenus. Is
  * `useMenuMachine`'s own, the same hook `Menu` itself uses, called here per item instead of a second,
  * poorer implementation.
  *
  * The one seam that needs care: Zag's own content keydown handler ALSO claims ArrowLeft/Right/Home/
  * End once a dropdown has focus (for nested-submenu navigation), and it runs on the BUBBLE phase.
  * This binding's own keydown handler runs on the CAPTURE phase (`onKeyDownCapture`) at the bar root
- * — capture always fires before bubble, on any ancestor — and steps aside (does nothing, lets the
+ *. Capture always fires before bubble, on any ancestor, and steps aside (does nothing, lets the
  * event continue to Zag) whenever focus is inside a NESTED submenu (`[data-sk-submenu]`), or whenever
  * a dropdown is open and the key isn't Left/Right (Home/End inside an open list is Zag's own job,
  * matching APG menu conventions, not the bar's).
@@ -45,7 +45,7 @@ type MenubarContextValue = {
   isTriggerStop: (topIndex: number) => boolean;
   registerTrigger: (topIndex: number, element: HTMLElement | null) => void;
   registerApi: (topIndex: number, api: MenuApi | null) => void;
-  /** Closes every OTHER item's dropdown — a safety net beside Zag's own outside-dismiss handling. */
+  /** Closes every OTHER item's dropdown. A safety net beside Zag's own outside-dismiss handling. */
   closeSiblings: (exceptIndex: number) => void;
 };
 
@@ -60,7 +60,7 @@ function useMenubarContext(component: string): MenubarContextValue {
 type TopShape = { hasMenu: boolean };
 
 /** `Menubar`'s own children → each `MenubarItem`'s shape: does it carry `items` (the contract's own
- *  `items` slot, `Menu`'s own item shape, verbatim — see `menu.ts`'s `menuItemShape`). */
+ *  `items` slot, `Menu`'s own item shape, verbatim; see `menu.ts`'s `menuItemShape`). */
 function readTops(children: ReactNode): TopShape[] {
   return Children.toArray(children)
     .filter((child): child is ReactElement<MenubarItemProps> => isValidElement(child) && child.type === MenubarItem)
@@ -81,7 +81,7 @@ export function Menubar({ children, className, label, ...props }: MenubarProps) 
   const topCount = tops.length;
   const hasMenuAt = (topIndex: number) => tops[topIndex]?.hasMenu ?? false;
   // Never exercised by the keys this handler actually resolves (see the note on `onKeyDown` below),
-  // kept only because `resolveMenubarKey`'s signature requires it — its own logic isn't changing.
+  // kept only because `resolveMenubarKey`'s signature requires it. Its own logic isn't changing.
   const subCountOf = () => 0;
 
   const openTopIndex = () => {
@@ -110,7 +110,7 @@ export function Menubar({ children, className, label, ...props }: MenubarProps) 
   };
 
   /*
-   * Only ArrowLeft/Right/Home/End ever reach `resolveMenubarKey` here — ArrowDown/Up/Enter/Space are
+   * Only ArrowLeft/Right/Home/End ever reach `resolveMenubarKey` here. ArrowDown/Up/Enter/Space are
    * Zag's own, already wired via `getTriggerProps()` on each item's trigger, and Escape is Zag's own
    * standard menu behavior (closes and returns focus to ITS trigger) once a dropdown has focus.
    */
@@ -180,24 +180,24 @@ export function Menubar({ children, className, label, ...props }: MenubarProps) 
 }
 
 export type MenubarItemProps = {
-  /** The command's own name — the contract's `children` slot. */
+  /** The command's own name. The contract's `children` slot. */
   children: ReactNode;
-  /** The dropdown this item opens, if it is a trigger rather than a plain command — `Menu`'s own
+  /** The dropdown this item opens, if it is a trigger rather than a plain command: `Menu`'s own
    *  item shape, verbatim (the same `MenuItem[]` its own `items` prop takes). */
   items?: readonly MenuItem[];
   /** Fires when a LEAF item (no dropdown) is activated. */
   onActivate?: () => void;
-  /** Fires when a command inside this item's dropdown is chosen — `Menu`'s own `onSelect`, threaded
+  /** Fires when a command inside this item's dropdown is chosen: `Menu`'s own `onSelect`, threaded
    *  straight through since the popup here IS `Menu`'s own. */
   onSelect?: (details: { value: string }) => void;
-  /** Where the dropdown portals — `Menu`'s own `container`, see its identical doc. */
+  /** Where the dropdown portals: `Menu`'s own `container`, see its identical doc. */
   container?: RefObject<HTMLElement>;
-  /** Styles the trigger as `nav-list`'s own link instead of a Button — see `menubar.ts`'s own doc
+  /** Styles the trigger as `nav-list`'s own link instead of a Button; see `menubar.ts`'s own doc
    *  on the contract option this mirrors. Every bit of Menubar's own behavior is unchanged. */
   nav?: boolean;
 };
 
-/** `topIndex` is injected by the parent `Menubar` — never author-set. */
+/** `topIndex` is injected by the parent `Menubar`: never author-set. */
 type InjectedMenubarItemProps = MenubarItemProps & { topIndex: number };
 
 function initialCheckedState(items: readonly MenuItem[]): CheckedState {
@@ -224,7 +224,7 @@ export function MenubarItem(publicProps: MenubarItemProps) {
     return () => context.registerApi(topIndex, null);
   });
 
-  // Zag's own open transition is the trigger, not the click that caused it — this also covers
+  // Zag's own open transition is the trigger, not the click that caused it. This also covers
   // opening via keyboard (ArrowDown/Enter/Space), which a click-only handler would miss.
   useEffect(() => {
     if (hasMenu && api.open) context.closeSiblings(topIndex);
@@ -262,7 +262,7 @@ export function MenubarItem(publicProps: MenubarItemProps) {
           {nav ? <span className="sk-nav-list__label">{children}</span> : children}
           {/* Same glyph as Menu's own top-level trigger (`menu.tsx`), so the two read as the same
             * affordance everywhere: this item opens something, absent on a leaf command. `menubar.css`
-            * rotates it on `[aria-expanded="true"]` — the glyph says "opens", the rotation says "is
+            * rotates it on `[aria-expanded="true"]`. The glyph says "opens", the rotation says "is
             * open right now", which a bar item otherwise has no pressed/visited look to say on its
             * own. */}
           <span aria-hidden="true" className={menubarParts.itemIndicator}>
@@ -272,10 +272,10 @@ export function MenubarItem(publicProps: MenubarItemProps) {
       ) : (
         <button
           // `sk-anchor` even with no popup to anchor: the contract's own shared trigger node
-          // carries it unconditionally too (`menubar.ts`) — inert without a name ever written on
+          // carries it unconditionally too (`menubar.ts`). Inert without a name ever written on
           // it (`anchored.ts`'s own doc), so matching that here is simpler than a second, leaf-only
           // class list to keep symmetric. `sk-button`/`ghost`/`sm` mirror the core template's own
-          // attrs for the identical node — a bar item is a real Button, sized and skinned to sit
+          // attrs for the identical node. A bar item is a real Button, sized and skinned to sit
           // flush in a row of siblings, not the filled default a lone page action wants.
           // `nav` mirrors the core template's other sibling node instead: `sk-nav-list__link`, no
           // Button-specific attrs, its label wrapped the same way `NavListLink` wraps its own.

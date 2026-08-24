@@ -81,7 +81,7 @@ interface Props {
   /**
    * Floor the stage at a CSS length, for a specimen that is simply short on its own (a navbar strip,
    * say) and reads cramped at its natural content height. Unlike `viewport`'s presets, this reserves
-   * no room for anything painting outside flow — it just keeps the stage from hugging the content.
+   * no room for anything painting outside flow. It just keeps the stage from hugging the content.
    */
   minHeight?: string;
   /** Give the stage no padding: some components ARE a layout and must reach the edges. */
@@ -116,11 +116,26 @@ interface Props {
    * Offer the zoomed-out desktop preset (1440 px, fitted to the docs column).
    *
    * OFF by default. Desktop / Tablet / Mobile are a question any component can answer; this one
-   * only earns its keep on layouts that actually change past the docs column — Navbar, Layout Grid,
+   * only earns its keep on layouts that actually change past the docs column. Navbar, Layout Grid,
    * and the same class of wide chrome. Fullscreen never shows it: that page already IS the
    * viewport this preset pretends to be.
    */
   zoomedDesktop?: boolean;
+  /**
+   * Give this preview's OWN screen preset, decoupled from the page's shared one.
+   *
+   * The shared preset (see `screens` above) answers "how does this hold up on a phone" for the
+   * PAGE, and every preview follows it on purpose. A pattern whose whole point only reads at phone
+   * width (Vaul: [decision 9](/decisiones/0009-el-vaul-es-un-pattern-y-el-drag-es-lo-unico-que-cuesta-js))
+   * still needs to open on `mobile`, but doing that through the shared preset would make THIS demo's
+   * opinion the first-time seed for every other preview on the site, the moment a reader lands here
+   * before any other component page. `"local"` opts this preview's toggle out of `documentScreen`
+   * entirely: its own `Segmented` still switches Libre/Tablet/Móvil like any other, it just never
+   * reads or writes the persisted/shared preference to do it.
+   */
+  screenScope?: "local";
+  /** This preview's own starting preset when `screenScope="local"`. Ignored otherwise. */
+  defaultScreen?: "free" | "tablet" | "mobile";
   /**
    * Skip the source panels under the stage. Marketing surfaces (the landing page) want the live
    * specimen without the teaching HTML/TSX that every component page pairs with it.
@@ -129,7 +144,7 @@ interface Props {
   /**
    * Named span on the page's `.sk-layout-grid` (`packages/core/css/patterns/layout.css`). Each tab
    * panel is its own layout grid, so a preview sits at `content` measure by default and only reaches
-   * for `breakout` (or narrower) when the demo itself needs the room — a settings List does, a Badge
+   * for `breakout` (or narrower) when the demo itself needs the room. A settings List does, a Badge
    * does not. Omit to inherit the panel's default.
    */
   width?: "narrow" | "content" | "breakout" | "full-width";
@@ -154,6 +169,8 @@ const {
   measure,
   screens = true,
   zoomedDesktop = false,
+  screenScope,
+  defaultScreen = "mobile",
   hideSource = false,
   width,
 } = Astro.props;
@@ -168,7 +185,7 @@ const t = useTranslations(locale);
 const treeHtml = tree ? emitMarkup(tree, { fillDefaults: false }) : undefined;
 /*
  * React arrives as up to TWO files: the component, and the module its collections were moved to.
- * `data` is what the second tab shows — a `<Menu>` whose items were serialized into the tag buried
+ * `data` is what the second tab shows. A `<Menu>` whose items were serialized into the tag buried
  * the composition the page is about under a wall of entries, so the entries live where a real
  * project would have put them and the component file is left saying only how it is composed.
  *
@@ -315,6 +332,7 @@ const screenToggleLabels = Object.fromEntries(
   class="sk-component-preview"
   data-sk-component-preview
   data-width={width}
+  data-sk-component-preview-screen-local={screenScope === "local" ? "" : undefined}
   id={previewId}
   style={minHeight ? `--sk-component-preview-stage-min-block-size: ${minHeight}` : undefined}
 >
@@ -323,7 +341,7 @@ const screenToggleLabels = Object.fromEntries(
       /*
        * THE LABEL ALONE. The card used to open with its 1-based position on the page, which was only
        * ever an implementation detail leaking into the chrome: nothing reads it (see the `previewN`
-       * note that used to sit above — both the fullscreen opener and `/f/{page}/{n}` count DOM order
+       * note that used to sit above. Both the fullscreen opener and `/f/{page}/{n}` count DOM order
        * at click time, never a rendered number), and a reader gets nothing from "this is the third
        * demo" that the demo's own name does not already tell them better.
        *
@@ -336,7 +354,7 @@ const screenToggleLabels = Object.fromEntries(
     <span class="sk-component-preview__title">{label}</span>
     {note && <span class="sk-component-preview__note">{note}</span>}
     {/*
-      * THREE separate, self-contained controls in a row — not one boxed toolbar holding all of
+      * THREE separate, self-contained controls in a row: not one boxed toolbar holding all of
       * them. The binding toggle and the screen presets are each a real `Segmented` (see
       * /componentes/segmented): a boxed radiogroup with its own border and sliding indicator, so
       * each already reads as its own control. Wrapping them (plus the overflow menu) in a bordered
@@ -399,7 +417,7 @@ const screenToggleLabels = Object.fromEntries(
             class="sk-segmented"
             data-sk-segmented
             data-sk-component-preview-screen-tabs
-            data-value="free"
+            data-value={screenScope === "local" ? defaultScreen : "free"}
             role="radiogroup"
             aria-label={t("preview.screenGroup", { name: label })}
           >
@@ -410,7 +428,7 @@ const screenToggleLabels = Object.fromEntries(
               * hover/focus next to the sentence-length `aria-label` above. The wrapper stays
               * `display: contents` (component-preview.css) so it never becomes a box of its own:
               * the button is what `.sk-segmented`'s indicator math measures, and the positioner is
-              * `position: fixed` (patterns/anchored.css), so neither counts as a flex item — the
+              * `position: fixed` (patterns/anchored.css), so neither counts as a flex item. The
               * track's layout is exactly what it would be without the tooltip.
               */}
             {screenOptions.map((option) => (
@@ -721,7 +739,10 @@ const screenToggleLabels = Object.fromEntries(
    * full-width first and snapping to phone size once the enhancer arrives.
    */
   (hasBindingTabs || screens) && (
-    <script is:inline define:vars={{ previewId, hasBindingTabs, screens, zoomedDesktop }}>
+    <script
+      is:inline
+      define:vars={{ previewId, hasBindingTabs, screens, zoomedDesktop, screenScope, defaultScreen }}
+    >
       (function () {
         var d = document.documentElement;
         var root = document.getElementById(previewId);
@@ -743,9 +764,16 @@ const screenToggleLabels = Object.fromEntries(
         }
 
         if (screens) {
-          var screen = d.getAttribute("data-sk-component-preview-screen-pref");
-          if (screen === "xl" && !zoomedDesktop) screen = "free";
-          if (screen !== "xl" && screen !== "tablet" && screen !== "mobile") screen = "free";
+          var screen;
+          if (screenScope === "local") {
+            // Never reads the shared/persisted preset: this preview's opinion of its own starting
+            // point (see the `screenScope` doc on ComponentPreview.astro), not the page's.
+            screen = defaultScreen || "mobile";
+          } else {
+            screen = d.getAttribute("data-sk-component-preview-screen-pref");
+            if (screen === "xl" && !zoomedDesktop) screen = "free";
+            if (screen !== "xl" && screen !== "tablet" && screen !== "mobile") screen = "free";
+          }
           var screenTabs = root.querySelector("[data-sk-component-preview-screen-tabs]");
           if (screenTabs) {
             screenTabs.setAttribute("data-value", screen);

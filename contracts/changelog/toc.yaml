@@ -13,11 +13,11 @@ entries:
         Se van el <code>&lt;details&gt;</code>, el <code>&lt;summary&gt;</code> y el chevron: el índice
         ya no se abre ni se cierra, se ve desde el primer paint. Con ellos se van las partes
         <code>disclosure</code>, <code>summary</code> y <code>chevron</code>, el atributo
-        <code>data-sk-toc-disclosure</code> y el opt-in <code>data-sk-toc-rail</code> — que además
+        <code>data-sk-toc-disclosure</code> y el opt-in <code>data-sk-toc-rail</code>: que además
         nunca estuvo en el contrato: era un string mágico re-tipeado en la hoja de estilos, el
         enhancer y cada consumidor que quisiera el rail. El motivo: toda la apariencia de rail vivía
         detrás de ese atributo Y de un <code>min-width: 72rem</code>, así que la propia página del
-        componente no podía renderizar la forma sobre la que corre el sitio de docs — un frame de
+        componente no podía renderizar la forma sobre la que corre el sitio de docs. Un frame de
         preview mide 1022px y la compuerta pedía 1152px. Lo único que sigue detrás de
         <code>wide</code> son <code>position: sticky</code> y el ancho fijo. <strong>Migración:</strong>
         borrá <code>data-sk-toc-rail</code> de tu markup y no envuelvas la lista en un
@@ -29,11 +29,11 @@ entries:
         The <code>&lt;details&gt;</code>, the <code>&lt;summary&gt;</code> and the chevron are gone:
         the index no longer opens or closes, it is readable from first paint. With them go the
         <code>disclosure</code>, <code>summary</code> and <code>chevron</code> parts, the
-        <code>data-sk-toc-disclosure</code> attribute, and the <code>data-sk-toc-rail</code> opt-in —
+        <code>data-sk-toc-disclosure</code> attribute, and the <code>data-sk-toc-rail</code> opt-in -
         which was never in this contract to begin with: a magic string re-typed in the stylesheet, the
         enhancer, and every consumer that wanted the rail. The reason: the rail's entire appearance sat
         behind that attribute AND a <code>min-width: 72rem</code> query, so the component's own page
-        could not render the form the docs site itself runs on — a preview frame is 1022px wide and the
+        could not render the form the docs site itself runs on. A preview frame is 1022px wide and the
         gate asked for 1152px. All that stays behind <code>wide</code> is <code>position: sticky</code>
         and the fixed inline size. <strong>Migration:</strong> drop <code>data-sk-toc-rail</code> from
         your markup and stop wrapping the list in a <code>&lt;details&gt;</code>; the emitter already
@@ -47,14 +47,14 @@ entries:
       body: >-
         <code>aria-current</code> del item activo pasaba <code>"true"</code>, el token genérico.
         Ahora pasa <code>"location"</code>, el que ARIA reserva para "un ítem que representa la
-        posición actual dentro del entorno del usuario" — exactamente el caso de un TOC con
+        posición actual dentro del entorno del usuario". Exactamente el caso de un TOC con
         scroll-spy. Auditoría ARIA APG extendida al resto del catálogo de docs.
     en:
       title: The current item now announces "location", not "true"
       body: >-
         The active item's <code>aria-current</code> used to pass the generic <code>"true"</code>.
         It now passes <code>"location"</code>, the token ARIA reserves for "an item representing
-        the current position within a reader's environment" — exactly the scroll-spy TOC case.
+        the current position within a reader's environment". Exactly the scroll-spy TOC case.
         Extended ARIA APG audit over the rest of the docs catalogue.
   - date: 2026-08-11
     kind: feature

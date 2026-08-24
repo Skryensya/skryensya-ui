@@ -50,7 +50,7 @@ export const dialogContract = {
     /**
      * Renders as an Alert Dialog: `role="alertdialog"`, `aria-modal` authored explicitly rather
      * than left to the platform's implicit mapping (an explicit `role` overriding `<dialog>`'s own
-     * is not guaranteed to keep the implicit value that role would have carried on its own — the
+     * is not guaranteed to keep the implicit value that role would have carried on its own. The
      * same reasoning `aria-atomic` got on Toast), and `aria-describedby` pointing at the body, so
      * the prompt is read together with the name instead of requiring a second Tab press to reach
      * it. For a message needing the user's IMMEDIATE attention (a destructive confirmation, a
@@ -59,7 +59,7 @@ export const dialogContract = {
      * Focus is not this option's to give: the platform focuses the dialog's first autofocusable
      * descendant on its own, so putting `autofocus` on the least destructive action (see the
      * confirm demo) is what the pattern actually asks for, and it already works with no option
-     * here — an alert dialog only ever differs from a plain one in how it is ANNOUNCED.
+     * here. An alert dialog only ever differs from a plain one in how it is ANNOUNCED.
      */
     alert: { type: "boolean", default: false, attr: "role", trueValue: "alertdialog" },
   },

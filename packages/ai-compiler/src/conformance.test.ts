@@ -29,7 +29,7 @@ describe("G1: the bindings realize their contracts", () => {
     const root = repoWith((source) =>
       source.replace(
         "type ButtonAppearanceProps = SignatureOptionsOf<typeof buttonContract, \"Button.action\"> & {",
-        'type ButtonAppearanceProps = { variant?: "neutral" | "primary" | "danger" | "ghost" } & {',
+        'type ButtonAppearanceProps = { variant?: "neutral" | "accent" | "danger" | "ghost" } & {',
       ),
     );
 

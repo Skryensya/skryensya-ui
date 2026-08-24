@@ -45,8 +45,8 @@ entrypoint includes the public palettes, so no second import or selector is need
 | Tier | Answers | Example | May reference |
 |------|---------|---------|---------------|
 | **1 primitive** | what values exist | `--palette-blue-600: oklch(56% .2 255)` | nothing |
-| **2 semantic** | what it means | `--color-action-primary: light-dark(var(--palette-blue-600), …)` | tier 1, or sideways within tier 2 |
-| **3 component** | where it's used | `--sk-button-bg: var(--color-action-primary)` | tier 2 only |
+| **2 semantic** | what it means | `--color-action-accent: light-dark(var(--palette-blue-600), …)` | tier 1, or sideways within tier 2 |
+| **3 component** | where it's used | `--sk-button-bg: var(--color-action-accent)` | tier 2 only |
 
 The rule: **references point down, never up, and tier 3 may never skip to tier 1.** A component hook
 that reaches straight into a palette bypasses the mode-switching in tier 2, so it, and only it, breaks
@@ -69,7 +69,7 @@ contract directly:
 ```
 
 `brand-accent.css` re-declares the complete semantic bundle it owns, for example
-`--color-action-primary`, `--color-text-accent`, `--color-border-accent`, and
+`--color-action-accent`, `--color-text-accent`, `--color-border-accent`, and
 `--color-bg-accent-subtle`. Core performs no implicit runtime derivation. Public palettes remain
 meaning-free source material; the shipped semantic declarations are deliberately verbose but auditable:
 contrast tools validate exactly the values the application ships.
@@ -173,13 +173,13 @@ plus only the components a page uses pulls in exactly what those components need
 ```
 
 `tokens.css` is `primitives.scss` + `semantic.scss` compiled, plus the three patterns `tokens.scss`
-ships in base (state layer, visually hidden, icon — never opt-in). `modes/hc.css` and
+ships in base (state layer, visually hidden, icon: never opt-in). `modes/hc.css` and
 `dimensions/*.css` mirror the Sass path's optional pieces. `components/*.css` and `patterns/*.css`
-are exactly the files a bundler-based consumer imports, exported unmodified — the only thing that
+are exactly the files a bundler-based consumer imports, exported unmodified. The only thing that
 changed is that `tokens.css` now exists compiled, so a plain `<link>` reader has the same
 per-component granularity a bundler already gets.
 
-**Without a toolchain, everything.** Link the batteries-included bundle instead — tokens, every
+**Without a toolchain, everything.** Link the batteries-included bundle instead. Tokens, every
 component and every pattern in one stylesheet:
 
 ```html

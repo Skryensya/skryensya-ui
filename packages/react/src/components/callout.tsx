@@ -5,7 +5,7 @@ const cx = (base: string, className: string | undefined) => (className ? `${base
 
 export type CalloutProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   /**
-   * Optional recovery action owned by the caller — a `translucent` or `danger` Button, or a plain Link.
+   * Optional recovery action owned by the caller. A `translucent` or `danger` Button, or a plain Link.
    * Never a dismiss: Callout is purely informational and has no way to close itself, unlike Toast.
    */
   actions?: ReactNode;

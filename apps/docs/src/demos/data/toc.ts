@@ -2,8 +2,8 @@ import type { ItemInput } from "@skryensya/core/usage-tree";
 import type { Translate } from "../../i18n";
 
 /*
- * THE ENTRIES OF EVERY TOC DEMO. A table of contents IS its list — the composition around it is
- * three lines — so the two are kept apart: `toc.ts` says which Toc is being shown, this says what is
+ * THE ENTRIES OF EVERY TOC DEMO. A table of contents IS its list. The composition around it is
+ * three lines, so the two are kept apart: `toc.ts` says which Toc is being shown, this says what is
  * in it.
  */
 

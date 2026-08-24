@@ -117,7 +117,7 @@ describe("Changelog", () => {
    * THE TONES ARE WRITTEN OUT HERE, not read from `changeKindTones`, and that is deliberate: a test
    * that looked the answer up in the same table the component reads would pass no matter what the
    * table said. These five pairs ARE the spec, so recolouring a kind has to be done twice on purpose
-   * — and `breaking` in particular can never quietly stop being red.
+   *, and `breaking` in particular can never quietly stop being red.
    *
    * The tone is derived rather than passed, which is the other half: there is no prop that could
    * file a breaking change under a calm badge.

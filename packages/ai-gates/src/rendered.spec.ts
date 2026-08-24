@@ -48,7 +48,7 @@ test("every canonical tree is valid against its contract", () => {
 });
 
 /**
- * Every `contract.signature` a tree touches, root or nested — a `Menu` whose "Exportar" item opens
+ * Every `contract.signature` a tree touches, root or nested. A `Menu` whose "Exportar" item opens
  * a submenu references `menu.Menu` twice, once for itself and once for the nested one, and both
  * count. Walks the same `slotItems`/`collectionItems` shape every emitter already walks, so a
  * signature only reachable through a collection entry (a select item, a tree-view node) is not
@@ -69,7 +69,7 @@ function walkSignatures(content: SlotContent | undefined, into: Set<string>): vo
  * The list this list and the published catalogue are supposed to grow together (this file's own
  * header, above `signatureTrees`). That was a comment, never a check: select, menu, table-pager and
  * tooltip were each published and went uncompared by G2 for a while, and nothing failed until
- * someone opened the page and looked. This is the check — every signature the registry publishes
+ * someone opened the page and looked. This is the check. Every signature the registry publishes
  * has to be reachable from at least one canonical tree, root or nested, or the build fails naming
  * it, instead of a family quietly shipping with nobody watching.
  */

@@ -11,7 +11,7 @@ import { marketingTree } from "./marketing";
  * EVERY TEMPLATE, AGAINST ITS CONTRACTS.
  *
  * `emitMarkup` is not this check. The emitter's job is to turn a tree into markup and it will
- * happily emit a tree the contracts reject — which is exactly how `docs-site` shipped with three
+ * happily emit a tree the contracts reject, which is exactly how `docs-site` shipped with three
  * `ListItem.leading` slots holding text, a slot that only accepts `Icon` or `Avatar.initials`. It
  * rendered, it looked right, and it was invalid. `validateUsageTree` is the authority, so it runs
  * here rather than being something someone remembers to do by hand.
@@ -47,7 +47,7 @@ describe("templates", () => {
    * The English render is a real second consumer, not a formality: a template that reads its copy
    * through `t` can only break here by a key that exists in Spanish and not in English, and `t`
    * falls back silently to the Spanish string rather than throwing. Comparing the two trees catches
-   * the case where the fallback fired for every string — a template nobody translated at all.
+   * the case where the fallback fired for every string. A template nobody translated at all.
    */
   it("every template renders in both locales", () => {
     const en = useTranslations("en");

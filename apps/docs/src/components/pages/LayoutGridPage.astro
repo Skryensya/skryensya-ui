@@ -24,14 +24,14 @@ const configurationCss = `.sk-layout-grid {
 const previewCss = `.sk-layout-grid {
   row-gap: var(--space-stack-lg);
   /* \`flush\` (below) drops the stage's own padding on every axis, which the full-width box needs to
-     actually reach the edge — but the block axis still wants SOME breathing room, or the first and
+     actually reach the edge, but the block axis still wants SOME breathing room, or the first and
      last card touch the stage's top/bottom edge flush. Block-only, so the inline edges stay bare. */
   padding-block: var(--space-inset-lg);
 }
 
 /* The rail demos below, singled out by the one structural thing that tells them apart from the
    levels demo above (a rail child): main and rail read as one region split in two, not two
-   unrelated cards, so they sit closer together than the four independent width levels do —
+   unrelated cards, so they sit closer together than the four independent width levels do -
    tighter than any named \`space-stack-*\` step goes, a hairline rather than a real gap. */
 .sk-layout-grid:has(> [data-width="rail"]),
 .sk-layout-grid:has(> [data-width="rail-start"]) {
@@ -40,7 +40,7 @@ const previewCss = `.sk-layout-grid {
 
 /*
  * The tab-panel stage never reaches 72rem (see the comment above the rail previews), so the
- * rail demos stay on the FLUID template — and \`fit-content\` on a grid with \`1fr\` tracks does
+ * rail demos stay on the FLUID template, and \`fit-content\` on a grid with \`1fr\` tracks does
  * not shrink in Chromium. A measure cap is the same job Wrapper does for a page column.
  *
  * ONLY below \`wide\`: fullscreen opens this same CSS inside a viewport that DOES pass 72rem,
@@ -64,7 +64,7 @@ const previewCss = `.sk-layout-grid {
 /*
  * One primitive palette hue per width, not the semantic surface tokens \`data-surface\` already
  * painted: \`raised\`/\`surface\` read as near-identical flat white next to the page canvas in light
- * mode (measured — the stack demo above hit the same near-invisible pairing). A palette tint makes
+ * mode (measured. The stack demo above hit the same near-invisible pairing). A palette tint makes
  * each card legible on its own AND doubles as a second cue for which width is which, matched to the
  * light/dark tier-1 primitives directly rather than through a semantic layer this demo doesn't need.
  */
@@ -128,10 +128,10 @@ const sourceFiles = [
     <h3>{t("layoutGridPage.levelsTitle")}</h3>
     <p set:html={t("layoutGridPage.levelsBody")} />
     <ul>
-      <li><code>narrow</code> — {t("layoutGridPage.levelNarrow")}</li>
-      <li><code>content</code> — {t("layoutGridPage.levelContent")}</li>
-      <li><code>breakout</code> — {t("layoutGridPage.levelBreakout")}</li>
-      <li><code>full-width</code> — {t("layoutGridPage.levelFullWidth")}</li>
+      <li><code>narrow</code>: {t("layoutGridPage.levelNarrow")}</li>
+      <li><code>content</code>: {t("layoutGridPage.levelContent")}</li>
+      <li><code>breakout</code>: {t("layoutGridPage.levelBreakout")}</li>
+      <li><code>full-width</code>: {t("layoutGridPage.levelFullWidth")}</li>
     </ul>
 
     <h3>{t("layoutGridPage.fullWidthTitle")}</h3>

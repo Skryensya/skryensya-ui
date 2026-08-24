@@ -20,14 +20,14 @@ import type { ComponentContract } from "./contract.js";
  * with a spare column turned into a rail by declaring `data-sk-toc-rail`. Two shapes out of one
  * contract, and the seam showed everywhere: the rail's entire appearance sat behind BOTH that
  * attribute and a `min-width: 72rem` query, so the component's own documentation could never render
- * the form the docs site itself runs on — a preview frame is 1022px wide and the gate is 1152px, so
+ * the form the docs site itself runs on. A preview frame is 1022px wide and the gate is 1152px, so
  * the example was structurally incapable of showing it. The attribute was also never part of this
  * contract (not in `tocAttrs`, not an option, not in the template): a magic string re-typed in the
  * stylesheet, the enhancer and every consumer that wanted the rail.
  *
  * So the rail IS the component now. There is no disclosure, no `<summary>`, no chevron and nothing to
  * open: the list is always visible, and what stays behind `wide` is only what genuinely needs a spare
- * column — `position: sticky` and the fixed inline size (`toc.css`). A host with no room gets the same
+ * column: `position: sticky` and the fixed inline size (`toc.css`). A host with no room gets the same
  * compact index in normal flow, which is a layout answer rather than a second shape of this one.
  */
 export const tocParts = {
@@ -83,8 +83,8 @@ export const tocContract = {
               },
               /*
                * Written by the scroll-spy at runtime; an author may also seed the first one.
-               * `"location"`, not `"true"`: ARIA reserves that token for exactly this case — "an
-               * item representing the current position within a reader's environment" — which is
+               * `"location"`, not `"true"`: ARIA reserves that token for exactly this case: "an
+               * item representing the current position within a reader's environment", which is
                * more precise than the generic true/false pair for a scroll-spy TOC.
                */
               current: {

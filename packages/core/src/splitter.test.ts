@@ -50,7 +50,7 @@ describe("hasCrossedDragThreshold", () => {
     expect(hasCrossedDragThreshold(100, 108)).toBe(true);
   });
 
-  it("is direction-agnostic — travel either way counts", () => {
+  it("is direction-agnostic. Travel either way counts", () => {
     expect(hasCrossedDragThreshold(100, 96)).toBe(true);
   });
 

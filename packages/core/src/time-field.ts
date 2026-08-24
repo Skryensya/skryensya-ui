@@ -2,22 +2,22 @@ import type { ComponentContract } from "./contract.js";
 
 /*
  * TIME FIELD: hour, minute, and AM/PM (12-hour locales) as independently steppable and typeable
- * segments in one accessible group, the shape a native segmented time control already has — PLUS a
+ * segments in one accessible group, the shape a native segmented time control already has. PLUS a
  * trigger that opens a plain listbox of preset times, for browsing instead of typing. Both are
  * always present; there is no segments-only variant.
  *
  * Two things this is deliberately NOT, both tried and dropped: a scroll-wheel picker behind a
- * trigger (neither simpler nor more accessible than the segments themselves — a screen reader user
+ * trigger (neither simpler nor more accessible than the segments themselves. A screen reader user
  * had to learn a bespoke scroll container instead of the `spinbutton` pattern every platform time
  * input already teaches), and a SEARCHABLE list, `Combobox`-style (too much machine for a list that
- * is already short, ordered and bounded — every N minutes across one day, never more than a few
+ * is already short, ordered and bounded. Every N minutes across one day, never more than a few
  * dozen rows at a sane step; a search box earns its place on an unordered or unbounded collection,
  * not this one). What earned a permanent spot is the plain listbox in between those two: arrow-key
  * navigable, one click to open, one click or Enter to pick, nothing to type unless typing the
  * segments directly is what's wanted.
  *
  * There is no Zag machine for the SEGMENTS (unlike date-picker/combobox) so this file owns that
- * value model and the segment/token logic instead of re-exporting one from `@zag-js/*` — the
+ * value model and the segment/token logic instead of re-exporting one from `@zag-js/*`. The
  * listbox itself is `@zag-js/select`'s own machine, driven directly by both bindings (their own docs
  * have the reasoning for not using the full `Select` component: it carries its own visible trigger,
  * and nesting one trigger inside another is the exact inefficiency a search box already was).
@@ -33,7 +33,7 @@ export const timeFieldParts = {
   clear: "sk-time-field__clear",
   /**
    * The last child of the control: the picker trigger, always present. Internal placement/query
-   * hook, not a public extension point — nothing else ever fills it. `display: contents` in the
+   * hook, not a public extension point: nothing else ever fills it. `display: contents` in the
    * stylesheet, so it adds no box of its own.
    */
   trailing: "sk-time-field__trailing",
@@ -100,12 +100,12 @@ export function getHourCycle(locale: string): HourCycle {
 
 /**
  * `hourCycle`'s own resolution: an explicit choice always wins over `Intl`'s locale-based guess.
- * That guess is, in practice, one of the least reliable corners of the Intl API — confirmed against
+ * That guess is, in practice, one of the least reliable corners of the Intl API. Confirmed against
  * a real browser, not assumed: `es`/`es-AR` resolve to OPPOSITE cycles across Node's own ICU build
  * and this project's Chromium (`h23` vs `h12`), the exact same locale string, two different answers,
  * neither "wrong" by spec, just genuinely inconsistent CLDR data between engines and versions. A
  * segment's own typing behaviour (`typeDigit`'s auto-advance, both bindings) is driven entirely by
- * `segmentBounds`, which reads straight off whatever cycle this function returns — so a guess that
+ * `segmentBounds`, which reads straight off whatever cycle this function returns, so a guess that
  * lands on `h12` where the author expected `h24` does not just mislabel the hour, it changes how
  * many digits a keystroke waits for, and a single ambiguous first digit (a "2", which could still
  * become "20"–"23") auto-advances a segment early because the wrong MAX made it look unambiguous. A
@@ -119,15 +119,15 @@ export function resolveHourCycle(locale: string, override?: HourCycle): HourCycl
 export type TimeFieldOption = { readonly value: string; readonly label: string };
 
 /**
- * Every clock time in a day, `stepMinutes` apart, as `{ value, label }` pairs — `value` the
+ * Every clock time in a day, `stepMinutes` apart, as `{ value, label }` pairs: `value` the
  * canonical `HH:mm` this file already carries everywhere else, `label` formatted in the SAME
  * hour cycle and locale the field itself displays, so an option reads exactly like what typing it
  * by hand would have produced. The shape `@zag-js/select`'s own item collection already expects
- * (`SelectOption` minus `disabled`, `@skryensya/core/select`) — this file does not import that type
+ * (`SelectOption` minus `disabled`, `@skryensya/core/select`). This file does not import that type
  * back, to keep TimeField ignorant of Select the way `core/splitter.ts`'s own banner keeps Table
  * ignorant of Sidebar, but the two are structurally compatible on purpose, so feeding one into the
  * other needs no mapping step. `stepMinutes` is caller-owned and unchecked beyond `> 0`: a step that
- * does not divide 1440 evenly (a 7-minute step, say) still produces a valid, if lopsided, list — the
+ * does not divide 1440 evenly (a 7-minute step, say) still produces a valid, if lopsided, list. The
  * same tolerance `minuteStep` already has for the segmented spinbutton.
  */
 export function generateTimeOptions(
@@ -272,7 +272,7 @@ export const timeFieldContract = {
     locale: { type: "string", default: "es", attr: "data-locale", machineInput: true },
     /**
      * Forces the hour segment to 12- or 24-hour form, overriding `getHourCycle`'s own locale-based
-     * guess — see `resolveHourCycle`'s own doc for why that guess cannot be trusted to land the same
+     * guess; see `resolveHourCycle`'s own doc for why that guess cannot be trusted to land the same
      * way in every browser. Omitted, the guess stands, unchanged from before this option existed.
      */
     hourCycle: { type: "enum", values: ["h12", "h24"], attr: "data-hour-cycle", machineInput: true },
@@ -296,13 +296,13 @@ export const timeFieldContract = {
     periodLabel: { type: "string", default: "Periodo", attr: "data-period-label", machineInput: true },
     clearLabel: { type: "string", default: "Limpiar hora", attr: "data-clear-label", machineInput: true },
     /**
-     * How far apart the picker's own listbox rows sit, in minutes — every full multiple of it
+     * How far apart the picker's own listbox rows sit, in minutes. Every full multiple of it
      * across the day (`generateTimeOptions`, below). Defaults to 30: enough rows to matter (48) and
      * few enough to arrow-key through without scrolling past most of them, the common case for
      * scheduling a meeting or an appointment.
      */
     optionsStep: { type: "number", default: 30, attr: "data-options-step", machineInput: true },
-    /** The picker trigger's own accessible name — it opens the listbox, so it needs one distinct
+    /** The picker trigger's own accessible name. It opens the listbox, so it needs one distinct
      * from the field's own label (WCAG 2.5.3, the same reasoning SplitButton's own `triggerLabel`
      * states), since the trigger carries no visible text of its own, only an icon. */
     optionsLabel: { type: "string", default: "Elegir de la lista", attr: "data-options-label", machineInput: true },
@@ -336,7 +336,7 @@ export const timeFieldContract = {
       /*
        * The picker's own listbox leaves the field's subtree: React portals it (`Portal`,
        * `@zag-js/react`, to `document.body` by default), while Vanilla keeps it in place, nested
-       * inside the root, positioned by CSS anchoring (decision 25) — the same split every other
+       * inside the root, positioned by CSS anchoring (decision 25). The same split every other
        * `@zag-js/*`-backed floating panel in this codebase already has (`select.ts`/`combobox.ts`'s
        * own `portals: true`). Declared so the symmetry gate measures ONE subtree, container-scoped,
        * instead of comparing a nested tree against a body-portaled one as if they disagreed.

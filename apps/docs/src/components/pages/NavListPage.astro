@@ -1,0 +1,83 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { navListCollapsibleTree, navListHorizontalTree, navListProductTree } from "../../demos/nav-list";
+import { getLocale, useTranslations } from "../../i18n";
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+const isEnglish = locale === "en";
+
+const componentHref = isEnglish ? "/en/components" : "/componentes";
+const tokenHref = isEnglish ? "/en/reference" : "/referencia";
+const startHref = isEnglish ? "/en/installation" : "/instalacion";
+
+const styles = `@import "@skryensya/core/patterns/nav-list.css";`;
+---
+
+<ComponentPageShell
+  title="Nav list"
+  description={t("navListPage.description")}
+  contractId="nav-list"
+  styleGroups={[{ file: "patterns/nav-list.css", probe: "sk-nav-list", title: "Nav list" }]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("navListPage.lede")} />
+
+    <h3>{t("navListPage.productTitle")}</h3>
+    <p set:html={t("navListPage.productBody")} />
+    <ComponentPreview
+      tree={navListProductTree(t, {
+        dashboard: "/app/dashboard",
+        inbox: "/app/inbox",
+        customers: "/app/customers",
+        segments: "/app/customers/segments",
+        automations: "/app/automations",
+        settings: "/app/settings",
+      })}
+      label={t("demo.navList.productLabel")}
+      measure="18rem"
+    />
+
+    <h3>{t("navListPage.horizontalTitle")}</h3>
+    <p set:html={t("navListPage.horizontalBody")} />
+    <ComponentPreview
+      tree={navListHorizontalTree(t, {
+        overview: "/app",
+        projects: "/app/projects",
+        reports: "/app/reports",
+        team: "/app/team",
+      })}
+      label={t("demo.navList.horizontalLabel")}
+      measure="34rem"
+      minHeight="9rem"
+    />
+
+    <h3>{t("navListPage.disclosureTitle")}</h3>
+    <p set:html={t("navListPage.disclosureBody")} />
+    <ComponentPreview
+      tree={navListCollapsibleTree(t, {
+        start: startHref,
+        components: componentHref,
+        tokens: tokenHref,
+        profile: "/account/profile",
+        billing: "/account/billing",
+      })}
+      label={t("demo.navList.collapsibleNavLabel")}
+      measure="18rem"
+    />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("navListPage.contractBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <p set:html={t("navListPage.installIntro")} />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("navListPage.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

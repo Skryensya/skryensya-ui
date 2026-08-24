@@ -9,25 +9,25 @@ entries:
     kind: feature
     target: nav
     es:
-      title: Nueva opción nav en MenubarItem — el trigger puede ser el link real de nav-list
+      title: Nueva opción nav en MenubarItem. El trigger puede ser el link real de nav-list
       body: >-
         Se agrega <code>nav</code> (booleana) a <code>MenubarItem</code>: cuando está presente, el
         trigger renderiza con las clases propias de <code>nav-list</code>
         (<code>sk-nav-list__link</code>/<code>__label</code>) en vez de <code>Button</code>
-        (<code>sk-button</code>). Nada del comportamiento de Menubar cambia — mismo <code>role</code>,
-        mismo roving tabindex, mismo manejo de apertura/cierre de desplegables — sólo el elemento y
+        (<code>sk-button</code>). Nada del comportamiento de Menubar cambia: mismo <code>role</code>,
+        mismo roving tabindex, mismo manejo de apertura/cierre de desplegables. Sólo el elemento y
         las clases que pinta el trigger. Pensada junto con la nueva opción de ítem <code>href</code>
         de <code>Menu</code> para el caso <code>menubar-navigation</code> de WAI-ARIA: una barra que
         es de verdad navegación, construida con los elementos de <code>nav-list</code>, no una barra
         de comandos con los colores de nav-list prestados.
     en:
-      title: New nav option on MenubarItem — the trigger can be nav-list's own real link
+      title: New nav option on MenubarItem. The trigger can be nav-list's own real link
       body: >-
         Adds <code>nav</code> (boolean) to <code>MenubarItem</code>: when given, the trigger renders
         with <code>nav-list</code>'s own classes (<code>sk-nav-list__link</code>/<code>__label</code>)
         instead of <code>Button</code>'s (<code>sk-button</code>). Nothing about Menubar's own
-        behavior changes — same <code>role</code>, same roving tabindex, same dropdown open/close
-        handling — only the trigger's element and classes. Built together with <code>Menu</code>'s
+        behavior changes: same <code>role</code>, same roving tabindex, same dropdown open/close
+        handling: only the trigger's element and classes. Built together with <code>Menu</code>'s
         new <code>href</code> item option for WAI-ARIA's own <code>menubar-navigation</code> case: a
         bar that is genuinely navigation, built from <code>nav-list</code>'s own elements, not a
         command bar wearing nav-list's borrowed colors.

@@ -6,11 +6,11 @@
  * this module exists because of what the measurement showed.
  *
  * The submenu's `closing` state runs THREE effects at once: `trackPointerMove` (which closes early
- * if a move lands outside the polygon), `trackInteractOutside`, and `waitForCloseDelay` — a flat
+ * if a move lands outside the polygon), `trackInteractOutside`, and `waitForCloseDelay`. A flat
  * 100ms timer that sends `DELAY.CLOSE` no matter where the pointer is. So `intentPolygon` can only
  * VETO an early close during those 100ms; it cannot extend them. Parking the pointer motionless
  * well INSIDE the polygon and touching nothing else, the submenu still closed at ~90ms and the
- * parent's `pointerRoutingMode` fell back to "interactive" — no pointer move ever happened, so the
+ * parent's `pointerRoutingMode` fell back to "interactive": no pointer move ever happened, so the
  * only thing that could have closed it is the fuse. `closing` is left only by `MENU_POINTERENTER`,
  * i.e. by the pointer physically reaching the submenu's own content. A reader crossing a sibling
  * row on the way there loses the submenu unless their hand makes the whole trip in under 100ms.
@@ -19,14 +19,14 @@
  * `pointerleave` does not fire while the pointer is over a DESCENDANT of the element it left. So
  * the safe area is a real element INSIDE the trigger, covering the triangle the reader is about to
  * cross. Crossing it, the trigger is never left, `TRIGGER_POINTERLEAVE` never fires, the fuse is
- * never lit, and the sibling rows underneath never see a `pointermove` to steal the highlight with —
+ * never lit, and the sibling rows underneath never see a `pointermove` to steal the highlight with -
  * one mechanism instead of a close race and a highlight race fought separately. This is what
  * "counts as part of the parent element" has to mean to a browser.
  *
  * Three measured details it depends on:
  *
  *   - `position: fixed` escapes `.sk-menu__content`'s `overflow: auto` (nothing on the path
- *     establishes a containing block for fixed in either binding — probed on the real page), and
+ *     establishes a containing block for fixed in either binding. Probed on the real page), and
  *     being out of flow it is NOT a grid item, so dropping it inside the trigger's own
  *     `display: grid` costs the trigger no layout.
  *   - `clip-path` clips HIT TESTING, not just paint. That is what makes this a triangle rather than
@@ -37,7 +37,7 @@
  *   - `.sk-menu__item` is `isolation: isolate`, so the safe area is trapped in the TRIGGER's
  *     stacking context and later sibling rows would paint over it. The trigger therefore carries
  *     `data-sk-menu-safe-area` while the shape is mounted, and menu.css raises it for exactly that
- *     long — the attribute is the mechanism, not a styling hook.
+ *     long. The attribute is the mechanism, not a styling hook.
  */
 
 export interface SafeAreaPoint {
@@ -65,7 +65,7 @@ export interface SafeAreaShape {
 /**
  * Pulls the apex this far back INTO the trigger, away from the submenu. The triangle at any x
  * between apex and base widens as the apex moves further from the base, so a few px of bleed buys
- * tolerance for the first pointer sample after the boundary — which is never exactly on it. Zag's
+ * tolerance for the first pointer sample after the boundary, which is never exactly on it. Zag's
  * own `setIntentPolygon` bleeds by 5 for the same reason; this stays under a single item's height
  * so the shape never reaches back across the whole trigger.
  */
@@ -74,7 +74,7 @@ const SAFE_AREA_BLEED = 4;
 /**
  * The pointer has to stop somewhere. While it keeps moving inside the safe area the shape stays
  * (every `pointermove` re-arms this), but a hand that has come to rest is no longer travelling to
- * the submenu, and leaving the shape mounted would leave the row underneath unreachable — including
+ * the submenu, and leaving the shape mounted would leave the row underneath unreachable. Including
  * unclickable, which is the one failure a reader cannot work around. 300ms is comfortably longer
  * than the pause inside a real diagonal (a crossing samples continuously) and short enough that a
  * reader who changed their mind does not notice the row was ever held.
@@ -110,7 +110,7 @@ export function safeAreaShape(
    * Which way the corridor runs is a fact about the two RECTS, never about the pointer: deriving it
    * from the pointer instead reverses the bleed the moment the pointer reaches the near edge, and
    * builds the shape on the submenu's side of it. The pointer's only say is whether it is still on
-   * the trigger's side at all — once it is not, there is no corridor left to bridge.
+   * the trigger's side at all. Once it is not, there is no corridor left to bridge.
    */
   if (towardEnd ? pointer.x >= nearX : pointer.x <= nearX) return null;
   const apexX = pointer.x + (towardEnd ? -SAFE_AREA_BLEED : SAFE_AREA_BLEED);
@@ -144,7 +144,7 @@ export interface MenuSafeAreaHandle {
    * happen before the pointer leaves, not after: an element created in response to `pointerleave`
    * arrives one event too late, with the fuse already lit.
    *
-   * Ignored while the pointer is inside the shape — the apex freezes at the crossing point instead
+   * Ignored while the pointer is inside the shape. The apex freezes at the crossing point instead
    * of trailing the pointer, which is what keeps the reader from dragging the protected region
    * around with them.
    */
@@ -163,11 +163,11 @@ export const menuSafeAreaAttr = "data-sk-menu-safe-area";
  * `perspective`, `contain: paint|layout|strict|content`, `will-change: transform`, or
  * `backdrop-filter`): CSS then makes that ancestor the containing block for every `position: fixed`
  * descendant, this span included. A parent menu placed by the machine's own fallback (`strategy:
- * "fixed"`, written as `transform: translate3d(var(--x), var(--y), 0)` — `@zag-js/popper` always
+ * "fixed"`, written as `transform: translate3d(var(--x), var(--y), 0)`: `@zag-js/popper` always
  * positions this way, there is no plain-`top`/`left` mode to opt into) is exactly such an ancestor
  * whenever this trigger's own submenu sits in a tree that fell back to it. Measured against a live
  * nested Menu: the shape's `left`/`top` came out correct in viewport terms and rendered dozens of
- * pixels off — the same offset as the hijacking ancestor's own on-screen position, because the
+ * pixels off. The same offset as the hijacking ancestor's own on-screen position, because the
  * browser was resolving them against ITS box, not the viewport this module assumed.
  */
 function fixedContainingBlockOrigin(from: HTMLElement, doc: Document): SafeAreaPoint {

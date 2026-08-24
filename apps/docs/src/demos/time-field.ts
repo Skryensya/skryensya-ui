@@ -19,10 +19,10 @@ export const timeFieldTree = (
 });
 
 /**
- * A 24-hour field, GUARANTEED — `hourCycle: "h24"` overrides whatever the locale's own `Intl`
+ * A 24-hour field, GUARANTEED: `hourCycle: "h24"` overrides whatever the locale's own `Intl`
  * guess would otherwise resolve to. That guess is unreliable enough to demonstrate directly: the
  * SAME locale string ("es"/"es-AR") resolves to opposite cycles across Node's own ICU build and a
- * real Chromium (`resolveHourCycle`'s own doc, `@skryensya/core/time-field`) — a consumer that
+ * real Chromium (`resolveHourCycle`'s own doc, `@skryensya/core/time-field`). A consumer that
  * needs a guaranteed 24-hour field (a scheduling form, an ops dashboard) cannot depend on that
  * guess landing the same way in every browser.
  */
@@ -43,7 +43,7 @@ export const timeFieldForced24Tree = (
 
 /**
  * `optionsStep` (contract option, `@skryensya/core/time-field`) shown at a tighter grain than the
- * default 30 minutes — 96 rows instead of 48, still short enough to arrow-key through without a
+ * default 30 minutes. 96 rows instead of 48, still short enough to arrow-key through without a
  * search box.
  */
 export const timeFieldQuarterHourTree = (

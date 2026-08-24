@@ -11,7 +11,7 @@ export const progressInLayoutCase: EvalCase = {
       "(Progress declara `inline-size: 100%` dentro de un Stack flex, y necesitó " +
       "`:has(> .sk-progress)` en component-preview.css para no encogerse a cero). Este runner sólo " +
       "prueba G0-G3 (forma): esta entrada NO prueba que el layout se vea bien, sólo que la " +
-      "composición sigue siendo válida — la prueba visual vive en las gates de renderizado, no acá.",
+      "composición sigue siendo válida. La prueba visual vive en las gates de renderizado, no acá.",
   ],
   tree: {
     contract: "layout",

@@ -51,7 +51,7 @@ export type ChangeKind = (typeof CHANGE_KINDS)[number];
  * They are two fields because they are read by two different people, or by the same person twice. A
  * reader scanning a release wants the list of what moved and nothing else; a reader who stopped on
  * one of them wants the reasoning. Written as a single blob, the first reader has to read the second
- * reader's paragraph to find out whether they care — which is what the entries used to be, four
+ * reader's paragraph to find out whether they care, which is what the entries used to be, four
  * sentences deep, and why a release read as a wall.
  *
  * `title` is plain text: it lands in a heading-shaped slot and there is nothing in a headline that
@@ -95,7 +95,7 @@ export type ReleaseLedger = {
    * The version being written now, unpublished. Unreleased entries are stamped `<working>-dev`:
    * the number it will carry, marked as not carrying it yet. That suffix is the entire answer to
    * "what do we show before there is any versioning", and it is a real answer rather than a
-   * placeholder, because it says both things a reader needs — which version this is heading for,
+   * placeholder, because it says both things a reader needs, which version this is heading for,
    * and that it has not got there.
    */
   readonly working: string;
@@ -120,7 +120,7 @@ const MISSING_TEXT = ["es.title", "es.body", "en.title", "en.body"] as const;
  *
  * Reached this way rather than by four hand-written conditions so the check and the error message
  * are the same list: a fifth field would otherwise be validated in one place and reported in another.
- * Deliberately untyped in the middle — this reads a parsed YAML blob, which is `unknown` until these
+ * Deliberately untyped in the middle. This reads a parsed YAML blob, which is `unknown` until these
  * very checks have passed.
  */
 function textAt(entry: ChangeEntry, path: (typeof MISSING_TEXT)[number]): string | undefined {
@@ -175,7 +175,7 @@ export function readChangelogs(dir: string): ChangelogReadResult {
  *
  * Dates have to be unique because they are the boundaries: two releases on one day leave entries
  * from that day with two right answers, and the reader would see the same change filed under two
- * versions. The working version has to be unpublished for the same class of reason — a `0.1.0-dev`
+ * versions. The working version has to be unpublished for the same class of reason. A `0.1.0-dev`
  * sitting above a shipped `0.1.0` claims that what is in it is not in the version it names.
  */
 function readLedger(dir: string, conflicts: string[]): ReleaseLedger {

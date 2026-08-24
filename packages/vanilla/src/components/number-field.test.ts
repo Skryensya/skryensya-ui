@@ -7,7 +7,7 @@ import { mountNumberField } from "./number-field.js";
 /*
  * The exact shape `numberFieldContract`'s template (core/src/number-field.ts) emits: a labelled
  * root, decrement/input/increment inside a control row. `value` is the HTML attribute the
- * contract's `defaultValue` option maps to — `NumberField.svelte` reads it off `input.defaultValue`
+ * contract's `defaultValue` option maps to: `NumberField.svelte` reads it off `input.defaultValue`
  * (the attribute mirror), never the live `.value`.
  */
 function markup({ value = "5", min = "0", max = "10", step = "1", disabled = false } = {}): HTMLElement {
@@ -58,7 +58,7 @@ const press = (trigger: HTMLButtonElement) => {
 
 /*
  * `@zag-js/svelte`'s own `normalizeProps` (`normalize-props.js`'s `propMap`) remaps `onFocus`/
- * `onBlur` to `onfocusin`/`onfocusout` — the bubbling pair, not plain `focus`/`blur`. `bindZagEvents`
+ * `onBlur` to `onfocusin`/`onfocusout`. The bubbling pair, not plain `focus`/`blur`. `bindZagEvents`
  * binds whatever event name comes out of that map, so the real listener is on `focusin`/`focusout`;
  * `fireEvent.focus`/`.blur` fire an event type nothing here listens for, and the machine silently
  * never sees them. Confirmed against the installed `@zag-js/number-input` machine's own `debug: true`
@@ -71,7 +71,7 @@ const press = (trigger: HTMLButtonElement) => {
  * behind a real `requestAnimationFrame`, same as the dismiss machinery `menu.test.ts` documents. Real
  * `.focus()`, not `fireEvent.focusIn`: a synthetic `focusin` with no actual DOM focus left an extra,
  * unexplained `INPUT.FOCUS` re-transition after the blur fired (checked against the machine's own
- * `debug: true` log) — real focus does not.
+ * `debug: true` log). Real focus does not.
  */
 const tick = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 const type = async (input: HTMLInputElement, value: string) => {
@@ -176,7 +176,7 @@ describe("NumberField vanilla enhancer", () => {
 
   /*
    * WAI-ARIA APG's Spinbutton pattern (see docs/aria-apg-audit.md's own "Spinbutton" row) is built
-   * around KEYBOARD interaction on the input itself — ArrowUp/ArrowDown/Home/End are the pattern's
+   * around KEYBOARD interaction on the input itself. ArrowUp/ArrowDown/Home/End are the pattern's
    * required behaviors, not an enhancement over the pointer-button pair above. Everything above this
    * only exercises the trigger buttons and blur-commit; without this, a regression that broke the
    * input's own keyboard handling (the primary way a keyboard/screen-reader user actually drives a
@@ -196,7 +196,7 @@ describe("NumberField vanilla enhancer", () => {
     const { input } = parts(root);
     // Real `.focus()`, not a synthetic event: the machine only wires ArrowUp/ArrowDown/Home/End
     // inside its "focused" state (checked against the installed `@zag-js/number-input` machine's own
-    // state chart) — same requirement `type()`'s own doc above documents for the blur-commit path.
+    // state chart). Same requirement `type()`'s own doc above documents for the blur-commit path.
     input.focus();
 
     fireEvent.keyDown(input, { key: "ArrowUp" });

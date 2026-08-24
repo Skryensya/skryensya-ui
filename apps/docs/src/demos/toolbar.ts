@@ -32,7 +32,7 @@ const iconButton = (
       contract: "button",
       signature: "Button.action",
       // `ghost`: no fill, no border, matching the bar's own chrome instead of drawing a second
-      // box inside it — Button's own variant, not a toolbar-specific reinterpretation of it.
+      // box inside it. Button's own variant, not a toolbar-specific reinterpretation of it.
       options: { iconOnly: true, size: "sm", variant: "ghost" },
       attrs: { "aria-label": label },
       children: { contract: "icon", signature: "Icon", options: { name: icon } },

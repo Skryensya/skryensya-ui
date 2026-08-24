@@ -2,7 +2,7 @@
 /*
  * Header chrome: switch language, staying on the SAME page.
  *
- * A MENU over the DS Menu contract, and every row is a real `<a href>` — Menu's own item `href`
+ * A MENU over the DS Menu contract, and every row is a real `<a href>`. Menu's own item `href`
  * shape, which Zag activates as a link (`navigate`, default `clickIfLink`). So each row is still
  * exactly what the whole control used to be, a link to this document's other translation; what
  * changed is that the control now NAMES the languages instead of asking the reader to decode a
@@ -20,8 +20,8 @@
  *
  * The current language is a `radio` row carrying `data-checked`, which is what the enhancer reads to
  * seed the machine (`Menu.svelte`: `checked: boolAttr(node, "data-checked")`). So the menu says which
- * language you are reading, with `role="menuitemradio"` + `aria-checked` — the state a screen reader
- * asks for — instead of a tick drawn by hand.
+ * language you are reading, with `role="menuitemradio"` + `aria-checked`. The state a screen reader
+ * asks for, instead of a tick drawn by hand.
  *
  * `hreflang` and `lang` per row tell the browser and assistive tech that the destination and the
  * label itself are in that language, so a screen reader announces "English" in English.

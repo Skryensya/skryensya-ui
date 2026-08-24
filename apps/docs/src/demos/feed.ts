@@ -2,7 +2,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /*
- * Three posts. Each `FeedArticle` states its own `posInset`/`setSize` — a screen reader user
+ * Three posts. Each `FeedArticle` states its own `posInset`/`setSize`. A screen reader user
  * navigating past article 2 hears "2 of 3" without reading the other two first.
  */
 export const feedTree = (t: Translate): UsageTree => {

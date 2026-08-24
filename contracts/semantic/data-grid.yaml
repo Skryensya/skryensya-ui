@@ -2,9 +2,9 @@
 
 DataGrid:
   useWhen:
-    - "un conjunto de celdas necesita navegación 2D por teclado — flechas se mueven entre filas y columnas"
-    - "es una grilla de widgets (chips, tarjetas, enlaces) y se quiere UNA sola parada de tabulación en vez de una por widget — el caso 'layout grid' de WAI"
-    - "es una grilla de datos interactiva (editable, con celdas que reciben foco) — el caso 'data grid' de WAI"
+    - "un conjunto de celdas necesita navegación 2D por teclado. Flechas se mueven entre filas y columnas"
+    - "es una grilla de widgets (chips, tarjetas, enlaces) y se quiere UNA sola parada de tabulación en vez de una por widget. El caso 'layout grid' de WAI"
+    - "es una grilla de datos interactiva (editable, con celdas que reciben foco). El caso 'data grid' de WAI"
   avoidWhen:
     - "los datos son tabulares pero ESTÁTICOS, sin necesidad de navegar con flechas; eso es Table"
     - "hay jerarquía además de columnas; eso es Treegrid"
@@ -15,7 +15,7 @@ DataGrid:
 
 DataGridRow:
   useWhen:
-    - "una fila lógica de celdas — no necesariamente una fila visual; puede envolver varias líneas físicas"
+    - "una fila lógica de celdas: no necesariamente una fila visual; puede envolver varias líneas físicas"
 
 DataGridCell:
   useWhen:

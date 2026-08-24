@@ -13,7 +13,7 @@ type Cleanup = () => void;
 
 /*
  * Keeps the two native inputs of a `SliderRange` from being dragged past each other, and the fill
- * bar between them in sync — the one thing native `min`/`max` can't do on their own, because
+ * bar between them in sync. The one thing native `min`/`max` can't do on their own, because
  * neither input's bounds know about the other's current value. See `slider.ts`'s own "MULTI-THUMB"
  * banner for why two plain range inputs were chosen over a hand-rolled widget in the first place.
  */
@@ -29,7 +29,7 @@ export function connectSliderRange(root: HTMLElement): Cleanup {
   };
 
   // Captured ONCE, before either input's own `min`/`max` gets narrowed to the other thumb's
-  // current value below — reading them back off the inputs on a LATER sync would see the
+  // current value below. Reading them back off the inputs on a LATER sync would see the
   // already-narrowed bound instead of the true, fixed ends of the whole range.
   const min = numberOr(low.min || high.min, 0);
   const max = numberOr(low.max || high.max, 100);

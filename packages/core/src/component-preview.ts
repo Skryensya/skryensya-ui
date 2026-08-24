@@ -73,6 +73,13 @@ export const componentPreviewAttrs = {
    * setting it again on every example they scroll past. Absent means `free`.
    */
   documentScreen: "data-sk-component-preview-screen-pref",
+  /**
+   * On the root: this preview's screen preset is its OWN, not the page's shared one. It never reads
+   * or writes {@link componentPreviewAttrs.documentScreen}, so a pattern that only makes sense
+   * starting from a phone (Vaul, say) can open there without seeding that as every OTHER preview's
+   * default for a first-time reader who happens to land here first.
+   */
+  screenLocal: "data-sk-component-preview-screen-local",
   sourceTabs: "data-sk-component-preview-source-tabs",
   source: "data-sk-component-preview-source",
   flush: "data-sk-component-preview-flush",

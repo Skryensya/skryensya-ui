@@ -7,7 +7,7 @@ type Cleanup = () => void;
 
 /*
  * THE SCROLL-SPY IS ALL THAT IS LEFT HERE. This used to also own a `matchMedia` that pinned the
- * `<details>` open and took its `<summary>` out of the tab order past `wide` — machinery that existed
+ * `<details>` open and took its `<summary>` out of the tab order past `wide`. Machinery that existed
  * only because the component shipped two shapes and JavaScript had to pick one per breakpoint. The
  * index is always open now (`toc.ts`), so there is no state to sync and nothing to decide: what is
  * left is the one thing that is genuinely behaviour rather than appearance, moving `aria-current`

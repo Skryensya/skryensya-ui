@@ -2,10 +2,10 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /*
- * One visual weight, four tones — and no way to dismiss any of them. Callout is purely
+ * One visual weight, four tones, and no way to dismiss any of them. Callout is purely
  * informational: it shows something, it does not run anything, so there is no `dismissible` here to
  * demonstrate. The one interactive piece a Callout can carry is a recovery action, and the contract
- * narrows its `variant` to `subtle`/`danger` so it never reads as a second, competing primary button.
+ * narrows its `variant` to `subtle`/`danger` so it never reads as a second, competing action button.
  */
 
 /** The default: surface and border, no semantic paint, and no action, ever. */
@@ -47,7 +47,7 @@ export const calloutWarningTree = (t: Translate): UsageTree => ({
   children: t("demo.callout.warning.body"),
 });
 
-/** A recovery action as a Button — `translucent`, which blends with the callout's colored background. */
+/** A recovery action as a Button: `translucent`, which blends with the callout's colored background. */
 export const calloutSuccessTree = (t: Translate): UsageTree => ({
   contract: "callout",
   signature: "Callout",

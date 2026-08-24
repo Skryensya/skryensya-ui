@@ -42,14 +42,14 @@ const cx = (base: string, className: string | undefined) => (className ? `${base
 type WithChildren<T> = T & { children: ReactNode };
 
 /*
- * TREEGRID, the React binding — composable, one component per `treegrid.ts` signature, the same
+ * TREEGRID, the React binding. Composable, one component per `treegrid.ts` signature, the same
  * shape `table.tsx` already uses for the parts that carry no behaviour (`TreegridHead`/
  * `TreegridHeadRow`/`TreegridColumnHeader` below are literally `table.tsx`'s header components,
- * renamed). Rows DO carry behaviour — expand/collapse, roving tabindex, arrow-key navigation — with
+ * renamed). Rows DO carry behaviour. Expand/collapse, roving tabindex, arrow-key navigation. With
  * nowhere else to put it: unlike `TreeView`'s single data-driven `nodes` prop, an author here writes
  * flat `<TreegridRow>` JSX the same way they write a `<TableRow>`, so `Treegrid` (the root) reads
- * that authored tree ONCE, synchronously, off `children` — a plain top-down read of props, not a
- * registry any child populates as it renders — and hands the result down through context so
+ * that authored tree ONCE, synchronously, off `children`. A plain top-down read of props, not a
+ * registry any child populates as it renders, and hands the result down through context so
  * `TreegridRow`/`TreegridCell` only ever ask "am I hidden" / "am I the current stop", never recompute
  * either from scratch.
  */
@@ -59,18 +59,18 @@ type TreegridContextValue = {
   isCellStop: (id: string, col: number) => boolean;
   isHidden: (id: string) => boolean;
   isExpanded: (id: string) => boolean;
-  /** `"entering"`/`"exiting"` for one animation's worth after a toggle, `undefined` at rest — see
+  /** `"entering"`/`"exiting"` for one animation's worth after a toggle, `undefined` at rest. See
    * `Treegrid`'s own effect for what drives it. */
   transitionOf: (id: string) => TreegridRowTransition;
-  /** `column === 0` on a branch row toggles instead of just moving focus — same rule the vanilla
+  /** `column === 0` on a branch row toggles instead of just moving focus. Same rule the vanilla
    * enhancer's own click handler applies. */
   onCellClick: (id: string, isBranch: boolean, col: number) => void;
   registerElement: (id: string, col: number | null, element: HTMLElement | null) => void;
-  /** Opt-in column resizing — see `Treegrid`'s own `resizableColumns` prop doc. `columnWidths` is
+  /** Opt-in column resizing; see `Treegrid`'s own `resizableColumns` prop doc. `columnWidths` is
    * the CURRENT px width of every column; `setColumnWidths` is the raw state setter, exposed
    * un-wrapped (not a `resizeColumn(index, delta)` helper) because `TreegridColumnResizer` needs
-   * two different update shapes from the SAME state — an incremental one from the keyboard, and one
-   * computed fresh against a drag's OWN start snapshot from the pointer — and hiding both behind one
+   * two different update shapes from the SAME state. An incremental one from the keyboard, and one
+   * computed fresh against a drag's OWN start snapshot from the pointer, and hiding both behind one
    * method would just move the branch, not remove it. */
   resizableColumns: boolean;
   resizeLabel?: string;
@@ -130,14 +130,14 @@ export type TreegridProps = Omit<HTMLAttributes<HTMLTableElement>, "onChange"> &
   onActivate?: (details: { value: string }) => void;
   /**
    * Opt-in: a `.sk-splitter` drag handle between each pair of column headers, WAI-ARIA APG's
-   * "Window Splitter" pattern — see `treegrid.ts`'s own option doc for why this defaults to off.
+   * "Window Splitter" pattern; see `treegrid.ts`'s own option doc for why this defaults to off.
    */
   resizableColumns?: boolean;
-  /** Required whenever `resizableColumns` is on — see `treegrid.ts`'s `resizeLabel` option doc. */
+  /** Required whenever `resizableColumns` is on; see `treegrid.ts`'s `resizeLabel` option doc. */
   resizeLabel?: string;
   /**
    * The INITIAL share of the table's width each column claims before any drag, one positive number
-   * per column — see `treegrid.ts`'s identical `columnWeights` option and
+   * per column; see `treegrid.ts`'s identical `columnWeights` option and
    * `resolveWeightedColumnWidths` (`@skryensya/core/splitter`). Omitted, falls back to
    * {@link defaultTreegridColumnWeights} rather than an equal split.
    */
@@ -155,7 +155,7 @@ export function Treegrid({
   columnWeights,
   ...props
 }: TreegridProps) {
-  // Lazy initializer: seeded from each row's OWN authored `expanded`, read once — a branch that
+  // Lazy initializer: seeded from each row's OWN authored `expanded`, read once. A branch that
   // opens by default (`expanded` true) must not silently start collapsed just because state starts
   // empty. Later toggles only ever touch this map, never `readRows` again.
   const [expandedById, setExpandedById] = useState<Record<string, boolean>>(() =>
@@ -163,12 +163,12 @@ export function Treegrid({
   );
   const [focus, setFocus] = useState<TreegridFocus>({ row: 0, col: null });
   const elements = useRef(new Map<string, HTMLElement>());
-  /** The reverse of `elements` — which (row id, column) an element IS, for `currentFocus` below. */
+  /** The reverse of `elements`, which (row id, column) an element IS, for `currentFocus` below. */
   const elementKeys = useRef(new Map<HTMLElement, { id: string; col: number | null }>());
 
   const rows = useMemo(() => readRows(children), [children]);
   /*
-   * `table-layout: fixed` needs an authoritative column count to size against — measured in
+   * `table-layout: fixed` needs an authoritative column count to size against. Measured in
    * Chromium 1.42 that leaving it to infer from `<thead>`/`<tbody>` independently is unreliable: the
    * header's own two columns came back a different width than the first body row's, swapped, and
    * neither summed to the table's real rendered width. An explicit `<colgroup>` is the mechanism the
@@ -180,9 +180,9 @@ export function Treegrid({
 
   /*
    * `resizableColumns`'s own state: PX widths, one per column, seeded from the table's SCROLL
-   * WRAPPER width (`measured width ÷ colCount`) — same reasoning, and same fix, as the vanilla
+   * WRAPPER width (`measured width ÷ colCount`). Same reasoning, and same fix, as the vanilla
    * enhancer's `applyColumnGroup`: on the FIRST render `columnWidths` is still `[]`, so the colgroup
-   * below renders no `<col>`s at all, and `table-layout: fixed` has nothing to size against — the
+   * below renders no `<col>`s at all, and `table-layout: fixed` has nothing to size against. The
    * table reports its own unconstrained CONTENT width instead of the space it actually has (measured
    * with a wide fixture: four `white-space: nowrap` columns summed to far more than the container,
    * every seeded column oversized, pushing later columns' resizers entirely outside the scrollable
@@ -192,11 +192,11 @@ export function Treegrid({
    * falls back to measuring itself.
    *
    * NOT a one-shot `getBoundingClientRect()` at mount, though: a table can mount while its own
-   * ancestor is `display: none` (measured live — a docs preview panel not yet the selected binding
+   * ancestor is `display: none` (measured live. A docs preview panel not yet the selected binding
    * tab reads 0 the whole time it stays hidden, exactly like a closed accordion or an inactive tab
    * panel would), and 0 ÷ colCount seeds every column at the min floor, permanently, since nothing
    * ever asks again. `ResizeObserver` keeps watching until the FIRST real, nonzero width arrives,
-   * seeds from it, and disconnects — after that this is a mount concern again, exactly once, same
+   * seeds from it, and disconnects. After that this is a mount concern again, exactly once, same
    * as before: re-seeding on every resize would fight a reader's own drag.
    */
   const tableRef = useRef<HTMLTableElement | null>(null);
@@ -207,7 +207,7 @@ export function Treegrid({
     if (!table) return;
     const measured = table.parentElement instanceof HTMLElement ? table.parentElement : table;
     /*
-     * `columnWeights`, falling back to `defaultTreegridColumnWeights` — the hierarchy column (index
+     * `columnWeights`, falling back to `defaultTreegridColumnWeights`. The hierarchy column (index
      * 0) carries per-level indentation, a disclosure button, and the row's own label, so it earns a
      * bigger default share than a flat metadata column beside it. `resolveWeightedColumnWidths`
      * (`@skryensya/core/splitter`) has the arithmetic; an equal `columnWeights` reduces to the exact
@@ -215,7 +215,7 @@ export function Treegrid({
      */
     const weights = columnWeights ?? defaultTreegridColumnWeights(colCount);
 
-    // Guards against a callback already in flight the instant `disconnect()` is called — a real
+    // Guards against a callback already in flight the instant `disconnect()` is called. A real
     // race, not a hypothetical one, since `ResizeObserver` batches and delivers on the next frame.
     let seeded = false;
     const seedFrom = (width: number): boolean => {
@@ -225,13 +225,13 @@ export function Treegrid({
       setColumnWidths(seeds);
       /*
        * An explicit pixel WIDTH on the table itself, not left at the stylesheet's `inline-size:
-       * auto` — see `treegrid.css`'s own note on why `auto` is not safe here: a `table-layout:
+       * auto`; see `treegrid.css`'s own note on why `auto` is not safe here: a `table-layout:
        * fixed` table sized `auto` still compares its columns' sum against its containing block and
        * takes the greater, and once the table ends up wider than that sum, Chromium's real
        * redistribution algorithm hands the surplus to whichever columns have the most unbreakable
        * `nowrap` content rather than leaving every column at its authored width. Resizing never has
        * to touch this again: `resolveColumnResize` conserves the touched pair's own total, so the
-       * table's OWN total is an invariant of every resize, set correctly exactly once, here — an
+       * table's OWN total is an invariant of every resize, set correctly exactly once, here. An
        * imperative write, not a `style` prop, since nothing else on this element owns `style` for
        * React to fight over.
        */
@@ -245,7 +245,7 @@ export function Treegrid({
     });
     observer.observe(measured);
     return () => observer.disconnect();
-    // A mount concern, like the vanilla enhancer's own one-time measurement — re-running on every
+    // A mount concern, like the vanilla enhancer's own one-time measurement. Re-running on every
     // `colCount`/`columnWeights` change would blow away a reader's own drag the moment authored
     // content changed for an unrelated reason.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -262,25 +262,25 @@ export function Treegrid({
   /*
    * ANIMATING A TOGGLE. `visibleFlags` above stays the pure, INSTANT truth `resolveTreegridKey`'s
    * own keyboard-navigable index space is built from (an "exiting" row is not addressable by arrow
-   * keys the instant its branch collapses, whether or not it is still painting) — nothing here
+   * keys the instant its branch collapses, whether or not it is still painting): nothing here
    * touches that. What these two states add is a WINDOW between a row's logical visibility
    * flipping and its DOM `hidden` attribute catching up:
    *   - `exitingIds`: rows CURRENTLY `visibleFlags === false` that are kept un-hidden anyway, so
    *     they keep painting through their own exit animation instead of vanishing in the same frame
    *     the branch collapses. `hiddenById` below is the only thing that reads this.
    *   - `transitionById`: `"entering"`/`"exiting"` for exactly the same window, one animation's
-   *     worth — what `TreegridRow` puts on `data-state` for `treegrid.css`'s own keyframes to key
+   *     worth. What `TreegridRow` puts on `data-state` for `treegrid.css`'s own keyframes to key
    *     off. An entering row needs no `exitingIds` counterpart: it is already unhidden the instant
    *     `visibleFlags` says so (table layout grows right away), this is purely the cosmetic fade+
    *     rise layered on top.
    *
-   * Both are set from INSIDE `toggle()` itself, synchronously with `setExpandedById` — not reactively
+   * Both are set from INSIDE `toggle()` itself, synchronously with `setExpandedById`: not reactively
    * off a `visibleFlags`-watching `useEffect`. A passive effect fires AFTER the browser has already
    * committed and painted the "unhidden, no `data-state` yet" frame from the `setExpandedById` commit,
    * so `data-state="entering"` lands one commit too late for the browser to ever start
    * `sk-treegrid-row-in` against it (confirmed live: `getAnimations()` came back empty every time).
-   * Diffing here instead — against `visibleFlags` from THIS render's closure, the state as it stood
-   * before this toggle — means `hidden` and `data-state` both change in the SAME commit, same as the
+   * Diffing here instead. Against `visibleFlags` from THIS render's closure, the state as it stood
+   * before this toggle. Means `hidden` and `data-state` both change in the SAME commit, same as the
    * vanilla binding's own two synchronous attribute writes.
    */
   const [exitingIds, setExitingIds] = useState<ReadonlySet<string>>(() => new Set());
@@ -303,7 +303,7 @@ export function Treegrid({
     if (timer) clearTimeout(timer);
     settleTimersRef.current.delete(id);
     setTransitionById((prevState) => {
-      // Only clear if STILL the transition that scheduled this settle — a rapid re-toggle may
+      // Only clear if STILL the transition that scheduled this settle. A rapid re-toggle may
       // already have moved this row into the OPPOSITE transition by the time this fires.
       if (prevState[id] !== transition) return prevState;
       const next = { ...prevState };
@@ -380,7 +380,7 @@ export function Treegrid({
   };
 
   /*
-   * Where focus ACTUALLY is, read off the DOM rather than trusting `focus` state alone — the same
+   * Where focus ACTUALLY is, read off the DOM rather than trusting `focus` state alone. The same
    * reasoning `treegrid.ts` (vanilla) documents: React re-renders on state changes it caused, but
    * something else (an app's own focus management, a test) can move real DOM focus without going
    * through `moveFocus`, and using the stale index would resolve the next keystroke against the
@@ -425,7 +425,7 @@ export function Treegrid({
     isExpanded: (id) => expandedById[id] ?? false,
     transitionOf: (id) => transitionById[id],
     // Cells cover the row's entire clickable area in a real `<table>`, so click handling lives here
-    // ONLY (never duplicated on `<tr>` too) — a `<td>`'s own click already bubbles to its row, and a
+    // ONLY (never duplicated on `<tr>` too). A `<td>`'s own click already bubbles to its row, and a
     // second handler up there would fire a second, conflicting focus/toggle for the same click.
     onCellClick: (id, isBranch, col) => {
       const rowIndex = visibleIndexById[id];
@@ -509,7 +509,7 @@ export function TreegridHeadRow({ children, className, ...props }: TreegridHeadR
 
 export type TreegridColumnHeaderProps = WithChildren<ThHTMLAttributes<HTMLTableCellElement>>;
 
-/** `columnIndex`/`columnCount` are injected by the parent `TreegridHeadRow`, see the comment there —
+/** `columnIndex`/`columnCount` are injected by the parent `TreegridHeadRow`, see the comment there -
  * never author-set. */
 type InjectedTreegridColumnHeaderProps = TreegridColumnHeaderProps & { columnIndex: number; columnCount: number };
 
@@ -518,7 +518,7 @@ export function TreegridColumnHeader(publicProps: TreegridColumnHeaderProps) {
     publicProps as InjectedTreegridColumnHeaderProps;
   const context = useContext(TreegridContext);
   const headerRef = useRef<HTMLTableCellElement>(null);
-  // Never the LAST column — see `resolveColumnResize`'s own doc: a handle there would have no next
+  // Never the LAST column; see `resolveColumnResize`'s own doc: a handle there would have no next
   // neighbor to redistribute width with.
   const resizable = Boolean(context?.resizableColumns) && columnIndex < columnCount - 1;
   return (
@@ -530,10 +530,10 @@ export function TreegridColumnHeader(publicProps: TreegridColumnHeaderProps) {
 }
 
 /**
- * The drag edge for one column boundary — never authored, `TreegridColumnHeader` renders one when
+ * The drag edge for one column boundary: never authored, `TreegridColumnHeader` renders one when
  * `resizableColumns` is on and this is not the last column. Same shape as `SidebarResizeHandle`
  * (press-vs-drag threshold, RTL sign, `resolveSplitterKey` for the keyboard), reading/writing the
- * PAIR of widths on either side of it through context instead of a single CSS-clamped property —
+ * PAIR of widths on either side of it through context instead of a single CSS-clamped property -
  * `resolveColumnResize`'s own doc explains why a column resize cannot be one clamped value.
  */
 function TreegridColumnResizer({ columnIndex, headerRef }: { columnIndex: number; headerRef: RefObject<HTMLTableCellElement | null> }) {
@@ -551,13 +551,13 @@ function TreegridColumnResizer({ columnIndex, headerRef }: { columnIndex: number
   const direction = () =>
     splitterDirectionSign(headerRef.current && getComputedStyle(headerRef.current).direction === "rtl" ? "rtl" : "ltr");
 
-  /** From the CURRENT widths — right for a discrete keyboard press, wrong for a continuous drag
+  /** From the CURRENT widths. Right for a discrete keyboard press, wrong for a continuous drag
    * (see `onPointerMove` below, which resolves against the drag's OWN start snapshot instead). */
   const resize = (delta: number) => {
     context.setColumnWidths(resolveColumnResize({ widths: context.columnWidths, index: columnIndex, delta, min: MIN_COLUMN_WIDTH }));
   };
 
-  /** Back to an even split between this pair — the keyboard's answer to double-click, same as
+  /** Back to an even split between this pair. The keyboard's answer to double-click, same as
    * Sidebar's own Enter/dblclick reset. */
   const reset = () => resize(total / 2 - before);
 
@@ -645,12 +645,12 @@ export function TreegridBody({ children, className, ...props }: TreegridBodyProp
 
 export type TreegridRowProps = Omit<HTMLAttributes<HTMLTableRowElement>, "children"> & {
   children: ReactNode;
-  /** The row's identity — what `onExpandedChange`/`onActivate` report, and what context lookups key on. */
+  /** The row's identity. What `onExpandedChange`/`onActivate` report, and what context lookups key on. */
   value: string;
   level: number;
   setSize: number;
   posInset: number;
-  /** Omit for a leaf. `true`/`false` marks a branch, open or collapsed — see `treegrid.ts`'s option. */
+  /** Omit for a leaf. `true`/`false` marks a branch, open or collapsed; see `treegrid.ts`'s option. */
   expanded?: boolean;
 };
 
@@ -669,7 +669,7 @@ export function TreegridRow({
   const hidden = context.isHidden(value);
   const currentlyExpanded = context.isExpanded(value);
   /*
-   * A cell states its own text, nothing else — which column it is and which row it belongs to are
+   * A cell states its own text, nothing else, which column it is and which row it belongs to are
    * facts of WHERE it was written, not something an author should restate by hand (a `TableCell`
    * doesn't take a column index either). So the row injects both here, the one place that already
    * knows a cell's position among its siblings.
@@ -687,7 +687,7 @@ export function TreegridRow({
       aria-posinset={posInset}
       aria-setsize={setSize}
       // NOT `sk-interactive` here: its state layer paints a `::before` directly on this `<tr>`,
-      // and a `<tr>`'s children are the table layout algorithm's own column-fixup input — a
+      // and a `<tr>`'s children are the table layout algorithm's own column-fixup input. A
       // generated box among them gets wrapped into an anonymous table-cell, pushing every real
       // `<td>` one column right (measured: Chromium 140). `TreegridCell` below still carries
       // `sk-interactive` for its own hover/press feedback.
@@ -706,7 +706,7 @@ export function TreegridRow({
 
 export type TreegridCellProps = WithChildren<TdHTMLAttributes<HTMLTableCellElement>>;
 
-/** `row`/`column`/`isBranch` are injected by the parent `TreegridRow`, see the comment there — never
+/** `row`/`column`/`isBranch` are injected by the parent `TreegridRow`, see the comment there. Never
  * author-set. */
 type InjectedTreegridCellProps = TreegridCellProps & { row: string; column: number; isBranch: boolean };
 
@@ -726,14 +726,14 @@ export function TreegridCell(publicProps: TreegridCellProps) {
       tabIndex={context.isCellStop(row, column) ? 0 : -1}
     >
       {/*
-       * The expand/collapse control, rendered only in a branch row's first cell — never authored,
+       * The expand/collapse control, rendered only in a branch row's first cell: never authored,
        * `TreegridRow` injects `isBranch`/`column` above for exactly this check. `aria-hidden` +
        * `tabIndex={-1}`: the row's own `aria-expanded` already announces this state to a screen
        * reader (`treegrid.ts`'s `disclosure` part doc), so the button stays decorative to
        * assistive tech and out of the roving tab sequence. NOT `sk-interactive`: that class would
        * give the button its OWN hover/press state layer, a second highlight competing with this
        * `<td>`'s own for the same click (`onCellClick` toggles on `column === 0`, never on whether
-       * the click landed on this button specifically) — `treegrid.css` instead darkens the glyph
+       * the click landed on this button specifically): `treegrid.css` instead darkens the glyph
        * off the ROW's hover/focus, one layer, not two. The click still bubbles to this `<td>`'s own
        * `onClick` above unchanged.
        */}

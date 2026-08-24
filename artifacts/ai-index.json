@@ -786,9 +786,9 @@
           ],
           "parents": [],
           "useWhen": [
-            "un conjunto de celdas necesita navegación 2D por teclado — flechas se mueven entre filas y columnas",
-            "es una grilla de widgets (chips, tarjetas, enlaces) y se quiere UNA sola parada de tabulación en vez de una por widget — el caso 'layout grid' de WAI",
-            "es una grilla de datos interactiva (editable, con celdas que reciben foco) — el caso 'data grid' de WAI"
+            "un conjunto de celdas necesita navegación 2D por teclado. Flechas se mueven entre filas y columnas",
+            "es una grilla de widgets (chips, tarjetas, enlaces) y se quiere UNA sola parada de tabulación en vez de una por widget. El caso 'layout grid' de WAI",
+            "es una grilla de datos interactiva (editable, con celdas que reciben foco). El caso 'data grid' de WAI"
           ]
         },
         {
@@ -804,7 +804,7 @@
             "DataGrid"
           ],
           "useWhen": [
-            "una fila lógica de celdas — no necesariamente una fila visual; puede envolver varias líneas físicas"
+            "una fila lógica de celdas: no necesariamente una fila visual; puede envolver varias líneas físicas"
           ]
         },
         {
@@ -1036,7 +1036,7 @@
           ],
           "parents": [],
           "useWhen": [
-            "un stream de unidades de contenido independientes que se puede cargar en tandas — posts, comentarios, actividad"
+            "un stream de unidades de contenido independientes que se puede cargar en tandas. Posts, comentarios, actividad"
           ]
         },
         {
@@ -1053,7 +1053,7 @@
             "Feed"
           ],
           "useWhen": [
-            "una unidad de contenido dentro del feed — un post, un comentario"
+            "una unidad de contenido dentro del feed. Un post, un comentario"
           ]
         }
       ]
@@ -1152,7 +1152,7 @@
             "Icon"
           ],
           "avoidWhen": [
-            "el comportamiento ya existe hecho: un ciclo de modo de color usa las funciones de @skryensya/core/theme-toggle, un copy-to-clipboard usa writeClipboard de @skryensya/core/copy-button, sobre este mismo primitivo — no hay que reinventar esa parte",
+            "el comportamiento ya existe hecho: un ciclo de modo de color usa las funciones de @skryensya/core/theme-toggle, un copy-to-clipboard usa writeClipboard de @skryensya/core/copy-button, sobre este mismo primitivo: no hay que reinventar esa parte",
             "hay un solo estado, o dos que se leen como on/off: eso es un Switch o un Toggle simple, no vale la pena declarar una colección de caras para dos valores",
             "el ícono es puramente decorativo y no cambia: eso es Icon, sin la anatomía de estados"
           ],
@@ -1377,7 +1377,7 @@
           "useWhen": [
             "una página necesita una medida de lectura y algunos hijos deben ser angostos, abrirse o sangrar de borde a borde",
             "una sección full-width debe conservar su contenido centrado sin un wrapper adicional",
-            "la página lleva un rail de apoyo (TOC, navegación contextual): es un hijo directo con data-width=\"rail\" (después del contenido) o data-width=\"rail-start\" (antes), o ambos — no un span de contenido como narrow/breakout, sino una columna aparte que la misma grilla reserva junto al flujo, separada de él solo por --sk-layout-rail-gap"
+            "la página lleva un rail de apoyo (TOC, navegación contextual): es un hijo directo con data-width=\"rail\" (después del contenido) o data-width=\"rail-start\" (antes), o ambos: no un span de contenido como narrow/breakout, sino una columna aparte que la misma grilla reserva junto al flujo, separada de él solo por --sk-layout-rail-gap"
           ]
         },
         {
@@ -1657,7 +1657,7 @@
             "Megamenu"
           ],
           "useWhen": [
-            "una categoría de la barra — su panel (`columns`) son 2-4 NavListGroup, no comandos ni un solo enlace"
+            "una categoría de la barra. Su panel (`columns`) son 2-4 NavListGroup, no comandos ni un solo enlace"
           ]
         }
       ]
@@ -1713,7 +1713,7 @@
           ],
           "parents": [],
           "useWhen": [
-            "una barra persistente de comandos de aplicación, algunos con submenú desplegable — un editor (Archivo/Editar/Ver)",
+            "una barra persistente de comandos de aplicación, algunos con submenú desplegable. Un editor (Archivo/Editar/Ver)",
             "navegación de sitio con secciones que despliegan sub-destinos"
           ]
         },
@@ -1730,7 +1730,7 @@
             "Menubar"
           ],
           "useWhen": [
-            "un ítem de la barra — con `items` (el mismo shape de Menu: comandos, checkbox/radio, separadores, submenús anidados) es un desplegable, sin `items` es un comando directo"
+            "un ítem de la barra. Con `items` (el mismo shape de Menu: comandos, checkbox/radio, separadores, submenús anidados) es un desplegable, sin `items` es un comando directo"
           ]
         }
       ]
@@ -1814,7 +1814,7 @@
           "useWhen": [
             "agrupa destinos bajo un rótulo",
             "hace falta el <ul> aunque el grupo no lleve rótulo visible",
-            "con collapsible: la sección se puede ocultar/mostrar — el patrón WAI 'Disclosure (Navigation)'"
+            "con collapsible: la sección se puede ocultar/mostrar. El patrón WAI 'Disclosure (Navigation)'"
           ]
         },
         {
@@ -2439,7 +2439,7 @@
           ],
           "parents": [],
           "useWhen": [
-            "el usuario acota un rango entre un mínimo y un máximo — un filtro de precio, una franja de fechas por posición"
+            "el usuario acota un rango entre un mínimo y un máximo. Un filtro de precio, una franja de fechas por posición"
           ]
         }
       ]
@@ -2891,6 +2891,27 @@
           "useWhen": [
             "una etiqueta que el usuario puede quitar: un filtro aplicado, una palabra clave"
           ]
+        },
+        {
+          "alternatives": [
+            "Link",
+            "Button.navigation"
+          ],
+          "avoidWhen": [
+            "también debe poder quitarse; un tag enlace no es dismissible porque no puede contener otro botón",
+            "es un enlace dentro de una frase; eso es Link"
+          ],
+          "host": "a",
+          "id": "Tag.link",
+          "intent": [
+            "tag-link",
+            "navigable-keyword",
+            "facet-link"
+          ],
+          "parents": [],
+          "useWhen": [
+            "una etiqueta que navega a una faceta, tema o palabra clave"
+          ]
         }
       ]
     },
@@ -3308,7 +3329,7 @@
           ],
           "parents": [],
           "useWhen": [
-            "casi siempre: mismo motivo que TableScroll — la grilla no debe reventar un flex o un grid al ser más ancha que su espacio"
+            "casi siempre: mismo motivo que TableScroll. La grilla no debe reventar un flex o un grid al ser más ancha que su espacio"
           ]
         },
         {
@@ -3329,7 +3350,7 @@
           ],
           "parents": [],
           "useWhen": [
-            "los datos tienen jerarquía Y columnas a la vez — un explorador de archivos con tamaño/fecha, un org chart con cargo/área",
+            "los datos tienen jerarquía Y columnas a la vez. Un explorador de archivos con tamaño/fecha, un org chart con cargo/área",
             "cada fila necesita expandirse o colapsarse sin perder el resto de sus columnas"
           ]
         },
@@ -3396,7 +3417,7 @@
         {
           "alternatives": [],
           "avoidWhen": [
-            "la fila es una hoja sin hijos; ahí no se pasa `expanded` en absoluto — su ausencia es lo que la marca hoja, no un valor `false`"
+            "la fila es una hoja sin hijos; ahí no se pasa `expanded` en absoluto. Su ausencia es lo que la marca hoja, no un valor `false`"
           ],
           "host": "tr",
           "id": "TreegridRow",
@@ -3408,14 +3429,14 @@
             "TreegridBody"
           ],
           "useWhen": [
-            "un registro de la grilla, en el mismo orden que un lector de pantalla lo recorre — nunca anidado dentro de otro TreegridRow, un <tr> no puede contener otro <tr>",
+            "un registro de la grilla, en el mismo orden que un lector de pantalla lo recorre: nunca anidado dentro de otro TreegridRow, un <tr> no puede contener otro <tr>",
             "la fila tiene descendientes: pasa `expanded` (true o false) y escríbelos a continuación, en orden, con un `level` mayor"
           ]
         },
         {
           "alternatives": [],
           "avoidWhen": [
-            "el contenido necesita su propio control interactivo (un botón, un link); esta versión del contrato es fiel al ejemplo WAI `treegrid-1` — celdas de solo texto, ver docs/aria-apg-audit.md"
+            "el contenido necesita su propio control interactivo (un botón, un link); esta versión del contrato es fiel al ejemplo WAI `treegrid-1`. Celdas de solo texto, ver docs/aria-apg-audit.md"
           ],
           "host": "td",
           "id": "TreegridCell",
@@ -3624,5 +3645,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "dfd754af9412bcd8"
+  "sourceHash": "6036212a266856d6"
 }

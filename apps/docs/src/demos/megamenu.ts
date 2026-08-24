@@ -3,16 +3,16 @@ import { DEMO_IMAGE_FRAME_SRC } from "./image-frame.js";
 import type { Translate } from "../i18n";
 
 /*
- * Two categories, `Producto` (4 columns) and `Recursos` (3 columns) — both inside the contract's
+ * Two categories, `Producto` (4 columns) and `Recursos` (3 columns). Both inside the contract's
  * documented 2-4 range, and different enough from each other that the ruler's own constant-height
  * behavior visibly does something. Every links column is `NavListGroup` with `heading: true` (a real
- * `<h3>`, see `nav-list.ts`'s own doc) — the same component NavList uses for its sidebar/navbar
+ * `<h3>`, see `nav-list.ts`'s own doc). The same component NavList uses for its sidebar/navbar
  * groups, not a second description of one. Each trigger's LAST column is an `ImageFrame`
- * (`image-frame.ts`), the contract's own worked example of `columns`' OTHER accepted signature — a
+ * (`image-frame.ts`), the contract's own worked example of `columns`' OTHER accepted signature. A
  * media column, not a links column, proving `columns` was never NavListGroup-only by construction.
  *
  * EVERY link carries `data-sk-megamenu-preview` (`megamenu.ts`'s own `attrs` escape hatch, no
- * contract change needed — see that constant's own doc), each a differently-colored placeholder:
+ * contract change needed; see that constant's own doc), each a differently-colored placeholder:
  * hovering or focusing one swaps ITS trigger's image, reverting to the trigger's own authored default
  * the instant focus/hover leaves every preview link.
  */

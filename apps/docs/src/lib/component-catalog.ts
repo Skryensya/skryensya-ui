@@ -37,8 +37,8 @@ const componentDescriptions = {
     en: "Explores and selects dates in an always-visible grid.",
   },
   "/componentes/callout": {
-    es: "Destaca un mensaje inline —error, confirmación, advertencia o nota— que permanece visible.",
-    en: "Highlights an inline message — error, confirmation, warning, or note — that stays visible.",
+    es: "Destaca un mensaje inline -error, confirmación, advertencia o nota- que permanece visible.",
+    en: "Highlights an inline message. Error, confirmation, warning, or note. That stays visible.",
   },
   "/componentes/card": {
     es: "Compone contenido relacionado en una superficie flexible y reutilizable.",
@@ -222,7 +222,7 @@ const componentDescriptions = {
   },
   "/componentes/split-button": {
     es: "Combina una acción principal con alternativas relacionadas.",
-    en: "Pairs one primary action with related alternatives.",
+    en: "Pairs one accent action with related alternatives.",
   },
   "/componentes/stack": {
     es: "Separa elementos verticalmente con un ritmo consistente.",

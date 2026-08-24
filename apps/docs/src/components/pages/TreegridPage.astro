@@ -16,7 +16,7 @@ const t = useTranslations(getLocale(Astro.url));
 
 /*
  * `TreegridScroll` reuses `.sk-table-scroll` and `Treegrid`/its rows reuse `.sk-table`/
- * `.sk-table__*` (the contract's `also`, see `treegrid.ts`) — border, striping, sticky header/column
+ * `.sk-table__*` (the contract's `also`, see `treegrid.ts`). Border, striping, sticky header/column
  * all come from `table.css` for free, so a consumer imports BOTH stylesheets, never `treegrid.css`
  * alone.
  */

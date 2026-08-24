@@ -1,63 +1,49 @@
 ---
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 import ComponentPreview from "../components/ComponentPreview.astro";
 import StylingHooks from "../components/StylingHooks.astro";
 
 const import_ = `@import "@skryensya/core/patterns/scrollbar.css";`;
 
-const always = `<div
-  class="sk-scrollbar demo-scroll"
-  tabindex="0"
->
-  <p>
-    Región con scroll nativo y chrome del sistema: track y thumb
-    siempre visibles. La rueda, el momentum y el toque siguen
-    siendo de la plataforma; el pattern solo pinta la superficie
-    que el navegador expone.
-  </p>
-  <p>
-    Añade <code>sk-scrollbar</code> a cualquier contenedor con
-    <code>overflow: auto</code> (o <code>scroll</code>). Sin la
-    clase, el SO pinta su scrollbar nativa.
-  </p>
-  <p>
-    Tercer párrafo para forzar el desbordamiento y ver el
-    thumb. Cambia modo o contraste arriba: los hooks siguen
-    a los tokens semánticos.
-  </p>
-  <p>
-    Cuarto párrafo. El tamaño del thumb lo decide el navegador
-    según cuánto contenido hay; el sistema solo fija el ancho
-    del rail y los colores.
-  </p>
-</div>`;
 
-const reveal = `<div
-  class="sk-scrollbar sk-scrollbar--reveal demo-scroll"
-  tabindex="0"
->
-  <p>
-    Misma región, variante <code>sk-scrollbar--reveal</code>:
-    el gutter queda reservado (<code>scrollbar-gutter: stable</code>)
-    pero el thumb está transparente hasta que pasas el mouse o
-    el foco de teclado entra en la región.
-  </p>
-  <p>
-    Al revelar no aparece un track relleno: solo el thumb,
-    donde estás. Un rail pintado leería como un borde que el
-    layout no pidió.
-  </p>
-  <p>
-    Pasa el mouse por aquí, o tabula hasta esta caja, para
-    ver el thumb. Al salir, vuelve a callarse sin mover el
-    layout.
-  </p>
-  <p>
-    Ideal en sidebars y rails densos, donde una scrollbar
-    siempre encendida compite con el contenido.
-  </p>
-</div>`;
+
+const alwaysTree: UsageTree = {
+  contract: "layout",
+  signature: "Stack",
+  attrs: { class: "sk-scrollbar demo-scroll", tabindex: "0" },
+  children: [
+    "Longitud: medio",
+    "Estado: sincronizado",
+    "Render: vanilla",
+    "Binding: React",
+    "Contrato: publicado",
+    "Gate: verde",
+    "Source hash: actual",
+    "Preview: árbol",
+    "Scroll: nativo",
+    "Thumb: visible",
+  ],
+};
+
+const revealTree: UsageTree = {
+  contract: "layout",
+  signature: "Stack",
+  attrs: { class: "sk-scrollbar demo-scroll sk-scrollbar--reveal", tabindex: "0" },
+  children: [
+    "Longitud: medio",
+    "Estado: sincronizado",
+    "Render: vanilla",
+    "Binding: React",
+    "Contrato: publicado",
+    "Gate: verde",
+    "Source hash: actual",
+    "Preview: árbol",
+    "Scroll: nativo",
+    "Thumb: visible",
+  ],
+};
 ---
 
 <Base
@@ -101,7 +87,7 @@ const reveal = `<div
     <code>sk-scrollbar</code> deja track y thumb a la vista. Úsalo cuando el scroll es parte
     del mapa de la UI (un panel de código, una tabla ancha).
   </p>
-  <ComponentPreview html={always} label="sk-scrollbar" />
+  <ComponentPreview tree={alwaysTree} label="sk-scrollbar" />
 
   <h2>Reveal al hover (y al foco)</h2>
   <p>
@@ -109,7 +95,7 @@ const reveal = `<div
     deja el thumb transparente hasta <code>:hover</code> o <code>:focus-within</code>. Al
     revelar solo aparece el thumb, no un track relleno.
   </p>
-  <ComponentPreview html={reveal} label="sk-scrollbar--reveal" note="hover o tab para revelar" />
+  <ComponentPreview tree={revealTree} label="sk-scrollbar--reveal" note="hover o tab para revelar" />
   <p>
     El rail del sidebar de esta documentación usa exactamente esta variante: quieto en reposo,
     legible cuando lo tocas.

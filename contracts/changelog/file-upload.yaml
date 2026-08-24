@@ -16,7 +16,7 @@ entries:
         (<code>rejection</code>) con su propia hoja de estilo esperando. React ahora renderiza esa
         parte con <code>role="alert"</code> cuando hay rechazos, con el nombre del archivo y el
         motivo en prosa (nueva función compartida <code>fileUploadErrorMessage</code>, para que
-        Vanilla — que nunca dibuja markup propio, por diseño — pueda armar el mismo mensaje al
+        Vanilla. Que nunca dibuja markup propio, por diseño. Pueda armar el mismo mensaje al
         escuchar <code>sk-file-change</code>).
     en:
       title: React now shows why a file was rejected, instead of nothing
@@ -26,8 +26,8 @@ entries:
         with no visible or announced message, even though the contract already had a dedicated part
         (<code>rejection</code>) with its own stylesheet waiting. React now renders that part with
         <code>role="alert"</code> when there are rejections, naming the file and the reason in
-        prose (new shared <code>fileUploadErrorMessage</code> function, so Vanilla — which never
-        draws its own markup, by design — can build the same message from
+        prose (new shared <code>fileUploadErrorMessage</code> function, so Vanilla: which never
+        draws its own markup, by design. Can build the same message from
         <code>sk-file-change</code>).
   - date: 2026-08-11
     kind: feature

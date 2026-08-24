@@ -5,13 +5,13 @@ import type { Translate } from "../i18n";
  * TWO RELEASES, AND ONE OF THEM HAS NOT SHIPPED, which is the only pair that shows what this
  * contract is for. A demo of one dated release would be a list with a heading; the second one, with
  * no date, is where the rail's dot goes hollow and where `0.2.0-dev` says both which version the
- * work is heading for and that it has not got there — the state every changelog in this repo is
+ * work is heading for and that it has not got there. The state every changelog in this repo is
  * actually in today.
  *
  * ALL FIVE KINDS ARE HERE, one per entry, because every kind now wears its own tone and the badge
  * column is the first thing a reader scans. A demo showing four of them would be a legend with a
  * hole in it: nothing on the page would say what the fifth colour means, and the one it left out
- * would be `chore` — the quiet one, which is exactly the tone a reader needs to have seen before
+ * would be `chore`. The quiet one, which is exactly the tone a reader needs to have seen before
  * they can trust that a grey badge means "not for you" rather than "unlabelled".
  *
  * The DATE IS WRITTEN TWICE on purpose and the demo would be dishonest otherwise. The option is the

@@ -284,7 +284,7 @@ export const tablePagerContract = {
 
     /*
      * `role="status"`, unconditional: the enhancer rewrites this node's text on every page change
-     * (`table-pager.ts`'s own `status.textContent = ...`), and nothing announced that until now —
+     * (`table-pager.ts`'s own `status.textContent = ...`), and nothing announced that until now -
      * the same live-region gap Combobox's own result counter already had and fixed, applied here.
      */
     TablePagerStatus: {

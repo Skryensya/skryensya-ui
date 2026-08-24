@@ -13,7 +13,7 @@ summary: >-
 
 ## El problema
 
-`meter.css` decía, literalmente, "deliberadamente idéntico en forma a Progress" — y lo era: mismo
+`meter.css` decía, literalmente, "deliberadamente idéntico en forma a Progress". Y lo era: mismo
 track sunken, mismo fill con `border-radius: var(--radius-pill)`, mismo hook `--sk-*-color` por tono.
 Lo único que los distinguía era semántico y estaba fuera de la vista:
 
@@ -32,7 +32,7 @@ Meter gana una fila de header, pintada arriba del track:
 - `label` (ya existía como opción, ya alimentaba `aria-label`) ahora TAMBIÉN se pinta como texto
   visible, vía `textFromOption` en un `<span>` propio.
 - `valueText` (ya existía, opcional, ya alimentaba `aria-valuetext`) TAMBIÉN se pinta, solo cuando el
-  autor lo da — WAI la lista como recomendada, no requerida, y un número desnudo ("68%") junto a una
+  autor lo da. WAI la lista como recomendada, no requerida, y un número desnudo ("68%") junto a una
   barra sin etiqueta es menos legible que ningún número.
 - Ninguno de los dos deja de ser un atributo ARIA real en el track: `textFromOption` agrega una
   SEGUNDA lectura visible de la misma cadena, no reemplaza la primera. La lectura de un lector de
@@ -41,7 +41,7 @@ Meter gana una fila de header, pintada arriba del track:
 El precedente es Adobe Spectrum: es el sibling más cercano a este contrato (el mismo split ARIA
 `meter` contra `progressbar` que ya seguíamos), y su `<sp-meter>` pinta por defecto "a label that
 describes what is being measured... and a percentage value showing the numeric progress". El track y
-el fill de Spectrum son casi idénticos entre meter y progress-bar — la forma no es donde el ecosistema
+el fill de Spectrum son casi idénticos entre meter y progress-bar. La forma no es donde el ecosistema
 distingue los dos, la etiqueta sí.
 
 `Progress` no cambia. Sigue siendo una barra desnuda: su lugar de uso típico (una tabla, una toolbar,
@@ -62,4 +62,4 @@ pasar `className`/props sueltos a "el elemento raíz" sin decidir cuál de los d
 No se agregó coloreado automático por zona (lo que hace `<meter>` nativo: verde/amarillo/rojo según
 `low`/`high`/`optimum`). Es el otro precedente real que arrojó la investigación, pero cambia la API del
 contrato (opciones nuevas, un cómputo de zona que hoy el autor hace a mano eligiendo `tone`) en vez de
-solo el CSS. Si se pide después, el hook `tone` ya está — solo faltaría quién lo calcule.
+solo el CSS. Si se pide después, el hook `tone` ya está. Solo faltaría quién lo calcule.

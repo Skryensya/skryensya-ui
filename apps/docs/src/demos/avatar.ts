@@ -5,7 +5,7 @@ const ACCENT_HEX = "1f5fc3";
 const ON_ACCENT_HEX = "ffffff";
 /*
  * 96, not the displayed avatar's own pixel size (32/40/48 for sm/md/lg): dummyimage.com's baked-in
- * text does not scale proportionally with the requested canvas — a 160px canvas (the previous
+ * text does not scale proportionally with the requested canvas. A 160px canvas (the previous
  * value) drew the SAME roughly-fixed-size initials as a 64px one, just with more empty margin
  * around them, so at avatar scale the letters read as tiny and thin next to the real, properly
  * sized initials `Avatar.initials` renders as text. 96 keeps enough headroom for a retina lg
@@ -27,7 +27,7 @@ const demoSrc = (initials: string) =>
 const AVATAR_FALLBACK_STYLE = "--sk-avatar-bg: var(--palette-blue-600); --sk-avatar-fg: var(--palette-white);";
 
 /*
- * Sixteen swatches, four steps off four semantic families (accent/danger/success/info) — enough hues
+ * Sixteen swatches, four steps off four semantic families (accent/danger/success/info). Enough hues
  * that no two neighbors read as "the same person's avatar, twice", and every step dark enough for
  * the white fallback ink to stay readable. Warning stays out because it runs lighter at comparable
  * stops, so mixing it in unevenly would have made a couple of avatars look washed out next to the
@@ -114,7 +114,7 @@ export const avatarSizesTree = (t: Translate): UsageTree => ({
 /*
  * Sixteen identities, each its own hue off the base palette, largest first: the same "color is a
  * styling hook" idea `avatarSizesTree` shows with one color, scaled up to the real reason a hook
- * exists there at all — "tinting avatars per person is the most ordinary thing an app does with
+ * exists there at all: "tinting avatars per person is the most ordinary thing an app does with
  * them" (avatar.css). Rings each disc in the surface color, `box-shadow: 0 0 0 2px
  * var(--color-bg-surface)`, the EXACT rule `.sk-avatar-group` already uses to separate its own
  * overlapping discs (avatar.css): these avatars never overlap, but the same ring still reads as

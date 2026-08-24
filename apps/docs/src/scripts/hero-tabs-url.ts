@@ -13,7 +13,7 @@
  *
  * SCOPED TO `.docs-component-hero-tabs`, the one tab bar a component page has at its top. Every
  * other `[data-sk-tabs]` on these pages belongs to a ComponentPreview (HTML/JS, one per demo), and
- * there is no single answer to "which preview does `?tab=` mean" — so they stay out of the URL.
+ * there is no single answer to "which preview does `?tab=` mean", so they stay out of the URL.
  *
  * RUNS BEFORE HYDRATION. `Tabs.svelte` reads the authored `data-value` at mount and hands it to the
  * machine as `defaultValue`, so writing the attribute here is enough to open the right panel: no

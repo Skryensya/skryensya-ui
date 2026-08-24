@@ -138,7 +138,7 @@ export const tableStickyColumnTree = (t: Translate): UsageTree => ({
 
 /**
  * `resizableColumns`, opt-in: a real WAI-ARIA APG "Window Splitter" separator between every pair of
- * column headers — the same shared `@skryensya/core/splitter` primitive Sidebar's own resize handle
+ * column headers. The same shared `@skryensya/core/splitter` primitive Sidebar's own resize handle
  * and Treegrid's own column resizer already use. Requires `resizeLabel`, an a11y gate: a
  * binding-inserted separator has no author-supplied `label` slot to draw its own accessible name
  * from, unlike `SidebarResizeHandle`.

@@ -103,7 +103,7 @@ describe("accessibility", () => {
 
   it("rejects an unconditional rule (when: {}) as a hard error, not an advisory", () => {
     // Carousel's root gets role="region" + aria-roledescription="carousel" from the machine, but
-    // neither NAMES it — unlike nav-list's landmark rule (gated on `landmarkCount`, a page-scoped
+    // neither NAMES it. Unlike nav-list's landmark rule (gated on `landmarkCount`, a page-scoped
     // signal no static check can settle), this one applies to EVERY Carousel, so it is decidable
     // from the tree alone and must fail loud, not just advise.
     const tree: UsageTree = {

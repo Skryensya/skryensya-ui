@@ -3,21 +3,21 @@ import { resolveMegamenuEvent, type MegamenuState } from "./megamenu.js";
 
 const closed: MegamenuState = { openIndex: null };
 
-describe("resolveMegamenuEvent — activate (click / Enter / Space)", () => {
+describe("resolveMegamenuEvent. Activate (click / Enter / Space)", () => {
   it("opens a closed trigger", () => {
     expect(resolveMegamenuEvent(closed, { kind: "activate", index: 0 })).toEqual({ openIndex: 0 });
   });
 
-  it("closes the SAME trigger when it is already open — a toggle", () => {
+  it("closes the SAME trigger when it is already open. A toggle", () => {
     expect(resolveMegamenuEvent({ openIndex: 0 }, { kind: "activate", index: 0 })).toEqual({ openIndex: null });
   });
 
-  it("switches to a DIFFERENT trigger, closing whichever was open — exclusivity", () => {
+  it("switches to a DIFFERENT trigger, closing whichever was open. Exclusivity", () => {
     expect(resolveMegamenuEvent({ openIndex: 0 }, { kind: "activate", index: 2 })).toEqual({ openIndex: 2 });
   });
 });
 
-describe("resolveMegamenuEvent — hover intent", () => {
+describe("resolveMegamenuEvent. Hover intent", () => {
   it("opens a trigger once the open-intent delay elapses", () => {
     expect(resolveMegamenuEvent(closed, { kind: "hoverIntentOpen", index: 1 })).toEqual({ openIndex: 1 });
   });
@@ -42,7 +42,7 @@ describe("resolveMegamenuEvent — hover intent", () => {
   });
 });
 
-describe("resolveMegamenuEvent — escape / blur", () => {
+describe("resolveMegamenuEvent. Escape / blur", () => {
   it("Escape closes whichever panel is open", () => {
     expect(resolveMegamenuEvent({ openIndex: 2 }, { kind: "escape" })).toEqual({ openIndex: null });
   });

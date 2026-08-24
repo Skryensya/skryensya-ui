@@ -104,7 +104,7 @@ describe("Table column resize", () => {
   const colWidths = (container: HTMLElement) =>
     Array.from(container.querySelectorAll<HTMLTableColElement>("col")).map((c) => Number.parseFloat(c.style.width));
 
-  /* jsdom lays nothing out, so the mount-time seed would clamp every column to the min floor — see
+  /* jsdom lays nothing out, so the mount-time seed would clamp every column to the min floor. See
    * `treegrid.test.tsx`'s identical stub for the full reasoning. */
   const stubTableWidth = (px: number) => {
     const spy = vi
@@ -113,7 +113,7 @@ describe("Table column resize", () => {
     return () => spy.mockRestore();
   };
 
-  it("renders one resizer per column boundary — never after the last column, never on a body row-header", () => {
+  it("renders one resizer per column boundary: never after the last column, never on a body row-header", () => {
     const restore = stubTableWidth(600);
     const ui = render(<ResizableFixture />);
     const handles = resizers(ui.container);
@@ -163,9 +163,9 @@ describe("Table column resize", () => {
   });
 
   /** `measureColumnContentWidth` reads a detached CLONE's `getBoundingClientRect().width`, never
-   * the real cell's — a clone still carries the real cell's `textContent` faithfully, which jsdom
-   * (no real layout) can key a stub off of. Everything else — the width-seeding effect's own
-   * `measured` wrapper, the height effect's table/row reads — falls back to `fallbackWidth`,
+   * the real cell's. A clone still carries the real cell's `textContent` faithfully, which jsdom
+   * (no real layout) can key a stub off of. Everything else. The width-seeding effect's own
+   * `measured` wrapper, the height effect's table/row reads. Falls back to `fallbackWidth`,
    * replacing `stubTableWidth` for these two tests instead of composing with it: both mock the same
    * prototype method, and only one implementation can win. */
   function mockRectByText(cellWidths: Record<string, number>, fallbackWidth = 600) {
@@ -177,7 +177,7 @@ describe("Table column resize", () => {
   }
 
   it("Enter (and double-click) fits the column to its own content, not an even split", () => {
-    // Column 0's cells are "Nombre" (header) and "index.ts" (body) — both report 220 here; real
+    // Column 0's cells are "Nombre" (header) and "index.ts" (body). Both report 220 here; real
     // content varies per cell, `measureColumnContentWidth`'s own suite covers taking the max.
     const spy = mockRectByText({ Nombre: 220, "index.ts": 220 });
     const ui = render(<ResizableFixture />);
@@ -223,7 +223,7 @@ describe("Table column resize", () => {
   it("--sk-splitter-block-size excludes a <caption>'s own height, measured from the header row down", () => {
     // The mount effect reads geometry SYNCHRONOUSLY as part of `render()`, so the rects have to be
     // stubbed before it, not patched onto the elements afterward (there is no live ResizeObserver
-    // in this test environment — see `test-setup.ts`'s own stub — to re-fire `apply` on a later
+    // in this test environment; see `test-setup.ts`'s own stub. To re-fire `apply` on a later
     // patch). Per-tag-name, one spy: TABLE gets a box that includes a caption's own height (300px,
     // `table.css`'s own note on why); TR reports where the header row itself actually starts (40px
     // down, i.e. the caption's height); everything else (the render container `measured` reads
@@ -277,14 +277,14 @@ describe("Table column resize", () => {
     );
     const total = colWidths(ui.container).reduce((sum, width) => sum + width!, 0);
     // CSS's separated-border table model paints the table's border OUTSIDE the width its `<col>`
-    // sum describes — seeded straight off the wrapper's 402px would render 2px past it (a
+    // sum describes. Seeded straight off the wrapper's 402px would render 2px past it (a
     // permanent horizontal scrollbar); 400px leaves exactly enough room for the 1px+1px border.
     expect(total).toBeCloseTo(400);
     restore();
   });
 
   it("never produces NaN widths when the environment reports no computed border at all (an empty string, not \"0px\")", () => {
-    // `ResizableFixture` sets no border style at all — `getComputedStyle(table).borderLeftWidth`
+    // `ResizableFixture` sets no border style at all: `getComputedStyle(table).borderLeftWidth`
     // reads `""` in this environment (no real stylesheet cascade), and `parseFloat("")` is `NaN`
     // if unguarded.
     const restore = stubTableWidth(300);

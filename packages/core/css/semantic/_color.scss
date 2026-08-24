@@ -39,7 +39,7 @@
     --color-border-focus: light-dark(var(--palette-blue-600), var(--palette-blue-400));
 
     /* ── action: interactive fills. Hover/press feedback comes from the state layer. ── */
-    --color-action-primary: light-dark(var(--palette-blue-600), var(--palette-blue-500));
+    --color-action-accent: light-dark(var(--palette-blue-600), var(--palette-blue-500));
     --color-action-neutral: light-dark(var(--palette-stone-100), var(--palette-stone-800));
     --color-action-danger: light-dark(var(--palette-red-600), var(--palette-red-500));
     --color-action-disabled: light-dark(var(--palette-stone-300), var(--palette-stone-800));

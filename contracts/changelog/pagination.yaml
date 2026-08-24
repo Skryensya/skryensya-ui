@@ -10,14 +10,14 @@ entries:
     es:
       title: La página actual es una tecla raised, no un botón primary
       body: >-
-        <code>aria-current="page"</code> pintaba <code>--color-action-primary</code> y texto
+        <code>aria-current="page"</code> pintaba <code>--color-action-accent</code> y texto
         on-accent, un Submit azul en una fila de ghosts. Ahora es superficie raised, texto
         primario y el mismo bisel de tres capas que Kbd y Segmented. No hay opción nueva: el
         default marca el lugar sin gritar marca.
     en:
-      title: The current page is a raised key, not a primary button
+      title: The current page is a raised key, not a action button
       body: >-
-        <code>aria-current="page"</code> painted <code>--color-action-primary</code> and on-accent
+        <code>aria-current="page"</code> painted <code>--color-action-accent</code> and on-accent
         text, a blue Submit sitting in a row of ghosts. It is now a raised surface, primary text
         and the same three-layer bevel Kbd and Segmented use. No new option: the default marks
         the place without shouting brand.

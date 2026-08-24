@@ -12,23 +12,23 @@ entries:
       title: NavListGroup ahora también vive dentro de un MegamenuTrigger
       body: >-
         <code>MegamenuTrigger</code> ya declaraba, en su propio contrato, que su slot
-        <code>columns</code> acepta <code>NavListGroup</code> — un panel de mega-menú es columnas de
+        <code>columns</code> acepta <code>NavListGroup</code>: un panel de mega-menú es columnas de
         enlaces, y esas columnas son el mismo grupo que ya arma un rail o un navbar. Lo que faltaba
         era que <code>NavListGroup</code> lo supiera de vuelta: sus dos hogares legales declarados
         eran <code>NavList</code> y <code>NavListLink</code>, así que una composición real que
-        anidaba un grupo dentro de un trigger de mega-menú — exactamente la que
-        <code>megamenu.ts</code> ya documentaba como válida — quedaba rechazada por el validador. El
+        anidaba un grupo dentro de un trigger de mega-menú. Exactamente la que
+        <code>megamenu.ts</code> ya documentaba como válida: quedaba rechazada por el validador. El
         template no cambia: este signature nunca supo qué padre lo colocó.
     en:
       title: NavListGroup now also lives inside a MegamenuTrigger
       body: >-
         <code>MegamenuTrigger</code> already declared, in its own contract, that its <code>columns</code>
-        slot accepts <code>NavListGroup</code> — a mega-menu panel is columns of links, and those
+        slot accepts <code>NavListGroup</code>: a mega-menu panel is columns of links, and those
         columns are the same group that already builds a rail or a navbar. What was missing was
         <code>NavListGroup</code> knowing it back: its two declared legal homes were
         <code>NavList</code> and <code>NavListLink</code>, so a real composition nesting a group
-        inside a mega-menu trigger — exactly the one <code>megamenu.ts</code> already documented as
-        valid — was rejected by the validator. The template does not change: this signature never
+        inside a mega-menu trigger: exactly the one <code>megamenu.ts</code> already documented as
+        valid. Was rejected by the validator. The template does not change: this signature never
         knew which parent placed it.
   - date: 2026-08-20
     kind: feature
@@ -37,7 +37,7 @@ entries:
       title: NavListGroup puede rotular su sección con un encabezado real
       body: >-
         Nueva opción <code>heading</code>: una etiqueta ESTÁTICA (sin <code>collapsible</code>) se
-        renderiza como <code>&lt;h3&gt;</code> en vez de un <code>&lt;div&gt;</code> — para un grupo
+        renderiza como <code>&lt;h3&gt;</code> en vez de un <code>&lt;div&gt;</code>: para un grupo
         que vive adentro de un panel grande (<code>Megamenu</code>'s propias columnas siendo el caso
         que lo motivó) donde la navegación por encabezados de un lector de pantalla es cómo alguien
         se orienta entre varios grupos a la vez. Sin efecto sobre una etiqueta colapsable, que ya es
@@ -47,7 +47,7 @@ entries:
       title: NavListGroup can label its section with a real heading
       body: >-
         New <code>heading</code> option: a STATIC label (no <code>collapsible</code>) renders as an
-        <code>&lt;h3&gt;</code> instead of a <code>&lt;div&gt;</code> — for a group living inside a
+        <code>&lt;h3&gt;</code> instead of a <code>&lt;div&gt;</code>: for a group living inside a
         large panel (<code>Megamenu</code>'s own columns being the motivating case) where a screen
         reader's own heading-navigation is how a reader orients among several groups at once. No
         effect on a collapsible label, already a real <code>&lt;button&gt;</code>, a stronger
@@ -61,7 +61,7 @@ entries:
       body: >-
         Nuevo slot <code>nested</code> en <code>NavListLink</code>, que acepta un
         <code>NavListGroup</code>. Se renderiza adentro del mismo <code>&lt;li&gt;</code>, como
-        hermano del <code>&lt;a&gt;</code>, no adentro de la lista del grupo padre — un
+        hermano del <code>&lt;a&gt;</code>, no adentro de la lista del grupo padre: un
         <code>NavListGroup</code> metido directo en el <code>children</code> de otro grupo no es
         HTML válido, porque un <code>&lt;div&gt;</code> no es hijo legal de <code>&lt;ul&gt;</code>,
         sólo <code>&lt;li&gt;</code> lo es. <code>NavListGroup</code> ahora acepta
@@ -75,12 +75,12 @@ entries:
       body: >-
         New <code>nested</code> slot on <code>NavListLink</code>, accepting a
         <code>NavListGroup</code>. It renders inside the SAME <code>&lt;li&gt;</code>, as a sibling
-        of the <code>&lt;a&gt;</code>, not inside the parent group's own list — a
+        of the <code>&lt;a&gt;</code>, not inside the parent group's own list: a
         <code>NavListGroup</code> nested straight inside another group's <code>children</code> is
         not valid HTML, since a <code>&lt;div&gt;</code> is not a legal <code>&lt;ul&gt;</code>
         child, only <code>&lt;li&gt;</code> is. <code>NavListGroup</code> now accepts
         <code>NavListLink</code> as a second legal parent (previously only <code>NavList</code>),
-        but its template is unchanged — same <code>&lt;div&gt;</code>, optional label,
+        but its template is unchanged: same <code>&lt;div&gt;</code>, optional label,
         <code>&lt;ul&gt;</code>, collapsible or not, the identical enhancer either way. Depth is
         unbounded: a nested <code>NavListLink</code> can carry its own <code>nested</code> again.
   - date: 2026-08-15
@@ -94,9 +94,9 @@ entries:
         <code>Accordion</code>): con <code>collapsible</code>, la etiqueta estática del grupo se
         convierte en un <code>&lt;button&gt;</code> con <code>aria-expanded</code>/
         <code>aria-controls</code> que alterna la lista de enlaces. Deliberadamente NO
-        <code>role="menu"</code> — misma razón que ya documenta <code>NavList</code> para sí mismo.
+        <code>role="menu"</code>: misma razón que ya documenta <code>NavList</code> para sí mismo.
         Ahora sí tiene un enhancer Vanilla (<code>data-sk-nav-list-group-trigger</code>), solo para
-        el caso colapsable — el grupo estático sigue sin necesitar JavaScript.
+        el caso colapsable. El grupo estático sigue sin necesitar JavaScript.
     en:
       title: NavListGroup can be a collapsible section
       body: >-
@@ -104,9 +104,9 @@ entries:
         <code>defaultOpen</code> options (open by default, unlike <code>Accordion</code>): with
         <code>collapsible</code>, the group's static label becomes a <code>&lt;button&gt;</code>
         with <code>aria-expanded</code>/<code>aria-controls</code> toggling its list of links.
-        Deliberately NOT <code>role="menu"</code> — the same reason <code>NavList</code> already
+        Deliberately NOT <code>role="menu"</code>: the same reason <code>NavList</code> already
         documents for itself. It now has a Vanilla enhancer
-        (<code>data-sk-nav-list-group-trigger</code>), only for the collapsible case — the static
+        (<code>data-sk-nav-list-group-trigger</code>), only for the collapsible case: the static
         group still needs no JavaScript at all.
   - date: 2026-08-11
     kind: feature

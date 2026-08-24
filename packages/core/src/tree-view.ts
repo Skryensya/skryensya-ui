@@ -40,7 +40,7 @@ export type TreeViewExpandedDetails = { expandedValue: string[] };
 /**
  * A hierarchy you can walk: files, an org chart, a table of contents.
  *
- * The one family whose data RECURSES — a folder holds folders — and the reason the collection model
+ * The one family whose data RECURSES. A folder holds folders, and the reason the collection model
  * grew `recursive`. Everything else in the catalogue is a flat list of entries; here an entry's
  * children are entries of the same shape, at any depth, and a template that had to state each level
  * would state them forever.
@@ -50,7 +50,7 @@ export type TreeViewExpandedDetails = { expandedValue: string[] };
  * than of an option.
  *
  * Zag owns `aria-level`, `aria-posinset` and the roving focus, and writes them onto whichever markup
- * it is given — so the authored tree carries structure and the machine carries position.
+ * it is given, so the authored tree carries structure and the machine carries position.
  */
 export const treeViewContract = {
   id: "tree-view",

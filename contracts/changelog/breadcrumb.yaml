@@ -11,7 +11,7 @@ entries:
       title: Breadcrumb colapsa los niveles intermedios en un Menu real cuando el ancho no alcanza
       body: >-
         Un enhancer nuevo (los dos bindings) mide si la senda entra en una sola línea; cuando no,
-        esconde los niveles ancestro — nunca el primero ni la página actual — detrás de un
+        esconde los niveles ancestro. Nunca el primero ni la página actual. Detrás de un
         disclosure «…» que abre un <a href="/componentes/menu">Menu</a> real con esos mismos
         niveles: el patrón de teclado ARIA de un menú (flechas, Home/End, typeahead), no una lista
         plana. La machine, el posicionamiento y el estilo del panel son los de Menu, compuestos
@@ -23,11 +23,11 @@ entries:
       title: Breadcrumb collapses ancestor levels into a real Menu when the width does not fit
       body: >-
         A new enhancer (both bindings) measures whether the trail fits on one line; when it does
-        not, it hides the ancestor levels — never the first one or the current page — behind a
+        not, it hides the ancestor levels: never the first one or the current page. Behind a
         "…" disclosure that opens a real <a href="/en/components/menu">Menu</a> holding those same
         levels: an ARIA menu's own keyboard pattern (arrow keys, Home/End, typeahead), not a plain
         list. The machine, positioning and panel styling are Menu's, composed beside Breadcrumb's
-        own trigger — the same move every <code>MenubarItem</code>'s dropdown already makes. New
+        own trigger: the same move every <code>MenubarItem</code>'s dropdown already makes. New
         option <code>collapsedLabel</code>, new part <code>collapseTrigger</code>. Without JS (or
         under four levels) the markup is still complete on its own, as before.
   - date: 2026-08-11

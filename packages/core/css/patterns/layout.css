@@ -94,7 +94,7 @@
     --sk-layout-content: var(--size-wrapper-md);
     --sk-layout-breakout: var(--size-wrapper-lg);
     /* The rail's own width, the small gap that sits between a rail and the content (NOT the
-       breakout track — that one is a reading measure, and leaving the rail past it put ~13rem of
+       breakout track. That one is a reading measure, and leaving the rail past it put ~13rem of
        empty air between a content child and its TOC), and how many of the grid's rows a rail
        should span. Read only by a grid that actually has a rail child (below), declared here
        regardless so they stay overridable up front like the four measures above.
@@ -170,18 +170,18 @@
    * content span: the small `--sk-layout-rail-gap` is the only air between them. The same
    * `minmax(gutter, 1fr)` tracks the un-railed grid already uses sit OUTSIDE the rails, so the
    * whole unit (start rail, content, end rail) stays centered in its container with equal air
-   * to either viewport edge — a start rail is not flush-left while an end rail floats.
+   * to either viewport edge. A start rail is not flush-left while an end rail floats.
    * Breakout coincides with content whenever a rail is present: there is no open side left to
    * grow into without un-centering the unit.
    *
    * Below `wide` there is no room for a side column: the base `.sk-layout-grid > *` rule above
    * already places every rail at `content-start / content-end` like any other unlabeled child,
-   * and `order: -1` is the only addition — both rails share that order so they keep source order
+   * and `order: -1` is the only addition. Both rails share that order so they keep source order
    * relative to each other and read as an index, first, above the content they index.
    *
    * `72rem`, hardcoded: media queries cannot read custom properties, so this has to be a
    * compile-time constant. The same exception `patterns/dialog-vaul.css` and `patterns/vaul.css`
-   * already take for their own hand-written breakpoints (ADR-19, tier-3 stays CSS) — this is the
+   * already take for their own hand-written breakpoints (ADR-19, tier-3 stays CSS). This is the
    * "wide" step from `core/css/semantic/_breakpoints.scss`, hand-copied for the same reason theirs
    * is: a `@media` query is the one place that file's own comment admits CSS genuinely can't reach.
    *

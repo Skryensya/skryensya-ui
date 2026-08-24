@@ -42,15 +42,15 @@ export type NavListGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "children">
   children: ReactNode;
   label?: ReactNode;
   /**
-   * Turns the static label into a disclosure button toggling the list — the WAI-ARIA APG
+   * Turns the static label into a disclosure button toggling the list. The WAI-ARIA APG
    * "Disclosure (Navigation)" pattern. Requires `label`: a button needs the text to click on.
    */
   collapsible?: boolean;
-  /** Starts expanded — hiding navigation by default is the wrong default. Uncontrolled: read once,
+  /** Starts expanded. Hiding navigation by default is the wrong default. Uncontrolled: read once,
    *  then this component owns it, the same as `Accordion`'s own `defaultOpen`. */
   defaultOpen?: boolean;
   /**
-   * Renders a static label (`collapsible` absent) as a real `<h3>` instead of a plain `<div>` —
+   * Renders a static label (`collapsible` absent) as a real `<h3>` instead of a plain `<div>` -
    * for a group sitting inside a large panel (`Megamenu`'s columns being the motivating case)
    * where screen-reader heading-navigation is how a reader orients among several groups at once.
    * Has no effect on a collapsible group's label, which is already a real `<button>`.
@@ -88,7 +88,7 @@ export function NavListGroup({
         // The one keyboard requirement WAI's Disclosure (Navigation) pattern does NOT mark
         // optional (unlike arrow keys/Home/End, confirmed fetching the example page): Escape
         // closes an open dropdown from anywhere focus is inside it, and returns focus to the
-        // trigger — "point of regard", same reasoning `Dialog`'s own Escape handling serves.
+        // trigger: "point of regard", same reasoning `Dialog`'s own Escape handling serves.
         if (!collapsible || !open || event.key !== "Escape") return;
         event.preventDefault();
         setOpen(false);
@@ -142,7 +142,7 @@ export type NavListLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> &
     /**
      * This destination's own sub-destinations: a `<NavListGroup>` rendered inside the same `<li>`,
      * after the link. `<li>` accepts arbitrary flow content, so this is valid where a group nested
-     * straight inside another group's `<ul>` would not be — a `<div>` is not a legal `<ul>` child.
+     * straight inside another group's `<ul>` would not be. A `<div>` is not a legal `<ul>` child.
      */
     nested?: ReactNode;
   };

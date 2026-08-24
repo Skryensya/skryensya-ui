@@ -12,8 +12,8 @@ entries:
       title: El ítem resaltado con el teclado vuelve a mostrar su anillo de foco
       body: >-
         Navegar un menú con las flechas no dibujaba ningún anillo: la regla lo pedía con
-        <code>:focus-visible</code>, y en un menú el foco real nunca llega al ítem — Zag lo sigue con
-        <code>aria-activedescendant</code> sobre el panel —, así que no coincidía nunca. Al lector de
+        <code>:focus-visible</code>, y en un menú el foco real nunca llega al ítem: Zag lo sigue con
+        <code>aria-activedescendant</code> sobre el panel -, así que no coincidía nunca. Al lector de
         teclado le quedaba sólo el tinte, exactamente el mismo que pinta el hover del mouse, sin nada
         que distinguiera "acá están las flechas" de "acá está el puntero". El anillo ahora lo pide
         <code>[data-highlighted]:not(:hover)</code>: sale cuando el resaltado lo movió el teclado y no
@@ -23,8 +23,8 @@ entries:
       title: The keyboard-highlighted item shows its focus ring again
       body: >-
         Arrow-key navigation drew no ring at all: the rule asked for it with
-        <code>:focus-visible</code>, and in a menu real focus never reaches the item — Zag tracks it
-        with <code>aria-activedescendant</code> on the panel — so it never matched. The keyboard
+        <code>:focus-visible</code>, and in a menu real focus never reaches the item: Zag tracks it
+        with <code>aria-activedescendant</code> on the panel: so it never matched. The keyboard
         reader was left with the tint alone, the very same one a mouse hover paints, with nothing to
         tell "the arrow keys are here" from "the pointer is here". The ring now comes from
         <code>[data-highlighted]:not(:hover)</code>: it shows when the keyboard moved the highlight
@@ -34,7 +34,7 @@ entries:
     kind: feature
     target: href
     es:
-      title: Nueva opción de ítem href — un ítem puede ser un destino, no sólo un comando
+      title: Nueva opción de ítem href. Un ítem puede ser un destino, no sólo un comando
       body: >-
         Se agrega <code>href</code> a la forma de ítem que <code>Menu</code> y <code>Menubar</code>
         comparten (<code>menuItemShape</code>): un ítem con <code>href</code> renderiza como
@@ -42,10 +42,10 @@ entries:
         <code>@zag-js/menu</code> ya soporta un ítem-ancla de fábrica (<code>navigate</code>, que por
         defecto hace click nativo en el link), así que nada del manejo de teclado ni el rol cambia:
         misma máquina, mismo <code>getItemProps()</code>, sólo el elemento que las recibe. Pensado
-        para el caso <code>menubar-navigation</code> de WAI-ARIA — una barra de navegación cuyos
+        para el caso <code>menubar-navigation</code> de WAI-ARIA: una barra de navegación cuyos
         desplegables son listas de páginas reales, no comandos.
     en:
-      title: New item option href — an item can be a destination, not only a command
+      title: New item option href. An item can be a destination, not only a command
       body: >-
         Adds <code>href</code> to the item shape <code>Menu</code> and <code>Menubar</code> share
         (<code>menuItemShape</code>): an item with <code>href</code> renders as a real
@@ -53,7 +53,7 @@ entries:
         <code>@zag-js/menu</code> already supports an anchor item out of the box (<code>navigate</code>,
         defaulting to a native click on the link), so nothing about keyboard handling or the role
         changes: same machine, same <code>getItemProps()</code>, only the element receiving them.
-        Built for WAI-ARIA's own <code>menubar-navigation</code> case — a navigation bar whose
+        Built for WAI-ARIA's own <code>menubar-navigation</code> case: a navigation bar whose
         dropdowns are lists of real pages, not commands.
   - date: 2026-08-17
     kind: feature
@@ -63,7 +63,7 @@ entries:
       body: >-
         Renombradas junto con las opciones homónimas de <code>Button</code>
         (<code>squareStart</code>/<code>squareEnd</code> → <code>weldStart</code>/<code>weldEnd</code>,
-        ver el changelog de Button) — siguen escribiendo a los mismos atributos
+        ver el changelog de Button). Siguen escribiendo a los mismos atributos
         (<code>data-weld-start</code>/<code>data-weld-end</code>), ahora el nombre también refleja
         que quitan el borde del trigger en ese lado, no solo el redondeo.
     en:
@@ -71,7 +71,7 @@ entries:
       body: >-
         Renamed together with Button's own identically-shaped options
         (<code>squareStart</code>/<code>squareEnd</code> → <code>weldStart</code>/<code>weldEnd</code>,
-        see Button's own changelog) — still writing to the same attributes
+        see Button's own changelog). Still writing to the same attributes
         (<code>data-weld-start</code>/<code>data-weld-end</code>), the name now also reflects that
         they clear the trigger's own border on that side, not only the rounding.
   - date: 2026-08-17
@@ -83,8 +83,8 @@ entries:
         Se agrega <code>triggerIconOnly</code>, escribiendo al mismo <code>data-icon-only</code>
         que la opción homónima de <code>Button</code>. Un trigger sin contenido visible (emparejado
         con <code>triggerLabel</code> para su nombre accesible) es exactamente la forma de ícono
-        solo que Button ya tenía un nombre para — un cuadrado del tamaño del control con un solo
-        glifo, cero padding inline — así que este trigger reusa esa forma directo en vez de que
+        solo que Button ya tenía un nombre para. Un cuadrado del tamaño del control con un solo
+        glifo, cero padding inline. Así que este trigger reusa esa forma directo en vez de que
         Menu inventara la suya. Lo único que sigue siendo específico de un trigger soldado a otro
         control (no de cualquier botón de solo-ícono) es <code>triggerSquareStart</code>.
     en:
@@ -93,8 +93,8 @@ entries:
         Adds <code>triggerIconOnly</code>, writing to the same <code>data-icon-only</code> as
         <code>Button</code>'s own identically-named option. A trigger with no visible content
         (paired with <code>triggerLabel</code> for its accessible name) is exactly the icon-only
-        SHAPE Button already had a name for — a control-sized square holding one glyph, zero
-        inline padding — so this trigger reuses that shape directly instead of Menu inventing its
+        SHAPE Button already had a name for. A control-sized square holding one glyph, zero
+        inline padding, so this trigger reuses that shape directly instead of Menu inventing its
         own. The only thing that stays specific to a trigger welded against another control (not
         to any icon-only button) is <code>triggerSquareStart</code>.
   - date: 2026-08-17
@@ -104,14 +104,14 @@ entries:
       title: Nuevas opciones triggerSquareStart/End, triggerVariant, triggerSize
       body: >-
         Se agregan <code>triggerSquareStart</code>/<code>triggerSquareEnd</code> (booleanas) y
-        <code>triggerVariant</code>/<code>triggerSize</code> (string, sin validar — Menu no es dueño
+        <code>triggerVariant</code>/<code>triggerSize</code> (string, sin validar: Menu no es dueño
         de ese vocabulario, <code>Button</code> sí), las cuatro escribiendo a las MISMAS
         <code>data-square-start</code>/<code>data-square-end</code>/<code>data-variant</code>/
         <code>data-size</code> que las opciones homónimas de <code>Button</code>
         (<code>squareStart</code>/<code>squareEnd</code>/<code>variant</code>/<code>size</code>).
         El trigger ya carga la clase <code>sk-button</code>, así que las reglas de button.css se
         aplican directo, sin que este archivo repita ni una línea de esa hoja. Pensado para cuando
-        un Menu se compone como el segmento adjunto de otro control — el caso que lo motivó es
+        un Menu se compone como el segmento adjunto de otro control. El caso que lo motivó es
         <code>SplitButton</code>, cuyo trigger necesitaba coincidir en relleno, tamaño y esquina
         soldada con el botón primario de al lado, y hasta ahora lo hacía con un selector de
         hermanos en CSS propio de split-button en vez de pedirle al trigger que cargue los mismos
@@ -120,15 +120,15 @@ entries:
       title: New triggerSquareStart/End, triggerVariant, triggerSize options
       body: >-
         Adds <code>triggerSquareStart</code>/<code>triggerSquareEnd</code> (boolean) and
-        <code>triggerVariant</code>/<code>triggerSize</code> (plain string, unvalidated — Menu does
+        <code>triggerVariant</code>/<code>triggerSize</code> (plain string, unvalidated: Menu does
         not own that vocabulary, <code>Button</code> does), all four writing to the SAME
         <code>data-square-start</code>/<code>data-square-end</code>/<code>data-variant</code>/
         <code>data-size</code> attributes as <code>Button</code>'s own identically-named options
         (<code>squareStart</code>/<code>squareEnd</code>/<code>variant</code>/<code>size</code>).
         The trigger already carries the <code>sk-button</code> class, so button.css's own rules
         apply directly, with not one line of that stylesheet restated here. Built for when a Menu
-        is composed as another control's attached segment — the motivating case is
-        <code>SplitButton</code>, whose trigger needed to match the neighboring primary button's
+        is composed as another control's attached segment. The motivating case is
+        <code>SplitButton</code>, whose trigger needed to match the neighboring action button's
         fill, size, and welded corner, and until now did it with a sibling selector in
         split-button's own CSS instead of asking the trigger to simply carry the same attributes
         any Button already uses.
@@ -143,9 +143,9 @@ entries:
         menú como un todo ("Acciones del archivo" contra un trigger visible más corto, "Acciones");
         reusarla en el botón habría pisado su propio texto visible con una cadena DISTINTA, un
         desajuste "Label in Name" (WCAG 2.5.3) entre lo que lee una persona y lo que anuncia un
-        lector de pantalla. Pensada para el trigger de solo-ícono — el patrón real de un split
+        lector de pantalla. Pensada para el trigger de solo-ícono. El patrón real de un split
         button (el segmento del menú es sólo el chevron, sin texto) o el botón "más acciones" de
-        una barra de herramientas — que hasta ahora no tenía forma correcta de anunciar un nombre.
+        una barra de herramientas. Que hasta ahora no tenía forma correcta de anunciar un nombre.
         El slot <code>trigger</code> deja de ser obligatorio: se puede omitir del todo y dejar que
         el chevron que el template ya pinta sea el único contenido visible, nombrado por esta
         opción en vez de por su propio texto.
@@ -157,8 +157,8 @@ entries:
         as a whole ("File actions" against a shorter visible trigger, "Actions"); reusing it on the
         button would have overwritten its own visible text with a DIFFERENT string, a "Label in
         Name" mismatch (WCAG 2.5.3) between what a sighted user reads and what a screen reader
-        announces. Built for the icon-only trigger — the real split-button pattern (the menu half
-        is just a chevron, no text) or a toolbar's "more actions" button — which had no correct way
+        announces. Built for the icon-only trigger. The real split-button pattern (the menu half
+        is just a chevron, no text) or a toolbar's "more actions" button, which had no correct way
         to announce a name until now. The <code>trigger</code> slot is no longer required: it can
         be left empty entirely, letting the chevron the template already paints be the only visible
         content, named by this option instead of by its own text.
@@ -172,7 +172,7 @@ entries:
         polígono de <code>@zag-js/menu</code> no alcanzaba: sólo puede vetar un cierre temprano
         durante los 100ms de <code>waitForCloseDelay</code>, no extenderlos, así que con el puntero
         quieto adentro del polígono el submenú igual se cerraba a los ~90ms. Ahora hay un elemento
-        real —un triángulo recortado con <code>clip-path</code> dentro del trigger— así que el
+        real -un triángulo recortado con <code>clip-path</code> dentro del trigger- así que el
         navegador nunca dispara <code>pointerleave</code> mientras se cruza y el temporizador ni se
         enciende. Vale para cualquier profundidad. Nuevas partes: <code>sk-menu__safe-area</code>,
         <code>sk-menu__intent-readout</code>. <code>debugSafetyTriangle</code> ahora pinta ese mismo
@@ -184,8 +184,8 @@ entries:
         Crossing diagonally toward an open submenu no longer closes it or highlights the row below.
         <code>@zag-js/menu</code>'s polygon was not enough: it can only veto an early close during
         <code>waitForCloseDelay</code>'s 100ms, never extend them, so a pointer parked motionless
-        inside the polygon still lost the submenu at ~90ms. There is now a real element — a
-        <code>clip-path</code> triangle inside the trigger — so the browser fires no
+        inside the polygon still lost the submenu at ~90ms. There is now a real element. A
+        <code>clip-path</code> triangle inside the trigger: so the browser fires no
         <code>pointerleave</code> during the crossing and the timer is never lit. It holds at any
         depth. New parts: <code>sk-menu__safe-area</code>, <code>sk-menu__intent-readout</code>.
         <code>debugSafetyTriangle</code> now paints that very element instead of drawing a separate

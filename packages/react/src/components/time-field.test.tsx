@@ -134,7 +134,7 @@ describe("TimeField", () => {
   it("waits for a possible second digit in 24-hour form too, e.g. typing 22 as the hour", () => {
     // Forced explicitly rather than left to `locale="es"`'s own guess: `Intl`'s hourCycle
     // resolution for "es" is exactly the kind of thing `hourCycle` exists to stop depending on
-    // (`resolveHourCycle`'s own doc — confirmed against a real browser, Node and Chromium disagree
+    // (`resolveHourCycle`'s own doc. Confirmed against a real browser, Node and Chromium disagree
     // on this very locale). Forcing it here is what makes the assertion deterministic.
     const { ui } = setup({ hourCycle: "h24", hourLabel: "Hour", locale: "es", minuteLabel: "Minute" });
     const hour = segment(ui, "Hour");
@@ -150,7 +150,7 @@ describe("TimeField", () => {
   });
 
   it("an explicit hourCycle overrides whatever the locale would otherwise resolve to", () => {
-    // en-US resolves to h12 on its own — forcing h24 here proves the override wins, not a
+    // en-US resolves to h12 on its own. Forcing h24 here proves the override wins, not a
     // coincidence of what the locale already wanted.
     const { ui } = setup({ hourCycle: "h24", hourLabel: "Hour", locale: "en-US" });
     expect(querySegment(ui, "Period")).toBeNull();
@@ -183,7 +183,7 @@ describe("TimeField", () => {
     expect(children.at(-2)).toBe(ui.getByRole("button", { name: "Limpiar hora" }));
   });
 
-  it("anchors the picker's own listbox to the CONTROL, not the trigger — so it opens the field's own width, not the icon's", () => {
+  it("anchors the picker's own listbox to the CONTROL, not the trigger, so it opens the field's own width, not the icon's", () => {
     // The bug this guards: anchoring to the small icon-only trigger (`anchor-size(width)`
     // resolving against a 32px square) squeezed the listbox and its rows down to that same 32px,
     // unreadable. The control is the field's own full width.
@@ -207,7 +207,7 @@ describe("TimeField", () => {
     expect(hour.getAttribute("aria-valuetext")).toBe("hh");
   });
 
-  it("leaves the picker closed on a plain ArrowDown — that key is the segment's own", () => {
+  it("leaves the picker closed on a plain ArrowDown. That key is the segment's own", () => {
     const { ui } = setup({ hourLabel: "Hour", locale: "en-US" });
     const hour = segment(ui, "Hour");
     const trigger = ui.getByRole("combobox", { name: "Elegir de la lista" });
@@ -291,7 +291,7 @@ describe("TimeField", () => {
 
 describe("TimeField picker", () => {
   // A real click/keyboard interaction moves REAL DOM focus into the listbox on open
-  // (`role="listbox"`, deferred to a `raf` inside `@zag-js/select`) — the same mechanics
+  // (`role="listbox"`, deferred to a `raf` inside `@zag-js/select`). The same mechanics
   // `select.test.tsx` already established for `Select` itself, since this drives the identical
   // machine. Waiting for the listbox to actually hold focus, not just for the trigger to have lost
   // it, avoids the race that file's own comment documents (the trigger blurs to `document.body`
@@ -305,7 +305,7 @@ describe("TimeField picker", () => {
     const { ui } = setup({ defaultValue: "09:30", locale: "en-US" });
 
     expect(ui.getByRole("combobox", { name: "Elegir de la lista" })).toBeTruthy();
-    // The field's own label stays the group's name — the trigger did not steal it.
+    // The field's own label stays the group's name. The trigger did not steal it.
     expect(ui.getByRole("group", { name: "Hora de inicio" })).toBeTruthy();
   });
 
@@ -316,10 +316,10 @@ describe("TimeField picker", () => {
 
     expect(ui.getAllByRole("option")).toHaveLength(24);
     expect(ui.getByRole("option", { name: "09:00" })).toBeTruthy();
-    expect(ui.getByRole("option", { name: "22:00" })).toBeTruthy(); // never "10:00 PM" — h24 was forced
+    expect(ui.getByRole("option", { name: "22:00" })).toBeTruthy(); // never "10:00 PM". H24 was forced
   });
 
-  it("defaults to a 30-minute step when none is given — 48 rows, not 1440", async () => {
+  it("defaults to a 30-minute step when none is given. 48 rows, not 1440", async () => {
     const { ui } = setup({ hourCycle: "h24", locale: "en-US" });
 
     await openPicker(ui);
@@ -347,11 +347,11 @@ describe("TimeField picker", () => {
   });
 
   it("updates the segments immediately when `value` is given, the same as typing already does", async () => {
-    // Picking and typing commit through the SAME path now (`commit`, inside `TimeField` itself) —
+    // Picking and typing commit through the SAME path now (`commit`, inside `TimeField` itself) -
     // one code path for "the value changed," not two. A controlled consumer still gets to veto or
     // override it, exactly the way a controlled `<input>` does: by feeding a DIFFERENT `value` back
     // on its own next render, which the segments' own resync effect already picks up (untouched by
-    // this feature) — not by the field silently refusing to show what was just picked.
+    // this feature): not by the field silently refusing to show what was just picked.
     const { ui, onValueChange } = setup({
       hourCycle: "h24",
       hourLabel: "Hour",
@@ -367,7 +367,7 @@ describe("TimeField picker", () => {
     expect(onValueChange).toHaveBeenLastCalledWith({ value: "22:00" });
   });
 
-  it("omits the trigger entirely while disabled or read-only — nothing to browse to", () => {
+  it("omits the trigger entirely while disabled or read-only: nothing to browse to", () => {
     const { ui } = setup({ disabled: true, locale: "en-US" });
     expect(ui.queryByRole("combobox", { name: "Elegir de la lista" })).toBeNull();
 

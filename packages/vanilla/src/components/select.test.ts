@@ -142,7 +142,7 @@ describe("Select Vanilla contracts", () => {
     for (const item of items) expect(itemAt(item.value).hasAttribute("aria-selected")).toBe(false);
 
     // Unlike Combobox's virtual-focus-on-input model, Select moves REAL DOM focus into the
-    // listbox on open (`setInitialFocus`, deferred to `raf`) — arrow keys are dispatched wherever
+    // listbox on open (`setInitialFocus`, deferred to `raf`). Arrow keys are dispatched wherever
     // focus actually landed. Waiting for the exact target (not just "not the trigger") matters:
     // `document.activeElement` passes through `<body>` first, which would vacuously satisfy a
     // weaker check before the `raf` callback actually lands the focus on the content.

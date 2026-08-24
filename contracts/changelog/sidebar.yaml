@@ -14,10 +14,10 @@ entries:
         Un app shell real casi nunca quiere una fila de header sólo para el hamburger: el trigger
         ahora puede llevar <code>floating</code>, que lo saca del flujo y lo fija a la esquina
         superior del lado final del panel, apenas afuera de su borde. Es una decisión de pintado,
-        no un padre legal nuevo — sigue siendo hijo de <code>Sidebar</code>,
+        no un padre legal nuevo: sigue siendo hijo de <code>Sidebar</code>,
         <code>SidebarHeader</code> o <code>SidebarFooter</code>, y <code>aria-controls</code> lo
         sigue encontrando igual. Como consecuencia, el propio <code>.sk-sidebar</code> dejó de
-        recortar con <code>overflow: hidden</code> en la raíz — el recorte ahora es de cada región
+        recortar con <code>overflow: hidden</code> en la raíz: el recorte ahora es de cada región
         (<code>__header</code>, <code>__content</code>, <code>__footer</code>), que es donde
         depende del contenido real, y es lo que deja que el trigger flotante se vea fuera del
         panel en lugar de cortado por él.
@@ -26,11 +26,11 @@ entries:
       body: >-
         A real app shell rarely wants a whole header row just for the hamburger: the trigger can
         now take <code>floating</code>, which lifts it out of flow and pins it to the panel's own
-        top inline-end corner, just past its edge. It is a paint decision, not a new legal parent —
+        top inline-end corner, just past its edge. It is a paint decision, not a new legal parent -
         it is still a child of <code>Sidebar</code>, <code>SidebarHeader</code>, or
         <code>SidebarFooter</code>, and <code>aria-controls</code> still finds it the same way. As
         a consequence, `.sk-sidebar` itself no longer clips with a root-level
-        <code>overflow: hidden</code> — the clip now belongs to each region
+        <code>overflow: hidden</code>: the clip now belongs to each region
         (<code>__header</code>, <code>__content</code>, <code>__footer</code>), which is where it
         actually depends on that region's content, and is what lets the floating trigger sit
         visibly past the panel instead of being cut off by it.
@@ -40,7 +40,7 @@ entries:
     es:
       title: Nueva opción landmarkLabel para nombrar el aside cuando hay más de uno
       body: >-
-        El contrato no tenía forma de nombrar el propio <code>&lt;aside&gt;</code> — <code>label</code>
+        El contrato no tenía forma de nombrar el propio <code>&lt;aside&gt;</code>: <code>label</code>
         ya estaba tomado por el nombre accesible del trigger, un target distinto. WAI-ARIA exige un
         nombre en cuanto una página tiene más de una región <code>complementary</code>; ahora
         <code>landmarkLabel</code> lo cubre, opcional porque un único Sidebar en la página no lo
@@ -48,7 +48,7 @@ entries:
     en:
       title: New landmarkLabel option to name the aside once there is more than one
       body: >-
-        The contract had no way to name the `<aside>` itself — `label` was already taken by the
+        The contract had no way to name the `<aside>` itself: `label` was already taken by the
         trigger's own accessible name, a different target. WAI-ARIA requires a name the moment a
         page has more than one `complementary` region; `landmarkLabel` now covers that, optional
         because a single Sidebar on the page needs none to be unambiguous.

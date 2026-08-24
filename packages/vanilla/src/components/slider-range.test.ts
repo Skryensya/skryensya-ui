@@ -30,7 +30,7 @@ describe("SliderRange vanilla enhancer", () => {
     markup();
     expect(low().max).toBe("80");
     expect(high().min).toBe("20");
-    // The true ends of the range stay put — neither is the OTHER thumb's value.
+    // The true ends of the range stay put. Neither is the OTHER thumb's value.
     expect(low().min).toBe("0");
     expect(high().max).toBe("100");
   });
@@ -46,7 +46,7 @@ describe("SliderRange vanilla enhancer", () => {
     low().value = "50";
     fireEvent.input(low());
     expect(high().min).toBe("50");
-    // A SECOND sync (moving the other thumb) must not have drifted the true ends — this is the
+    // A SECOND sync (moving the other thumb) must not have drifted the true ends. This is the
     // exact bug caught while writing this enhancer: reading `min`/`max` back off the already-
     // narrowed inputs on a later sync, instead of the ends captured once at connect time.
     high().value = "90";
@@ -57,7 +57,7 @@ describe("SliderRange vanilla enhancer", () => {
     void root;
   });
 
-  it("never lets one thumb's value exceed the other — native min/max clamps a direct value write past the bound", () => {
+  it("never lets one thumb's value exceed the other. Native min/max clamps a direct value write past the bound", () => {
     markup();
     low().value = "50";
     fireEvent.input(low());

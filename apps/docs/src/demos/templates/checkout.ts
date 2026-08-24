@@ -2,13 +2,13 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../../i18n";
 
 /*
- * ECOMMERCE CHECKOUT — the transactional shape, and the one template here whose whole job is to be
+ * ECOMMERCE CHECKOUT. The transactional shape, and the one template here whose whole job is to be
  * finished rather than browsed. Three things follow from that and none of them are decoration:
  *
  *   - `Steps` opens the page. A form the reader cannot abandon halfway has to say how long it is;
  *     the contract carries `status` per item, so "done / here / not yet" survives without colour.
- *   - the summary is a `List`, not a table. These rows are not compared column-wise — each is a
- *     line item with a title, a qualifier and a price, which is `ListItem`'s three slots exactly.
+ *   - the summary is a `List`, not a table. These rows are not compared column-wise. Each row is
+ *     a line item with a title, a qualifier and a price, which is `ListItem`'s three slots exactly.
  *   - the ONLY accent on the page is the pay button. A checkout with two primary-looking buttons is
  *     a checkout where people press the wrong one.
  */
@@ -52,7 +52,7 @@ export const checkoutTree = (t: Translate, locale: "es" | "en"): UsageTree => {
               /*
                * A `Badge`, on both counts. Not a Button, because nothing happens when you press it
                * and a dead control is the last thing a payment page can afford; and not a `Tag`,
-               * because a Tag is removable — `Badge.useWhen` covers exactly this shape, "un estado
+               * because a Tag is removable: `Badge.useWhen` covers exactly this shape, "un estado
                * corto pegado a otra cosa", with `success` as the system role it carries.
                */
               contract: "badge",
@@ -161,7 +161,7 @@ export const checkoutTree = (t: Translate, locale: "es" | "en"): UsageTree => {
                          * `Select.native`, wrapped in a FormField like every other control in this
                          * column. The custom `Select` exists for options that need markup, a
                          * controlled collection or its own positioning; three plain country names
-                         * need none of that, and `Select.avoidWhen` is blunt about it — "la
+                         * need none of that, and `Select.avoidWhen` is blunt about it: "la
                          * apariencia dejó de ser razón para reemplazar el control nativo". On a
                          * phone the native one also opens the platform picker, which on a checkout
                          * is worth more than matching the input's border radius.
@@ -241,12 +241,12 @@ export const checkoutTree = (t: Translate, locale: "es" | "en"): UsageTree => {
                             ],
                           },
                           /*
-                           * The total is a `Stat` — one number with its name, which is exactly what
+                           * The total is a `Stat`. One number with its name, which is exactly what
                            * that contract is for, and it brings the tabular figures every other
                            * figure in the kit already has.
                            *
                            * The tax note is NOT in its `change` slot, though it fitted there and
-                           * looked right. `change` is the DELTA — where the number is heading — and
+                           * looked right. `change` is the DELTA, where the number is heading. And
                            * "IVA incluido" says nothing about direction; parked there it would have
                            * inherited the trend styling and read as movement that does not exist.
                            * A qualifier under a figure is just text.

@@ -1,7 +1,7 @@
 ---
 /*
  * The component CATALOG, not a component's own page: a directory of cards linking out to every
- * migrated page, so `ComponentPageShell`'s tabs (Uso/Instalación/Referencia…) do not apply — there
+ * migrated page, so `ComponentPageShell`'s tabs (Uso/Instalación/Referencia…) do not apply. There
  * is no single "usage" to tab into. What carries over for visual consistency with the pages this
  * links to is only the hero header block itself (eyebrow + h1), used here directly rather than
  * through the shell, with no tab strip underneath it.
@@ -24,7 +24,7 @@ const t = useTranslations(locale);
  * THIS PAGE'S SEARCH IS THE CATALOGUE'S, not the site's. The chrome's ⌘K palette still indexes every
  * documentation destination and is a keystroke away; a reader who came here and typed into the box
  * labelled "Buscar componentes" is asking about components, so the palette behind it indexes exactly
- * what the cards below list — the components navigation section, and nothing from guides or ADRs.
+ * what the cards below list. The components navigation section, and nothing from guides or ADRs.
  * `!todo` mirrors the site index: an entry with no page behind it is not a destination.
  */
 const componentSearchIndex = componentSection.groups.flatMap((group) =>
@@ -42,7 +42,7 @@ const componentSearchIndex = componentSection.groups.flatMap((group) =>
 
 /*
  * dummyimage SCALES ITS TEXT TO FIT the requested box, so the same placeholder renders "Kbd" huge
- * and "Component preview" small — three letters and seventeen both stretched to the same 400px.
+ * and "Component preview" small. Three letters and seventeen both stretched to the same 400px.
  * Side by side in a grid that reads as inconsistent artwork, not as one placeholder repeated.
  * Padding every label to the SAME character count (centred, so the word stays in the middle of the
  * frame) makes the string the service measures the same width for every card, so every card comes
@@ -71,7 +71,7 @@ const placeholderSrc = (label: string) => {
   {/*
     Opens the catalogue's OWN palette (`docs-cmdk-components`), not the chrome's: `aria-controls` is
     what the enhancer reads to decide which triggers belong to which dialog, so pointing it here is
-    the whole scoping mechanism. No ⌘K badge and no `aria-keyshortcuts` either — that shortcut still
+    the whole scoping mechanism. No ⌘K badge and no `aria-keyshortcuts` either. That shortcut still
     belongs to the site-wide palette, and this button is not it.
   */}
   <button
@@ -97,12 +97,12 @@ const placeholderSrc = (label: string) => {
   {
     /*
      * FLAT ON PURPOSE. `indexDocument()` (the build-time TOC scan) only counts `h2`/`h3` sitting at
-     * the top level of `<main>` — a heading buried inside a wrapping `<section><header><div>` reads
+     * the top level of `<main>`. A heading buried inside a wrapping `<section><header><div>` reads
      * as content being demonstrated, the same rule that keeps a demo's own headings out of the TOC.
      * That used to leave this page's own group titles unindexed and the rail empty. So the heading
      * (and its count, folded INTO it rather than beside it in a sibling wrapper) sits bare at the
      * top level; only the `<ul>` of cards is still wrapped, in a `<section aria-labelledby>` that
-     * points at the heading by id rather than containing it — `aria-labelledby` never required
+     * points at the heading by id rather than containing it: `aria-labelledby` never required
      * containment, just the reference.
      */
     componentSection.groups.map((group, groupIndex) => {

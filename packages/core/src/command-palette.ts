@@ -128,7 +128,7 @@ export const commandPaletteContract = {
      * The index, JSON-encoded: a demo's ONLY way to seed one, since a usage tree names contracts
      * and signatures and has no channel for a literal `<script>`. No `attr`: it never lands on an
      * element as a value, only as the JSON script's text (below) or, renamed to `items`, as
-     * React's own prop — machine input on both sides, same as `emptyLabel`.
+     * React's own prop. Machine input on both sides, same as `emptyLabel`.
      */
     entries: { type: "string", prop: "items", machineInput: true },
   },
@@ -170,7 +170,7 @@ export const commandPaletteContract = {
                   spellcheck: "false",
                   "aria-expanded": "false",
                   "aria-autocomplete": "list",
-                  /* Always points at the listbox, visible or not — WAI's combobox pattern requires
+                  /* Always points at the listbox, visible or not. WAI's combobox pattern requires
                    * this whether or not the popup happens to be open right now. */
                   "aria-controls": "sk-command-palette-listbox",
                 },

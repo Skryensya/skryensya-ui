@@ -3,8 +3,29 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "ef90435500b85263"
+surface: "289e1fb115d38914"
 entries:
+  - date: 2026-08-24
+    kind: feature
+    target: Tag.link
+    es:
+      title: Tag.link publica las etiquetas navegables
+      body: >-
+        Se agrega <code>Tag.link</code>: una etiqueta que navega a una faceta, tema o palabra
+        clave con host <code>&lt;a&gt;</code> y opción requerida <code>href</code>. El
+        <code>Tag</code> existente queda como host <code>&lt;span&gt;</code> cuando no hay
+        <code>href</code>. Un tag navegable no puede ser removible: <code>removable</code> y
+        <code>removeLabel</code> quedan prohibidos en esta firma para no esconder dos acciones en
+        un solo objetivo interactivo.
+    en:
+      title: Tag.link publishes navigable tags
+      body: >-
+        Adds <code>Tag.link</code>: a tag that navigates to a facet, topic or keyword with an
+        <code>&lt;a&gt;</code> host and required <code>href</code> option. The existing
+        <code>Tag</code> stays a <code>&lt;span&gt;</code> host when there is no
+        <code>href</code>. A navigable tag cannot be removable: <code>removable</code> and
+        <code>removeLabel</code> are forbidden on this signature so one interactive target does not
+        hide two actions.
   - date: 2026-08-11
     kind: feature
     es:

@@ -154,7 +154,7 @@ export function parseTokens(cssDir = CSS_DIR) {
     const raw = isHc ? [...(hcByName.get(name) ?? [])][0] : baseSemantic.get(name);
     if (!raw) return null;
     /* `[\s\S]`, not `.`: a token value may span lines, and `.` stops at the newline, so a
-     * multi-line `light-dark()` matched nothing here and fell through to "unresolvable" — the
+     * multi-line `light-dark()` matched nothing here and fell through to "unresolvable". The
      * validator kept passing while it had quietly stopped checking those pairs. */
     const ld = raw.match(/light-dark\(([\s\S]*)\)/);
     const pick = ld ? splitTopLevel(ld[1])[mode.endsWith("light") ? 0 : 1] : raw;

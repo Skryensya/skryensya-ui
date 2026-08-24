@@ -14,4 +14,4 @@ Megamenu:
 
 MegamenuTrigger:
   useWhen:
-    - "una categoría de la barra — su panel (`columns`) son 2-4 NavListGroup, no comandos ni un solo enlace"
+    - "una categoría de la barra. Su panel (`columns`) son 2-4 NavListGroup, no comandos ni un solo enlace"

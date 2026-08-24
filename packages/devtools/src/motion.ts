@@ -1,11 +1,11 @@
 /*
- * MOTION SLOW-MO — retunes the primitive duration SCALE, not a per-element multiplier.
+ * MOTION SLOW-MO. Retunes the primitive duration SCALE, not a per-element multiplier.
  *
  * `packages/core/css/primitives/_motion.scss` is the one place every animated duration in the
  * system ultimately comes from: every component consumes a semantic `--motion-*-duration` token
  * (`packages/core/css/semantic/_motion.scss`), and every one of those resolves to one of a handful
  * of `--scale-duration-*` primitives. Overriding just those primitives at a devtools-scoped selector
- * therefore slows down EVERY component's motion proportionally and correctly — retune a few root
+ * therefore slows down EVERY component's motion proportionally and correctly. Retune a few root
  * tokens, touch nothing else.
  *
  * The values are duplicated here rather than read back from the primitives file: a custom property

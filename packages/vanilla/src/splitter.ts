@@ -8,7 +8,7 @@ import {
 } from "@skryensya/core/splitter";
 
 /*
- * SPLITTER, the imperative binding for a COLUMN-RESIZE handle — the pointer/keyboard wiring
+ * SPLITTER, the imperative binding for a COLUMN-RESIZE handle. The pointer/keyboard wiring
  * `@skryensya/core/splitter`'s own banner leaves to each binding, now written ONCE instead of once
  * per consumer: Treegrid's column resizer and a plain Table's both attach one of these per column
  * boundary, and until this file existed the two copied each other's press-vs-drag arming, RTL sign
@@ -19,26 +19,26 @@ import {
  */
 
 export interface ColumnResizerOptions {
-  /** The header cell this handle sits inside — appended as its last child. */
+  /** The header cell this handle sits inside. Appended as its last child. */
   readonly th: HTMLElement;
-  /** This handle sits BETWEEN column `index` and `index + 1` — `resolveColumnResize`'s own indexing. */
+  /** This handle sits BETWEEN column `index` and `index + 1`: `resolveColumnResize`'s own indexing. */
   readonly index: number;
   readonly getWidths: () => readonly number[];
   readonly setWidths: (widths: readonly number[]) => void;
   readonly min: number;
   readonly ariaLabel: string;
-  /** Reads current writing direction fresh per gesture — a document can flip direction under a
+  /** Reads current writing direction fresh per gesture. A document can flip direction under a
    * long-lived table, the same reasoning `sidebar.ts`'s own `towardWider` documents. */
   readonly direction: () => "ltr" | "rtl";
   /** The caller's OWN part class (`sk-table__column-resizer`, `sk-treegrid__column-resizer`, …),
-   * composed with the shared `sk-splitter` pattern the same way every other part composes it — the
+   * composed with the shared `sk-splitter` pattern the same way every other part composes it. The
    * gesture is generic, the paint is still the consumer's, per-contract part class. */
   readonly className: string;
   /**
-   * What Enter/double-click resizes column `index` TO, in px — omitted, the WAI convention default:
+   * What Enter/double-click resizes column `index` TO, in px. Omitted, the WAI convention default:
    * an even split with its neighbor (`core/splitter.ts`'s own banner: "Sidebar and Treegrid both
    * reset to an even/default split"). A plain Table instead supplies `measureColumnContentWidth`
-   * here, so the SAME gesture fits the column to its own content instead — the spreadsheet
+   * here, so the SAME gesture fits the column to its own content instead. The spreadsheet
    * convention, and the more useful default for a column of actual data. This file only ever turns
    * the target into a `delta` against the pair's current width; it never measures anything itself.
    */
@@ -47,26 +47,26 @@ export interface ColumnResizerOptions {
 
 /**
  * Seeds column widths from `measured`'s real rendered width, watching for one if it reads 0 right
- * now — `measured` can be `display: none` at the moment a table mounts (a docs preview panel not
+ * now: `measured` can be `display: none` at the moment a table mounts (a docs preview panel not
  * yet the selected binding tab, a closed accordion, an inactive tab panel: all read 0 the whole
  * time they stay hidden), and 0 ÷ colCount would seed every column at the min floor permanently,
  * since nothing would ever ask again. A synchronous read that already succeeds needs no observer at
  * all; only a genuinely-zero read starts one, and it disconnects itself the moment a real,
- * nonzero width finally arrives — this only ever seeds once, a mount concern, not a resize one.
+ * nonzero width finally arrives. This only ever seeds once, a mount concern, not a resize one.
  */
 export function watchColumnLayout(options: {
   readonly measured: HTMLElement;
   readonly colCount: number;
   readonly min: number;
-  /** One positive weight per column — `resolveWeightedColumnWidths`'s own doc
+  /** One positive weight per column: `resolveWeightedColumnWidths`'s own doc
    * (`@skryensya/core/splitter`) explains why an equal split is not always the seed a consumer
    * wants. Omitted, every column starts equal, the prior behaviour. */
   readonly weights?: readonly number[];
   /**
-   * Corrects the raw measured width before it is split across columns — Table's own call
+   * Corrects the raw measured width before it is split across columns. Table's own call
    * subtracts its `<table>`'s own border width: CSS's separated-border table model
    * (`border-collapse: separate`, what `.sk-table` uses) paints a table's border OUTSIDE the
-   * width its `width` property/`<col>` sum describes, regardless of `box-sizing` — confirmed
+   * width its `width` property/`<col>` sum describes, regardless of `box-sizing`. Confirmed
    * against a real render, not assumed: a table seeded to exactly its wrapper's own width still
    * rendered 2px wider (one border width per side), a permanent horizontal scrollbar on a table
    * that should never need one. Omitted, the raw measured width is used as-is (Treegrid's own
@@ -78,7 +78,7 @@ export function watchColumnLayout(options: {
   const { measured, colCount, min, apply } = options;
   const weights = options.weights ?? Array.from({ length: colCount }, () => 1);
   const adjustTotal = options.adjustTotal ?? ((total: number) => total);
-  // Guards against a callback already in flight the instant `disconnect()` is called — a real race,
+  // Guards against a callback already in flight the instant `disconnect()` is called. A real race,
   // not a hypothetical one, since `ResizeObserver` batches and delivers on the next frame.
   let seeded = false;
   const seedFrom = (rawTotal: number): boolean => {
@@ -96,7 +96,7 @@ export function watchColumnLayout(options: {
   return () => observer.disconnect();
 }
 
-/** Attaches one column-resize handle and returns its own cleanup — same shape every enhancer here
+/** Attaches one column-resize handle and returns its own cleanup. Same shape every enhancer here
  * returns, and the same one `bindHotkey` documents for a single reusable primitive. */
 export function attachColumnResizer(options: ColumnResizerOptions): () => void {
   const { th, index, getWidths, setWidths, min, ariaLabel, direction, className, resetWidth } = options;
@@ -129,7 +129,7 @@ export function attachColumnResizer(options: ColumnResizerOptions): () => void {
   };
 
   /** `resetWidth`'s own target when the caller supplies one, an even split with the neighbor
-   * otherwise — see `ColumnResizerOptions.resetWidth`'s own doc for which consumers pass which. */
+   * otherwise; see `ColumnResizerOptions.resetWidth`'s own doc for which consumers pass which. */
   const reset = () => {
     const widths = getWidths();
     const before = widths[index] ?? 0;
@@ -227,20 +227,20 @@ export function attachColumnResizer(options: ColumnResizerOptions): () => void {
 
 /**
  * The natural, single-line width column `columnIndex` needs to show EVERY currently-rendered cell
- * in it without wrapping or truncating — what a spreadsheet's own double-click-the-border
+ * in it without wrapping or truncating. What a spreadsheet's own double-click-the-border
  * convention measures, and `Table`'s own `resetWidth` (`components/table.ts`).
  *
  * Clones each cell into a throwaway, `table-layout: auto` table (off-screen, `visibility: hidden`,
  * never painted) and reads the CLONE's own rendered width, rather than reading anything off the
- * real cell — confirmed against a real table, not assumed, that NEITHER of the two techniques that
+ * real cell. Confirmed against a real table, not assumed, that NEITHER of the two techniques that
  * look like they should work actually does:
  *   - The real cell's own `scrollWidth`, even under a temporary `white-space: nowrap`, never moves:
  *     a `table-layout: fixed` cell's box is held at its `<col>`'s width no matter how much (or how
- *     little) text it holds — measuring it can only ever answer "what is this column right now",
+ *     little) text it holds. Measuring it can only ever answer "what is this column right now",
  *     the very thing this gesture is about to overwrite, never "what does the content need".
  *   - `overflow: hidden` does not rescue that read either, and for a reason worth stating plainly:
  *     `scrollWidth` is SPECIFIED as `max(clientWidth, content width)`, which means it can reveal
- *     content WIDER than the box (a real overflow) but can never report NARROWER — a column that is
+ *     content WIDER than the box (a real overflow) but can never report NARROWER. A column that is
  *     already too generous for its content has nothing to "scroll", so `scrollWidth` just echoes
  *     `clientWidth` back, and a spreadsheet's auto-fit needs exactly that direction too (SHRINKING
  *     an over-wide column is the common case, not just growing a truncated one).
@@ -249,11 +249,11 @@ export function attachColumnResizer(options: ColumnResizerOptions): () => void {
  * keeps the ORIGINAL cell's classes (via the ruler table's own `className`, so ancestor selectors
  * like `.sk-table :is(th, td)` still match) and any inline styles, so the measured width reflects
  * the real padding/font/box-sizing, not a guess reconstructed property by property. The resizer
- * handle itself is stripped from the clone first — `cloneNode(true)` would otherwise duplicate that
+ * handle itself is stripped from the clone first: `cloneNode(true)` would otherwise duplicate that
  * `position: absolute` child too, which contributes nothing to the width but does not belong in a
  * detached copy either.
  *
- * All clones are built and attached in ONE batch, and only THEN read — one forced layout for the
+ * All clones are built and attached in ONE batch, and only THEN read. One forced layout for the
  * whole column, not one per cell (the standard read/write-batching fix for layout thrashing).
  */
 export function measureColumnContentWidth(params: {
@@ -290,18 +290,18 @@ export function measureColumnContentWidth(params: {
 
 /**
  * Keeps `--sk-splitter-block-size` (the splitter pattern's own opt-in hook, `patterns/splitter.css`
- * — every `.sk-splitter` fills `100%` of its containing block by default, this is how a caller asks
+ *. Every `.sk-splitter` fills `100%` of its containing block by default, this is how a caller asks
  * for something taller) matched to `container`'s own rendered extent for as long as the returned
- * cleanup is never called — unlike `watchColumnLayout`'s one-shot seed, this never disconnects on
+ * cleanup is never called. Unlike `watchColumnLayout`'s one-shot seed, this never disconnects on
  * its own: resizing a column can change how many lines a cell WRAPS to, which changes the table's
  * own height mid-gesture, so the column line every `.sk-splitter` inside it draws has to keep
  * tracking a moving target for the resizable table's whole lifetime, not just once at mount.
  *
- * `measure` defaults to `container`'s own full rendered height — right for a plain box, WRONG for
+ * `measure` defaults to `container`'s own full rendered height. Right for a plain box, WRONG for
  * `Table`'s own call (`components/table.ts`): a `<caption>` renders outside the table's own grid
  * (`table.css`'s own note) but still inside the `<table>` ELEMENT's rendered box, so its own
  * `getBoundingClientRect().height` over-counts by the caption's height, while the resizer itself
- * starts at the header row (it lives inside a `<th>`), not the caption above it — left at the
+ * starts at the header row (it lives inside a `<th>`), not the caption above it. Left at the
  * default, a captioned table's line would run past the table's real bottom edge by exactly that
  * much. `Table` supplies its own `measure` that reads from the first row down instead.
  */

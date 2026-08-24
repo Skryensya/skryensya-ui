@@ -10,7 +10,7 @@
   --z-below: var(--scale-z-behind); /* decorative, under content, the state layer's ::before */
   --z-base: var(--scale-z-0); /* normal flow */
   --z-focus: var(--scale-z-50); /* an interactive element, ABOVE its own normal-flow siblings, while
-    its focus ring is showing — the ring's own offset bleeds past the element's border box, and a
+    its focus ring is showing. The ring's own offset bleeds past the element's border box, and a
     welded neighbor (Button's own `weldStart`/`weldEnd`) sits flush against that exact edge, so
     without this the neighbor (later in paint order, same stacking level) paints over the ring */
   --z-sticky: var(--scale-z-100); /* pinned chrome that content scrolls under: navbar, sticky header */

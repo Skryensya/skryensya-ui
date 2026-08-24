@@ -17,8 +17,8 @@ entries:
         junto a un botón, el track hundido con un borde casi invisible se leía más liviano y turbio
         que sus vecinos, más cerca de una superficie deshabilitada que de algo que se presiona.
         <code>ComponentPreview</code> ya venía pisando esos dos hooks en su propio header por
-        exactamente esa razón — un consumidor arreglándose el componente para sí mismo mientras el
-        resto se quedaba con la versión liviana —; ese override se borró y ésta es la apariencia
+        exactamente esa razón. Un consumidor arreglándose el componente para sí mismo mientras el
+        resto se quedaba con la versión liviana -; ese override se borró y ésta es la apariencia
         publicada. La geometría no cambia (alto, padding, radio, gap), y el anillo de acento del
         thumb es lo que lo mantiene visible sin depender de que el track sea oscuro.
         <strong>Si querés el pozo de vuelta:</strong> redeclará esos dos hooks en tu propio scope.
@@ -30,7 +30,7 @@ entries:
         <code>--color-border-subtle</code> to <code>--color-border-default</code>: the same two
         tokens <code>Button</code>'s <code>neutral</code> variant already reads. Sitting in a row
         beside a button, the sunken track behind a barely-findable border read lighter and muddier
-        than its neighbours — closer to a disabled surface than to something you press.
+        than its neighbours. Closer to a disabled surface than to something you press.
         <code>ComponentPreview</code> had already been overriding both hooks in its own header for
         exactly that reason, one consumer quietly fixing the component for itself while every other
         consumer kept the lighter version; that override is gone and this is the published look.
@@ -75,18 +75,18 @@ entries:
     kind: breaking
     target: label
     es:
-      title: label ahora es obligatoria — el radiogroup necesita un nombre
+      title: label ahora es obligatoria. El radiogroup necesita un nombre
       body: >-
         El patrón Radio Group de WAI espera que <code>role="radiogroup"</code> tenga un nombre
-        accesible, y este contrato no tenía forma de dárselo — las tres instancias reales del
+        accesible, y este contrato no tenía forma de dárselo. Las tres instancias reales del
         catálogo ya pasaban <code>aria-label</code> por fuera, a mano, un comentario propio de la
         demo lo admitía explícitamente ("Segmented's contract does not map it"). Ahora
         <code>label</code> es una opción real y obligatoria.
     en:
-      title: label is now required — the radiogroup needs a name
+      title: label is now required. The radiogroup needs a name
       body: >-
         WAI's Radio Group pattern expects `role="radiogroup"` to carry an accessible name, and this
-        contract had no way to give it one — the catalogue's three real instances already passed
+        contract had no way to give it one. The catalogue's three real instances already passed
         `aria-label` outside the contract, by hand, one demo's own comment admitted it explicitly
         ("Segmented's contract does not map it"). `label` is now a real, required option.
   - date: 2026-08-11

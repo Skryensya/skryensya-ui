@@ -62,7 +62,7 @@
      * after: the region's own removal contract ("no fill mode ON PURPOSE" above, `event.target.remove()`
      * on receipt) stays exactly as small as it always was, because the enhancer holds the event back
      * until this transition ends and only then lets the consumer's `.remove()` fire. No `translate`
-     * here — that axis stays the depth system's alone (below), a dismissing toast only fades, shrinks
+     * here. That axis stays the depth system's alone (below), a dismissing toast only fades, shrinks
      * and softens, in place, whatever its current position happens to be. */
     transition:
       opacity var(--motion-exit-duration) var(--motion-exit-easing),
@@ -86,7 +86,7 @@
       /* Same materialise touch as Popover (`--motion-materialize-scale`/`-blur`), not just fade +
        * rise: still no fill mode, so `scale` here is only ever `0.98` for the OPENING frame of the
        * animation, and the moment it ends the depth-based `scale: calc(1 - depth * shrink)` below
-       * takes back over with no visible seam — the newest toast is always depth 0, so that calc is
+       * takes back over with no visible seam. The newest toast is always depth 0, so that calc is
        * already `1`, the exact value the keyframe was easing toward. `filter` has nothing below it
        * to hand off to; the stack never touches blur. */
       scale: var(--motion-materialize-scale);
@@ -99,7 +99,7 @@
    * `prefers-reduced-motion: reduce`. `scale`/`filter` are not part of that token-driven distance
    * system, same gap Popover/Menu/Tooltip/Combobox all hit, but this is a `@keyframes` `animation`,
    * not a `transition`: there is no element-level property to override, only which KEYFRAME plays.
-   * Swap the name, not the values — a plain fade, exactly what the comment above already claimed.
+   * Swap the name, not the values. A plain fade, exactly what the comment above already claimed.
    */
   @media (prefers-reduced-motion: reduce) {
     .sk-toast-region > .sk-callout {
@@ -127,15 +127,15 @@
   }
 
   /* Undoes callout.css's row-span: plain `1 / -1` for an icon-less toast, `2 / -1` once an icon
-   * opens a second column (`.sk-callout:has(.sk-callout__icon) .sk-callout__actions`) — either way
+   * opens a second column (`.sk-callout:has(.sk-callout__icon) .sk-callout__actions`). Either way
    * actions goes back to being the LAST column on the SAME row as the message, auto-placed after
    * icon and content, pinned to the end instead of starting at the panel's own inset.
    *
    * `[data-sk-toast]` is load-bearing, not decoration: without it this selector and callout's own
    * `:has()` one land at EQUAL specificity (0,3,0 either way), so which wins is import order, not
-   * intent — and it was losing. `grid-column: 2 / -1` still applying meant actions overlapped
+   * intent, and it was losing. `grid-column: 2 / -1` still applying meant actions overlapped
    * content's own column; auto-placement refuses to double-book a cell, so it pushed actions onto
-   * its OWN row below the message instead of beside it — the dismiss ✕ landing under the text
+   * its OWN row below the message instead of beside it. The dismiss ✕ landing under the text
    * instead of level with the title. The attribute (already on every toast, `data-sk-toast=""`)
    * costs one more compound and settles it outright: (0,4,0) beats callout's (0,3,0) regardless of
    * which file loads second. */
@@ -257,7 +257,7 @@
 
     /* Dismissal wins over BOTH the depth stack's own opacity/scale and the hover/focus-within reset
      * above: same (0,4,0) specificity as that reset, so it has to come AFTER it in source to hold once
-     * a fanned-out toast is dismissed mid-hover — the one moment a reader is most likely to actually
+     * a fanned-out toast is dismissed mid-hover. The one moment a reader is most likely to actually
      * reach a background toast's dismiss control. Timing switches from `--motion-expand-*` (the pile's
      * own tempo) to `--motion-exit-*` (this toast leaving), and the delay drops to 0: dismissal is a
      * response to THIS toast, not a step in the depth cascade. */

@@ -166,7 +166,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     /* Distances already collapse via the intent tokens. Scale and blur are not distances, so they
-     * still need the same explicit hold Popover writes — a short opacity fade, no spatial move. */
+     * still need the same explicit hold Popover writes. A short opacity fade, no spatial move. */
     .sk-dialog,
     .sk-dialog[open] {
       scale: 1;

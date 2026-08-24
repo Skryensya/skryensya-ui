@@ -1,7 +1,7 @@
 /*
  * TIER 3, TOC
  *
- * ONE SHAPE: a compact, always-open index of the document beside it — see `toc.ts`'s own header for
+ * ONE SHAPE: a compact, always-open index of the document beside it; see `toc.ts`'s own header for
  * why the `<details>` disclosure and its `data-sk-toc-rail` opt-in are gone rather than kept as a
  * second form. Nothing here is behind an attribute a consumer has to discover: the APPEARANCE below
  * is unconditional, and the only thing that waits for a breakpoint is `position: sticky` and the
@@ -31,16 +31,16 @@
   }
 
   /*
-   * Caption label, not a prose section title — and SUBORDINATE to the list it names, which the
+   * Caption label, not a prose section title, and SUBORDINATE to the list it names, which the
    * all-caps treatment it used to carry had inverted. Measured on the docs rail (glyph run, not the
    * `<h2>`'s own block box, which fills the column either way): "En esta página" set in
-   * `uppercase` + `letter-spacing: 0.08em` ran 113px against 86px in sentence case — 24% of the
+   * `uppercase` + `letter-spacing: 0.08em` ran 113px against 86px in sentence case. 24% of the
    * caption's length bought nothing but emphasis, on the one string here that should carry least.
    * All-caps also reads heavier at a given weight, so the label was outweighing the links it names.
    *
    * The micro-tracking leaves with it rather than separately: that 0.08em only ever existed to keep
    * all-caps legible, and applied to sentence case it just loosens words that do not need it. The
-   * weight stays at `emphasis` and the colour at `tertiary` — with the width gone, those two are all
+   * weight stays at `emphasis` and the colour at `tertiary`, with the width gone, those two are all
    * that still separate a label from the links beneath it, and dropping either as well would leave
    * the caption reading as one more row in the list.
    */
@@ -142,7 +142,7 @@
    * THE ONLY THING LEFT BEHIND A BREAKPOINT, and the two declarations that earn it: pinning the index
    * beside the prose and holding it to a fixed column only mean anything where there IS a spare
    * column. Everything above this paints the same at every width, so a narrow host gets the identical
-   * compact index in normal flow — a layout difference, not a second shape of the component. This is
+   * compact index in normal flow. A layout difference, not a second shape of the component. This is
    * also what the old `data-sk-toc-rail` opt-in was really protecting, and it needs no attribute: a
    * viewport this wide either has the room or the consumer's own grid decides it does not.
    */

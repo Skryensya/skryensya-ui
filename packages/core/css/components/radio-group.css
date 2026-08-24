@@ -11,7 +11,7 @@
     --sk-radio-border-color: var(--color-border-strong);
     --sk-radio-border-width: 1px;
     --sk-radio-selected-bg: transparent;
-    --sk-radio-selected-fg: var(--color-action-primary);
+    --sk-radio-selected-fg: var(--color-action-accent);
     --sk-radio-selected-border-color: var(--color-border-accent);
     --sk-radio-disabled-bg: transparent;
     --sk-radio-disabled-fg: var(--color-text-disabled);
@@ -69,7 +69,7 @@
     /* The press squeeze lives here, on the hit-box, not on `::before`: ring and dot share this one
      * grid cell, so scaling the parent moves both as a single unit with one declaration, the same
      * "whole label answers a press" checkbox.css already gives its own control. FEEDBACK tempo,
-     * because it has to land under the finger — see checkbox.css for the full split. */
+     * because it has to land under the finger; see checkbox.css for the full split. */
     transition: scale var(--motion-feedback-duration) var(--motion-feedback-easing);
   }
 

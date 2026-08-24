@@ -87,7 +87,7 @@ export const popoverContract = {
       /*
        * The panel's own name and description, the same relationship `Dialog` fixes between its
        * `<dialog>` and its title/body (`dialog.ts`'s own comment): without it, a screen reader
-       * focusing or announcing the popover gets nothing from its OWN heading — `popover="auto"`
+       * focusing or announcing the popover gets nothing from its OWN heading: `popover="auto"`
        * grants no implicit accessible name the way `<dialog>` at least tries to. `labelledBySlot`
        * covers the title half (the emitter finds whichever node renders `title` and points this one
        * at it); `wiring` covers the description half, because that is a plain id reference rather

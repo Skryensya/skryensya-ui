@@ -6,7 +6,7 @@ describe("Calendar", () => {
   it("defaults every accessible name to Spanish, locale-aware from `locale`", () => {
     const ui = render(<Calendar />);
 
-    // Zag's own `defaultTranslations` is English-only and unconditional — `locale` drove
+    // Zag's own `defaultTranslations` is English-only and unconditional: `locale` drove
     // `DateFormatter` before this fix, and nothing else. A day cell's accessible name comes from
     // `aria-label`, not its text content (that's just the day number), so this queries by role.
     expect(ui.getAllByRole("button", { name: /^Elegir /i }).length).toBeGreaterThan(0);

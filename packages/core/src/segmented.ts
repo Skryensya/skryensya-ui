@@ -46,7 +46,7 @@ export const segmentedContract = {
      */
     value: { type: "string", attr: "data-value", prop: "defaultValue" },
     /** The group's own accessible name. WAI's Radio Group pattern expects one; this `role="radiogroup"`
-     *  had no way to carry it at all before this option existed — every real usage passed `aria-label`
+     *  had no way to carry it at all before this option existed. Every real usage passed `aria-label`
      *  by hand, outside the contract. */
     label: { type: "string", attr: "aria-label" },
   },

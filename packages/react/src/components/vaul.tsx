@@ -19,9 +19,9 @@ export type VaulProps = Omit<DialogHTMLAttributes<HTMLDialogElement>, "aria-labe
   /**
    * Names the panel. Required: `showModal()` gives the root an implicit `role="dialog"` whether or
    * not the composition thinks about it, and Vaul has no header of its own to source a name from
-   * the way `Dialog`'s required `title` slot does — this is that same requirement, as a plain
+   * the way `Dialog`'s required `title` slot does. This is that same requirement, as a plain
    * option instead of a slot. Named `label`, not `aria-label`, the same as every other option this
-   * binding maps to an `aria-*` attribute internally (see `Feed`'s own `label`) — the contract's
+   * binding maps to an `aria-*` attribute internally (see `Feed`'s own `label`). The contract's
    * key, not the DOM spelling, is the binding's own prop name.
    */
   label: string;

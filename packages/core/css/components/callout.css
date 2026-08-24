@@ -23,21 +23,21 @@
 @layer components {
   .sk-callout {
     /* THREE HOOKS drive the whole color story, background, foreground (text + icon via currentColor)
-     * and accent (the border, and — mixed with the background below — the icon chip). A tone
+     * and accent (the border, and. Mixed with the background below. The icon chip). A tone
      * re-declares just these three; nothing below the hooks knows which tone it is. Neutral is
      * the default recipe: a plain panel with no semantic color until a status tone opts in. */
     --sk-callout-bg: var(--color-bg-surface);
     --sk-callout-fg: var(--color-text-primary);
     --sk-callout-accent: var(--color-border-subtle);
     /* A FOURTH hook: the panel's own inset, and (in toast.css, not here) how far Toast's own dismiss
-     * is pulled back into it. A consumer that tightens the panel — Toast does, floating chrome wants
-     * less air than a page banner — moves both by declaring one value. */
+     * is pulled back into it. A consumer that tightens the panel. Toast does, floating chrome wants
+     * less air than a page banner. Moves both by declaring one value. */
     --sk-callout-padding: var(--space-inset-md);
     /* And the title↔description rhythm, for the same reason: a tighter panel needs a tighter stack
      * inside it, or the gap between the two lines ends up wider than the inset around them. */
     --sk-callout-content-gap: 0.25rem;
 
-    /* LAYOUT: a grid of ONE column, [icon | content] on the first row, actions on its own row below —
+    /* LAYOUT: a grid of ONE column, [icon | content] on the first row, actions on its own row below -
      * never beside the text, where a lone action reads as a second, unrelated thing happening rather
      * than what to do about the first. `minmax(0, 1fr)` lets the content column shrink below its
      * intrinsic width, so long words wrap instead of pushing the panel wider than its container.
@@ -129,9 +129,9 @@
   .sk-callout__description { margin: 0; font-size: var(--font-size-body-sm); color: var(--color-text-secondary); line-height: var(--font-line-height-body); }
   /* ACTIONS is its OWN ROW below the message. `1 / -1` is the base (no-icon) case, the panel's only
    * column, so actions starts flush with the text above it; the icon-present case narrows that to the
-   * content column alone (see above) so the SAME alignment holds either way — title, description and
+   * content column alone (see above) so the SAME alignment holds either way. Title, description and
    * actions all start at one shared edge. Whatever recovery control the consumer supplies (a Link or
-   * a `subtle`/`danger` Button — the contract restricts it, see callout.ts) wraps if narrow. No
+   * a `subtle`/`danger` Button. The contract restricts it, see callout.ts) wraps if narrow. No
    * dismiss ever lands here: Callout has none. */
   .sk-callout__actions { grid-column: 1 / -1; display: inline-flex; flex-wrap: wrap; gap: var(--space-inline-xs); align-items: center; justify-content: start; }
 

@@ -8,7 +8,7 @@ import type { ItemInput } from "@skryensya/core/usage-tree";
  * deployments read as eight deployments rather than as forty nested nodes.
  */
 
-/** id, service, environment, status, unit, amount — the six values one deployment row carries. */
+/** id, service, environment, status, unit, amount. The six values one deployment row carries. */
 export const deploymentRows = [
   ["dep-1040", "API", "production", "succeeded", "minutes", "4"],
   ["dep-1039", "Worker", "production", "running", "minutes", "12"],

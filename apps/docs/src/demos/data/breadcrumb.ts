@@ -48,7 +48,7 @@ export const breadcrumbLongItems = (
 ];
 
 /**
- * Six levels deep with full sentence-length labels — comfortably wider than the preview column at
+ * Six levels deep with full sentence-length labels. Comfortably wider than the preview column at
  * any reasonable width, so the enhancer always has real ancestors to collapse rather than a fit
  * that depends on exactly how wide the surrounding page happens to be.
  */

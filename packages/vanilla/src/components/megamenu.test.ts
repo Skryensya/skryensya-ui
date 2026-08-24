@@ -5,7 +5,7 @@ import { mountMegamenu } from "./megamenu.js";
 
 /*
  * The exact shape `megamenuContract`'s template (core/src/megamenu.ts) emits: a `<nav>` root, a
- * `<ul>` of `<li>` items each holding a trigger and its OWN positioner/content pair — the enhancer
+ * `<ul>` of `<li>` items each holding a trigger and its OWN positioner/content pair. The enhancer
  * collapses these N pairs into one shared panel at connect time (see megamenu.ts's own header
  * comment), which is exactly the behavior under test here. "Products" carries both a links column
  * and an image column (for the preview-swap tests); "Resources" is links-only.
@@ -52,7 +52,7 @@ const isOpen = (root: HTMLElement, index: number) => triggers(root)[index]!.getA
 
 afterEach(() => {
   // Without this, `connect()`'s own document-level `pointerdown` capture listener and any pending
-  // hover-intent `setTimeout` outlive the test that scheduled them — a REAL timer installed before a
+  // hover-intent `setTimeout` outlive the test that scheduled them. A REAL timer installed before a
   // later test switches to `vi.useFakeTimers()` is untouched by that switch (fake timers only affect
   // NEW scheduling calls), so it can still fire mid-suite and touch a root a later test never
   // expected touched. Found via a genuine order-dependent flake: this file's first test passed in
@@ -75,7 +75,7 @@ describe("Megamenu vanilla enhancer", () => {
       expect(trigger.getAttribute("aria-expanded")).toBe("false");
       // The Disclosure (Navigation) pattern this component deliberately follows instead of Menu
       // Button (core/megamenu.ts's own header comment) never carries `aria-haspopup`/`role="menu"`
-      // — a screen reader announces "button, collapsed", never "has a menu", and Tab still walks
+      //. A screen reader announces "button, collapsed", never "has a menu", and Tab still walks
       // through the panel's own links in normal document order. Guards against a regression that
       // "helpfully" adds Menu-pattern ARIA here, which would silently break that assumption.
       expect(trigger.hasAttribute("aria-haspopup")).toBe(false);
@@ -95,7 +95,7 @@ describe("Megamenu vanilla enhancer", () => {
     expect(visiblePanel(root).textContent).toContain("Overview");
   });
 
-  it("clicking the SAME trigger again closes it — a toggle", () => {
+  it("clicking the SAME trigger again closes it. A toggle", () => {
     const root = markup();
     fireEvent.click(triggers(root)[0]!);
     fireEvent.click(triggers(root)[0]!);

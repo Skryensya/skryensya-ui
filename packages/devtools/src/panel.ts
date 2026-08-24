@@ -1,7 +1,7 @@
 /*
  * A relative path into `@skryensya/core`'s own file tree, not its published `?raw` specifier: Vite's
  * resolver does not consult the package's wildcarded `exports` map (`"./components/*"` etc.) for a
- * `?raw`-suffixed request, and `@skryensya/core/components/button.css?raw` 404s as a result — the
+ * `?raw`-suffixed request, and `@skryensya/core/components/button.css?raw` 404s as a result. The
  * same reason `apps/docs`'s own source-viewer pages reach around the exports map with a path alias
  * for this exact query shape. `@skryensya/core` is still the declared dependency (package.json); this
  * only names where inside it the file actually lives.
@@ -16,7 +16,7 @@ import { createFocusOrderOverlay } from "./focus-order";
 import { createFpsMeter } from "./fps";
 
 /*
- * Written by `apps/docs`'s `Base.astro`, right after its own `initComponents()` call resolves —
+ * Written by `apps/docs`'s `Base.astro`, right after its own `initComponents()` call resolves -
  * that return value IS the exact mount count (`registry.ts`'s own `mount(root)` interfaces each
  * return how many instances they just hydrated, summed by `initComponents()`). Reading a number
  * some OTHER script already computed, rather than re-deriving it here, is the same reasoning as the
@@ -34,19 +34,19 @@ declare global {
  * control a real `sk-checkbox` (markup lifted verbatim from `validate_ui` against their published
  * contracts), with the actual published stylesheets injected as text into this shadow root. A tool
  * for inspecting the design system should look like it, and it means this file owns none of the
- * hover/press/focus states or the checked/indeterminate visuals — the same CSS every consumer gets
+ * hover/press/focus states or the checked/indeterminate visuals. The same CSS every consumer gets
  * already owns all of that.
  *
  * `:host { all: initial }` plus a shadow root is the isolation story on top of that: nothing this
- * stylesheet declares can leak onto the host page, and nothing the host page declares — resets, a
- * hostile `*` rule — can reach in here either. Custom properties (`--color-*`, `--size-*`, the
+ * stylesheet declares can leak onto the host page, and nothing the host page declares. Resets, a
+ * hostile `*` rule. Can reach in here either. Custom properties (`--color-*`, `--size-*`, the
  * current density/contrast/scheme) still cross the shadow boundary by inheritance from the host
  * element's own computed style, which is what lets the real component CSS resolve correctly without
  * this file re-declaring a single token.
  */
 const LAYOUT_STYLES = `
   /*
-   * \`all: initial\` also resets \`color-scheme\` — a REAL CSS property, not a custom one, so it is
+   * \`all: initial\` also resets \`color-scheme\`. A REAL CSS property, not a custom one, so it is
    * NOT among the handful \`all\` leaves alone. Every token in the injected component stylesheets
    * that resolves through \`light-dark(...)\` (button.css's own \`--sk-button-bg\`/\`--sk-button-border-
    * color\` among them) reads that property off the element the declaration lands on, and without
@@ -62,7 +62,7 @@ const LAYOUT_STYLES = `
   .root {
     position: fixed;
     z-index: 2147483001;
-    /* The site's own body/code families, not a hardcoded stack — a product that retunes its type
+    /* The site's own body/code families, not a hardcoded stack. A product that retunes its type
        tokens (ADR-19's per-consumer retuning story) should see this panel retune with it, the same
        reason the colors above resolve through tokens rather than literals. */
     font: 13px/1.4 var(--font-family-body, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
@@ -107,7 +107,7 @@ const LAYOUT_STYLES = `
     font: 700 11px/1 var(--font-family-code, ui-monospace, "SF Mono", monospace);
     opacity: 0.8;
   }
-  /* Separates the read-only stat above from the toggles below — two different kinds of row (one
+  /* Separates the read-only stat above from the toggles below. Two different kinds of row (one
      reports, the rest control), and nothing before this distinguished them but a shared margin. */
   .divider {
     margin: 0 0 var(--space-stack-xs, 8px);
@@ -141,7 +141,7 @@ function savePosition(position: SavedPosition): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(position));
   } catch {
-    /* private mode, quota exceeded — the position just does not survive reload */
+    /* private mode, quota exceeded. The position just does not survive reload */
   }
 }
 
@@ -153,7 +153,7 @@ function clamp(position: SavedPosition, size: { width: number; height: number })
 }
 
 /*
- * EVERY CHECK SURVIVES NAVIGATION, and that is not a convenience — it is what makes the panel usable
+ * EVERY CHECK SURVIVES NAVIGATION, and that is not a convenience. It is what makes the panel usable
  * at all. Each of these answers a question you ask ACROSS pages ("is the focus order sane on every
  * component page", "does anything drop frames while I click through the catalogue"), and a flag that
  * resets on the next link turns that into re-ticking a box at every step until you stop bothering.
@@ -179,13 +179,13 @@ function writeToggle(id: string, on: boolean): void {
     if (on) localStorage.setItem(`${TOGGLE_KEY_PREFIX}${id}`, "1");
     else localStorage.removeItem(`${TOGGLE_KEY_PREFIX}${id}`);
   } catch {
-    /* private mode, quota exceeded — the check still works, it just will not survive the reload */
+    /* private mode, quota exceeded. The check still works, it just will not survive the reload */
   }
 }
 
 /*
  * NOT under the prefix above, deliberately. This exact string is also read by `Base.astro`'s own
- * early `<head>` script, before any menu mounts and long before this module loads — it is a
+ * early `<head>` script, before any menu mounts and long before this module loads. It is a
  * cross-file contract, not this panel's private storage, and renaming it for tidiness would silently
  * drop the flag for anyone who already has it set.
  */
@@ -194,9 +194,9 @@ const SAFETY_TRIANGLE_KEY = "sk-devtools-safety-triangle";
 const PANEL_OPEN_KEY = `${TOGGLE_KEY_PREFIX}panel-open`;
 
 /**
- * One `sk-checkbox` row (markup lifted verbatim from `validate_ui`, same as the button — see the
+ * One `sk-checkbox` row (markup lifted verbatim from `validate_ui`, same as the button; see the
  * file header). Only the "checked" glyph is drawn: none of this panel's checkboxes ever go
- * indeterminate, so that state's icon would never paint. The empty sibling still has to exist —
+ * indeterminate, so that state's icon would never paint. The empty sibling still has to exist -
  * checkbox.css positions both by part name, and the CSS drives visibility off `:checked`/
  * `:indeterminate` on the real input, not off whether this file bothered to fill each one in.
  */
@@ -229,8 +229,8 @@ export type DebugPanelOptions = { toggleLabel?: string };
  * Mounts a small, self-contained debug overlay: a draggable toggle button and a panel with the
  * available checks (see `overlay.ts` for "Hit areas"; "Safety triangle" is wired up just below).
  *
- * Everything a reader sets here survives navigation and reload — which check is on, whether the
- * panel is open, and where the button sits — so the panel comes back exactly as it was left on the
+ * Everything a reader sets here survives navigation and reload, which check is on, whether the
+ * panel is open, and where the button sits, so the panel comes back exactly as it was left on the
  * next page. See `persistedToggle` below, and the storage helpers above it for why every access is
  * wrapped.
  */
@@ -284,8 +284,8 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
    * fires a matching event) once its own `initComponents()` call resolves. The LISTENER is
    * registered before the synchronous fallback read runs, on purpose: measured, this panel's own
    * dynamic-import can start running before that script's `await initComponents()` finishes, so the
-   * property alone can be read too early. `addEventListener` still catches the event fired after —
-   * it does not matter which side registered first — so this covers both orderings, and the
+   * property alone can be read too early. `addEventListener` still catches the event fired after -
+   * it does not matter which side registered first, so this covers both orderings, and the
    * synchronous read only wins the ones where the property was already there. A snapshot either
    * way, not a live counter: the docs site is a plain multi-page site (a full navigation per link),
    * so the count cannot change again once either path lands a number here.
@@ -296,7 +296,7 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
   componentCountLabel.textContent = "Components mounted";
   const componentCountValue = document.createElement("span");
   componentCountValue.className = "stat-row__value";
-  componentCountValue.textContent = String(window.__skDevtoolsComponentCount ?? "—");
+  componentCountValue.textContent = String(window.__skDevtoolsComponentCount ?? "N/A");
   window.addEventListener(
     "sk:devtools-component-count",
     (event) => {
@@ -343,7 +343,7 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
    * `data-sk-menu-debug-intent` off an ancestor ONCE, at each menu's own setup (see the matching
    * comment in `Base.astro`), so flipping the attribute after a menu has already mounted does
    * nothing for that menu. This writes the SAME `localStorage` key `Base.astro`'s early script
-   * reads before any menu mounts, then reloads — the only way the flag can actually take effect,
+   * reads before any menu mounts, then reloads. The only way the flag can actually take effect,
    * on or off. The checkbox opens already reflecting whatever that key currently says, rather than
    * always starting unchecked and lying about the state a page carried in from the last reload.
    */
@@ -351,7 +351,7 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
   try {
     safetyCheckbox.checked = localStorage.getItem(SAFETY_TRIANGLE_KEY) === "1";
   } catch {
-    /* private mode — opens unchecked, same as a reader who never set it */
+    /* private mode. Opens unchecked, same as a reader who never set it */
   }
   panel.appendChild(safetyRow);
   safetyCheckbox.addEventListener("change", () => {
@@ -359,7 +359,7 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
       if (safetyCheckbox.checked) localStorage.setItem(SAFETY_TRIANGLE_KEY, "1");
       else localStorage.removeItem(SAFETY_TRIANGLE_KEY);
     } catch {
-      /* private mode, quota exceeded — nothing to persist, so nothing to reload for either */
+      /* private mode, quota exceeded: nothing to persist, so nothing to reload for either */
       return;
     }
     location.reload();
@@ -368,7 +368,7 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
   /*
    * FPS METER. The checkbox here is only a remote control: the reading itself renders as a real
    * light-DOM badge (`fps.ts`'s own `createFpsMeter()`), not a node inside this panel's shadow
-   * root — see that file's header comment for why. That also means, unlike every other row in this
+   * root; see that file's header comment for why. That also means, unlike every other row in this
    * function, there is nothing of this check's own to append to `panel`; the row is a plain toggle.
    */
   const fpsMeter = createFpsMeter();
@@ -386,8 +386,8 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
   /*
    * OPEN/CLOSED IS STATE TOO, and it persists for the same reason the checks do: someone working
    * through a run of pages with the panel open should not have to re-open it on every navigation.
-   * One function owns the three things that must move together — the `hidden` flag, the button's
-   * `aria-expanded`, and which edge the panel grows from — so restoring at mount and toggling on
+   * One function owns the three things that must move together. The `hidden` flag, the button's
+   * `aria-expanded`, and which edge the panel grows from, so restoring at mount and toggling on
    * click cannot drift apart.
    */
   function setPanelOpen(open: boolean): void {
@@ -406,13 +406,13 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
   try {
     if (localStorage.getItem(PANEL_OPEN_KEY) === "1") setPanelOpen(true);
   } catch {
-    /* private mode — opens closed, the same default a first-time reader gets */
+    /* private mode. Opens closed, the same default a first-time reader gets */
   }
 
   /*
    * POSITIONING. Anchored by `left`/`top` (never `right`/`bottom`): a drag reads the pointer's own
    * viewport coordinates, and computing a `right`/`bottom` offset from those would mean re-deriving
-   * them from `innerWidth`/`innerHeight` on every move for no benefit — `left`/`top` is what the
+   * them from `innerWidth`/`innerHeight` on every move for no benefit: `left`/`top` is what the
    * pointer already gives you. Restored on mount from `localStorage`, clamped so a viewport that
    * shrank since the position was saved cannot leave the button reachable only off-screen.
    */
@@ -438,7 +438,7 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
 
   /*
    * DRAG VS. CLICK. A pointer that never travels past the threshold is a click and reaches the
-   * button's native `click` handler normally — `pointerdown` never calls `preventDefault()` for
+   * button's native `click` handler normally: `pointerdown` never calls `preventDefault()` for
    * that case. One that does travel is a drag: this suppresses the `click` that would otherwise
    * ALSO fire on release (the platform does not know a drag happened, only that the pointer went
    * down and came back up on the same element), so releasing a drag never also toggles the panel.
@@ -490,7 +490,7 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
       if (panel.hidden) localStorage.removeItem(PANEL_OPEN_KEY);
       else localStorage.setItem(PANEL_OPEN_KEY, "1");
     } catch {
-      /* private mode — the panel just opens closed again next time */
+      /* private mode. The panel just opens closed again next time */
     }
   });
 

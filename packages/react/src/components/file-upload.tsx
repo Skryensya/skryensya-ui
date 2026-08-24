@@ -101,7 +101,7 @@ export function FileUpload({
       {rejected.length ? (
         // `role="alert"`: unlike the accepted list below, this is new, unexpected feedback about
         // the choice the reader just made, not a persistent state a screen reader can visit at
-        // will — the same reasoning `Callout`'s own `danger` tone already carries.
+        // will. The same reasoning `Callout`'s own `danger` tone already carries.
         <div className={fileUploadParts.rejection} role="alert">
           {rejected.map(({ file, errors }) => (
             <p key={`${file.name}-${file.lastModified}`}>

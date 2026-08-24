@@ -22,8 +22,8 @@ entries:
         único lector que tiene un changelog. <code>removed</code> se escribe
         <code>breaking</code>, porque una opción publicada que deja de existir es algo sobre lo que
         hay que actuar, y ése es el significado del badge rojo. Además cada tipo lleva ahora su
-        propio tono —<code>danger</code>, <code>success</code>, <code>accent</code>,
-        <code>warning</code>, <code>neutral</code>, en ese orden— derivado igual que antes desde la
+        propio tono -<code>danger</code>, <code>success</code>, <code>accent</code>,
+        <code>warning</code>, <code>neutral</code>, en ese orden- derivado igual que antes desde la
         opción, así que la columna de badges contesta "¿algo de esto es para mí?" antes de que se
         lea una palabra. El default pasa de <code>changed</code> a <code>chore</code>: una entrada a
         la que se le olvidó el tipo debe leerse como que no es para vos, nunca como una novedad que
@@ -37,8 +37,8 @@ entries:
         happened to the FILE, these name what happens to the consumer, which is the only reader a
         changelog has. <code>removed</code> is written as <code>breaking</code>, because a published
         option that stops existing is a thing someone has to act on, and that is what the red badge
-        means. Every kind also wears its own tone now —<code>danger</code>, <code>success</code>,
-        <code>accent</code>, <code>warning</code>, <code>neutral</code>, in that order— derived from
+        means. Every kind also wears its own tone now -<code>danger</code>, <code>success</code>,
+        <code>accent</code>, <code>warning</code>, <code>neutral</code>, in that order- derived from
         the option exactly as before, so the badge column answers "is any of this for me" before a
         word of it is read. The default moves from <code>changed</code> to <code>chore</code>: an
         entry whose kind was forgotten should read as not being addressed to you, never as a feature

@@ -2,7 +2,7 @@
  * TIER 3, FEED
  *
  * A vertical stream of independent content units. No interaction model of its own (see feed.ts's
- * own banner) — this file is purely the stack + the article boundary, with hooks for a consumer's
+ * own banner). This file is purely the stack + the article boundary, with hooks for a consumer's
  * own density.
  */
 @layer components {

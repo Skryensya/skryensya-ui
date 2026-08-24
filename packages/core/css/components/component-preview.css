@@ -139,7 +139,7 @@
    * The trailing glyph on this card's own overflow-menu commands, sitting in `.sk-menu__item`'s
    * second grid column. `align-items: center` rather than letting it ride the text baseline: the
    * icon pattern's own `-0.125em` nudge (icon.css) is tuned for a glyph inline BESIDE text, and this
-   * one has no sibling text in its cell to share a baseline with, so the nudge lifts it off centre —
+   * one has no sibling text in its cell to share a baseline with, so the nudge lifts it off centre -
    * the same correction, for the same reason, that `menu.css` already makes on `__item-indicator`.
    *
    * `tertiary`, not the item's own text colour: these mark what a row does, and at full strength two
@@ -327,7 +327,7 @@
    */
   /*
    * TWO HOSTS, ONE RECIPE. The card paints this in its own stage row, where the stage is a direct
-   * child. A host that MOVES the stage somewhere else cannot use that `:has(> …)` — the fullscreen
+   * child. A host that MOVES the stage somewhere else cannot use that `:has(> …)`. The fullscreen
    * shell (`apps/docs/src/pages/f/[...path].astro`) lifts the stage into a pane of its own, so the
    * selector stopped matching and a preset there letterboxed against flat background instead of the
    * halftone, the same class of miss that file already documents for the loader's own `:has(> …)`.
@@ -335,7 +335,7 @@
    * `[data-sk-component-preview-mat]` is that host's opt-in: it declares itself the wall, supplies
    * its own grid placement (its cell is not this card's stage row), and inherits every
    * `--sk-component-preview-mat-*` from the card it still lives inside. The paint below stays
-   * defined exactly once, which is the point — a second copy of a two-gradient halftone is a fork
+   * defined exactly once, which is the point. A second copy of a two-gradient halftone is a fork
    * that drifts the first time either side is touched.
    */
   .sk-component-preview:has(
@@ -606,7 +606,7 @@
    * A layout whose content cannot size it takes the whole line.
    *
    * The stage is a wrapping ROW of specimens, so each top-level child is a flex item sized by its
-   * content, and Progress (and Meter's `.sk-meter-group` wrapper — see meter.css's own file banner)
+   * content, and Progress (and Meter's `.sk-meter-group` wrapper; see meter.css's own file banner)
    * has no content to be sized by: it declares `inline-size: 100%`, which is 100% of nothing inside a
    * shrink-to-fit Stack. The bars measured 0 wide and the stage painted empty, which is what a usage
    * tree that wraps its demo in a layout primitive gets by default.

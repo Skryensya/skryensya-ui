@@ -30,7 +30,7 @@ cambia de meaning cuando cambia la marca.
 
 La dimensión `accent reach` desaparece. Los estados current de navegación usan accent directo; badges, tags,
 kbd y marcadores decorativos usan los semánticos base de accent; ghost/quiet actions quedan en
-`--color-text-primary`; el media gradient usa `--color-action-primary`. No queda `data-accent` ni tokens
+`--color-text-primary`; el media gradient usa `--color-action-accent`. No queda `data-accent` ni tokens
 globales `--color-decorative-*`, `--color-nav-current-*`, `--color-action-quiet-fg` o
 `--color-decorative-wash`.
 

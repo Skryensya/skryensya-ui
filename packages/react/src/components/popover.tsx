@@ -50,6 +50,17 @@ export function Popover({
 }: PopoverProps) {
   const generatedId = useId();
   const contentId = id ?? `${generatedId}-popover`;
+  // Same relationship `Dialog` fixes between its `<dialog>` and its own title/body (see
+  // `dialog.tsx`): `popover="auto"` grants no implicit accessible name the way `<dialog>` at least
+  // tries to, so without this a screen reader focusing or announcing the popover gets nothing from
+  // its OWN heading. Two separate `useId()` calls, not one derived from `contentId`, for the same
+  // reason `Dialog` doesn't derive its own from the dialog's id either: the panel's id is author-
+  // supplied (`panelId`, tied to the trigger's `popovertarget`) and does not need to double as a
+  // stem for ids the author never sees or sets.
+  const titleId = useId();
+  const descriptionId = useId();
+  const hasTitle = Boolean(title) && !bare;
+  const hasDescription = Boolean(description) && !bare;
 
   return (
     <div {...props} className={cx(popoverParts.root, className)}>
@@ -62,14 +73,24 @@ export function Popover({
         {trigger}
       </button>
       <div
+        aria-describedby={hasDescription ? descriptionId : undefined}
+        aria-labelledby={hasTitle ? titleId : undefined}
         className={cx(popoverParts.positioner, popoverParts.content, anchoredParts.positioner, contentClassName)}
         data-sk-placement={placement}
         id={contentId}
         popover="auto"
       >
         {arrow ? <span aria-hidden="true" className={anchoredParts.arrow} /> : null}
-        {title && !bare ? <h2 className={popoverParts.title}>{title}</h2> : null}
-        {description && !bare ? <p className={popoverParts.description}>{description}</p> : null}
+        {hasTitle ? (
+          <h2 className={popoverParts.title} id={titleId}>
+            {title}
+          </h2>
+        ) : null}
+        {hasDescription ? (
+          <p className={popoverParts.description} id={descriptionId}>
+            {description}
+          </p>
+        ) : null}
         {children}
         {bare ? null : (
         <button

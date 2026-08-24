@@ -8,9 +8,9 @@
  */
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, join, resolve as resolvePath } from "node:path";
-import { fileURLToPath } from "node:url";
+import { cwd } from "node:process";
 
-const SRC_ROOT = fileURLToPath(new URL("..", import.meta.url));
+const SRC_ROOT = join(cwd(), "src");
 const PAGES_ROOT = join(SRC_ROOT, "pages");
 
 const SKIP_PAGE = /^(?:f\/|(?:en\/)?404\.astro$)/;

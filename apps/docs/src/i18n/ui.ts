@@ -2464,6 +2464,12 @@ export const ui = {
     "popoverPage.testReact5": "No renderiza flecha por defecto, y solo una cuando se pide.",
     "popoverPage.testReact6": "Escribe el placement elegido sobre el contenido.",
     "popoverPage.testReact7": "Nombra un trigger icon-only con triggerLabel.",
+    "popoverPage.testReact8":
+      'Liga el panel a su propio título/descripción vía <code class="sk-code">aria-labelledby</code>/<code class="sk-code">aria-describedby</code>, igual que Dialog.',
+    "popoverPage.testReact9":
+      "No lleva ni aria-labelledby ni aria-describedby sin un título/descripción a los que apuntar.",
+    "popoverPage.testReact10":
+      "No lleva ni aria-labelledby ni aria-describedby en modo bare, aunque se den título y descripción.",
 
     "popupPage.description": "Superficie flotante mínima para composiciones que no necesitan chrome de Popover.",
     "popupPage.contractBody": "Popup aporta ancla y superficie, no semántica interna. Si el patrón tiene título y acciones de cierre, usa Popover.",
@@ -6137,6 +6143,12 @@ export const ui = {
     "popoverPage.testReact5": "Renders no arrow by default, and one only when asked.",
     "popoverPage.testReact6": "Writes the chosen placement onto the content.",
     "popoverPage.testReact7": "Names an icon-only trigger with triggerLabel.",
+    "popoverPage.testReact8":
+      'Links the panel to its own title/description via <code class="sk-code">aria-labelledby</code>/<code class="sk-code">aria-describedby</code>, same as Dialog.',
+    "popoverPage.testReact9":
+      "Carries neither aria-labelledby nor aria-describedby without a title/description to point at.",
+    "popoverPage.testReact10":
+      "Carries neither aria-labelledby nor aria-describedby in bare mode, even with title/description given.",
 
     "popupPage.description": "A minimal floating surface for compositions that need none of Popover's chrome.",
     "popupPage.contractBody": "Popup provides an anchor and a surface, not internal semantics. If the pattern has a title and closing actions, use Popover.",

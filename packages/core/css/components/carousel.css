@@ -47,7 +47,7 @@
     --sk-carousel-dot-size: 0.5rem;
     --sk-carousel-dot-gap: var(--space-inline-sm);
     --sk-carousel-dot-color: var(--color-border-strong);
-    --sk-carousel-dot-active-color: var(--color-action-primary);
+    --sk-carousel-dot-active-color: var(--color-action-accent);
     --sk-carousel-motion-duration: var(--motion-state-change-duration);
     --sk-carousel-motion-easing: var(--motion-state-change-easing);
 

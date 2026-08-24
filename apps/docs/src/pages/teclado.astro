@@ -13,7 +13,7 @@ import Base from "../layouts/Base.astro";
     flecha. El teclado viene de uno de dos lugares: el elemento HTML nativo (un <code>&lt;button&gt;</code>,
     un <code>&lt;input type="range"&gt;</code>, un <code>&lt;dialog&gt;</code>) o una máquina de
     <code>@zag-js/*</code>. Esta página documenta el resultado, componente por componente, verificado
-    leyendo el código instalado — no asumido por el nombre del paquete.
+    leyendo el código instalado: no asumido por el nombre del paquete.
   </p>
 
   <div class="sk-callout" data-tone="info">
@@ -30,7 +30,7 @@ import Base from "../layouts/Base.astro";
   <h2>Foco real y foco virtual</h2>
   <p>
     La mayoría de los widgets mueven el foco de DOM de verdad de un control a otro. Un grupo distinto
-    — los que muestran una lista flotante mientras el usuario sigue escribiendo — nunca mueven el foco:
+   - Los que muestran una lista flotante mientras el usuario sigue escribiendo: nunca mueven el foco:
     lo dejan en el input y señalan la opción resaltada con <code>aria-activedescendant</code>. Confundir
     los dos rompe una prueba (esperar que <code>document.activeElement</code> cambie donde no cambia, o
     al revés), así que quedan separados desde el principio.
@@ -60,7 +60,7 @@ import Base from "../layouts/Base.astro";
     </table>
   </div>
 
-  <h2>Botón, link y disclosure — nativo, sin ARIA a mano</h2>
+  <h2>Botón, link y disclosure. Nativo, sin ARIA a mano</h2>
   <p>
     Ningún atajo que memorizar: son elementos nativos y el navegador ya sabe qué hacer con
     <kbd class="sk-kbd">↵</kbd> y <kbd class="sk-kbd">Espacio</kbd>.
@@ -94,7 +94,7 @@ import Base from "../layouts/Base.astro";
     </table>
   </div>
 
-  <h2>Selección simple — Checkbox, RadioGroup, Switch, Slider, NumberField</h2>
+  <h2>Selección simple. Checkbox, RadioGroup, Switch, Slider, NumberField</h2>
   <p>
     Todos corren sobre un input nativo (<code>checkbox</code>, <code>radio</code>,
     <code>range</code>) o una máquina Zag que replica el keymap nativo (<code>@zag-js/number-input</code>).
@@ -115,20 +115,20 @@ import Base from "../layouts/Base.astro";
       <tbody class="sk-table__body">
         <tr class="sk-table__row">
           <td class="sk-table__cell">Checkbox, Switch</td>
-          <td class="sk-table__cell">—</td>
+          <td class="sk-table__cell">-</td>
           <td class="sk-table__cell"><kbd class="sk-kbd">Espacio</kbd> alterna</td>
-          <td class="sk-table__cell">—</td>
+          <td class="sk-table__cell">-</td>
         </tr>
         <tr class="sk-table__row">
           <td class="sk-table__cell">RadioGroup</td>
           <td class="sk-table__cell"><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> mueve Y marca a la vez, con loop</td>
           <td class="sk-table__cell"><kbd class="sk-kbd">Espacio</kbd> marca la enfocada si no lo estaba</td>
-          <td class="sk-table__cell">—</td>
+          <td class="sk-table__cell">-</td>
         </tr>
         <tr class="sk-table__row">
           <td class="sk-table__cell">Slider, SliderRange</td>
           <td class="sk-table__cell"><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> ±1 paso (nativo, incluye PageUp/PageDown ±paso mayor)</td>
-          <td class="sk-table__cell">—</td>
+          <td class="sk-table__cell">-</td>
           <td class="sk-table__cell"><kbd class="sk-kbd">Home</kbd> / <kbd class="sk-kbd">End</kbd></td>
         </tr>
         <tr class="sk-table__row">
@@ -141,7 +141,7 @@ import Base from "../layouts/Base.astro";
     </table>
   </div>
 
-  <h2>Popup con un solo trigger — Menu, Combobox, Select, CommandPalette, DatePicker</h2>
+  <h2>Popup con un solo trigger. Menu, Combobox, Select, CommandPalette, DatePicker</h2>
   <p>
     Un botón o input abre una superficie flotante. <kbd class="sk-kbd">Esc</kbd> la cierra y devuelve
     el foco a quien la abrió en los cinco. La diferencia entre ellos es foco real vs. virtual (tabla de
@@ -187,11 +187,11 @@ import Base from "../layouts/Base.astro";
     </table>
   </div>
 
-  <h2>Barra compuesta — Toolbar, Menubar</h2>
+  <h2>Barra compuesta. Toolbar, Menubar</h2>
   <p>
     Una sola parada de <kbd class="sk-kbd">Tab</kbd> para toda la barra (roving tabindex); adentro,
-    las flechas mueven entre controles con loop. Un widget compuesto anidado — un RadioGroup dentro de
-    un Toolbar, por ejemplo — cuenta como <strong>una sola parada</strong>: sus propias flechas mueven
+    las flechas mueven entre controles con loop. Un widget compuesto anidado. Un RadioGroup dentro de
+    un Toolbar, por ejemplo. Cuenta como <strong>una sola parada</strong>: sus propias flechas mueven
     dentro de él, y la barra nunca recorre sus miembros uno por uno.
   </p>
   <div class="sk-table-scroll">
@@ -212,13 +212,13 @@ import Base from "../layouts/Base.astro";
         <tr class="sk-table__row">
           <td class="sk-table__cell">Menubar</td>
           <td class="sk-table__cell"><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> entre ítems de nivel superior; <kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Espacio</kbd> abre el desplegable (primero); <kbd class="sk-kbd">↑</kbd> lo abre en el último</td>
-          <td class="sk-table__cell">Mover a un ítem adyacente con un desplegable abierto lo <strong>cierra y reabre en el nuevo</strong>, no solo mueve el resaltado — el detalle que una implementación ingenua de roving tabindex pasa por alto.</td>
+          <td class="sk-table__cell">Mover a un ítem adyacente con un desplegable abierto lo <strong>cierra y reabre en el nuevo</strong>, no solo mueve el resaltado. El detalle que una implementación ingenua de roving tabindex pasa por alto.</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <h2>Árbol y grilla — TreeView, Treegrid, DataGrid</h2>
+  <h2>Árbol y grilla. TreeView, Treegrid, DataGrid</h2>
   <div class="sk-table-scroll">
     <table class="sk-table">
       <thead class="sk-table__head">
@@ -243,12 +243,12 @@ import Base from "../layouts/Base.astro";
     </table>
   </div>
 
-  <h2>Modal — Dialog, AlertDialog, Drawer</h2>
+  <h2>Modal. Dialog, AlertDialog, Drawer</h2>
   <p>
     Los tres son <code>&lt;dialog&gt;</code> nativo abierto con <code>showModal()</code>. Nada de esto
     es código propio: <kbd class="sk-kbd">Tab</kbd>/<kbd class="sk-kbd">⇧</kbd>+<kbd class="sk-kbd">Tab</kbd>
     quedan atrapados dentro, <kbd class="sk-kbd">Esc</kbd> cierra, y el foco vuelve solo a quien abrió
-    el diálogo — comportamiento estándar de los motores modernos (Chrome/Firefox/Safari), sin una
+    el diálogo. Comportamiento estándar de los motores modernos (Chrome/Firefox/Safari), sin una
     línea de JS guardando ni restaurando nada a mano. El foco inicial (qué botón queda enfocado al
     abrir) es una elección de composición: quien arma el diálogo pone <code>autofocus</code> en la
     acción menos destructiva.
@@ -258,12 +258,12 @@ import Base from "../layouts/Base.astro";
   <ul>
     <li>
       El popover de <strong>DatePicker</strong> usa <code>role="application"</code> en vez de
-      <code>role="dialog"</code> (decisión de <code>@zag-js/date-picker</code>, no de este repo) —
+      <code>role="dialog"</code> (decisión de <code>@zag-js/date-picker</code>, no de este repo) -
       cambia cómo un lector de pantalla recorre ese subárbol, y no se puede validar sin uno físico.
       Documentado, no tocado, por decisión explícita del equipo.
     </li>
     <li>
-      <strong>PageUp/PageDown en NumberField</strong> no están cableados — WAI los marca como
+      <strong>PageUp/PageDown en NumberField</strong> no están cableados. WAI los marca como
       opcionales para spinbutton, y el equivalente (paso grande) ya existe vía
       <kbd class="sk-kbd">⇧</kbd>+flecha.
     </li>

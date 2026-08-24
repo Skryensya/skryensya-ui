@@ -55,9 +55,9 @@ export type DatePickerProps = Pick<
   dayLabel?: (state: DayTableCellState) => string;
   /** Accessible name for the day/month/year view-switch button. */
   viewTriggerLabel?: (view: DateView) => string;
-  /** Accessible name for "go back" — previous month/year/decade depending on the open view. */
+  /** Accessible name for "go back". Previous month/year/decade depending on the open view. */
   prevTriggerLabel?: (view: DateView) => string;
-  /** Accessible name for "go forward" — next month/year/decade depending on the open view. */
+  /** Accessible name for "go forward". Next month/year/decade depending on the open view. */
   nextTriggerLabel?: (view: DateView) => string;
   onValueChange?: (details: { value: string[] }) => void;
 };

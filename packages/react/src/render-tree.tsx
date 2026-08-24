@@ -220,7 +220,7 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
        * `minInlineSize`/`maxInlineSize`, DensityScope's `densityFactor`) take it as an ordinary
        * named prop and build their OWN style entry from it rather than reading a caller-supplied
        * `style`. Passing both costs nothing for a component that only reads `style` (Carousel), and
-       * is the only way one that reads the named prop instead ever sees the value at all — DensityScope
+       * is the only way one that reads the named prop instead ever sees the value at all. DensityScope
        * silently fell back to its own default here until a canonical tree finally set `densityFactor`
        * to something other than that default.
        */

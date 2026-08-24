@@ -27,24 +27,24 @@ const rootAttributes = [
    * `@skryensya/devtools`'s "Safety triangle" toggle sets this on the PARENT page's `<html>`
    * before any of ITS OWN menus mount (see `Base.astro`'s early `is:inline` script). Every preview
    * here is its own `srcdoc` document, so without mirroring it too, the flag would reach the real
-   * page's own menus and stop there — every menu demo on the site lives inside one of these
+   * page's own menus and stop there. Every menu demo on the site lives inside one of these
    * frames, so that would be the one place the toggle visibly does nothing. `syncRootState()` runs
    * before `mountFrameComponents()` below, same as it does for `data-scheme`/`data-contrast`, so
    * `Menu.svelte`'s one-time `root.closest(...)` read sees it already there.
    */
   "data-sk-menu-debug-intent",
   /*
-   * `@skryensya/devtools`'s "Hit areas" toggle. Unlike the menu flag above, this one is pure CSS —
-   * a live-toggleable attribute, no mount-time constraint — so mirroring it here is all it needs on
+   * `@skryensya/devtools`'s "Hit areas" toggle. Unlike the menu flag above, this one is pure CSS -
+   * a live-toggleable attribute, no mount-time constraint, so mirroring it here is all it needs on
    * the ATTRIBUTE side; `syncRootState()` re-runs on every parent-`<html>` attribute change
    * (`rootObserver` below), so this keeps working even toggled long after an iframe has booted. The
    * matching STYLE RULE still has to exist in this document too, which is `ensureHitAreaStyleTag()`
-   * in the devtools package's own `overlay.ts` — called at panel MOUNT rather than at first toggle
+   * in the devtools package's own `overlay.ts`. Called at panel MOUNT rather than at first toggle
    * for exactly this reason, so `cloneParentStyles()` below has something to actually clone.
    */
   "data-sk-devtools-hit-areas",
   /*
-   * Same shape as "Hit areas" above — pure CSS, live-toggleable, no mount-time constraint — for
+   * Same shape as "Hit areas" above. Pure CSS, live-toggleable, no mount-time constraint. For
    * `@skryensya/devtools`'s "Slow motion" and "Focus order" checks. Each rule is pre-seeded in
    * `Base.astro`'s early `<head>` the same way, so `cloneParentStyles()` below always has something
    * to clone regardless of when a given iframe boots relative to the panel.
@@ -99,12 +99,12 @@ function applyOverflow(): void {
  * Is there an element BETWEEN `target` and the frame's own `<body>` (exclusive of both) that can
  * still move in the wheel gesture's own direction? The auto-fit frame's `<html>`/`<body>` are
  * `overflow: hidden` (`applyOverflow`), by design, but a component can open its OWN scrollable
- * region inside that short frame regardless — a listbox, a menu, anything a Zag/native popup
+ * region inside that short frame regardless. A listbox, a menu, anything a Zag/native popup
  * portals into the frame's document (`Portal` with no `container` lands there, not on the parent
- * page) — and that region is real, independent, internal scroll that has nothing to do with
+ * page), and that region is real, independent, internal scroll that has nothing to do with
  * whether the FRAME itself is auto-fit. Confirmed the concrete failure against a live render, not
  * assumed: TimeField's own picker (48 rows, `.sk-select__content`) was the first demo on the site
- * with enough rows to actually need this — every earlier dropdown demo's item count fit inside its
+ * with enough rows to actually need this. Every earlier dropdown demo's item count fit inside its
  * `max-block-size` without scrolling, so the gap between "the frame is short" and "something inside
  * it needs its own scroll" had never been exercised before.
  */
@@ -133,8 +133,8 @@ function hasScrollableAncestor(target: EventTarget | null, deltaY: number): bool
  * into `scroll`) this gets out of the way entirely, and the frame's own content scrolls normally.
  *
  * `hasScrollableAncestor` guards that forwarding: hijacking a gesture the reader aimed at a
- * component's OWN open dropdown — scrolling the outer preview instead of the list under the
- * pointer — is worse than the dead-stop this function exists to fix in the first place.
+ * component's OWN open dropdown. Scrolling the outer preview instead of the list under the
+ * pointer. Is worse than the dead-stop this function exists to fix in the first place.
  */
 function forwardWheelToParent(event: WheelEvent): void {
   if (scrolls()) return;
@@ -191,7 +191,7 @@ function injectFrameChrome(): void {
        * regardless of specificity: an unlayered rule always beats a layered one. Left unforced, every
        * previewed demo painted on canvas instead of the surface component-preview.css intends, and in
        * dark mode canvas is exactly the depth \`--color-bg-surface-sunken\` deliberately lands on (it is
-       * meant to sit INSIDE a surface) — so a slider/progress/meter track vanished into the stage.
+       * meant to sit INSIDE a surface), so a slider/progress/meter track vanished into the stage.
        */
       background: var(--sk-component-preview-bg) !important;
     }
@@ -507,11 +507,11 @@ function measureContentHeight(): number {
    * An OPEN menu panel is exactly the out-of-flow content `consider()` above is right to skip for
    * its own DIRECT box (a closed trigger must not reserve room for a menu that might never open),
    * but skipping it forever is a different bug: `.sk-menu` is a normal, in-flow wrapper, never
-   * `display: contents`, so `consider()` never descends into it to find the panel nested inside —
+   * `display: contents`, so `consider()` never descends into it to find the panel nested inside -
    * a `position: fixed` submenu escapes the WRAPPER's own box by design (`patterns/anchored.css`),
    * and nothing here ever measured where it actually landed. Measured against a live nested Menu:
    * the auto-fit frame stayed at the closed trigger's own height regardless of how many levels were
-   * open, clipping every one of them at the iframe's own edge — this is what actually broke, not
+   * open, clipping every one of them at the iframe's own edge. This is what actually broke, not
    * how tall any preset floor was. Every open panel, at ANY depth, gets its own real screen rect
    * folded in here; a closed one is `display: none` and contributes nothing, so this only grows the
    * frame for what the reader can currently see.
@@ -560,7 +560,7 @@ function frameCollapsed(): boolean {
  * floor alone cannot reach: a menu's flip logic decides which side it opens on by asking whether it
  * fits in the CURRENT frame, and once `frame-ready` zeroes the CSS floor (before any menu has ever
  * opened), that current frame is the closed trigger's own few px. A submenu opening into that flips
- * upward to "fit", landing at a negative `y` — ABOVE this frame's own origin, clipped at the top
+ * upward to "fit", landing at a negative `y`. ABOVE this frame's own origin, clipped at the top
  * instead of the bottom, and `measureContentHeight`'s open-panel pass only ever grows the BOTTOM
  * edge. Applying the floor here keeps the frame reporting a reasonable height even before content
  * says it needs one, so the flip decision a newly-opened menu makes is against real room from the

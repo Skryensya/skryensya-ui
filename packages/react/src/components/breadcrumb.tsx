@@ -51,7 +51,7 @@ function Crumb({
   );
 }
 
-/** Every item, flat, uncollapsed — the short trail's own render and the shadow measurer's content. */
+/** Every item, flat, uncollapsed. The short trail's own render and the shadow measurer's content. */
 function FlatCrumbs({ items, separator }: { items: readonly BreadcrumbItem[]; separator: ReactNode }) {
   return items.map((item, index) => {
     const current = item.current ?? index === items.length - 1;
@@ -83,20 +83,20 @@ export function Breadcrumb({
 
   const navRef = useRef<HTMLElement>(null);
   // The full trail, laid out off-screen (`position: absolute; visibility: hidden`) purely to
-  // measure its true, unconstrained width — decoupled from whatever the VISIBLE list currently
+  // measure its true, unconstrained width. Decoupled from whatever the VISIBLE list currently
   // shows. Measuring the visible list instead would need it to be fully expanded first, and since
   // that is state this component owns, an effect driven by that same state to decide THAT state is
   // self-referential: collapsing shrinks the visible list, which un-collapses it to re-measure,
-  // which finds it overflows again, which collapses it again — a ping-pong `setCollapsed` never
+  // which finds it overflows again, which collapses it again. A ping-pong `setCollapsed` never
   // settles out of. The shadow list's width never depends on `collapsed`, so there is nothing to
   // chase.
   const shadowRef = useRef<HTMLOListElement>(null);
   const [collapsed, setCollapsed] = useState(false);
   const menuId = useId();
   // Called unconditionally, like every other hook here, even on a trail that never collapses
-  // (`range` null) — hooks cannot be called only from inside the branch that needs them, the same
+  // (`range` null). Hooks cannot be called only from inside the branch that needs them, the same
   // reason `MenubarItem` (`menubar.tsx`) calls this for every item regardless of whether it has a
-  // dropdown. What is collapsed, real navigation links, opens as a real `Menu` — the ARIA menu
+  // dropdown. What is collapsed, real navigation links, opens as a real `Menu`. The ARIA menu
   // pattern's own keyboard model (arrow keys, Home/End, typeahead), not a plain list of `<a>`s.
   const { service: menuService, api: menuApi } = useMenuMachine({ id: menuId, defaultOpen: false });
   const anchor = useAnchored(menuId, true);

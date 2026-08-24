@@ -1,10 +1,10 @@
 /*
- * DIMENSION: press scale — WHETHER a control's `:active` feedback includes a squeeze.
+ * DIMENSION: press scale. WHETHER a control's `:active` feedback includes a squeeze.
  *
  * Orthogonal to color mode, high contrast, density and radius: a product can turn this off while
  * keeping every other dimension exactly where it is. `--motion-press-scale` (semantic/_motion.scss)
  * is what Button, Checkbox, Switch's track, Radio and Segmented's option all read for their own
- * `:active` scale — one token, five consumers, so this dimension only has to touch the one thing.
+ * `:active` scale. One token, five consumers, so this dimension only has to touch the one thing.
  *
  * NOT THE SAME AXIS AS `prefers-reduced-motion`. Reduced motion is a READER's OS-level signal, and
  * this system already answers it for the squeeze on its own terms: `--motion-feedback-duration`
@@ -12,7 +12,7 @@
  * (`_reduced-motion.scss`), so a reduced-motion reader already gets the state change with no
  * animated travel, same as everywhere else "Decorative" motion is classified. This dimension is for
  * a PRODUCT that wants a flatter feel for EVERY reader, unconditionally, an aesthetic choice, not
- * an accessibility one — the two can be set independently and never fight, because they resolve
+ * an accessibility one. The two can be set independently and never fight, because they resolve
  * different tokens (`--motion-press-scale` here, `--motion-feedback-duration` there).
  *
  * Activated with `data-press-scale="off"` on :root or any subtree, opt-in import like

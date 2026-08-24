@@ -14,7 +14,7 @@ entries:
         Mismo cambio que <code>button</code> (misma fecha, mismo motivo): <code>linkTone</code>
         solo tenía un valor posible, <code>primary</code>, y ese nombre describía el color como
         una posición de jerarquía ("el tono principal") cuando en realidad es un interruptor
-        binario — el link toma el color de la marca o no lo toma, sin escala entre medio. La
+        binario. El link toma el color de la marca o no lo toma, sin escala entre medio. La
         cadena de tokens detrás (<code>--color-text-link</code> → <code>--color-text-accent</code>)
         ya decía "accent" dos niveles abajo; el nombre de la opción ahora dice lo mismo. Distinto
         de <code>Text</code>'s <code>tone</code> (<code>primary</code>/<code>secondary</code>/
@@ -27,7 +27,7 @@ entries:
       body: >-
         Same change as <code>button</code> (same date, same reason): <code>linkTone</code> only
         ever had one possible value, <code>primary</code>, and that name described the color as a
-        rank in a hierarchy ("the main tone") when it is really a binary switch — the link either
+        rank in a hierarchy ("the main tone") when it is really a binary switch. The link either
         takes the brand color or it does not, no scale in between. The token chain behind it
         (<code>--color-text-link</code> → <code>--color-text-accent</code>) already said "accent"
         two levels down; the option's name now says the same thing. Different from

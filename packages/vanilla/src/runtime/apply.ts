@@ -210,7 +210,7 @@ export function applyZagProps(
 
 /*
  * `applyZagProps` nunca pisa `class`: las clases BEM las autora el consumidor. Varios enhancers
- * necesitan una excepción puntual a esa regla — no para RENDERIZAR nada, sino para GARANTIZAR que
+ * necesitan una excepción puntual a esa regla: no para RENDERIZAR nada, sino para GARANTIZAR que
  * una clase estructural o del state layer (`sk-interactive`, `sk-tile--expandable`, `sk-anchor`)
  * está puesta incluso si el autor la olvidó, el mismo respaldo que daba el enhancer viejo antes de
  * esta migración. Antes esa excepción se reabría con un `classList.add` suelto en cada componente

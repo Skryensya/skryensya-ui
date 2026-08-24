@@ -2,12 +2,12 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../../i18n";
 
 /*
- * DOCUMENTATION SITE — three columns, and each one answers a different question: the Sidebar says
+ * DOCUMENTATION SITE. Three columns, and each one answers a different question: the Sidebar says
  * "where else can I go", the article says "what is this", the `Toc` says "what is on THIS page".
  * Collapsing the third into the first is the usual mistake and it costs the reader the only cheap
  * way to see a long page's shape.
  *
- * The rail is a `NavList` with collapsible groups rather than a `TreeView` — a docs rail lists
+ * The rail is a `NavList` with collapsible groups rather than a `TreeView`. A docs rail lists
  * DESTINATIONS, and nav-list.yaml's own `useWhen` is exactly that (see the note in `app-shell.ts`,
  * which turns down the same substitution for the same reason).
  */
@@ -42,7 +42,7 @@ export const docsSiteTree = (t: Translate): UsageTree => ({
           children: [
             /*
              * The search affordance is a Button carrying a `Kbd`, not an `Input`: this control does
-             * not accept text where it stands — it opens a CommandPalette. A text box that cannot be
+             * not accept text where it stands. It opens a CommandPalette. A text box that cannot be
              * typed into is a lie the whole pattern is built on avoiding, and the shortcut hint is
              * what tells a reader it is a door rather than a field.
              */
@@ -171,11 +171,11 @@ export const docsSiteTree = (t: Translate): UsageTree => ({
               },
               /*
                * `ProcessList`, and the catalogue decides this one outright: these are instructions
-               * to read and carry out, and `Steps.avoidWhen` names that case by hand — "son
+               * to read and carry out, and `Steps.avoidWhen` names that case by hand: "son
                * instrucciones para leer y hacer; eso es un ProcessList". `OrderedList` was the wrong
                * answer for the same reason from the other side: it is a list whose ORDER carries
                * meaning, but its rows have no step anatomy, and `ListItem.leading` only accepts an
-               * `Icon` or an `Avatar.initials` — never a numeral — so the numbers had to be smuggled
+               * `Icon` or an `Avatar.initials`: never a numeral, so the numbers had to be smuggled
                * in as text the contract does not allow. ProcessList draws its own.
                */
               {
@@ -215,7 +215,7 @@ export const docsSiteTree = (t: Translate): UsageTree => ({
           },
         },
         /*
-         * The page rail. `Toc`'s host IS an `<aside>`, so it needs no wrapper to be a landmark —
+         * The page rail. `Toc`'s host IS an `<aside>`, so it needs no wrapper to be a landmark -
          * the class only gives it a width and its own scroll inside the shell (site.css).
          */
         {

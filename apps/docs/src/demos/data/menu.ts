@@ -4,8 +4,8 @@ import type { Translate } from "../../i18n";
 /*
  * THE ROWS OF EVERY MENU DEMO, kept out of the compositions that use them.
  *
- * A menu's entries are data — the same data the emitted React snippet now writes to `menu-items.ts`
- * rather than into the tag — and a tree with fifteen of them inline says almost nothing about the
+ * A menu's entries are data. The same data the emitted React snippet now writes to `menu-items.ts`
+ * rather than into the tag, and a tree with fifteen of them inline says almost nothing about the
  * composition it is supposed to be showing. Split, `menu.ts` reads as "a Menu with a trigger and
  * these items", which is the whole subject of the page, and the entries stay legible here as a list.
  *
@@ -99,7 +99,7 @@ export const menuCompactItems = (t: Translate): readonly ItemInput[] => [
  *
  * The same rule applies to EACH of "Compartir"'s own two triggers, not only to "Compartir" itself:
  * "Por correo" sits second and "Exportar como PDF" sits fourth, never first, so opening either one
- * still means crossing at least one sibling row on the way in — the case the safety area exists for.
+ * still means crossing at least one sibling row on the way in. The case the safety area exists for.
  * Two independent triggers at this level, not one nested three deep, is deliberate: the corridor the
  * safety area protects is between whichever ROW is open and the panel beside it, and that shape does
  * not change by chaining more levels under a single item, only by giving the level another one to

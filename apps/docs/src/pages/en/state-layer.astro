@@ -1,6 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import Used from "../../components/Used.astro";
 
@@ -24,181 +25,8 @@ const projectedUsage = `<!-- resulting DOM; it is written by the adapter. -->
   Argentina
 </div>`;
 
-const bareHtml = `<div class="sl-tiles">
-  <button class="sl-tile sk-interactive" type="button">
-    Interactivo
-  </button>
-  <button
-    class="sl-tile sk-interactive"
-    type="button"
-    data-peek="hover"
-    tabindex="-1"
-  >
-    Hover
-  </button>
-  <button
-    class="sl-tile sk-interactive"
-    type="button"
-    data-peek="focus"
-    tabindex="-1"
-  >
-    Focus
-  </button>
-  <button
-    class="sl-tile sk-interactive"
-    type="button"
-    data-peek="pressed"
-    tabindex="-1"
-  >
-    Pressed
-  </button>
-  <button
-    class="sl-tile sk-interactive"
-    type="button"
-    aria-selected="true"
-    tabindex="-1"
-  >
-    Selected
-  </button>
-  <button
-    class="sl-tile sk-interactive"
-    type="button"
-    data-dragging="true"
-    tabindex="-1"
-  >
-    Dragged
-  </button>
-  <button
-    class="sl-tile sk-interactive"
-    type="button"
-    aria-disabled="true"
-    disabled
-  >
-    Disabled
-  </button>
-</div>`;
 
-const currentColorHtml = `<div class="sl-tiles">
-  <button
-    class="sl-tile sl-current-tile sk-interactive"
-    type="button"
-  >
-    Interactivo
-  </button>
-  <button
-    class="sl-tile sl-current-tile sk-interactive"
-    type="button"
-    data-peek="hover"
-    tabindex="-1"
-  >
-    Hover
-  </button>
-  <button
-    class="sl-tile sl-current-tile sk-interactive"
-    type="button"
-    data-peek="focus"
-    tabindex="-1"
-  >
-    Focus
-  </button>
-  <button
-    class="sl-tile sl-current-tile sk-interactive"
-    type="button"
-    data-peek="pressed"
-    tabindex="-1"
-  >
-    Pressed
-  </button>
-  <button
-    class="sl-tile sl-current-tile sk-interactive"
-    type="button"
-    aria-selected="true"
-    tabindex="-1"
-  >
-    Selected
-  </button>
-  <button
-    class="sl-tile sl-current-tile sk-interactive"
-    type="button"
-    data-dragging="true"
-    tabindex="-1"
-  >
-    Dragged
-  </button>
-  <button
-    class="sl-tile sl-current-tile sk-interactive"
-    type="button"
-    aria-disabled="true"
-    disabled
-  >
-    Disabled
-  </button>
-</div>`;
 
-const labHtml = `<div class="sl-lab">
-  <p class="sl-lab__caption">
-    Neutral surface · hover, focus, press, selected, disabled
-  </p>
-  <nav class="sl-list" aria-label="Folders">
-    <a class="sl-item sk-interactive" href="#">
-      <span data-sk-icon="info"></span>
-      <span class="sl-item__label">inbox</span>
-      <span class="sl-item__meta">128</span>
-    </a>
-    <a
-      class="sl-item sk-interactive"
-      href="#"
-      aria-selected="true"
-    >
-      <span data-sk-icon="check"></span>
-      <span class="sl-item__label">Enviados</span>
-      <span class="sl-item__meta">12</span>
-    </a>
-    <a class="sl-item sk-interactive" href="#">
-      <span data-sk-icon="edit"></span>
-      <span class="sl-item__label">Borradores</span>
-      <span class="sl-item__meta">3</span>
-    </a>
-    <a
-      class="sl-item sk-interactive"
-      href="#"
-      aria-disabled="true"
-    >
-      <span data-sk-icon="settings"></span>
-      <span class="sl-item__label">Archivados</span>
-    </a>
-  </nav>
-
-  <p class="sl-lab__caption">
-    Saturated fill · the layer is currentColor (on-accent)
-  </p>
-  <div class="sl-actions">
-    <button
-      class="sk-button sk-interactive"
-      data-sk-button
-      data-variant="accent"
-      type="button"
-    >
-      Publicar
-    </button>
-    <button
-      class="sk-button sk-interactive"
-      data-sk-button
-      type="button"
-    >
-      Cancel
-    </button>
-    <button
-      class="sk-button sk-interactive"
-      data-sk-button
-      data-variant="ghost"
-      type="button"
-      disabled
-    >
-      Deshacer
-    </button>
-  </div>
-</div>`;
 
 const ladder = [
   ["disabled", "--state-layer-disabled-opacity", "force layer to 0"],
@@ -208,6 +36,73 @@ const ladder = [
   ["hover", "--state-layer-hover-opacity", ""],
   ["selected", "--state-layer-selected-opacity", "the base step"],
 ];
+
+const stateLabels = [
+  { label: "Interactive" },
+  { label: "Hover", peek: "hover" },
+  { label: "Focus", peek: "focus" },
+  { label: "Pressed", peek: "pressed" },
+  { label: "Selected", selected: "true" },
+  { label: "Disabled", disabled: "true" },
+];
+const stateAttrs = (baseClass: string, item: (typeof stateLabels)[number]) => ({
+  class: baseClass,
+  ...(item.peek ? { "data-peek": item.peek } : {}),
+  ...(item.selected ? { "aria-selected": item.selected } : {}),
+  ...(item.disabled ? { "aria-disabled": item.disabled } : {}),
+});
+
+const bareTree: UsageTree = {
+  contract: "layout",
+  signature: "Grid",
+  attrs: { class: "sl-tiles" },
+  children: stateLabels.map((item) => ({
+    contract: "button",
+    signature: "Button.action",
+    attrs: stateAttrs("sl-tile", item),
+    children: item.label,
+  })),
+};
+
+const currentColorTree: UsageTree = {
+  contract: "layout",
+  signature: "Grid",
+  attrs: { class: "sl-tiles" },
+  children: stateLabels.map((item) => ({
+    contract: "button",
+    signature: "Button.action",
+    attrs: stateAttrs("sl-tile sl-current-tile", item),
+    children: item.label,
+  })),
+};
+
+const labTree: UsageTree = {
+  contract: "layout",
+  signature: "Stack",
+  attrs: { class: "sl-lab" },
+  children: [
+    { contract: "typography", signature: "Text", attrs: { class: "sl-lab__caption" }, children: "Neutral surface · hover, focus, press, selected, disabled" },
+    {
+      contract: "layout",
+      signature: "Stack",
+      attrs: { class: "sl-list" },
+      children: [
+        { contract: "button", signature: "Button.action", attrs: { class: "sl-item", "aria-selected": "true" }, children: "Inbox 24" },
+        { contract: "button", signature: "Button.action", attrs: { class: "sl-item", "data-peek": "hover" }, children: "Archive 8" },
+        { contract: "button", signature: "Button.action", attrs: { class: "sl-item", "aria-disabled": "true" }, children: "Drafts 0" },
+      ],
+    },
+    {
+      contract: "layout",
+      signature: "Inline",
+      attrs: { class: "sl-actions" },
+      children: [
+        { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: "Guardar" },
+        { contract: "button", signature: "Button.action", options: { variant: "neutral" }, children: "Cancelar" },
+      ],
+    },
+  ],
+};
 ---
 
 <Base
@@ -256,11 +151,8 @@ const ladder = [
   <p>
     The two previews freeze the same entire staircase for comparison without moving the pointer. The first uses a neutral surface; the second, an inverse surface whose layer inherits <code>currentColor</code>. In both, the first tile is still interactive.
   </p>
-  <ComponentPreview html={bareHtml} label="Neutral surface · all states" />
-  <ComponentPreview
-    html={currentColorHtml}
-    label="currentColor · all states"
-  />
+  <ComponentPreview tree={bareTree} label="Neutral surface · all states" />
+  <ComponentPreview tree={currentColorTree} label="currentColor · all states" />
   <p>
     Selected, hover, focus, pressed, and dragged now advance in visible steps. In high contrast the wash does not increase: doing so would bring the background closer to the text and dull the surface. Instead, a keyline inset appears whose thickness grows with each state.
   </p>
@@ -284,9 +176,9 @@ const ladder = [
 
   <h2>Same layer, different surfaces</h2>
   <p>
-    Neutral surface and saturated fill are not additional types: they only change the <code>currentColor</code> that colors the same layer. The list uses the text color; on the primary button the veil is <code>on-accent</code>. Change brand, mode or contrast: the contract is maintained.
+    Neutral surface and saturated fill are not additional types: they only change the <code>currentColor</code> that colors the same layer. The list uses the text color; on the action button the veil is <code>on-accent</code>. Change brand, mode or contrast: the contract is maintained.
   </p>
-  <ComponentPreview html={labHtml} label="Lista + acciones" />
+  <ComponentPreview tree={labTree} label="Lista + acciones" />
 
   <h2>The tint is <code>currentColor</code></h2>
   <p>
@@ -297,7 +189,7 @@ const ladder = [
       <strong>It subsumes black-on-light and white-on-dark:</strong> A neutral surface has dark text in light mode and light text in dark mode, and the layer alone darkens or lightens it without a branch per mode.
     </li>
     <li>
-      <strong>And is correct over saturated fills</strong>, where setting black or white fails: the content of a primary button uses <code>on-accent</code>, which resolves based on the fill. The layer inherits that exact tone instead of assuming one.
+      <strong>And is correct over saturated fills</strong>, where setting black or white fails: the content of a action button uses <code>on-accent</code>, which resolves based on the fill. The layer inherits that exact tone instead of assuming one.
     </li>
     <li><strong>Zero color tokens per component. </strong> One fits all.</li>
   </ul>

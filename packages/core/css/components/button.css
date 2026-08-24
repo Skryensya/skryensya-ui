@@ -75,7 +75,7 @@
     cursor: pointer;
     /*
      * Two tempos, same split checkbox.css and switch.css draw. STATE-CHANGE: `background-color`/
-     * `border-color`/`color`/`box-shadow` are the SELECTION — a variant is normally static, but
+     * `border-color`/`color`/`box-shadow` are the SELECTION. A variant is normally static, but
      * `disabled`/`aria-disabled` toggling at runtime (a submit button while its form validates) is
      * exactly this, and it used to snap. FEEDBACK: `scale` is the press answering the finger, a
      * faster tempo, because it has to land under the finger. Hover/press COLOR already comes from
@@ -93,7 +93,7 @@
   /*
    * Press feedback, STANDALONE buttons only. A welded button (`data-weld-start`/`data-weld-end`:
    * split-button's two halves, a segmented group's members) shares an edge with its neighbor, and
-   * `scale` shrinks around the button's OWN center — the welded edge would pull away from the
+   * `scale` shrinks around the button's OWN center. The welded edge would pull away from the
    * neighbor's touching edge, opening a gap at the seam instead of reading as one control
    * squeezing. `:not(:disabled)`/`:not([aria-disabled])` for the same reason checkbox.css guards
    * its own squeeze: a control that answers a press it is not going to honour is a lie. All the
@@ -105,12 +105,12 @@
     /* Pairs with the squeeze: `primary`/`danger` carry `--elevation-raised`, and flattening it to
      * `--elevation-flat` (`none`) while pressed reads as the button meeting the surface it was
      * floating above, not just shrinking in place. A no-op for every other variant, which already
-     * paints `--elevation-flat` at rest — this is the one declaration, not a per-variant override. */
+     * paints `--elevation-flat` at rest. This is the one declaration, not a per-variant override. */
     box-shadow: var(--elevation-flat);
   }
 
   /* A Button with `href` IS an anchor, so the UA gives it a visited colour. That must not replace
-   * the chosen variant: a primary button does not turn purple because the link was followed. */
+   * the chosen variant: a accent button does not turn purple because the link was followed. */
   a.sk-button:visited {
     color: var(--sk-button-fg);
   }
@@ -163,8 +163,8 @@
   }
 
   .sk-button[data-variant="accent"] {
-    --sk-button-bg: var(--color-action-primary);
-    /* on-accent, NOT text-primary: in dark, action-primary is a light blue and text-primary
+    --sk-button-bg: var(--color-action-accent);
+    /* on-accent, NOT text-primary: in dark, action-accent is a light blue and text-primary
      * is near-white, aliasing them makes a white-on-light-blue button. */
     --sk-button-fg: var(--color-text-on-accent);
     --sk-button-border-color: transparent;
@@ -180,13 +180,13 @@
 
   .sk-button[data-variant="ghost"] {
     --sk-button-bg: transparent;
-    /* Ghost is intentionally neutral: it is pressable, but it is not the primary CTA the brand should
+    /* Ghost is intentionally neutral: it is pressable, but it is not the accent CTA the brand should
      * point at. Keep it on primary text rather than secondary text so it still reads as a control. */
     --sk-button-fg: var(--color-text-primary);
     --sk-button-border-color: transparent;
   }
 
-  /* Icon-only is a SHAPE, a third axis orthogonal to variant and size, a primary button can be
+  /* Icon-only is a SHAPE, a third axis orthogonal to variant and size, an accent button can be
    * icon-only, and so can a small one. The box collapses to a square that fits one icon: the width
    * follows the height and the inline padding goes to zero, so a single centred glyph sits in a
    * control-sized square.
@@ -207,16 +207,16 @@
   }
 
   /*
-   * WELDING — a button glued to a neighbor on one (or both) sides loses that edge's own rounding
+   * WELDING. A button glued to a neighbor on one (or both) sides loses that edge's own rounding
    * AND that edge's own border color, a THIRD axis again, orthogonal to variant/size/icon-only:
    * any button can be welded. The border matters as much as the radius: `neutral`/`subtle`/
    * `translucent` all paint a real border, and leaving it on the welded edge sits a second line
-   * right next to whatever the neighbor paints on ITS OWN touching edge — two competing lines at
+   * right next to whatever the neighbor paints on ITS OWN touching edge. Two competing lines at
    * one seam instead of one. `primary`/`danger`/`ghost` never showed this (their own border is
    * already transparent), which is exactly why it went unnoticed until a `neutral`-on-`neutral`
    * example painted it. This is what a split button's primary half and its menu trigger are
    * welded with (`weldEnd` on the primary, `weldStart` on the trigger), and equally what a
-   * 3+-segment group's own middle members need (both at once) — the mechanism lives here, once,
+   * 3+-segment group's own middle members need (both at once). The mechanism lives here, once,
    * rather than as bespoke CSS in whatever composes the group: a split button's own root has no
    * fill, radius, or border logic of its own to write, because the two buttons it welds already
    * carry it themselves.
@@ -232,7 +232,7 @@
     border-inline-end-color: transparent;
   }
 
-  /* Sizes key off data-size, an ORTHOGONAL axis to data-variant, so a primary button can also
+  /* Sizes key off data-size, an ORTHOGONAL axis to data-variant, so an accent button can also
    * be small. (The old build collapsed these onto data-variant, which silently broke sizing.) */
   /* React serializes its md default explicitly. Keep this rule explicit too; the base declarations
    * above remain the resilient fallback for authored HTML that omits data-size. */

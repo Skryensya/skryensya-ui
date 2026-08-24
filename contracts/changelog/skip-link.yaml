@@ -15,7 +15,7 @@ entries:
         el único momento en que el enlace es visible: al recibir el foco. El state layer
         (<code>patterns/state-layer.css</code>) baja un <code>z-index: var(--z-focus)</code> (50) en
         <code>.sk-interactive:focus-visible</code>, un selector (0,2,0) que le ganaba a la regla base
-        (0,1,1) — así que el enlace enfocado se pintaba en 50, debajo de un navbar en
+        (0,1,1). Así que el enlace enfocado se pintaba en 50, debajo de un navbar en
         <code>--z-sticky</code> (100). Medido en este sitio: <code>elementFromPoint</code> en el
         centro del enlace devolvía el contenido del navbar. Ahora
         <code>a.sk-skip-link:focus</code> (0,2,1) re-declara su propia capa y gana en la cascada, sin
@@ -28,7 +28,7 @@ entries:
         so it would clear any chrome the page pins, but that layer was lost at the one moment the
         link is visible at all: on focus. The state layer (<code>patterns/state-layer.css</code>)
         sets <code>z-index: var(--z-focus)</code> (50) on <code>.sk-interactive:focus-visible</code>,
-        a (0,2,0) selector that outranked the base rule's (0,1,1) — so a focused link painted at 50,
+        a (0,2,0) selector that outranked the base rule's (0,1,1), so a focused link painted at 50,
         below a navbar at <code>--z-sticky</code> (100). Measured on this site:
         <code>elementFromPoint</code> at the link's centre returned the navbar's own contents.
         <code>a.sk-skip-link:focus</code> (0,2,1) now re-declares its own layer and wins in the

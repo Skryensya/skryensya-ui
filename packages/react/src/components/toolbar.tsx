@@ -10,7 +10,7 @@ const controlsSelector = "button:not([disabled]), a[href], input:not([disabled])
  * A toolbar item can itself be a composite widget (Segmented's radiogroup, Tabs' tablist): it
  * already owns a roving tabindex, so only ONE of its members has tabindex="0" and the rest are
  * "-1". Filtering those out is what makes the composite a single stop for the toolbar's own
- * roving focus, instead of the toolbar visiting every one of its internal options too — decision
+ * roving focus, instead of the toolbar visiting every one of its internal options too. Decision
  * 27, and the vanilla enhancer's own `isStop`/`controlsSelector` this mirrors exactly, so the two
  * bindings can never disagree about what counts as one stop.
  */

@@ -8,8 +8,8 @@
  * day/month/year cell carry `sk-button sk-interactive data-size="sm"`, never a bespoke box that
  * re-derives padding, height or state-layer feedback the button pattern already gives for free.
  * This file only re-declares the handful of `--sk-button-*` hooks each shape needs (icon-only
- * square for prev/next AND the day cell — a day number is one piece of content in a square, same
- * shape as a glyph — full-width pill for month/year cells), the same mechanism a themed instance
+ * square for prev/next AND the day cell. A day number is one piece of content in a square, same
+ * shape as a glyph. Full-width pill for month/year cells), the same mechanism a themed instance
  * uses. */
 @import url("./button.css");
 
@@ -27,7 +27,7 @@
     /* One row unit: a day cell's rendered height (button + its own padding). Month/year bodies
      * are sized in multiples of THIS, not a fixed pixel, so they track density/token changes. */
     --sk-calendar-row-size: calc(var(--sk-calendar-cell-size) + var(--space-inset-xs));
-    --sk-calendar-selected-bg: var(--color-action-primary);
+    --sk-calendar-selected-bg: var(--color-action-accent);
     --sk-calendar-selected-fg: var(--color-text-on-accent);
 
     box-sizing: border-box;

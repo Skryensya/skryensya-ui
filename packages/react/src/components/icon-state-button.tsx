@@ -5,10 +5,10 @@ import { Icon } from "./icon.js";
 
 /*
  * ICON STATE BUTTON, the React half (decision 33, reversed: this is the signature now, not a
- * primitive underneath CopyButton/ThemeToggle — both are gone). `faces` is author-supplied, the
+ * primitive underneath CopyButton/ThemeToggle. Both are gone). `faces` is author-supplied, the
  * same shape the authored/vanilla contract's `faces` items slot takes; `current` picks which one
  * carries `data-active`, the same comparison Icon Toggle's own pattern CSS already reads. Nothing
- * here decides WHEN `current` changes — that is the consumer's click handler, not this component's.
+ * here decides WHEN `current` changes. That is the consumer's click handler, not this component's.
  */
 
 function classes(...values: readonly (string | undefined)[]) {

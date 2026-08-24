@@ -42,7 +42,7 @@
      *
      * 0.75rem is the width a `thin` scrollbar actually reserves (measured at 11px in Blink), rounded
      * up to a round number. Added to the button's own `--space-inset-xs` margin, that leaves it the
-     * same small gap from the scrollbar that it has always had from the edge — it steps aside by
+     * same small gap from the scrollbar that it has always had from the edge. It steps aside by
      * exactly one scrollbar, rather than drifting into the middle of the code.
      */
     --sk-code-preview-copy-scroll-inset: 0.75rem;
@@ -142,7 +142,7 @@
 
   /*
    * Highlighted snippets arrive as `<pre>` (padding and the code face live there). A plain string
-   * in the viewport — a one-line command composed from a usage tree — has neither, and read as
+   * in the viewport. A one-line command composed from a usage tree. Has neither, and read as
    * an empty labelled box with type crushed to the edges. Same measures as `pre`, only when
    * there is no pre to own them.
    */
@@ -246,7 +246,7 @@
     overflow-x: auto;
     /* The window's own scrollbar, and the only affordance saying there is more below: quiet enough
      * not to read as a border, present enough to be found. A bottom fade was the other candidate
-     * and is the wrong instrument here — it would still be painted over the last line once the
+     * and is the wrong instrument here. It would still be painted over the last line once the
      * reader scrolled to the end, i.e. it would keep claiming there is more after there is not.
      * Same treatment as `.sk-table-scroll`, the system's other in-component scroll region. */
     scrollbar-color:
@@ -271,7 +271,7 @@
    *
    * `overflow-y: auto`, never `hidden`. Clipping made the window a wall: everything past line
    * fifteen was unreachable until you expanded, so the disclosure was not about page real estate,
-   * it was about permission to read. Scrolling separates the two — the window decides how much room
+   * it was about permission to read. Scrolling separates the two. The window decides how much room
    * the block TAKES, and the reader can always reach the whole snippet either way. Expanding is now
    * a convenience (see it all at once, no nested scroll) rather than the only way through.
    *
@@ -295,7 +295,7 @@
    * keyboard journey and earns no ring. Arriving by Tab is, and does: a reader who scrolls this
    * window with the arrow keys has to be able to see that they are standing in it. The ring is
    * INSET (negative offset) because the viewport clips at its own rounded edge, and an outset ring
-   * would be cut off by it. `:focus-visible` sits after `:focus` deliberately — same specificity,
+   * would be cut off by it. `:focus-visible` sits after `:focus` deliberately. Same specificity,
    * so source order is what lets it win. */
   .sk-code-preview pre:focus {
     outline: none;

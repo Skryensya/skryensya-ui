@@ -143,7 +143,7 @@ _Avoid_: markup template, skeleton, scaffold
 
 **Surface**:
 The part of a Contract a consumer can depend on: its options and their defaults, what each slot
-accepts, which signatures exist and what they require. Deliberately narrower than the Contract —
+accepts, which signatures exist and what they require. Deliberately narrower than the Contract -
 a template rewrite or a reworded `because` changes nothing anyone wrote, so it is outside. Hashed,
 so "did the promise move" is a question with a mechanical answer.
 _Avoid_: API, shape, public interface

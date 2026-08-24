@@ -18,7 +18,7 @@ entries:
         properties heredan hacia abajo, nunca hacia arriba, así que el wrapper y su propio track/
         fill nunca vieron ningún valor: <code>block-size</code> caía al <code>auto</code> inicial y,
         con todos los hijos en <code>position: absolute</code>, nada en flujo normal le daba altura
-        al wrapper — el control entero salía a 0×100%, con el track invisible. Invisible en jsdom
+        al wrapper. El control entero salía a 0×100%, con el track invisible. Invisible en jsdom
         (que nunca calcula layout real) y sólo detectable con un layout de navegador de verdad; el
         primer árbol canónico de <code>SliderRange</code> es lo que finalmente lo hizo evidente.
     en:
@@ -30,7 +30,7 @@ entries:
         <code>&lt;input&gt;</code>s, never on <code>.sk-slider-range</code> itself. Custom properties
         inherit downward, never up, so the wrapper and its own track/fill never saw a value:
         <code>block-size</code> fell back to its initial <code>auto</code>, and with every child
-        absolutely positioned, nothing in normal flow gave the wrapper a height — the whole control
+        absolutely positioned, nothing in normal flow gave the wrapper a height. The whole control
         rendered at 0×100%, with an invisible track. Invisible in jsdom (which never computes real
         layout) and only catchable with a real browser layout; the first canonical tree
         <code>SliderRange</code> ever had is what finally surfaced it.
@@ -45,7 +45,7 @@ entries:
         de los dos extremos llegaba nunca al componente, que se quedaba en sus propios valores por
         defecto (0 y 100) sin importar qué autorara el árbol. Invisible hasta ahora porque ningún
         árbol canónico había puesto <code>lowValue</code>/<code>highValue</code> en algo distinto del
-        default — el chequeo de cobertura que exige un árbol por cada signature publicada fue lo que
+        default. El chequeo de cobertura que exige un árbol por cada signature publicada fue lo que
         lo hizo evidente.
     en:
       title: SliderRange.lowValue/highValue reached React as one shared defaultValue
@@ -54,7 +54,7 @@ entries:
         actually expects <code>defaultLowValue</code>/<code>defaultHighValue</code>: neither end ever
         reached the component, which stayed at its own defaults (0 and 100) no matter what a tree
         authored. Invisible until now because no canonical tree had ever set
-        <code>lowValue</code>/<code>highValue</code> to anything but the default — the coverage check
+        <code>lowValue</code>/<code>highValue</code> to anything but the default: the coverage check
         that requires one tree per published signature is what surfaced it.
   - date: 2026-08-15
     kind: feature
@@ -64,7 +64,7 @@ entries:
       body: >-
         Cubre el patrón WAI-ARIA APG "Slider (Multi-Thumb)" con dos <code>&lt;input
         type="range"&gt;</code> nativos en vez del widget SVG a medida que documenta el ejemplo de
-        WAI — el propio patrón advierte que un widget custom puede dar problemas con lectores de
+        WAI. El propio patrón advierte que un widget custom puede dar problemas con lectores de
         pantalla táctiles, y dos inputs nativos ya traen teclado, formulario y árbol de
         accesibilidad de la plataforma. Opciones: <code>lowValue</code>/<code>highValue</code>
         (posición inicial de cada extremo), <code>lowLabel</code>/<code>highLabel</code>
@@ -76,7 +76,7 @@ entries:
       body: >-
         Covers the WAI-ARIA APG "Slider (Multi-Thumb)" pattern with two native <code>&lt;input
         type="range"&gt;</code> elements instead of the custom SVG widget the WAI example
-        documents — the pattern itself warns a hand-rolled widget can be difficult for touch-based
+        documents. The pattern itself warns a hand-rolled widget can be difficult for touch-based
         screen reader users, and two native inputs already get keyboard, form participation and
         the accessibility tree from the platform. Options: <code>lowValue</code>/
         <code>highValue</code> (each end's starting position), <code>lowLabel</code>/

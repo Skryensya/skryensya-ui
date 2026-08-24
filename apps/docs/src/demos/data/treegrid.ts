@@ -1,7 +1,7 @@
 import type { Translate } from "../../i18n";
 
 /*
- * THE FIXTURE EVERY TREEGRID TEST ALREADY USES — core's `treegrid.test.ts`, vanilla's, and react's
+ * THE FIXTURE EVERY TREEGRID TEST ALREADY USES. Core's `treegrid.test.ts`, vanilla's, and react's
  * all reason about this exact inbox shape (Inbox expanded with two messages, Drafts collapsed with
  * one hidden message, Sent a top-level leaf), so the demo on this page is provably the same
  * composition the test suites already exercise, not a second shape nobody tested.
@@ -19,7 +19,7 @@ export const treegridRows = (t: Translate) => [
     setSize: 3,
     posInset: 1,
     expanded: true,
-    cells: [t("demo.treegrid.inbox"), "—"],
+    cells: [t("demo.treegrid.inbox"), "N/A"],
   },
   {
     value: "alice",
@@ -41,7 +41,7 @@ export const treegridRows = (t: Translate) => [
     setSize: 3,
     posInset: 2,
     expanded: false,
-    cells: [t("demo.treegrid.drafts"), "—"],
+    cells: [t("demo.treegrid.drafts"), "N/A"],
   },
   {
     value: "untitled",
@@ -55,6 +55,6 @@ export const treegridRows = (t: Translate) => [
     level: 1,
     setSize: 3,
     posInset: 3,
-    cells: [t("demo.treegrid.sent"), "—"],
+    cells: [t("demo.treegrid.sent"), "N/A"],
   },
 ] as const;

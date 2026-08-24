@@ -16,7 +16,7 @@
     { "fg": "--color-text-tertiary",  "bg": "--color-bg-surface-raised", "min": 4.5, "modes": ["light", "dark"] },
     { "fg": "--color-text-tertiary",  "bg": "--color-bg-surface-sunken", "min": 4.5, "modes": ["light", "dark"] },
 
-    { "fg": "--color-text-on-accent", "bg": "--color-action-primary",    "min": 4.5, "modes": ["light", "dark"] },
+    { "fg": "--color-text-on-accent", "bg": "--color-action-accent",    "min": 4.5, "modes": ["light", "dark"] },
     { "fg": "--color-text-on-accent", "bg": "--color-action-danger",     "min": 4.5, "modes": ["light", "dark"] },
 
     { "fg": "--color-text-accent",    "bg": "--color-bg-canvas",         "min": 4.5, "modes": ["light", "dark"] },

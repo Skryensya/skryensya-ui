@@ -20,7 +20,7 @@ import {
  * floor", so without an explicit height on OUR OWN wrapper the box sat flush at the top of the
  * stage's reserved space instead of centered in it. `18rem` matches
  * `--sk-component-preview-stage-min-block-size` for `viewport="menu"` exactly (component-preview.css)
- * — a fixed constant, not a measured one: `100dvh` was tried first and fed back into `fitFrame`'s own
+ *. A fixed constant, not a measured one: `100dvh` was tried first and fed back into `fitFrame`'s own
  * measurement (the iframe's height depends on content height, which depended on `dvh`, which depends
  * on the iframe's height), which never settled. The whole area gets a hover state (a faint accent
  * wash, brighter marks) because a plain gray box with no visible affordance read as inert chrome,
@@ -98,7 +98,7 @@ export const menuContextCss = `.menu-context-demo {
 }`;
 
 /**
- * File actions, a checkbox and a submenu — the rows are in `data/menu.ts`.
+ * File actions, a checkbox and a submenu. The rows are in `data/menu.ts`.
  */
 export const menuTree = (t: Translate): UsageTree => ({
   contract: "menu",
@@ -135,7 +135,7 @@ export const menuCompactTree = (t: Translate): UsageTree => ({
 /**
  * `debugSafetyTriangle` is the one option that changes, and every submenu it reaches (menu.ts's
  * `debugSafetyTriangle` doc comment) draws @zag-js/menu's own intent polygon and lock state live.
- * The rows it needs to be shown against — a sibling above and below the one that opens a submenu —
+ * The rows it needs to be shown against. A sibling above and below the one that opens a submenu -
  * are `menuSafetyItems`.
  */
 export const menuSafetyTree = (t: Translate): UsageTree => ({

@@ -1,6 +1,6 @@
 /*
  * Behavior for `CopyButton.astro` (docs-local markup, decision 33: no published contract owns this
- * any more). Mirrors what `@skryensya/vanilla`'s deleted `connectCopyButton` used to do — the DOM
+ * any more). Mirrors what `@skryensya/vanilla`'s deleted `connectCopyButton` used to do. The DOM
  * shape didn't change, only where the click/timer logic lives.
  */
 import { anchorNameFor, bindAnchor, supportsAnchorPositioning } from "@skryensya/core/anchored";
@@ -51,7 +51,7 @@ function connect(root: HTMLButtonElement): () => void {
   /*
    * The dashed-ident that ties this button to its own flag (decision 25, Anclaje): without it the
    * flag has no anchor, `position-area` falls back to its static position, and it lands wherever
-   * page flow happens to put it — usually right on top of the button it is meant to float beside.
+   * page flow happens to put it. Usually right on top of the button it is meant to float beside.
    * Skipped where the API is absent: there is no machine here to take over, so the stylesheet's own
    * `@supports not (anchor-name)` rule hides the flag rather than place it wrongly.
    */
@@ -81,10 +81,10 @@ function connect(root: HTMLButtonElement): () => void {
     if (label) label.textContent = state === "copied" ? successLabel : errorLabel;
     /*
      * A second copy before the first flag closed used to write `data-state="open"` onto a flag
-     * that was already open — a no-op attribute set the browser had nothing to react to, and the
+     * that was already open. A no-op attribute set the browser had nothing to react to, and the
      * anchor positioning that followed painted the flag overlapping the button. Forcing a
      * close→reflow→reopen here fixed that race, but forces a synchronous reflow on EVERY open,
-     * including the first ever — the one time the engine is still settling `position-try` for a
+     * including the first ever. The one time the engine is still settling `position-try` for a
      * box that has never been visible before, which risks freezing an unsettled result into what
      * paints. `onClick`'s throttle closes the actual race instead: a second click can no longer
      * reach `paint()` while the first flag is still open, so there is nothing left to reopen.
@@ -117,7 +117,7 @@ function connect(root: HTMLButtonElement): () => void {
     /*
      * Optimistic: painted BEFORE the write resolves, not after. `navigator.clipboard.writeText`'s
      * permission check alone can take 150ms+, and gating the icon/flag animation behind that
-     * await left a dead pause after the click before anything moved — the animation then had to
+     * await left a dead pause after the click before anything moved. The animation then had to
      * play its full course in one late burst, which read as a snap rather than a response to the
      * click. A clipboard write failing is rare enough that correcting to "error" after the fact
      * costs less than delaying the common case ever does.

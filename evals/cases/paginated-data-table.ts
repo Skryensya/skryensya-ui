@@ -9,7 +9,7 @@ export const paginatedDataTableCase: EvalCase = {
   notes: [
     "Amplitud: Table envuelta en TableScroll (obligatorio para que una tabla más ancha que su " +
       "contenedor se desplace en vez de romper la superficie que la aloja) más Pagination como " +
-      "control aparte — el catálogo no tiene una firma que combine ambas.",
+      "control aparte. El catálogo no tiene una firma que combine ambas.",
   ],
   tree: {
     contract: "layout",

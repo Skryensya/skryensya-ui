@@ -98,7 +98,7 @@ describe("CheckboxGroup contracts", () => {
     const root = mount(markup(item("read", 'id="perm-read"') + item("write") + item("admin")));
     const [read, write, admin] = items(root);
 
-    // An authored id survives untouched — something else on the page may already point at it.
+    // An authored id survives untouched. Something else on the page may already point at it.
     expect(read!.id).toBe("perm-read");
     // The other two had none, so the enhancer generated one rather than leaving them unreferenced.
     expect(write!.id).not.toBe("");

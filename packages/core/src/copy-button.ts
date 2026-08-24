@@ -4,7 +4,7 @@
  * No contract lives here any more (decision 33, reversed): `CopyButton` used to be a signature
  * built on this plus Icon Toggle faces and an Anclaje feedback flag; now a consumer composes
  * `IconStateButton` itself, authors whatever feedback UI it wants, and calls into this module for
- * the one part that has nothing to do with any of that — actually writing text to the clipboard,
+ * the one part that has nothing to do with any of that. Actually writing text to the clipboard,
  * with the pre-`navigator.clipboard` path under it. Both the Vanilla and React bindings that used
  * to duplicate this exact function (down to the same fallback) now share the one copy.
  */

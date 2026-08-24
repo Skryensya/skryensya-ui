@@ -59,31 +59,31 @@ export const navListContract = {
       trueValue: "page",
     },
     /**
-     * Turns a group's static label into a disclosure button — the WAI-ARIA APG "Disclosure
+     * Turns a group's static label into a disclosure button. The WAI-ARIA APG "Disclosure
      * (Navigation)" pattern: a button with `aria-expanded`/`aria-controls` toggling a nested list
      * of links, explicitly NOT `role="menu"` (same reasoning the file banner already states for
-     * `NavList` itself — a menu implies keyboard behavior a navigation list does not owe).
+     * `NavList` itself. A menu implies keyboard behavior a navigation list does not owe).
      */
     collapsible: { type: "boolean", default: false, attr: "data-collapsible", trueValue: "", machineInput: true },
     /**
-     * Starts expanded — hiding navigation by default is the wrong default, unlike `Accordion`'s.
+     * Starts expanded. Hiding navigation by default is the wrong default, unlike `Accordion`'s.
      * Read once; after that the enhancer/binding owns it. Deliberately no `default` here (unlike
-     * every other boolean option in this codebase): a default would make this option — and its
-     * `data-default-open` attribute — emit on EVERY group, collapsible or not, since an option
+     * every other boolean option in this codebase): a default would make this option, and its
+     * `data-default-open` attribute. Emit on EVERY group, collapsible or not, since an option
      * with a default always has a resolved value to write. Both bindings already treat the
      * attribute's ABSENCE as "open", so nothing is lost by leaving it unauthored on the common,
      * non-collapsible case.
      */
     defaultOpen: { type: "boolean", attr: "data-default-open", trueValue: "", machineInput: true },
     /**
-     * Renders a STATIC label (`collapsible` absent) as a real `<h3>` instead of a plain `<div>` —
+     * Renders a STATIC label (`collapsible` absent) as a real `<h3>` instead of a plain `<div>` -
      * for a group sitting inside a large panel (`Megamenu`'s own columns being the motivating case)
      * where a screen reader's own heading-navigation is how a reader orients among several groups at
      * once, the same reason any other long region gets real headings rather than merely-bold text.
      * Absent by default: an ordinary sidebar/navbar `NavList` group is one of very few on the page
      * and does not need heading-navigation to be found. Has no effect on a COLLAPSIBLE group's label
-     * — that one is already a real, focusable `<button>`, a stronger landmark than a heading would
-     * add — nor without a `label`: a heading with nothing in it is worse than none, so pair the two.
+     *. That one is already a real, focusable `<button>`, a stronger landmark than a heading would
+     * add. Nor without a `label`: a heading with nothing in it is worse than none, so pair the two.
      */
     heading: { type: "boolean", default: false, attr: "data-heading", trueValue: "" },
   },
@@ -113,9 +113,9 @@ export const navListContract = {
        * Three legal homes, not one: `NavList` for a top-level section, `NavListLink` for a
        * destination's own sub-destinations (its `nested` slot, below), and `MegamenuTrigger` for
        * one column of a mega-menu panel (`megamenu.ts`'s own `columns` slot, `of: ["NavListGroup",
-       * "ImageFrame"]`) — the same group of links, just standing where a links column goes instead
-       * of a sidebar section. The template stays IDENTICAL in all three — this signature does not
-       * know which parent placed it — because what changes is only where the `<div>` lands
+       * "ImageFrame"]`). The same group of links, just standing where a links column goes instead
+       * of a sidebar section. The template stays IDENTICAL in all three. This signature does not
+       * know which parent placed it, because what changes is only where the `<div>` lands
        * (`<nav><ul>`, inside a `<li>` beside the `<a>` it nests under, or inside a mega-menu's own
        * panel), never what it renders.
        */
@@ -131,8 +131,8 @@ export const navListContract = {
        *
        * THREE label nodes, not one node with a conditional attribute: a static label is a `<div>`
        * (nothing to activate) or a real `<h3>` (`heading`, for a group inside a large panel that
-       * wants heading-navigation — see that option's own doc), a collapsible one is a `<button>`
-       * (something WAI requires be a real control) — the element itself changes, which `attrsWhen`
+       * wants heading-navigation; see that option's own doc), a collapsible one is a `<button>`
+       * (something WAI requires be a real control). The element itself changes, which `attrsWhen`
        * cannot say, only template nodes gated by `whenGiven`/`whenMissing` can (same technique
        * `Breadcrumb`'s link-vs-span split already uses for the same kind of either/or). The two
        * static nodes are mutually exclusive by construction: `whenMissing` accepts a list meaning
@@ -153,7 +153,7 @@ export const navListContract = {
           {
             // Gated on `heading` alone, not also on `label`: the composition-level condition
             // fields (`whenGiven`/`whenMissing`) can express ANY-of within one field, never an AND
-            // across two DIFFERENT options — see `heading`'s own doc for why pairing the two is left
+            // across two DIFFERENT options; see `heading`'s own doc for why pairing the two is left
             // to the author rather than enforced here.
             element: "h3",
             part: "groupLabel",
@@ -168,11 +168,11 @@ export const navListContract = {
             whenGiven: "collapsible",
             attrs: { type: "button" },
             // The REAL `aria-expanded` (and `aria-controls`, which needs a generated id) is the
-            // enhancer/binding's, same as `data-default-open` is only ever read once — this is
+            // enhancer/binding's, same as `data-default-open` is only ever read once. This is
             // just the honest INITIAL render before either attaches, so a no-JS or pre-hydration
             // paint never asserts a state opposite the one the list is actually showing.
             // `notEquals: "false"` (not `equals: "true"`) so the OPEN default holds even when the
-            // author never sets `defaultOpen` at all — it carries no `default` of its own (see the
+            // author never sets `defaultOpen` at all. It carries no `default` of its own (see the
             // option's comment), so "unauthored" and "explicitly true" must read the same way here.
             attrsWhen: [
               { option: "defaultOpen", notEquals: "false", attrs: { "aria-expanded": "true" } },
@@ -183,7 +183,7 @@ export const navListContract = {
           },
           // Two `<ul>` nodes, not one with a conditional attribute: `mount` and the `hidden`
           // toggle only mean anything for the collapsible case, and adding either to the ORIGINAL
-          // static node — even harmlessly, even always-false — would change what a non-collapsible
+          // static node. Even harmlessly, even always-false. Would change what a non-collapsible
           // group (the common case, unchanged since before this option existed) emits.
           {
             element: "ul",
@@ -222,12 +222,12 @@ export const navListContract = {
         /** Trailing metadata: a count, a badge. Pinned to the end, hidden when a host collapses. */
         trailing: { accepts: "node" },
         /**
-         * This destination's OWN sub-destinations, one level of nesting at a time — a
+         * This destination's OWN sub-destinations, one level of nesting at a time. A
          * `NavListGroup` sitting inside the same `<li>`, after the link rather than the label
          * slot NavList's own groups fill. `<li>` accepts arbitrary flow content, so `<a>` followed
          * by a nested `<div class="group"><ul>…</ul></div>` is valid, unlike nesting a group
          * straight inside another group's `<ul>` (a `<div>` is not a legal `<ul>` child, only
-         * `<li>` is — the reason this is a new slot on the LINK and not a widened `children` on
+         * `<li>` is. The reason this is a new slot on the LINK and not a widened `children` on
          * `NavListGroup` itself).
          */
         nested: { accepts: "signature", of: ["NavListGroup"] },

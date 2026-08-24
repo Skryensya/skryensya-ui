@@ -1,16 +1,16 @@
 import type { ComponentContract } from "./contract.js";
 
 /*
- * GRID — WAI-ARIA APG `grid`, which the spec itself says covers TWO use cases with the identical
+ * GRID. WAI-ARIA APG `grid`, which the spec itself says covers TWO use cases with the identical
  * roles and roving-tabindex mechanics: "presenting tabular information (data grids) and grouping
- * other widgets (layout grids)" — confirmed fetching the pattern's own overview page, not assumed
+ * other widgets (layout grids)". Confirmed fetching the pattern's own overview page, not assumed
  * from the example names. That is why this is ONE contract, not two: `Table` already owns the case
  * of STATIC tabular data with no keyboard model of its own (a plain `<table>`); this contract is for
  * when a grid of cells needs 2D roving-tabindex navigation, whether the cells hold plain text (a
- * data grid) or their own interactive widgets (message pills, a card grid) — the layout-grid case.
+ * data grid) or their own interactive widgets (message pills, a card grid). The layout-grid case.
  *
- * No `@zag-js/*` machine covers this pattern (`core/machines.ts` does not list it), so — same as
- * `Treegrid` — the keyboard model is hand-rolled, pure, and shared by both bindings.
+ * No `@zag-js/*` machine covers this pattern (`core/machines.ts` does not list it), so. Same as
+ * `Treegrid`: the keyboard model is hand-rolled, pure, and shared by both bindings.
  */
 export const dataGridParts = {
   root: "sk-data-grid",
@@ -33,7 +33,7 @@ export const dataGridContract = {
      * Whether Right/Left wraps into the next/previous row instead of stopping at the row's edge.
      * WAI's own layout-grid examples differ on this: a grid of interchangeable links wraps both
      * axes, a grid whose rows are a meaningful unit (a recipient's link + its own remove button)
-     * does not — false by default, the safer choice when rows carry structure worth respecting.
+     * does not. False by default, the safer choice when rows carry structure worth respecting.
      */
     wrapCols: { type: "boolean", default: false, attr: "data-wrap-cols", trueValue: "" },
     /** Same idea, for Up/Down wrapping past the first/last row. */
@@ -59,7 +59,7 @@ export const dataGridContract = {
     },
 
     /*
-     * A "row" here is a LOGICAL grouping, not necessarily a visual one — WAI's own layout-grid
+     * A "row" here is a LOGICAL grouping, not necessarily a visual one. WAI's own layout-grid
      * examples include a recipient pill list whose rows wrap across physical lines. `DataGridRow` is
      * the unit Home/End and vertical arrow navigation move by; how it's laid out visually is the
      * consumer's CSS, not this contract's concern.
@@ -75,8 +75,8 @@ export const dataGridContract = {
     },
 
     /*
-     * A cell PRESERVES the semantics of whatever it contains — a link stays a link, a button stays
-     * a button — the pattern explicitly does not reinterpret descendant content the way a menu or
+     * A cell PRESERVES the semantics of whatever it contains. A link stays a link, a button stays
+     * a button. The pattern explicitly does not reinterpret descendant content the way a menu or
      * listbox would. Which is why the roving-tabindex UNIT is computed at runtime, never authored:
      * an empty or plain-text cell is its own stop, a cell holding one interactive element hands the
      * stop to that element instead. See `gridCellFocusTarget` below.
@@ -101,7 +101,7 @@ export const dataGridContract = {
 } as const satisfies ComponentContract;
 
 /* ------------------------------------------------------------------------------------------------ *
- * Shared behaviour — the pure matcher here, the imperative binding in `@skryensya/vanilla`, the
+ * Shared behaviour. The pure matcher here, the imperative binding in `@skryensya/vanilla`, the
  * declarative one in `@skryensya/react` (the three-way split `hotkey.ts` documents, reused by
  * `treegrid.ts` for the same reason: the keyboard matrix is where the real complexity lives, and
  * it's the cheapest place to test it exhaustively, with no DOM involved).
@@ -116,7 +116,7 @@ export type DataGridAction = { readonly kind: "move"; readonly focus: DataGridFo
 
 /**
  * One keystroke, resolved against a grid whose rows may have DIFFERENT cell counts (a "ragged"
- * grid — WAI's own recipient-pill example wraps a logical row across physical lines with no fixed
+ * grid. WAI's own recipient-pill example wraps a logical row across physical lines with no fixed
  * column count). `colCountOf` is asked per row rather than taking one constant for exactly that
  * reason.
  */
@@ -136,7 +136,7 @@ export function resolveDataGridKey(params: {
   const lastRow = rowCount - 1;
   const lastCol = colCount - 1;
 
-  /** Column clamped into whatever row we're landing on — a shorter row still gets a valid cell. */
+  /** Column clamped into whatever row we're landing on. A shorter row still gets a valid cell. */
   const clampCol = (row: number, col: number) => Math.max(0, Math.min(col, colCountOf(row) - 1));
 
   switch (key) {
@@ -181,7 +181,7 @@ export function resolveDataGridKey(params: {
   }
 }
 
-/** The selector `Toolbar`'s own roving tabindex already uses for "counts as a stop" — reused
+/** The selector `Toolbar`'s own roving tabindex already uses for "counts as a stop". Reused
  *  verbatim so the same judgment of what is focusable never disagrees between the two contracts. */
 export const dataGridFocusableSelector =
   "button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled])";

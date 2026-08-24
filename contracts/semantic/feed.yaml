@@ -2,7 +2,7 @@
 
 Feed:
   useWhen:
-    - "un stream de unidades de contenido independientes que se puede cargar en tandas — posts, comentarios, actividad"
+    - "un stream de unidades de contenido independientes que se puede cargar en tandas. Posts, comentarios, actividad"
   avoidWhen:
     - "es una lista de opciones para elegir; eso es un Listbox o un List"
     - "el orden importa por posición fija, no por publicación; eso es una Table o un List simple"
@@ -11,4 +11,4 @@ Feed:
 
 FeedArticle:
   useWhen:
-    - "una unidad de contenido dentro del feed — un post, un comentario"
+    - "una unidad de contenido dentro del feed. Un post, un comentario"

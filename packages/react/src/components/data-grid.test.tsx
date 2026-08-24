@@ -71,7 +71,7 @@ describe("DataGrid React contracts", () => {
     fireEvent.keyDown(ui.getByRole("grid"), { key: "ArrowRight" });
     expect(document.activeElement).toBe(cellText(ui, "Nota")); // row 1, col 2
     fireEvent.keyDown(ui.getByRole("grid"), { key: "ArrowUp" });
-    // Row 0 only has 2 cells — clamped, not an out-of-range column.
+    // Row 0 only has 2 cells. Clamped, not an out-of-range column.
     expect(document.activeElement).toBe(removeButtons(ui)[0]);
   });
 

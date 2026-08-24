@@ -5,8 +5,8 @@ import { mountCarousel } from "./carousel.js";
 
 /*
  * jsdom has no layout: every rect is zero, so the machine measures a single snap point and the
- * carousel is correctly a one-pager. `layout()` fakes just enough geometry — a viewport narrower than
- * the content, and one rect per slide — for `getScrollSnapPositions` to find real, clamped positions.
+ * carousel is correctly a one-pager. `layout()` fakes just enough geometry. A viewport narrower than
+ * the content, and one rect per slide. For `getScrollSnapPositions` to find real, clamped positions.
  * That is deliberately the interesting case: the last slide's start edge sits PAST the maximum scroll
  * offset, so its snap point clamps onto the previous one and four slides make three pages. The old
  * hand-rolled enhancer drew four dots there, and the fourth could never light up.
@@ -101,7 +101,7 @@ describe("Carousel Vanilla contracts", () => {
     flushSync();
 
     // 4 slides of 400 + 3 gaps of 20 = 1660 of content in a 900 viewport: max scroll is 760, so the
-    // third slide (starts at 840) and the fourth (1260) BOTH clamp to 760 — one reachable position,
+    // third slide (starts at 840) and the fourth (1260) BOTH clamp to 760. One reachable position,
     // one page. Four slides, three dots.
     expect(dots(root)).toHaveLength(3);
     expect(dots(root)[0].getAttribute("aria-current")).toBe("true");
@@ -176,7 +176,7 @@ describe("Carousel Vanilla contracts", () => {
 
   /*
    * WCAG 2.2.2 / WAI-ARIA Carousel: hover and keyboard focus must pause an autoplaying carousel, and
-   * resume it on leave/blur — but never override an EXPLICIT stop the user made via the trigger. Zag
+   * resume it on leave/blur, but never override an EXPLICIT stop the user made via the trigger. Zag
    * 1.42.0 implements neither by itself (confirmed by reading its source directly): this file's own
    * `$effect` + root listeners are what actually deliver it.
    */
@@ -187,7 +187,7 @@ describe("Carousel Vanilla contracts", () => {
 
     // `aria-live` on the track is Zag's own, driven purely by whether it is ACTUALLY rotating
     // ("off" while it moves on its own, so mid-rotation DOM changes are not announced; "polite"
-    // once paused, so an intentional navigation still gets read out) — unlike `data-pressed`, hover
+    // once paused, so an intentional navigation still gets read out). Unlike `data-pressed`, hover
     // and focus DO move it, since neither reflects a promise made to the user.
     const track = root.querySelector<HTMLElement>(".sk-carousel__track")!;
     const toggle = root.querySelector<HTMLButtonElement>(".sk-carousel__autoplay")!;
@@ -292,14 +292,14 @@ describe("Carousel Vanilla contracts", () => {
 
   it("pauses on focus landing INSIDE a slide's own content, not only on the prev/next chrome", () => {
     // A real case the other focus test does not cover: a card slide with its own link. `focusin`
-    // bubbles from ANY descendant to the root listener, so this should need no code of its own —
+    // bubbles from ANY descendant to the root listener, so this should need no code of its own -
     // this test is here to prove that, not to add behaviour.
     document.body.innerHTML = `<section class="sk-carousel" data-sk-carousel data-autoplay aria-label="Novedades">
       <div class="sk-carousel__track">
-        <div class="sk-carousel__slide"><a href="/uno">Leer más — Uno</a></div>
-        <div class="sk-carousel__slide"><a href="/dos">Leer más — Dos</a></div>
-        <div class="sk-carousel__slide"><a href="/tres">Leer más — Tres</a></div>
-        <div class="sk-carousel__slide"><a href="/cuatro">Leer más — Cuatro</a></div>
+        <div class="sk-carousel__slide"><a href="/uno">Leer más. Uno</a></div>
+        <div class="sk-carousel__slide"><a href="/dos">Leer más. Dos</a></div>
+        <div class="sk-carousel__slide"><a href="/tres">Leer más. Tres</a></div>
+        <div class="sk-carousel__slide"><a href="/cuatro">Leer más. Cuatro</a></div>
       </div>
     </section>`;
     const root = document.body.firstElementChild as HTMLElement;

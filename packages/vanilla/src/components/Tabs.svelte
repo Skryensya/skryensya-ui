@@ -70,7 +70,7 @@
       const contentProps = api.getContentProps({ value: item.value }) as DomProps;
       applyZagProps(item.content, contentProps);
       // Zag only writes `aria-controls` on the SELECTED trigger (confirmed reading
-      // tabs.connect.js) — the WAI-ARIA Tabs pattern is explicit that EVERY tab has it
+      // tabs.connect.js). The WAI-ARIA Tabs pattern is explicit that EVERY tab has it
       // ("Each element with role tab has the property aria-controls referring to its
       // associated tabpanel element"), selected or not. `getContentProps` already computes
       // each panel's real id regardless of selection, so this is a correction, not a guess.

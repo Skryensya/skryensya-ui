@@ -11,28 +11,28 @@ entries:
     es:
       title: El variant "primary" pasa a llamarse "accent"
       body: >-
-        Renombrado de <code>primary</code>: ese nombre describía un ROL — "la acción principal de
-        esta pantalla" — que el propio botón no puede saber, es el autor quien decide cuál de sus
+        Renombrado de <code>primary</code>: ese nombre describía un ROL: "la acción principal de
+        esta pantalla". Que el propio botón no puede saber, es el autor quien decide cuál de sus
         botones es el destacado en un momento dado, y a veces es más de uno o ninguno. El variant
         solo pinta un relleno saturado; <code>accent</code> dice eso, no una jerarquía que el
         contrato no tiene forma de verificar. Es un rename del VALOR de la opción únicamente: el
-        token semántico detrás (<code>--color-action-primary</code>) no cambia de nombre, es un
+        token semántico detrás (<code>--color-action-accent</code>) no cambia de nombre, es un
         detalle interno de <code>button.css</code> y no parte de lo que este contrato promete. Un
-        consumidor con <code>data-variant="primary"</code> autorado a mano deja de pintar el
-        relleno (cae al <code>neutral</code> por defecto en silencio); <code>variant="primary"</code>
+        consumidor con <code>data-variant="accent"</code> autorado a mano deja de pintar el
+        relleno (cae al <code>neutral</code> por defecto en silencio); <code>variant="accent"</code>
         en un árbol de uso o en JSX deja de tipar.
     en:
       title: The "primary" variant is renamed to "accent"
       body: >-
-        Renamed from <code>primary</code>: that name described a ROLE — "this screen's main
-        action" — the button itself cannot know, it is the author who decides which of their
+        Renamed from <code>primary</code>: that name described a ROLE: "this screen's main
+        action". The button itself cannot know, it is the author who decides which of their
         buttons is the featured one at any given moment, and sometimes it is more than one or
         none. The variant only paints a saturated fill; <code>accent</code> says that, not a
         hierarchy the contract has no way to verify. This renames the option's VALUE only: the
-        semantic token behind it (<code>--color-action-primary</code>) keeps its name, it is an
+        semantic token behind it (<code>--color-action-accent</code>) keeps its name, it is an
         internal detail of <code>button.css</code> and not part of what this contract promises. A
-        consumer with hand-authored <code>data-variant="primary"</code> stops painting the fill
-        (silently falls back to <code>neutral</code>); <code>variant="primary"</code> in a usage
+        consumer with hand-authored <code>data-variant="accent"</code> stops painting the fill
+        (silently falls back to <code>neutral</code>); <code>variant="accent"</code> in a usage
         tree or in JSX stops type-checking.
   - date: 2026-08-17
     kind: feature
@@ -43,22 +43,22 @@ entries:
         Renombradas de <code>squareStart</code>/<code>squareEnd</code>: el nombre anterior solo
         describía lo que hacían con el RADIO, pero un botón <code>neutral</code>/<code>subtle</code>/
         <code>translucent</code> también pinta un borde propio, y quitar solo la esquina dejaba ese
-        borde intacto justo en la costura — dos líneas compitiendo, la del botón y la del vecino, en
+        borde intacto justo en la costura. Dos líneas compitiendo, la del botón y la del vecino, en
         vez de una. Pasó desapercibido mientras todos los ejemplos usaban <code>primary</code>/
         <code>danger</code>/<code>ghost</code> (esas tres ya pintan el borde transparente), hasta que
         un ejemplo emparejó dos mitades <code>neutral</code>. Las nuevas opciones quitan las dos
-        cosas — el redondeo Y el color del borde en ese mismo lado — y el nombre ahora lo dice.
+        cosas. El redondeo Y el color del borde en ese mismo lado, y el nombre ahora lo dice.
     en:
       title: squareStart/squareEnd rename to weldStart/weldEnd, and also clear the border there
       body: >-
         Renamed from <code>squareStart</code>/<code>squareEnd</code>: the old name only described
         what they did to the RADIUS, but a <code>neutral</code>/<code>subtle</code>/
         <code>translucent</code> button also paints a border of its own, and clearing only the
-        corner left that border intact right at the seam — two competing lines, the button's own
+        corner left that border intact right at the seam. Two competing lines, the button's own
         and the neighbor's, instead of one. This went unnoticed while every example used
         <code>primary</code>/<code>danger</code>/<code>ghost</code> (those three already paint a
         transparent border), until an example paired two <code>neutral</code> halves. The new
-        options clear both things — the rounding AND the border color on that same edge — and the
+        options clear both things. The rounding AND the border color on that same edge, and the
         name now says so.
   - date: 2026-08-17
     kind: feature
@@ -68,10 +68,10 @@ entries:
       body: >-
         Se agregan <code>squareStart</code>/<code>squareEnd</code> (booleanas, presencia-only): le
         quitan a un botón el redondeo de su esquina inicial/final, un tercer eje ortogonal a
-        <code>variant</code>/<code>size</code>/<code>iconOnly</code> — cualquier variante, cualquier
+        <code>variant</code>/<code>size</code>/<code>iconOnly</code>: cualquier variante, cualquier
         tamaño, puede soldarse a un vecino. Nacen de <code>SplitButton</code>, que hasta ahora
         resolvía esto con CSS propio apuntando a su propia clase (<code>.sk-split-button__primary</code>),
-        empatada en especificidad con la propia regla base de <code>.sk-button</code> — un empate que
+        empatada en especificidad con la propia regla base de <code>.sk-button</code>: un empate que
         el orden de carga de las hojas de estilo decidía en silencio, y lo decidió mal en la práctica
         (confirmado en vivo). Ahora el radio soldado es responsabilidad del propio botón, con las
         mismas dos clases que cualquier consumidor puede usar para armar su propio grupo de botones,
@@ -81,10 +81,10 @@ entries:
       body: >-
         Adds <code>squareStart</code>/<code>squareEnd</code> (boolean, presence-only): they remove a
         button's own leading/trailing corner rounding, a third axis orthogonal to
-        <code>variant</code>/<code>size</code>/<code>iconOnly</code> — any variant, any size, can be
+        <code>variant</code>/<code>size</code>/<code>iconOnly</code>: any variant, any size, can be
         welded to a neighbor. Born out of <code>SplitButton</code>, which until now solved this with
         its own CSS pointed at its own class (<code>.sk-split-button__primary</code>), tied in
-        specificity with <code>.sk-button</code>'s own base rule — a tie that whichever stylesheet
+        specificity with <code>.sk-button</code>'s own base rule: a tie that whichever stylesheet
         loaded second silently decided, and decided wrong in practice (confirmed live). The welded
         radius is now the button's own responsibility, with the same two classes any consumer can
         reach for to build their own button group, with no dependency on <code>SplitButton</code> at

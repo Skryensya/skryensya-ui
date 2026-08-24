@@ -177,7 +177,7 @@ server.registerTool(
     description:
       "Checks a usage tree against its contracts; signatures, option values, requires / forbids / " +
       "exactlyOneOf, valid parents, slots and declared accessibility; when it is valid, returns " +
-      "the emitted markup AND the emitted TSX — which is `react` plus, when the composition carries " +
+      "the emitted markup AND the emitted TSX, which is `react` plus, when the composition carries " +
       "a collection, `reactData`: a second file the component imports, to be written beside it. " +
       "Use the returned code; it is the only way what you " +
       "write and what was validated stay the same artifact. Problems come back with a path into the " +
@@ -207,7 +207,7 @@ server.registerTool(
 
     /*
      * React comes back as up to TWO files: the component, and the module its collections were moved
-     * to. Both are returned under their own names because both have to be WRITTEN — a component
+     * to. Both are returned under their own names because both have to be WRITTEN. A component
      * importing `./menu-items` from a caller that never received `menu-items.ts` does not build.
      */
     const react = emitReactSource(tree);

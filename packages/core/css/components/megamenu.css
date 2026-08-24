@@ -1,5 +1,5 @@
 /* TIER 3, MEGAMENU: a row of category triggers, each opening an edge-to-edge panel of navigation
- * columns — never application commands, see `megamenu.ts`'s own header comment for why this is a
+ * columns: never application commands, see `megamenu.ts`'s own header comment for why this is a
  * peer of `Navbar`/`NavList`, not a variant of `Menu`/`Menubar`/`Popover`. */
 @layer components {
   .sk-megamenu {
@@ -39,13 +39,13 @@
    * The pattern's own default (`anchored.css`) centers under the anchor, which is exactly right
    * here too, just at a bigger measure: the panel is a CARD that sits inside the bar's own reading
    * column, not a sheet that bleeds to its edges. `--sk-anchored-size` caps at `--size-wrapper-md`
-   * — the same token `Wrapper`'s `md` and `LayoutGrid`'s `content` column both already use (see
-   * `patterns/wrapper.css`, `patterns/layout.css`) — so the panel lands at the same measure as the
+   *. The same token `Wrapper`'s `md` and `LayoutGrid`'s `content` column both already use (see
+   * `patterns/wrapper.css`, `patterns/layout.css`), so the panel lands at the same measure as the
    * page's own content column by construction, whichever of the two a consumer's page happens to
    * use, without this component ever having to look outside its own subtree to find out which.
    * `anchor-size(width) - 2 × gutter`, not bare `anchor-size(width)`, bounds it on the other side: a
    * bar narrower than the `--size-wrapper-md` cap (a mobile-ish desktop window, a sidebar-shrunk
-   * main column) is exactly when that second term stops being the binding constraint — the FIRST
+   * main column) is exactly when that second term stops being the binding constraint. The FIRST
    * one has to actually be narrower than the bar, or the panel touches the viewport's own edges
    * with nothing left to center within.
    */
@@ -67,14 +67,14 @@
   }
 
   /*
-   * `NavListGroup`/`NavListLink`'s entire appearance — radius, height, padding, colors, the state
-   * layer's own `border-radius: inherit` — reads off `--sk-nav-list-*` custom properties that
+   * `NavListGroup`/`NavListLink`'s entire appearance. Radius, height, padding, colors, the state
+   * layer's own `border-radius: inherit`. Reads off `--sk-nav-list-*` custom properties that
    * `nav-list.css` defines ONLY on `.sk-nav-list`'s own root (see that file's own token block): a
    * link rendered ANYWHERE else, Megamenu's columns included, gets none of them and falls back to
-   * CSS's bare initial values — square corners, browser-default height/padding, wrong colors, not
+   * CSS's bare initial values. Square corners, browser-default height/padding, wrong colors, not
    * just a cosmetic miss but literally unstyled. This re-supplies the SAME tokens directly (never
    * the `.sk-nav-list` class itself: that rule also carries ITS OWN `display: grid` layout, which
-   * would fight this file's own grid-stacking ruler/panel structure) — every value here is
+   * would fight this file's own grid-stacking ruler/panel structure). Every value here is
    * `nav-list.css`'s own default read back from the SAME underlying design tokens, not a fork of it.
    */
   .sk-megamenu__content {
@@ -87,7 +87,7 @@
     --sk-nav-list-group-label-min-height: 0;
     /* `0`, not `nav-list.css`'s own `--space-stack-xs` default: a sidebar/navbar heading sits
      * beneath OTHER content it needs air from, a megamenu column's heading IS the top of its own
-     * column — the panel's own `padding` (`--space-inset-lg`) already supplies the air above it,
+     * column. The panel's own `padding` (`--space-inset-lg`) already supplies the air above it,
      * so a second inset here would only push it further from the shared top edge every column
      * aligns to (`.sk-megamenu__panel`'s own `align-items: start`). */
     --sk-nav-list-group-label-padding-block-start: 0;
@@ -143,7 +143,7 @@
   }
 
   .sk-megamenu__content[data-state="open"] {
-    /* ONE cell, shared by the ruler and the visible panel below — a grid with a single implicit
+    /* ONE cell, shared by the ruler and the visible panel below. A grid with a single implicit
      * row/column, not the N-column layout (that moved to `.sk-megamenu__panel`, which is what
      * actually holds a trigger's `NavListGroup`s now). */
     display: grid;
@@ -163,8 +163,8 @@
    * THE HEIGHT NEVER CHANGES, by construction rather than by measuring or animating anything: the
    * ruler and the one visible panel occupy the SAME grid cell (`grid-area: 1 / 1` on both), and a
    * grid track always sizes to its tallest occupant. The ruler holds every trigger's columns at
-   * once — `visibility: hidden`, which (unlike `opacity`/`display: none`) keeps them in layout
-   * without painting them or exposing them to focus or the accessibility tree — so the track is
+   * once: `visibility: hidden`, which (unlike `opacity`/`display: none`) keeps them in layout
+   * without painting them or exposing them to focus or the accessibility tree, so the track is
    * always exactly as tall as the tallest trigger has ever needed, and switching which trigger is
    * VISIBLE never changes that track's size. This is also why the old `block-size` transition and
    * the binding-side measure/pin/animate dance around it are gone: there is nothing left to animate,
@@ -185,7 +185,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
     /* `start`, not the grid default (`stretch`): a links column (`NavListGroup`) reads oddly
-     * pulled taller than its own content just to match a neighbor — its OWN top edge, not a
+     * pulled taller than its own content just to match a neighbor. Its OWN top edge, not a
      * matched height, is what a reader expects an uneven row to share. `.sk-image-frame` below
      * opts back INTO stretch on its own, since a media column reads the opposite way: a picture
      * cropped short of the row looks like a mistake, not a deliberate shorter column. */
@@ -213,7 +213,7 @@
    * on a single `<img>` exposes the frame's own background for a beat, which reads as "flashes to a
    * flat color", never as "one photo becoming another". So a binding clones the OUTGOING image as
    * this absolutely-positioned copy, updates the REAL `<img>` underneath immediately (already the
-   * new picture, just covered), then fades only the copy away — there is always a fully-opaque
+   * new picture, just covered), then fades only the copy away. There is always a fully-opaque
    * image on screen, one photo or the other, never neither. Removed once its own transition ends.
    */
   .sk-megamenu__preview-outgoing {
@@ -221,7 +221,7 @@
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    /* The RESTING state, reached the instant after insertion — `@starting-style` below is the
+    /* The RESTING state, reached the instant after insertion: `@starting-style` below is the
      * only reason it does not just appear already-gone: a binding never toggles this itself, only
      * appends the element and lets the same open/close materialize recipe (`menu.css`'s own comment
      * has the full reasoning) carry it from fully opaque to this. */
@@ -269,11 +269,11 @@
   }
 
   /*
-   * BELOW `--breakpoint-desktop` (52rem, `semantic/_breakpoints.scss` — this file is tier-3 CSS, the
+   * BELOW `--breakpoint-desktop` (52rem, `semantic/_breakpoints.scss`. This file is tier-3 CSS, the
    * one place that constant is re-declared as a literal rather than read, same as `patterns/vaul.css`
    * already does for its own desktop cut): no floating edge-to-edge panel, no anchor positioning at
-   * all. Each trigger becomes an ordinary in-flow disclosure — `NavListGroup`'s own `collapsible`
-   * mechanic, reused rather than reimplemented — and its columns stack single-file, full width. This
+   * all. Each trigger becomes an ordinary in-flow disclosure: `NavListGroup`'s own `collapsible`
+   * mechanic, reused rather than reimplemented, and its columns stack single-file, full width. This
    * is the SAME open/closed state a binding already tracks for the desktop panel (`data-state`), not
    * a second mobile-only piece of JS: only the CSS says what that state means at this width.
    */
@@ -281,7 +281,7 @@
     .sk-megamenu__positioner {
       /* `!important`, not plain specificity: `anchored.css`'s own `.sk-anchored { position: fixed }`
        * is unconditional and equal specificity (0,1,0), so which one wins this tie depends on import
-       * order rather than this media query matching — measured breaking in practice at this exact
+       * order rather than this media query matching. Measured breaking in practice at this exact
        * breakpoint. `position: static` alone is what actually neutralizes anchoring: every other
        * anchor-relative property (`position-anchor`, `position-area`, `inset`, `margin`) only has an
        * effect on an absolutely/fixed-positioned box, so forcing this one property to win is enough
@@ -308,7 +308,7 @@
       display: block;
     }
 
-    /* The ruler exists to size a FLOATING panel to its tallest sibling — meaningless once there is
+    /* The ruler exists to size a FLOATING panel to its tallest sibling. Meaningless once there is
      * no floating panel: an in-flow accordion sizes to whichever one is actually expanded, same as
      * `NavListGroup`'s own `collapsible` mechanic this reuses does everywhere else. Removed from
      * layout entirely, not just hidden: `visibility: hidden` alone would still reserve room for it. */

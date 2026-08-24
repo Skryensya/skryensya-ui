@@ -55,7 +55,7 @@ export function CalendarBody({
   /*
    * The year view is the top of the escalation (day → month → year, clamped there): clicking the
    * trigger again is normally a no-op, a dead end that still looks clickable. Repurpose it as a
-   * cancel instead — jump straight back to day view on the REAL current month, not wherever the
+   * cancel instead. Jump straight back to day view on the REAL current month, not wherever the
    * decade grid happened to be browsing, since "cancel" should mean "never mind", not "one level
    * down from here".
    */
@@ -87,7 +87,7 @@ export function CalendarBody({
 
   /*
    * Every trigger below IS the real `Button` component (ADR-19/8), not a hand-authored `<button>`
-   * copying its classes/attrs — a rename in Button's shape shows up here for free. Prev/next and
+   * copying its classes/attrs. A rename in Button's shape shows up here for free. Prev/next and
    * the day cell share the SAME `iconOnly` shape: a control-sized square holding one piece of
    * content, a glyph for prev/next, a day number for the cell, rather than a second "icon button"
    * for what is one shape wearing two kinds of content. Month/year cells stay plain Buttons: their
@@ -268,9 +268,9 @@ export type CalendarProps = Pick<
   dayLabel?: (state: DayTableCellState) => string;
   /** Accessible name for the day/month/year view-switch button. */
   viewTriggerLabel?: (view: DateView) => string;
-  /** Accessible name for "go back" — previous month/year/decade depending on the open view. */
+  /** Accessible name for "go back". Previous month/year/decade depending on the open view. */
   prevTriggerLabel?: (view: DateView) => string;
-  /** Accessible name for "go forward" — next month/year/decade depending on the open view. */
+  /** Accessible name for "go forward". Next month/year/decade depending on the open view. */
   nextTriggerLabel?: (view: DateView) => string;
   onValueChange?: (details: { value: string[] }) => void;
 };
@@ -285,7 +285,7 @@ export const asDates = (value: readonly (DateValue | string)[] | string | undefi
         .map((date) => asDate(date))
         .filter((date): date is DateValue => date !== undefined);
 
-/** Standalone calendar grid: no field, no popover — the same machine as DatePicker, `inline: true`. */
+/** Standalone calendar grid: no field, no popover. The same machine as DatePicker, `inline: true`. */
 export function Calendar({
   dayLabel,
   defaultValue,
@@ -320,7 +320,7 @@ export function Calendar({
     disabled,
     translations: {
       // `trigger`/`content` name a popover this component never renders (`inline: true`, no
-      // `getTriggerProps()`/`getContentProps()` call in `CalendarBody`) — required by the type,
+      // `getTriggerProps()`/`getContentProps()` call in `CalendarBody`). Required by the type,
       // dead in practice.
       ...unusedIntlTranslations(),
       trigger: () => "",

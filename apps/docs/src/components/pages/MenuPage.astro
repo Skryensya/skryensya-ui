@@ -42,7 +42,7 @@ initComponents();`;
  * Positioning is the MACHINE's job, not this page's: `getContextTriggerProps()` forwards the
  * click's point to the shared `@zag-js/menu` machine (both bindings run the same one), which
  * computes a real floating-ui placement from it with the SAME `bottom-start` default a trigger
- * button gets — below the pointer, growing toward the inline-end, with automatic flip near a
+ * button gets. Below the pointer, growing toward the inline-end, with automatic flip near a
  * screen edge. Neither binding's own menu.ts/menu.tsx adds a line of positioning for this route
  * (see the comment beside `anchorEl = trigger` in each): the native-anchor pattern anchors to an
  * ELEMENT's box, and a context trigger is not a point, so both bindings skip that route entirely

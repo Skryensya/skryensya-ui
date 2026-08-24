@@ -1,8 +1,8 @@
 ---
 /*
  * Diagnostic only: no ComponentPageShell, no prose, no nav/sidebar chrome. Three colored-box
- * renders of the rail placements (`rail`, `rail-start`, both) — vanilla markup plus a React
- * island each — so the mechanism (`packages/core/css/patterns/layout.css`,
+ * renders of the rail placements (`rail`, `rail-start`, both). Vanilla markup plus a React
+ * island each, so the mechanism (`packages/core/css/patterns/layout.css`,
  * `@media (min-width: 72rem)`) can be checked at real browser width, with nothing capping
  * the grid's measure.
  *
@@ -105,36 +105,36 @@ const bothHtml = `<div class="sk-layout-grid" data-debug="layout-grid-rail">
   </head>
   <body>
     <p class="debug-hint">
-      Rails sit beside the content only at ≥72rem (1152px) viewport width — narrower than
+      Rails sit beside the content only at ≥72rem (1152px) viewport width. Narrower than
       that, the boxes stack. The gap between a rail and the content is
       --sk-layout-rail-gap (space-inline-lg), not the breakout track. Resize the window
       to check the breakpoint.
     </p>
 
     <section class="debug-section">
-      <h2>After — data-width="rail" (vanilla)</h2>
+      <h2>After. Data-width="rail" (vanilla)</h2>
       <Fragment set:html={endHtml} />
     </section>
     <section class="debug-section">
-      <h2>After — React</h2>
+      <h2>After. React</h2>
       <LayoutGridRailEnd client:load />
     </section>
 
     <section class="debug-section">
-      <h2>Before — data-width="rail-start" (vanilla)</h2>
+      <h2>Before. Data-width="rail-start" (vanilla)</h2>
       <Fragment set:html={startHtml} />
     </section>
     <section class="debug-section">
-      <h2>Before — React</h2>
+      <h2>Before. React</h2>
       <LayoutGridRailStart client:load />
     </section>
 
     <section class="debug-section">
-      <h2>Both — rail-start + rail (vanilla)</h2>
+      <h2>Both. Rail-start + rail (vanilla)</h2>
       <Fragment set:html={bothHtml} />
     </section>
     <section class="debug-section">
-      <h2>Both — React</h2>
+      <h2>Both. React</h2>
       <LayoutGridRailsBoth client:load />
     </section>
   </body>

@@ -75,7 +75,7 @@ const toggleAttrs: Record<string, string> = {
   [codePreviewAttrs.expandedLabel]: t("code.collapse"),
   [codePreviewAttrs.expandedAriaLabel]: t("code.collapseTo", { count: String(previewLineCount) }),
   /* Deliberately un-interpolated: `{count}` stays in the string so the enhancer can fill it when
-     the density switch swaps which panel — and so which line count — is on screen. */
+     the density switch swaps which panel, and so which line count. Is on screen. */
   [codePreviewAttrs.linesLabel]: t("code.lines"),
 };
 
@@ -84,8 +84,8 @@ const toggleAttrs: Record<string, string> = {
  * gets the collapsed window only under `[condensed-collapsible]`, and the single no-density panel
  * gets it under `[collapsible]`.
  *
- * It matters here because a region that scrolls has to be reachable by keyboard — the same reasoning
- * `TableScroll` records in core/src/table.ts — and a focusable region has to be named.
+ * It matters here because a region that scrolls has to be reachable by keyboard. The same reasoning
+ * `TableScroll` records in core/src/table.ts, and a focusable region has to be named.
  * `role="group"`, not `region`: `pre` maps to `generic`, which drops `aria-label` on the floor, so
  * SOME role is needed to hold the name; `region` would hold it too, but it is a landmark, and a docs
  * page with ten code blocks does not want ten more entries in a screen reader's landmark rotor.
@@ -93,7 +93,7 @@ const toggleAttrs: Record<string, string> = {
 const condensedScrolls = hasDensity ? condensedCollapsible : isCollapsible;
 const fullScrolls = isCollapsible;
 const regionName = label ? t("code.region", { label }) : t("code.regionPlain");
-/* One shape whatever the answer, with `undefined` where an attribute does not apply — Astro drops
+/* One shape whatever the answer, with `undefined` where an attribute does not apply. Astro drops
    those, and a union of two different shapes is not assignable to `<Code>`'s props. */
 const scrollRegionAttrs = (scrolls: boolean) => ({
   tabindex: scrolls ? 0 : -1,

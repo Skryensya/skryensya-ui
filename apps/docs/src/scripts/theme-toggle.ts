@@ -1,7 +1,7 @@
 /*
  * Behavior for `ThemeToggle.astro`'s non-scoped header instance (docs-local markup, decision 33:
  * no published contract owns this any more). `initThemeToggle` mirrors what
- * `@skryensya/vanilla`'s deleted `connectThemeToggle` used to do — cycle `<html>`'s color mode on
+ * `@skryensya/vanilla`'s deleted `connectThemeToggle` used to do. Cycle `<html>`'s color mode on
  * click, keep every instance in sync via `themeToggleEvents.change`. The scoped/appearance preview
  * on the landing page has always been its own separate hand-rolled logic (LandingPage.astro) and is
  * untouched by this.
@@ -101,7 +101,7 @@ export function initThemeTogglePersistence(): void {
  * BACKGROUNDED tab, so a tab you switch away from and back to can sit stale until something else
  * repaints it. `visibilitychange`/`pageshow` (the latter for a bfcache restore, which fires no
  * `storage` events at all while frozen) re-read storage the moment the tab becomes visible again, so
- * switching tabs is never worse than a reload — and the `storage` listener still wins when the tab
+ * switching tabs is never worse than a reload, and the `storage` listener still wins when the tab
  * was never backgrounded, or the browser delivers it live anyway.
  */
 export function initThemeToggleSync(): void {

@@ -8,7 +8,7 @@
 @layer components {
   .sk-progress {
     --sk-progress-fill: 0%;
-    --sk-progress-color: var(--color-action-primary);
+    --sk-progress-color: var(--color-action-accent);
 
     display: block;
     inline-size: 100%;

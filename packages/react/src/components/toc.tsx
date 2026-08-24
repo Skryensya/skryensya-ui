@@ -11,7 +11,7 @@ import {
  * TOC: the React half of the same contract the Vanilla enhancer connects to.
  *
  * Copies `connectToc` rather than improving on it (the rule `NOT-PUBLISHED.md` already states for
- * `dialog`/`command-palette`): one shape shipped — a compact, always-open index — and a scroll-spy
+ * `dialog`/`command-palette`): one shape shipped. A compact, always-open index, and a scroll-spy
  * that moves `aria-current` on its own. The `<details>`/`<summary>` pair and the `matchMedia` that
  * pinned it open past `wide` are both gone; see `core/toc.ts`'s own header for why the disclosure
  * stopped being a second shape of this contract.

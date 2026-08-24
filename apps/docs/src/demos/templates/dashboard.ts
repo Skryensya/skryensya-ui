@@ -2,9 +2,9 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../../i18n";
 
 /*
- * ANALYTICS DASHBOARD — the SaaS back-office shape. It shares the app shell with `app-shell.ts`;
+ * ANALYTICS DASHBOARD. The SaaS back-office shape. It shares the app shell with `app-shell.ts`;
  * what it adds is the thing that shell was deliberately left empty to make room for: a work area
- * with a real information hierarchy — a KPI row you read in one glance, then the table you actually
+ * with a real information hierarchy. A KPI row you read in one glance, then the table you actually
  * work in, then its pager.
  *
  * Two choices worth naming, because both have an obvious wrong answer:
@@ -21,7 +21,7 @@ import type { Translate } from "../../i18n";
  * a narrow dashboard so much as an unreadable one. With it they were 73px.
  *
  * That is an improvement, not a fix, and the reason is worth writing down: those breakpoints are
- * `@media`, so they read the VIEWPORT, while this row lives inside a pane that is much narrower —
+ * `@media`, so they read the VIEWPORT, while this row lives inside a pane that is much narrower -
  * the docs rail, then the template's own sidebar. The kit publishes no container query (grepped:
  * zero `@container` rules in core), so a template cannot currently reflow on the space it actually
  * has. Closing that gap means adding container support to the layout pattern, which is a contract
@@ -127,7 +127,7 @@ export const dashboardTree = (t: Translate, locale: "es" | "en"): UsageTree => {
               },
               /*
                * `name` is the ACCESSIBLE name; the letters on screen are `children`. They are two
-               * separate things on purpose — "HP" is not what anyone should hear read aloud — and
+               * separate things on purpose: "HP" is not what anyone should hear read aloud. And
                * leaving the children off renders a correctly-labelled but visibly empty circle.
                */
               {
@@ -152,7 +152,7 @@ export const dashboardTree = (t: Translate, locale: "es" | "en"): UsageTree => {
             children: [
               /*
                * NOT `floating`. The floating trigger is an overlay pinned to the rail's outer edge,
-               * which works in `app-shell.ts` only because that template's `main` is empty — here it
+               * which works in `app-shell.ts` only because that template's `main` is empty. Here it
                * lands on top of the work area's own first line (measured: straight through the
                * "Resumen" heading). In flow it takes a row of the rail and collides with nothing.
                */
@@ -227,7 +227,7 @@ export const dashboardTree = (t: Translate, locale: "es" | "en"): UsageTree => {
                     /*
                      * A range picker, and `Segmented` is what its own `useWhen` describes: three
                      * mutually exclusive options that fit on one row, changing a VIEW rather than a
-                     * value the form submits. Both halves matter — past three or four options this
+                     * value the form submits. Both halves matter. Past three or four options this
                      * would owe a Select, and a value that posted with a form would owe a
                      * RadioGroup.
                      */

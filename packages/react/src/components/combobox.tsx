@@ -354,7 +354,7 @@ export function Combobox({
                  * `aria-activedescendant`. The WAI reference implementation
                  * (`combobox-autocomplete.js`, `setCurrentOptionStyle`) does the opposite for
                  * single-select: it moves `aria-selected="true"` onto whichever option is highlighted
-                 * as you arrow through the list, before Enter commits anything — that is what
+                 * as you arrow through the list, before Enter commits anything. That is what
                  * "visually indicated as the currently selected value" means in the APG's
                  * roles/states table. Multiple stays on Zag's default: with chips, `aria-selected`
                  * genuinely means "part of the chosen set" (aria-multiselectable="true"), a state the

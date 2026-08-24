@@ -1,6 +1,6 @@
 ---
 /*
- * "En esta página", rendered from the same TOC contract used in every consumer — and now with
+ * "En esta página", rendered from the same TOC contract used in every consumer, and now with
  * NOTHING added on top of it. This used to hand-write three things the contract could not express:
  * `data-sk-toc-rail` (a magic string that was never in `tocAttrs`), `open` on the `<details>`, and
  * the disclosure markup around the list. The component ships the always-open index itself now, so
@@ -34,7 +34,7 @@ interface Props {
   pending?: boolean;
   /**
    * Place this Toc as `sk-layout-grid`'s own published rail column (`data-width="rail"`,
-   * `packages/core/css/patterns/layout.css`) — a separate opt-in from `data-sk-toc-rail` above,
+   * `packages/core/css/patterns/layout.css`). A separate opt-in from `data-sk-toc-rail` above,
    * which controls the component's OWN sticky/width CSS regardless of what grid it sits in. A
    * caller only needs this when the Toc is actually a direct child of a `sk-layout-grid`.
    */

@@ -11,7 +11,7 @@ import "@skryensya/core/patterns/layout.css";
  * One import per contract the templates below compose. A page loads the CSS it uses and nothing
  * else (see `i18n/index.ts`'s note on why that matters here in particular: every ComponentPreview
  * stage clones this document's `<head>`), so adding a template means adding its contracts' sheets
- * to this list — the emitter writes the classes, it does not carry the styles.
+ * to this list. The emitter writes the classes, it does not carry the styles.
  */
 import "@skryensya/core/components/badge.css";
 import "@skryensya/core/components/breadcrumb.css";

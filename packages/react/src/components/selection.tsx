@@ -115,7 +115,7 @@ export const CheckboxGroup = forwardRef<HTMLDivElement, CheckboxGroupProps>(func
   ref,
 ) {
   const labelId = useId();
-  // Composed with each item's OWN value (already required to be unique — it is the entries' `key`),
+  // Composed with each item's OWN value (already required to be unique. It is the entries' `key`),
   // not an index: `aria-controls` on the parent, the WAI-ARIA mixed-checkbox pattern's own
   // relationship attribute naming which children it speaks for. `useId()` cannot run inside the
   // `.map()` below (the Hooks rule), so one call here is the stable base every item's id derives

@@ -11,7 +11,7 @@ export type SegmentedControlProps = Omit<
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
-  /** The group's own accessible name — WAI's Radio Group pattern expects one on `role="radiogroup"`. */
+  /** The group's own accessible name. WAI's Radio Group pattern expects one on `role="radiogroup"`. */
   label: string;
 };
 

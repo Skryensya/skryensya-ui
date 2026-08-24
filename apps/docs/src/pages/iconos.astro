@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import ComponentPreview from "../components/ComponentPreview.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 import Used from "../components/Used.astro";
 import { stableIconNames } from "@skryensya/core/icon";
 import { allSets, iconMarkup } from "../icons";
@@ -18,16 +19,20 @@ const vocabCss = `.sk-grid {
   font-size: var(--font-size-caption);
 }`;
 
-const vocabHtml = `<div class="sk-grid" data-gap="md">
-${stableIconNames
-  .map(
-    (name) => `  <span class="sk-stack" data-gap="xs" data-align="center">
-    <span data-sk-icon="${name}" data-sk-icon-size="lg"></span>
-    <code>${name}</code>
-  </span>`,
-  )
-  .join("\n")}
-</div>`;
+const vocabTree: UsageTree = {
+  contract: "layout",
+  signature: "Grid",
+  options: { gap: "md" },
+  children: stableIconNames.map((name) => ({
+    contract: "layout",
+    signature: "Stack",
+    options: { gap: "xs", align: "center" },
+    children: [
+      { contract: "icon", signature: "Icon", options: { name, size: "lg" } },
+      { contract: "typography", signature: "Code", children: name },
+    ],
+  })),
+};
 
 const bind = `# nada: Phosphor viene por defecto con @skryensya/react
 # ¿otro set? lo instalas, y solo entonces se empaqueta:
@@ -55,7 +60,7 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
     <a href="/componentes/icon">Icon</a>.
   </p>
 
-  <ComponentPreview html={vocabHtml} css={vocabCss} label="Vocabulario estable" />
+  <ComponentPreview tree={vocabTree} css={vocabCss} label="Vocabulario estable" />
   <p>
     Cambia marca, modo o contraste arriba: los iconos siguen, y no declaran un solo token de color.
     Heredan <code>currentColor</code>.

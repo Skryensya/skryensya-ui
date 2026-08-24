@@ -133,7 +133,7 @@ export function ListItem({
 
 export type ListItemLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "title"> &
   RowSlots & {
-    /** Required: a row that navigates needs a destination — an `<a>` with no `href` is not one. */
+    /** Required: a row that navigates needs a destination. An `<a>` with no `href` is not one. */
     href: string;
   };
 

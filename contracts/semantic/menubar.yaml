@@ -2,7 +2,7 @@
 
 Menubar:
   useWhen:
-    - "una barra persistente de comandos de aplicación, algunos con submenú desplegable — un editor (Archivo/Editar/Ver)"
+    - "una barra persistente de comandos de aplicación, algunos con submenú desplegable. Un editor (Archivo/Editar/Ver)"
     - "navegación de sitio con secciones que despliegan sub-destinos"
   avoidWhen:
     - "es un solo botón que abre un menú de comandos; eso es Menu"
@@ -13,4 +13,4 @@ Menubar:
 
 MenubarItem:
   useWhen:
-    - "un ítem de la barra — con `items` (el mismo shape de Menu: comandos, checkbox/radio, separadores, submenús anidados) es un desplegable, sin `items` es un comando directo"
+    - "un ítem de la barra. Con `items` (el mismo shape de Menu: comandos, checkbox/radio, separadores, submenús anidados) es un desplegable, sin `items` es un comando directo"

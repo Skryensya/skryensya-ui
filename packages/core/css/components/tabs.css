@@ -63,7 +63,7 @@
 
   /* `[aria-disabled]`, not `:disabled`: a tab that is `disabled` for real drops out of the arrow-key
    * roving tabindex the APG pattern expects, so this is `aria-disabled` the same way the color rule
-   * below it already is — which means, unlike a native `disabled` button, it is STILL pointer-
+   * below it already is, which means, unlike a native `disabled` button, it is STILL pointer-
    * reachable, and a press squeeze it does not act on would be a control answering for a click it
    * is not going to honour. */
   .sk-tabs__trigger:active:not([aria-disabled="true"]) {

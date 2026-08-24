@@ -12,7 +12,7 @@ export type MeterProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   tone?: MeterTone;
   /**
    * Accessible name for the bar, also painted in the header row. Required: `core/meter.ts` requires
-   * it too — without one the `meter` role announces a bare number about nothing.
+   * it too, without one the `meter` role announces a bare number about nothing.
    */
   label: string;
 };
@@ -34,7 +34,7 @@ export function Meter({
     // Painted, not just announced (see meter.ts's own file banner): `label`/`valueText` also drive
     // this header row, so a reader tells a Meter from a Progress bar at a glance, not only via a
     // screen reader. The track below still carries its own `aria-label`/`aria-valuetext` independently
-    // of what's painted here — spoken and painted never have to agree on layout to both be correct.
+    // of what's painted here. Spoken and painted never have to agree on layout to both be correct.
     <div className={cx(meterParts.root, className)}>
       <div aria-hidden="true" className={meterParts.header}>
         <span className={meterParts.label}>{label}</span>

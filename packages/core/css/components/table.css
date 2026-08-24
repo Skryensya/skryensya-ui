@@ -348,15 +348,15 @@
   }
 
   /*
-   * RESIZABLE COLUMNS, opt-in (`resizableColumns` — see `table.ts`'s own option doc). A binding
+   * RESIZABLE COLUMNS, opt-in (`resizableColumns`; see `table.ts`'s own option doc). A binding
    * inserts one `.sk-table__column-resizer.sk-splitter` (the shared "Window Splitter" pattern,
-   * `patterns/splitter.css` — the same primitive Sidebar's own resize handle and Treegrid's own
+   * `patterns/splitter.css`: the same primitive Sidebar's own resize handle and Treegrid's own
    * column resizer already use) into every column header but the last.
    *
    * `table-layout: fixed` is unconditional here, not the opt-in `[data-layout="fixed"]` above: a
    * `<col>`-driven resize needs it regardless of whether the consumer separately asked for it.
    * `inline-size: auto`, not the base rule's `width: 100%`: a resized table's real width is the SUM
-   * of its own column widths, which the reader chose, not a fraction of the container — the binding
+   * of its own column widths, which the reader chose, not a fraction of the container. The binding
    * also writes an explicit pixel `width` straight onto the table for the same reason
    * `treegrid.css` documents at length (a `table-layout: fixed` table sized `auto` still compares
    * its columns' sum against its containing block and redistributes any surplus by content, not by
@@ -367,7 +367,7 @@
     inline-size: auto;
   }
 
-  /* The resizer's containing block — `.sk-splitter` positions itself `inset-block-start: 0;
+  /* The resizer's containing block: `.sk-splitter` positions itself `inset-block-start: 0;
    * inset-inline-end: 0`, full header height at the column's near edge by default, against
    * WHATEVER ancestor is `position: relative`, which a plain `<th>` is not by default. */
   .sk-table[data-resizable-columns] thead th {
@@ -379,7 +379,7 @@
    * `--sk-splitter-block-size` hook (`patterns/splitter.css`): a spreadsheet-style divider that
    * runs the whole table, not a header-only drag handle a reader has to go looking for. The
    * binding (`table.ts`'s `watchSplitterExtent`) keeps the variable matched to the table's own
-   * rendered height for the resizable table's whole lifetime — a resize can change how many lines
+   * rendered height for the resizable table's whole lifetime. A resize can change how many lines
    * a cell WRAPS to, which changes that height mid-gesture, so this is a live `ResizeObserver`, not
    * a one-time seed.
    *
@@ -393,11 +393,11 @@
     z-index: 4;
     /*
      * ALWAYS-VISIBLE COLUMN LINE, opting the splitter pattern's `--sk-splitter-rest-color` hook
-     * (`patterns/splitter.css` — transparent by default, so Sidebar and Treegrid stay exactly as
-     * quiet as before) into a real color: on a resizable table, the column boundary IS structure —
+     * (`patterns/splitter.css`. Transparent by default, so Sidebar and Treegrid stay exactly as
+     * quiet as before) into a real color: on a resizable table, the column boundary IS structure -
      * a reader reads it as a grid line, the same way the header's own underline already reads, not
      * as a hover affordance to go looking for. Same color AND weight as the HEADER cell border it
-     * lives inside (`--sk-table-header-border-color`, `2px` — `.sk-table thead th`'s own rule,
+     * lives inside (`--sk-table-header-border-color`, `2px`: `.sk-table thead th`'s own rule,
      * above), not the lighter `1px` row dividers below it: the line starts at the header, so it
      * reads as that same rule extended downward, not a second, thinner grid competing with it.
      * Hover/focus/drag still escalate past this: the pattern's own rules set `background` directly,

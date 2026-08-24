@@ -9,7 +9,7 @@ const modeAware = tokens.filter((t) => t.modeAware).length;
 
 const accentBundle =
   `/* brand-accent.css: re-declares the complete semantic bundle. */\n:root {\n` +
-  `  --color-action-primary: light-dark(${palettes.blue[700]}, ${palettes.blue[400]});\n` +
+  `  --color-action-accent: light-dark(${palettes.blue[700]}, ${palettes.blue[400]});\n` +
   `  --color-text-accent: light-dark(${palettes.blue[700]}, ${palettes.blue[300]});\n` +
   `  --color-border-accent: light-dark(${palettes.blue[600]}, ${palettes.blue[500]});\n` +
   `  --color-bg-accent-subtle: light-dark(${palettes.blue[50]}, ${palettes.blue[950]});\n` +
@@ -174,7 +174,7 @@ const radiusUse = `<!-- A multiplier preset… -->
     <div class="sk-callout__content">
       <p>
         <strong>Painted small, hit area large.</strong> An icon-only button at <code>sm</code> paints
-        at its real visual size, smaller than 44px — but an invisible <code>::after</code> extends the
+        at its real visual size, smaller than 44px: but an invisible <code>::after</code> extends the
         clickable area up to the touch floor without growing the control on screen. It's the same
         pattern RadioGroup uses (<code>--sk-radio-hit-size</code>, a capture circle larger than the
         visible dot), and Switch solves it differently: there, the whole label is the touch area, so
@@ -184,7 +184,7 @@ const radiusUse = `<!-- A multiplier preset… -->
   </div>
   <p>
     17 components under <code>packages/core/css/components</code> consume the token today, among them
-    Combobox, Select, DatePicker and CommandPalette — any new interactive control should join that
+    Combobox, Select, DatePicker and CommandPalette. Any new interactive control should join that
     list rather than invent its own minimum.
   </p>
 

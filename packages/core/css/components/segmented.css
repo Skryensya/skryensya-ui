@@ -1,8 +1,8 @@
 /*
  * TIER 3, SEGMENTED CONTROL
  *
- * The track reads as ONE CONTROL AT BUTTON WEIGHT — same fill and same border strength as the
- * `.sk-button` it sits beside — not as a recessed well. It used to paint `--color-bg-surface-sunken`
+ * The track reads as ONE CONTROL AT BUTTON WEIGHT. Same fill and same border strength as the
+ * `.sk-button` it sits beside: not as a recessed well. It used to paint `--color-bg-surface-sunken`
  * behind `--color-border-subtle` on the theory that a sunken track frames its options without
  * turning them into a row of buttons. Measured side by side with the button next to it
  * (component-preview's own header is where both live), that theory cost more than it bought: the
@@ -10,19 +10,19 @@
  * than every neighbour, closer to a disabled surface than to something you press. `component-preview.css`
  * had already been overriding both hooks back to these values for exactly that reason, in a local
  * rule with the note "so the two Segmented toggles read as the same weight of control as the button
- * sitting next to them, not a lighter one" — one consumer quietly fixing the component for itself
+ * sitting next to them, not a lighter one". One consumer quietly fixing the component for itself
  * while every other consumer kept the lighter version. That override is gone; this IS the look now.
  *
  * The framing job the well used to do is already covered twice over, which is why nothing is lost by
  * dropping it: the track keeps its own 1px border and its inset padding, so the options are still
  * visibly held inside something, and the selected thumb is what separates "a segmented control" from
- * "a row of buttons" — a row of buttons has no single moving indicator.
+ * "a row of buttons". A row of buttons has no single moving indicator.
  *
  * Selection is a FLAT THUMB with a quiet accent tint and a 1px accent ring, not a brand chip:
  * full accent-subtle fill made every instance look like a marketing toggle, and no elevation
  * shadow on the thumb, since a simulated bevel/lift here read as a stray light source inside a
  * track that itself has none. The ring earns its keep on the tint alone: `--color-bg-accent-subtle`
- * in light mode is nearly as pale as the track behind it, so a fill-only pill all but vanished — the
+ * in light mode is nearly as pale as the track behind it, so a fill-only pill all but vanished. The
  * ring is a flat outline, not a substitute shadow, and stays the same weight in both schemes. That
  * is MORE true against the lighter track above, not less, which is why the ring is what makes this
  * change safe: the thumb's edge never depended on the well's own darkness to be found.
@@ -55,7 +55,7 @@
      * mode --color-bg-accent-subtle is nearly as pale as the track it sits on (a ~1% L difference
      * with barely any chroma), so the pill all but disappeared once its elevation shadow was
      * removed. A 1px accent ring gives the selected state a definite edge without simulating a
-     * light source — a flat outline, not a bevel. Load-bearing in both directions: it is also what
+     * light source. A flat outline, not a bevel. Load-bearing in both directions: it is also what
      * keeps the thumb findable now that the track is lighter rather than sunken. */
     --sk-segmented-selected-ring: inset 0 0 0 1px var(--color-border-accent);
 
@@ -143,10 +143,10 @@
     white-space: nowrap;
     /*
      * Two tempos, the same split checkbox.css/switch.css/button.css draw. STATE-CHANGE: `color` is
-     * the SELECTION — the pill underneath already glides smoothly (the indicator's own transition
+     * the SELECTION. The pill underneath already glides smoothly (the indicator's own transition
      * above), but the text itself used to snap from secondary to accent the instant `aria-checked`
      * flipped, a beautifully sliding background under an abruptly popping label. FEEDBACK: `scale`
-     * is the press answering the finger, faster, because it has to land under the finger — same
+     * is the press answering the finger, faster, because it has to land under the finger. Same
      * squeeze checkbox/switch/radio/button all have, safe here because the JS enhancer measures
      * `offsetWidth`/`offsetLeft` for the indicator, not `getBoundingClientRect()`, so a `transform`-
      * driven scale on the option never perturbs that measurement.
@@ -160,7 +160,7 @@
     scale: var(--motion-press-scale);
   }
 
-  /* Icon-only shape: a square face, no inline padding — same shape button gives
+  /* Icon-only shape: a square face, no inline padding. Same shape button gives
    * `[data-icon-only]`, but via `aspect-ratio` instead of a width=height var: the option's own
    * block-size is stretched to fit the track (see .sk-segmented above), never set here, so there
    * is no fixed height value to mirror into the inline axis. */
@@ -173,11 +173,11 @@
    * Invisible hit pad: grows the clickable area to --size-touch-target without growing layout
    * or the sliding indicator (those read the option's border box).
    *
-   * BLOCK axis expands freely — nothing else sits above or below one option, so there is no
+   * BLOCK axis expands freely: nothing else sits above or below one option, so there is no
    * neighbor to run into (same unconstrained `min()` button.css uses for its own ::after).
    *
    * INLINE axis is capped to half the gap to the next option. An icon-only option (~28-32px) is
-   * well short of 44px, so the naive expansion this used to be — the same unconstrained `min()` —
+   * well short of 44px, so the naive expansion this used to be. The same unconstrained `min()` -
    * reached past the option NEXT to it: two adjacent pads overlapped in the gap between them, and
    * whichever one happened to win the hit test (DOM order, not visual position) is what a tap near
    * the boundary landed on. `max()` against `-gap / 2` stops the expansion exactly at the gap's

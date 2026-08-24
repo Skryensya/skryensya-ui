@@ -2,8 +2,8 @@
  * TIER 3, TAG
  *
  * A keyword chip. Squarer than Badge (control radius, not pill) to read as actionable rather than a
- * status label. When removable, the label and the remove button are separate targets inside one
- * bordered shell; the remove control gets the focus ring and its own hover.
+ * status label. A tag may navigate to a keyword/facet OR expose a separate remove control; link tags
+ * cannot be dismissible, because one anchor cannot safely own a nested button.
  *
  * The edge is tinted from the tag's OWN text color (`currentColor`), so neutral gets a soft grey
  * hairline and every tone a soft hairline of its own hue, one recipe, no per-tone border token to keep
@@ -67,6 +67,14 @@
   .sk-tag[data-tone="success"] { --sk-tag-bg: var(--color-bg-success-subtle); --sk-tag-fg: var(--color-text-success); }
   .sk-tag[data-tone="warning"] { --sk-tag-bg: var(--color-bg-warning-subtle); --sk-tag-fg: var(--color-text-warning); }
   .sk-tag[data-tone="danger"] { --sk-tag-bg: var(--color-bg-danger-subtle); --sk-tag-fg: var(--color-text-danger); }
+
+  .sk-tag[href] {
+    text-decoration: none;
+  }
+
+  .sk-tag[href]:hover {
+    text-decoration: none;
+  }
 
   /* The label is the only part that flexes, so a long keyword ellipsizes instead of pushing the
    * remove button out of the chip. */

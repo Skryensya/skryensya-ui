@@ -33,7 +33,7 @@ export const navbarContract = {
         children: {
           accepts: "signature",
           required: true,
-          /* `Megamenu`, alongside `NavList`: another guest with its own navigation destinations —
+          /* `Megamenu`, alongside `NavList`: another guest with its own navigation destinations -
            * see megamenu.ts's own header comment for why it is a peer, never a variant, of anything
            * else in this catalogue. */
           of: ["NavbarBrand", "NavbarActions", "NavList", "Megamenu"],

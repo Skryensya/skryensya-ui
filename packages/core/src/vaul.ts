@@ -82,13 +82,13 @@ export const vaulContract = {
       default: "block-end",
       attr: "data-edge",
     },
-    /** Rendered already open, non-modally — the platform's attribute, as on `Dialog`. */
+    /** Rendered already open, non-modally. The platform's attribute, as on `Dialog`. */
     open: { type: "boolean", default: false, attr: "open", trueValue: "" },
     /*
      * Required, same reasoning as `Dialog`'s own required `title` slot: `showModal()` gives the
      * root an implicit `role="dialog"` whether or not the composition thinks about it, and WAI's
      * Dialog (Modal) pattern requires that role to carry a name. Vaul has no header of its own to
-     * source a `labelledBySlot` from (deliberately — "its own semantics are the composition's
+     * source a `labelledBySlot` from (deliberately: "its own semantics are the composition's
      * business"), so the name is a plain option instead of a slot, the same shape `Feed`'s own
      * required `label` already uses for a root with no title node either.
      */

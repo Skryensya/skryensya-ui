@@ -38,7 +38,7 @@ export type SidebarOptions = {
   minInlineSize?: string;
   maxInlineSize?: string;
   /**
-   * Names the `<aside>` landmark. Optional — required only once a page has a second
+   * Names the `<aside>` landmark. Optional. Required only once a page has a second
    * `complementary` region to disambiguate from.
    */
   landmarkLabel?: string;
@@ -84,7 +84,7 @@ export function sidebarWidthPreference(storageKey: string): Preference<number | 
 }
 
 /**
- * Where a width sits between the two bounds, 0 to 100 — Sidebar's own name for
+ * Where a width sits between the two bounds, 0 to 100. Sidebar's own name for
  * `splitterValuePercent` (`core/splitter.ts`, the shared "Window Splitter" primitive Treegrid's
  * column resizer now uses too), kept as its own export since it is Sidebar's public, documented,
  * tested API and a rename would be a breaking one for no behavioural reason.
@@ -149,7 +149,7 @@ export const sidebarContract = {
     label: { type: "string", attr: "aria-label" },
 
     /**
-     * Names the `<aside>` itself — a different target than `label` above (the trigger's own name).
+     * Names the `<aside>` itself. A different target than `label` above (the trigger's own name).
      * Optional: a page with exactly one `complementary` landmark needs no name to be unambiguous,
      * but WAI's own landmark practice requires one the moment a consumer renders a second `<aside>`
      * (or a second `Sidebar`) on the same page, and the contract had no way to supply it at all.
@@ -178,7 +178,7 @@ export const sidebarContract = {
      * rather than sitting inline where it was authored (a header row, say). For a shell whose
      * header is the application's own (a navbar above, a workspace switcher), an inline trigger
      * row is chrome the shell did not ask for; a corner control reads as the rail's own affordance
-     * instead. Purely presentational — the DOM position (and which legal parent hosts it) is
+     * instead. Purely presentational. The DOM position (and which legal parent hosts it) is
      * unchanged, so `aria-controls` and the click handler need nothing new to find it.
      */
     floating: { type: "boolean", default: false, attr: "data-floating", trueValue: "" },
@@ -260,11 +260,11 @@ export const sidebarContract = {
       /*
        * The header is where a sidebar actually puts it, beside the brand, and the footer is the
        * other real answer. `Sidebar` alone said the only legal place was loose in the shell, which
-       * is the one place nobody puts it — DOM position, that is. `floating` (below) still renders
+       * is the one place nobody puts it. DOM position, that is. `floating` (below) still renders
        * it wherever it was authored, just visually lifted to the panel's own corner; it is a paint
        * decision, not a second legal parent.
        *
-       * ONE LEVEL, EVERY ITEM ICONED — that is the whole of what collapsing can show. The rail
+       * ONE LEVEL, EVERY ITEM ICONED. That is the whole of what collapsing can show. The rail
        * narrows to `--sk-sidebar-collapsed-inline-size`, one icon's width, so a nested group has no
        * row left to draw its own trigger on, and a destination with no icon collapses to nothing at
        * all. A list with either reaches for `SidebarResizeHandle` instead: smaller, never iconified,
@@ -309,7 +309,7 @@ export const sidebarContract = {
       template: {
         element: "div",
         part: "resizeHandle",
-        // The shared "Window Splitter" visual language (`patterns/splitter.css`) — the hairline,
+        // The shared "Window Splitter" visual language (`patterns/splitter.css`). The hairline,
         // hover/focus/active colour, hit region, cursor. `core/splitter.ts` is the matching shared
         // behaviour both bindings drive this element with (see `connectSidebar`/`SidebarResizeHandle`).
         also: ["sk-splitter"],

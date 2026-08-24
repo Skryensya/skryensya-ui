@@ -2,6 +2,7 @@
 import "@skryensya/core/components/select.css";
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 import ComponentPreview from "../components/ComponentPreview.astro";
 import StylingHooks from "../components/StylingHooks.astro";
 
@@ -22,50 +23,7 @@ const anatomy = `<!-- El ANCLA: lo que sea contra lo que se mide. Casi siempre e
   </span>
 </span>`;
 
-const html = `<div class="sk-anclaje-demo">
-  <span class="sk-tooltip" data-sk-anchor data-sk-placement="block-start">
-    <button class="sk-button sk-interactive sk-tooltip__trigger sk-anchor" data-sk-anchor-trigger type="button">
-      block-start
-    </button>
-    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-      <span class="sk-anchored-arrow" aria-hidden="true"></span>
-      <span class="sk-tooltip__content" data-sk-anchor-content>Sale por arriba</span>
-    </span>
-  </span>
 
-  <span class="sk-tooltip" data-sk-anchor data-sk-placement="block-end">
-    <button class="sk-button sk-interactive sk-tooltip__trigger sk-anchor" data-sk-anchor-trigger type="button">
-      block-end
-    </button>
-    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-      <span class="sk-anchored-arrow" aria-hidden="true"></span>
-      <span class="sk-tooltip__content" data-sk-anchor-content>Sale por abajo</span>
-    </span>
-  </span>
-
-  <span class="sk-tooltip" data-sk-anchor data-sk-placement="inline-end">
-    <button class="sk-button sk-interactive sk-tooltip__trigger sk-anchor" data-sk-anchor-trigger type="button">
-      inline-end
-    </button>
-    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-      <span class="sk-anchored-arrow" aria-hidden="true"></span>
-      <span class="sk-tooltip__content" data-sk-anchor-content>Sale al costado</span>
-    </span>
-  </span>
-
-  <span class="sk-tooltip" data-sk-anchor>
-    <button class="sk-button sk-interactive sk-tooltip__trigger sk-anchor" data-sk-anchor-trigger type="button">
-      sin flecha
-    </button>
-    <span class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
-      <span class="sk-tooltip__content" data-sk-anchor-content>La flecha es opcional</span>
-    </span>
-  </span>
-</div>`;
-
-const js = `import { initComponents } from "@skryensya/vanilla/auto";
-
-initComponents();`;
 
 const escapeHatch = `/* Un submenú sale al costado y alineado por arriba: no es ninguna de las cuatro.
    Se pide por el hook, no agregando una quinta al vocabulario público. */
@@ -96,6 +54,26 @@ const arrowReact = `<Tooltip arrow content="Se guarda solo">
 <Popover arrow trigger="Ver perfil" title="Ada Lovelace">
   Matemática y escritora.
 </Popover>`;
+
+const anchorTree: UsageTree = {
+  contract: "layout",
+  signature: "Inline",
+  attrs: { class: "sk-anclaje-demo" },
+  children: ["block-start", "block-end", "inline-start", "inline-end"].map((placement) => ({
+    contract: "tooltip",
+    signature: "Tooltip",
+    options: { placement, arrow: true },
+    slots: {
+      children: {
+        contract: "button",
+        signature: "Button.action",
+        attrs: { class: "sk-tooltip__trigger" },
+        children: placement,
+      },
+      content: "Tooltip",
+    },
+  })),
+};
 ---
 
 <Base
@@ -110,7 +88,7 @@ const arrowReact = `<Tooltip arrow content="Se guarda solo">
     que hacen tooltip, popover, popup, menu y sus submenús, select, combobox y date picker.
   </p>
 
-  <ComponentPreview html={html} js={js} label="HTML" />
+  <ComponentPreview tree={anchorTree} label="HTML" />
 
   <h2>Por qué es un pattern y no un componente</h2>
   <p>

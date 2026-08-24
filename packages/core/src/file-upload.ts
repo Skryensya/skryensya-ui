@@ -8,8 +8,8 @@ export type FileUploadChangeDetails = {
 /**
  * A rejected file's own reason, in prose, keyed by Zag's own error codes (`@zag-js/file-utils`'
  * `FileError`). Shared here so neither binding invents its own wording, and so a vanilla consumer
- * — the one binding that never renders this contract's markup itself (see the KNOWN GAP note above)
- * — can still turn `sk-file-change`'s `rejectedFiles` into a real sentence without guessing Zag's
+ *. The one binding that never renders this contract's markup itself (see the KNOWN GAP note above)
+ *. Can still turn `sk-file-change`'s `rejectedFiles` into a real sentence without guessing Zag's
  * vocabulary.
  */
 export function fileUploadErrorMessage(error: string): string {

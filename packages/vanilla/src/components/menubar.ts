@@ -6,16 +6,16 @@ import { createConnectMount } from "../runtime/svelte-hydrate.js";
  * MENUBAR, now that each item's dropdown is a real `Menu` instance (decision: see menubar.ts's own
  * header comment in core). This binding owns only what Menu's own machine does NOT: roving tabindex
  * between TOP-LEVEL triggers, and the handoff that closes one item's dropdown and opens the adjacent
- * one. Everything that happens ONCE a dropdown (or a submenu inside it) has focus — Up/Down, Enter,
- * Escape, Home/End within that list, checkbox/radio, nested submenus — is `Menu.svelte`'s own,
+ * one. Everything that happens ONCE a dropdown (or a submenu inside it) has focus. Up/Down, Enter,
+ * Escape, Home/End within that list, checkbox/radio, nested submenus. Is `Menu.svelte`'s own,
  * because `[data-sk-menu-trigger]` on each item's own button already got `api.getTriggerProps()`
  * spread onto it by that component, mounted independently on the SAME `[data-sk-menu]` root the
  * item's wrapper carries.
  *
  * The one seam that needs care: `@zag-js/menu`'s own content keydown handler ALSO claims
  * ArrowLeft/Right/Home/End once a dropdown has focus (for nested-submenu navigation), and it runs in
- * the BUBBLE phase. This binding's own keydown listener runs in CAPTURE phase on the bar root — capture
- * always fires before bubble, on any ancestor, so it gets first refusal — and steps aside (does
+ * the BUBBLE phase. This binding's own keydown listener runs in CAPTURE phase on the bar root. Capture
+ * always fires before bubble, on any ancestor, so it gets first refusal, and steps aside (does
  * nothing, lets the event continue to Zag) whenever focus is inside a NESTED submenu
  * (`[data-sk-submenu]`), or whenever a dropdown is open at all and the key isn't Left/Right (Home/End
  * inside an open list is Zag's own job, matching APG menu conventions, not the bar's).
@@ -32,7 +32,7 @@ const selector = {
 
 type TopEntry = {
   trigger: HTMLElement;
-  /** The item's own `[data-sk-menu]` root — Menu.svelte's mount point, and what `getMenuApi` keys on. */
+  /** The item's own `[data-sk-menu]` root. Menu.svelte's mount point, and what `getMenuApi` keys on. */
   wrapper: HTMLElement;
 };
 
@@ -42,7 +42,7 @@ function readTops(root: HTMLElement): TopEntry[] {
     .map((trigger) => ({ trigger, wrapper: trigger.closest<HTMLElement>(selector.wrapper) ?? trigger }));
 }
 
-/** The item's OWN top-level popup content — not a nested submenu's, even though both match `[data-sk-menu-content]`. */
+/** The item's OWN top-level popup content: not a nested submenu's, even though both match `[data-sk-menu-content]`. */
 function ownContent(wrapper: HTMLElement): HTMLElement | null {
   return (
     Array.from(wrapper.querySelectorAll<HTMLElement>(selector.content)).find(
@@ -104,7 +104,7 @@ function connect(root: HTMLElement): () => void {
     const entry = tops[focus.topIndex];
     if (!entry) return;
     if (focus.subIndex === null) entry.trigger.focus();
-    // Focus onto an open dropdown's own content is Zag's own job as part of opening it —
+    // Focus onto an open dropdown's own content is Zag's own job as part of opening it -
     // `api.setOpen(true)` drives that, same as it does when the trigger opens itself natively.
   };
 

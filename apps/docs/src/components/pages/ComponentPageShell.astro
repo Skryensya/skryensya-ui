@@ -6,7 +6,7 @@
  * hero, tablist and `hasChanges` wiring to get it (see `apps/docs/src/scripts/hero-tabs-toc.ts`
  * for the ToC half of this contract: it skips each panel's own first heading and starts the rail
  * one level down, which is why `usage` gets a heading here but `install` and `a11y` bring their
- * own visible one, matching the tab strip word for word — see that file's own comment for why).
+ * own visible one, matching the tab strip word for word; see that file's own comment for why).
  *
  * Referencia and Cambios are wired automatically from `contractId`: a page cannot describe an
  * option the compiled contract does not also carry, because both are the one artifact
@@ -29,7 +29,7 @@ import Base from "../../layouts/Base.astro";
 import ContractChangelog from "../ContractChangelog.astro";
 import ContractReference from "../ContractReference.astro";
 import StylingHooks, { type HookGroup } from "../StylingHooks.astro";
-import SourceViewer, { type SourceFile } from "../SourceViewer.astro";
+import type { SourceFile } from "../SourceViewer.astro";
 import TestCoverage, { type TestGroup } from "../TestCoverage.astro";
 import { changelogFor } from "../../lib/contract-reference";
 import { getLocale, useTranslations } from "../../i18n";
@@ -42,14 +42,14 @@ interface Props {
    *  Cambios drop out rather than reading a contract that does not describe the page. */
   contractId?: string;
   styleGroups?: readonly HookGroup[];
-  /** Files for the "browse the source" panel under Referencia. Omit while a component has none wired. */
+  /** Legacy prop accepted by component pages that still collect source files; Referencia no longer renders a source browser. */
   sourceFiles?: readonly SourceFile[];
   /** One-line-per-test summaries, grouped by test file. Omit while a component has none curated yet. */
   tests?: readonly TestGroup[];
   hideVanillaMount?: boolean;
 }
 
-const { title, description, contractId, styleGroups = [], sourceFiles, tests = [], hideVanillaMount = true } = Astro.props;
+const { title, description, contractId, styleGroups = [], tests = [], hideVanillaMount = true } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
 const hasContract = Boolean(contractId);
 const hasChanges = contractId ? changelogFor(contractId).length > 0 : false;
@@ -66,7 +66,7 @@ const hasTests = tests.length > 0;
    * `<main>` is a `.sk-layout-grid`, and `layout.css` gives every direct child its own implicit row
    * (`.sk-layout-grid > * { grid-column: content-start / content-end }`). A sticky grid item is
    * confined to its own grid AREA, so a sticky hero sitting directly under `<main>` would have a
-   * one-row containing block and scroll away exactly like a static one — the property would be a
+   * one-row containing block and scroll away exactly like a static one. The property would be a
    * no-op. That is also why the tab strip already works: its sticky is not on the grid item, it is
    * on `.sk-tabs__list` INSIDE `.sk-tabs`, which is the tall item that spans the whole document.
    *
@@ -87,7 +87,7 @@ const hasTests = tests.length > 0;
      *
      * Shrinking the header for real was measured and is wrong. The tab strip below it rises at the
      * scroll's rate PLUS whatever height the header gives back, so it reaches its own pinned top
-     * roughly twice as fast as the band closes and spends the difference hidden underneath it — at
+     * roughly twice as fast as the band closes and spends the difference hidden underneath it. At
      * 1400px the strip was pinned at 100px with the band's edge still at 173. The only collapse
      * range that avoids it is 24px, which is too short to read as anything but a snap.
      *
@@ -103,7 +103,7 @@ const hasTests = tests.length > 0;
     <header class="docs-component-hero">
       {/*
        * PLAIN MARKUP, not the Breadcrumb contract: that was tried (a real `nav`/`ol`/`li` trail that
-       * flipped into an inline "Componentes / Accordion" row once collapsed) and undone — the morph
+       * flipped into an inline "Componentes / Accordion" row once collapsed) and undone. The morph
        * itself read as the wrong kind of attention on scroll. `--docs-hero-collapse` still drives the
        * eyebrow, just toward CLOSED now rather than toward a second layout: see its rule in site.css.
        */}
@@ -178,15 +178,6 @@ const hasTests = tests.length > 0;
         hasContract && contractId && (
           <div class="sk-tabs__content sk-layout-grid" data-sk-tabs-content data-value="contract">
             <ContractReference id={contractId} />
-            {
-              sourceFiles && sourceFiles.length > 0 && (
-                <>
-                  <h3>{t("sourceViewer.title")}</h3>
-                  <p>{t("sourceViewer.intro", { name: title })}</p>
-                  <SourceViewer id={contractId} title={title} files={sourceFiles} />
-                </>
-              )
-            }
           </div>
         )
       }

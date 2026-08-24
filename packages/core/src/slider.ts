@@ -29,16 +29,16 @@ export function sliderFill(value: number, min: number, max: number): number {
 }
 
 /*
- * MULTI-THUMB — two native range inputs, not WAI's own custom `role="slider"` SVG widget (the one
+ * MULTI-THUMB. Two native range inputs, not WAI's own custom `role="slider"` SVG widget (the one
  * example the APG publishes for this pattern). Chosen deliberately: two `<input type="range">`
  * already get keyboard, touch, form participation and the accessibility tree from the platform for
- * free — WAI's own custom-widget example carries an explicit caveat that "some users of touch-based
+ * free. WAI's own custom-widget example carries an explicit caveat that "some users of touch-based
  * assistive technologies may experience difficulty" with a hand-rolled slider, exactly the class of
  * problem a native element never has. The one thing native does NOT give for free is stopping one
  * thumb from being dragged past the other; `sliderRangeBounds` is that, and nothing else.
  */
 
-/** Each thumb's runtime `min`/`max`, bounded by where the OTHER thumb currently sits — the low
+/** Each thumb's runtime `min`/`max`, bounded by where the OTHER thumb currently sits. The low
  *  thumb can never be dragged past the high one, or vice versa, without either input's native
  *  clamping ever needing to know about the other. */
 export function sliderRangeBounds(
@@ -86,11 +86,11 @@ export const sliderContract = {
     name: { type: "string", attr: "name" },
     disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "" },
 
-    /** Where each thumb of `SliderRange` starts — same `value`/`defaultValue` split as `value`
+    /** Where each thumb of `SliderRange` starts. Same `value`/`defaultValue` split as `value`
      *  above, and for the same reason: a composition is data, never state to lock a thumb to. */
     lowValue: { type: "number", default: 0, attr: "value", prop: "defaultLowValue" },
     highValue: { type: "number", default: 100, attr: "value", prop: "defaultHighValue" },
-    /** A range input carries no implicit name, and here there are TWO thumbs to tell apart — WAI's
+    /** A range input carries no implicit name, and here there are TWO thumbs to tell apart. WAI's
      *  own multi-thumb example names them distinctly ("Hotel Minimum Price" / "...Maximum Price"),
      *  never just "value", so both are required rather than defaulted. */
     lowLabel: { type: "string", attr: "aria-label" },
@@ -122,7 +122,7 @@ export const sliderContract = {
     },
 
     /*
-     * Two native `<input type="range">`, not one — see the file's own "MULTI-THUMB" banner above
+     * Two native `<input type="range">`, not one; see the file's own "MULTI-THUMB" banner above
      * for why this is the chosen shape over WAI's custom SVG widget. The wrapper is the host so a
      * consumer's own `id`/`class`/`data-*` land in the one place a two-input control has to carry
      * them; the low/high inputs are internal structure, never composed by the author, the same way
@@ -145,7 +145,7 @@ export const sliderContract = {
             part: "rangeFill",
             attrs: { "aria-hidden": "true" },
             mount: "data-sk-slider-range-fill",
-            // Initial paint only — same caveat `Slider`'s own `style` entry documents: static,
+            // Initial paint only. Same caveat `Slider`'s own `style` entry documents: static,
             // ignorant of `min`, corrected for real by the enhancer/React on mount.
             style: [
               { property: "--sk-slider-range-fill-start", percentOf: ["lowValue", "max"], as: "fraction" },
@@ -153,7 +153,7 @@ export const sliderContract = {
             ],
           },
           {
-            // `also: ["sk-slider"]` — the single Slider's thumb/track/focus-ring styling is
+            // `also: ["sk-slider"]`. The single Slider's thumb/track/focus-ring styling is
             // reused wholesale, not restated; `slider.css`'s own `.sk-slider-range` rules are only
             // the DELTA a two-input overlay needs (position, a transparent track, pointer-events).
             element: "input",

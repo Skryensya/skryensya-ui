@@ -6,7 +6,7 @@ describe("sliderRangeBounds", () => {
     expect(sliderRangeBounds(20, 80, 0, 100)).toEqual({ lowMin: 0, lowMax: 80, highMin: 20, highMax: 100 });
   });
 
-  it("collapses to a single point when both thumbs share a value — neither can cross it", () => {
+  it("collapses to a single point when both thumbs share a value. Neither can cross it", () => {
     expect(sliderRangeBounds(50, 50, 0, 100)).toEqual({ lowMin: 0, lowMax: 50, highMin: 50, highMax: 100 });
   });
 

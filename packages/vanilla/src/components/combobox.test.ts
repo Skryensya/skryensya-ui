@@ -101,7 +101,7 @@ describe("Combobox Vanilla contracts", () => {
     type(input, "arg");
     fireEvent.click(items[1]);
 
-    // The chip carries the answer, so the input is free for the next search — on the whole list.
+    // The chip carries the answer, so the input is free for the next search. On the whole list.
     await waitFor(() => expect(input.value).toBe(""));
     expect(shown(root)).toHaveLength(items.length);
     expect(
@@ -119,7 +119,7 @@ describe("Combobox Vanilla contracts", () => {
     fireEvent.keyDown(input, { key: "ArrowDown" });
 
     expect(content.dataset.highlightSource).toBe("keyboard");
-    // The control gives its ring up while an option holds it — one ring on screen at a time.
+    // The control gives its ring up while an option holds it. One ring on screen at a time.
     await waitFor(() => expect(root.hasAttribute("data-virtual-focus")).toBe(true));
 
     fireEvent.pointerMove(items[0]);
@@ -158,7 +158,7 @@ describe("Combobox Vanilla contracts", () => {
     fireEvent.keyDown(input, { key: "ArrowDown" });
 
     // Nothing chosen yet: the highlight alone must not produce aria-selected in multiple mode
-    // either — only single-select borrows the highlight for it.
+    // either. Only single-select borrows the highlight for it.
     await waitFor(() => expect(items[0].hasAttribute("data-highlighted")).toBe(true));
     expect(items[0].hasAttribute("aria-selected")).toBe(false);
 

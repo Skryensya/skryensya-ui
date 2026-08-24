@@ -162,7 +162,7 @@ export function localizePath(pathname: string, locale: Locale): string {
  *
  * `?raw` IS LOAD-BEARING, and it is the difference between this file costing nothing and costing
  * every page 147 kB of someone else's CSS. Ask Vite for the page MODULES and you hand it an import
- * edge from this module — which `Base.astro` pulls in, so, every page — to all ~200 pages. Astro
+ * edge from this module, which `Base.astro` pulls in, so, every page. To all ~200 pages. Astro
  * then resolves each route's styles through that graph and concludes that every page's stylesheet
  * belongs on every page. Measured before this query was added: `/componentes/accordion` shipped 15
  * stylesheets totalling 298 kB, among them `customize.css` and `personalizar.css`, two OTHER routes'

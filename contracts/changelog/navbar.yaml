@@ -11,14 +11,14 @@ entries:
       title: Navbar acepta Megamenu como invitado, junto a NavList
       body: >-
         El slot <code>children</code> de <code>Navbar</code> ahora también acepta
-        <code>Megamenu</code> — otro invitado con sus propios destinos de navegación, la misma
+        <code>Megamenu</code>: otro invitado con sus propios destinos de navegación, la misma
         relación que ya tiene con <code>NavList</code>. Nada del rol de Navbar como SHELL cambia:
         sigue sin máquina propia y sin ajustar el markup de su invitado, sólo redeclara sus estilos.
     en:
       title: Navbar accepts Megamenu as a guest, alongside NavList
       body: >-
-        <code>Navbar</code>'s own <code>children</code> slot now also accepts <code>Megamenu</code>
-        — another guest with its own navigation destinations, the same relationship it already has
+        <code>Navbar</code>'s own <code>children</code> slot now also accepts <code>Megamenu</code>:
+        another guest with its own navigation destinations, the same relationship it already has
         with <code>NavList</code>. Nothing about Navbar's own role as a SHELL changes: still no
         machine of its own, still never reaching into its guest's markup, only re-declaring its own
         styling hooks.

@@ -6,7 +6,7 @@ describe("Feed React contracts", () => {
   it("sets role=feed, names it, and reflects aria-busy", () => {
     const ui = render(
       <Feed busy label="Actividad reciente">
-        <FeedArticle label="Ana — hace 2 min" posInset={1} setSize={2}>
+        <FeedArticle label="Ana. Hace 2 min" posInset={1} setSize={2}>
           Publicó una foto.
         </FeedArticle>
       </Feed>,
@@ -18,10 +18,10 @@ describe("Feed React contracts", () => {
   it("each article gets role=article with aria-posinset/aria-setsize and a real labelled name", () => {
     const ui = render(
       <Feed label="Actividad reciente">
-        <FeedArticle label="Ana — hace 2 min" posInset={1} setSize={2}>
+        <FeedArticle label="Ana. Hace 2 min" posInset={1} setSize={2}>
           Publicó una foto.
         </FeedArticle>
-        <FeedArticle label="Beto — hace 5 min" posInset={2} setSize={2}>
+        <FeedArticle label="Beto. Hace 5 min" posInset={2} setSize={2}>
           Comentó.
         </FeedArticle>
       </Feed>,
@@ -32,7 +32,7 @@ describe("Feed React contracts", () => {
     expect(articles[0]!.getAttribute("aria-setsize")).toBe("2");
     const labelId = articles[0]!.getAttribute("aria-labelledby");
     expect(labelId).not.toBeNull();
-    expect(document.getElementById(labelId!)?.textContent).toBe("Ana — hace 2 min");
+    expect(document.getElementById(labelId!)?.textContent).toBe("Ana. Hace 2 min");
     expect(articles[1]!.getAttribute("aria-posinset")).toBe("2");
   });
 

@@ -1,7 +1,7 @@
 import type { Translate } from "../../i18n";
 
 /*
- * THE STRESS FIXTURE — four columns instead of the minimal demo's two, long content that forces
+ * THE STRESS FIXTURE. Four columns instead of the minimal demo's two, long content that forces
  * ellipsis in more than one column, seven levels of nesting (five with their own CSS rule in
  * `treegrid.css`, the sixth and seventh falling back to the shared "deeper than 5" ceiling), and
  * collapsed branches at more than one level at once, including one at the root. A file explorer is
@@ -23,7 +23,7 @@ export const treegridStressRows = (t: Translate) => [
     setSize: 3,
     posInset: 1,
     expanded: true,
-    cells: [t("demo.treegridStress.projectAlpha"), t("demo.treegridStress.typeFolder"), "—", t("demo.treegridStress.modified2d")],
+    cells: [t("demo.treegridStress.projectAlpha"), t("demo.treegridStress.typeFolder"), "N/A", t("demo.treegridStress.modified2d")],
   },
   {
     value: "src",
@@ -31,7 +31,7 @@ export const treegridStressRows = (t: Translate) => [
     setSize: 3,
     posInset: 1,
     expanded: true,
-    cells: [t("demo.treegridStress.src"), t("demo.treegridStress.typeFolder"), "—", t("demo.treegridStress.modified2d")],
+    cells: [t("demo.treegridStress.src"), t("demo.treegridStress.typeFolder"), "N/A", t("demo.treegridStress.modified2d")],
   },
   {
     value: "components",
@@ -39,7 +39,7 @@ export const treegridStressRows = (t: Translate) => [
     setSize: 2,
     posInset: 1,
     expanded: true,
-    cells: [t("demo.treegridStress.components"), t("demo.treegridStress.typeFolder"), "—", t("demo.treegridStress.modified3d")],
+    cells: [t("demo.treegridStress.components"), t("demo.treegridStress.typeFolder"), "N/A", t("demo.treegridStress.modified3d")],
   },
   {
     value: "button-folder",
@@ -47,7 +47,7 @@ export const treegridStressRows = (t: Translate) => [
     setSize: 2,
     posInset: 1,
     expanded: true,
-    cells: [t("demo.treegridStress.buttonFolder"), t("demo.treegridStress.typeFolder"), "—", t("demo.treegridStress.modified3d")],
+    cells: [t("demo.treegridStress.buttonFolder"), t("demo.treegridStress.typeFolder"), "N/A", t("demo.treegridStress.modified3d")],
   },
   {
     value: "button-tsx",
@@ -66,7 +66,7 @@ export const treegridStressRows = (t: Translate) => [
     cells: [
       t("demo.treegridStress.internalTypesFolder"),
       t("demo.treegridStress.typeFolder"),
-      "—",
+      "N/A",
       t("demo.treegridStress.modified1h"),
     ],
   },
@@ -104,7 +104,7 @@ export const treegridStressRows = (t: Translate) => [
     setSize: 2,
     posInset: 2,
     expanded: false,
-    cells: [t("demo.treegridStress.utilsFolder"), t("demo.treegridStress.typeFolder"), "—", t("demo.treegridStress.modified1week")],
+    cells: [t("demo.treegridStress.utilsFolder"), t("demo.treegridStress.typeFolder"), "N/A", t("demo.treegridStress.modified1week")],
   },
   {
     value: "format-util",
@@ -133,7 +133,7 @@ export const treegridStressRows = (t: Translate) => [
     setSize: 3,
     posInset: 2,
     expanded: false,
-    cells: [t("demo.treegridStress.projectBeta"), t("demo.treegridStress.typeFolder"), "—", t("demo.treegridStress.modified1month")],
+    cells: [t("demo.treegridStress.projectBeta"), t("demo.treegridStress.typeFolder"), "N/A", t("demo.treegridStress.modified1month")],
   },
   {
     value: "index-ts",

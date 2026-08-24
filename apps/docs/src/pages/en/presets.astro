@@ -5,8 +5,8 @@
  * whole site.
  *
  * A "preset" here is NOT the header's accent toggle (that one cycles only 6-7 color tokens over
- * :root — see lib/palette-presets.ts). A preset is LOOK & FEEL, not just a palette: accent color,
- * feedback color, THE NEUTRAL SURFACES (background, text, borders — not just the accent),
+ * :root; see lib/palette-presets.ts). A preset is LOOK & FEEL, not just a palette: accent color,
+ * feedback color, THE NEUTRAL SURFACES (background, text, borders: not just the accent),
  * roundness, typography, spacing density, resting shadow, label weight and even how far a button
  * sinks on press all change together. Each preset re-declares that bundle onto `.preset-canvas`,
  * never onto :root, so picking one doesn't change this page or the rest of the site (that's why
@@ -14,7 +14,7 @@
  * preference).
  *
  * All five live simultaneously as a READ-ONLY GALLERY: nothing is selectable, there is no control
- * that cycles between them — each card already shows its own result, side by side with the others,
+ * that cycles between them. Each card already shows its own result, side by side with the others,
  * so they can be compared at a glance.
  *
  * The mechanism is the same re-declaration trick /customize used (see history): color and radius
@@ -25,7 +25,7 @@
  *
  * LAYOUT: `sk-layout-grid` (packages/core/css/patterns/layout.css), the published pattern, not
  * bespoke CSS. Neither the prose nor the gallery carries `data-width`, so both resolve to the same
- * "content" measure (64rem) — the text doesn't sit in a narrower column than the cards below it,
+ * "content" measure (64rem). The text doesn't sit in a narrower column than the cards below it,
  * the whole block breathes at the same width. `<Toc rail>` is the published rail
  * (`data-width="rail"`, packages/core/css/components/toc.css) instead of a hand-rolled side nav.
  * `fullBleed` stays: this page still skips the docs SidebarNav (navigating the component tree isn't
@@ -42,7 +42,7 @@ import "@skryensya/core/patterns/image-frame.css";
 
 /* A real (if generic) placeholder photo, not a gradient wash: the same dummyimage.com trick every
  * other card example in these docs already uses (examples/card-data.ts). One shared URL for all 20
- * card instances (5 presets × 2 schemes) — the browser fetches it once and serves the rest from
+ * card instances (5 presets × 2 schemes). The browser fetches it once and serves the rest from
  * cache, so this costs one network request, not twenty. */
 const demoImage = dummyImage(640, 220, "d4d4d4", "737373", "Image");
 
@@ -56,11 +56,11 @@ interface Preset {
 
 /*
  * Each card renders its demo TWICE, side by side, one half with `color-scheme: light` forced and
- * the other with `color-scheme: dark` forced — not a "current site theme" preview but both at once,
+ * the other with `color-scheme: dark` forced: not a "current site theme" preview but both at once,
  * so a preset can be judged in either mode without the reader having to flip the header's theme
  * toggle and scroll back. This costs nothing extra to wire: every `--color-*` token here is already
  * `light-dark(...)`, and `light-dark()` resolves against whatever `color-scheme` is in effect on the
- * element consuming it — the exact mechanism the real theme toggle uses on `<html>`, just scoped to
+ * element consuming it. The exact mechanism the real theme toggle uses on `<html>`, just scoped to
  * a `<div>` instead.
  */
 const SCHEMES = [
@@ -69,16 +69,16 @@ const SCHEMES = [
 ] as const;
 
 /*
- * Five presets, named for what they evoke, not for the hue that happens to carry them —
+ * Five presets, named for what they evoke, not for the hue that happens to carry them -
  * "Default" and "UC" are the two exceptions, and neither is a color name either (a baseline and a
  * real institution's initials). Each non-default preset pairs an accent family with a DIFFERENT
- * neutral family for its surfaces/text/borders (ADR 0019's constant, published palettes —
+ * neutral family for its surfaces/text/borders (ADR 0019's constant, published palettes -
  * stone/gray/slate/neutral/zinc all ship full 50–950 ramps already), plus a radius multiplier and a
- * typeface, plus — where it earns its keep — a spacing density (`--sk-density-factor`, needs
+ * typeface, plus, where it earns its keep. A spacing density (`--sk-density-factor`, needs
  * `data-sk-density-scope` on the canvas below to have any effect), a resting shadow
  * (`--elevation-flat`, `none` by default), a label weight (`--font-weight-label`) and how far a
  * button sinks on press (`--motion-press-scale`, `0.98` by default, `1` means no squeeze at all).
- * Not every preset touches every dimension — a preset that leaves one alone is still a real choice,
+ * Not every preset touches every dimension. A preset that leaves one alone is still a real choice,
  * not a gap.
  */
 const PRESETS: Preset[] = [
@@ -92,10 +92,10 @@ const PRESETS: Preset[] = [
     id: "uc",
     name: "UC",
     description:
-      "Reproduces kitdigital.uc.cl (Pontificia Universidad Católica de Chile): Celeste accent, pure-gray surfaces, a squarer radius, Roboto typography and zero microinteraction — an institutional button doesn't sink when pressed.",
+      "Reproduces kitdigital.uc.cl (Pontificia Universidad Católica de Chile): Celeste accent, pure-gray surfaces, a squarer radius, Roboto typography and zero microinteraction. An institutional button doesn't sink when pressed.",
     fontImport: "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap",
     vars: [
-      "--color-action-primary: oklch(57.02% 0.1812 254.01);",
+      "--color-action-accent: oklch(57.02% 0.1812 254.01);",
       "--color-text-accent: oklch(57.02% 0.1812 254.01);",
       "--color-border-accent: oklch(57.02% 0.1812 254.01);",
       "--color-bg-accent-subtle: light-dark(oklch(96% 0.04 254), oklch(24% 0.08 254));",
@@ -127,10 +127,10 @@ const PRESETS: Preset[] = [
     id: "aurora",
     name: "Aurora",
     description:
-      "Deep indigo over slate surfaces, very rounded corners, more air between controls, a shadow that makes the card float, and a button that sinks further on press — bold Manrope tops off the late-night tech product feel.",
+      "Deep indigo over slate surfaces, very rounded corners, more air between controls, a shadow that makes the card float, and a button that sinks further on press. Bold Manrope tops off the late-night tech product feel.",
     fontImport: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap",
     vars: [
-      "--color-action-primary: light-dark(var(--palette-indigo-600), var(--palette-indigo-500));",
+      "--color-action-accent: light-dark(var(--palette-indigo-600), var(--palette-indigo-500));",
       "--color-text-accent: light-dark(var(--palette-indigo-700), var(--palette-indigo-300));",
       "--color-border-accent: light-dark(var(--palette-indigo-600), var(--palette-indigo-500));",
       "--color-bg-accent-subtle: light-dark(var(--palette-indigo-50), var(--palette-indigo-950));",
@@ -165,10 +165,10 @@ const PRESETS: Preset[] = [
     id: "journal",
     name: "Journal",
     description:
-      "Warm orange over neutral surfaces, soft corners, more air between controls, and a barely-there shadow — serif Lora tops off the editorial, handmade feel, with no extra microinteraction.",
+      "Warm orange over neutral surfaces, soft corners, more air between controls, and a barely-there shadow. Serif Lora tops off the editorial, handmade feel, with no extra microinteraction.",
     fontImport: "https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap",
     vars: [
-      "--color-action-primary: light-dark(var(--palette-orange-600), var(--palette-orange-500));",
+      "--color-action-accent: light-dark(var(--palette-orange-600), var(--palette-orange-500));",
       "--color-text-accent: light-dark(var(--palette-orange-700), var(--palette-orange-300));",
       "--color-border-accent: light-dark(var(--palette-orange-600), var(--palette-orange-500));",
       "--color-bg-accent-subtle: light-dark(var(--palette-orange-50), var(--palette-orange-950));",
@@ -201,10 +201,10 @@ const PRESETS: Preset[] = [
     id: "archive",
     name: "Archive",
     description:
-      "Ink-gray zinc as both accent and surface, square corners, tighter controls, bold labels and zero microinteraction — Space Grotesk tops off the corporate, printed feel.",
+      "Ink-gray zinc as both accent and surface, square corners, tighter controls, bold labels and zero microinteraction. Space Grotesk tops off the corporate, printed feel.",
     fontImport: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap",
     vars: [
-      "--color-action-primary: light-dark(var(--palette-zinc-700), var(--palette-zinc-400));",
+      "--color-action-accent: light-dark(var(--palette-zinc-700), var(--palette-zinc-400));",
       "--color-text-accent: light-dark(var(--palette-zinc-800), var(--palette-zinc-200));",
       "--color-border-accent: light-dark(var(--palette-zinc-700), var(--palette-zinc-400));",
       "--color-bg-accent-subtle: light-dark(var(--palette-zinc-100), var(--palette-zinc-900));",
@@ -238,7 +238,7 @@ const PRESETS: Preset[] = [
 
 /* The TOC is hand-built, not scanned via `indexDocument`: the headings below are fully known at
  * build time (one per preset, plus the closing section), so there is nothing a string-scan of the
- * rendered HTML would tell us that this array doesn't already say directly — the same `items` shape
+ * rendered HTML would tell us that this array doesn't already say directly. The same `items` shape
  * `<Toc>` already accepts from every other consumer. */
 const tocItems = [
   ...PRESETS.map((p) => ({ href: `#preset-${p.id}`, label: p.name, level: "h2" as const })),
@@ -246,7 +246,7 @@ const tocItems = [
 ];
 
 /* The base line: every card gets the FULL semantic color/radius reset first, calqued straight off
- * :root's own values — never inherited from whatever the header's accent toggle currently has
+ * :root's own values: never inherited from whatever the header's accent toggle currently has
  * selected, so a card's "no override" state (Default) is a true baseline, not an accident of
  * whichever preference happens to be active right now. */
 const SCOPED_PREFIXES = ["--color-", "--radius-"];
@@ -259,19 +259,19 @@ const baseCss =
   /* `font-family` and `color` are INHERITED properties, not a live re-read of the custom property:
    * site.css's `body { font-family: var(--font-family-body); color: var(--color-text-primary); }`
    * resolves ONCE, using the SITE's ambient color-scheme, and every descendant inherits that
-   * computed value — so a preset's `--font-family-body` override, or the forced `color-scheme` on
+   * computed value, so a preset's `--font-family-body` override, or the forced `color-scheme` on
    * a light/dark half below, does nothing to text that never re-declares the property itself. This
    * bit us for real: a heading with no explicit `color` rendered invisible on the dark half, because
    * it inherited body's LIGHT-resolved near-black straight through, unaffected by the half's own
-   * forced scheme. Re-declaring both here makes the canvas re-root the lookup, so a preset's font —
-   * and the correct light/dark text color — actually reach its descendants. */
+   * forced scheme. Re-declaring both here makes the canvas re-root the lookup, so a preset's font -
+   * and the correct light/dark text color. Actually reach its descendants. */
   "\n  font-family: var(--font-family-body);\n  color: var(--color-text-primary);\n}";
 
 const overrideCss = PRESETS.filter((p) => p.vars.length > 0)
   .map((p) => `.preset-canvas[data-preset="${p.id}"] {\n` + p.vars.map((v) => `  ${v}`).join("\n") + "\n}")
   .join("\n\n");
 
-/* @import must lead the stylesheet (CSS spec: any rule before it is invalid and drops it) — several
+/* @import must lead the stylesheet (CSS spec: any rule before it is invalid and drops it). Several
  * consecutive @import rules are fine, one per typeface a preset actually uses, deduplicated so two
  * presets sharing a font (were that to happen) wouldn't load it twice. All are scoped by being here
  * at all: none of these fonts load through Base.astro, only on this page. */
@@ -281,7 +281,7 @@ const fontImports = Array.from(new Set(PRESETS.map((p) => p.fontImport).filter(B
 
 const stageCss = fontImports + "\n\n" + baseCss + "\n\n" + overrideCss;
 
-/* Same UC rule, formatted for reading rather than for shipping — the CodeBlock below teaches the
+/* Same UC rule, formatted for reading rather than for shipping. The CodeBlock below teaches the
  * shape every preset above follows, `stageCss` is what actually ships. Trimmed to the parts a reader
  * needs to recognize the pattern (accent, one neutral surface swap, radius, font, motion) rather
  * than all ten neutral lines UC itself ships. */
@@ -289,7 +289,7 @@ const ucCssTeaching =
   `@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');\n\n` +
   '.preset-canvas[data-preset="uc"] {\n' +
   `  /* accent + feedback: re-declared together, not a new palette */\n` +
-  `  --color-action-primary: oklch(57.02% 0.1812 254.01);\n` +
+  `  --color-action-accent: oklch(57.02% 0.1812 254.01);\n` +
   `  --color-text-accent: oklch(57.02% 0.1812 254.01);\n` +
   `  --color-text-danger: oklch(65.42% 0.1996 24.53);\n\n` +
   `  /* neutral surfaces: not just the accent, ALL the gray shifts family */\n` +
@@ -305,13 +305,13 @@ const ucCssTeaching =
 <Base
   fullBleed
   title="Presets"
-  description="Five complete look & feels — accent, neutral surfaces, roundness, typography, density, shadow and motion — in a read-only gallery."
+  description="Five complete look & feels. Accent, neutral surfaces, roundness, typography, density, shadow and motion. In a read-only gallery."
 >
   <div class="sk-layout-grid presets-shell">
     <div>
       <h1>Presets</h1>
       <p class="lede">
-        A preset here is a complete look & feel, not just its accent — accent color,
+        A preset here is a complete look & feel, not just its accent. Accent color,
         feedback color, THE NEUTRAL SURFACES (background, text, borders), roundness, typography,
         spacing density, resting shadow, label weight and even how far a button sinks on press all
         change together. It isn't the accent from the header's palette selector (that one cycles
@@ -369,7 +369,7 @@ const ucCssTeaching =
                           shadow and border come from the SAME box primitive every real card uses,
                           and the body proves type + link color read correctly on top of it. The
                           image is a plain placeholder photo (dummyimage.com, like every other card
-                          example in these docs) — a short, wide banner rather than 16/9, so the
+                          example in these docs). A short, wide banner rather than 16/9, so the
                           card doesn't tower over the buttons and callout around it. */}
                       <div class="sk-box preset-card__demo-card" data-surface="raised" data-border="subtle">
                         <div class="sk-image-frame preset-card__demo-image-frame">
@@ -408,20 +408,20 @@ const ucCssTeaching =
         <strong>UC</strong> reproduces the look of
         <a href="https://kitdigital.uc.cl/" target="_blank" rel="noreferrer">kitdigital.uc.cl</a>:
         Celeste accent, pure-gray surfaces, a squarer radius, Roboto typography and zero
-        microinteraction — not just the accent color, the whole character of the component. The
+        microinteraction: not just the accent color, the whole character of the component. The
         other three follow the exact same mold, but each one touches whichever dimensions actually
         set it apart: accent and feedback (danger/success/warning), neutral surfaces (background,
-        text, borders — a different gray family per preset, not the same "stone" every time),
+        text, borders. A different gray family per preset, not the same "stone" every time),
         roundness, typography, spacing density (<code>--sk-density-factor</code>), resting shadow
         (<code>--elevation-flat</code>), label weight (<code>--font-weight-label</code>) and how far
-        a button sinks on press (<code>--motion-press-scale</code>) — all re-declared onto
+        a button sinks on press (<code>--motion-press-scale</code>): all re-declared onto
         <code>.preset-canvas</code>, never onto <code>:root</code>. No preset touches every
         dimension: leaving one at its default is as real a decision as changing it.
       </p>
       <p>
         A card's light and dark halves aren't two different presets: it's the same
         <code>--color-*</code> resolved with <code>color-scheme: light</code> forced on one half
-        and <code>color-scheme: dark</code> on the other — the same mechanism the header's theme
+        and <code>color-scheme: dark</code> on the other: the same mechanism the header's theme
         toggle uses on <code>&lt;html&gt;</code>, applied here to a <code>&lt;div&gt;</code>.
       </p>
       <CodeBlock code={ucCssTeaching} label='CSS · applied only inside .preset-canvas[data-preset="uc"]' lang="css" />
@@ -431,7 +431,7 @@ const ucCssTeaching =
           <p>
             <strong>Content, not a site preference.</strong> The header's palette toggle (top
             right) is still its own thing: it changes <code>:root</code>, reaches the whole site,
-            and is remembered across visits. This is the deliberate opposite — content on this
+            and is remembered across visits. This is the deliberate opposite. Content on this
             page, that never touches <code>:root</code> or <code>localStorage</code>.
           </p>
         </div>
@@ -445,11 +445,11 @@ const ucCssTeaching =
 <style is:global set:html={stageCss}></style>
 
 <style>
-  /* `sk-layout-grid` (the published pattern) owns the gutters/columns/rail track — this page only
+  /* `sk-layout-grid` (the published pattern) owns the gutters/columns/rail track. This page only
      adds vertical rhythm and the rail's row-span, never its own width/column CSS. */
   .presets-shell {
     padding-block: var(--space-stack-xl);
-    /* Three top-level children ABOVE (narrow intro, the showcase grid, narrow closing section) —
+    /* Three top-level children ABOVE (narrow intro, the showcase grid, narrow closing section) -
        the rail needs to know how many rows to span to stay beside all of them, since CSS grid has
        no way to ask "however many rows the rest of this grid ends up needing." */
     --sk-layout-rail-row-span: 3;
@@ -472,7 +472,7 @@ const ucCssTeaching =
   }
 
   /* No swatch dot beside the title: the preset's color already shows all over the demo below (the
-     buttons, the image, the badges) — repeating it as a dot next to the NAME was redundant, and it
+     buttons, the image, the badges). Repeating it as a dot next to the NAME was redundant, and it
      drew a color onto the one piece of text that should read as plain content, not a color sample. */
   .preset-card__header h2 {
     margin: 0;
@@ -484,11 +484,11 @@ const ucCssTeaching =
   }
 
   /* Two panels, side by side, same width: one forced light, one forced dark (see `SCHEMES` and
-     `data-scheme-force` above). `inert` on this wrapper covers both — it is a picture of what the
+     `data-scheme-force` above). `inert` on this wrapper covers both. It is a picture of what the
      preset looks like in either mode, not a usable control, and this whole page is a showcase.
      The background is a CONSTANT gray, deliberately not a `--color-bg-*` semantic: those flip with
      the READER's own site theme, and if this backdrop did too, a reader on a light site would see
-     the "Light" panel merge straight into an already-light page — only "Dark" would stand out, and
+     the "Light" panel merge straight into an already-light page. Only "Dark" would stand out, and
      the light half would read as barely there. A fixed mid-gray gives both forced panels the same
      contrast against their surroundings no matter what theme the rest of the page happens to be in
      right now. */
@@ -507,7 +507,7 @@ const ucCssTeaching =
   }
 
   /* The actual forcing: `color-scheme` is inherited, and every `--color-*` token here resolves
-     through `light-dark()`, so setting it on this element alone re-resolves the WHOLE subtree —
+     through `light-dark()`, so setting it on this element alone re-resolves the WHOLE subtree -
      same mechanism the header's real theme toggle uses on `<html>`, just scoped to a `<div>`. */
   .preset-card__demo-half[data-scheme-force="light"] {
     color-scheme: light;
@@ -543,7 +543,7 @@ const ucCssTeaching =
   }
 
   /* A short, wide banner rather than the frame's own 16/9 default: at half the grid's content
-     width, 16/9 ran the card taller than the buttons/badges/callout stacked around it warranted —
+     width, 16/9 ran the card taller than the buttons/badges/callout stacked around it warranted -
      a placeholder photo doesn't need to be that tall to still read as "an image goes here". */
   .preset-card__demo-image-frame {
     --sk-image-frame-aspect: 3 / 1;
@@ -555,14 +555,14 @@ const ucCssTeaching =
     padding: var(--space-inset-md);
   }
 
-  /* A grid item stretches by default — left alone the badge grew to the card's full width and
+  /* A grid item stretches by default. Left alone the badge grew to the card's full width and
      stopped reading as a badge (the same fix card.css's own body class already documents). */
   .preset-card__demo-card-body > .sk-badge {
     justify-self: start;
   }
 
   /* Two panels side by side get too narrow to read once the layout's own rail breakpoint (72rem)
-     has already claimed room for the Toc — light above dark reads better than a squeeze here. */
+     has already claimed room for the Toc. Light above dark reads better than a squeeze here. */
   @media (max-width: 56rem) {
     .preset-card__demo-split {
       grid-template-columns: 1fr;

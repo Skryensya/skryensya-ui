@@ -11,7 +11,7 @@
     --sk-menu-radius: var(--radius-control);
     /* A group divider has to read as a RULE, not as unexplained whitespace: `--color-border-subtle`
      * (the panel's own outer edge, one step lighter) nearly disappears at 1px against the panel's
-     * surface, measured — the margin around it was the only thing a reader saw. `--color-border-
+     * surface, measured. The margin around it was the only thing a reader saw. `--color-border-
      * default`, one step darker, is the same strength menu.css already reaches for wherever a divider
      * has to be found on purpose rather than merely delimit a surface (see the state layer's own
      * keyline). */
@@ -35,7 +35,7 @@
    *
    * `inline-start` A SECAS (sin `span-`) NO alinea: selecciona la CELDA del grid de 3×3 que queda
    * completamente afuera, a la izquierda del ancla (medido: el borde DERECHO del panel termina
-   * pegado al borde IZQUIERDO del trigger — el panel flota al costado, no abajo). `span-inline-end`
+   * pegado al borde IZQUIERDO del trigger. El panel flota al costado, no abajo). `span-inline-end`
    * en cambio arranca la región en la propia columna del ancla y la extiende hacia el final, así que
    * `justify-self: start` sí pega el borde de arranque del panel con el de arranque del trigger y lo
    * deja crecer en el sentido de lectura.
@@ -117,11 +117,11 @@
     outline: none;
 
     /* Materialising, not sliding: same recipe as Popover (`--motion-materialize-scale`/`-blur`),
-     * `--motion-feedback-*` timing kept as-is (this is feedback, not an overlay entrance — see the
+     * `--motion-feedback-*` timing kept as-is (this is feedback, not an overlay entrance; see the
      * animation note below) and `--motion-distance-sm`, the distance the token file already names
      * for this exact case ("inline reveals: tooltip, menu, exit") instead of the hardcoded `-2px`
      * the previous `@keyframes` used. These are the CLOSED values: the default, and the exit target
-     * once `[data-state="open"]` stops matching — `allow-discrete` on `display` is what lets that
+     * once `[data-state="open"]` stops matching: `allow-discrete` on `display` is what lets that
      * exit actually play instead of cutting to `display: none` mid-fade. */
     opacity: 0;
     scale: var(--motion-materialize-scale);
@@ -148,7 +148,7 @@
    * A panel that HOSTS A SUBMENU must not clip it: `overflow: auto` above is a scroll container, and
    * a scroll container clips a `position: fixed` descendant when its containing block sits outside
    * that container's own box, which is exactly a submenu's situation (measured against a live nested
-   * Menu: the submenu's box computed a correct, on-screen rect and never painted — `overflow: visible`
+   * Menu: the submenu's box computed a correct, on-screen rect and never painted: `overflow: visible`
    * here is what made it appear at all). `:has(> .sk-menu)` scopes the trade to panels that actually
    * hold one: an ordinary long single-level menu keeps scrolling instead of spilling past its own
    * `max-block-size`, which is the case this rule must not regress.
@@ -213,7 +213,7 @@
    * A destructive command reads danger through its TEXT, not a fill: a menu item has no background
    * of its own to swap (unlike a danger Button), and `--state-layer-color` already defaults to
    * `currentColor` (patterns/state-layer.css), so setting `color` alone is enough to also tint this
-   * item's own hover/press wash red — the shared mechanism, not a second one for menus.
+   * item's own hover/press wash red. The shared mechanism, not a second one for menus.
    */
   .sk-menu__item[data-tone="danger"] {
     color: var(--color-text-danger);
@@ -258,7 +258,7 @@
    * `also: ["sk-interactive"]`), so patterns/state-layer.css already paints a `::before` here.
    * A SECOND, hand-rolled `::before` used to sit on top of it, so the two fought over `background`
    * at equal specificity while the shared one's box-shadow keyline and transition kept coming
-   * through underneath — two systems half-applied instead of one working. Bridging into the shared
+   * through underneath. Two systems half-applied instead of one working. Bridging into the shared
    * `--state-layer-opacity` slot, the same idiom tree-view.css uses, is the fix: one `::before`,
    * one opacity, the pattern's own transition and forced-colors keyline for free.
    *
@@ -272,7 +272,7 @@
    * THE OUTLINE BELOW IS SEPARATE FROM THIS TINT, and has to be: `data-highlighted` fires for a
    * mouse hover too (same Zag state either way), so the hover-strength tint alone reads identically
    * for "the pointer happens to be over this row" and "this is where arrow-key navigation currently
-   * is" — and the keyboard reader has no OTHER signal, because real DOM focus never leaves the panel
+   * is", and the keyboard reader has no OTHER signal, because real DOM focus never leaves the panel
    * container (`aria-activedescendant`, not per-item focus, is how Zag tracks this). */
   .sk-menu__item[data-highlighted] {
     --state-layer-opacity: var(--state-layer-hover-opacity);
@@ -284,7 +284,7 @@
    * `:focus-visible` cannot be what answers that here, and asking it to is how this rule spent a
    * while painting NOTHING: no item is ever the focused element, so `[data-highlighted]:focus-visible`
    * matches nothing at all and the keyboard reader lost the only signal they had. Focus sits on the
-   * CONTENT (`aria-activedescendant`), and moving the test up there does not work either — measured
+   * CONTENT (`aria-activedescendant`), and moving the test up there does not work either. Measured
    * in Blink: the panel is focused programmatically on open, and it matches `:focus-visible` even
    * when the trigger was CLICKED, so the content's own ring state cannot tell the two apart.
    *
@@ -297,7 +297,7 @@
    *
    * `[aria-expanded="true"]` is the ONE exception that transition carries, and the same source line
    * says why: the clear is guarded `not("isTriggerItem")`, so a SUBMENU TRIGGER deliberately keeps
-   * its highlight when the pointer leaves it — it has to, or walking the pointer from the trigger
+   * its highlight when the pointer leaves it. It has to, or walking the pointer from the trigger
    * into the panel it opened would drop the parent. Measured: with the mouse alone, moving into the
    * submenu leaves the trigger highlighted and no longer hovered, which is precisely the shape
    * `:not(:hover)` reads as keyboard. An open submenu is also the case where the ring is not needed:
@@ -310,7 +310,7 @@
    *
    * NOT `data-highlight-source`, which is how `combobox.css` answers the same question: that
    * attribute is `@zag-js/combobox`'s, and the menu machine does not publish one (checked, not
-   * assumed — zero occurrences in `menu.connect.js`/`menu.machine.js`).
+   * assumed. Zero occurrences in `menu.connect.js`/`menu.machine.js`).
    *
    * Inset, not outset, and from the same `--focus-ring-*` family `:focus-visible` uses elsewhere so
    * it carries that same unambiguous meaning: the panel's rows sit `1px` apart (`gap: 1px` above),
@@ -391,7 +391,7 @@
    * REAL MACHINERY, not decoration: menu-safe-area.ts explains at length what this element is and
    * what measurement forced it. Everything load-bearing about it is in this rule.
    *
-   * `fixed` is what escapes `.sk-menu__content`'s `overflow: auto` — the shape reaches across the
+   * `fixed` is what escapes `.sk-menu__content`'s `overflow: auto`. The shape reaches across the
    * panel's edge toward a submenu that is outside it, and an `absolute` box would be clipped at the
    * first scroll container. Being out of flow it is also NOT a grid item, so living inside the
    * trigger's own `display: grid` costs that trigger no column and no row.
@@ -400,7 +400,7 @@
    * hits, so that the hit counts as the TRIGGER (its parent) and no `pointerleave` fires. It is the
    * one element in this file that must never be transparent to the pointer.
    *
-   * `clip-path` is set inline, per move, by the module — and it clips hit testing, not just paint,
+   * `clip-path` is set inline, per move, by the module, and it clips hit testing, not just paint,
    * which is what keeps this a triangle aimed at the submenu instead of a blanket over the rows
    * below it. Without a clip the element still covers its whole box, so there is deliberately no
    * fallback shape here: the module always writes one before the element is appended.
@@ -412,7 +412,7 @@
 
   /*
    * `.sk-menu__item` is `isolation: isolate`, so the safe area is trapped inside the TRIGGER's own
-   * stacking context, and the sibling rows it has to cover are later positioned siblings — they
+   * stacking context, and the sibling rows it has to cover are later positioned siblings. They
    * would paint (and hit-test) over it. Raising the trigger raises the shape with it. Scoped to the
    * attribute the module adds and removes, so a trigger with no safe area mounted keeps the exact
    * stacking it has always had.
@@ -434,7 +434,7 @@
    * The status line, laid out instead of floated. It used to be a `position: fixed` badge on
    * `<body>` pinned to the top-inline-start corner, which in a preview frame is exactly where the
    * menu's own trigger sits: it covered the button it was explaining. A flagged root becomes a
-   * column so the trigger keeps its own size and the readout gets its own space underneath —
+   * column so the trigger keeps its own size and the readout gets its own space underneath -
    * `align-items: start` because `.sk-menu` is `inline-flex` and a column would otherwise stretch
    * the trigger to the readout's width.
    */

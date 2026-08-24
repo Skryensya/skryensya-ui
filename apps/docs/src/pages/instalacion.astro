@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import ComponentPreview from "../components/ComponentPreview.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -11,33 +12,29 @@ const imports = `/* Base: ramps, escala, semánticos y state layer. */
 /* Opt-in: importa solo los componentes que envías. */
 @import "@skryensya/core/components/button.css";`;
 
-const usage = `<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-variant="accent"
->
-  Guardar
-</button>
-<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-variant="neutral"
->
-  Cancelar
-</button>
-<button
-  class="sk-button sk-interactive"
-  data-sk-button
-  data-variant="danger"
->
-  Borrar
-</button>`;
-
-const usageReact = `import { Button } from "@skryensya/react/button";
-
-<Button variant="accent">Guardar</Button>
-<Button variant="neutral">Cancelar</Button>
-<Button variant="danger">Borrar</Button>;`;
+const usageTree: UsageTree = {
+  contract: "layout",
+  signature: "Inline",
+  children: [
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "accent" },
+      children: "Guardar",
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      children: "Cancelar",
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "danger" },
+      children: "Borrar",
+    },
+  ],
+};
 ---
 
 <Base
@@ -69,7 +66,7 @@ const usageReact = `import { Button } from "@skryensya/react/button";
     <code>@skryensya/react</code> renderiza el mismo contrato.
   </p>
 
-  <ComponentPreview html={usage} react={usageReact} label="Button" />
+  <ComponentPreview tree={usageTree} label="Button" />
 
   <h2>Componentes con comportamiento</h2>
   <p>

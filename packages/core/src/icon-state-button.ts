@@ -4,22 +4,22 @@ import { iconToggleAttrs, iconToggleParts } from "./icon-toggle.js";
 
 /*
  * ICON STATE BUTTON, decision 33 reversed: this is the public signature now, not a primitive
- * underneath two others. An icon-only button whose faces are author-supplied — a `faces` items
- * slot, one `{ name, icon }` entry per state — because the set of states is different every time
+ * underneath two others. An icon-only button whose faces are author-supplied. A `faces` items
+ * slot, one `{ name, icon }` entry per state, because the set of states is different every time
  * it is used (idle/copied for a copy action, system/light/dark for a color mode) and a fixed enum
  * baked into one contract cannot say that.
  *
  * WHICH FACE IS CURRENT is `current`, a plain string option compared against each entry's own
- * `name` — the same pairing RadioGroup already does between its `value` option and each item's
+ * `name`: the same pairing RadioGroup already does between its `value` option and each item's
  * `value` (`selection.ts`), reused here via `selectedBy` against Icon Toggle's own `data-active`
  * marker instead of a component-specific state attribute. Because `selectedBy` resolves at EMIT
- * TIME, the correct face already carries `data-active` in the first paint — no JS, no FOUC gap,
+ * TIME, the correct face already carries `data-active` in the first paint: no JS, no FOUC gap,
  * the same property CopyButton and ThemeToggle used to buy with their own hand-written CSS.
  *
  * WHAT THIS CONTRACT DOES NOT DO is decide when `current` changes, or what a click does at all: no
  * `mount`, no vanilla enhancer, no behavior. A button that shows one of N icons and does nothing on
  * click is not useful on its own; a consumer supplies the click handling, the timer, the clipboard
- * write, the cross-instance broadcast — whatever the actual feature needs — and updates `current`
+ * write, the cross-instance broadcast. Whatever the actual feature needs, and updates `current`
  * (or the DOM `data-active`) itself. `setIconState`/`getIconState` below are for exactly that: a
  * small, optional imperative helper, not part of the contract.
  */
@@ -46,7 +46,7 @@ export type IconStateButtonAttr = keyof typeof iconStateButtonAttrs;
 export type IconStateButtonAttrName = (typeof iconStateButtonAttrs)[IconStateButtonAttr];
 
 /**
- * Imperative set/read of a state attribute plus, when given, the accessible name — for a
+ * Imperative set/read of a state attribute plus, when given, the accessible name. For a
  * consumer's own behavior script to call after its own click/cycle logic decides the next state.
  * Not wired to `current` above automatically: this contract has no enhancer to do that wiring.
  */
@@ -103,11 +103,11 @@ export const iconStateButtonContract = {
               {
                 /* No `part`: a face IS the icon placeholder, nothing wraps it, and `sk-icon`
                    itself (written once the real set replaces this span) is already the only
-                   class that means anything here — a second one with no rule to match would be
+                   class that means anything here. A second one with no rule to match would be
                    the divergence G2 exists to catch, not real anatomy. `data-sk-icon-size` is the
                    one attribute that IS load-bearing: it is how the icon-mounting enhancer knows
                    what size to render, read once and never copied to the final `<svg>`
-                   (`controlAttrs` in `vanilla/src/icon.ts`) — React's own `<Icon>` needs no
+                   (`controlAttrs` in `vanilla/src/icon.ts`). React's own `<Icon>` needs no
                    equivalent since its `size` prop already defaults to `"md"`. */
                 element: "span",
                 attrs: { "data-sk-icon-size": "md" },

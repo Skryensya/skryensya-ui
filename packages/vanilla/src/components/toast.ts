@@ -48,10 +48,10 @@ export function connectToast(root: HTMLElement, options: ToastOptions = {}): Cle
 
     // toast.css answers `data-dismissing` with an opacity/scale/filter transition (`--motion-exit-*`),
     // and the region's own removal contract is `event.target.remove()` on receipt of `sk-dismiss`
-    // (see toast-dismiss.ts) — so the exit only has somewhere to play if the EVENT waits for it. The
+    // (see toast-dismiss.ts), so the exit only has somewhere to play if the EVENT waits for it. The
     // attribute goes on first, then the event fires once that transition ends, never before. Nothing
     // to wait for (no stylesheet loaded, `transition-duration: 0s`) skips the promise tick entirely and
-    // fires on the same turn as the call, exactly like before this existed — a synchronous contract
+    // fires on the same turn as the call, exactly like before this existed. A synchronous contract
     // stays synchronous where there is no animation to hold it up for.
     applyAttrs(root, { "data-dismissing": true });
     const durationMs = getExitDurationMs(root);
@@ -102,7 +102,7 @@ function getExitDurationMs(root: HTMLElement): number {
 }
 
 // Resolves once the `[data-dismissing]` exit transition (toast.css) finishes, or after its own
-// measured duration if the `transitionend` never arrives — display:none ancestors, a property the
+// measured duration if the `transitionend` never arrives. Display:none ancestors, a property the
 // browser decided not to animate, anything that would otherwise strand the toast on screen forever.
 function waitForExit(root: HTMLElement, durationMs: number): Promise<void> {
   return new Promise((resolve) => {

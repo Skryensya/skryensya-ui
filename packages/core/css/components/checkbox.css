@@ -15,9 +15,9 @@
     --sk-checkbox-border-color: var(--color-border-default);
     --sk-checkbox-border-width: 1px;
     --sk-checkbox-radius: var(--radius-control);
-    --sk-checkbox-selected-bg: var(--color-action-primary);
+    --sk-checkbox-selected-bg: var(--color-action-accent);
     --sk-checkbox-selected-fg: var(--color-text-on-accent);
-    --sk-checkbox-selected-border-color: var(--color-action-primary);
+    --sk-checkbox-selected-border-color: var(--color-action-accent);
     --sk-checkbox-disabled-bg: var(--color-action-disabled);
     --sk-checkbox-disabled-fg: var(--color-text-disabled);
     --sk-checkbox-disabled-border-color: var(--color-border-subtle);

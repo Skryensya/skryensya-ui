@@ -23,7 +23,7 @@ describe("CommandPalette", () => {
     expect(ui.container.querySelectorAll("[role='option']")).toHaveLength(0);
     expect(ui.container.querySelector<HTMLElement>(".sk-command-palette__empty")?.hidden).toBe(true);
     // WAI's combobox pattern requires `aria-controls` point at the listbox whether or not it is
-    // visible right now — it used to be entirely absent.
+    // visible right now. It used to be entirely absent.
     const listbox = ui.container.querySelector<HTMLElement>("[role='listbox']")!;
     expect(input.getAttribute("aria-controls")).toBe(listbox.id);
     expect(listbox.id).toBeTruthy();

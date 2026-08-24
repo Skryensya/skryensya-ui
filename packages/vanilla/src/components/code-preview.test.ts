@@ -134,7 +134,7 @@ describe("CodePreview opt-in enhancer", () => {
 
   /*
    * The single-panel case (no density switch): `syncDisclosureChrome` used to run only from inside
-   * `showDensity`, which only ever fired when a density `<input>` existed — so a plain collapsible
+   * `showDensity`, which only ever fired when a density `<input>` existed, so a plain collapsible
    * preview never got its line count filled in, and its toggle never got `aria-controls`, in the
    * entire time this enhancer has shipped.
    */

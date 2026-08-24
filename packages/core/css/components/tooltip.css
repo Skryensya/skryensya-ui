@@ -66,7 +66,7 @@
    * have them above: in React this element is portalled to `document.body` (no `container` passed),
    * so it renders outside `.sk-tooltip`'s subtree and cannot inherit the hooks it defines. Without a
    * fallback each `var()` is invalid there and the property drops to its initial value, i.e. an
-   * unstyled box — background, radius and padding all silently gone, only in the one binding that
+   * unstyled box. Background, radius and padding all silently gone, only in the one binding that
    * portals. Vanilla nests content inside `.sk-tooltip` and keeps inheriting the hook normally, so
    * the fallback never overrides an author's own `--sk-tooltip-*` there; it only fires where
    * inheritance was already broken.
@@ -107,7 +107,7 @@
    * enter-*`). El opacity + scale + blur suave es el mismo recipe que Popover sí usa
    * (`--motion-materialize-scale`/`-blur`, `patterns/anchored.css` comparte el nombre con Menu). La
    * distancia es `--motion-distance-sm` (4px), la que el archivo de tokens ya documenta para "inline
-   * reveals: tooltip, menu, exit" — antes era un `2px` suelto.
+   * reveals: tooltip, menu, exit". Antes era un `2px` suelto.
    *
    * POSITIVO, no negativo: un tooltip sale ARRIBA del trigger por defecto, así que entra viniendo de
    * ABAJO (más cerca del control) hacia su lugar final, el gesto de "emerger del trigger". Popover y

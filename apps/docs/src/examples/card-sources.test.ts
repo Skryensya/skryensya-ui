@@ -24,7 +24,7 @@ describe("cardSources", () => {
     /*
      * Regression: Zag's checkbox machine (`TileCheckbox.svelte`) reads `defaultChecked` from
      * `data-default-checked` on the ROOT label, never from a native `checked` attribute on the
-     * input — that attribute is a live property Zag owns and overwrites on mount. The select
+     * input. That attribute is a live property Zag owns and overwrites on mount. The select
      * example used to author `checked` on the `<input>` instead, so every card rendered
      * unchecked regardless of its data, including the one meant to start checked.
      */

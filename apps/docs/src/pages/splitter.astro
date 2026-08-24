@@ -15,7 +15,7 @@ const import_ = `@import "@skryensya/core/patterns/splitter.css";`;
  * Hardcoded, not pulled from lib/tokens.ts's corpus: `--sk-splitter-*` is declared here in
  * patterns/splitter.css AND redeclared as an override inside components/sidebar.css (its resize
  * handle's own hook). The corpus dedupes by name, first file wins, and `components/` sorts before
- * `patterns/` — so every one of these four would attribute to sidebar.css instead, and Used.astro's
+ * `patterns/`: so every one of these four would attribute to sidebar.css instead, and Used.astro's
  * probe would read them off a bare `.sk-sidebar`, not `.sk-splitter`. Wrong file, wrong value.
  */
 const hooks = [
@@ -72,8 +72,8 @@ const keyboard = [
     El patrón <strong>Window Splitter</strong> de WAI-ARIA: una franja delgada, arrastrable con
     puntero o teclado, que redimensiona lo que tiene al lado. <code>Sidebar</code> lo usa para su
     ancho de panel; <code>Table</code> y <code>Treegrid</code> lo usan entre cada par de columnas.
-    Los tres comparten un solo primitivo — <code>@skryensya/core/splitter.ts</code> para el
-    comportamiento, <code>.sk-splitter</code> para la franja visual — en vez de reimplementar
+    Los tres comparten un solo primitivo: <code>@skryensya/core/splitter.ts</code> para el
+    comportamiento, <code>.sk-splitter</code> para la franja visual: en vez de reimplementar
     arrastre y teclado cada vez.
   </p>
 
@@ -97,14 +97,14 @@ const keyboard = [
           <td class="sk-table__cell"><strong>Sidebar</strong></td>
           <td class="sk-table__cell">Un valor único contra un límite fijo</td>
           <td class="sk-table__cell">
-            <code>clamp()</code> en CSS — no hay "otro panel" con el que conservar un ancho total.
+            <code>clamp()</code> en CSS: no hay "otro panel" con el que conservar un ancho total.
           </td>
         </tr>
         <tr class="sk-table__row">
           <td class="sk-table__cell"><strong>Table / Treegrid</strong></td>
           <td class="sk-table__cell">Un par de columnas vecinas</td>
           <td class="sk-table__cell">
-            <code>resolveColumnResize</code> — la suma del par se mantiene fija, así que ninguna
+            <code>resolveColumnResize</code>: la suma del par se mantiene fija, así que ninguna
             otra columna se mueve.
           </td>
         </tr>
@@ -115,7 +115,7 @@ const keyboard = [
   <h2>Marca el separador</h2>
   <p>
     <code>.sk-splitter</code> solo dibuja la franja: tamaño, posición, cursor, color en
-    hover/focus/drag. No sabe qué redimensiona — el bloque contenedor lo da el consumidor
+    hover/focus/drag. No sabe qué redimensiona. El bloque contenedor lo da el consumidor
     (Sidebar la flota contra el borde del panel; Treegrid pone una dentro de cada <code>th</code>),
     y el binding del consumidor escribe <code>data-dragging</code> mientras dura el gesto, el
     único estado que este archivo lee.
@@ -175,7 +175,7 @@ const keyboard = [
     <li>
       El anillo de foco es <code>inset</code>: un handle al ras del borde de su contenedor tendría
       el outline dibujado afuera, recortado por el <code>overflow: hidden</code> de ese contenedor
-      (el caso de Sidebar) — inset funciona sin que el patrón necesite saber si el consumidor recorta.
+      (el caso de Sidebar). Inset funciona sin que el patrón necesite saber si el consumidor recorta.
     </li>
     <li>
       En <code>forced-colors</code>, la franja se dibuja con <code>CanvasText</code>: el state layer
@@ -217,8 +217,8 @@ const keyboard = [
 
   <h2>Dónde vive</h2>
   <ul>
-    <li><a href="/componentes/sidebar">Sidebar</a> — <code>SidebarResizeHandle</code>, valor único.</li>
-    <li><a href="/componentes/table">Table</a> — <code>resizableColumns</code>/<code>resizeLabel</code>, opt-in.</li>
-    <li><a href="/componentes/treegrid">Treegrid</a> — mismo par <code>resizableColumns</code>/<code>resizeLabel</code>, más <code>columnWeights</code> para el reparto inicial.</li>
+    <li><a href="/componentes/sidebar">Sidebar</a>: <code>SidebarResizeHandle</code>, valor único.</li>
+    <li><a href="/componentes/table">Table</a>: <code>resizableColumns</code>/<code>resizeLabel</code>, opt-in.</li>
+    <li><a href="/componentes/treegrid">Treegrid</a>: mismo par <code>resizableColumns</code>/<code>resizeLabel</code>, más <code>columnWeights</code> para el reparto inicial.</li>
   </ul>
 </Base>

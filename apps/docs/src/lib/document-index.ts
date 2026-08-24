@@ -63,7 +63,7 @@ export interface DocumentIndex {
   /** Its sections, in reading order. */
   headings: DocHeading[];
   /**
-   * How many elements sit at the fragment's own top level — exactly the row count `<main>`'s content
+   * How many elements sit at the fragment's own top level. Exactly the row count `<main>`'s content
    * contributes once it is a `display: contents` pass-through into `.docs-document-pair`'s grid
    * (site.css). A rail sharing that grid needs to span every one of those rows to sit beside all of
    * them; unlike the heading count, this includes every top-level element, not only `h2`/`h3`.
@@ -107,7 +107,7 @@ function decodeEntities(text: string): string {
 
 /**
  * A heading can carry a child that says something ABOUT it rather than being part of its own name
- * — a count badge inside a catalog group's `<h2>`, say. `data-toc-ignore` on that child drops its
+ *. A count badge inside a catalog group's `<h2>`, say. `data-toc-ignore` on that child drops its
  * text from the label this produces (and so from the TOC link, the page `<title>`-adjacent id
  * slug, everywhere a heading's name gets read) without changing what's visually inside the heading.
  */
@@ -137,7 +137,7 @@ function textOf(html: string): string {
         const tag = html.slice(lt, end);
         if (!/\/\s*>$/.test(tag) && TOC_IGNORE_ATTR.test(tag)) {
           // The WHOLE element is skipped, its own closing tag included, so nothing inside it
-          // — however deeply nested — leaks into the label either.
+          //. However deeply nested. Leaks into the label either.
           const element = name.toLowerCase();
           const close = html.indexOf(`</${element}`, end);
           i = close < 0 ? html.length : tagEnd(html, close + 2 + element.length);

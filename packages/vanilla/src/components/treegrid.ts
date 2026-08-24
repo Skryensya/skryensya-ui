@@ -41,7 +41,7 @@ function readRows(root: HTMLElement): RowEntry[] {
 }
 
 /*
- * The expand/collapse control, inserted (never authored — `readRows` above already read the row's
+ * The expand/collapse control, inserted (never authored: `readRows` above already read the row's
  * cells off markup that never included one) as the first child of a branch row's first cell.
  * `treegrid.css` draws the chevron entirely off this element's class/position, so the only job here
  * is to create it, once per branch row, idempotent the same way `applyColumnGroup` below is.
@@ -50,7 +50,7 @@ function readRows(root: HTMLElement): RowEntry[] {
  * assistive tech and out of the roving tab sequence. NOT `sk-interactive`: that class would give the
  * button its OWN hover/press state layer, a second highlight competing with the CELL's own for the
  * same click (`onClick` below toggles on `column === 0`, never on whether the click landed on this
- * button specifically) — `treegrid.css` instead darkens the glyph off the ROW's hover/focus, one
+ * button specifically): `treegrid.css` instead darkens the glyph off the ROW's hover/focus, one
  * layer, not two. The click still reaches `onClick` unchanged either way.
  */
 function ensureDisclosureButtons(rows: readonly RowEntry[]): void {
@@ -69,13 +69,13 @@ function ensureDisclosureButtons(rows: readonly RowEntry[]): void {
 }
 
 /*
- * `table-layout: fixed` needs an authoritative column count to size against — measured in Chromium
+ * `table-layout: fixed` needs an authoritative column count to size against. Measured in Chromium
  * 1.42 that leaving it to infer from `<thead>`/`<tbody>` independently is unreliable: the header's
  * own two columns came back a different width than the first body row's, swapped, and neither summed
  * to the table's real rendered width. An explicit `<colgroup>` is the mechanism the spec actually
  * recommends for fixed layout, sidestepping whatever per-row-group heuristic the browser was using
  * instead. `Math.max` over every row, not just the first: a ragged grid still needs ONE column count
- * every row sizes against. Idempotent — re-mounting replaces rather than duplicates.
+ * every row sizes against. Idempotent. Re-mounting replaces rather than duplicates.
  *
  * Returns the `<col>` elements so `connectColumnResize` below has something to drag: a resizable
  * grid seeds them in PX (`measured table width ÷ colCount`) rather than the usual percentage,
@@ -95,23 +95,23 @@ function applyColumnGroup(root: HTMLElement, rows: readonly RowEntry[]): HTMLTab
    * Measure the SCROLL WRAPPER (`.sk-table-scroll`, `TreegridScroll`'s own host), not the table
    * itself: at this exact moment the colgroup does not exist yet, so `table-layout: fixed` has no
    * column widths to size against and the table reports its own unconstrained CONTENT width
-   * instead — measured with a genuinely wide fixture, four `white-space: nowrap` columns summed to
+   * instead. Measured with a genuinely wide fixture, four `white-space: nowrap` columns summed to
    * ~1400px against a ~670px container, and every column seeded proportionally oversized, pushing
    * the resizer for column 1 entirely outside the scrollable viewport. The wrapper has no such
    * problem: it is a plain block box, already laid out to the AVAILABLE space regardless of what
    * its (currently oversized) child reports. A table authored without `TreegridScroll` (rare, and
    * against this component's own convention) falls back to measuring itself, the prior behaviour.
    * Either way, a degenerate (unmeasured, e.g. detached) read falls back to the min floor rather
-   * than 0 — the same "do not invent a position against no layout" caution `sidebar.ts`'s own
+   * than 0. The same "do not invent a position against no layout" caution `sidebar.ts`'s own
    * `describe()` documents, applied here to the SEED instead of a report.
    */
   const measured = root.parentElement instanceof HTMLElement ? root.parentElement : root;
   /*
    * `columnWeights` (`data-column-weights`) lets a consumer give a content-heavy column a bigger
-   * INITIAL share than a flat one — see `columnWeights`'s own doc (`core/treegrid.ts`). Missing or
+   * INITIAL share than a flat one; see `columnWeights`'s own doc (`core/treegrid.ts`). Missing or
    * malformed, this falls back to `defaultTreegridColumnWeights`: the hierarchy column (index 0)
    * carries per-level indentation, a disclosure button, and the row's own label, so it earns a
-   * bigger default share than a flat metadata column beside it — see that function's own doc.
+   * bigger default share than a flat metadata column beside it; see that function's own doc.
    */
   const widths = resizable
     ? resolveWeightedColumnWidths({
@@ -127,11 +127,11 @@ function applyColumnGroup(root: HTMLElement, rows: readonly RowEntry[]): HTMLTab
     colgroup.append(col);
     cols.push(col);
   }
-  // A `<colgroup>` must precede `<thead>`/`<tbody>` — `<table>`'s first child either way.
+  // A `<colgroup>` must precede `<thead>`/`<tbody>`: `<table>`'s first child either way.
   root.insertBefore(colgroup, root.firstChild);
   /*
    * An explicit pixel WIDTH on the table itself, not left at the stylesheet's `inline-size: auto`
-   * — see `treegrid.css`'s own note on why `auto` is not safe here: a `table-layout: fixed` table
+   *; see `treegrid.css`'s own note on why `auto` is not safe here: a `table-layout: fixed` table
    * sized `auto` still compares its columns' sum against its containing block and takes the
    * greater, and once the table ends up wider than that sum, Chromium's real redistribution
    * algorithm hands the surplus to whichever columns have the most unbreakable `nowrap` content
@@ -144,7 +144,7 @@ function applyColumnGroup(root: HTMLElement, rows: readonly RowEntry[]): HTMLTab
 }
 
 /** `columnWeights` off the table's own `data-column-weights`, falling back to
- * `defaultTreegridColumnWeights` — the one place both `applyColumnGroup` and `watchTreegridLayout`
+ * `defaultTreegridColumnWeights`: the one place both `applyColumnGroup` and `watchTreegridLayout`
  * read it from, so neither can drift from the other's idea of a table's weights mid-mount. */
 function readColumnWeights(root: HTMLElement, colCount: number): readonly number[] {
   return parseColumnWeights(root.getAttribute("data-column-weights"), colCount) ?? defaultTreegridColumnWeights(colCount);
@@ -152,10 +152,10 @@ function readColumnWeights(root: HTMLElement, colCount: number): readonly number
 
 /*
  * COLUMN RESIZE, opt-in (`resizableColumns`). Inserts one `.sk-treegrid__column-resizer.sk-splitter`
- * — the shared "Window Splitter" primitive (`core/splitter.ts`), the same one `sidebar.ts` drives —
+ *. The shared "Window Splitter" primitive (`core/splitter.ts`), the same one `sidebar.ts` drives -
  * into every column header but the last, via `attachColumnResizer` (`../splitter.ts`): the pointer/
  * keyboard wiring itself is shared with a plain resizable `Table`, so this function only ever
- * supplies what makes THIS a treegrid — where the `<col>` widths live, and how each resizer names
+ * supplies what makes THIS a treegrid, where the `<col>` widths live, and how each resizer names
  * itself off `resizeLabel` plus its own column header's text.
  */
 function connectColumnResize(root: HTMLElement, cols: readonly HTMLTableColElement[]): () => void {
@@ -168,7 +168,7 @@ function connectColumnResize(root: HTMLElement, cols: readonly HTMLTableColEleme
   const cleanups: (() => void)[] = [];
 
   headerCells.forEach((th, index) => {
-    // The LAST column has no next neighbor to redistribute width with — `resolveColumnResize`
+    // The LAST column has no next neighbor to redistribute width with: `resolveColumnResize`
     // itself is a no-op past the last pair, so a handle there would drag nothing.
     if (index >= headerCells.length - 1) return;
     if (th.querySelector(":scope > [data-sk-column-resizer]")) return;
@@ -193,7 +193,7 @@ function connectColumnResize(root: HTMLElement, cols: readonly HTMLTableColEleme
 
 /*
  * A mounted-while-hidden table (a docs preview panel not yet the selected binding tab, a closed
- * accordion, an inactive tab panel) measures 0 the whole time it stays that way — `applyColumnGroup`
+ * accordion, an inactive tab panel) measures 0 the whole time it stays that way: `applyColumnGroup`
  * already clamps that to the min floor rather than a literal 0px, but the floor stays wrong forever
  * unless something re-measures once the table is actually visible. `watchColumnLayout`
  * (`../splitter.ts`, shared with `table.ts`) is that one re-measurement: a no-op if the FIRST read
@@ -221,23 +221,23 @@ function connect(root: HTMLElement): () => void {
   const cols = applyColumnGroup(root, rows);
   const cleanupLayoutWatch = watchTreegridLayout(root, cols);
   const cleanupColumnResize = connectColumnResize(root, cols);
-  /** Only visible rows are addressable — the same index space `resolveTreegridKey` expects. */
+  /** Only visible rows are addressable. The same index space `resolveTreegridKey` expects. */
   let visible: RowEntry[] = [];
 
   /*
-   * ANIMATING A TOGGLE — mirrors `treegrid.tsx`'s own effect (React binding), same three-way split
+   * ANIMATING A TOGGLE. Mirrors `treegrid.tsx`'s own effect (React binding), same three-way split
    * `diffTreegridVisibility` documents, applied imperatively instead of via React state:
    *   - `previousFlags`: the visibility array from BEFORE this call, `null` on first mount (nothing
-   *     changed yet — a branch authored collapsed must not play an exit animation for content that
+   *     changed yet. A branch authored collapsed must not play an exit animation for content that
    *     was never shown).
    *   - `exitingEntries`: rows kept un-hidden past their own `visibleFlags === false` moment so they
    *     keep painting through `sk-treegrid-row-out` (`treegrid.css`) instead of vanishing the same
    *     frame the branch collapses. Guards the "no transition this call, but still mid-exit from
-   *     the LAST one" case below — a second, unrelated toggle mid-animation must not clip it early.
+   *     the LAST one" case below. A second, unrelated toggle mid-animation must not clip it early.
    *   - `settleTimers`: one `animationend`-or-`TREEGRID_EXIT_FALLBACK_MS`-timeout race per row
    *     currently transitioning, so a repeat toggle before the first settle cancels the stale one
    *     instead of it firing late against whatever state the row is in by then.
-   * `visible` itself stays computed straight off `flags` (the pure, INSTANT truth) either way — an
+   * `visible` itself stays computed straight off `flags` (the pure, INSTANT truth) either way. An
    * exiting-but-still-painting row is correctly unreachable by arrow keys immediately, unaffected by
    * this whole deferred-hide window.
    */
@@ -303,7 +303,7 @@ function connect(root: HTMLElement): () => void {
       const colIndex = entry.cells.indexOf(active as HTMLTableCellElement);
       if (colIndex !== -1) return { row: rowIndex, col: colIndex };
     }
-    // Nothing of ours is focused (e.g. keyboard action fired programmatically) — the roving stop,
+    // Nothing of ours is focused (e.g. keyboard action fired programmatically). The roving stop,
     // the SAME row/cell Tab would land on, is the sane fallback.
     for (let rowIndex = 0; rowIndex < visible.length; rowIndex++) {
       const entry = visible[rowIndex]!;

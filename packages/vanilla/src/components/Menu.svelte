@@ -5,7 +5,7 @@
    * Ligado padre/hijo entre menús anidados: un submenú encuentra su padre subiendo por `closest()`
    * sobre el DOM (vanilla nunca portales), y esto es lo que empareja cada root con su machine.
    * Bloque `module`: UNA instancia por módulo, compartida por todos los `Menu.svelte` que este
-   * archivo monta — si viviera en el `<script>` normal, cada componente tendría su PROPIO WeakMap y
+   * archivo monta. Si viviera en el `<script>` normal, cada componente tendría su PROPIO WeakMap y
    * un submenú nunca encontraría a su padre.
    */
   type MenuInstance = { service: MenuService; getApi: () => MenuApi };
@@ -13,7 +13,7 @@
 
   /**
    * The mounted `MenuApi` for a `[data-sk-menu]` root, for a consumer OUTSIDE this component that
-   * needs to drive it imperatively — Menubar's own resolver calling `setOpen()` on the dropdown
+   * needs to drive it imperatively. Menubar's own resolver calling `setOpen()` on the dropdown
    * beside the trigger it just moved focus to/from, the same registry `instances` already keeps for
    * submenu parent/child linking, just made reachable from outside this file.
    */
@@ -91,7 +91,7 @@
    * ese caso sola con `getContextTriggerProps`/`anchorPoint`.
    *
    * Capturado UNA vez: `getRootProps` de este machine no toca `root.id`, pero el trigger/content sí
-   * reciben ids namespaced que `applyZagProps` escribe de vuelta — el mismo motivo por el que el id
+   * reciben ids namespaced que `applyZagProps` escribe de vuelta. El mismo motivo por el que el id
    * del machine nunca se relee en vivo del DOM en el resto de esta migración.
    */
   const menuId = root.id || uniqueId("sk-menu");
@@ -99,7 +99,7 @@
   /*
    * `!hasSubmenu`: a submenu's trigger lives INSIDE the parent menu's own anchor-positioned panel,
    * and the browser's anchor-positioning engine cannot paint a box anchored to something inside
-   * ANOTHER anchor-positioned box — measured against a live nested Menu, the computed rect comes
+   * ANOTHER anchor-positioned box. Measured against a live nested Menu, the computed rect comes
    * back correct and nothing ever paints there. So a submenu always falls back to the machine's own
    * placement instead (the fallback this pattern already ships for browsers with no engine at all).
    *
@@ -108,7 +108,7 @@
    * submenu's `--x`/`--y` are the machine's own measurement, taken relative to the viewport; but the
    * browser resolves the SUBMENU's `position: fixed` against the nearest ancestor that is itself
    * anchor-positioned (the top level's OWN positioner, still carrying `anchor-name` unconditionally
-   * whether or not it is placed via `@supports`) rather than the viewport — measured against a live
+   * whether or not it is placed via `@supports`) rather than the viewport. Measured against a live
    * nested Menu: a submenu math-correct in viewport terms rendered offset by roughly the top level
    * panel's own on-screen position. One engine for the whole tree removes the mismatch instead of
    * chasing which ancestor property makes it a containing block.
@@ -128,7 +128,7 @@
      * which is what actually positions a SUBMENU now that `anchorName` is withheld from one (see the
      * note above). `absolute`'s containing block is the nearest positioned ancestor, here the parent
      * menu's own panel, so a submenu measuring past that panel's edge grew ITS `overflow: auto`
-     * scrollport instead of floating free — the exact failure `patterns/anchored.css` already
+     * scrollport instead of floating free. The exact failure `patterns/anchored.css` already
      * explains choosing `fixed` over `absolute` to avoid for the browser-placed case.
      */
     positioning: { placement: "bottom-start" as const, strategy: "fixed" as const },
@@ -237,7 +237,7 @@
     /*
      * Recién ACÁ, no en el cuerpo del script: `@zag-js/svelte`'s `useMachine` arranca la máquina
      * (status → Started) desde SU PROPIO onMount, registrado antes que este por orden de
-     * declaración. `send()` — lo que `setParent`/`setChild` disparan por debajo — descarta en
+     * declaración. `send()`. Lo que `setParent`/`setChild` disparan por debajo. Descarta en
      * silencio cualquier evento mandado antes de eso (`status !== Started`), así que hacerlo en el
      * top level del script (antes de que exista NINGÚN onMount) nunca movía `isSubmenu`, y el
      * primer render de un submenú salía con `data-part="trigger"` en vez de `"trigger-item"`.

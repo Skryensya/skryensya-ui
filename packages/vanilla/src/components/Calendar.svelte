@@ -19,7 +19,7 @@
   /*
    * CALENDAR, standalone: the same `@zag-js/date-picker` machine as DatePicker, but `inline: true`
    * and none of the field parts (label/control/input/trigger/clear). Where DatePicker nests
-   * `CalendarView` inside its popover positioner, this root IS the calendar — no field, no popup.
+   * `CalendarView` inside its popover positioner, this root IS the calendar: no field, no popup.
    */
   const root = getRoot();
   if (!root.id) root.id = uniqueId("sk-calendar");
@@ -32,7 +32,7 @@
     selectionMode: (root.dataset.selectionMode === "range" ? "range" : "single") as "single" | "range",
     /*
      * The preselected date. Absent until now, which meant authored markup had no way to say one at
-     * all — a calendar could only ever open on today, and the React binding accepted a value the
+     * all. A calendar could only ever open on today, and the React binding accepted a value the
      * enhancer silently dropped. Space-separated so a range can name both ends the way it reads.
      */
     defaultValue: root.dataset.value
@@ -47,7 +47,7 @@
     inline: true,
     fixedWeeks: true,
     /*
-     * Zag's own `defaultTranslations` is English-only, unconditionally — a Spanish-locale calendar
+     * Zag's own `defaultTranslations` is English-only, unconditionally. A Spanish-locale calendar
      * announced "Choose 15 de agosto" in English otherwise, matching the same gap fixed in the React
      * binding. `trigger`/`content` name a popover this component never renders (`inline: true`).
      */

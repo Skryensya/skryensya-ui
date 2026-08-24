@@ -7,3 +7,13 @@ Tag:
     - "es sólo un conteo o un estado que nadie puede tocar; eso es un Badge"
   alternatives:
     - Badge
+
+Tag.link:
+  useWhen:
+    - "una etiqueta que navega a una faceta, tema o palabra clave"
+  avoidWhen:
+    - "también debe poder quitarse; un tag enlace no es dismissible porque no puede contener otro botón"
+    - "es un enlace dentro de una frase; eso es Link"
+  alternatives:
+    - Link
+    - Button.navigation

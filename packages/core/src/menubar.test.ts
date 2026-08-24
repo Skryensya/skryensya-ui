@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { resolveMenubarKey } from "./menubar.js";
 
 /*
- * A 3-item bar — "File" (3 commands), "Edit" (2 commands), "Help" (no dropdown, a direct command) —
+ * A 3-item bar: "File" (3 commands), "Edit" (2 commands), "Help" (no dropdown, a direct command) -
  * matching WAI's own `menubar-editor` shape closely enough to exercise every branch.
  */
 const resolve = (key: string, focus: { topIndex: number; subIndex: number | null }) =>
@@ -14,7 +14,7 @@ const resolve = (key: string, focus: { topIndex: number; subIndex: number | null
     subCountOf: (topIndex) => (topIndex === 0 ? 3 : topIndex === 1 ? 2 : 0),
   });
 
-describe("resolveMenubarKey — Left/Right between top-level items", () => {
+describe("resolveMenubarKey. Left/Right between top-level items", () => {
   it("moves one item at a time and wraps at both ends", () => {
     expect(resolve("ArrowRight", { topIndex: 0, subIndex: null })).toEqual({
       kind: "moveTop",
@@ -33,7 +33,7 @@ describe("resolveMenubarKey — Left/Right between top-level items", () => {
     });
   });
 
-  it("keeps the NEXT item's dropdown open when the current one was open — the detail a plain roving tabindex misses", () => {
+  it("keeps the NEXT item's dropdown open when the current one was open. The detail a plain roving tabindex misses", () => {
     expect(resolve("ArrowRight", { topIndex: 0, subIndex: 1 })).toEqual({
       kind: "moveTop",
       topIndex: 1,
@@ -42,7 +42,7 @@ describe("resolveMenubarKey — Left/Right between top-level items", () => {
   });
 });
 
-describe("resolveMenubarKey — opening and moving within a dropdown", () => {
+describe("resolveMenubarKey. Opening and moving within a dropdown", () => {
   it("Down Arrow on a closed dropdown trigger opens it, focusing the FIRST item", () => {
     expect(resolve("ArrowDown", { topIndex: 0, subIndex: null })).toEqual({
       kind: "open",
@@ -80,7 +80,7 @@ describe("resolveMenubarKey — opening and moving within a dropdown", () => {
   });
 });
 
-describe("resolveMenubarKey — Enter/Space", () => {
+describe("resolveMenubarKey. Enter/Space", () => {
   it("opens a closed dropdown trigger, focusing the first item", () => {
     expect(resolve("Enter", { topIndex: 1, subIndex: null })).toEqual({
       kind: "open",
@@ -94,20 +94,20 @@ describe("resolveMenubarKey — Enter/Space", () => {
     });
   });
 
-  it("does nothing on a leaf item or an already-open dropdown item — native click/Enter handles activation", () => {
+  it("does nothing on a leaf item or an already-open dropdown item. Native click/Enter handles activation", () => {
     expect(resolve("Enter", { topIndex: 2, subIndex: null })).toEqual({ kind: "none" });
     expect(resolve("Enter", { topIndex: 0, subIndex: 1 })).toEqual({ kind: "none" });
   });
 });
 
-describe("resolveMenubarKey — Escape", () => {
+describe("resolveMenubarKey. Escape", () => {
   it("closes an open dropdown; does nothing when already closed", () => {
     expect(resolve("Escape", { topIndex: 0, subIndex: 1 })).toEqual({ kind: "close" });
     expect(resolve("Escape", { topIndex: 0, subIndex: null })).toEqual({ kind: "none" });
   });
 });
 
-describe("resolveMenubarKey — Home/End", () => {
+describe("resolveMenubarKey. Home/End", () => {
   it("jump to the first/last TOP-LEVEL item when no dropdown is open", () => {
     expect(resolve("Home", { topIndex: 1, subIndex: null })).toEqual({
       kind: "moveTop",

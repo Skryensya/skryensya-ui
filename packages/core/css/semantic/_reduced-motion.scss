@@ -27,7 +27,7 @@
        * Toast): scale and blur have no distance concept of their own to zero out, so they
        * get overridden directly here instead. Doing it at the token means a future consumer of
        * `--motion-materialize-*` gets the reduced-motion behaviour for free, the same way `--motion-
-       * enter-distance` already does — the earlier components each wrote their own explicit
+       * enter-distance` already does. The earlier components each wrote their own explicit
        * `scale: 1; filter: blur(0)` override in their own reduced-motion block because this pairing
        * did not exist yet when they were built; still correct, just no longer the only way. */
       --motion-materialize-scale: 1;

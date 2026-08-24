@@ -1,17 +1,18 @@
 import { evalCases } from "./index.js";
-import { runCase } from "./agent/harness.js";
 import { detectProvider, isProviderId, providers, type ProviderId } from "./agent/providers.js";
 import type { CaseScore } from "./agent/scoring.js";
 
 /*
- * THE SECOND HALF OF F7, opt-in and separate from `pnpm check` on purpose: this spends real API
- * calls against a real model and is not deterministic, so it does not belong in the static gate
- * `run.ts` already runs on every check. Run it by hand:
+ * THE SECOND HALF OF F7, opt-in and separate from `pnpm check` on purpose: this spends real usage
+ * against a real model (API-metered for `anthropic`/`openai`, subscription-metered for
+ * `claude-code`) and is not deterministic, so it does not belong in the static gate `run.ts`
+ * already runs on every check. Run it by hand:
  *
- *   pnpm --filter @skryensya/evals agent [--provider anthropic|openai] [--model <id>]
+ *   pnpm --filter @skryensya/evals agent [--provider anthropic|openai|claude-code] [--model <id>]
  *                                        [--lang es|en|both] [--case <id>] [--verbose]
  *
- * See evals/README.md for what this does and does not prove.
+ * See evals/README.md for what this does and does not prove, and `agent/providers.ts` for what each
+ * provider actually is.
  */
 
 function parseArgs(argv: string[]): {
@@ -52,19 +53,19 @@ async function main(): Promise<void> {
     : detectProvider();
 
   if (!providerId) {
-    console.error(
-      "  No provider configured: set one of\n" +
-        Object.entries(providers)
-          .map(([id, config]) => `    ${config.envVar} (for --provider ${id})`)
-          .join("\n"),
-    );
+    console.error("  No provider is available right now:");
+    for (const provider of Object.values(providers)) {
+      const availability = provider.availability();
+      console.error(`    ${provider.id}: ${availability.ok ? "ok" : availability.reason}`);
+    }
     process.exitCode = 1;
     return;
   }
 
   const provider = providers[providerId];
-  if (!process.env[provider.envVar]) {
-    console.error(`  --provider ${providerId} needs ${provider.envVar} set.`);
+  const availability = provider.availability();
+  if (!availability.ok) {
+    console.error(`  --provider ${providerId} is not available: ${availability.reason}`);
     process.exitCode = 1;
     return;
   }
@@ -79,13 +80,13 @@ async function main(): Promise<void> {
     return;
   }
 
-  console.log(`  provider: ${providerId} (${model})`);
+  console.log(`  provider: ${provider.label} (${model})`);
   console.log(`  running ${cases.length} case(s) x ${langs.length} lang(s)\n`);
 
   const scores: CaseScore[] = [];
   for (const evalCase of cases) {
     for (const lang of langs) {
-      const score = await runCase(evalCase, lang, { provider, model, verbose: args.verbose });
+      const score = await provider.run(evalCase, lang, model, args.verbose);
       scores.push(score);
       const mark = score.valid ? "PASS" : "FAIL";
       const note = score.valid

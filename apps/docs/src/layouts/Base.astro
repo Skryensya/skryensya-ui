@@ -624,6 +624,7 @@ const PALETTE_PRESETS = palettePresets(locale);
           aria-controls="docs-cmdk"
           aria-expanded="false"
           aria-keyshortcuts="Meta+K Control+K"
+          aria-label={t("search.label")}
           data-sk-command-palette-open
         >
           <Fragment set:html={searchIcon} />
@@ -719,6 +720,23 @@ const PALETTE_PRESETS = palettePresets(locale);
           ))
         }
       </nav>
+      <div class="docs-drawer__prefs" role="group" aria-label={t("prefs.title")}>
+        <button
+          class="sk-button sk-interactive dimensions__palette-toggle"
+          data-variant="ghost"
+          data-icon-only
+          type="button"
+          aria-label={t("prefs.palette")}
+          title={t("prefs.palette")}
+          data-docs-palette-toggle
+          data-label-template={t("prefs.paletteNamed")}
+        >
+          <span class="dimensions__palette-dot" aria-hidden="true"></span>
+        </button>
+        <ThemeToggle />
+        <ContrastToggle />
+        <LanguageMenu />
+      </div>
       <div class="docs-drawer__content sk-scrollbar sk-scrollbar--reveal">
         <SidebarNav nav={navigation} path={path} idPrefix="docs-drawer-nav" />
       </div>
@@ -1267,20 +1285,25 @@ const PALETTE_PRESETS = palettePresets(locale);
        * is the default and removes every inline ramp override. */
       import { getPreference, setPreference } from "@skryensya/vanilla/storage";
       import { palettePreference } from "../lib/preferences";
+      type PalettePreset = {
+        id: string;
+        name: string;
+        accent: string;
+        tokens: Record<string, string>;
+      };
 
-      const paletteToggle = document.querySelector("[data-docs-palette-toggle]");
+      const paletteToggles = document.querySelectorAll("[data-docs-palette-toggle]");
       const presetsEl = document.getElementById("docs-palette-presets");
-      if (paletteToggle && presetsEl) {
+      if (paletteToggles.length > 0 && presetsEl) {
         const root = document.documentElement;
-        const dot = paletteToggle.querySelector<HTMLElement>(".dimensions__palette-dot");
-        let presets = [];
+        let presets: PalettePreset[] = [];
         try {
           presets = JSON.parse(presetsEl.textContent || "[]");
         } catch {}
 
         let index = Math.max(0, presets.findIndex((p) => p.id === getPreference(palettePreference)));
 
-        const apply = (persist) => {
+        const apply = (persist: boolean) => {
           const preset = presets[index];
           if (!preset) return;
           const properties = Object.keys(presets[0].tokens);
@@ -1288,21 +1311,26 @@ const PALETTE_PRESETS = palettePresets(locale);
             if (index === 0) root.style.removeProperty(property);
             else root.style.setProperty(property, preset.tokens[property]);
           }
-          /* the dot shows the current color; the label names it so the icon-only button stays legible */
-          if (dot) dot.style.setProperty("--swatch", preset.accent);
-          /* Template rendered at build (`Paleta: {name}` / `Palette: {name}`): a module script has
-           * no access to `t()`, so the locale arrives on the element. */
-          const template = paletteToggle.getAttribute("data-label-template") || "{name}";
-          const text = template.replace("{name}", preset.name);
-          paletteToggle.setAttribute("aria-label", text);
-          paletteToggle.setAttribute("title", text);
+          paletteToggles.forEach((paletteToggle) => {
+            const dot = paletteToggle.querySelector<HTMLElement>(".dimensions__palette-dot");
+            /* the dot shows the current color; the label names it so the icon-only button stays legible */
+            if (dot) dot.style.setProperty("--swatch", preset.accent);
+            /* Template rendered at build (`Paleta: {name}` / `Palette: {name}`): a module script has
+             * no access to `t()`, so the locale arrives on the element. */
+            const template = paletteToggle.getAttribute("data-label-template") || "{name}";
+            const text = template.replace("{name}", preset.name);
+            paletteToggle.setAttribute("aria-label", text);
+            paletteToggle.setAttribute("title", text);
+          });
           if (persist) setPreference(palettePreference, preset.id);
         };
 
-        apply(false); // sync the dot + label to the saved preset the FOUC guard already applied
-        paletteToggle.addEventListener("click", () => {
-          index = (index + 1) % presets.length;
-          apply(true);
+        apply(false); // sync every dot + label to the saved preset the FOUC guard already applied
+        paletteToggles.forEach((paletteToggle) => {
+          paletteToggle.addEventListener("click", () => {
+            index = (index + 1) % presets.length;
+            apply(true);
+          });
         });
       }
     </script>

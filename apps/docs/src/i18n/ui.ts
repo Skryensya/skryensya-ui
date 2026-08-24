@@ -228,6 +228,7 @@ export const ui = {
 
     "action.close": "Cerrar",
 
+    "prefs.title": "Preferencias",
     "prefs.palette": "Paleta de color",
     "prefs.paletteNamed": "Paleta: {name}",
     "prefs.contrastNormal": "Contraste: normal",
@@ -4043,6 +4044,7 @@ export const ui = {
 
     "action.close": "Close",
 
+    "prefs.title": "Preferences",
     "prefs.palette": "Color palette",
     "prefs.paletteNamed": "Palette: {name}",
     "prefs.contrastNormal": "Contrast: normal",

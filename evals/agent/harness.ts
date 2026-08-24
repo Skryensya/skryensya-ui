@@ -1,15 +1,16 @@
 import { chat } from "@tanstack/ai";
+import type { AnyTextAdapter } from "@tanstack/ai";
 import type { EvalCase } from "../case.js";
-import type { ProviderConfig } from "./providers.js";
 import { connectServerTools } from "./mcp-tools.js";
 import { scoreCase, type CaseScore } from "./scoring.js";
+import { evalSystemPrompt } from "./system-prompt.js";
 
 /*
- * THE FIRST REAL SLICE OF G6: a model, wired to the actual three MCP tools over the actual stdio
- * server, given nothing but one case's prompt. `run.ts` (the other half of F7) re-validates a tree
- * that was already composed by hand; this is the harness that README named as missing: it never
- * reads `evalCase.tree` before scoring, only after, to check what the agent independently arrived
- * at against it.
+ * ONE OF TWO WAYS TO DRIVE G6 (the other is `claude-code-provider.ts`): a model, wired via TanStack
+ * AI to the actual three MCP tools over the actual stdio server, given nothing but one case's
+ * prompt. `run.ts` (the other half of F7) re-validates a tree that was already composed by hand;
+ * this is the harness that README named as missing: it never reads `evalCase.tree` before scoring,
+ * only after, to check what the agent independently arrived at against it.
  *
  * A mismatch against the reference tree never fails a case (see `scoring.ts`): the reference is ONE
  * composition that passes G0-G3, not the only one a correct agent could produce. Only `valid` does:
@@ -18,8 +19,7 @@ import { scoreCase, type CaseScore } from "./scoring.js";
  */
 
 export interface RunOptions {
-  provider: ProviderConfig;
-  model: string;
+  adapter: AnyTextAdapter;
   verbose?: boolean;
 }
 
@@ -31,9 +31,9 @@ export async function runCase(
   const { tools, calls, close } = await connectServerTools();
 
   try {
-    const adapter = options.provider.createAdapter(options.model);
     await chat({
-      adapter,
+      adapter: options.adapter,
+      systemPrompts: [evalSystemPrompt],
       messages: [{ role: "user", content: evalCase.prompt[lang] }],
       // eslint-disable-next-line @typescript-eslint/no-explicit-any -- MCP tools are discovered at
       // runtime from the server's own schemas; there is no static type to bind them to here.

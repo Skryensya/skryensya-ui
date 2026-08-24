@@ -771,6 +771,38 @@ Dos capas, y sólo la primera corre en cada `pnpm check`:
   porque la pregunta de G6 es si *un agente* converge en una composición correcta, no si un modelo
   puntual lo hace.
 
+> **Correr `claude-code` en vivo destapó dos huecos reales del harness, no del modelo**
+>
+> Corriendo el corpus completo contra `claude -p`, dos casos fallaron de formas que no eran del
+> contrato: un caso leyó directamente el archivo fuente del propio caso (su árbol de referencia)
+> en vez de usar las tres tools, y otro respondió el prompt en prosa como si fuera una pregunta
+> literal, sin tocar ninguna tool. Ninguno de los dos es una medición válida de G6.
+>
+> **Fuga de filesystem**: `claude -p` corrido desde la raíz del repo, con `Read` (el único tool
+> integrado que `--permission-mode dontAsk` deja pasar sin aprobar) alcanza para leer el propio
+> repo, y una vez leyó el árbol de referencia del caso antes de llamar una sola tool del MCP. Un
+> run así no distingue "compuso bien" de "encontró la respuesta tirada por ahí". Arreglo: cada
+> llamada corre desde un directorio temporal vacío (`mkdtemp`, borrado al terminar), con
+> `--mcp-config` como JSON inline que nombra el server por su ruta absoluta compilada.
+> `.mcp.json` no sirve fuera de la raíz del repo porque su `args` es relativo. Sin nada del repo
+> alcanzable, `Read` no tiene qué encontrar.
+>
+> **Respuesta literal**: con un prompt corto y llano ("a short survey with a single-choice
+> question among three alternatives"), el modelo a veces respondía como si le hubieran pedido
+> escribir una encuesta de verdad, sin tocar ninguna tool. Arreglo: un system prompt compartido
+> (`agent/system-prompt.ts`, usado por los dos loops de agente) que dice explícitamente que el
+> mensaje del usuario es una interfaz para componer, no una pregunta para responder. No es
+> infalible: un agente no es determinista, y un caso puede seguir escapando ocasionalmente sin
+> tocar una tool, pero confirmado en corridas repetidas: converge de forma confiable donde antes
+> fallaba siempre.
+>
+> Queda un costo real y no evitable: `get_catalog` (~110KB) sigue disparando un umbral de Claude
+> Code, separado y más bajo, que vuelca un resultado grande a un archivo en vez de devolverlo
+> inline; ninguna env var lo mueve. El agente gasta un `Read` sobre su propio resultado guardado
+> para recuperarlo. Medido: cuesta turnos, no corrección. Está leyendo lo que la propia tool
+> devolvió, no el código fuente del repo, y el agente sigue convergiendo en un `validate_ui`
+> correcto después.
+
 **Salida:** el corpus pasa de forma reproducible y cada fallo se corrige en el contrato o el overlay
 antes que en el prompt.
 

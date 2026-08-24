@@ -151,7 +151,7 @@
   .sk-vaul[data-edge="inline-start"] {
     inset-block: 0;
     inset-inline: 0 auto;
-    inline-size: var(--sk-vaul-size);
+    inline-size: min(var(--sk-vaul-size), 100dvw);
     block-size: 100dvh;
     border-inline-end: var(--sk-vaul-border-width) solid var(--sk-vaul-border-color);
     translate: -100% 0;
@@ -164,7 +164,7 @@
   .sk-vaul[data-edge="inline-end"] {
     inset-block: 0;
     inset-inline: auto 0;
-    inline-size: var(--sk-vaul-size);
+    inline-size: min(var(--sk-vaul-size), 100dvw);
     block-size: 100dvh;
     border-inline-start: var(--sk-vaul-border-width) solid var(--sk-vaul-border-color);
     translate: 100% 0;
@@ -179,7 +179,7 @@
   .sk-vaul[data-edge="block-end"] {
     inset-block: auto 0;
     inset-inline: 0;
-    inline-size: 100%;
+    inline-size: 100dvw;
     /* A sheet is sized by its content up to a ceiling, but a generous one: a short sheet floating at
      * the bottom of a tall screen reads as timid. Its own hook so a sheet can ask for more or less
      * without touching the inline width clamp above; it defaults to most of the viewport height. */

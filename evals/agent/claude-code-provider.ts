@@ -12,21 +12,20 @@ import { evalSystemPrompt } from "./system-prompt.js";
  * THE OTHER WAY TO DRIVE G6: instead of a hand-rolled agent loop (`harness.ts`), spawn the actual
  * `claude` CLI headless (`claude -p`) and let it use its OWN agent loop against the SAME server.
  *
- * Runs from a FRESH TEMP DIRECTORY, not the repo root. Measured live: from the repo root, with
- * only `mcp__skryensya-ui` pre-approved, the agent still reached for `Bash`/`Read` (the platform's
- * always-on read-only tools, which `--permission-mode dontAsk` does not gate) and grepped/read this
- * very repo's source directly, once even reading the eval case file's OWN reference tree before
- * calling a single MCP tool. A repo-root run cannot tell "composed it right" from "found the
- * answer lying around", so it isn't one. `--mcp-config` here is INLINE JSON naming the server by its
- * ABSOLUTE built path (`packages/mcp/dist/index.js`), not `.mcp.json`: that file's own `args` entry
- * is repo-relative, and would silently fail to resolve from anywhere else.
+ * Runs from a FRESH TEMP DIRECTORY, not the repo root. Measured live: from the repo root, `Read`
+ * (the one built-in tool `--permission-mode dontAsk` lets through unconditionally, per the platform's
+ * own read-only command set; `Bash`, `Write` and everything else got a real `permission_denied`
+ * event, confirmed in the stream) was enough for the agent to read this very repo's source directly,
+ * once even reading the eval case file's OWN reference tree before calling a single MCP tool. A
+ * repo-root run cannot tell "composed it right" from "found the answer lying around", so it isn't
+ * one. `--mcp-config` here is INLINE JSON naming the server by its ABSOLUTE built path
+ * (`packages/mcp/dist/index.js`), not `.mcp.json`: that file's own `args` entry is repo-relative,
+ * and would silently fail to resolve from anywhere else.
  *
  * `--strict-mcp-config` still matters even alone in a scratch directory: without it, every OTHER
  * MCP server in the runner's own `~/.claude` (this repo's own figma/gmail/etc.) would also be
- * sitting in the model's tool list. `--allowedTools "mcp__skryensya-ui"` plus
- * `--permission-mode dontAsk` denies everything else that needs approval. Bash and Read are still
- * technically present (Claude Code's baseline, present even under `--bare`), but with nothing of
- * this repo in reach from a scratch directory, they have nothing useful left to find.
+ * sitting in the model's tool list. From a scratch directory, `Read` still exists but has nothing of
+ * this repo left to find.
  *
  * This runs WITHOUT `--bare`: it uses the session's own subscription login, not a separate
  * `ANTHROPIC_API_KEY` (see `providers.ts`'s `claudeCodeProvider`); that is the one thing that makes
@@ -101,12 +100,18 @@ async function spawnClaude(prompt: string, options: ClaudeCodeOptions): Promise<
         cwd,
         stdio: ["ignore", "pipe", "pipe"],
         /*
-         * Claude Code caps any MCP tool result at 25,000 tokens by default (`MAX_MCP_OUTPUT_TOKENS`).
-         * Measured live: `get_catalog`'s ~110KB payload AND a `validate_ui` response for a complex
-         * composition (`paginated-data-table`, ~94KB) both sit over that, tripping the cap and
-         * costing the agent turns on a read-file-back detour instead of converging on a correct
-         * composition. Raising the cap here removes the trigger at its actual source (a CLI-imposed
-         * limit, not a real payload or model-context problem).
+         * Claude Code caps any MCP tool result at 25,000 tokens by default (`MAX_MCP_OUTPUT_TOKENS`),
+         * a HARD rejection: without this, `get_catalog`'s ~110KB payload and a `validate_ui` response
+         * for a complex composition (`paginated-data-table`, ~94KB) both tripped it, and the agent
+         * never saw the result at all. Raising the cap removes that at its source.
+         *
+         * A SEPARATE, lower, fixed threshold still persists a large result to a file instead of
+         * inlining it (Claude Code's own doc: "the warning threshold is fixed"), and no env var moves
+         * it: `get_catalog` still triggers this every time, regardless of the cap above. Measured
+         * live, this costs turns (a `Read` on the saved file) but not correctness or fairness. It's
+         * the agent reading back its OWN tool's output, not repo source; confirmed the agent still
+         * converges on a correct `validate_ui` call afterward. Left as a real, load-bearing cost of
+         * this provider rather than something to route around further.
          */
         env: { ...process.env, MAX_MCP_OUTPUT_TOKENS: "100000" },
       });
@@ -138,9 +143,9 @@ async function spawnClaude(prompt: string, options: ClaudeCodeOptions): Promise<
 
 /**
  * Pairs each `tool_use` block for one of OUR three tools with its `tool_result`, by the id the
- * stream itself uses to correlate them. Every other tool_use (ToolSearch, Bash, Read: the platform's
- * own tools, still visible even though only `mcp__skryensya-ui` is pre-approved) is not ours to
- * score and is left out.
+ * stream itself uses to correlate them. Every other tool_use (ToolSearch, Read: the platform's own
+ * tools, still available even though only `mcp__skryensya-ui` is pre-approved) is not ours to score
+ * and is left out.
  */
 function extractRecords(events: StreamEvent[]): ToolCallRecord[] {
   const pending = new Map<string, { name: string; args: unknown }>();

@@ -105,6 +105,19 @@
   }
 
   /*
+   * Keep mobile prose inset, but step it down from desktop's roomy `lg` gutter. At 390px the old
+   * 24px rails left only 331px for content, which made dense component pages feel narrower than the
+   * screen. `md` keeps an intentional edge without wasting the scarce inline measure.
+   */
+  .docs-document-pair[data-document-layout="grid"] {
+    --sk-layout-gutter: var(--space-inset-md);
+  }
+
+  .docs-document-pair:not([data-document-layout="grid"]) > main {
+    --sk-wrapper-padding-inline: var(--space-inset-md);
+  }
+
+  /*
    * Mobile loses the document rail entirely. The left navigation already moved into the drawer at
    * this breakpoint, and an in-page index stacked above the article costs the same scarce vertical
    * space the old sticky rail did. Keep the Toc component available for previews and wide/tablet

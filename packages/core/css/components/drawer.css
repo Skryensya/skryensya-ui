@@ -14,7 +14,7 @@
  */
 @layer components {
   .sk-drawer {
-    --sk-drawer-inline-size: min(20rem, 85vw);
+    --sk-drawer-inline-size: min(20rem, 85dvw);
     --sk-drawer-bg: var(--color-bg-surface);
     --sk-drawer-fg: var(--color-text-primary);
     --sk-drawer-border-color: var(--color-border-subtle);

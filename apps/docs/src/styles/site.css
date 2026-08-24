@@ -175,9 +175,36 @@ body {
   --sk-icon-toggle-on: 1;
 }
 
-/* The global links move into the drawer on narrow screens; contrast remains available beside mode. */
-@media (max-width: 36rem) {
-  .dimensions__global {
+/* The global links and preference cluster move into the drawer on narrow screens. */
+@media (max-width: 52rem) {
+  .dimensions__content {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-inline-xs);
+    padding-block: var(--space-inset-xs);
+  }
+
+  .dimensions__global,
+  .dimensions__prefs {
+    display: none;
+  }
+
+  .dimensions__menu-trigger {
+    grid-column: 1;
+  }
+
+  .dimensions__search-trigger {
+    grid-column: 3;
+    inline-size: var(--size-control-md);
+    min-inline-size: var(--size-control-md);
+    margin-inline-start: 0;
+    justify-content: center;
+    padding-inline: 0;
+    border-color: transparent;
+  }
+
+  .dimensions__search-label,
+  .dimensions__search-trigger .sk-kbd {
     display: none;
   }
 }
@@ -195,44 +222,8 @@ html:has(dialog:modal) .docs-drawer__content {
 }
 
 @media (max-width: 40rem) {
-  .dimensions__search-label {
-    display: none;
-  }
   .dimensions__search-trigger {
-    min-inline-size: 0;
-  }
-}
-
-/* At 400% zoom, a 1280px viewport reflows to 320 CSS px. Keep every control available instead of
-   clipping the preference cluster: identity gets row one, search + preferences share row two. */
-@media (max-width: 30rem) {
-  .dimensions__content {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    gap: var(--space-inline-xs);
-    padding-block: var(--space-inset-xs);
-  }
-
-  .dimensions__menu-trigger {
-    grid-row: 1;
-    grid-column: 1;
-  }
-
-  .dimensions__brand {
-    grid-row: 1;
-    grid-column: 2 / -1;
-  }
-
-  .dimensions__search-trigger {
-    grid-row: 2;
-    grid-column: 1 / 3;
-    inline-size: 100%;
-    margin-inline-start: 0;
-  }
-
-  .dimensions__prefs {
-    grid-row: 2;
-    grid-column: 3;
+    min-inline-size: var(--size-control-md);
   }
 }
 
@@ -495,8 +486,7 @@ main {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   flex: none;
   gap: var(--space-inline-xs);
-  padding: var(--space-inset-sm) var(--space-inset-md);
-  border-bottom: 1px solid var(--color-border-subtle);
+  padding: var(--space-inset-md) var(--space-inset-md) var(--space-inset-sm);
 }
 
 .docs-drawer__global-link {
@@ -515,6 +505,20 @@ main {
 .docs-drawer__global-link[aria-current="page"] {
   background: var(--color-bg-surface-sunken);
   color: var(--color-text-primary);
+}
+
+.docs-drawer__prefs {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-inline-xs);
+  padding: 0 var(--space-inset-md) var(--space-inset-md);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.docs-drawer__prefs::before {
+  content: "";
+  flex: 1;
 }
 
 

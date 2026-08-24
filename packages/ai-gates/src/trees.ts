@@ -2070,6 +2070,65 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
+  {
+    // The shell region: no options, children optional — an app shell can show chrome and a
+    // deliberately empty work area before deciding what goes there, so a heading is content here,
+    // not a requirement of the signature.
+    name: "layout/main",
+    enhanced: false,
+    tree: {
+      contract: "layout",
+      signature: "Main",
+      children: {
+        contract: "typography",
+        signature: "Heading",
+        options: { headingSize: "h2" },
+        children: "Panel",
+      },
+    },
+  },
+  {
+    /*
+     * One trigger, one column: `MegamenuTrigger`'s `columns` slot takes the same `NavListGroup` a
+     * sidebar or navbar already builds with (`nav-list.ts`) — proven live by this very case, which
+     * needed `NavListGroup.parents` to learn `MegamenuTrigger` as a third legal home (see that
+     * signature's own comment). `enhanced`: the trigger's `aria-expanded` and the panel's anchored
+     * positioning are both machine-driven, same as Menu.
+     */
+    name: "megamenu/product",
+    enhanced: true,
+    tree: {
+      contract: "megamenu",
+      signature: "Megamenu",
+      options: { label: "Producto" },
+      children: [
+        {
+          contract: "megamenu",
+          signature: "MegamenuTrigger",
+          children: "Soluciones",
+          slots: {
+            columns: [
+              {
+                contract: "nav-list",
+                signature: "NavListGroup",
+                options: { heading: true },
+                slots: { label: "Producto" },
+                children: [
+                  { contract: "nav-list", signature: "NavListLink", options: { href: "/precios" }, children: "Precios" },
+                  {
+                    contract: "nav-list",
+                    signature: "NavListLink",
+                    options: { href: "/integraciones" },
+                    children: "Integraciones",
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      ],
+    },
+  },
 ];
 
 /*

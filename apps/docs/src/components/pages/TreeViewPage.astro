@@ -18,6 +18,7 @@ import coreSource from "@core/src/tree-view.ts?raw";
 import cssSource from "@core/css/components/tree-view.css?raw";
 import vanillaMountSource from "@vanilla/src/components/tree-view.ts?raw";
 import reactSource from "@react/src/components/tree-view.tsx?raw";
+import reactTestSource from "@react/src/components/tree-view.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -36,6 +37,7 @@ const sourceFiles = [
   { id: "packages/core/css/components/tree-view.css", source: cssSource, language: "css" },
   { id: "packages/vanilla/src/components/tree-view.ts", source: vanillaMountSource, language: "ts" },
   { id: "packages/react/src/components/tree-view.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/tree-view.test.tsx", source: reactTestSource, language: "tsx" },
 ] as const;
 ---
 
@@ -60,6 +62,39 @@ const sourceFiles = [
         {
           name: "selects a leaf and reports the value the composition wrote",
           description: t("treeViewPage.test3"),
+        },
+      ],
+    },
+    {
+      file: "packages/react/src/components/tree-view.test.tsx",
+      tests: [
+        {
+          name: "wires tree semantics onto the rendered nodes",
+          description: t("treeViewPage.testReact1"),
+        },
+        {
+          name: "expands a branch from its control and calls onExpandedChange",
+          description: t("treeViewPage.testReact2"),
+        },
+        {
+          name: "seeds the open branches from defaultExpandedValue",
+          description: t("treeViewPage.testReact3"),
+        },
+        {
+          name: "selects a leaf and calls onSelectionChange",
+          description: t("treeViewPage.testReact4"),
+        },
+        {
+          name: "replaces the selection in single mode",
+          description: t("treeViewPage.testReact5"),
+        },
+        {
+          name: "extends the selection in multiple mode with the platform's own modifier",
+          description: t("treeViewPage.testReact6"),
+        },
+        {
+          name: "leaves a disabled node out of the selection",
+          description: t("treeViewPage.testReact7"),
         },
       ],
     },

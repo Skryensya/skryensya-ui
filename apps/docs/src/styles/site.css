@@ -141,6 +141,22 @@ body {
 }
 
 
+/* The language menu is the LAST control in the header, so its panel opens against the window edge.
+   Menu's own placement is start-aligned (`block-end span-inline-end` + `justify-self: start`, see
+   menu.css), which for this trigger means a panel that starts 24px from the right edge and needs
+   ~190px it does not have: measured, the engine shifted it back on screen and left it flush against
+   the window, overshooting the header's own gutter. End-aligned instead, so the panel's end edge
+   lines up with the trigger's, exactly the mirror of the default — asked for through the Anclaje
+   escape hooks (ADR-25), the same two properties menu.css writes for its own submenu case, rather
+   than by overriding the pattern's insets.
+
+   This is the CSS path (`position-area`). A browser with no anchor-positioning engine falls back to
+   the machine's own `bottom-start` and Zag's shift, which clamps it on screen the way it does today. */
+.dimensions__language-menu .sk-menu__positioner {
+  --sk-anchored-position-area: block-end span-inline-start;
+  --sk-anchored-justify: end;
+}
+
 /* Icon-only, the same square as the theme toggle beside it (sizing comes from sk-button[data-icon-only]).
    Faces and the morph are the Icon Toggle pattern; this mapping lights the matching face from the
    same `[data-contrast="high"]` the tokens key on, so the icon cannot disagree with the mode. */
@@ -1634,6 +1650,50 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .d
   color: var(--color-text-secondary);
 }
 
+/*
+ * The OTHER shape a template can stand in for: a whole PAGE rather than an application.
+ *
+ * The difference is where the scroll lives, and it is not cosmetic. `.app-shell` is a row of panes
+ * that each scroll inside a fixed screen — that is what an app shell IS, and it is why the rail
+ * stays put while the work area moves. A marketing landing or a checkout has no panes: it is one
+ * document that runs past the bottom of the window, so the scroll belongs to the shell itself and
+ * the navbar above it scrolls away with everything else, exactly as it would on the real site.
+ *
+ * Getting this wrong is subtle rather than broken: a landing page inside `.app-shell` renders, and
+ * then silently letterboxes its hero into a 22rem strip with the CTA below the fold and no way to
+ * reach it, because a flex ROW gave the whole document one column's worth of height.
+ */
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  inline-size: 100%;
+  block-size: 22rem;
+  overflow: auto;
+  background: var(--color-bg-canvas);
+  /* Same reasoning as `.app-shell`: this box is the body of a site, not a card, so it must not
+     round the corner where it meets the Navbar above it. */
+  --sk-box-radius: 0;
+}
+
+.page-shell__main {
+  padding-block: var(--space-inset-xl);
+  padding-inline: var(--space-inset-lg);
+}
+
+/*
+ * The docs template's third column. `Toc`'s host is already an `<aside>` (a landmark on its own),
+ * so this only gives it a width it will not give up and its own scroll — without `flex: none` the
+ * rail is the first thing a long article squeezes, and a table of contents that wraps every entry
+ * onto three lines is worse than no table of contents.
+ */
+.docs-template__toc {
+  flex: none;
+  inline-size: 14rem;
+  padding: var(--space-inset-md);
+  overflow: auto;
+  border-inline-start: 1px solid var(--color-border-subtle);
+}
+
 /* Templates render in the docs' main region rather than an iframe. This quiet frame separates the
  * consuming application from the prose without pretending it is another document or card. */
 .templates__example {
@@ -1654,10 +1714,20 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .d
  * is the stage's padding, `--space-inset-sm` and `--space-stack-sm` are this frame's own padding
  * and margin), so it reads like the real screen it is standing in for. Scoped to this page's frame
  * only: SidebarPage's inline demo keeps the 22rem box above, sized for sitting beside prose. */
-.templates__example .app-shell {
+.templates__example :is(.app-shell, .page-shell) {
   block-size: calc(
     100dvh - var(--docs-navbar-h, var(--docs-header-block-size)) - (var(--space-inset-xl) * 2) -
       (var(--space-inset-sm) * 2) - (var(--space-stack-sm) * 2)
+  );
+}
+
+/* The templates that model a whole page carry their own Navbar INSIDE the frame, so the frame's
+   viewport is what is left after that bar — otherwise the shell alone is a full screen tall and the
+   two together overflow the stage by exactly the navbar's height. */
+.templates__example > .sk-stack:has(> .page-shell) .page-shell {
+  block-size: calc(
+    100dvh - var(--docs-navbar-h, var(--docs-header-block-size)) - (var(--space-inset-xl) * 2) -
+      (var(--space-inset-sm) * 2) - (var(--space-stack-sm) * 2) - var(--docs-header-block-size)
   );
 }
 

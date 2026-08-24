@@ -5,6 +5,35 @@
 # hash nuevo.
 surface: "88af0bbb953a655b"
 entries:
+  - date: 2026-08-23
+    kind: bugfix
+    es:
+      title: El enlace de salto ya no aparece por debajo del header pegajoso
+      body: >-
+        El componente siempre declaró <code>--sk-skip-link-z</code> en <code>--z-toast</code> (400)
+        para quedar por encima de cualquier chrome fijado por la página, pero esa capa se perdía en
+        el único momento en que el enlace es visible: al recibir el foco. El state layer
+        (<code>patterns/state-layer.css</code>) baja un <code>z-index: var(--z-focus)</code> (50) en
+        <code>.sk-interactive:focus-visible</code>, un selector (0,2,0) que le ganaba a la regla base
+        (0,1,1) — así que el enlace enfocado se pintaba en 50, debajo de un navbar en
+        <code>--z-sticky</code> (100). Medido en este sitio: <code>elementFromPoint</code> en el
+        centro del enlace devolvía el contenido del navbar. Ahora
+        <code>a.sk-skip-link:focus</code> (0,2,1) re-declara su propia capa y gana en la cascada, sin
+        <code>!important</code> y sin tocar el pattern compartido. Un consumidor que además lo quiera
+        más abajo sigue teniendo <code>--sk-skip-link-offset</code>.
+    en:
+      title: The skip link no longer renders underneath the sticky header
+      body: >-
+        The component always declared <code>--sk-skip-link-z</code> as <code>--z-toast</code> (400)
+        so it would clear any chrome the page pins, but that layer was lost at the one moment the
+        link is visible at all: on focus. The state layer (<code>patterns/state-layer.css</code>)
+        sets <code>z-index: var(--z-focus)</code> (50) on <code>.sk-interactive:focus-visible</code>,
+        a (0,2,0) selector that outranked the base rule's (0,1,1) — so a focused link painted at 50,
+        below a navbar at <code>--z-sticky</code> (100). Measured on this site:
+        <code>elementFromPoint</code> at the link's centre returned the navbar's own contents.
+        <code>a.sk-skip-link:focus</code> (0,2,1) now re-declares its own layer and wins in the
+        cascade, with no <code>!important</code> and no change to the shared pattern. A consumer that
+        also wants it lower still has <code>--sk-skip-link-offset</code>.
   - date: 2026-08-11
     kind: feature
     es:

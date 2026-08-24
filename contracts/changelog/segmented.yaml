@@ -5,6 +5,38 @@
 # hash nuevo.
 surface: "4bde761dff14be1e"
 entries:
+  - date: 2026-08-23
+    kind: rework
+    es:
+      title: El track pasa a leerse como un control, no como un hueco hundido
+      body: >-
+        <code>--sk-segmented-bg</code> pasa de <code>--color-bg-surface-sunken</code> a
+        <code>--color-action-neutral</code> y <code>--sk-segmented-border-color</code> de
+        <code>--color-border-subtle</code> a <code>--color-border-default</code>: los mismos dos
+        tokens que usa el variant <code>neutral</code> de <code>Button</code>. Sentado en una fila
+        junto a un botón, el track hundido con un borde casi invisible se leía más liviano y turbio
+        que sus vecinos, más cerca de una superficie deshabilitada que de algo que se presiona.
+        <code>ComponentPreview</code> ya venía pisando esos dos hooks en su propio header por
+        exactamente esa razón — un consumidor arreglándose el componente para sí mismo mientras el
+        resto se quedaba con la versión liviana —; ese override se borró y ésta es la apariencia
+        publicada. La geometría no cambia (alto, padding, radio, gap), y el anillo de acento del
+        thumb es lo que lo mantiene visible sin depender de que el track sea oscuro.
+        <strong>Si querés el pozo de vuelta:</strong> redeclará esos dos hooks en tu propio scope.
+    en:
+      title: The track now reads as a control, not as a recessed well
+      body: >-
+        <code>--sk-segmented-bg</code> moves from <code>--color-bg-surface-sunken</code> to
+        <code>--color-action-neutral</code>, and <code>--sk-segmented-border-color</code> from
+        <code>--color-border-subtle</code> to <code>--color-border-default</code>: the same two
+        tokens <code>Button</code>'s <code>neutral</code> variant already reads. Sitting in a row
+        beside a button, the sunken track behind a barely-findable border read lighter and muddier
+        than its neighbours — closer to a disabled surface than to something you press.
+        <code>ComponentPreview</code> had already been overriding both hooks in its own header for
+        exactly that reason, one consumer quietly fixing the component for itself while every other
+        consumer kept the lighter version; that override is gone and this is the published look.
+        Geometry is unchanged (height, padding, radius, gap), and the thumb's accent ring is what
+        keeps it findable without depending on a dark track.
+        <strong>To get the well back:</strong> redeclare those two hooks in your own scope.
   - date: 2026-08-22
     kind: bugfix
     es:

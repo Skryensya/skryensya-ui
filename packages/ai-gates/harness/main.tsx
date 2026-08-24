@@ -42,6 +42,19 @@ import "@skryensya/core/components/icon-state-button.css";
 import "@skryensya/core/components/toast.css";
 import "@skryensya/core/components/tooltip.css";
 import "@skryensya/core/patterns/anchored.css";
+/* Needed for focus-ring.spec.ts (G5): that gate reads a real computed `outline-style` off a
+ * highlighted `.sk-menu__item`, which resolves to nothing without this sheet. Confirmed missing
+ * before this addition — `menu/with-submenu` was already a canonical tree and rendered, unstyled,
+ * through every existing gate; none of G2/G4/G3's screenshot baseline needed real menu CSS to pass,
+ * so the gap went unnoticed until a test needed a computed style. Several other contracts in
+ * `trees.ts` (select, combobox, dialog, popover, command-palette, …) have the same gap; out of scope
+ * here — this adds only what G5 exercises. */
+import "@skryensya/core/components/menu.css";
+/* `megamenu/product` (the first canonical tree for this contract) needs this to be genuinely closed
+ * at rest: without it, `.sk-megamenu__content`'s unconditional `display: none` default never applies,
+ * and the panel paints (and stays in the accessibility tree) whether or not anything is open. Same
+ * gap as menu.css above, same fix. */
+import "@skryensya/core/components/megamenu.css";
 import "@skryensya/core/components/badge.css";
 import "@skryensya/core/components/kbd.css";
 import "@skryensya/core/components/loader.css";

@@ -10,7 +10,9 @@ import contractSource from "@contracts/semantic/menu.yaml?raw";
 import coreSource from "@core/src/menu.ts?raw";
 import cssSource from "@core/css/components/menu.css?raw";
 import vanillaMountSource from "@vanilla/src/components/menu.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/menu.test.ts?raw";
 import reactSource from "@react/src/components/menu.tsx?raw";
+import reactTestSource from "@react/src/components/menu.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -91,7 +93,9 @@ const sourceFiles = [
   { id: "packages/core/src/menu.ts", source: coreSource, language: "ts" },
   { id: "packages/core/css/components/menu.css", source: cssSource, language: "css" },
   { id: "packages/vanilla/src/components/menu.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/menu.test.ts", source: vanillaTestSource, language: "ts" },
   { id: "packages/react/src/components/menu.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/menu.test.tsx", source: reactTestSource, language: "tsx" },
 ] as const;
 ---
 
@@ -103,6 +107,87 @@ const sourceFiles = [
   styleGroups={[
     { file: "components/menu.css", probe: "sk-menu", title: "Menu" },
     { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
+  ]}
+  tests={[
+    {
+      file: "packages/vanilla/src/components/menu.test.ts",
+      tests: [
+        { name: "wires ARIA on mount and stays closed", description: t("menuPage.testVanilla1") },
+        {
+          name: "opens on trigger click and closes on Escape, returning focus to the trigger",
+          description: t("menuPage.testVanilla2"),
+        },
+        { name: "closes on an outside pointer press", description: t("menuPage.testVanilla3") },
+        {
+          name: "selecting a plain item emits sk-select with its value and closes the menu",
+          description: t("menuPage.testVanilla4"),
+        },
+        {
+          name: "never fires sk-select for a disabled item, and the menu stays open",
+          description: t("menuPage.testVanilla5"),
+        },
+        {
+          name: "toggles a checkbox item's data-checked and emits sk-checked-change",
+          description: t("menuPage.testVanilla6"),
+        },
+        {
+          name: "keeps a radio group mutually exclusive within the same data-group",
+          description: t("menuPage.testVanilla7"),
+        },
+        {
+          name: "renders an href entry as a real anchor with role=menuitem",
+          description: t("menuPage.testVanilla8"),
+        },
+        {
+          name: "ArrowDown moves the highlight through the item list, skipping the disabled one",
+          description: t("menuPage.testVanilla9"),
+        },
+        {
+          name: "nests a real second Menu instance for a submenu entry, closed until asked",
+          description: t("menuPage.testVanilla10"),
+        },
+        {
+          name: "selecting a submenu item closes the whole tree, parent included",
+          description: t("menuPage.testVanilla11"),
+        },
+      ],
+    },
+    {
+      file: "packages/react/src/components/menu.test.tsx",
+      tests: [
+        { name: "wires ARIA on mount and stays closed", description: t("menuPage.testReact1") },
+        {
+          name: "opens on trigger click and closes on Escape, returning focus to the trigger",
+          description: t("menuPage.testReact2"),
+        },
+        { name: "closes on an outside pointer press", description: t("menuPage.testReact3") },
+        {
+          name: "selecting a plain item calls onSelect with its value and closes the menu",
+          description: t("menuPage.testReact4"),
+        },
+        {
+          name: "never calls onSelect for a disabled item, and the menu stays open",
+          description: t("menuPage.testReact5"),
+        },
+        {
+          name: "toggles a checkbox item and calls onCheckedChange",
+          description: t("menuPage.testReact6"),
+        },
+        {
+          name: "keeps a radio group mutually exclusive within the same group",
+          description: t("menuPage.testReact7"),
+        },
+        { name: "renders an href entry as a real anchor", description: t("menuPage.testReact8") },
+        {
+          name: "ArrowDown moves the highlight through the item list, skipping the disabled one",
+          description: t("menuPage.testReact9"),
+        },
+        {
+          name: "selecting a submenu item closes the whole tree, parent included",
+          description: t("menuPage.testReact10"),
+        },
+      ],
+    },
   ]}
 >
   <Fragment slot="usage">

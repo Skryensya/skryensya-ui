@@ -269,26 +269,54 @@
    * the priority ladder: above a checkbox/radio item's `aria-checked` selected tint (hover > selected,
    * per the ladder) and below disabled.
    *
-   * THE OUTLINE IS SEPARATE FROM THE TINT ABOVE, and has to be: `data-highlighted` fires for a mouse
-   * hover too (same Zag state either way), so the hover-strength tint alone reads identically for
-   * "the pointer happens to be over this row" and "this is where arrow-key navigation currently is"
-   * — a keyboard reader has no OTHER signal, because real DOM focus never leaves the panel container
-   * (`aria-activedescendant`, not per-item focus, is how Zag tracks this). The same
-   * `--focus-ring-*` family `:focus-visible` uses elsewhere borrows that same unambiguous meaning
-   * here: inset, not outset, because the panel's own rows sit only `1px` apart (`gap: 1px` above) —
-   * an outward ring at the token's own width would bleed into the next row. */
+   * THE OUTLINE BELOW IS SEPARATE FROM THIS TINT, and has to be: `data-highlighted` fires for a
+   * mouse hover too (same Zag state either way), so the hover-strength tint alone reads identically
+   * for "the pointer happens to be over this row" and "this is where arrow-key navigation currently
+   * is" — and the keyboard reader has no OTHER signal, because real DOM focus never leaves the panel
+   * container (`aria-activedescendant`, not per-item focus, is how Zag tracks this). */
   .sk-menu__item[data-highlighted] {
     --state-layer-opacity: var(--state-layer-hover-opacity);
   }
 
-  /* Show outline only on keyboard navigation, not on mouse hover */
-  @media (any-hover: hover) {
-    .sk-menu__item[data-highlighted]:not(:focus-visible) {
-      outline: none;
-    }
-  }
-
-  .sk-menu__item[data-highlighted]:focus-visible {
+  /*
+   * The ring, and WHICH highlight earns one: keyboard navigation, never a mouse hover.
+   *
+   * `:focus-visible` cannot be what answers that here, and asking it to is how this rule spent a
+   * while painting NOTHING: no item is ever the focused element, so `[data-highlighted]:focus-visible`
+   * matches nothing at all and the keyboard reader lost the only signal they had. Focus sits on the
+   * CONTENT (`aria-activedescendant`), and moving the test up there does not work either — measured
+   * in Blink: the panel is focused programmatically on open, and it matches `:focus-visible` even
+   * when the trigger was CLICKED, so the content's own ring state cannot tell the two apart.
+   *
+   * `:not(:hover)` can, and needs no modality tracking of its own: Zag highlights the row under the
+   * pointer and CLEARS the highlight when the pointer leaves it, so a highlight that is not also a
+   * hover is one the arrow keys put there. That is the machine's own `ITEM_POINTERLEAVE →
+   * clearHighlightedItem`, read in `menu.machine.js` rather than inferred. The one overlap,
+   * arrow-keying onto the row the resting pointer happens to sit on, is the case where the reader can
+   * already see where they are.
+   *
+   * `[aria-expanded="true"]` is the ONE exception that transition carries, and the same source line
+   * says why: the clear is guarded `not("isTriggerItem")`, so a SUBMENU TRIGGER deliberately keeps
+   * its highlight when the pointer leaves it — it has to, or walking the pointer from the trigger
+   * into the panel it opened would drop the parent. Measured: with the mouse alone, moving into the
+   * submenu leaves the trigger highlighted and no longer hovered, which is precisely the shape
+   * `:not(:hover)` reads as keyboard. An open submenu is also the case where the ring is not needed:
+   * it has MOVED INTO that submenu, onto the innermost highlighted row, and the parent still carries
+   * its own tint so the path stays visible. A submenu trigger the arrows have merely landed on is
+   * `aria-expanded="false"` and rings normally.
+   *
+   * Not gated on `any-hover`: a device with a keyboard and no pointer reports `any-hover: none`, and
+   * that reader is precisely the one this ring exists for.
+   *
+   * NOT `data-highlight-source`, which is how `combobox.css` answers the same question: that
+   * attribute is `@zag-js/combobox`'s, and the menu machine does not publish one (checked, not
+   * assumed — zero occurrences in `menu.connect.js`/`menu.machine.js`).
+   *
+   * Inset, not outset, and from the same `--focus-ring-*` family `:focus-visible` uses elsewhere so
+   * it carries that same unambiguous meaning: the panel's rows sit `1px` apart (`gap: 1px` above),
+   * so an outward ring at the token's own width would bleed into the next row.
+   */
+  .sk-menu__item[data-highlighted]:not(:hover, [aria-expanded="true"]) {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
     outline-offset: calc(-1 * var(--focus-ring-width));
   }

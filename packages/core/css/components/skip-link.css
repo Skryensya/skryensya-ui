@@ -104,5 +104,25 @@
     padding: var(--sk-skip-link-padding-block) var(--sk-skip-link-padding-inline);
     border: 1px solid var(--sk-skip-link-border-color);
     box-shadow: var(--sk-skip-link-shadow);
+
+    /*
+     * THE Z-INDEX IS RE-DECLARED HERE, and it is not redundant — without it this component fails at
+     * the one job it has. It is the same collision with `sk-interactive` the `a.` qualifier above
+     * already fights for `position`, in the rule that comment did not reach: the state layer's
+     * FOCUS rung (`patterns/state-layer.css`) sets `z-index: var(--z-focus)` so a focused control's
+     * ring can clear its own welded neighbours. That selector is `.sk-interactive:focus-visible`,
+     * (0,2,0), against the base rule's (0,1,1) — so it wins, and the moment this link is focused,
+     * which is the only moment it is visible at all, its own `--z-toast` (400) was being replaced by
+     * `--z-focus` (50). Measured on this site: the link painted at 50 under a navbar sitting at
+     * `--z-sticky` (100), with `elementFromPoint` at its centre returning the navbar's own contents.
+     * A skip link rendered underneath the sticky header it exists to skip is invisible to the reader
+     * who needs it and invisible to whoever authored the header — exactly the failure the
+     * `--sk-skip-link-z` comment above describes, arriving through the cascade rather than through a
+     * consumer's stacking.
+     *
+     * `a.sk-skip-link:focus` is (0,2,1), one element more specific than the state layer's rung, so
+     * this settles it in the cascade with no `!important` and no change to the shared pattern.
+     */
+    z-index: var(--sk-skip-link-z);
   }
 }

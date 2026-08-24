@@ -11,7 +11,9 @@ import contractSource from "@contracts/semantic/number-field.yaml?raw";
 import coreSource from "@core/src/number-field.ts?raw";
 import cssSource from "@core/css/components/number-field.css?raw";
 import vanillaMountSource from "@vanilla/src/components/number-field.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/number-field.test.ts?raw";
 import reactSource from "@react/src/components/number-field.tsx?raw";
+import reactTestSource from "@react/src/components/number-field.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 const styles = `@import "@skryensya/core/patterns/state-layer.css";
@@ -23,7 +25,9 @@ const sourceFiles = [
   { id: "packages/core/src/number-field.ts", source: coreSource, language: "ts" },
   { id: "packages/core/css/components/number-field.css", source: cssSource, language: "css" },
   { id: "packages/vanilla/src/components/number-field.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/number-field.test.ts", source: vanillaTestSource, language: "ts" },
   { id: "packages/react/src/components/number-field.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/number-field.test.tsx", source: reactTestSource, language: "tsx" },
 ] as const;
 ---
 
@@ -33,6 +37,90 @@ const sourceFiles = [
   contractId="number-field"
   sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/number-field.css", probe: "sk-number-field", title: "NumberField" }]}
+  tests={[
+    {
+      file: "packages/vanilla/src/components/number-field.test.ts",
+      tests: [
+        {
+          name: "wires the accessible names from the authored aria-label onto the triggers",
+          description: t("numberFieldPage.testVanilla1"),
+        },
+        {
+          name: "increments and decrements by step, emitting sk-value-change",
+          description: t("numberFieldPage.testVanilla2"),
+        },
+        {
+          name: "disables the increment trigger at max and the decrement trigger at min",
+          description: t("numberFieldPage.testVanilla3"),
+        },
+        {
+          name: "pressing a disabled trigger at the bound is a no-op",
+          description: t("numberFieldPage.testVanilla4"),
+        },
+        {
+          name: "commits a typed value on blur and emits sk-value-change",
+          description: t("numberFieldPage.testVanilla5"),
+        },
+        {
+          name: "clamps a typed value past max down to the bound on blur",
+          description: t("numberFieldPage.testVanilla6"),
+        },
+        {
+          name: "disables the input and both triggers when the root's own input is authored disabled",
+          description: t("numberFieldPage.testVanilla7"),
+        },
+        {
+          name: "wires role=spinbutton with aria-valuemin/aria-valuemax/aria-valuenow",
+          description: t("numberFieldPage.testVanilla8"),
+        },
+        {
+          name: "ArrowUp/ArrowDown step from the keyboard, Home/End jump to the bounds",
+          description: t("numberFieldPage.testVanilla9"),
+        },
+      ],
+    },
+    {
+      file: "packages/react/src/components/number-field.test.tsx",
+      tests: [
+        {
+          name: "wires the accessible names from decrementLabel/incrementLabel onto the triggers",
+          description: t("numberFieldPage.testReact1"),
+        },
+        {
+          name: "increments and decrements by step, calling onValueChange",
+          description: t("numberFieldPage.testReact2"),
+        },
+        {
+          name: "disables the increment trigger at max and the decrement trigger at min",
+          description: t("numberFieldPage.testReact3"),
+        },
+        {
+          name: "pressing a disabled trigger at the bound is a no-op",
+          description: t("numberFieldPage.testReact4"),
+        },
+        {
+          name: "commits a typed value on blur and calls onValueChange",
+          description: t("numberFieldPage.testReact5"),
+        },
+        {
+          name: "clamps a typed value past max down to the bound on blur",
+          description: t("numberFieldPage.testReact6"),
+        },
+        {
+          name: "disables the input and both triggers when disabled",
+          description: t("numberFieldPage.testReact7"),
+        },
+        {
+          name: "wires aria-valuemin/aria-valuemax/aria-valuenow",
+          description: t("numberFieldPage.testReact8"),
+        },
+        {
+          name: "ArrowUp/ArrowDown step from the keyboard, Home/End jump to the bounds",
+          description: t("numberFieldPage.testReact9"),
+        },
+      ],
+    },
+  ]}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("numberFieldPage.description")} />

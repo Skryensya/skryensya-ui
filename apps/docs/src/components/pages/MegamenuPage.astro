@@ -9,7 +9,9 @@ import contractSource from "@contracts/semantic/megamenu.yaml?raw";
 import coreSource from "@core/src/megamenu.ts?raw";
 import cssSource from "@core/css/components/megamenu.css?raw";
 import vanillaMountSource from "@vanilla/src/components/megamenu.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/megamenu.test.ts?raw";
 import reactSource from "@react/src/components/megamenu.tsx?raw";
+import reactTestSource from "@react/src/components/megamenu.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -31,7 +33,9 @@ const sourceFiles = [
   { id: "packages/core/src/megamenu.ts", source: coreSource, language: "ts" },
   { id: "packages/core/css/components/megamenu.css", source: cssSource, language: "css" },
   { id: "packages/vanilla/src/components/megamenu.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/megamenu.test.ts", source: vanillaTestSource, language: "ts" },
   { id: "packages/react/src/components/megamenu.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/megamenu.test.tsx", source: reactTestSource, language: "tsx" },
 ] as const;
 ---
 
@@ -44,6 +48,114 @@ const sourceFiles = [
     { file: "components/megamenu.css", probe: "sk-megamenu", title: "Megamenu" },
     { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
     { file: "patterns/nav-list.css", probe: "sk-nav-list", title: "Heredados de NavList" },
+  ]}
+  tests={[
+    {
+      file: "packages/vanilla/src/components/megamenu.test.ts",
+      tests: [
+        {
+          name: "collapses the N authored positioners into one shared panel, sized by a hidden ruler",
+          description: t("megamenuPage.testVanilla1"),
+        },
+        {
+          name: "clicking a trigger opens its panel with that trigger's own columns",
+          description: t("megamenuPage.testVanilla2"),
+        },
+        {
+          name: "clicking the SAME trigger again closes it — a toggle",
+          description: t("megamenuPage.testVanilla3"),
+        },
+        {
+          name: "clicking a DIFFERENT trigger switches the shared panel's content, exclusively",
+          description: t("megamenuPage.testVanilla4"),
+        },
+        {
+          name: "opens on hover intent after its delay, not immediately",
+          description: t("megamenuPage.testVanilla5"),
+        },
+        {
+          name: "cancels the open-intent timer when the pointer leaves before the delay elapses",
+          description: t("megamenuPage.testVanilla6"),
+        },
+        {
+          name: "closes on hover intent after its own delay once the pointer leaves both trigger and panel",
+          description: t("megamenuPage.testVanilla7"),
+        },
+        {
+          name: "re-entering the shared panel cancels its pending close",
+          description: t("megamenuPage.testVanilla8"),
+        },
+        {
+          name: "Escape closes the open panel and returns focus to its trigger",
+          description: t("megamenuPage.testVanilla9"),
+        },
+        {
+          name: "focus leaving the whole bar closes the open panel",
+          description: t("megamenuPage.testVanilla10"),
+        },
+        {
+          name: "focus moving from a trigger into its own (portalled-out) panel does NOT close it",
+          description: t("megamenuPage.testVanilla11"),
+        },
+        {
+          name: "hovering a preview link swaps the image, reverting once every preview link is left",
+          description: t("megamenuPage.testVanilla12"),
+        },
+      ],
+    },
+    {
+      file: "packages/react/src/components/megamenu.test.tsx",
+      tests: [
+        {
+          name: "renders one shared panel, sized by a hidden ruler holding every trigger's columns",
+          description: t("megamenuPage.testReact1"),
+        },
+        {
+          name: "clicking a trigger opens its panel with that trigger's own columns",
+          description: t("megamenuPage.testReact2"),
+        },
+        {
+          name: "clicking the SAME trigger again closes it — a toggle",
+          description: t("megamenuPage.testReact3"),
+        },
+        {
+          name: "clicking a DIFFERENT trigger switches the shared panel's content, exclusively",
+          description: t("megamenuPage.testReact4"),
+        },
+        {
+          name: "opens on hover intent after its delay, not immediately",
+          description: t("megamenuPage.testReact5"),
+        },
+        {
+          name: "cancels the open-intent timer when the pointer leaves before the delay elapses",
+          description: t("megamenuPage.testReact6"),
+        },
+        {
+          name: "closes on hover intent after its own delay once the pointer leaves both trigger and panel",
+          description: t("megamenuPage.testReact7"),
+        },
+        {
+          name: "re-entering the shared panel cancels its pending close",
+          description: t("megamenuPage.testReact8"),
+        },
+        {
+          name: "Escape closes the open panel and returns focus to its trigger",
+          description: t("megamenuPage.testReact9"),
+        },
+        {
+          name: "focus leaving the whole bar closes the open panel",
+          description: t("megamenuPage.testReact10"),
+        },
+        {
+          name: "focus moving from a trigger into its own (portalled-out) panel does NOT close it",
+          description: t("megamenuPage.testReact11"),
+        },
+        {
+          name: "hovering a preview link swaps the image, reverting once every preview link is left",
+          description: t("megamenuPage.testReact12"),
+        },
+      ],
+    },
   ]}
 >
   <Fragment slot="usage">

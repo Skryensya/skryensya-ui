@@ -82,6 +82,7 @@ export function NavListGroup({
     <div
       {...props}
       className={cx(navListParts.group, className)}
+      data-heading={heading ? "" : undefined}
       onKeyDown={(event) => {
         props.onKeyDown?.(event);
         // The one keyboard requirement WAI's Disclosure (Navigation) pattern does NOT mark

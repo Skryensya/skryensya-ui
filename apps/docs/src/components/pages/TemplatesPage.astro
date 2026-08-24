@@ -7,10 +7,40 @@ import "@skryensya/core/patterns/box.css";
 import "@skryensya/core/patterns/nav-list.css";
 import "@skryensya/core/patterns/icon.css";
 import "@skryensya/core/patterns/layout.css";
+/*
+ * One import per contract the templates below compose. A page loads the CSS it uses and nothing
+ * else (see `i18n/index.ts`'s note on why that matters here in particular: every ComponentPreview
+ * stage clones this document's `<head>`), so adding a template means adding its contracts' sheets
+ * to this list — the emitter writes the classes, it does not carry the styles.
+ */
+import "@skryensya/core/components/badge.css";
+import "@skryensya/core/components/breadcrumb.css";
+import "@skryensya/core/components/button.css";
+import "@skryensya/core/components/callout.css";
+import "@skryensya/core/components/checkbox.css";
+import "@skryensya/core/components/form-field.css";
+import "@skryensya/core/components/input.css";
+import "@skryensya/core/components/kbd.css";
+import "@skryensya/core/components/list.css";
+import "@skryensya/core/components/pagination.css";
+import "@skryensya/core/components/process-list.css";
+import "@skryensya/core/components/segmented.css";
+import "@skryensya/core/components/select.css";
+import "@skryensya/core/components/stat.css";
+import "@skryensya/core/components/steps.css";
+import "@skryensya/core/components/table.css";
+import "@skryensya/core/components/toc.css";
+import "@skryensya/core/components/avatar.css";
+import "@skryensya/core/patterns/wrapper.css";
 import { appShellExplorerTree, appShellTree } from "../../demos/app-shell";
+import { checkoutTree } from "../../demos/templates/checkout";
+import { dashboardTree } from "../../demos/templates/dashboard";
+import { docsSiteTree } from "../../demos/templates/docs-site";
+import { marketingTree } from "../../demos/templates/marketing";
 import { getLocale, useTranslations } from "../../i18n";
 
-const t = useTranslations(getLocale(Astro.url));
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
 
 /*
  * One entry per template. The page is `fullBleed` (own sidebar, no toc, no width cap): the rail
@@ -31,6 +61,34 @@ const templates = [
     navLabel: t("templates.explorerNavLabel"),
     label: t("templates.explorerLabel"),
     markup: emitMarkup(appShellExplorerTree(t), { fillDefaults: false }),
+  },
+  {
+    id: "marketing",
+    title: t("templates.marketingTitle"),
+    navLabel: t("templates.marketingNavLabel"),
+    label: t("templates.marketingLabel"),
+    markup: emitMarkup(marketingTree(t), { fillDefaults: false }),
+  },
+  {
+    id: "docs-site",
+    title: t("templates.docsSiteTitle"),
+    navLabel: t("templates.docsSiteNavLabel"),
+    label: t("templates.docsSiteLabel"),
+    markup: emitMarkup(docsSiteTree(t), { fillDefaults: false }),
+  },
+  {
+    id: "dashboard",
+    title: t("templates.dashboardTitle"),
+    navLabel: t("templates.dashboardNavLabel"),
+    label: t("templates.dashboardLabel"),
+    markup: emitMarkup(dashboardTree(t, locale), { fillDefaults: false }),
+  },
+  {
+    id: "checkout",
+    title: t("templates.checkoutTitle"),
+    navLabel: t("templates.checkoutNavLabel"),
+    label: t("templates.checkoutLabel"),
+    markup: emitMarkup(checkoutTree(t, locale), { fillDefaults: false }),
   },
 ];
 ---

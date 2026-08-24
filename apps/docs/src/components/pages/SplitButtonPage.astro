@@ -18,6 +18,7 @@ import contractSource from "@contracts/semantic/split-button.yaml?raw";
 import coreSource from "@core/src/split-button.ts?raw";
 import cssSource from "@core/css/components/split-button.css?raw";
 import reactSource from "@react/src/components/split-button.tsx?raw";
+import reactTestSource from "@react/src/components/split-button.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -38,6 +39,7 @@ const sourceFiles = [
   { id: "packages/core/src/split-button.ts", source: coreSource, language: "ts" },
   { id: "packages/core/css/components/split-button.css", source: cssSource, language: "css" },
   { id: "packages/react/src/components/split-button.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/split-button.test.tsx", source: reactTestSource, language: "tsx" },
 ] as const;
 ---
 
@@ -49,6 +51,37 @@ const sourceFiles = [
   styleGroups={[
     { file: "components/split-button.css", probe: "sk-split-button", title: "SplitButton" },
     { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
+  ]}
+  tests={[
+    {
+      file: "packages/react/src/components/split-button.test.tsx",
+      tests: [
+        {
+          name: "renders a labelled group holding the primary button and the menu's icon-only trigger",
+          description: t("splitButtonPage.testReact1"),
+        },
+        {
+          name: "clicking the primary button fires onClick, independent of the menu",
+          description: t("splitButtonPage.testReact2"),
+        },
+        {
+          name: "opens the fallback menu from its trigger and selects an item",
+          description: t("splitButtonPage.testReact3"),
+        },
+        {
+          name: "disables both the primary button and the menu trigger together",
+          description: t("splitButtonPage.testReact4"),
+        },
+        {
+          name: "pairs the fallback trigger's shape and variant/size with the primary button",
+          description: t("splitButtonPage.testReact6"),
+        },
+        {
+          name: "renders a hand-composed primary and menu verbatim instead of the flat-prop fallback",
+          description: t("splitButtonPage.testReact5"),
+        },
+      ],
+    },
   ]}
 >
   <Fragment slot="usage">

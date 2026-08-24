@@ -11,6 +11,23 @@ import checkboxCss from "../../core/css/components/checkbox.css?raw";
 import iconCss from "../../core/css/patterns/icon.css?raw";
 import stateLayerCss from "../../core/css/patterns/state-layer.css?raw";
 import { createHitAreaOverlay } from "./overlay";
+import { createMotionSlowMo } from "./motion";
+import { createFocusOrderOverlay } from "./focus-order";
+import { createFpsMeter } from "./fps";
+
+/*
+ * Written by `apps/docs`'s `Base.astro`, right after its own `initComponents()` call resolves —
+ * that return value IS the exact mount count (`registry.ts`'s own `mount(root)` interfaces each
+ * return how many instances they just hydrated, summed by `initComponents()`). Reading a number
+ * some OTHER script already computed, rather than re-deriving it here, is the same reasoning as the
+ * hit-area/motion CSS text being duplicated instead of imported: this package cannot import from
+ * `apps/docs`, so the two sides share a name instead, documented on both ends.
+ */
+declare global {
+  interface Window {
+    __skDevtoolsComponentCount?: number;
+  }
+}
 
 /*
  * REAL COMPONENTS, not hand-rolled chrome: the toggle is a real `sk-button` and the "Hit areas"
@@ -28,12 +45,27 @@ import { createHitAreaOverlay } from "./overlay";
  * this file re-declaring a single token.
  */
 const LAYOUT_STYLES = `
-  :host { all: initial; }
+  /*
+   * \`all: initial\` also resets \`color-scheme\` — a REAL CSS property, not a custom one, so it is
+   * NOT among the handful \`all\` leaves alone. Every token in the injected component stylesheets
+   * that resolves through \`light-dark(...)\` (button.css's own \`--sk-button-bg\`/\`--sk-button-border-
+   * color\` among them) reads that property off the element the declaration lands on, and without
+   * this line every one of them was resolving as if the page were permanently in LIGHT mode: measured
+   * with the site's own \`data-scheme="dark"\` set, this panel's background stayed pure white
+   * (\`oklch(1 0 0)\`) instead of the dark surface token. \`inherit\`, not a hardcoded \`light dark\`: the
+   * real value already lives on \`<html>\` (\`Base.astro\`'s pre-paint script sets it explicitly, never
+   * left to guess at the OS preference alone), so inheriting it is what makes this panel track
+   * whichever of light/dark/system the reader actually has chosen, not just their OS.
+   */
+  :host { all: initial; color-scheme: inherit; }
   * { box-sizing: border-box; }
   .root {
     position: fixed;
     z-index: 2147483001;
-    font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    /* The site's own body/code families, not a hardcoded stack — a product that retunes its type
+       tokens (ADR-19's per-consumer retuning story) should see this panel retune with it, the same
+       reason the colors above resolve through tokens rather than literals. */
+    font: 13px/1.4 var(--font-family-body, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
     touch-action: none;
   }
   .toggle { cursor: grab; }
@@ -46,19 +78,45 @@ const LAYOUT_STYLES = `
     color: var(--color-text-primary, #f4f4f5);
     border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.12));
     border-radius: var(--radius-surface, 10px);
-    padding: 10px 12px;
+    /* \`--space-inset-*\`, not literal px: these already scale with \`--sk-density\`, so a page running
+       a compact demo shows a correspondingly tighter panel instead of one fixed size regardless of
+       the density the rest of the page is proving out. */
+    padding: var(--space-inset-sm, 8px) var(--space-inset-md, 16px);
     box-shadow: var(--elevation-raised, 0 8px 24px rgba(0, 0, 0, 0.4));
   }
-  .panel[data-edge="bottom"] { top: calc(100% + 8px); }
-  .panel[data-edge="top"] { bottom: calc(100% + 8px); }
+  .panel[data-edge="bottom"] { top: calc(100% + var(--space-stack-xs, 8px)); }
+  .panel[data-edge="top"] { bottom: calc(100% + var(--space-stack-xs, 8px)); }
   .panel[hidden] { display: none; }
   .title {
-    margin: 0 0 8px;
+    margin: 0 0 var(--space-stack-xs, 8px);
     font-weight: 600;
     font-size: 11px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     opacity: 0.6;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-inline-sm, 8px);
+    margin: 0 0 var(--space-stack-xs, 8px);
+    padding-block: 2px;
+  }
+  .stat-row__value {
+    font: 700 11px/1 var(--font-family-code, ui-monospace, "SF Mono", monospace);
+    opacity: 0.8;
+  }
+  /* Separates the read-only stat above from the toggles below — two different kinds of row (one
+     reports, the rest control), and nothing before this distinguished them but a shared margin. */
+  .divider {
+    margin: 0 0 var(--space-stack-xs, 8px);
+    border: none;
+    border-block-start: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.12));
+    opacity: 0.5;
+  }
+  .sk-checkbox + .sk-checkbox {
+    margin-block-start: var(--space-stack-xs, 8px);
   }
 `;
 
@@ -94,13 +152,87 @@ function clamp(position: SavedPosition, size: { width: number; height: number })
   return { left: Math.min(Math.max(0, position.left), maxLeft), top: Math.min(Math.max(0, position.top), maxTop) };
 }
 
+/*
+ * EVERY CHECK SURVIVES NAVIGATION, and that is not a convenience — it is what makes the panel usable
+ * at all. Each of these answers a question you ask ACROSS pages ("is the focus order sane on every
+ * component page", "does anything drop frames while I click through the catalogue"), and a flag that
+ * resets on the next link turns that into re-ticking a box at every step until you stop bothering.
+ * Only "Safety triangle" persisted before, and only because it had no choice: it needs a reload to
+ * take effect, so it had to survive one.
+ *
+ * One key per check, `null`-safe on every access: a private window, a full quota or a browser with
+ * site data blocked all throw on `localStorage`, and a debug overlay that throws while the page is
+ * loading is worse than one that forgets a checkbox.
+ */
+const TOGGLE_KEY_PREFIX = "sk-devtools-toggle:";
+
+function readToggle(id: string): boolean {
+  try {
+    return localStorage.getItem(`${TOGGLE_KEY_PREFIX}${id}`) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function writeToggle(id: string, on: boolean): void {
+  try {
+    if (on) localStorage.setItem(`${TOGGLE_KEY_PREFIX}${id}`, "1");
+    else localStorage.removeItem(`${TOGGLE_KEY_PREFIX}${id}`);
+  } catch {
+    /* private mode, quota exceeded — the check still works, it just will not survive the reload */
+  }
+}
+
+/*
+ * NOT under the prefix above, deliberately. This exact string is also read by `Base.astro`'s own
+ * early `<head>` script, before any menu mounts and long before this module loads — it is a
+ * cross-file contract, not this panel's private storage, and renaming it for tidiness would silently
+ * drop the flag for anyone who already has it set.
+ */
+const SAFETY_TRIANGLE_KEY = "sk-devtools-safety-triangle";
+
+const PANEL_OPEN_KEY = `${TOGGLE_KEY_PREFIX}panel-open`;
+
+/**
+ * One `sk-checkbox` row (markup lifted verbatim from `validate_ui`, same as the button — see the
+ * file header). Only the "checked" glyph is drawn: none of this panel's checkboxes ever go
+ * indeterminate, so that state's icon would never paint. The empty sibling still has to exist —
+ * checkbox.css positions both by part name, and the CSS drives visibility off `:checked`/
+ * `:indeterminate` on the real input, not off whether this file bothered to fill each one in.
+ */
+function createCheckboxRow(labelText: string): { row: HTMLLabelElement; input: HTMLInputElement } {
+  const row = document.createElement("label");
+  row.className = "sk-checkbox";
+  const input = document.createElement("input");
+  input.className = "sk-checkbox__input";
+  input.type = "checkbox";
+  const control = document.createElement("span");
+  control.className = "sk-checkbox__control sk-interactive";
+  control.setAttribute("aria-hidden", "true");
+  control.innerHTML = `
+    <span class="sk-checkbox__indicator" data-state="checked">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"></path></svg>
+    </span>
+    <span class="sk-checkbox__indicator" data-state="indeterminate"></span>
+  `;
+  const text = document.createElement("span");
+  text.className = "sk-checkbox__label";
+  text.textContent = labelText;
+  row.append(input, control, text);
+  return { row, input };
+}
+
 export type DebugPanelHandle = { unmount: () => void };
 export type DebugPanelOptions = { toggleLabel?: string };
 
 /**
  * Mounts a small, self-contained debug overlay: a draggable toggle button and a panel with the
- * available checks. The only check today is "Hit areas" (see `overlay.ts`); the panel is built so
- * a second one is another block appended to it, not a rewrite.
+ * available checks (see `overlay.ts` for "Hit areas"; "Safety triangle" is wired up just below).
+ *
+ * Everything a reader sets here survives navigation and reload — which check is on, whether the
+ * panel is open, and where the button sits — so the panel comes back exactly as it was left on the
+ * next page. See `persistedToggle` below, and the storage helpers above it for why every access is
+ * wrapped.
  */
 export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHandle {
   const host = document.createElement("div");
@@ -124,7 +256,16 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
   toggle.setAttribute("data-icon-only", "");
   toggle.setAttribute("aria-label", options.toggleLabel ?? "skryensya/ui debug panel");
   toggle.setAttribute("aria-expanded", "false");
-  toggle.textContent = "\u{1F41E}"; // 🐞, decorative but self-explanatory as a debug marker
+  /*
+   * An inline SVG, not the 🐞 emoji this used to be: an emoji glyph renders as a DIFFERENT icon on
+   * every platform (a literal ladybug on some, a generic insect on others, missing entirely on a
+   * system with no color-emoji font), which is a strange first impression for a design-system tool
+   * to make. `currentColor` + the same `viewBox="0 0 24 24"`/2px-stroke convention as the checkbox
+   * glyph above (and every icon this design system ships) means it also inherits the button's own
+   * `color`, so it repaints correctly across every variant and scheme this panel already tracks.
+   */
+  toggle.innerHTML =
+    '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12h4l2-7 4 14 3-9 2 2h5"></path></svg>';
   root.appendChild(toggle);
 
   const panel = document.createElement("div");
@@ -138,37 +279,135 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
   title.textContent = "Debug";
   panel.appendChild(title);
 
-  const hitAreaLabel = document.createElement("label");
-  hitAreaLabel.className = "sk-checkbox";
-  const hitAreaCheckbox = document.createElement("input");
-  hitAreaCheckbox.className = "sk-checkbox__input";
-  hitAreaCheckbox.type = "checkbox";
-  const hitAreaControl = document.createElement("span");
-  hitAreaControl.className = "sk-checkbox__control sk-interactive";
-  hitAreaControl.setAttribute("aria-hidden", "true");
-  /* Only the "checked" glyph is drawn: this checkbox never goes indeterminate, so that state's icon
-   * would never paint. The empty sibling still has to exist — checkbox.css positions both by part
-   * name, and the CSS drives visibility off `:checked`/`:indeterminate` on the real input, not off
-   * whether this file bothered to fill each one in. */
-  hitAreaControl.innerHTML = `
-    <span class="sk-checkbox__indicator" data-state="checked">
-      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"></path></svg>
-    </span>
-    <span class="sk-checkbox__indicator" data-state="indeterminate"></span>
-  `;
-  const hitAreaText = document.createElement("span");
-  hitAreaText.className = "sk-checkbox__label";
-  hitAreaText.textContent = "Hit areas";
-  hitAreaLabel.append(hitAreaCheckbox, hitAreaControl, hitAreaText);
-  panel.appendChild(hitAreaLabel);
+  /*
+   * COMPONENTS MOUNTED, read-only: `Base.astro` writes `window.__skDevtoolsComponentCount` (and
+   * fires a matching event) once its own `initComponents()` call resolves. The LISTENER is
+   * registered before the synchronous fallback read runs, on purpose: measured, this panel's own
+   * dynamic-import can start running before that script's `await initComponents()` finishes, so the
+   * property alone can be read too early. `addEventListener` still catches the event fired after —
+   * it does not matter which side registered first — so this covers both orderings, and the
+   * synchronous read only wins the ones where the property was already there. A snapshot either
+   * way, not a live counter: the docs site is a plain multi-page site (a full navigation per link),
+   * so the count cannot change again once either path lands a number here.
+   */
+  const componentCountRow = document.createElement("p");
+  componentCountRow.className = "stat-row";
+  const componentCountLabel = document.createElement("span");
+  componentCountLabel.textContent = "Components mounted";
+  const componentCountValue = document.createElement("span");
+  componentCountValue.className = "stat-row__value";
+  componentCountValue.textContent = String(window.__skDevtoolsComponentCount ?? "—");
+  window.addEventListener(
+    "sk:devtools-component-count",
+    (event) => {
+      componentCountValue.textContent = String((event as CustomEvent<number>).detail);
+    },
+    { once: true },
+  );
+  componentCountRow.append(componentCountLabel, componentCountValue);
+  panel.appendChild(componentCountRow);
+
+  const divider = document.createElement("hr");
+  divider.className = "divider";
+  panel.appendChild(divider);
+
+  /**
+   * One persisted check. Restores itself at mount by actually RUNNING `start()` when the flag was
+   * left on, not just by ticking the box: a checkbox that reads "on" over a page showing none of the
+   * effect is worse than no persistence at all, because it makes you doubt the tool rather than the
+   * page. The write happens after the effect, so a `start()` that throws cannot leave a flag behind
+   * claiming a state the page never reached.
+   */
+  function persistedToggle(
+    id: string,
+    labelText: string,
+    controls: { start: () => void; stop: () => void },
+  ): { row: HTMLLabelElement; input: HTMLInputElement } {
+    const { row, input } = createCheckboxRow(labelText);
+    input.checked = readToggle(id);
+    if (input.checked) controls.start();
+    input.addEventListener("change", () => {
+      if (input.checked) controls.start();
+      else controls.stop();
+      writeToggle(id, input.checked);
+    });
+    return { row, input };
+  }
 
   const hitAreaOverlay = createHitAreaOverlay();
-  hitAreaCheckbox.addEventListener("change", () => {
-    if (hitAreaCheckbox.checked) hitAreaOverlay.start();
-    else hitAreaOverlay.stop();
+  const { row: hitAreaRow } = persistedToggle("hit-areas", "Hit areas", hitAreaOverlay);
+  panel.appendChild(hitAreaRow);
+
+  /*
+   * SAFETY TRIANGLE. Unlike "Hit areas", this cannot toggle live: `Menu.svelte` reads
+   * `data-sk-menu-debug-intent` off an ancestor ONCE, at each menu's own setup (see the matching
+   * comment in `Base.astro`), so flipping the attribute after a menu has already mounted does
+   * nothing for that menu. This writes the SAME `localStorage` key `Base.astro`'s early script
+   * reads before any menu mounts, then reloads — the only way the flag can actually take effect,
+   * on or off. The checkbox opens already reflecting whatever that key currently says, rather than
+   * always starting unchecked and lying about the state a page carried in from the last reload.
+   */
+  const { row: safetyRow, input: safetyCheckbox } = createCheckboxRow("Safety triangle");
+  try {
+    safetyCheckbox.checked = localStorage.getItem(SAFETY_TRIANGLE_KEY) === "1";
+  } catch {
+    /* private mode — opens unchecked, same as a reader who never set it */
+  }
+  panel.appendChild(safetyRow);
+  safetyCheckbox.addEventListener("change", () => {
+    try {
+      if (safetyCheckbox.checked) localStorage.setItem(SAFETY_TRIANGLE_KEY, "1");
+      else localStorage.removeItem(SAFETY_TRIANGLE_KEY);
+    } catch {
+      /* private mode, quota exceeded — nothing to persist, so nothing to reload for either */
+      return;
+    }
+    location.reload();
   });
 
+  /*
+   * FPS METER. The checkbox here is only a remote control: the reading itself renders as a real
+   * light-DOM badge (`fps.ts`'s own `createFpsMeter()`), not a node inside this panel's shadow
+   * root — see that file's header comment for why. That also means, unlike every other row in this
+   * function, there is nothing of this check's own to append to `panel`; the row is a plain toggle.
+   */
+  const fpsMeter = createFpsMeter();
+  const { row: fpsRow } = persistedToggle("fps", "FPS meter", fpsMeter);
+  panel.appendChild(fpsRow);
+
+  const motionSlowMo = createMotionSlowMo();
+  const { row: slowMoRow } = persistedToggle("slow-motion", "Slow motion (6x)", motionSlowMo);
+  panel.appendChild(slowMoRow);
+
+  const focusOrderOverlay = createFocusOrderOverlay();
+  const { row: focusOrderRow } = persistedToggle("focus-order", "Focus order", focusOrderOverlay);
+  panel.appendChild(focusOrderRow);
+
+  /*
+   * OPEN/CLOSED IS STATE TOO, and it persists for the same reason the checks do: someone working
+   * through a run of pages with the panel open should not have to re-open it on every navigation.
+   * One function owns the three things that must move together — the `hidden` flag, the button's
+   * `aria-expanded`, and which edge the panel grows from — so restoring at mount and toggling on
+   * click cannot drift apart.
+   */
+  function setPanelOpen(open: boolean): void {
+    panel.hidden = !open;
+    toggle.setAttribute("aria-expanded", String(open));
+    if (!open) return;
+    // Open UPWARD by default; flip below only when the panel would not fit above the button.
+    const spaceAbove = toggle.getBoundingClientRect().top;
+    panel.dataset.edge = spaceAbove < 220 ? "bottom" : "top";
+  }
+
   document.body.appendChild(host);
+
+  /* After `appendChild`: the edge decision above measures the toggle, and a detached element
+   * measures 0, which would pin the panel to "bottom" on every restore regardless of room. */
+  try {
+    if (localStorage.getItem(PANEL_OPEN_KEY) === "1") setPanelOpen(true);
+  } catch {
+    /* private mode — opens closed, the same default a first-time reader gets */
+  }
 
   /*
    * POSITIONING. Anchored by `left`/`top` (never `right`/`bottom`): a drag reads the pointer's own
@@ -246,19 +485,21 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
       dragged = false;
       return;
     }
-    const wasHidden = panel.hidden;
-    panel.hidden = !wasHidden;
-    toggle.setAttribute("aria-expanded", String(wasHidden));
-    if (wasHidden) {
-      // Open UPWARD by default; flip below only when the panel would not fit above the button.
-      const spaceAbove = toggle.getBoundingClientRect().top;
-      panel.dataset.edge = spaceAbove < 220 ? "bottom" : "top";
+    setPanelOpen(panel.hidden);
+    try {
+      if (panel.hidden) localStorage.removeItem(PANEL_OPEN_KEY);
+      else localStorage.setItem(PANEL_OPEN_KEY, "1");
+    } catch {
+      /* private mode — the panel just opens closed again next time */
     }
   });
 
   return {
     unmount(): void {
       hitAreaOverlay.stop();
+      motionSlowMo.stop();
+      focusOrderOverlay.stop();
+      fpsMeter.stop();
       host.remove();
     },
   };

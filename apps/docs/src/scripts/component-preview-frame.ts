@@ -23,6 +23,34 @@ const rootAttributes = [
   "data-contrast",
   "data-radius",
   "data-icon-set",
+  /*
+   * `@skryensya/devtools`'s "Safety triangle" toggle sets this on the PARENT page's `<html>`
+   * before any of ITS OWN menus mount (see `Base.astro`'s early `is:inline` script). Every preview
+   * here is its own `srcdoc` document, so without mirroring it too, the flag would reach the real
+   * page's own menus and stop there — every menu demo on the site lives inside one of these
+   * frames, so that would be the one place the toggle visibly does nothing. `syncRootState()` runs
+   * before `mountFrameComponents()` below, same as it does for `data-scheme`/`data-contrast`, so
+   * `Menu.svelte`'s one-time `root.closest(...)` read sees it already there.
+   */
+  "data-sk-menu-debug-intent",
+  /*
+   * `@skryensya/devtools`'s "Hit areas" toggle. Unlike the menu flag above, this one is pure CSS —
+   * a live-toggleable attribute, no mount-time constraint — so mirroring it here is all it needs on
+   * the ATTRIBUTE side; `syncRootState()` re-runs on every parent-`<html>` attribute change
+   * (`rootObserver` below), so this keeps working even toggled long after an iframe has booted. The
+   * matching STYLE RULE still has to exist in this document too, which is `ensureHitAreaStyleTag()`
+   * in the devtools package's own `overlay.ts` — called at panel MOUNT rather than at first toggle
+   * for exactly this reason, so `cloneParentStyles()` below has something to actually clone.
+   */
+  "data-sk-devtools-hit-areas",
+  /*
+   * Same shape as "Hit areas" above — pure CSS, live-toggleable, no mount-time constraint — for
+   * `@skryensya/devtools`'s "Slow motion" and "Focus order" checks. Each rule is pre-seeded in
+   * `Base.astro`'s early `<head>` the same way, so `cloneParentStyles()` below always has something
+   * to clone regardless of when a given iframe boots relative to the panel.
+   */
+  "data-sk-devtools-slow-mo",
+  "data-sk-devtools-focus-order",
 ] as const;
 const allowScroll = document.body.hasAttribute(
   "data-sk-component-preview-scroll",

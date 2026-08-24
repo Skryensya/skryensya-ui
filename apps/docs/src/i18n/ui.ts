@@ -57,7 +57,157 @@ export const ui = {
     "templates.explorerTitle": "App shell con navegación anidada",
     "templates.explorerLabel": "App shell con sidebar redimensionable de navegación anidada",
     "templates.explorerNavLabel": "Navegación anidada",
+    "templates.marketingTitle": "Landing de producto",
+    "templates.marketingLabel": "Landing de marketing con hero, features y cierre",
+    "templates.marketingNavLabel": "Landing",
+    "templates.docsSiteTitle": "Sitio de documentación",
+    "templates.docsSiteLabel": "Documentación a tres columnas: rail, artículo e índice de página",
+    "templates.docsSiteNavLabel": "Documentación",
+    "templates.dashboardTitle": "Dashboard de analítica",
+    "templates.dashboardLabel": "Panel con KPIs, tabla de pedidos y paginación",
+    "templates.dashboardNavLabel": "Dashboard",
+    "templates.checkoutTitle": "Checkout de ecommerce",
+    "templates.checkoutLabel": "Checkout con pasos, formulario de envío y resumen del pedido",
+    "templates.checkoutNavLabel": "Checkout",
     "templates.navLabel": "Templates",
+
+    /* Landing de marketing. Nombres de producto ("Lumen") quedan escritos en el árbol: son
+       sustantivos propios y no se traducen. */
+    "demo.marketing.nav": "Navegación del sitio",
+    "demo.marketing.navProduct": "Producto",
+    "demo.marketing.navPricing": "Precios",
+    "demo.marketing.navCustomers": "Clientes",
+    "demo.marketing.navDocs": "Docs",
+    "demo.marketing.signIn": "Entrar",
+    "demo.marketing.cta": "Empezar gratis",
+    "demo.marketing.heroTag": "Novedad · v3",
+    "demo.marketing.heroTitle": "Publicá tu producto sin pelear con el layout",
+    "demo.marketing.heroBody":
+      "Un sistema de diseño que trae tipografía, espaciado y color resueltos, para que tu equipo escriba producto en vez de CSS.",
+    "demo.marketing.heroPrimary": "Crear cuenta",
+    "demo.marketing.heroSecondary": "Ver demo",
+    "demo.marketing.feature1Title": "Tokens, no valores sueltos",
+    "demo.marketing.feature1Body":
+      "Cada color, radio y espacio sale de un token con nombre. Cambiás la marca en un lugar y la aplicación entera lo sigue.",
+    "demo.marketing.feature2Title": "Accesible de fábrica",
+    "demo.marketing.feature2Body":
+      "Foco visible, roles correctos y contraste medido en cada componente, antes de que llegue a tu página.",
+    "demo.marketing.feature3Title": "Dos bindings, un contrato",
+    "demo.marketing.feature3Body":
+      "El mismo componente en HTML plano o en React, con la misma API y el mismo markup emitido.",
+    "demo.marketing.proofLabel": "Números del producto",
+    "demo.marketing.proof1Label": "Equipos usándolo",
+    "demo.marketing.proof1Value": "2.400",
+    "demo.marketing.proof2Label": "Componentes publicados",
+    "demo.marketing.proof2Value": "69",
+    "demo.marketing.proof3Label": "Tiempo de integración",
+    "demo.marketing.proof3Value": "1 día",
+    "demo.marketing.ctaTitle": "Empezá con el kit hoy",
+    "demo.marketing.ctaBody": "Sin tarjeta, sin instalación local. Un import y ya estás componiendo.",
+
+    /* Sitio de documentación. */
+    "demo.docsSite.search": "Buscar",
+    "demo.docsSite.getStarted": "Empezar",
+    "demo.docsSite.navigation": "Navegación de la documentación",
+    "demo.docsSite.resize": "Cambiar el ancho de la navegación",
+    "demo.docsSite.groupStart": "Empezar",
+    "demo.docsSite.groupGuides": "Guías",
+    "demo.docsSite.groupReference": "Referencia",
+    "demo.docsSite.linkInstall": "Instalación",
+    "demo.docsSite.linkQuickstart": "Inicio rápido",
+    "demo.docsSite.linkTokens": "Tokens",
+    "demo.docsSite.linkTheming": "Temas y marca",
+    "demo.docsSite.linkForms": "Formularios",
+    "demo.docsSite.linkA11y": "Accesibilidad",
+    "demo.docsSite.linkApi": "Referencia de API",
+    "demo.docsSite.linkChangelog": "Changelog",
+    "demo.docsSite.breadcrumbLabel": "Migas de pan",
+    "demo.docsSite.crumbDocs": "Docs",
+    "demo.docsSite.title": "Inicio rápido",
+    "demo.docsSite.lede":
+      "De cero a un componente en pantalla en tres pasos. Al final de esta página vas a tener el kit instalado y un botón renderizando con tus tokens.",
+    "demo.docsSite.calloutTitle": "Antes de empezar",
+    "demo.docsSite.calloutBody":
+      "Necesitás Node 20 o superior. Si venís de la v2, leé primero la guía de migración: los nombres de token cambiaron.",
+    "demo.docsSite.sectionInstall": "Instalar el paquete",
+    "demo.docsSite.sectionInstallBody":
+      "El kit se publica como un único paquete con los estilos separados por componente, así una página sólo carga el CSS que usa.",
+    "demo.docsSite.step1": "Instalá el paquete desde tu gestor de siempre.",
+    "demo.docsSite.step2": "Importá la hoja de tokens una vez, en la raíz de la aplicación.",
+    "demo.docsSite.step3": "Importá el CSS del componente donde lo uses.",
+    "demo.docsSite.step1Short": "Instalar",
+    "demo.docsSite.step2Short": "Importar tokens",
+    "demo.docsSite.sectionNext": "Qué sigue",
+    "demo.docsSite.sectionNextBody":
+      "Con el kit instalado, el siguiente paso es elegir tu paleta: la guía de temas explica qué tokens redefinir y cuáles conviene dejar como están.",
+    "demo.docsSite.onThisPage": "En esta página",
+
+    /* Dashboard de analítica. Los nombres de persona quedan escritos: son datos de ejemplo. */
+    "demo.dashboard.export": "Exportar",
+    "demo.dashboard.collapse": "Contraer navegación",
+    "demo.dashboard.navigation": "Navegación del panel",
+    "demo.dashboard.groupAnalyze": "Analizar",
+    "demo.dashboard.groupManage": "Administrar",
+    "demo.dashboard.navOverview": "Resumen",
+    "demo.dashboard.navOrders": "Pedidos",
+    "demo.dashboard.navCustomers": "Clientes",
+    "demo.dashboard.navReports": "Informes",
+    "demo.dashboard.navSettings": "Configuración",
+    "demo.dashboard.title": "Resumen",
+    "demo.dashboard.rangeLabel": "Rango de fechas",
+    "demo.dashboard.range7": "7 días",
+    "demo.dashboard.range30": "30 días",
+    "demo.dashboard.range90": "90 días",
+    "demo.dashboard.kpiLabel": "Indicadores del período",
+    "demo.dashboard.kpiRevenue": "Ingresos",
+    "demo.dashboard.kpiOrders": "Pedidos",
+    "demo.dashboard.kpiCustomers": "Clientes nuevos",
+    "demo.dashboard.kpiRefunds": "Devoluciones",
+    "demo.dashboard.tableCaption": "Últimos pedidos",
+    "demo.dashboard.colId": "Pedido",
+    "demo.dashboard.colCustomer": "Cliente",
+    "demo.dashboard.colState": "Estado",
+    "demo.dashboard.colAmount": "Importe",
+    "demo.dashboard.statePaid": "Pagado",
+    "demo.dashboard.statePending": "Pendiente",
+    "demo.dashboard.stateRefunded": "Devuelto",
+    "demo.dashboard.paginationLabel": "Páginas de pedidos",
+    "demo.dashboard.paginationPrevious": "Página anterior",
+    "demo.dashboard.paginationNext": "Página siguiente",
+
+    /* Checkout de ecommerce. */
+    "demo.checkout.secure": "Pago seguro",
+    "demo.checkout.step1": "Carrito",
+    "demo.checkout.step1Hint": "2 artículos",
+    "demo.checkout.step2": "Envío",
+    "demo.checkout.step2Hint": "Dirección y contacto",
+    "demo.checkout.step3": "Pago",
+    "demo.checkout.step3Hint": "Tarjeta o transferencia",
+    "demo.checkout.formTitle": "Datos de envío",
+    "demo.checkout.fieldName": "Nombre completo",
+    "demo.checkout.fieldNamePlaceholder": "Ada Lovelace",
+    "demo.checkout.fieldEmail": "Email",
+    "demo.checkout.fieldEmailPlaceholder": "ada@ejemplo.com",
+    "demo.checkout.fieldAddress": "Dirección",
+    "demo.checkout.fieldAddressPlaceholder": "Calle y número",
+    "demo.checkout.fieldCity": "Ciudad",
+    "demo.checkout.fieldCityPlaceholder": "Santiago",
+    "demo.checkout.fieldCountry": "País",
+    "demo.checkout.countryEs": "España",
+    "demo.checkout.countryCl": "Chile",
+    "demo.checkout.countryMx": "México",
+    "demo.checkout.sameBilling": "Usar esta dirección también para la factura",
+    "demo.checkout.summaryTitle": "Tu pedido",
+    "demo.checkout.item1": "Teclado Lumen 65",
+    "demo.checkout.item1Hint": "Switches lineales · 1 unidad",
+    "demo.checkout.item2": "Cable trenzado",
+    "demo.checkout.item2Hint": "USB-C · 1,5 m",
+    "demo.checkout.shipping": "Envío",
+    "demo.checkout.shippingHint": "Estándar · 3 a 5 días",
+    "demo.checkout.total": "Total",
+    "demo.checkout.taxNote": "IVA incluido",
+    "demo.checkout.pay": "Pagar el pedido",
+    "demo.checkout.terms": "Al pagar aceptás los términos de venta y la política de devoluciones.",
     "nav.skipToNav": "Ir a la navegación",
 
     "status.wip": "En progreso",
@@ -65,6 +215,9 @@ export const ui = {
     "search.label": "Buscar",
     "search.dialog": "Buscar en la documentación",
     "search.placeholder": "Buscar componentes y páginas…",
+    /* La paleta acotada del catálogo: sólo busca entre los componentes que la página lista. */
+    "search.componentsDialog": "Buscar entre los componentes",
+    "search.componentsPlaceholder": "Buscar un componente…",
     "search.results": "Resultados",
     "search.empty": "Sin resultados.",
     "search.hintNavigate": "navegar",
@@ -108,7 +261,7 @@ export const ui = {
     "copy.action": "Copiar",
 
     "preview.reloadAction": "Recargar",
-    "preview.fullscreenAction": "Ver en pantalla completa",
+    "preview.fullscreenAction": "Pantalla completa",
     "preview.moreActions": "Más acciones: {name}",
     "preview.screenToggleLabel": "Tamaño de pantalla ({name}): {hint}",
     "preview.bindingGroup": "Vínculo del código: {name}",
@@ -1560,6 +1713,11 @@ export const ui = {
       "Recorre libre → tablet → mobile → libre al hacer click, marcando el stage y limpiándolo para libre.",
     "componentPreview.test4": "Recarga el stage del srcdoc desde el documento autorado.",
 
+    "componentPreview.testReact1": "Renderiza el título, el stage y el código en orden.",
+    "componentPreview.testReact2": "Muestra una nota al lado del título cuando se da.",
+    "componentPreview.testReact3": "Omite el header por completo cuando no hay título ni nota.",
+    "componentPreview.testReact4": "Conserva el header con solo una nota, sin texto de título.",
+
     "datePicker.description":
       "Campo de fecha único o en rango, con nativo type=date y calendario custom detrás de un trigger.",
     "datePicker.lede":
@@ -1637,9 +1795,33 @@ export const ui = {
     "emptyState.contractBody": "El título nombra el estado, la descripción explica, y la acción resuelve. No uses EmptyState durante carga.",
     "emptyState.a11yBody": "El icono es decorativo; el texto y la acción sostienen el significado sin depender de una ilustración.",
 
+    "emptyState.testReact1":
+      "Renderiza el título como un heading, sin icono, descripción ni acciones por defecto.",
+    "emptyState.testReact2": "Renderiza un icono, oculto para tecnología asistiva, solo cuando se da.",
+    "emptyState.testReact3": "Renderiza una descripción solo cuando se da.",
+    "emptyState.testReact4": "Renderiza acciones solo cuando se dan.",
+
     "fileUploadPage.description": "Selección y drag-and-drop con límites, rechazo y lista de archivos.",
     "fileUploadPage.contractBody": "Vanilla emite sk-file-change y nunca inventa una carga remota. React expone archivos aceptados y rechazados.",
     "fileUploadPage.a11yBody": "El input real permanece disponible para formularios y tecnología asistiva; la dropzone no lo sustituye.",
+
+    "fileUploadPage.testVanilla1":
+      'La dropzone es un <code class="sk-code">role="button"</code> real y tabulable, no decoración; el trigger es un botón nativo.',
+    "fileUploadPage.testVanilla8":
+      "Enter o Espacio sobre la dropzone abren el selector de archivos, no solo un click de mouse.",
+    "fileUploadPage.testVanilla2":
+      'Elegir un archivo válido emite <code class="sk-code">sk-file-change</code> con el archivo aceptado.',
+    "fileUploadPage.testVanilla3":
+      'Un archivo que excede el tamaño emite <code class="sk-code">sk-file-change</code> con el archivo rechazado en vez de aceptado.',
+    "fileUploadPage.testVanilla4":
+      "El botón de quitar se queda oculto hasta que se acepta un archivo, y aparece cuando eso pasa.",
+    "fileUploadPage.testVanilla5":
+      "Hacer click en el botón de quitar vacía los archivos aceptados y se vuelve a ocultar.",
+    "fileUploadPage.testVanilla6": "Sin dropzone/input/trigger autorados no hace nada, ni tira un error.",
+    "fileUploadPage.testVanilla7": "Destruir el mount detiene la máquina y deja de emitir eventos.",
+
+    "fileUploadPage.testReact1": "Anuncia el motivo del rechazo de un archivo en vez de fallar en silencio.",
+    "fileUploadPage.testReact2": "Limpia el mensaje de rechazo en cuanto sigue una selección válida.",
 
 
     "grid.description": "Grid: columnas iguales con gap nombrado y semántica elegida por quien lo usa.",
@@ -2055,6 +2237,44 @@ export const ui = {
       "Megamenu es distinto de Menu/Menubar: sin <code>role=\"menu\"</code>, sin flechas ni typeahead. Cada categoría es un <code>&lt;button aria-expanded&gt;</code> y su panel son 2-4 <code>NavListGroup</code> (el mismo componente que usa NavList), enlaces comunes que se recorren con Tab. El panel mide el mismo ancho que la barra entera (anclado a la barra, no al trigger).",
     "megamenuPage.a11yBody":
       "Tab recorre los enlaces del panel en orden normal del documento, sin trampa de foco. Escape cierra el panel abierto y devuelve el foco a su trigger. El hover con intención (~150ms) es una mejora sólo para mouse; click/Enter/Space funcionan igual en cualquier dispositivo.",
+
+    "megamenuPage.testVanilla1":
+      "Las N posicionadoras autoradas colapsan en un solo panel compartido, dimensionado por una regla oculta con las columnas de cada trigger.",
+    "megamenuPage.testVanilla2":
+      "Un click abre el panel de ese trigger con sus propias columnas.",
+    "megamenuPage.testVanilla3": "Un click en el MISMO trigger lo cierra — un toggle.",
+    "megamenuPage.testVanilla4":
+      "Un click en un trigger DISTINTO cambia el contenido del panel compartido, de forma excluyente.",
+    "megamenuPage.testVanilla5": "Abre por intención de hover recién cuando pasa su demora, no al instante.",
+    "megamenuPage.testVanilla6": "Sacar el puntero antes de que pase la demora cancela la apertura por hover.",
+    "megamenuPage.testVanilla7":
+      "Cierra por intención de hover recién cuando pasa su propia demora, una vez que el puntero deja el trigger Y el panel.",
+    "megamenuPage.testVanilla8": "Volver a entrar al panel compartido cancela su cierre pendiente.",
+    "megamenuPage.testVanilla9": "Escape cierra el panel abierto y devuelve el foco a su trigger.",
+    "megamenuPage.testVanilla10": "El foco saliendo de toda la barra cierra el panel abierto.",
+    "megamenuPage.testVanilla11":
+      "El foco moviéndose de un trigger a su propio panel (portado afuera) NO lo cierra.",
+    "megamenuPage.testVanilla12":
+      "Pasar el puntero por un enlace con preview cambia la imagen, revirtiendo recién al dejar todos los enlaces con preview.",
+
+    "megamenuPage.testReact1":
+      "Renderiza un solo panel compartido, dimensionado por una regla oculta con las columnas de cada trigger.",
+    "megamenuPage.testReact2":
+      "Un click abre el panel de ese trigger con sus propias columnas.",
+    "megamenuPage.testReact3": "Un click en el MISMO trigger lo cierra — un toggle.",
+    "megamenuPage.testReact4":
+      "Un click en un trigger DISTINTO cambia el contenido del panel compartido, de forma excluyente.",
+    "megamenuPage.testReact5": "Abre por intención de hover recién cuando pasa su demora, no al instante.",
+    "megamenuPage.testReact6": "Sacar el puntero antes de que pase la demora cancela la apertura por hover.",
+    "megamenuPage.testReact7":
+      "Cierra por intención de hover recién cuando pasa su propia demora, una vez que el puntero deja el trigger Y el panel.",
+    "megamenuPage.testReact8": "Volver a entrar al panel compartido cancela su cierre pendiente.",
+    "megamenuPage.testReact9": "Escape cierra el panel abierto y devuelve el foco a su trigger.",
+    "megamenuPage.testReact10": "El foco saliendo de toda la barra cierra el panel abierto.",
+    "megamenuPage.testReact11":
+      "El foco moviéndose de un trigger a su propio panel (portado afuera) NO lo cierra.",
+    "megamenuPage.testReact12":
+      "Pasar el puntero por un enlace con preview cambia la imagen, revirtiendo recién al dejar todos los enlaces con preview.",
     "demo.megamenu.label": "Navegación principal",
     "demo.megamenu.trigger1": "Producto",
     "demo.megamenu.trigger2": "Recursos",
@@ -2089,6 +2309,50 @@ export const ui = {
     "menuPage.safetyBody":
       "Cuando un submenú está abierto, cruzar en diagonal sobre otro item del menú padre no lo resalta ni cierra el submenú. Lo que lo sostiene es un elemento real: el <em>safe area</em>, un triángulo recortado con <code>clip-path</code> que vive DENTRO del trigger y va del puntero al borde cercano del submenú. Mientras el puntero está sobre él, el navegador no dispara <code>pointerleave</code> en el trigger —un descendiente cuenta como el elemento— así que la máquina nunca entra en <code>closing</code> y los items de abajo nunca reciben el <code>pointermove</code> con el que robarían el resaltado. El polígono propio de <code>@zag-js/menu</code> no alcanzaba: sólo puede vetar un cierre temprano durante los 100ms de <code>waitForCloseDelay</code>, no extenderlos, y con el puntero quieto adentro del polígono el submenú igual se cerraba a los ~90ms. Abrí «Compartir» y cruzá diagonalmente hacia el submenú: el triángulo pintado es el mismo elemento que estás tocando, no un dibujo aparte.",
 
+    "menuPage.testVanilla1":
+      'El trigger monta con <code class="sk-code">aria-haspopup="menu"</code> y <code class="sk-code">aria-expanded="false"</code>: el menú no abre solo.',
+    "menuPage.testVanilla2":
+      'Un click abre el menú; <kbd>Escape</kbd> lo cierra y devuelve el foco al trigger.',
+    "menuPage.testVanilla3":
+      "Un pointerdown fuera del menú lo cierra, el mismo dismiss-layer que un click adentro ya usa.",
+    "menuPage.testVanilla4":
+      'Elegir un item dispara el evento <code class="sk-code">sk-select</code> con su value y cierra el menú.',
+    "menuPage.testVanilla5":
+      'Un item deshabilitado nunca dispara <code class="sk-code">sk-select</code>; el menú se queda abierto.',
+    "menuPage.testVanilla6":
+      'Un checkbox alterna <code class="sk-code">data-checked</code> y emite <code class="sk-code">sk-checked-change</code>.',
+    "menuPage.testVanilla7":
+      "Dos radios del mismo grupo son mutuamente excluyentes; elegir uno cierra el menú, como un comando.",
+    "menuPage.testVanilla8":
+      'Un item con <code class="sk-code">href</code> se renderiza como un <code class="sk-code">&lt;a&gt;</code> real con <code class="sk-code">role="menuitem"</code>.',
+    "menuPage.testVanilla9":
+      "ArrowDown mueve el resaltado por la lista, saltando el item deshabilitado.",
+    "menuPage.testVanilla10":
+      'Un item con <code class="sk-code">children</code> monta una segunda instancia real de Menu, cerrada hasta que se abre.',
+    "menuPage.testVanilla11":
+      "Elegir un item del submenú cierra todo el árbol, padre incluido.",
+
+    "menuPage.testReact1":
+      'El trigger monta con <code class="sk-code">aria-haspopup="menu"</code> y <code class="sk-code">aria-expanded="false"</code>: el menú no abre solo.',
+    "menuPage.testReact2":
+      'Un click abre el menú; <kbd>Escape</kbd> lo cierra y devuelve el foco al trigger.',
+    "menuPage.testReact3":
+      "Un pointerdown fuera del menú lo cierra, el mismo dismiss-layer que un click adentro ya usa.",
+    "menuPage.testReact4":
+      'Elegir un item llama a <code class="sk-code">onSelect</code> con su value y cierra el menú.',
+    "menuPage.testReact5":
+      'Un item deshabilitado nunca llama a <code class="sk-code">onSelect</code>; el menú se queda abierto.',
+    "menuPage.testReact6":
+      'Un checkbox alterna <code class="sk-code">aria-checked</code> y llama a <code class="sk-code">onCheckedChange</code>.',
+    "menuPage.testReact7":
+      "Dos radios del mismo grupo son mutuamente excluyentes; elegir uno cierra el menú, como un comando.",
+    "menuPage.testReact8":
+      'Un item con <code class="sk-code">href</code> se renderiza como un <code class="sk-code">&lt;a&gt;</code> real.',
+    "menuPage.testReact9":
+      "ArrowDown mueve el resaltado por la lista, saltando el item deshabilitado.",
+    "menuPage.testReact10":
+      "Elegir un item del submenú cierra todo el árbol, padre incluido.",
+
     "navbarPage.description": "Navbar: la barra, con la lista de navegación como pattern horizontal.",
     "navbarPage.lede":
       "Navbar es la <strong>barra</strong>: superficie, marca y un lugar para acciones. No tiene máquina y no la necesita, es un <code>&lt;header&gt;</code> con links, y todo eso lo envía la plataforma.",
@@ -2103,6 +2367,41 @@ export const ui = {
     "numberFieldPage.description": "Entrada numérica localizada con límites, pasos y controles de incremento.",
     "numberFieldPage.contractBody": "El valor público conserva string y valueAsNumber. Intl.NumberFormat controla la presentación.",
     "numberFieldPage.a11yBody": "Los triggers tienen nombres propios y el input anuncia min, max, valor actual y estado inválido.",
+
+    "numberFieldPage.testVanilla1":
+      'Los triggers montan con el <code class="sk-code">aria-label</code> autorado en el markup.',
+    "numberFieldPage.testVanilla2":
+      'Cada trigger suma o resta un <code class="sk-code">step</code> y emite <code class="sk-code">sk-value-change</code>.',
+    "numberFieldPage.testVanilla3":
+      "El trigger de incrementar se deshabilita en el máximo, el de disminuir en el mínimo.",
+    "numberFieldPage.testVanilla4": "Presionar un trigger deshabilitado en el límite no hace nada.",
+    "numberFieldPage.testVanilla5":
+      'Escribir un valor y salir del campo lo confirma y emite <code class="sk-code">sk-value-change</code>.',
+    "numberFieldPage.testVanilla6":
+      "Un valor tipeado por encima del máximo se recorta al límite al salir del campo.",
+    "numberFieldPage.testVanilla7":
+      "El input y ambos triggers quedan deshabilitados cuando el input autorado lo está.",
+    "numberFieldPage.testVanilla8":
+      'Monta <code class="sk-code">role="spinbutton"</code> con <code class="sk-code">aria-valuemin</code>/<code class="sk-code">aria-valuemax</code>/<code class="sk-code">aria-valuenow</code>.',
+    "numberFieldPage.testVanilla9":
+      "Flecha arriba/abajo suman o restan desde el teclado; Home/End saltan a los límites.",
+
+    "numberFieldPage.testReact1":
+      'Los triggers montan con el nombre accesible de <code class="sk-code">decrementLabel</code>/<code class="sk-code">incrementLabel</code>.',
+    "numberFieldPage.testReact2":
+      'Cada trigger suma o resta un <code class="sk-code">step</code> y llama a <code class="sk-code">onValueChange</code>.',
+    "numberFieldPage.testReact3":
+      "El trigger de incrementar se deshabilita en el máximo, el de disminuir en el mínimo.",
+    "numberFieldPage.testReact4": "Presionar un trigger deshabilitado en el límite no hace nada.",
+    "numberFieldPage.testReact5":
+      'Escribir un valor y salir del campo lo confirma y llama a <code class="sk-code">onValueChange</code>.',
+    "numberFieldPage.testReact6":
+      "Un valor tipeado por encima del máximo se recorta al límite al salir del campo.",
+    "numberFieldPage.testReact7": "El input y ambos triggers quedan deshabilitados con disabled.",
+    "numberFieldPage.testReact8":
+      'Monta <code class="sk-code">aria-valuemin</code>/<code class="sk-code">aria-valuemax</code>/<code class="sk-code">aria-valuenow</code>.',
+    "numberFieldPage.testReact9":
+      "Flecha arriba/abajo suman o restan desde el teclado; Home/End saltan a los límites.",
 
     "paginationPage.description": "Pagination: ventana de páginas como función pura del core, con primera, última y elipsis.",
     "paginationPage.lede":
@@ -2154,6 +2453,17 @@ export const ui = {
     "popoverPage.placementLabel": "Popover en las cuatro colocaciones",
     "popoverPage.contractBody": "Popover describe contenido auxiliar rico. Menu contiene acciones; Tooltip solo una descripción corta.",
     "popoverPage.a11yBody": "La plataforma posee top layer, Escape y light-dismiss mediante popover=auto.",
+
+    "popoverPage.testReact1":
+      'Liga el trigger a su contenido vía <code class="sk-code">popovertarget</code>/id, con <code class="sk-code">popover=auto</code>.',
+    "popoverPage.testReact2": "Renderiza un título y una descripción en la anatomía completa (no bare).",
+    "popoverPage.testReact3":
+      'Renderiza un botón de cerrar en la anatomía completa, ligado a <code class="sk-code">popoverTargetAction=hide</code>.',
+    "popoverPage.testReact4":
+      "Omite por completo el título, la descripción y el botón de cerrar en modo bare.",
+    "popoverPage.testReact5": "No renderiza flecha por defecto, y solo una cuando se pide.",
+    "popoverPage.testReact6": "Escribe el placement elegido sobre el contenido.",
+    "popoverPage.testReact7": "Nombra un trigger icon-only con triggerLabel.",
 
     "popupPage.description": "Superficie flotante mínima para composiciones que no necesitan chrome de Popover.",
     "popupPage.contractBody": "Popup aporta ancla y superficie, no semántica interna. Si el patrón tiene título y acciones de cierre, usa Popover.",
@@ -2326,6 +2636,18 @@ export const ui = {
     "splitButtonPage.description": "Acción principal estable y menú adyacente con acciones alternativas.",
     "splitButtonPage.contractBody": "La acción principal no cambia silenciosamente al elegir el menú. Si no hay una acción dominante, usa Menu.",
     "splitButtonPage.a11yBody": "Son dos botones independientes: uno ejecuta y el otro anuncia y abre las alternativas.",
+
+    "splitButtonPage.testReact1":
+      "Renderiza un grupo con nombre que contiene el botón primario y el trigger icon-only del menú.",
+    "splitButtonPage.testReact2":
+      'Al hacer click en el botón primario dispara <code class="sk-code">onClick</code>, independiente del menú.',
+    "splitButtonPage.testReact3":
+      'Abre el menú de fallback desde su trigger y selecciona un item, disparando <code class="sk-code">onSelect</code>.',
+    "splitButtonPage.testReact4": "disabled deshabilita el botón primario y el trigger del menú juntos.",
+    "splitButtonPage.testReact6":
+      'El trigger de fallback empareja su <code class="sk-code">variant</code>/<code class="sk-code">size</code> y forma (icon-only, soldado) con el botón primario.',
+    "splitButtonPage.testReact5":
+      "Un primary y un menu compuestos a mano se renderizan tal cual, en vez del fallback de props planas.",
     "splitButtonPage.smallTitle": "Tamaño small",
     "splitButtonPage.smallBody": "Las dos mitades escalan juntas — <code>size</code> en el Button primario, <code>triggerSize</code> en el trigger del Menu.",
     "splitButtonPage.smallLabel": "SplitButton, tamaño small",
@@ -2775,6 +3097,17 @@ export const ui = {
     "treeViewPage.test1": "Parcha la semántica de árbol sobre el markup autorado y monta una sola vez.",
     "treeViewPage.test2": "Expande una rama desde su control y lo comunica.",
     "treeViewPage.test3": "Selecciona una hoja y reporta el valor que escribió la composición.",
+
+    "treeViewPage.testReact1": "Renderiza la semántica de árbol a partir de la prop nodes.",
+    "treeViewPage.testReact2":
+      'Expande una rama desde su control y llama a <code class="sk-code">onExpandedChange</code>.',
+    "treeViewPage.testReact3":
+      'Las ramas abiertas se pueden sembrar con <code class="sk-code">defaultExpandedValue</code>.',
+    "treeViewPage.testReact4":
+      'Selecciona una hoja y llama a <code class="sk-code">onSelectionChange</code>.',
+    "treeViewPage.testReact5": "Reemplaza la selección en modo single.",
+    "treeViewPage.testReact6": "Extiende la selección en modo multiple con el modificador de la plataforma.",
+    "treeViewPage.testReact7": "Un nodo deshabilitado queda fuera de la selección.",
 
     "treegridPage.description": "Filas jerárquicas con columnas: expande o colapsa una sin perder el resto de sus valores.",
     "treegridPage.lede":
@@ -3449,7 +3782,157 @@ export const ui = {
     "templates.explorerTitle": "App shell with nested navigation",
     "templates.explorerLabel": "App shell with a resizable, nested-navigation sidebar",
     "templates.explorerNavLabel": "Nested navigation",
+    "templates.marketingTitle": "Product landing page",
+    "templates.marketingLabel": "Marketing landing with hero, features and closing call to action",
+    "templates.marketingNavLabel": "Landing",
+    "templates.docsSiteTitle": "Documentation site",
+    "templates.docsSiteLabel": "Three-column documentation: rail, article and page index",
+    "templates.docsSiteNavLabel": "Documentation",
+    "templates.dashboardTitle": "Analytics dashboard",
+    "templates.dashboardLabel": "Panel with KPIs, an orders table and pagination",
+    "templates.dashboardNavLabel": "Dashboard",
+    "templates.checkoutTitle": "Ecommerce checkout",
+    "templates.checkoutLabel": "Checkout with steps, a shipping form and an order summary",
+    "templates.checkoutNavLabel": "Checkout",
     "templates.navLabel": "Templates",
+
+    /* Marketing landing. Product names ("Lumen") stay written in the tree: proper nouns do not
+       translate. */
+    "demo.marketing.nav": "Site navigation",
+    "demo.marketing.navProduct": "Product",
+    "demo.marketing.navPricing": "Pricing",
+    "demo.marketing.navCustomers": "Customers",
+    "demo.marketing.navDocs": "Docs",
+    "demo.marketing.signIn": "Sign in",
+    "demo.marketing.cta": "Start for free",
+    "demo.marketing.heroTag": "New · v3",
+    "demo.marketing.heroTitle": "Ship your product without fighting the layout",
+    "demo.marketing.heroBody":
+      "A design system that arrives with typography, spacing and colour already settled, so your team writes product instead of CSS.",
+    "demo.marketing.heroPrimary": "Create account",
+    "demo.marketing.heroSecondary": "Watch the demo",
+    "demo.marketing.feature1Title": "Tokens, not loose values",
+    "demo.marketing.feature1Body":
+      "Every colour, radius and space comes from a named token. Change the brand in one place and the whole application follows.",
+    "demo.marketing.feature2Title": "Accessible out of the box",
+    "demo.marketing.feature2Body":
+      "Visible focus, correct roles and measured contrast in every component, before it ever reaches your page.",
+    "demo.marketing.feature3Title": "Two bindings, one contract",
+    "demo.marketing.feature3Body":
+      "The same component in plain HTML or in React, with the same API and the same emitted markup.",
+    "demo.marketing.proofLabel": "Product numbers",
+    "demo.marketing.proof1Label": "Teams using it",
+    "demo.marketing.proof1Value": "2,400",
+    "demo.marketing.proof2Label": "Published components",
+    "demo.marketing.proof2Value": "69",
+    "demo.marketing.proof3Label": "Time to integrate",
+    "demo.marketing.proof3Value": "1 day",
+    "demo.marketing.ctaTitle": "Start with the kit today",
+    "demo.marketing.ctaBody": "No card, no local install. One import and you are composing.",
+
+    /* Documentation site. */
+    "demo.docsSite.search": "Search",
+    "demo.docsSite.getStarted": "Get started",
+    "demo.docsSite.navigation": "Documentation navigation",
+    "demo.docsSite.resize": "Resize the navigation",
+    "demo.docsSite.groupStart": "Get started",
+    "demo.docsSite.groupGuides": "Guides",
+    "demo.docsSite.groupReference": "Reference",
+    "demo.docsSite.linkInstall": "Installation",
+    "demo.docsSite.linkQuickstart": "Quickstart",
+    "demo.docsSite.linkTokens": "Tokens",
+    "demo.docsSite.linkTheming": "Theming and brand",
+    "demo.docsSite.linkForms": "Forms",
+    "demo.docsSite.linkA11y": "Accessibility",
+    "demo.docsSite.linkApi": "API reference",
+    "demo.docsSite.linkChangelog": "Changelog",
+    "demo.docsSite.breadcrumbLabel": "Breadcrumb",
+    "demo.docsSite.crumbDocs": "Docs",
+    "demo.docsSite.title": "Quickstart",
+    "demo.docsSite.lede":
+      "From nothing to a component on screen in three steps. By the end of this page you will have the kit installed and a button rendering with your tokens.",
+    "demo.docsSite.calloutTitle": "Before you start",
+    "demo.docsSite.calloutBody":
+      "You need Node 20 or newer. Coming from v2, read the migration guide first: the token names changed.",
+    "demo.docsSite.sectionInstall": "Install the package",
+    "demo.docsSite.sectionInstallBody":
+      "The kit ships as a single package with per-component stylesheets, so a page only loads the CSS it actually uses.",
+    "demo.docsSite.step1": "Install the package with your usual package manager.",
+    "demo.docsSite.step2": "Import the token sheet once, at the root of the application.",
+    "demo.docsSite.step3": "Import a component's CSS where you use it.",
+    "demo.docsSite.step1Short": "Install",
+    "demo.docsSite.step2Short": "Import tokens",
+    "demo.docsSite.sectionNext": "What comes next",
+    "demo.docsSite.sectionNextBody":
+      "With the kit installed, the next step is picking your palette: the theming guide covers which tokens to redefine and which are better left alone.",
+    "demo.docsSite.onThisPage": "On this page",
+
+    /* Analytics dashboard. Person names stay written: they are sample data. */
+    "demo.dashboard.export": "Export",
+    "demo.dashboard.collapse": "Collapse navigation",
+    "demo.dashboard.navigation": "Dashboard navigation",
+    "demo.dashboard.groupAnalyze": "Analyse",
+    "demo.dashboard.groupManage": "Manage",
+    "demo.dashboard.navOverview": "Overview",
+    "demo.dashboard.navOrders": "Orders",
+    "demo.dashboard.navCustomers": "Customers",
+    "demo.dashboard.navReports": "Reports",
+    "demo.dashboard.navSettings": "Settings",
+    "demo.dashboard.title": "Overview",
+    "demo.dashboard.rangeLabel": "Date range",
+    "demo.dashboard.range7": "7 days",
+    "demo.dashboard.range30": "30 days",
+    "demo.dashboard.range90": "90 days",
+    "demo.dashboard.kpiLabel": "Metrics for the period",
+    "demo.dashboard.kpiRevenue": "Revenue",
+    "demo.dashboard.kpiOrders": "Orders",
+    "demo.dashboard.kpiCustomers": "New customers",
+    "demo.dashboard.kpiRefunds": "Refunds",
+    "demo.dashboard.tableCaption": "Latest orders",
+    "demo.dashboard.colId": "Order",
+    "demo.dashboard.colCustomer": "Customer",
+    "demo.dashboard.colState": "State",
+    "demo.dashboard.colAmount": "Amount",
+    "demo.dashboard.statePaid": "Paid",
+    "demo.dashboard.statePending": "Pending",
+    "demo.dashboard.stateRefunded": "Refunded",
+    "demo.dashboard.paginationLabel": "Order pages",
+    "demo.dashboard.paginationPrevious": "Previous page",
+    "demo.dashboard.paginationNext": "Next page",
+
+    /* Ecommerce checkout. */
+    "demo.checkout.secure": "Secure payment",
+    "demo.checkout.step1": "Cart",
+    "demo.checkout.step1Hint": "2 items",
+    "demo.checkout.step2": "Shipping",
+    "demo.checkout.step2Hint": "Address and contact",
+    "demo.checkout.step3": "Payment",
+    "demo.checkout.step3Hint": "Card or transfer",
+    "demo.checkout.formTitle": "Shipping details",
+    "demo.checkout.fieldName": "Full name",
+    "demo.checkout.fieldNamePlaceholder": "Ada Lovelace",
+    "demo.checkout.fieldEmail": "Email",
+    "demo.checkout.fieldEmailPlaceholder": "ada@example.com",
+    "demo.checkout.fieldAddress": "Address",
+    "demo.checkout.fieldAddressPlaceholder": "Street and number",
+    "demo.checkout.fieldCity": "City",
+    "demo.checkout.fieldCityPlaceholder": "Santiago",
+    "demo.checkout.fieldCountry": "Country",
+    "demo.checkout.countryEs": "Spain",
+    "demo.checkout.countryCl": "Chile",
+    "demo.checkout.countryMx": "Mexico",
+    "demo.checkout.sameBilling": "Use this address for billing too",
+    "demo.checkout.summaryTitle": "Your order",
+    "demo.checkout.item1": "Lumen 65 keyboard",
+    "demo.checkout.item1Hint": "Linear switches · 1 unit",
+    "demo.checkout.item2": "Braided cable",
+    "demo.checkout.item2Hint": "USB-C · 1.5 m",
+    "demo.checkout.shipping": "Shipping",
+    "demo.checkout.shippingHint": "Standard · 3 to 5 days",
+    "demo.checkout.total": "Total",
+    "demo.checkout.taxNote": "VAT included",
+    "demo.checkout.pay": "Pay for the order",
+    "demo.checkout.terms": "By paying you accept the terms of sale and the returns policy.",
     "nav.skipToNav": "Go to navigation",
 
     "status.wip": "Work in progress",
@@ -3457,6 +3940,8 @@ export const ui = {
     "search.label": "Search",
     "search.dialog": "Search the documentation",
     "search.placeholder": "Search components and pages…",
+    "search.componentsDialog": "Search the components",
+    "search.componentsPlaceholder": "Search for a component…",
     "search.results": "Results",
     "search.empty": "No results.",
     "search.hintNavigate": "navigate",
@@ -3497,7 +3982,7 @@ export const ui = {
     "copy.action": "Copy",
 
     "preview.reloadAction": "Reload",
-    "preview.fullscreenAction": "View in full screen",
+    "preview.fullscreenAction": "Full screen",
     "preview.moreActions": "More actions: {name}",
     "preview.screenToggleLabel": "Screen size ({name}): {hint}",
     "preview.bindingGroup": "Code binding: {name}",
@@ -4903,6 +5388,11 @@ export const ui = {
       "Cycles free → tablet → mobile → free on click, marking the stage and clearing it for free.",
     "componentPreview.test4": "Reloads the srcdoc stage from the authored document.",
 
+    "componentPreview.testReact1": "Renders the title, stage and code in order.",
+    "componentPreview.testReact2": "Renders a note beside the title when given.",
+    "componentPreview.testReact3": "Omits the header entirely when there is neither a title nor a note.",
+    "componentPreview.testReact4": "Keeps the header when only a note is given, with no title text.",
+
     "datePicker.description":
       "A single or range date field, with a native type=date and a custom calendar behind a trigger.",
     "datePicker.lede":
@@ -4980,9 +5470,33 @@ export const ui = {
     "emptyState.contractBody": "The title names the state, the description explains, and the action resolves it. Do not use EmptyState during loading.",
     "emptyState.a11yBody": "The icon is decorative; the text and the action carry the meaning without depending on an illustration.",
 
+    "emptyState.testReact1":
+      "Renders the title as a heading, with no icon, description or actions by default.",
+    "emptyState.testReact2": "Renders an icon, hidden from assistive tech, only when given.",
+    "emptyState.testReact3": "Renders a description only when given.",
+    "emptyState.testReact4": "Renders actions only when given.",
+
     "fileUploadPage.description": "Selection and drag-and-drop with limits, rejection, and a file list.",
     "fileUploadPage.contractBody": "Vanilla emits sk-file-change and never invents a remote upload. React exposes accepted and rejected files.",
     "fileUploadPage.a11yBody": "The real input stays available to forms and assistive technology; the dropzone does not replace it.",
+
+    "fileUploadPage.testVanilla1":
+      'The dropzone is a real, tabbable <code class="sk-code">role="button"</code>, not decoration; the trigger is a native button.',
+    "fileUploadPage.testVanilla8":
+      "Enter or Space on the dropzone opens the file picker, not just a pointer click.",
+    "fileUploadPage.testVanilla2":
+      'Choosing a valid file emits <code class="sk-code">sk-file-change</code> with it accepted.',
+    "fileUploadPage.testVanilla3":
+      'An oversized file emits <code class="sk-code">sk-file-change</code> with it rejected instead of accepted.',
+    "fileUploadPage.testVanilla4":
+      "The clear trigger stays hidden until a file is accepted, and shows once one is.",
+    "fileUploadPage.testVanilla5":
+      "Clicking the clear trigger empties the accepted files and re-hides itself.",
+    "fileUploadPage.testVanilla6": "With no authored dropzone/input/trigger, it does nothing, without throwing.",
+    "fileUploadPage.testVanilla7": "Destroying the mount stops the machine and it stops emitting events.",
+
+    "fileUploadPage.testReact1": "Announces a rejected file's reason instead of failing silently.",
+    "fileUploadPage.testReact2": "Clears the rejection message once a valid selection follows.",
 
 
     "grid.description": "Grid: equal columns with a named gap and semantics chosen by whoever uses it.",
@@ -5398,6 +5912,43 @@ export const ui = {
       "Megamenu is deliberately unlike Menu/Menubar: no <code>role=\"menu\"</code>, no arrow keys or typeahead. Each category is a plain <code>&lt;button aria-expanded&gt;</code> and its panel is 2-4 <code>NavListGroup</code>s (the same component NavList uses), ordinary links you Tab through. The panel matches the whole bar's own width (anchored to the bar, not the trigger).",
     "megamenuPage.a11yBody":
       "Tab flows through a panel's links in normal document order, no focus trap. Escape closes the open panel and returns focus to its trigger. Hover-intent (~150ms) is a mouse-only enhancement; click/Enter/Space work identically on any device.",
+
+    "megamenuPage.testVanilla1":
+      "The N authored positioners collapse into one shared panel, sized by a hidden ruler holding every trigger's columns.",
+    "megamenuPage.testVanilla2": "A click opens that trigger's panel with its own columns.",
+    "megamenuPage.testVanilla3": "A click on the SAME trigger closes it — a toggle.",
+    "megamenuPage.testVanilla4":
+      "A click on a DIFFERENT trigger switches the shared panel's content, exclusively.",
+    "megamenuPage.testVanilla5": "Opens on hover intent only once its own delay elapses, not immediately.",
+    "megamenuPage.testVanilla6": "Leaving before the delay elapses cancels the hover-intent open.",
+    "megamenuPage.testVanilla7":
+      "Closes on hover intent only once its own delay elapses, after the pointer leaves both the trigger and the panel.",
+    "megamenuPage.testVanilla8": "Re-entering the shared panel cancels its pending close.",
+    "megamenuPage.testVanilla9": "Escape closes the open panel and returns focus to its trigger.",
+    "megamenuPage.testVanilla10": "Focus leaving the whole bar closes the open panel.",
+    "megamenuPage.testVanilla11":
+      "Focus moving from a trigger into its own (portalled-out) panel does NOT close it.",
+    "megamenuPage.testVanilla12":
+      "Hovering a preview link swaps the image, reverting only once every preview link is left.",
+
+    "megamenuPage.testReact1":
+      "Renders one shared panel, sized by a hidden ruler holding every trigger's columns.",
+    "megamenuPage.testReact2": "A click opens that trigger's panel with its own columns.",
+    "megamenuPage.testReact3": "A click on the SAME trigger closes it — a toggle.",
+    "megamenuPage.testReact4":
+      "A click on a DIFFERENT trigger switches the shared panel's content, exclusively.",
+    "megamenuPage.testReact5": "Opens on hover intent only once its own delay elapses, not immediately.",
+    "megamenuPage.testReact6": "Leaving before the delay elapses cancels the hover-intent open.",
+    "megamenuPage.testReact7":
+      "Closes on hover intent only once its own delay elapses, after the pointer leaves both the trigger and the panel.",
+    "megamenuPage.testReact8": "Re-entering the shared panel cancels its pending close.",
+    "megamenuPage.testReact9": "Escape closes the open panel and returns focus to its trigger.",
+    "megamenuPage.testReact10": "Focus leaving the whole bar closes the open panel.",
+    "megamenuPage.testReact11":
+      "Focus moving from a trigger into its own (portalled-out) panel does NOT close it.",
+    "megamenuPage.testReact12":
+      "Hovering a preview link swaps the image, reverting only once every preview link is left.",
+
     "demo.megamenu.label": "Main navigation",
     "demo.megamenu.trigger1": "Product",
     "demo.megamenu.trigger2": "Resources",
@@ -5432,6 +5983,50 @@ export const ui = {
     "menuPage.safetyBody":
       "When a submenu is open, crossing another parent-menu item on a diagonal path does not highlight it or close the submenu. What holds it is a real element: the <em>safe area</em>, a <code>clip-path</code> triangle living INSIDE the trigger and reaching from the pointer to the submenu's near edge. While the pointer is over it the browser fires no <code>pointerleave</code> on the trigger — a descendant counts as the element — so the machine never enters <code>closing</code> and the rows underneath never get the <code>pointermove</code> they would steal the highlight with. <code>@zag-js/menu</code>'s own polygon was not enough: it can only veto an early close during <code>waitForCloseDelay</code>'s 100ms, never extend them, and a pointer parked motionless inside the polygon still lost the submenu at ~90ms. Open \"Share\" and cross diagonally toward the submenu: the painted triangle is the very element you are touching, not a separate drawing of it.",
 
+    "menuPage.testVanilla1":
+      'The trigger mounts with <code class="sk-code">aria-haspopup="menu"</code> and <code class="sk-code">aria-expanded="false"</code>: the menu never opens on its own.',
+    "menuPage.testVanilla2":
+      'A click opens the menu; <kbd>Escape</kbd> closes it and returns focus to the trigger.',
+    "menuPage.testVanilla3":
+      "A pointerdown outside the menu closes it, the same dismiss layer a click inside already uses.",
+    "menuPage.testVanilla4":
+      'Choosing an item fires the <code class="sk-code">sk-select</code> event with its value and closes the menu.',
+    "menuPage.testVanilla5":
+      'A disabled item never fires <code class="sk-code">sk-select</code>; the menu stays open.',
+    "menuPage.testVanilla6":
+      'A checkbox toggles <code class="sk-code">data-checked</code> and emits <code class="sk-code">sk-checked-change</code>.',
+    "menuPage.testVanilla7":
+      "Two radios in the same group are mutually exclusive; choosing one closes the menu, like a command.",
+    "menuPage.testVanilla8":
+      'An item with <code class="sk-code">href</code> renders as a real <code class="sk-code">&lt;a&gt;</code> with <code class="sk-code">role="menuitem"</code>.',
+    "menuPage.testVanilla9":
+      "ArrowDown moves the highlight through the item list, skipping the disabled one.",
+    "menuPage.testVanilla10":
+      'An item with <code class="sk-code">children</code> mounts a real second Menu instance, closed until opened.',
+    "menuPage.testVanilla11":
+      "Choosing a submenu item closes the whole tree, parent included.",
+
+    "menuPage.testReact1":
+      'The trigger mounts with <code class="sk-code">aria-haspopup="menu"</code> and <code class="sk-code">aria-expanded="false"</code>: the menu never opens on its own.',
+    "menuPage.testReact2":
+      'A click opens the menu; <kbd>Escape</kbd> closes it and returns focus to the trigger.',
+    "menuPage.testReact3":
+      "A pointerdown outside the menu closes it, the same dismiss layer a click inside already uses.",
+    "menuPage.testReact4":
+      'Choosing an item calls <code class="sk-code">onSelect</code> with its value and closes the menu.',
+    "menuPage.testReact5":
+      'A disabled item never calls <code class="sk-code">onSelect</code>; the menu stays open.',
+    "menuPage.testReact6":
+      'A checkbox toggles <code class="sk-code">aria-checked</code> and calls <code class="sk-code">onCheckedChange</code>.',
+    "menuPage.testReact7":
+      "Two radios in the same group are mutually exclusive; choosing one closes the menu, like a command.",
+    "menuPage.testReact8":
+      'An item with <code class="sk-code">href</code> renders as a real <code class="sk-code">&lt;a&gt;</code>.',
+    "menuPage.testReact9":
+      "ArrowDown moves the highlight through the item list, skipping the disabled one.",
+    "menuPage.testReact10":
+      "Choosing a submenu item closes the whole tree, parent included.",
+
     "navbarPage.description": "Navbar: the bar, with the navigation list as a horizontal pattern.",
     "navbarPage.lede":
       "Navbar is the <strong>bar</strong>: a surface, a brand mark, and a place for actions. It has no machine and needs none — it is a <code>&lt;header&gt;</code> with links, and the platform ships all of that.",
@@ -5446,6 +6041,41 @@ export const ui = {
     "numberFieldPage.description": "Localized numeric entry with limits, steps, and increment controls.",
     "numberFieldPage.contractBody": "The public value keeps both string and valueAsNumber. Intl.NumberFormat controls the presentation.",
     "numberFieldPage.a11yBody": "The triggers carry their own names, and the input announces min, max, current value, and invalid state.",
+
+    "numberFieldPage.testVanilla1":
+      'The triggers mount with the authored <code class="sk-code">aria-label</code> from the markup.',
+    "numberFieldPage.testVanilla2":
+      'Each trigger adds or subtracts one <code class="sk-code">step</code> and emits <code class="sk-code">sk-value-change</code>.',
+    "numberFieldPage.testVanilla3":
+      "The increment trigger disables at the max, the decrement trigger disables at the min.",
+    "numberFieldPage.testVanilla4": "Pressing a disabled trigger at the bound does nothing.",
+    "numberFieldPage.testVanilla5":
+      'Typing a value and leaving the field commits it and emits <code class="sk-code">sk-value-change</code>.',
+    "numberFieldPage.testVanilla6":
+      "A typed value past the max clamps down to the bound when the field is left.",
+    "numberFieldPage.testVanilla7":
+      "The input and both triggers disable when the authored input is disabled.",
+    "numberFieldPage.testVanilla8":
+      'Mounts <code class="sk-code">role="spinbutton"</code> with <code class="sk-code">aria-valuemin</code>/<code class="sk-code">aria-valuemax</code>/<code class="sk-code">aria-valuenow</code>.',
+    "numberFieldPage.testVanilla9":
+      "ArrowUp/ArrowDown step from the keyboard; Home/End jump to the bounds.",
+
+    "numberFieldPage.testReact1":
+      'The triggers mount with the accessible name from <code class="sk-code">decrementLabel</code>/<code class="sk-code">incrementLabel</code>.',
+    "numberFieldPage.testReact2":
+      'Each trigger adds or subtracts one <code class="sk-code">step</code> and calls <code class="sk-code">onValueChange</code>.',
+    "numberFieldPage.testReact3":
+      "The increment trigger disables at the max, the decrement trigger disables at the min.",
+    "numberFieldPage.testReact4": "Pressing a disabled trigger at the bound does nothing.",
+    "numberFieldPage.testReact5":
+      'Typing a value and leaving the field commits it and calls <code class="sk-code">onValueChange</code>.',
+    "numberFieldPage.testReact6":
+      "A typed value past the max clamps down to the bound when the field is left.",
+    "numberFieldPage.testReact7": "The input and both triggers disable with disabled.",
+    "numberFieldPage.testReact8":
+      'Mounts <code class="sk-code">aria-valuemin</code>/<code class="sk-code">aria-valuemax</code>/<code class="sk-code">aria-valuenow</code>.',
+    "numberFieldPage.testReact9":
+      "ArrowUp/ArrowDown step from the keyboard; Home/End jump to the bounds.",
 
     "paginationPage.description": "Pagination: a page window as a pure function from core, with first, last, and ellipsis.",
     "paginationPage.lede":
@@ -5497,6 +6127,16 @@ export const ui = {
     "popoverPage.placementLabel": "Popover in all four placements",
     "popoverPage.contractBody": "Popover describes rich auxiliary content. Menu holds actions; Tooltip holds only a short description.",
     "popoverPage.a11yBody": "The platform owns the top layer, Escape, and light-dismiss through popover=auto.",
+
+    "popoverPage.testReact1":
+      'Links the trigger to its content via <code class="sk-code">popovertarget</code>/id, with <code class="sk-code">popover=auto</code>.',
+    "popoverPage.testReact2": "Renders a title and description in the full (non-bare) anatomy.",
+    "popoverPage.testReact3":
+      'Renders a close button in the full anatomy, wired to <code class="sk-code">popoverTargetAction=hide</code>.',
+    "popoverPage.testReact4": "Omits the title, description and close button entirely in bare mode.",
+    "popoverPage.testReact5": "Renders no arrow by default, and one only when asked.",
+    "popoverPage.testReact6": "Writes the chosen placement onto the content.",
+    "popoverPage.testReact7": "Names an icon-only trigger with triggerLabel.",
 
     "popupPage.description": "A minimal floating surface for compositions that need none of Popover's chrome.",
     "popupPage.contractBody": "Popup provides an anchor and a surface, not internal semantics. If the pattern has a title and closing actions, use Popover.",
@@ -5668,6 +6308,18 @@ export const ui = {
     "splitButtonPage.description": "A stable primary action with an adjacent menu of alternative actions.",
     "splitButtonPage.contractBody": "The primary action never silently changes when the menu is chosen. If there is no dominant action, use Menu.",
     "splitButtonPage.a11yBody": "They are two independent buttons: one runs the action, and the other announces and opens the alternatives.",
+
+    "splitButtonPage.testReact1":
+      "Renders a labelled group holding the primary button and the menu's icon-only trigger.",
+    "splitButtonPage.testReact2":
+      'Clicking the primary button fires <code class="sk-code">onClick</code>, independent of the menu.',
+    "splitButtonPage.testReact3":
+      'Opens the fallback menu from its trigger and selects an item, firing <code class="sk-code">onSelect</code>.',
+    "splitButtonPage.testReact4": "disabled disables both the primary button and the menu trigger together.",
+    "splitButtonPage.testReact6":
+      'The fallback trigger pairs its <code class="sk-code">variant</code>/<code class="sk-code">size</code> and shape (icon-only, welded) with the primary button.',
+    "splitButtonPage.testReact5":
+      "A hand-composed primary and menu render verbatim instead of the flat-prop fallback.",
     "splitButtonPage.smallTitle": "Small size",
     "splitButtonPage.smallBody": "Both halves scale together — <code>size</code> on the primary Button, <code>triggerSize</code> on the Menu's own trigger.",
     "splitButtonPage.smallLabel": "SplitButton, small size",
@@ -6109,6 +6761,17 @@ export const ui = {
     "treeViewPage.test1": "Patches tree semantics onto authored markup and mounts once.",
     "treeViewPage.test2": "Expands a branch from its control and says so.",
     "treeViewPage.test3": "Selects a leaf and reports the value the composition wrote.",
+
+    "treeViewPage.testReact1": "Renders tree semantics from the nodes prop.",
+    "treeViewPage.testReact2":
+      'Expands a branch from its control and calls <code class="sk-code">onExpandedChange</code>.',
+    "treeViewPage.testReact3":
+      'Open branches can be seeded with <code class="sk-code">defaultExpandedValue</code>.',
+    "treeViewPage.testReact4":
+      'Selects a leaf and calls <code class="sk-code">onSelectionChange</code>.',
+    "treeViewPage.testReact5": "Replaces the selection in single mode.",
+    "treeViewPage.testReact6": "Extends the selection in multiple mode with the platform's own modifier.",
+    "treeViewPage.testReact7": "A disabled node is left out of the selection.",
 
     "treegridPage.description": "Hierarchical rows with columns: expand or collapse one without losing the rest of its values.",
     "treegridPage.lede":

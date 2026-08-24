@@ -110,13 +110,16 @@ export const navListContract = {
       host: { element: "div" },
       options: ["collapsible", "defaultOpen", "heading"],
       /*
-       * Two legal homes, not one: `NavList` for a top-level section, `NavListLink` for a
-       * destination's own sub-destinations (its `nested` slot, below). The template stays
-       * IDENTICAL either way — this signature does not know which parent placed it — because what
-       * changes is only where the `<div>` lands (`<nav><ul>` vs. inside a `<li>`, beside the `<a>`
-       * it nests under), never what it renders.
+       * Three legal homes, not one: `NavList` for a top-level section, `NavListLink` for a
+       * destination's own sub-destinations (its `nested` slot, below), and `MegamenuTrigger` for
+       * one column of a mega-menu panel (`megamenu.ts`'s own `columns` slot, `of: ["NavListGroup",
+       * "ImageFrame"]`) — the same group of links, just standing where a links column goes instead
+       * of a sidebar section. The template stays IDENTICAL in all three — this signature does not
+       * know which parent placed it — because what changes is only where the `<div>` lands
+       * (`<nav><ul>`, inside a `<li>` beside the `<a>` it nests under, or inside a mega-menu's own
+       * panel), never what it renders.
        */
-      parents: ["NavList", "NavListLink"],
+      parents: ["NavList", "NavListLink", "MegamenuTrigger"],
       slots: {
         label: { accepts: "node" },
         children: { accepts: "signature", required: true, of: ["NavListLink"] },

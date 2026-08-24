@@ -324,7 +324,7 @@ export function Megamenu({ children, className, container, label, ...props }: Me
 
   const panel = (
     <div
-      {...anchored.positioner({}, cx(megamenuParts.positioner, `sk-anchored ${megamenuParts.root}`))}
+      {...anchored.positioner({}, cx(megamenuParts.positioner, megamenuParts.root))}
       data-sk-megamenu-positioner
       onPointerEnter={cancelPanelClose}
       onPointerLeave={schedulePanelClose}
@@ -337,18 +337,30 @@ export function Megamenu({ children, className, container, label, ...props }: Me
             </div>
           ))}
         </div>
-        {displayedIndex !== null && (
-          <div
-            className={`${megamenuParts.panel} ${megamenuParts.panelVisible}`}
-            onBlur={onPreviewBlur}
-            onFocus={onPreviewFocus}
-            onPointerOut={onPreviewPointerOut}
-            onPointerOver={onPreviewPointerOver}
-            ref={visiblePanelRef}
-          >
-            {columnsByIndex?.[displayedIndex]}
-          </div>
-        )}
+        {
+          /*
+           * Unconditional, matching Vanilla: that binding builds this panel once, at connect, and
+           * only ever swaps its CHILDREN (`megamenu.ts`'s own `buildPanel(columnsByIndex[0], …)` at
+           * connect, `visiblePanel.replaceChildren(…)` on open) — it is a permanent fixture, never
+           * absent-then-created. Gating this on `displayedIndex !== null` (React never having opened
+           * yet) made the panel node itself not exist until the first open, a real DOM-shape
+           * divergence G2 caught the moment a canonical tree first rendered this contract: closed
+           * and never-opened is still "closed", and the two bindings owe the same markup for it, not
+           * merely the same painted result. Costs nothing extra on screen either way — this panel's
+           * whole ancestor (`sharedContent`/`.sk-megamenu__content`) is what `data-state="closed"`
+           * hides, same as Vanilla's.
+           */
+        }
+        <div
+          className={`${megamenuParts.panel} ${megamenuParts.panelVisible}`}
+          onBlur={onPreviewBlur}
+          onFocus={onPreviewFocus}
+          onPointerOut={onPreviewPointerOut}
+          onPointerOver={onPreviewPointerOver}
+          ref={visiblePanelRef}
+        >
+          {columnsByIndex?.[displayedIndex ?? 0]}
+        </div>
       </div>
     </div>
   );

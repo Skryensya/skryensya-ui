@@ -5,6 +5,31 @@
 # hash nuevo.
 surface: "4490fcac2c8fc1cf"
 entries:
+  - date: 2026-08-24
+    kind: bugfix
+    target: item
+    es:
+      title: El ítem resaltado con el teclado vuelve a mostrar su anillo de foco
+      body: >-
+        Navegar un menú con las flechas no dibujaba ningún anillo: la regla lo pedía con
+        <code>:focus-visible</code>, y en un menú el foco real nunca llega al ítem — Zag lo sigue con
+        <code>aria-activedescendant</code> sobre el panel —, así que no coincidía nunca. Al lector de
+        teclado le quedaba sólo el tinte, exactamente el mismo que pinta el hover del mouse, sin nada
+        que distinguiera "acá están las flechas" de "acá está el puntero". El anillo ahora lo pide
+        <code>[data-highlighted]:not(:hover)</code>: sale cuando el resaltado lo movió el teclado y no
+        cuando lo puso el puntero. Alcanza igual a los desplegables de <code>Menubar</code>, que son
+        este mismo ítem.
+    en:
+      title: The keyboard-highlighted item shows its focus ring again
+      body: >-
+        Arrow-key navigation drew no ring at all: the rule asked for it with
+        <code>:focus-visible</code>, and in a menu real focus never reaches the item — Zag tracks it
+        with <code>aria-activedescendant</code> on the panel — so it never matched. The keyboard
+        reader was left with the tint alone, the very same one a mouse hover paints, with nothing to
+        tell "the arrow keys are here" from "the pointer is here". The ring now comes from
+        <code>[data-highlighted]:not(:hover)</code>: it shows when the keyboard moved the highlight
+        and not when the pointer did. It covers <code>Menubar</code>'s dropdowns too, which are this
+        same item.
   - date: 2026-08-19
     kind: feature
     target: href

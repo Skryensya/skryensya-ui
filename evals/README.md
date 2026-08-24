@@ -79,17 +79,31 @@ key, or just have `claude` on `PATH`, and it runs with no other setup.
 per language and is not deterministic; the static `run.ts` gate stays the thing every commit runs;
 this is the thing a person runs by hand to actually measure G6.
 
-**`claude-code`'s tradeoff, measured live, not assumed:** `claude -p` (no `--bare`) loads this
-machine's own hooks, skills and `CLAUDE.md`, and `--allowedTools "mcp__skryensya-ui"` only
-pre-approves that server; it does not hide the platform's other built-in tools from the model, and
-`--permission-mode dontAsk` still lets through the read-only ones (`Read`, a safe `grep`/`cat`)
-regardless. Confirmed running it for real: `get_catalog`'s ~110KB payload trips Claude Code's own
-per-call output-size guard, and the agent falls back to `Bash`/`Read` on the saved copy to get
-around it. `agent/claude-code-provider.ts` only scores calls to the three `mcp__skryensya-ui__*`
-tools, so that detour neither counts toward nor breaks a case. It means this provider is not a
-hermetic "only these three tools exist" measurement the way `anthropic`/`openai` are. A `--bare` +
-explicit `ANTHROPIC_API_KEY` variant would close that gap; not built here, since it would give up
-the one thing that makes this provider worth having (no separate API key).
+**`claude-code`'s remaining tradeoff, measured live, not assumed:** `claude -p` (no `--bare`) still
+loads this machine's own hooks, skills and `CLAUDE.md` into context. Two sharper problems that WERE
+here got fixed instead of just documented:
+
+- **Fairness.** Measured before the fix: from the repo root, the model reached for `Read` (the one
+  built-in tool `dontAsk` lets through unconditionally) and, once, read the eval case file's OWN
+  reference tree before calling a single MCP tool. A run like that can't tell "composed it right"
+  from "found the answer lying around." Fixed by spawning `claude -p` from a fresh, empty temp
+  directory per call (`mkdtemp`, cleaned up after) with `--mcp-config` as inline JSON naming the
+  server by its absolute built path. Nothing of this repo is reachable from there, so `Read` has
+  nothing useful left to find.
+- **The literal-answer failure mode.** Measured before the fix: a short, plain prompt like "a short
+  survey with a single-choice question among three alternatives" sometimes got answered as an
+  actual survey question, never touching a tool. Fixed with a shared system prompt
+  (`agent/system-prompt.ts`, used by both providers) stating explicitly that the user's message is a
+  UI to compose, not a question to answer. Not airtight: LLM agents are not deterministic, and a
+  case can still occasionally slip through without a tool call, but confirmed across repeated runs
+  it now converges reliably where it previously failed every time.
+
+What's left, and is a real, load-bearing cost of this provider rather than something routed around
+further: `get_catalog`'s ~110KB response still trips a separate, LOWER, fixed threshold that
+persists a large tool result to a file instead of inlining it; no env var moves that one. The agent
+spends a `Read` on its own saved output to recover it. Measured: this costs turns, not correctness.
+It's reading back what the tool itself returned, not repo source, and the agent still converges on
+a correct `validate_ui` call afterward.
 
 ## Running the static gate
 

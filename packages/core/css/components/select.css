@@ -473,7 +473,46 @@
     cursor: pointer;
   }
 
+  /*
+   * ── state layer bridge, and the ring beside it ──────────────────────────────
+   * `.sk-select__item` carries `sk-interactive` (select.ts's `also: ["sk-anchor", "sk-interactive"]`
+   * on the trigger and `also: ["sk-interactive"]` on the item), so `patterns/state-layer.css` already
+   * paints a `::before` here — but nothing bridged INTO it: `@zag-js/select` marks the row the arrow
+   * keys are on with a bare `data-highlighted`, which the pattern's own `:hover`/`:focus-visible`
+   * rungs never see. Real DOM focus moves to the LISTBOX (`.sk-select__content`, confirmed live —
+   * `setInitialFocus`, `select.machine.js`), never to the option itself: the option is virtual focus,
+   * `aria-activedescendant` on that content element, the same mechanism Menu and Combobox use (see
+   * this file's own note on the `Listbox` row of `docs/aria-apg-audit.md`, which found the same
+   * "real focus, but on the container" shape while fixing `aria-selected` here). Without this, keyboard navigation through an
+   * open listbox showed NOTHING — not even a tint — measured against a bare fixture carrying
+   * `sk-interactive` and `data-highlighted` alone: `--state-layer-opacity` resolved to its own
+   * initial `0`. `menu.css` had the same gap for its ring specifically (fixed alongside this); select
+   * had never had either half. Same idiom `menu.css`/`tree-view.css` already use for the tint.
+   *
+   * The ring: `[data-highlighted]:not(:hover)`, not `:focus-visible` — focus never reaches the
+   * option, so that selector matches nothing, the exact way `menu.css`'s own ring shipped broken.
+   * Zag clears `data-highlighted` when the pointer leaves the row it set it on (confirmed reading
+   * `select.connect.js`'s `onPointerLeave`), so a highlight that is not also a hover is one the arrow
+   * keys put there. No `[aria-expanded="true"]` exception: unlike Menu, a listbox option never opens
+   * a submenu of its own, so there is no case where a highlighted row is legitimately unhovered by
+   * the SAME interaction that highlighted it. Inset, not outset: `.sk-select__content` stacks rows
+   * with no gap between them (no `gap` declared on it), so an outward ring at the token's own width
+   * would collide with the neighbouring row exactly the way `menu.css`'s own note explains.
+   */
+  .sk-select__item[data-highlighted] {
+    --state-layer-opacity: var(--state-layer-hover-opacity);
+  }
+
+  .sk-select__item[data-highlighted]:not(:hover) {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: calc(-1 * var(--focus-ring-width));
+  }
+
+  /* Disabled, same specificity, declared after: wins the tie against the highlighted bridge above,
+   * same priority ladder `menu.css` follows (disabled > hover). Carries the pre-existing color/cursor
+   * this rule already owned, plus the opacity slot it never wrote to. */
   .sk-select__item[data-disabled] {
+    --state-layer-opacity: var(--state-layer-disabled-opacity);
     color: var(--sk-select-item-disabled-fg);
     cursor: not-allowed;
   }

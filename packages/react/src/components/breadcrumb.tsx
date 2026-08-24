@@ -117,7 +117,13 @@ export function Breadcrumb({
 
   if (!range) {
     return (
-      <nav aria-label={label} className={breadcrumbParts.root} data-sk-breadcrumb="" ref={navRef}>
+      <nav
+        aria-label={label}
+        className={breadcrumbParts.root}
+        data-collapsed-label={collapsedLabel}
+        data-sk-breadcrumb=""
+        ref={navRef}
+      >
         <ol className={breadcrumbParts.list} role="list">
           <FlatCrumbs items={items} separator={separator} />
         </ol>
@@ -131,7 +137,13 @@ export function Breadcrumb({
   const lastCurrent = last.current ?? true;
 
   return (
-    <nav aria-label={label} className={breadcrumbParts.root} data-sk-breadcrumb="" ref={navRef}>
+    <nav
+      aria-label={label}
+      className={breadcrumbParts.root}
+      data-collapsed-label={collapsedLabel}
+      data-sk-breadcrumb=""
+      ref={navRef}
+    >
       <ol
         aria-hidden="true"
         className={breadcrumbParts.list}

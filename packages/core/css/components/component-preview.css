@@ -135,10 +135,21 @@
     font-weight: var(--font-weight-emphasis);
   }
 
-  .sk-component-preview__n {
+  /*
+   * The trailing glyph on this card's own overflow-menu commands, sitting in `.sk-menu__item`'s
+   * second grid column. `align-items: center` rather than letting it ride the text baseline: the
+   * icon pattern's own `-0.125em` nudge (icon.css) is tuned for a glyph inline BESIDE text, and this
+   * one has no sibling text in its cell to share a baseline with, so the nudge lifts it off centre —
+   * the same correction, for the same reason, that `menu.css` already makes on `__item-indicator`.
+   *
+   * `tertiary`, not the item's own text colour: these mark what a row does, and at full strength two
+   * of them competed with the labels in a menu that only has two entries.
+   */
+  .sk-component-preview__menu-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     color: var(--sk-component-preview-note-fg);
-    font-variant-numeric: tabular-nums;
-    margin-inline-end: var(--space-inline-sm);
   }
 
   .sk-component-preview__note {
@@ -155,12 +166,9 @@
     margin-inline-start: auto;
   }
 
-  /* Match the overflow trigger's `neutral` button chrome, so the two Segmented toggles read as the
-   * same weight of control as the button sitting next to them, not a lighter one. */
-  .sk-component-preview__actions .sk-segmented {
-    --sk-segmented-bg: var(--color-action-neutral);
-    --sk-segmented-border-color: var(--color-border-default);
-  }
+  /* The `--sk-segmented-bg`/`-border-color` override that used to sit here is gone: `segmented.css`
+   * paints exactly these values itself now, so this header gets the same chrome by default and every
+   * other consumer gets what this card was quietly keeping for itself. See that file's own header. */
 
   /*
    * The screen preset's per-option Tooltip root stays out of the track's own flex layout. Left at
@@ -317,12 +325,26 @@
    * sitting in a void. Veiling with the mat's own color fades only what is drawn on the wall, and
    * never all the way to nothing: the grid stays legible under the frame, just quieter.
    */
+  /*
+   * TWO HOSTS, ONE RECIPE. The card paints this in its own stage row, where the stage is a direct
+   * child. A host that MOVES the stage somewhere else cannot use that `:has(> …)` — the fullscreen
+   * shell (`apps/docs/src/pages/f/[...path].astro`) lifts the stage into a pane of its own, so the
+   * selector stopped matching and a preset there letterboxed against flat background instead of the
+   * halftone, the same class of miss that file already documents for the loader's own `:has(> …)`.
+   *
+   * `[data-sk-component-preview-mat]` is that host's opt-in: it declares itself the wall, supplies
+   * its own grid placement (its cell is not this card's stage row), and inherits every
+   * `--sk-component-preview-mat-*` from the card it still lives inside. The paint below stays
+   * defined exactly once, which is the point — a second copy of a two-gradient halftone is a fork
+   * that drifts the first time either side is touched.
+   */
   .sk-component-preview:has(
     > .sk-component-preview__stage[data-sk-component-preview-screen]
+  )::before,
+  [data-sk-component-preview-mat]:has(
+    .sk-component-preview__stage[data-sk-component-preview-screen]
   )::before {
     content: "";
-    grid-column: 1;
-    grid-row: 2;
     border-block-end: 1px solid var(--sk-component-preview-border-color);
     background-color: var(--sk-component-preview-mat-bg);
     background-image:
@@ -342,6 +364,16 @@
       100% 100%,
       var(--sk-component-preview-mat-dot-gap)
         var(--sk-component-preview-mat-dot-gap);
+  }
+
+  /* The CARD's own placement, kept off the shared rule above: the stage row it shares with the
+     stage, the resizer and the loader. An opt-in host has a grid of its own and places its wall
+     itself. */
+  .sk-component-preview:has(
+    > .sk-component-preview__stage[data-sk-component-preview-screen]
+  )::before {
+    grid-column: 1;
+    grid-row: 2;
   }
 
   .sk-component-preview__stage[data-sk-component-preview-scroll] {

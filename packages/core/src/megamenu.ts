@@ -99,6 +99,23 @@ export const megamenuContract = {
       mount: megamenuAttrs.root,
       options: ["label"],
       requires: ["label"],
+      /*
+       * Floating content leaves the subtree in React, but as ONE portal owned by the ROOT, not one
+       * per trigger the way `Menu`/`Menubar` do it: `megamenu.tsx`'s own header comment is explicit
+       * — "ONE PHYSICAL PANEL... never one inside each trigger" — because every trigger's columns
+       * share a single positioner sized to the tallest one, so switching triggers reads as the same
+       * box gaining new content, not one box closing while another opens. `Megamenu`'s own React
+       * component is what calls `createPortal` and is what accepts `container`; a consumer needs one
+       * to scope it, same reason `Menu`/`Menubar` declare this on whichever signature actually owns
+       * the call. `MegamenuTrigger` carries no portal of its own — it hands its `columns` content to
+       * the parent, which is where it is rendered — so marking THAT signature `portals: true` (as an
+       * earlier revision did, copying the flag from `Menu` without checking which component actually
+       * owns the call here) left every consumer's injected `container` landing on a component that
+       * never reads one, and `Megamenu` itself always falling back to `document.body` — invisible to
+       * anything scoped to where the tree was composed. First caught by `megamenu/product`, the first
+       * canonical tree to render this contract at all.
+       */
+      portals: true,
       slots: {
         children: { accepts: "signature", required: true, of: ["MegamenuTrigger"] },
       },
@@ -128,9 +145,6 @@ export const megamenuContract = {
       host: { element: "li" },
       parents: ["Megamenu"],
       options: [],
-      /* Floating content leaves the subtree in React (`useAnchored`'s own portal) — same reason
-       * `Menu`/`Menubar` declare this: a consumer needs a `container` to scope it. */
-      portals: true,
       slots: {
         /** The category's own name — plain text, an accessible name a screen reader announces on
          *  the button itself, nothing more (no icon slot: a category label is not a destination). */

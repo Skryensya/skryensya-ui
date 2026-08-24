@@ -12,9 +12,10 @@
  *
  * This tints the REAL elements instead, with a stylesheet rule scoped behind an attribute so it
  * paints nothing until toggled on. The browser's own renderer keeps it perfectly in sync with
- * scroll, resize and reflow — nothing here ever recomputes a position — and `outline`/
- * `background-image` on a wrapped inline element already paint PER LINE FRAGMENT natively, which is
- * the correct picture a JS bounding-box rect could never give.
+ * scroll, resize and reflow — nothing here ever recomputes a position — and `background-image` on a
+ * wrapped inline element already paints PER LINE FRAGMENT natively, which is the correct picture a
+ * JS bounding-box rect could never give. Fill only, no outline: a border on every fragment of a
+ * multi-line link reads as a grid of boxes, not a tint.
  *
  * The `::after` half only ever paints where a component ALREADY declares one (`content: ""` — see
  * `.sk-button::after` in button.css): the selector is inert everywhere else, so this still needs no
@@ -22,12 +23,22 @@
  * cascade itself is what decides.
  */
 
-const ATTR = "data-sk-devtools-hit-areas";
+/** Also read by `apps/docs`'s `component-preview-frame.ts`, to mirror the same attribute into every
+ *  preview `srcdoc` iframe — see this module's own header comment for why that mirroring needs it. */
+export const HIT_AREA_ATTR = "data-sk-devtools-hit-areas";
 const STYLE_ID = "sk-devtools-hit-area-style";
 const TINT = "rgba(236, 72, 153, 0.28)";
-const OUTLINE = "1px solid rgba(236, 72, 153, 0.9)";
 
-function ensureStyleTag(): void {
+/*
+ * Called from `createHitAreaOverlay()` below at PANEL MOUNT, not lazily on first `start()`: every
+ * component-preview `srcdoc` iframe on this docs site clones the parent's `<head>` stylesheets
+ * exactly ONCE, at ITS OWN boot (`cloneParentStyles()`) — some are `loading="lazy"` and boot well
+ * after page load, on their own schedule. Injecting this tag as early as the panel itself mounts,
+ * rather than waiting for a reader to actually check "Hit areas" first, is what gives even a late,
+ * lazily-booting iframe a real chance of catching it in its one clone pass. The RULE itself stays
+ * inert until the attribute is set, so being present early costs nothing either way.
+ */
+export function ensureHitAreaStyleTag(): void {
   if (document.getElementById(STYLE_ID)) return;
   const style = document.createElement("style");
   style.id = STYLE_ID;
@@ -36,27 +47,24 @@ function ensureStyleTag(): void {
   // instead of layering over it. A gradient between two identical stops is the standard way to tint
   // without touching whatever color is already there.
   style.textContent = `
-    html[${ATTR}] .sk-interactive {
-      outline: ${OUTLINE};
-      outline-offset: -1px;
+    html[${HIT_AREA_ATTR}] .sk-interactive {
       background-image: linear-gradient(${TINT}, ${TINT});
     }
-    html[${ATTR}] .sk-interactive::after {
+    html[${HIT_AREA_ATTR}] .sk-interactive::after {
       background: ${TINT};
-      outline: ${OUTLINE};
     }
   `;
   document.head.appendChild(style);
 }
 
 export function createHitAreaOverlay() {
+  ensureHitAreaStyleTag();
   return {
     start(): void {
-      ensureStyleTag();
-      document.documentElement.setAttribute(ATTR, "");
+      document.documentElement.setAttribute(HIT_AREA_ATTR, "");
     },
     stop(): void {
-      document.documentElement.removeAttribute(ATTR);
+      document.documentElement.removeAttribute(HIT_AREA_ATTR);
     },
   };
 }

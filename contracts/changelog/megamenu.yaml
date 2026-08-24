@@ -3,8 +3,39 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "ccfd4f26c5deed0e"
+surface: "7989c3bbe9532059"
 entries:
+  - date: 2026-08-24
+    kind: bugfix
+    target: Megamenu
+    es:
+      title: portals se mueve de MegamenuTrigger a Megamenu
+      body: >-
+        Marcaba <code>portals: true</code> en <code>MegamenuTrigger</code>, copiado del mismo
+        vocabulario que usan <code>Menu</code>/<code>Menubar</code> — pero ahí cada instancia porta
+        su propio panel; Megamenu no: un único panel físico, de altura constante, portado UNA vez
+        desde la raíz (<code>megamenu.tsx</code>, comentario de cabecera: "ONE PHYSICAL PANEL... never
+        one inside each trigger"), para que cambiar de categoría se lea como la misma caja con
+        contenido nuevo. El componente React que realmente llama <code>createPortal</code> y acepta
+        <code>container</code> es <code>Megamenu</code>, no <code>MegamenuTrigger</code> — así que el
+        <code>container</code> que un consumidor inyecta a través de un árbol de uso quedaba en el
+        signature equivocado, invisible para el componente que de verdad lo necesitaba, y
+        <code>Megamenu</code> siempre terminaba en el <code>document.body</code> por defecto.
+        Encontrado al escribir el primer árbol canónico que renderiza este contrato.
+    en:
+      title: portals moves from MegamenuTrigger to Megamenu
+      body: >-
+        Marked <code>portals: true</code> on <code>MegamenuTrigger</code>, copied from the same
+        vocabulary <code>Menu</code>/<code>Menubar</code> use — but there each instance portals its
+        own panel; Megamenu does not: one single physical panel, constant height, portalled ONCE from
+        the root (<code>megamenu.tsx</code>'s own header comment: "ONE PHYSICAL PANEL... never one
+        inside each trigger"), so switching categories reads as the same box gaining new content. The
+        React component that actually calls <code>createPortal</code> and accepts <code>container</code>
+        is <code>Megamenu</code>, not <code>MegamenuTrigger</code> — so the <code>container</code> a
+        consumer injects through a usage tree landed on the wrong signature, invisible to the
+        component that actually needed it, and <code>Megamenu</code> always fell back to
+        <code>document.body</code>. Found while writing the first canonical tree to render this
+        contract at all.
   - date: 2026-08-21
     kind: bugfix
     es:

@@ -1126,6 +1126,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-24",
+            "en": {
+              "body": "Marked <code>portals: true</code> on <code>MegamenuTrigger</code>, copied from the same vocabulary <code>Menu</code>/<code>Menubar</code> use — but there each instance portals its own panel; Megamenu does not: one single physical panel, constant height, portalled ONCE from the root (<code>megamenu.tsx</code>'s own header comment: \"ONE PHYSICAL PANEL... never one inside each trigger\"), so switching categories reads as the same box gaining new content. The React component that actually calls <code>createPortal</code> and accepts <code>container</code> is <code>Megamenu</code>, not <code>MegamenuTrigger</code> — so the <code>container</code> a consumer injects through a usage tree landed on the wrong signature, invisible to the component that actually needed it, and <code>Megamenu</code> always fell back to <code>document.body</code>. Found while writing the first canonical tree to render this contract at all.",
+              "title": "portals moves from MegamenuTrigger to Megamenu"
+            },
+            "es": {
+              "body": "Marcaba <code>portals: true</code> en <code>MegamenuTrigger</code>, copiado del mismo vocabulario que usan <code>Menu</code>/<code>Menubar</code> — pero ahí cada instancia porta su propio panel; Megamenu no: un único panel físico, de altura constante, portado UNA vez desde la raíz (<code>megamenu.tsx</code>, comentario de cabecera: \"ONE PHYSICAL PANEL... never one inside each trigger\"), para que cambiar de categoría se lea como la misma caja con contenido nuevo. El componente React que realmente llama <code>createPortal</code> y acepta <code>container</code> es <code>Megamenu</code>, no <code>MegamenuTrigger</code> — así que el <code>container</code> que un consumidor inyecta a través de un árbol de uso quedaba en el signature equivocado, invisible para el componente que de verdad lo necesitaba, y <code>Megamenu</code> siempre terminaba en el <code>document.body</code> por defecto. Encontrado al escribir el primer árbol canónico que renderiza este contrato.",
+              "title": "portals se mueve de MegamenuTrigger a Megamenu"
+            },
+            "kind": "bugfix",
+            "target": "Megamenu"
+          },
+          {
             "date": "2026-08-21",
             "en": {
               "body": "The image swap on hovering or focusing a link no longer fades through its own transparency (which exposed the frame's background for an instant): new <code>previewOutgoing</code> part, a clone of the outgoing image fading away over the incoming one, already visible underneath the whole time.",
@@ -1193,6 +1206,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-24",
+            "en": {
+              "body": "Arrow-key navigation drew no ring at all: the rule asked for it with <code>:focus-visible</code>, and in a menu real focus never reaches the item — Zag tracks it with <code>aria-activedescendant</code> on the panel — so it never matched. The keyboard reader was left with the tint alone, the very same one a mouse hover paints, with nothing to tell \"the arrow keys are here\" from \"the pointer is here\". The ring now comes from <code>[data-highlighted]:not(:hover)</code>: it shows when the keyboard moved the highlight and not when the pointer did. It covers <code>Menubar</code>'s dropdowns too, which are this same item.",
+              "title": "The keyboard-highlighted item shows its focus ring again"
+            },
+            "es": {
+              "body": "Navegar un menú con las flechas no dibujaba ningún anillo: la regla lo pedía con <code>:focus-visible</code>, y en un menú el foco real nunca llega al ítem — Zag lo sigue con <code>aria-activedescendant</code> sobre el panel —, así que no coincidía nunca. Al lector de teclado le quedaba sólo el tinte, exactamente el mismo que pinta el hover del mouse, sin nada que distinguiera \"acá están las flechas\" de \"acá está el puntero\". El anillo ahora lo pide <code>[data-highlighted]:not(:hover)</code>: sale cuando el resaltado lo movió el teclado y no cuando lo puso el puntero. Alcanza igual a los desplegables de <code>Menubar</code>, que son este mismo ítem.",
+              "title": "El ítem resaltado con el teclado vuelve a mostrar su anillo de foco"
+            },
+            "kind": "bugfix",
+            "target": "item"
+          },
           {
             "date": "2026-08-19",
             "en": {
@@ -1358,6 +1384,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-24",
+            "en": {
+              "body": "<code>MegamenuTrigger</code> already declared, in its own contract, that its <code>columns</code> slot accepts <code>NavListGroup</code> — a mega-menu panel is columns of links, and those columns are the same group that already builds a rail or a navbar. What was missing was <code>NavListGroup</code> knowing it back: its two declared legal homes were <code>NavList</code> and <code>NavListLink</code>, so a real composition nesting a group inside a mega-menu trigger — exactly the one <code>megamenu.ts</code> already documented as valid — was rejected by the validator. The template does not change: this signature never knew which parent placed it.",
+              "title": "NavListGroup now also lives inside a MegamenuTrigger"
+            },
+            "es": {
+              "body": "<code>MegamenuTrigger</code> ya declaraba, en su propio contrato, que su slot <code>columns</code> acepta <code>NavListGroup</code> — un panel de mega-menú es columnas de enlaces, y esas columnas son el mismo grupo que ya arma un rail o un navbar. Lo que faltaba era que <code>NavListGroup</code> lo supiera de vuelta: sus dos hogares legales declarados eran <code>NavList</code> y <code>NavListLink</code>, así que una composición real que anidaba un grupo dentro de un trigger de mega-menú — exactamente la que <code>megamenu.ts</code> ya documentaba como válida — quedaba rechazada por el validador. El template no cambia: este signature nunca supo qué padre lo colocó.",
+              "title": "NavListGroup ahora también vive dentro de un MegamenuTrigger"
+            },
+            "kind": "feature",
+            "target": "NavListGroup"
+          },
           {
             "date": "2026-08-20",
             "en": {
@@ -1602,6 +1641,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-23",
+            "en": {
+              "body": "<code>--sk-segmented-bg</code> moves from <code>--color-bg-surface-sunken</code> to <code>--color-action-neutral</code>, and <code>--sk-segmented-border-color</code> from <code>--color-border-subtle</code> to <code>--color-border-default</code>: the same two tokens <code>Button</code>'s <code>neutral</code> variant already reads. Sitting in a row beside a button, the sunken track behind a barely-findable border read lighter and muddier than its neighbours — closer to a disabled surface than to something you press. <code>ComponentPreview</code> had already been overriding both hooks in its own header for exactly that reason, one consumer quietly fixing the component for itself while every other consumer kept the lighter version; that override is gone and this is the published look. Geometry is unchanged (height, padding, radius, gap), and the thumb's accent ring is what keeps it findable without depending on a dark track. <strong>To get the well back:</strong> redeclare those two hooks in your own scope.",
+              "title": "The track now reads as a control, not as a recessed well"
+            },
+            "es": {
+              "body": "<code>--sk-segmented-bg</code> pasa de <code>--color-bg-surface-sunken</code> a <code>--color-action-neutral</code> y <code>--sk-segmented-border-color</code> de <code>--color-border-subtle</code> a <code>--color-border-default</code>: los mismos dos tokens que usa el variant <code>neutral</code> de <code>Button</code>. Sentado en una fila junto a un botón, el track hundido con un borde casi invisible se leía más liviano y turbio que sus vecinos, más cerca de una superficie deshabilitada que de algo que se presiona. <code>ComponentPreview</code> ya venía pisando esos dos hooks en su propio header por exactamente esa razón — un consumidor arreglándose el componente para sí mismo mientras el resto se quedaba con la versión liviana —; ese override se borró y ésta es la apariencia publicada. La geometría no cambia (alto, padding, radio, gap), y el anillo de acento del thumb es lo que lo mantiene visible sin depender de que el track sea oscuro. <strong>Si querés el pozo de vuelta:</strong> redeclará esos dos hooks en tu propio scope.",
+              "title": "El track pasa a leerse como un control, no como un hueco hundido"
+            },
+            "kind": "rework"
+          },
+          {
             "date": "2026-08-22",
             "en": {
               "body": "The raised stone thumb and the hover wash read as the same pill. Selected now mixes a little <code>--color-bg-accent-subtle</code> into raised and takes accent text; the selected state-layer rung is muted (the thumb already is the indicator), so hover stays the shared tint alone.",
@@ -1658,6 +1709,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-24",
+            "en": {
+              "body": "It used to show nothing: <code>@zag-js/select</code> marks the row the arrow keys highlight with <code>data-highlighted</code>, but no rule in <code>select.css</code> read it — no tint, no ring — because real focus never reaches it (virtual focus, <code>aria-activedescendant</code>, same as <code>Menu</code>). The highlight now feeds the shared state layer (the same mechanism <code>Menu</code>/<code>TreeView</code> already use) and, when the keyboard put it there rather than the pointer (<code>[data-highlighted]:not(:hover)</code>), also paints the same focus ring.",
+              "title": "Navigating the listbox by keyboard now shows where you are"
+            },
+            "es": {
+              "body": "Antes no mostraba nada: <code>@zag-js/select</code> marca la fila que las flechas resaltan con <code>data-highlighted</code>, pero ninguna regla de <code>select.css</code> lo leía — ni tinte ni anillo — porque el foco real nunca llega ahí (foco virtual, <code>aria-activedescendant</code>, igual que <code>Menu</code>). Ahora el resaltado se conecta a la capa de estado compartida (mismo mecanismo que <code>Menu</code>/ <code>TreeView</code>) y, cuando lo puso el teclado y no el puntero (<code>[data-highlighted]:not(:hover)</code>), pinta además el mismo anillo de foco.",
+              "title": "Navegar el listbox con el teclado ahora muestra dónde estás"
+            },
+            "kind": "bugfix",
+            "target": "item"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -1737,6 +1801,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-23",
+            "en": {
+              "body": "The component always declared <code>--sk-skip-link-z</code> as <code>--z-toast</code> (400) so it would clear any chrome the page pins, but that layer was lost at the one moment the link is visible at all: on focus. The state layer (<code>patterns/state-layer.css</code>) sets <code>z-index: var(--z-focus)</code> (50) on <code>.sk-interactive:focus-visible</code>, a (0,2,0) selector that outranked the base rule's (0,1,1) — so a focused link painted at 50, below a navbar at <code>--z-sticky</code> (100). Measured on this site: <code>elementFromPoint</code> at the link's centre returned the navbar's own contents. <code>a.sk-skip-link:focus</code> (0,2,1) now re-declares its own layer and wins in the cascade, with no <code>!important</code> and no change to the shared pattern. A consumer that also wants it lower still has <code>--sk-skip-link-offset</code>.",
+              "title": "The skip link no longer renders underneath the sticky header"
+            },
+            "es": {
+              "body": "El componente siempre declaró <code>--sk-skip-link-z</code> en <code>--z-toast</code> (400) para quedar por encima de cualquier chrome fijado por la página, pero esa capa se perdía en el único momento en que el enlace es visible: al recibir el foco. El state layer (<code>patterns/state-layer.css</code>) baja un <code>z-index: var(--z-focus)</code> (50) en <code>.sk-interactive:focus-visible</code>, un selector (0,2,0) que le ganaba a la regla base (0,1,1) — así que el enlace enfocado se pintaba en 50, debajo de un navbar en <code>--z-sticky</code> (100). Medido en este sitio: <code>elementFromPoint</code> en el centro del enlace devolvía el contenido del navbar. Ahora <code>a.sk-skip-link:focus</code> (0,2,1) re-declara su propia capa y gana en la cascada, sin <code>!important</code> y sin tocar el pattern compartido. Un consumidor que además lo quiera más abajo sigue teniendo <code>--sk-skip-link-offset</code>.",
+              "title": "El enlace de salto ya no aparece por debajo del header pegajoso"
+            },
+            "kind": "bugfix"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -9227,6 +9303,7 @@
           "options": [
             "label"
           ],
+          "portals": true,
           "react": {
             "from": "@skryensya/react/megamenu",
             "name": "Megamenu"
@@ -9274,7 +9351,6 @@
           "parents": [
             "Megamenu"
           ],
-          "portals": true,
           "react": {
             "from": "@skryensya/react/megamenu",
             "name": "MegamenuTrigger"
@@ -10509,7 +10585,8 @@
           ],
           "parents": [
             "NavList",
-            "NavListLink"
+            "NavListLink",
+            "MegamenuTrigger"
           ],
           "react": {
             "from": "@skryensya/react/nav-list",
@@ -17394,5 +17471,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "f306dc4383c08987"
+  "sourceHash": "dfd754af9412bcd8"
 }

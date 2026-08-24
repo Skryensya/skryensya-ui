@@ -8,6 +8,7 @@ import contractSource from "@contracts/semantic/empty-state.yaml?raw";
 import coreSource from "@core/src/empty-state.ts?raw";
 import cssSource from "@core/css/components/empty-state.css?raw";
 import reactSource from "@react/src/components/empty-state.tsx?raw";
+import reactTestSource from "@react/src/components/empty-state.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -16,6 +17,7 @@ const sourceFiles = [
   { id: "packages/core/src/empty-state.ts", source: coreSource, language: "ts" },
   { id: "packages/core/css/components/empty-state.css", source: cssSource, language: "css" },
   { id: "packages/react/src/components/empty-state.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/empty-state.test.tsx", source: reactTestSource, language: "tsx" },
 ] as const;
 ---
 
@@ -25,6 +27,23 @@ const sourceFiles = [
   contractId="empty-state"
   sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/empty-state.css", probe: "sk-empty-state", title: "EmptyState" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/empty-state.test.tsx",
+      tests: [
+        {
+          name: "renders the title as a heading, with no icon, description or actions by default",
+          description: t("emptyState.testReact1"),
+        },
+        {
+          name: "renders an icon, hidden from assistive tech, only when given",
+          description: t("emptyState.testReact2"),
+        },
+        { name: "renders a description only when given", description: t("emptyState.testReact3") },
+        { name: "renders actions only when given", description: t("emptyState.testReact4") },
+      ],
+    },
+  ]}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("emptyState.description")} />

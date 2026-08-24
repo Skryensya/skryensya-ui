@@ -1,0 +1,89 @@
+---
+/*
+ * Header chrome: switch language, staying on the SAME page.
+ *
+ * A MENU over the DS Menu contract, and every row is a real `<a href>` — Menu's own item `href`
+ * shape, which Zag activates as a link (`navigate`, default `clickIfLink`). So each row is still
+ * exactly what the whole control used to be, a link to this document's other translation; what
+ * changed is that the control now NAMES the languages instead of asking the reader to decode a
+ * two-letter code, and that a third locale becomes one more row instead of a rewrite.
+ *
+ * `localizePath` maps the current path across route vocabularies (`/componentes/avatar` ⇄
+ * `/en/components/avatar`), so the reader lands where they were rather than being dumped on the home
+ * page, the single most common failure of a language switcher.
+ *
+ * It renders ONLY where there is more than one translation of this page. The site is being
+ * translated a page at a time, and a control that is always present but usually leads to a 404
+ * teaches the reader to distrust it; `availableLocales` reads the page directory at build, so this
+ * appears exactly on the pages that can honour it. On the rest there is nothing to click, which is
+ * the truth.
+ *
+ * The current language is a `radio` row carrying `data-checked`, which is what the enhancer reads to
+ * seed the machine (`Menu.svelte`: `checked: boolAttr(node, "data-checked")`). So the menu says which
+ * language you are reading, with `role="menuitemradio"` + `aria-checked` — the state a screen reader
+ * asks for — instead of a tick drawn by hand.
+ *
+ * `hreflang` and `lang` per row tell the browser and assistive tech that the destination and the
+ * label itself are in that language, so a screen reader announces "English" in English.
+ *
+ * NO persistence: language is in the URL, so the URL is the preference. Storing it too would mean a
+ * shared link could open in a language the sender never saw.
+ */
+import {
+  availableLocales,
+  canonicalPath,
+  getLocale,
+  localeNames,
+  localizePath,
+  useTranslations,
+} from "../i18n";
+import { iconDataMarkup, language } from "../icons";
+
+const current = getLocale(Astro.url);
+const t = useTranslations(current);
+const canonical = canonicalPath(Astro.url.pathname);
+const locales = availableLocales(canonical);
+
+/* The glyph, not the code: "ES"/"EN" was a label the reader had to decode, and it was also the one
+ * control in the preference cluster that was text where its neighbours are icons. */
+const languageIcon = iconDataMarkup("language", language);
+---
+
+{
+  locales.length > 1 && (
+    <div class="sk-menu dimensions__language-menu" data-sk-menu aria-label={t("prefs.language")}>
+      <button
+        class="sk-menu__trigger sk-button sk-interactive sk-anchor"
+        data-sk-menu-trigger
+        data-variant="ghost"
+        data-icon-only
+        type="button"
+        aria-label={`${t("prefs.language")}: ${localeNames[current]}`}
+        title={`${t("prefs.language")}: ${localeNames[current]}`}
+      >
+        <Fragment set:html={languageIcon} />
+      </button>
+      <div class="sk-menu__positioner sk-anchored" data-sk-menu-positioner>
+        <div class="sk-menu__content" data-sk-menu-content>
+          {locales.map((locale) => (
+            <a
+              class="sk-menu__item sk-interactive"
+              data-sk-menu-item
+              data-value={locale}
+              data-type="radio"
+              data-checked={locale === current ? "" : undefined}
+              href={localizePath(canonical, locale)}
+              hreflang={locale}
+              lang={locale}
+            >
+              <span class="sk-menu__item-label">{localeNames[locale]}</span>
+              <span class="sk-menu__item-indicator" aria-hidden="true">
+                <span data-sk-icon="check" data-sk-icon-size="md" />
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}

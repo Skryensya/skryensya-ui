@@ -104,14 +104,19 @@
     justify-self: stretch;
   }
 
+  /*
+   * Mobile loses the document rail entirely. The left navigation already moved into the drawer at
+   * this breakpoint, and an in-page index stacked above the article costs the same scarce vertical
+   * space the old sticky rail did. Keep the Toc component available for previews and wide/tablet
+   * layouts; hide only the shell-owned page Toc here.
+   */
   .docs-document-pair > .sk-toc {
-    grid-column: 1;
-    grid-row: 1;
+    display: none;
   }
 
   .docs-document-pair > main {
     grid-column: 1;
-    grid-row: 2;
+    grid-row: 1;
   }
 
   .dimensions__menu-trigger {

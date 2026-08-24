@@ -1,53 +1,92 @@
+import { spawnSync } from "node:child_process";
 import { anthropicText } from "@tanstack/ai-anthropic";
 import { openaiText } from "@tanstack/ai-openai";
 import type { AnyTextAdapter } from "@tanstack/ai";
+import type { EvalCase } from "../case.js";
+import { runCase } from "./harness.js";
+import { runCaseWithClaudeCode } from "./claude-code-provider.js";
+import type { CaseScore } from "./scoring.js";
 
 /*
- * ONE SHAPE, MANY PROVIDERS. G6 asks whether AN AGENT arrives at a correct composition from the
- * prompt and the three MCP tools alone; it says nothing about which model. Locking this harness to
- * Anthropic would answer a narrower question than the one F7 exists to ask, so every provider is
- * the same `chat({ adapter, ... })` call underneath; only which adapter differs.
- *
- * Adding a third provider (OpenRouter, Gemini, whatever) is one more entry here, not a rewrite.
+ * ONE SHAPE, MANY WAYS TO RUN A MODEL. G6 asks whether AN AGENT arrives at a correct composition
+ * from the prompt and the three MCP tools alone; it says nothing about which model, or even which
+ * agent loop. Locking this harness to one API-key provider would answer a narrower question than
+ * the one F7 exists to ask, so a `Provider` is just "given one case, produce a scored run"; an
+ * Anthropic or OpenAI call through TanStack AI's `chat()` (`harness.ts`) and the real `claude` CLI
+ * headless (`claude-code-provider.ts`) are both that, and nothing about `run-agent.ts` needs to know
+ * which is which. Adding a `codex` provider later, or an OpenRouter one, is one more entry here.
  */
-export type ProviderId = "anthropic" | "openai";
+export type ProviderId = "anthropic" | "openai" | "claude-code";
 
-export interface ProviderConfig {
-  /** Env var this provider's adapter reads its API key from. Checked before spending a request. */
-  envVar: string;
-  /** Used when `--model` is omitted. Kept current, not "whatever shipped first". */
+export type Availability = { ok: true } | { ok: false; reason: string };
+
+export interface Provider {
+  id: ProviderId;
+  label: string;
   defaultModel: string;
-  createAdapter: (model: string) => AnyTextAdapter;
+  availability: () => Availability;
+  run: (evalCase: EvalCase, lang: "es" | "en", model: string, verbose: boolean) => Promise<CaseScore>;
 }
 
-export const providers: Record<ProviderId, ProviderConfig> = {
-  anthropic: {
-    envVar: "ANTHROPIC_API_KEY",
-    defaultModel: "claude-sonnet-5",
-    /*
-     * The adapter factories are typed against a const model-id union (kept in sync with each
-     * provider's catalogue by their own `sync-provider-models` script), which a CLI-supplied
-     * `--model` string cannot satisfy statically. The cast is the boundary where a runtime input
-     * meets that compile-time union; an unknown id still fails loudly, just at the provider's API
-     * call instead of at `tsc`.
-     */
-    createAdapter: (model) => anthropicText(model as Parameters<typeof anthropicText>[0]),
-  },
-  openai: {
-    envVar: "OPENAI_API_KEY",
-    defaultModel: "gpt-5.1-codex",
-    createAdapter: (model) => openaiText(model as Parameters<typeof openaiText>[0]),
-  },
+function tanstackProvider(
+  id: ProviderId,
+  label: string,
+  envVar: string,
+  defaultModel: string,
+  createAdapter: (model: string) => AnyTextAdapter,
+): Provider {
+  return {
+    id,
+    label,
+    defaultModel,
+    availability: () => (process.env[envVar] ? { ok: true } : { ok: false, reason: `${envVar} not set` }),
+    run: (evalCase, lang, model, verbose) =>
+      runCase(evalCase, lang, { adapter: createAdapter(model), verbose }),
+  };
+}
+
+function hasClaudeCli(): boolean {
+  return spawnSync("claude", ["--version"], { stdio: "ignore" }).status === 0;
+}
+
+const claudeCodeProvider: Provider = {
+  id: "claude-code",
+  label: "Claude Code CLI (claude -p, subscription login)",
+  /*
+   * Informational default only: `claude -p` without `--model` uses whatever model the session is
+   * already on. Passed through as `--model` when `--model` is given on this script's own CLI.
+   */
+  defaultModel: "claude-sonnet-5",
+  availability: () => (hasClaudeCli() ? { ok: true } : { ok: false, reason: "`claude` CLI not found on PATH" }),
+  run: (evalCase, lang, model, verbose) => runCaseWithClaudeCode(evalCase, lang, { model, verbose }),
+};
+
+export const providers: Record<ProviderId, Provider> = {
+  anthropic: tanstackProvider(
+    "anthropic",
+    "Anthropic (TanStack AI, ANTHROPIC_API_KEY)",
+    "ANTHROPIC_API_KEY",
+    "claude-sonnet-5",
+    (model) => anthropicText(model as Parameters<typeof anthropicText>[0]),
+  ),
+  openai: tanstackProvider(
+    "openai",
+    "OpenAI (TanStack AI, OPENAI_API_KEY)",
+    "OPENAI_API_KEY",
+    "gpt-5.1-codex",
+    (model) => openaiText(model as Parameters<typeof openaiText>[0]),
+  ),
+  "claude-code": claudeCodeProvider,
 };
 
 export function isProviderId(value: string): value is ProviderId {
   return value in providers;
 }
 
-/** The first provider with an API key set, in declaration order. Null when none is configured. */
+/** The first provider that reports itself available, in declaration order. Null when none is. */
 export function detectProvider(): ProviderId | null {
   for (const id of Object.keys(providers) as ProviderId[]) {
-    if (process.env[providers[id].envVar]) return id;
+    if (providers[id].availability().ok) return id;
   }
   return null;
 }

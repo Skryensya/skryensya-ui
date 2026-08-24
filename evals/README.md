@@ -47,11 +47,17 @@ The other half of G6: send `prompt.es`/`prompt.en` to a real model, wired to the
 tools over the actual stdio server (`packages/mcp/dist/index.js`, spawned exactly as `.mcp.json`
 spawns it), capture whatever tree it independently arrives at, and score it.
 
-Built on [TanStack AI](https://tanstack.com/ai) (`@tanstack/ai` + `@tanstack/ai-mcp`), which is
-provider-agnostic on purpose: G6 asks whether *an agent* converges on a correct composition, not
-whether one specific model does, so this is not locked to Anthropic. `agent/providers.ts` is a
-small registry (`anthropic`, `openai` today; adding another provider is one more entry, not a
-rewrite).
+A `Provider` (`agent/providers.ts`) is just "given one case, produce a scored run"; nothing about
+`run-agent.ts` cares how. Three today:
+
+- `anthropic`, `openai`: [TanStack AI](https://tanstack.com/ai) (`@tanstack/ai` + `@tanstack/ai-mcp`)
+  driving a hand-rolled agent loop (`agent/harness.ts`) via the provider's API. Needs
+  `ANTHROPIC_API_KEY` / `OPENAI_API_KEY`.
+- `claude-code`: the actual `claude` CLI, headless (`claude -p`), using its OWN agent loop
+  (`agent/claude-code-provider.ts`). Uses the session's subscription login, not a separate API key;
+  the only requirement is the `claude` binary on `PATH`.
+
+Adding a fourth (Codex, OpenRouter, whatever) is one more entry in `providers.ts`, not a rewrite.
 
 **Scoring** (`agent/scoring.ts`) reads the tool-call log the harness records (by wrapping every
 discovered tool's `execute`, not by parsing `chat()`'s final text), and asks one question: did the
@@ -61,17 +67,29 @@ too, but **never fails a case on its own**: the reference tree is one compositio
 G0-G3, not the only one a correct agent could produce.
 
 ```
-pnpm --filter @skryensya/evals agent [--provider anthropic|openai] [--model <id>] \
+pnpm --filter @skryensya/evals agent [--provider anthropic|openai|claude-code] [--model <id>] \
                                       [--lang es|en|both] [--case <id>] [--verbose]
 ```
 
-Needs `packages/mcp` built (`pnpm --filter @skryensya/mcp build`) and one provider's API key set
-(`ANTHROPIC_API_KEY` or `OPENAI_API_KEY`); the script names both if neither is present. Defaults to
-every case, both languages, whichever provider has a key set.
+Needs `packages/mcp` built (`pnpm --filter @skryensya/mcp build`). Without `--provider`, it picks
+the first available one, in declaration order (`anthropic`, `openai`, `claude-code`): set an API
+key, or just have `claude` on `PATH`, and it runs with no other setup.
 
-**This is opt-in and deliberately NOT wired into `pnpm check` or CI.** It spends a real API call per
-case per language and is not deterministic; the static `run.ts` gate stays the thing every commit
-runs; this is the thing a person runs by hand to actually measure G6.
+**This is opt-in and deliberately NOT wired into `pnpm check` or CI.** It spends real usage per case
+per language and is not deterministic; the static `run.ts` gate stays the thing every commit runs;
+this is the thing a person runs by hand to actually measure G6.
+
+**`claude-code`'s tradeoff, measured live, not assumed:** `claude -p` (no `--bare`) loads this
+machine's own hooks, skills and `CLAUDE.md`, and `--allowedTools "mcp__skryensya-ui"` only
+pre-approves that server; it does not hide the platform's other built-in tools from the model, and
+`--permission-mode dontAsk` still lets through the read-only ones (`Read`, a safe `grep`/`cat`)
+regardless. Confirmed running it for real: `get_catalog`'s ~110KB payload trips Claude Code's own
+per-call output-size guard, and the agent falls back to `Bash`/`Read` on the saved copy to get
+around it. `agent/claude-code-provider.ts` only scores calls to the three `mcp__skryensya-ui__*`
+tools, so that detour neither counts toward nor breaks a case. It means this provider is not a
+hermetic "only these three tools exist" measurement the way `anthropic`/`openai` are. A `--bare` +
+explicit `ANTHROPIC_API_KEY` variant would close that gap; not built here, since it would give up
+the one thing that makes this provider worth having (no separate API key).
 
 ## Running the static gate
 

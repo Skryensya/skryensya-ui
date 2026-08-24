@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Estado** | En construcción · F0–F5 verdes; F4 publica 69 familias / 158 firmas; F6 en curso (9 recipes, 29 previews de docs medidos: 29 usan usage tree, 0 siguen autoreados a mano); F7 en curso (red de regresión estática verde; harness de agente vivo recién construido, corrida real pendiente de una API key) |
+| **Estado** | En construcción · F0–F5 verdes; F4 publica 69 familias / 158 firmas; F6 en curso (9 recipes, 29 previews de docs medidos: 29 usan usage tree, 0 siguen autoreados a mano); F7 en curso (red de regresión estática verde; harness de agente vivo con tres providers, corrido en vivo contra el server real vía `claude -p`) |
 | **Fecha** | 24 de agosto de 2026 |
 | **Supersede** | `apps/docs/01_arquitectura_objetivo_skryensya_ai_ui.md` y `apps/docs/02_plan_reconstruccion_desde_cero_skryensya_ai_ui.md`, que quedan como material de origen y no dirigen el trabajo |
 | **Decisiones** | [28](./decisiones/0013-el-contrato-vive-en-core-y-los-frameworks-son-bindings.md) · [29](./decisiones/0014-el-usage-tree-es-la-moneda-unica.md) · [30](./decisiones/0015-la-evidencia-se-renderiza-en-los-dos-bindings.md) · [31](./decisiones/0016-el-catalogo-cabe-en-el-contexto.md) |
@@ -763,9 +763,13 @@ Dos capas, y sólo la primera corre en cada `pnpm check`:
   el mismo binario que arranca `.mcp.json`), recibe sólo el prompt de un caso y compone solo. Se
   puntúa si su última llamada a `validate_ui` volvió `valid: true`; que su markup emitido coincida
   con el del árbol de referencia se reporta pero nunca reprueba un caso, porque el árbol de
-  referencia es una composición válida, no la única. Construido sobre TanStack AI
-  (`@tanstack/ai` + `@tanstack/ai-mcp`), agnóstico de proveedor a propósito: la pregunta de G6 es si
-  *un agente* converge en una composición correcta, no si un modelo puntual lo hace.
+  referencia es una composición válida, no la única. Tres providers (`agent/providers.ts`), y
+  agregar uno más es una entrada, no una reescritura: `anthropic`/`openai` vía TanStack AI
+  (`@tanstack/ai` + `@tanstack/ai-mcp`, necesitan API key) y `claude-code`, el binario `claude`
+  headless (`claude -p`) con su propio loop de agente, autenticado con la sesión ya logueada en vez
+  de una key aparte. Corrido en vivo contra el server real: los tres providers importan por igual
+  porque la pregunta de G6 es si *un agente* converge en una composición correcta, no si un modelo
+  puntual lo hace.
 
 **Salida:** el corpus pasa de forma reproducible y cada fallo se corrige en el contrato o el overlay
 antes que en el prompt.

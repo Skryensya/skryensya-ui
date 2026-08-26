@@ -6,7 +6,7 @@ export type BoxBorder = "none" | "subtle" | "default";
 export type LayoutAlign = "start" | "center" | "end" | "stretch";
 export type InlineAlign = "start" | "center" | "end" | "baseline" | "stretch";
 export type InlineJustify = "start" | "center" | "end" | "between";
-export type GridColumns = 1 | 2 | 3 | 4;
+export type GridColumns = 1 | 2 | 3 | 4 | 5;
 /**
  * Named spans a direct LayoutGrid child may request with `data-width`.
  *
@@ -97,8 +97,9 @@ export const layoutContract = {
      * state nobody meant.
      */
     wrap: { type: "boolean", default: true, attr: "data-wrap", trueValue: "true", falseValue: "false" },
-    columns: { type: "enum", values: ["1", "2", "3", "4"], default: "1", attr: "data-columns" },
+    columns: { type: "enum", values: ["1", "2", "3", "4", "5"], default: "1", attr: "data-columns" },
     multicol: { type: "boolean", default: false, attr: "data-multicol", trueValue: "" },
+    responsive: { type: "boolean", default: false, attr: "data-responsive", trueValue: "" },
     densityFactor: { type: "number", default: 1, styleProperty: "--sk-density-factor" },
   },
 
@@ -124,7 +125,7 @@ export const layoutContract = {
     Grid: {
       intent: ["columns", "card-grid", "equal-width-cells"],
       host: { element: "div" },
-      options: ["gap", "columns", "multicol"],
+      options: ["gap", "columns", "multicol", "responsive"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "div", part: "grid", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "Grid" },

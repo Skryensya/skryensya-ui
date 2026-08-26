@@ -73,6 +73,7 @@
   .sk-grid[data-columns="2"] { --sk-grid-columns: 2; }
   .sk-grid[data-columns="3"] { --sk-grid-columns: 3; }
   .sk-grid[data-columns="4"] { --sk-grid-columns: 4; }
+  .sk-grid[data-columns="5"] { --sk-grid-columns: 5; }
   .sk-grid[data-gap="none"] { --sk-grid-gap: 0; }
   .sk-grid[data-gap="xs"] { --sk-grid-gap: var(--space-stack-xs); }
   .sk-grid[data-gap="sm"] { --sk-grid-gap: var(--space-stack-sm); }
@@ -272,9 +273,11 @@
    * MULTI-COLUMN LAYOUT, CSS Multi-column Layout Module Level 1, shortened to multicol in CSS.
    *
    * `data-columns` names the maximum lane count. A collection starts with one lane, gains a
-   * second at compact (36rem), a third at desktop (52rem), and a fourth at wide (72rem). The
-   * same named breakpoints live in semantic/_breakpoints.scss; these literals are necessary
-   * because CSS media queries cannot read custom properties.
+   * second at compact (36rem), a third at desktop (52rem), a fourth at wide (72rem), and a fifth
+   * at ultrawide (90rem, the same measure as `--size-wrapper-lg`: the widest a page column ever
+   * gets is exactly where a 5th lane has room to breathe). The same named breakpoints live in
+   * semantic/_breakpoints.scss; these literals are necessary because CSS media queries cannot
+   * read custom properties.
    *
    * Columns flow each card down a lane before continuing into the next. Keep source order useful
    * for reading and keyboard navigation; this pattern is for independent cards, not a sequence
@@ -294,21 +297,125 @@
   @media (min-width: 36rem) {
     .sk-grid[data-multicol][data-columns="2"],
     .sk-grid[data-multicol][data-columns="3"],
-    .sk-grid[data-multicol][data-columns="4"] {
+    .sk-grid[data-multicol][data-columns="4"],
+    .sk-grid[data-multicol][data-columns="5"] {
       column-count: 2;
     }
   }
 
   @media (min-width: 52rem) {
     .sk-grid[data-multicol][data-columns="3"],
-    .sk-grid[data-multicol][data-columns="4"] {
+    .sk-grid[data-multicol][data-columns="4"],
+    .sk-grid[data-multicol][data-columns="5"] {
       column-count: 3;
     }
   }
 
   @media (min-width: 72rem) {
-    .sk-grid[data-multicol][data-columns="4"] {
+    .sk-grid[data-multicol][data-columns="4"],
+    .sk-grid[data-multicol][data-columns="5"] {
       column-count: 4;
+    }
+  }
+
+  @media (min-width: 90rem) {
+    .sk-grid[data-multicol][data-columns="5"] {
+      column-count: 5;
+    }
+  }
+
+  /*
+   * RESPONSIVE GRID, the same breakpoint-driven lane progression as multicol above, but real CSS
+   * Grid rows instead of CSS columns. Every row's block-size matches its tallest cell (unlike
+   * multicol, where each column keeps its own independent height), and in exchange a direct child
+   * can opt into a wider footprint with `data-span`, something `column-span` cannot do below "every
+   * lane at once". Reach for `data-multicol` when every card should keep an independent,
+   * Pinterest-style column height; reach for `data-responsive` when one or more "featured" wide
+   * cells matter more than avoiding row-height gaps under their shorter neighbours.
+   *
+   * `[data-columns]` (attribute present, any value) on the base rule, not the bare class, so this
+   * reliably outranks the plain `.sk-grid[data-columns="N"]` rule above regardless of source
+   * order: both are single-attribute selectors, so an equal-specificity tie would otherwise depend
+   * on which rule happens to read later in the cascade.
+   */
+  .sk-grid[data-responsive][data-columns] {
+    --sk-grid-columns: 1;
+    grid-auto-flow: dense;
+    /* Grid's own default is `stretch`: every cell in a row grows to match that row's tallest
+       neighbour. `start` keeps each card's own height instead, so a short card next to a tall
+       `data-span` feature reads as a short card with air below it in its own row track, not as a
+       card that got stretched to a height its own content never asked for. */
+    align-items: start;
+  }
+
+  @media (min-width: 36rem) {
+    .sk-grid[data-responsive][data-columns="2"],
+    .sk-grid[data-responsive][data-columns="3"],
+    .sk-grid[data-responsive][data-columns="4"],
+    .sk-grid[data-responsive][data-columns="5"] {
+      --sk-grid-columns: 2;
+    }
+  }
+
+  @media (min-width: 52rem) {
+    .sk-grid[data-responsive][data-columns="3"],
+    .sk-grid[data-responsive][data-columns="4"],
+    .sk-grid[data-responsive][data-columns="5"] {
+      --sk-grid-columns: 3;
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .sk-grid[data-responsive][data-columns="4"],
+    .sk-grid[data-responsive][data-columns="5"] {
+      --sk-grid-columns: 4;
+    }
+  }
+
+  @media (min-width: 90rem) {
+    .sk-grid[data-responsive][data-columns="5"] {
+      --sk-grid-columns: 5;
+    }
+  }
+
+  /*
+   * How many lanes a direct child of a responsive Grid occupies, capped to however many lanes
+   * actually exist at the current tier (`min(own span, that tier's column count)`, hand-expanded
+   * per breakpoint below): confirmed live, an UNCONDITIONAL `grid-column: span 2` on a grid whose
+   * explicit template is one column does not just fill that single lane, it makes the grid
+   * generate an IMPLICIT second column track (sized by `grid-auto-columns`'s `auto` default,
+   * which collapsed to 0px for the tile that triggered this) to satisfy the request. Below
+   * `36rem`, where every responsive grid is one lane regardless of `data-columns`, no span rule
+   * applies at all, on purpose: that is what keeps a spanning child to its one real lane there
+   * instead of conjuring a phantom second one.
+   */
+  @media (min-width: 36rem) {
+    .sk-grid[data-responsive] > [data-span="2"],
+    .sk-grid[data-responsive] > [data-span="3"],
+    .sk-grid[data-responsive] > [data-span="4"],
+    .sk-grid[data-responsive] > [data-span="5"] {
+      grid-column: span 2;
+    }
+  }
+
+  @media (min-width: 52rem) {
+    .sk-grid[data-responsive] > [data-span="3"],
+    .sk-grid[data-responsive] > [data-span="4"],
+    .sk-grid[data-responsive] > [data-span="5"] {
+      grid-column: span 3;
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .sk-grid[data-responsive] > [data-span="4"],
+    .sk-grid[data-responsive] > [data-span="5"] {
+      grid-column: span 4;
+    }
+  }
+
+  @media (min-width: 90rem) {
+    .sk-grid[data-responsive] > [data-span="5"] {
+      grid-column: span 5;
     }
   }
 }

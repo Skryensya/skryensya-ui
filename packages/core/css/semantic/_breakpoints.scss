@@ -23,9 +23,10 @@
 
 /* name → min-width at which the layout is "at or above" that size. Ordered small → large. */
 $breakpoints: (
-  "compact": 36rem,  // side-by-side page compositions stop sitting inline and stack
-  "desktop": 52rem,  // the rail becomes a drawer, Dialog Vaul activates, Vaul drops its drag
-  "wide": 72rem,     // room for the document's own index (toc) beside the prose
+  "compact": 36rem,    // side-by-side page compositions stop sitting inline and stack
+  "desktop": 52rem,    // the rail becomes a drawer, Dialog Vaul activates, Vaul drops its drag
+  "wide": 72rem,       // room for the document's own index (toc) beside the prose
+  "ultrawide": 90rem,  // the widest wrapper measure (--size-wrapper-lg): room for a 5th multicol lane
 );
 
 @function at($name) {

@@ -11,7 +11,9 @@
 @layer components {
   .sk-dialog {
     --sk-dialog-inline-size: min(32rem, calc(100vw - var(--space-inset-lg) * 2));
-    --sk-dialog-bg: var(--color-bg-surface);
+    /* The highest elevation tier, so the lightest surface tint this system has (see /elevacion):
+     * `-overlay`, not the base `-surface` a modal used to share with the page behind it. */
+    --sk-dialog-bg: var(--color-bg-surface-overlay);
     --sk-dialog-fg: var(--color-text-primary);
     /* Subtle, same as Menu and Popover. `--color-border-default` is the HC-safe rung and read as a
      * forced-colors frame in everyday light/dark; the WIDTH stays 1px because HC still collapses

@@ -92,6 +92,10 @@ const componentDescriptions = {
     es: "Explica por qué no hay contenido y orienta el siguiente paso.",
     en: "Explains why content is absent and points to the next step.",
   },
+  "/componentes/fade-edge": {
+    es: "Desvanece el contenido suavemente en un borde para ocultar overflow sin cortes duros.",
+    en: "Smoothly fades content at an edge to hide overflow without hard clipping.",
+  },
   "/componentes/feed": {
     es: "Stream de publicaciones independientes, cada una con su posición anunciada.",
     en: "A stream of independent posts, each announced with its own position.",

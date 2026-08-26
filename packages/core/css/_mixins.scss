@@ -11,6 +11,10 @@
   --color-bg-canvas: light-dark(var(--palette-white), var(--palette-black));
   --color-bg-surface: light-dark(var(--palette-white), var(--palette-black));
   --color-bg-surface-raised: light-dark(var(--palette-white), var(--palette-stone-950));
+  // The subtle tint step is exactly what HC removes reliance on: same treatment as `-raised`,
+  // pushed to the extreme rung. Borders carry the separation here, not a barely-there lightness
+  // difference nobody asked HC mode to preserve.
+  --color-bg-surface-overlay: light-dark(var(--palette-white), var(--palette-stone-950));
   --color-bg-surface-sunken: light-dark(var(--palette-stone-100), var(--palette-black));
   --color-bg-well: light-dark(var(--palette-stone-300), var(--palette-black));
   --color-bg-inverse: light-dark(var(--palette-black), var(--palette-white));

@@ -169,3 +169,10 @@
     scroll-padding-inline: var(--sk-wrapper-padding-inline);
   }
 }
+
+/* Disabled navbar buttons (coming soon features in non-dev mode) */
+.sk-nav-list__link:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}

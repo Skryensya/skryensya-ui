@@ -1,5 +1,10 @@
 import { splitter } from "@skryensya/core/machines";
-import { resolveWeightedColumnWidths } from "@skryensya/core/splitter";
+import {
+  resolveColumnResize,
+  resolveSplitterKey,
+  resolveWeightedColumnWidths,
+  splitterDirectionSign,
+} from "@skryensya/core/splitter";
 import { normalizeProps, VanillaMachine } from "@zag-js/vanilla";
 import { applyZagProps, bindZagEvents, type DomProps } from "./runtime/apply.js";
 
@@ -121,10 +126,23 @@ export function attachColumnResizer(options: ColumnResizerOptions): () => void {
     const total = totalWidth();
     return sizes.map((size) => (size / 100) * total);
   };
+  /*
+   * `minSize` as a PERCENT of the CURRENT total, computed here, rather than a `px` string handed to
+   * Zag's own rootEl-relative conversion. Two reasons:
+   *  - Zag only re-normalizes `panels` (and re-measures the group) when its own dependency watcher
+   *    sees the SERIALIZED `panels` prop change. A fixed `"60px"` string never changes text even
+   *    when the real ratio it represents does (a proportional resize keeps every width's SHARE the
+   *    same, so `size()`'s own percentages don't change either) - Zag would never notice the total
+   *    moved at all, and `resizeByDelta` would keep dragging against a floor computed from whatever
+   *    total happened to be current the ONE time it last measured. A percent string changes text
+   *    exactly when the real floor-to-total ratio changes, so the same watcher catches it.
+   *  - It sidesteps needing `rootEl` measurable at all for this to be correct, consistent with how
+   *    `size()` already avoids it below.
+   */
   const panels = () =>
     getWidths().map((_, panelIndex) => ({
       id: `c${panelIndex}`,
-      minSize: `${min}px`,
+      minSize: `${toPercent(min, totalWidth())}%`,
     }));
   const size = () => {
     const total = totalWidth();
@@ -135,8 +153,7 @@ export function attachColumnResizer(options: ColumnResizerOptions): () => void {
     id: `${rootId}-${index}`,
     ids,
     dir: options.direction(),
-    orientation: "horizontal",
-    keyboardResizeBy: 16,
+    orientation: "horizontal" as const,
     panels: panels(),
     size: size(),
     onResize(details) {
@@ -145,19 +162,74 @@ export function attachColumnResizer(options: ColumnResizerOptions): () => void {
   }));
 
   const api = () => splitter.connect(machine.service, normalizeProps);
-  const triggerId = `c${index}:c${index + 1}`;
-  const triggerProps = (): DomProps => api().getResizeTriggerProps({ id: triggerId }) as unknown as DomProps;
+  /*
+   * Zag's own pointer-drag arithmetic has no `dir` awareness at all (unlike its keyboard handler,
+   * which flips ArrowLeft/Right via `getEventKey`): a rightward physical drag always GROWS the
+   * trigger id's first (before) panel, whatever `dir` says. Swapping which panel id comes first in
+   * RTL is the only lever this binding has to make a rightward drag SHRINK column `index` there too
+   * (`splitterDirectionSign`'s own reasoning, just applied to Zag's pivot order instead of a raw
+   * delta sign). `resolveResizeTriggerId` accepts either order verbatim once both ids are present.
+   */
+  const triggerId = (): `${string}:${string}` =>
+    options.direction() === "rtl" ? `c${index + 1}:c${index}` : `c${index}:c${index + 1}`;
+  const triggerProps = (): DomProps => api().getResizeTriggerProps({ id: triggerId() }) as unknown as DomProps;
+  /*
+   * Zag's own `onKeyDown` moves in fixed PERCENTAGE points (a hardcoded 10 on Shift, regardless of
+   * `keyboardResizeBy`) and only resets a `collapsible` panel on Enter - neither matches the
+   * WAI-ARIA Window Splitter contract this binding already promises and the ARIA APG audit records
+   * (`resolveSplitterKey`'s own step/coarseStep in PX, Enter resets to `resetWidth`). Keyboard stays
+   * hand-wired below; Zag still owns the pointer drag and the focus/hover state attributes.
+   */
+  const bindableProps = (): DomProps => {
+    const { onKeyDown: _zagKeyDown, ...rest } = triggerProps();
+    return rest;
+  };
   const sync = () => {
-    applyZagProps(handle, triggerProps());
+    applyZagProps(handle, bindableProps());
+    // Zag mirrors its own panel-flow `orientation` straight onto the attribute; APG wants the
+    // SEPARATOR's own axis, the opposite one for a row of side-by-side columns.
+    handle.setAttribute("aria-orientation", "vertical");
+    /*
+     * The ARIA value triple, computed against THIS pair's own total rather than read back off
+     * Zag's internal context. Two reasons neither is cosmetic:
+     *  - Zag's `panels` for this machine is the WHOLE column set (needed for its own pointer-drag
+     *    math), so its own `getAriaValue` reports bounds that account for every OTHER column's
+     *    floor too - richer than what this binding actually allows. `resolveColumnResize` only
+     *    ever conserves the touched PAIR's own total, so a third column's floor is never actually
+     *    in play here; reporting it anyway would tell a screen reader a bound this drag can't honor.
+     *  - Zag's internal context only re-measures on its own `syncSize` (gated on a real
+     *    `ResizeObserver` firing), so a width change made outside this binding's own drag/keyboard
+     *    paths - a container that legitimately resizes - would leave it stale until that observer
+     *    catches up. Reading `getWidths()` fresh here can't go stale, by construction.
+     */
+    const widths = getWidths();
+    const before = widths[index] ?? 0;
+    const after = widths[index + 1] ?? 0;
+    const pairTotal = before + after;
+    handle.setAttribute("aria-valuemin", String(pairTotal > 0 ? Math.round((min / pairTotal) * 100) : 0));
+    handle.setAttribute("aria-valuemax", String(pairTotal > 0 ? Math.round(((pairTotal - min) / pairTotal) * 100) : 100));
+    handle.setAttribute("aria-valuenow", String(pairTotal > 0 ? Math.round((before / pairTotal) * 100) : 0));
     handle.className = `${className} sk-splitter`;
     handle.setAttribute("aria-label", ariaLabel);
     handle.setAttribute("data-sk-column-resizer", "");
   };
   const unsubscribe = machine.subscribe(sync);
   machine.start();
-  const unbind = bindZagEvents(handle, triggerProps);
+  const unbind = bindZagEvents(handle, bindableProps);
   sync();
 
+  /*
+   * `reset`/`onKeyDown` below write `getWidths()`/`setWidths()` directly and never touch Zag's own
+   * `send`: `size` is a CONTROLLED prop here (always non-null), so `api().setSizes()` would only
+   * re-invoke `onResize` with the value we just gave it - `setSize`'s own controlled branch never
+   * calls `context.set("size", …)` itself in that mode. Zag's internal baseline for a drag's OWN
+   * `initialSize` (`setDraggingState`) catches up the NEXT time its watch tracker notices `size()`'s
+   * serialized value changed - any subsequent FOCUS/POINTER_DOWN on this same handle - so a drag
+   * started immediately after a keyboard move, with no intervening blur, can begin from a
+   * one-interaction-stale baseline. Self-corrects on the following interaction; not worth an
+   * uncontrolled-mode rewrite (which would trade this for losing `onResize` entirely) for a gap this
+   * narrow.
+   */
   const reset = () => {
     const widths = getWidths();
     const before = widths[index] ?? 0;
@@ -172,7 +244,28 @@ export function attachColumnResizer(options: ColumnResizerOptions): () => void {
   };
   handle.addEventListener("dblclick", reset);
 
+  const onKeyDown = (event: KeyboardEvent) => {
+    const action = resolveSplitterKey(event);
+    if (action.kind === "none") return;
+    event.preventDefault();
+    if (action.kind === "reset") {
+      reset();
+      return;
+    }
+    const delta =
+      action.kind === "home"
+        ? -Infinity
+        : action.kind === "end"
+          ? Infinity
+          : action.delta * splitterDirectionSign(options.direction());
+    const next = resolveColumnResize({ widths: getWidths(), index, delta, min });
+    setWidths(next);
+    sync();
+  };
+  handle.addEventListener("keydown", onKeyDown);
+
   return () => {
+    handle.removeEventListener("keydown", onKeyDown);
     handle.removeEventListener("dblclick", reset);
     unbind();
     unsubscribe();

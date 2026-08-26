@@ -22,7 +22,7 @@
     --sk-date-picker-disabled-fg: var(--color-text-disabled);
     /* The calendar popover surface. Compact by default: a dense grid does not need the full 22rem, so
      * the width and the padding are hooks, and the sheet on mobile widens it back to full-bleed. */
-    --sk-date-picker-content-bg: var(--color-bg-surface-raised);
+    --sk-date-picker-content-bg: var(--color-bg-surface-overlay);
     --sk-date-picker-content-border-color: var(--color-border-subtle);
     --sk-date-picker-content-radius: var(--radius-surface);
     --sk-date-picker-content-inline-size: 18rem;
@@ -134,7 +134,7 @@
    * `.sk-date-picker` no le llega por herencia y cada hook que se lea de acá para abajo resuelve
    * vacío (un `padding` vacío es `0`). Ver la nota equivalente en `select.css`. */
   .sk-date-picker__positioner {
-    --sk-date-picker-content-bg: var(--color-bg-surface-raised);
+    --sk-date-picker-content-bg: var(--color-bg-surface-overlay);
     --sk-date-picker-content-border-color: var(--color-border-subtle);
     --sk-date-picker-content-radius: var(--radius-surface);
     --sk-date-picker-content-padding: var(--space-inset-xs) var(--space-inset-sm);
@@ -154,7 +154,9 @@
     border: 1px solid var(--sk-date-picker-content-border-color);
     border-radius: var(--sk-date-picker-content-radius);
     background: var(--sk-date-picker-content-bg);
-    box-shadow: var(--elevation-raised);
+    /* A full calendar grid, not a short tethered list: its own standalone surface, the same tier
+     * as Popover/ColorPicker rather than Menu/Select's lighter listbox. See /elevacion. */
+    box-shadow: var(--elevation-overlay);
     outline: none;
   }
   .sk-date-picker__content[data-state="open"] {

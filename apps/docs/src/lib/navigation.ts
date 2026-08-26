@@ -195,6 +195,11 @@ const componentItems = [
   },
   { href: "/componentes/drawer", label: "Drawer", aliases: ["panel lateral", "cajón", "cajon"] },
   {
+    href: "/componentes/fade-edge",
+    label: "FadeEdge",
+    aliases: ["fade out", "fade-out", "mask", "gradient fade", "fade effect", "fade visual"],
+  },
+  {
     href: "/componentes/feed",
     label: "Feed",
     aliases: ["stream", "feed de actividad", "publicaciones", "posts"],
@@ -620,6 +625,7 @@ export const componentNavigation = [
     blurb: "group.componentLayout.blurb",
     items: componentGroupItems(
       "/componentes/box",
+      "/componentes/fade-edge",
       "/componentes/grid",
       "/componentes/hero",
       "/componentes/layout-grid",
@@ -743,6 +749,22 @@ export const documentationNavigation = [
           },
           { href: "/styling-hooks", label: "Styling hooks" },
           { href: "/motion", label: "Motion" },
+          {
+            href: "/elevacion",
+            label: "Elevación",
+            aliases: [
+              "elevation",
+              "sombra",
+              "sombras",
+              "shadow",
+              "shadows",
+              "box-shadow",
+              "depth",
+              "profundidad",
+              "material elevation",
+              "z-depth",
+            ],
+          },
           {
             href: "/gradientes",
             label: "Gradientes",

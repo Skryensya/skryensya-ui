@@ -90,6 +90,12 @@ export function probeProp(value: string): string {
     return "color";
   if (/cubic-bezier|^linear$|^ease/i.test(v)) return "transition-timing-function";
   if (/^-?[\d.]+m?s$/i.test(v)) return "transition-duration";
+  // `box-shadow` composites (`--elevation-*`) open with 2-4 offset/blur/spread lengths before their
+  // color, the one authored shape a plain length/size token never takes (that's a single number, at
+  // most inside one `calc()`), so this has to be checked before the generic length probe below would
+  // otherwise catch the first `1px` in the list and read the token back as a nonsense `width`.
+  if (/^\s*(inset\s+)?(-?[\d.]+(?:px|rem|em)?\s+){2,4}(var\(|#|rgb|hsl|oklch|oklab|currentColor|transparent)/i.test(v))
+    return "box-shadow";
   if (/(px|rem|em|ch|vh|vw|%)|^(calc|round|max|min|clamp)\(/i.test(v)) return "width";
   return ""; // plain numbers, font stacks, keywords, the specified value IS the value
 }

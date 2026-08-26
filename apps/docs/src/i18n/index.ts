@@ -93,6 +93,7 @@ const routeSegments: Record<string, Partial<Record<Locale, string>>> = {
   anclaje: { en: "anchoring" },
   densidad: { en: "density" },
   dimensiones: { en: "dimensions" },
+  elevacion: { en: "elevation" },
   gradientes: { en: "gradients" },
   iconos: { en: "icons" },
   instalacion: { en: "installation" },

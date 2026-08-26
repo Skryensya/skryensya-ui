@@ -12,7 +12,7 @@ import reactSource from "@react/src/components/layout.tsx?raw";
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
 
-const multicolCss = `/* data-columns="4": 1 carril → 2 → 3 → 4,
+const multicolCss = `/* data-columns="5": 1 carril → 2 → 3 → 4 → 5,
    según el viewport. */
 .sk-grid[data-multicol] {
   column-count: 1;
@@ -27,21 +27,30 @@ const multicolCss = `/* data-columns="4": 1 carril → 2 → 3 → 4,
 @media (min-width: 36rem) {
   .sk-grid[data-multicol][data-columns="2"],
   .sk-grid[data-multicol][data-columns="3"],
-  .sk-grid[data-multicol][data-columns="4"] {
+  .sk-grid[data-multicol][data-columns="4"],
+  .sk-grid[data-multicol][data-columns="5"] {
     column-count: 2;
   }
 }
 
 @media (min-width: 52rem) {
   .sk-grid[data-multicol][data-columns="3"],
-  .sk-grid[data-multicol][data-columns="4"] {
+  .sk-grid[data-multicol][data-columns="4"],
+  .sk-grid[data-multicol][data-columns="5"] {
     column-count: 3;
   }
 }
 
 @media (min-width: 72rem) {
-  .sk-grid[data-multicol][data-columns="4"] {
+  .sk-grid[data-multicol][data-columns="4"],
+  .sk-grid[data-multicol][data-columns="5"] {
     column-count: 4;
+  }
+}
+
+@media (min-width: 90rem) {
+  .sk-grid[data-multicol][data-columns="5"] {
+    column-count: 5;
   }
 }`;
 
@@ -92,6 +101,7 @@ const sourceFiles = [
       <li set:html={t("grid.contractItem2")} />
       <li set:html={t("grid.contractItem3")} />
       <li set:html={t("grid.contractItem4")} />
+      <li set:html={t("grid.contractItem5")} />
     </ul>
   </Fragment>
 

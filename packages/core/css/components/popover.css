@@ -36,7 +36,7 @@
      * sin él se leería como un triángulo pegado, no como la punta de la misma caja. Que la flecha sea
      * HIJA es lo que hace que su relleno tape ese borde por donde entra: el panel se va al top layer y
      * ahí sólo entra con sus hijos, así que sólo desde adentro puede pintar encima de él. */
-    --sk-anchored-arrow-bg: var(--sk-popover-bg, var(--color-bg-surface-raised));
+    --sk-anchored-arrow-bg: var(--sk-popover-bg, var(--color-bg-surface-overlay));
     --sk-anchored-arrow-border-color: var(
       --sk-popover-border-color,
       var(--color-border-subtle)
@@ -44,7 +44,7 @@
   }
 
   .sk-popover__content {
-    --sk-popover-bg: var(--color-bg-surface-raised);
+    --sk-popover-bg: var(--color-bg-surface-overlay);
     --sk-popover-fg: var(--color-text-primary);
     --sk-popover-border-color: var(--color-border-subtle);
     --sk-popover-radius: var(--radius-surface);
@@ -72,7 +72,10 @@
     border-radius: var(--sk-popover-radius);
     background: var(--sk-popover-bg);
     color: var(--sk-popover-fg);
-    box-shadow: var(--elevation-raised);
+    /* Its own standalone surface (arbitrary content, `--motion-enter-*`/`-exit-*` below instead of
+     * the lighter `--motion-feedback-*` Menu/Tooltip/Combobox/Select use), so it reads one rung
+     * above them: `--elevation-overlay`, not `-raised`. See /elevacion. */
+    box-shadow: var(--elevation-overlay);
 
     /*
      * MATERIALISING, NOT SLIDING: opacity + scale + a short translate + a soft blur settling to

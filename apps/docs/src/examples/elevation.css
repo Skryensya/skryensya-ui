@@ -1,0 +1,30 @@
+/* Las cuatro sombras nombradas del sistema, pintadas sobre un Box real (`border: "subtle"`,
+   `padding: "lg"` en el árbol de la página): lo único que esta hoja fuerza es el shadow, todo lo
+   demás (relleno, borde, radio) ya lo trae `box.css`. Las cuatro comparten el mismo borde real
+   (incluida `flat`), así que el encuadre no depende de la sombra para leerse. */
+
+.ev-swatch {
+  min-block-size: 6rem;
+  display: grid;
+  place-items: center;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-label);
+  text-align: center;
+}
+
+.ev-swatch[data-level="flat"] {
+  box-shadow: var(--elevation-flat);
+}
+
+.ev-swatch[data-level="raised"] {
+  box-shadow: var(--elevation-raised);
+}
+
+.ev-swatch[data-level="overlay"] {
+  box-shadow: var(--elevation-overlay);
+}
+
+.ev-swatch[data-level="modal"] {
+  box-shadow: var(--elevation-modal);
+}

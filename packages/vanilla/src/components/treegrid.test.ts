@@ -53,6 +53,24 @@ function resizableMarkup() {
     </tbody>
   </table>`;
   const root = document.querySelector<HTMLElement>("[data-sk-treegrid]")!;
+  /*
+   * Zag's splitter machine measures the ROOT's own real rendered width to seed and re-validate its
+   * internal size context (`syncSize`, gated on a nonzero `getGroupSize`), synchronously on mount;
+   * jsdom lays nothing out, so without this a resize's pointer-drag path captures an empty internal
+   * size at that first (and, absent a real ResizeObserver firing, only) sync and throws once a drag
+   * reads it back. Installed BEFORE `mountTreegrid`, since that first sync happens synchronously
+   * inside it. Reads the `<col>` widths fresh each call (they don't exist yet at this exact line -
+   * `applyColumnGroup` creates them moments later, still inside `mountTreegrid` but before this
+   * measurement is taken), so `widenColumns()` (called after mount, by callers that need it) is
+   * reflected too.
+   */
+  root.getBoundingClientRect = () =>
+    ({
+      width: Array.from(root.querySelectorAll<HTMLTableColElement>("col")).reduce(
+        (sum, col) => sum + (Number.parseFloat(col.style.width) || 0),
+        0,
+      ),
+    }) as DOMRect;
   expect(mountTreegrid(document)).toBe(1);
   return root;
 }
@@ -218,22 +236,32 @@ describe("Treegrid column resize", () => {
   const widenColumns = (px: number) => cols().forEach((col) => (col.style.width = `${px}px`));
 
   /** A press, then whatever moves the caller asks for, then the release. Same shape as
-   * `sidebar.test.ts`'s own `gesture()` helper, against the resizer at `resizerIndex` instead. */
-  function gesture(resizerIndex: number, xs: number[], { release = true } = {}) {
+   * `sidebar.test.ts`'s own `gesture()` helper, against the resizer at `resizerIndex` instead.
+   *
+   * Zag's `VanillaMachine.send` defers every transition through `queueMicrotask` (see
+   * `splitter.test.ts`'s own note on this): a synthetic burst dispatched all in one synchronous
+   * tick fires `pointermove` before `pointerdown`'s transition has actually entered `dragging`
+   * (and attached its own document-level move/up listeners), silently dropping the move. Awaiting a
+   * microtask tick after each dispatch lets that transition land first. */
+  async function gesture(resizerIndex: number, xs: number[], { release = true } = {}) {
     const handle = resizers()[resizerIndex]!;
     handle.setPointerCapture = () => {};
     handle.hasPointerCapture = () => true;
     handle.releasePointerCapture = () => {};
 
-    const send = (type: string, clientX: number, extra = {}) => {
+    const send = async (type: string, clientX: number, extra = {}) => {
       const event = pointer(type, { clientX, ...extra });
       event.pointerId = 1;
       handle.dispatchEvent(event);
+      // Two ticks: Zag's own `onPointerDown` also calls `.focus()` before sending `POINTER_DOWN`,
+      // which queues a SECOND `send` (FOCUS) ahead of it - one tick only drains the first.
+      await Promise.resolve();
+      await Promise.resolve();
     };
 
-    send("pointerdown", xs[0]!, { button: 0 });
-    for (const x of xs.slice(1)) send("pointermove", x);
-    if (release) send("pointerup", xs[xs.length - 1]!);
+    await send("pointerdown", xs[0]!, { button: 0 });
+    for (const x of xs.slice(1)) await send("pointermove", x);
+    if (release) await send("pointerup", xs[xs.length - 1]!);
     return handle;
   }
 
@@ -254,33 +282,33 @@ describe("Treegrid column resize", () => {
     expect(resizers()[1]!.getAttribute("aria-label")).toBe("Redimensionar columna: De");
   });
 
-  it("a press that never travels resizes nothing", () => {
+  it("a press that never travels resizes nothing", async () => {
     resizableMarkup();
     const widthsBefore = cols().map((c) => c.style.width);
-    gesture(0, [100]);
+    await gesture(0, [100]);
     expect(cols().map((c) => c.style.width)).toEqual(widthsBefore);
   });
 
-  it("dragging redistributes width between exactly the resized pair, total conserved", () => {
+  it("dragging redistributes width between exactly the resized pair, total conserved", async () => {
     resizableMarkup();
     widenColumns(200);
     const before = cols().map((c) => Number.parseFloat(c.style.width));
     // The move that CROSSES the threshold measures from there (no slop-jump, `sidebar.ts`'s own
     // documented behavior); a third point is what actually demonstrates a resize.
-    gesture(0, [100, 140, 180]);
+    await gesture(0, [100, 140, 180]);
     const after = cols().map((c) => Number.parseFloat(c.style.width));
     expect(after[0]! + after[1]!).toBeCloseTo(before[0]! + before[1]!);
     expect(after[0]!).toBeGreaterThan(before[0]!);
     expect(after[1]!).toBeLessThan(before[1]!);
-    expect(after[2]).toBe(before[2]); // the untouched third column never moves
+    expect(after[2]).toBeCloseTo(before[2]!); // the untouched third column never moves
   });
 
-  it("marks the resizer `data-dragging` for the length of the gesture only", () => {
+  it("marks the resizer `data-dragging` for the length of the gesture only", async () => {
     resizableMarkup();
     widenColumns(200);
-    const handle = gesture(0, [100, 140], { release: false });
+    const handle = await gesture(0, [100, 140], { release: false });
     expect(handle.hasAttribute("data-dragging")).toBe(true);
-    gesture(0, [100, 140]);
+    await gesture(0, [100, 140]);
     expect(handle.hasAttribute("data-dragging")).toBe(false);
   });
 
@@ -324,15 +352,23 @@ describe("Treegrid column resize", () => {
     expect(r0).toBeCloseTo(r1!);
   });
 
-  it("reports its position as a percentage of the pair's travel, not a raw pixel count", () => {
+  it("reports its position as a percentage of the pair's REACHABLE travel, not a flat 0-100", async () => {
     resizableMarkup();
     widenColumns(200);
     const handle = resizers()[0]!;
-    expect(handle.getAttribute("aria-valuemin")).toBe("0");
-    expect(handle.getAttribute("aria-valuemax")).toBe("100");
+    // `widenColumns` writes `<col>` widths directly, bypassing this binding entirely - same as a
+    // real container resizing under it. Focusing (as a screen reader user does before their first
+    // Arrow/Home/End) is what actually re-reads them: Zag's own FOCUS transition still runs through
+    // this binding's `machine.subscribe(sync)`, which is what refreshes the ARIA triple below.
+    handle.focus();
+    await Promise.resolve();
+    // Pair total is 400 (200+200); MIN_COLUMN_WIDTH=60 on each side means the pair can never
+    // actually reach 0% or 100%, only [15, 85].
+    expect(handle.getAttribute("aria-valuemin")).toBe("15");
+    expect(handle.getAttribute("aria-valuemax")).toBe("85");
     fireEvent.keyDown(handle, { key: "End" });
-    expect(handle.getAttribute("aria-valuenow")).toBe("100");
+    expect(handle.getAttribute("aria-valuenow")).toBe("85");
     fireEvent.keyDown(handle, { key: "Home" });
-    expect(handle.getAttribute("aria-valuenow")).toBe("0");
+    expect(handle.getAttribute("aria-valuenow")).toBe("15");
   });
 });

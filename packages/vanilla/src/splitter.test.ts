@@ -8,21 +8,30 @@ function pointer(type: string, init: { clientX?: number; button?: number } = {})
 }
 
 /** A press, then whatever moves the caller asks for, then the release. Same shape every
- * `gesture()` helper in this codebase already uses (`sidebar.test.ts`, `treegrid.test.ts`). */
-function gesture(handle: HTMLElement, xs: number[], { release = true } = {}) {
+ * `gesture()` helper in this codebase already uses (`sidebar.test.ts`, `treegrid.test.ts`).
+ *
+ * Zag's `VanillaMachine.send` defers every transition through `queueMicrotask` (real browser input
+ * naturally spaces events across separate tasks, so this is invisible in production - see
+ * `attachColumnResizer`'s own notes on why keyboard is hand-wired instead). A synthetic gesture
+ * dispatched all in one synchronous burst would fire `pointermove` before the `pointerdown`'s
+ * transition has actually entered the `dragging` state (and attached its own document-level
+ * listeners), silently dropping the move. Awaiting a microtask tick after each dispatch lets that
+ * transition land before the next event goes out. */
+async function gesture(handle: HTMLElement, xs: number[], { release = true } = {}) {
   handle.setPointerCapture = () => {};
   handle.hasPointerCapture = () => true;
   handle.releasePointerCapture = () => {};
 
-  const send = (target: EventTarget, type: string, clientX: number, extra = {}) => {
+  const send = async (target: EventTarget, type: string, clientX: number, extra = {}) => {
     const event = pointer(type, { clientX, ...extra });
     event.pointerId = 1;
     target.dispatchEvent(event);
+    await Promise.resolve();
   };
 
-  send(handle, "pointerdown", xs[0]!, { button: 0 });
-  for (const x of xs.slice(1)) send(document, "pointermove", x);
-  if (release) send(document, "pointerup", xs[xs.length - 1]!);
+  await send(handle, "pointerdown", xs[0]!, { button: 0 });
+  for (const x of xs.slice(1)) await send(document, "pointermove", x);
+  if (release) await send(document, "pointerup", xs[xs.length - 1]!);
 }
 
 afterEach(() => {
@@ -62,30 +71,31 @@ describe("attachColumnResizer", () => {
     expect(handle.tabIndex).toBe(0);
   });
 
-  it("reports its position as a 0-100 percentage of the pair's travel", () => {
+  it("reports its position as a percentage of the pair's REACHABLE travel, not a flat 0-100", () => {
     const { handle } = setup();
-    expect(handle.getAttribute("aria-valuemin")).toBe("0");
-    expect(handle.getAttribute("aria-valuemax")).toBe("100");
+    // min=20 out of a 200 total: the pair can never actually reach 0% or 100%, only [10, 90].
+    expect(handle.getAttribute("aria-valuemin")).toBe("10");
+    expect(handle.getAttribute("aria-valuemax")).toBe("90");
     expect(handle.getAttribute("aria-valuenow")).toBe("50"); // [100,100], midpoint
   });
 
-  it("a press that never travels resizes nothing", () => {
+  it("a press that never travels resizes nothing", async () => {
     const { handle, widths } = setup();
-    gesture(handle, [100]);
+    await gesture(handle, [100]);
     expect(widths()).toEqual([100, 100]);
   });
 
-  it("dragging redistributes width between exactly the pair, total conserved", () => {
+  it("dragging redistributes width between exactly the pair, total conserved", async () => {
     const { handle, widths } = setup();
     // The move that crosses the threshold measures from there. A third point demonstrates a resize
     // (same reasoning `sidebar.test.ts`'s own gesture comments document).
-    gesture(handle, [100, 140, 180]);
+    await gesture(handle, [100, 140, 180]);
     const [before, after] = widths();
     expect(before! + after!).toBe(200);
     expect(before!).toBeGreaterThan(100);
   });
 
-  it("honors RTL: a drag toward larger x still SHRINKS the column in a right-to-left direction", () => {
+  it("honors RTL: a drag toward larger x still SHRINKS the column in a right-to-left direction", async () => {
     const th = document.createElement("th");
     document.body.append(th);
     let current: readonly number[] = [100, 100];
@@ -103,15 +113,15 @@ describe("attachColumnResizer", () => {
     });
     cleanups.push(cleanup);
     const handle = th.querySelector<HTMLElement>("[data-sk-column-resizer]")!;
-    gesture(handle, [100, 140, 180]);
+    await gesture(handle, [100, 140, 180]);
     expect(current[0]).toBeLessThan(100);
   });
 
-  it("marks `data-dragging` for the length of the gesture only", () => {
+  it("marks `data-dragging` for the length of the gesture only", async () => {
     const { handle } = setup();
-    gesture(handle, [100, 140, 180], { release: false });
+    await gesture(handle, [100, 140, 180], { release: false });
     expect(handle.hasAttribute("data-dragging")).toBe(true);
-    gesture(handle, [100, 140, 180]);
+    await gesture(handle, [100, 140, 180]);
     expect(handle.hasAttribute("data-dragging")).toBe(false);
   });
 

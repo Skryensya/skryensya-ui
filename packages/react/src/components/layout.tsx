@@ -112,7 +112,14 @@ export function Inline<Element extends ElementType = "div">({
 
 export type GridProps<Element extends ElementType = "div"> = PolymorphicProps<
   Element,
-  LayoutChildren & { columns?: GridColumns; gap?: Space; multicol?: boolean; "data-multicol"?: string }
+  LayoutChildren & {
+    columns?: GridColumns;
+    gap?: Space;
+    multicol?: boolean;
+    responsive?: boolean;
+    "data-multicol"?: string;
+    "data-responsive"?: string;
+  }
 >;
 
 export function Grid<Element extends ElementType = "div">({
@@ -121,7 +128,9 @@ export function Grid<Element extends ElementType = "div">({
   columns = 1,
   gap = "md",
   multicol,
+  responsive,
   "data-multicol": rawMulticol,
+  "data-responsive": rawResponsive,
   ...props
 }: GridProps<Element>) {
   const Component = as ?? "div";
@@ -132,6 +141,7 @@ export function Grid<Element extends ElementType = "div">({
       data-columns={columns}
       data-gap={gap}
       data-multicol={multicol === true ? "" : multicol === false ? undefined : rawMulticol}
+      data-responsive={responsive === true ? "" : responsive === false ? undefined : rawResponsive}
     />
   );
 }

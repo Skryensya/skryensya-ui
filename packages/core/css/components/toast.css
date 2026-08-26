@@ -47,7 +47,10 @@
      * column callout.css's single-column layout closed off. */
     grid-template-columns: minmax(0, 1fr) auto;
 
-    box-shadow: var(--elevation-raised);
+    /* Arrives on its own, untethered to any trigger, with the same `enter` motion intent Dialog
+     * uses (below): a standalone surface, not a quick anchored popup. `--elevation-overlay`, not
+     * `-raised`. See /elevacion. */
+    box-shadow: var(--elevation-overlay);
     /* EVERY toast arrives, none of them just appears. A panel that pops in fully formed over the work
      * reads as a glitch: the eye has to go find out what changed. Rising the ENTER distance into place
      * while fading up says where it came from, and the region is at the block-end edge, so "from
@@ -117,7 +120,7 @@
    * surface for the RAISED surface token: paired with the shadow above, the plain toast now reads as
    * elevated chrome too, matching the toned ones without borrowing a status color it does not mean. */
   .sk-toast-region > .sk-callout[data-tone="neutral"] {
-    --sk-callout-bg: var(--color-bg-surface-raised);
+    --sk-callout-bg: var(--color-bg-surface-overlay);
   }
 
   /* The icon variant opens a THIRD column, same as a standalone Callout: icon, content, then the

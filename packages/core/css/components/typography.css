@@ -167,6 +167,15 @@
     text-decoration-thickness: from-font;
     text-underline-offset: 0.15em;
     border-radius: var(--radius-control);
+    /*
+     * A text link keeps inline behavior in prose, but layout primitives can still blockify a direct
+     * child and stretch it across the cross axis (`display:flex; flex-direction:column`, grid stretch).
+     * Pin the authored box to its contents so the state layer/focus ring belongs to the words, not to
+     * an empty full-row hit area. On a normal inline anchor this property is inert; line wrapping stays
+     * browser-native.
+     */
+    inline-size: fit-content;
+    max-inline-size: 100%;
   }
 
   /* Brand / accent paint, the colored call-out in a paragraph. */

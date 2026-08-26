@@ -1,0 +1,230 @@
+# Qué cambió en hero, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
+# hash nuevo.
+surface: "a3d8996be1a3b490"
+entries:
+  - date: 2026-08-25
+    kind: rework
+    target: Hero
+    es:
+      title: Catálogo recortado a 13 patrones, email-capture rediseñado como franja de ancho completo
+      body: >-
+        Se sacan del catálogo <code>hero-with-search</code> y <code>hero-with-command-hint</code>:
+        pedido directo, no un bug en ninguno de los dos. <code>hero-with-email-capture</code> se
+        rediseña: antes era una columna angosta con el mismo fondo que el resto del hero, ahora es
+        una franja de <code>box.Box</code> (<code>surface: "sunken"</code>) que ocupa el ANCHO
+        COMPLETO del hero (sin <code>Wrapper</code> alrededor del <code>Box</code> mismo; el
+        <code>Wrapper</code> se mueve adentro, centrando sólo la fila de contenido a la medida
+        principal de la página), con el pitch y el campo de correo repartidos lado a lado
+        (<code>justify: "between"</code>) en vez de apilados, para usar el ancho de la franja en
+        vez de dejarlo vacío. Se evaluó <code>surface: "raised"</code> antes de <code>"sunken"</code>:
+        Hero ya se apoya en <code>surface: "surface"</code>, así que un panel elevado competía por
+        atención con la propia superficie del hero; uno hundido se lee como una región distinta sin
+        esa competencia. Cada uno de los 13 patrones restantes gana su propio <code>&lt;h4&gt;</code>
+        (título) y una descripción de una línea, ambos traducidos, como hermanos directos del panel
+        "Uso" (nunca envueltos en otro elemento): el indexador de documentos de <code>Base.astro</code>
+        (<code>lib/document-index.ts</code>, <code>indexHeroTabPanel</code>) camina <code>h3</code>/
+        <code>h4</code> a profundidad 0 de ese panel, así que cada <code>h4</code> aparece como una
+        fila anidada bajo "HTML autorado" en el riel "En esta página", un patrón encontrable por
+        nombre en vez de un bloque sin nombre adentro de esa sección.
+    en:
+      title: Catalogue trimmed to 13 patterns, email capture redesigned as a full-width band
+      body: >-
+        <code>hero-with-search</code> and <code>hero-with-command-hint</code> are dropped from the
+        catalogue: a direct request, not a bug in either. <code>hero-with-email-capture</code> is
+        redesigned: it used to be a narrow column sharing the hero's own background, now it's a
+        <code>box.Box</code> band (<code>surface: "sunken"</code>) spanning the hero's FULL WIDTH
+        (no <code>Wrapper</code> around the <code>Box</code> itself; <code>Wrapper</code> moves
+        inside it instead, centering only the row of content at the page's own main measure), the
+        pitch and the email field split side by side (<code>justify: "between"</code>) rather than
+        stacked, so the band's own width gets used instead of left empty. <code>surface: "raised"</code>
+        was tried before <code>"sunken"</code>: Hero already sits on <code>surface: "surface"</code>,
+        so a raised panel competed for attention with the hero's own surface; a sunken one reads as
+        a distinct region without that competition. Each of the 13 remaining patterns gains its own
+        <code>&lt;h4&gt;</code> title and a one-line description, both translated, as plain siblings
+        of the "usage" panel (never wrapped in another element): <code>Base.astro</code>'s own document indexer
+        (<code>lib/document-index.ts</code>, <code>indexHeroTabPanel</code>) walks <code>h3</code>/
+        <code>h4</code> at depth 0 of that panel, so each <code>h4</code> surfaces as a nested row
+        under "Authored HTML" in the "On this page" rail, a pattern findable by name instead of an
+        unnamed block inside that section.
+  - date: 2026-08-25
+    kind: bugfix
+    target: Hero
+    es:
+      title: Testimonio corregido (el contenido rompía su propia regla), tabs de audiencia reescrito
+      body: >-
+        Dos correcciones al catálogo de patrones, no al contrato. `hero-with-testimonial` usaba una
+        <code>typography.Text</code> grande para la cita, justificado como "una excepción deliberada"
+        a la regla de contenido de Hero. Era simplemente la mostraron: la propia regla
+        (<code>hero.contentRule1</code>, "adentro siempre va un encabezado real, nunca sólo texto
+        grande") describe exactamente esa forma como el error que nombra. Ahora la cita ES el
+        <code>Heading</code> (<code>headingSize: "h1"</code>, no <code>"display-sm"</code>: una
+        oración completa a ese tamaño se envuelve en tres o cuatro líneas y grita en vez de citar).
+        `hero-with-audience-tabs` dejó de estar centrado (<code>align: "start"</code>, el default):
+        centrado, la línea inferior de <code>Tabs</code> (que sigue el ancho del panel más ancho, no
+        el de las dos etiquetas) quedaba visiblemente descentrada respecto a sus propias etiquetas.
+        Cada panel gana una lista corta de tres filas (antes una sola oración): confirmado en vivo,
+        cambiar de pestaña desmonta un panel y monta el otro, así que dos paneles de alturas
+        distintas hacían saltar el contenido de la página debajo del hero en el cambio mismo;
+        igualar la forma exacta entre ambos paneles mantiene ese salto en prácticamente cero. Cada
+        fila es un <code>layout.Inline</code> con un <code>Icon</code> ("check") y un
+        <code>Text</code>, no <code>list.List</code>/<code>ListItem</code>: se probó primero con
+        <code>List</code>, pero su opción <code>dividers</code> no está conectada a la firma
+        <code>List</code> (<code>get_contract("list")</code> expone <code>List.options</code> como
+        sólo <code>["density"]</code>), así que <code>dividers: false</code> no hacía nada y cada
+        fila seguía dibujando su divisor. <code>validate_ui</code> aceptó igual el árbol: confirmado
+        por separado que no revisa las opciones del contenido anidado dentro del slot
+        <code>children</code> de un panel de <code>Tabs.items</code> de la misma forma que en
+        cualquier otro lugar, que es cómo pasó la opción inválida sin avisar. Ese hueco del
+        validador es un bug real en <code>ai-compiler</code>, no de este contrato; queda reportado,
+        no arreglado acá.
+    en:
+      title: Testimonial fixed (its content broke its own rule), audience tabs rewritten
+      body: >-
+        Two fixes to the pattern catalogue, not the contract. `hero-with-testimonial` used a large
+        <code>typography.Text</code> for the quote, justified as "a deliberate exception" to Hero's
+        own content rule. It was simply the mistake that rule names:
+        (<code>hero.contentRule1</code>, "a real heading always goes inside, never just large-
+        looking text") describes exactly that shape. The quote is now the <code>Heading</code> itself
+        (<code>headingSize: "h1"</code>, not <code>"display-sm"</code>: a whole sentence at that size
+        wraps across three or four lines and reads as shouting instead of quoting).
+        `hero-with-audience-tabs` is no longer centered (<code>align: "start"</code>, the default):
+        centered, `Tabs`'s own underline (which follows the widest panel, not the two labels) sat
+        visibly off-center from its own labels. Each panel gains a short list of three rows
+        (previously one sentence): confirmed live, switching tabs unmounts one panel and mounts the
+        other, so two panels of different heights made the page's own content below the hero
+        visibly jump on the switch itself; matching both panels' shape exactly keeps that jump
+        effectively at zero. Each row is a <code>layout.Inline</code> with an <code>Icon</code>
+        ("check") and a <code>Text</code>, not <code>list.List</code>/<code>ListItem</code>: tried
+        first with <code>List</code>, but its <code>dividers</code> option turns out not to be
+        wired to the <code>List</code> signature at all (<code>get_contract("list")</code> exposes
+        <code>List.options</code> as only <code>["density"]</code>), so <code>dividers: false</code>
+        did nothing and every row still drew its divider. <code>validate_ui</code> still accepted
+        the tree: confirmed separately that it does not check options on content nested inside a
+        <code>Tabs.items[].slots.children</code> panel the way it does everywhere else, which is
+        how the invalid option passed silently. That validator gap is a real bug in
+        <code>ai-compiler</code>, not this contract's; it is reported, not fixed, here.
+  - date: 2026-08-25
+    kind: feature
+    target: Hero
+    es:
+      title: Diez patrones más, surveados contra galerías reales de hero sections
+      body: >-
+        Se agregan diez patrones nuevos a los cinco que ya publicaba <code>get_examples</code>
+        (<code>contracts/snippets/hero-*.ts</code>), buscados contra catálogos reales de hero
+        sections (el propio catálogo de Saaspo nombra "Email CTA", "Logos" y "Tabs" como categorías
+        reconocidas, no inventadas acá): captura de correo con un <code>form-field.FormField</code>
+        real (no un placeholder haciendo de label), badges de tienda de apps, un muro de marcas de
+        confianza en texto (nunca fotos genéricas haciendo de logo), un buscador estilo
+        marketplace, un switch de precios mensual/anual con <code>segmented.Segmented</code>, un
+        hero de herramienta para desarrolladores con <code>code-preview.CodePreview</code> en vez de
+        una captura de pantalla, un hint de atajo de teclado (<code>kbd.Kbd</code>) para una home de
+        documentación, un demo en video con miniatura pausada, un selector de audiencia con
+        <code>tabs.Tabs</code> (un solo <code>Heading</code> compartido arriba, sólo el pitch y la
+        acción cambian por pestaña) y un pull-quote de testimonio. El contrato en sí no cambió:
+        <code>options</code> sigue siendo sólo <code>padding</code>/<code>surface</code>/<code>align</code>,
+        todos los quince patrones siguen validando contra la misma anatomía mínima.
+    en:
+      title: Ten more patterns, surveyed against real hero-section galleries
+      body: >-
+        Adds ten new patterns to the five <code>get_examples</code> already published
+        (<code>contracts/snippets/hero-*.ts</code>), surveyed against real hero-section catalogues
+        (Saaspo's own catalogue names "Email CTA", "Logos" and "Tabs" as recognized categories, not
+        invented here): an email capture with a real <code>form-field.FormField</code> (no
+        placeholder standing in for a label), app-store badges, a trust wall of text wordmarks
+        (never generic photos standing in for logos), a marketplace-style search bar, a monthly/
+        annual pricing switch with <code>segmented.Segmented</code>, a developer-tool hero with
+        <code>code-preview.CodePreview</code> instead of a screenshot, a keyboard-shortcut hint
+        (<code>kbd.Kbd</code>) for a documentation homepage, a video-demo hero with a paused
+        thumbnail, an audience switch with <code>tabs.Tabs</code> (one shared <code>Heading</code>
+        above, only the pitch and action change per tab) and a testimonial pull-quote. The contract
+        itself did not change: <code>options</code> is still only
+        <code>padding</code>/<code>surface</code>/<code>align</code>, all fifteen patterns still
+        validate against the same minimal anatomy.
+  - date: 2026-08-25
+    kind: bugfix
+    target: Hero
+    es:
+      title: Hero ya no se encoge a su propio contenido dentro de una fila flex
+      body: >-
+        <code>.sk-hero</code> ahora pide <code>inline-size: 100%</code> y <code>flex: 1 1 100%</code>
+        además del flujo de bloque normal. Confirmado en vivo: dentro de una fila flex que envuelve
+        (el stage de la tarjeta de preview de docs, <code>.sk-component-preview__frame-body</code>,
+        que es <code>display: flex; flex-wrap: wrap</code> sin ancho en sus hijos), un Hero es un
+        ítem flex y su tamaño por defecto en el eje principal es el de su propio contenido, así que
+        se encogía y quedaba pegado al borde inicial en vez de ocupar toda la fila. Un patrón
+        full-bleed como <code>Hero &gt; layout.LayoutGrid</code> (sin <code>Wrapper</code>) depende
+        de que Hero tenga el ancho completo para que sus propios carriles centrados tengan algo
+        contra qué centrarse; medido en una página real y aislada ya se centraba al pixel (214px
+        de cada lado en un viewport de 1400px), la falla sólo aparecía dentro de un contenedor flex
+        de fila como el del stage. La regla no hace nada en flujo de bloque normal, donde un bloque
+        de ancho completo ya se comporta así.
+    en:
+      title: Hero no longer shrinks to its own content inside a wrapping flex row
+      body: >-
+        <code>.sk-hero</code> now asks for <code>inline-size: 100%</code> and
+        <code>flex: 1 1 100%</code> on top of ordinary block flow. Confirmed live: inside a
+        wrapping flex row (the docs preview card's own stage,
+        <code>.sk-component-preview__frame-body</code>, which is
+        <code>display: flex; flex-wrap: wrap</code> with no width on its children), a Hero is a
+        flex item whose default main-axis size is its own content, so it shrank and sat flush
+        against the start edge instead of filling the row. A full-bleed pattern like
+        <code>Hero &gt; layout.LayoutGrid</code> (no <code>Wrapper</code>) depends on Hero holding
+        the full width so its own centered tracks have something to center against; measured on a
+        real, standalone page it already centered to the pixel (214px either side of a 1400px
+        viewport), the failure only showed up inside a row-flex container like the stage's. The
+        rule is a no-op in ordinary block flow, where a full-width block already behaves this way.
+  - date: 2026-08-25
+    kind: feature
+    target: Hero
+    es:
+      title: Nueva opción align, y reglas de contenido y accesibilidad explícitas en el catálogo
+      body: >-
+        Se agrega <code>align</code> (<code>"start"</code> por defecto, o <code>"center"</code>):
+        la mayoría de los heroes se leen de una de dos formas, contenido pegado al borde inicial
+        (la forma común cuando el hero está junto a otro contenido de la página alineado a la
+        izquierda) o centrado (la forma que le sienta mejor a un hero sin vecino visual: un
+        portfolio, una pantalla de login). Es una palanca visual, no anatomía nueva, igual que el
+        <code>align</code> que ya tiene <code>layout.Inline</code>. Las reglas de contenido
+        (un <code>Heading</code> real siempre adentro, como mucho una acción primaria y una
+        secundaria, cualquier imagen con su propio <code>alt</code>) y de accesibilidad (el host
+        no es landmark por defecto; si se autora como uno necesita <code>aria-label</code> o
+        <code>aria-labelledby</code>) ya vivían en la intención del contrato desde que se publicó;
+        ahora están explícitas en <code>useWhen</code>/<code>avoidWhen</code>, lo único que el
+        compilador realmente lee del overlay semántico, así que llegan al catálogo que un agente
+        consulta en vez de vivir sólo en el comentario del código fuente. Cinco patrones reales que
+        siguen validando contra este mismo contrato (un pitch con dos acciones, un titular mínimo
+        centrado, un "eyebrow" arriba del titular, un layout partido con una captura al lado, y un
+        pitch centrado respaldado por un grupo de avatares y un contador de confianza) se publican
+        como snippets en <code>contracts/snippets/hero-*.ts</code>, alcanzables vía
+        <code>get_examples</code>. <code>surface: "raised"</code> gana un <code>box-shadow</code> de
+        elevación, el mismo tratamiento que ya recibe <code>Box</code> en su propio
+        <code>data-surface="raised"</code>; el resto de las superficies siguen siendo rellenos
+        planos, a propósito: la decoración es una decisión de la página que lo usa, no de este
+        contrato.
+    en:
+      title: New align option, and explicit content and accessibility rules in the catalogue
+      body: >-
+        Adds <code>align</code> (<code>"start"</code> by default, or <code>"center"</code>): most
+        heroes read one of two ways, content pinned to the start edge (the common shape once a
+        hero sits beside other left-aligned page content) or centered (the shape that suits a
+        standalone, no-visual-neighbor hero best: a portfolio, a login screen). It's a visual
+        lever, not new anatomy, same as the <code>align</code> <code>layout.Inline</code> already
+        has. The content rules (a real <code>Heading</code> always inside, at most one primary
+        action plus one secondary, any image carrying its own <code>alt</code>) and accessibility
+        rules (the host is not a landmark by default; if authored as one it needs
+        <code>aria-label</code> or <code>aria-labelledby</code>) already lived in the contract's
+        own intent since it was first published; now they're explicit in
+        <code>useWhen</code>/<code>avoidWhen</code>, the only thing the compiler actually reads
+        from the semantic overlay, so they reach the catalogue an agent consults instead of living
+        only in the source file's own comment. Five real patterns that still validate against this
+        same contract (a pitch with two actions, a centered minimal headline, an "eyebrow" above
+        the headline, a split layout with a screenshot beside the text, and a centered pitch backed
+        by a group of avatars and a trust count) are published as snippets in
+        <code>contracts/snippets/hero-*.ts</code>, reachable through <code>get_examples</code>.
+        <code>surface: "raised"</code> gains an elevation <code>box-shadow</code>, the same
+        treatment <code>Box</code> already gives its own <code>data-surface="raised"</code>; every
+        other surface stays a flat fill, on purpose: decoration is a call for the page that uses it
+        to make, not this contract's.

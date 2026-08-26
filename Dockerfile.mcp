@@ -1,0 +1,51 @@
+# MCP server only (@skryensya/mcp), Streamable HTTP transport (packages/mcp/src/http.ts).
+# Build context must be the monorepo root.
+# Dokploy: Dockerfile path = Dockerfile.mcp
+
+FROM node:22-bookworm-slim AS build
+
+RUN corepack enable && corepack prepare pnpm@10.18.2 --activate
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY apps ./apps
+COPY packages ./packages
+COPY contracts ./contracts
+COPY evals ./evals
+COPY artifacts ./artifacts
+COPY scripts ./scripts
+
+RUN pnpm install --frozen-lockfile
+
+# The compiled manifest the server reads at runtime (packages/mcp/src/manifest.ts never falls back
+# to reading source, per its own header comment), then both of the server's own entry points,
+# bundled by esbuild with the whole workspace chain (ai-compiler -> core -> recipes -> snippets)
+# inlined. Only the two REAL npm dependencies packages/mcp/scripts/build.mjs leaves external
+# (@modelcontextprotocol/sdk, zod) are not in this bundle; the runtime stage installs those two
+# directly instead of copying this stage's own node_modules, whose @skryensya/* workspace symlinks
+# the bundle already made irrelevant.
+RUN pnpm --filter @skryensya/ai-compiler build && pnpm --filter @skryensya/mcp build
+
+FROM node:22-bookworm-slim AS runtime
+
+WORKDIR /app
+
+# Keep these two in sync with packages/mcp/package.json's own "dependencies" field: they are the
+# only entries in that file this stage's install has to mirror, everything else there is a
+# workspace link already inlined into dist/*.js above.
+RUN npm install --omit=dev --no-save "@modelcontextprotocol/sdk@^1.30.0" "zod@^3.24.1"
+
+COPY --from=build /app/packages/mcp/dist ./packages/mcp/dist
+COPY --from=build /app/artifacts ./artifacts
+
+# 0.0.0.0, not http.ts's own local-dev default (127.0.0.1): a container is reached through Docker's
+# own port mapping, on the container's network interface, never on its loopback. MCP_HTTP_TOKEN is
+# deliberately unset here — a secret belongs in the deploy's own env config (`docker run -e
+# MCP_HTTP_TOKEN=...`, Dokploy's own environment variables panel), never baked into an image layer.
+ENV HOST=0.0.0.0
+ENV PORT=8787
+
+EXPOSE 8787
+
+CMD ["node", "packages/mcp/dist/http.js"]

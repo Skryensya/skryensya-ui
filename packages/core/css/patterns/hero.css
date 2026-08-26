@@ -1,0 +1,109 @@
+/*
+ * HERO, a page's opening moment: a surface and generous room, nothing else.
+ *
+ * Same shape as `.sk-box` (surface/border/padding structure) on purpose: a consumer who already
+ * reads Box's CSS reads this one for free. But the class stays separate from `.sk-box` rather than
+ * `Hero` reusing it via `also`: Hero's OWN defaults (surface, generous padding) are opposite Box's
+ * (none, none), and two contracts sharing one class with two different default postures is exactly
+ * the kind of silent coupling this system avoids elsewhere (`layout.css`'s own header on why Box and
+ * Wrapper keep separate stylesheets despite sharing `layoutParts`).
+ */
+@layer components {
+  .sk-hero {
+    --sk-hero-bg: transparent;
+    --sk-hero-padding: 0;
+    --sk-hero-radius: var(--radius-surface);
+    /*
+     * A real floor, not left to whatever the content happens to need. Confirmed live as the fix
+     * for "se ven muy chicos": a Hero sized to exactly its own headline+subline+button read as a
+     * slightly-padded paragraph, not a page's own opening moment, the same complaint a real landing
+     * page's hero would draw if it collapsed to content height too. `26rem` is a floor, not a fixed
+     * size: a hero whose OWN content needs more room (a tall screenshot in the split pattern, a
+     * long bio) still grows past it normally, this only stops a short one from reading as small.
+     * A custom property, not a literal in the rule below, so a consumer with a real full-bleed
+     * landing page can raise it (`--sk-hero-min-height: 80vh`) without a second override chain.
+     */
+    --sk-hero-min-height: 26rem;
+
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    /* Vertical centering of whatever single child this holds, unconditionally: with the floor
+       above, a short hero would otherwise sit glued to the top with empty room below it, which is
+       the same "looks small" complaint in a different shape. Horizontal alignment stays the
+       `data-align` lever below; this axis is not something `align="start"` vs `"center"` decides. */
+    justify-content: center;
+    min-inline-size: 0;
+    min-block-size: var(--sk-hero-min-height);
+    /*
+     * A Hero is a full-bleed section: it must claim the WHOLE width of whatever holds it, never
+     * shrink to its own content. Plain block flow already does that for free, but a Hero dropped
+     * into a wrapping flex ROW (the docs `ComponentPreview` stage: `.sk-component-preview__frame-body`
+     * is `display: flex; flex-wrap: wrap` with no width on its children) is a flex ITEM instead, and
+     * a flex item's default main-axis size is its own content, `flex: 0 1 auto`. Confirmed live: a
+     * `Hero > LayoutGrid` (no `Wrapper`) measured perfectly centered on a real, standalone page
+     * (214px either side of a 1400px viewport, to the pixel) but shrink-wrapped and sat flush left
+     * inside that stage, which is what actually read as "not centered", not a fault in `LayoutGrid`'s
+     * own track math. `flex: 1 1 100%` asks for the full line whenever an ancestor happens to be a
+     * flex row; it does nothing in ordinary block flow, where a full-width block already behaves
+     * this way with or without it.
+     */
+    inline-size: 100%;
+    flex: 1 1 100%;
+    padding: var(--sk-hero-padding);
+    border-radius: var(--sk-hero-radius);
+    background: var(--sk-hero-bg);
+  }
+
+  /*
+   * Flat fills, same as `Box`'s own `data-surface` values, deliberately: a radial-gradient "glow"
+   * lived here briefly and came back out. It read fine in an isolated test page, but confirmed live
+   * against the actual docs preview it added a visual flourish nobody asked for on top of a bug
+   * (`components/stat.css` never loaded there) that was the real complaint. A flat surface is the
+   * honest baseline; decoration is a call for a consumer's own page to make, not this contract's.
+   */
+  .sk-hero[data-surface="sunken"] { --sk-hero-bg: var(--color-bg-surface-sunken); }
+  .sk-hero[data-surface="surface"] { --sk-hero-bg: var(--color-bg-surface); }
+  .sk-hero[data-surface="raised"] {
+    --sk-hero-bg: var(--color-bg-surface-raised);
+    box-shadow: var(--elevation-raised);
+  }
+
+  .sk-hero[data-padding="xs"] { --sk-hero-padding: var(--space-inset-xs); }
+  .sk-hero[data-padding="sm"] { --sk-hero-padding: var(--space-inset-sm); }
+  .sk-hero[data-padding="md"] { --sk-hero-padding: var(--space-inset-md); }
+  .sk-hero[data-padding="lg"] { --sk-hero-padding: var(--space-inset-lg); }
+  .sk-hero[data-padding="xl"] { --sk-hero-padding: var(--space-inset-xl); }
+
+  /*
+   * HORIZONTAL alignment only, the one axis `justify-content: center` above does not touch:
+   * `align="start"` keeps the flex column's own default cross-axis behavior (`align-items: normal`,
+   * a block-level child already fills the available inline size on its own, same as normal block
+   * flow would); `align="center"` is the one case Hero itself has to help with, centering the
+   * child horizontally within the row `justify-content` is already centering vertically. Neither
+   * value is a duplicate of a lever `Stack`/`Inline` already has: a `Stack` has no notion of
+   * "and also center MYSELF within my own parent," only of how its own children line up.
+   */
+  .sk-hero[data-align="center"] {
+    align-items: center;
+    text-align: center;
+  }
+
+  /*
+   * 36rem is `--breakpoint-compact` (semantic/_breakpoints.scss), a literal here for the same
+   * reason `patterns/vaul.css`'s own desktop rule hand-copies `52rem`: a CSS `@media` cannot read a
+   * custom property, so the one shared source has to be typed twice.
+   *
+   * The 26rem floor above is tuned for a real hero on a real page, sharing the screen with a nav
+   * bar above and more content below. On a phone that same floor is the majority of the viewport
+   * before scrolling reveals anything else, worse for the `hero-centered-minimal` snippet (a
+   * headline and one line of body copy) than for any pattern with more to fill it. `18rem` still
+   * reads as a considered opening section, not a paragraph, while giving a short mobile hero room
+   * to breathe above the fold instead of eating it.
+   */
+  @media (max-width: 35.999rem) {
+    .sk-hero {
+      --sk-hero-min-height: 18rem;
+    }
+  }
+}

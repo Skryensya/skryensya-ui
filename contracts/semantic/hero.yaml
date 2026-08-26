@@ -1,0 +1,20 @@
+# La estructura vive en packages/core/src/hero.ts. Acá sólo por qué se elige.
+#
+# useWhen/avoidWhen es el único vocabulario que el compilador realmente lee de este archivo
+# (`ai-compiler/src/overlay.ts`'s `SignatureSemantics`). Las reglas de contenido y accesibilidad de
+# Hero viven ADENTRO de estas dos listas, en vez de campos nuevos que el compilador ignoraría en
+# silencio: un overlay con datos que nadie lee es peor que uno corto, porque parece completo y no lo
+# está.
+
+Hero:
+  useWhen:
+    - "es la apertura de una página o de una sección: necesita distinguirse visualmente de lo que sigue"
+    - "el titular y la bajada necesitan más aire y una superficie propia, no la del fondo de la página"
+    - "adentro siempre va un encabezado real (Heading), nunca sólo texto grande: si el hero abre la página entera, ese encabezado es el <h1> de la página"
+    - "como mucho una acción primaria y una secundaria más silenciosa; nunca una fila de botones de igual peso"
+    - "el host por defecto no es un landmark y no necesita aria-label; si se autora como landmark (<section>, as=\"section\" en React) sí necesita aria-label o aria-labelledby apuntando al encabezado adentro"
+  avoidWhen:
+    - "es una sección más de la página, no la de apertura; eso es un Box o directamente un Stack"
+    - "sólo hace falta separar contenido con relleno o borde; eso es un Box"
+    - "el mensaje necesita más de dos acciones o más de un titular compitiendo; separa el resto en su propia sección"
+    - "una imagen adentro reemplaza al titular en vez de acompañarlo; el titular sigue siendo un Heading real, la imagen lleva su propio alt"

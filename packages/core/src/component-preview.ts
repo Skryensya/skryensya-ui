@@ -80,6 +80,18 @@ export const componentPreviewAttrs = {
    * default for a first-time reader who happens to land here first.
    */
   screenLocal: "data-sk-component-preview-screen-local",
+  /**
+   * A `sk-tabs` group of file panels (HTML/CSS/TS, or Componente/data). One shared
+   * "Ver código"/"Ocultar código" control sits above its tab strip as a DIRECT CHILD — plain
+   * `@skryensya/core/code-preview` markup (`codePreviewParts.more`/`toggle`/`toggleIcon`,
+   * `codePreviewAttrs.toggle`/`toggleLabel`/`expandedLabel`), not a parallel vocabulary of this
+   * component's own: every file's own per-panel toggle stays hidden (component-preview.css), and
+   * `connectSourceToggle` (`@skryensya/vanilla/component-preview`) finds the shared one purely by
+   * that DIRECT-CHILD position (`:scope > .sk-code-preview__more`, never nested under
+   * `.sk-tabs__content` the way a per-file one is) and forwards its click to every panel's own
+   * toggle in one pass. Reusing the identical attributes is what makes the control read as the
+   * SAME one whether a page has one file or several, Vanilla or React.
+   */
   sourceTabs: "data-sk-component-preview-source-tabs",
   source: "data-sk-component-preview-source",
   flush: "data-sk-component-preview-flush",

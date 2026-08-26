@@ -70,6 +70,7 @@ const componentItems = [
   { href: "/componentes/avatar", label: "Avatar", aliases: ["perfil"] },
   { href: "/componentes/badge", label: "Badge", aliases: ["insignia"] },
   { href: "/componentes/box", label: "Box", aliases: ["caja"] },
+  { href: "/componentes/hero", label: "Hero", aliases: ["portada", "landing"] },
   {
     href: "/componentes/button",
     label: "Button",
@@ -614,6 +615,7 @@ export const componentNavigation = [
     items: componentGroupItems(
       "/componentes/box",
       "/componentes/grid",
+      "/componentes/hero",
       "/componentes/layout-grid",
       "/hotkey",
       "/componentes/inline",

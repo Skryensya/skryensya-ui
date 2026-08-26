@@ -108,6 +108,10 @@ const componentDescriptions = {
     es: "Define títulos y niveles que estructuran el documento.",
     en: "Defines titles and levels that structure a document.",
   },
+  "/componentes/hero": {
+    es: "Abre una página con superficie propia y espacio generoso.",
+    en: "Opens a page with a surface of its own and generous room.",
+  },
   "/componentes/icon": {
     es: "Representa acciones y conceptos con iconografía consistente.",
     en: "Represents actions and concepts with consistent iconography.",

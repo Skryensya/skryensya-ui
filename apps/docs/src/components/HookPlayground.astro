@@ -1,0 +1,112 @@
+---
+/*
+ * PROOF OF CONCEPT: a live component next to sliders for its own styling hooks, no header, no
+ * binding tabs, no source panels. `ComponentPreview` answers "what does the markup look like and
+ * does it work"; this answers a narrower question — "what happens if I push this ONE hook" — for a
+ * reader who is deciding whether the hook is worth reaching for at all.
+ *
+ * The stage renders straight into the docs document, no `srcdoc` iframe: a slider firing fifty
+ * `input` events a second has nothing to gain from postMessage, and the parent page already carries
+ * every component's CSS (`ComponentPreview`'s own imports put it there). Isolation is what the
+ * iframe buys ComponentPreview; this widget doesn't need it, only pixels that update instantly.
+ *
+ * Still one authored TREE (`emitMarkup`, no hand-written HTML string): if this survives being a
+ * proof of concept, every later page gets the same live specimen the reader already saw emitted
+ * correctly elsewhere, not a second copy that can drift from the contract.
+ */
+import { emitMarkup } from "@skryensya/ai-compiler/emit";
+import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import "@skryensya/core/components/button.css";
+import "@skryensya/core/components/slider.css";
+import type { HookControl } from "../lib/hook-control";
+import { getLocale, useTranslations } from "../i18n";
+
+export type { HookControl };
+
+interface Props {
+  tree: UsageTree;
+  controls: readonly HookControl[];
+  label: string;
+  /**
+   * CSS selector for the element the hooks actually land on (e.g. `".sk-loader"`), scoped to the
+   * stage. Every published component redeclares its own custom properties unconditionally in its
+   * base rule (`.sk-loader { --sk-loader-size: ...; }`), so a value only INHERITED from an ancestor
+   * never wins — an inline style has to sit on the probe element itself to out-rank that rule.
+   */
+  probe: string;
+}
+
+const { tree, controls, label, probe } = Astro.props;
+const t = useTranslations(getLocale(Astro.url));
+const markup = emitMarkup(tree, { fillDefaults: false });
+---
+
+<div class="sk-hook-playground" data-sk-hook-playground aria-label={label}>
+  <div
+    class="sk-hook-playground__stage"
+    data-sk-hook-playground-stage
+    data-sk-hook-playground-probe={probe}
+    set:html={markup}
+  />
+  <div class="sk-hook-playground__controls" data-sk-hook-playground-controls>
+    {
+      controls.map((control) => (
+        <label
+          class="sk-hook-playground__control"
+          data-sk-hook-playground-control
+          data-hook={control.hook}
+          data-unit={control.unit ?? ""}
+          data-default={control.default}
+        >
+          <span class="sk-hook-playground__control-label">{control.label}</span>
+          {control.type === "range" ? (
+            <div
+              class="sk-slider"
+              data-sk-slider
+              data-min={control.min}
+              data-max={control.max}
+              data-step={control.step}
+              data-value={control.default}
+              data-sk-hook-playground-input
+              aria-label={control.label}
+            >
+              <div class="sk-slider__control" data-sk-slider-control>
+                <div class="sk-slider__track" data-sk-slider-track>
+                  <div class="sk-slider__range" data-sk-slider-range-part />
+                </div>
+                <div class="sk-slider__thumb" data-sk-slider-thumb>
+                  <input class="sk-slider__input" data-sk-slider-input type="text" hidden />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <input
+              type="color"
+              class="sk-hook-playground__swatch"
+              value={control.default}
+              data-sk-hook-playground-input
+            />
+          )}
+          <output class="sk-hook-playground__control-value" data-sk-hook-playground-output>
+            {control.default}
+            {control.unit ?? ""}
+          </output>
+        </label>
+      ))
+    }
+    <button
+      class="sk-button sk-interactive sk-hook-playground__reset"
+      data-variant="ghost"
+      data-size="sm"
+      data-sk-hook-playground-reset
+      type="button"
+    >
+      {t("hookPlayground.reset")}
+    </button>
+  </div>
+</div>
+
+<script>
+  import { initHookPlayground } from "../scripts/hook-playground";
+  initHookPlayground();
+</script>

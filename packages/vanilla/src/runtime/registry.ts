@@ -102,6 +102,10 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/date-picker.js")).mountDatePicker,
   },
   {
+    selector: "[data-sk-color-picker]",
+    load: async () => (await import("../components/color-picker.js")).mountColorPicker,
+  },
+  {
     selector: "[data-sk-time-field]",
     load: async () => (await import("../components/time-field.js")).mountTimeField,
   },

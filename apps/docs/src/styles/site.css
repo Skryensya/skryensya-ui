@@ -1892,7 +1892,12 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .d
 .sk-table__cell--copy .sk-copy-button {
   position: absolute;
   inset-inline-end: var(--sk-table-cell-padding-x);
-  inset-block-start: var(--sk-table-cell-padding-y);
+  /* Centered on the block axis instead of pinned to the top padding: a wrapped, multi-line cell
+     (long `color-mix(...)` values, say) would otherwise leave the button stranded next to the
+     first line. `translate` (not `transform`) so it composes with `.sk-icon-toggle`'s own
+     `transform: scale(...)` on press instead of being replaced by it. */
+  inset-block-start: 50%;
+  translate: 0 -50%;
   flex-shrink: 0;
 }
 
@@ -1904,6 +1909,108 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .d
  */
 .docs-copy-cells {
   display: none;
+}
+
+/* ── hook playground ──────────────────────────────────────────────────────── */
+/*
+ * `HookPlayground.astro`: a live component plus sliders/color pickers for its own styling hooks,
+ * with none of `ComponentPreview`'s chrome. Proof of concept on the Loader page; shared here (not
+ * in `examples/loader.css`) so a second component page can reach for the same widget without
+ * copying its CSS first.
+ */
+.sk-hook-playground {
+  display: grid;
+  gap: var(--space-stack-md);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface);
+  padding: var(--space-inset-lg);
+}
+
+.sk-hook-playground__stage {
+  display: grid;
+  place-items: center;
+  min-block-size: 8rem;
+  padding: var(--space-inset-md);
+  border: 1px dashed var(--color-border-subtle);
+  border-radius: var(--radius-control);
+}
+
+.sk-hook-playground__controls {
+  display: grid;
+  gap: var(--space-stack-sm);
+}
+
+.sk-hook-playground__control {
+  display: grid;
+  grid-template-columns: 12rem 1fr 4rem;
+  align-items: center;
+  gap: var(--space-inline-md);
+  padding-block: var(--space-inset-xs);
+  padding-inline: var(--space-inset-sm);
+  border-radius: var(--radius-control);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-body-sm);
+}
+
+.sk-hook-playground__control:hover {
+  background: var(--color-bg-surface-sunken);
+}
+
+.sk-hook-playground__control-label {
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sk-hook-playground__control-value {
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+/* Native color inputs give almost nothing to style directly: the swatch itself lives in a
+   vendor-prefixed pseudo-element, so the box has to be sized here and the swatch trimmed to match
+   through it, per engine. */
+.sk-hook-playground__swatch {
+  inline-size: var(--size-control-sm);
+  block-size: var(--size-control-sm);
+  padding: 2px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface);
+  cursor: pointer;
+  justify-self: start;
+}
+
+.sk-hook-playground__swatch::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.sk-hook-playground__swatch::-webkit-color-swatch {
+  border: none;
+  border-radius: calc(var(--radius-control) - 2px);
+}
+
+.sk-hook-playground__swatch::-moz-color-swatch {
+  border: none;
+  border-radius: calc(var(--radius-control) - 2px);
+}
+
+.sk-hook-playground__reset {
+  justify-self: start;
+}
+
+@media (max-width: 30rem) {
+  .sk-hook-playground__control {
+    grid-template-columns: 1fr;
+    gap: var(--space-stack-xs);
+  }
+
+  .sk-hook-playground__control-value {
+    text-align: start;
+  }
 }
 
 /* ── filter row ───────────────────────────────────────────────────────────── */

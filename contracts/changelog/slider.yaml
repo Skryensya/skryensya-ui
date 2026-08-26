@@ -3,8 +3,23 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "6f8d9fb4bbb1991e"
+surface: "f7fc0fbc4a12d06d"
 entries:
+  - date: 2026-08-26
+    kind: chore
+    target: Slider
+    es:
+      title: Slider usa las máquinas de Zag 1.43.3
+      body: >-
+        Se actualiza la dependencia <code>@zag-js/slider</code> de 1.42.0 a 1.43.3. La API
+        publicada del contrato no agrega opciones ni cambia slots, pero la superficie compilada
+        registra la versión de la máquina que hidrata el control.
+    en:
+      title: Slider uses the Zag 1.43.3 machines
+      body: >-
+        Updates the <code>@zag-js/slider</code> dependency from 1.42.0 to 1.43.3. The published
+        contract API adds no options and changes no slots, but the compiled surface records the
+        machine version that hydrates the control.
   - date: 2026-08-18
     kind: bugfix
     target: SliderRange

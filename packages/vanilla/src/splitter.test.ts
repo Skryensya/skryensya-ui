@@ -1,6 +1,7 @@
 import { fireEvent } from "@testing-library/dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { attachColumnResizer, measureColumnContentWidth, watchColumnLayout, watchSplitterExtent } from "./splitter.js";
+const cleanups: Array<() => void> = [];
 
 function pointer(type: string, init: { clientX?: number; button?: number } = {}) {
   return new MouseEvent(type, { bubbles: true, cancelable: true, ...init }) as MouseEvent & { pointerId: number };
@@ -13,18 +14,19 @@ function gesture(handle: HTMLElement, xs: number[], { release = true } = {}) {
   handle.hasPointerCapture = () => true;
   handle.releasePointerCapture = () => {};
 
-  const send = (type: string, clientX: number, extra = {}) => {
+  const send = (target: EventTarget, type: string, clientX: number, extra = {}) => {
     const event = pointer(type, { clientX, ...extra });
     event.pointerId = 1;
-    handle.dispatchEvent(event);
+    target.dispatchEvent(event);
   };
 
-  send("pointerdown", xs[0]!, { button: 0 });
-  for (const x of xs.slice(1)) send("pointermove", x);
-  if (release) send("pointerup", xs[xs.length - 1]!);
+  send(handle, "pointerdown", xs[0]!, { button: 0 });
+  for (const x of xs.slice(1)) send(document, "pointermove", x);
+  if (release) send(document, "pointerup", xs[xs.length - 1]!);
 }
 
 afterEach(() => {
+  for (const cleanup of cleanups.splice(0)) cleanup();
   document.body.innerHTML = "";
 });
 
@@ -33,7 +35,9 @@ describe("attachColumnResizer", () => {
     const th = document.createElement("th");
     document.body.append(th);
     let current: readonly number[] = widths;
+    th.getBoundingClientRect = () => ({ width: current.reduce((sum, width) => sum + width, 0) }) as DOMRect;
     const cleanup = attachColumnResizer({
+      root: th,
       th,
       index: 0,
       getWidths: () => current,
@@ -45,6 +49,7 @@ describe("attachColumnResizer", () => {
       className: "sk-test__column-resizer",
       direction: () => "ltr",
     });
+    cleanups.push(cleanup);
     const handle = th.querySelector<HTMLElement>("[data-sk-column-resizer]")!;
     return { th, handle, cleanup, widths: () => current };
   }
@@ -84,7 +89,9 @@ describe("attachColumnResizer", () => {
     const th = document.createElement("th");
     document.body.append(th);
     let current: readonly number[] = [100, 100];
-    attachColumnResizer({
+    th.getBoundingClientRect = () => ({ width: current.reduce((sum, width) => sum + width, 0) }) as DOMRect;
+    const cleanup = attachColumnResizer({
+      root: th,
       th,
       index: 0,
       getWidths: () => current,
@@ -94,6 +101,7 @@ describe("attachColumnResizer", () => {
       className: "sk-test__column-resizer",
       direction: () => "rtl",
     });
+    cleanups.push(cleanup);
     const handle = th.querySelector<HTMLElement>("[data-sk-column-resizer]")!;
     gesture(handle, [100, 140, 180]);
     expect(current[0]).toBeLessThan(100);
@@ -138,7 +146,9 @@ describe("attachColumnResizer", () => {
     const th = document.createElement("th");
     document.body.append(th);
     let current: readonly number[] = [100, 100];
-    attachColumnResizer({
+    th.getBoundingClientRect = () => ({ width: current.reduce((sum, width) => sum + width, 0) }) as DOMRect;
+    const cleanup = attachColumnResizer({
+      root: th,
       th,
       index: 0,
       getWidths: () => current,
@@ -149,6 +159,7 @@ describe("attachColumnResizer", () => {
       direction: () => "ltr",
       resetWidth: () => 150,
     });
+    cleanups.push(cleanup);
     const handle = th.querySelector<HTMLElement>("[data-sk-column-resizer]")!;
 
     fireEvent.keyDown(handle, { key: "End" });

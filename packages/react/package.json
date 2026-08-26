@@ -280,6 +280,10 @@
       "types": "./src/components/date-picker.tsx",
       "default": "./src/components/date-picker.tsx"
     },
+    "./color-picker": {
+      "types": "./src/components/color-picker.tsx",
+      "default": "./src/components/color-picker.tsx"
+    },
     "./calendar": {
       "types": "./src/components/calendar.tsx",
       "default": "./src/components/calendar.tsx"
@@ -367,16 +371,17 @@
     "lint": "tsc -p tsconfig.json --noEmit && vitest run"
   },
   "dependencies": {
+    "@skryensya/ai-compiler": "workspace:*",
     "@skryensya/core": "workspace:*",
     "@skryensya/icons-phosphor": "workspace:*",
-    "@zag-js/checkbox": "^1.42.0",
-    "@zag-js/collapsible": "^1.42.0",
-    "@zag-js/radio-group": "^1.42.0",
-    "@zag-js/react": "^1.42.0",
-    "@zag-js/select": "^1.42.0",
-    "@zag-js/tabs": "^1.42.0",
-    "@zag-js/tooltip": "1.42.0",
-    "@skryensya/ai-compiler": "workspace:*"
+    "@zag-js/checkbox": "^1.43.3",
+    "@zag-js/collapsible": "^1.43.3",
+    "@zag-js/radio-group": "^1.43.3",
+    "@zag-js/react": "^1.43.3",
+    "@zag-js/select": "^1.43.3",
+    "@zag-js/slider": "^1.43.3",
+    "@zag-js/tabs": "^1.43.3",
+    "@zag-js/tooltip": "1.43.3"
   },
   "peerDependencies": {
     "@skryensya/icons-lucide": "workspace:*",

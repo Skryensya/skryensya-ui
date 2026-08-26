@@ -202,6 +202,11 @@ export { Calendar } from "./components/calendar.js";
 export type { CalendarProps } from "./components/calendar.js";
 export { DatePicker } from "./components/date-picker.js";
 export type { DatePickerProps } from "./components/date-picker.js";
+export { ColorPicker, CompactColorPicker, NativeColorPicker } from "./components/color-picker.js";
+export type {
+  ColorPickerProps,
+  NativeColorPickerProps,
+} from "./components/color-picker.js";
 export { EmptyState } from "./components/empty-state.js";
 export type { EmptyStateProps } from "./components/empty-state.js";
 export { FileUpload } from "./components/file-upload.js";

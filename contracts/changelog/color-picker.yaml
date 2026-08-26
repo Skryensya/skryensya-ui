@@ -1,0 +1,35 @@
+# Qué cambió en color-picker, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
+# hash nuevo.
+surface: "777ae63892a35d46"
+entries:
+  - date: 2026-08-26
+    kind: feature
+    es:
+      title: ColorPicker se publica como contrato, con 3 signatures
+      body: >-
+        Entra al catálogo con <code>ColorPicker</code>, <code>ColorPicker.compact</code> y
+        <code>ColorPicker.native</code>: las dos primeras corren sobre <code>@zag-js/color-picker</code>
+        (área, riel de matiz, riel de alfa, filas hex/RGB/HSL/OKLCH y presets), la tercera es un
+        <code>input type="color"</code> real. OKLCH no es un formato nativo de la máquina; su fila lee y
+        escribe a través de una conversión propia (<code>@skryensya/core/color</code>) sobre el mismo
+        color que la máquina ya expone. El binding Vanilla monta sobre
+        <code>data-sk-color-picker</code>. Opciones: <code>name</code>, <code>value</code>,
+        <code>disabled</code>, <code>readOnly</code>, <code>required</code>, <code>invalid</code>,
+        <code>triggerLabel</code>, <code>swatches</code>. La hoja es
+        <code>components/color-picker.css</code>.
+    en:
+      title: ColorPicker is published as a contract, with 3 signatures
+      body: >-
+        It joins the catalogue with <code>ColorPicker</code>, <code>ColorPicker.compact</code> and
+        <code>ColorPicker.native</code>: the first two run on <code>@zag-js/color-picker</code> (area,
+        hue rail, alpha rail, hex/RGB/HSL/OKLCH rows and presets), the third is a real
+        <code>input type="color"</code>. OKLCH is not one of the machine's own formats; its row reads
+        and writes through a conversion this system owns (<code>@skryensya/core/color</code>) over the
+        same color the machine already exposes. The Vanilla binding mounts on
+        <code>data-sk-color-picker</code>. Options: <code>name</code>, <code>value</code>,
+        <code>disabled</code>, <code>readOnly</code>, <code>required</code>, <code>invalid</code>,
+        <code>triggerLabel</code>, <code>swatches</code>. Its stylesheet is
+        <code>components/color-picker.css</code>.

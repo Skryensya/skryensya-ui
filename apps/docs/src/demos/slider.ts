@@ -28,9 +28,8 @@ export const sliderTree = (t: Translate): UsageTree => ({
 });
 
 /*
- * Two native `<input type="range">` under one host, not WAI's own custom SVG widget. See
- * `sliderRangeBounds` in `slider.ts` for why. Neither thumb can be dragged past the other; the
- * bound comes from where the OTHER thumb sits, not a static min/max either input owns alone.
+ * Two thumbs from the same Zag machine under one host. Neither thumb can be dragged past the other;
+ * the machine publishes each thumb's current ARIA bounds and the fill percentages.
  */
 export const sliderRangeTree = (t: Translate): UsageTree => ({
   contract: "slider",

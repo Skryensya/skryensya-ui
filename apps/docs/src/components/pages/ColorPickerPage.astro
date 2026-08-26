@@ -1,0 +1,120 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  colorPickerTree,
+  compactColorPickerTree,
+  disabledColorPickerTree,
+  nativeColorPickerTree,
+  presetsColorPickerTree,
+} from "../../demos/color-picker";
+import { getLocale, useTranslations } from "../../i18n";
+import "@skryensya/core/components/color-picker.css";
+import contractSource from "@contracts/semantic/color-picker.yaml?raw";
+import coreSource from "@core/src/color-picker.ts?raw";
+import colorSource from "@core/src/color.ts?raw";
+import cssSource from "@core/css/components/color-picker.css?raw";
+import vanillaSource from "@vanilla/src/components/ColorPicker.svelte?raw";
+import vanillaPanelSource from "@vanilla/src/components/ColorPickerPanel.svelte?raw";
+import vanillaMountSource from "@vanilla/src/components/color-picker.ts?raw";
+import reactSource from "@react/src/components/color-picker.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const styles = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/components/color-picker.css";`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/color-picker.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/color-picker.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/src/color.ts", source: colorSource, language: "ts" },
+  { id: "packages/core/css/components/color-picker.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/ColorPicker.svelte", source: vanillaSource, language: "svelte" },
+  { id: "packages/vanilla/src/components/ColorPickerPanel.svelte", source: vanillaPanelSource, language: "svelte" },
+  { id: "packages/vanilla/src/components/color-picker.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/react/src/components/color-picker.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="ColorPicker"
+  description={t("colorPicker.description")}
+  contractId="color-picker"
+  sourceFiles={sourceFiles}
+  styleGroups={[
+    { file: "components/color-picker.css", probe: "sk-color-picker", title: "ColorPicker" },
+    { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
+    { file: "components/button.css", probe: "sk-button", title: "Heredados de Button" },
+  ]}
+  tests={[
+    {
+      file: "packages/vanilla/src/components/color-picker.svelte.test.ts",
+      tests: [
+        { name: "refuses markup that is missing a part it must patch", description: t("colorPicker.test1") },
+        {
+          name: "patches the authored control and renders the popover around a panel",
+          description: t("colorPicker.test2"),
+        },
+        {
+          name: "shows the starting color on the root's own custom property",
+          description: t("colorPicker.test3"),
+        },
+        {
+          name: "commits a typed hex value and fills every channel row from it",
+          description: t("colorPicker.test4"),
+        },
+        {
+          name: "selects a preset swatch and updates the current color",
+          description: t("colorPicker.test5"),
+        },
+        {
+          name: "the compact anatomy drops the channel-input rows entirely",
+          description: t("colorPicker.test6"),
+        },
+        {
+          name: "keeps the authored trigger label instead of Zag's own color-describing default",
+          description: t("colorPicker.test7"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("colorPicker.lede")} />
+
+    <h3>{t("colorPicker.nativeTitle")}</h3>
+    <p set:html={t("colorPicker.nativeBody")} />
+    <ComponentPreview tree={nativeColorPickerTree(t)} label={t("demo.colorPicker.nativeLabel")} />
+
+    <h3>{t("colorPicker.customTitle")}</h3>
+    <p set:html={t("colorPicker.customBody")} />
+    <ComponentPreview tree={colorPickerTree(t)} label={t("demo.colorPicker.label")} viewport="overlay" />
+
+    <h3>{t("colorPicker.compactTitle")}</h3>
+    <p set:html={t("colorPicker.compactBody")} />
+    <ComponentPreview tree={compactColorPickerTree(t)} label={t("demo.colorPicker.compactLabel")} viewport="overlay" />
+
+    <h3>{t("colorPicker.presetsTitle")}</h3>
+    <p set:html={t("colorPicker.presetsBody")} />
+    <ComponentPreview tree={presetsColorPickerTree(t)} label={t("demo.colorPicker.presetsLabel")} viewport="overlay" />
+
+    <h3>{t("colorPicker.disabledTitle")}</h3>
+    <ComponentPreview tree={disabledColorPickerTree(t)} label={t("colorPicker.disabledLabel")} />
+
+    <h3>{t("colorPicker.whichTitle")}</h3>
+    <p set:html={t("colorPicker.whichBody")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("colorPicker.contractBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={styles} label="CSS" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("colorPicker.a11yBody")} />
+  </Fragment>
+</ComponentPageShell>

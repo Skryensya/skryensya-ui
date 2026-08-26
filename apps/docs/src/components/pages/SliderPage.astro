@@ -50,7 +50,7 @@ const sourceFiles = [
       file: "packages/react/src/components/slider.test.tsx",
       tests: [
         {
-          name: "stays a native range input and reports value changes as numbers",
+          name: "uses the Zag slider machine anatomy and value state",
           description: t("sliderPage.test1"),
         },
       ],
@@ -59,7 +59,7 @@ const sourceFiles = [
       file: "packages/vanilla/src/components/slider.test.ts",
       tests: [
         {
-          name: "paints the initial fill from value within [min, max] on mount",
+          name: "mounts the Zag slider machine over authored markup",
           description: t("sliderPage.test2"),
         },
       ],
@@ -77,7 +77,7 @@ const sourceFiles = [
       file: "packages/react/src/components/slider-range.test.tsx",
       tests: [
         {
-          name: "re-bounds the OTHER thumb after a value changes, reporting both values on change",
+          name: "bounds each thumb's max/min at the other's CURRENT value",
           description: t("sliderPage.testRange2"),
         },
       ],
@@ -86,7 +86,7 @@ const sourceFiles = [
       file: "packages/vanilla/src/components/slider-range.test.ts",
       tests: [
         {
-          name: "never lets one thumb's value exceed the other. Native min/max clamps a direct value write past the bound",
+          name: "paints the fill bar's start/end offsets from each thumb's value",
           description: t("sliderPage.testRange3"),
         },
       ],

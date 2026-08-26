@@ -1,116 +1,46 @@
 /*
  * TIER 3, SLIDER
  *
- * A skinned native range input. The filled portion is painted with a gradient stopped at
- * --sk-slider-fill (0–1), which the binding keeps in sync with the value. Track and thumb are styled
- * per engine; keyboard, focus and form participation stay the platform's.
+ * A Zag-backed slider. The line is a real element, and the thumb is centred over percentage points
+ * on that line (`thumbAlignment: "center"` in both bindings), so 0% and 100% are reachable visually
+ * instead of being inset by a native range thumb box.
  */
 @layer components {
-  .sk-slider {
-    --sk-slider-fill: 0;
-    --sk-slider-track: var(--color-bg-surface-sunken);
+  .sk-slider,
+  .sk-slider-range {
+    --sk-slider-track: light-dark(
+      var(--color-bg-surface-sunken),
+      color-mix(in oklab, var(--color-text-primary) 24%, var(--color-bg-surface))
+    );
     --sk-slider-fill-color: var(--color-action-accent);
     --sk-slider-thumb: var(--color-bg-surface);
+    --sk-slider-thumb-ring: var(--color-bg-surface);
+    --sk-slider-thumb-ring-size: 3px;
     --sk-slider-track-size: var(--space-inset-xs);
-    /* The VISIBLE knob is small; the pointer target is the full control-sm box (WCAG target floored
-     * inside the token). The two are decoupled by painting the knob with a radial-gradient centred in
-     * a larger, otherwise-transparent thumb, a native range thumb can't carry a pseudo-element. */
     --sk-slider-thumb-size: var(--size-icon-sm);
     --sk-slider-thumb-hit: var(--size-control-sm);
 
     inline-size: 100%;
-    margin: 0;
-    background: transparent;
-    cursor: pointer;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-
-  /* Focus ring is painted INTO the knob gradient (an outline would ring the large transparent box):
-   * the 1px border ring becomes a focus-colored ring one --focus-ring-width thick, hugging the knob. */
-  .sk-slider:focus-visible { outline: none; }
-  .sk-slider:focus-visible::-webkit-slider-thumb {
-    background: radial-gradient(circle at center,
-      var(--sk-slider-thumb) 0 calc(var(--sk-slider-thumb-size) / 2 - 1px),
-      var(--focus-ring-color) calc(var(--sk-slider-thumb-size) / 2 - 1px) calc(var(--sk-slider-thumb-size) / 2 + var(--focus-ring-width)),
-      transparent calc(var(--sk-slider-thumb-size) / 2 + var(--focus-ring-width)));
-  }
-  .sk-slider:focus-visible::-moz-range-thumb {
-    background: radial-gradient(circle at center,
-      var(--sk-slider-thumb) 0 calc(var(--sk-slider-thumb-size) / 2 - 1px),
-      var(--focus-ring-color) calc(var(--sk-slider-thumb-size) / 2 - 1px) calc(var(--sk-slider-thumb-size) / 2 + var(--focus-ring-width)),
-      transparent calc(var(--sk-slider-thumb-size) / 2 + var(--focus-ring-width)));
-  }
-
-  /* Track: a gradient hard-stopped at the filled fraction, so no extra fill element is needed. */
-  .sk-slider::-webkit-slider-runnable-track {
-    block-size: var(--sk-slider-track-size);
-    border-radius: var(--radius-pill);
-    background: linear-gradient(to right, var(--sk-slider-fill-color) calc(var(--sk-slider-fill) * 100%), var(--sk-slider-track) 0);
-  }
-  .sk-slider::-moz-range-track {
-    block-size: var(--sk-slider-track-size);
-    border-radius: var(--radius-pill);
-    background: linear-gradient(to right, var(--sk-slider-fill-color) calc(var(--sk-slider-fill) * 100%), var(--sk-slider-track) 0);
-  }
-
-  /* The thumb BOX is the pointer target; the knob is the small centred circle the gradient paints,
-   * ringed 1px with the border color, transparent beyond. Border/box-shadow can't be used, they'd
-   * draw around the full (large) box, so the ring lives in the gradient and elevation is dropped. */
-  .sk-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    inline-size: var(--sk-slider-thumb-hit);
+    min-inline-size: var(--sk-slider-thumb-hit);
     block-size: var(--sk-slider-thumb-hit);
-    margin-block-start: calc((var(--sk-slider-track-size) - var(--sk-slider-thumb-hit)) / 2);
-    border: 0;
-    border-radius: var(--radius-pill);
-    background: radial-gradient(circle at center,
-      var(--sk-slider-thumb) 0 calc(var(--sk-slider-thumb-size) / 2 - 1px),
-      var(--color-border-default) calc(var(--sk-slider-thumb-size) / 2 - 1px) calc(var(--sk-slider-thumb-size) / 2),
-      transparent calc(var(--sk-slider-thumb-size) / 2));
-  }
-  .sk-slider::-moz-range-thumb {
-    inline-size: var(--sk-slider-thumb-hit);
-    block-size: var(--sk-slider-thumb-hit);
-    border: 0;
-    border-radius: var(--radius-pill);
-    background: radial-gradient(circle at center,
-      var(--sk-slider-thumb) 0 calc(var(--sk-slider-thumb-size) / 2 - 1px),
-      var(--color-border-default) calc(var(--sk-slider-thumb-size) / 2 - 1px) calc(var(--sk-slider-thumb-size) / 2),
-      transparent calc(var(--sk-slider-thumb-size) / 2));
+    position: relative;
   }
 
-  .sk-slider:disabled { cursor: not-allowed; opacity: 0.5; }
+  .sk-slider[data-disabled],
+  .sk-slider-range[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 
-  /*
-   * MULTI-THUMB: two `.sk-slider` inputs stacked in one wrapper. Track/thumb/focus-ring styling
-   * comes free from the rules above (`also: ["sk-slider"]` in `slider.ts`); this is only the
-   * delta a two-input overlay needs. The classic technique: both inputs cover the full box,
-   * their OWN track becomes fully transparent so nothing paints twice, and `pointer-events: none`
-   * on the input with `pointer-events: auto` restored on just the thumb lets a click pass through
-   * empty track to whichever thumb sits on top, while both remain independently draggable.
-   */
-  .sk-slider-range {
-    /*
-     * Defined HERE, not only on `.sk-slider` (`also: ["sk-slider"]` puts that class on the two
-     * CHILD inputs, `__low`/`__high`, never on this wrapper). Custom properties inherit downward,
-     * never up, so `.sk-slider-range` and its `__track`/`__fill` children, which read these same
-     * four names below: never saw a value: `block-size` fell back to its initial `auto`, and with
-     * every child absolutely positioned nothing in normal flow gave the wrapper a height to be
-     * `auto`, so the whole control rendered at 0×100% with an invisible track. First caught by a
-     * canonical tree that actually laid this signature out in a browser: no jsdom test could.
-     */
-    --sk-slider-track: var(--color-bg-surface-sunken);
-    --sk-slider-fill-color: var(--color-action-accent);
-    --sk-slider-track-size: var(--space-inset-xs);
-    --sk-slider-thumb-hit: var(--size-control-sm);
-
+  .sk-slider__control,
+  .sk-slider-range__control {
     position: relative;
     inline-size: 100%;
     block-size: var(--sk-slider-thumb-hit);
+    cursor: pointer;
   }
 
+  .sk-slider__track,
   .sk-slider-range__track {
     position: absolute;
     inset-inline: 0;
@@ -121,76 +51,85 @@
     background: var(--sk-slider-track);
   }
 
+  .sk-slider__range,
   .sk-slider-range__fill {
     position: absolute;
-    inset-block-start: 50%;
-    translate: 0 -50%;
-    inset-inline-start: calc(var(--sk-slider-range-fill-start, 0) * 100%);
-    inline-size: calc((var(--sk-slider-range-fill-end, 1) - var(--sk-slider-range-fill-start, 0)) * 100%);
-    block-size: var(--sk-slider-track-size);
+    inset-block: 0;
     border-radius: var(--radius-pill);
     background: var(--sk-slider-fill-color);
   }
 
+  .sk-slider__thumb,
   .sk-slider-range__low,
   .sk-slider-range__high {
     position: absolute;
-    inset: 0;
-    inline-size: 100%;
-    pointer-events: none;
+    inset-block-start: 50%;
+    inline-size: var(--sk-slider-thumb-hit);
+    block-size: var(--sk-slider-thumb-hit);
+    translate: 0 -50%;
+    border-radius: var(--radius-pill);
+    touch-action: none;
+    cursor: grab;
+    background: radial-gradient(circle at center,
+      var(--sk-slider-thumb) 0 calc(var(--sk-slider-thumb-size) / 2 - 1px),
+      var(--color-border-default) calc(var(--sk-slider-thumb-size) / 2 - 1px) calc(var(--sk-slider-thumb-size) / 2),
+      var(--sk-slider-thumb-ring) calc(var(--sk-slider-thumb-size) / 2) calc(var(--sk-slider-thumb-size) / 2 + var(--sk-slider-thumb-ring-size)),
+      transparent calc(var(--sk-slider-thumb-size) / 2 + var(--sk-slider-thumb-ring-size)));
   }
 
-  /* Split by vendor prefix, never combined: a selector list is invalid as a WHOLE the moment one
-   * of its selectors names a pseudo-element the engine doesn't recognize, so a single rule mixing
-   * `-webkit-` and `-moz-` here would make Chromium drop the transparent override entirely, and
-   * the base `.sk-slider` gradient paints solid over the `__fill` div this technique depends on. */
-  .sk-slider-range__low::-webkit-slider-runnable-track,
-  .sk-slider-range__high::-webkit-slider-runnable-track {
-    background: transparent;
-  }
-  .sk-slider-range__low::-moz-range-track,
-  .sk-slider-range__high::-moz-range-track {
-    background: transparent;
+  .sk-slider__thumb[data-dragging],
+  .sk-slider-range__low[data-dragging],
+  .sk-slider-range__high[data-dragging] {
+    cursor: grabbing;
   }
 
-  .sk-slider-range__low::-webkit-slider-thumb,
-  .sk-slider-range__high::-webkit-slider-thumb {
-    pointer-events: auto;
+  .sk-slider__thumb:focus-visible,
+  .sk-slider-range__low:focus-visible,
+  .sk-slider-range__high:focus-visible {
+    outline: none;
+    background: radial-gradient(circle at center,
+      var(--sk-slider-thumb) 0 calc(var(--sk-slider-thumb-size) / 2 - 1px),
+      var(--color-border-default) calc(var(--sk-slider-thumb-size) / 2 - 1px) calc(var(--sk-slider-thumb-size) / 2),
+      var(--sk-slider-thumb-ring) calc(var(--sk-slider-thumb-size) / 2) calc(var(--sk-slider-thumb-size) / 2 + var(--sk-slider-thumb-ring-size)),
+      var(--focus-ring-color) calc(var(--sk-slider-thumb-size) / 2 + var(--sk-slider-thumb-ring-size)) calc(var(--sk-slider-thumb-size) / 2 + var(--sk-slider-thumb-ring-size) + var(--focus-ring-width)),
+      transparent calc(var(--sk-slider-thumb-size) / 2 + var(--sk-slider-thumb-ring-size) + var(--focus-ring-width)));
   }
-  .sk-slider-range__low::-moz-range-thumb,
-  .sk-slider-range__high::-moz-range-thumb {
-    pointer-events: auto;
+
+  .sk-slider__input,
+  .sk-slider-range__low-input,
+  .sk-slider-range__high-input {
+    display: none;
   }
 
   @media (forced-colors: active) {
-    .sk-slider-range__track { background: GrayText; }
-    .sk-slider-range__fill { background: Highlight; }
-  }
-
-  @media (forced-colors: active) {
-    .sk-slider {
+    .sk-slider,
+    .sk-slider-range {
       --sk-slider-track: GrayText;
       --sk-slider-fill-color: Highlight;
     }
 
-    .sk-slider::-webkit-slider-thumb,
-    .sk-slider::-moz-range-thumb {
+    .sk-slider__thumb,
+    .sk-slider-range__low,
+    .sk-slider-range__high {
       border: 2px solid CanvasText;
       background: Canvas;
     }
 
-    .sk-slider:focus-visible::-webkit-slider-thumb,
-    .sk-slider:focus-visible::-moz-range-thumb {
+    .sk-slider__thumb:focus-visible,
+    .sk-slider-range__low:focus-visible,
+    .sk-slider-range__high:focus-visible {
       background: Canvas;
       outline: 2px solid Highlight;
       outline-offset: 2px;
     }
 
-    .sk-slider:disabled {
+    .sk-slider[data-disabled],
+    .sk-slider-range[data-disabled] {
       opacity: 1;
     }
-    .sk-slider:disabled::-webkit-slider-thumb,
-    .sk-slider:disabled::-moz-range-thumb {
+
+    .sk-slider[data-disabled] .sk-slider__thumb,
+    .sk-slider-range[data-disabled] :is(.sk-slider-range__low, .sk-slider-range__high) {
       border-color: GrayText;
     }
   }

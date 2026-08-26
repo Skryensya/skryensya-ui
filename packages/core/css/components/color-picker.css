@@ -1,0 +1,430 @@
+/* TIER 3, COLOR PICKER: a swatch trigger that opens a Sketch-style panel (area, hue/alpha rails,
+ * channel-input rows, presets) driven by `@zag-js/color-picker`.
+ *
+ * The FIELD (label, control, trigger) is this file's own chrome, same split as Date Picker. The
+ * PANEL's internals (area/rails/channels/swatches) are entirely derived — neither binding's
+ * template describes them — and their part classes come from `colorPickerPanelParts`
+ * (`@skryensya/core/color-picker`), not authored markup, but they are styled here for the same
+ * reason Calendar's derived grid is styled in its own sheet rather than the consumer's.
+ *
+ * Zag inlines the geometry that changes per-frame (gradients, thumb position, the checkerboard's
+ * own image) via `style`; this sheet only owns what stays constant: sizing, shape, borders,
+ * z-ordering. Where a value here would fight an inline style, it stays out of that property
+ * entirely rather than reaching for `!important`. */
+@layer components {
+  .sk-color-picker {
+    --sk-color-picker-gap: var(--space-stack-xs);
+    --sk-color-picker-label-color: var(--color-text-secondary);
+    --sk-color-picker-trigger-size: var(--size-control-md);
+    --sk-color-picker-swatch-border-color: var(--color-border-default);
+
+    --sk-color-picker-content-bg: color-mix(in oklch, var(--color-bg-surface-raised) 92%, var(--color-action-accent) 8%);
+    --sk-color-picker-content-border-color: color-mix(in oklch, var(--color-border-subtle) 70%, var(--color-action-accent) 30%);
+    --sk-color-picker-content-radius: var(--radius-surface);
+    --sk-color-picker-content-inline-size: 18rem;
+    --sk-color-picker-content-padding: var(--space-inset-sm);
+    --sk-color-picker-content-gap: var(--space-stack-xs);
+
+    --sk-color-picker-area-block-size: 8.75rem;
+    --sk-color-picker-area-radius: calc(var(--radius-control) + 2px);
+    --sk-color-picker-area-thumb-size: 1.15rem;
+
+    --sk-color-picker-rail-block-size: 0.85rem;
+    --sk-color-picker-rail-radius: var(--radius-pill);
+    --sk-color-picker-rail-thumb-size: 1.15rem;
+    --sk-color-picker-thumb-ring-color: var(--color-bg-surface);
+    --sk-color-picker-thumb-ring-size: 3px;
+    --sk-color-picker-thumb-shadow: 0 1px 2px rgb(0 0 0 / 45%), 0 0 0 1px rgb(0 0 0 / 35%);
+    --sk-color-picker-checkerboard-size: 8px;
+
+    display: inline-grid;
+    gap: var(--sk-color-picker-gap);
+  }
+
+  .sk-color-picker__label {
+    color: var(--sk-color-picker-label-color);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+  }
+
+  .sk-color-picker__control {
+    display: inline-flex;
+  }
+
+  /* The trigger is a real icon-only Button; only its content (the swatch) is component-specific. */
+  .sk-color-picker__trigger.sk-button {
+    --sk-button-bg: transparent;
+    --sk-button-border-color: var(--sk-color-picker-swatch-border-color);
+    --sk-button-radius: var(--radius-control);
+
+    inline-size: var(--sk-color-picker-trigger-size);
+    block-size: var(--sk-color-picker-trigger-size);
+    padding: 3px;
+  }
+  .sk-color-picker__trigger[type="color"] {
+    inline-size: calc(var(--sk-color-picker-trigger-size) * 1.25);
+    block-size: var(--sk-color-picker-trigger-size);
+    padding: 4px;
+    border: 1px solid var(--sk-color-picker-swatch-border-color);
+    border-radius: var(--radius-control);
+    background: var(--color-bg-surface);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 16%),
+      0 1px 2px rgb(0 0 0 / 18%);
+    cursor: pointer;
+  }
+  .sk-color-picker__trigger[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+  }
+  .sk-color-picker__trigger[type="color"]::-webkit-color-swatch {
+    border: 0;
+    border-radius: calc(var(--radius-control) - 4px);
+  }
+  .sk-color-picker__trigger[type="color"]::-moz-color-swatch {
+    border: 0;
+    border-radius: calc(var(--radius-control) - 4px);
+  }
+  .sk-color-picker__trigger[type="color"]:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  /* The current color, painted over a checkerboard so alpha is visible at a glance. `--value`
+   * comes from `getRootProps()`'s own style and inherits down from the root; nothing here reads
+   * the machine directly. */
+  /*
+   * The current color OVER a checkerboard, as two `background-image` layers on one box rather
+   * than a `::before` behind it at `z-index: -1`: a negative z-index child of a stacking-context
+   * PARENT still paints AFTER that parent's own `background-color` (only positioned descendants
+   * with a lower index sort before higher ones; the box's own background is step one, always
+   * first), so the checkerboard painted OVER the opaque color instead of showing through only
+   * where alpha lets it, hiding the swatch entirely. Multiple background LAYERS on the same box
+   * paint top-to-bottom in list order, so putting the color first genuinely stacks it above the
+   * checkerboard, and its own alpha (an rgba `--value`) blends through to the layer beneath.
+   */
+  .sk-color-picker__swatch {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    border-radius: calc(var(--radius-control) - 3px);
+    background-image: linear-gradient(var(--value, #000), var(--value, #000)), conic-gradient(#ddd 0 25%, transparent 0 50%, #ddd 0 75%, transparent 0);
+    background-size:
+      100% 100%,
+      var(--sk-color-picker-checkerboard-size) var(--sk-color-picker-checkerboard-size);
+    background-color: #fff;
+  }
+
+  /* ── THE PANEL, redeclared on the positioner: React portals it to the body, so nothing here
+   * reaches it by inheritance from `.sk-color-picker` (same note as `date-picker.css`'s own). ── */
+  .sk-color-picker__positioner {
+    --sk-color-picker-content-bg: color-mix(in oklch, var(--color-bg-surface-raised) 92%, var(--color-action-accent) 8%);
+    --sk-color-picker-content-border-color: color-mix(in oklch, var(--color-border-subtle) 70%, var(--color-action-accent) 30%);
+    --sk-color-picker-content-radius: var(--radius-surface);
+    --sk-color-picker-content-inline-size: 18rem;
+    --sk-color-picker-content-padding: var(--space-inset-sm);
+    --sk-color-picker-content-gap: var(--space-stack-xs);
+    --sk-anchored-position-area: block-end span-inline-end;
+    --sk-anchored-justify: start;
+    --sk-anchored-align: auto;
+    --sk-anchored-offset: var(--space-stack-xs) 0;
+    --sk-anchored-position-try: flip-block;
+  }
+
+  .sk-color-picker__content {
+    display: none;
+    box-sizing: border-box;
+    inline-size: min(
+      var(--sk-color-picker-content-inline-size),
+      calc(100vi - 2 * var(--space-inset-md))
+    );
+    padding: var(--sk-color-picker-content-padding);
+    border: 1px solid var(--sk-color-picker-content-border-color);
+    border-radius: var(--sk-color-picker-content-radius);
+    background:
+      linear-gradient(180deg, color-mix(in oklch, var(--color-bg-surface-raised) 98%, white 2%), var(--sk-color-picker-content-bg)),
+      var(--sk-color-picker-content-bg);
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklch, white 14%, transparent),
+      0 18px 44px rgb(0 0 0 / 28%),
+      var(--elevation-raised);
+    outline: none;
+  }
+  .sk-color-picker__content[data-state="open"] {
+    display: grid;
+    gap: var(--sk-color-picker-content-gap);
+  }
+
+  /* ── THE AREA: 2D saturation/value plane. Zag inlines its own gradient + the thumb's position
+   * (with centering translate already applied); this sheet only sizes the box and the dot. ── */
+  .sk-color-picker__area {
+    block-size: var(--sk-color-picker-area-block-size);
+    border-radius: var(--sk-color-picker-area-radius);
+    overflow: hidden;
+    border: 1px solid color-mix(in oklch, var(--color-border-default) 65%, var(--color-bg-canvas) 35%);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 18%),
+      0 1px 2px rgb(0 0 0 / 30%);
+  }
+  /* `getAreaBackgroundProps` inlines `position: relative` on this element (not `absolute`), which
+   * an external stylesheet cannot out-rank without `!important`. Filling the parent by SIZE
+   * instead of by positioning it out of flow gets the same fill without fighting the inline
+   * style: `.area` above has an explicit block-size and this is its only child, so 100%/100% here
+   * resolves against that and covers it exactly. */
+  .sk-color-picker__area-background {
+    inline-size: 100%;
+    block-size: 100%;
+    border-radius: inherit;
+  }
+  .sk-color-picker__area-thumb {
+    inline-size: var(--sk-color-picker-area-thumb-size);
+    block-size: var(--sk-color-picker-area-thumb-size);
+    border-radius: var(--radius-pill);
+    background: var(--sk-color-picker-thumb-ring-color);
+    border: var(--sk-color-picker-thumb-ring-size) solid var(--sk-color-picker-thumb-ring-color);
+    box-shadow: var(--sk-color-picker-thumb-shadow);
+  }
+  .sk-color-picker__area-thumb:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  /* ── HUE AND ALPHA RAILS: one shared shape. The alpha rail additionally docks a transparency
+   * grid BEHIND its track, as a DOM sibling that comes first: Zag paints the track's own alpha
+   * gradient as that element's background, and a positioned sibling earlier in tree order paints
+   * underneath a positioned sibling later in tree order, so the grid shows through wherever the
+   * gradient actually goes transparent, with no z-index and no fighting the inline style. ── */
+  :is(.sk-color-picker__hue-slider, .sk-color-picker__alpha-slider) {
+    position: relative;
+    block-size: var(--sk-color-picker-rail-block-size);
+  }
+  /* Same inline-`position:relative` situation as the area's own background: filled by SIZE, not
+   * by being taken out of flow, so the alpha track (its own gradient painted here) still paints
+   * after — on top of — the transparency-grid sibling that comes first in the DOM. */
+  :is(.sk-color-picker__hue-track, .sk-color-picker__alpha-track) {
+    inline-size: 100%;
+    block-size: 100%;
+    border: 1px solid color-mix(in oklch, var(--color-border-default) 60%, black 40%);
+    border-radius: var(--sk-color-picker-rail-radius);
+    overflow: hidden;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 24%),
+      0 1px 1px rgb(0 0 0 / 28%);
+  }
+  .sk-color-picker__alpha-slider > [data-part="transparency-grid"] {
+    border-radius: var(--sk-color-picker-rail-radius);
+  }
+  :is(.sk-color-picker__hue-thumb, .sk-color-picker__alpha-thumb) {
+    inline-size: var(--sk-color-picker-rail-thumb-size);
+    block-size: var(--sk-color-picker-rail-thumb-size);
+    border-radius: var(--radius-pill);
+    background: var(--sk-color-picker-thumb-ring-color);
+    border: var(--sk-color-picker-thumb-ring-size) solid var(--sk-color-picker-thumb-ring-color);
+    box-shadow: var(--sk-color-picker-thumb-shadow);
+    transform: translate(-50%, -50%);
+  }
+  :is(.sk-color-picker__hue-thumb, .sk-color-picker__alpha-thumb):focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  /* ── CHANNEL FORMAT + INPUT ROW: show one editable model at a time. Compact drops the whole
+   * editor area, not just its spacing, per the anatomy split `color-picker.ts` documents. ── */
+  .sk-color-picker__format-switch {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    padding: 2px;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: calc(var(--radius-control) + 2px);
+    background: color-mix(in oklch, var(--color-bg-canvas) 42%, transparent);
+  }
+  .sk-color-picker__format-option {
+    min-block-size: 1.65rem;
+    border: 0;
+    border-radius: calc(var(--radius-control) - 2px);
+    background: transparent;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-label);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .sk-color-picker__format-option:is(:hover, :focus-visible) {
+    color: var(--color-text-primary);
+    background: color-mix(in oklch, var(--color-bg-surface-sunken) 52%, transparent);
+  }
+  .sk-color-picker__format-option:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+  .sk-color-picker__format-option[data-state="checked"] {
+    color: var(--color-text-primary);
+    background: color-mix(in oklch, var(--color-action-accent) 28%, var(--color-bg-surface-raised) 72%);
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-action-accent) 40%, transparent);
+  }
+  .sk-color-picker__channels {
+    display: grid;
+    gap: 1px;
+    padding: 2px;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: calc(var(--radius-control) + 2px);
+    background: color-mix(in oklch, var(--color-bg-canvas) 42%, transparent);
+  }
+  [data-anatomy="compact"] .sk-color-picker__channels {
+    display: none;
+  }
+  .sk-color-picker__channel-row {
+    display: grid;
+    grid-template-columns: minmax(3.75rem, 0.7fr) repeat(var(--sk-color-picker-channel-count, 3), 1fr);
+    gap: 1px;
+    align-items: center;
+  }
+  .sk-color-picker__channel-label {
+    align-self: stretch;
+    display: grid;
+    align-items: center;
+    padding-inline: var(--space-inset-xs);
+    border-radius: calc(var(--radius-control) - 2px);
+    background: color-mix(in oklch, var(--color-bg-surface-sunken) 62%, transparent);
+    color: var(--sk-color-picker-label-color);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-label);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .sk-color-picker__channel-input {
+    box-sizing: border-box;
+    inline-size: 100%;
+    min-block-size: 1.75rem;
+    padding: 0 var(--space-inset-2xs);
+    border: 0;
+    border-radius: calc(var(--radius-control) - 2px);
+    background: color-mix(in oklch, var(--color-bg-surface-raised) 86%, var(--color-bg-canvas) 14%);
+    color: var(--color-text-primary);
+    font: inherit;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-border-subtle) 70%, transparent);
+  }
+  .sk-color-picker__channel-input:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  /* ── PRESET SWATCHES ── */
+  .sk-color-picker__swatch-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(1.75rem, 1fr));
+    gap: var(--space-inline-xs);
+    padding: var(--space-inset-xs);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: calc(var(--radius-control) + 2px);
+    background: color-mix(in oklch, var(--color-bg-canvas) 38%, transparent);
+  }
+  .sk-color-picker__swatch-trigger {
+    box-sizing: border-box;
+    inline-size: 100%;
+    aspect-ratio: 1;
+    min-block-size: 1.75rem;
+    padding: 3px;
+    border: 1px solid var(--sk-color-picker-swatch-border-color);
+    border-radius: var(--radius-control);
+    background: var(--color-bg-surface);
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 14%);
+  }
+  .sk-color-picker__swatch-trigger:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+  .sk-color-picker__swatch-trigger[data-state="checked"] {
+    outline: 2px solid var(--color-action-accent);
+    outline-offset: 2px;
+    border-color: color-mix(in oklch, var(--color-action-accent) 65%, var(--color-border-default) 35%);
+  }
+  /* `getSwatchProps` inlines `position: relative` too; filled by size, same as the area/rail
+   * backgrounds above, against the trigger button's own explicit box size. */
+  .sk-color-picker__swatch-swatch {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    border-radius: calc(var(--radius-control) - 1px);
+  }
+
+  /* ── EYEDROPPER: a real icon-only Button, feature-detected out of the panel entirely where the
+   * browser has no `window.EyeDropper` (the enhancer never renders the placeholder there). ── */
+  .sk-color-picker__eyedropper.sk-button {
+    --sk-button-bg: transparent;
+
+    justify-self: start;
+  }
+
+  @media (forced-colors: active) {
+    :is(.sk-color-picker__trigger, .sk-color-picker__content, .sk-color-picker__channel-input) {
+      border-color: CanvasText;
+    }
+  }
+
+  /* ── VAUL ON MOBILE, same shape and breakpoint as Date Picker's own. ── */
+  @media (max-width: 30rem) {
+    .sk-color-picker {
+      --sk-color-picker-backdrop-bg: light-dark(
+        color-mix(in oklch, var(--color-text-primary) 40%, transparent),
+        color-mix(in oklch, var(--color-bg-canvas) 80%, transparent)
+      );
+    }
+
+    .sk-color-picker__positioner {
+      position: fixed;
+      inset: 0;
+      inline-size: auto;
+      justify-self: stretch;
+      align-self: stretch;
+      z-index: var(--z-overlay);
+      display: none;
+      align-items: end;
+      position-area: none;
+      margin: 0;
+      background: var(--sk-color-picker-backdrop-bg);
+    }
+    .sk-color-picker__positioner:has(> .sk-color-picker__content[data-state="open"]) {
+      display: grid;
+    }
+
+    .sk-color-picker__content {
+      inline-size: 100%;
+      max-inline-size: none;
+      padding: var(--space-inset-md) var(--space-inset-md) var(--space-inset-lg);
+      border-block-start: 1px solid var(--sk-color-picker-content-border-color);
+      border-inline: 0;
+      border-block-end: 0;
+      border-radius: var(--radius-surface) var(--radius-surface) 0 0;
+    }
+    .sk-color-picker__content[data-state="open"] {
+      animation: sk-color-picker-sheet-in var(--motion-enter-duration) var(--motion-enter-easing);
+    }
+    .sk-color-picker__content::before {
+      content: "";
+      justify-self: center;
+      inline-size: 2.25rem;
+      block-size: 0.25rem;
+      margin-block-end: var(--space-stack-xs);
+      border-radius: var(--radius-pill);
+      background: var(--color-border-strong);
+    }
+  }
+
+  @keyframes sk-color-picker-sheet-in {
+    from {
+      translate: 0 100%;
+    }
+  }
+
+  @media (max-width: 30rem) and (prefers-reduced-motion: reduce) {
+    .sk-color-picker__content[data-state="open"] {
+      animation: none;
+    }
+  }
+}

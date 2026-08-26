@@ -177,6 +177,7 @@ function connectColumnResize(root: HTMLElement, cols: readonly HTMLTableColEleme
     cleanups.push(
       attachColumnResizer({
         th,
+        root,
         index,
         getWidths: widths,
         setWidths,

@@ -3,8 +3,11 @@ import "../../examples/loader.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
+import HookPlayground from "../HookPlayground.astro";
 import {
   loaderContextsTree,
+  loaderHookPlaygroundControls,
+  loaderHookPlaygroundTree,
   loaderSimulationScript,
   loaderSimulationTree,
   loaderSizesTree,
@@ -109,5 +112,16 @@ const sourceFiles = [
   <Fragment slot="install">
     <CodeBlock code={install} label="terminal" />
     <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="style">
+    <h3>{t("loaderPage.hookPlaygroundTitle")}</h3>
+    <p set:html={t("loaderPage.hookPlaygroundBody")} />
+    <HookPlayground
+      tree={loaderHookPlaygroundTree(t)}
+      controls={loaderHookPlaygroundControls}
+      label={t("loaderPage.hookPlaygroundLabel")}
+      probe=".sk-loader"
+    />
   </Fragment>
 </ComponentPageShell>

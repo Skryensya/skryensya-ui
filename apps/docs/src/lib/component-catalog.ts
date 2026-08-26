@@ -56,6 +56,10 @@ const componentDescriptions = {
     es: "Presenta bloques de código legibles, resaltados y copiables.",
     en: "Displays readable, highlighted, and copyable code blocks.",
   },
+  "/componentes/color-picker": {
+    es: "Elige un color con área, rieles, canales editables y presets, o el picker nativo.",
+    en: "Picks a color with an area, rails, editable channels and presets, or the native picker.",
+  },
   "/componentes/combobox": {
     es: "Busca y selecciona una opción mediante una entrada editable.",
     en: "Searches and selects an option through editable input.",

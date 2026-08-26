@@ -1,4 +1,5 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
+import type { HookControl } from "../lib/hook-control";
 import type { Translate } from "../i18n";
 
 /* Loader specimens use only published surface, layout and typography vocabulary. */
@@ -107,31 +108,43 @@ export const loaderSimulationTree = (t: Translate): UsageTree => ({
   signature: "Stack",
   options: { gap: "md", align: "center" },
   attrs: { "aria-label": t("demo.loader.simulation"), "data-loader-demo": "" },
-  children: [
-    {
-      contract: "box",
-      signature: "Box",
-      options: { surface: "surface", border: "subtle", padding: "lg" },
-      attrs: { "data-loader-busy": "" },
-      children: {
+  children: {
+    contract: "box",
+    signature: "Box",
+    options: { surface: "surface", border: "subtle", padding: "lg" },
+    /*
+     * Busy and ready are stacked in the same grid cell (loader.css) instead of hidden siblings:
+     * the box then always sizes to the taller of the two, so the stage never resizes between them.
+     */
+    attrs: { "data-loader-stage": "", "data-loader-state": "busy" },
+    children: [
+      {
         contract: "loader",
         signature: "Loader",
         options: { size: "lg", label: t("demo.loader.busy") },
+        attrs: { "data-loader-busy": "" },
       },
-    },
-    {
-      contract: "typography",
-      signature: "Text",
-      attrs: { "data-loader-ready": "", hidden: "" },
-      children: t("demo.loader.ready"),
-    },
-    {
-      contract: "button",
-      signature: "Button.action",
-      attrs: { "data-loader-start": "", hidden: "" },
-      children: t("demo.loader.start"),
-    },
-  ],
+      {
+        contract: "layout",
+        signature: "Stack",
+        options: { gap: "sm", align: "center" },
+        attrs: { "data-loader-ready": "" },
+        children: [
+          {
+            contract: "typography",
+            signature: "Text",
+            children: t("demo.loader.ready"),
+          },
+          {
+            contract: "button",
+            signature: "Button.action",
+            attrs: { "data-loader-start": "" },
+            children: t("demo.loader.start"),
+          },
+        ],
+      },
+    ],
+  },
 });
 
 export { default as loaderSimulationScript } from "./scripts/loader-simulation.ts?raw";
@@ -171,3 +184,20 @@ export const loaderContextsTree = (t: Translate): UsageTree => ({
     ),
   ],
 });
+
+/** `HookPlayground` proof of concept: the plain Loader (no size option, so it starts at the same
+ *  20px / 2px / 0.96s the Style hooks table already shows resolved above it). */
+export const loaderHookPlaygroundTree = (t: Translate): UsageTree => ({
+  contract: "loader",
+  signature: "Loader",
+  options: { label: t("demo.loader.busy") },
+});
+
+export const loaderHookPlaygroundControls: readonly HookControl[] = [
+  { hook: "--sk-loader-size", label: "--sk-loader-size", type: "range", unit: "px", min: 12, max: 64, step: 2, default: "20" },
+  { hook: "--sk-loader-stroke-width", label: "--sk-loader-stroke-width", type: "range", unit: "px", min: 1, max: 8, step: 1, default: "2" },
+  { hook: "--sk-loader-track-color", label: "--sk-loader-track-color", type: "color", default: "#94a3b8" },
+  /* 1s, not the token's exact 0.96s: a value off the 0.1 step gets silently snapped by the input
+     on parse, and the output would then show a number the slider itself never lands on again. */
+  { hook: "--sk-loader-duration", label: "--sk-loader-duration", type: "range", unit: "s", min: 0.2, max: 3, step: 0.1, default: "1" },
+];

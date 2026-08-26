@@ -5,7 +5,7 @@ export { mountSelect } from "./components/select.js";
 export { mountSegmented } from "./components/segmented.js";
 export { mountStat } from "./components/stat.js";
 export { connectSidebar, mountSidebar } from "./components/sidebar.js";
-export { connectSlider, mountSlider } from "./components/slider.js";
+export { mountSlider } from "./components/slider.js";
 export {
   connectTablePager,
   mountTablePager,
@@ -17,6 +17,7 @@ export { mountTileSwitch } from "./components/tile-switch.js";
 export { mountTileRadioGroup } from "./components/tile-radio-group.js";
 export { connectToast, mountToast } from "./components/toast.js";
 export { mountDatePicker } from "./components/date-picker.js";
+export { mountColorPicker } from "./components/color-picker.js";
 export { mountCalendar } from "./components/calendar.js";
 export { mountTooltip } from "./components/tooltip.js";
 export {
@@ -34,7 +35,7 @@ export { mountToolbar } from "./components/toolbar.js";
 export { mountTreeView } from "./components/tree-view.js";
 export { mountTreegrid } from "./components/treegrid.js";
 export { mountTable } from "./components/table.js";
-export { mountSliderRange, connectSliderRange } from "./components/slider-range.js";
+export { mountSliderRange } from "./components/slider-range.js";
 export { mountDataGrid } from "./components/data-grid.js";
 export { mountNavListGroup } from "./components/nav-list.js";
 export { mountMenubar } from "./components/menubar.js";

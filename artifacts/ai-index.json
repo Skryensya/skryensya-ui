@@ -603,6 +603,75 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/color-picker.css",
+      "id": "color-picker",
+      "signatures": [
+        {
+          "alternatives": [
+            "ColorPicker.compact",
+            "ColorPicker.native"
+          ],
+          "avoidWhen": [
+            "el color es siempre uno de un puñado conocido: eso es Select o Segmented",
+            "el espacio es mínimo o el color es secundario al resto del formulario"
+          ],
+          "host": "div",
+          "id": "ColorPicker",
+          "intent": [
+            "pick-a-color",
+            "color-field",
+            "swatch-behind-a-trigger"
+          ],
+          "parents": [],
+          "useWhen": [
+            "el valor es un color arbitrario, no una de pocas opciones fijas",
+            "conviene ver y ajustar el matiz, la saturación y la transparencia a mano"
+          ]
+        },
+        {
+          "alternatives": [
+            "ColorPicker"
+          ],
+          "avoidWhen": [
+            "hace falta escribir un valor exacto (hex, RGB, HSL u OKLCH): eso es ColorPicker"
+          ],
+          "host": "div",
+          "id": "ColorPicker.compact",
+          "intent": [
+            "pick-a-color-compact",
+            "color-field-minimal",
+            "toolbar-color-swatch"
+          ],
+          "parents": [],
+          "useWhen": [
+            "el swatch vive en una barra de herramientas u otro lugar apretado",
+            "el lector sólo necesita área, matiz y presets, no cada canal por separado"
+          ]
+        },
+        {
+          "alternatives": [
+            "ColorPicker",
+            "ColorPicker.compact"
+          ],
+          "avoidWhen": [
+            "hace falta OKLCH, presets o ver los canales mientras se ajusta: eso es ColorPicker"
+          ],
+          "host": "div",
+          "id": "ColorPicker.native",
+          "intent": [
+            "a-standard-color-field",
+            "form-field",
+            "no-javascript"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un color común dentro de un formulario, sin presets ni canales propios",
+            "el picker del sistema operativo y el envío deben pertenecer al navegador"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/combobox.css",
       "id": "combobox",
       "signatures": [
@@ -2440,7 +2509,7 @@
             "son opciones discretas y pocas; eso es un RadioGroup o un Segmented",
             "el usuario elige DOS valores, un mínimo y un máximo; eso es SliderRange"
           ],
-          "host": "input",
+          "host": "div",
           "id": "Slider",
           "intent": [
             "value-in-a-range",
@@ -3676,5 +3745,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "e958da22fd6def88"
+  "sourceHash": "a440aba9248cb713"
 }

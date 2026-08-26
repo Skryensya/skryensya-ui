@@ -423,6 +423,11 @@ const componentItems = [
     aliases: ["fecha", "selector de fecha", "date range", "campo de fecha"],
   },
   {
+    href: "/componentes/color-picker",
+    label: "ColorPicker",
+    aliases: ["selector de color", "color picker", "swatch", "rgb", "hsl", "oklch", "presets de color"],
+  },
+  {
     href: "/componentes/calendar",
     label: "Calendar",
     aliases: ["calendario", "grid de fecha", "mes", "vista de año", "década"],
@@ -520,6 +525,7 @@ export const componentNavigation = [
       "/componentes/button",
       "/componentes/calendar",
       "/componentes/checkbox",
+      "/componentes/color-picker",
       "/componentes/combobox",
       "/componentes/date-picker",
       "/componentes/file-upload",

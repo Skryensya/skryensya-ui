@@ -255,6 +255,7 @@ export function MenubarItem(publicProps: MenubarItemProps) {
           )}
           {...(nav ? {} : { "data-size": "sm", "data-variant": "ghost" })}
           ref={ref}
+          onClickCapture={() => context.closeSiblings(topIndex)}
           role="menuitem"
           tabIndex={tabIndex}
           type="button"

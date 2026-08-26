@@ -138,6 +138,7 @@ function connect(root: HTMLElement): () => void {
     cleanups.push(
       attachColumnResizer({
         th,
+        root,
         index,
         getWidths: widths,
         setWidths,

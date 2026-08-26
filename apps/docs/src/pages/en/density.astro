@@ -51,7 +51,7 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
   const button = target?.querySelector(".sk-button");
 
   if (
-    !(slider instanceof HTMLInputElement)
+    !(slider instanceof HTMLElement)
     || !(target instanceof HTMLElement)
     || !(factorOutput instanceof HTMLElement)
     || !(effectiveOutput instanceof HTMLElement)
@@ -61,14 +61,12 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
   ) return;
 
   const render = () => {
-    const value = Number(slider.value);
-    const min = Number(slider.min);
-    const max = Number(slider.max);
+    const thumb = slider.querySelector('[role="slider"]');
+    const value = Number(thumb?.getAttribute("aria-valuenow") ?? slider.getAttribute("data-value"));
     const factor = value / 100;
 
     target.style.setProperty("--sk-density-factor", String(factor));
-    slider.style.setProperty("--sk-slider-fill", String((value - min) / (max - min)));
-    slider.setAttribute("aria-valuetext", \`\${factor.toFixed(2)} veces la densidad del sistema\`);
+    thumb?.setAttribute("aria-valuetext", \`\${factor.toFixed(2)} veces la densidad del sistema\`);
     factorOutput.textContent = \`\${factor.toFixed(2)}×\`;
 
     const density = Number.parseFloat(getComputedStyle(target).getPropertyValue("--sk-density"));
@@ -77,7 +75,7 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
     buttonOutput.textContent = \`\${Math.round(button.getBoundingClientRect().height)}px\`;
   };
 
-  slider.addEventListener("input", render);
+  slider.addEventListener("sk-value-change", render);
   render();
 });`;
 

@@ -144,7 +144,10 @@ function connect(root: HTMLElement): () => void {
   };
 
   // Safety net beside Zag's own outside-dismiss handling: a click on a SIBLING trigger while
-  // another item's dropdown is open must close that sibling too, not just open the clicked one.
+  // another item's dropdown is open must close that sibling before the clicked trigger's own Menu
+  // handler runs. Zag 1.43 keeps trigger clicks from switching cleanly when another independent
+  // root is still open, so the bar preserves the invariant it owns: at most one top-level menu is
+  // open before the target trigger decides whether to open itself.
   const onClick = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
     const clickedIndex = tops.findIndex((entry) => entry.trigger === target || entry.trigger.contains(target));
@@ -155,11 +158,11 @@ function connect(root: HTMLElement): () => void {
 
   applyTabindex({ topIndex: 0, subIndex: null });
   root.addEventListener("keydown", onKeyDown, { capture: true });
-  root.addEventListener("click", onClick);
+  root.addEventListener("click", onClick, { capture: true });
   root.addEventListener("focusin", onFocusIn);
   return () => {
     root.removeEventListener("keydown", onKeyDown, { capture: true });
-    root.removeEventListener("click", onClick);
+    root.removeEventListener("click", onClick, { capture: true });
     root.removeEventListener("focusin", onFocusIn);
   };
 }

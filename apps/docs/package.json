@@ -19,7 +19,7 @@
     "@skryensya/react": "workspace:*",
     "@skryensya/recipes": "workspace:*",
     "@skryensya/vanilla": "workspace:*",
-    "@zag-js/react": "^1.42.0",
+    "@zag-js/react": "^1.43.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

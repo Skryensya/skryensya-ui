@@ -315,6 +315,14 @@
       "types": "./src/calendar.ts",
       "default": "./src/calendar.ts"
     },
+    "./color": {
+      "types": "./src/color.ts",
+      "default": "./src/color.ts"
+    },
+    "./color-picker": {
+      "types": "./src/color-picker.ts",
+      "default": "./src/color-picker.ts"
+    },
     "./empty-state": {
       "types": "./src/empty-state.ts",
       "default": "./src/empty-state.ts"
@@ -433,20 +441,23 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.2",
-    "@zag-js/accordion": "^1.42.0",
-    "@zag-js/carousel": "1.42.0",
-    "@zag-js/checkbox": "^1.42.0",
-    "@zag-js/collapsible": "^1.42.0",
-    "@zag-js/combobox": "^1.42.0",
-    "@zag-js/core": "^1.42.0",
-    "@zag-js/date-picker": "^1.42.0",
-    "@zag-js/file-upload": "^1.42.0",
-    "@zag-js/menu": "^1.42.0",
-    "@zag-js/number-input": "^1.42.0",
-    "@zag-js/radio-group": "^1.42.0",
-    "@zag-js/select": "^1.42.0",
-    "@zag-js/tabs": "^1.42.0",
-    "@zag-js/tooltip": "1.42.0",
-    "@zag-js/tree-view": "^1.42.0"
+    "@zag-js/accordion": "^1.43.3",
+    "@zag-js/carousel": "1.43.3",
+    "@zag-js/checkbox": "^1.43.3",
+    "@zag-js/collapsible": "^1.43.3",
+    "@zag-js/color-picker": "^1.43.3",
+    "@zag-js/combobox": "^1.43.3",
+    "@zag-js/core": "^1.43.3",
+    "@zag-js/date-picker": "^1.43.3",
+    "@zag-js/file-upload": "^1.43.3",
+    "@zag-js/menu": "^1.43.3",
+    "@zag-js/number-input": "^1.43.3",
+    "@zag-js/radio-group": "^1.43.3",
+    "@zag-js/select": "^1.43.3",
+    "@zag-js/slider": "^1.43.3",
+    "@zag-js/splitter": "1.43.3",
+    "@zag-js/tabs": "^1.43.3",
+    "@zag-js/tooltip": "1.43.3",
+    "@zag-js/tree-view": "^1.43.3"
   }
 }

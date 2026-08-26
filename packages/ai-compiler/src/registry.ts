@@ -35,6 +35,7 @@ import { feedContract } from "@skryensya/core/feed";
 import { comboboxContract } from "@skryensya/core/combobox";
 import { calendarContract } from "@skryensya/core/calendar";
 import { datePickerContract } from "@skryensya/core/date-picker";
+import { colorPickerContract } from "@skryensya/core/color-picker";
 import { dialogContract } from "@skryensya/core/dialog";
 import { splitButtonContract } from "@skryensya/core/split-button";
 import { popoverContract } from "@skryensya/core/popover";
@@ -136,6 +137,7 @@ export const contracts = {
   combobox: comboboxContract,
   calendar: calendarContract,
   "date-picker": datePickerContract,
+  "color-picker": colorPickerContract,
   dialog: dialogContract,
   "split-button": splitButtonContract,
   popover: popoverContract,

@@ -1,0 +1,31 @@
+# La estructura vive en packages/core/src/color-picker.ts. Acá sólo por qué se elige.
+
+ColorPicker:
+  useWhen:
+    - "el valor es un color arbitrario, no una de pocas opciones fijas"
+    - "conviene ver y ajustar el matiz, la saturación y la transparencia a mano"
+  avoidWhen:
+    - "el color es siempre uno de un puñado conocido: eso es Select o Segmented"
+    - "el espacio es mínimo o el color es secundario al resto del formulario"
+  alternatives:
+    - ColorPicker.compact
+    - ColorPicker.native
+
+ColorPicker.compact:
+  useWhen:
+    - "el swatch vive en una barra de herramientas u otro lugar apretado"
+    - "el lector sólo necesita área, matiz y presets, no cada canal por separado"
+  avoidWhen:
+    - "hace falta escribir un valor exacto (hex, RGB, HSL u OKLCH): eso es ColorPicker"
+  alternatives:
+    - ColorPicker
+
+ColorPicker.native:
+  useWhen:
+    - "un color común dentro de un formulario, sin presets ni canales propios"
+    - "el picker del sistema operativo y el envío deben pertenecer al navegador"
+  avoidWhen:
+    - "hace falta OKLCH, presets o ver los canales mientras se ajusta: eso es ColorPicker"
+  alternatives:
+    - ColorPicker
+    - ColorPicker.compact

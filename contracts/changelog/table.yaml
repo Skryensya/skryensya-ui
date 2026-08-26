@@ -3,8 +3,35 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "12065481ea087661"
+surface: "36c0bb1d371c8cf5"
 entries:
+  - date: 2026-08-25
+    kind: bugfix
+    target: Table
+    es:
+      title: El aviso de resizeLabel dejaba de estar acotado a Table
+      body: >-
+        La regla de a11y de <code>resizeLabel</code> no traía <code>signatures</code>, así que
+        aplicaba a las nueve signatures de la familia por igual. <code>resizableColumns</code> es
+        una opción sólo de <code>Table</code>: para <code>TableCaption</code>,
+        <code>TableRow</code>, <code>TableHeader</code> y el resto, la condición
+        <code>when: { resizableColumns: true }</code> no se podía evaluar (ninguna la declara
+        entre sus propias opciones), así que la regla caía a la rama "no evaluable" y avisaba
+        siempre, aunque la composición nunca hubiera pedido columnas redimensionables. Se agrega
+        <code>signatures: ["Table"]</code>: la regla sólo se evalúa donde la opción que la activa
+        realmente existe.
+    en:
+      title: The resizeLabel advisory used to fire outside Table
+      body: >-
+        The <code>resizeLabel</code> a11y rule carried no <code>signatures</code>, so it applied
+        to all nine signatures in the family equally. <code>resizableColumns</code> is
+        <code>Table</code>'s own option: for <code>TableCaption</code>, <code>TableRow</code>,
+        <code>TableHeader</code> and the rest, the <code>when: { resizableColumns: true }</code>
+        condition could not be evaluated (none of them declare it among their own options), so the
+        rule fell to the "unevaluable" branch and warned unconditionally, even when the
+        composition never asked for resizable columns at all. Adds
+        <code>signatures: ["Table"]</code>: the rule now only evaluates where the option that
+        turns it on actually exists.
   - date: 2026-08-16
     kind: feature
     target: Table

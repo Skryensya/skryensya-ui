@@ -2,7 +2,7 @@ import { fireEvent } from "@testing-library/dom";
 import { flushSync } from "svelte";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { destroyMount } from "../runtime/svelte-hydrate.js";
-import { getMenuApi } from "./Menu.svelte";
+import { getMenuApi } from "./menu-registry.js";
 import { mountMenu } from "./menu.js";
 
 /*

@@ -213,17 +213,26 @@ describe("Vaul Vanilla contracts", () => {
     expect(mountVaul(document)).toBe(1);
     expect(mountVaul(document)).toBe(0);
 
-    fireEvent.click(document.querySelector<HTMLElement>("[data-sk-vaul-open]")!);
+    const trigger = document.querySelector<HTMLElement>("[data-sk-vaul-open]")!;
+    expect(trigger.getAttribute("aria-controls")).toBe("panel");
+    expect(trigger.getAttribute("aria-haspopup")).toBe("dialog");
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
+
+    fireEvent.click(trigger);
     expect(root.open).toBe(true);
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
 
     fireEvent.click(document.querySelector<HTMLElement>("[data-sk-vaul-close]")!);
     expect(root.open).toBe(false);
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
 
-    fireEvent.click(document.querySelector<HTMLElement>("[data-sk-vaul-open]")!);
+    fireEvent.click(trigger);
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
     // The backdrop IS the dialog's own box, so a click outside the panel's rectangle is a
     // click on the backdrop, with no second element to own it.
     fireEvent.click(root, { clientX: 900, clientY: 900 });
     expect(root.open).toBe(false);
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
   });
 
   it("keeps a click inside the panel from dismissing it", () => {

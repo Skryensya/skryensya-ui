@@ -1,4 +1,5 @@
 import { boxContract, layoutContract, wrapperContract } from "@skryensya/core/layout";
+import { heroContract } from "@skryensya/core/hero";
 import { typographyContract } from "@skryensya/core/typography";
 import { breadcrumbContract } from "@skryensya/core/breadcrumb";
 import { emptyStateContract } from "@skryensya/core/empty-state";
@@ -86,6 +87,7 @@ export const contracts = {
   checkbox: checkboxContract,
   "empty-state": emptyStateContract,
   "form-field": formFieldContract,
+  hero: heroContract,
   icon: iconContract,
   "image-frame": imageFrameContract,
   kbd: kbdContract,

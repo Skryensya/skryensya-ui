@@ -51,12 +51,37 @@ export function connectCodePreview(root: HTMLElement): Cleanup {
   const linesTemplate = toggle?.getAttribute(codePreviewAttrs.linesLabel) ?? "{count}";
   const formatLines = (count: number): string => linesTemplate.replace("{count}", String(count));
 
+  /*
+   * Present only on a panel whose collapsed state shows NOTHING (`CodeBlock`'s own
+   * `forceCollapsible`, e.g. every embedded ComponentPreview source): a real 15-line peek window
+   * stays genuinely visible and scrollable while "collapsed", so it keeps its normal
+   * tabindex/role/aria-label at rest and is left alone here. An empty one must not offer a Tab
+   * stop, or a screen reader region, that leads to zero-height nothing.
+   *
+   * `inert` over hand-rolling `tabindex`/`role`/`aria-label` toggling: one attribute pulls the
+   * WHOLE region out of both the accessibility tree and native Tab order (and pointer hit-testing)
+   * in a single move, so nothing new added inside a code sample later — a future annotation, a
+   * link — can quietly reopen this gap by not knowing to repeat three separate overrides.
+   */
+  const hidesWhenCollapsed = root.hasAttribute(codePreviewAttrs.hidesWhenCollapsed);
+  const scrollRegionOf = (panel: HTMLElement | null): HTMLElement | null =>
+    panel?.querySelector<HTMLElement>("pre") ?? null;
+  const scrollRegions = [condensedPanelEl, fullPanelEl, plainPanelEl].map(scrollRegionOf);
+
   const setExpanded = (expanded: boolean) => {
     if (!toggle || !toggleLabel) return;
     root.setAttribute(codePreviewAttrs.expanded, String(expanded));
     toggle.setAttribute("aria-expanded", String(expanded));
     toggle.setAttribute("aria-label", expanded ? expandedAriaLabel : collapsedAriaLabel);
     toggleLabel.textContent = expanded ? expandedLabel : collapsedLabel;
+    if (hidesWhenCollapsed) {
+      // Both density panels, not just whichever is showing: the hidden one is already
+      // `display:none` (the density switch, not this), so touching it too is harmless, and
+      // `showDensity` never lets `expanded` stay true after leaving Full in the first place.
+      for (const region of scrollRegions) {
+        if (region) region.inert = !expanded;
+      }
+    }
   };
 
   const syncDisclosureChrome = (density: CodePreviewDensity | null) => {

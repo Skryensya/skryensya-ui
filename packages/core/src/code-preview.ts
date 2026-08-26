@@ -50,6 +50,15 @@ export const codePreviewAttrs = {
    * the English site.
    */
   linesLabel: "data-sk-code-preview-lines-label",
+  /**
+   * Present when a collapsed panel shows NOTHING (a consumer that forced collapsibility below the
+   * sitewide peek-window threshold — see `ComponentPreview`'s own `forceCollapsible`), as opposed
+   * to the default 15-line window, which stays genuinely visible and scrollable while collapsed.
+   * The enhancer reads this to decide whether a panel's own viewport needs `inert` toggled in
+   * step with `expanded`: a real peek window keeps its keyboard/AT reachability at rest; an empty
+   * one must not offer a stop a reader can tab to and find nothing at.
+   */
+  hidesWhenCollapsed: "data-sk-code-preview-hides-when-collapsed",
 } as const;
 
 export type CodePreviewAttr = keyof typeof codePreviewAttrs;

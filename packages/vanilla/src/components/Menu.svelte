@@ -1,27 +1,3 @@
-<script module lang="ts">
-  import type { MenuApi, MenuService } from "@skryensya/core/menu";
-
-  /*
-   * Ligado padre/hijo entre menús anidados: un submenú encuentra su padre subiendo por `closest()`
-   * sobre el DOM (vanilla nunca portales), y esto es lo que empareja cada root con su machine.
-   * Bloque `module`: UNA instancia por módulo, compartida por todos los `Menu.svelte` que este
-   * archivo monta. Si viviera en el `<script>` normal, cada componente tendría su PROPIO WeakMap y
-   * un submenú nunca encontraría a su padre.
-   */
-  type MenuInstance = { service: MenuService; getApi: () => MenuApi };
-  const instances = new WeakMap<HTMLElement, MenuInstance>();
-
-  /**
-   * The mounted `MenuApi` for a `[data-sk-menu]` root, for a consumer OUTSIDE this component that
-   * needs to drive it imperatively. Menubar's own resolver calling `setOpen()` on the dropdown
-   * beside the trigger it just moved focus to/from, the same registry `instances` already keeps for
-   * submenu parent/child linking, just made reachable from outside this file.
-   */
-  export function getMenuApi(root: HTMLElement): MenuApi | undefined {
-    return instances.get(root)?.getApi();
-  }
-</script>
-
 <script lang="ts">
   import {
     anchorNameFor,
@@ -36,6 +12,7 @@
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
   import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { deleteMenuInstance, getMenuInstance, setMenuInstance } from "./menu-registry.js";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
@@ -140,11 +117,12 @@
   const api = $derived(menu.connect(service, normalizeProps));
 
   // Ligado padre/hijo: un submenú encuentra su padre por closest() sobre el DOM. `parentRoot`/
-  // `parent` se resuelven ya, síncronos, porque `instances` es del padre HACIA ABAJO (el padre se
-  // registra ANTES de que su hijo empiece a montar, mismo orden que garantiza querySelectorAll).
+  // `parent` se resuelven ya, síncronos, porque el registro (`menu-registry.ts`) es del padre HACIA
+  // ABAJO (el padre se registra ANTES de que su hijo empiece a montar, mismo orden que garantiza
+  // querySelectorAll).
   const parentRoot = root.parentElement?.closest<HTMLElement>(selector.root);
-  const parent = parentRoot ? instances.get(parentRoot) : undefined;
-  instances.set(root, { service, getApi: () => api });
+  const parent = parentRoot ? getMenuInstance(parentRoot) : undefined;
+  setMenuInstance(root, { service, getApi: () => api });
 
   /*
    * Vanilla nunca portala: cada root de submenú sigue siendo descendiente real del que lleva la
@@ -293,6 +271,6 @@
     safeArea?.destroy();
     if (ownsReadout) readout?.destroy();
     else readout?.release(menuId);
-    instances.delete(root);
+    deleteMenuInstance(root);
   });
 </script>

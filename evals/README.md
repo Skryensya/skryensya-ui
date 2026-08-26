@@ -48,7 +48,7 @@ tools over the actual stdio server (`packages/mcp/dist/index.js`, spawned exactl
 spawns it), capture whatever tree it independently arrives at, and score it.
 
 A `Provider` (`agent/providers.ts`) is just "given one case, produce a scored run"; nothing about
-`run-agent.ts` cares how. Three today:
+`run-agent.ts` cares how. Four today:
 
 - `anthropic`, `openai`: [TanStack AI](https://tanstack.com/ai) (`@tanstack/ai` + `@tanstack/ai-mcp`)
   driving a hand-rolled agent loop (`agent/harness.ts`) via the provider's API. Needs
@@ -56,8 +56,11 @@ A `Provider` (`agent/providers.ts`) is just "given one case, produce a scored ru
 - `claude-code`: the actual `claude` CLI, headless (`claude -p`), using its OWN agent loop
   (`agent/claude-code-provider.ts`). Uses the session's subscription login, not a separate API key;
   the only requirement is the `claude` binary on `PATH`.
+- `codex-cli`: the actual `codex` CLI, headless (`codex exec --json`), using its OWN agent loop
+  (`agent/codex-cli-provider.ts`). Uses the Codex CLI login (`codex login`, ChatGPT subscription or
+  API key); the only requirement is the `codex` binary on `PATH`.
 
-Adding a fourth (Codex, OpenRouter, whatever) is one more entry in `providers.ts`, not a rewrite.
+Adding another provider (OpenRouter, whatever) is one more entry in `providers.ts`, not a rewrite.
 
 **Scoring** (`agent/scoring.ts`) reads the tool-call log the harness records (by wrapping every
 discovered tool's `execute`, not by parsing `chat()`'s final text), and asks one question: did the
@@ -67,17 +70,30 @@ too, but **never fails a case on its own**: the reference tree is one compositio
 G0-G3, not the only one a correct agent could produce.
 
 ```
-pnpm --filter @skryensya/evals agent [--provider anthropic|openai|claude-code] [--model <id>] \
-                                      [--lang es|en|both] [--case <id>] [--verbose]
+pnpm --filter @skryensya/evals agent [--provider anthropic|openai|claude-code|codex-cli] \
+                                      [--model <id>] [--lang es|en|both] [--case <id>] \
+                                      [--concurrency <n>] [--verbose]
 ```
 
 Needs `packages/mcp` built (`pnpm --filter @skryensya/mcp build`). Without `--provider`, it picks
-the first available one, in declaration order (`anthropic`, `openai`, `claude-code`): set an API
-key, or just have `claude` on `PATH`, and it runs with no other setup.
+the first available one, in declaration order (`anthropic`, `openai`, `claude-code`, `codex-cli`):
+set an API key, or have `claude` / `codex` on `PATH`, and it runs with no other setup.
 
-**This is opt-in and deliberately NOT wired into `pnpm check` or CI.** It spends real usage per case
-per language and is not deterministic; the static `run.ts` gate stays the thing every commit runs;
-this is the thing a person runs by hand to actually measure G6.
+**Defaults to English only** (`--lang en`). The corpus itself still HAS both languages — `run.ts`
+checks every case's `tree` holds for both on every `pnpm check` — but this is real, metered usage
+per call, and doubling every measurement run for a language pass that isn't the thing under test is
+exactly the spend to avoid. Pass `--lang both` or `--lang es` deliberately, e.g. after a
+prompt-wording change where the language actually matters to what's being checked.
+
+**Runs with `--concurrency 3` by default**, not one case at a time. Isolation lives in each
+`Provider.run()` call itself (`claude-code`/`codex-cli` use per-call temp directories; TanStack uses
+its own process-per-call MCP connection), not in waiting for one call to finish before starting the
+next — running several in parallel doesn't weaken that. `--concurrency 1` restores strictly
+sequential runs if a provider's rate limit needs it.
+
+**This is opt-in and deliberately NOT wired into `pnpm check` or CI.** It spends real usage per run
+and is not deterministic; the static `run.ts` gate stays the thing every commit runs; this is the
+thing a person runs by hand to actually measure G6.
 
 **`claude-code`'s remaining tradeoff, measured live, not assumed:** `claude -p` (no `--bare`) still
 loads this machine's own hooks, skills and `CLAUDE.md` into context. Two sharper problems that WERE
@@ -104,6 +120,75 @@ persists a large tool result to a file instead of inlining it; no env var moves 
 spends a `Read` on its own saved output to recover it. Measured: this costs turns, not correctness.
 It's reading back what the tool itself returned, not repo source, and the agent still converges on
 a correct `validate_ui` call afterward.
+
+## Reviewing what it composed (`agent/report.ts`, `apps/eval-viewer`)
+
+Every `run-agent.ts` run writes its full detail to `evals/agent/runs/<runId>/` (gitignored — this is
+a measurement of one run against the current catalogue, not a fixture): an `index.md` table of every
+case's verdict, and per case a `<caseId>.<lang>.md` (prompt, verdict, the full tool-call trace, the
+final tree, the emitted vanilla/react code) plus a matching `.json` carrying the same data
+structured for a machine to read.
+
+**`apps/eval-viewer`** reads those `.json` files and renders each case's composed tree LIVE — not the
+emitted code shown as text, the actual component: vanilla mounts the emitted markup and runs the real
+enhancers over it, React mounts the tree directly via `@skryensya/react/render-tree`, the same
+live-render path the docs site's own demos use.
+
+**The render is inside an IFRAME (`src/frame/`), never this app's own document — confirmed live as a
+hard requirement, not a nicety.** The kit's tokens arm `light-dark()` via `color-scheme: light dark`
+(`_base.scss`), which follows the reviewer's OS. Loaded into the SAME document as this app's own
+chrome (an earlier version of this app did exactly that), that bled into the chrome's own plain
+buttons and tables — no explicit color of their own, so they picked up the browser's native dark-mode
+widget styling — while `app.css`'s hardcoded light backgrounds stayed put: "reads as dark mode on a
+light background." `main.tsx` now imports NONE of the kit's CSS; `src/frame/kit-css.ts` compiles it
+(`?inline`) for the iframe's own document only, which pins `color-scheme: light` explicitly (this is a
+review tool, not a themed product surface — a fixed appearance beats one that silently differs by
+reviewer's OS) and sets the kit's own `--font-family-body` token on its `body`, since the kit
+deliberately never applies that itself (a real consumer's base stylesheet does). Confirmed live under
+a forced-dark browser profile: this app's chrome stayed light, the iframe's `color-scheme` read
+`"light"` regardless.
+
+```
+pnpm --filter @skryensya/eval-viewer dev
+```
+
+Starts at `:4190`; if that port is busy, Vite picks the next available port. Landing page lists every
+run found on disk; pick one, pick a case, and the preview tab shows ONE binding at a time (Vanilla |
+React toggle above the stage) with tabs for the raw tree, the emitted code, and the tool trace
+underneath. Only one binding mounted at once, on purpose: comparing two isn't scanning two columns,
+it's toggling between them the way `apps/docs`'s own ComponentPreview does — and it's also what makes
+a component that paints into the browser's top layer (`dialog`, anything anchored) safe to preview at
+all, see the note below. Started by hand, on purpose; it's a review tool, not something a run
+auto-launches.
+
+**Known limit:** new runs need a server restart to show up. `import.meta.glob`'s initial scan doesn't
+reliably pick up a file that didn't exist yet when the dev server started. If a run you just
+generated isn't in the list, stop and restart `pnpm --filter @skryensya/eval-viewer dev`.
+
+**A limit that WAS here and got fixed twice over:** rendering both bindings side by side used to make
+a component that opens into the browser's top layer (`dialog`, anything anchored) collide — confirmed
+live on `confirmation-dialog`, a native `<dialog open>` always paints centered over the whole page
+regardless of where it sits in the DOM. Mounting only one binding at a time (the toggle above) already
+removed the collision within one document; the iframe removes it more fundamentally, since two
+bindings can never even share a document to collide in. Confirmed live after both fixes, same case,
+toggling Vanilla ↔ React under a forced-dark browser profile: exactly one `<dialog>` each time, light
+appearance both times, no visual collision, no console errors.
+
+**Getting the iframe working at all took three more fixes, each confirmed live, each worth naming
+because the failure mode gave almost no signal:** `src/frame/entry.tsx` (loaded via `?worker&url`,
+the same trick `apps/docs`'s own preview frame uses for a stable cross-document script URL) throws
+`@vitejs/plugin-react`'s "can't detect preamble" the instant it runs, because Fast Refresh's injected
+runtime checks for a bootstrap that only a page processed through Vite's `transformIndexHtml` hook
+gets — and a hand-built `srcDoc` string never touches that hook. Two plausible-looking fixes didn't
+hold: `worker.plugins` (a separate plugin pipeline from the main one) only governs PRODUCTION
+bundling of a worker entry, so in DEV the files `entry.tsx` imports (`@skryensya/react/render-tree`
+and everything it renders) are still transformed through the MAIN pipeline regardless, `@react-refresh`
+and all — confirmed via a request log; and `react({ exclude })` on the main pipeline didn't stop it
+either, since the plugin runs two separate JSX code paths and only one honored the option for these
+files. The fix that held: `document.ts` manually injects the exact bootstrap
+`transformIndexHtml` would have (`RefreshRuntime.injectIntoGlobalHook`, `$RefreshReg$`, `$RefreshSig$`,
+`__vite_plugin_react_preamble_installed__`), dev-only — the same workaround Vite's own docs give for
+any non-standard HTML entry point.
 
 ## Running the static gate
 

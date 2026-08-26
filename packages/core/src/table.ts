@@ -105,6 +105,12 @@ export const tableContract = {
       requiresOneOf: ["resizeLabel"],
       because:
         "Each column resizer is a real, focusable role=\"separator\" a binding inserts: never authored, so nothing else names it for a screen reader; the column header it sits beside says WHICH column, not that the control resizes it.",
+      // `resizableColumns` is `Table`'s own option, not shared by `TableCaption`/`TableHead`/`TableRow`/
+      // etc. Left absent, every OTHER signature in this family finds `resizableColumns` outside its own
+      // options, calls the condition unevaluable, and falls to the advisory branch unconditionally —
+      // confirmed live: a plain `TableCaption` with no resizable columns anywhere in the tree still drew
+      // a `resizeLabel` advisory, once per signature it composed alongside, for a feature it never used.
+      signatures: ["Table"],
     },
   ],
 

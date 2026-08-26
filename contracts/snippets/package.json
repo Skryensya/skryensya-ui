@@ -1,0 +1,16 @@
+{
+  "name": "@skryensya/snippets",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Established usage trees below screen scale: one component well-composed, or a small molecule of a few. Sibling to @skryensya/recipes, which is whole screens; this is what an agent copies when the task is not a screen.",
+  "dependencies": {
+    "@skryensya/core": "workspace:*"
+  },
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    }
+  }
+}

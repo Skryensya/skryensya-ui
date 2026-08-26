@@ -1,5 +1,5 @@
 import { resolveMenubarKey, type MenubarFocus } from "@skryensya/core/menubar";
-import { getMenuApi } from "./Menu.svelte";
+import { getMenuApi } from "./menu-registry.js";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
 /*

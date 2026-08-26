@@ -10,6 +10,7 @@ import {
   type Space,
   type WrapperSize,
 } from "@skryensya/core/layout";
+import { heroParts, type HeroAlign, type HeroPadding, type HeroSurface } from "@skryensya/core/hero";
 import type { ComponentPropsWithoutRef, CSSProperties, ElementType, ReactNode } from "react";
 
 type PolymorphicProps<Element extends ElementType, OwnProps> = OwnProps & {
@@ -37,6 +38,31 @@ export function Box<Element extends ElementType = "div">({
 }: BoxProps<Element>) {
   const Component = as ?? "div";
   return <Component {...props} className={classes(layoutParts.box, className)} data-border={border} data-padding={padding} data-surface={surface} />;
+}
+
+export type HeroProps<Element extends ElementType = "div"> = PolymorphicProps<
+  Element,
+  LayoutChildren & { align?: HeroAlign; padding?: HeroPadding; surface?: HeroSurface }
+>;
+
+export function Hero<Element extends ElementType = "div">({
+  align = "start",
+  as,
+  className,
+  padding = "xl",
+  surface = "surface",
+  ...props
+}: HeroProps<Element>) {
+  const Component = as ?? "div";
+  return (
+    <Component
+      {...props}
+      className={classes(heroParts.hero, className)}
+      data-align={align}
+      data-padding={padding}
+      data-surface={surface}
+    />
+  );
 }
 
 export type StackProps<Element extends ElementType = "div"> = PolymorphicProps<

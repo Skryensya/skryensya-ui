@@ -19,6 +19,7 @@
  * on its way into the frame: shown as written, run as JavaScript.
  */
 import CodeBlock from "./CodeBlock.astro";
+import { codePreviewAttrs, codePreviewParts } from "@skryensya/core/code-preview";
 import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
 import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
 import { TreeDemo } from "./react-demos/tree";
@@ -29,6 +30,9 @@ import "@skryensya/core/components/tabs.css";
 import "@skryensya/core/patterns/anchored.css";
 import "@skryensya/core/components/tooltip.css";
 import "@skryensya/core/components/menu.css";
+import "@skryensya/core/patterns/vaul.css";
+import "@skryensya/core/components/drawer.css";
+import "@skryensya/core/patterns/scrollbar.css";
 import { buildPreviewFrameDocument } from "../lib/preview-frame";
 import { exampleComponentName } from "../lib/example-component-name";
 import { compileDemoScript } from "../lib/demo-script";
@@ -198,6 +202,15 @@ const reactSource = tree
   : undefined;
 const treeReact = reactSource?.component;
 const reactData = reactSource?.data;
+/*
+ * The tree itself, pretty-printed: a "View contract" entry in the "…" overflow menu opens it in a
+ * Drawer (`Vaul.drawer`, patterns/vaul.css), never a third tab or binding among the Vanilla/React
+ * source panels below. It has no live stage (a usage tree renders nothing) and no per-binding home
+ * (both were emitted from it equally), so it sits with the card's other secondary actions
+ * (Reload, Fullscreen) instead of competing for space with either source panel. Copyable as-is into
+ * `validate_ui` (see the MCP server instructions): the same shape, not a description of it.
+ */
+const treeJson = tree ? JSON.stringify(tree, null, 2) : undefined;
 
 const vanillaCode = code ?? treeHtml ?? html;
 /*
@@ -266,6 +279,13 @@ const frameDocument = buildPreviewFrameDocument({
 const moreIcon = iconMarkup("more");
 const reloadIcon = iconMarkup("refresh", { size: "sm" });
 /*
+ * The shared source-toggle's own chevron, same glyph and size `CodeBlock`'s per-panel disclosure
+ * draws (`chevron-down`, sm): one control standing in for however many independent panels a
+ * source-tabs group holds, so it borrows the same visual vocabulary a reader already knows from
+ * every OTHER collapsible code block on the site.
+ */
+const sourceToggleIcon = iconMarkup("chevron-down", { size: "sm" });
+/*
  * `external-link`, a STABLE role, where this used to draw `screen-fullscreen` as geometry of its own.
  * The glyph was describing the wrong action: "Ver en pantalla completa" does not put this page into
  * fullscreen, it calls `window.open(…, "_blank")` (`openComponentPreviewFullscreen`) and launches the
@@ -275,6 +295,7 @@ const reloadIcon = iconMarkup("refresh", { size: "sm" });
  * unknown `data-icon` keys), so this control was the one glyph in the header that never changed set.
  */
 const launchIcon = iconMarkup("external-link", { size: "sm" });
+const contractIcon = iconMarkup("file", { size: "sm" });
 /*
  * Screen presets. The name is a stable ROLE, not a device drawing, which is why the accessible
  * name spells out the actual viewport: `screen-tablet` tells you the class of screen, `768 × 1024`
@@ -501,6 +522,27 @@ const screenToggleLabels = Object.fromEntries(
               <span class="sk-menu__item-label">{t("preview.fullscreenAction")}</span>
               <span class="sk-component-preview__menu-icon"><Fragment set:html={launchIcon} /></span>
             </div>
+            {
+              /*
+               * `data-sk-vaul-open` is Vaul's OWN trigger attribute (`packages/vanilla/src/
+               * components/vaul.ts`, `mountVaul`), not a ComponentPreview one: `initComponents()`
+               * already runs it site-wide (see the docs' own mobile nav drawer, `Base.astro`), so
+               * this item needs no click handler of its own, unlike Reload/Fullscreen above.
+               */
+              treeJson && (
+                <div
+                  class="sk-menu__item sk-interactive"
+                  data-sk-menu-item
+                  data-value="contract"
+                  data-sk-vaul-open={`${previewId}-contract`}
+                >
+                  <span class="sk-menu__item-label">{t("preview.viewContract")}</span>
+                  <span class="sk-component-preview__menu-icon">
+                    <Fragment set:html={contractIcon} />
+                  </span>
+                </div>
+              )
+            }
             {/*
               * No "Ver en la documentación" item here: on the docs page itself, a link back to the
               * docs page would just point at the page a reader is already reading. It is added
@@ -592,6 +634,38 @@ const screenToggleLabels = Object.fromEntries(
               data-size="sm"
               data-value="html"
             >
+              {/*
+                * ONE toggle for HTML/CSS/TS together, not three: each panel's own disclosure is
+                * hidden (component-preview.css), and this button forwards its click to whichever
+                * of them are collapsible in one pass (`connectSourceToggle`,
+                * `@skryensya/vanilla/component-preview`), so switching files never resets what a
+                * reader already chose to see. CSS hides it entirely when none of the three even
+                * has anything to collapse.
+                *
+                * PLAIN `@skryensya/core/code-preview` markup — `codePreviewParts.more`/`toggle`/
+                * `toggleIcon`, `codePreviewAttrs.toggle`/`toggleLabel`/`expandedLabel` — not a
+                * parallel vocabulary of ComponentPreview's own: that duplication was exactly what
+                * made this control LOOK like a different one from a single file's own toggle.
+                * `connectSourceToggle` finds it purely by DIRECT-CHILD position (see that
+                * function's own comment), so no marker attribute is needed here at all.
+                */
+              }
+              <div class={codePreviewParts.more} {...{ [codePreviewAttrs.more]: "" }}>
+                <button
+                  class={`sk-button sk-interactive ${codePreviewParts.toggle}`}
+                  data-variant="ghost"
+                  data-size="sm"
+                  type="button"
+                  aria-expanded="false"
+                  {...{ [codePreviewAttrs.toggle]: "" }}
+                  {...{ [codePreviewAttrs.expandedLabel]: t("preview.hideCode") }}
+                >
+                  <span {...{ [codePreviewAttrs.toggleLabel]: "" }}>{t("preview.viewCode")}</span>
+                  <span class={codePreviewParts.toggleIcon} aria-hidden="true">
+                    <Fragment set:html={sourceToggleIcon} />
+                  </span>
+                </button>
+              </div>
               <div class="sk-tabs__list" data-sk-tabs-list aria-label="Fuente vanilla">
                 <button
                   class="sk-tabs__trigger sk-interactive"
@@ -632,7 +706,14 @@ const screenToggleLabels = Object.fromEntries(
                 data-value="html"
                 data-sk-component-preview-source="html"
               >
-                <CodeBlock code={vanillaCode} full={codeFull} lang={lang} />
+                <CodeBlock
+                  code={vanillaCode}
+                  full={codeFull}
+                  lang={lang}
+                  expandLabel={t("preview.viewCode")}
+                  collapseLabel={t("preview.hideCode")}
+                  forceCollapsible
+                />
               </div>
               {
                 css && (
@@ -642,7 +723,13 @@ const screenToggleLabels = Object.fromEntries(
                     data-value="css"
                     data-sk-component-preview-source="css"
                   >
-                    <CodeBlock code={css} lang="css" />
+                    <CodeBlock
+                      code={css}
+                      lang="css"
+                      expandLabel={t("preview.viewCode")}
+                      collapseLabel={t("preview.hideCode")}
+                      forceCollapsible
+                    />
                   </div>
                 )
               }
@@ -654,14 +741,27 @@ const screenToggleLabels = Object.fromEntries(
                     data-value="js"
                     data-sk-component-preview-source="js"
                   >
-                    <CodeBlock code={js} lang="ts" />
+                    <CodeBlock
+                      code={js}
+                      lang="ts"
+                      expandLabel={t("preview.viewCode")}
+                      collapseLabel={t("preview.hideCode")}
+                      forceCollapsible
+                    />
                   </div>
                 )
               }
             </div>
           ) : (
             <div class="sk-component-preview__code" data-sk-component-preview-source="html">
-              <CodeBlock code={vanillaCode} full={codeFull} lang={lang} />
+              <CodeBlock
+                code={vanillaCode}
+                full={codeFull}
+                lang={lang}
+                expandLabel={t("preview.viewCode")}
+                collapseLabel={t("preview.hideCode")}
+                forceCollapsible
+              />
             </div>
           )
         }
@@ -685,6 +785,22 @@ const screenToggleLabels = Object.fromEntries(
               data-size="sm"
               data-value="component"
             >
+              <div class={codePreviewParts.more} {...{ [codePreviewAttrs.more]: "" }}>
+                <button
+                  class={`sk-button sk-interactive ${codePreviewParts.toggle}`}
+                  data-variant="ghost"
+                  data-size="sm"
+                  type="button"
+                  aria-expanded="false"
+                  {...{ [codePreviewAttrs.toggle]: "" }}
+                  {...{ [codePreviewAttrs.expandedLabel]: t("preview.hideCode") }}
+                >
+                  <span {...{ [codePreviewAttrs.toggleLabel]: "" }}>{t("preview.viewCode")}</span>
+                  <span class={codePreviewParts.toggleIcon} aria-hidden="true">
+                    <Fragment set:html={sourceToggleIcon} />
+                  </span>
+                </button>
+              </div>
               <div class="sk-tabs__list" data-sk-tabs-list aria-label={t("preview.reactSource")}>
                 <button
                   class="sk-tabs__trigger sk-interactive"
@@ -710,7 +826,13 @@ const screenToggleLabels = Object.fromEntries(
                 data-value="component"
                 data-sk-component-preview-source="react"
               >
-                <CodeBlock code={treeReact!} lang="tsx" />
+                <CodeBlock
+                  code={treeReact!}
+                  lang="tsx"
+                  expandLabel={t("preview.viewCode")}
+                  collapseLabel={t("preview.hideCode")}
+                  forceCollapsible
+                />
               </div>
               <div
                 class="sk-tabs__content sk-component-preview__code"
@@ -718,16 +840,71 @@ const screenToggleLabels = Object.fromEntries(
                 data-value="data"
                 data-sk-component-preview-source="react-data"
               >
-                <CodeBlock code={reactData.source} lang="ts" />
+                <CodeBlock
+                  code={reactData.source}
+                  lang="ts"
+                  expandLabel={t("preview.viewCode")}
+                  collapseLabel={t("preview.hideCode")}
+                  forceCollapsible
+                />
               </div>
             </div>
           ) : (
             <div class="sk-component-preview__code" data-sk-component-preview-source="react">
-              <CodeBlock code={(treeReact ?? react)!} lang="tsx" />
+              <CodeBlock
+                code={(treeReact ?? react)!}
+                lang="tsx"
+                expandLabel={t("preview.viewCode")}
+                collapseLabel={t("preview.hideCode")}
+                forceCollapsible
+              />
             </div>
           )
         }
       </div>
+    )
+  }
+
+  {
+    /*
+     * `Vaul.drawer` (packages/core/src/vaul.ts): a native `<dialog>` again, so `showModal()`,
+     * Escape and focus trapping are still the platform's, but anchored to an edge instead of
+     * centred, with `mountVaul`'s drag-to-dismiss and light-dismiss on top. `data-sk-vaul` is what
+     * that SITE-WIDE enhancer (already running via `initComponents()`, see `Base.astro`'s own
+     * mobile nav drawer) scans for; this root needs no enhancer of its own. `sk-drawer` supplies
+     * only tokens (`components/drawer.css`'s own header: "ships hooks and no structure"), so the
+     * header/title/body below are this card's own classes, the same split `docs-drawer` uses in
+     * `site.css`.
+     */
+    treeJson && !hideSource && (
+      <dialog
+        class="sk-vaul sk-drawer sk-component-preview__contract-drawer"
+        id={`${previewId}-contract`}
+        data-sk-vaul
+        data-edge="inline-end"
+        aria-label={t("preview.usageTree")}
+      >
+        <div class="sk-vaul__handle" data-part="handle" aria-hidden="true" />
+        <div class="sk-component-preview__contract-header">
+          <span class="sk-component-preview__contract-title">{t("preview.usageTree")}</span>
+          <button
+            class="sk-button sk-interactive"
+            data-variant="ghost"
+            data-size="sm"
+            data-icon-only
+            type="button"
+            aria-label={t("action.close")}
+            data-sk-vaul-close
+          >
+            <Fragment set:html={iconMarkup("close", { size: "sm" })} />
+          </button>
+        </div>
+        <div class="sk-component-preview__contract-body sk-scrollbar">
+          {/* `open`: the drawer IS the disclosure, so the code inside never gets a second one — no
+            Expand control, no collapsed window ceiling, always the whole tree. */}
+          <CodeBlock code={treeJson} lang="json" open />
+        </div>
+      </dialog>
     )
   }
 </div>

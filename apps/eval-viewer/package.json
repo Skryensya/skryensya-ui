@@ -1,0 +1,31 @@
+{
+  "name": "@skryensya/eval-viewer",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Local-only Vite app: browse evals/agent/runs/ and render each case's composed tree in both bindings, live — not the emitted code as text, the actual component.",
+  "scripts": {
+    "dev": "vite",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@skryensya/core": "workspace:*",
+    "@skryensya/icons-phosphor": "workspace:*",
+    "@skryensya/react": "workspace:*",
+    "@skryensya/vanilla": "workspace:*",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@skryensya/devtools": "workspace:*",
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "sass": "^1.83.0",
+    "svelte": "^5.0.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.1.5"
+  }
+}

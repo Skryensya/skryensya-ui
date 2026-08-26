@@ -1116,6 +1116,37 @@
       ]
     },
     {
+      "css": "@skryensya/core/patterns/hero.css",
+      "id": "hero",
+      "signatures": [
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "es una sección más de la página, no la de apertura; eso es un Box o directamente un Stack",
+            "sólo hace falta separar contenido con relleno o borde; eso es un Box",
+            "el mensaje necesita más de dos acciones o más de un titular compitiendo; separa el resto en su propia sección",
+            "una imagen adentro reemplaza al titular en vez de acompañarlo; el titular sigue siendo un Heading real, la imagen lleva su propio alt"
+          ],
+          "host": "div",
+          "id": "Hero",
+          "intent": [
+            "page-intro",
+            "banner",
+            "landing-page-opener",
+            "primary-call-to-action-block"
+          ],
+          "parents": [],
+          "useWhen": [
+            "es la apertura de una página o de una sección: necesita distinguirse visualmente de lo que sigue",
+            "el titular y la bajada necesitan más aire y una superficie propia, no la del fondo de la página",
+            "adentro siempre va un encabezado real (Heading), nunca sólo texto grande: si el hero abre la página entera, ese encabezado es el <h1> de la página",
+            "como mucho una acción primaria y una secundaria más silenciosa; nunca una fila de botones de igual peso",
+            "el host por defecto no es un landmark y no necesita aria-label; si se autora como landmark (<section>, as=\"section\" en React) sí necesita aria-label o aria-labelledby apuntando al encabezado adentro"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/patterns/icon.css",
       "id": "icon",
       "signatures": [
@@ -3645,5 +3676,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "6036212a266856d6"
+  "sourceHash": "e958da22fd6def88"
 }

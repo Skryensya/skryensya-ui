@@ -7,6 +7,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "start": "node dist/index.js",
+    "start:http": "node dist/http.js",
     "check": "node scripts/build.mjs && tsc -p tsconfig.json --noEmit && vitest run",
     "lint": "tsc -p tsconfig.json --noEmit",
     "inspector": "npx @modelcontextprotocol/inspector node dist/index.js"
@@ -17,6 +18,8 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
     "@skryensya/ai-compiler": "workspace:*",
+    "@skryensya/recipes": "workspace:*",
+    "@skryensya/snippets": "workspace:*",
     "zod": "^3.24.1"
   },
   "devDependencies": {
@@ -24,7 +27,6 @@
     "tsx": "^4.19.2",
     "typescript": "^5.9.3",
     "vitest": "^4.1.10",
-    "esbuild": "^0.28.1",
-    "@skryensya/recipes": "workspace:*"
+    "esbuild": "^0.28.1"
   }
 }

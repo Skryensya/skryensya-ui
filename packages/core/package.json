@@ -147,6 +147,10 @@
       "types": "./src/layout.ts",
       "default": "./src/layout.ts"
     },
+    "./hero": {
+      "types": "./src/hero.ts",
+      "default": "./src/hero.ts"
+    },
     "./stack": {
       "types": "./src/layout.ts",
       "default": "./src/layout.ts"

@@ -1,0 +1,202 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  heroAppBadgesTree,
+  heroAudienceTabsTree,
+  heroCenteredTree,
+  heroCodePreviewTree,
+  heroEmailCaptureTree,
+  heroEyebrowTree,
+  heroLogoWallTree,
+  heroPricingToggleTree,
+  heroSocialProofTree,
+  heroSplitTree,
+  heroTestimonialTree,
+  heroTree,
+  heroVideoDemoTree,
+} from "../../demos/layout";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/hero.yaml?raw";
+import coreSource from "@core/src/hero.ts?raw";
+import cssSource from "@core/css/patterns/hero.css?raw";
+/* The sheet itself, not only its source: the Style hooks table resolves each hook
+   against a real element, and a page that never loads `patterns/hero.css` would show every
+   value blank. */
+import "@skryensya/core/patterns/hero.css";
+/*
+ * `avatar.css`, for the social-proof pattern's own `AvatarGroup`. Confirmed live as the ROOT CAUSE
+ * of an earlier "the CSS looks broken" report: this page's `stat`-based pattern rendered every
+ * number with zero styling because `components/stat.css` was never imported here either. Docs
+ * curates its CSS per page (the same convention `BoxPage.astro` follows for `patterns/box.css`), so
+ * every family a page's own demo trees actually use has to be imported by hand: there is no global
+ * bundle to fall back on silently supplying it.
+ */
+import "@skryensya/core/components/avatar.css";
+/* `wrapper.css`, for the `Wrapper` shell every pattern below composes its content inside now. */
+import "@skryensya/core/patterns/wrapper.css";
+/* `patterns/box.css`, for the email-capture pattern's own full-width highlighted band. */
+import "@skryensya/core/patterns/box.css";
+/*
+ * The remaining patterns after the original five each pull in one more family's own CSS: `form-
+ * field`/`input` (email capture), `segmented` (pricing toggle), `code-preview` (developer hero)
+ * and `tabs` (audience switch). Same rule as `avatar.css` above: every family a page's own demo
+ * trees actually use has to be imported by hand here, or it paints unstyled the same way the old
+ * stat-row pattern once did.
+ */
+import "@skryensya/core/components/form-field.css";
+import "@skryensya/core/components/input.css";
+import "@skryensya/core/components/segmented.css";
+import "@skryensya/core/components/code-preview.css";
+import "@skryensya/core/components/tabs.css";
+/* `patterns/icon.css`, for the audience-tabs pattern's own feature rows (a leading `Icon` beside
+   each line). */
+import "@skryensya/core/patterns/icon.css";
+import reactSource from "@react/src/components/layout.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const sourceFiles = [
+  { id: "contracts/semantic/hero.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/hero.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/patterns/hero.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/layout.tsx", source: reactSource, language: "tsx" },
+] as const;
+
+/*
+ * Thirteen real patterns, all valid against the same minimal contract: the same range an agent
+ * reaches via `get_examples` (`contracts/snippets/hero-*.ts`), shown here so a person sees it too
+ * instead of only reading it in prose. The `label` prop on each `ComponentPreview` stays a literal
+ * pattern name, not translated (the same reason `component.contractNotesTitle`'s own list items
+ * stay close to the contract's own vocabulary), but each pattern ALSO gets its own translated
+ * `<h4>` title and one-line description right above its card: `Base.astro`'s own document indexer
+ * walks `h3`/`h4` inside this "usage" panel (`lib/document-index.ts`'s `indexHeroTabPanel`, `depth
+ * === 0` only, so these headings sit as direct siblings here, never nested in another wrapper) and
+ * an `h4` is what surfaces as a NESTED row under "HTML autorado" in the page's own "En esta
+ * página" rail, one entry per pattern instead of the rail knowing only that section exists.
+ *
+ * A `search` and a `command-hint` pattern were tried and dropped: reported back as not earning
+ * their place in this catalogue, not a bug in either.
+ */
+const heroPitchTree = heroTree(t);
+const heroCenteredMinimalTree = heroCenteredTree(t);
+const heroEyebrowLabelTree = heroEyebrowTree(t);
+const heroSplitMediaTree = heroSplitTree(t);
+const heroProofTree = heroSocialProofTree(t);
+const heroEmailTree = heroEmailCaptureTree(t);
+const heroAppTree = heroAppBadgesTree(t);
+const heroLogosTree = heroLogoWallTree(t);
+const heroPricingTree = heroPricingToggleTree(t);
+const heroCodeTree = heroCodePreviewTree(t);
+const heroVideoTree = heroVideoDemoTree(t);
+const heroTabsTree = heroAudienceTabsTree(t);
+const heroQuoteTree = heroTestimonialTree(t);
+---
+
+<ComponentPageShell
+  title="Hero"
+  description={t("hero.description")}
+  contractId="hero"
+  styleGroups={[{ file: "patterns/hero.css", probe: "sk-hero" }]}
+  sourceFiles={sourceFiles}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("hero.lede")} />
+
+    <h3>{t("hero.whenTitle")}</h3>
+    <p set:html={t("hero.whenBody1")} />
+    <p set:html={t("hero.whenBody2")} />
+    <p set:html={t("hero.whenBody3")} />
+
+    <h3>{t("hero.contentRulesTitle")}</h3>
+    <ul>
+      <li set:html={t("hero.contentRule1")} />
+      <li set:html={t("hero.contentRule2")} />
+      <li set:html={t("hero.contentRule3")} />
+    </ul>
+
+    <h3>{t("hero.htmlTitle")}</h3>
+    {/*
+     * THIRTEEN separate, literal tags, not a `.map()` over an array: `/f/{page}/{n}`'s own
+     * static-path generator (`lib/fullscreen-preview-paths.ts`) counts `<ComponentPreview`
+     * occurrences by REGEX over this file's raw SOURCE TEXT, not by rendering it, so a `.map()`
+     * (one literal tag, N runtime instances) would register only `/f/componentes/hero/1` and leave
+     * the rest 404ing. Confirmed live: `ButtonPage.astro`'s own seven previews are the same seven
+     * literal tags for the identical reason. The counter has no notion of a loop; matching its own
+     * convention here is the only way every "Pantalla completa" link on this page actually lands.
+     *
+     * Each pattern's own `<h4>` + one-line description sits directly above its card, a plain
+     * sibling of it (not wrapped in another element): `indexHeroTabPanel`'s own depth walk only
+     * picks up `h3`/`h4` at depth 0 of this panel, so nesting either inside a wrapping `<div>`
+     * would drop it out of the page's own "En esta página" rail silently.
+     */}
+    <h4>{t("hero.patternPitchTitle")}</h4>
+    <p>{t("hero.patternPitchDescription")}</p>
+    <ComponentPreview tree={heroPitchTree} label="Pitch with actions" />
+
+    <h4>{t("hero.patternCenteredTitle")}</h4>
+    <p>{t("hero.patternCenteredDescription")}</p>
+    <ComponentPreview tree={heroCenteredMinimalTree} label="Centered, minimal" />
+
+    <h4>{t("hero.patternEyebrowTitle")}</h4>
+    <p>{t("hero.patternEyebrowDescription")}</p>
+    <ComponentPreview tree={heroEyebrowLabelTree} label="With an eyebrow label" />
+
+    <h4>{t("hero.patternSplitTitle")}</h4>
+    <p>{t("hero.patternSplitDescription")}</p>
+    <ComponentPreview tree={heroSplitMediaTree} label="Split with media" />
+
+    <h4>{t("hero.patternProofTitle")}</h4>
+    <p>{t("hero.patternProofDescription")}</p>
+    <ComponentPreview tree={heroProofTree} label="With social proof" />
+
+    <h4>{t("hero.patternEmailTitle")}</h4>
+    <p>{t("hero.patternEmailDescription")}</p>
+    <ComponentPreview tree={heroEmailTree} label="With email capture" />
+
+    <h4>{t("hero.patternAppBadgesTitle")}</h4>
+    <p>{t("hero.patternAppBadgesDescription")}</p>
+    <ComponentPreview tree={heroAppTree} label="With app store badges" />
+
+    <h4>{t("hero.patternLogoWallTitle")}</h4>
+    <p>{t("hero.patternLogoWallDescription")}</p>
+    <ComponentPreview tree={heroLogosTree} label="With a logo wall" />
+
+    <h4>{t("hero.patternPricingTitle")}</h4>
+    <p>{t("hero.patternPricingDescription")}</p>
+    <ComponentPreview tree={heroPricingTree} label="With a pricing toggle" />
+
+    <h4>{t("hero.patternCodePreviewTitle")}</h4>
+    <p>{t("hero.patternCodePreviewDescription")}</p>
+    <ComponentPreview tree={heroCodeTree} label="With a code preview" />
+
+    <h4>{t("hero.patternVideoDemoTitle")}</h4>
+    <p>{t("hero.patternVideoDemoDescription")}</p>
+    <ComponentPreview tree={heroVideoTree} label="With a video demo" />
+
+    <h4>{t("hero.patternAudienceTabsTitle")}</h4>
+    <p>{t("hero.patternAudienceTabsDescription")}</p>
+    <ComponentPreview tree={heroTabsTree} label="With audience tabs" />
+
+    <h4>{t("hero.patternTestimonialTitle")}</h4>
+    <p>{t("hero.patternTestimonialDescription")}</p>
+    <ComponentPreview tree={heroQuoteTree} label="With a testimonial" />
+
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("hero.contractItem1")} />
+      <li set:html={t("hero.contractItem2")} />
+      <li set:html={t("hero.contractItem3")} />
+      <li set:html={t("hero.contractItem4")} />
+      <li set:html={t("hero.contractItem5")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("hero.a11yP1")} />
+    <p set:html={t("hero.a11yP2")} />
+    <p set:html={t("hero.a11yP3")} />
+  </Fragment>
+</ComponentPageShell>

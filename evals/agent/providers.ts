@@ -4,6 +4,7 @@ import { openaiText } from "@tanstack/ai-openai";
 import type { AnyTextAdapter } from "@tanstack/ai";
 import type { EvalCase } from "../case.js";
 import { runCase } from "./harness.js";
+import { runCaseWithCodexCli } from "./codex-cli-provider.js";
 import { runCaseWithClaudeCode } from "./claude-code-provider.js";
 import type { CaseScore } from "./scoring.js";
 
@@ -12,11 +13,12 @@ import type { CaseScore } from "./scoring.js";
  * from the prompt and the three MCP tools alone; it says nothing about which model, or even which
  * agent loop. Locking this harness to one API-key provider would answer a narrower question than
  * the one F7 exists to ask, so a `Provider` is just "given one case, produce a scored run"; an
- * Anthropic or OpenAI call through TanStack AI's `chat()` (`harness.ts`) and the real `claude` CLI
- * headless (`claude-code-provider.ts`) are both that, and nothing about `run-agent.ts` needs to know
- * which is which. Adding a `codex` provider later, or an OpenRouter one, is one more entry here.
+ * Anthropic or OpenAI call through TanStack AI's `chat()` (`harness.ts`), the real `claude` CLI
+ * headless (`claude-code-provider.ts`) and the real `codex` CLI headless (`codex-cli-provider.ts`)
+ * are all that, and nothing about `run-agent.ts` needs to know which is which. Adding another
+ * provider later is one more entry here.
  */
-export type ProviderId = "anthropic" | "openai" | "claude-code";
+export type ProviderId = "anthropic" | "openai" | "claude-code" | "codex-cli";
 
 export type Availability = { ok: true } | { ok: false; reason: string };
 
@@ -49,6 +51,10 @@ function hasClaudeCli(): boolean {
   return spawnSync("claude", ["--version"], { stdio: "ignore" }).status === 0;
 }
 
+function hasCodexCli(): boolean {
+  return spawnSync("codex", ["--version"], { stdio: "ignore" }).status === 0;
+}
+
 const claudeCodeProvider: Provider = {
   id: "claude-code",
   label: "Claude Code CLI (claude -p, subscription login)",
@@ -59,6 +65,20 @@ const claudeCodeProvider: Provider = {
   defaultModel: "claude-sonnet-5",
   availability: () => (hasClaudeCli() ? { ok: true } : { ok: false, reason: "`claude` CLI not found on PATH" }),
   run: (evalCase, lang, model, verbose) => runCaseWithClaudeCode(evalCase, lang, { model, verbose }),
+};
+
+const codexCliProvider: Provider = {
+  id: "codex-cli",
+  label: "Codex CLI (codex exec, subscription/API login)",
+  /*
+   * Informational default only: without `--model`, Codex CLI uses the authenticated account's own
+   * configured/default model. Passing an API provider model id here is less portable across CLI
+   * releases than letting Codex choose.
+   */
+  defaultModel: "codex-default",
+  availability: () => (hasCodexCli() ? { ok: true } : { ok: false, reason: "`codex` CLI not found on PATH" }),
+  run: (evalCase, lang, model, verbose) =>
+    runCaseWithCodexCli(evalCase, lang, { model: model === "codex-default" ? undefined : model, verbose }),
 };
 
 export const providers: Record<ProviderId, Provider> = {
@@ -77,6 +97,7 @@ export const providers: Record<ProviderId, Provider> = {
     (model) => openaiText(model as Parameters<typeof openaiText>[0]),
   ),
   "claude-code": claudeCodeProvider,
+  "codex-cli": codexCliProvider,
 };
 
 export function isProviderId(value: string): value is ProviderId {

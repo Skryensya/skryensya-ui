@@ -23,6 +23,14 @@
      */
     --sk-code-preview-window: 15lh;
     /*
+     * The collapsed `pre`'s own block padding, separate from `--sk-code-preview-window`: `max-
+     * block-size` alone cannot shrink a box past its padding (border-box only clamps the CONTENT
+     * box to zero; the padding still renders, so a window set to 0 stalls at one padding's worth of
+     * height instead of vanishing). A consumer that wants a truly EMPTY collapsed state — see
+     * `component-preview.css`'s own override — sets both hooks to `0` together.
+     */
+    --sk-code-preview-collapsed-padding-block: var(--space-inset-md);
+    /*
      * The hook lives HERE, not on the copy button itself: a consumer's override
      * (`.shell .sk-code-preview { --sk-code-preview-copy-sticky-top: … }`) targets this same
      * element, so the two just compete in the normal cascade. Declaring it directly on
@@ -287,6 +295,7 @@
     )
     pre {
     max-block-size: var(--sk-code-preview-window);
+    padding-block: var(--sk-code-preview-collapsed-padding-block);
     overflow-y: auto;
     overscroll-behavior-block: contain;
   }

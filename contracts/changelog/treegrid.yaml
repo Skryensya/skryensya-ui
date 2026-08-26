@@ -3,8 +3,29 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "1f85fa90c8705899"
+surface: "2e9daa6c1f4f5e2c"
 entries:
+  - date: 2026-08-25
+    kind: bugfix
+    target: Treegrid
+    es:
+      title: El aviso de resizeLabel dejaba de estar acotado a Treegrid
+      body: >-
+        Mismo bug que <code>table.yaml</code> registra para su propia familia: la regla de a11y de
+        <code>resizeLabel</code> no traía <code>signatures</code>, así que aplicaba a las ocho
+        signatures de <code>treegrid</code> por igual, aunque <code>resizableColumns</code> es una
+        opción sólo de <code>Treegrid</code>. <code>TreegridScroll</code>, <code>TreegridRow</code>,
+        <code>TreegridCell</code> y el resto avisaban siempre, sin importar si la composición pedía
+        columnas redimensionables. Se agrega <code>signatures: ["Treegrid"]</code>.
+    en:
+      title: The resizeLabel advisory used to fire outside Treegrid
+      body: >-
+        Same bug `table.yaml` records for its own family: the <code>resizeLabel</code> a11y rule
+        carried no <code>signatures</code>, so it applied to all eight <code>treegrid</code>
+        signatures equally, even though <code>resizableColumns</code> is <code>Treegrid</code>'s
+        own option alone. <code>TreegridScroll</code>, <code>TreegridRow</code>,
+        <code>TreegridCell</code> and the rest warned unconditionally, regardless of whether the
+        composition asked for resizable columns. Adds <code>signatures: ["Treegrid"]</code>.
   - date: 2026-08-16
     kind: feature
     target: Treegrid

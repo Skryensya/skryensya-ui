@@ -24,3 +24,7 @@ apps/docs/check-trees.mts
 # stripped out of every commit by hand since, which is a chore that only ever ends one way.
 apps/docs/.astro/dev.json
 
+# Output of evals/run-agent.ts: one folder per run, read locally in apps/eval-viewer or a plain
+# editor. It's a measurement of THIS run against the current catalogue, not a fixture to keep.
+evals/agent/runs/
+

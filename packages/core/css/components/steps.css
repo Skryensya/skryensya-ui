@@ -11,6 +11,7 @@
   .sk-steps {
     --sk-steps-marker-size: var(--size-control-sm);
     --sk-steps-connector-size: 2px;
+    --sk-steps-item-padding: var(--space-inset-xs);
 
     display: flex;
     inline-size: 100%;
@@ -28,7 +29,7 @@
     justify-items: center;
     gap: var(--space-stack-xs);
     min-inline-size: 0;
-    padding: var(--space-inset-xs);
+    padding: var(--sk-steps-item-padding);
     border-radius: var(--radius-surface);
     text-align: center;
   }
@@ -139,7 +140,14 @@
 
   .sk-steps[data-orientation="vertical"] .sk-steps__item:not(:last-child)::after {
     inset-block-start: var(--sk-steps-marker-size);
-    inset-inline-start: calc(var(--sk-steps-marker-size) / 2 - var(--sk-steps-connector-size) / 2);
+    /*
+     * The marker sits in the grid CONTENT box, after the item's own padding. The connector is
+     * absolute in the padding box, so it has to add that inset back or it lands one padding step too
+     * far left of the marker's x-axis.
+     */
+    inset-inline-start: calc(
+      var(--sk-steps-item-padding) + var(--sk-steps-marker-size) / 2 - var(--sk-steps-connector-size) / 2
+    );
     inline-size: var(--sk-steps-connector-size);
     block-size: calc(100% - var(--sk-steps-marker-size));
   }
@@ -168,7 +176,13 @@
 
     .sk-steps:not([data-orientation="horizontal"]) .sk-steps__item:not(:last-child)::after {
       inset-block-start: var(--sk-steps-marker-size);
-      inset-inline-start: calc(var(--sk-steps-marker-size) / 2 - var(--sk-steps-connector-size) / 2);
+      /*
+       * Same geometry as explicit vertical: the marker lives inside the padded grid content, while
+       * the connector is positioned from the padded item's border box.
+       */
+      inset-inline-start: calc(
+        var(--sk-steps-item-padding) + var(--sk-steps-marker-size) / 2 - var(--sk-steps-connector-size) / 2
+      );
       inline-size: var(--sk-steps-connector-size);
       block-size: calc(100% - var(--sk-steps-marker-size));
     }

@@ -93,6 +93,11 @@ export const treegridContract = {
       requiresOneOf: ["resizeLabel"],
       because:
         "Each column resizer is a real, focusable role=\"separator\" a binding inserts: never authored, so nothing else names it for a screen reader; the column header it sits beside says WHICH column, not that the control resizes it.",
+      // Same fix as `table.ts`'s identical rule: `resizableColumns` is `Treegrid`'s own option, not
+      // shared by `TreegridScroll`/`TreegridHead`/`TreegridRow`/etc. Left absent here too, every other
+      // signature in the family drew this advisory regardless of whether resizable columns were ever
+      // requested.
+      signatures: ["Treegrid"],
     },
   ],
 

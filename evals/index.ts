@@ -1,9 +1,11 @@
+import { articleCardInGridCase } from "./cases/article-card-in-grid.js";
 import { calloutWithRetryCase } from "./cases/callout-with-retry.js";
 import { checkboxNoForIdCase } from "./cases/checkbox-no-for-id.js";
 import { confirmationDialogCase } from "./cases/confirmation-dialog.js";
 import { formFieldWithHintCase } from "./cases/form-field-with-hint.js";
 import { iconOnlyButtonLabelledCase } from "./cases/icon-only-button-labelled.js";
 import { paginatedDataTableCase } from "./cases/paginated-data-table.js";
+import { personalLandingPageCase } from "./cases/personal-landing-page.js";
 import { progressInLayoutCase } from "./cases/progress-in-layout.js";
 import { radioGroupValueAtGroupCase } from "./cases/radio-group-value-at-group.js";
 import { settingsToggleRowCase } from "./cases/settings-toggle-row.js";
@@ -30,6 +32,8 @@ export const evalCases: readonly EvalCase[] = [
   formFieldWithHintCase,
   calloutWithRetryCase,
   settingsToggleRowCase,
+  articleCardInGridCase,
+  personalLandingPageCase,
 ];
 
 export type { EvalCase } from "./case.js";

@@ -656,6 +656,86 @@
     inline-size: min(100%, var(--sk-component-preview-measure));
   }
 
+  /*
+   * The contract drawer: a plain `Vaul.drawer` (patterns/vaul.css + components/drawer.css already
+   * supply the edge, the slide, the backdrop and the drag), widened past the drawer default because
+   * a code block reads worse at 20rem than the nav drawer's own links do. Structure only, same as
+   * `docs-drawer`'s own header/content split in site.css (Vaul ships hooks and no anatomy — see
+   * that file's own header): closed by default and `[open]` only, so an author `display` never
+   * beats the UA's `dialog:not([open]) { display: none }`.
+   */
+  .sk-component-preview__contract-drawer {
+    --sk-drawer-inline-size: min(40rem, 92dvw);
+  }
+
+  .sk-component-preview__contract-drawer[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sk-component-preview__contract-header {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-inline-sm);
+    padding: var(--space-inset-sm) var(--space-inset-md);
+    border-block-end: 1px solid var(--sk-component-preview-border-color);
+  }
+
+  .sk-component-preview__contract-title {
+    font-weight: var(--font-weight-emphasis);
+  }
+
+  /*
+   * Flush, and ONE scroll surface, not two. This box used to own the vertical scrollbar itself
+   * (`overflow-y: auto`) while the code's own `pre` owned the horizontal one below it — two
+   * different elements, two different scrollbars, for what reads as a single block of code.
+   * `overflow: hidden` here hands BOTH axes down to `pre` (see the rule below): the drawer body is
+   * now just a sized box, the code preview is the one thing that scrolls inside it.
+   */
+  .sk-component-preview__contract-body {
+    display: flex;
+    flex: 1;
+    min-block-size: 0;
+    min-inline-size: 0;
+    overflow: hidden;
+  }
+
+  /* CodePreview's own border/margin/radius double-box against the drawer's; drop them the same way
+     ComponentPreview's own embedded code panel already does (see that rule above). Stretched to
+     fill the body so the `pre` inside has a real height to scroll within instead of its own
+     content height. */
+  .sk-component-preview__contract-body > .sk-code-preview {
+    --sk-code-preview-bg: var(--sk-component-preview-bg);
+    --sk-code-preview-footer-bg: var(--sk-component-preview-bg);
+    display: flex;
+    flex: 1;
+    min-block-size: 0;
+    min-inline-size: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .sk-component-preview__contract-body .sk-code-preview__preview,
+  .sk-component-preview__contract-body .sk-code-preview__viewport {
+    flex: 1;
+    min-block-size: 0;
+    min-inline-size: 0;
+  }
+
+  /*
+   * `pre`'s own `overflow-x: auto` (code-preview.css) is unconditional; `max-block-size` only
+   * applies in the collapsed-window state, which this drawer never uses (`CodeBlock`'s `open`
+   * prop). Filling the block axis here, instead, is what makes `pre` the ONE element that scrolls
+   * both ways: it now has a bounded height (the drawer body's) to overflow against.
+   */
+  .sk-component-preview__contract-body pre {
+    block-size: 100%;
+    overflow-y: auto;
+  }
+
   /* HTML | JS: an `sm` Tabs list. The list is the chrome; panels sit flush under it. */
   .sk-component-preview__source-tabs {
     --sk-tabs-gap: 0;
@@ -669,6 +749,107 @@
 
   .sk-component-preview__source-tabs .sk-tabs__list {
     padding-inline: var(--space-inset-md);
+  }
+
+  /*
+   * ONE disclosure per source-tabs group, not one per file: each panel's OWN toggle
+   * (`.sk-code-preview__more`, code-preview.css) is superseded here and never shown, whatever its
+   * own `[hidden]`/density state says. `connectSourceToggle`
+   * (`@skryensya/vanilla/component-preview`) forwards this button's click to every panel's toggle
+   * in one pass instead. Scoped to `.sk-tabs__content`: the SHARED bar below carries the identical
+   * `.sk-code-preview__more` class on purpose (see its own comment), and lives OUTSIDE any tab
+   * panel, as a direct child of `source-tabs` itself — this selector must never reach it too.
+   */
+  .sk-component-preview__source-tabs .sk-tabs__content .sk-code-preview__more {
+    display: none;
+  }
+
+  /*
+   * The shared bar wears `code-preview.css`'s OWN `.sk-code-preview__more`/`__toggle`/
+   * `__toggle-icon` classes, unmodified: a single file (no tabs) and several files (tabs) used to
+   * read as two different controls — this one centred with its own bordered bar, that one a bare
+   * left-aligned button — for a difference the reader never asked about, and it changed again
+   * between Vanilla and React on the SAME demo whenever one binding happened to have a tabs group
+   * and the other did not (a `reactData` file, say, that Vanilla's `js` prop had no equivalent
+   * for). Reusing the exact classes, rather than a parallel set of rules that merely resemble them,
+   * is what makes "the same" a property of the stylesheet instead of something to keep in sync by
+   * hand. Only the icon's rotate trigger has to differ (below): the per-file version reads its
+   * ANCESTOR `.sk-code-preview[expanded]`, which this bar has none of, being outside every panel.
+   * Selected the same DIRECT-CHILD way `connectSourceToggle` finds it (no marker attribute either
+   * needs or carries one; the position alone already distinguishes it from a per-file toggle).
+   */
+  .sk-component-preview__source-tabs
+    > .sk-code-preview__more
+    [data-sk-code-preview-toggle][aria-expanded="true"]
+    .sk-code-preview__toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  /*
+   * Absent entirely when NOTHING in this group has anything to collapse (every file short enough
+   * to already show in full): a control with no effect is worse than no control. Matches on ANY
+   * panel, active or not — a reader who expands from the HTML tab expects CSS/TS to already be
+   * open when they switch there next, so the button's relevance isn't limited to whichever file
+   * happens to be showing.
+   */
+  .sk-component-preview__source-tabs:not(
+      :has(.sk-code-preview[data-sk-code-preview-collapsible]),
+      :has(.sk-code-preview[data-sk-code-preview-condensed-collapsible])
+    )
+    > .sk-code-preview__more {
+    display: none;
+  }
+
+  /*
+   * The tab strip (HTML | CSS | TS) follows the ACTIVE panel's own collapse state: hidden while
+   * that panel shows nothing, back once it does. `:not([hidden])` picks out the one panel Tabs'
+   * own machine keeps un-hidden (see `tabs.test.ts`'s own `.hidden` assertions) — the only content
+   * a reader can see right now — so switching tabs re-evaluates this per panel rather than
+   * remembering whichever tab happened to be collapsed first.
+   *
+   * Same three-way selector this file's other collapsed-state rules use (density splits
+   * `[collapsible]` into a full/condensed pair).
+   */
+  .sk-component-preview__source-tabs:has(
+      > .sk-tabs__content:not([hidden])
+        .sk-code-preview[data-sk-code-preview-collapsible][data-sk-code-preview-expanded="false"][data-sk-code-preview-density="full"]
+    )
+    .sk-tabs__list,
+  .sk-component-preview__source-tabs:has(
+      > .sk-tabs__content:not([hidden])
+        .sk-code-preview[data-sk-code-preview-condensed-collapsible][data-sk-code-preview-expanded="false"][data-sk-code-preview-density="condensed"]
+    )
+    .sk-tabs__list,
+  .sk-component-preview__source-tabs:has(
+      > .sk-tabs__content:not([hidden])
+        .sk-code-preview[data-sk-code-preview-collapsible][data-sk-code-preview-expanded="false"]:not(
+          [data-sk-code-preview-density]
+        )
+    )
+    .sk-tabs__list {
+    display: none;
+  }
+
+  /*
+   * The disclosure control's position is fixed; the code opens BELOW it, not the other way round.
+   * `code-preview.css`'s own template renders `__more` (the toggle) AFTER `__preview` (the
+   * viewport), so by default expanding pushes the button down by however tall the code turns out
+   * to be — fine for a 15-line peek, but ComponentPreview's own panels open from a true zero (see
+   * this file's own grid-row rules above), so that push could be a thousand pixels for a long
+   * source. Flex + `order` reverses the visual stack without touching the shared template: the
+   * button stays where the reader clicked it, and the reveal grows in the space already below.
+   */
+  .sk-component-preview__code > .sk-code-preview {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sk-component-preview__code > .sk-code-preview > .sk-code-preview__preview {
+    order: 2;
+  }
+
+  .sk-component-preview__code > .sk-code-preview > .sk-code-preview__more {
+    order: 1;
   }
 
   .sk-component-preview__source-tabs > *,
@@ -697,6 +878,141 @@
   }
 
   /*
+   * The SAME two hooks, declared again here: the shared toggle bar's own `.sk-code-preview__more`
+   * (component-preview.css's own comment on it, above) is a DIRECT CHILD of `source-tabs`, never a
+   * descendant of any `.sk-code-preview` root — it sits OUTSIDE every file panel, standing in for
+   * all of them. Custom properties only cascade down the tree they're declared in, so without this
+   * the bar found neither hook set anywhere in its ancestry and `background` fell back to its own
+   * initial value, transparent, letting `source-tabs`'s own sunken header tone show through
+   * instead — a visibly different bar than the single-file case for no authored reason. Whichever
+   * file the tabs currently show still reads its OWN pair from the rule above; this one only
+   * reaches the bar itself.
+   */
+  .sk-component-preview__source-tabs {
+    --sk-code-preview-bg: var(--sk-component-preview-bg);
+    --sk-code-preview-footer-bg: var(--sk-component-preview-bg);
+  }
+
+  /*
+   * ComponentPreview's own override of `code-preview.css`'s "COLLAPSED IS A WINDOW, NOT A LID"
+   * default (a 15-line peek): a component page already shows the LIVE demo above this block, so a
+   * peek window here teaches nothing a reader can't already see rendered. Collapsed shows nothing
+   * at all (only the label and the Expand control); Expand still reveals the whole source.
+   *
+   * NOT `max-block-size` (the base rule's own mechanism, `--sk-code-preview-window`): that property
+   * cannot animate smoothly between "0" and "no cap" (`none`) — there is no numeric value on the
+   * open end for a transition to interpolate toward, so it either doesn't animate at all or snaps.
+   * This uses the CSS GRID-TRACK trick instead: a single-row grid whose `grid-template-rows` holds
+   * the fr-unit height, animating between `0fr` (collapsed) and `1fr` (the row's only claim on the
+   * grid, which resolves to the child's own natural content height) — both concrete, both
+   * interpolatable, so the reveal animates smoothly to WHATEVER height the source turns out to be,
+   * 12 lines or 200, with no JS measurement (contrast `sk-tile-expand`'s own `--height`, which needs
+   * one because Tile's content is never known-collapsed-to-zero the way a fully hidden block is).
+   *
+   * Same three-way selector `code-preview.css`'s own collapsed-window rule uses: density splits
+   * `[collapsible]` into a full/condensed pair, so matching the parent's `[collapsible]` alone would
+   * sweep in a Condensed panel that never collapses on its own.
+   */
+  .sk-component-preview__code
+    > .sk-code-preview[data-sk-code-preview-collapsible]
+    [data-sk-code-preview-density-panel="full"],
+  .sk-component-preview__code
+    > .sk-code-preview[data-sk-code-preview-condensed-collapsible]
+    [data-sk-code-preview-density-panel="condensed"],
+  .sk-component-preview__code
+    > .sk-code-preview[data-sk-code-preview-collapsible]:not([data-sk-code-preview-density])
+    .sk-code-preview__viewport {
+    display: grid;
+    grid-template-rows: 0fr;
+    /*
+     * `contain: layout style`: this row's own layout recalculation (a real cost on a long
+     * highlighted block, every animation frame) never needs to reach outside it — nothing here
+     * affects an ancestor's size or an unrelated sibling's counters/layout — so the browser can
+     * scope the work to this subtree alone instead of re-checking the page around it on every
+     * tick. `will-change` names the one property actually animating, so the browser can promote
+     * this row to its own compositing layer ahead of time rather than discovering the need for one
+     * mid-gesture; left on rather than toggled per click because these panels are a handful per
+     * page, not hundreds, so the standing layer costs less than reasoning about exactly when to
+     * arm and disarm it would.
+     */
+    contain: layout style;
+    will-change: grid-template-rows;
+    transition: grid-template-rows var(--motion-collapse-duration) var(--motion-collapse-easing);
+  }
+
+  /*
+   * The grid ROW clips; this element needs no height ceiling of its own to be clipped by it — ONLY
+   * the block axis: `pre`'s own `overflow-x: auto` (code-preview.css) still owns long lines once
+   * expanded, so a long line is still reachable rather than silently cut at the panel's edge.
+   *
+   * `padding-block: 0` too, and animated IN STEP with the row above (own `transition`, matching
+   * duration/easing): border-box floors a box's rendered height at its own padding no matter what
+   * shrinks it, grid track included, so the collapsed row alone still stalled at one padding's
+   * worth (measured 32px) without this. Animating it alongside the row, rather than snapping it at
+   * the attribute flip, is the same reason `sk-tile-expand`/`-collapse` grow `block-size` and
+   * `padding-block` together: a padding that pops to full size on frame one reads as a jump before
+   * the reveal has even started.
+   */
+  .sk-component-preview__code
+    > .sk-code-preview[data-sk-code-preview-collapsible]
+    [data-sk-code-preview-density-panel="full"]
+    > *,
+  .sk-component-preview__code
+    > .sk-code-preview[data-sk-code-preview-condensed-collapsible]
+    [data-sk-code-preview-density-panel="condensed"]
+    > *,
+  .sk-component-preview__code
+    > .sk-code-preview[data-sk-code-preview-collapsible]:not([data-sk-code-preview-density])
+    .sk-code-preview__viewport
+    > * {
+    min-block-size: 0;
+    padding-block: 0;
+    overflow-y: hidden;
+    /* Same reasoning as the row's own `contain`/`will-change` above, for the property THIS
+       element animates instead. */
+    contain: layout style;
+    will-change: padding-block;
+    transition: padding-block var(--motion-collapse-duration) var(--motion-collapse-easing);
+  }
+
+  /*
+   * EXPANDED: the row claims its child's full natural height instead of none, and the child's
+   * padding returns with it. Both read the EXPAND duration/easing here, not the collapsed rules'
+   * above — read from the state being ENTERED, the same asymmetric-transition trick
+   * `sk-tile-expand`/`-collapse` use via separate keyframes.
+   *
+   * `[collapsible]` repeated on both selectors below, redundantly true whenever `[expanded="true"]`
+   * can even occur (the enhancer never sets one without the other): it exists only to MATCH the
+   * densityless base selectors' own specificity above (five, their `:not()` included), which the
+   * same tie-broken-by-source-order rule (these come after) then lets these win outright, rather
+   * than the collapsed rules' `transition` shorthands silently keeping their own duration/easing
+   * through the expand as well because they happened to be the more specific of the two.
+   */
+  .sk-component-preview__code
+    > .sk-code-preview[data-sk-code-preview-collapsible][data-sk-code-preview-expanded="true"]
+    .sk-code-preview__viewport {
+    grid-template-rows: 1fr;
+    transition-duration: var(--motion-expand-duration);
+    transition-timing-function: var(--motion-expand-easing);
+  }
+
+  .sk-component-preview__code
+    > .sk-code-preview[data-sk-code-preview-collapsible][data-sk-code-preview-expanded="true"]
+    .sk-code-preview__viewport
+    > * {
+    padding-block: var(--space-inset-md);
+    transition-duration: var(--motion-expand-duration);
+    transition-timing-function: var(--motion-expand-easing);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-component-preview__code .sk-code-preview__viewport,
+    .sk-component-preview__code .sk-code-preview__viewport > * {
+      transition-duration: 1ms;
+    }
+  }
+
+  /*
    * A standalone CodePreview owns all four corners. Inside this composite surface, its source
    * begins against the stage or source-tab strip, so a rounded top edge opens a visible seam.
    * The final source edge sits inside ComponentPreview's 1px border: use the concentric inner
@@ -715,4 +1031,34 @@
     border-end-end-radius: max(0px, calc(var(--radius-surface) - 1px));
   }
 
+}
+
+/*
+ * UNLAYERED, deliberately: `.sk-copy-button` carries `sk-icon-toggle`, and that pattern's own
+ * `display: inline-grid` re-assertion (patterns/icon-toggle.css, "Consumer button skins set
+ * `display: inline-flex` unlayered; re-assert grid so faces stack") sits OUTSIDE `@layer`
+ * on purpose, to beat `sk-button`'s own layered flex. Any `display: none` written inside
+ * `@layer components` above loses to that unlayered rule regardless of specificity — layers
+ * always rank below the unlayered cascade, no matter how specific the layered selector is. This
+ * has to sit out here, at equal footing, for a higher-specificity selector to actually win.
+ *
+ * The copy button follows the code it copies: nothing visible means nothing to float a copy
+ * action over. Same three-way selector `code-preview.css`'s own "steps aside" rule uses (density
+ * splits `[collapsible]` into a full/condensed pair, so a Condensed panel that never collapses on
+ * its own is not swept in by matching on the parent's `[collapsible]` alone), restated under
+ * ComponentPreview's scope rather than sitewide: the 15-line peek elsewhere still wants its
+ * button, only a window collapsed to nothing does not.
+ */
+.sk-component-preview__code
+  > .sk-code-preview[data-sk-code-preview-collapsible][data-sk-code-preview-expanded="false"][data-sk-code-preview-density="full"]
+  .sk-copy-button,
+.sk-component-preview__code
+  > .sk-code-preview[data-sk-code-preview-condensed-collapsible][data-sk-code-preview-expanded="false"][data-sk-code-preview-density="condensed"]
+  .sk-copy-button,
+.sk-component-preview__code
+  > .sk-code-preview[data-sk-code-preview-collapsible][data-sk-code-preview-expanded="false"]:not(
+    [data-sk-code-preview-density]
+  )
+  .sk-copy-button {
+  display: none;
 }

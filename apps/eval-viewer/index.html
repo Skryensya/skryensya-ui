@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>eval-viewer</title>
+    <!--
+      PREPAINT, before any stylesheet or module loads — the same reason apps/docs's own Base.astro
+      has one: without this, the page paints with NO explicit `color-scheme` for one frame (the kit's
+      own `_base.scss` sets `color-scheme: light dark` on `:root`, which follows the OS until this
+      script — or React's own effect, a frame later — pins it), which is exactly the "reads as dark
+      mode on a light background" bug this app already chased down once for the preview iframe. This
+      is the SAME fix, at the SAME layer (before first paint), for this document's own chrome.
+
+      Hand-duplicated storage key/slot ("sk"/"scheme") rather than imported: this runs before any
+      module graph exists, so importing `colorModePreference` is the exact thing it has to happen
+      before. `src/useColorMode.ts` is the one place this logic is also written as real, imported
+      code — keep the two in sync if either changes.
+    -->
+    <script>
+      (function () {
+        var d = document.documentElement;
+        var scheme = "system";
+        try {
+          var s = JSON.parse(localStorage.getItem("sk") || "{}");
+          if (s && (s.scheme === "light" || s.scheme === "dark")) scheme = s.scheme;
+        } catch (e) {}
+        d.setAttribute("data-scheme", scheme);
+        d.style.colorScheme = scheme === "system" ? "light dark" : scheme;
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,4 +1,5 @@
 import { vaulEvents, type VaulEdge, type VaulOptions } from "@skryensya/core/vaul";
+import { applyAttrs } from "../runtime/apply.js";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 import { axisOf, decideDismiss, resist, VELOCITY_WINDOW, type Sample } from "./vaul-gesture.js";
 
@@ -241,51 +242,68 @@ export function connectVaul(root: HTMLElement, options: VaulOptions = {}): Clean
 /*
  * Progressive enhancement over authored Vaul and Dialog Vaul markup. Each root names its own
  * trigger/closer attributes; opening remains a plain click on a real button, while the enhancer adds
- * drag and nothing else changes hands.
+ * drag, light-dismiss and the disclosure facts (`aria-controls`/`aria-expanded`) the trigger must
+ * expose when the panel is being used as mobile navigation.
  */
 export const mountVaul = createConnectMount({
   key: "vaul",
   rootSelector: "[data-sk-vaul], [data-sk-dialog-vaul]",
   connect: (root) => {
-  const cleanupDrag = connectVaul(root, {
-    draggable: root.dataset.draggable !== "false",
-    dismissThreshold: root.dataset.dismissThreshold ? Number(root.dataset.dismissThreshold) : undefined,
-  });
+    const cleanupDrag = connectVaul(root, {
+      draggable: root.dataset.draggable !== "false",
+      dismissThreshold: root.dataset.dismissThreshold ? Number(root.dataset.dismissThreshold) : undefined,
+    });
 
-  if (!(root instanceof HTMLDialogElement)) return cleanupDrag;
+    if (!(root instanceof HTMLDialogElement)) return cleanupDrag;
 
-  /* The triggers live outside the panel, so they are found from the document rather than from the
-   * root, an enhancer patches elements that already exist, wherever the author put them. */
-  const open = () => {
-    root.showModal();
-  };
-  const attributePrefix = root.matches("[data-sk-dialog-vaul]") ? "data-sk-dialog-vaul" : "data-sk-vaul";
-  const triggers = root.id
-    ? [...document.querySelectorAll<HTMLElement>(`[${attributePrefix}-open="${root.id}"]`)]
-    : [];
-  for (const trigger of triggers) trigger.addEventListener("click", open);
+    /* The triggers live outside the panel, so they are found from the document rather than from the
+     * root, an enhancer patches elements that already exist, wherever the author put them. */
+    const syncTrigger = (trigger: HTMLElement) => {
+      applyAttrs(trigger, {
+        "aria-controls": root.id || null,
+        "aria-expanded": String(root.open),
+        "aria-haspopup": "dialog",
+      });
+    };
+    const open = () => {
+      root.showModal();
+      for (const trigger of triggers) syncTrigger(trigger);
+    };
+    const attributePrefix = root.matches("[data-sk-dialog-vaul]") ? "data-sk-dialog-vaul" : "data-sk-vaul";
+    const triggers = root.id
+      ? [...document.querySelectorAll<HTMLElement>(`[${attributePrefix}-open="${root.id}"]`)]
+      : [];
+    for (const trigger of triggers) {
+      syncTrigger(trigger);
+      trigger.addEventListener("click", open);
+    }
 
-  const close = () => root.close();
-  const closers = [...root.querySelectorAll<HTMLElement>(`[${attributePrefix}-close]`)];
+    const close = () => root.close();
+    const syncTriggers = () => {
+      for (const trigger of triggers) syncTrigger(trigger);
+    };
+    root.addEventListener("close", syncTriggers);
+    const closers = [...root.querySelectorAll<HTMLElement>(`[${attributePrefix}-close]`)];
 
-  for (const closer of closers) closer.addEventListener("click", close);
+    for (const closer of closers) closer.addEventListener("click", close);
 
-  /* The backdrop is the dialog's own box, so a click outside the panel's rectangle is a click on the
-   * backdrop, "tap outside to dismiss" with no second element to own it. */
-  const onLightDismiss = (event: MouseEvent) => {
-    if (event.target !== root) return;
-    const box = root.getBoundingClientRect();
-    const outside =
-      event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom;
-    if (outside) root.close();
-  };
-  root.addEventListener("click", onLightDismiss);
+    /* The backdrop is the dialog's own box, so a click outside the panel's rectangle is a click on the
+     * backdrop, "tap outside to dismiss" with no second element to own it. */
+    const onLightDismiss = (event: MouseEvent) => {
+      if (event.target !== root) return;
+      const box = root.getBoundingClientRect();
+      const outside =
+        event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom;
+      if (outside) root.close();
+    };
+    root.addEventListener("click", onLightDismiss);
 
-  return () => {
-    cleanupDrag();
-    for (const trigger of triggers) trigger.removeEventListener("click", open);
-    for (const closer of closers) closer.removeEventListener("click", close);
-    root.removeEventListener("click", onLightDismiss);
-  };
+    return () => {
+      cleanupDrag();
+      for (const trigger of triggers) trigger.removeEventListener("click", open);
+      for (const closer of closers) closer.removeEventListener("click", close);
+      root.removeEventListener("close", syncTriggers);
+      root.removeEventListener("click", onLightDismiss);
+    };
   },
 });

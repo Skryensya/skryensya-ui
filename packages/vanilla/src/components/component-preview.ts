@@ -7,6 +7,7 @@ import {
   type ComponentPreviewScreen,
   type ComponentPreviewSource,
 } from "@skryensya/core/component-preview";
+import { codePreviewAttrs } from "@skryensya/core/code-preview";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
 const selector = (attribute: string): string => `[${attribute}]`;
@@ -459,6 +460,68 @@ export function openComponentPreviewFullscreen(root: HTMLElement): void {
   window.open(new URL(`/f${page}/${n}`, location.origin).href, "_blank");
 }
 
+/**
+ * One shared "Ver código"/"Ocultar código" control for a whole source-tabs group (HTML/CSS/TS, or
+ * Componente/data), standing in for however many independent `CodePreview` toggles the tabs hold.
+ * Each panel's OWN disclosure stays hidden (component-preview.css); this button forwards its click
+ * to every one of them in a single pass, so HTML/CSS/TS always agree, and reads the resulting
+ * state back off whichever panel it finds first, rather than tracking a second copy of it here.
+ *
+ * `sourceTabs` may hold ZERO panels with anything to collapse (a short demo): the button still
+ * exists in that case (CSS hides it, see `component-preview.css`'s own `:has()` rule), so this
+ * connects unconditionally and is simply inert when `panelToggles()` comes back empty.
+ */
+function connectSourceToggle(sourceTabs: HTMLElement): Cleanup {
+  /*
+   * `:scope > .sk-code-preview__more`, not a marker attribute: the shared bar is plain
+   * `@skryensya/core/code-preview` markup (see `ComponentPreview.astro`'s own comment on why),
+   * and its ONLY distinguishing mark is sitting directly under `sourceTabs` itself. A per-file
+   * toggle's own `.sk-code-preview__more` is always nested several levels deeper, under
+   * `.sk-tabs__content`, so this can never reach one of those by accident.
+   */
+  const toggle = sourceTabs.querySelector<HTMLButtonElement>(
+    `:scope > .sk-code-preview__more ${selector(codePreviewAttrs.toggle)}`,
+  );
+  if (!toggle) return () => {};
+
+  // Same two places `code-preview.ts`'s own `connectCodePreview` reads them from: the label's OWN
+  // rendered text (SSR's the collapsed wording already) and the button's `expandedLabel` attribute.
+  const label = toggle.querySelector<HTMLElement>(selector(codePreviewAttrs.toggleLabel));
+  const expandLabel = label?.textContent ?? "";
+  const collapseLabel = toggle.getAttribute(codePreviewAttrs.expandedLabel) ?? "";
+
+  /* Both density panels of EVERY file, not just the currently visible one: a hidden CSS/TS tab
+     still has to flip together with the active one, so switching files later shows it already in
+     the state this button last set, never the SSR default it happened to start from. */
+  const panelToggles = (): HTMLButtonElement[] =>
+    [
+      ...sourceTabs.querySelectorAll<HTMLElement>(
+        `${selector(codePreviewAttrs.collapsible)}, ${selector(codePreviewAttrs.condensedCollapsible)}`,
+      ),
+    ]
+      .map((panel) => panel.querySelector<HTMLButtonElement>(selector(codePreviewAttrs.toggle)))
+      .filter((el): el is HTMLButtonElement => el !== null);
+
+  const syncFromPanels = () => {
+    const [first] = panelToggles();
+    const expanded = first?.getAttribute("aria-expanded") === "true";
+    toggle.setAttribute("aria-expanded", String(expanded));
+    if (label) label.textContent = expanded ? collapseLabel : expandLabel;
+  };
+
+  const onClick = () => {
+    for (const panelToggle of panelToggles()) panelToggle.click();
+    syncFromPanels();
+  };
+
+  toggle.addEventListener("click", onClick);
+  syncFromPanels();
+
+  return () => {
+    toggle.removeEventListener("click", onClick);
+  };
+}
+
 /** Switches the authored source panels without owning preview rendering or highlighted code. */
 export function connectComponentPreview(root: HTMLElement): Cleanup {
   const bindingTabs = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.bindingTabs));
@@ -504,6 +567,12 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
   const onFullscreen = () => openComponentPreviewFullscreen(root);
   const disconnectResizer = connectStageResizer(root);
   const disconnectScreenTabs = connectScreenTabs(root);
+  // Every source-tabs group this preview has (vanilla HTML/CSS/TS, react Componente/data), each
+  // with its own independent shared toggle: unlike `sourceTabs` above (deliberately the first
+  // match only, for the vanilla-only `showSource` logic), this one applies to all of them.
+  const disconnectSourceToggles = [
+    ...root.querySelectorAll<HTMLElement>(selector(componentPreviewAttrs.sourceTabs)),
+  ].map(connectSourceToggle);
 
   bindingTabs?.addEventListener("sk-value-change", onBindingValueChange);
   sourceTabs?.addEventListener("sk-value-change", onSourceChange);
@@ -534,6 +603,7 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
     fullscreen?.removeEventListener("click", onFullscreen);
     disconnectResizer();
     disconnectScreenTabs();
+    for (const disconnect of disconnectSourceToggles) disconnect();
   };
 }
 

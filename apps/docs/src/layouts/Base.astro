@@ -587,7 +587,7 @@ const PALETTE_PRESETS = palettePresets(locale);
           aria-controls="docs-drawer"
           aria-expanded="false"
           aria-label={t("nav.openMenu")}
-          data-docs-drawer-open
+          data-sk-vaul-open="docs-drawer"
         >
           <Fragment set:html={menuIcon} />
         </button>
@@ -697,13 +697,14 @@ const PALETTE_PRESETS = palettePresets(locale);
     {/*
       The same nav as the rail, in a drawer, for viewports with no room for a rail. It is a native
       <dialog> opened with showModal(), so the focus trap, ESC, the inert page and focus restoration
-      are the platform's (decision 11), none of it is shipped as JS.
+      are the platform's (decision 11). The trigger is a disclosure button for a dialog-backed
+      navigation drawer: no role="menu", no menuitem links, no arrow-key menu widget.
     */}
-    <dialog class="sk-vaul sk-drawer docs-drawer" id="docs-drawer" data-edge="inline-start" aria-label={t("nav.drawer")}>
+    <dialog class="sk-vaul sk-drawer docs-drawer" id="docs-drawer" data-sk-vaul data-edge="inline-start" aria-label={t("nav.drawer")}>
       <div class="sk-vaul__handle" data-part="handle" aria-hidden="true"></div>
       <div class="docs-drawer__header">
         <span class="docs-drawer__title">{t("nav.drawer")}</span>
-        <button class="sk-button sk-interactive" data-variant="ghost" type="button" aria-label={t("nav.closeDrawer")} data-docs-drawer-close>
+        <button class="sk-button sk-interactive" data-variant="ghost" type="button" aria-label={t("nav.closeDrawer")} data-sk-vaul-close>
           <Fragment set:html={closeIcon} />
         </button>
       </div>
@@ -1336,45 +1337,19 @@ const PALETTE_PRESETS = palettePresets(locale);
     </script>
 
     <script>
-      /* The drawer. Everything that makes it a dialog, focus trap, ESC, inert page, focus back on
-       * the trigger, belongs to showModal(); this only decides WHEN, and gets out of the way. */
-      import { connectVaul } from "@skryensya/vanilla/vaul";
-
+      /* The mobile nav is a dialog-backed navigation drawer, not an ARIA menu. Vaul owns opening,
+       * closing, light-dismiss, drag-to-dismiss and trigger disclosure state. This site-only hook only
+       * removes the drawer when the desktop rail returns, otherwise focus would stay trapped in a
+       * duplicate copy of the navigation now visible in the page. */
       const drawer = document.getElementById("docs-drawer");
-      /* The one behaviour the platform does not have: pull the panel back to its edge to dismiss. */
-      if (drawer instanceof HTMLDialogElement) connectVaul(drawer);
-
-      const drawerTrigger = document.querySelector<HTMLButtonElement>("[data-docs-drawer-open]");
-
-      if (drawer instanceof HTMLDialogElement && drawerTrigger) {
-        const sync = () => drawerTrigger.setAttribute("aria-expanded", String(drawer.open));
-
-        drawerTrigger.addEventListener("click", () => {
-          drawer.showModal();
-          sync();
-        });
-        drawer.addEventListener("close", sync);
-
-        drawer.querySelector("[data-docs-drawer-close]")?.addEventListener("click", () => drawer.close());
-
-        /* The backdrop is the dialog's own box, so a click landing outside the panel's rectangle is a
-         * click on the backdrop, the usual "tap outside to dismiss" without a second overlay element. */
-        drawer.addEventListener("click", (event) => {
-          if (event.target !== drawer) return;
-          const box = drawer.getBoundingClientRect();
-          const outside =
-            event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom;
-          if (outside) drawer.close();
-        });
-
-        /* Grow past the breakpoint and the rail is back: a modal pinned over a layout that no longer
-         * needs it would trap focus in a duplicate of what is already on screen. */
+      if (drawer instanceof HTMLDialogElement) {
         const wide = window.matchMedia("(min-width: 52rem)");
         wide.addEventListener("change", (event) => {
           if (event.matches && drawer.open) drawer.close();
         });
       }
     </script>
+
 
 
     {/*

@@ -520,6 +520,26 @@
         "version": "0.1.0-dev"
       }
     ],
+    "color-picker": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-26",
+            "en": {
+              "body": "It joins the catalogue with <code>ColorPicker</code>, <code>ColorPicker.compact</code> and <code>ColorPicker.native</code>: the first two run on <code>@zag-js/color-picker</code> (area, hue rail, alpha rail, hex/RGB/HSL/OKLCH rows and presets), the third is a real <code>input type=\"color\"</code>. OKLCH is not one of the machine's own formats; its row reads and writes through a conversion this system owns (<code>@skryensya/core/color</code>) over the same color the machine already exposes. The Vanilla binding mounts on <code>data-sk-color-picker</code>. Options: <code>name</code>, <code>value</code>, <code>disabled</code>, <code>readOnly</code>, <code>required</code>, <code>invalid</code>, <code>triggerLabel</code>, <code>swatches</code>. Its stylesheet is <code>components/color-picker.css</code>.",
+              "title": "ColorPicker is published as a contract, with 3 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>ColorPicker</code>, <code>ColorPicker.compact</code> y <code>ColorPicker.native</code>: las dos primeras corren sobre <code>@zag-js/color-picker</code> (área, riel de matiz, riel de alfa, filas hex/RGB/HSL/OKLCH y presets), la tercera es un <code>input type=\"color\"</code> real. OKLCH no es un formato nativo de la máquina; su fila lee y escribe a través de una conversión propia (<code>@skryensya/core/color</code>) sobre el mismo color que la máquina ya expone. El binding Vanilla monta sobre <code>data-sk-color-picker</code>. Opciones: <code>name</code>, <code>value</code>, <code>disabled</code>, <code>readOnly</code>, <code>required</code>, <code>invalid</code>, <code>triggerLabel</code>, <code>swatches</code>. La hoja es <code>components/color-picker.css</code>.",
+              "title": "ColorPicker se publica como contrato, con 3 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "combobox": [
       {
         "date": null,
@@ -1906,6 +1926,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-26",
+            "en": {
+              "body": "Updates the <code>@zag-js/slider</code> dependency from 1.42.0 to 1.43.3. The published contract API adds no options and changes no slots, but the compiled surface records the machine version that hydrates the control.",
+              "title": "Slider uses the Zag 1.43.3 machines"
+            },
+            "es": {
+              "body": "Se actualiza la dependencia <code>@zag-js/slider</code> de 1.42.0 a 1.43.3. La API publicada del contrato no agrega opciones ni cambia slots, pero la superficie compilada registra la versión de la máquina que hidrata el control.",
+              "title": "Slider usa las máquinas de Zag 1.43.3"
+            },
+            "kind": "chore",
+            "target": "Slider"
+          },
           {
             "date": "2026-08-18",
             "en": {
@@ -5277,6 +5310,356 @@
                 ],
                 "element": "div",
                 "part": "preview"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "color-picker": {
+      "css": "@skryensya/core/components/color-picker.css",
+      "id": "color-picker",
+      "options": {
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "invalid": {
+          "attr": "data-invalid",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "name": {
+          "attr": "data-name",
+          "machineInput": true,
+          "type": "string"
+        },
+        "readOnly": {
+          "attr": "data-readonly",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "required": {
+          "attr": "data-required",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "swatches": {
+          "attr": "data-swatches",
+          "prop": "swatches",
+          "type": "string"
+        },
+        "triggerLabel": {
+          "attr": "aria-label",
+          "default": "Elegir color",
+          "type": "string"
+        },
+        "value": {
+          "attr": "data-value",
+          "machineInput": true,
+          "prop": "defaultValue",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "content": "sk-color-picker__content",
+        "control": "sk-color-picker__control",
+        "hiddenInput": "sk-color-picker__hidden-input",
+        "label": "sk-color-picker__label",
+        "positioner": "sk-color-picker__positioner",
+        "root": "sk-color-picker",
+        "swatch": "sk-color-picker__swatch",
+        "trigger": "sk-color-picker__trigger"
+      },
+      "semantics": {
+        "ColorPicker": {
+          "alternatives": [
+            "ColorPicker.compact",
+            "ColorPicker.native"
+          ],
+          "avoidWhen": [
+            "el color es siempre uno de un puñado conocido: eso es Select o Segmented",
+            "el espacio es mínimo o el color es secundario al resto del formulario"
+          ],
+          "useWhen": [
+            "el valor es un color arbitrario, no una de pocas opciones fijas",
+            "conviene ver y ajustar el matiz, la saturación y la transparencia a mano"
+          ]
+        },
+        "ColorPicker.compact": {
+          "alternatives": [
+            "ColorPicker"
+          ],
+          "avoidWhen": [
+            "hace falta escribir un valor exacto (hex, RGB, HSL u OKLCH): eso es ColorPicker"
+          ],
+          "useWhen": [
+            "el swatch vive en una barra de herramientas u otro lugar apretado",
+            "el lector sólo necesita área, matiz y presets, no cada canal por separado"
+          ]
+        },
+        "ColorPicker.native": {
+          "alternatives": [
+            "ColorPicker",
+            "ColorPicker.compact"
+          ],
+          "avoidWhen": [
+            "hace falta OKLCH, presets o ver los canales mientras se ajusta: eso es ColorPicker"
+          ],
+          "useWhen": [
+            "un color común dentro de un formulario, sin presets ni canales propios",
+            "el picker del sistema operativo y el envío deben pertenecer al navegador"
+          ]
+        }
+      },
+      "signatures": {
+        "ColorPicker": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "pick-a-color",
+            "color-field",
+            "swatch-behind-a-trigger"
+          ],
+          "mount": "data-sk-color-picker",
+          "options": [
+            "name",
+            "value",
+            "disabled",
+            "readOnly",
+            "required",
+            "invalid",
+            "triggerLabel",
+            "swatches"
+          ],
+          "react": {
+            "from": "@skryensya/react/color-picker",
+            "name": "ColorPicker"
+          },
+          "slots": {
+            "label": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-anatomy": "full"
+            },
+            "children": [
+              {
+                "element": "label",
+                "part": "label",
+                "slot": "label",
+                "whenGiven": "label"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "style": "border:0;clip:rect(0 0 0 0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;white-space:nowrap;word-wrap:normal;",
+                  "tabindex": "-1"
+                },
+                "element": "input",
+                "mount": "data-sk-color-picker-hidden-input",
+                "optionAttrs": {
+                  "name": "name"
+                },
+                "options": [
+                  "name"
+                ],
+                "part": "hiddenInput"
+              },
+              {
+                "also": [
+                  "sk-anchor"
+                ],
+                "children": [
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-icon-only": "",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "element": "span",
+                        "part": "swatch"
+                      }
+                    ],
+                    "element": "button",
+                    "options": [
+                      "triggerLabel"
+                    ],
+                    "part": "trigger"
+                  }
+                ],
+                "element": "div",
+                "part": "control"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "ColorPicker.compact": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "pick-a-color-compact",
+            "color-field-minimal",
+            "toolbar-color-swatch"
+          ],
+          "mount": "data-sk-color-picker",
+          "options": [
+            "name",
+            "value",
+            "disabled",
+            "readOnly",
+            "required",
+            "invalid",
+            "triggerLabel",
+            "swatches"
+          ],
+          "react": {
+            "from": "@skryensya/react/color-picker",
+            "name": "CompactColorPicker"
+          },
+          "slots": {
+            "label": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-anatomy": "compact"
+            },
+            "children": [
+              {
+                "element": "label",
+                "part": "label",
+                "slot": "label",
+                "whenGiven": "label"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "style": "border:0;clip:rect(0 0 0 0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;white-space:nowrap;word-wrap:normal;",
+                  "tabindex": "-1"
+                },
+                "element": "input",
+                "mount": "data-sk-color-picker-hidden-input",
+                "optionAttrs": {
+                  "name": "name"
+                },
+                "options": [
+                  "name"
+                ],
+                "part": "hiddenInput"
+              },
+              {
+                "also": [
+                  "sk-anchor"
+                ],
+                "children": [
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-icon-only": "",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "element": "span",
+                        "part": "swatch"
+                      }
+                    ],
+                    "element": "button",
+                    "options": [
+                      "triggerLabel"
+                    ],
+                    "part": "trigger"
+                  }
+                ],
+                "element": "div",
+                "part": "control"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "ColorPicker.native": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "a-standard-color-field",
+            "form-field",
+            "no-javascript"
+          ],
+          "options": [
+            "name",
+            "value"
+          ],
+          "react": {
+            "from": "@skryensya/react/color-picker",
+            "name": "NativeColorPicker"
+          },
+          "slots": {
+            "label": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "label",
+                "part": "label",
+                "slot": "label"
+              },
+              {
+                "children": [
+                  {
+                    "attrs": {
+                      "type": "color"
+                    },
+                    "element": "input",
+                    "labelledBySlot": "label",
+                    "optionAttrs": {
+                      "name": "name",
+                      "value": "value"
+                    },
+                    "options": [
+                      "name",
+                      "value"
+                    ],
+                    "part": "trigger"
+                  }
+                ],
+                "element": "div",
+                "part": "control"
               }
             ],
             "element": "div",
@@ -13230,63 +13613,81 @@
       "id": "slider",
       "options": {
         "disabled": {
-          "attr": "disabled",
+          "attr": "data-disabled",
           "default": false,
+          "machineInput": true,
           "trueValue": "",
           "type": "boolean"
         },
         "highLabel": {
           "attr": "aria-label",
+          "machineInput": true,
           "type": "string"
         },
         "highValue": {
-          "attr": "value",
+          "attr": "data-high-value",
           "default": 100,
+          "machineInput": true,
           "prop": "defaultHighValue",
           "type": "number"
         },
         "lowLabel": {
           "attr": "aria-label",
+          "machineInput": true,
           "type": "string"
         },
         "lowValue": {
-          "attr": "value",
+          "attr": "data-low-value",
           "default": 0,
+          "machineInput": true,
           "prop": "defaultLowValue",
           "type": "number"
         },
         "max": {
-          "attr": "max",
+          "attr": "data-max",
           "default": 100,
+          "machineInput": true,
           "type": "number"
         },
         "min": {
-          "attr": "min",
+          "attr": "data-min",
           "default": 0,
+          "machineInput": true,
           "type": "number"
         },
         "name": {
-          "attr": "name",
+          "attr": "data-name",
+          "machineInput": true,
           "type": "string"
         },
         "step": {
-          "attr": "step",
+          "attr": "data-step",
+          "machineInput": true,
           "type": "number"
         },
         "value": {
-          "attr": "value",
+          "attr": "data-value",
           "default": 0,
+          "machineInput": true,
           "prop": "defaultValue",
           "type": "number"
         }
       },
       "parts": {
+        "control": "sk-slider__control",
+        "input": "sk-slider__input",
+        "range": "sk-slider__range",
+        "rangeControl": "sk-slider-range__control",
         "rangeFill": "sk-slider-range__fill",
         "rangeHigh": "sk-slider-range__high",
+        "rangeHighInput": "sk-slider-range__high-input",
         "rangeLow": "sk-slider-range__low",
+        "rangeLowInput": "sk-slider-range__low-input",
         "rangeRoot": "sk-slider-range",
         "rangeTrack": "sk-slider-range__track",
-        "root": "sk-slider"
+        "root": "sk-slider",
+        "thumb": "sk-slider__thumb",
+        "track": "sk-slider__track"
       },
       "semantics": {
         "Slider": {
@@ -13319,14 +13720,13 @@
       "signatures": {
         "Slider": {
           "host": {
-            "element": "input"
+            "element": "div"
           },
           "intent": [
             "value-in-a-range",
             "volume",
             "adjust-a-number-roughly"
           ],
-          "mount": "data-sk-slider",
           "options": [
             "value",
             "min",
@@ -13341,22 +13741,50 @@
           },
           "slots": {},
           "template": {
-            "attrs": {
-              "type": "range"
-            },
-            "element": "input",
-            "host": true,
-            "part": "root",
-            "style": [
+            "children": [
               {
-                "as": "fraction",
-                "percentOf": [
-                  "value",
-                  "max"
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "element": "div",
+                        "mount": "data-sk-slider-range-part",
+                        "part": "range"
+                      }
+                    ],
+                    "element": "div",
+                    "mount": "data-sk-slider-track",
+                    "part": "track"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attrs": {
+                          "hidden": "",
+                          "type": "text"
+                        },
+                        "element": "input",
+                        "mount": "data-sk-slider-input",
+                        "options": [
+                          "name"
+                        ],
+                        "part": "input"
+                      }
+                    ],
+                    "element": "div",
+                    "mount": "data-sk-slider-thumb",
+                    "part": "thumb"
+                  }
                 ],
-                "property": "--sk-slider-fill"
+                "element": "div",
+                "mount": "data-sk-slider-control",
+                "part": "control"
               }
-            ]
+            ],
+            "element": "div",
+            "host": true,
+            "mount": "data-sk-slider",
+            "part": "root"
           }
         },
         "SliderRange": {
@@ -13369,7 +13797,6 @@
             "price-range",
             "two-thumb-slider"
           ],
-          "mount": "data-sk-slider-range",
           "options": [
             "lowValue",
             "highValue",
@@ -13392,79 +13819,66 @@
           "template": {
             "children": [
               {
-                "attrs": {
-                  "aria-hidden": "true"
-                },
-                "element": "div",
-                "part": "rangeTrack"
-              },
-              {
-                "attrs": {
-                  "aria-hidden": "true"
-                },
-                "element": "div",
-                "mount": "data-sk-slider-range-fill",
-                "part": "rangeFill",
-                "style": [
+                "children": [
                   {
-                    "as": "fraction",
-                    "percentOf": [
-                      "lowValue",
-                      "max"
+                    "children": [
+                      {
+                        "element": "div",
+                        "mount": "data-sk-slider-range-fill",
+                        "part": "rangeFill"
+                      }
                     ],
-                    "property": "--sk-slider-range-fill-start"
+                    "element": "div",
+                    "mount": "data-sk-slider-range-track",
+                    "part": "rangeTrack"
                   },
                   {
-                    "as": "fraction",
-                    "percentOf": [
-                      "highValue",
-                      "max"
+                    "children": [
+                      {
+                        "attrs": {
+                          "hidden": "",
+                          "type": "text"
+                        },
+                        "element": "input",
+                        "mount": "data-sk-slider-range-low-input",
+                        "part": "rangeLowInput"
+                      }
                     ],
-                    "property": "--sk-slider-range-fill-end"
+                    "element": "div",
+                    "mount": "data-sk-slider-range-low",
+                    "options": [
+                      "lowLabel"
+                    ],
+                    "part": "rangeLow"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attrs": {
+                          "hidden": "",
+                          "type": "text"
+                        },
+                        "element": "input",
+                        "mount": "data-sk-slider-range-high-input",
+                        "part": "rangeHighInput"
+                      }
+                    ],
+                    "element": "div",
+                    "mount": "data-sk-slider-range-high",
+                    "options": [
+                      "highLabel"
+                    ],
+                    "part": "rangeHigh"
                   }
-                ]
-              },
-              {
-                "also": [
-                  "sk-slider"
                 ],
-                "attrs": {
-                  "type": "range"
-                },
-                "element": "input",
-                "mount": "data-sk-slider-range-low",
-                "options": [
-                  "lowValue",
-                  "lowLabel",
-                  "min",
-                  "max",
-                  "step",
-                  "disabled"
-                ],
-                "part": "rangeLow"
-              },
-              {
-                "also": [
-                  "sk-slider"
-                ],
-                "attrs": {
-                  "type": "range"
-                },
-                "element": "input",
-                "mount": "data-sk-slider-range-high",
-                "options": [
-                  "highValue",
-                  "highLabel",
-                  "min",
-                  "max",
-                  "step",
-                  "disabled"
-                ],
-                "part": "rangeHigh"
+                "element": "div",
+                "mount": "data-sk-slider-range-control",
+                "part": "rangeControl"
               }
             ],
             "element": "div",
             "host": true,
+            "mount": "data-sk-slider-range",
             "part": "rangeRoot"
           }
         }
@@ -17777,5 +18191,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "e958da22fd6def88"
+  "sourceHash": "a440aba9248cb713"
 }

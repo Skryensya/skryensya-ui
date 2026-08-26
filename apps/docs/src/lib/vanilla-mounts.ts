@@ -32,6 +32,12 @@ export const vanillaMounts = {
     mount: "mountTileCheckbox",
     selector: "[data-sk-tile-checkbox]",
   },
+  "/componentes/color-picker": {
+    name: "ColorPicker",
+    entrypoint: "@skryensya/vanilla/color-picker",
+    mount: "mountColorPicker",
+    selector: "[data-sk-color-picker]",
+  },
   "/componentes/command-palette": {
     name: "CommandPalette",
     entrypoint: "@skryensya/vanilla/command-palette",

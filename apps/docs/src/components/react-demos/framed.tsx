@@ -29,7 +29,7 @@
  * another realm still closes over the parent's React and would put us back at (2).
  */
 import { componentPreviewParts } from "@skryensya/core/component-preview";
-import { useMemo, type ComponentType } from "react";
+import type { ComponentType } from "react";
 import { buildPreviewFrameDocument } from "../../lib/preview-frame";
 
 export interface FramedOptions {
@@ -121,19 +121,15 @@ export function framedIn(moduleUrl: string) {
         ? encodeURIComponent(frameOptions.script)
         : undefined;
 
-      const srcDoc = useMemo(
-        () =>
-          buildPreviewFrameDocument({
-            body: "",
-            css,
-            flush,
-            scroll,
-            measure,
-            encodedScript,
-            reactDemo: { module, export: name, props: demoProps },
-          }),
-        [props],
-      );
+      const srcDoc = buildPreviewFrameDocument({
+        body: "",
+        css,
+        flush,
+        scroll,
+        measure,
+        encodedScript,
+        reactDemo: { module, export: name, props: demoProps },
+      });
 
       /*
        * No `data-sk-component-preview-binding` here: the wrapping `.sk-component-preview__react-stage`

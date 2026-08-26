@@ -1,62 +1,89 @@
-import { clampSliderRange, sliderFill, sliderParts, sliderRangeBounds } from "@skryensya/core/slider";
-import { forwardRef, useState, type CSSProperties, type ChangeEvent, type InputHTMLAttributes } from "react";
+import { slider } from "@skryensya/core/machines";
+import { clampSliderRange, sliderParts } from "@skryensya/core/slider";
+import { normalizeProps, useMachine } from "@zag-js/react";
+import { useId, type CSSProperties, type HTMLAttributes } from "react";
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
-const toNumber = (value: string | number | readonly string[] | undefined, fallback: number) => {
+const toNumber = (value: unknown, fallback: number) => {
   const n = typeof value === "number" ? value : Number(value);
   return Number.isFinite(n) ? n : fallback;
 };
 
-export type SliderProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
+const thumbSize = { width: 32, height: 32 };
+
+export type SliderProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "onChange"> & {
+  defaultValue?: number;
+  value?: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  name?: string;
+  disabled?: boolean;
   onValueChange?: (value: number) => void;
 };
 
-export const Slider = forwardRef<HTMLInputElement, SliderProps>(function Slider(
-  { className, defaultValue, max = 100, min = 0, onChange, onValueChange, value, ...props },
-  ref,
-) {
+export function Slider({
+  className,
+  defaultValue,
+  disabled,
+  id,
+  max = 100,
+  min = 0,
+  name,
+  onValueChange,
+  step,
+  style,
+  value,
+  ...props
+}: SliderProps) {
+  const generatedId = useId();
   const lo = toNumber(min, 0);
   const hi = toNumber(max, 100);
   const controlled = value !== undefined;
-  const [internal, setInternal] = useState(() => toNumber(controlled ? value : defaultValue, lo));
-  const current = controlled ? toNumber(value, lo) : internal;
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const next = toNumber(event.currentTarget.value, lo);
-    if (!controlled) setInternal(next);
-    onChange?.(event);
-    onValueChange?.(next);
-  };
-
-  const style = { ...props.style, [sliderFillPropertyName]: sliderFill(current, lo, hi) } as CSSProperties;
+  const service = useMachine(slider.machine, {
+    id: id ?? generatedId,
+    "aria-label": props["aria-label"] ? [String(props["aria-label"])] : undefined,
+    "aria-labelledby": props["aria-labelledby"] ? [String(props["aria-labelledby"])] : undefined,
+    defaultValue: [toNumber(defaultValue, lo)],
+    disabled,
+    max: hi,
+    min: lo,
+    name,
+    onValueChange(details) {
+      onValueChange?.(details.value[0] ?? lo);
+    },
+    step,
+    thumbAlignment: "center",
+    thumbSize,
+    value: controlled ? [toNumber(value, lo)] : undefined,
+  });
+  const api = slider.connect(service, normalizeProps);
+  const rootProps = api.getRootProps();
+  const controlProps = api.getControlProps();
+  const trackProps = api.getTrackProps();
+  const rangeProps = api.getRangeProps();
+  const thumbProps = api.getThumbProps({ index: 0 });
 
   return (
-    <input
+    <div
       {...props}
+      {...rootProps}
       className={cx(sliderParts.root, className)}
-      defaultValue={controlled ? undefined : defaultValue}
-      max={max}
-      min={min}
-      onChange={handleChange}
-      ref={ref}
-      style={style}
-      type="range"
-      value={controlled ? value : undefined}
-    />
+      style={{ ...(rootProps.style as CSSProperties), ...style }}
+    >
+      <div {...controlProps} className={sliderParts.control} data-sk-slider-control="">
+        <div {...trackProps} className={sliderParts.track} data-sk-slider-track="">
+          <div {...rangeProps} className={sliderParts.range} data-sk-slider-range-part="" />
+        </div>
+        <div {...thumbProps} className={sliderParts.thumb} data-sk-slider-thumb="" draggable={undefined}>
+          <input {...api.getHiddenInputProps({ index: 0, name })} className={sliderParts.input} data-sk-slider-input="" />
+        </div>
+      </div>
+    </div>
   );
-});
+}
 
-// Kept as a literal so the CSS custom property name and the core constant can be diffed at a glance.
-const sliderFillPropertyName = "--sk-slider-fill";
-
-/*
- * Two native range inputs, not WAI's own custom `role="slider"` SVG widget; see `slider.ts`'s own
- * "MULTI-THUMB" banner for why. Uncontrolled only, for now: no demo or consumer needs a fully
- * controlled two-thumb slider yet, and `value`/`onChange` on TWO inputs at once (one author-facing
- * value, which one is "the" controlled input?) is a real API question worth deferring to an actual
- * use case rather than guessing at today.
- */
 export type SliderRangeProps = {
   className?: string;
   id?: string;
@@ -88,51 +115,55 @@ export function SliderRange({
   onValueChange,
   step,
 }: SliderRangeProps) {
-  const [low, setLow] = useState(() => clampSliderRange(defaultLowValue ?? min, defaultHighValue ?? max).low);
-  const [high, setHigh] = useState(() => clampSliderRange(defaultLowValue ?? min, defaultHighValue ?? max).high);
-  const bounds = sliderRangeBounds(low, high, min, max);
-
-  const fillStyle = {
-    "--sk-slider-range-fill-start": sliderFill(low, min, max),
-    "--sk-slider-range-fill-end": sliderFill(high, min, max),
-  } as CSSProperties;
+  const generatedId = useId();
+  const { low, high } = clampSliderRange(defaultLowValue ?? min, defaultHighValue ?? max);
+  const service = useMachine(slider.machine, {
+    id: id ?? generatedId,
+    "aria-label": [lowLabel, highLabel],
+    defaultValue: [low, high],
+    disabled,
+    max,
+    min,
+    onValueChange(details) {
+      onValueChange?.({ low: details.value[0] ?? min, high: details.value[1] ?? max });
+    },
+    step,
+    thumbAlignment: "center",
+    thumbSize,
+  });
+  const api = slider.connect(service, normalizeProps);
+  const rootProps = api.getRootProps();
+  const controlProps = api.getControlProps();
+  const trackProps = api.getTrackProps();
+  const rangeProps = api.getRangeProps();
+  const lowThumbProps = api.getThumbProps({ index: 0, name: lowName });
+  const highThumbProps = api.getThumbProps({ index: 1, name: highName });
 
   return (
-    <div className={cx(sliderParts.rangeRoot, className)} id={id}>
-      <div aria-hidden="true" className={sliderParts.rangeTrack} />
-      <div aria-hidden="true" className={sliderParts.rangeFill} style={fillStyle} />
-      <input
-        aria-label={lowLabel}
-        className={cx(`${sliderParts.rangeLow} ${sliderParts.root}`, undefined)}
-        disabled={disabled}
-        max={bounds.lowMax}
-        min={bounds.lowMin}
-        name={lowName}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          const next = toNumber(event.currentTarget.value, min);
-          setLow(next);
-          onValueChange?.({ low: next, high });
-        }}
-        step={step}
-        type="range"
-        value={low}
-      />
-      <input
-        aria-label={highLabel}
-        className={cx(`${sliderParts.rangeHigh} ${sliderParts.root}`, undefined)}
-        disabled={disabled}
-        max={bounds.highMax}
-        min={bounds.highMin}
-        name={highName}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          const next = toNumber(event.currentTarget.value, max);
-          setHigh(next);
-          onValueChange?.({ low, high: next });
-        }}
-        step={step}
-        type="range"
-        value={high}
-      />
+    <div
+      {...rootProps}
+      className={cx(sliderParts.rangeRoot, className)}
+      style={rootProps.style as CSSProperties}
+    >
+      <div {...controlProps} className={sliderParts.rangeControl} data-sk-slider-range-control="">
+        <div {...trackProps} className={sliderParts.rangeTrack} data-sk-slider-range-track="">
+          <div {...rangeProps} className={sliderParts.rangeFill} data-sk-slider-range-fill="" />
+        </div>
+        <div {...lowThumbProps} className={sliderParts.rangeLow} data-sk-slider-range-low="" draggable={undefined}>
+          <input
+            {...api.getHiddenInputProps({ index: 0, name: lowName })}
+            className={sliderParts.rangeLowInput}
+            data-sk-slider-range-low-input=""
+          />
+        </div>
+        <div {...highThumbProps} className={sliderParts.rangeHigh} data-sk-slider-range-high="" draggable={undefined}>
+          <input
+            {...api.getHiddenInputProps({ index: 1, name: highName })}
+            className={sliderParts.rangeHighInput}
+            data-sk-slider-range-high-input=""
+          />
+        </div>
+      </div>
     </div>
   );
 }

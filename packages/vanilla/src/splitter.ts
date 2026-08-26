@@ -1,11 +1,7 @@
-import {
-  hasCrossedDragThreshold,
-  resolveColumnResize,
-  resolveSplitterKey,
-  resolveWeightedColumnWidths,
-  splitterDirectionSign,
-  splitterValuePercent,
-} from "@skryensya/core/splitter";
+import { splitter } from "@skryensya/core/machines";
+import { resolveWeightedColumnWidths } from "@skryensya/core/splitter";
+import { normalizeProps, VanillaMachine } from "@zag-js/vanilla";
+import { applyZagProps, bindZagEvents, type DomProps } from "./runtime/apply.js";
 
 /*
  * SPLITTER, the imperative binding for a COLUMN-RESIZE handle. The pointer/keyboard wiring
@@ -21,6 +17,8 @@ import {
 export interface ColumnResizerOptions {
   /** The header cell this handle sits inside. Appended as its last child. */
   readonly th: HTMLElement;
+  /** The element whose inline size is the whole splitter group Zag measures. */
+  readonly root: HTMLElement;
   /** This handle sits BETWEEN column `index` and `index + 1`: `resolveColumnResize`'s own indexing. */
   readonly index: number;
   readonly getWidths: () => readonly number[];
@@ -96,131 +94,89 @@ export function watchColumnLayout(options: {
   return () => observer.disconnect();
 }
 
-/** Attaches one column-resize handle and returns its own cleanup. Same shape every enhancer here
- * returns, and the same one `bindHotkey` documents for a single reusable primitive. */
+let splitterId = 0;
+
+/** Attaches one Zag-backed column-resize handle and returns its own cleanup. */
 export function attachColumnResizer(options: ColumnResizerOptions): () => void {
-  const { th, index, getWidths, setWidths, min, ariaLabel, direction, className, resetWidth } = options;
+  const { root, th, index, getWidths, setWidths, min, ariaLabel, className, resetWidth } = options;
   const doc = th.ownerDocument;
+  const rootId = root.id || `sk-zag-splitter-${++splitterId}`;
+  if (!root.id) root.id = rootId;
 
   const handle = doc.createElement("div");
   handle.className = `${className} sk-splitter`;
-  handle.setAttribute("role", "separator");
-  handle.setAttribute("aria-orientation", "vertical");
-  handle.setAttribute("aria-valuemin", "0");
-  handle.setAttribute("aria-valuemax", "100");
   handle.setAttribute("aria-label", ariaLabel);
   handle.setAttribute("data-sk-column-resizer", "");
-  handle.tabIndex = 0;
+  th.appendChild(handle);
 
-  const sign = () => splitterDirectionSign(direction());
-
-  const describe = () => {
-    const widths = getWidths();
-    const before = widths[index] ?? 0;
-    const after = widths[index + 1] ?? 0;
-    const total = before + after;
-    const max = Math.max(min, total - min);
-    handle.setAttribute("aria-valuenow", String(splitterValuePercent(before, min, max)));
+  const ids = {
+    root: rootId,
+    resizeTrigger: (id: string) => `${rootId}:resize:${id}`,
+    panel: (id: string | number) => `${rootId}:panel:${id}`,
   };
 
-  const resize = (delta: number) => {
-    setWidths(resolveColumnResize({ widths: getWidths(), index, delta, min }));
-    describe();
+  const totalWidth = () => getWidths().reduce((sum, width) => sum + width, 0);
+  const toPercent = (width: number, total: number) => (total > 0 ? (width / total) * 100 : 0);
+  const toWidths = (sizes: readonly number[]) => {
+    const total = totalWidth();
+    return sizes.map((size) => (size / 100) * total);
+  };
+  const panels = () =>
+    getWidths().map((_, panelIndex) => ({
+      id: `c${panelIndex}`,
+      minSize: `${min}px`,
+    }));
+  const size = () => {
+    const total = totalWidth();
+    return getWidths().map((width) => `${toPercent(width, total)}%`);
   };
 
-  /** `resetWidth`'s own target when the caller supplies one, an even split with the neighbor
-   * otherwise; see `ColumnResizerOptions.resetWidth`'s own doc for which consumers pass which. */
+  const machine = new VanillaMachine(splitter.machine, () => ({
+    id: `${rootId}-${index}`,
+    ids,
+    dir: options.direction(),
+    orientation: "horizontal",
+    keyboardResizeBy: 16,
+    panels: panels(),
+    size: size(),
+    onResize(details) {
+      setWidths(toWidths(details.size));
+    },
+  }));
+
+  const api = () => splitter.connect(machine.service, normalizeProps);
+  const triggerId = `c${index}:c${index + 1}`;
+  const triggerProps = (): DomProps => api().getResizeTriggerProps({ id: triggerId }) as unknown as DomProps;
+  const sync = () => {
+    applyZagProps(handle, triggerProps());
+    handle.className = `${className} sk-splitter`;
+    handle.setAttribute("aria-label", ariaLabel);
+    handle.setAttribute("data-sk-column-resizer", "");
+  };
+  const unsubscribe = machine.subscribe(sync);
+  machine.start();
+  const unbind = bindZagEvents(handle, triggerProps);
+  sync();
+
   const reset = () => {
     const widths = getWidths();
     const before = widths[index] ?? 0;
     const after = widths[index + 1] ?? 0;
     const target = resetWidth ? resetWidth() : (before + after) / 2;
-    resize(target - before);
+    const next = [...widths];
+    const bounded = Math.min(Math.max(target, min), before + after - min);
+    next[index] = bounded;
+    next[index + 1] = before + after - bounded;
+    setWidths(next);
+    sync();
   };
-
-  let pointerId: number | null = null;
-  let startX = 0;
-  let startWidths: readonly number[] = [];
-  let dragging = false;
-
-  const onPointerDown = (event: Event) => {
-    const pointer = event as PointerEvent;
-    if (pointer.button !== 0) return;
-    pointer.preventDefault();
-    pointerId = pointer.pointerId;
-    startX = pointer.clientX;
-    dragging = false;
-    handle.setPointerCapture(pointer.pointerId);
-  };
-
-  const onPointerMove = (event: Event) => {
-    const pointer = event as PointerEvent;
-    if (pointerId === null || pointer.pointerId !== pointerId) return;
-    if (!dragging) {
-      if (!hasCrossedDragThreshold(startX, pointer.clientX)) return;
-      // The gesture is a drag. Measure from HERE, so the width does not jump by the slop.
-      dragging = true;
-      startX = pointer.clientX;
-      startWidths = getWidths();
-      handle.setAttribute("data-dragging", "");
-    }
-    setWidths(
-      resolveColumnResize({ widths: startWidths, index, delta: (pointer.clientX - startX) * sign(), min }),
-    );
-    describe();
-  };
-
-  const onPointerUp = (event: Event) => {
-    const pointer = event as PointerEvent;
-    if (pointerId === null || pointer.pointerId !== pointerId) return;
-    if (handle.hasPointerCapture(pointer.pointerId)) handle.releasePointerCapture(pointer.pointerId);
-    pointerId = null;
-    // A press that never became a drag ends here: nothing moved.
-    if (!dragging) return;
-    dragging = false;
-    handle.removeAttribute("data-dragging");
-  };
-
-  const onKeyDown = (event: Event) => {
-    const key = event as KeyboardEvent;
-    const action = resolveSplitterKey(key);
-    switch (action.kind) {
-      case "delta":
-        resize(action.delta * sign());
-        break;
-      case "home":
-        resize(-Infinity);
-        break;
-      case "end":
-        resize(Infinity);
-        break;
-      case "reset":
-        key.preventDefault();
-        reset();
-        return;
-      case "none":
-        return;
-    }
-    key.preventDefault();
-  };
-
-  handle.addEventListener("pointerdown", onPointerDown);
-  handle.addEventListener("pointermove", onPointerMove);
-  handle.addEventListener("pointerup", onPointerUp);
-  handle.addEventListener("pointercancel", onPointerUp);
-  handle.addEventListener("keydown", onKeyDown);
   handle.addEventListener("dblclick", reset);
 
-  th.appendChild(handle);
-  describe();
-
   return () => {
-    handle.removeEventListener("pointerdown", onPointerDown);
-    handle.removeEventListener("pointermove", onPointerMove);
-    handle.removeEventListener("pointerup", onPointerUp);
-    handle.removeEventListener("pointercancel", onPointerUp);
-    handle.removeEventListener("keydown", onKeyDown);
     handle.removeEventListener("dblclick", reset);
+    unbind();
+    unsubscribe();
+    machine.stop();
     handle.remove();
   };
 }

@@ -29,7 +29,10 @@
      * gives it a real preferred width that grows with the viewport between a firm min and max, so it
      * takes a confident slice of the screen without ever getting narrow or absurdly wide. */
     --sk-vaul-size: clamp(21rem, 20rem + 14vw, 34rem);
-    --sk-vaul-bg: var(--color-bg-surface);
+    /* Matches `--sk-vaul-elevation`'s own default below: this pattern is modal-tier out of the
+     * box, so its bg default is the same lightest tint, not the base surface. Drawer/Dialog Vaul
+     * both override this from their own already-modal `-bg` anyway. See /elevacion. */
+    --sk-vaul-bg: var(--color-bg-surface-overlay);
     --sk-vaul-fg: var(--color-text-primary);
     --sk-vaul-border-color: var(--color-border-subtle);
     --sk-vaul-border-width: 1px;

@@ -1,0 +1,110 @@
+/*
+ * TIER 1, FADE-EDGE
+ *
+ * Hides content smoothly at one edge, two ways:
+ *
+ *  - `data-fade="transparent"` (default): a `mask-image` gradient. The element itself becomes
+ *    see-through toward the edge, so whatever sits behind it (the page, a card's own surface)
+ *    shows through. Content stays in the DOM and is selectable, only its paint fades. This is the
+ *    right default any time the backdrop is a flat, known surface: a card, a page background.
+ *
+ *  - `data-fade="color"`: a solid overlay gradient, from transparent to `--sk-fade-edge-color`
+ *    (default: `var(--color-bg-canvas)`), painted on top of the content via `::after`. Use this
+ *    over an image, a photo, or any backdrop the mask trick can't see through cleanly: rather than
+ *    revealing what is behind the element, it paints the edge the color you tell it to.
+ *
+ * Direction (data-direction): "to-bottom" (default), "to-top", "to-right", "to-left".
+ * Fade zone size: `--sk-fade-edge-size` (default: 4rem), the height/width of the faded band.
+ *
+ * A `mask-image` gradient reads by ALPHA, not color, so the "transparent" mode below uses `black`
+ * as its opaque stop; that value paints nothing, it only says "fully visible here".
+ *
+ * Example, fading a scrollable list into its own card:
+ *  <div class="sk-fade-edge" style="max-height: 12rem; overflow: hidden;">…</div>
+ *
+ * Example, fading a hero photo into the page's own background color:
+ *  <div class="sk-fade-edge" data-fade="color" style="--sk-fade-edge-color: var(--color-bg-canvas);">
+ *    <img src="…" alt="…" />
+ *  </div>
+ */
+@layer components {
+  .sk-fade-edge {
+    --sk-fade-edge-size: 4rem;
+    --sk-fade-edge-color: var(--color-bg-canvas);
+
+    position: relative;
+    mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black calc(100% - var(--sk-fade-edge-size)),
+      transparent 100%
+    );
+    mask-position: 0 0;
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+  }
+
+  .sk-fade-edge[data-direction="to-top"] {
+    mask-image: linear-gradient(
+      to top,
+      black 0%,
+      black calc(100% - var(--sk-fade-edge-size)),
+      transparent 100%
+    );
+  }
+
+  .sk-fade-edge[data-direction="to-right"] {
+    mask-image: linear-gradient(
+      to right,
+      black 0%,
+      black calc(100% - var(--sk-fade-edge-size)),
+      transparent 100%
+    );
+  }
+
+  .sk-fade-edge[data-direction="to-left"] {
+    mask-image: linear-gradient(
+      to left,
+      black 0%,
+      black calc(100% - var(--sk-fade-edge-size)),
+      transparent 100%
+    );
+  }
+
+  /*
+   * Color mode swaps the mask for a painted overlay: `::after` sits over the same edge and goes
+   * transparent → `--sk-fade-edge-color`, so the band reads as that color regardless of what the
+   * element sits on top of.
+   */
+  .sk-fade-edge[data-fade="color"] {
+    mask-image: none;
+  }
+
+  .sk-fade-edge[data-fade="color"]::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    block-size: var(--sk-fade-edge-size);
+    background: linear-gradient(to bottom, transparent, var(--sk-fade-edge-color));
+    pointer-events: none;
+  }
+
+  .sk-fade-edge[data-fade="color"][data-direction="to-top"]::after {
+    inset: 0 0 auto 0;
+    background: linear-gradient(to top, transparent, var(--sk-fade-edge-color));
+  }
+
+  .sk-fade-edge[data-fade="color"][data-direction="to-right"]::after {
+    inset: 0 0 0 auto;
+    inline-size: var(--sk-fade-edge-size);
+    block-size: auto;
+    background: linear-gradient(to right, transparent, var(--sk-fade-edge-color));
+  }
+
+  .sk-fade-edge[data-fade="color"][data-direction="to-left"]::after {
+    inset: 0 auto 0 0;
+    inline-size: var(--sk-fade-edge-size);
+    block-size: auto;
+    background: linear-gradient(to left, transparent, var(--sk-fade-edge-color));
+  }
+}

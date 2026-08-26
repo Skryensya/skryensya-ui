@@ -54,7 +54,7 @@
     --sk-anchored-justify: center;
     --sk-anchored-offset: var(--space-stack-xs) 0;
     --sk-megamenu-gutter: var(--space-inset-lg);
-    --sk-megamenu-bg: var(--color-bg-surface-raised);
+    --sk-megamenu-bg: var(--color-bg-surface-overlay);
     --sk-megamenu-fg: var(--color-text-primary);
     --sk-megamenu-border-color: var(--color-border-subtle);
     --sk-megamenu-radius: var(--radius-control);
@@ -121,7 +121,10 @@
     border-radius: var(--sk-megamenu-radius);
     background: var(--sk-megamenu-bg);
     color: var(--sk-megamenu-fg);
-    box-shadow: var(--elevation-raised);
+    /* `--motion-enter-*`/`-exit-*` below (not Menu's lighter `--motion-feedback-*`) already treats
+     * this as its own standalone surface, not a quick tethered popup: `--elevation-overlay`
+     * matches. See /elevacion. */
+    box-shadow: var(--elevation-overlay);
 
     /* Same materialize recipe as Menu/Popover (`menu.css`'s own comment has the full reasoning):
      * these are the CLOSED values, `[data-state="open"]` below is what a binding's own open/close

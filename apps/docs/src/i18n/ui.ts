@@ -39,6 +39,7 @@ export const ui = {
     "nav.docs": "Docs",
     "nav.presets": "Presets",
     "nav.templates": "Templates",
+    "nav.comingSoon": "Próximamente",
     "nav.resizeRail": "Cambiar el ancho de la navegación",
     /* Los dos primeros enlaces del documento, invisibles hasta que reciben el foco. Nombran el
        DESTINO y no la acción, porque son lo primero que se escucha al entrar y "saltar" no dice
@@ -1931,6 +1932,7 @@ export const ui = {
     "colorPicker.test7": "Mantiene el nombre accesible del trigger sin que Zag lo pise.",
 
     "drawer.description": "Un Vaul en el borde inline, a lo alto de la pantalla. Envía hooks y nada de estructura.",
+    "fadeEdge.description": "Efecto de desvanecimiento CSS puro para ocultar contenido suavemente en los bordes.",
     "drawer.lede":
       'Un drawer <strong>es</strong> un <a href="/vaul">Vaul</a> en el borde inline, corriendo a lo alto de la pantalla. Esa frase es el componente entero: el borde, el slide, el backdrop, el drag y el top layer son del pattern, y este archivo sólo dice <em>qué Vaul es un drawer</em> y cómo se ve.',
     "drawer.hooksTitle": "Envía hooks y nada de estructura",
@@ -2015,7 +2017,7 @@ export const ui = {
     "grid.multicolBody1":
       '<a href="https://www.w3.org/TR/css-multicol-1/">CSS Multi-column Layout Module Level 1</a> llama <strong>multi-column layout</strong> a este flujo. <code>data-multicol</code> activa las columnas CSS: cada tarjeta termina antes de partirse y la siguiente continúa en el mismo carril.',
     "grid.multicolBody2":
-      '<code>data-columns</code> marca el máximo de carriles. Con <code>data-columns="4"</code>, la colección usa 1 carril antes de <code>36rem</code>, 2 desde <code>36rem</code>, 3 desde <code>52rem</code> y 4 desde <code>72rem</code>. Valores <code>1</code>, <code>2</code> y <code>3</code> se detienen en ese máximo.',
+      '<code>data-columns</code> marca el máximo de carriles. Con <code>data-columns="5"</code>, la colección usa 1 carril antes de <code>36rem</code>, 2 desde <code>36rem</code>, 3 desde <code>52rem</code>, 4 desde <code>72rem</code> y 5 desde <code>90rem</code>. Valores menores se detienen en ese máximo.',
     "grid.multicolLabel": "Multi-column layout",
     "grid.multicolBody3":
       "Las columnas llenan un carril de arriba hacia abajo antes de pasar al siguiente. Conserva un orden útil en el DOM y úsalo para tarjetas independientes; no para una secuencia cuyo orden visual de izquierda a derecha tenga significado.",
@@ -2023,12 +2025,14 @@ export const ui = {
     "grid.htmlBody": "Elige el elemento semántico, como <code>section</code>, y aplica <code>sk-grid</code>. No requiere inicialización vanilla.",
     "grid.reactBody": "La prop <code>as</code> conserva esa elección semántica.",
     "grid.contractItem1":
-      "<code>sk-grid</code> crea una grilla de columnas iguales; <code>data-columns</code> admite <code>1</code>, <code>2</code>, <code>3</code> o <code>4</code>.",
+      "<code>sk-grid</code> crea una grilla de columnas iguales; <code>data-columns</code> admite <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code> o <code>5</code>.",
     "grid.contractItem2":
       "<code>data-gap</code> admite <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> o <code>xl</code>; el valor por defecto es <code>md</code>.",
     "grid.contractItem3":
-      "<code>data-multicol</code> activa el muro de tarjetas por columnas. <code>data-columns</code> define su máximo de carriles: 1 → 2 → 3 → 4 en los breakpoints <code>36rem</code>, <code>52rem</code> y <code>72rem</code>. En React se pasa como <code>data-multicol</code>.",
+      "<code>data-multicol</code> activa el muro de tarjetas por columnas. <code>data-columns</code> define su máximo de carriles: 1 → 2 → 3 → 4 → 5 en los breakpoints <code>36rem</code>, <code>52rem</code>, <code>72rem</code> y <code>90rem</code>. En React se pasa como <code>data-multicol</code>.",
     "grid.contractItem4": "En React, <code>Grid</code> recibe <code>as</code>, <code>columns</code> y <code>gap</code>; <code>columns</code> tiene por defecto <code>1</code>.",
+    "grid.contractItem5":
+      "<code>data-responsive</code> aplica esa misma progresión de carriles como un Grid CSS real en vez de columnas CSS: cada fila iguala su alto a la celda más alta, pero un hijo directo puede ensancharse con <code>data-span=\"2\"</code> (hasta <code>5</code>), algo que <code>column-span</code> no permite salvo abarcar todos los carriles a la vez. En React se pasa como <code>responsive</code>.",
     "grid.test1": "Renderiza Stack, Inline y Grid según los contratos de layout documentados.",
     "layoutGridPage.description":
       "Layout Grid: un flujo de página con medidas narrow, content, breakout y full-width.",
@@ -3798,6 +3802,10 @@ export const ui = {
       "Construye interfaces web con componentes, primitives y fundamentos que se combinan entre sí. Un contrato compartido mantiene estructura, comportamiento y estilos coherentes en HTML, JavaScript y React.",
     "landing.hero.ctaComponents": "Explorar componentes",
 
+    "landing.gallery.title": "Cada pieza, por separado.",
+    "landing.gallery.lede":
+      "Los mismos componentes que arman las pantallas de abajo, uno por uno.",
+
     "landing.showcase.title": "De una pieza a una pantalla.",
     "landing.showcase.lede":
       "Ejemplos reales, compuestos con el mismo catálogo que vas a usar. Esto es lo que se ve, no una maqueta.",
@@ -4032,6 +4040,7 @@ export const ui = {
     "nav.docs": "Docs",
     "nav.presets": "Presets",
     "nav.templates": "Templates",
+    "nav.comingSoon": "Coming soon",
     "nav.resizeRail": "Resize the navigation",
     "nav.skipToContent": "Go to content",
     "templates.title": "Templates",
@@ -5871,6 +5880,7 @@ export const ui = {
     "colorPicker.test7": "Keeps the trigger's accessible name intact instead of letting Zag override it.",
 
     "drawer.description": "A Vaul on the inline edge, running the full height of the screen. Ships hooks and no structure.",
+    "fadeEdge.description": "Pure CSS fade-out effect to smoothly hide content at the edges.",
     "drawer.lede":
       'A drawer <strong>is</strong> a <a href="/en/vaul">Vaul</a> on the inline edge, running the full height of the screen. That sentence is the whole component: the edge, the slide, the backdrop, the drag and the top layer belong to the pattern, and this file only says <em>which Vaul is a drawer</em> and how it looks.',
     "drawer.hooksTitle": "Ships hooks and no structure",
@@ -5955,7 +5965,7 @@ export const ui = {
     "grid.multicolBody1":
       '<a href="https://www.w3.org/TR/css-multicol-1/">CSS Multi-column Layout Module Level 1</a> calls this flow <strong>multi-column layout</strong>. <code>data-multicol</code> turns on CSS columns: every card finishes before breaking, and the next one continues in the same lane.',
     "grid.multicolBody2":
-      '<code>data-columns</code> sets the maximum number of lanes. With <code>data-columns="4"</code>, the collection uses 1 lane below <code>36rem</code>, 2 from <code>36rem</code>, 3 from <code>52rem</code>, and 4 from <code>72rem</code>. Values <code>1</code>, <code>2</code>, and <code>3</code> stop at that ceiling.',
+      '<code>data-columns</code> sets the maximum number of lanes. With <code>data-columns="5"</code>, the collection uses 1 lane below <code>36rem</code>, 2 from <code>36rem</code>, 3 from <code>52rem</code>, 4 from <code>72rem</code>, and 5 from <code>90rem</code>. Lower values stop at that ceiling.',
     "grid.multicolLabel": "Multi-column layout",
     "grid.multicolBody3":
       "Columns fill one lane top to bottom before moving to the next. It keeps a useful DOM order, so use it for independent cards, not for a sequence whose left-to-right visual order carries meaning.",
@@ -5963,12 +5973,14 @@ export const ui = {
     "grid.htmlBody": "Choose the semantic element, such as <code>section</code>, and apply <code>sk-grid</code>. No vanilla initialization needed.",
     "grid.reactBody": "The <code>as</code> prop keeps that semantic choice.",
     "grid.contractItem1":
-      "<code>sk-grid</code> creates an equal-column grid; <code>data-columns</code> accepts <code>1</code>, <code>2</code>, <code>3</code>, or <code>4</code>.",
+      "<code>sk-grid</code> creates an equal-column grid; <code>data-columns</code> accepts <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code>, or <code>5</code>.",
     "grid.contractItem2":
       "<code>data-gap</code> accepts <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code>, or <code>xl</code>; the default is <code>md</code>.",
     "grid.contractItem3":
-      "<code>data-multicol</code> turns on the column-flowing card wall. <code>data-columns</code> sets its lane ceiling: 1 → 2 → 3 → 4 at the <code>36rem</code>, <code>52rem</code>, and <code>72rem</code> breakpoints. In React it is passed as <code>data-multicol</code>.",
+      "<code>data-multicol</code> turns on the column-flowing card wall. <code>data-columns</code> sets its lane ceiling: 1 → 2 → 3 → 4 → 5 at the <code>36rem</code>, <code>52rem</code>, <code>72rem</code>, and <code>90rem</code> breakpoints. In React it is passed as <code>data-multicol</code>.",
     "grid.contractItem4": "In React, <code>Grid</code> takes <code>as</code>, <code>columns</code>, and <code>gap</code>; <code>columns</code> defaults to <code>1</code>.",
+    "grid.contractItem5":
+      "<code>data-responsive</code> applies that same lane progression as a real CSS Grid instead of CSS columns: every row's height matches its tallest cell, but a direct child can widen itself with <code>data-span=\"2\"</code> (up to <code>5</code>), something <code>column-span</code> cannot do short of spanning every lane at once. In React it is passed as <code>responsive</code>.",
     "grid.test1": "Renders Stack, Inline and Grid as the documented layout contracts.",
     "layoutGridPage.description":
       "Layout Grid: one page flow with narrow, content, breakout, and full-width measures.",
@@ -7721,6 +7733,10 @@ export const ui = {
       "Build web interfaces from components, primitives and foundations that compose together. One shared contract keeps structure, behavior and styling coherent across HTML, JavaScript and React.",
     "landing.hero.ctaComponents": "Explore components",
 
+    "landing.gallery.title": "Every piece, on its own.",
+    "landing.gallery.lede":
+      "The same components that build the screens below, one at a time.",
+
     "landing.showcase.title": "From one piece to a screen.",
     "landing.showcase.lede":
       "Real examples, composed from the same catalogue you'll actually use. This is what it looks like, not a mockup.",
@@ -7964,6 +7980,7 @@ export const navLabel: Record<Locale, Partial<Record<string, string>>> = {
     "/arquitectura": "Architecture",
     "/referencia": "Tokens",
     "/dimensiones": "Dimensions",
+    "/elevacion": "Elevation",
     "/zoom": "Zoom and reflow",
     "/teclado": "Keyboard navigation",
     "/densidad": "Component density",

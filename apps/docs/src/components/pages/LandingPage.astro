@@ -6,15 +6,28 @@
  * chrome, no code panel. What's on screen IS the example.
  */
 import Base from "../../layouts/Base.astro";
-import { getLocale, localizePath, useTranslations } from "../../i18n";
-import { compositionComboboxTree } from "../../demos/landing/composition";
-import { recipes } from "@skryensya/recipes";
+import { getLocale, localizePath, useTranslations, type Translate } from "../../i18n";
 import { emitMarkup } from "@skryensya/ai-compiler/emit";
 import type { UsageTree } from "@skryensya/core/usage-tree";
+
+import { badgeDotsTree } from "../../demos/badge";
+import { tagTonesTree } from "../../demos/tag";
+import { avatarGroupTree } from "../../demos/avatar";
+import { kbdTree } from "../../demos/kbd";
+import { iconSizeTree } from "../../demos/icon";
+import { meterTree } from "../../demos/meter";
+import { progressTree } from "../../demos/progress";
+import { breadcrumbTwoTree } from "../../demos/breadcrumb";
+import { stepsTree } from "../../demos/steps";
+import { segmentedTree } from "../../demos/segmented";
+import { calloutInfoTree, calloutSuccessTree } from "../../demos/callout";
+import { emptyStateTree } from "../../demos/empty-state";
+import { processListTree } from "../../demos/process-list";
 
 import "@skryensya/core/components/button.css";
 import "@skryensya/core/components/typography.css";
 import "@skryensya/core/patterns/layout.css";
+import "@skryensya/core/patterns/icon.css";
 import "@skryensya/core/components/combobox.css";
 import "@skryensya/core/components/form-field.css";
 import "@skryensya/core/patterns/scrollbar.css";
@@ -26,24 +39,71 @@ import "@skryensya/core/components/tile.css";
 import "@skryensya/core/components/accordion.css";
 import "@skryensya/core/components/details.css";
 import "@skryensya/core/components/steps.css";
+import "@skryensya/core/components/badge.css";
+import "@skryensya/core/components/tag.css";
+import "@skryensya/core/components/avatar.css";
+import "@skryensya/core/components/kbd.css";
+import "@skryensya/core/components/meter.css";
+import "@skryensya/core/components/breadcrumb.css";
+import "@skryensya/core/components/segmented.css";
+import "@skryensya/core/components/empty-state.css";
+import "@skryensya/core/components/process-list.css";
+import "@skryensya/core/components/loader.css";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 const href = (path: string) => localizePath(path, locale);
 
-const recipe = (id: string) => recipes.find((r) => r.id === id)!;
 
 /*
- * Each tree already carries its own heading (or its own field label): the recipes are written
- * that way on purpose, so nothing here needs a caption on top to say what it is.
+ * `loader.ts`'s own `loaderSizesTree` nests a 3-column comparison grid meant for a docs page's
+ * full prose width; inside one already-narrow masonry lane here it squeezed to a column too thin
+ * to hold a word, confirmed live (every label wrapped one character per line). A single spotlight
+ * loader is the bitesize-appropriate version of the same idea.
  */
-const showcase: UsageTree[] = [
-  compositionComboboxTree(t, locale),
-  recipe("form").states.error,
-  recipe("destructive-confirm").states.error,
-  recipe("upload").states.loading,
-  recipe("settings").states.success,
-  recipe("checkout").states.success,
+const loaderSpotlightTree = (translate: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "sm", align: "center" },
+  children: [
+    { contract: "loader", signature: "Loader", options: { size: "lg", label: translate("demo.loader.loadingResults") } },
+    { contract: "typography", signature: "Text", options: { tone: "secondary", size: "sm" }, children: translate("demo.loader.size.lg") },
+  ],
+});
+
+/*
+ * The gallery, one step below `showcase`: single components or one small cluster of them, not
+ * whole screens. Reused verbatim from each family's own docs demo (already validated, already
+ * imported by that page) rather than re-authored here, so the tiles stay true to how each
+ * component is actually documented. Fifteen of them, into a 5-lane `data-responsive` Grid.
+ *
+ * `data-responsive`, not `data-multicol`: ProcessList's three numbered steps read cramped at one
+ * lane wide, so it needs `data-span="2"`, and CSS multi-column can only span EVERY lane at once
+ * (`column-span: all`), never a partial width. A real Grid gives up multicol's independent
+ * per-column height in exchange for that span; `align-items: start` (layout.css) keeps a short
+ * card from stretching to its row's tallest neighbour, but the ROW TRACK itself still sizes to
+ * whatever is tallest in it, so the order below groups tiles by roughly how tall their real
+ * content is (short row, then a shorter-medium row, then the two genuinely tall ones — ProcessList
+ * and EmptyState — alongside Steps and Meter, the next tallest) rather than leaving that to
+ * chance: a short card stranded next to `data-span="2"` ProcessList would still sit under a lot of
+ * dead row height even without stretching into it.
+ */
+const gallery: Array<{ tree: UsageTree; span?: 2 }> = [
+  { tree: kbdTree },
+  { tree: badgeDotsTree(t) },
+  { tree: iconSizeTree },
+  { tree: avatarGroupTree(t) },
+  { tree: segmentedTree(t) },
+  { tree: breadcrumbTwoTree(t) },
+  { tree: tagTonesTree(t) },
+  { tree: progressTree(t) },
+  { tree: calloutInfoTree(t) },
+  { tree: loaderSpotlightTree(t) },
+  { tree: processListTree(t), span: 2 },
+  { tree: emptyStateTree(t) },
+  { tree: stepsTree(t) },
+  { tree: meterTree(t) },
+  { tree: calloutSuccessTree(t) },
 ];
 ---
 
@@ -73,20 +133,23 @@ const showcase: UsageTree[] = [
       </div>
     </section>
 
-    <section aria-label={t("landing.showcase.title")}>
+    <section aria-label={t("landing.gallery.title")}>
       <div class="sk-wrapper" data-size="lg">
         <div class="sk-stack" data-gap="md" style="margin-block-end: var(--space-stack-lg)">
-          <h2 class="sk-heading" data-size="h2" data-flush>{t("landing.showcase.title")}</h2>
-          <p class="sk-text" data-tone="secondary" data-size="lg">{t("landing.showcase.lede")}</p>
+          <h2 class="sk-heading" data-size="h2" data-flush>{t("landing.gallery.title")}</h2>
+          <p class="sk-text" data-tone="secondary" data-size="lg">{t("landing.gallery.lede")}</p>
         </div>
-        <div class="sk-grid" data-multicol data-columns="3" data-gap="lg">
+      </div>
+      <div class="sk-wrapper" data-size="full">
+        <div class="sk-grid" data-responsive data-columns="5" data-gap="md">
           {
-            showcase.map((tree) => (
+            gallery.map(({ tree, span }) => (
               <div
                 class="sk-box"
                 data-surface="raised"
                 data-border="subtle"
-                data-padding="lg"
+                data-padding="md"
+                data-span={span}
                 set:html={emitMarkup(tree, { fillDefaults: false })}
               />
             ))
@@ -94,5 +157,6 @@ const showcase: UsageTree[] = [
         </div>
       </div>
     </section>
+
   </div>
 </Base>

@@ -595,17 +595,35 @@ const PALETTE_PRESETS = palettePresets(locale);
           <div class="sk-nav-list__group">
             <ul class="sk-nav-list__list" role="list">
               {
-                globalNavigation.map((item) => (
-                  <li class="sk-nav-list__item">
-                    <a
-                      class="sk-nav-list__link sk-interactive"
-                      href={item.href}
-                      aria-current={path === item.href ? "page" : undefined}
-                    >
-                      <span class="sk-nav-list__label">{item.label}</span>
-                    </a>
-                  </li>
-                ))
+                globalNavigation.map((item) => {
+                  const isDevOnly = item.href === "/templates" || item.href === "/presets";
+                  const isDev = import.meta.env.DEV;
+                  const isDisabled = isDevOnly && !isDev;
+
+                  return (
+                    <li class="sk-nav-list__item">
+                      {isDisabled ? (
+                        <button
+                          class="sk-nav-list__link sk-interactive"
+                          type="button"
+                          disabled
+                          title={t("nav.comingSoon")}
+                          aria-label={t("nav.comingSoon")}
+                        >
+                          <span class="sk-nav-list__label">{item.label}</span>
+                        </button>
+                      ) : (
+                        <a
+                          class="sk-nav-list__link sk-interactive"
+                          href={item.href}
+                          aria-current={path === item.href ? "page" : undefined}
+                        >
+                          <span class="sk-nav-list__label">{item.label}</span>
+                        </a>
+                      )}
+                    </li>
+                  );
+                })
               }
             </ul>
           </div>

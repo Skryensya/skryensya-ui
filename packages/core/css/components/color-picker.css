@@ -18,7 +18,7 @@
     --sk-color-picker-trigger-size: var(--size-control-md);
     --sk-color-picker-swatch-border-color: var(--color-border-default);
 
-    --sk-color-picker-content-bg: color-mix(in oklch, var(--color-bg-surface-raised) 92%, var(--color-action-accent) 8%);
+    --sk-color-picker-content-bg: color-mix(in oklch, var(--color-bg-surface-overlay) 92%, var(--color-action-accent) 8%);
     --sk-color-picker-content-border-color: color-mix(in oklch, var(--color-border-subtle) 70%, var(--color-action-accent) 30%);
     --sk-color-picker-content-radius: var(--radius-surface);
     --sk-color-picker-content-inline-size: 18rem;
@@ -117,7 +117,7 @@
   /* ── THE PANEL, redeclared on the positioner: React portals it to the body, so nothing here
    * reaches it by inheritance from `.sk-color-picker` (same note as `date-picker.css`'s own). ── */
   .sk-color-picker__positioner {
-    --sk-color-picker-content-bg: color-mix(in oklch, var(--color-bg-surface-raised) 92%, var(--color-action-accent) 8%);
+    --sk-color-picker-content-bg: color-mix(in oklch, var(--color-bg-surface-overlay) 92%, var(--color-action-accent) 8%);
     --sk-color-picker-content-border-color: color-mix(in oklch, var(--color-border-subtle) 70%, var(--color-action-accent) 30%);
     --sk-color-picker-content-radius: var(--radius-surface);
     --sk-color-picker-content-inline-size: 18rem;
@@ -141,12 +141,15 @@
     border: 1px solid var(--sk-color-picker-content-border-color);
     border-radius: var(--sk-color-picker-content-radius);
     background:
-      linear-gradient(180deg, color-mix(in oklch, var(--color-bg-surface-raised) 98%, white 2%), var(--sk-color-picker-content-bg)),
+      linear-gradient(180deg, color-mix(in oklch, var(--color-bg-surface-overlay) 98%, white 2%), var(--sk-color-picker-content-bg)),
       var(--sk-color-picker-content-bg);
+    /* The rim-light inset stays hand-authored (a highlight, not a shadow); the ambient shadow used
+     * to be `-raised` PLUS an extra hand-tuned layer compensating for feeling under-elevated. Its
+     * own standalone panel, same tier as DatePicker/Popover: `--elevation-overlay` alone now
+     * covers what that extra layer was reaching for. See /elevacion. */
     box-shadow:
       inset 0 1px 0 color-mix(in oklch, white 14%, transparent),
-      0 18px 44px rgb(0 0 0 / 28%),
-      var(--elevation-raised);
+      var(--elevation-overlay);
     outline: none;
   }
   .sk-color-picker__content[data-state="open"] {

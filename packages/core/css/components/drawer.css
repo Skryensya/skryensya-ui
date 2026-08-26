@@ -15,7 +15,9 @@
 @layer components {
   .sk-drawer {
     --sk-drawer-inline-size: min(20rem, 85dvw);
-    --sk-drawer-bg: var(--color-bg-surface);
+    /* Same reasoning as Dialog's own: the modal tier gets this system's lightest surface tint,
+     * not the base surface it used to share with the page it blocks. See /elevacion. */
+    --sk-drawer-bg: var(--color-bg-surface-overlay);
     --sk-drawer-fg: var(--color-text-primary);
     --sk-drawer-border-color: var(--color-border-subtle);
     --sk-drawer-border-width: 1px;

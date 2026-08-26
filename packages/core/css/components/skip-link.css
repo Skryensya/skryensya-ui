@@ -34,7 +34,7 @@
    * consumer nothing and says why it is there.
    */
   a.sk-skip-link {
-    --sk-skip-link-bg: var(--color-bg-surface-raised);
+    --sk-skip-link-bg: var(--color-bg-surface-overlay);
     --sk-skip-link-fg: var(--color-text-primary);
     --sk-skip-link-border-color: var(--color-border-subtle);
     --sk-skip-link-radius: var(--radius-control);
@@ -46,7 +46,10 @@
      * interrupts, and pinning it against the edge reads as a browser affordance rather than as part
      * of the page. */
     --sk-skip-link-offset: var(--space-inset-sm);
-    --sk-skip-link-shadow: var(--elevation-raised);
+    /* Sits above the top layer's own popovers/dialogs (see the z-index note below): the single
+     * most-elevated floating surface short of a blocking modal. `--elevation-overlay`, not
+     * `-raised`. See /elevacion. */
+    --sk-skip-link-shadow: var(--elevation-overlay);
     /*
      * ABOVE EVERYTHING THE PAGE CAN PIN. A skip link that appears UNDER the sticky header it exists
      * to skip is a link the reader cannot read, and the failure is invisible to whoever authored the

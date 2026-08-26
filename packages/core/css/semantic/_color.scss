@@ -3,6 +3,26 @@
     --color-bg-canvas: light-dark(var(--palette-stone-100), var(--palette-stone-950));
     --color-bg-surface: light-dark(var(--palette-white), var(--palette-stone-900));
     --color-bg-surface-raised: light-dark(var(--palette-white), var(--palette-stone-800));
+    /*
+     * ONE more step past `-raised`, shared by BOTH the overlay and modal elevation tiers. A shadow
+     * alone barely reads against an already-dark canvas (a light source has to fall on something
+     * for a shadow to exist at all); Material's own dark-theme answer is a lighter surface standing
+     * in for that light source, the same principle `-raised` already applies once here. It cannot
+     * go a second, DISTINCT step further for `modal`: `contrast-pairs.json` requires every text
+     * token, `-tertiary` included, to clear 4.5:1 on every everyday surface, and that a designer
+     * never has to check a pairing is a stronger promise than Material makes for itself. Measured
+     * (`--color-text-tertiary` is the tightest pair): `-tertiary` drops under 4.5:1 past ~L 33.5%,
+     * `-raised` already sits at L 26.8%, leaving ~6-7 points of headroom - not two more visibly
+     * distinct rungs, one. `color-mix()` of the two flanking palette stops (not a third named
+     * stone-* stop) lands inside that headroom with a safety margin: measured 4.76:1, not 4.59:1
+     * riding the ceiling. Light mode needs none of this: white cannot get lighter, and a dark
+     * shadow on a light surface already reads on its own, so all rungs collapse to the same white a
+     * reader never notices doesn't move.
+     */
+    --color-bg-surface-overlay: light-dark(
+      var(--palette-white),
+      color-mix(in oklch, var(--palette-stone-800) 65%, var(--palette-stone-700) 35%)
+    );
     --color-bg-surface-sunken: light-dark(var(--palette-stone-200), var(--palette-stone-950));
     --color-bg-well: light-dark(var(--palette-stone-300), var(--palette-black));
     --color-bg-inverse: light-dark(var(--palette-stone-900), var(--palette-stone-100));

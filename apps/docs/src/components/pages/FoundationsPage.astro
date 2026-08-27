@@ -1,0 +1,32 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getLocale, useTranslations } from "../../i18n";
+import { getNavigation } from "../../lib/navigation";
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+const foundationsSection = getNavigation(locale).find((section) => section.id === "foundations");
+if (!foundationsSection) throw new Error("Missing foundations navigation section");
+---
+
+<Base title={t("foundationsPage.title")} description={t("foundationsPage.description")} documentLayout="grid">
+  <h1>{t("foundationsPage.title")}</h1>
+  <p class="lede">{t("foundationsPage.lede")}</p>
+
+  <h2>{t("foundationsPage.listTitle")}</h2>
+  {
+    foundationsSection.groups.map((group) => (
+      <section aria-labelledby={`foundation-${group.group.toLowerCase().replace(/\s+/g, "-")}`}>
+        <h3 id={`foundation-${group.group.toLowerCase().replace(/\s+/g, "-")}`}>{group.group}</h3>
+        {group.blurb && <p>{group.blurb}</p>}
+        <ul>
+          {group.items.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</Base>

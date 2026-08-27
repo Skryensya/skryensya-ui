@@ -99,6 +99,11 @@
       "types": "./src/changelog.ts",
       "default": "./src/changelog.ts"
     },
+    "./chart": {
+      "types": "./src/chart.ts",
+      "import": "./src/chart.ts",
+      "default": "./src/chart.ts"
+    },
     "./button": {
       "types": "./src/button.ts",
       "default": "./src/button.ts"
@@ -447,7 +452,6 @@
     "@zag-js/collapsible": "^1.43.3",
     "@zag-js/color-picker": "^1.43.3",
     "@zag-js/combobox": "^1.43.3",
-    "@zag-js/core": "^1.43.3",
     "@zag-js/date-picker": "^1.43.3",
     "@zag-js/file-upload": "^1.43.3",
     "@zag-js/menu": "^1.43.3",

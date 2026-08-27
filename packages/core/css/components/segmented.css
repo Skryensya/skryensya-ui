@@ -1,41 +1,39 @@
 /*
  * TIER 3, SEGMENTED CONTROL
  *
- * The track reads as ONE CONTROL AT BUTTON WEIGHT. Same fill and same border strength as the
- * `.sk-button` it sits beside: not as a recessed well. It used to paint `--color-bg-surface-sunken`
- * behind `--color-border-subtle` on the theory that a sunken track frames its options without
- * turning them into a row of buttons. Measured side by side with the button next to it
- * (component-preview's own header is where both live), that theory cost more than it bought: the
- * grey well plus a border a reader can barely find made the whole control read lighter and muddier
- * than every neighbour, closer to a disabled surface than to something you press. `component-preview.css`
- * had already been overriding both hooks back to these values for exactly that reason, in a local
- * rule with the note "so the two Segmented toggles read as the same weight of control as the button
- * sitting next to them, not a lighter one". One consumer quietly fixing the component for itself
- * while every other consumer kept the lighter version. That override is gone; this IS the look now.
+ * The track is `sunken` (see /elevacion) and the selected thumb is `raised`: a groove with a chip
+ * sitting inside it, not one flat plane. This reverses an earlier measured finding recorded here at
+ * length - a sunken track next to a button "read lighter and muddier... closer to a disabled surface
+ * than to something you press" - but that measurement was taken with a thumb that had NO elevation of
+ * its own ("a simulated bevel/lift here read as a stray light source inside a track that itself has
+ * none"). A track with no light-direction of its own and a thumb with none either is exactly the
+ * muddy, undifferentiated case that finding describes. Give the track a real recess
+ * (`--elevation-sunken`) and the thumb a real lift (`--elevation-raised`) together, and the "stray
+ * light source" objection disappears: the track now HAS a light direction, so the thumb lifting out
+ * of it is coherent, the same physical pairing Box/Hero's own sunken and raised already are on their
+ * own, just nested in one control instead of two.
  *
- * The framing job the well used to do is already covered twice over, which is why nothing is lost by
- * dropping it: the track keeps its own 1px border and its inset padding, so the options are still
- * visibly held inside something, and the selected thumb is what separates "a segmented control" from
- * "a row of buttons". A row of buttons has no single moving indicator.
+ * The framing job the well does is not the ONLY thing holding the options together: the track keeps
+ * its own 1px border and its inset padding on top of the recess, so the options are still visibly
+ * held inside something even before the thumb slides under one of them, and the selected thumb is
+ * still what separates "a segmented control" from "a row of buttons" - a row of buttons has no
+ * single moving indicator.
  *
- * Selection is a FLAT THUMB with a quiet accent tint and a 1px accent ring, not a brand chip:
- * full accent-subtle fill made every instance look like a marketing toggle, and no elevation
- * shadow on the thumb, since a simulated bevel/lift here read as a stray light source inside a
- * track that itself has none. The ring earns its keep on the tint alone: `--color-bg-accent-subtle`
- * in light mode is nearly as pale as the track behind it, so a fill-only pill all but vanished. The
- * ring is a flat outline, not a substitute shadow, and stays the same weight in both schemes. That
- * is MORE true against the lighter track above, not less, which is why the ring is what makes this
- * change safe: the thumb's edge never depended on the well's own darkness to be found.
+ * Selection is the thumb: a quiet accent tint, a 1px accent ring, AND now `--elevation-raised`. The
+ * ring stays for the same reason it always did - `--color-bg-accent-subtle` in light mode is nearly
+ * as pale as the track behind it, so a fill-only pill still needs a definite edge the tint alone does
+ * not give it - but it is reinforcement now, not the thumb's only separation from its groove: the
+ * shadow is real elevation, not a substitute for one.
  * Hover, focus and press come exclusively from the shared state layer; the selected rung of that
  * layer is muted, the thumb already is the indicator. The checked ARIA state drives both the
  * visual selection and the accessibility tree.
  */
 @layer components {
   .sk-segmented {
-    /* Both read the same tokens `.sk-button`'s own neutral variant does (`button.css`), which is the
-     * whole point: sitting in a row with one, the two now carry identical fill and identical border
-     * strength. See this file's own header for what these replaced and why. */
-    --sk-segmented-bg: var(--color-action-neutral);
+    /* The groove: `sunken`, see this file's own header for the earlier finding this reverses and
+     * why pairing it with a raised thumb (below) is what actually answers that finding. */
+    --sk-segmented-bg: var(--color-bg-surface-sunken);
+    --sk-segmented-shadow: var(--elevation-sunken);
     --sk-segmented-border-color: var(--color-border-default);
     /* Matches .sk-button's own hook, `--radius-control`, not `--radius-surface`: the track sits
      * next to buttons (component-preview's header, personalizar's dashboard actions row) and reads
@@ -51,13 +49,12 @@
     --sk-segmented-selected-fg: var(--color-text-accent);
     --sk-segmented-option-fg: var(--color-text-secondary);
     --sk-segmented-border-width: 1px;
-    /* The tint alone (accent-subtle mixed into raised) isn't enough to read as selected: in light
-     * mode --color-bg-accent-subtle is nearly as pale as the track it sits on (a ~1% L difference
-     * with barely any chroma), so the pill all but disappeared once its elevation shadow was
-     * removed. A 1px accent ring gives the selected state a definite edge without simulating a
-     * light source. A flat outline, not a bevel. Load-bearing in both directions: it is also what
-     * keeps the thumb findable now that the track is lighter rather than sunken. */
+    /* The ring is reinforcement now, not the thumb's only edge: `--elevation-raised` (below) is the
+     * real lift, the ring just keeps the tint (accent-subtle mixed into raised, nearly as pale as
+     * the track in light mode, a ~1% L difference with barely any chroma) from being the only thing
+     * saying "selected" when chroma alone is this close. */
     --sk-segmented-selected-ring: inset 0 0 0 1px var(--color-border-accent);
+    --sk-segmented-selected-elevation: var(--elevation-raised);
 
     /*
      * The TRACK, not the option, is what has to read as "the same size as a sm button": a reader
@@ -79,6 +76,7 @@
     border: var(--sk-segmented-border-width) solid var(--sk-segmented-border-color);
     border-radius: var(--sk-segmented-radius);
     background: var(--sk-segmented-bg);
+    box-shadow: var(--sk-segmented-shadow);
   }
   .sk-segmented__indicator {
     position: absolute;
@@ -90,7 +88,7 @@
     block-size: 0;
     border-radius: max(0px, calc(var(--sk-segmented-radius) - var(--sk-segmented-padding)));
     background: var(--sk-segmented-selected-bg);
-    box-shadow: var(--sk-segmented-selected-ring);
+    box-shadow: var(--sk-segmented-selected-ring), var(--sk-segmented-selected-elevation);
     pointer-events: none;
     transform: translate3d(0, 0, 0);
     visibility: hidden;
@@ -198,7 +196,7 @@
   .sk-segmented__option[aria-checked="true"] {
     background: var(--sk-segmented-selected-bg);
     color: var(--sk-segmented-selected-fg);
-    box-shadow: var(--sk-segmented-selected-ring);
+    box-shadow: var(--sk-segmented-selected-ring), var(--sk-segmented-selected-elevation);
   }
   .sk-segmented__option:disabled {
     background: transparent;

@@ -11,21 +11,7 @@ const t = useTranslations(getLocale(Astro.url));
 
 const import_ = `@import "@skryensya/core/patterns/splitter.css";`;
 
-/*
- * Hardcoded, not pulled from lib/tokens.ts's corpus: `--sk-splitter-*` is declared here in
- * patterns/splitter.css AND redeclared as an override inside components/sidebar.css (its resize
- * handle's own hook). The corpus dedupes by name, first file wins, and `components/` sorts before
- * `patterns/`: so every one of these four would attribute to sidebar.css instead, and Used.astro's
- * probe would read them off a bare `.sk-sidebar`, not `.sk-splitter`. Wrong file, wrong value.
- */
-const hooks = [
-  ["--sk-splitter-hit", "var(--space-inset-sm)", "Ancho de la zona de agarre; el hairline vive adentro, más angosto."],
-  ["--sk-splitter-line", "2px", "Grosor del hairline visible."],
-  ["--sk-splitter-color", "var(--color-border-strong)", "Color del hairline en hover."],
-  ["--sk-splitter-active-color", "var(--color-border-accent)", "Color del hairline en foco o mientras se arrastra."],
-] as const;
-
-const handleHtml = `<!-- Sidebar: pinza UN valor contra un límite fijo -->
+const handleHtml = `<!-- Sidebar: un valor contra un límite fijo. -->
 <div
   class="sk-sidebar__resize-handle sk-splitter"
   role="separator"
@@ -37,7 +23,7 @@ const handleHtml = `<!-- Sidebar: pinza UN valor contra un límite fijo -->
   tabindex="0"
 ></div>`;
 
-const columnHtml = `<!-- Table / Treegrid: redistribuye entre un PAR de columnas vecinas -->
+const columnHtml = `<!-- Table y Treegrid: un par de columnas vecinas. -->
 <th>
   Nombre
   <div
@@ -53,80 +39,83 @@ const columnHtml = `<!-- Table / Treegrid: redistribuye entre un PAR de columnas
 </th>`;
 
 const keyboard = [
-  ["←", "Un paso (16px por defecto) hacia el borde de inicio."],
+  ["←", "Un paso hacia el borde de inicio."],
   ["→", "Un paso hacia el borde de fin."],
-  ["Shift + ←/→", "Paso grueso (64px por defecto): la misma tecla, cuatro veces más lejos."],
-  ["Home", "Salta al mínimo de su recorrido."],
-  ["End", "Salta al máximo de su recorrido."],
-  ["Enter", "Resetea al valor por defecto. Por convención, doble clic hace lo mismo."],
+  ["Shift + ←/→", "Un paso grueso."],
+  ["Home", "Salta al mínimo del recorrido."],
+  ["End", "Salta al máximo del recorrido."],
+  ["Enter", "Resetea al valor por defecto."],
 ];
+
+const hooks = [
+  ["--sk-splitter-hit", "var(--space-inset-sm)", "Zona de agarre; el hairline visible vive dentro."],
+  ["--sk-splitter-line", "2px", "Grosor del hairline visible."],
+  ["--sk-splitter-color", "var(--color-border-strong)", "Color en hover."],
+  ["--sk-splitter-active-color", "var(--color-border-accent)", "Color en foco o drag."],
+] as const;
 ---
 
 <Base
   title="Splitter"
   documentLayout="grid"
-  description="El separador de arrastre compartido: role=separator, un modelo de valor por consumidor, la misma franja visual en Sidebar, Table y Treegrid."
+  description="Pattern de separator redimensionable compartido por Sidebar, Table y Treegrid."
 >
   <h1>Splitter</h1>
   <p class="lede">
-    El patrón <strong>Window Splitter</strong> de WAI-ARIA: una franja delgada, arrastrable con
-    puntero o teclado, que redimensiona lo que tiene al lado. <code>Sidebar</code> lo usa para su
-    ancho de panel; <code>Table</code> y <code>Treegrid</code> lo usan entre cada par de columnas.
-    Los tres comparten un solo primitivo: <code>@skryensya/core/splitter.ts</code> para el
-    comportamiento, <code>.sk-splitter</code> para la franja visual: en vez de reimplementar
-    arrastre y teclado cada vez.
+    <strong>Splitter es un Pattern</strong>: un separator redimensionable que Sidebar, Table y
+    Treegrid consumen sin reimplementar puntero, teclado ni franja visual. El Pattern entrega el
+    gesto y la clase <code>sk-splitter</code>; cada consumidor decide qué tamaño cambia.
   </p>
 
-  <h2>Un primitivo, dos modelos de valor</h2>
+  <h2>Consumidores</h2>
   <p>
-    Ambos son "un splitter", pero mueven cantidades distintas. El primitivo se queda ignorante de
-    cuál: solo devuelve un <code>delta</code> (o una intención <code>home</code>/<code>end</code>/
-    <code>reset</code>) y deja que quien lo consume decida qué significa "moverlo".
+    Sidebar cambia un ancho único. Table y Treegrid redistribuyen un par de columnas vecinas. Esa
+    diferencia queda fuera del Pattern: el módulo compartido emite delta, <code>home</code>,
+    <code>end</code> o <code>reset</code>, y el consumidor aplica su aritmética.
   </p>
   <div class="sk-table-scroll">
     <table class="sk-table">
       <thead class="sk-table__head">
         <tr class="sk-table__row">
           <th class="sk-table__header">Consumidor</th>
-          <th class="sk-table__header">Qué mueve</th>
-          <th class="sk-table__header">Aritmética</th>
+          <th class="sk-table__header">Qué redimensiona</th>
+          <th class="sk-table__header">Contrato local</th>
         </tr>
       </thead>
       <tbody class="sk-table__body">
         <tr class="sk-table__row">
-          <td class="sk-table__cell"><strong>Sidebar</strong></td>
-          <td class="sk-table__cell">Un valor único contra un límite fijo</td>
-          <td class="sk-table__cell">
-            <code>clamp()</code> en CSS: no hay "otro panel" con el que conservar un ancho total.
-          </td>
+          <td class="sk-table__cell"><a href="/componentes/sidebar">Sidebar</a></td>
+          <td class="sk-table__cell">ancho del panel</td>
+          <td class="sk-table__cell"><code>clamp()</code> contra mínimos y máximos.</td>
         </tr>
         <tr class="sk-table__row">
-          <td class="sk-table__cell"><strong>Table / Treegrid</strong></td>
-          <td class="sk-table__cell">Un par de columnas vecinas</td>
-          <td class="sk-table__cell">
-            <code>resolveColumnResize</code>: la suma del par se mantiene fija, así que ninguna
-            otra columna se mueve.
-          </td>
+          <td class="sk-table__cell"><a href="/componentes/table">Table</a></td>
+          <td class="sk-table__cell">dos columnas vecinas</td>
+          <td class="sk-table__cell"><code>resizableColumns</code> + <code>resizeLabel</code>.</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><a href="/componentes/treegrid">Treegrid</a></td>
+          <td class="sk-table__cell">dos columnas vecinas</td>
+          <td class="sk-table__cell"><code>columnWeights</code> define el reparto inicial.</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <h2>Marca el separador</h2>
+  <h2>Mecanismo</h2>
   <p>
-    <code>.sk-splitter</code> solo dibuja la franja: tamaño, posición, cursor, color en
-    hover/focus/drag. No sabe qué redimensiona. El bloque contenedor lo da el consumidor
-    (Sidebar la flota contra el borde del panel; Treegrid pone una dentro de cada <code>th</code>),
-    y el binding del consumidor escribe <code>data-dragging</code> mientras dura el gesto, el
-    único estado que este archivo lee.
+    La misma anatomía llega a los tres componentes: un elemento focusable con
+    <code>role="separator"</code>, orientación, valor accesible y clase <code>sk-splitter</code>. El
+    Binding del consumidor escribe <code>data-dragging</code> mientras dura el gesto; el Pattern solo
+    cambia el styling hook visual de esa franja.
   </p>
-  <CodeBlock code={handleHtml} label="HTML · Sidebar" note="valor único, clamp en CSS" />
-  <CodeBlock code={columnHtml} label="HTML · Table / Treegrid" note="par de columnas vecinas" />
+  <CodeBlock code={handleHtml} label="HTML" note="Sidebar" />
+  <CodeBlock code={columnHtml} label="HTML" note="Table y Treegrid" />
 
   <h2>En vivo</h2>
   <p>
-    El mismo demo de <a href="/componentes/sidebar">Sidebar</a>: arrastrá el borde del panel con
-    el puntero, o enfocalo y usá las flechas.
+    El demo de <a href="/componentes/sidebar">Sidebar</a> usa este Pattern. Arrastra el borde del
+    panel con el puntero, o enfócalo y usa el teclado.
   </p>
   <ComponentPreview
     tree={sidebarResizableTree(t)}
@@ -134,7 +123,7 @@ const keyboard = [
     flush
   />
 
-  <h2>Teclado</h2>
+  <h2>Teclado y accesibilidad</h2>
   <div class="sk-table-scroll">
     <table class="sk-table">
       <thead class="sk-table__head">
@@ -155,31 +144,34 @@ const keyboard = [
       </tbody>
     </table>
   </div>
-
-  <h2>Accesibilidad</h2>
   <ul>
     <li>
-      <code>role="separator"</code> + <code>aria-orientation</code> lo identifican como el patrón
-      Window Splitter, no como un <code>slider</code> ni un <code>scrollbar</code>.
+      <code>role="separator"</code> y <code>aria-orientation</code> lo exponen como Window Splitter,
+      no como slider ni scrollbar.
     </li>
     <li>
-      <code>aria-valuemin</code>/<code>aria-valuemax</code>/<code>aria-valuenow</code> reportan la
-      posición como porcentaje de su propio recorrido (<code>splitterValuePercent</code>), nunca un
-      píxel crudo: un lector de pantalla no aprende nada de una cifra sin el rango que la enmarca.
+      <code>aria-valuemin</code>, <code>aria-valuemax</code> y <code>aria-valuenow</code> reportan
+      porcentaje del recorrido, no píxeles sueltos.
     </li>
     <li>
-      <code>aria-label</code> es obligatorio, no opcional: el separador lo inserta el binding, nunca
-      lo autora el consumidor, así que nada más lo nombra para un lector de pantalla. El gate de
-      accesibilidad del contrato (<code>resizeLabel</code> en Table/Treegrid) lo exige.
+      <code>aria-label</code> lo aporta el consumidor: “Redimensionar panel” en Sidebar,
+      “Redimensionar columna Nombre” en Table y Treegrid.
     </li>
     <li>
-      El anillo de foco es <code>inset</code>: un handle al ras del borde de su contenedor tendría
-      el outline dibujado afuera, recortado por el <code>overflow: hidden</code> de ese contenedor
-      (el caso de Sidebar). Inset funciona sin que el patrón necesite saber si el consumidor recorta.
+      El foco es inset para no quedar recortado por contenedores con <code>overflow: hidden</code>.
+    </li>
+  </ul>
+
+  <h2>Compatibilidad y fallback</h2>
+  <ul>
+    <li>Si no hay puntero, el teclado mantiene el mismo recorrido.</li>
+    <li>
+      En <code>forced-colors</code>, la franja usa <code>CanvasText</code> para no depender de alpha
+      ni del State layer.
     </li>
     <li>
-      En <code>forced-colors</code>, la franja se dibuja con <code>CanvasText</code>: el state layer
-      y el acento desaparecen ahí, así que el borde necesita existir como borde real.
+      El Pattern no decide persistencia, mínimos ni redistribución. Si el consumidor no define esos
+      límites, el separator no tiene un tamaño seguro que aplicar.
     </li>
   </ul>
 
@@ -191,9 +183,9 @@ const keyboard = [
     <table class="sk-table">
       <thead class="sk-table__head">
         <tr class="sk-table__row">
-          <th class="sk-table__header">Hook</th>
-          <th class="sk-table__header">Valor por defecto</th>
-          <th class="sk-table__header">Qué controla</th>
+          <th class="sk-table__header">styling hook</th>
+          <th class="sk-table__header">Valor</th>
+          <th class="sk-table__header">Controla</th>
         </tr>
       </thead>
       <tbody class="sk-table__body">
@@ -210,15 +202,7 @@ const keyboard = [
     </table>
   </div>
   <p>
-    Sidebar re-declara estos cuatro contra su propio <code>--sk-sidebar-resize-*</code> (ver
-    <a href="/componentes/sidebar">Sidebar</a>), la misma forma en que cualquier host re-declara un
-    hook de pattern sin tocar su markup.
+    Sidebar re-declara estos styling hooks contra <code>--sk-sidebar-resize-*</code>. Table y
+    Treegrid los consumen desde su resizer de columna sin cambiar el Markup contract del Pattern.
   </p>
-
-  <h2>Dónde vive</h2>
-  <ul>
-    <li><a href="/componentes/sidebar">Sidebar</a>: <code>SidebarResizeHandle</code>, valor único.</li>
-    <li><a href="/componentes/table">Table</a>: <code>resizableColumns</code>/<code>resizeLabel</code>, opt-in.</li>
-    <li><a href="/componentes/treegrid">Treegrid</a>: mismo par <code>resizableColumns</code>/<code>resizeLabel</code>, más <code>columnWeights</code> para el reparto inicial.</li>
-  </ul>
 </Base>

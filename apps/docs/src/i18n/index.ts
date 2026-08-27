@@ -96,6 +96,7 @@ const routeSegments: Record<string, Partial<Record<Locale, string>>> = {
   elevacion: { en: "elevation" },
   gradientes: { en: "gradients" },
   iconos: { en: "icons" },
+  fundamentos: { en: "foundations" },
   instalacion: { en: "installation" },
   prerrequisitos: { en: "prerequisites" },
   teclado: { en: "keyboard" },

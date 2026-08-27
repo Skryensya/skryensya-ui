@@ -1,30 +1,195 @@
-/* Las cuatro sombras nombradas del sistema, pintadas sobre un Box real (`border: "subtle"`,
+/* Las cinco sombras nombradas del sistema, pintadas sobre un Box real (`border: "subtle"`,
    `padding: "lg"` en el árbol de la página): lo único que esta hoja fuerza es el shadow, todo lo
-   demás (relleno, borde, radio) ya lo trae `box.css`. Las cuatro comparten el mismo borde real
-   (incluida `flat`), así que el encuadre no depende de la sombra para leerse. */
+   demás (relleno, borde, radio) ya lo trae `box.css`. Las cinco comparten el mismo borde real
+   (incluida `flat`/`sunken`), así que el encuadre no depende de la sombra para leerse.
+   El FONDO también se fuerza por nivel, no solo la sombra: cada `data-level` pinta el mismo
+   `--color-bg-surface-*` que el componente real de ese nivel usaría (Box no lo hace solo porque
+   esta hoja no le pasa `surface`, ver la nota en `elevacion.astro`), si no la mitad de la escala
+   -las tres que comparten fondo con `--color-bg-surface`/`-overlay`- se leían idénticas entre sí. */
 
 .ev-swatch {
   min-block-size: 6rem;
   display: grid;
   place-items: center;
-  background: var(--color-bg-surface);
   color: var(--color-text-primary);
   font-weight: var(--font-weight-label);
   text-align: center;
 }
 
+.ev-swatch[data-level="sunken"] {
+  background: var(--color-bg-surface-sunken);
+  box-shadow: var(--elevation-sunken);
+}
+
 .ev-swatch[data-level="flat"] {
+  background: var(--color-bg-surface);
   box-shadow: var(--elevation-flat);
 }
 
 .ev-swatch[data-level="raised"] {
+  background: var(--color-bg-surface-raised);
   box-shadow: var(--elevation-raised);
 }
 
 .ev-swatch[data-level="overlay"] {
+  background: var(--color-bg-surface-overlay);
   box-shadow: var(--elevation-overlay);
 }
 
 .ev-swatch[data-level="modal"] {
+  /* Comparte fondo con `overlay`, a propósito: ver la sección de modo oscuro más abajo en la
+     página, `--color-bg-surface-overlay` es el mismo tono para los dos. */
+  background: var(--color-bg-surface-overlay);
   box-shadow: var(--elevation-modal);
+}
+
+/*
+ * ILLUSTRATIVE ONLY, below this line: a small interface fragment showing the five levels TOGETHER,
+ * in something closer to how they actually get used, instead of five isolated cells. Nothing here is
+ * a real Menu/Popover/Dialog: those need a trigger and JS state to open, which would leave this
+ * section blank on first paint, exactly what an at-a-glance illustration cannot afford. Plain boxes
+ * borrow the same `--elevation-*` those real components consume (never a hand-rolled shadow), so the
+ * WEIGHT shown here is the real one, only the interactivity is left out.
+ */
+.ev-demo {
+  position: relative;
+  min-block-size: 20rem;
+  padding: var(--space-inset-lg);
+  border-radius: var(--radius-surface);
+  background: var(--color-bg-canvas);
+}
+
+.ev-demo__tag {
+  position: absolute;
+  inset-block-start: -0.55rem;
+  inset-inline-end: var(--space-inset-sm);
+  padding: 0.05rem var(--space-inset-xs);
+  border-radius: var(--radius-pill);
+  background: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-label);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.ev-demo__toolbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-inline-sm);
+  max-inline-size: 22rem;
+  margin-block-end: var(--space-stack-lg);
+  padding: var(--space-inset-sm) var(--space-inset-md);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface-sunken);
+  box-shadow: var(--elevation-sunken);
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-body-sm);
+}
+
+.ev-demo__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-inline-lg);
+}
+
+.ev-demo__card {
+  position: relative;
+  inline-size: 16rem;
+  /* Tall enough that normal flow already clears the absolutely-positioned menu below: an absolute
+     child never grows its own container, so without this the menu's real bottom edge pokes out past
+     the row and collides with whatever comes next (the dialog card). */
+  min-block-size: 10rem;
+  padding: var(--space-inset-md);
+  border-radius: var(--radius-surface);
+  background: var(--color-bg-surface-raised);
+  box-shadow: var(--elevation-raised);
+}
+
+.ev-demo__card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-inline-sm);
+  margin-block-end: var(--space-stack-xs);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-label);
+}
+
+.ev-demo__sort {
+  padding: var(--space-inset-xs) var(--space-inset-sm);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-caption);
+}
+
+.ev-demo__card-body {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-body-sm);
+}
+
+/* Tethered: hangs off the "Ordenar" button in the header right above it, exactly the "raised vs
+   overlay" cut the section above this describes in prose. */
+.ev-demo__menu {
+  position: absolute;
+  inset-block-start: 2.75rem;
+  inset-inline-end: var(--space-inset-sm);
+  z-index: 2;
+  min-inline-size: 9rem;
+  padding: var(--space-inset-xs);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface-raised);
+  box-shadow: var(--elevation-raised);
+}
+
+.ev-demo__menu-item {
+  padding: var(--space-inset-xs) var(--space-inset-sm);
+  border-radius: var(--radius-control);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-caption);
+}
+
+/* Standalone: no trigger draws it, it just sits as its own window beside the card. */
+.ev-demo__popover {
+  position: relative;
+  inline-size: 13rem;
+  padding: var(--space-inset-md);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-surface);
+  background: var(--color-bg-surface-overlay);
+  box-shadow: var(--elevation-overlay);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-label);
+}
+
+.ev-demo__popover p {
+  margin: var(--space-stack-xs) 0 0;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-body);
+}
+
+.ev-demo__dialog {
+  position: relative;
+  margin-block-start: var(--space-stack-lg);
+  inline-size: 16rem;
+  padding: var(--space-inset-md);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-surface);
+  background: var(--color-bg-surface-overlay);
+  box-shadow: var(--elevation-modal);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-label);
+}
+
+.ev-demo__dialog p {
+  margin: var(--space-stack-xs) 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-body);
 }

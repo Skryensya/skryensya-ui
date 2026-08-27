@@ -184,15 +184,7 @@
   },
   "dependencies": {
     "@skryensya/core": "workspace:*",
-    "@zag-js/checkbox": "^1.43.3",
-    "@zag-js/collapsible": "^1.43.3",
-    "@zag-js/core": "^1.43.3",
-    "@zag-js/radio-group": "^1.43.3",
-    "@zag-js/select": "^1.43.3",
-    "@zag-js/slider": "^1.43.3",
     "@zag-js/svelte": "^1.43.3",
-    "@zag-js/tabs": "^1.43.3",
-    "@zag-js/tooltip": "1.43.3",
     "@zag-js/vanilla": "^1.43.3",
     "svelte": "^5.56.7"
   },

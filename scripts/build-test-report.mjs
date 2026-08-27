@@ -107,6 +107,8 @@ const TARGETS = [
   { pkg: "packages/react", file: "src/components/popover.test.tsx" },
   { pkg: "apps/docs", file: "src/examples/card-sources.test.ts" },
   { pkg: "apps/docs", file: "src/components/pages/CardPage.test.ts" },
+  { pkg: "apps/docs", file: "src/components/pages/ChartsPage.test.ts" },
+  { pkg: "packages/charts", file: "src/react/chart.test.tsx" },
 ];
 
 const results = {};

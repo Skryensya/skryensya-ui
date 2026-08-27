@@ -114,6 +114,7 @@
      * a header's first row would have put it rather than flush against the panel's very corner. */
     --sk-sidebar-trigger-offset-block: var(--space-inset-sm);
     --sk-sidebar-trigger-offset-inline: var(--space-inset-xs);
+    --sk-sidebar-trigger-shadow: var(--elevation-raised);
 
     --sk-sidebar-footer-fg: var(--color-text-tertiary);
     --sk-sidebar-footer-font-size: var(--font-size-caption);
@@ -390,7 +391,7 @@
     z-index: 1;
     background: var(--sk-sidebar-bg);
     border: var(--sk-sidebar-border-width) solid var(--sk-sidebar-border-color);
-    box-shadow: var(--elevation-raised);
+    box-shadow: var(--sk-sidebar-trigger-shadow);
     /*
      * Declared explicitly rather than left to ride the root's own `inline-size` transition: this
      * property is `inset-inline-start`, the root's is `inline-size`, and a percentage position

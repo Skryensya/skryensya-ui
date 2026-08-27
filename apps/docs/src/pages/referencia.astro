@@ -7,27 +7,24 @@ import TokenTable from "../components/TokenTable.astro";
 <Base
   title="Referencia de tokens"
   documentLayout="grid"
-  description="Todos los tokens del sistema: token leído del CSS en build, valor resuelto leído del navegador en vivo."
+  description="Lookup de tokens: nombre, tier, valor declarado y valor resuelto en las dimensiones activas."
 >
   <h1>Referencia de tokens</h1>
   <p class="lede">
-    Cada token en sus dos formas: el token que se escribió y el valor que resuelve ahora mismo, en las
-    dimensiones seleccionadas arriba.
+    Esta página es lookup. Sirve para encontrar un token, ver su tier y comparar el valor escrito en
+    CSS con el valor que resuelve el navegador en las dimensiones activas.
   </p>
 
   <TokenTable />
 
-  <h2>Cómo leer los tiers</h2>
+  <h2>Límites de esta vista</h2>
   <p>
-    Las referencias apuntan <strong>hacia abajo o de costado, nunca hacia arriba</strong>, y tier 3
-    no puede saltar a tier 1. Eso no es convención: el validador lo hace cumplir. Un
-    <code>--palette-*</code> dentro del CSS de un componente es la señal visible de que alguien se
-    saltó la capa semántica y rompió el modo oscuro para ese componente solo.
+    La tabla no explica la arquitectura ni reemplaza las guías. Si un token aparece como
+    <em>no resuelto en este contexto</em>, normalmente es un styling hook que solo existe dentro del
+    componente que lo declara.
   </p>
   <p>
-    Los tokens <span class="sk-badge" data-tone="success">component</span> viven en el elemento, no
-    en <code>:root</code>, por eso se resuelven contra un elemento de prueba que lleva la clase. Si
-    aparece <em>no resuelto en este contexto</em>, no es un bug: es el scoping de tier 3 mostrándose. Ese
-    token no existe hasta que un elemento opta por él.
+    Para entender la dirección de referencias, lee <a href="/tiers">Tiers</a>. Para ver qué ejes
+    cambian el valor resuelto, lee <a href="/dimensiones">Dimensiones</a>.
   </p>
 </Base>

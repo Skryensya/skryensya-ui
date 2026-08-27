@@ -94,6 +94,89 @@ export const sidebarTree = (
 });
 
 /*
+ * The floating trigger: `floating: true` lifts `SidebarTrigger` out of flow and pins it to the
+ * panel's own top-inline-end corner instead of wherever it was authored (see sidebar.ts's own
+ * comment on the option — a paint decision, not a second legal DOM parent). No `SidebarHeader` at
+ * all here, on purpose: a floating trigger is exactly the answer for a rail with no header row to
+ * put one in, and reusing `sidebarTree`'s header-hosted trigger above would not have shown that.
+ * `--elevation-raised` is what separates it from whatever content it pins over, confirmed missing
+ * a live example while auditing /elevacion's own "Dónde vive" table.
+ */
+export const sidebarFloatingTriggerTree = (
+  t: Translate,
+  hrefs: { home: string; reports: string },
+): UsageTree => ({
+  contract: "box",
+  signature: "Box",
+  attrs: { class: "app-shell" },
+  children: [
+    {
+      contract: "sidebar",
+      signature: "Sidebar",
+      options: { defaultCollapsed: false },
+      attrs: { id: "app-sidebar-floating" },
+      children: [
+        {
+          contract: "sidebar",
+          signature: "SidebarTrigger",
+          options: { label: t("demo.sidebar.collapse"), floating: true },
+          slots: {
+            icon: { contract: "icon", signature: "Icon", options: { name: "menu" } },
+          },
+        },
+        {
+          contract: "sidebar",
+          signature: "SidebarContent",
+          children: {
+            contract: "nav-list",
+            signature: "NavList",
+            attrs: { "aria-label": t("demo.sidebar.nav") },
+            children: {
+              contract: "nav-list",
+              signature: "NavListGroup",
+              slots: {
+                label: t("demo.sidebar.workspace"),
+                children: [
+                  {
+                    contract: "nav-list",
+                    signature: "NavListLink",
+                    options: { current: true, href: hrefs.home },
+                    slots: {
+                      icon: { contract: "icon", signature: "Icon", options: { name: "info" } },
+                      children: t("demo.sidebar.home"),
+                    },
+                  },
+                  {
+                    contract: "nav-list",
+                    signature: "NavListLink",
+                    options: { href: hrefs.reports },
+                    slots: {
+                      icon: { contract: "icon", signature: "Icon", options: { name: "calendar" } },
+                      trailing: "12",
+                      children: t("demo.sidebar.reports"),
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      ],
+    },
+    {
+      contract: "box",
+      signature: "Box",
+      attrs: { class: "app-shell__main" },
+      children: {
+        contract: "typography",
+        signature: "Text",
+        children: t("demo.sidebar.content"),
+      },
+    },
+  ],
+});
+
+/*
  * The resizable case, and the one that puts a TreeView in the rail.
  *
  * The pairing is the point. A tree is the guest whose right width nobody can know in advance, since

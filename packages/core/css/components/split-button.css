@@ -11,12 +11,50 @@
  */
 @layer components {
   .sk-split-button {
-    /* The hairline seam: a tint of the button's own foreground, so it reads on every variant fill
-     * without naming a color. */
-    --sk-split-button-divider-color: color-mix(in srgb, currentColor 24%, transparent);
+    /* The pill's own elevation, ONCE, here, not on either half: `box-shadow` has no per-edge
+     * variant the way `border` does (no such thing as "raised on three sides"), so a welded
+     * button that kept its own `--elevation-raised` still blurred that shadow across the seam it
+     * touches, `weldStart`/`weldEnd` only ever clear `border-radius`/`border-color`, never
+     * `box-shadow`. Confirmed live: the seam read as a stray line even after the divider color was
+     * fixed to match the border, because the artifact was never the border, it was shadow blur
+     * leaking past a corner the border-color reset never touched. One shadow around the whole
+     * outer silhouette instead - see below for where each half's own shadow goes to make room for
+     * it. */
+    --sk-split-button-shadow: var(--elevation-raised);
+
+    /* Same token `.sk-button`'s own `--sk-button-radius` defaults to: a `box-shadow` follows ITS
+     * OWN element's `border-radius`, not whatever shape its children happen to paint, so a plain
+     * rectangular wrapper cast a square-cornered shadow around two rounded buttons. Rounding the
+     * wrapper to match is what makes the outer silhouette one continuous rounded pill instead of a
+     * rounded control inside a square shadow. */
+    border-radius: var(--radius-control);
 
     display: inline-flex;
     align-items: stretch;
+    box-shadow: var(--sk-split-button-shadow);
+  }
+  /*
+   * Neither half casts its own shadow once the group above does: `:is([data-weld-start],
+   * [data-weld-end])` matches either welded edge at (0,3,0)/(0,3,1), enough to beat
+   * `.sk-button[data-variant="…"]`'s own (0,2,0) outright, the identical specificity concern the
+   * divider rule below already had to solve. A future third segment (three-way split, if this ever
+   * grows one) welds on BOTH edges at once and still matches here with no new rule.
+   */
+  .sk-split-button > .sk-button:is([data-weld-start], [data-weld-end]),
+  .sk-split-button > .sk-menu > button:is([data-weld-start], [data-weld-end]) {
+    box-shadow: none;
+  }
+  /*
+   * Pull the trailing child back by its own border width. Two adjacent flex items, each ending
+   * exactly where the next begins, can still round to different subpixels at some zoom/DPI values
+   * (each item's own fractional width rounds independently), and when that happens a hairline of
+   * whatever sits behind the control - the page, in practice always lighter than either button's
+   * fill - shows through the seam, reading as an unwanted extra border neither button actually
+   * has. Overlapping the two borders onto the SAME pixel column instead of leaving them adjacent
+   * removes the seam a subpixel rounding mismatch could ever open, rather than only making it less
+   * likely. `-1px` matches `--sk-button-border-width`; if that hook ever changes, this does too. */
+  .sk-split-button > :not(:first-child) {
+    margin-inline-start: -1px;
   }
   /*
    * Only the START edge of whichever child is NOT first carries the hairline. The seam between
@@ -37,10 +75,18 @@
    * settled on the last time this exact bug showed up.
    */
   .sk-split-button > .sk-button:not(:first-child) {
-    /* `border-inline-start-color`, a LOGICAL property, not a hardcoded physical side: it already
-     * flips to the correct edge under `dir="rtl"` on its own. The corner welding it pairs with
-     * (button.css's `weldStart`/`weldEnd`) uses the same logical family for the identical reason,
-     * so this file needs no `[dir="rtl"]` rule of its own for either concern. */
+    /* The hairline seam IS this button's own border color, declared HERE rather than on the
+     * `.sk-split-button` wrapper above: `--sk-button-border-color` is set on the button element
+     * itself (button.css), not on an ancestor, so reading it anywhere above this element would
+     * resolve to nothing. `neutral`/`subtle`/`translucent` carry a real border color there, so the
+     * divider reads as that same border continuing across the internal edge; `accent`/`danger`/
+     * `ghost` carry `transparent`, so the seam between two segments of the same solid fill
+     * disappears too - consistent with those variants never showing a border anywhere else on the
+     * control. `border-inline-start-color`, a LOGICAL property, not a hardcoded physical side: it
+     * already flips to the correct edge under `dir="rtl"` on its own. The corner welding it pairs
+     * with (button.css's `weldStart`/`weldEnd`) uses the same logical family for the identical
+     * reason, so this file needs no `[dir="rtl"]` rule of its own for either concern. */
+    --sk-split-button-divider-color: var(--sk-button-border-color);
     border-inline-start-color: var(--sk-split-button-divider-color);
   }
   /*
@@ -54,6 +100,10 @@
    * load order, no extra `.sk-button` needed here the way the rule above needed it.
    */
   .sk-split-button > .sk-menu:not(:first-child) > button {
+    /* Same reasoning as the rule above, declared again here for the same reason: this targets
+     * Menu's own trigger `<button class="sk-button">`, a DIFFERENT element than the one above, so
+     * `--sk-button-border-color` has to be read off THIS element too, not inherited from it. */
+    --sk-split-button-divider-color: var(--sk-button-border-color);
     border-inline-start-color: var(--sk-split-button-divider-color);
   }
 }

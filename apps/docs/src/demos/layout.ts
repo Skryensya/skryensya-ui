@@ -61,11 +61,16 @@ export const heroTree = (t: Translate): UsageTree => ({
   ],
 });
 
-/** Pattern 2: centered, headline and sub-line only, no action at all. */
+/**
+ * Pattern 2: centered, headline and sub-line only, no action at all. Also the one pattern in this
+ * file that asks Hero for `surface: "raised"`: every other one here leaves Hero at its transparent
+ * default, which meant nothing in the docs ever demonstrated the raised tier `--elevation-raised`
+ * actually promises (confirmed missing live while auditing /elevacion's own "Dónde vive" table).
+ */
 export const heroCenteredTree = (t: Translate): UsageTree => ({
   contract: "hero",
   signature: "Hero",
-  options: { align: "center" },
+  options: { align: "center", surface: "raised" },
   children: [
     {
       contract: "wrapper",

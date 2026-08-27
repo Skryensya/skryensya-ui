@@ -23,7 +23,7 @@ for (const entryPoint of entryPoints) {
     outfile: `dist/${entryPoint.replace(/^src\//, "").replace(/\.ts$/, ".js")}`,
     bundle: true,
     platform: "node",
-    target: "node22",
+    target: "node24",
     format: "esm",
     // The workspace is what has to be inlined, so only real npm dependencies are listed here.
     // `packages: "external"` would externalize the workspace links too, since pnpm puts them in

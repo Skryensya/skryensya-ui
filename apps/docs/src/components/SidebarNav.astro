@@ -15,6 +15,9 @@ type NavigationItem = {
   label: string;
   aliases?: readonly string[];
   todo?: boolean;
+  /** Short trailing text next to the label ("Beta", a count): `nav-list.ts`'s own `trailing` slot,
+   *  its part class (`sk-nav-list__trailing`) already styled in `patterns/nav-list.css`. */
+  trailing?: string;
 };
 
 type NavigationGroup = {
@@ -107,6 +110,13 @@ const groupsForSection = (section: NavigationSection): readonly NavigationGroup[
                     title={item.todo ? t("nav.notWritten") : undefined}
                   >
                     <span class="sk-nav-list__label">{item.label}</span>
+                    {
+                      item.trailing ? (
+                        <span class="sk-nav-list__trailing">
+                          <span class="sk-badge" data-tone="warning">{item.trailing}</span>
+                        </span>
+                      ) : null
+                    }
                   </a>
                 </li>
               ))}

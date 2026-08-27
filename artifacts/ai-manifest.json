@@ -468,6 +468,27 @@
         "version": "0.1.0-dev"
       }
     ],
+    "chart": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-08-26",
+            "en": {
+              "body": "It joins the catalogue with one signature, <code>Chart</code>, and with one decision that explains every other: <strong>the data is a list</strong>. Entries live in an <code>items</code> slot, the same one <code>Tabs</code> and <code>Segmented</code> already use for their collections, rather than in an opaque object handed to a library. That buys four things at once. Real accessibility instead of a summary: the series is a real list of real text, so a screen reader reads \"Dec, 14, Jan, 23\" off the DOM, instead of the usual <code>&lt;svg aria-label=\"a chart of contributions\"&gt;</code>, which announces that data exists and then refuses to say what it is. Bars with no engine: each entry carries its value and <code>components/chart.css</code> divides it by the series maximum to get a height, so a bar chart paints from authored markup. A renderer that is optional by construction: <code>line</code> and <code>area</code> need a path, and that really is geometry, so <code>@skryensya/charts</code> draws it as an <code>aria-hidden</code> overlay on top of this same markup; the engine is an UPGRADE to a chart that already worked, not the thing that makes it work, and swapping it can never break anyone because no consumer ever named it. And validation: an <code>items</code> slot is data the compiler checks and the MCP can compose. Options: <code>kind</code> (<code>bar</code>/<code>line</code>/<code>area</code>), <code>tone</code>, <code>height</code>, <code>labels</code>, <code>values</code>, <code>grid</code>, <code>flush</code> (for the chart that IS the bottom edge of a card), <code>format</code>, <code>currency</code>, <code>locale</code>, <code>description</code> and <code>label</code>, required: a series of numbers with nothing saying what it measures is the one chart worse than no chart. Each entry takes a <code>value</code>, its own <code>tone</code> to emphasize it against its siblings, and the <code>label</code> and <code>text</code> slots. What this contract deliberately does NOT have: a title, a subtitle, an action, or a surface of its own. Those belong to whatever contains the chart, and putting them here would have grown exactly the card-with-variants that Card refuses to be: a chart in a card is a COMPOSITION, published as a recipe.",
+              "title": "Chart is published as a contract, a series of labelled values made visible"
+            },
+            "es": {
+              "body": "Entra al catálogo con una sola signature, <code>Chart</code>, y con una decisión que explica todo lo demás: <strong>los datos son una lista</strong>. Las entradas viven en un slot <code>items</code>, el mismo que ya usan <code>Tabs</code> y <code>Segmented</code> para sus colecciones, y no en un objeto opaco que se le pasa a una librería. Eso compra cuatro cosas a la vez. Accesibilidad de verdad y no un resumen: la serie es una lista real de texto real, así que un lector de pantalla lee \"Dic, 14, Ene, 23\" desde el DOM, en lugar del <code>&lt;svg aria-label=\"gráfico de aportes\"&gt;</code> de siempre, que avisa que hay datos y después se niega a decir cuáles. Barras sin motor: cada entrada trae su valor y la hoja <code>components/chart.css</code> lo divide por el máximo de la serie para sacar la altura, así que un gráfico de barras se pinta desde markup autorado. Un renderer que es opcional por construcción: <code>line</code> y <code>area</code> necesitan un path, y eso sí es geometría, así que <code>@skryensya/charts</code> lo dibuja como un overlay <code>aria-hidden</code> encima de este mismo markup; el motor es una MEJORA de un gráfico que ya funcionaba, no lo que lo hace funcionar, y cambiarlo nunca puede romper a nadie porque ningún consumidor lo nombró. Y validación: un slot <code>items</code> es data que el compilador revisa y que la MCP puede componer. Opciones: <code>kind</code> (<code>bar</code>/<code>line</code>/<code>area</code>), <code>tone</code>, <code>height</code>, <code>labels</code>, <code>values</code>, <code>grid</code>, <code>flush</code> (para el gráfico que ES el borde inferior de una card), <code>format</code>, <code>currency</code>, <code>locale</code>, <code>description</code> y <code>label</code>, requerida: una serie de números sin nada que diga qué miden es el único gráfico peor que ningún gráfico. Cada entrada toma <code>value</code>, un <code>tone</code> propio para destacarla contra sus hermanas, y los slots <code>label</code> y <code>text</code>. Lo que este contrato deliberadamente NO tiene: título, subtítulo, acción ni superficie propia. Todo eso es de lo que contenga al gráfico, y ponerlo acá habría hecho crecer exactamente la card con variantes que Card se niega a ser: un gráfico dentro de una card es una COMPOSICIÓN, publicada como recipe.",
+              "title": "Chart se publica como contrato, una serie de valores con nombre hecha visible"
+            },
+            "kind": "feature",
+            "target": "Chart"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "checkbox": [
       {
         "date": null,
@@ -1090,6 +1111,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-08-26",
+            "en": {
+              "body": "<code>columns</code> accepts <code>\"5\"</code>, and the new <code>responsive</code> option (<code>data-responsive</code>) makes the declared number a CEILING rather than a fixed width: the grid starts at one column and adds lanes at 36rem, 52rem, 72rem and 90rem until it reaches the one that was asked for. Unlike <code>multicol</code>, these are real CSS Grid rows, so a direct child can request more than one lane with <code>data-span</code>, capped to however many lanes exist at that moment. The rule for choosing: <code>multicol</code> when every card should keep its own Pinterest-style height, <code>responsive</code> when one wide featured cell matters more than avoiding gaps under its shorter neighbours.",
+              "title": "Grid grows a fifth column and a responsive mode with featured cells"
+            },
+            "es": {
+              "body": "<code>columns</code> acepta <code>\"5\"</code>, y la opción nueva <code>responsive</code> (<code>data-responsive</code>) hace que el número declarado sea el TECHO y no el ancho fijo: la grilla arranca en una sola columna y va sumando carriles en 36rem, 52rem, 72rem y 90rem hasta llegar al que se pidió. A diferencia de <code>multicol</code>, son filas reales de CSS Grid, así que un hijo directo puede pedir más de un carril con <code>data-span</code>, acotado a los carriles que existan en ese momento. La regla para elegir: <code>multicol</code> cuando cada card deba conservar su propia altura estilo Pinterest, <code>responsive</code> cuando importe más tener una celda destacada ancha que evitar huecos bajo las vecinas más bajas.",
+              "title": "Grid agrega una quinta columna y un modo responsive con celdas destacadas"
+            },
+            "kind": "feature"
+          },
           {
             "date": "2026-08-21",
             "en": {
@@ -4529,6 +4562,278 @@
             "element": "li",
             "host": true,
             "part": "release"
+          }
+        }
+      }
+    },
+    "chart": {
+      "a11y": [
+        {
+          "because": "A chart's series is announced entry by entry, but nothing in the list says what the numbers measure. Without a name, a screen reader reads six numbers about nothing.",
+          "requiresOneOf": [
+            "label"
+          ],
+          "when": {
+            "label": "absent"
+          }
+        }
+      ],
+      "css": "@skryensya/core/components/chart.css",
+      "id": "chart",
+      "options": {
+        "currency": {
+          "attr": "data-currency",
+          "machineInput": true,
+          "type": "string"
+        },
+        "description": {
+          "attr": "data-description",
+          "type": "string"
+        },
+        "flush": {
+          "attr": "data-flush",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "format": {
+          "attr": "data-format",
+          "default": "number",
+          "type": "enum",
+          "values": [
+            "number",
+            "compact",
+            "percent",
+            "currency"
+          ]
+        },
+        "grid": {
+          "attr": "data-grid",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "height": {
+          "attr": "data-height",
+          "default": "md",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        "kind": {
+          "attr": "data-kind",
+          "default": "bar",
+          "type": "enum",
+          "values": [
+            "bar",
+            "line",
+            "area"
+          ]
+        },
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "labels": {
+          "attr": "data-labels",
+          "default": true,
+          "falseValue": "false",
+          "type": "boolean"
+        },
+        "locale": {
+          "attr": "data-locale",
+          "machineInput": true,
+          "type": "string"
+        },
+        "tone": {
+          "attr": "data-tone",
+          "default": "accent",
+          "type": "enum",
+          "values": [
+            "accent",
+            "success",
+            "warning",
+            "danger",
+            "info",
+            "neutral"
+          ]
+        },
+        "values": {
+          "attr": "data-values",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        }
+      },
+      "parts": {
+        "bar": "sk-chart__bar",
+        "caption": "sk-chart__caption",
+        "label": "sk-chart__label",
+        "overlay": "sk-chart__overlay",
+        "overlayArea": "sk-chart__area",
+        "overlayLine": "sk-chart__line",
+        "overlaySvg": "sk-chart__svg",
+        "plot": "sk-chart__plot",
+        "point": "sk-chart__point",
+        "root": "sk-chart",
+        "series": "sk-chart__series",
+        "value": "sk-chart__value"
+      },
+      "semantics": {
+        "Chart": {
+          "alternatives": [
+            "Meter",
+            "Progress",
+            "Table",
+            "Stat"
+          ],
+          "avoidWhen": [
+            "es UNA medición dentro de un rango conocido, no una serie; eso es Meter",
+            "es el avance de una tarea; eso es Progress",
+            "los valores hay que poder leerlos con precisión, compararlos fila por fila u ordenarlos; eso es una Table, y un gráfico de cinco barras es una tabla peor",
+            "la serie tiene decenas de entradas: las barras se vuelven líneas de un pixel y las etiquetas se pisan; agrupá los datos antes de dibujarlos"
+          ],
+          "useWhen": [
+            "hay una SERIE de valores con nombre y hace falta ver su forma: un total por mes, por hora, por versión",
+            "el número de una métrica ya está dicho en texto y el gráfico agrega la tendencia, no la reemplaza"
+          ]
+        }
+      },
+      "signatures": {
+        "Chart": {
+          "host": {
+            "element": "figure"
+          },
+          "intent": [
+            "series-of-labelled-values",
+            "trend-over-time",
+            "bar-chart",
+            "sparkline",
+            "dashboard-graph"
+          ],
+          "options": [
+            "kind",
+            "tone",
+            "height",
+            "labels",
+            "values",
+            "grid",
+            "flush",
+            "format",
+            "currency",
+            "locale",
+            "label",
+            "description"
+          ],
+          "react": {
+            "from": "@skryensya/react/chart",
+            "name": "Chart"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "options": {
+                  "tone": {
+                    "attr": "data-tone",
+                    "type": "enum",
+                    "values": [
+                      "accent",
+                      "success",
+                      "warning",
+                      "danger",
+                      "info",
+                      "neutral"
+                    ]
+                  },
+                  "value": {
+                    "attr": "data-value",
+                    "type": "number"
+                  }
+                },
+                "slots": {
+                  "label": {
+                    "accepts": "text",
+                    "required": true
+                  },
+                  "text": {
+                    "accepts": "text"
+                  }
+                }
+              },
+              "prop": "points",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "figcaption",
+                "part": "caption",
+                "textFromOption": "label",
+                "whenGiven": "label"
+              },
+              {
+                "children": [
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "element": "div",
+                    "part": "overlay"
+                  },
+                  {
+                    "attrs": {
+                      "role": "list"
+                    },
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "attrs": {
+                              "aria-hidden": "true"
+                            },
+                            "element": "span",
+                            "part": "bar"
+                          },
+                          {
+                            "element": "span",
+                            "itemSlot": "label",
+                            "part": "label"
+                          },
+                          {
+                            "element": "span",
+                            "itemSlot": "text",
+                            "part": "value"
+                          }
+                        ],
+                        "element": "li",
+                        "itemOptions": [
+                          "value",
+                          "tone"
+                        ],
+                        "part": "point",
+                        "repeat": "items"
+                      }
+                    ],
+                    "element": "ul",
+                    "part": "series"
+                  }
+                ],
+                "element": "div",
+                "part": "plot"
+              }
+            ],
+            "element": "figure",
+            "host": true,
+            "mount": "data-sk-chart",
+            "part": "root"
           }
         }
       }
@@ -8901,7 +9206,8 @@
             "1",
             "2",
             "3",
-            "4"
+            "4",
+            "5"
           ]
         },
         "densityFactor": {
@@ -8954,6 +9260,12 @@
         },
         "multicol": {
           "attr": "data-multicol",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "responsive": {
+          "attr": "data-responsive",
           "default": false,
           "trueValue": "",
           "type": "boolean"
@@ -9087,7 +9399,8 @@
           "options": [
             "gap",
             "columns",
-            "multicol"
+            "multicol",
+            "responsive"
           ],
           "react": {
             "from": "@skryensya/react/layout",
@@ -18191,5 +18504,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "a440aba9248cb713"
+  "sourceHash": "3002aa43f8674f86"
 }

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@skryensya/ai-compiler": "workspace:*",
+    "@skryensya/charts": "workspace:*",
     "@skryensya/core": "workspace:*",
     "@skryensya/icons-lucide": "workspace:*",
     "@skryensya/icons-material": "workspace:*",
@@ -19,7 +20,7 @@
     "@skryensya/react": "workspace:*",
     "@skryensya/recipes": "workspace:*",
     "@skryensya/vanilla": "workspace:*",
-    "@zag-js/react": "^1.43.3",
+    "@tanstack/charts": "0.15.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -28,14 +29,13 @@
     "@astrojs/react": "^6.0.1",
     "@skryensya/devtools": "workspace:*",
     "@sveltejs/vite-plugin-svelte": "^7.2.0",
-    "@types/node": "^26.1.1",
+    "@types/node": "catalog:",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "astro": "^7.1.0",
     "sass": "^1.83.0",
     "svelte": "^5.56.7",
     "typescript": "^5.9.3",
-    "vite": "^8.1.5",
     "vitest": "^4.1.10"
   }
 }

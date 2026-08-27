@@ -30,6 +30,7 @@
     --sk-copy-button-feedback-radius: var(--radius-control);
     --sk-copy-button-feedback-padding: var(--space-inset-xs) var(--space-inset-sm);
     --sk-copy-button-feedback-font-size: var(--font-size-body-sm);
+    --sk-copy-button-feedback-shadow: var(--elevation-raised);
   }
 
   /*
@@ -96,7 +97,7 @@
     line-height: var(--font-line-height-body);
     /* Two or three words. Wrapping them would make the flag taller than the button beside it. */
     white-space: nowrap;
-    box-shadow: var(--elevation-raised);
+    box-shadow: var(--sk-copy-button-feedback-shadow);
     pointer-events: none;
 
     /* Closed is the resting state, and the ABSENCE of `data-state` counts as closed: before the

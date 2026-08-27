@@ -8,3 +8,8 @@ packages:
   - "contracts/snippets"
   # Same reason: the evals runner imports the corpus as a module, not a directory of loose files.
   - "evals"
+
+# One Node types package for the whole workspace. Major matches the runtime (Node 24 LTS), not
+# @types/node 26, which describes APIs this repo does not run.
+catalog:
+  "@types/node": "^24.13.3"

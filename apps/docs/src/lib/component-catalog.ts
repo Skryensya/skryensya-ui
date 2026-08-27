@@ -48,6 +48,10 @@ const componentDescriptions = {
     es: "Recorre colecciones visuales horizontales mediante pasos definidos.",
     en: "Browses visual collections horizontally in discrete steps.",
   },
+  "/componentes/charts": {
+    es: "Visualiza una serie de valores con nombre. Las barras están en Core; línea y área son opcionales.",
+    en: "Visualizes a series of labelled values. Bars live in Core; line and area are optional.",
+  },
   "/componentes/checkbox": {
     es: "Permite marcar una o varias opciones independientes en un formulario.",
     en: "Lets people select one or more independent form choices.",

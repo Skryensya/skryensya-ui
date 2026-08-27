@@ -15,6 +15,13 @@ export type NavigationItem = {
    * once it has shipped as settled.
    */
   status?: ComponentStatus;
+  /**
+   * Short trailing text next to the label, the same word `nav-list.ts`'s own `trailing` slot uses
+   * ("a count, a badge"). Not `status`: that field is a maturity axis nothing downstream renders
+   * yet, and wiring it up now would light up every "wip" entry in the catalog at once, not just the
+   * one page asking for a callout. This is deliberately per-entry and opt-in instead.
+   */
+  trailing?: string;
 };
 
 /** `item.status`, defaulted: every catalog entry reads "wip" until deliberately marked "stable". */
@@ -44,7 +51,7 @@ export type NavigationSection = {
   groups: readonly NavigationGroup[];
 };
 
-export type NavigationSectionId = "start" | "system" | "components";
+export type NavigationSectionId = "start" | "foundations" | "components";
 
 /** Component inventory. The catalog groups this single source by task below. */
 const componentItems = [
@@ -119,6 +126,32 @@ const componentItems = [
       "scrollable sections",
       "scroll-button",
       "scroll-marker",
+    ],
+  },
+  {
+    href: "/componentes/charts",
+    label: "Charts",
+    trailing: "Beta",
+    aliases: [
+      "chart",
+      "charts",
+      "gráfico",
+      "grafico",
+      "gráficos",
+      "graficos",
+      "gráfica",
+      "grafica",
+      "visualización de datos",
+      "visualizacion de datos",
+      "data viz",
+      "barras",
+      "bar chart",
+      "líneas",
+      "lineas",
+      "line chart",
+      "área",
+      "area chart",
+      "tanstack charts",
     ],
   },
   {
@@ -576,6 +609,7 @@ export const componentNavigation = [
       "/componentes/card",
       "/componentes/carousel",
       "/componentes/changelog",
+      "/componentes/charts",
       "/componentes/code-preview",
       "/componentes/component-preview",
       "/componentes/data-grid",
@@ -656,7 +690,8 @@ if (
  */
 export const globalNavigation = [
   { href: "/", label: "nav.home" },
-  { href: "/componentes", label: "nav.docs" },
+  { href: "/fundamentos", label: "nav.foundations" },
+  { href: "/componentes", label: "nav.components" },
   { href: "/templates", label: "nav.templates" },
   { href: "/presets", label: "nav.presets" },
 ] satisfies readonly NavigationItem[];
@@ -695,18 +730,70 @@ export const documentationNavigation = [
     ],
   },
   {
-    id: "system",
-    section: "section.system",
-    blurb: "section.system.blurb",
+    id: "foundations",
+    section: "section.foundations",
+    href: "/fundamentos",
+    blurb: "section.foundations.blurb",
     groups: [
       {
-        group: "group.foundations",
-        // Orden de lectura, no alfabético: se lee de arriba abajo y cada ítem supone el anterior.
-        // Tokens abre porque todo lo demás resuelve a tokens; los patterns van al final, ya con
-        // vocabulario para explicarse. Al agregar una página, insértala donde se entienda, no por letra.
+        group: "group.foundationModel",
+        blurb: "group.foundationModel.blurb",
         items: [
+          {
+            href: "/arquitectura",
+            label: "Arquitectura",
+            aliases: ["contrato", "binding", "capas", "cómo se construye un componente", "machine"],
+          },
+          { href: "/tiers", label: "Tiers" },
           { href: "/referencia", label: "Tokens" },
+        ],
+      },
+      {
+        group: "group.visualDimensions",
+        blurb: "group.visualDimensions.blurb",
+        items: [
           { href: "/dimensiones", label: "Dimensiones" },
+          {
+            href: "/densidad",
+            label: "Densidad de componente",
+            aliases: ["density", "densidad local", "scope de densidad", "custom density", "compactar componente"],
+          },
+          {
+            href: "/elevacion",
+            label: "Elevación",
+            aliases: [
+              "elevation",
+              "sombra",
+              "sombras",
+              "shadow",
+              "shadows",
+              "box-shadow",
+              "depth",
+              "profundidad",
+              "material elevation",
+              "z-depth",
+            ],
+          },
+          {
+            href: "/iconos",
+            label: "Iconografía",
+            aliases: ["iconos", "icon set", "roles de icono", "vocabulario de iconos", "adr-15"],
+          },
+        ],
+      },
+      {
+        group: "group.publicSurfaces",
+        blurb: "group.publicSurfaces.blurb",
+        items: [
+          { href: "/styling-hooks", label: "Styling hooks" },
+          { href: "/state-layer", label: "State layer" },
+          { href: "/motion", label: "Motion" },
+        ],
+      },
+      {
+        group: "group.platformAccessibility",
+        blurb: "group.platformAccessibility.blurb",
+        items: [
           {
             href: "/zoom",
             label: "Zoom y reflow",
@@ -737,80 +824,6 @@ export const documentationNavigation = [
             ],
           },
           {
-            href: "/densidad",
-            label: "Densidad de componente",
-            aliases: ["density", "densidad local", "scope de densidad", "custom density", "compactar componente"],
-          },
-          { href: "/tiers", label: "Tiers" },
-          {
-            href: "/arquitectura",
-            label: "Arquitectura",
-            aliases: ["contrato", "binding", "capas", "cómo se construye un componente", "machine"],
-          },
-          { href: "/styling-hooks", label: "Styling hooks" },
-          { href: "/motion", label: "Motion" },
-          {
-            href: "/elevacion",
-            label: "Elevación",
-            aliases: [
-              "elevation",
-              "sombra",
-              "sombras",
-              "shadow",
-              "shadows",
-              "box-shadow",
-              "depth",
-              "profundidad",
-              "material elevation",
-              "z-depth",
-            ],
-          },
-          {
-            href: "/gradientes",
-            label: "Gradientes",
-            aliases: [
-              "gradient",
-              "gradients",
-              "media gradient",
-              "media-gradient",
-              "contraste sobre imagen",
-              "text on image",
-              "wash",
-              "velo",
-            ],
-          },
-          {
-            href: "/transparencias",
-            label: "Transparencias",
-            aliases: [
-              "transparency",
-              "reduced transparency",
-              "prefers-reduced-transparency",
-              "blur",
-              "glassmorphism",
-              "fondos translúcidos",
-            ],
-          },
-          {
-            href: "/iconos",
-            label: "Iconografía",
-            aliases: ["iconos", "icon set", "roles de icono", "vocabulario de iconos", "adr-15"],
-          },
-          { href: "/state-layer", label: "State layer" },
-          {
-            href: "/splitter",
-            label: "Splitter",
-            aliases: [
-              "window splitter",
-              "separador",
-              "resize handle",
-              "redimensionar",
-              "resizable columns",
-              "columnas redimensionables",
-              "sk-splitter",
-            ],
-          },
-          {
             href: "/almacenamiento",
             label: "Almacenamiento",
             aliases: [
@@ -825,6 +838,12 @@ export const documentationNavigation = [
               "definepreference",
             ],
           },
+        ],
+      },
+      {
+        group: "group.sharedPatterns",
+        blurb: "group.sharedPatterns.blurb",
+        items: [
           {
             href: "/anclaje",
             label: "Anclaje",
@@ -844,14 +863,48 @@ export const documentationNavigation = [
             ],
           },
           {
-            href: "/componentes/tile",
-            label: "Tile",
-            aliases: ["tarjeta", "patrón de tarjeta", "patron de tarjeta"],
-                  },
+            href: "/splitter",
+            label: "Splitter",
+            aliases: [
+              "window splitter",
+              "separador",
+              "resize handle",
+              "redimensionar",
+              "resizable columns",
+              "columnas redimensionables",
+              "sk-splitter",
+            ],
+          },
           {
             href: "/scroll-lock",
             label: "Scroll lock",
             aliases: ["scrollbar gutter", "cls", "overflow hidden", "congelar scroll", "reserva scrollbar"],
+          },
+          {
+            href: "/gradientes",
+            label: "Media gradient",
+            aliases: [
+              "gradient",
+              "gradients",
+              "media gradient",
+              "media-gradient",
+              "contraste sobre imagen",
+              "text on image",
+              "wash",
+              "velo",
+            ],
+          },
+          {
+            href: "/transparencias",
+            label: "Transparencia",
+            aliases: [
+              "transparency",
+              "reduced transparency",
+              "prefers-reduced-transparency",
+              "blur",
+              "glassmorphism",
+              "fondos translúcidos",
+            ],
           },
         ],
       },

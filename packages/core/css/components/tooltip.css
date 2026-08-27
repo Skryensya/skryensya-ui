@@ -20,6 +20,7 @@
     --sk-tooltip-padding: var(--space-inset-sm);
     --sk-tooltip-font-size: var(--font-size-body-sm);
     --sk-tooltip-max-inline-size: 18rem;
+    --sk-tooltip-shadow: var(--elevation-raised);
     /* La distancia al trigger. Un solo hook, porque el flip cambia el LADO pero no el hueco. */
     --sk-tooltip-offset: var(--space-stack-xs);
 
@@ -80,7 +81,7 @@
     color: var(--sk-tooltip-fg, var(--color-text-inverse));
     font-size: var(--sk-tooltip-font-size, var(--font-size-body-sm));
     line-height: var(--font-line-height-body);
-    box-shadow: var(--elevation-raised);
+    box-shadow: var(--sk-tooltip-shadow, var(--elevation-raised));
     /* El texto de un tooltip es corto por definición; envolver está bien, cortar no. */
     overflow-wrap: break-word;
   }

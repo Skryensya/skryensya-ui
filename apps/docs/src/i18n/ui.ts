@@ -36,7 +36,8 @@ export const ui = {
     "nav.between": "Navegación entre documentos",
     "nav.notWritten": "Todavía no escrita",
     "nav.home": "Home",
-    "nav.docs": "Docs",
+    "nav.foundations": "Fundamentos",
+    "nav.components": "Componentes",
     "nav.presets": "Presets",
     "nav.templates": "Templates",
     "nav.comingSoon": "Próximamente",
@@ -414,7 +415,7 @@ export const ui = {
     "hero.patternPitchTitle": "Pitch con acciones",
     "hero.patternPitchDescription": "El patrón por defecto: un titular, una bajada de una línea y como mucho dos acciones.",
     "hero.patternCenteredTitle": "Centrado, minimal",
-    "hero.patternCenteredDescription": "Sólo titular y bajada, sin acción: para un hero sin vecino visual, como un portfolio.",
+    "hero.patternCenteredDescription": "Sólo titular y bajada, sin acción: para un hero sin vecino visual, como un portfolio. También el único patrón acá que pide surface=\"raised\", el nivel de elevación que le falta ejemplo en vivo.",
     "hero.patternEyebrowTitle": "Con etiqueta superior",
     "hero.patternEyebrowDescription": "Una Badge chica arriba del titular, para dar contexto antes de que el pitch aterrice.",
     "hero.patternSplitTitle": "Partido con imagen",
@@ -803,11 +804,11 @@ export const ui = {
     "demo.splitButton.dangerItem2": "Mover a la papelera",
     "demo.accordion.environment.title": "Entorno",
     "demo.accordion.environment.description": "Producción · Fráncfort",
-    "demo.accordion.environment.p1": "Node 22 corre en tres réplicas detrás del balanceador de Fráncfort. El tráfico se reparte por round-robin y una réplica se recicla sola si falla dos health checks seguidos.",
+    "demo.accordion.environment.p1": "Node 24 corre en tres réplicas detrás del balanceador de Fráncfort. El tráfico se reparte por round-robin y una réplica se recicla sola si falla dos health checks seguidos.",
     "demo.accordion.environment.p2": "Los secretos se inyectan en el arranque desde el vault regional, así que ningún valor sensible queda en la imagen ni en el log de build.",
     "demo.accordion.runtime.title": "Runtime",
     "demo.accordion.runtime.description": "Versión y región",
-    "demo.accordion.runtime.p1": "Node 22 sobre el pool compartido de Fráncfort. Cada despliegue reserva dos vCPU y 512 MB, con autoscaling hasta seis réplicas cuando la cola de peticiones supera el umbral.",
+    "demo.accordion.runtime.p1": "Node 24 sobre el pool compartido de Fráncfort. Cada despliegue reserva dos vCPU y 512 MB, con autoscaling hasta seis réplicas cuando la cola de peticiones supera el umbral.",
     "demo.accordion.runtime.p2a": "El healthcheck pega a ",
     "demo.accordion.runtime.p2code": "/status",
     "demo.accordion.runtime.p2b": " cada diez segundos; tres fallos seguidos sacan la réplica del balanceador sin cortar el tráfico en vuelo.",
@@ -1364,37 +1365,43 @@ export const ui = {
      * .astro file. Grouped here as its own block, the same shape `demo.*` already uses per demo.
      */
     "accordion.description": "Una o varias divulgaciones Tile coordinadas en un solo marco.",
-    "architecture.title": "Cómo se construyen los componentes",
+    "architecture.title": "Arquitectura del componente",
     "architecture.lede":
-      "Todos siguen el mismo modelo: una base compartida para que se vean y se comporten igual, más el binding que elegís para tu aplicación. Esta página usa Accordion como ejemplo.",
-    "architecture.layersTitle": "El modelo, en cuatro piezas",
+      "Un componente no empieza en React ni en Vanilla. Empieza en un <strong>Contract</strong> de Core, que declara qué se puede escribir, qué markup se debe producir y qué comportamiento hace falta.",
+    "architecture.layersTitle": "Las piezas que nombra el Contract",
     "architecture.layer1":
-      '<strong>Contrato.</strong> Define las partes, opciones y reglas del componente. Es el plano que comparten la documentación y todas las implementaciones.',
+      '<strong>Contract.</strong> Declara las signatures, opciones, slots, partes, atributos y accesibilidad de un componente. Core es su único autor.',
     "architecture.layer2":
-      '<strong>Estilos.</strong> Un stylesheet publicado aplica los tokens y los estados visuales. Podés ajustarlo con style hooks sin copiar el componente.',
+      '<strong>Markup contract.</strong> Es la parte del Contract que se escribe en HTML: la estructura, partes y atributos que el consumidor debe anidar correctamente.',
     "architecture.layer3":
-      '<strong>Comportamiento.</strong> Sólo los componentes interactivos agregan una máquina que gestiona estado, teclado y atributos accesibles.',
+      '<strong>Signature.</strong> Es un significado seleccionable dentro del Contract. Nombra intención y host, no apariencia; por eso una opción puede elegir una signature sin crear otro componente.',
     "architecture.layer4":
-      '<strong>Binding.</strong> Elegís cómo usarlo: HTML con Vanilla, componentes declarativos con React o sólo CSS cuando no hace falta interacción.',
-    "architecture.flowTitle": "Qué pasa cuando alguien interactúa",
+      '<strong>Binding.</strong> Realiza el mismo Contract para un camino de consumo. React expone props; Vanilla hidrata markup escrito por el consumidor. Ninguno vuelve a declarar el Contract.',
+    "architecture.layer5":
+      '<strong>Machine.</strong> Coordina estado solo cuando la plataforma no alcanza. Es interna y reemplazable; por eso las partes se nombran con BEM y no con vocabulario de la machine.',
+    "architecture.layer6":
+      '<strong>Enhancer.</strong> Es la unidad de Vanilla: encuentra una raíz escrita por el consumidor, conecta la machine y parchea atributos. No renderiza markup ni escribe clases.',
+    "architecture.flowTitle": "Qué cambia en runtime",
     "architecture.flow1":
-      '<strong>La persona actúa.</strong> Hace click, toca o usa el teclado sobre un control nativo.',
+      '<strong>El consumidor elige una signature.</strong> En React lo hace con props; en HTML lo hace escribiendo el Markup contract documentado.',
     "architecture.flow2":
-      '<strong>El componente decide.</strong> Su comportamiento aplica la regla correspondiente: abrir, seleccionar, validar o cambiar de vista.',
+      '<strong>El binding expande o hidrata.</strong> React produce la part template completa; Vanilla asume que esa estructura ya existe y la conecta.',
     "architecture.flow3":
-      '<strong>La interfaz se actualiza.</strong> El estado, los atributos accesibles y los estilos cambian juntos.',
+      '<strong>La machine actualiza estado.</strong> Solo los componentes enhanced escriben atributos de estado, foco virtual o selección; los nativos quedan a cargo del navegador.',
     "architecture.flow4":
-      '<strong>Tu aplicación se entera.</strong> React llama el callback; Vanilla emite un evento. Sólo conectás ese dato si lo necesitás.',
-    "architecture.useTitle": "Cómo elegir qué usar",
+      '<strong>Los estilos leen atributos y styling hooks.</strong> La pintura sale del CSS compartido, no de lógica duplicada por binding.',
+    "architecture.useTitle": "Límites del modelo",
     "architecture.use1":
-      '<strong>Necesitás apariencia.</strong> Importá el stylesheet del componente.',
+      '<strong>Referencia no enseña arquitectura.</strong> La pestaña Referencia de cada componente lista signatures, opciones y slots para lookup rápido.',
     "architecture.use2":
-      '<strong>Necesitás interacción en HTML.</strong> Escribí el markup del contrato y montá el enhancer Vanilla.',
+      '<strong>Un styling hook no reemplaza el Contract.</strong> Permite ajustar pintura pública; no autoriza cambiar partes, estados ni accesibilidad.',
     "architecture.use3":
-      '<strong>Usás React.</strong> Importá el componente React y pasá props; el binding resuelve el markup y el comportamiento.',
+      '<strong>Un Binding no inventa opciones.</strong> Si React o Vanilla necesita una opción nueva, se agrega al Contract o no existe.',
     "architecture.exampleTitle": "Ejemplo: Accordion",
     "architecture.exampleBody":
-      'Accordion usa las cuatro piezas: su contrato nombra raíz, item, trigger y contenido; sus estilos reutilizan Tile; su comportamiento coordina qué secciones están abiertas; y React o Vanilla te entregan el valor cuando cambia. El detalle de sus opciones está en la pestaña <strong>Referencia</strong> de cada componente, generada desde el contrato.',
+      "Accordion usa todo el modelo: su Contract declara raíz, item, trigger y contenido; su Markup contract dice cómo anidar esas partes; sus signatures separan usos de disclosure; la machine coordina qué secciones están abiertas; y React o Vanilla realizan el mismo comportamiento desde bindings distintos.",
+    "architecture.nextBody":
+      'Viene de <a href="/fundamentos">Fundamentos</a>. El siguiente corte es visual: <a href="/tiers">Tiers</a> explica cómo primitive, semantic y styling hook ordenan los tokens. Para buscar opciones puntuales, usa <a href="/referencia">Referencia</a>.',
     "accordion.intro":
       'Si el estado puede vivir en el HTML y te alcanza con un grupo exclusivo nativo, la opción más simple es {detailsLink}, al final de esta página. Elige Accordion cuando necesites valor controlado, <code>multiple</code> o escuchar los cambios de estado.',
     "accordion.detailsNativoLabel": "Details nativo",
@@ -1505,12 +1512,22 @@ export const ui = {
 
     "section.start": "Empezar",
     "section.start.blurb": "Pon el sistema en una pantalla.",
-    "section.system": "Sistema",
-    "section.system.blurb": "Las reglas que mantienen todo consistente.",
+    "section.foundations": "Fundamentos",
+    "section.foundations.blurb": "Contrato, tokens, adaptación y patterns compartidos.",
     "section.components": "Componentes",
     "section.components.blurb": "Catálogo A–Z de piezas del sistema.",
     "group.firstSteps": "Primeros pasos",
     "group.foundations": "Fundamentos",
+    "group.foundationModel": "Modelo del sistema",
+    "group.foundationModel.blurb": "La verdad común que leen documentación, CSS, Vanilla y React.",
+    "group.visualDimensions": "Dimensiones visuales",
+    "group.visualDimensions.blurb": "Los ejes que cambian la interfaz sin multiplicar componentes.",
+    "group.publicSurfaces": "Superficies públicas",
+    "group.publicSurfaces.blurb": "Los puntos donde se ajusta estilo, estado, iconos y movimiento.",
+    "group.platformAccessibility": "Plataforma y accesibilidad",
+    "group.platformAccessibility.blurb": "Garantías del navegador, del runtime y de los canales de entrada.",
+    "group.sharedPatterns": "Patterns compartidos",
+    "group.sharedPatterns.blurb": "Estructuras opt-in que varios componentes consumen, pero que no son componentes finales.",
     "group.explore": "Explorar",
     "group.layout": "Layout",
     "group.global": "Global",
@@ -2814,6 +2831,10 @@ export const ui = {
     "sidebarPage.triggerTitle": "El trigger no lleva label visible",
     "sidebarPage.triggerBody":
       "Mide un icono de ancho, así que su nombre accesible va en un <code>aria-label</code> (o en texto visualmente oculto): un label visible adentro sería texto adentro de un cuadrado del ancho de un icono. El enhancer parchea atributos, nunca contenido, el nombre es tuyo.",
+    "sidebarPage.floatingTriggerTitle": "El trigger flotante",
+    "sidebarPage.floatingTriggerBody":
+      "<code>floating</code> es una decisión de pintura, no un segundo padre legal: el trigger se sigue autorando adentro de <code>Sidebar</code>, <code>SidebarHeader</code> o <code>SidebarFooter</code>, pero se levanta visualmente al rincón superior del panel. Este demo no tiene <code>SidebarHeader</code> en absoluto: es exactamente el caso donde no hay una fila propia para dibujar un trigger, así que flota sobre el panel en vez de competir por lugar. <code>--elevation-raised</code> es lo que lo separa del contenido sobre el que se apoya.",
+    "sidebarPage.floatingTriggerLabel": "Sidebar · trigger flotante",
     "sidebarPage.htmlTitle": "HTML autorado",
     "sidebarPage.htmlBody1":
       "El enhancer busca <code>[data-sk-sidebar]</code>, acepta un <code>[data-sk-sidebar-trigger]</code> o un <code>[data-sk-sidebar-resize]</code> y parchea <code>aria-expanded</code>, <code>aria-controls</code> y <code>data-state</code>. No escribe markup ni clases. El markup completo está en la pestaña <strong>Vanilla</strong> del preview.",
@@ -3612,6 +3633,13 @@ export const ui = {
     "cardPage.statBody":
       '<a href="/componentes/stat">Stat</a> pone la métrica y Box pone la card. La colección entra en una grilla sin que Stat se convierta en superficie ni gane una variante <code>card</code> en su API.',
     "cardPage.statNote": "Box + Stat + Icon",
+    "cardPage.chartTitle": "Card con chart opcional",
+    "cardPage.chartBody":
+      'El chart vive en el contrato <code>Chart</code>: una lista de puntos, no la API de una librería. La card sigue siendo una composición: Box lleva la superficie, Badge y Button el resto, y el área sólo la tendencia. <code>flush</code> llega al borde. Más formas, en <a href="/componentes/charts">Charts</a>.',
+    "cardPage.chartLabel": "Visitas de las últimas ocho semanas",
+    "cardPage.chartNote": "Box + Badge + Button + Chart area · paquete opcional para el área",
+    "cardPage.chartMore":
+      'Este peldaño es la card, no el chart. Las tres composiciones, las formas y el renderer opcional están en <a href="/componentes/charts">Charts</a>.',
     "cardPage.linkTitle": "Card que navega",
     "cardPage.linkBody":
       "Primer peldaño interactivo. Toda la superficie lleva a <strong>un</strong> destino, así que la raíz es el propio <code>a[href]</code>: un TileLink. No hay enlace estirado por CSS ni un <code>onClick</code> sobre un <code>div</code>, y el título es lo que nombra al enlace.",
@@ -3676,12 +3704,154 @@ export const ui = {
     "cardPage.testImportsCheckbox":
       "La página importa <code>checkbox.css</code>: sin ella cada indicador pinta el visto y el guion a la vez, sin importar el estado.",
 
+    "chartsPage.betaBadge": "Beta",
+    "chartsPage.description":
+      "Una serie de valores con nombre hecha visible. Las barras viven en Core; línea y área son un renderer opcional. La card alrededor es una composición.",
+    "chartsPage.lede":
+      "Chart es un contrato: <code>points</code>, <code>kind</code> y un <code>label</code> que dice qué miden los números. No es la API de una librería de gráficos. Las barras se pintan desde markup. Línea y área cambian el import a <code>@skryensya/charts/react</code>, un drop-in que dibuja un overlay sobre el mismo listado. TanStack existe, en otro subpath, para el caso que este contrato no cubre.",
+    "chartsPage.calloutBody":
+      "<strong>No hay <code>ChartCard</code>.</strong> Título, acción, superficie y números de apoyo son de <a href=\"/componentes/box\">Box</a>, <a href=\"/componentes/heading\">Heading</a>, <a href=\"/componentes/stat\">Stat</a> y <a href=\"/componentes/button\">Button</a>. El gráfico sólo pinta la serie. Publicarlo como variante de card habría crecido exactamente el componente que Card se niega a ser; la receta está en <code>metric-panel</code>.",
+    "chartsPage.cardsTitle": "Una card con un chart",
+    "chartsPage.cardsBody":
+      "Lo primero que se pide. Tres composiciones, no tres componentes: el número lo dice el texto, el gráfico dice la forma, y el botón dice a dónde ir después.",
+    "chartsPage.analyticsTitle": "Analítica, con la tendencia al borde",
+    "chartsPage.analyticsBody":
+      "El número vive en el texto. El área es un sparkline: <code>flush</code> cancela el padding del Box para que la serie llegue al borde, y <code>labels={false}</code> esconde el eje sin borrar los datos del DOM. Línea y área importan el renderer opcional.",
+    "chartsPage.analyticsLabel": "Visitas de las últimas ocho semanas",
+    "chartsPage.analyticsNote": "Box + Badge + Button + Chart area · flush",
+    "chartsPage.historyTitle": "Historial, con una barra destacada",
+    "chartsPage.historyBody":
+      "Barras con etiquetas, sin motor. El tono de la serie es <code>neutral</code>; Diciembre lleva <code>tone=\"accent\"</code> para destacarlo contra sus hermanas. Los dos Stats hundidos son apoyo, no pares del titular.",
+    "chartsPage.historyLabel": "Aportes de los últimos cinco meses",
+    "chartsPage.historyNote": "Box + Chart bar + Stat + Button",
+    "chartsPage.usageTitle": "Consumo, con los números debajo",
+    "chartsPage.usageBody":
+      "Otra vez barras. El gráfico no intenta decir 3.4 kW: eso lo dice el Stat. Un gráfico del que hay que estimar valores contra un eje es una tabla peor.",
+    "chartsPage.usageLabel": "Consumo eléctrico de toda la casa",
+    "chartsPage.usageNote": "Box + Chart bar + Stat",
+    "chartsPage.pieceTitle": "El gráfico, solo",
+    "chartsPage.pieceBody":
+      "Cuando no hay card alrededor, Chart sigue siendo la misma signature: una lista de entradas, cada una con etiqueta y número. <code>kind</code> elige la forma.",
+    "chartsPage.barTitle": "Barras, sin renderer",
+    "chartsPage.barBody":
+      "Cada entrada trae su valor y la hoja divide por el máximo de la serie. Un gráfico de barras se pinta desde markup autorado. No hace falta <code>@skryensya/charts</code>.",
+    "chartsPage.barLabel": "Componentes documentados por trimestre",
+    "chartsPage.barNote": "Chart · kind bar",
+    "chartsPage.lineTitle": "Línea, con el renderer opcional",
+    "chartsPage.lineBody":
+      "Una línea necesita un path, y CSS no puede calcularlo. El mismo componente, importado desde <code>@skryensya/charts/react</code>, dibuja el overlay. Las props no cambian.",
+    "chartsPage.lineLabel": "Latencia de interacción por versión",
+    "chartsPage.lineNote": "Chart · kind line · @skryensya/charts",
+    "chartsPage.areaTitle": "Área, el mismo drop-in",
+    "chartsPage.areaBody":
+      "Un área es la línea cerrada hasta la base. El renderer pinta dos paths: el relleno cerrado y el trazo abierto, para no dibujar un eje vertical que el contrato no tiene.",
+    "chartsPage.areaLabel": "Peso del bundle por semana",
+    "chartsPage.areaNote": "Chart · kind area · @skryensya/charts",
+    "chartsPage.integrationsTitle": "Chart con otros componentes",
+    "chartsPage.integrationsBody":
+      "Cuatro composiciones más, cada una un contrato que ya existe junto a Chart, no una capacidad nueva inventada para gráficos.",
+    "chartsPage.periodTitle": "Un selector cambia la serie",
+    "chartsPage.periodBody":
+      "<code>Segmented</code> elige el período; Chart sigue siendo la misma signature, sólo cambian sus <code>points</code>. El encabezado y el control no se mueven, así que el cambio se lee como un dato distinto, no como una card distinta.",
+    "chartsPage.periodLabel": "Tráfico del sitio, por período",
+    "chartsPage.periodNote": "Segmented + Chart bar",
+    "chartsPage.tableTitle": "Chart y Table, la misma serie dos veces",
+    "chartsPage.tableBody":
+      "El gráfico dice la forma; la tabla dice el número exacto y permite comparar fila por fila, el caso que <code>avoidWhen</code> en la semántica de Chart ya marca como <em>\"gráfico peor que tabla\"</em>. Cada uno lleva su propio nombre accesible: <code>label</code> en Chart, <code>TableCaption</code> en Table.",
+    "chartsPage.tableLabel": "Ingresos por trimestre",
+    "chartsPage.tableNote": "Chart bar + Table",
+    "chartsPage.detailTitle": "Un detalle por punto, con Tooltip",
+    "chartsPage.detailBody":
+      "La barra de Chart es <code>aria-hidden</code> y no tiene nombre propio, así que no es un trigger válido para Tooltip: el contrato de Tooltip exige que su contenido envuelva un control con su propio nombre accesible. Acá el trigger es un <code>Button.action</code> real por punto, debajo del gráfico; no duplica el overlay ni toca la lista accesible.",
+    "chartsPage.detailLabel": "Latencia por endpoint, con detalle",
+    "chartsPage.detailNote": "Chart bar + Tooltip + Button",
+    "chartsPage.galleryTitle": "Formatos y tamaños, lado a lado",
+    "chartsPage.galleryBody":
+      "Las mismas opciones de siempre (<code>kind</code>, <code>tone</code>, <code>height</code>, <code>format</code>, <code>flush</code>, <code>grid</code>) a escala de card, para que la diferencia se lea de un vistazo.",
+    "chartsPage.galleryLabel": "Cuatro chart cards, distintas opciones",
+    "chartsPage.galleryNote": "Grid + 4 Chart",
+    "chartsPage.metricTabsTitle": "Tabs, no Segmented: métricas distintas",
+    "chartsPage.metricTabsBody":
+      "El selector de período de arriba cambia una SERIE bajo una configuración; esto es distinto: cada tab es una métrica distinta, con su propio chart y su propio tono, la misma diferencia que <code>hero-with-audience-tabs</code> traza para un pitch. Los tres paneles comparten la misma altura de chart para que cambiar de tab no mueva el resto de la página.",
+    "chartsPage.metricTabsLabel": "Ingresos, usuarios y errores por semana",
+    "chartsPage.metricTabsNote": "Tabs + Stat + Chart bar",
+    "chartsPage.legendTitle": "Una leyenda, hecha de Badge",
+    "chartsPage.legendBody":
+      "Cada entrada lleva su propio <code>tone</code> (el override por punto que el contrato ya tiene) y la leyenda de abajo repite ese mapeo en Badges del mismo tono. Es decoración: <code>values</code> ya pinta el número de cada barra y la etiqueta ya nombra la categoría, así que la leyenda no es la única fuente de nada.",
+    "chartsPage.legendLabel": "Presupuesto por equipo, cinco categorías",
+    "chartsPage.legendNote": "Chart bar · tone por punto + Badge",
+    "chartsPage.comparisonTitle": "Dos períodos, lado a lado",
+    "chartsPage.comparisonBody":
+      "No es un chart con dos series — el contrato no tiene una segunda serie que darle. Son dos paneles independientes en un Grid, el actual con <code>tone=\"accent\"</code> y superficie <code>surface</code>, el anterior con <code>tone=\"neutral\"</code> y superficie <code>sunken</code>, para que el ojo encuentre \"ahora\" antes que \"antes\".",
+    "chartsPage.comparisonLabel": "Ingresos del trimestre, este año contra el anterior",
+    "chartsPage.comparisonNote": "Grid + 2 × (Stat + Chart area)",
+    "chartsPage.tanstackTitle": "Cuando el contrato no alcanza",
+    "chartsPage.tanstackBody":
+      "Facetas, apilados, scatter, brushing: eso es otro trabajo. El escape hatch vive en <code>@skryensya/charts/react/tanstack</code>, un import aparte para que salir del contrato se vea en el diff. Ahí la API es la de TanStack, sin changelog nuestro, y el peer pre-alpha queda sin instalar para quien no lo pidió.",
+    "chartsPage.doTitle": "Sí",
+    "chartsPage.doHeading": "Prácticas recomendadas",
+    "chartsPage.doItem1":
+      "Da a cada chart un <code>label</code> que diga qué mide, no \"gráfico\".",
+    "chartsPage.doItem2":
+      "Escribe <code>description</code> con la forma de los datos: rango, tendencia y unidades.",
+    "chartsPage.doItem3":
+      "Pon el número que importa en un <a href=\"/componentes/stat\">Stat</a>, no en el eje.",
+    "chartsPage.doItem4":
+      "Usa <code>tone</code> de la serie y, si hace falta, el de una entrada. El color sigue a los tokens.",
+    "chartsPage.doItem5":
+      "Compón la card con Box. No pidas un componente ChartCard al kit.",
+    "chartsPage.dontTitle": "No",
+    "chartsPage.dontHeading": "Errores frecuentes",
+    "chartsPage.dontItem1":
+      "No importes TanStack desde el camino documentado. El contrato no lo nombra.",
+    "chartsPage.dontItem2":
+      "No uses un chart para tres valores: una <a href=\"/componentes/table\">tabla</a> o un Stat se leen mejor.",
+    "chartsPage.dontItem3":
+      "No codifiques información sólo con color: la etiqueta y el valor siguen en el DOM a propósito.",
+    "chartsPage.dontItem4":
+      "No pongas título, acción o superficie en Chart. Eso es de lo que lo contiene.",
+    "chartsPage.dontItem5":
+      "No dibujes una serie de ceros como estado vacío: cero es un dato, y el vacío es no haber serie.",
+    "chartsPage.implTitle": "Implementación",
+    "chartsPage.implBody":
+      "Un import para barras: <code>@skryensya/react/chart</code> y <code>components/chart.css</code>. Línea y área cambian el módulo a <code>@skryensya/charts/react</code> y dejan las props igual. El motor es una mejora de un gráfico que ya funcionaba.",
+    "chartsPage.installBody":
+      "Barras no piden más que Core y el binding. La hoja no entra en el bundle base: hay que importarla, igual que Stat.",
+    "chartsPage.installLineBody":
+      "Línea y área añaden el paquete opcional. No instala TanStack: ese peer sólo entra con el subpath <code>react/tanstack</code>.",
+    "chartsPage.a11yP1":
+      "La serie es una lista real de texto real. Un lector de pantalla lee \"Dic, 18, Ene, 22\" desde el DOM, no un <code>aria-label</code> que avisa que hay datos y se niega a decir cuáles.",
+    "chartsPage.a11yP2":
+      "<code>label</code> es obligatorio: una serie de números sin nada que diga qué miden es el único gráfico peor que ningún gráfico.",
+    "chartsPage.a11yP3":
+      "<code>description</code> es la forma de los datos en palabras, para quien no va a ver las barras.",
+    "chartsPage.a11yP4":
+      "<code>labels={false}</code> oculta las etiquetas, no las borra. El sparkline sigue siendo una lista.",
+    "chartsPage.a11yP5":
+      "El overlay de línea y área es <code>aria-hidden</code>: es una segunda pintura de la misma lista, y leer las dos sería leer la serie dos veces.",
+    "chartsPage.testBarsNoEngine":
+      "Las barras no pintan overlay: no necesitan este paquete.",
+    "chartsPage.testLineOverlay":
+      "La línea se pinta en el overlay y marca el gráfico como renderizado.",
+    "chartsPage.testListIsData":
+      "La serie sigue siendo una lista de texto, que es la representación accesible.",
+    "chartsPage.testCardsAreComposition":
+      "Las cards del dashboard se componen con Box, Stat, Chart y Button, sin inventar ChartCard.",
+    "chartsPage.testNoTanstackApi":
+      "El camino documentado no expone la gramática de TanStack.",
+
     "indexPage.title": "Explorar componentes",
     "indexPage.description": "Componentes, patrones y primitivas organizados según la tarea que resuelven.",
     "indexPage.lede":
-      'Empieza por la tarea: capturar datos, orientar, presentar contenido o comunicar estado. Cada tarjeta explica cuándo usar la pieza. Si buscas reglas, roles y sets de iconos, ve a <a href="/iconos">Fundamentos → Iconografía</a>.',
+      'Empieza por la tarea: capturar datos, orientar, presentar contenido o comunicar estado. Cada tarjeta explica cuándo usar la pieza. Si buscas reglas, roles y sets de iconos, ve a <a href="/fundamentos">Fundamentos</a>.',
     "indexPage.searchLabel": "Buscar componentes",
     "indexPage.countSuffix": "componentes",
+
+    "foundationsPage.title": "Fundamentos",
+    "foundationsPage.description": "Contrato, tokens, adaptación y patterns compartidos del sistema.",
+    "foundationsPage.lede":
+      "Fundamentos documenta reglas que sobreviven a cualquier componente: qué promete un Contract, cómo viajan los tokens, dónde se puede ajustar estilo y qué garantías se mantienen cuando cambian entrada, viewport o preferencias.",
+    "foundationsPage.listTitle": "Mapa de fundamentos",
 
     "vaulPage.description": "Panel modal anclado a un borde del viewport, con variantes de sheet, drawer y gesto.",
     "vaulPage.lede":
@@ -4037,7 +4207,8 @@ export const ui = {
     "nav.between": "Document navigation",
     "nav.notWritten": "Not written yet",
     "nav.home": "Home",
-    "nav.docs": "Docs",
+    "nav.foundations": "Foundations",
+    "nav.components": "Components",
     "nav.presets": "Presets",
     "nav.templates": "Templates",
     "nav.comingSoon": "Coming soon",
@@ -4397,7 +4568,7 @@ export const ui = {
     "hero.patternPitchTitle": "Pitch with actions",
     "hero.patternPitchDescription": "The default shape: a headline, one line of body copy, and at most two actions.",
     "hero.patternCenteredTitle": "Centered, minimal",
-    "hero.patternCenteredDescription": "Just a headline and one line, no action: for a hero with no visual neighbor, like a portfolio.",
+    "hero.patternCenteredDescription": "Just a headline and one line, no action: for a hero with no visual neighbor, like a portfolio. Also the only pattern here asking for surface=\"raised\", the elevation tier that had no live example.",
     "hero.patternEyebrowTitle": "With an eyebrow label",
     "hero.patternEyebrowDescription": "A small Badge above the headline, giving context before the pitch lands.",
     "hero.patternSplitTitle": "Split with media",
@@ -4782,11 +4953,11 @@ export const ui = {
     "demo.splitButton.dangerItem2": "Move to trash",
     "demo.accordion.environment.title": "Environment",
     "demo.accordion.environment.description": "Production · Frankfurt",
-    "demo.accordion.environment.p1": "Node 22 runs in three replicas behind the Frankfurt balancer. Traffic is distributed round-robin and a replica recycles itself if it fails two health checks in a row.",
+    "demo.accordion.environment.p1": "Node 24 runs in three replicas behind the Frankfurt balancer. Traffic is distributed round-robin and a replica recycles itself if it fails two health checks in a row.",
     "demo.accordion.environment.p2": "Secrets are injected at boot from the regional vault, so no sensitive value is left in the image or build log.",
     "demo.accordion.runtime.title": "Runtime",
     "demo.accordion.runtime.description": "Version and region",
-    "demo.accordion.runtime.p1": "Node 22 on the Frankfurt shared pool. Each deployment reserves two vCPUs and 512 MB, with autoscaling up to six replicas when the request queue exceeds the threshold.",
+    "demo.accordion.runtime.p1": "Node 24 on the Frankfurt shared pool. Each deployment reserves two vCPUs and 512 MB, with autoscaling up to six replicas when the request queue exceeds the threshold.",
     "demo.accordion.runtime.p2a": "The healthcheck hits ",
     "demo.accordion.runtime.p2code": "/status",
     "demo.accordion.runtime.p2b": " every ten seconds; three failures in a row take the replica out of the balancer without cutting off in-flight traffic.",
@@ -5335,37 +5506,43 @@ export const ui = {
     "demo.tree.expansion": "Expansion",
 
     "accordion.description": "One or more Tile disclosures coordinated into a single frame.",
-    "architecture.title": "How components are built",
+    "architecture.title": "Component architecture",
     "architecture.lede":
-      "Every component follows the same model: a shared base so it looks and behaves consistently, plus the binding you choose for your application. This page uses Accordion as the example.",
-    "architecture.layersTitle": "The model in four pieces",
+      "A component does not start in React or Vanilla. It starts in a Core <strong>Contract</strong>, which declares what can be authored, what markup must be produced, and what behavior is needed.",
+    "architecture.layersTitle": "The pieces named by the Contract",
     "architecture.layer1":
-      '<strong>Contract.</strong> Defines the component parts, options, and rules. It is the blueprint shared by the documentation and every implementation.',
+      '<strong>Contract.</strong> Declares a component’s signatures, options, slots, parts, attributes, and accessibility. Core is its only author.',
     "architecture.layer2":
-      '<strong>Styles.</strong> A published stylesheet applies tokens and visual states. You can adjust it with style hooks without copying the component.',
+      '<strong>Markup contract.</strong> The authorable half of the Contract: the structure a consumer writes by hand when using HTML, with parts and attributes in the right nesting.',
     "architecture.layer3":
-      '<strong>Behavior.</strong> Only interactive components add a machine that manages state, keyboard input, and accessibility attributes.',
+      '<strong>Signature.</strong> A selectable meaning inside the Contract. It names intent and host, not appearance; an option can choose a signature without creating another component.',
     "architecture.layer4":
-      '<strong>Binding.</strong> Choose how to use it: HTML with Vanilla, declarative components with React, or CSS alone when no interaction is needed.',
-    "architecture.flowTitle": "What happens when someone interacts",
+      '<strong>Binding.</strong> Realizes the same Contract for one consumption path. React exposes props; Vanilla hydrates authored markup. Neither restates the Contract.',
+    "architecture.layer5":
+      '<strong>Machine.</strong> Coordinates state only when the platform is not enough. It is internal and replaceable; parts are named with BEM instead of machine vocabulary.',
+    "architecture.layer6":
+      '<strong>Enhancer.</strong> The Vanilla unit: it finds an authored root, connects the machine, and patches attributes. It renders no markup and writes no classes.',
+    "architecture.flowTitle": "What changes at runtime",
     "architecture.flow1":
-      '<strong>The person acts.</strong> They click, tap, or use the keyboard on a native control.',
+      '<strong>The consumer chooses a signature.</strong> In React, with props; in HTML, by writing the documented Markup contract.',
     "architecture.flow2":
-      '<strong>The component decides.</strong> Its behavior applies the relevant rule: open, select, validate, or change views.',
+      '<strong>The binding expands or hydrates.</strong> React produces the full part template; Vanilla assumes that structure already exists and connects it.',
     "architecture.flow3":
-      '<strong>The interface updates.</strong> State, accessibility attributes, and styles change together.',
+      '<strong>The machine updates state.</strong> Only enhanced components write state attributes, virtual focus, or selection; native alternatives stay with the browser.',
     "architecture.flow4":
-      '<strong>Your application hears about it.</strong> React calls the callback; Vanilla emits an event. Connect that data only when you need it.',
-    "architecture.useTitle": "How to choose what to use",
+      '<strong>Styles read attributes and styling hooks.</strong> Paint comes from shared CSS, not from binding-specific logic.',
+    "architecture.useTitle": "Model limits",
     "architecture.use1":
-      '<strong>You need appearance.</strong> Import the component stylesheet.',
+      '<strong>Reference does not teach architecture.</strong> Each component Reference tab lists signatures, options, and slots for quick lookup.',
     "architecture.use2":
-      '<strong>You need interaction in HTML.</strong> Write the contract markup and mount the Vanilla enhancer.',
+      '<strong>A styling hook does not replace the Contract.</strong> It adjusts public paint; it does not change parts, states, or accessibility.',
     "architecture.use3":
-      '<strong>You use React.</strong> Import the React component and pass props; the binding handles markup and behavior.',
+      '<strong>A Binding does not invent options.</strong> If React or Vanilla needs a new option, it is added to the Contract or it does not exist.',
     "architecture.exampleTitle": "Example: Accordion",
     "architecture.exampleBody":
-      "Accordion uses all four pieces: its contract names the root, item, trigger, and content; its styles reuse Tile; its behavior coordinates which sections are open; and React or Vanilla give you the value when it changes. Its options are listed in each component's <strong>Reference</strong> tab, generated from the contract.",
+      "Accordion uses the whole model: its Contract declares root, item, trigger, and content; its Markup contract says how to nest those parts; its signatures separate disclosure uses; the machine coordinates which sections are open; and React or Vanilla realize the same behavior through different bindings.",
+    "architecture.nextBody":
+      'It comes from <a href="/en/foundations">Foundations</a>. The next cut is visual: <a href="/en/tiers">Tiers</a> explains how primitive, semantic, and styling hook order tokens. For specific option lookup, use <a href="/en/reference">Reference</a>.',
     "accordion.intro":
       'If the state can live in HTML and a native exclusive group is enough, the simplest option is {detailsLink}, at the end of this page. Choose Accordion when you need a controlled value, <code>multiple</code>, or to listen for state changes.',
     "accordion.detailsNativoLabel": "Native details",
@@ -5476,12 +5653,22 @@ export const ui = {
 
     "section.start": "Get started",
     "section.start.blurb": "Put the system on a screen.",
-    "section.system": "System",
-    "section.system.blurb": "The rules that keep everything consistent.",
+    "section.foundations": "Foundations",
+    "section.foundations.blurb": "Shared contract, tokens, adaptation, and patterns.",
     "section.components": "Components",
     "section.components.blurb": "A–Z catalog of the system's pieces.",
     "group.firstSteps": "First steps",
     "group.foundations": "Foundations",
+    "group.foundationModel": "System model",
+    "group.foundationModel.blurb": "The shared truth read by documentation, CSS, Vanilla, and React.",
+    "group.visualDimensions": "Visual dimensions",
+    "group.visualDimensions.blurb": "Axes that change the interface without multiplying components.",
+    "group.publicSurfaces": "Public surfaces",
+    "group.publicSurfaces.blurb": "Where style, state, icons, and motion are adjusted.",
+    "group.platformAccessibility": "Platform and accessibility",
+    "group.platformAccessibility.blurb": "Browser, runtime, and input-channel guarantees.",
+    "group.sharedPatterns": "Shared patterns",
+    "group.sharedPatterns.blurb": "Opt-in structures consumed by several components, but not final components.",
     "group.explore": "Browse",
     "group.layout": "Layout",
     "group.global": "Global",
@@ -6760,6 +6947,10 @@ export const ui = {
     "sidebarPage.triggerTitle": "The trigger carries no visible label",
     "sidebarPage.triggerBody":
       "It measures one icon wide, so its accessible name goes in an <code>aria-label</code> (or visually hidden text): a visible label inside would be text inside a square the width of an icon. The enhancer patches attributes, never content: the name is yours.",
+    "sidebarPage.floatingTriggerTitle": "The floating trigger",
+    "sidebarPage.floatingTriggerBody":
+      "<code>floating</code> is a paint decision, not a second legal parent: the trigger is still authored inside <code>Sidebar</code>, <code>SidebarHeader</code>, or <code>SidebarFooter</code>, but it visually lifts to the panel's own corner. This demo has no <code>SidebarHeader</code> at all: it is exactly the case where there is no header row of its own to draw a trigger on, so it floats over the panel instead of competing for room. <code>--elevation-raised</code> is what separates it from whatever it rests over.",
+    "sidebarPage.floatingTriggerLabel": "Sidebar · floating trigger",
     "sidebarPage.htmlTitle": "Authored HTML",
     "sidebarPage.htmlBody1":
       "The enhancer looks for <code>[data-sk-sidebar]</code>, accepts a <code>[data-sk-sidebar-trigger]</code> or a <code>[data-sk-sidebar-resize]</code>, and patches <code>aria-expanded</code>, <code>aria-controls</code>, and <code>data-state</code>. It writes no markup or classes. The full markup is in the preview's <strong>Vanilla</strong> tab.",
@@ -7544,6 +7735,13 @@ export const ui = {
     "cardPage.statBody":
       '<a href="/en/components/stat">Stat</a> supplies the metric and Box supplies the card. The collection drops into a grid without Stat turning into a surface or growing a <code>card</code> variant in its API.',
     "cardPage.statNote": "Box + Stat + Icon",
+    "cardPage.chartTitle": "Card with an optional chart",
+    "cardPage.chartBody":
+      'The chart lives in the <code>Chart</code> contract: a list of points, not a library API. The card remains a composition: Box owns the surface, Badge and Button the rest, and the area owns only the trend. <code>flush</code> reaches the edge. More shapes live on <a href="/en/components/charts">Charts</a>.',
+    "cardPage.chartLabel": "Visits over the last eight weeks",
+    "cardPage.chartNote": "Box + Badge + Button + Chart area · optional package for the area",
+    "cardPage.chartMore":
+      'This rung is the card, not the chart. The three compositions, the shapes, and the optional renderer live on <a href="/en/components/charts">Charts</a>.',
     "cardPage.linkTitle": "Card that navigates",
     "cardPage.linkBody":
       "First interactive rung. The whole surface leads to <strong>one</strong> destination, so the root is the <code>a[href]</code> itself: a TileLink. There is no CSS-stretched link and no <code>onClick</code> on a <code>div</code>, and the title is what names the link.",
@@ -7608,12 +7806,154 @@ export const ui = {
     "cardPage.testImportsCheckbox":
       "The page imports <code>checkbox.css</code>: without it every indicator paints the check and the dash at once, regardless of state.",
 
+    "chartsPage.betaBadge": "Beta",
+    "chartsPage.description":
+      "A series of labelled values made visible. Bars live in Core; line and area are an optional renderer. The card around them is a composition.",
+    "chartsPage.lede":
+      "Chart is a contract: <code>points</code>, <code>kind</code>, and a <code>label</code> that says what the numbers measure. It is not a charting library's API. Bars paint from markup. Line and area swap the import to <code>@skryensya/charts/react</code>, a drop-in that draws an overlay on the same list. TanStack exists, on another subpath, for the job this contract does not cover.",
+    "chartsPage.calloutBody":
+      "<strong>There is no <code>ChartCard</code>.</strong> Title, action, surface, and supporting numbers belong to <a href=\"/en/components/box\">Box</a>, <a href=\"/en/components/heading\">Heading</a>, <a href=\"/en/components/stat\">Stat</a>, and <a href=\"/en/components/button\">Button</a>. The chart only paints the series. Publishing it as a card variant would have grown exactly the component Card refuses to be; the recipe lives in <code>metric-panel</code>.",
+    "chartsPage.cardsTitle": "A card with a chart",
+    "chartsPage.cardsBody":
+      "The first thing anyone asks for. Three compositions, not three components: the number lives in the text, the chart lives in the shape, and the button says where to go next.",
+    "chartsPage.analyticsTitle": "Analytics, with the trend at the edge",
+    "chartsPage.analyticsBody":
+      "The number lives in the text. The area is a sparkline: <code>flush</code> cancels the Box padding so the series reaches the edge, and <code>labels={false}</code> hides the axis without removing the data from the DOM. Line and area import the optional renderer.",
+    "chartsPage.analyticsLabel": "Visits over the last eight weeks",
+    "chartsPage.analyticsNote": "Box + Badge + Button + Chart area · flush",
+    "chartsPage.historyTitle": "History, with one bar emphasized",
+    "chartsPage.historyBody":
+      "Labelled bars, no engine. The series tone is <code>neutral</code>; December carries <code>tone=\"accent\"</code> to stand out against its siblings. The two sunken Stats are supporting, not peers of the headline.",
+    "chartsPage.historyLabel": "Contributions over the last five months",
+    "chartsPage.historyNote": "Box + Chart bar + Stat + Button",
+    "chartsPage.usageTitle": "Usage, with the numbers underneath",
+    "chartsPage.usageBody":
+      "Bars again. The chart does not try to say 3.4 kW: that is what Stat is for. A chart you have to estimate values off is a worse table.",
+    "chartsPage.usageLabel": "Whole-home power usage",
+    "chartsPage.usageNote": "Box + Chart bar + Stat",
+    "chartsPage.pieceTitle": "The chart, on its own",
+    "chartsPage.pieceBody":
+      "When there is no card around it, Chart is still the same signature: a list of entries, each with a label and a number. <code>kind</code> picks the shape.",
+    "chartsPage.barTitle": "Bars, with no renderer",
+    "chartsPage.barBody":
+      "Each entry carries its value and the stylesheet divides by the series maximum. A bar chart paints from authored markup. <code>@skryensya/charts</code> is not required.",
+    "chartsPage.barLabel": "Documented components per quarter",
+    "chartsPage.barNote": "Chart · kind bar",
+    "chartsPage.lineTitle": "Line, with the optional renderer",
+    "chartsPage.lineBody":
+      "A line needs a path, and CSS cannot compute one. The same component, imported from <code>@skryensya/charts/react</code>, draws the overlay. The props do not change.",
+    "chartsPage.lineLabel": "Interaction latency per version",
+    "chartsPage.lineNote": "Chart · kind line · @skryensya/charts",
+    "chartsPage.areaTitle": "Area, the same drop-in",
+    "chartsPage.areaBody":
+      "An area is the line closed down to the baseline. The renderer paints two paths: a closed fill and an open stroke, so it never draws a vertical axis the contract does not have.",
+    "chartsPage.areaLabel": "Bundle weight per week",
+    "chartsPage.areaNote": "Chart · kind area · @skryensya/charts",
+    "chartsPage.integrationsTitle": "Chart with other components",
+    "chartsPage.integrationsBody":
+      "Four more compositions, each a contract that already exists alongside Chart, not a new capability invented for charts specifically.",
+    "chartsPage.periodTitle": "A selector swaps the series",
+    "chartsPage.periodBody":
+      "<code>Segmented</code> picks the period; Chart stays the same signature, only its <code>points</code> change. The heading and the control hold still, so the change reads as different data, not a different card.",
+    "chartsPage.periodLabel": "Site traffic, by period",
+    "chartsPage.periodNote": "Segmented + Chart bar",
+    "chartsPage.tableTitle": "Chart and Table, the same series twice",
+    "chartsPage.tableBody":
+      "The chart says the shape; the table says the exact number and lets you compare row by row, the case Chart's own semantic <code>avoidWhen</code> already names as <em>\"a chart worse than a table\"</em>. Each carries its own accessible name: <code>label</code> on Chart, <code>TableCaption</code> on Table.",
+    "chartsPage.tableLabel": "Revenue by quarter",
+    "chartsPage.tableNote": "Chart bar + Table",
+    "chartsPage.detailTitle": "A per-point detail, with Tooltip",
+    "chartsPage.detailBody":
+      "Chart's bar is <code>aria-hidden</code> with no name of its own, so it is not a valid Tooltip trigger: Tooltip's own contract requires its content to wrap a control that already has an accessible name. Here the trigger is a real <code>Button.action</code> per point, underneath the chart; it duplicates neither the overlay nor the accessible list.",
+    "chartsPage.detailLabel": "Latency by endpoint, with detail",
+    "chartsPage.detailNote": "Chart bar + Tooltip + Button",
+    "chartsPage.galleryTitle": "Formats and sizes, side by side",
+    "chartsPage.galleryBody":
+      "The same options as always (<code>kind</code>, <code>tone</code>, <code>height</code>, <code>format</code>, <code>flush</code>, <code>grid</code>) at card scale, so the difference between them reads at a glance.",
+    "chartsPage.galleryLabel": "Four chart cards, different options",
+    "chartsPage.galleryNote": "Grid + 4 Chart",
+    "chartsPage.metricTabsTitle": "Tabs, not Segmented: different metrics",
+    "chartsPage.metricTabsBody":
+      "The period selector above changes one SERIES under a setting; this is different: each tab is a distinct metric, with its own chart and its own tone, the same distinction <code>hero-with-audience-tabs</code> draws for a pitch. All three panels share the same chart height so switching tabs never moves the rest of the page.",
+    "chartsPage.metricTabsLabel": "Revenue, users and errors per week",
+    "chartsPage.metricTabsNote": "Tabs + Stat + Chart bar",
+    "chartsPage.legendTitle": "A legend, made of Badge",
+    "chartsPage.legendBody":
+      "Each entry carries its own <code>tone</code> (the contract's own per-point override) and the legend below repeats that mapping as Badges of the same tone. It is decoration: <code>values</code> already paints each bar's own number and the label already names the category, so the legend is never the only source of anything.",
+    "chartsPage.legendLabel": "Budget by team, five categories",
+    "chartsPage.legendNote": "Chart bar · per-point tone + Badge",
+    "chartsPage.comparisonTitle": "Two periods, side by side",
+    "chartsPage.comparisonBody":
+      "Not one chart with two series — the contract has no second series to give it. Two independent panels in a Grid, the current one <code>tone=\"accent\"</code> on a <code>surface</code> box, the prior one <code>tone=\"neutral\"</code> on a <code>sunken</code> one, so the eye finds \"now\" before it finds \"then\".",
+    "chartsPage.comparisonLabel": "Quarterly revenue, this year against last",
+    "chartsPage.comparisonNote": "Grid + 2 × (Stat + Chart area)",
+    "chartsPage.tanstackTitle": "When the contract is not enough",
+    "chartsPage.tanstackBody":
+      "Facets, stacks, scatter, brushing: that is a different job. The escape hatch lives at <code>@skryensya/charts/react/tanstack</code>, a separate import so leaving the contract is visible in the diff. There the API is TanStack's, with no changelog of ours, and the pre-alpha peer stays uninstalled for anyone who did not ask for it.",
+    "chartsPage.doTitle": "Do",
+    "chartsPage.doHeading": "Recommended practice",
+    "chartsPage.doItem1":
+      "Give every chart a <code>label</code> that says what it measures, not \"chart\".",
+    "chartsPage.doItem2":
+      "Write a <code>description</code> carrying the shape of the data: range, trend, and units.",
+    "chartsPage.doItem3":
+      "Put the number that matters in a <a href=\"/en/components/stat\">Stat</a>, not on the axis.",
+    "chartsPage.doItem4":
+      "Use the series <code>tone</code> and, when needed, an entry's own. Color follows the tokens.",
+    "chartsPage.doItem5":
+      "Compose the card with Box. Do not ask the kit for a ChartCard component.",
+    "chartsPage.dontTitle": "Don't",
+    "chartsPage.dontHeading": "Common mistakes",
+    "chartsPage.dontItem1":
+      "Don't import TanStack on the documented path. The contract does not name it.",
+    "chartsPage.dontItem2":
+      "Don't use a chart for three values: a <a href=\"/en/components/table\">table</a> or a Stat reads better.",
+    "chartsPage.dontItem3":
+      "Don't encode information in color alone: the label and value stay in the DOM on purpose.",
+    "chartsPage.dontItem4":
+      "Don't put a title, an action, or a surface on Chart. Those belong to whatever contains it.",
+    "chartsPage.dontItem5":
+      "Don't draw a series of zeros as an empty state: zero is a datum, and empty is no series at all.",
+    "chartsPage.implTitle": "Implementation",
+    "chartsPage.implBody":
+      "One import for bars: <code>@skryensya/react/chart</code> and <code>components/chart.css</code>. Line and area swap the module to <code>@skryensya/charts/react</code> and leave the props alone. The engine is an upgrade to a chart that already worked.",
+    "chartsPage.installBody":
+      "Bars ask for nothing beyond Core and the binding. The sheet is not in the base bundle: import it, the same way Stat does.",
+    "chartsPage.installLineBody":
+      "Line and area add the optional package. It does not install TanStack: that peer only arrives with the <code>react/tanstack</code> subpath.",
+    "chartsPage.a11yP1":
+      "The series is a real list of real text. A screen reader reads \"Dec, 18, Jan, 22\" off the DOM, not an <code>aria-label</code> that announces data exists and then refuses to say what it is.",
+    "chartsPage.a11yP2":
+      "<code>label</code> is required: a series of numbers with nothing saying what they measure is the one chart worse than no chart.",
+    "chartsPage.a11yP3":
+      "<code>description</code> is the shape of the data in words, for a reader who is not going to see the bars.",
+    "chartsPage.a11yP4":
+      "<code>labels={false}</code> hides the labels, it does not delete them. The sparkline is still a list.",
+    "chartsPage.a11yP5":
+      "The line and area overlay is <code>aria-hidden</code>: it is a second painting of the same list, and reading both would read the series twice.",
+    "chartsPage.testBarsNoEngine":
+      "Bars paint no overlay: they never need this package.",
+    "chartsPage.testLineOverlay":
+      "The line is painted into the overlay and flags the chart as rendered.",
+    "chartsPage.testListIsData":
+      "The series stays a list of text, which is the accessible rendering.",
+    "chartsPage.testCardsAreComposition":
+      "The dashboard cards are composed from Box, Stat, Chart, and Button, without inventing ChartCard.",
+    "chartsPage.testNoTanstackApi":
+      "The documented path does not expose TanStack's grammar.",
+
     "indexPage.title": "Explore components",
     "indexPage.description": "Components, patterns, and primitives organized by the task they solve.",
     "indexPage.lede":
-      'Start with the task: capture data, provide orientation, present content, or communicate status. Each card explains when to use the piece. For icon roles, sets, and rules, go to <a href="/en/icons">Fundamentals → Iconography</a>.',
+      'Start with the task: capture data, provide orientation, present content, or communicate status. Each card explains when to use the piece. For icon roles, sets, and rules, go to <a href="/en/foundations">Foundations</a>.',
     "indexPage.searchLabel": "Search components",
     "indexPage.countSuffix": "components",
+
+    "foundationsPage.title": "Foundations",
+    "foundationsPage.description": "Shared contract, tokens, adaptation, and patterns in the system.",
+    "foundationsPage.lede":
+      "Foundations documents rules that survive any one component: what a Contract promises, how tokens travel, where styling can be adjusted, and which guarantees hold when input, viewport, or preferences change.",
+    "foundationsPage.listTitle": "Foundations map",
 
     "vaulPage.description": "A modal panel anchored to a viewport edge, with sheet, drawer, and gesture variants.",
     "vaulPage.lede":

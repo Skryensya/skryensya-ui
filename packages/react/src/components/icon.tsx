@@ -82,9 +82,20 @@ export function Icon({ name, data, label, size = "md", className, ...props }: Ic
   const boxProps: Record<string, string> = {};
   for (const [k, v] of box) boxProps[k === "class" ? "className" : k] = v;
 
+  // `presentation` is the set's raw attrs (`stroke-width`, `stroke-linecap`, …), correct as literal
+  // HTML attribute names for vanilla's own `setAttribute` calls, but React's SVG props expect the
+  // DOM property spelling (`strokeWidth`) for the multi-word ones: spread as-is, a glyph carrying one
+  // of these (an outlined arrow, say) renders with React warning "Invalid DOM property" and dropping
+  // the attribute silently, which is a real bug, not a lint nit — the icon paints thinner than the
+  // set drew it. `fill`/`stroke` themselves are already single words, so the replace is a no-op there.
+  const presentationProps: Record<string, string> = {};
+  for (const [k, v] of presentation) {
+    presentationProps[k.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())] = v;
+  }
+
   return (
     <svg
-      {...Object.fromEntries(presentation)}
+      {...presentationProps}
       {...props}
       {...boxProps}
       // El body es confiable por contrato: geometría autorada o de build, nunca de un usuario ni de

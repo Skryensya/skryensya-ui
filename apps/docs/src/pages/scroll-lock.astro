@@ -12,9 +12,7 @@ html:has(dialog:modal) {
   overflow: hidden;
 }`;
 
-const nested = `/* El pattern congela el documento. Si tu app tiene rails con
-   overflow:auto (sidebar, toc), congélalos tú cuando hay un modal: */
-html:has(dialog:modal) .mi-sidebar,
+const nested = `html:has(dialog:modal) .mi-sidebar,
 html:has(dialog:modal) .mi-toc {
   overflow: hidden;
 }`;
@@ -23,75 +21,82 @@ html:has(dialog:modal) .mi-toc {
 <Base
   title="Scroll lock"
   documentLayout="grid"
-  description="Pattern opt-in que congela la página detrás de un dialog:modal y reserva el gutter del scrollbar para que el layout no salte."
+  description="Pattern opt-in que congela el documento detrás de un dialog modal y reserva el scrollbar gutter."
 >
   <h1>Scroll lock</h1>
   <p class="lede">
-    Cuando un <code>&lt;dialog&gt;</code> se abre con <code>showModal()</code>, la página detrás tiene
-    que dejar de desplazarse. Congelar el overflow saca la scrollbar clásica y el contenido se ensancha
-    unos ~15px: eso es CLS. Este pattern hace las dos cosas a la vez, y solo si lo importas.
+    <strong>Scroll lock es un Pattern</strong> de documento: si una app importa su CSS, el
+    <code>html</code> se congela mientras existe un <code>dialog:modal</code> y conserva el gutter de
+    la scrollbar para que el layout no salte.
   </p>
 
-  <h2>Por qué es un pattern opt-in</h2>
+  <h2>Consumidores</h2>
   <p>
-    Es la primera regla del sistema que estiliza el <strong>root del documento</strong> desde un
-    archivo opt-in. Todo lo demás se scopea a su propio elemento. El import <em>es</em> el
-    consentimiento: una app que ya corre su propio scroll lock no debe importarlo, o se aplica doble.
-    Eso es la decisión 11 (<code>docs/decisiones/0005-el-dialog-exige-el-elemento-nativo.md</code>).
+    Lo consumen componentes que abren un dialog modal con <code>showModal()</code>:
+    <a href="/componentes/dialog">Dialog</a>, <a href="/componentes/drawer">Drawer</a>,
+    <a href="/vaul">Vaul</a> y <a href="/componentes/command-palette">Command palette</a>. Pintar un
+    rail con scroll propio es otro Pattern,
+    <a class="sk-link sk-interactive" href="/scrollbar">scrollbar</a>.
   </p>
 
-  <h2>Importar</h2>
-  <CodeBlock code={import_} label="CSS" />
-
-  <h2>Qué envía</h2>
-  <CodeBlock code={pattern} label="patterns/scroll-lock.css" />
+  <h2>Mecanismo</h2>
+  <CodeBlock code={pattern} label="CSS" />
   <ul>
     <li>
-      <code>scrollbar-gutter: stable</code> en <code>html</code>, siempre. Reserva el ancho de la
-      scrollbar clásica <em>antes</em> de congelar, para que el ancho del layout sea idéntico con el
-      modal abierto y cerrado. Aplicarlo solo en el momento del lock es una carrera que el navegador
-      puede perder.
+      <code>scrollbar-gutter: stable</code> se declara siempre en <code>html</code>. Reserva la
+      scrollbar clásica antes del lock; declararlo recién al abrir el dialog modal puede producir un
+      frame con ancho distinto.
     </li>
     <li>
-      <code>overflow: hidden</code> en <code>html:has(dialog:modal)</code>. Congela el documento
-      detrás de cualquier <code>&lt;dialog&gt;</code> abierto con <code>showModal()</code>: dialog,
-      drawer, vaul, command palette. Sin JS.
+      <code>html:has(dialog:modal)</code> aplica <code>overflow: hidden</code> solo cuando el
+      documento contiene un dialog en estado modal. No hay medición ni compensación con JavaScript.
     </li>
   </ul>
+
+  <h2>Opt-in</h2>
   <p>
-    En sistemas con scrollbar overlay (el default de macOS) el gutter no ocupa espacio de layout: la
-    reserva es un no-op y no molesta. En Windows y Linux con scrollbar clásica es lo que evita el salto.
+    Es una regla global y por eso no se envía desde ningún componente. El import es el consentimiento
+    de la app: si ya tienes un scroll lock propio, no importes este Pattern para no duplicar la
+    política.
   </p>
+  <CodeBlock code={import_} label="CSS" />
+
+  <h2>Restricciones</h2>
+  <ul>
+    <li>
+      Exige <code>&lt;dialog&gt;</code> abierto con <code>showModal()</code>. Un
+      <code>div role="dialog"</code> no entra en <code>:modal</code> y no dispara el lock.
+    </li>
+    <li>
+      Congela el documento, no todos los scroll containers. Rails con <code>overflow: auto</code>,
+      como un sidebar o un toc, deben congelarse en la app si siguen recibiendo rueda.
+    </li>
+    <li>
+      No pinta ni modifica el <code>::backdrop</code>. Esa superficie pertenece a Dialog, Vaul o al
+      componente que entró al top layer.
+    </li>
+  </ul>
+  <CodeBlock code={nested} label="CSS" />
+
+  <h2>Compatibilidad y fallback</h2>
+  <ul>
+    <li>
+      En macOS con scrollbar overlay, el gutter no ocupa espacio de layout; la reserva es un no-op.
+    </li>
+    <li>
+      En Windows y Linux con scrollbar clásica, el gutter evita que el contenido se ensanche al
+      ocultar la scrollbar.
+    </li>
+    <li>
+      Si el navegador no soporta <code>:has()</code> o <code>:modal</code>, la regla de lock no se
+      activa. La app conserva el comportamiento nativo del dialog y puede añadir su fallback propio.
+    </li>
+  </ul>
 
   <h2>Pruébalo aquí</h2>
   <p>
-    Este sitio importa el pattern. Abre el buscador con <kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd> o
-    el drawer de navegación en un viewport estrecho: la página detrás no se mueve y el contenido no
-    se ensancha. Cierra y el gutter sigue reservado, el mismo ancho de siempre.
+    Este sitio importa el Pattern. Abre el buscador con
+    <kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd> o el drawer de navegación en un
+    viewport estrecho: la página detrás no se desplaza y el ancho se mantiene estable.
   </p>
-
-  <h2>Lo que no cubre</h2>
-  <p>
-    <code>showModal()</code> deja la página inerte para puntero y teclado, pero los rails con
-    <code>overflow: auto</code> (un sidebar sticky, un toc) todavía pueden hacer scroll con la rueda.
-    El pattern no los toca a propósito: no sabe qué rails tiene tu app. Si existen, congélalos tú con
-    el mismo <code>:has(dialog:modal)</code>:
-  </p>
-  <CodeBlock code={nested} label="CSS" />
-
-  <p>
-    Pintar el thumb de una región con scroll es otro pattern:
-    <a class="sk-link sk-interactive" href="/scrollbar">scrollbar</a>. No se pisan: uno congela
-    <code>html</code>, el otro colorea rails.
-  </p>
-
-  <h2>Contrato</h2>
-  <ul>
-    <li>Opt-in: sin el import, el sistema no toca <code>html</code>.</li>
-    <li>Exige <code>&lt;dialog&gt;</code> + <code>showModal()</code>. Un <code>div</code> con
-      <code>role="dialog"</code> no entra en <code>:modal</code> y no dispara el lock.</li>
-    <li>No mide ni compensa con <code>padding-inline-end</code> en JS. La reserva es
-      <code>scrollbar-gutter</code>, propiedad de plataforma.</li>
-    <li>No reemplaza un scroll lock propio: si ya tienes uno, no importes este.</li>
-  </ul>
 </Base>

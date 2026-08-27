@@ -47,7 +47,11 @@
     --sk-button-gap: var(--space-inline-sm);
     --sk-button-font-size: var(--font-size-body);
     --sk-button-font-weight: var(--font-weight-label);
-    --sk-button-shadow: var(--elevation-flat);
+    /* A button is a raised control at rest, the same tier Box/Hero publish as their own `raised`
+     * surface (see /elevacion): pressable things sit above the surface they're pressed into. `ghost`
+     * (below) is the one variant that opts back out, on purpose - it has no fill and no border,
+     * and a shadow with nothing under it reads as a stray mark in space, not a lifted control. */
+    --sk-button-shadow: var(--elevation-raised);
 
     box-sizing: border-box;
     display: inline-flex;
@@ -102,9 +106,9 @@
    */
   .sk-button:active:not(:disabled):not([aria-disabled="true"]):not([data-weld-start]):not([data-weld-end]) {
     scale: var(--motion-press-scale);
-    /* Pairs with the squeeze: `primary`/`danger` carry `--elevation-raised`, and flattening it to
-     * `--elevation-flat` (`none`) while pressed reads as the button meeting the surface it was
-     * floating above, not just shrinking in place. A no-op for every other variant, which already
+    /* Pairs with the squeeze: every variant but `ghost` carries `--elevation-raised` at rest, and
+     * flattening it to `--elevation-flat` (`none`) while pressed reads as the button meeting the
+     * surface it was floating above, not just shrinking in place. A no-op for `ghost`, which already
      * paints `--elevation-flat` at rest. This is the one declaration, not a per-variant override. */
     box-shadow: var(--elevation-flat);
   }
@@ -168,14 +172,12 @@
      * is near-white, aliasing them makes a white-on-light-blue button. */
     --sk-button-fg: var(--color-text-on-accent);
     --sk-button-border-color: transparent;
-    --sk-button-shadow: var(--elevation-raised);
   }
 
   .sk-button[data-variant="danger"] {
     --sk-button-bg: var(--color-action-danger);
     --sk-button-fg: var(--color-text-on-accent);
     --sk-button-border-color: transparent;
-    --sk-button-shadow: var(--elevation-raised);
   }
 
   .sk-button[data-variant="ghost"] {
@@ -184,6 +186,10 @@
      * point at. Keep it on primary text rather than secondary text so it still reads as a control. */
     --sk-button-fg: var(--color-text-primary);
     --sk-button-border-color: transparent;
+    /* The one variant that opts back out of the base's `--elevation-raised` (see that hook's own
+     * comment): no fill, no border, so a cast shadow would read as a mark floating in space, not a
+     * lifted surface. */
+    --sk-button-shadow: var(--elevation-flat);
   }
 
   /* Icon-only is a SHAPE, a third axis orthogonal to variant and size, an accent button can be

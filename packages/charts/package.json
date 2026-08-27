@@ -1,0 +1,54 @@
+{
+  "name": "@skryensya/charts",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "The renderer for the chart contract's line and area kinds. Bars need no renderer; TanStack's full grammar is a separate, optional subpath.",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    "./react": {
+      "types": "./src/react/index.ts",
+      "default": "./src/react/index.ts"
+    },
+    "./react/tanstack": {
+      "types": "./src/react/tanstack.tsx",
+      "default": "./src/react/tanstack.tsx"
+    },
+    "./geometry": {
+      "types": "./src/geometry.ts",
+      "default": "./src/geometry.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit && vitest run",
+    "lint": "tsc -p tsconfig.json --noEmit && vitest run"
+  },
+  "dependencies": {
+    "@skryensya/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@skryensya/react": "workspace:*",
+    "@tanstack/charts": "0.15.0",
+    "react": ">=19"
+  },
+  "peerDependenciesMeta": {
+    "@tanstack/charts": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@skryensya/react": "workspace:*",
+    "@tanstack/charts": "0.15.0",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "jsdom": "^29.1.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
+  }
+}

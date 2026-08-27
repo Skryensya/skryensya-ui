@@ -95,22 +95,78 @@ body {
 
 
 /* The auto margin sits on the FIRST of the trailing group (search), so search + options travel to the
-   trailing edge together; a margin on options alone would strand search next to the brand. The trigger
-   reads as a field, not a button: a wide, quiet target that says "type here", with the shortcut badge
-   tucked at its trailing edge. */
+   trailing edge together; a margin on options alone would strand search next to the brand. The field
+   is a real `<input readonly>` now (search-trigger.ts has the full reasoning), this wrapper is purely
+   the field's own chrome: the sunken well, the border, the icon and kbd hint around the input. */
 .dimensions__search-trigger {
   margin-inline-start: auto;
+  display: inline-flex;
+  align-items: center;
   gap: var(--space-inline-sm);
   min-inline-size: min(18rem, 40vw);
-  justify-content: flex-start;
+  /* Matches `.sk-button`'s own default height hook, the one this used to inherit for free as a
+     `.sk-button`: the header's own height (`--docs-header-block-size` above) was measured against
+     that value, and dropping the class must not shrink the row around it. */
+  min-block-size: max(var(--size-control-md), var(--size-touch-target));
+  padding-inline: var(--space-inset-md);
+  border-radius: var(--radius-control);
   color: var(--color-text-tertiary);
-  /* A hairline so the trigger reads as the field it pretends to be: a ghost button is invisible until
-     hovered, but a search box should look typeable at rest. Subtle, not default, it is a quiet target. */
-  border: 1px solid var(--color-border-subtle);
+  cursor: pointer;
+  /*
+   * THE SAME WELL `.sk-input` SITS IN (`components/input.css`): a search box is a field to type
+   * into (even though this one is `readonly`, it reads as one), and `sunken` is the negative rung
+   * that says so at rest. `--color-border-default` is `.sk-input`'s own border token too, one step
+   * stronger than a plain hairline, because a field's edge is where a reader's eye confirms
+   * "this is typeable."
+   */
+  background: var(--color-bg-surface-sunken);
+  box-shadow: var(--elevation-sunken);
+  border: 1px solid var(--color-border-default);
 }
 
-.dimensions__search-label {
-  margin-inline-end: auto;
+.dimensions__search-trigger .sk-icon {
+  flex: none;
+  pointer-events: none;
+}
+
+/*
+ * The input fills the row and paints nothing of its own: the wrapper above already is the field's
+ * fill, border and shadow, an opaque or bordered input here would double them. Exactly the split
+ * `.sk-command-palette__search`/`__input` already draws between a bordered row and its borderless,
+ * `flex: 1` input (`components/command-palette.css`), reused here on purpose.
+ */
+.dimensions__search-input {
+  flex: 1;
+  min-inline-size: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: inherit;
+}
+
+.dimensions__search-input::placeholder {
+  color: inherit;
+  opacity: 1;
+}
+
+/* No native `:focus` ring on the bare input: the ring belongs to the FIELD, the wrapper, the same
+   way `.sk-input:focus-visible` rings the whole control rather than a sliver of it. */
+.dimensions__search-input:focus {
+  outline: none;
+}
+
+/*
+ * `:focus-within`, not `:focus-visible` on the input itself: focus lands ON the input (Tab, or the
+ * synthetic `.click()` search-trigger.ts fires), but the ring has to wrap the WHOLE field - the
+ * icon and kbd hint included - the same visual unit the sunken fill and border already draw as one
+ * piece. Same `--focus-ring-*` tokens `.sk-input:focus-visible` uses (`components/input.css`), so
+ * keyboard focus looks identical on this field and on the one it opens.
+ */
+.dimensions__search-trigger:focus-within {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
 }
 
 /* The mode + contrast icon controls, clustered. A tighter gap than the header's `lg`, because each
@@ -203,7 +259,16 @@ body {
     border-color: transparent;
   }
 
-  .dimensions__search-label,
+  /* Collapsed to zero rather than `display: none`: a hidden input cannot be focused or clicked, and
+     this one still has to be both (search-trigger.ts's wrapper click still lands on it, Tab still
+     has to reach it). Zero width and no padding just stop it from claiming any visible room next to
+     the icon; the field stays a real, working input, it only stops LOOKING like one at this size. */
+  .dimensions__search-input {
+    flex: none;
+    inline-size: 0;
+    padding: 0;
+  }
+
   .dimensions__search-trigger .sk-kbd {
     display: none;
   }
@@ -1316,6 +1381,25 @@ p:not(.sk-text) {
  * PLAIN TEXT COLOUR, DELIBERATELY NOT THE ACCENT. A caption-sized eyebrow can carry the brand; 60px
  * display type in fully saturated accent reads as a color choice first, not as the page title.
  */
+/*
+ * The badge rides beside the title, never inside its own font-size interpolation: `h1` scales from
+ * `--docs-hero-title-max` down to `--docs-hero-title-min` as the page scrolls (see its own rule
+ * below), and a badge inheriting that would either dwarf the collapsed bar or vanish at the top of
+ * the page. A sibling row keeps it one constant, caption-scale size at both ends.
+ */
+.docs-component-hero__title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-inline-sm);
+}
+
+.docs-component-hero__badge {
+  /* Never part of the collapse: a fixed size reads as a stable label, not a fourth thing scaling
+     on scroll alongside the eyebrow and the title. */
+  flex: none;
+}
+
 .docs-component-hero h1 {
   color: var(--color-text-primary);
 }
@@ -1466,8 +1550,34 @@ p:not(.sk-text) {
 }
 
 @keyframes docs-hero-collapse {
-  to {
+  0% {
+    box-shadow: none;
+  }
+  /*
+   * THE SHADOW ONLY EARNS ITS KEEP ONCE THE SPACER IS GONE. `box-shadow` is not interpolatable, so a
+   * discrete animation just holds a value until the next keyframe that redeclares it, flipping at the
+   * midpoint between the two, here effectively right at the end of the range. That is deliberate,
+   * not a shortcut: for most of the collapse this box is still the SMALL bar sitting under the tall
+   * spacer, its own edges exposed on the sides where the spacer's rounder, shadowless panel is not,
+   * and a shadow drawn there the whole time cut a visible seam straight across the "one card" the
+   * spacer and this bar are supposed to read as. Once the spacer has scrolled to nothing, this bar
+   * IS the whole card, and that is the one moment the lift actually belongs to it.
+   */
+  99% {
+    box-shadow: none;
+  }
+  100% {
     --docs-hero-collapse: 1;
+    /*
+     * THE TWO DROP LAYERS OF `--elevation-raised`, NOT THE TOKEN ITSELF: that token also carries
+     * `inset 0 0 0 9999px var(--elevation-tint-raised)`, a flat 2% tint meant to read as "this
+     * surface caught a little more light than the page around it" on a NEUTRAL surface. This one
+     * already has its own deliberate color, `--docs-hero-bg`, and stacking the tint on top of it
+     * shifted that color the instant the bar finished pinning, the exact moment a reader is meant to
+     * recognize it as the SAME band, not a slightly different one. Same `--shadow-sm` token either
+     * way, just the two shadows that read as lift without also reading as a wash.
+     */
+    box-shadow: 0 1px 2px 0 var(--shadow-sm), 0 1px 3px 0 var(--shadow-sm);
   }
 }
 
@@ -1475,7 +1585,13 @@ p:not(.sk-text) {
   /* A plain BLOCK container, and it has to stay one. Its whole job is to be the tall containing
      block the sticky hero never had as a direct child of `<main class="sk-layout-grid">` (see the
      comment in ComponentPageShell.astro). Turn this into a grid or a flex box and every child is
-     back in its own area, which is the exact bug it exists to fix. */
+     back in its own area, which is the exact bug it exists to fix.
+
+     NOT a `background` here: this box is the tall containing block, which means it is also as tall
+     as every tab panel stacked inside `.sk-tabs` below the hero (confirmed live: over 10,000px on
+     this very page), not just the band. A background painted here would tint every gap in that
+     entire column, not the hero's own corner. See `.docs-component-hero::before` for the fix that
+     is actually scoped to the hero's own edge. */
   min-inline-size: 0;
 }
 
@@ -1555,9 +1671,25 @@ p:not(.sk-text) {
          the eyebrow having closed to nothing), and at the expanded end the type overflows past it
          anyway. Zero here would let the title touch the bar's top edge once pinned. */
       padding-block-start: var(--docs-hero-pad-start-min);
+      /*
+       * TOP CORNERS SQUARE, ALWAYS: this box sits directly under the spacer above it (which carries
+       * ITS OWN top-rounded corners, see that rule's own comment), so a rounded top here would draw
+       * a second curve butted against the spacer's square bottom edge, a visible seam mid-panel.
+       *
+       * BOTTOM CORNERS CONSTANT, NOT ANIMATED: unlike the top, this edge is the panel's own real
+       * outer edge at every point in the collapse, expanded or pinned. Animating it to 0 alongside
+       * the top used to draw the same rounding the expanded card has, then flatten it away exactly
+       * as the bar finished sticking, so the one moment a reader looks for "is this still the same
+       * card" was the moment it stopped looking like one. Held here at the constant `--radius-surface`
+       * both ends already use, the pinned bar keeps the card's own bottom curve instead of losing it.
+       */
       border-radius: 0;
-      border-end-start-radius: calc(var(--radius-surface) * (1 - var(--docs-hero-collapse)));
-      border-end-end-radius: calc(var(--radius-surface) * (1 - var(--docs-hero-collapse)));
+      border-end-start-radius: var(--radius-surface);
+      border-end-end-radius: var(--radius-surface);
+      /* No static `box-shadow` here: the animation below owns it entirely (see
+         `@keyframes docs-hero-collapse`'s own comment for why it only switches on at the very end),
+         and `animation-fill-mode: both` is what makes that hold before the range starts and after it
+         ends, the same way it already does for `--docs-hero-collapse` itself. */
       animation-name: docs-hero-collapse;
       animation-fill-mode: both;
       animation-timing-function: linear;
@@ -1565,6 +1697,43 @@ p:not(.sk-text) {
          `nearest` would be a coin flip about which box this element is measured against. */
       animation-timeline: scroll(root block);
       animation-range: 0 var(--docs-hero-collapse-range);
+    }
+
+    /*
+     * THE SQUARE BACKING PLATE the rounded corners above sit on, a real SIBLING rather than a
+     * pseudo-element inside the hero. That was tried first and does not work: nothing paints behind
+     * an element's own `background` within its own stacking context, so a `z-index: -1` child there
+     * only outranks the hero's OTHER children (the title, the badge), never the hero's own fill,
+     * confirmed live as the entire band losing its blue the instant that version shipped.
+     *
+     * `.docs-component-head` is the hero's own containing block, but it is ALSO as tall as every tab
+     * panel stacked below the hero (confirmed live: over 10,000px on this page), so whatever that
+     * column happens to be scrolling at any given moment, a ComponentPreview's own white stage, a
+     * code block, sits directly behind the hero's rounded corner at that instant; the curve clips the
+     * hero's own background to the round, so the small triangle it does not cover showed exactly that
+     * scrolling content, confirmed live with `elementFromPoint` at the corner, not assumed.
+     *
+     * SAME STICKY OFFSET AS THE HERO, so the two rects always agree regardless of scroll position,
+     * and a LOWER z-index than the hero's 3 so the hero's own opaque fill covers this plate
+     * everywhere except the one triangle its own curve exposes. `margin-block-end` cancels its own
+     * block-size so it costs the layout nothing: a sticky element still reserves its own space in
+     * flow, and reserving `--docs-hero-bar-h` a second time here would have pushed the real hero
+     * down by exactly that much.
+     *
+     * `--color-bg-canvas`, NOT `--docs-hero-bg`: the same token `.docs-component-hero-tabs` already
+     * paints itself with, right below. A plate the hero's OWN blue made the curve disappear rather
+     * than fixing it, confirmed live: with the notch and the card the same colour, the bounding
+     * square and the rounded shape render pixel-identical, so the corner reads as square again, just
+     * with the leak gone too. The canvas colour is what the curve is supposed to reveal either way.
+     */
+    .docs-component-head .docs-component-hero__backing {
+      position: sticky;
+      top: var(--docs-navbar-h, var(--docs-header-block-size));
+      z-index: 1;
+      display: block;
+      block-size: var(--docs-hero-bar-h);
+      margin-block-end: calc(-1 * var(--docs-hero-bar-h));
+      background: var(--color-bg-canvas);
     }
 
     /*
@@ -1578,9 +1747,19 @@ p:not(.sk-text) {
       flex: none;
     }
 
-    /* Pinned under the collapsed band rather than under the navbar alone. */
+    /*
+     * Pinned under the collapsed band rather than under the navbar alone, ONE PIXEL HIGHER than the
+     * band's own bottom edge, on purpose: two independently `position: sticky` boxes computing their
+     * own offsets can round to adjacent device pixels a frame apart while the page is actively
+     * scrolling, which is exactly when a hairline of whatever is scrolling underneath shows through
+     * the seam, confirmed live rather than assumed from the math (the two rects agree to the
+     * sub-pixel once scrolling stops, which is why a static read never caught it). This bar's own
+     * lower z-index (`docs-component-hero-tabs`'s own rule: 2, against the band's 3) means the extra
+     * pixel just tucks under the band's bottom edge instead of poking out above it, so there is
+     * nothing to hide with a compensating `padding-block-start`.
+     */
     .docs-component-head .docs-component-hero-tabs {
-      top: calc(var(--docs-navbar-h, var(--docs-header-block-size)) + var(--docs-hero-bar-h));
+      top: calc(var(--docs-navbar-h, var(--docs-header-block-size)) + var(--docs-hero-bar-h) - 1px);
     }
   }
 }

@@ -18,7 +18,7 @@
     "@skryensya/snippets": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^22.10.2",
+    "@types/node": "catalog:",
     "vitest": "^4.1.10",
     "tsx": "^4.19.2"
   },

@@ -14,6 +14,8 @@
    * clamps to a readable 24rem but never wider than the viewport minus that margin on each side. A grid
    * with `stack-sm` gap stacks multiple toasts with even spacing. */
   .sk-toast-region {
+    --sk-toast-shadow: var(--elevation-overlay);
+
     position: fixed;
     z-index: var(--z-toast);
     display: grid;
@@ -50,7 +52,7 @@
     /* Arrives on its own, untethered to any trigger, with the same `enter` motion intent Dialog
      * uses (below): a standalone surface, not a quick anchored popup. `--elevation-overlay`, not
      * `-raised`. See /elevacion. */
-    box-shadow: var(--elevation-overlay);
+    box-shadow: var(--sk-toast-shadow);
     /* EVERY toast arrives, none of them just appears. A panel that pops in fully formed over the work
      * reads as a glitch: the eye has to go find out what changed. Rising the ENTER distance into place
      * while fading up says where it came from, and the region is at the block-end edge, so "from

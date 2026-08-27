@@ -17,6 +17,8 @@ export { Progress } from "./components/progress.js";
 export type { ProgressProps } from "./components/progress.js";
 export { Meter } from "./components/meter.js";
 export type { MeterProps } from "./components/meter.js";
+export { Chart } from "./components/chart.js";
+export type { ChartProps } from "./components/chart.js";
 export { DataGrid, DataGridRow, DataGridCell } from "./components/data-grid.js";
 export type { DataGridProps, DataGridRowProps, DataGridCellProps } from "./components/data-grid.js";
 export { Feed, FeedArticle } from "./components/feed.js";

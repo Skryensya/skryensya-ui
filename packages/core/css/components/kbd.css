@@ -8,8 +8,8 @@
  * Every hook resolves to a TIER-2 token, never a palette or raw color, scripts/lint.mjs enforces it.
  *
  * THE DEFAULT IS A PHYSICAL KEY, not an accent chip. Accent is a tone you opt into (`data-tone`),
- * the same knob Badge uses, for a shortcut that has to shout. At rest the key is stone and a bevel;
- * a key being held down is INFORMATION and the fill changes, the bevel inverts.
+ * the same knob Badge uses, for a shortcut that has to shout. At rest the key sits raised; a key
+ * being held down is INFORMATION and the fill changes, the shadow sinks inward.
  */
 @layer components {
   .sk-kbd {
@@ -27,15 +27,8 @@
     /* Display line-height (the tightest the scale has), a key is one line, so the generous body
      * leading only made it tall. */
     --sk-kbd-line-height: var(--font-line-height-display);
-    /* Three layers, not the generic raised elevation: a top bevel (the plastic catching light), a
-     * 1px ledge (the keycap's thickness) and the ambient lift. `--elevation-raised` alone was a
-     * floating card, not a key. Inverse-on-fill for the highlight so it reads in both modes. */
-    --sk-kbd-highlight: color-mix(in oklab, var(--color-text-inverse) 45%, transparent);
-    --sk-kbd-ledge: color-mix(in oklab, var(--color-text-primary) 22%, transparent);
-    --sk-kbd-shadow:
-      inset 0 1px 0 var(--sk-kbd-highlight),
-      0 1px 0 var(--sk-kbd-ledge),
-      var(--elevation-raised);
+    /* The same raised elevation any other surface uses, no bespoke bevel/ledge layered on top. */
+    --sk-kbd-shadow: var(--elevation-raised);
     /* The square minimum, applied to BOTH axes: a single glyph is a square key, and it is
      * also the key's height, so the box stays square-ish instead of growing into a tall pill.
      * Self-relative on purpose, it tracks the key's own font-size and stays square at any size,
@@ -83,8 +76,8 @@
    * machine's `data-state`. So it is a data attribute, set by whoever is watching the keyboard, and
    * here it re-declares the appearance hooks plus the one-pixel sink.
    *
-   * Neutral stays a keycap: the fill goes sunken and the bevel inverts, so it reads as down without
-   * becoming a brand chip. Accent is the one that takes the action colour: "this shortcut is live"
+   * Neutral stays a keycap: the fill goes sunken and the shadow flips inward, so it reads as down
+   * without becoming a brand chip. Accent is the one that takes the action colour: "this shortcut is live"
    * is INFORMATION, which the accent-reach dimension never dials, exactly like a checked checkbox. */
   .sk-kbd[data-pressed] {
     --sk-kbd-bg: var(--color-bg-surface-sunken);

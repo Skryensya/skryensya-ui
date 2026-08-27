@@ -16,6 +16,8 @@
  * once: the state-scoped visibility rule that hides one of them never loaded. */
 import "@skryensya/core/components/tile.css";
 import "@skryensya/core/components/checkbox.css";
+import "@skryensya/core/components/chart.css";
+import "@skryensya/core/components/stat.css";
 import "../../examples/card.css";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPageShell from "./ComponentPageShell.astro";
@@ -35,6 +37,7 @@ import {
   CardSelectDemo,
   CardStatDemo,
 } from "../react-demos/card";
+import { ChartCardDemo } from "../react-demos/chart-card";
 import { getLocale, useTranslations } from "../../i18n";
 
 /* The eleven examples are a LADDER: each rung adds one decision to the one before it, and every
@@ -48,6 +51,43 @@ const src = cardSources(copy);
 /* Same snippet Primitivas installs: Card asks nothing beyond the two packages every example here
  * already imports from. */
 const install = `pnpm add @skryensya/core @skryensya/react`;
+/* The composition, and only ONE chart. The other two cards and the Chart piece itself live on
+ * `/componentes/charts`; this rung is about the card around it. */
+const chartSource = `import { Badge } from "@skryensya/react/badge";
+import { Button } from "@skryensya/react/button";
+import { Chart } from "@skryensya/charts/react";
+import { Box, Inline, Stack } from "@skryensya/react/layout";
+import { Heading, Text } from "@skryensya/react/typography";
+
+<Box as="article" border="subtle" padding="lg" surface="surface">
+  <Stack gap="md">
+    <Inline align="start" justify="between">
+      <Stack gap="xs">
+        <Heading as="h3" flush size="h4">
+          Analytics
+        </Heading>
+        <Inline align="center" gap="sm">
+          <Text as="span" tone="secondary">
+            418.2K Visitors
+          </Text>
+          <Badge tone="success">+10%</Badge>
+        </Inline>
+      </Stack>
+      <Button size="sm" variant="translucent">
+        View Analytics
+      </Button>
+    </Inline>
+    <Chart
+      flush
+      format="compact"
+      height="sm"
+      kind="area"
+      label="Visits per week"
+      labels={false}
+      points={visits}
+    />
+  </Stack>
+</Box>;`;
 ---
 
 <ComponentPageShell
@@ -141,6 +181,15 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
         <CardStatDemo client:load lang={locale} />
       </Fragment>
     </ComponentPreview>
+
+    <h3 id="chart-card">{t("cardPage.chartTitle")}</h3>
+    <p set:html={t("cardPage.chartBody")} />
+    <ComponentPreview react={chartSource} label={t("cardPage.chartLabel")} note={t("cardPage.chartNote")} minHeight="25rem">
+      <Fragment slot="react">
+        <ChartCardDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+    <p set:html={t("cardPage.chartMore")} />
 
     <h3 id="enlace">{t("cardPage.linkTitle")}</h3>
     <p set:html={t("cardPage.linkBody")} />

@@ -1,0 +1,304 @@
+/*
+ * TIER 3, CHART
+ *
+ * The series is a LIST (see `chart.ts`'s own banner), and this file is what turns that list into a
+ * picture. Which means the picture has no geometry engine behind it: the entries are laid out by
+ * grid, and each bar's height is its own value over the series maximum. Both numbers arrive as
+ * custom properties that the bindings write from `data-value` (Meter's precedent, `meter.css`), so
+ * the fallbacks below are what paints during the window before either binding has run.
+ *
+ * `line` and `area` cannot be done here: a path needs coordinates, and CSS has no arithmetic over a
+ * whole collection. Those kinds keep the same list markup and get an SVG overlay drawn into
+ * `.sk-chart__overlay` by `@skryensya/charts`. Until that renderer arrives (or if it never does,
+ * because the consumer never installed it) `[data-kind]` still paints bars, on purpose: a chart that
+ * degrades to a different SHAPE of the same data is honest, and one that degrades to an empty box is
+ * a broken page.
+ */
+@layer components {
+  .sk-chart {
+    /* Overwritten by the bindings from the real series. 1 keeps the division defined. */
+    --sk-chart-max: 1;
+    --sk-chart-color: var(--color-action-accent);
+    /* Gap between bars: a band scale's padding, expressed as a real inline space token. */
+    --sk-chart-gap: var(--space-inline-xs);
+    /* `control`, not `surface`: a bar is a mark, and it rounds with the kit's smaller role so it
+       never out-curves the card it sits inside. */
+    --sk-chart-radius: var(--radius-control);
+
+    display: grid;
+    gap: var(--space-stack-xs);
+    margin: 0;
+    min-inline-size: 0;
+    /* Digits that do not reflow the labels between one value and the next. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sk-chart[data-tone="success"] { --sk-chart-color: var(--color-text-success); }
+  .sk-chart[data-tone="warning"] { --sk-chart-color: var(--color-text-warning); }
+  .sk-chart[data-tone="danger"] { --sk-chart-color: var(--color-text-danger); }
+  .sk-chart[data-tone="info"] { --sk-chart-color: var(--color-text-info); }
+  .sk-chart[data-tone="neutral"] { --sk-chart-color: var(--color-border-strong); }
+
+  /*
+   * The caption carries the accessible name, and it is hidden by DEFAULT rather than shown: almost
+   * every chart sits under a heading that already says the same thing (see the recipes), and two
+   * titles stacked on one graph is the shape of a chart nobody laid out. A composition that has no
+   * heading of its own opts back in by setting `--sk-chart-caption-display: block` on the figure.
+   */
+  .sk-chart__caption {
+    display: var(--sk-chart-caption-display, none);
+    font-size: var(--font-size-caption);
+    color: var(--color-text-secondary);
+  }
+
+  .sk-chart__plot {
+    position: relative;
+    min-inline-size: 0;
+    block-size: var(--sk-chart-plot-size, 10rem);
+  }
+
+  .sk-chart[data-height="sm"] { --sk-chart-plot-size: 6rem; }
+  .sk-chart[data-height="lg"] { --sk-chart-plot-size: 15rem; }
+
+  /*
+   * Reaching past the container's padding, for the chart that IS the bottom edge of a card.
+   *
+   * `--sk-box-padding` is what `patterns/box.css` resolves its own inset to, so this borrows the
+   * SAME number the surface used rather than guessing a margin that happens to match at one density
+   * and breaks at the next.
+   */
+  .sk-chart[data-flush] .sk-chart__plot {
+    margin-inline: calc(var(--sk-box-padding, 0px) * -1);
+  }
+  .sk-chart[data-flush][data-labels="false"] .sk-chart__plot {
+    margin-block-end: calc(var(--sk-box-padding, 0px) * -1);
+  }
+
+  .sk-chart__overlay {
+    position: absolute;
+    inset: 0;
+    /* Nothing to click: the list underneath owns interaction, this is the paint. */
+    pointer-events: none;
+  }
+  .sk-chart__overlay:empty {
+    display: none;
+  }
+
+  /*
+   * What a renderer paints with. The classes are contract parts (`chart.ts`), so the engine that
+   * fills the overlay ships geometry and no stylesheet, and swapping it cannot change how a chart
+   * looks.
+   *
+   * The SVG is a 0-100 unit box stretched to the plot (`preserveAspectRatio="none"`), which is what
+   * makes it responsive without measuring anything. `non-scaling-stroke` is not optional there: it is
+   * what undoes the distortion that stretching a square viewBox into a wide box would otherwise
+   * apply to the line, which shows up as a stroke that is thick at the top and thin on the sides.
+   */
+  .sk-chart__svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+    /*
+     * A left-to-right wipe, the same reading direction as the series it draws: `clip-path` rather
+     * than `stroke-dasharray`, because the area's own fill has no stroke length to animate and this
+     * one rule reveals both paths together instead of choreographing two techniques. `both` keeps
+     * the SVG clipped to nothing before the animation starts, so a slow layout pass never flashes the
+     * finished line for a frame first.
+     */
+    animation: sk-chart-reveal var(--motion-enter-duration) var(--motion-enter-easing) both;
+  }
+
+  @keyframes sk-chart-reveal {
+    from { clip-path: inset(0 100% 0 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
+
+  .sk-chart__line {
+    fill: none;
+    stroke: var(--sk-chart-color);
+    stroke-width: var(--sk-chart-stroke, 2px);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .sk-chart__area {
+    /* The same colour as the line, at a fraction of it: an area is the line's own reading of "how
+       much", not a second datum, so it never gets a hue of its own. */
+    fill: var(--sk-chart-color);
+    fill-opacity: var(--sk-chart-area-opacity, 0.18);
+    stroke: none;
+  }
+
+  /*
+   * One column per entry, all equal. `auto-fit` is wrong here and was tried: a chart's bars are a
+   * band scale, so the columns have to be as many as there are entries and no more, whatever the
+   * width. `grid-auto-flow: column` with an implicit track does exactly that.
+   */
+  .sk-chart__series {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    align-items: end;
+    gap: var(--sk-chart-gap);
+    block-size: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sk-chart__point {
+    /* Set per entry by the bindings, as a fraction of `--sk-chart-max`. */
+    --sk-chart-value: 0;
+
+    display: grid;
+    /* The bar takes the room, the label and value sit under it at their own height. */
+    grid-template-rows: 1fr auto auto;
+    align-items: end;
+    justify-items: center;
+    gap: var(--space-stack-2xs);
+    min-inline-size: 0;
+    block-size: 100%;
+  }
+
+  .sk-chart__bar {
+    display: block;
+    inline-size: 100%;
+    /*
+     * The whole chart, in one declaration. `max(…, 2px)` is not decoration: a value that rounds to
+     * zero height is a bar that vanished, and a reader cannot tell "almost nothing" from "no data"
+     * unless the mark survives. Two pixels is the smallest thing that still reads as a bar.
+     */
+    block-size: max(calc(var(--sk-chart-value) / var(--sk-chart-max) * 100%), 2px);
+    border-radius: var(--sk-chart-radius) var(--sk-chart-radius) 0 0;
+    background: var(--sk-chart-color);
+    transform-origin: bottom;
+    transition: block-size var(--motion-state-change-duration) var(--motion-state-change-easing);
+    /*
+     * THE ENTER, not the value change above: a bar that snaps to full height the instant its figure
+     * mounts reads as a table cell, not a chart. `scaleY` (never `block-size`) so this is a transform
+     * the compositor can run for free, and `backwards` so the bar sits at its start frame instead of
+     * flashing full-height for one paint before the animation begins. The intent token, not a raw
+     * duration: `--motion-enter-*` already degrades under reduced motion (see below) the same way
+     * every other entrance in the kit does.
+     */
+    animation: sk-chart-grow var(--motion-enter-duration) var(--motion-enter-easing) both;
+  }
+
+  @keyframes sk-chart-grow {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+  }
+
+  /*
+   * A hand-stepped stagger, not a formula: CSS has no per-item index to multiply, and `--sk-chart-i`
+   * would have been one more thing both bindings have to write per entry for a purely decorative
+   * wave. Capped at twelve, `avoidWhen` in the semantic overlay already tells a chart with more
+   * entries than that to regroup its data before it draws, so this never runs out on a chart this
+   * contract actually recommends.
+   */
+  .sk-chart__point:nth-child(1) .sk-chart__bar { animation-delay: 0ms; }
+  .sk-chart__point:nth-child(2) .sk-chart__bar { animation-delay: 35ms; }
+  .sk-chart__point:nth-child(3) .sk-chart__bar { animation-delay: 70ms; }
+  .sk-chart__point:nth-child(4) .sk-chart__bar { animation-delay: 105ms; }
+  .sk-chart__point:nth-child(5) .sk-chart__bar { animation-delay: 140ms; }
+  .sk-chart__point:nth-child(6) .sk-chart__bar { animation-delay: 175ms; }
+  .sk-chart__point:nth-child(7) .sk-chart__bar { animation-delay: 210ms; }
+  .sk-chart__point:nth-child(8) .sk-chart__bar { animation-delay: 245ms; }
+  .sk-chart__point:nth-child(9) .sk-chart__bar { animation-delay: 280ms; }
+  .sk-chart__point:nth-child(10) .sk-chart__bar { animation-delay: 315ms; }
+  .sk-chart__point:nth-child(n + 11) .sk-chart__bar { animation-delay: 350ms; }
+
+  /* One entry emphasized against its siblings: its own tone wins over the series'. */
+  .sk-chart__point[data-tone="accent"] .sk-chart__bar { background: var(--color-action-accent); }
+  .sk-chart__point[data-tone="success"] .sk-chart__bar { background: var(--color-text-success); }
+  .sk-chart__point[data-tone="warning"] .sk-chart__bar { background: var(--color-text-warning); }
+  .sk-chart__point[data-tone="danger"] .sk-chart__bar { background: var(--color-text-danger); }
+  .sk-chart__point[data-tone="info"] .sk-chart__bar { background: var(--color-text-info); }
+  .sk-chart__point[data-tone="neutral"] .sk-chart__bar { background: var(--color-border-strong); }
+
+  /*
+   * When a renderer has painted the overlay, the bars stop being the picture. They stay in the DOM
+   * and stay measurable; they just stop being drawn, because the path above them is now the drawing.
+   */
+  .sk-chart[data-rendered] .sk-chart__bar {
+    visibility: hidden;
+  }
+
+  .sk-chart__label,
+  .sk-chart__value {
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption);
+    max-inline-size: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sk-chart__label {
+    color: var(--color-text-tertiary);
+  }
+
+  .sk-chart__value {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-label);
+  }
+
+  /*
+   * Hidden the accessible way, never `display: none`: these strings ARE the chart's data, so a
+   * reader that cannot see the bars has to keep hearing them. `data-labels="false"` is a sparkline's
+   * "no axis", not "no data".
+   */
+  .sk-chart[data-labels="false"] .sk-chart__label,
+  .sk-chart:not([data-values]) .sk-chart__value {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .sk-chart[data-grid] .sk-chart__plot {
+    /*
+     * Four steps, drawn as a background rather than as elements: grid lines are not content, and
+     * every one of them as a `<span>` would be four more nodes per chart for a screen reader to walk
+     * past on the way to the data.
+     */
+    background-image: repeating-linear-gradient(
+      to top,
+      var(--color-border-subtle) 0,
+      var(--color-border-subtle) 1px,
+      transparent 1px,
+      transparent 25%
+    );
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-chart__bar { transition: none; animation: none; }
+    .sk-chart__svg { animation: none; }
+  }
+
+  /*
+   * Forced colors: `background` on the bars is dropped by the OS, so they would all disappear at
+   * once. `CanvasText` puts them back as solid marks. Emphasis by tone cannot survive here (the
+   * palette is the user's), which is exactly why per-entry tone was never the ONLY way this contract
+   * distinguishes an entry: the label and value are text, and text always survives.
+   */
+  @media (forced-colors: active) {
+    .sk-chart__bar {
+      background: CanvasText;
+      border: 1px solid CanvasText;
+    }
+    .sk-chart[data-rendered] .sk-chart__bar {
+      visibility: visible;
+    }
+    .sk-chart__overlay {
+      display: none;
+    }
+  }
+}

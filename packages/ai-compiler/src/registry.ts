@@ -7,6 +7,7 @@ import { statContract } from "@skryensya/core/stat";
 import { calloutContract } from "@skryensya/core/callout";
 import { processListContract } from "@skryensya/core/process-list";
 import { changelogContract } from "@skryensya/core/changelog";
+import { chartContract } from "@skryensya/core/chart";
 import { stepsContract } from "@skryensya/core/steps";
 import { listContract } from "@skryensya/core/list";
 import { mediaGradientContract } from "@skryensya/core/media-gradient";
@@ -85,6 +86,7 @@ export const contracts = {
   breadcrumb: breadcrumbContract,
   button: buttonContract,
   callout: calloutContract,
+  chart: chartContract,
   checkbox: checkboxContract,
   "empty-state": emptyStateContract,
   "form-field": formFieldContract,

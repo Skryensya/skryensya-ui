@@ -24,15 +24,15 @@ const linterOutput = `✗ 1 problem(s):
 ---
 
 <Base
-  title="Tres tiers"
+  title="Tiers de tokens"
   documentLayout="grid"
-  description="Primitivos, semánticos y styling hooks: qué puede referenciar cada tier, y por qué la dirección de las referencias es lo que hace que esto sea un sistema."
+  description="Primitive, semantic y styling hook: qué responde cada tier, hacia dónde puede referenciar y qué falla cuando se salta la dirección."
 >
-  <h1>Tres tiers</h1>
+  <h1>Tiers de tokens</h1>
   <p class="lede">
     Un tier no se define por la carpeta donde vive, sino por <strong>qué puede referenciar</strong>.
-    Tres carpetas llamadas primitive/semantic/component no hacen un sistema de tres tiers; lo hace
-    la dirección obligada de las referencias.
+    El sistema tiene primitive, semantic y styling hook porque esa dirección mantiene separados valor,
+    significado y uso público.
   </p>
 
   <div class="sk-table-scroll">
@@ -49,94 +49,76 @@ const linterOutput = `✗ 1 problem(s):
         <tr class="sk-table__row">
           <td class="sk-table__cell"><span class="sk-badge" data-tone="warning">primitive</span></td>
           <td class="sk-table__cell">qué valores existen</td>
-          <td class="sk-table__cell">nada, es el fondo</td>
+          <td class="sk-table__cell">nada</td>
           <td class="sk-table__cell mono">{counts.primitive}</td>
         </tr>
         <tr class="sk-table__row">
           <td class="sk-table__cell"><span class="sk-badge" data-tone="accent">semantic</span></td>
           <td class="sk-table__cell">qué significa un valor</td>
-          <td class="sk-table__cell">primitivos, y otros semánticos</td>
+          <td class="sk-table__cell">primitive u otro semantic</td>
           <td class="sk-table__cell mono">{counts.semantic}</td>
         </tr>
         <tr class="sk-table__row">
-          <td class="sk-table__cell"><span class="sk-badge" data-tone="success">component</span></td>
+          <td class="sk-table__cell"><span class="sk-badge" data-tone="success">styling hook</span></td>
           <td class="sk-table__cell">dónde se usa un valor</td>
-          <td class="sk-table__cell">solo semánticos, <strong>nunca</strong> primitivos</td>
+          <td class="sk-table__cell">semantic, nunca primitive</td>
           <td class="sk-table__cell mono">{counts.component}</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <h2>La cadena, en vivo</h2>
+  <h2>Mecanismo: las referencias bajan</h2>
   <p>
-    Cada rung muestra su valor usado ahora mismo. Cambia la <strong>marca</strong> arriba y mira qué
-    se mueve: el literal de abajo cambia de hue, y los nombres de arriba no se enteran. Esa
-    indiferencia es todo el mecanismo.
-  </p>
-  <p>
-    La cadena se abre en dos donde hay un token mode-aware, porque <code>light-dark()</code> tiene
-    dos padres. Cambia el <strong>modo</strong> y vas a ver cuál de los dos slots está usando tu
-    valor de arriba.
+    Una referencia puede bajar un tier o moverse de costado dentro del mismo tier. Nunca sube, y el
+    styling hook no puede saltar hasta primitive. Esa regla permite cambiar marca, modo o contraste en
+    semantic sin reescribir componentes.
   </p>
 
   <Chain
     token="--sk-button-bg"
-    caption="El fondo de un botón, desde el styling hook hasta el literal."
+    caption="El fondo de Button, desde el styling hook hasta el literal."
   />
 
   <Chain
     token="--color-action-accent"
-    caption="Un token semántico nombra un propósito y apunta a una posición de rampa, nunca a un hue."
+    caption="Un semantic token nombra propósito y apunta a una posición de rampa."
   />
 
-  <h2>Por qué las referencias solo bajan</h2>
+  <h2>Límite: el styling hook no salta a primitive</h2>
   <p>
-    Un semántico puede apuntar a un primitivo o de costado a otro semántico. Un styling hook puede apuntar a
-    un semántico. Nada apunta hacia arriba, y <strong>tier 3 no puede saltar a tier 1</strong>.
-  </p>
-  <p>
-    Ese salto es el que parece inofensivo y no lo es. Un styling hook que toma <code>--palette-blue-600</code>
-    directamente se salta la capa donde vive <code>light-dark()</code>. Ese componente, y solo ese,
-    deja de tener modo oscuro. El defecto no se ve hasta que alguien mira la página en oscuro.
+    El salto parece más corto, pero rompe el modo oscuro de un solo componente. Si
+    <code>--sk-button-bg</code> toma <code>--palette-blue-600</code> directo, se salta el semantic que
+    contiene <code>light-dark()</code>.
   </p>
 
-  <CodeBlock code={badExample} label="components/button.css" note="tier 3 → tier 1" />
-  <CodeBlock code={linterOutput} label="pnpm lint" note="el build se cae" />
+  <CodeBlock code={badExample} label="components/button.css" note="styling hook a primitive" />
+  <CodeBlock code={linterOutput} label="pnpm lint" note="regla ejecutable" />
 
-  <div class="sk-callout" data-tone="info">
-    <div class="sk-callout__content">
-    <p>
-      No es una convención documentada: es una regla ejecutable. El validador corre sobre el CSS antes
-      de cada build, en <em>todas</em> las marcas, porque una regla que solo se cumple en la paleta por
-      defecto no es una regla. La salida de arriba es real: sale de apuntar un styling hook a una rampa
-      a propósito.
-    </p>
-    </div>
-  </div>
-
-  <h2>El prefijo marca el tier</h2>
+  <h2>El prefijo deja ver el tier</h2>
   <p>
-    Un primitivo se lee <code>--palette-blue-600</code>; un semántico, <code>--color-action-accent</code>.
-    El prefijo distinto es intencional: ver un <code>--palette-*</code> dentro del CSS de un componente
-    es la señal visible, a simple vista, de que alguien se saltó un tier. Aplanar a <code>--accent-600</code>
-    perdería esa señal.
+    Un primitive se lee <code>--palette-blue-600</code>; un semantic,
+    <code>--color-action-accent</code>; un styling hook, <code>--sk-button-bg</code>. Ver
+    <code>--palette-*</code> dentro del CSS de un componente es una señal de salto prohibido, no una
+    preferencia de nombres.
   </p>
 
-  <h2>El borde del tier es una cascade layer</h2>
+  <h2>La cascade layer marca el borde</h2>
   <p>
-    La precedencia entre tiers no depende del orden de los <code>@import</code>: está en la cascada.
-    Una layer posterior gana, así que las overrides de marca y contraste siempre le ganan a los
-    semánticos base, sin importar el orden de importación.
+    La precedencia entre tiers está declarada en la cascada, no en el orden casual de imports. Las
+    overrides de marca y contraste viven después de los semánticos base; las reglas de producto sin
+    layer siguen pudiendo pisar un styling hook público sin pelear especificidad.
   </p>
   <CodeBlock
     code={`@layer primitives, semantic, components, overrides;`}
     label="tokens.scss"
-    note="el orden que decide todo"
+    note="orden de precedencia"
   />
-  <p>
-    Y tiene un beneficio: como <strong>cualquier regla sin layer le gana a todas las layers</strong>,
-    tu app puede pisar un styling hook sin pelear especificidad.
-  </p>
   <CodeBlock code={`.hero .sk-button { --sk-button-bg: rebeccapurple; }`} label="CSS" />
+
+  <p>
+    Viene de <a href="/arquitectura">Arquitectura</a>, donde se definen Contract y Binding. Sigue en
+    <a href="/dimensiones">Dimensiones</a>, que muestra qué cambia en semantic, y en
+    <a href="/referencia">Referencia</a>, que queda para buscar tokens puntuales.
+  </p>
 </Base>

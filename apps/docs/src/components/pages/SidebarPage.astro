@@ -6,7 +6,7 @@ import "@skryensya/core/components/tree-view.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { sidebarResizableTree, sidebarTree } from "../../demos/sidebar";
+import { sidebarFloatingTriggerTree, sidebarResizableTree, sidebarTree } from "../../demos/sidebar";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/sidebar.yaml?raw";
 import coreSource from "@core/src/sidebar.ts?raw";
@@ -112,6 +112,14 @@ const sourceFiles = [
 
     <h3>{t("sidebarPage.triggerTitle")}</h3>
     <p set:html={t("sidebarPage.triggerBody")} />
+
+    <h3>{t("sidebarPage.floatingTriggerTitle")}</h3>
+    <p set:html={t("sidebarPage.floatingTriggerBody")} />
+    <ComponentPreview
+      tree={sidebarFloatingTriggerTree(t, { home: "/", reports: "/reportes" })}
+      label={t("sidebarPage.floatingTriggerLabel")}
+      flush
+    />
 
     <h3>{t("sidebarPage.htmlTitle")}</h3>
     <p set:html={t("sidebarPage.htmlBody1")} />

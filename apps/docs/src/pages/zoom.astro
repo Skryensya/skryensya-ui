@@ -15,7 +15,7 @@ const reflowCss = `.responsive-grid {
   min-inline-size: 0;
 }`;
 
-const mediaCss = `.content {
+const flexibleMediaCss = `.content {
   inline-size: min(100%, 70rem);
 }
 
@@ -25,95 +25,48 @@ const mediaCss = `.content {
   block-size: auto;
 }
 
-/* Evita alturas fijas: el texto ampliado necesita crecer. */
 .card {
   min-block-size: 12rem;
   block-size: auto;
 }`;
 
-const localScrollCss = `.table-scroll,
+const localOverflowCss = `.table-scroll,
 .code-scroll {
   max-inline-size: 100%;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
-}`;
-
-const auditTs = `import { expect, test } from "@playwright/test";
-
-const routes = ["/", "/settings", "/checkout"];
-const widths = [640, 320];
-
-for (const route of routes) {
-  for (const width of widths) {
-    test(\`\${route} reflows at \${width}px\`, async ({ page }) => {
-      await page.setViewportSize({ width, height: 900 });
-      await page.goto(route);
-
-      const hasPageOverflow = await page.evaluate(() => {
-        const root = document.documentElement;
-        return root.scrollWidth > root.clientWidth;
-      });
-
-      expect(hasPageOverflow).toBe(false);
-      await expect(page.locator("main")).toBeVisible();
-    });
-  }
 }`;
 ---
 
 <Base
   title="Zoom y reflow"
   documentLayout="grid"
-  description="Texto al 200% y reflow al 400% sin pérdida de contenido, controles ni funcionalidad."
+  description="Cómo el sistema conserva contenido, controles y orden cuando cambia el zoom, el tamaño de texto o el viewport."
 >
   <h1>Zoom y reflow</h1>
   <p class="lede">
-    Zoom no es una preferencia visual ni una media query. Es una transformación del viewport y del
-    tamaño legible: el contenido debe envolver, las columnas deben apilarse y todos los controles
-    deben seguir disponibles. La interfaz cambia de geometría, no de capacidades.
+    Zoom y reflow son garantías de capacidad. El viewport efectivo cambia, el texto crece y la
+    interfaz debe conservar el mismo contenido, las mismas acciones y un orden de lectura coherente.
+    Se permite cambiar la geometría; no se permite perder funcionalidad.
   </p>
 
   <div class="sk-callout" data-tone="info">
     <div class="sk-callout__content">
       <p>
-        <strong>200% y 400% prueban contratos distintos.</strong> A 200% se comprueba que el texto
-        puede crecer sin perder contenido o funcionalidad. A 400% se comprueba reflow: un viewport de
-        1280px equivale a <strong>320 CSS px</strong> y la página debe poder leerse en una sola
-        dirección.
+        <strong>200% y 400% cubren fallos distintos.</strong> A 200% se prueba que el texto puede
+        crecer sin quedar recortado. A 400%, un viewport de 1280px equivale a
+        <strong>320 CSS px</strong>; la página debe leerse en una sola dirección, salvo regiones que
+        por naturaleza necesitan dos ejes, como tablas o código.
       </p>
     </div>
   </div>
 
-  <h2>Dos pruebas, dos fallos posibles</h2>
-  <div class="sk-table-scroll">
-    <table class="sk-table">
-      <thead class="sk-table__head">
-        <tr class="sk-table__row">
-          <th class="sk-table__header">Prueba</th>
-          <th class="sk-table__header">Qué exige</th>
-          <th class="sk-table__header">Fallo típico</th>
-        </tr>
-      </thead>
-      <tbody class="sk-table__body">
-        <tr class="sk-table__row">
-          <td class="sk-table__cell"><strong>200%</strong></td>
-          <td class="sk-table__cell">Texto legible y controles operables</td>
-          <td class="sk-table__cell">Labels cortados por alturas fijas</td>
-        </tr>
-        <tr class="sk-table__row">
-          <td class="sk-table__cell"><strong>400%</strong></td>
-          <td class="sk-table__cell">Reflow a 320 CSS px</td>
-          <td class="sk-table__cell">Columnas o toolbars fuera del viewport</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h2>El layout conserva capacidad</h2>
+  <h2>La regla del sistema</h2>
   <p>
-    Esta muestra usa la misma regla que una lista de cards real. En ancho amplio presenta tres
-    columnas; en el equivalente a 400% converge en una. Ninguna tarjeta desaparece ni cambia de
-    orden.
+    Un Contract no promete un ancho fijo. Promete que su Markup contract puede envolver texto, que sus
+    partes pueden encogerse con <code>min-inline-size: 0</code> y que sus styling hooks no fuerzan una
+    medida que rompa el viewport. El Binding puede cambiar filas, columnas o disclosure, pero debe
+    mantener las acciones alcanzables y el orden del DOM.
   </p>
 
   <figure class="reflow-specimen">
@@ -121,17 +74,17 @@ for (const route of routes) {
       <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="md">
         <span class="reflow-specimen__index">01</span>
         <strong>Contenido</strong>
-        <p>El texto envuelve y hace crecer su propia caja.</p>
+        <p>El texto envuelve y hace crecer su caja.</p>
       </article>
       <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="md">
         <span class="reflow-specimen__index">02</span>
         <strong>Controles</strong>
-        <p>Las acciones permanecen visibles y alcanzables.</p>
+        <p>Las acciones siguen visibles y alcanzables.</p>
       </article>
       <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="md">
         <span class="reflow-specimen__index">03</span>
         <strong>Orden</strong>
-        <p>El DOM conserva una secuencia de lectura coherente.</p>
+        <p>El DOM conserva una lectura predecible.</p>
       </article>
     </div>
     <figcaption>
@@ -142,117 +95,49 @@ for (const route of routes) {
 
   <CodeBlock code={reflowCss} label="CSS · grid con reflow" />
 
-  <h2>Reglas de implementación</h2>
+  <h2>Mecanismos que evitan pérdida de capacidad</h2>
 
-  <h3>Deja crecer texto y media</h3>
+  <h3>El contenedor decide la geometría</h3>
   <p>
-    Evita alturas fijas en cajas con contenido. Imágenes y vídeo se limitan al ancho disponible sin
-    deformar su proporción.
-  </p>
-  <CodeBlock code={mediaCss} label="CSS · contenido flexible" />
-
-  <h3>El scroll horizontal es local, no global</h3>
-  <p>
-    Tablas de datos, código, mapas y diagramas pueden necesitar dos dimensiones. El scroll pertenece
-    a ese componente; el título, la explicación y el resto de la página siguen haciendo reflow.
-  </p>
-  <CodeBlock code={localScrollCss} label="CSS · overflow local" />
-
-  <h2>Cómo garantizarlo en tu sistema</h2>
-
-  <h3>1. Haz que el contenedor decida</h3>
-  <p>
-    Un componente no debería conocer el ancho del dispositivo. Dale un ancho flexible, permite que
-    sus hijos encojan con <code>min-inline-size: 0</code> y deja que el contenedor cambie columnas,
-    wrapping o distribución según el espacio real.
+    Un componente no debería conocer el dispositivo. Recibe un ancho flexible, deja encoger a sus hijos
+    y usa grid, flex-wrap o Stack para cambiar distribución según el espacio real. Si un componente
+    necesita esconder acciones, debe moverlas a una superficie accesible, no eliminarlas.
   </p>
 
-  <h3>2. Define un contrato de reflow por componente</h3>
-  <div class="sk-table-scroll">
-    <table class="sk-table">
-      <thead class="sk-table__head">
-        <tr class="sk-table__row">
-          <th class="sk-table__header">Tipo</th>
-          <th class="sk-table__header">Contrato mínimo</th>
-        </tr>
-      </thead>
-      <tbody class="sk-table__body">
-        <tr class="sk-table__row">
-          <td class="sk-table__cell">Texto, Callout, Tile, Card</td>
-          <td class="sk-table__cell">Altura automática; labels y contenido pueden envolver.</td>
-        </tr>
-        <tr class="sk-table__row">
-          <td class="sk-table__cell">Navbar y toolbar</td>
-          <td class="sk-table__cell">Acciones envuelven, cambian de fila o pasan a un menú accesible.</td>
-        </tr>
-        <tr class="sk-table__row">
-          <td class="sk-table__cell">Dialog, Drawer y popover</td>
-          <td class="sk-table__cell">Cabecen en el viewport; el body tiene scroll interno si hace falta.</td>
-        </tr>
-        <tr class="sk-table__row">
-          <td class="sk-table__cell">Grid y Stack</td>
-          <td class="sk-table__cell">Las columnas convergen sin cambiar el orden del DOM.</td>
-        </tr>
-        <tr class="sk-table__row">
-          <td class="sk-table__cell">Tabla, código, mapa</td>
-          <td class="sk-table__cell">El overflow horizontal queda contenido en el componente.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h3>3. Audita todas las rutas</h3>
+  <h3>Texto y media crecen sin recorte</h3>
   <p>
-    Ejecuta una matriz con cada ruta y los anchos efectivos de 200% y 400%. Esta prueba detecta
-    overflow global automáticamente; añade a cada flujo sus interacciones esenciales porque una
-    interfaz visible todavía puede haber perdido funcionalidad.
+    Las cajas con contenido no tienen altura fija. Las imágenes, videos e iframes respetan el ancho
+    disponible y mantienen proporción. Cuando una Signature acepta contenido largo, ese caso pertenece
+    al Contract: no se delega al producto consumidor.
   </p>
-  <CodeBlock code={auditTs} label="Playwright · matriz de reflow" lang="ts" />
+  <CodeBlock code={flexibleMediaCss} label="CSS · contenido flexible" />
 
-  <h3>4. Termina con zoom real</h3>
+  <h3>El overflow horizontal es local</h3>
   <p>
-    Un viewport estrecho automatizado prueba la geometría, pero no sustituye la revisión final:
-    abre el navegador al 200% y 400%, recorre la página con teclado y prueba menús, dialogs,
-    tooltips, validaciones y estados con contenido largo.
+    Tablas, código, mapas y diagramas pueden necesitar dos dimensiones. El scroll pertenece a esa
+    región, no al documento completo. El título, la explicación y las acciones cercanas siguen
+    haciendo reflow.
   </p>
+  <CodeBlock code={localOverflowCss} label="CSS · overflow local" />
 
-  <h2>Qué se rompe con zoom</h2>
+  <h2>Reglas de revisión</h2>
+  <ul>
+    <li>Se revisa texto al 200%; un viewport móvil no cubre texto ampliado.</li>
+    <li>Se revisa reflow a 400%, equivalente a 320 CSS px desde 1280px.</li>
+    <li>La página se puede leer con scroll vertical, sin overflow horizontal global.</li>
+    <li>Menús, dialogs, popovers, validaciones y preferencias siguen operables.</li>
+    <li>El foco y el orden de lectura siguen al orden visual después del reflow.</li>
+    <li>La State layer de foco queda visible en cada parada.</li>
+  </ul>
+
+  <h2>Fallos que el sistema no acepta</h2>
   <ul>
     <li><code>width</code> o <code>min-width</code> fijos mayores que el viewport efectivo.</li>
     <li><code>height</code> fija en botones, cards, callouts o campos con texto.</li>
-    <li><code>white-space: nowrap</code> en labels que no tienen una salida responsive.</li>
-    <li>Toolbars que ocultan acciones en vez de envolverlas o reorganizarlas.</li>
-    <li>Contenido posicionado con offsets físicos que deja de participar en el flujo.</li>
-    <li><code>overflow: hidden</code> usado para esconder el síntoma en lugar de arreglar el ancho.</li>
-  </ul>
-
-  <h2>Contrato del sitio de documentación</h2>
-  <ul>
-    <li>
-      A 200%, el layout efectivo de 640 CSS px no produce scroll horizontal global.
-    </li>
-    <li>
-      A 400%, el layout efectivo de 320 CSS px apila el contenido en una columna.
-    </li>
-    <li>
-      El header pasa a dos filas: identidad arriba; búsqueda y preferencias abajo.
-    </li>
-    <li>
-      Menú, búsqueda, paleta, tema y contraste permanecen visibles y operables.
-    </li>
-    <li>
-      Los bloques de código y las tablas contienen su propio overflow cuando lo necesitan.
-    </li>
-  </ul>
-
-  <h2>Checklist</h2>
-  <ul>
-    <li>Prueba texto al 200%, no solo un viewport móvil.</li>
-    <li>Prueba 400% desde 1280px o directamente a 320 CSS px.</li>
-    <li>Lee la página completa usando únicamente scroll vertical.</li>
-    <li>Abre menús, dialogs y popovers; visible no significa operable.</li>
-    <li>Cambia tema y preferencias para detectar controles solapados.</li>
-    <li>Confirma que foco y orden de lectura siguen al orden visual.</li>
+    <li><code>white-space: nowrap</code> en labels sin alternativa responsive.</li>
+    <li>Toolbars que ocultan acciones sin ofrecer otro camino por teclado.</li>
+    <li>Contenido posicionado con offsets físicos que sale del flujo.</li>
+    <li><code>overflow: hidden</code> usado para esconder el síntoma.</li>
   </ul>
 
   <p>

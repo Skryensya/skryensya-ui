@@ -5,7 +5,7 @@ import { mountAccordion } from "./accordion.js";
 
 function mount(type: "single" | "multiple" = "single", defaultValue = "runtime"): HTMLElement {
   document.body.innerHTML = `<div data-sk-accordion data-type="${type}" data-default-value="${defaultValue}">
-    <section class="sk-tile sk-tile--expandable" data-part="item" data-value="runtime"><button data-part="trigger">Runtime</button><div data-part="content">Node 22</div></section>
+    <section class="sk-tile sk-tile--expandable" data-part="item" data-value="runtime"><button data-part="trigger">Runtime</button><div data-part="content">Node 24</div></section>
     <section class="sk-tile sk-tile--expandable" data-part="item" data-value="rollout"><button data-part="trigger">Rollout</button><div data-part="content">10%, then 100%</div></section>
   </div>`;
   const root = document.body.firstElementChild as HTMLElement;

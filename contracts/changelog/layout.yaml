@@ -3,8 +3,32 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "1de00956bf02b97b"
+surface: "20a8a0fdad83f3aa"
 entries:
+  - date: 2026-08-26
+    kind: feature
+    es:
+      title: Grid agrega una quinta columna y un modo responsive con celdas destacadas
+      body: >-
+        <code>columns</code> acepta <code>"5"</code>, y la opción nueva <code>responsive</code>
+        (<code>data-responsive</code>) hace que el número declarado sea el TECHO y no el ancho fijo:
+        la grilla arranca en una sola columna y va sumando carriles en 36rem, 52rem, 72rem y 90rem
+        hasta llegar al que se pidió. A diferencia de <code>multicol</code>, son filas reales de CSS
+        Grid, así que un hijo directo puede pedir más de un carril con <code>data-span</code>, acotado
+        a los carriles que existan en ese momento. La regla para elegir: <code>multicol</code> cuando
+        cada card deba conservar su propia altura estilo Pinterest, <code>responsive</code> cuando
+        importe más tener una celda destacada ancha que evitar huecos bajo las vecinas más bajas.
+    en:
+      title: Grid grows a fifth column and a responsive mode with featured cells
+      body: >-
+        <code>columns</code> accepts <code>"5"</code>, and the new <code>responsive</code> option
+        (<code>data-responsive</code>) makes the declared number a CEILING rather than a fixed width:
+        the grid starts at one column and adds lanes at 36rem, 52rem, 72rem and 90rem until it reaches
+        the one that was asked for. Unlike <code>multicol</code>, these are real CSS Grid rows, so a
+        direct child can request more than one lane with <code>data-span</code>, capped to however many
+        lanes exist at that moment. The rule for choosing: <code>multicol</code> when every card should
+        keep its own Pinterest-style height, <code>responsive</code> when one wide featured cell matters
+        more than avoiding gaps under its shorter neighbours.
   - date: 2026-08-21
     kind: feature
     es:

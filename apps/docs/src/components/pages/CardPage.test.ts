@@ -10,6 +10,10 @@ import { describe, expect, it } from "vitest";
  * `astro check` has no way to know a `.sk-tile` class needs `tile.css` loaded somewhere.
  */
 const source = readFileSync(fileURLToPath(new URL("./CardPage.astro", import.meta.url)), "utf8");
+const chartDemoSource = readFileSync(
+  fileURLToPath(new URL("../react-demos/chart-card.tsx", import.meta.url)),
+  "utf8",
+);
 
 describe("CardPage.astro", () => {
   it("imports tile.css, which Base.astro never loads globally", () => {
@@ -18,5 +22,12 @@ describe("CardPage.astro", () => {
 
   it("imports checkbox.css, without which every indicator paints both the check and the dash glyph at once", () => {
     expect(source).toContain('import "@skryensya/core/components/checkbox.css"');
+  });
+
+  it("keeps the optional chart card a Box composition instead of inventing sk-card", () => {
+    expect(chartDemoSource).toContain('<Box as="article"');
+    expect(chartDemoSource).toContain("<Chart");
+    expect(chartDemoSource).not.toContain("sk-card");
+    expect(chartDemoSource).not.toContain("BarChart");
   });
 });

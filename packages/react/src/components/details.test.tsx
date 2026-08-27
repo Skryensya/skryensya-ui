@@ -12,7 +12,7 @@ describe("Details", () => {
     const ui = render(
       <Details>
         <Details.Summary>Requisitos</Details.Summary>
-        <Details.Content>Node 22</Details.Content>
+        <Details.Content>Node 24</Details.Content>
       </Details>,
     );
 
@@ -23,14 +23,14 @@ describe("Details", () => {
     const summary = ui.container.querySelector("summary")!;
     expect(summary.classList.contains("sk-details__summary")).toBe(true);
     expect(summary.classList.contains("sk-interactive")).toBe(true);
-    expect(ui.getByText("Node 22").classList).toContain("sk-details__content");
+    expect(ui.getByText("Node 24").classList).toContain("sk-details__content");
   });
 
   it("bakes in the disclosure mark the browser's own marker no longer draws", () => {
     const ui = render(
       <Details>
         <Details.Summary>Requisitos</Details.Summary>
-        <Details.Content>Node 22</Details.Content>
+        <Details.Content>Node 24</Details.Content>
       </Details>,
     );
 
@@ -49,7 +49,7 @@ describe("Details", () => {
     const ui = render(
       <Details>
         <Details.Summary>Requisitos</Details.Summary>
-        <Details.Content>Node 22</Details.Content>
+        <Details.Content>Node 24</Details.Content>
       </Details>,
     );
     const details = ui.container.querySelector("details")!;
@@ -90,7 +90,7 @@ describe("Details", () => {
       <DetailsGroup className="faq">
         <Details className="destacado">
           <Details.Summary className="titulo">Requisitos</Details.Summary>
-          <Details.Content className="cuerpo">Node 22</Details.Content>
+          <Details.Content className="cuerpo">Node 24</Details.Content>
         </Details>
       </DetailsGroup>,
     );
@@ -100,6 +100,6 @@ describe("Details", () => {
     expect(ui.container.querySelector("summary")?.className).toBe(
       "sk-details__summary sk-interactive titulo",
     );
-    expect(ui.getByText("Node 22").className).toBe("sk-details__content cuerpo");
+    expect(ui.getByText("Node 24").className).toBe("sk-details__content cuerpo");
   });
 });

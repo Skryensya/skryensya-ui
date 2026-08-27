@@ -1,7 +1,11 @@
 /* TIER 3, COMBOBOX: editable input plus filtered listbox. */
 @layer components {
   .sk-combobox {
-    --sk-combobox-bg: var(--color-bg-surface-raised);
+    /* A field is a well you type INTO, not a card on the surface: `sunken` (see /elevacion), same
+     * as Input and Select. `--elevation-sunken`'s inset shadow traces the control's own edge, so it
+     * still reads apart from whatever lighter container (a card, a Dialog) it sits inside. */
+    --sk-combobox-bg: var(--color-bg-surface-sunken);
+    --sk-combobox-shadow: var(--elevation-sunken);
     --sk-combobox-fg: var(--color-text-primary);
     --sk-combobox-border-color: var(--color-border-default);
     --sk-combobox-invalid-border-color: var(--color-border-danger);
@@ -11,6 +15,7 @@
     --sk-combobox-content-bg: var(--color-bg-surface-raised);
     --sk-combobox-content-border-color: var(--color-border-subtle);
     --sk-combobox-content-max-block-size: 18rem;
+    --sk-combobox-content-shadow: var(--elevation-raised);
     --sk-combobox-radius: var(--radius-control);
     --sk-combobox-content-radius: var(--radius-surface);
     --sk-combobox-padding-x: var(--space-inset-sm);
@@ -38,6 +43,7 @@
     border-radius: var(--sk-combobox-radius);
     background: var(--sk-combobox-bg);
     color: var(--sk-combobox-fg);
+    box-shadow: var(--sk-combobox-shadow);
   }
 
   .sk-combobox__control[data-invalid] {
@@ -194,6 +200,7 @@
     --sk-combobox-content-border-color: var(--color-border-subtle);
     --sk-combobox-content-radius: var(--radius-surface);
     --sk-combobox-content-max-block-size: 18rem;
+    --sk-combobox-content-shadow: var(--elevation-raised);
     --sk-combobox-item-padding: var(--space-inset-xs) var(--space-inset-sm);
 
     --sk-anchored-position-area: block-end span-inline-end;
@@ -241,7 +248,7 @@
     border-radius: var(--sk-combobox-content-radius);
     background: var(--sk-combobox-content-bg);
     color: var(--sk-combobox-fg);
-    box-shadow: var(--elevation-raised);
+    box-shadow: var(--sk-combobox-content-shadow);
     outline: none;
 
     /* Materialising, not sliding: same recipe as Popover/Menu (`--motion-materialize-scale`/

@@ -9,6 +9,7 @@ export * from "./breadcrumb.js";
 export * from "./button.js";
 export * from "./calendar.js";
 export * from "./changelog.js";
+export * from "./chart.js";
 export * from "./code-preview.js";
 export * from "./component-preview.js";
 export * from "./copy-button.js";

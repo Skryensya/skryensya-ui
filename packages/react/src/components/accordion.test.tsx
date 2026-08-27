@@ -4,7 +4,7 @@ import { Accordion } from "./accordion.js";
 
 const items = (
   <>
-    <Accordion.Item value="runtime"><Accordion.Trigger>Runtime</Accordion.Trigger><Accordion.Content>Node 22</Accordion.Content></Accordion.Item>
+    <Accordion.Item value="runtime"><Accordion.Trigger>Runtime</Accordion.Trigger><Accordion.Content>Node 24</Accordion.Content></Accordion.Item>
     <Accordion.Item value="rollout"><Accordion.Trigger>Rollout</Accordion.Trigger><Accordion.Content>10%, then 100%</Accordion.Content></Accordion.Item>
   </>
 );
@@ -66,7 +66,7 @@ describe("Accordion React contracts", () => {
       <Accordion defaultValue="runtime">
         <Accordion.Item value="runtime">
           <Accordion.Trigger>Runtime</Accordion.Trigger>
-          <Accordion.Content>Node 22</Accordion.Content>
+          <Accordion.Content>Node 24</Accordion.Content>
         </Accordion.Item>
         <Accordion.Item value="rollout">
           <Accordion.Trigger headingLevel={4}>Rollout</Accordion.Trigger>

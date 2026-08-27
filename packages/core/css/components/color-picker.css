@@ -24,6 +24,7 @@
     --sk-color-picker-content-inline-size: 18rem;
     --sk-color-picker-content-padding: var(--space-inset-sm);
     --sk-color-picker-content-gap: var(--space-stack-xs);
+    --sk-color-picker-content-shadow: var(--elevation-overlay);
 
     --sk-color-picker-area-block-size: 8.75rem;
     --sk-color-picker-area-radius: calc(var(--radius-control) + 2px);
@@ -123,6 +124,7 @@
     --sk-color-picker-content-inline-size: 18rem;
     --sk-color-picker-content-padding: var(--space-inset-sm);
     --sk-color-picker-content-gap: var(--space-stack-xs);
+    --sk-color-picker-content-shadow: var(--elevation-overlay);
     --sk-anchored-position-area: block-end span-inline-end;
     --sk-anchored-justify: start;
     --sk-anchored-align: auto;
@@ -149,7 +151,7 @@
      * covers what that extra layer was reaching for. See /elevacion. */
     box-shadow:
       inset 0 1px 0 color-mix(in oklch, white 14%, transparent),
-      var(--elevation-overlay);
+      var(--sk-color-picker-content-shadow);
     outline: none;
   }
   .sk-color-picker__content[data-state="open"] {
@@ -304,12 +306,19 @@
     padding: 0 var(--space-inset-2xs);
     border: 0;
     border-radius: calc(var(--radius-control) - 2px);
-    background: color-mix(in oklch, var(--color-bg-surface-raised) 86%, var(--color-bg-canvas) 14%);
+    /* A field, `sunken` like Input/Select/Combobox elsewhere (see /elevacion): the real token now,
+       not the hand-mixed raised/canvas blend this used before real `sunken` was tuned to be usable
+       here. `--elevation-sunken` is the SECOND layer, after the border simulation this control
+       already needed (no real `border`, `border-radius` would clip a real one to a visible seam
+       at the corner otherwise). */
+    background: var(--color-bg-surface-sunken);
     color: var(--color-text-primary);
     font: inherit;
     font-variant-numeric: tabular-nums;
     text-align: center;
-    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-border-subtle) 70%, transparent);
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklch, var(--color-border-subtle) 70%, transparent),
+      var(--elevation-sunken);
   }
   .sk-color-picker__channel-input:focus-visible {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);

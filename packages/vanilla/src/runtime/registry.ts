@@ -185,6 +185,10 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/meter.js")).mountMeter,
   },
   {
+    selector: "[data-sk-chart]",
+    load: async () => (await import("../components/chart.js")).mountChart,
+  },
+  {
     selector: "[data-sk-breadcrumb]",
     load: async () => (await import("../components/breadcrumb.js")).mountBreadcrumb,
   },

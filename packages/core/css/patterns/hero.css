@@ -13,6 +13,7 @@
     --sk-hero-bg: transparent;
     --sk-hero-padding: 0;
     --sk-hero-radius: var(--radius-surface);
+    --sk-hero-shadow: var(--elevation-flat);
     /*
      * A real floor, not left to whatever the content happens to need. Confirmed live as the fix
      * for "se ven muy chicos": a Hero sized to exactly its own headline+subline+button read as a
@@ -53,6 +54,7 @@
     padding: var(--sk-hero-padding);
     border-radius: var(--sk-hero-radius);
     background: var(--sk-hero-bg);
+    box-shadow: var(--sk-hero-shadow);
   }
 
   /*
@@ -62,11 +64,25 @@
    * (`components/stat.css` never loaded there) that was the real complaint. A flat surface is the
    * honest baseline; decoration is a call for a consumer's own page to make, not this contract's.
    */
-  .sk-hero[data-surface="sunken"] { --sk-hero-bg: var(--color-bg-surface-sunken); }
+  .sk-hero[data-surface="sunken"] {
+    --sk-hero-bg: var(--color-bg-surface-sunken);
+    --sk-hero-shadow: var(--elevation-sunken);
+  }
   .sk-hero[data-surface="surface"] { --sk-hero-bg: var(--color-bg-surface); }
   .sk-hero[data-surface="raised"] {
     --sk-hero-bg: var(--color-bg-surface-raised);
-    box-shadow: var(--elevation-raised);
+    --sk-hero-shadow: var(--elevation-raised);
+  }
+
+  /* Same rescue as `box.css`'s own: `forced-colors` drops the shadow AND flattens every
+   * `--color-bg-surface-*` tint to one `Canvas`, and Hero never draws a border of its own (the
+   * comment above explains why: a flat fill is the honest baseline). Without this, a raised or
+   * sunken Hero is indistinguishable from the page around it in high contrast. */
+  @media (forced-colors: active) {
+    .sk-hero[data-surface="raised"],
+    .sk-hero[data-surface="sunken"] {
+      border: 1px solid CanvasText;
+    }
   }
 
   .sk-hero[data-padding="xs"] { --sk-hero-padding: var(--space-inset-xs); }

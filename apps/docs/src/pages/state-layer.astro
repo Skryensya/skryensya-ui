@@ -6,16 +6,12 @@ import ComponentPreview from "../components/ComponentPreview.astro";
 import Used from "../components/Used.astro";
 
 import "../examples/state-layer.css";
-import listSource from "../examples/state-layer.css?raw";
 
-const usage = `
-<!-- Sin imports extra: el state layer viene en tokens.scss.
-     Solo marcas el elemento. -->
-<button class="sl-tile sk-interactive" type="button">
+const usage = `<button class="sl-tile sk-interactive" type="button">
   Interactivo
 </button>`;
 
-const projectedUsage = `<!-- DOM resultante; lo escribe el adapter. -->
+const projectedUsage = `<!-- DOM resultante: lo escribe el Enhancer. -->
 <div
   class="sk-combobox__item sk-interactive"
   data-sk-combobox-item
@@ -25,16 +21,13 @@ const projectedUsage = `<!-- DOM resultante; lo escribe el adapter. -->
   Argentina
 </div>`;
 
-
-
-
 const ladder = [
-  ["disabled", "--state-layer-disabled-opacity", "fuerza el layer a 0"],
-  ["dragged", "--state-layer-dragged-opacity", ""],
-  ["pressed", "--state-layer-pressed-opacity", ""],
-  ["focus", "--state-layer-focus-opacity", ""],
-  ["hover", "--state-layer-hover-opacity", ""],
-  ["selected", "--state-layer-selected-opacity", "el escalón base"],
+  ["selected", "--state-layer-selected-opacity", "base persistente"],
+  ["hover", "--state-layer-hover-opacity", "puntero encima"],
+  ["focus", "--state-layer-focus-opacity", "teclado"],
+  ["pressed", "--state-layer-pressed-opacity", "activación"],
+  ["dragged", "--state-layer-dragged-opacity", "arrastre"],
+  ["disabled", "--state-layer-disabled-opacity", "fuerza 0"],
 ];
 
 const stateLabels = [
@@ -45,6 +38,7 @@ const stateLabels = [
   { label: "Selected", selected: "true" },
   { label: "Disabled", disabled: "true" },
 ];
+
 const stateAttrs = (baseClass: string, item: (typeof stateLabels)[number]) => ({
   class: baseClass,
   ...(item.peek ? { "data-peek": item.peek } : {}),
@@ -81,15 +75,35 @@ const labTree: UsageTree = {
   signature: "Stack",
   attrs: { class: "sl-lab" },
   children: [
-    { contract: "typography", signature: "Text", attrs: { class: "sl-lab__caption" }, children: "Superficie neutra · hover, foco, press, selected, disabled" },
+    {
+      contract: "typography",
+      signature: "Text",
+      attrs: { class: "sl-lab__caption" },
+      children: "Lista con selección, hover y disabled",
+    },
     {
       contract: "layout",
       signature: "Stack",
       attrs: { class: "sl-list" },
       children: [
-        { contract: "button", signature: "Button.action", attrs: { class: "sl-item", "aria-selected": "true" }, children: "Inbox 24" },
-        { contract: "button", signature: "Button.action", attrs: { class: "sl-item", "data-peek": "hover" }, children: "Archivo 8" },
-        { contract: "button", signature: "Button.action", attrs: { class: "sl-item", "aria-disabled": "true" }, children: "Borradores 0" },
+        {
+          contract: "button",
+          signature: "Button.action",
+          attrs: { class: "sl-item", "aria-selected": "true" },
+          children: "Inbox 24",
+        },
+        {
+          contract: "button",
+          signature: "Button.action",
+          attrs: { class: "sl-item", "data-peek": "hover" },
+          children: "Archivo 8",
+        },
+        {
+          contract: "button",
+          signature: "Button.action",
+          attrs: { class: "sl-item", "aria-disabled": "true" },
+          children: "Borradores 0",
+        },
       ],
     },
     {
@@ -97,8 +111,18 @@ const labTree: UsageTree = {
       signature: "Inline",
       attrs: { class: "sl-actions" },
       children: [
-        { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: "Guardar" },
-        { contract: "button", signature: "Button.action", options: { variant: "neutral" }, children: "Cancelar" },
+        {
+          contract: "button",
+          signature: "Button.action",
+          options: { variant: "accent" },
+          children: "Guardar",
+        },
+        {
+          contract: "button",
+          signature: "Button.action",
+          options: { variant: "neutral" },
+          children: "Cancelar",
+        },
       ],
     },
   ],
@@ -108,127 +132,62 @@ const labTree: UsageTree = {
 <Base
   title="State layer"
   documentLayout="grid"
-  description="Dos formas de conectar el mismo feedback: estados DOM directos y estados proyectados por una máquina."
+  description="Un solo Pattern de feedback para estados DOM directos y estados proyectados por una Machine."
 >
   <h1>State layer</h1>
   <p class="lede">
-    Un mismo overlay semitransparente expresa hover, focus, pressed, selected y dragged. El sistema
-    tiene dos formas de conectarlo: desde el estado real del DOM o desde el estado lógico de una máquina.
-    Comparten pintura y tokens; no son dos variantes visuales ni dos capas superpuestas.
+    State layer es un Pattern: un overlay semitransparente teñido con el color de contenido del
+    componente. Sirve para hover, focus, pressed, selected y dragged. La fuente de verdad puede ser el
+    DOM o una Machine, pero la pintura y los tokens son los mismos.
   </p>
 
-  <h2>Dos tipos de conexión, una sola capa</h2>
+  <h2>Qué falla sin esta regla</h2>
   <p>
-    El tipo describe <strong>quién conoce el estado</strong>. Si el propio elemento recibe hover,
-    foco y press, la conexión es directa. Si el foco DOM permanece en otro nodo y una máquina sabe
-    qué item está activo, el adapter proyecta ese estado al DOM.
+    Sin una capa única, hover, focus y selected se apilan como overlays distintos. La opacidad se suma,
+    el contraste cambia por accidente y la selección termina dependiendo de un wash visual. El Pattern
+    evita esa suma: exactamente un estado pinta el layer en cada momento.
+  </p>
+
+  <h2>Conexión directa</h2>
+  <p>
+    La conexión es directa cuando el mismo elemento recibe el estado del navegador. Un button, un link
+    o un tile añaden <code>sk-interactive</code>; el CSS compartido lee <code>:hover</code>,
+    <code>:focus-visible</code>, <code>:active</code>, ARIA y <code>:has()</code> cuando el target
+    contiene un input nativo.
+  </p>
+  <CodeBlock code={usage} label="HTML" note="el target posee el estado" />
+  <ComponentPreview tree={bareTree} label="Superficie neutra" />
+  <ComponentPreview tree={currentColorTree} label="Superficie con currentColor" />
+
+  <h2>Conexión proyectada</h2>
+  <p>
+    La conexión es proyectada cuando una Machine posee el estado lógico. En Combobox o TreeView el foco
+    puede seguir en el input o en la raíz mientras las flechas activan un item. El Enhancer escribe
+    atributos como <code>data-highlighted</code> o <code>data-selected</code>; el CSS del componente
+    los traduce a la misma escalera de opacidades.
+  </p>
+  <CodeBlock code={projectedUsage} label="HTML" note="resultado escrito por el Enhancer" />
+  <ComponentPreview tree={labTree} label="Proyección y acciones" />
+
+  <h2>Mecanismo</h2>
+  <p>
+    El color del layer es <Used token="--state-layer-color" />, es decir <code>currentColor</code>.
+    Una superficie neutra, un botón de acento y un modo de alto contraste cambian el color de contenido;
+    el State layer lo sigue sin tokens de color por componente.
+  </p>
+  <p>
+    Las reglas directas y proyectadas asignan el mismo <code>--state-layer-opacity</code>. Cuando varios
+    estados coinciden, gana una sola opacidad por prioridad, no una suma:
   </p>
   <div class="sk-table-scroll">
     <table class="sk-table">
       <thead class="sk-table__head">
-        <tr class="sk-table__row"><th class="sk-table__header">Tipo</th><th class="sk-table__header">Fuente de verdad</th><th class="sk-table__header">Úsalo cuando</th><th class="sk-table__header">Quién lo conecta</th></tr>
-      </thead>
-      <tbody class="sk-table__body">
         <tr class="sk-table__row">
-          <td class="sk-table__cell"><strong>Directo</strong></td>
-          <td class="sk-table__cell"><code>:hover</code>, <code>:focus-visible</code>, <code>:active</code>, ARIA y <code>:has()</code></td>
-          <td class="sk-table__cell">El mismo button, link, tile o wrapper posee la interacción.</td>
-          <td class="sk-table__cell">El consumidor añade <code>sk-interactive</code> una vez.</td>
+          <th class="sk-table__header">Prioridad</th>
+          <th class="sk-table__header">Estado</th>
+          <th class="sk-table__header">Token</th>
+          <th class="sk-table__header">Razón</th>
         </tr>
-        <tr class="sk-table__row">
-          <td class="sk-table__cell"><strong>Proyectado</strong></td>
-          <td class="sk-table__cell"><code>data-highlighted</code>, <code>data-selected</code>, <code>data-disabled</code> y otros estados de máquina.</td>
-          <td class="sk-table__cell">Un widget compuesto conserva el foco en su input o raíz, pero activa un item interno.</td>
-          <td class="sk-table__cell">El adapter y el CSS del componente; el consumidor no recrea el mapping.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h2>1. Directo: el elemento posee el estado</h2>
-  <p>
-    Button, link y tile reciben los estados del navegador en el mismo nodo que se pinta. El patrón
-    viene en <code>tokens.scss</code>: el consumidor solo añade <code>sk-interactive</code>. Sus
-    selectores también leen ARIA y usan <code>:has()</code> cuando un wrapper contiene el input nativo.
-    El <code>::before</code> permanece inerte en todo lo demás.
-  </p>
-  <CodeBlock code={usage} label="HTML · conexión directa" note="marca el target una vez" />
-
-  <h3>Todos los estados, dos superficies</h3>
-  <p>
-    Los dos previews congelan la misma escalera completa para compararla sin mover el puntero.
-    El primero usa una superficie neutra; el segundo, una superficie inversa cuyo layer hereda
-    <code>currentColor</code>. En ambos, el primer tile sigue siendo interactivo.
-  </p>
-  <ComponentPreview tree={bareTree} label="Superficie neutra · todos los estados" />
-  <ComponentPreview tree={currentColorTree} label="currentColor · todos los estados" />
-  <p>
-    Selected, hover, focus, pressed y dragged avanzan ahora en pasos visibles. En alto contraste
-    el wash no aumenta: hacerlo acercaría el fondo al texto y apagaría la superficie. En su lugar,
-    aparece un keyline inset cuyo grosor crece con cada estado.
-  </p>
-
-  <h2>2. Proyectado: la máquina posee el estado</h2>
-  <p>
-    En Combobox, Menu, DatePicker y TreeView el foco puede permanecer en el input o en la raíz mientras
-    las flechas activan otro item. Ese item no coincide necesariamente con
-    <code>:focus-visible</code>. El adapter escribe <code>data-highlighted</code>,
-    <code>data-selected</code> o <code>data-disabled</code>, y el CSS del componente traduce ese
-    estado lógico a los mismos tokens de opacidad.
-  </p>
-  <CodeBlock
-    code={projectedUsage}
-    label="DOM resultante · conexión proyectada"
-    note="lo escribe el adapter; no se copia"
-  />
-  <div class="sk-callout" data-tone="info">
-    <div class="sk-callout__content">
-      <p>
-        <strong>El consumidor no elige entre dos clases.</strong> Usa <code>sk-interactive</code>
-        para un target DOM propio. Al consumir un widget compuesto, su adapter y su stylesheet ya
-        poseen la conexión proyectada.
-      </p>
-    </div>
-  </div>
-
-  <h2>Mismo layer, superficies distintas</h2>
-  <p>
-    Superficie neutra y relleno saturado no son tipos adicionales: solo cambian el
-    <code>currentColor</code> que tiñe el mismo layer. La lista usa el color de texto; en el botón
-    primario el velo es <code>on-accent</code>. Cambia marca, modo o contraste: el contrato se mantiene.
-  </p>
-  <ComponentPreview tree={labTree} label="Lista + acciones" />
-
-  <h2>El tinte es <code>currentColor</code></h2>
-  <p>
-    El color del layer es <Used token="--state-layer-color" />, el color de contenido del propio
-    componente. Un solo token cubre todos los casos:
-  </p>
-  <ul>
-    <li>
-      <strong>Subsume negro-sobre-claro / blanco-sobre-oscuro:</strong> una superficie neutra tiene
-      texto oscuro (claro) o claro (oscuro), así que el layer oscurece o aclara solo, sin una rama por
-      modo.
-    </li>
-    <li>
-      <strong>Y es correcto sobre rellenos saturados</strong>, donde fijar negro o blanco falla: el
-      contenido de un botón primario usa <code>on-accent</code>, que se resuelve según el relleno.
-      El layer hereda ese tono exacto en vez de asumir uno.
-    </li>
-    <li><strong>Cero tokens de color por componente.</strong> Uno sirve a todo.</li>
-  </ul>
-
-
-  <h2>Exactamente un layer activo</h2>
-  <p>
-    Las dos conexiones escriben una sola opacidad sobre un solo pseudo-elemento; nunca apilan overlays.
-    En la conexión directa, el patrón compartido resuelve coincidencias simultáneas con esta escalera,
-    de mayor a menor prioridad:
-  </p>
-  <div class="sk-table-scroll">
-    <table class="sk-table">
-      <thead class="sk-table__head">
-        <tr class="sk-table__row"><th class="sk-table__header">Prioridad</th><th class="sk-table__header">Estado</th><th class="sk-table__header">Opacidad usada</th><th class="sk-table__header"></th></tr>
       </thead>
       <tbody class="sk-table__body">
         {
@@ -237,7 +196,7 @@ const labTree: UsageTree = {
               <td class="sk-table__cell count">{i + 1}</td>
               <td class="sk-table__cell mono">{state}</td>
               <td class="sk-table__cell"><Used token={token} /></td>
-              <td class="sk-table__cell count">{note}</td>
+              <td class="sk-table__cell">{note}</td>
             </tr>
           ))
         }
@@ -245,75 +204,32 @@ const labTree: UsageTree = {
     </table>
   </div>
 
-  <div class="sk-callout" data-tone="info">
-    <div class="sk-callout__content">
-    <p>
-      <strong>La escalera no usa selectores combinados.</strong> Cada regla de estado asigna el
-      <em>mismo</em> <code>--state-layer-opacity</code>, y todos los selectores tienen la misma
-      especificidad (0,2,0), así que cuando varios coinciden, decide el <strong>orden en el
-      archivo</strong>. Las reglas están escritas en prioridad ascendente: la última gana.
-    </p>
-    </div>
-  </div>
-
-  <h2>En la conexión directa, <code>selected</code> es el escalón más bajo</h2>
-  <p>
-    Una base persistente debajo de hover significaría dos capas superpuestas, es decir, opacidad
-    sumada, que el modelo prohíbe. Así que selected es el más bajo y hover/pressed lo reemplazan.
-  </p>
-  <p>
-    La selección nunca desaparece porque <strong>siempre lleva un indicador independiente</strong>: un
-    check, un control relleno, un riel, un peso tipográfico. En la lista de arriba, "Enviados" lleva un
-    riel de acento y tipografía enfatizada, no depende del layer. Si necesitas un selected+hover más
-    fuerte, defines un token de opacidad combinada; nunca una suma en runtime.
-  </p>
-
-  <h2>Accesibilidad, no negociable</h2>
-  <p>El layer <strong>nunca es la única señal</strong>:</p>
+  <h2>Límites y accesibilidad</h2>
   <ul>
     <li>
-      El foco lleva un anillo independiente (<Used token="--focus-ring-width" /> de
-      <Used token="--focus-ring-color" />), verificado a ≥3:1 por el validador. Por eso vive en su
-      propia familia <code>--focus-ring-*</code> y no dentro de <code>--state-layer-*</code>: el nombre
-      carga la garantía.
+      El State layer nunca es la única señal. Focus lleva ring propio; selected lleva check, riel,
+      peso tipográfico o control relleno.
     </li>
-    <li>La selección lleva un indicador real.</li>
     <li>
-      <code>disabled</code> atenúa con los tokens del componente y <strong>fuerza el layer a 0</strong>.
+      Disabled fuerza el layer a 0 y atenúa con los tokens del componente. No debe parecer interactivo.
     </li>
-    <li>Se usa <code>:focus-visible</code>, no <code>:focus</code>, así un clic con mouse no deja un layer pegado.</li>
-    <li>El fade respeta <code>prefers-reduced-motion</code>.</li>
+    <li>
+      Alto contraste añade un keyline inset y refuerza el foco. No sube la opacidad del wash, porque
+      eso acercaría fondo y texto.
+    </li>
+    <li>
+      Un selector externo más específico puede romper la escalera. Si se necesita cambiar color o
+      opacidad, se hace con styling hooks y un alcance claro.
+    </li>
+    <li>
+      Para estados de Machine no se copia el mapping. Se consume el componente y su Binding.
+    </li>
   </ul>
 
-  <h2>Alto contraste añade un keyline, no más wash</h2>
-  <p>
-    Claro y oscuro comparten la misma escalera: <code>currentColor</code> ya cambia con el modo.
-    Alto contraste tampoco duplica las opacidades. Eso acercaría el fondo al color del texto y haría
-    que el control se leyera apagado. <code>[data-contrast="high"]</code> conserva el wash, añade un
-    keyline inset proporcional al estado y aumenta el anillo de foco a <code>3px</code>. Activa
-    contraste alto arriba y compara ambas galerías.
-  </p>
-
-  <h2>Tu CSS</h2>
-  <p>
-    Para un target DOM propio, el patrón envía la estructura del layer y la escalera; tú escribes el
-    layout y agregas la clase. Los widgets compuestos ya envían su mapping proyectado en el CSS del
-    componente:
-  </p>
-  <CodeBlock code={listSource} label="src/examples/state-layer.css" note="el CSS de los previews ↞" />
-
-  <p>
-    Cero colores de estado y cero opacidades hardcodeadas. Usa la conexión directa en controles propios;
-    para estados de máquina, consume el componente en lugar de duplicar sus selectores internos.
-  </p>
-
-  <div class="sk-callout" data-tone="info">
-    <div class="sk-callout__content">
-    <p>
-      Un consumidor con un selector más específico que <code>.sk-interactive:hover</code> puede romper
-      la escalera. Es una limitación de CSS, la misma que acepta
-      <a href="/styling-hooks">el contrato de styling hooks</a>.
-    </p>
-    </div>
-  </div>
+  <h2>Siguiente</h2>
+  <ul>
+    <li><a href="/styling-hooks">Styling hooks</a>, para redefinir puntos de uso públicos.</li>
+    <li><a href="/motion">Motion</a>, para el fade del layer y reduced motion.</li>
+    <li><a href="/componentes/combobox">Combobox</a>, como ejemplo de estado proyectado.</li>
+  </ul>
 </Base>

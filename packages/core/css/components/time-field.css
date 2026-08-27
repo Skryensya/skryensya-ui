@@ -12,7 +12,10 @@
     --sk-time-field-border-color: var(--color-border-default);
     --sk-time-field-invalid-border-color: var(--color-border-danger);
     --sk-time-field-radius: var(--radius-control);
-    --sk-time-field-bg: var(--color-bg-surface-raised);
+    /* A field, `sunken` like Input/Select/Combobox/NumberField (see /elevacion): the well the
+     * segments sit in, not a card on the surface. `--elevation-sunken` traces its own edge. */
+    --sk-time-field-bg: var(--color-bg-surface-sunken);
+    --sk-time-field-shadow: var(--elevation-sunken);
     --sk-time-field-fg: var(--color-text-primary);
     --sk-time-field-placeholder-color: var(--color-text-secondary);
     --sk-time-field-affordance-color: var(--color-text-secondary);
@@ -55,6 +58,7 @@
     border-radius: var(--sk-time-field-radius);
     background: var(--sk-time-field-bg);
     color: var(--sk-time-field-fg);
+    box-shadow: var(--sk-time-field-shadow);
     font-variant-numeric: tabular-nums;
   }
 

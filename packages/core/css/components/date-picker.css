@@ -12,10 +12,12 @@
     --sk-date-picker-inline-size: 16.5rem;
     --sk-date-picker-min-inline-size: 14rem;
     --sk-date-picker-label-color: var(--color-text-secondary);
-    /* The editable date input, same field chrome as Time Field / Number Field. */
+    /* The editable date input, same field chrome as Time Field / Number Field: `sunken`, not a card
+     * on the surface (see /elevacion). `--elevation-sunken` traces the control's own edge. */
     --sk-date-picker-border-color: var(--color-border-default);
     --sk-date-picker-radius: var(--radius-control);
-    --sk-date-picker-bg: var(--color-bg-surface-raised);
+    --sk-date-picker-bg: var(--color-bg-surface-sunken);
+    --sk-date-picker-shadow: var(--elevation-sunken);
     --sk-date-picker-fg: var(--color-text-primary);
     --sk-date-picker-affordance-color: var(--color-text-secondary);
     --sk-date-picker-disabled-bg: var(--color-action-disabled);
@@ -27,6 +29,7 @@
     --sk-date-picker-content-radius: var(--radius-surface);
     --sk-date-picker-content-inline-size: 18rem;
     --sk-date-picker-content-padding: var(--space-inset-xs) var(--space-inset-sm);
+    --sk-date-picker-content-shadow: var(--elevation-overlay);
 
     box-sizing: border-box;
     display: grid;
@@ -47,6 +50,7 @@
     border: 1px solid var(--sk-date-picker-border-color);
     border-radius: var(--sk-date-picker-radius);
     background: var(--sk-date-picker-bg);
+    box-shadow: var(--sk-date-picker-shadow);
     /* El control es el ancla, pero QUIEN LO DECLARA es el pattern (`sk-anchor`, ADR-11), no esta hoja.
      * Acá vivía un `anchor-name: var(--sk-date-picker-anchor)` que nadie escribía nunca: un `var()`
      * sin fallback es inválido a computed-value time, así que resolvía a `none`, y como esta hoja se
@@ -139,6 +143,7 @@
     --sk-date-picker-content-radius: var(--radius-surface);
     --sk-date-picker-content-padding: var(--space-inset-xs) var(--space-inset-sm);
     --sk-date-picker-content-inline-size: 18rem;
+    --sk-date-picker-content-shadow: var(--elevation-overlay);
 
     --sk-anchored-position-area: block-end span-inline-end;
     --sk-anchored-justify: start;
@@ -156,7 +161,7 @@
     background: var(--sk-date-picker-content-bg);
     /* A full calendar grid, not a short tethered list: its own standalone surface, the same tier
      * as Popover/ColorPicker rather than Menu/Select's lighter listbox. See /elevacion. */
-    box-shadow: var(--elevation-overlay);
+    box-shadow: var(--sk-date-picker-content-shadow);
     outline: none;
   }
   .sk-date-picker__content[data-state="open"] {

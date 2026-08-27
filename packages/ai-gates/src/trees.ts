@@ -1141,7 +1141,7 @@ const signatureTrees: readonly Canonical[] = [
           options: { name: "deployment" },
           children: [
             { contract: "details", signature: "Details.Summary", children: "Runtime" },
-            { contract: "details", signature: "Details.Content", children: "Node 22 sobre el pool compartido." },
+            { contract: "details", signature: "Details.Content", children: "Node 24 sobre el pool compartido." },
           ],
         },
         {

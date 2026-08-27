@@ -312,6 +312,10 @@
       "types": "./src/components/meter.tsx",
       "default": "./src/components/meter.tsx"
     },
+    "./chart": {
+      "types": "./src/components/chart.tsx",
+      "default": "./src/components/chart.tsx"
+    },
     "./data-grid": {
       "types": "./src/components/data-grid.tsx",
       "default": "./src/components/data-grid.tsx"
@@ -374,19 +378,13 @@
     "@skryensya/ai-compiler": "workspace:*",
     "@skryensya/core": "workspace:*",
     "@skryensya/icons-phosphor": "workspace:*",
-    "@zag-js/checkbox": "^1.43.3",
-    "@zag-js/collapsible": "^1.43.3",
-    "@zag-js/radio-group": "^1.43.3",
-    "@zag-js/react": "^1.43.3",
-    "@zag-js/select": "^1.43.3",
-    "@zag-js/slider": "^1.43.3",
-    "@zag-js/tabs": "^1.43.3",
-    "@zag-js/tooltip": "1.43.3"
+    "@zag-js/react": "^1.43.3"
   },
   "peerDependencies": {
     "@skryensya/icons-lucide": "workspace:*",
     "@skryensya/icons-material": "workspace:*",
-    "react": ">=19"
+    "react": ">=19",
+    "react-dom": ">=19"
   },
   "peerDependenciesMeta": {
     "@skryensya/icons-lucide": {
@@ -405,8 +403,6 @@
     "axe-core": "^4.12.1",
     "jsdom": "^29.1.1",
     "react-dom": "^19.2.7",
-    "sass": "^1.101.0",
-    "tslib": "^2.8.1",
     "typescript": "^5.9.3",
     "vitest": "^4.1.10"
   }

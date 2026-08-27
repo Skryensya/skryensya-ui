@@ -776,7 +776,27 @@
     },
     "apps/docs/src/components/pages/CardPage.test.ts": {
       "imports tile.css, which Base.astro never loads globally": "passed",
-      "imports checkbox.css, without which every indicator paints both the check and the dash glyph at once": "passed"
+      "imports checkbox.css, without which every indicator paints both the check and the dash glyph at once": "passed",
+      "keeps the optional chart card a Box composition instead of inventing sk-card": "passed"
+    },
+    "apps/docs/src/components/pages/ChartsPage.test.ts": {
+      "composes the dashboard cards from Box, Stat, Chart and Button": "passed",
+      "does not expose TanStack's grammar on the documented path": "passed",
+      "opens on the three card compositions before documenting Chart itself": "passed"
+    },
+    "packages/charts/src/react/chart.test.tsx": {
+      "spreads a series across the unit box and inverts it, so the biggest value is highest": "passed",
+      "puts a single point in the middle rather than at the left edge": "passed",
+      "closes an area down to the baseline and back, without drawing the sides": "passed",
+      "draws nothing for an empty series instead of a stray dot": "passed",
+      "survives a series of zeros rather than dividing by nothing": "passed",
+      "paints no overlay for bars: they never need this package": "passed",
+      "paints a line into the overlay and flags the chart as rendered": "passed",
+      "paints an area as TWO paths, so the fill is closed and the stroke is not": "passed",
+      "keeps the series as a real list of text, which is the accessible rendering": "passed",
+      "hides the overlay from assistive tech, so the series is never read twice": "passed",
+      "stretches a unit box instead of measuring the plot": "passed",
+      "renders nothing rather than an empty path when there is no data": "passed"
     }
   }
 }

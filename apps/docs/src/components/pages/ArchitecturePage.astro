@@ -1,15 +1,4 @@
 ---
-/*
- * How a component is built: the contract, the stylesheet, the machine, the binding.
- *
- * This was the Accordion page's "Arquitectura" tab, and it was never about the Accordion. Every
- * string in it described the platform, and its own lede said so ("esta página usa Accordion como
- * ejemplo"), while living under `accordion.*` keys inside a tab strip that promised the page's own
- * contents. Sixty component pages would each have carried the same four paragraphs, updated in one.
- *
- * So it is a page, and the component pages link to it. The Accordion worked example stays: the model
- * is easier to believe against something real than in the abstract.
- */
 import Base from "../../layouts/Base.astro";
 import { getLocale, useTranslations } from "../../i18n";
 
@@ -26,6 +15,8 @@ const t = useTranslations(getLocale(Astro.url));
     <li set:html={t("architecture.layer2")} />
     <li set:html={t("architecture.layer3")} />
     <li set:html={t("architecture.layer4")} />
+    <li set:html={t("architecture.layer5")} />
+    <li set:html={t("architecture.layer6")} />
   </ol>
 
   <h2>{t("architecture.flowTitle")}</h2>
@@ -45,4 +36,5 @@ const t = useTranslations(getLocale(Astro.url));
 
   <h2>{t("architecture.exampleTitle")}</h2>
   <p set:html={t("architecture.exampleBody")} />
+  <p set:html={t("architecture.nextBody")} />
 </Base>

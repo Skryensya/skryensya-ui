@@ -1,8 +1,8 @@
 ---
-import "@skryensya/core/components/dialog.css";
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import StylingHooks from "../components/StylingHooks.astro";
+import "@skryensya/core/patterns/box.css";
 import "@skryensya/core/patterns/transparency.css";
 
 const install = `@import "@skryensya/core/tokens.scss";
@@ -17,70 +17,23 @@ const basicHtml = `<article
   data-surface="surface"
 >
   <h2>Resumen semanal</h2>
-  <p>El contenido siempre vive sobre un fallback opaco.</p>
+  <p>12 cambios desde tu última visita.</p>
 </article>`;
 
-const navbarReact = `import {
-  Navbar,
-  NavbarActions,
-  NavbarBrand,
-} from "@skryensya/react/navbar";
-import { Button } from "@skryensya/react/button";
-
-<Navbar className="sk-translucent" data-strength="sm">
-  <NavbarBrand>Atlas</NavbarBrand>
-  <NavbarActions>
-    <Button variant="ghost">Buscar</Button>
-    <Button variant="accent">Crear</Button>
-  </NavbarActions>
-</Navbar>;`;
-
-const boxReact = `import { Box } from "@skryensya/react/box";
-
-<Box
-  as="article"
-  className="sk-translucent"
-  data-strength="md"
-  surface="surface"
-  border="subtle"
-  padding="lg"
->
-  <h2>Actividad</h2>
-  <p>12 cambios desde tu última visita.</p>
-</Box>;`;
-
-const dialogHtml = `<dialog
-  class="sk-dialog sk-translucent"
-  data-strength="sm"
-  aria-labelledby="invite-title"
->
-  <header class="sk-dialog__header">
-    <h2 id="invite-title" class="sk-dialog__title">
-      Invitar al equipo
-    </h2>
-  </header>
-  <div class="sk-dialog__body">
-    <p>El backdrop y la superficie se reducen por separado.</p>
-  </div>
-</dialog>`;
-
-const customize = `.hero-glass {
-  /* El fallback opaco contra el que se valida contraste. */
+const customize = `.hero-panel {
   --sk-translucent-surface: var(--color-bg-surface-raised);
-
-  /* Solo se usan cuando la transparencia está permitida. */
   --sk-translucent-opacity: 76%;
   --sk-translucent-blur: 20px;
   --sk-translucent-saturation: 120%;
 }`;
 
-const manualReduction = `.legacy-glass {
+const legacy = `.legacy-panel {
   background: rgb(255 255 255 / 72%);
   backdrop-filter: blur(16px);
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .legacy-glass {
+  .legacy-panel {
     background: var(--color-bg-surface);
     backdrop-filter: none;
   }
@@ -90,31 +43,68 @@ const manualReduction = `.legacy-glass {
 <Base
   title="Transparencias"
   documentLayout="grid"
-  description="Superficies translúcidas reutilizables, con blur progresivo, fallback opaco y reducción automática."
+  description="Pattern de superficies translúcidas con fallback opaco y reducción de transparencia."
 >
   <h1>Transparencias</h1>
   <p class="lede">
-    Una superficie translúcida deja ver el contexto sin entregarle el contraste. La clase
-    <code>sk-translucent</code> compone alpha y backdrop blur sobre componentes conocidos, pero
-    siempre parte de una superficie opaca. Si el navegador no entiende la preferencia, o la persona
-    pide reducir transparencia, el contenido conserva exactamente la misma caja y lectura.
+    <strong>Transparencia es un Pattern</strong> para superficies que dejan percibir contexto sin
+    entregar el contraste. <code>sk-translucent</code> aplica alpha y backdrop blur solo como mejora;
+    el fallback opaco existe antes de cualquier media query.
   </p>
 
   <div class="sk-callout" data-tone="info">
     <div class="sk-callout__content">
       <p>
         <strong><code>prefers-reduced-transparency</code> sigue siendo experimental.</strong> Por eso
-        el sistema no depende de la rama <code>reduce</code> para ser seguro: transparencia y blur
-        solo se activan bajo <code>no-preference</code>. Sin soporte, queda el fallback opaco.
+        el Pattern no depende de <code>reduce</code> para ser seguro: la transparencia se activa bajo
+        <code>no-preference</code>. Sin soporte, queda la superficie opaca.
       </p>
     </div>
   </div>
 
-  <h2>Qué está pasando</h2>
+  <h2>Consumidores</h2>
   <p>
-    Hay tres capas. El <strong>backdrop</strong> es lo que ya estaba detrás; la
-    <strong>superficie</strong> mezcla su color opaco con alpha y desenfoca ese backdrop; el
-    <strong>contenido</strong> permanece arriba, al 100% de opacidad. Nunca se aplica
+    <a href="/componentes/box">Box</a>, <a href="/componentes/navbar">Navbar</a>,
+    <a href="/componentes/dialog">Dialog</a>, <a href="/componentes/sidebar">Sidebar</a>,
+    <a href="/vaul">Vaul</a> y <a href="/componentes/drawer">Drawer</a> pueden añadir la clase al
+    mismo nodo que ya pinta su superficie. Media gradient y Backdrop usan la misma política de
+    reducción, pero no son la misma superficie: uno protege captions sobre media y el otro pertenece
+    al top layer.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Consumidor</th>
+          <th class="sk-table__header">Uso seguro</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><a href="/componentes/box">Box</a></td>
+          <td class="sk-table__cell">paneles sobre media o fondos editoriales.</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">
+            <a href="/componentes/navbar">Navbar</a> y <a href="/componentes/sidebar">Sidebar</a>
+          </td>
+          <td class="sk-table__cell">chrome persistente con <code>data-strength="sm"</code>.</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">
+            <a href="/componentes/dialog">Dialog</a>, <a href="/vaul">Vaul</a> y
+            <a href="/componentes/drawer">Drawer</a>
+          </td>
+          <td class="sk-table__cell">paneles modales; el <code>::backdrop</code> se reduce aparte.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Mecanismo</h2>
+  <p>
+    Hay tres capas. El backdrop es lo que ya estaba detrás; la superficie mezcla su color opaco con
+    alpha y desenfoca ese backdrop; el contenido queda arriba al 100% de opacidad. Nunca se aplica
     <code>opacity</code> al contenedor entero porque también degradaría texto, iconos y bordes.
   </p>
 
@@ -163,140 +153,46 @@ const manualReduction = `.legacy-glass {
       </div>
     </div>
     <figcaption>
-      El fondo de calibración combina bordes finos, cambios de color y tipografía para que alpha y
-      blur sean visibles. Con reducción, las tres muestras convergen en la misma superficie opaca.
+      Con reducción, las tres muestras convergen en la misma superficie opaca. El contenido no cambia
+      de opacidad.
     </figcaption>
   </figure>
 
-  <h2>Instalar</h2>
+  <h2>Uso</h2>
   <p>
-    El patrón es opt-in. Importa primero los tokens y los estilos del componente que quieras pintar;
-    <code>transparency.css</code> aporta la clase composable y su política accesible.
-  </p>
-  <CodeBlock code={install} label="CSS" />
-
-  <h2>Una clase, tres intensidades</h2>
-  <p>
-    Añade <code>sk-translucent</code> al mismo nodo que ya pinta la superficie. Sin
-    <code>data-strength</code>, el valor es <code>md</code>. La intensidad describe cuánto se percibe
-    el efecto: <code>lg</code> deja ver más backdrop y lo desenfoca más.
+    Añade <code>sk-translucent</code> al nodo que ya pinta la superficie. Sin
+    <code>data-strength</code>, el valor es <code>md</code>. La intensidad cambia la mejora visual, no
+    el fallback que se usa para validar contraste.
   </p>
   <CodeBlock code={basicHtml} label="HTML" lang="html" />
 
-  <div class="sk-table-scroll">
-    <table class="sk-table">
-      <thead class="sk-table__head">
-        <tr class="sk-table__row">
-          <th class="sk-table__header">Strength</th>
-          <th class="sk-table__header">Superficie</th>
-          <th class="sk-table__header">Blur</th>
-          <th class="sk-table__header">Uso recomendado</th>
-        </tr>
-      </thead>
-      <tbody class="sk-table__body">
-        <tr class="sk-table__row">
-          <td class="sk-table__cell"><code>sm</code></td>
-          <td class="sk-table__cell">92%</td>
-          <td class="sk-table__cell">8px</td>
-          <td class="sk-table__cell">Navbar, Sidebar, Dialog</td>
-        </tr>
-        <tr class="sk-table__row">
-          <td class="sk-table__cell"><code>md</code></td>
-          <td class="sk-table__cell">82%</td>
-          <td class="sk-table__cell">16px</td>
-          <td class="sk-table__cell">Box, cards y paneles flotantes</td>
-        </tr>
-        <tr class="sk-table__row">
-          <td class="sk-table__cell"><code>lg</code></td>
-          <td class="sk-table__cell">70%</td>
-          <td class="sk-table__cell">24px</td>
-          <td class="sk-table__cell">Hero o pieza editorial; nunca UI densa</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <h2>Componentes conocidos</h2>
-  <p>
-    La clase ya enlaza los hooks de superficie de <strong>Box, Navbar, Dialog, Sidebar, Vaul y
-    Drawer</strong>. No cambia su anatomía ni crea una variante paralela: el mismo componente gana
-    una pintura opcional.
-  </p>
-
-  <h3>Navbar: persistente y discreta</h3>
-  <p>
-    Usa <code>sm</code>: la navegación permanece estable mientras el contenido pasa por detrás.
-  </p>
-  <CodeBlock code={navbarReact} label="React · Navbar" lang="tsx" />
-
-  <h3>Box: una card sobre media</h3>
-  <p>
-    <code>md</code> funciona cuando la card flota sobre una imagen o un fondo editorial. Sobre un
-    canvas plano, una Box opaca es más simple y no necesita este patrón.
-  </p>
-  <CodeBlock code={boxReact} label="React · Box" lang="tsx" />
-
-  <h3>Dialog: el panel y el backdrop son cosas distintas</h3>
-  <p>
-    La clase pinta el panel. El <code>::backdrop</code> sigue perteneciendo a Dialog y se vuelve
-    opaco con transparencia reducida. Para un modal conserva <code>sm</code>: la tarea debe dominar,
-    no el fondo.
-  </p>
-  <CodeBlock code={dialogHtml} label="HTML · Dialog" lang="html" />
-
-  <h2>Personalizar sin romper el fallback</h2>
-  <p>
-    <code>--sk-translucent-surface</code> es la superficie opaca real. Los otros tres hooks solo
-    afectan la mejora transparente. Cambiar el alpha nunca debe ser la forma de arreglar contraste:
-    primero elige una superficie opaca correcta y valida texto y bordes contra ella.
-  </p>
-  <CodeBlock code={customize} label="CSS · hooks" />
-
-  <h2>Cuándo no usarla</h2>
+  <h2>Restricciones</h2>
   <ul>
-    <li>Sobre un canvas plano: no hay contexto útil que revelar.</li>
-    <li>En tablas, formularios largos o UI densa: el backdrop compite con la lectura.</li>
-    <li>Como única separación entre dos regiones: conserva borde, espacio o elevación.</li>
-    <li>Aplicando <code>opacity</code> al contenedor: también vuelve translúcido el contenido.</li>
-    <li>En State layer: esa alpha comunica interacción y no es una superficie de glassmorphism.</li>
+    <li>El fallback opaco debe funcionar antes de cualquier <code>@media</code>.</li>
+    <li>Texto, iconos y bordes permanecen al 100% de opacidad.</li>
+    <li>El borde o la elevación siguen separando la caja del fondo.</li>
+    <li>No se usa en tablas, formularios largos ni UI densa.</li>
+    <li>No reemplaza State layer: esa alpha comunica interacción, no superficie.</li>
   </ul>
+
+  <h2>Compatibilidad y fallback</h2>
+  <p>
+    La clase del sistema activa blur y alpha solo cuando la plataforma reporta
+    <code>prefers-reduced-transparency: no-preference</code>. Si la preferencia es
+    <code>reduce</code>, o si el navegador no la entiende, se conserva el color opaco de
+    <code>--sk-translucent-surface</code>.
+  </p>
+  <CodeBlock code={customize} label="CSS" />
 
   <h2>Superficies heredadas</h2>
   <p>
-    Si no puedes adoptar <code>sk-translucent</code>, añade una reducción explícita. Esta forma sirve
-    para código anterior, pero el baseline sigue siendo transparente en navegadores sin soporte;
-    para código nuevo, la clase del sistema es más segura.
+    Si una superficie anterior no puede adoptar <code>sk-translucent</code>, añade la reducción
+    explícita. Para código nuevo, usa el Pattern porque el baseline seguro es opaco.
   </p>
-  <CodeBlock code={manualReduction} label="CSS legado" />
+  <CodeBlock code={legacy} label="CSS" />
 
-  <h2>Contrato del sistema</h2>
-  <ul>
-    <li>
-      <strong>Dialog y Vaul.</strong> Sus backdrops pasan de una mezcla con
-      <code>transparent</code> a un fondo opaco. Modalidad y drag permanecen.
-    </li>
-    <li>
-      <strong>Media gradient.</strong> El wash se convierte en el color base opaco dentro de la caja
-      del caption; no cubre toda la imagen.
-    </li>
-    <li>
-      <strong>State layer.</strong> Se conserva porque es feedback esencial; selección y foco tienen
-      indicadores independientes.
-    </li>
-    <li>
-      <strong>Blur de transición.</strong> Pertenece a
-      <a href="/motion"><code>prefers-reduced-motion</code></a>, no a esta política de superficies.
-    </li>
-  </ul>
-
-  <h2>Checklist</h2>
-  <ul>
-    <li>El fallback opaco funciona antes de cualquier media query.</li>
-    <li>La clase vive en el mismo nodo que pinta la superficie.</li>
-    <li>Texto e iconos permanecen al 100% de opacidad.</li>
-    <li>El borde o la elevación siguen separando la caja del fondo.</li>
-    <li>La UI funciona si el navegador ignora por completo la preferencia.</li>
-  </ul>
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="CSS" />
 
   <StylingHooks
     groups={[

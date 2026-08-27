@@ -3,143 +3,138 @@ import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import ComponentPreview from "../components/ComponentPreview.astro";
-import { tokens } from "../lib/tokens";
 
 import "../examples/styling-hook-override.css";
 import overrideSource from "../examples/styling-hook-override.css?raw";
 
-const buttonHooks = tokens.filter((t) => t.file === "components/button.css");
+const contractFlow = `Contract
+  -> Part .sk-button
+  -> styling hook --sk-button-bg
+  -> Semantic token --color-action-accent`;
 
-const naive = `/* Lo que NO hacemos: un styling hook por variante. */
+const badHooks = `/* Evitar: un styling hook por variante y estado. */
 --sk-button-primary-bg
 --sk-button-danger-bg
---sk-button-ghost-bg
 --sk-button-primary-bg-hover
---sk-button-danger-bg-hover
-/* …y tu CSS tiene que ramificar entre ellos. */`;
+--sk-button-danger-bg-hover`;
 
-const actual = `/* Lo que hacemos: un styling hook, re-declarado por especificidad. */
+const declaredHooks = `/* components/button.css */
 .sk-button {
   --sk-button-bg: var(--color-action-neutral);
 }
+
 .sk-button[data-variant="accent"] {
   --sk-button-bg: var(--color-action-accent);
 }
+
 .sk-button[data-variant="danger"] {
   --sk-button-bg: var(--color-action-danger);
 }`;
 
-const consumer = `/* Tu CSS lo lee una vez y nunca ramifica. */
-.sk-button { background: var(--sk-button-bg); }`;
+const consumedHook = `.sk-button {
+  background: var(--sk-button-bg);
+}`;
 
 const overrideTree: UsageTree = {
   contract: "layout",
   signature: "Inline",
   attrs: { class: "promo", style: "display: contents" },
   children: [
-    { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: "Guardar" },
-    { contract: "button", signature: "Button.action", options: { variant: "neutral" }, children: "Cancelar" },
-    { contract: "button", signature: "Button.action", options: { variant: "danger" }, children: "Borrar" },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "accent" },
+      children: "Guardar",
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "neutral" },
+      children: "Cancelar",
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "danger" },
+      children: "Borrar",
+    },
   ],
 };
 ---
 
 <Base
-  title="El contrato de styling hooks"
+  title="Styling hooks"
   documentLayout="grid"
-  description="Un styling hook es la perilla pública de un componente: qué significa eso, cómo se nombran y cómo pisarlos."
+  description="La superficie pública que conecta un Contract, sus Parts y los valores semánticos que se pueden redefinir."
 >
-  <h1>El contrato de styling hooks</h1>
+  <h1>Styling hooks</h1>
   <p class="lede">
-    Importar <code>components/button.css</code> te da un botón <em>y</em>
-    {buttonHooks.length} styling hooks. La clase es lo que ves; los hooks son cómo lo cambias sin
-    tocar un selector. Ese es el contrato.
+    Un styling hook es la superficie pública de override de un componente. El Contract estabiliza la
+    Part, la Part declara el styling hook, y el styling hook apunta a un Semantic token. El consumidor
+    redefine ese punto de uso sin depender del selector interno ni del valor final.
   </p>
 
-  <div class="sk-callout" data-tone="info">
-    <div class="sk-callout__content">
-    <p>
-      Esto <strong>cambió</strong>. Durante mucho tiempo el sistema enviaba los hooks y nada más: la
-      estructura la escribía cada consumidor. Se revirtió, porque no se sostuvo,
-      <a href="/decisiones/0002-que-envia-tier-3">la decisión 8</a> cuenta qué se midió. Lo que no
-      cambió es para qué existe un hook: no es un repuesto de la estructura ausente, es la perilla.
-    </p>
-    </div>
-  </div>
-
-  <h2>Por qué hooks y no una clase por variante</h2>
+  <h2>Qué falla sin esta regla</h2>
   <p>
-    Porque un componente tiene un look base, variantes y tamaños, y esas combinaciones se multiplican.
-    Un styling hook las colapsa: es una custom property, y a una custom property no le importa qué
-    elemento la lleva ni cuántos selectores la re-declaren. Además, lo que no importas
-    <strong>no pesa</strong>: un consumidor que no envía botones no descarga ni un byte de
-    <code>button.css</code>.
+    Si cada variante tiene su propia variable, el consumidor debe conocer combinaciones de variante,
+    estado y selector. Ese acoplamiento rompe el Markup contract: un cambio de Part o de Signature
+    obliga a reescribir CSS externo aunque la promesa pública no haya cambiado.
   </p>
+  <CodeBlock code={badHooks} label="CSS · anti patrón" />
 
-  <h2>Los styling hooks pierden el segmento del grupo</h2>
+  <h2>Mecanismo</h2>
   <p>
-    La codificación ingenua le da a cada variante su propia variable, y termina en una explosión que
-    tu CSS tiene que desambiguar con condicionales:
+    La cadena pública siempre baja en este orden. Ningún paso salta de un componente a una palette ni
+    expone un valor técnico:
   </p>
-  <CodeBlock code={naive} label="lo que no hacemos" />
-
+  <CodeBlock code={contractFlow} label="modelo" />
   <p>
-    En vez de eso, la base y cada variante declaran <strong>el mismo</strong> styling hook. La variante
-    simplemente lo re-declara en un selector más específico y <strong>gana por especificidad</strong>:
+    La base y cada variante re-declaran el mismo styling hook. La especificidad decide qué valor queda
+    activo, pero el consumidor lo lee una sola vez:
   </p>
-  <CodeBlock code={actual} label="components/button.css" />
-  <CodeBlock code={consumer} label="CSS" note="una línea, cero ramas" />
+  <CodeBlock code={declaredHooks} label="components/button.css" />
+  <CodeBlock code={consumedHook} label="CSS" note="una lectura, cero ramas" />
 
-  <h2>Por eso pisar un styling hook es trivial y total</h2>
+  <h2>Override con alcance</h2>
   <p>
-    Como todas las variantes leen el mismo styling hook, una línea las reestiliza a todas dentro de un scope.
-    Y no hay pelea de especificidad porque cualquier regla sin layer le gana a todas las layers.
+    Como todas las variantes leen el mismo styling hook, un alcance puede cambiar el significado local
+    de un botón sin inventar una clase paralela ni duplicar la anatomía del componente.
   </p>
-
-  <ComponentPreview tree={overrideTree} css={overrideSource} label="src/examples/styling-hook-override.css" note="el override que pinta la demo" />
-
+  <ComponentPreview
+    tree={overrideTree}
+    css={overrideSource}
+    label="src/examples/styling-hook-override.css"
+    note="el override que pinta la demo"
+  />
   <p>
-    Los tres botones de arriba son las mismas variantes de la home. Tres líneas los reestilizaron a
-    todos, sin tocar el design system y sin inventar un token nuevo.
+    La demo mantiene las Signatures reales de Button. Solo cambia el valor público que esas Signatures
+    consumen dentro de este bloque.
   </p>
 
-  <h2>El riesgo de la especificidad</h2>
-  <p>
-    Las variantes se ganan por especificidad de selector. Un consumidor que escribe un selector más
-    específico puede pisar una variante sin querer. Aceptamos ese riesgo para mantener pocos styling
-    hooks, sin anidarlos por variante.
-  </p>
+  <h2>Límites</h2>
+  <ul>
+    <li>
+      Un styling hook vive en la clase del componente, no en <code>:root</code>. Existe cuando se
+      importa el CSS de ese componente.
+    </li>
+    <li>
+      El valor debe bajar a un Semantic token. Apuntar a <code>--palette-*</code> salta tiers y falla
+      por la misma regla que gobierna color y motion.
+    </li>
+    <li>
+      CSS sigue teniendo especificidad. Un selector externo más específico puede ganar por accidente;
+      por eso el override se escribe con un alcance claro.
+    </li>
+    <li>
+      No se usa un styling hook para cambiar estructura. Si cambia la anatomía, cambia el Contract o
+      el Pattern, no una variable.
+    </li>
+  </ul>
 
-  <h2>Todos los styling hooks de button</h2>
-  <p>
-    Estos son los {buttonHooks.length} que envía <code>components/button.css</code>. Viven en
-    <code>.sk-button</code>, nunca en <code>:root</code>, no existen hasta que un elemento opta por
-    ellos.
-  </p>
-
-  <div class="sk-table-scroll">
-    <table class="sk-table">
-      <thead class="sk-table__head">
-        <tr class="sk-table__row">
-          <th class="sk-table__header">Hook</th>
-          <th class="sk-table__header">Apunta a</th>
-        </tr>
-      </thead>
-      <tbody class="sk-table__body">
-        {
-          buttonHooks.map((t) => (
-            <tr class="sk-table__row">
-              <td class="sk-table__cell mono">{t.name}</td>
-              <td class="sk-table__cell mono">{t.value}</td>
-            </tr>
-          ))
-        }
-      </tbody>
-    </table>
-  </div>
-
-  <p>
-    Nótese que ninguno apunta a un <code>--palette-*</code>. No es disciplina: es
-    <a href="/tiers">la regla de tier-skip</a>, y rompe el build.
-  </p>
+  <h2>Siguiente</h2>
+  <ul>
+    <li><a href="/componentes/button">Button</a>, para ver los hooks en un componente real.</li>
+    <li><a href="/tiers">Tiers</a>, para la regla que impide saltar de tier 3 a tier 1.</li>
+    <li><a href="/state-layer">State layer</a>, otro Pattern que consume tokens públicos.</li>
+  </ul>
 </Base>

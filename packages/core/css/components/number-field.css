@@ -7,7 +7,10 @@
     --sk-number-field-border-color: var(--color-border-default);
     --sk-number-field-border-width: 1px;
     --sk-number-field-radius: var(--radius-control);
-    --sk-number-field-bg: var(--color-bg-surface-raised);
+    /* A field, `sunken` like Input/Select/Combobox (see /elevacion): the well you type into, not a
+     * card on the surface. `--elevation-sunken` traces the control's own edge. */
+    --sk-number-field-bg: var(--color-bg-surface-sunken);
+    --sk-number-field-shadow: var(--elevation-sunken);
     --sk-number-field-fg: var(--color-text-primary);
     --sk-number-field-step-color: var(--color-text-secondary);
     /* El stepper es un botón icon-only sm: se pinta chico y separado del borde del control, así que
@@ -32,6 +35,7 @@
     border: var(--sk-number-field-border-width) solid var(--sk-number-field-border-color);
     border-radius: var(--sk-number-field-radius);
     background: var(--sk-number-field-bg);
+    box-shadow: var(--sk-number-field-shadow);
   }
   .sk-number-field__control:focus-within {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);

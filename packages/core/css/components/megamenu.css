@@ -58,6 +58,7 @@
     --sk-megamenu-fg: var(--color-text-primary);
     --sk-megamenu-border-color: var(--color-border-subtle);
     --sk-megamenu-radius: var(--radius-control);
+    --sk-megamenu-shadow: var(--elevation-overlay);
   }
 
   @supports (anchor-name: --a) {
@@ -124,7 +125,7 @@
     /* `--motion-enter-*`/`-exit-*` below (not Menu's lighter `--motion-feedback-*`) already treats
      * this as its own standalone surface, not a quick tethered popup: `--elevation-overlay`
      * matches. See /elevacion. */
-    box-shadow: var(--elevation-overlay);
+    box-shadow: var(--sk-megamenu-shadow);
 
     /* Same materialize recipe as Menu/Popover (`menu.css`'s own comment has the full reasoning):
      * these are the CLOSED values, `[data-state="open"]` below is what a binding's own open/close

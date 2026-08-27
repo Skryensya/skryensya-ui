@@ -7,11 +7,14 @@
 @layer components {
   .sk-select-native,
   .sk-select {
-    /* A trigger is an interactive control that reads as RAISED against the surface it sits on. In
-     * dark mode `sunken` resolves to neutral-1000, darker than any surface, so the control looked
-     * like a hole punched in the dialog; `raised` (neutral-800) lifts it instead, matching the
-     * dark elevation model (lighter = higher). In light it is white with a border, the usual field. */
-    --sk-select-bg: var(--color-bg-surface-raised);
+    /* A field is a well you type/choose INTO, not a card on the surface: `sunken`, same negative
+     * rung Box/Hero publish (see /elevacion). This used to read RAISED specifically to dodge
+     * `sunken` looking like a hole punched in a dialog in dark mode (`-surface-sunken` shares its
+     * dark value with `-canvas` on purpose). `--elevation-sunken`'s own inset shadow is the answer
+     * now: the trigger's edge comes from the shadow tracing it, not the fill alone, so it still
+     * reads as its own control inside a lighter container. */
+    --sk-select-bg: var(--color-bg-surface-sunken);
+    --sk-select-shadow: var(--elevation-sunken);
     --sk-select-fg: var(--color-text-primary);
     --sk-select-border-color: var(--color-border-default);
     --sk-select-border-width: 1px;
@@ -27,6 +30,7 @@
     --sk-select-content-border-color: var(--color-border-subtle);
     --sk-select-content-max-block-size: 18rem;
     --sk-select-content-padding: var(--space-inset-xs);
+    --sk-select-content-shadow: var(--elevation-raised);
     --sk-select-item-fg: var(--color-text-primary);
     --sk-select-item-disabled-fg: var(--color-text-disabled);
     --sk-select-item-padding: var(--space-inset-xs) var(--space-inset-sm);
@@ -46,6 +50,7 @@
     border-radius: var(--sk-select-radius);
     background: var(--sk-select-bg);
     color: var(--sk-select-fg);
+    box-shadow: var(--sk-select-shadow);
     font: inherit;
     font-size: var(--sk-select-font-size);
     text-align: start;
@@ -135,7 +140,7 @@
       border-radius: var(--sk-select-radius);
       background: var(--sk-select-content-bg);
       color: var(--sk-select-fg);
-      box-shadow: var(--elevation-raised);
+      box-shadow: var(--sk-select-content-shadow);
     }
 
     .sk-select-native option {
@@ -340,6 +345,7 @@
     --sk-select-content-border-color: var(--color-border-subtle);
     --sk-select-content-padding: var(--space-inset-xs);
     --sk-select-content-max-block-size: 18rem;
+    --sk-select-content-shadow: var(--elevation-raised);
     --sk-select-item-fg: var(--color-text-primary);
     --sk-select-item-disabled-fg: var(--color-text-disabled);
     --sk-select-item-padding: var(--space-inset-xs) var(--space-inset-sm);
@@ -378,7 +384,7 @@
     border-radius: var(--sk-select-radius);
     background: var(--sk-select-content-bg);
     color: var(--sk-select-fg);
-    box-shadow: var(--elevation-raised);
+    box-shadow: var(--sk-select-content-shadow);
     list-style: none;
 
     /*

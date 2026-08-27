@@ -22,7 +22,7 @@
     "@playwright/test": "^1.62.0",
     "@skryensya/recipes": "workspace:*",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
-    "@types/node": "^22.20.1",
+    "@types/node": "catalog:",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^5.0.0",

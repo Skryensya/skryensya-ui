@@ -47,9 +47,21 @@ interface Props {
   /** One-line-per-test summaries, grouped by test file. Omit while a component has none curated yet. */
   tests?: readonly TestGroup[];
   hideVanillaMount?: boolean;
+  /** Short status word next to the title ("Beta"). Omit for every page whose contract has settled;
+   *  this is a per-page callout, not the catalog's own maturity axis (see `navigation.ts`'s
+   *  `status`), so adding it here never lights up any other page. */
+  badge?: string;
 }
 
-const { title, description, contractId, styleGroups = [], tests = [], hideVanillaMount = true } = Astro.props;
+const {
+  title,
+  description,
+  contractId,
+  styleGroups = [],
+  tests = [],
+  hideVanillaMount = true,
+  badge,
+} = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
 const hasContract = Boolean(contractId);
 const hasChanges = contractId ? changelogFor(contractId).length > 0 : false;
@@ -100,6 +112,23 @@ const hasTests = tests.length > 0;
      */}
     <div class="docs-component-hero__spacer"></div>
 
+    {/*
+     * THE HERO'S OWN BACKING PLATE, a real sibling rather than a pseudo-element INSIDE the hero:
+     * nothing can paint behind an element's own `background` within its own stacking context, not
+     * even a `z-index: -1` child (that only outranks the hero's other CHILDREN, the title and the
+     * badge, never the hero's own fill). The hero's bottom corners are rounded, so its own background
+     * clips to the curve and the small triangle the curve does not cover shows whatever paints
+     * BEHIND the hero in the surrounding page instead, real scrolling content once the hero is
+     * pinned (see this element's own CSS for how that was confirmed live). A same-rect, square,
+     * canvas-coloured sibling sitting just under the hero in stacking gives that triangle something
+     * constant and correct to reveal, so the corner stays visibly rounded instead of reading as a
+     * plain square once notch and card are painted the same colour (also tried, also live: matching
+     * the hero's own blue erased the curve rather than fixing it, since a same-colour notch and
+     * card are pixel-identical). Empty and `aria-hidden`: it carries no content of its own to hide
+     * from a screen reader, it is paint.
+     */}
+    <div aria-hidden="true" class="docs-component-hero__backing"></div>
+
     <header class="docs-component-hero">
       {/*
        * PLAIN MARKUP, not the Breadcrumb contract: that was tried (a real `nav`/`ol`/`li` trail that
@@ -108,7 +137,12 @@ const hasTests = tests.length > 0;
        * eyebrow, just toward CLOSED now rather than toward a second layout: see its rule in site.css.
        */}
       <p class="docs-component-hero__eyebrow">{t("section.components")}</p>
-      <h1>{title}</h1>
+      <div class="docs-component-hero__title-row">
+        <h1>{title}</h1>
+        {badge && (
+          <span class="sk-badge docs-component-hero__badge" data-tone="warning">{badge}</span>
+        )}
+      </div>
     </header>
 
     <div class="sk-tabs" data-orientation="horizontal" data-activation-mode="automatic" data-value="usage" data-sk-tabs>

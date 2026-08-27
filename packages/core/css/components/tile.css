@@ -23,6 +23,7 @@
     --sk-tile-padding: var(--space-inset-md);
     --sk-font-heading-sm: var(--font-size-heading-sm);
     --sk-font-body-sm: var(--font-size-body-sm);
+    --sk-tile-shadow: var(--elevation-flat);
 
     box-sizing: border-box;
     display: grid;
@@ -34,7 +35,7 @@
     border: 1px solid var(--sk-tile-border-color);
     border-radius: var(--radius-surface);
     background: var(--color-bg-surface);
-    box-shadow: var(--elevation-flat);
+    box-shadow: var(--sk-tile-shadow);
     color: var(--sk-color-text-primary);
     font-size: var(--sk-font-body-sm);
     overflow-wrap: anywhere;

@@ -134,53 +134,45 @@ const densityPreviewTree: UsageTree = {
 ---
 
 <Base
-  title="Densidad de componente"
+  title="Densidad global y local"
   documentLayout="grid"
-  description="Ajusta el espacio y los controles de un componente aislado sin compactar el resto de la interfaz."
+  description="La densidad global ajusta la aplicación; un scope local recalcula un componente sin compactar sus vecinos."
 >
-  <h1>Densidad de componente</h1>
+  <h1>Densidad global y local</h1>
   <p class="lede">
-    La densidad local no es una variante del componente. Es un scope que vuelve a calcular los tokens de
-    espacio y control <strong>en el límite de tu componente</strong>, sin tocar sus vecinos ni la densidad
-    elegida para la aplicación.
+    La densidad es un multiplicador global sobre espacio y tamaños de control. Un scope local permite
+    compactar o espaciar un componente aislado sin cambiar la densidad de la aplicación ni marcar cada
+    descendiente.
   </p>
 
-  <div class="sk-callout" data-tone="info">
-    <div class="sk-callout__content">
-      <p>
-        <strong>Todo el contrato vive en el mismo nodo:</strong> <code>data-sk-density-scope</code>
-        activa la reproyección local; <code>--sk-density-factor</code> o <code>--sk-density</code>,
-        escritos en <code>style</code>, deciden su valor. Este scope no añade clases, selectores,
-        presets obligatorios ni un prop a cada componente.
-      </p>
-    </div>
-  </div>
-
-  <h2>Configúralo en el límite que ya tienes</h2>
+  <h2>Scope global</h2>
   <p>
-    Pon el atributo una vez, en la raíz del componente que quieres compactar, y escribe allí el valor
-    como estilo inline. Sus descendientes siguen leyendo los mismos tokens semánticos; no necesitas
-    crear una clase para el scope ni marcar cada botón, campo o fila por separado.
+    El valor de aplicación vive en <code>--sk-density</code>, normalmente en <code>html</code>. Los
+    tokens semánticos de espacio y control lo leen en runtime; los componentes no reciben una prop de
+    densidad.
+  </p>
+  <CodeBlock code={`html { --sk-density: 0.8; }`} label="CSS" />
+
+  <h2>Scope local</h2>
+  <p>
+    Para una excepción, se declara <code>data-sk-density-scope</code> en la raíz del componente. El
+    mismo nodo lleva <code>--sk-density-factor</code> si debe multiplicar la densidad global, o
+    <code>--sk-density</code> si necesita un valor absoluto.
   </p>
   <CodeBlock code={componentMarkup} label="HTML del componente" />
 
-  <h2>Usa un factor relativo por defecto</h2>
+  <h2>Factor relativo y valor absoluto</h2>
   <p>
-    <code>--sk-density-factor</code> conserva la intención del usuario. Si la aplicación está en
-    <code>0.8</code> y el componente usa <code>0.72</code>, su densidad efectiva es
-    <code>0.576</code>. El valor puede ser cualquier número válido, sin depender de presets.
-  </p>
-
-  <p>
-    Usa un valor absoluto solo cuando el componente necesita una medida independiente de la aplicación.
-    El valor absoluto gana sobre el factor; elige uno u otro, no los dos.
+    El factor relativo conserva la intención del usuario: un componente con factor <code>0.72</code>
+    sigue siendo 72% de la densidad elegida para la aplicación. El valor absoluto ignora esa densidad y
+    se reserva para superficies que deben medir igual en cualquier contexto.
   </p>
   <CodeBlock code={absoluteDensity} label="HTML con valor absoluto" />
 
   <h2>Prueba un componente aislado</h2>
   <p>
-    El control queda fuera del scope. Arrástralo: cambian el padding, los gaps y los tamaños semánticos
-    dentro del resumen; el resto de la página no se mueve.
+    El control queda fuera del scope. Al moverlo, cambian padding, gaps y tamaños semánticos dentro del
+    resumen; el resto de la página no se mueve.
   </p>
   <ComponentPreview tree={densityPreviewTree} previewScript={densityLabScript} label="Scope local en acción" note="scope y valor viven inline en el mismo nodo" />
 
@@ -194,23 +186,25 @@ const densityPreviewTree: UsageTree = {
         <tr class="sk-table__row"><td class="sk-table__cell"><code>--space-*</code></td><td class="sk-table__cell">Padding, gaps e insets se recalculan con la densidad efectiva.</td></tr>
         <tr class="sk-table__row"><td class="sk-table__cell"><code>--size-control-*</code></td><td class="sk-table__cell">Se recalculan, con el piso de tamaño mínimo incorporado.</td></tr>
         <tr class="sk-table__row"><td class="sk-table__cell">Tipografía, iconos y radio</td><td class="sk-table__cell">Permanecen invariantes: densidad acerca contenido, no cambia la escala visual.</td></tr>
-        <tr class="sk-table__row"><td class="sk-table__cell">Focus ring y área táctil</td><td class="sk-table__cell">Permanecen protegidos. Un Button default no baja de <code>44px</code> de pintura; <code>data-size="sm"</code> puede pintar a 32px y el hit sigue en <code>44px</code>.</td></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell">Focus ring y área táctil</td><td class="sk-table__cell">Permanecen protegidos. Un Button default no baja de <code>44px</code> de pintura; <code>data-size="sm"</code> puede pintar a 32px y mantener el hit en <code>44px</code>.</td></tr>
         <tr class="sk-table__row"><td class="sk-table__cell">Wrappers y <code>--space-section</code></td><td class="sk-table__cell">No se compactan: la geometría de página no pertenece al componente.</td></tr>
       </tbody>
     </table>
   </div>
 
-  <h2>Scopes anidados no se encogen dos veces</h2>
+  <h2>Scopes anidados</h2>
   <p>
     Cada scope calcula su factor contra la densidad capturada del sistema, no contra el scope padre. Un
     componente a <code>0.72</code> dentro de otro a <code>0.72</code> sigue resolviendo a
-    <code>0.72 × sistema</code>, no a <code>0.5184 × sistema</code>. Así un subcomponente no se vuelve
-    ilegible por una composición accidental.
+    <code>0.72 × sistema</code>, no a <code>0.5184 × sistema</code>.
   </p>
 
+  <h2>Límites</h2>
   <p>
-    Para configurar la densidad de toda la aplicación, usa <a href="/dimensiones#densidad--un-multiplicador-con-el-piso-adentro">la dimensión global</a>.
-    Para una excepción local, mantén el scope en el borde del componente y deja que sus tokens hagan el resto.
+    La densidad no cambia tipo, radio, foco ni área táctil. Viene de
+    <a href="/dimensiones">Dimensiones</a>, donde se define el eje global. Sigue en
+    <a href="/elevacion">Elevación</a>, que muestra fallbacks visuales, y en
+    <a href="/referencia">Referencia</a>, para buscar los tokens resueltos.
   </p>
 </Base>
 

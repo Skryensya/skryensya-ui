@@ -25,6 +25,7 @@
 
   .sk-box[data-surface="sunken"] {
     --sk-box-bg: var(--color-bg-surface-sunken);
+    --sk-box-shadow: var(--elevation-sunken);
   }
 
   .sk-box[data-surface="surface"] {
@@ -34,6 +35,21 @@
   .sk-box[data-surface="raised"] {
     --sk-box-bg: var(--color-bg-surface-raised);
     --sk-box-shadow: var(--elevation-raised);
+  }
+
+  /* `forced-colors` strips the shadow AND collapses every `--color-bg-surface-*` tint to the same
+   * `Canvas`: measured live, a raised OR sunken Box with no explicit border (the default) becomes
+   * fully invisible, pixel-identical to the page around it. `raised`/`sunken` are the two Box
+   * surfaces that promise a real elevation cue (one cast, one inset - `forced-colors` drops both the
+   * same way), so they are the two surface values that cannot rely on `data-border` being asked for
+   * separately: forcing the hook here (not a bare `border` shorthand) keeps composing with whatever
+   * the border hooks already resolve to instead of fighting them. */
+  @media (forced-colors: active) {
+    .sk-box[data-surface="raised"],
+    .sk-box[data-surface="sunken"] {
+      --sk-box-border-width: 1px;
+      --sk-box-border-color: CanvasText;
+    }
   }
 
   .sk-box[data-border="subtle"] {

@@ -1,10 +1,13 @@
 import { appShellRecipe } from "./app-shell.js";
 import { browseRecipe } from "./browse.js";
+import { chartPeriodPanelRecipe } from "./chart-period-panel.js";
+import { chartTableReportRecipe } from "./chart-table-report.js";
 import { checkoutRecipe } from "./checkout.js";
 import { dataTableRecipe } from "./data-table.js";
 import { destructiveConfirmRecipe } from "./destructive-confirm.js";
 import { detailRecipe } from "./detail.js";
 import { formRecipe } from "./form.js";
+import { metricPanelRecipe } from "./metric-panel.js";
 import { settingsRecipe } from "./settings.js";
 import { uploadRecipe } from "./upload.js";
 import type { Recipe } from "./recipe.js";
@@ -27,6 +30,9 @@ export const recipes: readonly Recipe[] = [
   checkoutRecipe,
   uploadRecipe,
   dataTableRecipe,
+  metricPanelRecipe,
+  chartPeriodPanelRecipe,
+  chartTableReportRecipe,
   settingsRecipe,
   destructiveConfirmRecipe,
 ];

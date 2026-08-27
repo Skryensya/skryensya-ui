@@ -1,0 +1,681 @@
+---
+/*
+ * THE CHART CONTRACT'S PAGE, and it opens on the composition people actually want: a card with a
+ * chart inside it. Chart itself has no title, no action and no surface (see `core/chart.ts`); those
+ * belong to Box, Heading, Stat and Button. Publishing a `<ChartCard>` would have grown the card with
+ * variants that Card refuses to be.
+ *
+ * `contractId="chart"` so Referencia and Cambios read the compiled artifact. Bars need nothing
+ * beyond Core and React. Line and area swap the import to `@skryensya/charts/react`, a drop-in that
+ * paints an overlay on the same markup. TanStack is a separate subpath and is not the API this page
+ * teaches.
+ */
+import "@skryensya/core/components/chart.css";
+import "@skryensya/core/components/stat.css";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  ChartAnalyticsCardDemo,
+  ChartHistoryCardDemo,
+  ChartUsageCardDemo,
+} from "../react-demos/chart-card";
+import { ChartsAreaDemo, ChartsBarDemo, ChartsLineDemo } from "../react-demos/charts";
+import {
+  ChartGalleryDemo,
+  ChartPeriodCardDemo,
+  ChartPointDetailDemo,
+  ChartTableCardDemo,
+} from "../react-demos/chart-integrations";
+import {
+  ChartCategoryLegendDemo,
+  ChartComparisonDemo,
+  ChartMetricTabsDemo,
+} from "../react-demos/chart-more";
+import { getLocale, useTranslations } from "../../i18n";
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const installLine = `pnpm add @skryensya/charts`;
+
+const analyticsSource = `import { Chart } from "@skryensya/charts/react";
+import { Button } from "@skryensya/react/button";
+import { Icon } from "@skryensya/react/icon";
+import { Box, Inline, Stack } from "@skryensya/react/layout";
+import { Stat } from "@skryensya/react/stat";
+import { Heading } from "@skryensya/react/typography";
+
+const compactCount = (n) =>
+  new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(n);
+
+<Box as="article" border="subtle" padding="lg" surface="surface">
+  <Stack gap="lg">
+    <Inline align="start" justify="between">
+      <Stack gap="xs">
+        <Heading as="h3" flush size="h4">
+          Analytics
+        </Heading>
+        <Stat
+          animate
+          change={<><Icon name="arrow-up" size="sm" /> +10%</>}
+          count={418200}
+          format={compactCount}
+          label="Visits this month"
+          trend="up"
+          value="418.2K"
+        />
+      </Stack>
+      <Button size="sm" variant="translucent">
+        View Analytics
+      </Button>
+    </Inline>
+    <Chart
+      flush
+      format="compact"
+      height="md"
+      kind="area"
+      label="Visits per week"
+      labels={false}
+      points={visits}
+      tone="neutral"
+    />
+  </Stack>
+</Box>;`;
+
+const historySource = `import { Button } from "@skryensya/react/button";
+import { Chart } from "@skryensya/react/chart";
+import { Box, Grid, Stack } from "@skryensya/react/layout";
+import { Stat } from "@skryensya/react/stat";
+import { Heading, Text } from "@skryensya/react/typography";
+
+<Box as="article" border="subtle" padding="lg" surface="surface">
+  <Stack gap="md">
+    <Stack gap="xs">
+      <Heading as="h3" flush size="h4">
+        Contribution History
+      </Heading>
+      <Text size="caption" tone="tertiary">
+        Last 6 months of activity
+      </Text>
+    </Stack>
+    <Chart
+      height="lg"
+      kind="bar"
+      label="Contributions per month"
+      points={contributions}
+      tone="neutral"
+    />
+    <Grid columns={2} gap="sm">
+      <Box padding="sm" surface="sunken">
+        <Stat label="Upcoming" value="May 2026" />
+      </Box>
+      <Box padding="sm" surface="sunken">
+        <Stat label="Savings plan" value="Accelerated" />
+      </Box>
+    </Grid>
+    <Button size="sm" variant="neutral">
+      View Full Report
+    </Button>
+  </Stack>
+</Box>;`;
+
+const usageSource = `import { Chart } from "@skryensya/react/chart";
+import { Icon } from "@skryensya/react/icon";
+import { Box, Grid, Stack } from "@skryensya/react/layout";
+import { Stat } from "@skryensya/react/stat";
+import { Heading, Text } from "@skryensya/react/typography";
+
+<Box as="article" border="subtle" padding="lg" surface="surface">
+  <Stack gap="md">
+    <Stack gap="xs">
+      <Heading as="h3" flush size="h4">Power Usage</Heading>
+      <Text size="caption" tone="tertiary">Whole Home</Text>
+    </Stack>
+    <Chart
+      height="lg"
+      kind="bar"
+      label="Usage by hour"
+      points={hours}
+      tone="neutral"
+    />
+    <Grid columns={2} gap="md">
+      <Stat label="Currently Using" value="3.4 kW" />
+      <Stat
+        change={<><Icon name="arrow-up" size="sm" /> +18%</>}
+        label="Solar Gen"
+        trend="up"
+        value="1.2 kW"
+      />
+    </Grid>
+  </Stack>
+</Box>;`;
+
+const barSource = `import { Chart } from "@skryensya/react/chart";
+
+<Chart
+  height="lg"
+  kind="bar"
+  label="Documented components per quarter"
+  points={[
+    { label: "Q1", value: 14 },
+    { label: "Q2", value: 23 },
+    { label: "Q3", value: 41 },
+  ]}
+/>;`;
+
+const lineSource = `import { Chart } from "@skryensya/charts/react";
+
+<Chart
+  height="lg"
+  kind="line"
+  label="Interaction latency per version"
+  points={[
+    { label: "0.4", value: 182 },
+    { label: "0.9", value: 74 },
+  ]}
+  tone="info"
+/>;`;
+
+const areaSource = `import { Chart } from "@skryensya/charts/react";
+
+<Chart
+  height="lg"
+  kind="area"
+  label="Bundle weight per week"
+  points={[
+    { label: "S1", value: 148 },
+    { label: "S6", value: 103 },
+  ]}
+/>;`;
+
+const periodSource = `import { SegmentedControl } from "@skryensya/react/segmented";
+import { Chart } from "@skryensya/react/chart";
+import { Box, Inline, Stack } from "@skryensya/react/layout";
+import { Heading, Text } from "@skryensya/react/typography";
+import { useState } from "react";
+
+const [period, setPeriod] = useState("30d");
+
+<Box as="article" border="subtle" padding="lg" surface="surface">
+  <Stack gap="md">
+    <Inline align="start" justify="between">
+      <Stack gap="xs">
+        <Heading as="h3" flush size="h4">
+          Site traffic
+        </Heading>
+        <Text size="caption" tone="tertiary">
+          Page views, by period
+        </Text>
+      </Stack>
+      <SegmentedControl
+        label="Choose period"
+        onValueChange={setPeriod}
+        options={[
+          { value: "7d", label: "7D" },
+          { value: "30d", label: "30D" },
+          { value: "90d", label: "90D" },
+        ]}
+        value={period}
+      />
+    </Inline>
+    <Chart
+      height="lg"
+      kind="bar"
+      label={\`Page views, \${period}\`}
+      points={trafficByPeriod[period]}
+      tone="accent"
+    />
+  </Stack>
+</Box>;`;
+
+const tableSource = `import { Chart } from "@skryensya/react/chart";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableScroll,
+} from "@skryensya/react/table";
+
+<Chart
+  format="compact"
+  height="md"
+  kind="bar"
+  label="Revenue by quarter"
+  points={quarterlyRevenue}
+  tone="neutral"
+/>
+<TableScroll>
+  <Table>
+    <TableCaption>Revenue by quarter, in dollars</TableCaption>
+    <TableHead>
+      <TableRow>
+        <TableHeader scope="col">Quarter</TableHeader>
+        <TableHeader scope="col">Revenue</TableHeader>
+        <TableHeader scope="col">Change</TableHeader>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {quarterlyRevenue.map((row) => (
+        <TableRow key={row.label}>
+          <TableHeader scope="row">{row.label}</TableHeader>
+          <TableCell>{row.revenue}</TableCell>
+          <TableCell>{row.delta ?? "—"}</TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</TableScroll>;`;
+
+const detailSource = `import { Chart } from "@skryensya/react/chart";
+import { Button } from "@skryensya/react/button";
+import { Tooltip } from "@skryensya/react/tooltip";
+import { Stack } from "@skryensya/react/layout";
+import { formatChartValue } from "@skryensya/core/chart";
+
+<Stack gap="md">
+  <Chart
+    height="md"
+    kind="bar"
+    label="Latency by endpoint"
+    labels={false}
+    points={latency}
+    tone="info"
+  />
+  {/* One grid column per point, matching the chart's own bar columns exactly —
+      not a wrapping row, whose widths would follow each label's own text length. */}
+  <div style={{ display: "grid", gridAutoFlow: "column", gridAutoColumns: "1fr", gap: "var(--space-inline-xs)" }}>
+    {latency.map((point) => (
+      <Tooltip content={\`\${formatChartValue(point.value)} ms\`} key={point.label}>
+        <Button size="sm" style={{ inlineSize: "100%" }} variant="ghost">
+          {point.label}
+        </Button>
+      </Tooltip>
+    ))}
+  </div>
+</Stack>;`;
+
+const gallerySource = `import { Chart } from "@skryensya/react/chart";
+import { Chart as PathChart } from "@skryensya/charts/react";
+import { Grid } from "@skryensya/react/layout";
+
+<Grid columns={2} gap="md">
+  <Chart height="md" kind="bar" format="percent" tone="success" values points={conversion} label="Daily conversion" />
+  <PathChart height="md" kind="line" tone="danger" points={errors} label="Errors per day" />
+  <PathChart height="md" kind="area" flush labels={false} tone="warning" points={cpu} label="CPU usage" />
+  <Chart height="md" kind="bar" format="currency" currency="USD" grid tone="neutral" points={spend} label="Daily spend" />
+</Grid>;`;
+
+const metricTabsSource = `import { Tabs } from "@skryensya/react/tabs";
+import { Chart } from "@skryensya/react/chart";
+import { Stat } from "@skryensya/react/stat";
+import { Stack } from "@skryensya/react/layout";
+import { Heading } from "@skryensya/react/typography";
+
+function MetricPanel({ heading, statLabel, value, chartLabel, points, tone }) {
+  return (
+    <Stack gap="md">
+      <Stack gap="xs">
+        <Heading as="h4" flush size="h5">{heading}</Heading>
+        <Stat label={statLabel} value={value} />
+      </Stack>
+      <Chart height="md" kind="bar" label={chartLabel} points={points} tone={tone} />
+    </Stack>
+  );
+}
+
+<Tabs
+  aria-label="Choose metric"
+  defaultValue="revenue"
+  items={[
+    { value: "revenue", label: "Revenue", children: <MetricPanel {...revenue} /> },
+    { value: "users", label: "Users", children: <MetricPanel {...users} /> },
+    { value: "errors", label: "Errors", children: <MetricPanel {...errors} /> },
+  ]}
+/>;`;
+
+const legendSource = `import { Badge } from "@skryensya/react/badge";
+import { Chart } from "@skryensya/react/chart";
+import { Box, Inline, Stack } from "@skryensya/react/layout";
+import { Heading, Text } from "@skryensya/react/typography";
+
+const budget = [
+  { label: "Eng", value: 182000, tone: "accent" },
+  { label: "Sales", value: 96000, tone: "success" },
+  { label: "Support", value: 54000, tone: "warning" },
+  { label: "Legal", value: 21000, tone: "danger" },
+  { label: "Ops", value: 68000, tone: "neutral" },
+];
+
+<Box as="article" border="subtle" padding="lg" surface="surface">
+  <Stack gap="md">
+    <Stack gap="xs">
+      <Heading as="h3" flush size="h4">Budget by team</Heading>
+      <Text size="caption" tone="tertiary">Fiscal year 2026, in dollars</Text>
+    </Stack>
+    <Chart
+      format="compact"
+      kind="bar"
+      label="Budget by team"
+      points={budget}
+      values
+    />
+    <Inline aria-hidden="true" gap="sm" wrap>
+      {budget.map((point) => (
+        <Badge key={point.label} tone={point.tone}>
+          {point.label}
+        </Badge>
+      ))}
+    </Inline>
+  </Stack>
+</Box>;`;
+
+const comparisonSource = `import { Chart } from "@skryensya/charts/react";
+import { Box, Grid, Stack } from "@skryensya/react/layout";
+import { Stat } from "@skryensya/react/stat";
+import { Text } from "@skryensya/react/typography";
+
+function ComparisonPanel({ title, points, tone, value, change }) {
+  return (
+    <Box border="subtle" padding="md" surface={tone === "accent" ? "surface" : "sunken"}>
+      <Stack gap="sm">
+        <Text size="caption" tone="tertiary" weight="label">{title}</Text>
+        <Stat change={change} label="Quarterly revenue" trend="up" value={value} />
+        <Chart flush format="compact" height="sm" kind="area" label={\`\${title} revenue\`} labels={false} points={points} tone={tone} />
+      </Stack>
+    </Box>
+  );
+}
+
+<Grid columns={2} gap="md">
+  <ComparisonPanel title="Q4 2026" points={q4Current} tone="accent" value="231.7K" change="+22%" />
+  <ComparisonPanel title="Q4 2025" points={q4Prior} tone="neutral" value="194.9K" />
+</Grid>;`;
+
+const tanstackSource = `import { TanStackChart } from "@skryensya/charts/react/tanstack";`;
+---
+
+<ComponentPageShell
+  title="Charts"
+  description={t("chartsPage.description")}
+  contractId="chart"
+  badge={t("chartsPage.betaBadge")}
+  styleGroups={[{ file: "components/chart.css", probe: "sk-chart" }]}
+  tests={[
+    {
+      file: "packages/charts/src/react/chart.test.tsx",
+      tests: [
+        {
+          name: "paints no overlay for bars: they never need this package",
+          description: t("chartsPage.testBarsNoEngine"),
+        },
+        {
+          name: "paints a line into the overlay and flags the chart as rendered",
+          description: t("chartsPage.testLineOverlay"),
+        },
+        {
+          name: "keeps the series as a real list of text, which is the accessible rendering",
+          description: t("chartsPage.testListIsData"),
+        },
+      ],
+    },
+    {
+      file: "apps/docs/src/components/pages/ChartsPage.test.ts",
+      tests: [
+        {
+          name: "composes the dashboard cards from Box, Stat, Chart and Button",
+          description: t("chartsPage.testCardsAreComposition"),
+        },
+        {
+          name: "does not expose TanStack's grammar on the documented path",
+          description: t("chartsPage.testNoTanstackApi"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("chartsPage.lede")} />
+
+    <div class="sk-callout" data-tone="info">
+      <div class="sk-callout__content">
+        <div class="sk-callout__description" set:html={t("chartsPage.calloutBody")} />
+      </div>
+    </div>
+
+    <h3 id="cards">{t("chartsPage.cardsTitle")}</h3>
+    <p set:html={t("chartsPage.cardsBody")} />
+
+    <h3 id="analitica">{t("chartsPage.analyticsTitle")}</h3>
+    <p set:html={t("chartsPage.analyticsBody")} />
+    <ComponentPreview
+      react={analyticsSource}
+      label={t("chartsPage.analyticsLabel")}
+      note={t("chartsPage.analyticsNote")}
+      minHeight="26rem"
+    >
+      <Fragment slot="react">
+        <ChartAnalyticsCardDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="historial">{t("chartsPage.historyTitle")}</h3>
+    <p set:html={t("chartsPage.historyBody")} />
+    <ComponentPreview
+      react={historySource}
+      label={t("chartsPage.historyLabel")}
+      note={t("chartsPage.historyNote")}
+      minHeight="32rem"
+    >
+      <Fragment slot="react">
+        <ChartHistoryCardDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="consumo">{t("chartsPage.usageTitle")}</h3>
+    <p set:html={t("chartsPage.usageBody")} />
+    <ComponentPreview
+      react={usageSource}
+      label={t("chartsPage.usageLabel")}
+      note={t("chartsPage.usageNote")}
+      minHeight="30rem"
+    >
+      <Fragment slot="react">
+        <ChartUsageCardDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="chart">{t("chartsPage.pieceTitle")}</h3>
+    <p set:html={t("chartsPage.pieceBody")} />
+
+    <h3 id="barras">{t("chartsPage.barTitle")}</h3>
+    <p set:html={t("chartsPage.barBody")} />
+    <ComponentPreview
+      react={barSource}
+      label={t("chartsPage.barLabel")}
+      note={t("chartsPage.barNote")}
+      minHeight="22rem"
+    >
+      <Fragment slot="react">
+        <ChartsBarDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="linea">{t("chartsPage.lineTitle")}</h3>
+    <p set:html={t("chartsPage.lineBody")} />
+    <ComponentPreview
+      react={lineSource}
+      label={t("chartsPage.lineLabel")}
+      note={t("chartsPage.lineNote")}
+      minHeight="22rem"
+    >
+      <Fragment slot="react">
+        <ChartsLineDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="area">{t("chartsPage.areaTitle")}</h3>
+    <p set:html={t("chartsPage.areaBody")} />
+    <ComponentPreview
+      react={areaSource}
+      label={t("chartsPage.areaLabel")}
+      note={t("chartsPage.areaNote")}
+      minHeight="22rem"
+    >
+      <Fragment slot="react">
+        <ChartsAreaDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="integraciones">{t("chartsPage.integrationsTitle")}</h3>
+    <p set:html={t("chartsPage.integrationsBody")} />
+
+    <h4 id="periodo">{t("chartsPage.periodTitle")}</h4>
+    <p set:html={t("chartsPage.periodBody")} />
+    <ComponentPreview
+      react={periodSource}
+      label={t("chartsPage.periodLabel")}
+      note={t("chartsPage.periodNote")}
+      minHeight="26rem"
+    >
+      <Fragment slot="react">
+        <ChartPeriodCardDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h4 id="tabla">{t("chartsPage.tableTitle")}</h4>
+    <p set:html={t("chartsPage.tableBody")} />
+    <ComponentPreview
+      react={tableSource}
+      label={t("chartsPage.tableLabel")}
+      note={t("chartsPage.tableNote")}
+      minHeight="34rem"
+    >
+      <Fragment slot="react">
+        <ChartTableCardDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h4 id="detalle">{t("chartsPage.detailTitle")}</h4>
+    <p set:html={t("chartsPage.detailBody")} />
+    <ComponentPreview
+      react={detailSource}
+      label={t("chartsPage.detailLabel")}
+      note={t("chartsPage.detailNote")}
+      minHeight="24rem"
+    >
+      <Fragment slot="react">
+        <ChartPointDetailDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h4 id="galeria">{t("chartsPage.galleryTitle")}</h4>
+    <p set:html={t("chartsPage.galleryBody")} />
+    <ComponentPreview
+      react={gallerySource}
+      label={t("chartsPage.galleryLabel")}
+      note={t("chartsPage.galleryNote")}
+      minHeight="32rem"
+    >
+      <Fragment slot="react">
+        <ChartGalleryDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h4 id="metricas">{t("chartsPage.metricTabsTitle")}</h4>
+    <p set:html={t("chartsPage.metricTabsBody")} />
+    <ComponentPreview
+      react={metricTabsSource}
+      label={t("chartsPage.metricTabsLabel")}
+      note={t("chartsPage.metricTabsNote")}
+      minHeight="28rem"
+    >
+      <Fragment slot="react">
+        <ChartMetricTabsDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h4 id="leyenda">{t("chartsPage.legendTitle")}</h4>
+    <p set:html={t("chartsPage.legendBody")} />
+    <ComponentPreview
+      react={legendSource}
+      label={t("chartsPage.legendLabel")}
+      note={t("chartsPage.legendNote")}
+      minHeight="26rem"
+    >
+      <Fragment slot="react">
+        <ChartCategoryLegendDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h4 id="comparacion">{t("chartsPage.comparisonTitle")}</h4>
+    <p set:html={t("chartsPage.comparisonBody")} />
+    <ComponentPreview
+      react={comparisonSource}
+      label={t("chartsPage.comparisonLabel")}
+      note={t("chartsPage.comparisonNote")}
+      minHeight="26rem"
+    >
+      <Fragment slot="react">
+        <ChartComparisonDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3 id="tanstack">{t("chartsPage.tanstackTitle")}</h3>
+    <p set:html={t("chartsPage.tanstackBody")} />
+    <CodeBlock code={tanstackSource} label="tsx" />
+
+    <h3>Do &amp; Don't</h3>
+    <div class="sk-grid" data-columns="2" data-gap="md" data-multicol>
+      <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="lg">
+        <div class="sk-stack" data-gap="sm">
+          <span class="sk-badge" data-tone="success">{t("chartsPage.doTitle")}</span>
+          <h4 class="sk-heading" data-size="h4">{t("chartsPage.doHeading")}</h4>
+          <ul>
+            <li set:html={t("chartsPage.doItem1")} />
+            <li set:html={t("chartsPage.doItem2")} />
+            <li set:html={t("chartsPage.doItem3")} />
+            <li set:html={t("chartsPage.doItem4")} />
+            <li set:html={t("chartsPage.doItem5")} />
+          </ul>
+        </div>
+      </section>
+      <section class="sk-box" data-surface="surface" data-border="subtle" data-padding="lg">
+        <div class="sk-stack" data-gap="sm">
+          <span class="sk-badge" data-tone="danger">{t("chartsPage.dontTitle")}</span>
+          <h4 class="sk-heading" data-size="h4">{t("chartsPage.dontHeading")}</h4>
+          <ul>
+            <li set:html={t("chartsPage.dontItem1")} />
+            <li set:html={t("chartsPage.dontItem2")} />
+            <li set:html={t("chartsPage.dontItem3")} />
+            <li set:html={t("chartsPage.dontItem4")} />
+            <li set:html={t("chartsPage.dontItem5")} />
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <h3>{t("chartsPage.implTitle")}</h3>
+    <p set:html={t("chartsPage.implBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <p set:html={t("chartsPage.installBody")} />
+    <CodeBlock code={installLine} label="terminal" />
+    <p set:html={t("chartsPage.installLineBody")} />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("chartsPage.a11yP1")} />
+    <p set:html={t("chartsPage.a11yP2")} />
+    <p set:html={t("chartsPage.a11yP3")} />
+    <p set:html={t("chartsPage.a11yP4")} />
+    <p set:html={t("chartsPage.a11yP5")} />
+  </Fragment>
+</ComponentPageShell>

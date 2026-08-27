@@ -3,12 +3,9 @@ import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import ComponentPreview from "../components/ComponentPreview.astro";
 import type { UsageTree } from "@skryensya/core/usage-tree";
-import Used from "../components/Used.astro";
 import { stableIconNames } from "@skryensya/core/icon";
 import { allSets, iconMarkup } from "../icons";
 
-/* Los roles que se muestran lado a lado. Un puñado alcanza para ver que el dibujo cambia y el nombre
- * no; el vocabulario entero está arriba. */
 const compared = ["search", "delete", "settings", "user", "warning", "external-link"] as const;
 
 const vocabCss = `.sk-grid {
@@ -34,107 +31,104 @@ const vocabTree: UsageTree = {
   })),
 };
 
-const bind = `# nada: Phosphor viene por defecto con @skryensya/react
-# ¿otro set? lo instalas, y solo entonces se empaqueta:
-pnpm add @skryensya/icons-lucide     # o @skryensya/icons-material`;
+const install = `# Phosphor viene con @skryensya/react.
+# Otro set se instala solo cuando se elige como marca:
+pnpm add @skryensya/icons-lucide
+pnpm add @skryensya/icons-material`;
 
-const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
-+ import { phosphorIcons } from "@skryensya/icons-phosphor";
+const swap = `import { phosphorIcons } from "@skryensya/icons-phosphor";
+import { IconSetProvider } from "@skryensya/react";
 
-- <IconSetProvider set={lucideIcons}>
-+ <IconSetProvider set={phosphorIcons}>
-
-  // y nada más. Ni un <Icon name="…"> se mueve.`;
+<IconSetProvider set={phosphorIcons}>
+  <App />
+</IconSetProvider>`;
 ---
 
 <Base
   title="Iconografía"
   documentLayout="grid"
-  description="El vocabulario estable de roles, los sets como marca, y por qué el pattern de SVG no pinta fill ni stroke."
+  description="Los iconos son roles estables; los sets son la marca que dibuja cada rol."
 >
   <h1>Iconografía</h1>
   <p class="lede">
-    El sistema nombra <strong>roles</strong>, no dibujos. Un set (Lucide, Phosphor, Material) es una
-    marca: elige la geometría que ocupa cada rol, igual que una marca elige el hue de
-    <code>--palette-blue-600</code>. Cómo montas el SVG en React o vanilla está en
-    <a href="/componentes/icon">Icon</a>.
+    El sistema nombra roles, no dibujos. Un Stable icon name sobrevive al cambio de set; un Icon set
+    decide la geometría, el viewBox y si el trazo se expresa con fill o stroke. El color queda fuera:
+    el SVG hereda <code>currentColor</code>.
   </p>
 
   <ComponentPreview tree={vocabTree} css={vocabCss} label="Vocabulario estable" />
+
+  <h2>Qué falla sin roles estables</h2>
   <p>
-    Cambia marca, modo o contraste arriba: los iconos siguen, y no declaran un solo token de color.
-    Heredan <code>currentColor</code>.
+    Si un componente pide <code>trash</code>, otro pide <code>delete</code> y otro pega un SVG, cambiar
+    de set deja de ser una decisión de marca y se convierte en una migración de usos. El Contract debe
+    nombrar la intención, no la forma que una librería dibujó hoy.
   </p>
 
-  <h2>Un pattern, no un extra</h2>
+  <h2>El vocabulario</h2>
   <p>
-    Como el <a href="/state-layer">state layer</a>, el pattern viene en <code>tokens.scss</code>. Un
-    icono no es un add-on al que un componente opta: apenas algo muestra un chevron, un close o un
-    glifo de estado necesita esta misma caja. Las reglas son inertes hasta que un elemento lleva
-    <code>sk-icon</code>, así que no pesan en una página sin iconos. La decisión está en
-    <a href="/decisiones/0019-paletas-publicas-y-semanticos-constantes">ADR-19</a>.
+    Hay {stableIconNames.length} nombres estables. Cubren acciones, navegación, feedback y estados
+    comunes de una app, no solo los iconos que consume un componente del sistema. Un rol omitido vuelve
+    con nombres distintos en cada producto.
+  </p>
+  <p>
+    La regla de nombre es semántica: <code>delete</code>, no <code>trash</code>; <code>visibility</code>,
+    no <code>eye</code>; <code>external-link</code>, no el nombre de una librería. Un concepto de
+    producto como <code>invoice</code> o <code>warehouse</code> no entra en el vocabulario global: se
+    pasa como Icon data propia.
   </p>
 
-  <h2>El vocabulario estable</h2>
+  <h2>Sets como marca</h2>
   <p>
-    Treinta y dos roles, que cubren los casos más usados de una app y no solo lo que consumen los
-    componentes del sistema. La razón es la portabilidad: si el vocabulario llegara hasta
-    <code>chevron-down</code> y nada más, cada proyecto declararía <code>search</code> o
-    <code>delete</code> por su cuenta, y el rol más común del sistema se llamaría distinto en cada
-    app.
-  </p>
-  <p>
-    Cada nombre es un <strong>rol</strong>, nunca un dibujo: <code>delete</code> y no
-    <code>trash</code>, <code>edit</code> y no <code>pencil</code>, <code>search</code> y no
-    <code>magnifying-glass</code>, <code>visibility</code> y no <code>eye</code>. El nombre tiene que
-    seguir siendo verdad cuando otro set dibuje el rol distinto. Y es <code>danger</code>, no
-    <code>error</code>, porque el sistema ya dice <code>danger</code> en
-    <Used token="--color-text-danger" /> y en <code>BadgeTone</code>, una palabra no coexiste con su
-    sinónimo.
-  </p>
-  <p>
-    El límite no se movió: un concepto de <strong>producto</strong> (<code>invoice</code>,
-    <code>warehouse</code>, <code>airplane-tilt</code>) no entra por más usado que sea en tu app. Sale
-    como geometría tuya. Y cada nombre aquí es una obligación para quien dibuje un set, porque un set
-    es completo.
-  </p>
-
-  <h2>Elegir un set</h2>
-  <p>
-    Un set de iconos <strong>es una marca</strong>. <code>@skryensya/core</code> nombra la posición
-    (<code>chevron-down</code>) y el set dice qué dibujo la ocupa.
-    <strong>Phosphor es el default</strong> (viaja con React); Lucide y Material son intercambiables,
-    opt-in:
-  </p>
-  <div class="sk-table-scroll">
-  <table class="sk-table">
-    <thead class="sk-table__head">
-      <tr class="sk-table__row"><th class="sk-table__header">Paquete</th><th class="sk-table__header">Librería</th><th class="sk-table__header">Trazo</th><th class="sk-table__header">viewBox</th><th class="sk-table__header">Licencia</th></tr>
-    </thead>
-    <tbody class="sk-table__body">
-      <tr class="sk-table__row"><td class="sk-table__cell"><code>@skryensya/icons-lucide</code></td><td class="sk-table__cell">Lucide</td><td class="sk-table__cell">contorno, 2px</td><td class="sk-table__cell"><code>0 0 24 24</code></td><td class="sk-table__cell">ISC</td></tr>
-      <tr class="sk-table__row"><td class="sk-table__cell"><code>@skryensya/icons-phosphor</code></td><td class="sk-table__cell">Phosphor, peso regular</td><td class="sk-table__cell">relleno</td><td class="sk-table__cell"><code>0 0 256 256</code></td><td class="sk-table__cell">MIT</td></tr>
-      <tr class="sk-table__row"><td class="sk-table__cell"><code>@skryensya/icons-material</code></td><td class="sk-table__cell">Material Symbols, outlined 400</td><td class="sk-table__cell">relleno</td><td class="sk-table__cell"><code>0 -960 960 960</code></td><td class="sk-table__cell">Apache-2.0</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <p>
-    Ninguno vive en <code>@skryensya/core</code>: core no nombra inquilinos, y sus
-    <code>dependencies</code> están vacías. Son paquetes aparte.
-  </p>
-  <CodeBlock code={bind} label="instalar" note="Phosphor por defecto; los otros, opt-in" />
-
-  <h2>El mismo nombre, tres dibujos</h2>
-  <p>
-    Cada fila es <strong>un</strong> rol; cada columna, un set. El frame del preview monta un solo set;
-    esta tabla vive en la página para comparar los tres a la vez. El nombre que escribes es el de la
-    izquierda, <code>search</code>, no <code>magnifying-glass</code> ni el codepoint de una fuente.
+    Core no envía geometría ni depende de una librería de iconos. Cada Icon set es completo: si existe
+    un Stable icon name, el set debe dibujarlo. Por eso cambiar de set es cambiar la marca visual, no
+    reescribir cada uso de <code>&lt;Icon name="..." /&gt;</code>.
   </p>
   <div class="sk-table-scroll">
     <table class="sk-table">
       <thead class="sk-table__head">
         <tr class="sk-table__row">
-          <th class="sk-table__header">rol</th>
+          <th class="sk-table__header">Paquete</th>
+          <th class="sk-table__header">Librería</th>
+          <th class="sk-table__header">Geometría</th>
+          <th class="sk-table__header">Licencia</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><code>@skryensya/icons-phosphor</code></td>
+          <td class="sk-table__cell">Phosphor regular</td>
+          <td class="sk-table__cell"><code>0 0 256 256</code>, relleno</td>
+          <td class="sk-table__cell">MIT</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><code>@skryensya/icons-lucide</code></td>
+          <td class="sk-table__cell">Lucide</td>
+          <td class="sk-table__cell"><code>0 0 24 24</code>, contorno</td>
+          <td class="sk-table__cell">ISC</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><code>@skryensya/icons-material</code></td>
+          <td class="sk-table__cell">Material Symbols outlined</td>
+          <td class="sk-table__cell"><code>0 -960 960 960</code>, relleno</td>
+          <td class="sk-table__cell">Apache-2.0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <CodeBlock code={install} label="terminal" />
+  <CodeBlock code={swap} label="React" note="ningún nombre de icono cambia" />
+
+  <h2>El mismo rol, tres dibujos</h2>
+  <p>
+    Cada fila mantiene el mismo nombre público. Las columnas muestran cómo cada set lo realiza con su
+    propia geometría.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Rol</th>
           {allSets.map((s) => <th class="sk-table__header">{s.label}</th>)}
         </tr>
       </thead>
@@ -144,7 +138,9 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
             <tr class="sk-table__row">
               <td class="sk-table__cell"><code>{role}</code></td>
               {allSets.map((s) => (
-                <td class="sk-table__cell"><Fragment set:html={iconMarkup(role, { size: "lg", set: s.set })} /></td>
+                <td class="sk-table__cell">
+                  <Fragment set:html={iconMarkup(role, { size: "lg", set: s.set })} />
+                </td>
               ))}
             </tr>
           ))
@@ -152,31 +148,31 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
       </tbody>
     </table>
   </div>
-  <p>
-    Tres librerías, tres viewBox distintos, cero tokens de color: los tres heredan
-    <code>currentColor</code>.
-  </p>
-  <p>Cambiar de set es esto, y nada más:</p>
-  <CodeBlock code={swap} label="cambiar de set" note="ningún call site se mueve" />
 
-  <h2>El CSS no toca <code>fill</code> ni <code>stroke</code></h2>
-  <p>
-    Un set de contorno dibuja con <code>fill="none" stroke="currentColor"</code> en el
-    <code>&lt;svg&gt;</code> raíz, y una declaración CSS <strong>le gana a un atributo de
-    presentación</strong>. Un <code>fill: currentColor</code> en el pattern volvería sólido todo set de
-    contorno, en silencio. Así que la intención de la geometría vive en <code>attrs</code>, del set, y
-    el pattern solo pone caja y tamaño.
-  </p>
-  <p>
-    Eso deja al icono <strong>sin color propio</strong>: hereda <code>currentColor</code>, es correcto
-    en las ocho marcas y los dos modos sin un token, no necesita override en
-    <code>modes/hc.scss</code>, no entra en <code>contrast-pairs.json</code>, y en contraste forzado el
-    navegador fuerza el <code>color</code> del contenedor y <code>currentColor</code> lo sigue solo.
-  </p>
+  <h2>Límites</h2>
+  <ul>
+    <li>
+      El Pattern del icono pone caja y tamaño. No declara <code>fill</code> ni <code>stroke</code>,
+      porque eso destruiría los sets de contorno.
+    </li>
+    <li>
+      La geometría es Icon data confiable del set o del producto. No se monta desde contenido de
+      usuario ni desde una API.
+    </li>
+    <li>
+      Un set incompleto no es un set publicable. Cada Stable icon name agregado crea trabajo para
+      todos los sets.
+    </li>
+    <li>
+      La accesibilidad se decide en el uso: decorativo cuando acompaña texto, con nombre accesible
+      cuando el icono es la única señal.
+    </li>
+  </ul>
 
-  <h2>Usar el pattern</h2>
-  <p>
-    React (<code>&lt;Icon&gt;</code>), vanilla (<code>mountIcons</code>), tamaños y accesibilidad en el
-    call site: <a href="/componentes/icon">Icon</a>.
-  </p>
+  <h2>Siguiente</h2>
+  <ul>
+    <li><a href="/componentes/icon">Icon</a>, para consumir roles en React y Vanilla.</li>
+    <li><a href="/styling-hooks">Styling hooks</a>, para otra superficie pública tier 3.</li>
+    <li><a href="/state-layer">State layer</a>, para el patrón compartido de feedback.</li>
+  </ul>
 </Base>

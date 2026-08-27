@@ -199,7 +199,7 @@ const navigation = getNavigation(locale) satisfies readonly NavigationSection[];
 const globalNavigation = getGlobalNavigation(locale);
 /* By stable id, never by visible title: the titles are translated now and would stop matching. */
 const componentSection = navigation.find((section) => section.id === "components");
-const systemSection = navigation.find((section) => section.id === "system");
+const foundationsSection = navigation.find((section) => section.id === "foundations");
 
 /*
  * One rail follows the reader through the whole library. Catalog and reference subpages inherit
@@ -209,9 +209,16 @@ const systemSection = navigation.find((section) => section.id === "system");
 const currentSection =
   canonical === "/componentes" || canonical.startsWith("/componentes/")
     ? componentSection ?? navigation[0]
-    : canonical.startsWith("/referencia/")
-      ? systemSection ?? navigation[0]
+    : canonical === "/fundamentos" || canonical.startsWith("/referencia/")
+      ? foundationsSection ?? navigation[0]
       : navigation.find((section) => section.groups.some((group) => group.items.some((item) => item.href === path))) ?? navigation[0];
+const sectionNavigation = [currentSection] satisfies readonly NavigationSection[];
+const isGlobalItemCurrent = (href: string): boolean => {
+  const itemCanonical = canonicalPath(href);
+  if (itemCanonical === "/componentes") return canonical === "/componentes" || canonical.startsWith("/componentes/");
+  if (itemCanonical === "/fundamentos") return currentSection.id === "foundations";
+  return canonical === itemCanonical;
+};
 
 /*
  * THE DOCUMENT, RENDERED HERE, so its own index can be read before the page is sent.
@@ -616,7 +623,7 @@ const PALETTE_PRESETS = palettePresets(locale);
                         <a
                           class="sk-nav-list__link sk-interactive"
                           href={item.href}
-                          aria-current={path === item.href ? "page" : undefined}
+                          aria-current={isGlobalItemCurrent(item.href) ? "page" : undefined}
                         >
                           <span class="sk-nav-list__label">{item.label}</span>
                         </a>
@@ -634,21 +641,34 @@ const PALETTE_PRESETS = palettePresets(locale);
         {/*
           The command-palette trigger is the shortest path to any documentation destination. The
           trailing controls keep only reader preferences: scheme and contrast.
+
+          A real `<input>`, not a `<button>` (decision: search-trigger.ts's own header comment has
+          the full reasoning): a button's `:active` squeeze and its `--elevation-raised` at-rest
+          shadow are BOTH real button semantics this control never wanted, they came along for
+          free only because `.sk-button` was the fastest way to get the field's own look. `readonly`
+          keeps it from accepting typed input (the real query box is the palette's own, opened on
+          top of this one) while staying a genuine focusable, clickable text field: Tab reaches it,
+          a screen reader announces it as a text box, and `search-trigger.ts` opens the palette on
+          focus (keyboard) as well as on click (pointer), so neither path is second-class.
         */}
-        <button
-          class="sk-button sk-interactive dimensions__search-trigger"
-          data-variant="ghost"
-          type="button"
-          aria-controls="docs-cmdk"
-          aria-expanded="false"
-          aria-keyshortcuts="Meta+K Control+K"
-          aria-label={t("search.label")}
-          data-sk-command-palette-open
-        >
+        <div class="dimensions__search-trigger" data-sk-search-trigger>
           <Fragment set:html={searchIcon} />
-          <span class="dimensions__search-label">{t("search.label")}</span>
+          <input
+            class="dimensions__search-input"
+            type="text"
+            readonly
+            inputmode="none"
+            autocomplete="off"
+            placeholder={t("search.label")}
+            aria-label={t("search.label")}
+            aria-controls="docs-cmdk"
+            aria-expanded="false"
+            aria-keyshortcuts="Meta+K Control+K"
+            data-sk-command-palette-open
+            data-sk-search-trigger-input
+          />
           <kbd class="sk-kbd" data-sk-command-palette-hint aria-hidden="true">⌘K</kbd>
-        </button>
+        </div>
 
         {/*
           The reader-preference icon controls (palette + reach + mode + contrast) are one cluster: a
@@ -732,7 +752,7 @@ const PALETTE_PRESETS = palettePresets(locale);
             <a
               class="docs-drawer__global-link sk-interactive"
               href={item.href}
-              aria-current={path === item.href ? "page" : undefined}
+              aria-current={isGlobalItemCurrent(item.href) ? "page" : undefined}
             >
               {item.label}
             </a>
@@ -757,7 +777,7 @@ const PALETTE_PRESETS = palettePresets(locale);
         <LanguageMenu />
       </div>
       <div class="docs-drawer__content sk-scrollbar sk-scrollbar--reveal">
-        <SidebarNav nav={navigation} path={path} idPrefix="docs-drawer-nav" />
+        <SidebarNav nav={sectionNavigation} path={path} idPrefix="docs-drawer-nav" />
       </div>
     </dialog>
 
@@ -825,7 +845,7 @@ const PALETTE_PRESETS = palettePresets(locale);
           id="docs-nav"
           tabindex="-1"
         >
-          <SidebarNav nav={navigation} path={path} idPrefix="docs-nav" />
+          <SidebarNav nav={sectionNavigation} path={path} idPrefix="docs-nav" />
         </div>
         {/*
           Restore as soon as `#docs-nav` exists, not at the end of the body. This is a multi-page
@@ -1444,11 +1464,13 @@ const PALETTE_PRESETS = palettePresets(locale);
       import { initCopyButtons } from "../scripts/copy-button";
       import { initThemeToggle, initThemeTogglePersistence, initThemeToggleSync } from "../scripts/theme-toggle";
       import { initDocsBinding } from "../scripts/docs-binding";
+      import { initSearchTrigger } from "../scripts/search-trigger";
       initCopyButtons();
       initThemeToggle();
       initThemeTogglePersistence();
       initThemeToggleSync();
       initDocsBinding();
+      initSearchTrigger();
     </script>
 
     {/*

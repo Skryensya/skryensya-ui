@@ -80,7 +80,18 @@ export default defineConfig({
      * naming one of these here just logs "Failed to resolve dependency" and does nothing.
      */
     resolve: {
-      dedupe: ["react", "react-dom"],
+      dedupe: ["react", "react-dom", "@skryensya/core"],
+    },
+    /*
+     * `@skryensya/charts` is workspace source, same as `@skryensya/react`. Vite's SSR runner
+     * externalizes node_modules packages by default, then tries to load their nested
+     * `@skryensya/core/chart` import as a Node module. That subpath points at TypeScript, so
+     * fetchModule throws `Cannot find module` and the Charts (and Card) islands never hydrate.
+     * `noExternal` keeps the package in Vite's graph so the import is rewritten to an `@fs` URL
+     * the way every other kit binding already is.
+     */
+    ssr: {
+      noExternal: ["@skryensya/charts"],
     },
     optimizeDeps: {
       include: [

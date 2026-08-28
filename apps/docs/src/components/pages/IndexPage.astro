@@ -131,7 +131,10 @@ const placeholderSrc = (label: string) => {
                     />
                     <div class="docs-catalog__content">
                       <h3 class="docs-catalog__title">
-                        {item.label}
+                        <span class="docs-catalog__name">{item.label}</span>
+                        {item.trailing && (
+                          <span class="sk-badge" data-size="sm" data-tone="warning">{item.trailing}</span>
+                        )}
                       </h3>
                       <p class="docs-catalog__description">
                         {getComponentDescription(item.href, locale)}

@@ -891,6 +891,10 @@ h2.docs-catalog-section__title {
 }
 
 .docs-catalog__title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-inline-xs);
   margin: 0;
   color: var(--color-text-primary);
   font-size: var(--font-size-body-sm);
@@ -918,7 +922,7 @@ h2.docs-catalog-section__title {
      perceive. A tint that falls under someone's contrast threshold, a zoom removed by the reduced
      motion query right below, and the underline is the one that survives either of those being
      missed, on the element that is actually the link's own name. */
-  .docs-catalog__card:hover .docs-catalog__title {
+  .docs-catalog__card:hover .docs-catalog__name {
     text-decoration: underline;
   }
 }

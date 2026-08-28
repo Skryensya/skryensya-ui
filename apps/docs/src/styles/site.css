@@ -1283,7 +1283,7 @@ p:not(.sk-text) {
 /*
  * DEFAULT ONLY, at `:root`. `Base.astro`'s live palette picker sets this same custom property as an
  * inline style on `<html>` for every non-default preset (`accentBundle()`'s `--docs-hero-bg` key);
- * it used to be redeclared here on `.docs-component-head`/`.docs-component-hero` off a hardcoded
+ * it used to be redeclared here on `.docs-component-shell`/`.docs-component-hero` off a hardcoded
  * `--palette-blue-*`, which shadowed that override on every element that matters and left the band
  * blue regardless of which accent was active. One declaration, inherited by both boxes below, is
  * also simpler than the "same value on two boxes" duplication the property used to need.
@@ -1292,7 +1292,7 @@ p:not(.sk-text) {
   --docs-hero-bg: light-dark(var(--palette-blue-200), var(--palette-blue-950));
 }
 
-.docs-component-head,
+.docs-component-shell,
 .docs-component-hero {
   --docs-hero-pad-start-max: calc(var(--space-section) * 1.5);
   --docs-hero-pad-start-min: var(--space-inset-md);
@@ -1310,7 +1310,6 @@ p:not(.sk-text) {
   --docs-hero-title-max: var(--font-size-display-lg);
   --docs-hero-title-min: var(--font-size-heading-h2);
   --docs-hero-eyebrow-line: calc(var(--font-size-caption) * var(--font-line-height-caption));
-  --docs-hero-shadow: 0 1px 2px 0 var(--shadow-sm), 0 1px 3px 0 var(--shadow-sm);
 }
 
 .docs-component-hero {
@@ -1341,7 +1340,6 @@ p:not(.sk-text) {
      would be two notches showing scrolling content through them. */
   border-radius: calc(var(--radius-surface) * (1 - var(--docs-hero-collapse)));
   background: var(--docs-hero-bg);
-  box-shadow: var(--docs-hero-shadow);
 }
 
 /*
@@ -1551,38 +1549,36 @@ p:not(.sk-text) {
   initial-value: 0;
 }
 
+/*
+ * ONE NUMBER, THE WHOLE RANGE. Holding 0 until 99% then jumping to 1 was the snap: font-size,
+ * eyebrow and padding all read this property, so they stayed at the display end until the spacer
+ * was gone and then popped to the sticky bar. `0` → `1` across `animation-range` is what lets the
+ * title shrink with the scroll instead of after it. Linear on purpose: this is scroll-driven, not
+ * a timed tween, and easing here would desync the type from the spacer that is disappearing 1:1.
+ */
 @keyframes docs-hero-collapse {
   0% {
-    box-shadow: var(--docs-hero-shadow);
-  }
-  /*
-   * THE SHADOW IS PRESENT BEFORE THE BAR STICKS. The component-page hero is a raised card from
-   * first paint, not only after it has collapsed into chrome; otherwise the panel reads flat while it
-   * is still the page's main title and only gains elevation after becoming sticky. `box-shadow` is
-   * not interpolatable, so every keyframe keeps the same raised shadow and only the custom-property
-   * collapse value changes.
-   */
-  99% {
-    box-shadow: var(--docs-hero-shadow);
+    --docs-hero-collapse: 0;
   }
   100% {
     --docs-hero-collapse: 1;
-    box-shadow: var(--docs-hero-shadow);
   }
 }
 
-.docs-component-head {
+.docs-component-shell {
   /* A plain BLOCK container, and it has to stay one. Its whole job is to be the tall containing
      block the sticky hero never had as a direct child of `<main class="sk-layout-grid">` (see the
      comment in ComponentPageShell.astro). Turn this into a grid or a flex box and every child is
      back in its own area, which is the exact bug it exists to fix.
 
      NOT a `background` here: this box is the tall containing block, which means it is also as tall
-     as every tab panel stacked inside `.sk-tabs` below the hero (confirmed live: over 10,000px on
-     this very page), not just the band. A background painted here would tint every gap in that
-     entire column, not the hero's own corner. See `.docs-component-hero::before` for the fix that
-     is actually scoped to the hero's own edge. */
+     as every tab panel stacked inside `.sk-tabs` below the hero, not just the band. A background
+     painted here would tint every gap in that entire column, not the hero's own corner. */
   min-inline-size: 0;
+}
+
+.docs-component-head {
+  display: contents;
 }
 
 /* Nothing to stand in for until the collapse is on: without it the header is the whole band again. */
@@ -1590,14 +1586,14 @@ p:not(.sk-text) {
   display: none;
 }
 
-/* Every selector below is scoped under `.docs-component-head`, and that is load-bearing rather than
+/* Every selector below is scoped under `.docs-component-shell`, and that is load-bearing rather than
    tidiness: `/componentes` renders a `.docs-component-hero` of its own with no collapsing shell
    around it, and unscoped these rules reached it too. Pinning a catalogue masthead that has nothing
    to pin under, squaring its top corners, and dropping it from 212px to 90px because
    `padding-block-start: 0` landed on a box that still wanted its padding. */
 @supports (animation-timeline: scroll()) {
   @media (prefers-reduced-motion: no-preference) {
-    .docs-component-head {
+    .docs-component-shell {
       /*
        * THE TWO MEASUREMENTS THE WHOLE THING HANGS OFF, declared on the shell because three
        * different boxes need them and custom properties only travel downward: the header sizes
@@ -1631,17 +1627,18 @@ p:not(.sk-text) {
     }
 
     /* The half of the band that scrolls away. Carries the top corners, because the header below it
-       is now only the bottom edge of the same panel. */
-    .docs-component-head .docs-component-hero__spacer {
+       is now only the bottom edge of the same panel. No elevation here: the raised shadow belongs
+       only to the fully collapsed sticky bar, otherwise the expanded masthead casts a visible shadow
+       from its top edge before anything is pinned. */
+    .docs-component-shell .docs-component-hero__spacer {
       display: block;
       block-size: var(--docs-hero-collapse-range);
       border-start-start-radius: var(--radius-surface);
       border-start-end-radius: var(--radius-surface);
       background: var(--docs-hero-bg);
-      box-shadow: var(--docs-hero-shadow);
     }
 
-    .docs-component-head .docs-component-hero {
+    .docs-component-shell .docs-component-hero {
       position: sticky;
       top: var(--docs-navbar-h, var(--docs-header-block-size));
       /* Over the tab strip's 2: the bar is opaque and the strip slides up behind it. */
@@ -1677,8 +1674,7 @@ p:not(.sk-text) {
       border-radius: 0;
       border-end-start-radius: var(--radius-surface);
       border-end-end-radius: var(--radius-surface);
-      /* The hero is raised before it sticks; the animation keeps the same shadow across the whole
-         collapse so the elevation does not appear only after the title has become chrome. */
+      /* The hero collapse only resizes the masthead; it does not add a raised shadow. */
       animation-name: docs-hero-collapse;
       animation-fill-mode: both;
       animation-timing-function: linear;
@@ -1695,12 +1691,11 @@ p:not(.sk-text) {
      * only outranks the hero's OTHER children (the title, the badge), never the hero's own fill,
      * confirmed live as the entire band losing its blue the instant that version shipped.
      *
-     * `.docs-component-head` is the hero's own containing block, but it is ALSO as tall as every tab
-     * panel stacked below the hero (confirmed live: over 10,000px on this page), so whatever that
-     * column happens to be scrolling at any given moment, a ComponentPreview's own white stage, a
-     * code block, sits directly behind the hero's rounded corner at that instant; the curve clips the
-     * hero's own background to the round, so the small triangle it does not cover showed exactly that
-     * scrolling content, confirmed live with `elementFromPoint` at the corner, not assumed.
+     * `.docs-component-shell` is the hero's containing block, and it is intentionally as tall as the
+     * tabs and their panels below the masthead. Whatever that column is scrolling at any given
+     * moment can sit directly behind the hero's rounded corner; the curve clips the hero's own
+     * background to the round, so the small triangle it does not cover showed scrolling content,
+     * confirmed live with `elementFromPoint` at the corner, not assumed.
      *
      * SAME STICKY OFFSET AS THE HERO, so the two rects always agree regardless of scroll position,
      * and a LOWER z-index than the hero's 3 so the hero's own opaque fill covers this plate
@@ -1715,7 +1710,7 @@ p:not(.sk-text) {
      * square and the rounded shape render pixel-identical, so the corner reads as square again, just
      * with the leak gone too. The canvas colour is what the curve is supposed to reveal either way.
      */
-    .docs-component-head .docs-component-hero__backing {
+    .docs-component-shell .docs-component-hero__backing {
       position: sticky;
       top: var(--docs-navbar-h, var(--docs-header-block-size));
       z-index: 1;
@@ -1732,7 +1727,7 @@ p:not(.sk-text) {
      * while the font-size said otherwise. `none` makes the column keep its natural height and hang
      * over the top edge, which is the effect this is built on.
      */
-    .docs-component-head .docs-component-hero > * {
+    .docs-component-shell .docs-component-hero > * {
       flex: none;
     }
 
@@ -1747,7 +1742,7 @@ p:not(.sk-text) {
      * pixel just tucks under the band's bottom edge instead of poking out above it, so there is
      * nothing to hide with a compensating `padding-block-start`.
      */
-    .docs-component-head .docs-component-hero-tabs {
+    .docs-component-shell .docs-component-hero-tabs {
       top: calc(var(--docs-navbar-h, var(--docs-header-block-size)) + var(--docs-hero-bar-h) - 1px);
     }
   }

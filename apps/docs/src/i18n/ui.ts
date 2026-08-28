@@ -389,6 +389,7 @@ export const ui = {
     "demo.hero.testimonialRole": "Head of Design, Northwind",
 
     "hero.description": "La apertura de una página: una superficie propia y espacio generoso, sin anatomía fija.",
+    "hero.betaBadge": "Beta",
     "hero.lede":
       "Hero sólo posee superficie y padding, con los valores por defecto invertidos respecto a Box: <code>surface: \"surface\"</code> y <code>padding: \"xl\"</code> en vez de <code>\"none\"</code>. El titular, la bajada y la acción siguen siendo composición libre: <code>Heading</code>, <code>Text</code> y <code>Button</code> como en cualquier otra sección.",
     "hero.whenTitle": "Cuándo usarlo",
@@ -1959,6 +1960,7 @@ export const ui = {
 
     "drawer.description": "Un Vaul en el borde inline, a lo alto de la pantalla. Envía hooks y nada de estructura.",
     "fadeEdge.description": "Efecto de desvanecimiento CSS puro para ocultar contenido suavemente en los bordes.",
+    "fadeEdge.betaBadge": "Beta",
     "drawer.lede":
       'Un drawer <strong>es</strong> un <a href="/vaul">Vaul</a> en el borde inline, corriendo a lo alto de la pantalla. Esa frase es el componente entero: el borde, el slide, el backdrop, el drag y el top layer son del pattern, y este archivo sólo dice <em>qué Vaul es un drawer</em> y cómo se ve.',
     "drawer.hooksTitle": "Envía hooks y nada de estructura",
@@ -4662,6 +4664,7 @@ export const ui = {
     "demo.hero.testimonialRole": "Head of Design, Northwind",
 
     "hero.description": "A page's opening: a surface of its own and generous room, no fixed anatomy.",
+    "hero.betaBadge": "Beta",
     "hero.lede":
       "Hero only owns surface and padding, with the defaults flipped from Box: <code>surface: \"surface\"</code> and <code>padding: \"xl\"</code> instead of <code>\"none\"</code>. The headline, sub-line and action stay freely composed: <code>Heading</code>, <code>Text</code> and <code>Button</code> like any other section.",
     "hero.whenTitle": "When to use it",
@@ -6197,6 +6200,7 @@ export const ui = {
 
     "drawer.description": "A Vaul on the inline edge, running the full height of the screen. Ships hooks and no structure.",
     "fadeEdge.description": "Pure CSS fade-out effect to smoothly hide content at the edges.",
+    "fadeEdge.betaBadge": "Beta",
     "drawer.lede":
       'A drawer <strong>is</strong> a <a href="/en/vaul">Vaul</a> on the inline edge, running the full height of the screen. That sentence is the whole component: the edge, the slide, the backdrop, the drag and the top layer belong to the pattern, and this file only says <em>which Vaul is a drawer</em> and how it looks.',
     "drawer.hooksTitle": "Ships hooks and no structure",

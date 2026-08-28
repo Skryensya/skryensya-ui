@@ -9,7 +9,7 @@ import { Chart as PathChart } from "@skryensya/charts/react";
 import { Chart } from "@skryensya/react/chart";
 import { framedIn } from "./framed";
 
-const framed = framedIn(import.meta.url);
+const framed = framedIn("charts");
 
 type DemoProps = { lang?: "es" | "en" };
 

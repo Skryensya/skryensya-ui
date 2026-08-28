@@ -1,16 +1,16 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 
 /*
- * A SNIPPET: an established tree below screen scale — sibling to `@skryensya/recipes`
+ * A SNIPPET: an established tree below screen scale  -  sibling to `@skryensya/recipes`
  * (`recipe.ts`'s own header), which is whole screens, one per state. A recipe answers "what does a
  * form look like when it's saving"; most of what an agent is actually asked for is smaller than
- * that — "a card in a grid", "an icon-only button that explains itself", "a settings row" — and
+ * that  -  "a card in a grid", "an icon-only button that explains itself", "a settings row"  -  and
  * forcing those through a recipe's four-state shape would be inventing states nothing asked for.
  *
  * TWO LEVELS, not one, because they solve different problems:
- *   - "component": ONE family, well-composed — every slot worth using is used, every option that
+ *   - "component": ONE family, well-composed  -  every slot worth using is used, every option that
  *     matters is set. What "the idiomatic way to use Callout" looks like, not just "a Callout".
- *   - "molecule": a FEW families working together for one small piece of UI that is not a screen —
+ *   - "molecule": a FEW families working together for one small piece of UI that is not a screen  - 
  *     a card in a grid, a toolbar of icon buttons, a table with its pager. The compositions that sit
  *     between "one component" and "a whole recipe".
  *

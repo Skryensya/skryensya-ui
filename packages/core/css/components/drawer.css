@@ -22,6 +22,7 @@
     --sk-drawer-border-color: var(--color-border-subtle);
     --sk-drawer-border-width: 1px;
     --sk-drawer-elevation: var(--elevation-modal);
+    --sk-drawer-wash: var(--elevation-wash-modal);
 
     /* The drawer's hooks ARE Vaul's, re-declared. A consumer tunes `--sk-drawer-*` and never
      * learns that Vaul is underneath; the pattern stays an implementation detail rather than a
@@ -32,6 +33,7 @@
     --sk-vaul-border-color: var(--sk-drawer-border-color);
     --sk-vaul-border-width: var(--sk-drawer-border-width);
     --sk-vaul-elevation: var(--sk-drawer-elevation);
+    --sk-vaul-wash: var(--sk-drawer-wash);
     /* square: a drawer meets three viewport edges, and a radius against them reads as a mistake */
     --sk-vaul-radius: 0;
   }

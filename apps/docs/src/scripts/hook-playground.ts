@@ -1,6 +1,6 @@
 /*
  * Wires every `HookPlayground.astro` on the page: each slider/color input writes its own custom
- * property straight onto the PROBE element (the actual `.sk-loader`, say — see the `probe` prop's
+ * property straight onto the PROBE element (the actual `.sk-loader`, say  -  see the `probe` prop's
  * own doc), the same way a consumer's stylesheet would. Setting it on the stage div instead would
  * only ever be inherited, and every published component redeclares its own custom properties
  * unconditionally in its base rule, so an inherited value never wins. Reset restores the values the
@@ -24,7 +24,8 @@ function apply(control: HTMLElement, rawValue: string): void {
 }
 
 export function initHookPlayground(): void {
-  document.querySelectorAll<HTMLElement>(ROOT).forEach((root) => {
+  document.querySelectorAll<HTMLElement>(`${ROOT}:not([data-sk-hook-playground-bound])`).forEach((root) => {
+    root.setAttribute("data-sk-hook-playground-bound", "");
     const controls = root.querySelectorAll<HTMLElement>("[data-sk-hook-playground-control]");
 
     controls.forEach((control) => {

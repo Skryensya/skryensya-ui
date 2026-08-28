@@ -21,16 +21,20 @@ import { iconMarkup } from "../icons";
 interface Props {
   /** The dialog id: what openers target with `aria-controls`, and what names the index script. */
   id: string;
-  /** The searchable destinations. Serialized into the JSON island the enhancer reads on mount. */
-  entries: readonly CommandPaletteEntry[];
+  /** The searchable destinations. Serialized inline unless `indexSrc` moves them behind a URL. */
+  entries?: readonly CommandPaletteEntry[];
+  /** JSON endpoint for lazy indexes that should not inflate every HTML page. */
+  indexSrc?: string;
   /** Names the dialog for anyone who cannot see it. */
   label: string;
   placeholder: string;
   /** Opt-in, one instance per page: `"mod+k"` binds the shortcut and fills the ⌘K badges. */
   hotkey?: string;
+  /** Defer the Vanilla enhancer until the first opener click/hotkey. Docs chrome uses this path. */
+  lazy?: boolean;
 }
 
-const { id, entries, label, placeholder, hotkey } = Astro.props;
+const { id, entries, indexSrc, label, placeholder, hotkey, lazy = false } = Astro.props;
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
@@ -45,8 +49,10 @@ const listId = `${id}-list`;
 <dialog
   class="sk-dialog sk-command-palette"
   id={id}
-  data-sk-command-palette
+  data-sk-command-palette={lazy ? undefined : ""}
+  data-sk-command-palette-lazy={lazy ? "" : undefined}
   data-sk-command-palette-index={indexId}
+  data-sk-command-palette-index-src={indexSrc}
   data-sk-command-palette-hotkey={hotkey}
   aria-label={label}
 >
@@ -100,4 +106,4 @@ const listId = `${id}-list`;
     <span><kbd class="sk-kbd">Esc</kbd> {t("search.hintClose")}</span>
   </footer>
 </dialog>
-<script type="application/json" id={indexId} set:html={JSON.stringify(entries)}></script>
+{entries && <script type="application/json" id={indexId} set:html={JSON.stringify(entries)}></script>}

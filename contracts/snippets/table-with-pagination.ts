@@ -3,20 +3,20 @@ import type { Snippet } from "./snippet.js";
 export const tableWithPaginationSnippet: Snippet = {
   id: "table-with-pagination",
   level: "molecule",
-  intent: "A table too long to show all at once, with its pager underneath — two components, one job.",
+  intent: "A table too long to show all at once, with its pager underneath  -  two components, one job.",
   notes: [
-    "The `Table` and the `Pagination` are NOT wired to each other by anything in the tree — nothing " +
+    "The `Table` and the `Pagination` are NOT wired to each other by anything in the tree  -  nothing " +
       "in either contract makes a table \"paginated\" as a single unit. This molecule is the " +
       "PLACEMENT convention (a `Stack` holding the table then its pager, same gap rhythm as any " +
       "other stacked pair) plus a real, working `Pagination` under it; which rows the table actually " +
       "shows for the current page is application data, decided by whatever renders this tree, same " +
       "as any other table content.",
-    "Every data row's FIRST cell is a `TableHeader` with `scope: \"row\"`, not a `TableCell` — that's " +
+    "Every data row's FIRST cell is a `TableHeader` with `scope: \"row\"`, not a `TableCell`  -  that's " +
       "what gives each row an accessible name (\"row #1042\"), the same reason `TableCaption` names " +
       "the whole table. A table where every cell is a plain `TableCell` reads as an undifferentiated " +
       "grid of text to anyone navigating it by header.",
     "`Table`'s own `children` slot is ORDERED and typed by cardinality (`get_contract`: `TableCaption` " +
-      "optional, `TableHead` optional, `TableBody` exactly one) — caption, then head, then body is " +
+      "optional, `TableHead` optional, `TableBody` exactly one)  -  caption, then head, then body is " +
       "not a style choice this snippet made, it's the only order the contract accepts.",
   ],
   tree: {

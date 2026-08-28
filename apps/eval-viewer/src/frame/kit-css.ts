@@ -1,15 +1,15 @@
 /*
- * The kit's CSS, compiled to plain text, for injection into the PREVIEW IFRAME's own document — and
+ * The kit's CSS, compiled to plain text, for injection into the PREVIEW IFRAME's own document  -  and
  * ONLY there. It must never land in this app's own `main.tsx`/`app.css`: `_base.scss`'s
  * `color-scheme: light dark` arms `light-dark()` to follow the OS, and confirmed live, this app's
- * OWN chrome (plain buttons, tables — nothing that sets its own explicit color/background) picked up
+ * OWN chrome (plain buttons, tables  -  nothing that sets its own explicit color/background) picked up
  * the browser's native dark-mode widget styling the moment the kit's CSS was loaded into the same
  * document, while `app.css`'s hardcoded light backgrounds stayed put. "Everything reads as dark mode
  * on a light background" was that collision, not a kit bug. Isolating the kit's CSS to the iframe
  * (which pins `color-scheme: light` itself, see `document.ts`) removes the collision at its source
  * instead of patching around it with more specificity in `app.css`.
  *
- * `?inline` (not `?url`): the frame is an iframe `srcDoc` string, not a page Vite serves — nothing
+ * `?inline` (not `?url`): the frame is an iframe `srcDoc` string, not a page Vite serves  -  nothing
  * fetches a stylesheet URL from there in dev the way a normal document would, so the compiled CSS
  * TEXT is embedded directly as one `<style>` block. `tokens.scss` is one file (its own `@use`
  * pulls in primitives + semantic, compiled to one output); `components/*.css` and `patterns/*.css`

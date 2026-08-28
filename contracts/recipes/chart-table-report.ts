@@ -117,7 +117,7 @@ export const chartTableReportRecipe: Recipe = {
             contract: "table",
             signature: "TableBody",
             children: [
-              row("Q1", "$184.000", "—"),
+              row("Q1", "$184.000", " - "),
               row("Q2", "$201.000", "+9%"),
               row("Q3", "$196.000", "-2%"),
               row("Q4", "$238.000", "+21%"),

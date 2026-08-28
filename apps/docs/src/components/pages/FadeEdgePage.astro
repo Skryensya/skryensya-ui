@@ -22,7 +22,7 @@ const sourceFiles = [
  * A real activity feed, seven rows deep: enough that the box (max-height 11rem, ~3 rows visible)
  * has real content to scroll THROUGH, not just a static clip. `overflow-y: auto` on the fade-edge
  * element itself is what makes that legible: `mask-image` paints relative to the element's own box,
- * not its content, so the faded band stays pinned to the edge while rows scroll underneath it — the
+ * not its content, so the faded band stays pinned to the edge while rows scroll underneath it  -  the
  * same trick as a `background-attachment: local` gradient, just via the mask layer instead.
  */
 const activityItem = (initials: string, palette: string, name: string, action: string, time: string) => `
@@ -102,7 +102,7 @@ if (region) region.scrollLeft = region.scrollWidth;
 /*
  * The scrim pattern: a photo card whose caption needs to stay legible over whatever the image
  * happens to show. `data-fade="color"` paints an opaque gradient instead of revealing the
- * backdrop, which is the point here — there is no flat surface behind the photo to fade into.
+ * backdrop, which is the point here  -  there is no flat surface behind the photo to fade into.
  */
 const fadeColorHtml = `<div class="sk-box" data-border="subtle" style="inline-size: 20rem; overflow: hidden;">
   <div style="position: relative;">
@@ -120,7 +120,7 @@ const fadeColorHtml = `<div class="sk-box" data-border="subtle" style="inline-si
 
 /*
  * The intensity control: a real range input driving `--sk-fade-edge-size` live, over the SAME
- * scrollable feed as the first demo. Pixels, not rem, on the input itself — `<input type="range">`
+ * scrollable feed as the first demo. Pixels, not rem, on the input itself  -  `<input type="range">`
  * has no unit, and converting on read (`sync`) keeps the label honest in the unit the CSS variable
  * actually documents.
  */
@@ -171,7 +171,7 @@ sync();
     </ul>
 
     <h3>Fundido hacia abajo</h3>
-    <p>Una lista con scroll real y altura acotada: el borde inferior se desvanece para señalar que faltan filas por ver. Desplazate adentro del recuadro — el degradé queda fijo en el borde mientras el contenido pasa debajo, así se aprecia el efecto en acción.</p>
+    <p>Una lista con scroll real y altura acotada: el borde inferior se desvanece para señalar que faltan filas por ver. Desplazate adentro del recuadro  -  el degradé queda fijo en el borde mientras el contenido pasa debajo, así se aprecia el efecto en acción.</p>
     <ComponentPreview html={fadeBottomHtml} label="Fade to bottom" />
 
     <h3>Fundido hacia arriba</h3>
@@ -187,7 +187,7 @@ sync();
     <ComponentPreview html={fadeLeftHtml} previewScript={fadeLeftScript} label="Fade to left" />
 
     <h3>Fundido a un color determinado</h3>
-    <p>Cuando no hay una superficie plana detrás para revelar — una foto, por ejemplo — <code>data-fade="color"</code> pinta un degradé opaco encima en vez de hacer transparente el contenido. Es el patrón clásico del scrim: un texto legible sobre una imagen, sin importar qué colores tenga la foto.</p>
+    <p>Cuando no hay una superficie plana detrás para revelar  -  una foto, por ejemplo  -  <code>data-fade="color"</code> pinta un degradé opaco encima en vez de hacer transparente el contenido. Es el patrón clásico del scrim: un texto legible sobre una imagen, sin importar qué colores tenga la foto.</p>
     <ComponentPreview html={fadeColorHtml} label="Fade a color" />
 
     <h3>Ajustar la intensidad</h3>
@@ -204,9 +204,9 @@ sync();
 
     <h3>Notas de implementación</h3>
     <ul>
-      <li>Modo <code>transparent</code>: usa <code>mask-image</code> con un <code>linear-gradient</code>. El contenido sigue en el DOM y es seleccionable — solo se enmascara visualmente. Solo se nota si lo que hay detrás es un fondo sólido y contrasta con el contenido</li>
+      <li>Modo <code>transparent</code>: usa <code>mask-image</code> con un <code>linear-gradient</code>. El contenido sigue en el DOM y es seleccionable  -  solo se enmascara visualmente. Solo se nota si lo que hay detrás es un fondo sólido y contrasta con el contenido</li>
       <li>Modo <code>color</code>: un <code>::after</code> posicionado encima pinta el degradé, así que el elemento necesita <code>position: relative</code> (ya lo trae por defecto) y el resto de tu contenido no debe competir por ese mismo pseudo-elemento</li>
-      <li>El desvanecido queda fijo en el borde del elemento aunque el contenido interno tenga scroll — no hace falta recalcularlo al desplazarse</li>
+      <li>El desvanecido queda fijo en el borde del elemento aunque el contenido interno tenga scroll  -  no hace falta recalcularlo al desplazarse</li>
       <li>Ponele <code>overflow: auto</code> (o <code>hidden</code>, si no necesitás scroll) al mismo elemento cuando el contenido interno se desborda, para que no se vea por fuera del área desvanecida</li>
       <li>Para accesibilidad, asegurate de que el contenido crítico no quede oculto detrás del desvanecido</li>
     </ul>

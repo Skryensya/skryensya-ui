@@ -11,6 +11,11 @@
 @layer components {
   .sk-hero {
     --sk-hero-bg: transparent;
+    /* The elevation identity wash, a `background-image` layer now rather than the inset `box-
+     * shadow` `--elevation-raised`/`-sunken` used to carry it as (see `_color.scss`'s own comment
+     * on `--elevation-wash-*`): `none` at the flat default, so the shorthand below stays a plain
+     * fill until a `data-surface` variant below opts into one. */
+    --sk-hero-wash: none;
     --sk-hero-padding: 0;
     --sk-hero-radius: var(--radius-surface);
     --sk-hero-shadow: var(--elevation-flat);
@@ -53,7 +58,7 @@
     flex: 1 1 100%;
     padding: var(--sk-hero-padding);
     border-radius: var(--sk-hero-radius);
-    background: var(--sk-hero-bg);
+    background: var(--sk-hero-wash) var(--sk-hero-bg);
     box-shadow: var(--sk-hero-shadow);
   }
 
@@ -67,11 +72,13 @@
   .sk-hero[data-surface="sunken"] {
     --sk-hero-bg: var(--color-bg-surface-sunken);
     --sk-hero-shadow: var(--elevation-sunken);
+    --sk-hero-wash: var(--elevation-wash-sunken);
   }
   .sk-hero[data-surface="surface"] { --sk-hero-bg: var(--color-bg-surface); }
   .sk-hero[data-surface="raised"] {
     --sk-hero-bg: var(--color-bg-surface-raised);
     --sk-hero-shadow: var(--elevation-raised);
+    --sk-hero-wash: var(--elevation-wash-raised);
   }
 
   /* Same rescue as `box.css`'s own: `forced-colors` drops the shadow AND flattens every

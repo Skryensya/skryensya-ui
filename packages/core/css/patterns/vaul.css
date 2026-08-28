@@ -37,6 +37,7 @@
     --sk-vaul-border-color: var(--color-border-subtle);
     --sk-vaul-border-width: 1px;
     --sk-vaul-elevation: var(--elevation-modal);
+    --sk-vaul-wash: var(--elevation-wash-modal);
     --sk-vaul-radius: 0;
 
     /* The backdrop is composed here because the system has no backdrop-color token, and cannot
@@ -95,7 +96,7 @@
     max-inline-size: none;
     max-block-size: none;
     border-radius: var(--sk-vaul-radius);
-    background: var(--sk-vaul-bg);
+    background: var(--sk-vaul-wash) var(--sk-vaul-bg);
     color: var(--sk-vaul-fg);
     box-shadow: var(--sk-vaul-elevation);
     overflow: hidden;
@@ -407,6 +408,7 @@
       --sk-vaul-border-color: CanvasText;
       --sk-vaul-bg: Canvas;
       --sk-vaul-fg: CanvasText;
+      --sk-vaul-wash: none;
       box-shadow: none;
     }
 

@@ -59,6 +59,7 @@
     --sk-megamenu-border-color: var(--color-border-subtle);
     --sk-megamenu-radius: var(--radius-control);
     --sk-megamenu-shadow: var(--elevation-overlay);
+    --sk-megamenu-wash: var(--elevation-wash-overlay);
   }
 
   @supports (anchor-name: --a) {
@@ -120,7 +121,7 @@
     overflow: auto;
     border: 1px solid var(--sk-megamenu-border-color);
     border-radius: var(--sk-megamenu-radius);
-    background: var(--sk-megamenu-bg);
+    background: var(--sk-megamenu-wash) var(--sk-megamenu-bg);
     color: var(--sk-megamenu-fg);
     /* `--motion-enter-*`/`-exit-*` below (not Menu's lighter `--motion-feedback-*`) already treats
      * this as its own standalone surface, not a quick tethered popup: `--elevation-overlay`

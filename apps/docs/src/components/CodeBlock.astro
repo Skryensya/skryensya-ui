@@ -13,8 +13,8 @@ interface Props {
   /** Visible source. When `full` is set, this is the condensed view. */
   code: string;
   /**
-   * Complete source for the Full toggle. Copy always uses this when present,
-   * even while Condensed is on screen.
+   * Complete source for the Full toggle. Copy always uses this when present. The hidden Full panel
+   * ships as escaped text instead of a second Shiki tree; syntax highlighting is paid once.
    */
   full?: string;
   label?: string;
@@ -32,7 +32,7 @@ interface Props {
    * Override the disclosure's visible text (default: "Expandir"/"Contraer" or the English
    * equivalent). A consumer whose collapsed state shows NOTHING (`ComponentPreview`'s own embedded
    * source, see that component's own override in `component-preview.css`) needs the control itself
-   * to say what is behind it — plain "Expand" reads as a size toggle when there is no peek of code
+   * to say what is behind it  -  plain "Expand" reads as a size toggle when there is no peek of code
    * to already answer that. The generic wording elsewhere still has a visible line or two doing
    * that job, so it is left alone.
    */
@@ -42,7 +42,7 @@ interface Props {
    * Collapse regardless of line count, even a two-line snippet: for a consumer where EVERY
    * instance must behave the same way whether the source is 3 lines or 300 (`ComponentPreview`'s
    * own embedded panels), the length-based threshold below is exactly the inconsistency that
-   * reads as two different controls on the same page — one snippet gets a disclosure, its
+   * reads as two different controls on the same page  -  one snippet gets a disclosure, its
    * neighbour just shows in full, for a difference the reader never asked about.
    */
   forceCollapsible?: boolean;
@@ -65,7 +65,8 @@ const complete = full?.trim();
 const hasDensity = Boolean(complete);
 const condensedId = `code-${crypto.randomUUID()}`;
 const fullId = `code-${crypto.randomUUID()}`;
-const copyTargetId = complete ? fullId : condensedId;
+const fullSourceId = `code-source-${crypto.randomUUID()}`;
+const copyTargetId = complete ? fullSourceId : condensedId;
 const condensedLines = condensed ? condensed.split(/\r\n|\r|\n/).length : 0;
 const fullLines = complete ? complete.split(/\r\n|\r|\n/).length : 0;
 const previewLineCount = 15;
@@ -104,7 +105,7 @@ const rootAttrs: Record<string, string | undefined> = {
  * `forceCollapsible` drops the count/target-bearing attrs below: those exist to say WHICH block
  * expands and to WHAT SIZE, and both questions stop making sense the moment this same button also
  * has to stand in for however many sibling files a `ComponentPreview` tabs group holds (see that
- * component's own `connectSourceToggle`) — a single count would be honest for one file and simply
+ * component's own `connectSourceToggle`)  -  a single count would be honest for one file and simply
  * wrong for the other two. Keeping the SAME reduced attribute set on every instance, one file or
  * three, is what makes the control read as one thing rather than two that happen to look alike.
  */
@@ -140,7 +141,7 @@ const regionName = label ? t("code.region", { label }) : t("code.regionPlain");
  * (`forceCollapsible`): the block always opens collapsed (`expanded` is SSR'd `"false"`), so a
  * reader tabbing through the page must not land on a region that is, at that exact moment, zero
  * height and invisible. `connectCodePreview` flips it off the instant the panel actually expands,
- * and back on when it collapses again — see that enhancer's own comment for why one attribute
+ * and back on when it collapses again  -  see that enhancer's own comment for why one attribute
  * covers both the accessibility tree and Tab reachability in one move, rather than juggling
  * `tabindex`/`role`/`aria-label` separately. A real peek-window panel (`forceCollapsible` false)
  * never gets it: it stays genuinely visible and scrollable at rest, exactly as before.
@@ -216,9 +217,16 @@ const toggleIcon = iconMarkup("chevron-down", { size: "sm" });
     </div>
     {
       complete && (
-        <div class={codePreviewParts.viewport} id={fullId} {...{ [codePreviewAttrs.densityPanel]: "full" }}>
-          <Code code={complete} lang={language} themes={themes} defaultColor={false} {...scrollRegionAttrs(fullScrolls)} />
-        </div>
+        <>
+          <div
+            class={codePreviewParts.viewport}
+            id={fullId}
+            data-sk-code-preview-source-template={fullSourceId}
+            {...{ [codePreviewAttrs.densityPanel]: "full" }}
+            {...scrollRegionAttrs(fullScrolls)}
+          />
+          <template id={fullSourceId}>{complete}</template>
+        </>
       )
     }
     {/* Copy always reads the full source when one exists. */}

@@ -1,7 +1,7 @@
 /**
  * `runId` IS the timestamp: `evals/agent/report.ts` names each run folder
  * `new Date().toISOString().replaceAll(/[:.]/g, "-")` (filesystem-safe), e.g.
- * `2026-08-24T20-53-07-521Z`. Reversing that substitution is the only parsing this needs — no
+ * `2026-08-24T20-53-07-521Z`. Reversing that substitution is the only parsing this needs  -  no
  * separate `runDate` field to keep in sync with the folder name that already carries it.
  */
 export function parseRunId(runId: string): Date {
@@ -20,7 +20,7 @@ const UNITS: readonly [Intl.RelativeTimeFormatUnit, number][] = [
   ["second", 1],
 ];
 
-/** "3h ago", "in 2 days" (never expected here, but `numeric: "auto"` covers it) — English-only, like the eval corpus itself. */
+/** "3h ago", "in 2 days" (never expected here, but `numeric: "auto"` covers it)  -  English-only, like the eval corpus itself. */
 export function formatRelativeTime(date: Date, now: Date = new Date()): string {
   const deltaSeconds = (date.getTime() - now.getTime()) / 1000;
   for (const [unit, secondsInUnit] of UNITS) {

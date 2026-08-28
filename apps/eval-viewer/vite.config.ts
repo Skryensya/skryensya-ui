@@ -23,7 +23,7 @@ import { defineConfig } from "vite";
  * them.
  *  - `worker.plugins` (react OR not) governs PRODUCTION bundling of a worker entry only. In DEV,
  *    files `entry.tsx` imports (`@skryensya/react/render-tree` and everything it renders) are still
- *    requested and transformed through the MAIN per-file pipeline regardless — a request log
+ *    requested and transformed through the MAIN per-file pipeline regardless  -  a request log
  *    confirmed `render-tree.tsx` arriving via a plain `/@fs/...` URL, never a worker-scoped one.
  *  - `react({ exclude: [...] })` on the main pipeline, aimed at excluding `packages/react/src` from
  *    Fast Refresh instrumentation, did not stop it either: the plugin runs TWO separate JSX code
@@ -34,18 +34,18 @@ import { defineConfig } from "vite";
  * serves (`RefreshRuntime.injectIntoGlobalHook`, `$RefreshReg$`, `$RefreshSig$`,
  * `__vite_plugin_react_preamble_installed__`). That hook is what a hand-built `srcDoc` string skips
  * by construction, and it's the ONE thing Fast Refresh's injected runtime actually checks for before
- * running — supplying it directly is the same fix Vite's own docs give for any non-standard HTML
+ * running  -  supplying it directly is the same fix Vite's own docs give for any non-standard HTML
  * entry point, not a workaround specific to this app.
  *
  * `optimizeDeps.entries` forces `entry.tsx` into the SAME initial dependency-scan pass as
  * `index.html`. Confirmed live, this is load-bearing, not defensive: on a genuinely cold, single
  * navigation (no forced reload), the FIRST case a reader opens 504'd almost every request on the
- * page — react, react-dom, and every `@zag-js/*` package `@skryensya/vanilla`'s enhancers pull in —
+ * page  -  react, react-dom, and every `@zag-js/*` package `@skryensya/vanilla`'s enhancers pull in  - 
  * because Vite's initial esbuild scan never follows a `?worker&url` import to discover what it needs,
  * so those deps were only ever discovered the moment the iframe's entry script actually ran,
  * triggering a SECOND, later optimize pass that invalidated every request already in flight under the
  * first pass's hash. This was tried once before, and abandoned because it appeared to coincide with
- * the Fast Refresh preamble error — it didn't cause that error, the preamble fix above just didn't
+ * the Fast Refresh preamble error  -  it didn't cause that error, the preamble fix above just didn't
  * exist yet at the time. With both fixes in place together, a single cold load works.
  */
 const workspaceRoot = fileURLToPath(new URL("../..", import.meta.url));

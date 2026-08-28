@@ -7,7 +7,7 @@
  * roots inside that realm and keeps the parent theme dimensions in sync.
  *
  * The React demo, when the caller provides a `react` slot, renders as a real `@astrojs/react`
- * island (`client:load`) sitting next to the iframe in the parent document: an actual
+ * island (`client:visible`) sitting next to the iframe in the parent document: an actual
  * `@skryensya/react` component, not a source string. The `react` prop stays the source shown
  * below it; a page may supply either alone.
  *
@@ -214,7 +214,7 @@ const treeJson = tree ? JSON.stringify(tree, null, 2) : undefined;
 
 const vanillaCode = code ?? treeHtml ?? html;
 /*
- * The `react` slot carries the LIVE demo (an actual `@skryensya/react` component, `client:load`);
+ * The `react` slot carries the LIVE demo (an actual `@skryensya/react` component, `client:visible`);
  * the `react` string prop stays the source shown under it. Either alone still counts as "there is a
  * React binding": a page can render a live demo before it has bothered to also show its source.
  */
@@ -260,14 +260,17 @@ const previewId = ((): string => {
   used.add(candidate);
   return candidate;
 })();
-const frameDocument = buildPreviewFrameDocument({
-  body: previewHtml,
-  css,
-  flush,
-  scroll,
-  measure,
-  encodedScript: encodedPreviewScript,
-});
+const hasVanillaStage = previewHtml.length > 0;
+const frameDocument = hasVanillaStage
+  ? buildPreviewFrameDocument({
+      body: previewHtml,
+      css,
+      flush,
+      scroll,
+      measure,
+      encodedScript: encodedPreviewScript,
+    })
+  : undefined;
 
 /*
  * The header's glyphs, serialised at BUILD time instead of authored as `data-sk-icon` placeholders.
@@ -557,24 +560,23 @@ const screenToggleLabels = Object.fromEntries(
     </div>
   </header>
 
-  {/*
-   * Inline srcdoc: an isolated document without a second page or URL.
-   * No `scrolling` attribute: the legacy `no` wins over content CSS in Blink, and a stage the
-   * reader shrank has to scroll. The frame runtime owns html/body overflow instead.
-   */}
-  <iframe
-    class="sk-component-preview__stage"
-    data-sk-component-preview-binding="vanilla"
-    data-sk-component-preview-flush={flush ? "" : undefined}
-    data-sk-component-preview-viewport={viewport === "auto" ? undefined : viewport}
-    data-sk-component-preview-min-height={minHeight ? "" : undefined}
-    data-sk-component-preview-scroll={scroll ? "" : undefined}
-    aria-busy="true"
-    srcdoc={frameDocument}
-    title={`Preview renderizado: ${label}`}
-    loading="lazy"
-    allow="clipboard-write"
-  />
+  {
+    hasVanillaStage && (
+      <iframe
+        class="sk-component-preview__stage"
+        data-sk-component-preview-binding="vanilla"
+        data-sk-component-preview-flush={flush ? "" : undefined}
+        data-sk-component-preview-viewport={viewport === "auto" ? undefined : viewport}
+        data-sk-component-preview-min-height={minHeight ? "" : undefined}
+        data-sk-component-preview-scroll={scroll ? "" : undefined}
+        aria-busy="true"
+        srcdoc={frameDocument}
+        title={`Preview renderizado: ${label}`}
+        loading="lazy"
+        allow="clipboard-write"
+      />
+    )
+  }
   {
     /*
      * The React binding's own stage. This element is only the SLOT HOST (`display: contents`): the
@@ -595,7 +597,7 @@ const screenToggleLabels = Object.fromEntries(
             tree={tree}
             measure={measure}
             frameOptions={{ flush, scroll, viewport, minHeight, css, script: previewScript }}
-            client:load
+            client:visible
           />
         ) : (
           <Fragment set:html={reactSlotHtml} />
@@ -642,8 +644,8 @@ const screenToggleLabels = Object.fromEntries(
                 * reader already chose to see. CSS hides it entirely when none of the three even
                 * has anything to collapse.
                 *
-                * PLAIN `@skryensya/core/code-preview` markup — `codePreviewParts.more`/`toggle`/
-                * `toggleIcon`, `codePreviewAttrs.toggle`/`toggleLabel`/`expandedLabel` — not a
+                * PLAIN `@skryensya/core/code-preview` markup  -  `codePreviewParts.more`/`toggle`/
+                * `toggleIcon`, `codePreviewAttrs.toggle`/`toggleLabel`/`expandedLabel`  -  not a
                 * parallel vocabulary of ComponentPreview's own: that duplication was exactly what
                 * made this control LOOK like a different one from a single file's own toggle.
                 * `connectSourceToggle` finds it purely by DIRECT-CHILD position (see that
@@ -900,7 +902,7 @@ const screenToggleLabels = Object.fromEntries(
           </button>
         </div>
         <div class="sk-component-preview__contract-body sk-scrollbar">
-          {/* `open`: the drawer IS the disclosure, so the code inside never gets a second one — no
+          {/* `open`: the drawer IS the disclosure, so the code inside never gets a second one  -  no
             Expand control, no collapsed window ceiling, always the whole tree. */}
           <CodeBlock code={treeJson} lang="json" open />
         </div>
@@ -989,7 +991,7 @@ const screenToggleLabels = Object.fromEntries(
     const preload = document.createElement("link");
     preload.rel = "modulepreload";
     preload.href = frameRuntimeUrl;
-    preload.fetchPriority = "high";
+    preload.fetchPriority = "low";
     preload.setAttribute("data-sk-component-preview-runtime-preload", "");
     document.head.append(preload);
   }

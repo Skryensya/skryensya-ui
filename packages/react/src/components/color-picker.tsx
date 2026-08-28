@@ -25,7 +25,7 @@ export type ColorPickerProps = {
   triggerLabel?: string;
   /*
    * Preset swatches for the panel's presets row. The contract's own option is one plain STRING,
-   * space-separated (see `color-picker.ts`'s own comment) — there is no array/list option type
+   * space-separated (see `color-picker.ts`'s own comment)  -  there is no array/list option type
    * in this system, so that is the only shape the compiler can emit as valid JSX. An array is
    * accepted too, the more ergonomic shape for hand-authored React, same precedent as
    * `DatePickerProps.value` taking `readonly (DateValue | string)[] | string`.
@@ -40,7 +40,7 @@ const asSwatches = (input: ColorPickerProps["swatches"]): readonly string[] =>
 /*
  * COLOR PICKER: the editable field (label, trigger with its swatch) plus a popover. The panel
  * inside is `ColorPickerPanelBody`, shared verbatim between `ColorPicker` and `CompactColorPicker`
- * (only `anatomy` differs), so full and compact never fork into two independent implementations —
+ * (only `anatomy` differs), so full and compact never fork into two independent implementations  - 
  * same discipline `CalendarBody` gives DatePicker and Calendar.
  */
 function useColorPicker({
@@ -109,7 +109,7 @@ function ColorPickerField({
          * Zag SIEMPRE manda `aria-labelledby` (apuntando al label del campo) además de su propio
          * `aria-label` ("select color. current color is ..."); `aria-labelledby` le gana a
          * `aria-label` en el algoritmo de nombre accesible, así que se omite acá para que
-         * `triggerLabel` — el mecanismo de nombrado de ESTE contrato, con default "Elegir color" —
+         * `triggerLabel`  -  el mecanismo de nombrado de ESTE contrato, con default "Elegir color"  - 
          * sea el que manda, igual que hace el binding Vanilla.
          */}
         <button
@@ -367,7 +367,7 @@ export function NativeColorPicker({ defaultValue, id, label, name, value }: Nati
   return (
     <div className={colorPickerParts.root}>
       {/* Named through `aria-labelledby` rather than `for`/`id`: same reason `NativeDatePicker`
-          gives — the two bindings render into one document in the symmetry gate, and a literal
+          gives  -  the two bindings render into one document in the symmetry gate, and a literal
           id would collide across them. */}
       <label className={colorPickerParts.label} id={`${inputId}-label`}>
         {label}

@@ -115,6 +115,7 @@
     --sk-sidebar-trigger-offset-block: var(--space-inset-sm);
     --sk-sidebar-trigger-offset-inline: var(--space-inset-xs);
     --sk-sidebar-trigger-shadow: var(--elevation-raised);
+    --sk-sidebar-trigger-wash: var(--elevation-wash-raised);
 
     --sk-sidebar-footer-fg: var(--color-text-tertiary);
     --sk-sidebar-footer-font-size: var(--font-size-caption);
@@ -389,7 +390,7 @@
     top: var(--sk-sidebar-trigger-offset-block);
     inset-inline-start: calc(100% + var(--sk-sidebar-trigger-offset-inline));
     z-index: 1;
-    background: var(--sk-sidebar-bg);
+    background: var(--sk-sidebar-trigger-wash) var(--sk-sidebar-bg);
     border: var(--sk-sidebar-border-width) solid var(--sk-sidebar-border-color);
     box-shadow: var(--sk-sidebar-trigger-shadow);
     /*

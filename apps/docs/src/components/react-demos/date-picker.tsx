@@ -1,12 +1,12 @@
 /*
  * Live React demo for /components/date-picker. Self-contained island (no function props crossing
- * the Astro boundary), mounted directly from the page with a bare `<DatePickerCustomDemo client:load />`.
+ * the Astro boundary), mounted directly from the page with a bare `<DatePickerCustomDemo client:visible />`.
  */
 import { DatePicker } from "@skryensya/react/date-picker";
 import { framedIn } from "./framed";
 
 /** Every demo below runs inside its own preview frame. See `framed.tsx`. */
-const framed = framedIn(import.meta.url);
+const framed = framedIn("date-picker");
 
 export const DatePickerCustomDemo = framed(function DatePickerCustomDemo() {
   return (

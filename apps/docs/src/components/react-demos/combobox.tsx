@@ -1,13 +1,13 @@
 /*
  * Live React demo for /components/combobox. Self-contained island (no function props crossing the
- * Astro boundary), mounted directly from the page with a bare `<ComboboxBasicDemo client:load />`.
+ * Astro boundary), mounted directly from the page with a bare `<ComboboxBasicDemo client:visible />`.
  */
 import { Combobox } from "@skryensya/react/combobox";
 import { Icon } from "@skryensya/react/icon";
 import { framedIn } from "./framed";
 
 /** Every demo below runs inside its own preview frame. See `framed.tsx`. */
-const framed = framedIn(import.meta.url);
+const framed = framedIn("combobox");
 
 const slug = (name: string) =>
   name

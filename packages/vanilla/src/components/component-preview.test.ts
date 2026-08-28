@@ -1,8 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   mountComponentPreview,
+  releaseComponentPreviewStages,
   resetSharedComponentPreviewBinding,
   resetSharedComponentPreviewScreen,
+  restoreComponentPreviewStages,
 } from "./component-preview.js";
 import { mountSegmented } from "./segmented.js";
 
@@ -272,6 +274,72 @@ describe("ComponentPreview opt-in enhancer", () => {
     expect(stage.srcdoc).toBe("");
 
     frames.shift()?.(0);
+    expect(stage.srcdoc).toContain("<body>one</body>");
+  });
+
+  it("releases a stage's realm and restores it from the same cached document", () => {
+    resetBindingState();
+    document.body.innerHTML = `
+      <div data-sk-component-preview>
+        <iframe
+          class="sk-component-preview__stage"
+          srcdoc="<!doctype html><body>one</body>"
+          data-sk-component-preview-frame-ready
+        ></iframe>
+      </div>
+    `;
+    const root = document.querySelector<HTMLElement>("[data-sk-component-preview]");
+    const stage = root?.querySelector<HTMLIFrameElement>(".sk-component-preview__stage");
+    if (!root || !stage) throw new Error("Invalid test markup.");
+    expect(mountComponentPreview(document)).toBe(1);
+
+    releaseComponentPreviewStages(root);
+    expect(stage.hasAttribute("data-sk-component-preview-frame-ready")).toBe(false);
+    expect(stage.getAttribute("aria-busy")).toBe("true");
+    expect(stage.srcdoc).toBe("");
+
+    // Releasing an already-released stage must not overwrite the cache with the empty string.
+    releaseComponentPreviewStages(root);
+
+    restoreComponentPreviewStages(root);
+    expect(stage.srcdoc).toContain("<body>one</body>");
+  });
+
+  it("never releases a stage that currently holds focus", () => {
+    resetBindingState();
+    document.body.innerHTML = `
+      <div data-sk-component-preview>
+        <iframe
+          class="sk-component-preview__stage"
+          srcdoc="<!doctype html><body>one</body>"
+        ></iframe>
+      </div>
+    `;
+    const root = document.querySelector<HTMLElement>("[data-sk-component-preview]");
+    const stage = root?.querySelector<HTMLIFrameElement>(".sk-component-preview__stage");
+    if (!root || !stage) throw new Error("Invalid test markup.");
+    expect(mountComponentPreview(document)).toBe(1);
+
+    stage.focus();
+    expect(document.activeElement).toBe(stage);
+
+    releaseComponentPreviewStages(root);
+    expect(stage.srcdoc).toContain("<body>one</body>");
+  });
+
+  it("restoring an already-live or never-released stage is a no-op", () => {
+    resetBindingState();
+    document.body.innerHTML = `
+      <div data-sk-component-preview>
+        <iframe class="sk-component-preview__stage" srcdoc="<!doctype html><body>one</body>"></iframe>
+      </div>
+    `;
+    const root = document.querySelector<HTMLElement>("[data-sk-component-preview]");
+    const stage = root?.querySelector<HTMLIFrameElement>(".sk-component-preview__stage");
+    if (!root || !stage) throw new Error("Invalid test markup.");
+    expect(mountComponentPreview(document)).toBe(1);
+
+    restoreComponentPreviewStages(root);
     expect(stage.srcdoc).toContain("<body>one</body>");
   });
 

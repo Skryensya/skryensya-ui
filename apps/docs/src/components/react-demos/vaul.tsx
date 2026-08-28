@@ -4,7 +4,7 @@ import { CheckboxGroup, RadioGroup } from "@skryensya/react/selection";
 import { Vaul } from "@skryensya/react/vaul";
 import { framedIn } from "./framed";
 
-const framed = framedIn(import.meta.url);
+const framed = framedIn("vaul");
 
 type VaulShareDemoProps = {
   openLabel: string;

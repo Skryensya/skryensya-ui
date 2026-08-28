@@ -32,7 +32,7 @@ export interface CaseScore {
   finalTree?: UsageTree;
   /** The code `validate_ui` emitted for `finalTree`, only present when `valid` is true. */
   emitted?: { vanilla: string; react: string };
-  /** Every stylesheet `finalTree` needs, only present when `valid` is true — for the viewer app. */
+  /** Every stylesheet `finalTree` needs, only present when `valid` is true  -  for the viewer app. */
   css?: string[];
   /**
    * Whether the agent's own emitted markup matches what the reference tree in the case file emits.

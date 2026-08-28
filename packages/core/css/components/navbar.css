@@ -18,6 +18,7 @@
     --sk-navbar-padding-y: var(--space-inset-sm);
     --sk-navbar-gap: var(--space-inline-lg);
     --sk-navbar-elevation: var(--elevation-raised);
+    --sk-navbar-wash: var(--elevation-wash-raised);
     --sk-navbar-brand-fg: var(--color-text-primary);
     --sk-navbar-brand-font-size: var(--font-size-body-lg);
     --sk-navbar-brand-font-weight: var(--font-weight-heading);
@@ -34,7 +35,7 @@
     min-block-size: var(--sk-navbar-min-height);
     padding: var(--sk-navbar-padding-y) var(--sk-navbar-padding-x);
     border-block-end: 1px solid var(--sk-navbar-border-color);
-    background: var(--sk-navbar-bg);
+    background: var(--sk-navbar-wash) var(--sk-navbar-bg);
     color: var(--sk-navbar-fg);
     box-shadow: var(--sk-navbar-elevation);
   }

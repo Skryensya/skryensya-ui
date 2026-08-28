@@ -25,7 +25,7 @@ import { cardCopy, type CardLang } from "../../examples/card-data";
 import { framedIn } from "./framed";
 
 /** Every demo below runs inside its own preview frame. See `framed.tsx`. */
-const framed = framedIn(import.meta.url);
+const framed = framedIn("card");
 
 type DemoProps = { lang?: CardLang };
 

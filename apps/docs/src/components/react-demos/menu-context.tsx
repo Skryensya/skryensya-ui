@@ -23,7 +23,7 @@ import { Menu } from "@skryensya/react/menu";
 import { menuContextCss } from "../../demos/menu";
 import { framedIn } from "./framed";
 
-const framed = framedIn(import.meta.url);
+const framed = framedIn("menu-context");
 
 type MenuContextDemoProps = {
   ariaLabel: string;

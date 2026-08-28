@@ -1146,13 +1146,21 @@ export const ui = {
     "badge.tagBody":
       "La forma con texto: un estado, una categoría o un metadato corto. Cada tono lleva un borde de su propio color, así el neutral, cuyo fondo es el lienzo, no queda como un rectángulo invisible.",
     "badge.tagLabel": "Badge",
+    "badge.smallTitle": "Tamaño sm",
+    "badge.smallBody":
+      'El tamaño <code>sm</code> conserva la cápsula de texto pero baja su altura para metadatos compactos, como un contador al final de una fila de navegación.',
+    "badge.smallLabel": "Badge sm",
     "badge.dotTitle": "Dot",
     "badge.dotBody":
       "Un badge que es <strong>sólo un punto</strong>: sin texto, comunica por color y posición. Suelto es una luz de estado; su relleno es un tono saturado para que se lea a unos pocos píxeles.",
     "badge.dotLabel": "Badge dot",
+    "badge.pulseTitle": "Dot pulsante",
+    "badge.pulseBody":
+      'Cualquier dot puede sumar <code>pulse</code> cuando el estado está vivo o acaba de cambiar. El halo usa el mismo color del punto; este ejemplo muestra el pulso en todos los tonos y se apaga con <code>prefers-reduced-motion</code>.',
+    "badge.pulseLabel": "Badge dot pulsante",
     "badge.cornerTitle": "En la esquina de un elemento",
     "badge.cornerBody":
-      'Envuelve el elemento en <code>sk-badge-holder</code> y el dot se ancla arriba a la derecha, un indicador de novedades sobre un botón, de presencia sobre un avatar. Un anillo del color de la superficie lo despega del contenido de abajo. El punto lleva su propio <code>aria-label</code> porque significa algo; el elemento anfitrión no cambia.',
+      'Envuelve el elemento en <code>sk-badge-holder</code> y el dot se ancla arriba a la derecha, un indicador de novedades sobre un botón, de presencia sobre un avatar. Un anillo del color de la superficie lo despega del contenido de abajo. Los dos ejemplos usan <code>pulse</code>. El punto lleva su propio <code>aria-label</code> porque significa algo; el elemento anfitrión no cambia.',
     "badge.cornerLabel": "Badge dot en la esquina",
     "badge.test1": "Renderiza su etiqueta accesible y reenvía los atributos semánticos.",
     "badge.test2": "Ancla un dot de estado sin agregar contenido visible.",
@@ -1921,6 +1929,7 @@ export const ui = {
 
     "colorPicker.description":
       "Selector de color con área de saturación/valor, riel de matiz, riel de alfa, filas hex/RGB/HSL/OKLCH y presets, más un type=color nativo.",
+    "colorPicker.betaBadge": "Beta",
     "colorPicker.lede":
       'Tres formas de elegir un color. La <strong>nativa</strong> es un <code>&lt;input type="color"&gt;</code> con el picker del sistema operativo: sin JavaScript, sin presets, un solo hex plano. La <strong>custom</strong> monta un panel derivado de <code>@zag-js/color-picker</code> detrás de un botón swatch, con área 2D, rieles de matiz y alfa, y filas de canal editables en hex, RGB, HSL y OKLCH. OKLCH no lo entiende la máquina directamente (Zag sólo trae rgba/hsla/hsba); esa fila lee y escribe a través de una conversión propia (<code>@skryensya/core/color</code>) sobre el mismo color que la máquina expone, nunca un estado paralelo. La <strong>compact</strong> comparte el mismo control y abre el mismo tipo de panel, sólo que sin las filas de canal: área, riel de matiz y presets.',
     "colorPicker.nativeTitle": "Nativo",
@@ -3782,7 +3791,7 @@ export const ui = {
     "chartsPage.legendNote": "Chart bar · tone por punto + Badge",
     "chartsPage.comparisonTitle": "Dos períodos, lado a lado",
     "chartsPage.comparisonBody":
-      "No es un chart con dos series — el contrato no tiene una segunda serie que darle. Son dos paneles independientes en un Grid, el actual con <code>tone=\"accent\"</code> y superficie <code>surface</code>, el anterior con <code>tone=\"neutral\"</code> y superficie <code>sunken</code>, para que el ojo encuentre \"ahora\" antes que \"antes\".",
+      "No es un chart con dos series  -  el contrato no tiene una segunda serie que darle. Son dos paneles independientes en un Grid, el actual con <code>tone=\"accent\"</code> y superficie <code>surface</code>, el anterior con <code>tone=\"neutral\"</code> y superficie <code>sunken</code>, para que el ojo encuentre \"ahora\" antes que \"antes\".",
     "chartsPage.comparisonLabel": "Ingresos del trimestre, este año contra el anterior",
     "chartsPage.comparisonNote": "Grid + 2 × (Stat + Chart area)",
     "chartsPage.tanstackTitle": "Cuando el contrato no alcanza",
@@ -4194,6 +4203,117 @@ export const ui = {
     "landing.close.linkChangelog": "Changelog",
     "landing.close.linkComponents": "Components",
     "landing.close.linkFoundations": "Foundations",
+
+    "demo.charts.month.dec": "Dic",
+    "demo.charts.month.jan": "Ene",
+    "demo.charts.month.feb": "Feb",
+    "demo.charts.month.mar": "Mar",
+    "demo.charts.month.apr": "Abr",
+    "demo.charts.weekday.mon": "L",
+    "demo.charts.weekday.tue": "M",
+    "demo.charts.weekday.wed": "X",
+    "demo.charts.weekday.thu": "J",
+    "demo.charts.weekday.fri": "V",
+    "demo.charts.weekday.monShort": "Lun",
+    "demo.charts.weekday.tueShort": "Mar",
+    "demo.charts.weekday.wedShort": "Mié",
+    "demo.charts.weekday.thuShort": "Jue",
+    "demo.charts.weekday.friShort": "Vie",
+    "demo.charts.weekday.satShort": "Sáb",
+    "demo.charts.weekday.sunShort": "Dom",
+    "demo.charts.week": "Sem",
+
+    "demo.charts.history.heading": "Historial de aportes",
+    "demo.charts.history.subtitle": "Actividad de los últimos seis meses",
+    "demo.charts.history.chartLabel": "Aportes por mes",
+    "demo.charts.history.chartDescription":
+      "Cinco meses de aportes. Diciembre está destacado, marzo es el más alto.",
+    "demo.charts.history.upcomingLabel": "Próximo",
+    "demo.charts.history.upcomingValue": "Mayo 2026",
+    "demo.charts.history.upcomingChange": "Programado",
+    "demo.charts.history.savingsLabel": "Plan de ahorro",
+    "demo.charts.history.savingsValue": "Acelerado",
+    "demo.charts.history.savingsChange": "Recurrente",
+    "demo.charts.history.button": "Ver informe completo",
+
+    "demo.charts.usage.heading": "Consumo eléctrico",
+    "demo.charts.usage.subtitle": "Toda la casa",
+    "demo.charts.usage.chartLabel": "Consumo por hora",
+    "demo.charts.usage.chartDescription": "Ocho intervalos de dos horas. El pico es al mediodía, 31.",
+    "demo.charts.usage.nowLabel": "En uso ahora",
+    "demo.charts.usage.solarLabel": "Generación solar",
+    "demo.charts.usage.solarChange": "+18%",
+
+    "demo.charts.bar.label": "Componentes documentados por trimestre",
+    "demo.charts.bar.description": "Cinco barras, una por trimestre, subiendo de 14 a 72 componentes.",
+
+    "demo.charts.line.label": "Latencia de interacción por versión",
+    "demo.charts.line.description":
+      "Una línea descendente: la latencia baja de 182 a 74 milisegundos entre la 0.4 y la 0.9.",
+
+    "demo.charts.area.label": "Peso del bundle por semana",
+    "demo.charts.area.description":
+      "Un área con el peso del bundle, bajando de 148 a 103 kB a lo largo de seis semanas.",
+
+    "demo.charts.table.heading": "Ingresos por trimestre",
+    "demo.charts.table.subtitle": "La forma arriba, el número exacto abajo",
+    "demo.charts.table.chartDescription":
+      "Cuatro trimestres, subiendo de 184 mil a 238 mil, con una baja en el tercero.",
+    "demo.charts.table.caption": "Ingresos por trimestre, en dólares",
+    "demo.charts.table.headQuarter": "Trimestre",
+    "demo.charts.table.headRevenue": "Ingresos",
+    "demo.charts.table.headChange": "Variación",
+
+    "demo.charts.pointDetail.heading": "Latencia por endpoint",
+    "demo.charts.pointDetail.subtitle":
+      "El valor exacto está siempre en la lista; el tooltip lo repite para quien mira las barras",
+    "demo.charts.pointDetail.chartDescription":
+      "Cinco endpoints. El más lento es /search con 118 ms, el más rápido /health con 9 ms.",
+
+    "demo.charts.legend.heading": "Presupuesto por equipo",
+    "demo.charts.legend.subtitle": "Año fiscal 2026, en dólares",
+    "demo.charts.legend.chartDescription":
+      "Cinco equipos. Ingeniería es el mayor con 182 mil; Legal el menor con 21 mil.",
+
+    "demo.charts.metricTabs.ariaLabel": "Elegir métrica",
+    "demo.charts.metricTabs.revenueTab": "Ingresos",
+    "demo.charts.metricTabs.revenueHeading": "Ingresos",
+    "demo.charts.metricTabs.usersTab": "Usuarios",
+    "demo.charts.metricTabs.usersHeading": "Usuarios activos",
+    "demo.charts.metricTabs.errorsTab": "Errores",
+    "demo.charts.metricTabs.errorsHeading": "Errores de servidor",
+    "demo.charts.metricTabs.statLabel": "Últimas 6 semanas",
+
+    "demo.charts.gallery.conversionTitle": "Conversión",
+    "demo.charts.gallery.conversionChartLabel": "Conversión diaria",
+    "demo.charts.gallery.errorsTitle": "Errores",
+    "demo.charts.gallery.errorsChartLabel": "Errores por día",
+    "demo.charts.gallery.cpuTitle": "CPU",
+    "demo.charts.gallery.cpuChartLabel": "Uso de CPU",
+    "demo.charts.gallery.spendTitle": "Gasto",
+    "demo.charts.gallery.spendChartLabel": "Gasto diario",
+
+    "demo.charts.comparison.currentTitle": "T4 2026",
+    "demo.charts.comparison.priorTitle": "T4 2025",
+    "demo.charts.comparison.statLabel": "Ingresos del trimestre",
+    "demo.charts.comparison.chartLabelSuffix": "ingresos por mes",
+    "demo.charts.comparison.currentValue": "231,7K",
+    "demo.charts.comparison.currentChange": "+22%",
+    "demo.charts.comparison.priorValue": "194,9K",
+
+    "demo.charts.period.heading": "Tráfico del sitio",
+    "demo.charts.period.subtitle": "Páginas vistas, por período",
+    "demo.charts.period.ariaLabel": "Elegir período",
+    "demo.charts.period.chartDescription": "La serie cambia con el período elegido; el control queda arriba.",
+    "demo.charts.period.chartLabelPrefix": "Páginas vistas,",
+
+    "demo.charts.analytics.heading": "Analítica",
+    "demo.charts.analytics.statLabel": "Visitas este mes",
+    "demo.charts.analytics.statValue": "418,2 mil",
+    "demo.charts.analytics.statChange": "+10%",
+    "demo.charts.analytics.button": "Ver analítica",
+    "demo.charts.analytics.chartLabel": "Visitas por semana",
+    "demo.charts.analytics.chartDescription": "Ocho semanas, subiendo de 38.200 a 61.400 visitas.",
 
     "footer.body":
       "Este sitio consume {core} y los paquetes de componentes por sus exports maps, con bundler, el mismo camino que documenta. Cada píxel sale de un token.",
@@ -5292,13 +5412,21 @@ export const ui = {
     "badge.tagBody":
       "The shape with text: a status, a category or a short piece of metadata. Every tone carries a border in its own color, so neutral, whose background is the canvas: never reads as an invisible rectangle.",
     "badge.tagLabel": "Badge",
+    "badge.smallTitle": "sm size",
+    "badge.smallBody":
+      'The <code>sm</code> size keeps the text capsule but lowers its height for compact metadata, like a trailing count at the end of a navigation row.',
+    "badge.smallLabel": "Badge sm",
     "badge.dotTitle": "Dot",
     "badge.dotBody":
       "A badge that is <strong>just a dot</strong>: no text, it communicates through color and position. On its own it's a status light; its fill is a saturated tone so it reads at just a few pixels.",
     "badge.dotLabel": "Badge dot",
+    "badge.pulseTitle": "Pulsing dot",
+    "badge.pulseBody":
+      'Any dot can add <code>pulse</code> when the state is live or just changed. The halo uses the dot’s own color; this example shows every tone pulsing and turns off under <code>prefers-reduced-motion</code>.',
+    "badge.pulseLabel": "Pulsing badge dot",
     "badge.cornerTitle": "In the corner of an element",
     "badge.cornerBody":
-      "Wrap the element in <code>sk-badge-holder</code> and the dot anchors to the top right: a new-activity indicator on a button, a presence indicator on an avatar. A ring in the surface's color lifts it off the content underneath. The dot carries its own <code>aria-label</code> because it means something; the host element does not change.",
+      "Wrap the element in <code>sk-badge-holder</code> and the dot anchors to the top right: a new-activity indicator on a button, a presence indicator on an avatar. A ring in the surface's color lifts it off the content underneath. Both examples use <code>pulse</code>. The dot carries its own <code>aria-label</code> because it means something; the host element does not change.",
     "badge.cornerLabel": "Badge dot in the corner",
     "badge.test1": "Renders its accessible label and forwards semantic attributes.",
     "badge.test2": "Anchors a status dot without adding visible content.",
@@ -6039,6 +6167,7 @@ export const ui = {
 
     "colorPicker.description":
       "A color picker with a saturation/value area, a hue rail, an alpha rail, hex/RGB/HSL/OKLCH rows and presets, plus a native type=color.",
+    "colorPicker.betaBadge": "Beta",
     "colorPicker.lede":
       'Three ways to pick a color. The <strong>native</strong> one is an <code>&lt;input type="color"&gt;</code> with the OS\'s own picker: no JavaScript, no presets, one flat hex value. The <strong>custom</strong> one mounts a panel derived from <code>@zag-js/color-picker</code> behind a swatch button, with a 2D area, hue and alpha rails, and channel rows editable in hex, RGB, HSL and OKLCH. The machine does not understand OKLCH directly (Zag only ships rgba/hsla/hsba); that row reads and writes through a conversion this system owns (<code>@skryensya/core/color</code>) over the same color the machine already exposes, never a parallel piece of state. The <strong>compact</strong> one shares the same control and opens the same kind of panel, just without the channel rows: area, hue rail and presets.',
     "colorPicker.nativeTitle": "Native",
@@ -7884,7 +8013,7 @@ export const ui = {
     "chartsPage.legendNote": "Chart bar · per-point tone + Badge",
     "chartsPage.comparisonTitle": "Two periods, side by side",
     "chartsPage.comparisonBody":
-      "Not one chart with two series — the contract has no second series to give it. Two independent panels in a Grid, the current one <code>tone=\"accent\"</code> on a <code>surface</code> box, the prior one <code>tone=\"neutral\"</code> on a <code>sunken</code> one, so the eye finds \"now\" before it finds \"then\".",
+      "Not one chart with two series  -  the contract has no second series to give it. Two independent panels in a Grid, the current one <code>tone=\"accent\"</code> on a <code>surface</code> box, the prior one <code>tone=\"neutral\"</code> on a <code>sunken</code> one, so the eye finds \"now\" before it finds \"then\".",
     "chartsPage.comparisonLabel": "Quarterly revenue, this year against last",
     "chartsPage.comparisonNote": "Grid + 2 × (Stat + Chart area)",
     "chartsPage.tanstackTitle": "When the contract is not enough",
@@ -8295,6 +8424,117 @@ export const ui = {
     "landing.close.linkChangelog": "Changelog",
     "landing.close.linkComponents": "Components",
     "landing.close.linkFoundations": "Foundations",
+
+    "demo.charts.month.dec": "Dec",
+    "demo.charts.month.jan": "Jan",
+    "demo.charts.month.feb": "Feb",
+    "demo.charts.month.mar": "Mar",
+    "demo.charts.month.apr": "Apr",
+    "demo.charts.weekday.mon": "Mo",
+    "demo.charts.weekday.tue": "Tu",
+    "demo.charts.weekday.wed": "We",
+    "demo.charts.weekday.thu": "Th",
+    "demo.charts.weekday.fri": "Fr",
+    "demo.charts.weekday.monShort": "Mon",
+    "demo.charts.weekday.tueShort": "Tue",
+    "demo.charts.weekday.wedShort": "Wed",
+    "demo.charts.weekday.thuShort": "Thu",
+    "demo.charts.weekday.friShort": "Fri",
+    "demo.charts.weekday.satShort": "Sat",
+    "demo.charts.weekday.sunShort": "Sun",
+    "demo.charts.week": "Wk",
+
+    "demo.charts.history.heading": "Contribution History",
+    "demo.charts.history.subtitle": "Last 6 months of activity",
+    "demo.charts.history.chartLabel": "Contributions per month",
+    "demo.charts.history.chartDescription":
+      "Five months of contributions. December is emphasized, March is the tallest.",
+    "demo.charts.history.upcomingLabel": "Upcoming",
+    "demo.charts.history.upcomingValue": "May 2026",
+    "demo.charts.history.upcomingChange": "Scheduled",
+    "demo.charts.history.savingsLabel": "Savings plan",
+    "demo.charts.history.savingsValue": "Accelerated",
+    "demo.charts.history.savingsChange": "Recurring",
+    "demo.charts.history.button": "View Full Report",
+
+    "demo.charts.usage.heading": "Power Usage",
+    "demo.charts.usage.subtitle": "Whole Home",
+    "demo.charts.usage.chartLabel": "Usage by hour",
+    "demo.charts.usage.chartDescription": "Eight two-hour intervals. The peak is at noon, 31.",
+    "demo.charts.usage.nowLabel": "Currently Using",
+    "demo.charts.usage.solarLabel": "Solar Gen",
+    "demo.charts.usage.solarChange": "+18%",
+
+    "demo.charts.bar.label": "Documented components per quarter",
+    "demo.charts.bar.description": "Five bars, one per quarter, rising from 14 to 72 components.",
+
+    "demo.charts.line.label": "Interaction latency per version",
+    "demo.charts.line.description":
+      "A descending line: latency drops from 182 to 74 milliseconds between 0.4 and 0.9.",
+
+    "demo.charts.area.label": "Bundle weight per week",
+    "demo.charts.area.description":
+      "An area for bundle weight, falling from 148 to 103 kB across six weeks.",
+
+    "demo.charts.table.heading": "Revenue by quarter",
+    "demo.charts.table.subtitle": "The shape above, the exact figure below",
+    "demo.charts.table.chartDescription":
+      "Four quarters, rising from 184K to 238K, with a dip in the third.",
+    "demo.charts.table.caption": "Revenue by quarter, in dollars",
+    "demo.charts.table.headQuarter": "Quarter",
+    "demo.charts.table.headRevenue": "Revenue",
+    "demo.charts.table.headChange": "Change",
+
+    "demo.charts.pointDetail.heading": "Latency by endpoint",
+    "demo.charts.pointDetail.subtitle":
+      "The exact value is always in the list; the tooltip repeats it for someone reading the bars",
+    "demo.charts.pointDetail.chartDescription":
+      "Five endpoints. The slowest is /search at 118 ms, the fastest /health at 9 ms.",
+
+    "demo.charts.legend.heading": "Budget by team",
+    "demo.charts.legend.subtitle": "Fiscal year 2026, in dollars",
+    "demo.charts.legend.chartDescription":
+      "Five teams. Engineering is the largest at 182K; Legal the smallest at 21K.",
+
+    "demo.charts.metricTabs.ariaLabel": "Choose metric",
+    "demo.charts.metricTabs.revenueTab": "Revenue",
+    "demo.charts.metricTabs.revenueHeading": "Revenue",
+    "demo.charts.metricTabs.usersTab": "Users",
+    "demo.charts.metricTabs.usersHeading": "Active users",
+    "demo.charts.metricTabs.errorsTab": "Errors",
+    "demo.charts.metricTabs.errorsHeading": "Server errors",
+    "demo.charts.metricTabs.statLabel": "Last 6 weeks",
+
+    "demo.charts.gallery.conversionTitle": "Conversion",
+    "demo.charts.gallery.conversionChartLabel": "Daily conversion",
+    "demo.charts.gallery.errorsTitle": "Errors",
+    "demo.charts.gallery.errorsChartLabel": "Errors per day",
+    "demo.charts.gallery.cpuTitle": "CPU",
+    "demo.charts.gallery.cpuChartLabel": "CPU usage",
+    "demo.charts.gallery.spendTitle": "Spend",
+    "demo.charts.gallery.spendChartLabel": "Daily spend",
+
+    "demo.charts.comparison.currentTitle": "Q4 2026",
+    "demo.charts.comparison.priorTitle": "Q4 2025",
+    "demo.charts.comparison.statLabel": "Quarterly revenue",
+    "demo.charts.comparison.chartLabelSuffix": "revenue by month",
+    "demo.charts.comparison.currentValue": "231.7K",
+    "demo.charts.comparison.currentChange": "+22%",
+    "demo.charts.comparison.priorValue": "194.9K",
+
+    "demo.charts.period.heading": "Site traffic",
+    "demo.charts.period.subtitle": "Page views, by period",
+    "demo.charts.period.ariaLabel": "Choose period",
+    "demo.charts.period.chartDescription": "The series changes with the chosen period; the control stays put.",
+    "demo.charts.period.chartLabelPrefix": "Page views,",
+
+    "demo.charts.analytics.heading": "Analytics",
+    "demo.charts.analytics.statLabel": "Visits this month",
+    "demo.charts.analytics.statValue": "418.2K",
+    "demo.charts.analytics.statChange": "+10%",
+    "demo.charts.analytics.button": "View Analytics",
+    "demo.charts.analytics.chartLabel": "Visits per week",
+    "demo.charts.analytics.chartDescription": "Eight weeks, rising from 38,200 to 61,400 visits.",
 
     "footer.body":
       "This site consumes {core} and the component packages through their exports maps, with a bundler: the same path it documents. Every pixel comes from a token.",

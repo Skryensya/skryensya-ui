@@ -1,6 +1,6 @@
 /*
  * Live React demo for /components/process-list. Self-contained island (no function props crossing
- * the Astro boundary), mounted directly from the page with `<ProcessListDemo client:load />`.
+ * the Astro boundary), mounted directly from the page with `<ProcessListDemo client:visible />`.
  */
 import { Badge } from "@skryensya/react/badge";
 import { Inline, Stack } from "@skryensya/react/layout";
@@ -10,7 +10,7 @@ import { Text } from "@skryensya/react/text";
 import { framedIn } from "./framed";
 
 /** Every demo below runs inside its own preview frame. See `framed.tsx`. */
-const framed = framedIn(import.meta.url);
+const framed = framedIn("process-list");
 
 export const ProcessListDemo = framed(function ProcessListDemo() {
   return (

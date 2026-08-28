@@ -22,6 +22,7 @@
     --sk-dialog-border-width: 1px;
     --sk-dialog-radius: var(--radius-surface);
     --sk-dialog-elevation: var(--elevation-modal);
+    --sk-dialog-wash: var(--elevation-wash-modal);
     --sk-dialog-padding: var(--space-inset-md);
     --sk-dialog-backdrop-bg: light-dark(
       color-mix(in oklch, var(--color-text-primary) 40%, transparent),
@@ -34,7 +35,7 @@
     padding: 0;
     border: var(--sk-dialog-border-width) solid var(--sk-dialog-border-color);
     border-radius: var(--sk-dialog-radius);
-    background: var(--sk-dialog-bg);
+    background: var(--sk-dialog-wash) var(--sk-dialog-bg);
     color: var(--sk-dialog-fg);
     box-shadow: var(--sk-dialog-elevation);
     /* Same materialise as Popover/Menu: opacity + scale + blur + a short drop. Closed values are

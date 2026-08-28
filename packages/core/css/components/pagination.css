@@ -25,6 +25,7 @@
     --sk-pagination-item-font-size: var(--font-size-body-sm);
     --sk-pagination-item-font-weight: var(--font-weight-body);
     --sk-pagination-item-shadow: none;
+    --sk-pagination-item-wash: none;
     --sk-pagination-current-bg: var(--color-bg-surface-raised);
     --sk-pagination-current-fg: var(--color-text-primary);
     --sk-pagination-current-border-color: color-mix(
@@ -39,6 +40,7 @@
       inset 0 1px 0 var(--sk-pagination-current-highlight),
       0 1px 0 var(--sk-pagination-current-ledge),
       var(--elevation-raised);
+    --sk-pagination-current-wash: var(--elevation-wash-raised);
     --sk-pagination-disabled-bg: transparent;
     --sk-pagination-disabled-fg: var(--color-text-disabled);
     --sk-pagination-disabled-border-color: transparent;
@@ -58,6 +60,7 @@
     --sk-pagination-item-border-color: var(--sk-pagination-current-border-color);
     --sk-pagination-item-font-weight: var(--sk-pagination-current-font-weight);
     --sk-pagination-item-shadow: var(--sk-pagination-current-shadow);
+    --sk-pagination-item-wash: var(--sk-pagination-current-wash);
   }
 
   .sk-pagination__item:disabled,
@@ -79,7 +82,7 @@
     padding: 0;
     border: var(--sk-pagination-item-border-width) solid var(--sk-pagination-item-border-color);
     border-radius: var(--sk-pagination-item-radius);
-    background: var(--sk-pagination-item-bg);
+    background: var(--sk-pagination-item-wash) var(--sk-pagination-item-bg);
     color: var(--sk-pagination-item-fg);
     box-shadow: var(--sk-pagination-item-shadow);
     font: inherit;
@@ -152,6 +155,7 @@
       --sk-pagination-item-fg: HighlightText;
       --sk-pagination-item-border-color: CanvasText;
       --sk-pagination-item-shadow: none;
+      --sk-pagination-item-wash: none;
     }
 
     .sk-pagination__item:disabled,

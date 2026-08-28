@@ -73,6 +73,9 @@ function connect(root: HTMLButtonElement): () => void {
   };
 }
 
+let persistenceBound = false;
+let syncBound = false;
+
 export function initThemeToggle(): void {
   document
     .querySelectorAll<HTMLButtonElement>(`[${rootAttr}]:not([data-theme-toggle-bound])`)
@@ -83,6 +86,8 @@ export function initThemeToggle(): void {
 }
 
 export function initThemeTogglePersistence(): void {
+  if (persistenceBound) return;
+  persistenceBound = true;
   document.addEventListener(themeToggleEvents.change, ((event: CustomEvent<{ value: ColorMode }>) => {
     const value = event.detail?.value;
     if (!isColorMode(value)) return;
@@ -105,8 +110,10 @@ export function initThemeTogglePersistence(): void {
  * was never backgrounded, or the browser delivers it live anyway.
  */
 export function initThemeToggleSync(): void {
-  const target = document.documentElement;
+  if (syncBound) return;
+  syncBound = true;
   const applyIfChanged = (mode: ColorMode) => {
+    const target = document.documentElement;
     if (readColorMode(target) === mode) return;
     applyColorMode(target, mode);
     document

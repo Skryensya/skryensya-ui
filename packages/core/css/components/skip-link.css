@@ -50,6 +50,7 @@
      * most-elevated floating surface short of a blocking modal. `--elevation-overlay`, not
      * `-raised`. See /elevacion. */
     --sk-skip-link-shadow: var(--elevation-overlay);
+    --sk-skip-link-wash: var(--elevation-wash-overlay);
     /*
      * ABOVE EVERYTHING THE PAGE CAN PIN. A skip link that appears UNDER the sticky header it exists
      * to skip is a link the reader cannot read, and the failure is invisible to whoever authored the
@@ -81,7 +82,7 @@
     padding: 0;
     border: 0;
     border-radius: var(--sk-skip-link-radius);
-    background: var(--sk-skip-link-bg);
+    background: var(--sk-skip-link-wash) var(--sk-skip-link-bg);
     color: var(--sk-skip-link-fg);
     font-size: var(--sk-skip-link-font-size);
     font-weight: var(--sk-skip-link-font-weight);

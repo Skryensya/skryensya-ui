@@ -12,6 +12,7 @@
     --sk-box-padding: 0;
     --sk-box-radius: var(--radius-surface);
     --sk-box-shadow: var(--elevation-flat);
+    --sk-box-wash: none;
 
     box-sizing: border-box;
     min-inline-size: 0;
@@ -19,13 +20,14 @@
     border: var(--sk-box-border-width) solid var(--sk-box-border-color);
     border-radius: var(--sk-box-radius);
     overflow: hidden;
-    background: var(--sk-box-bg);
+    background: var(--sk-box-wash) var(--sk-box-bg);
     box-shadow: var(--sk-box-shadow);
   }
 
   .sk-box[data-surface="sunken"] {
     --sk-box-bg: var(--color-bg-surface-sunken);
     --sk-box-shadow: var(--elevation-sunken);
+    --sk-box-wash: var(--elevation-wash-sunken);
   }
 
   .sk-box[data-surface="surface"] {
@@ -35,6 +37,7 @@
   .sk-box[data-surface="raised"] {
     --sk-box-bg: var(--color-bg-surface-raised);
     --sk-box-shadow: var(--elevation-raised);
+    --sk-box-wash: var(--elevation-wash-raised);
   }
 
   /* `forced-colors` strips the shadow AND collapses every `--color-bg-surface-*` tint to the same

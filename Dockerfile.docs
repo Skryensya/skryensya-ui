@@ -1,21 +1,52 @@
+# syntax=docker/dockerfile:1.7
 # Docs site only (@skryensya/docs). Build context must be the monorepo root.
 # Dokploy: Dockerfile path = Dockerfile.docs
 
 FROM node:22-bookworm-slim AS build
+
+ENV PNPM_HOME=/pnpm
+ENV PATH="$PNPM_HOME:$PATH"
 
 RUN corepack enable && corepack prepare pnpm@10.18.2 --activate
 
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-COPY apps ./apps
-COPY packages ./packages
-COPY contracts ./contracts
-COPY evals ./evals
-COPY artifacts ./artifacts
-COPY scripts ./scripts
+COPY apps/docs/package.json ./apps/docs/package.json
+COPY apps/eval-viewer/package.json ./apps/eval-viewer/package.json
+COPY packages/ai-compiler/package.json ./packages/ai-compiler/package.json
+COPY packages/ai-gates/package.json ./packages/ai-gates/package.json
+COPY packages/charts/package.json ./packages/charts/package.json
+COPY packages/core/package.json ./packages/core/package.json
+COPY packages/devtools/package.json ./packages/devtools/package.json
+COPY packages/icons-lucide/package.json ./packages/icons-lucide/package.json
+COPY packages/icons-material/package.json ./packages/icons-material/package.json
+COPY packages/icons-phosphor/package.json ./packages/icons-phosphor/package.json
+COPY packages/mcp/package.json ./packages/mcp/package.json
+COPY packages/react/package.json ./packages/react/package.json
+COPY packages/vanilla/package.json ./packages/vanilla/package.json
+COPY contracts/recipes/package.json ./contracts/recipes/package.json
+COPY contracts/snippets/package.json ./contracts/snippets/package.json
+COPY evals/package.json ./evals/package.json
 
-RUN pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+  pnpm config set store-dir /pnpm/store && pnpm fetch --frozen-lockfile
+
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+  pnpm config set store-dir /pnpm/store && pnpm install --frozen-lockfile --offline
+
+COPY apps/docs ./apps/docs
+COPY packages/ai-compiler ./packages/ai-compiler
+COPY packages/charts ./packages/charts
+COPY packages/core ./packages/core
+COPY packages/devtools ./packages/devtools
+COPY packages/icons-lucide ./packages/icons-lucide
+COPY packages/icons-material ./packages/icons-material
+COPY packages/icons-phosphor ./packages/icons-phosphor
+COPY packages/react ./packages/react
+COPY packages/vanilla ./packages/vanilla
+COPY contracts ./contracts
+COPY artifacts ./artifacts
 
 # Core's built CSS is the only package build artifact docs needs at image build time. The docs app
 # imports workspace source for catalogues, demos and compilers; using Turbo here also runs compiler

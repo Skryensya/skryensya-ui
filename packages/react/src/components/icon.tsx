@@ -86,7 +86,7 @@ export function Icon({ name, data, label, size = "md", className, ...props }: Ic
   // HTML attribute names for vanilla's own `setAttribute` calls, but React's SVG props expect the
   // DOM property spelling (`strokeWidth`) for the multi-word ones: spread as-is, a glyph carrying one
   // of these (an outlined arrow, say) renders with React warning "Invalid DOM property" and dropping
-  // the attribute silently, which is a real bug, not a lint nit — the icon paints thinner than the
+  // the attribute silently, which is a real bug, not a lint nit  -  the icon paints thinner than the
   // set drew it. `fill`/`stroke` themselves are already single words, so the replace is a no-op there.
   const presentationProps: Record<string, string> = {};
   for (const [k, v] of presentation) {

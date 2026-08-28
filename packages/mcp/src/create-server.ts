@@ -36,7 +36,7 @@ export function createServer(): McpServer {
     },
     {
       instructions:
-        "Workflow: get_catalog (page through ALL of it — call again with page: 2, 3, ... while the " +
+        "Workflow: get_catalog (page through ALL of it  -  call again with page: 2, 3, ... while the " +
         "response says more: true; the catalogue is meant to be read whole, paging is only how the " +
         "bytes arrive) -> get_examples with NO id, EVERY time, before composing anything, even a " +
         "single simple control you're confident about -> get_contract(id) for the signatures you " +
@@ -46,24 +46,24 @@ export function createServer(): McpServer {
         "CALLING get_examples IS NOT OPTIONAL, even when you already know which signature you'd pick. " +
         "Measured directly, on the identical prompt: a run that called get_examples adapted the " +
         "established two-box pattern (an outer surface with no padding so an image sits flush to its " +
-        "edge, an inner box padding only the text) — a run that skipped straight from the catalogue to " +
+        "edge, an inner box padding only the text)  -  a run that skipped straight from the catalogue to " +
         "composing wrapped ONE box around everything, padding the image too, exactly the mistake that " +
         "pattern's own notes warn against. Both trees validated. Only one was right. \"I already know " +
-        "the signature\" is not a reason to skip this — knowing the right SIGNATURE and knowing the " +
+        "the signature\" is not a reason to skip this  -  knowing the right SIGNATURE and knowing the " +
         "right SHAPE are different things, and get_examples is where the shape lives.\n\n" +
         "get_examples publishes established trees below the whole-catalogue scale: one component " +
         "well-composed (\"component\"), a few components as one small piece of UI (\"molecule\"), or a " +
         "whole screen across its loading/empty/error/success states (\"screen\"). Call it with no id " +
         "first for the index (every example's id, level and intent, so you know what exists), then " +
         "call it again with an id for the one that fits. If one fits the task, adapt its CONTENT, not " +
-        "just its shape, rather than composing the same thing from nothing — then validate whatever " +
+        "just its shape, rather than composing the same thing from nothing  -  then validate whatever " +
         "you adapted through validate_ui the same as anything else: an example proves its tree matched " +
         "a contract at the moment it was written, not that it still does. Only once the index has no " +
         "match, compose straight from get_catalog's signatures: prefer one whose useWhen matches over " +
         "forcing one that doesn't (avoidWhen exists for exactly that mistake), reach for a layout " +
         "primitive (Stack/Inline/Grid/Box) with an intentional gap when nothing named fits the shape " +
         "rather than a fixed size guessed to look right, and give every icon-only control its own " +
-        "accessible name — validate_ui enforces that one, but it is cheaper to compose it correctly the " +
+        "accessible name  -  validate_ui enforces that one, but it is cheaper to compose it correctly the " +
         "first time than to fix it after a rejection.\n\n" +
         "A usage tree has three distinct fields, and confusing them is the common mistake:\n" +
         "  - options  what the contract maps to an attribute (variant, href, current)\n" +
@@ -82,7 +82,7 @@ export function createServer(): McpServer {
       description:
         "Every published family and signature with what it is for (useWhen), what it is NOT for " +
         "(avoidWhen), its HTML host, valid parents, alternatives and deprecations. Still meant to be " +
-        "read WHOLE, not searched or ranked — choosing is your job. PAGED only because the full " +
+        "read WHOLE, not searched or ranked  -  choosing is your job. PAGED only because the full " +
         "catalogue is too large for one response to arrive intact: call with no `page` for page 1, " +
         "keep incrementing `page` while the response says `more: true`. A family absent from every " +
         "page is not published, whatever the kit may contain.",
@@ -104,7 +104,7 @@ export function createServer(): McpServer {
       const start = (page - 1) * CATALOG_PAGE_SIZE;
       const contracts = catalogueIndex.contracts.slice(start, start + CATALOG_PAGE_SIZE);
 
-      // `schemaVersion`/`sourceHash` come from `provenance`, stamped by `ok()` below — not repeated
+      // `schemaVersion`/`sourceHash` come from `provenance`, stamped by `ok()` below  -  not repeated
       // from `catalogueIndex` here, which would mean carrying the same two fields two different ways.
       return ok({ contracts, page, totalPages, totalFamilies, more: page < totalPages });
     },
@@ -151,15 +151,15 @@ export function createServer(): McpServer {
   server.registerTool(
     "get_examples",
     {
-      title: "Browse established example trees, or fetch one by id — call before composing, always",
+      title: "Browse established example trees, or fetch one by id  -  call before composing, always",
       description:
         "Call this BEFORE composing anything, even something you're confident you already know how to " +
-        "build — knowing the right signature and knowing the right SHAPE are different things, and " +
+        "build  -  knowing the right signature and knowing the right SHAPE are different things, and " +
         "this is where the shape lives. Established trees below the whole-catalogue scale: one " +
         "component well-composed, a few as one small molecule, or a whole screen across its " +
         "loading/empty/error/success states. Call with no id for the index (id, level, intent, notes, " +
         "which contract families it touches, no trees). Call again with an id for that example's full " +
-        "tree(s) — a snippet returns one tree, a screen returns all four states. Adapt an example's " +
+        "tree(s)  -  a snippet returns one tree, a screen returns all four states. Adapt an example's " +
         "content rather than composing the same shape from nothing, then validate whatever you " +
         "adapted through validate_ui same as any tree: an example proves its tree matched a contract " +
         "when it was written, not that it still does.",
@@ -263,12 +263,12 @@ export function createServer(): McpServer {
 
 /*
  * PAGED, not searched. The catalogue is still meant to be read WHOLE (decision 31 stands: no
- * ranker, no keyword filter, choosing is the caller's job) — this only changes how many bytes
+ * ranker, no keyword filter, choosing is the caller's job)  -  this only changes how many bytes
  * arrive in one response, not what "whole" means or what the caller has to ask for.
  *
  * Confirmed live as a real failure, not a theoretical one: the FULL catalogue (69 families, ~110KB)
- * trips Claude Code's own fixed large-tool-result threshold — separate from, and not moved by,
- * `MAX_MCP_OUTPUT_TOKENS` — which persists the response to a file and hands the caller a truncated
+ * trips Claude Code's own fixed large-tool-result threshold  -  separate from, and not moved by,
+ * `MAX_MCP_OUTPUT_TOKENS`  -  which persists the response to a file and hands the caller a truncated
  * preview instead. Traced through a real recorded eval run: `get_catalog` came back as that
  * preview, the model never saw a single real `useWhen`/`avoidWhen`, and the next three calls were
  * `get_contract` against family names that sound plausible and do not exist ("card", "grid",
@@ -282,15 +282,15 @@ const CATALOG_PAGE_SIZE = 10;
 /*
  * EXAMPLES: established trees below the whole-catalogue scale, so composing does not start from a
  * blank tree every time. Two sources, one response shape:
- *   - `@skryensya/snippets` ("component"/"molecule") — one family well-composed, or a few families
+ *   - `@skryensya/snippets` ("component"/"molecule")  -  one family well-composed, or a few families
  *     as one small piece of UI. Single tree each.
- *   - `@skryensya/recipes` ("screen") — a whole screen across its four states. Already published
+ *   - `@skryensya/recipes` ("screen")  -  a whole screen across its four states. Already published
  *     for humans (`apps/docs`'s recetas page) and stress-tested against this very server
  *     (`server.test.ts`); this is the same data, reachable by the thing recipes were always meant
  *     for copying by, not just reading.
  *
  * Two calls, same shape as `get_catalog` -> `get_contract`: no `id` lists everything WITHOUT trees
- * (an index to scan, the same reason `get_catalog` has no search — small enough to read whole); an
+ * (an index to scan, the same reason `get_catalog` has no search  -  small enough to read whole); an
  * `id` returns that one example's full tree(s). Trees are not returned in the list on purpose: a
  * recipe alone can run to several KB across its four states, and a model with a small context budget
  * (this exists partly FOR those) pays for every example's full tree on every call otherwise, most of
@@ -329,7 +329,7 @@ type ExampleIndexEntry = {
  * ONE walk, shared by everything that needs to visit every real node in a tree once: `cssFor` (below,
  * every stylesheet) and `collectContracts` (every family id, for `get_examples`' index). Both used to
  * write this descent by hand, close enough to look identical and different enough that only one of
- * the two actually handled a collection item's own `slots` (a tab's label/children pane) correctly —
+ * the two actually handled a collection item's own `slots` (a tab's label/children pane) correctly  - 
  * exactly the kind of drift a shared walk exists to make impossible.
  *
  * Recurses into anything object-shaped generically rather than branching on "is this a node or a
@@ -437,24 +437,24 @@ const usageTreeSchema: z.ZodType<UsageTree> = z.lazy(() =>
 ) as z.ZodType<UsageTree>;
 
 /*
- * Every part class name, reverse-mapped to the ONE stylesheet that owns it — built once from the
+ * Every part class name, reverse-mapped to the ONE stylesheet that owns it  -  built once from the
  * compiled manifest's own `parts` maps (`{ root: "sk-button", interactive: "sk-interactive", ... }`
  * per contract). What `cssFor` needs to resolve a template's `also` classes back to a stylesheet:
  * `also` names CSS classes borrowed from ANOTHER contract's template (`IconStateButton`'s
  * `also: ["sk-button", "sk-interactive", "sk-icon-toggle"]`, borrowing `Button`'s own root class),
- * not a contract id — nothing walking `tree.contract` alone can ever resolve it.
+ * not a contract id  -  nothing walking `tree.contract` alone can ever resolve it.
  *
  * ONLY WHEN UNAMBIGUOUS. A `parts` entry means "this template names this class", not "this
- * contract's own stylesheet defines it" — the two came apart in exactly the class this exists to
+ * contract's own stylesheet defines it"  -  the two came apart in exactly the class this exists to
  * resolve: `sk-interactive` (the shared state-layer pattern, defined once in `patterns/state-layer.
  * css` and loaded unconditionally by every consumer's `tokens.scss`) is listed as a named part by
- * MANY different contracts that borrow it via their own `also`, `button` among them — so indexing
+ * MANY different contracts that borrow it via their own `also`, `button` among them  -  so indexing
  * every `parts` entry blindly pointed `sk-interactive` at whichever contract's manifest entry
- * happened to iterate last (confirmed live: `button.css` — right — then `list.css` — wrong — on
+ * happened to iterate last (confirmed live: `button.css`  -  right  -  then `list.css`  -  wrong  -  on
  * successive runs, since object key order is not a stable ownership signal). A class more than one
  * contract's `parts` map claims is excluded rather than guessed at: `sk-button` has exactly one
  * claimant (`button` itself) and resolves correctly; `sk-interactive` has several and resolves to
- * nothing, which is correct too — it never needed an entry, since every consumer already loads it.
+ * nothing, which is correct too  -  it never needed an entry, since every consumer already loads it.
  */
 const classToCss: ReadonlyMap<string, string> = (() => {
   const claimants = new Map<string, Set<string>>();
@@ -490,7 +490,7 @@ function alsoClassesFor(node: UsageTree): readonly string[] {
  *
  * Confirmed live as a real gap, not a hypothetical: composing `IconStateButton` (whose template
  * borrows `also: ["sk-button", ...]`) and asking `validate_ui` for its `css` returned
- * `icon-state-button.css` alone. `button.css` — the stylesheet `.sk-button` actually needs — was
+ * `icon-state-button.css` alone. `button.css`  -  the stylesheet `.sk-button` actually needs  -  was
  * missing, because nothing here ever looked at `also` before. The button rendered as a real,
  * correctly-classed `<button>` with the browser's bare UA chrome instead of the kit's own: valid
  * markup, silently unstyled. `classToCss`/`alsoClassesFor` above are what closes it.

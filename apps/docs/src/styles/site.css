@@ -1310,6 +1310,7 @@ p:not(.sk-text) {
   --docs-hero-title-max: var(--font-size-display-lg);
   --docs-hero-title-min: var(--font-size-heading-h2);
   --docs-hero-eyebrow-line: calc(var(--font-size-caption) * var(--font-line-height-caption));
+  --docs-hero-shadow: 0 1px 2px 0 var(--shadow-sm), 0 1px 3px 0 var(--shadow-sm);
 }
 
 .docs-component-hero {
@@ -1340,6 +1341,7 @@ p:not(.sk-text) {
      would be two notches showing scrolling content through them. */
   border-radius: calc(var(--radius-surface) * (1 - var(--docs-hero-collapse)));
   background: var(--docs-hero-bg);
+  box-shadow: var(--docs-hero-shadow);
 }
 
 /*
@@ -1551,33 +1553,21 @@ p:not(.sk-text) {
 
 @keyframes docs-hero-collapse {
   0% {
-    box-shadow: none;
+    box-shadow: var(--docs-hero-shadow);
   }
   /*
-   * THE SHADOW ONLY EARNS ITS KEEP ONCE THE SPACER IS GONE. `box-shadow` is not interpolatable, so a
-   * discrete animation just holds a value until the next keyframe that redeclares it, flipping at the
-   * midpoint between the two, here effectively right at the end of the range. That is deliberate,
-   * not a shortcut: for most of the collapse this box is still the SMALL bar sitting under the tall
-   * spacer, its own edges exposed on the sides where the spacer's rounder, shadowless panel is not,
-   * and a shadow drawn there the whole time cut a visible seam straight across the "one card" the
-   * spacer and this bar are supposed to read as. Once the spacer has scrolled to nothing, this bar
-   * IS the whole card, and that is the one moment the lift actually belongs to it.
+   * THE SHADOW IS PRESENT BEFORE THE BAR STICKS. The component-page hero is a raised card from
+   * first paint, not only after it has collapsed into chrome; otherwise the panel reads flat while it
+   * is still the page's main title and only gains elevation after becoming sticky. `box-shadow` is
+   * not interpolatable, so every keyframe keeps the same raised shadow and only the custom-property
+   * collapse value changes.
    */
   99% {
-    box-shadow: none;
+    box-shadow: var(--docs-hero-shadow);
   }
   100% {
     --docs-hero-collapse: 1;
-    /*
-     * THE TWO DROP LAYERS OF `--elevation-raised`, NOT THE TOKEN ITSELF: that token also carries
-     * `inset 0 0 0 9999px var(--elevation-tint-raised)`, a flat 2% tint meant to read as "this
-     * surface caught a little more light than the page around it" on a NEUTRAL surface. This one
-     * already has its own deliberate color, `--docs-hero-bg`, and stacking the tint on top of it
-     * shifted that color the instant the bar finished pinning, the exact moment a reader is meant to
-     * recognize it as the SAME band, not a slightly different one. Same `--shadow-sm` token either
-     * way, just the two shadows that read as lift without also reading as a wash.
-     */
-    box-shadow: 0 1px 2px 0 var(--shadow-sm), 0 1px 3px 0 var(--shadow-sm);
+    box-shadow: var(--docs-hero-shadow);
   }
 }
 
@@ -1648,6 +1638,7 @@ p:not(.sk-text) {
       border-start-start-radius: var(--radius-surface);
       border-start-end-radius: var(--radius-surface);
       background: var(--docs-hero-bg);
+      box-shadow: var(--docs-hero-shadow);
     }
 
     .docs-component-head .docs-component-hero {
@@ -1686,10 +1677,8 @@ p:not(.sk-text) {
       border-radius: 0;
       border-end-start-radius: var(--radius-surface);
       border-end-end-radius: var(--radius-surface);
-      /* No static `box-shadow` here: the animation below owns it entirely (see
-         `@keyframes docs-hero-collapse`'s own comment for why it only switches on at the very end),
-         and `animation-fill-mode: both` is what makes that hold before the range starts and after it
-         ends, the same way it already does for `--docs-hero-collapse` itself. */
+      /* The hero is raised before it sticks; the animation keeps the same shadow across the whole
+         collapse so the elevation does not appear only after the title has become chrome. */
       animation-name: docs-hero-collapse;
       animation-fill-mode: both;
       animation-timing-function: linear;

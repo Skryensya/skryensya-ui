@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 /*
  * A HAND-ROLLED ROUTER, not a library: three route shapes total, and the only things this app
  * actually needs from "not being a SPA" are real URLs (bookmarkable, shareable, back/forward-able)
- * and full-looking navigation via real `<a href>` elements — not a client-side view-state that
+ * and full-looking navigation via real `<a href>` elements  -  not a client-side view-state that
  * resets on refresh. Reaching for react-router for three routes would be exactly the speculative
  * abstraction this app's own history (`vite.config.ts`'s doc comments) argues against everywhere
  * else; the History API plus one delegated click listener covers the whole surface.
@@ -63,7 +63,7 @@ export function useRoute(): Route {
  * ONE delegated listener for the whole document, rather than a custom `<NavLink>` wrapper around
  * every kit component that happens to render an `<a>` (`ListItemLink`, `Breadcrumb`, `Link`, a
  * `Button.navigation`). Those are real anchors with real `href`s by contract (see `list`/`breadcrumb`/
- * `typography` in the catalogue) — this only intercepts the same-origin, unmodified left-clicks a
+ * `typography` in the catalogue)  -  this only intercepts the same-origin, unmodified left-clicks a
  * client-side transition can actually handle, and lets everything else (cmd-click, middle-click,
  * external links, downloads) fall through to normal browser behavior untouched.
  */

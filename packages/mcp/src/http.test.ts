@@ -7,7 +7,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 /*
  * Contract tests through a REAL client over Streamable HTTP, the same discipline `server.test.ts`
  * uses for stdio: what is being tested is the thing an agent actually talks to over a network
- * (the transport, the route, the auth gate), not the four tools themselves — those already have
+ * (the transport, the route, the auth gate), not the four tools themselves  -  those already have
  * their own exhaustive suite in `server.test.ts`, run against the identical `createServer()` this
  * file's own server also calls. Duplicating that suite here would test `createServer()` twice and
  * `http.ts` not at all.

@@ -11,6 +11,7 @@
      * card on the surface. `--elevation-sunken` traces the control's own edge. */
     --sk-number-field-bg: var(--color-bg-surface-sunken);
     --sk-number-field-shadow: var(--elevation-sunken);
+    --sk-number-field-wash: var(--elevation-wash-sunken);
     --sk-number-field-fg: var(--color-text-primary);
     --sk-number-field-step-color: var(--color-text-secondary);
     /* El stepper es un botón icon-only sm: se pinta chico y separado del borde del control, así que
@@ -34,7 +35,7 @@
     align-items: center;
     border: var(--sk-number-field-border-width) solid var(--sk-number-field-border-color);
     border-radius: var(--sk-number-field-radius);
-    background: var(--sk-number-field-bg);
+    background: var(--sk-number-field-wash) var(--sk-number-field-bg);
     box-shadow: var(--sk-number-field-shadow);
   }
   .sk-number-field__control:focus-within {

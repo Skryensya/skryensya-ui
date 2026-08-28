@@ -16,7 +16,7 @@ import { Heading, Text } from "@skryensya/react/typography";
 import type { ChartTone } from "@skryensya/core/chart";
 import { framedIn } from "./framed";
 
-const framed = framedIn(import.meta.url);
+const framed = framedIn("chart-more");
 
 type DemoProps = { lang?: "es" | "en" };
 
@@ -27,7 +27,7 @@ type DemoProps = { lang?: "es" | "en" };
  * distinction applied to a chart instead of a pitch. `chart-integrations.tsx`'s Segmented demo is
  * the other half: same series, a setting (the period) changes what it shows.
  *
- * EVERY PANEL IS THE SAME SHAPE — one Stat, one Chart at the same `height` — for the reason
+ * EVERY PANEL IS THE SAME SHAPE  -  one Stat, one Chart at the same `height`  -  for the reason
  * `hero-with-audience-tabs`'s own notes give: Tabs unmounts one panel and mounts the next, and two
  * panels of different heights make the card jump the instant a reader switches. Matching the shape,
  * not just approximating it, is what keeps the switch reading as a content change, not a resize.
@@ -155,7 +155,7 @@ export const ChartMetricTabsDemo = framed(
  * 2. A LEGEND, from Badge, not a new part on Chart. Each entry carries its own `tone` (the
  * contract's own per-point override, `chart.ts`'s `items` slot), and the legend below just repeats
  * that same mapping in words. `Badge`'s five tones (`neutral`/`accent`/`success`/`warning`/`danger`)
- * are a subset of Chart's six — this composition sticks to that subset on purpose, so one Badge per
+ * are a subset of Chart's six  -  this composition sticks to that subset on purpose, so one Badge per
  * category can borrow the bar's own color instead of inventing a second palette next to it.
  *
  * THE LEGEND IS DECORATIVE, not a second name for the data: `values` is on, so every bar already
@@ -220,7 +220,7 @@ export const ChartCategoryLegendDemo = framed(
 /* ---------------------------------------------------------------------------------------------
  * 3. TWO PERIODS, SIDE BY SIDE: the year-over-year comparison every dashboard eventually grows.
  * Not one chart with two series (Chart's own contract has no second series to give it, `chart.ts`'s
- * own banner: "the data is a list") — two independent metric panels in a Grid, the CURRENT one
+ * own banner: "the data is a list")  -  two independent metric panels in a Grid, the CURRENT one
  * accented, the PRIOR one neutral, so the eye finds "now" before it finds "then".
  * ------------------------------------------------------------------------------------------- */
 const q4Current = [

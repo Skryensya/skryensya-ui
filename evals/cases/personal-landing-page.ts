@@ -12,7 +12,7 @@ export const personalLandingPageCase: EvalCase = {
       "título y una línea de descripción; una sección 'Sobre mí' con una foto/avatar redondo al " +
       "lado de una bio corta en primera persona; una sección de 'Contacto' con una lista de enlaces " +
       "(email, LinkedIn, GitHub); y una línea de copyright al final. Contenido de relleno está bien " +
-      "en todos lados — lo que importa es la forma de la página, no el texto exacto.",
+      "en todos lados  -  lo que importa es la forma de la página, no el texto exacto.",
     en:
       "A personal landing page, in the same spirit as allison.sh: a top bar with the person's name " +
       "and a couple of nav links; a hero with a short one-line headline, a one-to-two sentence " +
@@ -21,25 +21,25 @@ export const personalLandingPageCase: EvalCase = {
       "link) and, below it, a compact list of several more projects, each with a title and a " +
       "one-line description; an 'About' section with a round photo/avatar next to a short " +
       "first-person bio; a 'Contact' section with a list of links (email, LinkedIn, GitHub); and a " +
-      "copyright line at the bottom. Placeholder content is fine everywhere — what matters is the " +
+      "copyright line at the bottom. Placeholder content is fine everywhere  -  what matters is the " +
       "shape of the page, not the exact wording.",
   },
   notes: [
     "El primer caso del corpus a escala de PÁGINA COMPLETA, no de componente ni de molécula. Sigue " +
-      "siendo un `EvalCase` — un solo `tree`, no los cuatro estados de un `Recipe` — pero ejercita " +
+      "siendo un `EvalCase`  -  un solo `tree`, no los cuatro estados de un `Recipe`  -  pero ejercita " +
       "muchas más familias a la vez que cualquier otro caso: layout (Stack/Inline/Main), wrapper, " +
       "navbar, typography, button, box, image-frame, list y avatar, todas anidadas correctamente en " +
       "una sola composición. Es exactamente el tipo de prompt que separa a un agente que compone " +
       "landmark por landmark con criterio de uno que sólo sabe resolver un pedido a la vez.",
     "Inspirado en la ESTRUCTURA real de una landing page personal (relevada en vivo con un browser " +
-      "headless: qué tipo de sección hay, en qué orden, y cuántos ítems trae cada lista repetida — " +
+      "headless: qué tipo de sección hay, en qué orden, y cuántos ítems trae cada lista repetida  -  " +
       "nunca el copy exacto, que este prompt deliberadamente no pide reproducir). El patrón " +
       "'proyecto destacado como card + el resto como lista compacta de enlaces' en la sección de " +
       "Proyectos viene de ahí: no es una elección arbitraria del caso, es una forma real y común de " +
       "priorizar un ítem sobre el resto sin repetir la card completa N veces.",
     "El catálogo no publica una familia `Footer`: el copyright final es un `typography.Text` suelto " +
       "al pie del `Stack` principal, sin ningún landmark `<footer>` propio. `Hero` SÍ existe ahora " +
-      "(publicado junto con este caso, `packages/core/src/hero.ts`) — la referencia lo usa " +
+      "(publicado junto con este caso, `packages/core/src/hero.ts`)  -  la referencia lo usa " +
       "envolviendo el mismo `Stack` de `Heading`/`Text`/`Button` que antes flotaba sin superficie " +
       "propia: `Hero` no tiene anatomía fija (sin slots con nombre), sólo `padding`/`surface` con " +
       "los defaults de `Box` invertidos (`xl`/`surface` en vez de `none`/`none`), así que el " +
@@ -47,7 +47,7 @@ export const personalLandingPageCase: EvalCase = {
       "este árbol de referencia debería migrar a usarlo en vez de un `Text` suelto.",
     "El proyecto destacado reusa el mismo patrón de dos `Box` anidados que `article-card-in-grid` y " +
       "el snippet `product-card-in-grid` (exterior `padding: none` para que la imagen llegue al " +
-      "borde, interior `padding: md` sólo alrededor del texto) — la repetición es intencional: es la " +
+      "borde, interior `padding: md` sólo alrededor del texto)  -  la repetición es intencional: es la " +
       "prueba de que un agente que ya vio ese patrón en un ejemplo lo reconoce y lo reaplica dentro " +
       "de una composición mucho más grande, no sólo cuando el pedido es 'una sola card'.",
   ],
@@ -297,7 +297,7 @@ export const personalLandingPageCase: EvalCase = {
                     contract: "typography",
                     signature: "Text",
                     options: { tone: "secondary", size: "sm" },
-                    children: "© 2026 — built with a design system.",
+                    children: "© 2026  -  built with a design system.",
                   },
                 ],
               },

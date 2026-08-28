@@ -188,9 +188,9 @@ const boxNativeTree: UsageTree = {
     <code>sunken</code> too: a field is the well you write into, not a card resting on the surface.
     <code>select.css</code> and <code>input.css</code> had the opposite reasoning written by hand:
     <em>"in dark mode <code>sunken</code> resolves to neutral-1000, darker than any surface, so the
-    control looked like a hole punched in the dialog"</em>. True at the time —
+    control looked like a hole punched in the dialog"</em>. True at the time  - 
     <code>--color-bg-surface-sunken</code> in dark mode shares its value with
-    <code>--color-bg-canvas</code> on purpose— but that is no longer the only thing carrying it: the
+    <code>--color-bg-canvas</code> on purpose -  but that is no longer the only thing carrying it: the
     <code>inset</code> of <code>--elevation-sunken</code> traces the field's own edge, so it still
     reads as its own control even when the container around it (a card, a Dialog) is lighter.
   </p>
@@ -198,9 +198,9 @@ const boxNativeTree: UsageTree = {
   <h2>All five together, not isolated</h2>
   <p>
     A single-color swatch is easy to misread: nothing says whether that shadow is a lot or a little
-    until it sits next to another one. This fragment is not a real component — Menu, Popover and
+    until it sits next to another one. This fragment is not a real component  -  Menu, Popover and
     Dialog need a trigger and JS state to open, which would leave this section blank on first paint,
-    exactly what an at-a-glance illustration cannot afford — but every box borrows the same
+    exactly what an at-a-glance illustration cannot afford  -  but every box borrows the same
     <code>--elevation-*</code> the real component would consume, so the weight you see is the real
     one, only the interactivity is missing.
   </p>
@@ -306,7 +306,7 @@ const boxNativeTree: UsageTree = {
   </p>
   <p>
     <strong><code>forced-colors: active</code></strong> (OS-level high contrast):
-    <code>box-shadow</code> is decoration, and the browser drops it outright, no exceptions — the
+    <code>box-shadow</code> is decoration, and the browser drops it outright, no exceptions  -  the
     <code>inset</code> shadow <code>sunken</code> uses included, not just the cast one
     <code>raised</code> uses. Measured live: a <code>Box</code> at <code>surface="raised"</code>
     <strong>or</strong> <code>surface="sunken"</code> with no border of its own (the default path,
@@ -344,8 +344,8 @@ const boxNativeTree: UsageTree = {
     fix: a per-level identity tint, composed as one more <code>box-shadow</code> layer
     (<code>inset 0 0 0 9999px</code>, clipped to the <code>border-radius</code> the same as any
     <code>inset</code> shadow) inside each <code>--elevation-*</code>. Already on under normal
-    contrast, not just high contrast: at rest it's a light reinforcement — 2/4/7% for
-    <code>raised</code>/<code>overlay</code>/<code>modal</code>, 4% for <code>sunken</code> — because
+    contrast, not just high contrast: at rest it's a light reinforcement  -  2/4/7% for
+    <code>raised</code>/<code>overlay</code>/<code>modal</code>, 4% for <code>sunken</code>  -  because
     the real background already does most of the work there (see the five swatches above, each now
     painting its own <code>--color-bg-surface-*</code>). High contrast bumps those same four numbers
     to 5/10/16% and 10%, exactly where the background stops helping. In both cases each positive
@@ -431,8 +431,8 @@ const boxNativeTree: UsageTree = {
     renders (not an isolated swatch), and compared against whatever <code>--elevation-flat</code>/
     <code>-raised</code>/<code>-overlay</code>/<code>-modal</code> resolves to today. The composites
     (<code>Kbd</code>, <code>Pagination</code>'s <code>aria-current</code>, <code>ColorPicker</code>,
-    <code>Drawer</code>) carry their own extra layers ahead of the system's shadow — a bevel, a
-    rim-light, the "material" strip at the edge that reveals on drag — and in all four the scale's
+    <code>Drawer</code>) carry their own extra layers ahead of the system's shadow  -  a bevel, a
+    rim-light, the "material" strip at the edge that reveals on drag  -  and in all four the scale's
     own shadow still closes out the list, never replaced. Two real gaps came out of this, both
     <strong>example coverage</strong>, not CSS: no docs page demonstrated a <code>Hero</code> at
     <code>surface="raised"</code>, nor <code>Sidebar</code> with its trigger in

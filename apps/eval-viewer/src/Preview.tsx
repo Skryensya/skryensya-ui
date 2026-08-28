@@ -4,43 +4,43 @@ import { buildFrameDocument } from "./frame/document";
 import type { CaseRun } from "./data";
 
 /*
- * The preview stage is an IFRAME, not a mount into this page — a hard requirement, not a nicety:
+ * The preview stage is an IFRAME, not a mount into this page  -  a hard requirement, not a nicety:
  * the kit's CSS and the case's rendered output must never share this app's own document. Two
  * confirmed reasons, not one:
  *
  *  1. Styling. `packages/core`'s tokens arm `light-dark()` via `color-scheme: light dark`
  *     (`_base.scss`), which follows the reviewer's OS. Loaded into THIS document, that bled into the
  *     app's own plain chrome (buttons, tables with no explicit color of their own picked up native
- *     dark-mode widget styling), while `app.css`'s hardcoded light backgrounds stayed put — "reads as
+ *     dark-mode widget styling), while `app.css`'s hardcoded light backgrounds stayed put  -  "reads as
  *     dark mode on a light background", confirmed live. The two documents' CSS stay apart; what DOES
  *     cross the boundary is `color-scheme` itself and the devtools attributes, mirrored live by
- *     `frame/entry.tsx`'s own `syncRootState()` — that is state, not stylesheets, and mirroring it is
+ *     `frame/entry.tsx`'s own `syncRootState()`  -  that is state, not stylesheets, and mirroring it is
  *     exactly what makes the iframe track this app's own light/dark toggle instead of ignoring it.
  *  2. Top-layer collision. A native `<dialog open>` (or anything anchored) paints into the
- *     document's top layer regardless of where it sits in the DOM tree — confirmed live on
+ *     document's top layer regardless of where it sits in the DOM tree  -  confirmed live on
  *     `confirmation-dialog` when both bindings were mounted directly into this page at once. A
  *     SEPARATE DOCUMENT is what actually prevents that, not just showing one binding at a time (which
- *     was the fix before this one, and remains — see the toggle below).
+ *     was the fix before this one, and remains  -  see the toggle below).
  *
  * `srcDoc`, not a URL: each build embeds the exact tree/markup this ONE case produced
- * (`buildFrameDocument`), so there is nothing to route or serve — React just resets the iframe's
+ * (`buildFrameDocument`), so there is nothing to route or serve  -  React just resets the iframe's
  * `srcdoc` attribute when the binding or the case changes, and the browser navigates it fresh. Theme
- * changes do NOT rebuild it any more — see `frame/document.ts`'s own header — so the `key` below
+ * changes do NOT rebuild it any more  -  see `frame/document.ts`'s own header  -  so the `key` below
  * only needs to change for what genuinely is a different render.
  *
  * THE IFRAME TAKES ITS CONTAINER'S HEIGHT: `.preview-stage` owns it (`app.css`'s own `height` +
  * `min-height`, `resize: vertical` past that), the iframe is `height: 100%` of it, and the iframe's
- * OWN document scrolls internally — standard iframe behavior — when its content is taller than the
+ * OWN document scrolls internally  -  standard iframe behavior  -  when its content is taller than the
  * box it currently has. Dragging the resize handle has an immediate, visible effect on how much
  * render is showing.
  *
- * The STAGE's starting height still comes from the content, though — `useInitialFitHeight` below,
- * `postMessage` from `frame/entry.tsx` — just as a ONE-SHOT imperative write to `.preview-stage`'s own
+ * The STAGE's starting height still comes from the content, though  -  `useInitialFitHeight` below,
+ * `postMessage` from `frame/entry.tsx`  -  just as a ONE-SHOT imperative write to `.preview-stage`'s own
  * inline height, not a value React keeps re-asserting on the iframe itself. That distinction is the
  * whole fix: the earlier version drove the IFRAME's height from React state continuously, which is
  * exactly what fought a reader's manual resize (the next render just overwrote whatever they'd just
  * dragged). Writing the stage's inline height once, imperatively, is indistinguishable from a reader
- * having dragged it there themselves — `resize: vertical`'s own native drag sets that same property
+ * having dragged it there themselves  -  `resize: vertical`'s own native drag sets that same property
  * the same way, so ownership only ever passes ONE direction: content sizes it first, a reader's own
  * drag (if any) is what touches it after that, never both at once.
  */
@@ -111,7 +111,7 @@ export function Preview({ caseRun, lazy = false }: { caseRun: CaseRun; lazy?: bo
   if (!caseRun.valid || !caseRun.finalTree) {
     return (
       <p className="preview-empty">
-        This case never reached a valid composition — nothing to render. See the tool trace below.
+        This case never reached a valid composition  -  nothing to render. See the tool trace below.
       </p>
     );
   }
@@ -119,7 +119,7 @@ export function Preview({ caseRun, lazy = false }: { caseRun: CaseRun; lazy?: bo
   if (!srcDoc) {
     return (
       <div ref={rootRef} className="preview-stage preview-stage--queued">
-        Preview queued — scroll a little closer.
+        Preview queued  -  scroll a little closer.
       </div>
     );
   }
@@ -127,7 +127,7 @@ export function Preview({ caseRun, lazy = false }: { caseRun: CaseRun; lazy?: bo
   return (
     <div ref={rootRef}>
       {/*
-       * Controlled mode: `value`+`onValueChange` (not `defaultValue`) — the contract's `value` option
+       * Controlled mode: `value`+`onValueChange` (not `defaultValue`)  -  the contract's `value` option
        * only documents the UNCONTROLLED path (it maps to the vanilla binding's `defaultValue` prop,
        * confirmed via get_contract), but the React component source
        * (packages/react/src/components/segmented.tsx) exposes `value`/`onValueChange` as a superset for
@@ -149,7 +149,7 @@ export function Preview({ caseRun, lazy = false }: { caseRun: CaseRun; lazy?: bo
           ref={iframeRef}
           className="preview-frame"
           srcDoc={srcDoc}
-          title={`${caseRun.caseId} [${caseRun.lang}] — ${binding}`}
+          title={`${caseRun.caseId} [${caseRun.lang}]  -  ${binding}`}
         />
       </div>
     </div>

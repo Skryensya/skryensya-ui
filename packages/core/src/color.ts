@@ -6,7 +6,7 @@
  * (chakra-ui/zag#2446) and closed in favor of an official implementation landing in Zag's own
  * v2, with no release date yet. The interactive area and both channel rails already operate in
  * the machine's own internal HSB space regardless of which text format is showing, so an OKLCH
- * channel-input row does not need the MACHINE to know the color space at all — it only needs to
+ * channel-input row does not need the MACHINE to know the color space at all  -  it only needs to
  * read the machine's real color (always convertible to sRGB) and write back through one.
  *
  * This is that conversion, kept here rather than duplicated per binding for the same reason

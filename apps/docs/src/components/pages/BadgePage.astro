@@ -3,7 +3,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { badgeDotsTree, badgeHoldersTree } from "../../demos/badge";
+import { badgeDotsTree, badgeHoldersTree, badgePulseTree, badgeSmallTree } from "../../demos/badge";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/badge.yaml?raw";
 import coreSource from "@core/src/badge.ts?raw";
@@ -64,9 +64,17 @@ const sourceFiles = [
     <p set:html={t("badge.tagBody")} />
     <ComponentPreview tree={tree} label={t("badge.tagLabel")} />
 
+    <h4>{t("badge.smallTitle")}</h4>
+    <p set:html={t("badge.smallBody")} />
+    <ComponentPreview tree={badgeSmallTree(t)} label={t("badge.smallLabel")} />
+
     <h3>{t("badge.dotTitle")}</h3>
     <p set:html={t("badge.dotBody")} />
     <ComponentPreview tree={badgeDotsTree(t)} label={t("badge.dotLabel")} />
+
+    <h4>{t("badge.pulseTitle")}</h4>
+    <p set:html={t("badge.pulseBody")} />
+    <ComponentPreview tree={badgePulseTree(t)} label={t("badge.pulseLabel")} />
 
     <h4>{t("badge.cornerTitle")}</h4>
     <p set:html={t("badge.cornerBody")} />

@@ -96,6 +96,30 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-08-27",
+            "en": {
+              "body": "<code>BadgeDot</code> adds <code>pulse</code>, authoring <code>data-pulse</code> and drawing a pulsing halo in the dot's own color. The animation uses only <code>scale</code> and <code>opacity</code>, and turns off under <code>prefers-reduced-motion</code>.",
+              "title": "BadgeDot can pulse for live states"
+            },
+            "es": {
+              "body": "<code>BadgeDot</code> suma <code>pulse</code>, que autoría <code>data-pulse</code> y dibuja un halo pulsante con el color del punto. La animación usa sólo <code>scale</code> y <code>opacity</code>, y se apaga con <code>prefers-reduced-motion</code>.",
+              "title": "BadgeDot puede pulsar para estados vivos"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-08-27",
+            "en": {
+              "body": "<code>Badge</code> now accepts <code>size=\"sm\"</code>, authoring <code>data-size=\"sm\"</code> and reducing the text badge's height for compact navigation, including Sidebar trailing counts. The default size keeps the previous height.",
+              "title": "Badge adds an sm size for compact counts"
+            },
+            "es": {
+              "body": "<code>Badge</code> ahora acepta <code>size=\"sm\"</code>, que autoría <code>data-size=\"sm\"</code> y reduce la altura del badge de texto para vivir dentro de navegación compacta, como el conteo trailing del Sidebar. El tamaño por defecto conserva la altura anterior.",
+              "title": "Badge suma tamaño sm para conteos compactos"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-08-17",
             "en": {
               "body": "<code>BadgeDot</code> has no visible content of its own: without an accessible name, a screen reader announces nothing of what the dot communicates (unread, online). Every real usage was already passing <code>aria-label</code>/<code>role=\"status\"</code> outside the contract, by hand; <code>label</code> is now a real, <b>required</b> option, and <code>role=\"status\"</code> is always authored. Composing a <code>BadgeDot</code> without naming it now fails validation instead of silently rendering with no accessible name.",
@@ -3172,6 +3196,21 @@
           "attr": "aria-label",
           "type": "string"
         },
+        "pulse": {
+          "attr": "data-pulse",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "size": {
+          "attr": "data-size",
+          "default": "md",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md"
+          ]
+        },
         "tone": {
           "attr": "data-tone",
           "default": "neutral",
@@ -3238,7 +3277,8 @@
             "unread-indicator"
           ],
           "options": [
-            "tone"
+            "tone",
+            "size"
           ],
           "react": {
             "from": "@skryensya/react/badge",
@@ -3268,7 +3308,8 @@
           ],
           "options": [
             "tone",
-            "label"
+            "label",
+            "pulse"
           ],
           "react": {
             "from": "@skryensya/react/badge",
@@ -18504,5 +18545,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "3002aa43f8674f86"
+  "sourceHash": "885b306403e90f4e"
 }

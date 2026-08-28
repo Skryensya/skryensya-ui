@@ -92,6 +92,7 @@ import "../styles/shell.scss";
  * nothing itself, so this pulls in a string and no graph.
  */
 import { FOCUS_ORDER_CSS } from "../../../../packages/devtools/src/focus-order";
+import { ClientRouter } from "astro:transitions";
 import LanguageMenu from "../components/LanguageMenu.astro";
 import CommandPalette from "../components/CommandPalette.astro";
 import ContrastToggle from "../components/ContrastToggle.astro";
@@ -102,7 +103,7 @@ import { indexDocument, indexHeroTabPanel } from "../lib/document-index";
 import { vanillaMountSections } from "../lib/vanilla-mount-sections";
 import VanillaMount from "../components/VanillaMount.astro";
 import { vanillaMounts } from "../lib/vanilla-mounts";
-import { allSets, iconMarkup, siteIconSet } from "../icons";
+import { iconMarkup, siteIconSet } from "../icons";
 import { getGlobalNavigation, getNavigation, type NavigationSection } from "../lib/navigation";
 import { palettePresets } from "../lib/palette-presets";
 import { availableLocales, canonicalPath, getLocale, localizePath, useTranslations } from "../i18n";
@@ -132,7 +133,7 @@ const PREPAINT = {
 
 /*
  * DEV ONLY. `@skryensya/devtools`'s "Components mounted" readout reads this global; see the
- * `initComponents()` call near the end of `<body>` for where it is written, and that script's own
+ * `initComponents()` call in `docs-page-lifecycle.ts` for where it is written, and that script's
  * comment for why a global rather than a DOM attribute.
  */
 declare global {
@@ -177,19 +178,6 @@ const alternates = availableLocales(canonical).map((code) => ({
 }));
 
 
-/*
- * The geometry of all three sets, serialized into the page for the pre-paint pass below.
- *
- * This site is unusual on purpose: it lets you SWAP icon sets at runtime, which no consuming app
- * does, an app picks its set at build and its icons are correct on first paint with zero JS. That
- * affordance is what put the geometry behind a deferred module, and a deferred module is why the
- * page painted Lucide and then swapped to your set while you watched.
- *
- * These bytes were already being shipped, as a module chunk. Inlining moves them rather than adding
- * them: the cost is losing a cross-page cache entry, and the return is that the icons are never
- * wrong on screen. Derived from `allSets`, so the set list has exactly one source of truth.
- */
-const iconGeometry = Object.fromEntries(allSets.map((set) => [set.id, set.set]));
 
 /*
  * The navigation lives in lib/navigation.ts, shared with the catalog so the same task grouping
@@ -284,46 +272,8 @@ const mainRowCount =
   (currentNavIndex >= 0 ? 1 : 0) +
   1;
 
-/*
- * Search sees the complete library. The catalog is a view, not a rail category, but remains a
- * deliberate result for people who want to browse rather than arrive with a component name.
- */
-const searchIndex = [
-  ...navigation.flatMap((section) =>
-    section.groups.flatMap((group) =>
-      group.items
-        .filter((item) => !item.todo)
-        .map((item) => ({
-          label: item.label,
-          aliases: item.aliases ?? [],
-          href: item.href,
-          section: section.section,
-          group: group.group,
-        })),
-    ),
-  ),
-  {
-    label: t("search.exploreComponents"),
-    aliases: ["all", "catalog", "catálogo", "todos"],
-    href: localizePath("/componentes", locale),
-    section: t("section.components"),
-    group: t("group.explore"),
-  },
-  {
-    label: t("search.layoutGuide"),
-    aliases: ["overview", "primitivas", "resumen"],
-    href: localizePath("/componentes/primitivas", locale),
-    section: t("section.components"),
-    group: t("group.layout"),
-  },
-  {
-    label: t("nav.presets"),
-    aliases: ["personalizar", "marca", "brand", "uc", "theming"],
-    href: localizePath("/presets", locale),
-    section: t("group.global"),
-    group: t("nav.presets"),
-  },
-];
+
+const searchIndexSrc = locale === "en" ? "/en/search-index.json" : "/search-index.json";
 
 const searchIcon = iconMarkup("search");
 const closeIcon = iconMarkup("close");
@@ -350,6 +300,7 @@ const PALETTE_PRESETS = palettePresets(locale);
     {alternates.map((alternate) => (
       <link rel="alternate" hreflang={alternate.code} href={alternate.href} />
     ))}
+    <ClientRouter />
 
     {/*
       Docs has a fixed visual contract: Phosphor icons, medium density and medium rounding. The reader
@@ -364,7 +315,8 @@ const PALETTE_PRESETS = palettePresets(locale);
       nobody writes any more. The value guards stay duplicated here, because a parser is a function
       and functions do not survive serialisation; that is the known and only cost of the exception.
     */}
-    <script is:inline define:vars={{ PALETTE_PRESETS, PREPAINT, siteIconSet }}>
+    <script type="application/json" id="docs-palette-presets" set:html={JSON.stringify(PALETTE_PRESETS)}></script>
+    <script is:inline define:vars={{ PREPAINT, siteIconSet }}>
       (function () {
         var d = document.documentElement;
         /* "Scripting is on", declared before first paint. Its only consumer is the pre-hydration
@@ -425,12 +377,16 @@ const PALETTE_PRESETS = palettePresets(locale);
         }
         /* Each non-default preset carries complete semantic accent declarations. Unknown or absent ids
          * fall back to the default stylesheet, so clearing storage is a no-op. */
+        var palettes = [];
+        try {
+          palettes = JSON.parse(document.getElementById("docs-palette-presets").textContent || "[]");
+        } catch (e) {}
         var preset = null;
         var paletteId = stored(PREPAINT.palette);
-        for (var i = 0; i < PALETTE_PRESETS.length; i++) {
-          if (PALETTE_PRESETS[i].id === paletteId) { preset = PALETTE_PRESETS[i]; break; }
+        for (var i = 0; i < palettes.length; i++) {
+          if (palettes[i].id === paletteId) { preset = palettes[i]; break; }
         }
-        if (preset && preset.id !== PALETTE_PRESETS[0].id) {
+        if (preset && palettes[0] && preset.id !== palettes[0].id) {
           var properties = Object.keys(preset.tokens);
           for (var j = 0; j < properties.length; j++) {
             d.style.setProperty(properties[j], preset.tokens[properties[j]]);
@@ -717,10 +673,11 @@ const PALETTE_PRESETS = palettePresets(locale);
     */}
     <CommandPalette
       id="docs-cmdk"
-      entries={searchIndex}
+      indexSrc={searchIndexSrc}
       label={t("search.dialog")}
       placeholder={t("search.placeholder")}
       hotkey="mod+k"
+      lazy
     />
     {/*
       A page that owns a search box of its own puts its palette here rather than in `<slot />`: the
@@ -729,8 +686,6 @@ const PALETTE_PRESETS = palettePresets(locale);
       the toc rail's row span, and a closed dialog is not a row.
     */}
     <slot name="palette" />
-    {/* The cycle order for the palette toggle, read by its module script (which has no define:vars). */}
-    <script type="application/json" id="docs-palette-presets" set:html={JSON.stringify(PALETTE_PRESETS)}></script>
 
     {/*
       The same nav as the rail, in a drawer, for viewports with no room for a rail. It is a native
@@ -1036,7 +991,7 @@ const PALETTE_PRESETS = palettePresets(locale);
       <div data-probe-for=""></div>
       <span class="sk-badge" data-probe-for="sk-badge"></span>
       <kbd class="sk-kbd" data-probe-for="sk-kbd"></kbd>
-      <button class="sk-button sk-interactive" data-sk-button data-probe-for="sk-button"></button>
+      <button class="sk-button sk-interactive" data-probe-for="sk-button"></button>
       <div class="sk-form-field" data-probe-for="sk-form-field"></div>
       <input class="sk-input" data-probe-for="sk-input" />
       <label class="sk-checkbox" data-probe-for="sk-checkbox"></label>
@@ -1056,7 +1011,7 @@ const PALETTE_PRESETS = palettePresets(locale);
       <nav class="sk-pagination" data-probe-for="sk-pagination"></nav>
       <select class="sk-select-native" data-probe-for="sk-select-native"></select>
       <div class="sk-select" data-probe-for="sk-select"></div>
-      <dialog class="sk-dialog" data-sk-dialog-vaul data-probe-for="data-sk-dialog-vaul"></dialog>
+      <dialog class="sk-dialog" data-probe-for="data-sk-dialog-vaul"></dialog>
       <table class="sk-table" data-probe-for="sk-table"></table>
       {/* One probe per component whose page documents styling hooks; used-values.ts resolves each
           hook against the element that scopes it. A component with a hooks table and no probe here
@@ -1100,54 +1055,6 @@ const PALETTE_PRESETS = palettePresets(locale);
       <div class="sk-wrapper" data-probe-for="sk-wrapper"></div>
     </div>
 
-    {/*
-      BEFORE THE FIRST PAINT, and that is the whole point of the two scripts below.
-
-      Both used to be deferred modules. They were correct and they were late: a module is deferred by
-      definition, so the reader saw the page WITHOUT them and then watched them arrive, the toc
-      column appearing and reflowing the prose, the icons painting Lucide and swapping to your set.
-      "Run it sooner" is not a knob you can turn on a module; it is a different script. These are
-      `is:inline`, so they are parser-blocking and run here, after the markup they touch and before
-      anything is painted. Nothing pops, because there is no frame where the wrong thing was on screen.
-
-      They are the same trick as the FOUC guard in <head>, moved down to where the DOM exists.
-    */}
-    <script is:inline define:vars={{ iconGeometry, siteIconSet }}>
-      (function () {
-        /* The set owns geometry intent, fill, stroke, viewBox, and the binding owns the box and
-         * accessibility. So everything the set did not write is stripped, and the managed few stay. */
-        var managed = { class: 1, "data-icon": 1, "data-size": 1, "aria-hidden": 1, focusable: 1 };
-
-        // Docs always paints `siteIconSet`, the same set `iconMarkup` serialises at build, so this
-        // pass is a no-op on the chrome instead of a visible re-draw. Only the playground calls the
-        // scoped form to preview a set inside its own stage; the chrome never adopts that preview.
-        function applyIconSet(requested, root) {
-          var setId = iconGeometry[requested] ? requested : siteIconSet;
-          var set = iconGeometry[setId];
-          (root || document.documentElement).setAttribute("data-icon-set", setId);
-
-          var svgs = (root || document).querySelectorAll("svg[data-icon]");
-          for (var i = 0; i < svgs.length; i++) {
-            var svg = svgs[i];
-            var icon = set[svg.getAttribute("data-icon")];
-            if (!icon) continue;
-
-            for (var j = svg.attributes.length - 1; j >= 0; j--) {
-              var name = svg.attributes[j].name;
-              if (!managed[name]) svg.removeAttribute(name);
-            }
-            svg.setAttribute("viewBox", icon.viewBox);
-            for (var key in icon.attrs || {}) svg.setAttribute(key, icon.attrs[key]);
-            svg.replaceChildren();
-            svg.insertAdjacentHTML("afterbegin", icon.body);
-          }
-        }
-
-        // Scoped swap for the playground: same geometry, one preview subtree, no global state.
-        window.__dsApplyIconSetWithin = function (root, setId) { applyIconSet(setId, root); };
-        applyIconSet(siteIconSet);
-      })();
-    </script>
 
     {/*
       The navbar's REAL height → `--docs-navbar-h`, and, only on the accordion page, the one pilot
@@ -1423,54 +1330,10 @@ const PALETTE_PRESETS = palettePresets(locale);
       </script>
     )}
 
-    <script>
-      /* Icons hydrate the same way a consumer's would: authored `<span data-sk-icon="role">`
-       * placeholders swapped for the bound set's <svg>. mountIcons is NOT part of initComponents on
-       * purpose, a set is always explicit (ADR-19), so the chrome proves that path by taking it.
-       * Runs BEFORE initComponents so machine enhancers patch over already-hydrated markup.
-       *
-       * The set is `siteIcons`, the SAME one the guard above already painted. A different set here
-       * would win (this runs after the guard), and the placeholders would land in one set while
-       * everything serialised at build stayed in the other. */
-      import { mountIcons } from "@skryensya/vanilla/icon";
-      import { initComponents } from "@skryensya/vanilla/auto";
-      import { siteIcons } from "../icons";
-      mountIcons(document, siteIcons);
-      const mountedCount = await initComponents();
-      /*
-       * DEV ONLY, read by `@skryensya/devtools`'s "Components mounted" readout. `initComponents()`'s
-       * own return value (`registry.ts`) is already the exact count. Every enhancer's `mount(root)`
-       * returns how many instances it just hydrated, summed here, so this is a global to hand that
-       * number to the panel, not a second count.
-       *
-       * BOTH the property AND an event, not just the property: Astro's dev server extracts each
-       * `<script>` in this file into its OWN `type="module" src="...">` tag, and measured, the panel's
-       * own dynamic-import script can start running BEFORE this one's `await initComponents()` above
-       * has resolved. Deferred module scripts are ordered relative to when they START, not
-       * guaranteed to finish one before the next begins. The property alone can lose that race; a
-       * `sk:devtools-component-count` event cannot, because `addEventListener` catches an event fired
-       * AFTER it was registered regardless of which script added the listener first.
-       */
-      if (import.meta.env.DEV) {
-        window.__skDevtoolsComponentCount = mountedCount;
-        window.dispatchEvent(new CustomEvent("sk:devtools-component-count", { detail: mountedCount }));
-      }
-    </script>
 
     <script>
-      /* Mode remains the sole scheme control in the docs chrome. Neither CopyButton nor ThemeToggle
-         is a published contract any more (decision 33): both are docs-local markup + behavior now,
-         so their mount calls live here rather than in initComponents(). */
-      import { initCopyButtons } from "../scripts/copy-button";
-      import { initThemeToggle, initThemeTogglePersistence, initThemeToggleSync } from "../scripts/theme-toggle";
-      import { initDocsBinding } from "../scripts/docs-binding";
-      import { initSearchTrigger } from "../scripts/search-trigger";
-      initCopyButtons();
-      initThemeToggle();
-      initThemeTogglePersistence();
-      initThemeToggleSync();
-      initDocsBinding();
-      initSearchTrigger();
+      import { initDocsPageLifecycle } from "../scripts/docs-page-lifecycle";
+      initDocsPageLifecycle();
     </script>
 
     {/*

@@ -1,12 +1,12 @@
 /*
  * Live React demo for /components/popover. Self-contained island (no function props crossing the
- * Astro boundary), mounted directly from the page with `<PopoverDemo client:load />`.
+ * Astro boundary), mounted directly from the page with `<PopoverDemo client:visible />`.
  */
 import { Popover } from "@skryensya/react/popover";
 import { framedIn } from "./framed";
 
 /** Every demo below runs inside its own preview frame. See `framed.tsx`. */
-const framed = framedIn(import.meta.url);
+const framed = framedIn("popover");
 
 export const PopoverDemo = framed(function PopoverDemo() {
   return (

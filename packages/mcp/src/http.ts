@@ -11,7 +11,7 @@ import { createServer } from "./create-server.js";
  * or reach it directly on a LAN/VPN without one.
  *
  * STATELESS (`sessionIdGenerator: undefined`), on purpose: this server carries no state of its own
- * between calls (every tool reads the same compiled manifest, `snippets`, `recipes` — nothing a
+ * between calls (every tool reads the same compiled manifest, `snippets`, `recipes`  -  nothing a
  * client's session would need remembered), the same reason stdio already spins up a fresh, isolated
  * process per client with nothing shared between them. A FRESH `McpServer` AND a fresh transport
  * per request, not one shared server: the SDK's own stateless example does the same (see that
@@ -21,7 +21,7 @@ import { createServer } from "./create-server.js";
  * paying it per request costs nothing a shared instance would meaningfully save.
  *
  * NO AUTH by default, matching stdio's own model: stdio's access control is "whoever can spawn this
- * process", HTTP's default is "whoever can reach this host and port" — a deliberate choice for a
+ * process", HTTP's default is "whoever can reach this host and port"  -  a deliberate choice for a
  * server whose four tools are already read-only against public, non-secret data (a compiled
  * component manifest, published snippets and recipes) with no side effect and nothing to leak.
  * Setting `MCP_HTTP_TOKEN` turns that off: every request then needs `Authorization: Bearer

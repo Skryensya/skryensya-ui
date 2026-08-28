@@ -20,6 +20,7 @@
      * even sitting inside a lighter container. */
     --sk-input-bg: var(--color-bg-surface-sunken);
     --sk-input-shadow: var(--elevation-sunken);
+    --sk-input-wash: var(--elevation-wash-sunken);
     --sk-input-fg: var(--color-text-primary);
     --sk-input-placeholder-fg: var(--color-text-tertiary);
     --sk-input-border-color: var(--color-border-default);
@@ -50,7 +51,7 @@
     padding: var(--sk-input-padding-y) var(--sk-input-padding-x);
     border: var(--sk-input-border-width) solid var(--sk-input-border-color);
     border-radius: var(--sk-input-radius);
-    background: var(--sk-input-bg);
+    background: var(--sk-input-wash) var(--sk-input-bg);
     color: var(--sk-input-fg);
     box-shadow: var(--sk-input-shadow);
     font: inherit;

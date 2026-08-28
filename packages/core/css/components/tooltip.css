@@ -21,6 +21,7 @@
     --sk-tooltip-font-size: var(--font-size-body-sm);
     --sk-tooltip-max-inline-size: 18rem;
     --sk-tooltip-shadow: var(--elevation-raised);
+    --sk-tooltip-wash: var(--elevation-wash-raised);
     /* La distancia al trigger. Un solo hook, porque el flip cambia el LADO pero no el hueco. */
     --sk-tooltip-offset: var(--space-stack-xs);
 
@@ -77,7 +78,7 @@
     box-sizing: border-box;
     padding: var(--sk-tooltip-padding, var(--space-inset-sm));
     border-radius: var(--sk-tooltip-radius, var(--radius-control));
-    background: var(--sk-tooltip-bg, var(--color-bg-inverse));
+    background: var(--sk-tooltip-wash, none) var(--sk-tooltip-bg, var(--color-bg-inverse));
     color: var(--sk-tooltip-fg, var(--color-text-inverse));
     font-size: var(--sk-tooltip-font-size, var(--font-size-body-sm));
     line-height: var(--font-line-height-body);

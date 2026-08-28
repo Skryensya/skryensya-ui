@@ -46,7 +46,7 @@ if (badRecipes.length > 0) {
 
 /*
  * Then the snippets: one scope below recipes, same reasoning. A snippet naming a signature that
- * changed is the same failure — a tree an agent is invited to copy, teaching something the
+ * changed is the same failure  -  a tree an agent is invited to copy, teaching something the
  * catalogue no longer does.
  */
 const badSnippets = checkSnippets();

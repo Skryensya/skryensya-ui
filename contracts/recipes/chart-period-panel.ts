@@ -16,14 +16,14 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
  * for this and should not grow one; the period is a fact about the composition, not about the series.
  *
  * THE CONTROL OUTLIVES THE DATA. It sits in every one of the four states, including loading and
- * error, for the reason `metric-panel`'s own heading does: what identifies the panel — here, which
- * period a reader asked for — stays true whether or not this attempt to show it succeeded. A
+ * error, for the reason `metric-panel`'s own heading does: what identifies the panel  -  here, which
+ * period a reader asked for  -  stays true whether or not this attempt to show it succeeded. A
  * Segmented that vanishes while its own request is in flight cannot be re-pressed to retry a
  * different window; it comes back once there is data again, which is later than a reader should have
  * to wait to change their mind.
  *
  * THE STATIC SNAPSHOT SELECTS "30D": a recipe is one still moment, not a live control (the same
- * caveat `hero-with-pricing-toggle`'s own notes give its Segmented) — a consumer wiring this for real
+ * caveat `hero-with-pricing-toggle`'s own notes give its Segmented)  -  a consumer wiring this for real
  * reads the control's change event and swaps `Chart`'s `points`, the same shape
  * `ChartPeriodCardDemo` in the docs implements live.
  */

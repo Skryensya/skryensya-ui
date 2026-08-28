@@ -15,27 +15,52 @@ import "@skryensya/core/components/stat.css";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
+import { ChartAnalyticsCardDemo } from "../react-demos/chart-card";
+import { ChartsAreaDemo, ChartsLineDemo } from "../react-demos/charts";
+import { ChartGalleryDemo, ChartPeriodCardDemo } from "../react-demos/chart-integrations";
+import { ChartComparisonDemo } from "../react-demos/chart-more";
 import {
-  ChartAnalyticsCardDemo,
-  ChartHistoryCardDemo,
-  ChartUsageCardDemo,
-} from "../react-demos/chart-card";
-import { ChartsAreaDemo, ChartsBarDemo, ChartsLineDemo } from "../react-demos/charts";
-import {
-  ChartGalleryDemo,
-  ChartPeriodCardDemo,
-  ChartPointDetailDemo,
-  ChartTableCardDemo,
-} from "../react-demos/chart-integrations";
-import {
-  ChartCategoryLegendDemo,
-  ChartComparisonDemo,
-  ChartMetricTabsDemo,
-} from "../react-demos/chart-more";
+  chartAnalyticsCardTree,
+  chartComparisonOverlays,
+  chartComparisonTree,
+  chartGalleryOverlays,
+  chartGalleryTree,
+  chartHistoryCardTree,
+  chartLegendCardTree,
+  chartMetricTabsTree,
+  chartPeriodCardTree,
+  chartPeriodScript,
+  chartPointDetailTree,
+  chartsAreaTree,
+  chartsBarTree,
+  chartsLineTree,
+  chartTableCardTree,
+  chartUsageCardTree,
+} from "../../demos/charts";
+import { emitCompositionWithChartOverlays, emitChartWithOverlay } from "../../demos/chart-overlay";
+import { bundleWeightPerWeek, latencyPerVersion, visitsPerWeek } from "../../demos/data/charts";
 import { getLocale, useTranslations } from "../../i18n";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
+
+/*
+ * VANILLA MARKUP FOR THE FIVE `line`/`area` CARDS, computed once here at build time.
+ *
+ * Each one's React composition stays hand-authored below (`ChartAnalyticsCardDemo` and friends,
+ * imported from `react-demos/*`) because the whole point of these five is a REAL `@skryensya/charts`
+ * import, which a tree cannot name. The Vanilla stage still needs to be more than an empty iframe,
+ * though - see `demos/chart-overlay.ts`'s own header for how the same tree's markup gets the same
+ * geometry the React renderer draws, without a JS engine running in the browser to compute it.
+ */
+const analyticsHtml = emitChartWithOverlay(chartAnalyticsCardTree(t), "area", visitsPerWeek);
+const chartsLineHtml = emitChartWithOverlay(chartsLineTree(t), "line", latencyPerVersion);
+const chartsAreaHtml = emitChartWithOverlay(chartsAreaTree(t), "area", bundleWeightPerWeek);
+const galleryHtml = emitCompositionWithChartOverlays(chartGalleryTree(t), chartGalleryOverlays(t));
+const comparisonHtml = emitCompositionWithChartOverlays(chartComparisonTree(t), chartComparisonOverlays());
+/** `bar` only: no overlay to paint, but still built from the same tree the React side's own data
+ *  mirrors, and carrying the `data-chart-periods` JSON `chart-period.ts` reads at runtime. */
+const periodHtml = emitChartWithOverlay(chartPeriodCardTree(t), "bar", []);
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const installLine = `pnpm add @skryensya/charts`;
@@ -83,87 +108,6 @@ const compactCount = (n) =>
     />
   </Stack>
 </Box>;`;
-
-const historySource = `import { Button } from "@skryensya/react/button";
-import { Chart } from "@skryensya/react/chart";
-import { Box, Grid, Stack } from "@skryensya/react/layout";
-import { Stat } from "@skryensya/react/stat";
-import { Heading, Text } from "@skryensya/react/typography";
-
-<Box as="article" border="subtle" padding="lg" surface="surface">
-  <Stack gap="md">
-    <Stack gap="xs">
-      <Heading as="h3" flush size="h4">
-        Contribution History
-      </Heading>
-      <Text size="caption" tone="tertiary">
-        Last 6 months of activity
-      </Text>
-    </Stack>
-    <Chart
-      height="lg"
-      kind="bar"
-      label="Contributions per month"
-      points={contributions}
-      tone="neutral"
-    />
-    <Grid columns={2} gap="sm">
-      <Box padding="sm" surface="sunken">
-        <Stat label="Upcoming" value="May 2026" />
-      </Box>
-      <Box padding="sm" surface="sunken">
-        <Stat label="Savings plan" value="Accelerated" />
-      </Box>
-    </Grid>
-    <Button size="sm" variant="neutral">
-      View Full Report
-    </Button>
-  </Stack>
-</Box>;`;
-
-const usageSource = `import { Chart } from "@skryensya/react/chart";
-import { Icon } from "@skryensya/react/icon";
-import { Box, Grid, Stack } from "@skryensya/react/layout";
-import { Stat } from "@skryensya/react/stat";
-import { Heading, Text } from "@skryensya/react/typography";
-
-<Box as="article" border="subtle" padding="lg" surface="surface">
-  <Stack gap="md">
-    <Stack gap="xs">
-      <Heading as="h3" flush size="h4">Power Usage</Heading>
-      <Text size="caption" tone="tertiary">Whole Home</Text>
-    </Stack>
-    <Chart
-      height="lg"
-      kind="bar"
-      label="Usage by hour"
-      points={hours}
-      tone="neutral"
-    />
-    <Grid columns={2} gap="md">
-      <Stat label="Currently Using" value="3.4 kW" />
-      <Stat
-        change={<><Icon name="arrow-up" size="sm" /> +18%</>}
-        label="Solar Gen"
-        trend="up"
-        value="1.2 kW"
-      />
-    </Grid>
-  </Stack>
-</Box>;`;
-
-const barSource = `import { Chart } from "@skryensya/react/chart";
-
-<Chart
-  height="lg"
-  kind="bar"
-  label="Documented components per quarter"
-  points={[
-    { label: "Q1", value: 14 },
-    { label: "Q2", value: 23 },
-    { label: "Q3", value: 41 },
-  ]}
-/>;`;
 
 const lineSource = `import { Chart } from "@skryensya/charts/react";
 
@@ -230,76 +174,6 @@ const [period, setPeriod] = useState("30d");
   </Stack>
 </Box>;`;
 
-const tableSource = `import { Chart } from "@skryensya/react/chart";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableScroll,
-} from "@skryensya/react/table";
-
-<Chart
-  format="compact"
-  height="md"
-  kind="bar"
-  label="Revenue by quarter"
-  points={quarterlyRevenue}
-  tone="neutral"
-/>
-<TableScroll>
-  <Table>
-    <TableCaption>Revenue by quarter, in dollars</TableCaption>
-    <TableHead>
-      <TableRow>
-        <TableHeader scope="col">Quarter</TableHeader>
-        <TableHeader scope="col">Revenue</TableHeader>
-        <TableHeader scope="col">Change</TableHeader>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {quarterlyRevenue.map((row) => (
-        <TableRow key={row.label}>
-          <TableHeader scope="row">{row.label}</TableHeader>
-          <TableCell>{row.revenue}</TableCell>
-          <TableCell>{row.delta ?? "—"}</TableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-</TableScroll>;`;
-
-const detailSource = `import { Chart } from "@skryensya/react/chart";
-import { Button } from "@skryensya/react/button";
-import { Tooltip } from "@skryensya/react/tooltip";
-import { Stack } from "@skryensya/react/layout";
-import { formatChartValue } from "@skryensya/core/chart";
-
-<Stack gap="md">
-  <Chart
-    height="md"
-    kind="bar"
-    label="Latency by endpoint"
-    labels={false}
-    points={latency}
-    tone="info"
-  />
-  {/* One grid column per point, matching the chart's own bar columns exactly —
-      not a wrapping row, whose widths would follow each label's own text length. */}
-  <div style={{ display: "grid", gridAutoFlow: "column", gridAutoColumns: "1fr", gap: "var(--space-inline-xs)" }}>
-    {latency.map((point) => (
-      <Tooltip content={\`\${formatChartValue(point.value)} ms\`} key={point.label}>
-        <Button size="sm" style={{ inlineSize: "100%" }} variant="ghost">
-          {point.label}
-        </Button>
-      </Tooltip>
-    ))}
-  </div>
-</Stack>;`;
-
 const gallerySource = `import { Chart } from "@skryensya/react/chart";
 import { Chart as PathChart } from "@skryensya/charts/react";
 import { Grid } from "@skryensya/react/layout";
@@ -310,70 +184,6 @@ import { Grid } from "@skryensya/react/layout";
   <PathChart height="md" kind="area" flush labels={false} tone="warning" points={cpu} label="CPU usage" />
   <Chart height="md" kind="bar" format="currency" currency="USD" grid tone="neutral" points={spend} label="Daily spend" />
 </Grid>;`;
-
-const metricTabsSource = `import { Tabs } from "@skryensya/react/tabs";
-import { Chart } from "@skryensya/react/chart";
-import { Stat } from "@skryensya/react/stat";
-import { Stack } from "@skryensya/react/layout";
-import { Heading } from "@skryensya/react/typography";
-
-function MetricPanel({ heading, statLabel, value, chartLabel, points, tone }) {
-  return (
-    <Stack gap="md">
-      <Stack gap="xs">
-        <Heading as="h4" flush size="h5">{heading}</Heading>
-        <Stat label={statLabel} value={value} />
-      </Stack>
-      <Chart height="md" kind="bar" label={chartLabel} points={points} tone={tone} />
-    </Stack>
-  );
-}
-
-<Tabs
-  aria-label="Choose metric"
-  defaultValue="revenue"
-  items={[
-    { value: "revenue", label: "Revenue", children: <MetricPanel {...revenue} /> },
-    { value: "users", label: "Users", children: <MetricPanel {...users} /> },
-    { value: "errors", label: "Errors", children: <MetricPanel {...errors} /> },
-  ]}
-/>;`;
-
-const legendSource = `import { Badge } from "@skryensya/react/badge";
-import { Chart } from "@skryensya/react/chart";
-import { Box, Inline, Stack } from "@skryensya/react/layout";
-import { Heading, Text } from "@skryensya/react/typography";
-
-const budget = [
-  { label: "Eng", value: 182000, tone: "accent" },
-  { label: "Sales", value: 96000, tone: "success" },
-  { label: "Support", value: 54000, tone: "warning" },
-  { label: "Legal", value: 21000, tone: "danger" },
-  { label: "Ops", value: 68000, tone: "neutral" },
-];
-
-<Box as="article" border="subtle" padding="lg" surface="surface">
-  <Stack gap="md">
-    <Stack gap="xs">
-      <Heading as="h3" flush size="h4">Budget by team</Heading>
-      <Text size="caption" tone="tertiary">Fiscal year 2026, in dollars</Text>
-    </Stack>
-    <Chart
-      format="compact"
-      kind="bar"
-      label="Budget by team"
-      points={budget}
-      values
-    />
-    <Inline aria-hidden="true" gap="sm" wrap>
-      {budget.map((point) => (
-        <Badge key={point.label} tone={point.tone}>
-          {point.label}
-        </Badge>
-      ))}
-    </Inline>
-  </Stack>
-</Box>;`;
 
 const comparisonSource = `import { Chart } from "@skryensya/charts/react";
 import { Box, Grid, Stack } from "@skryensya/react/layout";
@@ -454,6 +264,7 @@ const tanstackSource = `import { TanStackChart } from "@skryensya/charts/react/t
     <h3 id="analitica">{t("chartsPage.analyticsTitle")}</h3>
     <p set:html={t("chartsPage.analyticsBody")} />
     <ComponentPreview
+      html={analyticsHtml}
       react={analyticsSource}
       label={t("chartsPage.analyticsLabel")}
       note={t("chartsPage.analyticsNote")}
@@ -467,28 +278,20 @@ const tanstackSource = `import { TanStackChart } from "@skryensya/charts/react/t
     <h3 id="historial">{t("chartsPage.historyTitle")}</h3>
     <p set:html={t("chartsPage.historyBody")} />
     <ComponentPreview
-      react={historySource}
+      tree={chartHistoryCardTree(t)}
       label={t("chartsPage.historyLabel")}
       note={t("chartsPage.historyNote")}
       minHeight="32rem"
-    >
-      <Fragment slot="react">
-        <ChartHistoryCardDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    />
 
     <h3 id="consumo">{t("chartsPage.usageTitle")}</h3>
     <p set:html={t("chartsPage.usageBody")} />
     <ComponentPreview
-      react={usageSource}
+      tree={chartUsageCardTree(t)}
       label={t("chartsPage.usageLabel")}
       note={t("chartsPage.usageNote")}
       minHeight="30rem"
-    >
-      <Fragment slot="react">
-        <ChartUsageCardDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    />
 
     <h3 id="chart">{t("chartsPage.pieceTitle")}</h3>
     <p set:html={t("chartsPage.pieceBody")} />
@@ -496,19 +299,16 @@ const tanstackSource = `import { TanStackChart } from "@skryensya/charts/react/t
     <h3 id="barras">{t("chartsPage.barTitle")}</h3>
     <p set:html={t("chartsPage.barBody")} />
     <ComponentPreview
-      react={barSource}
+      tree={chartsBarTree(t)}
       label={t("chartsPage.barLabel")}
       note={t("chartsPage.barNote")}
       minHeight="22rem"
-    >
-      <Fragment slot="react">
-        <ChartsBarDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    />
 
     <h3 id="linea">{t("chartsPage.lineTitle")}</h3>
     <p set:html={t("chartsPage.lineBody")} />
     <ComponentPreview
+      html={chartsLineHtml}
       react={lineSource}
       label={t("chartsPage.lineLabel")}
       note={t("chartsPage.lineNote")}
@@ -522,6 +322,7 @@ const tanstackSource = `import { TanStackChart } from "@skryensya/charts/react/t
     <h3 id="area">{t("chartsPage.areaTitle")}</h3>
     <p set:html={t("chartsPage.areaBody")} />
     <ComponentPreview
+      html={chartsAreaHtml}
       react={areaSource}
       label={t("chartsPage.areaLabel")}
       note={t("chartsPage.areaNote")}
@@ -538,6 +339,9 @@ const tanstackSource = `import { TanStackChart } from "@skryensya/charts/react/t
     <h4 id="periodo">{t("chartsPage.periodTitle")}</h4>
     <p set:html={t("chartsPage.periodBody")} />
     <ComponentPreview
+      html={periodHtml}
+      js={chartPeriodScript}
+      previewScript={chartPeriodScript}
       react={periodSource}
       label={t("chartsPage.periodLabel")}
       note={t("chartsPage.periodNote")}
@@ -551,32 +355,25 @@ const tanstackSource = `import { TanStackChart } from "@skryensya/charts/react/t
     <h4 id="tabla">{t("chartsPage.tableTitle")}</h4>
     <p set:html={t("chartsPage.tableBody")} />
     <ComponentPreview
-      react={tableSource}
+      tree={chartTableCardTree(t)}
       label={t("chartsPage.tableLabel")}
       note={t("chartsPage.tableNote")}
       minHeight="34rem"
-    >
-      <Fragment slot="react">
-        <ChartTableCardDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    />
 
     <h4 id="detalle">{t("chartsPage.detailTitle")}</h4>
     <p set:html={t("chartsPage.detailBody")} />
     <ComponentPreview
-      react={detailSource}
+      tree={chartPointDetailTree(t)}
       label={t("chartsPage.detailLabel")}
       note={t("chartsPage.detailNote")}
       minHeight="24rem"
-    >
-      <Fragment slot="react">
-        <ChartPointDetailDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    />
 
     <h4 id="galeria">{t("chartsPage.galleryTitle")}</h4>
     <p set:html={t("chartsPage.galleryBody")} />
     <ComponentPreview
+      html={galleryHtml}
       react={gallerySource}
       label={t("chartsPage.galleryLabel")}
       note={t("chartsPage.galleryNote")}
@@ -590,32 +387,25 @@ const tanstackSource = `import { TanStackChart } from "@skryensya/charts/react/t
     <h4 id="metricas">{t("chartsPage.metricTabsTitle")}</h4>
     <p set:html={t("chartsPage.metricTabsBody")} />
     <ComponentPreview
-      react={metricTabsSource}
+      tree={chartMetricTabsTree(t)}
       label={t("chartsPage.metricTabsLabel")}
       note={t("chartsPage.metricTabsNote")}
       minHeight="28rem"
-    >
-      <Fragment slot="react">
-        <ChartMetricTabsDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    />
 
     <h4 id="leyenda">{t("chartsPage.legendTitle")}</h4>
     <p set:html={t("chartsPage.legendBody")} />
     <ComponentPreview
-      react={legendSource}
+      tree={chartLegendCardTree(t)}
       label={t("chartsPage.legendLabel")}
       note={t("chartsPage.legendNote")}
       minHeight="26rem"
-    >
-      <Fragment slot="react">
-        <ChartCategoryLegendDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    />
 
     <h4 id="comparacion">{t("chartsPage.comparisonTitle")}</h4>
     <p set:html={t("chartsPage.comparisonBody")} />
     <ComponentPreview
+      html={comparisonHtml}
       react={comparisonSource}
       label={t("chartsPage.comparisonLabel")}
       note={t("chartsPage.comparisonNote")}

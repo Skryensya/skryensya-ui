@@ -1,7 +1,7 @@
 /*
  * Put a React demo in the same isolated realm the Vanilla one already gets.
  *
- * A `client:load` island renders into the DOCS document: it inherits the page's cascade, its top
+ * A `client:visible` island renders into the DOCS document: it inherits the page's cascade, its top
  * layer, its viewport and its `<html>`. That makes the React binding a weaker demo than the Vanilla
  * one beside it: it reflows with the docs column instead of the stage, cannot honour a screen
  * preset, and its dialogs open against the reader's viewport. Worse, it is a different answer to
@@ -63,12 +63,12 @@ export type FramedOverrides = Pick<
 };
 
 /**
- * The demo file's name, as the frame's glob map keys it.
+ * The demo file's basename, as the frame's glob map keys it.
  *
- * Dev serves the real path (`…/react-demos/button.tsx?t=123` → `button`), but a BUILD serves a
- * hashed chunk (`button_vlYZB2ck.mjs`), which is why the frame matches on a prefix rather than
- * demanding an exact hit: stripping a hash whose format is Vite's to change would be guessing.
- * This only has to get the stem right; `resolveDemoLoader` in the frame owns the matching.
+ * This used to derive the name from `import.meta.url`. That works in dev, where the URL is the
+ * source file, but production can inline a demo into the importing Astro page chunk. The frame then
+ * receives `CardPage_HASH` instead of `card`, misses the glob key, and the iframe finishes booting
+ * with an empty body. Passing the source basename explicitly keeps the frame resolver stable.
  */
 function moduleKey(moduleUrl: string): string {
   const path = moduleUrl.split("?")[0] ?? moduleUrl;
@@ -77,19 +77,18 @@ function moduleKey(moduleUrl: string): string {
 }
 
 /**
- * Bind `framed` to the file calling it: `const framed = framedIn(import.meta.url)`.
+ * Bind `framed` to the file calling it: `const framed = framedIn("button")`.
  *
- * One line per demo file rather than an argument on each of the 131 demos, and (the reason it is
- * shaped this way at all) the PAGES never change. A page still writes `<ButtonBasicDemo
- * client:load />`, so isolation is a property of the demo itself, not something 262 call sites have
- * to remember to ask for.
+ * One line per demo file rather than an argument on each of the page call sites, and (the reason it
+ * is shaped this way at all) the PAGES never change. A page still writes `<ButtonBasicDemo
+ * client:visible />`, so isolation is a property of the demo itself, not something every call site
+ * has to remember to ask for.
  *
- * `import.meta.url` is the module's real served URL in dev and its hashed chunk URL in a build; the
- * frame resolves it through a Vite glob rather than fetching it, so both work without a hand-kept
- * registry that would drift the first time a demo file was added.
+ * The argument is the source file basename used by `component-preview-frame.ts`'s Vite glob map.
+ * It is intentionally not derived from the built chunk URL; chunks are an optimizer detail.
  */
-export function framedIn(moduleUrl: string) {
-  const module = moduleKey(moduleUrl);
+export function framedIn(moduleName: string) {
+  const module = moduleKey(moduleName);
 
   return function framed<P extends object>(
     Component: ComponentType<P>,
@@ -102,7 +101,7 @@ export function framedIn(moduleUrl: string) {
       /*
        * Props are serialised into the frame as JSON. These demos take only plain data (`lang`), by
        * the same rule that already governs them: nothing that cannot cross the Astro boundary for
-       * `client:load`. A function prop could not have been authored here in the first place.
+       * `client:visible`. A function prop could not have been authored here in the first place.
        *
        * `measure` and `frameOptions` are RESERVED props: they belong to the frame, not to the demo.
        * Most wrappers bake their frame settings in at definition time. Shared wrappers such as
@@ -153,6 +152,7 @@ export function framedIn(moduleUrl: string) {
           aria-busy="true"
           srcDoc={srcDoc}
           title={`Preview renderizado (React): ${title}`}
+          loading="lazy"
           allow="clipboard-write"
         />
       );

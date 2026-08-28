@@ -14,6 +14,27 @@ export const badgeDotsTree = (_t: Translate): UsageTree => ({
   })),
 });
 
+export const badgeSmallTree = (_t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Inline",
+  options: { gap: "sm", inlineAlign: "center" },
+  children: [
+    { contract: "badge", signature: "Badge", options: { tone: "neutral" }, children: "Default" },
+    { contract: "badge", signature: "Badge", options: { tone: "neutral", size: "sm" }, children: "Small" },
+  ],
+});
+
+export const badgePulseTree = (_t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Inline",
+  options: { gap: "md" },
+  children: tones.map((tone) => ({
+    contract: "badge",
+    signature: "BadgeDot",
+    options: { tone, label: tone, pulse: true },
+  })),
+});
+
 export const badgeHoldersTree = (t: Translate): UsageTree => ({
   contract: "layout",
   signature: "Inline",
@@ -33,7 +54,7 @@ export const badgeHoldersTree = (t: Translate): UsageTree => ({
         {
           contract: "badge",
           signature: "BadgeDot",
-          options: { tone: "danger", label: t("demo.badge.unread") },
+          options: { tone: "danger", label: t("demo.badge.unread"), pulse: true },
         },
       ],
     },
@@ -50,7 +71,7 @@ export const badgeHoldersTree = (t: Translate): UsageTree => ({
         {
           contract: "badge",
           signature: "BadgeDot",
-          options: { tone: "success", label: t("demo.badge.online") },
+          options: { tone: "success", label: t("demo.badge.online"), pulse: true },
         },
       ],
     },

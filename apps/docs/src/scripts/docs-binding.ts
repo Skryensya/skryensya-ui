@@ -27,25 +27,32 @@ function persist<Value>(
   if (parsed !== undefined) setPreference(preference, parsed);
 }
 
-export function initDocsBinding(): void {
-  document.addEventListener(componentPreviewBindingChangeEvent, (event) => {
-    persist(componentPreviewBindingPreference, (event as CustomEvent<{ value: string }>).detail?.value);
-  });
+let docsBindingBound = false;
 
-  document.addEventListener(componentPreviewScreenChangeEvent, (event) => {
-    persist(componentPreviewScreenPreference, (event as CustomEvent<{ value: string }>).detail?.value);
-  });
+export function initDocsBinding(): void {
+  const root = document.documentElement;
+
+  if (!docsBindingBound) {
+    document.addEventListener(componentPreviewBindingChangeEvent, (event) => {
+      persist(componentPreviewBindingPreference, (event as CustomEvent<{ value: string }>).detail?.value);
+    });
+
+    document.addEventListener(componentPreviewScreenChangeEvent, (event) => {
+      persist(componentPreviewScreenPreference, (event as CustomEvent<{ value: string }>).detail?.value);
+    });
+
+    docsBindingBound = true;
+  }
 
   /*
    * Fullscreen reconstructs one card in a srcdoc whose `<html>` has no screen pref (XL is
    * docs-column-only and was stripped). Writing that absence back to storage would clobber the
    * catalogue tab's own preset. Listeners above still persist a choice made IN this frame.
    */
-  if (document.documentElement.hasAttribute("data-sk-fullscreen-preview")) return;
+  if (root.hasAttribute("data-sk-fullscreen-preview")) return;
 
   // If the pre-paint script already wrote the attributes, keep storage aligned (first paint, or a
   // value another tab wrote while this one was closed).
-  const root = document.documentElement;
   persist(componentPreviewBindingPreference, root.getAttribute(componentPreviewAttrs.documentBinding));
   // `free` is the ABSENCE of the screen attribute, so an absent one is a real value, not a gap.
   persist(

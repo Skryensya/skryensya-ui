@@ -1,6 +1,7 @@
 import type { ComponentContract } from "./contract.js";
 
 export type BadgeTone = "neutral" | "accent" | "success" | "warning" | "danger";
+export type BadgeSize = "sm" | "md";
 
 export const badgeParts = {
   root: "sk-badge",
@@ -28,6 +29,8 @@ export const badgeContract = {
       default: "neutral",
       attr: "data-tone",
     },
+    size: { type: "enum", values: ["sm", "md"], default: "md", attr: "data-size" },
+    pulse: { type: "boolean", default: false, attr: "data-pulse", trueValue: "" },
     /** What the dot means ("Unread", "Online"). Its only accessible content, see `BadgeDot`'s own doc. */
     label: { type: "string", attr: "aria-label" },
   },
@@ -36,7 +39,7 @@ export const badgeContract = {
     Badge: {
       intent: ["count", "status", "label-on-something", "unread-indicator"],
       host: { element: "span" },
-      options: ["tone"],
+      options: ["tone", "size"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "span", part: "root", host: true, slot: "children" },
       react: { from: "@skryensya/react/badge", name: "Badge" },
@@ -52,7 +55,7 @@ export const badgeContract = {
     BadgeDot: {
       intent: ["unread-dot", "presence-dot", "status-dot"],
       host: { element: "span" },
-      options: ["tone", "label"],
+      options: ["tone", "label", "pulse"],
       requires: ["label"],
       slots: {},
       template: {

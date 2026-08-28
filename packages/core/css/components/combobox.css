@@ -6,6 +6,7 @@
      * still reads apart from whatever lighter container (a card, a Dialog) it sits inside. */
     --sk-combobox-bg: var(--color-bg-surface-sunken);
     --sk-combobox-shadow: var(--elevation-sunken);
+    --sk-combobox-wash: var(--elevation-wash-sunken);
     --sk-combobox-fg: var(--color-text-primary);
     --sk-combobox-border-color: var(--color-border-default);
     --sk-combobox-invalid-border-color: var(--color-border-danger);
@@ -16,6 +17,7 @@
     --sk-combobox-content-border-color: var(--color-border-subtle);
     --sk-combobox-content-max-block-size: 18rem;
     --sk-combobox-content-shadow: var(--elevation-raised);
+    --sk-combobox-content-wash: var(--elevation-wash-raised);
     --sk-combobox-radius: var(--radius-control);
     --sk-combobox-content-radius: var(--radius-surface);
     --sk-combobox-padding-x: var(--space-inset-sm);
@@ -41,7 +43,7 @@
     overflow: clip;
     border: 1px solid var(--sk-combobox-border-color);
     border-radius: var(--sk-combobox-radius);
-    background: var(--sk-combobox-bg);
+    background: var(--sk-combobox-wash) var(--sk-combobox-bg);
     color: var(--sk-combobox-fg);
     box-shadow: var(--sk-combobox-shadow);
   }
@@ -201,6 +203,7 @@
     --sk-combobox-content-radius: var(--radius-surface);
     --sk-combobox-content-max-block-size: 18rem;
     --sk-combobox-content-shadow: var(--elevation-raised);
+    --sk-combobox-content-wash: var(--elevation-wash-raised);
     --sk-combobox-item-padding: var(--space-inset-xs) var(--space-inset-sm);
 
     --sk-anchored-position-area: block-end span-inline-end;
@@ -246,7 +249,7 @@
     scroll-padding: var(--space-inset-xs);
     border: 1px solid var(--sk-combobox-content-border-color);
     border-radius: var(--sk-combobox-content-radius);
-    background: var(--sk-combobox-content-bg);
+    background: var(--sk-combobox-content-wash) var(--sk-combobox-content-bg);
     color: var(--sk-combobox-fg);
     box-shadow: var(--sk-combobox-content-shadow);
     outline: none;

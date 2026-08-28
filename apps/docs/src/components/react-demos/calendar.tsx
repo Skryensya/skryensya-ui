@@ -8,7 +8,7 @@ import { parseCalendarDate } from "@skryensya/core/calendar";
 import { framedIn } from "./framed";
 
 /** Every demo below runs inside its own preview frame. See `framed.tsx`. */
-const framed = framedIn(import.meta.url);
+const framed = framedIn("calendar");
 
 export const CalendarBasicDemo = framed(function CalendarBasicDemo() {
   return <Calendar label="Availability" locale="en" />;

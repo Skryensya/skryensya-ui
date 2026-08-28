@@ -22,6 +22,18 @@ export function connectCodePreview(root: HTMLElement): Cleanup {
   const fullPanelEl = root.querySelector<HTMLElement>(`[${codePreviewAttrs.densityPanel}="full"]`);
   // The single-panel case (no density switch): the one viewport this preview has.
   const plainPanelEl = condensedPanelEl || fullPanelEl ? null : root.querySelector<HTMLElement>(`.${codePreviewParts.viewport}`);
+  const fullSourceTemplateId = fullPanelEl?.dataset.skCodePreviewSourceTemplate;
+  const fullSourceTemplate = fullSourceTemplateId ? document.getElementById(fullSourceTemplateId) : null;
+
+  const hydrateFullSource = () => {
+    if (!fullPanelEl || fullPanelEl.textContent) return;
+    const source =
+      fullSourceTemplate instanceof HTMLTemplateElement
+        ? fullSourceTemplate.content.textContent
+        : fullSourceTemplate?.textContent;
+    if (source) fullPanelEl.textContent = source;
+  };
+
 
   /*
    * `aria-controls` needs SOME id to point at, and authored/compiled markup never assigns one -
@@ -60,8 +72,8 @@ export function connectCodePreview(root: HTMLElement): Cleanup {
    *
    * `inert` over hand-rolling `tabindex`/`role`/`aria-label` toggling: one attribute pulls the
    * WHOLE region out of both the accessibility tree and native Tab order (and pointer hit-testing)
-   * in a single move, so nothing new added inside a code sample later — a future annotation, a
-   * link — can quietly reopen this gap by not knowing to repeat three separate overrides.
+   * in a single move, so nothing new added inside a code sample later  -  a future annotation, a
+   * link  -  can quietly reopen this gap by not knowing to repeat three separate overrides.
    */
   const hidesWhenCollapsed = root.hasAttribute(codePreviewAttrs.hidesWhenCollapsed);
   const scrollRegionOf = (panel: HTMLElement | null): HTMLElement | null =>
@@ -106,6 +118,7 @@ export function connectCodePreview(root: HTMLElement): Cleanup {
   };
 
   const showDensity = (density: CodePreviewDensity) => {
+    if (density === "full") hydrateFullSource();
     root.setAttribute(codePreviewAttrs.density, density);
     if (densityInput) densityInput.checked = density === "full";
     syncDisclosureChrome(density);

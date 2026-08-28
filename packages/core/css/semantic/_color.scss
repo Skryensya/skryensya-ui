@@ -14,14 +14,20 @@
      * (`--color-text-tertiary` is the tightest pair): `-tertiary` drops under 4.5:1 past ~L 33.5%,
      * `-raised` already sits at L 26.8%, leaving ~6-7 points of headroom - not two more visibly
      * distinct rungs, one. `color-mix()` of the two flanking palette stops (not a third named
-     * stone-* stop) lands inside that headroom with a safety margin: measured 4.76:1, not 4.59:1
-     * riding the ceiling. Light mode needs none of this: white cannot get lighter, and a dark
-     * shadow on a light surface already reads on its own, so all rungs collapse to the same white a
-     * reader never notices doesn't move.
+     * stone-* stop) lands inside that headroom with a safety margin, well clear of the 4.5:1 floor.
+     * Light mode needs none of this: white cannot get lighter, and a dark shadow on a light surface
+     * already reads on its own, so all rungs collapse to the same white a reader never notices
+     * doesn't move.
+     *
+     * 85/15, not the original 65/35 (nor the 75/25 stop in between, still confirmed live as too
+     * light): keeps this a real, distinct step above `-raised` (L 28.39 against its L 26.8) while
+     * leaning as little toward `-700`'s own L 37.4 as still reads as its own rung rather than
+     * `-raised` itself - well inside the same headroom to the 4.5:1 floor, spending even less of
+     * it than 75/25 did.
      */
     --color-bg-surface-overlay: light-dark(
       var(--palette-white),
-      color-mix(in oklch, var(--palette-stone-800) 65%, var(--palette-stone-700) 35%)
+      color-mix(in oklch, var(--palette-stone-800) 85%, var(--palette-stone-700) 15%)
     );
     /* `stone-100`, not `-200`: measured too strong a drop against `-surface`'s white (L92.3 read as
      * a full step past `-canvas` itself, L97, not just past the white surfaces sitting above it).
@@ -77,10 +83,23 @@
 
     /*
      * ELEVATION TINT: a per-level identity wash, layered on TOP of whatever `--color-bg-surface-*`
-     * a component already paints, never a replacement for it. Composed into every non-`flat` level
-     * below as one more `box-shadow` layer (`inset 0 0 0 9999px`, the fill-the-box trick: clipped to
-     * the border-radius same as any inset shadow, invisible against the cast layers since those only
-     * ever paint OUTSIDE the box).
+     * a component already paints, never a replacement for it.
+     *
+     * NOT a `box-shadow` layer any more. `inset 0 0 0 9999px`, the fill-the-box trick this used to
+     * ride in on, is exactly the shape that trips a real Chromium rendering bug: once spread is
+     * pushed past roughly the box's OWN `border-radius` (any amount enough to actually fill a real
+     * component, not a magnitude thing  -  measured live at spread 40px, not just the 9999px this
+     * used), the inset shadow's own corner radius is clamped to 0 before it is clipped against the
+     * box's real rounded corner, and the seam between the two paints as a visibly darker arc
+     * hugging the curve while the straight edges stay correctly faint. Confirmed live on a raised
+     * Hero: stripping just this layer made the corner match the edges again.
+     *
+     * So the wash is now `--elevation-wash-*` below, a `background-image` layer instead: a
+     * same-color-twice `linear-gradient`, a flat fill that respects `border-radius` the way any
+     * ordinary background does, with none of the inset-shadow spread math to go wrong. A consumer
+     * composes it into its OWN `background` (`background: var(--elevation-wash-raised), var(--own-
+     * bg));`), the same "layer on top of whatever is already there" contract the box-shadow version
+     * had, just on the property that was always going to render it correctly.
      *
      * Real here, in the base tier, not just under `hc-tokens` (`_mixins.scss`, which pushes these
      * same four to a stronger rung): each level keeps its own identity wash at ordinary contrast too,
@@ -100,9 +119,9 @@
      * strong enough to undo most of that light-mode fix on its own (~4% black over `stone-100`
      * lands close to the old, too-dark `stone-200` this was moved away from). Light stays weak
      * enough to actually stay subtle; dark keeps the strength `sunken` needs there. A component can
-     * still opt out at any point the rest of this system already lets it: override ITS OWN hook
-     * (`--sk-box-shadow`, say) to a value that never referenced `--elevation-tint-*` in the first
-     * place, or override the token directly to `transparent`.
+     * still opt out at any point the rest of this system already lets it: leave the matching
+     * `--elevation-wash-*` layer out of its own `background`, or override the tint token directly to
+     * `transparent`.
      */
     --elevation-tint-sunken: light-dark(
       color-mix(in oklch, var(--palette-black) 1%, transparent),
@@ -112,13 +131,22 @@
     --elevation-tint-overlay: color-mix(in oklch, var(--color-text-primary) 4%, transparent);
     --elevation-tint-modal: color-mix(in oklch, var(--color-text-primary) 7%, transparent);
 
+    /* One `background-image` layer per non-`flat` level, a flat fill wearing a `linear-gradient`
+     * shape only because that is the value type `background-image` accepts; same color start and
+     * end, so nothing actually gradates. See the block above for why this replaced an inset
+     * `box-shadow`. */
+    --elevation-wash-sunken: linear-gradient(var(--elevation-tint-sunken), var(--elevation-tint-sunken));
+    --elevation-wash-raised: linear-gradient(var(--elevation-tint-raised), var(--elevation-tint-raised));
+    --elevation-wash-overlay: linear-gradient(var(--elevation-tint-overlay), var(--elevation-tint-overlay));
+    --elevation-wash-modal: linear-gradient(var(--elevation-tint-modal), var(--elevation-tint-modal));
+
     --elevation-flat: none;
-    --elevation-raised: 0 1px 2px 0 var(--shadow-sm), 0 1px 3px 0 var(--shadow-sm), inset 0 0 0 9999px var(--elevation-tint-raised);
-    --elevation-overlay: 0 4px 6px -2px var(--shadow-md), 0 10px 15px -3px var(--shadow-md), inset 0 0 0 9999px var(--elevation-tint-overlay);
-    --elevation-modal: 0 8px 10px -6px var(--shadow-lg), 0 20px 25px -5px var(--shadow-lg), inset 0 0 0 9999px var(--elevation-tint-modal);
+    --elevation-raised: 0 1px 2px 0 var(--shadow-sm), 0 1px 3px 0 var(--shadow-sm);
+    --elevation-overlay: 0 4px 6px -2px var(--shadow-md), 0 10px 15px -3px var(--shadow-md);
+    --elevation-modal: 0 8px 10px -6px var(--shadow-lg), 0 20px 25px -5px var(--shadow-lg);
     /* The one negative rung: pressed INTO the canvas rather than lifted off it, same `--shadow-sm`
      * ingredient `-raised` uses, `inset` instead of cast. `surface="sunken"` used to change only the
      * background tint and nothing else, the one surface value with no shadow reinforcing which way
      * it reads. See /elevacion. */
-    --elevation-sunken: inset 0 1px 2px 0 var(--shadow-sm), inset 0 0 0 9999px var(--elevation-tint-sunken);
+    --elevation-sunken: inset 0 1px 2px 0 var(--shadow-sm);
 }

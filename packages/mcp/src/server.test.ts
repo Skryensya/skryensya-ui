@@ -72,8 +72,8 @@ describe("the surface", () => {
     /*
      * FOUR, not five, and not back to three either.
      *
-     * The old surface's sin was one tool per WORKFLOW STEP over the same content — search, then read
-     * a schema, then check props — which is exactly what get_catalog -> get_contract -> validate_ui
+     * The old surface's sin was one tool per WORKFLOW STEP over the same content  -  search, then read
+     * a schema, then check props  -  which is exactly what get_catalog -> get_contract -> validate_ui
      * replaced with three. get_examples is not another step over that same content: it is a second
      * KIND of content (a worked tree, not a bare contract) that none of the other three can answer,
      * the same way get_contract answers a question get_catalog cannot. Folding it into get_catalog
@@ -177,7 +177,7 @@ describe("get_examples", () => {
     expect(productCard.contracts).toEqual(
       expect.arrayContaining(["box", "image-frame", "layout", "typography"]),
     );
-    // The index exists to be read whole and cheaply — the tree is get_examples(id)'s job.
+    // The index exists to be read whole and cheaply  -  the tree is get_examples(id)'s job.
     expect(productCard.tree).toBeUndefined();
   });
 
@@ -204,7 +204,7 @@ describe("get_examples", () => {
   });
 
   /*
-   * Every snippet, through the real door — same discipline as "accepts every recipe" below, and the
+   * Every snippet, through the real door  -  same discipline as "accepts every recipe" below, and the
    * same two bugs that check exists because of are exactly what a snippet is small enough to slip
    * past by accident: a collection item missing `slots: {}`, an option sent as the wrong type.
    */

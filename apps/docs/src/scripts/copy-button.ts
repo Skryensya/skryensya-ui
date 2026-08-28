@@ -41,7 +41,10 @@ type CopyState = "copied" | "error";
 
 function sourceText(button: HTMLButtonElement): string | null {
   const target = button.getAttribute(attrs.target);
-  return target ? (document.getElementById(target)?.textContent ?? null) : null;
+  if (!target) return null;
+  const source = document.getElementById(target);
+  if (source instanceof HTMLTemplateElement) return source.content.textContent;
+  return source?.textContent ?? null;
 }
 
 function connect(root: HTMLButtonElement): () => void {

@@ -7,11 +7,11 @@ import type { ComponentContract } from "./contract.js";
  * those by their part classes and patches them. The PANEL (the 2D saturation/value area, the hue
  * and alpha rails, the channel-input rows, the presets row, the eyedropper) is not markup at all;
  * it is derived from `@zag-js/color-picker`'s own state, so both bindings generate it and neither
- * composition nor this template says anything about its internals — exactly as DatePicker's
+ * composition nor this template says anything about its internals  -  exactly as DatePicker's
  * calendar is derived from `@zag-js/date-picker` rather than templated here.
  *
  * `ColorPicker` and `ColorPicker.compact` share this same control chrome and this same option
- * set; only the PANEL each opens differs — full renders every channel-input row (hex, RGB, HSL,
+ * set; only the PANEL each opens differs  -  full renders every channel-input row (hex, RGB, HSL,
  * OKLCH) plus the presets row and the eyedropper, compact renders only the area, the hue rail and
  * presets. That is a second SIGNATURE rather than a density flag for the reason
  * `CodePreview.density` (`code-preview.ts`) is one: the anatomy genuinely differs, whole rows
@@ -45,7 +45,7 @@ export const colorPickerAttrs = {
 } as const;
 
 /*
- * The PANEL's own parts — area, rails, channel-input rows, swatches, eyedropper — same role as
+ * The PANEL's own parts  -  area, rails, channel-input rows, swatches, eyedropper  -  same role as
  * `calendarParts` plays for DatePicker's calendar grid: none of this is in `signatures.template`
  * above because none of it is authorable, it is entirely derived from `@zag-js/color-picker`'s
  * state. Unlike Calendar, there is no standalone signature for it (a picker panel makes no sense
@@ -100,7 +100,7 @@ export const colorPickerContract = {
     triggerLabel: { type: "string", default: "Elegir color", attr: "aria-label" },
     /**
      * Preset swatches for the panel's own presets row, any CSS color string each, space-separated
-     * — the same "one plain-string attribute, split downstream" shape `DatePicker`'s own `value`
+     *  -  the same "one plain-string attribute, split downstream" shape `DatePicker`'s own `value`
      * uses for a date range, not an `items` slot: an entry here has exactly one field (the color),
      * so there is nothing an items collection's per-entry markup would buy that a split string
      * does not. React's prop takes this same space-separated string OR a `string[]` (same
@@ -130,7 +130,7 @@ export const colorPickerContract = {
         children: [
           { element: "label", part: "label", slot: "label", whenGiven: "label" },
           /*
-           * The hidden native control, so the value reaches a form submission — same reasoning
+           * The hidden native control, so the value reaches a form submission  -  same reasoning
            * and shape as Select's own hidden `<select>` (`select.ts`): the trigger is a button,
            * not a form control, so nothing else in this template can carry `name`/the current
            * value into a submit. Vanilla only ADOPTS an authored one (optional, like Select's);

@@ -3,8 +3,38 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "48e30fb817fb7751"
+surface: "7638691b1b67f5d5"
 entries:
+  - date: 2026-08-27
+    kind: feature
+    es:
+      title: BadgeDot puede pulsar para estados vivos
+      body: >-
+        <code>BadgeDot</code> suma <code>pulse</code>, que autoría
+        <code>data-pulse</code> y dibuja un halo pulsante con el color del punto. La animación usa
+        sólo <code>scale</code> y <code>opacity</code>, y se apaga con
+        <code>prefers-reduced-motion</code>.
+    en:
+      title: BadgeDot can pulse for live states
+      body: >-
+        <code>BadgeDot</code> adds <code>pulse</code>, authoring <code>data-pulse</code> and drawing
+        a pulsing halo in the dot's own color. The animation uses only <code>scale</code> and
+        <code>opacity</code>, and turns off under <code>prefers-reduced-motion</code>.
+  - date: 2026-08-27
+    kind: feature
+    es:
+      title: Badge suma tamaño sm para conteos compactos
+      body: >-
+        <code>Badge</code> ahora acepta <code>size="sm"</code>, que autoría
+        <code>data-size="sm"</code> y reduce la altura del badge de texto para vivir dentro de
+        navegación compacta, como el conteo trailing del Sidebar. El tamaño por defecto conserva la
+        altura anterior.
+    en:
+      title: Badge adds an sm size for compact counts
+      body: >-
+        <code>Badge</code> now accepts <code>size="sm"</code>, authoring
+        <code>data-size="sm"</code> and reducing the text badge's height for compact navigation,
+        including Sidebar trailing counts. The default size keeps the previous height.
   - date: 2026-08-17
     kind: breaking
     es:

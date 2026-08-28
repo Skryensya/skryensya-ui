@@ -5,6 +5,7 @@
     --sk-menu-fg: var(--color-text-primary);
     --sk-menu-border-color: var(--color-border-subtle);
     --sk-menu-shadow: var(--elevation-raised);
+    --sk-menu-wash: var(--elevation-wash-raised);
     /* Matches the trigger's OWN radius (`--radius-control`, the same token `.sk-button` and
      * `.sk-select` round with), not `--radius-surface`: the panel is an extension of the control
      * that opened it, not an unrelated card floating near it, and `select.css` already sets this
@@ -61,6 +62,7 @@
     --sk-menu-border-color: var(--color-border-subtle);
     --sk-menu-radius: var(--radius-control);
     --sk-menu-shadow: var(--elevation-raised);
+    --sk-menu-wash: var(--elevation-wash-raised);
   }
 
   /* Un SUBMENÚ sale al costado y alineado por arriba con el item del que cuelga, que no es ninguna
@@ -113,7 +115,7 @@
     overflow: auto;
     border: 1px solid var(--sk-menu-border-color);
     border-radius: var(--sk-menu-radius);
-    background: var(--sk-menu-bg);
+    background: var(--sk-menu-wash) var(--sk-menu-bg);
     color: var(--sk-menu-fg);
     box-shadow: var(--sk-menu-shadow);
     outline: none;

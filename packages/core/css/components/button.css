@@ -52,6 +52,7 @@
      * (below) is the one variant that opts back out, on purpose - it has no fill and no border,
      * and a shadow with nothing under it reads as a stray mark in space, not a lifted control. */
     --sk-button-shadow: var(--elevation-raised);
+    --sk-button-wash: var(--elevation-wash-raised);
 
     box-sizing: border-box;
     display: inline-flex;
@@ -69,7 +70,7 @@
     padding-inline: var(--sk-button-padding-x);
     border: var(--sk-button-border-width) solid var(--sk-button-border-color);
     border-radius: var(--sk-button-radius);
-    background: var(--sk-button-bg);
+    background: var(--sk-button-wash) var(--sk-button-bg);
     color: var(--sk-button-fg);
     font:
       var(--sk-button-font-weight) var(--sk-button-font-size) / 1
@@ -190,6 +191,7 @@
      * comment): no fill, no border, so a cast shadow would read as a mark floating in space, not a
      * lifted surface. */
     --sk-button-shadow: var(--elevation-flat);
+    --sk-button-wash: none;
   }
 
   /* Icon-only is a SHAPE, a third axis orthogonal to variant and size, an accent button can be
@@ -306,6 +308,7 @@
     --sk-button-fg: var(--color-text-disabled);
     --sk-button-border-color: var(--color-border-subtle);
     --sk-button-shadow: var(--elevation-flat);
+    --sk-button-wash: none;
 
     cursor: not-allowed;
   }
@@ -314,6 +317,7 @@
     .sk-button {
       --sk-button-border-color: CanvasText;
       --sk-button-shadow: none;
+      --sk-button-wash: none;
       border-color: CanvasText;
     }
 

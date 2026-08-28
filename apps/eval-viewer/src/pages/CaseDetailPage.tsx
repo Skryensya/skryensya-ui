@@ -8,17 +8,17 @@ import { Preview } from "../Preview";
 import { ToolTraceList } from "../ToolTrace";
 
 /*
- * ONE CASE, every render STACKED — the reason this page and `CaseListPage` are two different
+ * ONE CASE, every render STACKED  -  the reason this page and `CaseListPage` are two different
  * components rather than one with an optional prop (that was tried; see the commit this replaces):
- * the list is "which prompts exist, how many times has each run" — a scan. This is "how did every
- * attempt at ONE prompt actually turn out" — a comparison, and a comparison wants every render on
+ * the list is "which prompts exist, how many times has each run"  -  a scan. This is "how did every
+ * attempt at ONE prompt actually turn out"  -  a comparison, and a comparison wants every render on
  * screen at once, not a table of links a reader has to open one at a time to see anything.
  *
- * REAL KIT COMPONENTS throughout, not hand-rolled markup with a local CSS class per element — `Box`
+ * REAL KIT COMPONENTS throughout, not hand-rolled markup with a local CSS class per element  -  `Box`
  * for the card surface, `Stack`/`Inline` for every layout seam, `Heading`/`Text`/`Code` for type,
  * `Badge` for the verdict and the MCP-step rail, `DetailsGroup`/`Details`/`CodePreview` for the
  * collapsed tool trace. Every composition below was round-tripped through `validate_ui` before being
- * written here — `DetailsGroup` wrapping a single `Details`, specifically, because `Details`'s own
+ * written here  -  `DetailsGroup` wrapping a single `Details`, specifically, because `Details`'s own
  * contract declares `parents: ["DetailsGroup"]`: a standalone `<details>` is not a signature this kit
  * publishes, even for what reads like one disclosure on its own.
  */

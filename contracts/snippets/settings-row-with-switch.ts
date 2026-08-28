@@ -5,7 +5,7 @@ export const settingsRowWithSwitchSnippet: Snippet = {
   level: "molecule",
   intent: "A settings row: a label and its description on one side, the control on the other.",
   notes: [
-    "`Inline` with `justify: \"between\"`, not two elements floated by hand — the gap between the " +
+    "`Inline` with `justify: \"between\"`, not two elements floated by hand  -  the gap between the " +
       "text block and the control is a layout primitive's job (`layout`'s own `useWhen`: \"las cosas " +
       "van una al lado de otra\"), not a one-off margin invented for this row alone.",
     "The `Switch` carries its OWN `aria-label`, restating the row's visible title, even though the " +
@@ -14,7 +14,7 @@ export const settingsRowWithSwitchSnippet: Snippet = {
       "control itself says. Passing the same text as the Switch's own `children` instead would work " +
       "too, but would print it a second time on screen next to the text already carrying it.",
     "The description is a SEPARATE, secondary-tone Text under the title, not folded into one string " +
-      "— the same title/description split `Callout` and `FormField` both make for the same reason: " +
+      " -  the same title/description split `Callout` and `FormField` both make for the same reason: " +
       "one is the name of the setting, the other is what it does.",
   ],
   tree: {

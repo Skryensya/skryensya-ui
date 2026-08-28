@@ -4,12 +4,12 @@ import type { CaseScore } from "./scoring.js";
 
 /*
  * Everything a batch of `run-agent.ts` scores gets turned into files someone can actually open and
- * react to — the point of asking for this at all: reading a PASS/FAIL line in a terminal doesn't let
+ * react to  -  the point of asking for this at all: reading a PASS/FAIL line in a terminal doesn't let
  * you see whether the tree the agent composed is one you'd want to ship.
  *
  * Two formats, two audiences: a `.md` per case is for a person to open and read (in an editor, on
  * GitHub, wherever); the matching `.json` is for `apps/eval-viewer` to read and RENDER the tree live,
- * not re-parse markup out of prose. Neither is derived from the other — both come straight from the
+ * not re-parse markup out of prose. Neither is derived from the other  -  both come straight from the
  * same `CaseScore`, so they can't drift.
  */
 
@@ -72,11 +72,11 @@ function caseMd(meta: RunMeta, score: CaseScore): string {
 
   if (score.emitted) {
     lines.push(
-      "## Emitted — Vanilla",
+      "## Emitted  -  Vanilla",
       "",
       codeBlock("html", score.emitted.vanilla),
       "",
-      "## Emitted — React",
+      "## Emitted  -  React",
       "",
       codeBlock("tsx", score.emitted.react),
       "",

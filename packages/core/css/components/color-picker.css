@@ -2,8 +2,8 @@
  * channel-input rows, presets) driven by `@zag-js/color-picker`.
  *
  * The FIELD (label, control, trigger) is this file's own chrome, same split as Date Picker. The
- * PANEL's internals (area/rails/channels/swatches) are entirely derived — neither binding's
- * template describes them — and their part classes come from `colorPickerPanelParts`
+ * PANEL's internals (area/rails/channels/swatches) are entirely derived  -  neither binding's
+ * template describes them  -  and their part classes come from `colorPickerPanelParts`
  * (`@skryensya/core/color-picker`), not authored markup, but they are styled here for the same
  * reason Calendar's derived grid is styled in its own sheet rather than the consumer's.
  *
@@ -25,6 +25,7 @@
     --sk-color-picker-content-padding: var(--space-inset-sm);
     --sk-color-picker-content-gap: var(--space-stack-xs);
     --sk-color-picker-content-shadow: var(--elevation-overlay);
+    --sk-color-picker-content-wash: var(--elevation-wash-overlay);
 
     --sk-color-picker-area-block-size: 8.75rem;
     --sk-color-picker-area-radius: calc(var(--radius-control) + 2px);
@@ -125,6 +126,7 @@
     --sk-color-picker-content-padding: var(--space-inset-sm);
     --sk-color-picker-content-gap: var(--space-stack-xs);
     --sk-color-picker-content-shadow: var(--elevation-overlay);
+    --sk-color-picker-content-wash: var(--elevation-wash-overlay);
     --sk-anchored-position-area: block-end span-inline-end;
     --sk-anchored-justify: start;
     --sk-anchored-align: auto;
@@ -143,6 +145,7 @@
     border: 1px solid var(--sk-color-picker-content-border-color);
     border-radius: var(--sk-color-picker-content-radius);
     background:
+      var(--sk-color-picker-content-wash),
       linear-gradient(180deg, color-mix(in oklch, var(--color-bg-surface-overlay) 98%, white 2%), var(--sk-color-picker-content-bg)),
       var(--sk-color-picker-content-bg);
     /* The rim-light inset stays hand-authored (a highlight, not a shadow); the ambient shadow used
@@ -204,7 +207,7 @@
   }
   /* Same inline-`position:relative` situation as the area's own background: filled by SIZE, not
    * by being taken out of flow, so the alpha track (its own gradient painted here) still paints
-   * after — on top of — the transparency-grid sibling that comes first in the DOM. */
+   * after  -  on top of  -  the transparency-grid sibling that comes first in the DOM. */
   :is(.sk-color-picker__hue-track, .sk-color-picker__alpha-track) {
     inline-size: 100%;
     block-size: 100%;
@@ -311,7 +314,7 @@
        here. `--elevation-sunken` is the SECOND layer, after the border simulation this control
        already needed (no real `border`, `border-radius` would clip a real one to a visible seam
        at the corner otherwise). */
-    background: var(--color-bg-surface-sunken);
+    background: var(--elevation-wash-sunken), var(--color-bg-surface-sunken);
     color: var(--color-text-primary);
     font: inherit;
     font-variant-numeric: tabular-nums;

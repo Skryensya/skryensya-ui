@@ -18,7 +18,7 @@ import { Stat } from "@skryensya/react/stat";
 import { Heading, Text } from "@skryensya/react/typography";
 import { framedIn } from "./framed";
 
-const framed = framedIn(import.meta.url);
+const framed = framedIn("chart-card");
 
 /** Compact notation for a Stat's count-up ticks, matched to the card's own locale. */
 const compactCount = (locale: string) => (n: number) =>

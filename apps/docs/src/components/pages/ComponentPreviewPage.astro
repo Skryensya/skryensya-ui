@@ -345,7 +345,7 @@ const sourceFiles = [
 
     <ComponentPreview html={demoHtml} js={demoJs} react={demoReact} label="Button">
       <Fragment slot="react">
-        <SaveActionDemo client:load />
+        <SaveActionDemo client:visible />
       </Fragment>
     </ComponentPreview>
 
@@ -388,6 +388,7 @@ const sourceFiles = [
           srcdoc={nestedFrame}
           title="Preview renderizado: Button"
           allow="clipboard-write"
+          loading="lazy"
           aria-busy="true"></iframe>
 
         <div
@@ -419,7 +420,7 @@ const sourceFiles = [
     <p set:html={t("componentPreview.screenBody3")} />
     <ComponentPreview label="Grid multicol" note={t("componentPreview.screenNote")} html={screensHtml} react={screensReact}>
       <Fragment slot="react">
-        <ScreensGridDemo client:load />
+        <ScreensGridDemo client:visible />
       </Fragment>
     </ComponentPreview>
     <p set:html={t("componentPreview.screenBody4")} />

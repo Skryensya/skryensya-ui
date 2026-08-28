@@ -16,11 +16,9 @@ import { phosphorIcons } from "@skryensya/icons-phosphor";
 /*
  * EL SET Y SU ID SON EL MISMO HECHO, y por eso salen del mismo lugar.
  *
- * `siteIcons` es la geometría que el sitio serializa en build (`iconMarkup`); `siteIconSet` es el id
- * que el guard de Base re-pinta sobre `svg[data-icon]` antes del primer paint. Mientras los dos
- * dijeron cosas distintas (la geometría era Lucide, el guard pintaba Phosphor), cada icono del chrome
- * se escribía dos veces: salía Lucide en el HTML y el guard lo reemplazaba. Se veía como un icono que
- * CAMBIA al cargar, porque eso era. Con los dos alineados el guard queda idempotente.
+ * `siteIcons` is the geometry that `iconMarkup` serializes at build; `siteIconSet` is the id written
+ * on `<html>` so CSS and preview frames can name the same set. Keeping both beside each other avoids
+ * a runtime icon-swap module in the docs shell: the chrome ships already painted in the site set.
  */
 export const siteIconSet = "lucide";
 export const siteIcons = lucideIcons;

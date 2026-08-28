@@ -82,7 +82,7 @@ export const componentPreviewAttrs = {
   screenLocal: "data-sk-component-preview-screen-local",
   /**
    * A `sk-tabs` group of file panels (HTML/CSS/TS, or Componente/data). One shared
-   * "Ver código"/"Ocultar código" control sits above its tab strip as a DIRECT CHILD — plain
+   * "Ver código"/"Ocultar código" control sits above its tab strip as a DIRECT CHILD  -  plain
    * `@skryensya/core/code-preview` markup (`codePreviewParts.more`/`toggle`/`toggleIcon`,
    * `codePreviewAttrs.toggle`/`toggleLabel`/`expandedLabel`), not a parallel vocabulary of this
    * component's own: every file's own per-panel toggle stays hidden (component-preview.css), and

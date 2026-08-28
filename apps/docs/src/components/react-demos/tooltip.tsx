@@ -12,7 +12,7 @@ import { Tooltip } from "@skryensya/react/tooltip";
 import { framedIn } from "./framed";
 
 /** Every demo below runs inside its own preview frame. See `framed.tsx`. */
-const framed = framedIn(import.meta.url);
+const framed = framedIn("tooltip");
 
 export interface TooltipDemoProps {
   /** Plain data, because props are serialised into the frame as JSON. */

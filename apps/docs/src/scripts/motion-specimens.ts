@@ -25,6 +25,8 @@ const PLAYING = "data-motion-playing";
 /** The beat between rounds: long enough to see everything land, short enough to keep comparing. */
 const REST = 700;
 
+let motionSpecimensController: AbortController | null = null;
+
 const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 interface Group {
@@ -100,6 +102,8 @@ function stop(group: Group) {
 }
 
 export function initMotionSpecimens() {
+  motionSpecimensController?.abort();
+  motionSpecimensController = new AbortController();
   const groups = [...document.querySelectorAll<HTMLElement>("[data-motion-group]")].map(
     (root): Group => ({
       root,
@@ -112,6 +116,9 @@ export function initMotionSpecimens() {
     }),
   );
   if (groups.length === 0) return;
+  motionSpecimensController.signal.addEventListener("abort", () => {
+    for (const group of groups) stop(group);
+  }, { once: true });
 
   for (const group of groups) {
     // Press play mid-introduction and you get the transport from a clean start, not a second
@@ -120,12 +127,12 @@ export function initMotionSpecimens() {
       const wasLooping = group.looping;
       stop(group);
       if (!wasLooping) start(group, true);
-    });
+    }, { signal: motionSpecimensController.signal });
 
     // A specimen that is a control of its own (the easing cards) plays alone on click, which is
     // how one curve gets looked at without the other six moving.
     for (const specimen of group.specimens) {
-      if (specimen.tagName === "BUTTON") specimen.addEventListener("click", () => play(specimen));
+      if (specimen.tagName === "BUTTON") specimen.addEventListener("click", () => play(specimen), { signal: motionSpecimensController.signal });
     }
   }
 
@@ -148,4 +155,7 @@ export function initMotionSpecimens() {
   );
 
   for (const group of groups) seen.observe(group.root);
+  motionSpecimensController.signal.addEventListener("abort", () => seen.disconnect(), {
+    once: true,
+  });
 }

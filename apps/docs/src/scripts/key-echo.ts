@@ -11,7 +11,11 @@
  */
 import { detectMac, matchesHotkey } from "@skryensya/core/hotkey";
 
+let keyEchoController: AbortController | null = null;
+
 export function initKeyEcho(): void {
+  keyEchoController?.abort();
+  keyEchoController = new AbortController();
   const byKey = [...document.querySelectorAll<HTMLElement>("[data-key]")];
   const byChord = [...document.querySelectorAll<HTMLElement>("[data-hotkey]")];
   if (byKey.length === 0 && byChord.length === 0) return;
@@ -42,13 +46,13 @@ export function initKeyEcho(): void {
     down.add(event.key.toLowerCase());
     paintKeys();
     paintChords(event);
-  });
+  }, { signal: keyEchoController.signal });
 
   window.addEventListener("keyup", (event) => {
     down.delete(event.key.toLowerCase());
     paintKeys();
     paintChords(event);
-  });
+  }, { signal: keyEchoController.signal });
 
   /* A keyup can be missed, a Mac drops keyups for other keys while ⌘ is held, and a lost focus eats
    * the release entirely, which would strand a key lit. Clearing on blur is the honest reset. */
@@ -56,5 +60,5 @@ export function initKeyEcho(): void {
     down.clear();
     paintKeys();
     for (const el of byChord) el.removeAttribute("data-pressed");
-  });
+  }, { signal: keyEchoController.signal });
 }

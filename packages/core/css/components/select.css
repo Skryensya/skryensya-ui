@@ -15,6 +15,7 @@
      * reads as its own control inside a lighter container. */
     --sk-select-bg: var(--color-bg-surface-sunken);
     --sk-select-shadow: var(--elevation-sunken);
+    --sk-select-wash: var(--elevation-wash-sunken);
     --sk-select-fg: var(--color-text-primary);
     --sk-select-border-color: var(--color-border-default);
     --sk-select-border-width: 1px;
@@ -31,6 +32,7 @@
     --sk-select-content-max-block-size: 18rem;
     --sk-select-content-padding: var(--space-inset-xs);
     --sk-select-content-shadow: var(--elevation-raised);
+    --sk-select-content-wash: var(--elevation-wash-raised);
     --sk-select-item-fg: var(--color-text-primary);
     --sk-select-item-disabled-fg: var(--color-text-disabled);
     --sk-select-item-padding: var(--space-inset-xs) var(--space-inset-sm);
@@ -48,7 +50,7 @@
     padding: 0 var(--sk-select-padding-x);
     border: var(--sk-select-border-width) solid var(--sk-select-border-color);
     border-radius: var(--sk-select-radius);
-    background: var(--sk-select-bg);
+    background: var(--sk-select-wash) var(--sk-select-bg);
     color: var(--sk-select-fg);
     box-shadow: var(--sk-select-shadow);
     font: inherit;
@@ -60,11 +62,13 @@
   .sk-select-native {
     --sk-select-state-opacity: 0;
 
-    background: color-mix(
-      in srgb,
-      currentColor calc(var(--sk-select-state-opacity) * 100%),
-      var(--sk-select-bg)
-    );
+    background:
+      var(--sk-select-wash),
+      color-mix(
+        in srgb,
+        currentColor calc(var(--sk-select-state-opacity) * 100%),
+        var(--sk-select-bg)
+      );
   }
 
   @media (any-hover: hover) {
@@ -138,7 +142,7 @@
       overflow: auto;
       border: 1px solid var(--sk-select-content-border-color);
       border-radius: var(--sk-select-radius);
-      background: var(--sk-select-content-bg);
+      background: var(--sk-select-content-wash) var(--sk-select-content-bg);
       color: var(--sk-select-fg);
       box-shadow: var(--sk-select-content-shadow);
     }
@@ -346,6 +350,7 @@
     --sk-select-content-padding: var(--space-inset-xs);
     --sk-select-content-max-block-size: 18rem;
     --sk-select-content-shadow: var(--elevation-raised);
+    --sk-select-content-wash: var(--elevation-wash-raised);
     --sk-select-item-fg: var(--color-text-primary);
     --sk-select-item-disabled-fg: var(--color-text-disabled);
     --sk-select-item-padding: var(--space-inset-xs) var(--space-inset-sm);
@@ -382,7 +387,7 @@
     overflow: auto;
     border: 1px solid var(--sk-select-content-border-color);
     border-radius: var(--sk-select-radius);
-    background: var(--sk-select-content-bg);
+    background: var(--sk-select-content-wash) var(--sk-select-content-bg);
     color: var(--sk-select-fg);
     box-shadow: var(--sk-select-content-shadow);
     list-style: none;

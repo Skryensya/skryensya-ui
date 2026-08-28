@@ -32,6 +32,8 @@ type Cell = HTMLTableCellElement;
 let button: HTMLElement | null = null;
 let home: HTMLElement | null = null;
 let copyWord = "Copy";
+let controller: AbortController | null = null;
+
 
 /** The cell's own value, in the id'd span the enhancer copies from. */
 function valueOf(cell: Cell): HTMLElement | null {
@@ -115,6 +117,8 @@ export function revalidateCopyCells(): void {
 }
 
 export function initCopyCells(): void {
+  controller?.abort();
+  controller = new AbortController();
   home = document.querySelector<HTMLElement>(HOME);
   button = home?.querySelector<HTMLElement>(`[${copyButtonAttrs.root}]`) ?? null;
   if (!home || !button) return;
@@ -133,7 +137,7 @@ export function initCopyCells(): void {
       if (cell) place(cell);
       else if (!target.closest(HOME)) park();
     },
-    { passive: true },
+    { passive: true, signal: controller.signal },
   );
 
   button.addEventListener("keydown", (event) => {
@@ -144,7 +148,7 @@ export function initCopyCells(): void {
     event.preventDefault();
     place(next);
     button?.focus();
-  });
+  }, { signal: controller.signal });
 
   /* Somewhere to land before anyone has hovered anything: the first copyable value on the page, so
      the tables hold a real tab stop from the first Tab rather than only after a pointer wakes it. */

@@ -81,7 +81,7 @@ export function buildPreviewFrameDocument({
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light dark">
     <base target="_top">
-    <script type="module" src="${escapeAttribute(frameRuntimeUrl)}" fetchpriority="high"><\/script>
+    <script type="module" src="${escapeAttribute(frameRuntimeUrl)}"><\/script>
     ${css ? `<style>\n${css}\n    </style>` : ""}
   </head>
   <body

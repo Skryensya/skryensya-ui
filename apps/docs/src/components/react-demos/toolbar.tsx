@@ -12,7 +12,7 @@ import { Tooltip } from "@skryensya/react/tooltip";
 import { framedIn } from "./framed";
 
 /** Every demo below runs inside its own preview frame. See `framed.tsx`. */
-const framed = framedIn(import.meta.url);
+const framed = framedIn("toolbar");
 
 /*
  * `Icon`'s `name` is typed to the STABLE vocabulary on purpose: it is set-independent, which is what

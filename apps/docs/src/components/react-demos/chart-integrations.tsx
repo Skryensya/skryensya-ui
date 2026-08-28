@@ -2,7 +2,7 @@
  * CHART INTEGRATED WITH OTHER COMPONENTS, beyond the dashboard-card compositions in `chart-card.tsx`.
  *
  * Same rule as every other chart demo: no `sk-chart-*` variant grows to fit these. Each pattern below
- * is Chart plus a contract that already exists — Segmented, Table, Tooltip — composed the way their
+ * is Chart plus a contract that already exists  -  Segmented, Table, Tooltip  -  composed the way their
  * own docs pages already compose them, not a new capability invented for charts specifically.
  */
 import { Badge } from "@skryensya/react/badge";
@@ -27,7 +27,7 @@ import { formatChartValue, type ChartPoint } from "@skryensya/core/chart";
 import { useState, type ReactNode } from "react";
 import { framedIn } from "./framed";
 
-const framed = framedIn(import.meta.url);
+const framed = framedIn("chart-integrations");
 
 type DemoProps = { lang?: "es" | "en" };
 
@@ -138,7 +138,7 @@ export const ChartPeriodCardDemo = framed(
 /* ---------------------------------------------------------------------------------------------
  * 2. CHART + TABLE: the same series, read two ways. The chart says the shape; a reader who wants
  * to compare quarters or quote an exact figure wants the table, not an estimate off a bar's
- * height — the exact case `contracts/semantic/chart.yaml`'s `avoidWhen` already names.
+ * height  -  the exact case `contracts/semantic/chart.yaml`'s `avoidWhen` already names.
  *
  * The two carry SEPARATE accessible names (`label` on Chart, `TableCaption` on Table): they are
  * two renderings of one dataset, not one thing described twice.
@@ -198,7 +198,7 @@ export const ChartTableCardDemo = framed(
                     <TableCell>
                       {formatChartValue(row.value, { format: "currency", currency: "USD", locale: es ? "es" : "en" })}
                     </TableCell>
-                    <TableCell>{row.delta ?? "—"}</TableCell>
+                    <TableCell>{row.delta ?? " - "}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -217,7 +217,7 @@ export const ChartTableCardDemo = framed(
  * by contract, and Tooltip's `children` slot requires a signature that already carries its own
  * accessible name (`tooltip.ts`: "the control being described... carries its own accessible
  * name"). A decorative bar has neither, so the trigger is a real `Button.action` underneath the
- * chart instead — it does not duplicate the overlay, and it does not touch the accessible list.
+ * chart instead  -  it does not duplicate the overlay, and it does not touch the accessible list.
  * ------------------------------------------------------------------------------------------- */
 const latency = [
   { label: "/auth", value: 42 },
@@ -259,8 +259,8 @@ export const ChartPointDetailDemo = framed(
             tone="info"
           />
           {/*
-           * ONE COLUMN PER POINT, matching `.sk-chart__series` (`chart.css`) exactly — same
-           * `grid-auto-flow: column` + `grid-auto-columns: 1fr` track sizing, same gap token — so
+           * ONE COLUMN PER POINT, matching `.sk-chart__series` (`chart.css`) exactly  -  same
+           * `grid-auto-flow: column` + `grid-auto-columns: 1fr` track sizing, same gap token  -  so
            * each trigger sits directly under its bar instead of a wrapped row whose widths follow
            * each label's own text length. A flex `Inline` was tried first and drifted out of
            * alignment the moment two labels differed in width, exactly the mismatch this grid

@@ -1,22 +1,47 @@
+# syntax=docker/dockerfile:1.7
 # MCP server only (@skryensya/mcp), Streamable HTTP transport (packages/mcp/src/http.ts).
 # Build context must be the monorepo root.
 # Dokploy: Dockerfile path = Dockerfile.mcp
 
 FROM node:22-bookworm-slim AS build
 
+ENV PNPM_HOME=/pnpm
+ENV PATH="$PNPM_HOME:$PATH"
+
 RUN corepack enable && corepack prepare pnpm@10.18.2 --activate
 
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-COPY apps ./apps
-COPY packages ./packages
-COPY contracts ./contracts
-COPY evals ./evals
-COPY artifacts ./artifacts
-COPY scripts ./scripts
+COPY apps/docs/package.json ./apps/docs/package.json
+COPY apps/eval-viewer/package.json ./apps/eval-viewer/package.json
+COPY packages/ai-compiler/package.json ./packages/ai-compiler/package.json
+COPY packages/ai-gates/package.json ./packages/ai-gates/package.json
+COPY packages/charts/package.json ./packages/charts/package.json
+COPY packages/core/package.json ./packages/core/package.json
+COPY packages/devtools/package.json ./packages/devtools/package.json
+COPY packages/icons-lucide/package.json ./packages/icons-lucide/package.json
+COPY packages/icons-material/package.json ./packages/icons-material/package.json
+COPY packages/icons-phosphor/package.json ./packages/icons-phosphor/package.json
+COPY packages/mcp/package.json ./packages/mcp/package.json
+COPY packages/react/package.json ./packages/react/package.json
+COPY packages/vanilla/package.json ./packages/vanilla/package.json
+COPY contracts/recipes/package.json ./contracts/recipes/package.json
+COPY contracts/snippets/package.json ./contracts/snippets/package.json
+COPY evals/package.json ./evals/package.json
 
-RUN pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+  pnpm config set store-dir /pnpm/store && pnpm fetch --frozen-lockfile
+
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+  pnpm config set store-dir /pnpm/store && pnpm install --frozen-lockfile --offline
+
+COPY packages/ai-compiler ./packages/ai-compiler
+COPY packages/core ./packages/core
+COPY packages/mcp ./packages/mcp
+COPY packages/react ./packages/react
+COPY contracts ./contracts
+COPY artifacts ./artifacts
 
 # The compiled manifest the server reads at runtime (packages/mcp/src/manifest.ts never falls back
 # to reading source, per its own header comment), then both of the server's own entry points,

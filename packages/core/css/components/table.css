@@ -8,27 +8,33 @@
  * `<caption>` outside the table box, so a caption stays in the DOM as the table's first child
  * while sitting visually above the bordered surface (CSS2 table model / caption-side).
  *
- * Header fill is a mix of text-on-surface, not `--color-bg-surface-sunken`: in high-contrast dark
- * sunken collapses onto the same palette value as surface, so a sunken header would vanish. A mix
- * of `--color-text-primary` into the table surface stays visible in every mode (light, dark, both HC).
- * The header rule uses `--color-border-default` for the same reason, subtle borders wash out when
- * contrast is the point.
+ * Header and footer separation uses the same quiet row ruler as the body. High-contrast gets its
+ * own forced-colors override below; everyday light mode should not read a header underline as a
+ * heavier rule than the table itself.
  */
 
 @import url("../patterns/splitter.css");
 
 @layer components {
   .sk-table {
-    --sk-table-container-border-color: var(--color-border-default);
+    --sk-table-container-border-color: color-mix(
+      in oklab,
+      var(--color-border-subtle) 60%,
+      transparent
+    );
     --sk-table-container-border-width: 1px;
     --sk-table-container-radius: var(--radius-surface);
     --sk-table-bg: var(--color-bg-surface);
     --sk-table-fg: var(--color-text-primary);
-    --sk-table-border-color: var(--color-border-subtle);
+    --sk-table-border-color: color-mix(
+      in oklab,
+      var(--color-border-subtle) 55%,
+      transparent
+    );
     /* Slight lift over the body, readable when sunken == surface (HC dark). */
     --sk-table-header-bg: color-mix(in oklab, var(--color-text-primary) 5%, var(--color-bg-surface));
     --sk-table-header-fg: var(--color-text-primary);
-    --sk-table-header-border-color: var(--color-border-default);
+    --sk-table-header-border-color: var(--sk-table-border-color);
     --sk-table-header-font-weight: var(--font-weight-label);
     --sk-table-caption-fg: var(--color-text-secondary);
     --sk-table-caption-gap: var(--space-stack-sm);
@@ -227,9 +233,7 @@
     background: var(--sk-table-header-bg);
     color: var(--sk-table-header-fg);
     font-weight: var(--sk-table-header-font-weight);
-    /* Stronger rule under the header, the cue that survives when fills flatten in high contrast. */
     border-bottom-color: var(--sk-table-header-border-color);
-    border-bottom-width: 2px;
     white-space: nowrap;
   }
 
@@ -341,11 +345,8 @@
     border-bottom: 0;
   }
 
-  /* When a footer follows, keep the last body row's divider so foot and body stay separated. */
-  .sk-table:has(tfoot) tbody tr:last-child :is(th, td),
-  .sk-table:has(.sk-table__foot) .sk-table__body .sk-table__row:last-child :is(.sk-table__header.sk-table__cell) {
-    border-bottom: 1px solid var(--sk-table-border-color);
-  }
+  /* Footer owns the section separator. Re-adding the last body row's bottom border stacks two 1px
+   * rules on the same seam and reads as a thicker footer top edge in light mode. */
 
   /*
    * RESIZABLE COLUMNS, opt-in (`resizableColumns`; see `table.ts`'s own option doc). A binding
@@ -394,16 +395,20 @@
     /*
      * ALWAYS-VISIBLE COLUMN LINE, opting the splitter pattern's `--sk-splitter-rest-color` hook
      * (`patterns/splitter.css`. Transparent by default, so Sidebar and Treegrid stay exactly as
-     * quiet as before) into a real color: on a resizable table, the column boundary IS structure -
-     * a reader reads it as a grid line, the same way the header's own underline already reads, not
-     * as a hover affordance to go looking for. Same color AND weight as the HEADER cell border it
-     * lives inside (`--sk-table-header-border-color`, `2px`: `.sk-table thead th`'s own rule,
-     * above), not the lighter `1px` row dividers below it: the line starts at the header, so it
-     * reads as that same rule extended downward, not a second, thinner grid competing with it.
+     * quiet as before) into a real color. It uses the same quiet hairline as the rest of the table:
+     * visible enough to find the resize affordance, not a heavier vertical rule competing with the
+     * row dividers.
      * Hover/focus/drag still escalate past this: the pattern's own rules set `background` directly,
      * never through this variable, so they always win once a reader actually reaches for the handle.
      */
     --sk-splitter-rest-color: var(--sk-table-header-border-color);
-    --sk-splitter-line: 2px;
+    --sk-splitter-line: 1px;
+  }
+  @media (forced-colors: active) {
+    .sk-table {
+      --sk-table-container-border-color: CanvasText;
+      --sk-table-border-color: CanvasText;
+      --sk-table-header-border-color: CanvasText;
+    }
   }
 }

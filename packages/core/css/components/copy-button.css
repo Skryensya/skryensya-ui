@@ -31,6 +31,7 @@
     --sk-copy-button-feedback-padding: var(--space-inset-xs) var(--space-inset-sm);
     --sk-copy-button-feedback-font-size: var(--font-size-body-sm);
     --sk-copy-button-feedback-shadow: var(--elevation-raised);
+    --sk-copy-button-feedback-wash: var(--elevation-wash-raised);
   }
 
   /*
@@ -90,7 +91,7 @@
     padding: var(--sk-copy-button-feedback-padding);
     border: 1px solid var(--sk-copy-button-feedback-border-color);
     border-radius: var(--sk-copy-button-feedback-radius);
-    background: var(--sk-copy-button-feedback-bg);
+    background: var(--sk-copy-button-feedback-wash) var(--sk-copy-button-feedback-bg);
     color: var(--sk-copy-button-feedback-fg);
     font-size: var(--sk-copy-button-feedback-font-size);
     font-weight: var(--font-weight-label);

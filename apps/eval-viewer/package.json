@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Local-only Vite app: browse evals/agent/runs/ and render each case's composed tree in both bindings, live — not the emitted code as text, the actual component.",
+  "description": "Local-only Vite app: browse evals/agent/runs/ and render each case's composed tree in both bindings, live  -  not the emitted code as text, the actual component.",
   "scripts": {
     "dev": "vite",
     "lint": "tsc -p tsconfig.json --noEmit"

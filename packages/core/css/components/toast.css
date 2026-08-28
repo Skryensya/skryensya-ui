@@ -35,6 +35,12 @@
    * while staying legible, and its own elevation already separates it from what is underneath, so it
    * does not need the extra air a panel uses to hold itself apart. One step down on the same scale. */
   .sk-toast-region > .sk-callout {
+    /* `--sk-callout-bg` stays Callout's own hook, untouched here same as every other tone recipe
+     * this selector leaves alone: only the wash layers on top of it, the same local override this
+     * selector already gives `--sk-callout-padding`/`-content-gap` below, not a change to Callout
+     * itself (which has no elevation of its own  -  see `_color.scss`'s own `--elevation-wash-*`). */
+    --sk-toast-wash: var(--elevation-wash-overlay);
+    background: var(--sk-toast-wash) var(--sk-callout-bg);
     --sk-callout-padding: var(--space-inset-sm);
     /* The two lines close up with the panel. At the callout's inset the `stack-xs` gap reads as
      * rhythm; inside the tighter toast the same gap is wider than the padding around it, which makes

@@ -38,7 +38,7 @@ describe("rgbToOklch / oklchToRgb", () => {
   });
 
   it("matches the CSS Color 4 spec's own worked example for pure red", () => {
-    // https://www.w3.org/TR/css-color-4/#color-conversion-code — oklch(62.8% 0.2577 29.23deg).
+    // https://www.w3.org/TR/css-color-4/#color-conversion-code  -  oklch(62.8% 0.2577 29.23deg).
     const oklch = rgbToOklch({ r: 255, g: 0, b: 0 });
     expect(oklch.l).toBeCloseTo(0.62796, 3);
     expect(oklch.c).toBeCloseTo(0.25768, 3);

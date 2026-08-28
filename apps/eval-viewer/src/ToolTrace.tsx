@@ -6,9 +6,9 @@ import type { ToolCallRecord } from "./data";
 /*
  * Shared by `CaseDetailPage`'s stacked-run cards (wrapped in a `DetailsGroup`/`Details` there, since
  * a compact card wants the trace collapsed by default) and `ExecutionDetailPage`'s own "trace" tab
- * (no further collapsing needed — `Tabs` is already the disclosure boundary there). One tool call,
+ * (no further collapsing needed  -  `Tabs` is already the disclosure boundary there). One tool call,
  * one `CodePreview`: `label` is the call's own name, `children` is its args then its result-or-error,
- * still plain `<pre>` — `Code` (typography) is for an inline fragment in a sentence, not a multi-line
+ * still plain `<pre>`  -  `Code` (typography) is for an inline fragment in a sentence, not a multi-line
  * JSON block, so it is the wrong signature for this despite sitting right next to it in the catalogue.
  */
 function ToolCallPreview({ call }: { call: ToolCallRecord }) {

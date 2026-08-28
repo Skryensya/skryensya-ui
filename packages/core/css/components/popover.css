@@ -50,6 +50,7 @@
     --sk-popover-radius: var(--radius-surface);
     --sk-popover-padding: var(--space-inset-md);
     --sk-popover-shadow: var(--elevation-overlay);
+    --sk-popover-wash: var(--elevation-wash-overlay);
 
     box-sizing: border-box;
     /* SIN `margin: 0` acá. En este componente el positioner y el content son EL MISMO elemento, así
@@ -71,7 +72,7 @@
     padding: var(--sk-popover-padding);
     border: 1px solid var(--sk-popover-border-color);
     border-radius: var(--sk-popover-radius);
-    background: var(--sk-popover-bg);
+    background: var(--sk-popover-wash) var(--sk-popover-bg);
     color: var(--sk-popover-fg);
     /* Its own standalone surface (arbitrary content, `--motion-enter-*`/`-exit-*` below instead of
      * the lighter `--motion-feedback-*` Menu/Tooltip/Combobox/Select use), so it reads one rung

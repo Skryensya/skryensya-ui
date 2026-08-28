@@ -2,7 +2,7 @@
 /*
  * PROOF OF CONCEPT: a live component next to sliders for its own styling hooks, no header, no
  * binding tabs, no source panels. `ComponentPreview` answers "what does the markup look like and
- * does it work"; this answers a narrower question — "what happens if I push this ONE hook" — for a
+ * does it work"; this answers a narrower question  -  "what happens if I push this ONE hook"  -  for a
  * reader who is deciding whether the hook is worth reaching for at all.
  *
  * The stage renders straight into the docs document, no `srcdoc` iframe: a slider firing fifty
@@ -31,7 +31,7 @@ interface Props {
    * CSS selector for the element the hooks actually land on (e.g. `".sk-loader"`), scoped to the
    * stage. Every published component redeclares its own custom properties unconditionally in its
    * base rule (`.sk-loader { --sk-loader-size: ...; }`), so a value only INHERITED from an ancestor
-   * never wins — an inline style has to sit on the probe element itself to out-rank that rule.
+   * never wins  -  an inline style has to sit on the probe element itself to out-rank that rule.
    */
   probe: string;
 }

@@ -67,7 +67,12 @@ export const sidebarTree = (
                     options: { href: hrefs.reports },
                     slots: {
                       icon: { contract: "icon", signature: "Icon", options: { name: "calendar" } },
-                      trailing: "12",
+                      trailing: {
+                        contract: "badge",
+                        signature: "Badge",
+                        options: { tone: "warning", size: "sm" },
+                        children: "12",
+                      },
                       children: t("demo.sidebar.reports"),
                     },
                   },
@@ -96,7 +101,7 @@ export const sidebarTree = (
 /*
  * The floating trigger: `floating: true` lifts `SidebarTrigger` out of flow and pins it to the
  * panel's own top-inline-end corner instead of wherever it was authored (see sidebar.ts's own
- * comment on the option — a paint decision, not a second legal DOM parent). No `SidebarHeader` at
+ * comment on the option  -  a paint decision, not a second legal DOM parent). No `SidebarHeader` at
  * all here, on purpose: a floating trigger is exactly the answer for a rail with no header row to
  * put one in, and reusing `sidebarTree`'s header-hosted trigger above would not have shown that.
  * `--elevation-raised` is what separates it from whatever content it pins over, confirmed missing
@@ -152,7 +157,12 @@ export const sidebarFloatingTriggerTree = (
                     options: { href: hrefs.reports },
                     slots: {
                       icon: { contract: "icon", signature: "Icon", options: { name: "calendar" } },
-                      trailing: "12",
+                      trailing: {
+                        contract: "badge",
+                        signature: "Badge",
+                        options: { tone: "warning", size: "sm" },
+                        children: "12",
+                      },
                       children: t("demo.sidebar.reports"),
                     },
                   },

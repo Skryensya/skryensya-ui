@@ -14,7 +14,7 @@ function verdictLabel(valid: boolean, matchesReferenceMarkup: boolean | undefine
 
 /*
  * `Breadcrumb` and `Tabs`, both validated via `validate_ui` before being written here. `Tabs` is
- * UNCONTROLLED (`defaultValue`, no `onValueChange` in its contract options) — that's enough here: the
+ * UNCONTROLLED (`defaultValue`, no `onValueChange` in its contract options)  -  that's enough here: the
  * whole page remounts on navigation anyway (a new `caseId`/`runId`/`lang` triple is a new URL, not a
  * state transition this component needs to preserve across), so there is nothing an uncontrolled tab
  * selection loses. `CodePreview` wraps a `<pre>` child, one per tab pane that isn't the live preview;

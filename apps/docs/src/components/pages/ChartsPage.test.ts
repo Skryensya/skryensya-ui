@@ -39,7 +39,7 @@ describe("ChartsPage.astro", () => {
     expect(page).toContain("@skryensya/charts/react/tanstack");
   });
 
-  it("opens on the three card compositions before documenting Chart itself", () => {
+  it("keeps only the React-only chart previews as viewport-triggered islands", () => {
     const cardsHeading = page.indexOf('id="cards"');
     const pieceHeading = page.indexOf('id="chart"');
     expect(cardsHeading).toBeGreaterThan(-1);

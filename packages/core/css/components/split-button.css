@@ -21,6 +21,7 @@
      * outer silhouette instead - see below for where each half's own shadow goes to make room for
      * it. */
     --sk-split-button-shadow: var(--elevation-raised);
+    --sk-split-button-wash: var(--elevation-wash-raised);
 
     /* Same token `.sk-button`'s own `--sk-button-radius` defaults to: a `box-shadow` follows ITS
      * OWN element's `border-radius`, not whatever shape its children happen to paint, so a plain
@@ -31,6 +32,7 @@
 
     display: inline-flex;
     align-items: stretch;
+    background: var(--sk-split-button-wash) transparent;
     box-shadow: var(--sk-split-button-shadow);
   }
   /*

@@ -463,6 +463,7 @@ const componentItems = [
   {
     href: "/componentes/color-picker",
     label: "ColorPicker",
+    trailing: "Beta",
     aliases: ["selector de color", "color picker", "swatch", "rgb", "hsl", "oklch", "presets de color"],
   },
   {

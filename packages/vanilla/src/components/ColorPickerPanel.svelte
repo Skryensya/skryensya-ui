@@ -18,7 +18,7 @@
 
   /*
    * THE PANEL BODY: area, hue/alpha rails, channel-input rows, presets, eyedropper. Entirely
-   * derived from `api` — nothing here is authored markup — same role `CalendarView` plays inside
+   * derived from `api`  -  nothing here is authored markup  -  same role `CalendarView` plays inside
    * DatePicker. `anatomy` gates which rows draw: "compact" stops after the area, hue rail and
    * presets; "full" adds the alpha rail, every channel-input row and the eyedropper.
    */
@@ -42,7 +42,7 @@
 
   // OKLCH is not one of Zag's own formats (see `color.ts`'s own doc): this row reads the machine's
   // real color through our conversion on every render, and writes back through the SAME `api.value`
-  // Zag already exposes, `setValue` on a color parsed from the resulting RGB — never a parallel
+  // Zag already exposes, `setValue` on a color parsed from the resulting RGB  -  never a parallel
   // OKLCH-typed piece of state the two could drift out of.
   const oklch = $derived(rgbToOklch(rgbOf()));
 

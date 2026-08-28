@@ -84,26 +84,74 @@ function stagesOf(root: HTMLElement): HTMLElement[] {
   return [...root.querySelectorAll<HTMLElement>(`.${componentPreviewParts.stage}`)];
 }
 
-/** Re-boot the srcdoc stages so count-ups, loaders and mount side-effects run again. */
+/*
+ * A stage's `srcdoc` IS its browsing context: clearing it drops the nested realm (React's own
+ * second copy of React included, see `react-demos/framed.tsx`) and the browser reclaims it,
+ * while the `<iframe>` element itself, its size, its classes, its part attributes, stays exactly
+ * where it was. Caching the string here rather than re-reading it off the element later is what
+ * makes a released stage's `srcdoc` attribute a reliable "is this live" check on its own: empty
+ * means released or never loaded, non-empty means live.
+ */
+const stageSrcdocCache = new WeakMap<HTMLIFrameElement, string>();
+
+/** Drops one stage's realm. A no-op on a stage that is already released or never had content. */
+function releaseStage(frame: HTMLIFrameElement): void {
+  const srcdoc = frame.getAttribute("srcdoc") ?? frame.srcdoc;
+  if (!srcdoc) return;
+  stageSrcdocCache.set(frame, srcdoc);
+
+  frame.removeAttribute(componentPreviewAttrs.frameReady);
+  frame.removeAttribute(componentPreviewAttrs.frameError);
+  frame.setAttribute("aria-busy", "true");
+  // A height the reader chose survives the reboot; an auto-fitted one is re-measured.
+  if (!frame.hasAttribute(componentPreviewAttrs.resized)) frame.style.removeProperty("height");
+
+  frame.srcdoc = "";
+}
+
+/** Remounts one stage from its cached document. A no-op with nothing cached, or already live. */
+function restoreStage(frame: HTMLIFrameElement): void {
+  const srcdoc = stageSrcdocCache.get(frame);
+  if (srcdoc === undefined || frame.srcdoc) return;
+  frame.srcdoc = srcdoc;
+}
+
+/**
+ * Releases every stage under `root`, Vanilla's own iframe and the React binding's nested one
+ * alike (`stagesOf` already reaches both, see its own comment above). Skips a stage that
+ * currently holds focus: `document.activeElement === frame` is how cross-document focus shows up
+ * on the PARENT side, and yanking `srcdoc` out from under a reader who tabbed into a stage's
+ * interactive content would drop that focus into the void.
+ */
+export function releaseComponentPreviewStages(root: HTMLElement): void {
+  for (const stage of stagesOf(root)) {
+    if (stage.tagName !== "IFRAME") continue;
+    const frame = stage as HTMLIFrameElement;
+    if (document.activeElement === frame) continue;
+    releaseStage(frame);
+  }
+}
+
+/** Restores every stage under `root` that `releaseComponentPreviewStages` had released. */
+export function restoreComponentPreviewStages(root: HTMLElement): void {
+  for (const stage of stagesOf(root)) {
+    if (stage.tagName !== "IFRAME") continue;
+    restoreStage(stage as HTMLIFrameElement);
+  }
+}
+
+/**
+ * Re-boot the srcdoc stages so count-ups, loaders and mount side-effects run again. The reader-
+ * facing reload button's own case of the same release/restore pair `connectStageLifecycle` below
+ * runs off the scroll observer: release, then restore on the very next frame instead of whenever
+ * the stage scrolls back near view.
+ */
 export function reloadComponentPreviewStage(root: HTMLElement): void {
   for (const stage of stagesOf(root)) {
     if (stage.tagName !== "IFRAME") continue;
     const frame = stage as HTMLIFrameElement;
-
-    const srcdoc = frame.getAttribute("srcdoc") ?? frame.srcdoc;
-    if (!srcdoc) continue;
-
-    frame.removeAttribute(componentPreviewAttrs.frameReady);
-    frame.removeAttribute(componentPreviewAttrs.frameError);
-    frame.setAttribute("aria-busy", "true");
-    // A height the reader chose survives the reboot; an auto-fitted one is re-measured.
-    if (!frame.hasAttribute(componentPreviewAttrs.resized)) frame.style.removeProperty("height");
-
-    // Browsers coalesce identical srcdoc writes; clear first so the document remounts.
-    frame.srcdoc = "";
-    requestAnimationFrame(() => {
-      frame.srcdoc = srcdoc;
-    });
+    releaseStage(frame);
+    requestAnimationFrame(() => restoreStage(frame));
   }
 }
 
@@ -463,13 +511,13 @@ export function openComponentPreviewFullscreen(root: HTMLElement): void {
 /**
  * One shared "Ver código"/"Ocultar código" STATE for the whole preview, not one per binding: a
  * demo's Vanilla source-tabs group (HTML/CSS/TS) and its React one (Componente/data) are two
- * separate `sk-tabs` groups — the live stage each sits inside needs its own iframe/island either
- * way — but they show the SAME underlying disclosure question ("is this demo's source open right
+ * separate `sk-tabs` groups  -  the live stage each sits inside needs its own iframe/island either
+ * way  -  but they show the SAME underlying disclosure question ("is this demo's source open right
  * now"), so a reader who expands it on Vanilla and then flips to React must find React's source
  * already open too, not reset to collapsed because it happens to be a different DOM subtree.
  *
  * Physically merging the two `sk-tabs` groups into one was the other way to get there, but the
- * source tabs live INSIDE each binding's own panel alongside that binding's own stage — hoisting
+ * source tabs live INSIDE each binding's own panel alongside that binding's own stage  -  hoisting
  * them out would mean restructuring the iframe/island layout this file and `component-preview.css`
  * already tune carefully for. Keeping two groups and synchronising their STATE, instead, reaches
  * the same reader-facing result (one shared yes/no, never two) for a fraction of the risk.
@@ -483,8 +531,8 @@ function connectSourceToggles(root: HTMLElement): Cleanup {
    * ONE representative toggle per BINDING (Vanilla, React), not per tabs group: a demo whose
    * React side is a single file (no `reactData`, so no tabs at all) still has to agree with a
    * tabbed Vanilla side, and vice versa. Each binding contributes whichever toggle it actually
-   * has — the shared bar's own, a direct child of `sourceTabs`, when there are file tabs; the
-   * lone panel's own otherwise (`.sk-component-preview__code` with no tabs wrapper around it) —
+   * has  -  the shared bar's own, a direct child of `sourceTabs`, when there are file tabs; the
+   * lone panel's own otherwise (`.sk-component-preview__code` with no tabs wrapper around it)  - 
    * or none at all, for a binding short enough that nothing there collapses.
    *
    * `:scope > .sk-code-preview__more` for the grouped case, not a marker attribute: the shared
@@ -543,10 +591,10 @@ function connectSourceToggles(root: HTMLElement): Cleanup {
   /*
    * A binding with no file tabs has NOTHING to stand in front of: its own toggle already IS the
    * one real per-file button, already wired by `code-preview.ts`'s own `connectCodePreview` (every
-   * `.sk-code-preview` mounts independently of this file) — AND it is also one of THIS function's
+   * `.sk-code-preview` mounts independently of this file)  -  AND it is also one of THIS function's
    * own representative toggles, since a binding with no tabs has no separate shared bar to be one.
    * Two things go wrong if a click is forwarded to it unfiltered, and both showed up live
-   * (`aria-expanded` coming back unchanged — toggled, then immediately un-toggled):
+   * (`aria-expanded` coming back unchanged  -  toggled, then immediately un-toggled):
    *
    *  1. `panelToggle.click()` on THE SAME element the reader just clicked fires
    *     `connectCodePreview`'s own listener a SECOND time, flipping its real state right back.
@@ -554,7 +602,7 @@ function connectSourceToggles(root: HTMLElement): Cleanup {
    *     a toggle from re-clicking itself.
    *  2. That same synthetic click ALSO fires THIS file's own listener on it a second time
    *     (attached alongside `connectCodePreview`'s, since it doubles as a representative), which
-   *     would start a SECOND forwarding pass back over every OTHER panel — flipping them again
+   *     would start a SECOND forwarding pass back over every OTHER panel  -  flipping them again
    *     too. A reentrancy guard is what stops THAT: only the outermost, genuinely user-initiated
    *     click runs the forwarding loop; a listener re-entered synchronously from inside that loop
    *     sees the guard already up and returns without cascading further.
@@ -583,6 +631,47 @@ function connectSourceToggles(root: HTMLElement): Cleanup {
   return () => {
     for (const cleanup of cleanups) cleanup();
   };
+}
+
+/*
+ * ONE observer for the whole page, exactly like `sharedBinding`/`sharedScreen` above are one
+ * preference for the whole page rather than one per preview: a page with a dozen previews gets a
+ * dozen `.observe()` calls against a single instance instead of a dozen redundant instances doing
+ * the same job. Built lazily, once, on the first preview that mounts.
+ *
+ * `IntersectionObserver` itself is guarded the same way `connectStageResizer` above already
+ * guards `ResizeObserver`: absent (an old browser, or jsdom in tests) means every preview simply
+ * stays live for the page's whole life, today's behaviour, not a broken one.
+ */
+let sharedStageObserver: IntersectionObserver | null = null;
+
+function stageObserver(): IntersectionObserver | null {
+  if (typeof IntersectionObserver === "undefined") return null;
+  if (!sharedStageObserver) {
+    sharedStageObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const previewRoot = entry.target as HTMLElement;
+          if (entry.isIntersecting) restoreComponentPreviewStages(previewRoot);
+          else releaseComponentPreviewStages(previewRoot);
+        }
+      },
+      // One generous band, not a tighter release margin plus a separate restore margin: a reader
+      // scrolling normally crosses this boundary once per direction, and toggling the segmented
+      // control on the preview in front of them never crosses it at all, so there is nothing here
+      // for two margins to buy over one.
+      { rootMargin: "100% 0px" },
+    );
+  }
+  return sharedStageObserver;
+}
+
+/** Releases a preview's stages once it scrolls a viewport past view, restores them when it scrolls back. */
+function connectStageLifecycle(root: HTMLElement): Cleanup {
+  const observer = stageObserver();
+  if (!observer || !stagesOf(root).length) return () => {};
+  observer.observe(root);
+  return () => observer.unobserve(root);
 }
 
 /** Switches the authored source panels without owning preview rendering or highlighted code. */
@@ -631,9 +720,10 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
   const disconnectResizer = connectStageResizer(root);
   const disconnectScreenTabs = connectScreenTabs(root);
   // Every source-tabs group this preview has (vanilla HTML/CSS/TS, react Componente/data), kept
-  // in ONE shared open/closed state — unlike `sourceTabs` above (deliberately the first match
+  // in ONE shared open/closed state  -  unlike `sourceTabs` above (deliberately the first match
   // only, for the vanilla-only `showSource` logic), this reaches all of them at once.
   const disconnectSourceToggle = connectSourceToggles(root);
+  const disconnectStageLifecycle = connectStageLifecycle(root);
 
   bindingTabs?.addEventListener("sk-value-change", onBindingValueChange);
   sourceTabs?.addEventListener("sk-value-change", onSourceChange);
@@ -665,6 +755,7 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
     disconnectResizer();
     disconnectScreenTabs();
     disconnectSourceToggle();
+    disconnectStageLifecycle();
   };
 }
 

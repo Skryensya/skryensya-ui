@@ -5,15 +5,15 @@ export const iconButtonToolbarWithTooltipsSnippet: Snippet = {
   level: "molecule",
   intent: "A row of icon-only actions, each one individually labelled and hinted.",
   notes: [
-    "Three `icon-only-button-tooltip` component snippets, side by side in an `Inline` — a molecule is " +
+    "Three `icon-only-button-tooltip` component snippets, side by side in an `Inline`  -  a molecule is " +
       "often exactly this: a layout primitive around several already-correct single-component " +
       "instances, not a new shape invented from raw parts.",
     "Every button gets its OWN `aria-label` and its OWN `Tooltip`, matched to what it does (\"Edit\", " +
-      "\"Duplicate\", \"Delete\") — three icon buttons with the same generic label (\"Action\", say) " +
+      "\"Duplicate\", \"Delete\")  -  three icon buttons with the same generic label (\"Action\", say) " +
       "would pass `validate_ui` (each individually satisfies the a11y rule) while still being " +
       "useless to anyone using a screen reader's \"list all buttons\" navigation, where three " +
       "identically-named controls are indistinguishable.",
-    "`gap: \"sm\"`, tighter than a typical `Inline` row of full-size buttons — this is chrome " +
+    "`gap: \"sm\"`, tighter than a typical `Inline` row of full-size buttons  -  this is chrome " +
       "(actions ON a row, not the row's own content), and reads as one cohesive toolbar rather than " +
       "three separate controls that happen to be adjacent.",
   ],

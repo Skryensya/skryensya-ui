@@ -330,6 +330,13 @@ function resolveDemoLoader(
 }
 
 /** This frame's icon set, bound: see `mountComponentsWithIcons` for the sequence and why. */
+
+function hasIconPlaceholders(root: Document | Element): boolean {
+  if (root instanceof Element && root.hasAttribute("data-sk-icon")) return true;
+  return root.querySelector("[data-sk-icon]") !== null;
+}
+
+
 const mountFrameComponents = (root: Document | Element): Promise<void> =>
   mountComponentsWithIcons(root, siteIcons);
 
@@ -454,7 +461,7 @@ async function mountReactDemo(): Promise<void> {
     );
   });
   await mountReactEnhancers(host);
-  mountIcons(host, siteIcons);
+  if (hasIconPlaceholders(host)) mountIcons(host, siteIcons);
 }
 
 function runAuthoredScript(): void {
@@ -613,9 +620,15 @@ async function boot(): Promise<void> {
    * placeholders as they arrive; observing child additions avoids timing guesses and ignores state
    * updates, which only change attributes.
    */
-  const iconObserver = new MutationObserver(() =>
-    mountIcons(document, siteIcons),
-  );
+  const iconObserver = new MutationObserver((records) => {
+    for (const record of records) {
+      for (const node of record.addedNodes) {
+        if (node instanceof Element && hasIconPlaceholders(node)) {
+          mountIcons(node, siteIcons);
+        }
+      }
+    }
+  });
   iconObserver.observe(document.body, { childList: true, subtree: true });
   window.addEventListener("pagehide", () => iconObserver.disconnect(), {
     once: true,
@@ -626,8 +639,8 @@ async function boot(): Promise<void> {
    * has to behave like one: its own tabs, reload, resizer and code disclosure. Both mounts are
    * no-ops when the demo has neither surface, which is every other preview on the site.
    */
-  mountCodePreview(document);
-  mountComponentPreview(document);
+  if (document.querySelector("[data-sk-code-preview]")) mountCodePreview(document);
+  if (document.querySelector("[data-sk-component-preview]")) mountComponentPreview(document);
   await mountReactDemo();
   runAuthoredScript();
 

@@ -5,7 +5,7 @@ import { SplitButton } from "@skryensya/react/split-button";
 import { framedIn } from "./framed";
 
 /** Every demo below runs inside its own preview frame. See `framed.tsx`. */
-const framed = framedIn(import.meta.url);
+const framed = framedIn("split-button");
 
 export const SplitButtonDemo = framed(function SplitButtonDemo() {
   return (

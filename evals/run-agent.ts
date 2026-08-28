@@ -17,14 +17,14 @@ import type { CaseScore } from "./agent/scoring.js";
  * provider actually is.
  *
  * DEFAULTS TO ENGLISH ONLY. The corpus HAS both languages (each case's `tree` still has to hold for
- * both — that's what `run.ts` checks on every `pnpm check`), but the live-agent measurement this file
+ * both  -  that's what `run.ts` checks on every `pnpm check`), but the live-agent measurement this file
  * runs is real, metered usage per call: doubling every run for a language pass that isn't the thing
  * under test is exactly the unnecessary spend to avoid. Pass `--lang both` (or `--lang es`) to
  * deliberately check the other language, e.g. after a prompt-wording change.
  *
  * DEFAULT CONCURRENCY IS 3, not sequential. Isolation lives in each `Provider.run()` call itself
  * (`claude-code-provider.ts`'s per-call `mkdtemp`, TanStack's own process-per-call MCP connection in
- * `mcp-tools.ts`), not in running one call at a time — running several in parallel doesn't weaken
+ * `mcp-tools.ts`), not in running one call at a time  -  running several in parallel doesn't weaken
  * that, it's what waiting for 24 sequential CLI spawns was costing for no reason. `--concurrency 1`
  * restores the old sequential behavior if a provider's rate limit needs it.
  */
@@ -128,7 +128,7 @@ async function main(): Promise<void> {
   );
 
   // Order of PRINTED lines follows completion, not `runs` order: with concurrency > 1, that is the
-  // only honest order — a case that finishes first is not necessarily the first one listed.
+  // only honest order  -  a case that finishes first is not necessarily the first one listed.
   const scores = await runWithConcurrency(runs, args.concurrency, async ({ evalCase, lang }) => {
     const score = await provider.run(evalCase, lang, model, args.verbose);
     const mark = score.valid ? "PASS" : "FAIL";

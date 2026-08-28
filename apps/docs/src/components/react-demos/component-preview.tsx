@@ -10,7 +10,7 @@ import { TileLink } from "@skryensya/react/tile";
 import { framedIn } from "./framed";
 
 /** Every demo below runs inside its own preview frame. See `framed.tsx`. */
-const framed = framedIn(import.meta.url);
+const framed = framedIn("component-preview");
 
 export const SaveActionDemo = framed(function SaveActionDemo() {
   return <Button onClick={() => {}}>Save changes</Button>;

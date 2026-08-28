@@ -1,12 +1,12 @@
 /*
  * This app's OWN chrome now composes real kit components (`List`, `Table`, `Breadcrumb`, `Tabs`,
  * `SegmentedControl`, `Badge`, `CodePreview`, `Navbar`, `IconStateButton`, `Link`/`Text`/`Heading`/
- * `Code`, `Box`, `Stack`/`Inline`, `Details`/`DetailsGroup` — see the pages/, AppNavbar.tsx,
- * ToolTrace.tsx and Preview.tsx doc comments for how each was validated) — the earlier decision to
+ * `Code`, `Box`, `Stack`/`Inline`, `Details`/`DetailsGroup`  -  see the pages/, AppNavbar.tsx,
+ * ToolTrace.tsx and Preview.tsx doc comments for how each was validated)  -  the earlier decision to
  * keep this file's chrome as plain, kit-free HTML/CSS is REVERSED. What is left here is only what the
  * kit's own CSS genuinely doesn't cover: the italic on a prompt (presentational, not a `Text` tone),
  * a plain `<pre>` code pane's own font/wrap (there is no kit signature for a raw code block outside
- * `CodePreview`'s own chrome around it), and the preview stage's own resizable iframe shell — nothing
+ * `CodePreview`'s own chrome around it), and the preview stage's own resizable iframe shell  -  nothing
  * a component composes, since the iframe itself is this app's one genuinely custom piece of UI.
  *
  * NO `color-scheme` pin here any more, on purpose: this app now has a real light/dark/system toggle
@@ -22,7 +22,7 @@ body {
 }
 
 /*
- * Width/inline-padding is `<Wrapper wrapperSize="lg">`'s job now (`App.tsx`), not this rule's — only
+ * Width/inline-padding is `<Wrapper wrapperSize="lg">`'s job now (`App.tsx`), not this rule's  -  only
  * the vertical rhythm the kit's own pattern doesn't own is left here.
  */
 main {
@@ -33,7 +33,7 @@ main {
  * Matches `.sk-wrapper[data-size="lg"]`'s own gutter (margin-inline:auto against `--size-wrapper-lg`,
  * plus its `--space-inset-lg` padding) exactly, so the brand/actions row lines up with the page
  * content below it instead of sitting flush against the viewport edge. Can't be a second `Wrapper`
- * node inside `<Navbar>` — `validate_ui` rejects that composition (see `App.tsx`'s doc comment) — so
+ * node inside `<Navbar>`  -  `validate_ui` rejects that composition (see `App.tsx`'s doc comment)  -  so
  * this is the sanctioned alternative: `--sk-navbar-padding-x` is the exact customization hook
  * `navbar.css` exposes for it, and reusing `--size-wrapper-lg` (rather than a second hand-picked
  * number) is what keeps this from drifting out of sync with `Wrapper` again.
@@ -46,10 +46,10 @@ main {
 }
 
 /*
- * Neither component owns the space AFTER itself — that's the page's own rhythm, not something
+ * Neither component owns the space AFTER itself  -  that's the page's own rhythm, not something
  * `Breadcrumb`'s or `SegmentedControl`'s own contract should assume about whatever sits next.
  * Without this, both sat flush against the block right below them (confirmed live: 0px gap in both
- * cases) — the trail touching the page's own `<h1>`, the vanilla/react switch touching the preview
+ * cases)  -  the trail touching the page's own `<h1>`, the vanilla/react switch touching the preview
  * stage's own border. `--space-stack-md`, the token this system already uses for the gap between two
  * stacked blocks, keeps this consistent with the rhythm `Stack gap="md"` produces everywhere else in
  * this app rather than a hand-picked px value.
@@ -82,17 +82,17 @@ pre {
 /*
  * Each run card owns one isolated iframe render. THE STAGE owns the height now, not the content: a
  * default height plus `resize: vertical` past it, and the iframe fills 100% of whatever that box
- * currently is (`.preview-frame`, below) — reversed from the iframe auto-fitting to its own content
+ * currently is (`.preview-frame`, below)  -  reversed from the iframe auto-fitting to its own content
  * and the stage growing to match (`postMessage` from `frame/entry.tsx`, removed). `overflow: hidden`,
  * not `auto`: the iframe's OWN document is the one scrolling surface when its content is taller than
  * the box (standard iframe behavior, no `overflow` needed here to reach it), so an outer scrollbar on
  * the stage itself would just be a second, redundant one. `resize` still needs a non-`visible`
  * overflow to paint its handle at all, which `hidden` satisfies the same as `auto` did.
  *
- * `height`, not just `min-height` — confirmed live as the difference between the iframe actually
+ * `height`, not just `min-height`  -  confirmed live as the difference between the iframe actually
  * filling this box and silently falling back to the browser's own default iframe size (150px): a
  * percentage height only resolves against a DEFINITE containing-block height (CSS spec), and
- * `min-height` alone never establishes one — the box's own `height` stays `auto` regardless of what
+ * `min-height` alone never establishes one  -  the box's own `height` stays `auto` regardless of what
  * `min-height` floors it at, so `.preview-frame`'s `height: 100%` had nothing definite to resolve
  * against until a reader's manual resize set an explicit inline height for the first time. `height`
  * here gives it that from the start; `min-height` stays alongside so `resize` still cannot be
@@ -124,7 +124,7 @@ pre {
    * The kit's own page background, not a hardcoded white: the FRAME's own document paints this same
    * token on its `body` once `color-scheme` is synced (`frame/document.ts`), but this element itself
    * is the one thing that briefly shows through before that document has anything painted (parse,
-   * first navigation) — a flash of white there while the rest of the app sits in dark mode is exactly
+   * first navigation)  -  a flash of white there while the rest of the app sits in dark mode is exactly
    * the "the preview isn't bounded by the theme" this token fixes. Available here too: `main.tsx`
    * imports `tokens.scss` before anything else, so this custom property already resolves in this
    * app's own chrome.

@@ -43,6 +43,16 @@
     white-space: nowrap;
   }
 
+  .sk-badge[data-size="sm"] {
+    /* Half-steps off --space-inset-xs, the same "fraction of a named token" the 2px sub-grid already
+     * allows elsewhere (calendar.css's own `calc(var(--space-inset-xs) * 0.5)`) rather than a step up
+     * to --space-inset-sm, which would land sm's own padding on the default badge's padding and erase
+     * the size difference. */
+    --sk-badge-padding-x: calc(var(--space-inset-xs) * 1.5);
+    --sk-badge-padding-y: calc(var(--space-inset-xs) * 0.5);
+    --sk-badge-line-height: 1.35;
+  }
+
   .sk-badge[data-tone="accent"] {
     --sk-badge-bg: var(--color-bg-accent-subtle);
     --sk-badge-fg: var(--color-text-accent);
@@ -68,14 +78,45 @@
   }
 
   /* The dot: a bare solid circle, no text, no padding, no hairline. It carries meaning by color and
-   * position alone, so it drops the label's box entirely. */
+   * position alone, so it drops the label's box entirely. `data-pulse` adds a single expanding halo
+   * for a live/transient state; it animates only transform and opacity, and stands down for reduced
+   * motion. */
   .sk-badge[data-dot] {
+    position: relative;
     padding: 0;
     border: 0;
     inline-size: var(--sk-badge-dot-size);
     block-size: var(--sk-badge-dot-size);
     border-radius: var(--radius-pill);
     background: var(--sk-badge-dot-color);
+  }
+
+  .sk-badge[data-dot][data-pulse]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--sk-badge-dot-color);
+    opacity: 0;
+    animation: sk-badge-pulse 1.6s cubic-bezier(0.2, 0, 0, 1) infinite;
+  }
+
+  @keyframes sk-badge-pulse {
+    0% {
+      opacity: 0.45;
+      scale: 1;
+    }
+    70%,
+    100% {
+      opacity: 0;
+      scale: 2.4;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-badge[data-dot][data-pulse]::after {
+      animation: none;
+    }
   }
 
   /* The holder anchors a badge to the top-right corner of whatever it wraps, an icon button, an avatar.

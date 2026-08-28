@@ -53,13 +53,16 @@ function paint(target: HTMLElement) {
   target.appendChild(document.createTextNode(value || "-"));
 }
 
+let usedValuesController: AbortController | null = null;
+
 export function initUsedValues() {
+  usedValuesController?.abort();
+  usedValuesController = new AbortController();
   /*
    * A Set, not a WeakSet, because this is also the repaint list below, and a repaint has to be able
    * to enumerate what it already painted.
    */
   const painted = new Set<HTMLElement>();
-
   const paintOnce = (target: HTMLElement) => {
     if (painted.has(target)) return;
     paint(target);
@@ -96,7 +99,13 @@ export function initUsedValues() {
    * painted, so the repaint repainted nothing: the reference kept showing values from the density
    * the reader had left. Same listener, right function.
    */
-  document.addEventListener("sk:dimensions-changed", () => {
+  const repaint = () => {
     for (const el of painted) paint(el);
+  };
+  document.addEventListener("sk:dimensions-changed", repaint, {
+    signal: usedValuesController.signal,
+  });
+  usedValuesController.signal.addEventListener("abort", () => observer.disconnect(), {
+    once: true,
   });
 }

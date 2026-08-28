@@ -77,7 +77,7 @@ const componentItems = [
   { href: "/componentes/avatar", label: "Avatar", aliases: ["perfil"] },
   { href: "/componentes/badge", label: "Badge", aliases: ["insignia"] },
   { href: "/componentes/box", label: "Box", aliases: ["caja"] },
-  { href: "/componentes/hero", label: "Hero", aliases: ["portada", "landing"] },
+  { href: "/componentes/hero", label: "Hero", trailing: "Beta", aliases: ["portada", "landing"] },
   {
     href: "/componentes/button",
     label: "Button",
@@ -230,6 +230,7 @@ const componentItems = [
   {
     href: "/componentes/fade-edge",
     label: "FadeEdge",
+    trailing: "Beta",
     aliases: ["fade out", "fade-out", "mask", "gradient fade", "fade effect", "fade visual"],
   },
   {

@@ -397,6 +397,24 @@ app rather than one component; documented, never shipped, and never implied by a
 component's own guide.
 _Avoid_: bootstrap, setup, boilerplate, starter, font provisioning
 
+## Usage of the system
+
+**Usage observation**:
+One live Binding instance of a Contract: a React mount, or a Vanilla enhancer that has become ready. Not a render, not a click, not authored Native alternative markup, and not a usage tree.
+_Avoid_: event, hit, impression, pageview, telemetry event, mount (unqualified)
+
+**Sample decision**:
+Whether this Document sends usage observations. Taken once for that Document's browser session. Not an identity, and not shared across Documents.
+_Avoid_: session ID, visitor sample, user sample, session (unqualified)
+
+**Usage batch**:
+The aggregated usage observations of one Document since the last accepted flush.
+_Avoid_: event stream, analytics payload, beacon (as the product name)
+
+**Ingest**:
+The owned HTTP surface that accepts a usage batch. Design-system callers never address Umami; Umami sits behind ingest.
+_Avoid_: telemetry API, analytics endpoint, Umami webhook
+
 ## Enforcement
 
 **The surface gate**:

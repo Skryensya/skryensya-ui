@@ -1,12 +1,12 @@
 ---
 /*
- * THE hero-tabs shell every component page is meant to take: Uso / Instalación / Referencia /
- * Style hooks / Accesibilidad / Cambios, over one `<h1>`. Pulled out of `AccordionPage.astro`,
- * which piloted the shape, so a second component page does not have to re-copy ~150 lines of
- * hero, tablist and `hasChanges` wiring to get it (see `apps/docs/src/scripts/hero-tabs-toc.ts`
- * for the ToC half of this contract: it skips each panel's own first heading and starts the rail
- * one level down, which is why `usage` gets a heading here but `install` and `a11y` bring their
- * own visible one, matching the tab strip word for word; see that file's own comment for why).
+ * Component page frame: masthead, tabs and generated panels over one `<h1>`. The masthead is the
+ * only content inside `.docs-component-head`; the tab strip and every page panel are siblings under
+ * `.docs-component-shell`, so the "head" class does not own the whole document. Pulled out of
+ * `AccordionPage.astro`, which piloted the shape, so a second component page does not have to
+ * re-copy the hero, tablist and `hasChanges` wiring to get it (see
+ * `apps/docs/src/scripts/hero-tabs-toc.ts` for the ToC half of this contract: it skips each panel's
+ * own first heading and starts the rail one level down).
  *
  * Referencia and Cambios are wired automatically from `contractId`: a page cannot describe an
  * option the compiled contract does not also carry, because both are the one artifact
@@ -73,78 +73,77 @@ const hasTests = tests.length > 0;
 
 <Base title={title} description={description} documentLayout="grid" hideVanillaMount={hideVanillaMount}>
   {/*
-   * ONE GRID ITEM AROUND BOTH, and it exists for exactly one reason: `position: sticky`.
+   * ONE GRID ITEM AROUND HERO AND TABS, and it exists for exactly one reason: `position: sticky`.
    *
    * `<main>` is a `.sk-layout-grid`, and `layout.css` gives every direct child its own implicit row
    * (`.sk-layout-grid > * { grid-column: content-start / content-end }`). A sticky grid item is
    * confined to its own grid AREA, so a sticky hero sitting directly under `<main>` would have a
    * one-row containing block and scroll away exactly like a static one. The property would be a
-   * no-op. That is also why the tab strip already works: its sticky is not on the grid item, it is
-   * on `.sk-tabs__list` INSIDE `.sk-tabs`, which is the tall item that spans the whole document.
+   * no-op.
    *
-   * This box gives the hero the same tall containing block. It stays a plain BLOCK container on
-   * purpose: making it a grid or flex box would put every child back in its own area and reintroduce
-   * the bug it was added to fix.
+   * This shell gives the hero the tall containing block. `docs-component-head` is deliberately only
+   * the masthead markup now; it no longer owns the tab system or every page panel. It is
+   * `display: contents` in CSS so the sticky hero is constrained by this shell, not by that short
+   * masthead wrapper.
    *
-   * Nothing else moves. The panels were already inside `.sk-tabs` rather than children of `<main>`,
-   * so no `data-width` placement changes, and the hero keeps the same `content` measure it had as a
-   * grid item. The three scripts that wire this shell reach the tabs through
-   * `closest("[data-sk-tabs]")` and `:scope >` from that root (`hero-tabs-toc.ts:16`,
-   * `hero-tabs-url.ts:30`), so an extra ancestor is invisible to all of them.
+   * Nothing else moves. The panels stay inside `.sk-tabs`, and the scripts that wire this shell
+   * reach the tabs through `closest("[data-sk-tabs]")` and `:scope >` from that root
+   * (`hero-tabs-toc.ts:16`, `hero-tabs-url.ts:30`).
    */}
-  <div class="docs-component-head">
-    {/*
-     * THE TALL HALF OF THE BAND, and the reason it is a box of its own rather than padding on the
-     * header: the header's LAYOUT height has to stay constant while the band appears to shrink.
-     *
-     * Shrinking the header for real was measured and is wrong. The tab strip below it rises at the
-     * scroll's rate PLUS whatever height the header gives back, so it reaches its own pinned top
-     * roughly twice as fast as the band closes and spends the difference hidden underneath it. At
-     * 1400px the strip was pinned at 100px with the band's edge still at 173. The only collapse
-     * range that avoids it is 24px, which is too short to read as anything but a snap.
-     *
-     * So the height that goes away is here, in a box that simply scrolls off, and the header keeps
-     * one constant height: the small bar. It is EXACTLY as tall as the scroll distance the collapse
-     * takes, which is what keeps the two halves in step.
-     *
-     * Empty and presentational. It has no text to hide from a screen reader, and it finishes the
-     * same accent-tinted band the header paints.
-     */}
-    <div class="docs-component-hero__spacer"></div>
-
-    {/*
-     * THE HERO'S OWN BACKING PLATE, a real sibling rather than a pseudo-element INSIDE the hero:
-     * nothing can paint behind an element's own `background` within its own stacking context, not
-     * even a `z-index: -1` child (that only outranks the hero's other CHILDREN, the title and the
-     * badge, never the hero's own fill). The hero's bottom corners are rounded, so its own background
-     * clips to the curve and the small triangle the curve does not cover shows whatever paints
-     * BEHIND the hero in the surrounding page instead, real scrolling content once the hero is
-     * pinned (see this element's own CSS for how that was confirmed live). A same-rect, square,
-     * canvas-coloured sibling sitting just under the hero in stacking gives that triangle something
-     * constant and correct to reveal, so the corner stays visibly rounded instead of reading as a
-     * plain square once notch and card are painted the same colour (also tried, also live: matching
-     * the hero's own blue erased the curve rather than fixing it, since a same-colour notch and
-     * card are pixel-identical). Empty and `aria-hidden`: it carries no content of its own to hide
-     * from a screen reader, it is paint.
-     */}
-    <div aria-hidden="true" class="docs-component-hero__backing"></div>
-
-    <header class="docs-component-hero">
+  <div class="docs-component-shell">
+    <div class="docs-component-head">
       {/*
-       * PLAIN MARKUP, not the Breadcrumb contract: that was tried (a real `nav`/`ol`/`li` trail that
-       * flipped into an inline "Componentes / Accordion" row once collapsed) and undone. The morph
-       * itself read as the wrong kind of attention on scroll. `--docs-hero-collapse` still drives the
-       * eyebrow, just toward CLOSED now rather than toward a second layout: see its rule in site.css.
+       * THE TALL HALF OF THE BAND, and the reason it is a box of its own rather than padding on the
+       * header: the header's LAYOUT height has to stay constant while the band appears to shrink.
+       *
+       * Shrinking the header for real was measured and is wrong. The tab strip below it rises at the
+       * scroll's rate PLUS whatever height the header gives back, so it reaches its own pinned top
+       * roughly twice as fast as the band closes and spends the difference hidden underneath it. At
+       * 1400px the strip was pinned at 100px with the band's edge still at 173. The only collapse
+       * range that avoids it is 24px, which is too short to read as anything but a snap.
+       *
+       * So the height that goes away is here, in a box that simply scrolls off, and the header keeps
+       * one constant height: the small bar. It is EXACTLY as tall as the scroll distance the collapse
+       * takes, which is what keeps the two halves in step.
+       *
+       * Empty and presentational. It has no text to hide from a screen reader, and it finishes the
+       * same accent-tinted band the header paints.
        */}
-      <p class="docs-component-hero__eyebrow">{t("section.components")}</p>
-      <div class="docs-component-hero__title-row">
-        <h1>{title}</h1>
-        {badge && (
-          <span class="sk-badge docs-component-hero__badge" data-tone="warning">{badge}</span>
-        )}
-      </div>
-    </header>
+      <div class="docs-component-hero__spacer"></div>
 
+      {/*
+       * THE HERO'S OWN BACKING PLATE, a real sibling rather than a pseudo-element INSIDE the hero:
+       * nothing can paint behind an element's own `background` within its own stacking context, not
+       * even a `z-index: -1` child (that only outranks the hero's other CHILDREN, the title and the
+       * badge, never the hero's own fill). The hero's bottom corners are rounded, so its own background
+       * clips to the curve and the small triangle the curve does not cover shows whatever paints
+       * BEHIND the hero in the surrounding page instead, real scrolling content once the hero is
+       * pinned (see this element's own CSS for how that was confirmed live). A same-rect, square,
+       * canvas-coloured sibling sitting just under the hero in stacking gives that triangle something
+       * constant and correct to reveal, so the corner stays visibly rounded instead of reading as a
+       * plain square once notch and card are painted the same colour (also tried, also live: matching
+       * the hero's own blue erased the curve rather than fixing it, since a same-colour notch and
+       * card are pixel-identical). Empty and `aria-hidden`: it carries no content of its own to hide
+       * from a screen reader, it is paint.
+       */}
+      <div aria-hidden="true" class="docs-component-hero__backing"></div>
+
+      <header class="docs-component-hero">
+        {/*
+         * PLAIN MARKUP, not the Breadcrumb contract: that was tried (a real `nav`/`ol`/`li` trail that
+         * flipped into an inline "Componentes / Accordion" row once collapsed) and undone. The morph
+         * itself read as the wrong kind of attention on scroll. `--docs-hero-collapse` still drives the
+         * eyebrow, just toward CLOSED now rather than toward a second layout: see its rule in site.css.
+         */}
+        <p class="docs-component-hero__eyebrow">{t("section.components")}</p>
+        <div class="docs-component-hero__title-row">
+          <h1>{title}</h1>
+          {badge && (
+            <span class="sk-badge docs-component-hero__badge" data-tone="warning">{badge}</span>
+          )}
+        </div>
+      </header>
+    </div>
     <div class="sk-tabs" data-orientation="horizontal" data-activation-mode="automatic" data-value="usage" data-sk-tabs>
       <div class="sk-tabs__list docs-component-hero-tabs" data-sk-tabs-list aria-label={t("component.tabsAriaLabel", { name: title })}>
         <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="usage" type="button">{t("component.tabUsage")}</button>

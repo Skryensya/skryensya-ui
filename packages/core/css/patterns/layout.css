@@ -36,16 +36,23 @@
   .sk-stack[data-gap="lg"] { --sk-stack-gap: var(--space-stack-lg); }
   .sk-stack[data-gap="xl"] { --sk-stack-gap: var(--space-stack-xl); }
 
+  /*
+   * `align-items: flex-end` by default: an Inline row's own items land on a shared bottom edge
+   * unless told otherwise (`data-align`), the common case for a row mixing a label and a control of
+   * different heights (a button beside its own field, say) reading as one baseline-ish line rather
+   * than each item floating at its own vertical center.
+   */
   .sk-inline {
     --sk-inline-gap: var(--space-inline-md);
 
     display: flex;
     flex-wrap: wrap;
     gap: var(--sk-inline-gap);
-    align-items: center;
+    align-items: flex-end;
   }
 
   .sk-inline[data-align="start"] { align-items: flex-start; }
+  .sk-inline[data-align="center"] { align-items: center; }
   .sk-inline[data-align="end"] { align-items: flex-end; }
   .sk-inline[data-align="baseline"] { align-items: baseline; }
   .sk-inline[data-align="stretch"] { align-items: stretch; }
@@ -163,6 +170,26 @@
   .sk-layout-grid > [data-width="full-width"] > [data-width="content"] { grid-column: content-start / content-end; }
   .sk-layout-grid > [data-width="full-width"] > [data-width="breakout"] { grid-column: breakout-start / breakout-end; }
   .sk-layout-grid > [data-width="full-width"] > [data-width="full-width"] { grid-column: full-width-start / full-width-end; }
+
+  /*
+   * FLUSH BREAKOUT, an opt-in escape hatch for a breakout child that should hit the true edge
+   * instead of merely reading wider once the viewport is too narrow for the difference to matter.
+   * Below the breakpoint the outer gutter track never grows past its fixed floor
+   * (`--sk-layout-gutter`), so an ordinary breakout there sits at the same inset as `content` with
+   * nothing gained; `data-breakout="flush"` jumps it to the same lines `full-width` already spans
+   * instead. Opt-in rather than a default, so an existing breakout composition keeps its current
+   * inset unless asked otherwise.
+   *
+   * `48rem`, hardcoded: media queries cannot read custom properties, the same exception the rail
+   * rule below and semantic/_breakpoints.scss's own comment already take (ADR-19, tier-3 stays
+   * CSS). Not tied to a named tier: this is a standalone choice, not the "compact" step.
+   */
+  @media (max-width: 48rem) {
+    .sk-layout-grid > [data-width="breakout"][data-breakout="flush"],
+    .sk-layout-grid > [data-width="full-width"] > [data-width="breakout"][data-breakout="flush"] {
+      grid-column: full-width-start / full-width-end;
+    }
+  }
 
   /*
    * RAIL, a supporting column beside the grid (a TOC, contextual navigation) rather than a section

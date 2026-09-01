@@ -131,6 +131,20 @@ export function framedIn(moduleName: string) {
       });
 
       /*
+       * Still an eager `srcDoc` prop, unlike the Vanilla stage's own — a deferred version (author
+       * into {@link componentPreviewAttrs.doc}, promote on `client:visible`'s own hydration) was
+       * tried and reverted: `/f/{page}/{n}` (the fullscreen route) reconstructs a preview from this
+       * page's own STATIC html, and it only ever copies `<script src="…">` tags into that
+       * reconstruction (`jsSrcs`, built from `script[type="module"]` elements with a `src`) — never
+       * inline ones. Astro's `client:visible` hydration bootstrap for an island IS an inline
+       * `<script>` (the `astro-island` custom element definition, no `src` to match), so it never
+       * makes it into that reconstruction and this component never hydrates there. Before, that did
+       * not matter: the fully-populated `srcDoc` was already in the static markup the fullscreen
+       * shell fetches, so the demo showed up with zero hydration needed. Deferring it made every
+       * React-bound "Pantalla completa" spin forever instead — confirmed live, not theoretical.
+       */
+
+      /*
        * No `data-sk-component-preview-binding` here: the wrapping `.sk-component-preview__react-stage`
        * div already carries it for `ComponentPreview.astro`'s toggle script, which does
        * `querySelectorAll("[data-sk-component-preview-binding]")` and sets `.hidden` on every match

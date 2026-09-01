@@ -562,6 +562,18 @@ const screenToggleLabels = Object.fromEntries(
 
   {
     hasVanillaStage && (
+      /*
+       * `data-sk-component-preview-doc` holds the document, `srcdoc` starts EMPTY: `loading="lazy"`
+       * does nothing for `srcdoc` content (it is already inline HTML, so the parser starts fetching
+       * whatever it references — the frame runtime, its module graph — the moment it is parsed,
+       * on every preview on the page, at once, regardless of scroll position; that WAS this
+       * attribute's job here, and it never worked). `connectStageLifecycle`
+       * (`@skryensya/vanilla/component-preview`) promotes it to `srcdoc` the same way it already
+       * restores a released one: through the shared `IntersectionObserver`, once the stage is near
+       * view. `/f/{page}/{n}` (the fullscreen route) reads the `-doc` attribute straight off this
+       * page's own static HTML, never a live DOM, so a preview nobody has scrolled to yet still
+       * opens correctly there.
+       */
       <iframe
         class="sk-component-preview__stage"
         data-sk-component-preview-binding="vanilla"
@@ -570,9 +582,8 @@ const screenToggleLabels = Object.fromEntries(
         data-sk-component-preview-min-height={minHeight ? "" : undefined}
         data-sk-component-preview-scroll={scroll ? "" : undefined}
         aria-busy="true"
-        srcdoc={frameDocument}
+        data-sk-component-preview-doc={frameDocument}
         title={`Preview renderizado: ${label}`}
-        loading="lazy"
         allow="clipboard-write"
       />
     )

@@ -85,6 +85,19 @@ body {
   --sk-wrapper-max: var(--docs-shell-max);
 }
 
+/* Mobile-only: the bar's own name, once the global nav (which lists "Home" as a peer destination,
+   not a logo) moves into the drawer and stops naming the site. Hidden here; the mobile media query
+   below is what actually shows it, grid-column 1, on the leading edge. */
+.dimensions__brand {
+  display: none;
+}
+
+/* Mobile-only: a real button standing in for the desktop search field, see the mobile media query
+   for why (the field shape is a desktop-only affordance). Hidden here by default. */
+.dimensions__search-trigger-mobile {
+  display: none;
+}
+
 /* Header destinations are one NavList. Home is not a logo-shaped exception; it is the first peer
    destination, with tighter chrome than the sidebar and roomier inline padding for scanning. */
 .dimensions__global {
@@ -235,9 +248,13 @@ body {
 @media (max-width: 52rem) {
   .dimensions__content {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto 1fr auto auto;
     gap: var(--space-inline-xs);
     padding-block: var(--space-inset-xs);
+    /* `sk-wrapper[data-size="lg"]`'s own inset (`--space-inset-lg`, 24px) is tuned for a desktop row
+       with room to spare; at mobile widths, next to two now-square 44px icon buttons, it read as
+       excess air on both edges. Matches the document's own mobile gutter (shell.scss). */
+    --sk-wrapper-padding-inline: var(--space-inset-md);
   }
 
   .dimensions__global,
@@ -245,32 +262,48 @@ body {
     display: none;
   }
 
+  /* Trailing edge, alongside search: the trigger stays FIRST in the markup (a keyboard user reaches
+     the drawer before anything else, the same one-tab-to-the-index reasoning the skip link's own
+     comment already states), but visually it reads as an icon cluster on the right, the shape every
+     mobile site's own header already trained readers to expect. Grid placement is purely visual;
+     nothing here touches DOM order or, with it, focus order.
+
+     `grid-row: 1` is required, not decorative, on all three placed children: the DOM has the
+     trigger (column 4) BEFORE the brand (column 1) and search (column 3), and sparse auto-placement
+     only ever moves its cursor forward. Landing on column 4 first pushes the cursor past the row, so
+     the next items (columns 1 and 3, both "behind" it) fell through to an implicit second row
+     instead of sharing the first — confirmed live via a Playwright DOM dump before this fix. */
   .dimensions__menu-trigger {
+    grid-row: 1;
+    grid-column: 4;
+  }
+
+  .dimensions__brand {
+    display: flex;
+    grid-row: 1;
     grid-column: 1;
+    align-items: center;
+    justify-content: flex-start;
+    min-inline-size: 0;
+    overflow: hidden;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-heading);
+    text-decoration: none;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
+  /* The field shape is a desktop-only affordance (it exists to grow and show a placeholder + the
+     ⌘K hint); mobile gets its own real button instead of this collapsed to an icon-sized husk. */
   .dimensions__search-trigger {
-    grid-column: 3;
-    inline-size: var(--size-control-md);
-    min-inline-size: var(--size-control-md);
-    margin-inline-start: 0;
-    justify-content: center;
-    padding-inline: 0;
-    border-color: transparent;
-  }
-
-  /* Collapsed to zero rather than `display: none`: a hidden input cannot be focused or clicked, and
-     this one still has to be both (search-trigger.ts's wrapper click still lands on it, Tab still
-     has to reach it). Zero width and no padding just stop it from claiming any visible room next to
-     the icon; the field stays a real, working input, it only stops LOOKING like one at this size. */
-  .dimensions__search-input {
-    flex: none;
-    inline-size: 0;
-    padding: 0;
-  }
-
-  .dimensions__search-trigger .sk-kbd {
     display: none;
+  }
+
+  .dimensions__search-trigger-mobile {
+    display: inline-flex;
+    grid-row: 1;
+    grid-column: 3;
   }
 }
 
@@ -545,30 +578,12 @@ main {
   text-transform: uppercase;
 }
 
-.docs-drawer__global {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  flex: none;
-  gap: var(--space-inline-xs);
+/* The global links now render as a real sk-nav-list (see Base.astro) instead of a hand-rolled grid:
+   same markup the desktop header uses, so the current-page cue (nav-list.css's own non-color
+   synthetic-bold treatment) and the touch-target fix below (--sk-nav-list-link-height) both apply
+   here for free instead of needing a second, divergent implementation. */
+.docs-drawer > .sk-nav-list {
   padding: var(--space-inset-md) var(--space-inset-md) var(--space-inset-sm);
-}
-
-.docs-drawer__global-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-block-size: var(--size-touch-target);
-  padding-inline: var(--space-inset-sm);
-  border-radius: var(--radius-control);
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-body-sm);
-  font-weight: var(--font-weight-label);
-  text-decoration: none;
-}
-
-.docs-drawer__global-link[aria-current="page"] {
-  background: var(--color-bg-surface-sunken);
-  color: var(--color-text-primary);
 }
 
 .docs-drawer__prefs {
@@ -701,6 +716,13 @@ h2.docs-nav-section__title {
   --sk-nav-list-link-font-size: var(--font-size-body-sm);
   --sk-nav-list-link-font-weight: var(--font-weight-body);
   --sk-nav-list-link-fg: var(--color-text-secondary);
+}
+
+/* The rail is mouse-driven (32px, --size-control-sm, is plenty); the drawer is touch-driven and
+   needs the real touch-target floor. Scoped to the drawer alone so the desktop rail's density is
+   untouched. */
+.docs-drawer .sk-nav-list {
+  --sk-nav-list-link-height: var(--size-touch-target);
 }
 
 .docs-sidebar .sk-nav-list__group-label,

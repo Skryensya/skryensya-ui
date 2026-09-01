@@ -117,6 +117,14 @@
     --sk-wrapper-padding-inline: var(--space-inset-md);
   }
 
+  /* Same step-down, for the OTHER shape a page can take: `fullBleed` (the marketing home,
+     /personalizar), which never has a `.docs-document-pair` to carry the rule above. Matches the
+     mobile header's own inset (`.dimensions__content`'s `--sk-wrapper-padding-inline`, site.css) so
+     the bar and the page it sits above line up on the same edge. */
+  .sk-main > .sk-layout-grid {
+    --sk-layout-gutter: var(--space-inset-md);
+  }
+
   /*
    * Mobile loses the document rail entirely. The left navigation already moved into the drawer at
    * this breakpoint, and an in-page index stacked above the article costs the same scarce vertical

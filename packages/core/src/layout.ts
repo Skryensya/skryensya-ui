@@ -88,7 +88,7 @@ export const layoutContract = {
   options: {
     gap: { type: "enum", values: ["none", "xs", "sm", "md", "lg", "xl"], default: "md", attr: "data-gap" },
     align: { type: "enum", values: ["start", "center", "end", "stretch"], attr: "data-align" },
-    inlineAlign: { type: "enum", values: ["start", "center", "end", "baseline", "stretch"], default: "center", attr: "data-align", prop: "align" },
+    inlineAlign: { type: "enum", values: ["start", "center", "end", "baseline", "stretch"], default: "end", attr: "data-align", prop: "align" },
     justify: { type: "enum", values: ["start", "center", "end", "between"], default: "start", attr: "data-justify" },
     equal: { type: "boolean", default: false, attr: "data-equal", trueValue: "" },
     /*

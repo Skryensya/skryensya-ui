@@ -123,9 +123,13 @@ export const chartHistoryCardTree = (t: Translate): UsageTree => ({
         ],
       },
       {
+        // A real destination, not a click handler: "view the full report" goes somewhere, so this
+        // is `Button.navigation` (an `<a>` under the same `.sk-button` look, every variant intact),
+        // not `Button.action` pretending to navigate off an `onClick`. See `demos/button.ts`'s own
+        // `buttonAsLinkTree` for the contract's other worked example of the same signature.
         contract: "button",
-        signature: "Button.action",
-        options: { variant: "neutral", size: "sm" },
+        signature: "Button.navigation",
+        options: { variant: "neutral", size: "sm", href: "#" },
         children: t("demo.charts.history.button"),
       },
     ],

@@ -8,6 +8,7 @@ import {
 import { detectMac, formatHotkey } from "@skryensya/core/hotkey";
 import { bindHotkey } from "../hotkey.js";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
+import { connectVaul } from "./vaul.js";
 
 const rootSelector = `[${commandPaletteAttrs.root}]`;
 const openSelector = `[${commandPaletteAttrs.open}]`;
@@ -37,6 +38,19 @@ export function connectCommandPalette(root: HTMLElement): Cleanup {
   if (!(root instanceof HTMLDialogElement)) {
     throw new Error(`CommandPalette root [${commandPaletteAttrs.root}] must be a <dialog>.`);
   }
+
+  /*
+   * A palette that opts into Dialog Vaul (`data-sk-dialog-vaul`, the mobile bottom sheet) still
+   * needs the drag-to-dismiss gesture, but it cannot come from the generic `mountVaul` auto-loader:
+   * that mount and this one share one lifecycle marker (`data-sk-ready`/`-mounting`,
+   * `createConnectMount`'s own doc says "selectors are disjoint, so a root gets enhanced by exactly
+   * one enhancer"), and this root matches BOTH. Whichever claims it first marks it ready for both,
+   * so the second — always this one, since it is lazy and the Vaul auto-loader is eager — found the
+   * root already "ready" and never wired a single listener: no crash, just a search button and a
+   * drawer trigger that silently did nothing. The registry's own selector now excludes command
+   * palettes for the same reason (`registry.ts`); this call is what still gives them the gesture.
+   */
+  const cleanupVaul = root.matches("[data-sk-dialog-vaul]") ? connectVaul(root) : null;
 
   const input = root.querySelector<HTMLInputElement>(`[${commandPaletteAttrs.input}]`);
   const list = root.querySelector<HTMLElement>(`[${commandPaletteAttrs.list}]`);
@@ -189,6 +203,7 @@ export function connectCommandPalette(root: HTMLElement): Cleanup {
       trigger.removeEventListener("click", onTriggerClick);
     }
     unbindHotkey();
+    cleanupVaul?.();
   };
 }
 

@@ -1,0 +1,29 @@
+msg_file="$1"
+subject="$(head -n1 "$msg_file")"
+line_count="$(grep -c . "$msg_file")"
+
+# Nunca un trailer de coautoría, de nadie (Cursor, Claude Code, o cualquier otra herramienta).
+if grep -qiE '^(Co-authored-by|Signed-off-by):' "$msg_file"; then
+  echo "commit-msg: no se permiten trailers de coautoria (Co-authored-by / Signed-off-by)." >&2
+  echo "  Saca esa linea del mensaje y volve a commitear." >&2
+  exit 1
+fi
+
+# Un solo commit == un solo asunto: sin cuerpo, sin lineas extra.
+if [ "$line_count" -gt 1 ]; then
+  echo "commit-msg: el mensaje debe ser una sola linea (sin cuerpo)." >&2
+  echo "  Recibido:" >&2
+  sed 's/^/    /' "$msg_file" >&2
+  exit 1
+fi
+
+# type(scope opcional): descripcion, en minuscula, sin punto final.
+pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9./-]+\))?: [a-z0-9].*[^.]$'
+if ! echo "$subject" | grep -qE "$pattern"; then
+  echo "commit-msg: el mensaje no sigue Conventional Commits." >&2
+  echo "  Recibido:   $subject" >&2
+  echo "  Esperado:   tipo(scope opcional): descripcion en minuscula, sin punto final" >&2
+  echo "  Tipos:      feat fix docs style refactor perf test build ci chore revert" >&2
+  echo "  Ejemplo:    fix(command-palette): defer mobile mount until pointerdown" >&2
+  exit 1
+fi

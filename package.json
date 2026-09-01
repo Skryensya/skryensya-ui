@@ -10,9 +10,11 @@
     "lint": "turbo run lint",
     "check": "turbo run check --concurrency=1",
     "build": "turbo run build",
-    "dev": "turbo run dev"
+    "dev": "turbo run dev",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
     "turbo": "^2.3.3"
   },
   "pnpm": {

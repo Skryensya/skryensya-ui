@@ -63,6 +63,42 @@ async function mountLazyCommandPalette(root: HTMLDialogElement): Promise<void> {
   mountCommandPalette(root);
 }
 
+/*
+ * Warm the lazy palette AFTER the page is quiet: `requestIdleCallback`, or the first real
+ * interaction anywhere on the page, whichever comes first. `data-sk-command-palette-lazy` still keeps
+ * the enhancer off the INITIAL graph, the seam it exists for. This only pulls it (chunk + the ~19KB
+ * index) once nothing else is competing, so a later tap on search finds the palette already mounted
+ * and `open()` is instant instead of a cold `import()` + fetch on a slow mobile connection.
+ * `mountLazyCommandPalette` is idempotent (`data-sk-ready`/`-mounting`), so this never races a real
+ * open into a double fetch.
+ */
+function warmLazyCommandPalettes(): void {
+  const roots = [...document.querySelectorAll<HTMLDialogElement>("[data-sk-command-palette-lazy]")];
+  if (!roots.length) return;
+
+  let warmed = false;
+  const warm = () => {
+    if (warmed) return;
+    warmed = true;
+    for (const root of roots) void mountLazyCommandPalette(root);
+  };
+
+  const idle =
+    typeof window.requestIdleCallback === "function"
+      ? (cb: () => void) => window.requestIdleCallback(cb, { timeout: 4000 })
+      : (cb: () => void) => window.setTimeout(cb, 2000);
+  idle(warm);
+
+  // A user who reaches for search before idle fires is exactly who should not wait for the cold path.
+  for (const type of ["pointerdown", "keydown", "touchstart", "wheel"] as const) {
+    window.addEventListener(type, warm, {
+      once: true,
+      passive: true,
+      signal: searchTriggerController?.signal,
+    });
+  }
+}
+
 function initLazyCommandPalettes(): void {
   const roots = document.querySelectorAll<HTMLDialogElement>("[data-sk-command-palette-lazy]");
   for (const root of roots) {
@@ -81,11 +117,31 @@ function initLazyCommandPalettes(): void {
         mounting = null;
       }));
 
+    /*
+     * Open the sheet on the FIRST interaction, BEFORE the enhancer chunk or the index have loaded.
+     *
+     * The delay this removes: the enhancer's lazy chunk statically pulls in the Svelte 5 runtime
+     * (via `createConnectMount` → `Imperative.svelte`), and nothing called `showModal()` until that
+     * whole graph had downloaded, parsed and run; on a mobile CPU, the visible "nothing happens for
+     * a beat after I tap search". The `<dialog>` is already in the DOM and `dialog-vaul.css` slides
+     * it up on `showModal()` alone via `@starting-style`, so this path costs no JS. `connect()` then
+     * adopts the open dialog (`command-palette.ts`): it fills the list and takes focus once it
+     * mounts. `[data-sk-cmdk-loading]` shows a spinner in the results area until then.
+     */
+    const openImmediately = () => {
+      if (root.open || root.hasAttribute("data-sk-ready") || typeof root.showModal !== "function") return;
+      root.setAttribute("data-sk-cmdk-loading", "");
+      root.showModal();
+      ensureMounted()
+        .catch(() => {})
+        .finally(() => root.removeAttribute("data-sk-cmdk-loading"));
+    };
+
     for (const trigger of uniqueTriggers) {
-      // `pointerdown` fires well before `click` resolves on a touch tap — start the fetch/import
-      // here so the mount is often already done by the time the click handler needs it, which is
-      // where the visible open delay lived on mobile. `passive: true`: nothing here calls
-      // `preventDefault`, so it must not block the scroll/tap the browser is deciding between.
+      // `pointerdown` fires well before `click` resolves on a touch tap, so start the fetch/import
+      // here: the mount is often already done by the time the sheet is up. `passive: true`:
+      // nothing here calls `preventDefault`, so it must not block the scroll/tap the browser is
+      // deciding between.
       trigger.addEventListener("pointerdown", () => {
         if (!root.hasAttribute("data-sk-ready")) ensureMounted();
       }, { signal: searchTriggerController?.signal, passive: true });
@@ -93,7 +149,7 @@ function initLazyCommandPalettes(): void {
       trigger.addEventListener("click", (event) => {
         if (root.hasAttribute("data-sk-ready")) return;
         event.preventDefault();
-        ensureMounted().then(() => trigger.click());
+        openImmediately();
       }, { signal: searchTriggerController?.signal });
     }
 
@@ -103,7 +159,7 @@ function initLazyCommandPalettes(): void {
         if (event.key.toLowerCase() !== "k" || (!event.metaKey && !event.ctrlKey) || event.altKey) return;
         event.preventDefault();
         if (root.hasAttribute("data-sk-ready")) uniqueTriggers[0].click();
-        else ensureMounted().then(() => uniqueTriggers[0].click());
+        else openImmediately();
       }, { signal: searchTriggerController?.signal });
     }
   }
@@ -133,4 +189,5 @@ export function initSearchTrigger(): void {
     if (event.target !== input) input.click();
   }, { signal: searchTriggerController.signal });
   initLazyCommandPalettes();
+  warmLazyCommandPalettes();
 }

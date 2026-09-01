@@ -26,8 +26,11 @@
  * `hreflang` and `lang` per row tell the browser and assistive tech that the destination and the
  * label itself are in that language, so a screen reader announces "English" in English.
  *
- * NO persistence: language is in the URL, so the URL is the preference. Storing it too would mean a
- * shared link could open in a language the sender never saw.
+ * The URL is still the source of truth for what you are reading: every row is a real link to a real
+ * file. The ONE thing that persists is the reader's explicit CHOICE (`languagePreference`, written
+ * by `scripts/language-menu.ts` on click), and only so the browser-language redirect in `Base.astro`
+ * does not overrule a decision the reader already made on every later visit. A shared link still
+ * opens where it points; picking a language from this menu is what opts into being remembered.
  */
 import {
   availableLocales,
@@ -72,6 +75,7 @@ const languageIcon = iconDataMarkup("language", language);
               data-value={locale}
               data-type="radio"
               data-checked={locale === current ? "" : undefined}
+              data-sk-lang-set={locale}
               href={localizePath(canonical, locale)}
               hreflang={locale}
               lang={locale}

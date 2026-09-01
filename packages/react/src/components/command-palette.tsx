@@ -4,7 +4,7 @@ import {
   filterCommandPaletteEntries,
   type CommandPaletteEntry,
 } from "@skryensya/core/command-palette";
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Icon } from "./icon.js";
 
 /*
@@ -50,6 +50,7 @@ export function CommandPalette({
   placeholder = "Buscar…",
 }: CommandPaletteProps) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const list = useRef<HTMLUListElement>(null);
   const items = useMemo(
     () => (typeof itemsProp === "string" ? (JSON.parse(itemsProp) as CommandPaletteEntry[]) : itemsProp),
     [itemsProp],
@@ -58,6 +59,29 @@ export function CommandPalette({
   const [active, setActive] = useState(-1);
   const [expanded, setExpanded] = useState(false);
   const optionId = (i: number) => `${id}-option-${i}`;
+
+  /*
+   * Feed the rows' natural height to the stylesheet as a length so `.sk-command-palette__list`
+   * transitions between result counts instead of snapping (clamp + transition in
+   * command-palette.css). Same measurement as the Vanilla enhancer: `last.bottom - first.top` is
+   * the rows' extent, unaffected by the box's own (possibly mid-transition) height or scroll, and
+   * `scrollHeight` could not report a shrunk content. Layout effect so the write lands before paint.
+   */
+  useLayoutEffect(() => {
+    const el = list.current;
+    if (!el) return;
+    const first = el.firstElementChild;
+    const last = el.lastElementChild;
+    if (!first || !last) {
+      el.style.removeProperty("--sk-command-palette-list-content");
+      return;
+    }
+    const styles = getComputedStyle(el);
+    const padding =
+      (parseFloat(styles.paddingTop) || 0) + (parseFloat(styles.paddingBottom) || 0);
+    const rows = last.getBoundingClientRect().bottom - first.getBoundingClientRect().top;
+    el.style.setProperty("--sk-command-palette-list-content", `${Math.ceil(rows + padding)}px`);
+  }, [results]);
 
   return (
     <dialog
@@ -105,6 +129,7 @@ export function CommandPalette({
         aria-label="Resultados"
         className={`${commandPaletteParts.list} sk-scrollbar`}
         id="sk-command-palette-listbox"
+        ref={list}
         role="listbox"
       >
         {results.map((entry, i) => {

@@ -35,22 +35,31 @@
     background-color: var(--sk-scrollbar-thumb-hover-bg);
   }
 
-  /* A stable gutter avoids a layout shift when the scrollbar is revealed. The inactive thumb is
-   * transparent rather than removed, so native scrolling keeps its expected geometry. */
+  /* This variant re-declares the two hooks it changes, and the base rules above do the rest.
+   *
+   * The TRACK IS GONE, not just quiet: revealing a filled rail down the edge draws a border the
+   * layout never asked for, so what appears on hover is the thumb ALONE, where you are, nothing
+   * else. Track stays transparent in every state, so there is no reveal rule for it to fight.
+   *
+   * The thumb sits at border-default rather than border-strong: this is a hint you reach for, not
+   * a line demanding to be read. */
   .sk-scrollbar--reveal {
-    /* This variant re-declares the two hooks it changes, and the base rules above do the rest.
-     *
-     * The TRACK IS GONE, not just quiet: revealing a filled rail down the edge draws a border the
-     * layout never asked for, so what appears on hover is the thumb ALONE, where you are, nothing
-     * else. Track stays transparent in every state, so there is no reveal rule for it to fight.
-     *
-     * The thumb sits at border-default rather than border-strong: this is a hint you reach for, not
-     * a line demanding to be read. */
     --sk-scrollbar-track-bg: transparent;
     --sk-scrollbar-thumb-bg: var(--color-border-default);
 
     scrollbar-color: transparent transparent;
-    scrollbar-gutter: stable;
+  }
+
+  /* A stable gutter avoids a layout shift when the scrollbar is revealed — but "revealed" means
+   * hovered or focused, an interaction touch does not have. `(hover: hover)` gates the reservation
+   * to devices where that reveal is a real thing a reader can trigger; on a touch-only vault
+   * (`.docs-drawer__content`, say) the classic reserved-space scrollbar this protects against never
+   * existed to begin with (touch scrollbars are transient overlays with no layout width of their
+   * own), so the gutter was pure dead space down one edge of content that never needed it. */
+  @media (hover: hover) {
+    .sk-scrollbar--reveal {
+      scrollbar-gutter: stable;
+    }
   }
 
   .sk-scrollbar--reveal::-webkit-scrollbar-thumb {

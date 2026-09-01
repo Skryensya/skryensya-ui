@@ -139,6 +139,14 @@
     list-style: none;
   }
 
+  /* A collapsible group's list toggles `hidden` (the enhancer, and the initial SSR paint for a
+   * `defaultOpen: false` group). The `display: flex` above is an AUTHOR rule, so it beats the UA
+   * stylesheet's unlayered `[hidden] { display: none }` on origin and the list would stay visible
+   * while closed. Same fix `combobox.css` / `tree-view.css` / `date-picker.css` already carry. */
+  .sk-nav-list__list[hidden] {
+    display: none;
+  }
+
   .sk-nav-list__item {
     min-inline-size: 0;
   }

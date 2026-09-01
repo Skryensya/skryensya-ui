@@ -96,13 +96,23 @@ const listId = `${id}-list`;
     </form>
   </div>
   <ul
-    class="sk-command-palette__list sk-scrollbar"
+    class="sk-command-palette__list sk-scrollbar sk-scrollbar--reveal"
     id={listId}
     role="listbox"
     aria-label={t("search.results")}
     data-sk-command-palette-list
   ></ul>
   <p class="sk-command-palette__empty" data-sk-command-palette-empty hidden>{t("search.empty")}</p>
+  {/*
+    Lazy-mount loading state. When `lazy`, the docs chrome opens this dialog with `showModal()` on
+    the first tap, before `connectCommandPalette` (whose chunk pulls the Svelte runtime) has loaded,
+    see `scripts/search-trigger.ts`. `[data-sk-cmdk-loading]` on the root (set there, cleared when
+    the mount resolves) shows this spinner in the empty results area so the sheet is never blank.
+    Never seen on a non-lazy palette: that one is enhanced before anyone can open it.
+  */}
+  <div class="docs-cmdk-loader" aria-hidden="true">
+    <span class="sk-loader" data-size="lg"></span>
+  </div>
   <footer class="sk-command-palette__footer">
     <span><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd> {t("search.hintNavigate")}</span>
     <span><kbd class="sk-kbd">↵</kbd> {t("search.hintOpen")}</span>

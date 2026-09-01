@@ -112,6 +112,35 @@ export function connectCommandPalette(root: HTMLElement): Cleanup {
     }
   };
 
+  /*
+   * Feed the results' natural height to the stylesheet as a length so `.sk-command-palette__list`
+   * can TRANSITION between result counts instead of snapping (the clamp + transition live in
+   * command-palette.css).
+   *
+   * Measured from the child rows, not `list.scrollHeight`: `scrollHeight` is never smaller than the
+   * box, so once the list has grown it can never report a SHRUNK content height, and touching the
+   * list's own `block-size` to force a re-measure cancels the very transition this exists to feed.
+   * `last.bottom - first.top` is the rows' total extent and is unaffected by the box height or its
+   * scroll position; add the list's own block padding back. The CSS `clamp()` owns the floor and
+   * ceiling, so no clamping here.
+   */
+  const sizeList = () => {
+    const first = list.firstElementChild;
+    const last = list.lastElementChild;
+    if (!first || !last) {
+      list.style.removeProperty("--sk-command-palette-list-content");
+      return;
+    }
+    const styles = getComputedStyle(list);
+    const padding =
+      (parseFloat(styles.paddingTop) || 0) + (parseFloat(styles.paddingBottom) || 0);
+    const rows = last.getBoundingClientRect().bottom - first.getBoundingClientRect().top;
+    list.style.setProperty(
+      "--sk-command-palette-list-content",
+      `${Math.ceil(rows + padding)}px`,
+    );
+  };
+
   const render = (query: string) => {
     results = filterCommandPaletteEntries(index, query);
     list.innerHTML = results
@@ -129,6 +158,7 @@ export function connectCommandPalette(root: HTMLElement): Cleanup {
       .join("");
     empty?.toggleAttribute("hidden", results.length !== 0);
     setActive(results.length ? 0 : -1);
+    sizeList();
   };
 
   const go = (i: number) => {
@@ -141,7 +171,12 @@ export function connectCommandPalette(root: HTMLElement): Cleanup {
     input.value = "";
     render("");
     root.showModal();
-    requestAnimationFrame(() => input.focus());
+    requestAnimationFrame(() => {
+      input.focus();
+      /* Now that the sheet is on screen, take the real measurement `render()` could not while it
+       * was `display: none`, so the first keystroke resizes from a true height. */
+      sizeList();
+    });
     setExpanded(true);
   };
 
@@ -192,6 +227,22 @@ export function connectCommandPalette(root: HTMLElement): Cleanup {
   }
 
   const unbindHotkey = hotkeySpec ? bindHotkey(hotkeySpec, open) : () => {};
+
+  /*
+   * Mounted onto an ALREADY-OPEN dialog. A lazy host (docs chrome, `search-trigger.ts`) shows the
+   * sheet with `showModal()` on the first tap, before this enhancer's chunk has loaded, so the sheet
+   * is never gated behind an import. `open()` bails on an open dialog, so run its first-open work
+   * here instead: fill the list, take focus, and flip `aria-expanded` so the combobox does not
+   * announce a populated listbox as collapsed.
+   */
+  if (root.open) {
+    render(input.value);
+    requestAnimationFrame(() => {
+      input.focus();
+      sizeList();
+    });
+    setExpanded(true);
+  }
 
   return () => {
     input.removeEventListener("input", onInput);

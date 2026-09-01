@@ -182,6 +182,34 @@ body {
   outline-offset: var(--focus-ring-offset);
 }
 
+/*
+ * The chrome Command Palette is lazy: on the first tap the sheet is shown with `showModal()` while
+ * the enhancer chunk (Svelte runtime included) still downloads (`scripts/search-trigger.ts`). This
+ * spinner fills the results area for that gap so the sheet is never blank. `search-trigger.ts` puts
+ * `data-sk-cmdk-loading` on the dialog and drops it once the mount resolves; by then the enhancer
+ * has filled the list, so there is no flash of empty. Unlayered, so it beats the layered
+ * `.sk-command-palette__list:empty { display: none }` without a specificity fight.
+ */
+.docs-cmdk-loader {
+  display: none;
+}
+
+.sk-command-palette[data-sk-cmdk-loading] .docs-cmdk-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--sk-command-palette-list-min-block-size);
+  color: var(--color-text-tertiary);
+}
+
+/* On the mobile sheet the results area is `order: 1` (`command-palette.css`); the loader stands in
+   for it, so it takes the same slot. */
+@media (max-width: 52rem) {
+  .sk-command-palette[data-sk-dialog-vaul] .docs-cmdk-loader {
+    order: 1;
+  }
+}
+
 /* The mode + contrast icon controls, clustered. A tighter gap than the header's `lg`, because each
    icon button carries ~one glyph of internal padding on both facing sides while the bordered search
    field carries none on its edge, so at an equal gap the two icons read as further apart than the
@@ -566,38 +594,32 @@ main {
   align-items: center;
   justify-content: space-between;
   min-block-size: var(--docs-header-block-size);
-  padding-inline: var(--space-inset-md);
+  /* One notch tighter than the index gutter below: the header's outer items are icon buttons that
+     already carry their own edge padding, so the document gutter would read as extra air here. */
+  padding-inline: var(--space-inset-sm);
   border-bottom: 1px solid var(--color-border-subtle);
 }
 
-.docs-drawer__title {
-  color: var(--color-text-tertiary);
-  font-size: var(--font-size-caption);
-  font-weight: var(--font-weight-emphasis);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* The global links now render as a real sk-nav-list (see Base.astro) instead of a hand-rolled grid:
-   same markup the desktop header uses, so the current-page cue (nav-list.css's own non-color
-   synthetic-bold treatment) and the touch-target fix below (--sk-nav-list-link-height) both apply
-   here for free instead of needing a second, divergent implementation. */
-.docs-drawer > .sk-nav-list {
-  padding: var(--space-inset-md) var(--space-inset-md) var(--space-inset-sm);
-}
-
+/* The reader-preference cluster, now the drawer's top bar (Base.astro): the same four controls as
+   the desktop header's own `.dimensions__prefs`, in REVERSED order (language, contrast, mode,
+   accent) so the language control leads. It sits at the start of the header; `.docs-drawer__header`'s
+   `space-between` carries the close button to the trailing edge on its own, so this needs no spacer
+   of its own. */
 .docs-drawer__prefs {
   display: flex;
   flex: none;
   align-items: center;
   gap: var(--space-inline-xs);
-  padding: 0 var(--space-inset-md) var(--space-inset-md);
-  border-bottom: 1px solid var(--color-border-subtle);
 }
 
-.docs-drawer__prefs::before {
-  content: "";
-  flex: 1;
+/* The header's end-aligned language panel (`.dimensions__language-menu` rule above) is tuned for the
+   desktop header, where the trigger is the LAST control and hugs the window's trailing edge. In the
+   drawer the same trigger sits near the LEADING edge, so it opens in Menu's own default direction
+   (start-aligned, rightward) instead; end-alignment here would run the panel off the drawer's left
+   side. Values mirror menu.css's own defaults. */
+.docs-drawer__prefs .dimensions__language-menu .sk-menu__positioner {
+  --sk-anchored-position-area: block-end span-inline-end;
+  --sk-anchored-justify: start;
 }
 
 
@@ -723,6 +745,64 @@ h2.docs-nav-section__title {
    untouched. */
 .docs-drawer .sk-nav-list {
   --sk-nav-list-link-height: var(--size-touch-target);
+}
+
+/*
+ * The drawer's nested site index (DrawerNav.astro). One `NavListGroup` per row of the tree:
+ * Inicio and Templates/Presets are unlabelled (a plain <ul>), the three documentation sections are
+ * `collapsible`: the WAI "Disclosure (Navigation)" pattern, where the label is a real <button>.
+ * Top-level groups are fenced from each other so the three levels (home / sections / dev pages) stay
+ * legible.
+ */
+.docs-drawer .docs-drawer-nav {
+  /* One rung tighter than the rail's own `--space-stack-sm`: this list carries the WHOLE index, so
+     the resting height (three collapsed sections + home + dev links) has to read as a short menu,
+     not a scroll. The `+ group` rule below adds the only air between top-level rows. */
+  --sk-nav-list-gap: var(--space-stack-xs);
+}
+
+.docs-drawer-nav > .sk-nav-list__group + .sk-nav-list__group {
+  padding-block-start: var(--space-stack-xs);
+  border-block-start: 1px solid var(--color-border-subtle);
+}
+
+/* When a page pours its own section list into the drawer (Base's `drawer-nav` slot, e.g.
+   `/templates`), it is a second `.docs-drawer-nav` above the site index. Fence the two apart the
+   same way the index fences its own rows. */
+.docs-drawer__content > .docs-drawer-nav + .docs-drawer-nav {
+  margin-block-start: var(--space-stack-sm);
+  padding-block-start: var(--space-stack-sm);
+  border-block-start: 1px solid var(--color-border-subtle);
+}
+
+/* The section disclosure button is primary navigation, not the caption-sized sub-index label the
+   rail's static groups use, so it opts out of the uppercase treatment below and reads at the link
+   size with a heavier stroke. Full touch-target height, like the links it toggles. */
+.docs-drawer .docs-drawer-nav .sk-nav-list__group-label {
+  min-block-size: var(--size-touch-target);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-emphasis);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+/* nav-list's default chevron is a 16px (`--size-icon-sm`) box masked to 60%, ~10px of visible
+   glyph: fine beside a caption-sized rail label, lost beside a body-sized primary-nav one. The row
+   is not an icon button, but the chevron is its only affordance, so give it the glyph size an
+   icon-only `md` button gives its icon (`--size-icon-lg`, 24px) at full size. */
+.docs-drawer .docs-drawer-nav .sk-nav-list__group-label::after {
+  inline-size: var(--size-icon-lg);
+  block-size: var(--size-icon-lg);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* The list a section owns sits one gutter in from its button, so the tree reads as nested rather
+   than as a flat run of rows that happen to have a heading. Scoped to the collapsible groups: the
+   `data-sk-nav-list-group-list` hook only ever lands on those, never on Inicio / Templates. */
+.docs-drawer-nav [data-sk-nav-list-group-list] {
+  padding-inline-start: var(--space-inset-sm);
 }
 
 .docs-sidebar .sk-nav-list__group-label,

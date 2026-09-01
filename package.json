@@ -10,7 +10,8 @@
     "lint": "turbo run lint",
     "check": "turbo run check --concurrency=1",
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --filter=@skryensya/docs",
+    "dev:all": "turbo run dev",
     "prepare": "husky"
   },
   "devDependencies": {

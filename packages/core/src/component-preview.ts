@@ -97,6 +97,18 @@ export const componentPreviewAttrs = {
   flush: "data-sk-component-preview-flush",
   frameReady: "data-sk-component-preview-frame-ready",
   frameError: "data-sk-component-preview-frame-error",
+  /**
+   * The Vanilla stage's authored document, held inert until the enhancer promotes it to `srcdoc`.
+   * `loading="lazy"` on the `<iframe>` does nothing for `srcdoc` content — that HTML is already
+   * inline in the page, so the parser starts fetching whatever it references (the frame runtime, its
+   * own module graph) the moment it is parsed, on every preview on the page, regardless of scroll
+   * position. Authoring the document here instead, and promoting it only once
+   * {@link componentPreviewParts.stage} enters the shared `IntersectionObserver`'s band (the same one
+   * `releaseComponentPreviewStages`/`restoreComponentPreviewStages` already use), is what actually
+   * defers it. `/f/{page}/{n}` (the fullscreen route) reads this same attribute off the page's own
+   * static HTML, not `srcdoc`, so a preview nobody has scrolled to yet still opens correctly there.
+   */
+  doc: "data-sk-component-preview-doc",
   viewport: "data-sk-component-preview-viewport",
   scroll: "data-sk-component-preview-scroll",
   reload: "data-sk-component-preview-reload",

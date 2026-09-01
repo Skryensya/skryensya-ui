@@ -57,6 +57,7 @@ import * as selectionModule from "./components/selection.js";
 import * as tableModule from "./components/table.js";
 import * as treegridModule from "./components/treegrid.js";
 import * as meterModule from "./components/meter.js";
+import * as chartModule from "./components/chart.js";
 import * as dataGridModule from "./components/data-grid.js";
 import * as feedModule from "./components/feed.js";
 import * as menubarModule from "./components/menubar.js";
@@ -148,6 +149,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/table": tableModule,
   "@skryensya/react/treegrid": treegridModule,
   "@skryensya/react/meter": meterModule,
+  "@skryensya/react/chart": chartModule,
   "@skryensya/react/data-grid": dataGridModule,
   "@skryensya/react/feed": feedModule,
   "@skryensya/react/menubar": menubarModule,

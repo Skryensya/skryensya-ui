@@ -10,19 +10,14 @@ import { getLocale, localizePath, useTranslations, type Translate } from "../../
 import { emitMarkup } from "@skryensya/ai-compiler/emit";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 
-import { badgeDotsTree } from "../../demos/badge";
-import { tagTonesTree } from "../../demos/tag";
-import { avatarGroupTree } from "../../demos/avatar";
-import { kbdTree } from "../../demos/kbd";
-import { iconSizeTree } from "../../demos/icon";
-import { meterTree } from "../../demos/meter";
-import { progressTree } from "../../demos/progress";
-import { breadcrumbTwoTree } from "../../demos/breadcrumb";
-import { stepsTree } from "../../demos/steps";
-import { segmentedTree } from "../../demos/segmented";
 import { calloutInfoTree, calloutSuccessTree } from "../../demos/callout";
 import { emptyStateTree } from "../../demos/empty-state";
 import { processListTree } from "../../demos/process-list";
+import { compositionInputButtonTree } from "../../demos/landing/composition";
+import { dialogConfirmScript, dialogConfirmTree } from "../../demos/dialog";
+import { tileRadioGroupTree } from "../../demos/radio-group";
+import { toolbarTree } from "../../demos/toolbar";
+import { DEMO_IMAGE_FRAME_SRC } from "../../demos/image-frame";
 
 import "@skryensya/core/components/button.css";
 import "@skryensya/core/components/typography.css";
@@ -34,21 +29,18 @@ import "@skryensya/core/patterns/scrollbar.css";
 import "@skryensya/core/components/input.css";
 import "@skryensya/core/components/callout.css";
 import "@skryensya/core/components/file-upload.css";
-import "@skryensya/core/components/progress.css";
 import "@skryensya/core/components/tile.css";
 import "@skryensya/core/components/accordion.css";
 import "@skryensya/core/components/details.css";
-import "@skryensya/core/components/steps.css";
 import "@skryensya/core/components/badge.css";
 import "@skryensya/core/components/tag.css";
 import "@skryensya/core/components/avatar.css";
-import "@skryensya/core/components/kbd.css";
-import "@skryensya/core/components/meter.css";
-import "@skryensya/core/components/breadcrumb.css";
-import "@skryensya/core/components/segmented.css";
 import "@skryensya/core/components/empty-state.css";
 import "@skryensya/core/components/process-list.css";
-import "@skryensya/core/components/loader.css";
+import "@skryensya/core/components/code-preview.css";
+import "@skryensya/core/components/radio-group.css";
+import "@skryensya/core/components/toolbar.css";
+import "@skryensya/core/components/stat.css";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
@@ -56,106 +48,344 @@ const href = (path: string) => localizePath(path, locale);
 
 
 /*
- * `loader.ts`'s own `loaderSizesTree` nests a 3-column comparison grid meant for a docs page's
- * full prose width; inside one already-narrow masonry lane here it squeezed to a column too thin
- * to hold a word, confirmed live (every label wrapped one character per line). A single spotlight
- * loader is the bitesize-appropriate version of the same idea.
+ * Five molecules with no docs demo of their own to borrow: each one composed here, by hand, from
+ * the catalogue's own published examples (`get_examples` on the MCP server — `product-card-in-grid`,
+ * `settings-row-with-switch`, `callout-error-with-retry`, plus two authored the same way for a
+ * profile row and a single metric card) and checked with `validate_ui` before being trusted here.
+ * The gallery's other tiles all come from `../../demos/*`; these five exist only for this page.
  */
-const loaderSpotlightTree = (translate: Translate): UsageTree => ({
-  contract: "layout",
-  signature: "Stack",
-  options: { gap: "sm", align: "center" },
+
+/** A card: image, title, lead text, a trailing link. Two nested Boxes, not one (see the gallery's
+ *  own comment on why: the outer carries the surface with no padding, the inner pads the text). */
+const productCardTree = (translate: Translate): UsageTree => ({
+  contract: "box",
+  signature: "Box",
+  options: { padding: "none", surface: "surface", border: "subtle" },
   children: [
-    { contract: "loader", signature: "Loader", options: { size: "lg", label: translate("demo.loader.loadingResults") } },
-    { contract: "typography", signature: "Text", options: { tone: "secondary", size: "sm" }, children: translate("demo.loader.size.lg") },
+    {
+      contract: "image-frame",
+      signature: "ImageFrame",
+      options: { src: DEMO_IMAGE_FRAME_SRC, alt: translate("demo.card.alt"), aspect: "4/3", radius: "top" },
+    },
+    {
+      contract: "box",
+      signature: "Box",
+      options: { padding: "md" },
+      children: {
+        contract: "layout",
+        signature: "Stack",
+        options: { gap: "sm" },
+        children: [
+          { contract: "typography", signature: "Heading", options: { headingSize: "h3", flush: true }, children: translate("demo.card.title") },
+          { contract: "typography", signature: "Text", options: { tone: "secondary" }, children: translate("demo.card.description") },
+          { contract: "typography", signature: "Link", options: { href: "/componentes" }, children: translate("demo.card.cta") },
+        ],
+      },
+    },
   ],
 });
 
+/** A settings row: a label and its description on one side, the Switch on the other. */
+const settingsRowTree = (translate: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Inline",
+  options: { justify: "between", inlineAlign: "center" },
+  children: [
+    {
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "xs" },
+      children: [
+        { contract: "typography", signature: "Text", options: { weight: "emphasis" }, children: translate("demo.settingsRow.title") },
+        { contract: "typography", signature: "Text", options: { tone: "secondary", size: "sm" }, children: translate("demo.settingsRow.description") },
+      ],
+    },
+    { contract: "switch", signature: "Switch", options: { checked: true }, attrs: { "aria-label": translate("demo.settingsRow.title") } },
+  ],
+});
+
+/** An error that gives the reader a way forward: `actions` restricts `variant` to `translucent`/
+ *  `danger` on purpose, so the recovery button never out-competes the callout's own color. */
+const alertRetryTree = (translate: Translate): UsageTree => ({
+  contract: "callout",
+  signature: "Callout",
+  options: { tone: "danger" },
+  slots: {
+    icon: { contract: "icon", signature: "Icon", options: { name: "danger" } },
+    title: translate("demo.alertRetry.title"),
+    actions: {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "translucent" },
+      children: translate("demo.alertRetry.action"),
+    },
+  },
+  children: translate("demo.alertRetry.body"),
+});
+
+/** A person row: avatar and name/role on one side, a status Tag on the other. */
+const profileRowTree = (translate: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Inline",
+  options: { gap: "sm", inlineAlign: "center", justify: "between" },
+  children: [
+    {
+      contract: "layout",
+      signature: "Inline",
+      options: { gap: "sm", inlineAlign: "center" },
+      children: [
+        { contract: "avatar", signature: "Avatar.initials", options: { size: "md", name: "Grace Hopper" }, children: "GH" },
+        {
+          contract: "layout",
+          signature: "Stack",
+          options: { gap: "none" },
+          children: [
+            { contract: "typography", signature: "Text", options: { weight: "emphasis" }, children: "Grace Hopper" },
+            { contract: "typography", signature: "Text", options: { tone: "secondary", size: "sm" }, children: translate("demo.popoverStructured.role") },
+          ],
+        },
+      ],
+    },
+    { contract: "tag", signature: "Tag", options: { tone: "success" }, children: translate("demo.profile.status") },
+  ],
+});
+
+/** One dashboard figure: a Box around a Stat, the same shape `metric-panel`'s own notes describe
+ *  ("no hay componente MetricPanel"), just one card instead of that pattern's row of three. */
+const metricCardTree = (translate: Translate): UsageTree => ({
+  contract: "box",
+  signature: "Box",
+  options: { surface: "surface", border: "subtle", padding: "lg" },
+  children: {
+    contract: "stat",
+    signature: "Stat",
+    options: { trend: "up" },
+    slots: {
+      label: translate("demo.stat.income"),
+      value: locale === "es" ? "48.200 €" : "$48,200",
+      change: [
+        { contract: "icon", signature: "Icon", options: { name: "arrow-up", size: "sm" } },
+        "12.5%",
+      ],
+    },
+  },
+});
+
+/** A single pricing card: plan name, price, three checked features, one CTA. Distinct from the
+ *  gallery's `tileRadioGroupTree` (a compact two-option picker, choosing BETWEEN plans) — this is
+ *  the other everyday shape, one plan sold on its own merits. Each feature row is a plain
+ *  `layout.Inline` (`Icon` `name: "check"` + `Text`), the same shape `hero-with-audience-tabs`'s own
+ *  notes use for a checklist rather than `list.List` (its own `dividers` option is unwired, see that
+ *  example's notes). */
+const pricingCardTree = (translate: Translate): UsageTree => ({
+  contract: "box",
+  signature: "Box",
+  options: { surface: "surface", border: "subtle", padding: "lg" },
+  children: {
+    contract: "layout",
+    signature: "Stack",
+    options: { gap: "md" },
+    children: [
+      { contract: "typography", signature: "Text", options: { weight: "emphasis" }, children: translate("demo.pricingCard.plan") },
+      {
+        contract: "layout",
+        signature: "Inline",
+        options: { gap: "xs", inlineAlign: "baseline" },
+        children: [
+          { contract: "typography", signature: "Heading", options: { headingSize: "h2", flush: true }, children: translate("demo.pricingCard.price") },
+          { contract: "typography", signature: "Text", options: { tone: "secondary", size: "sm" }, children: translate("demo.pricingCard.period") },
+        ],
+      },
+      {
+        contract: "layout",
+        signature: "Stack",
+        options: { gap: "xs" },
+        children: [translate("demo.pricingCard.feature1"), translate("demo.pricingCard.feature2"), translate("demo.pricingCard.feature3")].map(
+          (feature): UsageTree => ({
+            contract: "layout",
+            signature: "Inline",
+            options: { gap: "xs", inlineAlign: "center" },
+            children: [
+              { contract: "icon", signature: "Icon", options: { name: "check", size: "sm" } },
+              { contract: "typography", signature: "Text", options: { size: "sm" }, children: feature },
+            ],
+          }),
+        ),
+      },
+      { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: translate("demo.pricingCard.cta") },
+    ],
+  },
+});
+
+/** A team member card: centered avatar, name, role, one action. The vertical counterpart to
+ *  `profileRowTree`'s horizontal row — same three facts (who, what they do, what to do about it),
+ *  read as a standalone card instead of a line in a list. */
+const teamCardTree = (translate: Translate): UsageTree => ({
+  contract: "box",
+  signature: "Box",
+  options: { surface: "surface", border: "subtle", padding: "lg" },
+  children: {
+    contract: "layout",
+    signature: "Stack",
+    options: { gap: "sm", align: "center" },
+    children: [
+      { contract: "avatar", signature: "Avatar.initials", options: { size: "lg", name: "Ada Lovelace" }, children: "AL" },
+      { contract: "typography", signature: "Text", options: { weight: "emphasis" }, children: "Ada Lovelace" },
+      { contract: "typography", signature: "Text", options: { tone: "secondary", size: "sm" }, children: translate("demo.popover.description") },
+      { contract: "button", signature: "Button.action", options: { variant: "neutral", size: "sm" }, children: translate("demo.teamCard.follow") },
+    ],
+  },
+});
+
+/** A file row as a card: what it is (icon + name + size) on one side, what to do with it (an
+ *  icon-only menu trigger) on the other. The `file`-management counterpart to `productCardTree`'s
+ *  e-commerce one — the same "identity, then action" card shape, a different domain. */
+const fileCardTree = (translate: Translate): UsageTree => ({
+  contract: "box",
+  signature: "Box",
+  options: { surface: "surface", border: "subtle", padding: "md" },
+  children: {
+    contract: "layout",
+    signature: "Inline",
+    options: { justify: "between", inlineAlign: "center" },
+    children: [
+      {
+        contract: "layout",
+        signature: "Inline",
+        options: { gap: "sm", inlineAlign: "center" },
+        children: [
+          { contract: "icon", signature: "Icon", options: { name: "file" } },
+          {
+            contract: "layout",
+            signature: "Stack",
+            options: { gap: "none" },
+            children: [
+              { contract: "typography", signature: "Text", options: { weight: "emphasis" }, children: "informe-q3.pdf" },
+              { contract: "typography", signature: "Text", options: { tone: "secondary", size: "sm" }, children: "2.4 MB" },
+            ],
+          },
+        ],
+      },
+      {
+        contract: "button",
+        signature: "Button.action",
+        options: { variant: "ghost", iconOnly: true },
+        attrs: { "aria-label": translate("demo.fileCard.moreOptions") },
+        children: { contract: "icon", signature: "Icon", options: { name: "more" } },
+      },
+    ],
+  },
+});
+
 /*
- * The gallery, one step below `showcase`: single components or one small cluster of them, not
- * whole screens. Reused verbatim from each family's own docs demo (already validated, already
- * imported by that page) rather than re-authored here, so the tiles stay true to how each
- * component is actually documented. Fifteen of them, into a 5-lane `data-responsive` Grid.
+ * The gallery, one step below `showcase`: realistic small pieces of UI, not single components shown
+ * in isolation and not whole screens either. Four cards alone cover four different domains — a
+ * product (image + text + link), a metric (a number with its trend), a person (an avatar-centered
+ * profile with one action), a plan (price + features + one CTA), a file (identity + a menu trigger)
+ * — plus a form, a settings row, three alerts, a confirm-before-you-delete modal, a plan picker, a
+ * toolbar, a tutorial and an empty state: the normal, expected shapes an app is actually built out
+ * of, each one mixing the two-to-five component families that shape genuinely takes. Reused from
+ * each family's own docs demo where one already composed the same molecule (`process-list`,
+ * `callout`, `empty-state`, the landing page's own search-with-button journey, `dialog`'s confirm
+ * pattern, the tile radio group, the toolbar); the eight with no existing demo to borrow (product
+ * card, settings row, alert-with-retry, profile row, metric, pricing card, team card, file card) are
+ * composed just above, adapted from the MCP catalogue's own published examples (or, for the three
+ * newest cards, the same shapes applied to a new domain) and checked with `validate_ui` before being
+ * trusted here. Sixteen of them, into a 5-lane `data-responsive` Grid.
  *
  * `data-responsive`, not `data-multicol`: ProcessList's three numbered steps read cramped at one
  * lane wide, so it needs `data-span="2"`, and CSS multi-column can only span EVERY lane at once
  * (`column-span: all`), never a partial width. A real Grid gives up multicol's independent
  * per-column height in exchange for that span; `align-items: start` (layout.css) keeps a short
- * card from stretching to its row's tallest neighbour, but the ROW TRACK itself still sizes to
- * whatever is tallest in it, so the order below groups tiles by roughly how tall their real
- * content is (short row, then a shorter-medium row, then the two genuinely tall ones  -  ProcessList
- * and EmptyState  -  alongside Steps and Meter, the next tallest) rather than leaving that to
- * chance: a short card stranded next to `data-span="2"` ProcessList would still sit under a lot of
- * dead row height even without stretching into it.
+ * card from stretching to its row's tallest neighbour, but that just moves the problem rather than
+ * solving it: the card stays its own natural height, and the ROW TRACK still sizes to whichever
+ * sibling is tallest, so a short card next to a much taller one leaves bare section background
+ * under it instead of stretching to close the gap.
+ *
+ * The fix is packing, not stretching: rows built from *measured* render heights (Playwright against
+ * the live page, `sk-box` bounding rects, not eyeballed), sorted ascending so neighbours stay close
+ * in height and the leftover strip under the shortest one stays a sliver instead of a canyon.
+ * Sixteen items and one `data-span="2"` make seventeen slots: three full rows of five, the fifteen
+ * SHORTEST items, plus ProcessList alone in a final row of two — its own height is so far past
+ * everything else's (nearly 200px past the next-tallest card) that no row-mate would close that gap
+ * anyway, so it gets the width instead, reading as a deliberate closing feature rather than a tile
+ * with an empty neighbour. Measured heights at the grid's own column width (px, Chromium/1400):
+ *
+ *   row 1 ⟶  76–113   toolbar · confirm-delete trigger · profile row · search form · file card
+ *   row 2 ⟶ 144–230   settings row · alert (info) · alert (success) · metric · alert (retry)
+ *   row 3 ⟶ 242–406   plan picker · team card · pricing card · empty state · product card
+ *   row 4 ⟶     494   process list (2 lanes), alone
+ *
+ * Re-measure and re-sort this list if a tile's content changes height.
  */
 const gallery: Array<{ tree: UsageTree; span?: 2 }> = [
-  { tree: kbdTree },
-  { tree: badgeDotsTree(t) },
-  { tree: iconSizeTree },
-  { tree: avatarGroupTree(t) },
-  { tree: segmentedTree(t) },
-  { tree: breadcrumbTwoTree(t) },
-  { tree: tagTonesTree(t) },
-  { tree: progressTree(t) },
+  // row 1: 76–113
+  { tree: toolbarTree(t) },
+  { tree: dialogConfirmTree(t) },
+  { tree: profileRowTree(t) },
+  { tree: compositionInputButtonTree(t) },
+  { tree: fileCardTree(t) },
+  // row 2: 144–230
+  { tree: settingsRowTree(t) },
   { tree: calloutInfoTree(t) },
-  { tree: loaderSpotlightTree(t) },
-  { tree: processListTree(t), span: 2 },
-  { tree: emptyStateTree(t) },
-  { tree: stepsTree(t) },
-  { tree: meterTree(t) },
   { tree: calloutSuccessTree(t) },
+  { tree: metricCardTree(t) },
+  { tree: alertRetryTree(t) },
+  // row 3: 242–406
+  { tree: tileRadioGroupTree(t) },
+  { tree: teamCardTree(t) },
+  { tree: pricingCardTree(t) },
+  { tree: emptyStateTree(t) },
+  { tree: productCardTree(t) },
+  // row 4: alone, its own height far past every row-mate a packing pass could offer it
+  { tree: processListTree(t), span: 2 },
 ];
 ---
 
-<Base fullBleed title={t("landing.title")} description={t("landing.description")} hideVanillaMount>
-  <div class="sk-stack" data-gap="xl">
-    <section>
+<Base fullBleed title={t("landing.title")} description={t("landing.description")} hideVanillaMount alwaysShowNavTrigger={false}>
+  <div class="sk-layout-grid" style="row-gap: var(--space-stack-xl)">
+    <section data-width="narrow">
       <div class="sk-box" data-padding="xl">
-        <div class="sk-wrapper" data-size="sm">
-          <div class="sk-stack" data-gap="lg">
-            <header class="sk-stack" data-gap="md">
-              <h1 class="sk-heading" data-size="display-md" data-flush>{t("landing.hero.title")}</h1>
-              <p class="sk-text" data-tone="secondary" data-size="lg">{t("landing.hero.lede")}</p>
-            </header>
-            <div class="sk-inline" data-gap="sm">
-              <a
-                class="sk-button sk-interactive"
-                data-sk-button
-                data-variant="accent"
-                data-size="md"
-                href={href("/componentes")}
-              >
-                {t("landing.hero.ctaComponents")}
-              </a>
-            </div>
+        <div class="sk-stack" data-gap="lg">
+          <header class="sk-stack" data-gap="md">
+            <h1 class="sk-heading" data-size="display-md" data-flush>{t("landing.hero.title")}</h1>
+            <p class="sk-text" data-tone="secondary" data-size="lg">{t("landing.hero.lede")}</p>
+          </header>
+          <div class="sk-inline" data-gap="sm">
+            <a
+              class="sk-button sk-interactive"
+              data-sk-button
+              data-variant="accent"
+              data-size="md"
+              href={href("/componentes")}
+            >
+              {t("landing.hero.ctaComponents")}
+            </a>
           </div>
         </div>
       </div>
     </section>
 
-    <section aria-label={t("landing.gallery.title")}>
-      <div class="sk-wrapper" data-size="lg">
-        <div class="sk-stack" data-gap="md" style="margin-block-end: var(--space-stack-lg)">
-          <h2 class="sk-heading" data-size="h2" data-flush>{t("landing.gallery.title")}</h2>
-          <p class="sk-text" data-tone="secondary" data-size="lg">{t("landing.gallery.lede")}</p>
-        </div>
+    <section aria-label={t("landing.gallery.title")} data-width="full-width">
+      <div class="sk-stack" data-gap="md" data-width="breakout" style="margin-block-end: var(--space-stack-lg)">
+        <h2 class="sk-heading" data-size="h2" data-flush>{t("landing.gallery.title")}</h2>
+        <p class="sk-text" data-tone="secondary" data-size="lg">{t("landing.gallery.lede")}</p>
       </div>
-      <div class="sk-wrapper" data-size="full">
-        <div class="sk-grid" data-responsive data-columns="5" data-gap="md">
-          {
-            gallery.map(({ tree, span }) => (
-              <div
-                class="sk-box"
-                data-surface="raised"
-                data-border="subtle"
-                data-padding="md"
-                data-span={span}
-                set:html={emitMarkup(tree, { fillDefaults: false })}
-              />
-            ))
-          }
-        </div>
+      <div class="sk-grid" data-responsive data-columns="5" data-gap="md" data-width="breakout">
+        {
+          gallery.map(({ tree, span }) => (
+            <div
+              class="sk-box"
+              data-surface="raised"
+              data-border="subtle"
+              data-padding="md"
+              data-span={span}
+              set:html={emitMarkup(tree, { fillDefaults: false })}
+            />
+          ))
+        }
       </div>
+      <script is:inline set:html={dialogConfirmScript} />
     </section>
 
   </div>

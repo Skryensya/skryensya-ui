@@ -55,7 +55,10 @@ const listId = `${id}-list`;
   data-sk-command-palette-index-src={indexSrc}
   data-sk-command-palette-hotkey={hotkey}
   aria-label={label}
+  data-sk-dialog-vaul
+  data-edge="block-end"
 >
+  <div aria-hidden="true" data-part="handle"></div>
   <div class="sk-command-palette__search">
     <Fragment set:html={searchIcon} />
     {/*

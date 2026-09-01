@@ -88,7 +88,7 @@ export type InlineProps<Element extends ElementType = "div"> = PolymorphicProps<
 
 export function Inline<Element extends ElementType = "div">({
   as,
-  align = "center",
+  align = "end",
   className,
   equal = false,
   gap = "md",

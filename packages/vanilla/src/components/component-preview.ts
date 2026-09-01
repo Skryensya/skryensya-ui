@@ -109,11 +109,32 @@ function releaseStage(frame: HTMLIFrameElement): void {
   frame.srcdoc = "";
 }
 
-/** Remounts one stage from its cached document. A no-op with nothing cached, or already live. */
+/**
+ * Remounts one stage from its cached document, or, the FIRST time the VANILLA one ever enters
+ * view, from {@link componentPreviewAttrs.doc}: `ComponentPreview.astro` never sets `srcdoc`
+ * directly on it (see its own comment on the stage — `loading="lazy"` does nothing for inline
+ * `srcdoc` content, so eagerly setting it there defeats the whole point of this observer). A no-op
+ * on a stage already live, or one authored with no vanilla stage to begin with.
+ *
+ * The React stage matches the SAME `.sk-component-preview__stage` selector (`stagesOf`'s own
+ * comment: "both bindings render an iframe stage now"), but never falls into that path: `srcDoc`
+ * is a React-controlled prop there (`framed.tsx`'s own effect owns promoting it, gated by
+ * `client:visible`), so this shared, binding-agnostic observer promoting it FIRST raced React's
+ * hydration and read as a hydration mismatch — `aria-busy`/`srcdoc` on the server snapshot no
+ * longer matched what the client just diffed against. Only `ComponentPreview.astro`'s own iframe
+ * carries `data-sk-component-preview-binding="vanilla"` on itself (`framed.tsx` deliberately does
+ * not, see its own comment), which is what tells the two apart here.
+ */
 function restoreStage(frame: HTMLIFrameElement): void {
-  const srcdoc = stageSrcdocCache.get(frame);
-  if (srcdoc === undefined || frame.srcdoc) return;
-  frame.srcdoc = srcdoc;
+  if (frame.srcdoc) return;
+  const cached = stageSrcdocCache.get(frame);
+  if (cached !== undefined) {
+    frame.srcdoc = cached;
+    return;
+  }
+  if (frame.getAttribute(componentPreviewAttrs.binding) !== "vanilla") return;
+  const doc = frame.getAttribute(componentPreviewAttrs.doc);
+  if (doc) frame.srcdoc = doc;
 }
 
 /**

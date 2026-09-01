@@ -5,6 +5,32 @@
 # hash nuevo.
 surface: "fb2e7307660ea9d7"
 entries:
+  - date: 2026-09-01
+    kind: fix
+    target: collapsible
+    es:
+      title: Un NavListGroup colapsable ahora se oculta de verdad al cerrarse
+      body: >-
+        La lista de un grupo <code>collapsible</code> alterna <code>hidden</code> (el enhancer, y el
+        primer render de un grupo con <code>defaultOpen: false</code>), pero
+        <code>patterns/nav-list.css</code> le pone <code>display: flex</code> a
+        <code>.sk-nav-list__list</code>: una regla de autor que le gana por origen al
+        <code>[hidden] { display: none }</code> del navegador, así que la lista seguía visible
+        cerrada. Se agrega <code>.sk-nav-list__list[hidden] { display: none }</code>, el mismo arreglo
+        que <code>combobox.css</code>, <code>tree-view.css</code> y <code>date-picker.css</code> ya
+        traían. Sin cambios de superficie: la opción <code>collapsible</code> simplemente ahora
+        colapsa.
+    en:
+      title: A collapsible NavListGroup now actually hides when closed
+      body: >-
+        A <code>collapsible</code> group's list toggles <code>hidden</code> (the enhancer, and the
+        first paint of a <code>defaultOpen: false</code> group), but
+        <code>patterns/nav-list.css</code> sets <code>display: flex</code> on
+        <code>.sk-nav-list__list</code>: an author rule that beats the browser's
+        <code>[hidden] { display: none }</code> on origin, so the list stayed visible while closed.
+        Adds <code>.sk-nav-list__list[hidden] { display: none }</code>, the same fix
+        <code>combobox.css</code>, <code>tree-view.css</code> and <code>date-picker.css</code>
+        already carried. No surface change: the <code>collapsible</code> option simply collapses now.
   - date: 2026-08-24
     kind: feature
     target: NavListGroup

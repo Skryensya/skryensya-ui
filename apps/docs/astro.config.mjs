@@ -5,6 +5,14 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { NodePackageImporter } from "sass";
 
 /*
+ * `astro dev` leaves NODE_ENV unset or "development"; `astro build` forces "production". A couple of
+ * settings below trade a production navigation optimisation for dev predictability: in dev the
+ * server is the source of truth, and a tab that keeps serving a page you already edited (curl shows
+ * the new markup, the browser shows the old) is the failure this removes.
+ */
+const isDev = process.env.NODE_ENV !== "production";
+
+/*
  * Vanilla ComponentPreview demos still run in srcdoc frames and hydrate with @skryensya/vanilla.
  * The React binding is a real island now (@astrojs/react, client:load): a ComponentPreview's `react` slot
  * renders actual `@skryensya/react` components in the parent document, sitting next to the vanilla
@@ -18,14 +26,13 @@ export default defineConfig({
   // resolves in the browser from custom properties, there is nothing for a server to decide.
   output: "static",
 
-  // Every navigation is a full MPA load (no ClientRouter): `hover` fetches the destination HTML
-  // into the cache before the click lands, so the page a reader is about to ask for is already
-  // there when they ask for it. `prefetchAll` covers every internal `<a>` without opting each one
-  // in by hand.
-  prefetch: {
-    prefetchAll: true,
-    defaultStrategy: "hover",
-  },
+  // PROD: `hover` fetches the destination HTML into the browser cache before the click lands, so
+  // the page a reader is about to ask for is already there. `prefetchAll` covers every internal
+  // `<a>` without opting each one in by hand.
+  //
+  // DEV: that same warmed cache is exactly what serves a pre-edit copy of a page you just changed,
+  // so dev turns prefetch off and lets every navigation re-fetch from the server.
+  prefetch: isDev ? false : { prefetchAll: true, defaultStrategy: "hover" },
 
   /*
    * Spanish is the default and keeps its BARE paths (`prefixDefaultLocale: false`): every URL the
@@ -81,6 +88,14 @@ export default defineConfig({
      */
     resolve: {
       dedupe: ["react", "react-dom", "@skryensya/core"],
+    },
+    /*
+     * DEV ONLY: never let the browser reuse a served response without asking the dev server first.
+     * The dev server is the source of truth; a stale tab that outlives an edit costs more than a
+     * revalidation on localhost. Undefined in a build, where Astro's own asset hashing owns caching.
+     */
+    server: {
+      headers: isDev ? { "Cache-Control": "no-store" } : undefined,
     },
     /*
      * `server.warmup` was tried TWICE here (once broad — every core stylesheet — once narrowed to

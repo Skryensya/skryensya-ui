@@ -8,6 +8,12 @@
 @layer components {
   .sk-command-palette {
     --sk-command-palette-inline-size: min(36rem, calc(100vw - var(--space-inset-lg) * 2));
+    /* The results area holds a floor as well as a ceiling: a palette that shrink-wraps two matches
+     * reads as broken, and the box jumping size on every keystroke is worse. So the list (or the
+     * empty-state message, whichever is showing) is always at least this tall, with slack space
+     * below a short result set, the same steady frame cmd-K palettes keep. `45vh` keeps the floor
+     * under the `60vh` ceiling on a short viewport so the two never cross. */
+    --sk-command-palette-list-min-block-size: min(18rem, 45vh);
     --sk-command-palette-list-max-block-size: min(24rem, 60vh);
     --sk-command-palette-option-bg-selected: color-mix(
       in oklab,
@@ -94,9 +100,42 @@
     margin: 0;
     padding: var(--space-inset-xs);
     list-style: none;
+    box-sizing: border-box;
+    min-block-size: var(--sk-command-palette-list-min-block-size);
     max-block-size: var(--sk-command-palette-list-max-block-size);
     overflow-y: auto;
     overscroll-behavior: contain;
+    /* Height glides between result counts (100 matches → 8 → 3) instead of snapping. A content-driven
+     * `auto` height cannot be transitioned (it computes the same at both ends), so the binding feeds
+     * the measured content height in as `--sk-command-palette-list-content` on every filter and this
+     * `clamp()` bounds it to the floor/ceiling. Both ends are then real lengths, so the change
+     * animates. `expand` is the height-change intent (accordion / disclosure) and already drops to a
+     * short, legible move under `prefers-reduced-motion`.
+     *
+     * The plain `block-size: auto` below it is the fallback: until the custom property is a length
+     * the `clamp()` line is invalid and dropped, leaving today's behaviour (min/max clamp, no
+     * transition). Nobody sees that state, the palette is populated before it is shown. */
+    block-size: auto;
+    block-size: clamp(
+      var(--sk-command-palette-list-min-block-size),
+      var(--sk-command-palette-list-content),
+      var(--sk-command-palette-list-max-block-size)
+    );
+    transition: block-size var(--motion-expand-duration) var(--motion-expand-easing);
+  }
+
+  /* No matches: the enhancer empties the list and unhides the message below it. Drop the now-empty
+   * list so its floor does not stack on top of the message's, and let the message carry the floor
+   * instead, its text centred in that space rather than pinned to the top. */
+  .sk-command-palette__list:empty {
+    display: none;
+  }
+
+  .sk-command-palette__empty:not([hidden]) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-block-size: var(--sk-command-palette-list-min-block-size);
   }
 
   .sk-command-palette__option {
@@ -189,6 +228,21 @@
 
     .sk-command-palette[data-sk-dialog-vaul] .sk-command-palette__footer {
       display: none;
+    }
+
+    /* The breadcrumb (`Empezar › Primeros pasos`) reads as a caption under the result's own title
+     * here, not a second column beside it: `space-between` on a touch-width row left it competing
+     * with the label for the same line, wrapping mid-word on a long page title. A stacked pair is
+     * the same "title, then its place in the index" a reader gets from the desktop layout, just
+     * read top-to-bottom instead of left-to-right. */
+    .sk-command-palette[data-sk-dialog-vaul] .sk-command-palette__option {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-inline-xs);
+    }
+
+    .sk-command-palette[data-sk-dialog-vaul] .sk-command-palette__option-context {
+      white-space: normal;
     }
   }
 

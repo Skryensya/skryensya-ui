@@ -105,6 +105,7 @@ import LanguageMenu from "../components/LanguageMenu.astro";
 import CommandPalette from "../components/CommandPalette.astro";
 import ContrastToggle from "../components/ContrastToggle.astro";
 import SidebarNav from "../components/SidebarNav.astro";
+import DrawerNav from "../components/DrawerNav.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import Toc from "../components/Toc.astro";
 import { indexDocument, indexHeroTabPanel } from "../lib/document-index";
@@ -114,7 +115,15 @@ import { vanillaMounts } from "../lib/vanilla-mounts";
 import { iconMarkup, siteIconSet } from "../icons";
 import { getGlobalNavigation, getNavigation, type NavigationSection } from "../lib/navigation";
 import { palettePresets } from "../lib/palette-presets";
-import { availableLocales, canonicalPath, getLocale, localizePath, useTranslations } from "../i18n";
+import {
+  availableLocales,
+  canonicalPath,
+  defaultLocale,
+  getLocale,
+  locales,
+  localizePath,
+  useTranslations,
+} from "../i18n";
 import { skipLinkParts } from "@skryensya/core/skip-link";
 import { STORAGE_KEY } from "@skryensya/core/storage";
 import {
@@ -122,6 +131,7 @@ import {
   componentPreviewBindingPreference,
   componentPreviewScreenPreference,
   contrastPreference,
+  languagePreference,
   palettePreference,
 } from "../lib/preferences";
 
@@ -201,6 +211,26 @@ const alternates = availableLocales(canonical).map((code) => ({
   href: localizePath(canonical, code),
 }));
 
+/*
+ * WHAT THE LANGUAGE PRE-PAINT SCRIPT IS ALLOWED TO KNOW, same shape and same reason as `PREPAINT`
+ * below: an inline script that runs before any module, so every value it needs is handed in here
+ * from a real declaration rather than re-typed.
+ *
+ *   - `hrefs` is only the translations that ACTUALLY EXIST for this page (from `alternates`), so the
+ *     script can never redirect a reader onto a 404.
+ *   - `current` / `def` let it tell "an explicit `/en/` URL" (respect it) from "an unprefixed page"
+ *     (the only place browser-language auto-detection runs).
+ *   - `slot` is `languagePreference`'s, so a stored explicit choice overrides the browser guess.
+ */
+const LANG_REDIRECT = {
+  key: STORAGE_KEY,
+  slot: languagePreference.slot,
+  current: locale,
+  def: defaultLocale,
+  locales,
+  hrefs: Object.fromEntries(alternates.map((alternate) => [alternate.code, alternate.href])),
+};
+
 
 
 /*
@@ -212,6 +242,22 @@ const globalNavigation = getGlobalNavigation(locale);
 /* By stable id, never by visible title: the titles are translated now and would stop matching. */
 const componentSection = navigation.find((section) => section.id === "components");
 const foundationsSection = navigation.find((section) => section.id === "foundations");
+
+/*
+ * The mobile drawer's full-index nav (DrawerNav.astro) reads the same two resolved sources as the
+ * header: `navigation` for the three collapsible sections, `globalNavigation` for the childless
+ * top-level links. Matched on the CANONICAL (Spanish) path so `/` vs `/en` and `/templates` vs its
+ * localised twin resolve the same in every locale. `/templates` and `/presets` are dev-only, so
+ * outside `import.meta.env.DEV` they render as a disabled, non-navigating button, exactly as the old
+ * flat drawer list did.
+ */
+const drawerHome =
+  globalNavigation.find((item) => canonicalPath(item.href) === "/") ??
+  ({ href: href("/"), label: t("nav.home") } satisfies { href: string; label: string });
+const drawerExtras = (["/templates", "/presets"] as const).flatMap((canon) => {
+  const item = globalNavigation.find((entry) => canonicalPath(entry.href) === canon);
+  return item ? [{ ...item, disabled: !import.meta.env.DEV }] : [];
+});
 
 /*
  * One rail follows the reader through the whole library. Catalog and reference subpages inherit
@@ -317,6 +363,63 @@ const PALETTE_PRESETS = palettePresets(locale);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    {/*
+      LANGUAGE, RESOLVED BEFORE ANYTHING PAINTS.
+
+      The site is static and language IS the URL (`i18n/index.ts`). This is the one bit of runtime
+      negotiation layered on top, and it is deliberately narrow:
+
+        - A stored explicit choice (`languagePreference`, set from `LanguageMenu`) ALWAYS wins, both
+          directions. A reader who picked Español once is sent back to Español even from an `/en/`
+          link, because "remember my choice" is what they asked for.
+        - With NO stored choice, the browser's own language list decides, but ONLY on an unprefixed
+          (default-locale) page. An explicit `/en/` URL (a shared link, a bookmark) is left exactly
+          where it points; auto-detection never touches it.
+        - A redirect only ever fires toward a translation that EXISTS (`LANG_REDIRECT.hrefs` is built
+          from `alternates`), so an untranslated page never becomes a 404.
+
+      `location.replace`, not `assign`: the pre-redirect URL was never a page the reader chose to be
+      on, so it does not belong in history. Same `is:inline` + `define:vars` shape as the pre-paint
+      block below, and it runs first so a wrong-language document is abandoned before its subresources
+      are fetched.
+    */}
+    <script is:inline define:vars={{ LANG_REDIRECT }}>
+      (function () {
+        var R = LANG_REDIRECT;
+        var stored;
+        try {
+          var s = JSON.parse(localStorage.getItem(R.key) || "{}");
+          if (s && typeof s === "object") stored = s[R.slot];
+        } catch (e) {}
+
+        var known = R.locales.indexOf(stored) !== -1;
+        var target;
+        if (known) {
+          /* Explicit choice: honoured everywhere, even over an `/en/` URL. */
+          target = stored;
+        } else if (R.current === R.def) {
+          /* No choice yet, and this is an unprefixed page: let the browser decide. */
+          var navs =
+            navigator.languages && navigator.languages.length
+              ? navigator.languages
+              : [navigator.language || ""];
+          for (var i = 0; i < navs.length && !target; i++) {
+            var primary = String(navs[i]).toLowerCase().split("-")[0];
+            if (R.locales.indexOf(primary) !== -1) target = primary;
+          }
+          if (!target) target = R.def;
+        } else {
+          /* No choice, explicit `/en/` URL: respect it. */
+          return;
+        }
+
+        if (target === R.current) return;
+        var dest = R.hrefs[target];
+        if (dest) location.replace(dest);
+      })();
+    </script>
+
     <title>{title} · skryensya/ui</title>
     {description && <meta name="description" content={description} />}
     {/* Each translation of this page announces the others, so a crawler treats them as one document
@@ -747,72 +850,89 @@ const PALETTE_PRESETS = palettePresets(locale);
       are the platform's (decision 11). The trigger is a disclosure button for a dialog-backed
       navigation drawer: no role="menu", no menuitem links, no arrow-key menu widget.
     */}
-    <dialog class="sk-vaul sk-drawer docs-drawer" id="docs-drawer" data-sk-vaul data-edge="inline-start" aria-label={t("nav.drawer")}>
-        <div class="sk-vaul__handle" data-part="handle" aria-hidden="true"></div>
+    {/*
+      No `sk-vaul__handle`: on an `inline-start` nav drawer the grip is an `ew-resize` strip laid over
+      the leading links (patterns/vaul.css), and the panel already closes three cleaner ways — the X in
+      the header, Escape, and a tap on the backdrop. `connectVaul` treats a missing handle as "no
+      drag" and still wires all three, so dropping the element just removes the affordance, not the
+      dismiss. `data-draggable="false"` says the same thing explicitly for anyone reading the markup.
+    */}
+    <dialog class="sk-vaul sk-drawer docs-drawer" id="docs-drawer" data-sk-vaul data-edge="inline-start" data-draggable="false" aria-label={t("nav.drawer")}>
+        {/*
+          The drawer's top bar. The reader-preference cluster rides in the header beside the close
+          control instead of in a band of its own further down: the index then starts a row higher
+          and the whole chrome reads as one toolbar. There is no title text: the `<dialog>`'s own
+          `aria-label` names the region, and the section list right below is what a reader scans for.
+
+          Order is the desktop header's `.dimensions__prefs` REVERSED (language, contrast, mode,
+          accent), so the language control sits first at the leading edge, nearest the reader's
+          starting point on the row.
+        */}
         <div class="docs-drawer__header">
-          <span class="docs-drawer__title">{t("nav.drawer")}</span>
+          <div class="docs-drawer__prefs" role="group" aria-label={t("prefs.title")}>
+            <LanguageMenu />
+            <ContrastToggle />
+            <ThemeToggle />
+            <button
+              class="sk-button sk-interactive dimensions__palette-toggle"
+              data-variant="ghost"
+              data-icon-only
+              type="button"
+              aria-label={t("prefs.palette")}
+              title={t("prefs.palette")}
+              data-docs-palette-toggle
+              data-label-template={t("prefs.paletteNamed")}
+            >
+              <span class="dimensions__palette-dot" aria-hidden="true"></span>
+            </button>
+          </div>
           <button class="sk-button sk-interactive" data-variant="ghost" type="button" aria-label={t("nav.closeDrawer")} data-sk-vaul-close>
             <Fragment set:html={closeIcon} />
           </button>
         </div>
-        <nav class="sk-nav-list" aria-label={t("nav.global")}>
-          <div class="sk-nav-list__group">
-            <ul class="sk-nav-list__list" role="list">
-              {
-                globalNavigation.map((item) => {
-                  const isDevOnly = item.href === "/templates" || item.href === "/presets";
-                  const isDev = import.meta.env.DEV;
-                  const isDisabled = isDevOnly && !isDev;
-
-                  return (
-                    <li class="sk-nav-list__item">
-                      {isDisabled ? (
-                        <button
-                          class="sk-nav-list__link sk-interactive"
-                          type="button"
-                          disabled
-                          title={t("nav.comingSoon")}
-                          aria-label={t("nav.comingSoon")}
-                        >
-                          <span class="sk-nav-list__label">{item.label}</span>
-                        </button>
-                      ) : (
-                        <a
-                          class="sk-nav-list__link sk-interactive"
-                          href={item.href}
-                          aria-current={isGlobalItemCurrent(item.href) ? "page" : undefined}
-                        >
-                          <span class="sk-nav-list__label">{item.label}</span>
-                        </a>
-                      )}
-                    </li>
-                  );
-                })
-              }
-            </ul>
-          </div>
-        </nav>
-        <div class="docs-drawer__prefs" role="group" aria-label={t("prefs.title")}>
-          <button
-            class="sk-button sk-interactive dimensions__palette-toggle"
-            data-variant="ghost"
-            data-icon-only
-            type="button"
-            aria-label={t("prefs.palette")}
-            title={t("prefs.palette")}
-            data-docs-palette-toggle
-            data-label-template={t("prefs.paletteNamed")}
-          >
-            <span class="dimensions__palette-dot" aria-hidden="true"></span>
-          </button>
-          <ThemeToggle />
-          <ContrastToggle />
-          <LanguageMenu />
-        </div>
+        {/*
+          The WHOLE site index, nested: one collapsible disclosure per section (DrawerNav.astro), the
+          current one open. It replaces the old pair of flat lists (global links, then just the
+          current section's rail), which forced a reader deep in one section to leave via a link that
+          did not say where the other sections' pages were.
+        */}
         <div class="docs-drawer__content sk-scrollbar sk-scrollbar--reveal">
-          <SidebarNav nav={sectionNavigation} path={path} idPrefix="docs-drawer-nav" />
+          {/*
+            A page whose own in-page section rail is hidden on a phone (only `/templates` so far,
+            `fullBleed` with a `display: none` sticky column below `desktop`) pours those jump links
+            in here, above the site index, so the drawer is the one place that has both.
+          */}
+          <slot name="drawer-nav" />
+          <DrawerNav sections={navigation} home={drawerHome} extras={drawerExtras} path={path} />
         </div>
       </dialog>
+    {/*
+      On open, bring the current page's entry into view: its section is the one expanded, but a long
+      open list (Componentes) can still leave the entry below the fold. The `<dialog>`'s own `toggle`
+      event fires for `showModal()` too (Vaul's `sk:openchange` only announces CLOSE); double rAF so
+      the just-shown list has been laid out before `scrollIntoView` measures it. `astro:page-load`
+      re-binds after a view-transition nav; the `data-*` guard stops a double-bind on first load.
+    */}
+    <script is:inline>
+      (function () {
+        function bind() {
+          var drawer = document.getElementById("docs-drawer");
+          if (!drawer || drawer.dataset.skDrawerScrollBound) return;
+          drawer.dataset.skDrawerScrollBound = "1";
+          drawer.addEventListener("toggle", function (event) {
+            if (event.newState !== "open") return;
+            requestAnimationFrame(function () {
+              requestAnimationFrame(function () {
+                var current = drawer.querySelector('.docs-drawer-nav [aria-current="page"]');
+                if (current) current.scrollIntoView({ block: "center" });
+              });
+            });
+          });
+        }
+        bind();
+        document.addEventListener("astro:page-load", bind);
+      })();
+    </script>
 
     {/* Both `<main>`s below carry the skip link's destination: the same id, because a page has one
         main region and only one of these two ever renders. `tabindex="-1"` is what makes an element

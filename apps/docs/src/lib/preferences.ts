@@ -14,6 +14,10 @@
  */
 
 import { definePreference, oneOf, stringValue } from "@skryensya/core/storage";
+/* `../i18n/ui`, not `../i18n`: the barrel drags in the `import.meta.glob` over every page source,
+ * and this file has consumers (the pre-paint script's `PREPAINT`) that must stay cheap. `ui` is the
+ * plain locale list with no build-time filesystem read behind it. */
+import { defaultLocale, locales, type Locale } from "../i18n/ui";
 
 export { colorModePreference } from "@skryensya/core/theme-toggle";
 export {
@@ -34,4 +38,23 @@ export const palettePreference = definePreference<string>({
   slot: "palette",
   fallback: "",
   parse: stringValue(64),
+});
+
+/*
+ * The reader's chosen documentation language.
+ *
+ * Language is normally the URL and nothing else (`i18n/index.ts`): every page is a real file under
+ * `/` or `/en/`, and a shared link opens in the language it names. This preference is the ONE piece
+ * of client state layered on top, and it exists for one reason: a reader who picked a language once
+ * must not be overridden by the browser-language redirect on every later visit to an unprefixed
+ * page. `LanguageMenu.astro` writes it on click; the pre-paint redirect in `Base.astro` reads it
+ * before anything else paints.
+ *
+ * NO stored fallback path: an absent slot means "no choice yet, follow the browser". `defaultLocale`
+ * is only the declaration's type anchor; the absence branch in the redirect never writes it.
+ */
+export const languagePreference = definePreference<Locale>({
+  slot: "lang",
+  fallback: defaultLocale,
+  parse: oneOf(locales),
 });

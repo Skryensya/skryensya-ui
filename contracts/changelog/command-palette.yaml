@@ -5,6 +5,28 @@
 # hash nuevo.
 surface: "ee5395d301b35705"
 entries:
+  - date: 2026-09-01
+    kind: bugfix
+    es:
+      title: El enhancer Vanilla adopta un diálogo que ya está abierto
+      body: >-
+        <code>connectCommandPalette</code> asumía que se montaba ANTES de que alguien abriera el
+        diálogo: su <code>open()</code> hace el primer render, toma el foco y pone
+        <code>aria-expanded</code>, y sale temprano si el diálogo ya está abierto. Un host lazy que
+        muestra la hoja con <code>showModal()</code> antes de cargar el chunk del enhancer (para que
+        la aparición de la hoja no dependa de un <code>import()</code>) quedaba entonces con una
+        lista vacía y un combobox que se anunciaba colapsado. Ahora, si <code>root.open</code> ya es
+        <code>true</code> al montar, corre ese mismo trabajo de primera apertura.
+    en:
+      title: The Vanilla enhancer adopts an already-open dialog
+      body: >-
+        <code>connectCommandPalette</code> assumed it mounted BEFORE anyone opened the dialog: its
+        <code>open()</code> does the first render, takes focus and sets <code>aria-expanded</code>,
+        and bails early if the dialog is already open. A lazy host that shows the sheet with
+        <code>showModal()</code> before loading the enhancer chunk (so the sheet's appearance is not
+        gated behind an <code>import()</code>) was then left with an empty list and a combobox that
+        announced itself collapsed. Now, if <code>root.open</code> is already <code>true</code> at
+        mount, it runs that same first-open work.
   - date: 2026-08-22
     kind: bugfix
     es:

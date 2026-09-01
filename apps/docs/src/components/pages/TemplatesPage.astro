@@ -38,59 +38,30 @@ import { dashboardTree } from "../../demos/templates/dashboard";
 import { docsSiteTree } from "../../demos/templates/docs-site";
 import { marketingTree } from "../../demos/templates/marketing";
 import { getLocale, useTranslations } from "../../i18n";
+import { templateSections } from "../../lib/templates-nav";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 
 /*
- * One entry per template. The page is `fullBleed` (own sidebar, no toc, no width cap): the rail
- * on the left is this list, jumping to the matching `<section id>` in the stage. Adding a template
- * is adding an entry here, not touching the layout around it.
+ * The tree per section id. The section list itself (id, labels, order) lives in
+ * `lib/templates-nav.ts` so this page's rail and the mobile drawer entry cannot list different
+ * templates; here we only attach the emitted markup. Adding a template is one entry there plus one
+ * tree here.
  */
-const templates = [
-  {
-    id: "app-shell",
-    title: t("templates.appShellTitle"),
-    navLabel: t("templates.appShellNavLabel"),
-    label: t("templates.appShellLabel"),
-    markup: emitMarkup(appShellTree(t), { fillDefaults: false }),
-  },
-  {
-    id: "app-shell-explorer",
-    title: t("templates.explorerTitle"),
-    navLabel: t("templates.explorerNavLabel"),
-    label: t("templates.explorerLabel"),
-    markup: emitMarkup(appShellExplorerTree(t), { fillDefaults: false }),
-  },
-  {
-    id: "marketing",
-    title: t("templates.marketingTitle"),
-    navLabel: t("templates.marketingNavLabel"),
-    label: t("templates.marketingLabel"),
-    markup: emitMarkup(marketingTree(t), { fillDefaults: false }),
-  },
-  {
-    id: "docs-site",
-    title: t("templates.docsSiteTitle"),
-    navLabel: t("templates.docsSiteNavLabel"),
-    label: t("templates.docsSiteLabel"),
-    markup: emitMarkup(docsSiteTree(t), { fillDefaults: false }),
-  },
-  {
-    id: "dashboard",
-    title: t("templates.dashboardTitle"),
-    navLabel: t("templates.dashboardNavLabel"),
-    label: t("templates.dashboardLabel"),
-    markup: emitMarkup(dashboardTree(t, locale), { fillDefaults: false }),
-  },
-  {
-    id: "checkout",
-    title: t("templates.checkoutTitle"),
-    navLabel: t("templates.checkoutNavLabel"),
-    label: t("templates.checkoutLabel"),
-    markup: emitMarkup(checkoutTree(t, locale), { fillDefaults: false }),
-  },
-];
+const TREES: Record<string, () => ReturnType<typeof marketingTree>> = {
+  "app-shell": () => appShellTree(t),
+  "app-shell-explorer": () => appShellExplorerTree(t),
+  marketing: () => marketingTree(t),
+  "docs-site": () => docsSiteTree(t),
+  dashboard: () => dashboardTree(t, locale),
+  checkout: () => checkoutTree(t, locale),
+};
+
+const templates = templateSections(t).map((section) => ({
+  ...section,
+  markup: emitMarkup(TREES[section.id](), { fillDefaults: false }),
+}));
 ---
 
 <div class="templates">
@@ -127,10 +98,25 @@ const templates = [
   </main>
 </div>
 
-<style>
+<style lang="scss">
+  /* Same line the docs rail / drawer switch pivots on (`_breakpoints.scss` `desktop`, 52rem): the
+     sticky column below has no room on a phone, so it goes `display: none` and the same jump links
+     ride into the mobile drawer instead (Base's `drawer-nav` slot, filled by `templates.astro`). */
+  @use "@skryensya/core/breakpoints" as bp;
+
   .templates {
     display: flex;
     align-items: flex-start;
+  }
+
+  @include bp.down("desktop") {
+    .templates__sidebar {
+      display: none;
+    }
+
+    .templates__stage {
+      padding: var(--space-inset-md);
+    }
   }
 
   /* Same sticky arithmetic as the docs rail (site.css `.docs-sidebar`): flush under the measured

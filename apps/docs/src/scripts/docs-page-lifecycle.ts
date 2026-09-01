@@ -6,6 +6,7 @@ import { destroyMount } from "@skryensya/vanilla/runtime";
 import { siteIcons } from "../icons";
 import { initCopyButtons } from "./copy-button";
 import { initDocsBinding } from "./docs-binding";
+import { initLanguageMenu } from "./language-menu";
 import { initSearchTrigger } from "./search-trigger";
 import { initThemeToggle, initThemeTogglePersistence, initThemeToggleSync } from "./theme-toggle";
 
@@ -54,6 +55,7 @@ async function initRouteDocument(): Promise<void> {
   initThemeTogglePersistence();
   initThemeToggleSync();
   initDocsBinding();
+  initLanguageMenu();
   initSearchTrigger();
 
   if (document.querySelector("[data-docs-copy-cells]")) {

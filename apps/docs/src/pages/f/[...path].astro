@@ -336,10 +336,17 @@ export function getStaticPaths() {
          */
         for (const stage of card.querySelectorAll<HTMLIFrameElement>(".sk-component-preview__stage")) {
           stage.setAttribute("data-sk-component-preview-scroll", "");
-          const inner = stage.getAttribute("srcdoc");
+          /*
+           * `data-sk-component-preview-doc`, not `srcdoc`: neither binding's stage carries a live
+           * `srcdoc` in this page's own static HTML any more (`ComponentPreview.astro`/`framed.tsx`
+           * hold the document inert until their own enhancer/effect promotes it near view — see
+           * either file's comment on its stage). The card this shell just parsed is a snapshot of
+           * that SAME static HTML, so the document is still exactly here, just under this attribute.
+           */
+          const inner = stage.getAttribute("data-sk-component-preview-doc");
           if (inner && !inner.includes("data-sk-component-preview-scroll")) {
             stage.setAttribute(
-              "srcdoc",
+              "data-sk-component-preview-doc",
               inner.replace(
                 'class="sk-component-preview__frame-body"',
                 'class="sk-component-preview__frame-body" data-sk-component-preview-scroll',

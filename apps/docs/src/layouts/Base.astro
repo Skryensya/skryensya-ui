@@ -40,6 +40,14 @@ import "@skryensya/core/components/dialog.css";
  * Vaul (decisión 8), así que sin `vaul.css` no hay panel que ajustar.
  */
 import "@skryensya/core/patterns/vaul.css";
+/*
+ * The command palette opts into Dialog Vaul (`data-sk-dialog-vaul` on `CommandPalette.astro`'s own
+ * `<dialog>`): centred on desktop, a block-end sheet with a drag handle below `desktop`, the same
+ * pattern the mobile drawer's own edge behaviour comes from. Same hole as `vaul.css` above: the
+ * attribute alone does nothing without this sheet, and `⌘K` would silently keep the centred desktop
+ * box on a phone instead.
+ */
+import "@skryensya/core/patterns/dialog-vaul.css";
 import "@skryensya/core/components/drawer.css";
 import "@skryensya/core/components/command-palette.css";
 import "@skryensya/core/components/tabs.css";
@@ -155,9 +163,24 @@ interface Props {
    * structure the page chose; a page with tabs cannot have content the tabs don't own.
    */
   hideVanillaMount?: boolean;
+  /**
+   * `fullBleed` pages have no rail, so by default the drawer trigger stays visible at every width
+   * (there is no other way to reach the index once the rail is gone, e.g. /personalizar). A
+   * `fullBleed` page that DOES want the ordinary responsive trigger instead — hidden on desktop,
+   * shown on mobile, same as every railed page — opts out explicitly (the marketing home, which has
+   * nothing to reach the drawer for on desktop but still wants it on mobile like any other page).
+   */
+  alwaysShowNavTrigger?: boolean;
 }
 
-const { title, description, fullBleed = false, documentLayout = "column", hideVanillaMount = false } = Astro.props;
+const {
+  title,
+  description,
+  fullBleed = false,
+  documentLayout = "column",
+  hideVanillaMount = false,
+  alwaysShowNavTrigger = fullBleed,
+} = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 
 /*
@@ -169,6 +192,7 @@ const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 const locale = getLocale(Astro.url);
 const canonical = canonicalPath(path);
 const t = useTranslations(locale);
+const href = (path: string) => localizePath(path, locale);
 const vanillaMount = vanillaMounts[canonical as keyof typeof vanillaMounts];
 /* Every translation of this page that actually EXISTS: advertising one that 404s is worse than
  * advertising none, so the list comes from the page directory rather than from the locale list. */
@@ -544,8 +568,9 @@ const PALETTE_PRESETS = palettePresets(locale);
     <header class="dimensions">
       <div class="dimensions__content sk-wrapper" data-size="lg">
         <button
-          class={`sk-button sk-interactive dimensions__menu-trigger${fullBleed ? " dimensions__menu-trigger--always" : ""}`}
+          class={`sk-button sk-interactive dimensions__menu-trigger${alwaysShowNavTrigger ? " dimensions__menu-trigger--always" : ""}`}
           data-variant="ghost"
+          data-icon-only
           type="button"
           aria-controls="docs-drawer"
           aria-expanded="false"
@@ -554,6 +579,12 @@ const PALETTE_PRESETS = palettePresets(locale);
         >
           <Fragment set:html={menuIcon} />
         </button>
+        {/* The bar's own identity on mobile: once the global nav (which lists "Home" as a peer
+            destination, not a logo) moves into the drawer, nothing in the header names the site any
+            more. Hidden on desktop, where the nav already says it; see the mobile media query. */}
+        <a class="dimensions__brand sk-interactive" href={href("/")}>
+          skryensya/ui
+        </a>
         <nav class="dimensions__global sk-nav-list" data-orientation="horizontal" aria-label={t("nav.global")}>
           <div class="sk-nav-list__group">
             <ul class="sk-nav-list__list" role="list">
@@ -627,6 +658,29 @@ const PALETTE_PRESETS = palettePresets(locale);
         </div>
 
         {/*
+          Mobile's own trigger, a real `<button>` rather than the desktop field collapsed to an icon.
+          The field-with-placeholder shape above only earns its `<input>` cost (the readonly dance,
+          `search-trigger.ts`'s Enter/Space remap, the wrapper/input click hand-off) because it grows
+          to SHOW a placeholder and a ⌘K hint at desktop widths; mobile hides both and shrinks it to a
+          bare icon anyway, so it was paying an input's real-world mobile quirks (the OS's own
+          heuristics around a focusable text field, even readonly, occasionally flashing the virtual
+          keyboard or an autofill affordance before `inputmode="none"` is honoured) for a shape a
+          plain button already gives for free. `data-sk-command-palette-open` + `aria-controls` is
+          the whole contract `command-palette.ts` looks for; it never assumed an input specifically.
+        */}
+        <button
+          class="sk-button sk-interactive dimensions__search-trigger-mobile"
+          data-variant="ghost"
+          data-icon-only
+          type="button"
+          aria-label={t("search.label")}
+          aria-controls="docs-cmdk"
+          data-sk-command-palette-open
+        >
+          <Fragment set:html={searchIcon} />
+        </button>
+
+        {/*
           The reader-preference icon controls (palette + reach + mode + contrast) are one cluster: a
           tighter gap than the header's own, so the icon-to-icon whitespace optically matches the search
           field's edge to the first icon, the icons carry ~one glyph of internal padding on each side,
@@ -694,47 +748,71 @@ const PALETTE_PRESETS = palettePresets(locale);
       navigation drawer: no role="menu", no menuitem links, no arrow-key menu widget.
     */}
     <dialog class="sk-vaul sk-drawer docs-drawer" id="docs-drawer" data-sk-vaul data-edge="inline-start" aria-label={t("nav.drawer")}>
-      <div class="sk-vaul__handle" data-part="handle" aria-hidden="true"></div>
-      <div class="docs-drawer__header">
-        <span class="docs-drawer__title">{t("nav.drawer")}</span>
-        <button class="sk-button sk-interactive" data-variant="ghost" type="button" aria-label={t("nav.closeDrawer")} data-sk-vaul-close>
-          <Fragment set:html={closeIcon} />
-        </button>
-      </div>
-      <nav class="docs-drawer__global" aria-label={t("nav.global")}>
-        {
-          globalNavigation.map((item) => (
-            <a
-              class="docs-drawer__global-link sk-interactive"
-              href={item.href}
-              aria-current={isGlobalItemCurrent(item.href) ? "page" : undefined}
-            >
-              {item.label}
-            </a>
-          ))
-        }
-      </nav>
-      <div class="docs-drawer__prefs" role="group" aria-label={t("prefs.title")}>
-        <button
-          class="sk-button sk-interactive dimensions__palette-toggle"
-          data-variant="ghost"
-          data-icon-only
-          type="button"
-          aria-label={t("prefs.palette")}
-          title={t("prefs.palette")}
-          data-docs-palette-toggle
-          data-label-template={t("prefs.paletteNamed")}
-        >
-          <span class="dimensions__palette-dot" aria-hidden="true"></span>
-        </button>
-        <ThemeToggle />
-        <ContrastToggle />
-        <LanguageMenu />
-      </div>
-      <div class="docs-drawer__content sk-scrollbar sk-scrollbar--reveal">
-        <SidebarNav nav={sectionNavigation} path={path} idPrefix="docs-drawer-nav" />
-      </div>
-    </dialog>
+        <div class="sk-vaul__handle" data-part="handle" aria-hidden="true"></div>
+        <div class="docs-drawer__header">
+          <span class="docs-drawer__title">{t("nav.drawer")}</span>
+          <button class="sk-button sk-interactive" data-variant="ghost" type="button" aria-label={t("nav.closeDrawer")} data-sk-vaul-close>
+            <Fragment set:html={closeIcon} />
+          </button>
+        </div>
+        <nav class="sk-nav-list" aria-label={t("nav.global")}>
+          <div class="sk-nav-list__group">
+            <ul class="sk-nav-list__list" role="list">
+              {
+                globalNavigation.map((item) => {
+                  const isDevOnly = item.href === "/templates" || item.href === "/presets";
+                  const isDev = import.meta.env.DEV;
+                  const isDisabled = isDevOnly && !isDev;
+
+                  return (
+                    <li class="sk-nav-list__item">
+                      {isDisabled ? (
+                        <button
+                          class="sk-nav-list__link sk-interactive"
+                          type="button"
+                          disabled
+                          title={t("nav.comingSoon")}
+                          aria-label={t("nav.comingSoon")}
+                        >
+                          <span class="sk-nav-list__label">{item.label}</span>
+                        </button>
+                      ) : (
+                        <a
+                          class="sk-nav-list__link sk-interactive"
+                          href={item.href}
+                          aria-current={isGlobalItemCurrent(item.href) ? "page" : undefined}
+                        >
+                          <span class="sk-nav-list__label">{item.label}</span>
+                        </a>
+                      )}
+                    </li>
+                  );
+                })
+              }
+            </ul>
+          </div>
+        </nav>
+        <div class="docs-drawer__prefs" role="group" aria-label={t("prefs.title")}>
+          <button
+            class="sk-button sk-interactive dimensions__palette-toggle"
+            data-variant="ghost"
+            data-icon-only
+            type="button"
+            aria-label={t("prefs.palette")}
+            title={t("prefs.palette")}
+            data-docs-palette-toggle
+            data-label-template={t("prefs.paletteNamed")}
+          >
+            <span class="dimensions__palette-dot" aria-hidden="true"></span>
+          </button>
+          <ThemeToggle />
+          <ContrastToggle />
+          <LanguageMenu />
+        </div>
+        <div class="docs-drawer__content sk-scrollbar sk-scrollbar--reveal">
+          <SidebarNav nav={sectionNavigation} path={path} idPrefix="docs-drawer-nav" />
+        </div>
+      </dialog>
 
     {/* Both `<main>`s below carry the skip link's destination: the same id, because a page has one
         main region and only one of these two ever renders. `tabindex="-1"` is what makes an element

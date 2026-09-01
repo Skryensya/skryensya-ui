@@ -42,19 +42,25 @@ async function ensureCommandPaletteIndex(root: HTMLDialogElement): Promise<void>
   root.after(script);
 }
 
-async function mountLazyCommandPalette(root: HTMLDialogElement, trigger: HTMLElement): Promise<void> {
-  if (root.hasAttribute("data-sk-ready") || root.hasAttribute("data-sk-mounting")) {
-    trigger.click();
-    return;
-  }
+/*
+ * The index fetch and the enhancer's own JS chunk are independent, so they run in parallel
+ * (`Promise.all`) rather than one after the other — on mobile, awaiting them sequentially is
+ * exactly the delay a tap-to-open command palette should not have. Idempotent per root: repeat
+ * calls before the first resolves return the same in-flight promise (`initLazyCommandPalettes`'s
+ * `mounting` cache), so warming on `pointerdown` and finishing on `click` never double-fetches.
+ */
+async function mountLazyCommandPalette(root: HTMLDialogElement): Promise<void> {
+  if (root.hasAttribute("data-sk-ready") || root.hasAttribute("data-sk-mounting")) return;
 
   // Runtime-selected by user intent: importing this statically would put the whole CommandPalette
   // enhancer back on the initial page graph, which is the seam this lazy chrome path exists to move.
-  await ensureCommandPaletteIndex(root);
+  const [, { mountCommandPalette }] = await Promise.all([
+    ensureCommandPaletteIndex(root),
+    import("@skryensya/vanilla/command-palette"),
+  ]);
+  if (root.hasAttribute("data-sk-ready")) return;
   root.setAttribute("data-sk-command-palette", "");
-  const { mountCommandPalette } = await import("@skryensya/vanilla/command-palette");
   mountCommandPalette(root);
-  trigger.click();
 }
 
 function initLazyCommandPalettes(): void {
@@ -70,17 +76,24 @@ function initLazyCommandPalettes(): void {
     const uniqueTriggers = [...new Set(triggers)];
     let mounting: Promise<void> | null = null;
 
-    const open = (trigger: HTMLElement) => {
-      mounting ??= mountLazyCommandPalette(root, trigger).finally(() => {
+    const ensureMounted = () =>
+      (mounting ??= mountLazyCommandPalette(root).finally(() => {
         mounting = null;
-      });
-    };
+      }));
 
     for (const trigger of uniqueTriggers) {
+      // `pointerdown` fires well before `click` resolves on a touch tap — start the fetch/import
+      // here so the mount is often already done by the time the click handler needs it, which is
+      // where the visible open delay lived on mobile. `passive: true`: nothing here calls
+      // `preventDefault`, so it must not block the scroll/tap the browser is deciding between.
+      trigger.addEventListener("pointerdown", () => {
+        if (!root.hasAttribute("data-sk-ready")) ensureMounted();
+      }, { signal: searchTriggerController?.signal, passive: true });
+
       trigger.addEventListener("click", (event) => {
         if (root.hasAttribute("data-sk-ready")) return;
         event.preventDefault();
-        open(trigger);
+        ensureMounted().then(() => trigger.click());
       }, { signal: searchTriggerController?.signal });
     }
 
@@ -90,7 +103,7 @@ function initLazyCommandPalettes(): void {
         if (event.key.toLowerCase() !== "k" || (!event.metaKey && !event.ctrlKey) || event.altKey) return;
         event.preventDefault();
         if (root.hasAttribute("data-sk-ready")) uniqueTriggers[0].click();
-        else open(uniqueTriggers[0]);
+        else ensureMounted().then(() => uniqueTriggers[0].click());
       }, { signal: searchTriggerController?.signal });
     }
   }

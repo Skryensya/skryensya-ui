@@ -46,7 +46,15 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/toast.js")).mountToast,
   },
   {
-    selector: "[data-sk-vaul], [data-sk-dialog-vaul]",
+    /*
+     * Excludes a Dialog Vaul that is also a Command Palette: that root already gets the drag
+     * gesture from `connectCommandPalette` itself (`command-palette.ts`), because the two mounts
+     * share one lifecycle marker and would otherwise race to claim the same root — whichever ran
+     * first (always this eager one) marks it "ready" for both, and the other (lazy, mounted only on
+     * first open) finds it already ready and wires nothing. See the comment there for the failure
+     * this caused: a search trigger and a drawer trigger that silently did nothing.
+     */
+    selector: "[data-sk-vaul], [data-sk-dialog-vaul]:not([data-sk-command-palette]):not([data-sk-command-palette-lazy])",
     load: async () => (await import("../components/vaul.js")).mountVaul,
   },
   {

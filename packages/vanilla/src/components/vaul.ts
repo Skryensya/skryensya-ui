@@ -244,10 +244,18 @@ export function connectVaul(root: HTMLElement, options: VaulOptions = {}): Clean
  * trigger/closer attributes; opening remains a plain click on a real button, while the enhancer adds
  * drag, light-dismiss and the disclosure facts (`aria-controls`/`aria-expanded`) the trigger must
  * expose when the panel is being used as mobile navigation.
+ *
+ * A Dialog Vaul that is also a Command Palette is excluded here on purpose: it needs the SAME drag
+ * gesture, but this auto-loader is eager (runs at page load) while `connectCommandPalette`'s own
+ * mount is lazy (first open). `createConnectMount`'s ready/mounting markers are shared, not
+ * per-key, on the assumption that a root's selector only ever matches one enhancer; a command
+ * palette's root matches both, so whichever ran first marked it ready for both, and the lazy one
+ * always lost, finding its own root already "ready" and wiring nothing. `command-palette.ts` calls
+ * `connectVaul` itself instead, in the same pass as its own listeners.
  */
 export const mountVaul = createConnectMount({
   key: "vaul",
-  rootSelector: "[data-sk-vaul], [data-sk-dialog-vaul]",
+  rootSelector: "[data-sk-vaul], [data-sk-dialog-vaul]:not([data-sk-command-palette]):not([data-sk-command-palette-lazy])",
   connect: (root) => {
     const cleanupDrag = connectVaul(root, {
       draggable: root.dataset.draggable !== "false",

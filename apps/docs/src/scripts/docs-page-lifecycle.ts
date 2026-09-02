@@ -2,7 +2,6 @@ import { initComponents } from "@skryensya/vanilla/auto";
 import { mountCodePreview } from "@skryensya/vanilla/code-preview";
 import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
 import { mountIcons } from "@skryensya/vanilla/icon";
-import { destroyMount } from "@skryensya/vanilla/runtime";
 import { siteIcons } from "../icons";
 import { initCopyButtons } from "./copy-button";
 import { initDocsBinding } from "./docs-binding";
@@ -11,35 +10,6 @@ import { initSearchTrigger } from "./search-trigger";
 import { initThemeToggle, initThemeTogglePersistence, initThemeToggleSync } from "./theme-toggle";
 
 let bound = false;
-
-const rootStateAttrs = [
-  "data-js",
-  "data-scheme",
-  "data-contrast",
-  "data-icon-set",
-  "data-radius",
-  "data-sk-component-preview-pref",
-  "data-sk-component-preview-screen-pref",
-] as const;
-
-type AstroBeforeSwapEvent = Event & {
-  newDocument: Document;
-};
-
-function mirrorRootState(event: Event): void {
-  const source = document.documentElement;
-  const target = (event as AstroBeforeSwapEvent).newDocument?.documentElement;
-  if (!target) return;
-
-  for (const attr of rootStateAttrs) {
-    const value = source.getAttribute(attr);
-    if (value === null) target.removeAttribute(attr);
-    else target.setAttribute(attr, value);
-  }
-
-  target.style.cssText = source.style.cssText;
-}
-
 
 async function initRouteDocument(): Promise<void> {
   mountIcons(document, siteIcons);
@@ -78,25 +48,22 @@ async function initRouteDocument(): Promise<void> {
     const { initUsedValues } = await import("./used-values");
     initUsedValues();
   }
-}
-
-function cleanupRouteDocument(): void {
-  for (const dialog of document.querySelectorAll<HTMLDialogElement>("dialog[open]")) {
-    dialog.close();
-  }
-  for (const root of document.querySelectorAll<HTMLElement>("[data-sk-ready]")) {
-    destroyMount(root);
+  if (document.querySelector(".sk-fx-collapse-header")) {
+    const { initCollapseHeaderFallback } = await import("./collapse-header-fallback");
+    initCollapseHeaderFallback();
   }
 }
 
+/*
+ * Every navigation is a plain, full document load now: `<ClientRouter />` was pulled from
+ * `Base.astro`, the View Transitions swap felt broken in practice. That makes this a lot simpler
+ * than it used to be: no `astro:page-load` re-bind, no `astro:before-swap` root-state mirror or
+ * dialog cleanup, because a hard navigation already throws the whole document away and re-runs
+ * every script fresh. One call, once, is the whole lifecycle.
+ */
 export function initDocsPageLifecycle(): void {
   if (bound) return;
   bound = true;
 
   void initRouteDocument();
-  document.addEventListener("astro:page-load", () => {
-    void initRouteDocument();
-  });
-  document.addEventListener("astro:before-swap", mirrorRootState);
-  document.addEventListener("astro:before-swap", cleanupRouteDocument);
 }

@@ -2080,6 +2080,67 @@ p:not(.sk-text) {
   }
 }
 
+/*
+ * THE JS-FALLBACK TWIN of the whole block above, content-for-content identical, gated on
+ * `[data-sk-fx-collapse-js]` instead of `@supports (animation-timeline: scroll())`.
+ *
+ * Why a duplicate rather than one shared condition: CSS has no way to OR an `@supports` feature
+ * query with an attribute selector in one conditional group, and the native block above has to stay
+ * reachable with ZERO JavaScript (a browser with scripting off but native scroll-timeline support
+ * still gets the collapse) — so the capability check can't simply become "did some script decide
+ * this," only ADD to it. `[data-sk-fx-collapse-js]` is set by `collapse-header-fallback.ts` (see the
+ * effect's own note on this same attribute, `@skryensya/core/effects/collapse-header.css`), and only
+ * once that script has confirmed `animation-timeline: scroll()` is NOT natively supported, so the
+ * two blocks never both match on the same page.
+ *
+ * KEEP THESE TWO IN SYNC. Any change to the painting above (the hero, its spacer, its backing, the
+ * tab strip) belongs here too, verbatim, or the two mechanisms drift into two different mastheads.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  [data-sk-fx-collapse-js] .docs-component-shell {
+    --sk-fx-collapse-bar-height: calc(
+      var(--docs-hero-pad-start-min) + var(--docs-hero-pad-end-min) +
+        var(--font-size-heading-h2) * var(--font-line-height-display-lg)
+    );
+    --sk-fx-collapse-range: calc(
+      (var(--docs-hero-pad-start-max) - var(--docs-hero-pad-start-min)) +
+        (var(--docs-hero-pad-end-max) - var(--docs-hero-pad-end-min)) +
+        (var(--docs-hero-eyebrow-line) + var(--space-stack-xs)) +
+        (var(--docs-hero-title-max) - var(--docs-hero-title-min)) *
+        var(--font-line-height-display-lg)
+    );
+    --sk-fx-collapse-top: var(--docs-navbar-h, var(--docs-header-block-size));
+  }
+
+  [data-sk-fx-collapse-js] .docs-component-shell .docs-component-hero__spacer {
+    border-start-start-radius: var(--radius-surface);
+    border-start-end-radius: var(--radius-surface);
+    background: var(--docs-hero-bg);
+  }
+
+  [data-sk-fx-collapse-js] .docs-component-shell .docs-component-hero {
+    z-index: 3;
+    padding-block-start: var(--docs-hero-pad-start-min);
+    border-radius: 0;
+    border-end-start-radius: var(--radius-surface);
+    border-end-end-radius: var(--radius-surface);
+  }
+
+  [data-sk-fx-collapse-js] .docs-component-shell .docs-component-hero__backing {
+    position: sticky;
+    top: var(--docs-navbar-h, var(--docs-header-block-size));
+    z-index: 1;
+    display: block;
+    block-size: var(--sk-fx-collapse-bar-height);
+    margin-block-end: calc(-1 * var(--sk-fx-collapse-bar-height));
+    background: var(--color-bg-canvas);
+  }
+
+  [data-sk-fx-collapse-js] .docs-component-shell .docs-component-hero-tabs {
+    top: calc(var(--docs-navbar-h, var(--docs-header-block-size)) + var(--sk-fx-collapse-bar-height) - 1px);
+  }
+}
+
 
 .lede {
   font-size: var(--font-size-body-lg);
@@ -2565,4 +2626,23 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .d
   border-top: 1px solid var(--color-border-subtle);
   color: var(--color-text-tertiary);
   font-size: var(--font-size-body-sm);
+}
+
+.docs-footer p {
+  margin: 0;
+}
+
+.docs-footer__report {
+  margin-block-start: var(--space-stack-xs);
+}
+
+/* Colour is deliberately not set here: `main a:not(…)` (this file, further up) already paints every
+ * bare prose anchor `--color-text-link`, unlayered, so it wins on specificity over a class rule like
+ * this one regardless of source order. This link is exactly the kind of anchor that rule exists for
+ * — "a bare `<a>` someone typed in a sentence" — so it gets the same treatment as any other in-prose
+ * link on the site, not a one-off colour. Only the icon-row layout belongs here. */
+.docs-footer__report-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-inline-xs);
 }

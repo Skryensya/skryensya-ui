@@ -4346,6 +4346,8 @@ export const ui = {
 
     "footer.body":
       "Este sitio consume {core} y los paquetes de componentes por sus exports maps, con bundler, el mismo camino que documenta. Cada píxel sale de un token.",
+    "footer.reportIssue.label": "Reportar un problema en GitHub",
+    "footer.reportIssue.body": "**Página:** {url}\n\nDescribe el problema:\n",
   },
 
   en: {
@@ -8596,6 +8598,8 @@ export const ui = {
 
     "footer.body":
       "This site consumes {core} and the component packages through their exports maps, with a bundler: the same path it documents. Every pixel comes from a token.",
+    "footer.reportIssue.label": "Report an issue on GitHub",
+    "footer.reportIssue.body": "**Page:** {url}\n\nDescribe the issue:\n",
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 

@@ -41,11 +41,25 @@
  *   <header class="sk-fx-collapse-header"> … </header>   the bar; its children interpolate off progress
  *
  * ── PROGRESSIVE ─────────────────────────────────────────────────────────────
- * Everything is behind `@supports (animation-timeline: scroll())` and `prefers-reduced-motion:
- * no-preference`. Without support, or with reduced motion, the spacer is `display: none` and the
- * header is a normal, full-size masthead, which is the layout that shipped before any of this: the
+ * Everything is behind `prefers-reduced-motion: no-preference` PLUS one of two capability gates:
+ * `@supports (animation-timeline: scroll())`, native, no JavaScript; or `[data-sk-fx-collapse-js]`,
+ * an attribute a CONSUMER script sets after confirming the browser lacks that support (this file
+ * ships no such script itself — see below). Neither gate matching is still the layout that shipped
+ * before any of this: the spacer is `display: none`, the header a normal full-size masthead, and the
  * registered property's initial `0` means every consumer `calc()` resolves to its expanded end with
  * no fallback rule to maintain.
+ *
+ * ── THE JS GATE ──────────────────────────────────────────────────────────────
+ * Real-world scroll-timeline support (~84% globally as of 2026) still leaves a meaningful slice of
+ * mobile browsers on the plain fallback above, permanently, since ADR-20 rejected shipping a runtime
+ * dependency for what the platform already resolves. `[data-sk-fx-collapse-js]` is the one door left
+ * open for a CONSUMER who wants the collapse everywhere anyway: set that attribute on whatever
+ * ancestor scopes `--sk-fx-collapse-*` (only once `!CSS.supports("(animation-timeline: scroll())")`
+ * has been checked — setting it unconditionally fights the native path for the same layout) and walk
+ * `--sk-fx-collapse-progress` by hand, `clamp(scrollY / range, 0, 1)` on a rAF-throttled `scroll`
+ * listener, same as the docs site's own `collapse-header-fallback.ts` does. This block gives that
+ * script the exact same STICKY LAYOUT the native path gets (spacer sized, header pinned); only the
+ * three `animation*` lines stay native-only, because nothing else can drive them.
  */
 
 @property --sk-fx-collapse-progress {
@@ -99,6 +113,36 @@
       .sk-fx-collapse-header > * {
         flex: none;
       }
+    }
+  }
+
+  /*
+   * THE JS-FALLBACK TWIN of the block above: same spacer sizing, same sticky pin, same overflow
+   * rule, MINUS the three `animation*` lines a scroll-timeline needs and a hand-rolled scroll
+   * listener does not. Scoped to `[data-sk-fx-collapse-js]` rather than `@supports not (...)` so it
+   * only ever activates once a consumer's own script has actually confirmed it is going to drive
+   * `--sk-fx-collapse-progress` itself; nothing here sets that attribute on its own, so a page that
+   * never loads a fallback script simply never matches this block; a page that does gets the same
+   * shape (and does through Astro dev): see the ANATOMY note above and `docs-page-lifecycle.ts`'s
+   * on the docs site for the consumer.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    [data-sk-fx-collapse-js] .sk-fx-collapse-header__spacer {
+      display: block;
+      block-size: var(--sk-fx-collapse-range);
+    }
+
+    [data-sk-fx-collapse-js] .sk-fx-collapse-header {
+      position: sticky;
+      top: var(--sk-fx-collapse-top, 0px);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      block-size: var(--sk-fx-collapse-bar-height);
+    }
+
+    [data-sk-fx-collapse-js] .sk-fx-collapse-header > * {
+      flex: none;
     }
   }
 }

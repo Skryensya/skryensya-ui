@@ -112,6 +112,10 @@
     position: absolute;
     inset-block: min(0px, calc((100% - var(--size-touch-target)) / 2));
     inset-inline: min(0px, calc((100% - var(--size-touch-target)) / 2));
+    /* Follow the control's own corner so the hit area matches the paint, same
+     * `inherit` the state layer's `::before` uses. Without it this pad is a square
+     * rectangle and a pointer just outside a rounded corner still lands a hit. */
+    border-radius: inherit;
   }
 
   /* El hover cuelga de un ancestro, así que no lo cubre el guard de state-layer.css.

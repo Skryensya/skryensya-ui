@@ -130,6 +130,13 @@
     position: absolute;
     inset-block: min(0px, calc((100% - var(--size-touch-target)) / 2));
     inset-inline: min(0px, calc((100% - var(--size-touch-target)) / 2));
+    /* Follow the button's own corner so the HIT AREA matches the PAINT, the same
+     * `inherit` the state layer's `::before` uses. Without it this box is a square
+     * rectangle and a pointer just outside a rounded corner still lands a click. When
+     * the box expands past the border (sm, reaching --size-touch-target) the corner
+     * tips round in slightly; the target still clears the touch minimum across its
+     * full width and height. */
+    border-radius: inherit;
   }
 
   /*

@@ -39,7 +39,13 @@
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
       .sk-fx-reveal {
-        animation: sk-fx-reveal both;
+        /* LONGHANDS, never the `animation` shorthand: Lightning CSS (Vite's CSS transformer, through
+         * 1.33.0) folds a following `animation-timeline` back INTO the shorthand as
+         * `animation: both sk-fx-reveal view()`. The shorthand has no `<timeline>` slot, so every
+         * browser drops that whole declaration and the effect silently never runs in a production
+         * build. Kept apart, each longhand survives the minifier intact. */
+        animation-name: sk-fx-reveal;
+        animation-fill-mode: both;
         animation-timeline: view();
         /* Starts once the element has peeked a tenth of the way in, finishes while it is still
          * rising into the covered zone, so it settles ahead of the reader rather than trailing the

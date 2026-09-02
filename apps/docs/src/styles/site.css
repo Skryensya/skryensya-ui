@@ -2035,7 +2035,14 @@ p:not(.sk-text) {
       border-start-end-radius: var(--radius-surface);
       background: var(--docs-hero-bg);
       margin-block-start: var(--space-inset-lg);
-      animation: docs-hero-lead-close linear both;
+      /* LONGHANDS, never the `animation` shorthand: Lightning CSS (Vite's CSS transformer, through
+         1.33.0) folds the following `animation-timeline` back into the shorthand as
+         `animation: linear both docs-hero-lead-close scroll(root)`, which has no `<timeline>` slot,
+         so every browser drops the whole declaration and this lead-close never runs in a built
+         site. Same failure the effect's own `.sk-fx-collapse-header` rule documents. */
+      animation-name: docs-hero-lead-close;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
       animation-timeline: scroll(root block);
       animation-range: 0 var(--sk-fx-collapse-range);
     }

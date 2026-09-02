@@ -1920,6 +1920,27 @@ p:not(.sk-text) {
  * `--sk-fx-collapse-progress`, 0 → 1, which every calc above consumes.
  */
 
+/*
+ * THE BAND'S RESTING LEAD, as a gap that closes with the collapse instead of static padding that
+ * desyncs it (the collapse blocks below zero `.docs-document-pair`'s own `padding-block-start` and
+ * lean on this instead — see the `:has(.docs-component-shell)` rules there). At rest the spacer
+ * carries `var(--space-inset-lg)` of margin above it — the same "floating card" air every other
+ * grid page gets from pair padding — and this walks it to 0 over the SAME `scroll(root block)`
+ * timeline and the SAME `animation-range` the effect drives `--sk-fx-collapse-progress` on. Both are
+ * linear in scrollY over the same window and the spacer's height equals the range (the effect's
+ * contract), so the header still pins the exact frame the collapse finishes: measured, not assumed.
+ * A plain keyframe rather than `calc(… * (1 - var(--sk-fx-collapse-progress)))` because the spacer is
+ * the header's SIBLING, not a descendant, so the inherited progress never reaches it.
+ */
+@keyframes docs-hero-lead-close {
+  from {
+    margin-block-start: var(--space-inset-lg);
+  }
+  to {
+    margin-block-start: 0;
+  }
+}
+
 .docs-component-shell {
   /* A plain BLOCK container, and it has to stay one. Its whole job is to be the tall containing
      block the sticky hero never had as a direct child of `<main class="sk-layout-grid">` (see the
@@ -1990,14 +2011,33 @@ p:not(.sk-text) {
       --sk-fx-collapse-top: var(--docs-navbar-h, var(--docs-header-block-size));
     }
 
+    /*
+     * DROP THE STATIC LEAD only while the collapse is live. `.docs-document-pair`'s own
+     * `padding-block-start: var(--space-inset-lg)` (further up) sits ABOVE the spacer, so the header
+     * has that much further to scroll than `--sk-fx-collapse-range` accounts for — progress reaches 1
+     * while the collapsed bar is still ~24px shy of the navbar, drifting the rest with a canvas gap
+     * above it. The band's resting air is re-added as a SCROLL-CLOSED gap on the spacer just below
+     * (`@keyframes docs-hero-lead-close`). Off this block (no support / reduced motion) the masthead
+     * never collapses and the static pair padding is correct, so it is left alone there.
+     */
+    .docs-document-pair[data-document-layout="grid"]:has(.docs-component-shell) {
+      padding-block-start: 0;
+    }
+
     /* The half of the band that scrolls away. The effect makes it `display: block` and sizes it to
        `--sk-fx-collapse-range`; this rule only paints it, the top corners (the header below is now
        just the bottom edge of the same panel) and the accent fill. No elevation: the raised shadow
-       belongs only to the fully collapsed sticky bar. */
+       belongs only to the fully collapsed sticky bar. The `margin-block-start` + `animation` is the
+       resting lead that closes with the collapse (see `@keyframes docs-hero-lead-close` above);
+       `--sk-fx-collapse-range` is read off the shell, which this is a descendant of. */
     .docs-component-shell .docs-component-hero__spacer {
       border-start-start-radius: var(--radius-surface);
       border-start-end-radius: var(--radius-surface);
       background: var(--docs-hero-bg);
+      margin-block-start: var(--space-inset-lg);
+      animation: docs-hero-lead-close linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 var(--sk-fx-collapse-range);
     }
 
     /* The effect owns the sticky positioning, the `flex-end` column, the constant `block-size` and
@@ -2095,6 +2135,10 @@ p:not(.sk-text) {
  *
  * KEEP THESE TWO IN SYNC. Any change to the painting above (the hero, its spacer, its backing, the
  * tab strip) belongs here too, verbatim, or the two mechanisms drift into two different mastheads.
+ * The ONE deliberate divergence: the spacer's closing lead. The native block animates
+ * `margin-block-start` on a scroll timeline; here the spacer just holds `var(--space-inset-lg)` at
+ * rest and `collapse-header-fallback.ts` walks it inline every frame off the same `progress` it
+ * writes to `--sk-fx-collapse-progress`.
  */
 @media (prefers-reduced-motion: no-preference) {
   [data-sk-fx-collapse-js] .docs-component-shell {
@@ -2112,10 +2156,18 @@ p:not(.sk-text) {
     --sk-fx-collapse-top: var(--docs-navbar-h, var(--docs-header-block-size));
   }
 
+  /* Twin of the `@supports` block's rule: drop the static lead while the fallback drives the
+     collapse; the spacer's `margin-block-start` below is the scroll-closed replacement. */
+  [data-sk-fx-collapse-js] .docs-document-pair[data-document-layout="grid"]:has(.docs-component-shell) {
+    padding-block-start: 0;
+  }
+
   [data-sk-fx-collapse-js] .docs-component-shell .docs-component-hero__spacer {
     border-start-start-radius: var(--radius-surface);
     border-start-end-radius: var(--radius-surface);
     background: var(--docs-hero-bg);
+    /* Rest value only; the fallback script walks this to 0 as it collapses (see the sync note above). */
+    margin-block-start: var(--space-inset-lg);
   }
 
   [data-sk-fx-collapse-js] .docs-component-shell .docs-component-hero {

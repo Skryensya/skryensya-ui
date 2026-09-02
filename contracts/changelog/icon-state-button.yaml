@@ -3,8 +3,21 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "7db4cae932e57ae2"
+surface: "66fa515a3ee72951"
 entries:
+  - date: 2026-09-02
+    kind: feature
+    target: icon
+    es:
+      title: IconStateButton acepta el rol language
+      body: >-
+        El enum de <code>icon</code> incluye <code>language</code>, el mismo rol que acaba de
+        entrar al vocabulario estable.
+    en:
+      title: IconStateButton accepts the language role
+      body: >-
+        The <code>icon</code> enum includes <code>language</code>, the same role that just
+        joined the stable vocabulary.
   - date: 2026-08-21
     kind: feature
     target: icon

@@ -58,6 +58,7 @@ const MAP = {
   folder: "Folder",
   settings: "Settings",
   user: "User",
+  language: "Languages",
   visibility: "Eye",
   "visibility-off": "EyeOff",
   "mode-system": "Monitor",

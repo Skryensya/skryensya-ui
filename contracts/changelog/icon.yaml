@@ -3,8 +3,23 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "85dfabef0a9255e2"
+surface: "74ced6009fdbc126"
 entries:
+  - date: 2026-09-02
+    kind: feature
+    target: name
+    es:
+      title: El rol language se enlaza en todos los sets
+      body: >-
+        <code>language</code> nombra elegir el idioma de una app, no un dibujo: lo cubren los tres
+        sets publicados (Lucide lo dibuja como dos trazos de escritura, Phosphor y Material como un
+        par <code>A文</code>).
+    en:
+      title: The language role is linked by every icon set
+      body: >-
+        <code>language</code> names picking an app's language, not a drawing: all three published
+        sets cover it (Lucide draws it as two script strokes, Phosphor and Material as an
+        <code>A文</code> pair).
   - date: 2026-08-21
     kind: feature
     target: name

@@ -116,6 +116,12 @@ export const stableIconNames = [
   "user",
   "visibility",
   "visibility-off",
+  /* La selección de idioma / locale de una app. Es un ROL, no un dibujo: nombra "elegí el idioma de
+   * esto", y sigue siendo verdad lo dibuje un set como dos trazos de escritura cruzados (Lucide), un
+   * par "A文" (Material, Phosphor) o cualquier otra cosa. Por eso `language` y no `translate`, que es
+   * el nombre que dos de los tres sets le dan al dibujo, ni `globe`, que diría "región / web" antes
+   * que "cambiá el idioma". Los tres sets publicados lo cubren. */
+  "language",
 
   // modo de color (caras del ThemeToggle)
   "mode-system",

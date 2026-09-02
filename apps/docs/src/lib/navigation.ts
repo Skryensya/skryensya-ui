@@ -793,6 +793,7 @@ export const documentationNavigation = [
           {
             href: "/efectos",
             label: "Efectos",
+            trailing: "Demo",
             aliases: [
               "effects",
               "scroll reveal",

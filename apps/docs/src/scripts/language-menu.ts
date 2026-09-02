@@ -5,8 +5,8 @@
  * Each row is a real `<a href>` to this document's other translation, so in principle the browser
  * navigates on its own. In practice the row is ALSO a Zag `menuitemradio`: clicking it sends the
  * machine's `ITEM_CLICK` (toggle the radio, close the menu, restore focus to the trigger), and
- * between that teardown and `<ClientRouter />`'s own click interception the plain anchor navigation
- * is not something to rely on, especially on touch. So this drives the navigation itself:
+ * that teardown running in the same tick as the click is not something to trust the plain anchor
+ * navigation to survive, especially on touch. So this drives the navigation itself:
  *
  *   1. write `languagePreference` (synchronous) so the pre-paint redirect in `Base.astro` keeps
  *      honouring the choice on every later visit to an unprefixed page, and

@@ -109,7 +109,6 @@ import "../styles/shell.scss";
  * nothing itself, so this pulls in a string and no graph.
  */
 import { FOCUS_ORDER_CSS } from "../../../../packages/devtools/src/focus-order";
-import { ClientRouter } from "astro:transitions";
 import LanguageMenu from "../components/LanguageMenu.astro";
 import PrefTooltip from "../components/PrefTooltip.astro";
 import CommandPalette from "../components/CommandPalette.astro";
@@ -127,6 +126,7 @@ import { getGlobalNavigation, getNavigation, type NavigationItem, type Navigatio
 import type { DrawerSection } from "../components/DrawerNav.astro";
 import { templateSections } from "../lib/templates-nav";
 import { palettePresets } from "../lib/palette-presets";
+import { reportIssueUrl } from "../lib/report-issue";
 import {
   availableLocales,
   canonicalPath,
@@ -400,6 +400,14 @@ const menuIcon = iconMarkup("menu");
 const settingsIcon = iconMarkup("settings");
 const previousIcon = iconMarkup("arrow-left");
 const nextIcon = iconMarkup("arrow-right");
+const reportIssueIcon = iconMarkup("external-link", { size: "sm" });
+
+/*
+ * The footer's "Report an issue" link, pre-filled with the page the reader is actually standing on:
+ * `Astro.url.href` rather than `canonical`, so a `?tab=install` deep link or an `/en/` translation
+ * shows up in the issue exactly as the reader saw it, not normalised away.
+ */
+const issueUrl = reportIssueUrl(title, t("footer.reportIssue.body", { url: Astro.url.href }));
 
 /*
  * Curated accent presets. The data itself lives in lib/palette-presets so the /presets showcase
@@ -477,7 +485,6 @@ const PALETTE_PRESETS = palettePresets(locale);
     {alternates.map((alternate) => (
       <link rel="alternate" hreflang={alternate.code} href={alternate.href} />
     ))}
-    <ClientRouter />
 
     {/*
       Docs has a fixed visual contract: Phosphor icons, medium density and medium rounding. The reader
@@ -1039,29 +1046,23 @@ const PALETTE_PRESETS = palettePresets(locale);
       Tabbing from a different place than the sighted view is scrolled to. Focusing the current link
       makes the two agree and puts the reader one keystroke from browsing. The `<dialog>`'s own
       `toggle` event fires for `showModal()` too (Vaul's `sk:openchange` only announces CLOSE); double
-      rAF so the just-shown list has been laid out first. `astro:page-load` re-binds after a
-      view-transition nav; the `data-*` guard stops a double-bind on first load.
+      rAF so the just-shown list has been laid out first.
     */}
     <script is:inline>
       (function () {
-        function bind() {
-          var drawer = document.getElementById("docs-drawer");
-          if (!drawer || drawer.dataset.skDrawerScrollBound) return;
-          drawer.dataset.skDrawerScrollBound = "1";
-          drawer.addEventListener("toggle", function (event) {
-            if (event.newState !== "open") return;
+        var drawer = document.getElementById("docs-drawer");
+        if (!drawer) return;
+        drawer.addEventListener("toggle", function (event) {
+          if (event.newState !== "open") return;
+          requestAnimationFrame(function () {
             requestAnimationFrame(function () {
-              requestAnimationFrame(function () {
-                var current = drawer.querySelector('.docs-drawer-nav [aria-current="page"]');
-                if (!current) return;
-                current.scrollIntoView({ block: "center" });
-                current.focus({ preventScroll: true });
-              });
+              var current = drawer.querySelector('.docs-drawer-nav [aria-current="page"]');
+              if (!current) return;
+              current.scrollIntoView({ block: "center" });
+              current.focus({ preventScroll: true });
             });
           });
-        }
-        bind();
-        document.addEventListener("astro:page-load", bind);
+        });
       })();
     </script>
 
@@ -1222,8 +1223,23 @@ const PALETTE_PRESETS = palettePresets(locale);
           The footer names a package inside a sentence, so the string is split on `{core}` rather
           than concatenated: word order around it differs by language, and only the translator of a
           given locale knows where the code element lands.
+
+          The report-issue link is the SAME element on every component and foundation page, because
+          it lives here rather than in `ComponentPageShell` (component pages only) or a page-local
+          slot (foundation pages have no shared shell at all): this footer is the one thing both
+          already render. `target="_blank"` + `rel="noopener noreferrer"`, no separate "opens in a
+          new tab" text, matches every other external link already in this site's prose (see the
+          anchor-positioning MDN link in `tooltip.usage`).
         */}
-        <footer class="docs-footer" set:html={t("footer.body", { core: "<code>@skryensya/core</code>" })} />
+        <footer class="docs-footer">
+          <p set:html={t("footer.body", { core: "<code>@skryensya/core</code>" })} />
+          <p class="docs-footer__report">
+            <a class="docs-footer__report-link" href={issueUrl} target="_blank" rel="noopener noreferrer">
+              <Fragment set:html={reportIssueIcon} />
+              {t("footer.reportIssue.label")}
+            </a>
+          </p>
+        </footer>
       </main>
       </div>
 

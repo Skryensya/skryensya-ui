@@ -214,6 +214,16 @@ body {
   .sk-command-palette[data-sk-dialog-vaul] .docs-cmdk-loader {
     order: 1;
   }
+
+  /* `--space-inset-xs` (4px) is the component's own default, tuned for a DESKTOP dropdown where the
+     list floats in its own bordered panel; on a full-width bottom sheet it read as noticeably
+     tighter than the reader-preference sheet beside it in the same chrome (`--space-inset-md`,
+     16px). `sm` moves both PART way rather than making one match the other's number outright — the
+     prefs sheet's own side gets the matching move in `.docs-prefs-sheet__body` below — so neither
+     sheet's padding looks arbitrarily borrowed from the other's original value. */
+  .sk-command-palette[data-sk-dialog-vaul] .sk-command-palette__list {
+    padding: var(--space-inset-sm);
+  }
 }
 
 /* The mode + contrast icon controls, clustered. A tighter gap than the header's `lg`, because each
@@ -648,10 +658,13 @@ main {
 /* ── the reader-preference sheet (#docs-prefs-sheet) ─────────────────────────
    The SAME composition as the Command Palette on a phone: a `.sk-dialog` opting into Dialog Vaul
    (`data-sk-dialog-vaul`), so the corner radius, elevation, backdrop, drag handle and slide are
-   `dialog-vaul.css`'s, identical to the palette's. What is left for the site is the labelled
-   control rows in the body, and one small override: `.sk-dialog__body` lays its children out as a
-   `justify-items: start` grid, and these rows must instead run the full width with the control
-   pinned to the trailing edge. */
+   `dialog-vaul.css`'s, identical to the palette's. The palette also lifts its own surface to
+   `--color-bg-surface-raised` (`command-palette.css`); match it here so the two sheets read as the
+   same material. */
+.docs-prefs-sheet {
+  --sk-dialog-bg: var(--color-bg-surface-raised);
+}
+
 .docs-prefs-sheet__title {
   color: var(--color-text-primary);
   font-size: var(--font-size-body);
@@ -659,41 +672,199 @@ main {
   line-height: var(--font-line-height-body, 1.3);
 }
 
+/* The header's own inset is `--sk-dialog-padding` (16px) on all four sides (dialog.css), sized for
+   a header that is the ENTIRE reading distance to a paragraph body below it, with a hairline
+   (`border-block-end`) doing the separating. Here the first tile's own border already reads as
+   that same separator one row down, so the header's own line is dropped rather than stacking two
+   dividers close together, and the block-end padding only needs to clear "Preferencias" and the
+   close button, not leave room for a border that no longer exists.
+
+   The inline sides move to `--space-inset-sm` (8px) together with `.docs-prefs-sheet__body` below,
+   so "Preferencias" and the tiles under it share one left/right edge instead of the header sitting
+   16px in while the tiles sit 8. Same move, same reason, as the mobile Command Palette's own list
+   padding a few rules up: this sheet's original 16px read as noticeably looser than that one's 4px
+   in the same chrome; both land on the scale's next step in from wherever they started. */
+.docs-prefs-sheet .sk-dialog__header {
+  padding-inline: var(--space-inset-sm);
+  padding-block-end: var(--space-inset-sm);
+  border-block-end: none;
+}
+
+/* `.sk-dialog__body` is a `justify-items: start` grid; the preference tiles must instead run the
+   full width, so the body is restated as a flex column with a gap between the cards. Restated, not
+   merely extended: the site rule is unlayered and wins wholesale over the layered component one, so
+   the component's own inset (`--sk-dialog-padding`) has to be written back or it is lost.
+
+   `gap` is between TILES (their own borders already read as separators, so this is air, not a
+   rule), `padding`'s block-start is the tighter half of that same reasoning applied to the divider
+   above the first tile.
+
+   Inline padding is `--space-inset-sm` (8px), not the component default `--sk-dialog-padding`
+   (16px): measured against the mobile Command Palette's own list in the same chrome, that default
+   read as noticeably looser than the palette's 4px. Both sheets move toward each other instead of
+   one adopting the other's exact number outright (the palette's own list padding gets the matching
+   move, `command-palette.css` override above) — this is the header's own inline inset too, so the
+   title and the tiles under it share one edge. */
 .docs-prefs-sheet__body {
   display: flex;
   flex-direction: column;
-  /* the sheet ends flush with the viewport edge; keep the last row clear of the home indicator */
-  padding-block-end: max(var(--sk-dialog-padding), env(safe-area-inset-bottom));
+  gap: var(--space-stack-sm);
+  padding: var(--space-inset-xs) var(--space-inset-sm)
+    /* the sheet ends flush with the viewport edge; keep the last tile clear of the home indicator */
+    max(var(--sk-dialog-padding), env(safe-area-inset-bottom));
 }
 
-/* One preference per row: the text label carries the meaning the bare icon control could not, and
-   the control sits at the trailing edge. A hairline between rows, none above the first or below the
-   last, so the group reads as one list rather than a stack of boxes. */
-.docs-prefs-sheet__row {
-  display: flex;
+/* Each preference is a full-width Tile Button: the whole card changes the setting on tap (the
+   toggles cycle in place, language navigates to the next locale). The visible title carries the
+   meaning the bare icon could not, on the leading edge; the control's own affordance — the morphing
+   icon, the palette dot, the current-language name — sits on the trailing edge.
+
+   The grid is stated here because neither class the tile carries gives this row on its own:
+   `.sk-tile--interactive` is a single leading column, and `.sk-icon-toggle` stacks every face in
+   one centred cell (which is all that showed before this rule existed). Unlayered, so it wins over
+   both `@layer components` rules wholesale, the same note `.docs-prefs-sheet__body` above carries. */
+.docs-prefs-tile {
+  /* The trailing control's own safe area: a real control size (40px), not an icon size, so the
+     square reads as "a thing you can hit" instead of a caption glyph. `--size-control-md` is the
+     same box a Button's own tap target uses. */
+  --docs-prefs-tile-control-size: var(--size-control-md);
+  /* The chip's own surface. `--color-bg-surface-sunken` measured live as nearly invisible: in
+     light mode the sheet, the card AND sunken are three shades of near-white 3% apart, so the chip
+     read as a smudge; in dark mode sunken is DARKER than the card sitting on top of a card that is
+     itself darker than the sheet, so it read as a hole punched in the card rather than a control.
+     `color-mix` against `currentColor` (the tile's own text color) sidesteps retuning two more
+     absolute tokens per theme: it is always a fixed distance from whatever's already legible text
+     on this card, in both directions, with no light/dark branch to keep in sync. */
+  --docs-prefs-tile-chip-bg: color-mix(in oklch, currentColor 8%, transparent);
+  --docs-prefs-tile-chip-border: color-mix(in oklch, currentColor 16%, transparent);
+
+  display: grid;
+  /* The trailing track has a FLOOR, not just `auto`: an `auto` track sizes to its widest item's
+     max-content contribution, and measured live, Chromium's grid auto-sizing pass here landed on
+     the 28px icon and left the 40px `::before` chip (below) to overflow past it, so the two ended
+     up "end"-aligned to two different edges instead of sharing one. `minmax(control-size, auto)`
+     guarantees the track itself is never narrower than the chip, so both the chip and whatever
+     sits on top of it share the exact same trailing edge; content wider than the floor (the
+     Language value's own text) still grows the track past it. */
+  grid-template-columns: minmax(0, 1fr) minmax(var(--docs-prefs-tile-control-size), auto);
+  /* `justify-items` (not just `align-items`): `.sk-icon-toggle` sets `place-items: center`, which
+     otherwise centres the title in its 1fr column instead of letting it hug the leading edge. */
   align-items: center;
-  justify-content: space-between;
+  justify-items: start;
   gap: var(--space-inline-md);
-  min-block-size: var(--size-touch-target);
+  padding: var(--space-inset-md);
+  text-align: start;
 }
 
-.docs-prefs-sheet__row + .docs-prefs-sheet__row {
-  border-block-start: 1px solid var(--color-border-subtle);
+/* The face stack, the palette dot and the language value all land in the trailing cell. The
+   `[data-face]` spans share one grid area so the Icon Toggle cross-fade still runs; `place-items`
+   from `.sk-icon-toggle` no longer applies once each child is explicitly placed.
+
+   `center`, not `center end`: the trailing track is now floored at the control size (below), so
+   the dot and the chip already fill it edge to edge and "end" would make no visible difference to
+   them — but the 28px icon is narrower than that 40px track, and measured live, "end" put its own
+   right edge flush with the track's, leaving all the slack bunched on the icon's LEFT instead of
+   split evenly around it inside its safe-area chip. Plain `center` sits the icon in the middle of
+   the chip on both axes, which is where a safe area is supposed to put what it protects. */
+.docs-prefs-tile > [data-face],
+.docs-prefs-tile > .dimensions__palette-dot,
+.docs-prefs-tile > .docs-prefs-tile__value {
+  grid-column: 2;
+  grid-row: 1;
+  place-self: center;
 }
 
-.docs-prefs-sheet__row-label {
-  color: var(--color-text-primary);
-  font-size: var(--font-size-body-sm);
-  font-weight: var(--font-weight-body);
+/* `--size-icon-lg` (24px), not `-xl` (28px): measured live, an xl icon centred in the 40px chip
+   left an 8px gap on the DOT's side (it fills its 40px chip edge to edge, no inset) but only a 6px
+   gap on the ICON's side, so the two rows' actual painted marks sat at two different distances from
+   the shared trailing edge — the "doesn't line up" the chip redesign was supposed to fix. `lg` gives
+   the icon the exact same 8px inset the dot's own `padding: 0.5rem` already uses and the Language
+   chip's own `padding-inline` already uses, so all three marks sit the same distance off the tile's
+   edge instead of three different ones. */
+.docs-prefs-tile > [data-face] {
+  --sk-icon-size: var(--size-icon-lg);
 }
 
-/* The sheet sits on the viewport's bottom edge, so the language Menu has no room to open downward:
-   send its panel UP and align its trailing edge to the trigger's, the mirror of the desktop
-   header's own override. Asked for through the Anclaje hooks (ADR-25), so a browser with no
-   anchor-positioning engine still gets the machine's on-screen clamp. */
-.docs-prefs-sheet .dimensions__language-menu .sk-menu__positioner {
-  --sk-anchored-position-area: block-start span-inline-start;
-  --sk-anchored-justify: end;
+/*
+ * SAFE-AREA CHIP, one square backing behind whichever control sits on the trailing edge, so the
+ * four rows read as one column of equal-sized controls rather than a mix of a bare icon, a bare
+ * dot and bare text at four different visual weights.
+ *
+ * Theme and Contrast can't just wrap their `[data-face]` spans in a real box element: the morph
+ * CSS (`patterns/icon-toggle.css`) keys off `.sk-icon-toggle > [data-face]`, a DIRECT child
+ * selector, so a wrapper would silently stop every face from cross-fading. This used to be a
+ * `::before` generated box instead of a real element, explicitly placed into the same grid cell
+ * (`grid-column: 2; grid-row: 1`) as the faces — that measured correctly in Chromium AND in
+ * Playwright's WebKit, but a reader on actual Safari saw the chip painted off from the icon it was
+ * supposed to sit behind, an engine gap the automated cross-check never caught. `.docs-prefs-tile
+ * -chip` is the fix: a real, empty SIBLING span (ThemeToggle.astro, ContrastToggle.astro), placed
+ * into the SAME cell the same way, so it no longer depends on a generated box behaving as a grid
+ * item at all. Sibling, not wrapper — `[data-face]` stays a direct child of `.sk-icon-toggle`.
+ */
+.docs-prefs-tile-chip {
+  grid-column: 2;
+  grid-row: 1;
+  /* Without an explicit self-alignment this falls back to the container's `justify-items: start`,
+     so the chip would drift to the near edge of the track instead of filling it. It fills the
+     track exactly (both are the same `--docs-prefs-tile-control-size`), so `center` and `end` are
+     equivalent here; `center` matches the icon's own rule below rather than leaving two different
+     keywords to explain as accidentally interchangeable. */
+  place-self: center;
+  inline-size: var(--docs-prefs-tile-control-size);
+  block-size: var(--docs-prefs-tile-control-size);
+  border-radius: var(--radius-control);
+  background: var(--docs-prefs-tile-chip-bg);
+  border: 1px solid var(--docs-prefs-tile-chip-border);
+}
+
+/* Palette's own dot already carries its ring + fill; this only enlarges its box to match the icon
+   chips beside it in the list, then gives it the same backing so all three read as one family
+   instead of the dot floating free while its neighbours sit on a chip. */
+.docs-prefs-tile > .dimensions__palette-dot {
+  box-sizing: border-box;
+  inline-size: var(--docs-prefs-tile-control-size);
+  block-size: var(--docs-prefs-tile-control-size);
+  padding: 0.5rem;
+  border-radius: var(--radius-control);
+  background: var(--docs-prefs-tile-chip-bg);
+  border: 1px solid var(--docs-prefs-tile-chip-border);
+}
+
+/* `.sk-tile__title` is heading weight (700) AND heading-sm size (20px) everywhere else a Tile
+   names a whole card. Four of these sit stacked in one sheet with a description already under
+   each, so the row reads as a settings LIST rather than four headlines: `--font-weight-label`
+   (500, "UI labels, controls" — `semantic/_type.scss`) is one step down from the un-tiled desktop
+   cluster's plain-text row label, and `--font-size-body` (16px) matches that same row label's own
+   size instead of a card headline's. The description follows at `--font-size-caption` (12px, one
+   step below the tile default's `--font-size-body-sm`), so the pair keeps its own two-tier
+   contrast without either line reading as large as the "Preferencias" sheet title above them. */
+.docs-prefs-tile .sk-tile__title {
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-label);
+}
+
+.docs-prefs-tile .sk-tile__description {
+  font-size: var(--font-size-caption);
+}
+
+/* The current-language name gets the same chip the icon controls carry (min-size, radius,
+   background), so the row aligns with its neighbours instead of ending in bare text; unlike the
+   square icon chips its inline-size stays flexible ("Español" is wider than "English"), only the
+   block-size and the leading/trailing insets are held equal. */
+.docs-prefs-tile__value {
+  box-sizing: border-box;
+  min-inline-size: var(--docs-prefs-tile-control-size);
+  min-block-size: var(--docs-prefs-tile-control-size);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--space-inset-sm);
+  border-radius: var(--radius-control);
+  background: var(--docs-prefs-tile-chip-bg);
+  border: 1px solid var(--docs-prefs-tile-chip-border);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-caption);
+  white-space: nowrap;
 }
 
 

@@ -80,6 +80,12 @@ import "@skryensya/core/patterns/media-gradient.css";
 import "@skryensya/core/patterns/layout.css";
 import "@skryensya/core/patterns/table-pager.css";
 import "@skryensya/core/patterns/icon-toggle.css";
+/* The mobile preference sheet (`#docs-prefs-sheet`, below) renders every setting as a Tile Button —
+ * markup that lives in the layout, not in a page. Same opt-in rule as Menu above: without this
+ * sheet, on any page that doesn't happen to import `tile.css` for its OWN reasons (a component page
+ * demoing Tile itself), the sheet's `sk-tile*` classes hit no rules at all and fall back to bare
+ * span/button UA defaults — confirmed live on `/efectos`, which has no reason to pull Tile in. */
+import "@skryensya/core/components/tile.css";
 /* Effects (ADR-20), opt-in decorative motion: the component page masthead below is the collapse
  * effect's own consumer (`ComponentPageShell.astro`'s `sk-fx-collapse-header` classes). */
 import "@skryensya/core/effects/collapse-header.css";
@@ -950,7 +956,6 @@ const PALETTE_PRESETS = palettePresets(locale);
           <button
             class="sk-button sk-interactive sk-dialog__close"
             data-variant="ghost"
-            data-size="sm"
             data-icon-only
             type="submit"
             value="cancel"
@@ -961,41 +966,32 @@ const PALETTE_PRESETS = palettePresets(locale);
         </form>
       </header>
       {/*
-        Theme first: "dark mode" is the reason most readers open this. Language LAST and on purpose:
-        it is the one control here whose panel is a Menu that opens away from its trigger, and from
-        the last row — hard against the sheet's bottom edge — `flip-block` sends that panel UP over
-        the rows above it rather than off the screen. A row higher up would drop the panel downward
-        onto its neighbours.
+        Every preference is a full-width Tile Button (`.docs-prefs-tile`): the whole card changes
+        the setting on tap — the toggles cycle in place, language goes to the next translation —
+        with the visible title on the leading edge and the control's own affordance on the trailing
+        one. Theme first: "dark mode" is the reason most readers open this. Language last: it is the
+        one that navigates rather than toggling in place.
       */}
       <div class="sk-dialog__body docs-prefs-sheet__body">
-        <div class="docs-prefs-sheet__row">
-          <span class="docs-prefs-sheet__row-label">{t("prefs.theme")}</span>
-          <ThemeToggle />
-        </div>
-        <div class="docs-prefs-sheet__row">
-          <span class="docs-prefs-sheet__row-label">{t("prefs.contrast")}</span>
-          <ContrastToggle />
-        </div>
-        <div class="docs-prefs-sheet__row">
-          <span class="docs-prefs-sheet__row-label">{t("prefs.palette")}</span>
-          <button
-            class="sk-button sk-interactive dimensions__palette-toggle"
-            data-variant="ghost"
-            data-icon-only
-            type="button"
-            aria-label={t("prefs.palette")}
-            data-docs-palette-toggle
-            data-label-template={t("prefs.paletteNamed")}
-          >
-            <span class="dimensions__palette-dot" aria-hidden="true"></span>
-          </button>
-        </div>
-        {alternates.length > 1 && (
-          <div class="docs-prefs-sheet__row">
-            <span class="docs-prefs-sheet__row-label">{t("prefs.language")}</span>
-            <LanguageMenu />
-          </div>
-        )}
+        <ThemeToggle tile label={t("prefs.theme")} description={t("prefs.themeHint")} />
+        <ContrastToggle tile label={t("prefs.contrast")} description={t("prefs.contrastHint")} />
+        <button
+          class="sk-interactive sk-tile sk-tile--interactive docs-prefs-tile dimensions__palette-toggle"
+          data-padding="md"
+          data-scope="tile"
+          data-part="root"
+          type="button"
+          aria-label={t("prefs.palette")}
+          data-docs-palette-toggle
+          data-label-template={t("prefs.paletteNamed")}
+        >
+          <span class="sk-tile__content" data-part="content">
+            <span class="sk-tile__title">{t("prefs.palette")}</span>
+            <span class="sk-tile__description">{t("prefs.paletteHint")}</span>
+          </span>
+          <span class="dimensions__palette-dot" aria-hidden="true"></span>
+        </button>
+        <LanguageMenu tile label={t("prefs.language")} description={t("prefs.languageHint")} />
       </div>
     </dialog>
 

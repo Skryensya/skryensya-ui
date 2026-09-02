@@ -924,14 +924,14 @@ main {
 
 /* Each section owns a heading; later sections are fenced off so their task boundaries stay clear. */
 .docs-nav-section + .docs-nav-section {
-  margin-block-start: var(--space-stack-lg);
-  padding-block-start: var(--space-stack-lg);
+  margin-block-start: var(--space-stack-md);
+  padding-block-start: var(--space-stack-md);
   border-block-start: 1px solid var(--sk-sidebar-separator-color);
 }
 
 .docs-nav-section__header {
   padding-inline: var(--space-inline-sm);
-  margin-block-end: var(--space-stack-md);
+  margin-block-end: var(--space-stack-sm);
 }
 
 /*
@@ -947,11 +947,16 @@ main {
 h2.docs-nav-section__title {
   margin: 0;
   color: var(--color-text-tertiary);
-  font-size: var(--font-size-caption);
-  line-height: var(--font-line-height-caption, 1.3);
+  /* Below the kit's 12px caption floor on purpose: the rail's section/group headings are a
+     sub-index, not reading text, and at 12px + blurb they ate more vertical run than the links
+     they head. 11px uppercase still scans; the links stay at body-sm. */
+  font-size: calc(var(--font-size-caption) - 1px);
+  line-height: 1.2;
   font-weight: var(--font-weight-emphasis);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
+  /* Wrap to the rail's current (resizable) width instead of growing it. */
+  overflow-wrap: anywhere;
 }
 
 .docs-nav-section__title[href] {
@@ -964,10 +969,11 @@ h2.docs-nav-section__title {
 }
 
 .docs-nav-section__blurb {
-  margin: var(--space-stack-xs) 0 0;
+  margin: var(--space-inline-xs) 0 0;
   color: var(--color-text-tertiary);
-  font-size: var(--font-size-caption);
-  line-height: var(--font-line-height-caption, 1.35);
+  /* Tracks the title down a step so the hierarchy (title ≥ blurb) holds. */
+  font-size: calc(var(--font-size-caption) - 1px);
+  line-height: 1.3;
   font-weight: var(--font-weight-body);
 }
 
@@ -977,9 +983,11 @@ h2.docs-nav-section__title {
   --sk-nav-list-gap: var(--space-stack-sm);
   --sk-nav-list-group-gap: var(--space-stack-xs);
   --sk-nav-list-group-label-fg: var(--color-text-tertiary);
-  --sk-nav-list-group-label-font-size: var(--font-size-caption);
+  /* Same sub-index step as .docs-nav-section__title; the drawer's collapsible section buttons
+     re-raise their own size (body-sm) below, so this only lands on the rail's static labels. */
+  --sk-nav-list-group-label-font-size: calc(var(--font-size-caption) - 1px);
   --sk-nav-list-group-label-font-weight: var(--font-weight-emphasis);
-  --sk-nav-list-group-label-padding-block-start: var(--space-stack-sm);
+  --sk-nav-list-group-label-padding-block-start: var(--space-stack-xs);
   --sk-nav-list-link-font-size: var(--font-size-body-sm);
   --sk-nav-list-link-font-weight: var(--font-weight-body);
   --sk-nav-list-link-fg: var(--color-text-secondary);
@@ -1068,6 +1076,16 @@ h2.docs-nav-section__title {
 .docs-drawer .sk-nav-list__group-label {
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+/* nav-list.css sets the group label `white-space: nowrap` for the drawer's collapse-fade, where a
+   reflow mid-animation would look broken. The rail doesn't collapse, it RESIZES (drag handle), so a
+   heading longer than the current width ("Plataforma y accesibilidad") has to wrap to it, never
+   hold the rail open or spill past its edge. `anywhere` also lets the flex text item shrink so a
+   single long word still breaks when the rail is dragged very narrow. */
+.docs-sidebar .sk-nav-list__group-label {
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 /* Same palette as the navbar trigger (`data-sk-command-palette-open`), one dialog, many openers. */
@@ -1662,9 +1680,30 @@ p:not(.sk-text) {
 .docs-component-shell,
 .docs-component-hero {
   --docs-hero-pad-start-max: calc(var(--space-section) * 1.5);
-  --docs-hero-pad-start-min: var(--space-inset-md);
+  /* One step up from `--space-inset-md`: the collapsed bar reads a touch taller, and the pinned
+     title gets more air above it before it meets the navbar. Feeds BOTH `--sk-fx-collapse-bar-height`
+     (bar grows by the same amount) and `--sk-fx-collapse-range` (the term `-start-max − -start-min`,
+     so the range shortens by it) off this one token, so the "header pins the frame collapse
+     finishes" invariant holds without touching anything else. */
+  --docs-hero-pad-start-min: var(--space-inset-lg);
   --docs-hero-pad-end-max: var(--space-stack-lg);
   --docs-hero-pad-end-min: var(--space-inset-md);
+  /*
+   * THE PINNED BAND TUCKS UNDER THE NAVBAR, it does not butt against it. `.dimensions` (the navbar,
+   * `z-index: var(--z-sticky)`) and this band (`z-index: 3`) are both `position: sticky`, and two
+   * sticky boxes resolve their own device-pixel offsets a frame apart while the page is actively
+   * scrolling — so a hard abutment at `top: var(--docs-navbar-h)` opens a hairline of
+   * `--color-bg-canvas` between them on a high-DPR phone (`--docs-navbar-h` is already `Math.ceil`'d
+   * for the same reason; this covers the rounding the ceil leaves the other way). Pull the band up a
+   * few real pixels so the seam always lands under the navbar's own opaque fill. Same fix the tab
+   * strip already applies against this band one line down (`… - 1px`); this is `--docs-navbar-h`
+   * minus the overlap, so every box that pins under the navbar (the band, its backing plate, the tab
+   * strip) shifts together and stays rigid.
+   */
+  --docs-hero-navbar-overlap: 3px;
+  --docs-hero-pin-top: calc(
+    var(--docs-navbar-h, var(--docs-header-block-size)) - var(--docs-hero-navbar-overlap)
+  );
   /* Inline padding used to be a constant 24px whether the band was full-height or a small pinned
      bar, which at the collapsed end read as generous side margins around type that had nowhere
      near that much air above or below it. Animated on the SAME `--sk-fx-collapse-progress` (the `collapse-header` effect, ADR-20) as
@@ -1674,7 +1713,12 @@ p:not(.sk-text) {
      bar's own edges. */
   --docs-hero-pad-inline-max: var(--space-inset-lg);
   --docs-hero-pad-inline-min: var(--space-inset-md);
-  --docs-hero-title-max: var(--font-size-display-lg);
+  /* Was a flat display-lg (60px). On a phone that made a long one-word name
+     ("SegmentedControl") wider than the viewport, so the hero scrolled sideways. Scale the
+     expanded-end size with the viewport so it fits narrow screens; the h1 also hard-wraps
+     below as a backstop. Floored at the collapsed-end size so the scroll interpolation
+     (`max + (min - max) * progress`) and `--sk-fx-collapse-range` never invert. */
+  --docs-hero-title-max: clamp(var(--font-size-heading-h2), 8.5vw, var(--font-size-display-lg));
   --docs-hero-title-min: var(--font-size-heading-h2);
   --docs-hero-eyebrow-line: calc(var(--font-size-caption) * var(--font-line-height-caption));
 }
@@ -1769,6 +1813,12 @@ p:not(.sk-text) {
 
 .docs-component-hero h1 {
   color: var(--color-text-primary);
+  /* Flex child of `__title-row`: `min-inline-size: 0` lets it shrink under its content box,
+     and `overflow-wrap: anywhere` lets a long single word ("SegmentedControl") break rather
+     than push the hero wider than the column. Together they guarantee no sideways scroll at
+     any width, whatever the component is called. */
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
 }
 
 .docs-component-hero h1:not([data-flush]) {
@@ -1828,7 +1878,12 @@ p:not(.sk-text) {
   --docs-hero-tabs-scrollbar-size: 6px;
 
   position: sticky;
-  top: var(--docs-navbar-h, var(--docs-header-block-size));
+  /* Tucks the same few pixels under the navbar as the collapsing band does (`--docs-hero-pin-top`,
+     defined on `.docs-component-shell` above, which this always sits inside): on a page where the
+     hero never collapses this strip is the only thing pinned under the navbar, and the seam wants
+     the same overlap. The collapse blocks below override this with `pin-top + bar-height`. Fallback
+     kept in case the strip is ever rendered outside the shell. */
+  top: var(--docs-hero-pin-top, var(--docs-navbar-h, var(--docs-header-block-size)));
   z-index: 2;
   /* Only the top inset is ours. The bottom is the scrollbar's, and it takes it only when it exists;
      `.sk-tabs__list`'s own `border-block-end` closes the box under either. */
@@ -2008,7 +2063,7 @@ p:not(.sk-text) {
           (var(--docs-hero-title-max) - var(--docs-hero-title-min)) *
           var(--font-line-height-display-lg)
       );
-      --sk-fx-collapse-top: var(--docs-navbar-h, var(--docs-header-block-size));
+      --sk-fx-collapse-top: var(--docs-hero-pin-top);
     }
 
     /*
@@ -2102,7 +2157,7 @@ p:not(.sk-text) {
      */
     .docs-component-shell .docs-component-hero__backing {
       position: sticky;
-      top: var(--docs-navbar-h, var(--docs-header-block-size));
+      top: var(--docs-hero-pin-top);
       z-index: 1;
       display: block;
       block-size: var(--sk-fx-collapse-bar-height);
@@ -2122,7 +2177,7 @@ p:not(.sk-text) {
      * nothing to hide with a compensating `padding-block-start`.
      */
     .docs-component-shell .docs-component-hero-tabs {
-      top: calc(var(--docs-navbar-h, var(--docs-header-block-size)) + var(--sk-fx-collapse-bar-height) - 1px);
+      top: calc(var(--docs-hero-pin-top) + var(--sk-fx-collapse-bar-height) - 1px);
     }
   }
 }
@@ -2160,7 +2215,7 @@ p:not(.sk-text) {
         (var(--docs-hero-title-max) - var(--docs-hero-title-min)) *
         var(--font-line-height-display-lg)
     );
-    --sk-fx-collapse-top: var(--docs-navbar-h, var(--docs-header-block-size));
+    --sk-fx-collapse-top: var(--docs-hero-pin-top);
   }
 
   /* Twin of the `@supports` block's rule: drop the static lead while the fallback drives the
@@ -2187,7 +2242,7 @@ p:not(.sk-text) {
 
   [data-sk-fx-collapse-js] .docs-component-shell .docs-component-hero__backing {
     position: sticky;
-    top: var(--docs-navbar-h, var(--docs-header-block-size));
+    top: var(--docs-hero-pin-top);
     z-index: 1;
     display: block;
     block-size: var(--sk-fx-collapse-bar-height);
@@ -2196,7 +2251,7 @@ p:not(.sk-text) {
   }
 
   [data-sk-fx-collapse-js] .docs-component-shell .docs-component-hero-tabs {
-    top: calc(var(--docs-navbar-h, var(--docs-header-block-size)) + var(--sk-fx-collapse-bar-height) - 1px);
+    top: calc(var(--docs-hero-pin-top) + var(--sk-fx-collapse-bar-height) - 1px);
   }
 }
 

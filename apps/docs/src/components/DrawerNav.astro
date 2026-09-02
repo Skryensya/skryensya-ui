@@ -14,8 +14,11 @@
  *   - the section that contains the current page starts open; the rest start closed. This is the one
  *     place we override nav-list's "start open" default: three whole sections open at once turns the
  *     drawer back into the wall of links this change exists to replace.
- *   - Home / Templates / Presets have no children, so they are plain `NavListLink`s in an
- *     unlabelled group (the group is still what emits the <ul>).
+ *   - a section with no children (Home, and Presets in prose) is a plain `NavListLink` in an
+ *     unlabelled group; a disabled one (a dev-only page in a production build) is a non-navigating
+ *     `<button>`. Templates and Presets are ordinary rows in this one tree now, not a rail of their
+ *     own poured in above it: on a phone their in-page section rail is `display: none`, so their
+ *     jump links ride in here as a collapsible section like every other page's.
  *
  * Every `href` is already resolved for the active locale by `getNavigation` / `getGlobalNavigation`
  * upstream (translated route where the page exists, default-locale route where it does not), so no
@@ -24,22 +27,27 @@
 import { getLocale, useTranslations } from "../i18n";
 import type { NavigationItem, NavigationSection } from "../lib/navigation";
 
+/** A `NavigationSection`, or a synthetic one the layout builds for Templates / Presets. */
+export type DrawerSection = Omit<NavigationSection, "id"> & {
+  id: string;
+  /** Prod build, dev-only page: render the label as a disabled `<button>`, not a link. */
+  disabled?: boolean;
+};
+
 interface Props {
-  /** The three documentation sections, hrefs already locale-resolved. */
-  sections: readonly NavigationSection[];
+  /** The documentation sections plus any synthetic ones, hrefs already locale-resolved, in order. */
+  sections: readonly DrawerSection[];
   /** The site root link. */
   home: NavigationItem;
-  /** Top-level destinations with no sub-tree. `disabled` renders a non-navigating button (dev-only pages in prod). */
-  extras: readonly (NavigationItem & { disabled?: boolean })[];
   /** The current path, `/`-trimmed, already in this locale's vocabulary. */
   path: string;
 }
 
-const { sections, home, extras, path } = Astro.props;
+const { sections, home, path } = Astro.props;
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 
-const sectionContainsPath = (section: NavigationSection): boolean =>
+const sectionContainsPath = (section: DrawerSection): boolean =>
   section.href === path ||
   section.groups.some((group) => group.items.some((item) => item.href === path));
 
@@ -50,7 +58,7 @@ const sectionContainsPath = (section: NavigationSection): boolean =>
  * its AUTHORED order (Fundamentos' "Arquitectura → Tiers → Tokens" is a reading path, not an
  * alphabet), just without the visible sub-labels, which a nav-list `<ul>` has no legal slot for.
  */
-const itemsFor = (section: NavigationSection): readonly NavigationItem[] => {
+const itemsFor = (section: DrawerSection): readonly NavigationItem[] => {
   const flat = section.groups.flatMap((group) => group.items);
   return section.id === "components"
     ? flat.slice().sort((a, b) => a.label.localeCompare(b.label, locale))
@@ -75,6 +83,41 @@ const itemsFor = (section: NavigationSection): readonly NavigationItem[] => {
 
   {
     sections.map((section) => {
+      const items = itemsFor(section);
+
+      /* No children: a plain link (or a disabled button on a prod build of a dev-only page). Same
+         shape as the Home row above, so it reads as one more top-level destination, not an empty
+         disclosure. */
+      if (items.length === 0) {
+        return (
+          <div class="sk-nav-list__group">
+            <ul class="sk-nav-list__list" role="list">
+              <li class="sk-nav-list__item">
+                {section.disabled || !section.href ? (
+                  <button
+                    class="sk-nav-list__link sk-interactive"
+                    type="button"
+                    disabled
+                    title={t("nav.comingSoon")}
+                    aria-label={t("nav.comingSoon")}
+                  >
+                    <span class="sk-nav-list__label">{section.section}</span>
+                  </button>
+                ) : (
+                  <a
+                    class="sk-nav-list__link sk-interactive"
+                    href={section.href}
+                    aria-current={path === section.href ? "page" : undefined}
+                  >
+                    <span class="sk-nav-list__label">{section.section}</span>
+                  </a>
+                )}
+              </li>
+            </ul>
+          </div>
+        );
+      }
+
       const open = sectionContainsPath(section);
       return (
         <div class="sk-nav-list__group" data-collapsible data-default-open={open ? undefined : "false"}>
@@ -98,7 +141,7 @@ const itemsFor = (section: NavigationSection): readonly NavigationItem[] => {
                 </a>
               </li>
             )}
-            {itemsFor(section).map((item) => (
+            {items.map((item) => (
               <li class="sk-nav-list__item" data-todo={item.todo ? "" : undefined}>
                 <a
                   class="sk-nav-list__link sk-interactive"
@@ -106,6 +149,7 @@ const itemsFor = (section: NavigationSection): readonly NavigationItem[] => {
                   aria-current={path === item.href ? "page" : undefined}
                   aria-disabled={item.todo ? "true" : undefined}
                   title={item.todo ? t("nav.notWritten") : undefined}
+                  data-sk-vaul-close={item.href.includes("#") ? "" : undefined}
                 >
                   <span class="sk-nav-list__label">{item.label}</span>
                   {item.trailing && (
@@ -121,34 +165,4 @@ const itemsFor = (section: NavigationSection): readonly NavigationItem[] => {
       );
     })
   }
-
-  <div class="sk-nav-list__group">
-    <ul class="sk-nav-list__list" role="list">
-      {
-        extras.map((item) => (
-          <li class="sk-nav-list__item">
-            {item.disabled ? (
-              <button
-                class="sk-nav-list__link sk-interactive"
-                type="button"
-                disabled
-                title={t("nav.comingSoon")}
-                aria-label={t("nav.comingSoon")}
-              >
-                <span class="sk-nav-list__label">{item.label}</span>
-              </button>
-            ) : (
-              <a
-                class="sk-nav-list__link sk-interactive"
-                href={item.href}
-                aria-current={path === item.href ? "page" : undefined}
-              >
-                <span class="sk-nav-list__label">{item.label}</span>
-              </a>
-            )}
-          </li>
-        ))
-      }
-    </ul>
-  </div>
 </nav>

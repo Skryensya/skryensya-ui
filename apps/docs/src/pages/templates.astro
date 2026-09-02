@@ -2,37 +2,13 @@
 import Base from "../layouts/Base.astro";
 import TemplatesPage from "../components/pages/TemplatesPage.astro";
 import { getLocale, useTranslations } from "../i18n";
-import { templateSections } from "../lib/templates-nav";
 
 const t = useTranslations(getLocale(Astro.url));
-const sections = templateSections(t);
 ---
 
+{/* The phone's jump links to each template live in the drawer's own tree now (Base builds a
+    "Templates" collapsible section from `templateSections`), not in a per-page rail poured in above
+    it. */}
 <Base fullBleed title={t("templates.title")} description={t("templates.description")}>
-  {/*
-    The page's own section rail is `display: none` on a phone (TemplatesPage.astro). These are the
-    same jump links, handed to Base's drawer so they stay reachable there. `data-sk-vaul-close`
-    dismisses the drawer on tap (the Vaul enhancer wires it, no preventDefault) so the `#id` scroll
-    lands on a visible stage.
-  */}
-  <nav slot="drawer-nav" class="sk-nav-list docs-drawer-nav" aria-label={t("templates.navLabel")}>
-    <div class="sk-nav-list__group">
-      <ul class="sk-nav-list__list" role="list">
-        {
-          sections.map((section) => (
-            <li class="sk-nav-list__item">
-              <a
-                class="sk-nav-list__link sk-interactive"
-                href={`#${section.id}`}
-                data-sk-vaul-close
-              >
-                <span class="sk-nav-list__label">{section.navLabel}</span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </nav>
   <TemplatesPage />
 </Base>

@@ -102,6 +102,7 @@ import "../styles/shell.scss";
 import { FOCUS_ORDER_CSS } from "../../../../packages/devtools/src/focus-order";
 import { ClientRouter } from "astro:transitions";
 import LanguageMenu from "../components/LanguageMenu.astro";
+import PrefTooltip from "../components/PrefTooltip.astro";
 import CommandPalette from "../components/CommandPalette.astro";
 import ContrastToggle from "../components/ContrastToggle.astro";
 import SidebarNav from "../components/SidebarNav.astro";
@@ -113,7 +114,9 @@ import { vanillaMountSections } from "../lib/vanilla-mount-sections";
 import VanillaMount from "../components/VanillaMount.astro";
 import { vanillaMounts } from "../lib/vanilla-mounts";
 import { iconMarkup, siteIconSet } from "../icons";
-import { getGlobalNavigation, getNavigation, type NavigationSection } from "../lib/navigation";
+import { getGlobalNavigation, getNavigation, type NavigationItem, type NavigationSection } from "../lib/navigation";
+import type { DrawerSection } from "../components/DrawerNav.astro";
+import { templateSections } from "../lib/templates-nav";
 import { palettePresets } from "../lib/palette-presets";
 import {
   availableLocales,
@@ -244,20 +247,57 @@ const componentSection = navigation.find((section) => section.id === "components
 const foundationsSection = navigation.find((section) => section.id === "foundations");
 
 /*
- * The mobile drawer's full-index nav (DrawerNav.astro) reads the same two resolved sources as the
- * header: `navigation` for the three collapsible sections, `globalNavigation` for the childless
- * top-level links. Matched on the CANONICAL (Spanish) path so `/` vs `/en` and `/templates` vs its
- * localised twin resolve the same in every locale. `/templates` and `/presets` are dev-only, so
- * outside `import.meta.env.DEV` they render as a disabled, non-navigating button, exactly as the old
- * flat drawer list did.
+ * The mobile drawer's full-index nav (DrawerNav.astro): `navigation` for the three documentation
+ * sections, plus a synthetic section each for Templates and Presets so they are ORDINARY rows in the
+ * one tree, not a rail poured in above it. Matched on the CANONICAL (Spanish) path so `/` vs `/en`
+ * and `/templates` vs its localised twin resolve the same in every locale.
+ *
+ *   - Templates: a phone hides its in-page section rail (`fullBleed`, `display: none` below
+ *     desktop), so its jump links come in here as a collapsible section, each an `#id` on the
+ *     templates page. `data-sk-vaul-close` (DrawerNav, for any `#` href) shuts the drawer so the
+ *     scroll lands on a visible stage.
+ *   - Presets: its own Toc renders in normal flow on a phone, so this is just the top-level link.
+ *   - Both are dev-only; a production build renders the label as a disabled `<button>` (no `href`),
+ *     matching the header's own treatment.
  */
+const isDev = import.meta.env.DEV;
+const globalHref = (canon: string): string | undefined =>
+  globalNavigation.find((entry) => canonicalPath(entry.href) === canon)?.href;
+const globalLabel = (canon: string): string | undefined =>
+  globalNavigation.find((entry) => canonicalPath(entry.href) === canon)?.label;
+
 const drawerHome =
   globalNavigation.find((item) => canonicalPath(item.href) === "/") ??
   ({ href: href("/"), label: t("nav.home") } satisfies { href: string; label: string });
-const drawerExtras = (["/templates", "/presets"] as const).flatMap((canon) => {
-  const item = globalNavigation.find((entry) => canonicalPath(entry.href) === canon);
-  return item ? [{ ...item, disabled: !import.meta.env.DEV }] : [];
-});
+
+/** A synthetic drawer section for a dev-only gallery page (Templates / Presets). */
+const gallerySection = (canon: "/templates" | "/presets", items: readonly NavigationItem[]): DrawerSection[] => {
+  const label = globalLabel(canon);
+  if (!label) return [];
+  return [
+    {
+      id: canon.slice(1),
+      section: label,
+      href: isDev ? globalHref(canon) : undefined,
+      disabled: !isDev,
+      blurb: "",
+      groups: [{ group: "", items: isDev ? items : [] }],
+    },
+  ];
+};
+
+const templatesHref = globalHref("/templates") ?? "/templates";
+const drawerSections: readonly DrawerSection[] = [
+  ...navigation,
+  ...gallerySection(
+    "/templates",
+    templateSections(t).map((section) => ({
+      href: `${templatesHref}#${section.id}`,
+      label: section.navLabel,
+    })),
+  ),
+  ...gallerySection("/presets", []),
+];
 
 /*
  * One rail follows the reader through the whole library. Catalog and reference subpages inherit
@@ -348,6 +388,7 @@ const searchIndexSrc = locale === "en" ? "/en/search-index.json" : "/search-inde
 const searchIcon = iconMarkup("search");
 const closeIcon = iconMarkup("close");
 const menuIcon = iconMarkup("menu");
+const settingsIcon = iconMarkup("settings");
 const previousIcon = iconMarkup("arrow-left");
 const nextIcon = iconMarkup("arrow-right");
 
@@ -784,11 +825,37 @@ const PALETTE_PRESETS = palettePresets(locale);
         </button>
 
         {/*
+          Mobile-only: the reader preferences. On desktop the `.dimensions__prefs` cluster below is
+          visible in the header and this button is `display: none`; below `desktop` the cluster hides
+          and this opens the same four controls as a block-end sheet (`#docs-prefs-sheet`). They used
+          to ride at the foot of the nav drawer, where a reader hunting for "dark mode" had to open
+          the index and scroll past the whole site tree to reach an unlabelled icon row.
+          `data-sk-dialog-vaul-open` is the trigger attribute `connectVaul` reads for a Dialog Vaul
+          root (`vaul.ts`), the same shape as the drawer's own `data-sk-vaul-open`.
+        */}
+        <button
+          class="sk-button sk-interactive dimensions__prefs-trigger"
+          data-variant="ghost"
+          data-icon-only
+          type="button"
+          aria-label={t("prefs.title")}
+          aria-controls="docs-prefs-sheet"
+          data-sk-dialog-vaul-open="docs-prefs-sheet"
+        >
+          <Fragment set:html={settingsIcon} />
+        </button>
+
+        {/*
           The reader-preference icon controls (palette + reach + mode + contrast) are one cluster: a
           tighter gap than the header's own, so the icon-to-icon whitespace optically matches the search
           field's edge to the first icon, the icons carry ~one glyph of internal padding on each side,
           which the bordered field does not, so an equal flex gap would read as looser between the two
           icons.
+        */}
+        {/*
+          Every control here is icon-only, so each is wrapped in `PrefTooltip`: a desktop hover/focus
+          hint naming what it is, which is what replaced the `title` these carried. The mobile copies
+          in `#docs-prefs-sheet` already sit next to a visible row label, so they get none.
         */}
         <div class="dimensions__prefs">
           {/*
@@ -797,26 +864,32 @@ const PALETTE_PRESETS = palettePresets(locale);
             current accent; a click advances to the next preset and applies its complete semantic accent
             bundle. The button ships neutral so there is no wrong-color flash before the script runs.
           */}
-          <button
-            class="sk-button sk-interactive dimensions__palette-toggle"
-            data-variant="ghost"
-            data-icon-only
-            type="button"
-            aria-label={t("prefs.palette")}
-            title={t("prefs.palette")}
-            data-docs-palette-toggle
-            data-label-template={t("prefs.paletteNamed")}
-          >
-            <span class="dimensions__palette-dot" aria-hidden="true"></span>
-          </button>
-
+          <PrefTooltip label={t("prefs.palette")}>
+            <button
+              class="sk-button sk-interactive dimensions__palette-toggle"
+              data-variant="ghost"
+              data-icon-only
+              type="button"
+              aria-label={t("prefs.palette")}
+              data-docs-palette-toggle
+              data-label-template={t("prefs.paletteNamed")}
+            >
+              <span class="dimensions__palette-dot" aria-hidden="true"></span>
+            </button>
+          </PrefTooltip>
 
           {/* One-click mode cycle: system → claro → oscuro. */}
-          <ThemeToggle />
+          <PrefTooltip label={t("prefs.theme")}>
+            <ThemeToggle />
+          </PrefTooltip>
 
-          <ContrastToggle />
+          <PrefTooltip label={t("prefs.contrast")}>
+            <ContrastToggle />
+          </PrefTooltip>
 
-          <LanguageMenu />
+          <PrefTooltip label={t("prefs.language")}>
+            <LanguageMenu />
+          </PrefTooltip>
         </div>
 
       </div>
@@ -845,6 +918,85 @@ const PALETTE_PRESETS = palettePresets(locale);
     <slot name="palette" />
 
     {/*
+      READER PREFERENCES. The SAME composition as the Command Palette's mobile form (ADR-19): a
+      native `.sk-dialog` that opts into Dialog Vaul (`data-sk-dialog-vaul`), so it is a block-end
+      sheet below `desktop` and would be a centred dialog above it — except the only trigger
+      (`.dimensions__prefs-trigger`) is mobile-only, so in practice it is always the sheet. Sharing
+      the composition is what gives it the palette's own corner radius (`--sk-dialog-radius`),
+      elevation, backdrop and drag handle for free, instead of a second sheet skin to keep in step.
+
+      `connectVaul` auto-mounts on `[data-sk-dialog-vaul]` (registry.ts), wiring the handle drag,
+      Escape and backdrop dismiss; the header close is a `<form method="dialog">`, the platform's,
+      exactly as the palette's own close button.
+
+      On desktop the same four controls are the header's `.dimensions__prefs` cluster and this is
+      never opened. Each control is that identical icon-only component; what the sheet adds is the
+      row LABEL, the "what does this icon do" a bare globe / ring / monitor / dot could not answer.
+    */}
+    <dialog
+      class="sk-dialog docs-prefs-sheet"
+      id="docs-prefs-sheet"
+      data-sk-dialog-vaul
+      data-edge="block-end"
+      aria-labelledby="docs-prefs-sheet-title"
+    >
+      <div data-part="handle" aria-hidden="true"></div>
+      <header class="sk-dialog__header">
+        <h2 class="sk-dialog__title docs-prefs-sheet__title" id="docs-prefs-sheet-title" data-flush>{t("prefs.title")}</h2>
+        <form method="dialog">
+          <button
+            class="sk-button sk-interactive sk-dialog__close"
+            data-variant="ghost"
+            data-size="sm"
+            data-icon-only
+            type="submit"
+            value="cancel"
+            aria-label={t("action.close")}
+          >
+            <Fragment set:html={closeIcon} />
+          </button>
+        </form>
+      </header>
+      {/*
+        Theme first: "dark mode" is the reason most readers open this. Language LAST and on purpose:
+        it is the one control here whose panel is a Menu that opens away from its trigger, and from
+        the last row — hard against the sheet's bottom edge — `flip-block` sends that panel UP over
+        the rows above it rather than off the screen. A row higher up would drop the panel downward
+        onto its neighbours.
+      */}
+      <div class="sk-dialog__body docs-prefs-sheet__body">
+        <div class="docs-prefs-sheet__row">
+          <span class="docs-prefs-sheet__row-label">{t("prefs.theme")}</span>
+          <ThemeToggle />
+        </div>
+        <div class="docs-prefs-sheet__row">
+          <span class="docs-prefs-sheet__row-label">{t("prefs.contrast")}</span>
+          <ContrastToggle />
+        </div>
+        <div class="docs-prefs-sheet__row">
+          <span class="docs-prefs-sheet__row-label">{t("prefs.palette")}</span>
+          <button
+            class="sk-button sk-interactive dimensions__palette-toggle"
+            data-variant="ghost"
+            data-icon-only
+            type="button"
+            aria-label={t("prefs.palette")}
+            data-docs-palette-toggle
+            data-label-template={t("prefs.paletteNamed")}
+          >
+            <span class="dimensions__palette-dot" aria-hidden="true"></span>
+          </button>
+        </div>
+        {alternates.length > 1 && (
+          <div class="docs-prefs-sheet__row">
+            <span class="docs-prefs-sheet__row-label">{t("prefs.language")}</span>
+            <LanguageMenu />
+          </div>
+        )}
+      </div>
+    </dialog>
+
+    {/*
       The same nav as the rail, in a drawer, for viewports with no room for a rail. It is a native
       <dialog> opened with showModal(), so the focus trap, ESC, the inert page and focus restoration
       are the platform's (decision 11). The trigger is a disclosure button for a dialog-backed
@@ -857,35 +1009,16 @@ const PALETTE_PRESETS = palettePresets(locale);
       drag" and still wires all three, so dropping the element just removes the affordance, not the
       dismiss. `data-draggable="false"` says the same thing explicitly for anyone reading the markup.
     */}
-    <dialog class="sk-vaul sk-drawer docs-drawer" id="docs-drawer" data-sk-vaul data-edge="inline-start" data-draggable="false" aria-label={t("nav.drawer")}>
+    <dialog class="sk-vaul sk-drawer docs-drawer" id="docs-drawer" data-sk-vaul data-edge="inline-start" data-draggable="false" aria-labelledby="docs-drawer-title">
         {/*
-          The drawer's top bar. The reader-preference cluster rides in the header beside the close
-          control instead of in a band of its own further down: the index then starts a row higher
-          and the whole chrome reads as one toolbar. There is no title text: the `<dialog>`'s own
-          `aria-label` names the region, and the section list right below is what a reader scans for.
-
-          Order is the desktop header's `.dimensions__prefs` REVERSED (language, contrast, mode,
-          accent), so the language control sits first at the leading edge, nearest the reader's
-          starting point on the row.
+          Header: the panel's name and the close control, nothing else. Reader preferences (mode,
+          contrast, palette, language) are NOT here and no longer at the panel's foot either: they
+          are their own `#docs-prefs-sheet` bottom sheet, opened from a dedicated header button, so
+          the index is pure navigation and "dark mode" is one tap from any page instead of a scroll
+          past the whole site tree.
         */}
         <div class="docs-drawer__header">
-          <div class="docs-drawer__prefs" role="group" aria-label={t("prefs.title")}>
-            <LanguageMenu />
-            <ContrastToggle />
-            <ThemeToggle />
-            <button
-              class="sk-button sk-interactive dimensions__palette-toggle"
-              data-variant="ghost"
-              data-icon-only
-              type="button"
-              aria-label={t("prefs.palette")}
-              title={t("prefs.palette")}
-              data-docs-palette-toggle
-              data-label-template={t("prefs.paletteNamed")}
-            >
-              <span class="dimensions__palette-dot" aria-hidden="true"></span>
-            </button>
-          </div>
+          <h2 class="docs-drawer__title" id="docs-drawer-title">{t("nav.drawer")}</h2>
           <button class="sk-button sk-interactive" data-variant="ghost" type="button" aria-label={t("nav.closeDrawer")} data-sk-vaul-close>
             <Fragment set:html={closeIcon} />
           </button>
@@ -897,21 +1030,18 @@ const PALETTE_PRESETS = palettePresets(locale);
           did not say where the other sections' pages were.
         */}
         <div class="docs-drawer__content sk-scrollbar sk-scrollbar--reveal">
-          {/*
-            A page whose own in-page section rail is hidden on a phone (only `/templates` so far,
-            `fullBleed` with a `display: none` sticky column below `desktop`) pours those jump links
-            in here, above the site index, so the drawer is the one place that has both.
-          */}
-          <slot name="drawer-nav" />
-          <DrawerNav sections={navigation} home={drawerHome} extras={drawerExtras} path={path} />
+          <DrawerNav sections={drawerSections} home={drawerHome} path={path} />
         </div>
       </dialog>
     {/*
-      On open, bring the current page's entry into view: its section is the one expanded, but a long
-      open list (Componentes) can still leave the entry below the fold. The `<dialog>`'s own `toggle`
-      event fires for `showModal()` too (Vaul's `sk:openchange` only announces CLOSE); double rAF so
-      the just-shown list has been laid out before `scrollIntoView` measures it. `astro:page-load`
-      re-binds after a view-transition nav; the `data-*` guard stops a double-bind on first load.
+      On open, bring the current page's entry into view AND put focus on it: its section is the one
+      expanded, but a long open list (Componentes) can still leave the entry below the fold, and
+      `showModal()`'s own focus lands on the close button at the top, so a screen-reader user starts
+      Tabbing from a different place than the sighted view is scrolled to. Focusing the current link
+      makes the two agree and puts the reader one keystroke from browsing. The `<dialog>`'s own
+      `toggle` event fires for `showModal()` too (Vaul's `sk:openchange` only announces CLOSE); double
+      rAF so the just-shown list has been laid out first. `astro:page-load` re-binds after a
+      view-transition nav; the `data-*` guard stops a double-bind on first load.
     */}
     <script is:inline>
       (function () {
@@ -924,7 +1054,9 @@ const PALETTE_PRESETS = palettePresets(locale);
             requestAnimationFrame(function () {
               requestAnimationFrame(function () {
                 var current = drawer.querySelector('.docs-drawer-nav [aria-current="page"]');
-                if (current) current.scrollIntoView({ block: "center" });
+                if (!current) return;
+                current.scrollIntoView({ block: "center" });
+                current.focus({ preventScroll: true });
               });
             });
           });
@@ -1385,7 +1517,6 @@ const PALETTE_PRESETS = palettePresets(locale);
                 : contrastToggle.dataset.labelNormal) ?? "";
             contrastToggle.setAttribute("aria-pressed", String(high));
             contrastToggle.setAttribute("aria-label", text);
-            contrastToggle.setAttribute("title", text);
           });
         };
 
@@ -1464,7 +1595,6 @@ const PALETTE_PRESETS = palettePresets(locale);
             const template = paletteToggle.getAttribute("data-label-template") || "{name}";
             const text = template.replace("{name}", preset.name);
             paletteToggle.setAttribute("aria-label", text);
-            paletteToggle.setAttribute("title", text);
           });
           if (persist) setPreference(palettePreference, preset.id);
         };

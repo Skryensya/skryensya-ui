@@ -98,6 +98,12 @@ body {
   display: none;
 }
 
+/* Mobile-only: opens the reader-preference sheet (`#docs-prefs-sheet`). On desktop the preferences
+   are the visible `.dimensions__prefs` cluster and this button is `display: none`. */
+.dimensions__prefs-trigger {
+  display: none;
+}
+
 /* Header destinations are one NavList. Home is not a logo-shaped exception; it is the first peer
    destination, with tighter chrome than the sidebar and roomier inline padding for scanning. */
 .dimensions__global {
@@ -221,20 +227,34 @@ body {
 }
 
 /* Color-palette toggle: one icon-only button (same square as the theme/contrast toggles, sized by
-   sk-button[data-icon-only]) that cycles the presets. Its dot is the current accent, a plain filled
-   circle, since the whole page already shows the palette, so the dot only has to say "color lives
-   here". A ring in the surface color keeps a light dot legible against the ghost button. */
+   sk-button[data-icon-only]) that cycles the presets. It IS the contrast toggle's glyph in its
+   normal state — the same 2px currentColor ring, in the same secondary icon colour, inset the same
+   1px from the icon box — but with the current accent filling the circle instead of a stroke-only
+   outline. Same figure/ground as the contrast toggle's half-filled circle: the colour reads as the
+   thing the control carries, not a dot parked inside a frame. */
 .dimensions__palette-toggle {
   display: inline-grid;
   place-items: center;
 }
 
 .dimensions__palette-dot {
-  inline-size: 1.15rem;
-  block-size: 1.15rem;
+  display: grid;
+  place-items: center;
+  inline-size: var(--size-icon-lg);
+  block-size: var(--size-icon-lg);
+  /* the 1px pad is what insets the ring to match `contrastNormal`'s `<circle r="10">` in a 24 box */
+  padding: 1px;
+  color: var(--color-text-secondary);
+}
+
+.dimensions__palette-dot::before {
+  content: "";
+  inline-size: 100%;
+  block-size: 100%;
+  border: 2px solid currentColor;
   border-radius: var(--radius-pill);
   background: var(--swatch, var(--color-action-accent));
-  box-shadow: inset 0 0 0 1px var(--color-border-subtle);
+  background-clip: padding-box;
 }
 
 
@@ -252,6 +272,14 @@ body {
 .dimensions__language-menu .sk-menu__positioner {
   --sk-anchored-position-area: block-end span-inline-start;
   --sk-anchored-justify: end;
+}
+
+/* The language control is the one preference that is a Menu, not a toggle: a click opens a panel
+   that already names every language. Its `PrefTooltip` and that panel share the trigger as their
+   anchor, so an open menu with the "Idioma" tooltip still showing is two boxes stacked on the same
+   spot. Once the menu is open the tooltip has nothing left to say, so hide it for as long as it is. */
+.dimensions__prefs .sk-tooltip:has([data-sk-menu-trigger][data-state="open"]) .sk-tooltip__content {
+  display: none;
 }
 
 /* Icon-only, the same square as the theme toggle beside it (sizing comes from sk-button[data-icon-only]).
@@ -276,7 +304,7 @@ body {
 @media (max-width: 52rem) {
   .dimensions__content {
     display: grid;
-    grid-template-columns: auto 1fr auto auto;
+    grid-template-columns: auto 1fr auto auto auto;
     gap: var(--space-inline-xs);
     padding-block: var(--space-inset-xs);
     /* `sk-wrapper[data-size="lg"]`'s own inset (`--space-inset-lg`, 24px) is tuned for a desktop row
@@ -290,18 +318,23 @@ body {
     display: none;
   }
 
-  /* Trailing edge, alongside search: the trigger stays FIRST in the markup (a keyboard user reaches
-     the drawer before anything else, the same one-tab-to-the-index reasoning the skip link's own
-     comment already states), but visually it reads as an icon cluster on the right, the shape every
-     mobile site's own header already trained readers to expect. Grid placement is purely visual;
-     nothing here touches DOM order or, with it, focus order.
+  /* Trailing edge, an icon cluster on the right: `[search] [preferences] [menu]`. The nav trigger
+     stays FIRST in the markup (a keyboard user reaches the drawer before anything else, the same
+     one-tab-to-the-index reasoning the skip link's own comment already states); grid placement is
+     purely visual and touches neither DOM order nor focus order.
 
-     `grid-row: 1` is required, not decorative, on all three placed children: the DOM has the
-     trigger (column 4) BEFORE the brand (column 1) and search (column 3), and sparse auto-placement
-     only ever moves its cursor forward. Landing on column 4 first pushes the cursor past the row, so
-     the next items (columns 1 and 3, both "behind" it) fell through to an implicit second row
-     instead of sharing the first — confirmed live via a Playwright DOM dump before this fix. */
+     `grid-row: 1` is required, not decorative, on every placed child: the DOM has the nav trigger
+     (last column) BEFORE the brand (column 1), search (column 3) and the prefs trigger (column 4),
+     and sparse auto-placement only moves its cursor forward. Landing on the last column first pushes
+     the cursor past the row, so the earlier items fell through to an implicit second row instead of
+     sharing the first — confirmed live via a Playwright DOM dump before this fix. */
   .dimensions__menu-trigger {
+    grid-row: 1;
+    grid-column: 5;
+  }
+
+  .dimensions__prefs-trigger {
+    display: inline-flex;
     grid-row: 1;
     grid-column: 4;
   }
@@ -594,32 +627,73 @@ main {
   align-items: center;
   justify-content: space-between;
   min-block-size: var(--docs-header-block-size);
-  /* One notch tighter than the index gutter below: the header's outer items are icon buttons that
-     already carry their own edge padding, so the document gutter would read as extra air here. */
+  /* The title carries its own inline padding (below); the close button is an icon button that
+     carries its own edge padding, so the header gutter is one notch tighter than the index below. */
   padding-inline: var(--space-inset-sm);
   border-bottom: 1px solid var(--color-border-subtle);
 }
 
-/* The reader-preference cluster, now the drawer's top bar (Base.astro): the same four controls as
-   the desktop header's own `.dimensions__prefs`, in REVERSED order (language, contrast, mode,
-   accent) so the language control leads. It sits at the start of the header; `.docs-drawer__header`'s
-   `space-between` carries the close button to the trailing edge on its own, so this needs no spacer
-   of its own. */
-.docs-drawer__prefs {
-  display: flex;
-  flex: none;
-  align-items: center;
-  gap: var(--space-inline-xs);
+/* The panel's name: the drawer's own orientation cue, and the dialog's accessible name
+   (`aria-labelledby`). Reads at body size, not the caption/uppercase quiet the rail's own section
+   labels use, because it is the one line that says "you are in the navigation". */
+.docs-drawer__title {
+  margin: 0;
+  padding-inline-start: var(--space-inline-sm);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-emphasis);
+  line-height: var(--font-line-height-body, 1.3);
 }
 
-/* The header's end-aligned language panel (`.dimensions__language-menu` rule above) is tuned for the
-   desktop header, where the trigger is the LAST control and hugs the window's trailing edge. In the
-   drawer the same trigger sits near the LEADING edge, so it opens in Menu's own default direction
-   (start-aligned, rightward) instead; end-alignment here would run the panel off the drawer's left
-   side. Values mirror menu.css's own defaults. */
-.docs-drawer__prefs .dimensions__language-menu .sk-menu__positioner {
-  --sk-anchored-position-area: block-end span-inline-end;
-  --sk-anchored-justify: start;
+/* ── the reader-preference sheet (#docs-prefs-sheet) ─────────────────────────
+   The SAME composition as the Command Palette on a phone: a `.sk-dialog` opting into Dialog Vaul
+   (`data-sk-dialog-vaul`), so the corner radius, elevation, backdrop, drag handle and slide are
+   `dialog-vaul.css`'s, identical to the palette's. What is left for the site is the labelled
+   control rows in the body, and one small override: `.sk-dialog__body` lays its children out as a
+   `justify-items: start` grid, and these rows must instead run the full width with the control
+   pinned to the trailing edge. */
+.docs-prefs-sheet__title {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-body);
+  font-weight: var(--font-weight-emphasis);
+  line-height: var(--font-line-height-body, 1.3);
+}
+
+.docs-prefs-sheet__body {
+  display: flex;
+  flex-direction: column;
+  /* the sheet ends flush with the viewport edge; keep the last row clear of the home indicator */
+  padding-block-end: max(var(--sk-dialog-padding), env(safe-area-inset-bottom));
+}
+
+/* One preference per row: the text label carries the meaning the bare icon control could not, and
+   the control sits at the trailing edge. A hairline between rows, none above the first or below the
+   last, so the group reads as one list rather than a stack of boxes. */
+.docs-prefs-sheet__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-inline-md);
+  min-block-size: var(--size-touch-target);
+}
+
+.docs-prefs-sheet__row + .docs-prefs-sheet__row {
+  border-block-start: 1px solid var(--color-border-subtle);
+}
+
+.docs-prefs-sheet__row-label {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-body-sm);
+  font-weight: var(--font-weight-body);
+}
+
+/* The sheet sits on the viewport's bottom edge, so the language Menu has no room to open downward:
+   send its panel UP and align its trailing edge to the trigger's, the mirror of the desktop
+   header's own override. Asked for through the Anclaje hooks (ADR-25), so a browser with no
+   anchor-positioning engine still gets the machine's on-screen clamp. */
+.docs-prefs-sheet .dimensions__language-menu .sk-menu__positioner {
+  --sk-anchored-position-area: block-start span-inline-start;
+  --sk-anchored-justify: end;
 }
 
 
@@ -766,13 +840,27 @@ h2.docs-nav-section__title {
   border-block-start: 1px solid var(--color-border-subtle);
 }
 
-/* When a page pours its own section list into the drawer (Base's `drawer-nav` slot, e.g.
-   `/templates`), it is a second `.docs-drawer-nav` above the site index. Fence the two apart the
-   same way the index fences its own rows. */
-.docs-drawer__content > .docs-drawer-nav + .docs-drawer-nav {
-  margin-block-start: var(--space-stack-sm);
-  padding-block-start: var(--space-stack-sm);
-  border-block-start: 1px solid var(--color-border-subtle);
+/* A childless top-level row (Inicio, Presets, and Templates on a prod build) is a plain
+   `.sk-nav-list__link` in a non-collapsible group. Left at the pattern's default it reads a rung
+   quieter than the section disclosure buttons beside it — body weight, secondary colour — so the
+   three sections looked like headings and Inicio/Presets like orphaned children of nothing. They
+   are PEERS in this tree, every one a top-level destination, so they take the same primary colour
+   and emphasis stroke the disclosure button just above declares for itself. `:not([aria-current])`
+   leaves the current page its accent. */
+.docs-drawer-nav > .sk-nav-list__group:not([data-collapsible]) > .sk-nav-list__list
+  > .sk-nav-list__item > .sk-nav-list__link:not([aria-current="page"]) {
+  --sk-nav-list-link-fg: var(--color-text-primary);
+  font-weight: var(--font-weight-emphasis);
+}
+
+/* The state layer's hover wash is `currentColor` at 12% (state-layer.css). On these links
+   `currentColor` is a muted nav-list grey, so over the drawer's near-white overlay surface the
+   hover was barely a tint — "muy claro" in light mode. Point the wash at primary text instead, the
+   same move Menu / Menubar / Megamenu already make, so the hovered row is unmistakable in both
+   modes. */
+.docs-drawer-nav .sk-nav-list__link,
+.docs-drawer-nav .sk-nav-list__group-label {
+  --state-layer-color: var(--color-text-primary);
 }
 
 /* The section disclosure button is primary navigation, not the caption-sized sub-index label the
@@ -1317,7 +1405,8 @@ h2:not(
     .sk-toc__title,
     .sk-dialog__title,
     .sk-popover__title,
-    .sk-empty-state__title
+    .sk-empty-state__title,
+    .docs-drawer__title
   ) {
   margin: var(--space-section) 0 var(--space-stack-sm);
   font-size: var(--font-size-heading-md);

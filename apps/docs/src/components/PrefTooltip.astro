@@ -1,0 +1,39 @@
+---
+/*
+ * Desktop hover/focus hint for one header preference control.
+ *
+ * The controls in `.dimensions__prefs` are icon-only; each already carries its own accessible name
+ * on `aria-label` (and some rewrite it with state, "Modo: oscuro"). This adds the redundant VISIBLE
+ * label the Tooltip contract exists for (`core/tooltip.ts`: "un botón de sólo icono necesita una
+ * pista visual redundante para quien puede verla"), and it is what replaced the old `title`.
+ *
+ * Authored-markup Tooltip, the same shape ComponentPreview's segmented options use: the trigger is
+ * the wrapper span, not the control, so `bindAnchor` writes `anchor-name` on an element of ours and
+ * never fights the Menu anchor already on `LanguageMenu`'s button. Hover bubbles from the control to
+ * the span; so does `focusin`, so keyboard focus opens it too.
+ *
+ * `block-end`: the cluster sits at the very top of the viewport, so the hint goes below.
+ *
+ * Renders nothing when the slot is empty — `LanguageMenu` yields nothing on a page with a single
+ * translation, and a bare wrapper would still take a slot in the flex row's `gap`.
+ */
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+const control = (await Astro.slots.render("default")).trim();
+---
+
+{
+  control && (
+    <span class="sk-tooltip" data-sk-anchor data-sk-placement="block-end">
+      <span class="sk-tooltip__trigger sk-anchor" data-sk-anchor-trigger set:html={control} />
+      <div class="sk-tooltip__positioner sk-anchored" data-sk-anchor-positioner>
+        <div class="sk-tooltip__content" data-sk-anchor-content role="tooltip">
+          {label}
+        </div>
+      </div>
+    </span>
+  )
+}

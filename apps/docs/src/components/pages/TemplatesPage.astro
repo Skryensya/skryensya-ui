@@ -101,7 +101,8 @@ const templates = templateSections(t).map((section) => ({
 <style lang="scss">
   /* Same line the docs rail / drawer switch pivots on (`_breakpoints.scss` `desktop`, 52rem): the
      sticky column below has no room on a phone, so it goes `display: none` and the same jump links
-     ride into the mobile drawer instead (Base's `drawer-nav` slot, filled by `templates.astro`). */
+     ride into the mobile drawer instead, as a "Templates" collapsible section `Base.astro` builds
+     from `templateSections`. */
   @use "@skryensya/core/breakpoints" as bp;
 
   .templates {

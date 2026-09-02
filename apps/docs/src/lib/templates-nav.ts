@@ -2,9 +2,9 @@
  * The template gallery's section list, TEXT ONLY: no `emitMarkup`, no usage trees.
  *
  * Two places list these sections and they must not drift: `TemplatesPage.astro`'s own rail (a
- * sticky column on desktop, `display: none` below `desktop`) and the mobile drawer, where the same
- * jump links ride in via Base's `drawer-nav` slot so a reader with the rail hidden can still reach
- * every template. One array, read by both, in one order.
+ * sticky column on desktop, `display: none` below `desktop`) and the mobile drawer, where `Base.astro`
+ * turns the same entries into a "Templates" collapsible section in `DrawerNav` so a reader with the
+ * rail hidden can still reach every template. One array, read by both, in one order.
  */
 import type { Translate } from "../i18n";
 

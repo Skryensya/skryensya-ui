@@ -11,6 +11,24 @@ const usage = `<button class="sl-tile sk-interactive" type="button">
   Interactivo
 </button>`;
 
+const recipeUsage = `<!-- Nada que importar: el Pattern viene en tokens.scss.
+     Solo marcás el nodo que se pinta. -->
+
+<!-- DIRECTO: el nodo pintado recibe hover/focus/press -->
+<button class="sk-button sk-interactive">Guardar</button>
+<a class="sk-link sk-interactive" href="/docs">Ver docs</a>
+
+<!-- WRAPPER: sk-interactive envuelve un input nativo oculto.
+     Los selectores :has(:hover) / :has(:checked) hacen el resto. -->
+<label class="sk-checkbox sk-interactive">
+  <input type="checkbox" class="sk-checkbox__input" />
+  Acepto
+</label>
+
+<!-- PROYECTADO: no se escribe a mano. La Machine escribe
+     data-highlighted / data-selected y el CSS del componente
+     los mapea a la misma escalera. -->`;
+
 const projectedUsage = `<!-- DOM resultante: lo escribe el Enhancer. -->
 <div
   class="sk-combobox__item sk-interactive"
@@ -28,6 +46,62 @@ const ladder = [
   ["pressed", "--state-layer-pressed-opacity", "activación"],
   ["dragged", "--state-layer-dragged-opacity", "arrastre"],
   ["disabled", "--state-layer-disabled-opacity", "fuerza 0"],
+];
+
+const tokens = [
+  ["--state-layer-color", "currentColor", "El tinte. Es el color de contenido, por eso un solo modelo sirve para superficie neutra y para relleno saturado. Menu, Menubar y Megamenu lo reapuntan a --color-text-primary para que el texto rojo de un item danger no tiña su propio hover."],
+  ["--state-layer-selected-opacity", "0.08", "Escalón base persistente."],
+  ["--state-layer-hover-opacity", "0.12", "Puntero encima."],
+  ["--state-layer-focus-opacity", "0.16", "Foco de teclado."],
+  ["--state-layer-pressed-opacity", "0.20", "Activación."],
+  ["--state-layer-dragged-opacity", "0.28", "Arrastre."],
+  ["--state-layer-disabled-opacity", "0", "Disabled no muestra capa reactiva."],
+  ["--state-layer-keyline-scale", "0px → 8px en alto contraste", "Ancho del keyline inset = este valor × la opacidad activa. 0 en el tier base; hc-tokens lo sube."],
+];
+
+const where = [
+  ["Directo", "Button, Tile (checkbox / radio / switch / expandable), List item, Nav-list link, Tab, Accordion, Segmented, Pagination, Tag, Skip-link, Sidebar, TOC, .sk-link, Icon-state-button, celdas de Data-grid y Treegrid, swatch de Color-picker, y los botones icon-only de Code-preview, Dialog, Popover, File-upload y Number-field.", "El consumidor agrega sk-interactive una vez (o ya viene en el contrato del componente)."],
+  ["Proyectado", "Menu, Select, Combobox, Command palette, Tree-view, Calendar / Date-picker.", "El Enhancer escribe data-highlighted / data-selected y el CSS del componente los mapea. Menu es ambos: sk-interactive en el item más un mapa [data-highlighted] para el teclado."],
+];
+
+const versus = [
+  [
+    "Cantidad de tokens",
+    "--sk-x-bg-hover, --sk-x-bg-active, --sk-x-border-hover… por cada componente × estado × propiedad × variante × modo. Cientos, y crecen en cada eje.",
+    "Un mecanismo. Cero tokens de color por componente: currentColor × una opacidad por estado.",
+  ],
+  [
+    "Relleno saturado (accent, danger)",
+    "Cada variante necesita su propio hover, calculado a mano para verse bien sobre azul y sobre rojo. Fácil de dejar turbio.",
+    "El tinte es el color de contenido (on-accent), correcto sobre cualquier relleno sin una regla por variante.",
+  ],
+  [
+    "Componente o variante nueva",
+    "Autorar el set completo de colores de estado y validar el contraste de cada uno antes de que reaccione.",
+    "Agregar sk-interactive. El feedback ya está afinado; no hay nada que calibrar.",
+  ],
+  [
+    "Consistencia entre componentes",
+    "El hover de Button y el de Tab se afinan por separado y divergen con el tiempo.",
+    "Un solo juego de escalones global. Todo reacciona igual por construcción.",
+  ],
+  [
+    "Modos (claro / oscuro / alto contraste)",
+    "Una rama por modo en cada token de estado.",
+    "currentColor ya es light-dark() y cambia con el modo; sin ramas por componente.",
+  ],
+  [
+    "Estados que coinciden (hover sobre selected)",
+    "Dos colores distintos, o dos capas: la opacidad se suma salvo que se resuelva a mano.",
+    "Una sola capa activa; la prioridad elige un escalón, nunca una suma.",
+  ],
+];
+
+const stillToken = [
+  ["Indicador de selección", "El riel de acento, el check relleno, el borde --color-border-accent. Selected NO puede depender del layer, así que su señal independiente sí es un token semántico."],
+  ["Aspecto disabled", "--color-action-disabled / --color-text-disabled atenúan todo el control. No es un overlay reactivo; el layer se fuerza a 0."],
+  ["Cambios estructurales", "El thumb de un Switch que se desplaza, el trazo de un checkbox. Es geometría, no un wash."],
+  ["Reapuntar el tinte", "Cuando currentColor es el color equivocado (item danger en un Menu) se cambia --state-layer-color. Sigue siendo un token, no un set por estado."],
 ];
 
 const stateLabels = [
@@ -148,6 +222,60 @@ const labTree: UsageTree = {
     evita esa suma: exactamente un estado pinta el layer en cada momento.
   </p>
 
+  <h2>Cómo se usa</h2>
+  <p>
+    No hay nada que importar: el Pattern viaja en <code>tokens.scss</code>. No se elige color ni
+    opacidad por estado. Hay tres formas de conectarlo:
+  </p>
+  <ol>
+    <li>
+      <strong>Directo.</strong> El nodo que se pinta recibe el estado del navegador. Le agregás
+      <code>sk-interactive</code> y listo: los selectores de este archivo leen <code>:hover</code>,
+      <code>:focus-visible</code> y <code>:active</code> sobre ese elemento.
+    </li>
+    <li>
+      <strong>Wrapper.</strong> <code>sk-interactive</code> envuelve un <code>&lt;input&gt;</code>
+      nativo oculto. Las variantes <code>:has(:hover)</code> / <code>:has(:focus-visible)</code> /
+      <code>:has(:checked)</code> cubren el caso sin que el componente escriba su propia regla de hover.
+    </li>
+    <li>
+      <strong>Proyectado.</strong> Una Machine de Zag posee el estado lógico mientras el foco del DOM
+      sigue en un input o una raíz. El Enhancer escribe <code>data-highlighted</code> /
+      <code>data-selected</code> / <code>data-disabled</code> en el item y el CSS <em>del componente</em>
+      los traduce a la misma <code>--state-layer-opacity</code>, con especificidad (0,1,0), por debajo de
+      las reglas (0,2,0) de este Pattern. No se copia ese mapeo: se consume el componente.
+    </li>
+  </ol>
+  <CodeBlock code={recipeUsage} label="HTML" note="directo y wrapper se escriben a mano; proyectado no" />
+
+  <h2>En dónde se usa</h2>
+  <p>
+    Toda superficie interactiva del kit, vía <code>sk-interactive</code> en el contrato del componente
+    (<code>also: [...]</code>) o compuesto sobre <code>sk-button</code>.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Conexión</th>
+          <th class="sk-table__header">Componentes</th>
+          <th class="sk-table__header">Quién la conecta</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        {
+          where.map(([kind, list, who]) => (
+            <tr class="sk-table__row">
+              <td class="sk-table__cell"><strong>{kind}</strong></td>
+              <td class="sk-table__cell">{list}</td>
+              <td class="sk-table__cell">{who}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
   <h2>Conexión directa</h2>
   <p>
     La conexión es directa cuando el mismo elemento recibe el estado del navegador. Un button, un link
@@ -204,6 +332,88 @@ const labTree: UsageTree = {
     </table>
   </div>
 
+  <h3>Tokens</h3>
+  <p>
+    Definidos en <code>semantic/_state.scss</code>. Se redefinen desde una regla del consumidor con
+    alcance claro y sin capa, nunca peleando especificidad con el Pattern.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Token</th>
+          <th class="sk-table__header">Default</th>
+          <th class="sk-table__header">Rol</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        {
+          tokens.map(([token, value, role]) => (
+            <tr class="sk-table__row">
+              <td class="sk-table__cell"><Used token={token} /></td>
+              <td class="sk-table__cell mono">{value}</td>
+              <td class="sk-table__cell">{role}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2>State layer vs. un token semántico por estado</h2>
+  <p>
+    La alternativa evidente es que cada componente declare un color por estado:
+    <code>--sk-button-bg-hover</code>, <code>--sk-tab-bg-active</code>, <code>--sk-list-bg-selected</code>,
+    y lo mismo para borde, texto y sombra, por cada variante y por cada modo. El State layer existe
+    para borrar esa matriz.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Eje</th>
+          <th class="sk-table__header">Un token por estado y componente</th>
+          <th class="sk-table__header">State layer</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        {
+          versus.map(([axis, perToken, layer]) => (
+            <tr class="sk-table__row">
+              <td class="sk-table__cell"><strong>{axis}</strong></td>
+              <td class="sk-table__cell">{perToken}</td>
+              <td class="sk-table__cell">{layer}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p>
+    No es que un token por estado esté prohibido: es que un <em>wash reactivo</em> no es el lugar para
+    uno. Sigue habiendo tokens semánticos por estado donde el estado cambia algo más que el tinte:
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Caso</th>
+          <th class="sk-table__header">Por qué es un token, no el layer</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        {
+          stillToken.map(([caso, why]) => (
+            <tr class="sk-table__row">
+              <td class="sk-table__cell"><strong>{caso}</strong></td>
+              <td class="sk-table__cell">{why}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
   <h2>Límites y accesibilidad</h2>
   <ul>
     <li>
@@ -214,8 +424,10 @@ const labTree: UsageTree = {
       Disabled fuerza el layer a 0 y atenúa con los tokens del componente. No debe parecer interactivo.
     </li>
     <li>
-      Alto contraste añade un keyline inset y refuerza el foco. No sube la opacidad del wash, porque
-      eso acercaría fondo y texto.
+      Alto contraste no sube la opacidad del wash, porque eso acercaría fondo y texto. En su lugar
+      activa el keyline inset del <code>::before</code>: <code>--state-layer-keyline-scale</code> pasa
+      de <code>0px</code> a <code>8px</code> y su ancho se multiplica por la opacidad activa, así que
+      engrosa escalón a escalón con la escalera.
     </li>
     <li>
       Un selector externo más específico puede romper la escalera. Si se necesita cambiar color o

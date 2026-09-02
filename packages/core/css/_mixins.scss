@@ -84,4 +84,14 @@
   --elevation-tint-raised: color-mix(in oklch, var(--color-text-primary) 5%, transparent);
   --elevation-tint-overlay: color-mix(in oklch, var(--color-text-primary) 10%, transparent);
   --elevation-tint-modal: color-mix(in oklch, var(--color-text-primary) 16%, transparent);
+
+  // STATE LAYER keyline. The base tier keeps this 0px: light and dark already read the
+  // wash correctly (currentColor flips with the mode). HC must NOT darken the wash further,
+  // that pulls the background toward the text and dulls the control, so instead it wakes up
+  // the ::before's inset keyline in `patterns/state-layer.css`: its width is this value
+  // times the active `--state-layer-opacity`, so the outline thickens step for step with
+  // hover < focus < pressed < dragged (roughly 1px .. 2.8px at 8px). Included here, not in a
+  // `[data-contrast]` block of its own, so both HC triggers (the attribute and the OS
+  // signal) stay in sync the same way every other token above does.
+  --state-layer-keyline-scale: 8px;
 }

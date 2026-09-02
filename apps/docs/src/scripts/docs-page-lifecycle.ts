@@ -6,6 +6,7 @@ import { siteIcons } from "../icons";
 import { initCopyButtons } from "./copy-button";
 import { initDocsBinding } from "./docs-binding";
 import { initLanguageMenu } from "./language-menu";
+import { initPrefsSheet } from "./prefs-sheet";
 import { initSearchTrigger } from "./search-trigger";
 import { initThemeToggle, initThemeTogglePersistence, initThemeToggleSync } from "./theme-toggle";
 
@@ -27,6 +28,7 @@ async function initRouteDocument(): Promise<void> {
   initDocsBinding();
   initLanguageMenu();
   initSearchTrigger();
+  initPrefsSheet();
 
   if (document.querySelector("[data-docs-copy-cells]")) {
     const { initCopyCells } = await import("./copy-cells");

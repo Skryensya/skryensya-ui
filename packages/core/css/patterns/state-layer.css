@@ -6,27 +6,79 @@
  * this. It is the single, canonical way every component expresses state. The ::before is inert
  * until an element carries `sk-interactive`, so it costs nothing on non-interactive elements.
  *
- * Add `sk-interactive` to any interactive element to give it the four-layer composition,
- * bottom to top:
- *   1. container background (the element's own `background`)
- *   2. state layer, this ::before, currentColor mixed to a per-state alpha
- *   3. content, text / icons (untouched; the layer sits behind it)
- *   4. focus ring, the independent focus indicator (outline)
+ * WHY NOT A SEMANTIC TOKEN PER STATE (`--sk-button-bg-hover`, `--sk-tab-bg-active`, …): that is
+ * one color per component × state × property × variant × mode, a matrix that grows on every
+ * axis, drifts between components, and needs the contrast re-checked for each saturated fill.
+ * `currentColor` × a per-state alpha is none of that: correct on any surface, tuned once,
+ * global. A per-state token still earns its place where the state changes MORE than the tint,
+ * selection's independent indicator, the disabled look, a moving thumb; those are not a wash.
  *
- * The layer never blocks events (pointer-events: none) and never touches the content
- * (z-index: -1 under `isolation: isolate` puts it above the background, below content).
+ * ── WHAT IT PAINTS ──────────────────────────────────────────────────────────────────────
+ * `sk-interactive` gives an element a four-layer composition, bottom to top:
+ *   1. container background   the element's own `background`
+ *   2. state layer            this ::before, `--state-layer-color` mixed to a per-state alpha
+ *   3. content                text / icons, untouched; the layer sits behind them
+ *   4. focus ring             the independent `outline`, its own `--focus-ring-*` family
+ * The layer never blocks events (`pointer-events: none`) and never covers the content
+ * (`z-index: -1` under `isolation: isolate` puts it above the background, below content).
  *
- * SINGLE ACTIVE LAYER. Exactly one state's opacity is shown, never a sum of layers.
- * The priority ladder is
+ * ── HOW TO USE IT ───────────────────────────────────────────────────────────────────────
+ * There is nothing to import and no per-state color to pick. Three shapes:
+ *
+ *   DIRECT, the painted node owns the browser state.
+ *     <button class="sk-button sk-interactive">…</button>
+ *   The selectors below read `:hover` / `:focus-visible` / `:active` off this element and
+ *   set `--state-layer-opacity`. This is the common case: Button, a link, a Tile, a
+ *   List item, a Tab.
+ *
+ *   WRAPPER, `sk-interactive` wraps a hidden native input.
+ *     <label class="sk-checkbox sk-interactive"><input type="checkbox" …></label>
+ *   The `:has(:hover)` / `:has(:focus-visible)` / `:has(:checked)` variants below let the
+ *   same class cover this without the component writing its own hover rule.
+ *
+ *   PROJECTED, a Zag machine owns the logical state while DOM focus stays on an input or a
+ *   root (Menu, Select, Combobox, Command palette, Tree view, Calendar). The enhancer
+ *   writes `data-highlighted` / `data-selected` / `data-disabled` on the item, and the
+ *   COMPONENT's own stylesheet maps those to the same `--state-layer-opacity` slot at
+ *   specificity (0,1,0), deliberately below this pattern's own (0,2,0) rules. Consumers
+ *   don't recreate that mapping, they consume the component.
+ *
+ * ── TOKENS (semantic/_state.scss; override in a scoped, unlayered consumer rule) ─────────
+ *   --state-layer-color            currentColor   the tint; the content color, so one model
+ *                                                 covers neutral surfaces AND saturated fills.
+ *                                                 A few items repoint it (menu/menubar/megamenu
+ *                                                 set it to --color-text-primary so a `danger`
+ *                                                 row's red text doesn't tint its own hover).
+ *   --state-layer-selected-opacity 0.08          persistent base rung
+ *   --state-layer-hover-opacity    0.12
+ *   --state-layer-focus-opacity    0.16
+ *   --state-layer-pressed-opacity  0.20
+ *   --state-layer-dragged-opacity  0.28
+ *   --state-layer-disabled-opacity 0             disabled shows NO reactive layer
+ *   --state-layer-keyline-scale    0px           high-contrast only: the inset keyline's
+ *                                                width = this × the active opacity, so it
+ *                                                thickens step for step with the ladder.
+ *                                                Wired in css/_mixins.scss `hc-tokens`.
+ *
+ * ── WHERE IT IS USED ────────────────────────────────────────────────────────────────────
+ * Every interactive surface in the kit, via `sk-interactive` in the component's contract
+ * (`also: [...]`) or composed onto `sk-button`:
+ *   direct     Button, Tile (+ checkbox/radio/switch/expandable), List item, Nav-list link,
+ *              Tab, Accordion/Disclosure trigger, Segmented option, Pagination, Tag (+ remove),
+ *              Skip-link, Sidebar item, TOC link, `.sk-link` (typography), Icon-state-button,
+ *              Data-grid cell, Treegrid cell, Color-picker swatch, and the icon-only buttons
+ *              inside Code-preview, Dialog, Popover, File-upload, Number-field.
+ *   projected  Menu item, Select item, Combobox item, Command-palette option, Tree-view
+ *              item, Calendar / Date-picker day. (Menu is both: `sk-interactive` on the
+ *              item AND a `[data-highlighted]` map for keyboard navigation.)
+ *
+ * ── SINGLE ACTIVE LAYER ─────────────────────────────────────────────────────────────────
+ * Exactly one state's opacity is shown, never a sum of layers. The priority ladder is
  *     disabled > dragged > pressed > focus > hover > selected > default
- * and it is realised WITHOUT combined selectors: every state rule sets the same
- * `--state-layer-opacity`, every state selector has equal specificity (0,2,0), so
- * when several match, plain SOURCE ORDER decides, later wins. The rules below are written
- * in ascending priority, so the highest-priority match is always last.
- *
- * :has()/:where() variants let one class cover both a native control (`.sk-interactive` IS
- * the button) and a wrapper around a hidden input (`.sk-interactive` wraps a checkbox), so
- * the pattern is identical across Button, List item, Tab, Checkbox, Switch, …
+ * realised WITHOUT combined selectors: every state rule sets the same `--state-layer-opacity`,
+ * every state selector has equal specificity (0,2,0), so when several match, plain SOURCE
+ * ORDER decides, later wins. The rules below are written in ascending priority, so the
+ * highest-priority match is always last.
  */
 @property --state-layer-opacity {
   syntax: "<number>";
@@ -53,6 +105,11 @@
       var(--state-layer-color) calc(var(--state-layer-opacity) * 100%),
       transparent
     );
+    /* Inset keyline, HIGH CONTRAST only. `--state-layer-keyline-scale` is 0px in the base
+     * tier (no keyline), and `hc-tokens` (css/_mixins.scss) raises it so the outline's
+     * width tracks the active opacity: invisible at rest, ~1px on hover, up to ~2.8px
+     * pressed/dragged. Same `--state-layer-color` as the wash, so it is correct on every
+     * surface without a per-component color. */
     box-shadow: inset 0 0 0
       calc(var(--state-layer-keyline-scale) * var(--state-layer-opacity))
       var(--state-layer-color);

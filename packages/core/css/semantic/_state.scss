@@ -18,7 +18,10 @@
     --state-layer-pressed-opacity: 0.2;
     --state-layer-dragged-opacity: 0.28;
     --state-layer-disabled-opacity: 0;    /* disabled shows NO reactive layer */
-    --state-layer-keyline-scale: 0px;     /* high contrast opt-in; opacity scales its width */
+    /* 0px = no keyline in the base tier. `hc-tokens` (css/_mixins.scss) raises it; the
+     * ::before in patterns/state-layer.css multiplies it by the active opacity, so the
+     * inset outline thickens step for step with the ladder. */
+    --state-layer-keyline-scale: 0px;
     /* FOCUS RING, a separate family on purpose. The ring is the independent focus
      * indicator, not part of the layer: the layer is never a state's sole signal. The
      * naming carries that guarantee, so folding these under --state-layer-* would say

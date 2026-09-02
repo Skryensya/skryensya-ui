@@ -16,17 +16,37 @@
     --sk-switch-inline-size: calc(var(--size-icon-lg) * 1.75);
     --sk-switch-padding: var(--space-inset-xs);
     --sk-switch-gap: var(--space-inline-sm);
-    --sk-switch-bg: var(--color-bg-surface-sunken);
+    /*
+     * OFF TRACK: a solid neutral, `--color-border-default`, not `--color-bg-surface-sunken`. `sunken`
+     * is `stone-100` in light and `stone-950` in dark, i.e. it collapses onto the canvas in BOTH
+     * modes, so an off switch read as one faint ring around a thumb the same colour as the surface
+     * behind it, barely there and easily mistaken for disabled. An off state still has to say
+     * "interactive control, currently off", so the track carries a real fill. `--color-border-default`
+     * is the one colour token that is deliberately the same mid grey (`stone-500`) in both modes: the
+     * off switch reads identically light and dark, sits a clear step off every `--color-bg-surface-*`,
+     * and gives the light thumb below ~4.6:1 to separate against. Selection then reads by hue and
+     * chroma (`--color-action-accent`), not just by the track shifting lightness.
+     */
+    --sk-switch-bg: var(--color-border-default);
     --sk-switch-fg: var(--color-text-primary);
     --sk-switch-border-color: var(--color-border-default);
     --sk-switch-border-width: 1px;
-    --sk-switch-thumb-bg: var(--color-bg-surface-raised);
+    /* The thumb is a knob that catches the light: a bright puck in every state and mode.
+     * `--color-text-on-media` is the semantic "reads on a busy/saturated ground" white, which is what
+     * both grounds this sits on are - the mid-grey off track and the accent on track. NOT
+     * `--color-bg-surface-raised` (its dark value is `stone-800`, which sank the dark off thumb into
+     * its own track) and NOT `--color-text-on-accent` for the selected thumb (near-black in dark,
+     * which read as a hole punched in the blue rather than a lit knob). */
+    --sk-switch-thumb-bg: var(--color-text-on-media);
     --sk-switch-selected-bg: var(--color-action-accent);
     --sk-switch-selected-border-color: var(--color-action-accent);
-    --sk-switch-selected-thumb-bg: var(--color-text-on-accent);
+    --sk-switch-selected-thumb-bg: var(--color-text-on-media);
     --sk-switch-disabled-bg: var(--color-action-disabled);
     --sk-switch-disabled-fg: var(--color-text-disabled);
     --sk-switch-disabled-border-color: var(--color-border-subtle);
+    /* A muted knob when the control is inert, so disabled never borrows the lit puck of an enabled
+     * switch. `--color-text-disabled` sits between the disabled track and its border in both modes. */
+    --sk-switch-disabled-thumb-bg: var(--color-text-disabled);
   }
 
   .sk-switch {
@@ -51,6 +71,7 @@
     --sk-switch-bg: var(--sk-switch-disabled-bg);
     --sk-switch-fg: var(--sk-switch-disabled-fg);
     --sk-switch-border-color: var(--sk-switch-disabled-border-color);
+    --sk-switch-thumb-bg: var(--sk-switch-disabled-thumb-bg);
 
     cursor: not-allowed;
   }
@@ -101,6 +122,12 @@
     block-size: calc(var(--sk-switch-block-size) - (var(--sk-switch-padding) * 2) - (var(--sk-switch-border-width) * 2));
     border-radius: inherit;
     background: var(--sk-switch-thumb-bg);
+    /* A drop shadow lifts the knob off the track so it reads as a raised, physical element rather
+     * than a flat cut-out, and gives the light puck an edge that does not depend on the track colour
+     * alone. Mode-aware through `--shadow-*`, so it stays legible on the dark canvas too. Removed for
+     * disabled below: a knob that looks liftable but is not is the same lie the press-squeeze guard
+     * already refuses. */
+    box-shadow: var(--elevation-raised);
     /* The slide itself IS the state changing (there is no separate "fill" step to distinguish it
      * from, unlike the track above), so it is timed with the SAME state-change intent checkbox.css
      * uses for its own flip, not feedback: this is Switch's `background-color var(--motion-state-
@@ -115,6 +142,12 @@
   .sk-switch__input:checked + .sk-switch__control .sk-switch__thumb,
   .sk-tile:has(> input[type="checkbox"][role="switch"]:checked) > .sk-switch__control .sk-switch__thumb {
     transform: translateX(calc(var(--sk-switch-inline-size) - var(--sk-switch-block-size)));
+  }
+
+  /* Flat knob when the control cannot be operated, matching the :active squeeze guard above. */
+  .sk-switch:has(.sk-switch__input:disabled) .sk-switch__thumb,
+  .sk-tile:has(> input[type="checkbox"][role="switch"]:disabled) > .sk-switch__control .sk-switch__thumb {
+    box-shadow: none;
   }
 
   .sk-switch__input:focus-visible + .sk-switch__control,

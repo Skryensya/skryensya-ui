@@ -1393,6 +1393,16 @@ const PALETTE_PRESETS = palettePresets(locale);
       above them, instead of the token estimate `--docs-header-block-size`, which is a pixel shy of
       the rendered box and drifts further if density or wrapping change either bar. `is:inline` so
       it runs before first paint (no 1px settle); CSS falls back to the estimate until it does.
+
+      CEIL, NOT ROUND: `getBoundingClientRect().height` is a float, and on a high-DPR phone (3x is
+      common) rounding it to the NEAREST integer CSS px rounds down about half the time — e.g. a
+      real 57.7px bar becomes a `top` offset of 58px for everything sticky below it, which is 0.3px
+      ABOVE the bar's actual bottom edge. At 1x that sliver blends into the anti-aliasing and is
+      invisible; at 3x it is a full, crisp device pixel of whatever is behind the bar (the canvas,
+      or scrolled content) showing through as a hairline strip. `ceil` always resolves at or past
+      the true edge, so every consumer tucks a sliver UNDER the bar (hidden by its higher z-index)
+      instead of leaving a gap below it. Confirmed against `.docs-component-hero`'s own collapsed
+      band, the case this was reported against.
     */}
     <script is:inline>
       (function () {
@@ -1401,9 +1411,9 @@ const PALETTE_PRESETS = palettePresets(locale);
         var tabs = document.querySelector(".docs-component-hero-tabs");
         var root = document.documentElement;
         var sync = function () {
-          root.style.setProperty("--docs-navbar-h", Math.round(nav.getBoundingClientRect().height) + "px");
+          root.style.setProperty("--docs-navbar-h", Math.ceil(nav.getBoundingClientRect().height) + "px");
           if (tabs) {
-            root.style.setProperty("--docs-hero-tabs-h", Math.round(tabs.getBoundingClientRect().height) + "px");
+            root.style.setProperty("--docs-hero-tabs-h", Math.ceil(tabs.getBoundingClientRect().height) + "px");
           }
         };
         sync();

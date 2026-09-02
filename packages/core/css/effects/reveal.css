@@ -1,0 +1,53 @@
+/*
+ * REVEAL, an element fades and rises the first time it scrolls into view.
+ *
+ * This is an EFFECT, not a Pattern and not a Contract: one class you drop on any element or
+ * component root, opt-in, decorative. It changes nothing about what the element IS. The whole family
+ * lives under `@skryensya/core/effects/*` and follows three rules, all visible below:
+ *
+ *   1. INTENT TOKENS ONLY. The travel distance and the easing are `--motion-*` (tier 2, ADR-4),
+ *      never a raw duration or a literal px. A retune of the scale moves this with the system, and
+ *      `_reduced-motion.scss` already collapses `--motion-enter-distance` to 0 for everyone who asks.
+ *   2. PROGRESSIVE. Everything is behind `@supports (animation-timeline: view())`. A browser without
+ *      scroll-driven animation shows the element in its resting, visible state, which is also the
+ *      state the `@keyframes` `to` block describes. There is no separate base-case rule to keep in
+ *      sync, and no JavaScript.
+ *   3. GPU ONLY. `opacity` and `translate`, nothing that triggers layout.
+ *
+ * NOT FOR EVERYTHING. A page where every block rises on scroll reads as seasick, not polished. Use
+ * it on the one or two moments that earn a beat: a section heading, a figure, a card grid. If a
+ * reader sees it dozens of times a session, it is decoration tax, not delight.
+ *
+ * STAGGER is opt-in and needs no extra machinery for the common case: a column of `.sk-fx-reveal`
+ * items already reveals one after another as each crosses the fold. For a ROW that enters together,
+ * shift each item's range: `.row > :nth-child(2) { --sk-fx-reveal-range: entry 18% cover 34%; }` and
+ * so on. `--sk-fx-reveal-distance` overrides the travel per element.
+ */
+
+@keyframes sk-fx-reveal {
+  from {
+    opacity: 0;
+    translate: 0 var(--sk-fx-reveal-distance, var(--motion-enter-distance));
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@layer components {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .sk-fx-reveal {
+        animation: sk-fx-reveal both;
+        animation-timeline: view();
+        /* Starts once the element has peeked a tenth of the way in, finishes while it is still
+         * rising into the covered zone, so it settles ahead of the reader rather than trailing the
+         * scroll. An element already on screen at load is past the range end, so it renders
+         * finished: no first-paint flash for above-the-fold content. */
+        animation-range: var(--sk-fx-reveal-range, entry 10% cover 30%);
+        animation-timing-function: var(--motion-enter-easing);
+      }
+    }
+  }
+}

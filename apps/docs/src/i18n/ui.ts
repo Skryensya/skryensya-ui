@@ -8619,6 +8619,7 @@ export const navLabel: Record<Locale, Partial<Record<string, string>>> = {
     "/iconos": "Iconography",
     "/almacenamiento": "Storage",
     "/anclaje": "Anchoring",
+    "/efectos": "Effects",
     "/componentes/date-picker": "DatePicker",
     "/componentes/calendar": "Calendar",
   },

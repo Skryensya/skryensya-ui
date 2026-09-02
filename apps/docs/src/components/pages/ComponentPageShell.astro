@@ -109,7 +109,7 @@ const hasTests = tests.length > 0;
        * Empty and presentational. It has no text to hide from a screen reader, and it finishes the
        * same accent-tinted band the header paints.
        */}
-      <div class="docs-component-hero__spacer"></div>
+      <div class="docs-component-hero__spacer sk-fx-collapse-header__spacer"></div>
 
       {/*
        * THE HERO'S OWN BACKING PLATE, a real sibling rather than a pseudo-element INSIDE the hero:
@@ -128,12 +128,13 @@ const hasTests = tests.length > 0;
        */}
       <div aria-hidden="true" class="docs-component-hero__backing"></div>
 
-      <header class="docs-component-hero">
+      <header class="docs-component-hero sk-fx-collapse-header">
         {/*
          * PLAIN MARKUP, not the Breadcrumb contract: that was tried (a real `nav`/`ol`/`li` trail that
          * flipped into an inline "Componentes / Accordion" row once collapsed) and undone. The morph
-         * itself read as the wrong kind of attention on scroll. `--docs-hero-collapse` still drives the
-         * eyebrow, just toward CLOSED now rather than toward a second layout: see its rule in site.css.
+         * itself read as the wrong kind of attention on scroll. `--sk-fx-collapse-progress` (the
+         * `collapse-header` effect, ADR-20) still drives the eyebrow, just toward CLOSED now rather
+         * than toward a second layout: see its rule in site.css.
          */}
         <p class="docs-component-hero__eyebrow">{t("section.components")}</p>
         <div class="docs-component-hero__title-row">

@@ -1,0 +1,45 @@
+/* Demo markup for /efectos. The effect classes (`sk-fx-reveal`, `sk-fx-pulse`) do the actual work;
+   everything here is just the box around them so the live samples have somewhere to live on a
+   prose page. */
+
+/* ── reveal: a small scroll container ────────────────────────── */
+.fx-reveal-demo {
+  display: grid;
+  gap: var(--space-stack-sm);
+  block-size: 14rem;
+  overflow-y: auto;
+  padding: var(--space-inset-md);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-surface);
+  background: var(--color-bg-surface-sunken);
+}
+
+.fx-reveal-demo__spacer {
+  block-size: 8rem;
+}
+
+.fx-reveal-tile {
+  display: flex;
+  align-items: center;
+  min-block-size: 3.5rem;
+  padding-inline: var(--space-inset-md);
+  border-radius: var(--radius-surface);
+  background: var(--color-bg-surface);
+  box-shadow: var(--elevation-raised);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-body-sm);
+}
+
+/* ── pulse: a dot + a badge, both re-armed by the demo script ── */
+.fx-pulse-demo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-inline-md);
+}
+
+.fx-pulse-dot {
+  inline-size: 0.625rem;
+  block-size: 0.625rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-action-accent);
+}

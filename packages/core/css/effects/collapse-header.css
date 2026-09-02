@@ -59,7 +59,7 @@
  * `--sk-fx-collapse-progress` by hand, `clamp(scrollY / range, 0, 1)` on a rAF-throttled `scroll`
  * listener, same as the docs site's own `collapse-header-fallback.ts` does. This block gives that
  * script the exact same STICKY LAYOUT the native path gets (spacer sized, header pinned); only the
- * three `animation*` lines stay native-only, because nothing else can drive them.
+ * `animation-*` lines stay native-only, because nothing else can drive them.
  */
 
 @property --sk-fx-collapse-progress {
@@ -99,7 +99,15 @@
         flex-direction: column;
         justify-content: flex-end;
         block-size: var(--sk-fx-collapse-bar-height);
-        animation: sk-fx-collapse-header linear both;
+        /* LONGHANDS, never the `animation` shorthand. Lightning CSS (Vite's CSS transformer, through
+         * 1.33.0) folds a following `animation-timeline` back INTO the shorthand as
+         * `animation: linear both sk-fx-collapse-header scroll(root)`. The shorthand has no
+         * `<timeline>` slot, so every browser drops that whole declaration: no `animation-name`, no
+         * timeline, and the collapse silently never runs in a production build (dev, unminified, is
+         * fine — which is exactly how this shipped broken). Kept apart, each longhand survives. */
+        animation-name: sk-fx-collapse-header;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
         /* `root`, not `nearest`: a `nearest` scroller could be an inner `overflow: auto` rail and
          * become a coin flip about which box this is measured against. */
         animation-timeline: scroll(root block);
@@ -118,7 +126,7 @@
 
   /*
    * THE JS-FALLBACK TWIN of the block above: same spacer sizing, same sticky pin, same overflow
-   * rule, MINUS the three `animation*` lines a scroll-timeline needs and a hand-rolled scroll
+   * rule, MINUS the `animation-*` lines a scroll-timeline needs and a hand-rolled scroll
    * listener does not. Scoped to `[data-sk-fx-collapse-js]` rather than `@supports not (...)` so it
    * only ever activates once a consumer's own script has actually confirmed it is going to drive
    * `--sk-fx-collapse-progress` itself; nothing here sets that attribute on its own, so a page that

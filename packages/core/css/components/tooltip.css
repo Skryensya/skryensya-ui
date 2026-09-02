@@ -102,44 +102,37 @@
     pointer-events: none;
   }
 
-  /* ── El movimiento: materializar, no deslizar ────────────────────────────────
-   * Un tooltip informa; la animación no debe pedir atención ni retrasar la lectura. `--motion-
-   * feedback-*` es la misma intención que usa el state layer (ADR-1): esto es feedback, no una
-   * entrada de overlay, así que se queda con su propio timing en vez del de Popover (`--motion-
-   * enter-*`). El opacity + scale + blur suave es el mismo recipe que Popover sí usa
-   * (`--motion-materialize-scale`/`-blur`, `patterns/anchored.css` comparte el nombre con Menu). La
-   * distancia es `--motion-distance-sm` (4px), la que el archivo de tokens ya documenta para "inline
-   * reveals: tooltip, menu, exit". Antes era un `2px` suelto.
+  /* ── El movimiento: materializa al entrar, se va AL INSTANTE ─────────────────
+   * EL PATRÓN ES LA ASIMETRÍA. Un tooltip entra con un materialize suave (opacity + scale + blur, el
+   * mismo recipe que Popover y Menu, `--motion-materialize-scale`/`-blur`) viniendo desde ABAJO
+   * (`--motion-distance-sm`, 4px), el gesto de "emerger del trigger" —sale ARRIBA por defecto—. Pero
+   * al CERRARSE no se anima: desaparece en el mismo frame.
    *
-   * POSITIVO, no negativo: un tooltip sale ARRIBA del trigger por defecto, así que entra viniendo de
-   * ABAJO (más cerca del control) hacia su lugar final, el gesto de "emerger del trigger". Popover y
-   * Menu salen abajo y entran desde arriba, signo contrario; no es la misma regla con la flecha
-   * cambiada, es la dirección correcta para CADA colocación por defecto.
+   * Por qué no hay animación de salida: un tooltip se cierra en dos situaciones, y ninguna quiere un
+   * fade. Si el puntero se fue, ya nadie lo está mirando. Y si lo que se ACTIVÓ es el control que el
+   * tooltip describe —un toggle de preferencia del header, una opción del segmented de
+   * ComponentPreview— un fade encima de un control cuyo estado acaba de cambiar se lee como lag. El
+   * cierre de Zag ya es instantáneo (`closeOnClick`); esta hoja es lo que hacía que se viera lento.
+   * Menu/Select/Combobox sí se despiden con transición: son overlays que se descartan a propósito y
+   * el fade confirma el descarte. Un tooltip es ambiente; su salida es sólo dejar de estorbar.
    *
-   * SE ANIMAN LOS DOS HIJOS y no el positioner, que sería el lugar obvio para mover la unidad de una
-   * sola vez. No se puede: `translate` (incluso `0 0`) convierte a un elemento en bloque contenedor de
-   * sus descendientes `fixed`, y la flecha es `fixed` para poder anclarse al trigger (ver el pattern).
-   * Puesto en el positioner, durante la animación el ancla deja de ser alcanzable y la flecha salta
-   * al fallback y de vuelta. Se midió. `translate` en la flecha MISMA sí es seguro: no es su propio
-   * bloque contenedor lo que cambia, sólo el de sus descendientes, y la flecha no tiene ninguno.
+   * CÓMO: la `transition` vive SÓLO en la regla de estado abierto, así que corre únicamente en la
+   * dirección de entrada (una transición usa las propiedades del estado AL QUE se llega). Al cerrar
+   * se cae a la regla base —sin `transition`— y el `display: none` de la regla `[data-state]` de más
+   * arriba aplica de una. El `@starting-style` de abajo sigue dando el "desde" del primer paint.
    *
-   * Mismo timing en las dos piezas para que entren igual y a la vez: una animación sólo sobre el
-   * contenido dejaría a la flecha apareciendo de golpe y opaca mientras la caja todavía está en
-   * `opacity: 0`, o sea un rombo suelto un instante antes que su tooltip. `allow-discrete` en
-   * `display` es lo que le da a las dos un cierre real: antes desaparecían de golpe con
-   * `hidePopover`-equivalente (quitar `data-state`), sin transición ninguna. */
+   * SE ANIMAN LOS DOS HIJOS y no el positioner: `translate` (incluso `0 0`) lo volvería bloque
+   * contenedor de sus descendientes `fixed`, y la flecha es `fixed` para anclarse al trigger (ver el
+   * pattern); durante la animación el ancla dejaría de ser alcanzable y la flecha saltaría al
+   * fallback y de vuelta. `translate` en la flecha MISMA sí es seguro: no cambia su propio bloque
+   * contenedor, sólo el de sus descendientes, y no tiene. Mismo timing en las dos piezas para que
+   * entren juntas y no quede el rombo un instante suelto antes que su caja. */
   .sk-tooltip__positioner > .sk-tooltip__content,
   .sk-tooltip__positioner > .sk-anchored-arrow {
     opacity: 0;
     scale: var(--motion-materialize-scale);
     translate: 0 var(--motion-distance-sm);
     filter: blur(var(--motion-materialize-blur));
-    transition:
-      opacity var(--motion-feedback-duration) var(--motion-feedback-easing),
-      scale var(--motion-feedback-duration) var(--motion-feedback-easing),
-      translate var(--motion-feedback-duration) var(--motion-feedback-easing),
-      filter var(--motion-feedback-duration) var(--motion-feedback-easing),
-      display var(--motion-feedback-duration) var(--motion-feedback-easing) allow-discrete;
   }
 
   .sk-tooltip__positioner:has(> [data-state="open"]) > .sk-tooltip__content,
@@ -148,6 +141,11 @@
     scale: 1;
     translate: 0 0;
     filter: blur(0);
+    transition:
+      opacity var(--motion-feedback-duration) var(--motion-feedback-easing),
+      scale var(--motion-feedback-duration) var(--motion-feedback-easing),
+      translate var(--motion-feedback-duration) var(--motion-feedback-easing),
+      filter var(--motion-feedback-duration) var(--motion-feedback-easing);
   }
 
   /* El primer paint de un tooltip recién abierto usa esto en vez de la regla cerrada de arriba: sin

@@ -5,6 +5,24 @@
 # hash nuevo.
 surface: "6e7c8a7d5171bac0"
 entries:
+  - date: 2026-09-02
+    kind: rework
+    es:
+      title: El tooltip se cierra al instante, sin animación de salida
+      body: >-
+        Un tooltip sigue apareciendo con su materialize suave, pero al cerrarse desaparece en el
+        mismo frame en vez de desvanecerse. La asimetría es a propósito: cuando el puntero se va, o
+        cuando se activa el control que el tooltip describe (un botón de sólo icono, una opción de un
+        segmented), un fade de salida se lee como demora sobre algo que ya se leyó o sobre un control
+        cuyo estado acaba de cambiar. Aplica a los dos bindings; no hay nada que autorar.
+    en:
+      title: The tooltip closes instantly, with no exit animation
+      body: >-
+        A tooltip still appears with its soft materialize, but on close it disappears in the same
+        frame rather than fading. The asymmetry is deliberate: when the pointer leaves, or when the
+        control the tooltip describes is activated (an icon-only button, a segmented option), an exit
+        fade reads as lag over something already read or over a control whose state just changed.
+        Applies to both bindings; nothing to author.
   - date: 2026-08-11
     kind: feature
     es:

@@ -40,7 +40,7 @@ import {
   localizePath,
   useTranslations,
 } from "../i18n";
-import { iconDataMarkup, language } from "../icons";
+import { iconMarkup } from "../icons";
 
 const current = getLocale(Astro.url);
 const t = useTranslations(current);
@@ -48,8 +48,9 @@ const canonical = canonicalPath(Astro.url.pathname);
 const locales = availableLocales(canonical);
 
 /* The glyph, not the code: "ES"/"EN" was a label the reader had to decode, and it was also the one
- * control in the preference cluster that was text where its neighbours are icons. */
-const languageIcon = iconDataMarkup("language", language);
+ * control in the preference cluster that was text where its neighbours are icons. `language` is a
+ * stable role, so this tracks whatever set the site is painted in. */
+const languageIcon = iconMarkup("language");
 ---
 
 {
@@ -62,7 +63,6 @@ const languageIcon = iconDataMarkup("language", language);
         data-icon-only
         type="button"
         aria-label={`${t("prefs.language")}: ${localeNames[current]}`}
-        title={`${t("prefs.language")}: ${localeNames[current]}`}
       >
         <Fragment set:html={languageIcon} />
       </button>

@@ -55,6 +55,7 @@ const MAP = {
   folder: "folder",
   settings: "gear",
   user: "user",
+  language: "translate",
   visibility: "eye",
   "visibility-off": "eye-slash",
   "mode-system": "monitor",

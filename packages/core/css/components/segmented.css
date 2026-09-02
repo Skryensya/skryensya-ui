@@ -193,6 +193,10 @@
       calc(-1 * var(--sk-segmented-gap) / 2),
       min(0px, calc((100% - var(--size-touch-target)) / 2))
     );
+    /* Follow the option's own corner so the hit area matches the paint, same
+     * `inherit` button.css uses for its own `::after`. Without it this pad is a
+     * square rectangle and a pointer just outside a rounded corner still lands a hit. */
+    border-radius: inherit;
   }
 
   .sk-segmented__option[aria-checked="true"] {

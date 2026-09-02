@@ -23,3 +23,23 @@ entries:
         is no enhancer: the markup is complete on its own, so both bindings are the same markup twice.
         Options: <code>name</code>, <code>value</code>, <code>checked</code>, <code>disabled</code>. Its
         stylesheet is <code>components/switch.css</code>.
+  - date: 2026-09-02
+    kind: bugfix
+    es:
+      title: El estado apagado del switch ahora se ve en claro y en oscuro
+      body: >-
+        La pista apagada dejó de tomar <code>--color-bg-surface-sunken</code>, que en ambos modos se
+        confundía con el lienzo y hacía que un switch apagado pareciera deshabilitado. Ahora usa
+        <code>--color-border-default</code>, un gris medio idéntico en claro y oscuro; el pomo es una
+        pastilla clara (<code>--color-text-on-media</code>) en todos los estados, con una sombra sutil
+        que lo despega de la pista, y el pomo encendido ya no es casi negro en oscuro. Deshabilitado
+        estrena el hook <code>--sk-switch-disabled-thumb-bg</code> para quedar un paso más apagado.
+    en:
+      title: The switch off state is now visible in light and dark
+      body: >-
+        The off track no longer uses <code>--color-bg-surface-sunken</code>, which collapsed onto the
+        canvas in both modes and made an off switch look disabled. It now uses
+        <code>--color-border-default</code>, a mid grey identical in light and dark; the thumb is a
+        bright puck (<code>--color-text-on-media</code>) in every state, with a soft shadow that lifts
+        it off the track, and the on thumb is no longer near-black in dark. Disabled gains a
+        <code>--sk-switch-disabled-thumb-bg</code> hook so it sits one step flatter than off.

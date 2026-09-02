@@ -11,8 +11,8 @@ export const switchTree = (t: Translate): UsageTree => ({
 
 export const tileSwitchTree = (t: Translate): UsageTree => ({
   contract: "layout",
-  signature: "Inline",
-  options: { gap: "md", inlineAlign: "stretch", equal: true },
+  signature: "Grid",
+  options: { gap: "md", columns: "2", responsive: true },
   children: [
     {
       contract: "tile",

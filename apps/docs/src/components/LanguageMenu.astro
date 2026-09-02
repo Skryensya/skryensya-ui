@@ -42,6 +42,21 @@ import {
 } from "../i18n";
 import { iconMarkup } from "../icons";
 
+interface Props {
+  /**
+   * Render as a full-width Tile Button for the mobile preference sheet (`#docs-prefs-sheet`):
+   * one tap goes to the NEXT available translation of this page (cycling for 3+ locales), with
+   * the language currently being read shown on the trailing edge. `scripts/language-menu.ts`
+   * already delegates off `a[data-sk-lang-set]`, so this needs no enhancer of its own.
+   */
+  tile?: boolean;
+  /** Visible title shown inside the tile. Only read when `tile`. */
+  label?: string;
+  /** Secondary line under the title. Only read when `tile`. */
+  description?: string;
+}
+
+const { tile = false, label, description } = Astro.props;
 const current = getLocale(Astro.url);
 const t = useTranslations(current);
 const canonical = canonicalPath(Astro.url.pathname);
@@ -51,10 +66,35 @@ const locales = availableLocales(canonical);
  * control in the preference cluster that was text where its neighbours are icons. `language` is a
  * stable role, so this tracks whatever set the site is painted in. */
 const languageIcon = iconMarkup("language");
+
+/* Tile variant: the locale one tap away. `availableLocales` is already ordered, so "next" wraps. */
+const nextLocale = locales[(locales.indexOf(current) + 1) % locales.length];
 ---
 
 {
-  locales.length > 1 && (
+  tile && locales.length > 1 && (
+    <a
+      class="sk-interactive sk-tile sk-tile--interactive docs-prefs-tile"
+      data-scope="tile"
+      data-part="root"
+      data-padding="md"
+      href={localizePath(canonical, nextLocale)}
+      hreflang={nextLocale}
+      lang={nextLocale}
+      data-sk-lang-set={nextLocale}
+      aria-label={`${t("prefs.language")}: ${localeNames[current]}`}
+    >
+      <span class="sk-tile__content" data-part="content">
+        <span class="sk-tile__title">{label ?? t("prefs.language")}</span>
+        {description && <span class="sk-tile__description">{description}</span>}
+      </span>
+      <span class="docs-prefs-tile__value">{localeNames[current]}</span>
+    </a>
+  )
+}
+
+{
+  !tile && locales.length > 1 && (
     <div class="sk-menu dimensions__language-menu" data-sk-menu aria-label={t("prefs.language")}>
       <button
         class="sk-menu__trigger sk-button sk-interactive sk-anchor"

@@ -9,6 +9,20 @@
  *
  * `cycle="scheme"` (default) is system → light → dark and mounts on `<html>`. `cycle="appearance"`
  * is light ↔ dark only: no system face, and `scoped` so the host paints a local root.
+ *
+ * `tile`: the same control expanded into a full-width Tile Button for the mobile preference sheet
+ * (`#docs-prefs-sheet`). Same enhancer hooks (`data-sk-theme-toggle`, `.sk-theme-toggle`) and the
+ * same direct-child `[data-face]` spans the morph CSS keys off; it swaps the `.sk-button` icon-only
+ * skin for `sk-tile` + a visible `.sk-tile__title`, and `.docs-prefs-tile` (site.css) supplies the
+ * row grid that puts the title at the start and the morphing faces at the trailing edge.
+ *
+ * The trailing edge's safe-area backing (`.docs-prefs-tile-chip`) is a real, empty SIBLING span,
+ * not a `::before` on the button: confirmed live in actual Safari (not just Playwright's WebKit,
+ * which did not reproduce it), a generated box placed into a CSS Grid cell by `grid-column`/
+ * `grid-row` there does not reliably land in the same cell as a real sibling — it painted offset
+ * from the icon it was supposed to sit behind. A real element sidesteps that outright, and being a
+ * SIBLING rather than a wrapper keeps `[data-face]` a direct child of `.sk-icon-toggle`, which the
+ * morph CSS requires.
  */
 import { getLocale, useTranslations } from "../i18n";
 
@@ -25,18 +39,30 @@ interface Props {
    * "follow the OS" as a third state.
    */
   cycle?: "scheme" | "appearance";
+  /** Render as a full-width Tile Button (mobile preference sheet) instead of an icon-only button. */
+  tile?: boolean;
+  /** Visible title shown inside the tile. Only read when `tile`. */
+  label?: string;
+  /** Secondary line under the title. Only read when `tile`. */
+  description?: string;
 }
 
-const { size, scoped = false, cycle = "scheme" } = Astro.props;
+const { size, scoped = false, cycle = "scheme", tile = false, label, description } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
 const appearance = cycle === "appearance";
 ---
 
 <button
-  class="sk-button sk-interactive sk-icon-toggle sk-theme-toggle"
-  data-variant="ghost"
-  data-icon-only
-  data-size={size}
+  class:list={[
+    "sk-interactive sk-icon-toggle sk-theme-toggle",
+    tile ? "sk-tile sk-tile--interactive docs-prefs-tile" : "sk-button",
+  ]}
+  data-variant={tile ? undefined : "ghost"}
+  data-icon-only={tile ? undefined : ""}
+  data-size={tile ? undefined : size}
+  data-padding={tile ? "md" : undefined}
+  data-scope={tile ? "tile" : undefined}
+  data-part={tile ? "root" : undefined}
   data-cycle={appearance ? "appearance" : undefined}
   data-sk-theme-toggle={scoped || appearance ? undefined : ""}
   data-theme-toggle-scoped={scoped || appearance ? "" : undefined}
@@ -46,6 +72,15 @@ const appearance = cycle === "appearance";
   type="button"
   aria-label={appearance ? t("prefs.modeLight") : t("prefs.modeSystem")}
 >
+  {
+    tile && label && (
+      <span class="sk-tile__content" data-part="content">
+        <span class="sk-tile__title">{label}</span>
+        {description && <span class="sk-tile__description">{description}</span>}
+      </span>
+    )
+  }
+  {tile && <span class="docs-prefs-tile-chip" aria-hidden="true"></span>}
   {appearance ? null : <span data-sk-icon="mode-system" data-sk-theme-toggle-icon="system" data-face="system"></span>}
   <span data-sk-icon="mode-light" data-sk-theme-toggle-icon="light" data-face="light"></span>
   <span data-sk-icon="mode-dark" data-sk-theme-toggle-icon="dark" data-face="dark"></span>

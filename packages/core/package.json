@@ -407,6 +407,7 @@
     "./dimensions/*": "./css/dimensions/*",
     "./components/*": "./css/components/*",
     "./patterns/*": "./css/patterns/*",
+    "./effects/*": "./css/effects/*",
     "./vaul": {
       "types": "./src/vaul.ts",
       "default": "./src/vaul.ts"

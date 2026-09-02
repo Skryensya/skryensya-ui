@@ -790,6 +790,21 @@ export const documentationNavigation = [
           { href: "/styling-hooks", label: "Styling hooks" },
           { href: "/state-layer", label: "State layer" },
           { href: "/motion", label: "Motion" },
+          {
+            href: "/efectos",
+            label: "Efectos",
+            aliases: [
+              "effects",
+              "scroll reveal",
+              "reveal on scroll",
+              "animation-timeline",
+              "collapse header",
+              "header colapsable",
+              "pulse",
+              "pulso",
+              "adr-20",
+            ],
+          },
         ],
       },
       {

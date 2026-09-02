@@ -1,0 +1,104 @@
+/*
+ * COLLAPSE-HEADER, a page masthead that shrinks onto a sticky bar as the reader scrolls past it.
+ *
+ * An EFFECT (see `effects/reveal.css`'s header for the family rules): opt-in, decorative, built on
+ * the platform's own primitives, progressive, no JavaScript. This one is bigger than a one-liner
+ * because the mechanism is subtle, so it ships the mechanism and leaves every visual choice to the
+ * consumer.
+ *
+ * ── THE MECHANISM ───────────────────────────────────────────────────────────
+ * The header's LAYOUT height never changes. It is always the small bar. The height that "disappears"
+ * is a SEPARATE box above it, a spacer, that only ever scrolls off. Animating the header's real
+ * height instead was measured and is wrong: anything sticky below it (a tab strip, a filter row)
+ * rises at the scroll's rate PLUS every pixel the header gives back, so it overtakes its own pinned
+ * top about twice as fast as the band closes and spends the rest of the range hidden behind it.
+ *
+ * The spacer is EXACTLY as tall as the collapse range: the distance the reader scrolls to close the
+ * band is the height of band there was to close. One number does both jobs, which is why the title
+ * appears to settle rather than jump.
+ *
+ * A scroll-driven `@keyframes` walks `--sk-fx-collapse-progress` from 0 to 1 across that range. The
+ * consumer reads that number and interpolates whatever it wants off it, `font-size`, padding,
+ * opacity, corners, with plain `calc()`. Linear on purpose: the type has to stay locked 1:1 to the
+ * spacer disappearing under it, and an easing here would desync them.
+ *
+ * ── WHAT THE CONSUMER SUPPLIES ──────────────────────────────────────────────
+ *   --sk-fx-collapse-range        REQUIRED. The scroll distance the collapse takes. MUST equal the
+ *                                 spacer's rendered height (set both from one calc). A missing value
+ *                                 makes `animation-range` invalid, which falls back to the whole
+ *                                 page: the title then sheds a few px over a screenful of scroll.
+ *   --sk-fx-collapse-bar-height   REQUIRED. The constant height of the collapsed bar. The header is
+ *                                 this tall at every scroll position; expanded, the oversized type
+ *                                 simply overflows it upward over the spacer (`flex-end` pins the
+ *                                 content to the bar's bottom edge, so only the type's SIZE moves,
+ *                                 its baseline stays put).
+ *   --sk-fx-collapse-top          The sticky offset. Default 0; set it to whatever is pinned above
+ *                                 (a site navbar's height, usually).
+ *   --sk-fx-collapse-progress     READ ONLY. Registered <number>, 0 at the top, 1 once collapsed.
+ *
+ * ── ANATOMY ─────────────────────────────────────────────────────────────────
+ *   <div class="sk-fx-collapse-header__spacer"></div>   empty, presentational; finishes the band
+ *   <header class="sk-fx-collapse-header"> … </header>   the bar; its children interpolate off progress
+ *
+ * ── PROGRESSIVE ─────────────────────────────────────────────────────────────
+ * Everything is behind `@supports (animation-timeline: scroll())` and `prefers-reduced-motion:
+ * no-preference`. Without support, or with reduced motion, the spacer is `display: none` and the
+ * header is a normal, full-size masthead, which is the layout that shipped before any of this: the
+ * registered property's initial `0` means every consumer `calc()` resolves to its expanded end with
+ * no fallback rule to maintain.
+ */
+
+@property --sk-fx-collapse-progress {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@keyframes sk-fx-collapse-header {
+  0% {
+    --sk-fx-collapse-progress: 0;
+  }
+  100% {
+    --sk-fx-collapse-progress: 1;
+  }
+}
+
+@layer components {
+  /* Nothing to stand in for until the collapse is on. */
+  .sk-fx-collapse-header__spacer {
+    display: none;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .sk-fx-collapse-header__spacer {
+        display: block;
+        block-size: var(--sk-fx-collapse-range);
+      }
+
+      .sk-fx-collapse-header {
+        position: sticky;
+        top: var(--sk-fx-collapse-top, 0px);
+        /* Constant, and always the collapsed height. The expanded look is the spacer above plus
+         * type that overflows this box upward onto it. */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: var(--sk-fx-collapse-bar-height);
+        animation: sk-fx-collapse-header linear both;
+        /* `root`, not `nearest`: a `nearest` scroller could be an inner `overflow: auto` rail and
+         * become a coin flip about which box this is measured against. */
+        animation-timeline: scroll(root block);
+        animation-range: 0 var(--sk-fx-collapse-range);
+      }
+
+      /* Overflow, not shrink. A flex item defaults to `flex-shrink: 1`, and this box is shorter
+       * than its own content for most of the range, so left alone the oversized type gets crushed
+       * into the bar and the band reads as empty while the font-size says otherwise. `none` lets the
+       * column keep its natural height and hang over the top edge, which is the effect. */
+      .sk-fx-collapse-header > * {
+        flex: none;
+      }
+    }
+  }
+}

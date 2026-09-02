@@ -1,0 +1,40 @@
+/*
+ * PULSE, one short squeeze to draw the eye to something that just changed.
+ *
+ * An EFFECT (see `effects/reveal.css`'s header for the family rules): one class, opt-in, decorative,
+ * built on intent tokens. This one is the `--motion-emphasize-*` intent made visible: ADR-4 defines
+ * it as "attention on a real change. Use sparingly; not decorative", and that caveat is the whole
+ * contract of this file. A pulse on a timer, or on something that did not actually change, is noise.
+ *
+ * WHAT IT IS: a `transform: scale` nudge and back, twice. Transform only, so it never reflows a
+ * sibling. It runs once when the class appears; to fire it again for a later change, remove the
+ * class, force a reflow (`el.offsetWidth`), then re-add it, or toggle a `data-*` the consumer keys
+ * the class off. There is deliberately no infinite variant here: a forever-pulsing element is the
+ * thing this effect exists to be used instead of.
+ *
+ * REDUCED MOTION: `--motion-emphasize-duration` is already 0 under `prefers-reduced-motion`
+ * (decorative role, `_reduced-motion.scss`), so the animation is effectively inert; the explicit
+ * `animation: none` below just makes that legible rather than relying on a 0ms run.
+ */
+
+@keyframes sk-fx-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(var(--sk-fx-pulse-scale, 1.03));
+  }
+}
+
+@layer components {
+  .sk-fx-pulse {
+    animation: sk-fx-pulse var(--motion-emphasize-duration) var(--motion-emphasize-easing) 2;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-fx-pulse {
+      animation: none;
+    }
+  }
+}

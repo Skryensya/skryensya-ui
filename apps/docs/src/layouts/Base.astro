@@ -80,6 +80,9 @@ import "@skryensya/core/patterns/media-gradient.css";
 import "@skryensya/core/patterns/layout.css";
 import "@skryensya/core/patterns/table-pager.css";
 import "@skryensya/core/patterns/icon-toggle.css";
+/* Effects (ADR-20), opt-in decorative motion: the component page masthead below is the collapse
+ * effect's own consumer (`ComponentPageShell.astro`'s `sk-fx-collapse-header` classes). */
+import "@skryensya/core/effects/collapse-header.css";
 
 /* kbd is in the global chrome (the ⌘K search badge, the palette footer), so its consumer skin loads
  * here rather than per-page, the same reason the button skin above does. */

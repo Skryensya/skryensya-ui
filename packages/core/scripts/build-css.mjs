@@ -64,6 +64,10 @@ const readDir = (sub) =>
 
 const patterns = readDir("patterns");
 const components = readDir("components");
+// Effects (ADR-20): opt-in decorative motion applied over an element or component. Bundled AFTER
+// components so an effect class can sit on top of a component's own rules; never in `foundation.css`
+// or `tokens.css`, which are the pre-component baseline.
+const effects = readDir("effects");
 
 // One @charset, at the very top, strip any that the parts carry in. Every part's own
 // `@import url("./sibling.css")` also gets stripped here: the bundle already inlines every pattern
@@ -83,6 +87,8 @@ const bundle =
   section("patterns", patterns) +
   `\n\n` +
   section("components", components) +
+  `\n\n` +
+  section("effects", effects) +
   `\n`;
 
 mkdirSync(DIST, { recursive: true });
@@ -91,7 +97,7 @@ const results = [];
 results.push([
   "skryensya.css",
   writeDist("skryensya.css", bundle, "skryensya.css"),
-  `tokens + ${patterns.length} patterns + ${components.length} components`,
+  `tokens + ${patterns.length} patterns + ${components.length} components + ${effects.length} effects`,
 ]);
 
 // The foundation alone, no patterns or components: everything a consumer needs before it links even

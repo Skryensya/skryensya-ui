@@ -16,25 +16,14 @@
  * of the ROOT scroller's `scrollY`, not the header's own position. `clamp(scrollY / range, 0, 1)` on
  * a rAF-throttled `scroll` listener is that same mapping done by hand.
  *
- * RESOLVING THE RANGE TO A PIXEL NUMBER is the one part with no direct API: `--sk-fx-collapse-range`
- * is an untyped custom property (a `calc()` of several tokens, not a registered `<length>`), so
- * `getComputedStyle` hands back its post-substitution token stream as text, not a resolved px number
- * the way it would for `font-size`. `resolvePx` closes that gap the same way the DevTools "Computed"
- * panel does it under the hood: assign the text to a REAL length property on a throwaway, invisible
- * element and read that property's own resolved computed value back.
+ * READING THE RANGE AS A PIXEL NUMBER: measure the SPACER. Once `[data-sk-fx-collapse-js]` is set,
+ * the effect's own twin sizes `.sk-fx-collapse-header__spacer` to `block-size: var(--sk-fx-collapse-
+ * range)`, so its rendered height IS the range — no reparsing `--sk-fx-collapse-range`'s token
+ * stream (a `calc()` of `round()`-wrapped tokens that an older engine can resolve differently, or
+ * not at all). Same for the resting lead: `getComputedStyle(spacer).marginBlockStart` hands back
+ * `var(--space-inset-lg)` already resolved to px, because it is a real property, not a custom one.
  */
 let bound = false;
-
-function resolvePx(source: HTMLElement, varName: string): number {
-  const raw = getComputedStyle(source).getPropertyValue(varName).trim();
-  if (!raw) return 0;
-  const probe = document.createElement("div");
-  probe.style.cssText = `position:absolute;visibility:hidden;pointer-events:none;inline-size:${raw};`;
-  document.body.appendChild(probe);
-  const px = parseFloat(getComputedStyle(probe).inlineSize);
-  probe.remove();
-  return Number.isFinite(px) ? px : 0;
-}
 
 export function initCollapseHeaderFallback(): void {
   if (bound) return;
@@ -45,27 +34,45 @@ export function initCollapseHeaderFallback(): void {
      wrapper with the attribute below rather than needing its own reduced-motion branch. */
   if (!matchMedia("(prefers-reduced-motion: no-preference)").matches) return;
 
-  const shell = document.querySelector<HTMLElement>(".docs-component-shell");
   const header = document.querySelector<HTMLElement>(".sk-fx-collapse-header");
+  const spacer = document.querySelector<HTMLElement>(".sk-fx-collapse-header__spacer");
   /* Page has no collapsing masthead at all (most pages): nothing to walk. */
-  if (!shell || !header) return;
+  if (!header || !spacer) return;
 
   bound = true;
   document.documentElement.setAttribute("data-sk-fx-collapse-js", "");
 
+  /* The resting lead above the band (`site.css`'s JS twin sets `margin-block-start:
+     var(--space-inset-lg)` on the spacer), read once now that the twin applies. A browser that
+     cannot resolve the token computes this to 0, which just means no closing gap — the collapse
+     itself stays correct either way. */
+  const lead = parseFloat(getComputedStyle(spacer).marginBlockStart) || 0;
+
   let range = 0;
   const measure = () => {
-    range = resolvePx(shell, "--sk-fx-collapse-range");
+    range = spacer.getBoundingClientRect().height;
   };
 
   let queued = false;
+  let settleTries = 0;
   const apply = () => {
     queued = false;
-    /* No range yet (a layout pass still pending): render the collapsed end rather than the
-       expanded one — a masthead settled onto the small bar reads better for one frame than the
-       full-height one snapping shut the instant `range` resolves. */
-    const progress = range > 0 ? Math.min(1, Math.max(0, window.scrollY / range)) : 1;
+    /* No range yet (a layout pass still pending): stay at the EXPANDED end and re-measure next
+       frame. Rendering the collapsed bar here instead would flash a shrunk masthead on cold load,
+       which is the exact "looks broken" this fallback is meant to avoid. Bounded so a spacer that
+       never gets a height (effect CSS missing) just leaves the plain expanded masthead. */
+    if (range <= 0) {
+      measure();
+      if (range <= 0) {
+        if (settleTries++ < 30) requestAnimationFrame(apply);
+        return;
+      }
+    }
+    const progress = Math.min(1, Math.max(0, window.scrollY / range));
     header.style.setProperty("--sk-fx-collapse-progress", String(progress));
+    /* Mirror the native path's `docs-hero-lead-close` keyframe: close the lead in lockstep with
+       progress so the header pins the frame the collapse finishes, not `lead` px later. */
+    spacer.style.marginBlockStart = `${lead * (1 - progress)}px`;
   };
   const onScroll = () => {
     if (queued) return;
@@ -79,13 +86,14 @@ export function initCollapseHeaderFallback(): void {
 
   /* The range depends on font metrics (`--docs-hero-title-max/-min`, line-height), never on
      viewport width directly, but a late web font swap or a `zoom`/text-size change can still
-     shift it after first measure. */
+     shift it after first measure. Observe the spacer itself, since that is what carries the
+     resolved range as its own height. */
   if (window.ResizeObserver) {
     const ro = new ResizeObserver(() => {
       measure();
       apply();
     });
-    ro.observe(shell);
+    ro.observe(spacer);
   } else {
     window.addEventListener("resize", () => {
       measure();

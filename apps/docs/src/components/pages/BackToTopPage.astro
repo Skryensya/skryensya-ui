@@ -1,0 +1,148 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { backToTopScrollTree, backToTopTree } from "../../demos/back-to-top";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/back-to-top.yaml?raw";
+import coreSource from "@core/src/back-to-top.ts?raw";
+import cssSource from "@core/css/components/back-to-top.css?raw";
+import reactSource from "@react/src/components/back-to-top.tsx?raw";
+import reactTestSource from "@react/src/components/back-to-top.test.tsx?raw";
+/* The sheet itself, not only its source: the Style hooks table resolves each hook against a real
+   element, and a page that never loads this stylesheet shows every value blank. */
+import "@skryensya/core/components/back-to-top.css";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/back-to-top.css";`;
+
+const html = `<button class="sk-back-to-top sk-interactive" type="button" data-sk-back-to-top hidden>
+  <span class="sk-back-to-top__icon" aria-hidden="true">
+    <span data-sk-icon="chevron-up" data-sk-icon-size="sm"></span>
+  </span>
+  <span class="sk-back-to-top__label">Volver arriba</span>
+</button>`;
+
+/* The `target` half, which is the one nobody remembers: it moves FOCUS after the scroll so the next
+   Tab starts from the top. The destination has to be focusable itself. */
+const htmlTarget = `<button
+  class="sk-back-to-top sk-interactive"
+  type="button"
+  data-sk-back-to-top
+  data-threshold="600"
+  data-target="#top"
+  hidden
+>
+  <span class="sk-back-to-top__icon" aria-hidden="true">
+    <span data-sk-icon="chevron-up" data-sk-icon-size="sm"></span>
+  </span>
+  <span class="sk-back-to-top__label">Volver arriba</span>
+</button>
+…
+<h1 id="top" tabindex="-1">…</h1>`;
+
+const react = `import { BackToTop } from "@skryensya/react/back-to-top";
+
+// window scroller, focus moves to the heading up top
+<BackToTop threshold={600} target="#top">Volver arriba</BackToTop>
+
+// an inner overflow pane instead of the window
+<BackToTop scroller="#panel">Volver arriba</BackToTop>`;
+
+/* The labelled-pill escape hatch: the accessible name is already right, this only un-clips it. */
+const pill = `.mi-back-to-top {
+  --sk-back-to-top-size: auto;
+  padding-inline: var(--space-inset-md);
+}
+.mi-back-to-top .sk-back-to-top__label {
+  position: static;
+  inline-size: auto;
+  block-size: auto;
+  clip-path: none;
+}`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/back-to-top.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/back-to-top.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/back-to-top.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/back-to-top.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/back-to-top.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="BackToTop"
+  description={t("backToTop.description")}
+  badge={t("backToTop.betaBadge")}
+  contractId="back-to-top"
+  styleGroups={[{ file: "components/back-to-top.css", probe: "sk-back-to-top", title: "BackToTop" }]}
+  sourceFiles={sourceFiles}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("backToTop.lede")} />
+
+    <h3>{t("backToTop.whenTitle")}</h3>
+    <p set:html={t("backToTop.whenBody1")} />
+    <p set:html={t("backToTop.whenBody2")} />
+
+    <h3>{t("backToTop.demoStaticTitle")}</h3>
+    <p set:html={t("backToTop.demoStaticBody")} />
+    <ComponentPreview
+      tree={backToTopTree(t)}
+      label={t("backToTop.demoStaticLabel")}
+      minHeight="9rem"
+      screens={false}
+    />
+
+    <h3>{t("backToTop.demoScrollTitle")}</h3>
+    <p set:html={t("backToTop.demoScrollBody")} />
+    <ComponentPreview
+      tree={backToTopScrollTree(t)}
+      label={t("backToTop.demoScrollLabel")}
+      note={t("backToTop.demoScrollHint")}
+      scroll
+      minHeight="18rem"
+      screens={false}
+    />
+
+    <h3>{t("backToTop.behaviorTitle")}</h3>
+    <p set:html={t("backToTop.behaviorBody1")} />
+    <p set:html={t("backToTop.behaviorBody2")} />
+
+    <h3>{t("backToTop.optionsTitle")}</h3>
+    <p set:html={t("backToTop.optionsBody")} />
+
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("backToTop.contractItem1")} />
+      <li set:html={t("backToTop.contractItem2")} />
+      <li set:html={t("backToTop.contractItem3")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+
+    <h4>{t("backToTop.htmlTitle")}</h4>
+    <CodeBlock code={html} label="HTML" lang="html" />
+
+    <h4>{t("backToTop.targetTitle")}</h4>
+    <p set:html={t("backToTop.targetBody")} />
+    <CodeBlock code={htmlTarget} label="HTML" lang="html" />
+    <CodeBlock code={react} label="React" lang="tsx" />
+
+    <h4>{t("backToTop.pillTitle")}</h4>
+    <p set:html={t("backToTop.pillBody")} />
+    <CodeBlock code={pill} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("backToTop.a11yP1")} />
+    <p set:html={t("backToTop.a11yP2")} />
+  </Fragment>
+</ComponentPageShell>

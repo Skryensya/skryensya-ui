@@ -1,0 +1,197 @@
+---
+/*
+ * The site's own closing band. Built on the kit's `footer` contract (`sk-footer`, the `contentinfo`
+ * landmark) the same way the docs tell a consumer to build one: `sk-footer` for the band, one
+ * `sk-nav-list` per column so each reads as its own named `navigation` in the landmark list, and a
+ * plain meta bar composed by hand.
+ *
+ * LAYOUT: two regions, not a flat row of equal cells. A LEAD (wordmark + one-line description + a
+ * short meta link row) sized to a reading measure, and a NAV grid of three columns beside it: the
+ * site's own arteries (Empezar, Fundamentos, Explorar), never a leaf page. A footer that gives its
+ * identity the same width as a link column reads as five columns of nothing in particular;
+ * splitting the two is what makes it read as "here is the project, and here is where to go next".
+ *
+ * A SIBLING of `.docs-document-pair`, never a child of it (`Base.astro`): the footer is
+ * site-global chrome, not this document's own furniture (its Toc, its per-page report-issue
+ * line), the same reasoning that already keeps it out of `<main>`.
+ *
+ * THE BAND BLEEDS, THE CONTENT DOESN'T. `data-width="full-width"` on this `<footer>` is the same
+ * lever the hero's own email-capture band and every other full-bleed-surface-over-inset-content
+ * shape in this system opts into (layout.css's own header: "a full-width child repeats this
+ * grid, so its own direct children return to the same content measure without another
+ * wrapper"): the SURFACE (background, divider, sunken shadow) spans `.docs-footer-row`'s own
+ * full width, edge to edge except the sidebar's column (never reachable from here, the same
+ * reasoning the row's own comment gives), while `__inner` below, an unlabeled child of that
+ * nested grid, falls straight back to `content-start / content-end` — the EXACT SAME width and
+ * left edge `<main>`'s own content reads at, unchanged from before this was full-width. The
+ * band's own `data-padding="lg"` only supplies vertical breathing room now (`site.css` zeroes
+ * `padding-inline`, a scoped reskin, never the contract's own default): the horizontal inset is
+ * the nested grid's own gutter, the same source `<main>`'s own top-level content reads its inset
+ * from, not a second, redundant one.
+ *
+ * Rendered once per railed page. The per-page `.docs-footer` inside `<main>` (the "report an issue
+ * on THIS page" line) is a plain `<div>`, not a second `<footer>`: one document-level `contentinfo`
+ * per page, and this is it.
+ *
+ * The authorship credit is the last line of the meta bar, INSIDE the band: it belongs in
+ * `contentinfo` (a colophon is exactly that), and folding it in rather than tacking a second,
+ * differently-coloured strip underneath is what makes the whole thing read as one footer. It is
+ * still docs-local composition, same as the "built with" line beside the copyright; the `footer`
+ * component's own anatomy stays "free composition inside", nothing site-specific baked in.
+ */
+import { getGlobalNavigation, type NavigationSection } from "../lib/navigation";
+import { currentVersion } from "../lib/contract-reference";
+import { iconMarkup } from "../icons";
+import { useTranslations, type Locale } from "../i18n";
+
+interface Props {
+  nav: readonly NavigationSection[];
+  locale: Locale;
+}
+
+const { nav, locale } = Astro.props;
+const t = useTranslations(locale);
+
+const REPO_URL = "https://github.com/Skryensya/skryensya-ui";
+const AUTHOR_URL = "https://allison.sh";
+const changelogHref = locale === "en" ? "/en/components/changelog" : "/componentes/changelog";
+const year = new Date().getFullYear();
+const version = currentVersion();
+/** Same role, same trailing position, `Base.astro`'s own `reportIssueIcon`: it names "this leaves
+ *  the tab" as a footnote on the label, never the first thing read. Both external links in the
+ *  meta bar below reuse it, GitHub and the credit line's `allison.sh`. */
+const launchIcon = iconMarkup("external-link", { size: "sm" });
+
+/*
+ * THREE ARTERIES, never a leaf. A footer is read once, skimmed, not studied: the site's own main
+ * routes (get oriented, understand the model, go explore) earn a place here, a single component's
+ * own doc page does not. Concretely, that rules out reusing `nav` (the full rail data) wholesale:
+ * its own "components" section groups by TASK, and even the first group is still five individual
+ * components (Button, Checkbox, …) — exactly the specificity this footer is not for. Two of the
+ * three columns below still read from `nav` (Empezar, Fundamentos: their own first group IS already
+ * conceptual, Architecture/Tiers/Tokens, not a component list), the third is hand-picked from
+ * `globalNavigation`, the same five destinations the header itself points at, Componentes meaning
+ * "the catalog page", not any one piece in it.
+ */
+const startSection = nav.find((section) => section.id === "start");
+const foundationsSection = nav.find((section) => section.id === "foundations");
+const globalNav = getGlobalNavigation(locale);
+
+/* Dimensiones (visualDimensions' own first item), added to foundationModel's own three: still an
+   axis of the system, not a leaf, and it evens the column out to four, matching Empezar. */
+const foundationsItems = [
+  ...(foundationsSection?.groups[0]?.items ?? []),
+  ...(foundationsSection?.groups[1]?.items.slice(0, 1) ?? []),
+];
+
+const columns = [
+  {
+    title: startSection?.section ?? "",
+    href: startSection?.href,
+    items: (startSection?.groups[0]?.items ?? []).slice(0, 4),
+  },
+  {
+    title: foundationsSection?.section ?? "",
+    href: foundationsSection?.href,
+    items: foundationsItems.slice(0, 4),
+  },
+  {
+    title: t("siteFooter.colBrowse"),
+    href: undefined,
+    // Skips Home (0) and Foundations (1): the wordmark already IS home, and the column above
+    // already carries Foundations as its own linked heading. Componentes here is the catalog
+    // (`/componentes`), never one entry inside it.
+    items: globalNav.slice(2),
+  },
+];
+---
+
+<footer
+  class="sk-footer site-footer"
+  data-surface="sunken"
+  data-padding="lg"
+  data-divider
+  data-width="full-width"
+  aria-label={t("siteFooter.landmarkLabel")}
+>
+  <div class="site-footer__inner">
+    <div class="site-footer__layout">
+      <div class="site-footer__lead">
+        <p class="site-footer__brand">
+          <span class="site-footer__wordmark">skryensya/ui</span>
+          {/*
+            The real `Badge` part, not a hand-rolled pill: `sk-badge` for the tone/size/radius
+            tokens (`data-tone="accent"`, the same subtle-fill-on-accent-text pair every other
+            accent badge on the site uses), `sk-interactive` composed onto the SAME element for
+            the hover/focus wash, the identical idiom `sk-button.sk-interactive` and
+            `sk-tag.sk-interactive` already use to make one host both a part and a control. Badge
+            itself is never interactive (badge.css's own header states that), an anchor authored
+            with its class is what makes this ONE a control; every other badge on the page stays
+            the static label it always was.
+          */}
+          <a
+            class="sk-badge site-footer__version sk-interactive"
+            data-tone="accent"
+            data-size="sm"
+            href={changelogHref}
+            aria-label={t("siteFooter.versionLabel", { version })}
+          >
+            v{version}
+          </a>
+        </p>
+        <p class="site-footer__tagline">{t("siteFooter.tagline")}</p>
+        {/*
+          Changelog dropped from here: the version badge above already goes there, with its own
+          `aria-label` naming the destination. Two links to the identical href, one a prominent
+          badge and one three lines below it in tiny type, was the redundant one; GitHub is the
+          only place left this row actually earns.
+        */}
+        <p class="site-footer__meta">
+          <a class="site-footer__meta-link" href={REPO_URL} target="_blank" rel="noopener noreferrer">
+            {t("siteFooter.repo")}
+            <Fragment set:html={launchIcon} />
+          </a>
+        </p>
+      </div>
+
+      <div class="site-footer__nav">
+        {
+          columns.map((column) => (
+            <nav class="sk-nav-list site-footer__col" aria-label={column.title}>
+              <div class="sk-nav-list__group">
+                <div class="sk-nav-list__group-label">
+                  {column.href ? (
+                    <a class="site-footer__col-heading" href={column.href}>
+                      {column.title}
+                    </a>
+                  ) : (
+                    column.title
+                  )}
+                </div>
+                <ul class="sk-nav-list__list">
+                  {column.items.map((item) => (
+                    <li class="sk-nav-list__item">
+                      <a class="sk-nav-list__link sk-interactive" href={item.href}>
+                        <span class="sk-nav-list__label">{item.label}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </nav>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="site-footer__bar">
+      <p class="site-footer__legal">{t("siteFooter.legal", { year: String(year) })}</p>
+      <p
+        class="site-footer__credit"
+        set:html={t("siteFooter.credit", {
+          author: `<a class="site-footer__credit-link" href="${AUTHOR_URL}" target="_blank" rel="noopener noreferrer">allison.sh${launchIcon}</a>`,
+        })}
+      />
+    </div>
+  </div>
+</footer>

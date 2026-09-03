@@ -1,0 +1,20 @@
+# La estructura vive en packages/core/src/footer.ts. Acá sólo por qué se elige.
+#
+# useWhen/avoidWhen es el único vocabulario que el compilador realmente lee de este archivo
+# (`ai-compiler/src/overlay.ts`'s `SignatureSemantics`). Las reglas de contenido y accesibilidad de
+# Footer viven ADENTRO de estas dos listas, en vez de campos nuevos que el compilador ignoraría en
+# silencio: un overlay con datos que nadie lee es peor que uno corto, porque parece completo y no lo
+# está.
+
+Footer:
+  useWhen:
+    - "es el cierre de la página: la banda final que dice \"la página termina acá\", con navegación secundaria, aviso legal o crédito"
+    - "el host es un <footer> a nivel de documento, y eso YA es el landmark contentinfo sin escribir role: nunca se pone role=\"contentinfo\" a mano"
+    - "hay como mucho UN <footer> de documento por página; un footer que pertenece de verdad a un <article> es válido pero deja de ser el landmark, y esa es una decisión de quien compone"
+    - "la anatomía es libre, igual que Hero: adentro se compone con layout.Grid para la fila de columnas, nav-list.NavList para cada columna (con su propio nombre accesible), typography.Text para el aviso legal, wrapper.Wrapper para sostener la medida de la página"
+    - "por defecto surface=\"sunken\" y divider (borde superior) prendido: un footer que comparte el fondo de la página se lee como \"más contenido\", que es lo único que un footer no es"
+  avoidWhen:
+    - "sólo hace falta separar una sección del resto con relleno o borde en medio de la página; eso es un Box"
+    - "es una barra de acciones pegada abajo de un panel o un diálogo (una fila de botones de confirmación); eso se compone con layout.Inline dentro del contenedor, no con Footer"
+    - "cada columna de enlaces iría sin nombre accesible: una fila de navigation sin nombre en la lista de landmarks es peor que no tenerla; cada columna es un NavList con aria-label o encabezado visible"
+    - "el footer necesita más de dos niveles jerárquicos compitiendo (columnas, franja de newsletter, barra legal, sub-crédito, todo a la vez sin orden): separá lo que sobra en su propia región antes del footer"

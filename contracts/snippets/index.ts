@@ -1,4 +1,5 @@
 import { calloutErrorWithRetrySnippet } from "./callout-error-with-retry.js";
+import { footerCreditLineSnippet } from "./footer-credit-line.js";
 import { formFieldHintAndErrorSnippet } from "./form-field-hint-and-error.js";
 import { heroCenteredMinimalSnippet } from "./hero-centered-minimal.js";
 import { heroSplitWithMediaSnippet } from "./hero-split-with-media.js";
@@ -34,6 +35,7 @@ export const snippets: readonly Snippet[] = [
   heroWithActionsSnippet,
   heroCenteredMinimalSnippet,
   heroWithEyebrowSnippet,
+  footerCreditLineSnippet,
   paginationStandaloneSnippet,
   settingsRowWithSwitchSnippet,
   productCardInGridSnippet,

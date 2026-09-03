@@ -32,7 +32,12 @@ async function ensureCommandPaletteIndex(root: HTMLDialogElement): Promise<void>
   const indexSrc = root.getAttribute("data-sk-command-palette-index-src");
   if (!indexSrc) return;
 
-  const response = await fetch(indexSrc, { credentials: "same-origin" });
+  /* `cache: "no-cache"` forces a revalidation even when a still-"fresh" copy is in the HTTP cache: a
+     response previously stored under `max-age=3600` stays fresh for the rest of that hour and the
+     browser would not otherwise re-request it, so a reader who opened the palette once would keep
+     getting a catalog that predates any component added since. The endpoint now sends `no-cache`
+     too; this covers copies cached before that change shipped. */
+  const response = await fetch(indexSrc, { credentials: "same-origin", cache: "no-cache" });
   if (!response.ok) return;
 
   const script = document.createElement("script");

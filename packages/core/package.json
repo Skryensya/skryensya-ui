@@ -156,6 +156,10 @@
       "types": "./src/hero.ts",
       "default": "./src/hero.ts"
     },
+    "./footer": {
+      "types": "./src/footer.ts",
+      "default": "./src/footer.ts"
+    },
     "./stack": {
       "types": "./src/layout.ts",
       "default": "./src/layout.ts"
@@ -219,6 +223,10 @@
     "./splitter": {
       "types": "./src/splitter.ts",
       "default": "./src/splitter.ts"
+    },
+    "./back-to-top": {
+      "types": "./src/back-to-top.ts",
+      "default": "./src/back-to-top.ts"
     },
     "./skip-link": {
       "types": "./src/skip-link.ts",

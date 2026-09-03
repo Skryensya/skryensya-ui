@@ -21,6 +21,10 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/button.js")).mountButton,
   },
   {
+    selector: "[data-sk-back-to-top]",
+    load: async () => (await import("../components/back-to-top.js")).mountBackToTop,
+  },
+  {
     selector: "[data-sk-select]",
     load: async () => (await import("../components/select.js")).mountSelect,
   },

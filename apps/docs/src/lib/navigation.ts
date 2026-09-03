@@ -74,9 +74,32 @@ const componentItems = [
       "disclosure",
     ],
   },
-  { href: "/componentes/avatar", label: "Avatar", aliases: ["perfil"] },
+  { href: "/componentes/avatar", label: "Avatar", trailing: "Beta", aliases: ["perfil"] },
   { href: "/componentes/badge", label: "Badge", aliases: ["insignia"] },
+  {
+    href: "/componentes/back-to-top",
+    label: "BackToTop",
+    trailing: "Beta",
+    aliases: [
+      "volver arriba",
+      "ir arriba",
+      "subir",
+      "scroll to top",
+      "scroll top",
+      "back to top",
+      "return to top",
+      "botón flotante",
+      "boton flotante",
+      "fab",
+    ],
+  },
   { href: "/componentes/box", label: "Box", aliases: ["caja"] },
+  {
+    href: "/componentes/footer",
+    label: "Footer",
+    trailing: "Beta",
+    aliases: ["pie", "pie de pagina", "pie de página", "contentinfo", "colofón", "colofon"],
+  },
   { href: "/componentes/hero", label: "Hero", trailing: "Beta", aliases: ["portada", "landing"] },
   {
     href: "/componentes/button",
@@ -91,7 +114,7 @@ const componentItems = [
       "tarjeta boton",
     ],
   },
-  { href: "/componentes/callout", label: "Callout", aliases: ["alerta", "nota", "aviso"] },
+  { href: "/componentes/callout", label: "Callout", trailing: "Beta", aliases: ["alerta", "nota", "aviso"] },
   {
     href: "/componentes/card",
     label: "Card",
@@ -112,6 +135,7 @@ const componentItems = [
   {
     href: "/componentes/carousel",
     label: "Carousel",
+    trailing: "Beta",
     aliases: [
       "carrusel",
       "carousel",
@@ -170,6 +194,7 @@ const componentItems = [
   {
     href: "/componentes/changelog",
     label: "Changelog",
+    trailing: "Beta",
     aliases: [
       "changelog",
       "historial",
@@ -219,6 +244,7 @@ const componentItems = [
   {
     href: "/componentes/data-grid",
     label: "Data Grid",
+    trailing: "Beta",
     aliases: ["grilla de datos", "layout grid", "grilla de layout", "navegación 2d", "navegacion 2d"],
   },
   {
@@ -226,7 +252,12 @@ const componentItems = [
     label: "Dialog",
     aliases: ["diálogo", "dialogo", "modal", "confirm", "dialog vaul", "dialog enhanced"],
   },
-  { href: "/componentes/drawer", label: "Drawer", aliases: ["panel lateral", "cajón", "cajon"] },
+  {
+    href: "/componentes/drawer",
+    label: "Drawer",
+    trailing: "Beta",
+    aliases: ["panel lateral", "cajón", "cajon"],
+  },
   {
     href: "/componentes/fade-edge",
     label: "FadeEdge",
@@ -259,7 +290,12 @@ const componentItems = [
       "requerido",
     ],
   },
-  { href: "/componentes/grid", label: "Grid", aliases: ["grilla", "cuadrícula", "cuadricula"] },
+  {
+    href: "/componentes/grid",
+    label: "Grid",
+    trailing: "Beta",
+    aliases: ["grilla", "cuadrícula", "cuadricula"],
+  },
   {
     href: "/componentes/layout-grid",
     label: "Layout Grid",
@@ -417,6 +453,7 @@ const componentItems = [
   {
     href: "/componentes/treegrid",
     label: "Treegrid",
+    trailing: "Beta",
     aliases: ["grilla jerárquica", "grilla jerarquica", "tabla jerárquica", "tabla jerarquica", "explorador de archivos"],
   },
   { href: "/componentes/tabs", label: "Tabs", aliases: ["pestañas", "pestanas"] },
@@ -454,6 +491,7 @@ const componentItems = [
   {
     href: "/componentes/combobox",
     label: "Combobox",
+    trailing: "Beta",
     aliases: ["autocompletar", "autocomplete", "selector editable"],
   },
   {
@@ -470,11 +508,13 @@ const componentItems = [
   {
     href: "/componentes/calendar",
     label: "Calendar",
+    trailing: "Beta",
     aliases: ["calendario", "grid de fecha", "mes", "vista de año", "década"],
   },
   {
     href: "/componentes/empty-state",
     label: "EmptyState",
+    trailing: "Beta",
     aliases: ["estado vacío", "estado vacio", "sin resultados"],
   },
   {
@@ -538,6 +578,7 @@ const componentItems = [
   {
     href: "/componentes/tree-view",
     label: "TreeView",
+    trailing: "Beta",
     aliases: ["árbol", "arbol", "jerarquía", "jerarquia"],
   },
 ] as const satisfies readonly NavigationItem[];
@@ -586,6 +627,7 @@ export const componentNavigation = [
     group: "group.componentNavigation",
     blurb: "group.componentNavigation.blurb",
     items: componentGroupItems(
+      "/componentes/back-to-top",
       "/componentes/breadcrumb",
       "/componentes/command-palette",
       "/componentes/link",
@@ -662,6 +704,7 @@ export const componentNavigation = [
     items: componentGroupItems(
       "/componentes/box",
       "/componentes/fade-edge",
+      "/componentes/footer",
       "/componentes/grid",
       "/componentes/hero",
       "/componentes/layout-grid",

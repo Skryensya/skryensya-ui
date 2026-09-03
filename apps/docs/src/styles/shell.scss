@@ -104,6 +104,16 @@
     justify-self: stretch;
   }
 
+  /* The one tier `.shell` itself drops to a single column, so the footer row's own
+   * `grid-column: 2` (site.css) would otherwise reach past the template into an implicit column
+   * nothing else uses, widening the row and the page along with it. Follow the document into
+   * column 1, the only one left; auto-placement still lands it in the free row right after the
+   * pair's own span. The phantom rail inside it is already hidden below `wide` (site.css), well
+   * above this tier, so nothing here needs to know about it. */
+  .shell > .docs-footer-row {
+    grid-column: 1;
+  }
+
   /*
    * Keep mobile prose inset, but step it down from desktop's roomy `lg` gutter. At 390px the old
    * 24px rails left only 331px for content, which made dense component pages feel narrower than the
@@ -115,6 +125,13 @@
 
   .docs-document-pair:not([data-document-layout="grid"]) > main {
     --sk-wrapper-padding-inline: var(--space-inset-md);
+  }
+
+  /* Same step-down as the pair's own `[data-document-layout="grid"]` rule above, so the footer
+     row's own gutter matches the article's regardless of which shape THIS page happens to be:
+     `.docs-footer-row` is always `sk-layout-grid`, never the fixed non-grid pair template. */
+  .docs-footer-row {
+    --sk-layout-gutter: var(--space-inset-md);
   }
 
   /* Same step-down, for the OTHER shape a page can take: `fullBleed` (the marketing home,

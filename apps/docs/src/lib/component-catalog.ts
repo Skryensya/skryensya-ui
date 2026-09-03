@@ -20,6 +20,10 @@ const componentDescriptions = {
     es: "Señala estados, conteos o etiquetas breves junto a otro elemento.",
     en: "Marks short statuses, counts, or labels next to another element.",
   },
+  "/componentes/back-to-top": {
+    es: "Devuelve al inicio de una página larga con un control flotante.",
+    en: "Returns to the top of a long page with a floating control.",
+  },
   "/componentes/box": {
     es: "Añade superficie, borde y espacio interior alrededor de un grupo.",
     en: "Adds surface, border, and inner spacing around a group.",
@@ -107,6 +111,10 @@ const componentDescriptions = {
   "/componentes/file-upload": {
     es: "Selecciona o arrastra archivos y muestra su progreso.",
     en: "Selects or drops files and reports their progress.",
+  },
+  "/componentes/footer": {
+    es: "Cierra la página con una banda propia: navegación secundaria, aviso legal o crédito.",
+    en: "Closes the page with a band of its own: secondary navigation, a legal line, or a credit.",
   },
   "/componentes/form-field": {
     es: "Rotula un control y le adjunta ayuda y mensaje de validación.",

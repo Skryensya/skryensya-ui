@@ -32,6 +32,10 @@
       "types": "./src/icon.ts",
       "default": "./src/icon.ts"
     },
+    "./back-to-top": {
+      "types": "./src/components/back-to-top.ts",
+      "default": "./src/components/back-to-top.ts"
+    },
     "./button": {
       "types": "./src/components/button.ts",
       "default": "./src/components/button.ts"
@@ -132,6 +136,42 @@
       "types": "./src/components/tooltip.ts",
       "default": "./src/components/tooltip.ts"
     },
+    "./breadcrumb": {
+      "types": "./src/components/breadcrumb.ts",
+      "default": "./src/components/breadcrumb.ts"
+    },
+    "./chart": {
+      "types": "./src/components/chart.ts",
+      "default": "./src/components/chart.ts"
+    },
+    "./data-grid": {
+      "types": "./src/components/data-grid.ts",
+      "default": "./src/components/data-grid.ts"
+    },
+    "./menubar": {
+      "types": "./src/components/menubar.ts",
+      "default": "./src/components/menubar.ts"
+    },
+    "./meter": {
+      "types": "./src/components/meter.ts",
+      "default": "./src/components/meter.ts"
+    },
+    "./nav-list": {
+      "types": "./src/components/nav-list.ts",
+      "default": "./src/components/nav-list.ts"
+    },
+    "./slider-range": {
+      "types": "./src/components/slider-range.ts",
+      "default": "./src/components/slider-range.ts"
+    },
+    "./table": {
+      "types": "./src/components/table.ts",
+      "default": "./src/components/table.ts"
+    },
+    "./treegrid": {
+      "types": "./src/components/treegrid.ts",
+      "default": "./src/components/treegrid.ts"
+    },
     "./combobox": {
       "types": "./src/components/combobox.ts",
       "default": "./src/components/combobox.ts"
@@ -191,6 +231,7 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.2.0",
     "@testing-library/dom": "^10.4.1",
+    "@types/node": "catalog:",
     "jsdom": "^29.1.1",
     "svelte-check": "^4.7.3",
     "typescript": "^5.9.3",

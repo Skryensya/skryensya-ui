@@ -154,6 +154,41 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/back-to-top.css",
+      "id": "back-to-top",
+      "signatures": [
+        {
+          "alternatives": [
+            "SkipLink",
+            "Toc"
+          ],
+          "avoidWhen": [
+            "la página entra entera en una pantalla: no hay de dónde volver",
+            "lo que se quiere es saltear el chrome de arriba para llegar al contenido: eso es SkipLink, va primero en el foco y usa un ancla real",
+            "el destino es una sección concreta y no el principio del scroller: eso es un enlace de ancla dentro del texto, o Toc",
+            "el foco tiene que viajar siempre al volver arriba: pasale `target` con el id de algo enfocable al inicio, o mirá SkipLink",
+            "hay que restaurar la posición de scroll al navegar entre páginas: eso lo hace el router, no un botón"
+          ],
+          "host": "button",
+          "id": "BackToTop",
+          "intent": [
+            "back-to-top",
+            "scroll-to-top",
+            "return-to-top",
+            "scroll-restore",
+            "jump-to-start"
+          ],
+          "parents": [],
+          "useWhen": [
+            "la página es larga y quien baja mucho quiere volver al principio sin arrastrar el scroll a mano",
+            "aparece sola después de pasar un umbral de scroll y se va sola al volver arriba: no ocupa una esquina cuando no hace falta",
+            "el scroll lo hace la plataforma (scrollTo): suave, salvo que se pida menos movimiento, y entonces instantáneo",
+            "el scroller puede no ser el documento: con `scroller` apunta a un panel con overflow propio"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/badge.css",
       "id": "badge",
       "signatures": [
@@ -1186,6 +1221,38 @@
           "useWhen": [
             "hay que adjuntar archivos: un CV, un comprobante, fotos",
             "conviene aceptar arrastrar y soltar además del botón, sin obligar a nadie a arrastrar"
+          ]
+        }
+      ]
+    },
+    {
+      "css": "@skryensya/core/patterns/footer.css",
+      "id": "footer",
+      "signatures": [
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "sólo hace falta separar una sección del resto con relleno o borde en medio de la página; eso es un Box",
+            "es una barra de acciones pegada abajo de un panel o un diálogo (una fila de botones de confirmación); eso se compone con layout.Inline dentro del contenedor, no con Footer",
+            "cada columna de enlaces iría sin nombre accesible: una fila de navigation sin nombre en la lista de landmarks es peor que no tenerla; cada columna es un NavList con aria-label o encabezado visible",
+            "el footer necesita más de dos niveles jerárquicos compitiendo (columnas, franja de newsletter, barra legal, sub-crédito, todo a la vez sin orden): separá lo que sobra en su propia región antes del footer"
+          ],
+          "host": "footer",
+          "id": "Footer",
+          "intent": [
+            "site-footer",
+            "page-footer",
+            "contentinfo-landmark",
+            "colophon",
+            "footer-navigation-block"
+          ],
+          "parents": [],
+          "useWhen": [
+            "es el cierre de la página: la banda final que dice \"la página termina acá\", con navegación secundaria, aviso legal o crédito",
+            "el host es un <footer> a nivel de documento, y eso YA es el landmark contentinfo sin escribir role: nunca se pone role=\"contentinfo\" a mano",
+            "hay como mucho UN <footer> de documento por página; un footer que pertenece de verdad a un <article> es válido pero deja de ser el landmark, y esa es una decisión de quien compone",
+            "la anatomía es libre, igual que Hero: adentro se compone con layout.Grid para la fila de columnas, nav-list.NavList para cada columna (con su propio nombre accesible), typography.Text para el aviso legal, wrapper.Wrapper para sostener la medida de la página",
+            "por defecto surface=\"sunken\" y divider (borde superior) prendido: un footer que comparte el fondo de la página se lee como \"más contenido\", que es lo único que un footer no es"
           ]
         }
       ]
@@ -3779,5 +3846,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "885b306403e90f4e"
+  "sourceHash": "bff8b936e8da7a8d"
 }

@@ -11,6 +11,7 @@ import {
   type WrapperSize,
 } from "@skryensya/core/layout";
 import { heroParts, type HeroAlign, type HeroPadding, type HeroSurface } from "@skryensya/core/hero";
+import { footerParts, type FooterPadding, type FooterSurface } from "@skryensya/core/footer";
 import type { ComponentPropsWithoutRef, CSSProperties, ElementType, ReactNode } from "react";
 
 type PolymorphicProps<Element extends ElementType, OwnProps> = OwnProps & {
@@ -59,6 +60,37 @@ export function Hero<Element extends ElementType = "div">({
       {...props}
       className={classes(heroParts.hero, className)}
       data-align={align}
+      data-padding={padding}
+      data-surface={surface}
+    />
+  );
+}
+
+/*
+ * FREE COMPOSITIONAL, like `Hero`: the host is a real `<footer>` by default (the `contentinfo`
+ * landmark at document level), and everything inside is the composer's, `Grid` of `NavList`
+ * columns, a `Text` legal line, a `Wrapper` to hold the measure. `as` is here for the one case a
+ * footer is deliberately nested inside an `<article>` and must NOT be the landmark.
+ */
+export type FooterProps<Element extends ElementType = "footer"> = PolymorphicProps<
+  Element,
+  LayoutChildren & { divider?: boolean; padding?: FooterPadding; surface?: FooterSurface }
+>;
+
+export function Footer<Element extends ElementType = "footer">({
+  as,
+  className,
+  divider = true,
+  padding = "lg",
+  surface = "sunken",
+  ...props
+}: FooterProps<Element>) {
+  const Component = as ?? "footer";
+  return (
+    <Component
+      {...props}
+      className={classes(footerParts.footer, className)}
+      data-divider={divider ? "" : "false"}
       data-padding={padding}
       data-surface={surface}
     />

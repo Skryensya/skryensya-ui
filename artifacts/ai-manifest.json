@@ -91,6 +91,26 @@
         "version": "0.1.0-dev"
       }
     ],
+    "back-to-top": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-02",
+            "en": {
+              "body": "It joins the catalogue with <code>BackToTop</code>: a <code>&lt;button&gt;</code> pinned to a corner that returns a scroller to its start. It appears only after the reader is <code>threshold</code> pixels past the top (400 by default) and hides again on the way back; the markup ships <code>hidden</code>, so with no JavaScript it takes no corner. The visible mark is a <code>chevron-up</code> from the bound icon set (authored markup emits the <code>[data-sk-icon]</code> placeholder the enhancer swaps for the set's <code>&lt;svg&gt;</code>; React renders <code>&lt;Icon&gt;</code>), inside the <code>sk-back-to-top__icon</code> part. The scroll is the platform's (<code>scrollTo</code>), smooth unless the reader asked for less motion. Options: <code>threshold</code>, <code>scroller</code> (a selector for an inner <code>overflow</code> pane instead of the window) and <code>target</code> (a selector for a focusable element up top to move focus to after the scroll, so the next Tab continues from the start). The pure half — past the threshold?, does the scroll animate? — lives in <code>@skryensya/core/back-to-top</code> and both bindings share it. Its stylesheet is <code>components/back-to-top.css</code>.",
+              "title": "BackToTop is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>BackToTop</code>: un <code>&lt;button&gt;</code> que se fija a una esquina y devuelve un scroller a su inicio. Aparece sólo después de pasar <code>threshold</code> píxeles de scroll (400 por defecto) y se va sola al volver arriba; el markup viene con <code>hidden</code>, así que sin JavaScript no ocupa lugar. La marca visible es un <code>chevron-up</code> del set de iconos enlazado (el markup autorado emite el placeholder <code>[data-sk-icon]</code> que el enhancer reemplaza por el <code>&lt;svg&gt;</code> del set; React usa <code>&lt;Icon&gt;</code>), dentro de la parte <code>sk-back-to-top__icon</code>. El scroll lo hace la plataforma (<code>scrollTo</code>), suave salvo que se pida menos movimiento. Opciones: <code>threshold</code>, <code>scroller</code> (un selector para un panel con overflow propio, en vez de la ventana) y <code>target</code> (un selector de algo enfocable arriba al que mover el foco después del scroll, para que el siguiente Tab siga desde el principio). La parte pura —si pasó el umbral, si la animación se atenúa— vive en <code>@skryensya/core/back-to-top</code> y la comparten las dos bindings. La hoja es <code>components/back-to-top.css</code>.",
+              "title": "BackToTop se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "badge": [
       {
         "date": null,
@@ -570,6 +590,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-03",
+            "en": {
+              "body": "<code>ColorPicker</code> and <code>ColorPicker.compact</code> now declare <code>portals: true</code>: the React binding already portalled its panel with <code>&lt;Portal&gt;</code>, but without this flag <code>render-tree.tsx</code> never handed it a scoped container, so every instance on the page portalled into the same <code>document.body</code> with no way to tell them apart. The first time a canonical tree exercised both bindings (zero coverage before this), the symmetry gate could not pair one instance's panel with the other's. Two attributes the React binding never restated from the contract's own template got synced along the way: the hidden input carries <code>aria-hidden=\"true\"</code> and the eyedropper trigger carries <code>data-icon-only</code>, matching what Vanilla already did.",
+              "title": "The panel no longer compares against the wrong binding in symmetry tests"
+            },
+            "es": {
+              "body": "<code>ColorPicker</code> y <code>ColorPicker.compact</code> declaran ahora <code>portals: true</code>: el binding React ya portaba su panel con <code>&lt;Portal&gt;</code>, pero sin esta marca <code>render-tree.tsx</code> nunca le pasaba un contenedor propio, así que todas las instancias de la página portaban al mismo <code>document.body</code> sin distinción. La primera vez que un árbol canónico ejerció ambos bindings (antes de esto, cero cobertura) el gate de simetría no podía emparejar el panel de una instancia con el de la otra. De paso se sincronizaron dos atributos que el binding React nunca restataba del molde del contrato: el input oculto lleva <code>aria-hidden=\"true\"</code> y el disparador del gotero lleva <code>data-icon-only</code>, igual que ya hacía Vanilla.",
+              "title": "El panel ya no se compara contra el binding equivocado en las pruebas de simetría"
+            },
+            "kind": "bugfix"
+          },
+          {
             "date": "2026-08-26",
             "en": {
               "body": "It joins the catalogue with <code>ColorPicker</code>, <code>ColorPicker.compact</code> and <code>ColorPicker.native</code>: the first two run on <code>@zag-js/color-picker</code> (area, hue rail, alpha rail, hex/RGB/HSL/OKLCH rows and presets), the third is a real <code>input type=\"color\"</code>. OKLCH is not one of the machine's own formats; its row reads and writes through a conversion this system owns (<code>@skryensya/core/color</code>) over the same color the machine already exposes. The Vanilla binding mounts on <code>data-sk-color-picker</code>. Options: <code>name</code>, <code>value</code>, <code>disabled</code>, <code>readOnly</code>, <code>required</code>, <code>invalid</code>, <code>triggerLabel</code>, <code>swatches</code>. Its stylesheet is <code>components/color-picker.css</code>.",
@@ -609,6 +641,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-01",
+            "en": {
+              "body": "<code>connectCommandPalette</code> assumed it mounted BEFORE anyone opened the dialog: its <code>open()</code> does the first render, takes focus and sets <code>aria-expanded</code>, and bails early if the dialog is already open. A lazy host that shows the sheet with <code>showModal()</code> before loading the enhancer chunk (so the sheet's appearance is not gated behind an <code>import()</code>) was then left with an empty list and a combobox that announced itself collapsed. Now, if <code>root.open</code> is already <code>true</code> at mount, it runs that same first-open work.",
+              "title": "The Vanilla enhancer adopts an already-open dialog"
+            },
+            "es": {
+              "body": "<code>connectCommandPalette</code> asumía que se montaba ANTES de que alguien abriera el diálogo: su <code>open()</code> hace el primer render, toma el foco y pone <code>aria-expanded</code>, y sale temprano si el diálogo ya está abierto. Un host lazy que muestra la hoja con <code>showModal()</code> antes de cargar el chunk del enhancer (para que la aparición de la hoja no dependa de un <code>import()</code>) quedaba entonces con una lista vacía y un combobox que se anunciaba colapsado. Ahora, si <code>root.open</code> ya es <code>true</code> al montar, corre ese mismo trabajo de primera apertura.",
+              "title": "El enhancer Vanilla adopta un diálogo que ya está abierto"
+            },
+            "kind": "bugfix"
+          },
           {
             "date": "2026-08-22",
             "en": {
@@ -861,6 +905,7 @@
         "version": "0.1.0-dev"
       }
     ],
+    "footer": [],
     "form-field": [
       {
         "date": null,
@@ -971,6 +1016,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-02",
+            "en": {
+              "body": "<code>language</code> names picking an app's language, not a drawing: all three published sets cover it (Lucide draws it as two script strokes, Phosphor and Material as an <code>A文</code> pair).",
+              "title": "The language role is linked by every icon set"
+            },
+            "es": {
+              "body": "<code>language</code> nombra elegir el idioma de una app, no un dibujo: lo cubren los tres sets publicados (Lucide lo dibuja como dos trazos de escritura, Phosphor y Material como un par <code>A文</code>).",
+              "title": "El rol language se enlaza en todos los sets"
+            },
+            "kind": "feature",
+            "target": "name"
+          },
+          {
             "date": "2026-08-21",
             "en": {
               "body": "<code>zoom-out</code> names pulling the view back, not a magnifying glass. All three published sets cover it.",
@@ -1004,6 +1062,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-02",
+            "en": {
+              "body": "The <code>icon</code> enum includes <code>language</code>, the same role that just joined the stable vocabulary.",
+              "title": "IconStateButton accepts the language role"
+            },
+            "es": {
+              "body": "El enum de <code>icon</code> incluye <code>language</code>, el mismo rol que acaba de entrar al vocabulario estable.",
+              "title": "IconStateButton acepta el rol language"
+            },
+            "kind": "feature",
+            "target": "icon"
+          },
           {
             "date": "2026-08-21",
             "en": {
@@ -1135,6 +1206,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-02",
+            "en": {
+              "body": "The default for <code>inlineAlign</code> (<code>Inline</code>'s option, <code>data-align</code> in markup) moves from <code>\"center\"</code> to <code>\"end\"</code>: a row mixing, say, a label and a control of different heights now sits its items on a shared bottom edge rather than each floating at its own vertical center, so it reads as one line. A composition that relied on centering gets it back with <code>inlineAlign: \"center\"</code> (<code>data-align=\"center\"</code>), a value that did not need declaring before and now does. <code>patterns/layout.css</code> matches the change (<code>.sk-inline</code> starts at <code>align-items: flex-end</code>).",
+              "title": "Inline aligns its items to the bottom edge by default, not the center"
+            },
+            "es": {
+              "body": "El default de <code>inlineAlign</code> (la opción de <code>Inline</code>, <code>data-align</code> en el markup) pasa de <code>\"center\"</code> a <code>\"end\"</code>: una fila que mezcla, por ejemplo, una etiqueta y un control de distinta altura ahora asienta sus items sobre un borde inferior compartido en vez de flotar cada uno en su propio centro vertical, que se lee como una sola línea. Una composición que dependía del centrado vuelve a él con <code>inlineAlign: \"center\"</code> (<code>data-align=\"center\"</code>), un valor que antes no hacía falta declarar y ahora sí. <code>patterns/layout.css</code> acompaña el cambio (<code>.sk-inline</code> arranca en <code>align-items: flex-end</code>).",
+              "title": "Inline alinea sus items al borde inferior por defecto, no al centro"
+            },
+            "kind": "rework"
+          },
           {
             "date": "2026-08-26",
             "en": {
@@ -1534,6 +1617,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-01",
+            "en": {
+              "body": "A <code>collapsible</code> group's list toggles <code>hidden</code> (the enhancer, and the first paint of a <code>defaultOpen: false</code> group), but <code>patterns/nav-list.css</code> sets <code>display: flex</code> on <code>.sk-nav-list__list</code>: an author rule that beats the browser's <code>[hidden] { display: none }</code> on origin, so the list stayed visible while closed. Adds <code>.sk-nav-list__list[hidden] { display: none }</code>, the same fix <code>combobox.css</code>, <code>tree-view.css</code> and <code>date-picker.css</code> already carried. No surface change: the <code>collapsible</code> option simply collapses now.",
+              "title": "A collapsible NavListGroup now actually hides when closed"
+            },
+            "es": {
+              "body": "La lista de un grupo <code>collapsible</code> alterna <code>hidden</code> (el enhancer, y el primer render de un grupo con <code>defaultOpen: false</code>), pero <code>patterns/nav-list.css</code> le pone <code>display: flex</code> a <code>.sk-nav-list__list</code>: una regla de autor que le gana por origen al <code>[hidden] { display: none }</code> del navegador, así que la lista seguía visible cerrada. Se agrega <code>.sk-nav-list__list[hidden] { display: none }</code>, el mismo arreglo que <code>combobox.css</code>, <code>tree-view.css</code> y <code>date-picker.css</code> ya traían. Sin cambios de superficie: la opción <code>collapsible</code> simplemente ahora colapsa.",
+              "title": "Un NavListGroup colapsable ahora se oculta de verdad al cerrarse"
+            },
+            "kind": "bugfix",
+            "target": "collapsible"
+          },
           {
             "date": "2026-08-24",
             "en": {
@@ -2179,6 +2275,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-02",
+            "en": {
+              "body": "The off track no longer uses <code>--color-bg-surface-sunken</code>, which collapsed onto the canvas in both modes and made an off switch look disabled. It now uses <code>--color-border-default</code>, a mid grey identical in light and dark; the thumb is a bright puck (<code>--color-text-on-media</code>) in every state, with a soft shadow that lifts it off the track, and the on thumb is no longer near-black in dark. Disabled gains a <code>--sk-switch-disabled-thumb-bg</code> hook so it sits one step flatter than off.",
+              "title": "The switch off state is now visible in light and dark"
+            },
+            "es": {
+              "body": "La pista apagada dejó de tomar <code>--color-bg-surface-sunken</code>, que en ambos modos se confundía con el lienzo y hacía que un switch apagado pareciera deshabilitado. Ahora usa <code>--color-border-default</code>, un gris medio idéntico en claro y oscuro; el pomo es una pastilla clara (<code>--color-text-on-media</code>) en todos los estados, con una sombra sutil que lo despega de la pista, y el pomo encendido ya no es casi negro en oscuro. Deshabilitado estrena el hook <code>--sk-switch-disabled-thumb-bg</code> para quedar un paso más apagado.",
+              "title": "El estado apagado del switch ahora se ve en claro y en oscuro"
+            },
+            "kind": "bugfix"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>Switch</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>name</code>, <code>value</code>, <code>checked</code>, <code>disabled</code>. Its stylesheet is <code>components/switch.css</code>.",
@@ -2472,6 +2580,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-02",
+            "en": {
+              "body": "A tooltip still appears with its soft materialize, but on close it disappears in the same frame rather than fading. The asymmetry is deliberate: when the pointer leaves, or when the control the tooltip describes is activated (an icon-only button, a segmented option), an exit fade reads as lag over something already read or over a control whose state just changed. Applies to both bindings; nothing to author.",
+              "title": "The tooltip closes instantly, with no exit animation"
+            },
+            "es": {
+              "body": "Un tooltip sigue apareciendo con su materialize suave, pero al cerrarse desaparece en el mismo frame en vez de desvanecerse. La asimetría es a propósito: cuando el puntero se va, o cuando se activa el control que el tooltip describe (un botón de sólo icono, una opción de un segmented), un fade de salida se lee como demora sobre algo que ya se leyó o sobre un control cuyo estado acaba de cambiar. Aplica a los dos bindings; no hay nada que autorar.",
+              "title": "El tooltip se cierra al instante, sin animación de salida"
+            },
+            "kind": "rework"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -3184,6 +3304,119 @@
             "element": "div",
             "host": true,
             "part": "group"
+          }
+        }
+      }
+    },
+    "back-to-top": {
+      "css": "@skryensya/core/components/back-to-top.css",
+      "id": "back-to-top",
+      "options": {
+        "scroller": {
+          "attr": "data-scroller",
+          "machineInput": true,
+          "type": "string"
+        },
+        "target": {
+          "attr": "data-target",
+          "machineInput": true,
+          "type": "string"
+        },
+        "threshold": {
+          "attr": "data-threshold",
+          "default": 400,
+          "machineInput": true,
+          "type": "number"
+        }
+      },
+      "parts": {
+        "icon": "sk-back-to-top__icon",
+        "label": "sk-back-to-top__label",
+        "root": "sk-back-to-top"
+      },
+      "semantics": {
+        "BackToTop": {
+          "alternatives": [
+            "SkipLink",
+            "Toc"
+          ],
+          "avoidWhen": [
+            "la página entra entera en una pantalla: no hay de dónde volver",
+            "lo que se quiere es saltear el chrome de arriba para llegar al contenido: eso es SkipLink, va primero en el foco y usa un ancla real",
+            "el destino es una sección concreta y no el principio del scroller: eso es un enlace de ancla dentro del texto, o Toc",
+            "el foco tiene que viajar siempre al volver arriba: pasale `target` con el id de algo enfocable al inicio, o mirá SkipLink",
+            "hay que restaurar la posición de scroll al navegar entre páginas: eso lo hace el router, no un botón"
+          ],
+          "useWhen": [
+            "la página es larga y quien baja mucho quiere volver al principio sin arrastrar el scroll a mano",
+            "aparece sola después de pasar un umbral de scroll y se va sola al volver arriba: no ocupa una esquina cuando no hace falta",
+            "el scroll lo hace la plataforma (scrollTo): suave, salvo que se pida menos movimiento, y entonces instantáneo",
+            "el scroller puede no ser el documento: con `scroller` apunta a un panel con overflow propio"
+          ]
+        }
+      },
+      "signatures": {
+        "BackToTop": {
+          "host": {
+            "element": "button"
+          },
+          "intent": [
+            "back-to-top",
+            "scroll-to-top",
+            "return-to-top",
+            "scroll-restore",
+            "jump-to-start"
+          ],
+          "mount": "data-sk-back-to-top",
+          "options": [
+            "threshold",
+            "scroller",
+            "target"
+          ],
+          "react": {
+            "from": "@skryensya/react/back-to-top",
+            "name": "BackToTop"
+          },
+          "slots": {
+            "children": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-interactive"
+            ],
+            "attrs": {
+              "hidden": "",
+              "type": "button"
+            },
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon": "chevron-up",
+                      "data-sk-icon-size": "sm"
+                    },
+                    "element": "span"
+                  }
+                ],
+                "element": "span",
+                "part": "icon"
+              },
+              {
+                "element": "span",
+                "part": "label",
+                "slot": "children"
+              }
+            ],
+            "element": "button",
+            "host": true,
+            "part": "root"
           }
         }
       }
@@ -5791,6 +6024,7 @@
             "triggerLabel",
             "swatches"
           ],
+          "portals": true,
           "react": {
             "from": "@skryensya/react/color-picker",
             "name": "ColorPicker"
@@ -5883,6 +6117,7 @@
             "triggerLabel",
             "swatches"
           ],
+          "portals": true,
           "react": {
             "from": "@skryensya/react/color-picker",
             "name": "CompactColorPicker"
@@ -8320,6 +8555,97 @@
         }
       }
     },
+    "footer": {
+      "css": "@skryensya/core/patterns/footer.css",
+      "id": "footer",
+      "options": {
+        "divider": {
+          "attr": "data-divider",
+          "default": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "padding": {
+          "attr": "data-padding",
+          "default": "lg",
+          "type": "enum",
+          "values": [
+            "none",
+            "xs",
+            "sm",
+            "md",
+            "lg",
+            "xl"
+          ]
+        },
+        "surface": {
+          "attr": "data-surface",
+          "default": "sunken",
+          "type": "enum",
+          "values": [
+            "none",
+            "sunken",
+            "surface",
+            "raised"
+          ]
+        }
+      },
+      "parts": {
+        "footer": "sk-footer"
+      },
+      "semantics": {
+        "Footer": {
+          "avoidWhen": [
+            "sólo hace falta separar una sección del resto con relleno o borde en medio de la página; eso es un Box",
+            "es una barra de acciones pegada abajo de un panel o un diálogo (una fila de botones de confirmación); eso se compone con layout.Inline dentro del contenedor, no con Footer",
+            "cada columna de enlaces iría sin nombre accesible: una fila de navigation sin nombre en la lista de landmarks es peor que no tenerla; cada columna es un NavList con aria-label o encabezado visible",
+            "el footer necesita más de dos niveles jerárquicos compitiendo (columnas, franja de newsletter, barra legal, sub-crédito, todo a la vez sin orden): separá lo que sobra en su propia región antes del footer"
+          ],
+          "useWhen": [
+            "es el cierre de la página: la banda final que dice \"la página termina acá\", con navegación secundaria, aviso legal o crédito",
+            "el host es un <footer> a nivel de documento, y eso YA es el landmark contentinfo sin escribir role: nunca se pone role=\"contentinfo\" a mano",
+            "hay como mucho UN <footer> de documento por página; un footer que pertenece de verdad a un <article> es válido pero deja de ser el landmark, y esa es una decisión de quien compone",
+            "la anatomía es libre, igual que Hero: adentro se compone con layout.Grid para la fila de columnas, nav-list.NavList para cada columna (con su propio nombre accesible), typography.Text para el aviso legal, wrapper.Wrapper para sostener la medida de la página",
+            "por defecto surface=\"sunken\" y divider (borde superior) prendido: un footer que comparte el fondo de la página se lee como \"más contenido\", que es lo único que un footer no es"
+          ]
+        }
+      },
+      "signatures": {
+        "Footer": {
+          "host": {
+            "element": "footer"
+          },
+          "intent": [
+            "site-footer",
+            "page-footer",
+            "contentinfo-landmark",
+            "colophon",
+            "footer-navigation-block"
+          ],
+          "options": [
+            "padding",
+            "surface",
+            "divider"
+          ],
+          "react": {
+            "from": "@skryensya/react/layout",
+            "name": "Footer"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "footer",
+            "host": true,
+            "part": "footer",
+            "slot": "children"
+          }
+        }
+      }
+    },
     "form-field": {
       "css": "@skryensya/core/components/form-field.css",
       "id": "form-field",
@@ -8613,6 +8939,7 @@
             "user",
             "visibility",
             "visibility-off",
+            "language",
             "mode-system",
             "mode-light",
             "mode-dark",
@@ -8770,6 +9097,7 @@
                       "user",
                       "visibility",
                       "visibility-off",
+                      "language",
                       "mode-system",
                       "mode-light",
                       "mode-dark",
@@ -9277,7 +9605,7 @@
         },
         "inlineAlign": {
           "attr": "data-align",
-          "default": "center",
+          "default": "end",
           "prop": "align",
           "type": "enum",
           "values": [
@@ -18545,5 +18873,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "885b306403e90f4e"
+  "sourceHash": "bff8b936e8da7a8d"
 }

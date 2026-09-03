@@ -2139,6 +2139,129 @@ const signatureTrees: readonly Canonical[] = [
       ],
     },
   },
+
+  /*
+   * BackToTop, Hero, Footer, ColorPicker (all three signatures): published contracts with NO
+   * canonical-tree coverage until this entry — `rendered.spec.ts`'s "every published signature is
+   * reachable from a canonical tree" was failing on exactly these six ids. This is the same gap
+   * `chart` fell into for four days (2026-08-27 → 08-31): a contract can join `registry.ts`'s
+   * catalogue and `render-tree.tsx`'s module map with no fixture ever exercising its React binding,
+   * so a missing or broken render is caught only by luck, whenever some OTHER tree happens to touch
+   * it. These six close that for the families that had it open.
+   */
+  {
+    name: "back-to-top/default",
+    enhanced: true,
+    tree: { contract: "back-to-top", signature: "BackToTop", options: { threshold: 0 }, children: "Volver arriba" },
+  },
+  {
+    name: "hero/basic",
+    enhanced: false,
+    tree: {
+      contract: "hero",
+      signature: "Hero",
+      options: { align: "center", surface: "raised" },
+      children: [
+        {
+          contract: "typography",
+          signature: "Heading",
+          options: { headingSize: "display-sm", flush: true },
+          children: "Un sistema de diseño real",
+        },
+        {
+          contract: "typography",
+          signature: "Text",
+          options: { tone: "secondary", size: "lg" },
+          children: "Contratos, no componentes sueltos.",
+        },
+      ],
+    },
+  },
+  {
+    name: "footer/site",
+    enhanced: false,
+    tree: {
+      contract: "footer",
+      signature: "Footer",
+      children: [
+        {
+          contract: "wrapper",
+          signature: "Wrapper",
+          children: [
+            {
+              contract: "layout",
+              signature: "Stack",
+              options: { gap: "lg" },
+              children: [
+                {
+                  contract: "layout",
+                  signature: "Grid",
+                  options: { columns: "2", gap: "lg" },
+                  children: [
+                    {
+                      contract: "layout",
+                      signature: "Stack",
+                      options: { gap: "sm" },
+                      children: [
+                        { contract: "typography", signature: "Heading", options: { headingSize: "h5", flush: true }, children: "Producto" },
+                        { contract: "typography", signature: "Link", options: { href: "/componentes" }, children: "Componentes" },
+                        { contract: "typography", signature: "Link", options: { href: "/changelog" }, children: "Changelog" },
+                      ],
+                    },
+                    {
+                      contract: "layout",
+                      signature: "Stack",
+                      options: { gap: "sm" },
+                      children: [
+                        { contract: "typography", signature: "Heading", options: { headingSize: "h5", flush: true }, children: "Legal" },
+                        { contract: "typography", signature: "Link", options: { href: "/licencia" }, children: "Licencia" },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  contract: "typography",
+                  signature: "Text",
+                  options: { tone: "tertiary", size: "sm" },
+                  children: "© skryensya/ui",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    name: "color-picker/default",
+    enhanced: true,
+    tree: {
+      contract: "color-picker",
+      signature: "ColorPicker",
+      options: { name: "brand", value: "#3366ff" },
+      slots: { label: "Color de marca" },
+    },
+  },
+  {
+    name: "color-picker/compact",
+    enhanced: true,
+    tree: {
+      contract: "color-picker",
+      signature: "ColorPicker.compact",
+      options: { name: "accent", value: "#22aabb" },
+      slots: { label: "Acento" },
+    },
+  },
+  {
+    name: "color-picker/native",
+    enhanced: true,
+    tree: {
+      contract: "color-picker",
+      signature: "ColorPicker.native",
+      options: { name: "bg", value: "#ffffff" },
+      slots: { label: "Fondo" },
+    },
+  },
 ];
 
 /*

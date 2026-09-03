@@ -103,7 +103,11 @@ function ColorPickerField({
       ) : null}
       {/* So `name` reaches a form submission, same reasoning as Select's own hidden `<select>`:
           the trigger is a button, not a form control. */}
-      <input {...api.getHiddenInputProps()} className={colorPickerParts.hiddenInput} />
+      {/* `aria-hidden`: the contract's own template states it as a static attr (`core/color-picker.ts`),
+          because this input exists only so `name` reaches a form submission, never to be found by
+          assistive tech. `getHiddenInputProps()` does not add it; the vanilla binding gets it for free
+          from the authored template's own `attrs`, so this restates it explicitly for React too. */}
+      <input {...api.getHiddenInputProps()} aria-hidden="true" className={colorPickerParts.hiddenInput} />
       <div {...api.getControlProps()} {...anchor.anchor(colorPickerParts.control)}>
         {/*
          * Zag SIEMPRE manda `aria-labelledby` (apuntando al label del campo) además de su propio
@@ -319,6 +323,7 @@ function ColorPickerPanelBody({
         <button
           {...api.getEyeDropperTriggerProps()}
           className={`${P.eyedropper} sk-button sk-interactive`}
+          data-icon-only=""
           data-size="sm"
           data-variant="ghost"
         >

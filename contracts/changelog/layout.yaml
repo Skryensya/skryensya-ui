@@ -3,8 +3,31 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "20a8a0fdad83f3aa"
+surface: "1f12834890a36bdf"
 entries:
+  - date: 2026-09-02
+    kind: rework
+    es:
+      title: Inline alinea sus items al borde inferior por defecto, no al centro
+      body: >-
+        El default de <code>inlineAlign</code> (la opción de <code>Inline</code>, <code>data-align</code>
+        en el markup) pasa de <code>"center"</code> a <code>"end"</code>: una fila que mezcla, por
+        ejemplo, una etiqueta y un control de distinta altura ahora asienta sus items sobre un borde
+        inferior compartido en vez de flotar cada uno en su propio centro vertical, que se lee como una
+        sola línea. Una composición que dependía del centrado vuelve a él con
+        <code>inlineAlign: "center"</code> (<code>data-align="center"</code>), un valor que antes no
+        hacía falta declarar y ahora sí. <code>patterns/layout.css</code> acompaña el cambio
+        (<code>.sk-inline</code> arranca en <code>align-items: flex-end</code>).
+    en:
+      title: Inline aligns its items to the bottom edge by default, not the center
+      body: >-
+        The default for <code>inlineAlign</code> (<code>Inline</code>'s option, <code>data-align</code>
+        in markup) moves from <code>"center"</code> to <code>"end"</code>: a row mixing, say, a label
+        and a control of different heights now sits its items on a shared bottom edge rather than each
+        floating at its own vertical center, so it reads as one line. A composition that relied on
+        centering gets it back with <code>inlineAlign: "center"</code> (<code>data-align="center"</code>),
+        a value that did not need declaring before and now does. <code>patterns/layout.css</code>
+        matches the change (<code>.sk-inline</code> starts at <code>align-items: flex-end</code>).
   - date: 2026-08-26
     kind: feature
     es:

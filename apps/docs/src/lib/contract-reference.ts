@@ -59,9 +59,26 @@ type Manifest = {
   readonly contracts: Readonly<Record<string, ContractDoc>>;
   /** Keyed like `contracts`, and separate from it: a component's history is not its shape. */
   readonly changelogs: Readonly<Record<string, readonly Release[]>>;
+  /** The shared release ledger (`contracts/changelog/releases.yaml`), compiled in. */
+  readonly releases: {
+    readonly working: string;
+    readonly releases: readonly { readonly version: string; readonly date: string }[];
+  };
 };
 
 const compiled = manifest as unknown as Manifest;
+
+/**
+ * The version a reader can currently count on, from the shared ledger, NOT from any package's
+ * `version` field: a contract is realized by Core, React and Vanilla together, so
+ * `@skryensya/core`'s number is not the answer to "since when can I rely on this" (see
+ * `contracts/changelog/releases.yaml`'s own header). While nothing is published this is
+ * `<working>-dev`; once a release is cut it is that release's version.
+ */
+export function currentVersion(): string {
+  const { working, releases } = compiled.releases;
+  return releases.length > 0 ? releases[0].version : `${working}-dev`;
+}
 
 /**
  * The contract a page documents.

@@ -48,6 +48,9 @@ export const ui = {
        DESTINO y no la acción, porque son lo primero que se escucha al entrar y "saltar" no dice
        adónde. El contenido va primero: es lo que casi todo el mundo vino a leer. */
     "nav.skipToContent": "Ir al contenido",
+    /* La etiqueta del BackToTop del sitio (chrome, no la del componente en su propia página).
+       Nombra el destino, la misma convención que las dos de arriba. */
+    "nav.backToTop": "Volver arriba",
     "templates.title": "Templates",
     "templates.description":
       "Composiciones completas de layout para copiar, adaptar y combinar con el kit.",
@@ -396,6 +399,52 @@ export const ui = {
     "demo.hero.testimonialName": "Jordan Cole",
     "demo.hero.testimonialRole": "Head of Design, Northwind",
 
+    "demo.footer.colProduct": "Producto",
+    "demo.footer.colResources": "Recursos",
+    "demo.footer.colLegal": "Legal",
+    "demo.footer.linkOverview": "Resumen",
+    "demo.footer.linkChangelog": "Cambios",
+    "demo.footer.linkDocs": "Documentación",
+    "demo.footer.linkRepo": "Repositorio",
+    "demo.footer.linkLicense": "Licencia",
+    "demo.footer.linkPrivacy": "Privacidad",
+    "demo.footer.legal": "© 2026 skryensya/ui",
+    "demo.footer.built": "Compuesto a mano con skryensya/ui",
+    "demo.footer.credit": "Sitio compuesto a mano con skryensya/ui.",
+
+    "footer.description": "El cierre de la página: una banda con superficie propia, un borde arriba y espacio para respirar. Anatomía libre.",
+    "footer.betaBadge": "Beta",
+    "footer.lede":
+      "Footer sólo posee <code>padding</code>, <code>surface</code> y <code>divider</code>, con los valores por defecto pensados para cerrar la página en vez de desaparecer en ella: <code>surface: \"sunken\"</code>, <code>divider</code> prendido y <code>padding: \"lg\"</code>. Las columnas, el aviso legal y el crédito siguen siendo composición libre: <a href=\"/componentes/grid\">Grid</a>, <a href=\"/componentes/nav-list\">NavList</a> y <a href=\"/componentes/typography\">Text</a> adentro.",
+    "footer.whenTitle": "Cuándo usarlo",
+    "footer.whenBody1":
+      "Usa Footer para el cierre de la página: la banda final que dice «la página termina acá», con navegación secundaria, aviso legal o una línea de crédito. El host es un <code>&lt;footer&gt;</code>, y a nivel de documento ese elemento YA es el landmark <code>contentinfo</code> sin escribir <code>role</code>.",
+    "footer.whenBody2":
+      'Footer no impone anatomía: no hay slots con nombre para columnas ni una barra inferior. Compón adentro con <a href="/componentes/grid">Grid</a> para la fila de columnas, <a href="/componentes/nav-list">NavList</a> para cada columna (con su propio nombre accesible) y <a href="/componentes/wrapper">Wrapper</a> para sostener la medida de la página.',
+    "footer.whenBody3":
+      'Si sólo hace falta separar una sección del resto en medio de la página, usa <a href="/componentes/box">Box</a>. Una fila de botones de confirmación abajo de un panel o un diálogo se compone con <a href="/componentes/inline">Inline</a> dentro de ese contenedor, no con Footer.',
+    "footer.htmlTitle": "HTML autorado",
+    "footer.patternSiteTitle": "Footer de sitio",
+    "footer.patternSiteDescription":
+      "Una fila de columnas de enlaces sobre una línea legal, todo dentro de un Wrapper a la medida de la página.",
+    "footer.patternCreditTitle": "Línea de crédito",
+    "footer.patternCreditDescription":
+      "Todo el footer es una sola línea: el cierre de una página personal o de portfolio. El espejo de hero-centered-minimal.",
+    "footer.contractItem1":
+      'En HTML, usa un <code>&lt;footer&gt;</code> con la clase <code>sk-footer</code>. A nivel de documento ese elemento ya es el landmark <code>contentinfo</code>.',
+    "footer.contractItem2":
+      '<code>data-surface</code> acepta <code>none</code>, <code>sunken</code> (default), <code>surface</code> o <code>raised</code>.',
+    "footer.contractItem3":
+      '<code>data-padding</code> acepta <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> (default) o <code>xl</code>. En pantallas angostas <code>lg</code> baja a <code>md</code>.',
+    "footer.contractItem4":
+      '<code>data-divider</code> (el borde superior) viene prendido; <code>data-divider="false"</code> lo apaga sin mover nada abajo.',
+    "footer.a11yP1":
+      'El host de <code>Footer</code> es un <code>&lt;footer&gt;</code> real. A nivel de documento (no anidado dentro de <code>article</code>, <code>aside</code>, <code>main</code>, <code>nav</code> o <code>section</code>) ese elemento ES el landmark <code>contentinfo</code> sin escribir <code>role</code>, y un lector de pantalla lo lista junto a <code>banner</code>, <code>main</code> y la navegación de la página.',
+    "footer.a11yP2":
+      'Debe haber como mucho UN <code>&lt;footer&gt;</code> de documento por página, la misma regla que <code>banner</code> o <code>main</code>. Un footer que pertenece de verdad a un <code>&lt;article&gt;</code> sigue siendo válido, sólo que deja de ser el landmark.',
+    "footer.a11yP3":
+      'Una fila de columnas de enlaces es navegación: cada columna es un <a href="/componentes/nav-list">NavList</a> con su propio nombre accesible (<code>aria-label</code> o un encabezado visible), para que la lista de landmarks diga «Footer / Recursos», no una <code>navigation</code> sin nombre por columna.',
+
     "hero.description": "La apertura de una página: una superficie propia y espacio generoso, sin anatomía fija.",
     "hero.betaBadge": "Beta",
     "hero.lede":
@@ -452,6 +501,57 @@ export const ui = {
     "hero.a11yP2": 'Se vuelve un landmark sólo si quien lo compone lo autora explícitamente como uno (<code>&lt;section&gt;</code> a mano en HTML, <code>as="section"</code> en React). En ese momento aplica la misma regla de WAI para cualquier landmark sin nombre: dale <code>aria-label</code> o <code>aria-labelledby</code> apuntando al encabezado adentro.',
     "hero.a11yP3": 'El contrato no puede exigir estructuralmente "hay un encabezado real adentro" ni "la imagen tiene alt": <code>children</code> acepta contenido libre, la misma razón por la que Hero no tiene anatomía fija. Lo que el contrato sí exige, vía el esquema normal, son sus propias opciones (<code>padding</code>/<code>surface</code>/<code>align</code>); las reglas de contenido de arriba se enseñan por ejemplo, en cada patrón publicado, no por una validación que una composición distinta podría esquivar en silencio.',
 
+    "backToTop.description":
+      "Un botón fijado a una esquina que devuelve un scroller a su inicio. Aparece solo después de pasar un umbral de scroll y se va solo al volver arriba.",
+    "backToTop.betaBadge": "Beta",
+    "backToTop.lede":
+      "En una página larga hay un movimiento que se repite: volver al principio. El teclado tiene <kbd>Inicio</kbd> y el trackpad un envión fuerte, y ninguno se ve. Un botón anclado a la esquina es la señal de que ese movimiento existe.",
+    "backToTop.whenTitle": "Cuándo usarlo",
+    "backToTop.whenBody1":
+      "Cuando la página es larga y quien baja mucho quiere volver arriba sin arrastrar el scroll a mano. El botón viene con <code>hidden</code>: sin JavaScript no ocupa la esquina, y con él aparece recién después de pasar <code>threshold</code> píxeles (400 por defecto) y se esconde de nuevo al volver.",
+    "backToTop.whenBody2":
+      "No es <a href=\"/componentes/skip-link\">SkipLink</a>: ese va primero en el documento, se alcanza con Tab antes que nada y salta por un ancla real. Este aparece tarde, se alcanza con el puntero o tabulando hasta la esquina, y llama a <code>scrollTo</code> sobre un scroller que puede no ser el documento. Si querés llevar a una sección puntual y no al principio, eso es un enlace de ancla o <a href=\"/componentes/toc\">Toc</a>.",
+    "backToTop.behaviorTitle": "El comportamiento vive en las dos bindings, no en el markup",
+    "backToTop.behaviorBody1":
+      "No hay máquina de Zag para \"revelar al pasar un umbral\", así que se escribe como <code>hotkey</code>: la parte pura —¿pasó el umbral?, ¿la animación se atenúa?— vive en <code>@skryensya/core/back-to-top</code> y la comparten el enhancer de Vanilla y el componente de React. Cada binding pone lo que toca la plataforma: qué scroller escuchar, prender y apagar <code>hidden</code> por frame, y el <code>scrollTo</code> al hacer clic.",
+    "backToTop.behaviorBody2":
+      "El scroll lo hace la plataforma: suave por defecto, instantáneo si el lector pidió menos movimiento (<code>prefers-reduced-motion</code>). En este preview <code>threshold</code> está en <code>0</code> para que se vea sin nada que scrollear; en una página real se queda escondido hasta que bajás una pantalla o dos.",
+    "backToTop.demoLabel": "Volver arriba",
+    "backToTop.optionsTitle": "Opciones",
+    "backToTop.optionsBody":
+      "<code>threshold</code>: los píxeles de scroll antes de aparecer. <code>scroller</code>: un selector CSS para un panel con overflow propio, en vez de la ventana. <code>target</code>: un selector de algo enfocable arriba al que mover el foco después del scroll, para que el siguiente Tab siga desde el principio y no desde un control que ya se escondió (el destino tiene que poder recibir el foco, con <code>tabindex=\"-1\"</code> si es un landmark o un encabezado).",
+    "backToTop.a11yP1":
+      "Es un <code>&lt;button type=\"button\"&gt;</code> con un nombre accesible obligatorio: la marca visible es un <code>chevron-up</code> del set de iconos (decorativo, <code>aria-hidden</code>) y la etiqueta que le pasás (<code>sk-back-to-top__label</code>) queda recortada a una caja de solo-nombre, la misma técnica que <code>sk-visually-hidden</code>. Un texto requerido en un <code>&lt;button&gt;</code> hace que el control siempre tenga nombre, así que no hay regla de a11y que evaluar: la garantía es estructural.",
+    "backToTop.a11yP2":
+      "Escondido es <code>visibility</code>, no <code>display</code>: la hoja pisa el <code>[hidden]</code> de la UA para que la aparición pueda animarse, y <code>visibility: hidden</code> hace el trabajo semántico —fuera del árbol de accesibilidad y fuera del orden de tabulación— que <code>[hidden]</code> promete. Sin <code>target</code>, el foco no viaja: si te importa que el Tab siguiente arranque de arriba, pasalo.",
+    "backToTop.contractItem1":
+      "En HTML: un <code>&lt;button class=\"sk-back-to-top sk-interactive\" data-sk-back-to-top hidden&gt;</code> con el placeholder <code>&lt;span class=\"sk-back-to-top__icon\"&gt;&lt;span data-sk-icon=\"chevron-up\"&gt;</code> y la etiqueta en un <code>&lt;span class=\"sk-back-to-top__label\"&gt;</code>. El enhancer lo monta solo por <code>montaje automático</code> (y el mismo pase enlaza el icono al set).",
+    "backToTop.contractItem2":
+      "En React: <code>&lt;BackToTop&gt;Volver arriba&lt;/BackToTop&gt;</code>. <code>threshold</code>, <code>scroller</code> y <code>target</code> son props; el componente maneja <code>hidden</code> por estado.",
+    "backToTop.contractItem3":
+      "La hoja es <code>components/back-to-top.css</code>. Para un pill con texto visible, un consumidor restaura <code>.sk-back-to-top__label</code> (<code>position: static</code>, sin recorte) y le da aire al root; el nombre ya está bien, esto solo decide si se dibuja.",
+    "backToTop.demoStaticTitle": "El objeto",
+    "backToTop.demoStaticBody":
+      'Con <code>threshold</code> en <code>0</code> queda siempre visible, así se ve la pieza: un botón redondo con un <code>chevron-up</code> del set de iconos (Lucide en este sitio) y una sombra de superficie flotante. Al pasarle el puntero se levanta un pelo y el chevron lo acompaña.',
+    "backToTop.demoStaticLabel": "BackToTop siempre visible",
+    "backToTop.demoScrollTitle": "El comportamiento",
+    "backToTop.demoScrollBody":
+      "Acá el preview scrollea. Bajá dentro del recuadro: el botón aparece con un pop —aparece, escala desde chico, sube a su lugar— una vez que pasás el umbral, y al hacerle clic te lleva de vuelta arriba. Volvé a subir y se va solo.",
+    "backToTop.demoScrollLabel": "BackToTop al scrollear",
+    "backToTop.demoScrollHint": "Scrolleá dentro del recuadro para verlo aparecer.",
+    "backToTop.scrollDemoP1":
+      "Una página larga tiene un movimiento que se repite hasta el cansancio: volver al principio. Después de leer varias pantallas, quien quiere releer el encabezado o cambiar de sección tiene que arrastrar la barra o buscar la tecla Inicio, y ninguna de las dos se ve.",
+    "backToTop.scrollDemoP2":
+      "Un botón anclado a la esquina es la señal de que ese movimiento existe. No está desde el principio: aparece recién cuando ya te alejaste lo suficiente como para quererlo, y se esconde de nuevo cuando llegás. Cuando no hace falta, no ocupa la esquina.",
+    "backToTop.scrollDemoP3":
+      "El scroll lo hace la plataforma con <code>scrollTo</code>: suave por defecto, instantáneo si pediste menos movimiento. Con <code>target</code>, además mueve el foco a algo enfocable de arriba, así el siguiente Tab arranca del principio y no de un control que se acaba de esconder.",
+    "backToTop.htmlTitle": "HTML autorado",
+    "backToTop.targetTitle": "Umbral y foco",
+    "backToTop.targetBody":
+      '<code>data-threshold</code> son los píxeles de scroll antes de aparecer. <code>data-target</code> es un selector de algo enfocable arriba: sin él, el foco se queda en un botón que ya no se ve; con él, el siguiente Tab sigue desde el principio. El destino tiene que poder recibir el foco (<code>tabindex="-1"</code> si es un landmark o un encabezado).',
+    "backToTop.pillTitle": "Pill con texto visible",
+    "backToTop.pillBody":
+      "Por defecto es solo ícono y la etiqueta va recortada. El nombre accesible ya está; para dibujarlo, un consumidor destapa <code>.sk-back-to-top__label</code> y le da lugar al root.",
     "box.description": "Superficie visual y semántica elegida por quien la usa; sin interacción propia.",
     "box.lede":
       "Box sólo posee superficie, borde y padding. Quien lo usa elige el elemento semántico. No aporta interacción ni convierte el contenido en un destino o acción.",
@@ -558,6 +658,7 @@ export const ui = {
 
     "callout.description":
       "Callout: mensaje inline persistente con tono (incluido neutral), anuncio accesible y componente React.",
+    "callout.betaBadge": "Beta",
     "callout.lede1":
       "Callout es un mensaje inline que permanece en el layout mientras dure su condición. A diferencia de Toast, transitorio y montado en una región flotante, Callout vive en el flujo del contenido. Un solo peso visual, el panel con borde: el tono es la única variable, así que dos Callouts nunca compiten por cuál se ve más urgente.",
     "callout.lede2":
@@ -605,6 +706,7 @@ export const ui = {
 
     "calendar.description":
       "Grid de fecha independiente: día, mes o año/década, sin campo ni popover, con el mismo botón cambiando de vista.",
+    "calendar.betaBadge": "Beta",
     "calendar.lede":
       'El grid de fecha en sí, separado del campo que lo abre. <a href="/componentes/date-picker">DatePicker</a> lo nestea dentro de un popover; esta página es el mismo componente de pie, para cuando el calendario <em>es</em> la UI (una página de reservas, un filtro de dashboard) y no hace falta un input detrás.',
     "calendar.gridTitle": "Grid",
@@ -1289,6 +1391,7 @@ export const ui = {
     "demo.avatar.personThree": "Persona 3",
 
     "avatar.description": "Avatar: ImageFrame o iniciales, AvatarGroup con colapso +N y componente React.",
+    "avatar.betaBadge": "Beta",
     "avatar.lede":
       'Avatar es el token visual de una persona o entidad: una foto recortada con <strong>ImageFrame</strong> (1/1, cover, pill) o, sin imagen, las dos primeras letras del nombre. <strong>AvatarGroup</strong> apila un conjunto y colapsa el excedente en un contador «+N».',
     "avatar.body":
@@ -1638,6 +1741,7 @@ export const ui = {
 
     "carousel.description":
       "Carousel: región scroll-snap nativa de slides con controles machine-backed (Zag), snap-to-index y una base sin JS.",
+    "carousel.betaBadge": "Beta",
     "carousel.lede":
       "Secciones desplazables <strong>nativas</strong>: la pista es un <code>&lt;div&gt;</code> con <code>scroll-snap-type</code>, así que el desplazamiento, el momentum táctil y los puntos de anclaje son de la plataforma, no de un script. Encima van dos capas de control sobre ese mismo sustrato: una base <strong>sin JS</strong> con los pseudo-elementos nativos de carrusel, y un enhancer <strong>machine-backed</strong> sobre <code>@zag-js/carousel</code> que mide la pista, deriva las páginas y dibuja botones y dots. Cada slide es cualquier contenido: una card, una imagen, un stat.",
     "carousel.cardsTitle": "Carrusel de tarjetas",
@@ -1715,6 +1819,7 @@ export const ui = {
 
     "changelogPage.description":
       "Changelog: historial fechado con riel, donde la fecha es lo que se busca y el punto dice qué tipo de cambio fue.",
+    "changelogPage.betaBadge": "Beta",
     "changelogPage.lede":
       "Un historial fechado, lo más nuevo arriba. La fecha encabeza cada entrada porque es lo que el lector viene a buscar, y el punto del riel es una marca neutra que dice <em>cuándo</em>: el <em>qué</em> lo dice la palabra al lado. Es estático: no hay enhancer ni estado.",
     "changelogPage.previewNote": "cuatro tipos",
@@ -1812,6 +1917,7 @@ export const ui = {
     "codePreview.test3": "Dice el conteo en el idioma del autor, y solo el número cuando no hay uno.",
 
     "combobox.description": "Sugerencias editables con estados claros, ayuda contextual y navegación completa por teclado.",
+    "combobox.betaBadge": "Beta",
     "combobox.lede": "Sugerencias editables con contexto, estados claros y navegación completa por teclado.",
     "combobox.contractBody1":
       "Combobox filtra una colección autorada sin reemplazar sus opciones. Select conserva una lista cerrada e Input no muestra sugerencias.",
@@ -1986,6 +2092,7 @@ export const ui = {
     "colorPicker.test7": "Mantiene el nombre accesible del trigger sin que Zag lo pise.",
 
     "drawer.description": "Un Vaul en el borde inline, a lo alto de la pantalla. Envía hooks y nada de estructura.",
+    "drawer.betaBadge": "Beta",
     "fadeEdge.description": "Efecto de desvanecimiento CSS puro para ocultar contenido suavemente en los bordes.",
     "fadeEdge.betaBadge": "Beta",
     "drawer.lede":
@@ -2033,6 +2140,7 @@ export const ui = {
     "drawer.test1": "Agrega el modificador de drawer solo para la firma de drawer.",
 
     "emptyState.description": "Explica por qué no hay contenido y ofrece una siguiente acción concreta.",
+    "emptyState.betaBadge": "Beta",
     "emptyState.contractBody": "El título nombra el estado, la descripción explica, y la acción resuelve. No uses EmptyState durante carga.",
     "emptyState.a11yBody": "El icono es decorativo; el texto y la acción sostienen el significado sin depender de una ilustración.",
 
@@ -2066,6 +2174,7 @@ export const ui = {
 
 
     "grid.description": "Grid: columnas iguales con gap nombrado y semántica elegida por quien lo usa.",
+    "grid.betaBadge": "Beta",
     "grid.lede":
       "Una grilla de columnas iguales para grupos de contenido. Cada columna usa <code>minmax(0, 1fr)</code>: evita que el tamaño mínimo intrínseco ensanche las columnas.",
     "grid.multicolTitle": "CSS Multi-column Layout",
@@ -3344,6 +3453,7 @@ export const ui = {
     "wrapperPage.test1": "Renderiza Wrapper como una columna de página sobre la escala de tamaños.",
 
     "treeViewPage.description": "Jerarquías expandibles con selección simple o múltiple.",
+    "treeViewPage.betaBadge": "Beta",
     "treeViewPage.lede":
       'Una jerarquía que se recorre con el teclado: las ramas se abren y cierran, los nodos se seleccionan. Usa TreeView cuando la relación padre-hijo <em>es</em> el contenido: archivos, categorías, una organización. Para divulgaciones hermanas sin jerarquía usa <a href="/componentes/accordion">Accordion</a>; para navegar por secciones, <a href="/componentes/sidebar">Sidebar</a>.',
     "treeViewPage.minimalTitle": "Árbol mínimo",
@@ -3396,6 +3506,7 @@ export const ui = {
     "treeViewPage.testReact7": "Un nodo deshabilitado queda fuera de la selección.",
 
     "treegridPage.description": "Filas jerárquicas con columnas: expande o colapsa una sin perder el resto de sus valores.",
+    "treegridPage.betaBadge": "Beta",
     "treegridPage.lede":
       'Combina jerarquía y columnas a la vez: el patrón WAI-ARIA <code>treegrid</code>. Úsalo cuando cada fila necesita varios valores independientes ADEMÁS de su lugar en la jerarquía (un mensaje con remitente, un archivo con tamaño y fecha). Para una sola columna de texto jerárquico usa <a href="/componentes/tree-view">TreeView</a>; para columnas sin jerarquía, <a href="/componentes/table">Table</a>.',
     "treegridPage.minimalTitle": "Bandeja de entrada",
@@ -3533,6 +3644,7 @@ export const ui = {
 
     "dataGridPage.description":
       "Data Grid: navegación 2D con roving tabindex para datos tabulares o widgets agrupados.",
+    "dataGridPage.betaBadge": "Beta",
     "dataGridPage.lede":
       'La propia especificación WAI-ARIA trata "data grids" y "layout grids" como el mismo patrón. Mismos roles, misma mecánica de roving tabindex, así que este es UN contrato, no dos. Úsalo cuando una grilla de celdas necesita navegación 2D: <a href="/componentes/table">Table</a> ya cubre el caso de datos tabulares ESTÁTICOS, sin modelo de teclado propio.',
     "dataGridPage.dataTitle": "Datos tabulares",
@@ -4347,7 +4459,29 @@ export const ui = {
     "footer.body":
       "Este sitio consume {core} y los paquetes de componentes por sus exports maps, con bundler, el mismo camino que documenta. Cada píxel sale de un token.",
     "footer.reportIssue.label": "Reportar un problema en GitHub",
-    "footer.reportIssue.body": "**Página:** {url}\n\nDescribe el problema:\n",
+    "footer.reportIssue.description":
+      "Se abre en GitHub con la página y tu navegador ya completados, y espacio para contar qué pasó.",
+    /*
+     * Un pie de bug liviano, no un formulario: tres preguntas concretas (qué esperabas, qué pasó,
+     * cómo reproducirlo) en vez del "Describe el problema:" de antes, que dejaba a quien reporta
+     * inventar su propia estructura o, más seguido, no dar ninguna. `{url}` es lo único que el
+     * servidor puede completar; `{ua}`/`{viewport}` de `footer.reportIssue.environment` los
+     * completa `report-issue.ts` en el navegador, así que quedan intactos acá (nunca se les pasan
+     * `vars`, por eso `t()` los deja como están).
+     */
+    "footer.reportIssue.body":
+      "**Página:** {url}\n\n**¿Qué esperabas que pasara?**\n\n\n**¿Qué pasó en cambio?**\n\n\n**Pasos para reproducirlo:**\n1. \n2. \n3. \n",
+    /* Agregado por `report-issue.ts` al final del cuerpo de arriba, solo con JS: lo único que el
+       servidor no puede saber. Sin JS el cuerpo de arriba ya es un reporte completo por sí solo. */
+    "footer.reportIssue.environment": "\n\n**Entorno:**\n- Navegador: {ua}\n- Tamaño de ventana: {viewport}",
+
+    "siteFooter.landmarkLabel": "Pie del sitio",
+    "siteFooter.tagline": "Un contrato, dos runtimes, cero desvíos. Sistema de diseño framework-agnóstico.",
+    "siteFooter.colBrowse": "Explorar",
+    "siteFooter.repo": "GitHub",
+    "siteFooter.legal": "© {year} skryensya/ui",
+    "siteFooter.versionLabel": "Versión actual {version}, ver el registro de cambios",
+    "siteFooter.credit": "Sitio compuesto a mano por {author} utilizando skryensya/ui.",
   },
 
   en: {
@@ -4367,6 +4501,9 @@ export const ui = {
     "nav.comingSoon": "Coming soon",
     "nav.resizeRail": "Resize the navigation",
     "nav.skipToContent": "Go to content",
+    /* The site's own BackToTop label (chrome, not the component's own doc-page copy). Names the
+       destination, the same convention as the two above. */
+    "nav.backToTop": "Back to top",
     "templates.title": "Templates",
     "templates.description":
       "Complete layout compositions to copy, adapt, and combine with the kit.",
@@ -4700,6 +4837,52 @@ export const ui = {
     "demo.hero.testimonialName": "Jordan Cole",
     "demo.hero.testimonialRole": "Head of Design, Northwind",
 
+    "demo.footer.colProduct": "Product",
+    "demo.footer.colResources": "Resources",
+    "demo.footer.colLegal": "Legal",
+    "demo.footer.linkOverview": "Overview",
+    "demo.footer.linkChangelog": "Changelog",
+    "demo.footer.linkDocs": "Documentation",
+    "demo.footer.linkRepo": "Repository",
+    "demo.footer.linkLicense": "License",
+    "demo.footer.linkPrivacy": "Privacy",
+    "demo.footer.legal": "© 2026 skryensya/ui",
+    "demo.footer.built": "Hand-composed with skryensya/ui",
+    "demo.footer.credit": "Site hand-composed with skryensya/ui.",
+
+    "footer.description": "A page's close: a band with a surface of its own, a rule above it, and room to breathe. Free anatomy.",
+    "footer.betaBadge": "Beta",
+    "footer.lede":
+      "Footer owns only <code>padding</code>, <code>surface</code> and <code>divider</code>, with defaults tuned to close the page rather than disappear into it: <code>surface: \"sunken\"</code>, <code>divider</code> on, and <code>padding: \"lg\"</code>. Columns, the legal line and the credit stay free composition: <a href=\"/en/components/grid\">Grid</a>, <a href=\"/en/components/nav-list\">NavList</a> and <a href=\"/en/components/typography\">Text</a> inside.",
+    "footer.whenTitle": "When to use it",
+    "footer.whenBody1":
+      "Use Footer for a page's close: the final band that says “the page ends here”, with secondary navigation, a legal line or a credit. The host is a <code>&lt;footer&gt;</code>, and at document level that element already IS the <code>contentinfo</code> landmark with no <code>role</code> written.",
+    "footer.whenBody2":
+      'Footer imposes no anatomy: there are no named slots for columns or a bottom bar. Compose inside with <a href="/en/components/grid">Grid</a> for the column row, <a href="/en/components/nav-list">NavList</a> for each column (with its own accessible name) and <a href="/en/components/wrapper">Wrapper</a> to hold the page\'s measure.',
+    "footer.whenBody3":
+      'To separate a section from the rest mid-page, use <a href="/en/components/box">Box</a>. A row of confirm buttons at the bottom of a panel or dialog is composed with <a href="/en/components/inline">Inline</a> inside that container, not with Footer.',
+    "footer.htmlTitle": "Authored HTML",
+    "footer.patternSiteTitle": "Site footer",
+    "footer.patternSiteDescription":
+      "A row of link columns over a legal line, all inside a Wrapper at the page's own measure.",
+    "footer.patternCreditTitle": "Credit line",
+    "footer.patternCreditDescription":
+      "The whole footer is one line: a personal or portfolio page's close. The mirror of hero-centered-minimal.",
+    "footer.contractItem1":
+      'In HTML, use a <code>&lt;footer&gt;</code> with the <code>sk-footer</code> class. At document level that element already is the <code>contentinfo</code> landmark.',
+    "footer.contractItem2":
+      '<code>data-surface</code> accepts <code>none</code>, <code>sunken</code> (default), <code>surface</code> or <code>raised</code>.',
+    "footer.contractItem3":
+      '<code>data-padding</code> accepts <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> (default) or <code>xl</code>. On narrow screens <code>lg</code> steps down to <code>md</code>.',
+    "footer.contractItem4":
+      '<code>data-divider</code> (the top rule) is on by default; <code>data-divider="false"</code> turns it off without shifting anything below.',
+    "footer.a11yP1":
+      "<code>Footer</code>'s own host is a real <code>&lt;footer&gt;</code>. At document level (not nested inside <code>article</code>, <code>aside</code>, <code>main</code>, <code>nav</code> or <code>section</code>) that element IS the <code>contentinfo</code> landmark with no <code>role</code> written, and a screen reader lists it alongside <code>banner</code>, <code>main</code> and the page's navigation.",
+    "footer.a11yP2":
+      "There must be AT MOST ONE document-level <code>&lt;footer&gt;</code> per page, the same rule as <code>banner</code> or <code>main</code>. A footer that genuinely belongs to one <code>&lt;article&gt;</code> is still valid, it just is not the landmark.",
+    "footer.a11yP3":
+      'A row of link columns is navigation: each column is a <a href="/en/components/nav-list">NavList</a> with its own accessible name (<code>aria-label</code> or a visible heading), so the landmark list reads “Footer / Resources”, not one unnamed <code>navigation</code> per column.',
+
     "hero.description": "A page's opening: a surface of its own and generous room, no fixed anatomy.",
     "hero.betaBadge": "Beta",
     "hero.lede":
@@ -4756,6 +4939,57 @@ export const ui = {
     "hero.a11yP2": 'It only becomes a landmark if the composer explicitly authors it as one (a hand-written <code>&lt;section&gt;</code> in HTML, <code>as="section"</code> in React). At that point the usual rule for any unnamed landmark applies: give it <code>aria-label</code> or <code>aria-labelledby</code> pointing at the heading inside.',
     "hero.a11yP3": "The contract can't structurally require \"there's a real heading inside\" or \"the image has alt text\": <code>children</code> accepts free-form content, the same reason Hero has no fixed anatomy. What the contract DOES enforce, through the usual schema, are its own options (<code>padding</code>/<code>surface</code>/<code>align</code>); the content rules above are taught by example, in every published pattern, not by a check a differently-shaped composition could silently dodge.",
 
+    "backToTop.description":
+      "A button pinned to a corner that returns a scroller to its start. It appears only after the reader is past a scroll threshold and hides again on the way back.",
+    "backToTop.betaBadge": "Beta",
+    "backToTop.lede":
+      "A long page has one move the reader makes over and over: get back to the start. The keyboard has <kbd>Home</kbd> and a trackpad has a hard flick, and neither is discoverable. A button pinned to a corner is the affordance that says the move exists.",
+    "backToTop.whenTitle": "When to use it",
+    "backToTop.whenBody1":
+      "When the page is long and a reader who scrolled far wants back to the top without dragging the scrollbar by hand. The button ships <code>hidden</code>: with no JavaScript it takes no corner, and with it, it appears only once the reader is <code>threshold</code> pixels past the top (400 by default) and hides again on the way back.",
+    "backToTop.whenBody2":
+      "It is not <a href=\"/en/components/skip-link\">SkipLink</a>: that one goes first in the document, is reached by Tab before anything else, and jumps through a real anchor. This one appears late, is reached by pointer or by tabbing to the corner, and calls <code>scrollTo</code> on a scroller that may not be the document. To land on a specific section rather than the start, that is an anchor link, or <a href=\"/en/components/toc\">Toc</a>.",
+    "backToTop.behaviorTitle": "The behaviour lives in both bindings, not in the markup",
+    "backToTop.behaviorBody1":
+      "No Zag machine covers \"reveal past a scroll threshold\", so it is written the <code>hotkey</code> way: the pure half — past the threshold?, does the scroll animate? — lives in <code>@skryensya/core/back-to-top</code> and both the Vanilla enhancer and the React component share it. Each binding owns what touches the platform: which scroller to watch, toggling <code>hidden</code> per frame, and the <code>scrollTo</code> on click.",
+    "backToTop.behaviorBody2":
+      "The scroll is the platform's: smooth by default, instant when the reader asked for less motion (<code>prefers-reduced-motion</code>). This preview pins <code>threshold</code> to <code>0</code> so the button shows with nothing to scroll; on a real page it stays hidden until you are a screen or two down.",
+    "backToTop.demoLabel": "Back to top",
+    "backToTop.optionsTitle": "Options",
+    "backToTop.optionsBody":
+      "<code>threshold</code>: the scroll distance before it reveals. <code>scroller</code>: a CSS selector for an inner <code>overflow</code> pane instead of the window. <code>target</code>: a selector for a focusable element up top to move focus to after the scroll, so the next Tab continues from the start rather than from a control that has hidden itself (the target has to be focusable, with <code>tabindex=\"-1\"</code> if it is a landmark or a heading).",
+    "backToTop.a11yP1":
+      "It is a <code>&lt;button type=\"button\"&gt;</code> with a required accessible name: the visible mark is a <code>chevron-up</code> from the bound icon set (decorative, <code>aria-hidden</code>) and the label you pass (<code>sk-back-to-top__label</code>) is clipped to a name-only box, the same technique as <code>sk-visually-hidden</code>. Required text on a <code>&lt;button&gt;</code> means the control is always named, so there is no a11y rule to evaluate: the guarantee is structural.",
+    "backToTop.a11yP2":
+      "Hidden is <code>visibility</code>, not <code>display</code>: the stylesheet overrides the UA <code>[hidden]</code> so the reveal can animate, and <code>visibility: hidden</code> does the semantic work — out of the accessibility tree, out of the tab order — that <code>[hidden]</code> promises. Without <code>target</code>, focus does not travel: if it matters that the next Tab starts from the top, pass it.",
+    "backToTop.contractItem1":
+      "In HTML: a <code>&lt;button class=\"sk-back-to-top sk-interactive\" data-sk-back-to-top hidden&gt;</code> with the placeholder <code>&lt;span class=\"sk-back-to-top__icon\"&gt;&lt;span data-sk-icon=\"chevron-up\"&gt;</code> and the label in a <code>&lt;span class=\"sk-back-to-top__label\"&gt;</code>. The enhancer mounts it on its own through <code>auto-mounting</code> (and the same pass binds the icon to the set).",
+    "backToTop.contractItem2":
+      "In React: <code>&lt;BackToTop&gt;Back to top&lt;/BackToTop&gt;</code>. <code>threshold</code>, <code>scroller</code> and <code>target</code> are props; the component manages <code>hidden</code> from state.",
+    "backToTop.contractItem3":
+      "Its stylesheet is <code>components/back-to-top.css</code>. For a pill with visible text, a consumer restores <code>.sk-back-to-top__label</code> (<code>position: static</code>, no clip) and gives the root room; the name is already correct, this only decides whether it is drawn.",
+    "backToTop.demoStaticTitle": "The object",
+    "backToTop.demoStaticBody":
+      'With <code>threshold</code> at <code>0</code> it stays visible, so you can see the piece: a round button with a <code>chevron-up</code> from the bound icon set (Lucide on this site) and a floating-surface shadow. On hover it lifts a hair and the chevron rides up with it.',
+    "backToTop.demoStaticLabel": "BackToTop, always shown",
+    "backToTop.demoScrollTitle": "The behaviour",
+    "backToTop.demoScrollBody":
+      "This preview scrolls. Scroll down inside the box: the button pops in — fades, scales up from small, rises into place — once you are past the threshold, and clicking it carries you back to the top. Scroll back up and it hides itself.",
+    "backToTop.demoScrollLabel": "BackToTop on scroll",
+    "backToTop.demoScrollHint": "Scroll inside the box to see it appear.",
+    "backToTop.scrollDemoP1":
+      "A long page has one move the reader makes over and over: get back to the start. After a few screens of reading, someone who wants to re-read the heading or jump sections has to drag the scrollbar or reach for the Home key, and neither is visible.",
+    "backToTop.scrollDemoP2":
+      "A button pinned to the corner is the affordance that says the move exists. It is not there from the start: it appears once you have gone far enough to want it, and hides again once you are back. When it is not needed, it takes no corner.",
+    "backToTop.scrollDemoP3":
+      "The scroll is the platform's, via <code>scrollTo</code>: smooth by default, instant if you asked for less motion. With <code>target</code> it also moves focus to a focusable element up top, so the next Tab starts from the beginning rather than from a control that just hid itself.",
+    "backToTop.htmlTitle": "Authored HTML",
+    "backToTop.targetTitle": "Threshold and focus",
+    "backToTop.targetBody":
+      '<code>data-threshold</code> is the scroll distance before it appears. <code>data-target</code> is a selector for a focusable element up top: without it, focus is stranded on a button that has hidden itself; with it, the next Tab continues from the start. The target has to be focusable (<code>tabindex="-1"</code> if it is a landmark or a heading).',
+    "backToTop.pillTitle": "Pill with visible text",
+    "backToTop.pillBody":
+      "By default it is icon-only and the label is clipped. The accessible name is already there; to draw it, a consumer un-clips <code>.sk-back-to-top__label</code> and gives the root room.",
     "box.description": "Visual and semantic surface chosen by whoever uses it; no interaction of its own.",
     "box.lede":
       "Box only owns surface, border and padding. Whoever uses it chooses the semantic element. It adds no interaction and does not turn the content into a destination or an action.",
@@ -4863,6 +5097,7 @@ export const ui = {
 
     "callout.description":
       "Callout: persistent inline message with tone (including neutral), an accessible announcement and a React component.",
+    "callout.betaBadge": "Beta",
     "callout.lede1":
       "Callout is an inline message that stays in the layout for as long as its condition holds. Unlike Toast, transient and mounted in a floating region, Callout lives in the flow of content. One visual weight, the bordered panel: tone is the only variable, so two Callouts never compete over which looks more urgent.",
     "callout.lede2":
@@ -4910,6 +5145,7 @@ export const ui = {
 
     "calendar.description":
       "Standalone date grid for a day, month, or year/decade view, with no field or popover and the same button switching views.",
+    "calendar.betaBadge": "Beta",
     "calendar.lede":
       'The date grid itself, separate from the field that opens it. <a href="/en/components/date-picker">DatePicker</a> nests it inside a popover; this page is the same component standing alone, for when the calendar <em>is</em> the UI (a reservations page, a dashboard filter) and no input is needed behind it.',
     "calendar.gridTitle": "Grid",
@@ -5586,6 +5822,7 @@ export const ui = {
     "demo.avatar.personThree": "Person 3",
 
     "avatar.description": "Avatar: ImageFrame or initials, AvatarGroup with +N collapse, and a React component.",
+    "avatar.betaBadge": "Beta",
     "avatar.lede":
       'Avatar is the visual token for a person or entity: a cropped photo with <strong>ImageFrame</strong> (1/1, cover, pill), or, with no image, the first two letters of the name. <strong>AvatarGroup</strong> stacks a set and collapses the overflow into a "+N" counter.',
     "avatar.body":
@@ -5908,6 +6145,7 @@ export const ui = {
 
     "carousel.description":
       "Carousel: a native scroll-snap slide region with machine-backed (Zag) controls, snap-to-index, and a JS-free base.",
+    "carousel.betaBadge": "Beta",
     "carousel.lede":
       "Scrollable sections that are <strong>native</strong>: the track is a <code>&lt;div&gt;</code> with <code>scroll-snap-type</code>, so scrolling, touch momentum and anchor points belong to the platform, not a script. On top of that sit two control layers over the same substrate: a <strong>JS-free</strong> base using native carousel pseudo-elements, and a <strong>machine-backed</strong> enhancer over <code>@zag-js/carousel</code> that measures the track, derives the pages, and draws buttons and dots. Each slide is any content: a card, an image, a stat.",
     "carousel.cardsTitle": "Card carousel",
@@ -5985,6 +6223,7 @@ export const ui = {
 
     "changelogPage.description":
       "Changelog: a dated history with a rail, where the date is what a reader is looking for and the marker says what kind of change it was.",
+    "changelogPage.betaBadge": "Beta",
     "changelogPage.lede":
       "A dated history, newest on top. The date heads every entry because that is what the reader came looking for, and the rail's marker is a neutral mark that says <em>when</em>: the <em>what</em> is the word beside it. It is static: no enhancer, no state.",
     "changelogPage.previewNote": "four kinds",
@@ -6082,6 +6321,7 @@ export const ui = {
     "codePreview.test3": "Says the count in the author's language, and just the number when there is none.",
 
     "combobox.description": "Editable suggestions with clear states, contextual help, and full keyboard navigation.",
+    "combobox.betaBadge": "Beta",
     "combobox.lede": "Editable suggestions with context, clear states, and full keyboard navigation.",
     "combobox.contractBody1":
       "Combobox filters an authored collection without replacing its options. Select keeps a closed list, and Input shows no suggestions.",
@@ -6255,6 +6495,7 @@ export const ui = {
     "colorPicker.test7": "Keeps the trigger's accessible name intact instead of letting Zag override it.",
 
     "drawer.description": "A Vaul on the inline edge, running the full height of the screen. Ships hooks and no structure.",
+    "drawer.betaBadge": "Beta",
     "fadeEdge.description": "Pure CSS fade-out effect to smoothly hide content at the edges.",
     "fadeEdge.betaBadge": "Beta",
     "drawer.lede":
@@ -6302,6 +6543,7 @@ export const ui = {
     "drawer.test1": "Adds the drawer modifier only for the drawer signature.",
 
     "emptyState.description": "Explains why there is no content and offers a concrete next action.",
+    "emptyState.betaBadge": "Beta",
     "emptyState.contractBody": "The title names the state, the description explains, and the action resolves it. Do not use EmptyState during loading.",
     "emptyState.a11yBody": "The icon is decorative; the text and the action carry the meaning without depending on an illustration.",
 
@@ -6335,6 +6577,7 @@ export const ui = {
 
 
     "grid.description": "Grid: equal columns with a named gap and semantics chosen by whoever uses it.",
+    "grid.betaBadge": "Beta",
     "grid.lede":
       "An equal-column grid for groups of content. Every column uses <code>minmax(0, 1fr)</code>: it keeps the intrinsic minimum size from widening the columns.",
     "grid.multicolTitle": "CSS Multi-column Layout",
@@ -7251,6 +7494,26 @@ export const ui = {
     "stepsPage.verticalLabel": "Vertical Steps",
     "stepsPage.test1": "Derives complete / current / upcoming from the current index.",
     "stepsPage.test2": "Lets a step override its status explicitly.",
+    "switchPage.description": "Switch: a persistent binary preference over a native checkbox.",
+    "switchPage.lede":
+      "A binary state that takes effect immediately: on or off. For a selection that needs saving, use Checkbox.",
+    "switchPage.body":
+      "Needs no Vanilla initialization: the native checkbox already keeps keyboard, reset and form submission. React only wraps that same control.",
+    "switchPage.tileTitle": "Surface switch: TileSwitch",
+    "switchPage.tileBody1":
+      "When the preference needs a title, a description and the whole surface as its target, use <code>TileSwitch</code>. It's the same control (<code>sk-switch__control</code> plus thumb); only the container changes, the same relationship <code>TileCheckbox</code> has with Checkbox.",
+    "switchPage.tileBody2":
+      'The <code>tile-switch</code> enhancer (Svelte + <code>@zag-js/checkbox</code>, the same machine TileCheckbox and React use) hydrates every <code>data-sk-tile-switch</code> label with <code>initComponents()</code>: it drives its <code>input[data-part="input"]</code> (hidden, <code>role="switch"</code>) and syncs <code>data-state</code>; <code>[data-part="indicator"]</code> is the visual control.',
+    "switchPage.contractItem1":
+      '<code>The input is still a checkbox</code>; <code>role="switch"</code> communicates the correct semantics.',
+    "switchPage.contractItem2":
+      "<code>defaultChecked</code> leaves the value to the browser; <code>checked</code> controls it.",
+    "switchPage.contractItem3":
+      "<code>onCheckedChange</code> (<code>onCheck</code> on TileSwitch) reports intent; it never infers persistence or makes a request.",
+    "switchPage.contractItem4":
+      "Reach for it only when the change takes effect immediately and there are exactly two states: no indeterminate, unlike Checkbox.",
+    "switchPage.contractItem5":
+      "TileSwitch reuses <code>sk-switch__control</code> and the same thumb; it invents no second control.",
     "switchPage.test1":
       "Toggles checked state and the root's <code>data-state</code> on click, emitting <code>sk:checkedchange</code>.",
     "switchPage.test2": "Is form-associated and honours its <code>default-checked</code>.",
@@ -7600,6 +7863,7 @@ export const ui = {
     "wrapperPage.test1": "Renders Wrapper as a page column on the size scale.",
 
     "treeViewPage.description": "Expandable hierarchies with single or multiple selection.",
+    "treeViewPage.betaBadge": "Beta",
     "treeViewPage.lede":
       'A hierarchy you move through with the keyboard: branches open and close, nodes get selected. Use TreeView when the parent-child relationship <em>is</em> the content: files, categories, an organization. For sibling disclosures with no hierarchy use <a href="/en/components/accordion">Accordion</a>; to navigate between sections, <a href="/en/components/sidebar">Sidebar</a>.',
     "treeViewPage.minimalTitle": "Minimal tree",
@@ -7652,6 +7916,7 @@ export const ui = {
     "treeViewPage.testReact7": "A disabled node is left out of the selection.",
 
     "treegridPage.description": "Hierarchical rows with columns: expand or collapse one without losing the rest of its values.",
+    "treegridPage.betaBadge": "Beta",
     "treegridPage.lede":
       'Combines hierarchy and columns at once: the WAI-ARIA <code>treegrid</code> pattern. Use it when every row needs several independent values IN ADDITION to its place in the hierarchy (a message with a sender, a file with a size and a date). For a single column of hierarchical text use <a href="/en/components/tree-view">TreeView</a>; for columns with no hierarchy, <a href="/en/components/table">Table</a>.',
     "treegridPage.minimalTitle": "Inbox",
@@ -7787,6 +8052,7 @@ export const ui = {
 
     "dataGridPage.description":
       "Data Grid: 2D roving-tabindex navigation for tabular data or grouped widgets.",
+    "dataGridPage.betaBadge": "Beta",
     "dataGridPage.lede":
       'The WAI-ARIA spec itself treats "data grids" and "layout grids" as the same pattern. Identical roles, identical roving-tabindex mechanics, so this is ONE contract, not two. Use it when a grid of cells needs 2D navigation: <a href="/en/components/table">Table</a> already covers STATIC tabular data with no keyboard model of its own.',
     "dataGridPage.dataTitle": "Tabular data",
@@ -8599,7 +8865,26 @@ export const ui = {
     "footer.body":
       "This site consumes {core} and the component packages through their exports maps, with a bundler: the same path it documents. Every pixel comes from a token.",
     "footer.reportIssue.label": "Report an issue on GitHub",
-    "footer.reportIssue.body": "**Page:** {url}\n\nDescribe the issue:\n",
+    "footer.reportIssue.description":
+      "Opens on GitHub with the page and your browser already filled in, plus room to describe what happened.",
+    /* A light bug template, not a form: three concrete prompts (expected, actual, repro steps)
+       instead of the old bare "Describe the issue:", which left a reporter to invent their own
+       structure or, more often, skip one. `{url}` is what the server can fill; `{ua}`/`{viewport}`
+       from `footer.reportIssue.environment` are filled by `report-issue.ts` in the browser, so they
+       stay literal here (never passed as `vars`, which is why `t()` leaves them alone). */
+    "footer.reportIssue.body":
+      "**Page:** {url}\n\n**What did you expect to happen?**\n\n\n**What happened instead?**\n\n\n**Steps to reproduce:**\n1. \n2. \n3. \n",
+    /* Appended by `report-issue.ts` to the end of the body above, JS only: the one thing the server
+       cannot know. Without JS the body above is already a complete report on its own. */
+    "footer.reportIssue.environment": "\n\n**Environment:**\n- Browser: {ua}\n- Window size: {viewport}",
+
+    "siteFooter.landmarkLabel": "Site footer",
+    "siteFooter.tagline": "One contract, two runtimes, zero drift. A framework-agnostic design system.",
+    "siteFooter.colBrowse": "Explore",
+    "siteFooter.repo": "GitHub",
+    "siteFooter.legal": "© {year} skryensya/ui",
+    "siteFooter.versionLabel": "Current version {version}, see the changelog",
+    "siteFooter.credit": "Site hand-composed by {author} using skryensya/ui.",
   },
 } as const satisfies Record<Locale, Record<string, string>>;
 
@@ -8616,6 +8901,7 @@ export const navLabel: Record<Locale, Partial<Record<string, string>>> = {
   es: {},
   en: {
     "/": "Installation",
+    "/instalacion": "Installation",
     "/prerrequisitos": "Prerequisites",
     "/primer-componente": "Your first component",
     "/montaje-automatico": "Automatic mounting",

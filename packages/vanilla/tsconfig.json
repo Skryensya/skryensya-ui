@@ -5,6 +5,9 @@
     "moduleResolution": "Bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "customConditions": ["svelte"],
+    /* Only for the test suite's own file-reading (e.g. public-exports.test.ts's anti-drift check
+       against runtime/registry.ts's source text): no shipped enhancer touches a Node built-in. */
+    "types": ["node"],
     "strict": true,
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,

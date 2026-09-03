@@ -71,6 +71,10 @@ import "@skryensya/core/components/sidebar.css";
 /* El enlace de salto, primero en el documento y escondido hasta que recibe el foco. Va acá y no en
  * una página: es chrome del layout, como el rail y el cajón. */
 import "@skryensya/core/components/skip-link.css";
+/* Su contraparte al final de la lectura, misma razón: chrome del layout, no de una página. Aparece
+ * recién después de bajar cierto scroll y vuelve al mismo destino enfocable que el skip link de
+ * arriba (`#docs-content`), así el foco que devuelve es el mismo que el salto ofrece. */
+import "@skryensya/core/components/back-to-top.css";
 /* icon.css NO se importa aquí: viaja en tokens.scss, como el state layer. Un icono no es un extra al
  * que un componente opta (decisión 15). */
 import "@skryensya/core/patterns/nav-list.css"; // opt-in: una app puede no tener navegación (decisión 17)
@@ -78,6 +82,7 @@ import "@skryensya/core/patterns/scrollbar.css";
 import "@skryensya/core/patterns/scroll-lock.css";
 import "@skryensya/core/patterns/media-gradient.css";
 import "@skryensya/core/patterns/layout.css";
+import "@skryensya/core/patterns/footer.css"; // el `sk-footer` de <SiteFooter>, en cada página con rail
 import "@skryensya/core/patterns/table-pager.css";
 import "@skryensya/core/patterns/icon-toggle.css";
 /* The mobile preference sheet (`#docs-prefs-sheet`, below) renders every setting as a Tile Button —
@@ -114,6 +119,7 @@ import PrefTooltip from "../components/PrefTooltip.astro";
 import CommandPalette from "../components/CommandPalette.astro";
 import ContrastToggle from "../components/ContrastToggle.astro";
 import SidebarNav from "../components/SidebarNav.astro";
+import SiteFooter from "../components/SiteFooter.astro";
 import DrawerNav from "../components/DrawerNav.astro";
 import ThemeToggle from "../components/ThemeToggle.astro";
 import Toc from "../components/Toc.astro";
@@ -137,6 +143,7 @@ import {
   useTranslations,
 } from "../i18n";
 import { skipLinkParts } from "@skryensya/core/skip-link";
+import { backToTopParts } from "@skryensya/core/back-to-top";
 import { STORAGE_KEY } from "@skryensya/core/storage";
 import {
   colorModePreference,
@@ -401,6 +408,7 @@ const settingsIcon = iconMarkup("settings");
 const previousIcon = iconMarkup("arrow-left");
 const nextIcon = iconMarkup("arrow-right");
 const reportIssueIcon = iconMarkup("external-link", { size: "sm" });
+const backToTopIcon = iconMarkup("chevron-up", { size: "sm" });
 
 /*
  * The footer's "Report an issue" link, pre-filled with the page the reader is actually standing on:
@@ -1231,16 +1239,82 @@ const PALETTE_PRESETS = palettePresets(locale);
           new tab" text, matches every other external link already in this site's prose (see the
           anchor-positioning MDN link in `tooltip.usage`).
         */}
-        <footer class="docs-footer">
+        {/*
+          Per-page, and a plain `<div>`, not a `<footer>`: it carries "report an issue on THIS
+          page", not the site's colophon, and the one document-level `contentinfo` landmark is
+          `<SiteFooter>`, a sibling of `.docs-document-pair` below, never a child of it. Two
+          `<footer>` elements at document level would be two `contentinfo`s, which WAI treats as
+          an error.
+        */}
+        <div class="docs-footer">
           <p set:html={t("footer.body", { core: "<code>@skryensya/core</code>" })} />
-          <p class="docs-footer__report">
-            <a class="docs-footer__report-link" href={issueUrl} target="_blank" rel="noopener noreferrer">
-              <Fragment set:html={reportIssueIcon} />
-              {t("footer.reportIssue.label")}
-            </a>
-          </p>
-        </footer>
+          {/*
+            TileLink > TileContent, the kit's own contract for a bordered surface that goes
+            somewhere (`demos/link.ts`'s own `tileLinkTree` snippet shows the identical shape),
+            composed by hand here rather than reused as a `ComponentPreview`. A step up from the
+            bare inline link this used to be: a real surface plus the state layer's hover wash
+            says "this goes somewhere" more than underlined text alone did. Deliberately no
+            further than that: neutral tone (no accent tint), `sm` padding, and capped to its own
+            reading measure (site.css) rather than stretching the tile's own `inline-size: 100%`
+            across the whole page column, so it reads as one quiet utility affordance closing the
+            page, not a call-to-action banner.
+
+            `issueUrl`'s body is a bug-report skeleton the SERVER can fill (page + expected/actual/
+            repro-steps prompts, `footer.reportIssue.body`), which already works with no script.
+            `data-sk-report-issue(-environment)` are what `report-issue.ts` (`initComponents`'
+            neighbour in `docs-page-lifecycle.ts`) reads to append the one thing the server cannot
+            know, browser + viewport, once JS runs.
+          */}
+          <a
+            class="sk-tile sk-tile--interactive sk-interactive docs-footer__report-tile"
+            data-scope="tile"
+            data-part="root"
+            data-padding="sm"
+            href={issueUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-sk-report-issue
+            data-sk-report-issue-environment={t("footer.reportIssue.environment")}
+          >
+            <span class="sk-tile__content" data-part="content">
+              {/*
+                The launch icon TRAILS the label, same order ComponentPreview's own "open in a new
+                tab" menu item already uses (`sk-component-preview__menu-icon`, after
+                `sk-menu__item-label`): the label names the action, the icon is the "and it leaves
+                this tab" footnote on it, not the first thing read.
+              */}
+              <span class="sk-tile__title docs-footer__report-tile-title">
+                {t("footer.reportIssue.label")}
+                <Fragment set:html={reportIssueIcon} />
+              </span>
+              <span class="sk-tile__description">{t("footer.reportIssue.description")}</span>
+            </span>
+          </a>
+        </div>
       </main>
+      </div>
+
+      {/*
+        A SIBLING of `.docs-document-pair`, not a child of it: the footer is site-global chrome,
+        not this document's own furniture (its Toc, its per-page "report an issue" line), so it
+        does not live inside the per-document container either, the same reasoning that already
+        keeps it out of `<main>` itself.
+
+        `.docs-footer-row` reproduces `.docs-document-pair`'s OWN content/rail split from out
+        here, rather than merely capping a width: `grid-column: 2` (site.css) puts it in the
+        SAME `.shell` track the pair occupies, never the sidebar's, and `sk-layout-grid` (the
+        real pattern the pair itself is built on, `packages/core/css/patterns/layout.css`) sizes
+        its content the same way `<main>`'s own does, `--sk-layout-content`. The empty
+        `__rail` span beside it is the reason the LEFT edge lines up too, not just the width: it
+        reserves the identical `--docs-toc-inline-size` the real Toc rail claims (bridged the
+        same way `.docs-document-pair[data-document-layout="grid"]` bridges it for main, and
+        already 0px for free on a page whose Toc is empty, the same custom property both read),
+        so the content column sits exactly as far from center as the article's own does, without
+        this row needing to know whether THIS page's Toc is currently showing.
+      */}
+      <div class="docs-footer-row sk-layout-grid">
+        <SiteFooter nav={navigation} locale={locale} />
+        <div class="docs-footer-row__rail" data-width="rail" aria-hidden="true"></div>
       </div>
 
       {/*
@@ -1320,6 +1394,40 @@ const PALETTE_PRESETS = palettePresets(locale);
     </Fragment>
     )}
     </div>{/* .docs-canvas */}
+
+    {/*
+      BACK TO TOP, the skip link's mirror at the end of the reading rather than the start of it, and
+      chrome of the layout for the same reason (the stylesheet import above states it): every page
+      opens the same way and this is what every page ends with, so it belongs here and not on one.
+
+      UNCONDITIONAL, unlike `<SiteFooter>` inside `.shell` above: it sits OUTSIDE the `fullBleed`
+      ternary on purpose. `/personalizar` has no document column and no footer, but it is still a
+      page a reader can scroll, so it keeps the same way back up as every other one.
+
+      RETURNS TO THE SKIP LINK'S OWN DESTINATION (`data-target="#docs-content"`): that id is already
+      `tabindex="-1"` on both layout branches (see the comment on `.docs-document-pair` above), the
+      exact focusable landing spot `nav.skipToContent` jumps to. Reusing it means a keyboard reader
+      who tabs back up to entering the page again from a fresh Tab lands in the SAME place a skip
+      link would have put them, not a second destination this component invented on its own.
+
+      THE ICON IS PRE-RENDERED (`iconMarkup`, computed below with `searchIcon` and its neighbours),
+      not the `[data-sk-icon]` placeholder BackToTopPage.astro's own example markup shows. Every
+      other chrome control on this page (search, settings, menu, prev/next) already renders its icon
+      this way, because the docs site has no live icon-set switcher for its OWN chrome; that
+      placeholder path exists for `ComponentPreview`'s frames, which do let a reader compare sets.
+    */}
+    <button
+      class={`${backToTopParts.root} sk-interactive`}
+      type="button"
+      data-sk-back-to-top
+      data-target="#docs-content"
+      hidden
+    >
+      <span aria-hidden="true" class={backToTopParts.icon}>
+        <Fragment set:html={backToTopIcon} />
+      </span>
+      <span class={backToTopParts.label}>{t("nav.backToTop")}</span>
+    </button>
 
     {/*
       Probes: real elements carrying the component classes, so tier-3 styling hooks have somewhere to

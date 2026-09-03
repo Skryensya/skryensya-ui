@@ -22,6 +22,7 @@ import * as fileUploadModule from "./components/file-upload.js";
 import * as carouselModule from "./components/carousel.js";
 import * as treeViewModule from "./components/tree-view.js";
 import * as sidebarModule from "./components/sidebar.js";
+import * as backToTopModule from "./components/back-to-top.js";
 import * as skipLinkModule from "./components/skip-link.js";
 import * as accordionModule from "./components/accordion.js";
 import * as tileModule from "./components/tile.js";
@@ -45,6 +46,7 @@ import * as detailsModule from "./components/details.js";
 import * as vaulModule from "./components/vaul.js";
 import * as selectNativeModule from "./components/select-native.js";
 import * as badgeModule from "./components/badge.js";
+import * as colorPickerModule from "./components/color-picker.js";
 import * as kbdModule from "./components/kbd.js";
 import * as loaderModule from "./components/loader.js";
 import * as placeholderModule from "./components/placeholder.js";
@@ -126,6 +128,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/pagination": paginationModule,
   "@skryensya/react/accordion": accordionModule,
   "@skryensya/react/sidebar": sidebarModule,
+  "@skryensya/react/back-to-top": backToTopModule,
   "@skryensya/react/skip-link": skipLinkModule,
   "@skryensya/react/carousel": carouselModule,
   "@skryensya/react/file-upload": fileUploadModule,
@@ -136,6 +139,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/number-field": numberFieldModule,
   "@skryensya/react/tooltip": tooltipModule,
   "@skryensya/react/badge": badgeModule,
+  "@skryensya/react/color-picker": colorPickerModule,
   "@skryensya/react/kbd": kbdModule,
   "@skryensya/react/loader": loaderModule,
   "@skryensya/react/placeholder": placeholderModule,

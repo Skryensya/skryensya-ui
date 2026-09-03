@@ -1,4 +1,5 @@
 export { mountAccordion } from "./components/accordion.js";
+export { connectBackToTop, mountBackToTop } from "./components/back-to-top.js";
 export { mountButton } from "./components/button.js";
 export { mountExpandableTile } from "./components/expandable-tile.js";
 export { mountSelect } from "./components/select.js";
@@ -39,6 +40,9 @@ export { mountSliderRange } from "./components/slider-range.js";
 export { mountDataGrid } from "./components/data-grid.js";
 export { mountNavListGroup } from "./components/nav-list.js";
 export { mountMenubar } from "./components/menubar.js";
+export { mountBreadcrumb } from "./components/breadcrumb.js";
+export { mountChart } from "./components/chart.js";
+export { mountMeter } from "./components/meter.js";
 export { initComponents } from "./runtime/registry.js";
 export { destroyMount, destroyEnhancer } from "./runtime/svelte-hydrate.js";
 export { applyAttrs, bindEvents } from "./runtime/apply.js";

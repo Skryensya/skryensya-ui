@@ -531,11 +531,54 @@ main[data-document-layout="grid"] {
   --sk-wrapper-max: var(--docs-shell-max);
 }
 
-/* Explicit: `.shell` has exactly two children (the sidebar, `.docs-document-pair`), auto-placement
-   would already put them in tracks 1 and 2 in source order, but the pair also needs its own
-   `justify-self` above, so both get a named column rather than leaving one implicit. */
+/* Explicit: `.shell` has three children now (the sidebar, `.docs-document-pair`,
+   `.docs-footer-row`), auto-placement would already put the first two in tracks 1 and 2 in
+   source order, but the pair also needs its own `justify-self` above, so both get a named
+   column rather than leaving one implicit. */
 .shell > .docs-sidebar {
   grid-column: 1;
+}
+
+/*
+ * The footer's OWN row, in the SAME column the document lives in, never the sidebar's. With no
+ * `grid-row` of its own it auto-places into the first free row of column 2, which the pair's own
+ * placement above (row 1) leaves open right below it: one extra row `.shell`'s implicit grid
+ * grows to fit, nothing declared here. The sidebar's column is only ever explicit `grid-column: 1`
+ * (above) and never spans this row, so it stays empty beside the footer, exactly the space this
+ * exists to protect. Restated for the one-column mobile tier in `shell.scss`, the only breakpoint
+ * the value changes at.
+ */
+.shell > .docs-footer-row {
+  grid-column: 2;
+}
+
+/*
+ * The phantom rail, reserving the SAME width the real Toc rail claims from `.docs-document-pair`
+ * so `.docs-footer-row`'s own content column lands at the exact position the article's own does,
+ * without this row needing to know whether a Toc is actually showing. Bridged from the same
+ * `--docs-toc-inline-size` the pair itself reads (`.docs-document-pair[data-document-layout=
+ * "grid"]`, site.css above), so it tracks the SAME zero-width case an empty-Toc page already
+ * gets for free.
+ *
+ * ONLY reserved where `sk-layout-grid`'s own rail feature actually activates
+ * (`packages/core/css/patterns/layout.css`, gated `@media (min-width: 72rem)`, hand-copied here
+ * for the same reason that file's own comment gives: a media query cannot read a custom
+ * property). Below it the pattern folds the rail into the plain content column instead (its own
+ * `order: -1` rule, unconditional), which would just open an empty second row under the footer,
+ * not reproduce anything the real layout is doing at that width, so it is hidden outright there.
+ */
+.docs-footer-row {
+  --sk-layout-rail-inline-size: var(--docs-toc-inline-size);
+}
+
+.docs-footer-row__rail {
+  display: none;
+}
+
+@media (min-width: 72rem) {
+  .docs-footer-row__rail {
+    display: block;
+  }
 }
 
 /*
@@ -2746,17 +2789,234 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .d
   margin: 0;
 }
 
-.docs-footer__report {
-  margin-block-start: var(--space-stack-xs);
+/*
+ * The report-issue tile. `.sk-tile` already brings the surface, border, radius, and (via
+ * `sk-interactive`) the hover/focus wash; everything here is sizing, never paint.
+ *
+ * CAPPED, not full-bleed: `.sk-tile--interactive:where(a, …) { inline-size: 100% }` (tile.css)
+ * fills whatever contains it, which here is the same prose measure as the paragraph above it. A
+ * two-line note stretched to that width read as a banner, not a utility link; a reading measure of
+ * its own keeps it reading as one small, self-contained card.
+ */
+.docs-footer__report-tile {
+  margin-block-start: var(--space-stack-sm);
+  max-inline-size: 26rem;
 }
 
-/* Colour is deliberately not set here: `main a:not(…)` (this file, further up) already paints every
- * bare prose anchor `--color-text-link`, unlayered, so it wins on specificity over a class rule like
- * this one regardless of source order. This link is exactly the kind of anchor that rule exists for
- * — "a bare `<a>` someone typed in a sentence" — so it gets the same treatment as any other in-prose
- * link on the site, not a one-off colour. Only the icon-row layout belongs here. */
-.docs-footer__report-link {
+/* Icon beside the title, one line: `sk-tile__title` itself stays a plain block, since every OTHER
+   tile's title has no leading icon and no reason to become a flex container for one. */
+.docs-footer__report-tile-title {
   display: inline-flex;
   align-items: center;
   gap: var(--space-inline-xs);
+}
+
+/*
+ * SITE FOOTER (`SiteFooter.astro`). The band, surface / divider / padding, is the kit's own
+ * `sk-footer` (`patterns/footer.css`); everything here is the docs-local composition INSIDE it:
+ * the lead + nav two-region layout and the meta bar.
+ *
+ * The band is `data-width="full-width"`: it bleeds edge to edge of `.docs-footer-row`'s own box
+ * (a SIBLING of `.docs-document-pair`, in the SAME `.shell` column, so it bleeds to the sides,
+ * never under the sidebar), while `__inner` below, an unlabeled child of the nested grid that
+ * `data-width="full-width"` repeats (layout.css), falls back to `content-start / content-end` on
+ * its own — same width AND left edge `<main>`'s own content reads at, unaffected by the outer box
+ * now being wider (`.docs-footer-row`'s own comment, further up, has the phantom-rail reasoning
+ * that keeps THAT measure honest). `padding-inline: 0` below is what makes that hold: the
+ * contract's own `data-padding="lg"` (a single value, both axes, same vocabulary Box/Hero share)
+ * would otherwise ALSO inset the content horizontally, on top of the nested grid's own gutter,
+ * narrowing it below `<main>`'s. Vertical breathing room stays; horizontal inset has exactly one
+ * source now, the same one `<main>`'s own top-level content already reads from.
+ */
+.site-footer {
+  padding-inline: 0;
+  /* A compact, quiet reading of the nav-list, denser than the rail's and one tone back. */
+  --sk-nav-list-gap: var(--space-stack-xs);
+  --sk-nav-list-link-font-size: var(--font-size-body-sm);
+  --sk-nav-list-link-fg: var(--color-text-secondary);
+  --sk-nav-list-link-padding-x: 0;
+  --sk-nav-list-link-height: auto;
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-stack-xl);
+}
+
+/*
+ * Two regions: the LEAD (identity) at a reading measure, and the NAV grid beside it taking the rest.
+ * `2.4fr` on the nav side so three columns of links out-weigh the one column of prose; collapses to
+ * a single stack when the row can no longer hold both without crushing the links.
+ */
+.site-footer__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr);
+  gap: var(--space-stack-xl) var(--space-inline-xl);
+  align-items: start;
+}
+
+.site-footer__lead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-stack-sm);
+  max-inline-size: 34ch;
+}
+
+.site-footer__brand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-inline-sm);
+  margin: 0;
+}
+
+.site-footer__wordmark {
+  font-size: var(--font-size-body-lg);
+  font-weight: var(--font-weight-heading);
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+/*
+ * The current version, prominent on purpose: an accent `Badge`, `sk-interactive` composed onto it,
+ * right beside the wordmark, linking to the changelog. Reads from the shared release ledger
+ * (`currentVersion()`), never a package's own `version` field, so it is the version a consumer can
+ * actually rely on. `-dev` while nothing is cut.
+ *
+ * Every tone/size/radius declaration lives in `components/badge.css` now (`data-tone="accent"`,
+ * `data-size="sm"` on the element, `SiteFooter.astro`); this rule is the one thing Badge's own
+ * contract has no opinion on, an anchor's UA underline. Badge is never authored as a link, so
+ * `text-decoration: none` was never badge.css's to set; here, being one, it needs it explicitly,
+ * the same reason any bare `<a>` reused as a control does.
+ */
+.site-footer__version {
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.site-footer__tagline {
+  margin: 0;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-body-sm);
+  line-height: 1.5;
+}
+
+.site-footer__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-inline-xs) var(--space-inline-sm);
+  margin: 0;
+  font-size: var(--font-size-body-sm);
+}
+
+/*
+ * The real link colour, explicitly: this element is structurally OUTSIDE `<main>` now (the footer
+ * is its own grid item beside it, not a child), so `main a:not(…)` further down never reaches it.
+ * Left unstated it fell through to the UA default link blue, the one thing that actually read as
+ * wrong here (everything else in the footer is deliberately quiet on purpose; this is meant to
+ * read as an ordinary link, same token `.docs-footer__report-link` already reads: the colour is
+ * enough, no hover override, no underline of its own beyond the browser's default).
+ *
+ * The trailing launch icon (`target="_blank"`) needs the row to actually BE one: `inline-flex`
+ * keeps the anchor inline-level (it still sits in the meta row's own flow) while laying its own
+ * two children, the label and the icon, side by side.
+ */
+.site-footer__meta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-inline-xs);
+  color: var(--color-text-link);
+}
+
+/* The nav grid: three documentation sections. Two up on a tablet, one on a phone.
+   `align-items: start` is load-bearing: without it every column stretches to the tallest one, and
+   `.sk-nav-list__group` (a grid) then spreads that slack across its label and list rows, dropping
+   a wide gap between each heading and its first link. */
+.site-footer__nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-stack-lg) var(--space-inline-lg);
+  align-items: start;
+}
+
+.site-footer__col .sk-nav-list__group-label {
+  min-block-size: 0;
+  padding-block: 0 var(--space-stack-sm);
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-emphasis);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+/* The heading doubles as a link to the section's landing page. Quiet like the label it sits in,
+   not the site's link colour: it reads as a heading first, a link second. */
+.site-footer__col-heading {
+  color: inherit;
+  text-decoration: none;
+}
+.site-footer__col-heading:hover {
+  color: var(--color-text-secondary);
+}
+
+/*
+ * The meta bar: the copyright on the leading edge, the authorship credit on the trailing edge, one
+ * line that wraps to two on a narrow footer. One block under one hairline, all on the footer's own
+ * surface, so it reads as the footer closing rather than a separate strip stuck underneath (which
+ * it used to be, on a darker band of its own).
+ */
+.site-footer__bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-inline-xs) var(--space-inline-lg);
+  justify-content: space-between;
+  align-items: baseline;
+  padding-block-start: var(--space-stack-md);
+  border-block-start: 1px solid var(--color-border-subtle);
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-caption);
+}
+
+.site-footer__bar p {
+  margin: 0;
+}
+
+/*
+ * The quietest LINE of the footer (caption-size, tertiary-toned bar around it), but the link
+ * inside it still needs the real link colour, same reasoning as `.site-footer__meta-link` above:
+ * `color: inherit` borrowed the surrounding tertiary gray, which read as "not actually a link"
+ * rather than as quiet-by-design. Same trailing launch icon (`target="_blank"`) as that link, same
+ * `inline-flex` reason: this anchor still sits inline inside the sentence around it, only ITS own
+ * two children (the name, the icon) lay out side by side.
+ */
+.site-footer__credit-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-inline-xs);
+  color: var(--color-text-link);
+  text-underline-offset: 0.15em;
+}
+
+/* Tablet: the lead stops sharing the row with the nav grid; the grid keeps three up. */
+@media (max-width: 60rem) {
+  .site-footer__layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .site-footer__lead {
+    max-inline-size: none;
+  }
+}
+
+@media (max-width: 44rem) {
+  .site-footer__nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 26rem) {
+  .site-footer__nav {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

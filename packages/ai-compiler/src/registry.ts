@@ -1,5 +1,6 @@
 import { boxContract, layoutContract, wrapperContract } from "@skryensya/core/layout";
 import { heroContract } from "@skryensya/core/hero";
+import { footerContract } from "@skryensya/core/footer";
 import { typographyContract } from "@skryensya/core/typography";
 import { breadcrumbContract } from "@skryensya/core/breadcrumb";
 import { emptyStateContract } from "@skryensya/core/empty-state";
@@ -17,6 +18,7 @@ import { carouselContract } from "@skryensya/core/carousel";
 import { treeViewContract } from "@skryensya/core/tree-view";
 import { sidebarContract } from "@skryensya/core/sidebar";
 import { skipLinkContract } from "@skryensya/core/skip-link";
+import { backToTopContract } from "@skryensya/core/back-to-top";
 import { accordionContract } from "@skryensya/core/accordion";
 import { tileContract } from "@skryensya/core/tile";
 import { paginationContract, tablePagerContract } from "@skryensya/core/pagination";
@@ -81,6 +83,7 @@ import type {
  */
 export const contracts = {
   avatar: avatarContract,
+  "back-to-top": backToTopContract,
   badge: badgeContract,
   box: boxContract,
   breadcrumb: breadcrumbContract,
@@ -91,6 +94,7 @@ export const contracts = {
   "empty-state": emptyStateContract,
   "form-field": formFieldContract,
   hero: heroContract,
+  footer: footerContract,
   icon: iconContract,
   "image-frame": imageFrameContract,
   kbd: kbdContract,

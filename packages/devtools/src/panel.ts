@@ -14,6 +14,7 @@ import { createHitAreaOverlay } from "./overlay";
 import { createMotionSlowMo } from "./motion";
 import { createFocusOrderOverlay } from "./focus-order";
 import { createFpsMeter } from "./fps";
+import { clampPosition, exceedsDragThreshold, panelEdge } from "./geometry";
 
 /*
  * Written by `apps/docs`'s `Base.astro`, right after its own `initComponents()` call resolves -
@@ -145,11 +146,11 @@ function savePosition(position: SavedPosition): void {
   }
 }
 
-/** Keeps a `position: fixed` box fully inside the viewport after a drag or a resize. */
+/** Keeps a `position: fixed` box fully inside the viewport after a drag or a resize. The decision
+ *  itself is `clampPosition` (`./geometry.ts`, pure, tested there); this only supplies the one
+ *  thing that makes it a DOM call rather than a plain function call: the live viewport size. */
 function clamp(position: SavedPosition, size: { width: number; height: number }): SavedPosition {
-  const maxLeft = Math.max(0, window.innerWidth - size.width);
-  const maxTop = Math.max(0, window.innerHeight - size.height);
-  return { left: Math.min(Math.max(0, position.left), maxLeft), top: Math.min(Math.max(0, position.top), maxTop) };
+  return clampPosition(position, size, { width: window.innerWidth, height: window.innerHeight });
 }
 
 /*
@@ -395,8 +396,9 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
     toggle.setAttribute("aria-expanded", String(open));
     if (!open) return;
     // Open UPWARD by default; flip below only when the panel would not fit above the button.
+    // The threshold itself is `panelEdge` (`./geometry.ts`, pure, tested there).
     const spaceAbove = toggle.getBoundingClientRect().top;
-    panel.dataset.edge = spaceAbove < 220 ? "bottom" : "top";
+    panel.dataset.edge = panelEdge(spaceAbove, 220);
   }
 
   document.body.appendChild(host);
@@ -459,7 +461,8 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
     if (!dragOrigin || event.pointerId !== dragOrigin.pointerId) return;
     const dx = event.clientX - dragOrigin.startX;
     const dy = event.clientY - dragOrigin.startY;
-    if (!dragged && Math.hypot(dx, dy) < CLICK_VS_DRAG_THRESHOLD_PX) return;
+    // The threshold decision is `exceedsDragThreshold` (`./geometry.ts`, pure, tested there).
+    if (!dragged && !exceedsDragThreshold(dx, dy, CLICK_VS_DRAG_THRESHOLD_PX)) return;
     dragged = true;
     toggle.setAttribute("data-dragging", "");
     place(dragOrigin.rootLeft + dx, dragOrigin.rootTop + dy);

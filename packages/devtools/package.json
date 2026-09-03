@@ -13,12 +13,14 @@
     }
   },
   "scripts": {
-    "check": "tsc -p tsconfig.json --noEmit"
+    "check": "vitest run && tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@skryensya/core": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
   }
 }

@@ -18,6 +18,8 @@
  * without piercing a shadow boundary first.
  */
 
+import { fpsFromFrameCount } from "./geometry";
+
 const BADGE_ID = "sk-devtools-fps-badge";
 const STYLE_ID = "sk-devtools-fps-style";
 
@@ -53,7 +55,7 @@ export function createFpsMeter() {
     frames += 1;
     const elapsed = now - windowStart;
     if (elapsed >= 250) {
-      if (badge) badge.textContent = `${Math.round((frames * 1000) / elapsed)} fps`;
+      if (badge) badge.textContent = `${fpsFromFrameCount(frames, elapsed)} fps`;
       frames = 0;
       windowStart = now;
     }

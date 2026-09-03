@@ -1,0 +1,71 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { footerColumnsTree, footerCreditTree } from "../../demos/layout";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/footer.yaml?raw";
+import coreSource from "@core/src/footer.ts?raw";
+import cssSource from "@core/css/patterns/footer.css?raw";
+import reactSource from "@react/src/components/layout.tsx?raw";
+/* The sheet itself, not only its source: the Style hooks table resolves each hook against a real
+   element, and a page that never loads `patterns/footer.css` shows every value blank. */
+import "@skryensya/core/patterns/footer.css";
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+const docsHref = locale === "en" ? "/en" : "/";
+
+const sourceFiles = [
+  { id: "contracts/semantic/footer.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/footer.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/patterns/footer.css", source: cssSource, language: "css" },
+  { id: "packages/react/src/components/layout.tsx", source: reactSource, language: "tsx" },
+] as const;
+
+const footerSiteTree = footerColumnsTree(t, docsHref);
+const footerOneLineTree = footerCreditTree(t);
+---
+
+<ComponentPageShell
+  title="Footer"
+  description={t("footer.description")}
+  badge={t("footer.betaBadge")}
+  contractId="footer"
+  styleGroups={[{ file: "patterns/footer.css", probe: "sk-footer" }]}
+  sourceFiles={sourceFiles}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("footer.lede")} />
+
+    <h3>{t("footer.whenTitle")}</h3>
+    <p set:html={t("footer.whenBody1")} />
+    <p set:html={t("footer.whenBody2")} />
+    <p set:html={t("footer.whenBody3")} />
+
+    <h3>{t("footer.htmlTitle")}</h3>
+
+    <h4>{t("footer.patternSiteTitle")}</h4>
+    <p>{t("footer.patternSiteDescription")}</p>
+    <ComponentPreview tree={footerSiteTree} label="Site footer" />
+
+    <h4>{t("footer.patternCreditTitle")}</h4>
+    <p>{t("footer.patternCreditDescription")}</p>
+    <ComponentPreview tree={footerOneLineTree} label="Credit line" />
+
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("footer.contractItem1")} />
+      <li set:html={t("footer.contractItem2")} />
+      <li set:html={t("footer.contractItem3")} />
+      <li set:html={t("footer.contractItem4")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("footer.a11yP1")} />
+    <p set:html={t("footer.a11yP2")} />
+    <p set:html={t("footer.a11yP3")} />
+  </Fragment>
+</ComponentPageShell>

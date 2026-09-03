@@ -1,0 +1,122 @@
+/*
+ * FOOTER, a page's closing band: a surface, a rule above it, and room to breathe. Nothing else.
+ *
+ * Same shape as `.sk-box` / `.sk-hero` (surface / padding structure, one hook per lever) so a
+ * consumer who reads either of those reads this one for free. The class stays separate rather than
+ * `Footer` reusing `.sk-box` via `also`: Footer's OWN defaults (sunken surface, a top divider,
+ * generous padding) are nothing like Box's (none, none, none), and one class carrying two default
+ * postures is the silent coupling `layout.css` already explains this system avoids.
+ *
+ * Full-bleed on purpose: a `<footer>` claims the whole width of whatever holds it and never shrinks
+ * to its own content. Put a `wrapper.Wrapper` INSIDE to hold the content at the page's own measure,
+ * the same convention `Hero` follows.
+ */
+@layer components {
+  .sk-footer {
+    --sk-footer-bg: transparent;
+    /* The elevation identity wash (a `background-image` layer, same mechanism `hero.css` moved to):
+     * `none` at the flat default, a `data-surface` variant below opts into one. */
+    --sk-footer-wash: none;
+    --sk-footer-padding: var(--space-inset-lg);
+    /* 0 by default: a footer is the last thing on the page and a rounded bottom edge floating over
+     * canvas reads as a detached card, not as the page ending. A hook, not a literal, so a footer
+     * used as a bounded card inside some other layout can round itself without an override chain. */
+    --sk-footer-radius: 0;
+    --sk-footer-shadow: var(--elevation-flat);
+    /* The hairline above the band. `data-divider` (on by default from the contract) paints it;
+     * `data-divider="false"` sets it to `transparent` so the border box is unchanged and nothing
+     * below it shifts. */
+    --sk-footer-divider-color: var(--color-border-subtle);
+    --sk-footer-divider-width: 1px;
+
+    box-sizing: border-box;
+    /* Block flow, not Hero's centering flex column: a footer holds a stack of unrelated regions
+     * (a column row, a legal bar), each sizing itself, never one centred child. */
+    display: block;
+    min-inline-size: 0;
+    /* Claim the full line even when an ancestor is a wrapping flex row (the docs preview stage is
+     * one), the same guard `hero.css` documents at length. Inert in ordinary block flow. */
+    inline-size: 100%;
+    flex: 1 1 100%;
+    padding: var(--sk-footer-padding);
+    border-block-start: var(--sk-footer-divider-width) solid var(--sk-footer-divider-color);
+    border-radius: var(--sk-footer-radius);
+    background: var(--sk-footer-wash) var(--sk-footer-bg);
+    box-shadow: var(--sk-footer-shadow);
+  }
+
+  .sk-footer[data-divider="false"] {
+    --sk-footer-divider-color: transparent;
+  }
+
+  /*
+   * Flat fills, same values as `Box` / `Hero`'s own `data-surface`. `sunken` is the default posture
+   * the contract picks: a footer reads as a recessed, quieter zone below the content, never a
+   * raised panel competing with it for attention.
+   */
+  .sk-footer[data-surface="none"] {
+    --sk-footer-bg: transparent;
+  }
+  .sk-footer[data-surface="sunken"] {
+    --sk-footer-bg: var(--color-bg-surface-sunken);
+    --sk-footer-shadow: var(--elevation-sunken);
+    --sk-footer-wash: var(--elevation-wash-sunken);
+  }
+  .sk-footer[data-surface="surface"] {
+    --sk-footer-bg: var(--color-bg-surface);
+  }
+  .sk-footer[data-surface="raised"] {
+    --sk-footer-bg: var(--color-bg-surface-raised);
+    --sk-footer-shadow: var(--elevation-raised);
+    --sk-footer-wash: var(--elevation-wash-raised);
+  }
+
+  /*
+   * `forced-colors` drops the shadow AND flattens every `--color-bg-surface-*` tint to one
+   * `Canvas`, so a sunken or raised footer would be indistinguishable from the page above it. The
+   * divider is the cue that survives: force it to `CanvasText` and keep it even when the contract
+   * turned it off, because in high contrast it is the ONLY separation left.
+   */
+  @media (forced-colors: active) {
+    .sk-footer {
+      --sk-footer-divider-color: CanvasText;
+      --sk-footer-shadow: none;
+      --sk-footer-wash: none;
+      border-block-start-color: CanvasText;
+    }
+  }
+
+  .sk-footer[data-padding="none"] {
+    --sk-footer-padding: 0;
+  }
+  .sk-footer[data-padding="xs"] {
+    --sk-footer-padding: var(--space-inset-xs);
+  }
+  .sk-footer[data-padding="sm"] {
+    --sk-footer-padding: var(--space-inset-sm);
+  }
+  .sk-footer[data-padding="md"] {
+    --sk-footer-padding: var(--space-inset-md);
+  }
+  .sk-footer[data-padding="lg"] {
+    --sk-footer-padding: var(--space-inset-lg);
+  }
+  .sk-footer[data-padding="xl"] {
+    --sk-footer-padding: var(--space-inset-xl);
+  }
+
+  /*
+   * 36rem is `--breakpoint-compact` (semantic/_breakpoints.scss), a literal here because a CSS
+   * `@media` cannot read a custom property, the same hand-copy `hero.css` and `vaul.css` do.
+   * On a phone the `lg` inset is a lot of the viewport spent on the page's least important band;
+   * step it down to `md` so the footer stays a considered close without eating the screen.
+   */
+  @media (max-width: 35.999rem) {
+    .sk-footer[data-padding="lg"] {
+      --sk-footer-padding: var(--space-inset-md);
+    }
+    .sk-footer[data-padding="xl"] {
+      --sk-footer-padding: var(--space-inset-lg);
+    }
+  }
+}

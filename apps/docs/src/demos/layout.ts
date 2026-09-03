@@ -985,3 +985,95 @@ export const gridMulticolTree = (t: Translate): UsageTree => ({
   ),
 });
 
+
+/*
+ * FOOTER demos. Footer owns no anatomy of its own beyond `padding`/`surface`/`divider` (see
+ * `packages/core/src/footer.ts`): everything below is ordinary Wrapper/Grid/Stack/Text/Link
+ * composition inside its `children`, the same way the hero patterns above compose inside Hero.
+ * Mirrors `contracts/snippets/footer-credit-line.ts`, the tree an agent reaches via `get_examples`.
+ */
+
+/** A full site footer: a row of link columns over a legal line. `Wrapper` holds it at the page's
+ *  own measure; `Grid` gives the columns; each column is a `Stack` of `Link`s under a heading. */
+export const footerColumnsTree = (t: Translate, href: string): UsageTree => ({
+  contract: "footer",
+  signature: "Footer",
+  children: [
+    {
+      contract: "wrapper",
+      signature: "Wrapper",
+      children: [
+        {
+          contract: "layout",
+          signature: "Stack",
+          options: { gap: "lg" },
+          children: [
+            {
+              contract: "layout",
+              signature: "Grid",
+              options: { columns: "3", gap: "lg" },
+              children: [
+                {
+                  contract: "layout",
+                  signature: "Stack",
+                  options: { gap: "sm" },
+                  children: [
+                    { contract: "typography", signature: "Heading", options: { headingSize: "h5", flush: true }, children: t("demo.footer.colProduct") },
+                    { contract: "typography", signature: "Link", options: { href }, children: t("demo.footer.linkOverview") },
+                    { contract: "typography", signature: "Link", options: { href }, children: t("demo.footer.linkChangelog") },
+                  ],
+                },
+                {
+                  contract: "layout",
+                  signature: "Stack",
+                  options: { gap: "sm" },
+                  children: [
+                    { contract: "typography", signature: "Heading", options: { headingSize: "h5", flush: true }, children: t("demo.footer.colResources") },
+                    { contract: "typography", signature: "Link", options: { href }, children: t("demo.footer.linkDocs") },
+                    { contract: "typography", signature: "Link", options: { href }, children: t("demo.footer.linkRepo") },
+                  ],
+                },
+                {
+                  contract: "layout",
+                  signature: "Stack",
+                  options: { gap: "sm" },
+                  children: [
+                    { contract: "typography", signature: "Heading", options: { headingSize: "h5", flush: true }, children: t("demo.footer.colLegal") },
+                    { contract: "typography", signature: "Link", options: { href }, children: t("demo.footer.linkLicense") },
+                    { contract: "typography", signature: "Link", options: { href }, children: t("demo.footer.linkPrivacy") },
+                  ],
+                },
+              ],
+            },
+            {
+              contract: "layout",
+              signature: "Inline",
+              options: { gap: "sm", justify: "between", inlineAlign: "center", wrap: true },
+              children: [
+                { contract: "typography", signature: "Text", options: { tone: "tertiary", size: "sm" }, children: t("demo.footer.legal") },
+                { contract: "typography", signature: "Text", options: { tone: "tertiary", size: "sm" }, children: t("demo.footer.built") },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+});
+
+/** The whole footer is one line of credit: a personal or portfolio page's close. Mirrors the
+ *  `footer-credit-line` snippet. */
+export const footerCreditTree = (t: Translate): UsageTree => ({
+  contract: "footer",
+  signature: "Footer",
+  options: { padding: "md" },
+  children: [
+    {
+      contract: "wrapper",
+      signature: "Wrapper",
+      children: [
+        { contract: "typography", signature: "Text", options: { tone: "tertiary", size: "sm" }, children: t("demo.footer.credit") },
+      ],
+    },
+  ],
+});

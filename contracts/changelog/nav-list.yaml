@@ -6,7 +6,7 @@
 surface: "fb2e7307660ea9d7"
 entries:
   - date: 2026-09-01
-    kind: fix
+    kind: bugfix
     target: collapsible
     es:
       title: Un NavListGroup colapsable ahora se oculta de verdad al cerrarse

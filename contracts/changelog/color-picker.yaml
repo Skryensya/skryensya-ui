@@ -3,8 +3,34 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "777ae63892a35d46"
+surface: "3fbeaa977ec0bde6"
 entries:
+  - date: 2026-09-03
+    kind: bugfix
+    es:
+      title: El panel ya no se compara contra el binding equivocado en las pruebas de simetría
+      body: >-
+        <code>ColorPicker</code> y <code>ColorPicker.compact</code> declaran ahora <code>portals:
+        true</code>: el binding React ya portaba su panel con <code>&lt;Portal&gt;</code>, pero sin
+        esta marca <code>render-tree.tsx</code> nunca le pasaba un contenedor propio, así que todas
+        las instancias de la página portaban al mismo <code>document.body</code> sin distinción. La
+        primera vez que un árbol canónico ejerció ambos bindings (antes de esto, cero cobertura) el
+        gate de simetría no podía emparejar el panel de una instancia con el de la otra. De paso se
+        sincronizaron dos atributos que el binding React nunca restataba del molde del contrato: el
+        input oculto lleva <code>aria-hidden="true"</code> y el disparador del gotero lleva
+        <code>data-icon-only</code>, igual que ya hacía Vanilla.
+    en:
+      title: The panel no longer compares against the wrong binding in symmetry tests
+      body: >-
+        <code>ColorPicker</code> and <code>ColorPicker.compact</code> now declare <code>portals:
+        true</code>: the React binding already portalled its panel with <code>&lt;Portal&gt;</code>,
+        but without this flag <code>render-tree.tsx</code> never handed it a scoped container, so
+        every instance on the page portalled into the same <code>document.body</code> with no way to
+        tell them apart. The first time a canonical tree exercised both bindings (zero coverage
+        before this), the symmetry gate could not pair one instance's panel with the other's. Two
+        attributes the React binding never restated from the contract's own template got synced
+        along the way: the hidden input carries <code>aria-hidden="true"</code> and the eyedropper
+        trigger carries <code>data-icon-only</code>, matching what Vanilla already did.
   - date: 2026-08-26
     kind: feature
     es:

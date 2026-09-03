@@ -11,6 +11,7 @@ import {
   type UsageTree,
 } from "@skryensya/ai-compiler/usage-tree";
 import { canonicalTrees } from "./trees.js";
+import { waitForStage } from "./fixtures.js";
 
 /*
  * G5, and the claim the whole architecture rests on: a clean static result is not a rendered page.
@@ -95,8 +96,7 @@ test("every published signature is reachable from a canonical tree", () => {
 const DRAWS_NOTHING = new Set(["loader/status-only", "content/toast-template"]);
 
 test("every canonical tree paints something", async ({ page }) => {
-  await page.goto("/");
-  await page.waitForSelector('body[data-ready="true"]');
+  await waitForStage(page);
 
   for (const { name } of canonicalTrees) {
     // A visually-hidden status has no box by design; measuring one would be measuring the wrong
@@ -134,8 +134,7 @@ test("the empty frame is caught by the contract, and would also be caught by the
 
   // Level two: the render. Emitted anyway, past the gate, to show what shipping it looked like:
   // a frame element with no content inside it.
-  await page.goto("/");
-  await page.waitForSelector('body[data-ready="true"]');
+  await waitForStage(page);
 
   const painted = await page.evaluate((markup: string) => {
     const host = document.createElement("div");
@@ -151,8 +150,7 @@ test("the empty frame is caught by the contract, and would also be caught by the
 });
 
 test("canonical states hold their visual baseline", async ({ page }) => {
-  await page.goto("/");
-  await page.waitForSelector('body[data-ready="true"]');
+  await waitForStage(page);
 
   // One baseline for the whole stage: every canonical state in one image, so a token or CSS change
   // that moves any of them shows up as one reviewable diff.

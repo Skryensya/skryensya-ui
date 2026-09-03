@@ -1,0 +1,20 @@
+# El vocabulario de iconos (packages/core/src/icon.ts, stableIconNames) tiene que estar
+# completo en los tres sets publicados (CONTEXT.md, "Icon set": "Complete, never partial").
+# El chequeo YA EXISTE — cada paquete de iconos hace `xIcons: IconSet = generated satisfies
+# IconSet`, así que un rol nuevo sin agregar al MAP de un set falla `tsc --noEmit` — pero
+# nada lo obligaba a correr: este repo no tiene CI, y sin este hook alguien podía agregar un
+# stable icon name a core y comitear sin que nada avisara hasta que ese rol renderizara vacío
+# en producción. Acotado a cuando el commit realmente toca ese vocabulario, así el resto de
+# los commits no paga el costo (medido: ~0.9s con turbo/pnpm en caliente).
+staged="$(git diff --cached --name-only --diff-filter=ACMR)"
+
+if echo "$staged" | grep -qE '^(packages/core/src/icon\.ts|packages/icons-(lucide|material|phosphor)/)'; then
+  echo "pre-commit: el vocabulario de iconos cambió, verificando que los tres sets sigan completos..."
+  if ! pnpm --filter @skryensya/icons-lucide --filter @skryensya/icons-material --filter @skryensya/icons-phosphor run check; then
+    echo "" >&2
+    echo "pre-commit: un set de iconos quedo incompleto o desactualizado." >&2
+    echo "  Corre 'pnpm --filter @skryensya/icons-lucide --filter @skryensya/icons-material --filter @skryensya/icons-phosphor generate'" >&2
+    echo "  y agrega el rol que falta al MAP de cada set (scripts/generate.mjs)." >&2
+    exit 1
+  fi
+fi

@@ -1,11 +1,7 @@
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import { expect, test, type Page } from "@playwright/test";
+import { readComponentCss } from "./fixtures.js";
 
-const sliderCss = readFileSync(
-  fileURLToPath(new URL("../../core/css/components/slider.css", import.meta.url)),
-  "utf8",
-);
+const sliderCss = readComponentCss("slider", import.meta.url);
 
 const TRACK_WIDTH = 300;
 const THUMB_HIT = 32;

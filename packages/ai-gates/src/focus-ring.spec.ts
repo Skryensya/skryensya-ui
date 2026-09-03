@@ -1,6 +1,5 @@
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import { expect, test } from "@playwright/test";
+import { readComponentCss, waitForStage } from "./fixtures.js";
 
 /*
  * G5: the KEYBOARD's position is visible, and the mouse's is not mistaken for it.
@@ -59,8 +58,7 @@ for (const binding of BINDINGS) {
 
   test.describe(`${CASE}: the ${binding} binding's focus ring`, () => {
     test.beforeEach(async ({ page }) => {
-      await page.goto("/");
-      await page.waitForSelector("body[data-ready]");
+      await waitForStage(page);
     });
 
     /*
@@ -121,10 +119,7 @@ for (const binding of BINDINGS) {
  * interaction was a mouse, at both rows.
  */
 test.describe(`${CASE}: the focus-ring RULE itself, pointer walked into a submenu`, () => {
-  const menuCss = readFileSync(
-    fileURLToPath(new URL("../../core/css/components/menu.css", import.meta.url)),
-    "utf8",
-  );
+  const menuCss = readComponentCss("menu", import.meta.url);
 
   test("rings neither the parent trigger nor the hovered child", async ({ page }) => {
     await page.setContent(`

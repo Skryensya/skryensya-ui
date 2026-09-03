@@ -1,5 +1,6 @@
 import { createRequire } from "node:module";
 import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { test as base, expect, type BrowserContext, type Page } from "@playwright/test";
 
 /*
@@ -16,6 +17,43 @@ import { test as base, expect, type BrowserContext, type Page } from "@playwrigh
  * Tests that MUTATE the page (rendered.spec.ts's empty-frame check and its screenshot baseline)
  * stay on Playwright's own per-test `page`: sharing is only sound for pure readers.
  */
+
+/*
+ * `waitForStage`: the ONE idiom "navigate to the stage and wait for it" ever needs, shared by every
+ * spec that reads `body[data-ready]`, not only the worker-scoped `stagePage` below.
+ *
+ * PRESENCE IS NOT READY. `harness/main.tsx` sets `data-ready` to `"true"` on success and to
+ * `"error"` when the stage throws (`window.gateError` carries why) — the attribute EXISTS in both
+ * cases, so `waitForSelector("body[data-ready]")` alone (what `focus-ring.spec.ts` used to do on
+ * its own, before this helper) passes on a broken stage exactly as it does on a working one, and
+ * whatever ran next failed with a confusing locator timeout instead of the real reason. Waiting for
+ * the VALUE (`body[data-ready="true"]`, what `rendered.spec.ts`'s three call sites already got
+ * right independently) and checking it explicitly is what turns a broken stage into the one clear
+ * error message below, everywhere this helper is used instead of copied.
+ */
+export async function waitForStage(page: Page): Promise<void> {
+  await page.goto("/");
+  await page.waitForSelector('body[data-ready="true"], body[data-ready="error"]');
+
+  const state = await page.getAttribute("body", "data-ready");
+  if (state !== "true") {
+    const reason = await page.evaluate(() => window.gateError);
+    throw new Error(`The stage never became ready: ${reason ?? "unknown"}`);
+  }
+}
+
+/*
+ * `readComponentCss`: the other idiom four spec files each wrote out by hand
+ * (`readFileSync(fileURLToPath(new URL("../../core/css/components/x.css", import.meta.url)),
+ * "utf8")`) to isolate one component's stylesheet in a bare `page.setContent` fixture, CSS custom
+ * properties overridden by hand, no live stage. `importMetaUrl` is the CALLER's `import.meta.url`,
+ * never this file's: the relative path from `ai-gates/src/` to `core/css/components/` is the same
+ * for every caller today, but hard-coding it here instead of asking for it would silently break the
+ * day a caller moves, the same way four independent copies of the literal path already could.
+ */
+export function readComponentCss(name: string, importMetaUrl: string): string {
+  return readFileSync(fileURLToPath(new URL(`../../core/css/components/${name}.css`, importMetaUrl)), "utf8");
+}
 
 type WorkerFixtures = {
   stageContext: BrowserContext;
@@ -42,14 +80,8 @@ export const test = base.extend<{}, WorkerFixtures>({
       const failures: string[] = [];
       page.on("pageerror", (error) => failures.push(error.message));
 
-      await page.goto("/");
-      await page.waitForSelector("body[data-ready]");
+      await waitForStage(page);
 
-      const state = await page.getAttribute("body", "data-ready");
-      if (state !== "true") {
-        const reason = await page.evaluate(() => window.gateError);
-        throw new Error(`The stage never became ready: ${reason ?? "unknown"}`);
-      }
       if (failures.length > 0) {
         throw new Error(`the page must render both bindings without throwing: ${failures.join("; ")}`);
       }

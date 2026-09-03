@@ -1,11 +1,7 @@
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import { expect, test } from "@playwright/test";
+import { readComponentCss } from "./fixtures.js";
 
-const typographyCss = readFileSync(
-  fileURLToPath(new URL("../../core/css/components/typography.css", import.meta.url)),
-  "utf8",
-);
+const typographyCss = readComponentCss("typography", import.meta.url);
 
 /*
  * A Link is an inline text affordance. When a consumer drops it as a direct child of a column Stack

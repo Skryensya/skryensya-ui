@@ -57,4 +57,40 @@
   .sk-interactive .sk-icon {
     pointer-events: none;
   }
+
+  /*
+   * THE UNMOUNTED PLACEHOLDER, `<span data-sk-icon="…">` (icon.ts's own contract note: authored
+   * markup cannot carry `sk-icon` itself, because the class belongs to the `<svg>` a binding
+   * writes, never to a set-less placeholder). Left completely unsized, that placeholder is a 0×0
+   * inline span until `mountIcons()`/`<Icon>` replaces it, so every icon on a page reserves NO
+   * layout space until JavaScript runs, then suddenly claims a real box the instant it does. On a
+   * page with dozens of icons (the home page's own component gallery, say) that is dozens of
+   * simultaneous shifts the moment the enhancer catches up to first paint, measured as real CLS.
+   *
+   * Sizing the placeholder itself, off its OWN pre-mount attributes (`data-sk-icon-size`, not the
+   * post-mount `data-size` the box above keys on) closes the gap: the reserved space is already
+   * correct on the very first paint, so mounting only ever fills color and geometry into a box
+   * that never moves. Safe to key off `[data-sk-icon]` specifically (rather than making this the
+   * base rule `.sk-icon` also matches): `mountIcons` REPLACES the whole placeholder element with a
+   * new `<svg>` that carries `data-icon` (no `sk-` prefix) instead, so this selector can never
+   * match the mounted result and stops applying the moment the swap happens, with nothing to
+   * unwind.
+   */
+  [data-sk-icon] {
+    display: inline-block;
+    flex: none;
+    inline-size: var(--size-icon-md);
+    block-size: var(--size-icon-md);
+    vertical-align: -0.125em;
+  }
+
+  [data-sk-icon][data-sk-icon-size="sm"] {
+    inline-size: var(--size-icon-sm);
+    block-size: var(--size-icon-sm);
+  }
+
+  [data-sk-icon][data-sk-icon-size="lg"] {
+    inline-size: var(--size-icon-lg);
+    block-size: var(--size-icon-lg);
+  }
 }

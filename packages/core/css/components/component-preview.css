@@ -645,6 +645,20 @@
     flex: 1 1 100%;
   }
 
+  /*
+   * Same rule, same reason, for a FolderStack: a folder is a card with its own width cap
+   * (`--sk-folder-max-inline-size`), so the panel it stands on would otherwise shrink to that cap
+   * and every folder demo would be a different width from every other panel on the site. The ground
+   * a folder hides against is exactly the thing that should span the stage; the stack centres itself
+   * in it.
+   *
+   * Keyed on the child for the same reason the rule above is, and doubled for the React nesting.
+   */
+  .sk-component-preview__frame-body > :has(.sk-folder-stack),
+  .sk-component-preview__frame-body > [data-sk-react-demo-root] > :has(.sk-folder-stack) {
+    flex: 1 1 100%;
+  }
+
   .sk-component-preview__frame-body[data-sk-component-preview-flush] {
     display: block;
     padding: 0;

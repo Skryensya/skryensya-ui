@@ -230,8 +230,9 @@ const previewHtml = treeHtml ?? slotHtml ?? html ?? "";
  * `js`/`previewScript` props are the SOURCE; every execution path strips it first, and the tab below
  * shows what was written.
  */
-const encodedPreviewScript = previewScript
-  ? encodeURIComponent(compileDemoScript(previewScript))
+const compiledPreviewScript = previewScript ? compileDemoScript(previewScript) : undefined;
+const encodedPreviewScript = compiledPreviewScript
+  ? encodeURIComponent(compiledPreviewScript)
   : "";
 /**
  * A STABLE id, not a random one: the FOUC inline script needs any unique target, and
@@ -607,7 +608,27 @@ const screenToggleLabels = Object.fromEntries(
           <TreeDemo
             tree={tree}
             measure={measure}
-            frameOptions={{ flush, scroll, viewport, minHeight, css, script: previewScript }}
+            frameOptions={{
+              flush,
+              scroll,
+              viewport,
+              minHeight,
+              css,
+              /*
+               * COMPILED, not the authored source. This used to pass `previewScript` straight
+               * through, and the React stage was the only path that ran a demo's TypeScript at a
+               * browser: `framed` runs inside the island, where there is no compiler to reach for,
+               * so it encodes whatever it is handed. Any demo whose script declared a type threw
+               * `SyntaxError` out of `runAuthoredScript`, took the frame's whole init down with it,
+               * and left that preview's screen presets dead - the control is in this document and
+               * paints fine, but the stage it points at never finished booting.
+               *
+               * It went unseen because it needs BOTH a React binding and an app-level script, and
+               * comment-thread is the first preview to have both. The Vanilla stage was always
+               * right (`encodedScript` above); this makes the two agree.
+               */
+              script: compiledPreviewScript,
+            }}
             client:visible
           />
         ) : (

@@ -58,7 +58,15 @@ export type FramedOverrides = Pick<
   FramedOptions,
   "flush" | "scroll" | "viewport" | "minHeight" | "css"
 > & {
-  /** App-only script shared by both tree-rendered bindings. */
+  /**
+   * App-only script shared by both tree-rendered bindings, already COMPILED to JavaScript.
+   *
+   * Not the authored source: this runs in the island, and the frame runs it through `Function`, so
+   * there is no compiler anywhere on this path. A caller passing raw `demos/scripts/*.ts` gets a
+   * `SyntaxError` at frame init that takes the whole stage down with it. `ComponentPreview.astro`
+   * compiles it (`compileDemoScript`) before handing it over, which is also where the Vanilla
+   * stage's copy comes from, so both bindings run the same text.
+   */
   script?: string;
 };
 
@@ -154,6 +162,29 @@ export function framedIn(moduleName: string) {
        * every selector for this attribute is `.sk-component-preview > […]`, which the nested iframe
        * fails by structure.
        */
+      /*
+       * `suppressHydrationWarning`, because this element has TWO writers and React is not the one
+       * that owns its runtime state. It is a `.sk-component-preview__stage`, so the site-wide
+       * enhancer (`connectStageLifecycle`, `@skryensya/vanilla/component-preview`) claims it like
+       * any other stage and writes on it as the frame boots: `data-sk-component-preview-frame-ready`,
+       * `aria-busy` flipped to `false`, the measured `style="height:…"` from `fitFrame`, and the
+       * reader's `data-sk-component-preview-screen` preset. All of that lands BEFORE `client:visible`
+       * hydrates the island, so React arrives at a DOM that legitimately no longer matches what it
+       * rendered, diffs it, and warns (measured on this page: `aria-busy` true vs false, plus three
+       * attributes React never rendered at all).
+       *
+       * Suppressing is the correct answer rather than a silenced smell, and it is the opposite of
+       * the fix the note above describes: there, the island had ACQUIRED an attribute it should
+       * never have carried, and removing it made React and the DOM agree again. Here the attributes
+       * belong to the enhancer by design - a stage that reports its own readiness and height is the
+       * whole contract between the two layers - so the honest move is to tell React it does not own
+       * them. It only ever covers this element's own attributes, so a real mismatch in the demo
+       * inside the frame is still reported.
+       *
+       * The alternative (teach the enhancer to skip stages inside islands) would leave the React
+       * binding without the auto-fit, the readiness flag and the screen presets the Vanilla one
+       * gets, which is precisely the symmetry ComponentPreview exists to keep.
+       */
       return (
         <iframe
           className={componentPreviewParts.stage}
@@ -168,6 +199,7 @@ export function framedIn(moduleName: string) {
           title={`Preview renderizado (React): ${title}`}
           loading="lazy"
           allow="clipboard-write"
+          suppressHydrationWarning
         />
       );
     }

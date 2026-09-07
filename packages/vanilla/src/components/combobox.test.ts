@@ -22,7 +22,7 @@ const markup = `<div class="sk-combobox" data-sk-combobox>
       <input class="sk-combobox__input" data-sk-combobox-input placeholder="Buscar país" />
     </div>
     <button class="sk-combobox__clear" data-sk-combobox-clear type="button" hidden></button>
-    <button class="sk-combobox__trigger" data-sk-combobox-trigger type="button"></button>
+    <span class="sk-combobox__trigger" data-sk-combobox-trigger aria-hidden="true"></span>
   </div>
   <div class="sk-combobox__positioner" data-sk-combobox-positioner>
     <div class="sk-combobox__content" data-sk-combobox-content>

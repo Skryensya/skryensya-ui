@@ -74,7 +74,7 @@
   const error = root.querySelector<HTMLElement>(selector.error);
   const control = root.querySelector<HTMLElement>(selector.control);
   const input = root.querySelector<HTMLInputElement>(selector.input);
-  const trigger = root.querySelector<HTMLButtonElement>(selector.trigger);
+  const trigger = root.querySelector<HTMLElement>(selector.trigger);
   const clear = root.querySelector<HTMLButtonElement>(selector.clear);
   const positioner = root.querySelector<HTMLElement>(selector.positioner);
   const content = root.querySelector<HTMLElement>(selector.content);
@@ -141,11 +141,6 @@
   ]
     .filter(Boolean)
     .join(" ");
-  const triggerLabel =
-    trigger?.getAttribute("aria-label") ||
-    root.dataset.triggerLabel ||
-    (trigger ? nameText(trigger) : "") ||
-    "Mostrar opciones";
   const clearLabel =
     clear?.getAttribute("aria-label") || root.dataset.clearLabel || (clear ? nameText(clear) : "") || "Limpiar selección";
   const resultText = (count: number) => {
@@ -219,7 +214,7 @@
     // A search that was never resolved into a selection is still the user's work: `preserve` is the
     // only selectionBehavior that keeps it on blur/click-outside/Escape instead of reverting it.
     selectionBehavior: "preserve" as const,
-    translations: { clearTriggerLabel: clearLabel, triggerLabel },
+    translations: { clearTriggerLabel: clearLabel },
     onInputValueChange(details: { reason?: string; inputValue: string }) {
       // Only what the user TYPED is a filter; any non-typed write (a selection's label, the empty
       // string after clear) resets to the full set.
@@ -324,7 +319,9 @@
     applyZagProps(input, api.getInputProps() as DomProps);
     if (describedBy) input.setAttribute("aria-describedby", describedBy);
     if (error) input.setAttribute("aria-errormessage", error.id);
-    applyZagProps(trigger, api.getTriggerProps() as DomProps);
+    // Decorative only (see `combobox.ts`'s own note on `part: "trigger"`): no `getTriggerProps()`
+    // spread, no click/focus wiring below. `data-state` alone drives the open/closed chevron swap.
+    trigger.dataset.state = api.open ? "open" : "closed";
     if (clear) {
       applyZagProps(clear, api.getClearTriggerProps() as DomProps);
       clear.hidden = !(api.hasSelectedItems || input.value.length > 0);
@@ -352,7 +349,6 @@
   onMount(() => {
     if (!ready || !input || !trigger || !content) return;
     cleanups.push(bindZagEvents(input, () => api.getInputProps() as DomProps));
-    cleanups.push(bindZagEvents(trigger, () => api.getTriggerProps() as DomProps));
     if (clear) cleanups.push(bindZagEvents(clear, () => api.getClearTriggerProps() as DomProps));
     cleanups.push(bindZagEvents(content, () => api.getContentProps() as DomProps));
     for (const candidate of authored)

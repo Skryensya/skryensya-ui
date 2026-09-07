@@ -118,13 +118,10 @@
     white-space: nowrap;
   }
 
-  /* Every action inside the field composes Button's icon-only sm contract. Component CSS only
-     supplies the quiet field recipe; Button owns the square, focus ring and expanded hit target. */
-  :is(
-      .sk-combobox__remove-trigger,
-      .sk-combobox__clear,
-      .sk-combobox__trigger
-    ).sk-button {
+  /* Every REAL action inside the field composes Button's icon-only sm contract. Component CSS only
+     supplies the quiet field recipe; Button owns the square, focus ring and expanded hit target.
+     The chevron (`.sk-combobox__trigger`) is no longer one of these — see its own rules below. */
+  :is(.sk-combobox__remove-trigger, .sk-combobox__clear).sk-button {
     --sk-button-bg: transparent;
     --sk-button-fg: var(--color-text-secondary);
     --sk-button-border-color: transparent;
@@ -158,19 +155,49 @@
     cursor: not-allowed;
   }
 
-  /* Trigger and clear paint at control-sm. The margin reserves exactly the difference between that
-     face and Button's fixed touch target, so adjacent field actions never have overlapping hits. */
-  :is(.sk-combobox__trigger, .sk-combobox__clear).sk-button {
+  /* Clear paints at control-sm. The margin reserves exactly the difference between that face and
+     Button's fixed touch target, so it and the input's own edge never have overlapping hits. */
+  .sk-combobox__clear.sk-button {
     align-self: center;
     margin-inline: calc((var(--size-touch-target) - var(--size-control-sm)) * 0.5);
   }
 
+  .sk-combobox__clear.sk-button:is(:disabled, [aria-disabled="true"]) {
+    --sk-button-fg: var(--color-text-disabled);
+  }
+
+  /*
+   * THE CHEVRON, a plain decorative indicator now (see the contract's own note on `part: "trigger"`
+   * in `combobox.ts`), not a Button composition: same `--size-control-sm` square holding a
+   * `--size-icon-md` glyph as `.sk-select__indicator` (`select.css`), the exact spacing an
+   * icon-only `sm` Button gives its own icon, without the hover/pressed feedback that made it read
+   * as a second clickable control. `place-items: center` on both this and its `[data-state]`
+   * children for the same reason `select.css` needs it on its own children: a plain `<span>`'s line
+   * box is taller than the glyph it holds, and centering only the OUTER box leaves the icon a
+   * couple pixels off true centre.
+   */
+  .sk-combobox__trigger {
+    display: inline-grid;
+    place-items: center;
+    align-self: center;
+    inline-size: var(--size-control-sm);
+    block-size: var(--size-control-sm);
+    color: var(--color-text-secondary);
+    margin-inline-end: var(--space-inset-xs);
+  }
+
+  .sk-combobox__trigger .sk-icon {
+    --sk-icon-size: var(--size-icon-md);
+  }
+
   .sk-combobox__trigger > [data-state] {
     display: none;
+    place-items: center;
+    grid-area: 1 / 1;
   }
 
   .sk-combobox__trigger > [data-state="closed"] {
-    display: inline-grid;
+    display: grid;
   }
 
   .sk-combobox__trigger[data-state="open"] > [data-state="closed"] {
@@ -178,14 +205,7 @@
   }
 
   .sk-combobox__trigger[data-state="open"] > [data-state="open"] {
-    display: inline-grid;
-  }
-
-  :is(.sk-combobox__trigger, .sk-combobox__clear).sk-button:is(
-      :disabled,
-      [aria-disabled="true"]
-    ) {
-    --sk-button-fg: var(--color-text-disabled);
+    display: grid;
   }
 
   /* La colocación es del pattern Anclaje (ADR-11): el control lleva además `sk-anchor` y el

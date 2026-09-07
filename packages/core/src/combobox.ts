@@ -198,30 +198,34 @@ export const comboboxContract = {
                 },
                 children: [{ element: "span", attrs: { "data-sk-icon": "close", "data-sk-icon-size": "sm" } }],
               },
+              /*
+               * Decorative, not a second control: Zag's own `getTriggerProps()` already defaults
+               * this to `tabIndex: -1` (never a Tab stop), and every existing open path — typing,
+               * `openOnClick` on the input itself — never went through it either. What made it
+               * read as an independent button was purely visual (its own `.sk-button` ghost hover/
+               * pressed feedback on a mouse hover/click Zag still wired up), not a real second
+               * interaction surface. `aria-hidden` and a plain `span` remove that affordance
+               * instead of just restyling it; the input's own `role="combobox"` +
+               * `aria-expanded` already say everything a screen reader needs.
+               */
               {
-                element: "button",
+                element: "span",
                 part: "trigger",
-                also: ["sk-button", "sk-interactive"],
                 mount: "data-sk-combobox-trigger",
-                attrs: {
-                  type: "button",
-                  "data-icon-only": "",
-                  "data-size": "sm",
-                  "data-variant": "ghost",
-                },
+                attrs: { "aria-hidden": "true" },
                 children: [
                   {
                     element: "span",
                     attrs: { "data-state": "closed" },
                     children: [
-                      { element: "span", attrs: { "data-sk-icon": "chevron-down", "data-sk-icon-size": "sm" } },
+                      { element: "span", attrs: { "data-sk-icon": "chevron-down", "data-sk-icon-size": "md" } },
                     ],
                   },
                   {
                     element: "span",
                     attrs: { "data-state": "open" },
                     children: [
-                      { element: "span", attrs: { "data-sk-icon": "chevron-up", "data-sk-icon-size": "sm" } },
+                      { element: "span", attrs: { "data-sk-icon": "chevron-up", "data-sk-icon-size": "md" } },
                     ],
                   },
                 ],

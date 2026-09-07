@@ -103,11 +103,14 @@
       align-items: center;
     }
 
+    /* Same glyph as the enhanced trigger's own chevron (`--size-icon-md`, Button's icon-only `sm`
+     * size) rather than the item check's `--size-icon-sm`, for the same reason: one recipe for a
+     * field's own affordance icon, regardless of which of the two anatomies renders it. */
     .sk-select-native::picker-icon {
       content: "";
       flex: 0 0 auto;
-      inline-size: var(--size-icon-sm);
-      block-size: var(--size-icon-sm);
+      inline-size: var(--size-icon-md);
+      block-size: var(--size-icon-md);
       margin-inline-start: auto;
       background: currentColor;
       clip-path: polygon(
@@ -294,6 +297,10 @@
     align-items: center;
     inline-size: 100%;
     min-inline-size: 0;
+    /* One step tighter than the value's own start inset (`--sk-select-padding-x`, shared rule
+     * above): the indicator already carries its own icon-centering inset (`.sk-select__indicator`),
+     * so the field's full padding stacked on top of that read as more gap than this edge needed. */
+    padding-inline-end: var(--space-inset-xs);
   }
 
   .sk-select__trigger[data-disabled] {
@@ -310,20 +317,47 @@
     white-space: nowrap;
   }
 
-  /* A medium field uses body-sized text. Keep the chevron and item check at the text's 16px optical
-   * line rather than the md icon's 20px box; the grid cells already centre them vertically. */
-  .sk-select__trigger .sk-icon,
+  /* The item check stays at the text's 16px optical line; the grid cell already centres it
+   * vertically, and it sits beside a label, not against the field's own border. */
   .sk-select__item .sk-icon {
     --sk-icon-size: var(--size-icon-sm);
   }
 
+  /* The chevron is sized like Button's icon-only `sm` glyph (`--size-icon-md`, the off-by-one the
+   * icon-only size scale already uses — see button.css's own note): 20px, not the item check's
+   * 16px. */
+  .sk-select__trigger .sk-icon {
+    --sk-icon-size: var(--size-icon-md);
+  }
+
+  /*
+   * `--size-control-sm` square, same footprint as Button's `data-icon-only[data-size="sm"]`, so a
+   * `--size-icon-md` glyph centred in it gets that exact same spacing — `(control-sm − icon-md) /
+   * 2` on every side, arithmetic rather than a copied literal. No background, no border, no
+   * separate radius: it stays a plain, non-interactive part of the one button the trigger already
+   * is (a boxed/bordered look here read as a second clickable control and was rejected on sight).
+   */
   .sk-select__indicator {
     display: inline-grid;
-    align-items: center;
+    place-items: center;
+    inline-size: var(--size-control-sm);
+    block-size: var(--size-control-sm);
     transition: none;
   }
 
+  /*
+   * `[data-state]`'s own line box is TALLER than the glyph it holds (font `line-height`, not the
+   * icon's own 20px), and the icon inside sits at that line box's default `vertical-align:
+   * baseline`  -  flush with its top, all the leftover space pushed below it. The outer indicator's
+   * `place-items: center` above only centres THIS SPAN as a whole (it does, correctly), which is
+   * not the same as centring the glyph inside it: measured live, the icon sat 2px above true
+   * centre, `vertically closer to the trigger's top than its bottom`. Making the span its own tiny
+   * grid, centred, removes the line box from the equation instead of fighting it with a
+   * `line-height` or `vertical-align` override.
+   */
   .sk-select__indicator [data-state] {
+    display: grid;
+    place-items: center;
     grid-area: 1 / 1;
   }
 

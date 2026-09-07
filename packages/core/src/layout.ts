@@ -47,9 +47,9 @@ export type LayoutPartClass = (typeof layoutParts)[LayoutPart];
 
 /*
  * The flow-layout signatures share a family because choosing one answers the same question: how does
- * this group occupy space? Stack, Inline, Grid and LayoutGrid differ in flow; DensityScope changes
- * that flow's semantic spacing. Each is `as`-polymorphic in React, so the author keeps the element
- * semantics: a Stack that is really a `<ul>` is still a Stack.
+ * this group occupy space? Stack, Inline, Grid and LayoutGrid differ in flow. Each is `as`-polymorphic
+ * in React, so the author keeps the element semantics: a Stack that is really a `<ul>` is still a
+ * Stack.
  */
 /*
  * Three stylesheets, so three families. Box and Wrapper keep only their own public parts; the flow
@@ -100,7 +100,6 @@ export const layoutContract = {
     columns: { type: "enum", values: ["1", "2", "3", "4", "5"], default: "1", attr: "data-columns" },
     multicol: { type: "boolean", default: false, attr: "data-multicol", trueValue: "" },
     responsive: { type: "boolean", default: false, attr: "data-responsive", trueValue: "" },
-    densityFactor: { type: "number", default: 1, styleProperty: "--sk-density-factor" },
   },
 
   signatures: {
@@ -156,21 +155,6 @@ export const layoutContract = {
       slots: { children: { accepts: "node" } },
       template: { element: "main", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "Main" },
-    },
-
-    DensityScope: {
-      intent: ["local-density", "compact-subtree", "scaled-component-spacing"],
-      host: { element: "div" },
-      options: ["densityFactor"],
-      slots: { children: { accepts: "node", required: true } },
-      template: {
-        element: "div",
-        host: true,
-        options: ["densityFactor"],
-        attrs: { "data-sk-density-scope": "" },
-        slot: "children",
-      },
-      react: { from: "@skryensya/react/layout", name: "DensityScope" },
     },
   },
 } as const satisfies ComponentContract;

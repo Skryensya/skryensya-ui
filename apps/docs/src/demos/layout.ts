@@ -985,6 +985,47 @@ export const gridMulticolTree = (t: Translate): UsageTree => ({
   ),
 });
 
+/**
+ * Same lane progression as `data-multicol`, but real CSS Grid rows: every row's height matches
+ * its tallest cell, and Atlas opts into a wider footprint with `data-span="2"` instead of an
+ * independent column height. `data-span` has no contract option (it lives on the CHILD, not the
+ * Grid), so it travels as a raw `attrs` passthrough, the same channel `aria-label`/`id` use.
+ */
+export const gridResponsiveTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Grid",
+  options: { columns: "3", gap: "md", responsive: true },
+  attrs: { "aria-label": t("demo.grid.label") },
+  children: ["Atlas", "Brisa", "Cauce", "Delta", "Estuario"].map((name, index) => ({
+    contract: "box",
+    signature: "Box",
+    options: {
+      surface: index === 0 ? "raised" : "surface",
+      border: "subtle",
+      padding: index === 0 ? "lg" : "md",
+    },
+    ...(index === 0 ? { attrs: { "data-span": "2" } } : {}),
+    children: {
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "xs" },
+      children: [
+        {
+          contract: "typography",
+          signature: "Text",
+          options: { weight: "label" },
+          children: name,
+        },
+        {
+          contract: "typography",
+          signature: "Text",
+          options: { size: "sm", tone: "secondary" },
+          children: index === 0 ? t("grid.responsiveFeaturedLabel") : `${index + 1}`,
+        },
+      ],
+    },
+  })),
+});
 
 /*
  * FOOTER demos. Footer owns no anatomy of its own beyond `padding`/`surface`/`divider` (see

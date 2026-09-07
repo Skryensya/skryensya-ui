@@ -1,0 +1,289 @@
+/*
+ * TIER 3, EDITOR: a ProseMirror content surface with a Toolbar bar of formatting commands on top.
+ *
+ * The TOOLBAR reuses `.sk-toolbar`'s own class/hooks (`toolbar.css`) wholesale — this sheet only
+ * adds the flush-seam join between the two boxes and the toolbar BUTTON's own pressed-state paint
+ * (`[aria-pressed="true"]`/`[data-active]`, a shape `.sk-toolbar` itself never needed before this
+ * consumer). The CONTENT surface composes `.sk-input`'s own hooks (`input.css`) for its box model
+ * — border, radius, padding, focus ring, invalid/disabled states — so it reads as the exact same
+ * field Textarea already is; what is added here is only what a `contenteditable` div cannot get
+ * from `.sk-input` alone: no native `:read-only`/`:disabled` pseudo-classes to key off (there is
+ * no real form control here), so this sheet answers `[aria-readonly="true"]`/`[aria-disabled="true"]`
+ * instead, and the taller "grows like a textarea" sizing `textarea.sk-input` keys off an element
+ * selector this div can never match.
+ */
+@layer components {
+  .sk-editor {
+    --sk-editor-toolbar-bg: var(--color-bg-surface-sunken);
+    --sk-editor-pressed-bg: color-mix(in oklab, var(--color-bg-accent-subtle) 55%, var(--color-bg-surface-raised));
+    --sk-editor-pressed-fg: var(--color-text-accent);
+    --sk-editor-placeholder-fg: var(--color-text-tertiary);
+
+    display: flex;
+    flex-direction: column;
+    /*
+     * `.sk-input` already does this for the content box alone (input.css); the OUTER wrapper (this
+     * class, toolbar included) had no width rule of its own, so it only ever filled its container in
+     * plain block flow — inside any flex/grid parent (this docs page's own preview stage among
+     * them, `component-preview.css`'s `.sk-component-preview__frame-body` is a flex row) a flex item
+     * with real content sizes to that content instead of stretching, confirmed live: the editor sat
+     * at its own text's width, not the column's. This is what makes it reliably grow to whatever
+     * width its container gives it, in ANY layout context, the same guarantee a real `<textarea>`
+     * already has.
+     */
+    inline-size: 100%;
+  }
+
+  /* Flush seam: the toolbar sits directly atop the content box, the two read as one control
+   * instead of two stacked boxes with a gap between them ("un textarea con toolbar arriba"). */
+  .sk-editor > .sk-toolbar {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+    border-block-end: none;
+    background: var(--sk-editor-toolbar-bg);
+  }
+
+  /*
+   * COMPACT, the `toolbarCompact` option: a second density for the SAME bar, not a second anatomy
+   * (`editor.ts`'s own comment on the option explains why that stays an option, not a signature).
+   * `.sk-toolbar` already exposes its padding/gap as custom properties for exactly this — tightened
+   * here rather than touching `toolbar.css` itself, which every OTHER toolbar on the site still
+   * reads at its normal density. Buttons keep their real `data-size="sm"` footprint (and Button's
+   * own invisible `::after` still expands the tap target to `--size-touch-target` regardless of how
+   * tightly this packs them): what shrinks is the chrome AROUND the buttons, never the hit area.
+   */
+  .sk-editor[data-toolbar-compact] > .sk-toolbar {
+    --sk-toolbar-gap: 2px;
+    --sk-toolbar-padding: 2px;
+  }
+
+  .sk-editor[data-toolbar-compact] .sk-toolbar__separator {
+    margin-inline: 2px;
+  }
+
+  .sk-editor > .sk-editor__content {
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+  }
+
+  /*
+   * No ring of this box's own: `:focus-within` fired on every plain mouse click (into the content,
+   * or onto a toolbar button) and drew ONE outline around the entire toolbar+content box regardless
+   * of which part actually had focus — too intense, and not scoped to the part a reader's eye was
+   * actually on. Removed rather than narrowed, because there is nothing left for it to add: the
+   * toolbar's own buttons already carry a real, keyboard-only ring
+   * (`.sk-interactive:focus-visible`, `state-layer.css`), and the content surface already carries
+   * its own (`.sk-input:focus-visible`, `input.css`) — the same `--focus-ring-*` tokens, just
+   * scoped to whichever part is actually focused instead of the whole control at once.
+   */
+
+  .sk-editor__toolbar-button[aria-pressed="true"],
+  .sk-editor__toolbar-button[data-active] {
+    background: var(--sk-editor-pressed-bg);
+    color: var(--sk-editor-pressed-fg);
+  }
+
+  /*
+   * `.sk-editor__content.sk-input`, not `.sk-editor__content` alone: `.sk-input` itself (input.css)
+   * sets a FIXED `block-size: var(--sk-input-height)`, equal specificity (one class each), so
+   * whichever stylesheet a page happens to `@import` last would otherwise decide which wins —
+   * confirmed live, content silently overflowed a height-pinned box instead of growing it. The
+   * extra class here is what makes this rule win regardless of import order, the same "grows like
+   * a textarea" floor-plus-auto shape `textarea.sk-input`'s own element-selector rule gives a real
+   * `<textarea>` (which this div, `role="textbox"` rather than the real element, can never match).
+   */
+  .sk-editor__content.sk-input {
+    block-size: auto;
+    min-block-size: calc(var(--sk-input-height) * 3);
+    white-space: pre-wrap;
+  }
+
+  .sk-editor__content[aria-readonly="true"]:not([aria-invalid="true"]) {
+    --sk-input-bg: var(--sk-input-readonly-bg);
+    --sk-input-border-color: var(--sk-input-readonly-border-color);
+  }
+
+  .sk-editor__content[aria-disabled="true"] {
+    --sk-input-bg: var(--sk-input-disabled-bg);
+    --sk-input-fg: var(--sk-input-disabled-fg);
+    --sk-input-border-color: var(--sk-input-disabled-border-color);
+    cursor: not-allowed;
+  }
+
+  /*
+   * `[data-focus-pointer]` (`packages/editor/src/focus-modality.ts`, called by both bindings):
+   * `.sk-input:focus-visible` (input.css) rings a real Textarea on a plain click too, on purpose —
+   * the browser's own `:focus-visible` heuristic always treats a text-editing surface that way,
+   * unlike a button. This component asked to differ from that sitewide default: a ring only when
+   * focus arrives by keyboard. Scoped to `.sk-editor` alone, so ordinary Input/Textarea elsewhere
+   * keep the sitewide behavior unchanged — only the editor's own surface opts out.
+   */
+  .sk-editor__content[data-focus-pointer]:focus-visible {
+    outline: none;
+  }
+
+  /*
+   * ProseMirror renders a plain `<h1>`–`<h6>`, marked `data-flush` by the schema's own `toDOM`
+   * (`packages/editor/src/schema.ts`) specifically so this rule is the one that governs it: without
+   * that marker, the docs site's own UNLAYERED `h1:not([data-flush])`/`h2:not(...)` rules
+   * (`apps/docs/src/styles/site.css`) win regardless of anything written here — a `@layer
+   * components` rule can never outrank an unlayered one — and repaint a content heading as a 64px-
+   * above section title of the DOCS PAGE, confirmed live. Same `margin: 0` convention `.sk-heading`
+   * itself uses (`typography.css`): a heading owns no external spacing of its own; every block's gap
+   * comes from the single sibling-adjacent rule below instead, same as the rest of this content.
+   */
+  .sk-editor__content :is(h1, h2, h3, h4, h5, h6) {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-heading);
+  }
+
+  .sk-editor__content h1 {
+    font-size: var(--font-size-heading-h1);
+    line-height: var(--font-line-height-heading-h1);
+  }
+
+  .sk-editor__content h2 {
+    font-size: var(--font-size-heading-h2);
+    line-height: var(--font-line-height-heading-h2);
+  }
+
+  .sk-editor__content h3 {
+    font-size: var(--font-size-heading-h3);
+    line-height: var(--font-line-height-heading-h3);
+  }
+
+  /* Floor: h4/h5/h6 share one pair, the same "the scale does not shrink past a readable section
+   * title" rule `typography.css`'s own comment gives for `.sk-heading[data-size="h4"]` and up. */
+  .sk-editor__content :is(h4, h5, h6) {
+    font-size: var(--font-size-heading-h4);
+    line-height: var(--font-line-height-heading-h4);
+  }
+
+  /*
+   * PROSE: every other node the schema renders (`schema.ts`) — paragraph, list, blockquote, code,
+   * link, rule. This component is a standalone editing SURFACE, not embedded copy meant to inherit
+   * a host page's own prose CSS the way `changelog.css`'s own body deliberately does (see that
+   * file's own "OUTSIDE THE LAYER" comment) — a consumer with no site-level prose rules at all must
+   * still see real typography here, so every value below is this file's own, off the same tokens
+   * the rest of the system already uses (`.sk-code` for inline code, `.sk-input` for the box).
+   *
+   * ONE GAP RULE for every block, rather than each element carrying its own top/bottom margin: a
+   * margin an element owns has to be un-set again the moment that element is first-in-container or
+   * sits inside something narrower (exactly the list-item case below), and doing that per element is
+   * how a list ends up "con mucho mb" — each `<li>`'s own `<p>` still carrying the SAME top-level
+   * block gap the list itself already added. One sibling-adjacent rule composes correctly at any
+   * nesting depth with no second exception list to maintain.
+   */
+  .sk-editor__content :is(p, ul, ol, blockquote, pre, hr) {
+    margin-block: 0;
+  }
+
+  .sk-editor__content > * + *,
+  .sk-editor__content blockquote > * + * {
+    margin-block-start: var(--space-stack-sm);
+  }
+
+  /*
+   * A heading reads as the start of a new section, not one more paragraph in the same rhythm: MORE
+   * air above it than the ordinary block-to-block gap, none below (already `margin: 0` — a heading
+   * hugs whatever follows it). `:not(:first-child)`, so the very first block in an empty/short doc
+   * never opens with a dangling gap above nothing.
+   */
+  .sk-editor__content > :is(h1, h2, h3, h4, h5, h6):not(:first-child) {
+    margin-block-start: var(--space-stack-lg);
+  }
+
+  .sk-editor__content p {
+    color: var(--color-text-primary);
+    font-size: var(--font-size-body);
+    line-height: var(--font-line-height-body);
+  }
+
+  .sk-editor__content :is(ul, ol) {
+    padding-inline-start: 1.5em;
+  }
+
+  /* Muted markers: a bullet/number is navigation, not content, the same reasoning a muted icon
+   * gets elsewhere in the system — full-strength text color on every marker reads as louder than
+   * the words beside it. */
+  .sk-editor__content :is(ul, ol) li::marker {
+    color: var(--color-text-tertiary);
+  }
+
+  /* A list item's own paragraph is not a top-level block: it must not ALSO carry the block-to-block
+   * gap above, or a list reads as more air than text (the "mucho mb" this rule exists to fix). */
+  .sk-editor__content li > p {
+    margin-block: 0;
+  }
+
+  .sk-editor__content li + li {
+    margin-block-start: var(--space-stack-xs);
+  }
+
+  /* A vertical rule, not a tint or italics: the classic quotation mark this shape already reads as,
+   * without dimming the words the way `font-style: italic` alone tends to on a screen. */
+  .sk-editor__content blockquote {
+    border-inline-start: 3px solid var(--color-border-default);
+    padding-inline-start: var(--space-inline-md);
+    color: var(--color-text-secondary);
+  }
+
+  /* Same recipe `.sk-code` (typography.css) already draws for inline code elsewhere on the site,
+   * reused here rather than depended on: this file must not assume `.sk-code` is imported. */
+  .sk-editor__content code {
+    padding-inline: 0.3em;
+    padding-block: 0.1em;
+    border-radius: var(--radius-control);
+    background: var(--color-bg-surface-sunken);
+    font-family: var(--font-family-code);
+    font-size: 0.9em;
+    overflow-wrap: anywhere;
+  }
+
+  /* A code BLOCK: the block owns the surface and the scroll, so its own nested `<code>` gives up
+   * the inline treatment above rather than doubling the padding/background inside it. */
+  .sk-editor__content pre {
+    padding: var(--space-inset-sm);
+    border-radius: var(--radius-control);
+    background: var(--color-bg-surface-sunken);
+    overflow-x: auto;
+  }
+
+  .sk-editor__content pre code {
+    padding: 0;
+    background: none;
+    font-size: var(--font-size-body-sm);
+  }
+
+  .sk-editor__content a {
+    color: var(--color-text-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  /* A section break wants the same "more air than an ordinary block" treatment a heading gets —
+   * it is spacing playing the same structural role a heading's own extra margin-start plays above. */
+  .sk-editor__content > hr:not(:first-child) {
+    margin-block-start: var(--space-stack-lg);
+  }
+
+  .sk-editor__content hr {
+    border: none;
+    border-block-start: 1px solid var(--color-border-default);
+  }
+
+  .sk-editor__placeholder {
+    color: var(--sk-editor-placeholder-fg);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  @media (forced-colors: active) {
+    .sk-editor__toolbar-button[aria-pressed="true"],
+    .sk-editor__toolbar-button[data-active] {
+      background: Highlight;
+      color: HighlightText;
+    }
+  }
+}

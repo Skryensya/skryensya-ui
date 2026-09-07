@@ -13,6 +13,8 @@ export const generated = {
   "chevron-left": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"m15 18-6-6 6-6\" />" },
   "chevron-right": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"m9 18 6-6-6-6\" />" },
   "arrow-up": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"m5 12 7-7 7 7\" /><path d=\"M12 19V5\" />" },
+  "vote-up": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"M9 19a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-6a1 1 0 0 1 1-1h3.293a.707.707 0 0 0 .5-1.207l-7.086-7.086a1 1 0 0 0-1.414 0l-7.086 7.086a.707.707 0 0 0 .5 1.207H8a1 1 0 0 1 1 1z\" />" },
+  "vote-down": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"M9 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6a1 1 0 0 0 1 1h3.293a.707.707 0 0 1 .5 1.207l-7.086 7.086a1 1 0 0 1-1.414 0l-7.086-7.086a.707.707 0 0 1 .5-1.207H8a1 1 0 0 0 1-1z\" />" },
   "arrow-down": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"M12 5v14\" /><path d=\"m19 12-7 7-7-7\" />" },
   "arrow-left": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"m12 19-7-7 7-7\" /><path d=\"M19 12H5\" />" },
   "arrow-right": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"M5 12h14\" /><path d=\"m12 5 7 7-7 7\" />" },

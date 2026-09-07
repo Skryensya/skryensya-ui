@@ -80,6 +80,14 @@ export const stableIconNames = [
   "arrow-down",
   "arrow-left",
   "arrow-right",
+  /* VOTAR, y por qué es un rol propio y no "la flecha gorda". Los `arrow-*` de arriba nombran una
+   * DIRECCIÓN y son la excepción consciente del vocabulario; esto nombra una ACCIÓN, y por eso vale
+   * como nombre estable donde `arrow-big-up` no valdría: ese es el nombre que Lucide le da al
+   * dibujo, Phosphor lo llama `arrow-fat-up` y Material ni siquiera dibuja una flecha, dibuja un
+   * pulgar. Tres dibujos, un solo rol, que es exactamente el caso que esta lista existe para
+   * resolver (`delete` y no `trash`). Un set decide con qué lo ocupa; el sistema pide "votar". */
+  "vote-up",
+  "vote-down",
   "external-link",
 
   // acción

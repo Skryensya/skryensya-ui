@@ -27,6 +27,8 @@ const MAP = {
   "chevron-left": "chevron_left",
   "chevron-right": "chevron_right",
   "arrow-up": "arrow_upward",
+  "vote-up": "thumb_up",
+  "vote-down": "thumb_down",
   "arrow-down": "arrow_downward",
   "arrow-left": "arrow_back",
   "arrow-right": "arrow_forward",

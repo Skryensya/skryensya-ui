@@ -67,13 +67,30 @@ export const popoverContract = {
     bare: { type: "boolean", default: false, attr: "data-bare", trueValue: "", machineInput: true },
     /** What the closing control says. */
     closeLabel: { type: "string", default: "Cerrar", attr: "data-close-label", machineInput: true },
+    /**
+     * Passed straight to the trigger's own `data-variant`/`data-size`, the SAME three options
+     * `Menu` already publishes for its own trigger (`triggerVariant`/`triggerSize`/
+     * `triggerIconOnly`, menu.ts) and the SAME attributes `Button`'s own `variant`/`size`/
+     * `iconOnly` write. `button.css`'s existing `[data-variant="…"]`/`[data-size="…"]`/
+     * `[data-icon-only]` rules apply to the trigger directly; nothing here repeats their CSS.
+     *
+     * Untyped (plain string) for the same reason Menu's are: Popover does not own that
+     * vocabulary, `Button` does. Without them a Popover composed INTO another control's row
+     * (the Editor toolbar's link button being the motivating case) drew a default-variant,
+     * default-size trigger next to a row of small ghost icon buttons and read as a stray box.
+     */
+    triggerVariant: { type: "string", attr: "data-variant" },
+    triggerSize: { type: "string", attr: "data-size" },
+    /** The icon-only SHAPE: a control-sized square holding one glyph, zero inline padding. Pair it
+     *  with a `triggerLabel`, since a trigger with no visible content announces nothing. */
+    triggerIconOnly: { type: "boolean", default: false, attr: "data-icon-only", trueValue: "" },
   },
 
   signatures: {
     Popover: {
       intent: ["popover", "rich-panel-on-a-trigger", "light-dismiss-panel"],
       host: { element: "div" },
-      options: ["panelId", "placement", "arrow", "closeLabel"],
+      options: ["panelId", "placement", "arrow", "closeLabel", "triggerVariant", "triggerSize", "triggerIconOnly"],
       slots: {
         /** What opens it. Carries its own accessible name. */
         trigger: { accepts: "node", required: true },
@@ -106,7 +123,10 @@ export const popoverContract = {
             part: "trigger",
             also: ["sk-button", "sk-interactive", "sk-anchor"],
             attrs: { type: "button" },
-            options: ["panelId"],
+            // Claims the `trigger*` options for ITSELF (each one's own `attr` already says where,
+            // so only `panelId` needs the rename below), the same "one option, one element" split
+            // `Menu`'s own trigger keeps.
+            options: ["panelId", "triggerVariant", "triggerSize", "triggerIconOnly"],
             optionAttrs: { panelId: "popovertarget" },
             slot: "trigger",
           },
@@ -158,7 +178,7 @@ export const popoverContract = {
     "Popover.bare": {
       intent: ["bare-floating-surface", "anchored-panel-without-chrome", "popup"],
       host: { element: "div" },
-      options: ["panelId", "placement", "bare", "arrow"],
+      options: ["panelId", "placement", "bare", "arrow", "triggerVariant", "triggerSize", "triggerIconOnly"],
       slots: {
         /** What opens it. Carries its own accessible name. */
         trigger: { accepts: "node", required: true },
@@ -175,7 +195,10 @@ export const popoverContract = {
             part: "trigger",
             also: ["sk-button", "sk-interactive", "sk-anchor"],
             attrs: { type: "button" },
-            options: ["panelId"],
+            // Claims the `trigger*` options for ITSELF (each one's own `attr` already says where,
+            // so only `panelId` needs the rename below), the same "one option, one element" split
+            // `Menu`'s own trigger keeps.
+            options: ["panelId", "triggerVariant", "triggerSize", "triggerIconOnly"],
             optionAttrs: { panelId: "popovertarget" },
             slot: "trigger",
           },

@@ -983,6 +983,57 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
+  /*
+   * The silhouette is MEASURED, so this is the tree that proves the two bindings draw one shape: a
+   * real browser lays both out, each binding calls `folderPath` with what it measured, and the gate
+   * compares the resulting `d` attribute like any other. A difference of one pixel in either
+   * measurement shows up here as a different string.
+   */
+  {
+    name: "folder/one",
+    enhanced: true,
+    tree: {
+      contract: "folder",
+      signature: "Folder",
+      options: {},
+      slots: {
+        label: { contract: "typography", signature: "Heading", options: { headingSize: "h2", flush: true }, children: "Radio" },
+        children: { contract: "typography", signature: "Text", options: { size: "sm" }, children: "Una radio personal." },
+      },
+    },
+  },
+  /* The default use: a stack, invisible at rest in both bindings until something reaches into it. */
+  {
+    name: "folder/stack",
+    enhanced: true,
+    tree: {
+      contract: "folder",
+      signature: "FolderStack",
+      options: { overlap: "100px" },
+      slots: {
+        children: [
+          {
+            contract: "folder",
+            signature: "FolderLink",
+            options: { href: "#radio" },
+            slots: {
+              label: { contract: "typography", signature: "Heading", options: { headingSize: "h2", flush: true }, children: "Radio" },
+              children: { contract: "typography", signature: "Text", options: { size: "sm" }, children: "Una radio personal." },
+            },
+          },
+          {
+            contract: "folder",
+            signature: "FolderLink",
+            options: { href: "#printer" },
+            slots: {
+              label: { contract: "typography", signature: "Heading", options: { headingSize: "h2", flush: true }, children: "Printer" },
+              children: { contract: "typography", signature: "Text", options: { size: "sm" }, children: "Impresión instantánea." },
+            },
+          },
+        ],
+      },
+    },
+  },
   /* No enhancer at all: the browser owns light-dismiss, Escape and the top layer. */
   {
     name: "popover/on-a-trigger",
@@ -1853,16 +1904,6 @@ const signatureTrees: readonly Canonical[] = [
     },
   },
   {
-    name: "layout/density-scope",
-    enhanced: false,
-    tree: {
-      contract: "layout",
-      signature: "DensityScope",
-      options: { densityFactor: 0.75 },
-      children: { contract: "typography", signature: "Text", children: "Más compacto en este subárbol." },
-    },
-  },
-  {
     // Also the only fixture for `list.ListItemPlain`: an ordered list's rows are the same three
     // item signatures a plain `List` takes, and this is the plain one.
     name: "list/ordered",
@@ -2012,6 +2053,133 @@ const signatureTrees: readonly Canonical[] = [
           slots: { label: "Bruno, hace 1 hora", children: "Encontré un caso borde en el filtro." },
         },
       ],
+    },
+  },
+  /*
+   * COMMENT THREAD, three trees for the same reason the contract is five signatures: the pieces are
+   * meant to work apart, so a gate that only ever saw the full set would be evidence for exactly one
+   * of the three ways it ships. The bare `Comment` is the one the composition claims can stand
+   * alone; the composer is the one that has to hold a control it does not own.
+   */
+  {
+    name: "comment-thread/comment",
+    enhanced: false,
+    tree: {
+      contract: "comment-thread",
+      signature: "Comment",
+      slots: {
+        avatar: {
+          contract: "avatar",
+          signature: "Avatar.initials",
+          options: { size: "sm", name: "Ada" },
+          children: "Ad",
+        },
+        author: "Ada",
+        timestamp: "hace 3h",
+        children: "El deploy quedó bien, gracias por revisar.",
+      },
+    },
+  },
+  {
+    name: "comment-thread/thread",
+    enhanced: true,
+    tree: {
+      contract: "comment-thread",
+      signature: "CommentThread",
+      options: { label: "Comentarios" },
+      slots: {
+        /* The composer rides INSIDE the thread rather than as a tree of its own: its host is a
+         * `<form>` and the stage wraps each binding in one, so a standalone tree renders form-in-
+         * form. Nested here it is exercised the way a consumer nests it anyway, and G2 gets to
+         * compare the signature instead of never having seen it. */
+        composer: {
+          contract: "comment-thread",
+          signature: "CommentComposer",
+          children: {
+            contract: "form-field",
+            signature: "FormField",
+            slots: { label: "Comentario" },
+            children: { contract: "input", signature: "Textarea" },
+          },
+        },
+        children: {
+          contract: "comment-thread",
+          signature: "Comment",
+          options: { commentId: "c1", collapsible: true },
+          slots: {
+            avatar: {
+              contract: "avatar",
+              signature: "Avatar.initials",
+              options: { size: "sm", name: "Ada" },
+              children: "Ad",
+            },
+            author: "Ada",
+            timestamp: "hace 3h",
+            children: "El deploy quedó bien, gracias por revisar.",
+            actions: {
+              contract: "comment-thread",
+              signature: "CommentActions",
+              options: { reply: true, deletable: true },
+              slots: {
+                children: {
+                  contract: "comment-thread",
+                  signature: "CommentVote",
+                  options: { voted: "up" },
+                  slots: { count: "4" },
+                },
+              },
+            },
+            /* A per-comment reply box, so the gates exercise the composer where a consumer actually
+             * puts one and not only at thread level. */
+            replyComposer: {
+              contract: "comment-thread",
+              signature: "CommentComposer",
+              options: { cancellable: true },
+              children: {
+                contract: "form-field",
+                signature: "FormField",
+                options: { labelHidden: true },
+                slots: { label: "Respuesta" },
+                children: { contract: "input", signature: "Textarea" },
+              },
+            },
+            replies: [
+              {
+                contract: "comment-thread",
+                signature: "Comment",
+                options: { commentId: "c1-r1" },
+                slots: {
+                  avatar: {
+                    contract: "avatar",
+                    signature: "Avatar.initials",
+                    options: { size: "sm", name: "Bruno" },
+                    children: "Br",
+                  },
+                  author: "Bruno",
+                  timestamp: "hace 1h",
+                  children: "Encontré un caso borde en el filtro.",
+                },
+              },
+              {
+                contract: "comment-thread",
+                signature: "Comment",
+                options: { commentId: "c1-r2" },
+                slots: {
+                  avatar: {
+                    contract: "avatar",
+                    signature: "Avatar.initials",
+                    options: { size: "sm", name: "Carla" },
+                    children: "Ca",
+                  },
+                  author: "Carla",
+                  timestamp: "hace 20m",
+                  children: "Lo reproduzco y lo dejo anotado.",
+                },
+              },
+            ],
+          },
+        },
+      },
     },
   },
   {

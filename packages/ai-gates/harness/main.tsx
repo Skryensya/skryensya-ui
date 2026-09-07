@@ -38,6 +38,10 @@ import "@skryensya/core/components/sidebar.css";
 import "@skryensya/core/components/skip-link.css";
 import "@skryensya/core/components/tree-view.css";
 import "@skryensya/core/components/tile.css";
+/* Folder's silhouette is drawn from numbers this sheet publishes as hooks (`--sk-folder-tab-height`
+ * and friends), so without it BOTH bindings fall back to `folderGeometryFrom`'s defaults and the
+ * gate compares two folders drawn from a stylesheet that was never loaded. */
+import "@skryensya/core/components/folder.css";
 import "@skryensya/core/components/icon-state-button.css";
 import "@skryensya/core/components/toast.css";
 import "@skryensya/core/components/tooltip.css";
@@ -67,6 +71,7 @@ import "@skryensya/core/components/radio-group.css";
 import "@skryensya/core/components/switch.css";
 import "@skryensya/core/components/form-field.css";
 import "@skryensya/core/components/input.css";
+import "@skryensya/core/components/comment-thread.css";
 import "@skryensya/core/components/table.css";
 import "@skryensya/core/components/tabs.css";
 import "@skryensya/core/patterns/icon.css";

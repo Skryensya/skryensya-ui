@@ -3,8 +3,22 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "66fa515a3ee72951"
+surface: "1af499c76b985403"
 entries:
+  - date: 2026-09-05
+    kind: feature
+    es:
+      title: Alcanza los dos roles nuevos del vocabulario
+      body: >-
+        Sin cambios propios. Las caras de este control se tipan contra `StableIconName`, así que
+        `vote-up` y `vote-down` (ver el changelog de `icon`) son dos valores más que una cara puede
+        tomar. La superficie se movió porque el enum del que deriva creció.
+    en:
+      title: Reaches the vocabulary's two new roles
+      body: >-
+        No change of its own. This control's faces are typed against `StableIconName`, so `vote-up`
+        and `vote-down` (see `icon`'s own changelog) are two more values a face can take. The surface
+        moved because the enum it derives from grew.
   - date: 2026-09-02
     kind: feature
     target: icon

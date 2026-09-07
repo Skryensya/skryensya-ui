@@ -3,8 +3,32 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "74ced6009fdbc126"
+surface: "74eb4b77c0cd5ff1"
 entries:
+  - date: 2026-09-05
+    kind: feature
+    es:
+      title: El vocabulario estable gana vote-up y vote-down
+      body: >-
+        Dos roles nuevos para la acción de votar, que ya cubren los tres sets publicados. Son ROLES y
+        no dibujos, que es lo que esta lista pide: Lucide ocupa el rol con `ArrowBigUp`, Phosphor con
+        `arrow-fat-up` y Material ni siquiera dibuja una flecha, dibuja un pulgar. Tres dibujos
+        distintos para una sola intención es exactamente el caso que el vocabulario existe para
+        resolver, y por eso el nombre no es `arrow-big-up`: ese es el nombre que UN set le da al
+        dibujo, y dejaría a los otros dos publicando un icono que se llama como algo que no dibujan.
+        Como `IconSet` es completo, agregar un rol es aditivo para quien consume y trabajo nuevo para
+        quien dibuja un set: los tres del repo ya lo traen.
+    en:
+      title: The stable vocabulary gains vote-up and vote-down
+      body: >-
+        Two new roles for the act of voting, already covered by all three published sets. They are
+        ROLES and not drawings, which is what this list asks for: Lucide fills the role with
+        `ArrowBigUp`, Phosphor with `arrow-fat-up`, and Material does not draw an arrow at all, it
+        draws a thumb. Three different drawings for one intention is exactly the case the vocabulary
+        exists to resolve, and it is why the name is not `arrow-big-up`: that is what ONE set calls
+        the drawing, and it would leave the other two publishing an icon named after something they
+        do not draw. Because `IconSet` is complete, adding a role is additive for a consumer and new
+        work for whoever draws a set; all three in this repo already ship it.
   - date: 2026-09-02
     kind: feature
     target: name

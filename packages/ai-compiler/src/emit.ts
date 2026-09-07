@@ -1302,9 +1302,9 @@ function renderJsx(
        * ALSO the named prop, under the option's own key; see `render-tree.tsx`'s identical fix
        * for why: a `styleProperty` option says where the value lands in markup, not how a React
        * component wants it, and a component that takes it as an ordinary prop (Sidebar's
-       * `minInlineSize`, DensityScope's `densityFactor`) never saw it here either. The live island
-       * and this printed snippet have to pass the same props for the same reason ADR-15 gives:
-       * the demo a reader watches and the evidence G2 collects are the same call.
+       * `minInlineSize`) never saw it here either. The live island and this printed snippet have
+       * to pass the same props for the same reason ADR-15 gives: the demo a reader watches and the
+       * evidence G2 collects are the same call.
        */
     }
     if (value === false) {

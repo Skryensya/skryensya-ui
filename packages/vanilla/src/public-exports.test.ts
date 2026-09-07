@@ -11,11 +11,14 @@ import { mountCodePreview } from "@skryensya/vanilla/code-preview";
 import { mountColorPicker } from "@skryensya/vanilla/color-picker";
 import { mountCombobox } from "@skryensya/vanilla/combobox";
 import { mountCommandPalette } from "@skryensya/vanilla/command-palette";
+import { mountCommentThread } from "@skryensya/vanilla/comment-thread";
 import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
 import { mountDataGrid } from "@skryensya/vanilla/data-grid";
 import { mountDatePicker } from "@skryensya/vanilla/date-picker";
+import { mountEditor } from "@skryensya/vanilla/editor";
 import { mountExpandableTile } from "@skryensya/vanilla/expandable-tile";
 import { mountFileUpload } from "@skryensya/vanilla/file-upload";
+import { mountFolder } from "@skryensya/vanilla/folder";
 import { mountMegamenu } from "@skryensya/vanilla/megamenu";
 import { mountMenu } from "@skryensya/vanilla/menu";
 import { mountMenubar } from "@skryensya/vanilla/menubar";
@@ -69,10 +72,12 @@ const mounts = [
   mountColorPicker,
   mountCombobox,
   mountCommandPalette,
+  mountCommentThread,
   mountDataGrid,
   mountDatePicker,
   mountExpandableTile,
   mountFileUpload,
+  mountFolder,
   mountMegamenu,
   mountMenu,
   mountMenubar,
@@ -104,13 +109,21 @@ const mounts = [
 describe("Vanilla public entry points", () => {
   it("publishes the lazy auto-loader and one mount for every regular enhanced module", () => {
     expect(initComponents).toBeTypeOf("function");
-    expect(mounts).toHaveLength(41);
+    expect(mounts).toHaveLength(43);
     expect(mounts.every((mount) => typeof mount === "function")).toBe(true);
   });
 
-  it("publishes documentation previews and lifecycle control only through explicit subpaths", () => {
+  /*
+   * Editor sits beside CodePreview/ComponentPreview here for a different reason than either: it IS
+   * part of the default application runtime, conceptually, but `@skryensya/editor` (ProseMirror) is
+   * an optional peer dependency, so `runtime/registry.ts`'s auto-loader must never name it — even
+   * behind a selector-gated `import()` — or every consumer of `@skryensya/vanilla/auto` would need
+   * that peer installed. A page using Editor calls `mountEditor` explicitly instead.
+   */
+  it("publishes documentation previews, Editor, and lifecycle control only through explicit subpaths", () => {
     expect(mountCodePreview).toBeTypeOf("function");
     expect(mountComponentPreview).toBeTypeOf("function");
+    expect(mountEditor).toBeTypeOf("function");
     expect(destroyMount).toBeTypeOf("function");
   });
 
@@ -147,10 +160,12 @@ describe("Vanilla public entry points", () => {
         mountColorPicker,
         mountCombobox,
         mountCommandPalette,
+        mountCommentThread,
         mountDataGrid,
         mountDatePicker,
         mountExpandableTile,
         mountFileUpload,
+        mountFolder,
         mountMegamenu,
         mountMenu,
         mountMenubar,

@@ -84,9 +84,17 @@
       "types": "./src/components/button.tsx",
       "default": "./src/components/button.tsx"
     },
+    "./folder": {
+      "types": "./src/components/folder.tsx",
+      "default": "./src/components/folder.tsx"
+    },
     "./form-field": {
       "types": "./src/components/form-field.tsx",
       "default": "./src/components/form-field.tsx"
+    },
+    "./editor": {
+      "types": "./src/components/editor.tsx",
+      "default": "./src/components/editor.tsx"
     },
     "./layout": {
       "types": "./src/components/layout.tsx",
@@ -280,6 +288,10 @@
       "types": "./src/components/combobox.tsx",
       "default": "./src/components/combobox.tsx"
     },
+    "./comment-thread": {
+      "types": "./src/components/comment-thread.tsx",
+      "default": "./src/components/comment-thread.tsx"
+    },
     "./date-picker": {
       "types": "./src/components/date-picker.tsx",
       "default": "./src/components/date-picker.tsx"
@@ -385,12 +397,16 @@
     "@zag-js/react": "^1.43.3"
   },
   "peerDependencies": {
+    "@skryensya/editor": "workspace:*",
     "@skryensya/icons-lucide": "workspace:*",
     "@skryensya/icons-material": "workspace:*",
     "react": ">=19",
     "react-dom": ">=19"
   },
   "peerDependenciesMeta": {
+    "@skryensya/editor": {
+      "optional": true
+    },
     "@skryensya/icons-lucide": {
       "optional": true
     },
@@ -399,6 +415,7 @@
     }
   },
   "devDependencies": {
+    "@skryensya/editor": "workspace:*",
     "@skryensya/icons-lucide": "workspace:*",
     "@skryensya/icons-material": "workspace:*",
     "@testing-library/react": "^16.3.2",

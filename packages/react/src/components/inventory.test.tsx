@@ -127,20 +127,19 @@ describe("expanded component inventory", () => {
     );
     expect(input.getAttribute("aria-errormessage")).toBe(error.id);
     expect(input.getAttribute("aria-invalid")).toBe("true");
-    expect(ui.getByRole("button", { name: "Mostrar opciones" })).toBeTruthy();
-    expect(ui.getByRole("button", { name: "Limpiar selección" }).tabIndex).toBe(
-      0,
-    );
-    for (const action of [
-      ui.getByRole("button", { name: "Mostrar opciones" }),
-      ui.getByRole("button", { name: "Limpiar selección" }),
-    ]) {
-      expect(action.classList.contains("sk-button")).toBe(true);
-      expect(action.classList.contains("sk-interactive")).toBe(true);
-      expect(action.getAttribute("data-icon-only")).toBe("");
-      expect(action.getAttribute("data-size")).toBe("sm");
-      expect(action.getAttribute("data-variant")).toBe("ghost");
-    }
+    // The chevron is decorative, not a second control (see combobox.tsx's own note): no
+    // accessible name, `aria-hidden`, and it composes none of Button's contract.
+    const trigger = ui.container.querySelector(".sk-combobox__trigger")!;
+    expect(trigger.tagName).toBe("SPAN");
+    expect(trigger.getAttribute("aria-hidden")).toBe("true");
+    expect(trigger.classList.contains("sk-button")).toBe(false);
+    const clear = ui.getByRole("button", { name: "Limpiar selección" });
+    expect(clear.tabIndex).toBe(0);
+    expect(clear.classList.contains("sk-button")).toBe(true);
+    expect(clear.classList.contains("sk-interactive")).toBe(true);
+    expect(clear.getAttribute("data-icon-only")).toBe("");
+    expect(clear.getAttribute("data-size")).toBe("sm");
+    expect(clear.getAttribute("data-variant")).toBe("ghost");
   });
 
   it("shows and removes values from a multiple Combobox", async () => {

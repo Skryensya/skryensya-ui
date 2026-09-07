@@ -287,7 +287,22 @@ const ExpandableTileRoot = forwardRef<HTMLElement, ExpandableTileProps>(function
 
   return (
     <ExpandableTileContext.Provider value={api}>
-      <Component {...api.getRootProps()} {...props} className={classes} data-padding={padding} data-scope="tile" ref={ref}>
+      <Component
+        {...api.getRootProps()}
+        {...props}
+        className={classes}
+        data-padding={padding}
+        data-scope="tile"
+        // Symmetry with the Vanilla binding's own `AccordionItem.svelte`/`ExpandableTile.svelte`,
+        // which set this once their machine effect has run at all, to gate `tile.css`'s
+        // anti-flash shim for authored markup that has not been enhanced yet (see that CSS rule's
+        // own comment). React renders synchronously with the correct `hidden`/`data-state` from
+        // its first paint, so it never needs the shim itself; this exists purely so both bindings'
+        // settled DOM match, the same reason `data-scope`/`data-padding` are written unconditionally
+        // above rather than only under some binding-specific condition.
+        data-sk-tile-ready=""
+        ref={ref}
+      >
         {children}
       </Component>
     </ExpandableTileContext.Provider>

@@ -15,6 +15,9 @@ import contractSource from "@contracts/semantic/breadcrumb.yaml?raw";
 import coreSource from "@core/src/breadcrumb.ts?raw";
 import cssSource from "@core/css/components/breadcrumb.css?raw";
 import reactSource from "@react/src/components/breadcrumb.tsx?raw";
+import reactTestSource from "@react/src/components/breadcrumb.test.tsx?raw";
+import vanillaMountSource from "@vanilla/src/components/breadcrumb.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/breadcrumb.test.ts?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -25,16 +28,59 @@ const sourceFiles = [
   { id: "contracts/semantic/breadcrumb.yaml", source: contractSource, language: "yaml" },
   { id: "packages/core/src/breadcrumb.ts", source: coreSource, language: "ts" },
   { id: "packages/core/css/components/breadcrumb.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/breadcrumb.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/breadcrumb.test.ts", source: vanillaTestSource, language: "ts" },
   { id: "packages/react/src/components/breadcrumb.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/breadcrumb.test.tsx", source: reactTestSource, language: "tsx" },
 ] as const;
 ---
 
 <ComponentPageShell
   title="Breadcrumb"
   description={t("breadcrumb.description")}
+  badge={t("breadcrumb.betaBadge")}
   contractId="breadcrumb"
   sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/breadcrumb.css", probe: "sk-breadcrumb", title: "Breadcrumb" }]}
+  tests={[
+    {
+      file: "packages/react/src/components/breadcrumb.test.tsx",
+      tests: [
+        {
+          name: "renders a plain, uncollapsed trail when it is short enough that nothing is worth collapsing",
+          description: t("breadcrumb.test1"),
+        },
+        {
+          name: "opens a real Menu of the hidden ancestors when the trail overflows its container",
+          description: t("breadcrumb.test2"),
+        },
+        { name: "leaves a trail that fits on one line uncollapsed", description: t("breadcrumb.test3") },
+        {
+          name: "re-measures on every resize, even shrinking from an already-expanded state",
+          description: t("breadcrumb.test4"),
+        },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/breadcrumb.test.ts",
+      tests: [
+        {
+          name: "does nothing to a trail short enough that nothing is worth collapsing",
+          description: t("breadcrumb.test5"),
+        },
+        { name: "leaves a trail that fits on one line untouched", description: t("breadcrumb.test6") },
+        {
+          name: "opens a real Menu of the hidden ancestors when the trail does not fit",
+          description: t("breadcrumb.test7"),
+        },
+        {
+          name: "re-derives the collapse on every resize, expanding first so it never gets stuck",
+          description: t("breadcrumb.test8"),
+        },
+        { name: "restores every crumb to visible on unmount", description: t("breadcrumb.test9") },
+      ],
+    },
+  ]}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("breadcrumb.description")} />

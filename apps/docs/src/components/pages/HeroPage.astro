@@ -53,6 +53,7 @@ import "@skryensya/core/components/tabs.css";
    each line). */
 import "@skryensya/core/patterns/icon.css";
 import reactSource from "@react/src/components/layout.tsx?raw";
+import reactTestSource from "@react/src/components/layout.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -61,6 +62,7 @@ const sourceFiles = [
   { id: "packages/core/src/hero.ts", source: coreSource, language: "ts" },
   { id: "packages/core/css/patterns/hero.css", source: cssSource, language: "css" },
   { id: "packages/react/src/components/layout.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/layout.test.tsx", source: reactTestSource, language: "tsx" },
 ] as const;
 
 /*
@@ -100,6 +102,21 @@ const heroQuoteTree = heroTestimonialTree(t);
   contractId="hero"
   styleGroups={[{ file: "patterns/hero.css", probe: "sk-hero" }]}
   sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/layout.test.tsx",
+      tests: [
+        {
+          name: "renders Hero as a plain div with its documented defaults",
+          description: t("hero.test1"),
+        },
+        {
+          name: "lets Hero change align/padding/surface and render as a different element via `as`",
+          description: t("hero.test2"),
+        },
+      ],
+    },
+  ]}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("hero.lede")} />

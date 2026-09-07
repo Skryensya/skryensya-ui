@@ -41,4 +41,17 @@ export const tileRadioGroupItems = (t: Translate): readonly ItemInput[] => [
       },
     },
   },
+  {
+    options: { value: "basic" },
+    slots: {
+      label: {
+        contract: "tile",
+        signature: "TileContent",
+        slots: {
+          title: t("demo.radioGroup.basic.title"),
+          description: t("demo.radioGroup.basic.body"),
+        },
+      },
+    },
+  },
 ];

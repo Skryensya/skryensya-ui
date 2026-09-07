@@ -100,10 +100,19 @@ const densityPreviewTree: UsageTree = {
       ],
     },
     {
-      contract: "layout",
-      signature: "DensityScope",
-      options: { densityFactor: 0.72 },
-      attrs: { class: "sk-box sk-stack", "data-density-target": "", "data-surface": "surface", "data-border": "subtle", "data-padding": "lg", "data-gap": "sm" },
+      // Raw `data-sk-density-scope` + `--sk-density-factor`, hand-authored on the attrs the same
+      // way `CopyButton.astro` and the presets gallery already do it: the scope is a plain
+      // attribute contract, not something that ever needed its own signature to exist.
+      contract: "box",
+      signature: "Box",
+      options: { surface: "surface", border: "subtle", padding: "lg" },
+      attrs: {
+        class: "sk-stack",
+        "data-density-target": "",
+        "data-gap": "sm",
+        "data-sk-density-scope": "",
+        style: "--sk-density-factor: 0.72",
+      },
       children: [
         "Order summary",
         {

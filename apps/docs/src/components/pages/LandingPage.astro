@@ -12,11 +12,24 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 
 import { calloutInfoTree, calloutSuccessTree } from "../../demos/callout";
 import { emptyStateTree } from "../../demos/empty-state";
-import { processListTree } from "../../demos/process-list";
 import { compositionInputButtonTree } from "../../demos/landing/composition";
 import { dialogConfirmScript, dialogConfirmTree } from "../../demos/dialog";
 import { tileRadioGroupTree } from "../../demos/radio-group";
 import { toolbarTree } from "../../demos/toolbar";
+import { stepsTree } from "../../demos/steps";
+import { breadcrumbTwoTree } from "../../demos/breadcrumb";
+import { meterTree } from "../../demos/meter";
+import { progressTree } from "../../demos/progress";
+import { tagTonesTree } from "../../demos/tag";
+import { kbdTree } from "../../demos/kbd";
+import { listLeadingTree } from "../../demos/list";
+import { numberFieldTree } from "../../demos/number-field";
+import { segmentedTree } from "../../demos/segmented";
+import { checkboxGroupTree } from "../../demos/checkbox";
+import { accordionExclusiveTree } from "../../demos/accordion";
+import { badgeHoldersTree } from "../../demos/badge";
+import { selectTree } from "../../demos/select";
+import { sliderTree } from "../../demos/slider";
 import { DEMO_IMAGE_FRAME_SRC } from "../../demos/image-frame";
 
 import "@skryensya/core/components/button.css";
@@ -36,11 +49,21 @@ import "@skryensya/core/components/badge.css";
 import "@skryensya/core/components/tag.css";
 import "@skryensya/core/components/avatar.css";
 import "@skryensya/core/components/empty-state.css";
-import "@skryensya/core/components/process-list.css";
-import "@skryensya/core/components/code-preview.css";
 import "@skryensya/core/components/radio-group.css";
 import "@skryensya/core/components/toolbar.css";
 import "@skryensya/core/components/stat.css";
+import "@skryensya/core/components/steps.css";
+import "@skryensya/core/components/breadcrumb.css";
+import "@skryensya/core/components/meter.css";
+import "@skryensya/core/components/progress.css";
+import "@skryensya/core/components/kbd.css";
+import "@skryensya/core/components/list.css";
+import "@skryensya/core/components/number-field.css";
+import "@skryensya/core/components/segmented.css";
+import "@skryensya/core/components/checkbox.css";
+import "@skryensya/core/components/accordion.css";
+import "@skryensya/core/components/select.css";
+import "@skryensya/core/components/slider.css";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
@@ -277,68 +300,206 @@ const fileCardTree = (translate: Translate): UsageTree => ({
   },
 });
 
+/** A trust row: an avatar stack (three named people, one `overflow` count reading "and many
+ *  more") beside the line that says the same count in words. Adapted from the MCP catalogue's
+ *  `hero-with-social-proof` — just the proof row itself, not the whole Hero it normally sits in;
+ *  a bento tile is already its own small, considered surface. */
+const trustRowTree = (translate: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Inline",
+  options: { gap: "sm", inlineAlign: "center" },
+  children: [
+    {
+      contract: "avatar",
+      signature: "AvatarGroup",
+      slots: {
+        overflow: "+240",
+        children: [
+          { contract: "avatar", signature: "Avatar.initials", options: { name: "Alex Rivera" }, children: "AR" },
+          { contract: "avatar", signature: "Avatar.initials", options: { name: "Sam Okafor" }, children: "SO" },
+          { contract: "avatar", signature: "Avatar.initials", options: { name: "Priya Nair" }, children: "PN" },
+        ],
+      },
+    },
+    { contract: "typography", signature: "Text", options: { tone: "secondary", size: "sm" }, children: translate("demo.trustRow.text") },
+  ],
+});
+
+/** A field carrying a standing hint AND, once invalid, an error — both wired to the control by
+ *  the contract's own `wiring`, not authored here: `aria-describedby` references both, and
+ *  `aria-invalid="true"` follows from `error` being given. The MCP catalogue's own
+ *  `form-field-hint-and-error`, verbatim. */
+const passwordFieldTree = (translate: Translate): UsageTree => ({
+  contract: "form-field",
+  signature: "FormField",
+  options: { required: true },
+  slots: {
+    label: translate("demo.passwordField.label"),
+    hint: translate("demo.passwordField.hint"),
+    error: translate("demo.passwordField.error"),
+  },
+  children: { contract: "input", signature: "Input", options: { type: "password", controlSize: "md" } },
+});
+
 /*
  * The gallery, one step below `showcase`: realistic small pieces of UI, not single components shown
  * in isolation and not whole screens either. Four cards alone cover four different domains — a
  * product (image + text + link), a metric (a number with its trend), a person (an avatar-centered
  * profile with one action), a plan (price + features + one CTA), a file (identity + a menu trigger)
  * — plus a form, a settings row, three alerts, a confirm-before-you-delete modal, a plan picker, a
- * toolbar, a tutorial and an empty state: the normal, expected shapes an app is actually built out
- * of, each one mixing the two-to-five component families that shape genuinely takes. Reused from
- * each family's own docs demo where one already composed the same molecule (`process-list`,
- * `callout`, `empty-state`, the landing page's own search-with-button journey, `dialog`'s confirm
- * pattern, the tile radio group, the toolbar); the eight with no existing demo to borrow (product
- * card, settings row, alert-with-retry, profile row, metric, pricing card, team card, file card) are
- * composed just above, adapted from the MCP catalogue's own published examples (or, for the three
- * newest cards, the same shapes applied to a new domain) and checked with `validate_ui` before being
- * trusted here. Sixteen of them, into a 5-lane `data-responsive` Grid.
+ * toolbar, an empty state, a trust row, a validated field, and one-tile specimens of the smaller
+ * controls (steps, breadcrumb, meter, progress, tag set, shortcut keys, a titled list, a number
+ * field, a segmented control, a checkbox group, an accordion, a badge holder, a select, a slider):
+ * the normal, expected shapes an app is actually built out of, each one mixing the two-to-five
+ * component families that shape genuinely takes. Reused from each family's own docs demo where one
+ * already composed the shape (`callout`, `empty-state`, the search-with-button journey, `dialog`'s
+ * confirm pattern, the tile radio group, the toolbar, plus the fourteen small-control demos just
+ * named); the ten with no demo to borrow (product card, settings row, alert-with-retry, profile
+ * row, metric, pricing card, team card, file card, trust row, password field) are composed just
+ * above, adapted from the MCP catalogue's own published examples (`get_examples`'s
+ * `hero-with-social-proof`, `form-field-hint-and-error` for the two newest; three more are the same
+ * shapes applied to a new domain) and checked with `validate_ui` before being trusted here.
+ * Thirty-one distinct molecules, into a 5-lane `data-responsive` Grid.
  *
- * `data-responsive`, not `data-multicol`: ProcessList's three numbered steps read cramped at one
- * lane wide, so it needs `data-span="2"`, and CSS multi-column can only span EVERY lane at once
- * (`column-span: all`), never a partial width. A real Grid gives up multicol's independent
- * per-column height in exchange for that span; `align-items: start` (layout.css) keeps a short
- * card from stretching to its row's tallest neighbour, but that just moves the problem rather than
- * solving it: the card stays its own natural height, and the ROW TRACK still sizes to whichever
- * sibling is tallest, so a short card next to a much taller one leaves bare section background
- * under it instead of stretching to close the gap.
+ * Five COLUMNS, not five lanes of one shared Grid: `data-responsive`'s row-based packing (tried
+ * first, kept as an intermediate step in this file's own history) always leaves SOME gap under a
+ * short tile because every tile in a row still shares one row track — narrowing that gap by
+ * sorting, or even closing most of it with fixed-size sub-row tracks, is still fighting the ROW as
+ * the unit of layout. A column doesn't have that problem: each of the five is its own `.sk-stack`,
+ * tiles poured straight down it, so nothing under a tile is ever bare background — the next tile
+ * starts one `sm` gap after the last one ended. Nothing here spans more than one column either
+ * (`data-span` doesn't appear below at all): a wide tile would have to pick which column's stack it
+ * interrupts, defeating the one thing a column buys.
  *
- * The fix is packing, not stretching: rows built from *measured* render heights (Playwright against
- * the live page, `sk-box` bounding rects, not eyeballed), sorted ascending so neighbours stay close
- * in height and the leftover strip under the shortest one stays a sliver instead of a canyon.
- * Sixteen items and one `data-span="2"` make seventeen slots: three full rows of five, the fifteen
- * SHORTEST items, plus ProcessList alone in a final row of two — its own height is so far past
- * everything else's (nearly 200px past the next-tallest card) that no row-mate would close that gap
- * anyway, so it gets the width instead, reading as a deliberate closing feature rather than a tile
- * with an empty neighbour. Measured heights at the grid's own column width (px, Chromium/1400):
+ * The grid itself sits wider than a normal page section: `data-width="full-width"` (rather than
+ * `breakout`, capped at `--size-wrapper-lg`'s 1440px — precisely so a wide viewport still shows
+ * five real lanes, per `layout.css`'s own note on that token) puts it on the SAME edge-to-edge
+ * track the hero's section already sits on, and `GALLERY_MAX_WIDTH` then caps how far it actually
+ * grows — fullbleed with a ceiling, not fullbleed forever, so a 4K monitor gets five wider, airier
+ * columns rather than five endless ones. The heading/lede above it shares the same track and cap so
+ * their edges line up with the grid's.
  *
- *   row 1 ⟶  76–113   toolbar · confirm-delete trigger · profile row · search form · file card
- *   row 2 ⟶ 144–230   settings row · alert (info) · alert (success) · metric · alert (retry)
- *   row 3 ⟶ 242–406   plan picker · team card · pricing card · empty state · product card
- *   row 4 ⟶     494   process list (2 lanes), alone
+ * The five columns aren't equal width either: `GALLERY_COLUMN_WEIGHTS` (`--sk-grid-template`,
+ * layout.css) makes the center lane a little wider, its two neighbours equal to each other, and
+ * the two outer lanes a little narrower — 319 / 354 / 407 / 354 / 319px at `GALLERY_MAX_WIDTH`.
+ * That changes more than proportions: a WIDER column wraps text less, so the same tile measures
+ * differently depending which lane it lands in (`settingsRow` alone drops from 121px to 85px
+ * simply by moving from a narrow lane to the wide one). Placement below is ORDERED BY that benefit,
+ * not by tile identity: the center lane (col 2) holds the tiles that shrink the most as their
+ * column widens — `settingsRow`, `tagTonesTree`, `trustRowTree`, `compositionInputButtonTree` —
+ * with `productCardTree` pushed to the opposite extreme, a narrow SIDE lane, because it's the one
+ * tile that measures WORSE at width (its image's fixed aspect ratio grows taller as its column
+ * widens). Everything width-invariant fills in around them wherever a column needs more height.
  *
- * Re-measure and re-sort this list if a tile's content changes height.
+ * `data-fill` (layout.css) gives all five columns the SAME minimum block-size,
+ * `GALLERY_FILL_HEIGHT` — deliberately about double a single screen's worth, so each column reads
+ * as a short scroll rather than a fixed panel. It's a FLOOR, not a clamp: the five START level,
+ * then a column grows past it and pushes its own lower tiles down when a tile inside it expands
+ * (the `accordionExclusiveTree` specimen opening a section, say). Thirty-one distinct molecules
+ * cover the resting height; five (`teamCard`, `meter`, `steps`, `metricCard`, `alertRetry`, each
+ * repeat-safe: no authored id, no form `name`, no stateful machine) get ONE repeat apiece, with a
+ * distinct `idPrefix` — `emitMarkup`'s own escape hatch for independent trees sharing a page, the
+ * same machinery that keeps two ColorPickers from portaling into each other — to bring a short
+ * column up to that floor. `GALLERY_FILL_HEIGHT` is the tallest of the five resting totals, so the
+ * columns start as level as measurement allows.
+ *
+ * Re-measure every column's total at ITS OWN width (Playwright against the live page,
+ * `scrollHeight`, not eyeballed) and move a tile to a shorter column if a tile's content or frame
+ * changes height. Measured at `90rem`/1440px (`layout.css`'s own widest `data-columns="5"` tier).
+ *
+ * Not every tile wears the same frame, either — the rule is: box it, unless it's already a card
+ * or a container in its own right. Five molecules — product, metric, pricing, team, file — already
+ * build their own `contract:"box"` root (a real card: `raised`/`surface` background, `subtle`
+ * border); giving them a second, identical Box around the first just doubles the border and halves
+ * the padding's meaning, so their outer `frame` here is bare. Three more — the two Callouts and the
+ * retry alert — already carry a full tone-colored surface from `Callout` itself; boxing a
+ * box-shaped thing in a second, neutral one muddies the tone rather than framing it, so they're
+ * bare too. `toolbarTree` is the same story from a different component: `.sk-toolbar` already
+ * paints its own background, border and radius (see `components/toolbar.css`), so an outer card
+ * would just be a border around a border. Everything else here has NO surface of its own — a lone
+ * button, a form row, a person row, a tile picker, a titled list, the small single-control
+ * specimens — so it gets the same `raised`/`subtle` frame the self-boxed tiles' own root already
+ * carries: one consistent card language across every tile that isn't already one.
  */
-const gallery: Array<{ tree: UsageTree; span?: 2 }> = [
-  // row 1: 76–113
-  { tree: toolbarTree(t) },
-  { tree: dialogConfirmTree(t) },
-  { tree: profileRowTree(t) },
-  { tree: compositionInputButtonTree(t) },
-  { tree: fileCardTree(t) },
-  // row 2: 144–230
-  { tree: settingsRowTree(t) },
-  { tree: calloutInfoTree(t) },
-  { tree: calloutSuccessTree(t) },
-  { tree: metricCardTree(t) },
-  { tree: alertRetryTree(t) },
-  // row 3: 242–406
-  { tree: tileRadioGroupTree(t) },
-  { tree: teamCardTree(t) },
-  { tree: pricingCardTree(t) },
-  { tree: emptyStateTree(t) },
-  { tree: productCardTree(t) },
-  // row 4: alone, its own height far past every row-mate a packing pass could offer it
-  { tree: processListTree(t), span: 2 },
+type GalleryFrame = {
+  padding: "none" | "sm" | "md" | "lg";
+  surface?: "sunken" | "surface" | "raised";
+  border?: "subtle" | "default";
+};
+type GalleryTile = { tree: UsageTree; frame: GalleryFrame; idPrefix?: string };
+const box = (padding: GalleryFrame["padding"] = "md"): GalleryFrame => ({ padding, surface: "raised", border: "subtle" });
+const bare: GalleryFrame = { padding: "none" };
+
+/** Wider than `breakout`'s own 1440px ceiling (`--size-wrapper-lg`, `layout.css`) on purpose — the
+ *  gallery sits in `full-width`'s edge-to-edge track so it can grow past that, capped here instead
+ *  of by a named Wrapper step so a 4K monitor doesn't stretch five columns into five ribbons. */
+const GALLERY_MAX_WIDTH = 1800;
+
+/** Center lane a little wider, the two flanking it equal to each other, the two outer ones a
+ *  little narrower — `--sk-grid-template`'s own escape hatch (layout.css) for weighting a
+ *  `data-fill` grid's columns instead of leaving them even. */
+const GALLERY_COLUMN_WEIGHTS = "0.9fr 1fr 1.15fr 1fr 0.9fr";
+
+/** The tallest of the five column totals below (px, Chromium/1900, each column's own weighted
+ *  share of `GALLERY_MAX_WIDTH`) — roughly double the pre-`data-fill` single-screen height, so
+ *  each column is a short scroll of its own. Thirty-one distinct molecules fill most of it; five
+ *  get one repeat each (`idPrefix`) to top a column off. */
+const GALLERY_FILL_HEIGHT = 1191;
+
+const columns: GalleryTile[][] = [
+  // col 0, 319px (narrow) — productCard leads: the one tile that measures WORSE at width, so it
+  // gets the narrowest lane; the rest is width-invariant.
+  [
+    { tree: productCardTree(t), frame: bare }, // 394
+    { tree: meterTree(t), frame: box() }, // 175
+    { tree: metricCardTree(t), frame: bare }, // 137
+    { tree: calloutInfoTree(t), frame: bare }, // 95
+    { tree: badgeHoldersTree(t), frame: box() }, // 76
+    { tree: teamCardTree(t), frame: bare, idPrefix: "r1" }, // 211
+  ],
+  // col 1, 354px (medium)
+  [
+    { tree: accordionExclusiveTree(t), frame: box() }, // 309
+    { tree: stepsTree(t), frame: box() }, // 178
+    { tree: alertRetryTree(t), frame: bare }, // 172
+    { tree: selectTree(t), frame: box() }, // 100
+    { tree: progressTree(t), frame: box() }, // 88
+    { tree: kbdTree, frame: box() }, // 54
+    { tree: metricCardTree(t), frame: bare, idPrefix: "r1" }, // 137
+  ],
+  // col 2, 407px (wide centre) — holds every tile that SHRINKS as its column widens:
+  // settingsRow, tagTones, trustRow, compositionInputButton all measure shortest here.
+  [
+    { tree: compositionInputButtonTree(t), frame: box() }, // 105
+    { tree: settingsRowTree(t), frame: box() }, // 85
+    { tree: tagTonesTree(t), frame: box() }, // 60
+    { tree: trustRowTree(t), frame: box() }, // 72
+    { tree: emptyStateTree(t), frame: box() }, // 299
+    { tree: calloutSuccessTree(t), frame: bare }, // 126
+    { tree: dialogConfirmTree(t), frame: box() }, // 76
+    { tree: toolbarTree(t), frame: bare }, // 43
+    { tree: meterTree(t), frame: box(), idPrefix: "r1" }, // 175
+  ],
+  // col 3, 354px (medium)
+  [
+    { tree: listLeadingTree(t), frame: box() }, // 289
+    { tree: teamCardTree(t), frame: bare }, // 211
+    { tree: passwordFieldTree(t), frame: box() }, // 157
+    { tree: numberFieldTree(t), frame: box() }, // 107
+    { tree: profileRowTree(t), frame: box() }, // 77
+    { tree: breadcrumbTwoTree(t), frame: box() }, // 56
+    { tree: stepsTree(t), frame: box(), idPrefix: "r1" }, // 178
+  ],
+  // col 4, 319px (narrow)
+  [
+    { tree: pricingCardTree(t), frame: bare }, // 277
+    { tree: tileRadioGroupTree(t), frame: box("sm") }, // 224
+    { tree: checkboxGroupTree(t), frame: box() }, // 152
+    { tree: sliderTree(t), frame: box() }, // 108
+    { tree: fileCardTree(t), frame: bare }, // 79
+    { tree: segmentedTree(t), frame: box() }, // 64
+    { tree: alertRetryTree(t), frame: bare, idPrefix: "r1" }, // 172
+  ],
 ];
 ---
 
@@ -367,21 +528,37 @@ const gallery: Array<{ tree: UsageTree; span?: 2 }> = [
     </section>
 
     <section aria-label={t("landing.gallery.title")} data-width="full-width">
-      <div class="sk-stack" data-gap="md" data-width="breakout" style="margin-block-end: var(--space-stack-lg)">
+      <div
+        class="sk-stack"
+        data-gap="md"
+        data-width="full-width"
+        style={`margin-block-end: var(--space-stack-lg); max-width: ${GALLERY_MAX_WIDTH}px; margin-inline: auto; padding-inline: var(--space-inset-lg)`}
+      >
         <h2 class="sk-heading" data-size="h2" data-flush>{t("landing.gallery.title")}</h2>
         <p class="sk-text" data-tone="secondary" data-size="lg">{t("landing.gallery.lede")}</p>
       </div>
-      <div class="sk-grid" data-responsive data-columns="5" data-gap="md" data-width="breakout">
+      <div
+        class="sk-grid"
+        data-responsive
+        data-fill
+        data-columns="5"
+        data-gap="md"
+        data-width="full-width"
+        style={`--sk-grid-fill: ${GALLERY_FILL_HEIGHT}px; --sk-grid-template: ${GALLERY_COLUMN_WEIGHTS}; max-width: ${GALLERY_MAX_WIDTH}px; margin-inline: auto; padding-inline: var(--space-inset-lg)`}
+      >
         {
-          gallery.map(({ tree, span }) => (
-            <div
-              class="sk-box"
-              data-surface="raised"
-              data-border="subtle"
-              data-padding="md"
-              data-span={span}
-              set:html={emitMarkup(tree, { fillDefaults: false })}
-            />
+          columns.map((column) => (
+            <div class="sk-stack" data-gap="sm">
+              {column.map(({ tree, frame, idPrefix }) => (
+                <div
+                  class="sk-box"
+                  data-surface={frame.surface}
+                  data-border={frame.border}
+                  data-padding={frame.padding}
+                  set:html={emitMarkup(tree, { fillDefaults: false, idPrefix })}
+                />
+              ))}
+            </div>
           ))
         }
       </div>

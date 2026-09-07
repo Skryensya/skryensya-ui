@@ -4,6 +4,13 @@ import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { navListCollapsibleTree, navListHorizontalTree, navListProductTree } from "../../demos/nav-list";
 import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/nav-list.yaml?raw";
+import coreSource from "@core/src/nav-list.ts?raw";
+import cssSource from "@core/css/patterns/nav-list.css?raw";
+import vanillaSource from "@vanilla/src/components/nav-list.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/nav-list.test.ts?raw";
+import reactSource from "@react/src/components/nav-list.tsx?raw";
+import reactTestSource from "@react/src/components/nav-list.test.tsx?raw";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
@@ -14,6 +21,16 @@ const tokenHref = isEnglish ? "/en/reference" : "/referencia";
 const startHref = isEnglish ? "/en/installation" : "/instalacion";
 
 const styles = `@import "@skryensya/core/patterns/nav-list.css";`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/nav-list.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/nav-list.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/patterns/nav-list.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/nav-list.ts", source: vanillaSource, language: "ts" },
+  { id: "packages/vanilla/src/components/nav-list.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/react/src/components/nav-list.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/nav-list.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
 ---
 
 <ComponentPageShell
@@ -21,6 +38,76 @@ const styles = `@import "@skryensya/core/patterns/nav-list.css";`;
   description={t("navListPage.description")}
   contractId="nav-list"
   styleGroups={[{ file: "patterns/nav-list.css", probe: "sk-nav-list", title: "Nav list" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/nav-list.test.tsx",
+      tests: [
+        {
+          name: "renders a named navigation landmark with a labelled list of links",
+          description: t("navListPage.test1"),
+        },
+        {
+          name: "does not invent menu semantics for destination links",
+          description: t("navListPage.test2"),
+        },
+        {
+          name: "collapsible: renders a button with aria-expanded/aria-controls, open by default",
+          description: t("navListPage.test3"),
+        },
+        {
+          name: "collapsible: toggles aria-expanded and the list's hidden state on click",
+          description: t("navListPage.test4"),
+        },
+        {
+          name: "collapsible: Escape closes the open dropdown from anywhere inside it and returns focus to the trigger",
+          description: t("navListPage.test5"),
+        },
+        {
+          name: "nested: a link's own sub-destinations render inside the same <li>, independent of the parent group",
+          description: t("navListPage.test6"),
+        },
+        { name: "collapsible: honors defaultOpen=false", description: t("navListPage.test7") },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/nav-list.test.ts",
+      tests: [
+        {
+          name: "generates an id and wires aria-controls to the list, on mount",
+          description: t("navListPage.test8"),
+        },
+        {
+          name: "preserves an authored id instead of generating a second one",
+          description: t("navListPage.test9"),
+        },
+        {
+          name: "toggles aria-expanded and the list's hidden state on click",
+          description: t("navListPage.test10"),
+        },
+        {
+          name: "starts hidden when authored with aria-expanded=false",
+          description: t("navListPage.test11"),
+        },
+        {
+          name: "Enter/Space toggle it. Native <button> behavior, nothing this enhancer has to wire itself",
+          description: t("navListPage.test12"),
+        },
+        {
+          name: "Escape closes the open dropdown from anywhere inside it and returns focus to the trigger",
+          description: t("navListPage.test13"),
+        },
+        {
+          name: "Escape does nothing when the dropdown is already closed",
+          description: t("navListPage.test14"),
+        },
+        {
+          name: "wires a NavListLink's own nested group independently of its parent group",
+          description: t("navListPage.test15"),
+        },
+      ],
+    },
+  ]}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("navListPage.lede")} />

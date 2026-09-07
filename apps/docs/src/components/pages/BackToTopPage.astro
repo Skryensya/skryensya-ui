@@ -9,6 +9,8 @@ import coreSource from "@core/src/back-to-top.ts?raw";
 import cssSource from "@core/css/components/back-to-top.css?raw";
 import reactSource from "@react/src/components/back-to-top.tsx?raw";
 import reactTestSource from "@react/src/components/back-to-top.test.tsx?raw";
+import vanillaMountSource from "@vanilla/src/components/back-to-top.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/back-to-top.test.ts?raw";
 /* The sheet itself, not only its source: the Style hooks table resolves each hook against a real
    element, and a page that never loads this stylesheet shows every value blank. */
 import "@skryensya/core/components/back-to-top.css";
@@ -67,6 +69,8 @@ const sourceFiles = [
   { id: "contracts/semantic/back-to-top.yaml", source: contractSource, language: "yaml" },
   { id: "packages/core/src/back-to-top.ts", source: coreSource, language: "ts" },
   { id: "packages/core/css/components/back-to-top.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/back-to-top.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/back-to-top.test.ts", source: vanillaTestSource, language: "ts" },
   { id: "packages/react/src/components/back-to-top.tsx", source: reactSource, language: "tsx" },
   { id: "packages/react/src/components/back-to-top.test.tsx", source: reactTestSource, language: "tsx" },
 ] as const;
@@ -79,6 +83,84 @@ const sourceFiles = [
   contractId="back-to-top"
   styleGroups={[{ file: "components/back-to-top.css", probe: "sk-back-to-top", title: "BackToTop" }]}
   sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/back-to-top.test.tsx",
+      tests: [
+        {
+          name: "renders hidden, and names the control from its children once shown",
+          description: t("backToTop.test1"),
+        },
+        {
+          name: "reveals once scrolled past the threshold and hides again above it",
+          description: t("backToTop.test2"),
+        },
+        {
+          name: "returns the window to the top on click, smoothly by default",
+          description: t("backToTop.test3"),
+        },
+        {
+          name: "jumps instantly when the reader prefers reduced motion",
+          description: t("backToTop.test4"),
+        },
+        {
+          name: "moves focus to `target` after scrolling, without a second scroll",
+          description: t("backToTop.test5"),
+        },
+        {
+          name: "acts on a named inner scroller instead of the window",
+          description: t("backToTop.test6"),
+        },
+        {
+          name: "still calls a consumer's onClick, and lets it opt out of the scroll",
+          description: t("backToTop.test7"),
+        },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/back-to-top.test.ts",
+      tests: [
+        { name: "reveals at or past the threshold, never before", description: t("backToTop.test8") },
+        { name: "shows from the first pixel when the threshold is 0", description: t("backToTop.test9") },
+        {
+          name: "treats a broken threshold as the default, not as always- or never-on",
+          description: t("backToTop.test10"),
+        },
+        { name: "never reveals on a non-finite scroll position", description: t("backToTop.test11") },
+        {
+          name: "parses data-threshold, falling back to the default on empty or unparseable input",
+          description: t("backToTop.test12"),
+        },
+        {
+          name: "animates the scroll unless the reader asked for less motion",
+          description: t("backToTop.test13"),
+        },
+        {
+          name: "stays hidden below the threshold and reveals once past it",
+          description: t("backToTop.test14"),
+        },
+        { name: "honours a custom data-threshold", description: t("backToTop.test15") },
+        {
+          name: "returns the window to the top on click, smoothly by default",
+          description: t("backToTop.test16"),
+        },
+        {
+          name: "jumps instantly when the reader prefers reduced motion",
+          description: t("backToTop.test17"),
+        },
+        {
+          name: "moves focus to `target` after the scroll, without starting a second one",
+          description: t("backToTop.test18"),
+        },
+        {
+          name: "acts on a named inner scroller instead of the window",
+          description: t("backToTop.test19"),
+        },
+        { name: "stops syncing once cleaned up", description: t("backToTop.test20") },
+        { name: "mounts once per authored root", description: t("backToTop.test21") },
+      ],
+    },
+  ]}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("backToTop.lede")} />

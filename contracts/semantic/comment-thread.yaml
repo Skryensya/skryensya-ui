@@ -1,0 +1,55 @@
+# La estructura vive en packages/core/src/comment-thread.ts. Acá sólo por qué se elige.
+
+CommentThread:
+  useWhen:
+    - "hay una conversación con respuestas anidadas y hace falta un contenedor que la nombre"
+  avoidWhen:
+    - "el stream es plano, sin respuestas anidadas; eso es un Feed"
+    - "es una jerarquía seleccionable (archivos, un índice); eso es un TreeView"
+    - "hay un solo comentario y nada alrededor; eso es un Comment suelto"
+  alternatives:
+    - Feed
+    - TreeView
+
+Comment:
+  useWhen:
+    - "una unidad de conversación: quién la escribió, cuándo y qué dijo"
+    - "hace falta citar un comentario fuera de su hilo; no necesita contenedor"
+  avoidWhen:
+    - "es contenido de un stream plano sin respuestas; eso es un FeedArticle"
+  alternatives:
+    - FeedArticle
+
+CommentActions:
+  useWhen:
+    - "un comentario admite acciones: votar, responder, borrar"
+  avoidWhen:
+    - "el comentario es de sólo lectura; entonces simplemente no se compone"
+    - "es una barra de acciones de una vista entera, no de una unidad de contenido; eso es un Toolbar"
+  alternatives:
+    - Toolbar
+
+CommentVote:
+  useWhen:
+    - "hay un puntaje que se sube o se baja, con el voto propio del lector reflejado"
+  avoidWhen:
+    - "es una sola valoración sin dirección (me gusta); eso es un IconStateButton"
+  alternatives:
+    - IconStateButton
+
+CommentComposer:
+  useWhen:
+    - "hace falta escribir un comentario o una respuesta, con el control que decida el consumidor"
+  avoidWhen:
+    - "el formulario hace algo más que publicar un cuerpo de texto; eso es un form propio con FormField"
+  alternatives:
+    - FormField
+
+CommentTemplate:
+  useWhen:
+    - "la app crea comentarios en runtime y necesita un blueprint que clonar"
+  avoidWhen:
+    - "el markup se renderiza entero de nuevo; en React no hace falta, se vuelve a renderizar"
+    - "lo que se crea es un aviso transitorio y no un comentario; eso es un ToastTemplate"
+  alternatives:
+    - ToastTemplate

@@ -1,0 +1,373 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  commentActionsTree,
+  commentAloneTree,
+  commentDeepTree,
+  commentThreadTree,
+} from "../../demos/comment-thread";
+import { getLocale, useTranslations } from "../../i18n";
+import actionsScript from "../../demos/scripts/comment-thread-actions.ts?raw";
+import contractSource from "@contracts/semantic/comment-thread.yaml?raw";
+import coreSource from "@core/src/comment-thread.ts?raw";
+import cssSource from "@core/css/components/comment-thread.css?raw";
+import reactSource from "@react/src/components/comment-thread.tsx?raw";
+import reactTestSource from "@react/src/components/comment-thread.test.tsx?raw";
+import vanillaMountSource from "@vanilla/src/components/comment-thread.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/comment-thread.test.ts?raw";
+/* The sheet itself, not only its source: the Style hooks table resolves each hook against a real
+   element, and a page that never loads this stylesheet shows every value blank. */
+import "@skryensya/core/components/comment-thread.css";
+/* The interactive demos compose a real `Dialog` for the delete confirmation (the composition
+   `comment-thread.ts` points at), so the preview frame needs its sheet too. */
+import "@skryensya/core/components/dialog.css";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+/* Three sheets, not one: the thread's own controls ARE `sk-button`s carrying `sk-icon` glyphs
+   (`comment-thread.ts`'s template), so a consumer importing only the first gets the structure with
+   unstyled buttons and unsized icons. Same failure the List page shipped once by omitting its own. */
+const styles = `@import "@skryensya/core/components/comment-thread.css";
+@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/patterns/icon.css";
+@import "@skryensya/core/patterns/box.css";`;
+
+/* The full set, trimmed. Every piece here is also valid on its own: the `<article>` with nothing
+   after its body IS the simplest `Comment`, and the `<form>` at the top IS a standalone composer. */
+const html = `<div class="sk-comment-thread" data-sk-comment-thread aria-label="Comentarios">
+  <article class="sk-comment" data-sk-comment data-value="c1" data-collapsible>
+    <!-- \`__self\` es el comentario en sí; las respuestas quedan FUERA, y por eso la línea del hilo
+         abarca exactamente esto y no baja a través de ellas. -->
+    <div class="sk-comment__self">
+      <div class="sk-comment__gutter">
+        <span class="sk-comment__avatar"><!-- un Avatar propio del consumidor --></span>
+        <!-- La variante base, no \`ghost\`: el control va montado SOBRE la línea y necesita relleno
+             opaco para interrumpirla en vez de quedar tachado por ella. -->
+        <button type="button" class="sk-comment__collapse sk-button sk-interactive" data-sk-comment-collapse aria-expanded="true" data-icon-only data-size="sm">
+          <span aria-hidden="true">
+            <span data-state="closed"><span data-sk-icon="add" data-sk-icon-size="sm"></span></span>
+            <span data-state="open"><span data-sk-icon="remove" data-sk-icon-size="sm"></span></span>
+          </span>
+          <span class="sk-visually-hidden">Ocultar respuestas</span>
+        </button>
+      </div>
+      <div class="sk-comment__content">
+        <div class="sk-comment__header">
+          <div class="sk-comment__author">Ada</div>
+          <div class="sk-comment__timestamp">hace 3h</div>
+        </div>
+        <div class="sk-comment__body" data-sk-comment-body>Primer comentario</div>
+        <div class="sk-comment-actions" data-sk-comment-actions>
+          <div class="sk-comment-vote" data-sk-comment-vote data-voted="up">
+            <button type="button" class="sk-comment-vote__up sk-button sk-interactive" data-sk-comment-vote-up aria-pressed="true" data-icon-only data-size="sm" data-variant="ghost">
+              <span aria-hidden="true"><span data-sk-icon="vote-up" data-sk-icon-size="md"></span></span>
+              <span class="sk-visually-hidden">Votar a favor</span>
+            </button>
+            <span class="sk-comment-vote__count" data-sk-comment-vote-count>4</span>
+            <button type="button" class="sk-comment-vote__down sk-button sk-interactive" data-sk-comment-vote-down data-icon-only data-size="sm" data-variant="ghost">
+              <span aria-hidden="true"><span data-sk-icon="vote-down" data-sk-icon-size="md"></span></span>
+              <span class="sk-visually-hidden">Votar en contra</span>
+            </button>
+          </div>
+          <button type="button" class="sk-comment-actions__reply sk-button sk-interactive" data-sk-comment-reply aria-expanded="false" data-size="sm" data-variant="ghost">Responder</button>
+        </div>
+      </div>
+    </div>
+    <div class="sk-comment__reply-slot" data-sk-comment-reply-slot hidden>
+          <form class="sk-comment-composer" data-sk-comment-composer>
+            <!-- Cualquier control: un FormField con Textarea, un Input, un Editor. -->
+            <div class="sk-comment-composer__actions">
+    <button type="button" class="sk-comment-composer__cancel sk-button sk-interactive" data-sk-comment-composer-cancel data-size="sm" data-variant="ghost">Cancelar</button>
+    <button type="submit" class="sk-comment-composer__submit sk-button sk-interactive" data-sk-comment-composer-submit data-size="sm" data-variant="accent">Publicar</button>
+  </div>
+          </form>
+        </div>
+    <div class="sk-comment__replies" data-sk-comment-replies>
+      <article class="sk-comment" data-sk-comment data-value="c1-r1">
+        <div class="sk-comment__self">
+          <div class="sk-comment__gutter"><span class="sk-comment__avatar"><!-- Avatar --></span></div>
+          <div class="sk-comment__content">
+            <div class="sk-comment__header"><div class="sk-comment__author">Grace</div></div>
+            <div class="sk-comment__body" data-sk-comment-body>Una respuesta</div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </article>
+</div>`;
+
+const react = `import {
+  Comment,
+  CommentActions,
+  CommentComposer,
+  CommentThread,
+  CommentVote,
+} from "@skryensya/react/comment-thread";
+import { FormField } from "@skryensya/react/form-field";
+import { Textarea } from "@skryensya/react/input";
+
+// El comentario más simple: no necesita hilo, acciones ni respuestas.
+<Comment author="Ada" timestamp="hace 3h">Primer comentario</Comment>
+
+// El set completo, compuesto pieza por pieza.
+<CommentThread
+  label="Comentarios"
+  composer={
+    <CommentComposer onSubmit={(body) => post(null, body)}>
+      <FormField label="Comentario"><Textarea /></FormField>
+    </CommentComposer>
+  }
+>
+  <Comment
+    id="c1"
+    avatar={<Avatar name="Ada">Ad</Avatar>}
+    author="Ada"
+    timestamp="hace 3h"
+    collapsible
+    actions={
+      <CommentActions reply deletable onReply={open} onDelete={() => remove("c1")}>
+        <CommentVote count="4" voted="up" onVote={(dir) => vote("c1", dir)} />
+      </CommentActions>
+    }
+    replies={<Comment id="c1-r1" author="Grace">Una respuesta</Comment>}
+  >
+    Primer comentario
+  </Comment>
+</CommentThread>`;
+
+/* The Vanilla consumer API in one place: listen, veto, write state, create. */
+const vanillaApi = `import { initComponents } from "@skryensya/vanilla/auto";
+import { commentThreadEvents, setCommentVote } from "@skryensya/core/comment-thread";
+
+// LISTEN. The events bubble, so one listener on the thread covers every comment in it.
+thread.addEventListener(commentThreadEvents.vote, (event) => {
+  const { id, direction } = event.detail;
+  const group = document.querySelector(\`[data-value="\${id}"] [data-sk-comment-vote]\`);
+  // WRITE STATE. One call keeps data-voted and both aria-pressed in agreement.
+  setCommentVote(group, { voted: direction, count: String(next) });
+});
+
+// VETO. The events are cancelable: preventDefault keeps the draft and the box until you say so.
+thread.addEventListener(commentThreadEvents.reply, async (event) => {
+  event.preventDefault();
+  const { parentId, body } = event.detail;
+  await post(parentId, body);
+
+  // CREATE. Clone the blueprint, write the fields through the contract's own hooks, mount it.
+  const fresh = template.content.firstElementChild.cloneNode(true);
+  fresh.querySelector("[data-sk-comment-body]").textContent = body;
+  fresh.querySelector("[data-sk-comment-author]").textContent = me.name;
+  parentReplies.append(fresh);
+  await initComponents(fresh);
+});`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/comment-thread.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/comment-thread.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/comment-thread.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/comment-thread.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/comment-thread.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/react/src/components/comment-thread.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/comment-thread.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="CommentThread"
+  description={t("commentThread.description")}
+  badge={t("commentThread.betaBadge")}
+  contractId="comment-thread"
+  styleGroups={[
+    { file: "components/comment-thread.css", probe: "sk-comment-thread", title: "CommentThread" },
+    { file: "components/comment-thread.css", probe: "sk-comment", title: "Comment" },
+  ]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/comment-thread.test.tsx",
+      tests: [
+        {
+          name: "renders an author, a timestamp and a body with no thread, actions or replies around it",
+          description: t("commentThread.test1"),
+        },
+        {
+          name: "puts the avatar in the gutter, apart from the name, so the thread line can hang off it",
+          description: t("commentThread.test24"),
+        },
+        {
+          name: "takes composed content in the author slot, not only a string",
+          description: t("commentThread.test2"),
+        },
+        {
+          name: "renders no fold control unless it is collapsible AND has replies to fold",
+          description: t("commentThread.test3"),
+        },
+        {
+          name: "folds the REPLIES and leaves the comment itself readable",
+          description: t("commentThread.test4"),
+        },
+        {
+          name: "nests replies as Comments of the same shape, at any depth",
+          description: t("commentThread.test5"),
+        },
+        {
+          name: "reports the direction clicked and reflects the viewer's own past vote",
+          description: t("commentThread.test6"),
+        },
+        {
+          name: "renders only the triggers it was given, and reports each",
+          description: t("commentThread.test7"),
+        },
+        {
+          name: "submits the body of whatever control it was given, then resets it",
+          description: t("commentThread.test8"),
+        },
+        {
+          name: "reads a single-line Input just as readily as a Textarea, since it ships neither",
+          description: t("commentThread.test9"),
+        },
+        {
+          name: "submits nothing when the control is empty",
+          description: t("commentThread.test10"),
+        },
+        {
+          name: "names the thread and renders its composer above the comments",
+          description: t("commentThread.test11"),
+        },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/comment-thread.test.ts",
+      tests: [
+        {
+          name: "dispatches vote with the comment's id and the clicked direction, and never mutates the paint itself",
+          description: t("commentThread.test12"),
+        },
+        {
+          name: "attributes a nested reply's vote to the reply, not to the comment above it",
+          description: t("commentThread.test13"),
+        },
+        {
+          name: "dispatches delete only where the delete trigger exists",
+          description: t("commentThread.test14"),
+        },
+        {
+          name: "toggles the reply composer's aria-expanded and hidden state, scoped to its own comment",
+          description: t("commentThread.test15"),
+        },
+        {
+          name: "collapse folds the REPLIES and leaves the comment itself readable",
+          description: t("commentThread.test16"),
+        },
+        {
+          name: "submits a reply with the enclosing comment's id as parentId, resets it and closes the box",
+          description: t("commentThread.test17"),
+        },
+        {
+          name: "cancel on an EMPTY composer just closes it: nothing to lose, nothing to ask",
+          description: t("commentThread.test25"),
+        },
+        {
+          name: "cancel on a composer WITH a draft dispatches discard and leaves the box open for the app",
+          description: t("commentThread.test26"),
+        },
+        {
+          name: "a vetoed reply keeps the draft and the box: preventDefault stops the after-effect",
+          description: t("commentThread.test27"),
+        },
+        {
+          name: "submits the thread's own composer with parentId null",
+          description: t("commentThread.test18"),
+        },
+        {
+          name: "ignores an empty reply: no event, form left alone",
+          description: t("commentThread.test19"),
+        },
+        {
+          name: "folds the replies of a standalone Comment that has no thread around it",
+          description: t("commentThread.test20"),
+        },
+        {
+          name: "submits a standalone CommentComposer, reporting no parent",
+          description: t("commentThread.test21"),
+        },
+        {
+          name: "reads a single-line input as readily as a textarea, since the composer ships neither",
+          description: t("commentThread.test22"),
+        },
+        {
+          name: "reads a contenteditable surface too, so an Editor can be the control",
+          description: t("commentThread.test23"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("commentThread.lede")} />
+
+    <h3>{t("commentThread.whenTitle")}</h3>
+    <p set:html={t("commentThread.whenBody1")} />
+    <p set:html={t("commentThread.whenBody2")} />
+
+    {/* The ladder, simplest first: one comment, that comment with a row, the composer taking
+        different controls, and only then the whole set. */}
+    {/* The ladder, simplest first: one comment, its action row, a short thread, then depth. */}
+    <h3>{t("commentThread.demoTitle")}</h3>
+    <p set:html={t("commentThread.demoBody")} />
+    <ComponentPreview tree={commentAloneTree(t)} label={t("commentThread.demoAloneLabel")} />
+
+    <h4>{t("commentThread.demoActionsTitle")}</h4>
+    <p set:html={t("commentThread.demoActionsBody")} />
+    <ComponentPreview js={actionsScript} previewScript={actionsScript} tree={commentActionsTree(t)} label={t("commentThread.demoActionsLabel")} />
+
+    <h4>{t("commentThread.demoThreadTitle")}</h4>
+    <p set:html={t("commentThread.demoThreadBody")} />
+    <ComponentPreview js={actionsScript} previewScript={actionsScript} tree={commentThreadTree(t)} label={t("commentThread.demoLabel")} />
+
+    <h4>{t("commentThread.demoDeepTitle")}</h4>
+    <p set:html={t("commentThread.demoDeepBody")} />
+    <ComponentPreview js={actionsScript} previewScript={actionsScript} tree={commentDeepTree(t)} label={t("commentThread.demoDeepLabel")} minHeight="26rem" />
+
+    <h3>{t("commentThread.behaviorTitle")}</h3>
+    <p set:html={t("commentThread.behaviorBody1")} />
+    <p set:html={t("commentThread.behaviorBody2")} />
+
+    <h3>{t("commentThread.optionsTitle")}</h3>
+    <p set:html={t("commentThread.optionsBody")} />
+
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("commentThread.vanillaApiTitle")}</h3>
+    <p set:html={t("commentThread.vanillaApiBody1")} />
+    <p set:html={t("commentThread.vanillaApiBody2")} />
+    <CodeBlock code={vanillaApi} label="TypeScript" lang="ts" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("commentThread.contractItem1")} />
+      <li set:html={t("commentThread.contractItem2")} />
+      <li set:html={t("commentThread.contractItem3")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+
+    <h4>{t("commentThread.htmlTitle")}</h4>
+    <p set:html={t("commentThread.htmlBody")} />
+    <CodeBlock code={html} label="HTML" lang="html" />
+
+    <h4>{t("commentThread.reactTitle")}</h4>
+    <CodeBlock code={react} label="React" lang="tsx" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("commentThread.a11yP1")} />
+    <p set:html={t("commentThread.a11yP2")} />
+  </Fragment>
+</ComponentPageShell>

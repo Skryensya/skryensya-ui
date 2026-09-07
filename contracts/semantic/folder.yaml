@@ -1,0 +1,48 @@
+# La estructura vive en packages/core/src/folder.ts. Acá sólo por qué se elige.
+
+Folder:
+  useWhen:
+    - "un bloque de contenido necesita decir de qué es ANTES de que lo leas: la pestaña es un rótulo, no un título más"
+    - "hay una colección de cosas del mismo tipo y conviene que cada una se lea como un objeto aparte"
+    - "conviene que en reposo se lea como texto limpio: una carpeta nunca se ve hasta que la tocás"
+  avoidWhen:
+    - "es una superficie sin rótulo propio; eso es un Box, que no dibuja nada"
+    - "la superficie entera es un control; eso es un TileLink o un TileButton, que ya traen el estado y el foco de un control"
+    - "el contenido se abre y se cierra; eso es un Accordion o un Details"
+  alternatives:
+    - Box
+    - TileLink
+    - Accordion
+
+FolderLink:
+  useWhen:
+    - "la carpeta entera va a un lugar: el rectángulo completo es el destino"
+    - "hace falta que el revelado responda al teclado sin depender de lo que haya adentro"
+  avoidWhen:
+    - "la carpeta hace algo en la página en vez de navegar; eso es un TileButton"
+    - "adentro hay más de un destino; dos links anidados no existen, poné los links en el cuerpo de un Folder"
+  alternatives:
+    - Folder
+    - TileLink
+
+FolderPreview:
+  useWhen:
+    - "va adentro del slot previews de un Folder o un FolderLink: es la caja de UNA imagen del abanico"
+    - "hace falta que la imagen tenga su paspartú y su sombra propios, que la imagen sola no puede llevar"
+  avoidWhen:
+    - "la imagen es contenido de la carpeta y no un adelanto; eso va en el cuerpo, donde se la puede alcanzar"
+    - "está fuera de un Folder: sola no significa nada"
+  alternatives:
+    - ImageFrame
+    - Folder
+
+FolderStack:
+  useWhen:
+    - "las carpetas se leen como una pila: cada una muestra su pestaña y una franja de cuerpo"
+    - "el solape mismo es la información, que hay más abajo y hay un orden"
+  avoidWhen:
+    - "cada carpeta necesita verse entera; eso es una Grid o un Inline de Folders"
+    - "el conjunto es una lista con semántica propia (resultados, pasos); eso lo nombra quien la contiene, no esto"
+  alternatives:
+    - Grid
+    - Folder

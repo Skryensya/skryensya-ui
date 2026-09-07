@@ -34,6 +34,11 @@ async function fireUntil(fire: () => void, assert: () => void): Promise<void> {
   });
 }
 
+/** One real animation frame. `@zag-js/dismissable` defers its document-level listeners behind
+ *  `requestAnimationFrame`; awaiting a frame (or two, for margin) before firing a dismiss event
+ *  once lands it on a listener that actually exists. */
+const raf = (): Promise<void> => new Promise((resolve) => requestAnimationFrame(() => resolve()));
+
 describe("Menu (React)", () => {
   it("wires ARIA on mount and stays closed", () => {
     const ui = render(<Menu items={items} label="File actions" trigger="Actions" />);
@@ -50,10 +55,17 @@ describe("Menu (React)", () => {
     await waitFor(() => expect(trigger.getAttribute("aria-expanded")).toBe("true"));
     const menu = await ui.findByRole("menu");
 
-    await fireUntil(
-      () => fireEvent.keyDown(menu, { key: "Escape" }),
-      () => expect(trigger.getAttribute("aria-expanded")).toBe("false"),
-    );
+    // Escape is fired exactly ONCE here, not re-fired on a poll like the outside-press test below.
+    // `@zag-js/dismissable`'s Escape-keydown listener attaches synchronously inside a single
+    // `requestAnimationFrame` after open (it skips the extra interact-outside deferral), so two
+    // rafs of margin is enough for it to be live. Re-firing Escape after the close has already
+    // begun makes Zag re-run its focus-restore with the now-in-menu element as the target, and
+    // focus lands back on the menu content instead of the trigger: a flake this test spent real
+    // time chasing. See menu-test-suite-dismissable-timing.
+    await raf();
+    await raf();
+    fireEvent.keyDown(menu, { key: "Escape" });
+    await waitFor(() => expect(trigger.getAttribute("aria-expanded")).toBe("false"));
     await waitFor(() => expect(document.activeElement).toBe(trigger));
   });
 

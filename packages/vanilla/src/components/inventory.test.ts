@@ -82,10 +82,7 @@ describe("expanded Vanilla inventory", () => {
           data-sk-combobox-clear
           aria-label="Limpiar selección"
         >×</button>
-        <button
-          data-sk-combobox-trigger
-          aria-label="Mostrar opciones"
-        >Opciones</button>
+        <span data-sk-combobox-trigger aria-hidden="true">Opciones</span>
       </div>
       <div data-sk-combobox-status role="status"></div>
       <div data-sk-combobox-positioner>
@@ -109,14 +106,15 @@ describe("expanded Vanilla inventory", () => {
       "[data-sk-combobox-input]",
     )!;
     const hint = root.querySelector<HTMLElement>("[data-sk-combobox-hint]")!;
-    const trigger = root.querySelector<HTMLButtonElement>(
+    const trigger = root.querySelector<HTMLElement>(
       "[data-sk-combobox-trigger]",
     )!;
     const clear = root.querySelector<HTMLButtonElement>(
       "[data-sk-combobox-clear]",
     )!;
     expect(input.getAttribute("aria-describedby")).toBe(hint.id);
-    expect(trigger.getAttribute("aria-label")).toBe("Mostrar opciones");
+    // Decorative, not a second control: aria-hidden, no accessible name of its own to check.
+    expect(trigger.getAttribute("aria-hidden")).toBe("true");
     fireEvent.click(input);
     fireEvent.input(input, { target: { value: "republica" } });
     await waitFor(() =>
@@ -161,7 +159,7 @@ describe("expanded Vanilla inventory", () => {
       <label data-sk-combobox-label>Países</label>
       <div data-sk-combobox-control>
         <input data-sk-combobox-input />
-        <button data-sk-combobox-trigger>Opciones</button>
+        <span data-sk-combobox-trigger aria-hidden="true">Opciones</span>
       </div>
       <div data-sk-combobox-positioner>
         <div data-sk-combobox-content>

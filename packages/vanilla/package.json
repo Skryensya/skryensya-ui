@@ -112,6 +112,10 @@
       "types": "./src/components/checkbox-group.ts",
       "default": "./src/components/checkbox-group.ts"
     },
+    "./comment-thread": {
+      "types": "./src/components/comment-thread.ts",
+      "default": "./src/components/comment-thread.ts"
+    },
     "./tile-checkbox": {
       "types": "./src/components/tile-checkbox.ts",
       "default": "./src/components/tile-checkbox.ts"
@@ -192,9 +196,17 @@
       "types": "./src/components/number-field.ts",
       "default": "./src/components/number-field.ts"
     },
+    "./folder": {
+      "types": "./src/components/folder.ts",
+      "default": "./src/components/folder.ts"
+    },
     "./toolbar": {
       "types": "./src/components/toolbar.ts",
       "default": "./src/components/toolbar.ts"
+    },
+    "./editor": {
+      "types": "./src/components/editor.ts",
+      "default": "./src/components/editor.ts"
     },
     "./tree-view": {
       "types": "./src/components/tree-view.ts",
@@ -228,7 +240,16 @@
     "@zag-js/vanilla": "^1.43.3",
     "svelte": "^5.56.7"
   },
+  "peerDependencies": {
+    "@skryensya/editor": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@skryensya/editor": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@skryensya/editor": "workspace:*",
     "@sveltejs/vite-plugin-svelte": "^7.2.0",
     "@testing-library/dom": "^10.4.1",
     "@types/node": "catalog:",

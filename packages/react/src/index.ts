@@ -79,6 +79,8 @@ export { useHotkey } from "./components/hotkey.js";
 export type { UseHotkeyOptions } from "./components/hotkey.js";
 export { Kbd } from "./components/kbd.js";
 export type { KbdProps, KbdTone } from "./components/kbd.js";
+export { Folder, FolderLink, FolderPreview, FolderStack } from "./components/folder.js";
+export type { FolderProps, FolderLinkProps, FolderPreviewProps, FolderStackProps } from "./components/folder.js";
 export { FormField } from "./components/form-field.js";
 export type { FormFieldProps } from "./components/form-field.js";
 export { Input, Textarea } from "./components/input.js";

@@ -1,5 +1,6 @@
 import { boxContract, layoutContract, wrapperContract } from "@skryensya/core/layout";
 import { heroContract } from "@skryensya/core/hero";
+import { folderContract } from "@skryensya/core/folder";
 import { footerContract } from "@skryensya/core/footer";
 import { typographyContract } from "@skryensya/core/typography";
 import { breadcrumbContract } from "@skryensya/core/breadcrumb";
@@ -27,6 +28,7 @@ import { contentContract } from "@skryensya/core/content";
 import { numberFieldContract } from "@skryensya/core/number-field";
 import { navbarContract } from "@skryensya/core/navbar";
 import { toolbarContract } from "@skryensya/core/toolbar";
+import { editorContract } from "@skryensya/core/editor";
 import { tooltipContract } from "@skryensya/core/tooltip";
 import { selectContract } from "@skryensya/core/select";
 import { menuContract } from "@skryensya/core/menu";
@@ -35,6 +37,7 @@ import { megamenuContract } from "@skryensya/core/megamenu";
 import { meterContract } from "@skryensya/core/meter";
 import { dataGridContract } from "@skryensya/core/data-grid";
 import { feedContract } from "@skryensya/core/feed";
+import { commentThreadContract } from "@skryensya/core/comment-thread";
 import { comboboxContract } from "@skryensya/core/combobox";
 import { calendarContract } from "@skryensya/core/calendar";
 import { datePickerContract } from "@skryensya/core/date-picker";
@@ -94,6 +97,7 @@ export const contracts = {
   "empty-state": emptyStateContract,
   "form-field": formFieldContract,
   hero: heroContract,
+  folder: folderContract,
   footer: footerContract,
   icon: iconContract,
   "image-frame": imageFrameContract,
@@ -132,6 +136,7 @@ export const contracts = {
   treegrid: treegridContract,
   tag: tagContract,
   toolbar: toolbarContract,
+  editor: editorContract,
   tooltip: tooltipContract,
   select: selectContract,
   menu: menuContract,
@@ -140,6 +145,7 @@ export const contracts = {
   meter: meterContract,
   "data-grid": dataGridContract,
   feed: feedContract,
+  "comment-thread": commentThreadContract,
   combobox: comboboxContract,
   calendar: calendarContract,
   "date-picker": datePickerContract,

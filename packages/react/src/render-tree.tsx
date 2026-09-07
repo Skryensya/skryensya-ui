@@ -14,6 +14,7 @@ import * as stepsModule from "./components/steps.js";
 import * as listModule from "./components/list.js";
 import * as navbarModule from "./components/navbar.js";
 import * as toolbarModule from "./components/toolbar.js";
+import * as editorModule from "./components/editor.js";
 import * as mediaGradientModule from "./components/media-gradient.js";
 import * as segmentedModule from "./components/segmented.js";
 import * as sliderModule from "./components/slider.js";
@@ -62,6 +63,8 @@ import * as meterModule from "./components/meter.js";
 import * as chartModule from "./components/chart.js";
 import * as dataGridModule from "./components/data-grid.js";
 import * as feedModule from "./components/feed.js";
+import * as folderModule from "./components/folder.js";
+import * as commentThreadModule from "./components/comment-thread.js";
 import * as menubarModule from "./components/menubar.js";
 import * as megamenuModule from "./components/megamenu.js";
 import * as tabsModule from "./components/tabs.js";
@@ -156,11 +159,14 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/chart": chartModule,
   "@skryensya/react/data-grid": dataGridModule,
   "@skryensya/react/feed": feedModule,
+  "@skryensya/react/comment-thread": commentThreadModule,
   "@skryensya/react/menubar": menubarModule,
   "@skryensya/react/megamenu": megamenuModule,
   "@skryensya/react/tabs": tabsModule,
   "@skryensya/react/toc": tocModule,
   "@skryensya/react/component-preview": componentPreviewModule,
+  "@skryensya/react/editor": editorModule,
+  "@skryensya/react/folder": folderModule,
 };
 
 /*
@@ -223,12 +229,10 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
        * ALSO the named prop, under the option's own key: a `styleProperty` option says where the
        * value lands in MARKUP (an inline custom property, for the vanilla emitter and the static
        * fallback), not how a React component wants to receive it, and some components (Sidebar's
-       * `minInlineSize`/`maxInlineSize`, DensityScope's `densityFactor`) take it as an ordinary
-       * named prop and build their OWN style entry from it rather than reading a caller-supplied
-       * `style`. Passing both costs nothing for a component that only reads `style` (Carousel), and
-       * is the only way one that reads the named prop instead ever sees the value at all. DensityScope
-       * silently fell back to its own default here until a canonical tree finally set `densityFactor`
-       * to something other than that default.
+       * `minInlineSize`/`maxInlineSize`) take it as an ordinary named prop and build their OWN
+       * style entry from it rather than reading a caller-supplied `style`. Passing both costs
+       * nothing for a component that only reads `style` (Carousel), and is the only way one that
+       * reads the named prop instead ever sees the value at all.
        */
       props[option] = value;
       continue;

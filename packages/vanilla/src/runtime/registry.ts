@@ -13,6 +13,15 @@ type Registration = {
  *
  * CodePreview and ComponentPreview are deliberately absent. They are opt-in documentation surfaces
  * mounted through their explicit subpaths, never part of the default application runtime.
+ *
+ * Editor is deliberately absent too, for a sharper reason: `@skryensya/editor` (ProseMirror, ~9
+ * packages) is an OPTIONAL peer dependency of this package (see `package.json`), precisely so that
+ * importing `@skryensya/vanilla/auto` never drags it in for a consumer who never installed it. A
+ * selector-gated `import()` here would still name that module in this file's static analysis and
+ * in bundlers that eagerly resolve dynamic-import specifiers, which defeats the optionality this
+ * table exists to guarantee for every OTHER entry. A page that uses Editor calls `mountEditor`
+ * from `@skryensya/vanilla/editor` itself, explicitly — the same shape CodePreview/ComponentPreview
+ * already use, for a different reason.
  */
 // Runtime plugin loading is intentional: static imports would defeat selector gating and ship every enhancer.
 const registrations: readonly Registration[] = [
@@ -62,6 +71,10 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/vaul.js")).mountVaul,
   },
   {
+    selector: "[data-sk-folder]",
+    load: async () => (await import("../components/folder.js")).mountFolder,
+  },
+  {
     selector: "[data-sk-tabs]",
     load: async () => (await import("../components/tabs.js")).mountTabs,
   },
@@ -83,6 +96,15 @@ const registrations: readonly Registration[] = [
     selector: "[data-sk-checkbox-group]",
     load: async () =>
       (await import("../components/checkbox-group.js")).mountCheckboxGroup,
+  },
+  {
+    /* All three roots the enhancer answers to, not just the thread: the pieces are usable apart, so
+     * a standalone `Comment` or a lone `CommentComposer` has no thread above it to trigger the load
+     * and would have shipped inert. Exactly what happened to the docs page's own single-comment
+     * demo, where Reply opened nothing and Delete reported nothing. */
+    selector: "[data-sk-comment-thread], [data-sk-comment], [data-sk-comment-composer]",
+    load: async () =>
+      (await import("../components/comment-thread.js")).mountCommentThread,
   },
   {
     selector: "[data-sk-tile-checkbox]",

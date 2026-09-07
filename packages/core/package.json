@@ -136,9 +136,21 @@
       "types": "./src/machines.ts",
       "default": "./src/machines.ts"
     },
+    "./folder": {
+      "types": "./src/folder.ts",
+      "default": "./src/folder.ts"
+    },
     "./form-field": {
       "types": "./src/form-field.ts",
       "default": "./src/form-field.ts"
+    },
+    "./editor": {
+      "types": "./src/editor.ts",
+      "default": "./src/editor.ts"
+    },
+    "./editor-icons": {
+      "types": "./src/editor-icons.ts",
+      "default": "./src/editor-icons.ts"
     },
     "./input": {
       "types": "./src/input.ts",
@@ -319,6 +331,10 @@
     "./combobox": {
       "types": "./src/combobox.ts",
       "default": "./src/combobox.ts"
+    },
+    "./comment-thread": {
+      "types": "./src/comment-thread.ts",
+      "default": "./src/comment-thread.ts"
     },
     "./date-picker": {
       "types": "./src/date-picker.ts",

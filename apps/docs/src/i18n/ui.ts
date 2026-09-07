@@ -444,6 +444,10 @@ export const ui = {
       'Debe haber como mucho UN <code>&lt;footer&gt;</code> de documento por página, la misma regla que <code>banner</code> o <code>main</code>. Un footer que pertenece de verdad a un <code>&lt;article&gt;</code> sigue siendo válido, sólo que deja de ser el landmark.',
     "footer.a11yP3":
       'Una fila de columnas de enlaces es navegación: cada columna es un <a href="/componentes/nav-list">NavList</a> con su propio nombre accesible (<code>aria-label</code> o un encabezado visible), para que la lista de landmarks diga «Footer / Recursos», no una <code>navigation</code> sin nombre por columna.',
+    "footer.test1":
+      "Por defecto emite el landmark <code>contentinfo</code> con la superficie hundida, el padding grande y el divisor superior que documenta el contrato.",
+    "footer.test2":
+      "El divisor, el padding y la superficie se pueden cambiar, y <code>as</code> deja de emitir el landmark cuando el footer va anidado dentro de otro elemento.",
 
     "hero.description": "La apertura de una página: una superficie propia y espacio generoso, sin anatomía fija.",
     "hero.betaBadge": "Beta",
@@ -500,6 +504,10 @@ export const ui = {
     "hero.a11yP1": 'El host de <code>Hero</code> es un contenedor plano sin rol de landmark por defecto (un <code>div</code> en HTML, cualquier elemento vía <code>as</code> en React). La mayoría de las páginas tienen exactamente un hero, así que darle un rol de región sin nombre agregaría una parada más en la lista de landmarks de quien navega por ellos, sin ganar nada.',
     "hero.a11yP2": 'Se vuelve un landmark sólo si quien lo compone lo autora explícitamente como uno (<code>&lt;section&gt;</code> a mano en HTML, <code>as="section"</code> en React). En ese momento aplica la misma regla de WAI para cualquier landmark sin nombre: dale <code>aria-label</code> o <code>aria-labelledby</code> apuntando al encabezado adentro.',
     "hero.a11yP3": 'El contrato no puede exigir estructuralmente "hay un encabezado real adentro" ni "la imagen tiene alt": <code>children</code> acepta contenido libre, la misma razón por la que Hero no tiene anatomía fija. Lo que el contrato sí exige, vía el esquema normal, son sus propias opciones (<code>padding</code>/<code>surface</code>/<code>align</code>); las reglas de contenido de arriba se enseñan por ejemplo, en cada patrón publicado, no por una validación que una composición distinta podría esquivar en silencio.',
+    "hero.test1":
+      "Por defecto se renderiza como un <code>div</code> plano, sin rol de landmark, con <code>align=\"start\"</code>, padding <code>xl</code> y superficie <code>surface</code>.",
+    "hero.test2":
+      "<code>align</code>, <code>padding</code> y <code>surface</code> se pueden cambiar, y <code>as</code> renderiza el hero como cualquier otro elemento (por ejemplo un <code>section</code> con landmark propio).",
 
     "backToTop.description":
       "Un botón fijado a una esquina que devuelve un scroller a su inicio. Aparece solo después de pasar un umbral de scroll y se va solo al volver arriba.",
@@ -552,6 +560,147 @@ export const ui = {
     "backToTop.pillTitle": "Pill con texto visible",
     "backToTop.pillBody":
       "Por defecto es solo ícono y la etiqueta va recortada. El nombre accesible ya está; para dibujarlo, un consumidor destapa <code>.sk-back-to-top__label</code> y le da lugar al root.",
+    "backToTop.test1": "Se renderiza oculto (<code>hidden</code>) y toma su nombre accesible del contenido una vez visible.",
+    "backToTop.test2": "Se muestra al pasar el umbral y vuelve a ocultarse al subir de nuevo.",
+    "backToTop.test3": "Al hacer clic devuelve la ventana al inicio, con scroll suave por defecto.",
+    "backToTop.test4": "Salta de forma instantánea cuando quien lee prefiere menos movimiento.",
+    "backToTop.test5": "Mueve el foco a <code>target</code> después de scrollear, sin disparar un segundo scroll.",
+    "backToTop.test6": "Actúa sobre un scroller interno nombrado en vez de la ventana.",
+    "backToTop.test7": "Sigue llamando al <code>onClick</code> de quien lo usa, y le permite cancelar el scroll.",
+    "backToTop.test8": "Revela en o después del umbral, nunca antes.",
+    "backToTop.test9": "Con umbral 0 se muestra desde el primer píxel.",
+    "backToTop.test10": "Un umbral inválido cae al valor por defecto, no queda siempre prendido ni siempre apagado.",
+    "backToTop.test11": "Nunca se revela con una posición de scroll no finita.",
+    "backToTop.test12": "Parsea <code>data-threshold</code>, y cae al valor por defecto si viene vacío o no se puede interpretar.",
+    "backToTop.test13": "Anima el scroll salvo que quien lee haya pedido menos movimiento.",
+    "backToTop.test14": "Se mantiene oculto bajo el umbral y se revela al pasarlo.",
+    "backToTop.test15": "Respeta un <code>data-threshold</code> personalizado.",
+    "backToTop.test16": "Al hacer clic devuelve la ventana al inicio, con scroll suave por defecto.",
+    "backToTop.test17": "Salta de forma instantánea cuando quien lee prefiere menos movimiento.",
+    "backToTop.test18": "Mueve el foco a <code>target</code> después del scroll, sin iniciar uno segundo.",
+    "backToTop.test19": "Actúa sobre un scroller interno nombrado en vez de la ventana.",
+    "backToTop.test20": "Deja de sincronizar una vez limpiado (<code>off()</code>).",
+    "backToTop.test21": "Se monta una sola vez por raíz autorada; una segunda llamada no hace nada.",
+
+    "commentThread.description":
+      "Comentarios anidados en cinco piezas que se usan juntas o sueltas, data-driven y sin backend propio.",
+    "commentThread.betaBadge": "Beta",
+    "commentThread.lede":
+      "Cinco piezas, no un componente con todo adentro. La más simple es <code>Comment</code>: quién escribió, cuándo y qué dijo, válido sin hilo alrededor. Encima se componen <code>CommentActions</code>, <code>CommentVote</code>, <code>CommentComposer</code> y <code>CommentThread</code>. Las respuestas recursan por composición: <code>Comment</code> adentro de <code>Comment</code>, a cualquier profundidad. Nada de esto llama a una API ni guarda un borrador: cada acción se devuelve a quien lo usa.",
+    "commentThread.whenTitle": "Cuándo usarlo",
+    "commentThread.whenBody1":
+      "Cuando hay una conversación con respuestas anidadas de verdad: cada comentario puede tener los suyos, a cualquier profundidad. Un stream plano de publicaciones sin hilos es <a href=\"/componentes/feed\">Feed</a>; una jerarquía SELECCIONABLE (archivos, un índice) es <a href=\"/componentes/tree-view\">TreeView</a>. Este componente es para contenido de solo lectura con acciones (votar, responder, borrar), no para elegir un ítem.",
+    "commentThread.whenBody2":
+      "Para citar un solo comentario en otra parte no hace falta el hilo: <code>Comment</code> vale por sí solo. La moderación por rol y las menciones enriquecidas (<code>@</code>/<code>#</code>) quedaron afuera a propósito: son decisiones de dominio de cada app, no del sistema de diseño.",
+    "commentThread.demoTitle": "El objeto, de lo más simple al hilo profundo",
+    "commentThread.demoBody":
+      "La pieza más simple: quién escribió, cuándo y qué dijo. No necesita hilo alrededor ni arrastra chrome que no usa.",
+    "commentThread.demoAloneLabel": "Un comentario suelto",
+    "commentThread.demoActionsTitle": "Con acciones",
+    "commentThread.demoActionsBody":
+      "El mismo comentario más la fila: un <code>CommentVote</code> compuesto dentro de un <code>CommentActions</code>. Quién puede votar o borrar es composición, no un puñado de flags.",
+    "commentThread.demoActionsLabel": "Comentario con acciones",
+    "commentThread.demoThreadTitle": "Un hilo corto",
+    "commentThread.demoThreadBody":
+      "Tres comentarios, uno respondido. El control de plegado sólo aparece donde hay respuestas que plegar, y el último no trae acciones.",
+    "commentThread.demoDeepTitle": "Profundidad",
+    "commentThread.demoDeepBody":
+      "Cuatro niveles, con hermanos en varios. El conector se dibuja por respuesta y no se mide: la primera vuelve al control de plegado y la última corta en su propio codo, así que la única forma de ver que eso aguanta en profundidad es renderizarlo.",
+    "commentThread.demoThreadLabel": "Hilo corto",
+    "commentThread.demoDeepLabel": "Hilo profundo",
+    "commentThread.demoLabel": "Comentarios de ejemplo",
+    "commentThread.behaviorTitle": "Voto y borrado no tocan el DOM por su cuenta",
+    "commentThread.behaviorBody1":
+      "Un clic en votar o borrar solo despacha el evento (<code>onVote</code>/<code>onDelete</code> en React, un <code>CustomEvent</code> en Vanilla) — el estado que se ve (<code>aria-pressed</code>, <code>data-voted</code>) es SIEMPRE el que trae el dato de quien lo usa, nunca algo que este componente decida por su cuenta. Plegar un hilo y abrir/cerrar el cuadro de respuesta sí son estado propio, y usan el mismo patrón de disclosure de <code>NavListGroup</code> (<code>aria-expanded</code> + <code>hidden</code>): no hay máquina de Zag, no hace falta una para un click que alterna un booleano.",
+    "commentThread.behaviorBody2":
+      "Sin <code>role=\"feed\"</code> ni <code>role=\"tree\"</code>: cada comentario es un <code>&lt;article&gt;</code>, y sus respuestas son <code>&lt;article&gt;</code> anidados dentro — la jerarquía que un lector de pantalla ya calcula solo, sin <code>aria-level</code> autorado a mano (la misma exención que la spec normativa de WAI-ARIA da al patrón Tree cuando el árbol entero ya está en el DOM).",
+    "commentThread.optionsTitle": "Opciones",
+    "commentThread.optionsBody":
+      "<code>label</code>: el nombre accesible del hilo. <code>nodes</code>: el árbol de comentarios (cada uno con <code>id</code>, <code>author</code>, <code>timestamp</code>, <code>voteCount</code>, <code>body</code>, y opcionalmente <code>votedByMe</code>, <code>canDelete</code>, <code>replies</code>). <code>composer</code>: la caja para publicar un comentario nuevo, opcional. Los textos de cada control (<code>replyLabel</code>, <code>deleteLabel</code>, <code>voteUpLabel</code>…) son props separadas, nunca texto fijo en un idioma.",
+    "commentThread.a11yP1":
+      "Cada comentario es un <code>&lt;article&gt;</code> de solo lectura con sus acciones dentro, nunca un widget seleccionable: no hay roving tabindex ni flechas propias, cada control (voto, responder, borrar, plegar) es un <code>&lt;button&gt;</code> normal en el orden de Tab. Los botones de voto son solo-ícono; su nombre accesible viene de un <code>&lt;span&gt;</code> recortado con <code>sk-visually-hidden</code>, no de un <code>aria-label</code> aparte.",
+    "commentThread.a11yP2":
+      "Borrar no trae confirmación propia: dispara <code>onDelete</code> directo. Quien necesite un paso de confirmación compone <code>Dialog</code> con <code>alert</code> (pensado exactamente para eso) alrededor de su propio manejador, en vez de que este componente cargue una segunda ventana modal que no todos los consumidores necesitan.",
+    "commentThread.vanillaApiTitle": "La API en Vanilla",
+    "commentThread.vanillaApiBody1":
+      "Cuatro cosas y ninguna más: <strong>escuchar</strong> los tres eventos, <strong>vetar</strong> uno con <code>preventDefault()</code>, <strong>escribir</strong> estado con <code>setCommentVote</code>, y <strong>crear</strong> un comentario clonando un <code>CommentTemplate</code>.",
+    "commentThread.vanillaApiBody2":
+      "Para crear se clona un blueprint y se llenan los campos por los hooks <code>data-sk-comment-*</code>, nunca por las clases de parte: esas son de la hoja de estilos y se mueven cuando cambia la pintura. Es el mismo idiom que usa <a href=\"/componentes/toast\">Toast</a> con su propio <code>ToastTemplate</code>.",
+    "commentThread.htmlTitle": "HTML autorado",
+    "commentThread.htmlBody":
+      "Un comentario recursivo se compone repitiendo esta misma forma dentro de <code>.sk-comment-thread__replies</code>. El <code>FormField</code>/<code>Textarea</code> del formulario de respuesta queda a criterio de quien lo usa — acá se omite por brevedad.",
+    "commentThread.reactTitle": "React",
+    "commentThread.contractItem1":
+      "Las respuestas recursan por COMPOSICIÓN, no como colección de datos: <code>Comment.replies</code> acepta <code>Comment</code>, igual que <code>NavListLink.nested</code> acepta <code>NavListGroup</code>. Por eso cada slot a cualquier profundidad admite contenido compuesto, cosa que una colección no podía: una entrada de colección es DATA, y un subárbol adentro se aplanaba a su texto.",
+    "commentThread.contractItem2":
+      "<code>CommentComposer</code> no entrega ningún control: su slot acepta cualquier signature, sin <code>of</code>, igual que el de <code>FormField</code>. Un field, un textarea o un editor entran por igual, y ninguno queda fijo en el contrato.",
+    "commentThread.contractItem3":
+      "La hoja es <code>components/comment-thread.css</code> y publica un prefijo por pieza (<code>sk-comment</code>, <code>sk-comment-actions</code>, <code>sk-comment-vote</code>, <code>sk-comment-composer</code>), porque cada una se usa suelta. Todos los controles son <code>sk-button</code> reales: lo único que la hoja mueve es el tono, vía <code>--sk-button-fg</code>.",
+    "commentThread.test1": "Un <code>Comment</code> suelto renderiza autor, fecha y cuerpo, sin hilo ni chrome alrededor.",
+    "commentThread.test2": "El slot <code>author</code> acepta contenido compuesto, no solo un string.",
+    "commentThread.test3": "No hay control de plegado salvo que el comentario sea <code>collapsible</code> Y tenga respuestas que plegar.",
+    "commentThread.test4": "Plegar oculta las RESPUESTAS y deja legible el comentario en sí: su cuerpo y sus acciones siguen ahí.",
+    "commentThread.test5": "Las respuestas anidan como <code>Comment</code> de la misma forma, a cualquier profundidad.",
+    "commentThread.test6": "<code>CommentVote</code> reporta la dirección clickeada y refleja el voto previo del lector.",
+    "commentThread.test7": "<code>CommentActions</code> renderiza solo los botones que recibió, y reporta cada uno.",
+    "commentThread.test8": "El composer publica el cuerpo del control que le pasaron y después lo limpia.",
+    "commentThread.test9": "Lee un <code>Input</code> de una línea igual que un <code>Textarea</code>: no entrega ninguno.",
+    "commentThread.test10": "No publica nada si el control está vacío.",
+    "commentThread.test11": "El hilo se nombra a sí mismo y renderiza su composer arriba de los comentarios.",
+    "commentThread.test12":
+      "Despacha el voto con el id del comentario y la dirección clickeada, sin tocar la pintura por su cuenta.",
+    "commentThread.test13": "El voto de una respuesta anidada se atribuye a la respuesta, no al comentario de arriba.",
+    "commentThread.test14": "Despacha el borrado solo donde el botón de borrar existe.",
+    "commentThread.test15":
+      "Alterna <code>aria-expanded</code> y <code>hidden</code> del cuadro de respuesta, acotado a su propio comentario.",
+    "commentThread.test16": "Plegar oculta las respuestas de ese comentario y no lo que el comentario dice.",
+    "commentThread.test17":
+      "Publica una respuesta con el id del comentario que la contiene como <code>parentId</code>, la limpia y cierra el cuadro.",
+    "commentThread.test18": "El composer del hilo publica con <code>parentId</code> nulo.",
+    "commentThread.test19": "Ignora una respuesta vacía: sin evento, formulario intacto.",
+    "commentThread.test20": "Pliega las respuestas de un <code>Comment</code> suelto, sin hilo alrededor.",
+    "commentThread.test21": "Un <code>CommentComposer</code> suelto publica reportando que no tiene padre.",
+    "commentThread.test22": "Lee un input de una línea igual que un textarea: el composer no entrega ninguno.",
+    "commentThread.test23": "También lee una superficie <code>contenteditable</code>, así un Editor puede ser el control.",
+    "commentThread.test25": "Cancelar con la caja vacía la cierra sin preguntar: no hay nada que perder.",
+    "commentThread.test26": "Cancelar con un borrador despacha <code>discard</code> y deja la caja abierta para que la app decida.",
+    "commentThread.test27": "Una respuesta vetada con <code>preventDefault()</code> conserva el borrador y la caja.",
+    "commentThread.test24": "El avatar va en el canal, aparte del nombre, para que la línea del hilo pueda colgar de él.",
+    "demo.commentThread.label": "Comentarios",
+    "demo.commentThread.replyFieldLabel": "Respuesta",
+    "demo.commentThread.replyPlaceholder": "Escribí una respuesta…",
+    "demo.commentThread.send": "Responder",
+    "demo.commentThread.now": "recién",
+    "demo.commentThread.deleteTitle": "¿Eliminar el comentario?",
+    "demo.commentThread.deleteBody": "Se borra junto con sus respuestas. No se puede deshacer.",
+    "demo.commentThread.deleteCancel": "Cancelar",
+    "demo.commentThread.deleteConfirm": "Eliminar",
+    "demo.commentThread.cancel": "Cancelar",
+    "demo.commentThread.discardTitle": "¿Descartar lo escrito?",
+    "demo.commentThread.discardBody": "Se pierde lo que escribiste en la respuesta.",
+    "demo.commentThread.discardKeep": "Seguir escribiendo",
+    "demo.commentThread.discardConfirm": "Descartar",
+    "demo.commentThread.author1": "Ada",
+    "demo.commentThread.time1": "hace 3h",
+    "demo.commentThread.body1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "demo.commentThread.author2": "Grace",
+    "demo.commentThread.time2": "hace 1h",
+    "demo.commentThread.body2": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    "demo.commentThread.author3": "Linus",
+    "demo.commentThread.time3": "hace 40m",
+    "demo.commentThread.body3": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "demo.commentThread.author4": "Margaret",
+    "demo.commentThread.time4": "hace 10m",
+    "demo.commentThread.body4": "Lorem ipsum dolor sit amet.",
+    "demo.commentThread.author5": "Alan",
+    "demo.commentThread.time5": "hace 5m",
+    "demo.commentThread.body5": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "demo.commentThread.author6": "Barbara",
+    "demo.commentThread.time6": "hace 2m",
+    "demo.commentThread.body6": "Consectetur adipiscing elit, sed do eiusmod.",
+    "demo.commentThread.body7": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
+    "demo.commentThread.body8": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.",
+
     "box.description": "Superficie visual y semántica elegida por quien la usa; sin interacción propia.",
     "box.lede":
       "Box sólo posee superficie, borde y padding. Quien lo usa elige el elemento semántico. No aporta interacción ni convierte el contenido en un destino o acción.",
@@ -616,6 +765,7 @@ export const ui = {
     "demo.breadcrumb.sharedComponents": "Componentes compartidos",
 
     "breadcrumb.description": "Ubicación jerárquica con enlaces reales y página actual explícita.",
+    "breadcrumb.betaBadge": "Beta",
     "breadcrumb.examplesTitle": "Ejemplos",
     "breadcrumb.twoTitle": "Dos niveles",
     "breadcrumb.twoBody": "El caso mínimo: un enlace al nivel anterior y la página actual, sin enlace ni separador final.",
@@ -643,6 +793,15 @@ export const ui = {
     "breadcrumb.contractBody": "Usa nav + ol; el último elemento lleva aria-current=page y no es un enlace.",
     "breadcrumb.a11yBody":
       'El label distingue estas migas de otras navegaciones de la página. El disclosure «…» de una senda colapsada lleva su propio <code>aria-label</code> (<code>collapsedLabel</code>) y abre un <a href="/componentes/menu">Menu</a> real, <code>role="menu"</code>: navegación con flechas, Home/End, typeahead y cierre con Escape son del patrón de menú, no algo que este componente reimplemente.',
+    "breadcrumb.test1": "Una senda corta se renderiza sin colapsar: no hay «…» que valga la pena mostrar.",
+    "breadcrumb.test2": "El trigger «…» expone su <code>aria-label</code> y <code>aria-haspopup=\"menu\"</code>, y abre un <a href=\"/componentes/menu\">Menu</a> real con los niveles ocultos.",
+    "breadcrumb.test3": "Una senda que entra en una línea queda sin colapsar.",
+    "breadcrumb.test4": "El colapso se recalcula en cada resize, incluso al achicarse desde un estado ya expandido.",
+    "breadcrumb.test5": "Una senda corta no gana ni siquiera el elemento «…»: nada vale la pena esconder.",
+    "breadcrumb.test6": "Una senda que entra en una línea no toca ningún crumb: el «…» queda oculto.",
+    "breadcrumb.test7": "Sin espacio, el «…» abre un <a href=\"/componentes/menu\">Menu</a> real con los crumbs escondidos, cada uno como enlace navegable; el primero y la página actual quedan siempre a la vista.",
+    "breadcrumb.test8": "Cada resize vuelve a medir la senda: primero expande todo, así nunca queda atascado colapsado de más.",
+    "breadcrumb.test9": "Al desmontar el enhancer, todos los crumbs vuelven a quedar visibles.",
 
     "demo.callout.neutral.title": "Mantenimiento programado",
     "demo.callout.neutral.body":
@@ -1304,6 +1463,8 @@ export const ui = {
     "demo.radioGroup.starter.body": "Para proyectos personales.",
     "demo.radioGroup.pro.title": "Pro",
     "demo.radioGroup.pro.body": "Para equipos en crecimiento.",
+    "demo.radioGroup.basic.title": "Basic",
+    "demo.radioGroup.basic.body": "Funciones esenciales, sin costo.",
     "demo.stat.summary": "Resumen del negocio",
     "demo.stat.income": "Ingresos",
     "demo.stat.orders": "Pedidos",
@@ -1334,6 +1495,10 @@ export const ui = {
     "demo.pricingCard.cta": "Elegir Pro",
     "demo.teamCard.follow": "Seguir",
     "demo.fileCard.moreOptions": "Más opciones",
+    "demo.trustRow.text": "La confianza de más de 240 equipos",
+    "demo.passwordField.label": "Confirmar contraseña",
+    "demo.passwordField.hint": "Debe coincidir con la contraseña anterior.",
+    "demo.passwordField.error": "Las contraseñas no coinciden.",
     "demo.switch.auto.title": "Despliegue automático",
     "demo.switch.auto.body": "Publica cuando las verificaciones pasan.",
     "demo.switch.public.title": "URL pública",
@@ -1486,6 +1651,17 @@ export const ui = {
     "demo.toolbar.tablet": "Tablet",
     "demo.toolbar.mobile": "Móvil",
     "demo.toolbar.binding": "Binding",
+    "demo.editor.placeholder": "Escribe algo…",
+    "demo.editor.label": "Contenido",
+    "demo.folder.radioTitle": "Radio",
+    "demo.folder.radioBody":
+      "Una radio personal: estaciones curadas a mano y la misma canción sonando para todos a la misma hora, sin botón de siguiente ni servidor coordinando nada. Sólo el reloj de cada quien, que resulta ser el mismo reloj.",
+    "demo.folder.printerTitle": "Printer",
+    "demo.folder.printerBody":
+      "Un sitio donde cualquiera puede mandar un mensaje corto que sale impreso al instante en la impresora térmica de mi escritorio. Nació de una pregunta que no me dejaba en paz: ¿y si cualquier cosa en internet pudiera imprimir en ella?",
+    "demo.folder.wadaTitle": "Wada.ink",
+    "demo.folder.wadaBody":
+      "Un catálogo interactivo de las combinaciones de color de Sanzo Wada, pensado para navegar y descubrir, no sólo para mirar láminas. Ya existían otras versiones, pero ninguna dejaba comparar dos paletas de un vistazo.",
     "demo.tree.initialLabel": "Proyecto",
     "demo.tree.multipleLabel": "Archivos del proyecto",
     "demo.tree.disabledLabel": "Proyecto con rama deshabilitada",
@@ -1680,6 +1856,8 @@ export const ui = {
     "group.componentFeedback.blurb": "Para explicar qué ocurre, qué falta y qué sigue.",
     "group.componentLayers": "Capas y revelación",
     "group.componentLayers.blurb": "Para mostrar detalle o tareas sin perder el contexto.",
+    "group.componentExpressive": "Expresivos",
+    "group.componentExpressive.blurb": "Piezas con forma propia, donde el dibujo es parte del trabajo.",
     "group.componentLayout": "Layout y utilidades",
     "group.componentLayout.blurb": "Para componer, espaciar y sostener la interfaz.",
 
@@ -2193,11 +2371,19 @@ export const ui = {
     "grid.contractItem2":
       "<code>data-gap</code> admite <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> o <code>xl</code>; el valor por defecto es <code>md</code>.",
     "grid.contractItem3":
-      "<code>data-multicol</code> activa el muro de tarjetas por columnas. <code>data-columns</code> define su máximo de carriles: 1 → 2 → 3 → 4 → 5 en los breakpoints <code>36rem</code>, <code>52rem</code>, <code>72rem</code> y <code>90rem</code>. En React se pasa como <code>data-multicol</code>.",
-    "grid.contractItem4": "En React, <code>Grid</code> recibe <code>as</code>, <code>columns</code> y <code>gap</code>; <code>columns</code> tiene por defecto <code>1</code>.",
+      "<code>data-multicol</code> activa el muro de tarjetas por columnas. <code>data-columns</code> define su máximo de carriles: 1 → 2 → 3 → 4 → 5 en los breakpoints <code>36rem</code>, <code>52rem</code>, <code>72rem</code> y <code>90rem</code>. En React se pasa como <code>multicol</code>.",
+    "grid.contractItem4": "En React, <code>Grid</code> recibe <code>as</code>, <code>columns</code>, <code>gap</code>, <code>multicol</code> y <code>responsive</code>; <code>columns</code> tiene por defecto <code>1</code>.",
     "grid.contractItem5":
-      "<code>data-responsive</code> aplica esa misma progresión de carriles como un Grid CSS real en vez de columnas CSS: cada fila iguala su alto a la celda más alta, pero un hijo directo puede ensancharse con <code>data-span=\"2\"</code> (hasta <code>5</code>), algo que <code>column-span</code> no permite salvo abarcar todos los carriles a la vez. En React se pasa como <code>responsive</code>.",
+      "<code>data-responsive</code> aplica esa misma progresión de carriles como un Grid CSS real en vez de columnas CSS: cada fila iguala su alto a la celda más alta, pero un hijo directo puede ensancharse con <code>data-span=\"2\"</code> (hasta <code>5</code>), algo que <code>column-span</code> no permite salvo abarcar todos los carriles a la vez. En React se pasa como <code>responsive</code>; <code>data-span</code> no es una opción del contrato, así que viaja como atributo directo del hijo (<code>&lt;Box data-span=\"2\"&gt;</code>).",
+    "grid.responsiveTitle": "Grid responsivo",
+    "grid.responsiveBody1":
+      "<code>data-responsive</code> es la alternativa a <code>data-multicol</code> cuando algún hijo debe destacar. Usa un Grid CSS real: todas las celdas de una fila comparten el alto de la más alta, y un hijo directo puede pedir más de un carril con <code>data-span=\"2\"</code> (hasta <code>5</code>, acotado a los carriles que existan en cada breakpoint).",
+    "grid.responsiveBody2":
+      "A diferencia de <code>data-multicol</code>, cada tarjeta conserva su propio alto (<code>align-items: start</code>) en vez de estirarse para llenar la fila; solo la tarjeta con <code>data-span</code> ocupa más carriles.",
+    "grid.responsiveLabel": "Grid responsivo",
+    "grid.responsiveFeaturedLabel": "Destacado, ocupa dos carriles",
     "grid.test1": "Renderiza Stack, Inline y Grid según los contratos de layout documentados.",
+    "grid.test2": "Cambia Grid a filas responsivas y deja que un hijo pida un carril más ancho con data-span.",
     "layoutGridPage.description":
       "Layout Grid: un flujo de página con medidas narrow, content, breakout y full-width.",
     "layoutGridPage.lede":
@@ -2727,6 +2913,21 @@ export const ui = {
     "navListPage.installIntro": "Importa el pattern donde el host vaya a renderizar la navegación.",
     "navListPage.a11yBody":
       "Cada <code>NavList</code> es un landmark <code>&lt;nav&gt;</code>. Si hay más de uno en la página, nómbralo con <code>aria-label</code> o <code>aria-labelledby</code>. La página actual se marca con <code>aria-current=&quot;page&quot;</code>; no añadas un estado paralelo.",
+    "navListPage.test1": "Es un landmark <code>navigation</code> con nombre y una lista de enlaces etiquetada; el enlace actual lleva <code>aria-current=\"page\"</code>.",
+    "navListPage.test2": "Los enlaces de destino no fingen semántica de menú: no hay <code>role=\"menu\"</code> ni <code>aria-current</code> donde no corresponde.",
+    "navListPage.test3": "Un grupo colapsable es un <code>&lt;button&gt;</code> con <code>aria-expanded</code>/<code>aria-controls</code>, abierto por defecto.",
+    "navListPage.test4": "El clic alterna <code>aria-expanded</code> y el estado <code>hidden</code> de la lista.",
+    "navListPage.test5": "Escape cierra el grupo abierto desde cualquier punto adentro y devuelve el foco al trigger.",
+    "navListPage.test6": "Un grupo anidado dentro de un enlace vive en el mismo <code>&lt;li&gt;</code>, independiente del grupo padre.",
+    "navListPage.test7": "<code>defaultOpen={false}</code> arranca cerrado.",
+    "navListPage.test8": "Al montar genera un id y cablea <code>aria-controls</code> a la lista.",
+    "navListPage.test9": "Respeta un id autorado en vez de generar uno segundo.",
+    "navListPage.test10": "El clic alterna <code>aria-expanded</code> y el <code>hidden</code> de la lista.",
+    "navListPage.test11": "Arranca oculto si se autora con <code>aria-expanded=\"false\"</code>.",
+    "navListPage.test12": "Enter/Espacio lo alternan: comportamiento nativo del <code>&lt;button&gt;</code>, no algo que el enhancer cablee.",
+    "navListPage.test13": "Escape cierra el grupo abierto desde adentro y devuelve el foco al trigger.",
+    "navListPage.test14": "Escape no hace nada cuando el grupo ya está cerrado.",
+    "navListPage.test15": "Cablea el grupo anidado de un enlace de forma independiente del grupo padre (el trigger externo encuentra su propia <code>&lt;ul&gt;</code>, no la de adentro).",
 
     "navbarPage.description": "Navbar: la barra, con la lista de navegación como pattern horizontal.",
     "navbarPage.lede":
@@ -2845,8 +3046,13 @@ export const ui = {
       "No lleva ni aria-labelledby ni aria-describedby sin un título/descripción a los que apuntar.",
     "popoverPage.testReact10":
       "No lleva ni aria-labelledby ni aria-describedby en modo bare, aunque se den título y descripción.",
+    "popoverPage.testReact11":
+      'Pasa <code class="sk-code">triggerVariant</code>/<code class="sk-code">triggerSize</code>/<code class="sk-code">triggerIconOnly</code> al botón del trigger.',
+    "popoverPage.testReact12":
+      "Deja fuera los atributos de variante, tamaño e icon-only del trigger cuando no se piden.",
 
     "popupPage.description": "Superficie flotante mínima para composiciones que no necesitan chrome de Popover.",
+    "popupPage.betaBadge": "Beta",
     "popupPage.contractBody": "Popup aporta ancla y superficie, no semántica interna. Si el patrón tiene título y acciones de cierre, usa Popover.",
     "popupPage.a11yBody": "El contenido debe aportar su propia semántica; Popup no inventa roles dialog o menu.",
 
@@ -3394,13 +3600,125 @@ export const ui = {
     "tocPage.test2": "Siembra <code>aria-current</code> desde la composición antes de que el spy reporte.",
     "tocPage.test3": "Mueve <code>aria-current</code> a medida que los encabezados entran a la banda.",
 
+    "folderPage.description": "Folder: una superficie con pestaña, dibujada como una sola silueta que el binding mide.",
+    "folderPage.lede":
+      "Una carpeta no es una caja con otra caja encima: la pestaña sale del cuerpo en una curva, y esa curva es la razón de que este componente tenga geometría. La silueta es un solo <code>&lt;path&gt;</code>, y el único número que no se puede escribir de antemano es dónde termina la pestaña, porque termina donde termina su rótulo.",
+    "folderPage.shapeTitle": "Cómo se dibuja",
+    "folderPage.shapeBody":
+      "La geometría es una función pura de core, <code>folderPath</code>, y las dos bindings la llaman con los mismos números: miden la caja de la carpeta y el ancho de la pestaña, y escriben el <code>d</code> resultante. Los cinco números de la forma (alto de pestaña, barrido de entrada, hombro, esquina superior y radio inferior) son hooks CSS, así que una marca reafina la silueta en su propia hoja sin tocar una binding.",
+    "folderPage.revealTitle": "Nunca se ve en reposo",
+    "folderPage.revealBody":
+      "Una carpeta nunca se ve en reposo, y no hay opción para que se vea: es lo que el componente ES. Una página de carpetas se lee como texto limpio hasta que el puntero, o el foco del teclado, llega a una, y recién ahí la forma se resuelve bajo su propio rótulo. Responde a <code>:hover</code> y a <code>:focus-within</code>, nunca sólo a hover; en punteros gruesos, que no tienen hover con qué responder, se pinta siempre. Si querés la forma visible siempre, eso es un <code>Box</code> con un encabezado adentro, y el catálogo ya tiene uno.",
+    "folderPage.revealLabel": "FolderStack que aparece al interactuar",
+    "folderPage.previewsTitle": "Previews",
+    "folderPage.previewsBody":
+      "El slot opcional <code>previews</code> abre en abanico lo que la carpeta contenga sobre los mismos estados que revelan la silueta. Cada hijo directo es una preview y lo coloca la hoja, así que quien compone elige qué son (unos <code>ImageFrame</code>, casi siempre) en vez de pasar una lista que este contrato tendría que aprender a leer. Son decorativas por construcción: la capa va <code>aria-hidden</code> y no toma el puntero, así una preview que tapa la carpeta de adelante no le roba el clic. Una imagen que signifique algo por sí sola va en el cuerpo, donde se la puede alcanzar.",
+    "folderPage.plainLabel": "FolderStack sin previews",
+    "folderPage.touchTitle": "En táctil no hay hover",
+    "folderPage.touchBody":
+      "Una carpeta se revela con <code>:hover</code> y <code>:focus-within</code>, y un teléfono no tiene ninguno de los dos: hover no existe, y tocar un enlace navega en vez de dejarle el foco. Sin nada más, el abanico no aparecía nunca en un teléfono: las imágenes se renderizaban y se quedaban en <code>opacity: 0</code> para siempre. La opción <code>active</code> es la tercera entrada: dice que esta carpeta está siendo alcanzada por algo que no es el puntero ni el teclado, y la carpeta responde igual que al hover, abanico incluido. Quién la pone es de quien compone: en una página que scrollea suele ser la carpeta más cercana al centro de la pantalla, pero podría ser la que un carrusel dejó al frente o la que apunta una ruta, y esas preguntas las sabe la página, no el componente. Pintar el abanico siempre en táctil sería más simple y es peor: las previews suben hacia la carpeta de arriba, así que en una pila taparían su texto de forma permanente.",
+    "folderPage.touchLabel": "La segunda carpeta con active puesto",
+    "folderPage.groundTitle": "Se esconde contra su fondo",
+    "folderPage.groundBody":
+      "Una carpeta en reposo se pinta del color de lo que tiene detrás, no transparente: transparente no pinta nada, y una carpeta revelada se vería a través de las que van adelante. El binding copia lo que el primer ancestro que pinta algo tiene puesto (color y capas, el degradado de elevación incluido), así que la misma composición desaparece contra un panel hundido y contra uno elevado sin que nadie configure nada. Leer sólo el color de fondo no alcanzaba: las superficies de este sistema son un color con un wash encima, y ese wash delataba la forma. <code>--sk-folder-ground</code> queda como salida para lo que la heurística no cubre: una carpeta sobre una imagen o un degradado.",
+    "folderPage.groundSunkenLabel": "Sobre una superficie hundida",
+    "folderPage.groundRaisedLabel": "Sobre una superficie elevada",
+    "folderPage.stackTitle": "El solape",
+    "folderPage.stackBody":
+      "<code>FolderStack</code> solapa las carpetas como están en un cajón: cada una muestra su pestaña y una franja de cuerpo. El solape es una sola regla entre hermanos, sin elemento envoltorio ni índice por ítem, y sin <code>z-index</code> en ninguna parte: la carpeta que tocás sigue estando detrás de las que van adelante, igual que en un cajón de verdad. <code>overlap</code> es cuánto se esconde cada una detrás de la anterior.",
+    "folderPage.stackLabel": "FolderStack",
+    "folderPage.contractItem1":
+      "<code>label</code> es un slot, no un string: la pestaña de una carpeta casi siempre lleva un encabezado, y un encabezado es markup.",
+    "folderPage.contractItem2":
+      "Todas las carpetas son del mismo color, como en un cajón real: una pila con cada carpeta de un tono distinto se lee como cinco tarjetas sueltas que comparten forma, y la forma es todo el punto. Tampoco tiene borde: lo que la separa del fondo es la sombra.",
+    "folderPage.contractItem3":
+      "<code>Folder.link</code> es un <code>&lt;a&gt;</code> de verdad, no una caja con handler: es lo mismo que hace <code>TileLink</code>, y es lo que le da teclado a <code>reveal=\"interaction\"</code>.",
+    "folderPage.contractItem4":
+      "La sombra es un <code>drop-shadow</code>, no un <code>box-shadow</code>: una sombra de caja sigue el rectángulo, y todo el punto de este componente es que su borde no es un rectángulo.",
+    "folderPage.a11yBody":
+      "La silueta es decorativa por construcción: el <code>&lt;svg&gt;</code> va <code>aria-hidden</code>, sin rol y sin nombre. Lo que nombra a una carpeta es el contenido de su pestaña.",
+    "folderPage.a11yItem1":
+      "El revelado responde a <code>:focus-within</code> además de <code>:hover</code>: una forma que sólo aparece bajo el mouse es una forma que nadie que navegue con teclado ve nunca.",
+    "folderPage.a11yItem2":
+      "En punteros gruesos <code>interaction</code> se pinta como <code>always</code>: invisible para siempre es peor respuesta que revelado de entrada.",
+    "folderPage.a11yItem3":
+      "Con <code>prefers-reduced-motion</code> sobrevive el revelado, que es información, y se van el levante y los fundidos, que no lo son.",
+    "folderPage.testCore1": "Gira la esquina de entrada con el mismo radio en los dos ejes, como todas las demás.",
+    "folderPage.testCore2": "Lleva el filo de la pestaña hasta donde termina la pestaña y ahí dobla por el hombro.",
+    "folderPage.testCore3": "Mantiene las proporciones de la curva en S cuando la pestaña es más alta.",
+    "folderPage.testCore4": "Nunca dibuja fuera de la caja de la que se midió.",
+    "folderPage.testCore5": "Recorta una pestaña demasiado ancha en vez de plegar el path sobre sí mismo.",
+    "folderPage.testCore6": "Recorta el barrido de entrada a una pestaña que no lo puede contener, en vez de ensanchar la pestaña.",
+    "folderPage.testCore7": "Espeja la silueta completa para una carpeta en RTL.",
+    "folderPage.testCore8": "No dibuja nada para una caja sin área.",
+    "folderPage.testCore9": "Lee cada perilla de la forma desde una custom property.",
+    "folderPage.testCore10": "Cae al default por propiedad, así un hook redeclarado no se lleva el resto de la silueta.",
+    "folderPage.testReact1": "Renderiza la pestaña, el contenido y una silueta decorativa detrás.",
+    "folderPage.testReact2": "Dibuja la silueta a partir de la caja de la carpeta y del ancho de su pestaña.",
+    "folderPage.testReact3": "Marca la raíz como lista recién cuando escribió un path real.",
+    "folderPage.testReact4": "No escribe atributo de reveal: una carpeta nunca se ve en reposo.",
+    "folderPage.testReact5": "Escribe el <code>reveal</code> por defecto del contrato cuando no se pide.",
+    "folderPage.testReact6": "Espeja la silueta dentro de un subárbol RTL.",
+    "folderPage.testReact7": "<code>Folder.link</code> es un ancla real con la anatomía de la carpeta.",
+    "folderPage.testReact8": "La pila contiene carpetas directamente, sin elemento envoltorio entre medio.",
+    "folderPage.testReact9": "Pasa <code>overlap</code> como la custom property que lee la hoja.",
+    "folderPage.testVanilla1": "Dibuja la silueta a partir de la caja de la carpeta y del ancho de su pestaña.",
+    "folderPage.testVanilla2": "Marca la raíz como lista recién cuando escribió un path real.",
+    "folderPage.testVanilla3": "No dibuja nada, y no queda lista, si la caja no se puede medir.",
+    "folderPage.testVanilla4": "Vuelve a medir cuando cambia cualquiera de las dos cajas, y observa las dos.",
+    "folderPage.testVanilla5": "Rechaza una raíz a la que le faltan los nodos donde tiene que dibujar.",
+    "folderPage.testVanilla6": "Monta una vez por raíz y deja en paz una carpeta ya enhanceada.",
+    "folderPage.testCore11": "Mide hasta el borde lejano de la pestaña, no sólo su ancho.",
+    "folderPage.testCore12": "En RTL mide desde el borde inline-start, que es el derecho.",
+    "folderPage.testCore13": "Toma el primer ancestro que efectivamente pinta algo.",
+    "folderPage.testCore14": "Se saltea todas las formas de escribir un fondo totalmente transparente.",
+    "folderPage.testCore15": "Responde <code>null</code> cuando nada en el árbol pinta.",
+    "folderPage.testCore16": "Responde <code>null</code> para una carpeta sin padre.",
+    "folderPage.testCore17": "Pone el pliegue a la altura medida de la pestaña, sin importar el default.",
+    "folderPage.testCore18": "Levanta el canto superior del cuerpo sin mover la esquina de la pestaña.",
+    "folderPage.testCore19": "Nunca levanta ese canto por encima del techo de la pestaña.",
+    "folderPage.testCore20": "Copia las capas de imagen sobre el color, en el orden en que CSS las pinta.",
+    "folderPage.testCore21": "Toma una imagen aunque no haya color debajo.",
+    "folderPage.testCore22": "Esconde la parte vacía debajo de la última línea, y nada por encima.",
+    "folderPage.testCore23": "Una carpeta cuyo texto la llena no esconde nada, en vez de un valor negativo.",
+    "folderPage.testCore24": "Paga la inclinación, que una medición en espacio de layout no ve.",
+    "folderPage.testReact10": "Publica la silueta como clip para que el state layer la siga.",
+    "folderPage.testReact11": "Abre las previews en una capa <code>aria-hidden</code>, y no renderiza ninguna sin el slot.",
+    "folderPage.testVanilla7": "Publica la silueta como clip para que el state layer la siga.",
+
+    "editorPage.description": "Editor: superficie de texto enriquecido con una barra de formato arriba, construida sobre ProseMirror.",
+    "editorPage.betaBadge": "Beta",
+    "editorPage.lede":
+      "Un <code>&lt;textarea&gt;</code> con barra de herramientas arriba, pero de verdad: negrita, cursiva, subrayado, enlaces, títulos, listas, citas y bloques de código, con deshacer y rehacer. Cada cambio entrega el contenido en tres formatos a la vez.",
+    "editorPage.formatsTitle": "Formatos de salida",
+    "editorPage.formatsBody":
+      "Cada cambio entrega <code>html</code> (vía <code>DOMSerializer</code>), <code>markdown</code> (vía <code>prosemirror-markdown</code>) y <code>doc</code>, el nodo de ProseMirror sin serializar, los tres a la vez. El subrayado no tiene sintaxis nativa en CommonMark: se exporta como <code>&lt;u&gt;</code> HTML embebido — una salida válida, pero una entrada con pérdida, ya que el editor nunca vuelve a leer su propio Markdown en uso normal.",
+    "editorPage.contractItem1":
+      "<code>sk-editor</code> compone la barra (<code>Toolbar</code>, reusada sin cambios) y la superficie de contenido (<code>sk-input</code>, la misma caja que Textarea).",
+    "editorPage.contractItem2":
+      "El valor inicial es <code>defaultValue</code>, un string HTML — no controlado: no existe un <code>value</code> en vivo, porque una superficie contenteditable controlada pelea contra sus propias mutaciones del DOM en cada render.",
+    "editorPage.contractItem3":
+      "No existe una versión sin barra: <code>Editor</code> es la única signature, y siempre viene con su propia barra de formato.",
+    "editorPage.contractItem4":
+      "El motor (<code>@skryensya/editor</code>) es un peer dependency opcional de React y Vanilla: importar cualquier otro componente nunca instala ProseMirror.",
+    "editorPage.compactTitle": "Barra compacta",
+    "editorPage.compactBody":
+      "<code>toolbarCompact</code> reduce el padding y el gap de la barra — la misma anatomía, más chica, no un juego distinto de botones. Es una opción, no una segunda signature: a diferencia de <code>ColorPicker.compact</code> (que quita filas enteras del panel), acá sólo cambia el espaciado, así que sigue la misma lógica que <code>CodePreview.density</code>. Pensada para un espacio angosto — un comentario, una respuesta corta.",
+    "editorPage.compactLabel": "Editor con barra compacta",
+    "editorPage.a11yBody":
+      "La superficie es <code>role=\"textbox\"</code> con <code>aria-multiline=\"true\"</code>; dentro de un FormField hereda su <code>id</code>/<code>aria-describedby</code>/<code>aria-invalid</code>. Cada botón de la barra anuncia su estado con <code>aria-pressed</code>, y la barra hereda el roving tabindex de Toolbar: las flechas se mueven entre botones y Tab entra y sale de la barra en un solo paso.",
+
     "toolbarPage.description": "Agrupa controles relacionados y permite recorrerlos con flechas.",
+    "toolbarPage.betaBadge": "Beta",
     "toolbarPage.contractBody": "Toolbar agrupa controles; no reemplaza Navbar ni Menu. Los grupos internos usan role=group.",
     "toolbarPage.a11yBody": "Flechas recorren controles; Home y End saltan a los extremos. Tab entra y sale de la barra.",
     "toolbarPage.compositeTitle": "Toolbar con widgets compuestos",
     "toolbarPage.compositeBody":
       "Un grupo no tiene que ser botones sueltos: puede ser un widget compuesto entero, como un Segmented. La barra trata cada widget compuesto como <strong>una sola parada</strong>: el roving tabindex del Segmented ya deja una sola opción en <code>tabindex=\"0\"</code>, así que Toolbar sólo visita esa. Adentro del Segmented, las flechas navegan sus propias opciones; no escapan hacia el siguiente grupo de la barra. Este es el patrón real que usa el propio header del component preview de este sitio: el selector de tamaño de pantalla y el toggle Vanilla/React de cada demo en esta página son dos Segmented dentro de un Toolbar.",
     "toolbarPage.compositeLabel": "Toolbar con Segmented anidado",
+    "toolbarPage.wysiwygTitle": "Toolbar como barra de un editor",
+    "toolbarPage.wysiwygBody":
+      'El uso que le da nombre al patrón, <code>editor-toolbar</code>, en el contrato: agrupar los controles de formato de un editor de texto enriquecido. Para un editor real construido sobre este mismo Toolbar — con los comandos efectivamente conectados — ver <a href="/componentes/editor">Editor</a>.',
 
     "tooltipPage.description": "Tooltip: una descripción auxiliar anclada al trigger, con aria-describedby, Escape y CSS anchor positioning.",
     "tooltipPage.lede":
@@ -4882,6 +5200,10 @@ export const ui = {
       "There must be AT MOST ONE document-level <code>&lt;footer&gt;</code> per page, the same rule as <code>banner</code> or <code>main</code>. A footer that genuinely belongs to one <code>&lt;article&gt;</code> is still valid, it just is not the landmark.",
     "footer.a11yP3":
       'A row of link columns is navigation: each column is a <a href="/en/components/nav-list">NavList</a> with its own accessible name (<code>aria-label</code> or a visible heading), so the landmark list reads “Footer / Resources”, not one unnamed <code>navigation</code> per column.',
+    "footer.test1":
+      "Emits the <code>contentinfo</code> landmark by default, with the sunken surface, large padding and top divider the contract documents.",
+    "footer.test2":
+      "The divider, padding and surface can all be changed, and <code>as</code> drops the landmark when the footer is nested inside another element.",
 
     "hero.description": "A page's opening: a surface of its own and generous room, no fixed anatomy.",
     "hero.betaBadge": "Beta",
@@ -4938,6 +5260,10 @@ export const ui = {
     "hero.a11yP1": "<code>Hero</code>'s own host is a plain container with no landmark role by default (a <code>div</code> in HTML, whatever element <code>as</code> renders in React). Most pages have exactly one hero, so giving it an unnamed region role would just be one more stop for someone navigating by landmarks, with nothing gained.",
     "hero.a11yP2": 'It only becomes a landmark if the composer explicitly authors it as one (a hand-written <code>&lt;section&gt;</code> in HTML, <code>as="section"</code> in React). At that point the usual rule for any unnamed landmark applies: give it <code>aria-label</code> or <code>aria-labelledby</code> pointing at the heading inside.',
     "hero.a11yP3": "The contract can't structurally require \"there's a real heading inside\" or \"the image has alt text\": <code>children</code> accepts free-form content, the same reason Hero has no fixed anatomy. What the contract DOES enforce, through the usual schema, are its own options (<code>padding</code>/<code>surface</code>/<code>align</code>); the content rules above are taught by example, in every published pattern, not by a check a differently-shaped composition could silently dodge.",
+    "hero.test1":
+      "Renders as a plain <code>div</code> by default, with no landmark role, <code>align=\"start\"</code>, <code>xl</code> padding and <code>surface</code> surface.",
+    "hero.test2":
+      "<code>align</code>, <code>padding</code> and <code>surface</code> can all be changed, and <code>as</code> renders the hero as any other element (a <code>section</code> with its own landmark, for instance).",
 
     "backToTop.description":
       "A button pinned to a corner that returns a scroller to its start. It appears only after the reader is past a scroll threshold and hides again on the way back.",
@@ -4990,6 +5316,147 @@ export const ui = {
     "backToTop.pillTitle": "Pill with visible text",
     "backToTop.pillBody":
       "By default it is icon-only and the label is clipped. The accessible name is already there; to draw it, a consumer un-clips <code>.sk-back-to-top__label</code> and gives the root room.",
+    "backToTop.test1": "Renders hidden, and takes its accessible name from its content once shown.",
+    "backToTop.test2": "Reveals once scrolled past the threshold and hides again above it.",
+    "backToTop.test3": "Returns the window to the top on click, smoothly by default.",
+    "backToTop.test4": "Jumps instantly when the reader prefers reduced motion.",
+    "backToTop.test5": "Moves focus to <code>target</code> after scrolling, without a second scroll.",
+    "backToTop.test6": "Acts on a named inner scroller instead of the window.",
+    "backToTop.test7": "Still calls the consumer's <code>onClick</code>, and lets it opt out of the scroll.",
+    "backToTop.test8": "Reveals at or past the threshold, never before.",
+    "backToTop.test9": "Shows from the first pixel when the threshold is 0.",
+    "backToTop.test10": "A broken threshold falls back to the default, not always-on or always-off.",
+    "backToTop.test11": "Never reveals on a non-finite scroll position.",
+    "backToTop.test12": "Parses <code>data-threshold</code>, falling back to the default on empty or unparseable input.",
+    "backToTop.test13": "Animates the scroll unless the reader asked for less motion.",
+    "backToTop.test14": "Stays hidden below the threshold and reveals once past it.",
+    "backToTop.test15": "Honours a custom <code>data-threshold</code>.",
+    "backToTop.test16": "Returns the window to the top on click, smoothly by default.",
+    "backToTop.test17": "Jumps instantly when the reader prefers reduced motion.",
+    "backToTop.test18": "Moves focus to <code>target</code> after the scroll, without starting a second one.",
+    "backToTop.test19": "Acts on a named inner scroller instead of the window.",
+    "backToTop.test20": "Stops syncing once cleaned up (<code>off()</code>).",
+    "backToTop.test21": "Mounts once per authored root; a second call does nothing.",
+
+    "commentThread.description":
+      "Nested comments as five pieces usable together or apart, data-driven with no backend of its own.",
+    "commentThread.betaBadge": "Beta",
+    "commentThread.lede":
+      "Five pieces, not one component with everything folded in. The simplest is <code>Comment</code>: who wrote it, when, and what they said, valid with no thread around it. On top of that compose <code>CommentActions</code>, <code>CommentVote</code>, <code>CommentComposer</code> and <code>CommentThread</code>. Replies recurse by composition: a <code>Comment</code> inside a <code>Comment</code>, at any depth. None of it calls an API or persists a draft: every action is handed back to the consumer.",
+    "commentThread.whenTitle": "When to use it",
+    "commentThread.whenBody1":
+      "When there is a conversation with genuinely nested replies: any comment can have its own, at any depth. A flat stream of posts with no threading is <a href=\"/en/components/feed\">Feed</a>; a SELECTABLE hierarchy (files, an index) is <a href=\"/en/components/tree-view\">TreeView</a>. This one is for read-only content with actions (vote, reply, delete), not for picking an item.",
+    "commentThread.whenBody2":
+      "Per-node moderation by role and rich mention autocomplete (<code>@</code>/<code>#</code>) are deliberately out of this first version: those are each app's own domain decisions, not the design system's.",
+    "commentThread.demoTitle": "The object, from the simplest piece to a deep thread",
+    "commentThread.demoBody":
+      "The simplest piece: who wrote it, when, and what they said. It needs no thread around it and drags no chrome it does not use.",
+    "commentThread.demoAloneLabel": "One comment on its own",
+    "commentThread.demoActionsTitle": "With actions",
+    "commentThread.demoActionsBody":
+      "The same comment plus the row: a <code>CommentVote</code> composed inside a <code>CommentActions</code>. Who may vote or delete is composition, not a handful of flags.",
+    "commentThread.demoActionsLabel": "Comment with actions",
+    "commentThread.demoThreadTitle": "A short thread",
+    "commentThread.demoThreadBody":
+      "Three comments, one of them answered. The fold control appears only where there are replies to fold, and the last comment carries no actions.",
+    "commentThread.demoThreadLabel": "Short thread",
+    "commentThread.demoDeepTitle": "Depth",
+    "commentThread.demoDeepBody":
+      "Four levels, with siblings at several of them. The connector is drawn per reply rather than measured - the first reaches back to the fold control, the last clips at its own elbow - so the only way to see that hold at depth is to render it.",
+    "commentThread.demoDeepLabel": "Deep thread",
+    "commentThread.demoLabel": "Sample comments",
+    "commentThread.behaviorTitle": "Vote and delete never touch the DOM on their own",
+    "commentThread.behaviorBody1":
+      "A click on vote or delete only dispatches the event (<code>onVote</code>/<code>onDelete</code> in React, a <code>CustomEvent</code> in Vanilla) — the visible state (<code>aria-pressed</code>, <code>data-voted</code>) is ALWAYS whatever the consumer's own data says, never something this component decides on its own. Folding a thread and opening/closing the reply box ARE this component's own state, and use the same disclosure pattern as <code>NavListGroup</code> (<code>aria-expanded</code> + <code>hidden</code>): no Zag machine, none needed for a click that flips one boolean.",
+    "commentThread.behaviorBody2":
+      "No <code>role=\"feed\"</code>, no <code>role=\"tree\"</code>: every comment is an <code>&lt;article&gt;</code>, and its replies are nested <code>&lt;article&gt;</code> elements inside it — the hierarchy a screen reader already computes on its own, with no hand-authored <code>aria-level</code> (the same exemption WAI-ARIA's own normative Tree spec gives once the whole tree is already in the DOM).",
+    "commentThread.optionsTitle": "Options",
+    "commentThread.optionsBody":
+      "<code>label</code>: the thread's accessible name. <code>nodes</code>: the comment tree (each with <code>id</code>, <code>author</code>, <code>timestamp</code>, <code>voteCount</code>, <code>body</code>, and optionally <code>votedByMe</code>, <code>canDelete</code>, <code>replies</code>). <code>composer</code>: the box for posting a new comment, optional. Every control's copy (<code>replyLabel</code>, <code>deleteLabel</code>, <code>voteUpLabel</code>…) is its own prop, never fixed text in one language.",
+    "commentThread.a11yP1":
+      "Every comment is a read-only <code>&lt;article&gt;</code> with its actions inside, never a selectable widget: no roving tabindex, no arrow keys of its own — each control (vote, reply, delete, collapse) is a plain <code>&lt;button&gt;</code> in Tab order. The vote buttons are icon-only; their accessible name comes from a <code>&lt;span&gt;</code> clipped with <code>sk-visually-hidden</code>, not a separate <code>aria-label</code>.",
+    "commentThread.a11yP2":
+      "Delete ships no confirmation of its own: it fires <code>onDelete</code> directly. A consumer who wants a confirm step composes <code>Dialog</code> with <code>alert</code> (built for exactly that) around their own handler, rather than this component shipping a second modal not every consumer needs.",
+    "commentThread.vanillaApiTitle": "The Vanilla API",
+    "commentThread.vanillaApiBody1":
+      "Four things and no more: <strong>listen</strong> to the three events, <strong>veto</strong> one with <code>preventDefault()</code>, <strong>write</strong> state with <code>setCommentVote</code>, and <strong>create</strong> a comment by cloning a <code>CommentTemplate</code>.",
+    "commentThread.vanillaApiBody2":
+      "Creating means cloning a blueprint and filling it through the <code>data-sk-comment-*</code> hooks, never through part classes: those belong to the stylesheet and move whenever the paint does. It is the same idiom <a href=\"/en/components/toast\">Toast</a> uses with its own <code>ToastTemplate</code>.",
+    "commentThread.htmlTitle": "Authored HTML",
+    "commentThread.htmlBody":
+      "A recursive comment is composed by repeating this same shape inside <code>.sk-comment-thread__replies</code>. The reply form's <code>FormField</code>/<code>Textarea</code> is the consumer's own composition — omitted here for brevity.",
+    "commentThread.reactTitle": "React",
+    "commentThread.contractItem1":
+      "The tree is <code>nodes</code> (not <code>items</code>): the same name <code>TreeView</code>'s own recursive collection already uses.",
+    "commentThread.contractItem2":
+      "<code>CommentComposer</code> ships no control: its slot takes any signature at all, with no <code>of</code>, exactly as <code>FormField</code>'s own does. A field, a textarea or an editor all fit, and none of them is fixed in the contract.",
+    "commentThread.contractItem3":
+      "Its stylesheet is <code>components/comment-thread.css</code>, and it publishes one class prefix per piece (<code>sk-comment</code>, <code>sk-comment-actions</code>, <code>sk-comment-vote</code>, <code>sk-comment-composer</code>), because each is used on its own. Every control is a real <code>sk-button</code>: the only thing the sheet moves is the tone, through <code>--sk-button-fg</code>.",
+    "commentThread.test1": "A standalone <code>Comment</code> renders author, time and body, with no thread or chrome around it.",
+    "commentThread.test2": "The <code>author</code> slot takes composed content, not only a string.",
+    "commentThread.test3": "There is no fold control unless the comment is <code>collapsible</code> AND has replies to fold.",
+    "commentThread.test4": "Folding hides the REPLIES and leaves the comment itself readable: its body and actions stay put.",
+    "commentThread.test5": "Replies nest as <code>Comment</code>s of the same shape, at any depth.",
+    "commentThread.test6": "<code>CommentVote</code> reports the direction clicked and reflects the viewer's own past vote.",
+    "commentThread.test7": "<code>CommentActions</code> renders only the triggers it was given, and reports each.",
+    "commentThread.test8": "The composer submits the body of whatever control it was given, then resets it.",
+    "commentThread.test9": "Reads a single-line <code>Input</code> as readily as a <code>Textarea</code>: it ships neither.",
+    "commentThread.test10": "Submits nothing when the control is empty.",
+    "commentThread.test11": "The thread names itself and renders its composer above the comments.",
+    "commentThread.test12":
+      "Dispatches vote with the comment's id and the clicked direction, never touching the paint itself.",
+    "commentThread.test13": "A nested reply's vote is attributed to the reply, not to the comment above it.",
+    "commentThread.test14": "Dispatches delete only where the delete trigger exists.",
+    "commentThread.test15":
+      "Toggles the reply composer's <code>aria-expanded</code> and <code>hidden</code>, scoped to its own comment.",
+    "commentThread.test16": "Collapse hides that comment's replies, not what the comment says.",
+    "commentThread.test17":
+      "Submits a reply with the enclosing comment's id as <code>parentId</code>, resets it and closes the box.",
+    "commentThread.test18": "The thread's own composer submits with a null <code>parentId</code>.",
+    "commentThread.test19": "Ignores an empty reply: no event, form left untouched.",
+    "commentThread.test20": "Folds the replies of a standalone <code>Comment</code> with no thread around it.",
+    "commentThread.test21": "A standalone <code>CommentComposer</code> submits, reporting no parent.",
+    "commentThread.test22": "Reads a single-line input as readily as a textarea: the composer ships neither.",
+    "commentThread.test23": "Reads a <code>contenteditable</code> surface too, so an Editor can be the control.",
+    "commentThread.test25": "Cancelling an empty box closes it without asking: there is nothing to lose.",
+    "commentThread.test26": "Cancelling with a draft dispatches <code>discard</code> and leaves the box open for the app to decide.",
+    "commentThread.test27": "A reply vetoed with <code>preventDefault()</code> keeps the draft and the box.",
+    "commentThread.test24": "The avatar sits in the gutter, apart from the name, so the thread line can hang off it.",
+    "demo.commentThread.label": "Comments",
+    "demo.commentThread.replyFieldLabel": "Reply",
+    "demo.commentThread.replyPlaceholder": "Write a reply…",
+    "demo.commentThread.send": "Reply",
+    "demo.commentThread.now": "just now",
+    "demo.commentThread.deleteTitle": "Delete this comment?",
+    "demo.commentThread.deleteBody": "It goes along with its replies. This cannot be undone.",
+    "demo.commentThread.deleteCancel": "Cancel",
+    "demo.commentThread.deleteConfirm": "Delete",
+    "demo.commentThread.cancel": "Cancel",
+    "demo.commentThread.discardTitle": "Discard what you wrote?",
+    "demo.commentThread.discardBody": "What you typed in the reply is lost.",
+    "demo.commentThread.discardKeep": "Keep writing",
+    "demo.commentThread.discardConfirm": "Discard",
+    "demo.commentThread.author1": "Ada",
+    "demo.commentThread.time1": "3h ago",
+    "demo.commentThread.body1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "demo.commentThread.author2": "Grace",
+    "demo.commentThread.time2": "1h ago",
+    "demo.commentThread.body2": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+    "demo.commentThread.author3": "Linus",
+    "demo.commentThread.time3": "40m ago",
+    "demo.commentThread.body3": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "demo.commentThread.author4": "Margaret",
+    "demo.commentThread.time4": "10m ago",
+    "demo.commentThread.body4": "Lorem ipsum dolor sit amet.",
+    "demo.commentThread.author5": "Alan",
+    "demo.commentThread.time5": "5m ago",
+    "demo.commentThread.body5": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "demo.commentThread.author6": "Barbara",
+    "demo.commentThread.time6": "2m ago",
+    "demo.commentThread.body6": "Consectetur adipiscing elit, sed do eiusmod.",
+    "demo.commentThread.body7": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
+    "demo.commentThread.body8": "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.",
+
     "box.description": "Visual and semantic surface chosen by whoever uses it; no interaction of its own.",
     "box.lede":
       "Box only owns surface, border and padding. Whoever uses it chooses the semantic element. It adds no interaction and does not turn the content into a destination or an action.",
@@ -5055,6 +5522,7 @@ export const ui = {
     "demo.breadcrumb.sharedComponents": "Shared components",
 
     "breadcrumb.description": "Hierarchical location with real links and an explicit current page.",
+    "breadcrumb.betaBadge": "Beta",
     "breadcrumb.examplesTitle": "Examples",
     "breadcrumb.twoTitle": "Two levels",
     "breadcrumb.twoBody": "The minimum case: a link to the previous level and the current page, with no trailing link or separator.",
@@ -5082,6 +5550,15 @@ export const ui = {
     "breadcrumb.contractBody": "Use nav + ol; the last item carries aria-current=page and is not a link.",
     "breadcrumb.a11yBody":
       'The label tells these crumbs apart from other navigation on the page. A collapsed trail\'s "…" disclosure carries its own <code>aria-label</code> (<code>collapsedLabel</code>) and opens a real <a href="/en/components/menu">Menu</a>, <code>role="menu"</code>: arrow-key navigation, Home/End, typeahead and Escape to close all come from the menu pattern, not something this component reimplements.',
+    "breadcrumb.test1": "A short trail renders uncollapsed: there is no \"…\" worth showing.",
+    "breadcrumb.test2": "The \"…\" trigger exposes its <code>aria-label</code> and <code>aria-haspopup=\"menu\"</code>, and opens a real <a href=\"/en/components/menu\">Menu</a> of the hidden levels.",
+    "breadcrumb.test3": "A trail that fits on one line stays uncollapsed.",
+    "breadcrumb.test4": "The collapse is re-measured on every resize, even shrinking back from an already-expanded state.",
+    "breadcrumb.test5": "A short trail doesn't even grow the \"…\" item: nothing is worth hiding.",
+    "breadcrumb.test6": "A trail that fits on one line leaves every crumb untouched: the \"…\" stays hidden.",
+    "breadcrumb.test7": "With no room, the \"…\" opens a real <a href=\"/en/components/menu\">Menu</a> of the hidden crumbs, each one a navigable link; the first crumb and the current page stay visible either way.",
+    "breadcrumb.test8": "Every resize re-measures the trail: it expands first, so it never gets stuck over-collapsed.",
+    "breadcrumb.test9": "Unmounting the enhancer restores every crumb to visible.",
 
     "demo.callout.neutral.title": "Scheduled maintenance",
     "demo.callout.neutral.body":
@@ -5735,6 +6212,8 @@ export const ui = {
     "demo.radioGroup.starter.body": "For personal projects.",
     "demo.radioGroup.pro.title": "Pro",
     "demo.radioGroup.pro.body": "For growing teams.",
+    "demo.radioGroup.basic.title": "Basic",
+    "demo.radioGroup.basic.body": "Core features, free forever.",
     "demo.stat.summary": "Business summary",
     "demo.stat.income": "Income",
     "demo.stat.orders": "Orders",
@@ -5765,6 +6244,10 @@ export const ui = {
     "demo.pricingCard.cta": "Choose Pro",
     "demo.teamCard.follow": "Follow",
     "demo.fileCard.moreOptions": "More options",
+    "demo.trustRow.text": "Trusted by 240+ product teams",
+    "demo.passwordField.label": "Confirm password",
+    "demo.passwordField.hint": "Must match the password above.",
+    "demo.passwordField.error": "Passwords don't match.",
     "demo.switch.auto.title": "Automatic deployment",
     "demo.switch.auto.body": "Publish when all checks pass.",
     "demo.switch.public.title": "Public URL",
@@ -5917,6 +6400,17 @@ export const ui = {
     "demo.toolbar.tablet": "Tablet",
     "demo.toolbar.mobile": "Mobile",
     "demo.toolbar.binding": "Binding",
+    "demo.editor.placeholder": "Write something…",
+    "demo.editor.label": "Content",
+    "demo.folder.radioTitle": "Radio",
+    "demo.folder.radioBody":
+      "A personal radio: hand-picked stations, and the same song playing for everyone at the same time, with no skip button and no server keeping anyone in sync. Only each listener's own clock, which turns out to be the same clock.",
+    "demo.folder.printerTitle": "Printer",
+    "demo.folder.printerBody":
+      "A site where anyone can send a short message that prints instantly on the thermal printer on my desk. It grew out of a question that would not leave me alone: what if anything on the internet could print on it?",
+    "demo.folder.wadaTitle": "Wada.ink",
+    "demo.folder.wadaBody":
+      "An interactive catalogue of Sanzo Wada's colour combinations, built to browse and discover rather than only to look at. Other versions existed, but none let you hold two palettes side by side.",
     "demo.tree.initialLabel": "Project",
     "demo.tree.multipleLabel": "Project files",
     "demo.tree.disabledLabel": "Project with a disabled branch",
@@ -6106,6 +6600,8 @@ export const ui = {
     "group.componentFeedback.blurb": "Explain what is happening, missing, or next.",
     "group.componentLayers": "Layers and disclosure",
     "group.componentLayers.blurb": "Reveal detail or focused tasks without losing context.",
+    "group.componentExpressive": "Expressive",
+    "group.componentExpressive.blurb": "Pieces with a shape of their own, where the drawing is part of the job.",
     "group.componentLayout": "Layout and utilities",
     "group.componentLayout.blurb": "Compose, space, and support the interface.",
 
@@ -6596,11 +7092,19 @@ export const ui = {
     "grid.contractItem2":
       "<code>data-gap</code> accepts <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code>, or <code>xl</code>; the default is <code>md</code>.",
     "grid.contractItem3":
-      "<code>data-multicol</code> turns on the column-flowing card wall. <code>data-columns</code> sets its lane ceiling: 1 → 2 → 3 → 4 → 5 at the <code>36rem</code>, <code>52rem</code>, <code>72rem</code>, and <code>90rem</code> breakpoints. In React it is passed as <code>data-multicol</code>.",
-    "grid.contractItem4": "In React, <code>Grid</code> takes <code>as</code>, <code>columns</code>, and <code>gap</code>; <code>columns</code> defaults to <code>1</code>.",
+      "<code>data-multicol</code> turns on the column-flowing card wall. <code>data-columns</code> sets its lane ceiling: 1 → 2 → 3 → 4 → 5 at the <code>36rem</code>, <code>52rem</code>, <code>72rem</code>, and <code>90rem</code> breakpoints. In React it is passed as <code>multicol</code>.",
+    "grid.contractItem4": "In React, <code>Grid</code> takes <code>as</code>, <code>columns</code>, <code>gap</code>, <code>multicol</code>, and <code>responsive</code>; <code>columns</code> defaults to <code>1</code>.",
     "grid.contractItem5":
-      "<code>data-responsive</code> applies that same lane progression as a real CSS Grid instead of CSS columns: every row's height matches its tallest cell, but a direct child can widen itself with <code>data-span=\"2\"</code> (up to <code>5</code>), something <code>column-span</code> cannot do short of spanning every lane at once. In React it is passed as <code>responsive</code>.",
+      "<code>data-responsive</code> applies that same lane progression as a real CSS Grid instead of CSS columns: every row's height matches its tallest cell, but a direct child can widen itself with <code>data-span=\"2\"</code> (up to <code>5</code>), something <code>column-span</code> cannot do short of spanning every lane at once. In React it is passed as <code>responsive</code>; <code>data-span</code> is not a contract option, so it travels as a raw attribute on the child (<code>&lt;Box data-span=\"2\"&gt;</code>).",
+    "grid.responsiveTitle": "Responsive Grid",
+    "grid.responsiveBody1":
+      "<code>data-responsive</code> is the alternative to <code>data-multicol</code> when one child should stand out. It uses a real CSS Grid: every cell in a row shares that row's tallest height, and a direct child can request more than one lane with <code>data-span=\"2\"</code> (up to <code>5</code>, capped to however many lanes exist at each breakpoint).",
+    "grid.responsiveBody2":
+      "Unlike <code>data-multicol</code>, each card keeps its own height (<code>align-items: start</code>) instead of stretching to fill the row; only the card carrying <code>data-span</code> takes up more lanes.",
+    "grid.responsiveLabel": "Responsive grid",
+    "grid.responsiveFeaturedLabel": "Featured, spans two lanes",
     "grid.test1": "Renders Stack, Inline and Grid as the documented layout contracts.",
+    "grid.test2": "Switches Grid into responsive rows and lets a child request a wider span with data-span.",
     "layoutGridPage.description":
       "Layout Grid: one page flow with narrow, content, breakout, and full-width measures.",
     "layoutGridPage.lede":
@@ -7129,6 +7633,21 @@ export const ui = {
     "navListPage.installIntro": "Import the pattern wherever the host renders navigation.",
     "navListPage.a11yBody":
       "Each <code>NavList</code> is a <code>&lt;nav&gt;</code> landmark. If a page has more than one, name each with <code>aria-label</code> or <code>aria-labelledby</code>. Mark the current page with <code>aria-current=&quot;page&quot;</code>; do not add a parallel state.",
+    "navListPage.test1": "It is a named <code>navigation</code> landmark with a labelled list of links; the current link carries <code>aria-current=\"page\"</code>.",
+    "navListPage.test2": "Destination links don't fake menu semantics: no <code>role=\"menu\"</code>, no <code>aria-current</code> where it doesn't belong.",
+    "navListPage.test3": "A collapsible group is a <code>&lt;button&gt;</code> with <code>aria-expanded</code>/<code>aria-controls</code>, open by default.",
+    "navListPage.test4": "Clicking toggles <code>aria-expanded</code> and the list's <code>hidden</code> state.",
+    "navListPage.test5": "Escape closes the open group from anywhere inside it and returns focus to the trigger.",
+    "navListPage.test6": "A group nested inside a link lives in the same <code>&lt;li&gt;</code>, independent of the parent group.",
+    "navListPage.test7": "<code>defaultOpen={false}</code> starts closed.",
+    "navListPage.test8": "On mount it generates an id and wires <code>aria-controls</code> to the list.",
+    "navListPage.test9": "It preserves an authored id instead of generating a second one.",
+    "navListPage.test10": "Clicking toggles <code>aria-expanded</code> and the list's <code>hidden</code> state.",
+    "navListPage.test11": "It starts hidden when authored with <code>aria-expanded=\"false\"</code>.",
+    "navListPage.test12": "Enter/Space toggle it: native <code>&lt;button&gt;</code> behavior, nothing the enhancer wires itself.",
+    "navListPage.test13": "Escape closes the open group from inside it and returns focus to the trigger.",
+    "navListPage.test14": "Escape does nothing when the group is already closed.",
+    "navListPage.test15": "It wires a link's own nested group independently of its parent group (the outer trigger finds its own <code>&lt;ul&gt;</code>, not the nested one).",
 
     "navbarPage.description": "Navbar: the bar, with the navigation list as a horizontal pattern.",
     "navbarPage.lede":
@@ -7246,8 +7765,13 @@ export const ui = {
       "Carries neither aria-labelledby nor aria-describedby without a title/description to point at.",
     "popoverPage.testReact10":
       "Carries neither aria-labelledby nor aria-describedby in bare mode, even with title/description given.",
+    "popoverPage.testReact11":
+      'Passes <code class="sk-code">triggerVariant</code>/<code class="sk-code">triggerSize</code>/<code class="sk-code">triggerIconOnly</code> through to the trigger button.',
+    "popoverPage.testReact12":
+      "Leaves the trigger's variant/size/icon-only attributes off when unset.",
 
     "popupPage.description": "A minimal floating surface for compositions that need none of Popover's chrome.",
+    "popupPage.betaBadge": "Beta",
     "popupPage.contractBody": "Popup provides an anchor and a surface, not internal semantics. If the pattern has a title and closing actions, use Popover.",
     "popupPage.a11yBody": "The content must provide its own semantics; Popup invents no dialog or menu roles.",
 
@@ -7804,13 +8328,125 @@ export const ui = {
     "tocPage.test2": "Seeds aria-current from the composition before the spy reports.",
     "tocPage.test3": "Moves aria-current as headings enter the band.",
 
+    "folderPage.description": "Folder: a surface with a tab, drawn as one silhouette the binding measures.",
+    "folderPage.lede":
+      "A folder is not a box with another box stuck on top: the tab flows out of the body through a curve, and that curve is the whole reason this component needs geometry. The silhouette is a single <code>&lt;path&gt;</code>, and the only number that cannot be written ahead of time is where the tab ends, because it ends wherever its label ends.",
+    "folderPage.shapeTitle": "How it is drawn",
+    "folderPage.shapeBody":
+      "The geometry is a pure function in core, <code>folderPath</code>, and both bindings call it with the same numbers: they measure the folder's box and the tab's width, and write the resulting <code>d</code>. The shape's five numbers (tab height, leading sweep, shoulder, top corner and bottom radius) are CSS hooks, so a brand retunes the silhouette in its own stylesheet without touching a binding.",
+    "folderPage.revealTitle": "Never visible at rest",
+    "folderPage.revealBody":
+      "A folder is never visible at rest, and there is no option to make it so: that is what the component IS. A page of folders reads as plain text until the pointer, or the keyboard's focus, reaches one, and only then does the shape resolve under its own label. It answers <code>:hover</code> and <code>:focus-within</code>, never hover alone; on coarse pointers, which have no hover to answer with, it is simply painted. If you want the shape always visible, that is a <code>Box</code> with a heading in it, and the catalogue already has one.",
+    "folderPage.revealLabel": "A FolderStack that appears on interaction",
+    "folderPage.previewsTitle": "Previews",
+    "folderPage.previewsBody":
+      "The optional <code>previews</code> slot fans out whatever the folder holds, on the same states that reveal the silhouette. Each direct child is one preview and the stylesheet places it, so the author picks what they are (a few <code>ImageFrame</code>s, usually) rather than handing over a list this contract would have to learn to read. They are decorative by construction: the layer is <code>aria-hidden</code> and takes no pointer, so a preview covering the folder in front never steals its click. A picture that means something on its own belongs in the body, where a reader can reach it.",
+    "folderPage.plainLabel": "FolderStack with no previews",
+    "folderPage.touchTitle": "Touch has no hover",
+    "folderPage.touchBody":
+      "A folder reveals on <code>:hover</code> and <code>:focus-within</code>, and a phone has neither: hover does not exist, and a tap on a link navigates rather than settling focus on it. With nothing else, the fan never appeared on a phone at all: the pictures rendered and sat at <code>opacity: 0</code> forever. The <code>active</code> option is the third way in: it says this folder is being reached for by something that is neither pointer nor keyboard, and the folder answers exactly as it does to hover, fan included. Who sets it is the composition's business: on a scrolling page it is usually whichever folder is nearest the middle of the screen, but it could be the one a carousel stopped at or the one a route points at, and those questions belong to the page rather than to the component. Painting the fan permanently on touch would be simpler and is worse: previews rise into the folder above them, so in a stack they would cover its copy for good.",
+    "folderPage.touchLabel": "The second folder with active held on",
+    "folderPage.groundTitle": "It hides against its ground",
+    "folderPage.groundBody":
+      "A folder at rest is painted the colour of whatever is behind it, not transparent: transparent paints nothing, and a revealed folder would show straight through the ones in front. The binding copies whatever the first painting ancestor has on it (colour and layers, the elevation wash included), so the same composition disappears into a sunken panel and into a raised one with nothing configured. Reading the background colour alone was not enough: this system's surfaces are a colour with a wash over it, and that wash gave the shape away. <code>--sk-folder-ground</code> is the way out for what the heuristic cannot see: a folder over an image or a gradient.",
+    "folderPage.groundSunkenLabel": "On a sunken surface",
+    "folderPage.groundRaisedLabel": "On a raised surface",
+    "folderPage.stackTitle": "The overlap",
+    "folderPage.stackBody":
+      "<code>FolderStack</code> overlaps folders the way they sit in a drawer: each shows its tab and a strip of body. The overlap is one rule between siblings, with no wrapper element, no per-item index, and no <code>z-index</code> anywhere: the folder you reach for still sits behind the ones in front of it, exactly as it would in a real drawer. <code>overlap</code> is how deeply each one hides behind the one before it.",
+    "folderPage.stackLabel": "FolderStack",
+    "folderPage.contractItem1":
+      "<code>label</code> is a slot, not a string: a folder's tab almost always holds a heading, and a heading is markup.",
+    "folderPage.contractItem2":
+      "Every folder is the same colour, the way a real drawer is: a pile tinted one shade each reads as five unrelated cards that share a shape, and the shape is the whole point. Nor is there a border: what separates a folder from its ground is the shadow.",
+    "folderPage.contractItem3":
+      "<code>Folder.link</code> is a real <code>&lt;a&gt;</code>, not a box with a handler — the same move <code>TileLink</code> makes, and what gives <code>reveal=\"interaction\"</code> a keyboard.",
+    "folderPage.contractItem4":
+      "The shadow is a <code>drop-shadow</code>, not a <code>box-shadow</code>: a box shadow follows the rectangle, and the whole point of this component is that its edge is not one.",
+    "folderPage.a11yBody":
+      "The silhouette is decorative by construction: the <code>&lt;svg&gt;</code> is <code>aria-hidden</code>, with no role and no name. What names a folder is whatever its tab holds.",
+    "folderPage.a11yItem1":
+      "The reveal answers <code>:focus-within</code> as well as <code>:hover</code>: a shape that only ever appears under a mouse is a shape no keyboard reader ever sees.",
+    "folderPage.a11yItem2":
+      "On coarse pointers <code>interaction</code> paints as <code>always</code>: invisible forever is a worse answer than revealed early.",
+    "folderPage.a11yItem3":
+      "Under <code>prefers-reduced-motion</code> the reveal survives, because it is information, and the lift and the fades go, because they are not.",
+    "folderPage.testCore1": "Turns the leading corner on the same radius both ways, like every other corner.",
+    "folderPage.testCore2": "Runs the tab's top edge to where the tab ends, then folds down over the shoulder.",
+    "folderPage.testCore3": "Keeps the S-curve's proportions when the tab is taller.",
+    "folderPage.testCore4": "Never draws outside the box it was measured from.",
+    "folderPage.testCore5": "Clamps a tab too wide for its shoulder instead of folding the path back on itself.",
+    "folderPage.testCore6": "Clamps the leading sweep to a tab too narrow to hold it, instead of widening the tab.",
+    "folderPage.testCore7": "Mirrors the whole silhouette for an RTL folder.",
+    "folderPage.testCore8": "Draws nothing at all for a box with no area.",
+    "folderPage.testCore9": "Reads every knob off custom properties.",
+    "folderPage.testCore10": "Falls back per property, so one redeclared hook keeps the rest of the silhouette.",
+    "folderPage.testReact1": "Renders the tab, the content and a decorative silhouette behind them.",
+    "folderPage.testReact2": "Draws the silhouette from the folder's own box and its tab's width.",
+    "folderPage.testReact3": "Marks the root ready only once a real path has been written.",
+    "folderPage.testReact4": "Writes no reveal attribute, because a folder is never visible at rest.",
+    "folderPage.testReact5": "Writes the contract's default reveal when none is given.",
+    "folderPage.testReact6": "Mirrors the silhouette inside an RTL subtree.",
+    "folderPage.testReact7": "<code>Folder.link</code> is a real anchor carrying the folder's own anatomy.",
+    "folderPage.testReact8": "The stack holds folders directly, with no wrapper element between them.",
+    "folderPage.testReact9": "Passes <code>overlap</code> through as the custom property the stylesheet reads.",
+    "folderPage.testVanilla1": "Draws the silhouette from the folder's own box and its tab's width.",
+    "folderPage.testVanilla2": "Marks the root ready only once a real path has been written.",
+    "folderPage.testVanilla3": "Draws nothing, and stays unready, when the box cannot be measured.",
+    "folderPage.testVanilla4": "Re-measures when either box changes, and observes both.",
+    "folderPage.testVanilla5": "Refuses a root missing the nodes it has to draw into.",
+    "folderPage.testVanilla6": "Mounts once per root and leaves an already-enhanced folder alone.",
+    "folderPage.testCore11": "Measures to the tab's far edge, not merely its width.",
+    "folderPage.testCore12": "In RTL it measures from the inline-start edge, which is the right-hand one.",
+    "folderPage.testCore13": "Takes the first ancestor that actually paints something.",
+    "folderPage.testCore14": "Skips every spelling of a fully transparent background.",
+    "folderPage.testCore15": "Answers <code>null</code> when nothing up the tree paints at all.",
+    "folderPage.testCore16": "Answers <code>null</code> for a folder with no parent.",
+    "folderPage.testCore17": "Puts the fold at the measured tab height, whatever the default says.",
+    "folderPage.testCore18": "Lifts the body's top edge without moving the tab's own corner.",
+    "folderPage.testCore19": "Never lifts that edge above the tab's own top.",
+    "folderPage.testCore20": "Copies the image layers over the colour, in the order CSS paints them.",
+    "folderPage.testCore21": "Takes an image with no colour under it.",
+    "folderPage.testCore22": "Hides the empty card below the last line, and nothing above it.",
+    "folderPage.testCore23": "A folder whose copy fills it gets no tail, rather than a negative one.",
+    "folderPage.testCore24": "Pays for the forward lean, which a layout-space measurement cannot see.",
+    "folderPage.testReact10": "Publishes the silhouette as a clip for the state layer to follow.",
+    "folderPage.testReact11": "Fans previews into an <code>aria-hidden</code> layer, and renders none without the slot.",
+    "folderPage.testVanilla7": "Publishes the silhouette as a clip for the state layer to follow.",
+
+    "editorPage.description": "Editor: a rich-text surface with a formatting bar on top, built on ProseMirror.",
+    "editorPage.betaBadge": "Beta",
+    "editorPage.lede":
+      "A <code>&lt;textarea&gt;</code> with a toolbar on top, for real: bold, italic, underline, links, headings, lists, blockquotes and code blocks, with undo/redo. Every change reports the content in three formats at once.",
+    "editorPage.formatsTitle": "Output formats",
+    "editorPage.formatsBody":
+      "Every change reports <code>html</code> (via <code>DOMSerializer</code>), <code>markdown</code> (via <code>prosemirror-markdown</code>) and <code>doc</code>, the raw ProseMirror node, all three at once. Underline has no native CommonMark syntax: it serializes as raw embedded <code>&lt;u&gt;</code> HTML — a valid output, but a lossy input, since the editor never re-reads its own Markdown in normal use.",
+    "editorPage.contractItem1":
+      "<code>sk-editor</code> composes the bar (<code>Toolbar</code>, reused unchanged) and the content surface (<code>sk-input</code>, the same box Textarea uses).",
+    "editorPage.contractItem2":
+      "The initial value is <code>defaultValue</code>, an HTML string — uncontrolled: there is no live <code>value</code>, because a controlled contenteditable surface fights its own DOM mutations on every render.",
+    "editorPage.contractItem3":
+      "There is no toolbar-less version: <code>Editor</code> is the only signature, and it always ships with its own formatting bar.",
+    "editorPage.contractItem4":
+      "The engine (<code>@skryensya/editor</code>) is an optional peer dependency of both React and Vanilla: importing any other component never installs ProseMirror.",
+    "editorPage.compactTitle": "Compact bar",
+    "editorPage.compactBody":
+      "<code>toolbarCompact</code> tightens the bar's own padding and gap — the same anatomy, smaller, not a different button set. It is an option, not a second signature: unlike <code>ColorPicker.compact</code> (which drops whole panel rows), only spacing changes here, so it follows <code>CodePreview.density</code>'s own shape instead. Meant for a tight space — a comment, a short reply.",
+    "editorPage.compactLabel": "Editor with a compact bar",
+    "editorPage.a11yBody":
+      "The surface is <code>role=\"textbox\"</code> with <code>aria-multiline=\"true\"</code>; nested in a FormField it inherits its <code>id</code>/<code>aria-describedby</code>/<code>aria-invalid</code>. Every bar button announces its state with <code>aria-pressed</code>, and the bar inherits Toolbar's own roving tabindex: arrows move between buttons, and Tab enters and exits the bar in one step.",
+
     "toolbarPage.description": "Groups related controls and lets you move through them with arrows.",
+    "toolbarPage.betaBadge": "Beta",
     "toolbarPage.contractBody": "Toolbar groups controls; it does not replace Navbar or Menu. Internal groups use role=group.",
     "toolbarPage.a11yBody": "Arrows move through controls; Home and End jump to the ends. Tab enters and exits the bar.",
     "toolbarPage.compositeTitle": "Toolbar with composite widgets",
     "toolbarPage.compositeBody":
       "A group does not have to be loose buttons: it can be a whole composite widget, like a Segmented. The bar treats every composite widget as <strong>a single stop</strong>: Segmented's own roving tabindex already leaves one option at <code>tabindex=\"0\"</code>, so Toolbar only ever visits that one. Inside the Segmented, arrows navigate its own options; they never escape to the bar's next group. This is the real pattern this site's own component preview header uses: the screen-size selector and the Vanilla/React toggle on every demo on this page are two Segmenteds inside a Toolbar.",
     "toolbarPage.compositeLabel": "Toolbar with a nested Segmented",
+    "toolbarPage.wysiwygTitle": "Toolbar heading an editor",
+    "toolbarPage.wysiwygBody":
+      'The use that names the pattern, <code>editor-toolbar</code>, in the contract: grouping a rich-text editor\'s own formatting controls. For a real editor built on this same Toolbar — with the commands actually wired up — see <a href="/en/components/editor">Editor</a>.',
 
     "tooltipPage.description": "Tooltip: an auxiliary description anchored to the trigger, with aria-describedby, Escape, and CSS anchor positioning.",
     "tooltipPage.lede":

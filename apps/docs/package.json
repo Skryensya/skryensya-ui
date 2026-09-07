@@ -5,12 +5,14 @@
   "type": "module",
   "description": "Documentation site for skryensya/ui. Consumes @skryensya/core through the same exports map it documents.",
   "scripts": {
-    "dev": "astro dev --background --port 4173 ; astro dev logs --follow",
+    "dev": "astro dev --port 4173",
+    "dev:bg": "astro dev --background --port 4173",
     "dev:stop": "astro dev stop",
     "dev:status": "astro dev status",
-    "dev:logs": "astro dev logs --follow",
-    "dev:restart": "astro dev stop ; astro dev --background --port 4173 ; astro dev logs --follow",
-    "dev:clean": "astro dev stop ; rm -rf node_modules/.vite .astro ; astro dev --background --port 4173 --force ; astro dev logs --follow",
+    "dev:logs": "astro dev logs",
+    "dev:logs:follow": "astro dev logs --follow",
+    "dev:restart": "astro dev stop ; astro dev --background --port 4173",
+    "dev:clean": "astro dev stop ; rm -rf node_modules/.vite .astro ; astro dev --background --port 4173 --force",
     "check": "astro check && vitest run",
     "build": "astro build",
     "preview": "astro preview"

@@ -49,6 +49,8 @@ export type FormFieldProps = {
   error?: ReactNode;
   required?: boolean;
   disabled?: boolean;
+  /** Clips the label to a name-only box. The control keeps its label; only the eye skips it. */
+  labelHidden?: boolean;
   className?: string;
   id?: string;
 };
@@ -61,6 +63,7 @@ export function FormField({
   hint,
   id,
   label,
+  labelHidden = false,
   required = false,
 }: FormFieldProps) {
   const generatedId = useId();
@@ -74,7 +77,11 @@ export function FormField({
     <FormFieldContext.Provider
       value={{ controlId, describedBy, invalid: Boolean(error), required, disabled }}
     >
-      <div className={cx(formFieldParts.root, className)} data-disabled={disabled ? "" : undefined}>
+      <div
+        className={cx(formFieldParts.root, className)}
+        data-disabled={disabled ? "" : undefined}
+        data-label-hidden={labelHidden ? "" : undefined}
+      >
         <label className={formFieldParts.label} htmlFor={controlId}>
           {label}
           {required ? (

@@ -2,7 +2,7 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { gridMulticolTree, gridTree } from "../../demos/layout";
+import { gridMulticolTree, gridResponsiveTree, gridTree } from "../../demos/layout";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/layout.yaml?raw";
 import coreSource from "@core/src/layout.ts?raw";
@@ -54,6 +54,24 @@ const multicolCss = `/* data-columns="5": 1 carril → 2 → 3 → 4 → 5,
   }
 }`;
 
+const responsiveCss = `/* data-responsive: la misma progresión de carriles, pero Grid CSS real:
+   cada fila iguala su alto a la celda más alta. */
+.sk-grid[data-responsive][data-columns] {
+  grid-auto-flow: dense;
+  align-items: start;
+}
+
+/* Un hijo directo pide más carriles con data-span (hasta el máximo de la
+   grilla), acotado a lo que exista en cada breakpoint. */
+@media (min-width: 36rem) {
+  .sk-grid[data-responsive] > [data-span="2"],
+  .sk-grid[data-responsive] > [data-span="3"],
+  .sk-grid[data-responsive] > [data-span="4"],
+  .sk-grid[data-responsive] > [data-span="5"] {
+    grid-column: span 2;
+  }
+}`;
+
 const sourceFiles = [
   { id: "contracts/semantic/layout.yaml", source: contractSource, language: "yaml" },
   { id: "packages/core/src/layout.ts", source: coreSource, language: "ts" },
@@ -76,6 +94,10 @@ const sourceFiles = [
           name: "renders Stack, Inline and Grid as the documented layout contracts",
           description: t("grid.test1"),
         },
+        {
+          name: "switches Grid into responsive rows and lets a child request a wider span",
+          description: t("grid.test2"),
+        },
       ],
     },
   ]}
@@ -90,6 +112,12 @@ const sourceFiles = [
     <CodeBlock code={multicolCss} label="patterns/layout.css" />
     <ComponentPreview tree={gridMulticolTree(t)} label={t("grid.multicolLabel")} />
     <p set:html={t("grid.multicolBody3")} />
+
+    <h3>{t("grid.responsiveTitle")}</h3>
+    <p set:html={t("grid.responsiveBody1")} />
+    <p set:html={t("grid.responsiveBody2")} />
+    <CodeBlock code={responsiveCss} label="patterns/layout.css" />
+    <ComponentPreview tree={gridResponsiveTree(t)} label={t("grid.responsiveLabel")} />
 
     <h3>{t("grid.htmlTitle")}</h3>
     <p set:html={t("grid.htmlBody")} />

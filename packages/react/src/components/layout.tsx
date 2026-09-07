@@ -12,7 +12,7 @@ import {
 } from "@skryensya/core/layout";
 import { heroParts, type HeroAlign, type HeroPadding, type HeroSurface } from "@skryensya/core/hero";
 import { footerParts, type FooterPadding, type FooterSurface } from "@skryensya/core/footer";
-import type { ComponentPropsWithoutRef, CSSProperties, ElementType, ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
 
 type PolymorphicProps<Element extends ElementType, OwnProps> = OwnProps & {
   as?: Element;
@@ -201,25 +201,6 @@ export type MainProps = ComponentPropsWithoutRef<"main">;
 
 export function Main(props: MainProps) {
   return <main {...props} />;
-}
-
-export type DensityScopeProps<Element extends ElementType = "div"> = PolymorphicProps<
-  Element,
-  LayoutChildren & { densityFactor?: number }
->;
-
-export function DensityScope<Element extends ElementType = "div">({
-  as,
-  densityFactor = 1,
-  style,
-  ...props
-}: DensityScopeProps<Element>) {
-  const Component = as ?? "div";
-  const densityStyle = {
-    ...style,
-    "--sk-density-factor": densityFactor,
-  } as CSSProperties;
-  return <Component {...props} data-sk-density-scope="" style={densityStyle} />;
 }
 
 export type WrapperProps<Element extends ElementType = "div"> = PolymorphicProps<

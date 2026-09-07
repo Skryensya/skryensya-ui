@@ -3,8 +3,39 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "1f12834890a36bdf"
+surface: "c9e5768a67b90638"
 entries:
+  - date: 2026-09-04
+    kind: breaking
+    es:
+      title: DensityScope se retira del contrato
+      body: >-
+        El signature <code>DensityScope</code> y la opción <code>densityFactor</code> de
+        <code>layout</code> ya no existen; con ellos se va también el componente React
+        <code>&lt;DensityScope&gt;</code>. El motor que quedaba debajo NO se tocó:
+        <code>--sk-density</code>, <code>--sk-density-factor</code> y el atributo
+        <code>data-sk-density-scope</code> siguen siendo el mismo mecanismo semántico
+        (<code>semantic/_density.scss</code>), autorable a mano en cualquier elemento — es
+        exactamente como ya lo usan <code>CopyButton</code> y la galería de presets, ninguno de los
+        dos pasaba por este signature. Lo que se retira es sólo la envoltura de árbol de uso que
+        escribía ese atributo por vos; una migración cambia un nodo
+        <code>{ contract: "layout", signature: "DensityScope", options: { densityFactor } }</code>
+        por un <code>Box</code>/<code>Stack</code> con
+        <code>attrs: { "data-sk-density-scope": "", style: "--sk-density-factor: …" }</code>.
+    en:
+      title: DensityScope leaves the contract
+      body: >-
+        The <code>DensityScope</code> signature and <code>layout</code>'s <code>densityFactor</code>
+        option are gone, and with them the React <code>&lt;DensityScope&gt;</code> component. The engine
+        underneath was NOT touched: <code>--sk-density</code>, <code>--sk-density-factor</code> and
+        the <code>data-sk-density-scope</code> attribute stay exactly the same semantic mechanism
+        (<code>semantic/_density.scss</code>), hand-authorable on any element — it's exactly how
+        <code>CopyButton</code> and the presets gallery already use it, neither ever went through
+        this signature. What leaves is only the usage-tree wrapper that wrote that attribute for
+        you; a migration swaps a node
+        <code>{ contract: "layout", signature: "DensityScope", options: { densityFactor } }</code>
+        for a <code>Box</code>/<code>Stack</code> carrying
+        <code>attrs: { "data-sk-density-scope": "", style: "--sk-density-factor: …" }</code>.
   - date: 2026-09-02
     kind: rework
     es:

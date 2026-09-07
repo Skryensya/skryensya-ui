@@ -37,13 +37,3 @@ Main:
     - "la región es el landmark <main> de la página: el área de trabajo de una aplicación o de una plantilla"
   avoidWhen:
     - "es una sección dentro de la página, no el landmark principal; usa Box, Stack o LayoutGrid según corresponda"
-
-DensityScope:
-  useWhen:
-    - "un subárbol completo necesita escalar el espaciado semántico sin cambiar cada componente"
-  avoidWhen:
-    - "sólo cambia un gap; configura el Stack, Inline o Grid directamente"
-  alternatives:
-    - Stack
-    - Inline
-    - Grid

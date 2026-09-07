@@ -445,4 +445,48 @@
       grid-column: span 5;
     }
   }
+
+  /*
+   * FILL, opt-in on top of `data-responsive`: every direct child gets the SAME minimum
+   * block-size, so a column shorter than that floor still stretches down to it (no bare
+   * background under a short column, the failure mode `align-items: start` alone leaves open),
+   * while a column TALLER than the floor keeps growing — a `<details>` or an accordion section
+   * opening inside one tile lengthens that tile, that tile lengthens its `.sk-stack` column,
+   * and the column pushes its own lower tiles down and rises past its neighbours. Meant for a
+   * grid of COLUMNS (each direct child its own `.sk-stack`, one column of tiles), not tiles
+   * directly: five columns that START level and read as one continuous wall, then move
+   * independently as their content does. Every lane stays exactly one lane wide here —
+   * `data-span` and a sized column both trying to own a child's box at once don't compose.
+   *
+   * The floor is caller-supplied, as `style="--sk-grid-fill: Npx"` on the grid itself, inherited
+   * down to every child rather than repeated per child — a literal number the same way
+   * `data-span`'s value already is: how tall a column's resting content measures isn't something
+   * CSS can derive on its own. The caller sizes each column's own resting content close to that
+   * number so the five start level; growth from there is expected, not an overflow to hide.
+   *
+   * Gated to the same `90rem` tier `data-columns="5"` reaches its real 5 lanes at: a narrower
+   * viewport reflows every column's content to a different total height than whatever measured the
+   * fill size, so below this tier the rule doesn't apply at all and every column keeps its own
+   * natural height, the same safe behaviour `data-responsive` already has without `data-fill`.
+   */
+  @media (min-width: 90rem) {
+    .sk-grid[data-responsive][data-fill] > * {
+      min-block-size: var(--sk-grid-fill);
+    }
+
+    /*
+     * `--sk-grid-template`, an escape hatch for the SAME tier: `data-fill`'s columns default to
+     * even (`repeat(var(--sk-grid-columns), minmax(0, 1fr))`, the base rule above), but a caller
+     * can pass explicit per-column weights instead — `style="--sk-grid-template: 0.9fr 1fr 1.15fr
+     * 1fr 0.9fr"` for a center lane a little wider than its neighbours, say — without inventing a
+     * new named variant for every weighting a bento gallery might want. Falls back to the even
+     * `var(--sk-grid-columns)` count when unset, so this changes nothing for a `data-fill` grid
+     * that never sets it. Scoped to the same `90rem` tier as the rest of `data-fill`, for the same
+     * reason: custom weights measured for the wide column widths would misfit the narrower ones a
+     * smaller viewport reflows to.
+     */
+    .sk-grid[data-responsive][data-fill] {
+      grid-template-columns: var(--sk-grid-template, repeat(var(--sk-grid-columns), minmax(0, 1fr)));
+    }
+  }
 }

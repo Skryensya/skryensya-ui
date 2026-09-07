@@ -693,6 +693,50 @@
         "version": "0.1.0-dev"
       }
     ],
+    "comment-thread": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-05",
+            "en": {
+              "body": "Four changes chasing the same thing, that a Vanilla consumer never has to reach for internal classes. `data-sk-comment-avatar`/`-author`/`-timestamp` complete the addressing: only the body had a hook before, so filling a comment meant querying `.sk-comment__author`, which belongs to the stylesheet and moves whenever the paint does. `CommentTemplate` publishes a blueprint to clone when creating a comment at runtime, the same shape `ToastTemplate` has; deliberately a `&lt;template&gt;` and not a `renderComment(data)`, because generating anatomy in the binding would create a second source of it to keep in step with the contract's template. `setCommentVote(group, { voted, count })` writes a vote: three attributes have to agree (`data-voted` paints, two `aria-pressed` announce) and written by hand they drifted apart twice. And the three events are now `cancelable`: `preventDefault()` on `reply` keeps the draft and the open box, so a failed POST does not take what the person wrote with it.",
+              "title": "The Vanilla API completed with hooks, blueprint, state writing and veto"
+            },
+            "es": {
+              "body": "Cuatro cambios que persiguen lo mismo, que un consumidor de Vanilla nunca tenga que tocar clases internas. `data-sk-comment-avatar`/`-author`/`-timestamp` completan el direccionamiento: antes sólo el cuerpo tenía hook, así que llenar un comentario obligaba a buscar `.sk-comment__author`, que es de la hoja de estilos y se mueve cuando cambia la pintura. `CommentTemplate` publica un blueprint que se clona para crear un comentario en runtime, igual que `ToastTemplate`; es deliberadamente un `&lt;template&gt;` y no un `renderComment(data)`, porque generar anatomía en el binding crearía una segunda fuente que mantener en línea con el template del contrato. `setCommentVote(group, { voted, count })` escribe un voto: son tres atributos que tienen que coincidir (`data-voted` pinta, dos `aria-pressed` anuncian) y escritos a mano se separaron dos veces. Y los tres eventos ahora son `cancelable`: `preventDefault()` sobre `reply` conserva el borrador y la caja abierta, para que un POST fallido no se lleve lo que la persona escribió.",
+              "title": "La API en Vanilla se completa con hooks, blueprint, escritura de estado y veto"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-05",
+            "en": {
+              "body": "`cancellable` adds a cancel control beside submit. When the box has something written in it, cancel does NOT close it: it dispatches `sk:commentdiscard` with the draft and stops, so a consumer can confirm before anything is thrown away. An empty one just closes, because there is nothing to lose and a dialog about nothing is one a reader learns to dismiss unread. The same restraint delete already keeps: the component reports, the app decides. The composer also stopped wrapping itself in a `Box` - the control it is handed already draws a surface, so the box was a frame around a frame.",
+              "title": "CommentComposer gains cancel, and stops bringing a surface of its own"
+            },
+            "es": {
+              "body": "`cancellable` agrega un control de cancelar al lado de publicar. Cuando la caja tiene algo escrito, cancelar NO la cierra: despacha `sk:commentdiscard` con lo escrito y se detiene, para que quien lo use confirme antes de tirar un borrador. Vacía se cierra sola, porque no hay nada que perder y un diálogo sobre nada es uno que se aprende a descartar sin leer. La misma reserva que ya tiene borrar: el componente reporta, la app decide. Además el composer dejó de envolverse en un `Box`: el control que recibe ya dibuja su propia superficie, así que la caja era un marco alrededor de un marco.",
+              "title": "CommentComposer gana cancelar, y deja de traer superficie propia"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-04",
+            "en": {
+              "body": "Nested comments as five signatures usable together or apart: `Comment` (an author, when and what they said - the simplest piece, valid with no thread around it), `CommentActions` (the vote/reply/delete row), `CommentVote` (up, count, down), `CommentComposer` (the write box) and `CommentThread` (the container that names them). Replies recurse by COMPOSITION - `Comment.replies` takes `Comment` - so every slot at every depth accepts composed content: rich text in the body, whatever names a person. The avatar is its OWN slot rather than content inside `author`, because it is structural: the thread line descends from it, past the fold control riding on it, into each reply's own avatar. The composer SHIPS NO CONTROL: its slot takes any signature at all, exactly as `FormField`'s own does, so a field, a textarea or an editor all fit. Data-driven, no backend - every action is handed back to the consumer, and it never calls a network or persists a draft. No `role=\"feed\"`, no `role=\"tree\"`: plain nested `&lt;article&gt;`, the same implicit hierarchy a nested `&lt;article&gt;` already gives a screen reader with no hand-authored `aria-level`. Folding is opt-in (`collapsible`), its control exists only where there ARE replies to fold, and it hides the REPLIES, not the comment: a thread gets long because of what hangs off a comment, so hiding what someone said in order to skip the argument under it would lose the thing being read. It uses the same disclosure pattern `NavListGroup` already does (`aria-expanded` + `hidden`), not a Zag machine. Delete carries no modal of its own - a consumer composes `Dialog` (`alert: true`) if they want one.",
+              "title": "New CommentThread component, as five pieces"
+            },
+            "es": {
+              "body": "Comentarios anidados como cinco signatures que se usan juntas o sueltas: `Comment` (autor, cuándo y qué dijo, la pieza más simple y válida sin hilo alrededor), `CommentActions` (la fila de votar/responder/borrar), `CommentVote` (arriba, contador, abajo), `CommentComposer` (la caja de escribir) y `CommentThread` (el contenedor que los nombra). Las respuestas recursan por COMPOSICIÓN - `Comment.replies` acepta `Comment` - así cada slot a cualquier profundidad admite contenido compuesto: un Avatar junto al nombre, texto rico en el cuerpo. El composer NO entrega ningún control: su slot acepta cualquier signature, igual que el de `FormField`, así que un field, un textarea o un editor entran por igual. Data-driven y sin backend - cada acción se devuelve al consumidor, nunca llama a una red ni guarda un borrador. Sin `role=\"feed\"` ni `role=\"tree\"`: `&lt;article&gt;` anidado nativo, la misma jerarquía implícita que un `&lt;article&gt;` dentro de otro ya le da a un lector de pantalla sin autoría manual de `aria-level`. El plegado es opcional (`collapsible`), su control sólo existe donde HAY respuestas que plegar, y oculta las RESPUESTAS, no el comentario: un hilo se hace largo por lo que cuelga de un comentario, así que esconder lo que alguien dijo para saltarse la discusión de abajo perdería justo lo que se estaba leyendo. Usa el mismo patrón de disclosure que `NavListGroup` (`aria-expanded` + `hidden`), no una máquina de Zag. Borrar no trae modal propio - quien lo consuma compone `Dialog` (`alert: true`) si lo necesita.",
+              "title": "Nuevo componente CommentThread, en cinco piezas"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "component-preview": [
       {
         "date": null,
@@ -832,6 +876,26 @@
         "version": "0.1.0-dev"
       }
     ],
+    "editor": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-04",
+            "en": {
+              "body": "It joins the catalogue as <code>Editor</code> (bar + surface, always together — there is no toolbar-less version). The engine is ProseMirror, packaged separately as <code>@skryensya/editor</code> (an optional peer dependency): bold, italic, underline, links, H1–H3 headings, lists, blockquotes and code blocks, with undo/redo. Every change reports <code>html</code>, <code>markdown</code> and the raw ProseMirror <code>doc</code> at once. The bar reuses <code>Toolbar</code>/<code>ToolbarGroup</code>/<code>ToolbarSeparator</code> unchanged; the surface reuses <code>Input</code>/<code>Textarea</code>'s own box (<code>sk-input</code>). Options: <code>name</code>, <code>defaultValue</code>, <code>placeholder</code>, <code>readOnly</code>, <code>disabled</code>, <code>autofocus</code>, <code>label</code>, <code>toolbarLabel</code>, <code>toolbarCompact</code>. Its stylesheet is <code>components/editor.css</code>.",
+              "title": "Editor is published as a contract"
+            },
+            "es": {
+              "body": "Entra al catálogo como <code>Editor</code> (superficie + barra, siempre juntas — no hay una versión sin barra). El motor es ProseMirror, empaquetado aparte en <code>@skryensya/editor</code> (peer dependency opcional): negrita, cursiva, subrayado, enlaces, títulos H1–H3, listas, citas y bloques de código, con deshacer/rehacer. Cada cambio entrega <code>html</code>, <code>markdown</code> y el <code>doc</code> nativo de ProseMirror a la vez. La barra reusa <code>Toolbar</code>/<code>ToolbarGroup</code>/<code>ToolbarSeparator</code> sin cambios; la superficie reusa la caja de <code>Input</code>/<code>Textarea</code> (<code>sk-input</code>). Opciones: <code>name</code>, <code>defaultValue</code>, <code>placeholder</code>, <code>readOnly</code>, <code>disabled</code>, <code>autofocus</code>, <code>label</code>, <code>toolbarLabel</code>, <code>toolbarCompact</code>. La hoja es <code>components/editor.css</code>.",
+              "title": "Editor se publica como contrato"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "empty-state": [
       {
         "date": null,
@@ -905,11 +969,43 @@
         "version": "0.1.0-dev"
       }
     ],
+    "folder": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-04",
+            "en": {
+              "body": "It joins the catalogue with <code>Folder</code>, <code>Folder.link</code> and <code>FolderStack</code>, <code>FolderLink</code> and <code>FolderPreview</code>: a surface whose tab flows out of its body as one silhouette, drawn as a single <code>&lt;path&gt;</code> that the binding measures and writes. The geometry is a pure function in core (<code>folderPath</code>), so both bindings draw one shape rather than two that resemble each other; the only measurement is where the tab ends, which is where its label ends. A folder is NEVER visible at rest, and there is no option to make it so: it is painted the colour of whatever is behind it and reveals on <code>:hover</code> and <code>:focus-within</code>, never hover alone, and on coarse pointers it is simply painted. The stack is the default use. Touch has neither hover nor focus-on-tap, so <code>active</code> is the third way into the reveal: the composition sets it, usually on whichever folder is nearest the middle of the screen. An optional <code>previews</code> slot fans out a handful of <code>Folder.preview</code>s on those same states, each holding whatever picture you put in it: decorative by construction, since the layer is <code>aria-hidden</code> and takes no pointer. Every folder is the same colour and none carries a border: what separates one from its ground is an upward shadow, and a slight forward lean sets it on the plane. Options: <code>active</code>, <code>href</code>, <code>overlap</code>. Its stylesheet is <code>components/folder.css</code>, which publishes the silhouette's five numbers as hooks.",
+              "title": "Folder is published as a contract, with 3 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Folder</code>, <code>Folder.link</code> y <code>FolderStack</code>, <code>FolderLink</code> y <code>FolderPreview</code>: una superficie cuya pestaña sale del cuerpo en una sola silueta, dibujada como un <code>&lt;path&gt;</code> que el binding mide y escribe. La geometría es una función pura de core (<code>folderPath</code>), así que las dos bindings dibujan la misma forma en vez de dos parecidas; lo único que se mide es dónde termina la pestaña, que es donde termina su rótulo. Una carpeta NUNCA se ve en reposo, y no hay opción para que se vea: se pinta del color de lo que tiene detrás y se revela con <code>:hover</code> y <code>:focus-within</code>, nunca sólo con hover, y en punteros gruesos se pinta siempre. El uso por defecto es la pila. En táctil no hay hover ni foco al tocar un enlace, así que <code>active</code> es la tercera entrada al revelado: la pone quien compone, normalmente sobre la carpeta más cercana al centro de la pantalla. El slot opcional <code>previews</code> abre en abanico un puñado de <code>Folder.preview</code> sobre esos mismos estados, cada uno con la imagen que le pongas adentro: decorativo por construcción, la capa va <code>aria-hidden</code> y no toma el puntero. Todas las carpetas son del mismo color y ninguna lleva borde: lo que la separa del fondo es una sombra hacia arriba, y una leve inclinación hacia adelante la apoya en el plano. Opciones: <code>active</code>, <code>href</code>, <code>overlap</code>. La hoja es <code>components/folder.css</code>, que publica los cinco números de la silueta como hooks.",
+              "title": "Folder se publica como contrato, con 3 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "footer": [],
     "form-field": [
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-05",
+            "en": {
+              "body": "Clips the label to a name-only box rather than dropping it: the control still has a label, the `for` wiring still points at it, and a screen reader still reads it; what changes is that the eye does not. For a field the surrounding composition already named, like the reply box under the comment it answers, where repeating the word is noise to skip. Not \"no label\": the slot stays required, because a field without one is a control nothing announces. The same distinction `SkipLink` and every icon-only Button already make.",
+              "title": "FormField gains labelHidden"
+            },
+            "es": {
+              "body": "Recorta el label a una caja de solo-nombre en vez de sacarlo: el control sigue teniendo label, la conexión `for` sigue apuntando ahí y un lector de pantalla lo sigue leyendo; lo único que cambia es que el ojo no. Para un campo al que la composición de alrededor ya nombró, como la caja de respuesta debajo del comentario que contesta, donde repetir la palabra es ruido que hay que saltear. No es \"sin label\": el slot sigue siendo obligatorio, porque un campo sin él es un control que nada anuncia. La misma distinción que ya hacen `SkipLink` y cualquier Button icon-only.",
+              "title": "FormField gana labelHidden"
+            },
+            "kind": "feature"
+          },
           {
             "date": "2026-08-14",
             "en": {
@@ -1016,6 +1112,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-05",
+            "en": {
+              "body": "Two new roles for the act of voting, already covered by all three published sets. They are ROLES and not drawings, which is what this list asks for: Lucide fills the role with `ArrowBigUp`, Phosphor with `arrow-fat-up`, and Material does not draw an arrow at all, it draws a thumb. Three different drawings for one intention is exactly the case the vocabulary exists to resolve, and it is why the name is not `arrow-big-up`: that is what ONE set calls the drawing, and it would leave the other two publishing an icon named after something they do not draw. Because `IconSet` is complete, adding a role is additive for a consumer and new work for whoever draws a set; all three in this repo already ship it.",
+              "title": "The stable vocabulary gains vote-up and vote-down"
+            },
+            "es": {
+              "body": "Dos roles nuevos para la acción de votar, que ya cubren los tres sets publicados. Son ROLES y no dibujos, que es lo que esta lista pide: Lucide ocupa el rol con `ArrowBigUp`, Phosphor con `arrow-fat-up` y Material ni siquiera dibuja una flecha, dibuja un pulgar. Tres dibujos distintos para una sola intención es exactamente el caso que el vocabulario existe para resolver, y por eso el nombre no es `arrow-big-up`: ese es el nombre que UN set le da al dibujo, y dejaría a los otros dos publicando un icono que se llama como algo que no dibujan. Como `IconSet` es completo, agregar un rol es aditivo para quien consume y trabajo nuevo para quien dibuja un set: los tres del repo ya lo traen.",
+              "title": "El vocabulario estable gana vote-up y vote-down"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-09-02",
             "en": {
               "body": "<code>language</code> names picking an app's language, not a drawing: all three published sets cover it (Lucide draws it as two script strokes, Phosphor and Material as an <code>A文</code> pair).",
@@ -1062,6 +1170,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-05",
+            "en": {
+              "body": "No change of its own. This control's faces are typed against `StableIconName`, so `vote-up` and `vote-down` (see `icon`'s own changelog) are two more values a face can take. The surface moved because the enum it derives from grew.",
+              "title": "Reaches the vocabulary's two new roles"
+            },
+            "es": {
+              "body": "Sin cambios propios. Las caras de este control se tipan contra `StableIconName`, así que `vote-up` y `vote-down` (ver el changelog de `icon`) son dos valores más que una cara puede tomar. La superficie se movió porque el enum del que deriva creció.",
+              "title": "Alcanza los dos roles nuevos del vocabulario"
+            },
+            "kind": "feature"
+          },
           {
             "date": "2026-09-02",
             "en": {
@@ -1206,6 +1326,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-04",
+            "en": {
+              "body": "The <code>DensityScope</code> signature and <code>layout</code>'s <code>densityFactor</code> option are gone, and with them the React <code>&lt;DensityScope&gt;</code> component. The engine underneath was NOT touched: <code>--sk-density</code>, <code>--sk-density-factor</code> and the <code>data-sk-density-scope</code> attribute stay exactly the same semantic mechanism (<code>semantic/_density.scss</code>), hand-authorable on any element — it's exactly how <code>CopyButton</code> and the presets gallery already use it, neither ever went through this signature. What leaves is only the usage-tree wrapper that wrote that attribute for you; a migration swaps a node <code>{ contract: \"layout\", signature: \"DensityScope\", options: { densityFactor } }</code> for a <code>Box</code>/<code>Stack</code> carrying <code>attrs: { \"data-sk-density-scope\": \"\", style: \"--sk-density-factor: …\" }</code>.",
+              "title": "DensityScope leaves the contract"
+            },
+            "es": {
+              "body": "El signature <code>DensityScope</code> y la opción <code>densityFactor</code> de <code>layout</code> ya no existen; con ellos se va también el componente React <code>&lt;DensityScope&gt;</code>. El motor que quedaba debajo NO se tocó: <code>--sk-density</code>, <code>--sk-density-factor</code> y el atributo <code>data-sk-density-scope</code> siguen siendo el mismo mecanismo semántico (<code>semantic/_density.scss</code>), autorable a mano en cualquier elemento — es exactamente como ya lo usan <code>CopyButton</code> y la galería de presets, ninguno de los dos pasaba por este signature. Lo que se retira es sólo la envoltura de árbol de uso que escribía ese atributo por vos; una migración cambia un nodo <code>{ contract: \"layout\", signature: \"DensityScope\", options: { densityFactor } }</code> por un <code>Box</code>/<code>Stack</code> con <code>attrs: { \"data-sk-density-scope\": \"\", style: \"--sk-density-factor: …\" }</code>.",
+              "title": "DensityScope se retira del contrato"
+            },
+            "kind": "breaking"
+          },
           {
             "date": "2026-09-02",
             "en": {
@@ -1806,6 +1938,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-04",
+            "en": {
+              "body": "Adds <code>triggerVariant</code>, <code>triggerSize</code> and <code>triggerIconOnly</code> — the same three options <code>Menu</code> already publishes for its own trigger, writing the same attributes <code>Button</code>'s own <code>variant</code>, <code>size</code> and <code>iconOnly</code> do. They are for a Popover composed into another control's row: without them the trigger drew at Button's default variant and control height, and next to a bar of small icon buttons it read as a stray box. The React binding also takes <code>triggerClassName</code>, the same as <code>Menu</code>.",
+              "title": "Popover's trigger takes a variant, a size and the icon-only shape"
+            },
+            "es": {
+              "body": "Se suman <code>triggerVariant</code>, <code>triggerSize</code> y <code>triggerIconOnly</code>, las mismas tres opciones que <code>Menu</code> ya publica para su propio trigger y que escriben los mismos atributos que <code>variant</code>, <code>size</code> e <code>iconOnly</code> de <code>Button</code>. Sirven para un Popover compuesto dentro de la fila de otro control: sin ellas el trigger salía con la variante y el alto por defecto de Button, y al lado de una barra de botones de icono chicos se leía como una caja suelta. El binding de React agrega además <code>triggerClassName</code>, igual que <code>Menu</code>.",
+              "title": "El trigger de Popover acepta variante, tamaño y forma de icono"
+            },
+            "kind": "feature"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -6477,15 +6621,8 @@
                     "part": "clear"
                   },
                   {
-                    "also": [
-                      "sk-button",
-                      "sk-interactive"
-                    ],
                     "attrs": {
-                      "data-icon-only": "",
-                      "data-size": "sm",
-                      "data-variant": "ghost",
-                      "type": "button"
+                      "aria-hidden": "true"
                     },
                     "children": [
                       {
@@ -6496,7 +6633,7 @@
                           {
                             "attrs": {
                               "data-sk-icon": "chevron-down",
-                              "data-sk-icon-size": "sm"
+                              "data-sk-icon-size": "md"
                             },
                             "element": "span"
                           }
@@ -6511,7 +6648,7 @@
                           {
                             "attrs": {
                               "data-sk-icon": "chevron-up",
-                              "data-sk-icon-size": "sm"
+                              "data-sk-icon-size": "md"
                             },
                             "element": "span"
                           }
@@ -6519,7 +6656,7 @@
                         "element": "span"
                       }
                     ],
-                    "element": "button",
+                    "element": "span",
                     "mount": "data-sk-combobox-trigger",
                     "part": "trigger"
                   }
@@ -6833,6 +6970,792 @@
             "element": "dialog",
             "host": true,
             "part": "root"
+          }
+        }
+      }
+    },
+    "comment-thread": {
+      "css": "@skryensya/core/components/comment-thread.css",
+      "id": "comment-thread",
+      "options": {
+        "cancelLabel": {
+          "attr": "data-cancel-label",
+          "default": "Cancelar",
+          "type": "string"
+        },
+        "cancellable": {
+          "attr": "data-cancellable",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "collapseLabel": {
+          "attr": "data-collapse-label",
+          "default": "Ocultar respuestas",
+          "type": "string"
+        },
+        "collapsible": {
+          "attr": "data-collapsible",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "commentId": {
+          "attr": "data-value",
+          "prop": "id",
+          "type": "string"
+        },
+        "deletable": {
+          "attr": "data-deletable",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "deleteLabel": {
+          "attr": "data-delete-label",
+          "default": "Eliminar",
+          "type": "string"
+        },
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "reply": {
+          "attr": "data-reply",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "replyLabel": {
+          "attr": "data-reply-label",
+          "default": "Responder",
+          "type": "string"
+        },
+        "submitLabel": {
+          "attr": "data-submit-label",
+          "default": "Publicar",
+          "type": "string"
+        },
+        "voted": {
+          "attr": "data-voted",
+          "default": "none",
+          "type": "enum",
+          "values": [
+            "up",
+            "down",
+            "none"
+          ]
+        },
+        "voteDownLabel": {
+          "attr": "data-vote-down-label",
+          "default": "Votar en contra",
+          "type": "string"
+        },
+        "voteUpLabel": {
+          "attr": "data-vote-up-label",
+          "default": "Votar a favor",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "actions": "sk-comment-actions",
+        "actionsDelete": "sk-comment-actions__delete",
+        "actionsReply": "sk-comment-actions__reply",
+        "comment": "sk-comment",
+        "commentAuthor": "sk-comment__author",
+        "commentAvatar": "sk-comment__avatar",
+        "commentBody": "sk-comment__body",
+        "commentCollapse": "sk-comment__collapse",
+        "commentContent": "sk-comment__content",
+        "commentGutter": "sk-comment__gutter",
+        "commentHeader": "sk-comment__header",
+        "commentReplies": "sk-comment__replies",
+        "commentReplySlot": "sk-comment__reply-slot",
+        "commentSelf": "sk-comment__self",
+        "commentTimestamp": "sk-comment__timestamp",
+        "composer": "sk-comment-composer",
+        "composerActions": "sk-comment-composer__actions",
+        "composerCancel": "sk-comment-composer__cancel",
+        "composerSlot": "sk-comment-thread__composer-slot",
+        "composerSubmit": "sk-comment-composer__submit",
+        "root": "sk-comment-thread",
+        "vote": "sk-comment-vote",
+        "voteCount": "sk-comment-vote__count",
+        "voteDown": "sk-comment-vote__down",
+        "voteUp": "sk-comment-vote__up"
+      },
+      "semantics": {
+        "Comment": {
+          "alternatives": [
+            "FeedArticle"
+          ],
+          "avoidWhen": [
+            "es contenido de un stream plano sin respuestas; eso es un FeedArticle"
+          ],
+          "useWhen": [
+            "una unidad de conversación: quién la escribió, cuándo y qué dijo",
+            "hace falta citar un comentario fuera de su hilo; no necesita contenedor"
+          ]
+        },
+        "CommentActions": {
+          "alternatives": [
+            "Toolbar"
+          ],
+          "avoidWhen": [
+            "el comentario es de sólo lectura; entonces simplemente no se compone",
+            "es una barra de acciones de una vista entera, no de una unidad de contenido; eso es un Toolbar"
+          ],
+          "useWhen": [
+            "un comentario admite acciones: votar, responder, borrar"
+          ]
+        },
+        "CommentComposer": {
+          "alternatives": [
+            "FormField"
+          ],
+          "avoidWhen": [
+            "el formulario hace algo más que publicar un cuerpo de texto; eso es un form propio con FormField"
+          ],
+          "useWhen": [
+            "hace falta escribir un comentario o una respuesta, con el control que decida el consumidor"
+          ]
+        },
+        "CommentTemplate": {
+          "alternatives": [
+            "ToastTemplate"
+          ],
+          "avoidWhen": [
+            "el markup se renderiza entero de nuevo; en React no hace falta, se vuelve a renderizar",
+            "lo que se crea es un aviso transitorio y no un comentario; eso es un ToastTemplate"
+          ],
+          "useWhen": [
+            "la app crea comentarios en runtime y necesita un blueprint que clonar"
+          ]
+        },
+        "CommentThread": {
+          "alternatives": [
+            "Feed",
+            "TreeView"
+          ],
+          "avoidWhen": [
+            "el stream es plano, sin respuestas anidadas; eso es un Feed",
+            "es una jerarquía seleccionable (archivos, un índice); eso es un TreeView",
+            "hay un solo comentario y nada alrededor; eso es un Comment suelto"
+          ],
+          "useWhen": [
+            "hay una conversación con respuestas anidadas y hace falta un contenedor que la nombre"
+          ]
+        },
+        "CommentVote": {
+          "alternatives": [
+            "IconStateButton"
+          ],
+          "avoidWhen": [
+            "es una sola valoración sin dirección (me gusta); eso es un IconStateButton"
+          ],
+          "useWhen": [
+            "hay un puntaje que se sube o se baja, con el voto propio del lector reflejado"
+          ]
+        }
+      },
+      "signatures": {
+        "Comment": {
+          "host": {
+            "element": "article"
+          },
+          "intent": [
+            "comment",
+            "reply",
+            "post",
+            "discussion-entry"
+          ],
+          "mount": "data-sk-comment",
+          "options": [
+            "commentId",
+            "collapsible",
+            "collapseLabel"
+          ],
+          "parents": [
+            "CommentThread",
+            "Comment",
+            "CommentTemplate"
+          ],
+          "react": {
+            "from": "@skryensya/react/comment-thread",
+            "name": "Comment"
+          },
+          "slots": {
+            "actions": {
+              "accepts": "node"
+            },
+            "author": {
+              "accepts": "node",
+              "required": true
+            },
+            "avatar": {
+              "accepts": "node"
+            },
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "replies": {
+              "accepts": "signature",
+              "of": [
+                "Comment"
+              ]
+            },
+            "replyComposer": {
+              "accepts": "signature",
+              "of": [
+                "CommentComposer"
+              ]
+            },
+            "timestamp": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "element": "span",
+                        "mount": "data-sk-comment-avatar",
+                        "part": "commentAvatar",
+                        "slot": "avatar",
+                        "whenGiven": "avatar"
+                      },
+                      {
+                        "children": [
+                          {
+                            "also": [
+                              "sk-button",
+                              "sk-interactive"
+                            ],
+                            "attrs": {
+                              "aria-expanded": "true",
+                              "data-icon-only": "",
+                              "data-size": "sm",
+                              "type": "button"
+                            },
+                            "children": [
+                              {
+                                "attrs": {
+                                  "aria-hidden": "true"
+                                },
+                                "children": [
+                                  {
+                                    "attrs": {
+                                      "data-state": "closed"
+                                    },
+                                    "children": [
+                                      {
+                                        "attrs": {
+                                          "aria-hidden": "true"
+                                        },
+                                        "children": [
+                                          {
+                                            "attrs": {
+                                              "data-sk-icon": "add",
+                                              "data-sk-icon-size": "sm"
+                                            },
+                                            "element": "span"
+                                          }
+                                        ],
+                                        "element": "span"
+                                      }
+                                    ],
+                                    "element": "span"
+                                  },
+                                  {
+                                    "attrs": {
+                                      "data-state": "open"
+                                    },
+                                    "children": [
+                                      {
+                                        "attrs": {
+                                          "aria-hidden": "true"
+                                        },
+                                        "children": [
+                                          {
+                                            "attrs": {
+                                              "data-sk-icon": "remove",
+                                              "data-sk-icon-size": "sm"
+                                            },
+                                            "element": "span"
+                                          }
+                                        ],
+                                        "element": "span"
+                                      }
+                                    ],
+                                    "element": "span"
+                                  }
+                                ],
+                                "element": "span"
+                              },
+                              {
+                                "also": [
+                                  "sk-visually-hidden"
+                                ],
+                                "element": "span",
+                                "textFromOption": "collapseLabel"
+                              }
+                            ],
+                            "element": "button",
+                            "mount": "data-sk-comment-collapse",
+                            "part": "commentCollapse",
+                            "whenGiven": "collapsible"
+                          }
+                        ],
+                        "whenGiven": "replies"
+                      }
+                    ],
+                    "element": "div",
+                    "part": "commentGutter"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "element": "div",
+                            "mount": "data-sk-comment-author",
+                            "part": "commentAuthor",
+                            "slot": "author"
+                          },
+                          {
+                            "element": "div",
+                            "mount": "data-sk-comment-timestamp",
+                            "part": "commentTimestamp",
+                            "slot": "timestamp",
+                            "whenGiven": "timestamp"
+                          }
+                        ],
+                        "element": "div",
+                        "part": "commentHeader"
+                      },
+                      {
+                        "element": "div",
+                        "mount": "data-sk-comment-body",
+                        "part": "commentBody",
+                        "slot": "children"
+                      },
+                      {
+                        "slot": "actions",
+                        "whenGiven": "actions"
+                      }
+                    ],
+                    "element": "div",
+                    "part": "commentContent"
+                  }
+                ],
+                "element": "div",
+                "part": "commentSelf"
+              },
+              {
+                "attrs": {
+                  "hidden": ""
+                },
+                "element": "div",
+                "mount": "data-sk-comment-reply-slot",
+                "part": "commentReplySlot",
+                "slot": "replyComposer",
+                "whenGiven": "replyComposer"
+              },
+              {
+                "element": "div",
+                "mount": "data-sk-comment-replies",
+                "part": "commentReplies",
+                "slot": "replies",
+                "whenGiven": "replies"
+              }
+            ],
+            "element": "article",
+            "host": true,
+            "part": "comment"
+          }
+        },
+        "CommentActions": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "comment-actions",
+            "vote-reply-delete",
+            "action-row"
+          ],
+          "mount": "data-sk-comment-actions",
+          "options": [
+            "reply",
+            "replyLabel",
+            "deletable",
+            "deleteLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/comment-thread",
+            "name": "CommentActions"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "slot": "children",
+                "whenGiven": "children"
+              },
+              {
+                "also": [
+                  "sk-button",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "aria-expanded": "false",
+                  "data-size": "sm",
+                  "data-variant": "ghost",
+                  "type": "button"
+                },
+                "element": "button",
+                "mount": "data-sk-comment-reply",
+                "part": "actionsReply",
+                "textFromOption": "replyLabel",
+                "whenGiven": "reply"
+              },
+              {
+                "also": [
+                  "sk-button",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "data-size": "sm",
+                  "data-variant": "ghost",
+                  "type": "button"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "delete",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span"
+                  },
+                  {
+                    "element": "span",
+                    "textFromOption": "deleteLabel"
+                  }
+                ],
+                "element": "button",
+                "mount": "data-sk-comment-delete",
+                "part": "actionsDelete",
+                "whenGiven": "deletable"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "actions"
+          }
+        },
+        "CommentComposer": {
+          "host": {
+            "element": "form"
+          },
+          "intent": [
+            "comment-composer",
+            "reply-box",
+            "new-comment-form"
+          ],
+          "mount": "data-sk-comment-composer",
+          "options": [
+            "submitLabel",
+            "cancellable",
+            "cancelLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/comment-thread",
+            "name": "CommentComposer"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "slot": "children"
+              },
+              {
+                "children": [
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "element": "button",
+                    "mount": "data-sk-comment-composer-cancel",
+                    "part": "composerCancel",
+                    "textFromOption": "cancelLabel",
+                    "whenGiven": "cancellable"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-size": "sm",
+                      "data-variant": "accent",
+                      "type": "submit"
+                    },
+                    "element": "button",
+                    "mount": "data-sk-comment-composer-submit",
+                    "part": "composerSubmit",
+                    "textFromOption": "submitLabel"
+                  }
+                ],
+                "element": "div",
+                "part": "composerActions"
+              }
+            ],
+            "element": "form",
+            "host": true,
+            "part": "composer"
+          }
+        },
+        "CommentTemplate": {
+          "host": {
+            "element": "template"
+          },
+          "intent": [
+            "comment-blueprint",
+            "dynamic-comment-template",
+            "reply-template"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/comment-thread",
+            "name": "CommentTemplate"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "Comment"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "template",
+            "host": true,
+            "slot": "children"
+          }
+        },
+        "CommentThread": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "comment-thread",
+            "threaded-replies",
+            "nested-comments",
+            "discussion"
+          ],
+          "mount": "data-sk-comment-thread",
+          "options": [
+            "label"
+          ],
+          "react": {
+            "from": "@skryensya/react/comment-thread",
+            "name": "CommentThread"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "Comment"
+              ],
+              "required": true
+            },
+            "composer": {
+              "accepts": "signature",
+              "of": [
+                "CommentComposer"
+              ]
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "div",
+                "part": "composerSlot",
+                "slot": "composer",
+                "whenGiven": "composer"
+              },
+              {
+                "slot": "children"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "CommentVote": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "vote",
+            "upvote-downvote",
+            "score"
+          ],
+          "mount": "data-sk-comment-vote",
+          "options": [
+            "voted",
+            "voteUpLabel",
+            "voteDownLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/comment-thread",
+            "name": "CommentVote"
+          },
+          "slots": {
+            "count": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-button",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "data-icon-only": "",
+                  "data-size": "sm",
+                  "data-variant": "ghost",
+                  "type": "button"
+                },
+                "attrsWhen": [
+                  {
+                    "attrs": {
+                      "aria-pressed": "true"
+                    },
+                    "equals": "up",
+                    "option": "voted"
+                  }
+                ],
+                "children": [
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "vote-up",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span"
+                  },
+                  {
+                    "also": [
+                      "sk-visually-hidden"
+                    ],
+                    "element": "span",
+                    "textFromOption": "voteUpLabel"
+                  }
+                ],
+                "element": "button",
+                "mount": "data-sk-comment-vote-up",
+                "part": "voteUp"
+              },
+              {
+                "element": "span",
+                "mount": "data-sk-comment-vote-count",
+                "part": "voteCount",
+                "slot": "count"
+              },
+              {
+                "also": [
+                  "sk-button",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "data-icon-only": "",
+                  "data-size": "sm",
+                  "data-variant": "ghost",
+                  "type": "button"
+                },
+                "attrsWhen": [
+                  {
+                    "attrs": {
+                      "aria-pressed": "true"
+                    },
+                    "equals": "down",
+                    "option": "voted"
+                  }
+                ],
+                "children": [
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "vote-down",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span"
+                  },
+                  {
+                    "also": [
+                      "sk-visually-hidden"
+                    ],
+                    "element": "span",
+                    "textFromOption": "voteDownLabel"
+                  }
+                ],
+                "element": "button",
+                "mount": "data-sk-comment-vote-down",
+                "part": "voteDown"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "vote"
           }
         }
       }
@@ -8142,6 +9065,170 @@
         }
       }
     },
+    "editor": {
+      "css": "@skryensya/core/components/editor.css",
+      "id": "editor",
+      "options": {
+        "autofocus": {
+          "attr": "data-autofocus",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "defaultValue": {
+          "attr": "data-default-value",
+          "machineInput": true,
+          "type": "string"
+        },
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "name": {
+          "attr": "data-name",
+          "machineInput": true,
+          "type": "string"
+        },
+        "placeholder": {
+          "attr": "data-placeholder",
+          "machineInput": true,
+          "type": "string"
+        },
+        "readOnly": {
+          "attr": "data-readonly",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "toolbarCompact": {
+          "attr": "data-toolbar-compact",
+          "default": false,
+          "prop": "compact",
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "toolbarLabel": {
+          "attr": "aria-label",
+          "default": "Formato de texto",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "content": "sk-editor__content",
+        "hiddenInput": "sk-editor__hidden-input",
+        "root": "sk-editor",
+        "toolbarButton": "sk-editor__toolbar-button"
+      },
+      "semantics": {
+        "Editor": {
+          "alternatives": [
+            "Textarea"
+          ],
+          "avoidWhen": [
+            "el campo es de una sola línea, o no necesita ningún formato: ahí alcanza Input/Textarea"
+          ],
+          "useWhen": [
+            "se necesita texto con estilos — negrita, listas, títulos, citas — no sólo texto plano",
+            "la barra de formato debe venir resuelta, sin componerla a mano"
+          ]
+        }
+      },
+      "signatures": {
+        "Editor": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "rich-text-field",
+            "wysiwyg-editor",
+            "formatted-content",
+            "editor-with-toolbar"
+          ],
+          "mount": "data-sk-editor",
+          "options": [
+            "name",
+            "defaultValue",
+            "placeholder",
+            "readOnly",
+            "disabled",
+            "autofocus",
+            "label",
+            "toolbarLabel",
+            "toolbarCompact"
+          ],
+          "react": {
+            "from": "@skryensya/react/editor",
+            "name": "Editor"
+          },
+          "slots": {},
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-toolbar"
+                ],
+                "attrs": {
+                  "role": "toolbar"
+                },
+                "element": "div",
+                "mount": "data-sk-toolbar",
+                "optionAttrs": {
+                  "toolbarLabel": "aria-label"
+                },
+                "options": [
+                  "toolbarLabel"
+                ],
+                "part": "toolbar"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "style": "border:0;clip:rect(0 0 0 0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;white-space:nowrap;word-wrap:normal;",
+                  "tabindex": "-1"
+                },
+                "element": "textarea",
+                "mount": "data-sk-editor-hidden-input",
+                "optionAttrs": {
+                  "name": "name"
+                },
+                "options": [
+                  "name"
+                ],
+                "part": "hiddenInput"
+              },
+              {
+                "also": [
+                  "sk-input"
+                ],
+                "attrs": {
+                  "aria-multiline": "true",
+                  "role": "textbox",
+                  "tabindex": "0"
+                },
+                "element": "div",
+                "mount": "data-sk-editor-content",
+                "options": [
+                  "label"
+                ],
+                "part": "content"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "empty-state": {
       "css": "@skryensya/core/components/empty-state.css",
       "id": "empty-state",
@@ -8555,6 +9642,332 @@
         }
       }
     },
+    "folder": {
+      "css": "@skryensya/core/components/folder.css",
+      "id": "folder",
+      "options": {
+        "active": {
+          "attr": "data-active",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "href": {
+          "attr": "href",
+          "type": "string"
+        },
+        "overlap": {
+          "styleProperty": "--sk-folder-stack-overlap",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "content": "sk-folder__content",
+        "path": "sk-folder__shape-path",
+        "preview": "sk-folder__preview",
+        "previews": "sk-folder__previews",
+        "root": "sk-folder",
+        "shape": "sk-folder__shape",
+        "stack": "sk-folder-stack",
+        "tab": "sk-folder__tab"
+      },
+      "semantics": {
+        "Folder": {
+          "alternatives": [
+            "Box",
+            "TileLink",
+            "Accordion"
+          ],
+          "avoidWhen": [
+            "es una superficie sin rótulo propio; eso es un Box, que no dibuja nada",
+            "la superficie entera es un control; eso es un TileLink o un TileButton, que ya traen el estado y el foco de un control",
+            "el contenido se abre y se cierra; eso es un Accordion o un Details"
+          ],
+          "useWhen": [
+            "un bloque de contenido necesita decir de qué es ANTES de que lo leas: la pestaña es un rótulo, no un título más",
+            "hay una colección de cosas del mismo tipo y conviene que cada una se lea como un objeto aparte",
+            "conviene que en reposo se lea como texto limpio: una carpeta nunca se ve hasta que la tocás"
+          ]
+        },
+        "FolderLink": {
+          "alternatives": [
+            "Folder",
+            "TileLink"
+          ],
+          "avoidWhen": [
+            "la carpeta hace algo en la página en vez de navegar; eso es un TileButton",
+            "adentro hay más de un destino; dos links anidados no existen, poné los links en el cuerpo de un Folder"
+          ],
+          "useWhen": [
+            "la carpeta entera va a un lugar: el rectángulo completo es el destino",
+            "hace falta que el revelado responda al teclado sin depender de lo que haya adentro"
+          ]
+        },
+        "FolderPreview": {
+          "alternatives": [
+            "ImageFrame",
+            "Folder"
+          ],
+          "avoidWhen": [
+            "la imagen es contenido de la carpeta y no un adelanto; eso va en el cuerpo, donde se la puede alcanzar",
+            "está fuera de un Folder: sola no significa nada"
+          ],
+          "useWhen": [
+            "va adentro del slot previews de un Folder o un FolderLink: es la caja de UNA imagen del abanico",
+            "hace falta que la imagen tenga su paspartú y su sombra propios, que la imagen sola no puede llevar"
+          ]
+        },
+        "FolderStack": {
+          "alternatives": [
+            "Grid",
+            "Folder"
+          ],
+          "avoidWhen": [
+            "cada carpeta necesita verse entera; eso es una Grid o un Inline de Folders",
+            "el conjunto es una lista con semántica propia (resultados, pasos); eso lo nombra quien la contiene, no esto"
+          ],
+          "useWhen": [
+            "las carpetas se leen como una pila: cada una muestra su pestaña y una franja de cuerpo",
+            "el solape mismo es la información, que hay más abajo y hay un orden"
+          ]
+        }
+      },
+      "signatures": {
+        "Folder": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "folder",
+            "tabbed-surface",
+            "labelled-card",
+            "file-folder"
+          ],
+          "mount": "data-sk-folder",
+          "options": [
+            "active"
+          ],
+          "react": {
+            "from": "@skryensya/react/folder",
+            "name": "Folder"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "label": {
+              "accepts": "node",
+              "required": true
+            },
+            "previews": {
+              "accepts": "signature",
+              "of": [
+                "FolderPreview"
+              ]
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "focusable": "false",
+                  "preserveAspectRatio": "none"
+                },
+                "children": [
+                  {
+                    "element": "path",
+                    "mount": "data-sk-folder-path",
+                    "part": "path"
+                  }
+                ],
+                "element": "svg",
+                "mount": "data-sk-folder-shape",
+                "part": "shape"
+              },
+              {
+                "element": "div",
+                "mount": "data-sk-folder-tab",
+                "part": "tab",
+                "slot": "label"
+              },
+              {
+                "element": "div",
+                "part": "content",
+                "slot": "children"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "div",
+                "part": "previews",
+                "slot": "previews",
+                "whenGiven": "previews"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "FolderLink": {
+          "host": {
+            "element": "a"
+          },
+          "intent": [
+            "folder-link",
+            "clickable-folder",
+            "folder-that-goes-somewhere"
+          ],
+          "mount": "data-sk-folder",
+          "options": [
+            "active",
+            "href"
+          ],
+          "react": {
+            "from": "@skryensya/react/folder",
+            "name": "FolderLink"
+          },
+          "requires": [
+            "href"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "label": {
+              "accepts": "node",
+              "required": true
+            },
+            "previews": {
+              "accepts": "signature",
+              "of": [
+                "FolderPreview"
+              ]
+            }
+          },
+          "template": {
+            "also": [
+              "sk-interactive"
+            ],
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "focusable": "false",
+                  "preserveAspectRatio": "none"
+                },
+                "children": [
+                  {
+                    "element": "path",
+                    "mount": "data-sk-folder-path",
+                    "part": "path"
+                  }
+                ],
+                "element": "svg",
+                "mount": "data-sk-folder-shape",
+                "part": "shape"
+              },
+              {
+                "element": "div",
+                "mount": "data-sk-folder-tab",
+                "part": "tab",
+                "slot": "label"
+              },
+              {
+                "element": "div",
+                "part": "content",
+                "slot": "children"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "div",
+                "part": "previews",
+                "slot": "previews",
+                "whenGiven": "previews"
+              }
+            ],
+            "element": "a",
+            "host": true,
+            "options": [
+              "href"
+            ],
+            "part": "root"
+          }
+        },
+        "FolderPreview": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "folder-preview",
+            "one-card-in-a-folder-fan"
+          ],
+          "options": [],
+          "parents": [
+            "Folder",
+            "FolderLink"
+          ],
+          "react": {
+            "from": "@skryensya/react/folder",
+            "name": "FolderPreview"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "preview",
+            "slot": "children"
+          }
+        },
+        "FolderStack": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "folder-stack",
+            "overlapping-cards",
+            "drawer-of-folders"
+          ],
+          "options": [
+            "overlap"
+          ],
+          "react": {
+            "from": "@skryensya/react/folder",
+            "name": "FolderStack"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "Folder",
+                "FolderLink"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "options": [
+              "overlap"
+            ],
+            "part": "stack",
+            "slot": "children"
+          }
+        }
+      }
+    },
     "footer": {
       "css": "@skryensya/core/patterns/footer.css",
       "id": "footer",
@@ -8656,6 +10069,12 @@
           "trueValue": "",
           "type": "boolean"
         },
+        "labelHidden": {
+          "attr": "data-label-hidden",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
         "required": {
           "attr": "required",
           "default": false,
@@ -8697,7 +10116,8 @@
           ],
           "options": [
             "required",
-            "disabled"
+            "disabled",
+            "labelHidden"
           ],
           "react": {
             "from": "@skryensya/react/form-field",
@@ -8911,6 +10331,8 @@
             "arrow-down",
             "arrow-left",
             "arrow-right",
+            "vote-up",
+            "vote-down",
             "external-link",
             "add",
             "remove",
@@ -9069,6 +10491,8 @@
                       "arrow-down",
                       "arrow-left",
                       "arrow-right",
+                      "vote-up",
+                      "vote-down",
                       "external-link",
                       "add",
                       "remove",
@@ -9579,11 +11003,6 @@
             "5"
           ]
         },
-        "densityFactor": {
-          "default": 1,
-          "styleProperty": "--sk-density-factor",
-          "type": "number"
-        },
         "equal": {
           "attr": "data-equal",
           "default": false,
@@ -9656,19 +11075,6 @@
         "wrapper": "sk-wrapper"
       },
       "semantics": {
-        "DensityScope": {
-          "alternatives": [
-            "Stack",
-            "Inline",
-            "Grid"
-          ],
-          "avoidWhen": [
-            "sólo cambia un gap; configura el Stack, Inline o Grid directamente"
-          ],
-          "useWhen": [
-            "un subárbol completo necesita escalar el espaciado semántico sin cambiar cada componente"
-          ]
-        },
         "Grid": {
           "alternatives": [
             "Inline"
@@ -9722,40 +11128,6 @@
         }
       },
       "signatures": {
-        "DensityScope": {
-          "host": {
-            "element": "div"
-          },
-          "intent": [
-            "local-density",
-            "compact-subtree",
-            "scaled-component-spacing"
-          ],
-          "options": [
-            "densityFactor"
-          ],
-          "react": {
-            "from": "@skryensya/react/layout",
-            "name": "DensityScope"
-          },
-          "slots": {
-            "children": {
-              "accepts": "node",
-              "required": true
-            }
-          },
-          "template": {
-            "attrs": {
-              "data-sk-density-scope": ""
-            },
-            "element": "div",
-            "host": true,
-            "options": [
-              "densityFactor"
-            ],
-            "slot": "children"
-          }
-        },
         "Grid": {
           "host": {
             "element": "div"
@@ -12698,6 +14070,20 @@
             "inline-start",
             "inline-end"
           ]
+        },
+        "triggerIconOnly": {
+          "attr": "data-icon-only",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "triggerSize": {
+          "attr": "data-size",
+          "type": "string"
+        },
+        "triggerVariant": {
+          "attr": "data-variant",
+          "type": "string"
         }
       },
       "parts": {
@@ -12755,7 +14141,10 @@
             "panelId",
             "placement",
             "arrow",
-            "closeLabel"
+            "closeLabel",
+            "triggerVariant",
+            "triggerSize",
+            "triggerIconOnly"
           ],
           "react": {
             "from": "@skryensya/react/popover",
@@ -12793,7 +14182,10 @@
                   "panelId": "popovertarget"
                 },
                 "options": [
-                  "panelId"
+                  "panelId",
+                  "triggerVariant",
+                  "triggerSize",
+                  "triggerIconOnly"
                 ],
                 "part": "trigger",
                 "slot": "trigger"
@@ -12893,7 +14285,10 @@
             "panelId",
             "placement",
             "bare",
-            "arrow"
+            "arrow",
+            "triggerVariant",
+            "triggerSize",
+            "triggerIconOnly"
           ],
           "react": {
             "from": "@skryensya/react/popover",
@@ -12925,7 +14320,10 @@
                   "panelId": "popovertarget"
                 },
                 "options": [
-                  "panelId"
+                  "panelId",
+                  "triggerVariant",
+                  "triggerSize",
+                  "triggerIconOnly"
                 ],
                 "part": "trigger",
                 "slot": "trigger"
@@ -18873,5 +20271,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "bff8b936e8da7a8d"
+  "sourceHash": "34482f14e2f118a5"
 }

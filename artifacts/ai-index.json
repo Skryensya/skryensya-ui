@@ -799,6 +799,138 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/comment-thread.css",
+      "id": "comment-thread",
+      "signatures": [
+        {
+          "alternatives": [
+            "Feed",
+            "TreeView"
+          ],
+          "avoidWhen": [
+            "el stream es plano, sin respuestas anidadas; eso es un Feed",
+            "es una jerarquía seleccionable (archivos, un índice); eso es un TreeView",
+            "hay un solo comentario y nada alrededor; eso es un Comment suelto"
+          ],
+          "host": "div",
+          "id": "CommentThread",
+          "intent": [
+            "comment-thread",
+            "threaded-replies",
+            "nested-comments",
+            "discussion"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay una conversación con respuestas anidadas y hace falta un contenedor que la nombre"
+          ]
+        },
+        {
+          "alternatives": [
+            "FeedArticle"
+          ],
+          "avoidWhen": [
+            "es contenido de un stream plano sin respuestas; eso es un FeedArticle"
+          ],
+          "host": "article",
+          "id": "Comment",
+          "intent": [
+            "comment",
+            "reply",
+            "post",
+            "discussion-entry"
+          ],
+          "parents": [
+            "CommentThread",
+            "Comment",
+            "CommentTemplate"
+          ],
+          "useWhen": [
+            "una unidad de conversación: quién la escribió, cuándo y qué dijo",
+            "hace falta citar un comentario fuera de su hilo; no necesita contenedor"
+          ]
+        },
+        {
+          "alternatives": [
+            "Toolbar"
+          ],
+          "avoidWhen": [
+            "el comentario es de sólo lectura; entonces simplemente no se compone",
+            "es una barra de acciones de una vista entera, no de una unidad de contenido; eso es un Toolbar"
+          ],
+          "host": "div",
+          "id": "CommentActions",
+          "intent": [
+            "comment-actions",
+            "vote-reply-delete",
+            "action-row"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un comentario admite acciones: votar, responder, borrar"
+          ]
+        },
+        {
+          "alternatives": [
+            "IconStateButton"
+          ],
+          "avoidWhen": [
+            "es una sola valoración sin dirección (me gusta); eso es un IconStateButton"
+          ],
+          "host": "div",
+          "id": "CommentVote",
+          "intent": [
+            "vote",
+            "upvote-downvote",
+            "score"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay un puntaje que se sube o se baja, con el voto propio del lector reflejado"
+          ]
+        },
+        {
+          "alternatives": [
+            "ToastTemplate"
+          ],
+          "avoidWhen": [
+            "el markup se renderiza entero de nuevo; en React no hace falta, se vuelve a renderizar",
+            "lo que se crea es un aviso transitorio y no un comentario; eso es un ToastTemplate"
+          ],
+          "host": "template",
+          "id": "CommentTemplate",
+          "intent": [
+            "comment-blueprint",
+            "dynamic-comment-template",
+            "reply-template"
+          ],
+          "parents": [],
+          "useWhen": [
+            "la app crea comentarios en runtime y necesita un blueprint que clonar"
+          ]
+        },
+        {
+          "alternatives": [
+            "FormField"
+          ],
+          "avoidWhen": [
+            "el formulario hace algo más que publicar un cuerpo de texto; eso es un form propio con FormField"
+          ],
+          "host": "form",
+          "id": "CommentComposer",
+          "intent": [
+            "comment-composer",
+            "reply-box",
+            "new-comment-form"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hace falta escribir un comentario o una respuesta, con el control que decida el consumidor"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/component-preview.css",
       "id": "component-preview",
       "signatures": [
@@ -1125,6 +1257,33 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/editor.css",
+      "id": "editor",
+      "signatures": [
+        {
+          "alternatives": [
+            "Textarea"
+          ],
+          "avoidWhen": [
+            "el campo es de una sola línea, o no necesita ningún formato: ahí alcanza Input/Textarea"
+          ],
+          "host": "div",
+          "id": "Editor",
+          "intent": [
+            "rich-text-field",
+            "wysiwyg-editor",
+            "formatted-content",
+            "editor-with-toolbar"
+          ],
+          "parents": [],
+          "useWhen": [
+            "se necesita texto con estilos — negrita, listas, títulos, citas — no sólo texto plano",
+            "la barra de formato debe venir resuelta, sin componerla a mano"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/empty-state.css",
       "id": "empty-state",
       "signatures": [
@@ -1221,6 +1380,106 @@
           "useWhen": [
             "hay que adjuntar archivos: un CV, un comprobante, fotos",
             "conviene aceptar arrastrar y soltar además del botón, sin obligar a nadie a arrastrar"
+          ]
+        }
+      ]
+    },
+    {
+      "css": "@skryensya/core/components/folder.css",
+      "id": "folder",
+      "signatures": [
+        {
+          "alternatives": [
+            "Box",
+            "TileLink",
+            "Accordion"
+          ],
+          "avoidWhen": [
+            "es una superficie sin rótulo propio; eso es un Box, que no dibuja nada",
+            "la superficie entera es un control; eso es un TileLink o un TileButton, que ya traen el estado y el foco de un control",
+            "el contenido se abre y se cierra; eso es un Accordion o un Details"
+          ],
+          "host": "div",
+          "id": "Folder",
+          "intent": [
+            "folder",
+            "tabbed-surface",
+            "labelled-card",
+            "file-folder"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un bloque de contenido necesita decir de qué es ANTES de que lo leas: la pestaña es un rótulo, no un título más",
+            "hay una colección de cosas del mismo tipo y conviene que cada una se lea como un objeto aparte",
+            "conviene que en reposo se lea como texto limpio: una carpeta nunca se ve hasta que la tocás"
+          ]
+        },
+        {
+          "alternatives": [
+            "Folder",
+            "TileLink"
+          ],
+          "avoidWhen": [
+            "la carpeta hace algo en la página en vez de navegar; eso es un TileButton",
+            "adentro hay más de un destino; dos links anidados no existen, poné los links en el cuerpo de un Folder"
+          ],
+          "host": "a",
+          "id": "FolderLink",
+          "intent": [
+            "folder-link",
+            "clickable-folder",
+            "folder-that-goes-somewhere"
+          ],
+          "parents": [],
+          "useWhen": [
+            "la carpeta entera va a un lugar: el rectángulo completo es el destino",
+            "hace falta que el revelado responda al teclado sin depender de lo que haya adentro"
+          ]
+        },
+        {
+          "alternatives": [
+            "ImageFrame",
+            "Folder"
+          ],
+          "avoidWhen": [
+            "la imagen es contenido de la carpeta y no un adelanto; eso va en el cuerpo, donde se la puede alcanzar",
+            "está fuera de un Folder: sola no significa nada"
+          ],
+          "host": "div",
+          "id": "FolderPreview",
+          "intent": [
+            "folder-preview",
+            "one-card-in-a-folder-fan"
+          ],
+          "parents": [
+            "Folder",
+            "FolderLink"
+          ],
+          "useWhen": [
+            "va adentro del slot previews de un Folder o un FolderLink: es la caja de UNA imagen del abanico",
+            "hace falta que la imagen tenga su paspartú y su sombra propios, que la imagen sola no puede llevar"
+          ]
+        },
+        {
+          "alternatives": [
+            "Grid",
+            "Folder"
+          ],
+          "avoidWhen": [
+            "cada carpeta necesita verse entera; eso es una Grid o un Inline de Folders",
+            "el conjunto es una lista con semántica propia (resultados, pasos); eso lo nombra quien la contiene, no esto"
+          ],
+          "host": "div",
+          "id": "FolderStack",
+          "intent": [
+            "folder-stack",
+            "overlapping-cards",
+            "drawer-of-folders"
+          ],
+          "parents": [],
+          "useWhen": [
+            "las carpetas se leen como una pila: cada una muestra su pestaña y una franja de cuerpo",
+            "el solape mismo es la información, que hay más abajo y hay un orden"
           ]
         }
       ]
@@ -1596,27 +1855,6 @@
           "parents": [],
           "useWhen": [
             "la región es el landmark <main> de la página: el área de trabajo de una aplicación o de una plantilla"
-          ]
-        },
-        {
-          "alternatives": [
-            "Stack",
-            "Inline",
-            "Grid"
-          ],
-          "avoidWhen": [
-            "sólo cambia un gap; configura el Stack, Inline o Grid directamente"
-          ],
-          "host": "div",
-          "id": "DensityScope",
-          "intent": [
-            "local-density",
-            "compact-subtree",
-            "scaled-component-spacing"
-          ],
-          "parents": [],
-          "useWhen": [
-            "un subárbol completo necesita escalar el espaciado semántico sin cambiar cada componente"
           ]
         }
       ]
@@ -3846,5 +4084,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "bff8b936e8da7a8d"
+  "sourceHash": "34482f14e2f118a5"
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-24T15:10:26.904Z",
+  "generatedAt": "2026-09-06T03:29:52.157Z",
   "results": {
     "packages/react/src/components/accordion.test.tsx": {
       "keeps exactly one item open in single mode": "passed",
@@ -129,6 +129,9 @@
       "hands the stage height to the reader on drag and back to the content on double click": "passed",
       "keeps a reader-set height across a stage reload": "passed",
       "reloads the srcdoc stage from the authored document": "passed",
+      "releases a stage's realm and restores it from the same cached document": "passed",
+      "never releases a stage that currently holds focus": "passed",
+      "restoring an already-live or never-released stage is a no-op": "passed",
       "selects a preset directly on click, marking the stage and clearing it for free": "passed",
       "keeps a reader-selected height when switching to tablet": "passed",
       "keeps a reader-selected height when switching to mobile": "passed",
@@ -138,6 +141,7 @@
       "shares one preset across every preview on the page": "passed",
       "records the shared preset on the document element, free as an absence": "passed",
       "adopts a preset the document already carries, which is what FOUC writes": "passed",
+      "forces mobile on narrow viewports without overwriting the saved desktop preset": "passed",
       "keeps a card without the zoomed-desktop option on free when the shared pref is xl": "passed",
       "applies xl only on the card that offers it when the shared pref changes": "passed",
       "treats xl as free inside a fullscreen preview even when the option is still in the DOM": "passed",
@@ -266,8 +270,8 @@
     "packages/react/src/components/tag.test.tsx": {
       "carries its tone and label": "passed",
       "exposes a named remove control only when onRemove is given": "passed",
-      "removes with a real small icon-only button, not a lookalike": "passed",
-      "renders a navigable tag as a link and never as dismissible": "passed"
+      "renders a navigable tag as a link and never as dismissible": "passed",
+      "removes with a real small icon-only button, not a lookalike": "passed"
     },
     "packages/core/src/theme-toggle.test.ts": {
       "walks system → light → dark → system": "passed",
@@ -288,9 +292,14 @@
     "packages/react/src/components/layout.test.tsx": {
       "keeps semantic ownership with the caller while applying Box defaults": "passed",
       "renders Stack, Inline and Grid as the documented layout contracts": "passed",
+      "switches Grid into responsive rows and lets a child request a wider span": "passed",
       "renders LayoutGrid while leaving width on its semantic children": "passed",
       "renders Main as an empty application landmark": "passed",
-      "renders Wrapper as a page column on the size scale": "passed"
+      "renders Wrapper as a page column on the size scale": "passed",
+      "renders Footer as a contentinfo landmark with its documented defaults": "passed",
+      "lets Footer opt out of the divider, change padding/surface, and drop the landmark via `as`": "passed",
+      "renders Hero as a plain div with its documented defaults": "passed",
+      "lets Hero change align/padding/surface and render as a different element via `as`": "passed"
     },
     "packages/react/src/components/typography.test.tsx": {
       "separates heading hierarchy from its visual size": "passed",
@@ -404,14 +413,10 @@
       "moves aria-selected onto the highlighted option before Enter commits anything": "passed"
     },
     "packages/react/src/components/slider.test.tsx": {
-      "stays a native range input and reports value changes as numbers": "passed"
+      "uses the Zag slider machine anatomy and value state": "passed"
     },
     "packages/vanilla/src/components/slider.test.ts": {
-      "paints the initial fill from value within [min, max] on mount": "passed",
-      "tracks the value on input, and honours a non-zero min": "passed",
-      "falls back to the platform default range (0–100) when min/max are unset": "passed",
-      "stops updating after cleanup": "passed",
-      "auto-mounts via the enhancer and refuses a non-range root": "passed"
+      "mounts the Zag slider machine over authored markup": "passed"
     },
     "packages/react/src/components/stat.test.tsx": {
       "colors the change by trend, not by sign": "passed",
@@ -486,7 +491,7 @@
       "Left/Right resize by a step, Shift+Left/Right by the coarse step": "passed",
       "Home/End jump to the resized pair's min/max extent": "passed",
       "Enter (and double-click) resets the pair to an even split": "passed",
-      "reports its position as a percentage of the pair's travel, not a raw pixel count": "passed"
+      "reports its position as a percentage of the pair's REACHABLE travel, not a flat 0-100": "passed"
     },
     "packages/react/src/components/treegrid.test.tsx": {
       "names the grid, sets role=treegrid, and reads each row's authored hierarchy attributes": "passed",
@@ -530,14 +535,11 @@
     },
     "packages/vanilla/src/components/slider-range.test.ts": {
       "bounds each thumb's max/min at the other's CURRENT value on mount": "passed",
-      "paints the fill bar's start/end fractions from each thumb's value": "passed",
-      "re-narrows the OTHER thumb's bound after a real drag, without losing the true range ends": "passed",
-      "never lets one thumb's value exceed the other. Native min/max clamps a direct value write past the bound": "passed"
+      "paints the fill bar's start/end offsets from each thumb's value": "passed"
     },
     "packages/react/src/components/slider-range.test.tsx": {
       "names each thumb distinctly and starts at the authored defaults": "passed",
-      "bounds each thumb's max/min at the other's CURRENT value": "passed",
-      "re-bounds the OTHER thumb after a value changes, reporting both values on change": "passed"
+      "bounds each thumb's max/min at the other's CURRENT value": "passed"
     },
     "packages/react/src/components/meter.test.tsx": {
       "sets role=meter with the three required aria-value attributes": "passed",
@@ -575,10 +577,50 @@
       "Escape does nothing when the dropdown is already closed": "passed",
       "wires a NavListLink's own nested group independently of its parent group": "passed"
     },
+    "packages/react/src/components/nav-list.test.tsx": {
+      "renders a named navigation landmark with a labelled list of links": "passed",
+      "does not invent menu semantics for destination links": "passed",
+      "collapsible: renders a button with aria-expanded/aria-controls, open by default": "passed",
+      "collapsible: toggles aria-expanded and the list's hidden state on click": "passed",
+      "collapsible: Escape closes the open dropdown from anywhere inside it and returns focus to the trigger": "passed",
+      "nested: a link's own sub-destinations render inside the same <li>, independent of the parent group": "passed",
+      "collapsible: honors defaultOpen=false": "passed"
+    },
     "packages/react/src/components/feed.test.tsx": {
       "sets role=feed, names it, and reflects aria-busy": "passed",
       "each article gets role=article with aria-posinset/aria-setsize and a real labelled name": "passed",
       "allows setSize=-1 for an undetermined total, per WAI's own allowance": "passed"
+    },
+    "packages/react/src/components/comment-thread.test.tsx": {
+      "renders an author, a timestamp and a body with no thread, actions or replies around it": "passed",
+      "puts the avatar in the gutter, apart from the name, so the thread line can hang off it": "passed",
+      "takes composed content in the author slot, not only a string": "passed",
+      "renders no fold control unless it is collapsible AND has replies to fold": "passed",
+      "folds the REPLIES and leaves the comment itself readable": "passed",
+      "nests replies as Comments of the same shape, at any depth": "passed",
+      "reports the direction clicked and reflects the viewer's own past vote": "passed",
+      "renders only the triggers it was given, and reports each": "passed",
+      "submits the body of whatever control it was given, then resets it": "passed",
+      "reads a single-line Input just as readily as a Textarea, since it ships neither": "passed",
+      "submits nothing when the control is empty": "passed",
+      "names the thread and renders its composer above the comments": "passed"
+    },
+    "packages/vanilla/src/components/comment-thread.test.ts": {
+      "dispatches vote with the comment's id and the clicked direction, and never mutates the paint itself": "passed",
+      "attributes a nested reply's vote to the reply, not to the comment above it": "passed",
+      "dispatches delete only where the delete trigger exists": "passed",
+      "toggles the reply composer's aria-expanded and hidden state, scoped to its own comment": "passed",
+      "collapse folds the REPLIES and leaves the comment itself readable": "passed",
+      "submits a reply with the enclosing comment's id as parentId, resets it and closes the box": "passed",
+      "cancel on an EMPTY composer just closes it: nothing to lose, nothing to ask": "passed",
+      "cancel on a composer WITH a draft dispatches discard and leaves the box open for the app": "passed",
+      "a vetoed reply keeps the draft and the box: preventDefault stops the after-effect": "passed",
+      "submits the thread's own composer with parentId null": "passed",
+      "ignores an empty reply: no event, form left alone": "passed",
+      "folds the replies of a standalone Comment that has no thread around it": "passed",
+      "submits a standalone CommentComposer, reporting no parent": "passed",
+      "reads a single-line input as readily as a textarea, since the composer ships neither": "passed",
+      "reads a contenteditable surface too, so an Editor can be the control": "passed"
     },
     "packages/core/src/menubar.test.ts": {
       "moves one item at a time and wraps at both ends": "passed",
@@ -754,21 +796,73 @@
       "renders actions only when given": "passed"
     },
     "packages/react/src/components/split-button.test.tsx": {
-      "renders a labelled group holding the primary button and the menu's icon-only trigger": "passed",
-      "clicking the primary button fires onClick, independent of the menu": "passed",
+      "renders a labelled group holding the action button and the menu's icon-only trigger": "passed",
+      "clicking the action button fires onClick, independent of the menu": "passed",
       "opens the fallback menu from its trigger and selects an item": "passed",
-      "disables both the primary button and the menu trigger together": "passed",
-      "pairs the fallback trigger's shape and variant/size with the primary button": "passed",
-      "renders a hand-composed primary and menu verbatim instead of the flat-prop fallback": "passed"
+      "disables both the action button and the menu trigger together": "passed",
+      "pairs the fallback trigger's shape and variant/size with the action button": "passed",
+      "renders a hand-composed action and menu verbatim instead of the flat-prop fallback": "passed"
+    },
+    "packages/core/src/folder.test.ts": {
+      "turns the leading corner on the same radius both ways, like every other corner": "passed",
+      "runs the tab's top edge to where the tab ends, then folds down over the shoulder": "passed",
+      "puts the fold at the measured tab height, whatever the default says": "passed",
+      "lifts the body's top edge off the tab's bottom, leaving the tab's own corner where it was": "passed",
+      "never lifts the body's edge above the tab's own top": "passed",
+      "keeps the S-curve's proportions when the tab is taller": "passed",
+      "never draws outside the box it was measured from": "passed",
+      "clamps a tab too wide for its shoulder instead of folding the path back on itself": "passed",
+      "clamps the leading sweep to a tab too narrow to hold it, instead of widening the tab": "passed",
+      "mirrors the whole silhouette for an RTL folder": "passed",
+      "draws nothing at all for a box with no area": "passed",
+      "measures to the tab's far edge, not merely its width": "passed",
+      "measures from the inline-start edge in RTL, which is the right-hand one": "passed",
+      "takes the first ancestor that actually paints something": "passed",
+      "copies the image layers over the colour, in the order CSS paints them": "passed",
+      "takes an image with no colour under it": "passed",
+      "skips every spelling of a fully transparent background": "passed",
+      "answers null when nothing up the tree paints at all": "passed",
+      "answers null for a folder with no parent": "passed",
+      "hides the empty card below the last line, and nothing above it": "passed",
+      "gives a folder whose copy fills it no tail at all, rather than a negative one": "passed",
+      "pays for the forward lean, which a layout-space measurement cannot see": "passed",
+      "reads every knob off custom properties": "passed",
+      "falls back per property, so one redeclared hook keeps the rest of the silhouette": "passed"
+    },
+    "packages/react/src/components/folder.test.tsx": {
+      "renders the tab, the content and a decorative silhouette behind them": "passed",
+      "draws the silhouette from the folder's own box and its tab's width": "passed",
+      "marks the root ready only once a real path has been written": "passed",
+      "fans previews into an aria-hidden layer, and renders none without the slot": "passed",
+      "publishes the silhouette as a clip for the state layer to follow": "passed",
+      "writes no reveal attribute, because a folder is never visible at rest": "passed",
+      "mirrors the silhouette inside an RTL subtree": "passed",
+      "is a real anchor carrying the folder's own anatomy": "passed",
+      "holds folders directly, with no wrapper element between them": "passed",
+      "passes an overlap through as the custom property the stylesheet reads": "passed"
+    },
+    "packages/vanilla/src/components/folder.test.ts": {
+      "draws the silhouette from the folder's own box and its tab's width": "passed",
+      "marks the root ready only once a real path has been written": "passed",
+      "draws nothing, and stays unready, for a folder with no measurable box": "passed",
+      "re-measures when either box changes, and observes both": "passed",
+      "publishes the silhouette as a clip for the state layer to follow": "passed",
+      "refuses a root missing the nodes it has to draw into": "passed",
+      "mounts once per root and leaves an already-enhanced folder alone": "passed"
     },
     "packages/react/src/components/popover.test.tsx": {
       "links the trigger to its content via popovertarget/id, with popover=auto": "passed",
       "renders a title and description in the full (non-bare) anatomy": "passed",
+      "links the panel to its own title/description via aria-labelledby/aria-describedby": "passed",
+      "carries neither aria-labelledby nor aria-describedby without a title/description to point at": "passed",
+      "carries neither aria-labelledby nor aria-describedby in bare mode, even with title/description given": "passed",
       "renders a close button in the full anatomy, wired to popoverTargetAction=hide": "passed",
       "omits the title, description and close button entirely in bare mode": "passed",
       "renders no arrow by default, and one only when asked": "passed",
       "writes the chosen placement onto the content": "passed",
-      "names an icon-only trigger with triggerLabel": "passed"
+      "names an icon-only trigger with triggerLabel": "passed",
+      "passes triggerVariant/triggerSize/triggerIconOnly through to the trigger button": "passed",
+      "leaves the trigger's variant/size/icon-only attributes off when unset": "passed"
     },
     "apps/docs/src/examples/card-sources.test.ts": {
       "keeps every example's data array at exactly three cards": "passed",
@@ -782,7 +876,7 @@
     "apps/docs/src/components/pages/ChartsPage.test.ts": {
       "composes the dashboard cards from Box, Stat, Chart and Button": "passed",
       "does not expose TanStack's grammar on the documented path": "passed",
-      "opens on the three card compositions before documenting Chart itself": "passed"
+      "keeps only the React-only chart previews as viewport-triggered islands": "passed"
     },
     "packages/charts/src/react/chart.test.tsx": {
       "spreads a series across the unit box and inverts it, so the biggest value is highest": "passed",
@@ -797,6 +891,44 @@
       "hides the overlay from assistive tech, so the series is never read twice": "passed",
       "stretches a unit box instead of measuring the plot": "passed",
       "renders nothing rather than an empty path when there is no data": "passed"
+    },
+    "packages/react/src/components/breadcrumb.test.tsx": {
+      "renders a plain, uncollapsed trail when it is short enough that nothing is worth collapsing": "passed",
+      "opens a real Menu of the hidden ancestors when the trail overflows its container": "passed",
+      "leaves a trail that fits on one line uncollapsed": "passed",
+      "re-measures on every resize, even shrinking from an already-expanded state": "passed"
+    },
+    "packages/vanilla/src/components/breadcrumb.test.ts": {
+      "does nothing to a trail short enough that nothing is worth collapsing": "passed",
+      "leaves a trail that fits on one line untouched": "passed",
+      "opens a real Menu of the hidden ancestors when the trail does not fit": "passed",
+      "re-derives the collapse on every resize, expanding first so it never gets stuck": "passed",
+      "restores every crumb to visible on unmount": "passed"
+    },
+    "packages/react/src/components/back-to-top.test.tsx": {
+      "renders hidden, and names the control from its children once shown": "passed",
+      "reveals once scrolled past the threshold and hides again above it": "passed",
+      "returns the window to the top on click, smoothly by default": "passed",
+      "jumps instantly when the reader prefers reduced motion": "passed",
+      "moves focus to `target` after scrolling, without a second scroll": "passed",
+      "acts on a named inner scroller instead of the window": "passed",
+      "still calls a consumer's onClick, and lets it opt out of the scroll": "passed"
+    },
+    "packages/vanilla/src/components/back-to-top.test.ts": {
+      "reveals at or past the threshold, never before": "passed",
+      "shows from the first pixel when the threshold is 0": "passed",
+      "treats a broken threshold as the default, not as always- or never-on": "passed",
+      "never reveals on a non-finite scroll position": "passed",
+      "parses data-threshold, falling back to the default on empty or unparseable input": "passed",
+      "animates the scroll unless the reader asked for less motion": "passed",
+      "stays hidden below the threshold and reveals once past it": "passed",
+      "honours a custom data-threshold": "passed",
+      "returns the window to the top on click, smoothly by default": "passed",
+      "jumps instantly when the reader prefers reduced motion": "passed",
+      "moves focus to `target` after the scroll, without starting a second one": "passed",
+      "acts on a named inner scroller instead of the window": "passed",
+      "stops syncing once cleaned up": "passed",
+      "mounts once per authored root": "passed"
     }
   }
 }

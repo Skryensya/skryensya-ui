@@ -72,6 +72,10 @@ const componentDescriptions = {
     es: "Busca y selecciona una opción mediante una entrada editable.",
     en: "Searches and selects an option through editable input.",
   },
+  "/componentes/comment-thread": {
+    es: "Hilo de comentarios anidados: respuestas, voto y borrado, data-driven y sin backend.",
+    en: "Threaded, nested comments: replies, voting and delete, data-driven with no backend.",
+  },
   "/componentes/command-palette": {
     es: "Encuentra destinos y ejecuta comandos desde el teclado.",
     en: "Finds destinations and runs commands from the keyboard.",
@@ -99,6 +103,14 @@ const componentDescriptions = {
   "/componentes/empty-state": {
     es: "Explica por qué no hay contenido y orienta el siguiente paso.",
     en: "Explains why content is absent and points to the next step.",
+  },
+  "/componentes/editor": {
+    es: "Texto enriquecido con una barra de formato, construido sobre ProseMirror.",
+    en: "Rich text with a formatting bar, built on ProseMirror.",
+  },
+  "/componentes/folder": {
+    es: "Una superficie con pestaña, dibujada como una silueta sola; puede aparecer sólo al interactuar.",
+    en: "A surface with a tab, drawn as one silhouette; it can appear only on interaction.",
   },
   "/componentes/fade-edge": {
     es: "Desvanece el contenido suavemente en un borde para ocultar overflow sin cortes duros.",

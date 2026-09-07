@@ -41,6 +41,18 @@ describe("ui.ts locale parity", () => {
    * the fuzzy version was trying to automate away.
    */
   const identicalByDesign: readonly string[] = [
+    /* Lorem ipsum: placeholder Latin in the CommentThread demos, chosen so the examples show real
+     * paragraph lengths (one long, several medium, two short) without any of them being sentences a
+     * reader could mistake for documentation. It is the same Latin in both locales by definition -
+     * translating placeholder text would defeat what it is for. */
+    "demo.commentThread.body1",
+    "demo.commentThread.body2",
+    "demo.commentThread.body3",
+    "demo.commentThread.body4",
+    "demo.commentThread.body5",
+    "demo.commentThread.body6",
+    "demo.commentThread.body7",
+    "demo.commentThread.body8",
     // Component-name / feature lists, `·` or `+`-joined: naming is locale-invariant on purpose.
     "cardPage.gradientNote",
     "carousel.multiNote",

@@ -486,6 +486,7 @@ const componentItems = [
   {
     href: "/componentes/breadcrumb",
     label: "Breadcrumb",
+    trailing: "Beta",
     aliases: ["migas de pan", "ruta jerárquica", "ruta jerarquica"],
   },
   {
@@ -493,6 +494,12 @@ const componentItems = [
     label: "Combobox",
     trailing: "Beta",
     aliases: ["autocompletar", "autocomplete", "selector editable"],
+  },
+  {
+    href: "/componentes/comment-thread",
+    label: "CommentThread",
+    trailing: "Beta",
+    aliases: ["hilo de comentarios", "comentarios", "respuestas anidadas", "comment thread"],
   },
   {
     href: "/componentes/date-picker",
@@ -516,6 +523,17 @@ const componentItems = [
     label: "EmptyState",
     trailing: "Beta",
     aliases: ["estado vacío", "estado vacio", "sin resultados"],
+  },
+  {
+    href: "/componentes/editor",
+    label: "Editor",
+    trailing: "Beta",
+    aliases: ["editor de texto enriquecido", "wysiwyg", "rich text", "prosemirror", "editor de contenido"],
+  },
+  {
+    href: "/componentes/folder",
+    label: "Folder",
+    aliases: ["carpeta", "folder", "pestaña", "pestana", "tab surface", "pila de carpetas"],
   },
   {
     href: "/componentes/file-upload",
@@ -550,6 +568,7 @@ const componentItems = [
   {
     href: "/componentes/popup",
     label: "Popup",
+    trailing: "Beta",
     aliases: ["superficie flotante", "popup primitivo"],
   },
   {
@@ -573,6 +592,7 @@ const componentItems = [
   {
     href: "/componentes/toolbar",
     label: "Toolbar",
+    trailing: "Beta",
     aliases: ["barra de herramientas", "grupo de controles"],
   },
   {
@@ -609,6 +629,7 @@ export const componentNavigation = [
       "/componentes/color-picker",
       "/componentes/combobox",
       "/componentes/date-picker",
+      "/componentes/editor",
       "/componentes/file-upload",
       "/componentes/form-field",
       "/componentes/input",
@@ -655,6 +676,7 @@ export const componentNavigation = [
       "/componentes/changelog",
       "/componentes/charts",
       "/componentes/code-preview",
+      "/componentes/comment-thread",
       "/componentes/component-preview",
       "/componentes/data-grid",
       "/componentes/feed",
@@ -697,6 +719,17 @@ export const componentNavigation = [
       "/componentes/popup",
       "/vaul",
     ),
+  },
+  /*
+   * EXPRESSIVE: pieces with a shape of their own, whose point is the drawing as much as the job.
+   * They fit none of the five groups above and putting them in one anyway is how a catalogue starts
+   * lying about what it holds. Deliberately not called "misc": a drawer with that name is the one
+   * nobody ever reviews.
+   */
+  {
+    group: "group.componentExpressive",
+    blurb: "group.componentExpressive.blurb",
+    items: componentGroupItems("/componentes/folder"),
   },
   {
     group: "group.componentLayout",

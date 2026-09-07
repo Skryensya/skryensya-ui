@@ -1,0 +1,39 @@
+# Qué cambió en editor, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
+# hash nuevo.
+surface: "a70ea77668a62773"
+entries:
+  - date: 2026-09-04
+    kind: feature
+    es:
+      title: Editor se publica como contrato
+      body: >-
+        Entra al catálogo como <code>Editor</code> (superficie + barra, siempre juntas — no hay
+        una versión sin barra). El motor es ProseMirror, empaquetado aparte en
+        <code>@skryensya/editor</code> (peer dependency opcional): negrita, cursiva, subrayado,
+        enlaces, títulos H1–H3, listas, citas y bloques de código, con deshacer/rehacer. Cada
+        cambio entrega <code>html</code>, <code>markdown</code> y el <code>doc</code> nativo de
+        ProseMirror a la vez. La barra reusa
+        <code>Toolbar</code>/<code>ToolbarGroup</code>/<code>ToolbarSeparator</code> sin cambios;
+        la superficie reusa la caja de <code>Input</code>/<code>Textarea</code>
+        (<code>sk-input</code>). Opciones: <code>name</code>, <code>defaultValue</code>,
+        <code>placeholder</code>, <code>readOnly</code>, <code>disabled</code>,
+        <code>autofocus</code>, <code>label</code>, <code>toolbarLabel</code>,
+        <code>toolbarCompact</code>. La hoja es <code>components/editor.css</code>.
+    en:
+      title: Editor is published as a contract
+      body: >-
+        It joins the catalogue as <code>Editor</code> (bar + surface, always together — there is
+        no toolbar-less version). The engine is ProseMirror, packaged separately as
+        <code>@skryensya/editor</code> (an optional peer dependency): bold, italic, underline,
+        links, H1–H3 headings, lists, blockquotes and code blocks, with undo/redo. Every change
+        reports <code>html</code>, <code>markdown</code> and the raw ProseMirror <code>doc</code>
+        at once. The bar reuses
+        <code>Toolbar</code>/<code>ToolbarGroup</code>/<code>ToolbarSeparator</code> unchanged;
+        the surface reuses <code>Input</code>/<code>Textarea</code>'s own box
+        (<code>sk-input</code>). Options: <code>name</code>, <code>defaultValue</code>,
+        <code>placeholder</code>, <code>readOnly</code>, <code>disabled</code>,
+        <code>autofocus</code>, <code>label</code>, <code>toolbarLabel</code>,
+        <code>toolbarCompact</code>. Its stylesheet is <code>components/editor.css</code>.

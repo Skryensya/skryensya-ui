@@ -54,6 +54,12 @@
     // la sección envuelve trigger Y contenido, así que el layer pintado detrás de toda ella teñía el
     // contenido revelado al pasar el mouse.
     ensureClasses(el, tileParts.root, tileParts.expandable);
+    // Apaga el shim anti-flash de `tile.css` (`:not([data-sk-tile-ready])`): antes de este efecto,
+    // el contenido autorado no tiene `hidden` ni `data-state`, así que se veía abierto un instante
+    // aunque la sección arranque cerrada. Se pone una vez y nunca se saca, para que un panel
+    // asentado en abierto (que más tarde pierde `data-state` por la propia optimización de Zag)
+    // no vuelva a caer bajo ese shim.
+    el.setAttribute("data-sk-tile-ready", "");
     el.dataset.value = value;
     if (trigger) {
       applyZagProps(trigger, api.getTriggerProps() as DomProps);

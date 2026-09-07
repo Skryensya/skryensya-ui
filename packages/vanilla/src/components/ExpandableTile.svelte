@@ -52,6 +52,9 @@
     scopeTile(content);
     ensureClasses(root, tileParts.root, tileParts.expandable);
     ensureClasses(trigger, tileParts.interactive, "sk-interactive");
+    // Same anti-flash handoff as `AccordionItem.svelte`: see that file's own comment and
+    // `tile.css`'s `:not([data-sk-tile-ready])` rule for why this is set once and never removed.
+    root.setAttribute("data-sk-tile-ready", "");
   });
 
   const cleanups: Array<() => void> = [];

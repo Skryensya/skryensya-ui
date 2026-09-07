@@ -252,6 +252,39 @@
     color: var(--sk-color-text-secondary);
   }
 
+  /*
+   * THE UNMOUNTED FLASH. Authored/emitted markup for a closed section has no `hidden`, no
+   * `data-state`, nothing: the collapsible machine owns both, and it has not run yet. Until it
+   * does, this content sits under the OPEN LOOK rule below (`:not([hidden])` matches an absent
+   * attribute same as a present-but-false one) and paints padded, bordered and fully visible, on
+   * every section that is not `defaultOpen` — which on a page like the component gallery is most
+   * of them. The result was a real, reproducible flash: every closed accordion/tile rendered OPEN
+   * for one paint, then snapped shut the moment `initComponents()` reached it.
+   *
+   * Three conditions, all necessary:
+   *   - `:not([data-default-open])` on the tile itself: a section actually marked default-open is
+   *     SUPPOSED to render open at first paint (the EXPAND comment below already documents this as
+   *     the no-flash case), so this must never touch it.
+   *   - `:not([data-sk-tile-ready])`, ALSO on the tile: the flag `AccordionItem.svelte` and
+   *     `ExpandableTile.svelte` set once their own effect has run at all, regardless of open or
+   *     closed. It never comes off again, which is what makes this permanent instead of a race: a
+   *     settled-open panel LATER drops `data-state` entirely too (collapsible's own "skip"
+   *     optimization, same rule the OPEN LOOK comment describes), and without this second gate
+   *     that drop would fall through to `:not([data-state])` below and re-hide a panel the reader
+   *     just opened by hand.
+   *   - `:not([data-state])` on the CONTENT itself: React's binding renders synchronously, so its
+   *     very first paint already carries `data-state="closed"` (or `hidden`) with no separate
+   *     patch pass to flash between; this is what keeps the rule a no-op there without needing the
+   *     Vanilla-only ready flag at all. It is also what lets a Vanilla panel keep animating
+   *     normally forever after: `data-state` is present from the enhancer's first effect on,
+   *     whether opening, closing, or resting closed (see the OPEN LOOK note), so this clause alone
+   *     already stops matching well before the ready flag would need to.
+   */
+  .sk-tile--expandable:not([data-default-open]):not([data-sk-tile-ready])
+    > .sk-tile__expandable-content:not([data-state]) {
+    display: none;
+  }
+
   /* OPEN LOOK, the chrome a revealed panel wears (opening, settled open, OR collapsing). Deliberately
    * keyed OFF [data-state="open"]: the collapsible machine DROPS data-state entirely once a panel settles
    * open (its "skip" optimization), so binding the resting look to [data-state="open"] would strip the

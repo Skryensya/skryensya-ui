@@ -7,6 +7,7 @@ import contractSource from "@contracts/semantic/footer.yaml?raw";
 import coreSource from "@core/src/footer.ts?raw";
 import cssSource from "@core/css/patterns/footer.css?raw";
 import reactSource from "@react/src/components/layout.tsx?raw";
+import reactTestSource from "@react/src/components/layout.test.tsx?raw";
 /* The sheet itself, not only its source: the Style hooks table resolves each hook against a real
    element, and a page that never loads `patterns/footer.css` shows every value blank. */
 import "@skryensya/core/patterns/footer.css";
@@ -20,6 +21,7 @@ const sourceFiles = [
   { id: "packages/core/src/footer.ts", source: coreSource, language: "ts" },
   { id: "packages/core/css/patterns/footer.css", source: cssSource, language: "css" },
   { id: "packages/react/src/components/layout.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/layout.test.tsx", source: reactTestSource, language: "tsx" },
 ] as const;
 
 const footerSiteTree = footerColumnsTree(t, docsHref);
@@ -33,6 +35,21 @@ const footerOneLineTree = footerCreditTree(t);
   contractId="footer"
   styleGroups={[{ file: "patterns/footer.css", probe: "sk-footer" }]}
   sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/layout.test.tsx",
+      tests: [
+        {
+          name: "renders Footer as a contentinfo landmark with its documented defaults",
+          description: t("footer.test1"),
+        },
+        {
+          name: "lets Footer opt out of the divider, change padding/surface, and drop the landmark via `as`",
+          description: t("footer.test2"),
+        },
+      ],
+    },
+  ]}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("footer.lede")} />

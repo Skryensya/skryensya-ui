@@ -176,7 +176,17 @@ export const sidebarFloatingTriggerTree = (
     {
       contract: "box",
       signature: "Box",
-      attrs: { class: "app-shell__main" },
+      /*
+       * `padding-block-start` bumped past `.app-shell__main`'s own `--space-inset-lg` (24px): the
+       * floating trigger's box reaches `--sk-sidebar-trigger-offset-block` + `--sk-sidebar-trigger-
+       * size` (8 + 32 = 40px) down from the same shared top edge this pane starts from, so the
+       * class's own padding alone left the sample copy's first line sitting in the same band the
+       * trigger occupies — the button visually crossed out its own first word. This is scoped to
+       * the demo's sample copy, the same clearance a real consumer would give their own first line
+       * next to a floating corner trigger; it is not something `--sk-sidebar-trigger-offset-inline`
+       * alone can buy back at any reasonable value once the trigger is a real 32px square.
+       */
+      attrs: { class: "app-shell__main", style: "padding-block-start: 3rem" },
       children: {
         contract: "typography",
         signature: "Text",

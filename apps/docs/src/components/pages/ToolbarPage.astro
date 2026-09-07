@@ -36,6 +36,7 @@ const sourceFiles = [
 <ComponentPageShell
   title="Toolbar"
   description={t("toolbarPage.description")}
+  badge={t("toolbarPage.betaBadge")}
   contractId="toolbar"
   sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/toolbar.css", probe: "sk-toolbar", title: "Toolbar" }]}
@@ -50,6 +51,9 @@ const sourceFiles = [
     <h3>{t("toolbarPage.compositeTitle")}</h3>
     <p set:html={t("toolbarPage.compositeBody")} />
     <ComponentPreview tree={nestedToolbarTree(t)} js={js} label={t("toolbarPage.compositeLabel")} viewport="auto" />
+
+    <h3>{t("toolbarPage.wysiwygTitle")}</h3>
+    <p set:html={t("toolbarPage.wysiwygBody")} />
   </Fragment>
 
   <Fragment slot="install">

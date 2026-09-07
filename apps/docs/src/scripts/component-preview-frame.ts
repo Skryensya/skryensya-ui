@@ -641,6 +641,19 @@ async function boot(): Promise<void> {
    */
   if (document.querySelector("[data-sk-code-preview]")) mountCodePreview(document);
   if (document.querySelector("[data-sk-component-preview]")) mountComponentPreview(document);
+  /*
+   * Editor is deliberately absent from `initComponents`'s own registry (`mountFrameComponents`
+   * above already ran it): `@skryensya/editor` is an OPTIONAL peer dependency of
+   * `@skryensya/vanilla` (ProseMirror, ~9 packages), so the package's auto-loader must never name
+   * it, even lazily. This site's docs, though, is exactly the kind of consumer that already
+   * depends on `@skryensya/editor` directly — it is what builds this very demo — so it opts in
+   * explicitly here, the same shape any real page hosting an Editor would write for itself
+   * (`EditorPage.astro`'s own `js` snippet shows that exact shape to the reader).
+   */
+  if (document.querySelector("[data-sk-editor]")) {
+    const { mountEditor } = await import("@skryensya/vanilla/editor");
+    mountEditor(document);
+  }
   await mountReactDemo();
   runAuthoredScript();
 

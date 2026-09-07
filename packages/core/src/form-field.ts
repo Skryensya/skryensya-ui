@@ -49,6 +49,16 @@ export const formFieldContract = {
      */
     required: { type: "boolean", default: false, attr: "required", trueValue: "" },
     disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "" },
+    /**
+     * Clips the label to a name-only box instead of dropping it. The control still HAS a label, the
+     * wiring below still points at it, and a screen reader still reads it: what changes is that the
+     * eye does not, because the surrounding composition already said what this field is. A reply box
+     * under the comment it answers is the case that asked for it.
+     *
+     * Not "no label": a field with none is a control nothing announces, which is why the slot stays
+     * required. Same distinction `SkipLink` and every icon-only Button already make.
+     */
+    labelHidden: { type: "boolean", default: false, attr: "data-label-hidden", trueValue: "" },
   },
 
   signatures: {
@@ -56,7 +66,7 @@ export const formFieldContract = {
       intent: ["labelled-control", "form-field", "input-with-label", "validation-message"],
       host: { element: "div" },
       // Neither lands on the field box: both are the control's, delivered by the wiring below.
-      options: ["required", "disabled"],
+      options: ["required", "disabled", "labelHidden"],
       slots: {
         label: { accepts: "node", required: true },
         /** Guidance shown before the control. Pointed at by `aria-describedby`. */

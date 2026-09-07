@@ -3,8 +3,29 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "5e8b6c44e3c195d2"
+surface: "7e2acc48b1f75043"
 entries:
+  - date: 2026-09-05
+    kind: feature
+    es:
+      title: FormField gana labelHidden
+      body: >-
+        Recorta el label a una caja de solo-nombre en vez de sacarlo: el control sigue teniendo
+        label, la conexión `for` sigue apuntando ahí y un lector de pantalla lo sigue leyendo; lo
+        único que cambia es que el ojo no. Para un campo al que la composición de alrededor ya
+        nombró, como la caja de respuesta debajo del comentario que contesta, donde repetir la
+        palabra es ruido que hay que saltear. No es "sin label": el slot sigue siendo obligatorio,
+        porque un campo sin él es un control que nada anuncia. La misma distinción que ya hacen
+        `SkipLink` y cualquier Button icon-only.
+    en:
+      title: FormField gains labelHidden
+      body: >-
+        Clips the label to a name-only box rather than dropping it: the control still has a label,
+        the `for` wiring still points at it, and a screen reader still reads it; what changes is
+        that the eye does not. For a field the surrounding composition already named, like the
+        reply box under the comment it answers, where repeating the word is noise to skip. Not "no
+        label": the slot stays required, because a field without one is a control nothing
+        announces. The same distinction `SkipLink` and every icon-only Button already make.
   - date: 2026-08-14
     kind: breaking
     es:

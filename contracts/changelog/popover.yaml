@@ -3,7 +3,7 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "56b26a7b4ffce88d"
+surface: "35d0abbbb706e22b"
 entries:
   - date: 2026-08-11
     kind: feature
@@ -25,3 +25,26 @@ entries:
         bindings are the same markup twice. Options: <code>panelId</code>, <code>placement</code>,
         <code>arrow</code>, <code>bare</code>, <code>closeLabel</code>. Its stylesheet is
         <code>components/popover.css</code>.
+  - date: 2026-09-04
+    kind: feature
+    es:
+      title: El trigger de Popover acepta variante, tamaño y forma de icono
+      body: >-
+        Se suman <code>triggerVariant</code>, <code>triggerSize</code> y
+        <code>triggerIconOnly</code>, las mismas tres opciones que <code>Menu</code> ya publica para
+        su propio trigger y que escriben los mismos atributos que <code>variant</code>,
+        <code>size</code> e <code>iconOnly</code> de <code>Button</code>. Sirven para un Popover
+        compuesto dentro de la fila de otro control: sin ellas el trigger salía con la variante y el
+        alto por defecto de Button, y al lado de una barra de botones de icono chicos se leía como
+        una caja suelta. El binding de React agrega además <code>triggerClassName</code>, igual que
+        <code>Menu</code>.
+    en:
+      title: Popover's trigger takes a variant, a size and the icon-only shape
+      body: >-
+        Adds <code>triggerVariant</code>, <code>triggerSize</code> and
+        <code>triggerIconOnly</code> — the same three options <code>Menu</code> already publishes
+        for its own trigger, writing the same attributes <code>Button</code>'s own
+        <code>variant</code>, <code>size</code> and <code>iconOnly</code> do. They are for a Popover
+        composed into another control's row: without them the trigger drew at Button's default
+        variant and control height, and next to a bar of small icon buttons it read as a stray box.
+        The React binding also takes <code>triggerClassName</code>, the same as <code>Menu</code>.

@@ -1,9 +1,15 @@
-import { popoverParts, type PopoverPlacement } from "@skryensya/core/popover";
+import { popoverContract, popoverParts, type PopoverPlacement } from "@skryensya/core/popover";
 import { useId, type HTMLAttributes, type ReactNode, type RefObject } from "react";
 import { anchoredParts } from "@skryensya/core/anchored";
 
 
 const cx = (...classes: Array<string | undefined>) => classes.filter(Boolean).join(" ");
+
+const {
+  triggerVariant: triggerVariantOption,
+  triggerSize: triggerSizeOption,
+  triggerIconOnly: triggerIconOnlyOption,
+} = popoverContract.options;
 
 export type PopoverProps = Omit<HTMLAttributes<HTMLDivElement>, "content" | "title"> & {
   trigger: ReactNode;
@@ -23,6 +29,15 @@ export type PopoverProps = Omit<HTMLAttributes<HTMLDivElement>, "content" | "tit
   triggerLabel?: string;
   closeLabel?: string;
   contentClassName?: string;
+  triggerClassName?: string;
+  /** Passed straight to the trigger's own `data-variant`/`data-size`; see `popover.ts`'s identical
+   *  option doc. `Button`'s own `[data-variant="…"]`/`[data-size="…"]` rules (button.css) apply to
+   *  the trigger directly once these are set; nothing here repeats their CSS. */
+  triggerVariant?: string;
+  triggerSize?: string;
+  /** The SAME attribute `Button`'s own `iconOnly` option writes; see `popover.ts`'s identical
+   *  option doc. Pair it with `triggerLabel`. */
+  triggerIconOnly?: boolean;
   /**
    * Where the floating content is portalled. Defaults to `document.body`, which is right whenever
    * an ancestor might clip it. Pass a ref to keep the content inside a subtree instead: a preview
@@ -44,7 +59,11 @@ export function Popover({
   arrow = false,
   placement = "block-end",
   trigger,
+  triggerClassName,
+  triggerIconOnly = false,
   triggerLabel,
+  triggerSize,
+  triggerVariant,
   title,
   ...props
 }: PopoverProps) {
@@ -66,9 +85,14 @@ export function Popover({
     <div {...props} className={cx(popoverParts.root, className)}>
       <button
         aria-label={triggerLabel}
-        className={cx("sk-button", "sk-interactive", popoverParts.trigger, anchoredParts.anchor)}
+        className={cx("sk-button", "sk-interactive", popoverParts.trigger, anchoredParts.anchor, triggerClassName)}
         popoverTarget={contentId}
         type="button"
+        {...{
+          [triggerVariantOption.attr]: triggerVariant,
+          [triggerSizeOption.attr]: triggerSize,
+          [triggerIconOnlyOption.attr]: triggerIconOnly ? triggerIconOnlyOption.trueValue : undefined,
+        }}
       >
         {trigger}
       </button>

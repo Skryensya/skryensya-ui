@@ -128,4 +128,41 @@ describe("Popover (React)", () => {
     );
     expect(ui.getByRole("button", { name: "Abrir filtros" })).toBeTruthy();
   });
+
+  /*
+   * The same three attributes `Button`'s own `variant`/`size`/`iconOnly` write, so `button.css`'s
+   * existing rules shape the trigger without this file repeating any of them. What a Popover
+   * composed into another control's row needs (the Editor toolbar's link button): without them the
+   * trigger draws at Button's defaults and reads as a stray box beside the bar.
+   */
+  it("passes triggerVariant/triggerSize/triggerIconOnly through to the trigger button", () => {
+    const ui = render(
+      <Popover
+        trigger={<svg />}
+        triggerClassName="sk-editor__toolbar-button"
+        triggerIconOnly
+        triggerLabel="Insertar enlace"
+        triggerSize="sm"
+        triggerVariant="ghost"
+      >
+        Content
+      </Popover>,
+    );
+    const trigger = ui.getByRole("button", { name: "Insertar enlace" });
+    expect(trigger.getAttribute("data-variant")).toBe("ghost");
+    expect(trigger.getAttribute("data-size")).toBe("sm");
+    expect(trigger.getAttribute("data-icon-only")).toBe("");
+    expect(trigger.classList.contains("sk-editor__toolbar-button")).toBe(true);
+    // Still the trigger Popover's own CSS and the anchoring pattern find.
+    expect(trigger.classList.contains("sk-popover__trigger")).toBe(true);
+    expect(trigger.classList.contains("sk-anchor")).toBe(true);
+  });
+
+  it("leaves the trigger's variant/size/icon-only attributes off when unset", () => {
+    const ui = render(<Popover trigger="Open">Content</Popover>);
+    const trigger = ui.getByRole("button", { name: "Open" });
+    expect(trigger.hasAttribute("data-variant")).toBe(false);
+    expect(trigger.hasAttribute("data-size")).toBe(false);
+    expect(trigger.hasAttribute("data-icon-only")).toBe(false);
+  });
 });

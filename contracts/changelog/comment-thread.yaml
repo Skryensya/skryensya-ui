@@ -1,0 +1,105 @@
+# Qué cambió en comment-thread, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
+# hash nuevo.
+surface: "e7d751ebd5208c36"
+entries:
+  - date: 2026-09-05
+    kind: feature
+    es:
+      title: La API en Vanilla se completa con hooks, blueprint, escritura de estado y veto
+      body: >-
+        Cuatro cambios que persiguen lo mismo, que un consumidor de Vanilla nunca tenga que tocar
+        clases internas. `data-sk-comment-avatar`/`-author`/`-timestamp` completan el
+        direccionamiento: antes sólo el cuerpo tenía hook, así que llenar un comentario obligaba a
+        buscar `.sk-comment__author`, que es de la hoja de estilos y se mueve cuando cambia la
+        pintura. `CommentTemplate` publica un blueprint que se clona para crear un comentario en
+        runtime, igual que `ToastTemplate`; es deliberadamente un `&lt;template&gt;` y no un
+        `renderComment(data)`, porque generar anatomía en el binding crearía una segunda fuente que
+        mantener en línea con el template del contrato. `setCommentVote(group, { voted, count })`
+        escribe un voto: son tres atributos que tienen que coincidir (`data-voted` pinta, dos
+        `aria-pressed` anuncian) y escritos a mano se separaron dos veces. Y los tres eventos ahora
+        son `cancelable`: `preventDefault()` sobre `reply` conserva el borrador y la caja abierta,
+        para que un POST fallido no se lleve lo que la persona escribió.
+    en:
+      title: The Vanilla API completed with hooks, blueprint, state writing and veto
+      body: >-
+        Four changes chasing the same thing, that a Vanilla consumer never has to reach for internal
+        classes. `data-sk-comment-avatar`/`-author`/`-timestamp` complete the addressing: only the
+        body had a hook before, so filling a comment meant querying `.sk-comment__author`, which
+        belongs to the stylesheet and moves whenever the paint does. `CommentTemplate` publishes a
+        blueprint to clone when creating a comment at runtime, the same shape `ToastTemplate` has;
+        deliberately a `&lt;template&gt;` and not a `renderComment(data)`, because generating anatomy in
+        the binding would create a second source of it to keep in step with the contract's template.
+        `setCommentVote(group, { voted, count })` writes a vote: three attributes have to agree
+        (`data-voted` paints, two `aria-pressed` announce) and written by hand they drifted apart
+        twice. And the three events are now `cancelable`: `preventDefault()` on `reply` keeps the
+        draft and the open box, so a failed POST does not take what the person wrote with it.
+  - date: 2026-09-05
+    kind: feature
+    es:
+      title: CommentComposer gana cancelar, y deja de traer superficie propia
+      body: >-
+        `cancellable` agrega un control de cancelar al lado de publicar. Cuando la caja tiene algo
+        escrito, cancelar NO la cierra: despacha `sk:commentdiscard` con lo escrito y se detiene,
+        para que quien lo use confirme antes de tirar un borrador. Vacía se cierra sola, porque no
+        hay nada que perder y un diálogo sobre nada es uno que se aprende a descartar sin leer. La
+        misma reserva que ya tiene borrar: el componente reporta, la app decide. Además el composer
+        dejó de envolverse en un `Box`: el control que recibe ya dibuja su propia superficie, así
+        que la caja era un marco alrededor de un marco.
+    en:
+      title: CommentComposer gains cancel, and stops bringing a surface of its own
+      body: >-
+        `cancellable` adds a cancel control beside submit. When the box has something written in it,
+        cancel does NOT close it: it dispatches `sk:commentdiscard` with the draft and stops, so a
+        consumer can confirm before anything is thrown away. An empty one just closes, because there
+        is nothing to lose and a dialog about nothing is one a reader learns to dismiss unread. The
+        same restraint delete already keeps: the component reports, the app decides. The composer
+        also stopped wrapping itself in a `Box` - the control it is handed already draws a surface,
+        so the box was a frame around a frame.
+  - date: 2026-09-04
+    kind: feature
+    es:
+      title: Nuevo componente CommentThread, en cinco piezas
+      body: >-
+        Comentarios anidados como cinco signatures que se usan juntas o sueltas: `Comment` (autor,
+        cuándo y qué dijo, la pieza más simple y válida sin hilo alrededor), `CommentActions` (la
+        fila de votar/responder/borrar), `CommentVote` (arriba, contador, abajo), `CommentComposer`
+        (la caja de escribir) y `CommentThread` (el contenedor que los nombra). Las respuestas
+        recursan por COMPOSICIÓN - `Comment.replies` acepta `Comment` - así cada slot a cualquier
+        profundidad admite contenido compuesto: un Avatar junto al nombre, texto rico en el cuerpo.
+        El composer NO entrega ningún control: su slot acepta cualquier signature, igual que el de
+        `FormField`, así que un field, un textarea o un editor entran por igual. Data-driven y sin
+        backend - cada acción se devuelve al consumidor, nunca llama a una red ni guarda un
+        borrador. Sin `role="feed"` ni `role="tree"`: `&lt;article&gt;` anidado nativo, la misma jerarquía
+        implícita que un `&lt;article&gt;` dentro de otro ya le da a un lector de pantalla sin autoría
+        manual de `aria-level`. El plegado es opcional (`collapsible`), su control sólo existe donde
+        HAY respuestas que plegar, y oculta las RESPUESTAS, no el
+        comentario: un hilo se hace largo por lo que cuelga de un comentario, así que esconder lo
+        que alguien dijo para saltarse la discusión de abajo perdería justo lo que se estaba
+        leyendo. Usa el mismo patrón de disclosure que `NavListGroup` (`aria-expanded` + `hidden`),
+        no una máquina de Zag. Borrar no
+        trae modal propio - quien lo consuma compone `Dialog` (`alert: true`) si lo necesita.
+    en:
+      title: New CommentThread component, as five pieces
+      body: >-
+        Nested comments as five signatures usable together or apart: `Comment` (an author, when and
+        what they said - the simplest piece, valid with no thread around it), `CommentActions` (the
+        vote/reply/delete row), `CommentVote` (up, count, down), `CommentComposer` (the write box)
+        and `CommentThread` (the container that names them). Replies recurse by COMPOSITION -
+        `Comment.replies` takes `Comment` - so every slot at every depth accepts composed content:
+        rich text in the body, whatever names a person. The avatar is its OWN slot rather than
+        content inside `author`, because it is structural: the thread line descends from it, past
+        the fold control riding on it, into each reply's own avatar. The composer SHIPS NO CONTROL: its slot
+        takes any signature at all, exactly as `FormField`'s own does, so a field, a textarea or an
+        editor all fit. Data-driven, no backend - every action is handed back to the consumer, and
+        it never calls a network or persists a draft. No `role="feed"`, no `role="tree"`: plain
+        nested `&lt;article&gt;`, the same implicit hierarchy a nested `&lt;article&gt;` already gives a screen
+        reader with no hand-authored `aria-level`. Folding is opt-in (`collapsible`), its control exists only where there ARE
+        replies to fold, and it hides the REPLIES, not the
+        comment: a thread gets long because of what hangs off a comment, so hiding what someone said
+        in order to skip the argument under it would lose the thing being read. It uses the same
+        disclosure pattern `NavListGroup` already does (`aria-expanded` + `hidden`), not a Zag
+        machine. Delete carries no modal of its own - a consumer composes `Dialog` (`alert: true`)
+        if they want one.

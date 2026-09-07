@@ -1,0 +1,701 @@
+/*
+ * TIER 3, COMMENT THREAD: five pieces, each styleable on its own, because each is usable on its own
+ * (`comment-thread.ts`'s banner). A `Comment` quoted somewhere with no thread around it has to look
+ * right, so nothing here is written as "a descendant of the thread".
+ *
+ * Structure and tone only. Vote/reply/collapse/delete BEHAVIOUR lives in the two bindings; this file
+ * paints whichever state they leave on the DOM. Every control is a real `sk-button`, so the face,
+ * the radius, the focus ring, the state paint and the touch target come from `button.css` and are
+ * never re-declared here.
+ */
+@layer components {
+  /* ── The thread ─────────────────────────────────────────────────────────── */
+
+  .sk-comment-thread {
+    /* Between two SIBLING comments. Deliberately much larger than the gap INSIDE one
+     * (`--sk-comment-gap` below): the only thing telling a reader where one comment ends is that
+     * the space between two of them beats the space between a comment's own header, body and
+     * actions. Too close, and four comments read as one wall of text. */
+    --sk-comment-thread-gap: var(--space-stack-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-comment-thread-gap);
+    /* A flex item does not shrink below its min-content width unless told to, and a thread's
+     * min-content is set by its DEEPEST reply: every level adds an indent, so at four levels deep
+     * the whole thread refused to fit a phone and pushed its container 36px wider than the screen.
+     * Measured at 375px: parent 343, thread 379. */
+    min-inline-size: 0;
+    color: var(--color-text-primary);
+  }
+
+  .sk-comment-thread__composer-slot {
+    /* Its own rule rather than leaning on the flex gap: the composer is a different KIND of thing
+     * from the comments under it, and reads better with more air than they get from each other. */
+    margin-block-end: var(--space-stack-sm);
+  }
+
+  /* ── One comment ────────────────────────────────────────────────────────── */
+
+  /*
+   * `__self` is the comment's own row - the gutter beside what it says - and the replies sit
+   * OUTSIDE it. That is the whole geometry: the gutter is a flex sibling of the content, so it
+   * stretches to the content's height by itself, and the line drawn in it ends where the comment
+   * ends rather than running down through the replies. Each reply then draws its own incoming
+   * segment and elbow, all on the parent avatar's centre line, so the rail is continuous at any
+   * depth with nothing measuring anything.
+   */
+  .sk-comment {
+    /* Tight INSIDE one comment (8px); `--sk-comment-thread-gap` (24px) separates two of them, so
+     * the rhythm inside is a third of the rhythm between and the block reads as one thing.
+     * `stack-xs` is the smallest step the scale HAS - this was once authored as `--space-stack-2xs`,
+     * which does not exist, so the declaration was invalid and every comment rendered at zero. */
+    --sk-comment-gap: var(--space-stack-xs);
+    /* The gutter's width, and so where the line runs: the avatar's own size. */
+    --sk-comment-gutter: var(--size-control-sm);
+    /* Gutter to content. `inline-md`, for the reason `button.css` gives about its own icon-to-label
+     * gap: a filled disc needs more air before text than a line-height glyph does. */
+    --sk-comment-avatar-gap: var(--space-inline-md);
+    /* Name to time: DOUBLE the avatar's. What makes avatar + name read as one identity is the RATIO
+     * between the two gaps, and a third more space is inside the range a reader takes for "the
+     * same". Optics agree: against a solid disc a metric gap reads wider than the same gap between
+     * two runs of text. */
+    --sk-comment-meta-gap: calc(var(--space-inline-md) * 2);
+    /* Between two sibling replies. The elbow's own geometry is written against this, so the two
+     * can never disagree. */
+    --sk-comment-sib-gap: var(--space-stack-md);
+    /* Between a comment and its OWN replies - tighter than between two siblings, because a reply
+     * belongs to the comment above it more than two replies belong to each other. */
+    --sk-comment-replies-gap: var(--sk-comment-gap);
+    /* Where the descending line STOPS: at the fold control's centre when there is one, and at the
+     * bottom of the comment when there is not. The replies read the same value to know how far up
+     * to reach, so the two halves of the rail meet at one point by construction rather than by two
+     * numbers that happen to agree. */
+    --sk-comment-rail-end: 0px;
+    /* The ring that keeps the line off the avatar. Same technique `avatar.css` uses to separate a
+     * stack of overlapping discs - a ring in the SURFACE colour, not a border - so the two read as
+     * one idea. Both halves are hooks: a thread on a non-default surface only has to restate the
+     * colour for the cut-out to keep working. */
+    --sk-comment-avatar-ring-width: 3px;
+    --sk-comment-avatar-ring-color: var(--color-bg-surface);
+    /* How far a connector may paint outside the replies box: the first reply reaches UP past it to
+     * the control. A plain length, and it has to be - `overflow-clip-margin` rejects `calc()`
+     * outright in Chrome (measured: a literal and a plain-length var both compute, any `calc()`
+     * computes to 0), and the spacing tokens are themselves `round(calc(...))`. So this is an
+     * ALLOWANCE with headroom, not a measurement: it only has to exceed the real overhang. */
+    --sk-comment-rail-overhang: 2rem;
+    /*
+     * HOW FAR A REPLY INDENTS, and the single lever the whole nesting geometry hangs off. One
+     * gutter plus its gap puts a reply's avatar under its parent's NAME, which is the alignment a
+     * reader knows from every threaded conversation. Narrow viewports override just this.
+     */
+    --sk-comment-indent: calc(var(--sk-comment-gutter) + var(--sk-comment-avatar-gap));
+    /* How far back a reply reaches to meet its parent's line. DERIVED from the indent rather than
+     * spelled out again: the line sits at the parent gutter's centre, so the run is whatever the
+     * indent is, less that half gutter. Written this way the two cannot disagree when the indent
+     * changes, which is exactly what happens below the `compact` breakpoint. */
+    --sk-comment-rail-x: calc(var(--sk-comment-indent) - var(--sk-comment-gutter) / 2);
+    /*
+     * `border-strong`, and the choice is about the two modes rather than about weight.
+     * `border-default` is `light-dark(stone-500, stone-500)` - the SAME value on both sides - so a
+     * line using it reads as flat mid-grey on white and as barely-there on near-black: exactly the
+     * "too grey in light, not light enough in dark" it was. `border-strong` is
+     * `light-dark(stone-600, stone-400)`, which moves in OPPOSITE directions, darkening against a
+     * light ground and lightening against a dark one.
+     *
+     * `subtle` is the other end and was tried first: a hairline in an empty gutter that the eye
+     * skipped entirely, so the thread rendered as a flat list. A divider between blocks can
+     * whisper; a line carrying the structure cannot.
+     */
+    --sk-comment-rail-color: var(--color-border-strong);
+    --sk-comment-rail-width: 2px;
+    --sk-comment-rail-elbow: var(--space-inline-md);
+    /* The fold node's own size: `icon-md`, the smallest step that still holds the set's own `sm`
+     * glyph. Well under the avatar it hangs from, so the eye reads the avatar as the person and
+     * this as a small handle on the thread rather than a control competing with it. */
+    --sk-comment-node-size: var(--size-icon-md);
+    /*
+     * One measure for the WHOLE comment, not just its body. A cap on the body alone let the reply
+     * box run wider than the message above it, so the two disagreed at any width past the cap and
+     * the message read as the narrow one. `90ch` rather than a reading measure: a comment is not an
+     * article, it sits in whatever column an app gives it, and the cap is here only so a thread
+     * dropped into a very wide dashboard does not run edge to edge. A consumer who wants a tighter
+     * measure sets this hook.
+     */
+    --sk-comment-measure: 90ch;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sk-comment__self {
+    display: flex;
+    gap: var(--sk-comment-avatar-gap);
+    /* `stretch`, which is the default and is stated anyway because everything depends on it: the
+     * gutter has no height of its own, and the line inside it is measured against this. */
+    align-items: stretch;
+  }
+
+  .sk-comment__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-comment-gap);
+    flex: 1;
+    min-inline-size: 0;
+    max-inline-size: var(--sk-comment-measure);
+  }
+
+  .sk-comment__gutter {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: none;
+    inline-size: var(--sk-comment-gutter);
+  }
+
+  /* Nothing in it: no channel, no column gap, nothing to explain. */
+  .sk-comment__gutter:empty {
+    display: none;
+  }
+
+  /*
+   * The avatar sits ON TOP of the line and pushes it back with a ring of surface colour, so the
+   * rail stops just short of the disc instead of running into it. Two separate things are needed
+   * and both are load-bearing:
+   *
+   * `z-index`, because the rail is a positioned pseudo-element and the avatar is ordinary in-flow
+   * content: without it the line paints OVER the ring and the cut-out does nothing at all.
+   *
+   * `border-radius`, because the ring is a box-shadow and would otherwise be a rounded rectangle
+   * around a circular disc. This is the one place the slot's content is assumed to be round, which
+   * it is: it is a person's avatar, and `Avatar` is a circle.
+   */
+  .sk-comment__avatar {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    flex: none;
+    border-radius: var(--radius-pill);
+    box-shadow: 0 0 0 var(--sk-comment-avatar-ring-width) var(--sk-comment-avatar-ring-color);
+  }
+
+  /*
+   * THE LINE, from just under the avatar to the bottom of this comment's own content. Drawn as a
+   * BORDER rather than a background fill so its weight matches the elbow's stroke exactly - the
+   * elbow is necessarily border-drawn (only a border can be curved by `border-radius`), and two
+   * different painting mechanisms at the same nominal width do not land on the same pixels.
+   *
+   * Only when there are replies: a comment with none has nothing to connect to, and a line
+   * trailing off under the last one is a promise the thread does not keep.
+   */
+  .sk-comment:has(> .sk-comment__replies) > .sk-comment__self > .sk-comment__gutter::after {
+    content: "";
+    position: absolute;
+    inset-block: var(--sk-comment-rail-start, 0px) var(--sk-comment-rail-end);
+    inset-inline-start: 50%;
+    /* The stroke is centred ON 50%: a zero-width box with a left border would otherwise sit its
+     * whole width to one side of the axis and drift off the node above it. */
+    inline-size: 0;
+    border-inline-start: var(--sk-comment-rail-width) solid var(--sk-comment-rail-color);
+    translate: -50% 0;
+    pointer-events: none;
+  }
+
+  /* Where the line begins: under the avatar when there is one, at the top when there is not, so a
+   * comment with only a fold control still gets a line that goes somewhere. */
+  .sk-comment:has(> .sk-comment__self > .sk-comment__gutter > .sk-comment__avatar) {
+    --sk-comment-rail-start: var(--sk-comment-gutter);
+  }
+
+  /* And where it ends: ON the fold control. The line used to run past it to the bottom of the
+   * comment, which left the control looking threaded onto a rail that continued without it; the
+   * control is the junction the replies come back up to, so the descending line stops there. */
+  .sk-comment:has(> .sk-comment__self > .sk-comment__gutter > .sk-comment__collapse) {
+    --sk-comment-rail-end: calc(var(--size-control-sm) / 2);
+  }
+
+  /*
+   * How far the FIRST reply reaches back up, declared on the replies CONTAINER rather than on the
+   * comment. It has to live on an element a nested comment does not re-declare: `--sk-comment-*`
+   * defaults sit on `.sk-comment`, and a reply is itself a `.sk-comment`, so a value the parent set
+   * there was immediately shadowed by the child's own default - the first reply read `0` for its
+   * parent's rail end and stopped a control-radius short of the junction. Each replies container
+   * answers for its OWN comment, so this stays correct at every depth.
+   */
+  .sk-comment__replies {
+    --sk-comment-child-reach: var(--sk-comment-replies-gap);
+  }
+
+  .sk-comment:has(> .sk-comment__self > .sk-comment__gutter > .sk-comment__collapse)
+    > .sk-comment__replies {
+    --sk-comment-child-reach: calc(var(--sk-comment-replies-gap) + var(--size-control-sm) / 2);
+  }
+
+  /*
+   * The fold control rides LOW on the line, at the actions row, the way a handle sits on a thread
+   * rather than floating beside it. Absolutely positioned on the very same axis as the line
+   * (`50%` + the same translate), so the two cannot drift apart the way flex-centring one and
+   * percentage-positioning the other would.
+   */
+  /*
+   * A NODE ON THE LINE, not a control parked beside it: smaller than any Button size the scale
+   * ships, because at `sm` (32px) it read as a button that happened to sit on a rail rather than as
+   * the rail's own handle - it was as wide as the avatar above it and competed with it.
+   *
+   * Shrunk through Button's OWN hooks rather than re-built from nothing: the face, the focus ring,
+   * the state layer and the 44px touch target underneath all still come from `button.css`, so this
+   * keeps the system's interaction identity and changes only its size. That is what "bespoke" can
+   * safely mean here - a different measurement of the same control, not a second control.
+   *
+   * `.sk-comment__gutter >` is not decoration: `.sk-interactive` sets `position: relative` to
+   * establish the containing block for that touch target, and at equal specificity it won on source
+   * order - the control stayed in flow under the avatar instead of riding low on the line.
+   */
+  .sk-comment__gutter > .sk-comment__collapse {
+    --sk-button-radius: var(--radius-pill);
+    /* The node is part of the LINE, so it wears the line's colour - glyph and ring both. Before
+     * this it inherited the base variant's primary-text foreground and the default border, which
+     * made a dark dot on a mid-grey rail read as a separate control that happened to sit there. */
+    --sk-button-fg: var(--sk-comment-rail-color);
+    --sk-button-border-color: var(--sk-comment-rail-color);
+    /* `[data-icon-only]` zeroes this in `button.css`, but `[data-size="sm"]` sets it back and the
+     * two selectors tie on specificity, so the later one wins: an icon-only `sm` button carries
+     * 8px of inline padding it was never meant to have. Harmless on a 32px face, where the glyph
+     * simply overflows symmetrically; on a 24px node it leaves a 6px content box. */
+    --sk-button-padding-x: 0px;
+    /* `[data-icon-only]` derives the width from the height, so one hook resizes the square. */
+    --sk-button-height: var(--sk-comment-node-size);
+    position: absolute;
+    /* Centred on the ACTIONS ROW, not flush with the bottom of the gutter. The gutter ends where
+     * the actions end, so `0` lined the node's BOTTOM up with the row's bottom and, since the node
+     * is smaller than a control, its centre sat below the vote arrows it reads alongside. Half the
+     * difference between a control and this node puts the two centre lines on the same axis. */
+    inset-block-end: calc((var(--size-control-sm) - var(--sk-comment-node-size)) / 2);
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    /* ABOVE the line, which is the whole reason this control has an opaque face. Both it and the
+     * line are positioned, so with `z-index: auto` they paint in DOM order and the line - a later
+     * `::after` - drew straight over the button: the minus glyph crossed by the vertical stroke
+     * read as a PLUS, so a thread that was expanded looked collapsed. */
+    z-index: 1;
+  }
+
+  /*
+   * `line-height: 0` on the glyph's wrappers, which is what actually centres it. The button already
+   * centres its children, but each wrapper is an inline box sitting on a text baseline, and the
+   * descender space under it pushed the glyph half a pixel low - measured at 0.75px off centre,
+   * enough to see on a 24px dot with a ring around it.
+   */
+  .sk-comment__gutter > .sk-comment__collapse > span,
+  .sk-comment__gutter > .sk-comment__collapse [data-state] {
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+  }
+
+  /* The wrapper is the one box here that must be told to lay out; the `[data-state]` pair above
+   * deliberately says nothing about `display`, because that is the swap's to own. Setting it here
+   * once turned BOTH faces on at higher specificity than the `display: none` that hides the
+   * inactive one, so the plus and the minus sat side by side and the visible glyph ended up in the
+   * right half of a node twice as wide as it should have been. */
+  .sk-comment__gutter > .sk-comment__collapse > span[aria-hidden] {
+    display: flex;
+  }
+
+  /*
+   * Restores the size the CONTRACT asked for. The template writes `data-sk-icon-size="sm"`, but
+   * `button.css` re-sizes any icon inside a `sm` button to `--size-icon-md` - a fair rule for a
+   * full 32px control face, and wrong for a 24px node, where it produced a 20px glyph overflowing
+   * its own button and pushed 10px off centre. So this is not a size invented here: it is the set's
+   * own `sm` step, restated at enough specificity to survive a rule written for a bigger control.
+   */
+  .sk-comment__gutter > .sk-comment__collapse .sk-icon,
+  .sk-comment__gutter > .sk-comment__collapse [data-sk-icon] {
+    --sk-icon-size: var(--size-icon-sm);
+    inline-size: var(--size-icon-sm);
+    block-size: var(--size-icon-sm);
+  }
+
+  /* The +/- swap, keyed off this button's own `aria-expanded` since a comment has no native
+   * disclosure element to read an `[open]` from. */
+  .sk-comment__collapse [data-state] {
+    display: none;
+  }
+
+  .sk-comment__collapse [data-state="open"],
+  .sk-comment__collapse[aria-expanded="false"] [data-state="closed"] {
+    display: flex;
+  }
+
+  .sk-comment__collapse[aria-expanded="false"] [data-state="open"] {
+    display: none;
+  }
+
+  /*
+   * Folded, the line STAYS between the avatar and the node. It is the segment that says "this
+   * person's thread continues here, and here is the handle that reopens it"; hiding it left the
+   * node floating unattached and the comment looked like it had never had replies at all. What
+   * disappears below the node is not hidden by a rule: the replies are gone, and each reply drew
+   * its own incoming segment, so their part of the rail leaves with them.
+   */
+
+  /* The identity row. Its own height is the avatar's, so the name sits level with the face. */
+  .sk-comment__header {
+    display: flex;
+    align-items: center;
+    gap: var(--sk-comment-meta-gap);
+    min-block-size: var(--sk-comment-gutter);
+  }
+
+  .sk-comment__author {
+    font-weight: var(--font-weight-label);
+  }
+
+  .sk-comment__timestamp {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+  }
+
+  /*
+   * NO `white-space: pre-wrap`, which once made this box tall and is worth writing down: the
+   * emitter puts a wrapped body on its own indented line, so under `pre-wrap` that leading newline
+   * plus its indent and the trailing one were RENDERED, giving every comment a blank line above and
+   * below its text. It was also a silent divergence - React interpolates `{children}` with no
+   * surrounding whitespace, so only the authored side grew them. Author line breaks are the
+   * consumer's to compose; the slot takes `node`, so paragraphs are paragraphs.
+   */
+  .sk-comment__body {
+    font-size: var(--font-size-body);
+    line-height: var(--font-line-height-body);
+    /*
+     * LEADING TRIMMED, so the gap around the message is the gap the token asks for.
+     *
+     * A line box is taller than its ink by half the leading on each side: at `1.5` over a 16px body
+     * that is 4px above and 4px below, measured as 3px of visible clearance to the cap and baseline.
+     * Stacked on the 8px row gap it made the space around the message read as 11px while every other
+     * gap in the comment really was 8, so the body sat looser than the rest for no reason a reader
+     * could see. Pulling the half-leading back makes the two agree.
+     *
+     * Derived from the line-height token rather than typed as a pixel value: it is unitless (1.5),
+     * so the correction follows if the type scale is ever retuned.
+     */
+    margin-block: calc((1 - var(--font-line-height-body)) * 0.5em);
+  }
+
+  /* An author `display` beats the UA `[hidden]{display:none}` rule regardless of specificity (the
+   * same fix `tree-view.css` needs for its own branch content). */
+  .sk-comment__body[hidden],
+  .sk-comment-actions[hidden] {
+    display: none;
+  }
+
+  /*
+   * OPENING AND CLOSING THE REPLY BOX: the same APPEAR the replies fold uses, and for the same
+   * reasons. A height animation here grew the comment under the reader's cursor while they were
+   * reaching for the field; a fade leaves every other box where it was.
+   *
+   * `reveal`/`dismiss` (`semantic/_motion.scss`): the intent for inline transient content, the
+   * shortest pair the system has, and used without their distance tokens on purpose. Sober is the
+   * brief: the box should be there, not arrive.
+   */
+  .sk-comment__reply-slot {
+    margin-block-start: var(--space-stack-xs);
+    /* It sits at article level now (see the contract), so it indents itself to the same column the
+     * body occupies rather than inheriting that from a content box it is no longer inside. */
+    padding-inline-start: var(--sk-comment-indent);
+    position: relative;
+    transition:
+      opacity var(--motion-reveal-duration) var(--motion-reveal-easing),
+      display var(--motion-reveal-duration) allow-discrete;
+  }
+
+  /*
+   * The rail, continued THROUGH the open box. Moving the box out of `__self` put it between the
+   * fold control and the replies, which broke the line in two: the control's own rail stops at the
+   * control, and the first reply only reaches back as far as the gap it expects to be there. This
+   * segment spans the box and closes that gap, so the thread reads as one line whether the box is
+   * open or shut.
+   *
+   * Only when there are replies to join, and only while they are SHOWING: `:not([hidden])`, not just
+   * the block existing. A box open on a comment nobody has answered has nothing below it to connect
+   * to, and neither does one whose replies are folded away - measured on a real render, the line
+   * kept running past the composer and trailed off into nothing, which is the same broken promise
+   * the last reply's own clip exists to avoid. Its own top margin is included in the span
+   * (`inset-block-start` is negative) so the line does not break again at the seam.
+   */
+  .sk-comment:has(> .sk-comment__replies:not([hidden])) > .sk-comment__reply-slot::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: calc(var(--sk-comment-gutter) / 2 - var(--sk-comment-rail-width) / 2);
+    inset-block: calc(-1 * var(--space-stack-xs)) 0;
+    inline-size: 0;
+    border-inline-start: var(--sk-comment-rail-width) solid var(--sk-comment-rail-color);
+    pointer-events: none;
+  }
+
+  @starting-style {
+    .sk-comment__reply-slot {
+      opacity: 0;
+    }
+  }
+
+  .sk-comment__reply-slot[hidden] {
+    display: none;
+    opacity: 0;
+    transition:
+      opacity var(--motion-dismiss-duration) var(--motion-dismiss-easing),
+      display var(--motion-dismiss-duration) allow-discrete;
+  }
+
+  /*
+   * THE REPLIES BLOCK, indented to exactly one gutter plus its gap - which puts each reply's own
+   * avatar under its parent's NAME, the alignment a reader already knows from every threaded
+   * conversation they have used.
+   */
+  .sk-comment__replies {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-comment-sib-gap);
+    /* `replies-gap`, not `sib-gap`: a reply belongs to the comment above it more than two replies
+     * belong to each other, so it sits closer to its parent than they sit to one another. */
+    margin-block-start: var(--sk-comment-replies-gap);
+    padding-inline-start: var(--sk-comment-indent);
+  }
+
+  /*
+   * FOLDING THE REPLIES: an APPEAR. Opacity, and nothing else.
+   *
+   * The height was animated here before, as a grid row on the article, and two things were wrong
+   * with it. It moved the fold control: interpolating `auto 1fr -> auto 0fr` disturbs the `auto`
+   * track as well, traced at 140px to 131px to 112px, so the button the reader had just pressed
+   * slid under their cursor. And an `fr` track in an auto-height container does not fall linearly -
+   * 112px to 23px inside 76ms of a 320ms transition - so the tempo the token asked for was not the
+   * tempo anyone saw. A fade has neither problem: nothing reflows while it runs, so nothing moves.
+   *
+   * `reveal`/`dismiss` (`semantic/_motion.scss`), which is the intent for inline transient content
+   * and the shortest pair the system has. No distance: those tokens exist and are deliberately not
+   * used here, because a translate is exactly the flourish this is meant not to have.
+   *
+   * `display` transitions with `allow-discrete` so the block is gone rather than merely invisible at
+   * the end, and `@starting-style` gives the entry somewhere to come FROM - without it the fade only
+   * ever runs on the way out.
+   */
+  .sk-comment__replies {
+    transition:
+      opacity var(--motion-reveal-duration) var(--motion-reveal-easing),
+      display var(--motion-reveal-duration) allow-discrete;
+  }
+
+  @starting-style {
+    .sk-comment__replies {
+      opacity: 0;
+    }
+  }
+
+  /* Overrides the UA `[hidden] { display: none }` so the fade has something to run on; `display`
+   * above then takes it out of the layout, and out of the accessibility tree, once it finishes. */
+  .sk-comment__replies[hidden] {
+    display: none;
+    opacity: 0;
+    transition:
+      opacity var(--motion-dismiss-duration) var(--motion-dismiss-easing),
+      display var(--motion-dismiss-duration) allow-discrete;
+  }
+
+  /*
+   * THE INCOMING CONNECTOR, drawn by each reply rather than by the parent, which is what makes this
+   * work at unlimited depth from one rule: `::before` continues the parent's vertical line down past
+   * this reply to the next sibling, and `::after` is the rounded elbow curving off that line into
+   * this reply's own avatar. Both sit at `-rail-x`, the parent avatar's centre, so every segment
+   * abuts into one continuous rail.
+   */
+  .sk-comment__replies > .sk-comment {
+    position: relative;
+  }
+
+  .sk-comment__replies > .sk-comment::before {
+    content: "";
+    position: absolute;
+    /* Half a stroke further left than the axis, so the border is CENTRED on it. The parent's line is
+     * centred (`50%` plus `translate: -50%`), and these were not: a zero-width box with a left
+     * border sits its whole width to the right of wherever it is placed, so parent and reply were
+     * drawn one pixel apart and the rail had a visible kink at every reply. */
+    inset-inline-start: calc(-1 * var(--sk-comment-rail-x) - var(--sk-comment-rail-width) / 2);
+    inset-block-start: calc(-1 * var(--sk-comment-sib-gap));
+    inset-block-end: 0;
+    inline-size: 0;
+    border-inline-start: var(--sk-comment-rail-width) solid var(--sk-comment-rail-color);
+    pointer-events: none;
+  }
+
+  /* The FIRST reply reaches further up than the rest: past the gap and back to the fold control,
+   * which is where the descending line stopped. Every other reply only has to reach its previous
+   * sibling. */
+  .sk-comment__replies > .sk-comment:first-child::before {
+    inset-block-start: calc(-1 * var(--sk-comment-child-reach));
+  }
+
+  /* The last reply clips its vertical at the elbow, so the rail STOPS at the last thing it points
+   * to instead of trailing past the end of the conversation. */
+  .sk-comment__replies > .sk-comment:last-child::before {
+    inset-block-end: auto;
+    block-size: calc(
+      var(--sk-comment-sib-gap) + var(--sk-comment-gutter) / 2 - var(--sk-comment-rail-elbow)
+    );
+  }
+
+  /* An only child is both: it reaches up to the control AND stops at its own elbow, so its height is
+   * the longer reach rather than a sibling gap. */
+  .sk-comment__replies > .sk-comment:first-child:last-child::before {
+    block-size: calc(
+      var(--sk-comment-child-reach) + var(--sk-comment-gutter) / 2 - var(--sk-comment-rail-elbow)
+    );
+  }
+
+  /*
+   * The curve. A box with only its left and bottom borders drawn and the corner between them
+   * rounded - the one way to bend a line in CSS without an SVG, and why the vertical above is a
+   * border too: the two strokes have to be painted by the same mechanism to meet cleanly.
+   */
+  .sk-comment__replies > .sk-comment::after {
+    content: "";
+    position: absolute;
+    /* On the same axis as the vertical, and widened by exactly what that shift cost, so the curve
+     * still lands on this reply's own avatar rather than a pixel short of it. */
+    inset-inline-start: calc(-1 * var(--sk-comment-rail-x) - var(--sk-comment-rail-width) / 2);
+    inset-block-start: calc(var(--sk-comment-gutter) / 2 - var(--sk-comment-rail-elbow));
+    inline-size: calc(var(--sk-comment-rail-x) + var(--sk-comment-rail-width) / 2);
+    block-size: var(--sk-comment-rail-elbow);
+    border-inline-start: var(--sk-comment-rail-width) solid var(--sk-comment-rail-color);
+    border-block-end: var(--sk-comment-rail-width) solid var(--sk-comment-rail-color);
+    border-end-start-radius: var(--sk-comment-rail-elbow);
+    pointer-events: none;
+  }
+
+  /*
+   * NARROW VIEWPORTS. Below `compact` a phone has no width to spend on hierarchy, and this
+   * component spends it twice over: every nesting level pays an indent, and the rail's own channel
+   * pays for it again on the x axis. So the indent halves - the reply still lands clear of its
+   * parent's line, just closer to it - and because `--sk-comment-rail-x` is derived from the indent
+   * (see the block above), the connector and the elbow follow it with nothing else to keep in step.
+   *
+   * The gutter itself is NOT shrunk: it is sized to the avatar a consumer puts in it, and a channel
+   * narrower than its own content would push the face out of the column rather than save any room.
+   *
+   * `35.999rem` is one step under `--breakpoint-compact` (semantic/_breakpoints.scss), literal here
+   * because a CSS `@media` cannot read a custom property. Tier-3 stylesheets carry the value with a
+   * pointer back to the source, the same way `patterns/vaul.css` carries `52rem`.
+   */
+  @media (max-width: 35.999rem) {
+    .sk-comment {
+      --sk-comment-indent: calc(var(--sk-comment-gutter) / 2 + var(--sk-comment-avatar-gap));
+      /* The identity row loses its extra too: at this width the time is the first thing that would
+       * wrap away from the name it belongs to. */
+      --sk-comment-meta-gap: var(--space-inline-md);
+    }
+  }
+
+  /* ── The action row ─────────────────────────────────────────────────────── */
+
+  /*
+   * Between CLUSTERS, so it is looser than the gap inside one: the vote group's own up/count/down
+   * stays tight (`sk-comment-vote` below) and reads as a single control, while the row around it
+   * separates that control from Reply and from Delete. At one even `xs` everywhere, five buttons in
+   * a row read as one undifferentiated strip.
+   *
+   * PULLED BACK so the row starts where the TEXT starts. Every box in this column already shares a
+   * left edge - author, body and this row all measured at 0 - but the row's first control is an
+   * icon-only square with its glyph centred inside it, so what a reader sees begins one half of the
+   * leftover width further in than the sentence above it. Measured on a real render: a 20px glyph
+   * in a 32px face put the first mark at 6px while the body sat at 0.
+   *
+   * Half the difference between the control and its glyph, derived rather than typed as a number,
+   * so it stays right if either size changes. It is applied to the ROW and not to the first button,
+   * because the first button is not always the same thing: a comment with no vote group leads with
+   * Reply, a labelled control whose text already starts at its padding edge.
+   */
+  .sk-comment-actions {
+    --sk-comment-actions-optical: calc((var(--size-control-sm) - var(--size-icon-md)) / 2);
+    display: flex;
+    align-items: center;
+    /*
+     * WRAPS, and this is the last thing standing between the component and a phone. Everything else
+     * about the layout shrinks with its container - the body wraps, the content box carries
+     * `min-inline-size: 0`, the indent halves below `compact` - but a row of buttons has a hard
+     * min-content width, so at four levels deep the vote group plus Reply plus Delete was 20px wider
+     * than the column it sat in and pushed a scrollbar under the whole thread. Measured at 375px:
+     * this row was the ONLY offender left once the indent was fixed.
+     *
+     * Unconditional rather than inside the narrow-viewport block: it costs nothing when the row fits,
+     * and the row can run out of room at any viewport - a deep enough thread, a long delete label in
+     * another language, a consumer's own control added to the slot.
+     */
+    flex-wrap: wrap;
+    /* A wrapped second line is a new ROW, so it takes the comment's stack rhythm; the gap BETWEEN
+     * clusters on one line stays the inline one. */
+    gap: var(--space-stack-xs) var(--space-inline-md);
+  }
+
+  /* Only where the row actually LEADS with an icon-only control. A row starting with a labelled
+   * button has no overhang to correct, and pulling it back would push its text left of the body. */
+  .sk-comment-actions:has(> .sk-comment-vote:first-child) {
+    margin-inline-start: calc(-1 * var(--sk-comment-actions-optical));
+  }
+
+  /* A comment's chrome must not read louder than the comment, which is the ONE thing these parts
+   * move: the fg hook, exactly what it exists for. */
+  .sk-comment-actions__reply,
+  .sk-comment-actions__delete {
+    --sk-button-fg: var(--color-text-secondary);
+  }
+
+  /* ── The vote group ─────────────────────────────────────────────────────── */
+
+  .sk-comment-vote {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-inline-xs);
+  }
+
+  .sk-comment-vote__up,
+  .sk-comment-vote__down {
+    --sk-button-fg: var(--color-text-secondary);
+  }
+
+  .sk-comment-vote__count {
+    min-inline-size: 1.5ch;
+    text-align: center;
+    font-size: var(--font-size-body-sm);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The viewer's own past vote, read off the GROUP's `data-voted` - the one attribute `voted`
+   * writes in both bindings. Child combinators so a `CommentVote` nested inside another one's
+   * count slot could never be painted by its ancestor's state, the same own-scope rule
+   * `checkbox-group.ts` keeps for its own items. Moves the same hook the tone above does, so the
+   * accent rides Button's hover/active machinery instead of fighting it with a bare `color`. */
+  .sk-comment-vote[data-voted="up"] > .sk-comment-vote__up,
+  .sk-comment-vote[data-voted="down"] > .sk-comment-vote__down {
+    --sk-button-fg: var(--color-text-accent);
+  }
+
+  /* ── The composer ───────────────────────────────────────────────────────── */
+
+  /* Ships no control of its own, so it styles the BOX and nothing inside it: whatever the consumer
+   * passed (a FormField, a bare Input, an Editor) arrives already dressed by its own stylesheet. */
+  /* No surface of its own: the control it holds already draws one (see the contract). What this
+   * lays out is the control and the actions under it. */
+  .sk-comment-composer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-xs);
+    align-items: stretch;
+  }
+
+  /* Trailing, and tight: two buttons that answer the same box are one cluster, so they sit closer
+   * to each other than the cluster sits to the field above them. */
+  .sk-comment-composer__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-inline-xs);
+  }
+}

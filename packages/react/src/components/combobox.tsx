@@ -57,7 +57,6 @@ export type ComboboxProps = {
   clearIndicator?: ReactNode;
   removeIndicator?: ReactNode;
   clearLabel?: string;
-  triggerLabel?: string;
   selectedLabel?: string;
   removeLabel?: (item: ComboboxItem) => string;
   emptyLabel?: ReactNode;
@@ -95,7 +94,6 @@ export function Combobox({
   resultCountLabel = defaultResultCountLabel,
   selectedLabel = "Valores seleccionados",
   triggerIndicator,
-  triggerLabel = "Mostrar opciones",
   value,
 }: ComboboxProps) {
   const generatedId = useId();
@@ -167,7 +165,6 @@ export function Combobox({
     selectionBehavior: "preserve",
     translations: {
       clearTriggerLabel: clearLabel,
-      triggerLabel,
     },
     onInputValueChange(details) {
       // Only what the user TYPED is a filter. The machine writes this input too (the label after a
@@ -301,25 +298,27 @@ export function Combobox({
         >
           {clearIndicator ?? <Icon name="close" size="sm" />}
         </button>
-        <button
-          {...api.getTriggerProps()}
-          className={cx(comboboxParts.trigger, "sk-button", "sk-interactive")}
-          data-icon-only=""
-          data-size="sm"
-          data-variant="ghost"
-          type="button"
-        >
+        {/*
+          Decorative, not a second control: Zag's own `getTriggerProps()` already defaults this to
+          `tabIndex: -1` (never a Tab stop), and every open path here — typing, `openOnClick` on
+          the input itself — never went through it either. What made it read as an independent
+          button was purely visual (its own `.sk-button` ghost hover/pressed feedback on a mouse
+          click Zag still wired up), not a real second interaction surface. `aria-hidden` and a
+          plain `span` remove that affordance instead of just restyling it; the input's own
+          `role="combobox"` + `aria-expanded` already say everything a screen reader needs.
+        */}
+        <span aria-hidden="true" className={comboboxParts.trigger} data-state={api.open ? "open" : "closed"}>
           {triggerIndicator ?? (
             <>
               <span data-state="closed">
-                <Icon name="chevron-down" size="sm" />
+                <Icon name="chevron-down" size="md" />
               </span>
               <span data-state="open">
-                <Icon name="chevron-up" size="sm" />
+                <Icon name="chevron-up" size="md" />
               </span>
             </>
           )}
-        </button>
+        </span>
       </div>
       {error ? (
         <div className={formFieldParts.error} id={errorId}>

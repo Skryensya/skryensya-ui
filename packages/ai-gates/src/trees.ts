@@ -1019,6 +1019,20 @@ const signatureTrees: readonly Canonical[] = [
             slots: {
               label: { contract: "typography", signature: "Heading", options: { headingSize: "h2", flush: true }, children: "Radio" },
               children: { contract: "typography", signature: "Text", options: { size: "sm" }, children: "Una radio personal." },
+              /* A Box rather than the `ImageFrame` the docs use: a canonical tree must not reach the
+               * network, and what this proves is that both bindings place a preview identically. */
+              previews: [
+                {
+                  contract: "folder",
+                  signature: "FolderPreview",
+                  slots: { children: { contract: "box", signature: "Box", options: { surface: "raised", padding: "md" }, slots: { children: "1" } } },
+                },
+                {
+                  contract: "folder",
+                  signature: "FolderPreview",
+                  slots: { children: { contract: "box", signature: "Box", options: { surface: "raised", padding: "md" }, slots: { children: "2" } } },
+                },
+              ],
             },
           },
           {

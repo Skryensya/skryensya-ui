@@ -1,0 +1,217 @@
+---
+import "@skryensya/core/components/folder.css";
+/* Not Folder's own sheet: every demo below stands the folders on a `Box`, because a folder at rest
+ * is invisible by being its GROUND's colour and needs one to disappear against. Without this the
+ * React stage renders that Box unpainted, the binding finds nothing painted to match, and the
+ * folders fall back to the stylesheet's guess instead of the surface a reader can see. */
+import "@skryensya/core/patterns/box.css";
+/* The reveal demo fans a few `ImageFrame`s out of its folders, through the `previews` slot. */
+import "@skryensya/core/patterns/image-frame.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { folderActiveTree, folderPlainTree, folderRaisedTree, folderSunkenTree, folderTree } from "../../demos/folder";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/folder.yaml?raw";
+import coreSource from "@core/src/folder.ts?raw";
+import cssSource from "@core/css/components/folder.css?raw";
+import vanillaSource from "@vanilla/src/components/folder.ts?raw";
+import reactSource from "@react/src/components/folder.tsx?raw";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const styles = `@import "@skryensya/core/components/folder.css";
+
+/* Folder needs no other sheet. The demos on this page also import
+   patterns/box.css, for the surface the folders stand on. */`;
+
+const js = `import { mountFolder } from "@skryensya/vanilla/folder";
+
+mountFolder();`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/folder.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/folder.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/folder.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/folder.ts", source: vanillaSource, language: "ts" },
+  { id: "packages/react/src/components/folder.tsx", source: reactSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Folder"
+  description={t("folderPage.description")}
+  contractId="folder"
+  sourceFiles={sourceFiles}
+  styleGroups={[{ file: "components/folder.css", probe: "sk-folder", title: "Folder" }]}
+  tests={[
+    {
+      file: "packages/core/src/folder.test.ts",
+      tests: [
+        {
+          name: "turns the leading corner on the same radius both ways, like every other corner",
+          description: t("folderPage.testCore1"),
+        },
+        {
+          name: "runs the tab's top edge to where the tab ends, then folds down over the shoulder",
+          description: t("folderPage.testCore2"),
+        },
+        {
+          name: "puts the fold at the measured tab height, whatever the default says",
+          description: t("folderPage.testCore17"),
+        },
+        {
+          name: "lifts the body's top edge off the tab's bottom, leaving the tab's own corner where it was",
+          description: t("folderPage.testCore18"),
+        },
+        { name: "never lifts the body's edge above the tab's own top", description: t("folderPage.testCore19") },
+        { name: "keeps the S-curve's proportions when the tab is taller", description: t("folderPage.testCore3") },
+        { name: "never draws outside the box it was measured from", description: t("folderPage.testCore4") },
+        {
+          name: "clamps a tab too wide for its shoulder instead of folding the path back on itself",
+          description: t("folderPage.testCore5"),
+        },
+        {
+          name: "clamps the leading sweep to a tab too narrow to hold it, instead of widening the tab",
+          description: t("folderPage.testCore6"),
+        },
+        { name: "mirrors the whole silhouette for an RTL folder", description: t("folderPage.testCore7") },
+        { name: "draws nothing at all for a box with no area", description: t("folderPage.testCore8") },
+        { name: "reads every knob off custom properties", description: t("folderPage.testCore9") },
+        {
+          name: "falls back per property, so one redeclared hook keeps the rest of the silhouette",
+          description: t("folderPage.testCore10"),
+        },
+        { name: "measures to the tab's far edge, not merely its width", description: t("folderPage.testCore11") },
+        {
+          name: "measures from the inline-start edge in RTL, which is the right-hand one",
+          description: t("folderPage.testCore12"),
+        },
+        { name: "takes the first ancestor that actually paints something", description: t("folderPage.testCore13") },
+        {
+          name: "skips every spelling of a fully transparent background",
+          description: t("folderPage.testCore14"),
+        },
+        { name: "answers null when nothing up the tree paints at all", description: t("folderPage.testCore15") },
+        { name: "answers null for a folder with no parent", description: t("folderPage.testCore16") },
+        {
+          name: "copies the image layers over the colour, in the order CSS paints them",
+          description: t("folderPage.testCore20"),
+        },
+        { name: "takes an image with no colour under it", description: t("folderPage.testCore21") },
+        {
+          name: "hides the empty card below the last line, and nothing above it",
+          description: t("folderPage.testCore22"),
+        },
+        {
+          name: "gives a folder whose copy fills it no tail at all, rather than a negative one",
+          description: t("folderPage.testCore23"),
+        },
+        {
+          name: "pays for the forward lean, which a layout-space measurement cannot see",
+          description: t("folderPage.testCore24"),
+        },
+      ],
+    },
+    {
+      file: "packages/react/src/components/folder.test.tsx",
+      tests: [
+        {
+          name: "renders the tab, the content and a decorative silhouette behind them",
+          description: t("folderPage.testReact1"),
+        },
+        {
+          name: "draws the silhouette from the folder's own box and its tab's width",
+          description: t("folderPage.testReact2"),
+        },
+        { name: "marks the root ready only once a real path has been written", description: t("folderPage.testReact3") },
+        {
+          name: "writes no reveal attribute, because a folder is never visible at rest",
+          description: t("folderPage.testReact4"),
+        },
+        { name: "mirrors the silhouette inside an RTL subtree", description: t("folderPage.testReact6") },
+        {
+          name: "fans previews into an aria-hidden layer, and renders none without the slot",
+          description: t("folderPage.testReact11"),
+        },
+        {
+          name: "publishes the silhouette as a clip for the state layer to follow",
+          description: t("folderPage.testReact10"),
+        },
+        { name: "is a real anchor carrying the folder's own anatomy", description: t("folderPage.testReact7") },
+        { name: "holds folders directly, with no wrapper element between them", description: t("folderPage.testReact8") },
+        {
+          name: "passes an overlap through as the custom property the stylesheet reads",
+          description: t("folderPage.testReact9"),
+        },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/folder.test.ts",
+      tests: [
+        {
+          name: "draws the silhouette from the folder's own box and its tab's width",
+          description: t("folderPage.testVanilla1"),
+        },
+        { name: "marks the root ready only once a real path has been written", description: t("folderPage.testVanilla2") },
+        {
+          name: "draws nothing, and stays unready, for a folder with no measurable box",
+          description: t("folderPage.testVanilla3"),
+        },
+        { name: "re-measures when either box changes, and observes both", description: t("folderPage.testVanilla4") },
+        {
+          name: "publishes the silhouette as a clip for the state layer to follow",
+          description: t("folderPage.testVanilla7"),
+        },
+        { name: "refuses a root missing the nodes it has to draw into", description: t("folderPage.testVanilla5") },
+        { name: "mounts once per root and leaves an already-enhanced folder alone", description: t("folderPage.testVanilla6") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("folderPage.lede")} />
+    <ComponentPreview tree={folderTree(t)} js={js} label="FolderStack" viewport="auto" />
+
+    <h3>{t("folderPage.revealTitle")}</h3>
+    <p set:html={t("folderPage.revealBody")} />
+
+    <h3>{t("folderPage.previewsTitle")}</h3>
+    <p set:html={t("folderPage.previewsBody")} />
+    <ComponentPreview tree={folderPlainTree(t)} js={js} label={t("folderPage.plainLabel")} viewport="auto" />
+
+    <h3>{t("folderPage.touchTitle")}</h3>
+    <p set:html={t("folderPage.touchBody")} />
+    <ComponentPreview tree={folderActiveTree(t)} js={js} label={t("folderPage.touchLabel")} viewport="auto" />
+
+    <h3>{t("folderPage.groundTitle")}</h3>
+    <p set:html={t("folderPage.groundBody")} />
+    <ComponentPreview tree={folderSunkenTree(t)} js={js} label={t("folderPage.groundSunkenLabel")} viewport="auto" />
+    <ComponentPreview tree={folderRaisedTree(t)} js={js} label={t("folderPage.groundRaisedLabel")} viewport="auto" />
+
+    <h3>{t("folderPage.shapeTitle")}</h3>
+    <p set:html={t("folderPage.shapeBody")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("folderPage.contractItem1")} />
+      <li set:html={t("folderPage.contractItem2")} />
+      <li set:html={t("folderPage.contractItem3")} />
+      <li set:html={t("folderPage.contractItem4")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={styles} label="CSS" lang="css" />
+    <CodeBlock code={js} label="JS" lang="ts" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("folderPage.a11yBody")} />
+    <ul>
+      <li set:html={t("folderPage.a11yItem1")} />
+      <li set:html={t("folderPage.a11yItem2")} />
+      <li set:html={t("folderPage.a11yItem3")} />
+    </ul>
+  </Fragment>
+</ComponentPageShell>

@@ -1,0 +1,771 @@
+/*
+ * TIER 3, FOLDER
+ *
+ * A surface whose top edge carries a tab, painted as ONE silhouette: an `<svg>` sitting behind the
+ * content, whose single `<path>` the binding measures and writes (`@skryensya/core/folder`). This
+ * file owns everything about that path except its `d` - the fill, the shadow, the two states, and
+ * the five numbers the shape is drawn from, which are hooks here precisely so a brand retunes the
+ * silhouette without touching a binding.
+ *
+ * THE INVARIANT, same as every other component sheet: each hook resolves to a TIER-2 token, never a
+ * palette entry, never a raw colour. `scripts/lint.mjs` fails the build on a `--palette-*` here.
+ *
+ * WHY THE SHAPE IS BEHIND, NOT AROUND. The folder's paint and the folder's box are different
+ * things: the box is an ordinary block that lays its content out, and the silhouette is a picture
+ * of a folder stretched across it. Keeping them apart is what lets the shape be transparent at rest
+ * (it is its own ground's colour until reached for) while the box still receives the pointer over its
+ * whole area - a
+ * `clip-path` would have taken the hit area with it, and the shape a reader cannot see yet is a
+ * poor thing to ask them to aim at.
+ */
+@layer components {
+  .sk-folder {
+    /*
+     * THE SILHOUETTE'S GEOMETRY. Read by the binding through `folderGeometryFrom` and handed to
+     * `folderPath`; nothing in this file uses them for layout, which is deliberate - two sources
+     * for one shape is how a tab ends up 4px off the label it is drawn around. The tab element's
+     * own height comes from `--sk-folder-tab-height` for the same single-source reason.
+     */
+    /* The tab's MINIMUM, not its height: the binding measures the tab and draws the fold under
+     * whatever the label plus its padding actually needs (`tabHeight` in `folder.ts`). This is only
+     * what keeps a short label from producing a stub of a tab. */
+    --sk-folder-tab-height: 40px;
+    --sk-folder-tab-min: 168px;
+    --sk-folder-tab-radius: 26px;
+    --sk-folder-shoulder: 96px;
+    /*
+     * How far above the tab's own bottom the BODY's top edge sits. The fold used to land exactly on
+     * that bottom, which put this line a few pixels under the standfirst below it - two horizontals
+     * competing for the same reading. Lifting only this end opens the gap without moving any type:
+     * the label keeps its box, and the shoulder arrives higher than it leaves.
+     */
+    --sk-folder-fold-lift: 14px;
+    --sk-folder-top-radius: 18px;
+    --sk-folder-radius: 10px;
+
+    /*
+     * Paint. ONE colour for every folder: `-fill` at rest, `-fill-active` under hover/focus. There
+     * is no per-instance tone, and no border - a folder is a sheet of card, and a stroked outline
+     * around a non-rectangular shape reads as inconsistent against every other surface in the kit,
+     * whose borders are rectangles. What separates a folder from its ground is the SHADOW.
+     */
+    --sk-folder-fill: var(--color-bg-surface);
+    --sk-folder-fill-active: var(--color-bg-surface-raised);
+    --sk-folder-fg: var(--color-text-primary);
+    /*
+     * THE GROUND a folder sits on, and the colour it is painted at rest when it is not showing its
+     * own (`reveal="interaction"`). Not `transparent`, which is what this was and what was wrong:
+     * a transparent folder paints nothing, so a folder BEHIND it that has been revealed shows
+     * straight through the ones in front. Painted in the ground's own colour, a resting folder is
+     * equally invisible and still OCCLUDES, which is what makes a stack behave like a stack.
+     *
+     * CSS cannot sample what is behind an element, so the BINDING writes this: `folderGroundFrom`
+     * walks up for the first ancestor that actually paints something, on every draw. What is left
+     * here is the fallback for when nothing up the tree paints at all, and the override for a folder
+     * over an image or a gradient, where "the first painted ancestor" is not the whole truth.
+     */
+    --sk-folder-ground: var(--color-bg-canvas);
+    /*
+     * Thrown UPWARD, and mixed from the text colour rather than taken from the elevation ramp: the
+     * ramp's shadows are sized for a rectangle sitting on a surface, and this is a sheet lifting off
+     * a pile - light gets under its top edge first. Two layers, a wide soft one and a tight one.
+     *
+     * Kept FAINT on purpose, at a few percent. A folder is a big shape, and a shadow with any real
+     * weight on something this large stops reading as depth and starts reading as smudge - which is
+     * what it did at nine percent. The tight second layer is what actually draws the edge; the wide
+     * one only has to suggest that there is air under it.
+     */
+    --sk-folder-shadow-active-filter: drop-shadow(0 -14px 26px color-mix(in oklab, var(--color-text-primary) 4%, transparent))
+      drop-shadow(0 -5px 10px color-mix(in oklab, var(--color-text-primary) 2%, transparent));
+
+    /*
+     * Layout. The inset is measured from the SILHOUETTE, not from the box: content must clear the
+     * tab at the top and stay inside the rounded corners at the sides.
+     *
+     * `--sk-folder-min-height` is ANATOMY, not a guess at content, the same way `.sk-tile` floors
+     * itself at a control's height: a folder is a container with a body, and one sized purely by a
+     * line of text comes out 40px shorter than its own tab - a tab with a sliver under it, which is
+     * what the first pass drew and what does not read as a folder at any size.
+     */
+    --sk-folder-inset-x: var(--space-inset-lg);
+    --sk-folder-inset-y: var(--space-inset-lg);
+    /*
+     * Between the FOLD and the body's first line, and deliberately TIGHT. It is measured from the
+     * silhouette's own top edge, because that is the line the eye reads the body as hanging from -
+     * 8px of it. What lands on screen is a little more, by the half-leading of whatever type the
+     * body is set in; that belongs to the type, not here.
+     *
+     * A title and its own standfirst are one thing, and in a stack they have to look like one:
+     * whatever separates them has to be clearly smaller than what separates one folder from the
+     * next, or the eye pairs each standfirst with the title BELOW it. That reading is what a bigger
+     * gap here bought, and it is worse than the crowding it was meant to fix. The fold already
+     * draws a line between the two, which is a strong enough boundary on its own; adding distance
+     * to it is paying twice for one separation.
+     *
+     * What moves the body DOWN is `--sk-folder-tab-height`, which moves the fold, the label and the
+     * body together and leaves the pair as tight as it was.
+     */
+    --sk-folder-content-gap: var(--space-stack-xs);
+    /*
+     * The label's own inset from the top of the silhouette, and the gap left under it before the
+     * crease. Both come off the spacing scale, like every other length here: an arithmetic
+     * expression on top of a token (`calc(… / 4)`) lands between two rungs and stops being a token
+     * at all - it also escapes the density scaling the whole scale is built on.
+     *
+     * One step below the leading inset. Matching it exactly was too much air for a strip this
+     * shallow; a title reads as placed by being CLEARLY inset, not by measuring the same both ways.
+     */
+    --sk-folder-label-offset: var(--space-inset-md);
+    /* A title belongs to the tab it is written on, not to the space between it and the body. */
+    --sk-folder-label-gap: var(--space-inset-xs);
+    /*
+     * The size of a BARE text label. Anything slotted that brings its own type (a `Heading`, which
+     * is what a tab usually holds) wins on specificity and keeps its own size; this is only so a
+     * folder labelled with a plain string still reads as titled rather than as body copy.
+     */
+    --sk-folder-label-size: var(--font-size-heading-h2);
+    --sk-folder-min-height: 240px;
+    /*
+     * A ceiling on the width, so a folder in a wide column stays a readable card instead of a band
+     * of text across the page. `--size-wrapper-sm` is the system's own narrow measure (42rem), and
+     * it happens to be the exact width the reference folder was drawn at.
+     *
+     * NOT `90ch`, which was the first number tried and measured 918px against this folder's own
+     * 16px font - wider than the 782px it was already rendering at, so it would have loosened the
+     * very thing it was meant to tighten. `ch` is also the wrong unit for a box whose tab is set in
+     * a heading and whose body is set in something smaller: there is no single character width to
+     * measure against.
+     */
+    --sk-folder-max-inline-size: var(--size-wrapper-sm);
+    /* How far a folder rises when it answers the pointer. Small on purpose: this is a sheet of
+     * card lifting off a pile, not a card flying at the reader. */
+    --sk-folder-lift: 8px;
+    /*
+     * The forward lean. A folder in a drawer is never square to the eye: the top edge tips toward
+     * you and the bottom stays put, which is what `-4deg` about a bottom origin does. Kept small on
+     * purpose - past about six degrees the type starts to look like it is falling over.
+     *
+     * It is a STATIC transform, not motion, so `prefers-reduced-motion` leaves it alone; what that
+     * query takes away is the lift and the fades.
+     */
+    --sk-folder-perspective: 700px;
+    --sk-folder-tilt: -4deg;
+
+    position: relative;
+    /*
+     * Its OWN stacking context, so the tab and the content below (both raised above the silhouette)
+     * cannot paint over the next folder in a stack. Without it they escape: `position: relative` with
+     * `z-index: auto` establishes nothing, so a folder's body text rendered straight over the folder
+     * stacked on top of it - two headings and two paragraphs interleaved. Same reason
+     * `.sk-menu__item` isolates.
+     */
+    isolation: isolate;
+    box-sizing: border-box;
+    display: block;
+    min-block-size: var(--sk-folder-min-height);
+    max-inline-size: var(--sk-folder-max-inline-size);
+    padding-block: 0 var(--sk-folder-inset-y);
+    padding-inline: var(--sk-folder-inset-x);
+    color: var(--sk-folder-fg);
+    text-decoration: none;
+    transform-origin: 50% 100%;
+    transform: perspective(var(--sk-folder-perspective)) rotateX(var(--sk-folder-tilt));
+    /*
+     * Two tempos, the same split `button.css` draws. STATE-CHANGE carries the reveal itself (the
+     * silhouette's fill and its shadow, on `.sk-folder__shape*` below). FEEDBACK is the lift, which
+     * has to land under the pointer, so it runs at the faster tempo here.
+     */
+    transition: translate var(--motion-feedback-duration) var(--motion-feedback-easing);
+  }
+
+  /*
+   * THE FAN's knobs, declared on the folder AND on the stack. Not a duplicate: the stack is the
+   * folder's ANCESTOR, so it cannot inherit a value the folder declares, and it needs the rise to
+   * reserve headroom for the first folder's previews (see the stack block below). One selector, one
+   * value, both readers.
+   */
+  .sk-folder,
+  .sk-folder-stack {
+    --sk-folder-preview-size: 26%;
+    /* Enough for the fan to clear the tab, and no more: every pixel it rises is a pixel that has to
+     * exist above the FIRST folder of a stack, where there is no neighbour to overlap and the
+     * container clips instead. `FolderStack` reserves exactly this much headroom for that reason. */
+    --sk-folder-preview-rise: 92px;
+    --sk-folder-preview-spread: 34%;
+    --sk-folder-preview-tilt: 8deg;
+    /*
+     * How much smaller the flanking previews are than the leading one. Three cards of the same size
+     * at the same angle read as one smudge however far apart they sit; a size difference is what the
+     * eye uses for depth, and it is what tells them apart when their CONTENT is similar - which for
+     * screenshots of one project it usually is.
+     */
+    --sk-folder-preview-recede: 0.9;
+    /*
+     * WHAT SEPARATES ONE PREVIEW FROM THE NEXT, and it has to be the frame rather than the picture:
+     * a fan of screenshots from one project looks alike by nature, so a design that only reads when
+     * the images differ does not read at all in the case it exists for.
+     *
+     * A MAT, the way a photographic print has one: a band of the surface colour around the picture,
+     * then a hairline, then the shadow. All three as `box-shadow` layers on the preview's own box,
+     * so they follow its corner radius and take no part in layout.
+     *
+     * The mat is the piece that does the work. A hairline alone is grey on grey wherever two
+     * previews of similar colour overlap, which is most of the time; a light band between them
+     * reads at any size and against any picture. The shadow then says which one is in front.
+     */
+    --sk-folder-preview-mat: 2px;
+    --sk-folder-preview-border: 0 0 0 var(--sk-folder-preview-mat) var(--color-bg-surface),
+      0 0 0 calc(var(--sk-folder-preview-mat) + 1px) color-mix(in oklab, var(--color-text-primary) 14%, transparent);
+    --sk-folder-preview-shadow: 0 10px 24px color-mix(in oklab, var(--color-text-primary) 20%, transparent),
+      0 2px 6px color-mix(in oklab, var(--color-text-primary) 14%, transparent);
+    /* Small at rest so they read as growing out of the folder, not as sliding in from elsewhere. */
+    --sk-folder-preview-rest-scale: 0.86;
+
+    /*
+     * Spans the folder and has no height: the width is what the previews below size themselves
+     * against, and zero height keeps the layer out of the folder's own flow.
+     *
+     * It is a plain percentage rather than a container query, and that is not a preference: making
+     * `.sk-folder` a `container-type: inline-size` gives it size containment on the inline axis, so
+     * it contributes ZERO to its parent's intrinsic width. Measured on the real page - the Box
+     * holding the stack shrank to its own padding, 96px, and every folder in it collapsed with it.
+     */
+  }
+
+  .sk-folder,
+  .sk-folder *,
+  .sk-folder *::before,
+  .sk-folder *::after {
+    box-sizing: border-box;
+  }
+
+  /*
+   * The picture. Absolutely positioned so it takes no part in layout: the folder's height is
+   * whatever its CONTENT needs, and the silhouette is re-measured to match (a ResizeObserver on the
+   * root, in both bindings). `preserveAspectRatio="none"` costs nothing here because the viewBox the
+   * binding writes is the element's own pixel box - nothing is ever scaled, so the corner radii are
+   * the radii this file asked for rather than radii multiplied by some fitting factor.
+   */
+  .sk-folder__shape {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    /* Behind the content, and out of the pointer's way: the shape is a picture, the box is the
+     * control. `pointer-events: none` is what keeps a transparent silhouette from eating clicks
+     * meant for a link inside the body. */
+    z-index: 0;
+    pointer-events: none;
+    /*
+     * THE CAMOUFLAGE, and it lives here rather than on the path because a ground is not always a
+     * flat colour: this system's surfaces are a colour with an elevation wash layered over them, and
+     * an SVG `fill` takes neither a gradient nor an image. The element does - and it is already
+     * clipped to the silhouette by the same `d` the path draws, so it is the same shape either way.
+     *
+     * `none` until the binding has measured; the rule below keeps the whole layer hidden until then,
+     * so an unmeasured folder never flashes a rectangle of ground over the folder behind it.
+     */
+    background: var(--sk-folder-ground);
+    clip-path: var(--sk-folder-clip, none);
+  }
+
+  /*
+   * The path carries only the ACTIVE fill, over the camouflage above: transparent at rest, the
+   * folder's own colour once it is reached for. The shadow rides here too, because a filter on the
+   * clipped element above would be clipped away with it - and at rest the path paints nothing, so
+   * there is nothing to cast, which is exactly the invisibility the component wants.
+   */
+  .sk-folder__shape-path {
+    fill: var(--sk-folder-fill);
+    filter: var(--sk-folder-shadow-filter);
+    transition:
+      fill var(--motion-state-change-duration) var(--motion-state-change-easing),
+      filter var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  /*
+   * Until the binding has measured, the path is empty and the folder is a bare block of text. That
+   * is correct content and wrong paint, and the difference is one frame on a fast machine and
+   * several on a slow one, so the shape fades in rather than appearing mid-scroll. Content is never
+   * hidden by this: only the picture waits.
+   */
+  .sk-folder:not([data-sk-folder-ready]) .sk-folder__shape {
+    opacity: 0;
+  }
+
+  .sk-folder[data-sk-folder-ready] .sk-folder__shape {
+    opacity: 1;
+    transition:
+      opacity var(--motion-enter-duration) var(--motion-enter-easing),
+      filter var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  /* The tab. `fit-content` is the whole mechanism: the element sizes to its label, the binding
+   * measures the element, and the silhouette is drawn to that number - so the tab's padding lives
+   * here in CSS, where padding belongs, instead of as a magic constant inside the geometry. */
+  .sk-folder__tab {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    /* Down from the top of the silhouette, and a smaller gap under the type before the crease. The
+     * tab's HEIGHT is the sum of these two and the label; the binding measures it and puts the fold
+     * exactly there. */
+    padding-block: var(--sk-folder-label-offset) var(--sk-folder-label-gap);
+    min-block-size: var(--sk-folder-tab-height);
+    font-size: var(--sk-folder-label-size);
+    inline-size: fit-content;
+    /* A short label ("Radio") would otherwise leave a tab barely wider than its own leading sweep,
+     * and a folder whose tab is all curve reads as a dent rather than a tab. The floor is the tab,
+     * not the LABEL: the label stays where it is and the flat top simply runs on past it. */
+    min-inline-size: var(--sk-folder-tab-min);
+    /*
+     * Stops one long label from pushing the fold past the folder's trailing edge. `folderTabEnd`
+     * clamps the PATH to the same limit; this clamps the element, so the two agree and a label too
+     * long is truncated inside a tab that still matches its silhouette. `100%` here is the CONTENT
+     * box, already inset on both sides, while the geometry's limit is measured from the folder's
+     * own edge - hence the one inset added back.
+     */
+    max-inline-size: calc(
+      100% + var(--sk-folder-inset-x) - var(--sk-folder-shoulder) - var(--sk-folder-top-radius)
+    );
+    padding-inline-end: var(--space-inline-md);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /*
+   * The shared state layer follows the SILHOUETTE, not the box. `patterns/state-layer.css` paints
+   * hover and press as a `::before` with `inset: 0`, which on a folder is a grey slab sticking out
+   * above the fold - seen on the real page, and the one place a non-rectangular surface cannot take
+   * the system's interaction mechanism unchanged. Clipping costs nothing here: that layer is already
+   * `pointer-events: none`, so no hit area goes with it. The alternative was for this component to
+   * paint its own hover colour, which is the exact thing that pattern exists to stop.
+   *
+   * `none` until the binding has measured, so an unmeasured folder shows no state layer rather than
+   * a rectangle of one.
+   */
+  .sk-folder.sk-interactive::before {
+    clip-path: var(--sk-folder-clip, none);
+    border-radius: 0;
+  }
+
+  .sk-folder__content {
+    position: relative;
+    z-index: 1;
+    min-inline-size: 0;
+    padding-block-start: var(--sk-folder-content-gap);
+  }
+
+  /*
+   * PREVIEWS: what fans out above a folder while it is being reached for.
+   *
+   * POINTERS. The layer takes none at rest and each preview takes them back once the fan is out.
+   * Both halves matter:
+   *
+   *   at rest    the fan is invisible but still occupies the band above the folder, and an invisible
+   *              element that captures the pointer would make the folder ABOVE this one unhoverable
+   *              forever - a dead strip nobody could explain.
+   *   revealed   the previews rise OUT of the folder's own box, so without this, moving towards them
+   *              leaves the folder, drops `:hover`, and the fan closes under the pointer that was
+   *              reaching for it. Taking the pointer keeps the folder hovered, which keeps the fan
+   *              out: the state sustains itself for as long as the reader is looking at it.
+   *
+   * They paint over the folders BEHIND this one for free: paint order is source order, and a folder
+   * comes after the one it overlaps.
+   *
+   * Each direct child is one preview. The stylesheet places them; the author composes them, which is
+   * what keeps this a slot rather than a list of urls the contract would have to learn.
+   */
+  .sk-folder__previews {
+    /* The fan hangs off the tab's trailing side, above the fold, which is the one part of a stacked
+     * folder that is never covered. */
+    /* A quarter of the card, which is the proportion the reference fans at (211 on a 672 card). Much
+     * bigger and the previews stop being a peek at what is inside and start covering the folder
+     * that is showing them. */
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    block-size: 0;
+    /*
+     * BEHIND its own folder, which is the whole read: the previews are what the folder HOLDS, so
+     * they come out from behind it rather than being laid over its face. Only the part that clears
+     * the top edge is visible, exactly as a handful of cards pulled part-way out of a real one.
+     *
+     * `.sk-folder` is `isolation: isolate`, so this stays inside the folder's own stacking context:
+     * it goes under the silhouette without escaping behind whatever the folder sits on. And in a
+     * stack it still paints over the folder BEHIND this one, because that folder's whole context
+     * comes earlier in source order.
+     */
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /*
+   * ONE preview's box, and it is the folder's own element rather than the slotted picture: a real
+   * component clips itself (`ImageFrame` sets `clip-path: inset(0 round …)`), and a clip path
+   * removes everything painted outside the box - an outer `box-shadow` and a `drop-shadow` filter
+   * both, measured on the page. The mat and the shadow that separate one preview from the next have
+   * nowhere to land on the picture; they land here.
+   */
+  /*
+   * ONE preview's box, and it is the folder's own element rather than the slotted picture: a real
+   * component clips itself (`ImageFrame` sets `clip-path: inset(0 round …)`), and a clip path
+   * removes everything painted outside the box - an outer `box-shadow` and a `drop-shadow` filter
+   * both, measured on the page. The mat and the shadow that separate one preview from the next have
+   * nowhere to land on the picture; they land here.
+   *
+   * WHERE each preview sits is carried in custom properties rather than written into each position's
+   * own `translate`, so the revealed state and the reduced-motion one are each a single rule instead
+   * of three.
+   */
+  .sk-folder__preview {
+    /* Its place in the fan. Set per position below; these are the values for a lone preview. */
+    --sk-folder-preview-x: 0px;
+    --sk-folder-preview-y: var(--sk-folder-preview-rise);
+    --sk-folder-preview-scale: 1;
+    position: absolute;
+    inset-block-start: 0;
+    /* Both of these resolve against the layer above, which spans the folder: one hook reads as a
+     * share of the card, the way someone setting it would guess. */
+    inset-inline-start: 50%;
+    inline-size: var(--sk-folder-preview-size);
+    /*
+     * The fan is HIDDEN at rest, and that is a switch, never a fade - `opacity` transitions over
+     * ZERO seconds below, so it flips rather than interpolating. A fade reads as a picture
+     * materialising out of nothing, which is not what happens: the previews are already in the
+     * folder, and what the eye should follow is them coming OUT of it. Movement and size carry that.
+     *
+     * The switch is DELAYED by the exit duration, which is what makes hiding readable. Flipped at
+     * once, the previews vanished in mid-air and the return travel played to nobody; delayed, they
+     * slide back down and under the folder first, and only turn off once they are behind it - so
+     * what a reader sees is the fan being put away, not deleted.
+     */
+    opacity: 0;
+    transform-origin: 50% 100%;
+    translate: -50% 0;
+    scale: var(--sk-folder-preview-rest-scale);
+    rotate: 0deg;
+    /* The mat's own corner, so the ring follows the picture inside it rather than cutting square
+     * across its rounded ones. */
+    border-radius: var(--radius-control);
+    box-shadow: var(--sk-folder-preview-border), var(--sk-folder-preview-shadow);
+    transition:
+      translate var(--motion-exit-duration) var(--motion-exit-easing),
+      scale var(--motion-exit-duration) var(--motion-exit-easing),
+      rotate var(--motion-exit-duration) var(--motion-exit-easing),
+      opacity 0s linear var(--motion-exit-duration);
+  }
+
+  /* THE FAN. Three positions, because three is what an eye reads as a handful; a fourth child is
+   * placed on the middle one and simply sits behind. The centre leads, the sides splay and recede. */
+  .sk-folder__preview:nth-child(3n + 1) {
+    z-index: 3;
+  }
+
+  .sk-folder__preview:nth-child(3n + 2) {
+    --sk-folder-preview-x: calc(-1 * var(--sk-folder-preview-spread));
+    --sk-folder-preview-y: calc(var(--sk-folder-preview-rise) * 0.88);
+    --sk-folder-preview-scale: var(--sk-folder-preview-recede);
+
+    z-index: 1;
+    rotate: calc(-1 * var(--sk-folder-preview-tilt));
+  }
+
+  .sk-folder__preview:nth-child(3n + 3) {
+    --sk-folder-preview-x: var(--sk-folder-preview-spread);
+    --sk-folder-preview-y: calc(var(--sk-folder-preview-rise) * 0.82);
+    --sk-folder-preview-scale: var(--sk-folder-preview-recede);
+
+    z-index: 2;
+    rotate: var(--sk-folder-preview-tilt);
+  }
+
+  /*
+   * Revealed on exactly the states the silhouette answers - see the reveal block below for why
+   * `:focus-within` is in there and `:hover` alone never is.
+   *
+   * The transition is written out in full rather than overriding `transition-duration`, which would
+   * have handed that duration to `opacity` as well and turned the switch into the fade this
+   * component does not want. Coming out, the switch happens FIRST (no delay) so the travel is
+   * visible from its first frame.
+   */
+  .sk-folder:focus-within .sk-folder__preview,
+  .sk-folder[data-active] .sk-folder__preview {
+    opacity: 1;
+    /* See the layer's own note: this is what stops the fan closing under the pointer reaching it. */
+    pointer-events: auto;
+    translate: calc(-50% + var(--sk-folder-preview-x)) calc(-1 * var(--sk-folder-preview-y));
+    scale: var(--sk-folder-preview-scale);
+    transition:
+      translate var(--motion-enter-duration) var(--motion-enter-easing),
+      scale var(--motion-enter-duration) var(--motion-enter-easing),
+      rotate var(--motion-enter-duration) var(--motion-enter-easing),
+      opacity 0s linear 0s;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .sk-folder:hover .sk-folder__preview {
+      opacity: 1;
+      /* See the layer's own note: this is what stops the fan closing under the pointer reaching it. */
+      pointer-events: auto;
+      translate: calc(-50% + var(--sk-folder-preview-x)) calc(-1 * var(--sk-folder-preview-y));
+      scale: var(--sk-folder-preview-scale);
+      /* See the focus-within rule above for why this is written out in full. */
+      transition:
+        translate var(--motion-enter-duration) var(--motion-enter-easing),
+        scale var(--motion-enter-duration) var(--motion-enter-easing),
+        rotate var(--motion-enter-duration) var(--motion-enter-easing),
+          opacity 0s linear 0s;
+    }
+
+    /*
+     * The previews have NO hover of their own, deliberately. The folder is one link and one card, so
+     * a picture that grew under the pointer would announce a second control where there is only one
+     * destination - and it would mean the fan's shape depended on where in it the reader happened to
+     * stop, which is the fan telling you about your own mouse rather than about the folder.
+     *
+     * They still take the pointer while the fan is out (see the layer's own note): that is what keeps
+     * the folder hovered when the pointer reaches them, not a state of their own.
+     */
+  }
+
+  /*
+   * THE REVEAL, and it has no opt-out: a folder is the colour of its own ground until it is reached
+   * for. Not `transparent`, which is what this was and what was wrong - a transparent folder paints
+   * nothing, so a folder BEHIND it that has been revealed shows straight through the ones in front.
+   * Painted in the ground's colour it is equally invisible and still OCCLUDES, which is what makes a
+   * stack behave like a stack.
+   */
+  .sk-folder {
+    /* The path paints NOTHING at rest: the camouflage is the layer under it, which copies the
+     * ground's own paint. No shadow either - a shadow is the one thing that would give away a folder
+     * meant to be unseen. */
+    --sk-folder-fill: transparent;
+    --sk-folder-shadow-filter: none;
+  }
+
+  /*
+   * `:focus-within`, never `:hover` alone. A folder whose shape only ever appears under a mouse is
+   * a folder a keyboard reader is never shown; `Folder.link` takes focus itself, and a plain Folder
+   * gets this from whatever is focusable inside it. `[data-active]` is the third way in, for a
+   * caller driving the state from something else entirely (an in-view observer on a touch device,
+   * a "current" row) without reaching into this file.
+   */
+  .sk-folder:focus-within,
+  .sk-folder[data-active] {
+    --sk-folder-fill: var(--sk-folder-fill-active);
+    --sk-folder-shadow-filter: var(--sk-folder-shadow-active-filter);
+    translate: 0 calc(-1 * var(--sk-folder-lift));
+  }
+
+  /*
+   * The lift and the hover half of the reveal, for pointers that can hover. Everything that answers
+   * a POINTER is gated; everything that answers focus is not.
+   */
+  @media (hover: hover) and (pointer: fine) {
+    .sk-folder:hover {
+      --sk-folder-fill: var(--sk-folder-fill-active);
+      --sk-folder-shadow-filter: var(--sk-folder-shadow-active-filter);
+      translate: 0 calc(-1 * var(--sk-folder-lift));
+    }
+  }
+
+  /*
+   * A coarse pointer has no hover to answer with, and a silhouette that never appears is worse than
+   * one that is simply there: on touch the folder is simply painted. The reveal is a flourish for a
+   * device that can express it, never the only way to find out a folder is a folder.
+   *
+   * The FAN is not included, on purpose. Previews rise into the folder above them, so painting them
+   * permanently would leave every folder's pictures covering its neighbour's copy for good. They
+   * stay tied to `active`, which on touch is what a scrolling page sets.
+   */
+  @media not all and (hover: hover) {
+    .sk-folder {
+      --sk-folder-fill: var(--sk-folder-fill-active);
+    }
+  }
+
+  /*
+   * THE STACK: folders overlapped the way they sit in a drawer, so each shows its tab and a strip of
+   * body. The overlap is one rule between siblings - no wrapper element, no per-item index, and no
+   * `z-index` anywhere (see below).
+   */
+  .sk-folder-stack {
+    /*
+     * The CEILING on how much of a folder the one in front of it may hide - or, read the other way, how tall the
+     * strip left showing is: `--sk-folder-min-height` minus this.
+     *
+     * THE RULE IS THE CONTENT'S, not a ratio: the strip has to clear whatever each folder shows,
+     * because a body cut off mid-line reads as broken rather than as stacked. The default is set
+     * against a three-line standfirst, which is what a folder of prose usually holds: tab (52) plus
+     * the gap plus three lines reaches about 128, so 100 leaves 140 showing and a little air under
+     * the last line. Longer copy in a folder means a smaller number here, or a taller folder.
+     *
+     * The other constraint is proximity, and it survives at this value: a title sits about 12px from
+     * its own standfirst, and about 36px from the one above it. Three times, which is what stops the
+     * eye pairing a standfirst with the wrong title. Set it past the folder's own height and you get
+     * a row of tabs, which is a legitimate thing to want and the caller's call.
+     */
+    --sk-folder-stack-overlap: 100px;
+
+    display: flow-root;
+  }
+
+  /*
+   * Headroom for the FIRST folder's fan. Every other folder's previews rise into the folder behind
+   * it; the first one has nothing behind it, so without this its previews are cut off by whatever
+   * holds the stack - which is what shipped, and looked like a bug rather than a flourish.
+   *
+   * `:has()` so a stack of folders with no previews reserves nothing.
+   */
+  .sk-folder-stack:has(.sk-folder__previews) {
+    padding-block-start: var(--sk-folder-preview-rise);
+  }
+
+  /*
+   * THE OVERLAP, measured rather than tuned. Each folder pulls the next one up over its OWN empty
+   * tail - the card below its last line - which the binding measures and writes as
+   * `--sk-folder-tail`. So the height of the copy decides the spacing: a folder with four lines of
+   * standfirst hides less than one with two, and neither is ever cut off by the folder in front.
+   *
+   * On the folder itself rather than on the one after it, because a tail belongs to the folder that
+   * has it: no rule has to reach a previous sibling's height, which CSS could not do anyway.
+   *
+   * `--sk-folder-stack-overlap` is the CEILING, not the amount: it caps how much of a folder may
+   * ever disappear, so a folder that is mostly empty still leaves a strip of itself showing. Before
+   * the measurement lands the tail is zero, so the stack falls apart into separate folders rather
+   * than piling up wrongly.
+   */
+  .sk-folder-stack > .sk-folder:not(:last-child) {
+    margin-block-end: calc(-1 * min(var(--sk-folder-tail, 0px), var(--sk-folder-stack-overlap)));
+  }
+
+  /*
+   * HOVER raises nothing, and that is the point: in a drawer the folder you are touching still sits
+   * BEHIND the ones in front of it, and lifting it out of the pile breaks the one illusion the stack
+   * is built on. Paint order is source order, which is the order the folders are already in.
+   *
+   * KEYBOARD FOCUS is the exception, and it is not a matter of taste. WCAG 2.2 SC 2.4.11 (Focus Not
+   * Obscured, AA) says the focused component must not be ENTIRELY hidden by author-created content,
+   * and `overlap` is author-settable: set it to the folder's own height and every folder but the
+   * last is completely covered, so tabbing into one would move focus somewhere nothing can be seen.
+   * At the shipped default (120px of a 240px folder) there is always a strip showing and this rule
+   * changes nothing; it is what keeps the criterion met for the values it does not control.
+   *
+   * `:focus-within` only, never `:hover` - a pointer user is already looking at what they are
+   * pointing at.
+   */
+  .sk-folder-stack > .sk-folder:focus-within {
+    z-index: 1;
+  }
+
+  /*
+   * NARROW SCREENS. A folder is the same drawing at any width; what changes is how much room it can
+   * spend on it.
+   *
+   * The floor comes down because a 240px card in a 390px-wide phone is most of the screen for one
+   * item in a list. The tab comes down with it, and the shoulder with the tab (its height IS the
+   * fold's vertical run, so they move together or the curve gets steep). The fan shrinks and stops
+   * splaying: there is no width to splay into, so the previews sit almost square on top of one
+   * another, which is what the reference does at this size.
+   *
+   * Everything here is a hook, so this is a retune rather than a second component.
+   */
+  @media (max-width: 40rem) {
+    .sk-folder,
+    .sk-folder-stack {
+      /* Taller than the copy, on purpose: the overlap is whatever empty tail a folder has, so a card
+       * that ends exactly where its text does has none and the stack flattens into a column. The
+       * reference sits at 340 on a 390 screen for the same reason. */
+      --sk-folder-min-height: 320px;
+      /* The floor, and on a phone it is what the tab actually measures: the title plus its two
+       * insets comes to about 32, so this is the number that decides how tall the flap looks. */
+      --sk-folder-tab-height: 46px;
+      --sk-folder-shoulder: 76px;
+      --sk-folder-tab-radius: 18px;
+      --sk-folder-top-radius: 14px;
+      --sk-folder-inset-x: var(--space-inset-md);
+      /* Under half the inset, rather than equal to it: on a short tab that much air above the title
+       * is most of the strip, and the tab stops reading as a tab and starts reading as a gap. */
+      --sk-folder-label-offset: var(--space-inset-xs);
+      --sk-folder-label-size: var(--font-size-heading-h3);
+      /* No floor: the tab is exactly as wide as its title. The floor exists so a one-word label on a
+       * wide card does not produce a stub of a tab, and on a phone there is no width to spare for
+       * one - a tab wider than its own text is just a longer fold to nowhere. */
+      --sk-folder-tab-min: 0px;
+      /* Bigger as a share of a narrower card, and barely fanned: the reference lands at about half
+       * the card's width with a few degrees between the three. */
+      --sk-folder-preview-size: 46%;
+      --sk-folder-preview-spread: 16%;
+      --sk-folder-preview-tilt: 4deg;
+      --sk-folder-preview-rise: 64px;
+      --sk-folder-preview-mat: 2px;
+    }
+  }
+
+  /*
+   * The reveal is information (a folder resolving under its own label), so it survives; the MOTION
+   * is not, so the lift and the fades go. Same line every other component in this system draws.
+   */
+  /*
+   * REDUCED MOTION.
+   *
+   * The line is between what a state CHANGE is and what merely dramatises it. Everything that says
+   * something survives, instantly: the silhouette resolves, the fill and the shadow move, the fan is
+   * there. What goes is the travel - the folder's lift, and the previews sliding and growing out of
+   * it - because that is the part that is only there to be watched.
+   *
+   * The previews therefore appear ALREADY placed and already full size. Animating them to their
+   * final spot with a zero duration would be the same picture; declaring the final values outright
+   * is what makes it readable here rather than an accident of timing.
+   *
+   * The static tilt is untouched: a transform that never changes is not motion, it is the shape of
+   * the thing.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .sk-folder,
+    .sk-folder__shape,
+    .sk-folder__shape-path,
+    .sk-folder__preview {
+      transition: none;
+    }
+
+    .sk-folder:focus-within,
+    .sk-folder:hover,
+    .sk-folder[data-active] {
+      translate: none;
+    }
+
+    /* Already in their places, at their own sizes: the fan is still a fan, it just does not travel
+     * there. One rule, because a preview's place is a variable rather than a literal. */
+    .sk-folder__preview {
+      translate: calc(-50% + var(--sk-folder-preview-x)) calc(-1 * var(--sk-folder-preview-y));
+      scale: var(--sk-folder-preview-scale);
+    }
+  }
+
+  /*
+   * FORCED COLOURS. The silhouette is `fill`ed, and a forced-colours mode replaces colour with a
+   * system palette that has no notion of "a tinted card": painting it `Canvas` with a `CanvasText`
+   * edge is what keeps the folder a visible shape rather than a rectangle of text on a rectangle.
+   */
+  @media (forced-colors: active) {
+    /* The one place an outline earns its keep: forced colours replace every colour with a system
+     * palette that has no notion of a tinted card, and a fill alone would leave the folder's edge
+     * invisible. */
+    .sk-folder__shape-path {
+      fill: Canvas;
+      stroke: CanvasText;
+      stroke-width: 1px;
+    }
+
+    .sk-folder:focus-within .sk-folder__shape-path,
+    .sk-folder:hover .sk-folder__shape-path,
+    .sk-folder[data-active] .sk-folder__shape-path {
+      fill: Highlight;
+      stroke: HighlightText;
+    }
+  }
+}

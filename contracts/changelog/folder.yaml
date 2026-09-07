@@ -1,0 +1,54 @@
+# Qué cambió en folder, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
+# hash nuevo.
+surface: "e18e8168c75e9d69"
+entries:
+  - date: 2026-09-04
+    kind: feature
+    es:
+      title: Folder se publica como contrato, con 3 signatures
+      body: >-
+        Entra al catálogo con <code>Folder</code>, <code>Folder.link</code> y
+        <code>FolderStack</code>, <code>FolderLink</code> y <code>FolderPreview</code>: una superficie
+        cuya pestaña sale del cuerpo en una sola silueta,
+        dibujada como un <code>&lt;path&gt;</code> que el binding mide y escribe. La geometría es
+        una función pura de core (<code>folderPath</code>), así que las dos bindings dibujan la
+        misma forma en vez de dos parecidas; lo único que se mide es dónde termina la pestaña, que
+        es donde termina su rótulo. Una carpeta NUNCA se ve en reposo, y no hay opción para
+        que se vea: se pinta del color de lo que tiene detrás y se revela con <code>:hover</code> y
+        <code>:focus-within</code>, nunca sólo con hover, y en punteros gruesos se pinta siempre. El
+        uso por defecto es la pila. En táctil no hay hover ni foco al tocar un enlace, así que
+        <code>active</code> es la tercera entrada al revelado: la pone quien compone, normalmente
+        sobre la carpeta más cercana al centro de la pantalla. El slot opcional
+        <code>previews</code> abre en abanico un puñado de <code>Folder.preview</code> sobre esos
+        mismos estados, cada uno con la imagen que le pongas adentro: decorativo por construcción,
+        la capa va <code>aria-hidden</code> y no toma el puntero. Todas las carpetas son del mismo color y
+        ninguna lleva borde: lo que la separa del fondo es una sombra hacia arriba, y una leve
+        inclinación hacia adelante la apoya en el plano. Opciones:
+        <code>active</code>, <code>href</code>, <code>overlap</code>. La hoja es
+        <code>components/folder.css</code>, que publica los cinco números de la silueta como hooks.
+    en:
+      title: Folder is published as a contract, with 3 signatures
+      body: >-
+        It joins the catalogue with <code>Folder</code>, <code>Folder.link</code> and
+        <code>FolderStack</code>, <code>FolderLink</code> and <code>FolderPreview</code>: a surface
+        whose tab flows out of its body as one silhouette,
+        drawn as a single <code>&lt;path&gt;</code> that the binding measures and writes. The
+        geometry is a pure function in core (<code>folderPath</code>), so both bindings draw one
+        shape rather than two that resemble each other; the only measurement is where the tab ends,
+        which is where its label ends. A folder is NEVER visible at rest, and there is no
+        option to make it so: it is painted the colour of whatever is behind it and reveals on
+        <code>:hover</code> and <code>:focus-within</code>, never hover alone, and on coarse
+        pointers it is simply painted. The stack is the default
+        use. Touch has neither hover nor focus-on-tap, so <code>active</code> is the third way into
+        the reveal: the composition sets it, usually on whichever folder is nearest the middle of the
+        screen. An optional
+        <code>previews</code> slot fans out a handful of <code>Folder.preview</code>s on those same
+        states, each holding whatever picture you put in it: decorative by construction, since the
+        layer is <code>aria-hidden</code> and takes no pointer. Every folder is the same colour and none
+        carries a border: what separates one from its ground is an upward shadow, and a slight
+        forward lean sets it on the plane. Options:
+        <code>active</code>, <code>href</code>, <code>overlap</code>. Its stylesheet is
+        <code>components/folder.css</code>, which publishes the silhouette's five numbers as hooks.

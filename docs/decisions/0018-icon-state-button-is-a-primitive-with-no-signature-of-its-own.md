@@ -1,71 +1,67 @@
 ---
 num: 18
-title: Icon State Button es un primitivo, sin signature propia
-short: "Icon State Button: anatomía y paint, no un tercer componente"
+title: Icon State Button is a primitive, with no signature of its own
+short: "Icon State Button: anatomy and paint, not a third component"
 summary: >-
-  CopyButton y ThemeToggle son los dos "botón ícono con estados, un ícono por estado" que existen.
-  Los dos ya componían el pattern Icon Toggle para el cross-fade, pero cada uno escribía sus propias
-  N caras a mano (dos veces cada una, una en el contrato declarativo y otra en JSX) y su propia
-  función de "escribir el estado + el aria-label". Esta decisión saca esas dos piezas a
-  `@skryensya/core/icon-state-button`, un primitivo sin `signature` propia: no se registra, no tiene
-  export de React con su propio nombre, no aparece como un componente nuevo. CopyButton y ThemeToggle
-  siguen siendo dos signatures distintas, cada una dueña de su propio disparador de transición y de
-  su propio CSS.
+  CopyButton and ThemeToggle are the two "icon button with states, one icon per state" cases that exist.
+  Both already composed the Icon Toggle pattern for the cross-fade, but each wrote its own N faces by hand
+  (twice each, once in the declarative contract and once in JSX) and its own "write the state + the
+  aria-label" function. This decision lifts those two pieces into
+  `@skryensya/core/icon-state-button`, a primitive with no `signature` of its own: it is not registered, it
+  has no React export under its own name, it does not appear as a new component. CopyButton and
+  ThemeToggle remain two distinct signatures, each owning its own transition trigger and its own CSS.
 ---
 
-## Lo que había
+## What was there
 
-Icon Toggle (`icon-toggle.ts` + `patterns/icon-toggle.css`) ya resolvía el cross-fade entre caras
-apiladas para cualquier cantidad de estados. Eso ya era genérico. Lo que no era genérico era todo
-lo que queda alrededor:
+Icon Toggle (`icon-toggle.ts` + `patterns/icon-toggle.css`) already solved the cross-fade between stacked
+faces for any number of states. That part was already generic. What was not generic was everything
+around it:
 
-- Cada componente escribía sus propias N caras `<span data-face>` **dos veces**: una vez en
-  `template.children` del contrato (lo que consume el binding autorado/vanilla), y otra vez a mano
-  en JSX del binding React, sincronizadas solo por disciplina y por el gate G2 de simetría.
-- Cada binding vanilla tenía su propia función `paint()`/`paintToggle()` para escribir el atributo de
-  estado del root y el `aria-label`, casi idénticas entre sí.
-- El binding React de CopyButton redeclaraba `FEEDBACK_DURATION = 1800` por su cuenta. Un comentario
-  en el archivo admite que se copió a mano de la versión vanilla, "hasta la ventana de 1800ms".
+- Each component wrote its own N `<span data-face>` faces **twice**: once in the contract's
+  `template.children` (what the authored/vanilla binding consumes), and again by hand in the React
+  binding's JSX, kept in sync only by discipline and by the G2 symmetry gate.
+- Each vanilla binding had its own `paint()`/`paintToggle()` function to write the root's state attribute
+  and the `aria-label`, nearly identical to one another.
+- CopyButton's React binding redeclared `FEEDBACK_DURATION = 1800` on its own. A comment in the file
+  admits it was copied by hand from the vanilla version, "down to the 1800ms window".
 
-## La decisión: un primitivo, no un tercer componente
+## The decision: a primitive, not a third component
 
-`icon-state-button.ts` (core) exporta `buildIconStateFaces` (arma las N caras del contrato a partir
-de una lista `{ name, icon }`) y `setIconState`/`getIconState` (escriben o leen el atributo de estado
-del root, más el `aria-label` opcional). `icon-state-button.tsx` (react) exporta el equivalente para
-JSX, `renderIconStateFaces`.
+`icon-state-button.ts` (core) exports `buildIconStateFaces` (builds the contract's N faces from a
+`{ name, icon }` list) and `setIconState`/`getIconState` (write or read the root's state attribute, plus
+the optional `aria-label`). `icon-state-button.tsx` (react) exports the JSX equivalent,
+`renderIconStateFaces`.
 
-**Alcance deliberadamente angosto**: solo anatomía y lectura/escritura genérica del atributo. El
-primitivo NO decide cuándo cambia el estado. CopyButton se revierte solo con un timer, ThemeToggle
-cicla para siempre y avisa a sus hermanos por evento. Son dos formas de comportamiento genuinamente
-distintas; forzar una sola sobre las dos hubiera sido una abstracción falsa. Ese disparador sigue
-siendo de cada componente.
+**Deliberately narrow scope**: anatomy and generic reading/writing of the attribute, nothing more. The
+primitive does NOT decide when the state changes. CopyButton reverts itself on a timer, ThemeToggle
+cycles forever and notifies its siblings by event. Those are two genuinely different shapes of behavior;
+forcing one onto both would have been a false abstraction. That trigger stays with each component.
 
-**Y no tiene signature.** `CopyButton` y `ThemeToggle` siguen siendo dos entradas distintas en
-`signatures`, cada una con su propio `id`, su propio export de React (`@skryensya/react/copy-button`,
-`@skryensya/react/theme-toggle`) y su propia página de docs. `icon-state-button.ts` no se agrega al
-registro de `packages/ai-compiler/src/registry.ts`. Mismo trato que el propio Icon Toggle, que
-tampoco está registrado. Es la misma razón de la decisión 8: un primitivo se publica cuando un
-segundo consumidor ya lo necesita, y "un segundo consumidor" significa que dos componentes existentes
-lo comparten, no que nazca un componente nuevo para justificarlo.
+**And it has no signature.** `CopyButton` and `ThemeToggle` remain two separate entries in `signatures`,
+each with its own `id`, its own React export (`@skryensya/react/copy-button`,
+`@skryensya/react/theme-toggle`) and its own docs page. `icon-state-button.ts` is not added to the
+registry in `packages/ai-compiler/src/registry.ts`. Same treatment as Icon Toggle itself, which is not
+registered either. It is the same reasoning as decision 8: a primitive is published when a second
+consumer already needs it, and "a second consumer" means two existing components share it, not that a new
+component is born to justify it.
 
-## El CSS no se tocó
+## The CSS was not touched
 
-Cada componente sigue escribiendo a mano sus propios selectores que mapean el valor de su atributo de
-estado a la cara visible (`data-sk-copy-button-state` en copy-button.css, `data-scheme` en
-theme-toggle.css). CSS no tiene manera de decir "activa la cara cuyo nombre coincide con el valor de
-mi propio atributo" sin enumerar cada valor a mano. La única alternativa real es pasarse al mecanismo
-`data-active` que ya trae Icon Toggle, y eso solo lo puede escribir JS. Eso hubiera costado el paint
-sin JS que hoy tienen los dos: el fallback `prefers-color-scheme` de ThemeToggle y el "atributo
-ausente = idle" de CopyButton. Generar el markup valía la pena; generar el CSS, con ese costo, no.
+Each component still writes its own selectors by hand mapping its state attribute's value to the visible
+face (`data-sk-copy-button-state` in copy-button.css, `data-scheme` in theme-toggle.css). CSS has no way
+to say "activate the face whose name matches the value of my own attribute" without enumerating every
+value by hand. The only real alternative is switching to the `data-active` mechanism Icon Toggle already
+carries, and only JS can write that. That would have cost the no-JS paint both of them have today:
+ThemeToggle's `prefers-color-scheme` fallback and CopyButton's "attribute absent = idle". Generating the
+markup was worth it; generating the CSS, at that price, was not.
 
-## El costo, dicho
+## The cost, stated
 
-- `IconStateFace.icon` está tipado contra `StableIconName` (core), así que un nombre de ícono que no
-  existe en el vocabulario estable falla en build. Antes cada componente escribía el string suelto.
-- El helper de contrato (`buildIconStateFaces`) devuelve un tipo de retorno escrito a mano
-  (`readonly ContractTemplate[]`) en vez de inferido: el contrato que lo embebe queda
-  `as const satisfies ComponentContract`, y `as const` no vuelve a narrowear lo que devuelve una
-  llamada a función.
-- `FEEDBACK_DURATION` de CopyButton y el ciclo/broadcast de ThemeToggle siguen sin compartir código.
-  Es una duplicación real que queda. Deliberadamente fuera de alcance de esta decisión, no una que se
-  haya pasado por alto.
+- `IconStateFace.icon` is typed against `StableIconName` (core), so an icon name that does not exist in
+  the stable vocabulary fails at build. Previously each component wrote the bare string.
+- The contract helper (`buildIconStateFaces`) returns a hand-written return type
+  (`readonly ContractTemplate[]`) rather than an inferred one: the contract embedding it is
+  `as const satisfies ComponentContract`, and `as const` does not re-narrow what a function call returns.
+- CopyButton's `FEEDBACK_DURATION` and ThemeToggle's cycle/broadcast still share no code. That is real
+  duplication that remains. Deliberately out of scope for this decision, not something overlooked.

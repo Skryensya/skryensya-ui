@@ -14,10 +14,12 @@
  */
 
 import { definePreference, oneOf, stringValue } from "@skryensya/core/storage";
-/* `../i18n/ui`, not `../i18n`: the barrel drags in the `import.meta.glob` over every page source,
- * and this file has consumers (the pre-paint script's `PREPAINT`) that must stay cheap. `ui` is the
- * plain locale list with no build-time filesystem read behind it. */
-import { defaultLocale, locales, type Locale } from "../i18n/ui";
+/* `../i18n/locales`, and neither `../i18n` nor `../i18n/ui`. This file has consumers (the pre-paint
+ * script's `PREPAINT`) that must stay cheap, and each of the other two costs something: the barrel
+ * drags in the `import.meta.glob` over every page source, and `ui` is now built by spreading ~110
+ * route shards, which a bundler cannot prove pure, so importing it retains the whole dictionary
+ * (measured: an 814 kB `preferences` chunk). `locales` imports nothing and is five lines. */
+import { defaultLocale, locales, type Locale } from "../i18n/locales";
 
 export { colorModePreference } from "@skryensya/core/theme-toggle";
 export {

@@ -15,7 +15,7 @@ summary: >-
 
 El component preview de este sitio agrupa dos controles relacionados en su header: el selector de
 tamaño de pantalla y el toggle Vanilla/React. Ambos son Segmented: cada uno su propio `radiogroup`
-con roving tabindex ([`connectSegmented`](/../../packages/vanilla/src/components/segmented.ts): sólo
+con roving tabindex ([`connectSegmented`](../../packages/vanilla/src/components/segmented.ts): sólo
 la opción seleccionada tiene `tabindex="0"`, el resto `-1`). Agruparlos visualmente como una sola
 barra de controles es exactamente lo que Toolbar existe para hacer.
 
@@ -40,7 +40,7 @@ Una sola flecha saltaba dos paradas.
 
 ## La decisión
 
-Dos cambios en [`packages/vanilla/src/components/toolbar.ts`](/../../packages/vanilla/src/components/toolbar.ts):
+Dos cambios en [`packages/vanilla/src/components/toolbar.ts`](../../packages/vanilla/src/components/toolbar.ts):
 
 1. **Filtrar por parada, no por foco posible.** `controls` ahora excluye cualquier elemento con
    `tabindex="-1"`. Un widget compuesto que expone su propio roving tabindex (Segmented, y cualquier

@@ -161,7 +161,7 @@ paso de cada ítem es abrir la página + el contrato y decidir. Orden alfabétic
 - [ ] **Transporte HTTP para el MCP** (`mcp-http-transport-goal` en la memoria del agente). El
   usuario lo quiere eventualmente; **no programado**. `packages/mcp` hoy es stdio-only; mantener
   las asunciones de transporte sueltas en cualquier cambio a ese paquete, no bloquear en esto.
-- [ ] **Pipeline de consumo por IA (F6/F7)** - `docs/plataforma-ai-ui.md`, secciones "F6 · El sitio
+- [ ] **Pipeline de consumo por IA (F6/F7)** - `docs/ai-ui-platform.md`, secciones "F6 · El sitio
   y los recipes" y "F7 · Evals", ambas "en curso" a la fecha de ese documento (2026-08-24). **Ese
   documento es la fuente de verdad de este ítem, no este archivo**: verificado el 2026-09-03 que su
   propia lista de "familias sin publicar" ya está desactualizada (`calendar`, `combobox`,

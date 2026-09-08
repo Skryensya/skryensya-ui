@@ -28,7 +28,7 @@ Si se importa `tokens.scss`, ya está incluido.
 ## Enforced gratis por la regla que ya existía
 
 Como las duraciones y easings de escala son primitivos de tier 1, la regla de tier-skip del
-[validador](/decisiones/0019-paletas-publicas-y-semanticos-constantes) **ya prohíbe** que un componente referencie una duración
+[validador](./0019-public-palettes-and-constant-semantics.md) **ya prohíbe** que un componente referencie una duración
 cruda: tiene que pasar por un token de intención. No hizo falta una regla nueva, la del color hace el
 trabajo.
 
@@ -36,7 +36,7 @@ Ajustar un primitivo (`fast` de 120 a 100ms) reestiliza el sistema entero con ce
 componentes. Ese es todo el punto de una API semántica.
 
 ```css
-/* Falla el build: un componente no llega a un primitivo. */
+/* Build fails: a component does not reach a primitive. */
 .sk-dialog { transition: opacity var(--scale-duration-fast); }
 
 /* Así se consume. */

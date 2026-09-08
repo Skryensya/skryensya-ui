@@ -12,8 +12,8 @@ downstream of keeping that true.
 | File | What it decides |
 |---|---|
 | [`CONTEXT.md`](CONTEXT.md) | The glossary. Which word names each concept, and which words not to use. It is the only authority on terminology. |
-| [`docs/decisiones/`](docs/decisiones) | 20 decision records, each with the alternatives rejected. Most "why isn't this X?" questions have a numbered answer. |
-| [`docs/guia-escritura.md`](docs/guia-escritura.md) | How prose is written: register, person, punctuation, and what changes between Spanish and English. |
+| [`docs/decisions/`](docs/decisions) | 20 decision records, each with the alternatives rejected. Most "why isn't this X?" questions have a numbered answer. |
+| [`docs/writing-guide.md`](docs/writing-guide.md) | How prose is written: register, person, punctuation, and what changes between Spanish and English. |
 | [`docs/pending-tasks.md`](docs/pending-tasks.md) | The live backlog, ranked. If you want something to pick up, take the top unchecked item of Nivel 1. |
 
 ## Setup
@@ -219,7 +219,7 @@ minimumReleaseAgeExclude:
   rejected, the measurement that settled it, the failure the code is avoiding. Match the density of
   the file you are editing.
 - **Names come from `CONTEXT.md`.** If a term is not there and you need one, add it there first.
-- **Prose language follows [`docs/guia-escritura.md`](docs/guia-escritura.md)**: user-facing
+- **Prose language follows [`docs/writing-guide.md`](docs/writing-guide.md)**: user-facing
   documentation and decision records in Spanish, code and repository metadata in English.
 
 ## Proposing something large

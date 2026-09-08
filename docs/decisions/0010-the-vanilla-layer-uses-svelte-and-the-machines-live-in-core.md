@@ -42,7 +42,7 @@ en **light DOM**, `mount()` sobre la raíz existente, nada de custom elements ni
 `.hero .sk-tabs { … }` sigue alcanzando el elemento y el modelo de styling hooks queda intacto. Svelte
 es el motor interno, reemplazable, nunca un contrato para el consumidor: se autora HTML con clases y
 `data-sk-*`, se llama `initComponents()`, y no se escribe una línea de Svelte. El sitio
-([ADR-19](/decisiones/0006-monorepo-y-el-sitio)) compila esos `.svelte` con `@sveltejs/vite-plugin-svelte`
+([ADR-19](./0006-the-monorepo-and-the-site.md)) compila esos `.svelte` con `@sveltejs/vite-plugin-svelte`
 y no renderiza ni una UI de Svelte.
 
 Los enhancers SIN máquina de Zag, button, segmented, sidebar, slider, toast, vaul (gesto puro), los
@@ -52,8 +52,8 @@ Svelte en el mismo `initComponents()`.
 ## Core tiene dependencies, y está bien
 
 Centralizar las machines hace que `@skryensya/core` tenga `dependencies`, las de `@zag-js/*`, lo que
-**revierte** la invariante "core sin deps" de [ADR-19](/decisiones/0019-paletas-publicas-y-semanticos-constantes)
-/ [ADR-19](/decisiones/0006-monorepo-y-el-sitio). Se acepta porque una machine **no es un inquilino**:
+**revierte** la invariante "core sin deps" de [ADR-19](./0019-public-palettes-and-constant-semantics.md)
+/ [ADR-19](./0006-the-monorepo-and-the-site.md). Se acepta porque una machine **no es un inquilino**:
 no nombra una marca ni un proveedor, es comportamiento agnóstico de plataforma, que es lo que core
 publica. La distinción con los iconos se mantiene: la geometría de un set sí es de un inquilino y sigue
 sin poder vivir en core; una máquina, no. El repo de referencia (kitdigital) hace exactamente esto.

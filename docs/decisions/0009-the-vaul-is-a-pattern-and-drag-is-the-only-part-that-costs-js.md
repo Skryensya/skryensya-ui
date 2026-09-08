@@ -17,7 +17,7 @@ nombra por *de dónde viene*, nunca por la forma que hace al llegar. Evitamos `v
 
 ## Por qué es un pattern y no un componente
 
-La regla de la [decisión 8](/decisiones/0002-que-envia-tier-3) pregunta: *¿podría un segundo
+La regla de la [decisión 8](./0002-what-tier-3-ships.md) pregunta: *¿podría un segundo
 componente necesitar esta estructura exacta?* Sí: **Drawer** (`sk-drawer`) es un Vaul en el borde
 inline, a lo alto de la pantalla. Por eso `components/drawer.css` sólo reasigna los hooks
 `--sk-vaul-*` desde `--sk-drawer-*`; no vuelve a implementar panel, borde, slide ni backdrop.
@@ -29,7 +29,7 @@ breakpoint compacto. No hay una variante implícita de Dialog ni una clase `sk-v
 
 ## Exige el `<dialog>` nativo
 
-Por cada razón de la [decisión 11](/decisiones/0005-el-dialog-exige-el-elemento-nativo): focus trap,
+Por cada razón de la [decisión 11](./0005-dialog-requires-the-native-element.md): focus trap,
 ESC, fondo inerte, restauración del foco, top layer y `::backdrop` real pertenecen a la plataforma. Un
 Vaul sobre un div los reimplementa en JavaScript, y `:modal` no está disponible para un div.
 

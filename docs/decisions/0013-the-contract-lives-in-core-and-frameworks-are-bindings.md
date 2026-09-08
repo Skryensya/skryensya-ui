@@ -24,7 +24,7 @@ Lo que había, medido:
 - **14 de 62** exportan `*Options`, y React las importa en **8** componentes.
 - `packages/react/src/components/button.tsx` **redeclara** `variant`, `size` e `iconOnly` en su propio
   `ButtonAppearanceProps` en vez de usar `ButtonOptions`, que existe en
-  [`packages/core/src/button.ts`](/../../packages/core/src/button.ts) tres archivos más allá.
+  [`packages/core/src/button.ts`](../../packages/core/src/button.ts) tres archivos más allá.
 - `docs/ai/schemas/button.json` volvía a escribir los mismos cuatro variants, los mismos tres sizes y
   los mismos import paths, a mano, por tercera vez.
 

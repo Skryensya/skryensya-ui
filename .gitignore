@@ -19,7 +19,7 @@ dist/
 test-results/
 
 # Handoff note for the in-flight demo → usage-tree porting. Temporary by design: delete it when the
-# porting lands. What outlives it belongs in docs/plataforma-ai-ui.md, F6.
+# porting lands. What outlives it belongs in docs/ai-ui-platform.md, F6.
 PORTING-DEMOS.md
 
 # Scratch harnesses for that same porting: they check a page's stages rather than the product, and

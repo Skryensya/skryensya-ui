@@ -46,7 +46,7 @@ que el diseñador no escribió, y está justificado.
 - **Tipografía**, escalar font-size sin corregir line-height se lee peor. La densidad es un problema de
   espaciado, no de tipo.
 - **Radio de esquina**, es redondez, no espacio; tiene su propia dimensión
-  ([decisión 18](/decisiones/0019-paletas-publicas-y-semanticos-constantes)) y por eso la densidad no lo toca.
+  ([decisión 18](./0019-public-palettes-and-constant-semantics.md)) y por eso la densidad no lo toca.
 - **Ancho del anillo de foco**, un anillo que se encoge desaparece.
 - **Área de impacto táctil**, un target puede pintarse chico y responder grande: el área invisible se
   queda en 44px.

@@ -7,7 +7,7 @@
 | **Estado** | En construcción · F0–F5 verdes; F4 publica 69 familias / 158 firmas; F6 en curso (9 recipes, 29 previews de docs medidos: 29 usan usage tree, 0 siguen autoreados a mano); F7 en curso (red de regresión estática verde; harness de agente vivo con tres providers, corrido en vivo contra el server real vía `claude -p`) |
 | **Fecha** | 24 de agosto de 2026 |
 | **Supersede** | `apps/docs/01_arquitectura_objetivo_skryensya_ai_ui.md` y `apps/docs/02_plan_reconstruccion_desde_cero_skryensya_ai_ui.md`, que quedan como material de origen y no dirigen el trabajo |
-| **Decisiones** | [28](./decisiones/0013-el-contrato-vive-en-core-y-los-frameworks-son-bindings.md) · [29](./decisiones/0014-el-usage-tree-es-la-moneda-unica.md) · [30](./decisiones/0015-la-evidencia-se-renderiza-en-los-dos-bindings.md) · [31](./decisiones/0016-el-catalogo-cabe-en-el-contexto.md) |
+| **Decisiones** | [28](./decisions/0013-the-contract-lives-in-core-and-frameworks-are-bindings.md) · [29](./decisions/0014-the-usage-tree-is-the-single-currency.md) · [30](./decisions/0015-evidence-is-rendered-in-both-bindings.md) · [31](./decisions/0016-the-catalogue-fits-in-the-context.md) |
 | **Vocabulario** | `CONTEXT.md` → Contract, Binding, Signature, Part template, Usage tree |
 
 > **Principio rector**
@@ -82,7 +82,7 @@ valor y no un tipo porque el markup es dato: se importa, se serializa y sale det
 TypeScript Program para el grueso.
 
 ```ts
-// packages/core/src/button.ts: dos firmas sobre un export, discriminadas por href
+// packages/core/src/button.ts: two signatures over one export, discriminated by href
 export const buttonContract = {
   id: "button",
   css: "@skryensya/core/components/button.css",
@@ -103,7 +103,7 @@ export const buttonContract = {
       slots: { children: { accepts: "node", required: true } },
       template: { element: "button", part: "root", also: [buttonParts.interactive], host: true, slot: "children" },
       react: { from: "@skryensya/react/button", name: "Button" },
-      mount: "data-sk-button",                    // sólo la ruta vanilla lo escribe
+      mount: "data-sk-button",                    // only the vanilla path writes it
     },
     "Button.navigation": {
       intent: ["navigation", "single-destination"],
@@ -156,7 +156,7 @@ sin overlay, **rompe el build y no emite nada**.
 ```jsonc
 {
   "contract": "nav-list",
-  "signature": "NavList",              // orientation es una opción, nunca una segunda firma
+  "signature": "NavList",              // orientation is an option, never a second signature
   "attrs": { "aria-label": "Principal" },
   "children": [
     {
@@ -238,9 +238,9 @@ escribe una clase, y esa regla no se toca.
 ## 6. La API del MCP
 
 ```ts
-get_catalog()                    // índice completo: familias, firmas, useWhen, avoidWhen, deprecaciones
-get_contract({ id, detail? })    // el contrato compilado de una familia
-validate_ui({ tree })            // G0–G3 sobre el árbol; si pasa, devuelve el código emitido y el CSS
+get_catalog()                    // full index: families, signatures, useWhen, avoidWhen, deprecations
+get_contract({ id, detail? })    // a family's compiled contract
+validate_ui({ tree })            // G0-G3 over the tree; if it passes, it returns the emitted code and the CSS
 ```
 
 Tres tools. `get_catalog` no toma query: no hay ranker (decisión 31). `validate_ui` devuelve

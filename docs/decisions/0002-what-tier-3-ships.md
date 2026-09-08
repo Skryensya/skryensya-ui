@@ -27,7 +27,7 @@ declaraciones en `select.css`, 117 en `tile.css`, 85 en `details.css`. Catorce n
 El sistema no tenía una regla con excepciones: tenía dos sistemas, y en qué mitad caía un componente
 dependía de qué día se escribió.
 
-**Nada la verificaba.** [El validador](/decisiones/0019-paletas-publicas-y-semanticos-constantes) chequeaba direcciones de
+**Nada la verificaba.** [El validador](./0019-public-palettes-and-constant-semantics.md) chequeaba direcciones de
 referencia, completitud de modos, contraste y forma de nombres. Ninguna regla miraba si un componente
 enviaba estructura, así que el corpus derivó en silencio, componente por componente, sin que nadie
 tomara la decisión de revertirla.
@@ -49,7 +49,7 @@ botón, está enviando la tarea de hacer uno.
 Importar `components/button.css` te da un botón que se ve como un botón. Los hooks siguen siendo el
 contrato público, y siguen siendo cómo lo cambiás: `--sk-button-bg` se re-declara desde fuera sin
 pelear especificidad, porque la estructura vive en `@layer components` y cualquier regla sin layer le
-gana ([decisión 1](/decisiones/0019-paletas-publicas-y-semanticos-constantes)). Enviar la
+gana ([decisión 1](./0019-public-palettes-and-constant-semantics.md)). Enviar la
 estructura no cierra la puerta que los hooks abrían; la deja abierta con algo adentro.
 
 Esto lo hace cumplir el validador con la regla `component-ships-structure`: una hoja de
@@ -89,7 +89,7 @@ que vive en `components/combobox.css`, que es donde se escribe una sola vez de t
 
 ## La plataforma decide, componente por componente
 
-El principio de [CSS puro](/decisiones/0019-paletas-publicas-y-semanticos-constantes), no reimplementar el runtime del
+El principio de [CSS puro](./0019-public-palettes-and-constant-semantics.md), no reimplementar el runtime del
 navegador, corta para los dos lados, y el corte es por componente:
 
 | La plataforma lo envía | → solo CSS, sin máquina |
@@ -104,7 +104,7 @@ navegador, corta para los dos lados, y el corte es por componente:
 
 Un combobox con máquina no reimplementa **nada**, porque no hay combobox nativo, así que la objeción
 no tiene de dónde agarrarse. Un dialog con máquina reimplementa `showModal()`, así que
-[el dialog es nativo](/decisiones/0005-el-dialog-exige-el-elemento-nativo). No es un punto medio entre
+[el dialog es nativo](./0005-dialog-requires-the-native-element.md). No es un punto medio entre
 dos posiciones: es el mismo principio aplicado dos veces, cayendo distinto porque la plataforma es
 distinta.
 
@@ -134,26 +134,26 @@ máquina.
 Un enhancer **parchea atributos sobre markup autorado y nunca escribe una clase**. La excepción es el
 chrome que se deriva del contenido y que el autor por lo tanto no puede escribir: el carrusel dibuja
 sus controles porque cuántos dots hay sale de MEDIR la pista, no de contar slides
-([decisión 24](/decisiones/0010-la-capa-vanilla-usa-svelte-y-las-machines-viven-en-core)). Sigue sin
+([decisión 24](./0010-the-vanilla-layer-uses-svelte-and-the-machines-live-in-core.md)). Sigue sin
 inventar contenido; dibuja lo que sólo la máquina sabe.
 
 **Un framework nunca es el contrato.** Vanilla es la superficie que el sistema promete; React es una
 binding documentada, una de varias posibles, no la puerta de entrada
-([decisión 14](/decisiones/0007-core-vanilla-y-react)). Atar el design system a un framework que otro
+([decisión 14](./0007-core-vanilla-and-react.md)). Atar el design system a un framework que otro
 consumidor no tendría por qué usar es exactamente lo que la capa vanilla evita.
 
 ## El paquete compartido no guarda máquinas
 
 `core` existe, pero como paquete de **tokens + parts + opciones compartidas**
-([decisión 14](/decisiones/0007-core-vanilla-y-react)), lo que toda binding necesita ver igual. Las
+([decisión 14](./0007-core-vanilla-and-react.md)), lo que toda binding necesita ver igual. Las
 máquinas de estado no viven ahí: ya son paquetes standalone agnósticos de framework, y un paquete que solo
-las re-exportara falla [el test de borrado](/decisiones/0019-paletas-publicas-y-semanticos-constantes), bórralo, importa la
+las re-exportara falla [el test de borrado](./0019-public-palettes-and-constant-semantics.md), bórralo, importa la
 máquina directo, y no reaparece complejidad en los llamadores. Un enhancer las importa donde las usa.
 
 ## El CSS se queda en `packages/core`
 
 `components/combobox.css` vive con todas las demás hojas de estilo. La razón es enforcement, no
-orden: el corpus del [validador](/decisiones/0019-paletas-publicas-y-semanticos-constantes) es `packages/core/css/**`, así
+orden: el corpus del [validador](./0019-public-palettes-and-constant-semantics.md) es `packages/core/css/**`, así
 que CSS que migrara a otro paquete quedaría fuera de las reglas de tier, de mode-completeness y del
 contraste cross-marca, exento en silencio de cada garantía que el validador existe para dar.
 

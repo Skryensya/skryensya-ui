@@ -20,7 +20,7 @@ catalog:
 # Contra qué: la forma que tienen los ataques de cadena de suministro de npm (Shai-Hulud y los que
 # vinieron después) es publicar una versión maliciosa de un paquete legítimo, normalmente robando
 # el token de quien lo mantiene, y vivir de que alguien la instale en las horas siguientes. Se
-# detectan y se bajan rápido — casi siempre el mismo día — pero para entonces ya entraron en cada
+# detectan y se bajan rápido (casi siempre el mismo día), pero para entonces ya entraron en cada
 # `pnpm install` que corrió en esa ventana.
 #
 # Esperar hace que la ventana no exista: pnpm no instala una versión hasta que tenga 7 días, así que
@@ -75,7 +75,7 @@ minimumReleaseAgeExclude:
 #
 # Un script de `install`/`postinstall` corre con tus permisos, en tu máquina, apenas resolvés una
 # dependencia: es el camino más corto que tiene un paquete comprometido para llegar a tus claves.
-# pnpm 10 ya los bloquea a todos por default — este repo lo viene aprovechando sin saberlo. Escribir
+# pnpm 10 ya los bloquea a todos por default, y este repo lo viene aprovechando sin saberlo. Escribir
 # la lista igual convierte eso en una decisión de este repo en vez de un default heredado: si
 # mañana pnpm cambia de opinión, o alguien corre `pnpm approve-builds`, la lista sigue diciendo que
 # acá no corre nada.

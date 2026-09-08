@@ -13,5 +13,16 @@ export default defineConfig({
     exclude: [...configDefaults.exclude, "dist/**"],
     environment: "jsdom",
     setupFiles: ["./src/test-setup.ts"],
+    /*
+     * Lo mismo que en `packages/react/vitest.config.ts`, y por lo mismo: ahí está el razonamiento
+     * completo con las mediciones. Los enhancers de este paquete manejan las MISMAS máquinas de Zag
+     * (se comparten desde `core/machines`) detrás de las mismas cadenas `raf` + `raf` +
+     * `setTimeout(0)`, así que corren exactamente el mismo riesgo.
+     *
+     * Se pone acá aunque este paquete todavía no falló: no es que sea inmune, es que la corrida en
+     * la que React se cayó le tocó en un momento con menos carga. Esperar a que pase para arreglarlo
+     * es esperar a que el rojo aparezca en un momento peor.
+     */
+    testTimeout: 15_000,
   },
 });

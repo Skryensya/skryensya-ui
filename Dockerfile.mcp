@@ -71,7 +71,7 @@ WORKDIR /app
 # VERSIONES EXACTAS, NO RANGOS, y --ignore-scripts. Esta línea era el único lugar del repo que
 # resolvía dependencias por fuera de todas las reglas que el workspace define, porque es `npm` y no
 # `pnpm`: no lee el lockfile, no ve `minimumReleaseAge` y no ve `onlyBuiltDependencies`. Con
-# `^1.30.0` cada build tomaba lo más nuevo que hubiera ese día — exactamente la ventana de horas de
+# `^1.30.0` cada build tomaba lo más nuevo que hubiera ese día: exactamente la ventana de horas de
 # la que el cooldown existe para sacarnos, reabierta acá adentro.
 #
 # Los dos números son los que `pnpm-lock.yaml` ya tiene resueltos para packages/mcp, así que la

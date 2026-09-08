@@ -83,9 +83,9 @@ Two more notes:
 ## Commit messages
 
 ```
-type(scope opcional): descripcion
+type(optional scope): description
 
-Cuerpo opcional, despues de una linea en blanco, para el detalle que no entra en el asunto.
+Optional body, after a blank line, for detail that does not fit in the subject.
 ```
 
 Types: `feat fix docs style refactor perf test build ci chore revert`. The scope is optional. The

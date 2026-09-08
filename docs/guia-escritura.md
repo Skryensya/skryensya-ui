@@ -300,9 +300,9 @@ Regla práctica al escribir:
 Conventional Commits, en español, sin trailers:
 
 ```
-type(scope opcional): descripcion
+type(optional scope): description
 
-Cuerpo opcional, despues de una linea en blanco.
+Optional body, after a blank line.
 ```
 
 Tipos: `feat fix docs style refactor perf test build ci chore revert`. La descripción es texto libre:

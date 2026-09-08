@@ -39,7 +39,7 @@ if [ -n "$second" ]; then
   exit 1
 fi
 
-# type(scope opcional): descripcion.
+# type(optional scope): description.
 #
 # La descripcion es libre: puede empezar en mayuscula y puede terminar en punto. Antes se exigía
 # minuscula y sin punto final, y esa regla se relajó a propósito: no cambiaba nada que se pueda leer
@@ -49,7 +49,7 @@ pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0
 if ! printf '%s\n' "$subject" | grep -qE "$pattern"; then
   echo "commit-msg: el mensaje no sigue Conventional Commits." >&2
   echo "  Recibido:   $subject" >&2
-  echo "  Esperado:   tipo(scope opcional): descripcion" >&2
+  echo "  Esperado:   type(optional scope): description" >&2
   echo "  Tipos:      feat fix docs style refactor perf test build ci chore revert" >&2
   echo "  Ejemplo:    fix(command-palette): defer mobile mount until pointerdown" >&2
   exit 1

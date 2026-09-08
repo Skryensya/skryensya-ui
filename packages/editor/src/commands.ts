@@ -10,11 +10,11 @@ import { editorSchema } from "./schema.js";
  * ProseMirror's own `Command` (`(state, dispatch?, view?) => boolean`) and `EditorState` are
  * already the pure, testable command layer this repo would otherwise hand-roll (`hotkey.ts`,
  * `menubar.ts`). The only code this module adds is the mapping from a toolbar button's command
- * name to an already-pure ProseMirror command, plus small "is this active" readers — no new
+ * name to an already-pure ProseMirror command, plus small "is this active" readers - no new
  * abstraction, and every function here is tested directly against `EditorState` fixtures, no DOM.
  *
  * `toggleLink` takes an argument (`href`), so it cannot share this table's uniform zero-argument
- * `Command` signature — it is `setLink(href)`/`unsetLink` below instead. `editorCommandNames`
+ * `Command` signature - it is `setLink(href)`/`unsetLink` below instead. `editorCommandNames`
  * (imported from the contract) is exhaustive over this Record at the TYPE level; commands.test.ts
  * additionally asserts it at the VALUE level, so a contract addition can never silently ship with
  * no implementation.
@@ -42,12 +42,12 @@ export function setLink(href: string): Command {
 export const unsetLink: Command = (state, dispatch) => toggleMark(editorSchema.marks.link)(state, dispatch);
 
 /**
- * `setBlockType` is not itself a toggle — running `heading1` again on an already-h1 block just
+ * `setBlockType` is not itself a toggle - running `heading1` again on an already-h1 block just
  * re-applies "be heading1" and stays put (asserted by commands.test.ts's own double-apply case).
  * A toolbar button reads as broken if clicking an already-pressed one does nothing, so the four
  * `setBlockType`-based commands (`heading1`/`heading2`/`heading3`/`toggleCodeBlock`) are the ones
  * a caller should redirect to THIS command instead, when `blockActive` already reports them on.
- * `wrapInList`/`wrapIn` (the list/blockquote commands) don't have this problem the same way —
+ * `wrapInList`/`wrapIn` (the list/blockquote commands) don't have this problem the same way -
  * re-running them against an already-matching wrap is a safe no-op (`findWrapping` returns null),
  * not a value worth toggling off.
  */
@@ -55,9 +55,9 @@ export const setParagraph: Command = setBlockType(editorSchema.nodes.paragraph);
 
 /**
  * Whether the mark is active across the ENTIRE selection (or, when the selection is empty, at the
- * caret) — the standard toolbar "pressed" reading. Deliberately NOT `doc.rangeHasMark`: that asks
+ * caret) - the standard toolbar "pressed" reading. Deliberately NOT `doc.rangeHasMark`: that asks
  * whether the mark occurs ANYWHERE in the range, which would light up Bold for a selection that is
- * only partly bold — confirmed live by commands.test.ts, which is what caught this.
+ * only partly bold - confirmed live by commands.test.ts, which is what caught this.
  */
 export function markActive(state: EditorState, markType: MarkType): boolean {
   const { from, to, empty, $from } = state.selection;

@@ -139,7 +139,7 @@ export const folderMessages = {
     "folderPage.contractItem2":
       "Every folder is the same colour, the way a real drawer is: a pile tinted one shade each reads as five unrelated cards that share a shape, and the shape is the whole point. Nor is there a border: what separates a folder from its ground is the shadow.",
     "folderPage.contractItem3":
-      "<code>Folder.link</code> is a real <code>&lt;a&gt;</code>, not a box with a handler — the same move <code>TileLink</code> makes, and what gives <code>reveal=\"interaction\"</code> a keyboard.",
+      "<code>Folder.link</code> is a real <code>&lt;a&gt;</code>, not a box with a handler - the same move <code>TileLink</code> makes, and what gives <code>reveal=\"interaction\"</code> a keyboard.",
     "folderPage.contractItem4":
       "The shadow is a <code>drop-shadow</code>, not a <code>box-shadow</code>: a box shadow follows the rectangle, and the whole point of this component is that its edge is not one.",
     "folderPage.a11yBody":

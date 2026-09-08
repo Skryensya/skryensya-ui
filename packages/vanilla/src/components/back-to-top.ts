@@ -22,7 +22,7 @@ export function connectBackToTop(root: HTMLElement): Cleanup {
   const threshold = backToTopParseThreshold(root.getAttribute("data-threshold"));
 
   const selector = root.getAttribute("data-scroller");
-  /* A named scroller that is not on the page yet is not an error worth throwing over — fall back to
+  /* A named scroller that is not on the page yet is not an error worth throwing over - fall back to
      the window, the same scroller the un-configured control watches. */
   const scroller: Window | HTMLElement =
     (selector && document.querySelector<HTMLElement>(selector)) || window;

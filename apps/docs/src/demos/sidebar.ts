@@ -181,7 +181,7 @@ export const sidebarFloatingTriggerTree = (
        * floating trigger's box reaches `--sk-sidebar-trigger-offset-block` + `--sk-sidebar-trigger-
        * size` (8 + 32 = 40px) down from the same shared top edge this pane starts from, so the
        * class's own padding alone left the sample copy's first line sitting in the same band the
-       * trigger occupies — the button visually crossed out its own first word. This is scoped to
+       * trigger occupies - the button visually crossed out its own first word. This is scoped to
        * the demo's sample copy, the same clearance a real consumer would give their own first line
        * next to a floating corner trigger; it is not something `--sk-sidebar-trigger-offset-inline`
        * alone can buy back at any reasonable value once the trigger is a real 32px square.

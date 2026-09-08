@@ -324,7 +324,7 @@
   }
 
   /* The chevron is sized like Button's icon-only `sm` glyph (`--size-icon-md`, the off-by-one the
-   * icon-only size scale already uses — see button.css's own note): 20px, not the item check's
+   * icon-only size scale already uses - see button.css's own note): 20px, not the item check's
    * 16px. */
   .sk-select__trigger .sk-icon {
     --sk-icon-size: var(--size-icon-md);
@@ -332,7 +332,7 @@
 
   /*
    * `--size-control-sm` square, same footprint as Button's `data-icon-only[data-size="sm"]`, so a
-   * `--size-icon-md` glyph centred in it gets that exact same spacing — `(control-sm − icon-md) /
+   * `--size-icon-md` glyph centred in it gets that exact same spacing - `(control-sm − icon-md) /
    * 2` on every side, arithmetic rather than a copied literal. No background, no border, no
    * separate radius: it stays a plain, non-interactive part of the one button the trigger already
    * is (a boxed/bordered look here read as a second clickable control and was rejected on sight).

@@ -1,12 +1,12 @@
 /*
  * TIER 3, EDITOR: a ProseMirror content surface with a Toolbar bar of formatting commands on top.
  *
- * The TOOLBAR reuses `.sk-toolbar`'s own class/hooks (`toolbar.css`) wholesale — this sheet only
+ * The TOOLBAR reuses `.sk-toolbar`'s own class/hooks (`toolbar.css`) wholesale - this sheet only
  * adds the flush-seam join between the two boxes and the `[data-active]` paint for a command whose
  * mark is under the caret (ProseMirror's own marker, not an ARIA state). The pressed-state paint
  * this sheet used to own is Button's now: `aria-pressed` was a gap in that contract, and two
  * consumers had hand-rolled it before it was filled. The CONTENT surface composes `.sk-input`'s own hooks (`input.css`) for its box model
- * — border, radius, padding, focus ring, invalid/disabled states — so it reads as the exact same
+ * - border, radius, padding, focus ring, invalid/disabled states - so it reads as the exact same
  * field Textarea already is; what is added here is only what a `contenteditable` div cannot get
  * from `.sk-input` alone: no native `:read-only`/`:disabled` pseudo-classes to key off (there is
  * no real form control here), so this sheet answers `[aria-readonly="true"]`/`[aria-disabled="true"]`
@@ -25,7 +25,7 @@
     /*
      * `.sk-input` already does this for the content box alone (input.css); the OUTER wrapper (this
      * class, toolbar included) had no width rule of its own, so it only ever filled its container in
-     * plain block flow — inside any flex/grid parent (this docs page's own preview stage among
+     * plain block flow - inside any flex/grid parent (this docs page's own preview stage among
      * them, `component-preview.css`'s `.sk-component-preview__frame-body` is a flex row) a flex item
      * with real content sizes to that content instead of stretching, confirmed live: the editor sat
      * at its own text's width, not the column's. This is what makes it reliably grow to whatever
@@ -47,7 +47,7 @@
   /*
    * COMPACT, the `toolbarCompact` option: a second density for the SAME bar, not a second anatomy
    * (`editor.ts`'s own comment on the option explains why that stays an option, not a signature).
-   * `.sk-toolbar` already exposes its padding/gap as custom properties for exactly this — tightened
+   * `.sk-toolbar` already exposes its padding/gap as custom properties for exactly this - tightened
    * here rather than touching `toolbar.css` itself, which every OTHER toolbar on the site still
    * reads at its normal density. Buttons keep their real `data-size="sm"` footprint (and Button's
    * own invisible `::after` still expands the tap target to `--size-touch-target` regardless of how
@@ -70,11 +70,11 @@
   /*
    * No ring of this box's own: `:focus-within` fired on every plain mouse click (into the content,
    * or onto a toolbar button) and drew ONE outline around the entire toolbar+content box regardless
-   * of which part actually had focus — too intense, and not scoped to the part a reader's eye was
+   * of which part actually had focus - too intense, and not scoped to the part a reader's eye was
    * actually on. Removed rather than narrowed, because there is nothing left for it to add: the
    * toolbar's own buttons already carry a real, keyboard-only ring
    * (`.sk-interactive:focus-visible`, `state-layer.css`), and the content surface already carries
-   * its own (`.sk-input:focus-visible`, `input.css`) — the same `--focus-ring-*` tokens, just
+   * its own (`.sk-input:focus-visible`, `input.css`) - the same `--focus-ring-*` tokens, just
    * scoped to whichever part is actually focused instead of the whole control at once.
    */
 
@@ -90,7 +90,7 @@
   /*
    * `.sk-editor__content.sk-input`, not `.sk-editor__content` alone: `.sk-input` itself (input.css)
    * sets a FIXED `block-size: var(--sk-input-height)`, equal specificity (one class each), so
-   * whichever stylesheet a page happens to `@import` last would otherwise decide which wins —
+   * whichever stylesheet a page happens to `@import` last would otherwise decide which wins -
    * confirmed live, content silently overflowed a height-pinned box instead of growing it. The
    * extra class here is what makes this rule win regardless of import order, the same "grows like
    * a textarea" floor-plus-auto shape `textarea.sk-input`'s own element-selector rule gives a real
@@ -116,11 +116,11 @@
 
   /*
    * `[data-focus-pointer]` (`packages/editor/src/focus-modality.ts`, called by both bindings):
-   * `.sk-input:focus-visible` (input.css) rings a real Textarea on a plain click too, on purpose —
+   * `.sk-input:focus-visible` (input.css) rings a real Textarea on a plain click too, on purpose -
    * the browser's own `:focus-visible` heuristic always treats a text-editing surface that way,
    * unlike a button. This component asked to differ from that sitewide default: a ring only when
    * focus arrives by keyboard. Scoped to `.sk-editor` alone, so ordinary Input/Textarea elsewhere
-   * keep the sitewide behavior unchanged — only the editor's own surface opts out.
+   * keep the sitewide behavior unchanged - only the editor's own surface opts out.
    */
   .sk-editor__content[data-focus-pointer]:focus-visible {
     outline: none;
@@ -130,8 +130,8 @@
    * ProseMirror renders a plain `<h1>`–`<h6>`, marked `data-flush` by the schema's own `toDOM`
    * (`packages/editor/src/schema.ts`) specifically so this rule is the one that governs it: without
    * that marker, the docs site's own UNLAYERED `h1:not([data-flush])`/`h2:not(...)` rules
-   * (`apps/docs/src/styles/site.css`) win regardless of anything written here — a `@layer
-   * components` rule can never outrank an unlayered one — and repaint a content heading as a 64px-
+   * (`apps/docs/src/styles/site.css`) win regardless of anything written here - a `@layer
+   * components` rule can never outrank an unlayered one - and repaint a content heading as a 64px-
    * above section title of the DOCS PAGE, confirmed live. Same `margin: 0` convention `.sk-heading`
    * itself uses (`typography.css`): a heading owns no external spacing of its own; every block's gap
    * comes from the single sibling-adjacent rule below instead, same as the rest of this content.
@@ -165,17 +165,17 @@
   }
 
   /*
-   * PROSE: every other node the schema renders (`schema.ts`) — paragraph, list, blockquote, code,
+   * PROSE: every other node the schema renders (`schema.ts`) - paragraph, list, blockquote, code,
    * link, rule. This component is a standalone editing SURFACE, not embedded copy meant to inherit
    * a host page's own prose CSS the way `changelog.css`'s own body deliberately does (see that
-   * file's own "OUTSIDE THE LAYER" comment) — a consumer with no site-level prose rules at all must
+   * file's own "OUTSIDE THE LAYER" comment) - a consumer with no site-level prose rules at all must
    * still see real typography here, so every value below is this file's own, off the same tokens
    * the rest of the system already uses (`.sk-code` for inline code, `.sk-input` for the box).
    *
    * ONE GAP RULE for every block, rather than each element carrying its own top/bottom margin: a
    * margin an element owns has to be un-set again the moment that element is first-in-container or
    * sits inside something narrower (exactly the list-item case below), and doing that per element is
-   * how a list ends up "con mucho mb" — each `<li>`'s own `<p>` still carrying the SAME top-level
+   * how a list ends up "con mucho mb" - each `<li>`'s own `<p>` still carrying the SAME top-level
    * block gap the list itself already added. One sibling-adjacent rule composes correctly at any
    * nesting depth with no second exception list to maintain.
    */
@@ -190,7 +190,7 @@
 
   /*
    * A heading reads as the start of a new section, not one more paragraph in the same rhythm: MORE
-   * air above it than the ordinary block-to-block gap, none below (already `margin: 0` — a heading
+   * air above it than the ordinary block-to-block gap, none below (already `margin: 0` - a heading
    * hugs whatever follows it). `:not(:first-child)`, so the very first block in an empty/short doc
    * never opens with a dangling gap above nothing.
    */
@@ -209,7 +209,7 @@
   }
 
   /* Muted markers: a bullet/number is navigation, not content, the same reasoning a muted icon
-   * gets elsewhere in the system — full-strength text color on every marker reads as louder than
+   * gets elsewhere in the system - full-strength text color on every marker reads as louder than
    * the words beside it. */
   .sk-editor__content :is(ul, ol) li::marker {
     color: var(--color-text-tertiary);
@@ -266,7 +266,7 @@
     text-underline-offset: 0.15em;
   }
 
-  /* A section break wants the same "more air than an ordinary block" treatment a heading gets —
+  /* A section break wants the same "more air than an ordinary block" treatment a heading gets -
    * it is spacing playing the same structural role a heading's own extra margin-start plays above. */
   .sk-editor__content > hr:not(:first-child) {
     margin-block-start: var(--space-stack-lg);

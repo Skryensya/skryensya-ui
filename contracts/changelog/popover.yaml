@@ -42,7 +42,7 @@ entries:
       title: Popover's trigger takes a variant, a size and the icon-only shape
       body: >-
         Adds <code>triggerVariant</code>, <code>triggerSize</code> and
-        <code>triggerIconOnly</code> — the same three options <code>Menu</code> already publishes
+        <code>triggerIconOnly</code> - the same three options <code>Menu</code> already publishes
         for its own trigger, writing the same attributes <code>Button</code>'s own
         <code>variant</code>, <code>size</code> and <code>iconOnly</code> do. They are for a Popover
         composed into another control's row: without them the trigger drew at Button's default

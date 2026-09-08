@@ -158,9 +158,9 @@ Producción: telemetría activa en `import.meta.env.PROD` (mismo patrón que doc
 
 Cubrir **los dos Bindings de verdad**, no fingir simetría:
 
-1. **Button** — React mount + Vanilla enhancer (`mountButton`).
-2. **Input** — React mount. Vanilla es Native alternative: **no** hay instancia de enhancer; no inventar MutationObserver.
-3. **Dialog** — React mount. Vanilla es `<dialog>` nativo (ADR-0005). Un Dialog Vaul cuenta como Pattern **Vaul** si el enhancer Vaul ya está en el seam de hydrate; no crear `mountDialog`.
+1. **Button** - React mount + Vanilla enhancer (`mountButton`).
+2. **Input** - React mount. Vanilla es Native alternative: **no** hay instancia de enhancer; no inventar MutationObserver.
+3. **Dialog** - React mount. Vanilla es `<dialog>` nativo (ADR-0005). Un Dialog Vaul cuenta como Pattern **Vaul** si el enhancer Vaul ya está en el seam de hydrate; no crear `mountDialog`.
 
 Así docs produce telemetría real: islas React (Input/Dialog/Button) en el chrome, Button vanilla dentro de iframes **si** el frame configura el runtime.
 

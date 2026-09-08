@@ -44,7 +44,7 @@
  * Everything is behind `prefers-reduced-motion: no-preference` PLUS one of two capability gates:
  * `@supports (animation-timeline: scroll())`, native, no JavaScript; or `[data-sk-fx-collapse-js]`,
  * an attribute a CONSUMER script sets after confirming the browser lacks that support (this file
- * ships no such script itself — see below). Neither gate matching is still the layout that shipped
+ * ships no such script itself - see below). Neither gate matching is still the layout that shipped
  * before any of this: the spacer is `display: none`, the header a normal full-size masthead, and the
  * registered property's initial `0` means every consumer `calc()` resolves to its expanded end with
  * no fallback rule to maintain.
@@ -55,7 +55,7 @@
  * dependency for what the platform already resolves. `[data-sk-fx-collapse-js]` is the one door left
  * open for a CONSUMER who wants the collapse everywhere anyway: set that attribute on whatever
  * ancestor scopes `--sk-fx-collapse-*` (only once `!CSS.supports("(animation-timeline: scroll())")`
- * has been checked — setting it unconditionally fights the native path for the same layout) and walk
+ * has been checked - setting it unconditionally fights the native path for the same layout) and walk
  * `--sk-fx-collapse-progress` by hand, `clamp(scrollY / range, 0, 1)` on a rAF-throttled `scroll`
  * listener, same as the docs site's own `collapse-header-fallback.ts` does. This block gives that
  * script the exact same STICKY LAYOUT the native path gets (spacer sized, header pinned); only the
@@ -104,7 +104,7 @@
          * `animation: linear both sk-fx-collapse-header scroll(root)`. The shorthand has no
          * `<timeline>` slot, so every browser drops that whole declaration: no `animation-name`, no
          * timeline, and the collapse silently never runs in a production build (dev, unminified, is
-         * fine — which is exactly how this shipped broken). Kept apart, each longhand survives. */
+         * fine - which is exactly how this shipped broken). Kept apart, each longhand survives. */
         animation-name: sk-fx-collapse-header;
         animation-timing-function: linear;
         animation-fill-mode: both;

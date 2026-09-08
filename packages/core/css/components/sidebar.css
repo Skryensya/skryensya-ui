@@ -112,13 +112,13 @@
      * open air outside the panel, and the two have no reason to move together.
      *
      * Both at `--space-inset-sm` now: `inline` used to sit one step tighter (`-xs`), reasoned as
-     * "close to the panel's own corner" — but at a real `--sk-sidebar-trigger-size` (32px) square,
+     * "close to the panel's own corner" - but at a real `--sk-sidebar-trigger-size` (32px) square,
      * even that trimmed gap still let the trigger's far edge land ~28px past the border, deep
      * enough into whatever sits beside the rail to sit on top of its first word (confirmed against
      * the floating-trigger demo's own sample text, not just the token math). Levelling it with
-     * `block` does not fully solve that at any real trigger size — a floating corner control is
+     * `block` does not fully solve that at any real trigger size - a floating corner control is
      * still expected to sit OVER neighbouring content, `--elevation-raised` is what separates it
-     * visually — but it is a visible gap off the border instead of reading as none at all. */
+     * visually - but it is a visible gap off the border instead of reading as none at all. */
     --sk-sidebar-trigger-offset-block: var(--space-inset-sm);
     --sk-sidebar-trigger-offset-inline: var(--space-inset-sm);
     --sk-sidebar-trigger-shadow: var(--elevation-raised);

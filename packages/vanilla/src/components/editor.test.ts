@@ -6,7 +6,7 @@ import { mountEditor } from "./editor.js";
 
 /*
  * jsdom does no layout: stubbed with a zero rect, the same workaround `editor.test.tsx` (React)
- * needs and documents in full — `EditorView.updateState` calls into `coordsAtPos` on every
+ * needs and documents in full - `EditorView.updateState` calls into `coordsAtPos` on every
  * dispatch, which throws without it.
  */
 beforeAll(() => {

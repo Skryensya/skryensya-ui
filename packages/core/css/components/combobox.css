@@ -120,7 +120,7 @@
 
   /* Every REAL action inside the field composes Button's icon-only sm contract. Component CSS only
      supplies the quiet field recipe; Button owns the square, focus ring and expanded hit target.
-     The chevron (`.sk-combobox__trigger`) is no longer one of these — see its own rules below. */
+     The chevron (`.sk-combobox__trigger`) is no longer one of these - see its own rules below. */
   :is(.sk-combobox__remove-trigger, .sk-combobox__clear).sk-button {
     --sk-button-bg: transparent;
     --sk-button-fg: var(--color-text-secondary);

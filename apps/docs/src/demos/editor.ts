@@ -16,7 +16,7 @@ export const editorTree = (t: Translate): UsageTree => ({
 });
 
 /**
- * `toolbarCompact`: the SAME anatomy at a tighter density — an option, not a second signature (see
+ * `toolbarCompact`: the SAME anatomy at a tighter density - an option, not a second signature (see
  * `editorContract`'s own comment on why this differs from `ColorPicker.compact`'s split). A
  * narrower `defaultValue` than the primary demo's, so the preview reads as "this is for a tight
  * space" rather than the same wide document with a smaller bar bolted on.

@@ -19,7 +19,7 @@ import type { ComponentContract, OptionsOf } from "./contract.js";
  *
  * WHY A PURE CORE + TWO BINDINGS AND NO MACHINE: no `@zag-js/*` covers "reveal past a scroll
  * threshold", so the interactive part is written the three-way `hotkey` way. The pure half here is
- * two decisions with no DOM in them — is it past the threshold, and does the scroll animate — and
+ * two decisions with no DOM in them - is it past the threshold, and does the scroll animate - and
  * they are unit-tested from the Vanilla suite because Core ships no test runner. The DOM shell (the
  * scroll listener, the `scrollTo` call, the optional focus move) lives in each binding.
  */
@@ -46,7 +46,7 @@ export type BackToTopAttr = keyof typeof backToTopAttrs;
 export type BackToTopAttrName = (typeof backToTopAttrs)[BackToTopAttr];
 
 /* ---------------------------------------------------------------------------------------------- *
- * Pure behavior — no DOM, no framework. Tested from `packages/vanilla/src/components/back-to-top.test.ts`.
+ * Pure behavior - no DOM, no framework. Tested from `packages/vanilla/src/components/back-to-top.test.ts`.
  * ---------------------------------------------------------------------------------------------- */
 
 /** Pixels a scroller travels from its start before the control is worth showing. One viewport is
@@ -118,7 +118,7 @@ export const backToTopContract = {
     /**
      * A selector (`#top`) for a focusable element at the start of the scroller to move focus to
      * after the scroll, so the next Tab continues from the top instead of from a control that is now
-     * off-screen. Omitted: focus stays put and only the scroll happens — the common, least
+     * off-screen. Omitted: focus stays put and only the scroll happens - the common, least
      * surprising choice for a pointer user. The target has to be focusable itself (`tabindex="-1"`
      * if it is a landmark or heading), the same rule `SkipLink`'s destination has.
      */
@@ -146,7 +146,7 @@ export const backToTopContract = {
        * from the bound icon set (`Icon`, decision 2: Core names the ROLE, the set draws it); the
        * label is clipped to a name-only box (like `SkipLink`, and for the same reason a bare icon
        * needs `aria-label` elsewhere). Required text on a `button` means the control is always named,
-       * so there is no `a11y` rule to evaluate — the guarantee is structural. A consumer who wants a
+       * so there is no `a11y` rule to evaluate - the guarantee is structural. A consumer who wants a
        * labelled pill un-clips `sk-back-to-top__label` in CSS; the name is already there.
        */
       slots: { children: { accepts: "text", required: true } },

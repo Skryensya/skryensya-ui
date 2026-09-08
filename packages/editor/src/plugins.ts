@@ -3,7 +3,7 @@ import { Decoration, DecorationSet } from "prosemirror-view";
 
 /**
  * Shows `text` only while the document is the schema's own empty doc (one empty paragraph, no
- * marks) — the standard ProseMirror placeholder recipe: a widget decoration, not real content, so
+ * marks) - the standard ProseMirror placeholder recipe: a widget decoration, not real content, so
  * it never enters `doc`/serializes into html/markdown/doc output.
  *
  * Unlike `serialize.ts`, this reads the global `document` rather than taking one as a parameter:

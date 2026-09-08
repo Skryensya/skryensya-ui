@@ -41,7 +41,7 @@ const cx = (...classes: (string | undefined)[]) => classes.filter(Boolean).join(
 export type EditorValue = { html: string; markdown: string; doc: PMNode };
 
 export type EditorHandle = {
-  /** The live ProseMirror view. An escape hatch — most consumers never need it. */
+  /** The live ProseMirror view. An escape hatch - most consumers never need it. */
   view: EditorView | null;
   getHTML(): string;
   getMarkdown(): string;
@@ -185,7 +185,7 @@ function useImperativeEditorHandle(ref: ForwardedRef<EditorHandle>, viewRef: Ref
 export type EditorProps = {
   id?: string;
   className?: string;
-  /** Initial content, as an HTML string. Uncontrolled: there is no live `value` — a controlled
+  /** Initial content, as an HTML string. Uncontrolled: there is no live `value` - a controlled
    *  contenteditable surface fights its own DOM mutations every render. Read the current content
    *  from `onChange`, or imperatively via a `ref`. */
   defaultValue?: string;
@@ -201,7 +201,7 @@ export type EditorProps = {
 };
 
 export type EditorWithToolbarProps = EditorProps & {
-  /** A smaller toolbar: tighter padding and gaps, the same buttons — an option, not a different
+  /** A smaller toolbar: tighter padding and gaps, the same buttons - an option, not a different
    *  anatomy (see `editorContract`'s own `toolbarCompact` comment for why that split holds here). */
   compact?: boolean;
   /**
@@ -298,8 +298,8 @@ function LinkButton({ active, onSubmit }: { active: boolean; onSubmit: (href: st
       placement="block-end"
       trigger={<Icon data={editorIcons.link} size="sm" />}
       // The same icon-button shape every other button on this bar has (`ToolbarButton` above):
-      // small, ghost, icon-only. Without it Popover's trigger draws at Button's own defaults — a
-      // bordered, raised, control-height box — and the link reads as a stray control dropped next
+      // small, ghost, icon-only. Without it Popover's trigger draws at Button's own defaults - a
+      // bordered, raised, control-height box - and the link reads as a stray control dropped next
       // to the bar rather than the last button in it.
       triggerClassName={editorParts.toolbarButton}
       triggerIconOnly

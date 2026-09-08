@@ -50,7 +50,7 @@
     scrollbar-color: transparent transparent;
   }
 
-  /* A stable gutter avoids a layout shift when the scrollbar is revealed — but "revealed" means
+  /* A stable gutter avoids a layout shift when the scrollbar is revealed - but "revealed" means
    * hovered or focused, an interaction touch does not have. `(hover: hover)` gates the reservation
    * to devices where that reveal is a real thing a reader can trigger; on a touch-only vault
    * (`.docs-drawer__content`, say) the classic reserved-space scrollbar this protects against never

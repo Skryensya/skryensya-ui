@@ -257,7 +257,7 @@
    * `data-state`, nothing: the collapsible machine owns both, and it has not run yet. Until it
    * does, this content sits under the OPEN LOOK rule below (`:not([hidden])` matches an absent
    * attribute same as a present-but-false one) and paints padded, bordered and fully visible, on
-   * every section that is not `defaultOpen` — which on a page like the component gallery is most
+   * every section that is not `defaultOpen` - which on a page like the component gallery is most
    * of them. The result was a real, reproducible flash: every closed accordion/tile rendered OPEN
    * for one paint, then snapped shut the moment `initComponents()` reached it.
    *

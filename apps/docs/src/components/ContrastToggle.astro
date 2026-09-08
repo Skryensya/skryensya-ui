@@ -14,7 +14,7 @@
  * The trailing edge's safe-area backing (`.docs-prefs-tile-chip`) is a real, empty SIBLING span,
  * not a `::before` on the button: confirmed live in actual Safari (not just Playwright's WebKit,
  * which did not reproduce it), a generated box placed into a CSS Grid cell by `grid-column`/
- * `grid-row` there does not reliably land in the same cell as a real sibling — it painted offset
+ * `grid-row` there does not reliably land in the same cell as a real sibling - it painted offset
  * from the icon it was supposed to sit behind. A real element sidesteps that outright, and being a
  * SIBLING rather than a wrapper keeps `[data-face]` a direct child of `.sk-icon-toggle`, which the
  * morph CSS requires.

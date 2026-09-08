@@ -85,11 +85,11 @@ import "@skryensya/core/patterns/layout.css";
 import "@skryensya/core/patterns/footer.css"; // el `sk-footer` de <SiteFooter>, en cada página con rail
 import "@skryensya/core/patterns/table-pager.css";
 import "@skryensya/core/patterns/icon-toggle.css";
-/* The mobile preference sheet (`#docs-prefs-sheet`, below) renders every setting as a Tile Button —
+/* The mobile preference sheet (`#docs-prefs-sheet`, below) renders every setting as a Tile Button -
  * markup that lives in the layout, not in a page. Same opt-in rule as Menu above: without this
  * sheet, on any page that doesn't happen to import `tile.css` for its OWN reasons (a component page
  * demoing Tile itself), the sheet's `sk-tile*` classes hit no rules at all and fall back to bare
- * span/button UA defaults — confirmed live on `/efectos`, which has no reason to pull Tile in. */
+ * span/button UA defaults - confirmed live on `/efectos`, which has no reason to pull Tile in. */
 import "@skryensya/core/components/tile.css";
 /* Effects (ADR-20), opt-in decorative motion: the component page masthead below is the collapse
  * effect's own consumer (`ComponentPageShell.astro`'s `sk-fx-collapse-header` classes). */
@@ -184,8 +184,8 @@ interface Props {
   /**
    * `fullBleed` pages have no rail, so by default the drawer trigger stays visible at every width
    * (there is no other way to reach the index once the rail is gone, e.g. /personalizar). A
-   * `fullBleed` page that DOES want the ordinary responsive trigger instead — hidden on desktop,
-   * shown on mobile, same as every railed page — opts out explicitly (the marketing home, which has
+   * `fullBleed` page that DOES want the ordinary responsive trigger instead - hidden on desktop,
+   * shown on mobile, same as every railed page - opts out explicitly (the marketing home, which has
    * nothing to reach the drawer for on desktop but still wants it on mobile like any other page).
    */
   alwaysShowNavTrigger?: boolean;
@@ -933,7 +933,7 @@ const PALETTE_PRESETS = palettePresets(locale);
     {/*
       READER PREFERENCES. The SAME composition as the Command Palette's mobile form (ADR-19): a
       native `.sk-dialog` that opts into Dialog Vaul (`data-sk-dialog-vaul`), so it is a block-end
-      sheet below `desktop` and would be a centred dialog above it — except the only trigger
+      sheet below `desktop` and would be a centred dialog above it - except the only trigger
       (`.dimensions__prefs-trigger`) is mobile-only, so in practice it is always the sheet. Sharing
       the composition is what gives it the palette's own corner radius (`--sk-dialog-radius`),
       elevation, backdrop and drag handle for free, instead of a second sheet skin to keep in step.
@@ -971,7 +971,7 @@ const PALETTE_PRESETS = palettePresets(locale);
       </header>
       {/*
         Every preference is a full-width Tile Button (`.docs-prefs-tile`): the whole card changes
-        the setting on tap — the toggles cycle in place, language goes to the next translation —
+        the setting on tap - the toggles cycle in place, language goes to the next translation -
         with the visible title on the leading edge and the control's own affordance on the trailing
         one. Theme first: "dark mode" is the reason most readers open this. Language last: it is the
         one that navigates rather than toggling in place.
@@ -1007,7 +1007,7 @@ const PALETTE_PRESETS = palettePresets(locale);
     */}
     {/*
       No `sk-vaul__handle`: on an `inline-start` nav drawer the grip is an `ew-resize` strip laid over
-      the leading links (patterns/vaul.css), and the panel already closes three cleaner ways — the X in
+      the leading links (patterns/vaul.css), and the panel already closes three cleaner ways - the X in
       the header, Escape, and a tap on the backdrop. `connectVaul` treats a missing handle as "no
       drag" and still wires all three, so dropping the element just removes the affordance, not the
       dismiss. `data-draggable="false"` says the same thing explicitly for anyone reading the markup.
@@ -1536,7 +1536,7 @@ const PALETTE_PRESETS = palettePresets(locale);
       it runs before first paint (no 1px settle); CSS falls back to the estimate until it does.
 
       CEIL, NOT ROUND: `getBoundingClientRect().height` is a float, and on a high-DPR phone (3x is
-      common) rounding it to the NEAREST integer CSS px rounds down about half the time — e.g. a
+      common) rounding it to the NEAREST integer CSS px rounds down about half the time - e.g. a
       real 57.7px bar becomes a `top` offset of 58px for everything sticky below it, which is 0.3px
       ABOVE the bar's actual bottom edge. At 1x that sliver blends into the anti-aliasing and is
       invisible; at 3x it is a full, crisp device pixel of whatever is behind the bar (the canvas,

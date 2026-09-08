@@ -23,13 +23,13 @@ import { createConnectMount } from "../runtime/svelte-hydrate.js";
 /*
  * EDITOR, no `@zag-js/*` machine: ProseMirror's own `EditorState`/`EditorView` already ARE the
  * state machine here (same reasoning `menubar.ts`/`treegrid.ts` give for their own hand-rolled
- * behaviour — no existing machine covers this). That makes this an ORDINARY imperative enhancer
+ * behaviour - no existing machine covers this). That makes this an ORDINARY imperative enhancer
  * like `toolbar.ts`'s own (`connect(root) -> cleanup`, mounted through `createConnectMount`), not
- * a machine-backed Svelte component — there is no reactive state for Svelte's own runes to own,
+ * a machine-backed Svelte component - there is no reactive state for Svelte's own runes to own,
  * only DOM this function patches directly every time ProseMirror dispatches a transaction.
  *
  * The CONTENT surface is where ProseMirror mounts and takes over as its own contenteditable root
- * — adopt, never author, the same rule `ColorPicker.svelte` follows for its own control. The
+ * - adopt, never author, the same rule `ColorPicker.svelte` follows for its own control. The
  * TOOLBAR's buttons are DERIVED chrome, built here rather than authored in the contract's static
  * template (same reason ColorPicker's popover panel isn't templated either): which buttons exist
  * and which are pressed comes from ProseMirror's own live selection, not from markup.
@@ -104,7 +104,7 @@ const GROUPS: readonly {
 const SVG_NS = "http://www.w3.org/2000/svg";
 
 /** Builds a real `<svg class="sk-icon">`, the same box shape `@skryensya/vanilla/icon`'s own
- *  `mountIcons` enhancer produces — decorative (the button around it already carries `aria-label`). */
+ *  `mountIcons` enhancer produces - decorative (the button around it already carries `aria-label`). */
 function buildIconSvg(name: EditorIconName): SVGElement {
   const svg = document.createElementNS(SVG_NS, "svg");
   const { presentation, box, body } = renderIconBox({ icon: editorIcons[name], size: "sm" });
@@ -167,7 +167,7 @@ function connect(root: HTMLElement): () => void {
     button.setAttribute("aria-pressed", "false");
     button.title = label;
     button.appendChild(buildIconSvg(icon));
-    // Keeps the ProseMirror selection alive — a plain click already steals focus from the content
+    // Keeps the ProseMirror selection alive - a plain click already steals focus from the content
     // surface before `click` fires, which would collapse the selection a mark toggle needs.
     button.addEventListener("mousedown", (event) => event.preventDefault());
     button.addEventListener("click", () => {
@@ -182,7 +182,7 @@ function connect(root: HTMLElement): () => void {
    * Native Popover API markup, by hand: `popover.ts`'s own contract needs no enhancer at all ("the
    * native Popover API owns light-dismiss, Escape and the top layer... both bindings are the same
    * markup twice"), and `popover.css` positions every instance off ONE static, scope-shared anchor
-   * name — no per-instance JS binding the way ColorPicker/DatePicker/Tooltip need. Reusing the
+   * name - no per-instance JS binding the way ColorPicker/DatePicker/Tooltip need. Reusing the
    * exact class shape `Popover.tsx` renders is what makes this markup pick up that same CSS.
    */
   function buildLinkPopover(getView: () => EditorView | undefined): HTMLElement {
@@ -195,8 +195,8 @@ function connect(root: HTMLElement): () => void {
     // Popover's own trigger classes PLUS the same icon-button shape every other button on this bar
     // carries (`makeButton` above): small, ghost, icon-only. Popover publishes those three as
     // `triggerVariant`/`triggerSize`/`triggerIconOnly` (popover.ts) and they reach exactly these
-    // attributes; without them the trigger draws at Button's own defaults — a bordered, raised,
-    // control-height box — and the link reads as a stray control beside the bar, not the last
+    // attributes; without them the trigger draws at Button's own defaults - a bordered, raised,
+    // control-height box - and the link reads as a stray control beside the bar, not the last
     // button in it.
     trigger.className = `${editorParts.toolbarButton} sk-button sk-interactive ${popoverParts.trigger} ${anchoredParts.anchor}`;
     trigger.dataset.size = "sm";
@@ -215,7 +215,7 @@ function connect(root: HTMLElement): () => void {
 
     // Same shape `Popover.tsx` renders when `arrow` is set: a decorative span, first child of the
     // positioner, so this popover visually connects to its trigger the same way every other one on
-    // the site does — its absence read as "disconnected" (confirmed live).
+    // the site does - its absence read as "disconnected" (confirmed live).
     const arrow = document.createElement("span");
     arrow.className = anchoredParts.arrow;
     arrow.setAttribute("aria-hidden", "true");
@@ -250,7 +250,7 @@ function connect(root: HTMLElement): () => void {
       positioner.hidePopover?.();
     });
 
-    // Same close control `Popover.tsx` renders whenever it is not `bare` — an explicit way out
+    // Same close control `Popover.tsx` renders whenever it is not `bare` - an explicit way out
     // beyond Escape/light-dismiss, matching the reference Popover demo's own anatomy.
     const close = document.createElement("button");
     close.type = "button";
@@ -333,7 +333,7 @@ function connect(root: HTMLElement): () => void {
   /*
    * Vanilla's own escape hatch, symmetric with React's `ref`-based `EditorHandle`: since a Vanilla
    * consumer has no ref to grab, the live view (and small convenience readers/`setContent`) travel
-   * as this one event's `detail` instead — dispatched once, right after mount.
+   * as this one event's `detail` instead - dispatched once, right after mount.
    */
   root.dispatchEvent(
     new CustomEvent("sk-editor-ready", {

@@ -5,7 +5,7 @@ import type { ComponentContract } from "./contract.js";
  *
  * The TOOLBAR and CONTENT surface are markup shells only: an empty container div for each, found
  * by their part classes and filled by the binding. Nothing about which buttons exist or what a
- * selection currently has active is templated here — that is derived from ProseMirror's own
+ * selection currently has active is templated here - that is derived from ProseMirror's own
  * `EditorState`, exactly as ColorPicker's popover panel is derived from a Zag machine's state
  * rather than templated in `color-picker.ts`. Initial content is a plain STRING option
  * (`defaultValue`, HTML markup), the same shape ColorPicker's own `value` option already uses for
@@ -14,12 +14,12 @@ import type { ComponentContract } from "./contract.js";
  * controlled contenteditable surface fights its own DOM mutations every render (the same reason
  * ColorPicker's `value` maps to React's `defaultValue`, not a controlled `value`).
  *
- * `Editor` bakes the toolbar in — the only signature. There is deliberately no toolbar-less
+ * `Editor` bakes the toolbar in - the only signature. There is deliberately no toolbar-less
  * surface-only escape hatch: every Editor instance ships with its own formatting bar.
  */
 
 /**
- * The command set a toolbar button can address, and the ONLY place it is spelled — @skryensya/
+ * The command set a toolbar button can address, and the ONLY place it is spelled - @skryensya/
  * editor's own `editorCommands` table imports this same array, so the contract's button set and
  * the engine's implementation table can never drift silently out of sync.
  */
@@ -45,7 +45,7 @@ export type EditorCommandName = (typeof editorCommandNames)[number];
 export const editorParts = {
   root: "sk-editor",
   /* The toolbar container itself uses Toolbar's OWN part class (`sk-toolbar`, via `also` on
-   * `toolbarTemplate` below), not one of these — this is only the button's own CSS hook, dynamic
+   * `toolbarTemplate` below), not one of these - this is only the button's own CSS hook, dynamic
    * content that has no Toolbar-contract equivalent to borrow. */
   toolbarButton: "sk-editor__toolbar-button",
   content: "sk-editor__content",
@@ -60,11 +60,11 @@ export const editorAttrs = {
   command: "data-sk-editor-command",
 } as const;
 
-/** Same visually-hidden recipe as ColorPicker's own `hiddenInput` node — real, but never seen. */
+/** Same visually-hidden recipe as ColorPicker's own `hiddenInput` node - real, but never seen. */
 const hiddenInputStyle =
   "border:0;clip:rect(0 0 0 0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;white-space:nowrap;word-wrap:normal;";
 
-/** Shared by both signatures — the hidden form-submit node and the empty content shell ProseMirror
+/** Shared by both signatures - the hidden form-submit node and the empty content shell ProseMirror
  *  mounts into. Written twice (once per signature's own `template` literal) rather than factored
  *  into a shared function: `as const satisfies ComponentContract` needs each signature's template
  *  to stay one literal object for its exact shape to survive, and a conditionally-built object
@@ -82,7 +82,7 @@ const contentTemplate = {
   element: "div",
   part: "content",
   /* Composes the shared field-chrome pattern (`input.ts`/`input.css`) so this surface reads as
-   * the SAME box as Textarea — border, radius, padding, focus ring, invalid/disabled states, all
+   * the SAME box as Textarea - border, radius, padding, focus ring, invalid/disabled states, all
    * for free from `.sk-input`'s own custom properties. A consumer imports `input.css` alongside
    * `editor.css`, same as ColorPicker importing `button.css` for its own `also: ["sk-button"]`. */
   also: ["sk-input"],
@@ -128,7 +128,7 @@ export const editorContract = {
     toolbarLabel: { type: "string", default: "Formato de texto", attr: "aria-label" },
     /**
      * A smaller toolbar: tighter padding and gaps, not a different button set. An OPTION rather
-     * than a second signature — `ColorPicker.compact` earns its own signature because whole
+     * than a second signature - `ColorPicker.compact` earns its own signature because whole
      * channel-input ROWS are present or absent, "the anatomy genuinely differs, not merely their
      * spacing" (`color-picker.ts`'s own comment); this changes only the spacing, so it takes that
      * comment's own "density flag" shape instead, the same way `CodePreview.density` does.

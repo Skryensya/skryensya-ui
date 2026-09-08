@@ -49,7 +49,7 @@ async function ensureCommandPaletteIndex(root: HTMLDialogElement): Promise<void>
 
 /*
  * The index fetch and the enhancer's own JS chunk are independent, so they run in parallel
- * (`Promise.all`) rather than one after the other — on mobile, awaiting them sequentially is
+ * (`Promise.all`) rather than one after the other - on mobile, awaiting them sequentially is
  * exactly the delay a tap-to-open command palette should not have. Idempotent per root: repeat
  * calls before the first resolves return the same in-flight promise (`initLazyCommandPalettes`'s
  * `mounting` cache), so warming on `pointerdown` and finishing on `click` never double-fetches.

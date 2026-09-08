@@ -212,7 +212,7 @@
   /* Dialog Vaul turns this into a bottom sheet below `desktop` (`dialog-vaul.css`); the anatomy is
    * not just a resized version of the desktop layout. The search field moves to the sheet's own
    * foot, nearer the thumb that opened it and the software keyboard that is about to cover it, and
-   * the keyboard-shortcut footer is dropped outright — there is no physical keyboard on a touch
+   * the keyboard-shortcut footer is dropped outright - there is no physical keyboard on a touch
    * screen for "↑↓ navigate / ↵ open / Esc close" to describe. */
   @media (max-width: 52rem) {
     .sk-command-palette[data-sk-dialog-vaul] .sk-command-palette__list,

@@ -21,7 +21,7 @@ export const toolbarMessages = {
     "toolbarPage.compositeLabel": "Toolbar con Segmented anidado",
     "toolbarPage.wysiwygTitle": "Toolbar como barra de un editor",
     "toolbarPage.wysiwygBody":
-      'El uso que le da nombre al patrón, <code>editor-toolbar</code>, en el contrato: agrupar los controles de formato de un editor de texto enriquecido. Para un editor real construido sobre este mismo Toolbar — con los comandos efectivamente conectados — ver <a href="/componentes/editor">Editor</a>.',
+      'El uso que le da nombre al patrón, <code>editor-toolbar</code>, en el contrato: agrupar los controles de formato de un editor de texto enriquecido. Para un editor real construido sobre este mismo Toolbar - con los comandos efectivamente conectados - ver <a href="/componentes/editor">Editor</a>.',
   },
   en: {
     "demo.toolbar.actions": "Document actions",
@@ -45,6 +45,6 @@ export const toolbarMessages = {
     "toolbarPage.compositeLabel": "Toolbar with a nested Segmented",
     "toolbarPage.wysiwygTitle": "Toolbar heading an editor",
     "toolbarPage.wysiwygBody":
-      'The use that names the pattern, <code>editor-toolbar</code>, in the contract: grouping a rich-text editor\'s own formatting controls. For a real editor built on this same Toolbar — with the commands actually wired up — see <a href="/en/components/editor">Editor</a>.',
+      'The use that names the pattern, <code>editor-toolbar</code>, in the contract: grouping a rich-text editor\'s own formatting controls. For a real editor built on this same Toolbar - with the commands actually wired up - see <a href="/en/components/editor">Editor</a>.',
   },
 } as const;

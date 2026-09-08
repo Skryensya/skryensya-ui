@@ -23,7 +23,7 @@ import { test as base, expect, type BrowserContext, type Page } from "@playwrigh
  * spec that reads `body[data-ready]`, not only the worker-scoped `stagePage` below.
  *
  * PRESENCE IS NOT READY. `harness/main.tsx` sets `data-ready` to `"true"` on success and to
- * `"error"` when the stage throws (`window.gateError` carries why) — the attribute EXISTS in both
+ * `"error"` when the stage throws (`window.gateError` carries why) - the attribute EXISTS in both
  * cases, so `waitForSelector("body[data-ready]")` alone (what `focus-ring.spec.ts` used to do on
  * its own, before this helper) passes on a broken stage exactly as it does on a working one, and
  * whatever ran next failed with a confusing locator timeout instead of the real reason. Waiting for

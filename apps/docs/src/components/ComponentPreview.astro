@@ -566,7 +566,7 @@ const screenToggleLabels = Object.fromEntries(
       /*
        * `data-sk-component-preview-doc` holds the document, `srcdoc` starts EMPTY: `loading="lazy"`
        * does nothing for `srcdoc` content (it is already inline HTML, so the parser starts fetching
-       * whatever it references — the frame runtime, its module graph — the moment it is parsed,
+       * whatever it references - the frame runtime, its module graph - the moment it is parsed,
        * on every preview on the page, at once, regardless of scroll position; that WAS this
        * attribute's job here, and it never worked). `connectStageLifecycle`
        * (`@skryensya/vanilla/component-preview`) promotes it to `srcdoc` the same way it already

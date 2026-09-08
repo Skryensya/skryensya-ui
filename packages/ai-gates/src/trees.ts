@@ -2431,7 +2431,7 @@ const signatureTrees: readonly Canonical[] = [
 
   /*
    * BackToTop, Hero, Footer, ColorPicker (all three signatures): published contracts with NO
-   * canonical-tree coverage until this entry — `rendered.spec.ts`'s "every published signature is
+   * canonical-tree coverage until this entry - `rendered.spec.ts`'s "every published signature is
    * reachable from a canonical tree" was failing on exactly these six ids. This is the same gap
    * `chart` fell into for four days (2026-08-27 → 08-31): a contract can join `registry.ts`'s
    * catalogue and `render-tree.tsx`'s module map with no fixture ever exercising its React binding,

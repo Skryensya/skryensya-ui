@@ -37,3 +37,27 @@ entries:
         <code>placeholder</code>, <code>readOnly</code>, <code>disabled</code>,
         <code>autofocus</code>, <code>label</code>, <code>toolbarLabel</code>,
         <code>toolbarCompact</code>. Its stylesheet is <code>components/editor.css</code>.
+  - date: 2026-09-07
+    kind: bugfix
+    es:
+      title: React acepta toolbarLabel, y el contenido recibe un id en las dos bindings
+      body: >-
+        <code>toolbarLabel</code> estaba publicado en el contrato desde siempre y el binding de React
+        lo ignoraba: escribía "Formato de texto" a mano, así que quien lo configuraba lo obtenía en
+        markup autorado y silenciosamente no en React. Ahora es una prop, y su valor por defecto se
+        lee del contrato en vez de escribirse dos veces.
+        El div de contenido recibe un id también desde el enhancer. Ese id es el que apunta el
+        <code>for</code> de una etiqueta de <code>FormField</code>, y es exactamente el que
+        <code>useFormFieldControl</code> genera del lado de React; nadie lo generaba cuando el
+        enhancer construía el control. A cambio, la raíz dejó de recibir un id que no leía nadie.
+    en:
+      title: React accepts toolbarLabel, and the content gets an id in both bindings
+      body: >-
+        <code>toolbarLabel</code> had been published by the contract all along and the React binding
+        ignored it, hardcoding "Formato de texto" instead, so a consumer who set it got it in
+        authored markup and silently did not in React. It is a prop now, and its default is read from
+        the contract rather than written twice.
+        The content div also gets an id from the enhancer. That id is what a <code>FormField</code>
+        label points its <code>for</code> at, and is exactly what <code>useFormFieldControl</code>
+        mints on the React side; nothing was minting it when the enhancer built the control instead.
+        In exchange, the root stopped getting an id that nothing ever read.

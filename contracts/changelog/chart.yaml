@@ -66,3 +66,22 @@ entries:
         an action, or a surface of its own. Those belong to whatever contains the chart, and putting
         them here would have grown exactly the card-with-variants that Card refuses to be: a chart in
         a card is a COMPOSITION, published as a recipe.
+  - date: 2026-09-07
+    kind: bugfix
+    es:
+      title: labels deja de escribir un data-labels vacío cuando está encendido
+      body: >-
+        <code>labels</code> existe para poder decir <code>false</code>: la hoja tiene una regla para
+        <code>[data-labels="false"]</code> y ninguna para el caso verdadero, porque verdadero es
+        simplemente "con etiquetas, como siempre". El emisor igual escribía un
+        <code>data-labels=""</code> sin sentido que React nunca escribió, y G2 lo leía como una
+        divergencia entre bindings. Ahora un booleano que declara <code>falseValue</code> y no
+        <code>trueValue</code> no escribe nada cuando es verdadero.
+    en:
+      title: labels stops writing an empty data-labels when it is on
+      body: >-
+        <code>labels</code> exists in order to say <code>false</code>: the stylesheet has a rule for
+        <code>[data-labels="false"]</code> and none for the true case, because true is simply "with
+        labels, as always". The emitter wrote a meaningless <code>data-labels=""</code> anyway, which
+        React never wrote, and G2 read it as a divergence between bindings. A boolean that declares a
+        <code>falseValue</code> and no <code>trueValue</code> now writes nothing when true.

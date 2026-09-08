@@ -86,3 +86,25 @@ entries:
         <code>label</code>, <code>paletteId</code>, <code>placeholder</code>, <code>emptyLabel</code>,
         <code>open</code>, <code>entries</code>. Its stylesheet is
         <code>components/command-palette.css</code>.
+  - date: 2026-09-07
+    kind: bugfix
+    es:
+      title: aria-expanded ahora sigue a la lista, no al diálogo
+      body: >-
+        Un combobox está expandido cuando hay algo que expandir, y eso es "la lista tiene opciones".
+        El enhancer lo ponía en <code>true</code> al abrir la paleta y React lo dejaba fijo en
+        <code>true</code> desde la primera tecla sin volver a revisarlo, así que una paleta recién
+        abierta, o una búsqueda sin resultados, anunciaba una lista desplegada que estaba vacía: lo
+        mismo que la cabecera de este contrato dice que las dos implementaciones existen para evitar.
+        Ahora sale de la cantidad de resultados en los dos lados. "Sin resultados" además espera a
+        que se haya escrito algo: sobre una paleta intacta respondía una pregunta que nadie hizo.
+    en:
+      title: aria-expanded now follows the listbox, not the dialog
+      body: >-
+        A combobox is expanded when there is a popup to expand, which is "the listbox has options in
+        it". The enhancer set it to <code>true</code> on open, and React latched it to
+        <code>true</code> on the first keystroke and never reconsidered, so a freshly opened palette
+        (or a query matching nothing) announced an expanded popup over an empty list, the very thing
+        this contract's header says both bindings exist to avoid. It is now derived from the result
+        count on both sides. "Sin resultados" also waits until something has been asked: over an
+        untouched palette it answered a question nobody put.

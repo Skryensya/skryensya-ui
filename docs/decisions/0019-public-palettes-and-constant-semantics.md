@@ -1,49 +1,49 @@
 ---
 num: 19
-title: Paletas públicas y semánticos constantes
-short: "Paletas públicas"
+title: Public palettes and constant semantics
+short: "Public palettes"
 summary: >-
-  Core deja de publicar rampas de rol tier 1. Publica paletas Tailwind-like sin significado como
-  materia prima y expresa marca, feedback, superficies, texto y bordes como bundles semánticos
-  explícitos que no derivan combinaciones de color en runtime.
+  Core stops publishing tier 1 role ramps. It publishes Tailwind-like palettes with no meaning as raw
+  material, and expresses brand, feedback, surfaces, text and borders as explicit semantic bundles that
+  do not derive color combinations at runtime.
 ---
 
-El modelo de color cambia de `ramp -> semantic` a `palette -> semantic`. Una **Palette** es tier 1, se
-nombra por hue (`--palette-slate-500`, `--palette-blue-600`) y usa la escala Tailwind `50`–`950`, más
-`--palette-white` y `--palette-black`. Los valores son los OKLCH publicados por Tailwind; Core puede elegir
-otros rungs semánticos si un par de contraste lo exige, pero no altera la paleta base.
+The color model changes from `ramp -> semantic` to `palette -> semantic`. A **Palette** is tier 1, is
+named by hue (`--palette-slate-500`, `--palette-blue-600`) and uses the Tailwind `50`-`950` scale, plus
+`--palette-white` and `--palette-black`. The values are the OKLCH ones Tailwind publishes; Core may pick
+different semantic rungs if a contrast pair demands it, but it does not alter the base palette.
 
-Los semánticos (`--color-*`) siguen siendo la capa que nombra significado: superficies, texto, bordes,
-actions, accent y feedback. Pueden referenciar palettes y `light-dark()`, pero no generan colores con
-`color-mix()` ni recetas Sass. Un componente o styling hook tier 3 nunca referencia `--palette-*`; solo
-consume semánticos. Esa es la nueva regla que reemplaza “tier 3 nunca alcanza una rampa”.
+The semantics (`--color-*`) remain the layer that names meaning: surfaces, text, borders, actions,
+accent and feedback. They may reference palettes and `light-dark()`, but they do not generate colors
+with `color-mix()` or Sass recipes. A tier 3 component or styling hook never references `--palette-*`;
+it only consumes semantics. That is the new rule replacing "tier 3 never reaches a ramp".
 
-## Marca, accent y feedback
+## Brand, accent and feedback
 
-`accent` deja de ser una rampa. Es un bundle semántico completo: action primary, text accent/link, border
-accent/focus y bg accent subtle cambian juntos. La marca default puede apuntar a `blue`; un tenant no crea
-`--palette-accent-*`, re-declara el bundle semántico de accent.
+`accent` stops being a ramp. It is a complete semantic bundle: action primary, text accent/link, border
+accent/focus and bg accent subtle all change together. The default brand may point at `blue`; a tenant
+does not create `--palette-accent-*`, it re-declares the accent semantic bundle.
 
-`danger`, `success`, `warning` e `info` también dejan de ser rampas. Son roles semánticos de feedback que
-por default leen `red`, `emerald`, `amber` y `sky`. El feedback nunca lee accent: un aviso informativo no
-cambia de meaning cuando cambia la marca.
+`danger`, `success`, `warning` and `info` also stop being ramps. They are semantic feedback roles that
+read `red`, `emerald`, `amber` and `sky` by default. Feedback never reads accent: an informational
+notice does not change meaning when the brand changes.
 
-La dimensión `accent reach` desaparece. Los estados current de navegación usan accent directo; badges, tags,
-kbd y marcadores decorativos usan los semánticos base de accent; ghost/quiet actions quedan en
-`--color-text-primary`; el media gradient usa `--color-action-accent`. No queda `data-accent` ni tokens
-globales `--color-decorative-*`, `--color-nav-current-*`, `--color-action-quiet-fg` o
-`--color-decorative-wash`.
+The `accent reach` dimension disappears. Navigation current states use accent directly; badges, tags,
+kbd and decorative markers use accent's base semantics; ghost/quiet actions stay on
+`--color-text-primary`; the media gradient uses `--color-action-accent`. There is no `data-accent` left,
+and no global `--color-decorative-*`, `--color-nav-current-*`, `--color-action-quiet-fg` or
+`--color-decorative-wash` tokens.
 
-## Lo que sustituye
+## What it supersedes
 
-Esta decisión sustituye las partes de ADR-0019, ADR-0019, ADR-0019, ADR-0019 y ADR-0019 que asumían ramps
-de rol como primitivo público. Conserva tres invariantes de esas decisiones: componentes no consumen tier 1,
-el contraste se valida sobre el CSS que se publica, y la marca se expresa como CSS ordinario sin selector
-`data-brand`.
+This decision supersedes the parts of ADR-0019, ADR-0019, ADR-0019, ADR-0019 and ADR-0019 that assumed
+role ramps as a public primitive. It keeps three invariants from those decisions: components do not
+consume tier 1, contrast is validated against the CSS that ships, and the brand is expressed as ordinary
+CSS with no `data-brand` selector.
 
-## Costo aceptado
+## Accepted cost
 
-El sistema publica muchas más variables tier 1 que antes porque expone todas las palettes Tailwind-like,
-incluidas varias neutrales. Se acepta porque esas variables son constantes auditables, evitan generación de
-color en runtime y dan una base común para productos que necesitan re-declarar bundles semánticos sin inventar
-una paleta propia desde cero.
+The system publishes many more tier 1 variables than before because it exposes every Tailwind-like
+palette, several neutrals included. That is accepted because those variables are auditable constants,
+they avoid runtime color generation, and they give a common base to products that need to re-declare
+semantic bundles without inventing a palette of their own from scratch.

@@ -129,8 +129,10 @@ Turbo caches aggressively, so an unchanged run replays in milliseconds.
 
 ## Contributing
 
-Contributions are welcome. A few things about this repo are unusual, and knowing them up front saves
-a rejected commit.
+Contributions are welcome. [`CONTRIBUTING.md`](CONTRIBUTING.md) is the full guide: setup, the
+contract-first checklist for a new component, how translations and the Tests tab are wired, and how
+to read a failing browser gate. The essentials are below, because a few things about this repo are
+unusual and knowing them up front saves a rejected commit.
 
 ### There is no CI
 

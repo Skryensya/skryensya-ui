@@ -21,7 +21,9 @@
  * here too, so Enter/Space on a row behaves identically.
  */
 import { setPreference } from "@skryensya/vanilla/storage";
-import { locales } from "../i18n/ui";
+/* `../i18n/locales`, not `../i18n/ui`: this is a client module, and `ui` now retains the whole
+ * dictionary when imported (see the note in `i18n/locales.ts`). */
+import { locales } from "../i18n/locales";
 import { languagePreference } from "../lib/preferences";
 
 const isLocale = (value: string | null | undefined): value is (typeof locales)[number] =>

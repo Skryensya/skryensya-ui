@@ -1,77 +1,78 @@
 ---
 num: 10
-title: La capa vanilla usa Svelte como implementación interna, y las machines viven en core
-short: "Svelte interno y machines en core"
+title: The vanilla layer uses Svelte as an internal implementation, and the machines live in core
+short: "Internal Svelte and machines in core"
 summary: >-
-  Un componente con estado tenía su máquina dos veces: React la tomaba de Zag y la capa vanilla la
-  reimplementaba a mano, pineadas sólo por los `*Parts` const y un fixture golden que pasaba ambas
-  aunque ambas estuvieran mal. Esta decisión unifica: las machines de Zag se re-exportan desde
-  `@skryensya/core/machines` y las consumen los DOS bindings, React con `@zag-js/react`, la capa vanilla
-  con `@zag-js/svelte` dentro de componentes `.svelte` que hidratan el markup autorado en light DOM.
-  Svelte es implementación interna, no contrato del consumidor. Revierte ADR-19/15 (la capa vanilla no
-  renderiza / no usa Svelte) y la invariante "core sin dependencies", con los costos dichos.
+  A stateful component had its machine twice: React took it from Zag and the vanilla layer reimplemented it
+  by hand, pinned together only by the `*Parts` consts and a golden fixture that passed both even when
+  both were wrong. This decision unifies them: Zag's machines are re-exported from
+  `@skryensya/core/machines` and consumed by BOTH bindings, React with `@zag-js/react`, the vanilla layer
+  with `@zag-js/svelte` inside `.svelte` components that hydrate the authored markup in light DOM. Svelte
+  is an internal implementation, not a consumer contract. It reverses ADR-19/15 (the vanilla layer does
+  not render / does not use Svelte) and the "core with no dependencies" invariant, with the costs stated.
 ---
 
-Un componente con estado, tabs, accordion, un disclosure, un checkbox de tile, tiene UNA máquina de
-estados, no dos. Hasta acá vivía duplicada: React la tomaba de Zag (`@zag-js/tabs`, `/collapsible`,
-`/checkbox`, `/radio-group`), y la capa vanilla la reimplementaba a mano en un FSM propio. Las dos
-copias quedaban pineadas sólo por los `*Parts` const de core, y el único pin de comportamiento
-`tile-contracts.ts`, era un fixture golden compartido por los tests de ambos bindings: un bug que
-las dos compartían pasaba las dos suites. Es el defecto que el review de arquitectura marcó como el
-"through-line".
+A stateful component, tabs, accordion, a disclosure, a tile checkbox, has ONE state machine, not two.
+Until now it lived duplicated: React took it from Zag (`@zag-js/tabs`, `/collapsible`, `/checkbox`,
+`/radio-group`), and the vanilla layer reimplemented it by hand in an FSM of its own. The two copies were
+pinned together only by core's `*Parts` consts, and the only behavioral pin, `tile-contracts.ts`, was a
+golden fixture shared by both bindings' tests: a bug both shared passed both suites. That is the defect
+the architecture review flagged as the "through-line".
 
-## Una machine, dos adapters
+## One machine, two adapters
 
-Las machines de Zag son framework-agnósticas, que es exactamente lo que core publica. Así que core las
-re-exporta en **`@skryensya/core/machines`**, y las consumen los dos bindings:
+Zag's machines are framework-agnostic, which is exactly what core publishes. So core re-exports them in
+**`@skryensya/core/machines`**, and both bindings consume them:
 
-- **React** las adapta con `@zag-js/react` (`useMachine` + `connect`), como ya lo hacía, sólo cambia de
-  dónde importa la máquina: de `@zag-js/tabs` a `@skryensya/core/machines`.
-- **La capa vanilla** las adapta con **`@zag-js/svelte`** dentro de componentes `.svelte`, que se montan
-  sobre el markup `[data-sk-*]` que el consumidor ya escribió y **parchean los atributos** que devuelve
-  `connect` sobre ese DOM (`applyZagProps`), sin renderizar estructura propia.
+- **React** adapts them with `@zag-js/react` (`useMachine` + `connect`), as it already did, only changing
+  where it imports the machine from: `@zag-js/tabs` to `@skryensya/core/machines`.
+- **The vanilla layer** adapts them with **`@zag-js/svelte`** inside `.svelte` components, which mount
+  over the `[data-sk-*]` markup the consumer already wrote and **patch the attributes** `connect`
+  returns onto that DOM (`applyZagProps`), without rendering structure of their own.
 
-El comportamiento tiene un solo dueño; el contrato de parts se verifica contra la máquina en vez de
-duplicarse en un fixture.
+Behavior has a single owner; the parts contract is verified against the machine instead of being
+duplicated in a fixture.
 
-## Svelte es implementación interna, en light DOM
+## Svelte is an internal implementation, in light DOM
 
-Esto **revierte ADR-19 y ADR-19**, que decían que la capa vanilla no renderiza y no usa Svelte. Lo que
-NO cambia es lo que esas decisiones protegían: la capa **sigue hidratando markup autorado**, y lo hace
-en **light DOM**, `mount()` sobre la raíz existente, nada de custom elements ni shadow DOM, así que
-`.hero .sk-tabs { … }` sigue alcanzando el elemento y el modelo de styling hooks queda intacto. Svelte
-es el motor interno, reemplazable, nunca un contrato para el consumidor: se autora HTML con clases y
-`data-sk-*`, se llama `initComponents()`, y no se escribe una línea de Svelte. El sitio
-([ADR-19](./0006-the-monorepo-and-the-site.md)) compila esos `.svelte` con `@sveltejs/vite-plugin-svelte`
-y no renderiza ni una UI de Svelte.
+This **reverses ADR-19 and ADR-19**, which said the vanilla layer does not render and does not use
+Svelte. What does NOT change is what those decisions protected: the layer **still hydrates authored
+markup**, and it does so in **light DOM**, `mount()` over the existing root, no custom elements and no
+shadow DOM, so `.hero .sk-tabs { ... }` still reaches the element and the styling hooks model stays
+intact. Svelte is the internal engine, replaceable, never a contract for the consumer: you author HTML
+with classes and `data-sk-*`, you call `initComponents()`, and you write not one line of Svelte. The site
+([ADR-19](./0006-the-monorepo-and-the-site.md)) compiles those `.svelte` files with
+`@sveltejs/vite-plugin-svelte` and renders no Svelte UI at all.
 
-Los enhancers SIN máquina de Zag, button, segmented, sidebar, slider, toast, vaul (gesto puro), los
-factories de tile-link/tile-button, siguen siendo parcheo de atributos a mano y conviven con los
-Svelte en el mismo `initComponents()`.
+The enhancers WITHOUT a Zag machine, button, segmented, sidebar, slider, toast, vaul (pure gesture), the
+tile-link/tile-button factories, remain hand-written attribute patching and coexist with the Svelte ones
+in the same `initComponents()`.
 
-## Core tiene dependencies, y está bien
+## Core has dependencies, and that is fine
 
-Centralizar las machines hace que `@skryensya/core` tenga `dependencies`, las de `@zag-js/*`, lo que
-**revierte** la invariante "core sin deps" de [ADR-19](./0019-public-palettes-and-constant-semantics.md)
-/ [ADR-19](./0006-the-monorepo-and-the-site.md). Se acepta porque una machine **no es un inquilino**:
-no nombra una marca ni un proveedor, es comportamiento agnóstico de plataforma, que es lo que core
-publica. La distinción con los iconos se mantiene: la geometría de un set sí es de un inquilino y sigue
-sin poder vivir en core; una máquina, no. El repo de referencia (kitdigital) hace exactamente esto.
+Centralizing the machines means `@skryensya/core` has `dependencies`, those of `@zag-js/*`, which
+**reverses** the "core with no deps" invariant from
+[ADR-19](./0019-public-palettes-and-constant-semantics.md) /
+[ADR-19](./0006-the-monorepo-and-the-site.md). It is accepted because a machine **is not a tenant**: it
+names no brand and no vendor, it is platform-agnostic behavior, which is what core publishes. The
+distinction with icons holds: a set's geometry does belong to a tenant and still cannot live in core; a
+machine does not. The reference repo (kitdigital) does exactly this.
 
-## Costos, dichos
+## Costs, stated
 
-- **La animación del accordion queda pendiente.** React compone su accordion con un `collapsible` por
-  item, que aporta `--height` y anima. La capa vanilla usa `@zag-js/accordion` (una sola máquina,
-  single/multiple, teclado), que no expone `--height`, así que el alto no anima suave todavía. Es
-  funcionalmente correcto; igualar la animación pide cambiar a `collapsible`-por-item como React.
-- **El markup del checkbox/radio de tile cambió.** El modelo de Zag oculta el input nativo detrás de un
-  control visual (`getHiddenInputProps` + un `[data-part=indicator]` autorado), igual que React. Un
-  consumidor que autoró el checkbox con input visible tiene que agregar el indicador. Es un cambio de
-  contrato, no sólo un detalle interno, y se elige a cambio de alinear vanilla con React.
-- **Tests: la fidelidad de jsdom.** El `flush` de `@zag-js/svelte` es `flushSync(() => queueMicrotask(fn))`
-  y Zag difiere el foco con `raf()`; los navegadores drenan microtasks entre callbacks de `raf` y jsdom
-  no, así que la selección-al-enfocar con flechas y la restauración en `form.reset()` se prueban en el
-  navegador (revisión visual del sitio), no en jsdom. En jsdom se prueba la interacción determinística
-  (click, estado, eventos), que es el grueso del contrato.
-- **Un `CSS.escape` de polyfill** en el setup de tests, porque Zag escapa ids generados (que llevan `:`)
-  y jsdom no trae `CSS`.
+- **The accordion's animation is pending.** React composes its accordion with a `collapsible` per item,
+  which provides `--height` and animates. The vanilla layer uses `@zag-js/accordion` (a single machine,
+  single/multiple, keyboard), which does not expose `--height`, so the height does not animate smoothly
+  yet. It is functionally correct; matching the animation requires switching to `collapsible`-per-item
+  like React.
+- **The tile checkbox/radio markup changed.** Zag's model hides the native input behind a visual control
+  (`getHiddenInputProps` + an authored `[data-part=indicator]`), the same as React. A consumer who
+  authored the checkbox with a visible input has to add the indicator. That is a contract change, not
+  just an internal detail, and it is chosen in exchange for aligning vanilla with React.
+- **Tests: jsdom's fidelity.** `@zag-js/svelte`'s `flush` is `flushSync(() => queueMicrotask(fn))` and
+  Zag defers focus with `raf()`; browsers drain microtasks between `raf` callbacks and jsdom does not, so
+  select-on-focus with arrows and restoration on `form.reset()` are tested in the browser (visual review
+  of the site), not in jsdom. In jsdom we test deterministic interaction (click, state, events), which is
+  the bulk of the contract.
+- **A `CSS.escape` polyfill** in the test setup, because Zag escapes generated ids (which contain `:`)
+  and jsdom does not ship `CSS`.

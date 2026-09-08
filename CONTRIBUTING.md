@@ -12,7 +12,7 @@ downstream of keeping that true.
 | File | What it decides |
 |---|---|
 | [`CONTEXT.md`](CONTEXT.md) | The glossary. Which word names each concept, and which words not to use. It is the only authority on terminology. |
-| [`docs/decisions/`](docs/decisions) | 20 decision records, each with the alternatives rejected. Most "why isn't this X?" questions have a numbered answer. |
+| [`docs/decisions/`](docs/decisions) | 21 decision records, each with the alternatives rejected. Most "why isn't this X?" questions have a numbered answer. |
 | [`docs/writing-guide.md`](docs/writing-guide.md) | How prose is written: register, person, punctuation, and what changes between Spanish and English. |
 | [`docs/pending-tasks.md`](docs/pending-tasks.md) | The live backlog, ranked. If you want something to pick up, take the top unchecked item of Nivel 1. |
 
@@ -29,10 +29,15 @@ pnpm --filter @skryensya/docs dev     # http://localhost:4173
 Everyday gate, the same one `pre-push` runs:
 
 ```bash
-pnpm turbo run check --filter='!@skryensya/ai-gates' --concurrency=1
+pnpm check          # every package except the browser gates
+pnpm check:gates    # the browser gates, about 19 minutes
+pnpm check:all      # both, and what CI runs on a pull request
 ```
 
 `--concurrency=1` is not decoration. In parallel this check has intermittent timeouts in this repo.
+
+Turbo caches by content hash, so a second `pnpm check` with nothing changed is about 40ms and only
+the packages you actually touched re-run. If you need to defeat that deliberately, `--force`.
 
 ## Sending a change
 
@@ -77,7 +82,7 @@ Two more notes:
   since it was added. If you are auditing history, run `gitleaks git --no-banner --redact .` for the
   whole repo. On a public repository, GitHub's own secret scanning covers the pushed side.
 - **The browser gates are excluded everywhere**, from `pre-push` and from CI, because they take
-  about 15 minutes and are sensitive to machine load, which makes a red result on a shared runner
+  about 19 minutes and are sensitive to machine load, which makes a red result on a shared runner
   weak evidence. Run them yourself for anything visual (see below).
 
 ## Commit messages
@@ -173,7 +178,7 @@ fail the whole build.
 ## The browser gates
 
 ```bash
-pnpm --filter @skryensya/ai-gates check          # all of them, about 15 minutes
+pnpm check:gates                                 # all of them, about 15 minutes
 npx playwright test src/symmetry.spec.ts         # one file
 npx playwright test <spec> --workers=1           # to judge whether a failure is real
 ```

@@ -213,7 +213,9 @@
     }
 
     .sk-date-picker__content {
-      /* Roomier tap targets on the sheet: there is width to spare, unlike the compact desktop popover. */
+      /* Roomier tap targets on the sheet: there is width to spare, unlike the compact desktop popover.
+       * A day cell's FACE is `sm` (32px) everywhere else; here the same hook takes it to the full
+       * touch target. */
       --sk-calendar-cell-size: var(--size-touch-target);
 
       inline-size: 100%;
@@ -226,6 +228,10 @@
       border-block-end: 0;
       border-radius: var(--radius-surface) var(--radius-surface) 0 0;
     }
+    /* No font-size override here on purpose. This used to restate `--font-size-body-sm` because the
+     * day cell was `xs`, which pins `--font-size-caption` ON the button itself: a 12px digit in a
+     * 44px circle. Now that the cell is `sm`, body-sm is what the size axis already gives, and a
+     * rule that repeats it would just be a second place to keep in sync. */
     .sk-date-picker__content[data-state="open"] {
       animation: sk-date-picker-sheet-in var(--motion-enter-duration) var(--motion-enter-easing);
     }

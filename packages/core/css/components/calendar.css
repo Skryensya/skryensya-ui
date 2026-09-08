@@ -4,13 +4,19 @@
  * inside its positioner, but a page can also mount `data-sk-calendar` directly wherever an inline
  * date grid is the whole UI (a booking page, a dashboard filter).
  *
- * EVERY BUTTON IN HERE IS A REAL sm Button (ADR-19/8): previous, next, the view-trigger and every
- * day/month/year cell carry `sk-button sk-interactive data-size="sm"`, never a bespoke box that
- * re-derives padding, height or state-layer feedback the button pattern already gives for free.
- * This file only re-declares the handful of `--sk-button-*` hooks each shape needs (icon-only
+ * EVERY BUTTON IN HERE IS A REAL Button (ADR-19/8): previous, next, the view-trigger and the
+ * month/year AND day cells all carry `sk-button sk-interactive data-size="sm"`. Never a bespoke box
+ * that re-derives padding, height or state-layer feedback the button pattern already gives for
+ * free. This file only re-declares the handful of `--sk-button-*` hooks each shape needs (icon-only
  * square for prev/next AND the day cell. A day number is one piece of content in a square, same
  * shape as a glyph. Full-width pill for month/year cells), the same mechanism a themed instance
- * uses. */
+ * uses.
+ *
+ * ONE SIZE TIER, `sm`, THROUGHOUT. The day cell used to sit at `xs` on the argument that forty-two
+ * of them share one grid and should ask for the least room in the system. Rendered next to an `sm`
+ * header that reads as two control tiers inside one widget, and it put the thing you actually aim
+ * at forty-two times ON the WCAG 2.2 SC 2.5.8 24px minimum instead of comfortably past it. Levelled
+ * to `sm`: 32px faces, seven of them still inside the 18rem calendar. */
 @import url("./button.css");
 
 @layer components {
@@ -20,8 +26,10 @@
     --sk-calendar-inline-size: 18rem;
     --sk-calendar-gap: var(--space-stack-xs);
     --sk-calendar-header-gap: var(--space-inline-xs);
-    /* Day cells are a dense grid target, so they paint at control-sm (32px, above the 24px WCAG
-     * 2.5.8 floor) instead of the 44px used for standalone controls. */
+    /* Day cells paint at control-sm, the same 32px face the header controls take, and the 44px HIT
+     * area is there on top through `.sk-button::after` (button.css) whatever the face measures. The
+     * hook is what a roomier context raises: the mobile sheet takes it all the way to
+     * `--size-touch-target` (date-picker.css), so the face follows the space actually available. */
     --sk-calendar-cell-size: var(--size-control-sm);
     --sk-calendar-cell-radius: var(--radius-pill);
     /* One row unit: a day cell's rendered height (button + its own padding). Month/year bodies
@@ -101,6 +109,9 @@
   .sk-calendar__cell-trigger.sk-button {
     --sk-button-width: var(--sk-calendar-cell-size);
     --sk-button-radius: var(--sk-calendar-cell-radius);
+    /* Restating the height the `sm` face already gives, rather than trusting the size axis alone:
+     * the cell size is a HOOK, and pinning both axes to it is what lets one declaration elsewhere
+     * (the mobile sheet's `--size-touch-target`) resize the whole grid without touching this file. */
     --sk-button-height: var(--sk-calendar-cell-size);
     --sk-button-padding-x: 0;
     --sk-button-bg: transparent;

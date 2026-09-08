@@ -19,7 +19,7 @@ export const calloutWithRetryCase: EvalCase = {
       actions: {
         contract: "button",
         signature: "Button.action",
-        options: { variant: "danger" },
+        options: { tone: "danger" },
         children: "Reintentar",
       },
     },

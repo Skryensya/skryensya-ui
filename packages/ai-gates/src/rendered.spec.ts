@@ -93,7 +93,13 @@ test("every published signature is reachable from a canonical tree", () => {
  * `content/toast-template` joins for a different reason than `loader/status-only`: a `<template>`'s
  * content is inert by the HTML spec, never part of the rendered tree at all, in EITHER binding.
  */
-const DRAWS_NOTHING = new Set(["loader/status-only", "content/toast-template"]);
+const DRAWS_NOTHING = new Set([
+  "loader/status-only",
+  "content/toast-template",
+  /* Same reason as the toast template beside it: a `<template>`'s content is inert by the HTML
+   * spec and never part of the rendered tree, in either binding. */
+  "comment-thread/template",
+]);
 
 test("every canonical tree paints something", async ({ page }) => {
   await waitForStage(page);

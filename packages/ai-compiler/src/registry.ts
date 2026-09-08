@@ -16,6 +16,8 @@ import { mediaGradientContract } from "@skryensya/core/media-gradient";
 import { timeFieldContract } from "@skryensya/core/time-field";
 import { fileUploadContract } from "@skryensya/core/file-upload";
 import { carouselContract } from "@skryensya/core/carousel";
+import { fadeEdgeContract } from "@skryensya/core/fade-edge";
+import { marqueeContract } from "@skryensya/core/marquee";
 import { treeViewContract } from "@skryensya/core/tree-view";
 import { sidebarContract } from "@skryensya/core/sidebar";
 import { skipLinkContract } from "@skryensya/core/skip-link";
@@ -101,6 +103,7 @@ export const contracts = {
   footer: footerContract,
   icon: iconContract,
   "image-frame": imageFrameContract,
+  "fade-edge": fadeEdgeContract,
   kbd: kbdContract,
   layout: layoutContract,
   list: listContract,
@@ -116,6 +119,7 @@ export const contracts = {
   sidebar: sidebarContract,
   "skip-link": skipLinkContract,
   carousel: carouselContract,
+  marquee: marqueeContract,
   "file-upload": fileUploadContract,
   "time-field": timeFieldContract,
   "tree-view": treeViewContract,

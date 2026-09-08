@@ -49,7 +49,7 @@ export const docsSiteTree = (t: Translate): UsageTree => ({
             {
               contract: "button",
               signature: "Button.action",
-              options: { variant: "subtle" },
+              options: { variant: "soft" },
               children: [
                 { contract: "icon", signature: "Icon", options: { name: "search", size: "sm" } },
                 t("demo.docsSite.search"),
@@ -59,7 +59,7 @@ export const docsSiteTree = (t: Translate): UsageTree => ({
             {
               contract: "button",
               signature: "Button.action",
-              options: { variant: "accent" },
+              options: { tone: "accent" },
               children: t("demo.docsSite.getStarted"),
             },
           ],

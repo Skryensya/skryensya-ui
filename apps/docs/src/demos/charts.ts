@@ -129,7 +129,7 @@ export const chartHistoryCardTree = (t: Translate): UsageTree => ({
         // `buttonAsLinkTree` for the contract's other worked example of the same signature.
         contract: "button",
         signature: "Button.navigation",
-        options: { variant: "neutral", size: "sm", href: "#" },
+        options: { variant: "solid", size: "sm", href: "#" },
         children: t("demo.charts.history.button"),
       },
     ],

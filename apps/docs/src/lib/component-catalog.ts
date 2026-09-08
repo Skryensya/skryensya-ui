@@ -184,6 +184,10 @@ const componentDescriptions = {
     es: "Despliega un panel borde a borde con varias columnas de enlaces de navegación.",
     en: "Opens an edge-to-edge panel with several columns of navigation links.",
   },
+  "/componentes/marquee": {
+    es: "Repite una franja inerte con movimiento pedido o autoplay siempre pausable.",
+    en: "Repeats an inert strip with requested motion or always-pausable autoplay.",
+  },
   "/componentes/menu": {
     es: "Presenta una lista compacta de acciones contextuales.",
     en: "Presents a compact list of contextual actions.",

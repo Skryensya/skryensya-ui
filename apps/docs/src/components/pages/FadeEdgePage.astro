@@ -2,6 +2,10 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { getLocale, useTranslations } from "../../i18n";
+import semanticSource from "@contracts/semantic/fade-edge.yaml?raw";
+import changelogSource from "@contracts/changelog/fade-edge.yaml?raw";
+import coreSource from "@core/src/fade-edge.ts?raw";
+import reactSource from "@react/src/components/fade-edge.tsx?raw";
 import cssSource from "@core/css/components/fade-edge.css?raw";
 import "@skryensya/core/components/fade-edge.css";
 import "@skryensya/core/patterns/box.css";
@@ -15,6 +19,10 @@ import "@skryensya/core/patterns/scrollbar.css";
 const t = useTranslations(getLocale(Astro.url));
 
 const sourceFiles = [
+  { id: "contracts/semantic/fade-edge.yaml", source: semanticSource, language: "yaml" },
+  { id: "contracts/changelog/fade-edge.yaml", source: changelogSource, language: "yaml" },
+  { id: "packages/core/src/fade-edge.ts", source: coreSource, language: "ts" },
+  { id: "packages/react/src/components/fade-edge.tsx", source: reactSource, language: "tsx" },
   { id: "packages/core/css/components/fade-edge.css", source: cssSource, language: "css" },
 ] as const;
 
@@ -157,6 +165,7 @@ sync();
   title="FadeEdge"
   description={t("fadeEdge.description")}
   badge={t("fadeEdge.betaBadge")}
+  contractId="fade-edge"
   styleGroups={[{ file: "components/fade-edge.css", probe: "sk-fade-edge" }]}
   sourceFiles={sourceFiles}
 >

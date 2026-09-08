@@ -130,7 +130,7 @@ export const VaulDeleteDemo = framed(function VaulDeleteDemo({
           <Button onClick={() => setOpen(false)} variant="ghost">
             {cancel}
           </Button>
-          <Button onClick={() => setOpen(false)} variant="danger">
+          <Button onClick={() => setOpen(false)} tone="danger">
             {confirm}
           </Button>
         </footer>

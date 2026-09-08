@@ -235,7 +235,7 @@ const pricingCardTree = (translate: Translate): UsageTree => ({
           }),
         ),
       },
-      { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: translate("demo.pricingCard.cta") },
+      { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: translate("demo.pricingCard.cta") },
     ],
   },
 });
@@ -255,7 +255,7 @@ const teamCardTree = (translate: Translate): UsageTree => ({
       { contract: "avatar", signature: "Avatar.initials", options: { size: "lg", name: "Ada Lovelace" }, children: "AL" },
       { contract: "typography", signature: "Text", options: { weight: "emphasis" }, children: "Ada Lovelace" },
       { contract: "typography", signature: "Text", options: { tone: "secondary", size: "sm" }, children: translate("demo.popover.description") },
-      { contract: "button", signature: "Button.action", options: { variant: "neutral", size: "sm" }, children: translate("demo.teamCard.follow") },
+      { contract: "button", signature: "Button.action", options: { variant: "solid", size: "sm" }, children: translate("demo.teamCard.follow") },
     ],
   },
 });
@@ -516,7 +516,7 @@ const columns: GalleryTile[][] = [
             <a
               class="sk-button sk-interactive"
               data-sk-button
-              data-variant="accent"
+              data-tone="accent"
               data-size="md"
               href={href("/componentes")}
             >

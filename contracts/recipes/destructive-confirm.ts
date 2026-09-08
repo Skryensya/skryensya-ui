@@ -39,7 +39,7 @@ export const destructiveConfirmRecipe: Recipe = {
         {
           contract: "button",
           signature: "Button.action",
-          options: { variant: "danger" },
+          options: { tone: "danger" },
           children: "Eliminar el proyecto",
         },
       ],
@@ -74,7 +74,7 @@ export const destructiveConfirmRecipe: Recipe = {
               {
                 contract: "button",
                 signature: "Button.action",
-                options: { variant: "danger" },
+                options: { tone: "danger" },
                 children: "Eliminar el proyecto Atlas",
               },
             ],

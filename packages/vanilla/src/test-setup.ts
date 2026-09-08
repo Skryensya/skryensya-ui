@@ -18,6 +18,22 @@ if (dialogProto && typeof dialogProto.showModal !== "function") {
   };
 }
 
+/* jsdom ships no `matchMedia`, and the comment composer asks it whether it is a sheet. Reports "no"
+ * for every query, which is the in-flow presentation: the fallback, and the one a test asserts
+ * against unless it overrides this itself. */
+if (globalThis.window && typeof globalThis.window.matchMedia !== "function") {
+  globalThis.window.matchMedia = ((query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addEventListener() {},
+    removeEventListener() {},
+    addListener() {},
+    removeListener() {},
+    dispatchEvent: () => false,
+  })) as typeof window.matchMedia;
+}
+
 /* Pointer capture, which Vaul's drag asks for on the handle. A no-op is the honest stub: jsdom has
  * no compositor to retarget events with, and the gesture already tracks on the window regardless. */
 if (!Element.prototype.setPointerCapture) {

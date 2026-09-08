@@ -92,7 +92,7 @@ export const heroWithEmailCaptureSnippet: Snippet = {
                       {
                         contract: "button",
                         signature: "Button.action",
-                        options: { variant: "accent" },
+                        options: { tone: "accent" },
                         children: "Join the waitlist",
                       },
                     ],

@@ -40,7 +40,7 @@ export const chartPeriodPanelRecipe: Recipe = {
   states: {
     loading: panel([
       { contract: "loader", signature: "Loader.status", options: { label: "Cargando el tráfico" } },
-      { contract: "placeholder", signature: "Placeholder", options: { shape: "block" } },
+      { contract: "placeholder", signature: "Placeholder.block" },
     ]),
 
     empty: panel([

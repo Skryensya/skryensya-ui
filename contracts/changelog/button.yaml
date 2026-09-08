@@ -3,8 +3,45 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "a346957aa3335e9b"
+surface: "c44b5e36783c62f2"
 entries:
+  - date: 2026-09-07
+    kind: feature
+    target: size
+    es:
+      title: Se agrega el tamaño "xs", el piso de la escala
+      body: >-
+        <code>size</code> pasa de <code>sm / md / lg</code> a <code>xs / sm / md / lg</code>.
+        <code>xs</code> pinta a 24px, que no es un número elegido a ojo: es donde se detiene
+        WCAG 2.2 SC 2.5.8, así que es el control más chico que este sistema va a pintar. El área
+        de click NO se achica con la cara, sigue en 44px por el <code>::after</code> que todos
+        los botones ya tienen, y la tipografía baja a <code>--font-size-caption</code>, el único
+        escalón que entra en una cara de 24px sin que la etiqueta apriete su propia caja. El
+        glifo va a <code>--size-icon-sm</code>.
+        Sirve para un control que tiene que leerse como un NODO y no como un botón estacionado
+        al lado de algo: el handle que pliega las respuestas de <code>comment-thread</code> es el
+        caso que lo pidió, montado sobre la línea del hilo, donde <code>sm</code> era tan ancho
+        como el avatar de arriba y le competía. Ese handle era hasta ahora una cara achicada a
+        mano desde <code>sm</code> con los hooks de Button: andaba, pero la medida vivía en el CSS
+        de comment-thread, ningún otro componente podía pedirla y nada la mantenía en la escala.
+        Aditivo: ningún valor existente cambia de nombre ni de medida.
+    en:
+      title: A new "xs" size, the floor of the scale
+      body: >-
+        <code>size</code> goes from <code>sm / md / lg</code> to <code>xs / sm / md / lg</code>.
+        <code>xs</code> paints at 24px, which is not a number picked by eye: it is where WCAG 2.2
+        SC 2.5.8 stops, so it is the smallest control this system will ever paint. The hit area
+        does NOT shrink with the face, it stays at 44px through the <code>::after</code> every
+        button already carries, and the type steps down to <code>--font-size-caption</code>, the
+        only step that fits a 24px face without the label crowding its own box. The glyph goes to
+        <code>--size-icon-sm</code>.
+        It is for a control that has to read as a NODE rather than as a button parked beside
+        something: <code>comment-thread</code>'s reply-fold handle is the case that asked for it,
+        riding on the thread's own rail, where <code>sm</code> was as wide as the avatar above it
+        and competed with it. That handle was until now a face hand-shrunk from <code>sm</code>
+        through Button's hooks: it worked, but the measurement lived in comment-thread's CSS, no
+        other component could ask for it, and nothing kept it on the scale.
+        Additive: no existing value changes its name or its measurements.
   - date: 2026-08-23
     kind: breaking
     target: variant
@@ -109,3 +146,72 @@ entries:
         the markup is authored and the enhancer hydrates it, so whatever needs no JavaScript works
         before any runs. Options: <code>variant</code>, <code>size</code>, <code>iconOnly</code>,
         <code>href</code>, <code>disabled</code>. Its stylesheet is <code>components/button.css</code>.
+  - date: 2026-09-07
+    kind: rework
+    es:
+      title: Button se separa en dos ejes, emphasis y tone
+      body: >-
+        <code>variant</code> respondía dos preguntas a la vez: qué tan fuerte es el botón y qué
+        significa. Cuatro énfasis por tres intenciones son doce combinaciones, y una sola lista
+        nombraba seis, eligiendo arbitrariamente cuáles: había destructivo fuerte pero no destructivo
+        discreto, neutral discreto pero no primario discreto. Ahora <code>variant</code> dice sólo el
+        énfasis (<code>solid</code>, <code>soft</code>, <code>ghost</code>,
+        <code>translucent</code>) y <code>tone</code> dice sólo la intención (<code>neutral</code>,
+        <code>accent</code>, <code>danger</code>), que además es la palabra que Badge, Tag y Callout
+        ya usaban para lo mismo.
+        <strong>Es un cambio que rompe.</strong> <code>ghost</code> y <code>translucent</code> no se
+        tocan; el resto se mueve: <code>variant="accent"</code> pasa a <code>tone="accent"</code>,
+        <code>variant="danger"</code> a <code>tone="danger"</code>, <code>variant="subtle"</code> a
+        <code>variant="soft"</code> y <code>variant="neutral"</code> es el default y se puede omitir.
+        Son tres tonos y no los cinco de Badge: un badge REPORTA un estado, así que
+        <code>success</code> y <code>warning</code> son cosas que puede decir con verdad; un botón
+        EJECUTA una acción, y no existe una acción de advertencia.
+    en:
+      title: Button splits into two axes, emphasis and tone
+      body: >-
+        <code>variant</code> was answering two questions at once: how loud the button is, and what it
+        means. Four emphases times three intents is twelve combinations, and one list named six of
+        them, picking arbitrarily which: you got loud-destructive but not quiet-destructive,
+        quiet-neutral but not quiet-primary. <code>variant</code> now says only the emphasis
+        (<code>solid</code>, <code>soft</code>, <code>ghost</code>, <code>translucent</code>) and
+        <code>tone</code> says only the intent (<code>neutral</code>, <code>accent</code>,
+        <code>danger</code>), which is also the word Badge, Tag and Callout already used for it.
+        <strong>This is a breaking change.</strong> <code>ghost</code> and <code>translucent</code>
+        are untouched; the rest moves: <code>variant="accent"</code> becomes
+        <code>tone="accent"</code>, <code>variant="danger"</code> becomes <code>tone="danger"</code>,
+        <code>variant="subtle"</code> becomes <code>variant="soft"</code>, and
+        <code>variant="neutral"</code> is the default and can be dropped. Three tones rather than
+        Badge's five: a badge REPORTS a state, so <code>success</code> and <code>warning</code> are
+        things it can truthfully say; a button PERFORMS an action, and there is no warning action.
+  - date: 2026-09-07
+    kind: feature
+    es:
+      title: Un toggle encendido ahora se ve encendido
+      body: >-
+        Nace <code>pressed</code>, la opción que escribe <code>aria-pressed</code>, y Button pinta
+        ese estado: un ghost gana relleno, un botón con tono gana su propio lavado, un solid se
+        profundiza. Tiene tres estados y no dos, como el <code>wrap</code> de layout: ausente
+        significa "no es un toggle" y es lo correcto para casi cualquier botón, mientras que
+        <code>false</code> significa "es un toggle y está apagado", que un lector de pantalla
+        anuncia. Sólo en <code>Button.action</code>: un enlace navega, no queda presionado.
+        <strong>No usa la capa de estado compartida</strong>, que era la solución obvia y es la
+        equivocada: el hover reasigna la misma <code>--state-layer-opacity</code>, así que un toggle
+        cuyo único indicio fuera esa capa se veía apagado justo mientras el puntero estaba encima.
+        Mueve los hooks propios del botón y deja que la capa monte arriba.
+        Dos consumidores ya lo habían resuelto a mano (la barra del Editor y el par de votos de
+        CommentThread) y ahora los dos leen el contrato.
+    en:
+      title: A toggle that is on now looks on
+      body: >-
+        New <code>pressed</code> option, which writes <code>aria-pressed</code>, and Button paints
+        that state: a ghost gains a fill, a toned button gains its own wash, a solid deepens. It has
+        three states rather than two, like layout's <code>wrap</code>: absent means "not a toggle"
+        and is right for almost every button, while <code>false</code> means "a toggle, currently
+        off", which a screen reader announces. Action only: a link navigates, it does not stay
+        pressed.
+        <strong>It deliberately does not use the shared state layer</strong>, which was the obvious
+        fix and the wrong one: hover reassigns the same <code>--state-layer-opacity</code>, so a
+        toggle whose only cue was that layer read as unpressed exactly while the pointer sat on it.
+        It moves the button's own hooks instead and lets the layer ride on top.
+        Two consumers had already solved this by hand (the Editor toolbar and CommentThread's vote
+        pair); both now read the contract.

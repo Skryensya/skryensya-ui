@@ -45,7 +45,7 @@ export const settingsRecipe: Recipe = {
             actions: {
               contract: "button",
               signature: "Button.navigation",
-              options: { href: "/proyectos", variant: "accent" },
+              options: { href: "/proyectos", tone: "accent" },
               children: "Ver proyectos",
             },
           },

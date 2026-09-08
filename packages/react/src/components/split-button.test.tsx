@@ -65,12 +65,13 @@ describe("SplitButton (React)", () => {
    */
   it("pairs the fallback trigger's shape and variant/size with the action button", () => {
     const ui = render(
-      <SplitButton menuLabel="Más opciones" menuItems={items} variant="danger" size="lg">
+      <SplitButton menuLabel="Más opciones" menuItems={items} tone="danger" size="lg">
         Guardar
       </SplitButton>,
     );
     const trigger = ui.getByRole("button", { name: "Más opciones" });
-    expect(trigger.getAttribute("data-variant")).toBe("danger");
+    expect(trigger.getAttribute("data-tone")).toBe("danger");
+    expect(trigger.getAttribute("data-variant")).toBe("solid");
     expect(trigger.getAttribute("data-size")).toBe("lg");
     expect(trigger.hasAttribute("data-icon-only")).toBe(true);
     expect(trigger.hasAttribute("data-weld-start")).toBe(true);

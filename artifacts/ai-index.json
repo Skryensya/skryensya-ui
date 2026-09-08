@@ -317,7 +317,13 @@
             },
             {
               "la acción es secundaria dentro de un texto": "eso es un Link"
-            }
+            },
+            "dos `solid` + `accent` visibles a la vez: si todo es la acción principal, ninguna lo es",
+            "un tono en un botón que no actúa sobre nada: un disclosure o un toggle es neutral, no accent",
+            "`danger` en algo que se deshace con un clic: el tono miente sobre el costo",
+            "se busca `success` o `warning`: un botón ejecuta una acción y no existe una acción de advertencia; eso lo reporta un Badge o un Callout",
+            "`pressed` en algo que no permanece encendido: un botón que dispara y vuelve no es un toggle, y anunciarlo como tal miente sobre lo que hace",
+            "`pressed` para marcar el ítem elegido de un grupo exclusivo: eso es Segmented o RadioGroup, que además dan las flechas del teclado"
           ],
           "host": "button",
           "id": "Button.action",
@@ -330,7 +336,13 @@
           "useWhen": [
             "ejecuta una acción en la página",
             "envía un formulario",
-            "confirma o descarta un diálogo"
+            "confirma o descarta un diálogo",
+            "destruye algo o es difícil de deshacer: `tone: danger`, y el énfasis dice cuál de los dos momentos es",
+            "es LA acción de la vista: `tone: accent`, y una sola por región",
+            "un eliminar dentro de una fila de acciones: `variant: ghost` + `tone: danger`, que se lee destructivo sin convertirse en el botón de confirmar",
+            "el confirmar que ese eliminar abre: `variant: solid` + `tone: danger`, uno por diálogo",
+            "va sobre media o sobre una superficie de color desconocida: `variant: translucent`",
+            "el botón se queda encendido: `pressed`, un toggle real (negrita en una barra, un voto, play/pausa). Ausente si no es un toggle; `false` si lo es y está apagado"
           ]
         },
         {
@@ -343,7 +355,8 @@
             },
             {
               "el enlace vive dentro de un párrafo": "eso es un Link"
-            }
+            },
+            "`tone: danger` en un enlace: navegar no destruye nada; lo destructivo es la acción que la página de destino ofrece"
           ],
           "host": "a",
           "id": "Button.navigation",
@@ -354,7 +367,8 @@
           "parents": [],
           "useWhen": [
             "lleva a una URL y tiene que verse como un botón",
-            "una llamada a la acción principal que es un enlace"
+            "una llamada a la acción principal que es un enlace",
+            "los mismos dos ejes que Button.action: un enlace puede ser discreto (`ghost`) y seguir siendo la acción principal (`accent`)"
           ]
         }
       ]
@@ -1312,6 +1326,34 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/fade-edge.css",
+      "id": "fade-edge",
+      "signatures": [
+        {
+          "alternatives": [
+            "MediaGradient"
+          ],
+          "avoidWhen": [
+            "el contenido no está recortado; desvanecerlo sólo baja contraste",
+            "el gradiente protege texto sobre una foto; eso es MediaGradient dentro de MediaCaption",
+            "el desvanecido escondería un control o información necesaria en reposo"
+          ],
+          "host": "div",
+          "id": "FadeEdge",
+          "intent": [
+            "soften-a-clipped-edge",
+            "overflow-fade",
+            "paint-only-wrapper"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un borde recortado necesita indicar visualmente que el contenido continúa o entra y sale de la superficie",
+            "el efecto debe envolver otro componente sin cambiar su semántica, foco ni comportamiento"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/feed.css",
       "id": "feed",
       "signatures": [
@@ -2007,6 +2049,66 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/marquee.css",
+      "id": "marquee",
+      "signatures": [
+        {
+          "alternatives": [
+            "Carousel",
+            "Inline"
+          ],
+          "avoidWhen": [
+            "el contenido tiene enlaces, botones o cualquier parada de foco; duplicarlos crea controles repetidos y eso es Carousel o una lista",
+            "cada ítem importa por separado o se tiene que comparar; el movimiento baja su legibilidad",
+            "la franja tiene que actualizar datos en vivo; un marquee repite pintura, no anuncia cambios"
+          ],
+          "host": "div",
+          "id": "Marquee",
+          "intent": [
+            "user-started-marquee",
+            "requested-continuous-strip",
+            "moving-brand-row"
+          ],
+          "parents": [],
+          "useWhen": [
+            "una franja breve y repetida gana sentido al moverse, pero el movimiento sólo debe empezar después de que la persona lo pida",
+            "logos, nombres o palabras forman un ritmo visual continuo y no son destinos ni controles",
+            "una columna breve de marcas o actualizaciones inertes necesita viajar hacia arriba o abajo dentro de una altura visible definida",
+            "una vez iniciada por la persona, la franja conserva su ritmo al pasar el puntero: hover no revoca una decisión explícita",
+            "hace falta un control de Play/Pausa sí o sí: acá el botón no es opcional, es la única causa de movimiento que tiene"
+          ]
+        },
+        {
+          "alternatives": [
+            "Marquee",
+            "Carousel",
+            "Inline"
+          ],
+          "avoidWhen": [
+            "el movimiento no aporta información ni identidad; una fila quieta hace el mismo trabajo sin distraer",
+            "no hay lugar para el botón de pausa; entonces no hay lugar para movimiento automático que dure más de cinco segundos",
+            "se apaga `control` sobre contenido que no es decorativo: sin ese botón la franja queda fuera de WCAG 2.2.2, porque el hover es una ayuda y no un mecanismo, y con hijos inertes no hay nada que reciba foco",
+            "el contenido es esencial para completar una tarea; no debe pasar por la vista de manera temporal"
+          ],
+          "host": "div",
+          "id": "Marquee.autoplay",
+          "intent": [
+            "autoplay-marquee",
+            "ambient-continuous-strip",
+            "automatic-moving-content"
+          ],
+          "parents": [],
+          "useWhen": [
+            "la franja es ambientación secundaria y puede empezar sola sin ocultar ni reemplazar información necesaria",
+            "el contenido es decorativo y se puede ignorar por completo, así que la franja puede correr sin control (`control` viene apagado)",
+            "la franja lleva algo que alguien podría querer leer, y entonces se enciende `control` y se acepta el costo del botón de pausa",
+            "una columna secundaria de marcas o actualizaciones inertes aporta contexto al viajar hacia arriba o abajo sin reemplazar información necesaria",
+            "la franja se detiene temporalmente con hover o foco, además del control persistente; esa pausa ayuda a inspeccionar las marcas sin reemplazar el control"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/patterns/media-gradient.css",
       "id": "media-gradient",
       "signatures": [
@@ -2405,22 +2507,86 @@
       "signatures": [
         {
           "alternatives": [
+            "Placeholder.paragraph",
             "Loader"
           ],
           "avoidWhen": [
-            "no se sabe qué va a aparecer; ahí un Loader dice más"
+            "no se sabe qué va a aparecer; ahí un Loader dice más",
+            "el texto es un párrafo; ahí varias líneas sueltas son Placeholder.paragraph, que ya sabe cómo termina un párrafo"
           ],
           "host": "span",
           "id": "Placeholder",
           "intent": [
             "loading-skeleton",
             "content-not-yet-loaded",
-            "shape-of-absent-content"
+            "shape-of-absent-content",
+            "skeleton-line"
           ],
           "parents": [],
           "useWhen": [
-            "se prefigura contenido que está por llegar y ya se sabe qué forma tendrá",
-            "evita el salto de layout cuando los datos aparecen"
+            "se prefigura una línea de texto que está por llegar y ya se sabe qué rol tipográfico va a tener",
+            "evita el salto de layout cuando los datos aparecen, porque reserva exactamente la caja de línea del rol que reemplaza"
+          ]
+        },
+        {
+          "alternatives": [
+            "Placeholder"
+          ],
+          "avoidWhen": [
+            "es una sola línea; ahí es Placeholder y conserva la medida completa",
+            "las líneas tienen anchos que significan algo distinto entre sí (un nombre, una fecha); eso son Placeholder sueltos con su propio width"
+          ],
+          "host": "span",
+          "id": "Placeholder.paragraph",
+          "intent": [
+            "loading-paragraph",
+            "skeleton-text-block",
+            "multiple-skeleton-lines"
+          ],
+          "parents": [],
+          "useWhen": [
+            "lo que falta es prosa: un cuerpo, una descripción, un comentario",
+            "se quiere el borde irregular que hace leer el bloque como texto y no como una tabla"
+          ]
+        },
+        {
+          "alternatives": [
+            "Placeholder.paragraph",
+            "Loader"
+          ],
+          "avoidWhen": [
+            "lo que falta es texto; un rectángulo del alto de un párrafo no anticipa líneas, anticipa una imagen"
+          ],
+          "host": "span",
+          "id": "Placeholder.block",
+          "intent": [
+            "loading-media",
+            "skeleton-rectangle",
+            "image-not-yet-loaded"
+          ],
+          "parents": [],
+          "useWhen": [
+            "el hueco es rectangular: media, una tabla, un gráfico, una card",
+            "el bloque va dentro de un contenedor recortado (ImageFrame, Box con overflow) y tiene que tomar su caja y su esquina: eso es `fill`"
+          ]
+        },
+        {
+          "alternatives": [
+            "Placeholder.block"
+          ],
+          "avoidWhen": [
+            "la forma final no es circular; el skeleton no debe prometer una silueta que el contenido no tiene"
+          ],
+          "host": "span",
+          "id": "Placeholder.circle",
+          "intent": [
+            "loading-avatar",
+            "skeleton-circle",
+            "person-not-yet-loaded"
+          ],
+          "parents": [],
+          "useWhen": [
+            "el hueco es un avatar o un control circular, y se puede nombrar su escala (sm, md, lg) para que el reemplazo no salte"
           ]
         }
       ]
@@ -4084,5 +4250,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "34482f14e2f118a5"
+  "sourceHash": "0b9978b57cf36575"
 }

@@ -140,25 +140,83 @@
   }
 
   /*
-   * A quieter neutral, not a fourth base: same fill as the default (`--color-action-neutral`), but
-   * without the base's `--color-border-default` ring. The base variant's mid-gray border is sized
-   * for a button standing alone on canvas; a filled icon-only control sitting on a busier surface,
-   * a code panel, a colored card, reads that same ring as harder than the control needs. `subtle`
-   * drops it to `--color-border-subtle`, one step down the same neutral scale, so the button still
-   * has an edge, just a quieter one. First use: CopyButton over highlighted code
-   * (components/copy-button.css composes it as the copy button's own default look).
+   * ── EMPHASIS × TONE ─────────────────────────────────────────────────────────────────────────
+   *
+   * `data-variant` says HOW LOUD, `data-tone` says WHAT IT MEANS, and the two are resolved
+   * separately: four emphasis rules and three tone rules instead of one rule per combination. That
+   * is the whole reason for the split. The old single axis spelled six of the twelve cells and had
+   * no way at all to say "quiet and destructive", which is the shape a delete in an action row
+   * wants.
+   *
+   * The tone rules below set only `--sk-button-accent`, the ONE colour an emphasis then decides how
+   * to spend: as a fill (`solid`), as a wash (`soft`), or as ink (`ghost`). Adding a tone is one
+   * declaration; adding an emphasis is one rule that spends the hook differently.
    */
-  .sk-button[data-variant="subtle"] {
-    --sk-button-border-color: var(--color-border-subtle);
+
+  /* Neutral is the default, and it is the one tone whose ink is not its accent: an action with no
+   * particular meaning reads as text, not as a coloured thing. */
+  .sk-button {
+    --sk-button-accent: var(--color-action-neutral);
+    --sk-button-ink: var(--color-text-primary);
+  }
+
+  .sk-button[data-tone="accent"] {
+    --sk-button-accent: var(--color-action-accent);
+    --sk-button-ink: var(--color-text-accent);
+  }
+
+  .sk-button[data-tone="danger"] {
+    --sk-button-accent: var(--color-action-danger);
+    --sk-button-ink: var(--color-text-danger);
   }
 
   /*
-   * A button for use over colored backgrounds (like callouts). Semi-transparent fill that blends
-   * with the underlying surface, adapting to different tones without needing a variant for each.
-   * Uses oklab for consistent color behavior across modes. Use this when a button sits on a colored
-   * surface and should feel integrated, not layered on top.
+   * SOLID. The fill carries the meaning, so a toned solid drops the neutral border it would
+   * otherwise paint: a coloured fill with a grey ring around it reads as two decisions.
+   *
+   * `--color-text-on-accent`, NOT text-primary: in dark, action-accent is a light blue and
+   * text-primary is near-white, and aliasing them makes a white-on-light-blue button.
    */
   /*
+   * MATCHED BY ABSENCE, never by `[data-variant="solid"]`. `solid` is the DEFAULT, and a default is
+   * exactly the value authored markup leaves off: the docs emit with `fillDefaults: false` so a
+   * reader copies only what they would actually write, and a hand-written button says
+   * `data-tone="danger"` with no variant at all. Keying on the default's presence painted every one
+   * of those neutral, which is the whole bug this selector shape exists to prevent. The same reason
+   * marquee's fade reads `:not([data-fade="none"])`.
+   */
+  .sk-button:not([data-variant="soft"], [data-variant="ghost"], [data-variant="translucent"]):is(
+      [data-tone="accent"],
+      [data-tone="danger"]
+    ) {
+    --sk-button-bg: var(--sk-button-accent);
+    --sk-button-fg: var(--color-text-on-accent);
+    --sk-button-border-color: transparent;
+  }
+
+  /*
+   * SOFT. A fill that recedes rather than competes. Neutral soft is the old `subtle`: the same
+   * neutral fill as solid, with the base's mid-grey ring dropped one step, because that ring is
+   * sized for a button standing alone on canvas and reads as hard on a busier surface (a code
+   * panel, a coloured card). CopyButton over highlighted code is the case that asked for it.
+   *
+   * A TONED soft is a wash of its own accent instead: present, unmistakably destructive or primary,
+   * and still clearly quieter than the confirm it sits next to.
+   */
+  .sk-button[data-variant="soft"] {
+    --sk-button-border-color: var(--color-border-subtle);
+  }
+
+  .sk-button[data-variant="soft"]:is([data-tone="accent"], [data-tone="danger"]) {
+    --sk-button-bg: color-mix(in oklab, var(--sk-button-accent) 14%, var(--color-bg-surface));
+    --sk-button-fg: var(--sk-button-ink);
+    --sk-button-border-color: color-mix(in oklab, var(--sk-button-accent) 28%, transparent);
+  }
+
+  /*
+   * TRANSLUCENT. Soft, but for an UNKNOWN surface behind: over media, over a coloured card. A
+   * semi-transparent fill that blends with whatever it sits on rather than layering a panel over it.
+   *
    * Both halves read TIER-2 tokens, never `--palette-*`. A hook that names a palette bypasses the
    * semantic layer, so the mode-aware substitution has to happen through semantic tokens.
    */
@@ -174,31 +232,92 @@
     );
   }
 
-  .sk-button[data-variant="accent"] {
-    --sk-button-bg: var(--color-action-accent);
-    /* on-accent, NOT text-primary: in dark, action-accent is a light blue and text-primary
-     * is near-white, aliasing them makes a white-on-light-blue button. */
-    --sk-button-fg: var(--color-text-on-accent);
-    --sk-button-border-color: transparent;
+  .sk-button[data-variant="translucent"]:is([data-tone="accent"], [data-tone="danger"]) {
+    --sk-button-fg: var(--sk-button-ink);
   }
 
-  .sk-button[data-variant="danger"] {
-    --sk-button-bg: var(--color-action-danger);
-    --sk-button-fg: var(--color-text-on-accent);
-    --sk-button-border-color: transparent;
-  }
-
+  /*
+   * GHOST. Ink only, and the emphasis where the tone does the most work: with no fill and no border,
+   * the text colour is the only thing left to say what the button means. This is the cell the old
+   * single axis could not express at all.
+   *
+   * The hover and press tints come free. `.sk-interactive`'s state layer mixes
+   * `--state-layer-color`, which is `currentColor`, so a danger ghost tints danger on hover without
+   * one line of per-tone state CSS.
+   */
   .sk-button[data-variant="ghost"] {
     --sk-button-bg: transparent;
-    /* Ghost is intentionally neutral: it is pressable, but it is not the accent CTA the brand should
-     * point at. Keep it on primary text rather than secondary text so it still reads as a control. */
-    --sk-button-fg: var(--color-text-primary);
+    /* Neutral ghost stays on PRIMARY text, not secondary: it is quiet, but it is still a control,
+     * and secondary text reads as prose that happens to be clickable. */
+    --sk-button-fg: var(--sk-button-ink);
     --sk-button-border-color: transparent;
-    /* The one variant that opts back out of the base's `--elevation-raised` (see that hook's own
+    /* The one emphasis that opts back out of the base's `--elevation-raised` (see that hook's own
      * comment): no fill, no border, so a cast shadow would read as a mark floating in space, not a
      * lifted surface. */
     --sk-button-shadow: var(--elevation-flat);
     --sk-button-wash: none;
+  }
+
+  /*
+   * ── PRESSED ─────────────────────────────────────────────────────────────────────────────────
+   *
+   * A toggle that is ON: Bold in a toolbar, an upvote, Play/Pause. `aria-pressed` is already the
+   * truth an assistive technology reads; this is the paint that says the same thing to everyone else.
+   *
+   * DELIBERATELY NOT THE STATE LAYER. Adding `aria-pressed` to that pattern's selected rung is the
+   * obvious fix and it is wrong: the rung is REPLACED by hover (state-layer.css says so in its own
+   * comment, because hover reassigns the same `--state-layer-opacity`), so a toggle whose only cue
+   * was the layer would read as unpressed exactly while the pointer sits on it. Moving the button's
+   * OWN hooks instead leaves the layer free to ride on top, which is what hover and press then do.
+   *
+   * The rule is ONE STEP MORE PRESENT, tone unchanged: a ghost gains a fill, a toned button gains
+   * its own wash, a solid deepens. Two consumers had already reached this independently by hand
+   * (editor's toolbar buttons, comment-thread's vote pair), which is what made it a gap in the
+   * contract rather than a matter of taste.
+   */
+  .sk-button[aria-pressed="true"] {
+    /*
+     * A STEP DARKER than the neutral action fill, not equal to it. Setting it to
+     * `--color-action-neutral` outright was measurably wrong: a `soft` or `solid` neutral button
+     * already paints that, so pressing one changed nothing except dropping the raised wash, and it
+     * came out LIGHTER than its unpressed self. Deepening covers every emphasis with one value:
+     * a ghost goes from nothing to a fill, a soft or solid goes one step down.
+     */
+    --sk-button-bg: color-mix(in oklab, var(--color-action-neutral) 88%, var(--color-text-primary));
+    --sk-button-fg: var(--sk-button-ink);
+    --sk-button-border-color: var(--color-border-subtle);
+    /* A pressed control is held down, not lifted: the same reasoning `ghost` uses to opt out. */
+    --sk-button-shadow: var(--elevation-flat);
+    --sk-button-wash: none;
+  }
+
+  .sk-button[aria-pressed="true"]:is([data-tone="accent"], [data-tone="danger"]) {
+    --sk-button-bg: color-mix(in oklab, var(--sk-button-accent) 16%, var(--color-bg-surface));
+    --sk-button-border-color: color-mix(in oklab, var(--sk-button-accent) 30%, transparent);
+  }
+
+  /*
+   * A fill that ALREADY carries the tone deepens instead of washing out. Without this, pressing a
+   * solid accent button made it lighter than its unpressed self, which reads as released. Matched
+   * by absence for the same reason the solid rules above are; `solid` is the default nobody writes.
+   */
+  .sk-button:not([data-variant="soft"], [data-variant="ghost"], [data-variant="translucent"])[aria-pressed="true"]:is(
+      [data-tone="accent"],
+      [data-tone="danger"]
+    ) {
+    --sk-button-bg: color-mix(in oklab, var(--sk-button-accent) 78%, var(--color-text-primary));
+    --sk-button-fg: var(--color-text-on-accent);
+    --sk-button-border-color: transparent;
+  }
+
+  @media (forced-colors: active) {
+    /* The system's own "this one is on" pair, so a toggle survives where every mix collapses. */
+    .sk-button[aria-pressed="true"] {
+      --sk-button-bg: Highlight;
+      --sk-button-fg: HighlightText;
+      background: Highlight;
+      color: HighlightText;
+    }
   }
 
   /* Icon-only is a SHAPE, a third axis orthogonal to variant and size, an accent button can be
@@ -264,6 +383,31 @@
     --sk-button-font-size: var(--font-size-body-sm);
   }
 
+  /* The floor of the scale, sitting ON WCAG 2.2's 24px target minimum (see --scale-size-control-xs).
+   * Same deal as sm, one step further down: the FACE is 24px, the HIT AREA is still 44px through
+   * the ::after above, so a control this small is still as easy to press as any other. `caption` is
+   * the only type step that fits a 24px face without the label crowding its own box. */
+  .sk-button[data-size="xs"] {
+    --sk-button-height: var(--size-control-xs);
+    --sk-button-padding-x: var(--space-inset-xs);
+    --sk-button-font-size: var(--font-size-caption);
+  }
+
+  /*
+   * ICON-ONLY WINS THE PADDING, whatever the size says. `[data-icon-only]` zeroes
+   * --sk-button-padding-x above, but every `[data-size]` rule sets it back and the two selectors
+   * tie at (0,2,0), so the later one - the size - used to win: an icon-only `sm` button carried 8px
+   * of inline padding it was never meant to have. Harmless there (the square's inline-size is
+   * pinned to its height, so the glyph simply overflowed a too-narrow content box symmetrically and
+   * still centred), which is why it went unnoticed. On a 24px `xs` node it is not harmless: 4px a
+   * side plus the border leaves a 14px content box for a 16px glyph. Restated here, after the sizes,
+   * so the shape axis beats the size axis instead of depending on file order two hundred lines
+   * apart. Visually inert for sm/md/lg - flex was already centring the overflow.
+   */
+  .sk-button[data-size][data-icon-only] {
+    --sk-button-padding-x: 0px;
+  }
+
   .sk-button[data-size="lg"] {
     --sk-button-height: max(var(--size-control-lg), var(--size-touch-target));
     --sk-button-padding-x: var(--space-inset-lg);
@@ -277,7 +421,7 @@
    * 63% for sm. Same icon, three different optical weights, and the two big ones read as
    * under-sized rather than as the same icon in a bigger button.
    *
-   * The set below holds the ratio roughly flat instead: sm 20/32, md 24/44, lg 28/48.
+   * The set below holds the ratio roughly flat instead: xs 16/24, sm 20/32, md 24/44, lg 28/48.
    *
    * NOTE THE OFF-BY-ONE in the names, it is deliberate, not a typo. The icon pattern's own
    * sm/md/lg triple (16/20/24) is scaled for TEXT-adjacent glyphs; a control face is bigger than a
@@ -297,6 +441,12 @@
   .sk-button .sk-icon,
   .sk-button[data-size="md"] .sk-icon {
     --sk-icon-size: var(--size-icon-lg);
+  }
+
+  /* xs is the one step where the off-by-one above runs out: `--size-icon-sm` IS the bottom of the
+   * icon scale, so the 24px face takes the pattern's own sm rather than reaching a step up. */
+  .sk-button[data-size="xs"] .sk-icon {
+    --sk-icon-size: var(--size-icon-sm);
   }
 
   .sk-button[data-size="sm"] .sk-icon {
@@ -328,13 +478,30 @@
       border-color: CanvasText;
     }
 
-    .sk-button[data-variant="accent"],
-    .sk-button[data-variant="danger"] {
+    /* A TONED SOLID is the emphasized button in forced colors, whichever tone it is: the system
+     * palette has one "this is the emphasized thing" pair (Highlight/HighlightText) and no separate
+     * destructive colour, so accent and danger land on the same one rather than inventing a
+     * difference the user's own palette does not have. */
+    .sk-button:not([data-variant="soft"], [data-variant="ghost"], [data-variant="translucent"]):is(
+        [data-tone="accent"],
+        [data-tone="danger"]
+      ) {
       --sk-button-bg: Highlight;
       --sk-button-fg: HighlightText;
       --sk-button-border-color: CanvasText;
       background: Highlight;
       color: HighlightText;
+    }
+
+    /* A toned SOFT keeps its own surface here: the wash it paints in the base tier does not survive
+     * forced colors, and without this it would be indistinguishable from a solid. */
+    .sk-button[data-variant="soft"]:is([data-tone="accent"], [data-tone="danger"]) {
+      --sk-button-bg: Canvas;
+      --sk-button-fg: CanvasText;
+      --sk-button-border-color: Highlight;
+      background: Canvas;
+      color: CanvasText;
+      border-color: Highlight;
     }
 
     .sk-button[data-variant="ghost"] {

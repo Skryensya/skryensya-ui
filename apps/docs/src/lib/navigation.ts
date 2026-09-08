@@ -546,6 +546,12 @@ const componentItems = [
     aliases: ["mega menu", "megamenú", "panel de navegación", "navegación borde a borde"],
   },
   {
+    href: "/componentes/marquee",
+    label: "Marquee",
+    trailing: "Beta",
+    aliases: ["marquesina", "ticker", "cinta continua", "scrolling text", "logo wall"],
+  },
+  {
     href: "/componentes/menu",
     label: "Menu",
     aliases: ["menú", "menu de acciones", "context menu"],
@@ -729,7 +735,7 @@ export const componentNavigation = [
   {
     group: "group.componentExpressive",
     blurb: "group.componentExpressive.blurb",
-    items: componentGroupItems("/componentes/folder"),
+    items: componentGroupItems("/componentes/folder", "/componentes/marquee"),
   },
   {
     group: "group.componentLayout",

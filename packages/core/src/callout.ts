@@ -77,16 +77,21 @@ export const calloutContract = {
          * plan is a destination, not a command. Restricted to these three because an action row is
          * where a consumer would otherwise put anything at all.
          *
-         * `variant` is narrowed to `translucent`/`danger` on any Button here: this row exists for a
-         * secondary way forward beside a message, never to plant a second `primary` competing with
-         * the page's real call to action. A Callout that wants to look urgent already has `tone`.
-         * Use `translucent` for buttons that blend with the callout's colored background, `danger` for
-         * destructive actions that need to stand out visually.
+         * `tone` is narrowed to `neutral`/`danger` on any Button here: this row exists for a
+         * secondary way forward beside a message, never to plant a second call to action competing
+         * with the page's real one. A Callout that wants to look urgent already has its own `tone`.
+         *
+         * It used to narrow `variant` to `translucent`/`danger`, which was the same rule said in the
+         * vocabulary Button had at the time: one enum carried both how loud a button is and what it
+         * means, so "no competing CTA" could only be spelled by banning the accent FILL. Now that
+         * the two are separate axes, the rule is stated as what it always was about, and the
+         * emphasis is left open: a destructive action here can be `solid` so it stands out, and a
+         * neutral one can be `translucent` so it blends into the callout's own colour.
          */
         actions: {
           accepts: "signature",
           of: ["Button.action", "Button.navigation", "Link"],
-          restrictOptions: { variant: ["translucent", "danger"] },
+          restrictOptions: { tone: ["neutral", "danger"] },
         },
       },
       template: {

@@ -29,7 +29,7 @@ export const confirmationDialogCase: EvalCase = {
         {
           contract: "button",
           signature: "Button.action",
-          options: { variant: "danger" },
+          options: { tone: "danger" },
           attrs: { type: "submit", value: "confirm" },
           children: "Eliminar",
         },

@@ -22,7 +22,7 @@ describe("Button", () => {
     const ui = render(
       <>
         <Button>Implicit defaults</Button>
-        <Button size="md" variant="neutral">Explicit defaults</Button>
+        <Button size="md" variant="solid">Explicit defaults</Button>
       </>,
     );
 
@@ -30,8 +30,20 @@ describe("Button", () => {
       const button = ui.getByRole("button", { name });
       expect(button.classList.contains("sk-interactive")).toBe(true);
       expect(button.getAttribute("data-size")).toBe("md");
-      expect(button.getAttribute("data-variant")).toBe("neutral");
+      // Both appearance axes are always serialized, defaults included: the emitter writes them for
+      // authored markup, so a React button that left one off would diverge at G2.
+      expect(button.getAttribute("data-variant")).toBe("solid");
+      expect(button.getAttribute("data-tone")).toBe("neutral");
     }
+  });
+
+  /* The floor of the size scale, and the one size whose whole point is that it is smaller than the
+   * accessible target: it has to reach `data-size` like any other, because the 24px face and the
+   * 44px hit area underneath it are both keyed off that attribute in `button.css`. */
+  it("serializes the xs size onto the same attribute as every other size", () => {
+    const ui = render(<Button size="xs">Fold</Button>);
+
+    expect(ui.getByRole("button", { name: "Fold" }).getAttribute("data-size")).toBe("xs");
   });
 
   it("exposes disabled state to both native controls and assistive technology", () => {
@@ -47,7 +59,7 @@ describe("Button", () => {
 
   it("carries a leading icon alongside its label", () => {
     const ui = render(
-      <Button variant="accent">
+      <Button tone="accent">
         <svg className="sk-icon" data-icon="check" aria-hidden="true" />
         Guardar
       </Button>,
@@ -86,7 +98,7 @@ describe("Button", () => {
 describe("Button.navigation", () => {
   it("renders navigation with Button appearance and anchor attributes", () => {
     const ui = render(
-      <Button href="/docs" rel="next" target="_self" variant="accent">
+      <Button href="/docs" rel="next" target="_self" tone="accent">
         Documentation
       </Button>,
     );
@@ -95,7 +107,9 @@ describe("Button.navigation", () => {
     expect(link.getAttribute("href")).toBe("/docs");
     expect(link.getAttribute("rel")).toBe("next");
     expect(link.getAttribute("target")).toBe("_self");
-    expect(link.getAttribute("data-variant")).toBe("accent");
+    // `accent` is a TONE now, not an emphasis: a link can be quiet and still be the primary action.
+    expect(link.getAttribute("data-tone")).toBe("accent");
+    expect(link.getAttribute("data-variant")).toBe("solid");
     expect(link.getAttribute("data-size")).toBe("md");
     expect(link.classList.contains("sk-button")).toBe(true);
     expect(link.classList.contains("sk-interactive")).toBe(true);

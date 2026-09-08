@@ -60,7 +60,7 @@ export const heroSplitWithMediaSnippet: Snippet = {
                   {
                     contract: "button",
                     signature: "Button.navigation",
-                    options: { variant: "accent", href: "#get-started" },
+                    options: { tone: "accent", href: "#get-started" },
                     children: "Get started",
                   },
                 ],

@@ -50,7 +50,7 @@ export const heroTree = (t: Translate): UsageTree => ({
               signature: "Inline",
               options: { gap: "sm" },
               children: [
-                { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: t("demo.hero.action") },
+                { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: t("demo.hero.action") },
                 { contract: "button", signature: "Button.action", options: { variant: "ghost" }, children: t("demo.hero.secondaryAction") },
               ],
             },
@@ -107,7 +107,7 @@ export const heroEyebrowTree = (t: Translate): UsageTree => ({
             { contract: "badge", signature: "Badge", options: { tone: "accent" }, children: t("demo.hero.eyebrowLabel") },
             { contract: "typography", signature: "Heading", options: { headingSize: "display-sm", flush: true }, children: t("demo.hero.eyebrowTitle") },
             { contract: "typography", signature: "Text", options: { tone: "secondary", size: "lg" }, children: t("demo.hero.eyebrowBody") },
-            { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: t("demo.hero.action") },
+            { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: t("demo.hero.action") },
           ],
         },
       ],
@@ -136,7 +136,7 @@ export const heroSplitTree = (t: Translate): UsageTree => ({
               children: [
                 { contract: "typography", signature: "Heading", options: { headingSize: "display-sm", flush: true }, children: t("demo.hero.splitTitle") },
                 { contract: "typography", signature: "Text", options: { tone: "secondary", size: "lg" }, children: t("demo.hero.splitBody") },
-                { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: t("demo.hero.action") },
+                { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: t("demo.hero.action") },
               ],
             },
             {
@@ -184,7 +184,7 @@ export const heroSocialProofTree = (t: Translate): UsageTree => ({
               children: [
                 { contract: "typography", signature: "Heading", options: { headingSize: "display-sm", flush: true }, children: t("demo.hero.proofTitle") },
                 { contract: "typography", signature: "Text", options: { tone: "secondary", size: "lg" }, children: t("demo.hero.proofBody") },
-                { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: t("demo.hero.action") },
+                { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: t("demo.hero.action") },
               ],
             },
             {
@@ -274,7 +274,7 @@ export const heroEmailCaptureTree = (t: Translate): UsageTree => ({
                         children: { contract: "input", signature: "Input", options: { type: "email", placeholder: t("demo.hero.emailPlaceholder") } },
                       },
                     },
-                    { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: t("demo.hero.emailAction") },
+                    { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: t("demo.hero.emailAction") },
                   ],
                 },
               ],
@@ -308,8 +308,8 @@ export const heroAppBadgesTree = (t: Translate): UsageTree => ({
               signature: "Inline",
               options: { gap: "sm", inlineAlign: "center", wrap: true },
               children: [
-                { contract: "button", signature: "Button.navigation", options: { variant: "neutral", href: "#app-store" }, children: t("demo.hero.appStoreLabel") },
-                { contract: "button", signature: "Button.navigation", options: { variant: "neutral", href: "#google-play" }, children: t("demo.hero.googlePlayLabel") },
+                { contract: "button", signature: "Button.navigation", options: { variant: "solid", href: "#app-store" }, children: t("demo.hero.appStoreLabel") },
+                { contract: "button", signature: "Button.navigation", options: { variant: "solid", href: "#google-play" }, children: t("demo.hero.googlePlayLabel") },
               ],
             },
           ],
@@ -405,7 +405,7 @@ export const heroPricingToggleTree = (t: Translate): UsageTree => ({
               },
             },
             { contract: "typography", signature: "Text", options: { tone: "primary", size: "lg", weight: "emphasis" }, children: t("demo.hero.pricingPrice") },
-            { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: t("demo.hero.pricingAction") },
+            { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: t("demo.hero.pricingAction") },
           ],
         },
       ],
@@ -434,7 +434,7 @@ export const heroCodePreviewTree = (t: Translate): UsageTree => ({
               children: [
                 { contract: "typography", signature: "Heading", options: { headingSize: "display-sm", flush: true }, children: t("demo.hero.codeTitle") },
                 { contract: "typography", signature: "Text", options: { tone: "secondary", size: "lg" }, children: t("demo.hero.codeBody") },
-                { contract: "button", signature: "Button.navigation", options: { variant: "accent", href: "#docs" }, children: t("demo.hero.codeAction") },
+                { contract: "button", signature: "Button.navigation", options: { tone: "accent", href: "#docs" }, children: t("demo.hero.codeAction") },
               ],
             },
             {
@@ -473,7 +473,7 @@ export const heroVideoDemoTree = (t: Translate): UsageTree => ({
                 { contract: "typography", signature: "Text", options: { tone: "secondary", size: "lg" }, children: t("demo.hero.videoBody") },
               ],
             },
-            { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: t("demo.hero.videoAction") },
+            { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: t("demo.hero.videoAction") },
             {
               contract: "image-frame",
               signature: "ImageFrame",
@@ -562,7 +562,7 @@ export const heroAudienceTabsTree = (t: Translate): UsageTree => ({
                               heroFeatureRow(t("demo.hero.tabsDesignFeature3")),
                             ],
                           },
-                          { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: t("demo.hero.tabsDesignAction") },
+                          { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: t("demo.hero.tabsDesignAction") },
                         ],
                       },
                     },
@@ -587,7 +587,7 @@ export const heroAudienceTabsTree = (t: Translate): UsageTree => ({
                               heroFeatureRow(t("demo.hero.tabsDevFeature3")),
                             ],
                           },
-                          { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: t("demo.hero.tabsDevAction") },
+                          { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: t("demo.hero.tabsDevAction") },
                         ],
                       },
                     },
@@ -720,7 +720,7 @@ export const inlineTree = (t: Translate): UsageTree => ({
           {
             contract: "button",
             signature: "Button.action",
-            options: { variant: "accent" },
+            options: { tone: "accent" },
             children: t("demo.inline.publish"),
           },
         ],

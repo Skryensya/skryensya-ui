@@ -34,6 +34,8 @@ const SELECTOR = {
   delete: `[${commentThreadAttrs.delete}]`,
   collapse: `[${commentThreadAttrs.collapse}]`,
   replySlot: `[${commentThreadAttrs.replySlot}]`,
+  composerSlot: `[${commentThreadAttrs.composerSlot}]`,
+  composerTrigger: `[${commentThreadAttrs.composerTrigger}]`,
   body: `[${commentThreadAttrs.body}]`,
   actions: `[${commentThreadAttrs.actions}]`,
   replies: `[${commentThreadAttrs.replies}]`,
@@ -95,10 +97,16 @@ function clearControl(form: HTMLFormElement): void {
  * always-open box has nothing to close back to.
  */
 function closeComposer(form: HTMLFormElement): void {
-  const comment = form.closest<HTMLElement>(SELECTOR.comment);
-  const slot = comment && own<HTMLElement>(comment, SELECTOR.replySlot);
-  const trigger = comment && own<HTMLElement>(comment, SELECTOR.actions)?.querySelector<HTMLElement>(SELECTOR.reply);
-  if (trigger && slot) toggleDisclosure(trigger, [slot], false);
+  const box = form.closest("dialog");
+  if (!(box instanceof HTMLDialogElement) || !box.open) return;
+  /*
+   * The thread's OWN composer is the exception, and forgetting it deletes the box from the page.
+   * A reply box is always closable - it lives behind a trigger that can bring it back - but the
+   * thread's composer is always-open in flow above the breakpoint, where there is nothing to close
+   * back to and no trigger showing. So it only closes while it is actually a sheet.
+   */
+  if (box.matches(SELECTOR.composerSlot) && !isSheet(box)) return;
+  box.close();
 }
 
 function toggleDisclosure(trigger: HTMLElement, targets: readonly (Element | null)[], open: boolean): void {
@@ -108,9 +116,141 @@ function toggleDisclosure(trigger: HTMLElement, targets: readonly (Element | nul
   }
 }
 
+/* ── The composer boxes, in flow or as a Vaul ─────────────────────────────────────────────────── */
+
+/**
+ * Where the two presentations part, read from the SAME custom property the stylesheet uses
+ * (`--breakpoint-desktop`, semantic/_breakpoints.scss) rather than typed here. `vaul.ts` reads it
+ * exactly this way and for the same reason: a literal in the JS and a literal in the CSS are two
+ * numbers that agree until someone retunes the scale. `(width < …)` is the exact complement of the
+ * stylesheet's `(min-width: …)`, so the two never disagree, not even on the boundary pixel.
+ */
+function sheetMedia(el: HTMLElement): MediaQueryList {
+  const bp = getComputedStyle(el).getPropertyValue("--breakpoint-desktop").trim() || "52rem";
+  return window.matchMedia(`(width < ${bp})`);
+}
+
+/**
+ * Opens a box in the presentation the current width asks for: modal (a block-end Vaul) below the
+ * breakpoint, in flow above it.
+ *
+ * The guard is not defensive noise. `showModal()` on a dialog that is ALREADY open throws
+ * `InvalidStateError`, and this is called both by a trigger and by the breakpoint listener, so an
+ * open box crossing the line has to be shut before it can be reopened in the other mode. Closing
+ * first is also what keeps the two modes from being half-applied: a dialog cannot be modal and
+ * in-flow at once, and there is no attribute to switch between them.
+ */
+function openBox(box: HTMLDialogElement, modal: boolean): void {
+  if (box.open) box.close();
+  setSheet(box, modal);
+  if (modal) box.showModal();
+  else box.show();
+}
+
+/**
+ * Says whether this box is currently a Vaul, in the one way the stylesheet can read.
+ *
+ * The class is the whole bridge between the two layers: a dialog cannot be modal and in flow at
+ * once, so which presentation applies is decided here, in JavaScript, and no media query could
+ * reach it. `patterns/vaul.css` then paints the panel, the edge, the slide, the backdrop and the
+ * drag, and `comment-thread.css` only reassigns the hooks that make it a composer. Set BEFORE the
+ * dialog opens, so the pattern's `@starting-style` has the right rules in place to animate from.
+ */
+function setSheet(box: HTMLDialogElement, modal: boolean): void {
+  box.classList.toggle("sk-vaul", modal);
+}
+
+/**
+ * Whether this box is currently a sheet, asked of the class rather than of `:modal`.
+ *
+ * The two say the same thing here, because this enhancer is the only thing that opens these boxes
+ * and it always sets the class in the same breath as choosing the mode. The class is the better
+ * question anyway: it is the fact the STYLESHEET acts on, so reading it is reading the same state
+ * the paint reads, with no chance of the two disagreeing. It also keeps this working where `:modal`
+ * does not exist - jsdom parses `<dialog>` and reflects `open` but has no modality at all, so a test
+ * asking `:modal` would be asking about a distinction that environment cannot make.
+ */
+function isSheet(box: HTMLDialogElement): boolean {
+  return box.classList.contains("sk-vaul");
+}
+
+/** This comment's own reply box, or the thread's own composer box for a thread root. */
+function boxOf(root: HTMLElement, scope: Element | null): HTMLDialogElement | null {
+  const box = scope
+    ? own<HTMLElement>(scope, SELECTOR.replySlot)
+    : root.querySelector<HTMLElement>(SELECTOR.composerSlot);
+  return box instanceof HTMLDialogElement ? box : null;
+}
+
 function connect(root: HTMLElement): () => void {
   const owns = (el: Element | null): el is HTMLElement =>
     el instanceof HTMLElement && el.closest(ROOTS) === root;
+
+  const sheet = sheetMedia(root);
+
+  /**
+   * The boxes THIS root answers for, and only those.
+   *
+   * A thread owns its own composer; a comment owns its own reply box. Scoping it this way rather
+   * than querying the whole subtree is what keeps a thread from also re-opening every nested
+   * comment's box on a breakpoint change: every comment is its own enhancer root (see the banner),
+   * so each box is handled exactly once, by the piece it belongs to.
+   */
+  const ownBoxes = (): HTMLDialogElement[] => {
+    const boxes = [
+      root.matches(SELECTOR.thread) ? boxOf(root, null) : null,
+      root.matches(SELECTOR.comment) ? boxOf(root, root) : null,
+    ];
+    return boxes.filter((box): box is HTMLDialogElement => box !== null);
+  };
+
+  /**
+   * Puts every owned box into the presentation this width asks for. Runs at mount and on every
+   * crossing of the breakpoint, so a window dragged across the line re-presents live.
+   *
+   * The thread's composer is the only box with an opinion of its own about being open: in flow it
+   * is always there, as a sheet it waits behind its trigger. A reply box is only ever re-presented,
+   * never opened or closed here - whether it is open is the reader's business, not the width's.
+   */
+  const syncSheets = () => {
+    const modal = sheet.matches;
+    for (const box of ownBoxes()) {
+      const isComposer = box.matches(SELECTOR.composerSlot);
+      if (isComposer && !modal) {
+        if (!box.open || isSheet(box)) openBox(box, false);
+        continue;
+      }
+      if (isComposer && modal) {
+        if (box.open && !isSheet(box)) box.close();
+        /* A CLOSED box still has to know what it will be when it opens: the class is what the
+         * stylesheet reads, and setting it only at open time would leave the pattern's
+         * `@starting-style` with nothing to animate from on the very first open. */
+        setSheet(box, true);
+        continue;
+      }
+      if (box.open && isSheet(box) !== modal) openBox(box, modal);
+      else if (!box.open) setSheet(box, modal);
+    }
+  };
+
+  /**
+   * Keeps whichever trigger opened a box honest about it, however it closed: the cancel control, but
+   * also ESC and a tap on the backdrop, which the platform handles without telling anyone. Without
+   * this the reply trigger kept saying `aria-expanded="true"` after a reader dismissed the sheet.
+   */
+  const syncTrigger = (box: HTMLDialogElement) => {
+    const comment = box.closest<HTMLElement>(SELECTOR.comment);
+    const trigger = comment
+      ? own<HTMLElement>(comment, SELECTOR.actions)?.querySelector<HTMLElement>(SELECTOR.reply)
+      : root.querySelector<HTMLElement>(SELECTOR.composerTrigger);
+    trigger?.setAttribute("aria-expanded", String(box.open));
+  };
+
+  /* `close` is the only half the platform announces: a dialog fires nothing when it opens, so every
+   * opening path below calls `syncTrigger` for itself. */
+  const onBoxClose = (event: Event) => {
+    if (event.target instanceof HTMLDialogElement) syncTrigger(event.target);
+  };
 
   /*
    * CANCELABLE, so a consumer can veto rather than only observe. `preventDefault()` on an event that
@@ -185,14 +325,37 @@ function connect(root: HTMLElement): () => void {
     const reply = target.closest<HTMLElement>(SELECTOR.reply);
     if (owns(reply)) {
       const comment = reply.closest<HTMLElement>(SELECTOR.comment);
-      const slot = comment && own<HTMLElement>(comment, SELECTOR.replySlot);
-      if (!slot) return;
-      const open = reply.getAttribute("aria-expanded") !== "true";
-      toggleDisclosure(reply, [slot], open);
-      // Whatever control the consumer put in there: this composer ships none of its own.
-      if (open) slot.querySelector<HTMLElement>("textarea, input, [contenteditable]")?.focus();
+      const box = boxOf(root, comment);
+      if (!box) return;
+      if (box.open) {
+        box.close();
+        return;
+      }
+      openBox(box, sheet.matches);
+      syncTrigger(box);
+      /*
+       * Only in flow. `showModal()` already moves focus into the dialog by itself, and the platform
+       * picks the first focusable, which is the consumer's own control; focusing it again here would
+       * be a second focus move in the same frame for no gain. Opened in flow nothing focuses
+       * anything, so the reader would be left where they clicked.
+       */
+      if (!isSheet(box)) focusControl(box);
+      return;
+    }
+
+    const composerTrigger = target.closest<HTMLElement>(SELECTOR.composerTrigger);
+    if (owns(composerTrigger)) {
+      const box = boxOf(root, null);
+      if (!box || box.open) return;
+      openBox(box, sheet.matches);
+      syncTrigger(box);
     }
   };
+
+  /** Whatever control the consumer put in there: this composer ships none of its own. */
+  function focusControl(box: HTMLElement): void {
+    box.querySelector<HTMLElement>("textarea, input, [contenteditable]")?.focus();
+  }
 
   const onSubmit = (event: SubmitEvent) => {
     const form = event.target;
@@ -208,11 +371,40 @@ function connect(root: HTMLElement): () => void {
     closeComposer(form);
   };
 
+  /*
+   * A click on the backdrop dismisses. The backdrop IS the dialog's own box (the panel is painted by
+   * its padding box), so a click landing outside the panel's rectangle but on the dialog is a click
+   * on the backdrop: the same test `vaul.ts` makes, and it needs no second element to own it. Only
+   * while modal - in flow there is no backdrop, and the box's own rectangle is the box.
+   */
+  const onBackdropClick = (event: MouseEvent) => {
+    const box = event.target;
+    if (!(box instanceof HTMLDialogElement) || !isSheet(box)) return;
+    const at = box.getBoundingClientRect();
+    const outside =
+      event.clientX < at.left || event.clientX > at.right || event.clientY < at.top || event.clientY > at.bottom;
+    if (outside) box.close();
+  };
+
+  const boxes = ownBoxes();
+  for (const box of boxes) {
+    box.addEventListener("close", onBoxClose);
+    box.addEventListener("click", onBackdropClick);
+  }
+  syncSheets();
+  for (const box of boxes) syncTrigger(box);
+  sheet.addEventListener("change", syncSheets);
+
   root.addEventListener("click", onClick);
   root.addEventListener("submit", onSubmit);
   return () => {
     root.removeEventListener("click", onClick);
     root.removeEventListener("submit", onSubmit);
+    sheet.removeEventListener("change", syncSheets);
+    for (const box of boxes) {
+      box.removeEventListener("close", onBoxClose);
+      box.removeEventListener("click", onBackdropClick);
+    }
   };
 }
 

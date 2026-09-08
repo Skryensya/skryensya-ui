@@ -1,0 +1,12 @@
+# La estructura vive en packages/core/src/fade-edge.ts. Acá sólo por qué se elige.
+
+FadeEdge:
+  useWhen:
+    - "un borde recortado necesita indicar visualmente que el contenido continúa o entra y sale de la superficie"
+    - "el efecto debe envolver otro componente sin cambiar su semántica, foco ni comportamiento"
+  avoidWhen:
+    - "el contenido no está recortado; desvanecerlo sólo baja contraste"
+    - "el gradiente protege texto sobre una foto; eso es MediaGradient dentro de MediaCaption"
+    - "el desvanecido escondería un control o información necesaria en reposo"
+  alternatives:
+    - MediaGradient

@@ -34,8 +34,8 @@ export const chartTableReportRecipe: Recipe = {
   states: {
     loading: stack([
       { contract: "loader", signature: "Loader.status", options: { label: "Cargando los ingresos" } },
-      { contract: "placeholder", signature: "Placeholder", options: { shape: "block" } },
-      { contract: "placeholder", signature: "Placeholder", options: { shape: "text" } },
+      { contract: "placeholder", signature: "Placeholder.block" },
+      { contract: "placeholder", signature: "Placeholder" },
     ]),
 
     empty: stack([

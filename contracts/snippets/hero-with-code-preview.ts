@@ -51,7 +51,7 @@ export const heroWithCodePreviewSnippet: Snippet = {
                   {
                     contract: "button",
                     signature: "Button.navigation",
-                    options: { variant: "accent", href: "#docs" },
+                    options: { tone: "accent", href: "#docs" },
                     children: "Read the docs",
                   },
                 ],

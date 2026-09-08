@@ -1,0 +1,173 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  marqueeAutoplayTree,
+  marqueeAvatarTree,
+  marqueeBadgeTree,
+  marqueeControlTree,
+  marqueeManualTree,
+  marqueeNoFadeTree,
+  marqueeVerticalTree,
+} from "../../demos/marquee";
+import { emitReactSource } from "@skryensya/ai-compiler/emit";
+import { getLocale, useTranslations } from "../../i18n";
+import semanticSource from "@contracts/semantic/marquee.yaml?raw";
+import changelogSource from "@contracts/changelog/marquee.yaml?raw";
+import coreSource from "@core/src/marquee.ts?raw";
+import cssSource from "@core/css/components/marquee.css?raw";
+import reactSource from "@react/src/components/marquee.tsx?raw";
+import reactTestSource from "@react/src/components/marquee.test.tsx?raw";
+import vanillaSource from "@vanilla/src/components/marquee.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/marquee.test.ts?raw";
+import "@skryensya/core/components/marquee.css";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla
+# or
+pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/marquee.css";`;
+const vanilla = `import "@skryensya/vanilla/auto";`;
+const react = emitReactSource(marqueeAutoplayTree(), {
+  component: "MarqueeExample",
+}).component;
+
+const sourceFiles = [
+  { id: "contracts/semantic/marquee.yaml", source: semanticSource, language: "yaml" },
+  { id: "contracts/changelog/marquee.yaml", source: changelogSource, language: "yaml" },
+  { id: "packages/core/src/marquee.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/css/components/marquee.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/marquee.ts", source: vanillaSource, language: "ts" },
+  { id: "packages/vanilla/src/components/marquee.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/react/src/components/marquee.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/marquee.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Marquee"
+  description={t("marquee.description")}
+  badge={t("marquee.betaBadge")}
+  contractId="marquee"
+  styleGroups={[
+    { file: "components/marquee.css", probe: "sk-marquee", title: "Marquee" },
+  ]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/react/src/components/marquee.test.tsx",
+      tests: [
+        {
+          name: "renders one semantic run, one hidden visual copy, and waits for Play",
+          description: t("marquee.test1"),
+        },
+        {
+          name: "starts autoplay with a pressed Pause control",
+          description: t("marquee.test2"),
+        },
+        {
+          name: "stops autoplay when the live reduced-motion preference turns on",
+          description: t("marquee.test3"),
+        },
+        {
+          name: "fills a short run up to its viewport so the loop leaves no hole",
+          description: t("marquee.test6"),
+        },
+        {
+          name: "puts the Play/Pause control in a real Button and fades its own edges by default",
+          description: t("marquee.test8"),
+        },
+        {
+          name: "ships no control unless asked, and then never starts paused",
+          description: t("marquee.test9"),
+        },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/marquee.test.ts",
+      tests: [
+        {
+          name: "starts autoplay and derives duration from measured content",
+          description: t("marquee.test4"),
+        },
+        {
+          name: "never lets a preference cycle override an explicit pause",
+          description: t("marquee.test5"),
+        },
+        {
+          name: "fills a short run up to its viewport and times the widened run, not the authored one",
+          description: t("marquee.test7"),
+        },
+        {
+          name: "runs an uncontrolled autoplay strip without a toggle to talk to",
+          description: t("marquee.test10"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("marquee.lede")} />
+
+    <h3>{t("marquee.whenTitle")}</h3>
+    <p set:html={t("marquee.whenBody")} />
+
+    <h3>{t("marquee.manualTitle")}</h3>
+    <p set:html={t("marquee.manualBody")} />
+    <ComponentPreview tree={marqueeManualTree(t)} label={t("marquee.manualLabel")} minHeight="9rem" />
+
+    <h3>{t("marquee.autoplayTitle")}</h3>
+    <p set:html={t("marquee.autoplayBody")} />
+    <ComponentPreview
+      tree={marqueeAutoplayTree()}
+      label={t("marquee.autoplayLabel")}
+      note={t("marquee.autoplayNote")}
+      minHeight="6rem"
+    />
+
+    <h3>{t("marquee.controlTitle")}</h3>
+    <p set:html={t("marquee.controlBody")} />
+    <ComponentPreview tree={marqueeControlTree(t)} label={t("marquee.controlLabel")} minHeight="9rem" />
+
+    <h3>{t("marquee.anyChildTitle")}</h3>
+    <p set:html={t("marquee.anyChildBody")} />
+    <ComponentPreview tree={marqueeBadgeTree(t)} label={t("marquee.badgeLabel")} minHeight="6rem" />
+    <ComponentPreview tree={marqueeAvatarTree(t)} label={t("marquee.avatarLabel")} minHeight="7rem" />
+
+    <h3>{t("marquee.verticalTitle")}</h3>
+    <p set:html={t("marquee.verticalBody")} />
+    <ComponentPreview tree={marqueeVerticalTree(t)} label={t("marquee.verticalLabel")} minHeight="18rem" />
+
+    <h3>{t("marquee.fadeTitle")}</h3>
+    <p set:html={t("marquee.fadeBody")} />
+    <ComponentPreview tree={marqueeNoFadeTree()} label={t("marquee.fadeLabel")} minHeight="6rem" />
+
+    <h3>{t("marquee.behaviorTitle")}</h3>
+    <p set:html={t("marquee.behaviorBody1")} />
+    <p set:html={t("marquee.behaviorBody2")} />
+    <p set:html={t("marquee.behaviorBody3")} />
+
+    <h3>{t("marquee.optionsTitle")}</h3>
+    <p set:html={t("marquee.optionsBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <p set:html={t("marquee.installBody")} />
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+    <CodeBlock code={vanilla} label="Vanilla" lang="ts" />
+    <CodeBlock code={react} label="React" lang="tsx" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("marquee.a11yP1")} />
+    <p set:html={t("marquee.a11yP2")} />
+    <p>
+      <a href="https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html">WCAG 2.2.2: Pause, Stop, Hide</a>
+      ·
+      <a href="https://www.w3.org/WAI/WCAG22/Techniques/css/C39">Technique C39: prefers-reduced-motion</a>
+    </p>
+  </Fragment>
+</ComponentPageShell>

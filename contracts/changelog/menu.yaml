@@ -3,7 +3,7 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "4490fcac2c8fc1cf"
+surface: "bc4c8fb956098803"
 entries:
   - date: 2026-08-24
     kind: bugfix
@@ -226,3 +226,19 @@ entries:
         Vanilla binding mounts on <code>data-sk-menu</code>: the markup is authored and the enhancer
         hydrates it, so whatever needs no JavaScript works before any runs. Options: <code>label</code>,
         <code>disabled</code>. Its stylesheet is <code>components/menu.css</code>.
+  - date: 2026-09-07
+    kind: feature
+    es:
+      title: El trigger acepta triggerTone
+      body: >-
+        Junto a <code>triggerVariant</code>, ahora se puede pasar <code>triggerTone</code> y llega a
+        <code>data-tone</code> del botón disparador. Es la contraparte del segundo eje que Button
+        acaba de publicar: sin esto, un SplitButton podía emparejar el énfasis de sus dos mitades
+        pero no su intención, y el disparador de un split destructivo salía neutral.
+    en:
+      title: The trigger accepts triggerTone
+      body: >-
+        Alongside <code>triggerVariant</code>, <code>triggerTone</code> now forwards to the trigger
+        button's <code>data-tone</code>. It is the counterpart of the second axis Button just
+        published: without it a SplitButton could pair its two halves' emphasis but not their intent,
+        and a destructive split button's trigger came out neutral.

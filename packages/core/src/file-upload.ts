@@ -131,7 +131,11 @@ export const fileUploadContract = {
             element: "button",
             also: ["sk-button", "sk-interactive"],
             mount: "data-sk-file-upload-trigger",
-            attrs: { type: "button", "data-variant": "secondary" },
+            /* `solid` is the default, so no `data-variant` at all. This said "secondary", a value
+             * the Button contract has never published: it matched no rule in button.css and fell
+             * back to looking like the default anyway. Authored markup is where that hides, since
+             * nothing validates a hand-written attribute the way a usage tree gets validated. */
+            attrs: { type: "button" },
             slot: "triggerLabel",
           },
         ],

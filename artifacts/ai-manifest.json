@@ -224,6 +224,43 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-07",
+            "en": {
+              "body": "<code>size</code> goes from <code>sm / md / lg</code> to <code>xs / sm / md / lg</code>. <code>xs</code> paints at 24px, which is not a number picked by eye: it is where WCAG 2.2 SC 2.5.8 stops, so it is the smallest control this system will ever paint. The hit area does NOT shrink with the face, it stays at 44px through the <code>::after</code> every button already carries, and the type steps down to <code>--font-size-caption</code>, the only step that fits a 24px face without the label crowding its own box. The glyph goes to <code>--size-icon-sm</code>. It is for a control that has to read as a NODE rather than as a button parked beside something: <code>comment-thread</code>'s reply-fold handle is the case that asked for it, riding on the thread's own rail, where <code>sm</code> was as wide as the avatar above it and competed with it. That handle was until now a face hand-shrunk from <code>sm</code> through Button's hooks: it worked, but the measurement lived in comment-thread's CSS, no other component could ask for it, and nothing kept it on the scale. Additive: no existing value changes its name or its measurements.",
+              "title": "A new \"xs\" size, the floor of the scale"
+            },
+            "es": {
+              "body": "<code>size</code> pasa de <code>sm / md / lg</code> a <code>xs / sm / md / lg</code>. <code>xs</code> pinta a 24px, que no es un número elegido a ojo: es donde se detiene WCAG 2.2 SC 2.5.8, así que es el control más chico que este sistema va a pintar. El área de click NO se achica con la cara, sigue en 44px por el <code>::after</code> que todos los botones ya tienen, y la tipografía baja a <code>--font-size-caption</code>, el único escalón que entra en una cara de 24px sin que la etiqueta apriete su propia caja. El glifo va a <code>--size-icon-sm</code>. Sirve para un control que tiene que leerse como un NODO y no como un botón estacionado al lado de algo: el handle que pliega las respuestas de <code>comment-thread</code> es el caso que lo pidió, montado sobre la línea del hilo, donde <code>sm</code> era tan ancho como el avatar de arriba y le competía. Ese handle era hasta ahora una cara achicada a mano desde <code>sm</code> con los hooks de Button: andaba, pero la medida vivía en el CSS de comment-thread, ningún otro componente podía pedirla y nada la mantenía en la escala. Aditivo: ningún valor existente cambia de nombre ni de medida.",
+              "title": "Se agrega el tamaño \"xs\", el piso de la escala"
+            },
+            "kind": "feature",
+            "target": "size"
+          },
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "<code>variant</code> was answering two questions at once: how loud the button is, and what it means. Four emphases times three intents is twelve combinations, and one list named six of them, picking arbitrarily which: you got loud-destructive but not quiet-destructive, quiet-neutral but not quiet-primary. <code>variant</code> now says only the emphasis (<code>solid</code>, <code>soft</code>, <code>ghost</code>, <code>translucent</code>) and <code>tone</code> says only the intent (<code>neutral</code>, <code>accent</code>, <code>danger</code>), which is also the word Badge, Tag and Callout already used for it. <strong>This is a breaking change.</strong> <code>ghost</code> and <code>translucent</code> are untouched; the rest moves: <code>variant=\"accent\"</code> becomes <code>tone=\"accent\"</code>, <code>variant=\"danger\"</code> becomes <code>tone=\"danger\"</code>, <code>variant=\"subtle\"</code> becomes <code>variant=\"soft\"</code>, and <code>variant=\"neutral\"</code> is the default and can be dropped. Three tones rather than Badge's five: a badge REPORTS a state, so <code>success</code> and <code>warning</code> are things it can truthfully say; a button PERFORMS an action, and there is no warning action.",
+              "title": "Button splits into two axes, emphasis and tone"
+            },
+            "es": {
+              "body": "<code>variant</code> respondía dos preguntas a la vez: qué tan fuerte es el botón y qué significa. Cuatro énfasis por tres intenciones son doce combinaciones, y una sola lista nombraba seis, eligiendo arbitrariamente cuáles: había destructivo fuerte pero no destructivo discreto, neutral discreto pero no primario discreto. Ahora <code>variant</code> dice sólo el énfasis (<code>solid</code>, <code>soft</code>, <code>ghost</code>, <code>translucent</code>) y <code>tone</code> dice sólo la intención (<code>neutral</code>, <code>accent</code>, <code>danger</code>), que además es la palabra que Badge, Tag y Callout ya usaban para lo mismo. <strong>Es un cambio que rompe.</strong> <code>ghost</code> y <code>translucent</code> no se tocan; el resto se mueve: <code>variant=\"accent\"</code> pasa a <code>tone=\"accent\"</code>, <code>variant=\"danger\"</code> a <code>tone=\"danger\"</code>, <code>variant=\"subtle\"</code> a <code>variant=\"soft\"</code> y <code>variant=\"neutral\"</code> es el default y se puede omitir. Son tres tonos y no los cinco de Badge: un badge REPORTA un estado, así que <code>success</code> y <code>warning</code> son cosas que puede decir con verdad; un botón EJECUTA una acción, y no existe una acción de advertencia.",
+              "title": "Button se separa en dos ejes, emphasis y tone"
+            },
+            "kind": "rework"
+          },
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "New <code>pressed</code> option, which writes <code>aria-pressed</code>, and Button paints that state: a ghost gains a fill, a toned button gains its own wash, a solid deepens. It has three states rather than two, like layout's <code>wrap</code>: absent means \"not a toggle\" and is right for almost every button, while <code>false</code> means \"a toggle, currently off\", which a screen reader announces. Action only: a link navigates, it does not stay pressed. <strong>It deliberately does not use the shared state layer</strong>, which was the obvious fix and the wrong one: hover reassigns the same <code>--state-layer-opacity</code>, so a toggle whose only cue was that layer read as unpressed exactly while the pointer sat on it. It moves the button's own hooks instead and lets the layer ride on top. Two consumers had already solved this by hand (the Editor toolbar and CommentThread's vote pair); both now read the contract.",
+              "title": "A toggle that is on now looks on"
+            },
+            "es": {
+              "body": "Nace <code>pressed</code>, la opción que escribe <code>aria-pressed</code>, y Button pinta ese estado: un ghost gana relleno, un botón con tono gana su propio lavado, un solid se profundiza. Tiene tres estados y no dos, como el <code>wrap</code> de layout: ausente significa \"no es un toggle\" y es lo correcto para casi cualquier botón, mientras que <code>false</code> significa \"es un toggle y está apagado\", que un lector de pantalla anuncia. Sólo en <code>Button.action</code>: un enlace navega, no queda presionado. <strong>No usa la capa de estado compartida</strong>, que era la solución obvia y es la equivocada: el hover reasigna la misma <code>--state-layer-opacity</code>, así que un toggle cuyo único indicio fuera esa capa se veía apagado justo mientras el puntero estaba encima. Mueve los hooks propios del botón y deja que la capa monte arriba. Dos consumidores ya lo habían resuelto a mano (la barra del Editor y el par de votos de CommentThread) y ahora los dos leen el contrato.",
+              "title": "Un toggle encendido ahora se ve encendido"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-08-23",
             "en": {
               "body": "Renamed from <code>primary</code>: that name described a ROLE: \"this screen's main action\". The button itself cannot know, it is the author who decides which of their buttons is the featured one at any given moment, and sometimes it is more than one or none. The variant only paints a saturated fill; <code>accent</code> says that, not a hierarchy the contract has no way to verify. This renames the option's VALUE only: the semantic token behind it (<code>--color-action-accent</code>) keeps its name, it is an internal detail of <code>button.css</code> and not part of what this contract promises. A consumer with hand-authored <code>data-variant=\"accent\"</code> stops painting the fill (silently falls back to <code>neutral</code>); <code>variant=\"accent\"</code> in a usage tree or in JSX stops type-checking.",
@@ -302,6 +339,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "The <code>actions</code> slot narrowed <code>variant</code> to <code>translucent</code>/<code>danger</code>. That was the same rule stated in the vocabulary Button had at the time: one enum carried both how loud a button is and what it means, so \"do not compete with the page's call to action\" could only be spelled by banning the accent fill. Now that those are separate axes, the rule says what it always meant and narrows <code>tone</code> to <code>neutral</code>/<code>danger</code>. Emphasis is left open: a destructive action here can be <code>solid</code> so it stands out, and a neutral one can be <code>translucent</code> so it blends into the callout's own colour.",
+              "title": "The action row now restricts tone rather than emphasis"
+            },
+            "es": {
+              "body": "El slot <code>actions</code> limitaba <code>variant</code> a <code>translucent</code>/<code>danger</code>. Era la misma regla de siempre dicha en el vocabulario que Button tenía entonces: un solo enum cargaba a la vez qué tan fuerte es un botón y qué significa, así que \"que no compita con la llamada a la acción de la página\" sólo se podía escribir prohibiendo el relleno de acento. Ahora que son dos ejes, la regla dice lo que siempre quiso decir y limita <code>tone</code> a <code>neutral</code>/<code>danger</code>. El énfasis queda libre: una acción destructiva acá puede ser <code>solid</code> para destacarse, y una neutral puede ser <code>translucent</code> para integrarse al color del callout.",
+              "title": "La fila de acciones ahora restringe el tono, no el énfasis"
+            },
+            "kind": "rework"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -698,6 +747,55 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-07",
+            "en": {
+              "body": "The reply-fold control has a 24px face, but like every Button it expands its touch target to 44px, so its click box overhung the gutter by about 6px into the content column. The actions row came the other way: a row that leads with the vote group is pulled left by exactly those 6px for optical correction. The two met right over the upvote arrow, and because the fold control carries <code>z-index: 1</code> so it can interrupt the thread line, it won: the upvote sat under an invisible box that swallowed the click. The vote group now stacks above it. Only inside a comment: a standalone <code>CommentVote</code> has no gutter node to clear.",
+              "title": "The vote buttons no longer lose their clicks to the fold control"
+            },
+            "es": {
+              "body": "El control que pliega las respuestas mide 24px de cara, pero como todo Button expande su área táctil a 44px, su caja de click sobresalía unos 6px del canal hacia la columna de contenido. La fila de acciones venía en sentido contrario: cuando arranca con el grupo de voto se corre esos mismos 6px hacia la izquierda por corrección óptica. Las dos se cruzaban justo encima de la flecha de voto positivo, y como el control de plegado lleva <code>z-index: 1</code> para poder interrumpir la línea del hilo, ganaba él: el upvote quedaba debajo de una caja invisible que se comía el click. El grupo de voto ahora se apila por encima. Solo dentro de un comentario: un <code>CommentVote</code> suelto no tiene ninguna nota de la que despegarse.",
+              "title": "Los botones de voto ya no pierden sus clicks contra el control de plegado"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "The handle riding on the thread's rail used to be a hand-shrunk face: an <code>sm</code> cut down to <code>--size-icon-md</code> (20px) through Button's hooks, from comment-thread's own CSS. It is now <code>data-size=\"xs\"</code>, a size the scale publishes (see <code>button</code>'s own changelog), so the node measures 24px, which is what <code>xs</code> paints everywhere. It reads slightly larger than before (20px to 24px) and that is the only visible difference. In exchange the measurement no longer lives here: any other component that needs a node this size asks for it by name, and the 24px floor is WCAG 2.2 SC 2.5.8's rather than a number that had been tied to an icon token. The hit area was 44px and is still 44px. Nothing hand-authored breaks: markup written with <code>data-size=\"sm\"</code> on this control keeps working, just with the old face.",
+              "title": "The reply-fold control is now a real xs Button"
+            },
+            "es": {
+              "body": "El handle que monta sobre la línea del hilo dejaba de ser una cara achicada a mano: era un <code>sm</code> recortado a <code>--size-icon-md</code> (20px) con los hooks de Button desde el CSS de comment-thread. Ahora es <code>data-size=\"xs\"</code>, un tamaño que la escala publica (ver el changelog de <code>button</code>), así que el nodo mide 24px, que es lo que <code>xs</code> pinta en todos lados. Se ve un poco más grande que antes (20px a 24px) y esa es la única diferencia visible. A cambio, la medida ya no vive acá: cualquier otro componente que necesite un nodo del mismo tamaño lo pide por su nombre, y el piso de 24px es el de WCAG 2.2 SC 2.5.8 en vez de un número que había quedado atado al token de un icono. El área de click era 44px y sigue siendo 44px. Nada que se autore a mano se rompe: quien haya escrito el markup del control con <code>data-size=\"sm\"</code> lo sigue viendo funcionar, sólo que con la cara vieja.",
+              "title": "El control que pliega las respuestas ahora es un Button xs de verdad"
+            },
+            "kind": "feature",
+            "target": "collapsible"
+          },
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "Both write boxes (a comment's reply and the thread's own composer) go from `&lt;div&gt;` to `&lt;dialog&gt;`. Below <code>--breakpoint-desktop</code> the binding opens them with <code>showModal()</code> and they arrive from the block-end edge; above it they stay in flow, exactly where they were. ONE node in two presentations rather than two nodes: rendering it twice would duplicate the consumer's own control, which means duplicate ids, duplicate labels and a draft split across two fields. Every bit of panel, edge, slide and backdrop comes from the Vaul pattern through the <code>sk-vaul</code> class the binding adds; this contract only reassigns its hooks, the same deal Drawer keeps. With no enhancer the box stays in flow at every width, the fallback decision 9 describes. The reply trigger now carries <code>aria-haspopup=\"dialog\"</code> alongside <code>aria-expanded</code>: the first says what it opens, the second whether it is open. And because the thread's composer was always open in flow, on a phone it needs a way in: <code>composerTriggerLabel</code> names that control, which exists only where the box is a sheet.",
+              "title": "On a phone the composer is a Vaul, and stays in flow above it"
+            },
+            "es": {
+              "body": "Las dos cajas de escribir (la respuesta de un comentario y el composer del hilo) pasan de `&lt;div&gt;` a `&lt;dialog&gt;`. Debajo de <code>--breakpoint-desktop</code> el binding las abre con <code>showModal()</code> y quedan ancladas al borde inferior; por encima siguen en flujo, exactamente donde estaban. Es UN nodo en dos presentaciones y no dos nodos: duplicarlo duplicaría el control que pasa quien lo usa, con ids y labels repetidos y el borrador partido en dos. Toda la pintura del panel viene del pattern Vaul a través de la clase <code>sk-vaul</code>, que pone el binding; acá sólo se reasignan sus hooks, igual que hace Drawer. Sin enhancer la caja se queda en flujo a cualquier ancho, que es el mismo fallback que describe la decisión 9. El disparador de responder ahora declara <code>aria-haspopup=\"dialog\"</code> además de <code>aria-expanded</code>: lo primero dice qué abre, lo segundo si está abierto. Y como el composer del hilo siempre estuvo abierto en flujo, en móvil necesita una forma de entrar: <code>composerTriggerLabel</code> nombra ese control, que sólo existe donde la caja es una hoja.",
+              "title": "En un teléfono el composer es un Vaul, y arriba sigue en flujo"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "The vote buttons only wrote <code>aria-pressed=\"true\"</code> when the vote was cast, so an unset one carried no attribute at all and a screen reader read it as an ordinary button, losing the fact that it can be pressed. The base is now <code>false</code>, raised to <code>true</code> on whichever one is cast. The React binding also writes the option attributes the contract already declared on its hosts (<code>data-collapse-label</code>, <code>data-composer-trigger-label</code>, <code>data-reply</code>, <code>data-delete-label</code>, the vote pair's and the composer's), and the composer trigger is now always emitted rather than only when the view is a sheet: how wide the screen is was already a CSS decision, and deciding it in JS as well made the two bindings render different DOM at the same width.",
+              "title": "An unset vote now announces itself as a toggle that is off"
+            },
+            "es": {
+              "body": "Los botones de voto sólo escribían <code>aria-pressed=\"true\"</code> cuando el voto estaba puesto, así que uno sin marcar no llevaba el atributo y un lector de pantalla lo leía como un botón común: se perdía el hecho de que se puede presionar. Ahora la base es <code>false</code> y sube a <code>true</code> en el que corresponde. Además el binding de React escribe los atributos de opción que el contrato ya definía en sus hosts (<code>data-collapse-label</code>, <code>data-composer-trigger-label</code>, <code>data-reply</code>, <code>data-delete-label</code>, los de voto y los del composer), y el disparador del composer se emite siempre en vez de sólo cuando la vista es una hoja: qué tan ancha es la pantalla ya lo decide el CSS, y decidirlo también en JS hacía que los dos bindings dibujaran DOM distinto al mismo ancho.",
+              "title": "Un voto sin marcar ahora se anuncia como un toggle apagado"
+            },
+            "kind": "bugfix"
+          },
+          {
             "date": "2026-09-05",
             "en": {
               "body": "Four changes chasing the same thing, that a Vanilla consumer never has to reach for internal classes. `data-sk-comment-avatar`/`-author`/`-timestamp` complete the addressing: only the body had a hook before, so filling a comment meant querying `.sk-comment__author`, which belongs to the stylesheet and moves whenever the paint does. `CommentTemplate` publishes a blueprint to clone when creating a comment at runtime, the same shape `ToastTemplate` has; deliberately a `&lt;template&gt;` and not a `renderComment(data)`, because generating anatomy in the binding would create a second source of it to keep in step with the contract's template. `setCommentVote(group, { voted, count })` writes a vote: three attributes have to agree (`data-voted` paints, two `aria-pressed` announce) and written by hand they drifted apart twice. And the three events are now `cancelable`: `preventDefault()` on `reply` keeps the draft and the open box, so a failed POST does not take what the person wrote with it.",
@@ -909,6 +1007,26 @@
             "es": {
               "body": "Entra al catálogo con <code>EmptyState</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. No tiene opciones: el elemento ES el significado. La hoja es <code>components/empty-state.css</code>.",
               "title": "EmptyState se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
+    "fade-edge": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "The existing <code>sk-fade-edge</code> class joins the catalogue as <code>FadeEdge</code>. It wraps any content without changing its semantics or behavior, and exposes <code>mode</code>, <code>direction</code>, <code>size</code>, and <code>color</code>. Marquee can be composed inside when it needs a soft edge; the effect does not become part of Marquee's contract.",
+              "title": "FadeEdge ships as a paint-only composition"
+            },
+            "es": {
+              "body": "La clase existente <code>sk-fade-edge</code> entra al catálogo como <code>FadeEdge</code>. Envuelve cualquier contenido sin cambiar su semántica ni comportamiento, y expone <code>mode</code>, <code>direction</code>, <code>size</code> y <code>color</code>. Marquee puede componerse adentro cuando necesita un borde suave; el efecto no forma parte de su contrato.",
+              "title": "FadeEdge se publica como composición de pintura"
             },
             "kind": "feature"
           }
@@ -1466,6 +1584,110 @@
         "version": "0.1.0-dev"
       }
     ],
+    "marquee": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "It joins the catalogue as <code>Marquee</code> and <code>Marquee.autoplay</code>. The first stays still until the reader chooses Play; the second starts by itself and therefore includes the Pause control required by WCAG 2.2.2. Both emit one semantic copy and one <code>aria-hidden</code> visual copy, pause on pointer hover or focus within, and remain static under <code>prefers-reduced-motion</code>. <code>speed</code> preserves perceived velocity by measuring the real content width; <code>direction</code> chooses left or right. Children must be inert: links, buttons, or individually browsed items belong in Carousel or a list.",
+              "title": "Marquee ships with requested and automatic motion"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Marquee</code> y <code>Marquee.autoplay</code>. La primera queda quieta hasta que la persona elige reproducirla; la segunda arranca sola y por eso incluye el control de pausa que exige WCAG 2.2.2. Las dos emiten una sola copia semántica y una copia visual con <code>aria-hidden</code>, se detienen al pasar el puntero o llevar foco adentro, y quedan estáticas con <code>prefers-reduced-motion</code>. <code>speed</code> mantiene una velocidad percibida constante midiendo el ancho real; <code>direction</code> elige izquierda o derecha. Los hijos deben ser inertes: enlaces, botones o ítems que se recorren pertenecen a Carousel o a una lista.",
+              "title": "Marquee se publica con movimiento pedido y automático"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "<code>Marquee</code> preserves motion the reader started when the pointer crosses it. Only <code>Marquee.autoplay</code> pauses temporarily on hover or focus so its marks can be inspected; its persistent Pause button remains the WCAG 2.2.2-required mechanism.",
+              "title": "Hover pauses automatic motion only"
+            },
+            "es": {
+              "body": "<code>Marquee</code> conserva el movimiento que la persona inició al pasar el puntero. Sólo <code>Marquee.autoplay</code> se pausa temporalmente con hover o foco para poder inspeccionar las marcas; su botón de pausa persistente sigue siendo el mecanismo exigido por WCAG 2.2.2.",
+              "title": "El hover sólo pausa el movimiento automático"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "<code>slow</code>, <code>normal</code>, and <code>fast</code> now take their cadence from <code>--scale-duration-cycle-slow</code>, <code>--scale-duration-cycle</code>, and <code>--scale-duration-cycle-fast</code>. Measured width still determines final duration, so a long row does not accelerate and a short row does not linger.",
+              "title": "Speeds follow the duration scale"
+            },
+            "es": {
+              "body": "<code>slow</code>, <code>normal</code> y <code>fast</code> ahora toman sus cadencias de <code>--scale-duration-cycle-slow</code>, <code>--scale-duration-cycle</code> y <code>--scale-duration-cycle-fast</code>. El ancho medido sigue determinando la duración final, por lo que una fila larga no acelera ni una corta se demora.",
+              "title": "Las velocidades siguen la escala de duración"
+            },
+            "kind": "rework"
+          },
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "Every item now has a spacing-scale gap, including the point where the visual copy begins. <code>direction</code> also accepts <code>up</code> and <code>down</code>; the enhancer measures the column height and <code>--sk-marquee-vertical-size</code> defines its visible window.",
+              "title": "Marquee gains visible spacing and vertical direction"
+            },
+            "es": {
+              "body": "Cada elemento ahora se separa con un gap de la escala de espacio, incluido el punto donde empieza la copia visual. <code>direction</code> también acepta <code>up</code> y <code>down</code>; el enhancer mide el alto de la columna y <code>--sk-marquee-vertical-size</code> define su ventana visible.",
+              "title": "Marquee gana separación visible y dirección vertical"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "Two copies only cover the window while one of them reaches across it. With a shorter row, completing a cycle dragged a visible hole across the strip. The binding now measures the window and widens every gap in the row, the one between the last mark and the first mark of the next copy included, until a single row covers it; the rhythm stays even at the seam, and duration is computed from the widened row, so perceived velocity is unchanged.",
+              "title": "A short row no longer opens a hole once per cycle"
+            },
+            "es": {
+              "body": "Dos copias sólo cubren la ventana mientras una de ellas la alcance. Con una fila más corta, al completar un ciclo se veía un hueco cruzar la franja. Ahora el binding mide la ventana y ensancha todos los gaps de la fila, incluido el que separa la última marca de la primera de la copia siguiente, hasta que una sola fila la cubra; el ritmo queda parejo en la unión y la duración se calcula sobre la fila ya ensanchada, así que la velocidad percibida no cambia.",
+              "title": "Una fila corta ya no abre un hueco en cada vuelta"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "It is no longer a button this component drew by hand: it emits <code>sk-button</code> + <code>sk-interactive</code> with <code>data-variant=\"translucent\"</code>, <code>data-size=\"sm\"</code> and <code>data-icon-only</code>, so the fill, the focus ring, the state layer and the touch target come from Button rather than from a copy of it. It sits at the component's block-end/inline-end corner, on a row the grid reserves for it: overlaying the viewport put it on top of the last item, since the viewport is exactly one run tall and has no corner to spare. The glyph becomes its own part, <code>sk-marquee__glyph</code>, because on a <code>.sk-button</code> both pseudo-elements are already spoken for.",
+              "title": "The Play/Pause control is now a real Button, bottom right"
+            },
+            "es": {
+              "body": "Deja de ser un botón dibujado a mano por este componente: emite <code>sk-button</code> + <code>sk-interactive</code> con <code>data-variant=\"translucent\"</code>, <code>data-size=\"sm\"</code> y <code>data-icon-only</code>, así que el relleno, el foco, la capa de estado y el área táctil salen de Button y no de una copia. Queda en la esquina final inferior del componente, en una fila que la grilla le reserva: superponerlo a la ventana lo dejaba encima del último ítem, porque la ventana mide exactamente una fila y no tiene esquina libre. El glifo pasa a ser una parte propia, <code>sk-marquee__glyph</code>, porque en un <code>.sk-button</code> los dos pseudoelementos ya están ocupados.",
+              "title": "El control de Play/Pausa ahora es un Button de verdad, abajo a la derecha"
+            },
+            "kind": "rework"
+          },
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "New <code>fade</code> option, on by default: the viewport softens the two edges where it clips the run, on the same seven-stop curve FadeEdge uses, and <code>--sk-marquee-fade-size</code> sets the band's width. This used to be done by wrapping the component in two <code>FadeEdge</code>s, and that composition stopped working once the control took a row of its own: a mask reaches everything it contains, so it washed out the Play/Pause button too. The viewport paints it now, being the only part that clips anything. <code>fade=\"none\"</code> restores the hard edge.",
+              "title": "The strip fades its own edges"
+            },
+            "es": {
+              "body": "Nace <code>fade</code>, encendido por defecto: la ventana suaviza los dos bordes por donde recorta la fila, con la misma curva de siete paradas que usa FadeEdge, y <code>--sk-marquee-fade-size</code> define el ancho de la banda. Antes esto se lograba envolviendo el componente en dos <code>FadeEdge</code>, y esa composición dejó de servir cuando el control pasó a ocupar su propia fila: una máscara alcanza todo lo que contiene, así que también desteñía el botón de Play/Pausa. Ahora la pinta la ventana, que es la única parte que recorta algo. <code>fade=\"none\"</code> vuelve al borde duro.",
+              "title": "La franja desvanece sus propios bordes"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "<code>Marquee.autoplay</code> no longer ships a control: new <code>control</code> option, off by default, and without it the strip simply moves. An ambient row is not a media player. <code>playLabel</code> and <code>pauseLabel</code> are now optional on that signature, and stay required on <code>Marquee</code>, where the button is the only cause of motion and so cannot be turned off: a strip that starts paused with no way to start it is not a state worth validating, it is one that should not be writable. <strong>Turning <code>control</code> off is a conformance decision</strong>: hover still pauses and <code>prefers-reduced-motion</code> still wins, but neither is the explicit control WCAG 2.2.2 asks for, and with inert children nothing is left for a keyboard.",
+              "title": "The Play/Pause button becomes opt-in on autoplay"
+            },
+            "es": {
+              "body": "<code>Marquee.autoplay</code> ya no trae control: nace <code>control</code>, apagado por defecto, y sin él la franja simplemente se mueve. Una fila ambiental no es un reproductor. <code>playLabel</code> y <code>pauseLabel</code> pasan a ser opcionales en esa firma, y siguen siendo obligatorios en <code>Marquee</code>, donde el botón es la única causa de movimiento y por eso no se puede apagar: una franja que arranca pausada sin botón no sería un estado que valga la pena validar, sino uno que no debe poder escribirse. <strong>Apagar <code>control</code> es una decisión de conformidad</strong>: el hover sigue pausando y <code>prefers-reduced-motion</code> sigue mandando, pero ninguno es el control explícito que pide WCAG 2.2.2, y con hijos inertes no queda mecanismo por teclado.",
+              "title": "El botón de Play/Pausa pasa a ser opt-in en autoplay"
+            },
+            "kind": "rework"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "media-gradient": [
       {
         "date": null,
@@ -1571,6 +1793,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "Alongside <code>triggerVariant</code>, <code>triggerTone</code> now forwards to the trigger button's <code>data-tone</code>. It is the counterpart of the second axis Button just published: without it a SplitButton could pair its two halves' emphasis but not their intent, and a destructive split button's trigger came out neutral.",
+              "title": "The trigger accepts triggerTone"
+            },
+            "es": {
+              "body": "Junto a <code>triggerVariant</code>, ahora se puede pasar <code>triggerTone</code> y llega a <code>data-tone</code> del botón disparador. Es la contraparte del segundo eje que Button acaba de publicar: sin esto, un SplitButton podía emparejar el énfasis de sus dos mitades pero no su intención, y el disparador de un split destructivo salía neutral.",
+              "title": "El trigger acepta triggerTone"
+            },
+            "kind": "feature"
+          },
           {
             "date": "2026-08-24",
             "en": {
@@ -1918,6 +2152,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "<code>shape</code> is replaced by four signatures, each carrying only the options that apply to it: <code>Placeholder</code> (one line), <code>Placeholder.paragraph</code>, <code>Placeholder.block</code> and <code>Placeholder.circle</code>. A circle no longer accepts a type role and a paragraph no longer accepts <code>fill</code>, and the type system now says so. <strong>This is a breaking change</strong>: <code>&lt;Placeholder shape=\"circle\" /&gt;</code> becomes <code>&lt;PlaceholderCircle /&gt;</code>. The reason is that <code>shape</code> named geometry and never what the geometry stands in for, so every consumer translated meaning into pixels by hand: nine bespoke classes in the docs' own stylesheet and raw styles in the comment-thread demo, all guessing at measurements the system already knew (<code>1.5rem</code> for a line of h3, whose real line box is 27px). The role is named instead: <code>text=\"h3\"</code> resolves to the same token pair <code>Heading</code> reads, <code>size=\"sm\"</code> to the same scale <code>Avatar</code> reads, and <code>fill</code> takes a clipped container's box and corner. <code>lines</code> draws real lines with a short last one, clamped identically in both bindings.",
+              "title": "Placeholder becomes the primitive for composing specific skeletons"
+            },
+            "es": {
+              "body": "<code>shape</code> se reemplaza por cuatro signatures, cada una con sólo las opciones que le corresponden: <code>Placeholder</code> (una línea), <code>Placeholder.paragraph</code>, <code>Placeholder.block</code> y <code>Placeholder.circle</code>. Un círculo ya no acepta un rol tipográfico ni un párrafo acepta <code>fill</code>, y eso ahora lo dice el sistema de tipos. <strong>Es un cambio que rompe</strong>: <code>&lt;Placeholder shape=\"circle\" /&gt;</code> pasa a ser <code>&lt;PlaceholderCircle /&gt;</code>. La razón es que <code>shape</code> nombraba geometría y nunca lo que la geometría reemplaza, así que cada consumidor traducía sentido a píxeles a mano: nueve clases propias en la hoja de los docs y estilos crudos en el demo de comment-thread, todos adivinando medidas que el sistema ya conocía (<code>1.5rem</code> para una línea de h3, cuya caja real mide 27px). Ahora se nombra el rol: <code>text=\"h3\"</code> resuelve al mismo par de tokens que lee <code>Heading</code>, <code>size=\"sm\"</code> a la misma escala que lee <code>Avatar</code>, y <code>fill</code> toma la caja y la esquina del contenedor recortado. <code>lines</code> dibuja líneas reales con la última corta, acotadas igual en los dos bindings.",
+              "title": "Placeholder pasa a ser el primitivo para componer skeletons específicos"
+            },
+            "kind": "rework"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -4034,27 +4280,42 @@
           "trueValue": "",
           "type": "boolean"
         },
+        "pressed": {
+          "attr": "aria-pressed",
+          "falseValue": "false",
+          "trueValue": "true",
+          "type": "boolean"
+        },
         "size": {
           "attr": "data-size",
           "default": "md",
           "type": "enum",
           "values": [
+            "xs",
             "sm",
             "md",
             "lg"
           ]
         },
-        "variant": {
-          "attr": "data-variant",
+        "tone": {
+          "attr": "data-tone",
           "default": "neutral",
           "type": "enum",
           "values": [
             "neutral",
-            "subtle",
-            "translucent",
             "accent",
-            "danger",
-            "ghost"
+            "danger"
+          ]
+        },
+        "variant": {
+          "attr": "data-variant",
+          "default": "solid",
+          "type": "enum",
+          "values": [
+            "solid",
+            "soft",
+            "ghost",
+            "translucent"
           ]
         },
         "weldEnd": {
@@ -4085,12 +4346,24 @@
             },
             {
               "la acción es secundaria dentro de un texto": "eso es un Link"
-            }
+            },
+            "dos `solid` + `accent` visibles a la vez: si todo es la acción principal, ninguna lo es",
+            "un tono en un botón que no actúa sobre nada: un disclosure o un toggle es neutral, no accent",
+            "`danger` en algo que se deshace con un clic: el tono miente sobre el costo",
+            "se busca `success` o `warning`: un botón ejecuta una acción y no existe una acción de advertencia; eso lo reporta un Badge o un Callout",
+            "`pressed` en algo que no permanece encendido: un botón que dispara y vuelve no es un toggle, y anunciarlo como tal miente sobre lo que hace",
+            "`pressed` para marcar el ítem elegido de un grupo exclusivo: eso es Segmented o RadioGroup, que además dan las flechas del teclado"
           ],
           "useWhen": [
             "ejecuta una acción en la página",
             "envía un formulario",
-            "confirma o descarta un diálogo"
+            "confirma o descarta un diálogo",
+            "destruye algo o es difícil de deshacer: `tone: danger`, y el énfasis dice cuál de los dos momentos es",
+            "es LA acción de la vista: `tone: accent`, y una sola por región",
+            "un eliminar dentro de una fila de acciones: `variant: ghost` + `tone: danger`, que se lee destructivo sin convertirse en el botón de confirmar",
+            "el confirmar que ese eliminar abre: `variant: solid` + `tone: danger`, uno por diálogo",
+            "va sobre media o sobre una superficie de color desconocida: `variant: translucent`",
+            "el botón se queda encendido: `pressed`, un toggle real (negrita en una barra, un voto, play/pausa). Ausente si no es un toggle; `false` si lo es y está apagado"
           ]
         },
         "Button.navigation": {
@@ -4103,11 +4376,13 @@
             },
             {
               "el enlace vive dentro de un párrafo": "eso es un Link"
-            }
+            },
+            "`tone: danger` en un enlace: navegar no destruye nada; lo destructivo es la acción que la página de destino ofrece"
           ],
           "useWhen": [
             "lleva a una URL y tiene que verse como un botón",
-            "una llamada a la acción principal que es un enlace"
+            "una llamada a la acción principal que es un enlace",
+            "los mismos dos ejes que Button.action: un enlace puede ser discreto (`ghost`) y seguir siendo la acción principal (`accent`)"
           ]
         }
       },
@@ -4127,10 +4402,12 @@
           "mount": "data-sk-button",
           "options": [
             "variant",
+            "tone",
             "size",
             "iconOnly",
             "weldStart",
             "weldEnd",
+            "pressed",
             "disabled"
           ],
           "react": {
@@ -4165,7 +4442,8 @@
         "Button.navigation": {
           "forbids": [
             "disabled",
-            "type"
+            "type",
+            "pressed"
           ],
           "host": {
             "element": "a",
@@ -4180,6 +4458,7 @@
           "mount": "data-sk-button",
           "options": [
             "variant",
+            "tone",
             "size",
             "iconOnly",
             "weldStart",
@@ -4415,8 +4694,8 @@
                 "Link"
               ],
               "restrictOptions": {
-                "variant": [
-                  "translucent",
+                "tone": [
+                  "neutral",
                   "danger"
                 ]
               }
@@ -7005,6 +7284,11 @@
           "prop": "id",
           "type": "string"
         },
+        "composerTriggerLabel": {
+          "attr": "data-composer-trigger-label",
+          "default": "Escribir un comentario",
+          "type": "string"
+        },
         "deletable": {
           "attr": "data-deletable",
           "default": false,
@@ -7018,6 +7302,10 @@
         },
         "label": {
           "attr": "aria-label",
+          "type": "string"
+        },
+        "profileHref": {
+          "attr": "href",
           "type": "string"
         },
         "reply": {
@@ -7069,6 +7357,7 @@
         "commentContent": "sk-comment__content",
         "commentGutter": "sk-comment__gutter",
         "commentHeader": "sk-comment__header",
+        "commentProfile": "sk-comment__profile",
         "commentReplies": "sk-comment__replies",
         "commentReplySlot": "sk-comment__reply-slot",
         "commentSelf": "sk-comment__self",
@@ -7078,7 +7367,9 @@
         "composerCancel": "sk-comment-composer__cancel",
         "composerSlot": "sk-comment-thread__composer-slot",
         "composerSubmit": "sk-comment-composer__submit",
+        "composerTrigger": "sk-comment-thread__composer-trigger",
         "root": "sk-comment-thread",
+        "sheetHandle": "sk-comment-sheet__handle",
         "vote": "sk-comment-vote",
         "voteCount": "sk-comment-vote__count",
         "voteDown": "sk-comment-vote__down",
@@ -7172,6 +7463,7 @@
           "mount": "data-sk-comment",
           "options": [
             "commentId",
+            "profileHref",
             "collapsible",
             "collapseLabel"
           ],
@@ -7220,6 +7512,35 @@
               {
                 "children": [
                   {
+                    "also": [
+                      "sk-interactive"
+                    ],
+                    "children": [
+                      {
+                        "attrs": {
+                          "aria-hidden": "true"
+                        },
+                        "element": "span",
+                        "mount": "data-sk-comment-avatar",
+                        "part": "commentAvatar",
+                        "slot": "avatar",
+                        "whenGiven": "avatar"
+                      },
+                      {
+                        "element": "div",
+                        "mount": "data-sk-comment-author",
+                        "part": "commentAuthor",
+                        "slot": "author"
+                      }
+                    ],
+                    "element": "a",
+                    "options": [
+                      "profileHref"
+                    ],
+                    "part": "commentProfile",
+                    "whenGiven": "profileHref"
+                  },
+                  {
                     "children": [
                       {
                         "element": "span",
@@ -7228,6 +7549,32 @@
                         "slot": "avatar",
                         "whenGiven": "avatar"
                       },
+                      {
+                        "element": "div",
+                        "mount": "data-sk-comment-author",
+                        "part": "commentAuthor",
+                        "slot": "author"
+                      }
+                    ],
+                    "element": "div",
+                    "part": "commentProfile",
+                    "whenMissing": "profileHref"
+                  },
+                  {
+                    "children": [
+                      {
+                        "element": "div",
+                        "mount": "data-sk-comment-timestamp",
+                        "part": "commentTimestamp",
+                        "slot": "timestamp",
+                        "whenGiven": "timestamp"
+                      }
+                    ],
+                    "element": "div",
+                    "part": "commentHeader"
+                  },
+                  {
+                    "children": [
                       {
                         "children": [
                           {
@@ -7238,7 +7585,7 @@
                             "attrs": {
                               "aria-expanded": "true",
                               "data-icon-only": "",
-                              "data-size": "sm",
+                              "data-size": "xs",
                               "type": "button"
                             },
                             "children": [
@@ -7319,25 +7666,6 @@
                   {
                     "children": [
                       {
-                        "children": [
-                          {
-                            "element": "div",
-                            "mount": "data-sk-comment-author",
-                            "part": "commentAuthor",
-                            "slot": "author"
-                          },
-                          {
-                            "element": "div",
-                            "mount": "data-sk-comment-timestamp",
-                            "part": "commentTimestamp",
-                            "slot": "timestamp",
-                            "whenGiven": "timestamp"
-                          }
-                        ],
-                        "element": "div",
-                        "part": "commentHeader"
-                      },
-                      {
                         "element": "div",
                         "mount": "data-sk-comment-body",
                         "part": "commentBody",
@@ -7357,12 +7685,24 @@
               },
               {
                 "attrs": {
-                  "hidden": ""
+                  "data-edge": "block-end"
                 },
-                "element": "div",
+                "children": [
+                  {
+                    "attrs": {
+                      "aria-hidden": "true",
+                      "data-part": "handle"
+                    },
+                    "element": "div",
+                    "part": "sheetHandle"
+                  },
+                  {
+                    "slot": "replyComposer"
+                  }
+                ],
+                "element": "dialog",
                 "mount": "data-sk-comment-reply-slot",
                 "part": "commentReplySlot",
-                "slot": "replyComposer",
                 "whenGiven": "replyComposer"
               },
               {
@@ -7416,6 +7756,7 @@
                 ],
                 "attrs": {
                   "aria-expanded": "false",
+                  "aria-haspopup": "dialog",
                   "data-size": "sm",
                   "data-variant": "ghost",
                   "type": "button"
@@ -7433,6 +7774,7 @@
                 ],
                 "attrs": {
                   "data-size": "sm",
+                  "data-tone": "danger",
                   "data-variant": "ghost",
                   "type": "button"
                 },
@@ -7523,7 +7865,7 @@
                     ],
                     "attrs": {
                       "data-size": "sm",
-                      "data-variant": "accent",
+                      "data-tone": "accent",
                       "type": "submit"
                     },
                     "element": "button",
@@ -7582,7 +7924,8 @@
           ],
           "mount": "data-sk-comment-thread",
           "options": [
-            "label"
+            "label",
+            "composerTriggerLabel"
           ],
           "react": {
             "from": "@skryensya/react/comment-thread",
@@ -7609,9 +7952,46 @@
           "template": {
             "children": [
               {
-                "element": "div",
-                "part": "composerSlot",
-                "slot": "composer",
+                "children": [
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "aria-haspopup": "dialog",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "element": "button",
+                    "mount": "data-sk-comment-composer-trigger",
+                    "part": "composerTrigger",
+                    "textFromOption": "composerTriggerLabel"
+                  },
+                  {
+                    "attrs": {
+                      "data-edge": "block-end",
+                      "open": ""
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "aria-hidden": "true",
+                          "data-part": "handle"
+                        },
+                        "element": "div",
+                        "part": "sheetHandle"
+                      },
+                      {
+                        "slot": "composer"
+                      }
+                    ],
+                    "element": "dialog",
+                    "mount": "data-sk-comment-composer-slot",
+                    "part": "composerSlot"
+                  }
+                ],
                 "whenGiven": "composer"
               },
               {
@@ -7656,6 +8036,7 @@
                   "sk-interactive"
                 ],
                 "attrs": {
+                  "aria-pressed": "false",
                   "data-icon-only": "",
                   "data-size": "sm",
                   "data-variant": "ghost",
@@ -7710,6 +8091,7 @@
                   "sk-interactive"
                 ],
                 "attrs": {
+                  "aria-pressed": "false",
                   "data-icon-only": "",
                   "data-size": "sm",
                   "data-variant": "ghost",
@@ -8068,6 +8450,7 @@
                     "attrs": {
                       "data-icon-only": "",
                       "data-size": "sm",
+                      "data-tone": "neutral",
                       "data-variant": "ghost",
                       "type": "button"
                     },
@@ -9329,6 +9712,93 @@
         }
       }
     },
+    "fade-edge": {
+      "css": "@skryensya/core/components/fade-edge.css",
+      "id": "fade-edge",
+      "options": {
+        "color": {
+          "styleProperty": "--sk-fade-edge-color",
+          "type": "string"
+        },
+        "direction": {
+          "attr": "data-direction",
+          "default": "to-bottom",
+          "type": "enum",
+          "values": [
+            "to-bottom",
+            "to-top",
+            "to-right",
+            "to-left"
+          ]
+        },
+        "mode": {
+          "attr": "data-fade",
+          "default": "transparent",
+          "type": "enum",
+          "values": [
+            "transparent",
+            "color"
+          ]
+        },
+        "size": {
+          "styleProperty": "--sk-fade-edge-size",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "root": "sk-fade-edge"
+      },
+      "semantics": {
+        "FadeEdge": {
+          "alternatives": [
+            "MediaGradient"
+          ],
+          "avoidWhen": [
+            "el contenido no está recortado; desvanecerlo sólo baja contraste",
+            "el gradiente protege texto sobre una foto; eso es MediaGradient dentro de MediaCaption",
+            "el desvanecido escondería un control o información necesaria en reposo"
+          ],
+          "useWhen": [
+            "un borde recortado necesita indicar visualmente que el contenido continúa o entra y sale de la superficie",
+            "el efecto debe envolver otro componente sin cambiar su semántica, foco ni comportamiento"
+          ]
+        }
+      },
+      "signatures": {
+        "FadeEdge": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "soften-a-clipped-edge",
+            "overflow-fade",
+            "paint-only-wrapper"
+          ],
+          "options": [
+            "mode",
+            "direction",
+            "size",
+            "color"
+          ],
+          "react": {
+            "from": "@skryensya/react/fade-edge",
+            "name": "FadeEdge"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        }
+      }
+    },
     "feed": {
       "css": "@skryensya/core/components/feed.css",
       "id": "feed",
@@ -9627,7 +10097,6 @@
                   "sk-interactive"
                 ],
                 "attrs": {
-                  "data-variant": "secondary",
                   "type": "button"
                 },
                 "element": "button",
@@ -11781,6 +12250,337 @@
         }
       }
     },
+    "marquee": {
+      "css": "@skryensya/core/components/marquee.css",
+      "id": "marquee",
+      "options": {
+        "control": {
+          "attr": "data-control",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "direction": {
+          "attr": "data-direction",
+          "default": "left",
+          "type": "enum",
+          "values": [
+            "left",
+            "right",
+            "up",
+            "down"
+          ]
+        },
+        "fade": {
+          "attr": "data-fade",
+          "default": "edges",
+          "type": "enum",
+          "values": [
+            "edges",
+            "none"
+          ]
+        },
+        "speed": {
+          "attr": "data-speed",
+          "default": "normal",
+          "type": "enum",
+          "values": [
+            "slow",
+            "normal",
+            "fast"
+          ]
+        }
+      },
+      "parts": {
+        "content": "sk-marquee__content",
+        "glyph": "sk-marquee__glyph",
+        "label": "sk-marquee__label",
+        "root": "sk-marquee",
+        "toggle": "sk-marquee__toggle",
+        "track": "sk-marquee__track",
+        "viewport": "sk-marquee__viewport"
+      },
+      "semantics": {
+        "Marquee": {
+          "alternatives": [
+            "Carousel",
+            "Inline"
+          ],
+          "avoidWhen": [
+            "el contenido tiene enlaces, botones o cualquier parada de foco; duplicarlos crea controles repetidos y eso es Carousel o una lista",
+            "cada ítem importa por separado o se tiene que comparar; el movimiento baja su legibilidad",
+            "la franja tiene que actualizar datos en vivo; un marquee repite pintura, no anuncia cambios"
+          ],
+          "useWhen": [
+            "una franja breve y repetida gana sentido al moverse, pero el movimiento sólo debe empezar después de que la persona lo pida",
+            "logos, nombres o palabras forman un ritmo visual continuo y no son destinos ni controles",
+            "una columna breve de marcas o actualizaciones inertes necesita viajar hacia arriba o abajo dentro de una altura visible definida",
+            "una vez iniciada por la persona, la franja conserva su ritmo al pasar el puntero: hover no revoca una decisión explícita",
+            "hace falta un control de Play/Pausa sí o sí: acá el botón no es opcional, es la única causa de movimiento que tiene"
+          ]
+        },
+        "Marquee.autoplay": {
+          "alternatives": [
+            "Marquee",
+            "Carousel",
+            "Inline"
+          ],
+          "avoidWhen": [
+            "el movimiento no aporta información ni identidad; una fila quieta hace el mismo trabajo sin distraer",
+            "no hay lugar para el botón de pausa; entonces no hay lugar para movimiento automático que dure más de cinco segundos",
+            "se apaga `control` sobre contenido que no es decorativo: sin ese botón la franja queda fuera de WCAG 2.2.2, porque el hover es una ayuda y no un mecanismo, y con hijos inertes no hay nada que reciba foco",
+            "el contenido es esencial para completar una tarea; no debe pasar por la vista de manera temporal"
+          ],
+          "useWhen": [
+            "la franja es ambientación secundaria y puede empezar sola sin ocultar ni reemplazar información necesaria",
+            "el contenido es decorativo y se puede ignorar por completo, así que la franja puede correr sin control (`control` viene apagado)",
+            "la franja lleva algo que alguien podría querer leer, y entonces se enciende `control` y se acepta el costo del botón de pausa",
+            "una columna secundaria de marcas o actualizaciones inertes aporta contexto al viajar hacia arriba o abajo sin reemplazar información necesaria",
+            "la franja se detiene temporalmente con hover o foco, además del control persistente; esa pausa ayuda a inspeccionar las marcas sin reemplazar el control"
+          ]
+        }
+      },
+      "signatures": {
+        "Marquee": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "user-started-marquee",
+            "requested-continuous-strip",
+            "moving-brand-row"
+          ],
+          "mount": "data-sk-marquee",
+          "options": [
+            "direction",
+            "speed",
+            "fade"
+          ],
+          "react": {
+            "from": "@skryensya/react/marquee",
+            "name": "Marquee"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "pauseLabel": {
+              "accepts": "text",
+              "required": true
+            },
+            "playLabel": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-start": "manual",
+              "data-state": "paused"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "element": "div",
+                        "part": "content",
+                        "slot": "children"
+                      },
+                      {
+                        "attrs": {
+                          "aria-hidden": "true"
+                        },
+                        "element": "div",
+                        "part": "content",
+                        "slot": "children"
+                      }
+                    ],
+                    "element": "div",
+                    "part": "track"
+                  }
+                ],
+                "element": "div",
+                "part": "viewport"
+              },
+              {
+                "also": [
+                  "sk-button",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "aria-pressed": "false",
+                  "data-icon-only": "",
+                  "data-size": "sm",
+                  "data-sk-button": "",
+                  "data-tone": "neutral",
+                  "data-variant": "translucent",
+                  "type": "button"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "element": "span",
+                    "part": "glyph"
+                  },
+                  {
+                    "also": [
+                      "sk-visually-hidden"
+                    ],
+                    "attrs": {
+                      "data-action": "play"
+                    },
+                    "element": "span",
+                    "part": "label",
+                    "slot": "playLabel"
+                  },
+                  {
+                    "also": [
+                      "sk-visually-hidden"
+                    ],
+                    "attrs": {
+                      "data-action": "pause",
+                      "hidden": ""
+                    },
+                    "element": "span",
+                    "part": "label",
+                    "slot": "pauseLabel"
+                  }
+                ],
+                "element": "button",
+                "part": "toggle"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "Marquee.autoplay": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "autoplay-marquee",
+            "ambient-continuous-strip",
+            "automatic-moving-content"
+          ],
+          "mount": "data-sk-marquee",
+          "options": [
+            "direction",
+            "speed",
+            "fade",
+            "control"
+          ],
+          "react": {
+            "from": "@skryensya/react/marquee",
+            "name": "AutoplayMarquee"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "pauseLabel": {
+              "accepts": "text"
+            },
+            "playLabel": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "attrs": {
+              "data-start": "auto",
+              "data-state": "playing"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "element": "div",
+                        "part": "content",
+                        "slot": "children"
+                      },
+                      {
+                        "attrs": {
+                          "aria-hidden": "true"
+                        },
+                        "element": "div",
+                        "part": "content",
+                        "slot": "children"
+                      }
+                    ],
+                    "element": "div",
+                    "part": "track"
+                  }
+                ],
+                "element": "div",
+                "part": "viewport"
+              },
+              {
+                "also": [
+                  "sk-button",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "aria-pressed": "true",
+                  "data-icon-only": "",
+                  "data-size": "sm",
+                  "data-sk-button": "",
+                  "data-tone": "neutral",
+                  "data-variant": "translucent",
+                  "type": "button"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "element": "span",
+                    "part": "glyph"
+                  },
+                  {
+                    "also": [
+                      "sk-visually-hidden"
+                    ],
+                    "attrs": {
+                      "data-action": "play",
+                      "hidden": ""
+                    },
+                    "element": "span",
+                    "part": "label",
+                    "slot": "playLabel"
+                  },
+                  {
+                    "also": [
+                      "sk-visually-hidden"
+                    ],
+                    "attrs": {
+                      "data-action": "pause"
+                    },
+                    "element": "span",
+                    "part": "label",
+                    "slot": "pauseLabel"
+                  }
+                ],
+                "element": "button",
+                "part": "toggle",
+                "whenGiven": "control"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "media-gradient": {
       "css": "@skryensya/core/patterns/media-gradient.css",
       "id": "media-gradient",
@@ -12106,6 +12906,10 @@
           "attr": "data-size",
           "type": "string"
         },
+        "triggerTone": {
+          "attr": "data-tone",
+          "type": "string"
+        },
         "triggerVariant": {
           "attr": "data-variant",
           "type": "string"
@@ -12172,6 +12976,7 @@
             "triggerWeldStart",
             "triggerWeldEnd",
             "triggerVariant",
+            "triggerTone",
             "triggerSize",
             "triggerIconOnly",
             "disabled",
@@ -12272,6 +13077,7 @@
                   "triggerWeldStart",
                   "triggerWeldEnd",
                   "triggerVariant",
+                  "triggerTone",
                   "triggerSize",
                   "triggerIconOnly"
                 ],
@@ -13974,31 +14780,116 @@
       "css": "@skryensya/core/components/placeholder.css",
       "id": "placeholder",
       "options": {
-        "shape": {
-          "attr": "data-shape",
-          "default": "text",
+        "fill": {
+          "attr": "data-fill",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "height": {
+          "styleProperty": "--sk-placeholder-block-size",
+          "type": "string"
+        },
+        "lastLine": {
+          "default": "62%",
+          "styleProperty": "--sk-placeholder-last-line",
+          "type": "string"
+        },
+        "lines": {
+          "attr": "data-lines",
+          "computedInput": true,
+          "default": 3,
+          "type": "number"
+        },
+        "size": {
+          "attr": "data-size",
+          "default": "md",
           "type": "enum",
           "values": [
-            "text",
-            "block",
-            "circle"
+            "sm",
+            "md",
+            "lg"
           ]
+        },
+        "text": {
+          "attr": "data-text",
+          "default": "body",
+          "type": "enum",
+          "values": [
+            "caption",
+            "sm",
+            "body",
+            "lg",
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "display-sm",
+            "display-md",
+            "display-lg"
+          ]
+        },
+        "width": {
+          "styleProperty": "--sk-placeholder-inline-size",
+          "type": "string"
         }
       },
       "parts": {
+        "line": "sk-placeholder__line",
         "root": "sk-placeholder"
       },
       "semantics": {
         "Placeholder": {
           "alternatives": [
+            "Placeholder.paragraph",
             "Loader"
           ],
           "avoidWhen": [
-            "no se sabe qué va a aparecer; ahí un Loader dice más"
+            "no se sabe qué va a aparecer; ahí un Loader dice más",
+            "el texto es un párrafo; ahí varias líneas sueltas son Placeholder.paragraph, que ya sabe cómo termina un párrafo"
           ],
           "useWhen": [
-            "se prefigura contenido que está por llegar y ya se sabe qué forma tendrá",
-            "evita el salto de layout cuando los datos aparecen"
+            "se prefigura una línea de texto que está por llegar y ya se sabe qué rol tipográfico va a tener",
+            "evita el salto de layout cuando los datos aparecen, porque reserva exactamente la caja de línea del rol que reemplaza"
+          ]
+        },
+        "Placeholder.block": {
+          "alternatives": [
+            "Placeholder.paragraph",
+            "Loader"
+          ],
+          "avoidWhen": [
+            "lo que falta es texto; un rectángulo del alto de un párrafo no anticipa líneas, anticipa una imagen"
+          ],
+          "useWhen": [
+            "el hueco es rectangular: media, una tabla, un gráfico, una card",
+            "el bloque va dentro de un contenedor recortado (ImageFrame, Box con overflow) y tiene que tomar su caja y su esquina: eso es `fill`"
+          ]
+        },
+        "Placeholder.circle": {
+          "alternatives": [
+            "Placeholder.block"
+          ],
+          "avoidWhen": [
+            "la forma final no es circular; el skeleton no debe prometer una silueta que el contenido no tiene"
+          ],
+          "useWhen": [
+            "el hueco es un avatar o un control circular, y se puede nombrar su escala (sm, md, lg) para que el reemplazo no salte"
+          ]
+        },
+        "Placeholder.paragraph": {
+          "alternatives": [
+            "Placeholder"
+          ],
+          "avoidWhen": [
+            "es una sola línea; ahí es Placeholder y conserva la medida completa",
+            "las líneas tienen anchos que significan algo distinto entre sí (un nombre, una fecha); eso son Placeholder sueltos con su propio width"
+          ],
+          "useWhen": [
+            "lo que falta es prosa: un cuerpo, una descripción, un comentario",
+            "se quiere el borde irregular que hace leer el bloque como texto y no como una tabla"
           ]
         }
       },
@@ -14010,10 +14901,12 @@
           "intent": [
             "loading-skeleton",
             "content-not-yet-loaded",
-            "shape-of-absent-content"
+            "shape-of-absent-content",
+            "skeleton-line"
           ],
           "options": [
-            "shape"
+            "text",
+            "width"
           ],
           "react": {
             "from": "@skryensya/react/placeholder",
@@ -14022,8 +14915,107 @@
           "slots": {},
           "template": {
             "attrs": {
-              "aria-hidden": "true"
+              "aria-hidden": "true",
+              "data-shape": "text"
             },
+            "element": "span",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "Placeholder.block": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "loading-media",
+            "skeleton-rectangle",
+            "image-not-yet-loaded"
+          ],
+          "options": [
+            "width",
+            "height",
+            "fill"
+          ],
+          "react": {
+            "from": "@skryensya/react/placeholder",
+            "name": "PlaceholderBlock"
+          },
+          "slots": {},
+          "template": {
+            "attrs": {
+              "aria-hidden": "true",
+              "data-shape": "block"
+            },
+            "element": "span",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "Placeholder.circle": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "loading-avatar",
+            "skeleton-circle",
+            "person-not-yet-loaded"
+          ],
+          "options": [
+            "size"
+          ],
+          "react": {
+            "from": "@skryensya/react/placeholder",
+            "name": "PlaceholderCircle"
+          },
+          "slots": {},
+          "template": {
+            "attrs": {
+              "aria-hidden": "true",
+              "data-shape": "circle"
+            },
+            "element": "span",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "Placeholder.paragraph": {
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "loading-paragraph",
+            "skeleton-text-block",
+            "multiple-skeleton-lines"
+          ],
+          "options": [
+            "text",
+            "lines",
+            "lastLine"
+          ],
+          "react": {
+            "from": "@skryensya/react/placeholder",
+            "name": "PlaceholderParagraph"
+          },
+          "slots": {},
+          "template": {
+            "attrs": {
+              "aria-hidden": "true",
+              "data-shape": "paragraph"
+            },
+            "children": [
+              {
+                "element": "span",
+                "part": "line",
+                "repeatComputed": {
+                  "from": [
+                    "lines"
+                  ],
+                  "key": "line",
+                  "window": "skeleton-lines"
+                }
+              }
+            ],
             "element": "span",
             "host": true,
             "part": "root"
@@ -17487,6 +18479,7 @@
                   "data-icon-only": "",
                   "data-size": "sm",
                   "data-sk-button": "",
+                  "data-tone": "neutral",
                   "data-variant": "ghost",
                   "type": "button"
                 },
@@ -20271,5 +21264,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "34482f14e2f118a5"
+  "sourceHash": "0b9978b57cf36575"
 }

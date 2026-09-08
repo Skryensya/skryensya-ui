@@ -361,6 +361,10 @@
       "types": "./src/file-upload.ts",
       "default": "./src/file-upload.ts"
     },
+    "./fade-edge": {
+      "types": "./src/fade-edge.ts",
+      "default": "./src/fade-edge.ts"
+    },
     "./menu": {
       "types": "./src/menu.ts",
       "default": "./src/menu.ts"
@@ -380,6 +384,10 @@
     "./megamenu": {
       "types": "./src/megamenu.ts",
       "default": "./src/megamenu.ts"
+    },
+    "./marquee": {
+      "types": "./src/marquee.ts",
+      "default": "./src/marquee.ts"
     },
     "./meter": {
       "types": "./src/meter.ts",

@@ -41,7 +41,7 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "accent" },
+      options: { tone: "accent" },
       children: "Guardar",
     },
   },
@@ -51,7 +51,7 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "danger", size: "sm" },
+      options: { tone: "danger", size: "sm" },
       children: "Borrar",
     },
   },
@@ -72,7 +72,7 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "button",
       signature: "Button.navigation",
-      options: { variant: "accent", href: "/docs" },
+      options: { tone: "accent", href: "/docs" },
       children: "Documentación",
     },
   },
@@ -318,7 +318,78 @@ const signatureTrees: readonly Canonical[] = [
   {
     name: "placeholder/text",
     enhanced: false,
-    tree: { contract: "placeholder", signature: "Placeholder", options: { shape: "text" } },
+    tree: { contract: "placeholder", signature: "Placeholder", options: { text: "h3", width: "72%" } },
+  },
+  /* The paragraph is the one skeleton signature whose DOM is generated rather than fixed: the
+   * emitter expands `lines` through the same clamp React does, so this is where the two bindings
+   * would drift if either stopped agreeing about the count. */
+  {
+    name: "placeholder/paragraph",
+    enhanced: false,
+    tree: {
+      contract: "placeholder",
+      signature: "Placeholder.paragraph",
+      options: { text: "body", lines: 3, lastLine: "62%" },
+    },
+  },
+  {
+    name: "placeholder/circle",
+    enhanced: false,
+    tree: { contract: "placeholder", signature: "Placeholder.circle", options: { size: "sm" } },
+  },
+  {
+    name: "placeholder/block",
+    enhanced: false,
+    tree: {
+      contract: "placeholder",
+      signature: "Placeholder.block",
+      options: { width: "12rem", height: "6rem" },
+    },
+  },
+  /*
+   * MARQUEE and FADE-EDGE, published in the same session as the skeleton signatures and uncompared
+   * by G2 until this entry: exactly the gap `every published signature is reachable` exists to
+   * catch. The marquee cases are `enhanced` because the enhancer is what measures the run and turns
+   * it into a duration; the strip is inert markup until it mounts.
+   */
+  {
+    name: "marquee/requested",
+    enhanced: true,
+    tree: {
+      contract: "marquee",
+      signature: "Marquee",
+      options: { speed: "slow" },
+      slots: {
+        playLabel: "Reproducir movimiento",
+        pauseLabel: "Pausar movimiento",
+        children: "NORTHSTAR",
+      },
+    },
+  },
+  /* The default autoplay shape: no control at all, which is what `control` being opt-in means. */
+  {
+    name: "marquee/autoplay",
+    enhanced: true,
+    tree: {
+      contract: "marquee",
+      signature: "Marquee.autoplay",
+      options: { direction: "right", speed: "normal" },
+      slots: { children: "NORTHSTAR" },
+    },
+  },
+  {
+    name: "fade-edge/inline",
+    enhanced: false,
+    tree: {
+      contract: "fade-edge",
+      signature: "FadeEdge",
+      options: { direction: "to-right", size: "4rem" },
+      children: {
+        contract: "typography",
+        signature: "Text",
+        children: "Un texto que se desvanece en el borde",
+      },
+    },
   },
   {
     name: "tag/removable",
@@ -960,7 +1031,7 @@ const signatureTrees: readonly Canonical[] = [
         action: {
           contract: "button",
           signature: "Button.action",
-          options: { variant: "accent", weldEnd: true },
+          options: { tone: "accent", weldEnd: true },
           slots: { children: "Guardar" },
         },
         menu: {
@@ -1141,7 +1212,7 @@ const signatureTrees: readonly Canonical[] = [
         stage: {
           contract: "button",
           signature: "Button.action",
-          options: { variant: "accent" },
+          options: { tone: "accent" },
           children: "Guardar",
         },
         code: {
@@ -2070,15 +2141,50 @@ const signatureTrees: readonly Canonical[] = [
     },
   },
   /*
-   * COMMENT THREAD, three trees for the same reason the contract is five signatures: the pieces are
-   * meant to work apart, so a gate that only ever saw the full set would be evidence for exactly one
-   * of the three ways it ships. The bare `Comment` is the one the composition claims can stand
-   * alone; the composer is the one that has to hold a control it does not own.
+   * COMMENT THREAD, several trees for the same reason the contract is five signatures: the pieces
+   * are meant to work apart, so a gate that only ever saw the full set would be evidence for exactly
+   * one of the ways it ships. The composer is the one that has to hold a control it does not own.
+   *
+   * The single comment sits INSIDE a thread rather than at the top level: `Comment` declares
+   * `parents`, so a bare one is a tree its own contract rejects, and the validity gate said so.
    */
+  /*
+   * The two signatures G2 had never compared, each unreachable for its own reason: a
+   * `CommentTemplate` renders inert `<template>` content nobody composes by accident, and `Editor`
+   * is the one field whose canonical shape nothing else nests.
+   */
+  {
+    name: "comment-thread/template",
+    enhanced: false,
+    tree: {
+      contract: "comment-thread",
+      signature: "CommentTemplate",
+      slots: {
+        children: {
+          contract: "comment-thread",
+          signature: "Comment",
+          slots: { author: "Ada", timestamp: "hace 3h", children: "Una respuesta que todavía no existe." },
+        },
+      },
+    },
+  },
+  {
+    name: "editor/field",
+    enhanced: true,
+    tree: {
+      contract: "editor",
+      signature: "Editor",
+      options: { label: "Notas", placeholder: "Escribí algo", toolbarLabel: "Formato" },
+    },
+  },
   {
     name: "comment-thread/comment",
     enhanced: false,
     tree: {
+      contract: "comment-thread",
+      signature: "CommentThread",
+      options: { label: "Comentarios" },
+      slots: { children: {
       contract: "comment-thread",
       signature: "Comment",
       slots: {
@@ -2092,6 +2198,7 @@ const signatureTrees: readonly Canonical[] = [
         timestamp: "hace 3h",
         children: "El deploy quedó bien, gracias por revisar.",
       },
+    } },
     },
   },
   {

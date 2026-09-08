@@ -59,8 +59,8 @@ export const metricPanelRecipe: Recipe = {
        * cannot do is announce itself, and this draws nothing but the live region that does.
        */
       { contract: "loader", signature: "Loader.status", options: { label: "Cargando las visitas" } },
-      { contract: "placeholder", signature: "Placeholder", options: { shape: "text" } },
-      { contract: "placeholder", signature: "Placeholder", options: { shape: "block" } },
+      { contract: "placeholder", signature: "Placeholder" },
+      { contract: "placeholder", signature: "Placeholder.block" },
     ]),
 
     /*

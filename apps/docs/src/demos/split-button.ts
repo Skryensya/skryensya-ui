@@ -36,7 +36,7 @@ export const splitButtonTree = (t: Translate): UsageTree => ({
        * kept for symmetry with the trigger's own explicit `triggerVariant` below and with every
        * other tree in this file, all of which restate it the same way.
        */
-      options: { variant: "neutral", size: "md", weldEnd: true },
+      options: { variant: "solid", size: "md", weldEnd: true },
       slots: { children: t("demo.splitButton.action") },
     },
     menu: {
@@ -88,7 +88,7 @@ export const splitButtonSmallTree = (t: Translate): UsageTree => ({
     action: {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "neutral", size: "sm", weldEnd: true },
+      options: { variant: "solid", size: "sm", weldEnd: true },
       slots: { children: t("demo.splitButton.action") },
     },
     menu: {
@@ -120,7 +120,7 @@ export const splitButtonSubtleTree = (t: Translate): UsageTree => ({
     action: {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "subtle", size: "md", weldEnd: true },
+      options: { variant: "soft", size: "md", weldEnd: true },
       slots: { children: t("demo.splitButton.subtlePrimary") },
     },
     menu: {
@@ -212,7 +212,7 @@ export const splitButtonDangerTree = (t: Translate): UsageTree => ({
     action: {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "danger", size: "md", weldEnd: true },
+      options: { tone: "danger", size: "md", weldEnd: true },
       slots: { children: t("demo.splitButton.dangerPrimary") },
     },
     menu: {
@@ -272,7 +272,7 @@ export const splitButtonMenuFirstTree = (t: Translate): UsageTree => ({
       {
         contract: "button",
         signature: "Button.action",
-        options: { variant: "neutral", size: "md", weldStart: true },
+        options: { variant: "solid", size: "md", weldStart: true },
         slots: { children: t("demo.splitButton.action") },
       },
     ],

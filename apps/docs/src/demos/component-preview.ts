@@ -15,14 +15,14 @@ export const componentPreviewBareTree = (t: Translate): UsageTree => ({
     stage: {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "accent" },
+      options: { tone: "accent" },
       children: t("demo.componentPreview.button"),
     },
     code: {
       contract: "code-preview",
       signature: "CodePreview",
       slots: {
-        children: '<button class="sk-button" data-variant="accent">' + t("demo.componentPreview.button") + "</button>",
+        children: '<button class="sk-button" data-tone="accent">' + t("demo.componentPreview.button") + "</button>",
       },
     },
   },

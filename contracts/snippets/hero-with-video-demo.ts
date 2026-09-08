@@ -61,7 +61,7 @@ export const heroWithVideoDemoSnippet: Snippet = {
               {
                 contract: "button",
                 signature: "Button.action",
-                options: { variant: "accent" },
+                options: { tone: "accent" },
                 children: "Watch the demo",
               },
               {

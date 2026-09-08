@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-06T03:29:52.157Z",
+  "generatedAt": "2026-09-08T01:31:55.231Z",
   "results": {
     "packages/react/src/components/accordion.test.tsx": {
       "keeps exactly one item open in single mode": "passed",
@@ -34,6 +34,7 @@
     "packages/react/src/components/button.test.tsx": {
       "renders a native button that does not submit forms by default": "passed",
       "encodes both default appearance axes and the interaction contract": "passed",
+      "serializes the xs size onto the same attribute as every other size": "passed",
       "exposes disabled state to both native controls and assistive technology": "passed",
       "carries a leading icon alongside its label": "passed",
       "renders an icon-only button as a named square": "passed",
@@ -192,7 +193,12 @@
       "announces the visible row range as a polite, atomic live region": "passed"
     },
     "packages/react/src/components/placeholder.test.tsx": {
-      "renders decorative geometry and forwards layout classes": "passed",
+      "clamps a line count to something renderable": "passed",
+      "sizes a line by the type role it replaces, not by a hand-written length": "passed",
+      "draws a paragraph as real lines, clamped, with the raggedness authored on the root": "passed",
+      "clamps the rendered line count the same way the emitter does": "passed",
+      "gives a filled block its parent's whole box, and a circle the avatar scale": "passed",
+      "keeps every signature out of the accessibility tree": "passed",
       "has no serious accessibility violations inside a labelled busy region": "passed"
     },
     "packages/react/src/components/process-list.test.tsx": {
@@ -594,8 +600,10 @@
     "packages/react/src/components/comment-thread.test.tsx": {
       "renders an author, a timestamp and a body with no thread, actions or replies around it": "passed",
       "puts the avatar in the gutter, apart from the name, so the thread line can hang off it": "passed",
+      "makes the avatar and author one profile link only when given a profile URL": "passed",
       "takes composed content in the author slot, not only a string": "passed",
       "renders no fold control unless it is collapsible AND has replies to fold": "passed",
+      "draws the fold control as an icon-only Button at the xs size": "passed",
       "folds the REPLIES and leaves the comment itself readable": "passed",
       "nests replies as Comments of the same shape, at any depth": "passed",
       "reports the direction clicked and reflects the viewer's own past vote": "passed",
@@ -603,13 +611,17 @@
       "submits the body of whatever control it was given, then resets it": "passed",
       "reads a single-line Input just as readily as a Textarea, since it ships neither": "passed",
       "submits nothing when the control is empty": "passed",
-      "names the thread and renders its composer above the comments": "passed"
+      "names the thread and renders its composer above the comments": "passed",
+      "hands the thread's own composer to a trigger and opens it as a sheet": "passed",
+      "keeps that composer open in flow above the breakpoint, with no sheet class": "passed",
+      "opens a reply box as a sheet, and says so on the trigger": "passed",
+      "says a reply trigger opens a dialog, in both presentations": "passed"
     },
     "packages/vanilla/src/components/comment-thread.test.ts": {
       "dispatches vote with the comment's id and the clicked direction, and never mutates the paint itself": "passed",
       "attributes a nested reply's vote to the reply, not to the comment above it": "passed",
       "dispatches delete only where the delete trigger exists": "passed",
-      "toggles the reply composer's aria-expanded and hidden state, scoped to its own comment": "passed",
+      "toggles the reply composer's aria-expanded and open state, scoped to its own comment": "passed",
       "collapse folds the REPLIES and leaves the comment itself readable": "passed",
       "submits a reply with the enclosing comment's id as parentId, resets it and closes the box": "passed",
       "cancel on an EMPTY composer just closes it: nothing to lose, nothing to ask": "passed",
@@ -620,7 +632,11 @@
       "folds the replies of a standalone Comment that has no thread around it": "passed",
       "submits a standalone CommentComposer, reporting no parent": "passed",
       "reads a single-line input as readily as a textarea, since the composer ships neither": "passed",
-      "reads a contenteditable surface too, so an Editor can be the control": "passed"
+      "reads a contenteditable surface too, so an Editor can be the control": "passed",
+      "shuts the thread's own composer and hands it to its trigger": "passed",
+      "leaves the thread's own composer open in flow above the breakpoint, with no sheet class": "passed",
+      "marks a reply box as a sheet, and un-presses its trigger when the platform closes it": "passed",
+      "says a reply trigger opens a dialog, in both presentations": "passed"
     },
     "packages/core/src/menubar.test.ts": {
       "moves one item at a time and wraps at both ends": "passed",
@@ -835,6 +851,7 @@
       "marks the root ready only once a real path has been written": "passed",
       "fans previews into an aria-hidden layer, and renders none without the slot": "passed",
       "publishes the silhouette as a clip for the state layer to follow": "passed",
+      "writes active as the attribute the stylesheet reads, and omits it when off": "passed",
       "writes no reveal attribute, because a folder is never visible at rest": "passed",
       "mirrors the silhouette inside an RTL subtree": "passed",
       "is a real anchor carrying the folder's own anatomy": "passed",
@@ -929,6 +946,28 @@
       "acts on a named inner scroller instead of the window": "passed",
       "stops syncing once cleaned up": "passed",
       "mounts once per authored root": "passed"
+    },
+    "packages/react/src/components/marquee.test.tsx": {
+      "renders one semantic run, one hidden visual copy, and waits for Play": "passed",
+      "supports vertical travel and derives duration from the content height": "passed",
+      "fills a short run up to its viewport so the loop leaves no hole": "passed",
+      "puts the Play/Pause control in a real Button and fades its own edges by default": "passed",
+      "ships no control unless asked, and then never starts paused": "passed",
+      "starts autoplay with a pressed Pause control": "passed",
+      "stops autoplay when the live reduced-motion preference turns on": "passed",
+      "renders marquee contract trees, including FadeEdge composition": "passed"
+    },
+    "packages/vanilla/src/components/marquee.test.ts": {
+      "derives constant velocity from duration-scale cadence": "passed",
+      "widens gaps only when one run cannot cover its viewport": "passed",
+      "starts only automatic motion, and never against reduced motion": "passed",
+      "keeps requested motion paused until Play, then swaps the available action": "passed",
+      "starts autoplay and derives duration from measured content": "passed",
+      "fills a short run up to its viewport and times the widened run, not the authored one": "passed",
+      "stops when reduced motion turns on and resumes unmodified autoplay when it turns off": "passed",
+      "never lets a preference cycle override an explicit pause": "passed",
+      "runs an uncontrolled autoplay strip without a toggle to talk to": "passed",
+      "mounts each authored root only once": "passed"
     }
   }
 }

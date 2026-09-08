@@ -6,10 +6,14 @@ import {
   commentActionsTree,
   commentAloneTree,
   commentDeepTree,
+  commentSkeletonTree,
+  commentThreadFixedTree,
+  commentThreadInfiniteScrollTree,
   commentThreadTree,
 } from "../../demos/comment-thread";
 import { getLocale, useTranslations } from "../../i18n";
 import actionsScript from "../../demos/scripts/comment-thread-actions.ts?raw";
+import infiniteScrollScript from "../../demos/scripts/comment-thread-infinite-scroll.ts?raw";
 import contractSource from "@contracts/semantic/comment-thread.yaml?raw";
 import coreSource from "@core/src/comment-thread.ts?raw";
 import cssSource from "@core/css/components/comment-thread.css?raw";
@@ -23,6 +27,9 @@ import "@skryensya/core/components/comment-thread.css";
 /* The interactive demos compose a real `Dialog` for the delete confirmation (the composition
    `comment-thread.ts` points at), so the preview frame needs its sheet too. */
 import "@skryensya/core/components/dialog.css";
+/* The loading demos compose `Placeholder`; `loader.css` and `layout.css` are already global
+   (`Base.astro`), but this sheet is not. */
+import "@skryensya/core/components/placeholder.css";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -81,7 +88,7 @@ const html = `<div class="sk-comment-thread" data-sk-comment-thread aria-label="
             <!-- Cualquier control: un FormField con Textarea, un Input, un Editor. -->
             <div class="sk-comment-composer__actions">
     <button type="button" class="sk-comment-composer__cancel sk-button sk-interactive" data-sk-comment-composer-cancel data-size="sm" data-variant="ghost">Cancelar</button>
-    <button type="submit" class="sk-comment-composer__submit sk-button sk-interactive" data-sk-comment-composer-submit data-size="sm" data-variant="accent">Publicar</button>
+    <button type="submit" class="sk-comment-composer__submit sk-button sk-interactive" data-sk-comment-composer-submit data-size="sm" data-tone="accent">Publicar</button>
   </div>
           </form>
         </div>
@@ -124,6 +131,7 @@ import { Textarea } from "@skryensya/react/input";
   <Comment
     id="c1"
     avatar={<Avatar name="Ada">Ad</Avatar>}
+    profileHref="/profiles/ada" // Omítelo si esa identidad no lleva a un perfil.
     author="Ada"
     timestamp="hace 3h"
     collapsible
@@ -204,6 +212,10 @@ const sourceFiles = [
         {
           name: "renders no fold control unless it is collapsible AND has replies to fold",
           description: t("commentThread.test3"),
+        },
+        {
+          name: "draws the fold control as an icon-only Button at the xs size",
+          description: t("commentThread.test28"),
         },
         {
           name: "folds the REPLIES and leaves the comment itself readable",
@@ -328,9 +340,29 @@ const sourceFiles = [
     <p set:html={t("commentThread.demoThreadBody")} />
     <ComponentPreview js={actionsScript} previewScript={actionsScript} tree={commentThreadTree(t)} label={t("commentThread.demoLabel")} />
 
+    <h4>{t("commentThread.demoFixedTitle")}</h4>
+    <p set:html={t("commentThread.demoFixedBody")} />
+    <ComponentPreview js={actionsScript} previewScript={actionsScript} tree={commentThreadFixedTree(t)} label={t("commentThread.demoFixedLabel")} minHeight="26rem" />
+
     <h4>{t("commentThread.demoDeepTitle")}</h4>
     <p set:html={t("commentThread.demoDeepBody")} />
     <ComponentPreview js={actionsScript} previewScript={actionsScript} tree={commentDeepTree(t)} label={t("commentThread.demoDeepLabel")} minHeight="26rem" />
+
+    <h3>{t("commentThread.demoLoadingTitle")}</h3>
+    <p set:html={t("commentThread.demoLoadingBody")} />
+
+    <h4>{t("commentThread.demoSkeletonTitle")}</h4>
+    <p set:html={t("commentThread.demoSkeletonBody")} />
+    <ComponentPreview tree={commentSkeletonTree(t)} label={t("commentThread.demoSkeletonLabel")} />
+
+    <h4>{t("commentThread.demoInfiniteTitle")}</h4>
+    <p set:html={t("commentThread.demoInfiniteBody")} />
+    <ComponentPreview
+      js={infiniteScrollScript}
+      previewScript={infiniteScrollScript}
+      tree={commentThreadInfiniteScrollTree(t)}
+      label={t("commentThread.demoInfiniteLabel")}
+    />
 
     <h3>{t("commentThread.behaviorTitle")}</h3>
     <p set:html={t("commentThread.behaviorBody1")} />

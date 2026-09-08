@@ -2790,25 +2790,44 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .d
 }
 
 /*
- * The report-issue tile. `.sk-tile` already brings the surface, border, radius, and (via
- * `sk-interactive`) the hover/focus wash; everything here is sizing, never paint.
+ * REPORT AN ISSUE, above the pager. A heading and a sentence with a link in it, which is the whole
+ * design: this used to be a bordered `.sk-tile`, and a tile is a SURFACE that reads as a
+ * destination worth choosing - the same weight the catalogue's own cards carry. Closing a page of
+ * documentation with one made a quiet utility look like the page's call to action.
  *
- * CAPPED, not full-bleed: `.sk-tile--interactive:where(a, …) { inline-size: 100% }` (tile.css)
- * fills whatever contains it, which here is the same prose measure as the paragraph above it. A
- * two-line note stretched to that width read as a banner, not a utility link; a reading measure of
- * its own keeps it reading as one small, self-contained card.
+ * Almost nothing to declare, because almost nothing is new: the `<h2>` takes the docs' own unlayered
+ * prose heading rule (`--space-section` above it, which is also what separates this block from the
+ * content) and the bare anchor takes `main a:not(…)`'s prose link ink. Only the two things those
+ * cannot know are here.
  */
-.docs-footer__report-tile {
-  margin-block-start: var(--space-stack-sm);
-  max-inline-size: 26rem;
+/* 80ch on the TEXT, not on the block: the page column is wider than comfortable reading for a run of
+   plain prose, and this is a couple of lines of it closing the document. The cap sits on the
+   paragraph so the control below keeps the container's full width to place itself in - capping the
+   whole block would have quietly bounded the button too, for a measure that is only ever about
+   reading. The heading needs none of its own; it is a few words long either way. */
+.docs-report-issue > p {
+  margin: 0;
+  max-inline-size: 80ch;
+  color: var(--color-text-secondary);
 }
 
-/* Icon beside the title, one line: `sk-tile__title` itself stays a plain block, since every OTHER
-   tile's title has no leading icon and no reason to become a flex container for one. */
-.docs-footer__report-tile-title {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-inline-xs);
+/* Only the two things `button.css` cannot know: that this control closes a block of prose (so it
+   needs air above it, which a button standing alone in flow has no reason to carry), and that it
+   must not stretch. Everything else - the face, the gap between label and glyph, the focus ring, the
+   44px target - is Button's own. `text-decoration` is set for the same reason
+   `.docs-page-nav__link` sets it: `.sk-button` clears it inside `@layer components`, which an
+   unlayered docs rule on `main a` would otherwise beat. */
+.docs-report-issue__link {
+  margin-block-start: var(--space-stack-sm);
+  text-decoration: none;
+}
+
+/* One divider before the pager, not two. `.docs-page-nav` opens with `--space-section` and a rule of
+   its own, which is right when it follows the document directly; with this block in between, that
+   much air plus a line read as a second section break for a two-link row. The rule stays (it is what
+   separates "the page" from "where to go next"), the gap comes down. */
+.docs-report-issue + .docs-page-nav {
+  margin-block-start: var(--space-stack-lg);
 }
 
 /*

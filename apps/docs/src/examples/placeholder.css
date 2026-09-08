@@ -1,5 +1,10 @@
-/* Demo chrome only: width of the stage and Placeholder size hooks.
- * Structure and loaded UI come from kit primitives (Box, Stack, ImageFrame, …). */
+/* Demo chrome only: the stage width and the crossfade between the two states.
+ *
+ * Every Placeholder SIZE that used to live here is gone. Nine classes named things like
+ * `__line--title` and `__avatar` and set lengths by hand (`1.5rem` for a line of h3, whose real
+ * line box is 27px); the contract now takes `text="h3"`, `size="md"` and `fill`, and the stylesheet
+ * resolves those to the same tokens Heading and Avatar read. Structure and loaded UI come from kit
+ * primitives (Box, Stack, ImageFrame, …), as before. */
 
 .placeholder-example {
   inline-size: min(100%, 28rem);
@@ -36,53 +41,6 @@
 .placeholder-example__swap[data-state="loaded"] [data-placeholder-content] {
   opacity: 1;
   pointer-events: auto;
-}
-
-.placeholder-example__media {
-  --sk-placeholder-block-size: 100%;
-
-  border-radius: inherit;
-}
-
-.placeholder-example__line--eyebrow {
-  --sk-placeholder-inline-size: 40%;
-  --sk-placeholder-block-size: var(--size-control-sm);
-}
-
-.placeholder-example__line--title {
-  --sk-placeholder-block-size: 1.5rem;
-}
-
-.placeholder-example__line--title-short {
-  --sk-placeholder-inline-size: 72%;
-  --sk-placeholder-block-size: 1.5rem;
-}
-
-.placeholder-example__line--body,
-.placeholder-example__line--body-short {
-  --sk-placeholder-block-size: 1.25rem;
-}
-
-.placeholder-example__line--body-short {
-  --sk-placeholder-inline-size: 88%;
-}
-
-.placeholder-example__avatar {
-  --sk-placeholder-size: var(--size-control-md);
-}
-
-.placeholder-example__byline-copy {
-  flex: 1 1 auto;
-  max-inline-size: 12rem;
-}
-
-.placeholder-example__byline-copy .sk-placeholder:last-child {
-  --sk-placeholder-inline-size: 70%;
-  --sk-placeholder-block-size: 1rem;
-}
-
-.placeholder-example__byline-copy .sk-placeholder:first-child {
-  --sk-placeholder-block-size: 1.25rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

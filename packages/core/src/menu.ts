@@ -350,6 +350,8 @@ export const menuContract = {
      * already validate against Button's real enum before handing it down here.
      */
     triggerVariant: { type: "string", attr: "data-variant" },
+    /** Button's other appearance axis, forwarded the same way and for the same reason as `triggerVariant`. */
+    triggerTone: { type: "string", attr: "data-tone" },
     triggerSize: { type: "string", attr: "data-size" },
     /**
      * The SAME attribute `Button`'s own `iconOnly` option writes (`data-icon-only`). A trigger
@@ -405,6 +407,7 @@ export const menuContract = {
         "triggerWeldStart",
         "triggerWeldEnd",
         "triggerVariant",
+        "triggerTone",
         "triggerSize",
         "triggerIconOnly",
         "disabled",
@@ -444,6 +447,7 @@ export const menuContract = {
               "triggerWeldStart",
               "triggerWeldEnd",
               "triggerVariant",
+              "triggerTone",
               "triggerSize",
               "triggerIconOnly",
             ],

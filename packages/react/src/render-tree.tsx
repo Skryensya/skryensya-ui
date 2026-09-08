@@ -21,6 +21,7 @@ import * as sliderModule from "./components/slider.js";
 import * as timeFieldModule from "./components/time-field.js";
 import * as fileUploadModule from "./components/file-upload.js";
 import * as carouselModule from "./components/carousel.js";
+import * as marqueeModule from "./components/marquee.js";
 import * as treeViewModule from "./components/tree-view.js";
 import * as sidebarModule from "./components/sidebar.js";
 import * as backToTopModule from "./components/back-to-top.js";
@@ -53,6 +54,7 @@ import * as loaderModule from "./components/loader.js";
 import * as placeholderModule from "./components/placeholder.js";
 import * as buttonModule from "./components/button.js";
 import * as iconModule from "./components/icon.js";
+import * as fadeEdgeModule from "./components/fade-edge.js";
 import * as imageFrameModule from "./components/image-frame.js";
 import * as inputModule from "./components/input.js";
 import * as navListModule from "./components/nav-list.js";
@@ -134,6 +136,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/back-to-top": backToTopModule,
   "@skryensya/react/skip-link": skipLinkModule,
   "@skryensya/react/carousel": carouselModule,
+  "@skryensya/react/marquee": marqueeModule,
   "@skryensya/react/file-upload": fileUploadModule,
   "@skryensya/react/time-field": timeFieldModule,
   "@skryensya/react/tree-view": treeViewModule,
@@ -149,6 +152,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/button": buttonModule,
   "@skryensya/react/icon": iconModule,
   "@skryensya/react/image-frame": imageFrameModule,
+  "@skryensya/react/fade-edge": fadeEdgeModule,
   "@skryensya/react/form-field": formFieldModule,
   "@skryensya/react/input": inputModule,
   "@skryensya/react/nav-list": navListModule,

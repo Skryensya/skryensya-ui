@@ -119,7 +119,7 @@ export const dashboardTree = (t: Translate, locale: "es" | "en"): UsageTree => {
               {
                 contract: "button",
                 signature: "Button.action",
-                options: { variant: "subtle" },
+                options: { variant: "soft" },
                 children: [
                   { contract: "icon", signature: "Icon", options: { name: "download", size: "sm" } },
                   t("demo.dashboard.export"),

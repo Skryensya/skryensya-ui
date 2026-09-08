@@ -19,6 +19,23 @@
  * A `mask-image` gradient reads by ALPHA, not color, so the "transparent" mode below uses `black`
  * as its opaque stop; that value paints nothing, it only says "fully visible here".
  *
+ * ── THE RAMP ────────────────────────────────────────────────────────────────────────────
+ * Both modes fade on the same seven-stop ease-out curve. A two-stop linear ramp spends too much of
+ * the band at middling alpha, which reads as a grey veil rather than an edge disappearing. This
+ * curve holds full opacity at the inner boundary, crosses 50% at the band midpoint, then releases
+ * gently into the edge. The content remains legible deeper into the band without ending in a hard
+ * cutoff.
+ *
+ *   distance along the band    0%  12%  28%  50%  72%  88%  100%
+ *   ink                       100%  98%  88%  50%  12%   2%    0%
+ *
+ * Starting at 100% prevents the fade from tinting content before the declared band begins.
+ *
+ * The two modes express the same curve in two coordinate systems, which is why the stop list is
+ * written twice. The mask covers the WHOLE element (flat, then the ramp in the last
+ * `--sk-fade-edge-size`), while the colour overlay is a `::after` that IS the band, so its ramp
+ * spans 0-100% of itself. Editing one and not the other is how the two modes drift apart.
+ *
  * Example, fading a scrollable list into its own card:
  *  <div class="sk-fade-edge" style="max-height: 12rem; overflow: hidden;">…</div>
  *
@@ -32,49 +49,57 @@
     --sk-fade-edge-size: 4rem;
     --sk-fade-edge-color: var(--color-bg-canvas);
 
+    /*
+     * The ramp, in the MASK's coordinates: the element's whole length, with the curve in the last
+     * `--sk-fade-edge-size`. Each stop sits `size * (1 - F)` back from the far edge, so the shape
+     * holds at any band size. One list, four directions - the direction keyword turns the gradient
+     * line and the positions follow it.
+     */
+    --sk-fade-edge-mask-ramp:
+      rgb(0 0 0 / 100%) calc(100% - var(--sk-fade-edge-size)),
+      rgb(0 0 0 / 98%) calc(100% - var(--sk-fade-edge-size) * 0.88),
+      rgb(0 0 0 / 88%) calc(100% - var(--sk-fade-edge-size) * 0.72),
+      rgb(0 0 0 / 50%) calc(100% - var(--sk-fade-edge-size) * 0.5),
+      rgb(0 0 0 / 12%) calc(100% - var(--sk-fade-edge-size) * 0.28),
+      rgb(0 0 0 / 2%) calc(100% - var(--sk-fade-edge-size) * 0.12),
+      transparent 100%;
+    /*
+     * The same curve in the OVERLAY's coordinates: the `::after` is the band itself, so the ramp
+     * runs 0-100% of it, ink first. Each direction points the gradient line so that "ink at 0%"
+     * lands on the edge being covered.
+     */
+    --sk-fade-edge-ramp:
+      var(--sk-fade-edge-color) 0%,
+      color-mix(in srgb, var(--sk-fade-edge-color) 98%, transparent) 12%,
+      color-mix(in srgb, var(--sk-fade-edge-color) 88%, transparent) 28%,
+      color-mix(in srgb, var(--sk-fade-edge-color) 50%, transparent) 50%,
+      color-mix(in srgb, var(--sk-fade-edge-color) 12%, transparent) 72%,
+      color-mix(in srgb, var(--sk-fade-edge-color) 2%, transparent) 88%,
+      transparent 100%;
+
     position: relative;
-    mask-image: linear-gradient(
-      to bottom,
-      black 0%,
-      black calc(100% - var(--sk-fade-edge-size)),
-      transparent 100%
-    );
+    mask-image: linear-gradient(to bottom, #000 0%, var(--sk-fade-edge-mask-ramp));
     mask-position: 0 0;
     mask-size: 100% 100%;
     mask-repeat: no-repeat;
   }
 
   .sk-fade-edge[data-direction="to-top"] {
-    mask-image: linear-gradient(
-      to top,
-      black 0%,
-      black calc(100% - var(--sk-fade-edge-size)),
-      transparent 100%
-    );
+    mask-image: linear-gradient(to top, #000 0%, var(--sk-fade-edge-mask-ramp));
   }
 
   .sk-fade-edge[data-direction="to-right"] {
-    mask-image: linear-gradient(
-      to right,
-      black 0%,
-      black calc(100% - var(--sk-fade-edge-size)),
-      transparent 100%
-    );
+    mask-image: linear-gradient(to right, #000 0%, var(--sk-fade-edge-mask-ramp));
   }
 
   .sk-fade-edge[data-direction="to-left"] {
-    mask-image: linear-gradient(
-      to left,
-      black 0%,
-      black calc(100% - var(--sk-fade-edge-size)),
-      transparent 100%
-    );
+    mask-image: linear-gradient(to left, #000 0%, var(--sk-fade-edge-mask-ramp));
   }
 
   /*
-   * Color mode swaps the mask for a painted overlay: `::after` sits over the same edge and goes
-   * transparent → `--sk-fade-edge-color`, so the band reads as that color regardless of what the
-   * element sits on top of.
+   * Color mode swaps the mask for a painted overlay: `::after` sits over the same edge and runs
+   * `--sk-fade-edge-color` → transparent on the same curve, so the band reads as that color
+   * regardless of what the element sits on top of.
    */
   .sk-fade-edge[data-fade="color"] {
     mask-image: none;
@@ -85,26 +110,28 @@
     position: absolute;
     inset: auto 0 0 0;
     block-size: var(--sk-fade-edge-size);
-    background: linear-gradient(to bottom, transparent, var(--sk-fade-edge-color));
+    /* `to top`, not `to bottom`: the ink belongs at the edge being covered, which for a fade toward
+     * the bottom is the bottom of this band. */
+    background: linear-gradient(to top, var(--sk-fade-edge-ramp));
     pointer-events: none;
   }
 
   .sk-fade-edge[data-fade="color"][data-direction="to-top"]::after {
     inset: 0 0 auto 0;
-    background: linear-gradient(to top, transparent, var(--sk-fade-edge-color));
+    background: linear-gradient(to bottom, var(--sk-fade-edge-ramp));
   }
 
   .sk-fade-edge[data-fade="color"][data-direction="to-right"]::after {
     inset: 0 0 0 auto;
     inline-size: var(--sk-fade-edge-size);
     block-size: auto;
-    background: linear-gradient(to right, transparent, var(--sk-fade-edge-color));
+    background: linear-gradient(to left, var(--sk-fade-edge-ramp));
   }
 
   .sk-fade-edge[data-fade="color"][data-direction="to-left"]::after {
     inset: 0 auto 0 0;
     inline-size: var(--sk-fade-edge-size);
     block-size: auto;
-    background: linear-gradient(to left, transparent, var(--sk-fade-edge-color));
+    background: linear-gradient(to right, var(--sk-fade-edge-ramp));
   }
 }

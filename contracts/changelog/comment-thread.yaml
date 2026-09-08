@@ -3,8 +3,100 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "e7d751ebd5208c36"
+surface: "fae2f4110942292e"
 entries:
+  - date: 2026-09-07
+    kind: bugfix
+    es:
+      title: Los botones de voto ya no pierden sus clicks contra el control de plegado
+      body: >-
+        El control que pliega las respuestas mide 24px de cara, pero como todo Button expande su
+        área táctil a 44px, su caja de click sobresalía unos 6px del canal hacia la columna de
+        contenido. La fila de acciones venía en sentido contrario: cuando arranca con el grupo de
+        voto se corre esos mismos 6px hacia la izquierda por corrección óptica. Las dos se cruzaban
+        justo encima de la flecha de voto positivo, y como el control de plegado lleva
+        <code>z-index: 1</code> para poder interrumpir la línea del hilo, ganaba él: el upvote
+        quedaba debajo de una caja invisible que se comía el click.
+        El grupo de voto ahora se apila por encima. Solo dentro de un comentario: un
+        <code>CommentVote</code> suelto no tiene ninguna nota de la que despegarse.
+    en:
+      title: The vote buttons no longer lose their clicks to the fold control
+      body: >-
+        The reply-fold control has a 24px face, but like every Button it expands its touch target to
+        44px, so its click box overhung the gutter by about 6px into the content column. The actions
+        row came the other way: a row that leads with the vote group is pulled left by exactly those
+        6px for optical correction. The two met right over the upvote arrow, and because the fold
+        control carries <code>z-index: 1</code> so it can interrupt the thread line, it won: the
+        upvote sat under an invisible box that swallowed the click.
+        The vote group now stacks above it. Only inside a comment: a standalone
+        <code>CommentVote</code> has no gutter node to clear.
+  - date: 2026-09-07
+    kind: feature
+    target: collapsible
+    es:
+      title: El control que pliega las respuestas ahora es un Button xs de verdad
+      body: >-
+        El handle que monta sobre la línea del hilo dejaba de ser una cara achicada a mano: era un
+        <code>sm</code> recortado a <code>--size-icon-md</code> (20px) con los hooks de Button
+        desde el CSS de comment-thread. Ahora es <code>data-size="xs"</code>, un tamaño que la
+        escala publica (ver el changelog de <code>button</code>), así que el nodo mide 24px, que
+        es lo que <code>xs</code> pinta en todos lados.
+        Se ve un poco más grande que antes (20px a 24px) y esa es la única diferencia visible. A
+        cambio, la medida ya no vive acá: cualquier otro componente que necesite un nodo del mismo
+        tamaño lo pide por su nombre, y el piso de 24px es el de WCAG 2.2 SC 2.5.8 en vez de un
+        número que había quedado atado al token de un icono. El área de click era 44px y sigue
+        siendo 44px.
+        Nada que se autore a mano se rompe: quien haya escrito el markup del control con
+        <code>data-size="sm"</code> lo sigue viendo funcionar, sólo que con la cara vieja.
+    en:
+      title: The reply-fold control is now a real xs Button
+      body: >-
+        The handle riding on the thread's rail used to be a hand-shrunk face: an <code>sm</code>
+        cut down to <code>--size-icon-md</code> (20px) through Button's hooks, from
+        comment-thread's own CSS. It is now <code>data-size="xs"</code>, a size the scale
+        publishes (see <code>button</code>'s own changelog), so the node measures 24px, which is
+        what <code>xs</code> paints everywhere.
+        It reads slightly larger than before (20px to 24px) and that is the only visible
+        difference. In exchange the measurement no longer lives here: any other component that
+        needs a node this size asks for it by name, and the 24px floor is WCAG 2.2 SC 2.5.8's
+        rather than a number that had been tied to an icon token. The hit area was 44px and is
+        still 44px.
+        Nothing hand-authored breaks: markup written with <code>data-size="sm"</code> on this
+        control keeps working, just with the old face.
+  - date: 2026-09-07
+    kind: feature
+    es:
+      title: En un teléfono el composer es un Vaul, y arriba sigue en flujo
+      body: >-
+        Las dos cajas de escribir (la respuesta de un comentario y el composer del hilo) pasan de
+        `&lt;div&gt;` a `&lt;dialog&gt;`. Debajo de <code>--breakpoint-desktop</code> el binding las abre con
+        <code>showModal()</code> y quedan ancladas al borde inferior; por encima siguen en flujo,
+        exactamente donde estaban. Es UN nodo en dos presentaciones y no dos nodos: duplicarlo
+        duplicaría el control que pasa quien lo usa, con ids y labels repetidos y el borrador partido
+        en dos. Toda la pintura del panel viene del pattern Vaul a través de la clase
+        <code>sk-vaul</code>, que pone el binding; acá sólo se reasignan sus hooks, igual que hace
+        Drawer. Sin enhancer la caja se queda en flujo a cualquier ancho, que es el mismo fallback
+        que describe la decisión 9. El disparador de responder ahora declara
+        <code>aria-haspopup="dialog"</code> además de <code>aria-expanded</code>: lo primero dice qué
+        abre, lo segundo si está abierto. Y como el composer del hilo siempre estuvo abierto en
+        flujo, en móvil necesita una forma de entrar: <code>composerTriggerLabel</code> nombra ese
+        control, que sólo existe donde la caja es una hoja.
+    en:
+      title: On a phone the composer is a Vaul, and stays in flow above it
+      body: >-
+        Both write boxes (a comment's reply and the thread's own composer) go from `&lt;div&gt;` to
+        `&lt;dialog&gt;`. Below <code>--breakpoint-desktop</code> the binding opens them with
+        <code>showModal()</code> and they arrive from the block-end edge; above it they stay in flow,
+        exactly where they were. ONE node in two presentations rather than two nodes: rendering it
+        twice would duplicate the consumer's own control, which means duplicate ids, duplicate labels
+        and a draft split across two fields. Every bit of panel, edge, slide and backdrop comes from
+        the Vaul pattern through the <code>sk-vaul</code> class the binding adds; this contract only
+        reassigns its hooks, the same deal Drawer keeps. With no enhancer the box stays in flow at
+        every width, the fallback decision 9 describes. The reply trigger now carries
+        <code>aria-haspopup="dialog"</code> alongside <code>aria-expanded</code>: the first says what
+        it opens, the second whether it is open. And because the thread's composer was always open in
+        flow, on a phone it needs a way in: <code>composerTriggerLabel</code> names that control,
+        which exists only where the box is a sheet.
   - date: 2026-09-05
     kind: feature
     es:
@@ -103,3 +195,31 @@ entries:
         disclosure pattern `NavListGroup` already does (`aria-expanded` + `hidden`), not a Zag
         machine. Delete carries no modal of its own - a consumer composes `Dialog` (`alert: true`)
         if they want one.
+  - date: 2026-09-07
+    kind: bugfix
+    es:
+      title: Un voto sin marcar ahora se anuncia como un toggle apagado
+      body: >-
+        Los botones de voto sólo escribían <code>aria-pressed="true"</code> cuando el voto estaba
+        puesto, así que uno sin marcar no llevaba el atributo y un lector de pantalla lo leía como un
+        botón común: se perdía el hecho de que se puede presionar. Ahora la base es
+        <code>false</code> y sube a <code>true</code> en el que corresponde.
+        Además el binding de React escribe los atributos de opción que el contrato ya definía en sus
+        hosts (<code>data-collapse-label</code>, <code>data-composer-trigger-label</code>,
+        <code>data-reply</code>, <code>data-delete-label</code>, los de voto y los del composer), y
+        el disparador del composer se emite siempre en vez de sólo cuando la vista es una hoja: qué
+        tan ancha es la pantalla ya lo decide el CSS, y decidirlo también en JS hacía que los dos
+        bindings dibujaran DOM distinto al mismo ancho.
+    en:
+      title: An unset vote now announces itself as a toggle that is off
+      body: >-
+        The vote buttons only wrote <code>aria-pressed="true"</code> when the vote was cast, so an
+        unset one carried no attribute at all and a screen reader read it as an ordinary button,
+        losing the fact that it can be pressed. The base is now <code>false</code>, raised to
+        <code>true</code> on whichever one is cast.
+        The React binding also writes the option attributes the contract already declared on its
+        hosts (<code>data-collapse-label</code>, <code>data-composer-trigger-label</code>,
+        <code>data-reply</code>, <code>data-delete-label</code>, the vote pair's and the composer's),
+        and the composer trigger is now always emitted rather than only when the view is a sheet:
+        how wide the screen is was already a CSS decision, and deciding it in JS as well made the two
+        bindings render different DOM at the same width.

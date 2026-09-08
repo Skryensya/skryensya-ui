@@ -1209,17 +1209,92 @@ const PALETTE_PRESETS = palettePresets(locale);
       >
         <Fragment set:html={documentIndex!.html} />
         {!hideVanillaMount && vanillaMount && <VanillaMount {...vanillaMount} />}
+        {/*
+          ABOVE the prev/next nav, and above the site colophon in `.docs-footer` below it. Reading
+          order is the argument: "something is wrong with THIS page" belongs while the reader is
+          still on the page, before the two links that take them off it. Behind the pager it was
+          the last thing on the document, past the point most readers stop.
+
+          A HEADING AND A TEXT LINK, not the bordered tile this used to be. A tile is a surface that
+          reads as a destination worth choosing - the same weight the catalogue's own cards carry -
+          and this is a quiet utility, not a call to action competing with the page's content. The
+          `<h2>` inherits the docs' own unlayered prose heading rules, so it sits in the page's
+          heading outline exactly like every other section title, and the anchor is a bare one so
+          `main a:not(…)` paints it as ordinary prose link ink.
+
+          A plain `<div>`, not a `<section>`: a named `<section>` would add a `region` landmark to
+          every page in the site for one closing line, and the heading already gives it structure.
+
+          It lives HERE rather than in `ComponentPageShell` (component pages only) or a page-local
+          slot (foundation pages have no shared shell): this layout is the one thing both render.
+          `target="_blank"` + `rel="noopener noreferrer"` with no separate "opens in a new tab"
+          text, matching every other external link in this site's prose.
+
+          `issueUrl`'s body is a bug-report skeleton the SERVER fills (page + expected/actual/repro
+          prompts, `footer.reportIssue.body`), so it already works with no script.
+          `data-sk-report-issue(-environment)` are what `report-issue.ts` reads to append the one
+          thing the server cannot know, browser + viewport, once JS runs.
+        */}
+        <div class="docs-report-issue">
+          <h2>{t("footer.reportIssue.title")}</h2>
+          {/*
+            THE PROSE SETS UP, THE CONTROL CLOSES. The sentence says what pressing it does - it opens
+            on GitHub with the page and browser already filled in - and then stops, so the reader
+            arrives at the action already knowing what it costs them. It does NOT trail off into a
+            colon pointing at the button: the button carries its own label and announces itself,
+            which is what a control is for. Leading with the control asked for the click before
+            answering any of that.
+          */}
+          <p>{t("footer.reportIssue.description")}</p>
+          {/*
+            `Button.navigation`, which is a BUTTON THAT IS AN ANCHOR, not a `<button>`. This goes to
+            a URL, so the host has to stay `<a href>`: it has to survive a middle-click, a
+            copy-link, and `target="_blank"`, and none of that is a thing a `<button>` can do. The
+            contract's own overlay names this exact case ("lleva a una URL y tiene que verse como un
+            botón"), and it is also load-bearing for `report-issue.ts`, which reads and rewrites
+            `link.href` on an `HTMLAnchorElement` - against a real `<button>` that script has
+            nothing to write to.
+
+            `soft` + `lg`: `lg` is the TOP of the size scale (there is no `xl`; the scale is
+            xs/sm/md/lg), so this is as large as a published Button gets. Size carries the emphasis
+            here and the variant deliberately does not: `soft` keeps it a recessed fill, so the
+            control is easy to hit and easy to find without becoming the saturated call to action
+            the old tile was replaced for being.
+
+            Classes hand-written rather than a component, matching `.docs-page-nav__link` right
+            below: this layout has no Astro Button wrapper and composes the contract's classes
+            directly, the same way the pager already does.
+          */}
+          <a
+            class="sk-button sk-interactive docs-report-issue__link"
+            data-variant="soft"
+            data-size="lg"
+            href={issueUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-sk-report-issue
+            data-sk-report-issue-environment={t("footer.reportIssue.environment")}
+          >
+            {/*
+              The launch icon TRAILS the label, the same order ComponentPreview's "open in a new
+              tab" menu item uses: the label names the action, the icon is the "and it leaves this
+              tab" footnote on it, not the first thing read.
+            */}
+            <span>{t("footer.reportIssue.label")}</span>
+            <Fragment set:html={reportIssueIcon} />
+          </a>
+        </div>
         {
           currentNavIndex >= 0 && (
             <nav class="docs-page-nav" aria-label={t("nav.between")}>
               {previousNavItem && (
-                <a class="sk-button sk-interactive docs-page-nav__link" data-variant="subtle" href={previousNavItem.href} rel="prev">
+                <a class="sk-button sk-interactive docs-page-nav__link" data-variant="soft" href={previousNavItem.href} rel="prev">
                   <Fragment set:html={previousIcon} />
                   <span>{previousNavItem.label}</span>
                 </a>
               )}
               {nextNavItem && (
-                <a class="sk-button sk-interactive docs-page-nav__link docs-page-nav__link--next" data-variant="subtle" href={nextNavItem.href} rel="next">
+                <a class="sk-button sk-interactive docs-page-nav__link docs-page-nav__link--next" data-variant="soft" href={nextNavItem.href} rel="next">
                   <span>{nextNavItem.label}</span>
                   <Fragment set:html={nextIcon} />
                 </a>
@@ -1232,64 +1307,17 @@ const PALETTE_PRESETS = palettePresets(locale);
           than concatenated: word order around it differs by language, and only the translator of a
           given locale knows where the code element lands.
 
-          The report-issue link is the SAME element on every component and foundation page, because
-          it lives here rather than in `ComponentPageShell` (component pages only) or a page-local
-          slot (foundation pages have no shared shell at all): this footer is the one thing both
-          already render. `target="_blank"` + `rel="noopener noreferrer"`, no separate "opens in a
-          new tab" text, matches every other external link already in this site's prose (see the
-          anchor-positioning MDN link in `tooltip.usage`).
-        */}
-        {/*
-          Per-page, and a plain `<div>`, not a `<footer>`: it carries "report an issue on THIS
-          page", not the site's colophon, and the one document-level `contentinfo` landmark is
+          COLOPHON ONLY now. "Report an issue on this page" used to sit here too and has moved above
+          the pager (see `.docs-report-issue`): the two were never the same kind of statement, one
+          is about the page the reader is on and the other about how the site is built.
+
+          A plain `<div>`, not a `<footer>`: the one document-level `contentinfo` landmark is
           `<SiteFooter>`, a sibling of `.docs-document-pair` below, never a child of it. Two
           `<footer>` elements at document level would be two `contentinfo`s, which WAI treats as
           an error.
         */}
         <div class="docs-footer">
           <p set:html={t("footer.body", { core: "<code>@skryensya/core</code>" })} />
-          {/*
-            TileLink > TileContent, the kit's own contract for a bordered surface that goes
-            somewhere (`demos/link.ts`'s own `tileLinkTree` snippet shows the identical shape),
-            composed by hand here rather than reused as a `ComponentPreview`. A step up from the
-            bare inline link this used to be: a real surface plus the state layer's hover wash
-            says "this goes somewhere" more than underlined text alone did. Deliberately no
-            further than that: neutral tone (no accent tint), `sm` padding, and capped to its own
-            reading measure (site.css) rather than stretching the tile's own `inline-size: 100%`
-            across the whole page column, so it reads as one quiet utility affordance closing the
-            page, not a call-to-action banner.
-
-            `issueUrl`'s body is a bug-report skeleton the SERVER can fill (page + expected/actual/
-            repro-steps prompts, `footer.reportIssue.body`), which already works with no script.
-            `data-sk-report-issue(-environment)` are what `report-issue.ts` (`initComponents`'
-            neighbour in `docs-page-lifecycle.ts`) reads to append the one thing the server cannot
-            know, browser + viewport, once JS runs.
-          */}
-          <a
-            class="sk-tile sk-tile--interactive sk-interactive docs-footer__report-tile"
-            data-scope="tile"
-            data-part="root"
-            data-padding="sm"
-            href={issueUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-sk-report-issue
-            data-sk-report-issue-environment={t("footer.reportIssue.environment")}
-          >
-            <span class="sk-tile__content" data-part="content">
-              {/*
-                The launch icon TRAILS the label, same order ComponentPreview's own "open in a new
-                tab" menu item already uses (`sk-component-preview__menu-icon`, after
-                `sk-menu__item-label`): the label names the action, the icon is the "and it leaves
-                this tab" footnote on it, not the first thing read.
-              */}
-              <span class="sk-tile__title docs-footer__report-tile-title">
-                {t("footer.reportIssue.label")}
-                <Fragment set:html={reportIssueIcon} />
-              </span>
-              <span class="sk-tile__description">{t("footer.reportIssue.description")}</span>
-            </span>
-          </a>
         </div>
       </main>
       </div>

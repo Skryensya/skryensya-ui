@@ -3,49 +3,32 @@ import { flushSync } from "react-dom";
 import { emitMarkup } from "@skryensya/ai-compiler/emit";
 import { mountComponentsWithIcons } from "@skryensya/vanilla/auto";
 import { mountCodePreview } from "@skryensya/vanilla/code-preview";
+import { mountEditor } from "@skryensya/vanilla/editor";
 import { phosphorIcons } from "@skryensya/icons-phosphor";
 import { canonicalTrees } from "../src/trees.js";
 import { renderTree, setPortalContainer } from "./react-render.js";
 
 import "@skryensya/core/tokens.scss";
-import "@skryensya/core/components/tag.css";
-import "@skryensya/core/components/progress.css";
-import "@skryensya/core/components/avatar.css";
-import "@skryensya/core/components/typography.css";
-import "@skryensya/core/patterns/layout.css";
-import "@skryensya/core/patterns/box.css";
-import "@skryensya/core/patterns/wrapper.css";
-import "@skryensya/core/components/breadcrumb.css";
-import "@skryensya/core/components/empty-state.css";
-import "@skryensya/core/components/stat.css";
-import "@skryensya/core/components/callout.css";
-import "@skryensya/core/components/process-list.css";
-import "@skryensya/core/components/changelog.css";
-import "@skryensya/core/components/steps.css";
-import "@skryensya/core/components/list.css";
-import "@skryensya/core/components/navbar.css";
-import "@skryensya/core/components/toolbar.css";
-import "@skryensya/core/patterns/media-gradient.css";
-import "@skryensya/core/components/segmented.css";
-import "@skryensya/core/components/slider.css";
-import "@skryensya/core/components/number-field.css";
-import "@skryensya/core/components/pagination.css";
-import "@skryensya/core/components/accordion.css";
-import "@skryensya/core/components/carousel.css";
-import "@skryensya/core/components/file-upload.css";
-import "@skryensya/core/components/time-field.css";
-import "@skryensya/core/components/sidebar.css";
-import "@skryensya/core/components/skip-link.css";
-import "@skryensya/core/components/tree-view.css";
-import "@skryensya/core/components/tile.css";
-/* Folder's silhouette is drawn from numbers this sheet publishes as hooks (`--sk-folder-tab-height`
- * and friends), so without it BOTH bindings fall back to `folderGeometryFrom`'s defaults and the
- * gate compares two folders drawn from a stylesheet that was never loaded. */
-import "@skryensya/core/components/folder.css";
-import "@skryensya/core/components/icon-state-button.css";
-import "@skryensya/core/components/toast.css";
-import "@skryensya/core/components/tooltip.css";
-import "@skryensya/core/patterns/anchored.css";
+
+/*
+ * EVERY component and pattern stylesheet, globbed rather than listed by hand.
+ *
+ * The hand-kept list had fallen 26 components and 11 patterns behind, and a stylesheet missing
+ * from the stage is not a small thing: the component renders unstyled, so the visual baseline
+ * freezes something nobody would ship, and the ACCESSIBILITY TREE changes too. A chart's points
+ * ran together into "Sem 138.2K" in React and "Sem 1 38.2K" in vanilla purely because
+ * `chart.css`'s grid, the thing that separates those two spans into their own boxes, was never
+ * loaded; G2 reported it as a binding divergence, which it never was.
+ *
+ * A glob cannot fall behind. Relative rather than by package specifier because that is what Vite
+ * can enumerate at build time.
+ */
+import.meta.glob("../../core/css/patterns/*.css", { eager: true });
+import.meta.glob("../../core/css/components/*.css", { eager: true });
+/* (Folder is one of the sheets that glob now covers. Its silhouette is drawn from numbers the
+ * stylesheet publishes as hooks, `--sk-folder-tab-height` and friends, so without it BOTH bindings
+ * fall back to `folderGeometryFrom`'s defaults and the gate compares two folders drawn from a
+ * stylesheet that was never loaded. That is the failure mode for every sheet above.) */
 /* Needed for focus-ring.spec.ts (G5): that gate reads a real computed `outline-style` off a
  * highlighted `.sk-menu__item`, which resolves to nothing without this sheet. Confirmed missing
  * before this addition: `menu/with-submenu` was already a canonical tree and rendered, unstyled,
@@ -53,29 +36,10 @@ import "@skryensya/core/patterns/anchored.css";
  * so the gap went unnoticed until a test needed a computed style. Several other contracts in
  * `trees.ts` (select, combobox, dialog, popover, command-palette, …) have the same gap; out of scope
  * here. This adds only what G5 exercises. */
-import "@skryensya/core/components/menu.css";
 /* `megamenu/product` (the first canonical tree for this contract) needs this to be genuinely closed
  * at rest: without it, `.sk-megamenu__content`'s unconditional `display: none` default never applies,
  * and the panel paints (and stays in the accessibility tree) whether or not anything is open. Same
  * gap as menu.css above, same fix. */
-import "@skryensya/core/components/megamenu.css";
-import "@skryensya/core/components/badge.css";
-import "@skryensya/core/components/kbd.css";
-import "@skryensya/core/components/loader.css";
-import "@skryensya/core/components/placeholder.css";
-import "@skryensya/core/components/button.css";
-import "@skryensya/core/patterns/nav-list.css";
-import "@skryensya/core/patterns/image-frame.css";
-import "@skryensya/core/components/checkbox.css";
-import "@skryensya/core/components/radio-group.css";
-import "@skryensya/core/components/switch.css";
-import "@skryensya/core/components/form-field.css";
-import "@skryensya/core/components/input.css";
-import "@skryensya/core/components/comment-thread.css";
-import "@skryensya/core/components/table.css";
-import "@skryensya/core/components/tabs.css";
-import "@skryensya/core/patterns/icon.css";
-import "@skryensya/core/patterns/state-layer.css";
 import "./stage.css";
 
 /*
@@ -173,6 +137,21 @@ async function stage(): Promise<void> {
   // without this, the vanilla side of every code-preview canonical tree never enhances at all, so
   // React and Vanilla only LOOK symmetric because neither's dynamic behavior ever ran.
   mountCodePreview(document.body);
+  /*
+   * Editor is excluded from `initComponents` for its own reason (`registry.ts`): ProseMirror is an
+   * OPTIONAL peer dependency, so `@skryensya/vanilla/auto` must never name it, and a page that uses
+   * Editor mounts it explicitly. The stage is such a page. Without this the vanilla editor stayed
+   * as the contract emits it, an empty toolbar and a plain div, while React rendered fourteen
+   * toolbar buttons and a live ProseMirror: a ~950-line "divergence" that was really one binding
+   * never having been started.
+   */
+  for (const host of document.querySelectorAll<HTMLElement>('[data-binding="vanilla"]')) {
+    /* Scoped to the vanilla halves, unlike the mounts above. React's Editor renders the same
+     * `data-sk-editor` marker but builds its toolbar in JSX, so it has no `data-sk-toolbar` for the
+     * enhancer to find; handed the whole document, the enhancer reaches those too and throws
+     * ("necesita un [data-sk-toolbar]"), taking the whole stage down with it. */
+    await mountEditor(host);
+  }
 
   document.body.dataset.ready = "true";
 }

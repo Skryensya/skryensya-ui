@@ -29,8 +29,18 @@ export { Megamenu, MegamenuTrigger } from "./components/megamenu.js";
 export type { MegamenuProps, MegamenuTriggerProps } from "./components/megamenu.js";
 export { Loader } from "./components/loader.js";
 export type { LoaderProps } from "./components/loader.js";
-export { Placeholder } from "./components/placeholder.js";
-export type { PlaceholderProps } from "./components/placeholder.js";
+export {
+  Placeholder,
+  PlaceholderBlock,
+  PlaceholderCircle,
+  PlaceholderParagraph,
+} from "./components/placeholder.js";
+export type {
+  PlaceholderBlockProps,
+  PlaceholderCircleProps,
+  PlaceholderParagraphProps,
+  PlaceholderProps,
+} from "./components/placeholder.js";
 export { SegmentedControl } from "./components/segmented.js";
 export type { SegmentedControlProps } from "./components/segmented.js";
 export { Slider, SliderRange } from "./components/slider.js";
@@ -63,6 +73,8 @@ export type {
   CarouselProps,
   CarouselSlideProps,
 } from "./components/carousel.js";
+export { AutoplayMarquee, Marquee } from "./components/marquee.js";
+export type { MarqueeProps } from "./components/marquee.js";
 export { Steps } from "./components/steps.js";
 export type { StepsProps } from "./components/steps.js";
 export { Tag } from "./components/tag.js";
@@ -102,6 +114,8 @@ export type {
   MediaCaptionProps,
   MediaGradientProps,
 } from "./components/media-gradient.js";
+export { FadeEdge } from "./components/fade-edge.js";
+export type { FadeEdgeProps } from "./components/fade-edge.js";
 export { NavList, NavListGroup, NavListLink } from "./components/nav-list.js";
 export type {
   NavListGroupProps,

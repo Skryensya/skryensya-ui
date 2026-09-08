@@ -110,7 +110,7 @@ const idReferences = [
  * beside this one needs no such exemption: template content is never in the accessible tree either
  * way, so both sides already agree there.
  */
-const SHAPE_NOT_COMPARABLE = new Set(["content/toast-template"]);
+const SHAPE_NOT_COMPARABLE = new Set(["content/toast-template", "comment-thread/template"]);
 
 for (const { name } of canonicalTrees) {
   test(`${name}: both bindings land on the same DOM`, async ({ stagePage: page }) => {

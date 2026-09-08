@@ -283,7 +283,7 @@ export type ContractTemplate = {
    */
   readonly repeatComputed?: {
     /** The computation. The compiler holds the list; a name it does not know fails the build. */
-    readonly window: "pagination-range";
+    readonly window: "pagination-range" | "skeleton-lines";
     /** Option names, in the computation's argument order. */
     readonly from: readonly string[];
     /** The item option each entry's value lands in, so `selectedBy` and `itemOptions` can name it. */

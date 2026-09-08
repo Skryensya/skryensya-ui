@@ -112,7 +112,10 @@
     /* The fold node's own size: `icon-md`, the smallest step that still holds the set's own `sm`
      * glyph. Well under the avatar it hangs from, so the eye reads the avatar as the person and
      * this as a small handle on the thread rather than a control competing with it. */
-    --sk-comment-node-size: var(--size-icon-md);
+    /* The fold node's diameter, and now a PUBLISHED control size rather than an icon box borrowed
+     * as one: the control is `data-size="xs"`, so this has to be the same token `xs` paints with or
+     * the rail geometry below (which measures against it) drifts from the button it is centring on. */
+    --sk-comment-node-size: var(--size-control-xs);
     /*
      * One measure for the WHOLE comment, not just its body. A cap on the body alone let the reply
      * box run wider than the message above it, so the two disagreed at any width past the cap and
@@ -127,34 +130,84 @@
   }
 
   .sk-comment__self {
-    display: flex;
-    gap: var(--sk-comment-avatar-gap);
-    /* `stretch`, which is the default and is stated anyway because everything depends on it: the
-     * gutter has no height of its own, and the line inside it is measured against this. */
-    align-items: stretch;
+    --sk-comment-identity-gutter: 0px;
+    --sk-comment-identity-gap: 0px;
+    display: grid;
+    /*
+     * The NAME column is `auto`, not `1fr`: the name is a subgrid cell of `.sk-comment__profile`
+     * (below), so a flexible name column stretched that cell across the whole row and pushed the
+     * timestamp after it - justify-end in effect, flush against the far edge instead of sitting
+     * beside the name it describes. The FLEX moves to the timestamp's own column instead: its box
+     * still reaches the row's end (so `.sk-comment__content` below, spanning the same two tracks,
+     * keeps its full width), but the timestamp text inside it is start-aligned by default, so it
+     * reads immediately after the name and the unused width trails silently past it.
+     */
+    grid-template-columns: var(--sk-comment-identity-gutter) auto minmax(0, 1fr);
+    column-gap: var(--sk-comment-identity-gap);
+    grid-template-rows: auto auto;
+    align-items: start;
+  }
+
+  .sk-comment__self:has(.sk-comment__profile .sk-comment__avatar),
+  .sk-comment__self:has(.sk-comment__gutter:not(:empty)) {
+    --sk-comment-identity-gutter: var(--sk-comment-gutter);
+    --sk-comment-identity-gap: var(--sk-comment-avatar-gap);
+  }
+
+  /*
+   * One identity surface, either a plain box or the sole profile link. Its internal grid keeps the
+   * avatar and name together semantically while placing them in the same two tracks the comment
+   * uses. The timestamp stays outside the link: it is metadata about the comment, not its author.
+   */
+  .sk-comment__profile {
+    grid-column: 1 / 3;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: center;
+    min-inline-size: 0;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a.sk-comment__profile:is(:hover, :focus-visible) .sk-comment__author {
+    text-decoration: underline;
+  }
+
+  .sk-comment__header {
+    grid-column: 3;
+    grid-row: 1;
   }
 
   .sk-comment__content {
+    grid-column: 2 / -1;
+    grid-row: 2;
     display: flex;
     flex-direction: column;
     gap: var(--sk-comment-gap);
-    flex: 1;
     min-inline-size: 0;
     max-inline-size: var(--sk-comment-measure);
   }
 
   .sk-comment__gutter {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: none;
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: stretch;
     inline-size: var(--sk-comment-gutter);
   }
 
   /* Nothing in it: no channel, no column gap, nothing to explain. */
   .sk-comment__gutter:empty {
     display: none;
+  }
+
+  /*
+   * The rail belongs to a reply whether or not its parent offers a collapse control. Keep this
+   * otherwise-empty track in flow so its pseudo-element reaches from the avatar to the replies.
+   */
+  .sk-comment:has(> .sk-comment__replies) > .sk-comment__self > .sk-comment__gutter:empty {
+    display: block;
   }
 
   /*
@@ -202,7 +255,7 @@
 
   /* Where the line begins: under the avatar when there is one, at the top when there is not, so a
    * comment with only a fold control still gets a line that goes somewhere. */
-  .sk-comment:has(> .sk-comment__self > .sk-comment__gutter > .sk-comment__avatar) {
+  .sk-comment:has(> .sk-comment__self > .sk-comment__profile .sk-comment__avatar) {
     --sk-comment-rail-start: var(--sk-comment-gutter);
   }
 
@@ -237,33 +290,34 @@
    * percentage-positioning the other would.
    */
   /*
-   * A NODE ON THE LINE, not a control parked beside it: smaller than any Button size the scale
-   * ships, because at `sm` (32px) it read as a button that happened to sit on a rail rather than as
-   * the rail's own handle - it was as wide as the avatar above it and competed with it.
+   * A NODE ON THE LINE, not a control parked beside it: at `sm` (32px) it read as a button that
+   * happened to sit on a rail rather than as the rail's own handle - it was as wide as the avatar
+   * above it and competed with it.
    *
-   * Shrunk through Button's OWN hooks rather than re-built from nothing: the face, the focus ring,
-   * the state layer and the 44px touch target underneath all still come from `button.css`, so this
-   * keeps the system's interaction identity and changes only its size. That is what "bespoke" can
-   * safely mean here - a different measurement of the same control, not a second control.
+   * IT IS NOW `data-size="xs"`, a size the scale publishes, so this rule no longer measures
+   * anything. It used to carry two overrides that are both gone: a `--sk-button-height` cut down to
+   * an icon token (a face nothing else could ask for, and no other component could match) and a
+   * `--sk-button-padding-x: 0px` working around `[data-icon-only]` losing a specificity tie to the
+   * size rule - fixed at the source, in `button.css`, where every icon-only button gets it.
+   *
+   * What is left here is the only thing that is genuinely this component's: the node wears the
+   * RAIL's colour, because it is part of the line rather than a control sitting on top of one.
+   * Face, radius, focus ring, state layer and the 44px touch target underneath all still come from
+   * `button.css`. It is deliberately NOT a pill: fully rounded made it a dot, a different SHAPE from
+   * every other control on the page, and the thing it needed to read as was a small button on the
+   * line - `--radius-control` (Button's own default) keeps it in the same family as the actions it
+   * sits beside, just smaller.
    *
    * `.sk-comment__gutter >` is not decoration: `.sk-interactive` sets `position: relative` to
    * establish the containing block for that touch target, and at equal specificity it won on source
    * order - the control stayed in flow under the avatar instead of riding low on the line.
    */
   .sk-comment__gutter > .sk-comment__collapse {
-    --sk-button-radius: var(--radius-pill);
     /* The node is part of the LINE, so it wears the line's colour - glyph and ring both. Before
      * this it inherited the base variant's primary-text foreground and the default border, which
      * made a dark dot on a mid-grey rail read as a separate control that happened to sit there. */
     --sk-button-fg: var(--sk-comment-rail-color);
     --sk-button-border-color: var(--sk-comment-rail-color);
-    /* `[data-icon-only]` zeroes this in `button.css`, but `[data-size="sm"]` sets it back and the
-     * two selectors tie on specificity, so the later one wins: an icon-only `sm` button carries
-     * 8px of inline padding it was never meant to have. Harmless on a 32px face, where the glyph
-     * simply overflows symmetrically; on a 24px node it leaves a 6px content box. */
-    --sk-button-padding-x: 0px;
-    /* `[data-icon-only]` derives the width from the height, so one hook resizes the square. */
-    --sk-button-height: var(--sk-comment-node-size);
     position: absolute;
     /* Centred on the ACTIONS ROW, not flush with the bottom of the gutter. The gutter ends where
      * the actions end, so `0` lined the node's BOTTOM up with the row's bottom and, since the node
@@ -275,7 +329,12 @@
     /* ABOVE the line, which is the whole reason this control has an opaque face. Both it and the
      * line are positioned, so with `z-index: auto` they paint in DOM order and the line - a later
      * `::after` - drew straight over the button: the minus glyph crossed by the vertical stroke
-     * read as a PLUS, so a thread that was expanded looked collapsed. */
+     * read as a PLUS, so a thread that was expanded looked collapsed.
+     *
+     * `1` and not more, on purpose: this only has to clear the rail. The vote group deliberately
+     * sits ABOVE it at `2` (see `.sk-comment .sk-comment-vote`), because this control's 44px touch
+     * target overhangs the gutter and would otherwise swallow the upvote's clicks. Raising this
+     * number re-breaks that. */
     z-index: 1;
   }
 
@@ -397,7 +456,41 @@
    * shortest pair the system has, and used without their distance tokens on purpose. Sober is the
    * brief: the box should be there, not arrive.
    */
-  .sk-comment__reply-slot {
+  /*
+   * ── THE TWO COMPOSER BOXES ──────────────────────────────────────────────
+   *
+   * Both are `<dialog>` now (see the contract's own note on `commentReplySlot` for why one element
+   * in two presentations rather than two elements). Everything below is the IN-FLOW presentation:
+   * undoing the UA stylesheet, which styles a dialog as a centred floating box (`position: absolute`,
+   * `margin: auto`, `width: fit-content`, a solid border, 1em of padding and its own background).
+   * None of that is wanted where the box simply sits in the column, and all of it is wanted back the
+   * moment the box becomes a sheet.
+   *
+   * `:not(.sk-vaul)` is load-bearing and was learned the hard way: `.sk-vaul` is 0,1,0 and so is this
+   * selector, so they TIE, and a tie is settled by source order - this file loads after the pattern,
+   * so the reset won and the sheet rendered with no background at all, the comment behind it reading
+   * straight through the panel. Excluding the sheet explicitly is what keeps the two presentations
+   * from fighting, rather than trusting a load order no stylesheet controls.
+   */
+  .sk-comment__reply-slot:not(.sk-vaul),
+  .sk-comment-thread__composer-slot:not(.sk-vaul) {
+    position: relative;
+    inset: auto;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    inline-size: auto;
+    max-inline-size: none;
+    block-size: auto;
+    max-block-size: none;
+    overflow: visible;
+    background: none;
+    color: inherit;
+  }
+
+  /* `:not(.sk-vaul)` on all of it: a sheet spans the viewport's own edge, so the comment's indent
+   * would push it off-centre, and the pattern owns its motion. */
+  .sk-comment__reply-slot:not(.sk-vaul) {
     margin-block-start: var(--space-stack-xs);
     /* It sits at article level now (see the contract), so it indents itself to the same column the
      * body occupies rather than inheriting that from a content box it is no longer inside. */
@@ -422,7 +515,10 @@
    * the last reply's own clip exists to avoid. Its own top margin is included in the span
    * (`inset-block-start` is negative) so the line does not break again at the seam.
    */
-  .sk-comment:has(> .sk-comment__replies:not([hidden])) > .sk-comment__reply-slot::before {
+  /* `:not(.sk-vaul)`: as a sheet this box is in the top layer, not in the column, so there is no rail
+   * running through it to continue and the segment would be a stray line over the comment behind. */
+  .sk-comment:has(> .sk-comment__replies:not([hidden]))
+    > .sk-comment__reply-slot:not(.sk-vaul)::before {
     content: "";
     position: absolute;
     inset-inline-start: calc(var(--sk-comment-gutter) / 2 - var(--sk-comment-rail-width) / 2);
@@ -433,12 +529,18 @@
   }
 
   @starting-style {
-    .sk-comment__reply-slot {
+    .sk-comment__reply-slot:not(.sk-vaul) {
       opacity: 0;
     }
   }
 
-  .sk-comment__reply-slot[hidden] {
+  /*
+   * Closed is now the ABSENCE of `open`, not a `hidden` attribute: a `<dialog>` without `open` is
+   * already `display: none` by the UA stylesheet, so the resting state costs no markup. The fade is
+   * scoped away from the sheet, which brings the pattern's own slide and needs no second opinion
+   * about how it arrives.
+   */
+  .sk-comment__reply-slot:not([open]):not(.sk-vaul) {
     display: none;
     opacity: 0;
     transition:
@@ -594,6 +696,93 @@
     }
   }
 
+  /* ── The sheets ─────────────────────────────────────────────────────────── */
+
+  /*
+   * BELOW `--breakpoint-desktop` A COMPOSER IS A VAUL, and it says so by wearing `sk-vaul` - added by
+   * the binding, which is the only thing that knows the box is about to be opened with `showModal()`.
+   * A media query could not do this job: a dialog cannot be modal and in flow at once, so the
+   * presentation is decided in JavaScript and the class is how that decision reaches the stylesheet.
+   * It also makes the no-enhancer case correct by construction - no class, no sheet, the composer
+   * stays in flow at every width, which is exactly the fallback decision 9 describes.
+   *
+   * Nothing about the panel, the edge, the slide, the backdrop, the drag or the reduced-motion
+   * behaviour is written here: all of it is `patterns/vaul.css`, reached through the class. Only the
+   * hooks that make this particular Vaul a COMMENT composer are reassigned, which is the same deal
+   * `components/drawer.css` keeps with the same pattern (decision 9: a drawer that re-implemented the
+   * panel would be a second Vaul with a different name).
+   */
+  .sk-comment__reply-slot.sk-vaul,
+  .sk-comment-thread__composer-slot.sk-vaul {
+    /* A sheet is as tall as what it holds, never a fixed slice: the composer is one control and two
+     * buttons, and a half-empty panel pinned to some preset height reads as a loading state. The
+     * pattern still caps it against the viewport. */
+    --sk-vaul-block-size: auto;
+    /* Rounded where it meets the page, square where it meets the edge - the same corner treatment
+     * `patterns/dialog-vaul.css` gives its own block-end composition, for the same reason: a radius
+     * on the edge side would show a sliver of page under the panel. */
+    /* `--radius-surface`, no `--radius-lg`: ese es el nombre de un escalón de la escala primitiva,
+     * no de un rol semántico, y la capa de roles es la única que este archivo puede leer
+     * (scripts/lint.mjs lo verifica). Una hoja es una SUPERFICIE, así que redondea como todas. */
+    --sk-vaul-radius: var(--radius-surface) var(--radius-surface) 0 0;
+    padding: var(--space-inset-md);
+    /* The comment's own measure does not apply in the top layer: the sheet IS the width. */
+    --sk-comment-measure: none;
+  }
+
+  /*
+   * THE GRAB HANDLE, and it exists only while there is something to grab. Above the breakpoint the
+   * box is in flow and the pattern's own rule already hides it there; this covers the other half,
+   * the box that never became a sheet at all (no enhancer), where the pattern's rule never applies
+   * because the class is not on it.
+   */
+  .sk-comment-sheet__handle {
+    display: none;
+  }
+
+  .sk-vaul > .sk-comment-sheet__handle {
+    display: block;
+    inline-size: 2.25rem;
+    block-size: 0.25rem;
+    margin-inline: auto;
+    margin-block-end: var(--space-stack-sm);
+    border-radius: var(--radius-pill);
+    background: var(--color-border-strong);
+  }
+
+  /*
+   * THE TRIGGER that opens the thread's own composer, and the whole reason it exists: below the
+   * breakpoint the composer is a sheet, and a sheet with no trigger is a box nobody can reach.
+   * Hidden by default, which covers every width above the breakpoint in one line.
+   */
+  .sk-comment-thread__composer-trigger {
+    display: none;
+    inline-size: 100%;
+    justify-content: flex-start;
+    --sk-button-fg: var(--color-text-secondary);
+  }
+
+  /* `52rem` is `--breakpoint-desktop` (semantic/_breakpoints.scss), literal because a CSS `@media`
+   * cannot read a custom property, and the same value the binding reads from that property to decide
+   * modality. Tier-3 stylesheets carry it with a pointer back, as `patterns/vaul.css` does. */
+  @media (max-width: 52rem) {
+    .sk-comment-thread__composer-trigger {
+      display: inline-flex;
+    }
+
+    /*
+     * EXCEPT with no enhancer, where the box is still open in flow and the trigger would be a second
+     * way in that does nothing at all. `[open]:not(.sk-vaul)` is exactly that state: the class is
+     * added by the binding and by nothing else, so an open box without it is one no JavaScript has
+     * claimed. The composer then simply stays in flow, the same fallback the desktop layout is.
+     * Asked of the class rather than `:modal` so the stylesheet and the binding read one fact.
+     */
+    .sk-comment-thread:has(> [data-sk-comment-composer-slot][open]:not(.sk-vaul))
+      > .sk-comment-thread__composer-trigger {
+      display: none;
+    }
+  }
+
   /* ── The action row ─────────────────────────────────────────────────────── */
 
   /*
@@ -641,10 +830,14 @@
     margin-inline-start: calc(-1 * var(--sk-comment-actions-optical));
   }
 
-  /* A comment's chrome must not read louder than the comment, which is the ONE thing these parts
-   * move: the fg hook, exactly what it exists for. */
-  .sk-comment-actions__reply,
-  .sk-comment-actions__delete {
+  /* A comment's chrome must not read louder than the comment. Reply only: it is a neutral action
+   * with no meaning of its own to carry, so quieting its ink is the whole job.
+   *
+   * DELETE IS NOT HERE ANY MORE. It used to share this rule and get `--color-text-secondary`, which
+   * was a local override standing in for a thing the Button contract could not say: quiet AND
+   * destructive. It now says it, as `ghost` + `tone="danger"`, so the tone comes from the contract
+   * and the hover tint follows `currentColor` for free. */
+  .sk-comment-actions__reply {
     --sk-button-fg: var(--color-text-secondary);
   }
 
@@ -654,6 +847,30 @@
     display: inline-flex;
     align-items: center;
     gap: var(--space-inline-xs);
+  }
+
+  /*
+   * ABOVE THE FOLD NODE, and this is about the HIT AREA, not the paint.
+   *
+   * The node in the gutter is 24px of face but `.sk-button::after` expands every button's target to
+   * `--size-touch-target` (44px), so its click box reaches 10px past its own edge - about 6px beyond
+   * the 32px gutter, into the content column. The actions row then comes the other way: a row that
+   * LEADS with the vote group is pulled back by `--sk-comment-actions-optical`, which is also 6px.
+   * The two meet exactly over the upvote.
+   *
+   * The node carries `z-index: 1` (it has to, to interrupt the rail), and a positioned element with
+   * `z-index: auto` - which every `.sk-interactive` button is - never wins against that whatever the
+   * DOM order says. So the upvote was painted under an invisible box that swallowed its clicks.
+   * Raising the GROUP rather than the two buttons keeps the count between them on the same layer.
+   *
+   * Scoped to a vote group inside a comment: the `CommentVote` signature is publishable on its own
+   * (see the contract), and a standalone one has no gutter node to out-rank, so it should not get a
+   * stacking context it never asked for. Reply and Delete need none of this - they sit further along
+   * the row, well clear of the overhang.
+   */
+  .sk-comment .sk-comment-vote {
+    position: relative;
+    z-index: 2;
   }
 
   .sk-comment-vote__up,
@@ -673,9 +890,13 @@
    * count slot could never be painted by its ancestor's state, the same own-scope rule
    * `checkbox-group.ts` keeps for its own items. Moves the same hook the tone above does, so the
    * accent rides Button's hover/active machinery instead of fighting it with a bare `color`. */
+  /* The vote buttons already carry `aria-pressed`, and Button now paints that (button.css), so the
+   * fill and the accent ink arrive from the contract. What stays here is the TONE: a vote is an
+   * accent action, and saying so is a one-attribute job the group's own state cannot do. */
   .sk-comment-vote[data-voted="up"] > .sk-comment-vote__up,
   .sk-comment-vote[data-voted="down"] > .sk-comment-vote__down {
-    --sk-button-fg: var(--color-text-accent);
+    --sk-button-accent: var(--color-action-accent);
+    --sk-button-ink: var(--color-text-accent);
   }
 
   /* ── The composer ───────────────────────────────────────────────────────── */

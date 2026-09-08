@@ -78,7 +78,7 @@ describe("over Streamable HTTP", () => {
         tree: {
           contract: "button",
           signature: "Button.navigation",
-          options: { variant: "accent", href: "/docs" },
+          options: { tone: "accent", href: "/docs" },
           children: "Documentación",
         },
       },

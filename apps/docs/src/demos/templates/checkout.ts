@@ -268,7 +268,7 @@ export const checkoutTree = (t: Translate, locale: "es" | "en"): UsageTree => {
                           {
                             contract: "button",
                             signature: "Button.action",
-                            options: { variant: "accent", size: "lg" },
+                            options: { tone: "accent", size: "lg" },
                             children: t("demo.checkout.pay"),
                           },
                           {

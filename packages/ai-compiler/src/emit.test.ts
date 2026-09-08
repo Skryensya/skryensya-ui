@@ -12,14 +12,14 @@ import type { UsageTree } from "./usage-tree.js";
 const saveButton: UsageTree = {
   contract: "button",
   signature: "Button.action",
-  options: { variant: "accent" },
+  options: { tone: "accent" },
   children: "Guardar",
 };
 
 const docsLink: UsageTree = {
   contract: "button",
   signature: "Button.navigation",
-  options: { variant: "accent", href: "/docs" },
+  options: { tone: "accent", href: "/docs" },
   children: "Documentación",
 };
 
@@ -63,13 +63,13 @@ function normalize(markup: string): string {
 describe("emitMarkup", () => {
   it("writes the action signature onto its native host", () => {
     expect(normalize(emitMarkup(saveButton))).toBe(
-      '<button class="sk-button sk-interactive" data-sk-button data-variant="accent" data-size="md">Guardar</button>',
+      '<button class="sk-button sk-interactive" data-sk-button data-variant="solid" data-tone="accent" data-size="md">Guardar</button>',
     );
   });
 
   it("switches host on the discriminant, and drops nothing else", () => {
     expect(normalize(emitMarkup(docsLink))).toBe(
-      '<a class="sk-button sk-interactive" data-sk-button data-variant="accent" data-size="md" href="/docs">Documentación</a>',
+      '<a class="sk-button sk-interactive" data-sk-button data-variant="solid" data-tone="accent" data-size="md" href="/docs">Documentación</a>',
     );
   });
 
@@ -299,13 +299,36 @@ describe("emitMarkup", () => {
     ).toBe('<kbd class="sk-kbd" data-tone="neutral">⌘K</kbd>');
   });
 
+  /*
+   * A conditional attribute REPLACES the base one of the same name. Emitted as a second copy the
+   * HTML parser keeps the FIRST, so the conditional value is silently discarded and the markup is
+   * invalid besides. comment-thread's vote buttons are the case: a base `aria-pressed="false"` and
+   * a conditional `"true"` both landed, and every cast vote announced itself as not pressed.
+   */
+  it("lets a conditional attribute replace the base attribute it names", () => {
+    const voted = emitMarkup({
+      contract: "comment-thread",
+      signature: "CommentVote",
+      options: { voted: "up" },
+      slots: { count: "3" },
+    });
+    const up = voted.slice(0, voted.indexOf("sk-comment-vote__down"));
+
+    expect(up.match(/aria-pressed="[^"]*"/g)).toEqual(['aria-pressed="true"']);
+    expect(voted.match(/aria-pressed="[^"]*"/g)).toEqual([
+      'aria-pressed="true"',
+      'aria-pressed="false"',
+    ]);
+  });
+
   it("wraps a long opening tag one attribute per line, same as JSX", () => {
     expect(emitMarkup(docsLink)).toBe(
       [
         "<a",
         '  class="sk-button sk-interactive"',
         "  data-sk-button",
-        '  data-variant="accent"',
+        '  data-variant="solid"',
+        '  data-tone="accent"',
         '  data-size="md"',
         '  href="/docs"',
         ">",
@@ -350,7 +373,7 @@ describe("emitReact", () => {
         'import { Button } from "@skryensya/react/button";',
         "",
         "export function ButtonExample() {",
-        '  return <Button variant="accent">Guardar</Button>;',
+        '  return <Button tone="accent">Guardar</Button>;',
         "}",
       ].join("\n"),
     );
@@ -409,7 +432,7 @@ describe("emitReact", () => {
           actions: {
             contract: "button",
             signature: "Button.action",
-            options: { size: "sm", variant: "neutral" },
+            options: { size: "sm", variant: "solid" },
             children: "Deshacer",
           },
         },
@@ -425,7 +448,7 @@ describe("emitReact", () => {
         "        dismissible",
         '        dismissLabel="Descartar"',
         '        title="Documento archivado"',
-        '        actions={<Button variant="neutral" size="sm">Deshacer</Button>}',
+        '        actions={<Button variant="solid" size="sm">Deshacer</Button>}',
         "      >",
         "        Se movió a Archivados.",
         "      </Toast>",
@@ -594,7 +617,7 @@ describe("a collection is data, and data lives in a file of its own", () => {
     });
 
     expect(source).toContain("export default function App() {");
-    expect(source).toContain('  return <Button variant="accent">Guardar</Button>;');
+    expect(source).toContain('  return <Button tone="accent">Guardar</Button>;');
   });
 });
 
@@ -766,10 +789,10 @@ describe("a string option that contains a quote", () => {
     const source = emitReact({
       contract: "button",
       signature: "Button.action",
-      options: { variant: "accent" },
+      options: { tone: "accent" },
       children: "Guardar",
     } as never);
 
-    expect(source).toContain('variant="accent"');
+    expect(source).toContain('tone="accent"');
   });
 });

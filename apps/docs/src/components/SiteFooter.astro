@@ -22,7 +22,7 @@
  * wrapper"): the SURFACE (background, divider, sunken shadow) spans `.docs-footer-row`'s own
  * full width, edge to edge except the sidebar's column (never reachable from here, the same
  * reasoning the row's own comment gives), while `__inner` below, an unlabeled child of that
- * nested grid, falls straight back to `content-start / content-end` — the EXACT SAME width and
+ * nested grid, falls straight back to `content-start / content-end` - the EXACT SAME width and
  * left edge `<main>`'s own content reads at, unchanged from before this was full-width. The
  * band's own `data-padding="lg"` only supplies vertical breathing room now (`site.css` zeroes
  * `padding-inline`, a scoped reskin, never the contract's own default): the horizontal inset is
@@ -67,7 +67,7 @@ const launchIcon = iconMarkup("external-link", { size: "sm" });
  * routes (get oriented, understand the model, go explore) earn a place here, a single component's
  * own doc page does not. Concretely, that rules out reusing `nav` (the full rail data) wholesale:
  * its own "components" section groups by TASK, and even the first group is still five individual
- * components (Button, Checkbox, …) — exactly the specificity this footer is not for. Two of the
+ * components (Button, Checkbox, …) - exactly the specificity this footer is not for. Two of the
  * three columns below still read from `nav` (Empezar, Fundamentos: their own first group IS already
  * conceptual, Architecture/Tiers/Tokens, not a component list), the third is hand-picked from
  * `globalNavigation`, the same five destinations the header itself points at, Componentes meaning

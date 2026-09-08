@@ -10,7 +10,7 @@ import { Editor, type EditorHandle, type EditorValue } from "./editor.js";
  * and `EditorView.updateState` calls into `scrollToSelection` -> `coordsAtPos` unconditionally on
  * every dispatch, throwing `target.getClientRects is not a function` the moment a transaction
  * changes the selection. Stubbed with a zero rect, the standard workaround for testing ProseMirror
- * outside a real browser — this file is the only place these are needed, so they stay local rather
+ * outside a real browser - this file is the only place these are needed, so they stay local rather
  * than in the shared `test-setup.ts`.
  */
 beforeAll(() => {
@@ -129,7 +129,7 @@ describe("Editor: toolbar", () => {
     const h1 = screen.getByRole("button", { name: "Título 1" });
     fireEvent.click(h1);
     // `data-flush`: the schema marks every heading with it (schema.ts), opting a rendered heading
-    // out of the docs site's own unlayered prose-heading margin rules — see that file's comment.
+    // out of the docs site's own unlayered prose-heading margin rules - see that file's comment.
     expect(ref.current?.getHTML()).toBe('<h1 data-flush="">Title</h1>');
     expect(h1.getAttribute("aria-pressed")).toBe("true");
     fireEvent.click(h1);
@@ -172,7 +172,7 @@ describe("Editor: toolbar", () => {
     selectWord(ref.current!, "more");
 
     // jsdom implements no Popover API open/close behaviour (no showPopover), so its content stays
-    // `display: none` and only reachable via `{ hidden: true }` — confirmed project convention.
+    // `display: none` and only reachable via `{ hidden: true }` - confirmed project convention.
     // Submitting the form directly exercises the real handler without depending on that gap.
     const input = screen.getByRole("textbox", { hidden: true, name: "URL" }) as HTMLInputElement;
     const form = input.closest("form")!;

@@ -5,7 +5,7 @@ import { ui } from "./ui";
  * THE PARITY SEAM `t()` NEVER HAD. `useTranslations`'s own fallback (`ui[locale][key] ?? ui[
  * defaultLocale][key] ?? key`, i18n/index.ts) means a key present in `es` but absent from `en`
  * degrades SILENTLY: an English reader gets the Spanish sentence, with no build error, no type
- * error, and — until this file — no test. That is not hypothetical: the entire `switchPage.*`
+ * error, and - until this file - no test. That is not hypothetical: the entire `switchPage.*`
  * group (description, lede, body, tileTitle, tileBody1/2, contractItem1-5, nine keys) existed in
  * `es` and was missing from `en` outright, caught only by writing this test and reading the diff
  * it produced. The fallback stays (a partially-translated page is better than a missing string),
@@ -25,7 +25,7 @@ describe("ui.ts locale parity", () => {
 
   /*
    * A key that exists on both sides but reads IDENTICAL in both is usually not "correctly
-   * untranslated" (a code sample, a proper noun, a shared component name like "BackToTop") — it's
+   * untranslated" (a code sample, a proper noun, a shared component name like "BackToTop") - it's
    * the other half of the same failure the test above catches: someone pasted the Spanish string
    * into the English slot, or vice versa, and both blocks end up with the SAME text instead of one
    * being absent. That failure mode wouldn't trip the key-parity check above (both keys exist), so
@@ -98,6 +98,6 @@ describe("ui.ts locale parity", () => {
       return !(typedKey in ui.es) || !(typedKey in ui.en) || ui.es[typedKey] !== ui.en[typedKey];
     });
 
-    expect(stale, "allowlist entries that no longer exist or no longer match — remove them").toEqual([]);
+    expect(stale, "allowlist entries that no longer exist or no longer match - remove them").toEqual([]);
   });
 });

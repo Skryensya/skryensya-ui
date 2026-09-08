@@ -10,7 +10,7 @@ entries:
     es:
       title: Editor se publica como contrato
       body: >-
-        Entra al catálogo como <code>Editor</code> (superficie + barra, siempre juntas — no hay
+        Entra al catálogo como <code>Editor</code> (superficie + barra, siempre juntas - no hay
         una versión sin barra). El motor es ProseMirror, empaquetado aparte en
         <code>@skryensya/editor</code> (peer dependency opcional): negrita, cursiva, subrayado,
         enlaces, títulos H1–H3, listas, citas y bloques de código, con deshacer/rehacer. Cada
@@ -25,7 +25,7 @@ entries:
     en:
       title: Editor is published as a contract
       body: >-
-        It joins the catalogue as <code>Editor</code> (bar + surface, always together — there is
+        It joins the catalogue as <code>Editor</code> (bar + surface, always together - there is
         no toolbar-less version). The engine is ProseMirror, packaged separately as
         <code>@skryensya/editor</code> (an optional peer dependency): bold, italic, underline,
         links, H1–H3 headings, lists, blockquotes and code blocks, with undo/redo. Every change

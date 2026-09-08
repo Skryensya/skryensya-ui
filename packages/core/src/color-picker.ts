@@ -123,7 +123,7 @@ export const colorPickerContract = {
        * signature's two bindings: `ColorPicker` had zero canonical-tree coverage before
        * `ai-gates/src/trees.ts` gained one, and the first real comparison (G2, symmetry.spec.ts)
        * failed on both this and `.compact` for the reason `Tooltip`'s own comment on this field
-       * states — the React binding already portals (`<Portal container={container}>`,
+       * states - the React binding already portals (`<Portal container={container}>`,
        * `react/components/color-picker.tsx`), but with no `portals: true` here `render-tree.tsx`
        * never hands it a scoped `container`, so every ColorPicker instance on a page with more than
        * one (this stage has two: `ColorPicker` and `.compact`) portals into the SAME
@@ -197,7 +197,7 @@ export const colorPickerContract = {
        * signature's two bindings: `ColorPicker` had zero canonical-tree coverage before
        * `ai-gates/src/trees.ts` gained one, and the first real comparison (G2, symmetry.spec.ts)
        * failed on both this and `.compact` for the reason `Tooltip`'s own comment on this field
-       * states — the React binding already portals (`<Portal container={container}>`,
+       * states - the React binding already portals (`<Portal container={container}>`,
        * `react/components/color-picker.tsx`), but with no `portals: true` here `render-tree.tsx`
        * never hands it a scoped `container`, so every ColorPicker instance on a page with more than
        * one (this stage has two: `ColorPicker` and `.compact`) portals into the SAME

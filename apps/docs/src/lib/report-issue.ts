@@ -4,7 +4,7 @@
  * marketing home) loses its rail-less layout for this, and nothing gets a second, page-local copy.
  *
  * GitHub's own `issues/new` form accepts `title`/`body` as query params and pre-fills them from a
- * plain link — no API call, no token, no dependency on this repo publishing issue templates. The
+ * plain link - no API call, no token, no dependency on this repo publishing issue templates. The
  * reader still reviews and submits on GitHub; this never files anything on their behalf.
  */
 const REPO = "Skryensya/skryensya-ui";

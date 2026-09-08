@@ -37,17 +37,17 @@ export const commentThreadMessages = {
       "Dos preguntas distintas: qué se ve mientras algo carga, y qué pasa cuando eso tiene que convivir con lo que ya cargó.",
     "commentThread.demoSkeletonTitle": "El placeholder",
     "commentThread.demoSkeletonBody":
-      "La forma de un comentario que todavía no llegó: un círculo donde va el avatar, un par de barras para el encabezado y otro par para el cuerpo. Nada de esto se anuncia — <code>Loader.status</code> avisa la espera una sola vez, no una vez por fila.",
+      "La forma de un comentario que todavía no llegó: un círculo donde va el avatar, un par de barras para el encabezado y otro par para el cuerpo. Nada de esto se anuncia - <code>Loader.status</code> avisa la espera una sola vez, no una vez por fila.",
     "commentThread.demoSkeletonLabel": "Comentarios cargando",
     "commentThread.demoInfiniteTitle": "En uso: cargando al hacer scroll",
     "commentThread.demoInfiniteBody":
-      "Los comentarios ya cargados y el placeholder conviven: al llegar al final del scroll aparece la fila del esqueleto justo donde va a caer el próximo comentario, y a los pocos instantes ese comentario real la reemplaza. Nada de esto lo sabe <code>CommentThread</code> — el hilo nunca se entera de que hay páginas.",
+      "Los comentarios ya cargados y el placeholder conviven: al llegar al final del scroll aparece la fila del esqueleto justo donde va a caer el próximo comentario, y a los pocos instantes ese comentario real la reemplaza. Nada de esto lo sabe <code>CommentThread</code> - el hilo nunca se entera de que hay páginas.",
     "commentThread.demoInfiniteLabel": "Hilo con carga progresiva",
     "commentThread.behaviorTitle": "Voto y borrado no tocan el DOM por su cuenta",
     "commentThread.behaviorBody1":
-      "Un clic en votar o borrar solo despacha el evento (<code>onVote</code>/<code>onDelete</code> en React, un <code>CustomEvent</code> en Vanilla) — el estado que se ve (<code>aria-pressed</code>, <code>data-voted</code>) es SIEMPRE el que trae el dato de quien lo usa, nunca algo que este componente decida por su cuenta. Plegar un hilo y abrir/cerrar el cuadro de respuesta sí son estado propio, y usan el mismo patrón de disclosure de <code>NavListGroup</code> (<code>aria-expanded</code> + <code>hidden</code>): no hay máquina de Zag, no hace falta una para un click que alterna un booleano.",
+      "Un clic en votar o borrar solo despacha el evento (<code>onVote</code>/<code>onDelete</code> en React, un <code>CustomEvent</code> en Vanilla) - el estado que se ve (<code>aria-pressed</code>, <code>data-voted</code>) es SIEMPRE el que trae el dato de quien lo usa, nunca algo que este componente decida por su cuenta. Plegar un hilo y abrir/cerrar el cuadro de respuesta sí son estado propio, y usan el mismo patrón de disclosure de <code>NavListGroup</code> (<code>aria-expanded</code> + <code>hidden</code>): no hay máquina de Zag, no hace falta una para un click que alterna un booleano.",
     "commentThread.behaviorBody2":
-      "Sin <code>role=\"feed\"</code> ni <code>role=\"tree\"</code>: cada comentario es un <code>&lt;article&gt;</code>, y sus respuestas son <code>&lt;article&gt;</code> anidados dentro — la jerarquía que un lector de pantalla ya calcula solo, sin <code>aria-level</code> autorado a mano (la misma exención que la spec normativa de WAI-ARIA da al patrón Tree cuando el árbol entero ya está en el DOM).",
+      "Sin <code>role=\"feed\"</code> ni <code>role=\"tree\"</code>: cada comentario es un <code>&lt;article&gt;</code>, y sus respuestas son <code>&lt;article&gt;</code> anidados dentro - la jerarquía que un lector de pantalla ya calcula solo, sin <code>aria-level</code> autorado a mano (la misma exención que la spec normativa de WAI-ARIA da al patrón Tree cuando el árbol entero ya está en el DOM).",
     "commentThread.optionsTitle": "Opciones",
     "commentThread.optionsBody":
       "<code>label</code>: el nombre accesible del hilo. <code>nodes</code>: el árbol de comentarios (cada uno con <code>id</code>, <code>author</code>, <code>timestamp</code>, <code>voteCount</code>, <code>body</code>, y opcionalmente <code>votedByMe</code>, <code>canDelete</code>, <code>replies</code>). <code>composer</code>: la caja para publicar un comentario nuevo, opcional. Los textos de cada control (<code>replyLabel</code>, <code>deleteLabel</code>, <code>voteUpLabel</code>…) son props separadas, nunca texto fijo en un idioma.",
@@ -62,7 +62,7 @@ export const commentThreadMessages = {
       "Para crear se clona un blueprint y se llenan los campos por los hooks <code>data-sk-comment-*</code>, nunca por las clases de parte: esas son de la hoja de estilos y se mueven cuando cambia la pintura. Es el mismo idiom que usa <a href=\"/componentes/toast\">Toast</a> con su propio <code>ToastTemplate</code>.",
     "commentThread.htmlTitle": "HTML autorado",
     "commentThread.htmlBody":
-      "Un comentario recursivo se compone repitiendo esta misma forma dentro de <code>.sk-comment-thread__replies</code>. El <code>FormField</code>/<code>Textarea</code> del formulario de respuesta queda a criterio de quien lo usa — acá se omite por brevedad.",
+      "Un comentario recursivo se compone repitiendo esta misma forma dentro de <code>.sk-comment-thread__replies</code>. El <code>FormField</code>/<code>Textarea</code> del formulario de respuesta queda a criterio de quien lo usa - acá se omite por brevedad.",
     "commentThread.reactTitle": "React",
     "commentThread.contractItem1":
       "Las respuestas recursan por COMPOSICIÓN, no como colección de datos: <code>Comment.replies</code> acepta <code>Comment</code>, igual que <code>NavListLink.nested</code> acepta <code>NavListGroup</code>. Por eso cada slot a cualquier profundidad admite contenido compuesto, cosa que una colección no podía: una entrada de colección es DATA, y un subárbol adentro se aplanaba a su texto.",
@@ -177,22 +177,22 @@ export const commentThreadMessages = {
       "Two different questions: what shows while something is loading, and what happens when that has to sit next to what already loaded.",
     "commentThread.demoSkeletonTitle": "The placeholder",
     "commentThread.demoSkeletonBody":
-      "The shape of a comment that has not arrived yet: a circle where the avatar goes, a couple of bars for the header, another couple for the body. None of it is announced — <code>Loader.status</code> reports the wait once, not once per row.",
+      "The shape of a comment that has not arrived yet: a circle where the avatar goes, a couple of bars for the header, another couple for the body. None of it is announced - <code>Loader.status</code> reports the wait once, not once per row.",
     "commentThread.demoSkeletonLabel": "Comments loading",
     "commentThread.demoInfiniteTitle": "In use: loading on scroll",
     "commentThread.demoInfiniteBody":
-      "Comments already loaded and the placeholder sit side by side: reaching the end of the scroll reveals the skeleton row exactly where the next comment will land, and moments later a real comment replaces it. None of this is <code>CommentThread</code>'s own — the thread never learns that pages exist.",
+      "Comments already loaded and the placeholder sit side by side: reaching the end of the scroll reveals the skeleton row exactly where the next comment will land, and moments later a real comment replaces it. None of this is <code>CommentThread</code>'s own - the thread never learns that pages exist.",
     "commentThread.demoInfiniteLabel": "Thread with progressive loading",
     "commentThread.behaviorTitle": "Vote and delete never touch the DOM on their own",
     "commentThread.behaviorBody1":
-      "A click on vote or delete only dispatches the event (<code>onVote</code>/<code>onDelete</code> in React, a <code>CustomEvent</code> in Vanilla) — the visible state (<code>aria-pressed</code>, <code>data-voted</code>) is ALWAYS whatever the consumer's own data says, never something this component decides on its own. Folding a thread and opening/closing the reply box ARE this component's own state, and use the same disclosure pattern as <code>NavListGroup</code> (<code>aria-expanded</code> + <code>hidden</code>): no Zag machine, none needed for a click that flips one boolean.",
+      "A click on vote or delete only dispatches the event (<code>onVote</code>/<code>onDelete</code> in React, a <code>CustomEvent</code> in Vanilla) - the visible state (<code>aria-pressed</code>, <code>data-voted</code>) is ALWAYS whatever the consumer's own data says, never something this component decides on its own. Folding a thread and opening/closing the reply box ARE this component's own state, and use the same disclosure pattern as <code>NavListGroup</code> (<code>aria-expanded</code> + <code>hidden</code>): no Zag machine, none needed for a click that flips one boolean.",
     "commentThread.behaviorBody2":
-      "No <code>role=\"feed\"</code>, no <code>role=\"tree\"</code>: every comment is an <code>&lt;article&gt;</code>, and its replies are nested <code>&lt;article&gt;</code> elements inside it — the hierarchy a screen reader already computes on its own, with no hand-authored <code>aria-level</code> (the same exemption WAI-ARIA's own normative Tree spec gives once the whole tree is already in the DOM).",
+      "No <code>role=\"feed\"</code>, no <code>role=\"tree\"</code>: every comment is an <code>&lt;article&gt;</code>, and its replies are nested <code>&lt;article&gt;</code> elements inside it - the hierarchy a screen reader already computes on its own, with no hand-authored <code>aria-level</code> (the same exemption WAI-ARIA's own normative Tree spec gives once the whole tree is already in the DOM).",
     "commentThread.optionsTitle": "Options",
     "commentThread.optionsBody":
       "<code>label</code>: the thread's accessible name. <code>nodes</code>: the comment tree (each with <code>id</code>, <code>author</code>, <code>timestamp</code>, <code>voteCount</code>, <code>body</code>, and optionally <code>votedByMe</code>, <code>canDelete</code>, <code>replies</code>). <code>composer</code>: the box for posting a new comment, optional. Every control's copy (<code>replyLabel</code>, <code>deleteLabel</code>, <code>voteUpLabel</code>…) is its own prop, never fixed text in one language.",
     "commentThread.a11yP1":
-      "Every comment is a read-only <code>&lt;article&gt;</code> with its actions inside, never a selectable widget: no roving tabindex, no arrow keys of its own — each control (vote, reply, delete, collapse) is a plain <code>&lt;button&gt;</code> in Tab order. The vote buttons are icon-only; their accessible name comes from a <code>&lt;span&gt;</code> clipped with <code>sk-visually-hidden</code>, not a separate <code>aria-label</code>.",
+      "Every comment is a read-only <code>&lt;article&gt;</code> with its actions inside, never a selectable widget: no roving tabindex, no arrow keys of its own - each control (vote, reply, delete, collapse) is a plain <code>&lt;button&gt;</code> in Tab order. The vote buttons are icon-only; their accessible name comes from a <code>&lt;span&gt;</code> clipped with <code>sk-visually-hidden</code>, not a separate <code>aria-label</code>.",
     "commentThread.a11yP2":
       "Delete ships no confirmation of its own: it fires <code>onDelete</code> directly. A consumer who wants a confirm step composes <code>Dialog</code> with <code>alert</code> (built for exactly that) around their own handler, rather than this component shipping a second modal not every consumer needs.",
     "commentThread.vanillaApiTitle": "The Vanilla API",
@@ -202,7 +202,7 @@ export const commentThreadMessages = {
       "Creating means cloning a blueprint and filling it through the <code>data-sk-comment-*</code> hooks, never through part classes: those belong to the stylesheet and move whenever the paint does. It is the same idiom <a href=\"/en/components/toast\">Toast</a> uses with its own <code>ToastTemplate</code>.",
     "commentThread.htmlTitle": "Authored HTML",
     "commentThread.htmlBody":
-      "A recursive comment is composed by repeating this same shape inside <code>.sk-comment-thread__replies</code>. The reply form's <code>FormField</code>/<code>Textarea</code> is the consumer's own composition — omitted here for brevity.",
+      "A recursive comment is composed by repeating this same shape inside <code>.sk-comment-thread__replies</code>. The reply form's <code>FormField</code>/<code>Textarea</code> is the consumer's own composition - omitted here for brevity.",
     "commentThread.reactTitle": "React",
     "commentThread.contractItem1":
       "The tree is <code>nodes</code> (not <code>items</code>): the same name <code>TreeView</code>'s own recursive collection already uses.",

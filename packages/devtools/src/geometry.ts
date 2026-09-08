@@ -29,7 +29,7 @@ export function clampPosition(position: Point, size: Size, viewport: Size): Poin
 /**
  * Was a pointer that went down and is still down a DRAG, or is it still just a CLICK that has not
  * released yet? Distance travelled since `pointerdown`, in CSS pixels, past which the gesture stops
- * being a click even if the pointer comes back to the origin before release — the platform only
+ * being a click even if the pointer comes back to the origin before release - the platform only
  * knows "down, then up on the same element", never "moved and came back", so this is the one
  * signal a caller has for telling the two apart while the pointer is still down.
  */

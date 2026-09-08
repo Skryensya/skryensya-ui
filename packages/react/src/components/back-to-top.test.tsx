@@ -60,7 +60,7 @@ describe("BackToTop", () => {
     // The label rides in its own part so the stylesheet can clip it to a name-only box.
     expect(button.querySelector(".sk-back-to-top__label")?.textContent).toBe("Volver arriba");
 
-    // Revealed, it is a button with that accessible name — no `hidden` filter needed.
+    // Revealed, it is a button with that accessible name - no `hidden` filter needed.
     setScrollY(600);
     scroll();
     expect(ui.getByRole("button", { name: "Volver arriba" })).toBe(button);

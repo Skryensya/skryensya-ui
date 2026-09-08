@@ -218,8 +218,8 @@ body {
   /* `--space-inset-xs` (4px) is the component's own default, tuned for a DESKTOP dropdown where the
      list floats in its own bordered panel; on a full-width bottom sheet it read as noticeably
      tighter than the reader-preference sheet beside it in the same chrome (`--space-inset-md`,
-     16px). `sm` moves both PART way rather than making one match the other's number outright — the
-     prefs sheet's own side gets the matching move in `.docs-prefs-sheet__body` below — so neither
+     16px). `sm` moves both PART way rather than making one match the other's number outright - the
+     prefs sheet's own side gets the matching move in `.docs-prefs-sheet__body` below - so neither
      sheet's padding looks arbitrarily borrowed from the other's original value. */
   .sk-command-palette[data-sk-dialog-vaul] .sk-command-palette__list {
     padding: var(--space-inset-sm);
@@ -238,8 +238,8 @@ body {
 
 /* Color-palette toggle: one icon-only button (same square as the theme/contrast toggles, sized by
    sk-button[data-icon-only]) that cycles the presets. It IS the contrast toggle's glyph in its
-   normal state — the same 2px currentColor ring, in the same secondary icon colour, inset the same
-   1px from the icon box — but with the current accent filling the circle instead of a stroke-only
+   normal state - the same 2px currentColor ring, in the same secondary icon colour, inset the same
+   1px from the icon box - but with the current accent filling the circle instead of a stroke-only
    outline. Same figure/ground as the contrast toggle's half-filled circle: the colour reads as the
    thing the control carries, not a dot parked inside a frame. */
 .dimensions__palette-toggle {
@@ -337,7 +337,7 @@ body {
      (last column) BEFORE the brand (column 1), search (column 3) and the prefs trigger (column 4),
      and sparse auto-placement only moves its cursor forward. Landing on the last column first pushes
      the cursor past the row, so the earlier items fell through to an implicit second row instead of
-     sharing the first — confirmed live via a Playwright DOM dump before this fix. */
+     sharing the first - confirmed live via a Playwright DOM dump before this fix. */
   .dimensions__menu-trigger {
     grid-row: 1;
     grid-column: 5;
@@ -746,7 +746,7 @@ main {
    (16px): measured against the mobile Command Palette's own list in the same chrome, that default
    read as noticeably looser than the palette's 4px. Both sheets move toward each other instead of
    one adopting the other's exact number outright (the palette's own list padding gets the matching
-   move, `command-palette.css` override above) — this is the header's own inline inset too, so the
+   move, `command-palette.css` override above) - this is the header's own inline inset too, so the
    title and the tiles under it share one edge. */
 .docs-prefs-sheet__body {
   display: flex;
@@ -759,8 +759,8 @@ main {
 
 /* Each preference is a full-width Tile Button: the whole card changes the setting on tap (the
    toggles cycle in place, language navigates to the next locale). The visible title carries the
-   meaning the bare icon could not, on the leading edge; the control's own affordance — the morphing
-   icon, the palette dot, the current-language name — sits on the trailing edge.
+   meaning the bare icon could not, on the leading edge; the control's own affordance - the morphing
+   icon, the palette dot, the current-language name - sits on the trailing edge.
 
    The grid is stated here because neither class the tile carries gives this row on its own:
    `.sk-tile--interactive` is a single leading column, and `.sk-icon-toggle` stacks every face in
@@ -805,7 +805,7 @@ main {
 
    `center`, not `center end`: the trailing track is now floored at the control size (below), so
    the dot and the chip already fill it edge to edge and "end" would make no visible difference to
-   them — but the 28px icon is narrower than that 40px track, and measured live, "end" put its own
+   them - but the 28px icon is narrower than that 40px track, and measured live, "end" put its own
    right edge flush with the track's, leaving all the slack bunched on the icon's LEFT instead of
    split evenly around it inside its safe-area chip. Plain `center` sits the icon in the middle of
    the chip on both axes, which is where a safe area is supposed to put what it protects. */
@@ -820,7 +820,7 @@ main {
 /* `--size-icon-lg` (24px), not `-xl` (28px): measured live, an xl icon centred in the 40px chip
    left an 8px gap on the DOT's side (it fills its 40px chip edge to edge, no inset) but only a 6px
    gap on the ICON's side, so the two rows' actual painted marks sat at two different distances from
-   the shared trailing edge — the "doesn't line up" the chip redesign was supposed to fix. `lg` gives
+   the shared trailing edge - the "doesn't line up" the chip redesign was supposed to fix. `lg` gives
    the icon the exact same 8px inset the dot's own `padding: 0.5rem` already uses and the Language
    chip's own `padding-inline` already uses, so all three marks sit the same distance off the tile's
    edge instead of three different ones. */
@@ -837,12 +837,12 @@ main {
  * CSS (`patterns/icon-toggle.css`) keys off `.sk-icon-toggle > [data-face]`, a DIRECT child
  * selector, so a wrapper would silently stop every face from cross-fading. This used to be a
  * `::before` generated box instead of a real element, explicitly placed into the same grid cell
- * (`grid-column: 2; grid-row: 1`) as the faces — that measured correctly in Chromium AND in
+ * (`grid-column: 2; grid-row: 1`) as the faces - that measured correctly in Chromium AND in
  * Playwright's WebKit, but a reader on actual Safari saw the chip painted off from the icon it was
  * supposed to sit behind, an engine gap the automated cross-check never caught. `.docs-prefs-tile
  * -chip` is the fix: a real, empty SIBLING span (ThemeToggle.astro, ContrastToggle.astro), placed
  * into the SAME cell the same way, so it no longer depends on a generated box behaving as a grid
- * item at all. Sibling, not wrapper — `[data-face]` stays a direct child of `.sk-icon-toggle`.
+ * item at all. Sibling, not wrapper - `[data-face]` stays a direct child of `.sk-icon-toggle`.
  */
 .docs-prefs-tile-chip {
   grid-column: 2;
@@ -876,7 +876,7 @@ main {
 /* `.sk-tile__title` is heading weight (700) AND heading-sm size (20px) everywhere else a Tile
    names a whole card. Four of these sit stacked in one sheet with a description already under
    each, so the row reads as a settings LIST rather than four headlines: `--font-weight-label`
-   (500, "UI labels, controls" — `semantic/_type.scss`) is one step down from the un-tiled desktop
+   (500, "UI labels, controls" - `semantic/_type.scss`) is one step down from the un-tiled desktop
    cluster's plain-text row label, and `--font-size-body` (16px) matches that same row label's own
    size instead of a card headline's. The description follows at `--font-size-caption` (12px, one
    step below the tile default's `--font-size-body-sm`), so the pair keeps its own two-tier
@@ -1064,7 +1064,7 @@ h2.docs-nav-section__title {
 
 /* A childless top-level row (Inicio, Presets, and Templates on a prod build) is a plain
    `.sk-nav-list__link` in a non-collapsible group. Left at the pattern's default it reads a rung
-   quieter than the section disclosure buttons beside it — body weight, secondary colour — so the
+   quieter than the section disclosure buttons beside it - body weight, secondary colour - so the
    three sections looked like headings and Inicio/Presets like orphaned children of nothing. They
    are PEERS in this tree, every one a top-level destination, so they take the same primary colour
    and emphasis stroke the disclosure button just above declares for itself. `:not([aria-current])`
@@ -1077,7 +1077,7 @@ h2.docs-nav-section__title {
 
 /* The state layer's hover wash is `currentColor` at 12% (state-layer.css). On these links
    `currentColor` is a muted nav-list grey, so over the drawer's near-white overlay surface the
-   hover was barely a tint — "muy claro" in light mode. Point the wash at primary text instead, the
+   hover was barely a tint - "muy claro" in light mode. Point the wash at primary text instead, the
    same move Menu / Menubar / Megamenu already make, so the hovered row is unmistakable in both
    modes. */
 .docs-drawer-nav .sk-nav-list__link,
@@ -1735,7 +1735,7 @@ p:not(.sk-text) {
    * THE PINNED BAND TUCKS UNDER THE NAVBAR, it does not butt against it. `.dimensions` (the navbar,
    * `z-index: var(--z-sticky)`) and this band (`z-index: 3`) are both `position: sticky`, and two
    * sticky boxes resolve their own device-pixel offsets a frame apart while the page is actively
-   * scrolling — so a hard abutment at `top: var(--docs-navbar-h)` opens a hairline of
+   * scrolling - so a hard abutment at `top: var(--docs-navbar-h)` opens a hairline of
    * `--color-bg-canvas` between them on a high-DPR phone (`--docs-navbar-h` is already `Math.ceil`'d
    * for the same reason; this covers the rounding the ceil leaves the other way). Pull the band up a
    * few real pixels so the seam always lands under the navbar's own opaque fill. Same fix the tab
@@ -2021,9 +2021,9 @@ p:not(.sk-text) {
 /*
  * THE BAND'S RESTING LEAD, as a gap that closes with the collapse instead of static padding that
  * desyncs it (the collapse blocks below zero `.docs-document-pair`'s own `padding-block-start` and
- * lean on this instead — see the `:has(.docs-component-shell)` rules there). At rest the spacer
- * carries `var(--space-inset-lg)` of margin above it — the same "floating card" air every other
- * grid page gets from pair padding — and this walks it to 0 over the SAME `scroll(root block)`
+ * lean on this instead - see the `:has(.docs-component-shell)` rules there). At rest the spacer
+ * carries `var(--space-inset-lg)` of margin above it - the same "floating card" air every other
+ * grid page gets from pair padding - and this walks it to 0 over the SAME `scroll(root block)`
  * timeline and the SAME `animation-range` the effect drives `--sk-fx-collapse-progress` on. Both are
  * linear in scrollY over the same window and the spacer's height equals the range (the effect's
  * contract), so the header still pins the exact frame the collapse finishes: measured, not assumed.
@@ -2112,7 +2112,7 @@ p:not(.sk-text) {
     /*
      * DROP THE STATIC LEAD only while the collapse is live. `.docs-document-pair`'s own
      * `padding-block-start: var(--space-inset-lg)` (further up) sits ABOVE the spacer, so the header
-     * has that much further to scroll than `--sk-fx-collapse-range` accounts for — progress reaches 1
+     * has that much further to scroll than `--sk-fx-collapse-range` accounts for - progress reaches 1
      * while the collapsed bar is still ~24px shy of the navbar, drifting the rest with a canvas gap
      * above it. The band's resting air is re-added as a SCROLL-CLOSED gap on the spacer just below
      * (`@keyframes docs-hero-lead-close`). Off this block (no support / reduced motion) the masthead
@@ -2232,7 +2232,7 @@ p:not(.sk-text) {
  * Why a duplicate rather than one shared condition: CSS has no way to OR an `@supports` feature
  * query with an attribute selector in one conditional group, and the native block above has to stay
  * reachable with ZERO JavaScript (a browser with scripting off but native scroll-timeline support
- * still gets the collapse) — so the capability check can't simply become "did some script decide
+ * still gets the collapse) - so the capability check can't simply become "did some script decide
  * this," only ADD to it. `[data-sk-fx-collapse-js]` is set by `collapse-header-fallback.ts` (see the
  * effect's own note on this same attribute, `@skryensya/core/effects/collapse-header.css`), and only
  * once that script has confirmed `animation-timeline: scroll()` is NOT natively supported, so the
@@ -2839,7 +2839,7 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .d
  * (a SIBLING of `.docs-document-pair`, in the SAME `.shell` column, so it bleeds to the sides,
  * never under the sidebar), while `__inner` below, an unlabeled child of the nested grid that
  * `data-width="full-width"` repeats (layout.css), falls back to `content-start / content-end` on
- * its own — same width AND left edge `<main>`'s own content reads at, unaffected by the outer box
+ * its own - same width AND left edge `<main>`'s own content reads at, unaffected by the outer box
  * now being wider (`.docs-footer-row`'s own comment, further up, has the phantom-rail reasoning
  * that keeps THAT measure honest). `padding-inline: 0` below is what makes that hold: the
  * contract's own `data-padding="lg"` (a single value, both axes, same vocabulary Box/Hero share)

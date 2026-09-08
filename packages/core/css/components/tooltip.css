@@ -105,20 +105,20 @@
   /* ── El movimiento: materializa al entrar, se va AL INSTANTE ─────────────────
    * EL PATRÓN ES LA ASIMETRÍA. Un tooltip entra con un materialize suave (opacity + scale + blur, el
    * mismo recipe que Popover y Menu, `--motion-materialize-scale`/`-blur`) viniendo desde ABAJO
-   * (`--motion-distance-sm`, 4px), el gesto de "emerger del trigger" —sale ARRIBA por defecto—. Pero
+   * (`--motion-distance-sm`, 4px), el gesto de "emerger del trigger" (sale ARRIBA por defecto). Pero
    * al CERRARSE no se anima: desaparece en el mismo frame.
    *
    * Por qué no hay animación de salida: un tooltip se cierra en dos situaciones, y ninguna quiere un
    * fade. Si el puntero se fue, ya nadie lo está mirando. Y si lo que se ACTIVÓ es el control que el
-   * tooltip describe —un toggle de preferencia del header, una opción del segmented de
-   * ComponentPreview— un fade encima de un control cuyo estado acaba de cambiar se lee como lag. El
+   * tooltip describe (un toggle de preferencia del header, una opción del segmented de
+   * ComponentPreview), un fade encima de un control cuyo estado acaba de cambiar se lee como lag. El
    * cierre de Zag ya es instantáneo (`closeOnClick`); esta hoja es lo que hacía que se viera lento.
    * Menu/Select/Combobox sí se despiden con transición: son overlays que se descartan a propósito y
    * el fade confirma el descarte. Un tooltip es ambiente; su salida es sólo dejar de estorbar.
    *
    * CÓMO: la `transition` vive SÓLO en la regla de estado abierto, así que corre únicamente en la
    * dirección de entrada (una transición usa las propiedades del estado AL QUE se llega). Al cerrar
-   * se cae a la regla base —sin `transition`— y el `display: none` de la regla `[data-state]` de más
+   * se cae a la regla base (sin `transition`) y el `display: none` de la regla `[data-state]` de más
    * arriba aplica de una. El `@starting-style` de abajo sigue dando el "desde" del primer paint.
    *
    * SE ANIMAN LOS DOS HIJOS y no el positioner: `translate` (incluso `0 0`) lo volvería bloque

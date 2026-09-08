@@ -54,7 +54,7 @@ import { describe, expect, it } from "vitest";
 /*
  * DERIVED FROM `runtime/registry.ts`'s OWN `registrations`, not hand-counted: this file went stale
  * once already (asserted `toHaveLength(23)` while the real registry had grown past 40, missing 18
- * real mounts — `mountMegamenu`, `mountChart`, `mountTreegrid` among them — silently, because the
+ * real mounts - `mountMegamenu`, `mountChart`, `mountTreegrid` among them - silently, because the
  * length check and the import list never disagreed with EACH OTHER, only with the registry neither
  * one read). If this list drifts from `registry.ts` again, regenerate it: every mount function it
  * lists is `(await import("../components/<file>.js")).mount<Name>` in that file's `registrations`
@@ -118,8 +118,8 @@ describe("Vanilla public entry points", () => {
   /*
    * Editor sits beside CodePreview/ComponentPreview here for a different reason than either: it IS
    * part of the default application runtime, conceptually, but `@skryensya/editor` (ProseMirror) is
-   * an optional peer dependency, so `runtime/registry.ts`'s auto-loader must never name it — even
-   * behind a selector-gated `import()` — or every consumer of `@skryensya/vanilla/auto` would need
+   * an optional peer dependency, so `runtime/registry.ts`'s auto-loader must never name it - even
+   * behind a selector-gated `import()` - or every consumer of `@skryensya/vanilla/auto` would need
    * that peer installed. A page using Editor calls `mountEditor` explicitly instead.
    */
   it("publishes documentation previews, Editor, and lifecycle control only through explicit subpaths", () => {
@@ -133,8 +133,8 @@ describe("Vanilla public entry points", () => {
    * THE ANTI-DRIFT CHECK the two tests above cannot be, on their own: they prove every function in
    * `mounts` is real and importable, but nothing stops `mounts` itself from quietly falling behind
    * `runtime/registry.ts` again the way it already did once (see the comment on `mounts`). This
-   * reads `registry.ts`'s own `registrations` array as text — the same source-scanning approach
-   * `no-em-dash.test.ts` already uses elsewhere in this repo — and compares the SET of mount names
+   * reads `registry.ts`'s own `registrations` array as text - the same source-scanning approach
+   * `no-em-dash.test.ts` already uses elsewhere in this repo - and compares the SET of mount names
    * it finds against this file's own list, so a future registration that forgets its subpath (or a
    * subpath export that outlives a removed registration) fails HERE, at the one seam meant to
    * answer "does the public surface match the real one", instead of waiting for someone to notice

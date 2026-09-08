@@ -34,14 +34,14 @@ describe("Markdown serialization", () => {
 
   /*
    * KNOWN, DOCUMENTED LIMITATION (see this module's own header comment): CommonMark has no native
-   * underline syntax, so the mark serializes as raw <u>…</u> HTML passthrough — a good OUTPUT, but
+   * underline syntax, so the mark serializes as raw <u>…</u> HTML passthrough - a good OUTPUT, but
    * this module deliberately exposes no Markdown-to-doc PARSER at all (the editor's live state is
    * always the EditorState/doc, never a re-parse of its own Markdown export), so there is nothing
    * here that claims to read that passthrough back into the mark. This test exists so a future
    * addition of a Markdown parser is a visible, deliberate decision, not a silent regression of
    * the passthrough shape asserted below.
    */
-  it("docToMarkdown renders underline as raw <u> passthrough — a documented, known limitation", () => {
+  it("docToMarkdown renders underline as raw <u> passthrough - a documented, known limitation", () => {
     const doc = htmlToDoc("<p><u>Subrayado</u></p>", document);
     expect(docToMarkdown(doc).trim()).toBe("<u>Subrayado</u>");
   });

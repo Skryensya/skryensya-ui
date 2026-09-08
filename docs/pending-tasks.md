@@ -36,7 +36,7 @@ haya progreso visible seguido en vez de quedar atascado en el ítem más grande 
 
 ---
 
-## Nivel 1 — bloqueador conocido: sin Tests tab
+## Nivel 1 - bloqueador conocido: sin Tests tab
 
 Señal: `apps/docs/src/components/pages/*Page.astro` con `contractId` real (no una página de
 survey/índice) y sin prop `tests={...}`. Verificado en vivo el 2026-09-03. Completar un ítem es:
@@ -45,9 +45,9 @@ sumarla a `scripts/build-test-report.mjs` / `artifacts/test-results.json`, agreg
 `TARGETS` + claves i18n en la página (`feedback-wire-tests-into-docs-tab` en la memoria del
 agente tiene el checklist completo), y correr `turbo check`.
 
-- [ ] **FadeEdge** (`/componentes/fade-edge`) — bloqueado ⏸️ (2026-09-03): la premisa original
+- [ ] **FadeEdge** (`/componentes/fade-edge`) - bloqueado ⏸️ (2026-09-03): la premisa original
   ("efecto CSS puro, sin máquina: la suite más chica de este lote") estaba mal planteada. No es que
-  la suite sea chica — es que **no hay archivo `.ts`/`.tsx` en `core`/`react`/`vanilla` al que
+  la suite sea chica - es que **no hay archivo `.ts`/`.tsx` en `core`/`react`/`vanilla` al que
   atarla** (`grep -rln "fade-edge|fadeEdge|FadeEdge" packages/{core,react,vanilla}/src` vacío):
   FadeEdge es 100% CSS (`data-fade`, `data-direction`, `--sk-fade-edge-size`,
   `--sk-fade-edge-color`), sin contrato ni binding. Se verificó que no hay precedente en el repo
@@ -58,36 +58,36 @@ agente tiene el checklist completo), y correr `turbo check`.
   la página sin Tests tab permanentemente (es CSS puro, no aplica), o (b) definir una convención
   nueva para patrones CSS-only (p. ej. un check visual/computed-style vía `ai-gates`). No tomar de
   nuevo sin esa decisión.
-- [x] **Breadcrumb** (`/componentes/breadcrumb`) — hecho ✅ (2026-09-03): las suites YA existían en
+- [x] **Breadcrumb** (`/componentes/breadcrumb`) - hecho ✅ (2026-09-03): las suites YA existían en
   ambos bindings (`packages/react/src/components/breadcrumb.test.tsx`, 4 tests;
-  `packages/vanilla/src/components/breadcrumb.test.ts`, 5 tests) — el gap era solo de wiring, no de
+  `packages/vanilla/src/components/breadcrumb.test.ts`, 5 tests) - el gap era solo de wiring, no de
   cobertura. Se agregaron a `sourceFiles` + prop `tests={[...]}` en `BreadcrumbPage.astro`, las 9
   claves `breadcrumb.testN` (es/en) en `ui.ts`, las 2 entradas a `TARGETS` en
   `scripts/build-test-report.mjs`, se corrió el script (9/9 passed) y se verificó en vivo contra
-  `:4173` — las dos tablas del tab Tests muestran los 9 checks en verde, cero fallidos/pendientes.
-- [x] **Footer** (`/componentes/footer`) — hecho ✅ (2026-09-03): no había ninguna suite (el
+  `:4173` - las dos tablas del tab Tests muestran los 9 checks en verde, cero fallidos/pendientes.
+- [x] **Footer** (`/componentes/footer`) - hecho ✅ (2026-09-03): no había ninguna suite (el
   binding React vive en `layout.tsx`, junto a Box/Stack/Grid/etc., y su test file
   `packages/react/src/components/layout.test.tsx` no tenía ningún `it()` para `Footer`). Se
   agregaron 2 tests ahí mismo (mismo archivo/`describe` que Box/Stack/Wrapper): defaults
   documentados (landmark `contentinfo`, `data-surface="sunken"`, `data-padding="lg"`,
   `data-divider=""`) y overrides + `as` dropeando el landmark. Wireado a `FooterPage.astro`
-  (`sourceFiles` + `tests={[...]}`), 2 claves `footer.testN` (es/en) en `ui.ts` — `layout.test.tsx`
+  (`sourceFiles` + `tests={[...]}`), 2 claves `footer.testN` (es/en) en `ui.ts` - `layout.test.tsx`
   ya estaba en `TARGETS`, no hizo falta tocar `build-test-report.mjs`. Corrido (7/7 en
   `layout.test.tsx`, los 2 nuevos incluidos) y verificado en vivo contra `:4173`: ambos checks en
   verde. Nota al pasar: el primer intento de regenerar `test-results.json` chocó con un flake
   preexistente y no relacionado en `packages/react/src/components/menu.test.tsx` (el mismo timing
   de Escape/outside-press que ya documenta `menu-test-suite-dismissable-timing` en la memoria del
-  agente) — confirmado flake real (3/3 en aislado, luego pasó también dentro del run completo), no
+  agente) - confirmado flake real (3/3 en aislado, luego pasó también dentro del run completo), no
   una regresión de este cambio; no se tocó nada de Menu.
-- [x] **Hero** (`/componentes/hero`) — hecho ✅ (2026-09-03): mismo caso que Footer, mismo
+- [x] **Hero** (`/componentes/hero`) - hecho ✅ (2026-09-03): mismo caso que Footer, mismo
   archivo (`layout.test.tsx`, ningún `it()` para `Hero` todavía). 2 tests agregados: defaults
   (`div` plano, `data-align="start"`, `data-padding="xl"`, `data-surface="surface"`) y overrides +
   `as="section"` con landmark propio. Wireado a `HeroPage.astro`, 2 claves `hero.testN` (es/en),
   `layout.test.tsx` ya en `TARGETS`. Corrido y verificado en vivo (9/9 en `layout.test.tsx`, los 2
   nuevos incluidos). Nota: la regeneración de `test-results.json` volvió a chocar con el mismo
-  flake de `menu.test.tsx` visto en el ítem de Footer — ver el nuevo ítem que se agrega abajo por
+  flake de `menu.test.tsx` visto en el ítem de Footer - ver el nuevo ítem que se agrega abajo por
   esto mismo.
-- [x] **`menu.test.tsx` (React) flakea de verdad** — hecho ✅ (2026-09-03). El test `"opens on
+- [x] **`menu.test.tsx` (React) flakea de verdad** - hecho ✅ (2026-09-03). El test `"opens on
   trigger click and closes on Escape, returning focus to the trigger"` usaba `fireUntil` (re-dispara
   Escape en cada poll de `waitFor` hasta que cierra). Ese re-disparo es la causa: cuando Escape
   vuelve a dispararse *después* de que el cierre ya arrancó, `@zag-js/dismissable` re-corre su
@@ -99,42 +99,42 @@ agente tiene el checklist completo), y correr `turbo check`.
   solo `requestAnimationFrame`, sin la deferral extra de interact-outside). Verificado: 14 corridas
   seguidas sin fallar (antes ~1 de cada 3 fallaba). La guía de la memoria
   `menu-test-suite-dismissable-timing` decía "re-fire on every poll" para el flip de
-  `aria-expanded` — sigue valiendo para outside-press, pero NO para la aserción de foco: ahí el
+  `aria-expanded` - sigue valiendo para outside-press, pero NO para la aserción de foco: ahí el
   re-disparo la rompe. Memoria actualizada con esta excepción.
-- [x] **BackToTop** (`/componentes/back-to-top`) — hecho ✅ (2026-09-03): las dos suites YA
+- [x] **BackToTop** (`/componentes/back-to-top`) - hecho ✅ (2026-09-03): las dos suites YA
   existían (`packages/react/src/components/back-to-top.test.tsx`, 7 tests;
-  `packages/vanilla/src/components/back-to-top.test.ts`, 14 tests — 6 de comportamiento puro en
+  `packages/vanilla/src/components/back-to-top.test.ts`, 14 tests - 6 de comportamiento puro en
   Core + 8 del enhancer), el gap era solo de wiring. Se agregaron a `sourceFiles` + prop
   `tests={[...]}` en `BackToTopPage.astro` (21 entradas, mapeadas 1:1 contra los `it()` verbatim),
   21 claves `backToTop.testN` (es/en) en `ui.ts`, las 2 entradas a `TARGETS` en
   `build-test-report.mjs`. Corridas aisladas primero (7/7 y 14/14) para no chocar de nuevo con el
   flake de `menu.test.tsx`, después el script completo (21/21, sin colisión esta vez) y verificado
   en vivo contra `:4173`: 21 checks en verde en las dos tablas, cero fallidos/pendientes.
-- [x] **Nav list** (`/nav-list`, `contractId="nav-list"`) — hecho ✅ (2026-09-03). Las dos suites
+- [x] **Nav list** (`/nav-list`, `contractId="nav-list"`) - hecho ✅ (2026-09-03). Las dos suites
   ya existían (`packages/react/src/components/nav-list.test.tsx`, 7 tests;
-  `packages/vanilla/src/components/nav-list.test.ts`, 8 tests) — la vanilla incluso ya estaba en
+  `packages/vanilla/src/components/nav-list.test.ts`, 8 tests) - la vanilla incluso ya estaba en
   `TARGETS`, pero `NavListPage.astro` no tenía ni `sourceFiles` ni `tests={...}`. Se agregaron
   ambos (7 sourceFiles, incluidos los 2 test files; prop `tests` con las 15 entradas mapeadas 1:1
   contra los `it()` verbatim), 15 claves `navListPage.testN` (es/en) en `ui.ts`, la entrada del
   react a `TARGETS`. Corridas aisladas (7/7, 8/8) y verificado.
-  **Decisión sobre `trailing: "Beta"`: NO.** Nav list es infraestructura de carga — es el patrón
+  **Decisión sobre `trailing: "Beta"`: NO.** Nav list es infraestructura de carga - es el patrón
   que arma el propio sidebar de la doc, tiene contrato maduro (grupos colapsables + enlaces
   anidados + variante horizontal), 15 tests entre las dos capas y está en producción desde hace
   rato. Es lo opuesto a experimental; marcarlo Beta sería incorrecto. Sí sigue faltándole:
-  aparece en `componentItems` (buscador) pero ruteado en `/nav-list`, no bajo `/componentes/` —
+  aparece en `componentItems` (buscador) pero ruteado en `/nav-list`, no bajo `/componentes/` -
   eso es a propósito (vive bajo "patrones compartidos" en el sidebar), no un bug.
-- [ ] **Popup** (`/componentes/popup`) — reusa el contrato de `popover`; la suite tiene que probar
+- [ ] **Popup** (`/componentes/popup`) - reusa el contrato de `popover`; la suite tiene que probar
   la composición propia (ancla + superficie sin chrome), no repetir la de Popover.
-- [ ] **Toolbar** (`/componentes/toolbar`) — roving tabindex real, la más involucrada del lote:
+- [ ] **Toolbar** (`/componentes/toolbar`) - roving tabindex real, la más involucrada del lote:
   navegación por flechas, wrap, orientación.
 
 ---
 
-## Nivel 2 — Beta sin bloqueador documentado
+## Nivel 2 - Beta sin bloqueador documentado
 
 Los 14 que **ya tienen** Tests tab pero siguen marcados Beta. Nadie dejó escrito por qué; el primer
 paso de cada ítem es abrir la página + el contrato y decidir. Orden alfabético, no de prioridad real
-(no hay señal objetiva para rankearlos todavía — es lo primero que este nivel tiene que producir).
+(no hay señal objetiva para rankearlos todavía - es lo primero que este nivel tiene que producir).
 
 - [ ] **Avatar** (`/componentes/avatar`)
 - [ ] **Calendar** (`/componentes/calendar`)
@@ -153,15 +153,15 @@ paso de cada ítem es abrir la página + el contrato y decidir. Orden alfabétic
 
 ---
 
-## Nivel 3 — iniciativas grandes (tracking propio)
+## Nivel 3 - iniciativas grandes (tracking propio)
 
 - [ ] **Migración Vanilla → Svelte + Zag** (`vanilla-svelte-zag-migration` en la memoria del agente).
   Tabs/Tile/Splitter migrados. Pendiente: `select-menu`, marcado explícitamente como **bajo valor**
-  por el usuario — no tomar antes que cualquier ítem de Nivel 1 o 2 sin preguntar primero.
+  por el usuario - no tomar antes que cualquier ítem de Nivel 1 o 2 sin preguntar primero.
 - [ ] **Transporte HTTP para el MCP** (`mcp-http-transport-goal` en la memoria del agente). El
   usuario lo quiere eventualmente; **no programado**. `packages/mcp` hoy es stdio-only; mantener
   las asunciones de transporte sueltas en cualquier cambio a ese paquete, no bloquear en esto.
-- [ ] **Pipeline de consumo por IA (F6/F7)** — `docs/plataforma-ai-ui.md`, secciones "F6 · El sitio
+- [ ] **Pipeline de consumo por IA (F6/F7)** - `docs/plataforma-ai-ui.md`, secciones "F6 · El sitio
   y los recipes" y "F7 · Evals", ambas "en curso" a la fecha de ese documento (2026-08-24). **Ese
   documento es la fuente de verdad de este ítem, no este archivo**: verificado el 2026-09-03 que su
   propia lista de "familias sin publicar" ya está desactualizada (`calendar`, `combobox`,

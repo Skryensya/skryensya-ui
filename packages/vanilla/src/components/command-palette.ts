@@ -45,7 +45,7 @@ export function connectCommandPalette(root: HTMLElement): Cleanup {
    * that mount and this one share one lifecycle marker (`data-sk-ready`/`-mounting`,
    * `createConnectMount`'s own doc says "selectors are disjoint, so a root gets enhanced by exactly
    * one enhancer"), and this root matches BOTH. Whichever claims it first marks it ready for both,
-   * so the second — always this one, since it is lazy and the Vaul auto-loader is eager — found the
+   * so the second - always this one, since it is lazy and the Vaul auto-loader is eager - found the
    * root already "ready" and never wired a single listener: no crash, just a search button and a
    * drawer trigger that silently did nothing. The registry's own selector now excludes command
    * palettes for the same reason (`registry.ts`); this call is what still gives them the gesture.

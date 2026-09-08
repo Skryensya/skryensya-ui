@@ -13,7 +13,7 @@ export const backToTopMessages = {
       "No es <a href=\"/componentes/skip-link\">SkipLink</a>: ese va primero en el documento, se alcanza con Tab antes que nada y salta por un ancla real. Este aparece tarde, se alcanza con el puntero o tabulando hasta la esquina, y llama a <code>scrollTo</code> sobre un scroller que puede no ser el documento. Si querés llevar a una sección puntual y no al principio, eso es un enlace de ancla o <a href=\"/componentes/toc\">Toc</a>.",
     "backToTop.behaviorTitle": "El comportamiento vive en las dos bindings, no en el markup",
     "backToTop.behaviorBody1":
-      "No hay máquina de Zag para \"revelar al pasar un umbral\", así que se escribe como <code>hotkey</code>: la parte pura —¿pasó el umbral?, ¿la animación se atenúa?— vive en <code>@skryensya/core/back-to-top</code> y la comparten el enhancer de Vanilla y el componente de React. Cada binding pone lo que toca la plataforma: qué scroller escuchar, prender y apagar <code>hidden</code> por frame, y el <code>scrollTo</code> al hacer clic.",
+      "No hay máquina de Zag para \"revelar al pasar un umbral\", así que se escribe como <code>hotkey</code>: la parte pura (¿pasó el umbral?, ¿la animación se atenúa?) vive en <code>@skryensya/core/back-to-top</code> y la comparten el enhancer de Vanilla y el componente de React. Cada binding pone lo que toca la plataforma: qué scroller escuchar, prender y apagar <code>hidden</code> por frame, y el <code>scrollTo</code> al hacer clic.",
     "backToTop.behaviorBody2":
       "El scroll lo hace la plataforma: suave por defecto, instantáneo si el lector pidió menos movimiento (<code>prefers-reduced-motion</code>). En este preview <code>threshold</code> está en <code>0</code> para que se vea sin nada que scrollear; en una página real se queda escondido hasta que bajás una pantalla o dos.",
     "backToTop.demoLabel": "Volver arriba",
@@ -23,7 +23,7 @@ export const backToTopMessages = {
     "backToTop.a11yP1":
       "Es un <code>&lt;button type=\"button\"&gt;</code> con un nombre accesible obligatorio: la marca visible es un <code>chevron-up</code> del set de iconos (decorativo, <code>aria-hidden</code>) y la etiqueta que le pasás (<code>sk-back-to-top__label</code>) queda recortada a una caja de solo-nombre, la misma técnica que <code>sk-visually-hidden</code>. Un texto requerido en un <code>&lt;button&gt;</code> hace que el control siempre tenga nombre, así que no hay regla de a11y que evaluar: la garantía es estructural.",
     "backToTop.a11yP2":
-      "Escondido es <code>visibility</code>, no <code>display</code>: la hoja pisa el <code>[hidden]</code> de la UA para que la aparición pueda animarse, y <code>visibility: hidden</code> hace el trabajo semántico —fuera del árbol de accesibilidad y fuera del orden de tabulación— que <code>[hidden]</code> promete. Sin <code>target</code>, el foco no viaja: si te importa que el Tab siguiente arranque de arriba, pasalo.",
+      "Escondido es <code>visibility</code>, no <code>display</code>: la hoja pisa el <code>[hidden]</code> de la UA para que la aparición pueda animarse, y <code>visibility: hidden</code> hace el trabajo semántico (fuera del árbol de accesibilidad y fuera del orden de tabulación) que <code>[hidden]</code> promete. Sin <code>target</code>, el foco no viaja: si te importa que el Tab siguiente arranque de arriba, pasalo.",
     "backToTop.contractItem1":
       "En HTML: un <code>&lt;button class=\"sk-back-to-top sk-interactive\" data-sk-back-to-top hidden&gt;</code> con el placeholder <code>&lt;span class=\"sk-back-to-top__icon\"&gt;&lt;span data-sk-icon=\"chevron-up\"&gt;</code> y la etiqueta en un <code>&lt;span class=\"sk-back-to-top__label\"&gt;</code>. El enhancer lo monta solo por <code>montaje automático</code> (y el mismo pase enlaza el icono al set).",
     "backToTop.contractItem2":
@@ -36,7 +36,7 @@ export const backToTopMessages = {
     "backToTop.demoStaticLabel": "BackToTop siempre visible",
     "backToTop.demoScrollTitle": "El comportamiento",
     "backToTop.demoScrollBody":
-      "Acá el preview scrollea. Bajá dentro del recuadro: el botón aparece con un pop —aparece, escala desde chico, sube a su lugar— una vez que pasás el umbral, y al hacerle clic te lleva de vuelta arriba. Volvé a subir y se va solo.",
+      "Acá el preview scrollea. Bajá dentro del recuadro: el botón aparece con un pop (aparece, escala desde chico, sube a su lugar) una vez que pasás el umbral, y al hacerle clic te lleva de vuelta arriba. Volvé a subir y se va solo.",
     "backToTop.demoScrollLabel": "BackToTop al scrollear",
     "backToTop.demoScrollHint": "Scrolleá dentro del recuadro para verlo aparecer.",
     "backToTop.scrollDemoP1":
@@ -88,7 +88,7 @@ export const backToTopMessages = {
       "It is not <a href=\"/en/components/skip-link\">SkipLink</a>: that one goes first in the document, is reached by Tab before anything else, and jumps through a real anchor. This one appears late, is reached by pointer or by tabbing to the corner, and calls <code>scrollTo</code> on a scroller that may not be the document. To land on a specific section rather than the start, that is an anchor link, or <a href=\"/en/components/toc\">Toc</a>.",
     "backToTop.behaviorTitle": "The behaviour lives in both bindings, not in the markup",
     "backToTop.behaviorBody1":
-      "No Zag machine covers \"reveal past a scroll threshold\", so it is written the <code>hotkey</code> way: the pure half — past the threshold?, does the scroll animate? — lives in <code>@skryensya/core/back-to-top</code> and both the Vanilla enhancer and the React component share it. Each binding owns what touches the platform: which scroller to watch, toggling <code>hidden</code> per frame, and the <code>scrollTo</code> on click.",
+      "No Zag machine covers \"reveal past a scroll threshold\", so it is written the <code>hotkey</code> way: the pure half - past the threshold?, does the scroll animate? - lives in <code>@skryensya/core/back-to-top</code> and both the Vanilla enhancer and the React component share it. Each binding owns what touches the platform: which scroller to watch, toggling <code>hidden</code> per frame, and the <code>scrollTo</code> on click.",
     "backToTop.behaviorBody2":
       "The scroll is the platform's: smooth by default, instant when the reader asked for less motion (<code>prefers-reduced-motion</code>). This preview pins <code>threshold</code> to <code>0</code> so the button shows with nothing to scroll; on a real page it stays hidden until you are a screen or two down.",
     "backToTop.demoLabel": "Back to top",
@@ -98,7 +98,7 @@ export const backToTopMessages = {
     "backToTop.a11yP1":
       "It is a <code>&lt;button type=\"button\"&gt;</code> with a required accessible name: the visible mark is a <code>chevron-up</code> from the bound icon set (decorative, <code>aria-hidden</code>) and the label you pass (<code>sk-back-to-top__label</code>) is clipped to a name-only box, the same technique as <code>sk-visually-hidden</code>. Required text on a <code>&lt;button&gt;</code> means the control is always named, so there is no a11y rule to evaluate: the guarantee is structural.",
     "backToTop.a11yP2":
-      "Hidden is <code>visibility</code>, not <code>display</code>: the stylesheet overrides the UA <code>[hidden]</code> so the reveal can animate, and <code>visibility: hidden</code> does the semantic work — out of the accessibility tree, out of the tab order — that <code>[hidden]</code> promises. Without <code>target</code>, focus does not travel: if it matters that the next Tab starts from the top, pass it.",
+      "Hidden is <code>visibility</code>, not <code>display</code>: the stylesheet overrides the UA <code>[hidden]</code> so the reveal can animate, and <code>visibility: hidden</code> does the semantic work - out of the accessibility tree, out of the tab order - that <code>[hidden]</code> promises. Without <code>target</code>, focus does not travel: if it matters that the next Tab starts from the top, pass it.",
     "backToTop.contractItem1":
       "In HTML: a <code>&lt;button class=\"sk-back-to-top sk-interactive\" data-sk-back-to-top hidden&gt;</code> with the placeholder <code>&lt;span class=\"sk-back-to-top__icon\"&gt;&lt;span data-sk-icon=\"chevron-up\"&gt;</code> and the label in a <code>&lt;span class=\"sk-back-to-top__label\"&gt;</code>. The enhancer mounts it on its own through <code>auto-mounting</code> (and the same pass binds the icon to the set).",
     "backToTop.contractItem2":
@@ -111,7 +111,7 @@ export const backToTopMessages = {
     "backToTop.demoStaticLabel": "BackToTop, always shown",
     "backToTop.demoScrollTitle": "The behaviour",
     "backToTop.demoScrollBody":
-      "This preview scrolls. Scroll down inside the box: the button pops in — fades, scales up from small, rises into place — once you are past the threshold, and clicking it carries you back to the top. Scroll back up and it hides itself.",
+      "This preview scrolls. Scroll down inside the box: the button pops in - fades, scales up from small, rises into place - once you are past the threshold, and clicking it carries you back to the top. Scroll back up and it hides itself.",
     "backToTop.demoScrollLabel": "BackToTop on scroll",
     "backToTop.demoScrollHint": "Scroll inside the box to see it appear.",
     "backToTop.scrollDemoP1":

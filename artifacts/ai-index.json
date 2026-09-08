@@ -1291,7 +1291,7 @@
           ],
           "parents": [],
           "useWhen": [
-            "se necesita texto con estilos — negrita, listas, títulos, citas — no sólo texto plano",
+            "se necesita texto con estilos - negrita, listas, títulos, citas - no sólo texto plano",
             "la barra de formato debe venir resuelta, sin componerla a mano"
           ]
         }
@@ -4250,5 +4250,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "dd91f76bc754fb23"
+  "sourceHash": "f1a5cc15e8c91fa4"
 }

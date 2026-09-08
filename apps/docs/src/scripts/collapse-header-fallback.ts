@@ -1,6 +1,6 @@
 /*
  * JS fallback for the `sk-fx-collapse-header` effect (`@skryensya/core/effects/collapse-header.css`)
- * on a browser without `animation-timeline: scroll()` — real-world support is ~84% globally as of
+ * on a browser without `animation-timeline: scroll()` - real-world support is ~84% globally as of
  * 2026, which still leaves a meaningful slice of mobile browsers on the plain, permanently-expanded
  * masthead the effect falls back to by design (ADR-20 rejected a JS dependency for what the platform
  * already resolves, for the browsers that DO resolve it). This is the opt-in door that ADR left open:
@@ -18,7 +18,7 @@
  *
  * READING THE RANGE AS A PIXEL NUMBER: measure the SPACER. Once `[data-sk-fx-collapse-js]` is set,
  * the effect's own twin sizes `.sk-fx-collapse-header__spacer` to `block-size: var(--sk-fx-collapse-
- * range)`, so its rendered height IS the range — no reparsing `--sk-fx-collapse-range`'s token
+ * range)`, so its rendered height IS the range - no reparsing `--sk-fx-collapse-range`'s token
  * stream (a `calc()` of `round()`-wrapped tokens that an older engine can resolve differently, or
  * not at all). Same for the resting lead: `getComputedStyle(spacer).marginBlockStart` hands back
  * `var(--space-inset-lg)` already resolved to px, because it is a real property, not a custom one.
@@ -44,7 +44,7 @@ export function initCollapseHeaderFallback(): void {
 
   /* The resting lead above the band (`site.css`'s JS twin sets `margin-block-start:
      var(--space-inset-lg)` on the spacer), read once now that the twin applies. A browser that
-     cannot resolve the token computes this to 0, which just means no closing gap — the collapse
+     cannot resolve the token computes this to 0, which just means no closing gap - the collapse
      itself stays correct either way. */
   const lead = parseFloat(getComputedStyle(spacer).marginBlockStart) || 0;
 

@@ -18,12 +18,12 @@ export interface PalettePreset {
  * The two WASH tokens (`--color-bg-accent-subtle`, `--docs-hero-bg`) sit at the palette's palest
  * and darkest steps for every chromatic hue: `blue-50`/`blue-950` land at nearly the SAME
  * lightness as the site's own achromatic surface tokens (`--color-bg-canvas`'s stone-950 is
- * 14.7% L; `blue-950` is 28.2% L — a mere ~13pt gap, closer still to `--color-bg-surface-raised`'s
+ * 14.7% L; `blue-950` is 28.2% L - a mere ~13pt gap, closer still to `--color-bg-surface-raised`'s
  * stone-800 at 26.8% L) and it still reads as a distinct tinted panel, because HUE does the
  * separating, not lightness. `--palette-neutral-*` has zero chroma by design (see the HUES comment
  * below), so for THIS one entry lightness is the only channel left, and reusing blue's steps
  * verbatim made the wash all but disappear: `neutral-50`/`neutral-950` sit within a point of the
- * site's own stone-based canvas/surface at both ends (confirmed live — the subtle badge wash and
+ * site's own stone-based canvas/surface at both ends (confirmed live - the subtle badge wash and
  * the hero band were indistinguishable from the page behind them in both color schemes). Bumped
  * two steps in from each end instead, far enough from every rung of the surface ladder (canvas →
  * surface → surface-raised) that the wash stays visible as its own gray, in either mode.
@@ -60,7 +60,7 @@ function accentBundle(hue: string): Record<string, string> {
  *
  * `neutral` closes the cycle on purpose, not woven in among the saturated ones: every other entry
  * IS a color choice, so a reader cycling through reads them as "which hue." This one is the answer
- * to "no hue at all" — `--palette-neutral-*` is OKLCH chroma 0 (`oklch(43.9% 0 none)` at 600, the
+ * to "no hue at all" - `--palette-neutral-*` is OKLCH chroma 0 (`oklch(43.9% 0 none)` at 600, the
  * same darkness class as violet/indigo, not a lighter aside), the one palette in this set that
  * carries contrast without carrying color, for a look that wants emphasis without branding it.
  * Already published for base surfaces/text (see this file's other presets); never asked to be an

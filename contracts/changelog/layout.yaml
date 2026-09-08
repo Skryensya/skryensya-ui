@@ -15,7 +15,7 @@ entries:
         <code>&lt;DensityScope&gt;</code>. El motor que quedaba debajo NO se tocó:
         <code>--sk-density</code>, <code>--sk-density-factor</code> y el atributo
         <code>data-sk-density-scope</code> siguen siendo el mismo mecanismo semántico
-        (<code>semantic/_density.scss</code>), autorable a mano en cualquier elemento — es
+        (<code>semantic/_density.scss</code>), autorable a mano en cualquier elemento - es
         exactamente como ya lo usan <code>CopyButton</code> y la galería de presets, ninguno de los
         dos pasaba por este signature. Lo que se retira es sólo la envoltura de árbol de uso que
         escribía ese atributo por vos; una migración cambia un nodo
@@ -29,7 +29,7 @@ entries:
         option are gone, and with them the React <code>&lt;DensityScope&gt;</code> component. The engine
         underneath was NOT touched: <code>--sk-density</code>, <code>--sk-density-factor</code> and
         the <code>data-sk-density-scope</code> attribute stay exactly the same semantic mechanism
-        (<code>semantic/_density.scss</code>), hand-authorable on any element — it's exactly how
+        (<code>semantic/_density.scss</code>), hand-authorable on any element - it's exactly how
         <code>CopyButton</code> and the presets gallery already use it, neither ever went through
         this signature. What leaves is only the usage-tree wrapper that wrote that attribute for
         you; a migration swaps a node

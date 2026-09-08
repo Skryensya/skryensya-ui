@@ -2,7 +2,7 @@
  * TIER 3, BACK TO TOP
  *
  * A control pinned to a corner that returns a long scroller to its start. It is absent until the
- * reader has scrolled past a threshold and absent again once they are back — an affordance that
+ * reader has scrolled past a threshold and absent again once they are back - an affordance that
  * costs nothing when it is not needed.
  *
  * THE VISIBLE MARK IS A `chevron-up` FROM THE BOUND ICON SET (`Icon`, decision 2: Core names the
@@ -15,11 +15,11 @@
  * NO SCRIM BEHIND IT, unlike Dialog or Command Palette: this floats directly over ordinary page
  * content, which in light mode can be the same white `--color-bg-surface-overlay` paints. The base
  * rule below composes that surface with its own identity wash and pulls the border a rung stronger
- * than an overlay normally needs — see the two custom properties' own comments for the reasoning.
+ * than an overlay normally needs - see the two custom properties' own comments for the reasoning.
  *
  * HIDDEN IS `visibility`, NOT `display`. The markup ships the `hidden` attribute (the enhancer and
  * React toggle it), and this file overrides the UA `[hidden] { display: none }` so the reveal can
- * animate — a small pop: fade in, scale up from ~0.8, rise `--sk-back-to-top-travel`. `visibility:
+ * animate - a small pop: fade in, scale up from ~0.8, rise `--sk-back-to-top-travel`. `visibility:
  * hidden` still takes the control out of the accessibility tree and the tab ring, everything
  * `hidden` promises. `prefers-reduced-motion` drops the scale, the rise and the lift (opacity still
  * fades, on the near-zero duration the `--motion-*` tokens collapse to there), and the enhancer
@@ -30,7 +30,7 @@
     --sk-back-to-top-bg: var(--color-bg-surface-overlay);
     /*
      * ITS OWN IDENTITY WASH, composed into `background` below (`--elevation-wash-overlay`, see
-     * `semantic/_color.scss`'s own comment on the technique — `skip-link` uses the same layer for
+     * `semantic/_color.scss`'s own comment on the technique - `skip-link` uses the same layer for
      * the same reason). Every OTHER overlay-tier surface in the kit (Dialog, Command Palette) sits
      * on a scrim that dims the page behind it, which is most of what tells a reader "this is above
      * the content, not part of it." This control has no scrim: it floats directly over whatever the
@@ -56,7 +56,7 @@
      * needs to justify, it sits inside a surface already asking for attention) was more presence
      * than a scroll-position convenience earns. `-md` is the kit's own default control size for
      * everything else, so this is "ordinary", not "shrunk". The `::after` below keeps the actual
-     * tap target at the WCAG floor regardless — the hit area shrinks by 4px, the touch target does
+     * tap target at the WCAG floor regardless - the hit area shrinks by 4px, the touch target does
      * not shrink at all.
      */
     --sk-back-to-top-size: var(--size-control-md);
@@ -106,7 +106,7 @@
   }
 
   /*
-   * THE HIT AREA, expanded past the PAINT to `--size-touch-target` (44px) — the same move
+   * THE HIT AREA, expanded past the PAINT to `--size-touch-target` (44px) - the same move
    * `.sk-button::after` makes for its own `sm` shape, see that file's own comment for the mechanics.
    * `-md` paints at 40px, 4px short of the floor; this box is centred on the button and grows by
    * `min(0px, …)` only on the sides that are actually short, so it is a no-op the day a consumer
@@ -125,7 +125,7 @@
   /*
    * Hidden without leaving layout. `display` stays a painted value so `opacity`/`scale`/`translate`
    * have something to animate, and `visibility: hidden` does the semantic work `[hidden]` asks for:
-   * out of the accessibility tree, out of the tab order. `(0,1,1)` — the attribute selector — beats
+   * out of the accessibility tree, out of the tab order. `(0,1,1)` - the attribute selector - beats
    * the base `(0,1,0)` with no `!important`.
    */
   .sk-back-to-top[hidden] {
@@ -152,7 +152,7 @@
 
   /*
    * Under the pointer (or a keyboard focus): the whole control lifts a hair and the shadow deepens,
-   * and the chevron rides up with it — a back-to-top button whose mark leans toward where it takes
+   * and the chevron rides up with it - a back-to-top button whose mark leans toward where it takes
    * you is doing a small part of the explaining. `:not([hidden])` so a hover never resurrects the
    * hidden state.
    */
@@ -181,7 +181,7 @@
 
   /*
    * THE LABEL is the accessible name, clipped to a 1px box: still in the accessibility tree, still
-   * the button's name, just not painted — the chevron is the visible affordance. Same clip
+   * the button's name, just not painted - the chevron is the visible affordance. Same clip
    * technique as `sk-visually-hidden`; `white-space: nowrap` keeps a multi-word name from wrapping
    * inside the 1px box, which some screen readers announce one word per line.
    *
@@ -201,7 +201,7 @@
   /*
    * Z-INDEX RE-DECLARED ON FOCUS, and it is not redundant: the state layer
    * (`patterns/state-layer.css`) sets `z-index: var(--z-focus)` on `.sk-interactive:focus-visible`
-   * — a `(0,2,0)` selector that outranks this component's base `(0,1,0)`, so a focused button would
+   * - a `(0,2,0)` selector that outranks this component's base `(0,1,0)`, so a focused button would
    * drop to that layer. `button.sk-back-to-top:focus-visible` is `(0,2,1)`, one element more
    * specific, so it holds its own layer in the cascade with no `!important`. Same collision, same
    * fix, as `a.sk-skip-link:focus`.
@@ -211,7 +211,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    /* No scale, no rise, no lift — the control just fades, on the collapsed duration. */
+    /* No scale, no rise, no lift - the control just fades, on the collapsed duration. */
     .sk-back-to-top,
     .sk-back-to-top[hidden],
     .sk-back-to-top:not([hidden]),

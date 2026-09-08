@@ -3,8 +3,8 @@
  * chrome, same footing as `search-trigger.ts` / `theme-toggle.ts`: no published contract owns it.
  *
  * WHY THIS EXISTS SEPARATELY FROM `mountVaul`. The sheet is the SAME composition as the Command
- * Palette — a native `<dialog data-sk-dialog-vaul>`, slid up by `dialog-vaul.css`, drag/light-dismiss
- * from `connectVaul` — and `mountVaul` (registry.ts) already auto-wires its trigger. But that wiring
+ * Palette - a native `<dialog data-sk-dialog-vaul>`, slid up by `dialog-vaul.css`, drag/light-dismiss
+ * from `connectVaul` - and `mountVaul` (registry.ts) already auto-wires its trigger. But that wiring
  * only exists AFTER the vanilla chunk has loaded, and that chunk statically pulls the Svelte 5
  * runtime (`createConnectMount` → `Imperative.svelte`); on a cold mobile load the trigger is dead
  * until it arrives. The Command Palette hit exactly this and grew a framework-free eager opener
@@ -21,7 +21,7 @@
  * `--sk-vaul-drag-offset` written and `[data-dragging]` set (→ `transition: none; translate: 0
  * <offset>`), and the `pointerup` that would clear it never arrives because pointer capture is
  * dropped when the element enters the top layer (`vaul.ts` documents this hazard). The sheet then
- * rests part-way down, looking half-open / slid off the bottom of the viewport — reported on iOS
+ * rests part-way down, looking half-open / slid off the bottom of the viewport - reported on iOS
  * Safari. Wiping the four hooks on every open pins it back to `translate: 0`.
  */
 

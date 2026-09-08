@@ -300,8 +300,8 @@ export function Combobox({
         </button>
         {/*
           Decorative, not a second control: Zag's own `getTriggerProps()` already defaults this to
-          `tabIndex: -1` (never a Tab stop), and every open path here — typing, `openOnClick` on
-          the input itself — never went through it either. What made it read as an independent
+          `tabIndex: -1` (never a Tab stop), and every open path here - typing, `openOnClick` on
+          the input itself - never went through it either. What made it read as an independent
           button was purely visual (its own `.sk-button` ghost hover/pressed feedback on a mouse
           click Zag still wired up), not a real second interaction surface. `aria-hidden` and a
           plain `span` remove that affordance instead of just restyling it; the input's own

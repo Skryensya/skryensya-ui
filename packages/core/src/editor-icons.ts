@@ -6,14 +6,14 @@ import type { IconData } from "./icon.js";
  * belong in `stableIconNames`: "IconSet is complete" (icon.ts's own comment) means adding a role
  * there is an obligation for every set author, and a rich-text toolbar's bold/italic/heading/list/
  * undo glyphs are PRODUCT concepts of this one component, not roles every consumer of the design
- * system needs — the same test `icon.ts` itself draws the line with ("un concepto de PRODUCTO...
+ * system needs - the same test `icon.ts` itself draws the line with ("un concepto de PRODUCTO...
  * se pasa como `data` y es del consumidor").
  *
  * Traced from Lucide (ISC, already a real dependency of `@skryensya/icons-lucide`) at the exact
  * same 24×24/stroke-2 geometry its own generator emits, so a reader sees one consistent line-icon
  * language across the whole site rather than this component's own visual dialect. `bold`/`italic`/
  * `link` specifically are copied byte-for-byte from `packages/icons-lucide/src/generated/set.ts`,
- * which already carries this exact geometry under those names — orphaned there (present only in
+ * which already carries this exact geometry under those names - orphaned there (present only in
  * Lucide, absent from Phosphor/Material, never added to `stableIconNames`), reused here rather
  * than re-traced. Lives in `core` (not the docs app) because both `@skryensya/react/editor` and
  * `@skryensya/vanilla/editor` need the same geometry.

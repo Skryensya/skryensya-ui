@@ -30,7 +30,7 @@ function selectWord(state: EditorState, word: string): EditorState {
   return state.apply(state.tr.setSelection(TextSelection.create(state.doc, from, to)));
 }
 
-/** Runs a Command against `state` and returns `{ applied, state }` — the resulting state when the
+/** Runs a Command against `state` and returns `{ applied, state }` - the resulting state when the
  *  command dispatched a transaction, or the untouched input state when it returned false. */
 function run(command: Command, state: EditorState): { applied: boolean; state: EditorState } {
   let next = state;

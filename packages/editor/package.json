@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "The ProseMirror engine behind the Editor contract: schema, commands, keymap, HTML/Markdown/JSON serialization. Framework-agnostic — no React, no Svelte.",
+  "description": "The ProseMirror engine behind the Editor contract: schema, commands, keymap, HTML/Markdown/JSON serialization. Framework-agnostic - no React, no Svelte.",
   "files": [
     "dist",
     "src"

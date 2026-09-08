@@ -98,17 +98,17 @@ export default defineConfig({
       headers: isDev ? { "Cache-Control": "no-store" } : undefined,
     },
     /*
-     * `server.warmup` was tried TWICE here (once broad — every core stylesheet — once narrowed to
+     * `server.warmup` was tried TWICE here (once broad - every core stylesheet - once narrowed to
      * just the search chunk's three files) to pay the Command Palette's one-time-per-restart cold
      * compile at server boot instead of on a reader's first tap. BOTH left
      * `astro/runtime/client/dev-toolbar/entrypoint.js` permanently 504ing ("Outdated Optimize Dep")
-     * and, with it, `<ClientRouter />` same-tab navigation stuck site-wide — reproduced identically
+     * and, with it, `<ClientRouter />` same-tab navigation stuck site-wide - reproduced identically
      * both times, so it is not a matter of scoping the file list more carefully. Root cause: Astro's
      * own `astro:dev-toolbar` Vite plugin pins `aria-query`/`axobject-query` into
      * `optimizeDeps.include` at config time; warming ANY file that reaches new, not-yet-scanned
      * dependencies (Svelte/Zag's own graph, in this case) forces a SECOND, mid-startup re-optimize,
-     * which invalidates the dep-optimizer's hash for everything already served under the old one —
-     * the toolbar's bundle included — permanently, until the on-disk `.vite` cache itself is
+     * which invalidates the dep-optimizer's hash for everything already served under the old one -
+     * the toolbar's bundle included - permanently, until the on-disk `.vite` cache itself is
      * cleared, not just the process restarted. Do not re-add `server.warmup` to this config without
      * first confirming that specific Vite behavior no longer applies (a version bump, most likely).
      */

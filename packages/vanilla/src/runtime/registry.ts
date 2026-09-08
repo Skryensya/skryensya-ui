@@ -20,7 +20,7 @@ type Registration = {
  * selector-gated `import()` here would still name that module in this file's static analysis and
  * in bundlers that eagerly resolve dynamic-import specifiers, which defeats the optionality this
  * table exists to guarantee for every OTHER entry. A page that uses Editor calls `mountEditor`
- * from `@skryensya/vanilla/editor` itself, explicitly — the same shape CodePreview/ComponentPreview
+ * from `@skryensya/vanilla/editor` itself, explicitly - the same shape CodePreview/ComponentPreview
  * already use, for a different reason.
  */
 // Runtime plugin loading is intentional: static imports would defeat selector gating and ship every enhancer.
@@ -62,7 +62,7 @@ const registrations: readonly Registration[] = [
     /*
      * Excludes a Dialog Vaul that is also a Command Palette: that root already gets the drag
      * gesture from `connectCommandPalette` itself (`command-palette.ts`), because the two mounts
-     * share one lifecycle marker and would otherwise race to claim the same root — whichever ran
+     * share one lifecycle marker and would otherwise race to claim the same root - whichever ran
      * first (always this eager one) marks it "ready" for both, and the other (lazy, mounted only on
      * first open) finds it already ready and wires nothing. See the comment there for the failure
      * this caused: a search trigger and a drawer trigger that silently did nothing.

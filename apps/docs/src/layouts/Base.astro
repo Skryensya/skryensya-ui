@@ -168,17 +168,6 @@ const PREPAINT = {
   palette: palettePreference.slot,
 };
 
-/*
- * DEV ONLY. `@skryensya/devtools`'s "Components mounted" readout reads this global; see the
- * `initComponents()` call in `docs-page-lifecycle.ts` for where it is written, and that script's
- * comment for why a global rather than a DOM attribute.
- */
-declare global {
-  interface Window {
-    __skDevtoolsComponentCount?: number;
-  }
-}
-
 interface Props {
   title: string;
   description?: string;

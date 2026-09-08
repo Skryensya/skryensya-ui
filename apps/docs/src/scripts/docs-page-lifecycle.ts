@@ -11,6 +11,22 @@ import { initReportIssue } from "./report-issue";
 import { initSearchTrigger } from "./search-trigger";
 import { initThemeToggle, initThemeTogglePersistence, initThemeToggleSync } from "./theme-toggle";
 
+/*
+ * DEV ONLY, and declared HERE because this is the file that writes it. `@skryensya/devtools`'s
+ * "Components mounted" readout is the only reader (`packages/devtools/src/panel.ts`, which declares
+ * the same member on its own side: the two packages share a name, not a module).
+ *
+ * It used to be declared in `Base.astro`'s frontmatter, which is invisible to `tsc`. Astro's own
+ * checker reads it, so `astro check` was green while a plain `tsc -p apps/docs` reported
+ * "Property '__skDevtoolsComponentCount' does not exist on type 'Window'" on the assignment below.
+ * A declaration next to the assignment is seen by both.
+ */
+declare global {
+  interface Window {
+    __skDevtoolsComponentCount?: number;
+  }
+}
+
 let bound = false;
 
 async function initRouteDocument(): Promise<void> {

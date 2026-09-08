@@ -9,14 +9,7 @@
  * changes the HTML, so it has to resolve at build.
  */
 
-import {
-  defaultLocale,
-  locales,
-  navLabel,
-  ui,
-  type Locale,
-  type UIKey,
-} from "./ui";
+import { defaultLocale, locales, ui, type Locale, type UIKey } from "./ui";
 
 export {
   defaultLocale,

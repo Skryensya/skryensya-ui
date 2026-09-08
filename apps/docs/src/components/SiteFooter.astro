@@ -53,6 +53,9 @@ const { nav, locale } = Astro.props;
 const t = useTranslations(locale);
 
 const REPO_URL = "https://github.com/Skryensya/skryensya-ui";
+/* The LICENSE file itself, not a rendered summary: the terms are what someone deciding whether they
+   may use this needs to read, and the copy in the repo is the one that governs. */
+const LICENSE_URL = `${REPO_URL}/blob/main/LICENSE`;
 const AUTHOR_URL = "https://allison.sh";
 const changelogHref = locale === "en" ? "/en/components/changelog" : "/componentes/changelog";
 const year = new Date().getFullYear();
@@ -185,7 +188,20 @@ const columns = [
     </div>
 
     <div class="site-footer__bar">
-      <p class="site-footer__legal">{t("siteFooter.legal", { year: String(year) })}</p>
+      {/*
+        The licence sits on the copyright line because that is the one place a reader already looks
+        for it, and it is a LINK for the same reason the credit below is: naming a licence without
+        reaching its terms asks the reader to go hunting. Interpolated through `set:html` with the
+        anchor as a variable, the identical idiom the credit line beside it already uses, so the
+        sentence stays one translatable string per locale instead of markup split around a word.
+      */}
+      <p
+        class="site-footer__legal"
+        set:html={t("siteFooter.legal", {
+          year: String(year),
+          license: `<a class="site-footer__credit-link" href="${LICENSE_URL}" target="_blank" rel="noopener noreferrer">MIT${launchIcon}</a>`,
+        })}
+      />
       <p
         class="site-footer__credit"
         set:html={t("siteFooter.credit", {

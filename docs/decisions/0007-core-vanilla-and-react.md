@@ -13,7 +13,7 @@ summary: >-
 El sistema tiene dos bindings que comparten un contrato: una capa vanilla y una capa React. Con más de un
 framework en juego, un paquete compartido separa lo común de lo específico de cada uno, sin él, las dos
 capas duplicarían tokens, parts y tipos. (Con un solo framework no hacía falta, y por eso
-[ADR-2](/decisiones/0002-que-envia-tier-3) deja el corte en la capa vanilla.)
+[ADR-2](./0002-what-tier-3-ships.md) deja el corte en la capa vanilla.)
 
 ## El paquete `core`
 
@@ -60,7 +60,7 @@ de implementación de cada binding.
 ## El CSS vive en core
 
 Los hooks de estilo de cada componente viven en `packages/core/css/components/`. Moverlos junto al binding
-sacaría ese CSS del validador de tiers, modes y contraste descrito en [ADR-19](/decisiones/0019-paletas-publicas-y-semanticos-constantes).
+sacaría ese CSS del validador de tiers, modes y contraste descrito en [ADR-19](./0019-public-palettes-and-constant-semantics.md).
 El contrato queda partido a propósito:
 
 - tokens, styling hooks, parts y tipos compartidos: `@skryensya/core`;

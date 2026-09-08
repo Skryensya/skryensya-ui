@@ -19,9 +19,9 @@ un consumidor real no puede tomar, así que no prueba nada.
 Turborepo con pnpm workspaces:
 
 - **`packages/core`**, tokens, styling hooks y contrato compartido de componentes. Cero dependencias de
-  runtime, publicable; la carpeta `css/` es el [artefacto](/decisiones/0019-paletas-publicas-y-semanticos-constantes),
+  runtime, publicable; la carpeta `css/` es el [artefacto](./0019-public-palettes-and-constant-semantics.md),
   `src/` publica parts/tipos compartidos y `scripts/lint.mjs` es el
-  [validador](/decisiones/0019-paletas-publicas-y-semanticos-constantes). El tooling del monorepo (turbo, pnpm) vive en la raíz y en
+  [validador](./0019-public-palettes-and-constant-semantics.md). El tooling del monorepo (turbo, pnpm) vive en la raíz y en
   devDependencies; nunca entra al runtime del paquete.
 - **`apps/docs`**, el sitio, una app de Astro. Declara `"@skryensya/core": "workspace:*"`; pnpm lo
   symlinkea dentro de `node_modules`, y el sitio lo importa como paquete real.
@@ -47,7 +47,7 @@ camino que enseña.** Si el `exports` map se rompe, el sitio deja de compilar, l
 verifica por construcción, no por revisión.
 
 Esto encontró un bug apenas se armó: hacer del `exports` map el contrato expuso que `patterns/*` nunca
-había sido exportado. El CSS se enviaba y [el state layer](/decisiones/0003-el-state-layer) lo trata como
+había sido exportado. El CSS se enviaba y [el state layer](./0003-the-state-layer.md) lo trata como
 API pública, pero ningún consumidor con bundler podía importarlo. Una demo por ruta cruda nunca lo habría
 destapado, porque la ruta cruda no consulta `exports`. El primer consumidor honesto lo encontró en
 minutos.
@@ -63,14 +63,14 @@ enseña: especificadores desnudos vía `exports`.
 
 El sitio es el primer consumidor a cualquier escala: necesita navegación, bloques de código, tablas y
 callouts donde `button` era el catálogo entero. Eso lo convierte en la **fuente de componentes nuevos**,
-lo que invierte el consejo de [la primera decisión](/decisiones/0019-paletas-publicas-y-semanticos-constantes) de
+lo que invierte el consejo de [la primera decisión](./0019-public-palettes-and-constant-semantics.md) de
 diseñar solo con evidencia de reuso: con un solo consumidor no existe tal evidencia, y esperar a un
 segundo en un POC significa no crecer nunca.
 
 El syntax highlighting es su punto delicado. Sería la familia de color más grande del sistema, y cada
-token tiene que superar la puerta de contraste del [validador](/decisiones/0019-paletas-publicas-y-semanticos-constantes) sobre dos
+token tiene que superar la puerta de contraste del [validador](./0019-public-palettes-and-constant-semantics.md) sobre dos
 marcas y cuatro modos, el primer cambio lo bastante grande como para que la
-[brecha conocida](/decisiones/0019-paletas-publicas-y-semanticos-constantes) golpee.
+[brecha conocida](./0019-public-palettes-and-constant-semantics.md) golpee.
 
 ## Lo que se rechazó
 

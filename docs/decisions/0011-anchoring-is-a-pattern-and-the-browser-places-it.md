@@ -33,7 +33,7 @@ crudo en select, y un `position-area` hardcodeado sin hooks en popover.
 
 ## Es un pattern, por la regla de la decisión 8
 
-La pregunta de [ADR-2](/decisiones/0002-que-envia-tier-3) es si un segundo componente podría necesitar
+La pregunta de [ADR-2](./0002-what-tier-3-ships.md) es si un segundo componente podría necesitar
 esta estructura exacta. Acá no es hipotético: **nueve** ya la necesitan. Así que envía hooks *y*
 estructura, como Vaul, y no sólo variables.
 

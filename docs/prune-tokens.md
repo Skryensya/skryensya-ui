@@ -23,7 +23,7 @@ no ocho) y es independiente de esto.
 ## El tool: `packages/core/scripts/prune-tokens.mjs`
 
 Reutiliza `scripts/parse.mjs`, el mismo parser que corren el validador y la referencia de la docs
-([decisión sobre el parser compartido](/decisiones)), así que lee el grafo de tokens de una sola fuente.
+([decisión sobre el parser compartido](./decisions/)), así que lee el grafo de tokens de una sola fuente.
 
 Es **report-first**: por defecto solo reporta. El `--emit` es opt-in. Nunca reescribe de forma
 destructiva, por la razón del safelist más abajo.

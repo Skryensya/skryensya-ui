@@ -22,7 +22,7 @@ component" means two components that merely look alike.
 `@skryensya/core` publishes the contract: the parts, the option types, the attributes each option
 writes, and the accessibility rules that must hold. No framework, and no DOM of its own. The stateful
 components share their Zag state machines from here too, so both bindings drive identical behavior
-rather than two lookalike implementations ([decision 10](docs/decisiones/0010-la-capa-vanilla-usa-svelte-y-las-machines-viven-en-core.md)).
+rather than two lookalike implementations ([decision 10](docs/decisions/0010-the-vanilla-layer-uses-svelte-and-the-machines-live-in-core.md)).
 
 Both bindings **read** that contract instead of restating it.
 
@@ -97,7 +97,7 @@ report. The command above serves the same site locally.
 │   └── snippets/      smaller established compositions
 ├── artifacts/         compiled output: ai-manifest.json, ai-index.json, test-results.json
 ├── docs/
-│   ├── decisiones/    20 decision records, each with the alternatives rejected
+│   ├── decisions/    20 decision records, each with the alternatives rejected
 │   └── ...            audits, writing guide, pending work
 ├── evals/             agent evaluation corpus and runner
 └── CONTEXT.md         the glossary: what the words mean, and which words not to use
@@ -110,8 +110,8 @@ the docs site must consume it **as a package**, through the `exports` map, not t
 paths. That way the site takes the path it teaches: break the `exports` map and the site stops
 building. Turbo, pnpm and Astro live at the root and in `apps/docs`, never inside `packages/core`.
 
-See [decision 6](docs/decisiones/0006-monorepo-y-el-sitio.md), and
-[decision 13](docs/decisiones/0013-el-contrato-vive-en-core-y-los-frameworks-son-bindings.md) for why the
+See [decision 6](docs/decisions/0006-the-monorepo-and-the-site.md), and
+[decision 13](docs/decisions/0013-the-contract-lives-in-core-and-frameworks-are-bindings.md) for why the
 contract lives in Core and the frameworks are bindings.
 
 ## Commands
@@ -195,7 +195,7 @@ The contract comes first, and both bindings follow it:
 
 ### Before you propose something large
 
-Read [`CONTEXT.md`](CONTEXT.md) for the vocabulary and [`docs/decisiones/`](docs/decisiones) for the
+Read [`CONTEXT.md`](CONTEXT.md) for the vocabulary and [`docs/decisions/`](docs/decisions) for the
 decisions already made and the alternatives already rejected. Many "why isn't this X?" questions have
 a numbered answer there.
 

@@ -16,7 +16,7 @@ restauración del foco, donde `button` no necesitaba ninguno.
 
 **Se exige `<dialog>` + `showModal()`.** La plataforma provee cada uno de esos comportamientos, más el
 top layer y un `::backdrop` real. Un dialog basado en div reimplementa el runtime del navegador en JS
-que habría que enviar, exactamente lo que [no se hace](/decisiones/0019-paletas-publicas-y-semanticos-constantes). Exigir
+que habría que enviar, exactamente lo que [no se hace](./0019-public-palettes-and-constant-semantics.md). Exigir
 el nativo es lo que mantiene al sistema enviando solo CSS para un componente que necesita
 comportamiento.
 
@@ -37,14 +37,14 @@ que la plataforma ya decidió.
 
 ## Cuatro archivos
 
-Según [la regla de qué envía tier 3](/decisiones/0002-que-envia-tier-3): `components/dialog.css`
+Según [la regla de qué envía tier 3](./0002-what-tier-3-ships.md): `components/dialog.css`
 (styling hooks, el layout de header/body/footer es asunto de la app),
 `patterns/top-layer.css` y `patterns/backdrop.css` y `patterns/scroll-lock.css` (patterns, un drawer,
 un sheet y un popover los necesitan carácter por carácter).
 
 Top-layer y backdrop se mantienen **separados** aunque se muevan en sincronía: un menú entra al top
 layer sin scrim, así que fusionarlos enviaría CSS de backdrop a cada popover. No pueden desincronizarse
-porque los dos consumen los mismos [tokens de intención](/decisiones/0004-motion-por-tokens-de-intencion)
+porque los dos consumen los mismos [tokens de intención](./0004-motion-through-intent-tokens.md)
 `--motion-enter-*`.
 
 **El scroll lock es su propio import** porque `html:has(dialog:modal) { overflow: hidden }` es la primera
@@ -78,7 +78,7 @@ Por eso el dialog lleva un borde siempre encendido,
 borde negro o blanco duro.
 
 **No debe suavizarse a `border-subtle` por estética.** Subtle se queda gris medio en alto contraste, y
-[el validador](/decisiones/0019-paletas-publicas-y-semanticos-constantes) lo exime de las verificaciones de contraste por decorativo
+[el validador](./0019-public-palettes-and-constant-semantics.md) lo exime de las verificaciones de contraste por decorativo
 una exención que aquí es nula, porque un borde que es el único separador es un elemento no-texto
 *significativo* bajo WCAG 1.4.11. Ese cambio de una palabra hace invisible al dialog en alto contraste y
 **ningún test falla**.
@@ -98,5 +98,5 @@ pero eso es una molestia de ergonomía, no una razón para reimplementar el nave
 Un requisito duro sobre los consumidores (`<dialog>` nativo, sin excepciones) y una dependencia del
 baseline más nuevo del sistema: que `::backdrop` herede de su elemento de origen llegó en Chrome 122,
 Firefox 120 y Safari 17.4, ~un año más joven que el soporte de
-[`oklch()`](/decisiones/0019-paletas-publicas-y-semanticos-constantes). La página de `::backdrop` en
+[`oklch()`](./0019-public-palettes-and-constant-semantics.md). La página de `::backdrop` en
 MDN todavía documenta el comportamiento viejo; está desactualizada, no es una contradicción.

@@ -19,7 +19,7 @@ los géneros que `CONTEXT.md` no cubre:
 |---|---|---|
 | Páginas de componentes (`componentes/*.astro`) | Español | `componentes/button.astro` |
 | Traducción de una página de componente | Inglés, archivo propio | `en/components/avatar.astro` |
-| Registros de decisión (`docs/decisiones/`) | Español | `0002-nombrar-por-rol-nunca-por-inquilino.md` |
+| Registros de decisión (`docs/decisions/`) | Español | `0002-nombrar-por-rol-nunca-por-inquilino.md` |
 | `CONTEXT.md`, `README.md`, metadata de paquete | Inglés | este repo |
 | Comentarios en código fuente | Cualquiera, **localmente consistente** | ver [Comentarios de código](#comentarios-de-código) |
 | Mensajes de commit | Inglés | ver [Mensajes de commit](#mensajes-de-commit) |
@@ -39,7 +39,7 @@ Esto no cambia con el idioma:
 - **Sin relleno.** Nada de "en este artículo vamos a ver", "es importante notar que", cierres
   motivacionales. Cada oración aporta una decisión o un hecho.
 - **Nombra el mecanismo, no solo la conclusión.** No "esto es más seguro", sino *por qué*: qué falla
-  sin la regla y qué lo previene. Ver cualquier ADR en `docs/decisiones/` para el patrón completo.
+  sin la regla y qué lo previene. Ver cualquier ADR en `docs/decisions/` para el patrón completo.
 - **Un concepto, un nombre.** Si `CONTEXT.md` ya nombró algo, ese nombre es el único que se usa; nunca
   un sinónimo "para variar la prosa". Variar el nombre de un concepto fijo es el error que
   `CONTEXT.md` existe para prevenir.
@@ -54,7 +54,7 @@ La persona gramatical no es una preferencia de quien escribe, depende de qué ti
 - **Tutorial o página de componente** → se dirige al lector directamente (segunda persona). Enseña a
   alguien a hacer algo, paso a paso: "Si activa una acción, usa Button. Si navega, pasale `href` y
   Button se renderiza como `<a>`" (`componentes/button.astro`).
-- **Referencia o regla** (`CONTEXT.md`, ADRs, `docs/plataforma-ai-ui.md`) → impersonal, con "se". Describe
+- **Referencia o regla** (`CONTEXT.md`, ADRs, `docs/ai-ui-platform.md`) → impersonal, con "se". Describe
   un sistema, no acompaña a nadie: "no se usa `as="a"`", "el icono queda decorativo" (`docs/ai/README.md`,
   archivado en el tag `ai-v1`).
   Esta misma guía es referencia, por eso está escrita así y no como "vos vas a aprender a escribir…".
@@ -111,7 +111,7 @@ partida o varias oraciones independientes:
 
 - **Lista de afirmaciones independientes** → cada ítem es su propia oración completa, con su propio
   punto final, sin `y` de cierre. Ejemplo real, la lista de alternativas rechazadas en
-  `docs/decisiones/0019-paletas-publicas-y-semanticos-constantes.md`:
+  `docs/decisions/0019-public-palettes-and-constant-semantics.md`:
 
   ```
   - `palette` implica un *conjunto sin orden*; pierde que...
@@ -251,7 +251,7 @@ de newsletter de demo) sigue las reglas de [Code-switching](#code-switching-qué
 es contenido de interfaz, se traduce, y "tu" ahí es simplemente el posesivo correcto en español, no el
 patrón que esta sección corrige.
 
-## Registros de decisión (`docs/decisiones/`)
+## Registros de decisión (`docs/decisions/`)
 
 Un ADR no es un post de blog justificando una idea, es el registro de por qué el sistema tiene la forma
 que tiene, incluyendo lo que se descartó. La forma es fija:
@@ -272,7 +272,7 @@ que tiene, incluyendo lo que se descartó. La forma es fija:
   obvia se probó y falló, eso se documenta con la misma prioridad que la decisión final. ADR 0002
   dedica media página a la versión de enforcement que se descartó y por qué.
 - **Referencias cruzadas**: a otra decisión se la nombra por número y se enlaza con ruta relativa,
-  `[decisión 12](docs/decisiones/0006-monorepo-y-el-sitio.md)`, nunca solo por título.
+  `[decisión 12](decisions/0006-the-monorepo-and-the-site.md)`, nunca solo por título.
 
 ## README y metadata de repositorio
 

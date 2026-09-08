@@ -5,7 +5,7 @@
 ## Why
 
 <!-- The problem it solves, or the decision it implements. If it contradicts something in
-     docs/decisiones/, say so and say why. -->
+     docs/decisions/, say so and say why. -->
 
 ## Checklist
 

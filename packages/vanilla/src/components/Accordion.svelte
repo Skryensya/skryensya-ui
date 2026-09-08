@@ -5,11 +5,12 @@
   import AccordionItem from "./AccordionItem.svelte";
 
   /*
-   * ACCORDION, coordina un `@zag-js/collapsible` POR item (ver AccordionItem.svelte y ADR-0024), en vez
-   * de una sola máquina `@zag-js/accordion`. Ese cambio es lo que arregla la animación: la máquina de
-   * accordion ocultaba el contenido (`hidden`) apenas se cerraba, matando el colapso, y no exponía
-   * `--height`; collapsible-por-item anima apertura Y cierre por igual. La lógica single/multiple/collapsible
-   * (misma que la de React) vive acá: mantenemos el set abierto y le pasamos `open` controlado a cada item.
+   * ACCORDION, coordinates one `@zag-js/collapsible` PER item (see AccordionItem.svelte and ADR-0024),
+   * instead of a single `@zag-js/accordion` machine. That change is what fixes the animation: the
+   * accordion machine hid the content (`hidden`) as soon as it closed, killing the collapse, and did not
+   * expose `--height`; collapsible-per-item animates opening AND closing alike. The
+   * single/multiple/collapsible logic (the same as React's) lives here: we keep the open set and pass a
+   * controlled `open` to each item.
    */
   const root = getRoot();
   const itemEls = Array.from(root.querySelectorAll<HTMLElement>(':scope > [data-part="item"]'));
@@ -58,8 +59,8 @@
   const normalized = [...new Set(multiple ? initial : initial.slice(0, 1))].filter(Boolean);
   let values = $state<string[]>(normalized);
 
-  // Misma lógica que AccordionRoot.toggle en React: single reemplaza; multiple acumula; `collapsible`
-  // (sólo single) decide si el item abierto puede volver a cerrarse.
+  // Same logic as AccordionRoot.toggle in React: single replaces; multiple accumulates; `collapsible`
+  // (single only) decides whether the open item can be closed again.
   function toggle(value: string): void {
     const isOpen = values.includes(value);
     let next: string[];

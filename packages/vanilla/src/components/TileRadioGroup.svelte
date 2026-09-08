@@ -7,10 +7,10 @@
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
-   * TILE RADIO GROUP, sobre `@zag-js/radio-group` (la máquina que usa React en tile.tsx). Cada
-   * `[data-part=item]` es un radio: la label recibe getItemProps, su `<input type=radio>` autorado es
-   * el input oculto de Zag (getItemHiddenInputProps). Zag garantiza exclusión mutua; el `checked` vivo
-   * del input se espeja desde `api.value`.
+   * TILE RADIO GROUP, over `@zag-js/radio-group` (the machine React uses in tile.tsx). Every
+   * `[data-part=item]` is a radio: the label receives getItemProps, and its authored `<input type=radio>`
+   * is Zag's hidden input (getItemHiddenInputProps). Zag guarantees mutual exclusion; the input's live
+   * `checked` is mirrored from `api.value`.
    */
   const root = getRoot();
 
@@ -64,7 +64,7 @@
       const props = { value: item.value };
       applyZagProps(item.label, api.getItemProps(props) as DomProps);
       applyZagProps(item.input, api.getItemHiddenInputProps(props) as DomProps);
-      // `checked` es propiedad viva del radio; setAttribute no la sincroniza. Fuente de verdad: api.value.
+      // `checked` is a live property of the radio; setAttribute does not sync it. Source of truth: api.value.
       item.input.checked = api.value === item.value;
       // The machine's part names are the radio group's (`item-text`, `item-control`); the tile's
       // vocabulary is `content` and `indicator`, and the CSS reads the tile's. Restored after the

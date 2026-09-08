@@ -348,7 +348,7 @@ export const commentThreadContract = {
         avatar: { accepts: "node" },
         /** The name. Free composition; the avatar is its own slot above, not part of this one. */
         author: { accepts: "node", required: true },
-        /** Pre-formatted ("hace 3h"). This contract never computes relative time, nor owns its i18n. */
+        /** Pre-formatted ("3h ago"). This contract never computes relative time, nor owns its i18n. */
         timestamp: { accepts: "text" },
         children: { accepts: "node", required: true },
         /** The action row, usually a `CommentActions`. `node`, so any chrome at all can sit here. */

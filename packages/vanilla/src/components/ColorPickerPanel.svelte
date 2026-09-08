@@ -160,9 +160,9 @@
     data-icon-only=""
     {...api.getEyeDropperTriggerProps()}
   >
-    <!-- Un cuentagotas no está entre los roles estables del set de iconos (`icon.ts`); es la
-         única afordancia de este componente, así que se dibuja acá en vez de sumar un rol nuevo
-         al vocabulario compartido por un solo consumidor. -->
+    <!-- An eyedropper is not among the icon set's stable roles (`icon.ts`); it is this component's
+         only affordance, so it is drawn here instead of adding a new role to the shared vocabulary
+         for a single consumer. -->
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
       <path d="m2 22 1-4 9.5-9.5" />
       <path d="M12.5 8.5 16 5" />

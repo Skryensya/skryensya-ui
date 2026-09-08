@@ -1,18 +1,18 @@
 /*
- * Las machines compartidas, una sola fuente para los dos bindings.
+ * The shared machines, a single source for both bindings.
  *
- * Un componente con estado tiene UNA máquina de estados, no dos. Antes vivía duplicada: React la
- * tomaba de Zag y la capa vanilla la reimplementaba a mano, pineadas sólo por los `*Parts` const. Acá
- * core re-exporta las machines de Zag, que son framework-agnósticas, como todo lo demás de core, para
- * que React (`@zag-js/react`) y la capa vanilla (`@zag-js/svelte`) adapten LA MISMA máquina. Ese es el
- * corte de "una machine, dos adapters": el comportamiento tiene un solo dueño, y el contrato de parts
- * se verifica contra la máquina en vez de duplicarse en un fixture.
+ * A stateful component has ONE state machine, not two. It used to live duplicated: React took it from
+ * Zag and the vanilla layer reimplemented it by hand, pinned together only by the `*Parts` consts. Here
+ * core re-exports Zag's machines, which are framework-agnostic, like everything else in core, so that
+ * React (`@zag-js/react`) and the vanilla layer (`@zag-js/svelte`) adapt THE SAME machine. That is the
+ * "one machine, two adapters" cut: the behavior has a single owner, and the parts contract is verified
+ * against the machine instead of duplicated in a fixture.
  *
- * COSTO, dicho: esto hace que `@skryensya/core` tenga `dependencies`, las de `@zag-js/*`. La invariante
- * "core no tiene deps" (que sostenía, entre otras cosas, el argumento de por qué un set de iconos no
- * puede vivir en core) deja de ser cierta. Se acepta porque una machine NO es un inquilino: no nombra
- * una marca ni un proveedor, es comportamiento agnóstico de plataforma, que es exactamente lo que core
- * publica. La geometría de un icono sigue sin poder vivir acá; una máquina sí. Ver ADR-0010.
+ * COST, said plainly: this gives `@skryensya/core` `dependencies`, the `@zag-js/*` ones. The invariant
+ * "core has no deps" (which supported, among other things, the argument for why an icon set cannot live
+ * in core) stops being true. It is accepted because a machine is NOT a tenant: it names no brand and no
+ * provider, it is platform-agnostic behavior, which is exactly what core publishes. An icon's geometry
+ * still cannot live here; a machine can. See ADR-0010.
  */
 
 export * as tabs from "@zag-js/tabs";

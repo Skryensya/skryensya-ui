@@ -219,8 +219,10 @@ minimumReleaseAgeExclude:
   rejected, the measurement that settled it, the failure the code is avoiding. Match the density of
   the file you are editing.
 - **Names come from `CONTEXT.md`.** If a term is not there and you need one, add it there first.
-- **Prose language follows [`docs/writing-guide.md`](docs/writing-guide.md)**: user-facing
-  documentation and decision records in Spanish, code and repository metadata in English.
+- **Prose language follows [ADR-0021](docs/decisions/0021-english-is-the-repository-language-and-spanish-is-a-product-locale.md)**:
+  English for the repository, comments and decision records included. Spanish is a product locale, the
+  docs site under `/es/`, its messages, and the `es:` half of a changelog entry. If what you are
+  writing has no counterpart in the other language, it is English.
 
 ## Proposing something large
 

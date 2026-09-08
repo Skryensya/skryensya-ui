@@ -72,8 +72,8 @@ export function NumberField({
         {label}
       </label>
       <div {...api.getControlProps()} className={numberFieldParts.control}>
-        {/* Icon buttons compuestos: el botón pone la forma y el state layer, el nombre accesible
-            lo escribe Zag (`translations`), y el glifo queda decorativo. */}
+        {/* Composed icon buttons: the button provides the shape and the state layer, the accessible
+            name is written by Zag (`translations`), and the glyph stays decorative. */}
         <button
           {...api.getDecrementTriggerProps()}
           className={`sk-button sk-interactive ${numberFieldParts.decrement}`}

@@ -6,15 +6,16 @@
   import { applyZagProps, bindZagEvents, ensureClasses, type DomProps } from "../runtime/apply";
 
   /*
-   * ACCORDION ITEM, un `@zag-js/collapsible` por item, igual que React compone su accordion (ver
-   * ADR-0024). Es lo que le faltaba a la capa vanilla: collapsible mide el alto y lo expone en `--height`,
-   * y mantiene el contenido presente (`visible = open || closing`) hasta que TERMINA la animación de
-   * cierre, así el colapso anima igual que la apertura en vez de desaparecer de golpe. La coordinación
-   * single/multiple vive en el padre (Accordion.svelte), que controla `open`; este componente sólo corre
-   * la máquina de un item y parchea sus atributos sobre el markup autorado (no renderiza estructura).
+   * ACCORDION ITEM, one `@zag-js/collapsible` per item, the same way React composes its accordion (see
+   * ADR-0024). It is what the vanilla layer was missing: collapsible measures the height and exposes it
+   * in `--height`, and keeps the content present (`visible = open || closing`) until the closing
+   * animation FINISHES, so collapsing animates like opening instead of disappearing all at once. The
+   * single/multiple coordination lives in the parent (Accordion.svelte), which controls `open`; this
+   * component only runs one item's machine and patches its attributes onto the authored markup (it
+   * renders no structure).
    */
-  // `id` lo fija el padre (un nodo/id estable por item), así ningún prop `el.*` se lee en el top level
-  // del script, eso evita el aviso `state_referenced_locally` de Svelte.
+  // `id` is set by the parent (a stable node/id per item), so no `el.*` prop is read at the script's
+  // top level, which avoids Svelte's `state_referenced_locally` warning.
   type Props = {
     id: string;
     value: string;
@@ -27,9 +28,10 @@
   };
   const { id, value, el, trigger, content, open, disabled, onToggle }: Props = $props();
 
-  // `open` es controlado por el padre: el click sólo AVISA (onOpenChange); el estado real lo mueve el
-  // padre al recalcular el set abierto y devolvernos un nuevo `open`. Es el mismo flujo controlado que
-  // usa React (ExpandableTile.onOpenChange → accordion.toggle, con `open` atado a accordion.values).
+  // `open` is controlled by the parent: the click only NOTIFIES (onOpenChange); the real state is moved
+  // by the parent when it recomputes the open set and hands us back a new `open`. It is the same
+  // controlled flow React uses (ExpandableTile.onOpenChange → accordion.toggle, with `open` tied to
+  // accordion.values).
   const service = useMachine(collapsible.machine, () => ({
     id,
     open,
@@ -40,8 +42,8 @@
   }));
   const api = $derived(collapsible.connect(service, normalizeProps));
 
-  // El scope del CSS del tile es "tile"; collapsible pondría "collapsible". Lo devolvemos después de
-  // parchear, igual que hacen ExpandableTile y React. `applyZagProps` nunca toca `class`.
+  // The tile's CSS scope is "tile"; collapsible would set "collapsible". We put it back after patching,
+  // just like ExpandableTile and React do. `applyZagProps` never touches `class`.
   const asTile = (node: HTMLElement, part: string) => {
     node.setAttribute("data-scope", "tile");
     node.setAttribute("data-part", part);
@@ -50,15 +52,14 @@
   $effect(() => {
     applyZagProps(el, api.getRootProps() as DomProps);
     asTile(el, "item");
-    // `sk-interactive` va en el trigger, no en la sección (mismo arreglo que `ExpandableTile.svelte`):
-    // la sección envuelve trigger Y contenido, así que el layer pintado detrás de toda ella teñía el
-    // contenido revelado al pasar el mouse.
+    // `sk-interactive` goes on the trigger, not on the section (same fix as `ExpandableTile.svelte`):
+    // the section wraps trigger AND content, so the layer painted behind all of it tinted the revealed
+    // content on hover.
     ensureClasses(el, tileParts.root, tileParts.expandable);
-    // Apaga el shim anti-flash de `tile.css` (`:not([data-sk-tile-ready])`): antes de este efecto,
-    // el contenido autorado no tiene `hidden` ni `data-state`, así que se veía abierto un instante
-    // aunque la sección arranque cerrada. Se pone una vez y nunca se saca, para que un panel
-    // asentado en abierto (que más tarde pierde `data-state` por la propia optimización de Zag)
-    // no vuelva a caer bajo ese shim.
+    // Turns off `tile.css`'s anti-flash shim (`:not([data-sk-tile-ready])`): before this effect, the
+    // authored content has neither `hidden` nor `data-state`, so it was visible open for an instant even
+    // if the section starts closed. It is set once and never removed, so a panel settled open (which
+    // later loses `data-state` through Zag's own optimization) does not fall back under that shim.
     el.setAttribute("data-sk-tile-ready", "");
     el.dataset.value = value;
     if (trigger) {

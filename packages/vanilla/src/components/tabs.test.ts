@@ -72,7 +72,7 @@ describe("Tabs Vanilla contracts", () => {
 
     general.focus();
     fireEvent.keyDown(general, { key: "ArrowRight" });
-    // Zag mueve el foco dentro de un `raf`; `vi.waitFor` deja correr el frame antes de assertear.
+    // Zag moves focus inside a `raf`; `vi.waitFor` lets the frame run before asserting.
     await vi.waitFor(() => {
       expect(document.activeElement).toBe(security);
     });

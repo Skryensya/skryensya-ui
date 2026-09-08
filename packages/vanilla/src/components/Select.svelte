@@ -13,13 +13,13 @@
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
-   * SELECT, enhancer machine-backed sobre `@zag-js/select` (la MISMA máquina que usa React, vía
-   * `@skryensya/core/machines`). No renderiza estructura: escanea su markup autorado (label,
-   * control, trigger, positioner, content, items, y el `<select>` oculto opcional) y parchea los
-   * atributos que devuelve `connect` sobre esos nodos.
+   * SELECT, a machine-backed enhancer over `@zag-js/select` (the SAME machine React uses, via
+   * `@skryensya/core/machines`). It renders no structure: it scans its authored markup (label,
+   * control, trigger, positioner, content, items, and the optional hidden `<select>`) and patches the
+   * attributes `connect` returns onto those nodes.
    *
-   * No hay equivalente nativo para un listbox con typeahead, resaltado y colocación controlada
-   * (decisión 8), así que una máquina se gana el lugar, la misma que usa React.
+   * There is no native equivalent for a listbox with typeahead, highlighting and controlled placement
+   * (decision 8), so a machine earns its place, the same one React uses.
    */
   const root = getRoot();
 
@@ -88,21 +88,21 @@
   });
 
   const placeholder = root.dataset.placeholder ?? "";
-  // Capturado UNA vez, nunca releído del DOM: `getRootProps().id` devuelve un id namespaced
-  // (`select:${id}`) que `applyZagProps` escribe de vuelta sobre `root.id`. Leer `root.id` en vivo
-  // desde el factory reactivo de `useMachine` retroalimentaría ese prefijo en cada recomputación.
-  // El original imperativo nunca mutaba `root.id`; esto reproduce lo mismo.
+  // Captured ONCE, never re-read from the DOM: `getRootProps().id` returns a namespaced id
+  // (`select:${id}`) that `applyZagProps` writes back onto `root.id`. Reading `root.id` live from
+  // `useMachine`'s reactive factory would feed that prefix back on every recomputation. The imperative
+  // original never mutated `root.id`; this reproduces the same thing.
   const selectId = root.id || uniqueId("sk-select");
 
-  // PROGRESSIVE ENHANCEMENT, cuando el navegador tiene la CSS Anchor Positioning API, la colocación
-  // vive en select.css (detrás del mismo @supports); lo único que no puede vivir en CSS compartido
-  // es la relación ancla↔popup: un nombre único a esta instancia que ata ESTE trigger a ESTE
-  // listbox. Donde falta la API, `anchorName` es null y la colocación JS de Zag (configurada abajo)
-  // es la única, el fallback, no una ruta de segunda.
+  // PROGRESSIVE ENHANCEMENT: when the browser has the CSS Anchor Positioning API, the placement lives
+  // in select.css (behind the same @supports); the only thing that cannot live in shared CSS is the
+  // anchor↔popup relationship: a name unique to this instance that ties THIS trigger to THIS listbox.
+  // Where the API is missing, `anchorName` is null and Zag's JS placement (configured below) is the
+  // only one; the fallback, not a second-class path.
   const anchorName = supportsAnchorPositioning() ? anchorNameFor(selectId) : null;
   let unbindAnchor: (() => void) | undefined;
 
-  /* Sólo las parts a las que el consumidor le puso un id; el resto sigue siendo de la máquina. */
+  /* Only the parts the consumer gave an id to; the rest still belong to the machine. */
   function authoredIds(): Record<string, string> {
     const ids: Record<string, string> = {};
     const claim = (key: string, el: HTMLElement | null) => {
@@ -125,9 +125,8 @@
     return value ? [value] : undefined;
   };
 
-  // Capturados UNA vez, antes de que la máquina escriba nada: leer esto en vivo dentro del factory
-  // reactivo empezaría a reclamar como "autorados" los ids que la máquina misma generó en el
-  // primer render.
+  // Captured ONCE, before the machine writes anything: reading this live inside the reactive factory
+  // would start claiming as "authored" the ids the machine itself generated on the first render.
   const ids = authoredIds();
 
   const service = useMachine(select.machine, () => ({

@@ -1,4 +1,4 @@
-# La estructura vive en packages/core/src/image-frame.ts. Acá sólo por qué se elige.
+# The structure lives in packages/core/src/image-frame.ts. Here, only why it is chosen.
 
 ImageFrame:
   useWhen:

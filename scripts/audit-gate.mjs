@@ -1,27 +1,27 @@
 /*
- * `pnpm audit`, pero con un criterio de fallo que se puede poner en un hook sin volverse insoportable.
+ * `pnpm audit`, but with a failure criterion you can put in a hook without it becoming unbearable.
  *
- * POR QUÉ EXISTE, y no alcanza con correr `pnpm audit` a mano: `minimumReleaseAge` (30 días, en
- * pnpm-workspace.yaml) demora TODA versión nueva, parches de seguridad incluidos. Eso es seguro
- * solamente si alguien se entera de que hay un CVE y decide saltear la espera para ese paquete. Si
- * nadie mira, el cooldown deja de ser una cuarentena y pasa a ser un retraso silencioso. Este script
- * es la mitad que avisa: sin él, la otra mitad es una mala idea.
+ * WHY IT EXISTS, and why running `pnpm audit` by hand is not enough: `minimumReleaseAge` (30 days, in
+ * pnpm-workspace.yaml) delays EVERY new version, security patches included. That is only safe if
+ * somebody finds out there is a CVE and decides to skip the wait for that package. If nobody looks, the
+ * cooldown stops being a quarantine and becomes a silent delay. This script is the half that warns:
+ * without it, the other half is a bad idea.
  *
- * TRES DECISIONES QUE LO HACEN VIVIBLE EN UN HOOK:
+ * THREE DECISIONS THAT MAKE IT LIVABLE IN A HOOK:
  *
- * 1. SIN RED, PASA. `pnpm audit` consulta el registry. Un hook que falla en un avión, en un tren o
- *    con el wifi del café enseña a usar `--no-verify`, y un hook que se saltea por costumbre no
- *    protege de nada. Un fallo de red no es un hallazgo: se avisa y se sigue.
+ * 1. NO NETWORK, IT PASSES. `pnpm audit` queries the registry. A hook that fails on a plane, on a train
+ *    or on café wifi teaches people to use `--no-verify`, and a hook that gets skipped out of habit
+ *    protects nothing. A network failure is not a finding: it warns and moves on.
  *
- * 2. UMBRAL EXPLÍCITO. Falla en `high` y `critical`; `moderate`/`low` se listan pero no bloquean.
- *    No es que no importen: es que bloquear el trabajo por un ReDoS en una dependencia de desarrollo
- *    lleva al mismo `--no-verify` del punto anterior. Se ajusta con --level.
+ * 2. EXPLICIT THRESHOLD. It fails on `high` and `critical`; `moderate`/`low` are listed but do not
+ *    block. Not because they do not matter: because blocking work over a ReDoS in a dev dependency
+ *    leads to the same `--no-verify` as the previous point. Tune it with --level.
  *
- * 3. DICE QUÉ HACER. Un gate que sólo dice "no" hace que el siguiente paso sea saltearlo. Cuando
- *    encuentra algo imprime las dos salidas reales: el override, o la excepción al cooldown cuando
- *    el parche existe pero es más nuevo que la cuarentena.
+ * 3. IT SAYS WHAT TO DO. A gate that only says "no" makes the next step be skipping it. When it finds
+ *    something it prints the two real exits: the override, or the cooldown exception when the patch
+ *    exists but is newer than the quarantine.
  *
- * Uso:  node scripts/audit-gate.mjs [--level=high|moderate|low]
+ * Usage:  node scripts/audit-gate.mjs [--level=high|moderate|low]
  */
 
 import { spawn } from "node:child_process";
@@ -37,9 +37,9 @@ if (!ORDER.includes(level)) {
 const floor = ORDER.indexOf(level);
 
 /*
- * `pnpm audit --json` sale con código != 0 cuando ENCUENTRA algo, que es su trabajo, así que el
- * código de salida no distingue "hay vulnerabilidades" de "no pude consultar". Lo que sí distingue
- * es si lo que escribió parsea como el JSON esperado: eso sólo pasa cuando la consulta funcionó.
+ * `pnpm audit --json` exits with a non-zero code when it FINDS something, which is its job, so the exit
+ * code does not distinguish "there are vulnerabilities" from "I could not query". What does distinguish
+ * them is whether what it wrote parses as the expected JSON: that only happens when the query worked.
  */
 function runAudit() {
   return new Promise((resolve) => {
@@ -66,7 +66,7 @@ function runAudit() {
 const result = await runAudit();
 
 if (!result.ok) {
-  // Punto 1: sin red no se bloquea. Se dice fuerte para que no pase por sano.
+  // Point 1: no network does not block. Said loudly so it does not pass for healthy.
   console.warn(`audit-gate: no se pudo consultar el registry (${result.reason}).`);
   console.warn("           NO se revisaron las dependencias en esta corrida. Corré `pnpm audit` con red.");
   process.exit(0);
@@ -91,14 +91,14 @@ for (const a of blocking) {
   console.error(`  ${a.severity.toUpperCase()}  ${a.module_name}  ${a.vulnerable_versions}`);
   console.error(`    ${a.title}`);
   console.error(`    parcheado en: ${a.patched_versions}`);
-  // La ruta dice si es una dependencia directa (se sube en su package.json) o transitiva (sólo se
-  // alcanza con un override), que es la primera decisión de quien va a arreglarlo.
+  // The path says whether it is a direct dependency (bumped in its package.json) or a transitive one
+  // (only reachable with an override), which is the first decision for whoever is going to fix it.
   const path = a.findings?.[0]?.paths?.[0];
   if (path) console.error(`    vía: ${path}`);
   console.error("");
 }
 
-// Punto 3: las dos salidas reales, no "actualizá las dependencias".
+// Point 3: the two real exits, not "update your dependencies".
 console.error("Cómo se arregla:");
 console.error("  · Transitiva (la ruta de arriba pasa por otro paquete): agregá el rango parcheado");
 console.error("    a `pnpm.overrides` en el package.json raíz. Usá ^ para quedarte en el major que");

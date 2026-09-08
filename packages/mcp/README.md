@@ -26,10 +26,10 @@ pueden separarse.
 {
   "contract": "nav-list",
   "signature": "NavListLink",
-  "options": { "href": "/", "current": true },   // lo que el contrato mapea a un atributo
-  "attrs":   { "id": "inicio" },                 // lo que va al host tal cual
-  "slots":   { "trailing": "12" },               // dónde cae el contenido
-  "children": "Inicio"                           // azúcar para slots.children
+  "options": { "href": "/", "current": true },   // what the contract maps to an attribute
+  "attrs":   { "id": "inicio" },                 // what goes to the host as-is
+  "slots":   { "trailing": "12" },               // where the content lands
+  "children": "Inicio"                           // sugar for slots.children
 }
 ```
 

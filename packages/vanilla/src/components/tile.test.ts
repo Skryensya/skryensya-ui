@@ -6,10 +6,10 @@ import { createTileLink } from "./tile-link.js";
 import { expandableTileClass, interactiveTileClass } from "./tile.js";
 
 /*
- * Tile factories (link + button). Los tiles con estado, checkbox, radio-group, expandable, accordion, 
- * migraron a enhancers Svelte+Zag y se prueban en sus propios `*.svelte.test.ts`. Acá quedan sólo las
- * dos piezas que NO tienen máquina: markup interactivo que el consumidor compone (createTileLink /
- * createTileButton), que no cambiaron.
+ * Tile factories (link + button). The stateful tiles, checkbox, radio-group, expandable, accordion,
+ * migrated to Svelte+Zag enhancers and are tested in their own `*.svelte.test.ts`. What is left here
+ * are only the two pieces that have NO machine: interactive markup the consumer composes
+ * (createTileLink / createTileButton), which did not change.
  */
 function mount(html: string) {
   document.body.innerHTML = html;

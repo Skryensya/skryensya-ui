@@ -1,9 +1,10 @@
-# Lo que el contrato no puede inferir: cuándo elegir esta firma y cuándo no.
-# La estructura vive en packages/core/src/button.ts; acá sólo hay juicio de producto.
+# What the contract cannot infer: when to choose this signature and when not to.
+# The structure lives in packages/core/src/button.ts; here there is only product judgment.
 #
-# Los dos ejes de apariencia son ortogonales a la firma y legales en las dos: `variant` dice qué tan
-# fuerte (solid, soft, ghost, translucent) y `tone` qué significa (neutral, accent, danger). Elegir
-# uno no elige el otro, y el juicio sobre cuándo usar cada combinación está en useWhen/avoidWhen.
+# The two axes of appearance are orthogonal to the signature and legal on both: `variant` says how
+# strong (solid, soft, ghost, translucent) and `tone` says what it means (neutral, accent, danger).
+# Choosing one does not choose the other, and the judgment about when to use each combination is in
+# useWhen/avoidWhen.
 
 Button.action:
   useWhen:

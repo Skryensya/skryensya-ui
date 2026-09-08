@@ -6,8 +6,8 @@ import type { IconData } from "./icon.js";
  * belong in `stableIconNames`: "IconSet is complete" (icon.ts's own comment) means adding a role
  * there is an obligation for every set author, and a rich-text toolbar's bold/italic/heading/list/
  * undo glyphs are PRODUCT concepts of this one component, not roles every consumer of the design
- * system needs - the same test `icon.ts` itself draws the line with ("un concepto de PRODUCTO...
- * se pasa como `data` y es del consumidor").
+ * system needs - the same test `icon.ts` itself draws the line with ("a PRODUCT concept ... is passed as `data` and
+ * belongs to the consumer").
  *
  * Traced from Lucide (ISC, already a real dependency of `@skryensya/icons-lucide`) at the exact
  * same 24×24/stroke-2 geometry its own generator emits, so a reader sees one consistent line-icon

@@ -1,8 +1,8 @@
-# Qué cambió en hero, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+# What changed in hero, in the words its users read. Only appended to, never rewritten.
 #
-# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
-# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
-# hash nuevo.
+# `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
+# does not match, something a consumer depends on has moved: write the entry and paste in the new
+# hash.
 surface: "a3d8996be1a3b490"
 entries:
   - date: 2026-08-25

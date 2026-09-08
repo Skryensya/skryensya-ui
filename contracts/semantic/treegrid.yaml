@@ -1,4 +1,4 @@
-# La estructura vive en packages/core/src/treegrid.ts. Acá sólo por qué se elige.
+# The structure lives in packages/core/src/treegrid.ts. Here, only why it is chosen.
 
 Treegrid:
   useWhen:

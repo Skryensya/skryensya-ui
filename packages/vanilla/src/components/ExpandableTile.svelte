@@ -7,10 +7,10 @@
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
-   * EXPANDABLE TILE, enhancer machine-backed sobre `@zag-js/collapsible` (la misma máquina que usa
-   * React en tile.tsx). Zag collapsible aporta lo que el FSM viejo hacía a mano: mide el alto y lo
-   * expone en `--height`, y mantiene el contenido presente hasta que termina la animación de cierre.
-   * El CSS compartido (`css/components/tile.css`) ya funciona con esa salida, React lo prueba.
+   * EXPANDABLE TILE, a machine-backed enhancer over `@zag-js/collapsible` (the same machine React uses
+   * in tile.tsx). Zag collapsible provides what the old FSM did by hand: it measures the height and
+   * exposes it in `--height`, and keeps the content present until the closing animation finishes. The
+   * shared CSS (`css/components/tile.css`) already works with that output, React proves it.
    */
   const root = getRoot();
   const trigger = root.querySelector<HTMLElement>('[data-part="trigger"]');
@@ -35,12 +35,12 @@
   }));
   const api = $derived(collapsible.connect(service, normalizeProps));
 
-  // El scope del CSS del tile es "tile"; Zag pondría "collapsible". Lo devolvemos después de parchear,
-  // igual que hace React. Las clases `sk-tile*` las autora el consumidor (applyZagProps nunca toca
-  // class); garantizamos `sk-interactive` como hacía el enhancer viejo, pero en el TRIGGER, no en la
-  // sección: la sección es un contenedor, no el control, y el layer pintado detrás de toda la sección
-  // teñía el contenido revelado al pasar el mouse (y `sk-tile--interactive` bloqueaba seleccionar ese
-  // mismo texto vía `user-select: none`).
+  // The tile's CSS scope is "tile"; Zag would set "collapsible". We put it back after patching, just
+  // like React does. The `sk-tile*` classes are authored by the consumer (applyZagProps never touches
+  // class); we guarantee `sk-interactive` the way the old enhancer did, but on the TRIGGER, not on the
+  // section: the section is a container, not the control, and the layer painted behind the whole section
+  // tinted the revealed content on hover (and `sk-tile--interactive` blocked selecting that same text
+  // through `user-select: none`).
   const scopeTile = (el: HTMLElement) => el.setAttribute("data-scope", "tile");
 
   $effect(() => {

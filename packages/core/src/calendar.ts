@@ -133,11 +133,11 @@ export function getTwoLetterWeekdayLabel(
 }
 
 /*
- * CALENDAR, el chrome derivado que vive detrás de un DatePicker Y de pie solo. La máquina que lo
- * respalda sigue siendo `@zag-js/date-picker` (no hay un `@zag-js/calendar` separado en este stack),
- * pero el CONTROL (label, input, trigger, clear, positioner) es asunto del campo, no del calendario:
- * un Calendar inline nunca los monta. Estas parts cubren sólo lo que ambos dibujan: encabezado,
- * navegación, el botón que cambia de vista (día → mes → década) y las tres grillas (día/mes/año).
+ * CALENDAR, the derived chrome that lives behind a DatePicker AND on its own. The machine backing it
+ * is still `@zag-js/date-picker` (there is no separate `@zag-js/calendar` in this stack), but the
+ * CONTROL (label, input, trigger, clear, positioner) is the field's business, not the calendar's: an
+ * inline Calendar never mounts them. These parts cover only what both draw: header, navigation, the
+ * button that changes view (day → month → decade) and the three grids (day/month/year).
  */
 export const calendarParts = {
   root: "sk-calendar",

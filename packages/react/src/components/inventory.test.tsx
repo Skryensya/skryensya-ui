@@ -201,8 +201,8 @@ describe("expanded component inventory", () => {
       "sábado",
     ]);
 
-    // El view-trigger sólo escala vista (día → mes → año) con el calendario abierto: la máquina
-    // ignora VIEW.TOGGLE en estado idle, igual que ignoraba los cambios de mes/año si no estaba abierto.
+    // The view-trigger only escalates the view (day → month → year) with the calendar open: the machine
+    // ignores VIEW.TOGGLE in the idle state, just as it ignored month/year changes when it was not open.
     const trigger = ui.container.querySelector<HTMLButtonElement>(
       ".sk-date-picker__trigger",
     );
@@ -221,7 +221,7 @@ describe("expanded component inventory", () => {
       ).toBe("open");
     });
 
-    // El encabezado es un botón, no dos selects: clic escala día → mes → año.
+    // The header is one button, not two selects: a click escalates day → month → year.
     const viewTrigger = () =>
       document.querySelector<HTMLButtonElement>(".sk-calendar__view-trigger");
     if (!viewTrigger()) throw new Error("calendar view trigger missing");
@@ -239,7 +239,7 @@ describe("expanded component inventory", () => {
     ).find((cell) => !cell.disabled);
     if (!selectableYearCell) throw new Error("no selectable year cell in the decade grid");
     const chosenYear = selectableYearCell.textContent?.trim();
-    fireEvent.click(selectableYearCell); // vuelve a la vista de mes en el año elegido
+    fireEvent.click(selectableYearCell); // back to the month view in the chosen year
     await waitFor(() => {
       expect(document.querySelector(".sk-calendar__month-grid")).toBeTruthy();
     });
@@ -247,7 +247,7 @@ describe("expanded component inventory", () => {
       document.querySelectorAll<HTMLButtonElement>(".sk-calendar__cell-trigger"),
     ).find((cell) => cell.textContent?.trim().toLowerCase().startsWith("ene"));
     if (!januaryCell) throw new Error("january month cell missing");
-    fireEvent.click(januaryCell); // vuelve a la vista de día en enero del año elegido
+    fireEvent.click(januaryCell); // back to the day view in January of the chosen year
 
     await waitFor(() => {
       expect(

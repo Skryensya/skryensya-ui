@@ -3,8 +3,8 @@ import { applyZagProps } from "./apply";
 
 describe("applyZagProps", () => {
   it("deja intacto un atributo autorado que las props traen en undefined", () => {
-    // El caso real: `getTriggerProps` de Zag tooltip devuelve `"data-value": undefined` cuando no se
-    // le pasa un `value`, y el trigger es además la opción de un Segmented que autoró su `data-value`.
+    // The real case: Zag tooltip's `getTriggerProps` returns `"data-value": undefined` when it is passed
+    // no `value`, and the trigger is also the option of a Segmented that authored its own `data-value`.
     const node = document.createElement("button");
     node.setAttribute("data-value", "mobile");
 

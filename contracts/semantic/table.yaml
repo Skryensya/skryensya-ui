@@ -1,4 +1,4 @@
-# La estructura vive en packages/core/src/table.ts. Acá sólo por qué se elige.
+# The structure lives in packages/core/src/table.ts. Here, only why it is chosen.
 
 Table:
   useWhen:

@@ -16,7 +16,7 @@ import type { EvalCase } from "./case.js";
 
 /*
  * Every case, regressions first (each one guards a documented historical bug from
- * plataforma-ai-ui.md), then breadth (common product intents with no incident behind them, added
+ * ai-ui-platform.md), then breadth (common product intents with no incident behind them, added
  * so the corpus is not only a museum of past failures).
  */
 export const evalCases: readonly EvalCase[] = [

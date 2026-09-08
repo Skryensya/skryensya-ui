@@ -15,72 +15,72 @@ catalog:
   "@types/node": "^24.13.3"
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────────
-# CUARENTENA DE VERSIONES NUEVAS. 30 días en minutos.
+# QUARANTINE FOR NEW VERSIONS. 30 days, in minutes.
 #
-# Contra qué: la forma que tienen los ataques de cadena de suministro de npm (Shai-Hulud y los que
-# vinieron después) es publicar una versión maliciosa de un paquete legítimo, normalmente robando
-# el token de quien lo mantiene, y vivir de que alguien la instale en las horas siguientes. Se
-# detectan y se bajan rápido (casi siempre el mismo día), pero para entonces ya entraron en cada
-# `pnpm install` que corrió en esa ventana.
+# Against what: the shape npm supply-chain attacks take (Shai-Hulud and the ones that came after) is
+# publishing a malicious version of a legitimate package, usually by stealing the maintainer's token,
+# and living off someone installing it in the following hours. They are detected and taken down fast
+# (almost always the same day), but by then they have already entered every `pnpm install` that ran
+# in that window.
 #
-# Esperar hace que la ventana no exista: pnpm no instala una versión hasta que tenga 7 días, así que
-# el pico del ataque pasa entero antes de que este repo pueda verla. No detecta nada ni juzga nada;
-# simplemente no está cuando pasa.
+# Waiting makes the window not exist: pnpm does not install a version until it is 7 days old, so the
+# peak of the attack passes entirely before this repo can even see it. It detects nothing and judges
+# nothing; it simply is not there when it happens.
 #
-# LO QUE CUESTA, dicho de frente: los parches de seguridad legítimos también tardan 30 días en
-# llegar, y a 30 días eso deja de ser teórico. Medido en este árbol al escribir esto: 5 de los 8
-# overrides de seguridad del package.json apuntaban a versiones de menos de 30 días, y cayeron a una
-# anterior. En 4 de esos 5 la anterior también estaba parcheada y no cambió nada; en el quinto (qs)
-# la única versión parcheada ERA la nueva, y ahí no queda arreglo posible hasta que envejezca.
+# WHAT IT COSTS, said plainly: legitimate security patches also take 30 days to arrive, and at 30
+# days that stops being theoretical. Measured in this tree while writing this: 5 of the 8 security
+# overrides in package.json pointed at versions less than 30 days old, and fell back to an earlier
+# one. In 4 of those 5 the earlier one was patched too and nothing changed; in the fifth (qs) the only
+# patched version WAS the new one, and there no fix is possible until it ages.
 #
-# Cuando haga falta uno YA, se lo saltea por paquete y no bajando el número global:
+# When one is needed NOW, skip it per package rather than lowering the global number:
 #
 #     minimumReleaseAgeExclude:
-#       - "el-paquete-en-cuestion"
+#       - "the-package-in-question"
 #
-# ...o `pnpm add pkg@version --allow-newer` para una sola vez. La excepción queda escrita y se
-# revisa; el default sigue siendo esperar.
+# ...or `pnpm add pkg@version --allow-newer` for a one-off. The exception stays written down and gets
+# reviewed; the default is still to wait.
 minimumReleaseAge: 43200
 
-# LAS DOS EXCEPCIONES, las dos por fecha y no por criterio. Cada una dice cuándo se vence.
+# THE TWO EXCEPTIONS, both by date and not by judgment. Each one says when it expires.
 #
-# Las dos son el mismo caso: un rango cuyo PISO es una versión nueva, así que no hay ninguna
-# anterior a la que caer y la resolución se queda sin versión elegible. Se excluye el paquete en
-# vez de bajar el número global, porque bajarlo aflojaría la regla para las 773 dependencias del
-# árbol para destrabar una.
+# Both are the same case: a range whose FLOOR is a new version, so there is no earlier one to fall
+# back to and the resolution is left with no eligible version. The package is excluded instead of
+# lowering the global number, because lowering it would loosen the rule for the tree's 773
+# dependencies in order to unblock one.
 #
-# CUÁNDO IMPORTAN: sólo cuando algo se RESUELVE de nuevo (lockfile borrado, o un cambio de config
-# que fuerza re-resolución, que es exactamente lo que pasó al agregar los overrides de seguridad).
-# Sobre un lockfile ya asentado no hacen nada: una versión ya fijada se reusa sin volver a pasar por
-# el cooldown. Verificado sacándolas y reinstalando: no cambia nada hoy. Son seguro para el próximo
-# `pnpm install` que sí tenga que resolver, no parche de algo que esté roto ahora.
+# WHEN THEY MATTER: only when something is RESOLVED again (lockfile deleted, or a config change that
+# forces re-resolution, which is exactly what happened when the security overrides were added). On an
+# already-settled lockfile they do nothing: an already-pinned version is reused without going through
+# the cooldown again. Verified by removing them and reinstalling: nothing changes today. They are
+# insurance for the next `pnpm install` that does have to resolve, not a patch for something broken now.
 minimumReleaseAgeExclude:
-  # BORRAR DESPUÉS DEL 2026-10-02.
-  # `packages/editor` pide `prosemirror-transform: ^1.12.1`, y 1.12.1 (2026-09-02) es la única
-  # versión que ese rango admite: la anterior es 1.12.0, de marzo, que `^1.12.1` deja afuera.
-  # Acá el cooldown no está protegiendo nada de todos modos: esa versión YA está en el lockfile y
-  # YA está instalada, de antes de que esta regla existiera. Impedirla no evita el riesgo, sólo
-  # impide describir lo que la máquina ya corre.
+  # DELETE AFTER 2026-10-02.
+  # `packages/editor` asks for `prosemirror-transform: ^1.12.1`, and 1.12.1 (2026-09-02) is the only
+  # version that range admits: the previous one is 1.12.0, from March, which `^1.12.1` leaves out.
+  # Here the cooldown is not protecting anything anyway: that version is ALREADY in the lockfile and
+  # ALREADY installed, from before this rule existed. Blocking it does not avoid the risk, it only
+  # prevents describing what the machine already runs.
   - "prosemirror-transform"
-  # BORRAR DESPUÉS DEL 2026-09-28.
-  # qs 6.16.0 (2026-08-29) es la primera versión que corrige dos advisories moderate (bypass del
-  # array-limit, y un DoS por `isBuffer` controlable). No hay ninguna 6.16.x más vieja, así que a 30
-  # días la alternativa no es "una versión anterior parcheada" sino "seguir con la vulnerable".
-  # Entra por `evals > @tanstack/ai-mcp > @modelcontextprotocol/sdk > express > qs`: el harness de
-  # evals, que no se publica en ninguno de los 9 paquetes de npm, así que el parche pesa más que la
-  # espera. El 2026-09-28 cumple 30 días y esta línea deja de hacer nada.
+  # DELETE AFTER 2026-09-28.
+  # qs 6.16.0 (2026-08-29) is the first version that fixes two moderate advisories (an array-limit
+  # bypass, and a DoS through a controllable `isBuffer`). There is no older 6.16.x, so at 30 days the
+  # alternative is not "an earlier patched version" but "stay on the vulnerable one".
+  # It comes in through `evals > @tanstack/ai-mcp > @modelcontextprotocol/sdk > express > qs`: the
+  # evals harness, which is not published in any of the 9 npm packages, so the patch weighs more than
+  # the wait. On 2026-09-28 it turns 30 days old and this line stops doing anything.
   - "qs"
 
-# NADA EJECUTA CÓDIGO AL INSTALARSE, y la lista está vacía a propósito, no por olvido.
+# NOTHING RUNS CODE ON INSTALL, and the list is empty on purpose, not by oversight.
 #
-# Un script de `install`/`postinstall` corre con tus permisos, en tu máquina, apenas resolvés una
-# dependencia: es el camino más corto que tiene un paquete comprometido para llegar a tus claves.
-# pnpm 10 ya los bloquea a todos por default, y este repo lo viene aprovechando sin saberlo. Escribir
-# la lista igual convierte eso en una decisión de este repo en vez de un default heredado: si
-# mañana pnpm cambia de opinión, o alguien corre `pnpm approve-builds`, la lista sigue diciendo que
-# acá no corre nada.
+# An `install`/`postinstall` script runs with your permissions, on your machine, as soon as you
+# resolve a dependency: it is the shortest path a compromised package has to your keys. pnpm 10
+# already blocks them all by default, and this repo has been benefiting from that without knowing it.
+# Writing the list anyway turns that into a decision of this repo instead of an inherited default: if
+# pnpm changes its mind tomorrow, or someone runs `pnpm approve-builds`, the list still says nothing
+# runs here.
 #
-# Verificado antes de escribirla: `pnpm ignored-builds` sólo reporta `es5-ext`, cuyo postinstall
-# arma polyfills de ES5 que nada de esto necesita. Ningún paquete de este árbol requiere compilar
-# para funcionar (sharp incluido: baja binarios precompilados).
+# Verified before writing it: `pnpm ignored-builds` only reports `es5-ext`, whose postinstall builds
+# ES5 polyfills that none of this needs. No package in this tree requires compiling to work (sharp
+# included: it downloads precompiled binaries).
 onlyBuiltDependencies: []

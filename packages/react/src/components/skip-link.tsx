@@ -15,7 +15,7 @@ import type { AnchorHTMLAttributes, ReactNode } from "react";
 export type SkipLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "children"> & {
   /** In-page, so an id: `#main-nav`. What makes the jump the browser's rather than a script's. */
   href: string;
-  /** What it says when it appears. A destination, not an instruction: "Ir a la navegación". */
+  /** What it says when it appears. A destination, not an instruction: "Go to navigation". */
   children: ReactNode;
 };
 

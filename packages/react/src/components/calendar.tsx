@@ -19,8 +19,8 @@ import { useId, type MouseEvent, type ReactNode } from "react";
 import { Button } from "./button.js";
 import { Icon } from "./icon.js";
 
-// Sin depender de `@zag-js/date-picker` directamente (react no lo trae como dependencia propia,
-// sólo core la reexporta vía `machines.ts`): el tipo del `api` sale de la misma función `connect`.
+// Without depending on `@zag-js/date-picker` directly (react does not bring it as a dependency of its
+// own, core only re-exports it via `machines.ts`): the `api`'s type comes from the same `connect` function.
 type DatePickerApi = ReturnType<typeof datePicker.connect<PropTypes>>;
 
 /*

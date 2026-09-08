@@ -15,21 +15,21 @@
   import ColorPickerPanel from "./ColorPickerPanel.svelte";
 
   /*
-   * COLOR PICKER, enhancer machine-backed sobre `@zag-js/color-picker` (la MISMA máquina que usa
-   * React). Igual reparto que DatePicker: el CONTROL (label, trigger con su swatch) es markup
-   * autorado que se parchea; el PANEL (área, rieles, filas de canal, presets) es chrome derivado
-   * y lo posee `ColorPickerPanel`, este componente sólo le pone alrededor el popover.
+   * COLOR PICKER, a machine-backed enhancer over `@zag-js/color-picker` (the SAME machine React uses).
+   * Same split as DatePicker: the CONTROL (label, trigger with its swatch) is authored markup that gets
+   * patched; the PANEL (area, rails, channel rows, presets) is derived chrome and owned by
+   * `ColorPickerPanel`, and this component only puts the popover around it.
    *
-   * `data-anatomy` (puesto por la plantilla del contrato, "full" o "compact") decide qué filas
-   * dibuja el panel; la máquina en sí es idéntica para ambas señaturas.
+   * `data-anatomy` (set by the contract's template, "full" or "compact") decides which rows the panel
+   * draws; the machine itself is identical for both signatures.
    */
   const root = getRoot();
 
   const label = root.querySelector<HTMLElement>(`.${colorPickerParts.label}`);
   const control = root.querySelector<HTMLElement>(`.${colorPickerParts.control}`);
   const trigger = root.querySelector<HTMLButtonElement>(`.${colorPickerParts.trigger}`);
-  // Opcional, como el `<select>` oculto de Select: sólo lo parcha si el autor lo puso (o el
-  // emisor lo generó). Sin él, `name` simplemente no llega a un submit.
+  // Optional, like Select's hidden `<select>`: it is only patched if the author put it there (or the
+  // emitter generated it). Without it, `name` simply does not reach a submit.
   const hiddenInput = root.querySelector<HTMLInputElement>(`.${colorPickerParts.hiddenInput}`);
   const authoredTriggerLabel = trigger?.getAttribute("aria-label") ?? null;
 
@@ -44,9 +44,9 @@
 
   const service = useMachine(colorPicker.machine, () => ({
     id: root.id,
-    // El emisor sólo escribe `name` en el hidden input (es el único nodo de la plantilla que lo
-    // reclama, igual que el `<select>` oculto de Select), así que se lee de ahí primero; el root
-    // sigue siendo el fallback para markup escrito a mano sin ese input.
+    // The emitter only writes `name` on the hidden input (it is the only node in the template that
+    // claims it, just like Select's hidden `<select>`), so it is read from there first; the root is
+    // still the fallback for hand-written markup without that input.
     name: hiddenInput?.name || root.dataset.name || undefined,
     defaultValue: colorPicker.parse(root.dataset.value || "#000000"),
     disabled: root.hasAttribute("data-disabled"),
@@ -62,9 +62,9 @@
 
   const api = $derived(colorPicker.connect(service, normalizeProps));
 
-  // Anchor positioning, mismo mecanismo que DatePicker (ADR-25): con la API del navegador, el
-  // `style` de Zag para el positioner se descarta y coloca CSS anchor positioning; sin ella, pasa
-  // intacto y Zag posiciona.
+  // Anchor positioning, same mechanism as DatePicker (ADR-25): with the browser API, Zag's `style` for
+  // the positioner is discarded and CSS anchor positioning places it; without it, it passes through
+  // untouched and Zag positions.
   const anchored = supportsAnchorPositioning();
   let unbindAnchor: (() => void) | undefined;
   const positionerProps = (props: DomProps): DomProps =>
@@ -78,12 +78,12 @@
     ensureClasses(control, anchoredParts.anchor);
     applyZagProps(trigger, api.getTriggerProps() as DomProps);
     /*
-     * Zag SIEMPRE manda `aria-labelledby` apuntando al label del campo, además de su propio
-     * `aria-label` ("select color. current color is ..."). En el algoritmo de nombre accesible,
-     * `aria-labelledby` le gana a `aria-label`, así que ese `aria-labelledby` silenciaba el
-     * `triggerLabel` del contrato (que SIEMPRE tiene un valor, por default), sin importar qué
-     * dijera `aria-label`. `triggerLabel` es el mecanismo de nombrado de este contrato: se quita
-     * el `aria-labelledby` de Zag para que el `aria-label` (autorado o el default) mande.
+     * Zag ALWAYS sends an `aria-labelledby` pointing at the field's label, in addition to its own
+     * `aria-label` ("select color. current color is ..."). In the accessible name algorithm,
+     * `aria-labelledby` beats `aria-label`, so that `aria-labelledby` silenced the contract's
+     * `triggerLabel` (which ALWAYS has a value, by default), no matter what `aria-label` said.
+     * `triggerLabel` is this contract's naming mechanism: Zag's `aria-labelledby` is removed so the
+     * `aria-label` (authored or the default) is in charge.
      */
     trigger.removeAttribute("aria-labelledby");
     if (authoredTriggerLabel !== null) trigger.setAttribute("aria-label", authoredTriggerLabel);

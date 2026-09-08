@@ -20,8 +20,8 @@ export function defaultContentLabel(locale: string) {
 
 export type DatePickerSelectionMode = "single" | "range";
 
-// El chrome del calendario (encabezado, grillas, vistas, `getTwoLetterWeekdayLabel`) vive en
-// `./calendar.js`, no acá: DatePicker sólo posee el campo editable que lo abre.
+// The calendar's chrome (header, grids, views, `getTwoLetterWeekdayLabel`) lives in `./calendar.js`,
+// not here: DatePicker only owns the editable field that opens it.
 
 export const datePickerParts = {
   root: "sk-date-picker",

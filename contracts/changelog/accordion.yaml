@@ -1,12 +1,12 @@
-# Qué cambió en accordion, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+# What changed in accordion, in the words its users read. Only appended to, never rewritten.
 #
-# Cada entrada es un `title` y un `body` por idioma: el título es lo que alguien escanea para saber
-# si le importa, el cuerpo es por qué, y quien escanea no debería tener que leer el cuerpo para
-# averiguar si era para él. El título es texto plano; el cuerpo admite markup.
+# Each entry is a `title` and a `body` per language: the title is what someone scans to know whether
+# they care, the body is why, and whoever is scanning should not have to read the body to work out
+# whether it was for them. The title is plain text; the body accepts markup.
 #
-# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
-# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
-# hash nuevo.
+# `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
+# does not match, something a consumer depends on has moved: write the entry and paste in the new
+# hash.
 surface: "4956b78cd51d4ebd"
 entries:
   - date: 2026-08-14

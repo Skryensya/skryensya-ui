@@ -25,15 +25,16 @@
   import CalendarView from "./CalendarView.svelte";
 
   /*
-   * DATE PICKER, enhancer machine-backed sobre `@zag-js/date-picker` (la MISMA máquina que usa React).
+   * DATE PICKER, a machine-backed enhancer over `@zag-js/date-picker` (the SAME machine React uses).
    *
-   * Reparte el trabajo por dueño, como Carousel: el CONTROL (label, input, trigger, clear) es markup
-   * autorado que se parchea; el CALENDARIO es chrome derivado del estado y lo posee `CalendarView`
-   * (compartido con el Calendar standalone), este componente sólo le pone alrededor el popover.
+   * It splits the work by owner, like Carousel: the CONTROL (label, input, trigger, clear) is authored
+   * markup that gets patched; the CALENDAR is chrome derived from the state and owned by `CalendarView`
+   * (shared with the standalone Calendar), and this component only puts the popover around it.
    *
-   * El input nativo `type="date"` sigue siendo la capa sin JS: comparte `.sk-date-picker__control`, así
-   * que la versión nativa y la enhanceada se ven como el MISMO campo, y sin la capa vanilla montada el
-   * consumidor autora la nativa. Este enhancer sólo aparece cuando el markup pide `data-sk-date-picker`.
+   * The native `type="date"` input is still the no-JS layer: it shares `.sk-date-picker__control`, so
+   * the native version and the enhanced one look like the SAME field, and without the vanilla layer
+   * mounted the consumer authors the native one. This enhancer only appears when the markup asks for
+   * `data-sk-date-picker`.
    */
   const root = getRoot();
 
@@ -52,30 +53,30 @@
   if (!root.id) root.id = uniqueId("sk-date-picker");
   const locale = root.dataset.locale || "es";
 
-  /* El positioner lo renderiza este componente (es chrome derivado), así que la referencia sale del
-   * template de abajo y no de una query sobre markup autorado, como el control. */
+  /* The positioner is rendered by this component (it is derived chrome), so the reference comes from the
+   * template below and not from a query over authored markup, like the control does. */
   let positioner: HTMLElement | undefined = $state();
 
   const service = useMachine(datePicker.machine, () => ({
     id: root.id,
     name: root.dataset.name || input.name || undefined,
-    // Fecha explícita, nunca un string de locale ambiguo: locale y zona horaria se autoran o caen a es/UTC.
+    // Explicit date, never an ambiguous locale string: locale and time zone are authored or fall back to es/UTC.
     locale,
     timeZone: root.dataset.timeZone || "UTC",
     selectionMode: (root.dataset.selectionMode === "range" ? "range" : "single") as "single" | "range",
-    /* La fecha inicial y el rango permitido. Faltaban las tres: el markup autorado no tenía forma de
-     * decir ninguna, mientras el binding React aceptaba props que esta mitad descartaba. */
+    /* The initial date and the allowed range. All three were missing: the authored markup had no way to
+     * state any of them, while the React binding accepted props this half discarded. */
     defaultValue: root.dataset.value?.split(" ").filter(Boolean).map((date) => parseCalendarDate(date)!),
     min: parseCalendarDate(root.dataset.min),
     max: parseCalendarDate(root.dataset.max),
     disabled: root.hasAttribute("data-disabled"),
     readOnly: root.hasAttribute("data-readonly"),
     required: root.hasAttribute("data-required"),
-    // Alto de calendario estable entre meses: seis filas siempre, así abrir no reflowea la página.
+    // Stable calendar height across months: always six rows, so opening does not reflow the page.
     fixedWeeks: true,
     /*
-     * Zag's own `defaultTranslations` es sólo en inglés, sin condición de idioma. Un date picker en
-     * español anunciaba "Choose 15 de agosto" en inglés, mismo gap que se corrigió en el binding React.
+     * Zag's own `defaultTranslations` is English only, with no language condition. A date picker in
+     * Spanish announced "Choose 15 de agosto" in English, the same gap that was fixed in the React binding.
      */
     translations: {
       ...unusedIntlTranslations(),
@@ -96,13 +97,13 @@
   const api = $derived(datePicker.connect(service, normalizeProps));
 
   /*
-   * Anchor positioning, ahora vía el pattern Anclaje (ADR-25). Donde el navegador tiene la API coloca
-   * él el calendario y NO le pasamos a Zag el `style` inline, para que no peleen dos motores. Sin la
-   * API, el `style` de Zag pasa intacto y él posiciona (el fallback).
+   * Anchor positioning, now via the Anchoring pattern (ADR-25). Where the browser has the API it places
+   * the calendar itself and we do NOT pass Zag the inline `style`, so two engines do not fight. Without
+   * the API, Zag's `style` passes through untouched and it positions (the fallback).
    *
-   * Antes esto estampaba `--sk-date-picker-anchor` sobre el root y date-picker.css lo leía en el
-   * positioner, pero NADA le ponía nunca un `anchor-name` al control: la mitad del cableado faltaba,
-   * así que el bloque `@supports` no colocaba nada y Zag terminaba posicionando siempre.
+   * This used to stamp `--sk-date-picker-anchor` on the root and date-picker.css read it on the
+   * positioner, but NOTHING ever put an `anchor-name` on the control: half the wiring was missing, so
+   * the `@supports` block placed nothing and Zag ended up positioning every time.
    */
   const anchored = supportsAnchorPositioning();
   let unbindAnchor: (() => void) | undefined;
@@ -120,14 +121,14 @@
     if (clear) {
       applyZagProps(clear, api.getClearTriggerProps() as DomProps);
       if (authoredClearLabel !== null) clear.setAttribute("aria-label", authoredClearLabel);
-      // El clear sólo tiene sentido con una fecha puesta; sin valor no ocupa lugar en el campo.
+      // Clear only makes sense with a date set; with no value it takes up no room in the field.
       clear.hidden = api.value.length === 0;
     }
   });
 
-  // Los handlers de Zag se cablean una vez y se re-leen en cada disparo: la máquina cambia de estado y
-  // con ella el closure. Los triggers del calendario (prev/next/vista/día) los renderiza CalendarView
-  // con sus handlers ya cableados por Svelte, así que sólo el control autorado necesita bindZagEvents.
+  // Zag's handlers are wired once and re-read on every firing: the machine changes state and with it
+  // the closure. The calendar's triggers (prev/next/view/day) are rendered by CalendarView with their
+  // handlers already wired by Svelte, so only the authored control needs bindZagEvents.
   const cleanups: Array<() => void> = [];
   onMount(() => {
     cleanups.push(bindZagEvents(input, () => api.getInputProps({ index: 0 }) as DomProps));
@@ -135,9 +136,9 @@
     if (clear) {
       cleanups.push(bindZagEvents(clear, () => api.getClearTriggerProps() as DomProps));
     }
-    // El cableado ancla↔popup, después del primer render: el positioner sale del template de abajo.
+    // The anchor↔popup wiring, after the first render: the positioner comes from the template below.
     if (anchored) unbindAnchor = bindAnchor(control, positioner, anchorNameFor(root.id));
-    // Los chevrones se autoran como placeholders `data-sk-icon` y los hidrata el set ya registrado.
+    // The chevrons are authored as `data-sk-icon` placeholders and hydrated by the already-registered set.
     remountIcons(root);
   });
   onDestroy(() => {

@@ -1,16 +1,16 @@
 /*
- * Material Symbols enlazado al vocabulario estable, un set de iconos es una marca (decisión 15).
+ * Material Symbols bound to the stable vocabulary; an icon set is a brand (decision 15).
  *
- * El sistema nombra el rol (`chevron-down`); este paquete dice qué dibujo lo ocupa, igual que la
- * configuración raíz dice qué tono ocupa `--palette-blue-600`. Cambiar de set no mueve un solo call site:
- * eso es la portabilidad, funcionando.
+ * The system names the role (`chevron-down`); this package says which drawing occupies it, just like
+ * the root configuration says which hue occupies `--palette-blue-600`. Changing sets does not move a
+ * single call site: that is portability, working.
  *
- * Vive fuera de @skryensya/core por dos razones que ya estaban decididas: core no nombra inquilinos
- * (decisión 2), y sus dependencies están vacías. Aquí Material Symbols es una devDependency, la geometría se
- * generó en build, así que tu bundle recibe 32 iconos de datos y cero runtime de la librería.
+ * It lives outside @skryensya/core for two reasons that were already decided: core names no tenants
+ * (decision 2), and its dependencies are empty. Here Material Symbols is a devDependency, the geometry was
+ * generated at build time, so your bundle receives 32 icons of data and zero library runtime.
  */
 import type { IconSet } from "@skryensya/core/icon";
 import { generated } from "./generated/set.js";
 
-/** El set completo. `satisfies IconSet` prueba que cubre el vocabulario entero. */
+/** The complete set. `satisfies IconSet` proves it covers the whole vocabulary. */
 export const materialIcons: IconSet = generated satisfies IconSet;

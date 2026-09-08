@@ -2,26 +2,26 @@ import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { configDefaults, defineConfig } from "vitest/config";
 
 export default defineConfig({
-  // El plugin compila los `.svelte` (los enhancers machine-backed) en los tests, igual que lo hará
-  // Vite en el sitio. Los enhancers no-machine siguen siendo `.ts` puro.
+  // The plugin compiles the `.svelte` files (the machine-backed enhancers) in the tests, the same way
+  // Vite will on the site. The machine-less enhancers are still pure `.ts`.
   plugins: [svelte()],
-  // En test, resolver Svelte a su build de navegador: sin la condición `browser`, `mount()` cae al
-  // build de servidor y lanza `lifecycle_function_unavailable`. Sólo en VITEST para no alterar el
-  // resto de la resolución.
+  // In test, resolve Svelte to its browser build: without the `browser` condition, `mount()` falls back
+  // to the server build and throws `lifecycle_function_unavailable`. Only under VITEST, so the rest of
+  // the resolution is not altered.
   resolve: process.env.VITEST ? { conditions: ["browser"] } : undefined,
   test: {
     exclude: [...configDefaults.exclude, "dist/**"],
     environment: "jsdom",
     setupFiles: ["./src/test-setup.ts"],
     /*
-     * Lo mismo que en `packages/react/vitest.config.ts`, y por lo mismo: ahí está el razonamiento
-     * completo con las mediciones. Los enhancers de este paquete manejan las MISMAS máquinas de Zag
-     * (se comparten desde `core/machines`) detrás de las mismas cadenas `raf` + `raf` +
-     * `setTimeout(0)`, así que corren exactamente el mismo riesgo.
+     * The same as in `packages/react/vitest.config.ts`, and for the same reason: the full reasoning with
+     * the measurements is there. This package's enhancers drive the SAME Zag machines (shared from
+     * `core/machines`) behind the same `raf` + `raf` + `setTimeout(0)` chains, so they run exactly the
+     * same risk.
      *
-     * Se pone acá aunque este paquete todavía no falló: no es que sea inmune, es que la corrida en
-     * la que React se cayó le tocó en un momento con menos carga. Esperar a que pase para arreglarlo
-     * es esperar a que el rojo aparezca en un momento peor.
+     * It is set here even though this package has not failed yet: it is not that it is immune, it is
+     * that the run where React fell over happened to hit it at a less loaded moment. Waiting for it to
+     * happen before fixing it is waiting for the red to show up at a worse time.
      */
     testTimeout: 15_000,
   },

@@ -1,40 +1,40 @@
 import type { ComponentContract } from "./contract.js";
 
 /*
- * TOOLTIP, el contrato.
+ * TOOLTIP, the contract.
  *
- * Un tooltip es una DESCRIPCIÓN AUXILIAR, nunca el nombre del control ni el único lugar donde vive
- * un dato. La máquina cuelga `aria-describedby` del trigger mientras está abierto, no
- * `aria-labelledby`: el trigger ya tiene que tener nombre accesible por su cuenta (su texto, o un
- * `aria-label` si es icon-only) y el tooltip lo AMPLÍA.
+ * A tooltip is an AUXILIARY DESCRIPTION, never the name of the control nor the only place a piece of
+ * data lives. The machine hangs `aria-describedby` off the trigger while it is open, not
+ * `aria-labelledby`: the trigger already has to have an accessible name of its own (its text, or an
+ * `aria-label` if it is icon-only) and the tooltip EXTENDS it.
  *
- * Esa restricción no es purismo, es lo que hace que el componente sea honesto en dos escenarios que
- * no tienen arreglo dentro del componente:
+ * That restriction is not purism, it is what makes the component honest in two scenarios that have
+ * no fix inside the component:
  *
- *   1. TOUCH. No hay hover. Zag abre en `pointerenter` y en `focus` (gateado por `isFocusVisible`,
- *      así que un click con mouse no lo dispara). En un teléfono el tooltip prácticamente no se ve.
- *   2. SIN JS. El contenido se pinta oculto y sólo la máquina lo abre; sin la capa vanilla montada
- *      no aparece nunca.
+ *   1. TOUCH. There is no hover. Zag opens on `pointerenter` and on `focus` (gated by
+ *      `isFocusVisible`, so a mouse click does not trigger it). On a phone the tooltip is barely seen.
+ *   2. NO JS. The content is painted hidden and only the machine opens it; without the vanilla layer
+ *      mounted it never appears.
  *
- * En los dos casos no se pierde información PORQUE el contrato prohíbe que haya información ahí que
- * no esté en otro lado. Un tooltip que es la única fuente de algo es un bug de quien lo usa, y no lo
- * puede detectar el sistema: por eso está escrito acá arriba.
+ * In both cases no information is lost BECAUSE the contract forbids there being information there
+ * that is not somewhere else. A tooltip that is the only source of something is a bug in whoever
+ * uses it, and the system cannot detect it: that is why it is written up here.
  *
- * WCAG 1.4.13 (Content on Hover or Focus) pide tres cosas, y las tres se cumplen POR DEFECTO:
+ * WCAG 1.4.13 (Content on Hover or Focus) asks for three things, and all three hold BY DEFAULT:
  *
- *   - Descartable: Escape cierra, sin mover el puntero ni el foco.
- *   - Persistente: no se cierra sola por un temporizador.
- *   - Hoverable: el puntero puede llegar hasta el tooltip sin que desaparezca. Esto es la opción
- *     `interactive` de la máquina, y acá viene encendida.
+ *   - Dismissible: Escape closes, without moving the pointer or the focus.
+ *   - Persistent: it does not close itself on a timer.
+ *   - Hoverable: the pointer can reach the tooltip without it disappearing. This is the machine's
+ *     `interactive` option, and here it comes on.
  *
- * Ese default está medido, no supuesto. Con `interactive` apagado el contenido recibe
- * `pointer-events: none`, el puntero nunca lo alcanza y el tooltip se cierra en el camino: eso
- * FALLA el criterio. La tentación es apagarlo razonando "un tooltip descriptivo no tiene nada que
- * clickear", y es un error de lectura: hoverable no existe para poder operar el tooltip, existe para
- * poder LEERLO, que es justo lo que necesita alguien con magnificación de pantalla o con temblor.
+ * That default is measured, not assumed. With `interactive` off the content gets
+ * `pointer-events: none`, the pointer never reaches it and the tooltip closes on the way: that FAILS
+ * the criterion. The temptation is to turn it off reasoning "a descriptive tooltip has nothing to
+ * click", and that is a misreading: hoverable does not exist so the tooltip can be operated, it
+ * exists so it can be READ, which is exactly what someone with screen magnification or a tremor needs.
  *
- * Se puede apagar (`data-interactive="false"` / `interactive={false}`). Apagarlo es salirse del
- * criterio a sabiendas.
+ * It can be turned off (`data-interactive="false"` / `interactive={false}`). Turning it off is
+ * stepping outside the criterion knowingly.
  */
 
 import { anchorPlacements, anchorPlacementToZag, type AnchorPlacement } from "./anchored.js";
@@ -44,10 +44,10 @@ export type TooltipOpenChangeDetails = {
 };
 
 /**
- * De qué lado del trigger sale. El vocabulario es el del pattern Anclaje (ADR-11), no uno propio del
- * tooltip: son los mismos cuatro lados en ejes lógicos que pide cualquier caja anclada, y tenerlos
- * dos veces era tener dos que se podían separar. Estos alias se quedan porque son el nombre con el
- * que el contrato del tooltip ya se documentó.
+ * Which side of the trigger it comes out of. The vocabulary is the Anchoring pattern's (ADR-11), not
+ * one of the tooltip's own: they are the same four sides in logical axes any anchored box asks for,
+ * and having them twice meant having two that could drift apart. These aliases stay because they are
+ * the name the tooltip's contract was already documented with.
  */
 export type TooltipPlacement = AnchorPlacement;
 
@@ -56,30 +56,30 @@ export const tooltipPlacements = anchorPlacements;
 export const tooltipPlacementToZag = anchorPlacementToZag;
 
 /**
- * UN TOOLTIP SALE ARRIBA, y es el único de los anclados que no cae hacia abajo: abajo está lo que el
- * puntero acaba de tocar y lo que está por tocar.
+ * A TOOLTIP COMES OUT ABOVE, and it is the only anchored one that does not fall downward: below is
+ * what the pointer just touched and what it is about to touch.
  *
- * Está acá y no sólo en la hoja porque hay tres lugares que tienen que coincidir en el mismo lado: el
- * `position-area` de la caja, el de la FLECHA (que ya no cuelga de la caja y no puede deducirlo) y la
- * placement que se le pasa a la machine para el fallback. Cuando el default vivía sólo en el CSS los
- * tres se separaban en cuanto nadie autoraba `data-sk-placement`: la caja salía arriba, la flecha
- * abajo y la machine la colocaba abajo. Los bindings resuelven contra esta constante y escriben el
- * resultado, así que la ausencia de placement deja de ser un cuarto caso.
+ * It is here and not only in the stylesheet because three places have to agree on the same side: the
+ * box's `position-area`, the ARROW's (which no longer hangs off the box and cannot deduce it) and the
+ * placement passed to the machine for the fallback. When the default lived only in the CSS the three
+ * drifted apart as soon as nobody authored `data-sk-placement`: the box came out above, the arrow
+ * below and the machine placed it below. The bindings resolve against this constant and write the
+ * result, so a missing placement stops being a fourth case.
  */
 export const tooltipDefaultPlacement: TooltipPlacement = "block-start";
 
 export type TooltipOptions = {
   id?: string;
-  /** ms antes de abrir en hover. Zag usa 400 por defecto. */
+  /** ms before opening on hover. Zag uses 400 by default. */
   openDelay?: number;
-  /** ms antes de cerrar al salir. Zag usa 150 por defecto. */
+  /** ms before closing on leave. Zag uses 150 by default. */
   closeDelay?: number;
   /**
-   * WCAG 1.4.13 "hoverable": el tooltip sigue abierto si el puntero entra en él. Por defecto
-   * `true`; apagarlo hace que el componente falle el criterio.
+   * WCAG 1.4.13 "hoverable": the tooltip stays open if the pointer enters it. `true` by default;
+   * turning it off makes the component fail the criterion.
    */
   interactive?: boolean;
-  /** De qué lado sale. Por defecto `block-start`. */
+  /** Which side it comes out of. `block-start` by default. */
   placement?: TooltipPlacement;
   disabled?: boolean;
   open?: boolean;
@@ -88,14 +88,15 @@ export type TooltipOptions = {
 };
 
 /*
- * Las parts espejan la anatomía de `@zag-js/tooltip` (trigger, positioner, content, arrow,
- * arrowTip), con una diferencia: `arrowTip` no existe acá. Zag parte la flecha en dos, un contenedor
- * que posiciona y un hijo rotado que pinta; nuestro rombo es UN solo elemento, porque en la ruta del
- * navegador lo posiciona `position-area` y no hacen falta dos cajas para eso.
+ * The parts mirror `@zag-js/tooltip`'s anatomy (trigger, positioner, content, arrow, arrowTip), with
+ * one difference: `arrowTip` does not exist here. Zag splits the arrow in two, a container that
+ * positions and a rotated child that paints; our diamond is ONE single element, because on the
+ * browser path `position-area` positions it and two boxes are not needed for that.
  *
- * La flecha es OPCIONAL en las dos capas y no tiene part propia: se autora con la clase del pattern
- * (`sk-anchored-arrow`) adentro del positioner, y de ahí hereda los hooks con los que este componente
- * la pinta. Que salga del TRIGGER y no del centro de la caja es geometría del pattern, contada ahí.
+ * The arrow is OPTIONAL in both layers and has no part of its own: it is authored with the pattern's
+ * class (`sk-anchored-arrow`) inside the positioner, and from there it inherits the hooks this
+ * component paints it with. That it comes out of the TRIGGER and not the center of the box is the
+ * pattern's geometry, told there.
  */
 export const tooltipParts = {
   root: "sk-tooltip",
@@ -107,16 +108,16 @@ export const tooltipParts = {
 export type TooltipPart = keyof typeof tooltipParts;
 export type TooltipPartClass = (typeof tooltipParts)[TooltipPart];
 
-/** Los ganchos que la capa vanilla escanea sobre el markup autorado. */
+/** The hooks the vanilla layer scans for on authored markup. */
 export const tooltipAttrs = {
   root: "data-sk-anchor",
   trigger: "data-sk-anchor-trigger",
   positioner: "data-sk-anchor-positioner",
   content: "data-sk-anchor-content",
   /**
-   * La colocación pedida. Se autora en el ROOT y termina en el POSITIONER: en React el positioner se
-   * portalea al body, donde la herencia desde el root ya no llega, así que la hoja lo lee ahí. La
-   * flecha lo lee desde el positioner también, con el combinador de hijo.
+   * The requested placement. It is authored on the ROOT and ends up on the POSITIONER: in React the
+   * positioner is portaled to the body, where inheritance from the root no longer reaches, so the
+   * stylesheet reads it there. The arrow reads it from the positioner too, with the child combinator.
    */
   placement: "data-sk-placement",
 } as const;

@@ -7,9 +7,9 @@
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
-   * TREE VIEW, enhancer machine-backed sobre `@zag-js/tree-view` (la MISMA máquina que usa React,
-   * vía `@skryensya/core/machines`). No renderiza estructura: escanea su markup autorado
-   * (ramas/hojas anidadas) y parchea los atributos que devuelve `connect` sobre esos nodos.
+   * TREE VIEW, a machine-backed enhancer over `@zag-js/tree-view` (the SAME machine React uses, via
+   * `@skryensya/core/machines`). It renders no structure: it scans its authored markup (nested
+   * branches/leaves) and patches the attributes `connect` returns onto those nodes.
    */
   const root = getRoot();
 
@@ -38,7 +38,7 @@
   const direct = <T extends Element>(parent: Element, query: string): T | null =>
     (Array.from(parent.children).find((child) => child.matches(query)) as T | undefined) ?? null;
 
-  /** `data-expanded-value="src docs"` o `"src, docs"`: ambos separadores se aceptan. */
+  /** `data-expanded-value="src docs"` or `"src, docs"`: both separators are accepted. */
   const values = (raw: string | undefined): string[] | undefined => raw?.split(/[\s,]+/).filter(Boolean);
 
   function readNodes(parent: HTMLElement, path: number[] = []): AuthoredNode[] {
@@ -79,9 +79,9 @@
   const flat = (nodes: AuthoredNode[]): AuthoredNode[] => nodes.flatMap((node) => [node, ...flat(node.children)]);
   const all = flat(authored);
 
-  // Capturado UNA vez, nunca releído del DOM: `getRootProps().id` devuelve un id namespaced que
-  // `applyZagProps` escribe de vuelta sobre `root.id`. Leerlo en vivo desde el factory reactivo de
-  // `useMachine` retroalimentaría ese prefijo en cada recomputación.
+  // Captured ONCE, never re-read from the DOM: `getRootProps().id` returns a namespaced id that
+  // `applyZagProps` writes back onto `root.id`. Reading it live from `useMachine`'s reactive factory
+  // would feed that prefix back on every recomputation.
   const machineId = root.id || uniqueId("sk-tree-view");
 
   const collection = treeView.collection<TreeNode>({
@@ -116,8 +116,8 @@
 
   const api = $derived(treeView.connect(service, normalizeProps));
 
-  // Un solo `connect` por effect: cada llamada arma de nuevo el api completo, así que pedirlo por
-  // nodo haría el patch O(nodos²) en árboles grandes.
+  // A single `connect` per effect: every call rebuilds the whole api, so asking for one per node would
+  // make the patch O(nodes²) on large trees.
   $effect(() => {
     if (!tree) return;
     applyZagProps(root, api.getRootProps() as DomProps);

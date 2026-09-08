@@ -1,4 +1,4 @@
-# La estructura vive en packages/core/src/empty-state.ts. Acá sólo por qué se elige.
+# The structure lives in packages/core/src/empty-state.ts. Here, only why it is chosen.
 
 EmptyState:
   useWhen:

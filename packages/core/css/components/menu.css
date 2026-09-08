@@ -26,33 +26,33 @@
     display: inline-flex;
   }
 
-  /* La colocación es del pattern Anclaje (ADR-11): el trigger lleva además `sk-anchor` y el
-   * positioner además `sk-anchored`. Pero el default del PATTERN es centrado bajo el ancla, que es lo
-   * que quiere un tooltip o un popover hablando DE un control puntual; un menú de comandos no: abre
-   * pegado a un borde, como cualquier dropdown nativo (el `<select>` del navegador, un menú de
-   * escritorio, el kebab de GitHub). El borde de arranque del panel queda alineado con el borde de
-   * arranque del trigger y el panel crece en el sentido de lectura, nunca repartido a los dos lados de
-   * un trigger angosto. Esta es la única colocación que el menú redeclara: la del pattern es para
-   * quien mide contra un punto, no contra un borde.
+  /* The placement belongs to the Anchoring pattern (ADR-11): the trigger also carries `sk-anchor` and
+   * the positioner also `sk-anchored`. But the PATTERN's default is centered under the anchor, which is
+   * what a tooltip or a popover talking ABOUT a specific control wants; a command menu does not: it
+   * opens flush to an edge, like any native dropdown (the browser's `<select>`, a desktop menu,
+   * GitHub's kebab). The panel's start edge lines up with the trigger's start edge and the panel grows
+   * in the reading direction, never split across both sides of a narrow trigger. This is the only
+   * placement the menu re-declares: the pattern's is for whoever measures against a point, not against
+   * an edge.
    *
-   * `inline-start` A SECAS (sin `span-`) NO alinea: selecciona la CELDA del grid de 3×3 que queda
-   * completamente afuera, a la izquierda del ancla (medido: el borde DERECHO del panel termina
-   * pegado al borde IZQUIERDO del trigger. El panel flota al costado, no abajo). `span-inline-end`
-   * en cambio arranca la región en la propia columna del ancla y la extiende hacia el final, así que
-   * `justify-self: start` sí pega el borde de arranque del panel con el de arranque del trigger y lo
-   * deja crecer en el sentido de lectura.
+   * BARE `inline-start` (without `span-`) does NOT align: it selects the CELL of the 3×3 grid that
+   * falls completely outside, to the left of the anchor (measured: the panel's RIGHT edge ends up flush
+   * against the trigger's LEFT edge. The panel floats to the side, not below). `span-inline-end`
+   * instead starts the region in the anchor's own column and extends it toward the end, so
+   * `justify-self: start` does put the panel's start edge on the trigger's start edge and lets it grow
+   * in the reading direction.
    *
-   * `--sk-anchored-offset` es el `margin` del positioner ENTERO (los cuatro lados a la vez, ADR-11),
-   * y el default del pattern es un solo valor: el mismo hueco en bloque Y en línea. Eso es lo que
-   * quiere un tooltip centrado, pero acá deja el panel 8px adentro de la columna del trigger en vez
-   * de pegado a su borde (medido). Un PAR de valores en el hook parte el margin en dos ejes (mismo
-   * truco que usa el submenú más abajo, al revés): el primero es el hueco en bloque, que sigue
-   * siendo el mismo; el segundo es el margen en línea, que va a CERO para que el borde de arranque
-   * del panel quede exactamente sobre el borde de arranque del trigger.
+   * `--sk-anchored-offset` is the margin of the WHOLE positioner (all four sides at once, ADR-11), and
+   * the pattern's default is a single value: the same gap in block AND in inline. That is what a
+   * centered tooltip wants, but here it leaves the panel 8px inside the trigger's column instead of
+   * flush with its edge (measured). A PAIR of values in the hook splits the margin into two axes (the
+   * same trick the submenu below uses, in reverse): the first is the block gap, which stays the same;
+   * the second is the inline margin, which goes to ZERO so the panel's start edge sits exactly on the
+   * trigger's start edge.
    *
-   * De APARIENCIA también: React portea el positioner al `<body>`, así que lo que declara `.sk-menu`
-   * no le llega por herencia y cada hook que se lea de acá para abajo resuelve vacío. Ver la nota
-   * equivalente en `select.css`. */
+   * APPEARANCE too: React portals the positioner to the `<body>`, so what `.sk-menu` declares does not
+   * reach it by inheritance and every hook read from here down resolves empty. See the equivalent note
+   * in `select.css`. */
   .sk-menu__positioner {
     --sk-anchored-position-area: block-end span-inline-end;
     --sk-anchored-justify: start;
@@ -65,11 +65,11 @@
     --sk-menu-wash: var(--elevation-wash-raised);
   }
 
-  /* Un SUBMENÚ sale al costado y alineado por arriba con el item del que cuelga, que no es ninguna
-   * de las cuatro colocaciones públicas. Se pide por el hook de escape en vez de agregar una quinta
-   * al vocabulario: dejar que una excepción escriba el contrato es cómo un juego de cuatro se
-   * convierte en un juego de nueve. `span-block-end` arranca la región en el borde superior del item
-   * y `align-self: start` pega el panel ahí. */
+  /* A SUBMENU comes out to the side and top-aligned with the item it hangs off, which is none of the
+   * four public placements. It is requested through the escape hook instead of adding a fifth one to
+   * the vocabulary: letting an exception write the contract is how a set of four becomes a set of nine.
+   * `span-block-end` starts the region at the item's top edge and `align-self: start` sticks the panel
+   * there. */
   .sk-menu__positioner[data-sk-submenu] {
     --sk-anchored-position-area: inline-end span-block-end;
     --sk-anchored-justify: auto;

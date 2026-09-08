@@ -36,7 +36,7 @@
   }
 
   /* Flush seam: the toolbar sits directly atop the content box, the two read as one control
-   * instead of two stacked boxes with a gap between them ("un textarea con toolbar arriba"). */
+   * instead of two stacked boxes with a gap between them ("a textarea with a toolbar on top"). */
   .sk-editor > .sk-toolbar {
     border-end-start-radius: 0;
     border-end-end-radius: 0;
@@ -175,7 +175,7 @@
    * ONE GAP RULE for every block, rather than each element carrying its own top/bottom margin: a
    * margin an element owns has to be un-set again the moment that element is first-in-container or
    * sits inside something narrower (exactly the list-item case below), and doing that per element is
-   * how a list ends up "con mucho mb" - each `<li>`'s own `<p>` still carrying the SAME top-level
+   * how a list ends up "with a lot of mb" - each `<li>`'s own `<p>` still carrying the SAME top-level
    * block gap the list itself already added. One sibling-adjacent rule composes correctly at any
    * nesting depth with no second exception list to maintain.
    */

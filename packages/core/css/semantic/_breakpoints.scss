@@ -4,7 +4,7 @@
  * A breakpoint is a design decision like a spacing step or a radius, so it lives in the token tier,
  * as Sass. Why Sass and not a custom property: a `@media` query cannot read `var(--x)`, the value
  * has to exist at parse time, so the single source has to be a compile-time constant. This is
- * exactly the case ADR-19 keeps Sass for: "donde CSS no tiene macro". Delete this file and the
+ * exactly the case ADR-19 keeps Sass for: "where CSS has no macro". Delete this file and the
  * literal `52rem` reappears, hand-copied, in the drawer/sidebar switch, Dialog Vaul
  * and Vaul's desktop rule (ADR-19's test, if the duplication comes back, the layer did work).
  *

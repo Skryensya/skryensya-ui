@@ -967,7 +967,7 @@ function joinInlineItems(
  * newline is not a substitute for a space, it is whitespace the JSX transform throws away. Babel and
  * TypeScript trim every line of a text run that isn't the FIRST or LAST line of its own run of source
  * text, so a word sandwiched between two tags on its own indented line loses the space on both sides,
- * silently: `Un párrafo con un` and `y otro` came out of a real build with no space before the link
+ * silently: `A paragraph with a` and `and another` came out of a real build with no space before the link
  * that follows, in a snippet that looked, to the eye reading the source, exactly like the one that
  * renders correctly. `{" "}` is not a stylistic choice, it is the only child JSX renders unconditionally
  * regardless of the newlines and indentation around it. The same trick Prettier reaches for on any

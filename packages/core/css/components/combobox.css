@@ -208,15 +208,15 @@
     display: grid;
   }
 
-  /* La colocación es del pattern Anclaje (ADR-11): el control lleva además `sk-anchor` y el
-   * positioner además `sk-anchored`. El ancla es el CONTROL entero y no el botón del chevron, porque
-   * la lista se alinea con el campo que se está escribiendo.
+  /* The placement belongs to the Anchoring pattern (ADR-11): the control also carries `sk-anchor` and
+   * the positioner also `sk-anchored`. The anchor is the whole CONTROL and not the chevron button,
+   * because the list lines up with the field being typed into.
    *
-   * Debajo y con los bordes de inicio alineados, como el select: la lista de resultados es la
-   * continuación del campo, no una caja que flota cerca. */
-  /* Redeclarado, no duplicado: React portea el positioner al `<body>`, así que lo que declara
-   * `.sk-combobox` no le llega por herencia y cada hook que se lea de acá para abajo resuelve vacío
-   * (un `padding` vacío es `0`). Ver la nota equivalente en `select.css`. */
+   * Below and with the start edges aligned, like the select: the results list is the continuation of
+   * the field, not a box floating nearby. */
+  /* Redeclared, not duplicated: React portals the positioner to the `<body>`, so what `.sk-combobox`
+   * declares does not reach it by inheritance and every hook read from here down resolves empty (an
+   * empty `padding` is `0`). See the equivalent note in `select.css`. */
   .sk-combobox__positioner {
     --sk-combobox-content-bg: var(--color-bg-surface-raised);
     --sk-combobox-content-border-color: var(--color-border-subtle);
@@ -235,8 +235,8 @@
 
   @supports (anchor-name: --a) {
     .sk-combobox__positioner {
-      /* Tan ancho como el campo. Adentro del @supports porque `anchor-size()` sin ancla resuelta es
-       * inválido, y el pattern lee este hook también en la ruta del fallback. */
+      /* As wide as the field. Inside the @supports because `anchor-size()` without a resolved anchor is
+       * invalid, and the pattern reads this hook on the fallback path too. */
       --sk-anchored-size: anchor-size(width);
     }
   }
@@ -406,8 +406,8 @@
     color: var(--color-text-accent);
   }
 
-  /* The result-count live region is for assistive tech only: it announces "N resultados
-     disponibles" as the filter changes. The hiding is `sk-visually-hidden`, which ships in the base
+  /* The result-count live region is for assistive tech only: it announces "N results
+     available" as the filter changes. The hiding is `sk-visually-hidden`, which ships in the base
      bundle; this used to carry its own copy of that recipe because the utility did not exist yet. */
 
   .sk-combobox__empty {

@@ -1,15 +1,15 @@
 /*
  * TIER 3, POPOVER: native Popover API, no machine.
  *
- * La colocación es del pattern Anclaje (ADR-11): el trigger lleva además `sk-anchor` y el positioner
- * además `sk-anchored`, y de ahí salen los lados, el volteo, el hueco, el z-index y el
- * `position-visibility`. Con el pattern viene también el juego de reglas de `data-sk-placement`, que
- * es lo que hace que la prop `placement` de Popover y Popup HAGA algo: antes se escribía el atributo
- * y no había una sola regla que lo leyera.
+ * The placement belongs to the Anchoring pattern (ADR-11): the trigger also carries `sk-anchor` and
+ * the positioner also `sk-anchored`, and from there come the sides, the flip, the gap, the z-index
+ * and the `position-visibility`. With the pattern also comes the set of `data-sk-placement` rules,
+ * which is what makes Popover's and Popup's `placement` prop DO something: before, the attribute was
+ * written and there was not a single rule reading it.
  *
- * Acá quedan la pintura y una cosa que este componente no comparte con los otros ocho anclados: qué
- * hace cuando el navegador NO tiene la API. Es el único sin machine, así que es el único sin un
- * fallback de JS que lo coloque.
+ * What is left here is the paint and one thing this component does not share with the other eight
+ * anchored ones: what it does when the browser does NOT have the API. It is the only one without a
+ * machine, so it is the only one without a JS fallback to place it.
  */
 @layer components {
   .sk-popover {
@@ -31,11 +31,11 @@
     inline-size: max-content;
     max-inline-size: min(24rem, calc(100vi - 2 * var(--space-inset-md)));
 
-    /* La flecha es OPCIONAL y se autora (`.sk-anchored-arrow` dentro del positioner); esto sólo dice
-     * de qué color es cuando está. Acá SÍ lleva borde: el panel del popover tiene uno, y una flecha
-     * sin él se leería como un triángulo pegado, no como la punta de la misma caja. Que la flecha sea
-     * HIJA es lo que hace que su relleno tape ese borde por donde entra: el panel se va al top layer y
-     * ahí sólo entra con sus hijos, así que sólo desde adentro puede pintar encima de él. */
+    /* The arrow is OPTIONAL and authored (`.sk-anchored-arrow` inside the positioner); this only says
+     * what color it is when present. Here it DOES carry a border: the popover's panel has one, and an
+     * arrow without it would read as a triangle stuck on, not as the tip of the same box. That the
+     * arrow is a CHILD is what makes its fill cover the border it enters through: the panel goes to the
+     * top layer and only its children go with it, so only from inside can it paint over it. */
     --sk-anchored-arrow-bg: var(--sk-popover-bg, var(--color-bg-surface-overlay));
     --sk-anchored-arrow-border-color: var(
       --sk-popover-border-color,
@@ -53,21 +53,21 @@
     --sk-popover-wash: var(--elevation-wash-overlay);
 
     box-sizing: border-box;
-    /* SIN `margin: 0` acá. En este componente el positioner y el content son EL MISMO elemento, así
-     * que su margen es el hueco al ancla, y el hueco lo pone el pattern (`--sk-anchored-offset`)
-     * dentro de su `@supports`. Un `margin: 0` acá le ganaba por orden de import y el panel salía
-     * pegado al trigger; y fuera del `@supports` es justamente el `margin: auto` del user-agent lo
-     * que centra la hoja degradada, así que resetearlo rompía las dos rutas a la vez. */
-    /* EL UA LE PONE `overflow: auto` A TODO `[popover]`, y acá eso RECORTABA LA FLECHA.
+    /* NO `margin: 0` here. In this component the positioner and the content are THE SAME element, so
+     * its margin is the gap to the anchor, and the gap is set by the pattern (`--sk-anchored-offset`)
+     * inside its `@supports`. A `margin: 0` here beat it by import order and the panel came out stuck
+     * to the trigger; and outside the `@supports` it is precisely the user agent's `margin: auto` that
+     * centers the degraded sheet, so resetting it broke both paths at once. */
+    /* THE UA GIVES EVERY `[popover]` AN `overflow: auto`, AND HERE THAT WAS CLIPPING THE ARROW.
      *
-     * La flecha vive medio cuerpo FUERA de la caja (`inset-block-start: -4px`), que es lo que la hace
-     * asomar hacia el ancla; con un scrollport en el medio nunca se dibujaba, y el markup podía
-     * autorarla sin que apareciera nunca. Este componente es el único de los nueve anclados donde
-     * pasa, porque es el único cuyo positioner ES un popover nativo.
+     * The arrow lives half its body OUTSIDE the box (`inset-block-start: -4px`), which is what makes it
+     * peek toward the anchor; with a scrollport in the way it was never drawn, and the markup could
+     * author it and it would never appear. This component is the only one of the nine anchored ones
+     * where that happens, because it is the only one whose positioner IS a native popover.
      *
-     * En la ruta anclada no hay `max-block-size`, así que ese `auto` no scrolleaba nada: sólo
-     * recortaba. El estado degradado de más abajo se lo vuelve a poner junto con la altura máxima,
-     * y ahí sí hace falta; le gana a esta regla por especificidad, no por orden. */
+     * On the anchored path there is no `max-block-size`, so that `auto` scrolled nothing: it only
+     * clipped. The degraded state further down puts it back along with the maximum height, and there it
+     * is needed; it beats this rule by specificity, not by order. */
     overflow: visible;
     padding: var(--sk-popover-padding);
     border: 1px solid var(--sk-popover-border-color);
@@ -147,17 +147,17 @@
     font-size: var(--font-size-body-sm);
   }
 
-  /* ── EL ESTADO DEGRADADO, ELEGIDO ────────────────────────────────────────────
-   * Sin la API de anclaje no hay nada que coloque este panel: no tiene machine, así que no hay
-   * fallback de JS al que caer, y eso es lo que lo distingue de los otros ocho anclados.
+  /* ── THE DEGRADED STATE, CHOSEN ──────────────────────────────────────────────
+   * Without the anchoring API there is nothing to place this panel: it has no machine, so there is no
+   * JS fallback to fall to, and that is what sets it apart from the other eight anchored ones.
    *
-   * Dejado a su suerte quedaría gobernado por el `inset: 0` que el user-agent le da a `[popover]`,
-   * peleado con el `margin: 0` de la pintura de acá arriba, y terminaría contra un borde de la
-   * pantalla, lejos de su trigger. Eso es PEOR que no estar anclado: parece un bug de layout.
+   * Left to itself it would be governed by the `inset: 0` the user agent gives `[popover]`, fighting
+   * the `margin: 0` of the paint above, and it would end up against an edge of the screen, far from its
+   * trigger. That is WORSE than not being anchored: it looks like a layout bug.
    *
-   * Así que se elige a propósito la otra lectura: una HOJA CENTRADA, que dice honestamente "esto
-   * pertenece a la página" en vez de fingir una relación con un botón que no se puede dibujar. Es
-   * además lo que el user-agent ya quería hacer; `margin: auto` sobre el `inset: 0` es lo que centra. */
+   * So the other reading is chosen on purpose: a CENTERED SHEET, which honestly says "this belongs to
+   * the page" instead of faking a relationship with a button that cannot be drawn. It is also what the
+   * user agent already wanted to do; `margin: auto` over the `inset: 0` is what centers it. */
   @supports not (anchor-name: --a) {
     .sk-popover__positioner:popover-open {
       inset: 0;

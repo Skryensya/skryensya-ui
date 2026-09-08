@@ -1,54 +1,55 @@
-# El vocabulario de iconos (packages/core/src/icon.ts, stableIconNames) tiene que estar
-# completo en los tres sets publicados (CONTEXT.md, "Icon set": "Complete, never partial").
-# El chequeo YA EXISTE — cada paquete de iconos hace `xIcons: IconSet = generated satisfies
-# IconSet`, así que un rol nuevo sin agregar al MAP de un set falla `tsc --noEmit` — pero
-# nada lo obligaba a correr localmente, y sin este hook alguien podía agregar un
-# stable icon name a core y comitear sin que nada avisara hasta que ese rol renderizara vacío
-# en producción. Acotado a cuando el commit realmente toca ese vocabulario, así el resto de
-# los commits no paga el costo (medido: ~0.9s con turbo/pnpm en caliente).
+# The icon vocabulary (packages/core/src/icon.ts, stableIconNames) has to be complete across the
+# three published sets (CONTEXT.md, "Icon set": "Complete, never partial"). The check ALREADY
+# EXISTS: every icon package does `xIcons: IconSet = generated satisfies IconSet`, so a new role
+# not added to a set's MAP fails `tsc --noEmit`. But nothing forced it to run locally, and without
+# this hook someone could add a stable icon name to core and commit with no warning until that role
+# rendered empty in production. Scoped to when the commit actually touches that vocabulary, so the
+# rest of the commits do not pay the cost (measured: about 0.9s with turbo/pnpm warm).
 staged="$(git diff --cached --name-only --diff-filter=ACMR)"
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────────
-# SECRETOS, antes que nada, porque es lo único acá que no se puede deshacer: un commit con una clave
-# adentro queda en el historial aunque el siguiente la borre, y limpiarlo después es reescribir
-# ramas. Los otros chequeos protegen de un bug; este protege de algo irreversible.
+# SECRETS, before anything else, because this is the only thing here that cannot be undone: a commit
+# with a key inside stays in history even if the next one removes it, and cleaning it up afterwards
+# means rewriting branches. The other checks protect against a bug; this one protects against
+# something irreversible.
 #
-# ESTE REPO TIENE CLAVES REALES AL ALCANCE: `evals/agent/` lee ANTHROPIC_API_KEY y OPENAI_API_KEY
-# del entorno, así que la forma de esto no es hipotética.
+# THIS REPO HAS REAL KEYS WITHIN REACH: `evals/agent/` reads ANTHROPIC_API_KEY and OPENAI_API_KEY
+# from the environment, so the shape of this is not hypothetical.
 #
-# `git --staged`, no `dir .`: mira exactamente lo que está por entrar al commit. Medido en este
-# repo, `dir .` sobre el árbol entero da 46 hallazgos, los 46 en `apps/docs/dist/`: build output
-# ignorado que nunca se commitea, y ninguno un secreto real. Un hook que grita 46 veces por nada es
-# un hook que se aprende a saltear. En lo staged, hoy: cero.
+# `git --staged`, not `dir .`: it looks at exactly what is about to enter the commit. Measured in
+# this repo, `dir .` over the whole tree gives 46 findings, all 46 in `apps/docs/dist/`: ignored
+# build output that is never committed, and not one of them a real secret. A hook that shouts 46
+# times for nothing is a hook people learn to skip. On what is staged, today: zero.
 #
-# SI NO ESTÁ INSTALADO, AVISA Y SIGUE, no bloquea. Mismo criterio que scripts/audit-gate.mjs usa sin
-# red: un hook que rompe en una máquina recién clonada enseña a usar `--no-verify`, y ese hábito
-# cuesta más que lo que este chequeo aporta. El aviso es fuerte a propósito.
+# IF IT IS NOT INSTALLED, IT WARNS AND CONTINUES, it does not block. Same criterion
+# scripts/audit-gate.mjs uses with no network: a hook that breaks on a freshly cloned machine
+# teaches people to use `--no-verify`, and that habit costs more than this check contributes. The
+# warning is loud on purpose.
 if command -v gitleaks >/dev/null 2>&1; then
   if ! gitleaks git --staged --no-banner --redact --verbose; then
     echo "" >&2
-    echo "pre-commit: gitleaks encontro algo que parece un secreto en lo que estas por commitear." >&2
-    echo "  Arriba esta el archivo y la linea (el valor va tapado a proposito)." >&2
+    echo "pre-commit: gitleaks found something that looks like a secret in what you are committing." >&2
+    echo "  Above is the file and the line (the value is redacted on purpose)." >&2
     echo "" >&2
-    echo "  Si es un secreto de verdad: sacalo del archivo, y si ya se uso, ROTALO." >&2
-    echo "  Sacarlo del commit no lo desusa." >&2
+    echo "  If it is a real secret: take it out of the file, and if it has been used, ROTATE it." >&2
+    echo "  Removing it from the commit does not un-use it." >&2
     echo "" >&2
-    echo "  Si es un falso positivo: agregalo a .gitleaksignore con el dedo (huella) que" >&2
-    echo "  gitleaks imprime arriba, en su propia linea y con un comentario que diga por que." >&2
+    echo "  If it is a false positive: add it to .gitleaksignore with the fingerprint that" >&2
+    echo "  gitleaks prints above, on its own line and with a comment saying why." >&2
     exit 1
   fi
 else
-  echo "pre-commit: gitleaks no esta instalado, NO se reviso si hay secretos en este commit." >&2
-  echo "  Instalalo con 'brew install gitleaks'." >&2
+  echo "pre-commit: gitleaks is not installed, this commit was NOT checked for secrets." >&2
+  echo "  Install it with 'brew install gitleaks'." >&2
 fi
 
 if echo "$staged" | grep -qE '^(packages/core/src/icon\.ts|packages/icons-(lucide|material|phosphor)/)'; then
-  echo "pre-commit: el vocabulario de iconos cambió, verificando que los tres sets sigan completos..."
+  echo "pre-commit: the icon vocabulary changed, verifying the three sets are still complete..."
   if ! pnpm --filter @skryensya/icons-lucide --filter @skryensya/icons-material --filter @skryensya/icons-phosphor run check; then
     echo "" >&2
-    echo "pre-commit: un set de iconos quedo incompleto o desactualizado." >&2
-    echo "  Corre 'pnpm --filter @skryensya/icons-lucide --filter @skryensya/icons-material --filter @skryensya/icons-phosphor generate'" >&2
-    echo "  y agrega el rol que falta al MAP de cada set (scripts/generate.mjs)." >&2
+    echo "pre-commit: an icon set is incomplete or out of date." >&2
+    echo "  Run 'pnpm --filter @skryensya/icons-lucide --filter @skryensya/icons-material --filter @skryensya/icons-phosphor generate'" >&2
+    echo "  and add the missing role to each set's MAP (scripts/generate.mjs)." >&2
     exit 1
   fi
 fi

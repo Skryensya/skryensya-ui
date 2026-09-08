@@ -161,8 +161,7 @@ export function connectCommandPalette(root: HTMLElement): Cleanup {
      *
      * `aria-expanded` is about whether there is a popup to expand, so it follows the LIST: it used
      * to be set to `true` by `open()` regardless, which announced an expanded popup over an empty
-     * listbox, the exact thing this contract's header says both bindings exist to avoid. "Sin
-     * resultados" answers a different question, whether anything was ASKED, so it waits for a query
+     * listbox, the exact thing this contract's header says both bindings exist to avoid. "No results" answers a different question, whether anything was ASKED, so it waits for a query
      * instead of greeting an untouched palette with an absence nobody was looking for.
      */
     setExpanded(results.length > 0);

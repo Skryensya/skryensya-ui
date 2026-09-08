@@ -33,7 +33,7 @@
   /*
    * Caption label, not a prose section title, and SUBORDINATE to the list it names, which the
    * all-caps treatment it used to carry had inverted. Measured on the docs rail (glyph run, not the
-   * `<h2>`'s own block box, which fills the column either way): "En esta página" set in
+   * `<h2>`'s own block box, which fills the column either way): "On this page" set in
    * `uppercase` + `letter-spacing: 0.08em` ran 113px against 86px in sentence case. 24% of the
    * caption's length bought nothing but emphasis, on the one string here that should carry least.
    * All-caps also reads heavier at a given weight, so the label was outweighing the links it names.

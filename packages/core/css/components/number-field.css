@@ -14,8 +14,8 @@
     --sk-number-field-wash: var(--elevation-wash-sunken);
     --sk-number-field-fg: var(--color-text-primary);
     --sk-number-field-step-color: var(--color-text-secondary);
-    /* El stepper es un botón icon-only sm: se pinta chico y separado del borde del control, así que
-     * lleva su propio radio y su propio aire. */
+    /* The stepper is an icon-only sm button: it is painted small and away from the control's edge, so it
+     * carries its own radius and its own breathing room. */
     --sk-number-field-step-radius: var(--radius-control);
     --sk-number-field-step-inset: calc((var(--size-touch-target) - var(--size-control-sm)) * 0.5);
     --sk-number-field-hint-color: var(--color-text-secondary);
@@ -55,10 +55,10 @@
     font-variant-numeric: tabular-nums;
     text-align: center;
   }
-  /* Los steppers SON el botón icon-only (`.sk-button[data-icon-only] .sk-interactive`), compuestos,
-   * no reimplementados: el cuadrado, el hit target de 44px, el foco y el state layer ya viven ahí.
-   * Lo único de este archivo es encajar ese botón dentro del control: sin fondo ni borde propios
-   * (el borde es del control) y con las esquinas de la caja que lo contiene. */
+  /* The steppers ARE the icon-only button (`.sk-button[data-icon-only] .sk-interactive`), composed, not
+   * reimplemented: the square, the 44px hit target, the focus and the state layer already live there.
+   * The only thing this file does is fit that button inside the control: with no background or border of
+   * its own (the border belongs to the control) and with the corners of the box containing it. */
   :is(.sk-number-field__increment, .sk-number-field__decrement).sk-button {
     --sk-button-bg: transparent;
     --sk-button-fg: var(--sk-number-field-step-color);
@@ -67,12 +67,12 @@
     --sk-button-shadow: none;
     --sk-button-radius: var(--sk-number-field-step-radius);
 
-    /* El cuadrado paint a control-sm (data-size="sm") y queda flotando dentro del control, no
-     * pegado al borde. El ::after del botón sigue estirando el hit target a 44px. */
+    /* The square paints at control-sm (data-size="sm") and floats inside the control rather than sitting
+     * flush against the edge. The button's ::after still stretches the hit target to 44px. */
     margin: var(--sk-number-field-step-inset);
   }
-  /* El disabled del botón pinta un relleno (`--color-action-disabled`); acá adentro eso sería un
-   * cuadrado gris dentro del campo. Se conserva sólo el color de texto y el cursor. */
+  /* The button's disabled state paints a fill (`--color-action-disabled`); in here that would be a grey
+   * square inside the field. Only the text color and the cursor are kept. */
   :is(.sk-number-field__increment, .sk-number-field__decrement).sk-button:is(
       :disabled,
       [aria-disabled="true"]

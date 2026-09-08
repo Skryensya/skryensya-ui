@@ -4,12 +4,29 @@
  * A decorative stand-in for content whose shape is known before its data arrives. The surrounding
  * region owns aria-busy and the loading message; every Placeholder stays out of the accessibility
  * tree. A quiet diagonal shimmer signals activity without competing with the eventual content.
+ *
+ * THIS FILE IS WHERE MEANING BECOMES GEOMETRY. The contract lets an author say "a line of h3" or
+ * "an sm avatar"; the rules below resolve those to the SAME tokens Typography and Avatar read, so a
+ * skeleton and the content replacing it cannot disagree. Every hand-written rem at a call site was
+ * a chance for exactly that disagreement, which is the one bug a skeleton exists to prevent.
  */
 @layer components {
   .sk-placeholder {
     --sk-placeholder-inline-size: 100%;
-    --sk-placeholder-block-size: 0.75em;
+    /* The type pair a text skeleton borrows. Defaults are body's, and `data-text` swaps BOTH: a
+     * size without its paired leading is how a skeleton ends up a different height than the text. */
+    --sk-placeholder-font-size: var(--font-size-body);
+    --sk-placeholder-leading: var(--font-line-height-body);
+    /* The line BOX, which is what the real text will occupy. Height comes from this, so the block
+     * a paragraph reserves is the block it eventually gets, and nothing shifts on arrival. */
+    --sk-placeholder-line-box: calc(var(--sk-placeholder-font-size) * var(--sk-placeholder-leading));
+    /* How much of that box is inked. Text does not fill its own leading, and a bar that does reads
+     * as a filled row rather than as a line of prose. */
+    --sk-placeholder-ink: 0.72;
+    --sk-placeholder-block-size: var(--sk-placeholder-line-box);
     --sk-placeholder-size: var(--size-control-md);
+    --sk-placeholder-last-line: 62%;
+    --sk-placeholder-line-gap: calc(var(--sk-placeholder-line-box) * 0.32);
     --sk-placeholder-fill: color-mix(
       in oklab,
       var(--color-text-primary) 10%,
@@ -18,6 +35,10 @@
     --sk-placeholder-highlight: color-mix(in oklab, var(--color-text-primary) 10%, transparent);
 
     position: relative;
+    /* The ink is painted inside a padding box, so the padding has to count INWARD: without this the
+     * element measures its line box PLUS the padding and every skeleton comes out 1.28x too tall,
+     * which is exactly the layout shift this contract exists to prevent. */
+    box-sizing: border-box;
     display: block;
     inline-size: var(--sk-placeholder-inline-size);
     block-size: var(--sk-placeholder-block-size);
@@ -28,19 +49,177 @@
     pointer-events: none;
   }
 
+  /*
+   * TEXT ROLES. Each pairs the font-size token with ITS leading token, exactly as _type.scss pairs
+   * them; the two columns are never mixed. The element occupies the full line box and the ink sits
+   * centred inside it, painted through the padding box, so the bar looks like a line of text while
+   * the space it holds is the space the text will need.
+   */
+  .sk-placeholder[data-shape="text"],
+  .sk-placeholder[data-shape="paragraph"] .sk-placeholder__line {
+    padding-block: calc(var(--sk-placeholder-line-box) * (1 - var(--sk-placeholder-ink)) / 2);
+    background-clip: content-box;
+  }
+
+  .sk-placeholder[data-text="caption"] {
+    --sk-placeholder-font-size: var(--font-size-caption);
+    --sk-placeholder-leading: var(--font-line-height-caption);
+  }
+
+  .sk-placeholder[data-text="sm"] {
+    --sk-placeholder-font-size: var(--font-size-body-sm);
+    --sk-placeholder-leading: var(--font-line-height-body-sm);
+  }
+
+  .sk-placeholder[data-text="body"] {
+    --sk-placeholder-font-size: var(--font-size-body);
+    --sk-placeholder-leading: var(--font-line-height-body);
+  }
+
+  .sk-placeholder[data-text="lg"] {
+    --sk-placeholder-font-size: var(--font-size-body-lg);
+    --sk-placeholder-leading: var(--font-line-height-body-lg);
+  }
+
+  /* h4, h5 and h6 share one size in _type.scss; the skeleton shares it too rather than inventing
+   * three heights the headings themselves do not have. */
+  .sk-placeholder[data-text="h4"],
+  .sk-placeholder[data-text="h5"],
+  .sk-placeholder[data-text="h6"] {
+    --sk-placeholder-font-size: var(--font-size-heading-h4);
+    --sk-placeholder-leading: var(--font-line-height-heading-h4);
+  }
+
+  .sk-placeholder[data-text="h3"] {
+    --sk-placeholder-font-size: var(--font-size-heading-h3);
+    --sk-placeholder-leading: var(--font-line-height-heading-h3);
+  }
+
+  .sk-placeholder[data-text="h2"] {
+    --sk-placeholder-font-size: var(--font-size-heading-h2);
+    --sk-placeholder-leading: var(--font-line-height-heading-h2);
+  }
+
+  .sk-placeholder[data-text="h1"] {
+    --sk-placeholder-font-size: var(--font-size-heading-h1);
+    --sk-placeholder-leading: var(--font-line-height-heading-h1);
+  }
+
+  .sk-placeholder[data-text="display-sm"] {
+    --sk-placeholder-font-size: var(--font-size-display-sm);
+    --sk-placeholder-leading: var(--font-line-height-display-sm);
+  }
+
+  .sk-placeholder[data-text="display-md"] {
+    --sk-placeholder-font-size: var(--font-size-display-md);
+    --sk-placeholder-leading: var(--font-line-height-display-md);
+  }
+
+  .sk-placeholder[data-text="display-lg"] {
+    --sk-placeholder-font-size: var(--font-size-display-lg);
+    --sk-placeholder-leading: var(--font-line-height-display-lg);
+  }
+
+  /*
+   * PARAGRAPH. The root is a column of line elements rather than a painted gradient, because a line
+   * of prose has round ends and a gradient stop does not. It carries no fill of its own: the lines
+   * are what is inked, and a background here would paint the gaps between them.
+   */
+  .sk-placeholder[data-shape="paragraph"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-placeholder-line-gap);
+    block-size: auto;
+    overflow: visible;
+    border-radius: 0;
+    background: none;
+  }
+
+  .sk-placeholder__line {
+    position: relative;
+    box-sizing: border-box;
+    flex: none;
+    inline-size: 100%;
+    block-size: var(--sk-placeholder-line-box);
+    overflow: hidden;
+    border-radius: var(--radius-pill);
+    background: var(--sk-placeholder-fill);
+  }
+
+  /*
+   * THE RAGGED EDGE. Prose does not set every line to the full measure, and a stack of identical
+   * bars reads as a table rather than as text. A fixed cycle rather than anything random: a skeleton
+   * renders on a server and again in a browser, and a random width is a hydration mismatch that
+   * only reproduces sometimes.
+   */
+  .sk-placeholder__line:nth-child(4n + 2) {
+    inline-size: 97%;
+  }
+
+  .sk-placeholder__line:nth-child(4n + 4) {
+    inline-size: 94%;
+  }
+
+  /* The last line carries the signal: a paragraph ends mid-measure. Last, so it wins over the cycle. */
+  .sk-placeholder__line:last-child {
+    inline-size: var(--sk-placeholder-last-line);
+  }
+
+  /* One line is a line, not a paragraph with a stub, so it keeps the full measure. */
+  .sk-placeholder__line:only-child {
+    inline-size: 100%;
+  }
+
   .sk-placeholder[data-shape="block"] {
     --sk-placeholder-block-size: 8rem;
 
+    padding-block: 0;
     border-radius: var(--radius-control);
+    background-clip: border-box;
+  }
+
+  /*
+   * Media inside a clipped frame: take the whole box AND the frame's own corner. Both halves were
+   * being written by hand at every call site, and a block that took the box but not the corner
+   * squared off the frame it was sitting in.
+   */
+  .sk-placeholder[data-shape="block"][data-fill] {
+    --sk-placeholder-block-size: 100%;
+
+    border-radius: inherit;
   }
 
   .sk-placeholder[data-shape="circle"] {
     inline-size: var(--sk-placeholder-size);
     block-size: var(--sk-placeholder-size);
+    padding-block: 0;
     border-radius: 50%;
+    background-clip: border-box;
+    /* A disc standing in for an avatar must not be squeezed by the row it sits in; the avatar it
+     * replaces is not. */
+    flex: none;
   }
 
-  .sk-placeholder::after {
+  /* The same three steps Avatar publishes, from the same tokens, so a swap does not resize. */
+  .sk-placeholder[data-shape="circle"][data-size="sm"] {
+    --sk-placeholder-size: var(--size-control-sm);
+  }
+
+  .sk-placeholder[data-shape="circle"][data-size="md"] {
+    --sk-placeholder-size: var(--size-control-md);
+  }
+
+  .sk-placeholder[data-shape="circle"][data-size="lg"] {
+    --sk-placeholder-size: var(--size-control-lg);
+  }
+
+  /*
+   * The shimmer travels across each inked surface. On a paragraph that is every LINE, not the
+   * column: one sweep over the whole block would cross the gaps between lines and read as a panel
+   * being wiped rather than as text arriving.
+   */
+  .sk-placeholder:not([data-shape="paragraph"])::after,
+  .sk-placeholder__line::after {
     position: absolute;
     inset: 0;
     background: linear-gradient(
@@ -62,7 +241,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .sk-placeholder::after {
+    .sk-placeholder:not([data-shape="paragraph"])::after,
+    .sk-placeholder__line::after {
       animation: none;
       opacity: 0;
       transform: none;
@@ -70,12 +250,14 @@
   }
 
   @media (forced-colors: active) {
-    .sk-placeholder {
+    .sk-placeholder:not([data-shape="paragraph"]),
+    .sk-placeholder__line {
       forced-color-adjust: none;
       background: GrayText;
     }
 
-    .sk-placeholder::after {
+    .sk-placeholder:not([data-shape="paragraph"])::after,
+    .sk-placeholder__line::after {
       display: none;
     }
   }

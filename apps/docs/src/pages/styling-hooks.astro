@@ -23,11 +23,11 @@ const declaredHooks = `/* components/button.css */
   --sk-button-bg: var(--color-action-neutral);
 }
 
-.sk-button[data-variant="accent"] {
+.sk-button[data-tone="accent"] {
   --sk-button-bg: var(--color-action-accent);
 }
 
-.sk-button[data-variant="danger"] {
+.sk-button[data-tone="danger"] {
   --sk-button-bg: var(--color-action-danger);
 }`;
 
@@ -43,19 +43,19 @@ const overrideTree: UsageTree = {
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "accent" },
+      options: { tone: "accent" },
       children: "Guardar",
     },
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "neutral" },
+      options: { variant: "solid" },
       children: "Cancelar",
     },
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "danger" },
+      options: { tone: "danger" },
       children: "Borrar",
     },
   ],

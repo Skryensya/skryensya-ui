@@ -85,6 +85,10 @@
       "types": "./src/components/carousel.ts",
       "default": "./src/components/carousel.ts"
     },
+    "./marquee": {
+      "types": "./src/components/marquee.ts",
+      "default": "./src/components/marquee.ts"
+    },
     "./table-pager": {
       "types": "./src/components/table-pager.ts",
       "default": "./src/components/table-pager.ts"

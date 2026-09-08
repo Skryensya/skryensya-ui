@@ -1,14 +1,30 @@
 # Lo que el contrato no puede inferir: cuándo elegir esta firma y cuándo no.
 # La estructura vive en packages/core/src/button.ts; acá sólo hay juicio de producto.
+#
+# Los dos ejes de apariencia son ortogonales a la firma y legales en las dos: `variant` dice qué tan
+# fuerte (solid, soft, ghost, translucent) y `tone` qué significa (neutral, accent, danger). Elegir
+# uno no elige el otro, y el juicio sobre cuándo usar cada combinación está en useWhen/avoidWhen.
 
 Button.action:
   useWhen:
     - ejecuta una acción en la página
     - envía un formulario
     - confirma o descarta un diálogo
+    - "destruye algo o es difícil de deshacer: `tone: danger`, y el énfasis dice cuál de los dos momentos es"
+    - "es LA acción de la vista: `tone: accent`, y una sola por región"
+    - "un eliminar dentro de una fila de acciones: `variant: ghost` + `tone: danger`, que se lee destructivo sin convertirse en el botón de confirmar"
+    - "el confirmar que ese eliminar abre: `variant: solid` + `tone: danger`, uno por diálogo"
+    - "va sobre media o sobre una superficie de color desconocida: `variant: translucent`"
+    - "el botón se queda encendido: `pressed`, un toggle real (negrita en una barra, un voto, play/pausa). Ausente si no es un toggle; `false` si lo es y está apagado"
   avoidWhen:
     - lleva a otra URL, aunque se vea igual: esa es Button.navigation
     - la acción es secundaria dentro de un texto: eso es un Link
+    - "dos `solid` + `accent` visibles a la vez: si todo es la acción principal, ninguna lo es"
+    - "un tono en un botón que no actúa sobre nada: un disclosure o un toggle es neutral, no accent"
+    - "`danger` en algo que se deshace con un clic: el tono miente sobre el costo"
+    - "se busca `success` o `warning`: un botón ejecuta una acción y no existe una acción de advertencia; eso lo reporta un Badge o un Callout"
+    - "`pressed` en algo que no permanece encendido: un botón que dispara y vuelve no es un toggle, y anunciarlo como tal miente sobre lo que hace"
+    - "`pressed` para marcar el ítem elegido de un grupo exclusivo: eso es Segmented o RadioGroup, que además dan las flechas del teclado"
   alternatives:
     - Button.navigation
 
@@ -16,8 +32,10 @@ Button.navigation:
   useWhen:
     - lleva a una URL y tiene que verse como un botón
     - una llamada a la acción principal que es un enlace
+    - "los mismos dos ejes que Button.action: un enlace puede ser discreto (`ghost`) y seguir siendo la acción principal (`accent`)"
   avoidWhen:
     - el destino no está disponible: un enlace no se deshabilita, se renderiza contenido no enlazable
     - el enlace vive dentro de un párrafo: eso es un Link
+    - "`tone: danger` en un enlace: navegar no destruye nada; lo destructivo es la acción que la página de destino ofrece"
   alternatives:
     - Button.action

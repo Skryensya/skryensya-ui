@@ -116,7 +116,7 @@ export const personalLandingPageCase: EvalCase = {
                           {
                             contract: "button",
                             signature: "Button.navigation",
-                            options: { variant: "accent", href: "#projects" },
+                            options: { tone: "accent", href: "#projects" },
                             children: "View projects",
                           },
                         ],

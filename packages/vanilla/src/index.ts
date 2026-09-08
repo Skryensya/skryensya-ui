@@ -1,6 +1,7 @@
 export { mountAccordion } from "./components/accordion.js";
 export { connectBackToTop, mountBackToTop } from "./components/back-to-top.js";
 export { mountButton } from "./components/button.js";
+export { connectMarquee, mountMarquee } from "./components/marquee.js";
 export { mountExpandableTile } from "./components/expandable-tile.js";
 export { mountSelect } from "./components/select.js";
 export { mountSegmented } from "./components/segmented.js";

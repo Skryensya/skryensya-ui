@@ -1,4 +1,4 @@
-import { editorParts, type EditorCommandName } from "@skryensya/core/editor";
+import { editorContract, editorParts, type EditorCommandName } from "@skryensya/core/editor";
 import { editorIcons, type EditorIconName } from "@skryensya/core/editor-icons";
 import { suppressPointerFocusRing } from "@skryensya/editor/focus-modality";
 import {
@@ -204,6 +204,13 @@ export type EditorWithToolbarProps = EditorProps & {
   /** A smaller toolbar: tighter padding and gaps, the same buttons — an option, not a different
    *  anatomy (see `editorContract`'s own `toolbarCompact` comment for why that split holds here). */
   compact?: boolean;
+  /**
+   * The toolbar's own accessible name. The contract has published this as `toolbarLabel` all along
+   * and this binding hardcoded the default instead, so a consumer who set it got it in authored
+   * markup and silently did not in React. Its default is the contract's, read from there rather
+   * than written twice.
+   */
+  toolbarLabel?: string;
 };
 
 const GROUPS: readonly {
@@ -310,7 +317,7 @@ function LinkButton({ active, onSubmit }: { active: boolean; onSubmit: (href: st
         style={{ display: "flex", gap: "var(--space-inline-xs)", padding: "var(--space-inset-sm)" }}
       >
         <input aria-label="URL" className="sk-input" data-size="sm" name="href" placeholder="https://…" type="url" />
-        <button className="sk-button sk-interactive" data-size="sm" data-variant="accent" type="submit">
+        <button className="sk-button sk-interactive" data-size="sm" data-tone="accent" type="submit">
           Añadir
         </button>
       </form>
@@ -332,6 +339,7 @@ export const Editor = forwardRef<EditorHandle, EditorWithToolbarProps>(function 
     onChange,
     placeholder,
     readOnly = false,
+    toolbarLabel = editorContract.options.toolbarLabel.default,
   },
   ref,
 ) {
@@ -348,7 +356,7 @@ export const Editor = forwardRef<EditorHandle, EditorWithToolbarProps>(function 
 
   return (
     <div className={cx(editorParts.root, className)} data-sk-editor="" data-toolbar-compact={compact ? "" : undefined}>
-      <Toolbar label="Formato de texto">
+      <Toolbar label={toolbarLabel}>
         {GROUPS.map((group, index) => (
           <Fragment key={group.label}>
             {index > 0 ? <ToolbarSeparator /> : null}
@@ -392,6 +400,9 @@ export const Editor = forwardRef<EditorHandle, EditorWithToolbarProps>(function 
           position: "absolute",
           width: "1px",
           whiteSpace: "nowrap",
+          /* The contract's own `hiddenInputStyle` ends with `word-wrap: normal`, and leaving it off
+           * here made the two bindings' computed style differ by one declaration. */
+          wordWrap: "normal",
         }}
         readOnly
         tabIndex={-1}

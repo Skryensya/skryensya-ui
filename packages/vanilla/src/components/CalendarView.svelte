@@ -33,8 +33,19 @@
    * of collapsing to a square (calendar.css).
    */
   const buttonClass = `${buttonParts.root} ${buttonParts.interactive}`;
-  const { variant: variantOption, size: sizeOption, iconOnly: iconOnlyOption } = buttonContract.options;
-  const smGhost = { [variantOption.attr]: "ghost", [sizeOption.attr]: "sm" } as const;
+  const {
+    variant: variantOption,
+    tone: toneOption,
+    size: sizeOption,
+    iconOnly: iconOnlyOption,
+  } = buttonContract.options;
+  /* BOTH appearance axes, defaults included, because React composes a real `<Button>` here and
+   * Button serializes both. Naming only the emphasis left `data-tone` off one side of G2. */
+  const smGhost = {
+    [variantOption.attr]: "ghost",
+    [toneOption.attr]: toneOption.default,
+    [sizeOption.attr]: "sm",
+  } as const;
   const iconOnly = { [iconOnlyOption.attr]: iconOnlyOption.trueValue } as const;
 
   const headingLabel = $derived.by(() => {

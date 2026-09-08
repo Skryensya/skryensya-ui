@@ -15,10 +15,11 @@ export const commandPaletteDemoTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      /* `neutral`, not `secondary`: the Button contract has no such variant, so this demo emitted
-         `data-variant="secondary"`, matched no rule in button.css and fell back to looking like the
-         default anyway. Caught by running the demo tree through the validator. */
-      options: { variant: "neutral" },
+      /* `solid` (the default emphasis), not `secondary`: the Button contract has never published
+         such a value, so this demo emitted `data-variant="secondary"`, matched no rule in
+         button.css and fell back to looking like the default anyway. Caught by running the demo
+         tree through the validator, which is exactly what hand-written markup does not get. */
+      options: { variant: "solid" },
       attrs: { "data-cmdk-demo-open": "" },
       children: [
         { contract: "icon", signature: "Icon", options: { name: "search", size: "sm" } },

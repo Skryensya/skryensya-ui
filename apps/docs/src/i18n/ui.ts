@@ -603,12 +603,27 @@ export const ui = {
     "commentThread.demoThreadTitle": "Un hilo corto",
     "commentThread.demoThreadBody":
       "Tres comentarios, uno respondido. El control de plegado sólo aparece donde hay respuestas que plegar, y el último no trae acciones.",
+    "commentThread.demoFixedTitle": "Sin plegado",
+    "commentThread.demoFixedBody":
+      "El mismo hilo profundo de abajo, pero sin <code>collapsible</code> en ningún nivel: no hay control de plegado en ninguna parte y ninguna respuesta puede ocultarse. Para un hilo de soporte o moderación donde ocultar una respuesta nunca es lo que se quiere.",
+    "commentThread.demoFixedLabel": "Hilo profundo sin plegado",
     "commentThread.demoDeepTitle": "Profundidad",
     "commentThread.demoDeepBody":
       "Cuatro niveles, con hermanos en varios. El conector se dibuja por respuesta y no se mide: la primera vuelve al control de plegado y la última corta en su propio codo, así que la única forma de ver que eso aguanta en profundidad es renderizarlo.",
     "commentThread.demoThreadLabel": "Hilo corto",
     "commentThread.demoDeepLabel": "Hilo profundo",
     "commentThread.demoLabel": "Comentarios de ejemplo",
+    "commentThread.demoLoadingTitle": "Cargando",
+    "commentThread.demoLoadingBody":
+      "Dos preguntas distintas: qué se ve mientras algo carga, y qué pasa cuando eso tiene que convivir con lo que ya cargó.",
+    "commentThread.demoSkeletonTitle": "El placeholder",
+    "commentThread.demoSkeletonBody":
+      "La forma de un comentario que todavía no llegó: un círculo donde va el avatar, un par de barras para el encabezado y otro par para el cuerpo. Nada de esto se anuncia — <code>Loader.status</code> avisa la espera una sola vez, no una vez por fila.",
+    "commentThread.demoSkeletonLabel": "Comentarios cargando",
+    "commentThread.demoInfiniteTitle": "En uso: cargando al hacer scroll",
+    "commentThread.demoInfiniteBody":
+      "Los comentarios ya cargados y el placeholder conviven: al llegar al final del scroll aparece la fila del esqueleto justo donde va a caer el próximo comentario, y a los pocos instantes ese comentario real la reemplaza. Nada de esto lo sabe <code>CommentThread</code> — el hilo nunca se entera de que hay páginas.",
+    "commentThread.demoInfiniteLabel": "Hilo con carga progresiva",
     "commentThread.behaviorTitle": "Voto y borrado no tocan el DOM por su cuenta",
     "commentThread.behaviorBody1":
       "Un clic en votar o borrar solo despacha el evento (<code>onVote</code>/<code>onDelete</code> en React, un <code>CustomEvent</code> en Vanilla) — el estado que se ve (<code>aria-pressed</code>, <code>data-voted</code>) es SIEMPRE el que trae el dato de quien lo usa, nunca algo que este componente decida por su cuenta. Plegar un hilo y abrir/cerrar el cuadro de respuesta sí son estado propio, y usan el mismo patrón de disclosure de <code>NavListGroup</code> (<code>aria-expanded</code> + <code>hidden</code>): no hay máquina de Zag, no hace falta una para un click que alterna un booleano.",
@@ -666,11 +681,15 @@ export const ui = {
     "commentThread.test26": "Cancelar con un borrador despacha <code>discard</code> y deja la caja abierta para que la app decida.",
     "commentThread.test27": "Una respuesta vetada con <code>preventDefault()</code> conserva el borrador y la caja.",
     "commentThread.test24": "El avatar va en el canal, aparte del nombre, para que la línea del hilo pueda colgar de él.",
+    "commentThread.test28":
+      "El control de plegado es un Button solo-icono en tamaño <code>xs</code>, no una cara achicada acá.",
     "demo.commentThread.label": "Comentarios",
     "demo.commentThread.replyFieldLabel": "Respuesta",
     "demo.commentThread.replyPlaceholder": "Escribí una respuesta…",
     "demo.commentThread.send": "Responder",
     "demo.commentThread.now": "recién",
+    "demo.commentThread.loadingLabel": "Cargando comentarios",
+    "demo.commentThread.loadingMoreLabel": "Cargando más comentarios",
     "demo.commentThread.deleteTitle": "¿Eliminar el comentario?",
     "demo.commentThread.deleteBody": "Se borra junto con sus respuestas. No se puede deshacer.",
     "demo.commentThread.deleteCancel": "Cancelar",
@@ -1281,9 +1300,12 @@ export const ui = {
     "demo.checkbox.emailAlerts": "Alertas por email",
     "demo.switch.deployAutomatically": "Desplegar automáticamente",
     "demo.treeView.label": "Proyecto",
+    "demo.button.action": "Acción",
+    "demo.button.bold": "Negrita",
     "demo.button.save": "Guardar",
     "demo.button.cancel": "Cancelar",
     "demo.button.delete": "Borrar",
+    "demo.button.confirmDelete": "Sí, borrar",
     "demo.button.download": "Descargar",
     "demo.button.continue": "Continuar",
     "demo.button.settings": "Configuración",
@@ -1300,12 +1322,28 @@ export const ui = {
 
     "button.description": "Button: hooks de estilo, enhancer vanilla mínimo y componente React.",
     "button.lede": 'Styling hooks sobre el <code>&lt;button&gt;</code> nativo, un enhancer vanilla y un componente React.',
-    "button.variantsTitle": "Variantes",
+    "button.variantsTitle": "Dos ejes: énfasis y tono",
+    "button.variantsBody":
+      "Un botón responde dos preguntas independientes, y por eso son dos opciones. <code>variant</code> dice <strong>qué tan fuerte</strong> es: <code>solid</code>, <code>soft</code>, <code>ghost</code>, <code>translucent</code>. <code>tone</code> dice <strong>qué significa</strong>: <code>neutral</code>, <code>accent</code>, <code>danger</code>. Elegir uno no elige el otro; abajo cada fila es un énfasis y cada columna un tono.",
+    "button.variantsLabel": "La matriz completa: 4 énfasis x 3 tonos",
+    "button.matrixIconBody":
+      "Los mismos doce en <code>sm</code> e icon-only, que es donde un tono discreto se usa de verdad: una fila de acciones no tiene lugar para un botón de tamaño completo, y es el tamaño en el que la tinta de un <code>ghost</code> es lo único que carga el significado.",
+    "button.matrixIconLabel": "La misma matriz, sm e icon-only",
+    "button.toneCountBody":
+      "Tres tonos, no los cinco de Badge. Un badge <em>reporta</em> un estado, así que <code>success</code> y <code>warning</code> son cosas que puede decir con verdad; un botón <em>ejecuta</em> una acción, y no existe una acción de advertencia ni una de éxito. La más cercana es la destructiva, que es <code>danger</code>.",
+    "button.pressedTitle": "Toggles: un botón que se queda encendido",
+    "button.pressedBody":
+      "<code>pressed</code> escribe <code>aria-pressed</code> y además lo pinta. Tiene tres estados, no dos: ausente significa <em>no es un toggle</em> y es lo correcto para casi cualquier botón; <code>false</code> significa <em>es un toggle y está apagado</em>, que un lector de pantalla anuncia. El indicio es el relleno y no la capa de estado compartida, a propósito: el hover reasigna esa capa, así que un toggle que dependiera sólo de ella se vería apagado justo mientras el puntero está encima.",
+    "button.pressedLabel": "Apagado y encendido, por énfasis",
+    "button.destructiveTitle": "El par que motivó la separación",
+    "button.destructiveBody":
+      "Mismo tono, distinto énfasis, y esa diferencia es todo el mensaje: el <code>ghost</code> se lee destructivo sin convertirse en el botón de confirmar, así que puede vivir en una fila de acciones al lado de Responder. El <code>solid</code> es el confirmar que ese eliminar abre. Con un solo eje, la primera de las dos era imposible de escribir.",
+    "button.destructiveLabel": "ghost + danger, y solid + danger",
     "button.translucentBody":
       "<code>translucent</code> tiene un fondo semi-transparente que se mezcla con fondos coloreados. Úsalo en callouts, cards coloreadas, o cualquier contexto donde el botón necesita integrarse visualmente con su contenedor sin competir con él.",
     "button.sizesTitle": "Tamaños",
-    "button.sizesLabel": "Button · sm / md / lg",
-    "button.sizeHitNote": "ya incluido: la cara sm pinta a 32px, el hit sigue en 44px",
+    "button.sizesLabel": "Button · xs / sm / md / lg",
+    "button.sizeHitNote": "ya incluido: la cara xs pinta a 24px, el hit sigue en 44px",
     "button.iconTitle": "Con icono",
     "button.iconBody":
       "El icono va antes o después del texto según lo que necesite decir primero: adelante para anticipar el tipo de acción, atrás para señalar hacia dónde lleva. Es solo el orden en <code>children</code>: el mismo <code>gap</code> entre icono y texto en los dos casos.",
@@ -1330,6 +1368,7 @@ export const ui = {
     "button.test3": "Como enlace, renderiza con la apariencia de Button y los atributos del ancla.",
     "button.test4": "El enhancer da un <code>type</code> seguro a los botones autorados, y montar dos veces es idempotente.",
     "button.test5": "Un botón solo-icono sin nombre accesible es rechazado por el enhancer.",
+    "button.test6": "El tamaño <code>xs</code> viaja por el mismo <code>data-size</code> que los otros tres.",
 
     "demo.list.preferences": "Preferencias",
     "demo.list.resources": "Recursos del proyecto",
@@ -1591,6 +1630,7 @@ export const ui = {
     "demo.placeholder.body":
       "Doce entrevistas muestran dónde se pierde el contexto y qué señales ayudan a recuperarlo.",
     "demo.placeholder.readTime": "8 min de lectura · actualizado hoy",
+    "demo.placeholder.roleSample": "El texto real de este rol",
     "demo.processList.first.title": "Crea el espacio",
     "demo.processList.first.description": "Elige una región y un nombre estable.",
     "demo.processList.second.title": "Invita al equipo",
@@ -2273,6 +2313,83 @@ export const ui = {
     "drawer.betaBadge": "Beta",
     "fadeEdge.description": "Efecto de desvanecimiento CSS puro para ocultar contenido suavemente en los bordes.",
     "fadeEdge.betaBadge": "Beta",
+    "marquee.description": "Franja continua con dos causas de movimiento explícitas: pedido por la persona o automático con pausa.",
+    "marquee.betaBadge": "Beta",
+    "marquee.lede":
+      "Marquee repite una fila corta de logotipos inertes. La diferencia importante no es la velocidad: es <strong>quién pidió el movimiento</strong>. <code>Marquee</code> espera un Play; <code>Marquee.autoplay</code> empieza sola y carga con el costo completo de hacerlo bien.",
+    "marquee.whenTitle": "Dos firmas, dos causas",
+    "marquee.whenBody":
+      "Usa la versión pedida por defecto. Reserva autoplay para una franja secundaria cuyo movimiento aporte identidad o contexto; nunca para información necesaria ni para controles.",
+    "marquee.manualTitle": "Movimiento pedido",
+    "marquee.manualBody":
+      "Queda quieta hasta que se presiona Play. Es la opción segura cuando el movimiento ayuda pero no debe asumir intención.",
+    "marquee.manualLabel": "Marquee que espera Play",
+    "marquee.autoplayTitle": "Movimiento automático",
+    "marquee.autoplayBody":
+      "Empieza sola y se pausa al pasar el puntero. Así se ve por defecto: sin botón, porque una franja ambiental no es un reproductor y un control que nadie vino a apretar es una cosa más en la pantalla.",
+    "marquee.autoplayLabel": "Marquee con autoplay, sin control",
+    "marquee.autoplayNote": "Pasa el puntero por encima para pausarla temporalmente",
+    "marquee.controlTitle": "El control es opt-in",
+    "marquee.controlBody":
+      "<code>control</code> agrega el botón de Play/Pausa; viene apagado. Apagarlo es una decisión de conformidad además de visual: sin él la franja igual se detiene con el puntero y nunca arranca con <code>prefers-reduced-motion</code>, pero ninguna de las dos cosas es el control explícito que pide WCAG 2.2.2 para movimiento que empieza solo y dura más de cinco segundos. Y como los hijos son inertes, sin botón no queda ningún mecanismo para quien usa teclado. Apagado sirve para decoración que se puede ignorar; encendido, apenas la franja lleve algo que alguien quiera leer.",
+    "marquee.controlLabel": "La misma franja con control",
+    "marquee.anyChildTitle": "Acepta cualquier hijo, uno por franja",
+    "marquee.anyChildBody":
+      "El contrato no nombra qué va adentro: recibe nodos inertes y los repite. Eso no es permiso para mezclarlos. Una franja con un logotipo, un ícono y una línea suelta no se lee como <em>acepta cualquier cosa</em>, se lee como sin terminar. Cada ejemplo de acá lleva un solo tipo de hijo; la variedad está entre las franjas, nunca dentro de una.",
+    "marquee.badgeLabel": "Franja de badges de lanzamiento",
+    "marquee.avatarLabel": "Franja de avatares del equipo",
+    "marquee.verticalTitle": "También puede viajar en vertical",
+    "marquee.verticalBody":
+      "Usa <code>up</code> o <code>down</code> para una columna corta, define <code>--sk-marquee-vertical-size</code> para el alto visible y conserva los ítems inertes. La medición cambia al alto real de la columna, y el vertical pide bloques: tarjetas iguales, no ítems sueltos.",
+    "marquee.verticalLabel": "Columna de tarjetas de novedades",
+    "marquee.fadeTitle": "El desvanecido es de la ventana, no de un envoltorio",
+    "marquee.fadeBody":
+      "Una fila que se repite y corta de golpe en el borde se lee como un error, no como \"hay más\", así que <code>fade</code> viene encendido y suaviza los dos bordes por donde la ventana recorta. Lo dibuja la ventana misma y no un <code>FadeEdge</code> envolviendo el componente: una máscara alcanza todo lo que contiene, y así también desteñía el botón de Play/Pausa. <code>FadeEdge</code> sigue siendo la herramienta para un borde recortado propio; éste es el que Marquee ya sabe que tiene. Abajo, <code>fade=\"none\"</code> muestra lo que se pierde.",
+    "marquee.fadeLabel": "La misma fila con fade=\"none\", cortada en seco",
+    "marquee.behaviorTitle": "Una copia para leer, dos para pintar",
+    "marquee.behaviorBody1":
+      "La pista duplica la fila para cerrar el loop, pero la segunda copia lleva <code>aria-hidden=\"true\"</code>. El lector de pantalla recibe el contenido una vez; la vista obtiene una unión continua.",
+    "marquee.behaviorBody2":
+      "Los hijos deben ser inertes. Un link o botón duplicado crea dos paradas visualmente iguales y una copia escondida del árbol accesible. Para destinos, tarjetas o controles usa Carousel, Inline o List.",
+    "marquee.behaviorBody3":
+      "Dos copias sólo se ven infinitas mientras una alcance a cubrir la ventana. Si la fila autorada es más corta, al completar un ciclo el hueco cruza la franja a la vista. Por eso el binding mide la ventana y ensancha todos los gaps, incluido el que separa la última marca de la primera de la copia siguiente, hasta que una sola fila la cubra: el ritmo queda parejo en la unión y el loop no se corta nunca.",
+    "marquee.optionsTitle": "Dirección, velocidad, desvanecido y control",
+    "marquee.optionsBody":
+      "<code>direction</code> acepta <code>left</code>, <code>right</code>, <code>up</code> o <code>down</code>. <code>speed</code> acepta <code>slow</code>, <code>normal</code> o <code>fast</code>; el enhancer mide el ancho o el alto real para mantener la velocidad percibida en vez de fijar una duración frágil. <code>fade</code> acepta <code>edges</code> (por defecto) o <code>none</code>, y el ancho de la banda sale de <code>--sk-marquee-fade-size</code>. <code>control</code> es booleano, apagado por defecto, y sólo existe en la firma con autoplay.",
+    "marquee.a11yP1":
+      "WCAG 2.2.2 exige pausar, detener u ocultar contenido que empieza solo y dura más de cinco segundos. <code>control</code> emite ese botón y queda a criterio de quien lo usa, así que apagarlo deja la franja fuera del criterio: el hover es una ayuda, no un mecanismo, y con hijos inertes no hay nada que reciba foco. La firma pedida es el otro camino: su botón no es opcional porque es su única causa de movimiento.",
+    "marquee.a11yP2":
+      "Con <code>prefers-reduced-motion: reduce</code> la animación no arranca y el control inerte se oculta. El contenido queda visible y estático.",
+    "marquee.installBody":
+      "Importa la hoja y el auto-loader para HTML autorado, o usa una de las dos exportaciones React. FadeEdge se importa aparte porque sigue siendo una composición opcional.",
+    "marquee.test1": "La versión pedida empieza pausada, cambia a Play/Pause y mantiene una sola copia semántica.",
+    "marquee.test2": "Autoplay empieza reproduciendo y publica dirección, velocidad y estado en la raíz.",
+    "marquee.test3": "Un cambio vivo a reduced motion detiene autoplay.",
+    "marquee.test4": "La duración sale del ancho medido y de píxeles por segundo, no de una constante por contenido.",
+    "marquee.test5": "Un ciclo de preferencia nunca deshace una pausa explícita.",
+    "marquee.test6": "Una fila más corta que su ventana ensancha los gaps hasta cubrirla, y una fila que ya la cubre no toca nada.",
+    "marquee.test7": "El ancho que alimenta la duración es el de la fila ya ensanchada, no el autorado.",
+    "marquee.test8": "El control es un Button real (sk-button, translucent, icon-only) con su glifo propio, y el fade viene encendido.",
+    "marquee.test9": "Autoplay no emite botón salvo que se pida `control`, y sin botón nunca arranca pausada.",
+    "marquee.test10": "El enhancer mide y sigue la preferencia igual cuando no hay ningún toggle en el DOM.",
+    "demo.marquee.play": "Reproducir movimiento",
+    "demo.marquee.pause": "Pausar movimiento",
+    "demo.marquee.person": "Integrante {initials}",
+    "demo.marquee.badge1": "v4.2 estable",
+    "demo.marquee.badge2": "Tokens de motion",
+    "demo.marquee.badge3": "Marquee beta",
+    "demo.marquee.badge4": "Vaul en revisión",
+    "demo.marquee.badge5": "Paleta derivada",
+    "demo.marquee.badge6": "Contrastes AA",
+    "demo.marquee.badge7": "Set de íconos",
+    "demo.marquee.note1Title": "Contraste revisado",
+    "demo.marquee.note1Body": "Los cuatro tonos de estado pasan AA sobre superficie elevada.",
+    "demo.marquee.note2Title": "Escala de duración",
+    "demo.marquee.note2Body": "Las cadencias del marquee salen de la escala, no de constantes sueltas.",
+    "demo.marquee.note3Title": "Foco visible",
+    "demo.marquee.note3Body": "El anillo de foco ya no se recorta dentro de contenedores con overflow.",
+    "demo.marquee.note4Title": "Tipografía fluida",
+    "demo.marquee.note4Body": "Los tamaños display interpolan entre 360px y 1280px de ancho.",
     "drawer.lede":
       'Un drawer <strong>es</strong> un <a href="/vaul">Vaul</a> en el borde inline, corriendo a lo alto de la pantalla. Esa frase es el componente entero: el borde, el slide, el backdrop, el drag y el top layer son del pattern, y este archivo sólo dice <em>qué Vaul es un drawer</em> y cómo se ve.',
     "drawer.hooksTitle": "Envía hooks y nada de estructura",
@@ -3005,18 +3122,29 @@ export const ui = {
       "El segundo ejemplo espera <strong>5 segundos</strong>, retira el layout provisional y muestra el contenido real en el mismo espacio: <code>ImageFrame</code>, <code>Badge</code>, <code>Heading</code>, <code>Text</code> y <code>Avatar</code>.",
     "placeholderPage.swapLabel": "Placeholder → contenido",
     "placeholderPage.swapNote": "Carga falsa · 5 s",
-    "placeholderPage.shapesTitle": "Formas",
-    "placeholderPage.shapesItem1": "<code>text</code>: una línea; es el valor por defecto.",
-    "placeholderPage.shapesItem2": "<code>block</code>: media, tablas o regiones rectangulares.",
-    "placeholderPage.shapesItem3": "<code>circle</code>: avatares y controles circulares.",
+    "placeholderPage.shapesTitle": "Cuatro firmas, un primitivo",
     "placeholderPage.shapesBody":
-      "Ajusta <code>--sk-placeholder-inline-size</code>, <code>--sk-placeholder-block-size</code> o <code>--sk-placeholder-size</code> desde el layout consumidor. La forma no conoce el contenido.",
+      "Cada firma lleva sólo las opciones que le corresponden: un círculo no acepta <code>text</code> y un párrafo no acepta <code>fill</code>. Componer un skeleton específico es elegir firmas y nombrar roles, nunca escribir medidas.",
+    "placeholderPage.shapesItem1": "<code>Placeholder</code>: una línea, con el rol tipográfico que reemplaza.",
+    "placeholderPage.shapesItem2": "<code>Placeholder.paragraph</code>: varias líneas con la última corta.",
+    "placeholderPage.shapesItem3": "<code>Placeholder.block</code>: media, tablas o regiones rectangulares; <code>fill</code> toma la caja y la esquina del padre.",
+    "placeholderPage.shapesItem4": "<code>Placeholder.circle</code>: avatares, en la misma escala que usa Avatar.",
+    "placeholderPage.shapesLabel": "Las cuatro firmas",
+    "placeholderPage.matchTitle": "El skeleton mide lo que va a reemplazar",
+    "placeholderPage.matchBody":
+      "<code>text=\"h3\"</code> no es \"más o menos alto como un h3\": resuelve al mismo par de tokens de tamaño e interlineado que lee <code>Heading</code>. Acá cada fila es un Placeholder al lado del texto real del mismo rol. Coinciden porque leen lo mismo, no porque alguien los midió; si cambia la escala tipográfica, se mueven juntos.",
+    "placeholderPage.matchLabel": "Skeleton y texto real, mismo rol",
+    "placeholderPage.matchNote": "h1 · h3 · body · caption",
     "placeholderPage.reducedTitle": "Movimiento reducido",
     "placeholderPage.reducedBody":
       "El brillo se desplaza con <code>transform</code>. Con <code>prefers-reduced-motion: reduce</code>, desaparece la animación y permanece el relleno estático.",
     "placeholderPage.reactBody": "El código está en la pestaña <strong>React</strong> de cada preview.",
-    "placeholderPage.test1": "Renderiza geometría decorativa y reenvía las clases de layout.",
+    "placeholderPage.test1": "Una línea toma su alto del rol tipográfico que reemplaza, no de un largo escrito a mano.",
     "placeholderPage.test2": "No tiene violaciones serias de accesibilidad dentro de una región busy nombrada.",
+    "placeholderPage.test3": "El párrafo dibuja líneas reales y publica la última medida en la raíz.",
+    "placeholderPage.test4": "React acota la cantidad de líneas igual que el emisor, así los dos bindings dibujan lo mismo.",
+    "placeholderPage.test5": "Un bloque con fill toma la caja del padre; el círculo toma la escala de Avatar.",
+    "placeholderPage.test6": "Ninguna de las cuatro firmas entra al árbol de accesibilidad.",
 
     "popoverPage.description": "Contenido no modal con título, descripción y cierre explícito sobre top layer nativo.",
     "popoverPage.structuredTitle": "Contenido estructurado",
@@ -4776,9 +4904,16 @@ export const ui = {
 
     "footer.body":
       "Este sitio consume {core} y los paquetes de componentes por sus exports maps, con bundler, el mismo camino que documenta. Cada píxel sale de un token.",
+    /* El título de la sección, separado de `label`: `label` es el TEXTO DEL ENLACE y está redactado
+       como una acción ("Reportar un problema en GitHub"), que como encabezado le daría una orden a
+       quien quizá no encontró ningún problema. El título pregunta; el enlace actúa. */
+    "footer.reportIssue.title": "¿Encontraste un problema?",
     "footer.reportIssue.label": "Reportar un problema en GitHub",
+    /* Una frase que se cierra sola, sin dos puntos: el control va abajo y ya se anuncia con su
+       propia etiqueta, así que no necesita que la prosa lo señale. Antes empezaba con "Se abre en
+       GitHub…", que se refería hacia atrás porque el enlace venía primero. */
     "footer.reportIssue.description":
-      "Se abre en GitHub con la página y tu navegador ya completados, y espacio para contar qué pasó.",
+      "Si algo no anda como esperabas, el reporte ya lleva la página y tu navegador completados, y espacio para contar qué pasó.",
     /*
      * Un pie de bug liviano, no un formulario: tres preguntas concretas (qué esperabas, qué pasó,
      * cómo reproducirlo) en vez del "Describe el problema:" de antes, que dejaba a quien reporta
@@ -5360,11 +5495,26 @@ export const ui = {
     "commentThread.demoThreadBody":
       "Three comments, one of them answered. The fold control appears only where there are replies to fold, and the last comment carries no actions.",
     "commentThread.demoThreadLabel": "Short thread",
+    "commentThread.demoFixedTitle": "No folding",
+    "commentThread.demoFixedBody":
+      "The same deep thread below, but without <code>collapsible</code> at any level: there is no fold control anywhere, and no reply can ever be hidden. For a support or moderation thread where hiding a reply is never the right call.",
+    "commentThread.demoFixedLabel": "Deep thread with no folding",
     "commentThread.demoDeepTitle": "Depth",
     "commentThread.demoDeepBody":
       "Four levels, with siblings at several of them. The connector is drawn per reply rather than measured - the first reaches back to the fold control, the last clips at its own elbow - so the only way to see that hold at depth is to render it.",
     "commentThread.demoDeepLabel": "Deep thread",
     "commentThread.demoLabel": "Sample comments",
+    "commentThread.demoLoadingTitle": "Loading",
+    "commentThread.demoLoadingBody":
+      "Two different questions: what shows while something is loading, and what happens when that has to sit next to what already loaded.",
+    "commentThread.demoSkeletonTitle": "The placeholder",
+    "commentThread.demoSkeletonBody":
+      "The shape of a comment that has not arrived yet: a circle where the avatar goes, a couple of bars for the header, another couple for the body. None of it is announced — <code>Loader.status</code> reports the wait once, not once per row.",
+    "commentThread.demoSkeletonLabel": "Comments loading",
+    "commentThread.demoInfiniteTitle": "In use: loading on scroll",
+    "commentThread.demoInfiniteBody":
+      "Comments already loaded and the placeholder sit side by side: reaching the end of the scroll reveals the skeleton row exactly where the next comment will land, and moments later a real comment replaces it. None of this is <code>CommentThread</code>'s own — the thread never learns that pages exist.",
+    "commentThread.demoInfiniteLabel": "Thread with progressive loading",
     "commentThread.behaviorTitle": "Vote and delete never touch the DOM on their own",
     "commentThread.behaviorBody1":
       "A click on vote or delete only dispatches the event (<code>onVote</code>/<code>onDelete</code> in React, a <code>CustomEvent</code> in Vanilla) — the visible state (<code>aria-pressed</code>, <code>data-voted</code>) is ALWAYS whatever the consumer's own data says, never something this component decides on its own. Folding a thread and opening/closing the reply box ARE this component's own state, and use the same disclosure pattern as <code>NavListGroup</code> (<code>aria-expanded</code> + <code>hidden</code>): no Zag machine, none needed for a click that flips one boolean.",
@@ -5422,11 +5572,15 @@ export const ui = {
     "commentThread.test26": "Cancelling with a draft dispatches <code>discard</code> and leaves the box open for the app to decide.",
     "commentThread.test27": "A reply vetoed with <code>preventDefault()</code> keeps the draft and the box.",
     "commentThread.test24": "The avatar sits in the gutter, apart from the name, so the thread line can hang off it.",
+    "commentThread.test28":
+      "The fold control is an icon-only Button at the <code>xs</code> size, not a face shrunk here.",
     "demo.commentThread.label": "Comments",
     "demo.commentThread.replyFieldLabel": "Reply",
     "demo.commentThread.replyPlaceholder": "Write a reply…",
     "demo.commentThread.send": "Reply",
     "demo.commentThread.now": "just now",
+    "demo.commentThread.loadingLabel": "Loading comments",
+    "demo.commentThread.loadingMoreLabel": "Loading more comments",
     "demo.commentThread.deleteTitle": "Delete this comment?",
     "demo.commentThread.deleteBody": "It goes along with its replies. This cannot be undone.",
     "demo.commentThread.deleteCancel": "Cancel",
@@ -6030,9 +6184,12 @@ export const ui = {
     "demo.checkbox.emailAlerts": "Email alerts",
     "demo.switch.deployAutomatically": "Deploy automatically",
     "demo.treeView.label": "Project",
+    "demo.button.action": "Action",
+    "demo.button.bold": "Bold",
     "demo.button.save": "Save",
     "demo.button.cancel": "Cancel",
     "demo.button.delete": "Delete",
+    "demo.button.confirmDelete": "Yes, delete",
     "demo.button.download": "Download",
     "demo.button.continue": "Continue",
     "demo.button.settings": "Settings",
@@ -6049,12 +6206,28 @@ export const ui = {
 
     "button.description": "Button: style hooks, a minimal vanilla enhancer and a React component.",
     "button.lede": 'Styling hooks over the native <code>&lt;button&gt;</code>, a vanilla enhancer, and a React component.',
-    "button.variantsTitle": "Variants",
+    "button.variantsTitle": "Two axes: emphasis and tone",
+    "button.variantsBody":
+      "A button answers two independent questions, which is why there are two options. <code>variant</code> says <strong>how loud</strong> it is: <code>solid</code>, <code>soft</code>, <code>ghost</code>, <code>translucent</code>. <code>tone</code> says <strong>what it means</strong>: <code>neutral</code>, <code>accent</code>, <code>danger</code>. Choosing one does not choose the other; below, each row is an emphasis and each column a tone.",
+    "button.variantsLabel": "The full matrix: 4 emphases x 3 tones",
+    "button.matrixIconBody":
+      "The same twelve at <code>sm</code> and icon-only, which is where a quiet tone actually gets used: an action row has no room for a full-size button, and it is the size at which a <code>ghost</code>'s ink is the only thing carrying the meaning.",
+    "button.matrixIconLabel": "The same matrix, sm and icon-only",
+    "button.toneCountBody":
+      "Three tones, not Badge's five. A badge <em>reports</em> a state, so <code>success</code> and <code>warning</code> are things it can truthfully say; a button <em>performs</em> an action, and there is no warning action and no success action. The nearest real one is destructive, which is <code>danger</code>.",
+    "button.pressedTitle": "Toggles: a button that stays on",
+    "button.pressedBody":
+      "<code>pressed</code> writes <code>aria-pressed</code> and paints it too. Three states, not two: absent means <em>not a toggle</em> and is right for almost every button; <code>false</code> means <em>a toggle, currently off</em>, which a screen reader announces. The cue is the fill rather than the shared state layer, deliberately: hover reassigns that layer, so a toggle relying on it alone would read as off exactly while the pointer sits on it.",
+    "button.pressedLabel": "Off and on, per emphasis",
+    "button.destructiveTitle": "The pair that motivated the split",
+    "button.destructiveBody":
+      "Same tone, different emphasis, and that difference is the whole message: the <code>ghost</code> reads destructive without becoming the confirm button, so it can live in an action row next to Reply. The <code>solid</code> is the confirm that delete opens. With one axis, the first of the two was unwritable.",
+    "button.destructiveLabel": "ghost + danger, and solid + danger",
     "button.translucentBody":
       "<code>translucent</code> has a semi-transparent background that blends with colored backgrounds. Use it in callouts, colored cards, or any context where the button needs to visually integrate with its container instead of competing with it.",
     "button.sizesTitle": "Sizes",
-    "button.sizesLabel": "Button · sm / md / lg",
-    "button.sizeHitNote": "ships already: the sm face paints at 32px, the hit stays 44px",
+    "button.sizesLabel": "Button · xs / sm / md / lg",
+    "button.sizeHitNote": "ships already: the xs face paints at 24px, the hit stays 44px",
     "button.iconTitle": "With icon",
     "button.iconBody":
       "The icon sits before or after the label depending on what needs saying first: leading to signal the kind of action, trailing to point where it goes. It is only the order in <code>children</code>: the same <code>gap</code> between icon and text either way.",
@@ -6079,6 +6252,7 @@ export const ui = {
     "button.test3": "As a link, renders with Button's appearance and the anchor's attributes.",
     "button.test4": "The enhancer gives authored buttons a safe <code>type</code>, and mounting twice is idempotent.",
     "button.test5": "An icon-only button with no accessible name is refused by the enhancer.",
+    "button.test6": "The <code>xs</code> size travels on the same <code>data-size</code> as the other three.",
 
     "demo.list.preferences": "Preferences",
     "demo.list.resources": "Project resources",
@@ -6340,6 +6514,7 @@ export const ui = {
     "demo.placeholder.body":
       "Twelve interviews show where context is lost and what signs help to recover it.",
     "demo.placeholder.readTime": "8 min read · updated today",
+    "demo.placeholder.roleSample": "The real text of this role",
     "demo.processList.first.title": "Create the workspace",
     "demo.processList.first.description": "Choose a region and a stable name.",
     "demo.processList.second.title": "Invite the team",
@@ -6994,6 +7169,83 @@ export const ui = {
     "drawer.betaBadge": "Beta",
     "fadeEdge.description": "Pure CSS fade-out effect to smoothly hide content at the edges.",
     "fadeEdge.betaBadge": "Beta",
+    "marquee.description": "A continuous strip with two explicit causes of motion: reader-requested or automatic with pause.",
+    "marquee.betaBadge": "Beta",
+    "marquee.lede":
+      "Marquee repeats a short row of inert logos. The important difference is not speed; it is <strong>who requested the motion</strong>. <code>Marquee</code> waits for Play; <code>Marquee.autoplay</code> starts by itself and carries the full cost of doing that honestly.",
+    "marquee.whenTitle": "Two signatures, two causes",
+    "marquee.whenBody":
+      "Default to the requested version. Reserve autoplay for secondary material whose movement adds identity or context; never use it for required information or controls.",
+    "marquee.manualTitle": "Requested motion",
+    "marquee.manualBody":
+      "It remains still until Play is pressed. This is the safe choice when motion helps but must not assume intent.",
+    "marquee.manualLabel": "Marquee waiting for Play",
+    "marquee.autoplayTitle": "Automatic motion",
+    "marquee.autoplayBody":
+      "It starts by itself and pauses on pointer hover. This is what it looks like by default: no button, because an ambient strip is not a media player and a control nobody came to press is one more thing on the screen.",
+    "marquee.autoplayLabel": "Autoplay marquee, no control",
+    "marquee.autoplayNote": "Hover it to pause temporarily",
+    "marquee.controlTitle": "The control is opt-in",
+    "marquee.controlBody":
+      "<code>control</code> adds the Play/Pause button; it ships off. Turning it off is a conformance decision as much as a visual one: without it the strip still stops on hover and still never starts under <code>prefers-reduced-motion</code>, but neither is the explicit control WCAG 2.2.2 asks for on motion that starts by itself and runs past five seconds. And since the children are inert, with no button there is no mechanism at all for a keyboard. Off is right for decoration a reader can ignore; on, the moment the strip carries anything they might want to read.",
+    "marquee.controlLabel": "The same strip with the control",
+    "marquee.anyChildTitle": "It accepts any child, one kind per strip",
+    "marquee.anyChildBody":
+      "The contract never names what goes inside: it takes inert nodes and repeats them. That is not permission to mix them. A strip holding a logo, an icon, and a loose line of text does not read as <em>accepts anything</em>, it reads as unfinished. Every example below carries a single kind of child; the variety lives between the strips, never inside one.",
+    "marquee.badgeLabel": "Strip of release badges",
+    "marquee.avatarLabel": "Strip of team avatars",
+    "marquee.verticalTitle": "It can travel vertically too",
+    "marquee.verticalBody":
+      "Use <code>up</code> or <code>down</code> for a short column, set <code>--sk-marquee-vertical-size</code> for its visible height, and keep the items inert. Measurement switches to the column’s real height, and vertical travel wants blocks: equal cards, not loose items.",
+    "marquee.verticalLabel": "Column of update cards",
+    "marquee.fadeTitle": "The fade belongs to the viewport, not to a wrapper",
+    "marquee.fadeBody":
+      "A repeating row cut off hard at the boundary reads as a mistake, not as \"there is more\", so <code>fade</code> ships on and softens both edges where the viewport clips the run. The viewport draws it itself rather than a <code>FadeEdge</code> wrapped around the component: a mask reaches everything it contains, so a wrapper washed out the Play/Pause button along with the strip. <code>FadeEdge</code> is still the tool for a clipped edge of your own; this is the one Marquee already knows it has. Below, <code>fade=\"none\"</code> shows what it buys.",
+    "marquee.fadeLabel": "The same row with fade=\"none\", cut off flat",
+    "marquee.behaviorTitle": "One copy to read, two to paint",
+    "marquee.behaviorBody1":
+      "The track duplicates the row to close the loop, but the second copy carries <code>aria-hidden=\"true\"</code>. A screen reader gets the content once; the viewport gets a continuous seam.",
+    "marquee.behaviorBody2":
+      "Children must be inert. A duplicated link or button creates two visually identical stops and a copy hidden from the accessibility tree. Use Carousel, Inline, or List for destinations, cards, or controls.",
+    "marquee.behaviorBody3":
+      "Two copies only look infinite while one of them covers the window. When the authored row is shorter, completing a cycle drags a visible hole across the strip. The binding therefore measures the window and widens every gap, the one between the last mark and the first mark of the next copy included, until a single row covers it: the rhythm stays even at the seam, and the loop never breaks.",
+    "marquee.optionsTitle": "Direction, velocity, fade, and control",
+    "marquee.optionsBody":
+      "<code>direction</code> accepts <code>left</code>, <code>right</code>, <code>up</code>, or <code>down</code>. <code>speed</code> accepts <code>slow</code>, <code>normal</code>, or <code>fast</code>; the enhancer measures real width or height to preserve perceived velocity instead of fixing a brittle per-content duration. <code>fade</code> accepts <code>edges</code> (the default) or <code>none</code>, and the band's width comes from <code>--sk-marquee-fade-size</code>. <code>control</code> is a boolean, off by default, and exists only on the autoplay signature.",
+    "marquee.a11yP1":
+      "WCAG 2.2.2 requires a way to pause, stop, or hide content that starts automatically and lasts more than five seconds. <code>control</code> emits that button and is the consumer's call, so leaving it off puts the strip outside the criterion: hover is help, not a mechanism, and with inert children nothing inside can take focus. The requested signature is the other road: its button is not optional, because it is the only cause of motion it has.",
+    "marquee.a11yP2":
+      "Under <code>prefers-reduced-motion: reduce</code>, animation does not start and the inert control is hidden. Content remains visible and static.",
+    "marquee.installBody":
+      "Import the stylesheet and auto-loader for authored HTML, or use either React export. Import FadeEdge separately because it remains optional composition.",
+    "marquee.test1": "Requested motion starts paused, swaps Play/Pause, and keeps one semantic content copy.",
+    "marquee.test2": "Autoplay starts playing and exposes direction, velocity, and state on the root.",
+    "marquee.test3": "A live change to reduced motion stops autoplay.",
+    "marquee.test4": "Duration comes from measured width and pixels per second, not a per-content constant.",
+    "marquee.test5": "A preference cycle never overrides an explicit pause.",
+    "marquee.test6": "A run shorter than its viewport widens its gaps until it covers it; a run that already covers it is left alone.",
+    "marquee.test7": "The width feeding the duration is the widened run, not the authored one.",
+    "marquee.test8": "The control is a real Button (sk-button, translucent, icon-only) with its own glyph, and the fade ships on.",
+    "marquee.test9": "Autoplay emits no button unless `control` asks for one, and with no button it never starts paused.",
+    "marquee.test10": "The enhancer still measures and follows the preference when no toggle exists in the DOM.",
+    "demo.marquee.play": "Play motion",
+    "demo.marquee.pause": "Pause motion",
+    "demo.marquee.person": "Team member {initials}",
+    "demo.marquee.badge1": "v4.2 stable",
+    "demo.marquee.badge2": "Motion tokens",
+    "demo.marquee.badge3": "Marquee beta",
+    "demo.marquee.badge4": "Vaul in review",
+    "demo.marquee.badge5": "Derived palette",
+    "demo.marquee.badge6": "AA contrast",
+    "demo.marquee.badge7": "Icon set",
+    "demo.marquee.note1Title": "Contrast reviewed",
+    "demo.marquee.note1Body": "All four status tones pass AA on a raised surface.",
+    "demo.marquee.note2Title": "Duration scale",
+    "demo.marquee.note2Body": "Marquee cadences come from the scale, not from loose constants.",
+    "demo.marquee.note3Title": "Visible focus",
+    "demo.marquee.note3Body": "The focus ring is no longer clipped inside overflow containers.",
+    "demo.marquee.note4Title": "Fluid typography",
+    "demo.marquee.note4Body": "Display sizes interpolate between 360px and 1280px of width.",
     "drawer.lede":
       'A drawer <strong>is</strong> a <a href="/en/vaul">Vaul</a> on the inline edge, running the full height of the screen. That sentence is the whole component: the edge, the slide, the backdrop, the drag and the top layer belong to the pattern, and this file only says <em>which Vaul is a drawer</em> and how it looks.',
     "drawer.hooksTitle": "Ships hooks and no structure",
@@ -7725,18 +7977,29 @@ export const ui = {
       "The second example waits <strong>5 seconds</strong>, drops the provisional layout, and shows the real content in the same space: <code>ImageFrame</code>, <code>Badge</code>, <code>Heading</code>, <code>Text</code>, and <code>Avatar</code>.",
     "placeholderPage.swapLabel": "Placeholder → content",
     "placeholderPage.swapNote": "Fake load · 5 s",
-    "placeholderPage.shapesTitle": "Shapes",
-    "placeholderPage.shapesItem1": "<code>text</code>: a single line; it is the default.",
-    "placeholderPage.shapesItem2": "<code>block</code>: media, tables, or rectangular regions.",
-    "placeholderPage.shapesItem3": "<code>circle</code>: avatars and circular controls.",
+    "placeholderPage.shapesTitle": "Four signatures, one primitive",
+    "placeholderPage.shapesItem1": "<code>Placeholder</code>: one line, carrying the type role it replaces.",
+    "placeholderPage.shapesItem2": "<code>Placeholder.paragraph</code>: several lines with a short last one.",
+    "placeholderPage.shapesItem3": "<code>Placeholder.block</code>: media, tables, or rectangular regions; <code>fill</code> takes the parent's box and corner.",
+    "placeholderPage.shapesItem4": "<code>Placeholder.circle</code>: avatars, on the same scale Avatar uses.",
+    "placeholderPage.shapesLabel": "The four signatures",
+    "placeholderPage.matchTitle": "A skeleton measures what it will replace",
+    "placeholderPage.matchBody":
+      "<code>text=\"h3\"</code> does not mean \"roughly as tall as an h3\": it resolves to the same size and leading token pair <code>Heading</code> reads. Each row below is a Placeholder beside the real text of the same role. They line up because both read the same tokens, not because anyone measured; change the type scale and they move together.",
+    "placeholderPage.matchLabel": "Skeleton and real text, same role",
+    "placeholderPage.matchNote": "h1 · h3 · body · caption",
     "placeholderPage.shapesBody":
-      "Adjust <code>--sk-placeholder-inline-size</code>, <code>--sk-placeholder-block-size</code>, or <code>--sk-placeholder-size</code> from the consuming layout. The shape does not know the content.",
+      "Each signature carries only the options that apply to it: a circle takes no <code>text</code>, a paragraph takes no <code>fill</code>. Composing a specific skeleton is choosing signatures and naming roles, never writing measurements.",
     "placeholderPage.reducedTitle": "Reduced motion",
     "placeholderPage.reducedBody":
       "The sheen moves with <code>transform</code>. Under <code>prefers-reduced-motion: reduce</code>, the animation disappears and the static fill remains.",
     "placeholderPage.reactBody": "The code is in each preview's <strong>React</strong> tab.",
-    "placeholderPage.test1": "Renders decorative geometry and forwards layout classes.",
+    "placeholderPage.test1": "A line takes its height from the type role it replaces, not from a hand-written length.",
     "placeholderPage.test2": "Has no serious accessibility violations inside a labelled busy region.",
+    "placeholderPage.test3": "The paragraph draws real lines and publishes the last line's measure on the root.",
+    "placeholderPage.test4": "React clamps the line count exactly as the emitter does, so both bindings draw the same thing.",
+    "placeholderPage.test5": "A filled block takes the parent's box; the circle takes Avatar's scale.",
+    "placeholderPage.test6": "None of the four signatures enters the accessibility tree.",
 
     "popoverPage.description": "Non-modal content with a title, description, and explicit close over the native top layer.",
     "popoverPage.structuredTitle": "Structured content",
@@ -9500,9 +9763,16 @@ export const ui = {
 
     "footer.body":
       "This site consumes {core} and the component packages through their exports maps, with a bundler: the same path it documents. Every pixel comes from a token.",
+    /* The section's title, kept apart from `label`: `label` is the LINK TEXT and is written as an
+       action ("Report an issue on GitHub"), which as a heading would give an instruction to someone
+       who may not have found a problem at all. The title asks; the link acts. */
+    "footer.reportIssue.title": "Found a problem?",
     "footer.reportIssue.label": "Report an issue on GitHub",
+    /* A sentence that closes itself, no colon: the control sits below and already announces itself
+       with its own label, so the prose does not need to point at it. It used to open with "Opens on
+       GitHub…", which pointed backwards because the link came first. */
     "footer.reportIssue.description":
-      "Opens on GitHub with the page and your browser already filled in, plus room to describe what happened.",
+      "If something is not working the way you expected, the report already has the page and your browser filled in, with room to describe what happened.",
     /* A light bug template, not a form: three concrete prompts (expected, actual, repro steps)
        instead of the old bare "Describe the issue:", which left a reporter to invent their own
        structure or, more often, skip one. `{url}` is what the server can fill; `{ua}`/`{viewport}`

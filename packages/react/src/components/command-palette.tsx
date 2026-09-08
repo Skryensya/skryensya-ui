@@ -57,7 +57,14 @@ export function CommandPalette({
   );
   const [results, setResults] = useState<CommandPaletteEntry[]>([]);
   const [active, setActive] = useState(-1);
-  const [expanded, setExpanded] = useState(false);
+  /*
+   * `expanded` is DERIVED, not remembered: a combobox is expanded when there is a popup to expand,
+   * which is exactly "the listbox has options in it". It used to be a flag set to `true` on the
+   * first keystroke and never reconsidered, so a query that matched nothing still announced an
+   * expanded popup over an empty list. The vanilla enhancer had the mirror-image bug, claiming it
+   * on open; the two only ever agreed by accident.
+   */
+  const [queried, setQueried] = useState(false);
   const optionId = (i: number) => `${id}-option-${i}`;
 
   /*
@@ -97,14 +104,16 @@ export function CommandPalette({
           aria-activedescendant={active >= 0 ? optionId(active) : undefined}
           aria-autocomplete="list"
           aria-controls="sk-command-palette-listbox"
-          aria-expanded={expanded}
+          aria-expanded={results.length > 0}
           autoComplete="off"
           className={commandPaletteParts.input}
           onChange={(event) => {
             const next = filterCommandPaletteEntries(items, event.target.value);
             setResults(next);
             setActive(next.length ? 0 : -1);
-            setExpanded(true);
+            /* Whether anything was ASKED, which is a different question from whether anything was
+             * found: the empty message below answers the first, `aria-expanded` the second. */
+            setQueried(event.target.value.trim() !== "");
           }}
           placeholder={placeholder}
           role="combobox"
@@ -149,7 +158,9 @@ export function CommandPalette({
           );
         })}
       </ul>
-      <p className={commandPaletteParts.empty} hidden={!expanded || results.length !== 0}>
+      {/* "Sin resultados" answers a question, so it waits until one has been asked: over an
+          untouched palette it reports an absence nobody was looking for. */}
+      <p className={commandPaletteParts.empty} hidden={!queried || results.length !== 0}>
         {emptyLabel}
       </p>
       {footer ? <footer className={commandPaletteParts.footer}>{footer}</footer> : null}

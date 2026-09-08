@@ -34,7 +34,7 @@ export const toastActionTree = (t: Translate): UsageTree => ({
       actions: {
         contract: "button",
         signature: "Button.action",
-        options: { size: "sm", variant: "neutral" },
+        options: { size: "sm", variant: "solid" },
         children: t("demo.toast.undo"),
       },
     },
@@ -51,7 +51,7 @@ export const toastEmitTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "accent" },
+      options: { tone: "accent" },
       attrs: { "data-emit-toast": "" },
       children: t("demo.toast.emit"),
     },
@@ -125,7 +125,7 @@ export const toastStackTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "accent" },
+      options: { tone: "accent" },
       attrs: { "data-stack-add": "" },
       children: t("demo.toast.emit"),
     },

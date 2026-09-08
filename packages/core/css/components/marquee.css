@@ -1,0 +1,225 @@
+/*
+ * TIER 2, MARQUEE
+ *
+ * One semantic content run is followed by an aria-hidden visual copy. The track travels by one
+ * run plus one gap, so the second copy arrives where the first began without a seam. JavaScript
+ * measures that distance and repeats the duration-scale cadence across it; CSS owns every frame.
+ *
+ * Two copies only look infinite while one of them is at least as wide as the viewport. When the
+ * authored run is shorter, the binding widens every gap until it is (--sk-marquee-gap-fill), because
+ * the alternative, a hole crossing the strip once per cycle, is the one thing a marquee must not do.
+ *
+ * A requested marquee only changes state through its own Play/Pause control; pointer hover does not
+ * override the reader's choice. Autoplay pauses on hover or focus and keeps an explicit Pause button
+ * for WCAG 2.2.2. Reduced motion wins over both start modes: one static run remains visible and the
+ * now-inert control disappears.
+ *
+ * THE VIEWPORT FADES ITS OWN TWO EDGES (`data-fade`, default on). A repeating run cut off mid-item
+ * at a hard edge reads as a mistake rather than as "this continues". It is done from inside, on the
+ * viewport, rather than by wrapping the whole component in a FadeEdge: a wrapper's mask reaches
+ * everything it contains, so it faded the Play/Pause button too, and a control washed out by its own
+ * component's paint is worse than the edge the wrapper came to fix.
+ *
+ * THE TOGGLE IS A REAL BUTTON, not a button-shaped shape of this component's own making. It carries
+ * `.sk-button` + `.sk-interactive`, so everything a control owes a reader - the fill, the focus ring,
+ * the state layer, the touch target - comes from Button, and this stylesheet says only where it sits
+ * and what its glyph looks like. It sits at the block-end, inline-end corner OF THE COMPONENT, on a
+ * row the grid reserves for it: overlaying the viewport instead would put it on top of the strip,
+ * since the viewport is exactly one run tall and has no corner to spare.
+ */
+@layer components {
+  .sk-marquee {
+    --sk-marquee-duration: 20s;
+    --sk-marquee-cadence-duration: var(--motion-marquee-duration);
+    --sk-marquee-gap: var(--space-inline-lg);
+    /* Written by the binding when one run is narrower than the viewport; see marqueeGapFill. The
+     * authored gap stays readable underneath it, so a re-measure never compounds its own result. */
+    --sk-marquee-gap-fill: 0px;
+    --sk-marquee-run-gap: calc(var(--sk-marquee-gap) + var(--sk-marquee-gap-fill));
+    --sk-marquee-fade-size: 4rem;
+    /*
+     * FadeEdge's own seven-stop ease-out curve (see fade-edge.css for why it is not a two-stop
+     * ramp), written for both ends of one gradient because a marquee clips at both. The leading
+     * half runs edge → ink over the band; the trailing half mirrors it. Editing one and not the
+     * other is how the two ends stop matching.
+     */
+    --sk-marquee-fade-lead:
+      transparent 0,
+      rgb(0 0 0 / 2%) calc(var(--sk-marquee-fade-size) * 0.12),
+      rgb(0 0 0 / 12%) calc(var(--sk-marquee-fade-size) * 0.28),
+      rgb(0 0 0 / 50%) calc(var(--sk-marquee-fade-size) * 0.5),
+      rgb(0 0 0 / 88%) calc(var(--sk-marquee-fade-size) * 0.72),
+      rgb(0 0 0 / 98%) calc(var(--sk-marquee-fade-size) * 0.88),
+      rgb(0 0 0 / 100%) var(--sk-marquee-fade-size);
+    --sk-marquee-fade-trail:
+      rgb(0 0 0 / 100%) calc(100% - var(--sk-marquee-fade-size)),
+      rgb(0 0 0 / 98%) calc(100% - var(--sk-marquee-fade-size) * 0.88),
+      rgb(0 0 0 / 88%) calc(100% - var(--sk-marquee-fade-size) * 0.72),
+      rgb(0 0 0 / 50%) calc(100% - var(--sk-marquee-fade-size) * 0.5),
+      rgb(0 0 0 / 12%) calc(100% - var(--sk-marquee-fade-size) * 0.28),
+      rgb(0 0 0 / 2%) calc(100% - var(--sk-marquee-fade-size) * 0.12),
+      transparent 100%;
+
+    display: grid;
+    gap: var(--space-stack-sm);
+    min-inline-size: 0;
+  }
+  .sk-marquee[data-speed="slow"] {
+    --sk-marquee-cadence-duration: var(--motion-marquee-duration-slow);
+  }
+
+  .sk-marquee[data-speed="fast"] {
+    --sk-marquee-cadence-duration: var(--motion-marquee-duration-fast);
+  }
+
+  .sk-marquee__viewport {
+    min-inline-size: 0;
+    overflow: hidden;
+  }
+
+  .sk-marquee:is([data-direction="up"], [data-direction="down"]) .sk-marquee__viewport {
+    block-size: var(--sk-marquee-vertical-size, 16rem);
+    min-block-size: 0;
+  }
+
+  /*
+   * THE FADE IS THE VIEWPORT'S, not a wrapper's. `:not([data-fade="none"])` and never
+   * `[data-fade="edges"]`: `edges` is the default, so the emitter leaves the attribute off, and
+   * keying on its presence would fade nothing in authored markup.
+   *
+   * It lands here rather than on the root because the root also holds the Play/Pause button, and a
+   * mask reaches everything inside it. That is exactly what a FadeEdge wrapped around a Marquee got
+   * wrong: it washed out the control along with the strip. The viewport is the only part that clips
+   * anything, so it is the only part with an edge to soften.
+   */
+  .sk-marquee:not([data-fade="none"]) .sk-marquee__viewport {
+    mask-image: linear-gradient(to right, var(--sk-marquee-fade-lead), var(--sk-marquee-fade-trail));
+    mask-position: 0 0;
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+  }
+
+  .sk-marquee:not([data-fade="none"]):is([data-direction="up"], [data-direction="down"]) .sk-marquee__viewport {
+    mask-image: linear-gradient(to bottom, var(--sk-marquee-fade-lead), var(--sk-marquee-fade-trail));
+  }
+
+  .sk-marquee__track {
+    display: flex;
+    gap: 0;
+    inline-size: max-content;
+    animation: sk-marquee-scroll-left var(--sk-marquee-duration) var(--motion-marquee-easing) infinite;
+  }
+
+  .sk-marquee[data-direction="right"] .sk-marquee__track {
+    animation-name: sk-marquee-scroll-right;
+  }
+
+  .sk-marquee:is([data-direction="up"], [data-direction="down"]) .sk-marquee__track {
+    flex-direction: column;
+    inline-size: auto;
+    block-size: max-content;
+    animation-name: sk-marquee-scroll-up;
+  }
+
+  .sk-marquee[data-direction="down"] .sk-marquee__track {
+    animation-name: sk-marquee-scroll-down;
+  }
+
+  .sk-marquee[data-state="paused"] .sk-marquee__track {
+    animation-play-state: paused;
+  }
+
+  .sk-marquee[data-start="auto"]:is(:hover, :focus-within) .sk-marquee__track {
+    animation-play-state: paused;
+  }
+
+  .sk-marquee__content {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--sk-marquee-run-gap);
+    min-inline-size: max-content;
+    padding-inline-end: var(--sk-marquee-run-gap);
+  }
+
+  .sk-marquee:is([data-direction="up"], [data-direction="down"]) .sk-marquee__content {
+    flex-direction: column;
+    align-items: stretch;
+    min-inline-size: 0;
+    min-block-size: max-content;
+    padding-inline-end: 0;
+    padding-block-end: var(--sk-marquee-run-gap);
+  }
+
+  /*
+   * Marquee owns WHERE the control sits and nothing else: the fill, the border, the radius, the
+   * square, the state layer, the focus ring and the touch target are all `.sk-button`'s, which is
+   * why none of them are restated here.
+   *
+   * Its own row under the strip, pushed to the inline end, rather than floating over the viewport's
+   * corner: a marquee's viewport is exactly as tall as one run, so "the component's bottom-right" IS
+   * on top of the last item, and a control that covers the content it controls is worse than one
+   * that costs a row. The grid above already reserves that row.
+   */
+  .sk-marquee__toggle {
+    justify-self: end;
+  }
+
+  /* The play/pause glyph is component ANATOMY, not a system icon role: the vocabulary names no
+   * play/pause, and a media transport control is not something every icon set is obliged to draw.
+   * It gets a real element because on a `.sk-button` both pseudos are taken, `::before` by the
+   * shared state layer and `::after` by Button's own hit-area box. */
+  .sk-marquee__glyph {
+    flex: none;
+    inline-size: 0;
+    block-size: 0;
+    border-block: 0.3125rem solid transparent;
+    border-inline-start: 0.5rem solid currentColor;
+  }
+
+  .sk-marquee__toggle[aria-pressed="true"] .sk-marquee__glyph {
+    inline-size: 0.5rem;
+    block-size: 0.625rem;
+    border: 0;
+    background: linear-gradient(
+      to right,
+      currentColor 0 35%,
+      transparent 35% 65%,
+      currentColor 65% 100%
+    );
+  }
+
+  @keyframes sk-marquee-scroll-left {
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @keyframes sk-marquee-scroll-right {
+    from {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @keyframes sk-marquee-scroll-up {
+    to {
+      transform: translate3d(0, -50%, 0);
+    }
+  }
+
+  @keyframes sk-marquee-scroll-down {
+    from {
+      transform: translate3d(0, -50%, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-marquee__track {
+      animation: none;
+    }
+
+    .sk-marquee__toggle {
+      display: none;
+    }
+  }
+}

@@ -66,7 +66,7 @@ export const heroWithSocialProofSnippet: Snippet = {
                   {
                     contract: "button",
                     signature: "Button.action",
-                    options: { variant: "accent" },
+                    options: { tone: "accent" },
                     children: "Get started",
                   },
                 ],

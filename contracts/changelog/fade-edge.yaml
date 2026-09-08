@@ -1,0 +1,19 @@
+# Qué cambió en fade-edge, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+surface: "35edf1b78486b737"
+entries:
+  - date: 2026-09-07
+    kind: feature
+    es:
+      title: FadeEdge se publica como composición de pintura
+      body: >-
+        La clase existente <code>sk-fade-edge</code> entra al catálogo como <code>FadeEdge</code>.
+        Envuelve cualquier contenido sin cambiar su semántica ni comportamiento, y expone
+        <code>mode</code>, <code>direction</code>, <code>size</code> y <code>color</code>. Marquee puede
+        componerse adentro cuando necesita un borde suave; el efecto no forma parte de su contrato.
+    en:
+      title: FadeEdge ships as a paint-only composition
+      body: >-
+        The existing <code>sk-fade-edge</code> class joins the catalogue as <code>FadeEdge</code>. It
+        wraps any content without changing its semantics or behavior, and exposes <code>mode</code>,
+        <code>direction</code>, <code>size</code>, and <code>color</code>. Marquee can be composed inside
+        when it needs a soft edge; the effect does not become part of Marquee's contract.

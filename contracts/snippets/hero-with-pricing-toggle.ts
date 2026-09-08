@@ -74,7 +74,7 @@ export const heroWithPricingToggleSnippet: Snippet = {
               {
                 contract: "button",
                 signature: "Button.action",
-                options: { variant: "accent" },
+                options: { tone: "accent" },
                 children: "Start free trial",
               },
             ],

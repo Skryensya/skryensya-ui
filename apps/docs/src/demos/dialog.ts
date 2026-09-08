@@ -22,7 +22,7 @@ export const dialogConfirmTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "danger" },
+      options: { tone: "danger" },
       attrs: { "data-dialog-demo-open": "" },
       children: t("demo.dialog.open"),
     },
@@ -44,7 +44,7 @@ export const dialogConfirmTree = (t: Translate): UsageTree => ({
           {
             contract: "button",
             signature: "Button.action",
-            options: { variant: "danger" },
+            options: { tone: "danger" },
             attrs: { type: "submit", value: "confirm" },
             children: t("demo.dialog.confirm"),
           },

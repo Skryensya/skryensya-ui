@@ -116,7 +116,7 @@ export const heroWithAudienceTabsSnippet: Snippet = {
                             {
                               contract: "button",
                               signature: "Button.action",
-                              options: { variant: "accent" },
+                              options: { tone: "accent" },
                               children: "Browse components",
                             },
                           ],
@@ -151,7 +151,7 @@ export const heroWithAudienceTabsSnippet: Snippet = {
                             {
                               contract: "button",
                               signature: "Button.action",
-                              options: { variant: "accent" },
+                              options: { tone: "accent" },
                               children: "Read the docs",
                             },
                           ],

@@ -81,6 +81,14 @@
       "types": "./src/components/carousel.tsx",
       "default": "./src/components/carousel.tsx"
     },
+    "./marquee": {
+      "types": "./src/components/marquee.tsx",
+      "default": "./src/components/marquee.tsx"
+    },
+    "./fade-edge": {
+      "types": "./src/components/fade-edge.tsx",
+      "default": "./src/components/fade-edge.tsx"
+    },
     "./button": {
       "types": "./src/components/button.tsx",
       "default": "./src/components/button.tsx"

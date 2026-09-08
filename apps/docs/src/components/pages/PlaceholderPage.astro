@@ -7,7 +7,13 @@ import "../../examples/placeholder.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { publicationPlaceholderTree, publicationSwapScript, publicationSwapTree } from "../../demos/placeholder";
+import {
+  placeholderMatchTree,
+  placeholderVocabularyTree,
+  publicationPlaceholderTree,
+  publicationSwapScript,
+  publicationSwapTree,
+} from "../../demos/placeholder";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/placeholder.yaml?raw";
 import coreSource from "@core/src/placeholder.ts?raw";
@@ -44,8 +50,24 @@ const sourceFiles = [
       file: "packages/react/src/components/placeholder.test.tsx",
       tests: [
         {
-          name: "renders decorative geometry and forwards layout classes",
+          name: "sizes a line by the type role it replaces, not by a hand-written length",
           description: t("placeholderPage.test1"),
+        },
+        {
+          name: "draws a paragraph as real lines, clamped, with the raggedness authored on the root",
+          description: t("placeholderPage.test3"),
+        },
+        {
+          name: "clamps the rendered line count the same way the emitter does",
+          description: t("placeholderPage.test4"),
+        },
+        {
+          name: "gives a filled block its parent's whole box, and a circle the avatar scale",
+          description: t("placeholderPage.test5"),
+        },
+        {
+          name: "keeps every signature out of the accessibility tree",
+          description: t("placeholderPage.test6"),
         },
         {
           name: "has no serious accessibility violations inside a labelled busy region",
@@ -79,12 +101,22 @@ const sourceFiles = [
     />
 
     <h3>{t("placeholderPage.shapesTitle")}</h3>
+    <p set:html={t("placeholderPage.shapesBody")} />
     <ul>
       <li set:html={t("placeholderPage.shapesItem1")} />
       <li set:html={t("placeholderPage.shapesItem2")} />
       <li set:html={t("placeholderPage.shapesItem3")} />
+      <li set:html={t("placeholderPage.shapesItem4")} />
     </ul>
-    <p set:html={t("placeholderPage.shapesBody")} />
+    <ComponentPreview tree={placeholderVocabularyTree()} label={t("placeholderPage.shapesLabel")} />
+
+    <h3>{t("placeholderPage.matchTitle")}</h3>
+    <p set:html={t("placeholderPage.matchBody")} />
+    <ComponentPreview
+      tree={placeholderMatchTree(t)}
+      label={t("placeholderPage.matchLabel")}
+      note={t("placeholderPage.matchNote")}
+    />
 
     <h3>{t("placeholderPage.reducedTitle")}</h3>
     <p set:html={t("placeholderPage.reducedBody")} />

@@ -2,9 +2,10 @@
  * TIER 3, EDITOR: a ProseMirror content surface with a Toolbar bar of formatting commands on top.
  *
  * The TOOLBAR reuses `.sk-toolbar`'s own class/hooks (`toolbar.css`) wholesale — this sheet only
- * adds the flush-seam join between the two boxes and the toolbar BUTTON's own pressed-state paint
- * (`[aria-pressed="true"]`/`[data-active]`, a shape `.sk-toolbar` itself never needed before this
- * consumer). The CONTENT surface composes `.sk-input`'s own hooks (`input.css`) for its box model
+ * adds the flush-seam join between the two boxes and the `[data-active]` paint for a command whose
+ * mark is under the caret (ProseMirror's own marker, not an ARIA state). The pressed-state paint
+ * this sheet used to own is Button's now: `aria-pressed` was a gap in that contract, and two
+ * consumers had hand-rolled it before it was filled. The CONTENT surface composes `.sk-input`'s own hooks (`input.css`) for its box model
  * — border, radius, padding, focus ring, invalid/disabled states — so it reads as the exact same
  * field Textarea already is; what is added here is only what a `contenteditable` div cannot get
  * from `.sk-input` alone: no native `:read-only`/`:disabled` pseudo-classes to key off (there is
@@ -77,10 +78,13 @@
    * scoped to whichever part is actually focused instead of the whole control at once.
    */
 
-  .sk-editor__toolbar-button[aria-pressed="true"],
+  /* `[aria-pressed="true"]` is BUTTON's now (button.css's pressed rules), so only `[data-active]`
+   * is left here: ProseMirror's own marker for a command whose mark is under the caret, which is
+   * not an ARIA state and nothing outside this editor writes. It borrows the same hooks the
+   * contract moves, rather than painting `background`/`color` over them. */
   .sk-editor__toolbar-button[data-active] {
-    background: var(--sk-editor-pressed-bg);
-    color: var(--sk-editor-pressed-fg);
+    --sk-button-bg: var(--sk-editor-pressed-bg);
+    --sk-button-fg: var(--sk-editor-pressed-fg);
   }
 
   /*
@@ -280,7 +284,8 @@
   }
 
   @media (forced-colors: active) {
-    .sk-editor__toolbar-button[aria-pressed="true"],
+    /* `[aria-pressed="true"]` is Button's here too (button.css's own forced-colors rule paints the
+     * same Highlight pair), so this is left with ProseMirror's `[data-active]` alone. */
     .sk-editor__toolbar-button[data-active] {
       background: Highlight;
       color: HighlightText;

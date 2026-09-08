@@ -1,5 +1,6 @@
 import { splitButtonContract, splitButtonParts } from "@skryensya/core/split-button";
 import type { SignatureOptionsOf } from "@skryensya/core/contract";
+import type { ButtonTone, ButtonVariant } from "@skryensya/core/button";
 import type { MenuItem } from "@skryensya/core/menu";
 import type { ReactNode } from "react";
 import { Button } from "./button.js";
@@ -29,7 +30,9 @@ export type SplitButtonProps = {
    */
   action?: ReactNode;
   children?: ReactNode;
-  variant?: "neutral" | "subtle" | "translucent" | "accent" | "danger" | "ghost";
+  variant?: ButtonVariant;
+  /** The action's meaning. A split button's dominant action is `accent` unless told otherwise. */
+  tone?: ButtonTone;
   size?: "sm" | "md" | "lg";
   /** The group's own accessible name; see `split-button.ts`'s own `role="group"` doc for why it
    *  is optional. */
@@ -62,10 +65,12 @@ export function SplitButton({
   onClick,
   onSelect,
   action,
-  // "accent" is a split button's own opinion. A dominant, stable action: not Button's OWN
-  // default ("neutral"): a plain `<Button>` with no variant given reads as a secondary control, the
-  // opposite of what this contract names. Hardcoded here on purpose, not read off Button's contract.
-  variant = "accent",
+  variant = "solid",
+  // `accent` is a split button's own opinion, and it is a TONE, not an emphasis: a split button
+  // names a dominant, stable action, which is what accent means. Button's own default is `neutral`,
+  // so a plain `<Button>` reads as a secondary control, the opposite of what this contract names.
+  // Hardcoded here on purpose rather than read off Button's contract.
+  tone = "accent",
   size = "md",
 }: SplitButtonProps) {
   return (
@@ -73,7 +78,7 @@ export function SplitButton({
       {action ?? (
         // `weldEnd`: the action half of a split button always has a trigger glued to its end
         // side: never author-configurable, unlike `variant`/`size` above.
-        <Button variant={variant} size={size} weldEnd disabled={disabled} onClick={onClick} type="button">
+        <Button variant={variant} tone={tone} size={size} weldEnd disabled={disabled} onClick={onClick} type="button">
           {children}
         </Button>
       )}
@@ -89,11 +94,12 @@ export function SplitButton({
           // the chevron `Menu` already paints and nothing else, named for a screen reader by
           // `triggerLabel` instead of by visible text (`menu.ts`'s own option doc has the reasoning).
           triggerLabel={menuLabel}
-          // Pairs the trigger with the action `<Button>` above: same variant, same size, the
+          // Pairs the trigger with the action `<Button>` above: same emphasis, same tone, same size,
           // icon-only SHAPE any bare icon Button already has (button.css's own `[data-icon-only]`),
           // and the one delta that makes it a split-button trigger instead of a bare icon button -
           // its own start edge welded flat against the action's end edge.
           triggerVariant={variant}
+          triggerTone={tone}
           triggerSize={size}
           triggerIconOnly
           triggerWeldStart

@@ -163,7 +163,7 @@ export const ChartHistoryCardDemo = framed(
               />
             </Box>
           </Grid>
-          <Button size="sm" style={{ inlineSize: "100%" }} type="button" variant="neutral">
+          <Button size="sm" style={{ inlineSize: "100%" }} type="button" variant="solid">
             {es ? "Ver informe completo" : "View Full Report"}
           </Button>
         </Stack>

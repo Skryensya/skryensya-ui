@@ -11,49 +11,147 @@ import type { Translate } from "../i18n";
  */
 
 /**
- * The six variants. `neutral` is the default, so that one declares nothing.
- * `subtle` (quiet border) and `translucent` (blends on color) group as softened neutrals.
- * `accent` for actions, `danger` for destructive, `ghost` for text-only.
+ * THE WHOLE MATRIX, labelled, because a grid of unlabelled buttons shows that twelve exist without
+ * saying which is which. Row headers are the emphasis, column headers the tone, and every cell is
+ * the same word so the only thing varying between them is the thing being taught.
+ *
+ * `Grid` with four columns: one for the row label, three for the tones. The header row leads with an
+ * empty cell to sit the tone labels over their own columns.
+ *
+ * THE CONTENT IS DELIBERATELY MEANINGLESS. Every cell says "Acción" and the icon matrix says `more`,
+ * because the tone is the thing under test and the word must not argue with it: "Borrar" on the
+ * neutral and accent cells claimed the opposite of what those cells show, and a `delete` glyph did
+ * it more loudly still. The destructive pair below is where a real destructive label belongs.
  */
-export const buttonVariantsTree = (t: Translate): UsageTree => ({
+const EMPHASES = ["solid", "soft", "ghost", "translucent"] as const;
+const TONES = ["neutral", "accent", "danger"] as const;
+
+/** A column or row header. Caption-sized and secondary: the labels are scaffolding, not content. */
+const axisLabel = (text: string): UsageTree => ({
+  contract: "typography",
+  signature: "Text",
+  options: { size: "caption", tone: "secondary", weight: "label" },
+  children: text,
+});
+
+export const buttonMatrixTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Grid",
+  options: { columns: "4", gap: "md" },
+  attrs: { style: "align-items: center; justify-items: start;" },
+  children: [
+    // The corner: nothing to label, and an empty cell is what puts the tones over their columns.
+    { contract: "typography", signature: "Text", options: { size: "caption" }, children: "" },
+    ...TONES.map((tone) => axisLabel(tone)),
+    ...EMPHASES.flatMap((variant) => [
+      axisLabel(variant),
+      ...TONES.map((tone) => ({
+        contract: "button",
+        signature: "Button.action",
+        /*
+         * The defaults are omitted rather than restated, so the snippet under this preview reads
+         * like something an author would actually write: the solid/neutral cell is a bare
+         * `<Button>`, which is the honest way to show that it IS the default.
+         */
+        options: {
+          ...(variant === "solid" ? {} : { variant }),
+          ...(tone === "neutral" ? {} : { tone }),
+        },
+        children: t("demo.button.action"),
+      })),
+    ]),
+  ],
+});
+
+/**
+ * The same twelve at `sm` and icon-only, which is where a quiet tone is actually used: an action row
+ * has no room for a full-size button, and it is the size at which a ghost's ink is the only thing
+ * carrying the meaning.
+ */
+export const buttonMatrixIconTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Grid",
+  options: { columns: "4", gap: "md" },
+  attrs: { style: "align-items: center; justify-items: start;" },
+  children: [
+    { contract: "typography", signature: "Text", options: { size: "caption" }, children: "" },
+    ...TONES.map((tone) => axisLabel(tone)),
+    ...EMPHASES.flatMap((variant) => [
+      axisLabel(variant),
+      ...TONES.map((tone) => ({
+        contract: "button",
+        signature: "Button.action",
+        options: {
+          size: "sm",
+          iconOnly: true,
+          ...(variant === "solid" ? {} : { variant }),
+          ...(tone === "neutral" ? {} : { tone }),
+        },
+        attrs: { "aria-label": t("demo.button.moreActions") },
+        children: { contract: "icon", signature: "Icon", options: { name: "more" } },
+      })),
+    ]),
+  ],
+});
+
+/**
+ * A TOGGLE, off and on, in the emphases toggles actually use. `pressed` is the option; the paint is
+ * Button's. Deliberately shown as a pair per emphasis, because "on" only means anything next to the
+ * "off" it is not.
+ */
+export const buttonPressedTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "sm" },
+  children: (["ghost", "soft", "solid"] as const).map((variant) => ({
+    contract: "layout",
+    signature: "Inline",
+    options: { gap: "sm", inlineAlign: "center", wrap: false },
+    children: [false, true].map((on) => ({
+      contract: "button",
+      signature: "Button.action",
+      options: {
+        ...(variant === "solid" ? {} : { variant }),
+        tone: "accent",
+        size: "sm",
+        pressed: on,
+      },
+      children: t("demo.button.bold"),
+    })),
+  })),
+});
+
+/**
+ * The pair the split exists for, side by side: the quiet destructive trigger in an action row, and
+ * the loud destructive confirm it opens. Same tone, different emphasis, and that difference is the
+ * whole message: one of them is safe to sit next to Reply, the other is not.
+ */
+export const buttonDestructivePairTree = (t: Translate): UsageTree => ({
   contract: "layout",
   signature: "Inline",
+  options: { gap: "lg", inlineAlign: "center" },
   children: [
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "accent" },
-      children: t("demo.button.save"),
-    },
-    { contract: "button", signature: "Button.action", children: t("demo.button.cancel") },
-    {
-      contract: "button",
-      signature: "Button.action",
-      options: { variant: "subtle" },
-      children: t("demo.button.copy"),
-    },
-    {
-      contract: "button",
-      signature: "Button.action",
-      options: { variant: "translucent" },
-      children: t("demo.button.retry"),
-    },
-    {
-      contract: "button",
-      signature: "Button.action",
-      options: { variant: "ghost" },
-      children: t("demo.button.dismiss"),
-    },
-    {
-      contract: "button",
-      signature: "Button.action",
-      options: { variant: "danger" },
+      options: { variant: "ghost", tone: "danger", size: "sm" },
       children: t("demo.button.delete"),
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { tone: "danger" },
+      children: t("demo.button.confirmDelete"),
     },
   ],
 });
 
-/** sm · md · lg, on a labelled button and on an icon-only one. */
+/**
+ * xs · sm · md · lg, on a labelled button and on an icon-only one.
+ *
+ * `xs` leads because it is the floor of the scale: it paints at 24px, WCAG 2.2 SC 2.5.8's target
+ * minimum, and the hit area underneath is still 44px like every other size.
+ */
 export const buttonSizesTree = (t: Translate): UsageTree => ({
   contract: "layout",
   signature: "Inline",
@@ -61,20 +159,33 @@ export const buttonSizesTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { size: "sm", variant: "accent" },
+      options: { size: "xs", tone: "accent" },
       children: t("demo.button.save"),
     },
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "accent" },
+      options: { size: "sm", tone: "accent" },
       children: t("demo.button.save"),
     },
     {
       contract: "button",
       signature: "Button.action",
-      options: { size: "lg", variant: "accent" },
+      options: { tone: "accent" },
       children: t("demo.button.save"),
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { size: "lg", tone: "accent" },
+      children: t("demo.button.save"),
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { size: "xs", iconOnly: true, variant: "ghost" },
+      attrs: { "aria-label": t("demo.button.moreActions") },
+      children: { contract: "icon", signature: "Icon", options: { name: "more" } },
     },
     {
       contract: "button",
@@ -110,7 +221,7 @@ export const buttonIconTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "accent" },
+      options: { tone: "accent" },
       children: [
         { contract: "icon", signature: "Icon", options: { name: "download" } },
         t("demo.button.download"),
@@ -119,7 +230,7 @@ export const buttonIconTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "accent" },
+      options: { tone: "accent" },
       children: [
         t("demo.button.continue"),
         { contract: "icon", signature: "Icon", options: { name: "arrow-right" } },
@@ -149,7 +260,7 @@ export const buttonIconOnlyTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { iconOnly: true, variant: "subtle" },
+      options: { iconOnly: true, variant: "soft" },
       attrs: { "aria-label": t("demo.button.copy") },
       children: { contract: "icon", signature: "Icon", options: { name: "copy" } },
     },
@@ -185,7 +296,7 @@ export const buttonIconOnlySmTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { size: "sm", iconOnly: true, variant: "accent" },
+      options: { size: "sm", iconOnly: true, tone: "accent" },
       attrs: { "aria-label": t("demo.button.add") },
       children: { contract: "icon", signature: "Icon", options: { name: "add" } },
     },
@@ -206,7 +317,7 @@ export const buttonAsLinkTree = (t: Translate, href: string): UsageTree => ({
     {
       contract: "button",
       signature: "Button.navigation",
-      options: { variant: "accent", href },
+      options: { tone: "accent", href },
       children: t("demo.button.goFirstComponent"),
     },
     {
@@ -252,13 +363,13 @@ export const firstComponentButtonsTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "accent" },
+      options: { tone: "accent" },
       children: t("demo.button.save"),
     },
     {
       contract: "button",
       signature: "Button.action",
-      options: { variant: "danger" },
+      options: { tone: "danger" },
       children: t("demo.button.delete"),
     },
     {

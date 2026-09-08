@@ -19,6 +19,7 @@ import { mountEditor } from "@skryensya/vanilla/editor";
 import { mountExpandableTile } from "@skryensya/vanilla/expandable-tile";
 import { mountFileUpload } from "@skryensya/vanilla/file-upload";
 import { mountFolder } from "@skryensya/vanilla/folder";
+import { mountMarquee } from "@skryensya/vanilla/marquee";
 import { mountMegamenu } from "@skryensya/vanilla/megamenu";
 import { mountMenu } from "@skryensya/vanilla/menu";
 import { mountMenubar } from "@skryensya/vanilla/menubar";
@@ -78,6 +79,7 @@ const mounts = [
   mountExpandableTile,
   mountFileUpload,
   mountFolder,
+  mountMarquee,
   mountMegamenu,
   mountMenu,
   mountMenubar,
@@ -109,7 +111,7 @@ const mounts = [
 describe("Vanilla public entry points", () => {
   it("publishes the lazy auto-loader and one mount for every regular enhanced module", () => {
     expect(initComponents).toBeTypeOf("function");
-    expect(mounts).toHaveLength(43);
+    expect(mounts).toHaveLength(44);
     expect(mounts.every((mount) => typeof mount === "function")).toBe(true);
   });
 
@@ -166,6 +168,7 @@ describe("Vanilla public entry points", () => {
         mountExpandableTile,
         mountFileUpload,
         mountFolder,
+        mountMarquee,
         mountMegamenu,
         mountMenu,
         mountMenubar,

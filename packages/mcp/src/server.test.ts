@@ -151,8 +151,13 @@ describe("get_contract", () => {
   it("returns the options, their attributes and the constraints", async () => {
     const { payload } = await call("get_contract", { id: "button" });
 
-    expect(payload.options.variant.values).toContain("danger");
+    // Los DOS ejes, desde que `variant` (cuán fuerte) y `tone` (qué significa) se separaron: este
+    // test pedía `danger` sobre `variant`, que es justo el valor que se mudó, así que comprobarlo
+    // sobre uno solo ya no dice que el contrato viaja entero.
+    expect(payload.options.variant.values).toContain("ghost");
     expect(payload.options.variant.attr).toBe("data-variant");
+    expect(payload.options.tone.values).toContain("danger");
+    expect(payload.options.tone.attr).toBe("data-tone");
     expect(payload.signatures["Button.navigation"].requires).toEqual(["href"]);
     expect(payload.css).toBe("@skryensya/core/components/button.css");
   });
@@ -222,7 +227,7 @@ describe("validate_ui", () => {
       tree: {
         contract: "button",
         signature: "Button.navigation",
-        options: { variant: "accent", href: "/docs" },
+        options: { tone: "accent", href: "/docs" },
         children: "Documentación",
       },
     });

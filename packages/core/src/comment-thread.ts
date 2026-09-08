@@ -48,7 +48,20 @@ import type { ComponentContract } from "./contract.js";
 export const commentThreadParts = {
   /** The thread container. */
   root: "sk-comment-thread",
+  /**
+   * The box holding the "new comment" composer. A `<dialog>`, for the reason the reply slot's own
+   * part gives below: one node that is in flow at ordinary widths and a block-end Vaul on a phone.
+   */
   composerSlot: "sk-comment-thread__composer-slot",
+  /**
+   * Opens the composer where it is modal, and exists ONLY there. The thread's composer is always
+   * open in flow at ordinary widths, so above the breakpoint this control has nothing to do and the
+   * stylesheet hides it; below it, a modal box with no trigger would be a box nobody can reach.
+   * Replies need no equivalent because their trigger already exists: it is Reply.
+   */
+  composerTrigger: "sk-comment-thread__composer-trigger",
+  /** The grab handle both sheets show while they are a Vaul. Hidden above the breakpoint. */
+  sheetHandle: "sk-comment-sheet__handle",
 
   comment: "sk-comment",
   commentSelf: "sk-comment__self",
@@ -61,7 +74,21 @@ export const commentThreadParts = {
   commentCollapse: "sk-comment__collapse",
   commentBody: "sk-comment__body",
   commentReplies: "sk-comment__replies",
+  /**
+   * The box a reply is written in, and a `<dialog>` rather than a `<div>`.
+   *
+   * ONE node in two presentations, never two nodes: at ordinary widths it renders in flow exactly
+   * where it always did (`open`, with the stylesheet putting `position` back to `static`), and below
+   * `--breakpoint-desktop` the binding opens it with `showModal()` and the Vaul hooks paint it as a
+   * block-end sheet. Rendering it twice and hiding one would duplicate the consumer's own control,
+   * which means duplicate ids, duplicate labels and a draft split across two fields; moving the node
+   * at the breakpoint would hand React a different tree than it rendered. A `<dialog>` is the one
+   * element that can be both without moving, which is also why decision 9 requires it: focus trap,
+   * ESC, inert background, focus restoration and a real `::backdrop` all belong to the platform.
+   */
   commentReplySlot: "sk-comment__reply-slot",
+  /** The optional single link wrapping a comment author's avatar and name. */
+  commentProfile: "sk-comment__profile",
 
   actions: "sk-comment-actions",
   actionsReply: "sk-comment-actions__reply",
@@ -108,6 +135,9 @@ export const commentThreadAttrs = {
   composer: "data-sk-comment-composer",
   composerCancel: "data-sk-comment-composer-cancel",
   composerSubmit: "data-sk-comment-composer-submit",
+  /** The thread composer's box, and what its trigger opens. See `composerTrigger` above. */
+  composerSlot: "data-sk-comment-composer-slot",
+  composerTrigger: "data-sk-comment-composer-trigger",
 } as const;
 
 export type CommentThreadAttr = keyof typeof commentThreadAttrs;
@@ -181,6 +211,22 @@ const icon = (name: string, size: "sm" | "md" = "md") => ({
   children: [{ element: "span", attrs: { "data-sk-icon": name, "data-sk-icon-size": size } }],
 });
 
+/**
+ * The Vaul grab handle, on both sheets.
+ *
+ * `data-part="handle"` is not decoration: it is the selector `connectVaul` looks a handle up by
+ * (`:scope > [data-part="handle"]`), so writing it here is what makes drag-to-dismiss available to a
+ * consumer who opts into it. Purely decorative to a screen reader - ESC and the cancel control are
+ * the accessible ways out, and the platform gives the first one for free - so it is `aria-hidden`.
+ * The stylesheet hides it entirely above the breakpoint, where the box is not a sheet and there is
+ * nothing to grab: an affordance that lies is the one thing decision 9 says a handle must never be.
+ */
+const sheetHandle = {
+  element: "div",
+  part: "sheetHandle",
+  attrs: { "data-part": "handle", "aria-hidden": "true" },
+} as const;
+
 export const commentThreadContract = {
   id: "comment-thread",
   css: "@skryensya/core/components/comment-thread.css",
@@ -191,6 +237,8 @@ export const commentThreadContract = {
     label: { type: "string", attr: "aria-label" },
     /** This comment's identity, reported back by whichever action fires. */
     commentId: { type: "string", prop: "id", attr: "data-value" },
+    /** Makes a comment author's avatar and name one link to this profile URL. */
+    profileHref: { type: "string", attr: "href" },
     /**
      * Gives this comment a fold control. Off by default: the simplest comment is an author, a time
      * and a body, and a chevron on a comment nobody can fold is chrome with nothing behind it. Same
@@ -213,6 +261,17 @@ export const commentThreadContract = {
      *  cancel back to, so this is opt-in rather than always there. */
     cancellable: { type: "boolean", default: false, attr: "data-cancellable", trueValue: "" },
     cancelLabel: { type: "string", default: "Cancelar", attr: "data-cancel-label" },
+    /**
+     * What the mobile trigger says. Visible text on a control this contract renders itself, so it is
+     * a label with a default like every other one here rather than a slot: the trigger only ever
+     * holds this one string, and a slot would be a hole a consumer has to fill to get a working
+     * phone layout.
+     */
+    composerTriggerLabel: {
+      type: "string",
+      default: "Escribir un comentario",
+      attr: "data-composer-trigger-label",
+    },
   },
 
   signatures: {
@@ -222,7 +281,7 @@ export const commentThreadContract = {
     CommentThread: {
       intent: ["comment-thread", "threaded-replies", "nested-comments", "discussion"],
       host: { element: "div" },
-      options: ["label"],
+      options: ["label", "composerTriggerLabel"],
       requires: ["label"],
       mount: commentThreadAttrs.root,
       slots: {
@@ -230,12 +289,37 @@ export const commentThreadContract = {
         composer: { accepts: "signature", of: ["CommentComposer"] },
         children: { accepts: "signature", required: true, of: ["Comment"] },
       },
+      /*
+       * The composer's box ships OPEN, and that is the no-JavaScript answer as much as the desktop
+       * one: an authored page with no enhancer renders the composer in flow at every width, exactly
+       * as it did before this was a dialog. The binding closes it only where it is about to make it
+       * a sheet, so nothing is ever hidden by markup that JavaScript then has to rescue.
+       */
       template: {
         element: "div",
         part: "root",
         host: true,
         children: [
-          { element: "div", part: "composerSlot", whenGiven: "composer", slot: "composer" },
+          {
+            whenGiven: "composer",
+            children: [
+              {
+                element: "button",
+                part: "composerTrigger",
+                also: ["sk-button", "sk-interactive"],
+                mount: commentThreadAttrs.composerTrigger,
+                attrs: { type: "button", "aria-haspopup": "dialog", ...textButtonAttrs },
+                textFromOption: "composerTriggerLabel",
+              },
+              {
+                element: "dialog",
+                part: "composerSlot",
+                mount: commentThreadAttrs.composerSlot,
+                attrs: { open: "", "data-edge": "block-end" },
+                children: [sheetHandle, { slot: "composer" }],
+              },
+            ],
+          },
           { slot: "children" },
         ],
       },
@@ -250,7 +334,7 @@ export const commentThreadContract = {
     Comment: {
       intent: ["comment", "reply", "post", "discussion-entry"],
       host: { element: "article" },
-      options: ["commentId", "collapsible", "collapseLabel"],
+      options: ["commentId", "profileHref", "collapsible", "collapseLabel"],
       parents: ["CommentThread", "Comment", "CommentTemplate"],
       slots: {
         /**
@@ -297,9 +381,34 @@ export const commentThreadContract = {
             element: "div",
             part: "commentSelf",
             children: [
+              /*
+               * The profile link is one anchor around BOTH identity pieces, not two adjacent links.
+               * That gives a mouse and a screen reader one destination for one person. The plain
+               * div is the non-interactive counterpart, so an author without a profile URL does not
+               * become a focusable control with nowhere to go.
+               */
+              {
+                element: "a",
+                part: "commentProfile",
+                also: ["sk-interactive"],
+                options: ["profileHref"],
+                whenGiven: "profileHref",
+                children: [
+                  {
+                    element: "span",
+                    part: "commentAvatar",
+                    attrs: { "aria-hidden": "true" },
+                    mount: commentThreadAttrs.avatar,
+                    whenGiven: "avatar",
+                    slot: "avatar",
+                  },
+                  { element: "div", part: "commentAuthor", mount: commentThreadAttrs.author, slot: "author" },
+                ],
+              },
               {
                 element: "div",
-                part: "commentGutter",
+                part: "commentProfile",
+                whenMissing: "profileHref",
                 children: [
                   {
                     element: "span",
@@ -308,6 +417,26 @@ export const commentThreadContract = {
                     whenGiven: "avatar",
                     slot: "avatar",
                   },
+                  { element: "div", part: "commentAuthor", mount: commentThreadAttrs.author, slot: "author" },
+                ],
+              },
+              {
+                element: "div",
+                part: "commentHeader",
+                children: [
+                  {
+                    element: "div",
+                    part: "commentTimestamp",
+                    mount: commentThreadAttrs.timestamp,
+                    whenGiven: "timestamp",
+                    slot: "timestamp",
+                  },
+                ],
+              },
+              {
+                element: "div",
+                part: "commentGutter",
+                children: [
                   /*
                    * TWO conditions, expressed as a node inside a node because each template node
                    * carries one: the outer asks "are there replies?", the inner "did the author ask
@@ -326,19 +455,29 @@ export const commentThreadContract = {
                      * Ghost's own `--sk-button-bg: transparent` also out-specifies any override a
                      * component could write (`.sk-button[data-variant="ghost"]` is 0,2,0), so
                      * asking for the filled face by NOT asking for ghost is the honest way to get
-                     * it. Pill radius because a node on a line is a dot, not a rounded square. */
+                     * it. It keeps Button's own `--radius-control` rather than going pill: fully
+                     * rounded turned it into a dot, a different SHAPE from every other control on
+                     * the page, when what it has to read as is a small button sitting on the line.
+                     *
+                     * `xs` is a real Button size, NOT a face this component shrinks itself. It used
+                     * to be `sm` cut down to `--size-icon-md` through Button's own height hook,
+                     * which worked but left the measurement living here - a size the scale did not
+                     * publish, that nothing else could ask for, and that no other component could
+                     * match. The node is now 24px because that is what `xs` paints everywhere. */
                     also: ["sk-button", "sk-interactive"],
                     mount: commentThreadAttrs.collapse,
                     whenGiven: "collapsible",
-                    attrs: { type: "button", "aria-expanded": "true", "data-icon-only": "", "data-size": "sm" },
+                    attrs: { type: "button", "aria-expanded": "true", "data-icon-only": "", "data-size": "xs" },
                     children: [
                       {
                         element: "span",
                         attrs: { "aria-hidden": "true" },
                         children: [
-                          /* `sm` from the SET, not a size computed in CSS: the fold node is smaller
-                           * than any Button face, and sizing its glyph with a ratio meant the icon
-                           * stopped being one of the scale's own steps. */
+                          /* `sm` from the SET, and now it is also exactly what the face paints:
+                           * `xs` sizes its glyph at `--size-icon-sm` (button.css). Stated here
+                           * anyway rather than left to CSS, because the vanilla icon placeholder
+                           * sizes itself BEFORE hydration, and an unstated size drew a default-md
+                           * box that jumped on mount. */
                           { element: "span", attrs: { "data-state": "closed" }, children: [icon("add", "sm")] },
                           { element: "span", attrs: { "data-state": "open" }, children: [icon("remove", "sm")] },
                         ],
@@ -353,20 +492,6 @@ export const commentThreadContract = {
                 element: "div",
                 part: "commentContent",
                 children: [
-                  {
-                    element: "div",
-                    part: "commentHeader",
-                    children: [
-                      { element: "div", part: "commentAuthor", mount: commentThreadAttrs.author, slot: "author" },
-                      {
-                        element: "div",
-                        part: "commentTimestamp",
-                        mount: commentThreadAttrs.timestamp,
-                        whenGiven: "timestamp",
-                        slot: "timestamp",
-                      },
-                    ],
-                  },
                   { element: "div", part: "commentBody", mount: commentThreadAttrs.body, slot: "children" },
                   { whenGiven: "actions", slot: "actions" },
                 ],
@@ -381,13 +506,19 @@ export const commentThreadContract = {
            * own height, so the control stays where the reader left it. It is also where a reply in
            * progress belongs: after what is being answered, before what has already been said.
            */
+          /*
+           * No `hidden` any more, and none is needed: a `<dialog>` without `open` is already display
+           * none by the UA stylesheet, so closed is its resting state rather than an attribute the
+           * markup has to remember. It also ships closed rather than open (the thread's composer is
+           * the other way round) because a reply box has always started shut behind its trigger.
+           */
           {
-            element: "div",
+            element: "dialog",
             part: "commentReplySlot",
             mount: commentThreadAttrs.replySlot,
             whenGiven: "replyComposer",
-            attrs: { hidden: "" },
-            slot: "replyComposer",
+            attrs: { "data-edge": "block-end" },
+            children: [sheetHandle, { slot: "replyComposer" }],
           },
           {
             element: "div",
@@ -427,7 +558,21 @@ export const commentThreadContract = {
             also: ["sk-button", "sk-interactive"],
             mount: commentThreadAttrs.reply,
             whenGiven: "reply",
-            attrs: { type: "button", "aria-expanded": "false", ...textButtonAttrs },
+            /*
+             * BOTH, and each is true of a different thing. `aria-haspopup="dialog"` describes what
+             * this opens, which is now literally a `<dialog>` at every width - in flow above the
+             * breakpoint, modal below it - so the promise holds in both presentations rather than
+             * only one. `aria-expanded` describes whether it is open right now, which the binding
+             * keeps in step. ARIA allows a control to carry both, and dropping either would lose a
+             * fact: without haspopup a reader is not told a dialog is coming, and without expanded
+             * they cannot tell an open box from a shut one.
+             */
+            attrs: {
+              type: "button",
+              "aria-expanded": "false",
+              "aria-haspopup": "dialog",
+              ...textButtonAttrs,
+            },
             textFromOption: "replyLabel",
           },
           {
@@ -436,7 +581,15 @@ export const commentThreadContract = {
             also: ["sk-button", "sk-interactive"],
             mount: commentThreadAttrs.delete,
             whenGiven: "deletable",
-            attrs: { type: "button", ...textButtonAttrs },
+            /*
+             * GHOST + DANGER, the one cell Button could not express until the emphasis and the tone
+             * became separate axes. A delete in an action row has to read as destructive without
+             * turning into the confirm button beside Reply, and the two used to be one enum, so this
+             * shipped as a plain ghost with `--sk-button-fg` overridden locally in
+             * comment-thread.css: a one-off saying what a contract can now say. The hover tint comes
+             * with it, since the state layer mixes `currentColor`.
+             */
+            attrs: { type: "button", ...textButtonAttrs, "data-tone": "danger" },
             children: [icon("delete"), { element: "span", textFromOption: "deleteLabel" }],
           },
         ],
@@ -467,7 +620,11 @@ export const commentThreadContract = {
             part: "voteUp",
             also: ["sk-button", "sk-interactive"],
             mount: commentThreadAttrs.voteUp,
-            attrs: { type: "button", ...iconButtonAttrs },
+            /* `aria-pressed="false"` in the BASE attrs, raised to `"true"` below. A vote button is
+             * a toggle, and a toggle that is off says `false`; omitting the attribute entirely
+             * announces a plain button and loses the fact that it can be pressed at all. React had
+             * always written it, so this was also the last thing keeping the two bindings apart. */
+            attrs: { type: "button", "aria-pressed": "false", ...iconButtonAttrs },
             /* `aria-pressed` tracks the option, so authored markup announces the viewer's own vote
              * instead of always saying "not pressed". The PAINT reads `data-voted` off the group
              * (see comment-thread.css): a static `aria-pressed` was why an already-voted comment
@@ -481,7 +638,7 @@ export const commentThreadContract = {
             part: "voteDown",
             also: ["sk-button", "sk-interactive"],
             mount: commentThreadAttrs.voteDown,
-            attrs: { type: "button", ...iconButtonAttrs },
+            attrs: { type: "button", "aria-pressed": "false", ...iconButtonAttrs },
             attrsWhen: [{ option: "voted", equals: "down", attrs: { "aria-pressed": "true" } }],
             children: [icon("vote-down"), { element: "span", also: ["sk-visually-hidden"], textFromOption: "voteDownLabel" }],
           },
@@ -562,7 +719,7 @@ export const commentThreadContract = {
                 part: "composerSubmit",
                 also: ["sk-button", "sk-interactive"],
                 mount: commentThreadAttrs.composerSubmit,
-                attrs: { type: "submit", "data-size": "sm", "data-variant": "accent" },
+                attrs: { type: "submit", "data-size": "sm", "data-tone": "accent" },
                 textFromOption: "submitLabel",
               },
             ],

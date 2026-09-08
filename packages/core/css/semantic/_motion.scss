@@ -97,6 +97,13 @@
     --motion-loading-easing: var(--scale-easing-linear);
     --motion-loading-oscillation-easing: var(--scale-easing-standard);
 
+    /* marquee, continuous decorative travel. These are a cadence for one measured 3rem step; the
+     * binding repeats the cadence across the measured strip so speed stays constant at any width. */
+    --motion-marquee-duration: var(--scale-duration-cycle);
+    --motion-marquee-duration-fast: var(--scale-duration-cycle-fast);
+    --motion-marquee-duration-slow: var(--scale-duration-cycle-slow);
+    --motion-marquee-easing: var(--scale-easing-linear);
+
     /* drag, pickup / drop feedback (the follow-pointer part is not tokenised) */
     --motion-drag-duration: var(--scale-duration-fast);
     --motion-drag-easing: var(--scale-easing-standard);

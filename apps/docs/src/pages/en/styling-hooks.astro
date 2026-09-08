@@ -22,10 +22,10 @@ const actual = `/* What we do: a styling hook, re-declared for specificity. */
 .sk-button {
   --sk-button-bg: var(--color-action-neutral);
 }
-.sk-button[data-variant="accent"] {
+.sk-button[data-tone="accent"] {
   --sk-button-bg: var(--color-action-accent);
 }
-.sk-button[data-variant="danger"] {
+.sk-button[data-tone="danger"] {
   --sk-button-bg: var(--color-action-danger);
 }`;
 
@@ -37,9 +37,9 @@ const overrideTree: UsageTree = {
   signature: "Inline",
   attrs: { class: "promo", style: "display: contents" },
   children: [
-    { contract: "button", signature: "Button.action", options: { variant: "accent" }, children: "Save" },
-    { contract: "button", signature: "Button.action", options: { variant: "neutral" }, children: "Cancel" },
-    { contract: "button", signature: "Button.action", options: { variant: "danger" }, children: "Delete" },
+    { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: "Save" },
+    { contract: "button", signature: "Button.action", options: { variant: "solid" }, children: "Cancel" },
+    { contract: "button", signature: "Button.action", options: { tone: "danger" }, children: "Delete" },
   ],
 };
 ---

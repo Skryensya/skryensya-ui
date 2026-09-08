@@ -172,7 +172,7 @@ export const contentContract = {
                 whenGiven: "dismissible",
                 options: ["dismissLabel"],
                 mount: "data-sk-button",
-                attrs: { type: "button", "data-variant": "ghost", "data-size": "sm", "data-icon-only": "" },
+                attrs: { type: "button", "data-variant": "ghost", "data-tone": "neutral", "data-size": "sm", "data-icon-only": "" },
                 children: [{ element: "span", attrs: { "data-sk-icon": "close", "data-sk-icon-size": "md" } }],
               },
             ],

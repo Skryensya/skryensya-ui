@@ -119,6 +119,8 @@ const TARGETS = [
   { pkg: "packages/vanilla", file: "src/components/breadcrumb.test.ts" },
   { pkg: "packages/react", file: "src/components/back-to-top.test.tsx" },
   { pkg: "packages/vanilla", file: "src/components/back-to-top.test.ts" },
+  { pkg: "packages/react", file: "src/components/marquee.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/marquee.test.ts" },
 ];
 
 const results = {};

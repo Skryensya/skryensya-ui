@@ -430,7 +430,9 @@ describe("expanded component inventory", () => {
     const trigger = ui.getByRole("button", { name: "Más opciones" });
     expect(trigger.hasAttribute("data-weld-start")).toBe(true);
     expect(trigger.hasAttribute("data-icon-only")).toBe(true);
-    expect(trigger.getAttribute("data-variant")).toBe("accent");
+    // The trigger pairs with the action on BOTH axes now, not just emphasis.
+    expect(trigger.getAttribute("data-variant")).toBe("solid");
+    expect(trigger.getAttribute("data-tone")).toBe("accent");
   });
 
   it("forwards multiple native files through FileUpload", async () => {

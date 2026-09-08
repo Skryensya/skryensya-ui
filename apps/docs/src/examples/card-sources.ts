@@ -527,7 +527,7 @@ function Example() {
       </p>
       <div class="sk-inline" data-gap="sm" data-justify="between">
         <a class="sk-link" href="#">${c.cta.details}</a>
-        <button class="sk-button sk-interactive" data-variant="accent" type="button">
+        <button class="sk-button sk-interactive" data-tone="accent" type="button">
           ${c.cta.add}
         </button>
       </div>
@@ -563,7 +563,7 @@ function Example() {
             </p>
             <Inline gap="sm" justify="between">
               <Link href={card.href}>${c.cta.details}</Link>
-              <Button onClick={card.onAdd} variant="accent">${c.cta.add}</Button>
+              <Button onClick={card.onAdd} tone="accent">${c.cta.add}</Button>
             </Inline>
           </Stack>
         </Box>

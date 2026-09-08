@@ -1,0 +1,33 @@
+# La estructura vive en packages/core/src/marquee.ts. Acá sólo por qué se elige.
+
+Marquee:
+  useWhen:
+    - "una franja breve y repetida gana sentido al moverse, pero el movimiento sólo debe empezar después de que la persona lo pida"
+    - "logos, nombres o palabras forman un ritmo visual continuo y no son destinos ni controles"
+    - "una columna breve de marcas o actualizaciones inertes necesita viajar hacia arriba o abajo dentro de una altura visible definida"
+    - "una vez iniciada por la persona, la franja conserva su ritmo al pasar el puntero: hover no revoca una decisión explícita"
+    - "hace falta un control de Play/Pausa sí o sí: acá el botón no es opcional, es la única causa de movimiento que tiene"
+  avoidWhen:
+    - "el contenido tiene enlaces, botones o cualquier parada de foco; duplicarlos crea controles repetidos y eso es Carousel o una lista"
+    - "cada ítem importa por separado o se tiene que comparar; el movimiento baja su legibilidad"
+    - "la franja tiene que actualizar datos en vivo; un marquee repite pintura, no anuncia cambios"
+  alternatives:
+    - Carousel
+    - Inline
+
+Marquee.autoplay:
+  useWhen:
+    - "la franja es ambientación secundaria y puede empezar sola sin ocultar ni reemplazar información necesaria"
+    - "el contenido es decorativo y se puede ignorar por completo, así que la franja puede correr sin control (`control` viene apagado)"
+    - "la franja lleva algo que alguien podría querer leer, y entonces se enciende `control` y se acepta el costo del botón de pausa"
+    - "una columna secundaria de marcas o actualizaciones inertes aporta contexto al viajar hacia arriba o abajo sin reemplazar información necesaria"
+    - "la franja se detiene temporalmente con hover o foco, además del control persistente; esa pausa ayuda a inspeccionar las marcas sin reemplazar el control"
+  avoidWhen:
+    - "el movimiento no aporta información ni identidad; una fila quieta hace el mismo trabajo sin distraer"
+    - "no hay lugar para el botón de pausa; entonces no hay lugar para movimiento automático que dure más de cinco segundos"
+    - "se apaga `control` sobre contenido que no es decorativo: sin ese botón la franja queda fuera de WCAG 2.2.2, porque el hover es una ayuda y no un mecanismo, y con hijos inertes no hay nada que reciba foco"
+    - "el contenido es esencial para completar una tarea; no debe pasar por la vista de manera temporal"
+  alternatives:
+    - Marquee
+    - Carousel
+    - Inline

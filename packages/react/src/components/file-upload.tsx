@@ -93,7 +93,8 @@ export function FileUpload({
       <button
         {...api.getTriggerProps()}
         className="sk-button sk-interactive"
-        data-variant="secondary"
+        /* No `data-variant`: `solid` is the default. This said "secondary", which the contract has
+           never published, so it matched no rule and looked like the default regardless. */
         type="button"
       >
         {triggerLabel}

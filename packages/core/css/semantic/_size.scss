@@ -1,5 +1,10 @@
 @mixin density-tokens {
     /* Control sizes floor at WCAG's target inside the token, regardless of local density. */
+    /* Written in the same form as its three siblings even though the `max()` can never pick the
+     * left arm: xs already SITS on the floor, so density has nothing left to take. Keeping the
+     * formula rather than aliasing `--scale-fixed-target-min` is what says that out loud, and it
+     * means a future scale edit that lifts xs off the floor keeps working with no rewrite here. */
+    --size-control-xs: max(round(calc(var(--scale-size-control-xs) * var(--sk-density)), 2px), var(--scale-fixed-target-min));
     --size-control-sm: max(round(calc(var(--scale-size-control-sm) * var(--sk-density)), 2px), var(--scale-fixed-target-min));
     --size-control-md: max(round(calc(var(--scale-size-control-md) * var(--sk-density)), 2px), var(--scale-fixed-target-min));
     --size-control-lg: max(round(calc(var(--scale-size-control-lg) * var(--sk-density)), 2px), var(--scale-fixed-target-min));

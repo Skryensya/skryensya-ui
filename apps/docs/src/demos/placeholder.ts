@@ -3,6 +3,15 @@ import type { Translate } from "../i18n";
 
 const mediaSrc = "/demos/media-gradient.svg";
 
+/*
+ * The skeleton for the card below, composed entirely from named roles. Not one length is written
+ * here: `text: "h3"` is the same token pair the real Heading reads, `size: "md"` the same scale the
+ * real Avatar reads, and `fill` is what lets the media take the ImageFrame's own box and corner.
+ *
+ * This demo used to need nine bespoke classes in `examples/placeholder.css` to say the same thing,
+ * every one of them a guess at a measurement the system already knew: `1.5rem` for a line of h3,
+ * whose real line box is 27px. Those guesses were the bug the skeleton existed to prevent.
+ */
 const publicationPlaceholder = (): UsageTree => ({
   contract: "box",
   signature: "Box",
@@ -18,9 +27,8 @@ const publicationPlaceholder = (): UsageTree => ({
         options: { aspect: "16/9", border: "subtle", radius: "control" },
         children: {
           contract: "placeholder",
-          signature: "Placeholder",
-          options: { shape: "block" },
-          attrs: { class: "sk-image-frame__media placeholder-example__media" },
+          signature: "Placeholder.block",
+          options: { fill: true },
         },
       },
       {
@@ -28,64 +36,40 @@ const publicationPlaceholder = (): UsageTree => ({
         signature: "Stack",
         options: { gap: "sm" },
         children: [
+          /* The eyebrow is a Badge, which is control-sized rather than text-sized. */
           {
             contract: "placeholder",
-            signature: "Placeholder",
-            attrs: { class: "placeholder-example__line--eyebrow" },
+            signature: "Placeholder.block",
+            options: { width: "40%", height: "var(--size-control-sm)" },
           },
           {
-            contract: "layout",
-            signature: "Stack",
-            options: { gap: "xs" },
-            children: [
-              {
-                contract: "placeholder",
-                signature: "Placeholder",
-                attrs: { class: "placeholder-example__line--title" },
-              },
-              {
-                contract: "placeholder",
-                signature: "Placeholder",
-                attrs: { class: "placeholder-example__line--title-short" },
-              },
-            ],
+            contract: "placeholder",
+            signature: "Placeholder.paragraph",
+            options: { text: "h3", lines: 2, lastLine: "72%" },
           },
           {
-            contract: "layout",
-            signature: "Stack",
-            options: { gap: "xs" },
-            children: [
-              {
-                contract: "placeholder",
-                signature: "Placeholder",
-                attrs: { class: "placeholder-example__line--body" },
-              },
-              {
-                contract: "placeholder",
-                signature: "Placeholder",
-                attrs: { class: "placeholder-example__line--body-short" },
-              },
-            ],
+            contract: "placeholder",
+            signature: "Placeholder.paragraph",
+            options: { text: "body", lines: 2, lastLine: "88%" },
           },
           {
             contract: "layout",
             signature: "Inline",
             options: { gap: "sm", inlineAlign: "center" },
             children: [
-              {
-                contract: "placeholder",
-                signature: "Placeholder",
-                options: { shape: "circle" },
-                attrs: { class: "placeholder-example__avatar" },
-              },
+              { contract: "placeholder", signature: "Placeholder.circle", options: { size: "md" } },
               {
                 contract: "layout",
                 signature: "Stack",
                 options: { gap: "xs" },
-                attrs: { class: "placeholder-example__byline-copy" },
+                attrs: { style: "flex: 1 1 auto; max-inline-size: 12rem;" },
                 children: [
-                  { contract: "placeholder", signature: "Placeholder" },
-                  { contract: "placeholder", signature: "Placeholder" },
+                  { contract: "placeholder", signature: "Placeholder", options: { text: "sm" } },
+                  {
+                    contract: "placeholder",
+                    signature: "Placeholder",
+                    options: { text: "caption", width: "70%" },
+                  },
                 ],
               },
             ],
@@ -250,3 +234,62 @@ export const publicationSwapTree = (t: Translate): UsageTree => ({
 });
 
 export { default as publicationSwapScript } from "./scripts/placeholder-swap.ts?raw";
+
+/*
+ * THE POINT OF NAMING THE ROLE, shown rather than asserted: each row is a skeleton beside the real
+ * text it stands in for, at the same role. They line up because both read the same token pair, not
+ * because anyone measured. Change the type scale and both move together.
+ */
+const MATCHED_ROLES = ["h1", "h3", "body", "caption"] as const;
+
+export const placeholderMatchTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "md" },
+  children: MATCHED_ROLES.map((role) => ({
+    contract: "layout",
+    signature: "Grid",
+    options: { columns: "2", gap: "md" },
+    children: [
+      { contract: "placeholder", signature: "Placeholder", options: { text: role, width: "80%" } },
+      role === "h1" || role === "h3"
+        ? {
+            contract: "typography",
+            signature: "Heading",
+            options: { headingSize: role, flush: true },
+            children: t("demo.placeholder.roleSample"),
+          }
+        : {
+            contract: "typography",
+            signature: "Text",
+            options: { size: role },
+            children: t("demo.placeholder.roleSample"),
+          },
+    ],
+  })),
+});
+
+/** The four signatures, each doing the one job it exists for. */
+export const placeholderVocabularyTree = (): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "lg" },
+  children: [
+    {
+      contract: "layout",
+      signature: "Inline",
+      options: { gap: "md", inlineAlign: "center", wrap: false },
+      children: [
+        { contract: "placeholder", signature: "Placeholder.circle", options: { size: "lg" } },
+        { contract: "placeholder", signature: "Placeholder.circle", options: { size: "md" } },
+        { contract: "placeholder", signature: "Placeholder.circle", options: { size: "sm" } },
+        {
+          contract: "placeholder",
+          signature: "Placeholder.block",
+          options: { width: "8rem", height: "3rem" },
+        },
+      ],
+    },
+    { contract: "placeholder", signature: "Placeholder.paragraph", options: { lines: 4 } },
+  ],
+});

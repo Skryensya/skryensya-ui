@@ -49,9 +49,9 @@ export const browseRecipe: Recipe = {
           signature: "Grid",
           options: { columns: "3", gap: "md" },
           children: [
-            { contract: "placeholder", signature: "Placeholder", options: { shape: "block" } },
-            { contract: "placeholder", signature: "Placeholder", options: { shape: "block" } },
-            { contract: "placeholder", signature: "Placeholder", options: { shape: "block" } },
+            { contract: "placeholder", signature: "Placeholder.block" },
+            { contract: "placeholder", signature: "Placeholder.block" },
+            { contract: "placeholder", signature: "Placeholder.block" },
           ],
         },
       ],

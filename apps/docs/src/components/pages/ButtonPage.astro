@@ -9,7 +9,10 @@ import {
   buttonIconOnlyTree,
   buttonIconTree,
   buttonSizesTree,
-  buttonVariantsTree,
+  buttonDestructivePairTree,
+  buttonMatrixIconTree,
+  buttonMatrixTree,
+  buttonPressedTree,
   tileButtonTree,
 } from "../../demos/button";
 import { getLocale, useTranslations } from "../../i18n";
@@ -83,6 +86,10 @@ const sourceFiles = [
           name: "exposes disabled state to both native controls and assistive technology",
           description: t("button.test2"),
         },
+        {
+          name: "serializes the xs size onto the same attribute as every other size",
+          description: t("button.test6"),
+        },
         { name: "renders navigation with Button appearance and anchor attributes", description: t("button.test3") },
       ],
     },
@@ -102,8 +109,20 @@ const sourceFiles = [
     <p class="lede" set:html={t("button.lede")} />
 
     <h3>{t("button.variantsTitle")}</h3>
-    <ComponentPreview tree={buttonVariantsTree(t)} label="Button" />
+    <p set:html={t("button.variantsBody")} />
+    <ComponentPreview tree={buttonMatrixTree(t)} label={t("button.variantsLabel")} />
+    <p set:html={t("button.matrixIconBody")} />
+    <ComponentPreview tree={buttonMatrixIconTree(t)} label={t("button.matrixIconLabel")} />
+    <p set:html={t("button.toneCountBody")} />
     <p set:html={t("button.translucentBody")} />
+
+    <h3>{t("button.pressedTitle")}</h3>
+    <p set:html={t("button.pressedBody")} />
+    <ComponentPreview tree={buttonPressedTree(t)} label={t("button.pressedLabel")} />
+
+    <h3>{t("button.destructiveTitle")}</h3>
+    <p set:html={t("button.destructiveBody")} />
+    <ComponentPreview tree={buttonDestructivePairTree(t)} label={t("button.destructiveLabel")} />
 
     <h3>{t("button.sizesTitle")}</h3>
     <ComponentPreview tree={buttonSizesTree(t)} label={t("button.sizesLabel")} />

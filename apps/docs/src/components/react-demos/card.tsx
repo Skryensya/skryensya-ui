@@ -295,7 +295,7 @@ export const CardProductDemo = framed(function CardProductDemo({ lang = "es" }: 
               <Link href="#" onClick={stop}>
                 {c.cta.details}
               </Link>
-              <Button type="button" variant="accent">
+              <Button type="button" tone="accent">
                 {c.cta.add}
               </Button>
             </Inline>

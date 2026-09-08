@@ -27,6 +27,7 @@ const {
   triggerWeldStart: triggerWeldStartOption,
   triggerWeldEnd: triggerWeldEndOption,
   triggerVariant: triggerVariantOption,
+  triggerTone: triggerToneOption,
   triggerSize: triggerSizeOption,
   triggerIconOnly: triggerIconOnlyOption,
 } = menuContract.options;
@@ -56,6 +57,7 @@ export type MenuProps = Pick<
    *  option doc. `Button`'s own `[data-variant="…"]`/`[data-size="…"]` rules (button.css) apply to
    *  the trigger directly once these are set; nothing here repeats their CSS. */
   triggerVariant?: string;
+  triggerTone?: string;
   triggerSize?: string;
   /** The SAME attribute `Button`'s own `iconOnly` option writes; see `menu.ts`'s identical
    *  option doc. */
@@ -536,6 +538,7 @@ export function Menu({
   triggerWeldStart,
   triggerWeldEnd,
   triggerVariant,
+  triggerTone,
   triggerSize,
   triggerIconOnly,
 }: MenuProps) {
@@ -650,6 +653,7 @@ export function Menu({
               : undefined,
             [triggerWeldEndOption.attr]: triggerWeldEnd ? triggerWeldEndOption.trueValue : undefined,
             [triggerVariantOption.attr]: triggerVariant,
+            [triggerToneOption.attr]: triggerTone,
             [triggerSizeOption.attr]: triggerSize,
             [triggerIconOnlyOption.attr]: triggerIconOnly ? triggerIconOnlyOption.trueValue : undefined,
           }}

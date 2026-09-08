@@ -1,0 +1,162 @@
+# Qué cambió en marquee, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+surface: "4afb85b240c614d8"
+entries:
+  - date: 2026-09-07
+    kind: feature
+    es:
+      title: Marquee se publica con movimiento pedido y automático
+      body: >-
+        Entra al catálogo con <code>Marquee</code> y <code>Marquee.autoplay</code>. La primera queda
+        quieta hasta que la persona elige reproducirla; la segunda arranca sola y por eso incluye el
+        control de pausa que exige WCAG 2.2.2. Las dos emiten una sola copia semántica y una copia
+        visual con <code>aria-hidden</code>, se detienen al pasar el puntero o llevar foco adentro, y
+        quedan estáticas con <code>prefers-reduced-motion</code>. <code>speed</code> mantiene una
+        velocidad percibida constante midiendo el ancho real; <code>direction</code> elige izquierda
+        o derecha. Los hijos deben ser inertes: enlaces, botones o ítems que se recorren pertenecen a
+        Carousel o a una lista.
+    en:
+      title: Marquee ships with requested and automatic motion
+      body: >-
+        It joins the catalogue as <code>Marquee</code> and <code>Marquee.autoplay</code>. The first
+        stays still until the reader chooses Play; the second starts by itself and therefore includes
+        the Pause control required by WCAG 2.2.2. Both emit one semantic copy and one
+        <code>aria-hidden</code> visual copy, pause on pointer hover or focus within, and remain static
+        under <code>prefers-reduced-motion</code>. <code>speed</code> preserves perceived velocity by
+        measuring the real content width; <code>direction</code> chooses left or right. Children must
+        be inert: links, buttons, or individually browsed items belong in Carousel or a list.
+  - date: 2026-09-07
+    kind: bugfix
+    es:
+      title: El hover sólo pausa el movimiento automático
+      body: >-
+        <code>Marquee</code> conserva el movimiento que la persona inició al pasar el puntero. Sólo
+        <code>Marquee.autoplay</code> se pausa temporalmente con hover o foco para poder inspeccionar
+        las marcas; su botón de pausa persistente sigue siendo el mecanismo exigido por WCAG 2.2.2.
+    en:
+      title: Hover pauses automatic motion only
+      body: >-
+        <code>Marquee</code> preserves motion the reader started when the pointer crosses it. Only
+        <code>Marquee.autoplay</code> pauses temporarily on hover or focus so its marks can be
+        inspected; its persistent Pause button remains the WCAG 2.2.2-required mechanism.
+  - date: 2026-09-07
+    kind: rework
+    es:
+      title: Las velocidades siguen la escala de duración
+      body: >-
+        <code>slow</code>, <code>normal</code> y <code>fast</code> ahora toman sus cadencias de
+        <code>--scale-duration-cycle-slow</code>, <code>--scale-duration-cycle</code> y
+        <code>--scale-duration-cycle-fast</code>. El ancho medido sigue determinando la duración
+        final, por lo que una fila larga no acelera ni una corta se demora.
+    en:
+      title: Speeds follow the duration scale
+      body: >-
+        <code>slow</code>, <code>normal</code>, and <code>fast</code> now take their cadence from
+        <code>--scale-duration-cycle-slow</code>, <code>--scale-duration-cycle</code>, and
+        <code>--scale-duration-cycle-fast</code>. Measured width still determines final duration, so
+        a long row does not accelerate and a short row does not linger.
+  - date: 2026-09-07
+    kind: feature
+    es:
+      title: Marquee gana separación visible y dirección vertical
+      body: >-
+        Cada elemento ahora se separa con un gap de la escala de espacio, incluido el punto donde
+        empieza la copia visual. <code>direction</code> también acepta <code>up</code> y
+        <code>down</code>; el enhancer mide el alto de la columna y
+        <code>--sk-marquee-vertical-size</code> define su ventana visible.
+    en:
+      title: Marquee gains visible spacing and vertical direction
+      body: >-
+        Every item now has a spacing-scale gap, including the point where the visual copy begins.
+        <code>direction</code> also accepts <code>up</code> and <code>down</code>; the enhancer
+        measures the column height and <code>--sk-marquee-vertical-size</code> defines its visible
+        window.
+  - date: 2026-09-07
+    kind: bugfix
+    es:
+      title: Una fila corta ya no abre un hueco en cada vuelta
+      body: >-
+        Dos copias sólo cubren la ventana mientras una de ellas la alcance. Con una fila más corta,
+        al completar un ciclo se veía un hueco cruzar la franja. Ahora el binding mide la ventana y
+        ensancha todos los gaps de la fila, incluido el que separa la última marca de la primera de
+        la copia siguiente, hasta que una sola fila la cubra; el ritmo queda parejo en la unión y la
+        duración se calcula sobre la fila ya ensanchada, así que la velocidad percibida no cambia.
+    en:
+      title: A short row no longer opens a hole once per cycle
+      body: >-
+        Two copies only cover the window while one of them reaches across it. With a shorter row,
+        completing a cycle dragged a visible hole across the strip. The binding now measures the
+        window and widens every gap in the row, the one between the last mark and the first mark of
+        the next copy included, until a single row covers it; the rhythm stays even at the seam, and
+        duration is computed from the widened row, so perceived velocity is unchanged.
+  - date: 2026-09-07
+    kind: rework
+    es:
+      title: El control de Play/Pausa ahora es un Button de verdad, abajo a la derecha
+      body: >-
+        Deja de ser un botón dibujado a mano por este componente: emite <code>sk-button</code> +
+        <code>sk-interactive</code> con <code>data-variant="translucent"</code>,
+        <code>data-size="sm"</code> y <code>data-icon-only</code>, así que el relleno, el foco, la
+        capa de estado y el área táctil salen de Button y no de una copia. Queda en la esquina final
+        inferior del componente, en una fila que la grilla le reserva: superponerlo a la ventana lo
+        dejaba encima del último ítem, porque la ventana mide exactamente una fila y no tiene esquina
+        libre. El glifo pasa a ser una parte propia, <code>sk-marquee__glyph</code>, porque en un
+        <code>.sk-button</code> los dos pseudoelementos ya están ocupados.
+    en:
+      title: The Play/Pause control is now a real Button, bottom right
+      body: >-
+        It is no longer a button this component drew by hand: it emits <code>sk-button</code> +
+        <code>sk-interactive</code> with <code>data-variant="translucent"</code>,
+        <code>data-size="sm"</code> and <code>data-icon-only</code>, so the fill, the focus ring, the
+        state layer and the touch target come from Button rather than from a copy of it. It sits at
+        the component's block-end/inline-end corner, on a row the grid reserves for it: overlaying
+        the viewport put it on top of the last item, since the viewport is exactly one run tall and
+        has no corner to spare. The glyph becomes its own part, <code>sk-marquee__glyph</code>,
+        because on a <code>.sk-button</code> both pseudo-elements are already spoken for.
+  - date: 2026-09-07
+    kind: feature
+    es:
+      title: La franja desvanece sus propios bordes
+      body: >-
+        Nace <code>fade</code>, encendido por defecto: la ventana suaviza los dos bordes por donde
+        recorta la fila, con la misma curva de siete paradas que usa FadeEdge, y
+        <code>--sk-marquee-fade-size</code> define el ancho de la banda. Antes esto se lograba
+        envolviendo el componente en dos <code>FadeEdge</code>, y esa composición dejó de servir
+        cuando el control pasó a ocupar su propia fila: una máscara alcanza todo lo que contiene, así
+        que también desteñía el botón de Play/Pausa. Ahora la pinta la ventana, que es la única parte
+        que recorta algo. <code>fade="none"</code> vuelve al borde duro.
+    en:
+      title: The strip fades its own edges
+      body: >-
+        New <code>fade</code> option, on by default: the viewport softens the two edges where it
+        clips the run, on the same seven-stop curve FadeEdge uses, and
+        <code>--sk-marquee-fade-size</code> sets the band's width. This used to be done by wrapping
+        the component in two <code>FadeEdge</code>s, and that composition stopped working once the
+        control took a row of its own: a mask reaches everything it contains, so it washed out the
+        Play/Pause button too. The viewport paints it now, being the only part that clips anything.
+        <code>fade="none"</code> restores the hard edge.
+  - date: 2026-09-07
+    kind: rework
+    es:
+      title: El botón de Play/Pausa pasa a ser opt-in en autoplay
+      body: >-
+        <code>Marquee.autoplay</code> ya no trae control: nace <code>control</code>, apagado por
+        defecto, y sin él la franja simplemente se mueve. Una fila ambiental no es un reproductor.
+        <code>playLabel</code> y <code>pauseLabel</code> pasan a ser opcionales en esa firma, y
+        siguen siendo obligatorios en <code>Marquee</code>, donde el botón es la única causa de
+        movimiento y por eso no se puede apagar: una franja que arranca pausada sin botón no sería
+        un estado que valga la pena validar, sino uno que no debe poder escribirse.
+        <strong>Apagar <code>control</code> es una decisión de conformidad</strong>: el hover sigue
+        pausando y <code>prefers-reduced-motion</code> sigue mandando, pero ninguno es el control
+        explícito que pide WCAG 2.2.2, y con hijos inertes no queda mecanismo por teclado.
+    en:
+      title: The Play/Pause button becomes opt-in on autoplay
+      body: >-
+        <code>Marquee.autoplay</code> no longer ships a control: new <code>control</code> option, off
+        by default, and without it the strip simply moves. An ambient row is not a media player.
+        <code>playLabel</code> and <code>pauseLabel</code> are now optional on that signature, and
+        stay required on <code>Marquee</code>, where the button is the only cause of motion and so
+        cannot be turned off: a strip that starts paused with no way to start it is not a state worth
+        validating, it is one that should not be writable.
+        <strong>Turning <code>control</code> off is a conformance decision</strong>: hover still
+        pauses and <code>prefers-reduced-motion</code> still wins, but neither is the explicit
+        control WCAG 2.2.2 asks for, and with inert children nothing is left for a keyboard.

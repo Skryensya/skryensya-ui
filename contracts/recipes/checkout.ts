@@ -77,7 +77,7 @@ export const checkoutRecipe: Recipe = {
             {
               contract: "button",
               signature: "Button.action",
-              options: { variant: "accent" },
+              options: { tone: "accent" },
               children: "Continuar al pago",
             },
           ],
@@ -117,7 +117,7 @@ export const checkoutRecipe: Recipe = {
             {
               contract: "button",
               signature: "Button.action",
-              options: { variant: "accent" },
+              options: { tone: "accent" },
               children: "Continuar al pago",
             },
           ],

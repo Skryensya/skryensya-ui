@@ -83,6 +83,10 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/carousel.js")).mountCarousel,
   },
   {
+    selector: "[data-sk-marquee]",
+    load: async () => (await import("../components/marquee.js")).mountMarquee,
+  },
+  {
     selector: "[data-sk-accordion]",
     load: async () =>
       (await import("../components/accordion.js")).mountAccordion,

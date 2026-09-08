@@ -1,5 +1,11 @@
 @mixin tokens {
   /* ── scale: control heights (pre-density) ─────────────────────── */
+  /* xs is the floor of the scale, and it lands ON `--scale-fixed-target-min` below by
+   * construction, not by coincidence: 24px is where WCAG 2.2 SC 2.5.8 stops, so there is no
+   * smaller control this system will paint. Anything that wanted less than this was reaching
+   * past an accessibility limit, and the answer is the expanded hit area every button already
+   * carries (`.sk-button::after`, still 44px), not a smaller face. */
+  --scale-size-control-xs: 24px;
   --scale-size-control-sm: 32px;
   --scale-size-control-md: 40px;
   --scale-size-control-lg: 48px;

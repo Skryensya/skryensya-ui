@@ -56,13 +56,13 @@ export const heroWithAppBadgesSnippet: Snippet = {
                   {
                     contract: "button",
                     signature: "Button.navigation",
-                    options: { variant: "neutral", href: "#app-store" },
+                    options: { variant: "solid", href: "#app-store" },
                     children: "Download on the App Store",
                   },
                   {
                     contract: "button",
                     signature: "Button.navigation",
-                    options: { variant: "neutral", href: "#google-play" },
+                    options: { variant: "solid", href: "#google-play" },
                     children: "Get it on Google Play",
                   },
                 ],

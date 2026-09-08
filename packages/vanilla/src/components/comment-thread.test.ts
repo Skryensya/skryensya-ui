@@ -10,7 +10,7 @@ import { mountCommentThread } from "./comment-thread.js";
  * no thread around it at all.
  */
 
-const collapseButton = `<button type="button" class="sk-comment__collapse sk-button sk-interactive" data-sk-comment-collapse aria-expanded="true" data-icon-only data-size="sm">
+const collapseButton = `<button type="button" class="sk-comment__collapse sk-button sk-interactive" data-sk-comment-collapse aria-expanded="true" data-icon-only data-size="xs">
   <span aria-hidden="true">
     <span data-state="closed"><span data-sk-icon="add" data-sk-icon-size="sm"></span></span>
     <span data-state="open"><span data-sk-icon="remove" data-sk-icon-size="sm"></span></span>
@@ -37,7 +37,7 @@ const composer = (id: string) => `<form class="sk-comment-composer" data-sk-comm
   </div>
   <div class="sk-comment-composer__actions">
     <button type="button" class="sk-comment-composer__cancel sk-button sk-interactive" data-sk-comment-composer-cancel data-size="sm" data-variant="ghost">Cancelar</button>
-    <button type="submit" class="sk-comment-composer__submit sk-button sk-interactive" data-sk-comment-composer-submit data-size="sm" data-variant="accent">Publicar</button>
+    <button type="submit" class="sk-comment-composer__submit sk-button sk-interactive" data-sk-comment-composer-submit data-size="sm" data-tone="accent">Publicar</button>
   </div>
 </form>`;
 
@@ -58,7 +58,7 @@ function thread() {
           <div class="sk-comment__body" data-sk-comment-body>Primer comentario</div>
           <div class="sk-comment-actions" data-sk-comment-actions>
             ${vote("up", "4")}
-            <button type="button" class="sk-comment-actions__reply sk-button sk-interactive" data-sk-comment-reply aria-expanded="false" data-size="sm" data-variant="ghost">Responder</button>
+            <button type="button" class="sk-comment-actions__reply sk-button sk-interactive" data-sk-comment-reply aria-expanded="false" aria-haspopup="dialog" data-size="sm" data-variant="ghost">Responder</button>
             <button type="button" class="sk-comment-actions__delete sk-button sk-interactive" data-sk-comment-delete data-size="sm" data-variant="ghost">
               <span aria-hidden="true"><span data-sk-icon="delete" data-sk-icon-size="md"></span></span>
               <span>Eliminar</span>
@@ -66,7 +66,7 @@ function thread() {
           </div>
         </div>
       </div>
-      <div class="sk-comment__reply-slot" data-sk-comment-reply-slot hidden>${composer("respuesta-c1")}</div>
+      <dialog class="sk-comment__reply-slot" data-sk-comment-reply-slot data-edge="block-end">${composer("respuesta-c1")}</dialog>
       <div class="sk-comment__replies" data-sk-comment-replies>
         <article class="sk-comment" data-sk-comment data-value="c1-r1">
           <div class="sk-comment__self">
@@ -143,19 +143,19 @@ describe("CommentThread vanilla enhancer", () => {
     expect((onDelete.mock.calls[0][0] as CustomEvent).detail).toEqual({ id: "c1" });
   });
 
-  it("toggles the reply composer's aria-expanded and hidden state, scoped to its own comment", () => {
+  it("toggles the reply composer's aria-expanded and open state, scoped to its own comment", () => {
     thread();
     const trigger = comment("c1").querySelector<HTMLButtonElement>("[data-sk-comment-reply]")!;
-    const slot = comment("c1").querySelector<HTMLElement>("[data-sk-comment-reply-slot]")!;
-    expect(slot.hidden).toBe(true);
+    const slot = comment("c1").querySelector<HTMLDialogElement>("[data-sk-comment-reply-slot]")!;
+    expect(slot.open).toBe(false);
 
     fireEvent.click(trigger);
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
-    expect(slot.hidden).toBe(false);
+    expect(slot.open).toBe(true);
 
     fireEvent.click(trigger);
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
-    expect(slot.hidden).toBe(true);
+    expect(slot.open).toBe(false);
   });
 
   it("collapse folds the REPLIES and leaves the comment itself readable", () => {
@@ -186,7 +186,7 @@ describe("CommentThread vanilla enhancer", () => {
 
     const trigger = comment("c1").querySelector<HTMLButtonElement>("[data-sk-comment-reply]")!;
     fireEvent.click(trigger);
-    const slot = comment("c1").querySelector<HTMLElement>("[data-sk-comment-reply-slot]")!;
+    const slot = comment("c1").querySelector<HTMLDialogElement>("[data-sk-comment-reply-slot]")!;
     const textarea = slot.querySelector<HTMLTextAreaElement>("textarea")!;
     textarea.value = "una respuesta";
 
@@ -195,7 +195,7 @@ describe("CommentThread vanilla enhancer", () => {
     expect((onReply.mock.calls[0][0] as CustomEvent).detail).toEqual({ body: "una respuesta", parentId: "c1" });
     expect(textarea.value).toBe("");
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
-    expect(slot.hidden).toBe(true);
+    expect(slot.open).toBe(false);
   });
 
   it("cancel on an EMPTY composer just closes it: nothing to lose, nothing to ask", () => {
@@ -205,12 +205,12 @@ describe("CommentThread vanilla enhancer", () => {
 
     const trigger = comment("c1").querySelector<HTMLButtonElement>("[data-sk-comment-reply]")!;
     fireEvent.click(trigger);
-    const slot = comment("c1").querySelector<HTMLElement>("[data-sk-comment-reply-slot]")!;
-    expect(slot.hidden).toBe(false);
+    const slot = comment("c1").querySelector<HTMLDialogElement>("[data-sk-comment-reply-slot]")!;
+    expect(slot.open).toBe(true);
 
     fireEvent.click(slot.querySelector<HTMLButtonElement>("[data-sk-comment-composer-cancel]")!);
 
-    expect(slot.hidden).toBe(true);
+    expect(slot.open).toBe(false);
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
     expect(onDiscard).not.toHaveBeenCalled();
   });
@@ -222,7 +222,7 @@ describe("CommentThread vanilla enhancer", () => {
 
     const trigger = comment("c1").querySelector<HTMLButtonElement>("[data-sk-comment-reply]")!;
     fireEvent.click(trigger);
-    const slot = comment("c1").querySelector<HTMLElement>("[data-sk-comment-reply-slot]")!;
+    const slot = comment("c1").querySelector<HTMLDialogElement>("[data-sk-comment-reply-slot]")!;
     const textarea = slot.querySelector<HTMLTextAreaElement>("textarea")!;
     textarea.value = "algo a medio escribir";
 
@@ -233,7 +233,7 @@ describe("CommentThread vanilla enhancer", () => {
       parentId: "c1",
     });
     // Untouched: throwing a draft away is the consumer's call, so the enhancer reports and stops.
-    expect(slot.hidden).toBe(false);
+    expect(slot.open).toBe(true);
     expect(textarea.value).toBe("algo a medio escribir");
   });
 
@@ -243,7 +243,7 @@ describe("CommentThread vanilla enhancer", () => {
 
     const trigger = comment("c1").querySelector<HTMLButtonElement>("[data-sk-comment-reply]")!;
     fireEvent.click(trigger);
-    const slot = comment("c1").querySelector<HTMLElement>("[data-sk-comment-reply-slot]")!;
+    const slot = comment("c1").querySelector<HTMLDialogElement>("[data-sk-comment-reply-slot]")!;
     const textarea = slot.querySelector<HTMLTextAreaElement>("textarea")!;
     textarea.value = "algo que el servidor podria rechazar";
 
@@ -251,7 +251,7 @@ describe("CommentThread vanilla enhancer", () => {
 
     // Nothing was thrown away: a consumer whose POST failed still has what the person wrote.
     expect(textarea.value).toBe("algo que el servidor podria rechazar");
-    expect(slot.hidden).toBe(false);
+    expect(slot.open).toBe(true);
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
   });
 
@@ -358,5 +358,100 @@ describe("the pieces on their own", () => {
     fireEvent.submit(form);
 
     expect((onReply.mock.calls[0][0] as CustomEvent).detail).toEqual({ body: "desde un editor", parentId: null });
+  });
+});
+
+/*
+ * THE SHEET, which is the one thing here that depends on the viewport. `matchMedia` is stubbed to
+ * "no" by `test-setup.ts` (the in-flow presentation, which every test above asserts against), so a
+ * test that wants a phone says so by overriding it before mounting. jsdom has no modality at all -
+ * its `showModal` is `show` with a different name - so what is asserted is the state both the
+ * binding and the stylesheet actually act on: the `sk-vaul` class and the `open` attribute.
+ */
+describe("CommentThread vanilla enhancer, below the desktop breakpoint", () => {
+  afterEach(() => {
+    /* The same sweep the top-level afterEach does: `destroyMount` takes a mounted ROOT, and
+     * `document` is neither an HTMLElement nor one of them. */
+    for (const root of document.querySelectorAll<HTMLElement>("[data-sk-ready]")) destroyMount(root);
+    document.body.innerHTML = "";
+    vi.unstubAllGlobals();
+  });
+
+  const asPhone = () => {
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      matches: true,
+      media: query,
+      onchange: null,
+      addEventListener() {},
+      removeEventListener() {},
+      addListener() {},
+      removeListener() {},
+      dispatchEvent: () => false,
+    }));
+  };
+
+  const threadWithComposer = () => {
+    document.body.innerHTML = `<div class="sk-comment-thread" data-sk-comment-thread aria-label="Comentarios">
+      <button type="button" class="sk-comment-thread__composer-trigger sk-button sk-interactive" data-sk-comment-composer-trigger>Escribir un comentario</button>
+      <dialog class="sk-comment-thread__composer-slot" data-sk-comment-composer-slot data-edge="block-end" open>
+        <div class="sk-comment-sheet__handle" data-part="handle" aria-hidden="true"></div>
+        <form class="sk-comment-composer" data-sk-comment-composer>
+          <textarea></textarea>
+          <button type="submit" data-sk-comment-composer-submit>Publicar</button>
+        </form>
+      </dialog>
+    </div>`;
+    return document.querySelector<HTMLElement>("[data-sk-comment-thread]")!;
+  };
+
+  const composerBox = () =>
+    document.querySelector<HTMLDialogElement>("[data-sk-comment-composer-slot]")!;
+
+  it("shuts the thread's own composer and hands it to its trigger", () => {
+    asPhone();
+    threadWithComposer();
+    mountCommentThread(document);
+
+    /* Authored OPEN so a page with no enhancer keeps the composer in flow at every width. On a phone
+     * the enhancer takes it over, and the trigger is the only way in. */
+    const box = composerBox();
+    expect(box.open).toBe(false);
+    expect(box.classList.contains("sk-vaul")).toBe(true);
+
+    fireEvent.click(document.querySelector<HTMLButtonElement>("[data-sk-comment-composer-trigger]")!);
+    expect(box.open).toBe(true);
+  });
+
+  it("leaves the thread's own composer open in flow above the breakpoint, with no sheet class", () => {
+    threadWithComposer();
+    mountCommentThread(document);
+
+    const box = composerBox();
+    expect(box.open).toBe(true);
+    expect(box.classList.contains("sk-vaul")).toBe(false);
+  });
+
+  it("marks a reply box as a sheet, and un-presses its trigger when the platform closes it", () => {
+    asPhone();
+    thread();
+
+    const trigger = comment("c1").querySelector<HTMLButtonElement>("[data-sk-comment-reply]")!;
+    const slot = comment("c1").querySelector<HTMLDialogElement>("[data-sk-comment-reply-slot]")!;
+
+    fireEvent.click(trigger);
+    expect(slot.open).toBe(true);
+    expect(slot.classList.contains("sk-vaul")).toBe(true);
+    expect(trigger.getAttribute("aria-expanded")).toBe("true");
+
+    /* ESC and a tap on the backdrop are the platform's to handle, and it tells nobody but the dialog.
+     * Without the `close` listener the trigger kept claiming the box was open. */
+    slot.close();
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
+  });
+
+  it("says a reply trigger opens a dialog, in both presentations", () => {
+    thread();
+    const trigger = comment("c1").querySelector<HTMLButtonElement>("[data-sk-comment-reply]")!;
+    expect(trigger.getAttribute("aria-haspopup")).toBe("dialog");
   });
 });

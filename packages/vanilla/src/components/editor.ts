@@ -121,7 +121,16 @@ function connect(root: HTMLElement): () => void {
   if (!content) throw new Error(`[data-sk-editor] necesita un .${editorParts.content}.`);
   if (!toolbar) throw new Error("[data-sk-editor] necesita un [data-sk-toolbar]: no existe una versión sin toolbar.");
 
-  if (!root.id) root.id = uniqueId("sk-editor");
+  /*
+   * No generated id on the ROOT: it was assigned here and read by nothing, and an id only one
+   * binding writes is a divergence G2 reports for nothing in return.
+   *
+   * The CONTENT gets one, because that id is real: it is what a `FormField`'s label points its
+   * `for` at, which is exactly what React's `useFormFieldControl` mints for the same element. An
+   * author writing this markup by hand supplies it; nothing had been minting it when the enhancer
+   * built the control instead.
+   */
+  if (!content.id) content.id = uniqueId("sk-editor-content");
 
   const readOnly = root.hasAttribute("data-readonly");
   const disabled = root.hasAttribute("data-disabled");
@@ -229,7 +238,7 @@ function connect(root: HTMLElement): () => void {
     submit.type = "submit";
     submit.className = "sk-button sk-interactive";
     submit.dataset.size = "sm";
-    submit.dataset.variant = "accent";
+    submit.dataset.tone = "accent";
     submit.textContent = "Añadir";
 
     form.append(input, submit);

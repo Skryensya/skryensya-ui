@@ -1,4 +1,5 @@
 import { paginationRange } from "@skryensya/core/pagination";
+import { placeholderLines } from "@skryensya/core/placeholder";
 import type {
   ComponentContract,
   ContractSignature,
@@ -575,6 +576,15 @@ function computedWindow(
     ),
   );
 
+  /*
+   * A paragraph skeleton's lines: N entries carrying nothing at all. The count is the whole datum,
+   * and how wide each line runs is the stylesheet's (`.sk-placeholder__line`'s nth-child cycle), so
+   * an entry has no options and no slots to fill. React builds the same N from `placeholderLines`.
+   */
+  if (spec.window === "skeleton-lines") {
+    return Array.from({ length: placeholderLines(args[0] ?? 1) }, (): ItemInput => ({ slots: {} }));
+  }
+
   // A gap is an entry with no page: `whenItemMissing` then tells the two shapes apart, the same way
   // a breadcrumb tells a link from the page you are on.
   return paginationRange(args[0] ?? 1, args[1] ?? 0, args[2]).map(
@@ -651,6 +661,15 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
       out.push(attr(attrName, option.falseValue));
       continue;
     }
+    /*
+     * A boolean that declares a `falseValue` and NO `trueValue` writes nothing when true: the
+     * attribute exists only to say false. `chart`'s `labels` is the shape, and the only one in the
+     * catalogue: the stylesheet has a rule for `[data-labels="false"]` and none for the true case,
+     * because true is simply "labels, as always". Falling through to `trueValue ?? ""` wrote a
+     * meaningless `data-labels=""` that React had never written, which G2 read as a divergence.
+     * A boolean with NEITHER value still gets the empty-string presence form it always had.
+     */
+    if (value === true && option.trueValue === undefined && option.falseValue !== undefined) continue;
     out.push(
       value === true
         ? attr(attrName, option.trueValue ?? "")
@@ -756,8 +775,19 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
         contract.options[rule.equalsOption]?.default;
       if (String(value) !== String(other)) continue;
     }
-    for (const [name, literal] of Object.entries(rule.attrs))
-      out.push(attr(name, literal));
+    /*
+     * REPLACES a base attribute of the same name rather than being appended beside it. "When this
+     * option holds, this attribute is X" can only mean replacement: emitted as a second copy, the
+     * HTML parser keeps the FIRST one and the conditional value is silently discarded, which is
+     * invalid markup that looks like it worked. Found on comment-thread's vote buttons, where a
+     * base `aria-pressed="false"` and a conditional `"true"` both landed and every voted button
+     * announced itself as not pressed.
+     */
+    for (const [name, literal] of Object.entries(rule.attrs)) {
+      const at = out.findIndex((written) => written.startsWith(`${name}="`) || written === name);
+      if (at === -1) out.push(attr(name, literal));
+      else out[at] = attr(name, literal);
+    }
   }
 
 
@@ -1226,7 +1256,7 @@ function styleProp(declarations: readonly string[], depth: number): string {
  *     footer={
  *       <>
  *         <Button variant="ghost">Cancelar</Button>
- *         <Button variant="accent">Archivar</Button>
+ *         <Button tone="accent">Archivar</Button>
  *       </>
  *     }
  *

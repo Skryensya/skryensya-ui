@@ -76,6 +76,7 @@ export const tagContract = {
             attrs: {
               type: "button",
               "data-variant": "ghost",
+              "data-tone": "neutral",
               "data-size": "sm",
               "data-icon-only": "",
               "data-sk-button": "",

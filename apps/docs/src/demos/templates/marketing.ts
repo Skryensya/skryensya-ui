@@ -99,7 +99,7 @@ export const marketingTree = (t: Translate): UsageTree => ({
             {
               contract: "button",
               signature: "Button.action",
-              options: { variant: "accent" },
+              options: { tone: "accent" },
               children: t("demo.marketing.cta"),
             },
           ],
@@ -162,7 +162,7 @@ export const marketingTree = (t: Translate): UsageTree => ({
                       {
                         contract: "button",
                         signature: "Button.action",
-                        options: { variant: "accent", size: "lg" },
+                        options: { tone: "accent", size: "lg" },
                         children: t("demo.marketing.heroPrimary"),
                       },
                       {
@@ -242,7 +242,7 @@ export const marketingTree = (t: Translate): UsageTree => ({
                     {
                       contract: "button",
                       signature: "Button.action",
-                      options: { variant: "accent", size: "lg" },
+                      options: { tone: "accent", size: "lg" },
                       children: t("demo.marketing.cta"),
                     },
                   ],

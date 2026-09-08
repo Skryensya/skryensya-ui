@@ -1,6 +1,6 @@
 # Commit messages
 
-- Format: `type(scope opcional): descripcion`
+- Format: `type(optional scope): description`
 - Types: `feat fix docs style refactor perf test build ci chore revert`
 - The subject is capped at **100 characters**. Anything longer belongs in the body.
 - The description is free text: it may start uppercase and may end with a period.

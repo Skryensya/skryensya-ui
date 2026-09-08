@@ -160,9 +160,9 @@ rules.
 ### Commit messages
 
 ```
-type(scope opcional): descripcion
+type(optional scope): description
 
-Cuerpo opcional, despues de una linea en blanco.
+Optional body, after a blank line.
 ```
 
 Types: `feat fix docs style refactor perf test build ci chore revert`. The scope is optional and the

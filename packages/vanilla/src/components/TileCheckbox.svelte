@@ -7,10 +7,10 @@
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
-   * TILE CHECKBOX, sobre `@zag-js/checkbox` (la máquina que usa React en tile.tsx). El `<label>` es la
-   * raíz (getRootProps) y el `<input type=checkbox data-part=input>` autorado es el input oculto de Zag
-   * (getHiddenInputProps): Zag lo controla y el control visual es el `[data-part=indicator]` autorado,
-   * estilado por el `data-state` que Zag pone en la raíz. Mismo modelo que React.
+   * TILE CHECKBOX, over `@zag-js/checkbox` (the machine React uses in tile.tsx). The `<label>` is the
+   * root (getRootProps) and the authored `<input type=checkbox data-part=input>` is Zag's hidden input
+   * (getHiddenInputProps): Zag controls it and the visual control is the authored
+   * `[data-part=indicator]`, styled by the `data-state` Zag puts on the root. Same model as React.
    */
   const root = getRoot();
   const input = root.querySelector<HTMLInputElement>('input[type="checkbox"][data-part="input"], input[type="checkbox"]');
@@ -39,9 +39,9 @@
   $effect(() => {
     applyZagProps(root, api.getRootProps() as DomProps);
     applyZagProps(input, api.getHiddenInputProps() as DomProps);
-    // `checked`/`indeterminate` son PROPIEDADES vivas del input, no atributos: setAttribute no las
-    // sincroniza (y el form.reset del navegador vuelve al atributo). Las espejamos desde el estado de
-    // Zag, que es la fuente de verdad (incluye la restauración en reset).
+    // `checked`/`indeterminate` are live PROPERTIES of the input, not attributes: setAttribute does not
+    // sync them (and the browser's form.reset goes back to the attribute). We mirror them from Zag's
+    // state, which is the source of truth (restoration on reset included).
     input.checked = api.checked;
     input.indeterminate = api.indeterminate;
     scopeTile(root);

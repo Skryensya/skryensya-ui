@@ -1,8 +1,8 @@
-# La estructura vive en packages/core/src/icon-state-button.ts. Acá sólo por qué se elige.
+# The structure lives in packages/core/src/icon-state-button.ts. Here, only why it is chosen.
 #
-# A diferencia del resto de las signatures acá, esta no tiene opinión de comportamiento: no dice
-# cuándo cambia el estado ni qué hace un click. useWhen/avoidWhen hablan de la ANATOMÍA (un botón
-# ícono con N estados con nombre), no de un caso de uso terminado.
+# Unlike the rest of the signatures here, this one has no opinion about behavior: it does not say when
+# the state changes or what a click does. useWhen/avoidWhen talk about the ANATOMY (an icon button with
+# N named states), not about a finished use case.
 
 IconStateButton:
   useWhen:

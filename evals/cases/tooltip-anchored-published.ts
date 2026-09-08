@@ -9,7 +9,7 @@ export const tooltipAnchoredPublishedCase: EvalCase = {
   notes: [
     "Guarda la publicación de las familias ANCLADAS (tooltip, popover, menu, select, combobox, " +
       "date-picker, calendar, split-button), bloqueadas en su momento por la divergencia " +
-      "portal-vs-markup entre bindings (ver plataforma-ai-ui.md). `artifacts/ai-manifest.json` " +
+      "portal-vs-markup entre bindings (ver ai-ui-platform.md). `artifacts/ai-manifest.json` " +
       "confirma que las 65 familias publicadas ya incluyen las ocho; esta entrada existe para que " +
       "una regresión que las vuelva a bloquear falle acá primero, no en un agente en producción.",
   ],

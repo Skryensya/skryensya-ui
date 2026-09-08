@@ -39,13 +39,13 @@ describe("TileSwitch (@zag-js/checkbox) contracts", () => {
     const root = form.querySelector<HTMLElement>("[data-sk-tile-switch]")!;
     const input = getByRole(root, "switch") as HTMLInputElement;
 
-    // form-association: el input participa del form (name/value), como en React
+    // form-association: the input takes part in the form (name/value), as in React
     expect(input.form).toBe(form);
     expect(input.name).toBe("deploy");
-    // default-checked: arranca marcado y el data-state lo refleja
+    // default-checked: it starts checked and data-state reflects it
     expect(input.checked).toBe(true);
     expect(root.dataset.state).toBe("checked");
-    // switch nunca es un tercer estado: el role lo distingue de TileCheckbox, no un flag propio
+    // a switch is never a third state: the role is what tells it apart from TileCheckbox, not a flag of its own
     expect(input.getAttribute("role")).toBe("switch");
   });
 });

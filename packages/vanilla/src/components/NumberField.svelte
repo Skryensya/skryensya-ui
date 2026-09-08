@@ -6,9 +6,9 @@
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
-   * NUMBER FIELD, enhancer machine-backed sobre `@zag-js/number-input` (la MISMA máquina que usa
-   * React, vía `@skryensya/core/machines`). No renderiza estructura: escanea su markup autorado
-   * y parchea los atributos que devuelve `connect` sobre esos nodos.
+   * NUMBER FIELD, a machine-backed enhancer over `@zag-js/number-input` (the SAME machine React uses,
+   * via `@skryensya/core/machines`). It renders no structure: it scans its authored markup and patches
+   * the attributes `connect` returns onto those nodes.
    */
   const root = getRoot();
 
@@ -18,9 +18,9 @@
   const decrement = root.querySelector<HTMLButtonElement>("[data-sk-number-field-decrement]");
   const increment = root.querySelector<HTMLButtonElement>("[data-sk-number-field-increment]");
 
-  // Capturado UNA vez, nunca releído del DOM: `getRootProps().id` devuelve un id namespaced que
-  // `applyZagProps` escribe de vuelta sobre `root.id`. Leerlo en vivo desde el factory reactivo de
-  // `useMachine` retroalimentaría ese prefijo en cada recomputación.
+  // Captured ONCE, never re-read from the DOM: `getRootProps().id` returns a namespaced id that
+  // `applyZagProps` writes back onto `root.id`. Reading it live from `useMachine`'s reactive factory
+  // would feed that prefix back on every recomputation.
   const machineId = root.id || uniqueId("sk-number-field");
 
   const numberOf = (value: string | undefined) => (!value ? undefined : Number(value));
@@ -52,8 +52,8 @@
 
   const api = $derived(numberInput.connect(service, normalizeProps));
 
-  // Markup incompleto: el enhancer se queda mudo, como el conector imperativo que reemplaza (nunca
-  // rompe la página por una raíz mal autorada).
+  // Incomplete markup: the enhancer stays silent, like the imperative connector it replaces (it never
+  // breaks the page over a badly authored root).
   $effect(() => {
     if (!label || !control || !input || !decrement || !increment) return;
     applyZagProps(root, api.getRootProps() as DomProps);

@@ -16,9 +16,9 @@
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
-   * MENU, enhancer machine-backed sobre `@zag-js/menu` (la MISMA máquina que usa React, vía
-   * `@skryensya/core/machines`). No renderiza estructura: escanea su markup autorado y parchea los
-   * atributos que devuelve `connect` sobre esos nodos.
+   * MENU, a machine-backed enhancer over `@zag-js/menu` (the SAME machine React uses, via
+   * `@skryensya/core/machines`). It renders no structure: it scans its authored markup and patches the
+   * attributes `connect` returns onto those nodes.
    */
   const root = getRoot();
 
@@ -63,13 +63,13 @@
     }));
 
   /*
-   * El pattern Anclaje (ADR-25). SOLO el TRIGGER (botón) entra por esa ruta: un context trigger no
-   * es un punto fijo del layout, es la región que capturó el right-click, y la machine ya resuelve
-   * ese caso sola con `getContextTriggerProps`/`anchorPoint`.
+   * The Anchoring pattern (ADR-25). ONLY the TRIGGER (button) goes down that path: a context trigger is
+   * not a fixed point of the layout, it is the region that captured the right-click, and the machine
+   * already resolves that case on its own with `getContextTriggerProps`/`anchorPoint`.
    *
-   * Capturado UNA vez: `getRootProps` de este machine no toca `root.id`, pero el trigger/content sí
-   * reciben ids namespaced que `applyZagProps` escribe de vuelta. El mismo motivo por el que el id
-   * del machine nunca se relee en vivo del DOM en el resto de esta migración.
+   * Captured ONCE: this machine's `getRootProps` does not touch `root.id`, but the trigger/content do
+   * receive namespaced ids that `applyZagProps` writes back. The same reason the machine's id is never
+   * re-read live from the DOM anywhere else in this migration.
    */
   const menuId = root.id || uniqueId("sk-menu");
   const anchorEl = trigger;
@@ -116,17 +116,17 @@
 
   const api = $derived(menu.connect(service, normalizeProps));
 
-  // Ligado padre/hijo: un submenú encuentra su padre por closest() sobre el DOM. `parentRoot`/
-  // `parent` se resuelven ya, síncronos, porque el registro (`menu-registry.ts`) es del padre HACIA
-  // ABAJO (el padre se registra ANTES de que su hijo empiece a montar, mismo orden que garantiza
-  // querySelectorAll).
+  // Parent/child binding: a submenu finds its parent with closest() over the DOM. `parentRoot`/
+  // `parent` resolve right away, synchronously, because the registry (`menu-registry.ts`) is filled
+  // from the parent DOWNWARD (the parent registers BEFORE its child starts mounting, the same order
+  // querySelectorAll guarantees).
   const parentRoot = root.parentElement?.closest<HTMLElement>(selector.root);
   const parent = parentRoot ? getMenuInstance(parentRoot) : undefined;
   setMenuInstance(root, { service, getApi: () => api });
 
   /*
-   * Vanilla nunca portala: cada root de submenú sigue siendo descendiente real del que lleva la
-   * flag, así que `closest()` solo la encuentra en este root o en un ancestro.
+   * Vanilla never portals: every submenu root is still a real descendant of the one carrying the flag,
+   * so `closest()` only finds it on this root or on an ancestor.
    */
   const flaggedRoot = root.closest<HTMLElement>(`[${menuAttrs.debugSafetyTriangle}]`);
   const readout: IntentReadoutHandle | null = flaggedRoot
@@ -135,9 +135,9 @@
   const ownsReadout = flaggedRoot === root;
 
   /*
-   * La zona segura (core/src/menu-safe-area.ts) pertenece al SUBMENÚ, montada en el trigger del que
-   * cuelga: es lo que mantiene el puntero contando como ese trigger mientras el lector cruza las
-   * filas entre ellos. Un menú de nivel superior no tiene ese corredor.
+   * The safe area (core/src/menu-safe-area.ts) belongs to the SUBMENU, mounted on the trigger it hangs
+   * off: it is what keeps the pointer counting as that trigger while the reader crosses the rows between
+   * them. A top-level menu has no such corridor.
    */
   let safeArea: MenuSafeAreaHandle | null = null;
   if (parent && trigger) {
@@ -213,12 +213,12 @@
     if (!ready) return;
 
     /*
-     * Recién ACÁ, no en el cuerpo del script: `@zag-js/svelte`'s `useMachine` arranca la máquina
-     * (status → Started) desde SU PROPIO onMount, registrado antes que este por orden de
-     * declaración. `send()`. Lo que `setParent`/`setChild` disparan por debajo. Descarta en
-     * silencio cualquier evento mandado antes de eso (`status !== Started`), así que hacerlo en el
-     * top level del script (antes de que exista NINGÚN onMount) nunca movía `isSubmenu`, y el
-     * primer render de un submenú salía con `data-part="trigger"` en vez de `"trigger-item"`.
+     * Only HERE, not in the script body: `@zag-js/svelte`'s `useMachine` starts the machine
+     * (status → Started) from ITS OWN onMount, registered before this one by declaration order.
+     * `send()`. Which is what `setParent`/`setChild` fire underneath. Silently discards any event sent
+     * before that (`status !== Started`), so doing it at the script's top level (before ANY onMount
+     * exists) never moved `isSubmenu`, and a submenu's first render came out with `data-part="trigger"`
+     * instead of `"trigger-item"`.
      */
     if (parent) {
       menu.connect(service, normalizeProps).setParent(parent.service);
@@ -231,9 +231,9 @@
     for (const item of items) cleanups.push(bindZagEvents(item.node, () => itemProps(item)));
 
     /*
-     * Aiming: mientras el puntero está SOBRE el trigger, no en `pointerleave` (que ya sería un
-     * evento tarde). `addEventListener` liso, no un prop de Zag envuelto: esto solo AGREGA un
-     * handler, nunca reemplaza uno de la máquina.
+     * Aiming: while the pointer is OVER the trigger, not on `pointerleave` (which would already be an
+     * event too late). A plain `addEventListener`, not a wrapped Zag prop: this only ADDS a handler, it
+     * never replaces one of the machine's.
      */
     if (safeArea && trigger) {
       const aim = (event: PointerEvent) => {

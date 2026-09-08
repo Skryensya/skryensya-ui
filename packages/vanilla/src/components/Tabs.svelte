@@ -6,11 +6,11 @@
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
-   * TABS, enhancer machine-backed sobre `@zag-js/tabs` (la MISMA máquina que usa React, vía
-   * @skryensya/core/machines). No renderiza estructura: escanea su markup autorado
-   * (`[data-sk-tabs-list]` / `[data-sk-tabs-trigger]` / `[data-sk-tabs-content]`, cada uno con
-   * `data-value`) y parchea los atributos que devuelve `connect` sobre esos nodos. Preserva el
-   * contrato viejo: espeja `api.value` en `data-value` del root y emite `sk-value-change`.
+   * TABS, a machine-backed enhancer over `@zag-js/tabs` (the SAME machine React uses, via
+   * @skryensya/core/machines). It renders no structure: it scans its authored markup
+   * (`[data-sk-tabs-list]` / `[data-sk-tabs-trigger]` / `[data-sk-tabs-content]`, each with
+   * `data-value`) and patches the attributes `connect` returns onto those nodes. It preserves the old
+   * contract: it mirrors `api.value` in the root's `data-value` and emits `sk-value-change`.
    */
   const root = getRoot();
 
@@ -41,7 +41,7 @@
   const activationMode: "automatic" | "manual" =
     root.getAttribute("data-activation-mode") === "manual" ? "manual" : "automatic";
 
-  // El valor inicial: el `data-value` autorado si apunta a un tab habilitado, si no el primer habilitado.
+  // The initial value: the authored `data-value` if it points at an enabled tab, otherwise the first enabled one.
   const enabled = items.filter((item) => !item.disabled);
   const authored = root.getAttribute("data-value");
   const defaultValue = (authored && enabled.some((i) => i.value === authored) ? authored : enabled[0]?.value) ?? null;
@@ -61,8 +61,8 @@
 
   $effect(() => {
     applyZagProps(root, api.getRootProps() as DomProps);
-    // Espeja el valor seleccionado en `data-value`, como hacía el enhancer viejo (algún CSS/consumidor
-    // lo lee). Zag no lo pone en el root por su cuenta.
+    // Mirrors the selected value in `data-value`, as the old enhancer did (some CSS/consumer reads it).
+    // Zag does not put it on the root on its own.
     root.setAttribute("data-value", api.value ?? "");
     if (list) applyZagProps(list, api.getListProps() as DomProps);
     for (const item of items) {
@@ -78,8 +78,8 @@
     }
   });
 
-  // Los handlers de Zag (onClick/onKeyDown/onFocus) se cablean una vez y se re-leen en cada disparo:
-  // la máquina cambia de estado y con ella el closure.
+  // Zag's handlers (onClick/onKeyDown/onFocus) are wired once and re-read on every firing: the machine
+  // changes state and with it the closure.
   const cleanups: Array<() => void> = [];
   onMount(() => {
     if (list) {

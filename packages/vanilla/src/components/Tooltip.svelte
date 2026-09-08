@@ -19,10 +19,10 @@
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
-   * TOOLTIP, enhancer machine-backed sobre `@zag-js/tooltip` (la MISMA máquina que usa React, vía
-   * @skryensya/core/machines). No renderiza estructura: escanea el markup autorado
-   * (`[data-sk-anchor-trigger]` / `[data-sk-anchor-positioner]` / `[data-sk-anchor-content]`) y
-   * parchea sobre esos nodos los atributos que devuelve `connect`.
+   * TOOLTIP, a machine-backed enhancer over `@zag-js/tooltip` (the SAME machine React uses, via
+   * @skryensya/core/machines). It renders no structure: it scans the authored markup
+   * (`[data-sk-anchor-trigger]` / `[data-sk-anchor-positioner]` / `[data-sk-anchor-content]`) and
+   * patches onto those nodes the attributes `connect` returns.
    */
   const root = getRoot();
 
@@ -30,9 +30,9 @@
   const positioner = root.querySelector<HTMLElement>("[data-sk-anchor-positioner]");
   const content = root.querySelector<HTMLElement>("[data-sk-anchor-content]");
   /*
-   * La flecha es OPCIONAL: sin este nodo no hay flecha, y ése es el default. Se busca por la clase del
-   * pattern y no por un `data-sk-*` propio porque no hay nada que este enhancer le tenga que decir en
-   * la ruta del navegador: la coloca la hoja. Sólo hace falta encontrarla para el fallback.
+   * The arrow is OPTIONAL: without this node there is no arrow, and that is the default. It is looked up
+   * by the pattern's class and not by a `data-sk-*` of its own because there is nothing this enhancer
+   * has to tell it on the browser path: the stylesheet places it. It only needs to be found for the fallback.
    */
   const arrow = positioner?.querySelector<HTMLElement>(`.${anchoredParts.arrow}`) ?? null;
 
@@ -45,23 +45,22 @@
     return Number.isFinite(value) ? value : undefined;
   };
 
-  // `interactive` es el "hoverable" de WCAG 1.4.13: mantiene el tooltip abierto mientras el puntero
-  // viaja hacia él. Apagado por defecto (ver core/tooltip.ts); se enciende por markup y el CSS lee el
-  // mismo atributo para devolverle `pointer-events` al contenido.
-  // Encendido por defecto: es lo que cumple WCAG 1.4.13 "hoverable" (ver core/tooltip.ts). El
-  // opt-out es explícito y es salirse del criterio a sabiendas.
+  // `interactive` is WCAG 1.4.13's "hoverable": it keeps the tooltip open while the pointer travels
+  // toward it. Off by default (see core/tooltip.ts); turned on through markup, and the CSS reads the
+  // same attribute to give `pointer-events` back to the content.
+  // On by default: it is what satisfies WCAG 1.4.13 "hoverable" (see core/tooltip.ts). The opt-out is
+  // explicit and is stepping outside the criterion knowingly.
   const interactive = root.getAttribute("data-interactive") !== "false";
 
   /*
-   * La colocación se autora en el root y se copia al positioner, que es donde la lee la hoja (en React
-   * el positioner se portalea, así que no puede depender de la herencia). Un valor que no esté en el
-   * juego de cuatro se ignora.
+   * The placement is authored on the root and copied to the positioner, which is where the stylesheet
+   * reads it (in React the positioner is portaled, so it cannot depend on inheritance). A value outside
+   * the set of four is ignored.
    *
-   * SE RESUELVE EL DEFAULT en vez de dejar el atributo afuera. La caja se las arregla sin él, la
-   * flecha no: sus reglas van por `[data-sk-placement]` y el default del pattern es block-end,
-   * mientras que el de un tooltip es block-start, así que un tooltip sin placement autorada terminaba
-   * con la caja arriba y la flecha abajo. Escribir el lado resuelto hace que las dos, y la machine,
-   * digan lo mismo.
+   * THE DEFAULT IS RESOLVED instead of leaving the attribute out. The box manages without it, the arrow
+   * does not: its rules go through `[data-sk-placement]` and the pattern's default is block-end, while a
+   * tooltip's is block-start, so a tooltip with no authored placement ended up with the box above and
+   * the arrow below. Writing the resolved side makes both of them, and the machine, say the same thing.
    */
   const authoredPlacement = root.getAttribute("data-sk-placement");
   const placement = tooltipPlacements.includes(authoredPlacement as TooltipPlacement)
@@ -75,7 +74,7 @@
     openDelay: numberAttr("data-open-delay"),
     closeDelay: numberAttr("data-close-delay"),
     interactive,
-    // Sólo pesa en el fallback JS: con anclas, `position-area` ya colocó y Zag no posiciona.
+    // Only matters on the JS fallback: with anchors, `position-area` already placed it and Zag does not position.
     positioning: { placement: tooltipPlacementToZag[placement] },
     disabled: root.hasAttribute("data-disabled"),
     onOpenChange(details: { open: boolean }) {
@@ -88,13 +87,13 @@
   const api = $derived(tooltip.connect(service, normalizeProps));
 
   /*
-   * La ruta de anchor positioning, que ahora es del pattern Anclaje (ADR-25). Cuando el navegador
-   * tiene la API, el que coloca es el NAVEGADOR: cableamos un nombre único entre el trigger y el
-   * positioner, y NO le pasamos al positioner el `style` inline que trae Zag, porque serían dos
-   * motores de posicionamiento peleando. Sin la API, el `style` de Zag pasa intacto y él posiciona.
+   * The anchor positioning path, which now belongs to the Anchoring pattern (ADR-25). When the browser
+   * has the API, the one that places is the BROWSER: we wire a unique name between the trigger and the
+   * positioner, and we do NOT pass the positioner the inline `style` Zag brings, because that would be
+   * two positioning engines fighting. Without the API, Zag's `style` passes through untouched and it positions.
    *
-   * El nombre va sobre LOS DOS elementos y no se hereda del root: en React el positioner se portalea
-   * al body, y este enhancer usa el mismo helper para que las dos capas se comporten igual.
+   * The name goes on BOTH elements and is not inherited from the root: in React the positioner is
+   * portaled to the body, and this enhancer uses the same helper so both layers behave the same.
    */
   const anchored = supportsAnchorPositioning();
   let unbindAnchor: (() => void) | undefined;
@@ -112,15 +111,15 @@
     if (trigger) applyZagProps(trigger, api.getTriggerProps() as DomProps);
     if (positioner) applyZagProps(positioner, positionerProps(api.getPositionerProps() as DomProps));
     /*
-     * EN LA RUTA DEL NAVEGADOR NO SE LE ESCRIBE NADA A LA FLECHA: la coloca la hoja contra el mismo
-     * ancla, y su estado abierto lo lee del contenido con `:has()`.
+     * ON THE BROWSER PATH NOTHING IS WRITTEN TO THE ARROW: the stylesheet places it against the same
+     * anchor, and it reads its open state from the content with `:has()`.
      *
-     * En el fallback sí, porque ahí la coloca la machine: `getArrowProps` la marca como
-     * `[data-part=arrow]`, que es por donde `@zag-js/popper` la encuentra para moverla, y `data-side`
-     * (el lado que la machine RESOLVIÓ) es lo que la hoja lee para rotarla. Ese lado es dato firme
-     * sólo acá: en la otra ruta el que decide dónde quedó la caja es el navegador, y la opinión de la
-     * machine puede no coincidir. Se lee de las props y no del DOM para no depender de en qué orden se
-     * parchean los nodos.
+     * On the fallback it is, because there the machine places it: `getArrowProps` marks it as
+     * `[data-part=arrow]`, which is how `@zag-js/popper` finds it to move it, and `data-side` (the side
+     * the machine RESOLVED) is what the stylesheet reads to rotate it. That side is firm data only
+     * here: on the other path the one who decides where the box ended up is the browser, and the
+     * machine's opinion may not match. It is read from the props and not from the DOM so it does not
+     * depend on the order in which the nodes are patched.
      */
     if (arrow && !anchored) {
       applyZagProps(arrow, api.getArrowProps() as DomProps);
@@ -129,16 +128,16 @@
     }
     if (content) {
       applyZagProps(content, contentProps);
-      // El CSS necesita saber si el contenido es alcanzable por el puntero; el estado vive en la
-      // máquina, así que se espeja como atributo en vez de duplicar la condición en la hoja. Sólo
-      // se escribe el opt-out: alcanzable es el defecto de la hoja.
+      // The CSS needs to know whether the content is reachable by the pointer; the state lives in the
+      // machine, so it is mirrored as an attribute instead of duplicating the condition in the sheet. Only
+      // the opt-out is written: reachable is the sheet's default.
       if (interactive) content.removeAttribute("data-interactive");
       else content.setAttribute("data-interactive", "false");
     }
   });
 
-  // Los handlers de Zag se cablean una vez y se re-leen en cada disparo: la máquina cambia de estado
-  // y con ella el closure.
+  // Zag's handlers are wired once and re-read on every firing: the machine changes state and with it
+  // the closure.
   const cleanups: Array<() => void> = [];
   onMount(() => {
     if (trigger) {

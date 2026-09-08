@@ -160,7 +160,7 @@ export type CommentProps = Omit<HTMLAttributes<HTMLElement>, "children" | "id"> 
   author: ReactNode;
   /** Makes the author's avatar and name one link to this profile URL. */
   profileHref?: string;
-  /** Pre-formatted ("hace 3h"). This component never computes relative time. */
+  /** Pre-formatted ("3h ago"). This component never computes relative time. */
   timestamp?: ReactNode;
   /** This comment's identity, for whatever the consumer's own handlers report back. */
   id?: string;

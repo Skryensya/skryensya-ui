@@ -1,6 +1,6 @@
 # evals
 
-F7 from `docs/plataforma-ai-ui.md`: a corpus of product intents, in Spanish and English, each
+F7 from `docs/ai-ui-platform.md`: a corpus of product intents, in Spanish and English, each
 paired with a usage tree. `run.ts` re-validates every tree against G0-G3 (the same gate
 `validate_ui` runs) on every `pnpm check`, so a contract change that quietly breaks a composition
 this corpus already proved correct fails here first, before it fails an agent.
@@ -9,7 +9,7 @@ this corpus already proved correct fails here first, before it fails an agent.
 
 Twelve cases (`case.ts` defines the shape, `cases/*.ts` hold them, `index.ts` aggregates them):
 
-**Regressions**. Each one recasts a documented historical bug from `plataforma-ai-ui.md` as a
+**Regressions**. Each one recasts a documented historical bug from `ai-ui-platform.md` as a
 product intent, so the bug cannot silently come back:
 
 - `radio-group-value-at-group`. Selection lives on the group (`value` + `selectedBy`), not on

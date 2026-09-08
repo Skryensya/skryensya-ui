@@ -1,4 +1,4 @@
-# La estructura vive en packages/core/src/nav-list.ts. Acá sólo por qué se elige cada firma.
+# The structure lives in packages/core/src/nav-list.ts. Here, only why each signature is chosen.
 
 NavList:
   useWhen:
@@ -27,7 +27,7 @@ NavListLink:
   alternatives:
     - Button.navigation
 
-# `nested` (slot de NavListLink) es la ÚNICA forma soportada de anidar: un NavListGroup metido
-# directo en el `children` de otro grupo no es HTML válido (un `<div>` no es hijo legal de `<ul>`,
-# sólo `<li>` lo es), por eso el slot vive en el LINK y no en el grupo.
+# `nested` (NavListLink's slot) is the ONLY supported way to nest: a NavListGroup put directly into
+# another group's `children` is not valid HTML (a `<div>` is not a legal child of a `<ul>`, only `<li>`
+# is), which is why the slot lives on the LINK and not on the group.
 

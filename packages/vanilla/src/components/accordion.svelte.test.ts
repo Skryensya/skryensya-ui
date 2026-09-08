@@ -28,8 +28,8 @@ describe("Accordion (collapsible-per-item) contracts", () => {
     fireEvent.click(rollout);
     flushSync();
 
-    // Rollout abre de inmediato; Runtime cierra ANIMADO (collapsible lo mantiene visible hasta que la
-    // animación de salida termina, en jsdom no hay animación computada, así que resuelve en un raf).
+    // Rollout opens immediately; Runtime closes ANIMATED (collapsible keeps it visible until the exit
+    // animation finishes; in jsdom there is no computed animation, so it resolves within one raf).
     expect(rollout.getAttribute("aria-expanded")).toBe("true");
     await vi.waitFor(() => expect(runtime.getAttribute("aria-expanded")).toBe("false"));
     expect(handler).toHaveBeenCalledWith(expect.objectContaining({ detail: { value: "rollout" } }));

@@ -6,9 +6,9 @@
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
-   * FILE UPLOAD, enhancer machine-backed sobre `@zag-js/file-upload` (la MISMA máquina que usa
-   * React, vía `@skryensya/core/machines`). No renderiza estructura: escanea su markup autorado
-   * y parchea los atributos que devuelve `connect` sobre esos nodos.
+   * FILE UPLOAD, a machine-backed enhancer over `@zag-js/file-upload` (the SAME machine React uses, via
+   * `@skryensya/core/machines`). It renders no structure: it scans its authored markup and patches the
+   * attributes `connect` returns onto those nodes.
    */
   const root = getRoot();
 
@@ -18,9 +18,9 @@
   const trigger = root.querySelector<HTMLButtonElement>("[data-sk-file-upload-trigger]");
   const clear = root.querySelector<HTMLButtonElement>("[data-sk-file-upload-clear]");
 
-  // Capturado UNA vez, nunca releído del DOM: `getRootProps().id` devuelve un id namespaced que
-  // `applyZagProps` escribe de vuelta sobre `root.id`. Leerlo en vivo desde el factory reactivo de
-  // `useMachine` retroalimentaría ese prefijo en cada recomputación.
+  // Captured ONCE, never re-read from the DOM: `getRootProps().id` returns a namespaced id that
+  // `applyZagProps` writes back onto `root.id`. Reading it live from `useMachine`'s reactive factory
+  // would feed that prefix back on every recomputation.
   const machineId = root.id || uniqueId("sk-file-upload");
 
   const accept = input?.accept
@@ -55,7 +55,7 @@
 
   const api = $derived(fileUpload.connect(service, normalizeProps));
 
-  // Markup incompleto: el enhancer se queda mudo, como el conector imperativo que reemplaza.
+  // Incomplete markup: the enhancer stays silent, like the imperative connector it replaces.
   $effect(() => {
     if (!label || !dropzone || !input || !trigger) return;
     applyZagProps(root, api.getRootProps() as DomProps);

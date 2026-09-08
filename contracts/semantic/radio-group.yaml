@@ -1,4 +1,4 @@
-# La estructura vive en packages/core/src/selection.ts. Acá sólo por qué se elige.
+# The structure lives in packages/core/src/selection.ts. Here, only why it is chosen.
 
 RadioGroup:
   useWhen:

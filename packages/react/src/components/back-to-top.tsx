@@ -28,7 +28,7 @@ export type BackToTopProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "children" | "type"
 > & {
-  /** The accessible name. A destination, not an instruction: "Volver arriba". */
+  /** The accessible name. A destination, not an instruction: "Back to top". */
   children: ReactNode;
   /** Pixels scrolled from the start before it reveals itself. Default 400. */
   threshold?: number;

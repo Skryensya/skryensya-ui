@@ -13,10 +13,10 @@
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
-   * COMBOBOX, enhancer machine-backed sobre `@zag-js/combobox` (la MISMA máquina que usa React, vía
-   * `@skryensya/core/machines`). No renderiza estructura: escanea su markup autorado y parchea los
-   * atributos que devuelve `connect` sobre esos nodos. El filtro corre sobre los items AUTORADOS
-   * (el DOM sigue siendo la fuente de verdad), nunca sobre una lista que el binding inventa.
+   * COMBOBOX, a machine-backed enhancer over `@zag-js/combobox` (the SAME machine React uses, via
+   * `@skryensya/core/machines`). It renders no structure: it scans its authored markup and patches the
+   * attributes `connect` returns onto those nodes. The filter runs over the AUTHORED items (the DOM
+   * stays the source of truth), never over a list the binding invents.
    */
   const root = getRoot();
 
@@ -40,7 +40,7 @@
     status: "[data-sk-combobox-status]",
   } as const;
 
-  // Las teclas que mueven el resaltado dentro del listbox (las mismas que atiende la máquina).
+  // The keys that move the highlight inside the listbox (the same ones the machine handles).
   const navigationKeys = new Set(["ArrowDown", "ArrowUp", "Home", "End", "PageUp", "PageDown"]);
   const combiningMarks = /\p{M}+/gu;
   const searchKey = (value: string) => value.normalize("NFD").replace(combiningMarks, "").toLocaleLowerCase();
@@ -81,15 +81,15 @@
 
   const ready = Boolean(label && control && input && trigger && positioner && content);
 
-  // Capturado UNA vez, nunca releído del DOM: `getRootProps().id` devuelve un id namespaced
-  // (`combobox:${id}`) y `applyZagProps` lo escribe de vuelta sobre `root.id`. Leer `root.id` en
-  // vivo desde el factory reactivo de `useMachine` retroalimentaría ese prefijo en cada
-  // recomputación (`combobox:combobox:combobox:…`), que es exactamente lo que hacía crecer el id
-  // sin límite. El original imperativo nunca mutaba `root.id`; esto reproduce lo mismo.
+  // Captured ONCE, never re-read from the DOM: `getRootProps().id` returns a namespaced id
+  // (`combobox:${id}`) and `applyZagProps` writes it back onto `root.id`. Reading `root.id` live from
+  // `useMachine`'s reactive factory would feed that prefix back on every recomputation
+  // (`combobox:combobox:combobox:…`), which is exactly what made the id grow without bound. The
+  // imperative original never mutated `root.id`; this reproduces the same thing.
   const machineId = root.id || uniqueId("sk-combobox");
 
-  /* El pattern Anclaje (ADR-25). El ancla es el CONTROL entero, no el chevron: la lista se alinea
-   * con el campo que se está escribiendo. */
+  /* The Anchoring pattern (ADR-25). The anchor is the whole CONTROL, not the chevron: the list lines up
+   * with the field being typed into. */
   const anchorName = supportsAnchorPositioning() ? anchorNameFor(machineId) : null;
   let unbindAnchor: (() => void) | undefined;
 
@@ -180,8 +180,8 @@
       isItemDisabled: (item) => Boolean(item.disabled),
     });
 
-  // `$state.raw`: siempre se REEMPLAZA, nunca se muta un elemento adentro, así que no hace falta
-  // proxy profundo.
+  // `$state.raw`: it is always REPLACED, never mutated element by element, so a deep proxy is not
+  // needed.
   let visible = $state.raw(authored);
   const multiple = root.hasAttribute("data-multiple");
 
@@ -355,9 +355,9 @@
       cleanups.push(bindZagEvents(candidate.node, () => api.getItemProps({ item: candidate.item }) as DomProps));
 
     /*
-     * Los dos disparadores del foco virtual. Capture y passive: no se tocan, sólo se observan.
-     * `pointermove` sobre un ítem YA resaltado no llega a la máquina (Zag lo corta), así que el
-     * repintado no puede depender del effect de arriba.
+     * The two triggers of the virtual focus. Capture and passive: nothing is touched, only observed.
+     * A `pointermove` over an ALREADY highlighted item does not reach the machine (Zag cuts it off), so
+     * the repaint cannot depend on the effect above.
      */
     const onKeyboardHighlight = (event: Event) => {
       if (!navigationKeys.has((event as KeyboardEvent).key)) return;

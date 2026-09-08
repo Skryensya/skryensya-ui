@@ -29,22 +29,22 @@ export function bindEvents(element: Element, events: Events): () => void {
 }
 
 /*
- * ── El modo Zag/Svelte: parchear props de `connect` sobre markup autorado ──────────────────────────
+ * ── The Zag/Svelte mode: patching `connect` props onto authored markup ────────────────────────────
  *
- * Los `connect` de Zag devuelven objetos de props tipados como atributos del framework (sin index
- * signature): mezclan atributos, handlers `onX` y `style`. Estas dos funciones son el "patch-in-place"
- * del progressive enhancement, en vez de renderizar markup nuevo, sincronizan esas props sobre el HTML
- * autorado, preservando su contenido y sus clases BEM (nunca tocan `class`). Es la contraparte vanilla
- * de lo que hace `spreadProps` en el DOM del framework, y vive acá para que cada `.svelte` la reuse.
+ * Zag's `connect`s return prop objects typed as framework attributes (with no index signature): they
+ * mix attributes, `onX` handlers and `style`. These two functions are progressive enhancement's
+ * "patch-in-place": instead of rendering new markup, they sync those props onto the authored HTML,
+ * preserving its content and its BEM classes (they never touch `class`). It is the vanilla counterpart
+ * of what `spreadProps` does in the framework's DOM, and it lives here so every `.svelte` can reuse it.
  */
 
-// Los `connect` de Zag entregan props sin index signature; para iterarlas genéricamente las tratamos
-// como registro.
+// Zag's `connect`s hand back props with no index signature; to iterate them generically we treat them
+// as a record.
 export type DomProps = Record<string, unknown>;
 
 const isEventKey = (key: string) => /^on[A-Za-z]/.test(key);
 
-// Atributos que el navegador trata como booleanos: presencia = true.
+// Attributes the browser treats as booleans: presence = true.
 const BOOLEAN_ATTRS = new Set([
   "hidden",
   "disabled",
@@ -57,21 +57,21 @@ const BOOLEAN_ATTRS = new Set([
 ]);
 
 /*
- * Qué declaraciones inline puso ESTE runtime sobre cada nodo. El markup autorado también trae inline
- * styles (`style="--sk-carousel-slide-size: 26rem"`); sobrescribir el atributo entero los borraría, así
- * que parcheamos declaración por declaración y sólo removemos las que nosotros mismos habíamos puesto y
- * ya no vienen.
+ * Which inline declarations THIS runtime put on each node. Authored markup also brings inline styles
+ * (`style="--sk-carousel-slide-size: 26rem"`); overwriting the whole attribute would erase them, so we
+ * patch declaration by declaration and only remove the ones we had put there ourselves and that no
+ * longer come back.
  */
 const appliedStyleProps = new WeakMap<HTMLElement, Set<string>>();
 
 /*
- * Qué atributos puso ESTE runtime sobre cada nodo en el patch anterior. Igual que con los estilos:
- * Zag OMITE una prop de estado cuando pasa a falsa (`getItemProps` deja de incluir `data-highlighted`
- * en cuanto el ítem deja de estar resaltado, en vez de mandarlo en `false`), así que un patch que sólo
- * recorre las props presentes nunca ve el atributo viejo y no lo borra. Sin esto, `data-highlighted` /
- * `data-state` se ACUMULAN: al bajar con el teclado por una lista, cada fila que se resalta conserva la
- * marca y terminan varias resaltadas a la vez. Recordamos lo que escribimos y quitamos lo que ya no
- * vuelve, que es lo mismo que hace `spreadProps` de Zag (lo usa Select) y por lo que aquél no tiene el bug.
+ * Which attributes THIS runtime put on each node in the previous patch. Same as with the styles: Zag
+ * OMITS a state prop when it turns false (`getItemProps` stops including `data-highlighted` as soon as
+ * the item stops being highlighted, instead of sending it as `false`), so a patch that only walks the
+ * present props never sees the old attribute and does not remove it. Without this, `data-highlighted` /
+ * `data-state` ACCUMULATE: keyboarding down a list, every row that gets highlighted keeps the mark and
+ * several end up highlighted at once. We remember what we wrote and remove what no longer comes back,
+ * which is the same thing Zag's `spreadProps` does (Select uses it) and why that one does not have the bug.
  */
 const appliedAttrs = new WeakMap<Element, Set<string>>();
 
@@ -89,7 +89,7 @@ function parseStyleString(value: string): Array<[string, string]> {
     .filter((entry): entry is [string, string] => entry !== null);
 }
 
-/** camelCase de las props de Zag a la propiedad CSS real; las custom properties se dejan intactas. */
+/** camelCase of Zag's props to the real CSS property; custom properties are left untouched. */
 const cssProp = (key: string) =>
   key.startsWith("--")
     ? key
@@ -125,24 +125,24 @@ function applyStyle(node: HTMLElement, value: unknown): void {
 
 export type ApplyOptions = {
   /**
-   * Si escribir el `style` de las props. Por defecto sí.
+   * Whether to write the props' `style`. Yes by default.
    *
-   * Ponelo en `false` cuando la MÁQUINA también escriba estilos a mano sobre el mismo nodo. El
-   * `style` que devuelve `connect` es configuración estática (derivada de props que no cambian),
-   * pero un `$effect` lo re-aplica en CADA cambio de estado, y ahí le gana a lo que la máquina
-   * acaba de escribir imperativamente.
+   * Set it to `false` when the MACHINE also writes styles by hand on the same node. The `style`
+   * `connect` returns is static configuration (derived from props that do not change), but an
+   * `$effect` re-applies it on EVERY state change, and there it beats what the machine just wrote
+   * imperatively.
    *
-   * El caso que lo destapó: el carrusel pone `scroll-snap-type: none` mientras arrastrás, para
-   * poder mover el track a mano. El effect lo devolvía a `x mandatory` en el mismo frame, así que
-   * cada píxel de arrastre lo re-snapeaba, y mover el mouse 10px saltaba un slide entero. La
-   * configuración se aplica UNA vez; el estado es de la máquina.
+   * The case that uncovered it: the carousel sets `scroll-snap-type: none` while you drag, so it can
+   * move the track by hand. The effect returned it to `x mandatory` in the same frame, so every pixel
+   * of drag re-snapped it, and moving the mouse 10px jumped a whole slide. Configuration is applied
+   * ONCE; state belongs to the machine.
    */
   style?: boolean;
 };
 
 /**
- * Sincroniza un objeto de props de Zag sobre `node`. Ignora los handlers de eventos (se cablean con
- * {@link bindZagEvents}) y nunca pisa `class`, las clases BEM las autora el consumidor.
+ * Syncs a Zag props object onto `node`. It ignores event handlers (those are wired with
+ * {@link bindZagEvents}) and never overwrites `class`; the BEM classes are authored by the consumer.
  */
 export function applyZagProps(
   node: HTMLElement,
@@ -150,8 +150,8 @@ export function applyZagProps(
   options: ApplyOptions = {},
 ): void {
   const writeStyle = options.style !== false;
-  // Atributos que este patch deja PRESENTES sobre el nodo; al final quitamos los que pusimos antes
-  // y ya no vuelven (el estado que Zag omite en vez de mandar en falso).
+  // Attributes this patch leaves PRESENT on the node; at the end we remove the ones we had put there
+  // before and that no longer come back (the state Zag omits instead of sending as false).
   const owned = new Set<string>();
   const previous = appliedAttrs.get(node);
 
@@ -167,21 +167,21 @@ export function applyZagProps(
     }
 
     if (value === false || value === undefined || value === null) {
-      // aria-* booleanos necesitan el string "false" (siguen presentes); el resto se quita.
+      // Boolean aria-* attributes need the string "false" (they stay present); the rest are removed.
       if (value === false && key.startsWith("aria-")) {
         node.setAttribute(key, "false");
         owned.add(key);
       } else if (value === false || previous?.has(key)) {
         /*
-         * `false` es una opinión: la máquina dice que ese estado está apagado, y se quita.
+         * `false` is an opinion: the machine says that state is off, and it is removed.
          *
-         * `undefined` / `null` NO lo son: son la prop que la máquina no llena porque nadie se la
-         * pasó, y en markup autorado ese nombre puede ser del AUTOR. `getTriggerProps` de Zag
-         * tooltip devuelve `"data-value": undefined` cuando no se le da un `value`; borrarlo le
-         * arrancaba el `data-value` a cada `<button data-sk-segmented-option>` que además es
-         * trigger de un Tooltip, y Segmented se quedaba sin poder resolver en qué opción se hizo
-         * clic (los presets de pantalla del preview: Libre/Tablet/Móvil dejaban de responder).
-         * Sólo se borra lo que ESTE runtime había escrito antes.
+         * `undefined` / `null` are NOT: they are the prop the machine does not fill because nobody
+         * passed it, and in authored markup that name may belong to the AUTHOR. Zag tooltip's
+         * `getTriggerProps` returns `"data-value": undefined` when it is given no `value`; deleting it
+         * tore the `data-value` off every `<button data-sk-segmented-option>` that is also a
+         * Tooltip trigger, and Segmented was left unable to resolve which option had been
+         * clicked (the preview's screen presets: Free/Tablet/Mobile stopped responding).
+         * Only what THIS runtime had written before is deleted.
          */
         node.removeAttribute(key);
       }
@@ -200,36 +200,35 @@ export function applyZagProps(
     owned.add(key);
   }
 
-  // Barrido de lo obsoleto: un atributo que ESTE runtime escribió en el patch anterior y que las props
-  // de ahora ya no traen es un estado que se apagó (p. ej. `data-highlighted` de la fila que se dejó de
-  // resaltar). Nunca toca atributos autorados: sólo salen los que nosotros mismos pusimos.
+  // Sweep of the stale: an attribute THIS runtime wrote in the previous patch and that the current
+  // props no longer bring is a state that turned off (e.g. the `data-highlighted` of the row that
+  // stopped being highlighted). It never touches authored attributes: only the ones we put there leave.
   if (previous)
     for (const key of previous) if (!owned.has(key)) node.removeAttribute(key);
   appliedAttrs.set(node, owned);
 }
 
 /*
- * `applyZagProps` nunca pisa `class`: las clases BEM las autora el consumidor. Varios enhancers
- * necesitan una excepción puntual a esa regla: no para RENDERIZAR nada, sino para GARANTIZAR que
- * una clase estructural o del state layer (`sk-interactive`, `sk-tile--expandable`, `sk-anchor`)
- * está puesta incluso si el autor la olvidó, el mismo respaldo que daba el enhancer viejo antes de
- * esta migración. Antes esa excepción se reabría con un `classList.add` suelto en cada componente
- * que la necesitaba (nueve sitios, en siete archivos), cada uno con su propio comentario
- * reexplicando por qué. `ensureClasses` es el único lugar donde esa excepción existe: la regla de
- * `applyZagProps` sigue siendo "nunca clase" salvo por esta función nombrada, buscable, y las clases
- * que garantiza quedan documentadas en el call site, no reinventadas.
+ * `applyZagProps` never overwrites `class`: the BEM classes are authored by the consumer. Several
+ * enhancers need a specific exception to that rule: not to RENDER anything, but to GUARANTEE that a
+ * structural or state-layer class (`sk-interactive`, `sk-tile--expandable`, `sk-anchor`) is present
+ * even if the author forgot it, the same backstop the old enhancer gave before this migration. That
+ * exception used to be reopened with a loose `classList.add` in every component that needed it (nine
+ * sites, across seven files), each with its own comment re-explaining why. `ensureClasses` is the only
+ * place that exception exists: `applyZagProps`'s rule is still "never class" except through this named,
+ * searchable function, and the classes it guarantees are documented at the call site, not reinvented.
  */
 export function ensureClasses(node: HTMLElement, ...classes: readonly string[]): void {
   node.classList.add(...classes);
 }
 
-/** Nombre de evento DOM a partir de keys Svelte (`onclick`) o Vanilla (`onPointerDown`). */
+/** DOM event name from Svelte (`onclick`) or Vanilla (`onPointerDown`) keys. */
 const eventName = (key: string) => key.slice(2).toLowerCase();
 
 /**
- * Cablea los handlers de eventos de un objeto de props de Zag sobre `node`. `getProps` se re-lee en
- * cada disparo para usar siempre el handler vigente (la máquina cambia de estado y con ella el closure
- * de Zag). Devuelve una función que remueve todos los listeners agregados.
+ * Wires a Zag props object's event handlers onto `node`. `getProps` is re-read on every firing so the
+ * current handler is always used (the machine changes state and with it Zag's closure). Returns a
+ * function that removes every added listener.
  */
 export function bindZagEvents(
   node: HTMLElement,

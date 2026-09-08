@@ -7,12 +7,12 @@
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
-   * TILE SWITCH, sobre el mismo `@zag-js/checkbox` que TileCheckbox: un switch es un checkbox con
-   * `role="switch"` y sin estado indeterminado, la misma relación que Switch (packages/react
-   * selection.tsx) tiene con Checkbox. El `<label>` es la raíz (getRootProps) y el
-   * `<input type=checkbox data-part=input>` autorado es el input oculto de Zag
-   * (getHiddenInputProps): Zag lo controla y el control visual es el `[data-part=indicator]`
-   * autorado, estilado por el `data-state` que Zag pone en la raíz. Mismo modelo que React.
+   * TILE SWITCH, over the same `@zag-js/checkbox` as TileCheckbox: a switch is a checkbox with
+   * `role="switch"` and no indeterminate state, the same relationship Switch (packages/react
+   * selection.tsx) has with Checkbox. The `<label>` is the root (getRootProps) and the authored
+   * `<input type=checkbox data-part=input>` is Zag's hidden input (getHiddenInputProps): Zag controls
+   * it and the visual control is the authored `[data-part=indicator]`, styled by the `data-state` Zag
+   * puts on the root. Same model as React.
    */
   const root = getRoot();
   const input = root.querySelector<HTMLInputElement>('input[type="checkbox"][data-part="input"], input[type="checkbox"]');
@@ -40,9 +40,9 @@
   $effect(() => {
     applyZagProps(root, api.getRootProps() as DomProps);
     applyZagProps(input, api.getHiddenInputProps() as DomProps);
-    // `checked` es una PROPIEDAD viva del input, no un atributo: setAttribute no la sincroniza (y el
-    // form.reset del navegador vuelve al atributo). La espejamos desde el estado de Zag, que es la
-    // fuente de verdad (incluye la restauración en reset).
+    // `checked` is a live PROPERTY of the input, not an attribute: setAttribute does not sync it (and the
+    // browser's form.reset goes back to the attribute). We mirror it from Zag's state, which is the
+    // source of truth (restoration on reset included).
     input.checked = api.checked === true;
     scopeTile(root);
     input.setAttribute("data-part", "input");

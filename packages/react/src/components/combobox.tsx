@@ -11,7 +11,7 @@ const combiningMarks = /\p{M}+/gu;
 const searchKey = (value: string) =>
   value.normalize("NFD").replace(combiningMarks, "").toLocaleLowerCase();
 type HighlightSource = "keyboard" | "pointer" | undefined;
-// Las teclas que mueven el resaltado dentro del listbox (las mismas que atiende la máquina).
+// The keys that move the highlight inside the listbox (the same ones the machine handles).
 const navigationKeys = new Set([
   "ArrowDown",
   "ArrowUp",
@@ -186,8 +186,8 @@ export function Combobox({
   });
   const api = combobox.connect(service, normalizeProps);
 
-  /* El ancla es el CONTROL entero, no el botón del chevron: el listbox se alinea con el campo que
-   * el usuario está escribiendo, y anclarlo al chevron lo pegaría a un cuadrado de 32px. */
+  /* The anchor is the whole CONTROL, not the chevron button: the listbox lines up with the field the
+   * user is typing into, and anchoring it to the chevron would pin it to a 32px square. */
   const anchor = useAnchored(machineId);
   const inputProps = api.getInputProps();
   const describedBy =

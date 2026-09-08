@@ -1,5 +1,9 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [
+    "contracts/semantic/**",
+    "contracts/changelog/**"
+  ],
   "tasks": {
     "lint": {
       "inputs": [

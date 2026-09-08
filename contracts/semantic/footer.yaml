@@ -1,10 +1,9 @@
-# La estructura vive en packages/core/src/footer.ts. Acá sólo por qué se elige.
+# The structure lives in packages/core/src/footer.ts. Here, only why it is chosen.
 #
-# useWhen/avoidWhen es el único vocabulario que el compilador realmente lee de este archivo
-# (`ai-compiler/src/overlay.ts`'s `SignatureSemantics`). Las reglas de contenido y accesibilidad de
-# Footer viven ADENTRO de estas dos listas, en vez de campos nuevos que el compilador ignoraría en
-# silencio: un overlay con datos que nadie lee es peor que uno corto, porque parece completo y no lo
-# está.
+# useWhen/avoidWhen is the only vocabulary the compiler actually reads from this file
+# (`ai-compiler/src/overlay.ts`'s `SignatureSemantics`). Footer's content and accessibility rules live
+# INSIDE those two lists, rather than in new fields the compiler would ignore in silence: an overlay
+# with data nobody reads is worse than a short one, because it looks complete and is not.
 
 Footer:
   useWhen:

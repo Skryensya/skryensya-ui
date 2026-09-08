@@ -5,9 +5,9 @@ import { normalizeProps, Portal, useMachine, type PropTypes } from "@zag-js/reac
 import { useId, useState, type ReactNode, type RefObject } from "react";
 import { useAnchored } from "./anchored.js";
 
-// Sin depender de `@zag-js/color-picker` directamente (react no lo trae como dependencia propia,
-// sólo core la reexporta vía `machines.ts`): el tipo del `api` sale de la misma función `connect`,
-// igual que hace `DatePicker` con la suya.
+// Without depending on `@zag-js/color-picker` directly (react does not bring it as a dependency of its
+// own, core only re-exports it via `machines.ts`): the `api`'s type comes from the same `connect`
+// function, just like `DatePicker` does with its own.
 type ColorPickerApi = ReturnType<typeof colorPicker.connect<PropTypes>>;
 
 export type ColorPickerProps = {
@@ -110,11 +110,11 @@ function ColorPickerField({
       <input {...api.getHiddenInputProps()} aria-hidden="true" className={colorPickerParts.hiddenInput} />
       <div {...api.getControlProps()} {...anchor.anchor(colorPickerParts.control)}>
         {/*
-         * Zag SIEMPRE manda `aria-labelledby` (apuntando al label del campo) además de su propio
-         * `aria-label` ("select color. current color is ..."); `aria-labelledby` le gana a
-         * `aria-label` en el algoritmo de nombre accesible, así que se omite acá para que
-         * `triggerLabel`  -  el mecanismo de nombrado de ESTE contrato, con default "Elegir color"  - 
-         * sea el que manda, igual que hace el binding Vanilla.
+         * Zag ALWAYS sends an `aria-labelledby` (pointing at the field's label) in addition to its own
+         * `aria-label` ("select color. current color is ..."); `aria-labelledby` beats `aria-label` in
+         * the accessible name algorithm, so it is omitted here so that `triggerLabel`  -  THIS
+         * contract's naming mechanism, defaulting to "Elegir color"  -  is the one in charge, the same
+         * way the Vanilla binding does it.
          */}
         <button
           {...api.getTriggerProps()}

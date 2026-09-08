@@ -128,8 +128,8 @@ export function DatePicker({
   });
   const api = datePicker.connect(service, normalizeProps);
 
-  /* El ancla es el control entero (input + botones), no el botón del calendario: el panel se alinea
-   * con el campo, que es lo que el calendario está editando. */
+  /* The anchor is the whole control (input + buttons), not the calendar button: the panel lines up with
+   * the field, which is what the calendar is editing. */
   const anchor = useAnchored(id ?? generatedId);
   const inputCount = selectionMode === "range" ? 2 : 1;
 

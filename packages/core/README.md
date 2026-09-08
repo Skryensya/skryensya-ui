@@ -128,7 +128,7 @@ tier-skip rule already forbids a component from hardcoding a duration, it must g
 token, so retuning a primitive restyles the whole system. **Reduced motion is a functional variant**:
 a `@media (prefers-reduced-motion: reduce)` block in `semantic.scss` redefines the intent tokens by role
 (Essential / Helpful / Decorative / Continuous) rather than zeroing them, so essential changes stay
-legible. See [decision 10](../../docs/decisiones/0004-motion-por-tokens-de-intencion.md).
+legible. See [decision 10](../../docs/decisions/0004-motion-through-intent-tokens.md).
 
 ## One root brand, configured through semantic bundles
 
@@ -202,6 +202,6 @@ Set the color mode before first paint to avoid a flash, read `localStorage` sync
 
 ## Migration note
 
-This was a Style Dictionary + JSON pipeline until v0.2. See [decision 6](../../docs/decisiones/0019-paletas-publicas-y-semanticos-constantes.md)
+This was a Style Dictionary + JSON pipeline until v0.2. See [decision 6](../../docs/decisions/0019-public-palettes-and-constant-semantics.md)
 for why it became pure CSS, the short version: SD was reimplementing the browser's runtime at
 build time for a web-only system, so deleting the build layer removed complexity instead of moving it.

@@ -9,7 +9,9 @@
   "description": "Turborepo for skryensya/ui. Core contains tokens and the framework-agnostic component contract.",
   "scripts": {
     "lint": "turbo run lint",
-    "check": "turbo run check --concurrency=1",
+    "check": "turbo run check --filter=!@skryensya/ai-gates --concurrency=1",
+    "check:gates": "turbo run check --filter=@skryensya/ai-gates",
+    "check:all": "turbo run check --concurrency=1",
     "audit:gate": "node scripts/audit-gate.mjs",
     "build": "turbo run build",
     "dev": "turbo run dev --filter=@skryensya/docs",
@@ -22,16 +24,16 @@
   },
   "pnpm": {
     "comment-overrides": [
-      "Las 8 entradas de abajo del @types/node cierran las 20 advisories que reportaba `pnpm audit`",
-      "(9 high, 10 moderate, 1 low). NINGUNA es dependencia directa de este repo: las 8 entran por",
-      "abajo (astro, vite, jsdom, el SDK de MCP), así que no hay un package.json donde subirlas y un",
-      "override es el único lugar desde el que se alcanzan.",
-      "CARET Y NO >=: ^ se queda dentro del major que el árbol ya usa, que es justo lo que hace que",
-      "esto sea seguro de aplicar a ciegas sobre dependencias de otro. Verificado antes de escribirlo:",
-      "cada uno de los 8 aparece con UN solo major en el lockfile, así que no hay un consumidor",
-      "esperando otra línea al que forzarlo le rompa nada.",
-      "Se borra la entrada cuando el paquete de arriba suba solo: un override que ya no cambia nada es",
-      "una versión vieja congelada esperando a que alguien la note."
+      "The 8 entries below @types/node close the 20 advisories `pnpm audit` was reporting",
+      "(9 high, 10 moderate, 1 low). NONE is a direct dependency of this repo: all 8 come in from",
+      "underneath (astro, vite, jsdom, the MCP SDK), so there is no package.json to bump them in and an",
+      "override is the only place they can be reached from.",
+      "CARET AND NOT >=: ^ stays inside the major the tree already uses, which is exactly what makes",
+      "this safe to apply blindly over someone else's dependencies. Verified before writing it:",
+      "each of the 8 appears with ONE single major in the lockfile, so there is no consumer",
+      "expecting another line that forcing it would break.",
+      "The entry is deleted when the package above bumps on its own: an override that no longer changes",
+      "anything is a frozen old version waiting for someone to notice it."
     ],
     "overrides": {
       "@types/node": "^24.13.3",

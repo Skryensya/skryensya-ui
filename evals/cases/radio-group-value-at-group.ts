@@ -7,7 +7,7 @@ export const radioGroupValueAtGroupCase: EvalCase = {
     en: "A short survey with a single-choice question among three alternatives.",
   },
   notes: [
-    "Guarda la regresión documentada en plataforma-ai-ui.md: la selección es del GRUPO (`value` a " +
+    "Guarda la regresión documentada en ai-ui-platform.md: la selección es del GRUPO (`value` a " +
       "nivel de RadioGroup), no de cada entrada (`checked` por opción). El contrato marca la entrada " +
       "que coincide vía `selectedBy`; nada en la data puede dejar dos entradas marcadas a la vez.",
   ],

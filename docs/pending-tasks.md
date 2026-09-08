@@ -168,3 +168,28 @@ paso de cada ítem es abrir la página + el contrato y decidir. Orden alfabétic
   `popover`, `select`, `dialog`, `vaul`, `toc`, `tooltip` ya están publicadas; el manifest pasó de
   69 a 74 familias). Antes de tocar algo de F6/F7, releer ese documento entero, no asumir que la
   lista de bloqueados sigue vigente.
+- [ ] **English migration** ([ADR-0021](decisions/0021-english-is-the-repository-language-and-spanish-is-a-product-locale.md)
+  is the rule; this is the remaining work). Done as of 2026-09-08: code comments (1,687 lines across
+  246 files), the templated headers of all 79 changelog and 78 semantic files, and
+  `package.json`'s `pnpm.comment-overrides`. Items below are written in English because ADR-0021 now
+  requires it, which is why this file reads mixed until its own row is taken.
+  - [ ] `contracts/semantic/*.yaml` `useWhen`/`avoidWhen` and `contracts/recipes/*.ts` `intent`/`notes`
+    (~2,105 lines, 72 files). **Take this first.** It is the only Spanish with no counterpart at all
+    (zero `en:` keys, against 14 in `contracts/changelog/button.yaml`), and it is not inert: it reaches
+    agents through `get_catalog`/`get_contract` and renders on component pages, which now sit on the
+    English base routes. Translate the prose only; `id`, signature names and option keys are
+    identifiers and do not move. Do not machine-translate: these sentences are why one signature is
+    chosen over its neighbour.
+  - [ ] Spanish prose docs (~2,846 lines, 8 files): `docs/aria-apg-audit.md`,
+    `docs/ai-ui-platform.md`, `TELEMETRY_PLAN.md`, `docs/writing-guide.md`, `docs/pending-tasks.md`
+    (this file), `docs/prune-tokens.md`, `contracts/README.md`, `packages/mcp/README.md`.
+    `docs/writing-guide.md` needs correcting as well as translating: its "Qué idioma en qué lugar"
+    table still says component pages and decision records are Spanish and that comments may be either.
+  - [ ] `evals/cases/*.ts` prompt fixtures (~692 lines, 12 files). **Decide before translating**: the
+    run transcripts come in `.es.md`/`.en.md` pairs, so Spanish prompts may be deliberate coverage of a
+    Spanish-speaking user rather than an oversight. If they are coverage, say so in a comment in the
+    file and close this item; the gap is that nothing currently records which it is.
+  - [ ] Do **not** translate `apps/docs/src/pages/es/**`, `apps/docs/src/i18n/messages/**`,
+    `apps/docs/src/lib/component-catalog.ts` or the `es:` halves of `contracts/changelog/*.yaml`
+    (~9,400 lines). That is the Spanish product, not a backlog. Listed here so the next person who
+    greps for Spanish does not "finish the job" by deleting the Spanish site.

@@ -1,7 +1,7 @@
 # skryensya/ui
 
 The ubiquitous language of the design system. This is a **glossary, not a spec**, it defines what
-the words mean, never how anything is built. `docs/decisiones/` records *why* the system is shaped
+the words mean, never how anything is built. `docs/decisions/` records *why* the system is shaped
 the way it is; `README.md` records *what it does*.
 
 When a word here conflicts with a word in a proposal, a PR, or a conversation, this file wins or it
@@ -9,7 +9,14 @@ changes, but the two never coexist.
 
 ## Language
 
-User-facing documentation and decision records are written in Spanish. Code, identifiers, and repository metadata are written in English. Comments may use either language when locally consistent.
+English is the language of the repository: code, comments, identifiers, metadata, `docs/`, and the
+decision records. Spanish is a **product locale**, and only that: the docs site pages under `/es/`,
+their messages, and the `es:` half of a changelog entry.
+
+The test is whether a counterpart exists in the other language. A file with `es:` and `en:` keys, or a
+page that exists at both `/components/x` and `/es/componentes/x`, is a locale. A single Spanish copy
+with no counterpart is not the Spanish version of anything; it is untranslated repository content. See
+[ADR-0021](docs/decisions/0021-english-is-the-repository-language-and-spanish-is-a-product-locale.md).
 
 
 ## Tiers

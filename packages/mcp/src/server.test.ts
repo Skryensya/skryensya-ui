@@ -151,9 +151,9 @@ describe("get_contract", () => {
   it("returns the options, their attributes and the constraints", async () => {
     const { payload } = await call("get_contract", { id: "button" });
 
-    // Los DOS ejes, desde que `variant` (cuán fuerte) y `tone` (qué significa) se separaron: este
-    // test pedía `danger` sobre `variant`, que es justo el valor que se mudó, así que comprobarlo
-    // sobre uno solo ya no dice que el contrato viaja entero.
+    // BOTH axes, ever since `variant` (how strong) and `tone` (what it means) were separated: this test
+    // asked for `danger` on `variant`, which is exactly the value that moved, so checking it on one
+    // alone no longer says the contract travels whole.
     expect(payload.options.variant.values).toContain("ghost");
     expect(payload.options.variant.attr).toBe("data-variant");
     expect(payload.options.tone.values).toContain("danger");

@@ -1,74 +1,74 @@
 import type { ComponentContract } from "./contract.js";
 /*
- * El contrato de iconos. Tipos y vocabulario, ni geometría, ni DOM, ni dependencias.
+ * The icon contract. Types and vocabulary, no geometry, no DOM, no dependencies.
  *
- * Core nombra ROLES y nunca a un proveedor (decisión 2). "chevron-down" es una posición que el
- * sistema referencia; qué dibujo la ocupa lo decide el consumidor al enlazar un IconSet, exactamente
- * como una marca decide qué hue ocupa --palette-blue-600. Un módulo de core llamado `lucide` sería un
- * inquilino con nombre propio, y además rompería las dependencies vacías del paquete.
+ * Core names ROLES and never a provider (decision 2). "chevron-down" is a position the system
+ * references; which drawing occupies it is decided by the consumer when binding an IconSet, exactly
+ * like a brand decides which hue occupies --palette-blue-600. A core module called `lucide` would be
+ * a tenant with a proper name, and it would also break the package's empty dependencies.
  *
- * Lo que NO está aquí, y por qué (decisión 15):
- *   - providers con hasIcon/getIcon, un servicio de runtime necesita el catálogo entero en
- *     memoria, que es justo lo que el allowlist decía evitar. Un set es un índice, no un servicio.
- *   - generadores de manifiesto y de tipos, el objeto literal del consumidor ES el manifiesto, y
- *     `satisfies` da el mismo error que darían los tipos generados. Eliminar código muerto es
- *     trabajo del bundler.
+ * What is NOT here, and why (decision 15):
+ *   - providers with hasIcon/getIcon: a runtime service needs the whole catalogue in memory, which
+ *     is exactly what the allowlist was meant to avoid. A set is an index, not a service.
+ *   - manifest and type generators: the consumer's object literal IS the manifest, and `satisfies`
+ *     gives the same error generated types would. Removing dead code is the bundler's job.
  */
 
 /**
- * Geometría SVG normalizada: los hijos de un `<svg>`, sin el elemento.
+ * Normalized SVG geometry: the children of an `<svg>`, without the element.
  *
- * El binding escribe el `<svg>` (viewBox, a11y, clase); el set aporta solo lo que va adentro. Esa
- * división es la que mantiene la accesibilidad y el nombre de la clase fuera del alcance del set.
+ * The binding writes the `<svg>` (viewBox, a11y, class); the set contributes only what goes inside.
+ * That split is what keeps accessibility and the class name out of the set's reach.
  */
 export type IconData = {
   /**
-   * Markup hijo del `<svg>`. CONFIABLE: autorado en el proyecto o generado en build, nunca de un
-   * usuario ni de una API, el renderer lo inyecta sin sanitizar. Ver el costo dicho en la decisión 15.
+   * Markup that is a child of the `<svg>`. TRUSTED: authored in the project or generated at build
+   * time, never from a user or an API; the renderer injects it without sanitizing. See the cost
+   * stated in decision 15.
    */
   body: string;
   /**
-   * El viewBox literal en que se dibujó `body`. Nunca un tamaño renderizado, eso lo decide
+   * The literal viewBox `body` was drawn in. Never a rendered size, that is decided by
    * `--sk-icon-size`.
    *
-   * Es un string y no un par width/height porque un viewBox no siempre arranca en `0 0`: Material
-   * dibuja en `0 -960 960 960`. Guardar dos números y armar `0 0 w h` era una codificación con
-   * pérdida que funcionaba solo por casualidad, mientras los únicos sets fueran Lucide (`0 0 24 24`)
-   * y Phosphor (`0 0 256 256`).
+   * It is a string and not a width/height pair because a viewBox does not always start at `0 0`:
+   * Material draws in `0 -960 960 960`. Storing two numbers and assembling `0 0 w h` was a lossy
+   * encoding that only worked by coincidence, while the only sets were Lucide (`0 0 24 24`) and
+   * Phosphor (`0 0 256 256`).
    */
   viewBox: string;
   /**
-   * Atributos de presentación para el `<svg>` externo. Aquí vive la intención de la geometría: un set
-   * de contorno pone `{ fill: "none", stroke: "currentColor", "stroke-width": "2" }` y uno sólido
-   * pone `{ fill: "currentColor" }`.
+   * Presentation attributes for the outer `<svg>`. This is where the geometry's intent lives: an
+   * outline set sets `{ fill: "none", stroke: "currentColor", "stroke-width": "2" }` and a solid one
+   * sets `{ fill: "currentColor" }`.
    *
-   * Es del set y no del CSS a propósito: una declaración CSS le gana a un atributo de presentación,
-   * así que un `fill: currentColor` en patterns/icon.css volvería sólido todo set de contorno.
+   * It belongs to the set and not to CSS on purpose: a CSS declaration beats a presentation
+   * attribute, so a `fill: currentColor` in patterns/icon.css would turn every outline set solid.
    */
   attrs?: Readonly<Record<string, string>>;
 };
 
 /**
- * El vocabulario estable: los roles que el sistema referencia y que sobreviven a un cambio de set.
+ * The stable vocabulary: the roles the system references and that survive a change of set.
  *
- * Cubre los casos más usados de una app, no solo lo que consumen los componentes fundacionales: un
- * vocabulario que solo llegara hasta `chevron-down` obligaría a cada proyecto a re-declarar `search`
- * o `delete` como icono propio, y entonces el nombre del rol más común del sistema sería distinto en
- * cada app, que es exactamente lo que un vocabulario estable existe para impedir.
+ * It covers an app's most common cases, not just what the foundational components consume: a
+ * vocabulary that only reached `chevron-down` would force every project to re-declare `search` or
+ * `delete` as its own icon, and then the name of the system's most common role would be different in
+ * every app, which is exactly what a stable vocabulary exists to prevent.
  *
- * Todo nombre aquí es un ROL, nunca un dibujo (decisión 2, un tier más arriba). Por eso `delete` y no
- * `trash`, `edit` y no `pencil`, `search` y no `magnifying-glass`, `more` y no `dots`, `visibility` y
- * no `eye`: el nombre tiene que seguir siendo verdad cuando otro set dibuje el rol distinto. Los
- * `chevron-*` y `arrow-*` son la excepción consciente, nombran una dirección, y la distinción entre
- * los dos (chevron revela, arrow mueve) no tiene otro nombre corto.
+ * Every name here is a ROLE, never a drawing (decision 2, one tier up). That is why `delete` and not
+ * `trash`, `edit` and not `pencil`, `search` and not `magnifying-glass`, `more` and not `dots`,
+ * `visibility` and not `eye`: the name has to stay true when another set draws the role differently.
+ * The `chevron-*` and `arrow-*` ones are the deliberate exception, they name a direction, and the
+ * distinction between the two (chevron reveals, arrow moves) has no other short name.
  *
- * `danger`, no `error`: el sistema ya dice danger en --color-text-danger, --color-action-danger y
- * BadgeTone, y una palabra no coexiste con su sinónimo.
+ * `danger`, not `error`: the system already says danger in --color-text-danger, --color-action-danger
+ * and BadgeTone, and a word does not coexist with its synonym.
  *
- * El límite sigue siendo el mismo: un concepto de PRODUCTO (invoice, warehouse, airplane-tilt) no
- * entra por más usado que sea en una app, se pasa como `data` y es del consumidor. Y cada nombre aquí
- * es una obligación para todo autor de set, porque IconSet es completo: agregar uno es aditivo para
- * el consumidor y trabajo nuevo para quien dibuja.
+ * The limit stays the same: a PRODUCT concept (invoice, warehouse, airplane-tilt) does not get in no
+ * matter how common it is in an app, it is passed as `data` and belongs to the consumer. And every
+ * name here is an obligation for every set author, because IconSet is complete: adding one is
+ * additive for the consumer and new work for whoever draws.
  */
 export const stableIconNames = [
   // dirección, chevron revela y adjunta, arrow mueve y navega
@@ -80,12 +80,12 @@ export const stableIconNames = [
   "arrow-down",
   "arrow-left",
   "arrow-right",
-  /* VOTAR, y por qué es un rol propio y no "la flecha gorda". Los `arrow-*` de arriba nombran una
-   * DIRECCIÓN y son la excepción consciente del vocabulario; esto nombra una ACCIÓN, y por eso vale
-   * como nombre estable donde `arrow-big-up` no valdría: ese es el nombre que Lucide le da al
-   * dibujo, Phosphor lo llama `arrow-fat-up` y Material ni siquiera dibuja una flecha, dibuja un
-   * pulgar. Tres dibujos, un solo rol, que es exactamente el caso que esta lista existe para
-   * resolver (`delete` y no `trash`). Un set decide con qué lo ocupa; el sistema pide "votar". */
+  /* VOTING, and why it is a role of its own and not "the fat arrow". The `arrow-*` ones above name a
+   * DIRECTION and are the vocabulary's deliberate exception; this names an ACTION, and that is why it
+   * works as a stable name where `arrow-big-up` would not: that is the name Lucide gives the drawing,
+   * Phosphor calls it `arrow-fat-up` and Material does not even draw an arrow, it draws a thumb.
+   * Three drawings, one role, which is exactly the case this list exists to resolve (`delete` and not
+   * `trash`). A set decides what occupies it; the system asks for "voting". */
   "vote-up",
   "vote-down",
   "external-link",
@@ -101,13 +101,13 @@ export const stableIconNames = [
   "copy",
   "filter",
   "refresh",
-  /* Aleja la vista, no nombra una lupa: un set puede dibujar un menos en un círculo o flechas
-   * hacia adentro, y el rol sigue siendo verdad. */
+  /* Zooms the view out, it does not name a magnifying glass: a set may draw a minus in a circle or
+   * arrows pointing inward, and the role stays true. */
   "zoom-out",
   "more",
   "menu",
 
-  // estado, los cuatro tonos que el sistema ya nombra
+  // state, the four tones the system already names
   "info",
   "success",
   "warning",
@@ -124,26 +124,26 @@ export const stableIconNames = [
   "user",
   "visibility",
   "visibility-off",
-  /* La selección de idioma / locale de una app. Es un ROL, no un dibujo: nombra "elegí el idioma de
-   * esto", y sigue siendo verdad lo dibuje un set como dos trazos de escritura cruzados (Lucide), un
-   * par "A文" (Material, Phosphor) o cualquier otra cosa. Por eso `language` y no `translate`, que es
-   * el nombre que dos de los tres sets le dan al dibujo, ni `globe`, que diría "región / web" antes
-   * que "cambiá el idioma". Los tres sets publicados lo cubren. */
+  /* An app's language / locale selection. It is a ROLE, not a drawing: it names "pick the language of
+   * this", and it stays true whether a set draws it as two crossed writing strokes (Lucide), an "A文"
+   * pair (Material, Phosphor) or anything else. That is why `language` and not `translate`, which is
+   * the name two of the three sets give the drawing, nor `globe`, which would say "region / web"
+   * before "change the language". The three published sets cover it. */
   "language",
 
-  // modo de color (caras del ThemeToggle)
+  // color mode (the ThemeToggle's faces)
   "mode-system",
   "mode-light",
   "mode-dark",
 
-  /* clase de pantalla. Es un ROL igual que los demás: nombra el TAMAÑO de pantalla, no el aparato
-   * dibujado. Un set puede dibujar `screen-desktop` como monitor o como laptop y `screen-mobile`
-   * como teléfono o como mano con teléfono, y los tres nombres siguen siendo verdad. Por eso
-   * `screen-desktop` y no `monitor`, que sería el dibujo, exactamente como `delete` y no `trash`.
+  /* screen class. It is a ROLE like the rest: it names the SIZE of screen, not the device drawn. A set
+   * may draw `screen-desktop` as a monitor or as a laptop and `screen-mobile` as a phone or as a hand
+   * holding a phone, and all three names stay true. That is why `screen-desktop` and not `monitor`,
+   * which would be the drawing, exactly like `delete` and not `trash`.
    *
-   * `screen-desktop` NO es sinónimo de `mode-system`, aunque Lucide y Phosphor dibujen los dos como
-   * un monitor: uno dice "el modo lo decide el sistema" y el otro "pantalla grande". Dos roles que
-   * hoy comparten dibujo siguen siendo dos roles, y un set puede separarlos mañana. */
+   * `screen-desktop` is NOT a synonym of `mode-system`, even though Lucide and Phosphor draw both as
+   * a monitor: one says "the system decides the mode" and the other "large screen". Two roles that
+   * share a drawing today are still two roles, and a set may separate them tomorrow. */
   "screen-desktop",
   "screen-tablet",
   "screen-mobile",
@@ -152,24 +152,24 @@ export const stableIconNames = [
 export type StableIconName = (typeof stableIconNames)[number];
 
 /**
- * El enlace de cada rol a una geometría, un set de iconos es una marca.
+ * The binding of each role to a geometry; an icon set is a brand.
  *
- * Completo, no parcial: un set que no cubre el vocabulario deja a un componente fundacional sin su
- * icono en runtime, igual que una marca a la que le falta una posición de ramp deja un color roto.
+ * Complete, not partial: a set that does not cover the vocabulary leaves a foundational component
+ * without its icon at runtime, just like a brand missing a ramp position leaves a broken color.
  *
- * Core no envía ninguno, y no puede: un set real viene de una librería externa, y las dependencies
- * de @skryensya/core están vacías a propósito. Los sets viven en paquetes aparte, 
- * `@skryensya/icons-lucide`, `@skryensya/icons-phosphor`, `@skryensya/icons-material`, que es la salida
- * que la decisión 15 ya había anticipado: aditiva, y sin que core nombre a un inquilino.
+ * Core ships none, and cannot: a real set comes from an external library, and @skryensya/core's
+ * dependencies are empty on purpose. Sets live in separate packages,
+ * `@skryensya/icons-lucide`, `@skryensya/icons-phosphor`, `@skryensya/icons-material`, which is the
+ * exit decision 15 had already anticipated: additive, and without core naming a tenant.
  */
 export type IconSet = Readonly<Record<StableIconName, IconData>>;
 
 /**
- * Los tres tamaños del pattern, que el renderer escribe como `data-size`.
+ * The pattern's three sizes, which the renderer writes as `data-size`.
  *
- * No hay escotilla numérica: un tamaño arbitrario se pide redeclarando el hook, que es como se piden
- * todos los valores arbitrarios del sistema, `.hero .sk-icon { --sk-icon-size: 2rem; }`. Una prop
- * numérica que escribiera width/height perdería igual contra el inline-size del CSS.
+ * There is no numeric escape hatch: an arbitrary size is requested by re-declaring the hook, which is
+ * how every arbitrary value in the system is requested, `.hero .sk-icon { --sk-icon-size: 2rem; }`. A
+ * numeric prop that wrote width/height would lose against the CSS inline-size anyway.
  */
 export type IconSize = "sm" | "md" | "lg";
 

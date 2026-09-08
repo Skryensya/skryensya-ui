@@ -2,27 +2,27 @@ import { flushSync, getContext, mount, unmount, type Component } from "svelte";
 import Imperative from "../components/Imperative.svelte";
 
 /*
- * Hidratación con Svelte 5, el motor de los enhancers machine-backed.
+ * Hydration with Svelte 5, the engine behind the machine-backed enhancers.
  *
- * Un enhancer machine-backed corre una máquina de Zag. En vez de reimplementar esa máquina a mano (lo
- * que hacían los FSM viejos, duplicando lo que React ya tenía de Zag), lo monta un componente `.svelte`
- * que consume la MISMA máquina desde `@skryensya/core/machines` vía `@zag-js/svelte`. Svelte es
- * implementación interna, nunca contrato del consumidor: el `.svelte` se monta en LIGHT DOM sobre la
- * raíz `[data-sk-*]` que el consumidor ya escribió, nada de custom elements ni shadow DOM, así que
- * `.hero .sk-tabs { … }` sigue alcanzando el elemento y el modelo de styling hooks queda intacto.
+ * A machine-backed enhancer runs a Zag machine. Instead of reimplementing that machine by hand (what
+ * the old FSMs did, duplicating what React already had from Zag), it is mounted by a `.svelte`
+ * component that consumes the SAME machine from `@skryensya/core/machines` via `@zag-js/svelte`.
+ * Svelte is internal implementation, never the consumer's contract: the `.svelte` is mounted in LIGHT
+ * DOM over the `[data-sk-*]` root the consumer already wrote, no custom elements and no shadow DOM, so
+ * `.hero .sk-tabs { … }` still reaches the element and the styling-hooks model stays intact.
  *
- * El componente lee su raíz por CONTEXTO (`getRoot()`), la escanea, corre la máquina y parchea los
- * atributos sobre el markup existente con `applyZagProps`, no renderiza estructura propia. El contrato
- * de ciclo de vida (`data-sk-<key>-mounting`/`-ready`) hace el montaje idempotente, igual que el
- * `createEnhancer` de attr-patch que siguen usando los enhancers sin máquina.
+ * The component reads its root from CONTEXT (`getRoot()`), scans it, runs the machine and patches the
+ * attributes onto the existing markup with `applyZagProps`; it renders no structure of its own. The
+ * lifecycle contract (`data-sk-<key>-mounting`/`-ready`) makes mounting idempotent, same as the
+ * attr-patch `createEnhancer` the machine-less enhancers still use.
  */
 
 let counter = 0;
 export const uniqueId = (prefix: string): string => `${prefix}-${(counter += 1)}`;
 
-// La raíz se pasa por CONTEXT y no por props: `getContext` devuelve un valor no reactivo, así el
-// componente lo lee en una línea con `getRoot()`, sin el aviso `state_referenced_locally` ni el
-// boilerplate de `$props()`.
+// The root is passed through CONTEXT and not through props: `getContext` returns a non-reactive value,
+// so the component reads it in one line with `getRoot()`, without the `state_referenced_locally` warning
+// or `$props()` boilerplate.
 const ROOT_CONTEXT = Symbol("sk-root");
 
 export const getRoot = (): HTMLElement => {
@@ -33,16 +33,16 @@ export const getRoot = (): HTMLElement => {
   return root;
 };
 
-/** La función imperativa que corre un enhancer sin máquina, pasada por contexto a Imperative.svelte. */
+/** The imperative function a machine-less enhancer runs, passed through context to Imperative.svelte. */
 export type Connect = (root: HTMLElement) => () => void;
 const CONNECT_CONTEXT = Symbol("sk-connect");
 
-// Raíz → cómo desmontarla. Lo llena `createConnectMount` al montar; `destroyMount` lo consume. Conserva
-// el nombre público del runtime viejo, para el único caso que lo necesita: re-montar un enhancer con otro
-// valor (el playground del sitio re-apunta un Select).
+// Root → how to unmount it. Filled in by `createConnectMount` on mount; consumed by `destroyMount`. It
+// keeps the old runtime's public name, for the only case that needs it: re-mounting an enhancer with a
+// different value (the site's playground re-points a Select).
 const mountedApps = new WeakMap<HTMLElement, () => void>();
 
-/** Desmonta el enhancer imperativo montado sobre `root` (corre su cleanup) y libera el marcador ready. */
+/** Unmounts the imperative enhancer mounted on `root` (runs its cleanup) and releases the ready marker. */
 export function destroyMount(root: HTMLElement): void {
   const destroy = mountedApps.get(root);
   if (destroy) {
@@ -50,7 +50,7 @@ export function destroyMount(root: HTMLElement): void {
     mountedApps.delete(root);
   }
 }
-/** Alias con el nombre público del runtime viejo. */
+/** Alias with the old runtime's public name. */
 export const destroyEnhancer = destroyMount;
 export const getConnect = (): Connect => {
   const connect = getContext<Connect | undefined>(CONNECT_CONTEXT);
@@ -89,25 +89,25 @@ export function createSvelteEnhancer(options: SvelteEnhancerOptions): Enhancer {
 
     target.setAttribute(mountingAttr, "true");
     const app = mount(Component, { target, context: new Map([[ROOT_CONTEXT, target]]) });
-    // El montaje deja el markup hidratado de forma SÍNCRONA: `flushSync` corre el `$effect` inicial
-    // (el que parchea los atributos) antes de devolver, así el enhancer es idempotente y testeable sin
-    // esperar un microtask. Los cambios de estado posteriores también se pueden forzar con `flushSync`.
+    // Mounting leaves the markup hydrated SYNCHRONOUSLY: `flushSync` runs the initial `$effect` (the one
+    // that patches the attributes) before returning, so the enhancer is idempotent and testable without
+    // waiting for a microtask. Later state changes can also be forced with `flushSync`.
     flushSync();
     target.removeAttribute(mountingAttr);
     target.setAttribute(readyAttr, "true");
 
     const destroy = () => {
-      // Sin `options.outro`, `component_root()` destruye el efecto de forma SÍNCRONA dentro del
-      // propio executor de la Promise que devuelve: el `void` no deja nada pendiente, el teardown
-      // (los `onDestroy` de cada `.svelte`, que sueltan sus listeners) ya corrió cuando esta línea
-      // retorna.
+      // Without `options.outro`, `component_root()` destroys the effect SYNCHRONOUSLY inside the very
+      // executor of the Promise it returns: the `void` leaves nothing pending, the teardown (each
+      // `.svelte`'s `onDestroy`, which release their listeners) has already run by the time this line
+      // returns.
       void unmount(app);
       target.removeAttribute(readyAttr);
       mountedApps.delete(target);
     };
-    // El mismo registro que lee `destroyMount()` para el camino imperativo (`createConnectMount`),
-    // así un enhancer machine-backed se puede desmontar igual sin que el caller sepa cuál de las dos
-    // implementaciones lo montó.
+    // The same registry `destroyMount()` reads for the imperative path (`createConnectMount`), so a
+    // machine-backed enhancer can be unmounted the same way without the caller knowing which of the two
+    // implementations mounted it.
     mountedApps.set(target, destroy);
 
     return { root: target, destroy };
@@ -145,9 +145,9 @@ export function createSvelteMount(options: SvelteEnhancerOptions): Mount {
  */
 export function createConnectMount(options: { key: string; rootSelector: string; connect: Connect }): Mount {
   const { rootSelector, connect } = options;
-  // Los enhancers imperativos comparten el marcador de ciclo de vida `data-sk-ready`/`-mounting` (como
-  // el viejo createEnhancer), no uno por-key: sus selectores son disjuntos, así que una raíz la enhancea
-  // exactamente un enhancer. El montaje sigue siendo Svelte (Imperative.svelte), no createEnhancer.
+  // The imperative enhancers share the `data-sk-ready`/`-mounting` lifecycle marker (like the old
+  // createEnhancer), not one per key: their selectors are disjoint, so a root is enhanced by exactly one
+  // enhancer. Mounting is still Svelte (Imperative.svelte), not createEnhancer.
   const readyAttr = "data-sk-ready";
   const mountingAttr = "data-sk-mounting";
   // Comma-safe: the guard has to attach to EACH selector (Vaul is `[data-sk-vaul], [data-sk-dialog-vaul]`).
@@ -166,12 +166,12 @@ export function createConnectMount(options: { key: string; rootSelector: string;
         [CONNECT_CONTEXT, connect],
       ]),
     });
-    // Mismo montaje síncrono que createSvelteEnhancer: el onMount (que corre `connect`) queda aplicado
-    // antes de devolver, así el enhancer es idempotente y testeable sin esperar un microtask.
+    // Same synchronous mount as createSvelteEnhancer: the onMount (which runs `connect`) is applied
+    // before returning, so the enhancer is idempotent and testable without waiting for a microtask.
     flushSync();
     target.removeAttribute(mountingAttr);
     target.setAttribute(readyAttr, "true");
-    // Desmontar corre onDestroy → el cleanup del connect, y libera el marcador para poder re-montar.
+    // Unmounting runs onDestroy → the connect's cleanup, and releases the marker so it can be re-mounted.
     mountedApps.set(target, () => {
       void unmount(app);
       target.removeAttribute(readyAttr);

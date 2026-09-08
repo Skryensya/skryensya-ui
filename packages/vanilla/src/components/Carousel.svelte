@@ -8,24 +8,24 @@
   import { remountIcons } from "../icon.js";
 
   /*
-   * CAROUSEL, enhancer machine-backed sobre `@zag-js/carousel`.
+   * CAROUSEL, a machine-backed enhancer over `@zag-js/carousel`.
    *
-   * Reparte el trabajo por dueño: el TRACK y los SLIDES son markup autorado, así que se escanean y se
-   * les parchean los atributos de la máquina (igual que Tabs). Los CONTROLES no son contenido sino
-   * chrome derivado del track, así que los renderiza este componente, como el enhancer viejo, y por la
-   * misma razón por la que no pueden ser autorados: cuántos dots hay no lo sabe quien escribe el HTML.
-   * Lo sabe la máquina, y recién después de MEDIR.
+   * It splits the work by owner: the TRACK and the SLIDES are authored markup, so they are scanned and
+   * patched with the machine's attributes (same as Tabs). The CONTROLS are not content but chrome
+   * derived from the track, so this component renders them, like the old enhancer, and for the same
+   * reason they cannot be authored: how many dots there are is not known by whoever writes the HTML.
+   * The machine knows, and only after MEASURING.
    *
-   * Ese es el bug que arregla la máquina. Los snap points reales no son uno por slide: con slides que
-   * asoman, los últimos se recortan todos contra el máximo scroll y colapsan en la misma posición. El
-   * enhancer viejo dibujaba un dot por slide y llamaba `scrollTo(slide.offsetLeft)`, así que los
-   * últimos dots no se podían activar y el botón "siguiente" nunca se deshabilitaba. Zag deriva las
-   * páginas de `getScrollSnapPositions` (medidas, recortadas y deduplicadas), por eso acá los dots
-   * salen de `api.pageSnapPoints` y no de la cantidad de slides.
+   * That is the bug the machine fixes. The real snap points are not one per slide: with slides that
+   * peek, the last ones all clamp against the maximum scroll and collapse onto the same position. The
+   * old enhancer drew one dot per slide and called `scrollTo(slide.offsetLeft)`, so the last dots could
+   * not be activated and the "next" button never disabled itself. Zag derives the pages from
+   * `getScrollSnapPositions` (measured, clamped and deduplicated), which is why the dots here come from
+   * `api.pageSnapPoints` and not from the number of slides.
    *
-   * El tamaño de un slide sigue siendo de CSS (`--sk-carousel-slide-size`), no de la máquina: con
-   * `autoSize` Zag no impone anchos, sólo mide. Así la capa sin JS y la enhanceada son el MISMO
-   * carrusel, y la máquina no se vuelve dueña del layout.
+   * A slide's size still belongs to CSS (`--sk-carousel-slide-size`), not to the machine: with
+   * `autoSize` Zag imposes no widths, it only measures. That way the no-JS layer and the enhanced one
+   * are the SAME carousel, and the machine does not become the owner of the layout.
    */
   const root = getRoot();
 
@@ -44,9 +44,9 @@
     indicator: (index: number) => `${root.id}-dot-${index}`,
   };
 
-  // La máquina arranca sus effects (mutation/resize/intersection observers) y su entry `setSnapPoints`
-  // ANTES de que corra el primer `$effect`, y para eso resuelve la pista por id y los slides por
-  // `[data-part=item]`. Se siembran acá, en el cuerpo del script, para que ya estén cuando mida.
+  // The machine starts its effects (mutation/resize/intersection observers) and its `setSnapPoints`
+  // entry BEFORE the first `$effect` runs, and for that it resolves the track by id and the slides by
+  // `[data-part=item]`. They are seeded here, in the script body, so they are already there when it measures.
   track.id = ids.itemGroup;
   track.setAttribute("data-scope", "carousel");
   track.setAttribute("data-part", "itemGroup");
@@ -55,16 +55,16 @@
     slide.setAttribute("data-scope", "carousel");
     slide.setAttribute("data-part", "item");
     slide.setAttribute("data-index", String(index));
-    // Lo mismo, pero de estilo: la primera medición lee `scroll-snap-align` COMPUTADO para saber
-    // dónde ancla cada slide. La hoja del sistema ya lo declara, pero un consumidor puede montar sin
-    // ese CSS, y ahí la máquina no encontraría ni un snap point. Es el mismo valor que Zag escribe.
+    // The same, but for style: the first measurement reads the COMPUTED `scroll-snap-align` to know
+    // where each slide anchors. The system's sheet already declares it, but a consumer may mount without
+    // that CSS, and then the machine would not find a single snap point. It is the same value Zag writes.
     slide.style.setProperty("scroll-snap-align", "start");
   });
 
   /*
-   * Autoplay, con el freno puesto por defecto: quien pidió menos movimiento no recibe un carrusel que
-   * se mueve solo. La opción queda declarada igual, así que si el usuario cambia de preferencia el
-   * markup no miente; simplemente no arranca acá.
+   * Autoplay, with the brake on by default: whoever asked for less motion does not get a carousel that
+   * moves on its own. The option stays declared anyway, so if the user changes their preference the
+   * markup does not lie; it simply does not start here.
    */
   const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
   const autoplayAttr = root.getAttribute("data-autoplay");
@@ -91,7 +91,7 @@
     // other way through: without this a desktop pointer cannot move a carousel that has no controls.
     // `data-mouse-drag="off"` opts out, for slides whose text is meant to be selectable.
     allowMouseDrag: root.getAttribute("data-mouse-drag") !== "off",
-    // El ancho de un slide lo pone el CSS del sistema; la máquina sólo mide dónde cae cada snap point.
+    // A slide's width is set by the system's CSS; the machine only measures where each snap point falls.
     autoSize: true,
     spacing: "var(--sk-carousel-gap)",
     translations: {
@@ -107,15 +107,15 @@
   const api = $derived(carousel.connect(service, normalizeProps));
 
   /*
-   * WCAG 2.2.2 (Pause, Stop, Hide) y el patrón WAI-ARIA de Carousel piden que la rotación automática
-   * se detenga apenas el mouse pasa por encima O el teclado entra con foco, y se reanude al salir -
-   * salvo que la OTRA condición siga activa. La máquina de Zag (1.42.0) no implementa ninguna de las
-   * dos: su estado `autoplay` no reacciona en absoluto a `VIEWPORT.FOCUS` (confirmado leyendo
-   * `carousel.machine.js`), y no existe manejo de mouseenter/mouseleave en todo el paquete.
+   * WCAG 2.2.2 (Pause, Stop, Hide) and the WAI-ARIA Carousel pattern ask that automatic rotation stop
+   * as soon as the mouse passes over it OR the keyboard enters with focus, and resume on leaving -
+   * unless the OTHER condition is still active. Zag's machine (1.42.0) implements neither: its
+   * `autoplay` state does not react at all to `VIEWPORT.FOCUS` (confirmed by reading
+   * `carousel.machine.js`), and there is no mouseenter/mouseleave handling anywhere in the package.
    *
-   * `desiredPlaying` es la intención explícita del usuario. Lo que el botón de pausa/play pidió por
-   * última vez. Independiente de la pausa TEMPORAL que hover/foco imponen. Sin esa separación, salir
-   * con el mouse reanudaría un carrusel que el usuario detuvo a propósito con el botón.
+   * `desiredPlaying` is the user's explicit intent. What the pause/play button last asked for.
+   * Independent of the TEMPORARY pause that hover/focus impose. Without that separation, moving the
+   * mouse out would resume a carousel the user stopped on purpose with the button.
    */
   let hovering = $state(false);
   let focused = $state(false);
@@ -130,26 +130,26 @@
   });
 
   /*
-   * Tres razones para no dibujar controles, y las tres son la misma: no hay nada que controlar.
-   *   - `data-controls="none"`, el consumidor lo pidió: la pista queda como scroller con snap, se
-   *     arrastra o se desliza, y el peek del siguiente slide es lo único que lo anuncia.
-   *   - Un solo slide, que no es un carrusel.
-   *   - Una sola página medida, o sea que todo entra a la vez y no hay a dónde ir.
+   * Three reasons not to draw controls, and all three are the same one: there is nothing to control.
+   *   - `data-controls="none"`, the consumer asked for it: the track stays a snap scroller, dragged or
+   *     swiped, and the peek of the next slide is the only thing that announces it.
+   *   - A single slide, which is not a carousel.
+   *   - A single measured page, meaning everything fits at once and there is nowhere to go.
    */
   const wantsControls = root.getAttribute("data-controls") !== "none";
   const showControls = $derived(wantsControls && slides.length > 1 && api.pageSnapPoints.length > 1);
 
   /*
-   * Los ESTILOS de `connect` se escriben una sola vez; los ATRIBUTOS, en cada cambio de estado.
+   * `connect`'s STYLES are written once; its ATTRIBUTES, on every state change.
    *
-   * El style que devuelve Zag acá es configuración estática (display, gap, snap type, overflow,
-   * el ancho de un slide), derivada de props que no cambian en la vida del componente. Los
-   * atributos no: `data-dragging`, `data-inview`, `aria-hidden` son estado y tienen que seguirlo.
+   * The style Zag returns here is static configuration (display, gap, snap type, overflow, a slide's
+   * width), derived from props that do not change over the component's life. The attributes are not:
+   * `data-dragging`, `data-inview`, `aria-hidden` are state and have to follow it.
    *
-   * Y re-aplicar el style es activamente dañino, porque la máquina también escribe estilos a mano:
-   * al empezar un arrastre pone `scroll-snap-type: none` para poder mover el track. Si el effect lo
-   * devuelve a `x mandatory` en el mismo frame, el navegador re-snapea en cada píxel arrastrado y
-   * mover el mouse 10px salta un slide entero. La configuración es nuestra, el estado es suyo.
+   * And re-applying the style is actively harmful, because the machine also writes styles by hand: when
+   * a drag starts it sets `scroll-snap-type: none` so it can move the track. If the effect returns it to
+   * `x mandatory` in the same frame, the browser re-snaps on every dragged pixel and moving the mouse
+   * 10px jumps a whole slide. The configuration is ours, the state is the machine's.
    */
   let stylesWritten = false;
   $effect(() => {
@@ -163,9 +163,9 @@
   });
 
   /*
-   * El contrato público de eventos, intacto: `sk-carousel-change` al cambiar de página (por scroll,
-   * botón, tecla, arrastre o goto) y `sk-carousel-goto` como comando de entrada. `index` es la PÁGINA,
-   * que con el default de un slide por página es el índice del slide.
+   * The public event contract, untouched: `sk-carousel-change` on page change (by scroll, button, key,
+   * drag or goto) and `sk-carousel-goto` as an input command. `index` is the PAGE, which with the
+   * default of one slide per page is the slide's index.
    */
   let lastPage = -1;
   $effect(() => {
@@ -180,25 +180,25 @@
 
   const cleanups: Array<() => void> = [];
   onMount(() => {
-    // Los handlers de la pista (focus/blur/wheel/touch/mousedown) se cablean una vez y se re-leen en
-    // cada disparo: la máquina cambia de estado y con ella el closure de Zag.
+    // The track's handlers (focus/blur/wheel/touch/mousedown) are wired once and re-read on every
+    // firing: the machine changes state and with it Zag's closure.
     cleanups.push(
       bindZagEvents(track, () => api.getItemGroupProps() as DomProps),
     );
 
     const onGoto = ((event: CustomEvent<CarouselGotoDetail>) => {
       const index = event.detail?.index ?? 0;
-      // Pedir la página en la que ya se está no mueve la máquina, así que tampoco movería el scroll.
-      // `refresh` re-mide y re-alinea, que es lo que un goto a la página actual tiene que significar.
+      // Asking for the page you are already on does not move the machine, so it would not move the scroll
+      // either. `refresh` re-measures and re-aligns, which is what a goto to the current page has to mean.
       if (index === api.page) api.refresh();
       else api.scrollTo(index);
     }) as EventListener;
     root.addEventListener(carouselEvents.goto, onGoto);
     cleanups.push(() => root.removeEventListener(carouselEvents.goto, onGoto));
 
-    // Root-level: "hovering" es cualquier punto del carrusel, no sólo la pista, y `focusin`/`focusout`
-    // (a diferencia de `focus`/`blur`) burbujean, así que un único listener detecta foco en CUALQUIER
-    // descendiente (un slide, el prev/next, un dot) sin necesidad de capturar en cada uno por separado.
+    // Root-level: "hovering" is any point of the carousel, not just the track, and `focusin`/`focusout`
+    // (unlike `focus`/`blur`) bubble, so a single listener detects focus on ANY descendant (a slide, the
+    // prev/next, a dot) without having to capture on each one separately.
     if (wantsAutoplay) {
       const onMouseEnter = () => {
         hovering = true;
@@ -225,12 +225,12 @@
       });
     }
 
-    // Los chevrones se autoran como placeholders `data-sk-icon` y los hidrata el set que la app ya
-    // registró con `mountIcons` (ADR-15: el set sigue siendo explícito del lado de la app).
+    // The chevrons are authored as `data-sk-icon` placeholders and hydrated by the set the app already
+    // registered with `mountIcons` (ADR-15: the set stays explicit on the app's side).
     remountIcons(root);
 
-    // Re-medir una vez que el DOM quedó parcheado y los controles renderizados: la primera medición
-    // de la máquina corre antes que el `$effect`, y el alto de la fila de controles cambia la caja.
+    // Re-measure once the DOM has been patched and the controls rendered: the machine's first
+    // measurement runs before the `$effect`, and the height of the controls row changes the box.
     api.refresh();
   });
   onDestroy(() => {
@@ -258,16 +258,17 @@
       <span data-sk-icon="chevron-right" data-sk-icon-size="sm"></span>
     </button>
 
-    <!-- El glifo lo dibuja el CSS a partir de `data-pressed`, no un icono: pausa/reproducir no están
-         en el vocabulario estable de roles, y esto no es motivo para obligar a cada set a dibujarlos. -->
+    <!-- The glyph is drawn by CSS from `data-pressed`, not an icon: pause/play are not in the stable
+         vocabulary of roles, and this is not reason enough to force every set to draw them. -->
     {#if wantsAutoplay}
       <!--
-        `data-pressed` y `aria-label` NO vienen del spread de Zag (que los deriva de `api.isPlaying`,
-        el estado MOMENTÁNEO. Suprimido mientras el mouse o el foco están encima). Vienen de
-        `desiredPlaying`, la última elección EXPLÍCITA del usuario: si el botón mostrara "Reanudar"
-        sólo porque el hover ya pausó la rotación, un click ahí haría lo contrario de lo que promete
-        (reiniciaría en vez de detener). El `onclick` tampoco delega en el de Zag por la misma razón:
-        sólo alterna `desiredPlaying`, y el efecto de arriba es el único que llama a play()/pause().
+        `data-pressed` and `aria-label` do NOT come from Zag's spread (which derives them from
+        `api.isPlaying`, the MOMENTARY state. Suppressed while the mouse or the focus is over it). They
+        come from `desiredPlaying`, the user's last EXPLICIT choice: if the button showed "Resume" just
+        because hover had already paused the rotation, a click there would do the opposite of what it
+        promises (it would restart instead of stop). The `onclick` does not delegate to Zag's either, for
+        the same reason: it only toggles `desiredPlaying`, and the effect above is the only one that
+        calls play()/pause().
       -->
       <button
         {...api.getAutoplayTriggerProps()}

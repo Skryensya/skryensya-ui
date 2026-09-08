@@ -1,4 +1,4 @@
-# La estructura vive en packages/core/src/content.ts. Acá sólo por qué se elige.
+# The structure lives in packages/core/src/content.ts. Here, only why it is chosen.
 
 ToastRegion:
   useWhen:

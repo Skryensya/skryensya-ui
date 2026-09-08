@@ -1,4 +1,4 @@
-# La estructura vive en packages/core/src/form-field.ts. Acá sólo por qué se elige.
+# The structure lives in packages/core/src/form-field.ts. Here, only why it is chosen.
 
 FormField:
   useWhen:

@@ -17,7 +17,7 @@ staged="$(git diff --cached --name-only --diff-filter=ACMR)"
 # del entorno, así que la forma de esto no es hipotética.
 #
 # `git --staged`, no `dir .`: mira exactamente lo que está por entrar al commit. Medido en este
-# repo, `dir .` sobre el árbol entero da 46 hallazgos, los 46 en `apps/docs/dist/` — build output
+# repo, `dir .` sobre el árbol entero da 46 hallazgos, los 46 en `apps/docs/dist/`: build output
 # ignorado que nunca se commitea, y ninguno un secreto real. Un hook que grita 46 veces por nada es
 # un hook que se aprende a saltear. En lo staged, hoy: cero.
 #

@@ -22,7 +22,7 @@ import reactTestSource from "@react/src/components/list.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 /* Both link demos point at real docs routes, and a docs route differs per locale. */
-const LINK_HREFS = ["/prerrequisitos", "/primer-componente", "/presets", "/referencia", "/tiers"];
+const LINK_HREFS = ["/prerequisites", "/first-component", "/presets", "/reference", "/tiers"];
 const TEAM_HREFS = ["/equipo/john-doe", "/equipo/jane-doe", "/equipo/richard-roe", "/equipo/mary-major"];
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
@@ -102,11 +102,11 @@ const sourceFiles = [
 </ComponentPageShell>
 
 <style is:global>
-  /* Una lista la dimensiona su host: sin ancho, el stage es flex y cada `<ul>` se encoge al ancho de
-     su fila más larga, así que los seis ejemplos salían de anchos distintos y el paso 1 quedaba en
-     77px. El demo le presta el ancho que tendría una columna real; el código enseña el markup sin
-     ese ancho, que es del consumidor.
-     `is:global`: el HTML autorado vive dentro del srcdoc y no lleva el atributo de scope de Astro. */
+  /* A list is sized by its host: with no width, the stage is flex and each `<ul>` shrinks to the width
+     of its longest row, so the six examples came out at different widths and step 1 ended up at 77px.
+     The demo lends it the width a real column would have; the code shows the markup without that width,
+     which belongs to the consumer.
+     `is:global`: the authored HTML lives inside the srcdoc and does not carry Astro's scope attribute. */
   .sk-list-demo {
     inline-size: min(100%, 34rem);
   }

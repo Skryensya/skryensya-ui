@@ -169,10 +169,10 @@ export function getStaticPaths() {
       };
 
       /*
-       * Geometría propia (decisión 15; see `../icons.ts`'s own contrast/play-pause pairs): a
-       * layout switch is not a stable icon role, and importing `../icons` here would pull the
+       * Geometría propia (decisión 15; see `../../icons.ts`'s own contrast/play-pause pairs): a
+       * layout switch is not a stable icon role, and importing `../../icons` here would pull the
        * whole site icon-set trio into this shell's own tiny bundle for two 24×24 glyphs. Hand-drawn
-       * inline instead, same stroke recipe (`strokeAttrs` in `../icons.ts`), but still the SAME box
+       * inline instead, same stroke recipe (`strokeAttrs` in `../../icons.ts`), but still the SAME box
        * every other glyph in the system wears (`patterns/icon.css`'s own banner):
        * `class="sk-icon"`, no hardcoded width/height. Without that class an svg has no
        * `--sk-icon-size`, no `flex: none`, none of the box this pattern owns, which is exactly why a
@@ -183,7 +183,7 @@ export function getStaticPaths() {
       const LAYOUT_ICON_SIDE =
         '<svg class="sk-icon" data-size="sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="14" y1="3" x2="14" y2="21"></line></svg>';
 
-      /* Same pair `ContrastToggle.astro` draws (`contrastNormal`/`contrastHigh` in `../icons.ts`):
+      /* Same pair `ContrastToggle.astro` draws (`contrastNormal`/`contrastHigh` in `../../icons.ts`):
        * an empty ring, and the same ring with its inner half filled. Hand-drawn here for the same
        * reason the layout pair above is. This glyph is not a stable role in the published sets. */
       const ICON_CONTRAST_NORMAL =
@@ -198,7 +198,7 @@ export function getStaticPaths() {
         return typeof value === "string" && value.startsWith("/") && !value.startsWith("//");
       }
 
-      /** `/f/componentes/layout-grid/2` → page `/componentes/layout-grid`, example `2`. `/f/2` is the home page. */
+      /** `/f/components/layout-grid/2` → page `/components/layout-grid`, example `2`. `/f/2` is the home page. */
       function parseFullscreenPath(pathname: string): { pagePath: string; n: number } | null {
         const match = pathname.match(/^\/f\/(?:(.+)\/)?(\d+)\/?$/);
         if (!match) return null;

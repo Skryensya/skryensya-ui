@@ -161,10 +161,10 @@ export const checkoutTree = (t: Translate, locale: "es" | "en"): UsageTree => {
                          * `Select.native`, wrapped in a FormField like every other control in this
                          * column. The custom `Select` exists for options that need markup, a
                          * controlled collection or its own positioning; three plain country names
-                         * need none of that, and `Select.avoidWhen` is blunt about it: "la
-                         * apariencia dejó de ser razón para reemplazar el control nativo". On a
-                         * phone the native one also opens the platform picker, which on a checkout
-                         * is worth more than matching the input's border radius.
+                         * need none of that, and `Select.avoidWhen` is blunt about it: "appearance
+                         * stopped being a reason to replace the native control". On a phone the
+                         * native one also opens the platform picker, which on a checkout is worth
+                         * more than matching the input's border radius.
                          */
                         {
                           contract: "form-field",

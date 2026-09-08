@@ -41,11 +41,11 @@ const [titleSection, autoSection, onlySection] = vanillaMountSections(t, name);
 /*
  * The full explanation of `initComponents()` (the map-not-a-list-of-imports shape, idempotence,
  * scoping the scan to a root) used to be repeated inline on every page that mounts this component
- * (copy paste, ~17 places at last count). It now lives once at `/montaje-automatico`
+ * (copy paste, ~17 places at last count). It now lives once at `/automatic-mounting`
  * (`/en/automatic-mounting`), and this paragraph only orients the reader toward it; the same
  * `{link}` splice `accordion.intro` already used for its own cross-reference.
  */
-const autoLink = `<a href="${localizePath("/montaje-automatico", locale)}">${t("vanilla.autoLinkLabel")}</a>`;
+const autoLink = `<a href="${localizePath("/automatic-mounting", locale)}">${t("vanilla.autoLinkLabel")}</a>`;
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 

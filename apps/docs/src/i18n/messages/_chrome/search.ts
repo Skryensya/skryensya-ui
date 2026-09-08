@@ -4,7 +4,7 @@ export const searchMessages = {
     "search.label": "Buscar",
     "search.dialog": "Buscar en la documentación",
     "search.placeholder": "Buscar componentes y páginas…",
-    /* La paleta acotada del catálogo: sólo busca entre los componentes que la página lista. */
+    /* The catalogue's narrowed palette: it only searches among the components the page lists. */
     "search.componentsDialog": "Buscar entre los componentes",
     "search.componentsPlaceholder": "Buscar un componente…",
     "search.results": "Resultados",

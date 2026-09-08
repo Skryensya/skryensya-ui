@@ -15,7 +15,7 @@ import { getLocale, useTranslations } from "../../i18n";
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
-const path = locale === "en" ? "/en/components/primitives" : "/componentes/primitivas";
+const path = locale === "en" ? "/en/components/primitives" : "/components/primitives";
 ---
 
 <ComponentPageShell title={t("primitivasPage.title")} description={t("primitivasPage.description")}>

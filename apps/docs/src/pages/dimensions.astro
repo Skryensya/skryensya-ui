@@ -1,0 +1,215 @@
+---
+import Base from "../layouts/Base.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import Used from "../components/Used.astro";
+import { tokens } from "../lib/tokens";
+import { palettes } from "../lib/palettes";
+
+const modeAware = tokens.filter((t) => t.modeAware).length;
+
+const accentBundle =
+  `/* brand-accent.css: re-declares the complete semantic bundle. */\n:root {\n` +
+  `  --color-action-accent: light-dark(${palettes.blue[700]}, ${palettes.blue[400]});\n` +
+  `  --color-text-accent: light-dark(${palettes.blue[700]}, ${palettes.blue[300]});\n` +
+  `  --color-border-accent: light-dark(${palettes.blue[600]}, ${palettes.blue[500]});\n` +
+  `  --color-bg-accent-subtle: light-dark(${palettes.blue[50]}, ${palettes.blue[950]});\n` +
+  "}";
+
+const densityUse = `/* A multiplier, not a second scale. */
+html { --sk-density: 0.8; }`;
+
+const radiusUse = `<!-- A multiplier preset… -->
+<html data-radius="xl">
+
+<!-- …or a continuous value off the ladder. -->
+<html style="--radius-multiplier: 1.25">`;
+---
+
+<Base
+  title="Cuatro dimensiones"
+  documentLayout="grid"
+  description="Color mode, high contrast, density and radius: four axes that compose in the cascade. Brand re-declares semantic bundles."
+>
+  <h1>Four dimensions</h1>
+  <p class="lede">
+    Color mode, high contrast, density and radius. Four independent axes that <strong>make up</strong> in the cascade, are not listed on disk.
+  </p>
+
+  <p>
+    Tier 1 palettes are meaning-free raw material. Brand does not choose a semantic bundle: it re-declares
+    the semantic accent bundle on <code>:root</code>; the other tokens keep their meaning. There is no
+    brand catalog, selector, or attribute to maintain inside Core.
+  </p>
+
+  <h2>Each dimension has a different layer</h2>
+  <p>That is the whole reason they compose instead of multiply.</p>
+
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Dimension</th>
+          <th class="sk-table__header">Posee</th>
+          <th class="sk-table__header">Mecanismo</th>
+          <th class="sk-table__header">Activated with</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Color mode</strong></td>
+          <td class="sk-table__cell">color tier-2</td>
+          <td class="sk-table__cell"><code>light-dark()</code> choose slot</td>
+          <td class="sk-table__cell mono">color-scheme</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>High contrast</strong></td>
+          <td class="sk-table__cell">color tier-2</td>
+          <td class="sk-table__cell">re-declares the same tokens</td>
+          <td class="sk-table__cell mono">data-contrast</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Densidad</strong></td>
+          <td class="sk-table__cell">espaciado tier-2</td>
+          <td class="sk-table__cell">multiplier in runtime</td>
+          <td class="sk-table__cell mono">--sk-density</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Radio</strong></td>
+          <td class="sk-table__cell">redondez tier-2</td>
+          <td class="sk-table__cell">a multiplier in runtime</td>
+          <td class="sk-table__cell mono">data-radius / --radius-multiplier</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+    <p>
+      <strong>The separation remains structural:</strong> palettes are tier 1 and semantic tokens name
+      meaning. Replacing the accent never steps on mode, contrast, density, or radius: every axis stays
+      independent.
+    </p>
+    </div>
+  </div>
+
+
+  <h2>Accent, an explicit bundle</h2>
+  <p>
+    <code>tokens.scss</code> includes public palettes and default semantics. Your branding tool generates
+    layerless CSS that replaces the complete semantic bundle; Core does not receive a root color or derive
+    combinations at runtime. This example shows part of the accent bundle.
+  </p>
+  <CodeBlock code={accentBundle} label="brand-accent.css" />
+
+  <h2>Color mode, two slots, and only two</h2>
+  <p>
+    <code>light-dark()</code> takes <strong>exactly two</strong> arguments and is only valid where one <code>&lt; color&gt; </code> is valid. These two restrictions do not fight: they are accepted, and they shape the rest of the model.
+  </p>
+  <ul>
+    <li>
+      <strong>Three modes do not fit in two slots</strong>, so, high contrast is not a third argument: it is a separate override block that re-declares the same tokens, still within
+      <code>light-dark()</code>, because it composes with the light/dark axis.
+    </li>
+    <li>
+      <strong>What is not color cannot be mode-aware. </strong> A shadow, a length, a font family can never live inside <code>light-dark()</code>.
+    </li>
+  </ul>
+  <p>
+    That is why <strong>every mode-aware token in the system is necessarily a</strong> color token, there is {modeAware}, and that is why elevation is modeled as color-plus-composite instead of a per-mode shadow. It is a property of the platform, not an aesthetic decision.
+  </p>
+
+  <h2>Density, a multiplier with the floor inside</h2>
+  <p>
+    A single number, <code>--sk-density</code> (1 = comfortable). There is no second spacing scale that
+    can derive from the first. It is continuous, any value will do, and the <strong>Options</strong>
+    Above offer five shortcut presets, from <em>spacious</em> (1.2) to <em>condensed</em> (0.5).
+  </p>
+  <CodeBlock code={densityUse} label="CSS" />
+
+  <p>
+    To vary only one container, add <code>data-sk-density-scope</code>. Your <code>--sk-density-factor</code> multiplies the system density; a <code>--sk-density</code> written directly into the scope sets an absolute value. Presets are just helper names - any valid number still works.
+  </p>
+
+  <p>
+    <a href="/en/density">The</a> component density guide shows the local scope with a real component and explains when to choose a relative factor or an absolute value.
+  </p>
+
+  <p>
+    Put the density in <em>dense</em> above and look at these two:
+  </p>
+  <div class="sk-box" data-surface="surface" data-border="subtle" data-padding="lg">
+    <p>
+      <code>--space-inset-md</code> → <Used token="--space-inset-md" /><br />
+      <code>--size-control-md</code> → <Used token="--size-control-md" />
+    </p>
+  </div>
+
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+    <p>
+      <strong>The accessibility floor is inside the token, not in the documentation. </strong> Interactive sizes output <code>max(round(calc(base × densidad), 2px), 24px)</code>. That <code>max()</code> is the WCAG 2.2 SC 2.5.8 minimum: no team can multiply below 24px, no matter what they assign to <code>--sk-density</code>. It is unattainable by construction, not by code review.
+    </p>
+    </div>
+  </div>
+
+  <p>
+    The <code>round(…, 2px)</code> is not a whim either: <code>calc(4px * 0.6)</code> = 2.4px goes off the grid, and several of those together make a compact UI shake. It is a no-op at density 1.
+  </p>
+
+  <h3>What is deliberately density invariant?</h3>
+  <p>
+    Typography (scaling font-size without correcting line-height reads worse, density is a spacing issue, not type), corner radius (it is its own dimension, a concern of roundness, not spacing), focus ring width (a shrinking ring disappears), and touch area (can be painted small and respond large).
+  </p>
+
+  <h3>Touch target, 44px no matter how small it paints</h3>
+  <p>
+    <code>--size-touch-target</code> is a fixed value, <strong>44px</strong> (iOS HIG), that does not
+    respond to density. Button and Input consume it with
+    <code>max(control-size, size-touch-target)</code>: the control can never end up smaller than 44px
+    no matter how compact the size scale gets, but it can still paint larger when its own visual size
+    already clears that floor (<code>lg</code>, for instance).
+  </p>
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+      <p>
+        <strong>Painted small, hit area large.</strong> An icon-only button at <code>sm</code> paints
+        at its real visual size, smaller than 44px: but an invisible <code>::after</code> extends the
+        clickable area up to the touch floor without growing the control on screen. It's the same
+        pattern RadioGroup uses (<code>--sk-radio-hit-size</code>, a capture circle larger than the
+        visible dot), and Switch solves it differently: there, the whole label is the touch area, so
+        the visual track doesn't need to carry the floor on its own.
+      </p>
+    </div>
+  </div>
+  <p>
+    17 components under <code>packages/core/css/components</code> consume the token today, among them
+    Combobox, Select, DatePicker and CommandPalette. Any new interactive control should join that
+    list rather than invent its own minimum.
+  </p>
+
+  <h2>Radius, roundness as an axis, not as a brand value</h2>
+  <p>
+    A <strong>multiplier</strong>, not a flat value the same for everything: <code>--radius-multiplier</code> scales a radius scale where each role retains its place, <code>control</code> and <code>surface</code> remain distinct at any level. Use the density mechanism, not the high contrast one. Five presets under <code>data-radius</code>, <code>none 0 · sm.5 · md 1 ·
+ lg 1.5 · xl 2</code>, with <code>md</code> as a base, set only that multiplier, and a product can mark a continuous value (e.g. <code>1.25</code>) outside that ladder. It is orthogonal to the brand: the same brand looks lively or soft without touching your palette.
+  </p>
+  <CodeBlock code={radiusUse} label="HTML" />
+
+  <p>
+    Change the radius above and look at the two roles that move:
+  </p>
+  <div class="sk-box" data-surface="surface" data-border="subtle" data-padding="lg">
+    <p>
+      <code>--radius-control</code> → <Used token="--radius-control" /><br />
+      <code>--radius-surface</code> → <Used token="--radius-surface" />
+    </p>
+  </div>
+
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+    <p>
+      <strong>The dimension invariant: <code>--radius-pill</code> does not move. </strong> The axis plays the two roles of roundness, control and surface, and leaves the shape still: a pill is a completely round lozenge, not a setting of roundness, and turning it into a rectangle in <code>none</code> would erase its identity. Each dimension carries its invariant inside: the density has the WCAG floor, the radius has the pill.
+    </p>
+    </div>
+  </div>
+</Base>

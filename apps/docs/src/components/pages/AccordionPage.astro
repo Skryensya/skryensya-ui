@@ -8,7 +8,7 @@
  * change here to land there too. Every string below goes through `t()`, the exact pattern
  * `demos/accordion.ts` already used for its trees ("one composition read in two languages"); this
  * extends it to the page ITSELF. The two route files that remain are shells: they exist because
- * the site's URLs differ per locale (`/componentes/accordion` vs `/en/components/accordion`,
+ * the site's URLs differ per locale (`/components/accordion` vs `/en/components/accordion`,
  * folder name translated, English prefixed); see `i18n/index.ts`; not because the content does.
  *
  * The hero, the tablist and the Referencia/Style hooks/Cambios wiring now live in
@@ -178,7 +178,7 @@ const sourceFiles = [
   </Fragment>
 
   <Fragment slot="install">
-    <VanillaMount {...vanillaMounts["/componentes/accordion"]} headingLevel="h3" />
+    <VanillaMount {...vanillaMounts["/components/accordion"]} headingLevel="h3" />
     <p set:html={t("accordion.iconsNote")} />
     <CodeBlock code={iconsSetup} label="JavaScript" />
 

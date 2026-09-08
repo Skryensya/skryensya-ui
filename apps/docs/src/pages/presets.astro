@@ -1,36 +1,36 @@
 ---
 /*
- * /presets reemplaza a /personalizar (el editor rampa por rampa, con densidad, radio, set de
- * íconos, auditoría de contraste en vivo y códigos compartibles). Ese editor exponía CADA variable
- * y pisaba todo el sitio.
+ * /en/presets replaces /en/customize (the ramp-by-ramp editor, with density, radius, icon set,
+ * live contrast audit and shareable codes). That editor exposed EVERY variable and wrote onto the
+ * whole site.
  *
- * Un "preset" acá NO es el toggle de acento del header (ese cicla solo 6-7 tokens de color sobre
- * :root. Ver lib/palette-presets.ts). Un preset es LOOK & FEEL, no solo paleta: color de acento,
- * color de feedback, LAS SUPERFICIES NEUTRAS (fondo, texto, bordes: no solo el acento), redondez,
- * tipografía, densidad de espaciado, sombra en reposo, peso de las etiquetas y hasta cuánto se hunde
- * un botón al presionarlo cambian todos juntos. Cada preset re-declara ese bundle sobre
- * `.preset-canvas`, nunca sobre :root, así que elegir uno no cambia esta página ni el resto del
- * sitio (por eso no hay localStorage acá, a diferencia del selector del header, que sí es una
- * preferencia del sitio).
+ * A "preset" here is NOT the header's accent toggle (that one cycles only 6-7 color tokens over
+ * :root; see lib/palette-presets.ts). A preset is LOOK & FEEL, not just a palette: accent color,
+ * feedback color, THE NEUTRAL SURFACES (background, text, borders: not just the accent),
+ * roundness, typography, spacing density, resting shadow, label weight and even how far a button
+ * sinks on press all change together. Each preset re-declares that bundle onto `.preset-canvas`,
+ * never onto :root, so picking one doesn't change this page or the rest of the site (that's why
+ * there's no localStorage here, unlike the header's selector, which genuinely is a site
+ * preference).
  *
- * Los cinco viven simultáneamente como GALERÍA DE SOLO LECTURA: nada es seleccionable, no hay un
- * control que cicle entre ellos. Cada tarjeta ya muestra su propio resultado, lado a lado con las
- * demás, para poder compararlos de un vistazo.
+ * All five live simultaneously as a READ-ONLY GALLERY: nothing is selectable, there is no control
+ * that cycles between them. Each card already shows its own result, side by side with the others,
+ * so they can be compared at a glance.
  *
- * El mecanismo es el mismo truco de re-declaración que usaba /personalizar (ver el historial): los
- * tokens semánticos de color y radio se vuelven a declarar sobre `.preset-canvas` (la línea base,
- * calcada de :root, para que la tarjeta no dependa de qué preset de acento tenga elegido el header
- * en ese momento). Cada preset con carácter propio agrega su `[data-preset="id"]` encima de esa base,
- * reemplazando solo lo que lo distingue: no necesita generar paletas privadas en runtime.
+ * The mechanism is the same re-declaration trick /customize used (see history): color and radius
+ * semantic tokens are re-declared onto `.preset-canvas` (the base line, calqued off :root, so the
+ * card doesn't depend on whichever accent preset the header currently has selected). Each preset
+ * with its own character adds its `[data-preset="id"]` on top of that base, replacing only what
+ * distinguishes it: it needs no runtime-generated private palettes.
  *
- * LAYOUT: `sk-layout-grid` (packages/core/css/patterns/layout.css), el patrón publicado, no CSS
- * bespoke. Ni la prosa ni la galería llevan `data-width`, así que ambas resuelven a la misma medida
- * "content" (64rem). El texto no queda en una columna más angosta que las tarjetas de abajo, todo
- * el bloque respira al mismo ancho. `<Toc rail>` es el rail publicado (`data-width="rail"`,
- * `packages/core/css/components/toc.css`) en vez de un nav lateral hecho a mano. `fullBleed` se
- * mantiene: esta página sigue sin el SidebarNav de documentación (navegar el árbol de componentes
- * no es lo mismo que saltar entre presets de esta única página), pero el rail del Toc reemplaza lo
- * que antes era un `<nav>` propio.
+ * LAYOUT: `sk-layout-grid` (packages/core/css/patterns/layout.css), the published pattern, not
+ * bespoke CSS. Neither the prose nor the gallery carries `data-width`, so both resolve to the same
+ * "content" measure (64rem). The text doesn't sit in a narrower column than the cards below it,
+ * the whole block breathes at the same width. `<Toc rail>` is the published rail
+ * (`data-width="rail"`, packages/core/css/components/toc.css) instead of a hand-rolled side nav.
+ * `fullBleed` stays: this page still skips the docs SidebarNav (navigating the component tree isn't
+ * the same as jumping between presets on this one page), but the Toc's rail now replaces what used
+ * to be a hand-rolled `<nav>`.
  */
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
@@ -44,7 +44,7 @@ import "@skryensya/core/patterns/image-frame.css";
  * other card example in these docs already uses (examples/card-data.ts). One shared URL for all 20
  * card instances (5 presets × 2 schemes). The browser fetches it once and serves the rest from
  * cache, so this costs one network request, not twenty. */
-const demoImage = dummyImage(640, 220, "d4d4d4", "737373", "Imagen");
+const demoImage = dummyImage(640, 220, "d4d4d4", "737373", "Image");
 
 interface Preset {
   id: string;
@@ -64,15 +64,15 @@ interface Preset {
  * a `<div>` instead.
  */
 const SCHEMES = [
-  { id: "light", label: "Claro" },
-  { id: "dark", label: "Oscuro" },
+  { id: "light", label: "Light" },
+  { id: "dark", label: "Dark" },
 ] as const;
 
 /*
  * Five presets, named for what they evoke, not for the hue that happens to carry them -
- * "Predeterminado" and "UC" are the two exceptions, and neither is a color name either (a baseline
- * and a real institution's initials). Each non-default preset pairs an accent family with a
- * DIFFERENT neutral family for its surfaces/text/borders (ADR 0019's constant, published palettes -
+ * "Default" and "UC" are the two exceptions, and neither is a color name either (a baseline and a
+ * real institution's initials). Each non-default preset pairs an accent family with a DIFFERENT
+ * neutral family for its surfaces/text/borders (ADR 0019's constant, published palettes -
  * stone/gray/slate/neutral/zinc all ship full 50–950 ramps already), plus a radius multiplier and a
  * typeface, plus, where it earns its keep. A spacing density (`--sk-density-factor`, needs
  * `data-sk-density-scope` on the canvas below to have any effect), a resting shadow
@@ -84,15 +84,15 @@ const SCHEMES = [
 const PRESETS: Preset[] = [
   {
     id: "default",
-    name: "Predeterminado",
-    description: "El sistema tal como sale de fábrica: sin overrides.",
+    name: "Default",
+    description: "The system as it ships: no overrides.",
     vars: [],
   },
   {
     id: "uc",
     name: "UC",
     description:
-      "Reproduce kitdigital.uc.cl (Pontificia Universidad Católica de Chile): acento celeste, superficies en gris puro, radio recto, tipografía Roboto y cero microinteracción. Un botón institucional no se hunde al presionarlo.",
+      "Reproduces kitdigital.uc.cl (Pontificia Universidad Católica de Chile): Celeste accent, pure-gray surfaces, a squarer radius, Roboto typography and zero microinteraction. An institutional button doesn't sink when pressed.",
     fontImport: "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap",
     vars: [
       "--color-action-accent: oklch(57.02% 0.1812 254.01);",
@@ -127,7 +127,7 @@ const PRESETS: Preset[] = [
     id: "aurora",
     name: "Aurora",
     description:
-      "Índigo intenso sobre superficies slate, esquinas muy redondeadas, más aire entre controles, una sombra que hace flotar la tarjeta y un botón que se hunde más al presionarlo. Manrope en negrita remata el carácter de producto tech nocturno.",
+      "Deep indigo over slate surfaces, very rounded corners, more air between controls, a shadow that makes the card float, and a button that sinks further on press. Bold Manrope tops off the late-night tech product feel.",
     fontImport: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap",
     vars: [
       "--color-action-accent: light-dark(var(--palette-indigo-600), var(--palette-indigo-500));",
@@ -162,10 +162,10 @@ const PRESETS: Preset[] = [
     ],
   },
   {
-    id: "bitacora",
-    name: "Bitácora",
+    id: "journal",
+    name: "Journal",
     description:
-      "Naranja cálido sobre superficies neutral, esquinas suaves, más aire entre controles y una sombra apenas perceptible. Lora serif remata el carácter editorial y artesanal, sin microinteracciones de más.",
+      "Warm orange over neutral surfaces, soft corners, more air between controls, and a barely-there shadow. Serif Lora tops off the editorial, handmade feel, with no extra microinteraction.",
     fontImport: "https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap",
     vars: [
       "--color-action-accent: light-dark(var(--palette-orange-600), var(--palette-orange-500));",
@@ -198,10 +198,10 @@ const PRESETS: Preset[] = [
     ],
   },
   {
-    id: "archivo",
-    name: "Archivo",
+    id: "archive",
+    name: "Archive",
     description:
-      "Grises de tinta zinc en acento y superficies, esquinas rectas, controles más compactos, etiquetas en negrita y cero microinteracción. Space Grotesk remata el carácter corporativo impreso.",
+      "Ink-gray zinc as both accent and surface, square corners, tighter controls, bold labels and zero microinteraction. Space Grotesk tops off the corporate, printed feel.",
     fontImport: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap",
     vars: [
       "--color-action-accent: light-dark(var(--palette-zinc-700), var(--palette-zinc-400));",
@@ -242,13 +242,13 @@ const PRESETS: Preset[] = [
  * `<Toc>` already accepts from every other consumer. */
 const tocItems = [
   ...PRESETS.map((p) => ({ href: `#preset-${p.id}`, label: p.name, level: "h2" as const })),
-  { href: "#como-se-arma", label: "Cómo se arma un preset", level: "h2" as const },
+  { href: "#how-its-built", label: "How a preset is built", level: "h2" as const },
 ];
 
 /* The base line: every card gets the FULL semantic color/radius reset first, calqued straight off
  * :root's own values: never inherited from whatever the header's accent toggle currently has
- * selected, so a card's "no override" state (Predeterminado) is a true baseline, not an accident of
- * what preference happens to be active right now. */
+ * selected, so a card's "no override" state (Default) is a true baseline, not an accident of
+ * whichever preference happens to be active right now. */
 const SCOPED_PREFIXES = ["--color-", "--radius-"];
 const baseCss =
   ".preset-canvas {\n" +
@@ -288,36 +288,36 @@ const stageCss = fontImports + "\n\n" + baseCss + "\n\n" + overrideCss;
 const ucCssTeaching =
   `@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');\n\n` +
   '.preset-canvas[data-preset="uc"] {\n' +
-  `  /* acento + feedback: se re-declaran juntos, no una paleta nueva */\n` +
+  `  /* accent + feedback: re-declared together, not a new palette */\n` +
   `  --color-action-accent: oklch(57.02% 0.1812 254.01);\n` +
   `  --color-text-accent: oklch(57.02% 0.1812 254.01);\n` +
   `  --color-text-danger: oklch(65.42% 0.1996 24.53);\n\n` +
-  `  /* superficies neutras: no solo el acento cambia, TODO el gris cambia de familia */\n` +
+  `  /* neutral surfaces: not just the accent, ALL the gray shifts family */\n` +
   `  --color-bg-surface: light-dark(var(--palette-white), var(--palette-gray-900));\n` +
   `  --color-text-primary: light-dark(var(--palette-gray-900), var(--palette-gray-100));\n` +
   `  --color-border-subtle: light-dark(var(--palette-gray-300), var(--palette-gray-800));\n\n` +
-  `  --radius-multiplier: 0.5; /* como data-radius="sm" */\n` +
+  `  --radius-multiplier: 0.5; /* like data-radius="sm" */\n` +
   `  --font-family-body: 'Roboto', 'Segoe UI', Helvetica, Arial, sans-serif;\n` +
-  `  --motion-press-scale: 1; /* un botón institucional no se hunde al presionarlo */\n` +
+  `  --motion-press-scale: 1; /* an institutional button doesn't sink when pressed */\n` +
   "}";
 ---
 
 <Base
   fullBleed
   title="Presets"
-  description="Cinco look & feel completos. Acento, superficies neutras, redondez, tipografía, densidad, sombra y motion. En una galería de solo lectura."
+  description="Five complete look & feels. Accent, neutral surfaces, roundness, typography, density, shadow and motion. In a read-only gallery."
 >
   <div class="sk-layout-grid presets-shell">
     <div>
       <h1>Presets</h1>
       <p class="lede">
-        Un preset acá es un look & feel completo, no solo su acento. Color de acento,
-        color de feedback, LAS SUPERFICIES NEUTRAS (fondo, texto, bordes), redondez, tipografía,
-        densidad de espaciado, sombra en reposo, peso de las etiquetas y hasta cuánto se hunde un
-        botón al presionarlo cambian todos juntos. No es el acento del selector de paleta del header
-        (ese sí cicla sobre <code>:root</code> y se recuerda entre visitas). Cada tarjeta de abajo es
-        una galería de solo lectura, mostrada a la vez en claro y en oscuro: nada es seleccionable, y
-        no hace falta cambiar el tema del sitio para juzgar los dos modos.
+        A preset here is a complete look & feel, not just its accent. Accent color,
+        feedback color, THE NEUTRAL SURFACES (background, text, borders), roundness, typography,
+        spacing density, resting shadow, label weight and even how far a button sinks on press all
+        change together. It isn't the accent from the header's palette selector (that one cycles
+        over <code>:root</code> and is remembered across visits). Each card below is a read-only
+        gallery shown in light AND dark at once: nothing is selectable, and there's no need to flip
+        the site's theme to judge both modes.
       </p>
     </div>
 
@@ -345,7 +345,7 @@ const ucCssTeaching =
                     <div class="sk-stack" data-gap="sm">
                       <div class="sk-inline" data-gap="sm">
                         <button class="sk-button" data-tone="accent" type="button">
-                          Acento
+                          Accent
                         </button>
                         <button class="sk-button" type="button">
                           Neutral
@@ -356,13 +356,13 @@ const ucCssTeaching =
                       </div>
                       <div class="sk-inline" data-gap="sm">
                         <span class="sk-badge" data-tone="accent">
-                          Nuevo
+                          New
                         </span>
                         <span class="sk-badge" data-tone="success">
-                          Activo
+                          Active
                         </span>
                         <span class="sk-badge" data-tone="warning">
-                          Pendiente
+                          Pending
                         </span>
                       </div>
                       {/* A card is where a preset's whole character shows at once: the radius,
@@ -377,18 +377,18 @@ const ucCssTeaching =
                         </div>
                         <div class="preset-card__demo-card-body">
                           <span class="sk-badge" data-tone="accent">
-                            Destacado
+                            Featured
                           </span>
-                          <p class="preset-card__demo-heading">Título de tarjeta</p>
+                          <p class="preset-card__demo-heading">Card title</p>
                           <p class="preset-card__demo-text">
-                            Un párrafo de texto normal, con <a href="#">un enlace</a> de muestra.
+                            An ordinary paragraph of text, with <a href="#">an example link</a>.
                           </p>
                         </div>
                       </div>
                       <div class="sk-callout" data-tone="info" role="note">
                         <div class="sk-callout__content">
                           <p>
-                            <strong>Ejemplo.</strong> Este callout vive dentro de <code>--font-family-body</code>.
+                            <strong>Example.</strong> This callout lives inside <code>--font-family-body</code>.
                           </p>
                         </div>
                       </div>
@@ -403,37 +403,36 @@ const ucCssTeaching =
     </div>
 
     <div>
-      <h2 id="como-se-arma">Cómo se arma un preset</h2>
+      <h2 id="how-its-built">How a preset is built</h2>
       <p>
-        <strong>UC</strong> reproduce el look de
-        <a href="https://kitdigital.uc.cl/" target="_blank" rel="noreferrer">kitdigital.uc.cl</a>: acento
-        celeste, superficies en gris puro, radio más recto, tipografía Roboto y cero microinteracción -
-        no solo el color de acento, todo el carácter del componente. Los otros tres siguen exactamente
-        el mismo molde, pero cada uno toca las dimensiones que realmente lo distinguen: acento y
-        feedback (danger/success/warning), superficies neutras (fondo, texto, bordes. Una familia de
-        gris distinta por preset, no la misma "stone" de siempre), redondez, tipografía, densidad de
-        espaciado (<code>--sk-density-factor</code>), sombra en reposo (<code>--elevation-flat</code>),
-        peso de las etiquetas (<code>--font-weight-label</code>) y cuánto se hunde un botón al
-        presionarlo (<code>--motion-press-scale</code>): todo re-declarado sobre
-        <code>.preset-canvas</code>, nunca sobre <code>:root</code>. Ningún preset toca todas las
-        dimensiones: dejar una en su valor por defecto es una decisión tan real como
-        cambiarla.
+        <strong>UC</strong> reproduces the look of
+        <a href="https://kitdigital.uc.cl/" target="_blank" rel="noreferrer">kitdigital.uc.cl</a>:
+        Celeste accent, pure-gray surfaces, a squarer radius, Roboto typography and zero
+        microinteraction: not just the accent color, the whole character of the component. The
+        other three follow the exact same mold, but each one touches whichever dimensions actually
+        set it apart: accent and feedback (danger/success/warning), neutral surfaces (background,
+        text, borders. A different gray family per preset, not the same "stone" every time),
+        roundness, typography, spacing density (<code>--sk-density-factor</code>), resting shadow
+        (<code>--elevation-flat</code>), label weight (<code>--font-weight-label</code>) and how far
+        a button sinks on press (<code>--motion-press-scale</code>): all re-declared onto
+        <code>.preset-canvas</code>, never onto <code>:root</code>. No preset touches every
+        dimension: leaving one at its default is as real a decision as changing it.
       </p>
       <p>
-        El claro y el oscuro de cada tarjeta no son dos presets distintos: es el mismo
-        <code>--color-*</code> resuelto con <code>color-scheme: light</code> forzado en una mitad y
-        <code>color-scheme: dark</code> en la otra, el mismo mecanismo que usa el selector de tema
-        del header sobre <code>&lt;html&gt;</code>, aplicado acá sobre un <code>&lt;div&gt;</code>.
+        A card's light and dark halves aren't two different presets: it's the same
+        <code>--color-*</code> resolved with <code>color-scheme: light</code> forced on one half
+        and <code>color-scheme: dark</code> on the other: the same mechanism the header's theme
+        toggle uses on <code>&lt;html&gt;</code>, applied here to a <code>&lt;div&gt;</code>.
       </p>
-      <CodeBlock code={ucCssTeaching} label='CSS · aplicado solo dentro de .preset-canvas[data-preset="uc"]' lang="css" />
+      <CodeBlock code={ucCssTeaching} label='CSS · applied only inside .preset-canvas[data-preset="uc"]' lang="css" />
 
       <div class="sk-callout" data-tone="info">
         <div class="sk-callout__content">
           <p>
-            <strong>Contenido, no preferencia del sitio.</strong> El selector de paleta del header
-            (arriba a la derecha) sigue siendo lo suyo: cambia <code>:root</code>, alcanza todo el
-            sitio y se recuerda entre visitas. Esto es lo opuesto a propósito. Contenido de esta
-            página, sin tocar <code>:root</code> ni <code>localStorage</code>.
+            <strong>Content, not a site preference.</strong> The header's palette toggle (top
+            right) is still its own thing: it changes <code>:root</code>, reaches the whole site,
+            and is remembered across visits. This is the deliberate opposite. Content on this
+            page, that never touches <code>:root</code> or <code>localStorage</code>.
           </p>
         </div>
       </div>
@@ -489,10 +488,10 @@ const ucCssTeaching =
      preset looks like in either mode, not a usable control, and this whole page is a showcase.
      The background is a CONSTANT gray, deliberately not a `--color-bg-*` semantic: those flip with
      the READER's own site theme, and if this backdrop did too, a reader on a light site would see
-     the "Claro" panel merge straight into an already-light page. Only "Oscuro" would stand out,
-     and the light half would read as barely there. A fixed mid-gray gives both forced panels the
-     same contrast against their surroundings no matter what theme the rest of the page happens to
-     be in right now. */
+     the "Light" panel merge straight into an already-light page. Only "Dark" would stand out, and
+     the light half would read as barely there. A fixed mid-gray gives both forced panels the same
+     contrast against their surroundings no matter what theme the rest of the page happens to be in
+     right now. */
   .preset-card__demo-split {
     display: grid;
     grid-template-columns: 1fr 1fr;

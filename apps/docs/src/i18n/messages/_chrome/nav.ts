@@ -15,12 +15,12 @@ export const navMessages = {
     "nav.templates": "Templates",
     "nav.comingSoon": "Próximamente",
     "nav.resizeRail": "Cambiar el ancho de la navegación",
-    /* Los dos primeros enlaces del documento, invisibles hasta que reciben el foco. Nombran el
-       DESTINO y no la acción, porque son lo primero que se escucha al entrar y "saltar" no dice
-       adónde. El contenido va primero: es lo que casi todo el mundo vino a leer. */
+    /* The document's first two links, invisible until they receive focus. They name the DESTINATION
+       and not the action, because they are the first thing heard on arrival and "skip" does not say
+       where to. The content goes first: it is what almost everyone came to read. */
     "nav.skipToContent": "Ir al contenido",
-    /* La etiqueta del BackToTop del sitio (chrome, no la del componente en su propia página).
-       Nombra el destino, la misma convención que las dos de arriba. */
+    /* The label of the site's BackToTop (chrome, not the component's on its own page). It names the
+       destination, the same convention as the two above. */
     "nav.backToTop": "Volver arriba",
     "nav.skipToNav": "Ir a la navegación",
   },

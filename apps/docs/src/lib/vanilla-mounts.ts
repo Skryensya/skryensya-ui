@@ -14,109 +14,109 @@ export type VanillaMountDocumentation = {
  * owns an enhancer: native controls and CSS-only modules deliberately do not imply a JavaScript import.
  */
 export const vanillaMounts = {
-  "/componentes/accordion": {
+  "/components/accordion": {
     name: "Accordion",
     entrypoint: "@skryensya/vanilla/accordion",
     mount: "mountAccordion",
     selector: "[data-sk-accordion]",
   },
-  "/componentes/button": {
+  "/components/button": {
     name: "Button",
     entrypoint: "@skryensya/vanilla/button",
     mount: "mountButton",
     selector: "[data-sk-button]",
   },
-  "/componentes/checkbox": {
+  "/components/checkbox": {
     name: "TileCheckbox",
     entrypoint: "@skryensya/vanilla/tile-checkbox",
     mount: "mountTileCheckbox",
     selector: "[data-sk-tile-checkbox]",
   },
-  "/componentes/color-picker": {
+  "/components/color-picker": {
     name: "ColorPicker",
     entrypoint: "@skryensya/vanilla/color-picker",
     mount: "mountColorPicker",
     selector: "[data-sk-color-picker]",
   },
-  "/componentes/command-palette": {
+  "/components/command-palette": {
     name: "CommandPalette",
     entrypoint: "@skryensya/vanilla/command-palette",
     mount: "mountCommandPalette",
     selector: "[data-sk-command-palette]",
   },
-  "/componentes/date-picker": {
+  "/components/date-picker": {
     name: "DatePicker",
     entrypoint: "@skryensya/vanilla/date-picker",
     mount: "mountDatePicker",
     selector: "[data-sk-date-picker]",
   },
-  "/componentes/calendar": {
+  "/components/calendar": {
     name: "Calendar",
     entrypoint: "@skryensya/vanilla/calendar",
     mount: "mountCalendar",
     selector: "[data-sk-calendar]",
   },
-  "/componentes/dialog": {
+  "/components/dialog": {
     name: "Dialog Vaul",
     entrypoint: "@skryensya/vanilla/vaul",
     mount: "mountVaul",
     selector: "[data-sk-dialog-vaul]",
   },
-  "/componentes/drawer": {
+  "/components/drawer": {
     name: "Drawer Vaul",
     entrypoint: "@skryensya/vanilla/vaul",
     mount: "mountVaul",
     selector: "[data-sk-vaul]",
   },
-  "/componentes/radio-group": {
+  "/components/radio-group": {
     name: "TileRadioGroup",
     entrypoint: "@skryensya/vanilla/tile-radio-group",
     mount: "mountTileRadioGroup",
     selector: "[data-sk-tile-radio-group]",
   },
-  "/componentes/segmented": {
+  "/components/segmented": {
     name: "SegmentedControl",
     entrypoint: "@skryensya/vanilla/segmented",
     mount: "mountSegmented",
     selector: "[data-sk-segmented]",
   },
-  "/componentes/select": {
+  "/components/select": {
     name: "Select",
     entrypoint: "@skryensya/vanilla/select",
     mount: "mountSelect",
     selector: "[data-sk-select]",
   },
-  "/componentes/sidebar": {
+  "/components/sidebar": {
     name: "Sidebar",
     entrypoint: "@skryensya/vanilla/sidebar",
     mount: "mountSidebar",
     selector: "[data-sk-sidebar]",
   },
-  "/componentes/slider": {
+  "/components/slider": {
     name: "Slider",
     entrypoint: "@skryensya/vanilla/slider",
     mount: "mountSlider",
     selector: "[data-sk-slider]",
   },
-  "/componentes/tabs": {
+  "/components/tabs": {
     name: "Tabs",
     entrypoint: "@skryensya/vanilla/tabs",
     mount: "mountTabs",
     selector: "[data-sk-tabs]",
   },
-  "/componentes/toast": {
+  "/components/toast": {
     name: "Toast",
     entrypoint: "@skryensya/vanilla/toast",
     mount: "mountToast",
     selector: "[data-sk-toast]",
   },
-  "/componentes/toc": {
+  "/components/toc": {
     name: "Toc",
     entrypoint: "@skryensya/vanilla/toc",
     mount: "mountToc",
     selector: "[data-sk-toc]",
   },
-  "/componentes/tooltip": {
+  "/components/tooltip": {
     name: "Tooltip",
     entrypoint: "@skryensya/vanilla/tooltip",
     mount: "mountTooltip",

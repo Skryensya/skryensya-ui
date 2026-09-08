@@ -47,7 +47,7 @@ const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 
 /*
- * The rail and the catalog page (`/componentes`) read the SAME task-grouped source
+ * The rail and the catalog page (`/components`) read the SAME task-grouped source
  * (`componentNavigation` in `lib/navigation.ts`) on purpose: one inventory, so a new component
  * cannot land in the catalog without also landing in the rail. But they answer different
  * questions: the catalog helps someone who does not know the name yet pick by what they need to

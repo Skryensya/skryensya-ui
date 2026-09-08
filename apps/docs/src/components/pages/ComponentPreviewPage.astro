@@ -89,7 +89,7 @@ const screensHtml = `<div class="sk-grid" data-multicol data-columns="3">
 const screensReact = `import { Grid } from "@skryensya/react/grid";
 import { TileLink } from "@skryensya/react/tile-link";
 
-// Grid aún no tiene prop \`multicol\`; el atributo pasa derecho por las props.
+// Grid does not have a \`multicol\` prop yet; the attribute passes straight through the props.
 <Grid columns={3} data-multicol>
   <TileLink href="/facturacion">
     <span className="sk-tile__content">
@@ -125,7 +125,7 @@ const anatomy = `<div class="sk-component-preview" data-sk-component-preview>
     </div>
   </header>
 
-  <!-- El srcdoc es estático: no existe una segunda ruta. Lo arma la pestaña JS. -->
+  <!-- The srcdoc is static: there is no second path. The JS tab assembles it. -->
   <iframe
     class="sk-component-preview__stage"
     title="Preview renderizado: Button"
@@ -133,7 +133,7 @@ const anatomy = `<div class="sk-component-preview" data-sk-component-preview>
     aria-busy="true"
   ></iframe>
 
-  <!-- Arrastra el borde inferior del stage para darle más o menos alto. -->
+  <!-- Drag the stage's bottom edge to give it more or less height. -->
   <div
     class="sk-component-preview__resizer"
     data-sk-component-preview-resizer
@@ -143,7 +143,7 @@ const anatomy = `<div class="sk-component-preview" data-sk-component-preview>
     tabindex="0"
   ></div>
 
-  <!-- Se oculta solo cuando el frame avisa que ya pintó. -->
+  <!-- It hides itself once the frame reports it has painted. -->
   <div class="sk-component-preview__loading">
     <span class="sk-loader" data-size="lg" role="status" aria-label="Cargando preview: Button"></span>
   </div>
@@ -166,7 +166,7 @@ const anatomyFull = `<div class="sk-component-preview" data-sk-component-preview
         <span data-sk-icon="refresh"></span>
       </button>
 
-      <!-- Los tabs de binding son un SegmentedControl normal. -->
+      <!-- The binding tabs are an ordinary SegmentedControl. -->
       <div
         class="sk-segmented sk-component-preview__binding-tabs"
         data-sk-segmented
@@ -186,7 +186,7 @@ const anatomyFull = `<div class="sk-component-preview" data-sk-component-preview
     </div>
   </header>
 
-  <!-- Mismo stage que el ejemplo mínimo: el srcdoc lo arma la pestaña JS. -->
+  <!-- Same stage as the minimal example: the JS tab assembles the srcdoc. -->
   <iframe
     class="sk-component-preview__stage"
     title="Preview renderizado: Button"
@@ -207,11 +207,11 @@ const anatomyFull = `<div class="sk-component-preview" data-sk-component-preview
     <span class="sk-loader" data-size="lg" role="status" aria-label="Cargando preview: Button"></span>
   </div>
 
-  <!-- Un panel por binding. CodePreview es dueño de cada superficie de código. -->
+  <!-- One panel per binding. CodePreview owns each code surface. -->
   <section class="sk-component-preview__binding" data-sk-component-preview-binding="vanilla">
     <div class="sk-component-preview__code" data-sk-component-preview-source="html">
       <div class="sk-code-preview" data-sk-code-preview>
-        <!-- HTML resaltado por Shiki + CopyButton -->
+        <!-- HTML highlighted by Shiki + CopyButton -->
       </div>
     </div>
   </section>
@@ -219,23 +219,23 @@ const anatomyFull = `<div class="sk-component-preview" data-sk-component-preview
   <section class="sk-component-preview__binding" data-sk-component-preview-binding="react" hidden>
     <div class="sk-component-preview__code">
       <div class="sk-code-preview" data-sk-code-preview>
-        <!-- TSX resaltado por Shiki + CopyButton -->
+        <!-- TSX highlighted by Shiki + CopyButton -->
       </div>
     </div>
   </section>
 </div>`;
 
 /*
- * La otra mitad del ejemplo: sin el documento del stage y sin el montaje, el HTML de arriba es un
- * marco vacío. Es el mismo código que corre esta página, no una versión de folleto.
+ * The example's other half: without the stage's document and without the mount, the HTML above is an
+ * empty frame. It is the same code this page runs, not a brochure version.
  */
 const anatomyJs = `import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
 import { mountCodePreview } from "@skryensya/vanilla/code-preview";
-// El entry point del frame (el de "runtime dentro del srcdoc", más abajo) como URL.
+// The frame's entry point (the "runtime inside the srcdoc" one, further down) as a URL.
 import frameRuntimeUrl from "./component-preview-frame.ts?worker&url";
 
-/* El stage es un documento aparte: su <head> carga el runtime, que clona los estilos del padre,
-   sincroniza modo/contraste/radio/densidad, monta Vanilla adentro y ajusta el alto del iframe. */
+/* The stage is a separate document: its <head> loads the runtime, which clones the parent's styles,
+   syncs mode/contrast/radius/density, mounts Vanilla inside and adjusts the iframe's height. */
 const frameDocument = \`<!doctype html>
 <html lang="es">
   <head>
@@ -253,15 +253,15 @@ const frameDocument = \`<!doctype html>
 const stage = document.querySelector(".sk-component-preview__stage");
 stage.srcdoc = frameDocument;
 
-// Las superficies de documentación son opt-in: tabs, recarga y resizer del preview…
+// The documentation surfaces are opt-in: tabs, reload and the preview's resizer…
 mountComponentPreview();
-// …y copiar, densidad y disclosure de cada bloque de código, si el preview trae paneles.
+// …and copy, density and each code block's disclosure, if the preview brings panels.
 mountCodePreview();`;
 
 /*
- * El stage de los dos ejemplos de abajo es un ComponentPreview: el mismo documento srcdoc que usa
- * ComponentPreview, montado un nivel más adentro. El runtime del frame monta las superficies de
- * documentación, así el preview anidado tiene sus propios tabs, recarga, resizer y disclosure.
+ * The stage for the two examples below is a ComponentPreview: the same srcdoc document ComponentPreview
+ * uses, mounted one level further in. The frame's runtime mounts the documentation surfaces, so the
+ * nested preview has its own tabs, reload, resizer and disclosure.
  */
 const nestedFrame = buildPreviewFrameDocument({ body: demoHtml });
 
@@ -269,14 +269,14 @@ const mount = `import { initComponents } from "@skryensya/vanilla/auto";
 import { mountCodePreview } from "@skryensya/vanilla/code-preview";
 import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
 
-// Button, SegmentedControl y CopyButton se descubren por selector.
+// Button, SegmentedControl and CopyButton are discovered by selector.
 await initComponents();
 
-// Las superficies de documentación son opt-in.
+// The documentation surfaces are opt-in.
 mountCodePreview();
 mountComponentPreview();`;
 
-const frameMount = `// Entry point cargado por el srcdoc; se ejecuta en el realm del iframe.
+const frameMount = `// Entry point loaded by the srcdoc; it runs in the iframe's realm.
 import { lucideIcons } from "@skryensya/icons-lucide";
 import { initComponents } from "@skryensya/vanilla/auto";
 import { mountIcons } from "@skryensya/vanilla/icon";
@@ -361,8 +361,8 @@ const sourceFiles = [
     <p set:html={t("componentPreview.minimalBody")} />
     <ComponentPreview label="ComponentPreview" note={t("componentPreview.minimalNote")} code={anatomy} js={anatomyJs} lang="html">
       {/*
-       * El stage acomoda sus hijos como flex items, así que un specimen se encoge a su contenido.
-       * Éste es una superficie: ocupa todo el ancho disponible, dentro del inset del stage.
+       * The stage lays its children out as flex items, so a specimen shrinks to its content.
+       * This one is a surface: it takes the full available width, inside the stage's inset.
        */}
       <div class="sk-component-preview" data-sk-component-preview style="inline-size: 100%">
         <header class="sk-component-preview__header">

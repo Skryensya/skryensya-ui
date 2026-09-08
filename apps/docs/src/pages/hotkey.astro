@@ -4,11 +4,11 @@ import CodeBlock from "../components/CodeBlock.astro";
 
 const vanilla = `import { bindHotkey } from "@skryensya/vanilla/hotkey";
 
-// 'mod' es ⌘ en Mac y Ctrl en el resto, un solo spec, las
+// 'mod' is ⌘ on Mac and Ctrl on the rest, a single spec, the
 // dos plataformas.
 const off = bindHotkey("mod+k", () => palette.showModal());
 
-// devuelve su propia limpieza, como todo enhancer
+// returns its own cleanliness, like every enhancer
 off();`;
 
 const react = `import { useHotkey } from "@skryensya/react/hotkey";
@@ -19,92 +19,70 @@ function Palette() {
   // …
 }`;
 
-const specs = `"mod+k"        // ⌘K en Mac, Ctrl+K en el resto
-"mod+shift+p"  // combinación exacta: NO dispara con "mod+p"
-"shift+/"      // "?" para ayuda
-"escape"       // una sola tecla, sin modificador`;
+const specs = `"mod+k"        // ⌘K on Mac, Ctrl+K on the rest
+"mod+shift+p"  // exact combination: DOES NOT fire with "mod+p"
+"shift+/"      // "?" for help
+"escape"       // a single key, no modifier `;
 
 const format = `import { formatHotkey } from "@skryensya/core/hotkey";
 
 formatHotkey("mod+k", true);   // "⌘K"   (Mac)
 formatHotkey("mod+k", false);  // "Ctrl+K"
-// el badge junto al buscador de arriba se llena así`;
+// the badge next to the search engine above is filled so`;
 ---
 
 <Base
   title="Hotkey"
-  description="El primitivo de atajos de teclado: un matcher framework-agnostic, un bindHotkey imperativo y un useHotkey de React."
+  description="The keyboard shortcut primitive: a framework-agnostic matcher, an imperative bindHotkey, and a React useHotkey."
   documentLayout="grid"
 >
   <h1>Hotkey</h1>
   <p class="lede">
-    Un atajo de teclado es comportamiento sin equivalente en la plataforma, <code>accesskey</code>
-    existe pero el navegador lo esconde detrás de sus propios acordes y nunca da un gatillo tipo ⌘K. Así
-    que el sistema lo envía, partido igual que todo comportamiento: el matcher puro en
-    <code>@skryensya/core</code>, el binding imperativo en <code>@skryensya/vanilla</code>, el hook
-    declarativo en <code>@skryensya/react</code>.
+    A keyboard shortcut is behavior without an equivalent on the platform, <code>accesskey</code> exists but the browser hides it behind its own chords and never gives a ⌘K type trigger. So the system sends it, split like all behavior: the pure matcher in <code>@skryensya/core</code>, the imperative binding in <code>@skryensya/vanilla</code>, the declarative hook in <code>@skryensya/react</code>.
   </p>
   <p>
-    Pruébalo ahora: aprieta <kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd>, el buscador de esta documentación
-    es <a href="/componentes/command-palette">CommandPalette</a>, el componente que consume este primitivo. El <a href="/componentes/kbd"><code>Kbd</code></a> tiene
-    además un estado que reacciona al teclado con este mismo <code>matchesHotkey</code>; se ve en su
-    página.
+    Try it now: press <kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd>, the finder in this documentation is <a href="/en/components/command-palette">CommandPalette</a>, the component that consumes this primitive. The <a href="/en/components/kbd"><code>Kbd</code></a> also has a state that reacts to the keyboard with this same <code>matchesHotkey</code>; It is seen on your page.
   </p>
 
-  <h2>Por qué <code>mod</code> lo vale</h2>
+  <h2>Why <code>mod</code> is worth it</h2>
   <p>
-    Es la razón de que esto merezca un primitivo y no un <code>event.metaKey</code> suelto:
-    <code>mod</code> es ⌘ en una Mac y Ctrl en todo lo demás, así que un solo spec, 
-    <code>"mod+k"</code>, es el acorde correcto en ambos sin que quien lo escribe ramifique nunca por
-    plataforma. El core toma ese dato como un booleano en vez de olfatear <code>navigator</code>, así
-    que queda puro y testeable; los bindings lo detectan y se lo pasan.
+    It is why this deserves a primitive and not a loose <code>event.metaKey</code>: <code>mod</code> is ⌘ on a Mac and Ctrl everywhere else, so a single spec, <code>"mod+k"</code>, is the correct chord on both without the writer ever branchingper platform. The core takes that data as a boolean instead of sniffing <code>navigator</code>, so it remains pure and testable; The bindings detect it and pass it on.
   </p>
 
   <h2>Vanilla</h2>
   <p>
-    <code>bindHotkey(spec, handler)</code> engancha un listener de <code>keydown</code> y devuelve su
-    propia limpieza, la misma forma que devuelve todo enhancer del sistema.
+    <code>bindHotkey(spec, handler)</code> hooks a <code>keydown</code> listener and returns its own cleanup, the same way every system enhancer returns.
   </p>
   <CodeBlock code={vanilla} label="JavaScript" />
 
   <h2>React</h2>
   <p>
-    <code>useHotkey(spec, handler)</code> es lo mismo como hook: consume el mismo matcher del core
-    (nunca el paquete vanilla, los dos bindings son hermanos sobre el core), pasa el handler por un ref
-    para no re-enganchar en cada render, y la limpieza del efecto quita el listener.
+    <code>useHotkey(spec, handler)</code> is the same as a hook: it consumes the same core matcher (never the vanilla package, the two bindings are siblings on the core), passes the handler through a ref so as not to re-hook in each render, and cleaning the effect removes the listener.
   </p>
   <CodeBlock code={react} label="React" />
 
-  <h2>El spec</h2>
+  <h2>The spec</h2>
   <p>
-    Modificadores y una tecla, separados por <code>+</code>, en cualquier orden. El acorde es
-    <strong>exacto</strong>: <code>"mod+k"</code> no dispara con <code>mod+shift+k</code>, para que un
-    atajo no se trague en silencio un superconjunto que la app quería para otra cosa.
+    Modifiers and a key, separated by <code>+</code>, in any order. The chord is <strong>exact</strong>: <code>"mod+k"</code> does not trigger with <code>mod+shift+k</code>, so that a shortcut does not silently swallow a superset that the app wanted for something else.
   </p>
   <CodeBlock code={specs} label="specs" lang="ts" />
 
-  <h2>Mostrarlo</h2>
+  <h2>Showing it</h2>
   <p>
-    Un atajo solo se descubre si se ve. <code>formatHotkey</code> lo escribe como lo escribe el sistema
-    operativo, glifos en Mac, palabras en el resto, para el badge junto a un buscador o en un menú.
+    A shortcut is only discovered if it is seen. <code>formatHotkey</code> writes it as the operating system writes it, glyphs on Mac, words on the rest, for the badge next to a search engine or in a menu.
   </p>
   <CodeBlock code={format} label="JavaScript" />
 
-  <h2>Lo que hace por ti, y lo que no</h2>
+  <h2>What it does for you, and what it does not</h2>
   <ul>
     <li>
-      <strong>No dispara una letra suelta mientras escribes.</strong> Un <code>"/"</code> dentro de un
-      input es texto, no un comando, se suprime. Pero un acorde con modificador (⌘K) <em>siempre</em>
-      dispara, porque tiene que llegarte desde adentro del buscador que abre. Se puede forzar con
-      <code>enableWhileTyping</code>.
+      <strong>It does not trigger a single letter while you type. </strong> A <code>"/"</code> within an input is text, not a command, it is deleted. But a chord with modifier (⌘K) <em>always triggers</em>, because it has to reach you from within the search engine it opens. It can be forced with <code>enableWhileTyping</code>.
     </li>
     <li>
-      <strong>Frena el default del navegador.</strong> Un ⌘S que además guarda la página es un bug, así
-      que llama <code>preventDefault()</code> por defecto.
+      <strong>Stops the default browser. </strong> A ⌘S that also saves the page is a bug, so it calls <code>preventDefault()</code> by default.
     </li>
     <li>
-      <strong>No maneja secuencias</strong> (tipo <code>g</code> después de <code>g</code>) ni scopes por
-      widget: es un acorde y un handler. Lo demás lo arma quien lo consume, como el buscador de arriba.
+      <strong>It does not handle</strong> sequences (type <code>g</code> after <code>g</code>) or scopes per widget: it is a chord and a handler. The rest is put together by whoever consumes it, like the search engine above.
     </li>
   </ul>
 </Base>

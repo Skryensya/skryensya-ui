@@ -26,10 +26,10 @@ const stackCss = `/* Ya viene en components/toast.css: está acá porque
    es la única parte del componente que lee el DOM
    desde CSS, y conviene saber de dónde sale. */
 
-/* Sólo el más nuevo queda en flujo, así la región
-   mide lo que mide ÉL. Los de atrás salen de flujo
-   estirados a esa misma caja: por eso la pila se lee
-   como un objeto y no como cartas descuadradas. */
+/* Only the newest one stays in flow, so the region
+   measures what IT measures. The ones behind go out of
+   flow stretched to that same box: that is why the stack
+   reads as one object and not as misaligned cards. */
 .sk-toast-region:not([data-stack="off"]) > .sk-callout:not(:last-child) {
   position: absolute;
   inset: 0;
@@ -37,8 +37,8 @@ const stackCss = `/* Ya viene en components/toast.css: está acá porque
 }
 
 .sk-toast-region:not([data-stack="off"]) > .sk-callout {
-  /* 0 para el más nuevo (el último hijo), +1 por
-     cada uno que quedó atrás. Sin contadores en JS. */
+  /* 0 for the newest (the last child), +1 for
+     each one that fell behind. No counters in JS. */
   --sk-toast-depth: calc(sibling-count() - sibling-index());
 
   transform-origin: bottom center;
@@ -48,8 +48,8 @@ const stackCss = `/* Ya viene en components/toast.css: está acá porque
   scale: calc(1 - (var(--sk-toast-depth) * var(--sk-toast-shrink)));
   opacity: calc(3 - var(--sk-toast-depth));
 
-  /* La profundidad otra vez, ahora en el tiempo: el de
-     adelante sale primero, cada uno detrás lo sigue. */
+  /* Depth again, now in time: the one in front
+     leaves first, each one behind follows it. */
   transition-delay: calc(
     var(--sk-toast-depth) * var(--sk-toast-cascade)
   );
@@ -64,9 +64,10 @@ const stackCss = `/* Ya viene en components/toast.css: está acá porque
   opacity: 1;
 }
 
-/* El layout no transiciona: al dejar de ser absolutos ya
-   están en su fila. En vez de animar el salto, se lo tapa
-   con una llegada. El más nuevo no participa: no se movió. */
+/* The layout does not transition: once they stop being
+   absolute they are already in their row. Instead of animating
+   the jump, it is covered with an arrival. The newest one does
+   not take part: it did not move. */
 .sk-toast-region:not([data-stack="off"]):is(:hover, :focus-within)
   > .sk-callout:not(:last-child) {
   animation: sk-toast-fan var(--motion-expand-duration)

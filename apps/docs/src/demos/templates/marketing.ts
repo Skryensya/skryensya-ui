@@ -126,8 +126,8 @@ export const marketingTree = (t: Translate): UsageTree => ({
               /*
                * HERO. The eyebrow is a `Badge`, not a `Tag`, and the catalogue draws that line
                * itself: a Tag is something the reader can REMOVE (an applied filter, a keyword),
-               * and `Tag.avoidWhen` sends exactly this case away: "es sólo un conteo o un estado
-               * que nadie puede tocar; eso es un Badge". A release marker is read, never dismissed.
+               * and `Tag.avoidWhen` sends exactly this case away: "it is just a count or a state
+               * nobody can touch; that is a Badge". A release marker is read, never dismissed.
                * Both render as a capsule, which is precisely why picking by appearance gets it
                * wrong: the difference is whether it can be acted on.
                */

@@ -45,11 +45,11 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("linkPage.lede")} />
-    <ComponentPreview tree={linkTree(t, "/componentes/link")} label="Link" />
+    <ComponentPreview tree={linkTree(t, "/components/link")} label="Link" />
 
     <h3>{t("linkPage.tileTitle")}</h3>
     <p set:html={t("linkPage.tileBody1")} />
-    <ComponentPreview tree={tileLinkTree(t, "/componentes/link")} label="TileLink" />
+    <ComponentPreview tree={tileLinkTree(t, "/components/link")} label="TileLink" />
     <p set:html={t("linkPage.tileBody2")} />
     <CodeBlock code={tileLinkVanilla} label="JavaScript" />
 

@@ -6,22 +6,21 @@ const searchIcon = iconMarkup("search");
 ---
 
 <Base
-  title="Página no encontrada"
-  description="La ruta solicitada no existe en la documentación de @skryensya."
+  title="Page not found"
+  description="The requested path does not exist in @skryensya's documentation."
 >
   <section class="docs-not-found" aria-labelledby="not-found-title">
     <p class="docs-not-found__status" aria-hidden="true">404</p>
 
     <div class="docs-not-found__copy">
-      <h1 id="not-found-title">Esta ruta no está en la documentación.</h1>
+      <h1 id="not-found-title">This path is not in the documentation.</h1>
       <p class="lede">
-        El enlace puede haber cambiado o la URL no pertenece a este sitio. Busca por componente, token o
-        concepto, o vuelve al punto de partida.
+        The link may have changed or the URL does not belong to this site. Search by component, token or concept, or go back to where you started.
       </p>
     </div>
 
     <div class="sk-inline docs-not-found__actions" data-gap="sm">
-      <a class="sk-button sk-interactive" data-tone="accent" href="/">Ir a la documentación</a>
+      <a class="sk-button sk-interactive" data-tone="accent" href="/in">Go to documentation</a>
       <button
         class="sk-button sk-interactive"
         data-variant="ghost"
@@ -32,17 +31,17 @@ const searchIcon = iconMarkup("search");
         data-sk-command-palette-open
       >
         <Fragment set:html={searchIcon} />
-        Buscar en Docs
+        Search in Docs
         <kbd class="sk-kbd" data-sk-command-palette-hint aria-hidden="true">⌘K</kbd>
       </button>
     </div>
 
-    <nav class="docs-not-found__routes" aria-label="Páginas para continuar">
-      <span>Continúa por</span>
-      <a href="/prerrequisitos">Prerrequisitos</a>
-      <a href="/componentes">Componentes</a>
-      <a href="/referencia">Tokens</a>
-      <a href="/dimensiones">Dimensiones</a>
+    <nav class="docs-not-found__routes" aria-label="Pages to continue">
+      <span>Continue by</span>
+      <a href="/en/prerequisites">Prerrequisitos</a>
+      <a href="/en/components">Components</a>
+      <a href="/en/reference">Tokens</a>
+      <a href="/en/dimensions">Dimensiones</a>
     </nav>
   </section>
 </Base>

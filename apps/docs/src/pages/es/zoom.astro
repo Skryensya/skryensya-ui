@@ -1,0 +1,201 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+
+const reflowCss = `.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(min(100%, 18rem), 1fr)
+  );
+  gap: var(--space-inline-md);
+}
+
+.responsive-grid > * {
+  min-inline-size: 0;
+}`;
+
+const flexibleMediaCss = `.content {
+  inline-size: min(100%, 70rem);
+}
+
+.content img,
+.content video {
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+.card {
+  min-block-size: 12rem;
+  block-size: auto;
+}`;
+
+const localOverflowCss = `.table-scroll,
+.code-scroll {
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}`;
+---
+
+<Base
+  title="Zoom y reflow"
+  documentLayout="grid"
+  description="Cómo el sistema conserva contenido, controles y orden cuando cambia el zoom, el tamaño de texto o el viewport."
+>
+  <h1>Zoom y reflow</h1>
+  <p class="lede">
+    Zoom y reflow son garantías de capacidad. El viewport efectivo cambia, el texto crece y la
+    interfaz debe conservar el mismo contenido, las mismas acciones y un orden de lectura coherente.
+    Se permite cambiar la geometría; no se permite perder funcionalidad.
+  </p>
+
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+      <p>
+        <strong>200% y 400% cubren fallos distintos.</strong> A 200% se prueba que el texto puede
+        crecer sin quedar recortado. A 400%, un viewport de 1280px equivale a
+        <strong>320 CSS px</strong>; la página debe leerse en una sola dirección, salvo regiones que
+        por naturaleza necesitan dos ejes, como tablas o código.
+      </p>
+    </div>
+  </div>
+
+  <h2>La regla del sistema</h2>
+  <p>
+    Un Contract no promete un ancho fijo. Promete que su Markup contract puede envolver texto, que sus
+    partes pueden encogerse con <code>min-inline-size: 0</code> y que sus styling hooks no fuerzan una
+    medida que rompa el viewport. El Binding puede cambiar filas, columnas o disclosure, pero debe
+    mantener las acciones alcanzables y el orden del DOM.
+  </p>
+
+  <figure class="reflow-specimen">
+    <div class="reflow-specimen__grid">
+      <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="md">
+        <span class="reflow-specimen__index">01</span>
+        <strong>Contenido</strong>
+        <p>El texto envuelve y hace crecer su caja.</p>
+      </article>
+      <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="md">
+        <span class="reflow-specimen__index">02</span>
+        <strong>Controles</strong>
+        <p>Las acciones siguen visibles y alcanzables.</p>
+      </article>
+      <article class="sk-box" data-surface="surface" data-border="subtle" data-padding="md">
+        <span class="reflow-specimen__index">03</span>
+        <strong>Orden</strong>
+        <p>El DOM conserva una lectura predecible.</p>
+      </article>
+    </div>
+    <figcaption>
+      El grid no necesita un breakpoint por dispositivo: <code>auto-fit</code> responde al espacio
+      disponible y <code>min(100%, 18rem)</code> evita que una columna imponga overflow.
+    </figcaption>
+  </figure>
+
+  <CodeBlock code={reflowCss} label="CSS · grid con reflow" />
+
+  <h2>Mecanismos que evitan pérdida de capacidad</h2>
+
+  <h3>El contenedor decide la geometría</h3>
+  <p>
+    Un componente no debería conocer el dispositivo. Recibe un ancho flexible, deja encoger a sus hijos
+    y usa grid, flex-wrap o Stack para cambiar distribución según el espacio real. Si un componente
+    necesita esconder acciones, debe moverlas a una superficie accesible, no eliminarlas.
+  </p>
+
+  <h3>Texto y media crecen sin recorte</h3>
+  <p>
+    Las cajas con contenido no tienen altura fija. Las imágenes, videos e iframes respetan el ancho
+    disponible y mantienen proporción. Cuando una Signature acepta contenido largo, ese caso pertenece
+    al Contract: no se delega al producto consumidor.
+  </p>
+  <CodeBlock code={flexibleMediaCss} label="CSS · contenido flexible" />
+
+  <h3>El overflow horizontal es local</h3>
+  <p>
+    Tablas, código, mapas y diagramas pueden necesitar dos dimensiones. El scroll pertenece a esa
+    región, no al documento completo. El título, la explicación y las acciones cercanas siguen
+    haciendo reflow.
+  </p>
+  <CodeBlock code={localOverflowCss} label="CSS · overflow local" />
+
+  <h2>Reglas de revisión</h2>
+  <ul>
+    <li>Se revisa texto al 200%; un viewport móvil no cubre texto ampliado.</li>
+    <li>Se revisa reflow a 400%, equivalente a 320 CSS px desde 1280px.</li>
+    <li>La página se puede leer con scroll vertical, sin overflow horizontal global.</li>
+    <li>Menús, dialogs, popovers, validaciones y preferencias siguen operables.</li>
+    <li>El foco y el orden de lectura siguen al orden visual después del reflow.</li>
+    <li>La State layer de foco queda visible en cada parada.</li>
+  </ul>
+
+  <h2>Fallos que el sistema no acepta</h2>
+  <ul>
+    <li><code>width</code> o <code>min-width</code> fijos mayores que el viewport efectivo.</li>
+    <li><code>height</code> fija en botones, cards, callouts o campos con texto.</li>
+    <li><code>white-space: nowrap</code> en labels sin alternativa responsive.</li>
+    <li>Toolbars que ocultan acciones sin ofrecer otro camino por teclado.</li>
+    <li>Contenido posicionado con offsets físicos que sale del flujo.</li>
+    <li><code>overflow: hidden</code> usado para esconder el síntoma.</li>
+  </ul>
+
+  <p>
+    Referencias:
+    <a href="https://www.w3.org/WAI/WCAG22/Understanding/resize-text.html">
+      WCAG 1.4.4 Resize Text
+    </a>
+    y
+    <a href="https://www.w3.org/WAI/WCAG22/Understanding/reflow.html">
+      WCAG 1.4.10 Reflow
+    </a>.
+  </p>
+</Base>
+
+<style>
+  .reflow-specimen {
+    display: grid;
+    gap: var(--space-stack-sm);
+    margin: var(--space-stack-md) 0 var(--space-section);
+  }
+
+  .reflow-specimen__grid {
+    display: grid;
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(100%, 12rem), 1fr)
+    );
+    gap: var(--space-inline-md);
+    padding: var(--space-inset-md);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-surface);
+    background: var(--color-bg-surface-sunken);
+  }
+
+  .reflow-specimen__grid article {
+    display: grid;
+    gap: var(--space-stack-xs);
+    min-inline-size: 0;
+    align-content: start;
+  }
+
+  .reflow-specimen__grid p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+
+  .reflow-specimen__index {
+    color: var(--color-text-accent);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-caption);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .reflow-specimen figcaption {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption);
+    text-wrap: pretty;
+  }
+</style>

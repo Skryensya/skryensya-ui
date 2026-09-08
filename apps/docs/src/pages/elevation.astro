@@ -1,0 +1,446 @@
+---
+import Base from "../layouts/Base.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import ComponentPreview from "../components/ComponentPreview.astro";
+import Used from "../components/Used.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
+
+import "../examples/elevation.css";
+import elevationSource from "../examples/elevation.css?raw";
+
+const scale = [
+  {
+    level: "sunken",
+    name: "Sunken",
+    token: "--elevation-sunken",
+    note: "Pressed into the canvas, the one negative rung: inward pressure, not lift.",
+  },
+  {
+    level: "flat",
+    name: "Flat",
+    token: "--elevation-flat",
+    note: "At rest, no separation from the canvas: the default state of almost everything.",
+  },
+  {
+    level: "raised",
+    name: "Raised",
+    token: "--elevation-raised",
+    note: "Permanently lifted off the canvas, but not floating over other content.",
+  },
+  {
+    level: "overlay",
+    name: "Overlay",
+    token: "--elevation-overlay",
+    note: "A standalone floating surface with no trigger to hang off of: one rung above raised.",
+  },
+  {
+    level: "modal",
+    name: "Modal",
+    token: "--elevation-modal",
+    note: "Blocks the rest of the page while it is open.",
+  },
+] as const;
+
+const usage = `<!-- Box already ships the hook: surface="raised" sets --elevation-raised -->
+<div class="sk-box" data-surface="raised" data-padding="lg">…</div>
+
+<!-- Your own component: override YOUR OWN hook, never write box-shadow by hand -->
+<style>
+  .my-card {
+    --sk-my-card-shadow: var(--elevation-overlay);
+    box-shadow: var(--sk-my-card-shadow);
+  }
+</style>`;
+
+/*
+ * `Box` only reaches three of the five rungs itself (`surface="sunken"`/`"raised"` are real
+ * `box.css` behaviour; `overlay`/`modal` are not options Box publishes, on purpose - nothing in
+ * this system ever floats or blocks by being a Box). So all five swatches skin the SAME way
+ * instead: `.ev-swatch[data-level]` (examples/elevation.css) overrides `--sk-box-shadow` AND
+ * `background` directly, the exact "declare your own hook, override it" pattern the CodeBlock below
+ * shows in prose (paints the real `--color-bg-surface-*` each level's actual component would use,
+ * not just the shadow - without it, three of five swatches shared one flat background and only the
+ * shadow carried the difference, confirmed missing live). This IS a real `box` contract node, still
+ * emits real Box markup - only the paint comes from the page's own override, not `data-surface`.
+ */
+const scaleTree: UsageTree = {
+  contract: "layout",
+  signature: "Grid",
+  options: { gap: "md", columns: "5" },
+  children: scale.map((step) => ({
+    contract: "box",
+    signature: "Box",
+    options: { border: "subtle", padding: "lg" },
+    attrs: { class: "ev-swatch", "data-level": step.level },
+    children: step.name,
+  })),
+};
+
+/** Box's OWN three rungs, through its real `surface` option - no override at all, unlike the five
+ * swatches above. The path most consumers actually want: reach for Box, not for a hook. */
+const boxNativeTree: UsageTree = {
+  contract: "layout",
+  signature: "Grid",
+  options: { gap: "md", columns: "3" },
+  children: [
+    {
+      contract: "box",
+      signature: "Box",
+      options: { surface: "sunken", border: "subtle", padding: "lg" },
+      children: "surface: sunken",
+    },
+    {
+      contract: "box",
+      signature: "Box",
+      options: { surface: "surface", border: "subtle", padding: "lg" },
+      children: "surface: surface",
+    },
+    {
+      contract: "box",
+      signature: "Box",
+      options: { surface: "raised", padding: "lg" },
+      children: "surface: raised",
+    },
+  ],
+};
+---
+
+<Base
+  title="Elevation"
+  documentLayout="grid"
+  description="The system's shadow scale: five levels composed from --shadow-sm/md/lg, and when to reach for each."
+>
+  <h1>Elevation</h1>
+  <p class="lede">
+    Five named levels, not a free numeric scale: <code>sunken</code>, <code>flat</code>,
+    <code>raised</code>, <code>overlay</code> and <code>modal</code>. Each is a
+    <code>box-shadow</code> composed once, in the semantic tier
+    (<code>packages/core/css/semantic/_color.scss</code>), out of three mode-aware shadow colors
+    (<code>--shadow-sm</code>/<code>-md</code>/<code>-lg</code>). No component builds its own
+    shadow: every one of them consumes one of the five <code>--elevation-*</code>. Four are
+    positive (each reads a rung further stacked above the canvas than the last);
+    <code>sunken</code> is the one negative rung, pressed inward instead of lifted.
+  </p>
+
+  <h2>The scale</h2>
+  <p>
+    All five levels, with the real shadow rendered (none of this is hand-painted: it is
+    <code>box.css</code> plus the override the "How it's used" section shows) and the value each
+    resolves to right now, in the active mode.
+  </p>
+  <ComponentPreview tree={scaleTree} label="The five levels" />
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Level</th>
+          <th class="sk-table__header">Token</th>
+          <th class="sk-table__header">Resolved value</th>
+          <th class="sk-table__header">When</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        {
+          scale.map((step) => (
+            <tr class="sk-table__row">
+              <td class="sk-table__cell"><strong>{step.name}</strong></td>
+              <td class="sk-table__cell mono">{step.token}</td>
+              <td class="sk-table__cell mono"><Used token={step.token} /></td>
+              <td class="sk-table__cell">{step.note}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2><code>raised</code> vs. <code>overlay</code>: the real cut</h2>
+  <p>
+    The two look similar in an isolated swatch, but they separate two different things: a
+    <strong>tethered</strong> popup, hung off a specific trigger with quick feedback timing
+    (<code>--motion-feedback-*</code>), stays at <code>raised</code>. Menu, Select, Combobox and
+    Tooltip are exactly that. A <strong>standalone</strong> surface, with no trigger positioning
+    it, running its own enter/exit timing (<code>--motion-enter-*</code>/<code>-exit-*</code>),
+    goes up to <code>overlay</code>: Popover (arbitrary content), DatePicker, ColorPicker,
+    Megamenu, Toast and SkipLink. Neither literally floats above the other in practice; the
+    distinction is how much it behaves like a momentary extension of the trigger versus how much it
+    behaves like its own window.
+  </p>
+
+  <h2><code>sunken</code>: the one negative rung</h2>
+  <p>
+    The other four stack upward: each reads one rung closer to the reader than the last.
+    <code>sunken</code> does the opposite, pressing the surface in rather than lifting it, and
+    that's why its shadow is <code>inset</code> instead of cast:
+    <code>inset 0 1px 2px 0 var(--shadow-sm)</code>, the same ingredient <code>raised</code> already
+    uses, pointed inward instead of outward. Until now, <code>surface="sunken"</code>
+    (<a href="/en/components/box">Box</a>, <a href="/en/components/hero">Hero</a>) only ever changed
+    the background (<code>--color-bg-surface-sunken</code>) with no shadow reinforcing "pressed in":
+    the one surface of the four where <code>raised</code> went up with background + shadow but its
+    opposite went down with background alone, nothing else. Not anymore:
+    <code>--sk-box-shadow</code>/<code>--sk-hero-shadow</code> now resolve to
+    <code>--elevation-sunken</code> the same way they resolve to <code>--elevation-raised</code> on
+    the other side, same hook, same rule.
+  </p>
+  <p>
+    Fields (<a href="/en/components/input">Input</a>, <a href="/en/components/select">Select</a>,
+    Combobox, NumberField, TimeField, DatePicker, ColorPicker's own channel inputs) just moved to
+    <code>sunken</code> too: a field is the well you write into, not a card resting on the surface.
+    <code>select.css</code> and <code>input.css</code> had the opposite reasoning written by hand:
+    <em>"in dark mode <code>sunken</code> resolves to neutral-1000, darker than any surface, so the
+    control looked like a hole punched in the dialog"</em>. True at the time  - 
+    <code>--color-bg-surface-sunken</code> in dark mode shares its value with
+    <code>--color-bg-canvas</code> on purpose -  but that is no longer the only thing carrying it: the
+    <code>inset</code> of <code>--elevation-sunken</code> traces the field's own edge, so it still
+    reads as its own control even when the container around it (a card, a Dialog) is lighter.
+  </p>
+
+  <h2>All five together, not isolated</h2>
+  <p>
+    A single-color swatch is easy to misread: nothing says whether that shadow is a lot or a little
+    until it sits next to another one. This fragment is not a real component  -  Menu, Popover and
+    Dialog need a trigger and JS state to open, which would leave this section blank on first paint,
+    exactly what an at-a-glance illustration cannot afford  -  but every box borrows the same
+    <code>--elevation-*</code> the real component would consume, so the weight you see is the real
+    one, only the interactivity is missing.
+  </p>
+  <div class="ev-demo">
+    <div class="ev-demo__toolbar">
+      <span aria-hidden="true">⌕</span>
+      <span>Search projects…</span>
+      <span class="ev-demo__tag">sunken</span>
+    </div>
+    <div class="ev-demo__row">
+      <div class="ev-demo__card">
+        <div class="ev-demo__card-header">
+          <span>Projects</span>
+          <button class="ev-demo__sort" type="button">Sort ▾</button>
+        </div>
+        <p class="ev-demo__card-body">12 active, updated 2 minutes ago.</p>
+        <span class="ev-demo__tag">raised</span>
+        <div class="ev-demo__menu">
+          <div class="ev-demo__menu-item">Most recent</div>
+          <div class="ev-demo__menu-item">Name (A–Z)</div>
+          <div class="ev-demo__menu-item">Size</div>
+          <span class="ev-demo__tag">raised</span>
+        </div>
+      </div>
+      <div class="ev-demo__popover">
+        3 unsaved changes
+        <p>Autosaves every 30s.</p>
+        <span class="ev-demo__tag">overlay</span>
+      </div>
+    </div>
+    <div class="ev-demo__dialog">
+      Delete "Projects"?
+      <p>This action cannot be undone. In practice it covers the whole page with a scrim behind it;
+      here it's set apart to compare visual weight, not real position.</p>
+      <span class="ev-demo__tag">modal</span>
+    </div>
+  </div>
+
+  <h2>Where each shadow comes from</h2>
+  <p>
+    <code>--shadow-sm</code>/<code>-md</code>/<code>-lg</code> are the first ingredient: an
+    <code>oklch()</code> black with growing alpha, different per mode
+    (<code>light-dark()</code>) because a shadow needs more opacity to read against an already
+    dark background. <code>--elevation-tint-*</code> is the second, a light reinforcement that's
+    always on and stronger still under high contrast (see the section above). The five
+    <code>--elevation-*</code> are the recipe: each
+    composes one or two <code>box-shadow</code> layers (cast or <code>inset</code>) against one of
+    those three colors, plus the tint layer. A component never touches <code>--shadow-*</code> or
+    <code>--elevation-tint-*</code> directly, only the elevation level it needs.
+  </p>
+
+  <h2>Live, with nothing overridden</h2>
+  <p>
+    The swatches above force all five levels by hand so they can show
+    <code>overlay</code>/<code>modal</code>, which <a href="/en/components/box">Box</a> does not
+    publish. But if what's actually needed is a sunken or lifted Box, the real path is shorter: its
+    own <code>surface</code>. No shadow is written on this page, <code>box.css</code> paints it.
+  </p>
+  <ComponentPreview tree={boxNativeTree} label="Box · native surface" />
+
+  <h2>How it's used</h2>
+  <p>
+    The tokens are always on, no import needed: they are tier 2 semantic, part of the base bundle.
+    A consumer with its own surface does what <code>Box</code> does: declare its own hook against
+    an <code>--elevation-*</code>, and expose THAT hook, never a loose shadow value.
+  </p>
+  <CodeBlock code={usage} label="CSS" />
+
+  <h2>Dark mode: shadow alone isn't enough</h2>
+  <p>
+    <code>--shadow-sm</code>/<code>-md</code>/<code>-lg</code> already increase in alpha in dark
+    mode (0.12→0.5, 0.16→0.6, 0.22→0.7): not the same shadow recycled over a darker background.
+    But that only compensates so far. A shadow is the ABSENCE of a light that hits something: over
+    a canvas that's already near-black, darkening that edge further barely reads, no matter how
+    much alpha it carries. Material's own dark-mode answer runs the other way: instead of (or on
+    top of) darkening the edge, it <strong>lightens the elevated surface</strong>, as if it sat
+    closer to a light source. This system already did half of that: <code>surface-raised</code>
+    was already lighter than <code>surface</code> in dark mode (<code>stone-800</code> against
+    <code>stone-900</code>), just never formally tied to the elevation scale.
+  </p>
+  <p>
+    <code>--color-bg-surface-overlay</code> (new) continues that same step, shared by
+    <strong>both</strong> <code>overlay</code> <strong>and</strong> <code>modal</code>: Popover,
+    DatePicker, ColorPicker, Megamenu, Toast, SkipLink, Dialog, Drawer and Vaul move from
+    <code>surface</code>/<code>surface-raised</code> to this tone. It is not a THIRD step of its
+    own for <code>modal</code>: <code>contrast-pairs.json</code> requires EVERY text token,
+    including the palest (<code>text-tertiary</code>), to clear 4.5:1 on any everyday surface, the
+    "pair any text with any surface without checking" guarantee Material does not make for itself.
+    Measured: <code>text-tertiary</code> drops under 4.5:1 past roughly L 33.5%;
+    <code>surface-raised</code> already sits at L 26.8%. That leaves ~6-7 points of headroom,
+    enough for one visible step, not two.
+  </p>
+  <p>
+    <code>--color-bg-surface-overlay</code> resolves right now to
+    <Used token="--color-bg-surface-overlay" />. In light mode it's the same white as always: white
+    cannot get lighter, and a dark shadow on a light surface already reads on its own, so all four
+    levels converge there without a reader ever noticing they don't move.
+  </p>
+
+  <h2>High contrast</h2>
+  <p>
+    Two separate mechanisms, and elevation had to answer to both on its own.
+  </p>
+  <p>
+    <strong><code>forced-colors: active</code></strong> (OS-level high contrast):
+    <code>box-shadow</code> is decoration, and the browser drops it outright, no exceptions  -  the
+    <code>inset</code> shadow <code>sunken</code> uses included, not just the cast one
+    <code>raised</code> uses. Measured live: a <code>Box</code> at <code>surface="raised"</code>
+    <strong>or</strong> <code>surface="sunken"</code> with no border of its own (the default path,
+    the one the "In practice" section above shows) went fully <strong>invisible</strong>,
+    pixel-identical to the canvas around it. <code>Hero</code> at either had the same problem: it
+    never draws a border of its own. Both now force a real border (<code>1px solid CanvasText</code>)
+    under <code>forced-colors</code> for both surfaces, without touching their other hooks. Every
+    other <code>overlay</code>/<code>modal</code> consumer already carried this backup.
+  </p>
+  <p>
+    <strong><code>[data-contrast="high"]</code></strong> (the system's own theme, opt-in or via
+    <code>prefers-contrast: more</code>): this is not <code>forced-colors</code>, it is an ordinary
+    color theme that pushes every token to a stronger rung. In light mode it flattens
+    <code>-raised</code>/<code>-overlay</code> to the same white as <code>-surface</code>/
+    <code>-canvas</code> (the code's own comment: "borders carry the separation here, not a
+    barely-there lightness difference"), but left <code>--shadow-sm</code>/<code>-md</code>/
+    <code>-lg</code> copied unchanged from the base tier. Result: the same invisibility as
+    <code>forced-colors</code>, for the same case (a <code>Box</code> <code>raised</code> with no
+    border), because the background no longer distinguishes anything and the shadow was never
+    reinforced either. Bumped: the light side of the three shadows goes from 0.12/0.16/0.22 alpha to
+    0.22/0.28/0.35. Verified live: that same Box's computed <code>box-shadow</code> goes from
+    <code>oklch(0 0 0 / 0.12)</code> to <code>oklch(0 0 0 / 0.22)</code> when
+    <code>data-contrast="high"</code> turns on.
+  </p>
+  <p>
+    That fixed <code>-raised</code> against the canvas, but not <code>-raised</code> against
+    <code>-overlay</code> against <code>-modal</code> <strong>against each other</strong>, and in
+    dark mode those stayed indistinguishable: <code>-color-bg-surface-raised</code> and
+    <code>-surface-overlay</code> share the identical <code>stone-950</code> under high contrast (on
+    purpose, see the code's own comment on <code>-surface-overlay</code> above), and
+    <code>-surface-sunken</code> collapses onto the same black as <code>-canvas</code>. Three levels
+    reduced to two backgrounds, with a shadow that was never reinforced in dark mode (a black shadow
+    over an already near-black canvas barely reads, the same physics the dark-mode section below
+    already measures for the ordinary case). <strong><code>--elevation-tint-*</code></strong> is the
+    fix: a per-level identity tint, composed as one more <code>box-shadow</code> layer
+    (<code>inset 0 0 0 9999px</code>, clipped to the <code>border-radius</code> the same as any
+    <code>inset</code> shadow) inside each <code>--elevation-*</code>. Already on under normal
+    contrast, not just high contrast: at rest it's a light reinforcement  -  2/4/7% for
+    <code>raised</code>/<code>overlay</code>/<code>modal</code>, 4% for <code>sunken</code>  -  because
+    the real background already does most of the work there (see the five swatches above, each now
+    painting its own <code>--color-bg-surface-*</code>). High contrast bumps those same four numbers
+    to 5/10/16% and 10%, exactly where the background stops helping. In both cases each positive
+    level mixes in <code>--color-text-primary</code>, which lightens in dark mode (the same "closer to
+    the light" move the backgrounds already make) and darkens in light mode (white has no headroom
+    left, ink is the only lever remaining); <code>sunken</code> mixes in flat black, not mode-flipped,
+    because receding does not invert with the color scheme. A consumer can still opt out the same way
+    it opts out of any hook in this system: override <code>--elevation-tint-raised</code> (or another
+    level) to <code>transparent</code>.
+  </p>
+  <p>
+    Elevation is <strong>never the only signal</strong> that something floats or blocks; every
+    component that reaches <code>overlay</code> or <code>modal</code> already ships its own real
+    border as a backup. Same principle as <a href="/en/state-layer">the state layer</a>: a decorative
+    layer never carries meaning alone.
+  </p>
+
+  <h2>Where it lives</h2>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Level</th>
+          <th class="sk-table__header">Consumers</th>
+          <th class="sk-table__header">Hook</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Sunken</strong></td>
+          <td class="sk-table__cell">Box (<code>surface="sunken"</code>), Hero (<code>surface="sunken"</code>), Input, Select, Combobox, NumberField, TimeField, DatePicker (the field, not the calendar), ColorPicker (the channel inputs)</td>
+          <td class="sk-table__cell mono">--sk-box-shadow / --sk-hero-shadow / --sk-input-shadow / --sk-select-shadow / --sk-combobox-shadow / --sk-number-field-shadow / --sk-time-field-shadow / --sk-date-picker-shadow</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Flat</strong></td>
+          <td class="sk-table__cell">Sidebar (panel), Tile, Box (by default), Button (neutral at rest, and any variant while pressed)</td>
+          <td class="sk-table__cell mono">--sk-sidebar-elevation / --sk-tile-shadow / --sk-box-shadow / --sk-button-shadow</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Raised</strong></td>
+          <td class="sk-table__cell">Box (<code>surface="raised"</code>), Navbar, Hero, Button (<code>accent</code>/<code>danger</code> at rest)</td>
+          <td class="sk-table__cell mono">--sk-box-shadow / --sk-navbar-elevation / --sk-hero-shadow / --sk-button-shadow</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Raised</strong></td>
+          <td class="sk-table__cell">Menu, Select, Combobox, Tooltip, Kbd, Pagination (the current control), CopyButton, Sidebar (its floating open trigger)</td>
+          <td class="sk-table__cell mono">--sk-menu-shadow / --sk-select-content-shadow / --sk-combobox-content-shadow / --sk-tooltip-shadow / --sk-kbd-shadow / --sk-pagination-current-shadow / --sk-copy-button-feedback-shadow / --sk-sidebar-trigger-shadow</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Overlay</strong></td>
+          <td class="sk-table__cell">SkipLink</td>
+          <td class="sk-table__cell mono">--sk-skip-link-shadow</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Overlay</strong></td>
+          <td class="sk-table__cell">Popover, DatePicker, ColorPicker, Megamenu, Toast</td>
+          <td class="sk-table__cell mono">--sk-popover-shadow / --sk-date-picker-content-shadow / --sk-color-picker-content-shadow / --sk-megamenu-shadow / --sk-toast-shadow</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Modal</strong></td>
+          <td class="sk-table__cell">Dialog, Drawer, Vaul</td>
+          <td class="sk-table__cell mono">--sk-dialog-elevation / --sk-drawer-elevation / --sk-vaul-elevation</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Every consumer of the scale exposes its own hook now: nothing in this system paints
+    <code>box-shadow: var(--elevation-*)</code> straight from the level. A single Popover's shadow can
+    be bumped (<code>--sk-popover-shadow: var(--elevation-modal)</code>, say) without touching its CSS,
+    the same way a consumer already overrides <code>--sk-box-shadow</code> or
+    <code>--sk-button-shadow</code>. Every <strong>Overlay</strong>/<strong>Modal</strong> row above
+    also changes background, not just shadow:
+    <code>--sk-popover-bg</code>/<code>-megamenu-bg</code>/<code>-date-picker-content-bg</code>/
+    <code>-color-picker-content-bg</code>/<code>-skip-link-bg</code>/<code>-dialog-bg</code>/
+    <code>-drawer-bg</code>/<code>-vaul-bg</code> (Toast, via <code>-callout-bg</code>) move from
+    <code>surface</code>/<code>surface-raised</code> to <code>--color-bg-surface-overlay</code>. See
+    the dark mode section above: that's where it actually shows.
+  </p>
+  <p>
+    The whole row above is audited, not just declared: for every consumer,
+    <code>getComputedStyle(...).boxShadow</code> was read off the real markup its own docs page
+    renders (not an isolated swatch), and compared against whatever <code>--elevation-flat</code>/
+    <code>-raised</code>/<code>-overlay</code>/<code>-modal</code> resolves to today. The composites
+    (<code>Kbd</code>, <code>Pagination</code>'s <code>aria-current</code>, <code>ColorPicker</code>,
+    <code>Drawer</code>) carry their own extra layers ahead of the system's shadow  -  a bevel, a
+    rim-light, the "material" strip at the edge that reveals on drag  -  and in all four the scale's
+    own shadow still closes out the list, never replaced. Two real gaps came out of this, both
+    <strong>example coverage</strong>, not CSS: no docs page demonstrated a <code>Hero</code> at
+    <code>surface="raised"</code>, nor <code>Sidebar</code> with its trigger in
+    <code>data-floating</code> mode, even though both hooks already resolved correctly. Both now have
+    a live example: <a href="/en/components/hero">Hero</a> ("Centered, minimal", the one pattern on
+    that page asking for <code>surface="raised"</code>) and
+    <a href="/en/components/sidebar">Sidebar</a> ("The floating trigger").
+  </p>
+
+  <CodeBlock code={elevationSource} label="src/examples/elevation.css" note="the CSS behind the swatches above ↑" />
+</Base>

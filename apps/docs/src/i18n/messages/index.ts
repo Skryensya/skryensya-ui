@@ -23,7 +23,7 @@ export const indexMessages = {
     "indexPage.title": "Explorar componentes",
     "indexPage.description": "Componentes, patrones y primitivas organizados según la tarea que resuelven.",
     "indexPage.lede":
-      'Empieza por la tarea: capturar datos, orientar, presentar contenido o comunicar estado. Cada tarjeta explica cuándo usar la pieza. Si buscas reglas, roles y sets de iconos, ve a <a href="/fundamentos">Fundamentos</a>.',
+      'Empieza por la tarea: capturar datos, orientar, presentar contenido o comunicar estado. Cada tarjeta explica cuándo usar la pieza. Si buscas reglas, roles y sets de iconos, ve a <a href="/foundations">Fundamentos</a>.',
     "indexPage.searchLabel": "Buscar componentes",
     "indexPage.countSuffix": "componentes",
 

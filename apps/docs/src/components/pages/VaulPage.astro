@@ -1,6 +1,6 @@
 ---
-/* La hoja del pattern que el shell no carga, y la misma que el bloque de instalación de más abajo le
- * pide al consumidor. Sin ella el `<dialog>` de la demo cae en el estilo por defecto del navegador. */
+/* The pattern's sheet the shell does not load, and the same one the installation block further down
+ * asks the consumer for. Without it the demo's `<dialog>` falls back to the browser's default style. */
 import "@skryensya/core/patterns/vaul.css";
 import "@skryensya/core/components/list.css";
 import "@skryensya/core/components/checkbox.css";
@@ -657,10 +657,11 @@ const sourceFiles = [
 </ComponentPageShell>
 
 <style is:global>
-  /* La piel del demo es del consumidor, como siempre: el pattern trae hooks y estructura, no pintura.
-     El ancho lo decide el clamp del pattern; el alto lo da el contenido hasta el techo del sheet.
-     `is:global`: el HTML autorado vive dentro del srcdoc y no lleva el atributo de scope de Astro;
-     el adapter copia esta regla global al frame, una regla scopeada no podría alcanzarlo. */
+  /* The demo's skin belongs to the consumer, as always: the pattern brings hooks and structure, not
+     paint. The width is decided by the pattern's clamp; the height comes from the content up to the
+     sheet's ceiling.
+     `is:global`: the authored HTML lives inside the srcdoc and does not carry Astro's scope attribute;
+     the adapter copies this global rule into the frame, a scoped rule could not reach it. */
 
 
   .docs-vaul-cards {

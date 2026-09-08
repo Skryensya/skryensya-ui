@@ -4,9 +4,9 @@ export const codeMessages = {
     "code.condensed": "Condensado",
     "code.full": "Completo",
     "code.showFull": "Mostrar código completo",
-    /* Expandir/contraer, no "mostrar más/menos": colapsado ya muestra todo el código, con scroll
-     * dentro de su ventana. Lo que cambia el botón es cuánto espacio ocupa el bloque en la página,
-     * no cuánto se puede leer. */
+    /* Expand/collapse, not "show more/less": collapsed already shows all the code, scrolling inside its
+     * own window. What the button changes is how much space the block takes on the page, not how much
+     * can be read. */
     "code.expand": "Expandir",
     "code.expandTo": "Expandir el bloque a sus {count} líneas",
     "code.collapse": "Contraer",

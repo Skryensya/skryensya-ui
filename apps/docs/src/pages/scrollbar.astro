@@ -14,15 +14,15 @@ const alwaysTree: UsageTree = {
   signature: "Stack",
   attrs: { class: "sk-scrollbar demo-scroll", tabindex: "0" },
   children: [
-    "Longitud: medio",
-    "Estado: sincronizado",
+    "Length: medium",
+    "State: synchronized",
     "Render: vanilla",
     "Binding: React",
-    "Contrato: publicado",
-    "Gate: verde",
-    "Source hash: actual",
-    "Preview: árbol",
-    "Scroll: nativo",
+    "Contract: published",
+    "Gate: green",
+    "Source hash: current",
+    "Preview: tree",
+    "Scroll: native",
     "Thumb: visible",
   ],
 };
@@ -32,15 +32,15 @@ const revealTree: UsageTree = {
   signature: "Stack",
   attrs: { class: "sk-scrollbar demo-scroll sk-scrollbar--reveal", tabindex: "0" },
   children: [
-    "Longitud: medio",
-    "Estado: sincronizado",
+    "Length: medium",
+    "State: synchronized",
     "Render: vanilla",
     "Binding: React",
-    "Contrato: publicado",
-    "Gate: verde",
-    "Source hash: actual",
-    "Preview: árbol",
-    "Scroll: nativo",
+    "Contract: published",
+    "Gate: green",
+    "Source hash: current",
+    "Preview: tree",
+    "Scroll: native",
     "Thumb: visible",
   ],
 };
@@ -48,101 +48,81 @@ const revealTree: UsageTree = {
 
 <Base
   title="Scrollbar"
-  description="Pattern opt-in que pinta la scrollbar nativa del navegador: siempre visible, o silenciosa hasta hover/foco."
+  description="Opt-in pattern that paints the browser's native scrollbar: always visible or quiet until hover and focus."
   documentLayout="grid"
 >
   <h1>Scrollbar</h1>
   <p class="lede">
-    No reemplaza el scroll nativo. Colorea la superficie que el navegador ya expone
-    (<code>scrollbar-color</code>, <code>scrollbar-width</code> y los pseudo-elementos
-    <code>::-webkit-scrollbar*</code>). La rueda, el momentum, el pan táctil y las
-    preferencias del SO siguen siendo de la plataforma.
+    Does not replace the native scroll. Colors the surface that the browser already exposes (<code>scrollbar-color</code>, <code>scrollbar-width</code> and the <code>::-webkit-scrollbar*</code> pseudo-elements). The wheel, momentum, touch pad, and OS preferences remain platform-specific.
   </p>
 
-  <h2>Por qué es un pattern</h2>
+  <h2>Why it is a pattern</h2>
   <p>
-    Varios hosts comparten el mismo rail: el sidebar de docs, el drawer. Enviar la pintura una
-    vez evita que cada superficie reinvente un thumb.
-    Es <strong>opt-in</strong>, como nav-list: una app puede quedarse con la scrollbar del SO.
+    Several hosts share the same rail: the docs sidebar, the drawer. Sending the paint once prevents each surface from reinventing a thumb. It is <strong>opt-in</strong>, like nav-list: an app can keep the OS scrollbar.
   </p>
 
-  <h2>Instalar</h2>
+  <h2>Install</h2>
   <CodeBlock code={import_} label="CSS" />
   <p>
-    Luego marca la región que ya hace scroll (<code>overflow: auto</code> o
-    <code>scroll</code>, con un tamaño acotado). El pattern no define el overflow: solo pinta
-    la scrollbar que el navegador expone.
+    Then mark the region that is already scrolling (<code>overflow: auto</code> or <code>scroll</code>, with a limited size). The pattern does not define the overflow: it only paints the scrollbar that the browser exposes.
   </p>
   <CodeBlock
-    code={`<!-- tu contenedor con overflow: auto -->
+    code={`<!-- your container with overflow: auto -->
 <div class="sk-scrollbar">…</div>
 
-<!-- o la variante silenciosa hasta hover/foco -->
+<!-- or the quiet variant until hover/focus -->
 <div class="sk-scrollbar sk-scrollbar--reveal">…</div>`}
     label="HTML"
   />
 
-  <h2>Siempre visible</h2>
+  <h2>Always visible</h2>
   <p>
-    <code>sk-scrollbar</code> deja track y thumb a la vista. Úsalo cuando el scroll es parte
-    del mapa de la UI (un panel de código, una tabla ancha).
+    <code>sk-scrollbar</code> leaves track and thumb visible. Use it when the scroll is part of the UI map (a code panel, a wide table).
   </p>
   <ComponentPreview tree={alwaysTree} label="sk-scrollbar" />
 
-  <h2>Reveal al hover (y al foco)</h2>
+  <h2>Reveal on hover (and focus)</h2>
   <p>
-    <code>sk-scrollbar sk-scrollbar--reveal</code> reserva el gutter para no mover el layout, y
-    deja el thumb transparente hasta <code>:hover</code> o <code>:focus-within</code>. Al
-    revelar solo aparece el thumb, no un track relleno.
+    <code>sk-scrollbar sk-scrollbar--reveal</code> reserves the gutter so as not to move the layout, and leaves the thumb transparent until <code>: hover</code> or <code>: focus-within</code>. When revealed, only the thumb appears, not a filled track.
   </p>
-  <ComponentPreview tree={revealTree} label="sk-scrollbar--reveal" note="hover o tab para revelar" />
+  <ComponentPreview tree={revealTree} label="sk-scrollbar--reveal" note="hover or tab to reveal" />
   <p>
-    El rail del sidebar de esta documentación usa exactamente esta variante: quieto en reposo,
-    legible cuando lo tocas.
+    The sidebar rail in this documentation uses exactly this variant: still at rest, readable when you touch it.
   </p>
 
-  <h2>Cuál elegir</h2>
+  <h2>Which one to choose</h2>
   <ul>
     <li>
-      <strong>Siempre visible</strong> cuando el lector necesita saber de entrada que hay más
-      contenido (listas largas, logs, editores).
+      <strong>Always visible</strong> when the reader needs to know in advance that there is more content (long lists, logs, editors).
     </li>
     <li>
-      <strong>Reveal</strong> cuando el chrome compite con el contenido (navegación, toc,
-      paneles estrechos). El gutter estable evita CLS al aparecer el thumb.
+      <strong>Reveal</strong> when chrome competes with content (navigation, touch, narrow panels). The stable gutter prevents CLS when the thumb appears.
     </li>
   </ul>
   <p>
-    Congelar el scroll del <em>documento</em> detrás de un modal es otro pattern:
-    <a class="sk-link sk-interactive" href="/scroll-lock">scroll lock</a>. No se pisan: uno pinta
-    regiones, el otro congela <code>html</code>.
+    Freezing the scroll of the <em>document</em> behind a modal is another pattern: <a class="sk-link sk-interactive" href="/en/scroll-lock">scroll lock</a>. They do not step on each other: one paints regions, the other freezes <code>html</code>.
   </p>
 
   <StylingHooks
     groups={[{ file: "patterns/scrollbar.css", probe: "sk-scrollbar" }]}
   />
 
-  <h2>Contrato</h2>
+  <h2>Contract</h2>
   <ul>
     <li>
-      Opt-in: importa <code>patterns/scrollbar.css</code> y marca la región con
-      <code>sk-scrollbar</code>.
+      Opt-in: Import <code>patterns/scrollbar.css</code> and mark the region with <code>sk-scrollbar</code>.
     </li>
     <li>
-      La región debe poder hacer scroll (<code>overflow: auto|scroll</code> y un tamaño
-      acotado). El pattern no define el overflow.
+      The region must be scrollable (<code>overflow: auto|scroll</code> and a limited size). The pattern does not define the overflow.
     </li>
     <li>
-      <code>sk-scrollbar--reveal</code> exige también <code>sk-scrollbar</code> (la variante
-      solo re-declara hooks; la base aporta el resto).
+      <code>sk-scrollbar--reveal</code> also requires <code>sk-scrollbar</code> (the variant only re-declares hooks; the base provides the rest).
     </li>
     <li>
-      No inventa un thumb en JS ni oculta el scroll nativo con un div falso. Si el SO usa
-      scrollbar overlay, el gutter de reveal es un no-op y no molesta.
+      Do not invent a thumb in JS or hide the native scroll with a fake div. If the OS uses scrollbar overlay, the reveal gutter is a no-op and does not bother.
     </li>
     <li>
-      Los hooks <code>--sk-scrollbar-*</code> se pisan desde tu CSS sobre
-      <code>.sk-scrollbar</code>, igual que cualquier otro styling hook.
+      The <code>--sk-scrollbar-*</code> hooks are stepped on from your CSS on <code>.sk-scrollbar</code>, just like any other styling hook.
     </li>
   </ul>
 </Base>

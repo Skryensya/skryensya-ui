@@ -52,7 +52,7 @@ const src = cardSources(copy);
  * already imports from. */
 const install = `pnpm add @skryensya/core @skryensya/react`;
 /* The composition, and only ONE chart. The other two cards and the Chart piece itself live on
- * `/componentes/charts`; this rung is about the card around it. */
+ * `/components/charts`; this rung is about the card around it. */
 const chartSource = `import { Badge } from "@skryensya/react/badge";
 import { Button } from "@skryensya/react/button";
 import { Chart } from "@skryensya/charts/react";
@@ -139,12 +139,12 @@ import { Heading, Text } from "@skryensya/react/typography";
           <tr class="sk-table__row"><th class="sk-table__header">{t("cardPage.tableHeadSurface")}</th><th class="sk-table__header">{t("cardPage.tableHeadUses")}</th><th class="sk-table__header">{t("cardPage.tableHeadElement")}</th></tr>
         </thead>
         <tbody class="sk-table__body">
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow1Surface")}</td><td class="sk-table__cell"><a href="/componentes/box">Box</a></td><td set:html={t("cardPage.tableRow1Element")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow2Surface")}</td><td class="sk-table__cell"><a href="/componentes/link">TileLink</a></td><td set:html={t("cardPage.tableRow2Element")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow3Surface")}</td><td class="sk-table__cell"><a href="/componentes/button">TileButton</a></td><td set:html={t("cardPage.tableRow3Element")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow4Surface")}</td><td class="sk-table__cell"><a href="/componentes/checkbox">TileCheckbox</a></td><td set:html={t("cardPage.tableRow4Element")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow5Surface")}</td><td class="sk-table__cell"><a href="/componentes/radio-group">TileRadioGroup</a></td><td set:html={t("cardPage.tableRow5Element")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow6Surface")}</td><td class="sk-table__cell"><a href="/componentes/accordion">Accordion</a></td><td set:html={t("cardPage.tableRow6Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow1Surface")}</td><td class="sk-table__cell"><a href="/components/box">Box</a></td><td set:html={t("cardPage.tableRow1Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow2Surface")}</td><td class="sk-table__cell"><a href="/components/link">TileLink</a></td><td set:html={t("cardPage.tableRow2Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow3Surface")}</td><td class="sk-table__cell"><a href="/components/button">TileButton</a></td><td set:html={t("cardPage.tableRow3Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow4Surface")}</td><td class="sk-table__cell"><a href="/components/checkbox">TileCheckbox</a></td><td set:html={t("cardPage.tableRow4Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow5Surface")}</td><td class="sk-table__cell"><a href="/components/radio-group">TileRadioGroup</a></td><td set:html={t("cardPage.tableRow5Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow6Surface")}</td><td class="sk-table__cell"><a href="/components/accordion">Accordion</a></td><td set:html={t("cardPage.tableRow6Element")} class="sk-table__cell" /></tr>
         </tbody>
       </table>
     </div>

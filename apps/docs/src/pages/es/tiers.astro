@@ -1,0 +1,124 @@
+---
+import Base from "../../layouts/Base.astro";
+import Chain from "../../components/Chain.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import { tokens } from "../../lib/tokens";
+
+const counts = {
+  primitive: tokens.filter((t) => t.tier === "primitive").length,
+  semantic: tokens.filter((t) => t.tier === "semantic").length,
+  component: tokens.filter((t) => t.tier === "component").length,
+};
+
+const badExample = `/* This fails the build. */
+.sk-button {
+  --sk-button-bg: var(--palette-blue-600);
+}`;
+
+const linterOutput = `✗ 1 problem(s):
+
+  [tier-skip]
+    --sk-button-bg: component hook reaches past the semantic
+    layer into primitive --palette-blue-600, bypasses mode
+    switching, breaks dark mode for this component alone`;
+---
+
+<Base
+  title="Tiers de tokens"
+  documentLayout="grid"
+  description="Primitive, semantic y styling hook: qué responde cada tier, hacia dónde puede referenciar y qué falla cuando se salta la dirección."
+>
+  <h1>Tiers de tokens</h1>
+  <p class="lede">
+    Un tier no se define por la carpeta donde vive, sino por <strong>qué puede referenciar</strong>.
+    El sistema tiene primitive, semantic y styling hook porque esa dirección mantiene separados valor,
+    significado y uso público.
+  </p>
+
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Tier</th>
+          <th class="sk-table__header">Responde</th>
+          <th class="sk-table__header">Puede referenciar</th>
+          <th class="sk-table__header">Cuántos hay</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><span class="sk-badge" data-tone="warning">primitive</span></td>
+          <td class="sk-table__cell">qué valores existen</td>
+          <td class="sk-table__cell">nada</td>
+          <td class="sk-table__cell mono">{counts.primitive}</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><span class="sk-badge" data-tone="accent">semantic</span></td>
+          <td class="sk-table__cell">qué significa un valor</td>
+          <td class="sk-table__cell">primitive u otro semantic</td>
+          <td class="sk-table__cell mono">{counts.semantic}</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><span class="sk-badge" data-tone="success">styling hook</span></td>
+          <td class="sk-table__cell">dónde se usa un valor</td>
+          <td class="sk-table__cell">semantic, nunca primitive</td>
+          <td class="sk-table__cell mono">{counts.component}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Mecanismo: las referencias bajan</h2>
+  <p>
+    Una referencia puede bajar un tier o moverse de costado dentro del mismo tier. Nunca sube, y el
+    styling hook no puede saltar hasta primitive. Esa regla permite cambiar marca, modo o contraste en
+    semantic sin reescribir componentes.
+  </p>
+
+  <Chain
+    token="--sk-button-bg"
+    caption="El fondo de Button, desde el styling hook hasta el literal."
+  />
+
+  <Chain
+    token="--color-action-accent"
+    caption="Un semantic token nombra propósito y apunta a una posición de rampa."
+  />
+
+  <h2>Límite: el styling hook no salta a primitive</h2>
+  <p>
+    El salto parece más corto, pero rompe el modo oscuro de un solo componente. Si
+    <code>--sk-button-bg</code> toma <code>--palette-blue-600</code> directo, se salta el semantic que
+    contiene <code>light-dark()</code>.
+  </p>
+
+  <CodeBlock code={badExample} label="components/button.css" note="styling hook a primitive" />
+  <CodeBlock code={linterOutput} label="pnpm lint" note="regla ejecutable" />
+
+  <h2>El prefijo deja ver el tier</h2>
+  <p>
+    Un primitive se lee <code>--palette-blue-600</code>; un semantic,
+    <code>--color-action-accent</code>; un styling hook, <code>--sk-button-bg</code>. Ver
+    <code>--palette-*</code> dentro del CSS de un componente es una señal de salto prohibido, no una
+    preferencia de nombres.
+  </p>
+
+  <h2>La cascade layer marca el borde</h2>
+  <p>
+    La precedencia entre tiers está declarada en la cascada, no en el orden casual de imports. Las
+    overrides de marca y contraste viven después de los semánticos base; las reglas de producto sin
+    layer siguen pudiendo pisar un styling hook público sin pelear especificidad.
+  </p>
+  <CodeBlock
+    code={`@layer primitives, semantic, components, overrides;`}
+    label="tokens.scss"
+    note="orden de precedencia"
+  />
+  <CodeBlock code={`.hero .sk-button { --sk-button-bg: rebeccapurple; }`} label="CSS" />
+
+  <p>
+    Viene de <a href="/architecture">Arquitectura</a>, donde se definen Contract y Binding. Sigue en
+    <a href="/dimensions">Dimensiones</a>, que muestra qué cambia en semantic, y en
+    <a href="/reference">Referencia</a>, que queda para buscar tokens puntuales.
+  </p>
+</Base>

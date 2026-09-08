@@ -28,14 +28,14 @@ export function buildSearchIndex(locale: Locale): CommandPaletteEntry[] {
     {
       label: t("search.exploreComponents"),
       aliases: ["all", "catalog", "catálogo", "todos"],
-      href: localizePath("/componentes", locale),
+      href: localizePath("/components", locale),
       section: t("section.components"),
       group: t("group.explore"),
     },
     {
       label: t("search.layoutGuide"),
       aliases: ["overview", "primitivas", "resumen"],
-      href: localizePath("/componentes/primitivas", locale),
+      href: localizePath("/components/primitives", locale),
       section: t("section.components"),
       group: t("group.layout"),
     },

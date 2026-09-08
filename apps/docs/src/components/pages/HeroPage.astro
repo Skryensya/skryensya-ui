@@ -138,7 +138,7 @@ const heroQuoteTree = heroTestimonialTree(t);
      * THIRTEEN separate, literal tags, not a `.map()` over an array: `/f/{page}/{n}`'s own
      * static-path generator (`lib/fullscreen-preview-paths.ts`) counts `<ComponentPreview`
      * occurrences by REGEX over this file's raw SOURCE TEXT, not by rendering it, so a `.map()`
-     * (one literal tag, N runtime instances) would register only `/f/componentes/hero/1` and leave
+     * (one literal tag, N runtime instances) would register only `/f/components/hero/1` and leave
      * the rest 404ing. Confirmed live: `ButtonPage.astro`'s own seven previews are the same seven
      * literal tags for the identical reason. The counter has no notion of a loop; matching its own
      * convention here is the only way every "Pantalla completa" link on this page actually lands.

@@ -1,0 +1,282 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  title="Keyboard navigation"
+  documentLayout="grid"
+  description="Which key does what, component by component: verified against the real machine or native element, not against what the pattern is supposed to do."
+>
+  <h1>Keyboard navigation</h1>
+  <p class="lede">
+    No component in this system hand-writes a <code>keydown</code> listener to decide what an arrow
+    key does. Keyboard behavior comes from one of two places: the native HTML element (a
+    <code>&lt;button&gt;</code>, a <code>&lt;dialog&gt;</code>) or a <code>@zag-js/*</code> machine.
+    This page documents the result, component by component,
+    verified by reading the installed code: not assumed from the package name.
+  </p>
+
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+      <p>
+        <strong>Source for this page:</strong> the internal audit against the
+        <a href="https://www.w3.org/WAI/ARIA/apg/">WAI-ARIA Authoring Practices Guide</a>, pattern by
+        pattern, comparing real behavior (not the summary) against the installed code. Every row in the
+        tables below was confirmed, not copied from the spec.
+      </p>
+    </div>
+  </div>
+
+  <h2>Real focus and virtual focus</h2>
+  <p>
+    Most widgets move real DOM focus from one control to another. A separate group. The ones showing
+    a floating list while the user keeps typing: never move focus at all: it stays on the input, and
+    the highlighted option is signaled with <code>aria-activedescendant</code>. Confusing the two
+    breaks a test (waiting for <code>document.activeElement</code> to change where it does not, or the
+    reverse), so they are kept separate from the start.
+  </p>
+
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Mechanism</th>
+          <th class="sk-table__header">DOM focus</th>
+          <th class="sk-table__header">Components</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Virtual focus</strong></td>
+          <td class="sk-table__cell">Stays on the input; <code>aria-activedescendant</code> points at the highlighted row.</td>
+          <td class="sk-table__cell">Combobox, CommandPalette, Menu (inside the popup)</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Real focus</strong></td>
+          <td class="sk-table__cell">Moves to the actually-focused element, sometimes deferred a frame (<code>raf</code>) after opening.</td>
+          <td class="sk-table__cell">Select, TreeView, Toolbar, Menubar, Treegrid, DataGrid, Dialog</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Button, link and disclosure. Native, no hand-written ARIA</h2>
+  <p>
+    No shortcut to memorize: these are native elements, and the browser already knows what
+    <kbd class="sk-kbd">↵</kbd> and <kbd class="sk-kbd">Space</kbd> do.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Component</th>
+          <th class="sk-table__header">Element</th>
+          <th class="sk-table__header">Activates with</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Button (action)</td>
+          <td class="sk-table__cell"><code>&lt;button&gt;</code></td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd> and <kbd class="sk-kbd">Space</kbd></td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Button (navigation), Breadcrumb, NavList/Sidebar items</td>
+          <td class="sk-table__cell"><code>&lt;a href&gt;</code></td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd></td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Accordion, Disclosure</td>
+          <td class="sk-table__cell"><code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> (Disclosure) or a button wrapped in a heading (Accordion)</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd> and <kbd class="sk-kbd">Space</kbd></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Simple selection. Checkbox, RadioGroup, Switch, Slider, NumberField</h2>
+  <p>
+    All of these run on a native input (<code>checkbox</code>, <code>radio</code>,
+    <code>range</code>) or a Zag machine that replicates the native keymap
+    (<code>@zag-js/number-input</code>). RadioGroup in particular has zero lines of its own JS for
+    arrow keys: it is real <code>&lt;input type="radio"&gt;</code> elements sharing one
+    <code>name</code>, so grouping, wrap-around and select-on-move come free from the browser.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Component</th>
+          <th class="sk-table__header">Moves</th>
+          <th class="sk-table__header">Activates / changes</th>
+          <th class="sk-table__header">Ends</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Checkbox, Switch</td>
+          <td class="sk-table__cell">-</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">Space</kbd> toggles</td>
+          <td class="sk-table__cell">-</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">RadioGroup</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> moves AND selects at once, with wrap</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">Space</kbd> selects the focused one if not already selected</td>
+          <td class="sk-table__cell">-</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Slider, SliderRange</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> ±1 step (native, PageUp/PageDown included for a larger step)</td>
+          <td class="sk-table__cell">-</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">Home</kbd> / <kbd class="sk-kbd">End</kbd></td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">NumberField (spinbutton)</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd> ±1 step; <kbd class="sk-kbd">⇧</kbd>+arrow for a large step, <kbd class="sk-kbd">⌥</kbd>+arrow for a small step</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd> commits typed text</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">Home</kbd> / <kbd class="sk-kbd">End</kbd></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Single-trigger popup. Menu, Combobox, Select, CommandPalette, DatePicker</h2>
+  <p>
+    A button or input opens a floating surface. <kbd class="sk-kbd">Esc</kbd> closes it and returns
+    focus to whoever opened it, across all five. What differs between them is real vs. virtual focus
+    (table above), and whether <kbd class="sk-kbd">↓</kbd> from closed opens-and-focuses-the-first or
+    <kbd class="sk-kbd">↑</kbd> opens-and-focuses-the-last.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Component</th>
+          <th class="sk-table__header">Opens with</th>
+          <th class="sk-table__header">Navigates inside</th>
+          <th class="sk-table__header">Selects</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Menu (Menu Button)</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">Space</kbd>/<kbd class="sk-kbd">↵</kbd> (first) · <kbd class="sk-kbd">↑</kbd> (last)</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd> with wrap, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd>, letter typeahead</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Space</kbd></td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Combobox, CommandPalette</td>
+          <td class="sk-table__cell">Typing, or <kbd class="sk-kbd">↓</kbd>; focus never leaves the input</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd> move <code>aria-activedescendant</code>; Home/End optional per WAI</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd></td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Select (listbox)</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Space</kbd>; real DOM focus moves into the listbox</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd>, typeahead</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Space</kbd></td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">DatePicker (calendar)</td>
+          <td class="sk-table__cell">Trigger button, separate from the text input</td>
+          <td class="sk-table__cell">Arrows move by day, <kbd class="sk-kbd">PgUp</kbd>/<kbd class="sk-kbd">PgDn</kbd> by month, <kbd class="sk-kbd">⇧</kbd>+<kbd class="sk-kbd">PgUp</kbd>/<kbd class="sk-kbd">PgDn</kbd> by year</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Space</kbd></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Composite bar. Toolbar, Menubar</h2>
+  <p>
+    One single <kbd class="sk-kbd">Tab</kbd> stop for the whole bar (roving tabindex); inside it,
+    arrow keys move between controls with wrap. A nested composite widget. A RadioGroup inside a
+    Toolbar, say. Counts as <strong>one stop</strong>: its own arrow keys move within it, and the bar
+    never walks its members one by one.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Component</th>
+          <th class="sk-table__header">Moves</th>
+          <th class="sk-table__header">Own detail</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Toolbar</td>
+          <td class="sk-table__cell">Arrows per <code>aria-orientation</code>, with wrap; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> to first/last</td>
+          <td class="sk-table__cell">A control with native <code>disabled</code> is skipped on its own, because the browser already removes it from the tab order.</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Menubar</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> between top-level items; <kbd class="sk-kbd">↓</kbd>/<kbd class="sk-kbd">↵</kbd>/<kbd class="sk-kbd">Space</kbd> opens the dropdown (first item); <kbd class="sk-kbd">↑</kbd> opens it on the last</td>
+          <td class="sk-table__cell">Moving to an adjacent item while a dropdown is open <strong>closes and reopens it on the new item</strong>, not just a highlight move. The detail a naive roving-tabindex implementation misses.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Tree and grid. TreeView, Treegrid, DataGrid</h2>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Component</th>
+          <th class="sk-table__header">Moves</th>
+          <th class="sk-table__header">Own detail</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">TreeView</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">↑</kbd><kbd class="sk-kbd">↓</kbd><kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd>, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd>, typeahead</td>
+          <td class="sk-table__cell"><kbd class="sk-kbd">*</kbd> expands every sibling at the same level at once.</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Treegrid, DataGrid</td>
+          <td class="sk-table__cell">Arrows in all four directions between cells, roving tabindex</td>
+          <td class="sk-table__cell">The opt-in resizable column separator has its own keymap: <kbd class="sk-kbd">←</kbd><kbd class="sk-kbd">→</kbd> ±step, <kbd class="sk-kbd">⇧</kbd>+arrow for a coarse step, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> to the extremes, <kbd class="sk-kbd">↵</kbd>/double-click resets.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Modal. Dialog, AlertDialog, Drawer</h2>
+  <p>
+    All three are a native <code>&lt;dialog&gt;</code> opened with <code>showModal()</code>. None of
+    this is custom code: <kbd class="sk-kbd">Tab</kbd>/<kbd class="sk-kbd">⇧</kbd>+<kbd class="sk-kbd">Tab</kbd>
+    stay trapped inside, <kbd class="sk-kbd">Esc</kbd> closes, and focus returns on its own to whoever
+    opened the dialog. Standard behavior in modern engines (Chrome/Firefox/Safari), with no line of
+    JS saving or restoring anything by hand. Initial focus (which button is focused on open) is a
+    composition choice: whoever assembles the dialog puts <code>autofocus</code> on the least
+    destructive action.
+  </p>
+
+  <h2>What's still open</h2>
+  <ul>
+    <li>
+      The <strong>DatePicker</strong> popover uses <code>role="application"</code> instead of
+      <code>role="dialog"</code> (a decision made by <code>@zag-js/date-picker</code>, not this repo)
+     - It changes how a screen reader walks that subtree, and it can't be validated without a
+      physical one. Documented, not touched, by the team's explicit decision.
+    </li>
+    <li>
+      <strong>PageUp/PageDown on NumberField</strong> are not wired up. WAI marks them optional for
+      spinbutton, and the equivalent (a large step) already exists via <kbd class="sk-kbd">⇧</kbd>+arrow.
+    </li>
+  </ul>
+
+  <h2>Checklist</h2>
+  <ul>
+    <li>Walk the whole flow without a mouse: if a control is not reachable with <kbd class="sk-kbd">Tab</kbd>, it does not exist.</li>
+    <li>In any popup, confirm <kbd class="sk-kbd">Esc</kbd> closes it and focus returns to the trigger, not to <code>&lt;body&gt;</code>.</li>
+    <li>In a Toolbar/Menubar, confirm a nested composite widget counts as one stop, not several.</li>
+    <li>The <a href="/en/state-layer">focus ring</a> has to be visible at every stop, with no exceptions.</li>
+  </ul>
+
+  <p>
+    Reference: <a href="https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html">WCAG 2.1.1 Keyboard</a>.
+  </p>
+</Base>

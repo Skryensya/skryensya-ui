@@ -310,7 +310,7 @@ export const buttonIconOnlySmTree = (t: Translate): UsageTree => ({
  */
 export const buttonAsLinkTree = (t: Translate, href: string): UsageTree => ({
   // `href` comes from the page: the target is a docs route, and a docs route is locale-dependent
-  // (`/primer-componente` vs `/en/first-component`). Only the page knows which locale it is.
+  // (`/first-component` vs `/en/first-component`). Only the page knows which locale it is.
   contract: "layout",
   signature: "Inline",
   children: [

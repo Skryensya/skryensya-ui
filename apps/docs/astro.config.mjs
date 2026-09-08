@@ -54,8 +54,8 @@ export default defineConfig({
    * serving Spanish under an `/en/` URL that then looks translated to a crawler.
    */
   i18n: {
-    defaultLocale: "es",
-    locales: ["es", "en"],
+    defaultLocale: "en",
+    locales: ["en", "es"],
     routing: {
       prefixDefaultLocale: false,
       redirectToDefaultLocale: false,

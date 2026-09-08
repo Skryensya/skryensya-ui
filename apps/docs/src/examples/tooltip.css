@@ -1,10 +1,10 @@
 /*
  * Tooltip demo skin for /componentes/tooltip.
  *
- * Consumer CSS, not a package export, and una sola regla: la que CREA el tercer caso del demo. El
- * texto se corta, así que el tooltip es el único lugar de la pantalla donde el valor completo existe.
- * El `tabindex` del markup es lo que lo hace alcanzable: un span truncado no es focusable por su
- * cuenta, y sin foco el tooltip sería sólo para mouse.
+ * Consumer CSS, not a package export, and a single rule: the one that CREATES the demo's third case.
+ * The text is truncated, so the tooltip is the only place on screen where the full value exists. The
+ * markup's `tabindex` is what makes it reachable: a truncated span is not focusable on its own, and
+ * without focus the tooltip would be mouse-only.
  */
 .sk-truncate {
   display: block;

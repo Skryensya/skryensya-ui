@@ -101,7 +101,7 @@ const productCardTree = (translate: Translate): UsageTree => ({
         children: [
           { contract: "typography", signature: "Heading", options: { headingSize: "h3", flush: true }, children: translate("demo.card.title") },
           { contract: "typography", signature: "Text", options: { tone: "secondary" }, children: translate("demo.card.description") },
-          { contract: "typography", signature: "Link", options: { href: "/componentes" }, children: translate("demo.card.cta") },
+          { contract: "typography", signature: "Link", options: { href: "/components" }, children: translate("demo.card.cta") },
         ],
       },
     },
@@ -518,7 +518,7 @@ const columns: GalleryTile[][] = [
               data-sk-button
               data-tone="accent"
               data-size="md"
-              href={href("/componentes")}
+              href={href("/components")}
             >
               {t("landing.hero.ctaComponents")}
             </a>

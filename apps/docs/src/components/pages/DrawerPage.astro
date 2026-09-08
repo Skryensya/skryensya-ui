@@ -1,7 +1,7 @@
 ---
-/* Las dos hojas que el shell no carga, y las mismas que el bloque de instalación de más abajo le
- * pide al consumidor. Sin ellas el `<dialog>` de la demo cae en el estilo por defecto del navegador:
- * caja centrada con borde negro de 3px en vez de un panel pegado al borde inline. */
+/* The two sheets the shell does not load, and the same ones the installation block further down asks
+ * the consumer for. Without them the demo's `<dialog>` falls back to the browser's default style: a
+ * centered box with a 3px black border instead of a panel flush against the inline edge. */
 import "@skryensya/core/patterns/vaul.css";
 import "@skryensya/core/components/drawer.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
@@ -155,15 +155,15 @@ const sourceFiles = [
 </ComponentPageShell>
 
 <style is:global>
-  /* El drawer ES la columna: cabecera fija, navegación que scrollea, cuenta abajo. Es la misma
-     anatomía que el riel de este sitio, que es el punto del componente. */
+  /* The drawer IS the column: fixed header, scrolling navigation, count at the bottom. It is the same
+     anatomy as this site's rail, which is the point of the component. */
   .demo-drawer[open] {
     display: flex;
     flex-direction: column;
   }
 
-  /* Inset `md`, no `lg`: un drawer es angosto por definición, y el padding que se lleva es ancho que
-     los rótulos no tienen. Las bandas se separan con una línea, que cuesta 1px. */
+  /* Inset `md`, not `lg`: a drawer is narrow by definition, and the padding it takes is width the labels
+     do not have. The bands are separated with a line, which costs 1px. */
   .demo-drawer__header {
     display: flex;
     gap: var(--space-inline-md);
@@ -209,8 +209,8 @@ const sourceFiles = [
     font-size: var(--font-size-caption);
   }
 
-  /* El demo nativo de más abajo es deliberadamente mínimo: enseña que sin enhancer el drawer sigue
-     completo, así que no le sobra contenido que distraiga de eso. */
+  /* The native demo below is deliberately minimal: it shows that without the enhancer the drawer is
+     still complete, so it has no spare content to distract from that. */
   .demo-drawer__body {
     display: grid;
     gap: var(--space-stack-md);

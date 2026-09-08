@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+import TokenTable from "../components/TokenTable.astro";
+---
+
+<Base
+  title="Token reference"
+  documentLayout="grid"
+  description="All system tokens: token read from CSS in build, value resolved read from live browser."
+>
+  <h1>Token reference</h1>
+  <p class="lede">
+    Each token in its two forms: the token that was written and the value that resolves right now, in the dimensions selected above.
+  </p>
+
+  <TokenTable />
+
+  <h2>How to read the tiers</h2>
+  <p>
+    References point <strong>down or sideways, never up</strong>, and tier 3 cannot jump to tier 1. That is not convention: the validator enforces it. A <code>--palette-*</code> within a component's CSS is the visible sign that someone skipped the semantic layer and broke dark mode for that component alone.
+  </p>
+  <p>
+    The <span class="sk-badge" data-tone="success">component</span> tokens live on the element, not
+    in <code>:root</code>, so they resolve against a test element carried by the class. Yes
+    <em>appears unresolved in this context</em>, it is not a bug: it is the tier 3 scoping showing. that
+    token does not exist until an element opts for it.
+  </p>
+</Base>

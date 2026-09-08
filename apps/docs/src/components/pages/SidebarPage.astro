@@ -86,9 +86,9 @@ const sourceFiles = [
     <p set:html={t("sidebarPage.contentBody")} />
 
     <p set:html={t("sidebarPage.collapseBody")} />
-    {/* El `.app-shell` que envuelve al Sidebar está DENTRO del árbol, no en un slot alrededor de él.
-        Un sidebar sólo se lee al lado de la cosa junto a la que se sienta: sin un main que se ensanche,
-        contraer no muestra nada. */}
+    {/* The `.app-shell` that wraps the Sidebar is INSIDE the tree, not in a slot around it.
+        A sidebar only reads next to the thing it sits beside: without a main that widens,
+        collapsing shows nothing. */}
     <ComponentPreview tree={sidebarTree(t, { home: "/", reports: "/reportes" })} label="Sidebar" flush />
 
 

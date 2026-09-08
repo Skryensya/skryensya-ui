@@ -11,7 +11,7 @@
  * each locale's page, for no reason a reader could see.
  */
 
-/** `/componentes/tree-view` and `/en/components/tree-view` → `TreeViewExample`. */
+/** `/components/tree-view` and `/en/components/tree-view` → `TreeViewExample`. */
 export function exampleComponentName(url: URL): string | undefined {
   const slug = url.pathname.replace(/\/+$/, "").split("/").pop();
   if (!slug) return undefined;

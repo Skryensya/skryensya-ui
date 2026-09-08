@@ -1,0 +1,145 @@
+---
+import Base from "../layouts/Base.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import ComponentPreview from "../components/ComponentPreview.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
+import { stableIconNames } from "@skryensya/core/icon";
+import { allSets, iconMarkup } from "../icons";
+
+/* The roles shown side by side. A handful is enough to see that the drawing changes and the name
+ * not; all 32 are up. */
+const compared = ["search", "delete", "settings", "user", "warning", "external-link"] as const;
+
+const vocabCss = `.sk-grid {
+  grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
+}
+
+.sk-stack > code {
+  font-size: var(--font-size-caption);
+}`;
+
+const vocabTree: UsageTree = {
+  contract: "layout",
+  signature: "Grid",
+  options: { gap: "md" },
+  children: stableIconNames.map((name) => ({
+    contract: "layout",
+    signature: "Stack",
+    options: { gap: "xs", align: "center" },
+    children: [
+      { contract: "icon", signature: "Icon", options: { name, size: "lg" } },
+      { contract: "typography", signature: "Code", children: name },
+    ],
+  })),
+};
+
+const bind = `# nothing: Phosphor is the @skryensya/react default
+# another set? install it, and only then is it bundled:
+pnpm add @skryensya/icons-lucide     # or @skryensya/icons-material`;
+
+const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
++ import { phosphorIcons } from "@skryensya/icons-phosphor";
+
+- <IconSetProvider set={lucideIcons}>
++ <IconSetProvider set={phosphorIcons}>
+
+  // and nothing more. Not a <Icon name="…"> moves.`;
+---
+
+<Base
+  title="Iconography"
+  documentLayout="grid"
+  description="The stable vocabulary of roles, sets as a brand, and why the SVG pattern does not paint fill or stroke."
+>
+  <h1>Iconography</h1>
+  <p class="lede">
+    The system names <strong>roles</strong>, not drawings. A set (Lucide, Phosphor, Material) is a brand: it chooses the geometry that each role occupies, just as a brand chooses the hue of <code>--palette-blue-600</code>. How you mount the SVG in React or vanilla is in <a href="/en/components/icon">Icon</a>.
+  </p>
+
+  <ComponentPreview tree={vocabTree} css={vocabCss} label="Stable vocabulary" />
+  <p>
+    Change brand, mode or contrast above: the icons follow, and do not declare a single color token. They inherit <code>currentColor</code>.
+  </p>
+
+  <h2>A pattern, not an extra</h2>
+  <p>
+    Like the <a href="/en/state-layer">state layer</a>, the pattern comes in <code>tokens.scss</code>. An icon is not an add-on that a component opts into: just something that displays a chevron, a close, or a state glyph needs this same box. The rules are inert until an element has <code>sk-icon</code>, so they do not matter on a page without icons. The decision is in <a href="/decisions/0019-public-palettes-and-constant-semantics">ADR-19</a>.
+  </p>
+
+  <h2>The stable vocabulary</h2>
+  <p>
+    Thirty-two roles, which cover the most used cases of an app and not just what the system components consume. The reason is portability: if the vocabulary went up to <code>chevron-down</code> and nothing more, each project would declare <code>search</code> or <code>delete</code> on its own, and the most common system role would be called differently in each app.
+  </p>
+  <p>
+    Each name is a <strong>role</strong>, never a drawing: <code>delete</code> and not <code>trash</code>, <code>edit</code> and not <code>pencil</code>, <code>search</code> and not <code>magnifying-glass</code>, <code>visibility</code> and not <code>eye</code>. The name has to remain true when another set draws the different role. And it is <code>danger</code>, not <code>error</code>, because the system already says <code>danger</code> in and in <code>BadgeTone</code>, a word does not coexist with its synonym.
+  </p>
+  <p>
+    The limit did not move: a concept of <strong>product</strong> (<code>invoice</code>, <code>warehouse</code>, <code>airplane-tilt</code>) does not fit, no matter how much it is used in your app. It comes out as your geometry. And each name here is an obligation for whoever draws a set, because a set is complete.
+  </p>
+
+  <h2>Choose a set</h2>
+  <p>
+    A <strong>icon set is a</strong> brand. <code>@skryensya/core</code> names the position (<code>chevron-down</code>) and the set says which drawing occupies it. <strong>Phosphor is the default</strong> (travels with React); Lucide and Material are interchangeable, opt-in:
+  </p>
+  <div class="sk-table-scroll">
+  <table class="sk-table">
+    <thead class="sk-table__head">
+      <tr class="sk-table__row"><th class="sk-table__header">Paquete</th><th class="sk-table__header">Bookshop</th><th class="sk-table__header">Trazo</th><th class="sk-table__header">viewBox</th><th class="sk-table__header">Licencia</th></tr>
+    </thead>
+    <tbody class="sk-table__body">
+      <tr class="sk-table__row"><td class="sk-table__cell"><code>@skryensya/icons-lucide</code></td><td class="sk-table__cell">Lucide</td><td class="sk-table__cell">contorno, 2px</td><td class="sk-table__cell"><code>0 0 24 24</code></td><td class="sk-table__cell">ISC</td></tr>
+      <tr class="sk-table__row"><td class="sk-table__cell"><code>@skryensya/icons-phosphor</code></td><td class="sk-table__cell">Phosphor, peso regular</td><td class="sk-table__cell">relleno</td><td class="sk-table__cell"><code>0 0 256 256</code></td><td class="sk-table__cell">MIT</td></tr>
+      <tr class="sk-table__row"><td class="sk-table__cell"><code>@skryensya/icons-material</code></td><td class="sk-table__cell">Material Symbols, outlined 400</td><td class="sk-table__cell">relleno</td><td class="sk-table__cell"><code>0 -960 960 960</code></td><td class="sk-table__cell">Apache-2.0</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p>
+    None live in <code>@skryensya/core</code>: core does not name tenants, and their <code>dependencies</code> are empty. They are separate packages.
+  </p>
+  <CodeBlock code={bind} label="install" note="Default Phosphor; the others, opt-in" />
+
+  <h2>The same name, three drawings</h2>
+  <p>
+    Each row is <strong>a</strong> role; each column, one set. The preview frame has a single set; This table lives on the page to compare all three at once. The name you write is the one on the left, <code>search</code>, not <code>magnifying-glass</code> or the codepoint of a source.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">rol</th>
+          {allSets.map((s) => <th class="sk-table__header">{s.label}</th>)}
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        {
+          compared.map((role) => (
+            <tr class="sk-table__row">
+              <td class="sk-table__cell"><code>{role}</code></td>
+              {allSets.map((s) => (
+                <td class="sk-table__cell"><Fragment set:html={iconMarkup(role, { size: "lg", set: s.set })} /></td>
+              ))}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Three libraries, three different viewBoxes, zero color tokens: all three inherit <code>currentColor</code>.
+  </p>
+  <p>Changing sets is this, and nothing more:</p>
+  <CodeBlock code={swap} label="change set" note="no call site moves" />
+
+  <h2>The CSS does not touch <code>fill</code> or <code>stroke</code></h2>
+  <p>
+    An outline set draws with <code>fill="none" stroke="currentColor"</code> at the root <code>&lt; svg&gt; </code>, and a <strong>CSS declaration beats a</strong> presentation attribute. A <code>fill: currentColor</code> in the pattern would make every contour set solid, silently. So the intention of the geometry lives in <code>attrs</code>, of the set, and the pattern only puts box and size.
+  </p>
+  <p>
+    That leaves the <strong>icon without its own color</strong>: it inherits <code>currentColor</code>, is correct in all eight brands and the two modes without a token, does not need override on <code>modes/hc.scss</code>, does not enter <code>contrast-pairs.json</code>, and in forced contrast the browser forces the <code>color</code> from the container and <code>currentColor</code> follows it alone.
+  </p>
+
+  <h2>Use the pattern</h2>
+  <p>
+    React (<code>&lt; Icon&gt; </code>), vanilla (<code>mountIcons</code>), sizes and accessibility in the call site: <a href="/en/components/icon">Icon</a>.
+  </p>
+</Base>

@@ -1,92 +1,94 @@
 ---
 num: 13
-title: El contrato vive en core y los frameworks son bindings
-short: "Core es el contrato"
+title: The contract lives in core and frameworks are bindings
+short: "Core is the contract"
 summary: >-
-  El kit se consume por dos rutas (React y markup autoreado) y hasta ahora ninguna autoridad las
-  cubría a las dos: core exportaba las clases pero casi ninguna opción, React redeclaraba sus props
-  y `docs/ai/schemas/*.json` transcribía todo a mano por tercera vez. Esta decisión hace de core la
-  única autoría del contrato de un componente (firmas, opciones, parts, el mapeo de opción a
-  atributo y la accesibilidad debida) y convierte a React y a Vanilla en bindings que lo *realizan*.
-  Una opción que un binding redeclara deja de ser una opción: es drift, y rompe el build.
+  The kit is consumed by two routes (React and authored markup) and until now no authority covered both:
+  core exported the classes but almost no options, React redeclared its props, and
+  `docs/ai/schemas/*.json` transcribed everything by hand a third time. This decision makes core the sole
+  authoring of a component's contract (signatures, options, parts, the option-to-attribute mapping and the
+  accessibility owed) and turns React and Vanilla into bindings that *realize* it. An option a binding
+  redeclares stops being an option: it is drift, and it breaks the build.
 ---
 
-## El problema
+## The problem
 
-Un componente de este sistema se consume de dos maneras. Un consumidor React escribe
-`<Button variant="accent">`; un consumidor de la capa vanilla escribe
-`<button class="sk-button sk-interactive" data-sk-button data-variant="accent">`. Son la misma
-cosa dicha dos veces, y hasta hoy nada lo garantizaba.
+A component in this system is consumed two ways. A React consumer writes `<Button variant="accent">`; a
+vanilla layer consumer writes
+`<button class="sk-button sk-interactive" data-sk-button data-variant="accent">`. They are the same thing
+said twice, and until today nothing guaranteed it.
 
-Lo que había, medido:
+What was there, measured:
 
-- **56 de 62** módulos de core exportan `*Parts`: las clases, o sea el esqueleto del markup contract.
-- **14 de 62** exportan `*Options`, y React las importa en **8** componentes.
-- `packages/react/src/components/button.tsx` **redeclara** `variant`, `size` e `iconOnly` en su propio
-  `ButtonAppearanceProps` en vez de usar `ButtonOptions`, que existe en
-  [`packages/core/src/button.ts`](../../packages/core/src/button.ts) tres archivos más allá.
-- `docs/ai/schemas/button.json` volvía a escribir los mismos cuatro variants, los mismos tres sizes y
-  los mismos import paths, a mano, por tercera vez.
+- **56 of 62** core modules export `*Parts`: the classes, that is, the skeleton of the markup contract.
+- **14 of 62** export `*Options`, and React imports them in **8** components.
+- `packages/react/src/components/button.tsx` **redeclares** `variant`, `size` and `iconOnly` in its own
+  `ButtonAppearanceProps` instead of using `ButtonOptions`, which exists in
+  [`packages/core/src/button.ts`](../../packages/core/src/button.ts) three files away.
+- `docs/ai/schemas/button.json` wrote the same four variants, the same three sizes and the same import
+  paths again, by hand, a third time.
 
-Tres transcripciones del mismo hecho y ningún punto donde compararlas. El Gate 1 que existía escaneaba
-con regex y tenía una lista manual de excepciones de atributos nativos: acusaba el síntoma sin poder
-nombrar la causa.
+Three transcriptions of the same fact and no point at which to compare them. The Gate 1 that existed
+scanned with regexes and had a manual exception list for native attributes: it accused the symptom
+without being able to name the cause.
 
-## La decisión
+## The decision
 
-**Core exporta un contract por familia, y es su única autoría.** Un contract declara:
+**Core exports one contract per family, and it is its sole authoring.** A contract declares:
 
-- **Signatures**: la identidad lógica separada del nombre exportado, el host HTML al que aterriza y el
-  valor que la discrimina. `Button.action` y `Button.navigation` son dos firmas del mismo export,
-  discriminadas por `href`, con host `<button>` y `<a>`.
-- **Options**: los tipos que hoy viven sueltos en `*Options`, más **el atributo sobre el que cada una
-  se escribe**. `variant` no es solo `ButtonVariant`: es `ButtonVariant` que aterriza en
-  `data-variant`. Ese mapeo es lo que hacía falta para que las dos rutas sean comparables.
-- **Parts y part template**: las clases que ya exportaba `*Parts`, más el subárbol que cada firma
-  posee y dónde caen sus hijos. `navListParts` tiene ocho parts y React expone tres surfaces: el
-  template es lo que hace que esas dos cosas sean *la misma estructura* y no dos.
-- **Constraints y ARIA**: `requires`, `forbids`, `exactlyOneOf`, padres válidos, cardinalidad, y el
-  nombre accesible que una firma debe cobrar (`iconOnly` exige `aria-label`). Estructurado, nunca en
-  prosa: la regla de composición de `nav-list` (un link siempre dentro de un group, o el markup queda
-  inválido) era un párrafo en un JSON y pasa a ser `parents: [NavListGroup]`.
+- **Signatures**: the logical identity separated from the exported name, the HTML host it lands on and the
+  value that discriminates it. `Button.action` and `Button.navigation` are two signatures of the same
+  export, discriminated by `href`, with hosts `<button>` and `<a>`.
+- **Options**: the types that today live loose in `*Options`, plus **the attribute each one is written
+  onto**. `variant` is not only `ButtonVariant`: it is `ButtonVariant` landing on `data-variant`. That
+  mapping is what was missing for the two routes to be comparable.
+- **Parts and part template**: the classes `*Parts` already exported, plus the subtree each signature
+  owns and where its children land. `navListParts` has eight parts and React exposes three surfaces: the
+  template is what makes those two things *the same structure* rather than two.
+- **Constraints and ARIA**: `requires`, `forbids`, `exactlyOneOf`, valid parents, cardinality, and the
+  accessible name a signature must earn (`iconOnly` requires `aria-label`). Structured, never prose:
+  `nav-list`'s composition rule (a link is always inside a group, or the markup is invalid) was a
+  paragraph in a JSON file and becomes `parents: [NavListGroup]`.
 
-**React y Vanilla son bindings.** Un binding realiza el contract y no lo repite. `ButtonProps` deja de
-declarar `variant?: ButtonVariant` y pasa a derivarse de `ButtonOptions`. Redeclarar una opción no es
-un atajo: es una segunda verdad, y es exactamente lo que produjo el drift que veníamos parchando.
+**React and Vanilla are bindings.** A binding realizes the contract and does not repeat it. `ButtonProps`
+stops declaring `variant?: ButtonVariant` and is derived from `ButtonOptions` instead. Redeclaring an
+option is not a shortcut: it is a second truth, and it is exactly what produced the drift we had been
+patching.
 
-## Quién lo prueba
+## Who proves it
 
-Dos gates, porque son dos afirmaciones distintas:
+Two gates, because they are two different claims:
 
-1. **Conformidad del binding (G1).** La TypeScript Compiler API prueba que las props públicas del
-   binding React son asignables a las options del contract. Su trabajo se reduce a esta única
-   afirmación, que es lo único que solo ella puede probar. No extrae el catálogo: el contract ya es
-   un valor, se importa y se serializa.
-2. **Simetría (G2).** Se renderizan las dos rutas desde el mismo usage tree y se comparan los árboles
-   DOM normalizados: parts, atributos mapeados, árbol ARIA. Si difieren, rompe. Este gate no existía
-   de ninguna forma y es el que hace que "dos bindings" signifique algo verificable.
+1. **Binding conformance (G1).** The TypeScript Compiler API proves the React binding's public props are
+   assignable to the contract's options. Its job is reduced to that single claim, which is the only thing
+   only it can prove. It does not extract the catalogue: the contract is already a value, it is imported
+   and serialized.
+2. **Symmetry (G2).** Both routes are rendered from the same usage tree and the normalized DOM trees are
+   compared: parts, mapped attributes, ARIA tree. If they differ, it breaks. This gate did not exist in
+   any form and it is what makes "two bindings" mean something verifiable.
 
-## Lo que se rechazó
+## What was rejected
 
-**TypeScript como autoridad única**, que es lo que proponía el documento de arquitectura. Los tipos no
-pueden expresar el anidamiento de parts ni una regla de ARIA condicional sin codificaciones de tipos
-que nadie va a leer. El markup es dato, no tipo.
+**TypeScript as the single authority**, which is what the architecture document proposed. Types cannot
+express parts nesting or a conditional ARIA rule without type encodings nobody is going to read. Markup
+is data, not type.
 
-**El contrato en `contracts/*.yaml`, fuera de core.** No tocaba el kit y mantenía a core sin build
-(decisión 6), pero volvía a partir la verdad: core seguiría exportando `*Parts` por su lado y nadie
-garantizaría que el YAML lo siga. La misma enfermedad con otro formato.
+**The contract in `contracts/*.yaml`, outside core.** It did not touch the kit and kept core build-free
+(decision 6), but it split the truth again: core would keep exporting `*Parts` on its own side and nobody
+would guarantee the YAML followed it. The same disease in another format.
 
-**Declarar el mapeo a mano en el overlay semántico**, `{variant: {react: "variant", markup: "data-variant"}}`.
-Es copiar props a mano, que es el hábito que esta decisión existe para terminar.
+**Declaring the mapping by hand in the semantic overlay**,
+`{variant: {react: "variant", markup: "data-variant"}}`. That is copying props by hand, which is the habit
+this decision exists to end.
 
-**Reconciliar dos extracciones en el compilador**, adivinando que `variant` se corresponde con
-`data-variant` por regla de nombre. Habría funcionado hasta el primer caso irregular, y después la
-tabla de excepciones habría sido la verdad real.
+**Reconciling two extractions in the compiler**, guessing that `variant` corresponds to `data-variant` by
+a naming rule. It would have worked until the first irregular case, after which the exception table would
+have been the real truth.
 
-## Costo
+## Cost
 
-Aproximadamente 48 módulos de core que hoy solo exportan `*Parts` necesitan contract completo, y unos
-50 componentes React tienen que dejar de redeclarar sus props. Es mecánico y el typecheck actual lo
-verifica paso a paso, pero es la fase más larga de la reconstrucción y no produce nada visible
-mientras dura. Se acepta porque la alternativa, seguir manteniendo tres copias, ya demostró su costo
-en cada bug de drift que este repo arrastró.
+Roughly 48 core modules that today only export `*Parts` need a complete contract, and some 50 React
+components have to stop redeclaring their props. It is mechanical and the current typecheck verifies it
+step by step, but it is the longest phase of the rebuild and it produces nothing visible while it lasts.
+It is accepted because the alternative, continuing to maintain three copies, has already demonstrated its
+cost in every drift bug this repo has carried.

@@ -223,3 +223,23 @@ entries:
         and the composer trigger is now always emitted rather than only when the view is a sheet:
         how wide the screen is was already a CSS decision, and deciding it in JS as well made the two
         bindings render different DOM at the same width.
+  - date: 2026-09-07
+    kind: bugfix
+    es:
+      title: El disparador del composer ya no depende del orden de importación
+      body: >-
+        La regla que lo esconde arriba del breakpoint pesaba una clase, igual que el
+        <code>display: inline-flex</code> que <code>button.css</code> le da a todo
+        <code>.sk-button</code>, y las dos viven en la misma capa: cuál ganaba lo decidía qué hoja
+        importaba último la página. Medido en vivo, el disparador aparecía a cualquier ancho apenas
+        cambiaba ese orden, que es justo la "segunda puerta de entrada que no hace nada" que la regla
+        de al lado existe para evitar. Ahora la regla lleva dos clases y el empate no existe.
+    en:
+      title: The composer trigger no longer depends on import order
+      body: >-
+        The rule hiding it above the breakpoint weighed one class, exactly like the
+        <code>display: inline-flex</code> <code>button.css</code> gives every <code>.sk-button</code>,
+        and both live in the same layer: which one won came down to whichever stylesheet a page
+        imported last. Measured live, the trigger showed at every width the moment that order
+        changed, which is precisely the "second way in that does nothing" the rule beside it exists
+        to prevent. The rule now carries two classes and the tie is gone.

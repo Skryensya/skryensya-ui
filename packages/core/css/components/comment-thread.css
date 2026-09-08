@@ -755,7 +755,15 @@
    * breakpoint the composer is a sheet, and a sheet with no trigger is a box nobody can reach.
    * Hidden by default, which covers every width above the breakpoint in one line.
    */
-  .sk-comment-thread__composer-trigger {
+  /*
+   * `.sk-comment-thread` in front of it, not for scoping but for SPECIFICITY. This element is also a
+   * `.sk-button`, and `button.css` sets `display: inline-flex` at the same one-class weight inside
+   * the same `@layer components`, so which of the two won came down to which stylesheet a page
+   * happened to import last. That is not a decision anyone made: measured live, the trigger showed
+   * at every width the moment the import order changed, exactly the "second way in that does
+   * nothing" the rule below this one exists to prevent. Two classes settle it for good.
+   */
+  .sk-comment-thread > .sk-comment-thread__composer-trigger {
     display: none;
     inline-size: 100%;
     justify-content: flex-start;
@@ -766,7 +774,8 @@
    * cannot read a custom property, and the same value the binding reads from that property to decide
    * modality. Tier-3 stylesheets carry it with a pointer back, as `patterns/vaul.css` does. */
   @media (max-width: 52rem) {
-    .sk-comment-thread__composer-trigger {
+    /* Same two classes, so it can beat the rule above rather than tie with it. */
+    .sk-comment-thread > .sk-comment-thread__composer-trigger {
       display: inline-flex;
     }
 

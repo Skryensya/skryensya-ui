@@ -33,9 +33,9 @@ export const commandPaletteDemoTree = (t: Translate): UsageTree => ({
         label: t("demo.commandPalette.label"),
         paletteId: "demo-cmdk-tree",
         entries: JSON.stringify([
-          { label: t("demo.commandPalette.button"), href: "/componentes/button", section: t("demo.commandPalette.section") },
-          { label: t("demo.commandPalette.dialog"), href: "/componentes/dialog", section: t("demo.commandPalette.section") },
-          { label: t("demo.commandPalette.toc"), href: "/componentes/toc", section: t("demo.commandPalette.section") },
+          { label: t("demo.commandPalette.button"), href: "/components/button", section: t("demo.commandPalette.section") },
+          { label: t("demo.commandPalette.dialog"), href: "/components/dialog", section: t("demo.commandPalette.section") },
+          { label: t("demo.commandPalette.toc"), href: "/components/toc", section: t("demo.commandPalette.section") },
         ]),
       },
     },

@@ -1,11 +1,11 @@
-/* Las cinco sombras nombradas del sistema, pintadas sobre un Box real (`border: "subtle"`,
-   `padding: "lg"` en el árbol de la página): lo único que esta hoja fuerza es el shadow, todo lo
-   demás (relleno, borde, radio) ya lo trae `box.css`. Las cinco comparten el mismo borde real
-   (incluida `flat`/`sunken`), así que el encuadre no depende de la sombra para leerse.
-   El FONDO también se fuerza por nivel, no solo la sombra: cada `data-level` pinta el mismo
-   `--color-bg-surface-*` que el componente real de ese nivel usaría (Box no lo hace solo porque
-   esta hoja no le pasa `surface`, ver la nota en `elevacion.astro`), si no la mitad de la escala
-   -las tres que comparten fondo con `--color-bg-surface`/`-overlay`- se leían idénticas entre sí. */
+/* The system's five named shadows, painted on a real Box (`border: "subtle"`, `padding: "lg"` in the
+   page's tree): the only thing this sheet forces is the shadow, everything else (fill, border, radius)
+   already comes from `box.css`. All five share the same real border (`flat`/`sunken` included), so the
+   framing does not depend on the shadow to read.
+   The BACKGROUND is also forced per level, not just the shadow: each `data-level` paints the same
+   `--color-bg-surface-*` the real component at that level would use (Box does not do it on its own
+   because this sheet does not pass it `surface`, see the note in `elevacion.astro`), otherwise half the
+   scale -the three that share a background with `--color-bg-surface`/`-overlay`- read identically. */
 
 .ev-swatch {
   min-block-size: 6rem;
@@ -37,8 +37,8 @@
 }
 
 .ev-swatch[data-level="modal"] {
-  /* Comparte fondo con `overlay`, a propósito: ver la sección de modo oscuro más abajo en la
-     página, `--color-bg-surface-overlay` es el mismo tono para los dos. */
+  /* It shares a background with `overlay`, on purpose: see the dark mode section further down the
+     page, `--color-bg-surface-overlay` is the same tone for both. */
   background: var(--color-bg-surface-overlay);
   box-shadow: var(--elevation-modal);
 }

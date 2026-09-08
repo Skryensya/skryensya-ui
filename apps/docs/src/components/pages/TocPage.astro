@@ -31,13 +31,13 @@ const markup = `<aside class="sk-toc" data-sk-toc>
 
 const mount = `import { initComponents } from "@skryensya/vanilla/auto";
 
-// Encuentra [data-sk-toc] y conecta el scroll-spy que mueve aria-current.
+// Finds [data-sk-toc] and wires up the scroll-spy that moves aria-current.
 await initComponents();`;
 
 const builder = `---
 import { indexDocument } from "../lib/document-index";
 
-// El cuerpo de la página, ya renderizado a HTML: de ahí salen sus propias secciones.
+// The page's body, already rendered to HTML: its own sections come from there.
 const { html, headings } = indexDocument(await Astro.slots.render("default"));
 const items = headings.map((h) => ({ href: \`#\${h.id}\`, label: h.label, level: h.level }));
 ---

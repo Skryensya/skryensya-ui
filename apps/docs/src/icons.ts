@@ -1,12 +1,12 @@
 /*
- * Los iconos del sitio.
+ * The site's icons.
  *
- * El sitio no trae geometría propia: enlaza un set publicado, que es el camino que documenta. Lucide
- * es la elección del sitio, no la del sistema: core no nombra inquilinos (decisión 2), así que no hay
- * un set "oficial", hay tres publicados y tú eliges.
+ * The site brings no geometry of its own: it binds a published set, which is the path it documents.
+ * Lucide is the site's choice, not the system's: core names no tenants (decision 2), so there is no
+ * "official" set, there are three published ones and you choose.
  *
- * Cambiar de set es cambiar las dos líneas de abajo. Ningún call site se mueve, y eso es exactamente
- * lo que el vocabulario estable compra.
+ * Changing sets is changing the two lines below. No call site moves, and that is exactly what the
+ * stable vocabulary buys.
  */
 import { renderIconBox, type IconData, type IconSet, type IconSize, type StableIconName } from "@skryensya/core/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
@@ -14,7 +14,7 @@ import { materialIcons } from "@skryensya/icons-material";
 import { phosphorIcons } from "@skryensya/icons-phosphor";
 
 /*
- * EL SET Y SU ID SON EL MISMO HECHO, y por eso salen del mismo lugar.
+ * THE SET AND ITS ID ARE THE SAME FACT, and that is why they come from the same place.
  *
  * `siteIcons` is the geometry that `iconMarkup` serializes at build; `siteIconSet` is the id written
  * on `<html>` so CSS and preview frames can name the same set. Keeping both beside each other avoids
@@ -23,7 +23,7 @@ import { phosphorIcons } from "@skryensya/icons-phosphor";
 export const siteIconSet = "lucide";
 export const siteIcons = lucideIcons;
 
-/** Los tres sets publicados, para que la página los muestre lado a lado en vez de afirmar que existen. */
+/** The three published sets, so the page shows them side by side instead of asserting they exist. */
 export const allSets: readonly { id: string; label: string; licence: string; set: IconSet }[] = [
   { id: "lucide", label: "Lucide", licence: "ISC", set: lucideIcons },
   { id: "phosphor", label: "Phosphor", licence: "MIT", set: phosphorIcons },
@@ -31,13 +31,13 @@ export const allSets: readonly { id: string; label: string; licence: string; set
 ];
 
 /*
- * El serializador del sitio: la única codificación string del markup contract, sobre `renderIconBox`.
+ * The site's serializer: the only string encoding of the markup contract, over `renderIconBox`.
  *
- * Esto NO lo envía el sistema (decisión 15): un consumidor de vanilla escribe el `<svg>` a mano, y lo
- * que el sistema documenta es exactamente esta forma. Aquí vive como helper del sitio, y las dos
- * entradas públicas, rol estable y geometría propia, son adapters de una línea sobre él, en vez de dos
- * plantillas de string que podían desincronizarse. La caja (clase, viewBox, tamaño, a11y, precedencia)
- * la calcula core; el sitio sólo la serializa a string.
+ * The system does NOT ship this (decision 15): a vanilla consumer writes the `<svg>` by hand, and what
+ * the system documents is exactly this shape. Here it lives as a site helper, and the two public
+ * entry points, stable role and own geometry, are one-line adapters over it, instead of two string
+ * templates that could drift apart. The box (class, viewBox, size, a11y, precedence) is computed by
+ * core; the site only serializes it to a string.
  */
 function svgString(
   icon: IconData,
@@ -46,8 +46,8 @@ function svgString(
 ): string {
   const { presentation, box, body } = renderIconBox({ icon, dataIcon, size, className });
   const serialize = (pairs: [string, string][]) => pairs.map(([k, v]) => `${k}="${v}"`).join(" ");
-  // presentation, luego los attrs extra del consumidor (entre set y caja, como en los otros bindings),
-  // y por último la caja, que gana.
+  // presentation, then the consumer's extra attrs (between set and box, as in the other bindings),
+  // and finally the box, which wins.
   const attrs = [
     serialize(presentation),
     ...(extraAttrs ? [serialize(Object.entries(extraAttrs) as [string, string][])] : []),
@@ -58,8 +58,8 @@ function svgString(
 }
 
 /**
- * El markup contract para un rol estable. Un icono es decorativo por defecto: en un trigger con texto,
- * el texto ya nombra la acción.
+ * The markup contract for a stable role. An icon is decorative by default: in a trigger with text, the
+ * text already names the action.
  */
 export function iconMarkup(
   name: StableIconName,
@@ -69,7 +69,7 @@ export function iconMarkup(
 }
 
 /**
- * Markup for geometría propia, same shape as `iconMarkup`, but the name is not a stable role, so
+ * Markup for own geometry, same shape as `iconMarkup`, but the name is not a stable role, so
  * the site's icon-set swap leaves it alone (`applyIconSet` skips unknown `data-icon` keys).
  */
 export function iconDataMarkup(
@@ -93,8 +93,8 @@ const strokeAttrs = {
 } as const;
 
 /*
- * Un icono FUERA del set, lo único que es opt-in. No hay un SetIcon: esto es geometría que se pasa
- * como `data`, y el acoplamiento al proyecto es visible en el call site, que es el punto.
+ * An icon OUTSIDE the set, the only thing that is opt-in. There is no SetIcon: this is geometry passed
+ * as `data`, and the coupling to the project is visible at the call site, which is the point.
  */
 export const sparkle: IconData = {
   viewBox: "0 0 24 24",
@@ -102,7 +102,7 @@ export const sparkle: IconData = {
   body: `<path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2z" />`,
 };
 
-/* Four corners opening out: "ver en pantalla completa", not a device class. */
+/* Four corners opening out: "view fullscreen", not a device class. */
 export const screenFullscreen: IconData = {
   viewBox: "0 0 24 24",
   attrs: strokeAttrs,
@@ -129,14 +129,13 @@ export const contrastHigh: IconData = {
   body: `<circle cx="12" cy="12" r="10" /><path d="M12 6a6 6 0 0 1 0 12z" fill="currentColor" stroke="none" />`,
 };
 
-/* El selector de idioma del header dejó de ser geometría propia: `language` es ahora un rol estable
- * (ver `stableIconNames` en core), lo dibujan los tres sets publicados, y `LanguageMenu.astro` lo
- * pide por `iconMarkup("language")` como cualquier otro rol. */
+/* The header's language picker stopped being own geometry: `language` is now a stable role (see
+ * `stableIconNames` in core), the three published sets draw it, and `LanguageMenu.astro` asks for it
+ * with `iconMarkup("language")` like any other role. */
 
-/* Transporte de reproducción para las muestras de /motion, otro par de dos estados que se
- * cruzan en el mismo hueco. No son roles estables: play/pause es vocabulario de un reproductor,
- * no del sistema, así que entra como geometría propia de la página (decisión 15) en vez de
- * obligar a los tres sets publicados a dibujarlo. */
+/* Playback transport for the /motion samples, another pair of two states that swap in the same slot.
+ * They are not stable roles: play/pause is a player's vocabulary, not the system's, so it comes in as
+ * the page's own geometry (decision 15) instead of forcing the three published sets to draw it. */
 export const play: IconData = {
   viewBox: "0 0 24 24",
   attrs: strokeAttrs,

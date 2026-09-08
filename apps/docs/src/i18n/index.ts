@@ -3,7 +3,7 @@
  * given page live in the other one.
  *
  * The site is static and multi-page, so a locale is a URL PREFIX and nothing else: no runtime
- * negotiation, no cookie, no client state. `/componentes/avatar` is Spanish, `/en/components/avatar`
+ * negotiation, no cookie, no client state. `/components/avatar` is Spanish, `/en/components/avatar`
  * is English, and both are real files on disk. That is deliberate: every dimension this site already
  * has (brand, mode, contrast, density) resolves in the browser from custom properties, but language
  * changes the HTML, so it has to resolve at build.
@@ -67,39 +67,39 @@ export function useTranslations(locale: Locale): Translate {
 }
 
 /*
- * ROUTE SEGMENTS, Spanish → English.
+ * ROUTE SEGMENTS, English → Spanish.
  *
- * An English site whose URLs read `/en/componentes/avatar` is not an English site. But translating
- * whole paths would mean a per-locale href on all ~97 nav entries, so this translates SEGMENTS
- * instead: the Spanish path vocabulary is about a dozen words, and every component slug
- * (`avatar`, `date-picker`, `split-button`) is already English and passes through untouched.
+ * English owns the bare paths, so English is the canonical spelling of a route and this table says
+ * how each segment is written in the other locale. Translating whole paths would mean a per-locale
+ * href on all ~97 nav entries; the path vocabulary is about a dozen words, and every component slug
+ * (`avatar`, `date-picker`, `split-button`) is identical in both and passes through untouched.
  *
- * Keys are Spanish segments; a segment with no entry is emitted as-is.
+ * Keys are English segments; a segment with no entry is emitted as-is.
  */
 const routeSegments: Record<string, Partial<Record<Locale, string>>> = {
-  acento: { en: "accent" },
-  componentes: { en: "components" },
-  arquitectura: { en: "architecture" },
-  referencia: { en: "reference" },
-  primitivas: { en: "primitives" },
-  almacenamiento: { en: "storage" },
-  anclaje: { en: "anchoring" },
-  densidad: { en: "density" },
-  dimensiones: { en: "dimensions" },
-  efectos: { en: "effects" },
-  elevacion: { en: "elevation" },
-  gradientes: { en: "gradients" },
-  iconos: { en: "icons" },
-  fundamentos: { en: "foundations" },
-  instalacion: { en: "installation" },
-  prerrequisitos: { en: "prerequisites" },
-  teclado: { en: "keyboard" },
-  "primer-componente": { en: "first-component" },
-  "montaje-automatico": { en: "automatic-mounting" },
-  transparencias: { en: "transparency" },
+  accent: { es: "acento" },
+  components: { es: "componentes" },
+  architecture: { es: "arquitectura" },
+  reference: { es: "referencia" },
+  primitives: { es: "primitivas" },
+  storage: { es: "almacenamiento" },
+  anchoring: { es: "anclaje" },
+  density: { es: "densidad" },
+  dimensions: { es: "dimensiones" },
+  effects: { es: "efectos" },
+  elevation: { es: "elevacion" },
+  gradients: { es: "gradientes" },
+  icons: { es: "iconos" },
+  foundations: { es: "fundamentos" },
+  installation: { es: "instalacion" },
+  prerequisites: { es: "prerrequisitos" },
+  keyboard: { es: "teclado" },
+  "first-component": { es: "primer-componente" },
+  "automatic-mounting": { es: "montaje-automatico" },
+  transparency: { es: "transparencias" },
 };
 
-/** The reverse table, built once, so an English path can be read back to its Spanish identity. */
+/** The reverse table, built once, so a Spanish path can be read back to its English identity. */
 const reverseSegments = new Map<string, string>(
   Object.entries(routeSegments).flatMap(([es, translations]) =>
     Object.values(translations).map((translated) => [translated!, es] as const),
@@ -113,11 +113,12 @@ const stripLocale = (pathname: string): string => {
 };
 
 /**
- * A path in its Spanish (canonical) form, whatever locale it arrived in.
+ * A path in its English (canonical) form, whatever locale it arrived in.
  *
  * This is the KEY every locale-independent lookup uses (`vanillaMounts`, `navLabel`, the
  * "am I the current page" check in the nav), so those tables stay keyed one way instead of gaining a
- * column each time a language is added.
+ * column each time a language is added. It was Spanish until English took the bare paths; the
+ * direction of `routeSegments` is the only thing that decides it.
  */
 export function canonicalPath(pathname: string): string {
   const bare = stripLocale(pathname);
@@ -131,7 +132,7 @@ export function canonicalPath(pathname: string): string {
 
 /**
  * Where a page lives in `locale`. Takes a path in any locale, so it works both for authoring
- * (`localizePath("/componentes/avatar", "en")`) and for the language switcher, which hands it
+ * (`localizePath("/components/avatar", "en")`) and for the language switcher, which hands it
  * whatever the reader is currently looking at.
  */
 export function localizePath(pathname: string, locale: Locale): string {
@@ -160,7 +161,7 @@ export function localizePath(pathname: string, locale: Locale): string {
  * every page 147 kB of someone else's CSS. Ask Vite for the page MODULES and you hand it an import
  * edge from this module, which `Base.astro` pulls in, so, every page. To all ~200 pages. Astro
  * then resolves each route's styles through that graph and concludes that every page's stylesheet
- * belongs on every page. Measured before this query was added: `/componentes/accordion` shipped 15
+ * belongs on every page. Measured before this query was added: `/components/accordion` shipped 15
  * stylesheets totalling 298 kB, among them `customize.css` and `personalizar.css`, two OTHER routes'
  * page styles, 39 kB each; 180 of 198 built pages carried that same freight. With `?raw` the same
  * page ships 4 stylesheets and 154 kB, and the leak is down to the 2 pages that own those styles.

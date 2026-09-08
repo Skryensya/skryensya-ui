@@ -1,7 +1,7 @@
 /*
- * El set del sitio, importado de `../icons` como cualquier otro consumidor. Estuvo hardcodeado a
- * `lucideIcons` acá adentro: mientras el sitio pintaba Phosphor, los iconos del demo salían con otra
- * geometría que los del chrome que lo rodea. El set se nombra en UN lugar y este realm lo lee.
+ * The site's set, imported from `../icons` like any other consumer. It used to be hardcoded to
+ * `lucideIcons` in here: while the site painted Phosphor, the demo's icons came out with different
+ * geometry from the chrome around them. The set is named in ONE place and this realm reads it.
  */
 import { siteIcons } from "../icons";
 import { mountComponentsWithIcons } from "@skryensya/vanilla/auto";

@@ -1,0 +1,121 @@
+---
+import Base from "../../layouts/Base.astro";
+import { iconMarkup } from "../../icons";
+
+const searchIcon = iconMarkup("search");
+---
+
+<Base
+  title="Página no encontrada"
+  description="La ruta solicitada no existe en la documentación de @skryensya."
+>
+  <section class="docs-not-found" aria-labelledby="not-found-title">
+    <p class="docs-not-found__status" aria-hidden="true">404</p>
+
+    <div class="docs-not-found__copy">
+      <h1 id="not-found-title">Esta ruta no está en la documentación.</h1>
+      <p class="lede">
+        El enlace puede haber cambiado o la URL no pertenece a este sitio. Busca por componente, token o
+        concepto, o vuelve al punto de partida.
+      </p>
+    </div>
+
+    <div class="sk-inline docs-not-found__actions" data-gap="sm">
+      <a class="sk-button sk-interactive" data-tone="accent" href="/">Ir a la documentación</a>
+      <button
+        class="sk-button sk-interactive"
+        data-variant="ghost"
+        type="button"
+        aria-controls="docs-cmdk"
+        aria-expanded="false"
+        aria-keyshortcuts="Meta+K Control+K"
+        data-sk-command-palette-open
+      >
+        <Fragment set:html={searchIcon} />
+        Buscar en Docs
+        <kbd class="sk-kbd" data-sk-command-palette-hint aria-hidden="true">⌘K</kbd>
+      </button>
+    </div>
+
+    <nav class="docs-not-found__routes" aria-label="Páginas para continuar">
+      <span>Continúa por</span>
+      <a href="/prerequisites">Prerrequisitos</a>
+      <a href="/components">Componentes</a>
+      <a href="/reference">Tokens</a>
+      <a href="/dimensions">Dimensiones</a>
+    </nav>
+  </section>
+</Base>
+
+<style>
+  /* A route failure is still part of the library: familiar shell, one explicit recovery decision. */
+  .docs-not-found {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    min-block-size: min(36rem, calc(100dvh - var(--docs-header-block-size) - var(--space-section)));
+    padding-block: var(--space-section);
+  }
+
+  .docs-not-found__status {
+    margin: 0;
+    color: var(--color-text-tertiary);
+    font-family: var(--font-family-code);
+    font-size: clamp(
+      calc(var(--font-size-heading-lg) * 2),
+      14vw,
+      calc(var(--font-size-heading-lg) * 4)
+    );
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-heading);
+    letter-spacing: -0.08em;
+    line-height: 0.82;
+    user-select: none;
+  }
+
+  .docs-not-found__copy {
+    max-inline-size: 42rem;
+  }
+
+  .docs-not-found__copy h1 {
+    text-wrap: balance;
+  }
+
+  .docs-not-found__actions {
+    margin-block-start: var(--space-stack-lg);
+  }
+
+  .docs-not-found__routes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-sm);
+    align-items: baseline;
+    margin-block-start: var(--space-section);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+  }
+
+  .docs-not-found__routes > span {
+    color: var(--color-text-tertiary);
+  }
+
+  .docs-not-found__routes > a {
+    color: inherit;
+    text-decoration-color: var(--color-border-default);
+    text-underline-offset: 0.2em;
+  }
+
+  .docs-not-found__routes > a:hover {
+    color: var(--color-text-primary);
+  }
+
+  @media (max-width: 40rem) {
+    .docs-not-found {
+      min-block-size: auto;
+    }
+
+    .docs-not-found__status {
+      font-size: calc(var(--font-size-heading-lg) * 2.5);
+    }
+  }
+</style>

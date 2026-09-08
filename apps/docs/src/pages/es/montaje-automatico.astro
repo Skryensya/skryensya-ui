@@ -1,0 +1,81 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+
+const auto = `import { initComponents } from "@skryensya/vanilla/auto";
+
+// Each selector present triggers only its own enhancer's dynamic import.
+await initComponents();`;
+
+const scoped = `// Un contenedor recién insertado (un toast, un panel de tabs)
+// it does not need to re-scan the whole document.
+await initComponents(nuevoNodo);`;
+
+const single = `import { mountAccordion } from "@skryensya/vanilla/accordion";
+
+mountAccordion();`;
+---
+
+<Base
+  title="Montaje automático"
+  description="initComponents() escanea el documento y hace import() únicamente de los enhancers que la página realmente usa."
+  documentLayout="grid"
+>
+  <h1>Montaje automático</h1>
+  <p class="lede">
+    Una página con varios componentes del sistema no necesita un import por cada uno:
+    <code>initComponents()</code> escanea el documento, encuentra qué roots <code>data-sk-*</code>
+    están presentes, y hace <code>import()</code> únicamente de esos tipos.
+  </p>
+
+  <CodeBlock code={auto} label="JavaScript" />
+
+  <h2>Es un mapa, no una lista de imports</h2>
+  <p>
+    Por dentro es una tabla <em>selector → import dinámico</em>, no una serie de
+    <code>import</code> estáticos. Un componente que la página no usa nunca cruza la red: si no hay
+    ningún <code>[data-sk-select]</code> en el documento, el módulo de Select ni se descarga ni se
+    ejecuta. Es el mismo principio que un bundler aplica en build time (tree-shaking), aplicado en
+    runtime contra el DOM real.
+  </p>
+  <p>
+    Los módulos que sí coinciden se cargan todos en paralelo y se montan en el orden del registro,
+    así que llamar a <code>initComponents()</code> una sola vez alcanza para una página entera,
+    sin importar cuántos tipos de componente combine.
+  </p>
+
+  <h2>Es idempotente</h2>
+  <p>
+    Volver a llamarlo no vuelve a montar lo que ya está montado: cada enhancer marca su propia raíz
+    como lista, así que <code>initComponents()</code> es seguro de invocar más de una vez en la
+    misma página.
+  </p>
+
+  <h2>Acota el escaneo con una raíz</h2>
+  <p>
+    Por defecto escanea <code>document</code> entero, pero acepta cualquier <code>Element</code>.
+    Cuando el contenido nuevo es un subárbol conocido; un toast recién insertado, un panel que se
+    reveló; pasarlo directamente evita recorrer el documento completo por un solo nodo.
+  </p>
+  <CodeBlock code={scoped} label="JavaScript" />
+
+  <h2>Qué queda afuera</h2>
+  <p>
+    <code>CodePreview</code> y <code>ComponentPreview</code> son superficies de documentación
+    opt-in: se montan por su propio subpath, nunca como parte del runtime por defecto de una
+    aplicación. Si tu página no es un sitio de documentación, no vas a necesitarlos aquí.
+  </p>
+
+  <h2>La alternativa: un solo componente</h2>
+  <p>
+    Si una página usa un único componente del sistema, importar su función de montaje directamente
+    evita el escaneo por completo; la página de cada componente muestra este import bajo
+    "Sólo &lt;nombre&gt;". Por ejemplo, para Accordion:
+  </p>
+  <CodeBlock code={single} label="JavaScript" />
+  <p>
+    Elige esta ruta cuando sepas de antemano exactamente qué vas a montar; elige
+    <code>initComponents()</code> cuando la página combine varios y prefieras no mantener la lista
+    a mano.
+  </p>
+</Base>

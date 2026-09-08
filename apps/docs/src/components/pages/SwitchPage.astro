@@ -15,9 +15,9 @@ const t = useTranslations(getLocale(Astro.url));
 
 const tileSwitchVanilla = `import { initComponents } from "@skryensya/vanilla/auto";
 
-// Cada label se autora con data-sk-tile-switch (data-name, data-value,
-// data-default-checked) más su input role="switch" y su indicador.
-// initComponents las hidrata con la máquina @zag-js/checkbox.
+// Each label is authored with data-sk-tile-switch (data-name, data-value,
+// data-default-checked) plus its input role="switch" and its indicator.
+// initComponents hydrates them with the @zag-js/checkbox machine.
 await initComponents();
 
 for (const root of document.querySelectorAll(

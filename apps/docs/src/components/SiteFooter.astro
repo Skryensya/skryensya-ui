@@ -57,7 +57,7 @@ const REPO_URL = "https://github.com/Skryensya/skryensya-ui";
    may use this needs to read, and the copy in the repo is the one that governs. */
 const LICENSE_URL = `${REPO_URL}/blob/main/LICENSE`;
 const AUTHOR_URL = "https://allison.sh";
-const changelogHref = locale === "en" ? "/en/components/changelog" : "/componentes/changelog";
+const changelogHref = locale === "en" ? "/en/components/changelog" : "/components/changelog";
 const year = new Date().getFullYear();
 const version = currentVersion();
 /** Same role, same trailing position, `Base.astro`'s own `reportIssueIcon`: it names "this leaves
@@ -103,7 +103,7 @@ const columns = [
     href: undefined,
     // Skips Home (0) and Foundations (1): the wordmark already IS home, and the column above
     // already carries Foundations as its own linked heading. Componentes here is the catalog
-    // (`/componentes`), never one entry inside it.
+    // (`/components`), never one entry inside it.
     items: globalNav.slice(2),
   },
 ];

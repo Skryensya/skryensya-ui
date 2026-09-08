@@ -22,22 +22,23 @@ import "@skryensya/core/components/loader.css";
 import "@skryensya/core/components/segmented.css";
 import "@skryensya/core/components/pagination.css";
 import "@skryensya/core/components/input.css";
-/* La paleta se compone sobre `.sk-dialog` (decisión 11), y su hoja lo dice en la primera línea: es
- * dueña de la fila de búsqueda, la lista y el pie, no del marco modal. Sin esta hoja el ⌘K salía con
- * el borde negro y las esquinas rectas del navegador. Va antes por eso: es la base, no un extra. */
+/* The palette composes over `.sk-dialog` (decision 11), and its sheet says so on the first line: it
+ * owns the search row, the list and the footer, not the modal frame. Without this sheet ⌘K came out
+ * with the browser's black border and square corners. It goes first for that reason: it is the base,
+ * not an extra. */
 import "@skryensya/core/components/dialog.css";
 /*
- * El cajón móvil, y las dos hojas que lo hacen existir. Sin ellas el <dialog> del rail chico salía
- * exactamente como lo pinta el navegador: una caja de 300px centrada en la pantalla, con borde negro
- * de 3px y márgenes automáticos. No es un cajón mal estilado, es un dialog crudo.
+ * The mobile drawer, and the two sheets that make it exist. Without them the small rail's <dialog> came
+ * out exactly as the browser paints it: a 300px box centered on the screen, with a 3px black border and
+ * automatic margins. It is not a badly styled drawer, it is a raw dialog.
  *
- * Es el mismo agujero que ya tuvieron `sidebar.css` (el rail transparente) y `dialog.css` (el ⌘K con
- * borde negro): las tres se sacaron de acá en el mismo commit de "component CSS scoping", y el cajón
- * fue el que nadie volvió a buscar. La regla que las tres confirman: una hoja opt-in se importa donde
- * vive el markup que la usa, y este markup vive en el layout, así que va acá.
+ * It is the same hole `sidebar.css` (the transparent rail) and `dialog.css` (⌘K with a black border)
+ * already had: all three were taken out of here in the same "component CSS scoping" commit, and the
+ * drawer was the one nobody went looking for again. The rule all three confirm: an opt-in sheet is
+ * imported where the markup that uses it lives, and this markup lives in the layout, so it goes here.
  *
- * El patrón antes que el componente: `drawer.css` no trae estructura, sólo re-declara los hooks de
- * Vaul (decisión 8), así que sin `vaul.css` no hay panel que ajustar.
+ * The pattern before the component: `drawer.css` brings no structure, it only re-declares Vaul's hooks
+ * (decision 8), so without `vaul.css` there is no panel to adjust.
  */
 import "@skryensya/core/patterns/vaul.css";
 /*
@@ -51,45 +52,45 @@ import "@skryensya/core/patterns/dialog-vaul.css";
 import "@skryensya/core/components/drawer.css";
 import "@skryensya/core/components/command-palette.css";
 import "@skryensya/core/components/tabs.css";
-/* Anclaje: la colocación compartida por tooltip, popover, popup, menu, select, combobox y date picker
- * (decisión 25). Va antes que ellos porque son sus consumidores. */
+/* Anchoring: the placement shared by tooltip, popover, popup, menu, select, combobox and date picker
+ * (decision 25). It goes before them because they are its consumers. */
 import "@skryensya/core/patterns/anchored.css";
-/* El menú de idioma del header (`LanguageMenu.astro`) es el único Menu del chrome, y esta hoja es
- * opt-in: sin ella el panel no se esconde en reposo (`display: none` vive acá, no en el navegador)
- * y aparecería desplegado bajo el header. Misma regla que dialog/drawer/sidebar arriba: una hoja
- * opt-in se importa donde vive el markup que la usa, y este markup vive en el layout. */
+/* The header's language menu (`LanguageMenu.astro`) is the chrome's only Menu, and this sheet is
+ * opt-in: without it the panel does not hide at rest (`display: none` lives here, not in the browser)
+ * and it would appear expanded under the header. Same rule as dialog/drawer/sidebar above: an opt-in
+ * sheet is imported where the markup that uses it lives, and this markup lives in the layout. */
 import "@skryensya/core/components/menu.css";
 import "@skryensya/core/components/tooltip.css";
 import "@skryensya/core/components/switch.css";
 import "@skryensya/core/components/table.css";
 import "@skryensya/core/components/typography.css";
-import "@skryensya/core/components/toc.css"; // el rail "En esta página": Toc.astro monta [data-sk-toc]
-/* El shell del rail izquierdo. Faltaba, y el shell de docs había reescrito a mano sus reglas
- * (fondo, borde, separador, footer) leyendo hooks `--sk-sidebar-*` que sin esta hoja no los declara
- * nadie: todos resolvían a nada, así que el rail salía transparente y sin padding. */
+import "@skryensya/core/components/toc.css"; // the "On this page" rail: Toc.astro mounts [data-sk-toc]
+/* The left rail's shell. It was missing, and the docs shell had rewritten its rules by hand
+ * (background, border, separator, footer) reading `--sk-sidebar-*` hooks that without this sheet
+ * nobody declares: they all resolved to nothing, so the rail came out transparent and without padding. */
 import "@skryensya/core/components/sidebar.css";
-/* El enlace de salto, primero en el documento y escondido hasta que recibe el foco. Va acá y no en
- * una página: es chrome del layout, como el rail y el cajón. */
+/* The skip link, first in the document and hidden until it receives focus. It goes here and not on a
+ * page: it is layout chrome, like the rail and the drawer. */
 import "@skryensya/core/components/skip-link.css";
-/* Su contraparte al final de la lectura, misma razón: chrome del layout, no de una página. Aparece
- * recién después de bajar cierto scroll y vuelve al mismo destino enfocable que el skip link de
- * arriba (`#docs-content`), así el foco que devuelve es el mismo que el salto ofrece. */
+/* Its counterpart at the end of the reading, same reason: layout chrome, not a page's. It appears only
+ * after scrolling down a certain amount and returns to the same focusable destination as the skip link
+ * above (`#docs-content`), so the focus it gives back is the same one the jump offers. */
 import "@skryensya/core/components/back-to-top.css";
-/* icon.css NO se importa aquí: viaja en tokens.scss, como el state layer. Un icono no es un extra al
- * que un componente opta (decisión 15). */
-import "@skryensya/core/patterns/nav-list.css"; // opt-in: una app puede no tener navegación (decisión 17)
+/* icon.css is NOT imported here: it travels in tokens.scss, like the state layer. An icon is not an
+ * extra a component opts into (decision 15). */
+import "@skryensya/core/patterns/nav-list.css"; // opt-in: an app may have no navigation (decision 17)
 import "@skryensya/core/patterns/scrollbar.css";
 import "@skryensya/core/patterns/scroll-lock.css";
 import "@skryensya/core/patterns/media-gradient.css";
 import "@skryensya/core/patterns/layout.css";
-import "@skryensya/core/patterns/footer.css"; // el `sk-footer` de <SiteFooter>, en cada página con rail
+import "@skryensya/core/patterns/footer.css"; // <SiteFooter>'s `sk-footer`, on every page with a rail
 import "@skryensya/core/patterns/table-pager.css";
 import "@skryensya/core/patterns/icon-toggle.css";
 /* The mobile preference sheet (`#docs-prefs-sheet`, below) renders every setting as a Tile Button -
  * markup that lives in the layout, not in a page. Same opt-in rule as Menu above: without this
  * sheet, on any page that doesn't happen to import `tile.css` for its OWN reasons (a component page
  * demoing Tile itself), the sheet's `sk-tile*` classes hit no rules at all and fall back to bare
- * span/button UA defaults - confirmed live on `/efectos`, which has no reason to pull Tile in. */
+ * span/button UA defaults - confirmed live on `/effects`, which has no reason to pull Tile in. */
 import "@skryensya/core/components/tile.css";
 /* Effects (ADR-20), opt-in decorative motion: the component page masthead below is the collapse
  * effect's own consumer (`ComponentPageShell.astro`'s `sk-fx-collapse-header` classes). */
@@ -318,16 +319,16 @@ const drawerSections: readonly DrawerSection[] = [
  */
 /* Matched on `canonical`, so one rule covers `/componentes/...` and `/en/components/...` alike. */
 const currentSection =
-  canonical === "/componentes" || canonical.startsWith("/componentes/")
+  canonical === "/components" || canonical.startsWith("/componentes/")
     ? componentSection ?? navigation[0]
-    : canonical === "/fundamentos" || canonical.startsWith("/referencia/")
+    : canonical === "/foundations" || canonical.startsWith("/referencia/")
       ? foundationsSection ?? navigation[0]
       : navigation.find((section) => section.groups.some((group) => group.items.some((item) => item.href === path))) ?? navigation[0];
 const sectionNavigation = [currentSection] satisfies readonly NavigationSection[];
 const isGlobalItemCurrent = (href: string): boolean => {
   const itemCanonical = canonicalPath(href);
-  if (itemCanonical === "/componentes") return canonical === "/componentes" || canonical.startsWith("/componentes/");
-  if (itemCanonical === "/fundamentos") return currentSection.id === "foundations";
+  if (itemCanonical === "/components") return canonical === "/components" || canonical.startsWith("/componentes/");
+  if (itemCanonical === "/foundations") return currentSection.id === "foundations";
   return canonical === itemCanonical;
 };
 

@@ -16,9 +16,9 @@ const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 const isEnglish = locale === "en";
 
-const componentHref = isEnglish ? "/en/components" : "/componentes";
-const tokenHref = isEnglish ? "/en/reference" : "/referencia";
-const startHref = isEnglish ? "/en/installation" : "/instalacion";
+const componentHref = isEnglish ? "/en/components" : "/components";
+const tokenHref = isEnglish ? "/en/reference" : "/reference";
+const startHref = isEnglish ? "/en/installation" : "/installation";
 
 const styles = `@import "@skryensya/core/patterns/nav-list.css";`;
 

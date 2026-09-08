@@ -12,7 +12,7 @@ import reactSource from "@react/src/components/icon.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
-const vanilla = `<!-- Geometría fuera del set: la escribes tú. -->
+const vanilla = `<!-- Geometry outside the set: you write it. -->
 <svg
   class="sk-icon"
   viewBox="0 0 24 24"
@@ -25,38 +25,38 @@ const vanilla = `<!-- Geometría fuera del set: la escribes tú. -->
   <path d="M6 9l6 6 6-6" />
 </svg>`;
 
-const vanillaHydrate = `<!-- Escribes el nombre del rol, no el <svg>. -->
+const vanillaHydrate = `<!-- You write the role's name, not the <svg>. -->
 <span data-sk-icon="chevron-down"></span>
 <span data-sk-icon="close" data-sk-icon-label="Cerrar"></span>`;
 
 const vanillaBind = `import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 
-// reemplaza cada [data-sk-icon] por el <svg> del set. El
-// set es explícito.
+// replaces every [data-sk-icon] with the set's <svg>. The
+// set is explicit.
 mountIcons(document, lucideIcons);`;
 
 const reactApi = `import { Icon } from "@skryensya/react/icon";
 
-// sin configuración: dibuja con Phosphor, el set por defecto
+// no configuration: it draws with Phosphor, the default set
 <Icon name="chevron-down" />
-{/* un rol del sistema */}
+{/* a system role */}
 <Icon name="close" label="Cerrar" />
-{/* significa algo solo → role="img" */}
+{/* means something on its own → role="img" */}
 <Icon data={sparkle} />
-{/* fuera del set, lo único opt-in */}`;
+{/* outside the set, the only opt-in part */}`;
 
 const provider = `import { IconSetProvider, Icon } from "@skryensya/react/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 
-// ¿otro set? lo enlazas una vez, en la raíz, igual que
-// eliges una marca
+// another set? you bind it once, at the root, just like
+// choosing a brand
 <IconSetProvider set={lucideIcons}>
   <App />
 </IconSetProvider>;`;
 
-const sizesCss = `/* ¿otro tamaño? se redeclara el hook, como todo valor
-   arbitrario del sistema */
+const sizesCss = `/* another size? you re-declare the hook, like every
+   arbitrary value in the system */
 .hero .sk-icon { --sk-icon-size: 2rem; }`;
 
 const sourceFiles = [

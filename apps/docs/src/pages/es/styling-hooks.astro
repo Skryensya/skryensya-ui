@@ -1,0 +1,140 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
+import ComponentPreview from "../../components/ComponentPreview.astro";
+
+import "../../examples/styling-hook-override.css";
+import overrideSource from "../../examples/styling-hook-override.css?raw";
+
+const contractFlow = `Contract
+  -> Part .sk-button
+  -> styling hook --sk-button-bg
+  -> Semantic token --color-action-accent`;
+
+const badHooks = `/* Evitar: un styling hook por variante y estado. */
+--sk-button-primary-bg
+--sk-button-danger-bg
+--sk-button-primary-bg-hover
+--sk-button-danger-bg-hover`;
+
+const declaredHooks = `/* components/button.css */
+.sk-button {
+  --sk-button-bg: var(--color-action-neutral);
+}
+
+.sk-button[data-tone="accent"] {
+  --sk-button-bg: var(--color-action-accent);
+}
+
+.sk-button[data-tone="danger"] {
+  --sk-button-bg: var(--color-action-danger);
+}`;
+
+const consumedHook = `.sk-button {
+  background: var(--sk-button-bg);
+}`;
+
+const overrideTree: UsageTree = {
+  contract: "layout",
+  signature: "Inline",
+  attrs: { class: "promo", style: "display: contents" },
+  children: [
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { tone: "accent" },
+      children: "Guardar",
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { variant: "solid" },
+      children: "Cancelar",
+    },
+    {
+      contract: "button",
+      signature: "Button.action",
+      options: { tone: "danger" },
+      children: "Borrar",
+    },
+  ],
+};
+---
+
+<Base
+  title="Styling hooks"
+  documentLayout="grid"
+  description="La superficie pública que conecta un Contract, sus Parts y los valores semánticos que se pueden redefinir."
+>
+  <h1>Styling hooks</h1>
+  <p class="lede">
+    Un styling hook es la superficie pública de override de un componente. El Contract estabiliza la
+    Part, la Part declara el styling hook, y el styling hook apunta a un Semantic token. El consumidor
+    redefine ese punto de uso sin depender del selector interno ni del valor final.
+  </p>
+
+  <h2>Qué falla sin esta regla</h2>
+  <p>
+    Si cada variante tiene su propia variable, el consumidor debe conocer combinaciones de variante,
+    estado y selector. Ese acoplamiento rompe el Markup contract: un cambio de Part o de Signature
+    obliga a reescribir CSS externo aunque la promesa pública no haya cambiado.
+  </p>
+  <CodeBlock code={badHooks} label="CSS · anti patrón" />
+
+  <h2>Mecanismo</h2>
+  <p>
+    La cadena pública siempre baja en este orden. Ningún paso salta de un componente a una palette ni
+    expone un valor técnico:
+  </p>
+  <CodeBlock code={contractFlow} label="modelo" />
+  <p>
+    La base y cada variante re-declaran el mismo styling hook. La especificidad decide qué valor queda
+    activo, pero el consumidor lo lee una sola vez:
+  </p>
+  <CodeBlock code={declaredHooks} label="components/button.css" />
+  <CodeBlock code={consumedHook} label="CSS" note="una lectura, cero ramas" />
+
+  <h2>Override con alcance</h2>
+  <p>
+    Como todas las variantes leen el mismo styling hook, un alcance puede cambiar el significado local
+    de un botón sin inventar una clase paralela ni duplicar la anatomía del componente.
+  </p>
+  <ComponentPreview
+    tree={overrideTree}
+    css={overrideSource}
+    label="src/examples/styling-hook-override.css"
+    note="el override que pinta la demo"
+  />
+  <p>
+    La demo mantiene las Signatures reales de Button. Solo cambia el valor público que esas Signatures
+    consumen dentro de este bloque.
+  </p>
+
+  <h2>Límites</h2>
+  <ul>
+    <li>
+      Un styling hook vive en la clase del componente, no en <code>:root</code>. Existe cuando se
+      importa el CSS de ese componente.
+    </li>
+    <li>
+      El valor debe bajar a un Semantic token. Apuntar a <code>--palette-*</code> salta tiers y falla
+      por la misma regla que gobierna color y motion.
+    </li>
+    <li>
+      CSS sigue teniendo especificidad. Un selector externo más específico puede ganar por accidente;
+      por eso el override se escribe con un alcance claro.
+    </li>
+    <li>
+      No se usa un styling hook para cambiar estructura. Si cambia la anatomía, cambia el Contract o
+      el Pattern, no una variable.
+    </li>
+  </ul>
+
+  <h2>Siguiente</h2>
+  <ul>
+    <li><a href="/components/button">Button</a>, para ver los hooks en un componente real.</li>
+    <li><a href="/tiers">Tiers</a>, para la regla que impide saltar de tier 3 a tier 1.</li>
+    <li><a href="/state-layer">State layer</a>, otro Pattern que consume tokens públicos.</li>
+  </ul>
+</Base>

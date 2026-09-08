@@ -1,6 +1,6 @@
 ---
-// El preview clona las hojas del <head> de la página, así que lo que use el demo tiene que estar
-// importado acá: `.sk-truncate` es del demo, no del paquete.
+// The preview clones the sheets from the page's <head>, so whatever the demo uses has to be imported
+// here: `.sk-truncate` belongs to the demo, not to the package.
 import "../../examples/tooltip.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
@@ -48,8 +48,8 @@ const sourceFiles = [
   <Fragment slot="usage">
     <p class="lede" set:html={t("tooltipPage.lede")} />
 
-    {/* `menu`: el tooltip pinta fuera del flujo, y en un stage al alto del contenido no tendría a
-        dónde ir, así que la colocación real nunca se vería. */}
+    {/* `menu`: the tooltip paints out of flow, and in a stage sized to the content it would have
+        nowhere to go, so the real placement would never be visible. */}
     <ComponentPreview tree={tooltipTree(t)} label="Tooltip" viewport="menu" />
 
     <h3>{t("tooltipPage.ruleTitle")}</h3>

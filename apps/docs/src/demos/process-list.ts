@@ -88,7 +88,7 @@ export const processListTree = (t: Translate): UsageTree => ({
                 {
                   contract: "typography",
                   signature: "Link",
-                  attrs: { href: "/componentes/process-list" },
+                  attrs: { href: "/components/process-list" },
                   children: t("demo.processList.docs"),
                 },
               ],

@@ -8,10 +8,10 @@
  * 880 kB of copy. Keep it free of imports and the guarantee holds by construction.
  */
 
-export const locales = ["es", "en"] as const;
+export const locales = ["en", "es"] as const;
 export type Locale = (typeof locales)[number];
 
-export const defaultLocale = "es" satisfies Locale;
+export const defaultLocale = "en" satisfies Locale;
 
 /** What the language switcher shows. Endonyms: a reader looking for English scans for "English". */
 export const localeNames: Record<Locale, string> = {

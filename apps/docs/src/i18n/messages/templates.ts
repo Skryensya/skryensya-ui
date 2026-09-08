@@ -27,8 +27,8 @@ export const templatesMessages = {
     "templates.checkoutNavLabel": "Checkout",
     "templates.navLabel": "Templates",
 
-    /* Landing de marketing. Nombres de producto ("Lumen") quedan escritos en el árbol: son
-       sustantivos propios y no se traducen. */
+    /* Marketing landing. Product names ("Lumen") stay written in the tree: they are proper nouns and
+       are not translated. */
     "demo.marketing.nav": "Navegación del sitio",
     "demo.marketing.navProduct": "Producto",
     "demo.marketing.navPricing": "Precios",
@@ -98,7 +98,7 @@ export const templatesMessages = {
       "Con el kit instalado, el siguiente paso es elegir tu paleta: la guía de temas explica qué tokens redefinir y cuáles conviene dejar como están.",
     "demo.docsSite.onThisPage": "En esta página",
 
-    /* Dashboard de analítica. Los nombres de persona quedan escritos: son datos de ejemplo. */
+    /* Analytics dashboard. The people's names stay written: they are sample data. */
     "demo.dashboard.export": "Exportar",
     "demo.dashboard.collapse": "Contraer navegación",
     "demo.dashboard.navigation": "Navegación del panel",

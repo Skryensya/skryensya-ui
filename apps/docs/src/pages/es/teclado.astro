@@ -1,0 +1,162 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+
+<Base
+  title="Navegación por teclado"
+  documentLayout="grid"
+  description="Garantías de foco, activación y navegación por teclado para componentes nativos y enhanced."
+>
+  <h1>Navegación por teclado</h1>
+  <p class="lede">
+    El sistema no inventa un teclado por componente. Cada interacción viene del elemento HTML nativo o
+    de una Machine cuando la plataforma no coordina el patrón completo. La garantía pública es que cada
+    control alcanzable por puntero también es alcanzable por teclado, con foco visible y retorno de
+    foco predecible.
+  </p>
+
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+      <p>
+        <strong>La regla base es semántica antes que JavaScript.</strong> Button como acción usa
+        <code>&lt;button&gt;</code>, navegación usa <code>&lt;a href&gt;</code> y Dialog usa
+        <code>&lt;dialog&gt;</code>. Un Enhancer solo agrega comportamiento cuando el navegador no puede
+        coordinarlo por sí mismo.
+      </p>
+    </div>
+  </div>
+
+  <h2>Foco real y foco virtual</h2>
+  <p>
+    Hay dos modelos válidos. En foco real, <code>document.activeElement</code> cambia al elemento que
+    recibe la interacción. En foco virtual, el foco permanece en el input y el resaltado de la lista se
+    anuncia con <code>aria-activedescendant</code>. La prueba y el styling hook de foco deben respetar
+    esa diferencia: no se espera mover el foco donde el Contract declara foco virtual.
+  </p>
+
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Modelo</th>
+          <th class="sk-table__header">Mecanismo</th>
+          <th class="sk-table__header">Uso típico</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Foco real</strong></td>
+          <td class="sk-table__cell">El DOM enfoca el control, item, celda o dialog real.</td>
+          <td class="sk-table__cell">Button, link, Select, Toolbar, TreeView, Dialog.</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Foco virtual</strong></td>
+          <td class="sk-table__cell">
+            El input conserva foco y apunta al item activo con
+            <code>aria-activedescendant</code>.
+          </td>
+          <td class="sk-table__cell">Combobox y CommandPalette mientras se escribe.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Reglas comunes de teclado</h2>
+  <p>
+    Estas reglas son el piso de los Contracts interactivos. Una Signature puede agregar teclas propias,
+    pero no puede quitar activación, escape, tabulación o visibilidad de foco.
+  </p>
+
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Tecla</th>
+          <th class="sk-table__header">Garantía</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><kbd class="sk-kbd">Tab</kbd></td>
+          <td class="sk-table__cell">
+            Entra y sale de controles en el orden del DOM. Un widget compuesto ocupa una parada y luego
+            usa flechas internamente.
+          </td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">
+            <kbd class="sk-kbd">↵</kbd> / <kbd class="sk-kbd">Espacio</kbd>
+          </td>
+          <td class="sk-table__cell">
+            Activan botones, items seleccionables y acciones de menú según la semántica del host.
+          </td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><kbd class="sk-kbd">Esc</kbd></td>
+          <td class="sk-table__cell">
+            Cierra superficies temporales y devuelve el foco al trigger, no a
+            <code>&lt;body&gt;</code>.
+          </td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Flechas</td>
+          <td class="sk-table__cell">
+            Mueven dentro de radio groups, toolbars, menús, listboxes, árboles y grillas según
+            orientación. No reemplazan <kbd class="sk-kbd">Tab</kbd> entre regiones.
+          </td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">
+            <kbd class="sk-kbd">Home</kbd> / <kbd class="sk-kbd">End</kbd>
+          </td>
+          <td class="sk-table__cell">
+            Saltan al primer o último item cuando el patrón tiene una colección ordenada.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Componentes nativos</h2>
+  <p>
+    Button, link, checkbox, radio, range y dialog preservan el comportamiento del navegador. El sistema
+    no agrega ARIA para volver a declarar lo que el elemento ya expresa. En esos casos, el Markup
+    contract exige el host correcto y el Binding se limita a props, clases y styling hooks.
+  </p>
+  <ul>
+    <li><code>&lt;button&gt;</code> se activa con <kbd class="sk-kbd">↵</kbd> y <kbd class="sk-kbd">Espacio</kbd>.</li>
+    <li><code>&lt;a href&gt;</code> navega con <kbd class="sk-kbd">↵</kbd>.</li>
+    <li><code>&lt;input type="radio"&gt;</code> agrupado por <code>name</code> mueve y selecciona con flechas.</li>
+    <li><code>&lt;dialog&gt;</code> modal atrapa <kbd class="sk-kbd">Tab</kbd>, cierra con <kbd class="sk-kbd">Esc</kbd> y restaura foco.</li>
+  </ul>
+
+  <h2>Componentes con Machine</h2>
+  <p>
+    Menu, Select, Combobox, Toolbar, Menubar, TreeView y DataGrid necesitan coordinación que el HTML no
+    ofrece como un único elemento. La Machine escribe estados y atributos; el Enhancer no renderiza
+    markup ni inventa clases. Por eso el foco visible sigue siendo responsabilidad compartida: el
+    Contract declara qué parte enfoca y la State layer debe verse en esa parte.
+  </p>
+  <ul>
+    <li>Los menús y listboxes cierran con <kbd class="sk-kbd">Esc</kbd> y devuelven foco al trigger.</li>
+    <li>Roving tabindex deja una sola parada de <kbd class="sk-kbd">Tab</kbd> para la colección.</li>
+    <li>Typeahead puede mover el item activo sin cambiar el orden del DOM.</li>
+    <li>Un widget compuesto anidado cuenta como una parada, no como varias paradas repetidas.</li>
+  </ul>
+
+  <h2>Reglas de composición</h2>
+  <ul>
+    <li>Si una acción se puede hacer con mouse, se debe poder hacer con teclado.</li>
+    <li>El foco nunca se pierde al cerrar una superficie temporal.</li>
+    <li>El foco inicial de un dialog se decide con <code>autofocus</code> en la acción segura.</li>
+    <li>El orden visual después de reflow debe seguir el orden del DOM.</li>
+    <li>Los controles deshabilitados usan semántica nativa o atributos ARIA válidos, no solo color.</li>
+  </ul>
+
+  <p>
+    Referencia:
+    <a href="https://www.w3.org/WAI/WCAG22/Understanding/keyboard.html">
+      WCAG 2.1.1 Keyboard
+    </a>.
+  </p>
+</Base>

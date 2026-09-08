@@ -1,0 +1,415 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import EasingCurve from "../../components/EasingCurve.astro";
+import MotionTrack from "../../components/MotionTrack.astro";
+import MotionTransport from "../../components/MotionTransport.astro";
+import Used from "../../components/Used.astro";
+import { byName, literalOf, tokens } from "../../lib/tokens";
+
+const durationsBy = (cycles: boolean) =>
+  tokens
+    .filter((t) => t.name.startsWith("--scale-duration-"))
+    .map((t) => ({
+      ...t,
+      short: t.name.replace("--scale-duration-", ""),
+      ms: Number.parseFloat(literalOf(t.value)),
+    }))
+    .filter((t) => t.short.startsWith("cycle") === cycles)
+    .sort((a, b) => a.ms - b.ms);
+
+const transitionDurations = durationsBy(false);
+const cycleDurations = durationsBy(true);
+
+const easings = [
+  ["--scale-easing-linear", "loops sin aceleración"],
+  ["--scale-easing-standard", "cambio dentro de la pantalla"],
+  ["--scale-easing-enter", "entrada que se asienta"],
+  ["--scale-easing-exit", "salida que acelera"],
+  ["--scale-easing-emphasized", "énfasis más largo"],
+  ["--scale-easing-spring", "rebote, no para UI crítica"],
+  ["--scale-easing-glide", "continuidad de gesto"],
+];
+
+const shortRef = (ref?: string) => ref?.replace(/^--(?:scale|motion)-(?:duration|easing|distance)-/, "");
+
+const intents = tokens
+  .filter(
+    (t) =>
+      t.tier === "semantic" &&
+      /^--motion-[a-z-]+-duration$/.test(t.name) &&
+      t.name !== "--motion-reduced-duration",
+  )
+  .map((t) => {
+    const key = t.name.slice("--motion-".length, -"-duration".length);
+    const distance = byName.get(`--motion-${key}-distance`);
+    return {
+      key,
+      duration: shortRef(t.refs[0]),
+      easing: shortRef(byName.get(`--motion-${key}-easing`)?.refs[0]),
+      distance: distance && shortRef(distance.refs[0]),
+      loops: key === "loading",
+    };
+  });
+
+const bad = `.sk-dialog {
+  transition: opacity var(--scale-duration-fast);
+}`;
+
+const good = `.sk-dialog {
+  transition: opacity var(--motion-enter-duration)
+    var(--motion-enter-easing);
+  translate: 0 var(--motion-enter-distance);
+}`;
+
+const reduced = `@media (prefers-reduced-motion: reduce) {
+  /* spatial: with no travel, a fade is left */
+  --motion-enter-distance: 0px;
+
+  /* esencial: sigue siendo legible */
+  --motion-expand-duration: 120ms;
+
+  /* decorative: out */
+  --motion-emphasize-duration: 0ms;
+  --motion-count-duration: 0ms;
+}`;
+---
+
+<Base
+  title="Motion"
+  documentLayout="grid"
+  description="Los componentes consumen tokens de intención, no duraciones ni curvas crudas."
+>
+  <h1>Motion</h1>
+  <p class="lede">
+    Motion describe por qué algo se mueve: entrar, salir, revelar, responder, cargar. Los componentes
+    consumen tokens de intención; las duraciones, curvas y distancias técnicas quedan debajo y pueden
+    cambiar sin tocar un Contract.
+  </p>
+
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+      <p>
+        Motion viene con <code>tokens.scss</code>. No es un componente ni un Pattern opt-in: es parte
+        de la plataforma visual que leen los componentes.
+      </p>
+    </div>
+  </div>
+
+  <h2>Qué falla sin intención</h2>
+  <p>
+    Una duración cruda no dice si el cambio es esencial, decorativo o espacial. Si un componente lee
+    <code>--scale-duration-fast</code>, reduced motion no puede decidir qué conservar y qué eliminar.
+    La regla de tier-skip lo bloquea: tier 3 no consume primitivos de tier 1.
+  </p>
+  <CodeBlock code={bad} label="CSS · inválido" />
+  <CodeBlock code={good} label="CSS · válido" />
+
+  <h2>Mecanismo</h2>
+  <p>
+    Tier 1 mide tiempo y curva. Tier 2 compone esos valores en tokens de intención. Un componente solo
+    ve el nombre semántico, y por eso una revisión de timing reestiliza el sistema sin migrar cada
+    transición.
+  </p>
+  <p class="howto">
+    Las muestras usan los tokens reales. Al pulsar <em>Reproducir</em>, todas las filas del bloque se
+    mueven juntas para comparar tiempo, curva o intención sin copiar valores a mano.
+  </p>
+
+  <figure class="specimens" data-motion-group data-motion-specimen>
+    <figcaption class="specimens__head">
+      <span class="specimens__title">Duraciones de transición</span>
+      <MotionTransport label="las duraciones de transición" />
+    </figcaption>
+    <div class="specimens__rows">
+      {
+        transitionDurations.map((t) => (
+          <div class="race">
+            <span class="mono race__name">{t.short}</span>
+            <MotionTrack duration={`var(${t.name})`} easing="linear" />
+            <span class="mono race__value"><Used token={t.name} /></span>
+          </div>
+        ))
+      }
+    </div>
+    <p class="specimens__note">
+      Todas recorren la misma distancia con curva lineal. La diferencia visible es solo duración.
+    </p>
+  </figure>
+
+  <figure class="specimens" data-motion-group data-motion-continuous data-motion-specimen>
+    <figcaption class="specimens__head">
+      <span class="specimens__title">Duraciones de ciclo</span>
+      <MotionTransport label="las duraciones de ciclo" />
+    </figcaption>
+    <div class="specimens__rows">
+      {
+        cycleDurations.map((t) => (
+          <div class="race">
+            <span class="mono race__name">{t.short}</span>
+            <MotionTrack duration={`var(${t.name})`} easing="linear" loop />
+            <span class="mono race__value"><Used token={t.name} /></span>
+          </div>
+        ))
+      }
+    </div>
+    <p class="specimens__note">
+      Un ciclo mide una vuelta de algo continuo, como loading. No se usa para mover un estado hacia
+      otro estado.
+    </p>
+  </figure>
+
+  <figure class="specimens" data-motion-group>
+    <figcaption class="specimens__head">
+      <span class="specimens__title">Curvas</span>
+      <MotionTransport label="las curvas" />
+    </figcaption>
+    <div class="specimens__grid">
+      {easings.map(([token, note]) => <EasingCurve token={token} note={note} />)}
+    </div>
+    <p class="specimens__note">
+      Todas duran 1 s para aislar la curva. La diagonal punteada es movimiento lineal; spring puede
+      pasar el 100 % y volver.
+    </p>
+  </figure>
+
+  <h2>Tokens de intención</h2>
+  <p>
+    Cada intención combina duración, easing y, cuando corresponde, distancia. La tabla muestra el
+    primitivo que compone y el valor que el navegador resuelve en este momento.
+  </p>
+  <figure class="specimens" data-motion-group data-motion-specimen>
+    <figcaption class="specimens__head">
+      <span class="specimens__title">Intenciones</span>
+      <MotionTransport label="las intenciones" />
+    </figcaption>
+    <div class="sk-table-scroll">
+      <table class="sk-table intents">
+        <thead class="sk-table__head">
+          <tr class="sk-table__row">
+            <th class="sk-table__header">Intención</th>
+            <th class="sk-table__header">Duración</th>
+            <th class="sk-table__header">Easing</th>
+            <th class="sk-table__header">Distancia</th>
+            <th class="sk-table__header intents__sample">Muestra</th>
+          </tr>
+        </thead>
+        <tbody class="sk-table__body">
+          {
+            intents.map((i) => (
+              <tr class="sk-table__row">
+                <td class="sk-table__cell mono intents__name">--motion-{i.key}-*</td>
+                <td class="sk-table__cell mono">
+                  <span class="intents__ref">{i.duration}</span>
+                  <span class="intents__used"><Used token={`--motion-${i.key}-duration`} /></span>
+                </td>
+                <td class="sk-table__cell mono">
+                  <span class="intents__ref">{i.easing}</span>
+                </td>
+                <td class="sk-table__cell mono">
+                  {i.distance ? (
+                    <>
+                      <span class="intents__ref">{i.distance}</span>
+                      <span class="intents__used"><Used token={`--motion-${i.key}-distance`} /></span>
+                    </>
+                  ) : (
+                    <span class="intents__none">N/D</span>
+                  )}
+                </td>
+                <td class="sk-table__cell">
+                  <MotionTrack
+                    duration={`var(--motion-${i.key}-duration)`}
+                    easing={`var(--motion-${i.key}-easing)`}
+                    loop={i.loops}
+                  />
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </figure>
+
+  <h2>Dirección y rol</h2>
+  <ul>
+    <li>Entrar desacelera y viaja más: el elemento llega y se asienta.</li>
+    <li>Salir acelera y viaja menos: la decisión ya ocurrió, no debe añadir latencia.</li>
+    <li>Reveal y navigate usan distancia para expresar jerarquía, no decoración.</li>
+    <li>State-change y expand conservan legibilidad porque explican un cambio de estado.</li>
+    <li>Emphasize y count son decorativos; pueden desaparecer bajo reduced motion.</li>
+  </ul>
+
+  <h2>Reduced motion</h2>
+  <p>
+    Reduced motion no apaga todo. Re-declara los mismos tokens de intención según su rol: elimina
+    viajes espaciales, conserva cambios esenciales y corta movimiento decorativo.
+  </p>
+  <CodeBlock code={reduced} label="semantic.scss" />
+  <div class="sk-table-scroll">
+    <table class="sk-table roles">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Rol</th>
+          <th class="sk-table__header">Reducción</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Helpful: enter, exit, reveal, navigate</td>
+          <td class="sk-table__cell">Distancia a 0; queda un fade breve.</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Essential: state-change, expand, collapse</td>
+          <td class="sk-table__cell">Duración corta pero legible.</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Decorative: emphasize, count</td>
+          <td class="sk-table__cell">Duración a 0.</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell">Continuous: loading</td>
+          <td class="sk-table__cell">Ciclo más suave o variante no espacial.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Límites y siguiente</h2>
+  <ul>
+    <li>Spring existe como primitivo, pero no se usa en UI crítica porque el rebote parece impreciso.</li>
+    <li>Un loop no comunica progreso hacia un estado final. Loading necesita alternativa no espacial.</li>
+    <li><a href="/state-layer">State layer</a> usa estos tokens para feedback de interacción.</li>
+    <li><a href="/tiers">Tiers</a> explica por qué un componente no salta a valores primitivos.</li>
+  </ul>
+</Base>
+
+<style>
+  .specimens {
+    display: grid;
+    gap: var(--space-stack-sm);
+    margin: var(--space-stack-md) 0 var(--space-section);
+    overflow-x: clip;
+  }
+
+  .specimens__head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-sm);
+    align-items: center;
+    justify-content: space-between;
+    padding-block-end: var(--space-inset-xs);
+    border-block-end: 1px solid var(--color-border-subtle);
+  }
+
+  .specimens__title {
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+    color: var(--color-text-secondary);
+  }
+
+  .specimens__note {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption);
+    text-wrap: pretty;
+  }
+
+  .howto {
+    border-inline-start: 2px solid var(--color-border-default);
+    padding-inline-start: var(--space-inset-md);
+    color: var(--color-text-secondary);
+    text-wrap: pretty;
+  }
+
+  .specimens__rows {
+    display: grid;
+    gap: var(--space-stack-xs);
+  }
+
+  .specimens__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: var(--space-inline-sm);
+  }
+
+  .race {
+    display: grid;
+    grid-template-columns: minmax(5.5rem, auto) minmax(0, 1fr) 4.5rem;
+    gap: var(--space-inline-sm);
+    align-items: center;
+  }
+
+  .race__name {
+    color: var(--color-text-secondary);
+  }
+
+  .race__value {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .intents {
+    inline-size: 100%;
+  }
+
+  .intents :is(th, td) {
+    overflow-wrap: anywhere;
+  }
+
+  .intents__sample {
+    inline-size: 22%;
+  }
+
+  .intents__name {
+    color: var(--color-text-primary);
+  }
+
+  .intents__ref,
+  .intents__used {
+    display: block;
+  }
+
+  .intents__used,
+  .intents__none {
+    color: var(--color-text-tertiary);
+  }
+
+  .intents__used {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .roles {
+    inline-size: 100%;
+  }
+
+  @media (max-width: 34rem) {
+    .intents :is(th, td):last-child {
+      display: none;
+    }
+  }
+
+  @media (max-width: 28rem) {
+    .intents {
+      --sk-table-cell-padding-x: var(--space-inset-xs);
+      --sk-table-font-size: var(--font-size-caption);
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .race {
+      grid-template-columns: minmax(0, 1fr) 4.5rem;
+    }
+
+    .race__name {
+      grid-column: 1 / -1;
+    }
+  }
+</style>
+
+<script>
+  import { initMotionSpecimens } from "../../scripts/motion-specimens";
+
+  initMotionSpecimens();
+</script>

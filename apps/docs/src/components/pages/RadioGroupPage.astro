@@ -16,9 +16,9 @@ const t = useTranslations(getLocale(Astro.url));
 
 const tileRadioGroupVanilla = `import { initComponents } from "@skryensya/vanilla/auto";
 
-// La raíz se autora con data-sk-tile-radio-group (data-name, data-default-value),
-// y cada opción con data-part="item" + un input[type=radio] con su value.
-// initComponents la hidrata con la máquina @zag-js/radio-group (la misma que React).
+// The root is authored with data-sk-tile-radio-group (data-name, data-default-value),
+// and each option with data-part="item" + an input[type=radio] with its value.
+// initComponents hydrates it with the @zag-js/radio-group machine (the same one React uses).
 await initComponents();
 
 const root = document.querySelector("[data-sk-tile-radio-group]");

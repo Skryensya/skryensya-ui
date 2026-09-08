@@ -27,7 +27,7 @@ export const vaulMessages = {
     "vaulPage.detailsTitle": "Detalles del contrato",
     "vaulPage.whyPatternTitle": "Por qué es pattern",
     "vaulPage.whyPatternBody1":
-      '<a href="/componentes/drawer">Drawer</a> es el mismo Vaul pegado al borde inline. Compartir estructura evita mantener dos sheets casi iguales.',
+      '<a href="/components/drawer">Drawer</a> es el mismo Vaul pegado al borde inline. Compartir estructura evita mantener dos sheets casi iguales.',
     "vaulPage.whyPatternBody2": "Vaul envía hooks y estructura; cada composición decide el contenido.",
     "vaulPage.nativeTitle": "La modalidad es nativa",
     "vaulPage.nativeBody":
@@ -53,7 +53,7 @@ export const vaulMessages = {
     "vaulPage.motionBody1":
       "Entrar, salir y soltar usan tokens distintos. Con motion reducido cae el viaje decorativo, no la modalidad ni el aterrizaje del panel.",
     "vaulPage.motionBody2":
-      '<a href="/transparencias"><code>prefers-reduced-transparency</code></a> vuelve opaco el backdrop; no lo elimina.',
+      '<a href="/transparency"><code>prefers-reduced-transparency</code></a> vuelve opaco el backdrop; no lo elimina.',
     "vaulPage.motionBody3": "Soltar tiene su propio intent porque termina el impulso de la mano, no una animación de salida.",
     "vaulPage.demoOpenLabel": "Compartir archivo",
     "vaulPage.demoTitle": "Propuesta comercial Q3",

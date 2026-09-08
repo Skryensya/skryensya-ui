@@ -3,7 +3,7 @@
  * The mobile drawer's navigation: the WHOLE site index as ONE nested, collapsible tree, so a reader
  * on any page can reach any other without the drawer first deciding which section they are "in".
  * The desktop rail keeps its own `SidebarNav` (one section, always expanded): a persistent rail and
- * a summoned drawer answer different questions, the same split the rail and the `/componentes`
+ * a summoned drawer answer different questions, the same split the rail and the `/components`
  * catalog already make.
  *
  * Structure is the `nav-list` pattern, nothing hand-rolled:
@@ -54,7 +54,7 @@ const sectionContainsPath = (section: DrawerSection): boolean =>
 /*
  * Components flatten to one A–Z list, the call the rail already made ("six unlabelled task headers
  * just add scanning cost"), and a narrow drawer only sharpens it; the task grouping lives on the
- * `/componentes` catalog, which is the first link inside this disclosure. Every other section keeps
+ * `/components` catalog, which is the first link inside this disclosure. Every other section keeps
  * its AUTHORED order (Fundamentos' "Arquitectura → Tiers → Tokens" is a reading path, not an
  * alphabet), just without the visible sub-labels, which a nav-list `<ul>` has no legal slot for.
  */

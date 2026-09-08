@@ -46,13 +46,13 @@ const styles = `@import "@skryensya/core/components/comment-thread.css";
    after its body IS the simplest `Comment`, and the `<form>` at the top IS a standalone composer. */
 const html = `<div class="sk-comment-thread" data-sk-comment-thread aria-label="Comentarios">
   <article class="sk-comment" data-sk-comment data-value="c1" data-collapsible>
-    <!-- \`__self\` es el comentario en sí; las respuestas quedan FUERA, y por eso la línea del hilo
-         abarca exactamente esto y no baja a través de ellas. -->
+    <!-- \`__self\` is the comment itself; the replies stay OUTSIDE, which is why the thread's line
+         spans exactly this and does not run down through them. -->
     <div class="sk-comment__self">
       <div class="sk-comment__gutter">
-        <span class="sk-comment__avatar"><!-- un Avatar propio del consumidor --></span>
-        <!-- La variante base, no \`ghost\`: el control va montado SOBRE la línea y necesita relleno
-             opaco para interrumpirla en vez de quedar tachado por ella. -->
+        <span class="sk-comment__avatar"><!-- the consumer's own Avatar --></span>
+        <!-- The base variant, not \`ghost\`: the control is mounted ON the line and needs an opaque fill
+             to interrupt it instead of being struck through by it. -->
         <button type="button" class="sk-comment__collapse sk-button sk-interactive" data-sk-comment-collapse aria-expanded="true" data-icon-only data-size="sm">
           <span aria-hidden="true">
             <span data-state="closed"><span data-sk-icon="add" data-sk-icon-size="sm"></span></span>
@@ -85,7 +85,7 @@ const html = `<div class="sk-comment-thread" data-sk-comment-thread aria-label="
     </div>
     <div class="sk-comment__reply-slot" data-sk-comment-reply-slot hidden>
           <form class="sk-comment-composer" data-sk-comment-composer>
-            <!-- Cualquier control: un FormField con Textarea, un Input, un Editor. -->
+            <!-- Any control: a FormField with a Textarea, an Input, an Editor. -->
             <div class="sk-comment-composer__actions">
     <button type="button" class="sk-comment-composer__cancel sk-button sk-interactive" data-sk-comment-composer-cancel data-size="sm" data-variant="ghost">Cancelar</button>
     <button type="submit" class="sk-comment-composer__submit sk-button sk-interactive" data-sk-comment-composer-submit data-size="sm" data-tone="accent">Publicar</button>
@@ -116,10 +116,10 @@ const react = `import {
 import { FormField } from "@skryensya/react/form-field";
 import { Textarea } from "@skryensya/react/input";
 
-// El comentario más simple: no necesita hilo, acciones ni respuestas.
+// The simplest comment: it needs no thread, no actions and no replies.
 <Comment author="Ada" timestamp="hace 3h">Primer comentario</Comment>
 
-// El set completo, compuesto pieza por pieza.
+// The complete set, composed piece by piece.
 <CommentThread
   label="Comentarios"
   composer={
@@ -131,7 +131,7 @@ import { Textarea } from "@skryensya/react/input";
   <Comment
     id="c1"
     avatar={<Avatar name="Ada">Ad</Avatar>}
-    profileHref="/profiles/ada" // Omítelo si esa identidad no lleva a un perfil.
+    profileHref="/profiles/ada" // Omit it if that identity does not lead to a profile.
     author="Ada"
     timestamp="hace 3h"
     collapsible

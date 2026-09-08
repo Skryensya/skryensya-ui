@@ -1,0 +1,283 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
+import Used from "../../components/Used.astro";
+import type { UsageTree } from "@skryensya/core/usage-tree";
+
+import "../../examples/elevation.css";
+import elevationSource from "../../examples/elevation.css?raw";
+
+const scale = [
+  {
+    level: "sunken",
+    name: "Sunken",
+    token: "--elevation-sunken",
+    note: "Hundido en el canvas: presión hacia adentro, no levante.",
+  },
+  {
+    level: "flat",
+    name: "Flat",
+    token: "--elevation-flat",
+    note: "En reposo, sin separación propia del canvas.",
+  },
+  {
+    level: "raised",
+    name: "Raised",
+    token: "--elevation-raised",
+    note: "Levantado de forma permanente, sin comportarse como ventana flotante.",
+  },
+  {
+    level: "overlay",
+    name: "Overlay",
+    token: "--elevation-overlay",
+    note: "Superficie flotante independiente, por encima de raised.",
+  },
+  {
+    level: "modal",
+    name: "Modal",
+    token: "--elevation-modal",
+    note: "Bloquea el resto de la página mientras está abierta.",
+  },
+] as const;
+
+const usage = `<!-- Box ya trae el styling hook: surface="raised" usa --elevation-raised -->
+<div class="sk-box" data-surface="raised" data-padding="lg">…</div>
+
+<!-- A component of your own exposes its styling hook and ties it to the scale -->
+<style>
+  .mi-card {
+    --sk-mi-card-shadow: var(--elevation-overlay);
+    box-shadow: var(--sk-mi-card-shadow);
+  }
+</style>`;
+
+/*
+ * Box publishes sunken, surface and raised. The swatches force all five levels only to compare the
+ * full scale; every box is still real Box markup.
+ */
+const scaleTree: UsageTree = {
+  contract: "layout",
+  signature: "Grid",
+  options: { gap: "md", columns: "5" },
+  children: scale.map((step) => ({
+    contract: "box",
+    signature: "Box",
+    options: { border: "subtle", padding: "lg" },
+    attrs: { class: "ev-swatch", "data-level": step.level },
+    children: step.name,
+  })),
+};
+
+/** Box's native path: its three published surfaces, with no page overrides. */
+const boxNativeTree: UsageTree = {
+  contract: "layout",
+  signature: "Grid",
+  options: { gap: "md", columns: "3" },
+  children: [
+    {
+      contract: "box",
+      signature: "Box",
+      options: { surface: "sunken", border: "subtle", padding: "lg" },
+      children: "surface: sunken",
+    },
+    {
+      contract: "box",
+      signature: "Box",
+      options: { surface: "surface", border: "subtle", padding: "lg" },
+      children: "surface: surface",
+    },
+    {
+      contract: "box",
+      signature: "Box",
+      options: { surface: "raised", padding: "lg" },
+      children: "surface: raised",
+    },
+  ],
+};
+---
+
+<Base
+  title="Elevación"
+  documentLayout="grid"
+  description="Cinco niveles de elevación, cómo se consumen con styling hooks y qué fallback queda cuando sombra o contraste no alcanzan."
+>
+  <h1>Elevación</h1>
+  <p class="lede">
+    La elevación publica cinco niveles: <code>sunken</code>, <code>flat</code>, <code>raised</code>,
+    <code>overlay</code> y <code>modal</code>. Cada nivel es un composite semántico de sombras,
+    fondos y tintes; los componentes consumen el nivel mediante su propio styling hook.
+  </p>
+
+  <h2>La escala</h2>
+  <p>
+    La escala no es numérica. Cada nombre describe una relación con el canvas y con otras superficies.
+    El valor resuelto cambia con modo y contraste, pero el nombre que consume el componente no cambia.
+  </p>
+  <ComponentPreview tree={scaleTree} label="Los cinco niveles" />
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Nivel</th>
+          <th class="sk-table__header">Token</th>
+          <th class="sk-table__header">Valor resuelto</th>
+          <th class="sk-table__header">Cuándo</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        {
+          scale.map((step) => (
+            <tr class="sk-table__row">
+              <td class="sk-table__cell"><strong>{step.name}</strong></td>
+              <td class="sk-table__cell mono">{step.token}</td>
+              <td class="sk-table__cell mono"><Used token={step.token} /></td>
+              <td class="sk-table__cell">{step.note}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Cómo se elige un nivel</h2>
+  <p>
+    <code>flat</code> es reposo. <code>raised</code> separa una superficie permanente, como un Box
+    destacado o un Navbar. <code>overlay</code> se usa cuando la superficie flota como ventana propia:
+    Popover, DatePicker, ColorPicker, Megamenu o Toast. <code>modal</code> bloquea el resto de la
+    página. <code>sunken</code> es el único rango negativo y usa sombra <code>inset</code>.
+  </p>
+  <p>
+    Menu, Select, Combobox y Tooltip se quedan en <code>raised</code>: dependen de un trigger y se leen
+    como extensión momentánea de ese trigger, no como una superficie independiente.
+  </p>
+
+  <h2>Los cinco juntos</h2>
+  <p>
+    Un swatch aislado no muestra la distancia relativa. Este fragmento compara los cinco niveles usando
+    los mismos <code>--elevation-*</code> que consumen los componentes reales.
+  </p>
+  <div class="ev-demo">
+    <div class="ev-demo__toolbar">
+      <span aria-hidden="true">⌕</span>
+      <span>Buscar proyectos…</span>
+      <span class="ev-demo__tag">sunken</span>
+    </div>
+    <div class="ev-demo__row">
+      <div class="ev-demo__card">
+        <div class="ev-demo__card-header">
+          <span>Proyectos</span>
+          <button class="ev-demo__sort" type="button">Ordenar ▾</button>
+        </div>
+        <p class="ev-demo__card-body">12 activos, actualizado hace 2 minutos.</p>
+        <span class="ev-demo__tag">raised</span>
+        <div class="ev-demo__menu">
+          <div class="ev-demo__menu-item">Más recientes</div>
+          <div class="ev-demo__menu-item">Nombre (A-Z)</div>
+          <div class="ev-demo__menu-item">Tamaño</div>
+          <span class="ev-demo__tag">raised</span>
+        </div>
+      </div>
+      <div class="ev-demo__popover">
+        3 cambios sin guardar
+        <p>Se guardan solos cada 30s.</p>
+        <span class="ev-demo__tag">overlay</span>
+      </div>
+    </div>
+    <div class="ev-demo__dialog">
+      ¿Eliminar «Proyectos»?
+      <p>Esta acción no se puede deshacer. En una interfaz real cubre la página con un scrim; aquí se separa para comparar peso visual.</p>
+      <span class="ev-demo__tag">modal</span>
+    </div>
+  </div>
+
+  <h2>De qué está hecha</h2>
+  <p>
+    <code>--shadow-sm</code>, <code>--shadow-md</code> y <code>--shadow-lg</code> aportan sombra
+    mode-aware. Los tintes <code>--elevation-tint-*</code> refuerzan el nivel cuando el fondo o la
+    sombra no bastan. Los tokens <code>--elevation-*</code> componen esos ingredientes en una o dos
+    capas de <code>box-shadow</code>.
+  </p>
+  <p>
+    Un componente no toca los ingredientes internos. Declara un styling hook propio y lo apunta al
+    nivel semántico que necesita.
+  </p>
+  <CodeBlock code={usage} label="CSS" />
+
+  <h2>Box como consumidor nativo</h2>
+  <p>
+    Box publica solo <code>sunken</code>, <code>surface</code> y <code>raised</code>. Para esos casos
+    no hace falta escribir un styling hook nuevo: el atributo <code>surface</code> selecciona la
+    superficie y su elevación.
+  </p>
+  <ComponentPreview tree={boxNativeTree} label="Box · surface nativo" />
+
+  <h2>Fallbacks de modo y contraste</h2>
+  <p>
+    En modo oscuro la sombra sola no alcanza, porque oscurecer un borde sobre un canvas ya oscuro se
+    lee poco. Los fondos de superficies elevadas se aclaran dentro del margen de contraste disponible,
+    y el tinte termina de separar los niveles.
+  </p>
+  <p>
+    En <code>forced-colors: active</code>, el navegador puede suprimir <code>box-shadow</code>. Los
+    componentes que dependen de elevación tienen un borde real como respaldo. En
+    <code>data-contrast="high"</code>, las sombras y tintes suben de fuerza sin cambiar el nombre del
+    nivel que consume el componente.
+  </p>
+  <p>
+    La elevación nunca carga sola el significado de una capa. Overlays y modales también tienen borde,
+    fondo y, cuando corresponde, scrim o estado de foco.
+  </p>
+
+  <h2>Dónde vive</h2>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Nivel</th>
+          <th class="sk-table__header">Consumidores</th>
+          <th class="sk-table__header">Styling hook</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Sunken</strong></td>
+          <td class="sk-table__cell">Box y Hero con <code>surface="sunken"</code>; campos como Input, Select, Combobox, NumberField, TimeField y DatePicker.</td>
+          <td class="sk-table__cell mono">--sk-box-shadow / --sk-hero-shadow / --sk-input-shadow / --sk-select-shadow</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Flat</strong></td>
+          <td class="sk-table__cell">Sidebar, Tile, Box por defecto y Button en reposo neutro o presionado.</td>
+          <td class="sk-table__cell mono">--sk-sidebar-elevation / --sk-tile-shadow / --sk-box-shadow / --sk-button-shadow</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Raised</strong></td>
+          <td class="sk-table__cell">Box raised, Navbar, Hero, Button accent o danger, Menu, Select, Combobox, Tooltip y controles flotantes pequeños.</td>
+          <td class="sk-table__cell mono">--sk-box-shadow / --sk-navbar-elevation / --sk-menu-shadow / --sk-tooltip-shadow</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Overlay</strong></td>
+          <td class="sk-table__cell">Popover, DatePicker, ColorPicker, Megamenu, Toast y SkipLink.</td>
+          <td class="sk-table__cell mono">--sk-popover-shadow / --sk-date-picker-content-shadow / --sk-toast-shadow / --sk-skip-link-shadow</td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell"><strong>Modal</strong></td>
+          <td class="sk-table__cell">Dialog, Drawer y Vaul.</td>
+          <td class="sk-table__cell mono">--sk-dialog-elevation / --sk-drawer-elevation / --sk-vaul-elevation</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Límites</h2>
+  <p>
+    No se inventa un nivel por componente. Si una superficie necesita otro peso, se ajusta su styling
+    hook público; si necesita otro comportamiento de capa, pertenece al Contract del componente.
+  </p>
+  <p>
+    Viene de <a href="/dimensions">Dimensiones</a>, donde se explican modo y contraste. Para ver los
+    valores resueltos de cada token, usa <a href="/reference">Referencia</a>.
+  </p>
+
+  <CodeBlock code={elevationSource} label="src/examples/elevation.css" note="CSS del demo" />
+</Base>

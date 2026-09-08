@@ -1,0 +1,569 @@
+---
+/*
+ * /presets replaces /personalizar (the ramp-by-ramp editor, with density, radius, icon set, live
+ * contrast audit and shareable codes). That editor exposed EVERY variable and overrode the whole site.
+ *
+ * A "preset" here is NOT the header's accent toggle (that one cycles only 6-7 color tokens on :root.
+ * See lib/palette-presets.ts). A preset is LOOK & FEEL, not just palette: accent color, feedback
+ * color, THE NEUTRAL SURFACES (background, text, borders: not just the accent), roundness, typography,
+ * spacing density, resting shadow, label weight and even how far a button sinks when pressed all
+ * change together. Each preset re-declares that bundle on `.preset-canvas`, never on :root, so picking
+ * one changes neither this page nor the rest of the site (which is why there is no localStorage here,
+ * unlike the header's picker, which is a site preference).
+ *
+ * The five live simultaneously as a READ-ONLY GALLERY: nothing is selectable, there is no control that
+ * cycles between them. Each card already shows its own result, side by side with the others, so they
+ * can be compared at a glance.
+ *
+ * The mechanism is the same re-declaration trick /personalizar used (see the history): the semantic
+ * color and radius tokens are re-declared on `.preset-canvas` (the baseline, traced from :root, so the
+ * card does not depend on which accent preset the header happens to have selected at that moment).
+ * Each preset with a character of its own adds its `[data-preset="id"]` on top of that base, replacing
+ * only what sets it apart: it does not need to generate private palettes at runtime.
+ *
+ * LAYOUT: `sk-layout-grid` (packages/core/css/patterns/layout.css), the published pattern, not bespoke
+ * CSS. Neither the prose nor the gallery carries `data-width`, so both resolve to the same "content"
+ * measure (64rem). The text is not left in a narrower column than the cards below it, the whole block
+ * breathes at the same width. `<Toc rail>` is the published rail (`data-width="rail"`,
+ * `packages/core/css/components/toc.css`) instead of a hand-made side nav. `fullBleed` stays: this page
+ * still has no documentation SidebarNav (navigating the component tree is not the same as jumping
+ * between presets on this single page), but the Toc rail replaces what used to be a `<nav>` of its own.
+ */
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import Toc from "../../components/Toc.astro";
+import { tokens } from "../../lib/tokens";
+import { dummyImage } from "../../examples/card-data";
+import "@skryensya/core/patterns/box.css";
+import "@skryensya/core/patterns/image-frame.css";
+
+/* A real (if generic) placeholder photo, not a gradient wash: the same dummyimage.com trick every
+ * other card example in these docs already uses (examples/card-data.ts). One shared URL for all 20
+ * card instances (5 presets × 2 schemes). The browser fetches it once and serves the rest from
+ * cache, so this costs one network request, not twenty. */
+const demoImage = dummyImage(640, 220, "d4d4d4", "737373", "Imagen");
+
+interface Preset {
+  id: string;
+  name: string;
+  description: string;
+  fontImport?: string;
+  vars: string[];
+}
+
+/*
+ * Each card renders its demo TWICE, side by side, one half with `color-scheme: light` forced and
+ * the other with `color-scheme: dark` forced: not a "current site theme" preview but both at once,
+ * so a preset can be judged in either mode without the reader having to flip the header's theme
+ * toggle and scroll back. This costs nothing extra to wire: every `--color-*` token here is already
+ * `light-dark(...)`, and `light-dark()` resolves against whatever `color-scheme` is in effect on the
+ * element consuming it. The exact mechanism the real theme toggle uses on `<html>`, just scoped to
+ * a `<div>` instead.
+ */
+const SCHEMES = [
+  { id: "light", label: "Claro" },
+  { id: "dark", label: "Oscuro" },
+] as const;
+
+/*
+ * Five presets, named for what they evoke, not for the hue that happens to carry them -
+ * "Predeterminado" and "UC" are the two exceptions, and neither is a color name either (a baseline
+ * and a real institution's initials). Each non-default preset pairs an accent family with a
+ * DIFFERENT neutral family for its surfaces/text/borders (ADR 0019's constant, published palettes -
+ * stone/gray/slate/neutral/zinc all ship full 50–950 ramps already), plus a radius multiplier and a
+ * typeface, plus, where it earns its keep. A spacing density (`--sk-density-factor`, needs
+ * `data-sk-density-scope` on the canvas below to have any effect), a resting shadow
+ * (`--elevation-flat`, `none` by default), a label weight (`--font-weight-label`) and how far a
+ * button sinks on press (`--motion-press-scale`, `0.98` by default, `1` means no squeeze at all).
+ * Not every preset touches every dimension. A preset that leaves one alone is still a real choice,
+ * not a gap.
+ */
+const PRESETS: Preset[] = [
+  {
+    id: "default",
+    name: "Predeterminado",
+    description: "El sistema tal como sale de fábrica: sin overrides.",
+    vars: [],
+  },
+  {
+    id: "uc",
+    name: "UC",
+    description:
+      "Reproduce kitdigital.uc.cl (Pontificia Universidad Católica de Chile): acento celeste, superficies en gris puro, radio recto, tipografía Roboto y cero microinteracción. Un botón institucional no se hunde al presionarlo.",
+    fontImport: "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap",
+    vars: [
+      "--color-action-accent: oklch(57.02% 0.1812 254.01);",
+      "--color-text-accent: oklch(57.02% 0.1812 254.01);",
+      "--color-border-accent: oklch(57.02% 0.1812 254.01);",
+      "--color-bg-accent-subtle: light-dark(oklch(96% 0.04 254), oklch(24% 0.08 254));",
+      "--color-text-danger: oklch(65.42% 0.1996 24.53);",
+      "--color-border-danger: oklch(65.42% 0.1996 24.53);",
+      "--color-bg-danger-subtle: light-dark(oklch(96% 0.04 25), oklch(26% 0.08 25));",
+      "--color-text-success: oklch(63.94% 0.2176 142.5);",
+      "--color-border-success: oklch(63.94% 0.2176 142.5);",
+      "--color-bg-success-subtle: light-dark(oklch(96% 0.05 142), oklch(24% 0.08 142));",
+      "--color-text-warning: oklch(45% 0.13 86);",
+      "--color-border-warning: oklch(77.8% 0.1592 86.47);",
+      "--color-bg-warning-subtle: light-dark(oklch(96% 0.08 86), oklch(27% 0.07 86));",
+      "--color-bg-canvas: light-dark(var(--palette-gray-100), var(--palette-gray-950));",
+      "--color-bg-surface: light-dark(var(--palette-white), var(--palette-gray-900));",
+      "--color-bg-surface-raised: light-dark(var(--palette-white), var(--palette-gray-800));",
+      "--color-bg-surface-sunken: light-dark(var(--palette-gray-200), var(--palette-gray-950));",
+      "--color-text-primary: light-dark(var(--palette-gray-900), var(--palette-gray-100));",
+      "--color-text-secondary: light-dark(var(--palette-gray-700), var(--palette-gray-300));",
+      "--color-text-tertiary: light-dark(var(--palette-gray-600), var(--palette-gray-400));",
+      "--color-border-subtle: light-dark(var(--palette-gray-300), var(--palette-gray-800));",
+      "--color-border-default: light-dark(var(--palette-gray-500), var(--palette-gray-500));",
+      "--color-border-strong: light-dark(var(--palette-gray-600), var(--palette-gray-400));",
+      "--radius-multiplier: 0.5;",
+      "--font-family-body: 'Roboto', 'Segoe UI', Helvetica, Arial, sans-serif;",
+      "--motion-press-scale: 1;",
+    ],
+  },
+  {
+    id: "aurora",
+    name: "Aurora",
+    description:
+      "Índigo intenso sobre superficies slate, esquinas muy redondeadas, más aire entre controles, una sombra que hace flotar la tarjeta y un botón que se hunde más al presionarlo. Manrope en negrita remata el carácter de producto tech nocturno.",
+    fontImport: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap",
+    vars: [
+      "--color-action-accent: light-dark(var(--palette-indigo-600), var(--palette-indigo-500));",
+      "--color-text-accent: light-dark(var(--palette-indigo-700), var(--palette-indigo-300));",
+      "--color-border-accent: light-dark(var(--palette-indigo-600), var(--palette-indigo-500));",
+      "--color-bg-accent-subtle: light-dark(var(--palette-indigo-50), var(--palette-indigo-950));",
+      "--color-text-danger: light-dark(var(--palette-rose-700), var(--palette-rose-300));",
+      "--color-border-danger: light-dark(var(--palette-rose-600), var(--palette-rose-500));",
+      "--color-bg-danger-subtle: light-dark(var(--palette-rose-50), var(--palette-rose-950));",
+      "--color-text-success: light-dark(var(--palette-emerald-700), var(--palette-emerald-300));",
+      "--color-border-success: light-dark(var(--palette-emerald-600), var(--palette-emerald-500));",
+      "--color-bg-success-subtle: light-dark(var(--palette-emerald-50), var(--palette-emerald-950));",
+      "--color-text-warning: light-dark(var(--palette-amber-700), var(--palette-amber-300));",
+      "--color-border-warning: light-dark(var(--palette-amber-600), var(--palette-amber-500));",
+      "--color-bg-warning-subtle: light-dark(var(--palette-amber-50), var(--palette-amber-950));",
+      "--color-bg-canvas: light-dark(var(--palette-slate-100), var(--palette-slate-950));",
+      "--color-bg-surface: light-dark(var(--palette-white), var(--palette-slate-900));",
+      "--color-bg-surface-raised: light-dark(var(--palette-white), var(--palette-slate-800));",
+      "--color-bg-surface-sunken: light-dark(var(--palette-slate-200), var(--palette-slate-950));",
+      "--color-text-primary: light-dark(var(--palette-slate-900), var(--palette-slate-100));",
+      "--color-text-secondary: light-dark(var(--palette-slate-700), var(--palette-slate-300));",
+      "--color-text-tertiary: light-dark(var(--palette-slate-600), var(--palette-slate-400));",
+      "--color-border-subtle: light-dark(var(--palette-slate-300), var(--palette-slate-800));",
+      "--color-border-default: light-dark(var(--palette-slate-500), var(--palette-slate-500));",
+      "--color-border-strong: light-dark(var(--palette-slate-600), var(--palette-slate-400));",
+      "--radius-multiplier: 2;",
+      "--font-family-body: 'Manrope', 'Segoe UI', Helvetica, Arial, sans-serif;",
+      "--sk-density-factor: 1.15;",
+      "--elevation-flat: 0 12px 24px -8px var(--shadow-md), 0 4px 8px -4px var(--shadow-md);",
+      "--font-weight-label: 600;",
+      "--motion-press-scale: 0.94;",
+    ],
+  },
+  {
+    id: "bitacora",
+    name: "Bitácora",
+    description:
+      "Naranja cálido sobre superficies neutral, esquinas suaves, más aire entre controles y una sombra apenas perceptible. Lora serif remata el carácter editorial y artesanal, sin microinteracciones de más.",
+    fontImport: "https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap",
+    vars: [
+      "--color-action-accent: light-dark(var(--palette-orange-600), var(--palette-orange-500));",
+      "--color-text-accent: light-dark(var(--palette-orange-700), var(--palette-orange-300));",
+      "--color-border-accent: light-dark(var(--palette-orange-600), var(--palette-orange-500));",
+      "--color-bg-accent-subtle: light-dark(var(--palette-orange-50), var(--palette-orange-950));",
+      "--color-text-danger: light-dark(var(--palette-red-700), var(--palette-red-300));",
+      "--color-border-danger: light-dark(var(--palette-red-600), var(--palette-red-500));",
+      "--color-bg-danger-subtle: light-dark(var(--palette-red-50), var(--palette-red-950));",
+      "--color-text-success: light-dark(var(--palette-lime-700), var(--palette-lime-300));",
+      "--color-border-success: light-dark(var(--palette-lime-600), var(--palette-lime-500));",
+      "--color-bg-success-subtle: light-dark(var(--palette-lime-50), var(--palette-lime-950));",
+      "--color-text-warning: light-dark(var(--palette-amber-700), var(--palette-amber-300));",
+      "--color-border-warning: light-dark(var(--palette-amber-600), var(--palette-amber-500));",
+      "--color-bg-warning-subtle: light-dark(var(--palette-amber-50), var(--palette-amber-950));",
+      "--color-bg-canvas: light-dark(var(--palette-neutral-100), var(--palette-neutral-950));",
+      "--color-bg-surface: light-dark(var(--palette-white), var(--palette-neutral-900));",
+      "--color-bg-surface-raised: light-dark(var(--palette-white), var(--palette-neutral-800));",
+      "--color-bg-surface-sunken: light-dark(var(--palette-neutral-200), var(--palette-neutral-950));",
+      "--color-text-primary: light-dark(var(--palette-neutral-900), var(--palette-neutral-100));",
+      "--color-text-secondary: light-dark(var(--palette-neutral-700), var(--palette-neutral-300));",
+      "--color-text-tertiary: light-dark(var(--palette-neutral-600), var(--palette-neutral-400));",
+      "--color-border-subtle: light-dark(var(--palette-neutral-300), var(--palette-neutral-800));",
+      "--color-border-default: light-dark(var(--palette-neutral-500), var(--palette-neutral-500));",
+      "--color-border-strong: light-dark(var(--palette-neutral-600), var(--palette-neutral-400));",
+      "--radius-multiplier: 1.5;",
+      "--font-family-body: 'Lora', Georgia, 'Times New Roman', serif;",
+      "--sk-density-factor: 1.1;",
+      "--elevation-flat: 0 2px 6px -2px var(--shadow-sm);",
+    ],
+  },
+  {
+    id: "archivo",
+    name: "Archivo",
+    description:
+      "Grises de tinta zinc en acento y superficies, esquinas rectas, controles más compactos, etiquetas en negrita y cero microinteracción. Space Grotesk remata el carácter corporativo impreso.",
+    fontImport: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap",
+    vars: [
+      "--color-action-accent: light-dark(var(--palette-zinc-700), var(--palette-zinc-400));",
+      "--color-text-accent: light-dark(var(--palette-zinc-800), var(--palette-zinc-200));",
+      "--color-border-accent: light-dark(var(--palette-zinc-700), var(--palette-zinc-400));",
+      "--color-bg-accent-subtle: light-dark(var(--palette-zinc-100), var(--palette-zinc-900));",
+      "--color-text-danger: light-dark(var(--palette-red-700), var(--palette-red-300));",
+      "--color-border-danger: light-dark(var(--palette-red-600), var(--palette-red-500));",
+      "--color-bg-danger-subtle: light-dark(var(--palette-red-50), var(--palette-red-950));",
+      "--color-text-success: light-dark(var(--palette-emerald-700), var(--palette-emerald-300));",
+      "--color-border-success: light-dark(var(--palette-emerald-600), var(--palette-emerald-500));",
+      "--color-bg-success-subtle: light-dark(var(--palette-emerald-50), var(--palette-emerald-950));",
+      "--color-text-warning: light-dark(var(--palette-amber-700), var(--palette-amber-300));",
+      "--color-border-warning: light-dark(var(--palette-amber-600), var(--palette-amber-500));",
+      "--color-bg-warning-subtle: light-dark(var(--palette-amber-50), var(--palette-amber-950));",
+      "--color-bg-canvas: light-dark(var(--palette-zinc-100), var(--palette-zinc-950));",
+      "--color-bg-surface: light-dark(var(--palette-white), var(--palette-zinc-900));",
+      "--color-bg-surface-raised: light-dark(var(--palette-white), var(--palette-zinc-800));",
+      "--color-bg-surface-sunken: light-dark(var(--palette-zinc-200), var(--palette-zinc-950));",
+      "--color-text-primary: light-dark(var(--palette-zinc-900), var(--palette-zinc-100));",
+      "--color-text-secondary: light-dark(var(--palette-zinc-700), var(--palette-zinc-300));",
+      "--color-text-tertiary: light-dark(var(--palette-zinc-600), var(--palette-zinc-400));",
+      "--color-border-subtle: light-dark(var(--palette-zinc-300), var(--palette-zinc-800));",
+      "--color-border-default: light-dark(var(--palette-zinc-500), var(--palette-zinc-500));",
+      "--color-border-strong: light-dark(var(--palette-zinc-600), var(--palette-zinc-400));",
+      "--radius-multiplier: 0;",
+      "--font-family-body: 'Space Grotesk', 'Segoe UI', Helvetica, Arial, sans-serif;",
+      "--sk-density-factor: 0.85;",
+      "--font-weight-label: 700;",
+      "--motion-press-scale: 1;",
+    ],
+  },
+];
+
+/* The TOC is hand-built, not scanned via `indexDocument`: the headings below are fully known at
+ * build time (one per preset, plus the closing section), so there is nothing a string-scan of the
+ * rendered HTML would tell us that this array doesn't already say directly. The same `items` shape
+ * `<Toc>` already accepts from every other consumer. */
+const tocItems = [
+  ...PRESETS.map((p) => ({ href: `#preset-${p.id}`, label: p.name, level: "h2" as const })),
+  { href: "#como-se-arma", label: "Cómo se arma un preset", level: "h2" as const },
+];
+
+/* The base line: every card gets the FULL semantic color/radius reset first, calqued straight off
+ * :root's own values: never inherited from whatever the header's accent toggle currently has
+ * selected, so a card's "no override" state (Predeterminado) is a true baseline, not an accident of
+ * what preference happens to be active right now. */
+const SCOPED_PREFIXES = ["--color-", "--radius-"];
+const baseCss =
+  ".preset-canvas {\n" +
+  tokens
+    .filter((t) => t.tier === "semantic" && SCOPED_PREFIXES.some((p) => t.name.startsWith(p)))
+    .map((t) => `  ${t.name}: ${t.value};`)
+    .join("\n") +
+  /* `font-family` and `color` are INHERITED properties, not a live re-read of the custom property:
+   * site.css's `body { font-family: var(--font-family-body); color: var(--color-text-primary); }`
+   * resolves ONCE, using the SITE's ambient color-scheme, and every descendant inherits that
+   * computed value, so a preset's `--font-family-body` override, or the forced `color-scheme` on
+   * a light/dark half below, does nothing to text that never re-declares the property itself. This
+   * bit us for real: a heading with no explicit `color` rendered invisible on the dark half, because
+   * it inherited body's LIGHT-resolved near-black straight through, unaffected by the half's own
+   * forced scheme. Re-declaring both here makes the canvas re-root the lookup, so a preset's font -
+   * and the correct light/dark text color. Actually reach its descendants. */
+  "\n  font-family: var(--font-family-body);\n  color: var(--color-text-primary);\n}";
+
+const overrideCss = PRESETS.filter((p) => p.vars.length > 0)
+  .map((p) => `.preset-canvas[data-preset="${p.id}"] {\n` + p.vars.map((v) => `  ${v}`).join("\n") + "\n}")
+  .join("\n\n");
+
+/* @import must lead the stylesheet (CSS spec: any rule before it is invalid and drops it). Several
+ * consecutive @import rules are fine, one per typeface a preset actually uses, deduplicated so two
+ * presets sharing a font (were that to happen) wouldn't load it twice. All are scoped by being here
+ * at all: none of these fonts load through Base.astro, only on this page. */
+const fontImports = Array.from(new Set(PRESETS.map((p) => p.fontImport).filter(Boolean)))
+  .map((url) => `@import url('${url}');`)
+  .join("\n");
+
+const stageCss = fontImports + "\n\n" + baseCss + "\n\n" + overrideCss;
+
+/* Same UC rule, formatted for reading rather than for shipping. The CodeBlock below teaches the
+ * shape every preset above follows, `stageCss` is what actually ships. Trimmed to the parts a reader
+ * needs to recognize the pattern (accent, one neutral surface swap, radius, font, motion) rather
+ * than all ten neutral lines UC itself ships. */
+const ucCssTeaching =
+  `@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');\n\n` +
+  '.preset-canvas[data-preset="uc"] {\n' +
+  `  /* acento + feedback: se re-declaran juntos, no una paleta nueva */\n` +
+  `  --color-action-accent: oklch(57.02% 0.1812 254.01);\n` +
+  `  --color-text-accent: oklch(57.02% 0.1812 254.01);\n` +
+  `  --color-text-danger: oklch(65.42% 0.1996 24.53);\n\n` +
+  `  /* superficies neutras: no solo el acento cambia, TODO el gris cambia de familia */\n` +
+  `  --color-bg-surface: light-dark(var(--palette-white), var(--palette-gray-900));\n` +
+  `  --color-text-primary: light-dark(var(--palette-gray-900), var(--palette-gray-100));\n` +
+  `  --color-border-subtle: light-dark(var(--palette-gray-300), var(--palette-gray-800));\n\n` +
+  `  --radius-multiplier: 0.5; /* like data-radius="sm" */\n` +
+  `  --font-family-body: 'Roboto', 'Segoe UI', Helvetica, Arial, sans-serif;\n` +
+  `  --motion-press-scale: 1; /* an institutional button does not sink when pressed */\n` +
+  "}";
+---
+
+<Base
+  fullBleed
+  title="Presets"
+  description="Cinco look & feel completos. Acento, superficies neutras, redondez, tipografía, densidad, sombra y motion. En una galería de solo lectura."
+>
+  <div class="sk-layout-grid presets-shell">
+    <div>
+      <h1>Presets</h1>
+      <p class="lede">
+        Un preset acá es un look & feel completo, no solo su acento. Color de acento,
+        color de feedback, LAS SUPERFICIES NEUTRAS (fondo, texto, bordes), redondez, tipografía,
+        densidad de espaciado, sombra en reposo, peso de las etiquetas y hasta cuánto se hunde un
+        botón al presionarlo cambian todos juntos. No es el acento del selector de paleta del header
+        (ese sí cicla sobre <code>:root</code> y se recuerda entre visitas). Cada tarjeta de abajo es
+        una galería de solo lectura, mostrada a la vez en claro y en oscuro: nada es seleccionable, y
+        no hace falta cambiar el tema del sitio para juzgar los dos modos.
+      </p>
+    </div>
+
+    <div class="presets-grid">
+      {
+        PRESETS.map((preset) => (
+          <section id={`preset-${preset.id}`} class="preset-card">
+            <header class="preset-card__header">
+              <h2>{preset.name}</h2>
+              <p class="preset-card__description">{preset.description}</p>
+            </header>
+            <div class="preset-card__demo-split" inert>
+              {
+                SCHEMES.map((scheme) => (
+                  <div
+                    class="sk-box preset-canvas preset-card__demo-half"
+                    data-preset={preset.id}
+                    data-scheme-force={scheme.id}
+                    data-surface="surface"
+                    data-border="subtle"
+                    data-padding="md"
+                    data-sk-density-scope
+                  >
+                    <p class="preset-card__scheme-label">{scheme.label}</p>
+                    <div class="sk-stack" data-gap="sm">
+                      <div class="sk-inline" data-gap="sm">
+                        <button class="sk-button" data-tone="accent" type="button">
+                          Acento
+                        </button>
+                        <button class="sk-button" type="button">
+                          Neutral
+                        </button>
+                        <button class="sk-button" data-tone="danger" type="button">
+                          Danger
+                        </button>
+                      </div>
+                      <div class="sk-inline" data-gap="sm">
+                        <span class="sk-badge" data-tone="accent">
+                          Nuevo
+                        </span>
+                        <span class="sk-badge" data-tone="success">
+                          Activo
+                        </span>
+                        <span class="sk-badge" data-tone="warning">
+                          Pendiente
+                        </span>
+                      </div>
+                      {/* A card is where a preset's whole character shows at once: the radius,
+                          shadow and border come from the SAME box primitive every real card uses,
+                          and the body proves type + link color read correctly on top of it. The
+                          image is a plain placeholder photo (dummyimage.com, like every other card
+                          example in these docs). A short, wide banner rather than 16/9, so the
+                          card doesn't tower over the buttons and callout around it. */}
+                      <div class="sk-box preset-card__demo-card" data-surface="raised" data-border="subtle">
+                        <div class="sk-image-frame preset-card__demo-image-frame">
+                          <img class="sk-image-frame__media" src={demoImage} alt="" />
+                        </div>
+                        <div class="preset-card__demo-card-body">
+                          <span class="sk-badge" data-tone="accent">
+                            Destacado
+                          </span>
+                          <p class="preset-card__demo-heading">Título de tarjeta</p>
+                          <p class="preset-card__demo-text">
+                            Un párrafo de texto normal, con <a href="#">un enlace</a> de muestra.
+                          </p>
+                        </div>
+                      </div>
+                      <div class="sk-callout" data-tone="info" role="note">
+                        <div class="sk-callout__content">
+                          <p>
+                            <strong>Ejemplo.</strong> Este callout vive dentro de <code>--font-family-body</code>.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          </section>
+        ))
+      }
+    </div>
+
+    <div>
+      <h2 id="como-se-arma">Cómo se arma un preset</h2>
+      <p>
+        <strong>UC</strong> reproduce el look de
+        <a href="https://kitdigital.uc.cl/" target="_blank" rel="noreferrer">kitdigital.uc.cl</a>: acento
+        celeste, superficies en gris puro, radio más recto, tipografía Roboto y cero microinteracción -
+        no solo el color de acento, todo el carácter del componente. Los otros tres siguen exactamente
+        el mismo molde, pero cada uno toca las dimensiones que realmente lo distinguen: acento y
+        feedback (danger/success/warning), superficies neutras (fondo, texto, bordes. Una familia de
+        gris distinta por preset, no la misma "stone" de siempre), redondez, tipografía, densidad de
+        espaciado (<code>--sk-density-factor</code>), sombra en reposo (<code>--elevation-flat</code>),
+        peso de las etiquetas (<code>--font-weight-label</code>) y cuánto se hunde un botón al
+        presionarlo (<code>--motion-press-scale</code>): todo re-declarado sobre
+        <code>.preset-canvas</code>, nunca sobre <code>:root</code>. Ningún preset toca todas las
+        dimensiones: dejar una en su valor por defecto es una decisión tan real como
+        cambiarla.
+      </p>
+      <p>
+        El claro y el oscuro de cada tarjeta no son dos presets distintos: es el mismo
+        <code>--color-*</code> resuelto con <code>color-scheme: light</code> forzado en una mitad y
+        <code>color-scheme: dark</code> en la otra, el mismo mecanismo que usa el selector de tema
+        del header sobre <code>&lt;html&gt;</code>, aplicado acá sobre un <code>&lt;div&gt;</code>.
+      </p>
+      <CodeBlock code={ucCssTeaching} label='CSS · aplicado solo dentro de .preset-canvas[data-preset="uc"]' lang="css" />
+
+      <div class="sk-callout" data-tone="info">
+        <div class="sk-callout__content">
+          <p>
+            <strong>Contenido, no preferencia del sitio.</strong> El selector de paleta del header
+            (arriba a la derecha) sigue siendo lo suyo: cambia <code>:root</code>, alcanza todo el
+            sitio y se recuerda entre visitas. Esto es lo opuesto a propósito. Contenido de esta
+            página, sin tocar <code>:root</code> ni <code>localStorage</code>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <Toc items={tocItems} rail />
+  </div>
+</Base>
+
+<style is:global set:html={stageCss}></style>
+
+<style>
+  /* `sk-layout-grid` (the published pattern) owns the gutters/columns/rail track. This page only
+     adds vertical rhythm and the rail's row-span, never its own width/column CSS. */
+  .presets-shell {
+    padding-block: var(--space-stack-xl);
+    /* Three top-level children ABOVE (narrow intro, the showcase grid, narrow closing section) -
+       the rail needs to know how many rows to span to stay beside all of them, since CSS grid has
+       no way to ask "however many rows the rest of this grid ends up needing." */
+    --sk-layout-rail-row-span: 3;
+  }
+
+  .presets-grid {
+    margin-block: var(--space-stack-lg);
+  }
+
+  .preset-card {
+    scroll-margin-top: var(--space-stack-lg);
+  }
+
+  .preset-card + .preset-card {
+    margin-block-start: var(--space-stack-xl);
+  }
+
+  .preset-card__header {
+    margin-block-end: var(--space-stack-sm);
+  }
+
+  /* No swatch dot beside the title: the preset's color already shows all over the demo below (the
+     buttons, the image, the badges). Repeating it as a dot next to the NAME was redundant, and it
+     drew a color onto the one piece of text that should read as plain content, not a color sample. */
+  .preset-card__header h2 {
+    margin: 0;
+  }
+
+  .preset-card__description {
+    margin: 0;
+    color: var(--color-text-secondary);
+  }
+
+  /* Two panels, side by side, same width: one forced light, one forced dark (see `SCHEMES` and
+     `data-scheme-force` above). `inert` on this wrapper covers both. It is a picture of what the
+     preset looks like in either mode, not a usable control, and this whole page is a showcase.
+     The background is a CONSTANT gray, deliberately not a `--color-bg-*` semantic: those flip with
+     the READER's own site theme, and if this backdrop did too, a reader on a light site would see
+     the "Claro" panel merge straight into an already-light page. Only "Oscuro" would stand out,
+     and the light half would read as barely there. A fixed mid-gray gives both forced panels the
+     same contrast against their surroundings no matter what theme the rest of the page happens to
+     be in right now. */
+  .preset-card__demo-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-inline-md);
+    padding: var(--space-inset-md);
+    border-radius: var(--radius-surface);
+    background: oklch(55% 0 0);
+    pointer-events: none;
+  }
+
+  .preset-card__demo-half {
+    position: relative;
+  }
+
+  /* The actual forcing: `color-scheme` is inherited, and every `--color-*` token here resolves
+     through `light-dark()`, so setting it on this element alone re-resolves the WHOLE subtree -
+     same mechanism the header's real theme toggle uses on `<html>`, just scoped to a `<div>`. */
+  .preset-card__demo-half[data-scheme-force="light"] {
+    color-scheme: light;
+  }
+
+  .preset-card__demo-half[data-scheme-force="dark"] {
+    color-scheme: dark;
+  }
+
+  .preset-card__scheme-label {
+    margin: 0 0 var(--space-stack-sm);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-label);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+  }
+
+  .preset-card__demo-heading {
+    margin: 0;
+    font-weight: var(--font-weight-heading);
+  }
+
+  .preset-card__demo-text {
+    margin: 0;
+    color: var(--color-text-secondary);
+  }
+
+  /* No `data-padding` on this box: the image frame has to reach the card's own edges (so its own
+     radius clips flush against the box's), and the text below gets its own inset instead. */
+  .preset-card__demo-card {
+    overflow: hidden;
+  }
+
+  /* A short, wide banner rather than the frame's own 16/9 default: at half the grid's content
+     width, 16/9 ran the card taller than the buttons/badges/callout stacked around it warranted -
+     a placeholder photo doesn't need to be that tall to still read as "an image goes here". */
+  .preset-card__demo-image-frame {
+    --sk-image-frame-aspect: 3 / 1;
+  }
+
+  .preset-card__demo-card-body {
+    display: grid;
+    gap: var(--space-stack-xs);
+    padding: var(--space-inset-md);
+  }
+
+  /* A grid item stretches by default. Left alone the badge grew to the card's full width and
+     stopped reading as a badge (the same fix card.css's own body class already documents). */
+  .preset-card__demo-card-body > .sk-badge {
+    justify-self: start;
+  }
+
+  /* Two panels side by side get too narrow to read once the layout's own rail breakpoint (72rem)
+     has already claimed room for the Toc. Light above dark reads better than a squeeze here. */
+  @media (max-width: 56rem) {
+    .preset-card__demo-split {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

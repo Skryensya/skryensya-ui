@@ -61,8 +61,8 @@ const responsiveCss = `/* data-responsive: la misma progresión de carriles, per
   align-items: start;
 }
 
-/* Un hijo directo pide más carriles con data-span (hasta el máximo de la
-   grilla), acotado a lo que exista en cada breakpoint. */
+/* A direct child asks for more tracks with data-span (up to the grid's
+   maximum), clamped to whatever exists at each breakpoint. */
 @media (min-width: 36rem) {
   .sk-grid[data-responsive] > [data-span="2"],
   .sk-grid[data-responsive] > [data-span="3"],

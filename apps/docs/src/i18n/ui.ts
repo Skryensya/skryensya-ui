@@ -35,96 +35,96 @@ import { sourceViewerMessages } from "./messages/_chrome/source-viewer";
 import { statusMessages } from "./messages/_chrome/status";
 import { testsMessages } from "./messages/_chrome/tests";
 import { vanillaMessages } from "./messages/_chrome/vanilla";
-import { arquitecturaMessages } from "./messages/arquitectura";
-import { accordionMessages } from "./messages/componentes/accordion";
-import { avatarMessages } from "./messages/componentes/avatar";
-import { backToTopMessages } from "./messages/componentes/back-to-top";
-import { badgeMessages } from "./messages/componentes/badge";
-import { boxMessages } from "./messages/componentes/box";
-import { breadcrumbMessages } from "./messages/componentes/breadcrumb";
-import { buttonMessages } from "./messages/componentes/button";
-import { calendarMessages } from "./messages/componentes/calendar";
-import { calloutMessages } from "./messages/componentes/callout";
-import { cardMessages } from "./messages/componentes/card";
-import { carouselMessages } from "./messages/componentes/carousel";
-import { changelogMessages } from "./messages/componentes/changelog";
-import { chartsMessages } from "./messages/componentes/charts";
-import { checkboxMessages } from "./messages/componentes/checkbox";
-import { codePreviewMessages } from "./messages/componentes/code-preview";
-import { colorPickerMessages } from "./messages/componentes/color-picker";
-import { comboboxMessages } from "./messages/componentes/combobox";
-import { commandPaletteMessages } from "./messages/componentes/command-palette";
-import { commentThreadMessages } from "./messages/componentes/comment-thread";
-import { componentPreviewMessages } from "./messages/componentes/component-preview";
-import { copyButtonMessages } from "./messages/componentes/copy-button";
-import { dataGridMessages } from "./messages/componentes/data-grid";
-import { datePickerMessages } from "./messages/componentes/date-picker";
-import { dialogMessages } from "./messages/componentes/dialog";
-import { drawerMessages } from "./messages/componentes/drawer";
-import { editorMessages } from "./messages/componentes/editor";
-import { emptyStateMessages } from "./messages/componentes/empty-state";
-import { fadeEdgeMessages } from "./messages/componentes/fade-edge";
-import { feedMessages } from "./messages/componentes/feed";
-import { fileUploadMessages } from "./messages/componentes/file-upload";
-import { folderMessages } from "./messages/componentes/folder";
-import { footerMessages } from "./messages/componentes/footer";
-import { formFieldMessages } from "./messages/componentes/form-field";
-import { gridMessages } from "./messages/componentes/grid";
-import { headingMessages } from "./messages/componentes/heading";
-import { heroMessages } from "./messages/componentes/hero";
-import { iconMessages } from "./messages/componentes/icon";
-import { imageFrameMessages } from "./messages/componentes/image-frame";
-import { inlineMessages } from "./messages/componentes/inline";
-import { inputMessages } from "./messages/componentes/input";
-import { kbdMessages } from "./messages/componentes/kbd";
-import { layoutGridMessages } from "./messages/componentes/layout-grid";
-import { linkMessages } from "./messages/componentes/link";
-import { listMessages } from "./messages/componentes/list";
-import { loaderMessages } from "./messages/componentes/loader";
-import { marqueeMessages } from "./messages/componentes/marquee";
-import { megamenuMessages } from "./messages/componentes/megamenu";
-import { menuMessages } from "./messages/componentes/menu";
-import { menubarMessages } from "./messages/componentes/menubar";
-import { meterMessages } from "./messages/componentes/meter";
-import { navbarMessages } from "./messages/componentes/navbar";
-import { numberFieldMessages } from "./messages/componentes/number-field";
-import { paginationMessages } from "./messages/componentes/pagination";
-import { placeholderMessages } from "./messages/componentes/placeholder";
-import { popoverMessages } from "./messages/componentes/popover";
-import { popupMessages } from "./messages/componentes/popup";
-import { primitivasMessages } from "./messages/componentes/primitivas";
-import { processListMessages } from "./messages/componentes/process-list";
-import { progressMessages } from "./messages/componentes/progress";
-import { radioGroupMessages } from "./messages/componentes/radio-group";
-import { segmentedMessages } from "./messages/componentes/segmented";
-import { selectMessages } from "./messages/componentes/select";
-import { sidebarMessages } from "./messages/componentes/sidebar";
-import { skipLinkMessages } from "./messages/componentes/skip-link";
-import { sliderMessages } from "./messages/componentes/slider";
-import { splitButtonMessages } from "./messages/componentes/split-button";
-import { stackMessages } from "./messages/componentes/stack";
-import { statMessages } from "./messages/componentes/stat";
-import { stepsMessages } from "./messages/componentes/steps";
-import { switchMessages } from "./messages/componentes/switch";
-import { tableMessages } from "./messages/componentes/table";
-import { tabsMessages } from "./messages/componentes/tabs";
-import { tagMessages } from "./messages/componentes/tag";
-import { textMessages } from "./messages/componentes/text";
-import { themeToggleMessages } from "./messages/componentes/theme-toggle";
-import { tileMessages } from "./messages/componentes/tile";
-import { timeFieldMessages } from "./messages/componentes/time-field";
-import { toastMessages } from "./messages/componentes/toast";
-import { tocMessages } from "./messages/componentes/toc";
-import { toolbarMessages } from "./messages/componentes/toolbar";
-import { tooltipMessages } from "./messages/componentes/tooltip";
-import { treeViewMessages } from "./messages/componentes/tree-view";
-import { treegridMessages } from "./messages/componentes/treegrid";
-import { wrapperMessages } from "./messages/componentes/wrapper";
-import { fundamentosMessages } from "./messages/fundamentos";
-import { gradientesMessages } from "./messages/gradientes";
+import { architectureMessages } from "./messages/architecture";
+import { accordionMessages } from "./messages/components/accordion";
+import { avatarMessages } from "./messages/components/avatar";
+import { backToTopMessages } from "./messages/components/back-to-top";
+import { badgeMessages } from "./messages/components/badge";
+import { boxMessages } from "./messages/components/box";
+import { breadcrumbMessages } from "./messages/components/breadcrumb";
+import { buttonMessages } from "./messages/components/button";
+import { calendarMessages } from "./messages/components/calendar";
+import { calloutMessages } from "./messages/components/callout";
+import { cardMessages } from "./messages/components/card";
+import { carouselMessages } from "./messages/components/carousel";
+import { changelogMessages } from "./messages/components/changelog";
+import { chartsMessages } from "./messages/components/charts";
+import { checkboxMessages } from "./messages/components/checkbox";
+import { codePreviewMessages } from "./messages/components/code-preview";
+import { colorPickerMessages } from "./messages/components/color-picker";
+import { comboboxMessages } from "./messages/components/combobox";
+import { commandPaletteMessages } from "./messages/components/command-palette";
+import { commentThreadMessages } from "./messages/components/comment-thread";
+import { componentPreviewMessages } from "./messages/components/component-preview";
+import { copyButtonMessages } from "./messages/components/copy-button";
+import { dataGridMessages } from "./messages/components/data-grid";
+import { datePickerMessages } from "./messages/components/date-picker";
+import { dialogMessages } from "./messages/components/dialog";
+import { drawerMessages } from "./messages/components/drawer";
+import { editorMessages } from "./messages/components/editor";
+import { emptyStateMessages } from "./messages/components/empty-state";
+import { fadeEdgeMessages } from "./messages/components/fade-edge";
+import { feedMessages } from "./messages/components/feed";
+import { fileUploadMessages } from "./messages/components/file-upload";
+import { folderMessages } from "./messages/components/folder";
+import { footerMessages } from "./messages/components/footer";
+import { formFieldMessages } from "./messages/components/form-field";
+import { gridMessages } from "./messages/components/grid";
+import { headingMessages } from "./messages/components/heading";
+import { heroMessages } from "./messages/components/hero";
+import { iconMessages } from "./messages/components/icon";
+import { imageFrameMessages } from "./messages/components/image-frame";
+import { inlineMessages } from "./messages/components/inline";
+import { inputMessages } from "./messages/components/input";
+import { kbdMessages } from "./messages/components/kbd";
+import { layoutGridMessages } from "./messages/components/layout-grid";
+import { linkMessages } from "./messages/components/link";
+import { listMessages } from "./messages/components/list";
+import { loaderMessages } from "./messages/components/loader";
+import { marqueeMessages } from "./messages/components/marquee";
+import { megamenuMessages } from "./messages/components/megamenu";
+import { menuMessages } from "./messages/components/menu";
+import { menubarMessages } from "./messages/components/menubar";
+import { meterMessages } from "./messages/components/meter";
+import { navbarMessages } from "./messages/components/navbar";
+import { numberFieldMessages } from "./messages/components/number-field";
+import { paginationMessages } from "./messages/components/pagination";
+import { placeholderMessages } from "./messages/components/placeholder";
+import { popoverMessages } from "./messages/components/popover";
+import { popupMessages } from "./messages/components/popup";
+import { primitivesMessages } from "./messages/components/primitives";
+import { processListMessages } from "./messages/components/process-list";
+import { progressMessages } from "./messages/components/progress";
+import { radioGroupMessages } from "./messages/components/radio-group";
+import { segmentedMessages } from "./messages/components/segmented";
+import { selectMessages } from "./messages/components/select";
+import { sidebarMessages } from "./messages/components/sidebar";
+import { skipLinkMessages } from "./messages/components/skip-link";
+import { sliderMessages } from "./messages/components/slider";
+import { splitButtonMessages } from "./messages/components/split-button";
+import { stackMessages } from "./messages/components/stack";
+import { statMessages } from "./messages/components/stat";
+import { stepsMessages } from "./messages/components/steps";
+import { switchMessages } from "./messages/components/switch";
+import { tableMessages } from "./messages/components/table";
+import { tabsMessages } from "./messages/components/tabs";
+import { tagMessages } from "./messages/components/tag";
+import { textMessages } from "./messages/components/text";
+import { themeToggleMessages } from "./messages/components/theme-toggle";
+import { tileMessages } from "./messages/components/tile";
+import { timeFieldMessages } from "./messages/components/time-field";
+import { toastMessages } from "./messages/components/toast";
+import { tocMessages } from "./messages/components/toc";
+import { toolbarMessages } from "./messages/components/toolbar";
+import { tooltipMessages } from "./messages/components/tooltip";
+import { treeViewMessages } from "./messages/components/tree-view";
+import { treegridMessages } from "./messages/components/treegrid";
+import { wrapperMessages } from "./messages/components/wrapper";
+import { foundationsMessages } from "./messages/foundations";
+import { gradientsMessages } from "./messages/gradients";
 import { indexMessages } from "./messages/index";
 import { navListMessages } from "./messages/nav-list";
-import { referenciaMessages } from "./messages/referencia";
+import { referenceMessages } from "./messages/reference";
 import { templatesMessages } from "./messages/templates";
 import { vaulMessages } from "./messages/vaul";
 
@@ -150,7 +150,7 @@ export const ui = {
     ...statusMessages.es,
     ...testsMessages.es,
     ...vanillaMessages.es,
-    ...arquitecturaMessages.es,
+    ...architectureMessages.es,
     ...accordionMessages.es,
     ...avatarMessages.es,
     ...backToTopMessages.es,
@@ -207,7 +207,7 @@ export const ui = {
     ...placeholderMessages.es,
     ...popoverMessages.es,
     ...popupMessages.es,
-    ...primitivasMessages.es,
+    ...primitivesMessages.es,
     ...processListMessages.es,
     ...progressMessages.es,
     ...radioGroupMessages.es,
@@ -235,11 +235,11 @@ export const ui = {
     ...treeViewMessages.es,
     ...treegridMessages.es,
     ...wrapperMessages.es,
-    ...fundamentosMessages.es,
-    ...gradientesMessages.es,
+    ...foundationsMessages.es,
+    ...gradientsMessages.es,
     ...indexMessages.es,
     ...navListMessages.es,
-    ...referenciaMessages.es,
+    ...referenceMessages.es,
     ...templatesMessages.es,
     ...vaulMessages.es,
   },
@@ -262,7 +262,7 @@ export const ui = {
     ...statusMessages.en,
     ...testsMessages.en,
     ...vanillaMessages.en,
-    ...arquitecturaMessages.en,
+    ...architectureMessages.en,
     ...accordionMessages.en,
     ...avatarMessages.en,
     ...backToTopMessages.en,
@@ -319,7 +319,7 @@ export const ui = {
     ...placeholderMessages.en,
     ...popoverMessages.en,
     ...popupMessages.en,
-    ...primitivasMessages.en,
+    ...primitivesMessages.en,
     ...processListMessages.en,
     ...progressMessages.en,
     ...radioGroupMessages.en,
@@ -347,11 +347,11 @@ export const ui = {
     ...treeViewMessages.en,
     ...treegridMessages.en,
     ...wrapperMessages.en,
-    ...fundamentosMessages.en,
-    ...gradientesMessages.en,
+    ...foundationsMessages.en,
+    ...gradientsMessages.en,
     ...indexMessages.en,
     ...navListMessages.en,
-    ...referenciaMessages.en,
+    ...referenceMessages.en,
     ...templatesMessages.en,
     ...vaulMessages.en,
   },
@@ -370,24 +370,24 @@ export const navLabel: Record<Locale, Partial<Record<string, string>>> = {
   es: {},
   en: {
     "/": "Installation",
-    "/instalacion": "Installation",
-    "/prerrequisitos": "Prerequisites",
-    "/primer-componente": "Your first component",
-    "/montaje-automatico": "Automatic mounting",
-    "/arquitectura": "Architecture",
-    "/referencia": "Tokens",
-    "/dimensiones": "Dimensions",
-    "/elevacion": "Elevation",
+    "/installation": "Installation",
+    "/prerequisites": "Prerequisites",
+    "/first-component": "Your first component",
+    "/automatic-mounting": "Automatic mounting",
+    "/architecture": "Architecture",
+    "/reference": "Tokens",
+    "/dimensions": "Dimensions",
+    "/elevation": "Elevation",
     "/zoom": "Zoom and reflow",
-    "/teclado": "Keyboard navigation",
-    "/densidad": "Component density",
-    "/gradientes": "Gradients",
-    "/transparencias": "Transparency",
-    "/iconos": "Iconography",
-    "/almacenamiento": "Storage",
-    "/anclaje": "Anchoring",
-    "/efectos": "Effects",
-    "/componentes/date-picker": "DatePicker",
-    "/componentes/calendar": "Calendar",
+    "/keyboard": "Keyboard navigation",
+    "/density": "Component density",
+    "/gradients": "Gradients",
+    "/transparency": "Transparency",
+    "/icons": "Iconography",
+    "/storage": "Storage",
+    "/anchoring": "Anchoring",
+    "/effects": "Effects",
+    "/components/date-picker": "DatePicker",
+    "/components/calendar": "Calendar",
   },
 };

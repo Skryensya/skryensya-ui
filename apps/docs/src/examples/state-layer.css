@@ -1,15 +1,15 @@
-/* El patrón envía la estructura del layer y la escalera.
-   Tú escribes el layout y agregas `sk-interactive`.
-   Cero colores de estado: el layer se tiñe con currentColor. */
+/* The pattern ships the layer's structure and the ladder.
+   You write the layout and add `sk-interactive`.
+   Zero state colors: the layer is tinted with currentColor. */
 
-/* ── Bare: tiles planos, sin componentes del kit ─────────────── */
+/* ── Bare: flat tiles, no kit components ─────────────────────── */
 .sl-tiles {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(5.25rem, 1fr));
   gap: var(--space-inline-sm);
   inline-size: 100%;
   max-inline-size: 100%;
-  /* Hueco para el anillo de foco del peek; si no, el iframe scrollea. */
+  /* Room for the peek's focus ring; otherwise the iframe scrolls. */
   padding: calc(var(--focus-ring-width) + var(--focus-ring-offset));
   box-sizing: border-box;
 }
@@ -31,8 +31,8 @@
   cursor: pointer;
 }
 
-/* Congela un escalón de la escalera para enseñarlo. Sin pointer
-   para que no compita con el tile vivo. */
+/* Freezes one step of the ladder to show it. No pointer
+   so it does not compete with the live tile. */
 .sl-tile[data-peek] {
   pointer-events: none;
   cursor: default;
@@ -62,14 +62,14 @@
   cursor: not-allowed;
 }
 
-/* ── CurrentColor: la escalera completa sobre inverse ───────── */
+/* ── CurrentColor: the full ladder over inverse ─────────────── */
 .sl-current-tile {
   border-color: transparent;
   background: var(--color-bg-inverse);
   color: var(--color-text-inverse);
 }
 
-/* La selección conserva una señal independiente del layer. */
+/* The selection keeps a signal independent of the layer. */
 .sl-current-tile[aria-selected="true"] {
   color: var(--color-text-inverse);
   box-shadow: inset 0 0 0 2px currentColor;
@@ -132,7 +132,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Indicador de selección INDEPENDIENTE del layer. */
+/* Selection indicator INDEPENDENT of the layer. */
 .sl-item[aria-selected="true"] {
   color: var(--color-text-accent);
   font-weight: var(--font-weight-label);

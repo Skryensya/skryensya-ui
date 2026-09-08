@@ -1,0 +1,122 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
+import { firstComponentButtonsTree } from "../../demos/button";
+import { getLocale, useTranslations } from "../../i18n";
+
+const step1 = `pnpm add @skryensya/core`;
+
+const step2 = `@import "@skryensya/core/tokens.scss";`;
+
+const step3 = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/button.css";`;
+
+const step4 = `/* Un hook, no un selector nuevo: todas las variantes
+   leen la misma variable, así que esto las reestiliza
+   todas dentro de .hero. */
+.hero .sk-button {
+  --sk-button-bg: rebeccapurple;
+  --sk-button-radius: var(--radius-pill);
+}`;
+
+const t = useTranslations(getLocale(Astro.url));
+
+const step6html = `<button
+  class="sk-button sk-interactive"
+  data-sk-button
+  data-tone="accent"
+>
+  Guardar
+</button>`;
+
+/* The only place localStorage is touched by hand, because it runs before any module and cannot
+   import. The key and the slot still come from the declaration; see /almacenamiento. */
+const fouc = `<script>
+  // Before the first paint, synchronous: it cannot import,
+  // and it is the system's only exception (see Storage).
+  var s = {};
+  try { s = JSON.parse(localStorage.getItem('sk') || '{}'); } catch (e) {}
+  if (s.scheme) document.documentElement.style.colorScheme = s.scheme;
+</script>`;
+---
+
+<Base
+  title="Tu primer componente"
+  description="De cero a un botón que responde a las cuatro dimensiones, paso a paso."
+  documentLayout="grid"
+>
+  <h1>Tu primer componente</h1>
+  <p class="lede">
+    De cero a un botón que responde a modo, contraste, densidad y radio. Seis pasos, sin magia.
+  </p>
+
+  <h2>1. Instalar</h2>
+  <CodeBlock code={step1} label="terminal" />
+
+  <h2>2. Importar el bundle base</h2>
+  <p>
+    Es lo único que todo consumidor necesita: primitivos + semánticos. Con esto ya tienes las cuatro
+    dimensiones y el lenguaje de motion.
+  </p>
+  <CodeBlock code={step2} label="CSS" />
+  <p>
+    Los especificadores desnudos se resuelven por el <code>exports</code> map, así que necesitas un
+    bundler (Vite, webpack, Parcel).
+  </p>
+
+  <h2>3. Importar el componente que vas a usar</h2>
+  <p>Solo lo que envías. Un consumidor sin botones nunca baja este archivo.</p>
+  <CodeBlock code={step3} label="CSS" />
+  <p>
+    Con eso ya tienes un botón. <code>button.css</code> trae la clase <em>y</em> sus
+    <a href="/styling-hooks">styling hooks</a>: no hay un paso donde tengas que escribir tú el CSS
+    estructural para que algo se vea. El orden de los imports no importa, las
+    <a href="/tiers">cascade layers</a> deciden la precedencia.
+  </p>
+
+  <h2>4. Usarlo</h2>
+  <p>
+    Las variantes y los tamaños son atributos. No necesitas clases nuevas ni ramificar en tu CSS:
+    todas las variantes re-declaran <a href="/styling-hooks">el mismo styling hook</a>.
+  </p>
+  <ComponentPreview tree={firstComponentButtonsTree(t)} label="Button" />
+
+  <h2>5. Cambiarlo</h2>
+  <p>
+    Enviar la estructura no te deja afuera de ella: para eso están los hooks. La estructura vive en
+    <code>@layer components</code> y <strong>cualquier regla sin capa le gana a cualquier capa</strong>,
+    así que re-declaras un hook desde tu CSS y ganas, sin inventar un selector más específico ni pelear
+    con <code>!important</code>.
+  </p>
+  <CodeBlock code={step4} label="CSS" note="opcional" />
+
+  <h2>6. Estados interactivos</h2>
+  <p>
+    Hover, focus y pressed no son colores del botón: los aporta el
+    <a href="/state-layer">state layer</a>, un overlay de <code>currentColor</code> compartido por
+    todo componente interactivo. Es el mecanismo de interacción del sistema y viene en
+    <code>tokens.scss</code>, no hay nada que importar aparte. Solo agrega
+    <code>sk-interactive</code>: cero colores de estado en tu CSS, y el anillo de foco viene incluido.
+  </p>
+  <CodeBlock code={step6html} label="HTML" note="una clase más" />
+
+  <h2>Lo que falta: el guard de FOUC</h2>
+  <p>
+    Si dejas que el usuario elija el modo, aplícalo <strong>antes del primer paint</strong>,
+    sincrónico, en el <code>&lt;head&gt;</code>. Sin esto la página pinta sin la marca/modo elegidos y
+    después salta.
+  </p>
+  <CodeBlock code={fouc} label="HTML, en el head" />
+
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+    <p>
+      <strong>Y eso es todo el contrato.</strong> Dos imports y una clase, y tienes un botón que
+      responde a dos marcas, claro/oscuro, alto contraste y tres densidades, con el mínimo táctil de
+      WCAG garantizado dentro del token. Nada de eso está en tu código, y ninguna línea de CSS
+      estructural tampoco.
+    </p>
+    </div>
+  </div>
+</Base>

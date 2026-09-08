@@ -1,8 +1,8 @@
 export const testsMessages = {
   es: {
 
-    /* Resumen de tests: una línea por test. Sirve para confirmar de un vistazo qué queda cubierto
-       sin tener que leer el archivo de test entero. */
+    /* Test summary: one line per test. Useful for confirming at a glance what stays covered without
+       having to read the whole test file. */
     "tests.title": "Tests",
     "tests.intro": "Qué valida cada test, en una línea.",
     "tests.introNoReference": "Qué valida cada test, en una línea.",

@@ -1,7 +1,6 @@
-/* Una línea reestiliza TODAS las variantes dentro de .promo, 
-   porque todas leen el mismo styling hook. Sin peleas de
-   especificidad: cualquier regla sin layer le gana a todas las
-   layers. */
+/* One line restyles ALL the variants inside .promo,
+   because they all read the same styling hook. No specificity
+   fights: any rule outside a layer beats every layer. */
 .promo .sk-button {
   --sk-button-bg: oklch(62% 0.19 25);
   --sk-button-fg: white;

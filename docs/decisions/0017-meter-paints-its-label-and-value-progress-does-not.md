@@ -1,65 +1,66 @@
 ---
 num: 17
-title: Meter pinta su etiqueta y su valor; Progress no
-short: "El header de Meter"
+title: Meter paints its label and its value; Progress does not
+short: "Meter's header"
 summary: >-
-  Meter y Progress compartían track y fill al pixel: mismo `border-radius`, mismo alto, mismo hook de
-  tono. La distinción entre los dos (una medición ya sucedida contra el avance de una tarea) vivía
-  solo en el `role` ARIA y en `aria-label`/`aria-valuetext`, invisibles los dos. Un lector que mirara
-  la página no tenía manera de distinguirlos. Esta decisión le da a Meter una fila visible de
-  etiqueta + valor sobre la barra, tomada del mismo precedente que ya justifica su `role="meter"`
-  propio (el meter de Adobe Spectrum), y deja a Progress exactamente como estaba.
+  Meter and Progress shared track and fill down to the pixel: same `border-radius`, same height, same tone
+  hook. The distinction between the two (a measurement that already happened against the progress of a
+  task) lived only in the ARIA `role` and in `aria-label`/`aria-valuetext`, both invisible. A reader
+  looking at the page had no way to tell them apart. This decision gives Meter a visible label + value row
+  above the bar, taken from the same precedent that already justifies its own `role="meter"` (Adobe
+  Spectrum's meter), and leaves Progress exactly as it was.
 ---
 
-## El problema
+## The problem
 
-`meter.css` decía, literalmente, "deliberadamente idéntico en forma a Progress". Y lo era: mismo
-track sunken, mismo fill con `border-radius: var(--radius-pill)`, mismo hook `--sk-*-color` por tono.
-Lo único que los distinguía era semántico y estaba fuera de la vista:
+`meter.css` said, literally, "deliberately identical in shape to Progress". And it was: same sunken
+track, same fill with `border-radius: var(--radius-pill)`, same `--sk-*-color` hook per tone. The only
+thing distinguishing them was semantic and out of sight:
 
-- El `role` (`meter` contra `progressbar`).
-- `aria-label`/`aria-valuetext`, que un lector sin lector de pantalla nunca oye.
+- The `role` (`meter` against `progressbar`).
+- `aria-label`/`aria-valuetext`, which a reader without a screen reader never hears.
 
-Eso deja el mismo problema que motivó separar los dos contratos en primer lugar (ver el banner de
-`meter.ts`): la distinción "medición ya sucedida" contra "avance de una tarea" es real y vale la pena,
-pero solo llegaba a quien usa un lector de pantalla. Un lector visual viendo dos barras azules idénticas
-en dos páginas de la documentación no tenía ninguna pista.
+That leaves the same problem that motivated separating the two contracts in the first place (see the
+banner in `meter.ts`): the "measurement that already happened" against "progress of a task" distinction
+is real and worth having, but it only reached people using a screen reader. A sighted reader seeing two
+identical blue bars on two documentation pages had no clue at all.
 
-## La decisión
+## The decision
 
-Meter gana una fila de header, pintada arriba del track:
+Meter gains a header row, painted above the track:
 
-- `label` (ya existía como opción, ya alimentaba `aria-label`) ahora TAMBIÉN se pinta como texto
-  visible, vía `textFromOption` en un `<span>` propio.
-- `valueText` (ya existía, opcional, ya alimentaba `aria-valuetext`) TAMBIÉN se pinta, solo cuando el
-  autor lo da. WAI la lista como recomendada, no requerida, y un número desnudo ("68%") junto a una
-  barra sin etiqueta es menos legible que ningún número.
-- Ninguno de los dos deja de ser un atributo ARIA real en el track: `textFromOption` agrega una
-  SEGUNDA lectura visible de la misma cadena, no reemplaza la primera. La lectura de un lector de
-  pantalla nunca depende de si el layout visual decidió mostrar algo.
+- `label` (already an option, already feeding `aria-label`) is now ALSO painted as visible text, via
+  `textFromOption` in a `<span>` of its own.
+- `valueText` (already existed, optional, already feeding `aria-valuetext`) is ALSO painted, but only
+  when the author provides it. WAI lists it as recommended, not required, and a bare number ("68%") next
+  to an unlabeled bar is less legible than no number at all.
+- Neither one stops being a real ARIA attribute on the track: `textFromOption` adds a SECOND visible
+  reading of the same string, it does not replace the first. What a screen reader announces never depends
+  on whether the visual layout decided to show something.
 
-El precedente es Adobe Spectrum: es el sibling más cercano a este contrato (el mismo split ARIA
-`meter` contra `progressbar` que ya seguíamos), y su `<sp-meter>` pinta por defecto "a label that
-describes what is being measured... and a percentage value showing the numeric progress". El track y
-el fill de Spectrum son casi idénticos entre meter y progress-bar. La forma no es donde el ecosistema
-distingue los dos, la etiqueta sí.
+The precedent is Adobe Spectrum: it is the closest sibling to this contract (the same ARIA `meter`
+against `progressbar` split we already followed), and its `<sp-meter>` paints by default "a label that
+describes what is being measured... and a percentage value showing the numeric progress". Spectrum's
+track and fill are nearly identical between meter and progress-bar. Shape is not where the ecosystem
+distinguishes the two; the label is.
 
-`Progress` no cambia. Sigue siendo una barra desnuda: su lugar de uso típico (una tabla, una toolbar,
-una card) rara vez tiene espacio ni necesidad de una etiqueta permanente junto a la barra, y su propio
-`aria-label` ya cubre el caso con lector de pantalla.
+`Progress` does not change. It stays a bare bar: its typical place of use (a table, a toolbar, a card)
+rarely has room or need for a permanent label beside the bar, and its own `aria-label` already covers the
+screen reader case.
 
-## El costo, dicho
+## The cost, stated
 
-El árbol del componente creció un nivel: `.sk-meter` (el track, `role="meter"`) dejó de ser el nodo
-raíz y pasó a ser un hijo de un nuevo `.sk-meter-group`, junto a `.sk-meter-group__header`. Todo lo que
-apuntaba a `.sk-meter` como hijo directo de un layout (el caso de `component-preview.css` que fuerza
-`flex: 1 1 100%` en el stage) tuvo que reapuntar a `.sk-meter-group`. El binding React ya no puede
-pasar `className`/props sueltos a "el elemento raíz" sin decidir cuál de los dos raíces recibe qué:
-`className` va al grupo, el resto de `HTMLAttributes` va al track.
+The component tree grew a level: `.sk-meter` (the track, `role="meter"`) stopped being the root node and
+became a child of a new `.sk-meter-group`, alongside `.sk-meter-group__header`. Everything that targeted
+`.sk-meter` as the direct child of a layout (the `component-preview.css` case that forces
+`flex: 1 1 100%` on the stage) had to retarget `.sk-meter-group`. The React binding can no longer pass
+`className`/loose props to "the root element" without deciding which of the two roots receives what:
+`className` goes to the group, the rest of `HTMLAttributes` goes to the track.
 
-## Lo que no se hizo
+## What was not done
 
-No se agregó coloreado automático por zona (lo que hace `<meter>` nativo: verde/amarillo/rojo según
-`low`/`high`/`optimum`). Es el otro precedente real que arrojó la investigación, pero cambia la API del
-contrato (opciones nuevas, un cómputo de zona que hoy el autor hace a mano eligiendo `tone`) en vez de
-solo el CSS. Si se pide después, el hook `tone` ya está. Solo faltaría quién lo calcule.
+Automatic coloring by zone was not added (what native `<meter>` does: green/yellow/red according to
+`low`/`high`/`optimum`). It is the other real precedent the research turned up, but it changes the
+contract's API (new options, a zone computation the author does by hand today by picking `tone`) rather
+than only the CSS. If it is requested later, the `tone` hook is already there. All that would be missing
+is something to compute it.

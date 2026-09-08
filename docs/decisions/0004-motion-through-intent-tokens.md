@@ -1,81 +1,79 @@
 ---
 num: 4
-title: El motion se maneja con tokens de intención
-short: "Motion por intención"
+title: Motion is handled with intent tokens
+short: "Motion by intent"
 summary: >-
-  El motion se maneja con tokens de intención: los componentes describen qué significa una transición
-  (entrar, responder, expandir), no cuánto dura, así que los valores técnicos evolucionan sin tocar
-  ninguna API. La regla de tier-skip del validador ya prohíbe que un componente use una duración cruda.
-  Reduced motion no es un interruptor a cero: redefine los mismos tokens según su rol, así que ningún
-  componente cambia.
+  Motion is handled with intent tokens: components describe what a transition means (enter, respond,
+  expand), not how long it lasts, so the technical values evolve without touching any API. The validator's
+  tier-skip rule already forbids a component from using a raw duration. Reduced motion is not a switch to
+  zero: it redefines the same tokens according to their role, so no component changes.
 ---
 
-Sin un lenguaje, cada equipo elige duraciones y easings arbitrarios. Con uno, los componentes describen
-**qué significa** una transición, entrar, responder, expandir, no cuánto dura, así que los valores
-técnicos evolucionan sin tocar la API de ningún componente.
+Without a language, every team picks arbitrary durations and easings. With one, components describe
+**what a transition means**, enter, respond, expand, not how long it lasts, so the technical values
+evolve without touching any component's API.
 
-Motion **no es opt-in**: vive en `primitives.scss` y `semantic.scss`, es decir que viene en el bundle base.
-Si se importa `tokens.scss`, ya está incluido.
+Motion is **not opt-in**: it lives in `primitives.scss` and `semantic.scss`, which means it comes in the
+base bundle. If you import `tokens.scss`, it is already included.
 
-## Los mismos tres tiers que el color
+## The same three tiers as color
 
-- **Tier 1, valores técnicos, sin significado.** `--scale-duration-{instant,fast,moderate,slow}`,
+- **Tier 1, technical values, no meaning.** `--scale-duration-{instant,fast,moderate,slow}`,
   `--scale-easing-{linear,standard,enter,exit,emphasized,spring}`.
-- **Tier 2, intención.** `--motion-enter-{duration,easing,distance}`, `--motion-feedback-*`,
-  `--motion-expand-*`, más una escala `--motion-distance-{none,sm,md,lg}`.
-- **Tier 3, los componentes consumen intención, y solo intención.**
+- **Tier 2, intent.** `--motion-enter-{duration,easing,distance}`, `--motion-feedback-*`,
+  `--motion-expand-*`, plus a `--motion-distance-{none,sm,md,lg}` scale.
+- **Tier 3, components consume intent, and only intent.**
 
-## Enforced gratis por la regla que ya existía
+## Enforced for free by the rule that already existed
 
-Como las duraciones y easings de escala son primitivos de tier 1, la regla de tier-skip del
-[validador](./0019-public-palettes-and-constant-semantics.md) **ya prohíbe** que un componente referencie una duración
-cruda: tiene que pasar por un token de intención. No hizo falta una regla nueva, la del color hace el
-trabajo.
+Because scale durations and easings are tier 1 primitives, the
+[validator's](./0019-public-palettes-and-constant-semantics.md) tier-skip rule **already forbids** a
+component from referencing a raw duration: it has to go through an intent token. No new rule was needed,
+the color one does the work.
 
-Ajustar un primitivo (`fast` de 120 a 100ms) reestiliza el sistema entero con cero ediciones en
-componentes. Ese es todo el punto de una API semántica.
+Adjusting a primitive (`fast` from 120 to 100ms) restyles the whole system with zero component edits.
+That is the entire point of a semantic API.
 
 ```css
 /* Build fails: a component does not reach a primitive. */
 .sk-dialog { transition: opacity var(--scale-duration-fast); }
 
-/* Así se consume. */
+/* This is how it is consumed. */
 .sk-dialog {
   transition: opacity var(--motion-enter-duration) var(--motion-enter-easing);
   translate: 0 var(--motion-enter-distance);
 }
 ```
 
-## La dirección lleva significado
+## Direction carries meaning
 
-**Entrar decelera** (`easing-enter`) y viaja una distancia `md` hasta su lugar. **Salir acelera**
-(`easing-exit`), dura menos y viaja menos: sobre un elemento que se va ya se decidió, así que hacer
-esperar al usuario es latencia pura. La distancia mapea jerarquía: `lg` para navegación y profundidad,
-`sm` para reveals inline.
+**Entering decelerates** (`easing-enter`) and travels an `md` distance into place. **Exiting
+accelerates** (`easing-exit`), lasts less and travels less: about an element that is leaving the decision
+is already made, so making the user wait is pure latency. Distance maps hierarchy: `lg` for navigation
+and depth, `sm` for inline reveals.
 
-Los springs existen como primitivo pero están marcados **no para UI crítica**: el overshoot se lee como
-imprecisión.
+Springs exist as a primitive but are marked **not for critical UI**: the overshoot reads as imprecision.
 
-## Reduced motion es una variante funcional, no un interruptor
+## Reduced motion is a functional variant, not a switch
 
-Un `@media` que pone todas las duraciones en cero es la solución fácil y está mal: hace imperceptibles
-los cambios de estado esenciales. En vez de eso, el mismo bloque redefine los **mismos** tokens de
-intención según su rol:
+A `@media` block that sets every duration to zero is the easy answer and it is wrong: it makes essential
+state changes imperceptible. Instead, the same block redefines the **same** intent tokens according to
+their role:
 
-| Rol | Qué le pasa |
+| Role | What happens to it |
 |---|---|
-| **Helpful** (enter, exit, reveal, navigate) | distancia a 0, queda un fade corto |
-| **Essential** (state-change, expand/collapse) | conserva una duración breve y legible |
-| **Decorative** (emphasize) | a 0 |
-| **Continuous** (loading) | duración más suave; el componente debería cambiar a una variante no espacial |
+| **Helpful** (enter, exit, reveal, navigate) | distance to 0, a short fade remains |
+| **Essential** (state-change, expand/collapse) | keeps a brief, legible duration |
+| **Decorative** (emphasize) | to 0 |
+| **Continuous** (loading) | gentler duration; the component should switch to a non-spatial variant |
 
-Como redefine tokens que los componentes ya consumen, **ningún componente cambia**. La reducción es
-sistémica, no per-componente.
+Because it redefines tokens the components already consume, **no component changes**. The reduction is
+systemic, not per component.
 
-## Lo que se rechazó
+## What was rejected
 
-- *Exponer solo tokens técnicos (`duration-fast`, `ease-in-out`).* Es exactamente lo que deja a los
-  equipos elegir arbitrariamente; los tokens de intención son todo el pedido.
-- *Un provider en JS como fuente de verdad.* Los tokens son custom properties, así que
-  `prefers-reduced-motion` funciona con cero JS. Un provider solo haría falta para forzar un modo contra
-  la preferencia del sistema operativo.
+- *Exposing only technical tokens (`duration-fast`, `ease-in-out`).* That is exactly what lets teams
+  choose arbitrarily; intent tokens are the whole request.
+- *A JS provider as the source of truth.* The tokens are custom properties, so `prefers-reduced-motion`
+  works with zero JS. A provider would only be needed to force a mode against the operating system's
+  preference.

@@ -1,68 +1,69 @@
 ---
 num: 9
-title: Vaul es un pattern, y el drag es lo único que cuesta JS
-short: "Vaul y el drag"
+title: Vaul is a pattern, and drag is the only part that costs JS
+short: "Vaul and drag"
 summary: >-
-  Vaul es un panel modal anclado a un borde del viewport. Es un pattern y no un componente porque
-  un drawer necesita su estructura exacta en el borde inline. Dialog permanece un dialog centrado;
-  Dialog Vaul es una composición explícita que le da un Vaul block-end en móvil. El patrón exige
-  <dialog> nativo. Zag no se usa: no tiene máquina de Vaul y la plataforma ya resuelve la modalidad.
-  Drag-to-dismiss es el único JavaScript, es opt-in y usa el intent release.
+  A Vaul is a modal panel anchored to a viewport edge. It is a pattern and not a component because a
+  drawer needs its exact structure on the inline edge. Dialog remains a centered dialog; Dialog Vaul is an
+  explicit composition that gives it a block-end Vaul on mobile. The pattern requires the native <dialog>.
+  Zag is not used: it has no Vaul machine and the platform already solves modality. Drag-to-dismiss is the
+  only JavaScript, it is opt-in, and it uses the release intent.
 ---
 
-Un **Vaul** es un panel modal anclado a un **borde** del viewport: llega desde ese borde, deja la
-página inerte detrás de un backdrop, y se va por donde vino. El borde es la idea entera, un Vaul se
-nombra por *de dónde viene*, nunca por la forma que hace al llegar. Evitamos `vault`, `sheet` y
-`bottom sheet`: son nombres de forma, no del patrón.
+A **Vaul** is a modal panel anchored to an **edge** of the viewport: it arrives from that edge, leaves the
+page inert behind a backdrop, and leaves the way it came. The edge is the entire idea, a Vaul is named
+for *where it comes from*, never for the shape it makes on arrival. We avoid `vault`, `sheet` and
+`bottom sheet`: those are names of a shape, not of the pattern.
 
-## Por qué es un pattern y no un componente
+## Why it is a pattern and not a component
 
-La regla de la [decisión 8](./0002-what-tier-3-ships.md) pregunta: *¿podría un segundo
-componente necesitar esta estructura exacta?* Sí: **Drawer** (`sk-drawer`) es un Vaul en el borde
-inline, a lo alto de la pantalla. Por eso `components/drawer.css` sólo reasigna los hooks
-`--sk-vaul-*` desde `--sk-drawer-*`; no vuelve a implementar panel, borde, slide ni backdrop.
+The rule from [decision 8](./0002-what-tier-3-ships.md) asks: *could a second component need this exact
+structure?* Yes: **Drawer** (`sk-drawer`) is a Vaul on the inline edge, running the height of the screen.
+That is why `components/drawer.css` only reassigns the `--sk-vaul-*` hooks from `--sk-drawer-*`; it does
+not reimplement panel, border, slide or backdrop.
 
-**Dialog no es un Vaul.** Es una caja centrada nativa a cualquier ancho. Cuando una tarea necesita una
-hoja block-end en móvil, opta por el pattern **Dialog Vaul** con `data-sk-dialog-vaul`; esa
-composición conserva el contrato `sk-dialog` y sólo le entrega geometría, motion y drag de Vaul en el
-breakpoint compacto. No hay una variante implícita de Dialog ni una clase `sk-vaul` sobre él.
+**Dialog is not a Vaul.** It is a natively centered box at any width. When a task needs a block-end sheet
+on mobile, it opts into the **Dialog Vaul** pattern with `data-sk-dialog-vaul`; that composition keeps
+the `sk-dialog` contract and only hands it Vaul's geometry, motion and drag at the compact breakpoint.
+There is no implicit Dialog variant and no `sk-vaul` class on top of it.
 
-## Exige el `<dialog>` nativo
+## It requires the native `<dialog>`
 
-Por cada razón de la [decisión 11](./0005-dialog-requires-the-native-element.md): focus trap,
-ESC, fondo inerte, restauración del foco, top layer y `::backdrop` real pertenecen a la plataforma. Un
-Vaul sobre un div los reimplementa en JavaScript, y `:modal` no está disponible para un div.
+For every reason in [decision 11](./0005-dialog-requires-the-native-element.md): focus trap, ESC, inert
+background, focus restoration, top layer and a real `::backdrop` belong to the platform. A Vaul on a div
+reimplements them in JavaScript, and `:modal` is not available to a div.
 
-Los hooks pueden ser agnósticos al elemento; la maquinaria no. Esa separación es una decisión de la
-plataforma, no una política local.
+The hooks can be element-agnostic; the machinery cannot. That separation is a platform decision, not a
+local policy.
 
-## Zag no se usa aquí
+## Zag is not used here
 
-No existe una máquina de Vaul en Zag. `@zag-js/dialog` reimplementaría modalidad sobre un
-`<div role="dialog">`; `@zag-js/presence` duplica `@starting-style` y `allow-discrete`. Ninguno aporta
-coordinación de estado que justifique su runtime.
+There is no Vaul machine in Zag. `@zag-js/dialog` would reimplement modality over a
+`<div role="dialog">`; `@zag-js/presence` duplicates `@starting-style` and `allow-discrete`. Neither
+brings state coordination that would justify its runtime.
 
-## El drag es lo único que cuesta JS, y es opt-in
+## Drag is the only part that costs JS, and it is opt-in
 
-`@skryensya/vanilla/vaul` mejora el markup ya escrito. Usa `data-sk-vaul` para un Vaul y
-`data-sk-dialog-vaul` para la composición Dialog Vaul; abre con el atributo homónimo `-open` y cierra
-con `-close`. No renderiza markup ni escribe clases.
+`@skryensya/vanilla/vaul` enhances markup that is already written. It uses `data-sk-vaul` for a Vaul and
+`data-sk-dialog-vaul` for the Dialog Vaul composition; it opens with the matching `-open` attribute and
+closes with `-close`. It renders no markup and writes no classes.
 
-Sin enhancer, Vaul sigue teniendo panel, slide, backdrop, ESC y click afuera. Con enhancer, debajo de
-`52rem`, suma drag-to-dismiss. El CSS mantiene `--sk-vaul-drag-offset` y cada borde decide su dirección;
-el enhancer sólo lee geometría y escribe offset/progreso. Se cierra por distancia o velocidad; un flick
-hacia atrás gana a la distancia.
+Without the enhancer, a Vaul still has panel, slide, backdrop, ESC and outside click. With the enhancer,
+below `52rem`, it adds drag-to-dismiss. The CSS maintains `--sk-vaul-drag-offset` and each edge decides
+its own direction; the enhancer only reads geometry and writes offset/progress. It closes on distance or
+velocity; a flick backwards beats distance.
 
-## Soltar es una intención propia
+## Releasing is an intent of its own
 
-Un panel soltado no está *saliendo*: termina el impulso de la mano. Por eso consume `release`, no
-`enter` ni `exit`. La curva y duración de release cubren tanto volver a casa como salir por completo.
+A released panel is not *exiting*: it is finishing the hand's momentum. That is why it consumes
+`release`, not `enter` or `exit`. Release's curve and duration cover both returning home and leaving
+entirely.
 
-Tirar para el lado incorrecto resiste con un tope de ~12px en vez de trabarse. El backdrop sigue
-`--sk-vaul-drag-progress`, de modo que la página vuelve a medida que el panel sale.
+Dragging the wrong way resists with a cap of about 12px rather than locking. The backdrop follows
+`--sk-vaul-drag-progress`, so the page comes back as the panel leaves.
 
-## En desktop no se arrastra
+## On desktop there is no dragging
 
-El handle es táctil y desaparece arriba de `52rem`; CSS y enhancer leen el mismo breakpoint. El resto
-del documento no se transforma: la modalidad la expresa el backdrop nativo, no una reducción del DOM
-de fondo.
+The handle is touch-oriented and disappears above `52rem`; CSS and enhancer read the same breakpoint. The
+rest of the document is not transformed: modality is expressed by the native backdrop, not by shrinking
+the background DOM.

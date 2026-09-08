@@ -21,6 +21,15 @@ const isDev = process.env.NODE_ENV !== "production";
  * graph still need the Svelte compiler while preserving consumer-authored light DOM.
  */
 export default defineConfig({
+  /*
+   * The deployed origin. Astro needs it to turn a path into an absolute URL, which is what the
+   * `hreflang` alternates in `Base.astro` require: Google's rule for them is a fully-qualified URL,
+   * transport included, and a relative one is silently ignored rather than reported. Anything else
+   * that has to name the site from the outside (a sitemap, an `og:url`) reads it from here too,
+   * instead of a second copy of the domain living next to the first.
+   */
+  site: "https://ui.skryensya.dev",
+
   integrations: [react()],
   // Static output: the site is content, and every dimension (brand, mode, contrast, density)
   // resolves in the browser from custom properties, there is nothing for a server to decide.

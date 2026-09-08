@@ -214,10 +214,18 @@ const href = (path: string) => localizePath(path, locale);
 const vanillaMount = vanillaMounts[canonical as keyof typeof vanillaMounts];
 /* Every translation of this page that actually EXISTS: advertising one that 404s is worse than
  * advertising none, so the list comes from the page directory rather than from the locale list. */
-const alternates = availableLocales(canonical).map((code) => ({
-  code,
-  href: localizePath(canonical, code),
-}));
+/*
+ * ABSOLUTE, not the path. `hreflang` is one of the few places a relative URL is not merely untidy:
+ * the rule for these is a fully-qualified URL, transport included, and a relative one is skipped
+ * without a word rather than reported, so the two translations stop announcing each other and start
+ * competing as duplicates. `Astro.site` (astro.config.mjs) is the single place the origin is
+ * written. The fallback keeps this rendering if `site` is ever unset instead of throwing on every
+ * page: a wrong hreflang is a quiet SEO cost, a build that cannot render is a loud one.
+ */
+const alternates = availableLocales(canonical).map((code) => {
+  const path = localizePath(canonical, code);
+  return { code, href: Astro.site ? new URL(path, Astro.site).href : path };
+});
 
 /*
  * WHAT THE LANGUAGE PRE-PAINT SCRIPT IS ALLOWED TO KNOW, same shape and same reason as `PREPAINT`

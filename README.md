@@ -3,6 +3,8 @@
 **One contract, two runtimes, zero drift.** A framework-agnostic design system where the component
 contract is the source of truth, and every binding is derived from it rather than written twice.
 
+**[ui.skryensya.dev](https://ui.skryensya.dev)**
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D24-brightgreen.svg)](package.json)
 [![pnpm](https://img.shields.io/badge/pnpm-10.18.2-orange.svg)](package.json)
@@ -47,8 +49,9 @@ pnpm turbo run check --filter='!@skryensya/ai-gates' --concurrency=1
 That filter is the one `pre-push` uses. Dropping it (`pnpm check`) adds the browser gates, which are
 worth running for anything visual but take about 15 minutes.
 
-The documentation site is the primary reference: every contract has a page with live previews in
-both bindings, its options, its accessibility notes, and a real pass/fail test report.
+[**ui.skryensya.dev**](https://ui.skryensya.dev) is the primary reference: every contract has a page
+with live previews in both bindings, its options, its accessibility notes, and a real pass/fail test
+report. The command above serves the same site locally.
 
 ## Packages
 
@@ -78,7 +81,7 @@ both bindings, its options, its accessibility notes, and a real pass/fail test r
 |---|---|
 | [`@skryensya/recipes`](contracts/recipes) | Whole screens as usage trees, one per state, validated against the contracts. |
 | [`@skryensya/snippets`](contracts/snippets) | Established compositions below screen scale: one component well composed, or a small molecule. |
-| [`@skryensya/docs`](apps/docs) | The documentation site (Astro), and the system's own biggest consumer. |
+| [`@skryensya/docs`](apps/docs) | The documentation site at [ui.skryensya.dev](https://ui.skryensya.dev) (Astro), and the system's own biggest consumer. |
 | [`@skryensya/eval-viewer`](apps/eval-viewer) | Local-only viewer for agent eval runs. |
 
 ## Repository layout

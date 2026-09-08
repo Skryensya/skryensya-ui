@@ -1,74 +1,75 @@
 ---
 num: 15
-title: La evidencia se renderiza en los dos bindings
-short: "El sitio es el catálogo ejecutable"
+title: Evidence is rendered in both bindings
+short: "The site is the executable catalogue"
 summary: >-
-  El catálogo ejecutable que exigía el plan de reconstrucción ya existe: `apps/docs` renderiza los
-  dos bindings lado a lado (vanilla en un iframe `srcdoc`, React como island `client:load`) en 57 de
-  sus 67 páginas. Esta decisión lo declara el catálogo ejecutable del sistema, hace que su `ComponentPreview`
-  reciba usage trees en vez de strings, y adopta Playwright para correr los cuatro gates de runtime:
-  simetría por DOM-diff, interacción, accesibilidad y visual. Storybook no vuelve.
+  The executable catalogue the rebuild plan demanded already exists: `apps/docs` renders both bindings side
+  by side (vanilla in an `srcdoc` iframe, React as a `client:load` island) on 57 of its 67 pages. This
+  decision declares it the system's executable catalogue, makes its `ComponentPreview` take usage trees
+  instead of strings, and adopts Playwright to run the four runtime gates: DOM-diff symmetry, interaction,
+  accessibility and visual. Storybook does not come back.
 ---
 
-## El problema
+## The problem
 
-El plan de reconstrucción pedía un catálogo ejecutable y nombraba Storybook para todo: CSF como unidad
-de ejemplo, play tests para interacción, baselines visuales, y el Storybook MCP como la manera en que
-el agente vería el resultado.
+The rebuild plan asked for an executable catalogue and named Storybook for all of it: CSF as the example
+unit, play tests for interaction, visual baselines, and the Storybook MCP as the way the agent would see
+the result.
 
-Storybook se construyó en este repo, dos, uno para vanilla con `@storybook/html-vite` y otro para
-React, y se borró el 2026-07-17. No fue un accidente ni una limitación técnica: se rechazó a
-propósito y se pidió volver a los previews del sitio.
+Storybook was built in this repo, twice, one for vanilla with `@storybook/html-vite` and another for
+React, and deleted on 2026-07-17. It was not an accident or a technical limitation: it was rejected on
+purpose, with a request to go back to the site's previews.
 
-Y mientras tanto el sitio hacía ya lo que Storybook iba a hacer. `ComponentPreview.astro` monta la demo
-vanilla en un iframe `srcdoc` con su propio DOM, viewport y top layer, y la demo React como island
-`@astrojs/react` real (no un string de código) en el mismo documento, con un segmented para alternar.
-**57 de 67 páginas ya tienen las dos etapas vivas.** Un segundo catálogo en paralelo no habría
-agregado una sola capacidad; habría agregado una segunda cosa que mantener sincronizada.
+And meanwhile the site was already doing what Storybook was going to do. `ComponentPreview.astro` mounts
+the vanilla demo in an `srcdoc` iframe with its own DOM, viewport and top layer, and the React demo as a
+real `@astrojs/react` island (not a code string) in the same document, with a segmented control to switch
+between them. **57 of 67 pages already have both stages live.** A second catalogue in parallel would not
+have added a single capability; it would have added a second thing to keep in sync.
 
-## La decisión
+## The decision
 
-**`apps/docs` es el catálogo ejecutable.** No un reflejo de él: el mismo artefacto. `ComponentPreview` deja de
-recibir `html` y `react` como strings y recibe un usage tree, que renderiza con el mismo emisor que
-usa el MCP (decisión 29). El código que la página muestra es el emitido, no una transcripción. Una
-regresión en el contract se ve en la página.
+**`apps/docs` is the executable catalogue.** Not a reflection of it: the same artifact.
+`ComponentPreview` stops taking `html` and `react` as strings and takes a usage tree, which it renders
+with the same emitter the MCP uses (decision 29). The code the page shows is the emitted code, not a
+transcription. A regression in the contract shows up on the page.
 
-Las páginas siguen siendo humanas donde deben serlo: el orden, las secciones, la explicación de cuándo
-usar cada cosa. Lo que deja de escribirse a mano es la evidencia.
+The pages stay human where they should be: the order, the sections, the explanation of when to use what.
+What stops being written by hand is the evidence.
 
-**Playwright corre los gates de runtime**, los cuatro:
+**Playwright runs the runtime gates**, all four:
 
-| Gate | Qué prueba |
+| Gate | What it proves |
 |---|---|
-| Simetría | Los dos bindings del mismo árbol producen el mismo DOM normalizado: parts, atributos mapeados, árbol ARIA |
-| Interacción | La firma hace lo que declara, en un navegador real |
-| Accesibilidad | `@axe-core/playwright` sobre cada etapa, y el ARIA snapshot como contrato |
-| Visual | Baselines aprobados por estado canónico |
+| Symmetry | Both bindings of the same tree produce the same normalized DOM: parts, mapped attributes, ARIA tree |
+| Interaction | The signature does what it declares, in a real browser |
+| Accessibility | `@axe-core/playwright` over each stage, and the ARIA snapshot as a contract |
+| Visual | Baselines approved per canonical state |
 
-Se instala Playwright aunque el repo no lo tuviera. Manejar Chrome por CDP a mano fue un workaround
-por no tenerlo, nunca una preferencia: escribir a mano la inyección de axe, el diffing de imágenes y
-la captura de trazas es exactamente la rueda que no hay que reinventar. Y Playwright MCP es lo que el
-agente maneja para verificar la app consumidora.
+Playwright is installed even though the repo did not have it. Driving Chrome over CDP by hand was a
+workaround for not having it, never a preference: hand-writing axe injection, image diffing and trace
+capture is exactly the wheel not to reinvent. And Playwright MCP is what the agent drives to verify the
+consuming app.
 
-## Lo que se rechazó
+## What was rejected
 
-**Reintroducir Storybook**, que es lo que los documentos de origen especifican literalmente en G2, G4,
-G5 y en su fase de integración. Trae a11y y visual resueltos, pero ya se rechazó una vez con
-conocimiento de causa, y duplicaría un catálogo que existe y funciona.
+**Reintroducing Storybook**, which is what the source documents literally specify in G2, G4, G5 and in
+their integration phase. It brings a11y and visual solved, but it was already rejected once with full
+knowledge, and it would duplicate a catalogue that exists and works.
 
-**Formalizar el harness CDP propio.** Cero dependencias nuevas y control total del protocolo, a cambio
-de mantener el runner, los baselines y la captura de evidencia a mano.
+**Formalizing the in-house CDP harness.** Zero new dependencies and total control of the protocol, in
+exchange for maintaining the runner, the baselines and the evidence capture by hand.
 
-**jsdom para la mitad estructural y navegador solo para lo visual.** Los gates baratos correrían en
-cada commit, pero jsdom ya demostró en este repo que miente con Zag (`raf`, microtasks, `CSS.escape`
-ausente) justo en los componentes cuya interacción importa. Un gate que miente rápido no es barato.
+**jsdom for the structural half and a browser only for the visual one.** The cheap gates would run on
+every commit, but jsdom has already demonstrated in this repo that it lies with Zag (`raf`, microtasks,
+missing `CSS.escape`) precisely in the components whose interaction matters. A gate that lies fast is not
+cheap.
 
-**Que el sitio sea además el runner de CI**, exponiendo sus árboles en una ruta machine-readable. Un
-solo lugar donde las cosas se renderizan, al precio de acoplar los gates al build del sitio y a que el
-dev server esté sano.
+**Making the site the CI runner too**, exposing its trees on a machine-readable route. A single place
+where things render, at the price of coupling the gates to the site's build and to the dev server being
+healthy.
 
-## Costo
+## Cost
 
-`ComponentPreview.astro` y las 67 páginas se tocan una vez para pasar de strings a árboles, y las 10 páginas
-que hoy no tienen demo React necesitan uno o quedan fuera del gate de simetría. Playwright suma una
-dependencia grande y un navegador a CI.
+`ComponentPreview.astro` and the 67 pages are touched once to move from strings to trees, and the 10
+pages that have no React demo today need one or fall outside the symmetry gate. Playwright adds a large
+dependency and a browser to CI.

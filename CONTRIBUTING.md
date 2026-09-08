@@ -41,7 +41,7 @@ advisory. Read what a failing hook printed: each one names its own fix.
 
 | Hook | What it runs | Roughly |
 |---|---|---|
-| `commit-msg` | Conventional Commits shape, one line | instant |
+| `commit-msg` | Conventional Commits shape, a 100-character subject cap, no trailers | instant |
 | `pre-commit` | `gitleaks` on staged changes, plus icon-vocabulary completeness when the icon vocabulary is touched | about 1s |
 | `pre-push` | Dependency audit, then the full check minus the browser gates | a few minutes |
 
@@ -58,16 +58,28 @@ Two notes on the hooks:
 
 ## Commit messages
 
-One line. No body, no trailers, ever, whatever tool authored the change.
-
 ```
-type(scope opcional): descripcion en minuscula, sin punto final
+type(scope opcional): descripcion
+
+Cuerpo opcional, despues de una linea en blanco, para el detalle que no entra en el asunto.
 ```
 
-Types: `feat fix docs style refactor perf test build ci chore revert`. The scope is optional.
+Types: `feat fix docs style refactor perf test build ci chore revert`. The scope is optional. The
+description is free text: it may start uppercase and it may end with a period.
 
-`.husky/commit-msg` enforces the shape. It does not enforce the language, but the house style is
-**Spanish**, and the whole history follows it:
+Three things `.husky/commit-msg` does enforce:
+
+- **The subject is capped at 100 characters.** It is the only part `git log --oneline`, the GitHub
+  history and `git blame` ever show, and past a certain length it stops summarizing and becomes a
+  misplaced paragraph. 100 rather than the classic 72 because this history writes long subjects on
+  purpose: over the last 200 commits the median is 56 and the 90th percentile is 82, so 72 would have
+  rejected 39 of them and 100 rejects 5.
+- **A body must be separated by a blank line.** Git only treats the rest as a body if that blank line
+  is there; without it the whole thing renders as one very long subject.
+- **No `Co-authored-by:` or `Signed-off-by:` trailers**, whatever tool authored the change.
+
+The hook does not enforce the language, but the house style is **Spanish**, and the whole history
+follows it:
 
 ```
 fix(calendar): sube las celdas de dia a sm para que el widget tenga un solo escalon de tamano

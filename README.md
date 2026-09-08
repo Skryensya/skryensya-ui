@@ -43,11 +43,11 @@ pnpm install                            # link the workspace
 pnpm --filter @skryensya/docs dev       # docs site at http://localhost:4173
 
 # The everyday gate: typecheck, lint and tests across every package.
-pnpm turbo run check --filter='!@skryensya/ai-gates' --concurrency=1
+pnpm check
 ```
 
-That filter is the one `pre-push` uses. Dropping it (`pnpm check`) adds the browser gates, which are
-worth running for anything visual but take about 15 minutes.
+That is what `pre-push` runs, and it skips the browser gates. `pnpm check:gates` runs those alone
+(about 19 minutes, worth it for anything visual) and `pnpm check:all` runs both.
 
 [**ui.skryensya.dev**](https://ui.skryensya.dev) is the primary reference: every contract has a page
 with live previews in both bindings, its options, its accessibility notes, and a real pass/fail test
@@ -118,8 +118,9 @@ contract lives in Core and the frameworks are bindings.
 
 | Command | What it does |
 |---|---|
-| `pnpm turbo run check --filter='!@skryensya/ai-gates'` | Typecheck, lint and test every package except the browser gates. The everyday loop, and what `pre-push` runs. |
-| `pnpm check` | The same, plus the browser gates. The full gate, and slow. |
+| `pnpm check` | Typecheck, lint and test every package except the browser gates. The everyday loop, and what `pre-push` runs. Cached by Turbo: unchanged packages do not re-run. |
+| `pnpm check:gates` | The browser gates (Playwright, ~19 min). Their dependencies build first, from cache if nothing moved. |
+| `pnpm check:all` | Both. The full gate, and what CI runs on a pull request. |
 | `pnpm lint` | Token validator across the repo (cached by Turbo). |
 | `pnpm build` | Build every package. The docs site's static output lands in `apps/docs/dist`. |
 | `pnpm --filter @skryensya/docs dev` | Docs site on port 4173. |

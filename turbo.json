@@ -1,5 +1,11 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  // Read by a task but owned by no package, so nothing else hashes them.
+  // `ai-compiler`'s check runs `tsx src/cli.ts ../..`, which compiles the contracts from the repo
+  // root; `inputs` cannot reach outside a package, so without these two globs editing a contract left
+  // every hash untouched and `check` replayed a green log without ever re-validating the change.
+  // `contracts/recipes` and `contracts/snippets` are workspace packages and hash through the
+  // dependency graph already; these two are plain directories and do not.
   "globalDependencies": [
     "contracts/semantic/**",
     "contracts/changelog/**"

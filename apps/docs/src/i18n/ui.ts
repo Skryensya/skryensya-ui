@@ -919,6 +919,7 @@ export const ui = {
     "calendar.test1": "Genera todo el grid desde una raíz autorada vacía, una sola vez.",
     "calendar.test2": "Nombra los días de la semana en el locale autorado.",
     "calendar.test3": "Abre en la fecha autorada en vez de en hoy.",
+    "calendar.test4": "Pinta cada control del calendario en un solo escalón de tamaño, incluidas las celdas de día.",
 
     "demo.datePicker.locale": "es-DO",
     "demo.datePicker.label": "Reserva",
@@ -5811,6 +5812,7 @@ export const ui = {
     "calendar.test1": "Generates the whole grid from an empty authored root, once.",
     "calendar.test2": "Names the weekdays in the authored locale.",
     "calendar.test3": "Opens on the authored date rather than on today.",
+    "calendar.test4": "Paints every control in the calendar at one size tier, day cells included.",
 
     "demo.datePicker.locale": "en-US",
     "demo.datePicker.label": "Booking",

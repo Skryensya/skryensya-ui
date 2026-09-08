@@ -149,6 +149,27 @@ describe("Calendar Vanilla contracts", () => {
     await waitFor(() => expect(dayLabelled("20 de marzo de 2024")).toBeTruthy());
   });
 
+  /*
+   * These attributes are written by hand here (`CalendarView.svelte` spreads a literal bag onto a
+   * bare `<button>`) while React serializes them from a `<Button size="sm">` prop, so the same
+   * assertion lives on both sides: the two halves have to agree on the attribute or G2 reports
+   * the calendar as divergent. The day cell used to be `xs` against an `sm` header; the header is
+   * asserted alongside the day so a diff that reintroduces that split (or drops the header to
+   * match) can't read as deliberate density work.
+   */
+  it("paints every control in the calendar at one size tier, day cells included", () => {
+    markup();
+
+    const [day] = cells();
+    expect(day.className).toContain("sk-button");
+    expect(day.getAttribute("data-size")).toBe("sm");
+    // Same SHAPE as prev/next: a square holding one piece of content, now at the same size too.
+    expect(day.getAttribute("data-icon-only")).toBe("");
+    expect(prevTrigger().getAttribute("data-size")).toBe("sm");
+    expect(nextTrigger().getAttribute("data-size")).toBe("sm");
+    expect(viewTrigger().getAttribute("data-size")).toBe("sm");
+  });
+
   it("marks a disabled calendar as one", () => {
     const root = markup('data-locale="es-DO" data-value="2024-03-15" data-disabled');
     expect(root.getAttribute("data-disabled")).toBe("");

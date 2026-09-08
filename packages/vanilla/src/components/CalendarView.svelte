@@ -22,7 +22,7 @@
   const { api, locale }: { api: DatePickerApi; locale: string } = $props();
 
   /*
-   * Every trigger below IS a real sm ghost Button (ADR-1/8): the class list and the variant/size/
+   * Every trigger below IS a real ghost Button (ADR-1/8): the class list and the variant/size/
    * icon-only attrs come straight from `buttonContract`, not a copy of its values, so a rename in
    * Button's shape shows up here for free instead of drifting out of four hand-typed literals.
    *
@@ -31,6 +31,14 @@
    * button" contract for what is one shape wearing two kinds of content. Month/year cells stay plain
    * Buttons: their label is a word, not a single glyph, and they stretch to fill their `<td>` instead
    * of collapsing to a square (calendar.css).
+   *
+   * The SIZE is `sm` for EVERY control in here, day cells included. The day cell used to sit one
+   * tier lower at `xs` (24px, the floor of the scale) on the argument that forty-two of them share
+   * one grid; measured against the header it read as a second, weaker control tier inside one
+   * widget, and 24px is the WCAG 2.2 SC 2.5.8 minimum rather than comfortable room for a digit you
+   * aim at. One `smGhost` bag now covers the header and the grid, and it is spelled here because
+   * React composes a real `<Button size="sm">` for the same cell: the attribute has to be the one
+   * that prop serializes or G2 reports the two halves as divergent.
    */
   const buttonClass = `${buttonParts.root} ${buttonParts.interactive}`;
   const {

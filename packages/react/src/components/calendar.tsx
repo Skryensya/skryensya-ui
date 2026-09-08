@@ -92,6 +92,15 @@ export function CalendarBody({
    * content, a glyph for prev/next, a day number for the cell, rather than a second "icon button"
    * for what is one shape wearing two kinds of content. Month/year cells stay plain Buttons: their
    * label is a word, not a single glyph, and they stretch to fill their `<td>` (calendar.css).
+   *
+   * The SIZE is `sm` for EVERY control in here, day cells included. The day cell used to sit one
+   * tier lower at `xs` (24px, the floor of the scale) on the argument that forty-two of them share
+   * one grid; measured against the header it read as a second, weaker control tier inside one
+   * widget, and 24px is the WCAG 2.2 SC 2.5.8 minimum rather than comfortable room for a digit you
+   * aim at. One tier throughout, and the grid still fits the 18rem calendar. Spelled here rather
+   * than left to CSS: React serializes `data-size` from this prop, so the attribute the vanilla
+   * binding writes by hand has to be the one this prop produces or G2 reports the two halves as
+   * divergent.
    */
   return (
     <>

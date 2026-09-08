@@ -1,63 +1,62 @@
 ---
 num: 1
-title: La densidad es un multiplicador con el piso de WCAG adentro
-short: "La densidad"
+title: Density is a multiplier with the WCAG floor inside it
+short: "Density"
 summary: >-
-  La densidad es un multiplicador en runtime (--sk-density), no un segundo set de valores que pueda
-  derivar de los base. Los tamaños interactivos llevan el piso de 24px de WCAG dentro del propio token,
-  así que ningún equipo puede multiplicar por debajo del mínimo accesible, pongan lo que pongan. Tipografía,
-  radio y anillo de foco quedan deliberadamente invariantes a la densidad.
+  Density is a runtime multiplier (--sk-density), not a second set of values that could drift from the
+  base ones. Interactive sizes carry the WCAG 24px floor inside the token itself, so no team can multiply
+  below the accessible minimum, whatever they set. Typography, radius and the focus ring are deliberately
+  invariant to density.
 ---
 
-La densidad (cómoda/compacta/densa) es una dimensión de espaciado. La implementación obvia, escribir
-un segundo set completo de valores para "compacta", duplica la superficie a mantener y deja que las dos
-escalas deriven.
+Density (comfortable/compact/dense) is a spacing dimension. The obvious implementation, writing a second
+complete set of values for "compact", doubles the surface to maintain and lets the two scales drift.
 
-Y hay algo peor: cualquier mecanismo de densidad puede violar la accesibilidad en silencio. Si se encoge
-un control lo suficiente, se cruza el tamaño mínimo de target de WCAG 2.2 SC 2.5.8 (24px), algo que
-ninguna revisión de código detecta de forma confiable.
+And there is something worse: any density mechanism can violate accessibility silently. Shrink a control
+far enough and it crosses the WCAG 2.2 SC 2.5.8 minimum target size (24px), something no code review
+catches reliably.
 
-## Un solo número
+## A single number
 
-`--sk-density` (1 = cómoda). Los tokens de espaciado emiten:
+`--sk-density` (1 = comfortable). The spacing tokens emit:
 
 ```css
 round(calc(<base> * var(--sk-density)), 2px)
 ```
 
-Los tamaños interactivos además le ponen piso al resultado:
+Interactive sizes additionally floor the result:
 
 ```css
 max(round(calc(<base> * var(--sk-density)), 2px), 24px)
 ```
 
-**El piso está dentro del token.** Ningún equipo de producto puede multiplicar por debajo, sin importar
-lo que asignen a `--sk-density`. Es inalcanzable por construcción, no por documentación.
+**The floor is inside the token.** No product team can multiply below it, no matter what they assign to
+`--sk-density`. It is unreachable by construction, not by documentation.
 
-## Por qué `round(…, 2px)`
+## Why `round(..., 2px)`
 
-`calc(4px * 0.6)` = 2.4px se cae de la grilla base; unos cuantos de esos juntos hacen temblar una UI
-compacta. `round()` los engancha a una sub-grilla de 2px, un no-op a densidad 1 (cada primitivo ya es
-múltiplo de 4) y un estabilizador en el resto. Es el único lugar donde la capa de tokens hace aritmética
-que el diseñador no escribió, y está justificado.
+`calc(4px * 0.6)` = 2.4px falls off the base grid; a few of those together make a compact UI shimmer.
+`round()` snaps them to a 2px sub-grid, a no-op at density 1 (every primitive is already a multiple of 4)
+and a stabilizer everywhere else. It is the only place the token layer does arithmetic the designer did
+not write, and it is justified.
 
-## Qué es deliberadamente invariante a la densidad
+## What is deliberately invariant to density
 
-- **Tipografía**, escalar font-size sin corregir line-height se lee peor. La densidad es un problema de
-  espaciado, no de tipo.
-- **Radio de esquina**, es redondez, no espacio; tiene su propia dimensión
-  ([decisión 18](./0019-public-palettes-and-constant-semantics.md)) y por eso la densidad no lo toca.
-- **Ancho del anillo de foco**, un anillo que se encoge desaparece.
-- **Área de impacto táctil**, un target puede pintarse chico y responder grande: el área invisible se
-  queda en 44px.
+- **Typography**, scaling font-size without correcting line-height reads worse. Density is a spacing
+  problem, not a type problem.
+- **Corner radius**, it is roundness, not space; it has its own dimension
+  ([decision 18](./0019-public-palettes-and-constant-semantics.md)) and that is why density does not
+  touch it.
+- **Focus ring width**, a ring that shrinks disappears.
+- **Touch hit area**, a target can paint small and respond large: the invisible area stays at 44px.
 
-## La contra, y su trampa
+## The downside, and its trap
 
-Los valores emitidos son expresiones `calc`/`round`/`max`, no números. Leerlos de vuelta desde JS
-requiere el navegador.
+The emitted values are `calc`/`round`/`max` expressions, not numbers. Reading them back from JS requires
+the browser.
 
-Y ahí hay una trampa que cuesta caro: `getComputedStyle().getPropertyValue('--x')` **no resuelve** una
-custom property. Devuelve el valor especificado con los `var()` sustituidos, 
-`round(calc(16px * 1), 2px)`, nunca `16px`. Las custom properties solo se evalúan cuando se **usan** en
-una propiedad real. Para leer el valor usado hay que asignar el token a una propiedad de un elemento y
-leer *esa* propiedad.
+And there is a trap there that costs real time: `getComputedStyle().getPropertyValue('--x')` **does not
+resolve** a custom property. It returns the specified value with the `var()`s substituted,
+`round(calc(16px * 1), 2px)`, never `16px`. Custom properties are only evaluated when they are **used**
+in a real property. To read the used value you have to assign the token to a property on an element and
+read *that* property.

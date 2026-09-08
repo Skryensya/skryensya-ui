@@ -1,171 +1,170 @@
 ---
 num: 2
-title: Qué envía tier 3, styling hooks, patterns, y la capa vanilla
-short: "Qué envía tier 3"
+title: What tier 3 ships, styling hooks, patterns, and the vanilla layer
+short: "What tier 3 ships"
 summary: >-
-  Tier 3 envía la CLASE y sus styling hooks: importar button.css te da un botón. La regla vieja
-  ("componente = solo hooks, la app escribe la estructura") se revirtió porque no sobrevivió al uso:
-  22 de 36 hojas ya enviaban estructura, nada lo verificaba, y el único consumidor terminó escribiendo
-  17 skins y duplicando una. La distinción componente/pattern sobrevive, pero ahora decide DE QUIÉN es
-  una estructura, no si se envía. El comportamiento que la plataforma no da lo aporta una capa vanilla
-  de enhancers, nunca como contrato de framework.
+  Tier 3 ships the CLASS and its styling hooks: importing button.css gives you a button. The old rule
+  ("component = hooks only, the app writes the structure") was reversed because it did not survive use:
+  22 of 36 stylesheets already shipped structure, nothing verified it, and the only consumer ended up
+  writing 17 skins and duplicating one. The component/pattern distinction survives, but it now decides
+  WHOSE a structure is, not whether it ships. Behavior the platform does not provide comes from a vanilla
+  layer of enhancers, never as a framework contract.
 ---
 
-## La regla vieja, y por qué se cayó
+## The old rule, and why it fell
 
-Esta decisión decía:
+This decision used to say:
 
-> ¿Muchos componentes comparten esta estructura exacta? **Sí → pattern**, envía hooks y estructura.
-> **No → componente**, envía solo styling hooks, porque el markup y el layout de cada consumidor
-> difieren.
+> Do many components share this exact structure? **Yes -> pattern**, ships hooks and structure.
+> **No -> component**, ships styling hooks only, because every consumer's markup and layout differ.
 
-El argumento era razonable y la predicción era falsable: *"no hay dos apps que maqueten un botón
-igual"*. Se midió, y falló en las tres formas en que una regla puede fallar.
+The argument was reasonable and the prediction was falsifiable: *"no two apps lay out a button the same
+way"*. It was measured, and it failed in all three ways a rule can fail.
 
-**No se cumplía.** De 36 hojas en `css/components/`, 22 ya enviaban estructura, hasta 163
-declaraciones en `select.css`, 117 en `tile.css`, 85 en `details.css`. Catorce no enviaban ninguna.
-El sistema no tenía una regla con excepciones: tenía dos sistemas, y en qué mitad caía un componente
-dependía de qué día se escribió.
+**It was not being followed.** Of 36 stylesheets in `css/components/`, 22 already shipped structure, up
+to 163 declarations in `select.css`, 117 in `tile.css`, 85 in `details.css`. Fourteen shipped none. The
+system did not have a rule with exceptions: it had two systems, and which half a component fell into
+depended on what day it was written.
 
-**Nada la verificaba.** [El validador](./0019-public-palettes-and-constant-semantics.md) chequeaba direcciones de
-referencia, completitud de modos, contraste y forma de nombres. Ninguna regla miraba si un componente
-enviaba estructura, así que el corpus derivó en silencio, componente por componente, sin que nadie
-tomara la decisión de revertirla.
+**Nothing verified it.** [The validator](./0019-public-palettes-and-constant-semantics.md) checked
+reference directions, mode completeness, contrast and name shape. No rule looked at whether a component
+shipped structure, so the corpus drifted silently, component by component, without anyone deciding to
+reverse it.
 
-**La predicción se pudo medir, y salió mal.** El único consumidor que existe, este sitio, tuvo que
-escribir 17 skins en `apps/docs/src/examples/`. Una de ellas, `.sk-badge`, terminó duplicada en
-`site.css` y las dos copias **divergieron**: una perdió el `border`. Eso es una sola app duplicándose
-a sí misma. La premisa era que apps distintas maquetarían distinto; lo que pasó es que la misma app no
-pudo mantener sincronizada una copia consigo misma.
+**The prediction was measurable, and it came out wrong.** The only consumer that exists, this site, had
+to write 17 skins in `apps/docs/src/examples/`. One of them, `.sk-badge`, ended up duplicated in
+`site.css` and the two copies **diverged**: one lost its `border`. That is a single app duplicating
+itself. The premise was that different apps would lay things out differently; what happened is that the
+same app could not keep one copy in sync with itself.
 
-Y el costo real estaba en la puerta de entrada: importar `button.css` no daba un botón, daba
-variables. Un sistema de diseño cuyo primer paso es "ahora escribí vos el CSS" no está enviando un
-botón, está enviando la tarea de hacer uno.
+And the real cost was at the front door: importing `button.css` did not give you a button, it gave you
+variables. A design system whose first step is "now you write the CSS" is not shipping a button, it is
+shipping the job of making one.
 
-## La regla
+## The rule
 
-> **Un componente envía la clase y sus styling hooks.**
+> **A component ships the class and its styling hooks.**
 
-Importar `components/button.css` te da un botón que se ve como un botón. Los hooks siguen siendo el
-contrato público, y siguen siendo cómo lo cambiás: `--sk-button-bg` se re-declara desde fuera sin
-pelear especificidad, porque la estructura vive en `@layer components` y cualquier regla sin layer le
-gana ([decisión 1](./0019-public-palettes-and-constant-semantics.md)). Enviar la
-estructura no cierra la puerta que los hooks abrían; la deja abierta con algo adentro.
+Importing `components/button.css` gives you a button that looks like a button. The hooks remain the
+public contract, and they remain how you change it: `--sk-button-bg` is re-declared from outside without
+fighting specificity, because the structure lives in `@layer components` and any unlayered rule beats it
+([decision 1](./0019-public-palettes-and-constant-semantics.md)). Shipping the structure does not close
+the door the hooks opened; it leaves it open with something behind it.
 
-Esto lo hace cumplir el validador con la regla `component-ships-structure`: una hoja de
-`components/` que declare hooks y ninguna propiedad real falla. La regla nueva es el inverso exacto de
-la vieja, y existe porque la ausencia de una regla fue lo que dejó derivar a la anterior.
+The validator enforces this with the `component-ships-structure` rule: a sheet in `components/` that
+declares hooks and no real property fails. The new rule is the exact inverse of the old one, and it
+exists because the absence of a rule is what let the previous one drift.
 
-## Qué sigue siendo un pattern
+## What is still a pattern
 
-La distinción componente/pattern **no desapareció**: cambió de pregunta. Antes decidía *si* se enviaba
-estructura. Ahora decide **de quién es** una estructura.
+The component/pattern distinction **did not disappear**: it changed question. It used to decide *whether*
+structure shipped. Now it decides **whose** a structure is.
 
-> **¿Muchos componentes comparten esta estructura exacta?** Si es sí, vive en `patterns/` y la
-> escribe una sola vez.
+> **Do many components share this exact structure?** If yes, it lives in `patterns/` and is written once.
 
-`state-layer` es un pattern: button, tile, menu-item y tab necesitan todos el `::before` idéntico, con
-su `pointer-events`, su `z-index`, su `isolation` y su `border-radius: inherit`. Escribirlo en cada
-componente es exactamente la duplicación que el pattern existe para prevenir.
+`state-layer` is a pattern: button, tile, menu-item and tab all need the identical `::before`, with its
+`pointer-events`, its `z-index`, its `isolation` and its `border-radius: inherit`. Writing it in every
+component is exactly the duplication the pattern exists to prevent.
 
-Y sigue habiendo un caso en el que un componente no escribe estructura propia: cuando **compone** un
-pattern. `drawer.css` no declara panel, borde, slide ni backdrop; re-declara `--sk-vaul-*` desde
-`--sk-drawer-*` y ya está. No es "no envío nada", es "esto es un Vaul, afinado", y todo lo estructural
-que un drawer podría escribir es estructura que un bottom sheet necesita idéntica. El validador exime
-ese caso, y sólo ese: una hoja que re-declara los hooks de OTRO componente o pattern.
+And there is still a case where a component writes no structure of its own: when it **composes** a
+pattern. `drawer.css` declares no panel, border, slide or backdrop; it re-declares `--sk-vaul-*` from
+`--sk-drawer-*` and that is all. It is not "I ship nothing", it is "this is a Vaul, tuned", and
+everything structural a drawer might write is structure a bottom sheet needs identically. The validator
+exempts that case, and only that: a sheet that re-declares ANOTHER component's or pattern's hooks.
 
-## Invariante no es lo mismo que compartida
+## Invariant is not the same as shared
 
-Esta parte del argumento viejo sobrevive intacta, sólo que ahora justifica dónde vive una estructura,
-no si se envía.
+This part of the old argument survives intact, only now it justifies where a structure lives, not
+whether it ships.
 
-La anatomía de un combobox **es invariante**: la máquina dicta root → control → input + trigger,
-positioner → content → items, y desviarse lo rompe. Es tentador concluir que entonces es un pattern.
+A combobox's anatomy **is invariant**: the machine dictates root -> control -> input + trigger,
+positioner -> content -> items, and deviating breaks it. It is tempting to conclude that it is therefore
+a pattern.
 
-No. La invarianza es **necesaria pero no suficiente** para promover algo a `patterns/`. Lo que
-justifica un pattern es que la estructura esté **compartida**, ahí hay duplicación real que prevenir.
-La anatomía del combobox la usa exactamente un componente: el combobox. No hay nada que compartir, así
-que vive en `components/combobox.css`, que es donde se escribe una sola vez de todos modos.
+No. Invariance is **necessary but not sufficient** to promote something to `patterns/`. What justifies a
+pattern is that the structure is **shared**, because there is real duplication to prevent. The
+combobox's anatomy is used by exactly one component: the combobox. There is nothing to share, so it
+lives in `components/combobox.css`, which is where it is written once anyway.
 
-## La plataforma decide, componente por componente
+## The platform decides, component by component
 
-El principio de [CSS puro](./0019-public-palettes-and-constant-semantics.md), no reimplementar el runtime del
-navegador, corta para los dos lados, y el corte es por componente:
+The [pure CSS](./0019-public-palettes-and-constant-semantics.md) principle, do not reimplement the
+browser runtime, cuts both ways, and the cut is per component:
 
-| La plataforma lo envía | → solo CSS, sin máquina |
+| The platform ships it | -> CSS only, no machine |
 |---|---|
 | dialog | `<dialog>` + `showModal()` |
 | popover | Popover API |
 | disclosure | `<details>` / `<summary>` |
 
-| La plataforma no envía nada | → una máquina se gana su lugar |
+| The platform ships nothing | -> a machine earns its place |
 |---|---|
-| combobox, tabs, menu, tree, toast, date-picker, slider | no existe equivalente nativo |
+| combobox, tabs, menu, tree, toast, date-picker, slider | no native equivalent exists |
 
-Un combobox con máquina no reimplementa **nada**, porque no hay combobox nativo, así que la objeción
-no tiene de dónde agarrarse. Un dialog con máquina reimplementa `showModal()`, así que
-[el dialog es nativo](./0005-dialog-requires-the-native-element.md). No es un punto medio entre
-dos posiciones: es el mismo principio aplicado dos veces, cayendo distinto porque la plataforma es
-distinta.
+A combobox with a machine reimplements **nothing**, because there is no native combobox, so the
+objection has nothing to hold on to. A dialog with a machine reimplements `showModal()`, which is why
+[the dialog is native](./0005-dialog-requires-the-native-element.md). This is not a middle ground
+between two positions: it is the same principle applied twice, landing differently because the platform
+is different.
 
-## La capa vanilla
+## The vanilla layer
 
-El comportamiento que no envía la plataforma lo aporta una **capa vanilla**: el consumidor escribe el
-HTML, enlaza el CSS, y hace `await initComponents()`. **No necesita framework.**
+Behavior the platform does not ship comes from a **vanilla layer**: the consumer writes the HTML, links
+the CSS, and calls `await initComponents()`. **No framework needed.**
 
-Cada unidad es un **enhancer**: encuentra un root autorado, corre la máquina, y parchea atributos sobre
-elementos que ya existen. **No renderiza markup y nunca escribe una clase**, las dos cosas son del
-consumidor. Montar es idempotente.
+Each unit is an **enhancer**: it finds an authored root, runs the machine, and patches attributes onto
+elements that already exist. **It does not render markup and never writes a class**, both of which
+belong to the consumer. Mounting is idempotent.
 
-**Vanilla es el contrato.** El consumidor no escribe, no importa y no configura un framework. La capa
-existe para hidratar markup autorado: encuentra raíces, corre comportamiento y parchea atributos sobre
-elementos que ya existen.
+**Vanilla is the contract.** The consumer does not write, import or configure a framework. The layer
+exists to hydrate authored markup: it finds roots, runs behavior and patches attributes onto elements
+that already exist.
 
-El **markup contract**, los parts, en el anidado correcto, se **documenta, nunca se envía**. El
-sistema describe el markup y el consumidor lo escribe. Esa es la distinción que hay que no confundir
-con la regla de arriba: enviar la **clase** es enviar CSS, no HTML. `components/tabs.css` te dice cómo
-se ve un `.sk-tabs__list`; el `<div class="sk-tabs__list">` lo escribís vos.
+The **markup contract**, the parts in the correct nesting, is **documented, never shipped**. The system
+describes the markup and the consumer writes it. That is the distinction not to confuse with the rule
+above: shipping the **class** is shipping CSS, not HTML. `components/tabs.css` tells you what a
+`.sk-tabs__list` looks like; you write the `<div class="sk-tabs__list">`.
 
-Los **parts** se nombran en BEM (`.sk-tabs__list`) y son propios y permanentes: sobreviven si la
-máquina de abajo se reemplaza. El **state** (selected, expanded, disabled) lo escribe la máquina como
-atributo de data, nunca como modificador BEM y nunca a mano. Los parts son propios; el state es de la
-máquina.
+The **parts** are named in BEM (`.sk-tabs__list`) and are ours and permanent: they survive if the
+machine underneath is replaced. The **state** (selected, expanded, disabled) is written by the machine
+as a data attribute, never as a BEM modifier and never by hand. The parts are ours; the state is the
+machine's.
 
-Un enhancer **parchea atributos sobre markup autorado y nunca escribe una clase**. La excepción es el
-chrome que se deriva del contenido y que el autor por lo tanto no puede escribir: el carrusel dibuja
-sus controles porque cuántos dots hay sale de MEDIR la pista, no de contar slides
-([decisión 24](./0010-the-vanilla-layer-uses-svelte-and-the-machines-live-in-core.md)). Sigue sin
-inventar contenido; dibuja lo que sólo la máquina sabe.
+An enhancer **patches attributes onto authored markup and never writes a class**. The exception is
+chrome derived from the content, which the author therefore cannot write: the carousel draws its own
+controls because how many dots there are comes from MEASURING the track, not from counting slides
+([decision 24](./0010-the-vanilla-layer-uses-svelte-and-the-machines-live-in-core.md)). It still invents
+no content; it draws what only the machine knows.
 
-**Un framework nunca es el contrato.** Vanilla es la superficie que el sistema promete; React es una
-binding documentada, una de varias posibles, no la puerta de entrada
-([decisión 14](./0007-core-vanilla-and-react.md)). Atar el design system a un framework que otro
-consumidor no tendría por qué usar es exactamente lo que la capa vanilla evita.
+**A framework is never the contract.** Vanilla is the surface the system promises; React is a documented
+binding, one of several possible ones, not the front door
+([decision 14](./0007-core-vanilla-and-react.md)). Tying the design system to a framework another
+consumer would have no reason to use is exactly what the vanilla layer avoids.
 
-## El paquete compartido no guarda máquinas
+## The shared package does not hold machines
 
-`core` existe, pero como paquete de **tokens + parts + opciones compartidas**
-([decisión 14](./0007-core-vanilla-and-react.md)), lo que toda binding necesita ver igual. Las
-máquinas de estado no viven ahí: ya son paquetes standalone agnósticos de framework, y un paquete que solo
-las re-exportara falla [el test de borrado](./0019-public-palettes-and-constant-semantics.md), bórralo, importa la
-máquina directo, y no reaparece complejidad en los llamadores. Un enhancer las importa donde las usa.
+`core` exists, but as a package of **tokens + parts + shared options**
+([decision 14](./0007-core-vanilla-and-react.md)), what every binding needs to see identically. The state
+machines do not live there: they are already standalone framework-agnostic packages, and a package that
+only re-exported them fails [the deletion test](./0019-public-palettes-and-constant-semantics.md),
+delete it, import the machine directly, and no complexity reappears in the callers. An enhancer imports
+them where it uses them.
 
-## El CSS se queda en `packages/core`
+## The CSS stays in `packages/core`
 
-`components/combobox.css` vive con todas las demás hojas de estilo. La razón es enforcement, no
-orden: el corpus del [validador](./0019-public-palettes-and-constant-semantics.md) es `packages/core/css/**`, así
-que CSS que migrara a otro paquete quedaría fuera de las reglas de tier, de mode-completeness y del
-contraste cross-marca, exento en silencio de cada garantía que el validador existe para dar.
+`components/combobox.css` lives with every other stylesheet. The reason is enforcement, not tidiness:
+the [validator's](./0019-public-palettes-and-constant-semantics.md) corpus is `packages/core/css/**`, so
+CSS migrated to another package would fall outside the tier rules, mode completeness and cross-brand
+contrast, silently exempt from every guarantee the validator exists to give.
 
-## Ante la duda
+## When in doubt
 
-La pregunta que queda ("¿muchos componentes comparten esto?") sigue siendo una **predicción**, y una
-predicción equivocada promueve a `patterns/` una estructura que nadie reusa. Ante duda genuina,
-preferir `component`: promover después es aditivo, mientras que degradar un pattern rompe a todos sus
-consumidores.
+The question that remains ("do many components share this?") is still a **prediction**, and a wrong
+prediction promotes a structure nobody reuses into `patterns/`. On genuine doubt, prefer `component`:
+promoting later is additive, while demoting a pattern breaks all its consumers.
 
-Pero la lección más cara de esta decisión no es sobre esa pregunta, es sobre las predicciones en
-general. La regla vieja se apoyaba en una ("no hay dos apps que maqueten un botón igual"), nadie la
-midió durante meses, y el corpus la fue contradiciendo hoja por hoja sin que eso disparara nada. Una
-regla que el validador no puede chequear no es una regla: es una intención, y el código deriva de ella
-en silencio. Por eso la regla nueva llegó junto con su check, y no antes ni después.
+But the most expensive lesson of this decision is not about that question, it is about predictions in
+general. The old rule rested on one ("no two apps lay out a button the same way"), nobody measured it
+for months, and the corpus contradicted it sheet by sheet without that triggering anything. A rule the
+validator cannot check is not a rule: it is an intention, and the code drifts away from it silently.
+That is why the new rule arrived together with its check, and not before or after.

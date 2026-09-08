@@ -1,99 +1,98 @@
 ---
 num: 3
-title: El state layer usa `currentColor` y una escalera de un solo layer activo
-short: "El state layer"
+title: The state layer uses `currentColor` and a ladder with exactly one active layer
+short: "The state layer"
 summary: >-
-  El state layer es el mecanismo de interacción del sistema, no un extra opt-in: viaja en el bundle base
-  (tokens.scss), siempre presente, y ningún componente inventa sus propios colores de hover/pressed. Es un
-  overlay semitransparente teñido con currentColor, así que un solo token cubre superficies neutras y
-  rellenos saturados en ambos modos. Se muestra exactamente un layer activo a la vez, por una escalera de
-  prioridad resuelta por orden de archivo, nunca por suma de opacidades. El layer nunca es la única señal:
-  el foco lleva un anillo independiente verificado a 3:1, en su propia familia de tokens.
+  The state layer is the system's interaction mechanism, not an opt-in extra: it travels in the base bundle
+  (tokens.scss), always present, and no component invents its own hover/pressed colors. It is a
+  semi-transparent overlay tinted with currentColor, so a single token covers neutral surfaces and saturated
+  fills in both modes. Exactly one layer shows at a time, through a priority ladder resolved by file order,
+  never by adding opacities. The layer is never the only signal: focus carries an independent ring verified
+  at 3:1, in its own token family.
 ---
 
-Los estados interactivos (hover, focus, pressed, selected, dragged) necesitan un tratamiento visual
-consistente en cada componente, variante y color semántico, sin inventar un color por combinación. El
-patrón es un overlay semitransparente: el **state layer**.
+Interactive states (hover, focus, pressed, selected, dragged) need consistent visual treatment across
+every component, variant and semantic color, without inventing a color per combination. The pattern is
+a semi-transparent overlay: the **state layer**.
 
-## Es el mecanismo de interacción del sistema, no un opt-in
+## It is the system's interaction mechanism, not an opt-in
 
-El state layer es [un pattern](./0002-what-tier-3-ships.md) según la regla de qué envía tier 3, 
-envía estructura, porque button, tile, menu-item y tab necesitan todos el mismo `::before`. Pero, a
-diferencia de los otros patterns, **no es opt-in**: viaja en `tokens.scss`, el bundle base, igual que el
+The state layer is [a pattern](./0002-what-tier-3-ships.md) by the rule of what tier 3 ships, it ships
+structure, because button, tile, menu-item and tab all need the same `::before`. But unlike the other
+patterns, it is **not opt-in**: it travels in `tokens.scss`, the base bundle, the same as
 [motion](./0004-motion-through-intent-tokens.md).
 
-La razón es que la interacción es **universal**. Un pattern como el top layer del dialog lo necesitan
-solo algunas apps, así que se importa aparte. Pero todo componente interactivo tiene estados, y un
-componente que se inventa sus propios colores de hover/pressed está reimplementando esto, exactamente lo
-que pasó con el botón antes de corregirlo. Hacerlo base es lo que convierte al state layer en **la** forma
-de expresar estados, no una de dos.
+The reason is that interaction is **universal**. A pattern like the dialog's top layer is needed by only
+some apps, so it is imported separately. But every interactive component has states, and a component
+that invents its own hover/pressed colors is reimplementing this, exactly what happened to the button
+before it was corrected. Making it base is what turns the state layer into **the** way to express
+states, not one of two.
 
-El `::before` es **inerte hasta que un elemento lleva la clase `sk-interactive`**, así que enviarlo en
-base no cuesta nada sobre lo que no es interactivo. La clase es la API del mecanismo, marca qué
-elementos son interactivos, no un opt-in de bundle: no hay nada que importar.
+The `::before` is **inert until an element carries the `sk-interactive` class**, so shipping it in base
+costs nothing on anything that is not interactive. The class is the mechanism's API, it marks which
+elements are interactive, not a bundle opt-in: there is nothing to import.
 
-## El tinte es `currentColor`
+## The tint is `currentColor`
 
-`--state-layer-color: currentColor`, el color de contenido del propio componente. Un solo token cubre
-todo:
+`--state-layer-color: currentColor`, the component's own content color. A single token covers
+everything:
 
-- **Subsume negro-sobre-claro / blanco-sobre-oscuro.** Una superficie neutra tiene texto oscuro (modo
-  claro) o claro (modo oscuro), así que el layer oscurece o aclara solo, sin una rama por modo.
-- **Es correcto sobre rellenos saturados**, donde negro/blanco falla: el contenido de un botón primario
-  es `on-accent` (casi blanco), así que el layer es un velo blanco sobre azul. Un overlay negro ahí se
-  ve turbio.
-- **Cero tokens de color por componente.**
+- **It subsumes black-on-light / white-on-dark.** A neutral surface has dark text (light mode) or light
+  text (dark mode), so the layer darkens or lightens on its own, with no branch per mode.
+- **It is correct over saturated fills**, where black/white fails: a primary button's content is
+  `on-accent` (nearly white), so the layer is a white veil over blue. A black overlay there looks muddy.
+- **Zero color tokens per component.**
 
-## Exactamente un layer activo
+## Exactly one active layer
 
-Se muestra la opacidad de **un solo** estado. Las opacidades **nunca se suman**. La escalera, de mayor a
-menor prioridad:
+The opacity of **one** state is shown. Opacities are **never added**. The ladder, from highest to
+lowest priority:
 
 ```
 disabled > dragged > pressed > focus > hover > selected > default
 ```
 
-Y se realiza **sin selectores combinados**: cada regla de estado asigna el mismo
-`--state-layer-opacity`, todos los selectores tienen la misma especificidad (0,2,0), así que cuando
-varios coinciden decide el **orden en el archivo**. Las reglas están escritas en prioridad ascendente: la
-última gana. `disabled` fuerza la opacidad a 0.
+And it is achieved **without combined selectors**: every state rule assigns the same
+`--state-layer-opacity`, all selectors have the same specificity (0,2,0), so when several match it is
+**file order** that decides. The rules are written in ascending priority: the last one wins. `disabled`
+forces the opacity to 0.
 
-## `selected` es el escalón más bajo, no una base aditiva
+## `selected` is the lowest rung, not an additive base
 
-Una base persistente debajo de hover significaría dos capas superpuestas, es decir, opacidad sumada, que
-el modelo prohíbe. Así que selected es el más bajo y hover/pressed lo reemplazan.
+A persistent base underneath hover would mean two stacked layers, which is added opacity, which the
+model forbids. So selected is the lowest and hover/pressed replace it.
 
-La selección nunca desaparece porque **siempre lleva un indicador independiente**: un check, un control
-relleno, un riel, un peso. Un equipo que necesite un selected+hover más fuerte define un token de
-opacidad combinada dedicado, nunca una suma en runtime.
+Selection never disappears because **it always carries an independent indicator**: a check, a filled
+control, a rail, a weight. A team that needs a stronger selected+hover defines a dedicated combined
+opacity token, never a runtime sum.
 
-## Las opacidades son invariantes al modo
+## The opacities are mode-invariant
 
-Un número no puede vivir dentro de `light-dark()`
-([por qué](./0019-public-palettes-and-constant-semantics.md)), así que la escalera no cambia entre
-claro y oscuro. Tampoco se duplica en alto contraste: más `currentColor` acercaría el fondo al texto
-y haría que la superficie se leyera apagada. `[data-contrast="high"]` conserva el wash y añade un
-keyline inset cuyo ancho crece con la opacidad del estado; el anillo de foco independiente pasa a 3px.
+A number cannot live inside `light-dark()`
+([why](./0019-public-palettes-and-constant-semantics.md)), so the ladder does not change between light
+and dark. It is not doubled in high contrast either: more `currentColor` would pull the background
+closer to the text and make the surface read as muted. `[data-contrast="high"]` keeps the wash and adds
+an inset keyline whose width grows with the state's opacity; the independent focus ring goes to 3px.
 
-## Accesibilidad, no negociable
+## Accessibility, non-negotiable
 
-El layer **nunca es la única señal**:
+The layer is **never the only signal**:
 
-- El foco lleva un anillo independiente, verificado a ≥3:1 por
-  [el validador](./0019-public-palettes-and-constant-semantics.md). Por eso vive en su propia familia `--focus-ring-*` y
-  **no** dentro de `--state-layer-*`: el nombre carga la garantía. Meterlo adentro diría que el anillo
-  es parte del layer, cuando toda la garantía es que es independiente.
-- La selección lleva un indicador real.
-- `disabled` atenúa con los tokens del componente y **fuerza el layer a 0**.
-- Se usa `:focus-visible`, no `:focus`, así un clic con mouse no deja un layer pegado.
-- El fade respeta `prefers-reduced-motion`.
+- Focus carries an independent ring, verified at >=3:1 by
+  [the validator](./0019-public-palettes-and-constant-semantics.md). That is why it lives in its own
+  `--focus-ring-*` family and **not** inside `--state-layer-*`: the name carries the guarantee. Folding
+  it in would say the ring is part of the layer, when the whole guarantee is that it is independent.
+- Selection carries a real indicator.
+- `disabled` dims using the component's tokens and **forces the layer to 0**.
+- `:focus-visible` is used, not `:focus`, so a mouse click does not leave a layer stuck on.
+- The fade respects `prefers-reduced-motion`.
 
-## Implementación y caso borde
+## Implementation and edge case
 
-Un `::before` con `pointer-events: none` y `z-index: -1` bajo `isolation: isolate`, más
-`border-radius: inherit`. Las variantes con `:has()` dejan que la misma clase cubra controles nativos e
-inputs envueltos en label, `::before` no renderiza en un `<input>`.
+A `::before` with `pointer-events: none` and `z-index: -1` under `isolation: isolate`, plus
+`border-radius: inherit`. The `:has()` variants let the same class cover native controls and inputs
+wrapped in a label, since `::before` does not render on an `<input>`.
 
-Un consumidor con un selector más específico que `.sk-interactive:hover` puede romper la escalera. Es
-una limitación de CSS, la misma que acepta la especificidad de las variantes en
-[los tres tiers](./0019-public-palettes-and-constant-semantics.md).
+A consumer with a selector more specific than `.sk-interactive:hover` can break the ladder. That is a
+CSS limitation, the same one the variant specificity accepts in
+[the three tiers](./0019-public-palettes-and-constant-semantics.md).

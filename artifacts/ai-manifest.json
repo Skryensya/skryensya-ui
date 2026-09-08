@@ -566,6 +566,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-07",
+            "en": {
+              "body": "<code>labels</code> exists in order to say <code>false</code>: the stylesheet has a rule for <code>[data-labels=\"false\"]</code> and none for the true case, because true is simply \"with labels, as always\". The emitter wrote a meaningless <code>data-labels=\"\"</code> anyway, which React never wrote, and G2 read it as a divergence between bindings. A boolean that declares a <code>falseValue</code> and no <code>trueValue</code> now writes nothing when true.",
+              "title": "labels stops writing an empty data-labels when it is on"
+            },
+            "es": {
+              "body": "<code>labels</code> existe para poder decir <code>false</code>: la hoja tiene una regla para <code>[data-labels=\"false\"]</code> y ninguna para el caso verdadero, porque verdadero es simplemente \"con etiquetas, como siempre\". El emisor igual escribía un <code>data-labels=\"\"</code> sin sentido que React nunca escribió, y G2 lo leía como una divergencia entre bindings. Ahora un booleano que declara <code>falseValue</code> y no <code>trueValue</code> no escribe nada cuando es verdadero.",
+              "title": "labels deja de escribir un data-labels vacío cuando está encendido"
+            },
+            "kind": "bugfix"
+          },
+          {
             "date": "2026-08-26",
             "en": {
               "body": "It joins the catalogue with one signature, <code>Chart</code>, and with one decision that explains every other: <strong>the data is a list</strong>. Entries live in an <code>items</code> slot, the same one <code>Tabs</code> and <code>Segmented</code> already use for their collections, rather than in an opaque object handed to a library. That buys four things at once. Real accessibility instead of a summary: the series is a real list of real text, so a screen reader reads \"Dec, 14, Jan, 23\" off the DOM, instead of the usual <code>&lt;svg aria-label=\"a chart of contributions\"&gt;</code>, which announces that data exists and then refuses to say what it is. Bars with no engine: each entry carries its value and <code>components/chart.css</code> divides it by the series maximum to get a height, so a bar chart paints from authored markup. A renderer that is optional by construction: <code>line</code> and <code>area</code> need a path, and that really is geometry, so <code>@skryensya/charts</code> draws it as an <code>aria-hidden</code> overlay on top of this same markup; the engine is an UPGRADE to a chart that already worked, not the thing that makes it work, and swapping it can never break anyone because no consumer ever named it. And validation: an <code>items</code> slot is data the compiler checks and the MCP can compose. Options: <code>kind</code> (<code>bar</code>/<code>line</code>/<code>area</code>), <code>tone</code>, <code>height</code>, <code>labels</code>, <code>values</code>, <code>grid</code>, <code>flush</code> (for the chart that IS the bottom edge of a card), <code>format</code>, <code>currency</code>, <code>locale</code>, <code>description</code> and <code>label</code>, required: a series of numbers with nothing saying what it measures is the one chart worse than no chart. Each entry takes a <code>value</code>, its own <code>tone</code> to emphasize it against its siblings, and the <code>label</code> and <code>text</code> slots. What this contract deliberately does NOT have: a title, a subtitle, an action, or a surface of its own. Those belong to whatever contains the chart, and putting them here would have grown exactly the card-with-variants that Card refuses to be: a chart in a card is a COMPOSITION, published as a recipe.",
@@ -691,6 +703,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-07",
+            "en": {
+              "body": "A combobox is expanded when there is a popup to expand, which is \"the listbox has options in it\". The enhancer set it to <code>true</code> on open, and React latched it to <code>true</code> on the first keystroke and never reconsidered, so a freshly opened palette (or a query matching nothing) announced an expanded popup over an empty list, the very thing this contract's header says both bindings exist to avoid. It is now derived from the result count on both sides. \"Sin resultados\" also waits until something has been asked: over an untouched palette it answered a question nobody put.",
+              "title": "aria-expanded now follows the listbox, not the dialog"
+            },
+            "es": {
+              "body": "Un combobox está expandido cuando hay algo que expandir, y eso es \"la lista tiene opciones\". El enhancer lo ponía en <code>true</code> al abrir la paleta y React lo dejaba fijo en <code>true</code> desde la primera tecla sin volver a revisarlo, así que una paleta recién abierta, o una búsqueda sin resultados, anunciaba una lista desplegada que estaba vacía: lo mismo que la cabecera de este contrato dice que las dos implementaciones existen para evitar. Ahora sale de la cantidad de resultados en los dos lados. \"Sin resultados\" además espera a que se haya escrito algo: sobre una paleta intacta respondía una pregunta que nadie hizo.",
+              "title": "aria-expanded ahora sigue a la lista, no al diálogo"
+            },
+            "kind": "bugfix"
+          },
+          {
             "date": "2026-09-01",
             "en": {
               "body": "<code>connectCommandPalette</code> assumed it mounted BEFORE anyone opened the dialog: its <code>open()</code> does the first render, takes focus and sets <code>aria-expanded</code>, and bails early if the dialog is already open. A lazy host that shows the sheet with <code>showModal()</code> before loading the enhancer chunk (so the sheet's appearance is not gated behind an <code>import()</code>) was then left with an empty list and a combobox that announced itself collapsed. Now, if <code>root.open</code> is already <code>true</code> at mount, it runs that same first-open work.",
@@ -792,6 +816,18 @@
             "es": {
               "body": "Los botones de voto sólo escribían <code>aria-pressed=\"true\"</code> cuando el voto estaba puesto, así que uno sin marcar no llevaba el atributo y un lector de pantalla lo leía como un botón común: se perdía el hecho de que se puede presionar. Ahora la base es <code>false</code> y sube a <code>true</code> en el que corresponde. Además el binding de React escribe los atributos de opción que el contrato ya definía en sus hosts (<code>data-collapse-label</code>, <code>data-composer-trigger-label</code>, <code>data-reply</code>, <code>data-delete-label</code>, los de voto y los del composer), y el disparador del composer se emite siempre en vez de sólo cuando la vista es una hoja: qué tan ancha es la pantalla ya lo decide el CSS, y decidirlo también en JS hacía que los dos bindings dibujaran DOM distinto al mismo ancho.",
               "title": "Un voto sin marcar ahora se anuncia como un toggle apagado"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "The rule hiding it above the breakpoint weighed one class, exactly like the <code>display: inline-flex</code> <code>button.css</code> gives every <code>.sk-button</code>, and both live in the same layer: which one won came down to whichever stylesheet a page imported last. Measured live, the trigger showed at every width the moment that order changed, which is precisely the \"second way in that does nothing\" the rule beside it exists to prevent. The rule now carries two classes and the tie is gone.",
+              "title": "The composer trigger no longer depends on import order"
+            },
+            "es": {
+              "body": "La regla que lo esconde arriba del breakpoint pesaba una clase, igual que el <code>display: inline-flex</code> que <code>button.css</code> le da a todo <code>.sk-button</code>, y las dos viven en la misma capa: cuál ganaba lo decidía qué hoja importaba último la página. Medido en vivo, el disparador aparecía a cualquier ancho apenas cambiaba ese orden, que es justo la \"segunda puerta de entrada que no hace nada\" que la regla de al lado existe para evitar. Ahora la regla lleva dos clases y el empate no existe.",
+              "title": "El disparador del composer ya no depende del orden de importación"
             },
             "kind": "bugfix"
           },
@@ -978,6 +1014,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-07",
+            "en": {
+              "body": "<code>toolbarLabel</code> had been published by the contract all along and the React binding ignored it, hardcoding \"Formato de texto\" instead, so a consumer who set it got it in authored markup and silently did not in React. It is a prop now, and its default is read from the contract rather than written twice. The content div also gets an id from the enhancer. That id is what a <code>FormField</code> label points its <code>for</code> at, and is exactly what <code>useFormFieldControl</code> mints on the React side; nothing was minting it when the enhancer built the control instead. In exchange, the root stopped getting an id that nothing ever read.",
+              "title": "React accepts toolbarLabel, and the content gets an id in both bindings"
+            },
+            "es": {
+              "body": "<code>toolbarLabel</code> estaba publicado en el contrato desde siempre y el binding de React lo ignoraba: escribía \"Formato de texto\" a mano, así que quien lo configuraba lo obtenía en markup autorado y silenciosamente no en React. Ahora es una prop, y su valor por defecto se lee del contrato en vez de escribirse dos veces. El div de contenido recibe un id también desde el enhancer. Ese id es el que apunta el <code>for</code> de una etiqueta de <code>FormField</code>, y es exactamente el que <code>useFormFieldControl</code> genera del lado de React; nadie lo generaba cuando el enhancer construía el control. A cambio, la raíz dejó de recibir un id que no leía nadie.",
+              "title": "React acepta toolbarLabel, y el contenido recibe un id en las dos bindings"
+            },
+            "kind": "bugfix"
+          },
           {
             "date": "2026-09-04",
             "en": {
@@ -21264,5 +21312,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "0b9978b57cf36575"
+  "sourceHash": "dd91f76bc754fb23"
 }

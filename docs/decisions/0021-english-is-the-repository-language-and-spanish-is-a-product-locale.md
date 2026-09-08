@@ -67,6 +67,11 @@ The test is not a formality. `contracts/changelog/button.yaml` has 14 language k
 opposite sides of the line, and the test tells them apart without anyone relitigating what "user-facing"
 means for a YAML file an agent reads.
 
+**Commit messages are deliberately not decided here.** They are the one artifact where the existing
+Spanish convention is load-bearing on something this decision does not touch: the history already
+written. `CONTRIBUTING.md` still documents Spanish as the house style for them, and it stays that way
+until someone decides otherwise on its own merits.
+
 **A single Spanish copy is not "the Spanish version". It is untranslated repository content.** That
 sentence is the whole decision. A reader who picks English and reaches Spanish prose has not found a
 locale, they have found a gap, and the gap is invisible precisely because Spanish looks intentional

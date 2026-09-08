@@ -1,150 +1,154 @@
 ---
 num: 11
-title: El anclaje es un pattern, y el que coloca es el navegador
-short: "Anclaje: un pattern, motor del navegador"
+title: Anchoring is a pattern, and the browser is what places it
+short: "Anchoring: a pattern, the browser's engine"
 summary: >-
-  Nueve componentes flotan anclados a un trigger y cada uno resolvía la colocación por su cuenta: tres
-  dialectos de CSS, cuatro copias del probe de soporte y una geometría a mano. Esta decisión los unifica
-  en un PATTERN, `sk-anchored`, que envía la estructura del positioner y sus styling hooks, más un
-  módulo mínimo en `@skryensya/core/anchored` que sólo hace el cableado ancla↔popup. El motor primario
-  es la API de CSS Anchor Positioning, o sea EL NAVEGADOR; donde no está, posiciona la machine de Zag.
-  No se agrega un motor propio ni una dependencia directa de Floating UI.
+  Nine components float anchored to a trigger and each one solved placement on its own: three CSS
+  dialects, four copies of the support probe and one hand-written geometry. This decision unifies them in
+  a PATTERN, `sk-anchored`, which ships the positioner's structure and its styling hooks, plus a minimal
+  module in `@skryensya/core/anchored` that only does the anchor-to-popup wiring. The primary engine is
+  the CSS Anchor Positioning API, that is, THE BROWSER; where it is absent, Zag's machine positions. No
+  engine of our own is added, and no direct Floating UI dependency.
 ---
 
-Tooltip, Popover, Popup, Menu, Select, Combobox, Date picker, Flyout y los submenús hacen todos la
-misma cosa: poner una caja al lado de un elemento, voltearla cuando no entra, y esconderla si el ancla
-se va de pantalla. La anatomía ya era la misma sin que nadie la hubiera nombrado, `__trigger`,
-`__positioner`, `__content` en seis de ellos. Lo que estaba duplicado era el resto.
+Tooltip, Popover, Popup, Menu, Select, Combobox, Date picker, Flyout and submenus all do the same thing:
+put a box next to an element, flip it when it does not fit, and hide it if the anchor scrolls off screen.
+The anatomy was already the same without anyone having named it, `__trigger`, `__positioner`, `__content`
+in six of them. What was duplicated was everything else.
 
-## Lo que había
+## What was there
 
-Cuatro caminos para un solo comportamiento:
+Four paths for a single behavior:
 
-- **Tooltip y Select**: anchor positioning con fallback a Zag, implementado dos veces y distinto. Dos
-  probes de soporte, dos convenciones para nombrar el ancla (`--sk-select-anchor-${id}` contra
-  `--${root.id}-anchor`), dos funciones que sacan el `style` inline de Zag del positioner.
-- **Popover y Popup**: anchor positioning sin fallback ninguno.
-- **Menu, Combobox, Date picker**: sólo Zag, sin bloque `@supports` en ninguna parte, o sea que en un
-  navegador con la API igual posicionaban por JS.
-- **Flyout**: geometría a mano, `computeFlyoutFixedCoords`, con su propio flip y su propio clamp.
+- **Tooltip and Select**: anchor positioning with a Zag fallback, implemented twice and differently. Two
+  support probes, two conventions for naming the anchor (`--sk-select-anchor-${id}` against
+  `--${root.id}-anchor`), two functions removing Zag's inline `style` from the positioner.
+- **Popover and Popup**: anchor positioning with no fallback at all.
+- **Menu, Combobox, Date picker**: Zag only, with no `@supports` block anywhere, meaning that in a browser
+  with the API they still positioned in JS.
+- **Flyout**: hand-written geometry, `computeFlyoutFixedCoords`, with its own flip and its own clamp.
 
-Tres dialectos de CSS para lo mismo, además: `position-area` con hooks en tooltip, `top: anchor(bottom)`
-crudo en select, y un `position-area` hardcodeado sin hooks en popover.
+Three CSS dialects for the same thing, on top of that: `position-area` with hooks in tooltip, raw
+`top: anchor(bottom)` in select, and a hardcoded `position-area` with no hooks in popover.
 
-## Es un pattern, por la regla de la decisión 8
+## It is a pattern, by decision 8's rule
 
-La pregunta de [ADR-2](./0002-what-tier-3-ships.md) es si un segundo componente podría necesitar
-esta estructura exacta. Acá no es hipotético: **nueve** ya la necesitan. Así que envía hooks *y*
-estructura, como Vaul, y no sólo variables.
+[ADR-2](./0002-what-tier-3-ships.md)'s question is whether a second component could need this exact
+structure. Here it is not hypothetical: **nine** already need it. So it ships hooks *and* structure, like
+Vaul, and not only variables.
 
-`.sk-anchored` se pone **al lado** de la clase del positioner del componente, no la reemplaza, igual que
-`sk-interactive` convive con `sk-button`. El componente sigue siendo el dueño de su pintura y de su
-`z-index`; el pattern es dueño de la colocación y nada más.
+`.sk-anchored` goes **alongside** the component's positioner class, it does not replace it, the same way
+`sk-interactive` coexists with `sk-button`. The component still owns its paint and its `z-index`; the
+pattern owns placement and nothing else.
 
-## El motor primario es el navegador
+## The primary engine is the browser
 
-Donde está la API de anchor positioning, coloca el navegador: sin loop de layout, sin medir en cada
-scroll, y con `position-try-fallbacks` y `position-visibility` resolviendo el volteo y el ancla perdida
-en el motor de layout, que es donde esa información ya vive. Donde no está, posiciona la machine de Zag.
+Where the anchor positioning API exists, the browser places: no layout loop, no measuring on every
+scroll, and with `position-try-fallbacks` and `position-visibility` resolving the flip and the lost
+anchor in the layout engine, which is where that information already lives. Where it is absent, Zag's
+machine positions.
 
-**El fallback no es un camino inferior**, es el mismo contrato ejecutado por otro motor. Lo que exige es
-que los dos no corran a la vez: en el camino del navegador el binding le saca al positioner el `style`
-inline que trae Zag, y ésa es la razón por la que las declaraciones del pattern pueden quedarse sin
-`!important`. Es carga estructural: `position-try` sólo puede voltear declaraciones que NO son
-`!important`, así que un `!important` ahí apagaría el volteo.
+**The fallback is not an inferior path**, it is the same contract executed by another engine. What it
+requires is that the two do not run at once: on the browser path the binding strips the inline `style`
+Zag brings from the positioner, and that is why the pattern's declarations can stay free of `!important`.
+That is load-bearing: `position-try` can only flip declarations that are NOT `!important`, so an
+`!important` there would switch off the flip.
 
-## Un dialecto, `position-area`
+## One dialect, `position-area`
 
-Se elige la gramática de tooltip.css, `position-area` más hooks, y se abandona la de select.css,
-`top: anchor(bottom); left: anchor(left)`. Las dos funcionan; la diferencia es que
-`position-try-fallbacks: flip-block | flip-inline` existe **para voltear `position-area`**. Con insets
-crudos hay que escribir cada fallback a mano y se vuelve a tener geometría, sólo que declarativa.
+tooltip.css's grammar is chosen, `position-area` plus hooks, and select.css's is abandoned,
+`top: anchor(bottom); left: anchor(left)`. Both work; the difference is that
+`position-try-fallbacks: flip-block | flip-inline` exists **in order to flip `position-area`**. With raw
+insets you have to write every fallback by hand and you are back to geometry, only declarative.
 
-`anchor-size()` sobrevive como un hook opcional, `--sk-anchored-size`, porque el `sameWidth` de Select
-es una necesidad real y no un dialecto: el listbox tiene que medir lo que mide su trigger.
+`anchor-size()` survives as an optional hook, `--sk-anchored-size`, because Select's `sameWidth` is a real
+need and not a dialect: the listbox has to measure what its trigger measures.
 
-## No se agrega un motor
+## No engine is added
 
-Floating UI **ya está en el árbol**, como `@zag-js/popper`, que es lo que usan las machines. Una
-dependencia directa de `@floating-ui/dom` sería una segunda copia del mismo motor para resolver un
-problema que en el camino primario resuelve el navegador y en el fallback resuelve la machine. Y
-`computeFlyoutFixedCoords`, la única geometría propia que quedaba, deja de ser API: pasa a ser el
-fallback privado de Flyout, que es el único anclado sin machine.
+Floating UI is **already in the tree**, as `@zag-js/popper`, which is what the machines use. A direct
+`@floating-ui/dom` dependency would be a second copy of the same engine to solve a problem the browser
+solves on the primary path and the machine solves on the fallback. And `computeFlyoutFixedCoords`, the
+only geometry of our own that was left, stops being API: it becomes Flyout's private fallback, Flyout
+being the only anchored one without a machine.
 
-## Cuatro colocaciones, en ejes lógicos
+## Four placements, on logical axes
 
-`block-start`, `block-end`, `inline-start`, `inline-end`, pedidas con `data-sk-placement` sobre el
-positioner y no sobre el root, porque en React el positioner se portalea al body y la herencia desde el
-root no llega. Se dan vuelta solas en RTL; el único lugar donde no es el fallback de Zag, cuyas
-placements son físicas, y ahí el binding traduce.
+`block-start`, `block-end`, `inline-start`, `inline-end`, requested with `data-sk-placement` on the
+positioner and not on the root, because in React the positioner is portaled to the body and inheritance
+from the root does not reach it. They flip themselves in RTL; the only place they do not is Zag's
+fallback, whose placements are physical, and there the binding translates.
 
-El vocabulario **no se agranda** por los casos raros. Un submenú quiere `inline-end` alineado al
-block-start, y eso se pide sobrescribiendo `--sk-anchored-position-area` directamente, que para eso es
-un hook. Agregar una quinta placement al vocabulario público por un caso sería dejar que la excepción
-escriba el contrato.
+The vocabulary **is not enlarged** for the rare cases. A submenu wants `inline-end` aligned to the
+block-start, and that is requested by overriding `--sk-anchored-position-area` directly, which is what a
+hook is for. Adding a fifth placement to the public vocabulary for one case would be letting the
+exception write the contract.
 
-## La flecha es opcional, y se autora
+## The arrow is optional, and it is authored
 
-Un cuadrado rotado 45° que asoma por el borde de la caja hacia el ancla. **No se inventa**: si el
-markup no trae `.sk-anchored-arrow`, no hay flecha, y ése es el default. Un tooltip o un popover la
-quieren porque son chrome flotante que tiene que decir *de qué control* está hablando; un menu, un
-select o un combobox no, porque ahí la relación ya la dice el borde compartido con el trigger.
+A square rotated 45 degrees peeking out of the box's edge toward the anchor. **It is not invented**: if
+the markup does not bring `.sk-anchored-arrow`, there is no arrow, and that is the default. A tooltip or
+a popover wants one because they are floating chrome that has to say *which control* it is talking about;
+a menu, a select or a combobox does not, because there the relationship is already stated by the border
+shared with the trigger.
 
-Es **decorativa**, así que va siempre con `aria-hidden`: no agrega información, repite la que la
-colocación ya da.
+It is **decorative**, so it always goes with `aria-hidden`: it adds no information, it repeats what
+placement already gives.
 
-Se pinta ENCIMA de la caja y no debajo, que es lo que hace desaparecer la costura: el relleno del
-cuadrado tapa el pedazo de borde por donde entra, y sus dos bordes de afuera continúan el de la caja.
-Un `z-index: -1` la escondería justo donde más se usa, en un Popover, donde el positioner y el
-contenido son el MISMO elemento y su propio fondo la taparía.
+It is painted ON TOP of the box and not beneath it, which is what makes the seam disappear: the square's
+fill covers the piece of border it enters through, and its two outer edges continue the box's own. A
+`z-index: -1` would hide it exactly where it is most used, in a Popover, where the positioner and the
+content are the SAME element and its own background would cover it.
 
-### Sale del ancla, no del centro de la caja
+### It comes from the anchor, not from the box's center
 
-La diferencia aparece apenas la caja se corre: `anchor-center` la centra sobre el ancla pero la mete de
-vuelta en pantalla si no entra, así que un trigger cerca del borde deja la caja desplazada, y una
-flecha dibujada al 50% de esa caja apunta a cualquier lado menos al control. Es el caso normal de un
-botón de barra, no un borde raro. Así que la flecha no se coloca contra la caja: es **otra caja
-anclada** contra la misma ancla, con el mismo `position-area` y el mismo volteo.
+The difference appears as soon as the box shifts: `anchor-center` centers it over the anchor but pushes
+it back on screen if it does not fit, so a trigger near the edge leaves the box displaced, and an arrow
+drawn at 50% of that box points anywhere but at the control. That is the normal case for a toolbar
+button, not a strange edge. So the arrow is not placed against the box: it is **another anchored box**
+against the same anchor, with the same `position-area` and the same flip.
 
-Y aun así vive ADENTRO del positioner, que parecería imposible: el spec sólo deja usar como ancla algo
-que sea *descendiente del bloque contenedor* del elemento, y el trigger no cuelga del positioner. Lo
-que lo resuelve es **`position: fixed`**: el bloque contenedor de un fijo es el viewport, donde el
-trigger sí vive, aunque en el DOM la flecha siga adentro. Con `absolute` el bloque contenedor sería el
-positioner y `anchor()` y `anchor-center` quedarían inválidos EN SILENCIO, cayendo al fallback sin
-avisar y sin que `CSS.supports` deje de decir que sí.
+And even so it lives INSIDE the positioner, which would seem impossible: the spec only allows using as an
+anchor something that is a *descendant of the containing block* of the element, and the trigger does not
+hang off the positioner. What resolves it is **`position: fixed`**: a fixed element's containing block is
+the viewport, where the trigger does live, even though in the DOM the arrow stays inside. With `absolute`
+the containing block would be the positioner and `anchor()` and `anchor-center` would be invalid
+SILENTLY, falling to the fallback without warning and without `CSS.supports` ceasing to say yes.
 
-Quedarse adentro tampoco es prolijidad, hace falta por tres cosas a la vez: el **top layer**, donde la
-caja de un Popover sólo entra con sus hijos; la **costura**, que sólo se tapa pintando encima del fondo
-y del borde de la caja, y para eso hay que ser su hija posicionada; y el **fallback**, donde coloca la
-machine y `@zag-js/popper` busca la flecha adentro del elemento flotante.
+Staying inside is not tidiness either, it is needed for three things at once: the **top layer**, which a
+Popover's box only enters together with its children; the **seam**, which is only covered by painting
+over the box's background and border, and for that you have to be its positioned child; and the
+**fallback**, where the machine places and `@zag-js/popper` looks for the arrow inside the floating
+element.
 
-Voltea junto con la caja porque lleva el alto de la caja (`anchor-size()`) como margen del lado de
-afuera: las dos tienen la misma huella de bloque, así que cruzan el umbral de `position-try` a la vez.
-Un tamaño es el único dato del otro elemento que se puede leer sin que el scroll lo desactualice, y por
-eso la colocación va siempre por `position-area` y nunca por `anchor()` en los insets: Blink compensa
-el scroll de lo primero, no de lo segundo, que se atrasa un scrollY entero.
+It flips together with the box because it carries the box's height (`anchor-size()`) as its outer-side
+margin: both have the same block footprint, so they cross `position-try`'s threshold at the same time. A
+size is the only piece of data from the other element that can be read without scroll making it stale,
+and that is why placement always goes through `position-area` and never through `anchor()` in the insets:
+Blink compensates the former for scroll, not the latter, which lags by a whole scrollY.
 
-## Costos, dichos
+## Costs, stated
 
-- **La anatomía de Flyout cambia.** `sk-flyout__panel` se parte en `__positioner` y `__content`. Es un
-  cambio de contrato para quien autoró el markup de un flyout. Se hace igual: Flyout era el único
-  desalineado de nueve, y el valor del pattern es que la anatomía sea una sola.
-- **Popover y Popup necesitan un estado degradado explícito.** Hoy, sin la API, quedan `position: fixed`
-  sin coordenadas debajo de `popover="auto"`, así que gobierna el `inset: 0` del user-agent y la caja no
-  aparece cerca de su trigger. No tienen machine, así que no hay fallback de JS que las coloque: el
-  degradado pasa a ser una hoja centrada en el viewport, elegida a propósito en vez de heredada por
-  accidente.
-- **El pattern es opt-in, como todos.** Importar `patterns/anchored.css` es un import más para el
-  consumidor que arma su propia hoja. Es el mismo costo que ya pagan `nav-list.css` o `scroll-lock.css`.
-- **El positioner tiene que llevar un `anchor-name` propio.** Un segundo ident por instancia, escrito
-  por el binding igual que el primero, sólo para que su flecha pueda medirlo. `anchor-scope` sobre un
-  nombre compartido no alcanza: dos anclados abiertos a la vez (un menú y su submenú) responderían los
-  dos, y cada flecha tiene que medir SU caja.
-- **Al voltear, el `rotate` no acompaña.** `position-try` da vuelta insets, márgenes y alineación, pero
-  `rotate` no es una propiedad que acepte. El rombo es simétrico a 180°, así que la FORMA queda igual y
-  sólo cambian cuáles de sus lados llevan el borde: invisible en un tooltip, que no tiene borde, una
-  línea del lado que no es en un popover, que sí. Es el resto de un costo que antes era la flecha
-  entera dibujada en el borde equivocado de la caja.
-- **El positioner no puede llevar `transform` ni `translate`.** Cualquiera de las dos lo convierte en
-  bloque contenedor de sus descendientes `fixed`, y con eso la flecha pierde el ancla mientras dure. Se
-  pagó al mover el desplazamiento de entrada del tooltip desde el positioner a sus dos piezas.
+- **Flyout's anatomy changes.** `sk-flyout__panel` splits into `__positioner` and `__content`. That is a
+  contract change for anyone who authored a flyout's markup. It is done anyway: Flyout was the only one
+  of nine out of alignment, and the pattern's value is that the anatomy is one.
+- **Popover and Popup need an explicit degraded state.** Today, without the API, they end up
+  `position: fixed` with no coordinates under `popover="auto"`, so the user agent's `inset: 0` governs
+  and the box does not appear near its trigger. They have no machine, so there is no JS fallback to place
+  them: the degraded state becomes a sheet centered in the viewport, chosen on purpose rather than
+  inherited by accident.
+- **The pattern is opt-in, like all of them.** Importing `patterns/anchored.css` is one more import for
+  the consumer assembling their own sheet. It is the same cost `nav-list.css` or `scroll-lock.css`
+  already carry.
+- **The positioner has to carry an `anchor-name` of its own.** A second ident per instance, written by
+  the binding just like the first, only so its arrow can measure it. `anchor-scope` over a shared name is
+  not enough: two anchored elements open at once (a menu and its submenu) would both answer, and each
+  arrow has to measure ITS box.
+- **On flip, the `rotate` does not follow.** `position-try` flips insets, margins and alignment, but
+  `rotate` is not a property it accepts. The diamond is symmetric at 180 degrees, so the SHAPE stays the
+  same and only which of its sides carry the border changes: invisible in a tooltip, which has no border,
+  a line on the wrong side in a popover, which does. It is the remainder of a cost that used to be the
+  entire arrow drawn on the wrong edge of the box.
+- **The positioner cannot carry `transform` or `translate`.** Either one turns it into the containing
+  block of its `fixed` descendants, and with that the arrow loses the anchor for as long as it lasts. It
+  was paid by moving the tooltip's entry offset from the positioner to its two pieces.

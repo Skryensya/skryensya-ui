@@ -1,102 +1,101 @@
 ---
 num: 8
-title: El sidebar se contrae a un riel, así que no es un disclosure
-short: "El sidebar se contrae"
+title: The sidebar collapses to a rail, so it is not a disclosure
+short: "The sidebar collapses"
 summary: >-
-  La decisión 8 manda los disclosures al <details> nativo, y un sidebar colapsable parece uno. No lo es:
-  un <details> cerrado esconde su contenido, y un sidebar contraído lo sigue mostrando como iconos. Como
-  la plataforma no envía nada que se angoste sin esconder, un enhancer chico se gana su lugar sin
-  reimplementar nada. Los dos anchos son dos valores de un solo styling hook, contraído es un state que
-  escribe la máquina, y los labels se desvanecen pero no se quitan del DOM: contraído, el label es lo
-  único que nombra al icono.
+  Decision 8 sends disclosures to the native <details>, and a collapsible sidebar looks like one. It is
+  not: a closed <details> hides its content, and a collapsed sidebar keeps showing it as icons. Because
+  the platform ships nothing that narrows without hiding, a small enhancer earns its place without
+  reimplementing anything. The two widths are two values of a single styling hook, collapsed is a state
+  the machine writes, and the labels fade but are not removed from the DOM: collapsed, the label is the
+  only thing naming the icon.
 ---
 
-[La decisión 8](./0002-what-tier-3-ships.md) tiene una tabla que corta por componente: si la
-plataforma lo envía, es solo CSS y no hay máquina. El disclosure está en esa tabla, con
-`<details>` / `<summary>` al lado. Un sidebar colapsable **parece** un disclosure: hay un toggle, hay
-algo que se abre y se cierra, hay un `aria-expanded`. Aplicar la regla de memoria manda a exigir un
-`<details>` y cerrar el tema.
+[Decision 8](./0002-what-tier-3-ships.md) has a table that cuts per component: if the platform ships it,
+it is CSS only and there is no machine. The disclosure is in that table, with `<details>` / `<summary>`
+next to it. A collapsible sidebar **looks like** a disclosure: there is a toggle, there is something that
+opens and closes, there is an `aria-expanded`. Applying the rule from memory says to require a
+`<details>` and close the matter.
 
-Es la conclusión equivocada, y vale la pena decir por qué, porque la regla está bien.
+That is the wrong conclusion, and it is worth saying why, because the rule is right.
 
-## Esconder y angostar no son lo mismo
+## Hiding and narrowing are not the same
 
-Un `<details>` cerrado **esconde su contenido**: queda el `<summary>` y nada más. Eso es lo que es un
-disclosure, y para eso el elemento nativo es perfecto.
+A closed `<details>` **hides its content**: the `<summary>` remains and nothing else. That is what a
+disclosure is, and the native element is perfect for it.
 
-Un sidebar contraído **no esconde nada**. Se angosta a un riel y los links siguen ahí, visibles como
-iconos, clickeables, en el orden de tabulación y en el árbol de accesibilidad. Lo que cambia es el
-**ancho**, no la presencia. Un `<details>` no puede expresar eso a ningún precio: su estado cerrado es
-justamente el que borra lo que el riel tiene que seguir mostrando.
+A collapsed sidebar **hides nothing**. It narrows to a rail and the links are still there, visible as
+icons, clickable, in the tab order and in the accessibility tree. What changes is the **width**, not the
+presence. A `<details>` cannot express that at any price: its closed state is precisely the one that
+erases what the rail has to keep showing.
 
-Así que la plataforma no envía nada para esto, y la otra mitad de la tabla de la decisión 8 aplica: una
-máquina se gana su lugar. El enhancer es chico, un booleano, `aria-expanded`, `aria-controls` y un
-`data-state`, y **no reimplementa nada**, porque no hay nada nativo que reimplementar. La objeción de
-[CSS puro](./0019-public-palettes-and-constant-semantics.md) no tiene de dónde agarrarse, igual que no la tenía con
-el combobox.
+So the platform ships nothing for this, and the other half of decision 8's table applies: a machine earns
+its place. The enhancer is small, a boolean, `aria-expanded`, `aria-controls` and a `data-state`, and it
+**reimplements nothing**, because there is nothing native to reimplement. The
+[pure CSS](./0019-public-palettes-and-constant-semantics.md) objection has nothing to hold on to, just as
+it did not with the combobox.
 
-**La regla no falló: la premisa era falsa.** Un sidebar colapsable nunca fue un disclosure.
+**The rule did not fail: the premise was false.** A collapsible sidebar was never a disclosure.
 
-## Los grupos de adentro sí son disclosures
+## The groups inside it are disclosures
 
-El corte no es "sidebar sí, plataforma no". Un grupo de navegación anidado que colapsa **sí** esconde
-sus items, así que sí es un disclosure, y va en `<details>` / `<summary>` como dice la decisión 8. El
-mismo componente usa el elemento nativo donde corresponde y una máquina donde no hay elemento. El
-principio es uno y cae distinto en cada lugar porque la plataforma es distinta en cada lugar.
+The cut is not "sidebar yes, platform no". A nested navigation group that collapses **does** hide its
+items, so it is a disclosure, and it goes in `<details>` / `<summary>` as decision 8 says. The same
+component uses the native element where it fits and a machine where there is no element. The principle is
+one and it lands differently in each place because the platform is different in each place.
 
-## Un ancho, dos valores, un solo hook
+## One width, two values, a single hook
 
-Los dos anchos no son dos propiedades. `--sk-sidebar-inline-size` arranca en
-`--sk-sidebar-expanded-inline-size`, y `[data-state="collapsed"]` lo **re-declara** en
-`--sk-sidebar-collapsed-inline-size`. El consumidor escribe `inline-size: var(--sk-sidebar-inline-size)`
-una vez y no vuelve a tocar el tema: no hay una segunda regla que mantener sincronizada, que es
-exactamente lo que dice el contrato de styling hooks, una variante re-declara el hook que cambia en vez
-de agregar uno nuevo.
+The two widths are not two properties. `--sk-sidebar-inline-size` starts at
+`--sk-sidebar-expanded-inline-size`, and `[data-state="collapsed"]` **re-declares** it as
+`--sk-sidebar-collapsed-inline-size`. The consumer writes `inline-size: var(--sk-sidebar-inline-size)`
+once and never revisits it: there is no second rule to keep in sync, which is exactly what the styling
+hooks contract says, a variant re-declares the hook that changes rather than adding a new one.
 
-Contraído es un **state**: lo escribe la máquina como `data-state` en la raíz, nunca a mano y nunca como
-modificador BEM.
+Collapsed is a **state**: the machine writes it as `data-state` on the root, never by hand and never as a
+BEM modifier.
 
-La duración sale de los tokens de intención de expand/collapse
-([decisión 10](./0004-motion-through-intent-tokens.md)), que ya se achican solos bajo
-`prefers-reduced-motion`, por eso el CSS del sidebar no tiene ni un bloque de media query para eso.
+The duration comes from the expand/collapse intent tokens
+([decision 10](./0004-motion-through-intent-tokens.md)), which already shrink themselves under
+`prefers-reduced-motion`, which is why the sidebar's CSS has no media query block for it at all.
 
-## El label se desvanece, no se va
+## The label fades, it does not leave
 
-Contraído, la opacidad del label va a 0, `--sk-nav-list-label-opacity`, un hook del pattern de la lista
-que el shell re-declara al contraerse ([decisión 17](./0019-public-palettes-and-constant-semantics.md)), 
-y el riel recorta lo que sobra. El label **sigue en el DOM**, y eso no es una simplificación: es lo único
-que le pone nombre al icono para un lector de pantalla. Un usuario vidente ve un riel de dibujos; un
-usuario de lector de pantalla escucha "Reportes" porque el texto nunca se fue.
+Collapsed, the label's opacity goes to 0, `--sk-nav-list-label-opacity`, a hook of the list pattern the
+shell re-declares when collapsing ([decision 17](./0019-public-palettes-and-constant-semantics.md)), and
+the rail clips what is left over. The label **stays in the DOM**, and that is not a simplification: it is
+the only thing giving the icon a name for a screen reader. A sighted user sees a rail of drawings; a
+screen reader user hears "Reports" because the text never left.
 
-Por lo mismo el sidebar **no tiene un part de icono**. El icono es un
-[pattern](./0019-public-palettes-and-constant-semantics.md) y trae su propia caja; el color
-lo saca de `currentColor`, que el link ya fija. Un `sk-sidebar__icon` sería el sidebar re-declarando lo
-que `sk-icon` ya envía, la duplicación que un pattern existe para prevenir.
+For the same reason the sidebar **has no icon part**. The icon is a
+[pattern](./0019-public-palettes-and-constant-semantics.md) and brings its own box; it takes its color
+from `currentColor`, which the link already sets. An `sk-sidebar__icon` would be the sidebar re-declaring
+what `sk-icon` already ships, the duplication a pattern exists to prevent.
 
-## Lo que se rechazó
+## What was rejected
 
-- *Exigir `<details>`.* Aplica la regla de la decisión 8 a una premisa falsa. El estado cerrado esconde
-  los links, así que el riel, el punto entero del componente, deja de existir. El componente que
-  quedaría es un menú que se abre y se cierra, no un sidebar.
-- *`display: none` o `visibility: hidden` en los labels.* Renderiza igual de bien y saca los nombres del
-  árbol de accesibilidad: el riel queda como una fila de iconos anónimos. El navegador no avisa y ningún
-  test de layout falla.
-- *Un `visually-hidden` en los labels al contraer.* Conserva la accesibilidad pero mata la transición:
-  el ancho anima y el texto desaparece de golpe en el primer frame.
-- *Dos hooks de ancho, uno por estado.* Obliga al consumidor a escribir dos reglas y a saber cuál
-  aplica cuándo. El estado ya sabe cuál es; el hook es uno.
-- *Persistir la preferencia adentro del enhancer.* `localStorage` es una decisión de la app, no del
-  design system, con qué clave, por usuario o por dispositivo, y si sincroniza. El enhancer emite
-  `sk-collapsed-change` y React llama `onCollapsedChange`; guardar eso es del consumidor.
+- *Requiring `<details>`.* It applies decision 8's rule to a false premise. The closed state hides the
+  links, so the rail, the component's entire point, stops existing. What would be left is a menu that
+  opens and closes, not a sidebar.
+- *`display: none` or `visibility: hidden` on the labels.* It renders just as well and removes the names
+  from the accessibility tree: the rail becomes a row of anonymous icons. The browser does not warn and
+  no layout test fails.
+- *A `visually-hidden` on the labels when collapsing.* It preserves accessibility but kills the
+  transition: the width animates and the text vanishes abruptly on the first frame.
+- *Two width hooks, one per state.* It forces the consumer to write two rules and to know which applies
+  when. The state already knows which one it is; the hook is one.
+- *Persisting the preference inside the enhancer.* `localStorage` is the app's decision, not the design
+  system's, with what key, per user or per device, and whether it syncs. The enhancer emits
+  `sk-collapsed-change` and React calls `onCollapsedChange`; storing that belongs to the consumer.
 
-## Costo
+## Cost
 
-El trigger necesita un nombre accesible que el consumidor escribe, porque el enhancer parchea atributos
-y nunca contenido. El trigger mide un icono de ancho, así que ese nombre va en un `aria-label` o en
-texto visualmente oculto, un label visible adentro sería texto adentro de un cuadrado del ancho de un
-icono. Un trigger sin nombre queda anónimo, y el sistema no puede detectarlo por él.
+The trigger needs an accessible name the consumer writes, because the enhancer patches attributes and
+never content. The trigger is one icon wide, so that name goes in an `aria-label` or in visually hidden
+text; a visible label inside would be text inside a square the width of an icon. A trigger with no name
+stays anonymous, and the system cannot detect that for them.
 
-Y el riel apuesta a que los iconos se entienden. Un sidebar contraído es utilizable en la medida en que
-sus iconos signifiquen algo sin su label, lo cual es cierto para "inicio" y falso para casi cualquier
-sección con nombre propio. El componente permite arrancar contraído; que eso sea buena idea es del
-consumidor, y para la mayoría de las apps la respuesta es no.
+And the rail bets that the icons are understood. A collapsed sidebar is usable to the extent that its
+icons mean something without their label, which is true for "home" and false for almost any section with
+a name of its own. The component allows starting collapsed; whether that is a good idea belongs to the
+consumer, and for most apps the answer is no.

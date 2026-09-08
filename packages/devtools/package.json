@@ -1,6 +1,7 @@
 {
   "name": "@skryensya/devtools",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
   "description": "Optional runtime debug overlay for skryensya/ui: hit-area visualization and other inspection aids, built from the design system's own components. No package in this repo imports it, so it costs nothing unless a consumer opts in.",
   "files": [

@@ -1,6 +1,7 @@
 {
   "name": "@skryensya/charts",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
   "description": "The renderer for the chart contract's line and area kinds. Bars need no renderer; TanStack's full grammar is a separate, optional subpath.",
   "files": [

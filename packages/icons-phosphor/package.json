@@ -1,6 +1,7 @@
 {
   "name": "@skryensya/icons-phosphor",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
   "description": "Phosphor bound to skryensya/ui's stable icon vocabulary. Generated from the library; ships data, not a runtime.",
   "files": ["dist", "src", "LICENSE-phosphor"],

@@ -141,7 +141,7 @@ load-bearing rather than advisory:
 
 | Hook | What it enforces |
 |---|---|
-| `commit-msg` | Conventional Commits, one line, no body, no trailers. |
+| `commit-msg` | Conventional Commits shape, a 100-character subject cap, no trailers. |
 | `pre-commit` | Secret scanning (gitleaks) and icon-vocabulary completeness. |
 | `pre-push` | Dependency audit, then `pnpm check` across every package except the browser gates. |
 
@@ -150,14 +150,18 @@ you are pushing work in progress to a branch of your own.
 
 ### Commit messages
 
-One line. No body, no trailers, ever.
-
 ```
-type(scope): descripcion en minuscula, sin punto final
+type(scope opcional): descripcion
+
+Cuerpo opcional, despues de una linea en blanco.
 ```
 
-Types: `feat fix docs style refactor perf test build ci chore revert`. The scope is optional. This is
-enforced by `.husky/commit-msg`, so a non-conforming message is rejected at commit time.
+Types: `feat fix docs style refactor perf test build ci chore revert`. The scope is optional and the
+description is free text. The subject is capped at 100 characters; detail that does not fit goes in
+the body, after a blank line. No `Co-authored-by:` or `Signed-off-by:` trailers, ever.
+
+`.husky/commit-msg` enforces this, so a non-conforming message is rejected at commit time. See
+[`CONTRIBUTING.md`](CONTRIBUTING.md#commit-messages) for the reasoning behind the cap.
 
 ### Adding or changing a component
 

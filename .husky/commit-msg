@@ -1,28 +1,55 @@
 msg_file="$1"
-subject="$(head -n1 "$msg_file")"
-line_count="$(grep -c . "$msg_file")"
+
+# Git corre este hook ANTES de limpiar el mensaje, así que las líneas de comentario que el editor
+# agrega (`# Please enter the commit message...`) todavía están en el archivo. Validar sobre ellas
+# hacía que `git commit` sin `-m` fallara siempre: contaban como cuerpo. Se descartan primero, igual
+# que hace git después.
+cleaned="$(grep -v '^#' "$msg_file")"
+subject="$(printf '%s\n' "$cleaned" | head -n1)"
+second="$(printf '%s\n' "$cleaned" | sed -n '2p')"
 
 # Nunca un trailer de coautoría, de nadie (Cursor, Claude Code, o cualquier otra herramienta).
-if grep -qiE '^(Co-authored-by|Signed-off-by):' "$msg_file"; then
+if printf '%s\n' "$cleaned" | grep -qiE '^(Co-authored-by|Signed-off-by):'; then
   echo "commit-msg: no se permiten trailers de coautoria (Co-authored-by / Signed-off-by)." >&2
   echo "  Saca esa linea del mensaje y volve a commitear." >&2
   exit 1
 fi
 
-# Un solo commit == un solo asunto: sin cuerpo, sin lineas extra.
-if [ "$line_count" -gt 1 ]; then
-  echo "commit-msg: el mensaje debe ser una sola linea (sin cuerpo)." >&2
-  echo "  Recibido:" >&2
-  sed 's/^/    /' "$msg_file" >&2
+# EL ASUNTO TIENE UN TOPE DURO. Es lo único que se ve en `git log --oneline`, en el historial de
+# GitHub y en un `git blame`: pasado cierto largo deja de resumir y se convierte en un párrafo mal
+# ubicado, que es justo para lo que ahora existe el cuerpo. 100 y no los 72 clásicos porque este
+# historial ya escribe asuntos largos a propósito: medidos sobre los últimos 200 commits, la mediana
+# es 56 y el percentil 90 es 82, así que 72 habría rechazado 39 de ellos y 100 rechaza 5.
+max=100
+if [ "${#subject}" -gt "$max" ]; then
+  echo "commit-msg: el asunto tiene ${#subject} caracteres y el maximo es $max." >&2
+  echo "  Recibido:   $subject" >&2
+  echo "  Lo que sobra casi siempre es detalle: dejalo en el cuerpo, despues de una linea en blanco." >&2
   exit 1
 fi
 
-# type(scope opcional): descripcion, en minuscula, sin punto final.
-pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9./-]+\))?: [a-z0-9].*[^.]$'
-if ! echo "$subject" | grep -qE "$pattern"; then
+# SI HAY CUERPO, VA SEPARADO POR UNA LINEA EN BLANCO. No es estética: git trata la primera línea como
+# el asunto y el resto como cuerpo SOLO si hay una línea vacía entre medio. Sin ella, `git log
+# --oneline` y GitHub muestran todo pegado como un asunto larguísimo, que es exactamente lo que el
+# tope de arriba trata de evitar.
+if [ -n "$second" ]; then
+  echo "commit-msg: falta la linea en blanco entre el asunto y el cuerpo." >&2
+  echo "  Recibido en la linea 2:   $second" >&2
+  echo "  El cuerpo es bienvenido, pero tiene que empezar despues de una linea vacia." >&2
+  exit 1
+fi
+
+# type(scope opcional): descripcion.
+#
+# La descripcion es libre: puede empezar en mayuscula y puede terminar en punto. Antes se exigía
+# minuscula y sin punto final, y esa regla se relajó a propósito: no cambiaba nada que se pueda leer
+# en `git log` y rechazaba mensajes correctos. Lo que sí se sigue exigiendo es el tipo, porque de ahí
+# sale de un vistazo qué clase de cambio es cada commit.
+pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9./-]+\))?: .+$'
+if ! printf '%s\n' "$subject" | grep -qE "$pattern"; then
   echo "commit-msg: el mensaje no sigue Conventional Commits." >&2
   echo "  Recibido:   $subject" >&2
-  echo "  Esperado:   tipo(scope opcional): descripcion en minuscula, sin punto final" >&2
+  echo "  Esperado:   tipo(scope opcional): descripcion" >&2
   echo "  Tipos:      feat fix docs style refactor perf test build ci chore revert" >&2
   echo "  Ejemplo:    fix(command-palette): defer mobile mount until pointerdown" >&2
   exit 1

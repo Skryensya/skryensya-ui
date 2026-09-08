@@ -297,14 +297,21 @@ Regla práctica al escribir:
 
 ## Mensajes de commit
 
-Conventional Commits, en español, una sola línea, sin cuerpo y sin trailers:
+Conventional Commits, en español, sin trailers:
 
 ```
-type(scope opcional): descripcion en minuscula, sin punto final
+type(scope opcional): descripcion
+
+Cuerpo opcional, despues de una linea en blanco.
 ```
 
-Tipos: `feat fix docs style refactor perf test build ci chore revert`. Ejemplo real del historial:
+Tipos: `feat fix docs style refactor perf test build ci chore revert`. La descripción es texto libre:
+puede empezar en mayúscula y puede terminar en punto. Ejemplo real del historial:
 `fix(calendar): sube las celdas de dia a sm para que el widget tenga un solo escalon de tamano`.
+
+El **asunto tiene un tope de 100 caracteres**, que es lo único que se ve en `git log --oneline`. El
+detalle que no entra va al cuerpo, separado por una línea en blanco (sin esa línea git no distingue
+asunto de cuerpo).
 
 La forma la impone `.husky/commit-msg`, así que un mensaje que no la cumple se rechaza al commitear:
 esta sección describe lo que el hook ya obliga, nunca una convención paralela. El idioma no lo
@@ -334,4 +341,4 @@ son dos commits.
   independientes (punto en cada ítem), no mezcles las dos formas.
 - ¿ADR? Necesita alternativas rechazadas, debilidad aceptada, y enforcement, no solo la decisión final.
 - ¿Comentario de código? Sigue el idioma del archivo que estás editando.
-- ¿Commit? Conventional Commits en español, una línea, sin punto final.
+- ¿Commit? Conventional Commits en español, asunto de 100 caracteres como máximo, cuerpo opcional.

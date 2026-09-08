@@ -1,84 +1,84 @@
 ---
 num: 6
-title: El monorepo, y el sitio que consume el paquete por el camino que enseña
-short: "Monorepo y sitio"
+title: The monorepo, and the site that consumes the package by the path it teaches
+short: "Monorepo and site"
 summary: >-
-  El repo separa el artefacto publicable (packages/core, sin dependencias runtime) de su consumidor
-  (apps/docs), en un Turborepo con pnpm. El sitio consume por el exports map, el camino Sass que documenta
-  como canónico, así que si el exports map o la compilación Sass se rompe, el sitio deja de compilar: la
-  documentación se verifica por construcción.
+  The repo separates the publishable artifact (packages/core, with no runtime dependencies) from its
+  consumer (apps/docs), in a Turborepo with pnpm. The site consumes through the exports map, the Sass path
+  it documents as canonical, so if the exports map or the Sass compilation breaks, the site stops
+  building: the documentation is verified by construction.
 ---
 
-Dos cosas viven en este repo y no son la misma: `@skryensya/core` es un artefacto publicable con **cero
-dependencias de runtime**, y el sitio de documentación es un **consumidor** de ese artefacto. Un repo
-plano las mezcla, y deja que el consumidor llegue al CSS por una ruta relativa `../css/…`, el atajo que
-un consumidor real no puede tomar, así que no prueba nada.
+Two things live in this repo and they are not the same: `@skryensya/core` is a publishable artifact with
+**zero runtime dependencies**, and the documentation site is a **consumer** of that artifact. A flat repo
+mixes them, and lets the consumer reach the CSS through a relative `../css/...` path, the shortcut a real
+consumer cannot take, so it proves nothing.
 
-## La estructura
+## The structure
 
-Turborepo con pnpm workspaces:
+Turborepo with pnpm workspaces:
 
-- **`packages/core`**, tokens, styling hooks y contrato compartido de componentes. Cero dependencias de
-  runtime, publicable; la carpeta `css/` es el [artefacto](./0019-public-palettes-and-constant-semantics.md),
-  `src/` publica parts/tipos compartidos y `scripts/lint.mjs` es el
-  [validador](./0019-public-palettes-and-constant-semantics.md). El tooling del monorepo (turbo, pnpm) vive en la raíz y en
-  devDependencies; nunca entra al runtime del paquete.
-- **`apps/docs`**, el sitio, una app de Astro. Declara `"@skryensya/core": "workspace:*"`; pnpm lo
-  symlinkea dentro de `node_modules`, y el sitio lo importa como paquete real.
-- **`turbo.json`**, un pipeline `lint`/`check`/`dev`. `lint` cachea sobre el fuente de tokens, así que
-  las corridas sin cambios se replayean en milisegundos.
+- **`packages/core`**, tokens, styling hooks and the shared component contract. Zero runtime
+  dependencies, publishable; the `css/` folder is the
+  [artifact](./0019-public-palettes-and-constant-semantics.md), `src/` publishes shared parts/types and
+  `scripts/lint.mjs` is the [validator](./0019-public-palettes-and-constant-semantics.md). The monorepo's
+  tooling (turbo, pnpm) lives at the root and in devDependencies; it never enters the package's runtime.
+- **`apps/docs`**, the site, an Astro app. It declares `"@skryensya/core": "workspace:*"`; pnpm symlinks
+  it into `node_modules`, and the site imports it as a real package.
+- **`turbo.json`**, a `lint`/`check`/`dev` pipeline. `lint` caches on the token source, so unchanged runs
+  replay in milliseconds.
 
-pnpm es el default de Turborepo y da symlinks directos de workspace. npm/yarn workspaces también
-servirían; se eligió pnpm por idioma, no por necesidad.
+pnpm is Turborepo's default and gives direct workspace symlinks. npm/yarn workspaces would work too;
+pnpm was chosen as an idiom, not out of necessity.
 
-## El sitio toma el camino que enseña
+## The site takes the path it teaches
 
-Un paquete de tokens se consume por un **especificador desnudo** resuelto por el `exports` map
-(`@skryensya/core/tokens.scss`), que requiere un bundler con Sass. La antigua ruta cruda por
-`node_modules/@skryensya/core/css/...` esquivaba el `exports` map; ya no es el camino canónico porque el
-entrypoint público es Sass y debe pasar por el pipeline del consumidor.
+A token package is consumed through a **bare specifier** resolved by the `exports` map
+(`@skryensya/core/tokens.scss`), which requires a bundler with Sass. The old raw path through
+`node_modules/@skryensya/core/css/...` bypassed the `exports` map; it is no longer the canonical path
+because the public entrypoint is Sass and must go through the consumer's pipeline.
 
-El sitio no puede esquivar la elección, porque tiene que *decirle a los consumidores qué camino tomar*.
-Documentar un camino mientras se practica el otro es el mismo fracaso que mató al repo plano: un consumidor
-que llega al CSS por una ruta que los consumidores reales no pueden tomar no prueba nada.
+The site cannot dodge the choice, because it has to *tell consumers which path to take*. Documenting one
+path while practicing the other is the same failure that killed the flat repo: a consumer that reaches
+the CSS by a route real consumers cannot take proves nothing.
 
-**`apps/docs` consume por el `exports` map, documenta ese camino como canónico, y por lo tanto toma el
-camino que enseña.** Si el `exports` map se rompe, el sitio deja de compilar, la documentación se
-verifica por construcción, no por revisión.
+**`apps/docs` consumes through the `exports` map, documents that path as canonical, and therefore takes
+the path it teaches.** If the `exports` map breaks, the site stops building; the documentation is
+verified by construction, not by review.
 
-Esto encontró un bug apenas se armó: hacer del `exports` map el contrato expuso que `patterns/*` nunca
-había sido exportado. El CSS se enviaba y [el state layer](./0003-the-state-layer.md) lo trata como
-API pública, pero ningún consumidor con bundler podía importarlo. Una demo por ruta cruda nunca lo habría
-destapado, porque la ruta cruda no consulta `exports`. El primer consumidor honesto lo encontró en
-minutos.
+This found a bug as soon as it was set up: making the `exports` map the contract exposed that
+`patterns/*` had never been exported. The CSS shipped and [the state layer](./0003-the-state-layer.md)
+treats it as public API, but no consumer with a bundler could import it. A demo using the raw path would
+never have uncovered it, because the raw path does not consult `exports`. The first honest consumer found
+it in minutes.
 
-## El contrato exige Sass
+## The contract requires Sass
 
-Antes existía una `apps/demo` que consumía por ruta cruda. Se borró; su contenido se mudó al sitio. El
-costo cambió con ADR-19: **el contrato público ahora exige un bundler con Sass**. Eso es deliberado, el
-paquete publica la fuente que evita duplicar CSS generado, y el sitio lo prueba por el mismo camino que
-enseña: especificadores desnudos vía `exports`.
+There used to be an `apps/demo` that consumed through the raw path. It was deleted; its content moved
+into the site. The cost changed with ADR-19: **the public contract now requires a bundler with Sass**.
+That is deliberate, the package publishes the source that avoids duplicating generated CSS, and the site
+proves it through the same path it teaches: bare specifiers via `exports`.
 
-## El sitio es la fuente de componentes nuevos
+## The site is the source of new components
 
-El sitio es el primer consumidor a cualquier escala: necesita navegación, bloques de código, tablas y
-callouts donde `button` era el catálogo entero. Eso lo convierte en la **fuente de componentes nuevos**,
-lo que invierte el consejo de [la primera decisión](./0019-public-palettes-and-constant-semantics.md) de
-diseñar solo con evidencia de reuso: con un solo consumidor no existe tal evidencia, y esperar a un
-segundo en un POC significa no crecer nunca.
+The site is the first consumer at any scale: it needs navigation, code blocks, tables and callouts where
+`button` was the entire catalogue. That makes it the **source of new components**, which inverts
+[the first decision's](./0019-public-palettes-and-constant-semantics.md) advice to design only with
+evidence of reuse: with a single consumer there is no such evidence, and waiting for a second one in a
+POC means never growing.
 
-El syntax highlighting es su punto delicado. Sería la familia de color más grande del sistema, y cada
-token tiene que superar la puerta de contraste del [validador](./0019-public-palettes-and-constant-semantics.md) sobre dos
-marcas y cuatro modos, el primer cambio lo bastante grande como para que la
-[brecha conocida](./0019-public-palettes-and-constant-semantics.md) golpee.
+Syntax highlighting is its delicate point. It would be the largest color family in the system, and every
+token has to clear the [validator's](./0019-public-palettes-and-constant-semantics.md) contrast gate over
+two brands and four modes, the first change large enough for the
+[known gap](./0019-public-palettes-and-constant-semantics.md) to bite.
 
-## Lo que se rechazó
+## What was rejected
 
-- *Quedarse plano.* No puede demostrar consumo real del paquete, y mezcla el artefacto publicable con
-  sus consumidores.
-- *Un SSG de estantería (Starlight, Docusaurus).* La navegación y los bloques de código llegan resueltos,
-  pero el sitio llega **con la cara del SSG**. Para un design system, que el sitio se vea como el design
-  system no es decoración: es el argumento. Astro sin Starlight no envía CSS propio, así que cada píxel
-  sale de los tokens.
-- *Conservar `apps/demo` como testigo del camino sin build.* Un segundo consumidor mantenido solo para
-  probar una frase se degrada; el costo de no tenerlo se dice arriba en vez de esconderse.
+- *Staying flat.* It cannot demonstrate real consumption of the package, and it mixes the publishable
+  artifact with its consumers.
+- *An off-the-shelf SSG (Starlight, Docusaurus).* Navigation and code blocks arrive solved, but the site
+  arrives **wearing the SSG's face**. For a design system, the site looking like the design system is not
+  decoration: it is the argument. Astro without Starlight ships no CSS of its own, so every pixel comes
+  from the tokens.
+- *Keeping `apps/demo` as a witness for the build-free path.* A second consumer maintained only to prove
+  a sentence degrades; the cost of not having it is stated above rather than hidden.

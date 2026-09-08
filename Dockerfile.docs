@@ -24,6 +24,7 @@ COPY packages/ai-gates/package.json ./packages/ai-gates/package.json
 COPY packages/charts/package.json ./packages/charts/package.json
 COPY packages/core/package.json ./packages/core/package.json
 COPY packages/devtools/package.json ./packages/devtools/package.json
+COPY packages/editor/package.json ./packages/editor/package.json
 COPY packages/icons-lucide/package.json ./packages/icons-lucide/package.json
 COPY packages/icons-material/package.json ./packages/icons-material/package.json
 COPY packages/icons-phosphor/package.json ./packages/icons-phosphor/package.json
@@ -45,6 +46,12 @@ COPY packages/ai-compiler ./packages/ai-compiler
 COPY packages/charts ./packages/charts
 COPY packages/core ./packages/core
 COPY packages/devtools ./packages/devtools
+# `@skryensya/editor` is an OPTIONAL peer dependency of `@skryensya/vanilla`, and optional is what
+# makes its absence dangerous here rather than loud: install succeeds without it, and Vite quietly
+# swaps every import for an `__vite-optional-peer-dep:` stub, so the failure surfaces 30 steps later
+# as 28 MISSING_EXPORT errors out of `packages/vanilla/src/components/editor.ts`. Its `exports` point
+# at `src/*.ts`, so the SOURCE has to be here; there is no dist to copy and no build step to add.
+COPY packages/editor ./packages/editor
 COPY packages/icons-lucide ./packages/icons-lucide
 COPY packages/icons-material ./packages/icons-material
 COPY packages/icons-phosphor ./packages/icons-phosphor

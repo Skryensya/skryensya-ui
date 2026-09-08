@@ -1,0 +1,39 @@
+# Lo que reemplaza a una CI, corriendo acá. Este repo es privado en plan Free, así que branch
+# protection, secret scanning y code scanning no están disponibles (piden Pro o repo público), y de
+# todos modos la decisión fue que esto viva local. El push es el último momento en que algo se puede
+# frenar sin reescribir historia, así que los chequeos caros van acá y no en pre-commit: commitear
+# sigue siendo barato, publicar es lo que paga.
+#
+# ORDEN: primero el que tarda segundos, después el que tarda minutos.
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────────
+# 1. AUDIT. Es la mitad que avisa del cooldown de 30 días (`minimumReleaseAge`, pnpm-workspace.yaml):
+# esa regla demora TODO parche nuevo, lo cual es seguro sólo si alguien se entera de que hay un CVE y
+# decide saltear la espera para ese paquete. Sin este chequeo, la cuarentena se vuelve un retraso que
+# nadie ve. Falla en high/critical; sin red avisa y sigue (el script explica por qué).
+echo "pre-push: revisando dependencias..."
+if ! node scripts/audit-gate.mjs; then
+  echo "" >&2
+  echo "pre-push: hay vulnerabilidades de nivel high o mayor en las dependencias." >&2
+  echo "  Arriba esta cada una con su ruta y como se arregla." >&2
+  echo "  Si es a proposito y lo vas a resolver despues: 'git push --no-verify'." >&2
+  exit 1
+fi
+
+# ─────────────────────────────────────────────────────────────────────────────────────────────────
+# 2. CHECK. Lint + tests + tsc de los 16 paquetes deterministas.
+#
+# `@skryensya/ai-gates` queda AFUERA a proposito: son 730 tests de Playwright, ~19 minutos, y hoy se
+# caen a mitad de camino por el stage y no por regresiones (los que pasan tardan 10-13s, los que
+# fallan 0.3-2s, symmetry aborta a 1ms). Un push que tarda 20 minutos y termina en rojo por algo que
+# no rompiste enseña a usar --no-verify, y ese habito se lleva puesto tambien al chequeo de secretos.
+# Entra cuando este estable.
+#
+# --concurrency=1 porque en paralelo este check tiene timeouts intermitentes en este repo.
+echo "pre-push: corriendo check..."
+if ! pnpm turbo run check --filter='!@skryensya/ai-gates' --concurrency=1; then
+  echo "" >&2
+  echo "pre-push: 'check' fallo. Lo de arriba dice que paquete y por que." >&2
+  echo "  Si estas empujando trabajo a medias a una rama tuya: 'git push --no-verify'." >&2
+  exit 1
+fi

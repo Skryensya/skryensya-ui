@@ -5,6 +5,16 @@ dist/
 .DS_Store
 .cursor/
 
+# Secretos. `evals/agent/` lee ANTHROPIC_API_KEY y OPENAI_API_KEY del entorno, así que un `.env`
+# acá tiene claves reales adentro. Hoy no existe ninguno y nunca se commiteó uno (verificado sobre
+# todo el historial), y esta regla es para que siga siendo cierto: la primera vez que alguien cree
+# uno va a ser mientras debuggea algo, que es exactamente cuando no se mira `git status`.
+# `.env.example` queda FUERA del ignore a propósito: documenta qué variables hacen falta sin
+# llevar valores, y es lo que debería commitearse en su lugar.
+.env
+.env.*
+!.env.example
+
 # Playwright run output. The BASELINE is committed (src/**/*-snapshots); this is the diff of a run.
 test-results/
 

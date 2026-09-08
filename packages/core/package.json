@@ -1,6 +1,7 @@
 {
   "name": "@skryensya/core",
   "version": "0.1.0",
+  "private": true,
   "type": "module",
   "description": "Framework-agnostic contract for skryensya/ui: design tokens, component parts and shared option types.",
   "files": [

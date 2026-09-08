@@ -3,7 +3,15 @@
 # Build context must be the monorepo root.
 # Dokploy: Dockerfile path = Dockerfile.mcp
 
-FROM node:22-bookworm-slim AS build
+# POR DIGEST, no sólo por tag. `node:22-bookworm-slim` es un puntero que se mueve: quien controle
+# el repo puede reapuntarlo, y dos builds del mismo commit pueden traer imágenes distintas sin que
+# nada acá cambie. El digest es la imagen, no un nombre para ella.
+#
+# LO QUE CUESTA: los parches del sistema operativo de la base dejan de entrar solos al reconstruir.
+# Hay que subir el digest a mano, y conviene hacerlo cada tanto. Para sacar el de hoy:
+#   docker buildx imagetools inspect node:22-bookworm-slim
+# El tag al lado del digest no lo usa Docker para nada, está para que se lea qué versión es.
+FROM node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5 AS build
 
 ENV PNPM_HOME=/pnpm
 ENV PATH="$PNPM_HOME:$PATH"
@@ -52,14 +60,28 @@ COPY artifacts ./artifacts
 # the bundle already made irrelevant.
 RUN pnpm --filter @skryensya/ai-compiler build && pnpm --filter @skryensya/mcp build
 
-FROM node:22-bookworm-slim AS runtime
+FROM node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5 AS runtime
 
 WORKDIR /app
 
 # Keep these two in sync with packages/mcp/package.json's own "dependencies" field: they are the
 # only entries in that file this stage's install has to mirror, everything else there is a
 # workspace link already inlined into dist/*.js above.
-RUN npm install --omit=dev --no-save "@modelcontextprotocol/sdk@^1.30.0" "zod@^3.24.1"
+#
+# VERSIONES EXACTAS, NO RANGOS, y --ignore-scripts. Esta línea era el único lugar del repo que
+# resolvía dependencias por fuera de todas las reglas que el workspace define, porque es `npm` y no
+# `pnpm`: no lee el lockfile, no ve `minimumReleaseAge` y no ve `onlyBuiltDependencies`. Con
+# `^1.30.0` cada build tomaba lo más nuevo que hubiera ese día — exactamente la ventana de horas de
+# la que el cooldown existe para sacarnos, reabierta acá adentro.
+#
+# Los dos números son los que `pnpm-lock.yaml` ya tiene resueltos para packages/mcp, así que la
+# imagen corre las mismas versiones que la máquina de quien la construyó, y el `^` de
+# packages/mcp/package.json sigue siendo la fuente: al subirlo, se suben estos también.
+#
+# --ignore-scripts es lo que npm no hace solo (pnpm 10 sí): sin eso, un postinstall de cualquiera de
+# estos dos, o de sus transitivas, corre como root durante el build.
+RUN npm install --omit=dev --no-save --ignore-scripts \
+  "@modelcontextprotocol/sdk@1.30.0" "zod@3.25.76"
 
 COPY --from=build /app/packages/mcp/dist ./packages/mcp/dist
 COPY --from=build /app/artifacts ./artifacts
@@ -72,5 +94,13 @@ ENV HOST=0.0.0.0
 ENV PORT=8787
 
 EXPOSE 8787
+
+# NO ROOT. Las imágenes `node` traen un usuario `node` sin privilegios justo para esto, y hasta acá
+# el proceso corría como root sin necesitarlo: este servidor lee `artifacts/` y `dist/`, escucha un
+# puerto alto y no escribe nada. Root acá sólo cambia lo que puede hacer alguien que llegue a
+# ejecutar código dentro del contenedor.
+#
+# Después de los COPY, a propósito: esos traen archivos de root, y el proceso sólo necesita leerlos.
+USER node
 
 CMD ["node", "packages/mcp/dist/http.js"]

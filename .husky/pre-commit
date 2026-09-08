@@ -8,6 +8,40 @@
 # los commits no paga el costo (medido: ~0.9s con turbo/pnpm en caliente).
 staged="$(git diff --cached --name-only --diff-filter=ACMR)"
 
+# ─────────────────────────────────────────────────────────────────────────────────────────────────
+# SECRETOS, antes que nada, porque es lo único acá que no se puede deshacer: un commit con una clave
+# adentro queda en el historial aunque el siguiente la borre, y limpiarlo después es reescribir
+# ramas. Los otros chequeos protegen de un bug; este protege de algo irreversible.
+#
+# ESTE REPO TIENE CLAVES REALES AL ALCANCE: `evals/agent/` lee ANTHROPIC_API_KEY y OPENAI_API_KEY
+# del entorno, así que la forma de esto no es hipotética.
+#
+# `git --staged`, no `dir .`: mira exactamente lo que está por entrar al commit. Medido en este
+# repo, `dir .` sobre el árbol entero da 46 hallazgos, los 46 en `apps/docs/dist/` — build output
+# ignorado que nunca se commitea, y ninguno un secreto real. Un hook que grita 46 veces por nada es
+# un hook que se aprende a saltear. En lo staged, hoy: cero.
+#
+# SI NO ESTÁ INSTALADO, AVISA Y SIGUE, no bloquea. Mismo criterio que scripts/audit-gate.mjs usa sin
+# red: un hook que rompe en una máquina recién clonada enseña a usar `--no-verify`, y ese hábito
+# cuesta más que lo que este chequeo aporta. El aviso es fuerte a propósito.
+if command -v gitleaks >/dev/null 2>&1; then
+  if ! gitleaks git --staged --no-banner --redact --verbose; then
+    echo "" >&2
+    echo "pre-commit: gitleaks encontro algo que parece un secreto en lo que estas por commitear." >&2
+    echo "  Arriba esta el archivo y la linea (el valor va tapado a proposito)." >&2
+    echo "" >&2
+    echo "  Si es un secreto de verdad: sacalo del archivo, y si ya se uso, ROTALO." >&2
+    echo "  Sacarlo del commit no lo desusa." >&2
+    echo "" >&2
+    echo "  Si es un falso positivo: agregalo a .gitleaksignore con el dedo (huella) que" >&2
+    echo "  gitleaks imprime arriba, en su propia linea y con un comentario que diga por que." >&2
+    exit 1
+  fi
+else
+  echo "pre-commit: gitleaks no esta instalado, NO se reviso si hay secretos en este commit." >&2
+  echo "  Instalalo con 'brew install gitleaks'." >&2
+fi
+
 if echo "$staged" | grep -qE '^(packages/core/src/icon\.ts|packages/icons-(lucide|material|phosphor)/)'; then
   echo "pre-commit: el vocabulario de iconos cambió, verificando que los tres sets sigan completos..."
   if ! pnpm --filter @skryensya/icons-lucide --filter @skryensya/icons-material --filter @skryensya/icons-phosphor run check; then

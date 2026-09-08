@@ -33,7 +33,7 @@ fi
 #
 # --concurrency=1 because in parallel this check has intermittent timeouts in this repo.
 echo "pre-push: running check..."
-if ! pnpm turbo run check --filter='!@skryensya/ai-gates' --concurrency=1; then
+if ! pnpm check; then
   echo "" >&2
   echo "pre-push: 'check' failed. The output above says which package and why." >&2
   echo "  If you are pushing work in progress to a branch of your own: 'git push --no-verify'." >&2

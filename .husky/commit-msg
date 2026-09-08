@@ -39,6 +39,25 @@ if [ -n "$second" ]; then
   exit 1
 fi
 
+# AND THE BODY HAS A CAP TOO, for the reason the subject's cap did not cover: it constrained only the
+# first line, so the body grew unchecked the moment it was allowed. Measured right after: of 286
+# commits only 7 carried a body, all 7 written the same day the allowance landed, at 457 to 1042
+# characters each. A commit message that needs a thousand characters is explaining a decision, and
+# this repo already has two better places for that, an ADR in docs/decisions/ and a comment next to
+# the code, both of which a reader finds later without running `git log`.
+#
+# CHARACTERS AND NOT LINES, because a line count is gamed by writing longer lines, and what costs a
+# reader is how much there is to read. 300 is about a short paragraph; all 7 of those bodies exceed it.
+body="$(printf '%s\n' "$cleaned" | tail -n +2)"
+body_chars="${#body}"
+max_body=300
+if [ "$body_chars" -gt "$max_body" ]; then
+  echo "commit-msg: the body is $body_chars characters and the maximum is $max_body." >&2
+  echo "  Keep the why to a short paragraph." >&2
+  echo "  If it needs more room, it is an ADR (docs/decisions/) or a comment, not a commit message." >&2
+  exit 1
+fi
+
 # type(optional scope): description.
 #
 # The description is free text: it may start uppercase and it may end with a period. Lowercase and no

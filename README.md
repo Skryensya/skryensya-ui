@@ -146,7 +146,7 @@ minutes on a runner:
 
 | Hook | What it enforces |
 |---|---|
-| `commit-msg` | Conventional Commits shape, a 100-character subject cap, no trailers. |
+| `commit-msg` | Conventional Commits shape, a 100-character subject, a 300-character body, no trailers. |
 | `pre-commit` | Secret scanning (gitleaks) and icon-vocabulary completeness. |
 | `pre-push` | Dependency audit, then the full check across every package except the browser gates. |
 
@@ -163,12 +163,13 @@ rules.
 ```
 type(optional scope): description
 
-Optional body, after a blank line.
+Optional body, after a blank line. At most 300 characters.
 ```
 
 Types: `feat fix docs style refactor perf test build ci chore revert`. The scope is optional and the
-description is free text. The subject is capped at 100 characters; detail that does not fit goes in
-the body, after a blank line. No `Co-authored-by:` or `Signed-off-by:` trailers, ever.
+description is free text. The subject is capped at 100 characters and the body at 300; anything that
+needs more room is an ADR or a code comment. No `Co-authored-by:` or `Signed-off-by:`
+trailers, ever.
 
 `.husky/commit-msg` enforces this, so a non-conforming message is rejected at commit time. See
 [`CONTRIBUTING.md`](CONTRIBUTING.md#commit-messages) for the reasoning behind the cap.

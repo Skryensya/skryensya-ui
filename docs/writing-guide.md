@@ -302,7 +302,7 @@ Conventional Commits, en español, sin trailers:
 ```
 type(optional scope): description
 
-Optional body, after a blank line.
+Optional body, after a blank line. At most 300 characters.
 ```
 
 Tipos: `feat fix docs style refactor perf test build ci chore revert`. La descripción es texto libre:

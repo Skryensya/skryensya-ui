@@ -62,7 +62,7 @@ in two seconds on your own machine is worth more than failing in three minutes o
 
 | Hook | What it runs | Roughly |
 |---|---|---|
-| `commit-msg` | Conventional Commits shape, a 100-character subject cap, no trailers | instant |
+| `commit-msg` | Conventional Commits shape, a 100-character subject, a 300-character body, no trailers | instant |
 | `pre-commit` | `gitleaks` on staged changes, plus icon-vocabulary completeness when the icon vocabulary is touched | about 1s |
 | `pre-push` | Dependency audit, then the full check minus the browser gates | a few minutes |
 
@@ -90,7 +90,7 @@ Two more notes:
 ```
 type(optional scope): description
 
-Optional body, after a blank line, for detail that does not fit in the subject.
+Optional body, after a blank line, at most 300 characters.
 ```
 
 Types: `feat fix docs style refactor perf test build ci chore revert`. The scope is optional. The

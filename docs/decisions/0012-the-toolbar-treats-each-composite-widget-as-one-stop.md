@@ -1,71 +1,68 @@
 ---
 num: 12
-title: El Toolbar trata cada widget compuesto como una parada
-short: "Segmented dentro de Toolbar"
+title: The Toolbar treats each composite widget as one stop
+short: "Segmented inside Toolbar"
 summary: >-
-  El enhancer de Toolbar recorría con flechas TODO botón enfocable dentro de la raíz, sin distinguir
-  entre un botón suelto y una opción de un widget compuesto (Segmented, Tabs) que ya trae su propio
-  roving tabindex. Anidar un Segmented dentro de un Toolbar producía un salto doble: la opción movía
-  el foco una posición y el Toolbar, al ver el mismo evento burbujeado, lo movía una segunda vez. Esta
-  decisión hace que el Toolbar sólo visite la parada con `tabindex="0"` de cada hijo y respete
-  `event.defaultPrevented`, para que un widget compuesto cuente como una parada, no como N.
+  The Toolbar enhancer arrowed through EVERY focusable button inside the root, without distinguishing a
+  loose button from an option of a composite widget (Segmented, Tabs) that already brings its own roving
+  tabindex. Nesting a Segmented inside a Toolbar produced a double jump: the option moved focus one
+  position and the Toolbar, seeing the same bubbled event, moved it a second time. This decision makes the
+  Toolbar visit only the `tabindex="0"` stop of each child and respect `event.defaultPrevented`, so a
+  composite widget counts as one stop, not N.
 ---
 
-## El problema
+## The problem
 
-El component preview de este sitio agrupa dos controles relacionados en su header: el selector de
-tamaño de pantalla y el toggle Vanilla/React. Ambos son Segmented: cada uno su propio `radiogroup`
-con roving tabindex ([`connectSegmented`](../../packages/vanilla/src/components/segmented.ts): sólo
-la opción seleccionada tiene `tabindex="0"`, el resto `-1`). Agruparlos visualmente como una sola
-barra de controles es exactamente lo que Toolbar existe para hacer.
+This site's component preview groups two related controls in its header: the screen size selector and the
+Vanilla/React toggle. Both are Segmented: each its own `radiogroup` with a roving tabindex
+([`connectSegmented`](../../packages/vanilla/src/components/segmented.ts): only the selected option has
+`tabindex="0"`, the rest `-1`). Grouping them visually as a single bar of controls is exactly what
+Toolbar exists to do.
 
-Pero el enhancer de Toolbar no sabía nada de esto:
+But the Toolbar enhancer knew nothing about this:
 
 ```ts
 const controls = Array.from(root.querySelectorAll<HTMLElement>(controlsSelector));
 ```
 
-`controlsSelector` es `button:not([disabled]), a[href], ...`: recoge TODOS los botones dentro de la
-raíz, sin filtrar por tabindex. Anidar un Segmented de 3 opciones dentro de un Toolbar significaba que
-el Toolbar veía 3 paradas donde debía ver 1. Peor: Segmented ya maneja sus propias flechas
-(`onOptionKeydown`, con `event.preventDefault()` y `next.focus()`), así que al presionar
-`ArrowRight` con el foco en una opción, dos handlers reaccionaban al mismo evento:
+`controlsSelector` is `button:not([disabled]), a[href], ...`: it collects EVERY button inside the root,
+without filtering by tabindex. Nesting a 3-option Segmented inside a Toolbar meant the Toolbar saw 3
+stops where it should have seen 1. Worse: Segmented already handles its own arrows (`onOptionKeydown`,
+with `event.preventDefault()` and `next.focus()`), so pressing `ArrowRight` with focus on an option had
+two handlers reacting to the same event:
 
-1. El keydown del option de Segmented movía el foco a la siguiente opción y llamaba `preventDefault()`.
-2. El evento burbujeaba hasta la raíz del Toolbar, cuyo propio `onKeyDown` no comprobaba
-   `defaultPrevented`: encontraba el `document.activeElement` ya actualizado por el paso 1, y lo
-   volvía a mover una posición más.
+1. Segmented's option keydown moved focus to the next option and called `preventDefault()`.
+2. The event bubbled up to the Toolbar root, whose own `onKeyDown` did not check `defaultPrevented`: it
+   found the `document.activeElement` already updated by step 1, and moved it one position further.
 
-Una sola flecha saltaba dos paradas.
+A single arrow key jumped two stops.
 
-## La decisión
+## The decision
 
-Dos cambios en [`packages/vanilla/src/components/toolbar.ts`](../../packages/vanilla/src/components/toolbar.ts):
+Two changes in [`packages/vanilla/src/components/toolbar.ts`](../../packages/vanilla/src/components/toolbar.ts):
 
-1. **Filtrar por parada, no por foco posible.** `controls` ahora excluye cualquier elemento con
-   `tabindex="-1"`. Un widget compuesto que expone su propio roving tabindex (Segmented, y cualquier
-   futuro widget que siga el mismo contrato) pasa a contar como una sola parada para el Toolbar, sin
-   que el Toolbar tenga que conocer su tipo.
-2. **Respetar `event.defaultPrevented`.** Si el hijo ya manejó la tecla (Segmented, Tabs), el
-   `onKeyDown` del Toolbar no vuelve a moverse. Esto no es específico de Segmented: es el contrato
-   general "quien ya consumió el evento no lo vuelve a procesar el padre".
+1. **Filter by stop, not by focusability.** `controls` now excludes any element with `tabindex="-1"`. A
+   composite widget that exposes its own roving tabindex (Segmented, and any future widget following the
+   same contract) counts as a single stop for the Toolbar, without the Toolbar having to know its type.
+2. **Respect `event.defaultPrevented`.** If the child already handled the key (Segmented, Tabs), the
+   Toolbar's `onKeyDown` does not move again. This is not Segmented-specific: it is the general contract
+   "whoever already consumed the event is not second-guessed by the parent".
 
-Con esto, un Segmented anidado se comporta como el patrón de la ARIA APG para "toolbar con widgets
-compuestos": Home/End y las flechas del Toolbar navegan ENTRE widgets (o botones sueltos); una vez el
-foco entra a un widget compuesto, sus propias flechas navegan DENTRO de él y no escapan al siguiente
-grupo del Toolbar.
+With this, a nested Segmented behaves like the ARIA APG pattern for "toolbar with composite widgets":
+Home/End and the Toolbar's arrows navigate BETWEEN widgets (or loose buttons); once focus enters a
+composite widget, its own arrows navigate WITHIN it and do not escape to the Toolbar's next group.
 
-## Dónde se usa
+## Where it is used
 
-El propio header del component preview (`apps/docs/src/components/ComponentPreview.astro`) es el caso real,
-no un ejemplo de laboratorio: el selector de tamaño de pantalla y el toggle Vanilla/React son ahora
-un `sk-toolbar` con dos `sk-toolbar__group`, cada uno conteniendo un Segmented, separados por un
-`sk-toolbar__separator`. Está documentado como patrón en
-[`/componentes/toolbar`](/componentes/toolbar), sección "Toolbar con widgets compuestos".
+The component preview's own header (`apps/docs/src/components/ComponentPreview.astro`) is the real case,
+not a laboratory example: the screen size selector and the Vanilla/React toggle are now an `sk-toolbar`
+with two `sk-toolbar__group`, each containing a Segmented, separated by an `sk-toolbar__separator`. It is
+documented as a pattern in [`/components/toolbar`](/components/toolbar), section "Toolbar with composite
+widgets".
 
-## Lo que no se hizo
+## What was not done
 
-No se le pidió a Segmented (ni a Tabs) que supiera que puede vivir dentro de un Toolbar. El contrato
-sigue siendo unidireccional: cualquier widget que ya implemente roving tabindex correctamente
-(una parada en `tabindex="0"`) funciona anidado sin cambios propios, porque es el Toolbar quien se
-adapta a ese contrato, no al revés.
+Segmented (or Tabs) was not asked to know it can live inside a Toolbar. The contract stays
+unidirectional: any widget that already implements roving tabindex correctly (one stop at `tabindex="0"`)
+works nested with no changes of its own, because it is the Toolbar that adapts to that contract, not the
+other way around.

@@ -131,10 +131,10 @@
     --state-layer-opacity: var(--state-layer-selected-opacity);
   }
 
-  /* any-hover, no hover: en un híbrido con mouse conectado el feedback se conserva.
-   * Sin el guard, WebKit deja el hover pegado tras un tap y el tinte residual se lee
-   * como "sigue activo" en lo que no navega (checkbox, tile). El @media no cambia
-   * especificidad ni orden: focus-visible y active siguen ganando más abajo. */
+  /* any-hover, not hover: on a hybrid with a mouse connected the feedback is kept.
+   * Without the guard, WebKit leaves the hover stuck after a tap and the residual tint
+   * reads as "still active" on things that do not navigate (checkbox, tile). The @media
+   * changes neither specificity nor order: focus-visible and active still win below. */
   @media (any-hover: hover) {
     .sk-interactive:hover,
     .sk-interactive:has(:hover) {

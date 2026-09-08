@@ -433,8 +433,8 @@ function Submenu({
      * anchor came after it always fell back to the UA default top-left corner, `position-anchor`
      * still reading back the right custom ident and `position-area` still reading back the right
      * keywords. The computed values lie, only the rendered rect tells the truth). Every submenu
-     * beyond the first level shared this exact ordering bug, and "el placement de los segundos
-     * niveles" was that: not a wrong `position-area`, an anchor the browser refused to use because
+     * beyond the first level shared this exact ordering bug, and "the placement of the second
+     * levels" was that: not a wrong `position-area`, an anchor the browser refused to use because
      * of DOM order alone.
      *
      * Staying nested keeps trigger-before-positioner true AT EVERY DEPTH by construction: each

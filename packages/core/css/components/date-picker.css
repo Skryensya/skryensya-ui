@@ -53,11 +53,11 @@
     border-radius: var(--sk-date-picker-radius);
     background: var(--sk-date-picker-wash) var(--sk-date-picker-bg);
     box-shadow: var(--sk-date-picker-shadow);
-    /* El control es el ancla, pero QUIEN LO DECLARA es el pattern (`sk-anchor`, ADR-11), no esta hoja.
-     * Acá vivía un `anchor-name: var(--sk-date-picker-anchor)` que nadie escribía nunca: un `var()`
-     * sin fallback es inválido a computed-value time, así que resolvía a `none`, y como esta hoja se
-     * importa DESPUÉS del pattern y las dos reglas empatan en especificidad, ese `none` le ganaba al
-     * pattern y dejaba al calendario sin ancla. */
+    /* The control is the anchor, but WHO DECLARES IT is the pattern (`sk-anchor`, ADR-11), not this
+     * sheet. An `anchor-name: var(--sk-date-picker-anchor)` used to live here that nobody ever wrote: a
+     * `var()` with no fallback is invalid at computed-value time, so it resolved to `none`, and since
+     * this sheet is imported AFTER the pattern and the two rules tie on specificity, that `none` beat
+     * the pattern and left the calendar with no anchor. */
   }
   .sk-date-picker__control:focus-within {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
@@ -128,17 +128,17 @@
   .sk-date-picker__clear[hidden] {
     display: none;
   }
-  /* La colocación es del pattern Anclaje (ADR-11): el control lleva además `sk-anchor` y el
-   * positioner además `sk-anchored`. El ancla es el CONTROL, no el botón del calendario: el panel se
-   * alinea con el campo que está editando.
+  /* The placement belongs to the Anchoring pattern (ADR-11): the control also carries `sk-anchor` and
+   * the positioner also `sk-anchored`. The anchor is the CONTROL, not the calendar button: the panel
+   * lines up with the field being edited.
    *
-   * Debajo del campo y con los bordes de inicio alineados; `flip-block` lo sube cuando no hay lugar.
+   * Below the field and with the start edges aligned; `flip-block` lifts it when there is no room.
    *
-   * Antes esto vivía en un `@supports` propio que leía `--sk-date-picker-anchor`, una custom property
-   * que NADIE escribía: el bloque entero era inerte y el calendario lo colocaba siempre Zag. */
-  /* Redeclarado, no duplicado: React portea el positioner al `<body>`, así que lo que declara
-   * `.sk-date-picker` no le llega por herencia y cada hook que se lea de acá para abajo resuelve
-   * vacío (un `padding` vacío es `0`). Ver la nota equivalente en `select.css`. */
+   * This used to live in an `@supports` of its own that read `--sk-date-picker-anchor`, a custom
+   * property NOBODY wrote: the whole block was inert and the calendar was always placed by Zag. */
+  /* Redeclared, not duplicated: React portals the positioner to the `<body>`, so what
+   * `.sk-date-picker` declares does not reach it by inheritance and every hook read from here down
+   * resolves empty (an empty `padding` is `0`). See the equivalent note in `select.css`. */
   .sk-date-picker__positioner {
     --sk-date-picker-content-bg: var(--color-bg-surface-overlay);
     --sk-date-picker-content-border-color: var(--color-border-subtle);

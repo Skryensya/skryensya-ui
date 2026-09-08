@@ -10,7 +10,7 @@ export const emptyStateParts = {
 
 /*
  * A region with nothing in it, said on purpose. The title is a real heading rather than styled text,
- * because "no hay resultados" IS the heading of that region, and the icon is `aria-hidden` since it
+ * because "no results" IS the heading of that region, and the icon is `aria-hidden` since it
  * repeats what the title already says.
  */
 export const emptyStateContract = {

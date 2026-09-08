@@ -1,7 +1,7 @@
 import type { ComponentContract } from "./contract.js";
 import { anchorPlacements, type AnchorPlacement } from "./anchored.js";
 
-/** El vocabulario de colocación es el del pattern Anclaje (ADR-11); estos son sus alias acá. */
+/** The placement vocabulary is the Anchoring pattern's (ADR-11); these are its aliases here. */
 export type PopoverPlacement = AnchorPlacement;
 
 export const popoverPlacements = anchorPlacements;
@@ -167,8 +167,8 @@ export const popoverContract = {
     /*
      * THE BARE SURFACE: an anchor and a panel, and nothing the panel does not need.
      *
-     * The docs call this one `popup` and its own page says what it is: "superficie flotante mínima
-     * para composiciones que no necesitan chrome de Popover". It has no core file and no stylesheet
+     * The docs call this one `popup` and its own page says what it is: "a minimal floating surface
+     * for compositions that do not need Popover's chrome". It has no core file and no stylesheet
      * of its own (it imports `popover.css`) because it is not another component, it is this one
      * with less anatomy. A contract of its own would duplicate every part and leave a reader
      * choosing between two names for one thing, which is exactly what a catalogue must not do.

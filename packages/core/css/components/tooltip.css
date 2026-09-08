@@ -1,19 +1,19 @@
 /*
  * TIER 3, TOOLTIP
  *
- * Una descripción auxiliar anclada a un trigger. Envía la clase y sus styling hooks (ADR-2): importar
- * esta hoja da un tooltip pintado, no variables.
+ * An auxiliary description anchored to a trigger. It ships the class and its styling hooks (ADR-2):
+ * importing this sheet gives you a painted tooltip, not variables.
  *
- * CERRADO ES EL ESTADO POR DEFECTO, y eso es lo primero que hace esta hoja. El contenido vive en el
- * markup autorado desde el HTML inicial, así que sin la regla de abajo se vería antes de que monte la
- * capa vanilla. `data-state` lo escribe la máquina; su AUSENCIA (todavía sin montar, o sin JS) cuenta
- * como cerrado. Que sin JS no haya tooltip es aceptable acá y sólo acá: el contrato de core prohíbe
- * que el tooltip sea la única fuente de algo, así que no hay información que perder.
+ * CLOSED IS THE DEFAULT STATE, and that is the first thing this sheet does. The content lives in the
+ * authored markup from the initial HTML, so without the rule below it would be visible before the
+ * vanilla layer mounts. `data-state` is written by the machine; its ABSENCE (not mounted yet, or no
+ * JS) counts as closed. That there is no tooltip without JS is acceptable here and only here: core's
+ * contract forbids the tooltip being the only source of anything, so there is no information to lose.
  */
 @layer components {
   .sk-tooltip {
-    /* Los hooks. El tooltip es chrome flotante: superficie invertida, como la convención de la
-     * plataforma, para que se lea como una capa por encima y no como una tarjeta más de la página. */
+    /* The hooks. A tooltip is floating chrome: inverted surface, like the platform convention, so it
+     * reads as a layer above and not as one more card on the page. */
     --sk-tooltip-bg: var(--color-bg-inverse);
     --sk-tooltip-fg: var(--color-text-inverse);
     --sk-tooltip-radius: var(--radius-control);
@@ -22,44 +22,45 @@
     --sk-tooltip-max-inline-size: 18rem;
     --sk-tooltip-shadow: var(--elevation-raised);
     --sk-tooltip-wash: var(--elevation-wash-raised);
-    /* La distancia al trigger. Un solo hook, porque el flip cambia el LADO pero no el hueco. */
+    /* The distance to the trigger. A single hook, because the flip changes the SIDE but not the gap. */
     --sk-tooltip-offset: var(--space-stack-xs);
 
-    /* El root existe para anclar: envuelve el trigger sin alterar su layout. `contents` haría
-     * desaparecer la caja, pero también rompería el anchor positioning, que necesita un elemento
-     * real. `inline-flex` deja al trigger comportarse como el inline que ya era. */
+    /* The root exists in order to anchor: it wraps the trigger without altering its layout. `contents`
+     * would make the box disappear, but it would also break anchor positioning, which needs a real
+     * element. `inline-flex` lets the trigger behave like the inline it already was. */
     display: inline-flex;
   }
 
-  /* LA COLOCACIÓN NO ESTÁ ACÁ. Es del pattern Anclaje (ADR-11): el trigger lleva además `sk-anchor`
-   * y el positioner además `sk-anchored`, y `patterns/anchored.css` pone los lados, el volteo, el
-   * `z-index` y el ancho por contenido. Esta hoja sólo dice de qué TAMAÑO y de qué COLOR es un
-   * tooltip, que es lo único que no comparte con las otras ocho cajas ancladas del sistema. */
+  /* THE PLACEMENT IS NOT HERE. It belongs to the Anchoring pattern (ADR-11): the trigger also carries
+   * `sk-anchor` and the positioner also `sk-anchored`, and `patterns/anchored.css` sets the sides, the
+   * flip, the `z-index` and the content-based width. This sheet only says what SIZE and what COLOR a
+   * tooltip is, which is the only thing it does not share with the system's other eight anchored boxes. */
   .sk-tooltip__positioner {
-    /* El offset del pattern, expresado como el hook del tooltip. Con fallback, y no `var()` a secas,
-     * porque en React el positioner se portalea al body: ahí no hay `.sk-tooltip` arriba de quien
-     * heredar, así que sin el default esta declaración quedaría inválida. La flecha, que cuelga de
-     * acá, lo hereda: lo necesita para el mismo número, que es dónde está el borde de la caja. */
+    /* The pattern's offset, expressed as the tooltip's hook. With a fallback, and not a bare `var()`,
+     * because in React the positioner is portaled to the body: there is no `.sk-tooltip` above it to
+     * inherit from there, so without the default this declaration would be invalid. The arrow, which
+     * hangs off here, inherits it: it needs the same number, which is where the box's edge is. */
     --sk-anchored-offset: var(--sk-tooltip-offset, var(--space-stack-xs));
 
-    /* UN TOOLTIP SALE ARRIBA. Es el único de los anclados que no cae hacia abajo, porque abajo está
-     * lo que el puntero acaba de tocar y lo que está por tocar. El default del pattern es block-end,
-     * así que ésta es la re-declaración que lo corrige, y gana sin depender del orden de los imports
-     * porque los defaults del pattern viven en `:where()`. Un `data-sk-placement` explícito le gana
-     * a esto, que es lo que se quiere. */
+    /* A TOOLTIP COMES OUT ABOVE. It is the only anchored one that does not fall downward, because below
+     * is what the pointer just touched and what it is about to touch. The pattern's default is
+     * block-end, so this is the re-declaration that corrects it, and it wins without depending on
+     * import order because the pattern's defaults live in `:where()`. An explicit `data-sk-placement`
+     * beats this, which is what we want. */
     --sk-anchored-position-area: block-start span-all;
     --sk-anchored-position-try: flip-block;
 
-    /* El POSITIONER nunca intercepta el puntero: con `span-all` es una caja invisible mucho más ancha
-     * que el texto, y si capturara clicks bloquearía lo que hay debajo. El contenido sí los recibe
-     * (regla más abajo). El pattern no puede decidir esto: hay anclados, como el menu, donde apagar
-     * los eventos del positioner apagaría el componente entero. */
+    /* The POSITIONER never intercepts the pointer: with `span-all` it is an invisible box much wider
+     * than the text, and if it captured clicks it would block whatever is underneath. The content does
+     * receive them (rule further down). The pattern cannot decide this: there are anchored things,
+     * like the menu, where turning off the positioner's events would turn off the whole component. */
     pointer-events: none;
     max-inline-size: var(--sk-tooltip-max-inline-size, 18rem);
 
-    /* La flecha es OPCIONAL y se autora (`.sk-anchored-arrow` dentro del positioner); esto sólo dice
-     * de qué color es cuando está, y la flecha lo hereda. Sin borde: la superficie invertida ya se
-     * separa del fondo sola, y un borde ahí sería una línea que el resto del tooltip no tiene. */
+    /* The arrow is OPTIONAL and authored (`.sk-anchored-arrow` inside the positioner); this only says
+     * what color it is when present, and the arrow inherits it. No border: the inverted surface already
+     * separates itself from the background, and a border there would be a line the rest of the tooltip
+     * does not have. */
     --sk-anchored-arrow-bg: var(--sk-tooltip-bg, var(--color-bg-inverse));
   }
 
@@ -83,7 +84,7 @@
     font-size: var(--sk-tooltip-font-size, var(--font-size-body-sm));
     line-height: var(--font-line-height-body);
     box-shadow: var(--sk-tooltip-shadow, var(--elevation-raised));
-    /* El texto de un tooltip es corto por definición; envolver está bien, cortar no. */
+    /* A tooltip's text is short by definition; wrapping is fine, truncating is not. */
     overflow-wrap: break-word;
   }
 
@@ -91,9 +92,9 @@
     display: block;
   }
 
-  /* WCAG 1.4.13 "hoverable": el puntero tiene que poder viajar hasta el tooltip sin que se cierre, y
-   * para eso el contenido tiene que recibir eventos. Es el DEFECTO, no una opción: se midió que con
-   * `pointer-events: none` el puntero nunca llega y el tooltip se cierra en el camino. */
+  /* WCAG 1.4.13 "hoverable": the pointer has to be able to travel to the tooltip without it closing,
+   * and for that the content has to receive events. It is the DEFAULT, not an option: it was measured
+   * that with `pointer-events: none` the pointer never arrives and the tooltip closes on the way. */
   .sk-tooltip__content {
     pointer-events: auto;
   }
@@ -102,31 +103,31 @@
     pointer-events: none;
   }
 
-  /* ── El movimiento: materializa al entrar, se va AL INSTANTE ─────────────────
-   * EL PATRÓN ES LA ASIMETRÍA. Un tooltip entra con un materialize suave (opacity + scale + blur, el
-   * mismo recipe que Popover y Menu, `--motion-materialize-scale`/`-blur`) viniendo desde ABAJO
-   * (`--motion-distance-sm`, 4px), el gesto de "emerger del trigger" (sale ARRIBA por defecto). Pero
-   * al CERRARSE no se anima: desaparece en el mismo frame.
+  /* ── The motion: materializes on enter, leaves INSTANTLY ─────────────────────
+   * THE PATTERN IS THE ASYMMETRY. A tooltip enters with a soft materialize (opacity + scale + blur,
+   * the same recipe as Popover and Menu, `--motion-materialize-scale`/`-blur`) coming from BELOW
+   * (`--motion-distance-sm`, 4px), the gesture of "emerging from the trigger" (it comes out ABOVE by
+   * default). But on CLOSE it is not animated: it disappears in the same frame.
    *
-   * Por qué no hay animación de salida: un tooltip se cierra en dos situaciones, y ninguna quiere un
-   * fade. Si el puntero se fue, ya nadie lo está mirando. Y si lo que se ACTIVÓ es el control que el
-   * tooltip describe (un toggle de preferencia del header, una opción del segmented de
-   * ComponentPreview), un fade encima de un control cuyo estado acaba de cambiar se lee como lag. El
-   * cierre de Zag ya es instantáneo (`closeOnClick`); esta hoja es lo que hacía que se viera lento.
-   * Menu/Select/Combobox sí se despiden con transición: son overlays que se descartan a propósito y
-   * el fade confirma el descarte. Un tooltip es ambiente; su salida es sólo dejar de estorbar.
+   * Why there is no exit animation: a tooltip closes in two situations, and neither wants a fade. If
+   * the pointer left, nobody is looking at it any more. And if what was ACTIVATED is the control the
+   * tooltip describes (a preference toggle in the header, an option in ComponentPreview's segmented),
+   * a fade on top of a control whose state just changed reads as lag. Zag's close is already
+   * instantaneous (`closeOnClick`); this sheet was what made it look slow. Menu/Select/Combobox do say
+   * goodbye with a transition: they are overlays dismissed on purpose and the fade confirms the
+   * dismissal. A tooltip is ambient; its exit is just getting out of the way.
    *
-   * CÓMO: la `transition` vive SÓLO en la regla de estado abierto, así que corre únicamente en la
-   * dirección de entrada (una transición usa las propiedades del estado AL QUE se llega). Al cerrar
-   * se cae a la regla base (sin `transition`) y el `display: none` de la regla `[data-state]` de más
-   * arriba aplica de una. El `@starting-style` de abajo sigue dando el "desde" del primer paint.
+   * HOW: the `transition` lives ONLY in the open-state rule, so it runs only in the entering direction
+   * (a transition uses the properties of the state being arrived AT). On close it falls back to the
+   * base rule (no `transition`) and the `display: none` from the `[data-state]` rule further up applies
+   * at once. The `@starting-style` below still provides the "from" of the first paint.
    *
-   * SE ANIMAN LOS DOS HIJOS y no el positioner: `translate` (incluso `0 0`) lo volvería bloque
-   * contenedor de sus descendientes `fixed`, y la flecha es `fixed` para anclarse al trigger (ver el
-   * pattern); durante la animación el ancla dejaría de ser alcanzable y la flecha saltaría al
-   * fallback y de vuelta. `translate` en la flecha MISMA sí es seguro: no cambia su propio bloque
-   * contenedor, sólo el de sus descendientes, y no tiene. Mismo timing en las dos piezas para que
-   * entren juntas y no quede el rombo un instante suelto antes que su caja. */
+   * BOTH CHILDREN ARE ANIMATED and not the positioner: `translate` (even `0 0`) would make it the
+   * containing block of its `fixed` descendants, and the arrow is `fixed` in order to anchor to the
+   * trigger (see the pattern); during the animation the anchor would stop being reachable and the
+   * arrow would jump to the fallback and back. `translate` on the arrow ITSELF is safe: it does not
+   * change its own containing block, only that of its descendants, and it has none. Same timing on
+   * both pieces so they enter together and the diamond is not left loose for an instant before its box. */
   .sk-tooltip__positioner > .sk-tooltip__content,
   .sk-tooltip__positioner > .sk-anchored-arrow {
     opacity: 0;
@@ -148,8 +149,8 @@
       filter var(--motion-feedback-duration) var(--motion-feedback-easing);
   }
 
-  /* El primer paint de un tooltip recién abierto usa esto en vez de la regla cerrada de arriba: sin
-   * esto el navegador no tiene desde dónde transicionar y el estado abierto aparece de golpe. */
+  /* The first paint of a just-opened tooltip uses this instead of the closed rule above: without this
+   * the browser has nowhere to transition from and the open state appears all at once. */
   @starting-style {
     .sk-tooltip__positioner:has(> [data-state="open"]) > .sk-tooltip__content,
     .sk-tooltip__positioner:has(> [data-state="open"]) > .sk-anchored-arrow {
@@ -181,8 +182,8 @@
     }
   }
 
-  /* En forced colors el fondo se descarta, así que la caja perdería su borde contra el Canvas del
-   * sistema y el texto quedaría flotando. El borde es geometría, no color: sobrevive. */
+  /* In forced colors the background is discarded, so the box would lose its edge against the system's
+   * Canvas and the text would be left floating. The border is geometry, not color: it survives. */
   @media (forced-colors: active) {
     .sk-tooltip__content {
       border: 1px solid CanvasText;

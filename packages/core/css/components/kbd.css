@@ -36,9 +36,9 @@
      * with no second token. (Same reasoning as typography's em-based underline offset.) */
     --sk-kbd-min-size: 1.6em;
 
-    /* Kbd es estático: sin estado, sin máquina, sin enhancer. Es el `<kbd>` nativo con el aspecto de
-       una tecla. El único "estado" es `[data-pressed]`, que se prende cuando alguien tiene apretada
-       la tecla física; lo escribe quien mira el teclado, no el kbd. */
+    /* Kbd is static: no state, no machine, no enhancer. It is the native `<kbd>` with the look of a key.
+       The only "state" is `[data-pressed]`, which turns on when someone is holding the physical key
+       down; it is written by whoever is watching the keyboard, not by the kbd. */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -50,14 +50,14 @@
     border-radius: var(--sk-kbd-radius);
     background: var(--sk-kbd-wash) var(--sk-kbd-bg);
     color: var(--sk-kbd-fg);
-    /* La sombra le da profundidad de tecla física, sin engordar la caja. */
+    /* The shadow gives it the depth of a physical key, without fattening the box. */
     box-shadow: var(--sk-kbd-shadow);
     font-family: var(--sk-kbd-font-family);
     font-size: var(--sk-kbd-font-size);
     line-height: var(--sk-kbd-line-height);
-    /* La reacción al apretar usa la intención feedback (decisión 10):
-       rápida y discreta, nunca frena el flujo. Se transiciona el color,
-       la sombra y el desplazamiento; el resto no cambia. */
+    /* The press reaction uses the feedback intent (decision 10):
+       fast and discreet, it never slows the flow down. Color, shadow
+       and displacement are transitioned; nothing else changes. */
     transition:
       background-color var(--motion-feedback-duration) var(--motion-feedback-easing),
       color var(--motion-feedback-duration) var(--motion-feedback-easing),
@@ -87,8 +87,8 @@
     --sk-kbd-shadow: inset 0 1px 2px color-mix(in oklab, var(--color-text-primary) 18%, transparent);
     --sk-kbd-wash: none;
 
-    /* Apretada: además del color (que re-declaran los hooks en core) la
-       tecla se hunde un pixel, como una tecla física. */
+    /* Pressed: besides the color (re-declared by the hooks in core) the
+       key sinks a pixel, like a physical key. */
     translate: 0 1px;
   }
 

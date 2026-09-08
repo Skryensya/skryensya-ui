@@ -1,56 +1,56 @@
 msg_file="$1"
 
-# Git corre este hook ANTES de limpiar el mensaje, así que las líneas de comentario que el editor
-# agrega (`# Please enter the commit message...`) todavía están en el archivo. Validar sobre ellas
-# hacía que `git commit` sin `-m` fallara siempre: contaban como cuerpo. Se descartan primero, igual
-# que hace git después.
+# Git runs this hook BEFORE cleaning the message, so the comment lines the editor adds
+# (`# Please enter the commit message...`) are still in the file. Validating over them made
+# `git commit` without `-m` fail every time: they counted as a body. They are stripped first, the
+# same way git does afterwards.
 cleaned="$(grep -v '^#' "$msg_file")"
 subject="$(printf '%s\n' "$cleaned" | head -n1)"
 second="$(printf '%s\n' "$cleaned" | sed -n '2p')"
 
-# Nunca un trailer de coautoría, de nadie (Cursor, Claude Code, o cualquier otra herramienta).
+# Never a co-authorship trailer, from anyone (Cursor, Claude Code, or any other tool).
 if printf '%s\n' "$cleaned" | grep -qiE '^(Co-authored-by|Signed-off-by):'; then
-  echo "commit-msg: no se permiten trailers de coautoria (Co-authored-by / Signed-off-by)." >&2
-  echo "  Saca esa linea del mensaje y volve a commitear." >&2
+  echo "commit-msg: co-authorship trailers are not allowed (Co-authored-by / Signed-off-by)." >&2
+  echo "  Remove that line from the message and commit again." >&2
   exit 1
 fi
 
-# EL ASUNTO TIENE UN TOPE DURO. Es lo único que se ve en `git log --oneline`, en el historial de
-# GitHub y en un `git blame`: pasado cierto largo deja de resumir y se convierte en un párrafo mal
-# ubicado, que es justo para lo que ahora existe el cuerpo. 100 y no los 72 clásicos porque este
-# historial ya escribe asuntos largos a propósito: medidos sobre los últimos 200 commits, la mediana
-# es 56 y el percentil 90 es 82, así que 72 habría rechazado 39 de ellos y 100 rechaza 5.
+# THE SUBJECT HAS A HARD CAP. It is the only part visible in `git log --oneline`, in GitHub's history
+# and in a `git blame`: past a certain length it stops summarizing and becomes a misplaced paragraph,
+# which is exactly what the body now exists for. 100 rather than the classic 72 because this history
+# already writes long subjects on purpose: measured over the last 200 commits, the median is 56 and
+# the 90th percentile is 82, so 72 would have rejected 39 of them and 100 rejects 5.
 max=100
 if [ "${#subject}" -gt "$max" ]; then
-  echo "commit-msg: el asunto tiene ${#subject} caracteres y el maximo es $max." >&2
-  echo "  Recibido:   $subject" >&2
-  echo "  Lo que sobra casi siempre es detalle: dejalo en el cuerpo, despues de una linea en blanco." >&2
+  echo "commit-msg: the subject is ${#subject} characters and the maximum is $max." >&2
+  echo "  Received:   $subject" >&2
+  echo "  What does not fit is almost always detail: put it in the body, after a blank line." >&2
   exit 1
 fi
 
-# SI HAY CUERPO, VA SEPARADO POR UNA LINEA EN BLANCO. No es estética: git trata la primera línea como
-# el asunto y el resto como cuerpo SOLO si hay una línea vacía entre medio. Sin ella, `git log
-# --oneline` y GitHub muestran todo pegado como un asunto larguísimo, que es exactamente lo que el
-# tope de arriba trata de evitar.
+# IF THERE IS A BODY, IT IS SEPARATED BY A BLANK LINE. This is not aesthetics: git treats the first
+# line as the subject and the rest as the body ONLY if there is an empty line between them. Without
+# it, `git log --oneline` and GitHub show the whole thing as one very long subject, which is exactly
+# what the cap above is trying to avoid.
 if [ -n "$second" ]; then
-  echo "commit-msg: falta la linea en blanco entre el asunto y el cuerpo." >&2
-  echo "  Recibido en la linea 2:   $second" >&2
-  echo "  El cuerpo es bienvenido, pero tiene que empezar despues de una linea vacia." >&2
+  echo "commit-msg: missing the blank line between the subject and the body." >&2
+  echo "  Received on line 2:   $second" >&2
+  echo "  A body is welcome, but it has to start after an empty line." >&2
   exit 1
 fi
 
 # type(optional scope): description.
 #
-# La descripcion es libre: puede empezar en mayuscula y puede terminar en punto. Antes se exigía
-# minuscula y sin punto final, y esa regla se relajó a propósito: no cambiaba nada que se pueda leer
-# en `git log` y rechazaba mensajes correctos. Lo que sí se sigue exigiendo es el tipo, porque de ahí
-# sale de un vistazo qué clase de cambio es cada commit.
+# The description is free text: it may start uppercase and it may end with a period. Lowercase and no
+# trailing period used to be required, and that rule was relaxed on purpose: it changed nothing
+# readable in `git log` and it rejected correct messages. What is still required is the type, because
+# that is what tells you at a glance what kind of change each commit is.
 pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9./-]+\))?: .+$'
 if ! printf '%s\n' "$subject" | grep -qE "$pattern"; then
-  echo "commit-msg: el mensaje no sigue Conventional Commits." >&2
-  echo "  Recibido:   $subject" >&2
-  echo "  Esperado:   type(optional scope): description" >&2
-  echo "  Tipos:      feat fix docs style refactor perf test build ci chore revert" >&2
-  echo "  Ejemplo:    fix(command-palette): defer mobile mount until pointerdown" >&2
+  echo "commit-msg: the message does not follow Conventional Commits." >&2
+  echo "  Received:   $subject" >&2
+  echo "  Expected:   type(optional scope): description" >&2
+  echo "  Types:      feat fix docs style refactor perf test build ci chore revert" >&2
+  echo "  Example:    fix(command-palette): defer mobile mount until pointerdown" >&2
   exit 1
 fi

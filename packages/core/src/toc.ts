@@ -1,7 +1,7 @@
 import type { ComponentContract } from "./contract.js";
 
 /*
- * TOC, "En esta página": the index of the document.
+ * TOC, "On this page": the index of the document.
  *
  * Chrome of nothing but itself: a disclosure shell around a nested list of links to the headings
  * of whatever it sits beside. What made this NOT a component for a long time was that its markup

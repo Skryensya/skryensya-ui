@@ -1,40 +1,41 @@
-# LA PRIMERA LÍNEA DE DEFENSA, no la única. Desde que existe `.github/workflows/check.yml` hay CI, y
-# corre estos mismos chequeos sobre cada pull request: hacía falta porque un PR desde un fork no
-# ejecuta ningún hook de esta máquina. Este hook sigue siendo el que importa igual, porque fallar acá
-# en segundos vale más que fallar en un runner en minutos, y porque el push es el último momento en
-# que algo se puede frenar sin reescribir historia. Por eso los chequeos caros van acá y no en
-# pre-commit: commitear sigue siendo barato, publicar es lo que paga.
+# THE FIRST LINE OF DEFENSE, not the only one. Since `.github/workflows/check.yml` exists there is
+# CI, and it runs these same checks on every pull request: it was needed because a PR from a fork runs
+# no hook from this machine. This hook still matters just as much, because failing here in seconds is
+# worth more than failing on a runner in minutes, and because the push is the last moment something
+# can be stopped without rewriting history. That is why the expensive checks live here and not in
+# pre-commit: committing stays cheap, publishing is what pays.
 #
-# ORDEN: primero el que tarda segundos, después el que tarda minutos.
+# ORDER: the one that takes seconds first, the one that takes minutes second.
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────────
-# 1. AUDIT. Es la mitad que avisa del cooldown de 30 días (`minimumReleaseAge`, pnpm-workspace.yaml):
-# esa regla demora TODO parche nuevo, lo cual es seguro sólo si alguien se entera de que hay un CVE y
-# decide saltear la espera para ese paquete. Sin este chequeo, la cuarentena se vuelve un retraso que
-# nadie ve. Falla en high/critical; sin red avisa y sigue (el script explica por qué).
-echo "pre-push: revisando dependencias..."
+# 1. AUDIT. This is the half that warns about the 30-day cooldown (`minimumReleaseAge`,
+# pnpm-workspace.yaml): that rule delays EVERY new patch, which is only safe if somebody finds out
+# there is a CVE and decides to skip the wait for that package. Without this check, the quarantine
+# becomes a delay nobody sees. It fails on high/critical; with no network it warns and continues (the
+# script explains why).
+echo "pre-push: checking dependencies..."
 if ! node scripts/audit-gate.mjs; then
   echo "" >&2
-  echo "pre-push: hay vulnerabilidades de nivel high o mayor en las dependencias." >&2
-  echo "  Arriba esta cada una con su ruta y como se arregla." >&2
-  echo "  Si es a proposito y lo vas a resolver despues: 'git push --no-verify'." >&2
+  echo "pre-push: there are high or higher severity vulnerabilities in the dependencies." >&2
+  echo "  Above is each one with its path and how to fix it." >&2
+  echo "  If it is deliberate and you will resolve it later: 'git push --no-verify'." >&2
   exit 1
 fi
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────────
-# 2. CHECK. Lint + tests + tsc de los 16 paquetes deterministas.
+# 2. CHECK. Lint + tests + tsc across the 16 deterministic packages.
 #
-# `@skryensya/ai-gates` queda AFUERA a proposito: son 730 tests de Playwright, ~19 minutos, y hoy se
-# caen a mitad de camino por el stage y no por regresiones (los que pasan tardan 10-13s, los que
-# fallan 0.3-2s, symmetry aborta a 1ms). Un push que tarda 20 minutos y termina en rojo por algo que
-# no rompiste enseña a usar --no-verify, y ese habito se lleva puesto tambien al chequeo de secretos.
-# Entra cuando este estable.
+# `@skryensya/ai-gates` is left OUT on purpose: 730 Playwright tests, about 19 minutes, and today they
+# collapse partway through because of the stage rather than because of regressions (the ones that pass
+# take 10-13s, the ones that fail 0.3-2s, symmetry aborts at 1ms). A push that takes 20 minutes and
+# ends red because of something you did not break teaches people to use --no-verify, and that habit
+# carries over to the secret check too. It comes in when it is stable.
 #
-# --concurrency=1 porque en paralelo este check tiene timeouts intermitentes en este repo.
-echo "pre-push: corriendo check..."
+# --concurrency=1 because in parallel this check has intermittent timeouts in this repo.
+echo "pre-push: running check..."
 if ! pnpm turbo run check --filter='!@skryensya/ai-gates' --concurrency=1; then
   echo "" >&2
-  echo "pre-push: 'check' fallo. Lo de arriba dice que paquete y por que." >&2
-  echo "  Si estas empujando trabajo a medias a una rama tuya: 'git push --no-verify'." >&2
+  echo "pre-push: 'check' failed. The output above says which package and why." >&2
+  echo "  If you are pushing work in progress to a branch of your own: 'git push --no-verify'." >&2
   exit 1
 fi

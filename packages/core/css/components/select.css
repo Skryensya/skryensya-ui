@@ -370,12 +370,12 @@
     display: block;
   }
 
-  /* Esta lista REDECLARA lo que `.sk-select` ya declara, y no es duplicación: el binding de React
-   * portea el positioner al `<body>`, así que deja de ser descendiente de la raíz y NINGUNA de esas
-   * custom properties le llega por herencia. Un hook que se lea de acá para abajo (del positioner,
-   * del content o de un item) tiene que estar en esta lista; si falta, resuelve vacío y la
-   * declaración que lo usa se cae (un `padding` vacío es `0`, que fue justo el síntoma: items sin
-   * aire y el check pegado al borde). En Vanilla el positioner sigue adentro y esto es inocuo. */
+  /* This list REDECLARES what `.sk-select` already declares, and it is not duplication: React's binding
+   * portals the positioner to the `<body>`, so it stops being a descendant of the root and NONE of those
+   * custom properties reach it by inheritance. A hook read from here down (on the positioner, the
+   * content or an item) has to be in this list; if it is missing, it resolves empty and the declaration
+   * using it collapses (an empty `padding` is `0`, which was exactly the symptom: items with no air and
+   * the check flush against the edge). In Vanilla the positioner stays inside and this is harmless. */
   .sk-select__positioner {
     --sk-select-fg: var(--color-text-primary);
     --sk-select-radius: var(--radius-control);
@@ -390,23 +390,23 @@
     --sk-select-item-padding: var(--space-inset-xs) var(--space-inset-sm);
     --sk-select-item-radius: var(--radius-control);
 
-    /* ── La colocación es del pattern Anclaje (ADR-11) ─────────────────────────
-     * El positioner lleva además `sk-anchored` y el trigger `sk-anchor`. El z-index, el `fixed`, el
-     * volteo y el `position-visibility` los pone el pattern; acá quedan sólo las decisiones que son
-     * DE UN SELECT y de ninguna otra caja anclada.
+    /* ── The placement belongs to the Anchoring pattern (ADR-11) ───────────────
+     * The positioner also carries `sk-anchored` and the trigger `sk-anchor`. The z-index, the `fixed`,
+     * the flip and the `position-visibility` are set by the pattern; what is left here are only the
+     * decisions that belong to A SELECT and to no other anchored box.
      *
-     * Debajo del trigger y con los bordes de inicio ALINEADOS, no centrado: el listbox es la
-     * continuación del control, no una caja aparte que flota cerca. `span-inline-end` arranca la
-     * región en el borde de inicio del ancla y `justify-self: start` pega la caja ahí; el
-     * `anchor-center` que usa el pattern la centraría. */
+     * Below the trigger and with the start edges ALIGNED, not centered: the listbox is the continuation
+     * of the control, not a separate box floating nearby. `span-inline-end` starts the region at the
+     * anchor's start edge and `justify-self: start` sticks the box there; the `anchor-center` the
+     * pattern uses would center it. */
     --sk-anchored-position-area: block-end span-inline-end;
     --sk-anchored-justify: start;
     --sk-anchored-align: auto;
-    /* Hueco sólo en el eje de bloque: uno inline correría la caja 8px y rompería la alineación de
-     * bordes que se acaba de pedir. En los DOS lados del bloque, para que sobreviva a un flip. */
+    /* Gap only on the block axis: an inline one would shift the box 8px and break the edge alignment
+     * just asked for. On BOTH block sides, so it survives a flip. */
     --sk-anchored-offset: var(--space-stack-xs) 0;
-    /* Volteo completo, incluida la esquina opuesta: un select vive en un form largo y cerca de un
-     * borde, así que las tres alternativas se usan de verdad. */
+    /* Full flip, opposite corner included: a select lives in a long form and near an edge, so all three
+     * alternatives genuinely get used. */
     --sk-anchored-position-try: flip-block, flip-inline, flip-block flip-inline;
   }
 
@@ -487,10 +487,10 @@
 
   @supports (anchor-name: --a) {
     .sk-select__positioner {
-      /* `sameWidth`, tomado del ancla en vez de la `--reference-width` que Zag ya no escribe en esta
-       * ruta. Va ACÁ ADENTRO y no arriba con los otros hooks porque `anchor-size()` sin un
-       * `position-anchor` resuelto es inválido, y el pattern lee este hook también fuera del
-       * `@supports`: declararlo afuera dejaría el positioner sin ancho en el fallback. */
+      /* `sameWidth`, taken from the anchor instead of the `--reference-width` Zag no longer writes on
+       * this path. It goes IN HERE and not up with the other hooks because `anchor-size()` without a
+       * resolved `position-anchor` is invalid, and the pattern reads this hook outside the `@supports`
+       * too: declaring it outside would leave the positioner with no width on the fallback. */
       --sk-anchored-size: anchor-size(width);
     }
 

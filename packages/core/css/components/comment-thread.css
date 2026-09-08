@@ -721,9 +721,9 @@
     /* Rounded where it meets the page, square where it meets the edge - the same corner treatment
      * `patterns/dialog-vaul.css` gives its own block-end composition, for the same reason: a radius
      * on the edge side would show a sliver of page under the panel. */
-    /* `--radius-surface`, no `--radius-lg`: ese es el nombre de un escalón de la escala primitiva,
-     * no de un rol semántico, y la capa de roles es la única que este archivo puede leer
-     * (scripts/lint.mjs lo verifica). Una hoja es una SUPERFICIE, así que redondea como todas. */
+    /* `--radius-surface`, not `--radius-lg`: that is the name of a step on the primitive scale, not of
+     * a semantic role, and the role layer is the only one this file may read (scripts/lint.mjs checks
+     * it). A sheet is a SURFACE, so it rounds like all of them. */
     --sk-vaul-radius: var(--radius-surface) var(--radius-surface) 0 0;
     padding: var(--space-inset-md);
     /* The comment's own measure does not apply in the top layer: the sheet IS the width. */

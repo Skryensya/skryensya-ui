@@ -118,8 +118,8 @@
     border-radius: inherit;
   }
 
-  /* El hover cuelga de un ancestro, así que no lo cubre el guard de state-layer.css.
-   * Mismo criterio: sin any-hover, el tinte queda pegado tras el tap. */
+  /* The hover hangs off an ancestor, so state-layer.css's guard does not cover it.
+   * Same criterion: without any-hover, the tint stays stuck after the tap. */
   @media (any-hover: hover) {
     .sk-checkbox:hover .sk-checkbox__control.sk-interactive,
     .sk-tile:hover > .sk-checkbox__control.sk-interactive {

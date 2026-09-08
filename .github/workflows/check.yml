@@ -1,0 +1,80 @@
+# The gate for work that never ran the hooks.
+#
+# Every quality check in this repo lives in a local Git hook (see CONTRIBUTING.md). That works while
+# the only author is the one who installed them, and stops working the moment a change arrives from
+# a fork: a pull request never touches this machine, so `commit-msg`, `gitleaks` and `check` simply
+# do not run. This workflow is the same gate, applied where the hooks cannot reach.
+#
+# It deliberately does NOT replace the hooks. Failing locally in two seconds is worth more than
+# failing here in three minutes, so the hooks stay the first line and this is the backstop.
+name: check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A second push to the same PR makes the first run irrelevant. Cancel it rather than pay for both.
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: lint, typecheck and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # `packageManager` in package.json pins the version, so neither this file nor a contributor
+      # has to name it a second time.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      # `--frozen-lockfile` is what makes this a check rather than a resolution: it fails if the
+      # lockfile and the manifests disagree instead of quietly fixing them. It also sidesteps the
+      # 30-day dependency quarantine (`minimumReleaseAge`), which only applies when something has to
+      # be resolved.
+      - run: pnpm install --frozen-lockfile
+
+      # The browser gates are excluded for the same reason `pre-push` excludes them: about 15
+      # minutes, a browser download, and a sensitivity to machine load that makes a red result on a
+      # shared runner weak evidence. They stay a local, deliberate run.
+      - run: pnpm turbo run check --filter='!@skryensya/ai-gates' --concurrency=1
+
+  commits:
+    name: commit messages
+    runs-on: ubuntu-latest
+    # Only a pull request has a range to check. A push to main has already passed the local hook, or
+    # was pushed with --no-verify on purpose.
+    if: github.event_name == 'pull_request'
+    steps:
+      # `fetch-depth: 0` because the check needs the commits between base and head, and the default
+      # shallow clone does not have them.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # THE HOOK ITSELF is the validator, not a copy of its rules. A second implementation of the
+      # same regex is a second thing to keep in sync, and the failure mode is silent disagreement
+      # between what CI accepts and what a contributor's machine accepts.
+      - name: Validate every commit in this pull request
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          # Not named `status`: that identifier is read-only in zsh, so the same snippet pasted into
+          # a local shell would die on the assignment rather than run.
+          failed=0
+          for sha in $(git rev-list "$BASE".."$HEAD"); do
+            git log -1 --format=%B "$sha" > "$RUNNER_TEMP/msg"
+            if ! sh .husky/commit-msg "$RUNNER_TEMP/msg"; then
+              echo "::error::$(git log -1 --format='%h %s' "$sha")"
+              failed=1
+            fi
+          done
+          exit $failed

@@ -1,8 +1,9 @@
-# Lo que reemplaza a una CI, corriendo acá. Este repo es privado en plan Free, así que branch
-# protection, secret scanning y code scanning no están disponibles (piden Pro o repo público), y de
-# todos modos la decisión fue que esto viva local. El push es el último momento en que algo se puede
-# frenar sin reescribir historia, así que los chequeos caros van acá y no en pre-commit: commitear
-# sigue siendo barato, publicar es lo que paga.
+# LA PRIMERA LÍNEA DE DEFENSA, no la única. Desde que existe `.github/workflows/check.yml` hay CI, y
+# corre estos mismos chequeos sobre cada pull request: hacía falta porque un PR desde un fork no
+# ejecuta ningún hook de esta máquina. Este hook sigue siendo el que importa igual, porque fallar acá
+# en segundos vale más que fallar en un runner en minutos, y porque el push es el último momento en
+# que algo se puede frenar sin reescribir historia. Por eso los chequeos caros van acá y no en
+# pre-commit: commitear sigue siendo barato, publicar es lo que paga.
 #
 # ORDEN: primero el que tarda segundos, después el que tarda minutos.
 

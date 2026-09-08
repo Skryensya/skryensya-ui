@@ -34,10 +34,26 @@ pnpm turbo run check --filter='!@skryensya/ai-gates' --concurrency=1
 
 `--concurrency=1` is not decoration. In parallel this check has intermittent timeouts in this repo.
 
-## There is no CI
+## Sending a change
 
-Every gate runs locally, in Git hooks. That is deliberate, so the hooks are load-bearing rather than
-advisory. Read what a failing hook printed: each one names its own fix.
+Outside contributors cannot push to `main`, so work arrives as a pull request:
+
+1. **Fork** the repository and clone your fork.
+2. **Branch** from `main`. Name it after the change, not after yourself: `fix/calendar-cell-size`.
+3. **Commit** following the rules below. The hooks run on your machine and will tell you when
+   something is off.
+4. **Open a pull request** against `main`. The template asks what changed and why; the checklist is
+   there because a binding changed alone is the exact drift this system exists to prevent.
+5. **CI runs the same gates.** A red check is not a formality: it is the check you would have run
+   locally anyway.
+
+For anything larger than a fix, open an issue first. See
+[Proposing something large](#proposing-something-large).
+
+## Where the gates run
+
+Most of the quality checks in this repo are **local Git hooks**, not CI. That is deliberate: failing
+in two seconds on your own machine is worth more than failing in three minutes on a runner.
 
 | Hook | What it runs | Roughly |
 |---|---|---|
@@ -45,16 +61,24 @@ advisory. Read what a failing hook printed: each one names its own fix.
 | `pre-commit` | `gitleaks` on staged changes, plus icon-vocabulary completeness when the icon vocabulary is touched | about 1s |
 | `pre-push` | Dependency audit, then the full check minus the browser gates | a few minutes |
 
-`--no-verify` exists for pushing work in progress to a branch of your own. It is not a way past a
-red gate on shared history.
+Read what a failing hook printed: each one names its own fix. `--no-verify` exists for pushing work
+in progress to a branch of your own. It is not a way past a red gate on shared history.
 
-Two notes on the hooks:
+The catch is that **a pull request from a fork never runs any of them**, because they live on the
+author's machine. So [`.github/workflows/check.yml`](.github/workflows/check.yml) applies the same
+gates where the hooks cannot reach: the full check, and every commit message in the pull request
+validated by running `.husky/commit-msg` itself rather than a second copy of its rules.
+
+CI is the backstop, not the primary. Run the hooks locally and CI has nothing to catch.
+
+Two more notes:
 
 - **`gitleaks` is scoped to what is staged**, not the whole tree, and it only scans commits made
   since it was added. If you are auditing history, run `gitleaks git --no-banner --redact .` for the
-  whole repo.
-- **The browser gates are excluded from `pre-push`** because they take about 15 minutes and are
-  sensitive to machine load. Run them yourself for anything visual (see below).
+  whole repo. On a public repository, GitHub's own secret scanning covers the pushed side.
+- **The browser gates are excluded everywhere**, from `pre-push` and from CI, because they take
+  about 15 minutes and are sensitive to machine load, which makes a red result on a shared runner
+  weak evidence. Run them yourself for anything visual (see below).
 
 ## Commit messages
 

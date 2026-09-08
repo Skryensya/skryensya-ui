@@ -2,7 +2,7 @@
 # completo en los tres sets publicados (CONTEXT.md, "Icon set": "Complete, never partial").
 # El chequeo YA EXISTE — cada paquete de iconos hace `xIcons: IconSet = generated satisfies
 # IconSet`, así que un rol nuevo sin agregar al MAP de un set falla `tsc --noEmit` — pero
-# nada lo obligaba a correr: este repo no tiene CI, y sin este hook alguien podía agregar un
+# nada lo obligaba a correr localmente, y sin este hook alguien podía agregar un
 # stable icon name a core y comitear sin que nada avisara hasta que ese rol renderizara vacío
 # en producción. Acotado a cuando el commit realmente toca ese vocabulario, así el resto de
 # los commits no paga el costo (medido: ~0.9s con turbo/pnpm en caliente).

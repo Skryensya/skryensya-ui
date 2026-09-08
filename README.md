@@ -134,19 +134,28 @@ contract-first checklist for a new component, how translations and the Tests tab
 to read a failing browser gate. The essentials are below, because a few things about this repo are
 unusual and knowing them up front saves a rejected commit.
 
-### There is no CI
+### Sending a change
 
-Every gate runs locally, in Git hooks. That is a deliberate choice, not an omission, so the hooks are
-load-bearing rather than advisory:
+Fork, branch from `main`, and open a pull request. The template asks what changed and why.
+
+### The gates are local first
+
+Most checks run on your machine, in Git hooks, because failing in two seconds beats failing in three
+minutes on a runner:
 
 | Hook | What it enforces |
 |---|---|
 | `commit-msg` | Conventional Commits shape, a 100-character subject cap, no trailers. |
 | `pre-commit` | Secret scanning (gitleaks) and icon-vocabulary completeness. |
-| `pre-push` | Dependency audit, then `pnpm check` across every package except the browser gates. |
+| `pre-push` | Dependency audit, then the full check across every package except the browser gates. |
 
 If a hook blocks you, read what it printed: each one names the fix. Reach for `--no-verify` only when
 you are pushing work in progress to a branch of your own.
+
+A pull request from a fork never runs those hooks, so
+[CI](.github/workflows/check.yml) applies the same gates on every PR: the full check, plus each
+commit message validated by running `.husky/commit-msg` itself rather than a second copy of its
+rules.
 
 ### Commit messages
 

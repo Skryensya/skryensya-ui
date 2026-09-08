@@ -297,10 +297,24 @@ Regla práctica al escribir:
 
 ## Mensajes de commit
 
-En inglés, breves, forma `Categoría: qué cambia`, sin prefijo de tipo estilo Conventional Commits
-(`feat:`, `fix:`). Ejemplo real del historial: `Docs: monorepo READMEs + ADR-19; bump tokens 0.3.0`,
-`Turborepo: base styles in packages/tokens, demo app consumes them`. Un punto y coma encadena dos
-cambios relacionados dentro del mismo commit en vez de forzar dos oraciones separadas.
+Conventional Commits, en español, una sola línea, sin cuerpo y sin trailers:
+
+```
+type(scope opcional): descripcion en minuscula, sin punto final
+```
+
+Tipos: `feat fix docs style refactor perf test build ci chore revert`. Ejemplo real del historial:
+`fix(calendar): sube las celdas de dia a sm para que el widget tenga un solo escalon de tamano`.
+
+La forma la impone `.husky/commit-msg`, así que un mensaje que no la cumple se rechaza al commitear:
+esta sección describe lo que el hook ya obliga, nunca una convención paralela. El idioma no lo
+verifica el hook, pero el historial entero está en español.
+
+Un commit es un solo asunto. Si hace falta un punto y coma para unir dos cambios que no se implican,
+son dos commits.
+
+> Esta sección decía antes `Categoría: qué cambia`, en inglés y sin prefijo de tipo. Esa era la forma
+> del historial viejo; el hook que la reemplazó la rechazaría hoy.
 
 ## Checklist rápida
 
@@ -320,4 +334,4 @@ cambios relacionados dentro del mismo commit en vez de forzar dos oraciones sepa
   independientes (punto en cada ítem), no mezcles las dos formas.
 - ¿ADR? Necesita alternativas rechazadas, debilidad aceptada, y enforcement, no solo la decisión final.
 - ¿Comentario de código? Sigue el idioma del archivo que estás editando.
-- ¿Commit? Inglés, `Categoría: qué cambia`.
+- ¿Commit? Conventional Commits en español, una línea, sin punto final.

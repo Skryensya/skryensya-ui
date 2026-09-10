@@ -289,6 +289,32 @@ export type ContractTemplate = {
     /** The item option each entry's value lands in, so `selectedBy` and `itemOptions` can name it. */
     readonly key: string;
   };
+
+  /**
+   * This node's ATTRIBUTE is computed by the contract rather than written by the author.
+   *
+   * The third named derivation, beside `style.percentOf` (a computed style) and `repeatComputed`
+   * (a computed collection), and it exists because those two cover the wrong shapes for a symbol
+   * that is one long string. QR is the case: its geometry is a `<path d>`, and the alternatives are
+   * a collection of one element per module, which measures 16,020 elements and 669KB at version 40
+   * against one element and 113KB as a path, or an attribute the author pastes in, which puts a
+   * value in the tree that nothing can validate and that no longer says what it encodes.
+   *
+   * The vocabulary is closed for the reason the other two are: the compiler holds the list, a name
+   * it does not know fails the build, and a second kind gets named when a second case turns up
+   * rather than a formula string appearing in the data.
+   *
+   * `from` names OPTIONS and their values arrive as authored, not coerced: unlike `repeatComputed`,
+   * whose windows all take numbers, a computation here may want the string an author typed.
+   */
+  readonly attrComputed?: {
+    /** The computation. See `emit.ts`'s `computedAttribute`. */
+    readonly compute: "qr-path" | "qr-viewbox";
+    /** Option names, in the computation's argument order. */
+    readonly from: readonly string[];
+    /** Where the result lands on this node. */
+    readonly attr: string;
+  };
   /**
    * This node exists only when the ENTRY supplied or omitted the named item option. A breadcrumb
    * crumb is a link when it has an href and plain text when it does not: one entry, two shapes, and
@@ -373,6 +399,21 @@ export type ContractTemplate = {
     /** `percent` writes "62%", `fraction` writes "0.62". The CSS decides which it reads. */
     readonly as?: "percent" | "fraction";
   }[];
+  /**
+   * This node's text content is CONTENT, not layout: emit it verbatim, on the element's own line,
+   * and never re-indent or re-wrap it.
+   *
+   * Markup emission pretty-prints, which is right everywhere the HTML parser collapses whitespace
+   * and wrong wherever CSS says it does not. A CodePreview viewport is `white-space: pre-wrap`
+   * (code-preview.css), so the newline and six spaces the printer added around a one-line `pnpm
+   * add …` were rendered as a blank line, an indent and another blank line: the Vanilla stage drew
+   * a three-line box where React drew a one-line one, from the same tree, and the printer's own
+   * `PRINT_WIDTH` decided which snippets got it.
+   *
+   * Named for what is true of the ELEMENT rather than for the fix, because the same is true of any
+   * future `pre`: whitespace here is the author's, so the emitter stops editing it.
+   */
+  readonly preserveWhitespace?: boolean;
   readonly children?: readonly ContractTemplate[];
 };
 

@@ -147,7 +147,11 @@ export const codePreviewContract = {
           {
             element: "div",
             part: "preview",
-            children: [{ element: "div", part: "viewport", slot: "children" }],
+            /* `preserveWhitespace`: this box is `white-space: pre-wrap` (code-preview.css), so the
+               printer's own indentation would be rendered as blank lines and leading spaces. */
+            children: [
+              { element: "div", part: "viewport", slot: "children", preserveWhitespace: true },
+            ],
           },
           {
             element: "div",
@@ -276,12 +280,14 @@ export const codePreviewContract = {
                 part: "viewport",
                 attrs: { "data-sk-code-preview-density-panel": "condensed" },
                 slot: "condensed",
+                preserveWhitespace: true,
               },
               {
                 element: "div",
                 part: "viewport",
                 attrs: { "data-sk-code-preview-density-panel": "full" },
                 slot: "full",
+                preserveWhitespace: true,
               },
             ],
           },

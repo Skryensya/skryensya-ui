@@ -1,5 +1,12 @@
 import { paginationRange } from "@skryensya/core/pagination";
 import { placeholderLines } from "@skryensya/core/placeholder";
+import {
+  qrGeometry,
+  qrViewBox,
+  type QrLevel,
+  type QrMask,
+  type QrModuleShape,
+} from "@skryensya/core/qr-code";
 import type {
   ComponentContract,
   ContractSignature,
@@ -412,8 +419,15 @@ function renderTemplate(
    * additive rather than a chain of alternatives.
    */
   const raw = RAW_TEXT_ELEMENTS.has(node.element);
+  /*
+   * Whitespace this node's CSS renders is the AUTHOR's, so the printer stops editing it: text goes
+   * out at depth 0 with no indentation and no re-wrapping, and the tags close tight around it
+   * below. See `ContractTemplate.preserveWhitespace` for the bug that named this.
+   */
+  const pre = node.preserveWhitespace === true;
+  const textDepth = pre ? 0 : depth + 1;
   const children = [
-    ...(node.text !== undefined ? textLines(node.text, depth + 1, raw) : []),
+    ...(node.text !== undefined ? textLines(node.text, textDepth, raw, pre) : []),
     ...(node.textFromOption !== undefined
       ? textLines(
           String(
@@ -421,18 +435,20 @@ function renderTemplate(
               ctx.contract.options[node.textFromOption]?.default ??
               "",
           ),
-          depth + 1,
+          textDepth,
           raw,
+          pre,
         )
       : []),
     ...(node.itemSlot
-      ? renderSlot(ctx.item?.slots[node.itemSlot], depth + 1)
+      ? renderSlot(ctx.item?.slots[node.itemSlot], textDepth, undefined, pre)
       : []),
     ...(node.slot
       ? renderSlot(
           filled[node.slot],
-          depth + 1,
+          textDepth,
           node.slot === "children" ? ctx.wiring : undefined,
+          pre,
         )
       : []),
     ...(node.children ?? []).flatMap((child) =>
@@ -447,6 +463,19 @@ function renderTemplate(
     return [
       ...openLines.slice(0, last),
       `${openLines[last]}</${node.element}>`,
+    ];
+  }
+
+  /*
+   * A whitespace-preserving element never gets a line of its own around its content: every rendered
+   * space between `>` and `</` is one the reader sees. PRINT_WIDTH does not get a vote here, which
+   * is the whole point  -  it was PRINT_WIDTH that decided which snippets got the bug.
+   */
+  if (pre) {
+    const last = openLines.length - 1;
+    return [
+      ...openLines.slice(0, last),
+      `${openLines[last]}${children.join("\n")}</${node.element}>`,
     ];
   }
 
@@ -595,6 +624,32 @@ function computedWindow(
   );
 }
 
+/**
+ * One attribute the contract computes. The closed vocabulary `ContractTemplate.attrComputed` names.
+ *
+ * Values arrive as AUTHORED rather than coerced to numbers the way `computedWindow` does: a QR's
+ * `value` is a string, and the point of a computed attribute is that the computation decides what
+ * its own arguments mean.
+ */
+function computedAttribute(
+  spec: NonNullable<ContractTemplate["attrComputed"]>,
+  ctx: NodeContext,
+): string {
+  const [value, level, mask, moduleShape, quietZone, logoRatio] = spec.from.map(
+    (name) => ctx.tree.options?.[name] ?? ctx.contract.options[name]?.default,
+  );
+  const options = {
+    level: level as QrLevel | undefined,
+    mask: mask as QrMask | undefined,
+    moduleShape: moduleShape as QrModuleShape | undefined,
+    quietZone: quietZone === undefined ? undefined : Number(quietZone),
+    logoRatio: logoRatio === undefined ? undefined : Number(logoRatio),
+  };
+  /* `qrGeometry` memoizes, so the two nodes of one symbol encode it once between them. */
+  if (spec.compute === "qr-viewbox") return qrViewBox(String(value ?? ""), options);
+  return qrGeometry(String(value ?? ""), options).path;
+}
+
 function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
   const { tree, contract, signature } = ctx;
   const out: string[] = [];
@@ -610,6 +665,23 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
       ? !claimedAttrs.has("class")
       : (node.attrsFor ?? []).includes("class"))
       ? tree.attrs.class
+      : undefined;
+  /*
+   * `style` is merged, exactly like `class` above, and for a sharper reason than tidiness: an
+   * element may carry ONE style attribute. A signature with `styleProperty` options writes one from
+   * those options; an author writing `attrs.style` on the same node used to get a SECOND, and the
+   * HTML parser keeps the first and silently drops the rest. Measured on `/es/componentes/fade-edge`:
+   * the colour demo asked for `--sk-fade-edge-size` and `--sk-fade-edge-color` as options and for
+   * its own `block-size` and `background` as an authored style, and the whole photo (height and
+   * gradient) vanished on the Vanilla stage while React, whose emitter already folded the two
+   * together, painted it. One authoring is supposed to mean one demo.
+   */
+  const authoredStyle =
+    tree.attrs?.style !== undefined &&
+    (node.host
+      ? !claimedAttrs.has("style")
+      : (node.attrsFor ?? []).includes("style"))
+      ? tree.attrs.style
       : undefined;
 
   const classes = [
@@ -730,6 +802,11 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
   for (const [name, value] of Object.entries(node.attrs ?? {}))
     out.push(attr(name, value));
 
+  // An attribute the contract computes rather than the author writes. See `computedAttribute`.
+  if (node.attrComputed) {
+    out.push(attr(node.attrComputed.attr, computedAttribute(node.attrComputed, ctx)));
+  }
+
   // Values made visible: a fill computed from the option it represents, never typed by an author.
   const styles = [
     ...optionStyles,
@@ -745,6 +822,11 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
           : `${rule.property}: ${ratio * 100}%`,
       ];
     }),
+    /* Last, so an authored declaration wins a collision with an option-derived one, which is the
+       order `emitReactSource` already resolves them in. */
+    ...(authoredStyle === undefined
+      ? []
+      : splitInlineStyle(authoredStyle).map(([property, value]) => `${property}: ${value}`)),
   ];
   if (styles.length > 0) out.push(attr("style", styles.join("; ") + ";"));
 
@@ -795,7 +877,8 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
     const mineToWrite = node.host
       ? !claimedAttrs.has(name)
       : (node.attrsFor ?? []).includes(name);
-    if (mineToWrite && name !== "class") out.push(attr(name, value));
+    // `class` and `style` were both merged into the single attribute each element may carry.
+    if (mineToWrite && name !== "class" && name !== "style") out.push(attr(name, value));
   }
 
   /*
@@ -882,10 +965,24 @@ function slotId(ctx: NodeContext, slot: string): string | undefined {
  * solves for a child that arrived as markup instead. `raw` (script/style body) is never wrapped:
  * reflowing JS or CSS on whitespace would change what it says, not just how it is laid out.
  */
-function textLines(text: string, depth: number, raw: boolean): string[] {
+function textLines(
+  text: string,
+  depth: number,
+  raw: boolean,
+  /**
+   * Keep the text exactly as written  -  but still ESCAPE it.
+   *
+   * `raw` and this are not the same claim, and collapsing them was the first version of this fix:
+   * `raw` (script/style) says the parser will not read markup here, so escaping would corrupt the
+   * body. `preserve` says only that the LAYOUT is content, which is true of a `white-space: pre-wrap`
+   * box whose text is still parsed as markup: a `<` in a code snippet is still a tag to the parser
+   * and still has to be escaped.
+   */
+  preserve = false,
+): string[] {
   const content = raw ? text : escapeText(text);
   const line = `${"  ".repeat(depth)}${content}`;
-  if (raw || line.length <= PRINT_WIDTH) return [line];
+  if (raw || preserve || line.length <= PRINT_WIDTH) return [line];
   return wrapText(content, depth);
 }
 
@@ -893,12 +990,14 @@ function renderSlot(
   content: SlotContent | undefined,
   depth: number,
   wiring?: Wiring,
+  /** The enclosing element renders its own whitespace: hand the text back untouched. */
+  preserve = false,
 ): string[] {
   const items = slotItems(content);
   const rendered = items.map((item) =>
     isUsageTree(item)
       ? renderSignature(item, depth, wiring)
-      : textLines(item, depth, false),
+      : textLines(item, depth, false, preserve),
   );
   return joinInlineItems(items, rendered);
 }
@@ -1267,13 +1366,18 @@ function styleProp(declarations: readonly string[], depth: number): string {
  */
 function composedProp(
   propName: string,
-  composed: readonly UsageTree[],
+  composed: readonly (string | UsageTree)[],
   depth: number,
   ctx: JsxContext,
 ): string {
   const lone = composed.length === 1;
   const rendered = composed.map((item) =>
-    renderJsx(item, depth + (lone ? 2 : 3), ctx),
+    isUsageTree(item)
+      ? renderJsx(item, depth + (lone ? 2 : 3), ctx)
+      : /* Text beside an element in the same slot, rendered as the JSX text node it is. The markup
+           emitter already prints it (`Stat`'s `change` is an arrow icon FOLLOWED BY "+12%"); this is
+           what stops React's copy from being the same slot with the words missing. */
+        [`${"  ".repeat(depth + (lone ? 2 : 3))}${item.trim()}`],
   );
 
   // Inline needs every element to have come back as a single line; the join stays empty, because
@@ -1417,11 +1521,18 @@ function renderJsx(
 
     const items = slotItems(content);
 
-    // A slot can hold another signature (a nav link's decorative icon) and on this side it becomes
-    // an element in a prop. Emitting only the text ones silently dropped it.
-    const composed = items.filter(isUsageTree);
-    if (composed.length > 0) {
-      props.push(composedProp(propName, composed, depth, ctx));
+    /*
+     * A slot can hold another signature (a nav link's decorative icon) and on this side it becomes
+     * an element in a prop. Emitting only the text ones silently dropped it.
+     *
+     * And EVERY item goes in, not just the elements: a slot that mixes both used to keep the
+     * elements and drop the words, which is the same bug this comment's first line records, in the
+     * other direction. `Stat`'s `change` is exactly that shape, an arrow icon followed by "+12% vs
+     * last month": the markup binding printed both, React's copy printed the icon alone, and a page
+     * showing two sources that disagree is worse than one showing neither.
+     */
+    if (items.some(isUsageTree)) {
+      props.push(composedProp(propName, items, depth, ctx));
       continue;
     }
 
@@ -1632,6 +1743,22 @@ export function jsxPropName(attr: string): string {
  * both, so the fix (and any future one) cannot land in only one of them again.
  */
 export function parseInlineStyle(css: string): Array<[string, string]> {
+  return splitInlineStyle(css).map(([property, value]) => [
+    property.startsWith("--")
+      ? property
+      : property.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase()),
+    value,
+  ]);
+}
+
+/**
+ * The same split with the property names left EXACTLY as written, for the binding that speaks CSS.
+ *
+ * `parseInlineStyle` above camelCases for React's `style` object, and markup emission borrowing it
+ * turned an authored `block-size: 12rem` into `blockSize: 12rem` in a real `style` attribute, which
+ * a browser ignores in silence. Two consumers, two spellings, one split.
+ */
+export function splitInlineStyle(css: string): Array<[string, string]> {
   return css
     .split(";")
     .map((declaration) => declaration.trim())
@@ -1642,10 +1769,7 @@ export function parseInlineStyle(css: string): Array<[string, string]> {
       const property = declaration.slice(0, colon).trim();
       const value = declaration.slice(colon + 1).trim();
       if (!property || !value) return null;
-      const jsProperty = property.startsWith("--")
-        ? property
-        : property.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase());
-      return [jsProperty, value] as [string, string];
+      return [property, value] as [string, string];
     })
     .filter((pair): pair is [string, string] => pair !== null);
 }

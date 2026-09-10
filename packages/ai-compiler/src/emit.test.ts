@@ -419,6 +419,36 @@ describe("emitReact", () => {
     expect(tsx).toContain('aria-label="Regiones"');
   });
 
+  /*
+   * Regression: a slot holding BOTH an element and text kept the element and dropped the text, so
+   * the two bindings printed different content for the same tree. `Stat`'s `change` is the shape
+   * that exposed it on the Card page: an arrow icon followed by the figure it qualifies.
+   */
+  it("keeps the text beside an element when one slot holds both", () => {
+    const stat: UsageTree = {
+      contract: "stat",
+      signature: "Stat",
+      options: { trend: "up" },
+      slots: {
+        label: "Ingresos del mes",
+        value: "$48.2K",
+        change: [
+          { contract: "icon", signature: "Icon", options: { name: "arrow-up", size: "sm" } },
+          "+12% vs. el mes pasado",
+        ],
+      },
+    };
+
+    const html = emitMarkup(stat);
+    const tsx = emitReactSource(stat, { component: "StatExample" }).component;
+
+    expect(html).toContain("+12% vs. el mes pasado");
+    expect(html).toContain('data-sk-icon="arrow-up"');
+    // Both halves, on BOTH sides: the icon alone is exactly what this used to emit.
+    expect(tsx).toContain("+12% vs. el mes pasado");
+    expect(tsx).toContain("<Icon");
+  });
+
   it("wraps composed props and prose before docs snippets need horizontal scroll", () => {
     const toast: UsageTree = {
       contract: "content",
@@ -678,6 +708,67 @@ describe("the two bindings agree on what the tree says", () => {
     );
     expect(emitReact(table)).toContain(
       'style={{ "--sk-density": 1, "--sk-density-factor": 0.6 } as CSSProperties}',
+    );
+  });
+
+  it("folds an authored style into the ONE style attribute the options already write", () => {
+    /*
+     * An element may carry one `style`. A signature with `styleProperty` options writes one from
+     * those options, and an author writing `attrs.style` on the same node used to get a SECOND: the
+     * HTML parser keeps the first and drops the rest, in silence.
+     *
+     * Found on `/es/componentes/fade-edge`, whose colour demo asks for `--sk-fade-edge-size` and
+     * `--sk-fade-edge-color` as options and for its own `block-size` and `background` as an authored
+     * style. The photo (its height AND its gradient) simply vanished on the Vanilla stage, while
+     * React  -  whose emitter already folded the two together  -  painted it. One authoring, two
+     * different demos.
+     */
+    const fade: UsageTree = {
+      contract: "fade-edge",
+      signature: "FadeEdge",
+      options: { mode: "color", size: "7rem" },
+      attrs: { style: "block-size: 12rem; background: black" },
+      children: "Patagonia",
+    };
+
+    const markup = emitMarkup(fade, { fillDefaults: false });
+    expect(markup.match(/style="/g)).toHaveLength(1);
+    expect(markup).toContain(
+      'style="--sk-fade-edge-size: 7rem; block-size: 12rem; background: black;"',
+    );
+    /* CSS spelling in the attribute, JS spelling in the object: the same split, mapped twice. */
+    expect(markup).not.toContain("blockSize");
+    expect(emitReact(fade)).toContain('"blockSize": "12rem"');
+  });
+
+  it("never indents into an element whose whitespace is content", () => {
+    /*
+     * A CodePreview viewport is `white-space: pre-wrap`, so the printer's own newline and indent are
+     * RENDERED. Measured on `/components/process-list`: a one-line `pnpm add …` came out as a
+     * three-line box in Vanilla and a one-line box in React, and which snippets got it was decided
+     * by `PRINT_WIDTH`  -  short ones stayed inline and were fine, long ones broke and were not.
+     */
+    const preview: UsageTree = {
+      contract: "code-preview",
+      signature: "CodePreview",
+      slots: {
+        label: "terminal",
+        children: "pnpm add @skryensya/core @skryensya/react",
+      },
+    };
+
+    const markup = emitMarkup(preview, { fillDefaults: false });
+    expect(markup).toContain(
+      '<div class="sk-code-preview__viewport">pnpm add @skryensya/core @skryensya/react</div>',
+    );
+
+    /* Preserving the layout is not the same as trusting the text: a `<` here is still markup. */
+    const withMarkup = emitMarkup(
+      { ...preview, slots: { ...preview.slots, children: "<Button />" } },
+      { fillDefaults: false },
+    );
+    expect(withMarkup).toContain(
+      '<div class="sk-code-preview__viewport">&lt;Button /&gt;</div>',
     );
   });
 });

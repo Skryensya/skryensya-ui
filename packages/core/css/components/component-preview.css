@@ -255,7 +255,23 @@
     /* min() so a preset wider than the docs column degrades to the column instead of overflowing. */
     inline-size: min(var(--sk-component-preview-screen-inline-size), 100%);
     min-inline-size: 0;
-    min-block-size: var(--sk-component-preview-stage-min-block-size);
+    /*
+     * RESERVED FIRST, THE 12REM DEFAULT SECOND.
+     *
+     * The default is a guess that has to cover every demo at once, so it is wrong for nearly all of
+     * them: the stage stands at 12rem, the frame reports, and the box snaps to the real content. The
+     * reserved value is that real content height, measured once per preview into
+     * `artifacts/preview-heights.json` and written inline by `ComponentPreview.astro`, so the box
+     * the reader sees while it loads is already the box it will keep.
+     *
+     * Both are only a FLOOR and both stop applying at `frame-ready` below, so a stale or absent
+     * measurement costs the reader exactly the jump they have today, never a stage stuck at the
+     * wrong size.
+     */
+    min-block-size: var(
+      --sk-component-preview-stage-reserved-block-size,
+      var(--sk-component-preview-stage-min-block-size)
+    );
     overflow: hidden;
     border: 0;
     border-block-end: 1px solid var(--sk-component-preview-border-color);
@@ -272,6 +288,28 @@
    */
   iframe.sk-component-preview__stage {
     visibility: hidden;
+  }
+
+  /*
+   * THE RESERVED HEIGHT HAS TO BE THE BOX, NOT A FLOOR UNDER IT.
+   *
+   * `min-block-size` above cannot make anything SHORTER, and an `<iframe>` with no height of its own
+   * is 150px tall by definition (its default `height` attribute). So a floor alone only ever helped
+   * previews TALLER than 150px: a 88px avatar group still loaded at 150px and then collapsed, which
+   * is most of a page like `/components/avatar` where every demo is a single row of controls.
+   * Setting the height outright is what makes the loading box the settled box in BOTH directions.
+   *
+   * Scoped to the not-yet-ready iframe, so it is a placeholder and nothing more: `fitFrame` writes
+   * the real number to `style.height` the moment it has one, and an inline style outranks this
+   * anyway. With no measurement the `var()` has no value, the declaration is invalid at
+   * computed-value time, and `block-size` lands on its own `auto` initial: the 150px default under
+   * the 12rem floor, exactly what shipped before any of this.
+   */
+  iframe.sk-component-preview__stage:not(
+    [data-sk-component-preview-frame-ready],
+    [data-sk-component-preview-frame-error]
+  ) {
+    block-size: var(--sk-component-preview-stage-reserved-block-size);
   }
 
   /*
@@ -421,7 +459,13 @@
     z-index: 1;
     display: grid;
     place-items: center;
-    min-block-size: var(--sk-component-preview-stage-min-block-size);
+    /* Same pair as the stage's, and it has to be: the loader shares the stage's grid cell, so a
+       loader still floored at 12rem would hold the cell open at 12rem no matter what the stage
+       beside it reserved. */
+    min-block-size: var(
+      --sk-component-preview-stage-reserved-block-size,
+      var(--sk-component-preview-stage-min-block-size)
+    );
     border-block-end: 1px solid var(--sk-component-preview-border-color);
     background: var(--sk-component-preview-bg);
     color: var(--sk-component-preview-loader-fg);
@@ -613,11 +657,31 @@
     min-block-size: 0;
   }
 
-  .sk-component-preview__frame-body > * {
+  /*
+   * THE STAGE'S TOP-LEVEL CHILDREN, IN BOTH BINDINGS.
+   *
+   * The second selector of each pair is not a nicety: React mounts into its own
+   * `[data-sk-react-demo-root]`, and `display: contents` keeps that wrapper out of LAYOUT while
+   * leaving it very much in the SELECTOR. So the specimen React paints is a grandchild here and a
+   * child in Vanilla, and a rule written only for `> *` reaches one binding.
+   *
+   * Measured, on `/icons`: the vocabulary grid asks for `repeat(auto-fill, minmax(6rem, 1fr))`, and
+   * `auto-fill` against an INDEFINITE inline size resolves to a single repetition. The stage body is
+   * a wrapping flex row, so the grid is a flex item sized by its content, and the only thing that
+   * ever made that size definite was the `max-inline-size: 100%` below. Vanilla got it and laid out
+   * seven columns at 547px tall; React did not and laid out one, at 3109px. One authoring, two
+   * bindings, and a 2.5-metre column of icons on one of them.
+   *
+   * The two rules further down (`:has(> .sk-progress)`, `:has(.sk-folder-stack)`) already carry
+   * their own React twin for exactly this reason. These are the ones that never got it.
+   */
+  .sk-component-preview__frame-body > *,
+  .sk-component-preview__frame-body > [data-sk-react-demo-root] > * {
     max-inline-size: 100%;
   }
 
-  .sk-component-preview__frame-body > :not(.sk-select) {
+  .sk-component-preview__frame-body > :not(.sk-select),
+  .sk-component-preview__frame-body > [data-sk-react-demo-root] > :not(.sk-select) {
     min-inline-size: 0;
   }
 

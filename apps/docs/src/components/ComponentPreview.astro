@@ -37,6 +37,7 @@ import { buildPreviewFrameDocument } from "../lib/preview-frame";
 import { exampleComponentName } from "../lib/example-component-name";
 import { compileDemoScript } from "../lib/demo-script";
 import { getLocale, useTranslations } from "../i18n";
+import { previewHeight } from "../lib/preview-heights";
 import { slugify } from "../lib/document-index";
 
 type CodeLanguage = "bash" | "css" | "html" | "ts" | "tsx";
@@ -188,6 +189,23 @@ const t = useTranslations(locale);
  */
 const treeHtml = tree ? emitMarkup(tree, { fillDefaults: false }) : undefined;
 /*
+ * THE STAGE GETS THE DEFAULTS FILLED IN; THE SNIPPET DOES NOT. Same tree, two jobs.
+ *
+ * `fillDefaults: false` is what keeps the source panel honest: it shows what an author WRITES, not
+ * every attribute the contract would have serialized. That is right for a snippet and wrong for a
+ * render, because the React stage beside it is not authored-only  -  a React component writes its
+ * own prop defaults into the DOM unconditionally. Measured on `/components/hero`: `Hero` defaults
+ * to `padding="xl"` and `surface="surface"` in React, while a bare `.sk-hero` is transparent with
+ * no padding in CSS, so the video-demo card rendered a padded surface on one stage and an unpadded
+ * one on the other, from one tree.
+ *
+ * Splitting them makes the two STAGES the same render and leaves both SNIPPETS at what a person
+ * types, which is the symmetry the card actually claims. It does not paper over the underlying
+ * inconsistency (a contract whose declared default is not what its bare class does) - that is a
+ * decision for the CSS or the contract to settle, and it is worth settling.
+ */
+const treeStageHtml = tree ? emitMarkup(tree) : undefined;
+/*
  * React arrives as up to TWO files: the component, and the module its collections were moved to.
  * `data` is what the second tab shows. A `<Menu>` whose items were serialized into the tag buried
  * the composition the page is about under a wall of entries, so the entries live where a real
@@ -223,7 +241,16 @@ const hasReact = Boolean(tree) || Boolean(treeReact ?? react) || Boolean(reactSl
 const hasBindingTabs = Boolean(vanillaCode && hasReact);
 const hasSourceTabs = Boolean(vanillaCode && (js || css));
 const slotHtml = Astro.slots.has("default") ? await Astro.slots.render("default") : undefined;
-const previewHtml = treeHtml ?? slotHtml ?? html ?? "";
+const previewHtml = treeStageHtml ?? slotHtml ?? html ?? "";
+/*
+ * WHERE THIS DEMO'S MARKUP CAME FROM, as one word, in the same precedence `previewHtml` resolves.
+ *
+ * In the DOM because it cannot be derived from it: the emitted markup looks the same either way, so
+ * "is this preview emitted from a usage tree or is it bespoke markup" was only answerable by opening
+ * the page source and working out which prop had been passed. `@skryensya/devtools`' Preview metrics
+ * check reads this attribute; nothing else in the app depends on it, and it costs one word per card.
+ */
+const previewSource = treeHtml ? "tree" : slotHtml ? "slot" : html ? "html" : "react";
 /*
  * Authored in TypeScript (`demos/scripts/*.ts`, type-checked with the rest of the app) and run as
  * JavaScript, because the live preview frame is a browser with no compiler in front of it. The
@@ -351,6 +378,33 @@ const screenToggleLabels = Object.fromEntries(
     t("preview.screenToggleLabel", { name: label, hint: option.hint }),
   ]),
 ) as Record<(typeof screenOptions)[number]["value"], string>;
+
+/*
+ * THE STAGE'S HEIGHT, RESERVED BEFORE THE FRAME CAN REPORT IT.
+ *
+ * An iframe has no content height, so `fitFrame` measures the document inside and writes the number
+ * back AFTER first paint. Until then the stage stands at one global 12rem floor, and every preview
+ * that is not 12rem tall then snaps: -104px on this page's own stacked-avatar group, measured. The
+ * settled number is observable but not computable, so it is measured once into
+ * `artifacts/preview-heights.json` and reserved here, which makes the loading box and the settled
+ * box the same box.
+ *
+ * A SECOND CUSTOM PROPERTY, not the `minHeight` one it sits beside, because the two mean different
+ * things and only one of them survives the frame reporting. `minHeight` is an authored FLOOR for a
+ * specimen that reads cramped at its natural height, and it is meant to keep applying afterwards
+ * (see the `[data-sk-component-preview-min-height]` rules in component-preview.css). This is a
+ * placeholder that exists only until the real height arrives, and it must get out of the way then,
+ * or a measurement that is a few pixels generous would leave dead space under every demo forever.
+ * Folding both into one property would force one of those two behaviours onto the other.
+ */
+const reservedHeight = previewHeight(Astro.url.pathname, previewId);
+const stageStyle =
+  [
+    minHeight ? `--sk-component-preview-stage-min-block-size: ${minHeight}` : null,
+    reservedHeight === null ? null : `--sk-component-preview-stage-reserved-block-size: ${reservedHeight}px`,
+  ]
+    .filter(Boolean)
+    .join("; ") || undefined;
 ---
 
 <div
@@ -358,8 +412,9 @@ const screenToggleLabels = Object.fromEntries(
   data-sk-component-preview
   data-width={width}
   data-sk-component-preview-screen-local={screenScope === "local" ? "" : undefined}
+  data-sk-preview-source={previewSource}
   id={previewId}
-  style={minHeight ? `--sk-component-preview-stage-min-block-size: ${minHeight}` : undefined}
+  style={stageStyle}
 >
   <header class="sk-component-preview__header">
     {
@@ -655,6 +710,7 @@ const screenToggleLabels = Object.fromEntries(
       aria-label={`Cargando preview: ${label}`}
     />
   </div>
+
 
   {
     vanillaCode && !hideSource && (

@@ -36,6 +36,35 @@ haya progreso visible seguido en vez de quedar atascado en el ítem más grande 
 
 ---
 
+## Nivel 1 - bloqueado ⏸️: la CRITICAL de astro espera a que su árbol cumpla el cooldown
+
+**A partir del 2026-09-19**, subir `astro` a la línea `~7.2.8` en `apps/docs/package.json`.
+
+`astro <7.2.8` arrastra una advisory **CRITICAL** (ejecución remota de código a través de la
+optimización de imágenes AVIF, `apps/docs > astro`), y el gate de `pre-push`
+(`scripts/audit-gate.mjs`) la bloquea: **hoy no se puede pushear a `origin/main` sin `--no-verify`.**
+
+Intentado y revertido el 2026-09-09, con todo el detalle porque el próximo intento no debería
+redescubrirlo:
+
+- El arreglo en sí funciona. Con `astro: "~7.2.8"` (resuelve 7.2.10), overrides para `svgo ^4.1.0` y
+  `smol-toml ^1.7.1`, y los de `sharp` y `js-yaml` subidos a `^0.35.4` / `^4.3.2` (ya existían, con
+  el piso viejo), **el gate pasa con exit 0**.
+- Lo que lo bloquea es otra cosa: astro 7.2.x usa `satteri` de motor markdown, que necesita un
+  binario nativo por plataforma. Los nueve `@bruits/satteri-*@0.10.5` se publicaron el **2026-08-19**,
+  dentro de la ventana de `minimumReleaseAge`. Y pnpm, con dependencias OPCIONALES, no falla: las
+  omite en silencio. El install queda "bien" y después `astro check` muere con
+  `Cannot find native binding`. Agregarlas a `minimumReleaseAgeExclude` no alcanzó, ni con
+  `pnpm install --force`; por qué la exclusión no aplica a opcionales quedó sin averiguar.
+- Ocho paquetes más del árbol de astro caen en la misma ventana (`unifont`, `find-proc`, `satteri`,
+  `@astrojs/compiler-rs`, `@astrojs/compiler-binding`, `@astrojs/internal-helpers`,
+  `@astrojs/markdown-satteri`). Enumerados caminando el árbol de `astro@7.2.8`, no de a uno por
+  install fallido.
+
+Elegido esperar en vez de bajar `minimumReleaseAge` o acumular nueve exclusiones: al 2026-09-19 los
+binarios de satteri cumplen los 30 días y esto se resuelve sin ninguna excepción nueva. Es la
+política funcionando como fue diseñada, no un rodeo.
+
 ## Nivel 1 - bloqueador conocido: sin Tests tab
 
 Señal: `apps/docs/src/components/pages/*Page.astro` con `contractId` real (no una página de

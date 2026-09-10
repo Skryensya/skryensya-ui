@@ -2,6 +2,19 @@ export const componentPreviewMessages = {
   es: {
     "demo.componentPreview.title": "Botón primario",
     "demo.componentPreview.button": "Guardar",
+    "demo.componentPreview.saveChanges": "Guardar cambios",
+    "demo.componentPreview.billingTitle": "Facturación",
+    "demo.componentPreview.billingBody": "Planes, pagos y recibos.",
+    "demo.componentPreview.teamTitle": "Equipo",
+    "demo.componentPreview.teamBody": "Personas, roles y permisos.",
+    "demo.componentPreview.domainsTitle": "Dominios",
+    "demo.componentPreview.domainsBody": "DNS y certificados.",
+    "demo.componentPreview.logsTitle": "Registros",
+    "demo.componentPreview.logsBody": "Actividad y auditoría.",
+    "demo.componentPreview.integrationsTitle": "Integraciones",
+    "demo.componentPreview.integrationsBody": "Webhooks y llaves de API.",
+    "demo.componentPreview.notificationsTitle": "Notificaciones",
+    "demo.componentPreview.notificationsBody": "Correo y alertas.",
 
     "componentPreview.description":
       "Render de un componente y su código en una superficie documentada, con bindings y fuentes opcionales.",
@@ -69,6 +82,19 @@ export const componentPreviewMessages = {
   en: {
     "demo.componentPreview.title": "Primary button",
     "demo.componentPreview.button": "Save",
+    "demo.componentPreview.saveChanges": "Save changes",
+    "demo.componentPreview.billingTitle": "Billing",
+    "demo.componentPreview.billingBody": "Plans, payments and receipts.",
+    "demo.componentPreview.teamTitle": "Team",
+    "demo.componentPreview.teamBody": "People, roles and permissions.",
+    "demo.componentPreview.domainsTitle": "Domains",
+    "demo.componentPreview.domainsBody": "DNS and certificates.",
+    "demo.componentPreview.logsTitle": "Logs",
+    "demo.componentPreview.logsBody": "Activity and audit.",
+    "demo.componentPreview.integrationsTitle": "Integrations",
+    "demo.componentPreview.integrationsBody": "Webhooks and API keys.",
+    "demo.componentPreview.notificationsTitle": "Notifications",
+    "demo.componentPreview.notificationsBody": "Mail and alerts.",
 
     "componentPreview.description":
       "Renders a component and its code on a documented surface, with optional bindings and sources.",

@@ -112,6 +112,12 @@ export const cardMessages = {
       "Cada ejemplo mantiene exactamente tres cards: la invariante que compara alturas, medios y pies entre sí.",
     "cardPage.testSelectDefaultChecked":
       'El estado inicial de la card que se elige vive en <code>data-default-checked</code> de la raíz, no en el atributo <code>checked</code> del input.',
+    "cardPage.testLadderCovered":
+      "Cada peldaño rotulado de la escalera tiene su propio árbol: un ejemplo que perdiera el suyo dejaría de renderizar en una página cuyo tema son justamente los peldaños.",
+    "cardPage.testTreesValid":
+      "Los once ejemplos son válidos contra los contratos que componen: un árbol que el contrato rechaza igual emite markup, así que sin esto la página se construye y enseña algo falso.",
+    "cardPage.testBothBindings":
+      "Los dos bindings de cada ejemplo salen del mismo árbol: el snippet y el escenario que está al lado no pueden discrepar porque nadie los escribe dos veces.",
     "cardPage.testImportsTile":
       "La página importa <code>tile.css</code>, la hoja que TileLink, TileButton y TileCheckbox necesitan y que Base.astro nunca carga de forma global.",
     "cardPage.testImportsCheckbox":
@@ -230,6 +236,12 @@ export const cardMessages = {
       "Every example keeps exactly three cards: the invariant that lines up height, media and footer across siblings.",
     "cardPage.testSelectDefaultChecked":
       'The initial state of the card-that-gets-chosen example lives in the root\'s <code>data-default-checked</code>, not in the input\'s <code>checked</code> attribute.',
+    "cardPage.testLadderCovered":
+      "Every labelled rung of the ladder has a tree of its own: an example that lost one would simply stop rendering, on a page whose whole subject is the rungs.",
+    "cardPage.testTreesValid":
+      "All eleven examples are valid against the contracts they compose: a tree the contract rejects still emits markup, so without this the page builds and teaches something false.",
+    "cardPage.testBothBindings":
+      "Both bindings of every example come out of the one tree: the snippet and the stage beside it cannot disagree, because nobody types them twice.",
     "cardPage.testImportsTile":
       "The page imports <code>tile.css</code>, the sheet TileLink, TileButton and TileCheckbox need and that Base.astro never loads globally.",
     "cardPage.testImportsCheckbox":

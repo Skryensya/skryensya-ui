@@ -23,21 +23,26 @@ import CodeBlock from "../CodeBlock.astro";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { cardCopy } from "../../examples/card-data";
-import { cardSources } from "../../examples/card-sources";
+/* Every rung of the ladder is authored ONCE, as a tree: the markup, the React source and the live
+   island all come out of the compiler, so a snippet on this page cannot describe a card the stage
+   beside it is not rendering. See `demos/card.ts`. */
 import {
-  CardActionDemo,
-  CardBasicDemo,
-  CardGradientDemo,
-  CardLinkDemo,
-  CardMediaDemo,
-  CardMediaLinkDemo,
-  CardMetaDemo,
-  CardPlainMediaDemo,
-  CardProductDemo,
-  CardSelectDemo,
-  CardStatDemo,
-} from "../react-demos/card";
+  cardActionTree,
+  cardBasicTree,
+  cardGradientTree,
+  cardLinkTree,
+  cardMediaLinkTree,
+  cardMediaTree,
+  cardMetaTree,
+  cardPlainMediaTree,
+  cardProductTree,
+  cardSelectTree,
+  cardStatTree,
+} from "../../demos/card";
 import { ChartCardDemo } from "../react-demos/chart-card";
+import { chartAnalyticsCardSource, chartAnalyticsCardTree } from "../../demos/charts";
+import { emitChartWithOverlay } from "../../demos/chart-overlay";
+import { visitsPerWeek } from "../../demos/data/charts";
 import { getLocale, useTranslations } from "../../i18n";
 
 /* The eleven examples are a LADDER: each rung adds one decision to the one before it, and every
@@ -46,48 +51,24 @@ import { getLocale, useTranslations } from "../../i18n";
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 const copy = cardCopy[locale];
-const src = cardSources(copy);
 
 /* Same snippet Primitivas installs: Card asks nothing beyond the two packages every example here
  * already imports from. */
 const install = `pnpm add @skryensya/core @skryensya/react`;
-/* The composition, and only ONE chart. The other two cards and the Chart piece itself live on
- * `/components/charts`; this rung is about the card around it. */
-const chartSource = `import { Badge } from "@skryensya/react/badge";
-import { Button } from "@skryensya/react/button";
-import { Chart } from "@skryensya/charts/react";
-import { Box, Inline, Stack } from "@skryensya/react/layout";
-import { Heading, Text } from "@skryensya/react/typography";
-
-<Box as="article" border="subtle" padding="lg" surface="surface">
-  <Stack gap="md">
-    <Inline align="start" justify="between">
-      <Stack gap="xs">
-        <Heading as="h3" flush size="h4">
-          Analytics
-        </Heading>
-        <Inline align="center" gap="sm">
-          <Text as="span" tone="secondary">
-            418.2K Visitors
-          </Text>
-          <Badge tone="success">+10%</Badge>
-        </Inline>
-      </Stack>
-      <Button size="sm" variant="translucent">
-        View Analytics
-      </Button>
-    </Inline>
-    <Chart
-      flush
-      format="compact"
-      height="sm"
-      kind="area"
-      label="Visits per week"
-      labels={false}
-      points={visits}
-    />
-  </Stack>
-</Box>;`;
+/*
+ * THE CHART CARD, in BOTH bindings, from the same tree the Charts page uses.
+ *
+ * It was React-only: no `html`, so `ComponentPreview` rendered no Vanilla stage at all and the card
+ * was the one rung of this ladder a reader could not copy as markup. The source shown beside it was
+ * hand-typed too, and had drifted - it described a `Badge` and a `Text` where the live demo rendered
+ * a `Stat`.
+ *
+ * `emitChartWithOverlay` is what makes the Vanilla half possible: a `chart` tree emits the correct
+ * anatomy but leaves the overlay div empty, because the area path is a React-only prop of
+ * `@skryensya/charts`. That helper splices in the SAME geometry the React renderer draws, computed
+ * at build time (see `demos/chart-overlay.ts`). Exactly how `/components/charts` renders this card.
+ */
+const chartCardHtml = emitChartWithOverlay(chartAnalyticsCardTree(t), "area", visitsPerWeek);
 ---
 
 <ComponentPageShell
@@ -104,6 +85,18 @@ import { Heading, Text } from "@skryensya/react/typography";
       file: "apps/docs/src/examples/card-sources.test.ts",
       tests: [
         { name: "keeps every example's data array at exactly three cards", description: t("cardPage.testGridOfThree") },
+        {
+          name: "covers the whole ladder: one tree per labelled example",
+          description: t("cardPage.testLadderCovered"),
+        },
+        {
+          name: "keeps every example valid against the contracts it composes",
+          description: t("cardPage.testTreesValid"),
+        },
+        {
+          name: "emits both bindings of every example from the one authoring",
+          description: t("cardPage.testBothBindings"),
+        },
         {
           name: "marks the select example's initial state on the label, not on the input",
           description: t("cardPage.testSelectDefaultChecked"),
@@ -152,39 +145,23 @@ import { Heading, Text } from "@skryensya/react/typography";
 
     <h3 id="contenido">{t("cardPage.plainMediaTitle")}</h3>
     <p set:html={t("cardPage.plainMediaBody")} />
-    <ComponentPreview html={src.plainMedia.html} react={src.plainMedia.react} label={copy.labels.plainMedia} note={t("cardPage.plainMediaNote")}>
-      <Fragment slot="react">
-        <CardPlainMediaDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    <ComponentPreview tree={cardPlainMediaTree(copy)} label={copy.labels.plainMedia} note={t("cardPage.plainMediaNote")} />
 
     <h3 id="basic">{t("cardPage.basicTitle")}</h3>
     <p set:html={t("cardPage.basicBody")} />
-    <ComponentPreview html={src.basic.html} react={src.basic.react} label={copy.labels.basic} note={t("cardPage.basicNote")}>
-      <Fragment slot="react">
-        <CardBasicDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    <ComponentPreview tree={cardBasicTree(copy)} label={copy.labels.basic} note={t("cardPage.basicNote")} />
 
     <h3 id="meta">{t("cardPage.metaTitle")}</h3>
     <p set:html={t("cardPage.metaBody")} />
-    <ComponentPreview html={src.meta.html} react={src.meta.react} label={copy.labels.meta} note={t("cardPage.metaNote")}>
-      <Fragment slot="react">
-        <CardMetaDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    <ComponentPreview tree={cardMetaTree(copy)} label={copy.labels.meta} note={t("cardPage.metaNote")} />
 
     <h3 id="stat-card">{t("cardPage.statTitle")}</h3>
     <p set:html={t("cardPage.statBody")} />
-    <ComponentPreview html={src.stat.html} react={src.stat.react} label={copy.labels.stat} note={t("cardPage.statNote")}>
-      <Fragment slot="react">
-        <CardStatDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    <ComponentPreview tree={cardStatTree(copy)} label={copy.labels.stat} note={t("cardPage.statNote")} />
 
     <h3 id="chart-card">{t("cardPage.chartTitle")}</h3>
     <p set:html={t("cardPage.chartBody")} />
-    <ComponentPreview react={chartSource} label={t("cardPage.chartLabel")} note={t("cardPage.chartNote")} minHeight="25rem">
+    <ComponentPreview html={chartCardHtml} react={chartAnalyticsCardSource} label={t("cardPage.chartLabel")} note={t("cardPage.chartNote")} minHeight="25rem">
       <Fragment slot="react">
         <ChartCardDemo client:visible lang={locale} />
       </Fragment>
@@ -193,59 +170,31 @@ import { Heading, Text } from "@skryensya/react/typography";
 
     <h3 id="enlace">{t("cardPage.linkTitle")}</h3>
     <p set:html={t("cardPage.linkBody")} />
-    <ComponentPreview html={src.link.html} react={src.link.react} label={copy.labels.link} note={t("cardPage.linkNote")}>
-      <Fragment slot="react">
-        <CardLinkDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    <ComponentPreview tree={cardLinkTree(copy)} label={copy.labels.link} note={t("cardPage.linkNote")} />
 
     <h3 id="accion">{t("cardPage.actionTitle")}</h3>
     <p set:html={t("cardPage.actionBody")} />
-    <ComponentPreview html={src.action.html} react={src.action.react} label={copy.labels.action} note={t("cardPage.actionNote")}>
-      <Fragment slot="react">
-        <CardActionDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    <ComponentPreview tree={cardActionTree(copy)} label={copy.labels.action} note={t("cardPage.actionNote")} />
 
     <h3 id="seleccion">{t("cardPage.selectTitle")}</h3>
     <p set:html={t("cardPage.selectBody")} />
-    <ComponentPreview html={src.select.html} react={src.select.react} label={copy.labels.select} note={t("cardPage.selectNote")}>
-      <Fragment slot="react">
-        <CardSelectDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    <ComponentPreview tree={cardSelectTree(copy)} label={copy.labels.select} note={t("cardPage.selectNote")} />
 
     <h3 id="imagen">{t("cardPage.mediaTitle")}</h3>
     <p set:html={t("cardPage.mediaBody")} />
-    <ComponentPreview html={src.media.html} react={src.media.react} label={copy.labels.media} note={t("cardPage.mediaNote")}>
-      <Fragment slot="react">
-        <CardMediaDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    <ComponentPreview tree={cardMediaTree(copy)} label={copy.labels.media} note={t("cardPage.mediaNote")} />
 
     <h3 id="gradiente">{t("cardPage.gradientTitle")}</h3>
     <p set:html={t("cardPage.gradientBody")} />
-    <ComponentPreview html={src.gradient.html} react={src.gradient.react} label={copy.labels.gradient} note={t("cardPage.gradientNote")}>
-      <Fragment slot="react">
-        <CardGradientDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    <ComponentPreview tree={cardGradientTree(copy)} label={copy.labels.gradient} note={t("cardPage.gradientNote")} />
 
     <h3 id="imagen-enlace">{t("cardPage.mediaLinkTitle")}</h3>
     <p set:html={t("cardPage.mediaLinkBody")} />
-    <ComponentPreview html={src.mediaLink.html} react={src.mediaLink.react} label={copy.labels.mediaLink} note={t("cardPage.mediaLinkNote")}>
-      <Fragment slot="react">
-        <CardMediaLinkDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    <ComponentPreview tree={cardMediaLinkTree(copy)} label={copy.labels.mediaLink} note={t("cardPage.mediaLinkNote")} />
 
     <h3 id="producto">{t("cardPage.productTitle")}</h3>
     <p set:html={t("cardPage.productBody")} />
-    <ComponentPreview html={src.product.html} react={src.product.react} label={copy.labels.product} note={t("cardPage.productNote")}>
-      <Fragment slot="react">
-        <CardProductDemo client:visible lang={locale} />
-      </Fragment>
-    </ComponentPreview>
+    <ComponentPreview tree={cardProductTree(copy)} label={copy.labels.product} note={t("cardPage.productNote")} />
 
     <h3>Do &amp; Don't</h3>
     <div class="sk-grid" data-columns="2" data-gap="md" data-multicol>

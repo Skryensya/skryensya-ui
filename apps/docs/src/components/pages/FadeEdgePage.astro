@@ -1,6 +1,14 @@
 ---
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
+import {
+  fadeBottomTree,
+  fadeColorTree,
+  fadeIntensityTree,
+  fadeLeftTree,
+  fadeRightTree,
+  fadeTopTree,
+} from "../../demos/fade-edge";
 import { getLocale, useTranslations } from "../../i18n";
 import semanticSource from "@contracts/semantic/fade-edge.yaml?raw";
 import changelogSource from "@contracts/changelog/fade-edge.yaml?raw";
@@ -15,6 +23,9 @@ import "@skryensya/core/components/avatar.css";
 import "@skryensya/core/components/tag.css";
 import "@skryensya/core/components/typography.css";
 import "@skryensya/core/patterns/scrollbar.css";
+/* `input.css` for the intensity control, which is a real `NativeInput` now rather than a bare
+   `<input>` in a string; `stack`/`inline` ride in through `patterns/layout.css` globally. */
+import "@skryensya/core/components/input.css";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -27,123 +38,25 @@ const sourceFiles = [
 ] as const;
 
 /*
- * A real activity feed, seven rows deep: enough that the box (max-height 11rem, ~3 rows visible)
- * has real content to scroll THROUGH, not just a static clip. `overflow-y: auto` on the fade-edge
- * element itself is what makes that legible: `mask-image` paints relative to the element's own box,
- * not its content, so the faded band stays pinned to the edge while rows scroll underneath it  -  the
- * same trick as a `background-attachment: local` gradient, just via the mask layer instead.
+ * THE DEMOS THEMSELVES LIVE IN `demos/fade-edge.ts`, AS TREES.
+ *
+ * They were six HTML string literals right here, which is why this page had a Vanilla stage and no
+ * React one at all: `ComponentPreview` derives both bindings from a tree, and a string is only ever
+ * one of them. Nothing about FadeEdge was blocking that; the strings simply predate the compiler.
+ *
+ * The three scripts below stay here, because they ARE page-level app code: what a consumer would
+ * write around the pattern, not part of it. Each runs inside the stage for both bindings, so it
+ * drives the demo through the DOM and never through a binding's own API.
  */
-const activityItem = (initials: string, palette: string, name: string, action: string, time: string) => `
-      <li class="sk-list__item">
-        <span class="sk-list__leading">
-          <span class="sk-avatar" data-size="sm" aria-label="${name}" style="--sk-avatar-bg: var(--palette-${palette}); --sk-avatar-fg: var(--palette-white);">${initials}</span>
-        </span>
-        <span class="sk-list__content">
-          <span class="sk-list__title">${name}</span>
-          <span class="sk-list__description">${action}</span>
-        </span>
-        <span class="sk-list__trailing">
-          <span class="sk-text" data-tone="tertiary" data-size="sm">${time}</span>
-        </span>
-      </li>`;
-
-const activityRows = [
-  activityItem("AL", "blue-600", "Ada Lovelace", 'Comentó en "Rediseño del dashboard"', "2m"),
-  activityItem("GH", "emerald-600", "Grace Hopper", "Aprobó el pull request #482", "15m"),
-  activityItem("AT", "sky-600", "Alan Turing", 'Creó el ticket "Migrar auth a OAuth2"', "1h"),
-  activityItem("MH", "red-600", "Margaret Hamilton", "Cerró 3 issues en el sprint actual", "2h"),
-  activityItem("DK", "amber-600", "Donald Knuth", "Subió una nueva build a staging", "5h"),
-  activityItem("KP", "emerald-600", "Katherine Johnson", 'Editó la página "Roadmap Q3"', "8h"),
-  activityItem("BL", "blue-600", "Barbara Liskov", "Invitó a 2 personas al equipo", "1d"),
-].join("");
-
-const fadeBottomHtml = `<div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" style="inline-size: 22rem;">
-  <div class="sk-fade-edge sk-scrollbar" style="max-height: 11rem; overflow-y: auto;">
-    <ul class="sk-list" data-dividers="none" aria-label="Actividad reciente">${activityRows}
-    </ul>
-  </div>
-</div>`;
-
-const fadeTopHtml = `<div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" style="inline-size: 22rem;">
-  <div id="fade-top-scroll" class="sk-fade-edge sk-scrollbar" data-direction="to-top" style="max-height: 11rem; overflow-y: auto;">
-    <ul class="sk-list" data-dividers="none" aria-label="Actividad reciente, scrolleada hacia abajo">${activityRows}
-    </ul>
-  </div>
-</div>`;
-
 const fadeTopScript = `
 const region = document.getElementById("fade-top-scroll");
 if (region) region.scrollTop = region.scrollHeight;
 `;
 
-const tagRow = `
-      <span class="sk-tag">Diseño</span>
-      <span class="sk-tag" data-tone="accent">Frontend</span>
-      <span class="sk-tag" data-tone="success">Aprobado</span>
-      <span class="sk-tag" data-tone="warning">En revisión</span>
-      <span class="sk-tag" data-tone="danger">Bloqueado</span>
-      <span class="sk-tag">Backend</span>
-      <span class="sk-tag">Accesibilidad</span>
-      <span class="sk-tag">Performance</span>
-      <span class="sk-tag">Documentación</span>
-      <span class="sk-tag" data-tone="accent">QA</span>`;
-
-const fadeRightHtml = `<div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" style="inline-size: 20rem;">
-  <div class="sk-fade-edge sk-scrollbar" data-direction="to-right" style="overflow-x: auto;">
-    <div class="sk-inline" data-gap="sm" data-wrap="false">${tagRow}
-    </div>
-  </div>
-</div>`;
-
-const fadeLeftHtml = `<div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" style="inline-size: 20rem;">
-  <div id="fade-left-scroll" class="sk-fade-edge sk-scrollbar" data-direction="to-left" style="overflow-x: auto;">
-    <div class="sk-inline" data-gap="sm" data-wrap="false">${tagRow}
-    </div>
-  </div>
-</div>`;
-
 const fadeLeftScript = `
 const region = document.getElementById("fade-left-scroll");
 if (region) region.scrollLeft = region.scrollWidth;
 `;
-
-/*
- * The scrim pattern: a photo card whose caption needs to stay legible over whatever the image
- * happens to show. `data-fade="color"` paints an opaque gradient instead of revealing the
- * backdrop, which is the point here  -  there is no flat surface behind the photo to fade into.
- */
-const fadeColorHtml = `<div class="sk-box" data-border="subtle" style="inline-size: 20rem; overflow: hidden;">
-  <div style="position: relative;">
-    <div
-      class="sk-fade-edge"
-      data-fade="color"
-      style="--sk-fade-edge-color: rgb(15 23 42 / 85%); --sk-fade-edge-size: 7rem; block-size: 12rem; background: linear-gradient(135deg, var(--palette-blue-600), var(--palette-sky-400));"
-    ></div>
-    <div style="position: absolute; inset: auto 0 0 0; padding: var(--space-inset-md);">
-      <span class="sk-text" data-size="lg" style="color: white; font-weight: var(--font-weight-label); display: block;">Vista desde el mirador</span>
-      <span class="sk-text" data-size="sm" style="color: rgb(255 255 255 / 85%);">Patagonia, Argentina</span>
-    </div>
-  </div>
-</div>`;
-
-/*
- * The intensity control: a real range input driving `--sk-fade-edge-size` live, over the SAME
- * scrollable feed as the first demo. Pixels, not rem, on the input itself  -  `<input type="range">`
- * has no unit, and converting on read (`sync`) keeps the label honest in the unit the CSS variable
- * actually documents.
- */
-const fadeIntensityHtml = `<div class="sk-stack" data-gap="md" style="inline-size: 22rem;">
-  <div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md">
-    <div id="fade-intensity-region" class="sk-fade-edge sk-scrollbar" style="--sk-fade-edge-size: 64px; max-height: 11rem; overflow-y: auto;">
-      <ul class="sk-list" data-dividers="none" aria-label="Actividad reciente">${activityRows}
-      </ul>
-    </div>
-  </div>
-  <label class="sk-stack" data-gap="xs">
-    <span class="sk-text" data-size="sm" data-tone="secondary">Intensidad del desvanecido: <strong id="fade-intensity-value">4.0rem</strong></span>
-    <input id="fade-intensity-range" type="range" min="8" max="88" step="4" value="64" style="inline-size: 100%;" aria-label="Ajustar el tamaño del desvanecido" />
-  </label>
-</div>`;
 
 const fadeIntensityScript = `
 const region = document.getElementById("fade-intensity-region");
@@ -182,27 +95,27 @@ sync();
 
     <h3>Fundido hacia abajo</h3>
     <p>Una lista con scroll real y altura acotada: el borde inferior se desvanece para señalar que faltan filas por ver. Desplazate adentro del recuadro  -  el degradé queda fijo en el borde mientras el contenido pasa debajo, así se aprecia el efecto en acción.</p>
-    <ComponentPreview html={fadeBottomHtml} label="Fade to bottom" />
+    <ComponentPreview tree={fadeBottomTree} label="Fade to bottom" />
 
     <h3>Fundido hacia arriba</h3>
     <p>El mismo feed, arrancando ya scrolleado hasta el final: lo que falta está arriba, y el degradé lo señala ahí. Subí el scroll para verlo desaparecer.</p>
-    <ComponentPreview html={fadeTopHtml} previewScript={fadeTopScript} label="Fade to top" />
+    <ComponentPreview tree={fadeTopTree} previewScript={fadeTopScript} label="Fade to top" />
 
     <h3>Fundido hacia la derecha</h3>
     <p>Una fila de tags que no entra en el ancho disponible, con scroll horizontal real. El desvanecido a la derecha avisa que hay más sin necesidad de una flecha visible.</p>
-    <ComponentPreview html={fadeRightHtml} label="Fade to right" />
+    <ComponentPreview tree={fadeRightTree} label="Fade to right" />
 
     <h3>Fundido hacia la izquierda</h3>
     <p>La misma fila, arrancando ya scrolleada hasta el final: el desvanecido a la izquierda indica que hay contenido anterior.</p>
-    <ComponentPreview html={fadeLeftHtml} previewScript={fadeLeftScript} label="Fade to left" />
+    <ComponentPreview tree={fadeLeftTree} previewScript={fadeLeftScript} label="Fade to left" />
 
     <h3>Fundido a un color determinado</h3>
     <p>Cuando no hay una superficie plana detrás para revelar  -  una foto, por ejemplo  -  <code>data-fade="color"</code> pinta un degradé opaco encima en vez de hacer transparente el contenido. Es el patrón clásico del scrim: un texto legible sobre una imagen, sin importar qué colores tenga la foto.</p>
-    <ComponentPreview html={fadeColorHtml} label="Fade a color" />
+    <ComponentPreview tree={fadeColorTree} label="Fade a color" />
 
     <h3>Ajustar la intensidad</h3>
     <p>La variable <code>--sk-fade-edge-size</code> controla qué tan ancha es la zona que se desvanece (por defecto <code>4rem</code>), en cualquiera de los dos modos. Movés el control y el CSS se actualiza en vivo sobre el mismo feed con scroll de arriba.</p>
-    <ComponentPreview html={fadeIntensityHtml} previewScript={fadeIntensityScript} label="Intensidad del desvanecido" />
+    <ComponentPreview tree={fadeIntensityTree} previewScript={fadeIntensityScript} label="Intensidad del desvanecido" />
 
     <h3>Variables y atributos</h3>
     <ul>

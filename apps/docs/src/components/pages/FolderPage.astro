@@ -126,6 +126,10 @@ const sourceFiles = [
         },
         { name: "marks the root ready only once a real path has been written", description: t("folderPage.testReact3") },
         {
+          name: "re-samples the ground when the colour scheme flips, which resizes nothing",
+          description: t("folderPage.testReactScheme"),
+        },
+        {
           name: "writes no reveal attribute, because a folder is never visible at rest",
           description: t("folderPage.testReact4"),
         },
@@ -159,6 +163,14 @@ const sourceFiles = [
           description: t("folderPage.testVanilla3"),
         },
         { name: "re-measures when either box changes, and observes both", description: t("folderPage.testVanilla4") },
+        {
+          name: "re-samples the ground when the colour scheme flips, which resizes nothing",
+          description: t("folderPage.testVanillaScheme"),
+        },
+        {
+          name: "stops watching the scheme once the folder is destroyed",
+          description: t("folderPage.testVanillaSchemeCleanup"),
+        },
         {
           name: "publishes the silhouette as a clip for the state layer to follow",
           description: t("folderPage.testVanilla7"),

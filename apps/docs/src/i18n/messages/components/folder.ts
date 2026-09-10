@@ -66,6 +66,8 @@ export const folderMessages = {
     "folderPage.testReact1": "Renderiza la pestaña, el contenido y una silueta decorativa detrás.",
     "folderPage.testReact2": "Dibuja la silueta a partir de la caja de la carpeta y del ancho de su pestaña.",
     "folderPage.testReact3": "Marca la raíz como lista recién cuando escribió un path real.",
+    "folderPage.testReactScheme":
+      "Vuelve a leer el fondo cuando se da vuelta el esquema de color, que no mueve ninguna caja.",
     "folderPage.testReact4": "No escribe atributo de reveal: una carpeta nunca se ve en reposo.",
     "folderPage.testReact5": "Escribe el <code>reveal</code> por defecto del contrato cuando no se pide.",
     "folderPage.testReact6": "Espeja la silueta dentro de un subárbol RTL.",
@@ -76,6 +78,9 @@ export const folderMessages = {
     "folderPage.testVanilla2": "Marca la raíz como lista recién cuando escribió un path real.",
     "folderPage.testVanilla3": "No dibuja nada, y no queda lista, si la caja no se puede medir.",
     "folderPage.testVanilla4": "Vuelve a medir cuando cambia cualquiera de las dos cajas, y observa las dos.",
+    "folderPage.testVanillaScheme":
+      "Vuelve a leer el fondo cuando se da vuelta el esquema de color, que no mueve ninguna caja.",
+    "folderPage.testVanillaSchemeCleanup": "Deja de escuchar el esquema cuando la carpeta se destruye.",
     "folderPage.testVanilla5": "Rechaza una raíz a la que le faltan los nodos donde tiene que dibujar.",
     "folderPage.testVanilla6": "Monta una vez por raíz y deja en paz una carpeta ya enhanceada.",
     "folderPage.testCore11": "Mide hasta el borde lejano de la pestaña, no sólo su ancho.",
@@ -163,6 +168,8 @@ export const folderMessages = {
     "folderPage.testReact1": "Renders the tab, the content and a decorative silhouette behind them.",
     "folderPage.testReact2": "Draws the silhouette from the folder's own box and its tab's width.",
     "folderPage.testReact3": "Marks the root ready only once a real path has been written.",
+    "folderPage.testReactScheme":
+      "Re-samples the ground when the colour scheme flips, which moves no box at all.",
     "folderPage.testReact4": "Writes no reveal attribute, because a folder is never visible at rest.",
     "folderPage.testReact5": "Writes the contract's default reveal when none is given.",
     "folderPage.testReact6": "Mirrors the silhouette inside an RTL subtree.",
@@ -173,6 +180,9 @@ export const folderMessages = {
     "folderPage.testVanilla2": "Marks the root ready only once a real path has been written.",
     "folderPage.testVanilla3": "Draws nothing, and stays unready, when the box cannot be measured.",
     "folderPage.testVanilla4": "Re-measures when either box changes, and observes both.",
+    "folderPage.testVanillaScheme":
+      "Re-samples the ground when the colour scheme flips, which moves no box at all.",
+    "folderPage.testVanillaSchemeCleanup": "Stops watching the scheme once the folder is destroyed.",
     "folderPage.testVanilla5": "Refuses a root missing the nodes it has to draw into.",
     "folderPage.testVanilla6": "Mounts once per root and leaves an already-enhanced folder alone.",
     "folderPage.testCore11": "Measures to the tab's far edge, not merely its width.",

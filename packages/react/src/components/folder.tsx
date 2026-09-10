@@ -9,6 +9,7 @@ import {
   folderPath,
   folderTabEndFrom,
 } from "@skryensya/core/folder";
+import { observeAppearance } from "@skryensya/core/theme-toggle";
 import {
   useLayoutEffect,
   useRef,
@@ -154,11 +155,24 @@ function useFolderSilhouette<Root extends HTMLElement>(
     };
 
     draw();
-    if (typeof ResizeObserver === "undefined") return;
+
+    /*
+     * A SCHEME FLIP IS A REDRAW, and it is not a resize. The ground above is sampled as a literal
+     * colour, so it is wrong the moment light and dark swap - and every box on the page is exactly
+     * where it was, so the observer below would never come back for it. Measured before this
+     * existed: the folder kept painting the light ground several seconds into dark mode, until
+     * something unrelated resized the page.
+     */
+    const stopWatchingScheme = observeAppearance(root.ownerDocument.documentElement, draw);
+
+    if (typeof ResizeObserver === "undefined") return stopWatchingScheme;
     const observer = new ResizeObserver(draw);
     observer.observe(root);
     observer.observe(tab);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      stopWatchingScheme();
+    };
     // Mount-only: every reason to redraw is a size change, and both boxes are observed. Re-running
     // this on each render would tear down and rebuild a ResizeObserver for a measurement that has
     // not moved.

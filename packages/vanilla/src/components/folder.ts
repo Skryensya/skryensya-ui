@@ -8,6 +8,7 @@ import {
   folderPath,
   folderTabEndFrom,
 } from "@skryensya/core/folder";
+import { observeAppearance } from "@skryensya/core/theme-toggle";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
 /*
@@ -95,7 +96,16 @@ function connect(root: HTMLElement): () => void {
 
   draw();
 
-  if (typeof ResizeObserver === "undefined") return () => {};
+  /*
+   * A SCHEME FLIP IS A REDRAW, and it is not a resize. The ground below is sampled as a literal
+   * colour, so it is wrong the moment light and dark swap - and every box on the page is exactly
+   * where it was, so nothing in the observers below would ever come back for it. Measured before
+   * this existed: the folder kept painting the light ground several seconds into dark mode, until
+   * something unrelated resized the page.
+   */
+  const stopWatchingScheme = observeAppearance(root.ownerDocument.documentElement, draw);
+
+  if (typeof ResizeObserver === "undefined") return stopWatchingScheme;
   /*
    * BOTH boxes, because they change for different reasons and neither implies the other: the root's
    * height follows its content and its width follows the page, while the tab's width follows the
@@ -106,7 +116,10 @@ function connect(root: HTMLElement): () => void {
   const observer = new ResizeObserver(draw);
   observer.observe(root);
   observer.observe(tab);
-  return () => observer.disconnect();
+  return () => {
+    observer.disconnect();
+    stopWatchingScheme();
+  };
 }
 
 export const mountFolder = createConnectMount({

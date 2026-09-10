@@ -49,6 +49,8 @@ const shape = () => document.querySelector("[data-sk-folder-shape]")!;
 const path = () => document.querySelector("[data-sk-folder-path]")!;
 
 afterEach(() => {
+  document.documentElement.removeAttribute("data-scheme");
+  document.body.removeAttribute("style");
   const root = document.querySelector<HTMLElement>("[data-sk-folder]");
   if (root) destroyMount(root);
   document.body.innerHTML = "";
@@ -115,6 +117,40 @@ describe("Folder vanilla enhancer", () => {
     stubBox(document.querySelector("[data-sk-folder-tab]")!, { width: 320, height: TAB_HEIGHT, left: INSET });
     redraw();
     expect(path().getAttribute("d")).not.toBe(before);
+  });
+
+  /*
+   * The ground is SAMPLED, not named (no rule can ask what colour is behind an element), so it is a
+   * literal that goes wrong the instant light and dark swap - and a scheme flip moves no box, so
+   * the ResizeObserver above would never come back for it. Before this, a folder kept painting the
+   * light ground in dark mode until something unrelated resized the page.
+   */
+  it("re-samples the ground when the colour scheme flips, which resizes nothing", () => {
+    document.body.style.background = "rgb(255, 255, 255)";
+    const root = markup({ width: 600, height: 320, tabWidth: 180 });
+    expect(mountFolder(document)).toBe(1);
+    expect(root.style.getPropertyValue("--sk-folder-ground")).toBe("rgb(255, 255, 255)");
+
+    // What a toggle does, and all it does: the attribute moves and every box stays where it was.
+    document.body.style.background = "rgb(12, 12, 12)";
+    document.documentElement.setAttribute("data-scheme", "dark");
+
+    return vi.waitFor(() => {
+      expect(root.style.getPropertyValue("--sk-folder-ground")).toBe("rgb(12, 12, 12)");
+    });
+  });
+
+  it("stops watching the scheme once the folder is destroyed", async () => {
+    document.body.style.background = "rgb(255, 255, 255)";
+    const root = markup({ width: 600, height: 320, tabWidth: 180 });
+    expect(mountFolder(document)).toBe(1);
+
+    destroyMount(root);
+    document.body.style.background = "rgb(12, 12, 12)";
+    document.documentElement.setAttribute("data-scheme", "dark");
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(root.style.getPropertyValue("--sk-folder-ground")).toBe("rgb(255, 255, 255)");
   });
 
   /* The shared state layer is a rectangle; on a folder it showed as a grey slab above the fold

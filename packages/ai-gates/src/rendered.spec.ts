@@ -1,4 +1,3 @@
-import { expect, test } from "@playwright/test";
 import { validateUsageTree } from "@skryensya/ai-compiler/validate";
 import { emitMarkup } from "@skryensya/ai-compiler/emit";
 import { contracts } from "@skryensya/ai-compiler/registry";
@@ -11,7 +10,12 @@ import {
   type UsageTree,
 } from "@skryensya/ai-compiler/usage-tree";
 import { canonicalTrees } from "./trees.js";
-import { waitForStage } from "./fixtures.js";
+/*
+ * `test` comes from the fixtures, not from `@playwright/test`, for the worker-scoped `stagePage`
+ * the paint check reads: it is a pure reader, and the two tests below it that DO mutate the page
+ * still take Playwright's own per-test `page` off the same extended `test`.
+ */
+import { expect, test, waitForStage } from "./fixtures.js";
 
 /*
  * G5, and the claim the whole architecture rests on: a clean static result is not a rendered page.
@@ -101,31 +105,54 @@ const DRAWS_NOTHING = new Set([
   "comment-thread/template",
 ]);
 
-test("every canonical tree paints something", async ({ page }) => {
-  await waitForStage(page);
+test("every canonical tree paints something", async ({ stagePage: page }) => {
+  // A visually-hidden status has no box by design; measuring one would be measuring the wrong
+  // component. G2 and G4 still hold it to the claim that matters: same name, same live region.
+  const names = canonicalTrees.map(({ name }) => name).filter((name) => !DRAWS_NOTHING.has(name));
 
-  for (const { name } of canonicalTrees) {
-    // A visually-hidden status has no box by design; measuring one would be measuring the wrong
-    // component. G2 and G4 still hold it to the claim that matters: same name, same live region.
-    if (DRAWS_NOTHING.has(name)) continue;
+  /*
+   * ONE round trip for the whole stage, not two per case.
+   *
+   * This used to walk the cases with a `boundingBox()` locator call each, which is a locator
+   * round trip per binding per case: 344 of them on a stage that has grown to 175 cases. It spent
+   * the test's whole 30s budget on that traffic and then failed as a locator timeout on whichever
+   * case the clock happened to reach (`typography/strong`, which paints perfectly well), naming an
+   * innocent component and hiding the fact that nothing was actually wrong with the render.
+   *
+   * Measuring in the page is one evaluate, and it reports EVERY case that draws nothing rather
+   * than only the first, which is the shape of claim this gate makes anyway.
+   */
+  const problems = await page.evaluate((cases) => {
+    const found: string[] = [];
 
-    for (const binding of ["vanilla", "react"] as const) {
-      /*
-       * The first child that is not a FLOATING region. React portals its positioner into this same
-       * container, so for a menu or a select it lands ahead of the component itself, and a closed
-       * positioner is 0×0 by design, which made "paints something" measure the one element built
-       * not to. Vanilla nests the positioner instead, so it never hit this.
-       */
-      const box = await page
-        .locator(`[data-case="${name}"] [data-binding="${binding}"] > *:not(.sk-anchored)`)
-        .first()
-        .boundingBox();
+    for (const name of cases) {
+      for (const binding of ["vanilla", "react"]) {
+        const host = document.querySelector(`[data-case="${name}"] [data-binding="${binding}"]`);
+        /*
+         * The first child that is not a FLOATING region. React portals its positioner into this same
+         * container, so for a menu or a select it lands ahead of the component itself, and a closed
+         * positioner is 0×0 by design, which made "paints something" measure the one element built
+         * not to. Vanilla nests the positioner instead, so it never hit this.
+         */
+        const painted = host
+          ? [...host.children].find((child) => !child.classList.contains("sk-anchored"))
+          : undefined;
 
-      expect(box, `${name}/${binding} rendered nothing at all`).not.toBeNull();
-      expect(box!.width, `${name}/${binding} has no width`).toBeGreaterThan(0);
-      expect(box!.height, `${name}/${binding} has no height`).toBeGreaterThan(0);
+        if (!painted) {
+          found.push(`${name}/${binding} rendered nothing at all`);
+          continue;
+        }
+
+        const box = painted.getBoundingClientRect();
+        if (box.width === 0) found.push(`${name}/${binding} has no width`);
+        if (box.height === 0) found.push(`${name}/${binding} has no height`);
+      }
     }
-  }
+
+    return found;
+  }, names);
+
+  expect(problems, "a canonical tree that renders no box is a tree the static gates cannot see").toEqual([]);
 });
 
 test("the empty frame is caught by the contract, and would also be caught by the render", async ({
@@ -162,5 +189,14 @@ test("canonical states hold their visual baseline", async ({ page }) => {
   // that moves any of them shows up as one reviewable diff.
   await expect(page.locator("#stage")).toHaveScreenshot("canonical-states.png", {
     maxDiffPixelRatio: 0.01,
+    /*
+     * A REAL BUDGET, because the default 5s is not one for this image. The stage is 76,000px tall
+     * and Chromium captures anything past the viewport by scrolling and stitching: 1.9s measured,
+     * and the assertion takes the shot at least twice (it re-shoots until two agree before it
+     * compares), so the default leaves nothing over for a machine with anything else running. This
+     * gate used to fail inside "attempting scroll into view action", which reads like a broken page
+     * and was only ever the stopwatch.
+     */
+    timeout: 60_000,
   });
 });

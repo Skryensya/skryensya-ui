@@ -14,6 +14,7 @@ import { createHitAreaOverlay } from "./overlay";
 import { createMotionSlowMo } from "./motion";
 import { createFocusOrderOverlay } from "./focus-order";
 import { createFpsMeter } from "./fps";
+import { createPreviewMetrics } from "./preview-metrics";
 import { clampPosition, exceedsDragThreshold, panelEdge } from "./geometry";
 
 /*
@@ -383,6 +384,15 @@ export function mountDebugPanel(options: DebugPanelOptions = {}): DebugPanelHand
   const focusOrderOverlay = createFocusOrderOverlay();
   const { row: focusOrderRow } = persistedToggle("focus-order", "Focus order", focusOrderOverlay);
   panel.appendChild(focusOrderRow);
+
+  /*
+   * PREVIEW METRICS. Like the FPS meter, the checkbox is only a remote control: the readings render
+   * as real light-DOM lines under each preview card (see `preview-metrics.ts`), because the thing
+   * being watched is a load sequence that plays out while this panel is shut.
+   */
+  const previewMetrics = createPreviewMetrics();
+  const { row: previewMetricsRow } = persistedToggle("preview-metrics", "Preview metrics", previewMetrics);
+  panel.appendChild(previewMetricsRow);
 
   /*
    * OPEN/CLOSED IS STATE TOO, and it persists for the same reason the checks do: someone working

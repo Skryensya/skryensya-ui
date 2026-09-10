@@ -9,6 +9,7 @@
     "test": "playwright test",
     "test:quick": "playwright test src/hidden.spec.ts src/recipes.spec.ts src/rendered.spec.ts",
     "test:ui": "playwright test --ui",
+    "heights": "node scripts/build-preview-heights.mjs",
     "lint": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

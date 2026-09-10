@@ -174,6 +174,47 @@ describe("ComponentPreview opt-in enhancer", () => {
     expect(tabsB?.getAttribute("data-value")).toBe("react");
   });
 
+  /*
+   * The chart card on `/components/card` is authored with a `react` slot and no `html`, so it has a
+   * React panel and no Vanilla one. The shared preference still arrives as "vanilla", and hiding
+   * every panel that does not match it left that card with nothing displayed and its loader
+   * spinning forever: the rule that hides the loader (component-preview.css) waits for a stage that
+   * is ready AND `:not([hidden])`, and this one was ready the whole time, just hidden.
+   */
+  it("never hides the only binding a preview has", () => {
+    resetBindingState();
+    document.body.innerHTML = `
+      <div data-sk-component-preview data-test-id="react-only">
+        <div data-sk-component-preview-binding="react">
+          <iframe class="sk-component-preview__stage" data-sk-component-preview-binding="react"></iframe>
+        </div>
+      </div>`;
+    expect(mountAll()).toBe(1);
+
+    const react = document.querySelector<HTMLElement>(
+      '[data-sk-component-preview-binding="react"]',
+    );
+    expect(react?.hidden).toBe(false);
+  });
+
+  /** The mirror case: a Vanilla-only preview met by a reader whose stored preference is React. */
+  it("never hides a Vanilla-only preview when the preference is React", () => {
+    resetBindingState();
+    document.documentElement.setAttribute("data-sk-component-preview-pref", "react");
+    document.body.innerHTML = `
+      <div data-sk-component-preview data-test-id="vanilla-only">
+        <div data-sk-component-preview-binding="vanilla">
+          <iframe class="sk-component-preview__stage" data-sk-component-preview-binding="vanilla"></iframe>
+        </div>
+      </div>`;
+    expect(mountAll()).toBe(1);
+
+    const vanilla = document.querySelector<HTMLElement>(
+      '[data-sk-component-preview-binding="vanilla"]',
+    );
+    expect(vanilla?.hidden).toBe(false);
+  });
+
   it("hands the stage height to the reader on drag and back to the content on double click", () => {
     resetBindingState();
     document.body.innerHTML = `

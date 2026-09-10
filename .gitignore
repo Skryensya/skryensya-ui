@@ -15,6 +15,11 @@ dist/
 .env.*
 !.env.example
 
+# The production build `build-preview-heights.mjs` measures against. Rebuilt by the script itself,
+# never read by anything else, and ~800 pages of HTML: the measurements it produces are what gets
+# committed (`artifacts/preview-heights.json`), not the site they were taken from.
+packages/ai-gates/scripts/.preview-heights-dist/
+
 # Playwright run output. The BASELINE is committed (src/**/*-snapshots); this is the diff of a run.
 test-results/
 

@@ -20,7 +20,16 @@
 
   if (!root.id) root.id = uniqueId("sk-tile-switch");
   const dc = root.getAttribute("data-default-checked");
-  const defaultChecked: boolean | undefined = dc === "true" ? true : dc === "false" ? false : undefined;
+  /*
+   * PRESENT MEANS TRUE, which is what an HTML boolean attribute means and what the emitter writes.
+   *
+   * This used to accept only the literal string "true", so a tree-authored tile (`data-default-checked`
+   * with no value, the standard serialization the compiler emits for a boolean option) fell through
+   * to `undefined` and rendered unchecked while the React binding beside it rendered checked. Hand
+   * written `="true"` still works, and so does an explicit `="false"`; the two lines below already
+   * read `disabled` and `required` by presence alone, so this is the file agreeing with itself.
+   */
+  const defaultChecked: boolean | undefined = dc === null ? undefined : dc === "false" ? false : true;
 
   const service = useMachine(checkbox.machine, () => ({
     id: root.id,

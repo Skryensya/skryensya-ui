@@ -46,4 +46,29 @@ describe("TileCheckbox (@zag-js/checkbox) contracts", () => {
     expect(input.checked).toBe(true);
     expect(root.dataset.state).toBe("checked");
   });
+
+  /*
+   * Regression: the compiler serializes a boolean option as a BARE attribute, so a tree-authored
+   * tile carries `data-default-checked` with no value. This used to accept only the literal string
+   * "true" and fell through to `undefined`, so the Card page's selection example rendered every
+   * tile unchecked in Vanilla while the React binding beside it rendered the first one checked.
+   */
+  it("treats a valueless data-default-checked as checked, the way the emitter writes it", () => {
+    document.body.innerHTML = `<label class="sk-tile sk-tile--interactive" data-sk-tile-checkbox data-part="root" data-name="prefs" data-value="pref-1" data-default-checked><input type="checkbox" data-part="input" /><span data-part="content">Weekly</span><span data-part="indicator"></span></label>`;
+    expect(mountTileCheckbox(document)).toBe(1);
+    const root = document.querySelector<HTMLElement>("[data-sk-tile-checkbox]")!;
+
+    expect((getByRole(root, "checkbox") as HTMLInputElement).checked).toBe(true);
+    expect(root.dataset.state).toBe("checked");
+  });
+
+  /** The other half of the same contract: an explicit "false" still means unchecked. */
+  it("leaves an explicit data-default-checked=\"false\" unchecked", () => {
+    document.body.innerHTML = `<label class="sk-tile sk-tile--interactive" data-sk-tile-checkbox data-part="root" data-name="prefs" data-value="pref-2" data-default-checked="false"><input type="checkbox" data-part="input" /><span data-part="content">Mentions</span><span data-part="indicator"></span></label>`;
+    expect(mountTileCheckbox(document)).toBe(1);
+    const root = document.querySelector<HTMLElement>("[data-sk-tile-checkbox]")!;
+
+    expect((getByRole(root, "checkbox") as HTMLInputElement).checked).toBe(false);
+    expect(root.dataset.state).toBe("unchecked");
+  });
 });

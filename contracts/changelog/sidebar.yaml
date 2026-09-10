@@ -5,6 +5,60 @@
 # hash.
 surface: "8cb770292364ac26"
 entries:
+  - date: 2026-09-09
+    kind: rework
+    es:
+      title: La página actual se marca más fuerte en modo claro
+      body: >-
+        El fondo de la fila con <code>aria-current="page"</code> deja de ser el
+        <code>--color-bg-accent-subtle</code> del patrón, que en claro está a un paso del blanco
+        sobre una superficie que ya es blanca: en un riel de doscientas filas eso se leía como un
+        artefacto de render y no como "estás acá". Ahora se mezcla contra el fondo propio de la
+        barra, así que una barra repintada mantiene la relación. Modo oscuro sin cambios: ahí el
+        mismo token ya es un escalón por encima de su fondo.
+    en:
+      title: The current page is marked more strongly in light mode
+      body: >-
+        The background of the <code>aria-current="page"</code> row is no longer the pattern's
+        <code>--color-bg-accent-subtle</code>, which in light is one step off white on a surface that
+        is already white: down a rail of two hundred rows it read as a rendering artifact rather than
+        as "you are here". It is now mixed against the sidebar's own background, so a repainted rail
+        keeps the relationship. Dark mode is unchanged: there the same token is already a step above
+        its ground.
+  - date: 2026-09-08
+    kind: bugfix
+    target: SidebarResizeHandle
+    es:
+      title: Un ancho recordado ya no ensancha la barra después del primer pintado
+      body: >-
+        El <code>clamp()</code> del ancho vivía en
+        <code>.sk-sidebar:has(.sk-sidebar__resize-handle)</code>, y <code>:has()</code> no puede ver
+        un handle que el parser todavía no leyó: el handle es el último hijo del panel, así que una
+        página que restauraba el ancho guardado antes del primer pintado maquetaba la barra dos
+        veces, primero en su ancho expandido y después en el recordado, y como
+        <code>inline-size</code> tiene transición, el salto se ANIMABA y arrastraba la columna del
+        contenido con él. Ahora el clamp está en la regla base y lee siempre
+        <code>--sk-sidebar-resize-inline-size</code>, una propiedad que sólo escribe un arrastre o
+        una restauración: el ancho ya no depende de cuándo se parsea el handle. Efecto lateral: los
+        extremos ahora también acotan a una barra que nunca se arrastró, así que un
+        <code>--sk-sidebar-expanded-inline-size</code> fuera de
+        <code>--sk-sidebar-min-inline-size</code> y <code>--sk-sidebar-max-inline-size</code> se
+        recorta en vez de ganar.
+    en:
+      title: A remembered width no longer widens the bar after first paint
+      body: >-
+        The width <code>clamp()</code> lived on
+        <code>.sk-sidebar:has(.sk-sidebar__resize-handle)</code>, and <code>:has()</code> cannot
+        match a handle the parser has not reached yet: the handle is the panel's last child, so a
+        page that restored a stored width before first paint laid the bar out twice, once at its
+        expanded width and again at the remembered one, and since <code>inline-size</code> is in the
+        transition list, that jump ANIMATED and dragged the content column along with it. The clamp
+        now lives in the base rule and always reads
+        <code>--sk-sidebar-resize-inline-size</code>, a property only a drag or a restore writes:
+        the width no longer depends on when the handle parses. Side effect: the bounds now hold for
+        a bar that was never dragged, so a <code>--sk-sidebar-expanded-inline-size</code> outside
+        <code>--sk-sidebar-min-inline-size</code> and <code>--sk-sidebar-max-inline-size</code> is
+        clamped instead of winning.
   - date: 2026-08-19
     kind: feature
     target: floating

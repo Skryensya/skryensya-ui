@@ -101,10 +101,14 @@
     overflow: visible;
     /*
      * A left-to-right wipe, the same reading direction as the series it draws: `clip-path` rather
-     * than `stroke-dasharray`, because the area's own fill has no stroke length to animate and this
-     * one rule reveals both paths together instead of choreographing two techniques. `both` keeps
-     * the SVG clipped to nothing before the animation starts, so a slow layout pass never flashes the
+     * than `stroke-dasharray`, because a path's own stroke length is not something CSS can read and
+     * this one rule draws the line at any width without JS measuring it first. `both` keeps the SVG
+     * clipped to nothing before the animation starts, so a slow layout pass never flashes the
      * finished line for a frame first.
+     *
+     * IT WIPES THE WHOLE SVG, and the area's own fade (below) is what makes this read as two moves
+     * rather than one: under the wipe the area is still at zero opacity, so the only thing travelling
+     * left to right is the line.
      */
     animation: sk-chart-reveal var(--motion-enter-duration) var(--motion-enter-easing) both;
   }
@@ -129,6 +133,36 @@
     fill: var(--sk-chart-color);
     fill-opacity: var(--sk-chart-area-opacity, 0.18);
     stroke: none;
+
+    /*
+     * THE SECOND BEAT: the fill arrives only once the line has finished travelling.
+     *
+     * Reading order is the argument. A line chart's claim is the SHAPE, and the area is the emphasis
+     * under it; revealed together (which is what the wipe alone did) the two compete, and the eye
+     * follows the grey mass instead of the line that carries the data. Delayed by exactly the wipe's
+     * own duration, the line draws, lands, and the fill then settles under a shape the reader has
+     * already read.
+     *
+     * `opacity`, not `fill-opacity`: the fill's own value is a styling hook a consumer re-tints
+     * (`--sk-chart-area-opacity`), so animating it would fight whatever they set and would not
+     * composite. Opacity on the path composites and leaves the hook alone.
+     *
+     * `reveal` and not a second `enter`: this beat is subordinate to the line's, and `reveal` is the
+     * system's own faster intent, so the fill catches up rather than restating the same travel.
+     * Longhands, because `animation-delay` inside the shorthand is the one position readers
+     * routinely misread as a duration.
+     */
+    animation-name: sk-chart-area-in;
+    animation-duration: var(--motion-reveal-duration);
+    animation-timing-function: var(--motion-reveal-easing);
+    animation-delay: var(--motion-enter-duration);
+    animation-fill-mode: both;
+  }
+
+  /* `both`, so the fill holds at zero through the delay instead of painting first and then fading. */
+  @keyframes sk-chart-area-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 
   /*
@@ -281,6 +315,10 @@
   @media (prefers-reduced-motion: reduce) {
     .sk-chart__bar { transition: none; animation: none; }
     .sk-chart__svg { animation: none; }
+    /* Named on its own: the fill is a SEPARATE animation now, and `animation: none` on the svg above
+       says nothing about a child's. Without this the chart still waited out the delay before its
+       area appeared, which is the one thing reduced motion asks not to happen. */
+    .sk-chart__area { animation: none; }
   }
 
   /*

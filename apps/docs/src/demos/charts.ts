@@ -556,6 +556,62 @@ export const chartMetricTabsTree = (t: Translate): UsageTree => {
 /** The sparkline card: the number is text, the chart is only the trend, flush to the bottom edge.
  *  `kind="area"`, so its markup needs `chart-overlay.ts`'s pass once emitted - see this file's own
  *  header. */
+/*
+ * THE ANALYTICS CARD'S REACT SOURCE, beside the tree it describes.
+ *
+ * Hand written, not emitted, for the reason `chart-overlay.ts` gives: the area overlay is a
+ * React-only prop of `@skryensya/charts`, so an emitted snippet would name the bar-shaped anatomy
+ * and not the drop-in a consumer actually imports.
+ *
+ * HERE and not in a page, because TWO pages show this same card: `/components/charts` documents the
+ * chart, `/components/card` documents the surface around it. It used to be typed once per page, and
+ * the two had already drifted - the Card page's copy described a `Badge` and a `Text` where the live
+ * demo beside it rendered a `Stat`. One string cannot disagree with itself.
+ */
+export const chartAnalyticsCardSource = `import { Chart } from "@skryensya/charts/react";
+import { Button } from "@skryensya/react/button";
+import { Icon } from "@skryensya/react/icon";
+import { Box, Inline, Stack } from "@skryensya/react/layout";
+import { Stat } from "@skryensya/react/stat";
+import { Heading } from "@skryensya/react/typography";
+
+const compactCount = (n) =>
+  new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(n);
+
+<Box as="article" border="subtle" padding="lg" surface="surface">
+  <Stack gap="lg">
+    <Inline align="start" justify="between">
+      <Stack gap="xs">
+        <Heading as="h3" flush size="h4">
+          Analytics
+        </Heading>
+        <Stat
+          animate
+          change={<><Icon name="arrow-up" size="sm" /> +10%</>}
+          count={418200}
+          format={compactCount}
+          label="Visits this month"
+          trend="up"
+          value="418.2K"
+        />
+      </Stack>
+      <Button size="sm" variant="translucent">
+        View Analytics
+      </Button>
+    </Inline>
+    <Chart
+      flush
+      format="compact"
+      height="md"
+      kind="area"
+      label="Visits per week"
+      labels={false}
+      points={visits}
+      tone="neutral"
+    />
+  </Stack>
+</Box>;`;
+
 export const chartAnalyticsCardTree = (t: Translate): UsageTree => ({
   contract: "box",
   signature: "Box",
@@ -568,7 +624,14 @@ export const chartAnalyticsCardTree = (t: Translate): UsageTree => ({
       {
         contract: "layout",
         signature: "Inline",
-        options: { justify: "between", wrap: false },
+        /*
+         * `inlineAlign: "start"` is not decoration: without it the row takes `Inline`'s own default
+         * cross-axis alignment, and the action ends up pinned to the BOTTOM of a tall left column
+         * instead of sitting beside the heading. The hand-written React island for this same card
+         * (`react-demos/chart-card.tsx`) always declared `align="start"`; the tree did not, so the
+         * two bindings of one card disagreed about where its button goes.
+         */
+        options: { justify: "between", wrap: false, inlineAlign: "start" },
         children: [
           {
             contract: "layout",
@@ -578,7 +641,11 @@ export const chartAnalyticsCardTree = (t: Translate): UsageTree => ({
               {
                 contract: "typography",
                 signature: "Heading",
-                options: { headingSize: "h3", flush: true },
+                /* `h4`, matching the React island for this card
+                   (`react-demos/chart-card.tsx`'s own `size="h4"`). The tree said `h3` and the two
+                   bindings rendered the title at 20px and 18px: the same disagreement the row's
+                   `inlineAlign` had, in the type scale instead of the layout. */
+                options: { headingSize: "h4", flush: true },
                 children: t("demo.charts.analytics.heading"),
               },
               {

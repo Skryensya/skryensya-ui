@@ -1,0 +1,94 @@
+# Qué cambió en qr-code, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
+# hash nuevo.
+surface: "851093bf314aca69"
+entries:
+  - date: 2026-09-09
+    kind: feature
+    es:
+      title: QR se publica como contrato, con una signature
+      body: >-
+        Entra al catálogo con <code>QR</code>: un texto hecho escaneable. El símbolo se dibuja como
+        UN solo <code>path</code> y no como un elemento por módulo, que a versión 40 son 16.020
+        elementos y 669KB contra uno y 113KB. Opciones: <code>value</code>, <code>label</code>,
+        <code>level</code>, <code>moduleShape</code>, <code>quietZone</code>, <code>logoRatio</code>
+        y <code>qrSize</code>; el slot <code>logo</code> acepta cualquier nodo publicado. La hoja es
+        <code>components/qr-code.css</code>.
+    en:
+      title: QR is published as a contract, with one signature
+      body: >-
+        It joins the catalogue with <code>QR</code>: a string made scannable. The symbol is drawn as
+        ONE <code>path</code> rather than an element per module, which at version 40 is 16,020
+        elements and 669KB against one and 113KB. Options: <code>value</code>, <code>label</code>,
+        <code>level</code>, <code>moduleShape</code>, <code>quietZone</code>, <code>logoRatio</code>
+        and <code>qrSize</code>; the <code>logo</code> slot takes any published node. Its stylesheet
+        is <code>components/qr-code.css</code>.
+
+  - date: 2026-09-09
+    kind: feature
+    es: 
+      title: QR suma tone y polarity, y su default de corrección pasa a Q
+      body: >-
+        <code>tone</code> pinta los módulos con la paleta de Chart y <code>polarity</code> decide de
+        qué lado va el contraste. <code>light</code> por defecto  -  módulos oscuros sobre papel
+        claro, fijo  -  porque los colores seguían el esquema de la página y en modo oscuro el
+        símbolo se invertía solo y dejaba de escanear. El default de <code>level</code> pasa de
+        <code>M</code> a <code>Q</code>: este contrato trae logo, tinte y formas, que son lo que
+        gasta el presupuesto de corrección. <code>logoRatio</code> ahora se serializa como custom
+        property, sin la cual la caja del logo medía cero.
+    en: 
+      title: QR gains tone and polarity, and its correction default moves to Q
+      body: >-
+        <code>tone</code> paints the modules from Chart's palette and <code>polarity</code> decides
+        which way the contrast runs. <code>light</code> by default  -  dark modules on light paper,
+        pinned  -  because the colours used to follow the page's scheme, so in dark mode the symbol
+        inverted itself and stopped scanning. The <code>level</code> default moves from
+        <code>M</code> to <code>Q</code>: this contract ships a logo, a tint and shapes, which are
+        what spends the error budget. <code>logoRatio</code> now serializes as a custom property,
+        without which the logo box measured zero.
+
+  - date: 2026-09-09
+    kind: feature
+    es: 
+      title: polarity suma auto y pasa a ser el default
+      body: >-
+        Tercer valor para <code>polarity</code>: <code>auto</code> hereda el <code>color-scheme</code>
+        en vez de fijarlo, así que el símbolo se da vuelta con el modo claro/oscuro, y es el default.
+        Los colores siempre salieron de los mismos tokens y el SVG siempre fue inline con
+        <code>fill="currentColor"</code>; cada valor sólo elige qué rama de <code>light-dark()</code>
+        gana. Es una decisión con costo: la norma sólo garantiza oscuro-sobre-claro, así que para
+        imprimir o proyectar hay que pedir <code>light</code>.
+    en: 
+      title: polarity gains auto, and auto becomes the default
+      body: >-
+        A third value for <code>polarity</code>: <code>auto</code> inherits <code>color-scheme</code>
+        instead of pinning it, so the symbol flips with light and dark mode, and it is the default.
+        The colours always came from the same tokens and the SVG was always inline with
+        <code>fill="currentColor"</code>; each value only chooses which branch of
+        <code>light-dark()</code> wins. It is a trade: the standard only guarantees dark-on-light, so
+        anything printed or projected should ask for <code>light</code>.
+
+  - date: 2026-09-09
+    kind: breaking
+    es:
+      title: QR pasa a llamarse QRCode, y el contrato se publica como qr-code
+      body: >-
+        La signature es <code>QRCode</code> y el id del contrato es <code>qr-code</code>. Con eso se
+        mueven los imports (<code>@skryensya/core/qr-code</code>, <code>@skryensya/react/qr-code</code>),
+        la hoja (<code>components/qr-code.css</code>), las clases (<code>.sk-qr-code</code>), los
+        tokens de tamaño (<code>--size-qr-code-*</code>) y la ruta de la documentación
+        (<code>/components/qr-code</code>). El nombre corto era ambiguo escrito solo: QR es el formato,
+        no el componente. El buscador ahora encuentra la página por <em>quick response code</em>,
+        <em>código de respuesta rápida</em> y demás alias.
+    en:
+      title: QR is renamed QRCode, and the contract publishes as qr-code
+      body: >-
+        The signature is <code>QRCode</code> and the contract id is <code>qr-code</code>. That moves
+        the imports (<code>@skryensya/core/qr-code</code>, <code>@skryensya/react/qr-code</code>), the
+        stylesheet (<code>components/qr-code.css</code>), the classes (<code>.sk-qr-code</code>), the
+        size tokens (<code>--size-qr-code-*</code>) and the docs route
+        (<code>/components/qr-code</code>). The short name read as ambiguous on its own: QR is the
+        format, not the component. Search now reaches the page through <em>quick response code</em>,
+        <em>código de respuesta rápida</em> and the other aliases.

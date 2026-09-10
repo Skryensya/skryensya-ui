@@ -378,6 +378,54 @@ const signatureTrees: readonly Canonical[] = [
     },
   },
   {
+    /* The one contract whose payload is COMPUTED into an attribute rather than authored: G2 compares
+       the two bindings' `<path d>` here, which is the only check that both call the same encoder. */
+    name: "qr-code/default",
+    enhanced: false,
+    tree: {
+      contract: "qr-code",
+      signature: "QRCode",
+      options: { value: "https://ui.skryensya.dev", label: "Abrir el sitio", level: "Q" },
+    },
+  },
+  /* The same symbol with a hole knocked through the middle, because the logo path clears modules
+     and a binding that only covered them would look identical until someone scanned it. */
+  {
+    name: "qr-code/with-logo",
+    enhanced: false,
+    tree: {
+      contract: "qr-code",
+      signature: "QRCode",
+      options: {
+        value: "https://ui.skryensya.dev/components/qr-code",
+        label: "Abrir la documentación",
+        level: "H",
+        logoRatio: 0.2,
+        tone: "accent",
+      },
+      slots: {
+        logo: { contract: "icon", signature: "Icon", options: { name: "settings", size: "lg" } },
+      },
+    },
+  },
+  /* The opt-in inversion. Here so G2 sees that `polarity` is serialized identically by both
+     bindings: it decides whether the symbol scans, and it is carried by an attribute alone. */
+  {
+    name: "qr-code/inverted",
+    enhanced: false,
+    tree: {
+      contract: "qr-code",
+      signature: "QRCode",
+      options: {
+        value: "https://ui.skryensya.dev",
+        label: "Abrir el sitio",
+        polarity: "dark",
+        tone: "info",
+        qrSize: "sm",
+      },
+    },
+  },
+  {
     name: "fade-edge/inline",
     enhanced: false,
     tree: {

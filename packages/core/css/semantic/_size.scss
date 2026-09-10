@@ -26,4 +26,16 @@
     --size-wrapper-sm: 42rem;
     --size-wrapper-md: 64rem;
     --size-wrapper-lg: 90rem;
+
+    /* A QR's size is a SCANNABILITY property, so density deliberately does not touch it: a camera
+       needs a physical module big enough to resolve, and a compact UI shrinking the code until it
+       stops reading would be density breaking the component rather than tightening it.
+       The scale is sized for the common payload, a URL at the default `Q`, which lands around
+       version 4 (33 modules): `sm` is then ~2.2px per module and `md` ~3.1px, with the whole box
+       given over to the symbol now that the stylesheet adds no padding of its own. A long payload
+       pushes the version up and wants a step up with it. */
+    --size-qr-code-sm: 4.5rem;
+    --size-qr-code-md: 6.5rem;
+    --size-qr-code-lg: 9rem;
+    --size-qr-code-xl: 12rem;
 }

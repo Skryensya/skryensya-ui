@@ -1,0 +1,15 @@
+# The structure lives in packages/core/src/qr-code.ts. Here, only why it is chosen.
+
+QRCode:
+  useWhen:
+    - "hay que llevar al lector desde una superficie física  -  una mesa, un afiche, una pantalla ajena  -  hasta una URL, sin que la tipee"
+    - "el destino es corto y estable: un enlace, un identificador, una credencial de wifi"
+    - "el código se imprime o se proyecta, y por eso necesita contraste real y una zona de silencio de verdad"
+  avoidWhen:
+    - "el lector ya está en el mismo dispositivo; ahí un enlace común es más rápido y accesible que apuntar una cámara"
+    - "el contenido es largo o cambia seguido; el símbolo crece hasta volverse ilegible y queda desactualizado impreso"
+    - "es el único camino a una acción importante; un QR sin enlace escrito al lado deja afuera a quien no puede escanear"
+    - "se quiere decorar con un logo enorme; a partir de cierto tamaño el símbolo deja de escanear y eso no es un problema de estilo"
+  alternatives:
+    - Link
+    - CodePreview

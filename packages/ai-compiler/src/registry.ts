@@ -17,6 +17,7 @@ import { timeFieldContract } from "@skryensya/core/time-field";
 import { fileUploadContract } from "@skryensya/core/file-upload";
 import { carouselContract } from "@skryensya/core/carousel";
 import { fadeEdgeContract } from "@skryensya/core/fade-edge";
+import { qrCodeContract } from "@skryensya/core/qr-code";
 import { marqueeContract } from "@skryensya/core/marquee";
 import { treeViewContract } from "@skryensya/core/tree-view";
 import { sidebarContract } from "@skryensya/core/sidebar";
@@ -104,6 +105,7 @@ export const contracts = {
   icon: iconContract,
   "image-frame": imageFrameContract,
   "fade-edge": fadeEdgeContract,
+  "qr-code": qrCodeContract,
   kbd: kbdContract,
   layout: layoutContract,
   list: listContract,

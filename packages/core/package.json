@@ -365,6 +365,10 @@
       "types": "./src/fade-edge.ts",
       "default": "./src/fade-edge.ts"
     },
+    "./qr-code": {
+      "types": "./src/qr-code.ts",
+      "default": "./src/qr-code.ts"
+    },
     "./menu": {
       "types": "./src/menu.ts",
       "default": "./src/menu.ts"
@@ -480,6 +484,7 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.2",
+    "qrcode": "^1.5.4",
     "@zag-js/accordion": "^1.43.3",
     "@zag-js/carousel": "1.43.3",
     "@zag-js/checkbox": "^1.43.3",

@@ -89,6 +89,10 @@
       "types": "./src/components/fade-edge.tsx",
       "default": "./src/components/fade-edge.tsx"
     },
+    "./qr-code": {
+      "types": "./src/components/qr-code.tsx",
+      "default": "./src/components/qr-code.tsx"
+    },
     "./button": {
       "types": "./src/components/button.tsx",
       "default": "./src/components/button.tsx"

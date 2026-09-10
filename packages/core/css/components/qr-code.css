@@ -1,0 +1,206 @@
+/*
+ * QR, a string made scannable.
+ *
+ * THE SHEET OWNS ALMOST NOTHING, which is unusual here and deliberate. The symbol's geometry is a
+ * single computed `<path>` (see `core/src/qr-code.ts`), so there is no per-module rule to write, no
+ * grid to lay out and no state to paint. What is left is the box, the colour pair, and the hole the
+ * logo sits in.
+ *
+ * CONTRAST IS A CORRECTNESS PROPERTY HERE, not a style one, and this sheet is where that is
+ * enforced. A scanner needs a real light/dark relationship between the modules and the paper, and it
+ * needs the DARK modules to be the dark ones: the standard specifies dark-on-light and a good number
+ * of readers refuse the opposite.
+ *
+ * WHICH IS WHY THE COLOURS DO NOT FOLLOW THE PAGE'S COLOUR SCHEME. The obvious implementation  -
+ * `--color-text-primary` on `--color-bg-canvas`, inherited  -  is what this file had first, and it is
+ * wrong: those are `light-dark()` pairs, so in dark mode the symbol came out light-on-dark and
+ * silently flipped polarity. It still looked like a QR. It just stopped being one for half the
+ * devices pointed at it.
+ *
+ * THE FIX IS `color-scheme`, NOT LITERAL PALETTE STEPS. Pinning the pair by reaching for
+ * `--palette-stone-900` directly would work and would also skip the semantic layer, which the token
+ * gate rejects for a good reason: a component that names a primitive stops meaning anything when the
+ * brand changes. Forcing `color-scheme` on this box instead makes every `light-dark()` inside it
+ * resolve to the branch we need, so the symbol keeps using the SAME semantic tokens as everything
+ * else and simply refuses to follow the page. `data-polarity` is then one declaration, and every
+ * tint mirrors itself for free.
+ */
+@layer components {
+  .sk-qr-code {
+    /*
+     * NO `color-scheme` HERE, which is what makes `auto` the default: the box inherits the page's,
+     * so every `light-dark()` below resolves the way the rest of the page does and the symbol flips
+     * with the theme. The two pinned polarities override it, one declaration each.
+     */
+    --sk-qr-code-modules: var(--color-text-primary);
+    --sk-qr-code-paper: var(--color-bg-canvas);
+    --sk-qr-code-size: var(--size-qr-code-md);
+    --sk-qr-code-radius: var(--radius-surface);
+    /* How much of the middle the logo box takes. Kept in step with the contract's `logoRatio` by
+       the consumer: this only sizes the box, the encoder is what clears the modules under it. */
+    --sk-qr-code-logo-ratio: 0;
+
+    position: relative;
+    display: grid;
+    place-items: center;
+    inline-size: var(--sk-qr-code-size);
+    block-size: var(--sk-qr-code-size);
+    /*
+     * NO PADDING. The quiet zone is already inside the viewBox (`quietZone`, 4 modules by default,
+     * which is what the standard asks for), and the paper colour fills the whole box, so a CSS inset
+     * here was a SECOND margin stacked on the first: it shrank the symbol inside its own footprint
+     * and made every size read smaller than the token said. The margin a QR needs is the one the
+     * geometry draws; a consumer wanting more asks for more modules, not more padding.
+     */
+    box-sizing: border-box;
+    border-radius: var(--sk-qr-code-radius);
+    background: var(--sk-qr-code-paper);
+    color: var(--sk-qr-code-modules);
+  }
+
+  /*
+   * The opt-in inversion: light modules on a dark ground. Phone cameras handle it, the standard does
+   * not promise it, so nothing reaches this state without asking.
+   *
+   * ONE DECLARATION, and it re-resolves the base pair AND every tint below, because all of them are
+   * `light-dark()` underneath. That is the whole return on doing this through `color-scheme` rather
+   * than through pinned palette steps, which needed a mirrored rule per tone.
+   */
+  .sk-qr-code[data-polarity="dark"] {
+    color-scheme: dark;
+  }
+
+  /*
+   * `light` PINS the pair the standard specifies, whatever the page is doing: dark modules on light
+   * paper, the polarity every reader that has ever existed accepts. This is the value to reach for
+   * the moment a code leaves the screen  -  print, a projected slide, a scanner nobody controls.
+   */
+  .sk-qr-code[data-polarity="light"] {
+    color-scheme: light;
+  }
+
+  /* `auto` is the default and needs no rule: it is the absence of a pin. Spelled out so a reader
+     grepping for the value finds it here rather than concluding it was forgotten. */
+
+  /* Tints, from the same semantic family `chart` paints its series with. */
+  .sk-qr-code[data-tone="accent"] { --sk-qr-code-modules: var(--color-text-accent); }
+  .sk-qr-code[data-tone="success"] { --sk-qr-code-modules: var(--color-text-success); }
+  .sk-qr-code[data-tone="warning"] { --sk-qr-code-modules: var(--color-text-warning); }
+  .sk-qr-code[data-tone="danger"] { --sk-qr-code-modules: var(--color-text-danger); }
+  .sk-qr-code[data-tone="info"] { --sk-qr-code-modules: var(--color-text-info); }
+
+  .sk-qr-code[data-size="sm"] { --sk-qr-code-size: var(--size-qr-code-sm); }
+  .sk-qr-code[data-size="md"] { --sk-qr-code-size: var(--size-qr-code-md); }
+  .sk-qr-code[data-size="lg"] { --sk-qr-code-size: var(--size-qr-code-lg); }
+  .sk-qr-code[data-size="xl"] { --sk-qr-code-size: var(--size-qr-code-xl); }
+
+  /*
+   * `shape-rendering: crispEdges` on the module path.
+   *
+   * A QR is read by sampling the centre of each module, and antialiasing a square-module symbol
+   * spreads every edge across a grey half-pixel that a camera at an angle resolves the wrong way.
+   * Turning it off is what keeps a small symbol scannable; it is not a taste about sharpness.
+   *
+   * The rounded and dot shapes want the opposite, because their whole point is a curve, and they
+   * are only ever asked for at sizes where the curve is legible anyway.
+   */
+  .sk-qr-code__frame {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .sk-qr-code__modules {
+    shape-rendering: crispEdges;
+  }
+
+  .sk-qr-code[data-module-shape="dot"] .sk-qr-code__modules,
+  .sk-qr-code[data-module-shape="rounded"] .sk-qr-code__modules {
+    shape-rendering: geometricPrecision;
+  }
+
+  /*
+   * THE LOGO SITS IN A HOLE THE ENCODER ALREADY MADE. This box only has to land on top of it, so it
+   * is sized from the same ratio and centred by the grid above. The paper-coloured fill is what
+   * makes a transparent logo read cleanly against cleared modules rather than against whatever the
+   * page behind it happens to be.
+   */
+  .sk-qr-code__logo {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    /* A hair under the cleared span, so the hole's edge stays visible and the logo never covers a
+       live module the encoder did not clear. */
+    inline-size: calc(var(--sk-qr-code-logo-ratio) * 100% - 2px);
+    block-size: calc(var(--sk-qr-code-logo-ratio) * 100% - 2px);
+    /*
+     * `border-box` and a FIXED inset, not a percentage.
+     *
+     * Percentage padding resolves against the containing block  -  the whole QR  -  not against this
+     * box, so `6%` on a 21px hole inside a 104px symbol added 6.2px per side and grew the cover to
+     * 31px: half again as wide as the hole it was meant to sit in. Two pixels of breathing room, from
+     * the inside, is what this actually wanted.
+     */
+    box-sizing: border-box;
+    padding: 2px;
+    border-radius: var(--radius-control);
+    background: var(--sk-qr-code-paper);
+    /*
+     * THE MARK'S COLOUR IS PINNED TO THE MODULES', not inherited by accident.
+     *
+     * An `Icon` draws in `currentColor`, and `currentColor` here would otherwise be whatever the
+     * page around the QR happens to set. Against a paper-coloured chip that is how a logo comes out
+     * invisible: white on white in dark mode, which is exactly what it did. Pinning it to the module
+     * colour also means a tinted QR gets a tinted mark for free, which is what anyone reaching for
+     * `tone` wanted anyway.
+     */
+    color: var(--sk-qr-code-modules);
+  }
+
+  /*
+   * AN ICON IS RESIZED THROUGH ITS OWN HOOK, not fought with `max-*`.
+   *
+   * `.sk-icon` sets `inline-size` and `block-size` from `--sk-icon-size`, so capping it with
+   * `max-inline-size: 100%` squashed one axis and left the other at its declared size: measured
+   * 15x24 inside a square hole.
+   *
+   * The hook alone is not enough either, and that is worth writing down: `.sk-icon[data-size="lg"]`
+   * re-declares `--sk-icon-size` ON THE ELEMENT, so a value inherited from this box never reaches it.
+   * The dimensions are therefore set directly, at a specificity that beats `.sk-icon`'s own, and the
+   * hook is kept in step so anything else reading it agrees. Both axes at `100%` is safe here and
+   * only here: the hole is square and so is every icon in the set.
+   */
+  .sk-qr-code__logo > .sk-icon {
+    --sk-icon-size: 100%;
+
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  /*
+   * Everything else is CONTAINED rather than stretched, because a consumer's mark is not promised to
+   * be square: a wordmark in an `ImageFrame`, a raster logo. `object-fit` is what keeps the aspect,
+   * and it is harmless on the inline SVG above, which never reaches this rule anyway.
+   */
+  .sk-qr-code__logo > :not(.sk-icon) {
+    max-inline-size: 100%;
+    max-block-size: 100%;
+    object-fit: contain;
+  }
+
+  /*
+   * `forced-colors` is the one mode where a QR must NOT follow the system palette: the whole point
+   * of the symbol is a physical contrast a camera measures, and remapping it to `CanvasText` on
+   * `Canvas` is fine, while letting it inherit a high-contrast theme's inverted pair is not. Pinned
+   * to the two system colours that keep the polarity right.
+   */
+  @media (forced-colors: active) {
+    .sk-qr-code {
+      --sk-qr-code-modules: CanvasText;
+      --sk-qr-code-paper: Canvas;
+
+      forced-color-adjust: none;
+    }
+  }
+}

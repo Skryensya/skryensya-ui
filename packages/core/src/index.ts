@@ -24,6 +24,7 @@ export * from "./date-picker.js";
 export * from "./empty-state.js";
 export * from "./file-upload.js";
 export * from "./fade-edge.js";
+export * from "./qr-code.js";
 export * from "./loader.js";
 export * from "./menu.js";
 export * from "./menubar.js";

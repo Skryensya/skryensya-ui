@@ -1,0 +1,204 @@
+---
+/*
+ * QRCode's page.
+ *
+ * The first half is one option per section, each a single node, because QRCode takes its whole payload
+ * as options and has no composition to author. The second half is the opposite on purpose: a card, a
+ * popover and a ticket, all assembled from pieces the kit already publishes. Those exist because the
+ * contract deliberately refuses to grow a surface, a heading or an affordance of its own, and a page
+ * that only showed the single node would leave a reader with no idea what to build around it.
+ */
+import ComponentPageShell from "./ComponentPageShell.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import CodeBlock from "../CodeBlock.astro";
+import {
+  qrCodeCardTree,
+  qrCodeLevelsTree,
+  qrCodeLogoTree,
+  qrCodeMasksTree,
+  qrCodePopoverTree,
+  qrCodeShapesTree,
+  qrCodeSizesTree,
+  qrCodeTicketTree,
+  qrCodeTonesTree,
+  qrCodeTree,
+} from "../../demos/qr-code";
+import { getLocale, useTranslations } from "../../i18n";
+import semanticSource from "@contracts/semantic/qr-code.yaml?raw";
+import changelogSource from "@contracts/changelog/qr-code.yaml?raw";
+import coreSource from "@core/src/qr-code.ts?raw";
+import reactSource from "@react/src/components/qr-code.tsx?raw";
+import cssSource from "@core/css/components/qr-code.css?raw";
+/* The sheet itself, not only its source: the Style tab resolves each hook against a real element,
+   and a page that never loads `components/qr-code.css` would show every value blank. */
+import "@skryensya/core/components/qr-code.css";
+/* Every family the demo trees below actually compose: the level and shape rows are Inline/Stack of
+   Code labels, the logo is an Icon, and the closing card is a Box with a heading and a link. */
+import "@skryensya/core/patterns/layout.css";
+import "@skryensya/core/patterns/box.css";
+import "@skryensya/core/patterns/icon.css";
+import "@skryensya/core/components/typography.css";
+import "@skryensya/core/components/badge.css";
+/* The popover example is a real Popover, which needs its own sheet plus the anchoring pattern. */
+import "@skryensya/core/components/popover.css";
+import "@skryensya/core/patterns/anchored.css";
+import "@skryensya/core/components/button.css";
+
+/* The demos are functions of the LOCALE, not constants: every QR encodes this page's own URL, and
+   the Spanish route carries an `/es` prefix. A code pointing at the wrong locale is a broken link
+   that looks perfectly correct on the page, which is the one class of bug a QR hides best. */
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+
+const sourceFiles = [
+  { id: "contracts/semantic/qr-code.yaml", source: semanticSource, language: "yaml" },
+  { id: "contracts/changelog/qr-code.yaml", source: changelogSource, language: "yaml" },
+  { id: "packages/core/src/qr-code.ts", source: coreSource, language: "ts" },
+  { id: "packages/react/src/components/qr-code.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/core/css/components/qr-code.css", source: cssSource, language: "css" },
+] as const;
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const styles = `@import "@skryensya/core/tokens.scss";
+@import "@skryensya/core/components/qr-code.css";`;
+---
+
+<ComponentPageShell
+  title="QRCode"
+  description={t("qrCodePage.description")}
+  badge={t("qrCodePage.betaBadge")}
+  contractId="qr-code"
+  styleGroups={[{ file: "components/qr-code.css", probe: "sk-qr-code" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/core/src/qr-code.test.ts",
+      tests: [
+        {
+          name: "round-trips every encoding mode the contract promises",
+          description: t("qrCodePage.testRoundTrip"),
+        },
+        {
+          name: "still scans with a logo hole punched through the middle",
+          description: t("qrCodePage.testLogoScans"),
+        },
+        {
+          name: "draws the same symbol whatever shape the modules are",
+          description: t("qrCodePage.testShapes"),
+        },
+      ],
+    },
+    {
+      file: "packages/react/src/components/qr-code.test.tsx",
+      tests: [
+        {
+          name: "paints the same geometry the markup emitter would",
+          description: t("qrCodePage.testSameGeometry"),
+        },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("qrCodePage.lede")} />
+
+    <h3>{t("qrCodePage.basicTitle")}</h3>
+    <p set:html={t("qrCodePage.basicBody")} />
+    <ComponentPreview tree={qrCodeTree(locale)} label={t("qrCodePage.basicLabel")} note={t("qrCodePage.basicNote")} />
+
+    <h3>{t("qrCodePage.labelTitle")}</h3>
+    <p set:html={t("qrCodePage.labelBody")} />
+
+    <h3>{t("qrCodePage.sizesTitle")}</h3>
+    <p set:html={t("qrCodePage.sizesBody")} />
+    <ComponentPreview
+      tree={qrCodeSizesTree(locale)}
+      label={t("qrCodePage.sizesLabel")}
+      note={t("qrCodePage.sizesNote")}
+    />
+
+    <h3>{t("qrCodePage.levelsTitle")}</h3>
+    <p set:html={t("qrCodePage.levelsBody")} />
+    <ComponentPreview
+      tree={qrCodeLevelsTree(locale)}
+      label={t("qrCodePage.levelsLabel")}
+      note={t("qrCodePage.levelsNote")}
+    />
+
+    <h3>{t("qrCodePage.shapesTitle")}</h3>
+    <p set:html={t("qrCodePage.shapesBody")} />
+    <ComponentPreview
+      tree={qrCodeShapesTree(locale)}
+      label={t("qrCodePage.shapesLabel")}
+      note={t("qrCodePage.shapesNote")}
+    />
+
+    <h3>{t("qrCodePage.masksTitle")}</h3>
+    <p set:html={t("qrCodePage.masksBody")} />
+    <p set:html={t("qrCodePage.masksBody2")} />
+    <ComponentPreview
+      tree={qrCodeMasksTree(locale)}
+      label={t("qrCodePage.masksLabel")}
+      note={t("qrCodePage.masksNote")}
+    />
+
+    <h3>{t("qrCodePage.tonesTitle")}</h3>
+    <p set:html={t("qrCodePage.tonesBody")} />
+    <p set:html={t("qrCodePage.tonesBody2")} />
+    <ComponentPreview
+      tree={qrCodeTonesTree(locale)}
+      label={t("qrCodePage.tonesLabel")}
+      note={t("qrCodePage.tonesNote")}
+    />
+
+    <h3>{t("qrCodePage.logoTitle")}</h3>
+    <p set:html={t("qrCodePage.logoBody")} />
+    <p set:html={t("qrCodePage.logoBody2")} />
+    <ComponentPreview tree={qrCodeLogoTree(locale)} label={t("qrCodePage.logoLabel")} note={t("qrCodePage.logoNote")} />
+
+    <h3>{t("qrCodePage.compositionTitle")}</h3>
+    <p set:html={t("qrCodePage.compositionBody")} />
+    <ComponentPreview
+      tree={qrCodeCardTree(locale)}
+      label={t("qrCodePage.compositionLabel")}
+      note={t("qrCodePage.compositionNote")}
+    />
+
+    <h3>{t("qrCodePage.popoverTitle")}</h3>
+    <p set:html={t("qrCodePage.popoverBody")} />
+    <ComponentPreview
+      tree={qrCodePopoverTree(locale)}
+      label={t("qrCodePage.popoverLabel")}
+      note={t("qrCodePage.popoverNote")}
+      viewport="menu"
+    />
+
+    <h3>{t("qrCodePage.ticketTitle")}</h3>
+    <p set:html={t("qrCodePage.ticketBody")} />
+    <ComponentPreview
+      tree={qrCodeTicketTree(locale)}
+      label={t("qrCodePage.ticketLabel")}
+      note={t("qrCodePage.ticketNote")}
+    />
+
+    <h3>{t("qrCodePage.limitsTitle")}</h3>
+    <ul>
+      <li set:html={t("qrCodePage.limitsItem1")} />
+      <li set:html={t("qrCodePage.limitsItem2")} />
+      <li set:html={t("qrCodePage.limitsItem3")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("qrCodePage.a11yP1")} />
+    <p set:html={t("qrCodePage.a11yP2")} />
+    <p set:html={t("qrCodePage.a11yP3")} />
+    <p set:html={t("qrCodePage.a11yP4")} />
+  </Fragment>
+</ComponentPageShell>

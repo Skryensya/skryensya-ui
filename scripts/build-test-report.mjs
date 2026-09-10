@@ -111,6 +111,8 @@ const TARGETS = [
   { pkg: "packages/react", file: "src/components/folder.test.tsx" },
   { pkg: "packages/vanilla", file: "src/components/folder.test.ts" },
   { pkg: "packages/react", file: "src/components/popover.test.tsx" },
+  { pkg: "packages/core", file: "src/qr-code.test.ts" },
+  { pkg: "packages/react", file: "src/components/qr-code.test.tsx" },
   { pkg: "apps/docs", file: "src/examples/card-sources.test.ts" },
   { pkg: "apps/docs", file: "src/components/pages/CardPage.test.ts" },
   { pkg: "apps/docs", file: "src/components/pages/ChartsPage.test.ts" },

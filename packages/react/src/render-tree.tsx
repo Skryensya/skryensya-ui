@@ -55,6 +55,7 @@ import * as placeholderModule from "./components/placeholder.js";
 import * as buttonModule from "./components/button.js";
 import * as iconModule from "./components/icon.js";
 import * as fadeEdgeModule from "./components/fade-edge.js";
+import * as qrModule from "./components/qr-code.js";
 import * as imageFrameModule from "./components/image-frame.js";
 import * as inputModule from "./components/input.js";
 import * as navListModule from "./components/nav-list.js";
@@ -153,6 +154,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/icon": iconModule,
   "@skryensya/react/image-frame": imageFrameModule,
   "@skryensya/react/fade-edge": fadeEdgeModule,
+  "@skryensya/react/qr-code": qrModule,
   "@skryensya/react/form-field": formFieldModule,
   "@skryensya/react/input": inputModule,
   "@skryensya/react/nav-list": navListModule,

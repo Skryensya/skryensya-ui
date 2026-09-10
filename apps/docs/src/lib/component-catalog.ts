@@ -236,6 +236,10 @@ const componentDescriptions = {
     es: "Muestra cuánto avanzó una tarea con duración conocida.",
     en: "Shows how much of a task with known duration is complete.",
   },
+  "/components/qr-code": {
+    es: "Convierte un texto corto en un símbolo escaneable, dibujado como un solo path SVG.",
+    en: "Turns a short string into a scannable symbol, drawn as a single SVG path.",
+  },
   "/components/radio-group": {
     es: "Permite elegir una sola opción dentro de un conjunto.",
     en: "Lets people choose exactly one option from a set.",

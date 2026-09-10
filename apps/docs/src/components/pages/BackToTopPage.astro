@@ -2,7 +2,7 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { backToTopScrollTree, backToTopTree } from "../../demos/back-to-top";
+import { backToTopDemoCss, backToTopScrollTree, backToTopTree } from "../../demos/back-to-top";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/back-to-top.yaml?raw";
 import coreSource from "@core/src/back-to-top.ts?raw";
@@ -173,6 +173,7 @@ const sourceFiles = [
     <p set:html={t("backToTop.demoStaticBody")} />
     <ComponentPreview
       tree={backToTopTree(t)}
+      css={backToTopDemoCss}
       label={t("backToTop.demoStaticLabel")}
       minHeight="9rem"
       screens={false}
@@ -180,12 +181,20 @@ const sourceFiles = [
 
     <h3>{t("backToTop.demoScrollTitle")}</h3>
     <p set:html={t("backToTop.demoScrollBody")} />
+    {/*
+      `measure` IS WHAT GIVES THIS DEMO SOMETHING TO SCROLL. Measured at the stage's full width, the
+      three paragraphs stack to 296px inside a 288px frame: 8px of travel against a 96px threshold,
+      so the button could never appear and the card silently showed nothing. Capped to a reading
+      column they wrap tall enough for the reveal to actually happen.
+    */}
     <ComponentPreview
       tree={backToTopScrollTree(t)}
+      css={backToTopDemoCss}
       label={t("backToTop.demoScrollLabel")}
       note={t("backToTop.demoScrollHint")}
       scroll
       minHeight="18rem"
+      measure="30rem"
       screens={false}
     />
 

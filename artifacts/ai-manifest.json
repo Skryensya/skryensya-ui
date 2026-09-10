@@ -109,6 +109,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-10",
+            "en": {
+              "body": "<code>position: fixed</code>, its insets, <code>--sk-back-to-top-offset</code> and <code>--sk-back-to-top-z</code> leave the contract: where the control sits is the consumer's decision and the consumer now writes it. It was also not working: <code>.sk-interactive</code> sets <code>position: relative</code> in the same layer at the same specificity, so import order decided and the button sat in flow, half off the inline edge.",
+              "title": "the stylesheet stops positioning the button, and the offset and z-index hooks are gone"
+            },
+            "es": {
+              "body": "<code>position: fixed</code>, sus insets, <code>--sk-back-to-top-offset</code> y <code>--sk-back-to-top-z</code> salen del contrato: donde va el control es una decision del consumidor, que ahora la escribe. Ademas no estaba funcionando: <code>.sk-interactive</code> pone <code>position: relative</code> en la misma capa y con la misma especificidad, asi que decidia el orden de importacion y el boton quedaba en flujo, medio fuera del borde.",
+              "title": "la hoja deja de posicionar el boton, y se van los hooks de offset y z-index"
+            },
+            "kind": "breaking"
+          },
+          {
             "date": "2026-09-02",
             "en": {
               "body": "It joins the catalogue with <code>BackToTop</code>: a <code>&lt;button&gt;</code> pinned to a corner that returns a scroller to its start. It appears only after the reader is <code>threshold</code> pixels past the top (400 by default) and hides again on the way back; the markup ships <code>hidden</code>, so with no JavaScript it takes no corner. The visible mark is a <code>chevron-up</code> from the bound icon set (authored markup emits the <code>[data-sk-icon]</code> placeholder the enhancer swaps for the set's <code>&lt;svg&gt;</code>; React renders <code>&lt;Icon&gt;</code>), inside the <code>sk-back-to-top__icon</code> part. The scroll is the platform's (<code>scrollTo</code>), smooth unless the reader asked for less motion. Options: <code>threshold</code>, <code>scroller</code> (a selector for an inner <code>overflow</code> pane instead of the window) and <code>target</code> (a selector for a focusable element up top to move focus to after the scroll, so the next Tab continues from the start). The pure half - past the threshold?, does the scroll animate? - lives in <code>@skryensya/core/back-to-top</code> and both bindings share it. Its stylesheet is <code>components/back-to-top.css</code>.",
@@ -21675,5 +21687,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "5da6bbda4a8d33c4"
+  "sourceHash": "8b321dc4639ca5dd"
 }

@@ -2,15 +2,15 @@ export const backToTopMessages = {
   es: {
 
     "backToTop.description":
-      "Un botón fijado a una esquina que devuelve un scroller a su inicio. Aparece solo después de pasar un umbral de scroll y se va solo al volver arriba.",
+      "Un botón que devuelve un scroller a su inicio, colocado donde el consumidor quiera. Aparece solo después de pasar un umbral de scroll y se va solo al volver arriba.",
     "backToTop.betaBadge": "Beta",
     "backToTop.lede":
-      "En una página larga hay un movimiento que se repite: volver al principio. El teclado tiene <kbd>Inicio</kbd> y el trackpad un envión fuerte, y ninguno se ve. Un botón anclado a la esquina es la señal de que ese movimiento existe.",
+      "En una página larga hay un movimiento que se repite: volver al principio. El teclado tiene <kbd>Inicio</kbd> y el trackpad un envión fuerte, y ninguno se ve. Un botón visible mientras se baja es la señal de que ese movimiento existe. Dónde se ancla no lo decide el componente: acá va alineado al rail del índice, porque ese es el borde que ya responde \"dónde estoy, llevame a otro lado\".",
     "backToTop.whenTitle": "Cuándo usarlo",
     "backToTop.whenBody1":
-      "Cuando la página es larga y quien baja mucho quiere volver arriba sin arrastrar el scroll a mano. El botón viene con <code>hidden</code>: sin JavaScript no ocupa la esquina, y con él aparece recién después de pasar <code>threshold</code> píxeles (400 por defecto) y se esconde de nuevo al volver.",
+      "Cuando la página es larga y quien baja mucho quiere volver arriba sin arrastrar el scroll a mano. El botón viene con <code>hidden</code>: sin JavaScript no ocupa lugar, y con él aparece recién después de pasar <code>threshold</code> píxeles (400 por defecto) y se esconde de nuevo al volver.",
     "backToTop.whenBody2":
-      "No es <a href=\"/componentes/skip-link\">SkipLink</a>: ese va primero en el documento, se alcanza con Tab antes que nada y salta por un ancla real. Este aparece tarde, se alcanza con el puntero o tabulando hasta la esquina, y llama a <code>scrollTo</code> sobre un scroller que puede no ser el documento. Si querés llevar a una sección puntual y no al principio, eso es un enlace de ancla o <a href=\"/componentes/toc\">Toc</a>.",
+      "No es <a href=\"/componentes/skip-link\">SkipLink</a>: ese va primero en el documento, se alcanza con Tab antes que nada y salta por un ancla real. Este aparece tarde, se alcanza con el puntero o tabulando hasta él, y llama a <code>scrollTo</code> sobre un scroller que puede no ser el documento. Si querés llevar a una sección puntual y no al principio, eso es un enlace de ancla o <a href=\"/componentes/toc\">Toc</a>.",
     "backToTop.behaviorTitle": "El comportamiento vive en las dos bindings, no en el markup",
     "backToTop.behaviorBody1":
       "No hay máquina de Zag para \"revelar al pasar un umbral\", así que se escribe como <code>hotkey</code>: la parte pura (¿pasó el umbral?, ¿la animación se atenúa?) vive en <code>@skryensya/core/back-to-top</code> y la comparten el enhancer de Vanilla y el componente de React. Cada binding pone lo que toca la plataforma: qué scroller escuchar, prender y apagar <code>hidden</code> por frame, y el <code>scrollTo</code> al hacer clic.",
@@ -42,7 +42,7 @@ export const backToTopMessages = {
     "backToTop.scrollDemoP1":
       "Una página larga tiene un movimiento que se repite hasta el cansancio: volver al principio. Después de leer varias pantallas, quien quiere releer el encabezado o cambiar de sección tiene que arrastrar la barra o buscar la tecla Inicio, y ninguna de las dos se ve.",
     "backToTop.scrollDemoP2":
-      "Un botón anclado a la esquina es la señal de que ese movimiento existe. No está desde el principio: aparece recién cuando ya te alejaste lo suficiente como para quererlo, y se esconde de nuevo cuando llegás. Cuando no hace falta, no ocupa la esquina.",
+      "Un botón visible mientras se baja es la señal de que ese movimiento existe. No está desde el principio: aparece recién cuando ya te alejaste lo suficiente como para quererlo, y se esconde de nuevo cuando llegás. Cuando no hace falta, no ocupa lugar.",
     "backToTop.scrollDemoP3":
       "El scroll lo hace la plataforma con <code>scrollTo</code>: suave por defecto, instantáneo si pediste menos movimiento. Con <code>target</code>, además mueve el foco a algo enfocable de arriba, así el siguiente Tab arranca del principio y no de un control que se acaba de esconder.",
     "backToTop.htmlTitle": "HTML autorado",
@@ -77,15 +77,15 @@ export const backToTopMessages = {
   en: {
 
     "backToTop.description":
-      "A button pinned to a corner that returns a scroller to its start. It appears only after the reader is past a scroll threshold and hides again on the way back.",
+      "A button that returns a scroller to its start, placed wherever the consumer wants it. It appears only after the reader is past a scroll threshold and hides again on the way back.",
     "backToTop.betaBadge": "Beta",
     "backToTop.lede":
-      "A long page has one move the reader makes over and over: get back to the start. The keyboard has <kbd>Home</kbd> and a trackpad has a hard flick, and neither is discoverable. A button pinned to a corner is the affordance that says the move exists.",
+      "A long page has one move the reader makes over and over: get back to the start. The keyboard has <kbd>Home</kbd> and a trackpad has a hard flick, and neither is discoverable. A button that stays visible while scrolling is the affordance that says the move exists. Where it anchors is not the component's call: here it aligns to the index rail, the edge that already answers \"where am I, take me somewhere\".",
     "backToTop.whenTitle": "When to use it",
     "backToTop.whenBody1":
-      "When the page is long and a reader who scrolled far wants back to the top without dragging the scrollbar by hand. The button ships <code>hidden</code>: with no JavaScript it takes no corner, and with it, it appears only once the reader is <code>threshold</code> pixels past the top (400 by default) and hides again on the way back.",
+      "When the page is long and a reader who scrolled far wants back to the top without dragging the scrollbar by hand. The button ships <code>hidden</code>: with no JavaScript it takes no room, and with it, it appears only once the reader is <code>threshold</code> pixels past the top (400 by default) and hides again on the way back.",
     "backToTop.whenBody2":
-      "It is not <a href=\"/en/components/skip-link\">SkipLink</a>: that one goes first in the document, is reached by Tab before anything else, and jumps through a real anchor. This one appears late, is reached by pointer or by tabbing to the corner, and calls <code>scrollTo</code> on a scroller that may not be the document. To land on a specific section rather than the start, that is an anchor link, or <a href=\"/en/components/toc\">Toc</a>.",
+      "It is not <a href=\"/en/components/skip-link\">SkipLink</a>: that one goes first in the document, is reached by Tab before anything else, and jumps through a real anchor. This one appears late, is reached by pointer or by tabbing to it, and calls <code>scrollTo</code> on a scroller that may not be the document. To land on a specific section rather than the start, that is an anchor link, or <a href=\"/en/components/toc\">Toc</a>.",
     "backToTop.behaviorTitle": "The behaviour lives in both bindings, not in the markup",
     "backToTop.behaviorBody1":
       "No Zag machine covers \"reveal past a scroll threshold\", so it is written the <code>hotkey</code> way: the pure half - past the threshold?, does the scroll animate? - lives in <code>@skryensya/core/back-to-top</code> and both the Vanilla enhancer and the React component share it. Each binding owns what touches the platform: which scroller to watch, toggling <code>hidden</code> per frame, and the <code>scrollTo</code> on click.",
@@ -117,7 +117,7 @@ export const backToTopMessages = {
     "backToTop.scrollDemoP1":
       "A long page has one move the reader makes over and over: get back to the start. After a few screens of reading, someone who wants to re-read the heading or jump sections has to drag the scrollbar or reach for the Home key, and neither is visible.",
     "backToTop.scrollDemoP2":
-      "A button pinned to the corner is the affordance that says the move exists. It is not there from the start: it appears once you have gone far enough to want it, and hides again once you are back. When it is not needed, it takes no corner.",
+      "A button that stays visible while scrolling is the affordance that says the move exists. It is not there from the start: it appears once you have gone far enough to want it, and hides again once you are back. When it is not needed, it takes no room.",
     "backToTop.scrollDemoP3":
       "The scroll is the platform's, via <code>scrollTo</code>: smooth by default, instant if you asked for less motion. With <code>target</code> it also moves focus to a focusable element up top, so the next Tab starts from the beginning rather than from a control that just hid itself.",
     "backToTop.htmlTitle": "Authored HTML",

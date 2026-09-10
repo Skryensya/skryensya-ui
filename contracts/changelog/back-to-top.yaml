@@ -41,3 +41,22 @@ entries:
         the start). The pure half - past the threshold?, does the scroll animate? - lives in
         <code>@skryensya/core/back-to-top</code> and both bindings share it. Its stylesheet is
         <code>components/back-to-top.css</code>.
+
+  - date: 2026-09-10
+    kind: breaking
+    es: 
+      title: la hoja deja de posicionar el boton, y se van los hooks de offset y z-index
+      body: >-
+        <code>position: fixed</code>, sus insets, <code>--sk-back-to-top-offset</code> y
+        <code>--sk-back-to-top-z</code> salen del contrato: donde va el control es una decision del
+        consumidor, que ahora la escribe. Ademas no estaba funcionando: <code>.sk-interactive</code>
+        pone <code>position: relative</code> en la misma capa y con la misma especificidad, asi que
+        decidia el orden de importacion y el boton quedaba en flujo, medio fuera del borde.
+    en: 
+      title: the stylesheet stops positioning the button, and the offset and z-index hooks are gone
+      body: >-
+        <code>position: fixed</code>, its insets, <code>--sk-back-to-top-offset</code> and
+        <code>--sk-back-to-top-z</code> leave the contract: where the control sits is the consumer's
+        decision and the consumer now writes it. It was also not working: <code>.sk-interactive</code>
+        sets <code>position: relative</code> in the same layer at the same specificity, so import
+        order decided and the button sat in flow, half off the inline edge.

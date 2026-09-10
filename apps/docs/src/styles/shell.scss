@@ -9,6 +9,44 @@
   background: var(--color-bg-canvas);
 }
 
+/*
+ * BACK TO TOP, ANCHORED TO THE TOC RAIL, and only where that rail exists.
+ *
+ * `site.css` places the button in the trailing corner; this replaces the inline axis with the rail's
+ * own TRAILING edge, so the button lines up with the right side of the rail, below it, and never
+ * inside it. Not the gutter beyond the rail either: past it there are 42px to the viewport at
+ * 1600px wide and 24px at 1280px, so a 40px control does not fit outside the column. It is here rather than beside that rule because the
+ * condition is a breakpoint: below `wide` the toc stops being a rail and becomes a disclosure in
+ * normal flow above the prose (measured at 1100px: `position: static`, 769px wide, x=280), and
+ * anchoring to that would park the button in the middle of the article. Plain CSS cannot read the
+ * shared breakpoint source, which is this file's whole reason to exist.
+ */
+@include bp.up("wide") {
+  @supports (anchor-name: --probe) {
+    /* The rail names itself so the button can point at it. Scoped to the pair's own toc: the same
+       `.sk-toc` renders inside `ComponentPreview` frames, and a demo must not become the anchor. */
+    .docs-document-pair > .sk-toc {
+      anchor-name: --docs-toc;
+    }
+
+    .sk-back-to-top {
+      position-anchor: --docs-toc;
+      /*
+       * NO FALLBACK ARGUMENT, and that is load-bearing rather than an omission. Measured in Chrome
+       * 151: `anchor(--docs-toc left, auto)` resolved to the FALLBACK even with the rail present and
+       * anchorable, placing the button 200px off; the same expression without the second argument
+       * anchored correctly. With no fallback, an absent rail simply makes this invalid at
+       * computed-value time and the property lands on its initial `auto`, which is the graceful path
+       * anyway.
+       *
+       * This REPLACES `site.css`'s own `inset-inline-end` rather than fighting it: same property,
+       * later in the cascade, so the anchored value simply wins wherever the anchor exists.
+       */
+      inset-inline-end: anchor(--docs-toc end);
+    }
+  }
+}
+
 /* ── responsive shell ─────────────────────────────────────────────────────────
  * Below `wide` there is no third column, so the toc stops being a rail and becomes a DISCLOSURE:
  * in normal flow above the prose, closed, one row tall. Sticky is dropped on purpose: an index

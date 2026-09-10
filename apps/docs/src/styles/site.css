@@ -448,6 +448,47 @@ html:has(dialog:modal) .sk-toc {
   align-items: start;
 }
 
+/*
+ * BACK TO TOP, PLACED BY THE SITE, because placement is not the component's to hold: it ships the
+ * button, the reveal and the accessible name, and says nothing about where a consumer wants it
+ * (`components/back-to-top.css`'s own banner has the reasoning).
+ *
+ * IT SITS UNDER THE TOC RAIL, at the bottom of the viewport. That column is where "where am I, take
+ * me somewhere" already lives, and the rail itself stops partway down the screen, so the space
+ * below it is free at every scroll position.
+ *
+ * ANCHORED TO THE TOC RATHER THAN INSET FROM THE EDGE, and the measurements are why: the document
+ * and its rail are a centred pair with a max width, so the rail's trailing edge sits 53px from the
+ * viewport at 1600px wide and 35px at 1280px. There is no constant inset to write. Reproducing the
+ * pair's own centring math here would duplicate the shell's layout in a second place and rot the
+ * first time either moves, so the browser is asked to do the placing instead (decision 25, the same
+ * call `patterns/anchored.css` makes for the eight components that float against a trigger).
+ *
+ * ONLY THE INLINE AXIS COMES FROM THE ANCHOR. The block axis is the viewport's, which sidesteps the
+ * one real limitation of `anchor()` insets: they do not track scrolling. The rail is `sticky`, so it
+ * travels vertically as the reader scrolls and never horizontally, and the axis that moves is
+ * exactly the one not being taken from it.
+ *
+ * THE ANCHORING ITSELF LIVES IN `shell.scss`, not here, because it must only apply where the toc is
+ * actually a RAIL. Below `wide` it becomes a disclosure in normal flow above the prose  -  measured
+ * at 1100px: `position: static`, 769px wide, starting at x=280  -  and anchoring to that would park
+ * the button in the middle of the article. Only that file can read the shared breakpoint source.
+ * What stays here is the corner, which is both the pre-anchoring fallback and the narrow-viewport
+ * placement.
+ */
+.sk-back-to-top {
+  position: fixed;
+  /* Above page content and sticky chrome, below a toast or a modal. */
+  z-index: var(--z-sticky);
+  inset-block-end: var(--space-inset-lg);
+  /*
+   * THE FALLBACK, and the only rule that applies without anchor positioning or without a rail to
+   * anchor to: the trailing corner. Kept as a real declaration rather than left to a `@supports`
+   * else-branch, so a browser that has never heard of anchoring still gets a placed button.
+   */
+  inset-inline-end: var(--space-inset-lg);
+}
+
 /* A page with no headings renders `.sk-toc[data-empty]` (`Toc.astro`, computed at build time from
  * `documentIndex`, so this is known before first paint, no FOUC to guard against). The toc TRACK is
  * a fixed length (`--docs-toc-inline-size`), not `auto`: a content-sized track would otherwise

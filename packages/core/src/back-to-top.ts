@@ -4,7 +4,7 @@ import type { ComponentContract, OptionsOf } from "./contract.js";
  * BACK TO TOP, the control that only exists once you have scrolled away from where it takes you.
  *
  * A long page has one move a reader makes over and over: get back to the start. The keyboard has
- * `Home`, a trackpad has a hard flick, and neither is discoverable; a button pinned to a corner is
+ * `Home`, a trackpad has a hard flick, and neither is discoverable; a button that stays visible while scrolling is
  * the affordance that says the move exists. It is chrome of nothing but itself, like `Toc` and
  * `SkipLink`, and it earns a contract for the same reason `Toc` did: its defining behaviour is not a
  * value an author sets at compose time. Whether it is visible depends on where the reader has
@@ -13,7 +13,7 @@ import type { ComponentContract, OptionsOf } from "./contract.js";
  *
  * IT IS NOT `SkipLink`. That one goes FIRST in the document, is reached by Tab before anything else,
  * and jumps through a real in-page anchor so the platform owns the scroll, the focus move and the
- * Back button. This one appears LATE, is reached by pointer or by tabbing to the corner, and calls
+ * Back button. This one appears LATE, is reached by pointer or by tabbing to it, and calls
  * `scrollTo` on a scroller that may not be the document at all. Different element (`button`, not
  * `a`), different reason, different point in the reading.
  *
@@ -157,7 +157,7 @@ export const backToTopContract = {
         host: true,
         /*
          * `hidden` from the start: the control is an enhancement, so with no script it stays out of
-         * the way rather than pinned to the corner doing nothing. The enhancer (and React's state)
+         * the way rather than sitting there doing nothing. The enhancer (and React's state)
          * remove it once the reader is past the threshold.
          */
         attrs: { type: "button", hidden: "" },

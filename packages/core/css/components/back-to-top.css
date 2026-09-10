@@ -1,14 +1,25 @@
 /*
  * TIER 3, BACK TO TOP
  *
- * A control pinned to a corner that returns a long scroller to its start. It is absent until the
- * reader has scrolled past a threshold and absent again once they are back - an affordance that
- * costs nothing when it is not needed.
+ * A control that returns a long scroller to its start. It is absent until the reader has scrolled
+ * past a threshold and absent again once they are back - an affordance that costs nothing when it
+ * is not needed.
+ *
+ * WHERE IT SITS IS NOT THIS FILE'S DECISION, and that is a deliberate removal rather than an
+ * omission. It used to be `position: fixed` in a corner with its own offset and z-index hooks, which
+ * is a layout opinion a component has no way to hold correctly: a site with a rail wants it aligned
+ * to that rail, a full-bleed page wants a corner, an embedded widget wants it in flow. The consumer
+ * places it (see `apps/docs/src/styles/site.css` for one that aligns it to the site's index rail).
+ *
+ * That the old default was ALSO not working is what surfaced it: `.sk-interactive` sets
+ * `position: relative`, both rules sit in `@layer components` at the same specificity, so source
+ * order decided - and in the docs bundle the state layer landed last. The button was never fixed at
+ * all. It sat in flow at the end of the document, half off the inline edge.
  *
  * THE VISIBLE MARK IS A `chevron-up` FROM THE BOUND ICON SET (`Icon`, decision 2: Core names the
  * role, a set draws it). Authored markup ships the `[data-sk-icon]` placeholder that the icon
  * enhancer swaps for the set's `<svg>`; React renders `<Icon>`. This file only sizes and positions
- * `sk-back-to-top__icon` and rides it on the hover lift. The slotted label
+ * `sk-back-to-top__icon`. The slotted label
  * (`sk-back-to-top__label`) is the accessible name, clipped to a name-only box the way `SkipLink`'s
  * hidden state is; a consumer who wants a labelled pill un-clips it (see its rule).
  *
@@ -21,7 +32,7 @@
  * React toggle it), and this file overrides the UA `[hidden] { display: none }` so the reveal can
  * animate - a small pop: fade in, scale up from ~0.8, rise `--sk-back-to-top-travel`. `visibility:
  * hidden` still takes the control out of the accessibility tree and the tab ring, everything
- * `hidden` promises. `prefers-reduced-motion` drops the scale, the rise and the lift (opacity still
+ * `hidden` promises. `prefers-reduced-motion` drops the scale and the rise (opacity still
  * fades, on the near-zero duration the `--motion-*` tokens collapse to there), and the enhancer
  * asks for an instant `scrollTo` besides.
  */
@@ -60,23 +71,27 @@
      * not shrink at all.
      */
     --sk-back-to-top-size: var(--size-control-md);
-    /* How far the control sits from the corner it appears in. */
-    --sk-back-to-top-offset: var(--space-inset-lg);
     --sk-back-to-top-shadow: var(--elevation-overlay);
-    /* Deepened a step while the pointer is on it; see the hover rule. */
-    --sk-back-to-top-shadow-hover: var(--elevation-overlay), 0 0 0 max(1px, 0.0625rem) var(--sk-back-to-top-border-color);
-    /* Above page content and sticky chrome; below a toast or a modal. A consumer raises it here. */
-    --sk-back-to-top-z: var(--z-sticky);
-    /* How far it rises into place on reveal, and how far it lifts under the pointer. */
+    /*
+     * The pointer state is a BORDER change, not a second shadow. It used to add a 1px ring on top of
+     * the overlay elevation, which read as the control gaining an outline on hover  -  a focus cue's
+     * job, on an event that is not focus. The surface says "you are on it" by firming its edge.
+     */
+    --sk-back-to-top-border-color-hover: var(--color-border-strong);
+    /* How far it rises into place on reveal. */
     --sk-back-to-top-travel: var(--space-inset-sm);
-    --sk-back-to-top-lift: 0.125rem;
     /* Where the pop starts from. */
     --sk-back-to-top-enter-scale: 0.82;
 
-    position: fixed;
-    inset-block-end: var(--sk-back-to-top-offset);
-    inset-inline-end: var(--sk-back-to-top-offset);
-    z-index: var(--sk-back-to-top-z);
+    /*
+     * `relative` is STRUCTURE, not placement: `::after` (the touch target) and `__label` (the
+     * clipped accessible name) are both `position: absolute` and need this box to be their
+     * containing block. Written explicitly even though `.sk-interactive` already sets it, because
+     * relying on that made the two rules race in the cascade - same layer, same specificity, source
+     * order deciding. A component should not need its own pattern to load in a particular order to
+     * lay out its own pseudo-elements.
+     */
+    position: relative;
 
     /* Icon-only by default (the label is clipped); `grid-auto-flow: column` + `gap` are here for the
        labelled-pill escape hatch, where the consumer un-clips `sk-back-to-top__label` and it becomes
@@ -102,7 +117,7 @@
       opacity var(--motion-exit-duration) var(--motion-exit-easing),
       scale var(--motion-exit-duration) var(--motion-exit-easing),
       translate var(--motion-exit-duration) var(--motion-exit-easing),
-      box-shadow var(--motion-state-change-duration) var(--motion-state-change-easing);
+      border-color var(--motion-state-change-duration) var(--motion-state-change-easing);
   }
 
   /*
@@ -147,19 +162,22 @@
       opacity var(--motion-enter-duration) var(--motion-enter-easing),
       scale var(--motion-enter-duration) var(--motion-enter-easing),
       translate var(--motion-enter-duration) var(--motion-enter-easing),
-      box-shadow var(--motion-state-change-duration) var(--motion-state-change-easing);
+      border-color var(--motion-state-change-duration) var(--motion-state-change-easing);
   }
 
   /*
-   * Under the pointer (or a keyboard focus): the whole control lifts a hair and the shadow deepens,
-   * and the chevron rides up with it - a back-to-top button whose mark leans toward where it takes
-   * you is doing a small part of the explaining. `:not([hidden])` so a hover never resurrects the
-   * hidden state.
+   * Under the pointer: the edge firms and nothing moves.
+   *
+   * It used to lift the whole control, deepen the shadow AND slide the chevron up inside it - three
+   * simultaneous changes for "the pointer is here", on a control that is already floating over the
+   * page and already announcing itself by existing. The lift in particular fought the reveal: the
+   * button ENTERS by rising, so rising again on hover said the same thing twice in the same
+   * direction, and at 2px it read as a wobble rather than as a response.
+   *
+   * `:not([hidden])` so a hover never resurrects the hidden state.
    */
-  .sk-back-to-top:not([hidden]):hover,
-  button.sk-back-to-top:not([hidden]):focus-visible {
-    translate: 0 calc(-1 * var(--sk-back-to-top-lift));
-    box-shadow: var(--sk-back-to-top-shadow-hover);
+  .sk-back-to-top:not([hidden]):hover {
+    border-color: var(--sk-back-to-top-border-color-hover);
   }
 
   /*
@@ -170,13 +188,6 @@
   .sk-back-to-top__icon {
     display: grid;
     place-items: center;
-    translate: 0 0;
-    transition: translate var(--motion-state-change-duration) var(--motion-state-change-easing);
-  }
-
-  .sk-back-to-top:not([hidden]):hover .sk-back-to-top__icon,
-  button.sk-back-to-top:not([hidden]):focus-visible .sk-back-to-top__icon {
-    translate: 0 calc(-1 * var(--sk-back-to-top-lift));
   }
 
   /*
@@ -199,33 +210,23 @@
   }
 
   /*
-   * Z-INDEX RE-DECLARED ON FOCUS, and it is not redundant: the state layer
-   * (`patterns/state-layer.css`) sets `z-index: var(--z-focus)` on `.sk-interactive:focus-visible`
-   * - a `(0,2,0)` selector that outranks this component's base `(0,1,0)`, so a focused button would
-   * drop to that layer. `button.sk-back-to-top:focus-visible` is `(0,2,1)`, one element more
-   * specific, so it holds its own layer in the cascade with no `!important`. Same collision, same
-   * fix, as `a.sk-skip-link:focus`.
+   * NO Z-INDEX RULE HERE ANY MORE. It used to re-assert this component's own layer on focus, because
+   * the state layer raises `.sk-interactive:focus-visible` to `--z-focus` and would otherwise pull a
+   * focused button DOWN from the corner layer this file used to declare. With the stacking now
+   * owned by whoever places the control, there is no base layer left to defend, and a focused
+   * control rising above its neighbours is what that rule is for everywhere else.
    */
-  button.sk-back-to-top:focus-visible {
-    z-index: var(--sk-back-to-top-z);
-  }
 
   @media (prefers-reduced-motion: reduce) {
-    /* No scale, no rise, no lift - the control just fades, on the collapsed duration. */
+    /* No scale and no rise - the control just fades, on the collapsed duration. */
     .sk-back-to-top,
     .sk-back-to-top[hidden],
-    .sk-back-to-top:not([hidden]),
-    .sk-back-to-top:not([hidden]):hover,
-    button.sk-back-to-top:not([hidden]):focus-visible {
+    .sk-back-to-top:not([hidden]) {
       scale: 1;
       translate: 0 0;
     }
 
-    .sk-back-to-top__icon,
-    .sk-back-to-top:not([hidden]):hover .sk-back-to-top__icon,
-    button.sk-back-to-top:not([hidden]):focus-visible .sk-back-to-top__icon {
-      translate: 0 0;
-      transition: none;
-    }
+    /* Nothing to cancel on the icon any more: it no longer moves at all. The hover is a border
+       colour, which `prefers-reduced-motion` has no quarrel with. */
   }
 }

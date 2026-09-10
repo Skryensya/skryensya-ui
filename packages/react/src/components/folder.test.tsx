@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { defaultFolderGeometry, folderClipPath, folderPath } from "@skryensya/core/folder";
 import { Folder, FolderLink, FolderPreview, FolderStack } from "./folder.js";
@@ -109,6 +109,31 @@ describe("Folder (React)", () => {
     stubLayout();
     const measured = render(<Folder label="Radio">Body</Folder>);
     expect(measured.container.querySelector(".sk-folder")!.hasAttribute("data-sk-folder-ready")).toBe(true);
+  });
+
+  /*
+   * The ground is SAMPLED, not named (no rule can ask what colour is behind an element), so it is a
+   * literal that goes wrong the instant light and dark swap - and a scheme flip moves no box, so
+   * the effect's ResizeObserver would never come back for it. Before this, a folder kept painting
+   * the light ground in dark mode until something unrelated resized the page.
+   */
+  it("re-samples the ground when the colour scheme flips, which resizes nothing", async () => {
+    stubLayout();
+    document.body.style.background = "rgb(255, 255, 255)";
+    restore.push(() => document.body.removeAttribute("style"));
+    restore.push(() => document.documentElement.removeAttribute("data-scheme"));
+
+    const ui = render(<Folder label="Radio">Body</Folder>);
+    const root = ui.container.querySelector<HTMLElement>(".sk-folder")!;
+    expect(root.style.getPropertyValue("--sk-folder-ground")).toBe("rgb(255, 255, 255)");
+
+    // What a toggle does, and all it does: the attribute moves and every box stays where it was.
+    document.body.style.background = "rgb(12, 12, 12)";
+    document.documentElement.setAttribute("data-scheme", "dark");
+
+    await waitFor(() => {
+      expect(root.style.getPropertyValue("--sk-folder-ground")).toBe("rgb(12, 12, 12)");
+    });
   });
 
   /* Optional, decorative, and out of the pointer's way: the fan shows what the folder already says

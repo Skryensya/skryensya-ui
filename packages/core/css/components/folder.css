@@ -50,7 +50,32 @@
      * whose borders are rectangles. What separates a folder from its ground is the SHADOW.
      */
     --sk-folder-fill: var(--color-bg-surface);
-    --sk-folder-fill-active: var(--color-bg-surface-raised);
+    /*
+     * A REVEALED FOLDER IS A SHADE OFF ITS PAPER IN LIGHT, and `-raised` alone cannot be that.
+     *
+     * The elevation ramp lifts by getting LIGHTER, which is the right direction in dark (stone-900
+     * at rest, stone-800 revealed: a real step up off the pile) and has nowhere to go in light,
+     * where every rung is the same white. So the reveal - the whole point of the gesture - was a
+     * white sheet appearing on white paper, carried entirely by a two-percent shadow.
+     *
+     * SO LIGHT MODE GOES THE OTHER WAY, and deliberately past its own ground. The band above the
+     * page is three points of lightness wide (white L100, `--color-bg-canvas` stone-100 L97), and
+     * no step taken inside it is a step anyone sees: measured at L98.4, at L97.6 and again at L95.3,
+     * the revealed folder still read as the white it replaced. Ten percent lands at L92, about
+     * `stone-200`, which is the first value that separates from the page at a glance rather than
+     * under a colour picker - which is the whole job, since the reveal is the component's answer to
+     * being reached for.
+     *
+     * The cost is real and is the reason this is written down: "raised" and "lighter" come apart
+     * here, so a folder lifting off the pile in light mode is DARKER than the page it lifts off.
+     * What still says "raised" is the shadow, which is what draws this shape's edge in either mode
+     * anyway - a silhouette this large never separated on fill alone. Text keeps a wide margin over
+     * the 4.5:1 floor either way (`--color-text-primary` on L92 is about 13:1).
+     */
+    --sk-folder-fill-active: light-dark(
+      color-mix(in oklab, var(--color-text-primary) 10%, var(--color-bg-surface-raised)),
+      var(--color-bg-surface-raised)
+    );
     --sk-folder-fg: var(--color-text-primary);
     /*
      * THE GROUND a folder sits on, and the colour it is painted at rest when it is not showing its
@@ -654,10 +679,23 @@
    * At the shipped default (120px of a 240px folder) there is always a strip showing and this rule
    * changes nothing; it is what keeps the criterion met for the values it does not control.
    *
-   * `:focus-within` only, never `:hover` - a pointer user is already looking at what they are
-   * pointing at.
+   * `:focus-visible`, NOT `:focus-within`, and the difference is a pointer press.
+   *
+   * A folder in this stack is focusable (`Folder.link` is an anchor), so holding the mouse down on
+   * one focuses it: with `:focus-within` the folder being pressed jumped out of the pile and in
+   * front of the folders stacked over it, for as long as the button was held, then dropped back.
+   * That is the one illusion the stack is built on breaking under the pointer that is touching it.
+   *
+   * The criterion this rule exists for is about KEYBOARD focus - somebody who tabbed to a folder
+   * cannot see where they are unless it is raised - and `:focus-visible` is exactly that
+   * distinction, drawn by the browser rather than guessed at here. A pointer user is already
+   * looking at what they are pointing at, which is why `:hover` was never in this rule either.
+   *
+   * Both halves are needed: `:focus-visible` for the folder that IS the focusable (the link
+   * signature), `:has(:focus-visible)` for a plain Folder whose focus lands on something inside it.
    */
-  .sk-folder-stack > .sk-folder:focus-within {
+  .sk-folder-stack > .sk-folder:focus-visible,
+  .sk-folder-stack > .sk-folder:has(:focus-visible) {
     z-index: 1;
   }
 

@@ -5,6 +5,47 @@
 # hash.
 surface: "e18e8168c75e9d69"
 entries:
+  - date: 2026-09-09
+    kind: bugfix
+    es:
+      title: Una carpeta apretada con el mouse ya no se adelanta a las de adelante
+      body: >-
+        En un <code>FolderStack</code> el orden de pintado es el del documento, a propósito: la
+        carpeta que estás tocando sigue estando detrás de las que tiene delante. La única excepción
+        es el foco de TECLADO, que la levanta para cumplir WCAG 2.2 SC 2.4.11, y estaba escrita con
+        <code>:focus-within</code>: como <code>Folder.link</code> es un enlace, mantener el botón
+        apretado la enfocaba y la carpeta saltaba al frente hasta soltar. Ahora la regla usa
+        <code>:focus-visible</code>, que es esa distinción dibujada por el navegador.
+    en:
+      title: A folder held under the mouse no longer jumps in front of the ones over it
+      body: >-
+        Paint order in a <code>FolderStack</code> is source order, deliberately: the folder you are
+        touching still sits behind the ones in front of it. The one exception is KEYBOARD focus,
+        which raises it to meet WCAG 2.2 SC 2.4.11, and that rule was written with
+        <code>:focus-within</code>: since <code>Folder.link</code> is an anchor, holding the mouse
+        down focused it and the folder climbed to the front until the button came back up. The rule
+        now uses <code>:focus-visible</code>, which is that distinction as the browser draws it.
+  - date: 2026-09-09
+    kind: bugfix
+    es:
+      title: La carpeta se repinta al cambiar de tema, y el revelado se ve en modo claro
+      body: >-
+        El fondo contra el que una carpeta es invisible se MIDE (ninguna regla puede preguntar qué
+        color hay detrás de un elemento), así que era un literal que quedaba viejo al pasar de claro
+        a oscuro: cambiar de tema no mueve ninguna caja, y el <code>ResizeObserver</code> nunca
+        volvía a pasar. Ahora los dos bindings escuchan el esquema y vuelven a medir. Además el
+        relleno revelado en modo claro baja un paso: la rampa de elevación aclara, y en claro todos
+        los escalones son el mismo blanco, así que el revelado era una hoja blanca sobre papel
+        blanco.
+    en:
+      title: A folder repaints on a theme change, and its reveal is visible in light mode
+      body: >-
+        The ground a folder is invisible against is MEASURED (no rule can ask what colour is behind
+        an element), so it was a literal that went stale the moment light and dark swapped: a theme
+        change moves no box, and the <code>ResizeObserver</code> never came back for it. Both
+        bindings now listen for the scheme and re-measure. The revealed fill also steps DOWN in
+        light mode: the elevation ramp lifts by getting lighter, and in light every rung is the same
+        white, so the reveal was a white sheet on white paper.
   - date: 2026-09-04
     kind: feature
     es:

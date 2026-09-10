@@ -56,8 +56,29 @@
      * be larger. Split, not shared, for exactly that reason. */
     --sk-sidebar-padding-block: var(--space-inset-md);
 
-    /* the one width hook, plus the two widths the state chooses between */
-    --sk-sidebar-inline-size: var(--sk-sidebar-expanded-inline-size);
+    /*
+     * THE ONE WIDTH HOOK, plus the widths the state chooses between.
+     *
+     * The clamp is unconditional, and that is the whole point: it used to live on
+     * `.sk-sidebar:has(.sk-sidebar__resize-handle)`, so "resizable" read itself off the authored
+     * markup. But `:has()` cannot match a descendant the parser has not reached yet, and the handle
+     * is the LAST child of the panel. A page that restores a remembered width before first paint
+     * (the only way to restore one without a visible jump) therefore laid the rail out TWICE: once
+     * at the expanded width while the panel's own children were still streaming in, then again at
+     * the remembered width the moment the handle closed the `:has()`. With `inline-size` in the
+     * transition list below, that second layout ANIMATED, so the rail visibly grew on every cold
+     * load and dragged the document column along with it.
+     *
+     * Reading the resize hook here instead costs nothing: it is only ever written by a drag or a
+     * restore, both of which imply a handle, so a sidebar without one still resolves to its expanded
+     * width through the fallback. What changes is that the value no longer depends on WHEN the
+     * handle parses.
+     */
+    --sk-sidebar-inline-size: clamp(
+      var(--sk-sidebar-min-inline-size),
+      var(--sk-sidebar-resize-inline-size, var(--sk-sidebar-expanded-inline-size)),
+      var(--sk-sidebar-max-inline-size)
+    );
     /*
      * 13rem. It was 15rem, sized so the longest entry in the docs rail ("Densidad de componente")
      * never truncated: the panel was made to fit its worst label. That is backwards for a rail whose
@@ -77,11 +98,15 @@
     /*
      * THE TRAVEL OF A RESIZE, and the reason the width arithmetic lives in CSS.
      *
-     * A drag writes exactly one property, `--sk-sidebar-resize-inline-size`, and the `clamp()` below
+     * A drag writes exactly one property, `--sk-sidebar-resize-inline-size`, and the `clamp()` above
      * is what keeps it honest: no binding has to know the bounds, re-read them when a brand moves
      * them, or agree with the other binding about rounding. Unset (nobody has dragged, nothing was
      * restored) the clamp falls back to the expanded width, so a resizable sidebar and a fixed one
      * start life at exactly the same size.
+     *
+     * The bounds now hold for a sidebar that was never dragged too, since the clamp is the only
+     * declaration of the width: an expanded width authored outside its own limits was already a
+     * contradiction, and this is where it resolves.
      *
      * Neither end is arbitrary. Below roughly 11rem an expanded rail holds a chevron, an icon and
      * three characters of label, which is a worse rail than the collapsed one, and the collapsed
@@ -186,27 +211,6 @@
   }
 
   /*
-   * RESIZABLE IS A COMPOSITION, not an option: it is true when the consumer authored the handle.
-   * `:has()` is what lets the stylesheet read that instead of a `data-resizable` the bindings would
-   * have to keep in sync with the markup that already says it.
-   */
-  .sk-sidebar:has(.sk-sidebar__resize-handle) {
-    /*
-     * The dragged width replaces the WIDTH, not the expanded hook, so `--sk-sidebar-expanded-
-     * inline-size` keeps meaning "the size this sidebar was designed at" and stays the thing a
-     * consumer overrides. Unset, the clamp falls through to it and a resizable sidebar opens at
-     * exactly the same width as a fixed one. Declared BEFORE the collapsed rule on purpose: both
-     * land on this property at the same specificity, and a collapsed rail has to beat a remembered
-     * width, not negotiate with it.
-     */
-    --sk-sidebar-inline-size: clamp(
-      var(--sk-sidebar-min-inline-size),
-      var(--sk-sidebar-resize-inline-size, var(--sk-sidebar-expanded-inline-size)),
-      var(--sk-sidebar-max-inline-size)
-    );
-  }
-
-  /*
    * A drag has to feel attached to the pointer, and an animated width cannot: the transition exists
    * so COLLAPSING reads as a movement, and during a drag it turns the same property into lag. The
    * binding writes this attribute for the length of the gesture and nothing else.
@@ -251,6 +255,25 @@
   .sk-sidebar .sk-nav-list {
     --sk-nav-list-duration: var(--sk-sidebar-duration);
     --sk-nav-list-easing: var(--sk-sidebar-easing);
+    /*
+     * A STRONGER CURRENT-PAGE TINT IN LIGHT, and light only.
+     *
+     * The pattern's own default is `--color-bg-accent-subtle`, which in light is one step off white
+     * (blue-50, L97) sitting on a surface that is white. In a horizontal navbar that is enough: the
+     * current link is one of five, read in a glance. In a rail of two hundred rows it is not  -  the
+     * tint has to survive being scanned past, and at that distance from the ground it read as a
+     * rendering artifact rather than as "you are here". Dark mode keeps the pattern's value, where
+     * the same token is a real step ABOVE its ground and already carries.
+     *
+     * Mixed rather than named, because a component sheet naming a palette step (`--palette-blue-100`,
+     * which is what this lands on) leaves the semantic layer and stops meaning anything when a brand
+     * moves. Mixed against `--sk-sidebar-bg` and not against the page: the tint is a relationship to
+     * the rail's own ground, so a repainted rail keeps it.
+     */
+    --sk-nav-list-link-current-bg: light-dark(
+      color-mix(in oklab, var(--color-action-accent) 12%, var(--sk-sidebar-bg)),
+      var(--color-bg-accent-subtle)
+    );
   }
 
   .sk-sidebar[data-state="collapsed"] .sk-nav-list {

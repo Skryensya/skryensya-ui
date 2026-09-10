@@ -21,7 +21,7 @@ export const sidebarMessages = {
     "sidebarPage.collapseBody": "Contrae el sidebar con el botón: la lista se vuelve un riel de iconos, y sigue toda ahí.",
     "sidebarPage.widthTitle": "El ancho lo decide quien lee",
     "sidebarPage.widthBody1":
-      "Autorar un <code>SidebarResizeHandle</code> adentro del sidebar es lo que lo vuelve redimensionable. No hay una opción <code>resizable</code> al lado: dos formas de decir lo mismo son dos formas de contradecirse, y la hoja de estilos lee ese mismo hecho con <code>:has()</code>.",
+      "Autorar un <code>SidebarResizeHandle</code> adentro del sidebar es lo que lo vuelve redimensionable. No hay una opción <code>resizable</code> al lado: dos formas de decir lo mismo son dos formas de contradecirse. La hoja de estilos ni siquiera necesita preguntarlo: siempre lee <code>--sk-sidebar-resize-inline-size</code>, una propiedad que sólo escribe un arrastre o un ancho recordado, así que una barra sin handle se queda en su ancho expandido por el fallback.",
     "sidebarPage.widthBody2":
       "El recorrido lo acotan <code>--sk-sidebar-min-inline-size</code> y <code>--sk-sidebar-max-inline-size</code>, y el <code>clamp()</code> vive en el CSS: el arrastre escribe <strong>una</strong> propiedad y ninguna de las dos bindings hace la cuenta. Por eso una marca que mueva esos hooks mueve el resize con ella, sin volver a ejecutar nada.",
     "sidebarPage.widthBody3":
@@ -90,7 +90,7 @@ export const sidebarMessages = {
     "sidebarPage.collapseBody": "Collapse the sidebar with the button: the list becomes a rail of icons, and it is all still there.",
     "sidebarPage.widthTitle": "Width belongs to the reader",
     "sidebarPage.widthBody1":
-      "Authoring a <code>SidebarResizeHandle</code> inside the sidebar is what makes it resizable. There is no <code>resizable</code> option beside it: two ways to say the same thing are two ways to contradict each other, and the stylesheet reads that same fact with <code>:has()</code>.",
+      "Authoring a <code>SidebarResizeHandle</code> inside the sidebar is what makes it resizable. There is no <code>resizable</code> option beside it: two ways to say the same thing are two ways to contradict each other. The stylesheet never has to ask: it always reads <code>--sk-sidebar-resize-inline-size</code>, a property only a drag or a remembered width ever writes, so a bar with no handle stays at its expanded width through the fallback.",
     "sidebarPage.widthBody2":
       "The travel is bounded by <code>--sk-sidebar-min-inline-size</code> and <code>--sk-sidebar-max-inline-size</code>, and the <code>clamp()</code> lives in the CSS: the drag writes <strong>one</strong> property, and neither binding does the math. That is why a brand that moves those hooks moves the resize with it, with nothing to re-run.",
     "sidebarPage.widthBody3":

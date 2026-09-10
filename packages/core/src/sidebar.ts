@@ -289,8 +289,12 @@ export const sidebarContract = {
 
     /**
      * The drag edge, and the switch: a sidebar is resizable when one of these is authored inside it,
-     * with no `resizable` option beside it. Two ways to say the same thing is two ways to disagree,
-     * and the stylesheet needs the answer anyway, which it reads as `:has()` on this part.
+     * with no `resizable` option beside it. Two ways to say the same thing is two ways to disagree.
+     * The stylesheet no longer asks the question at all: it always reads
+     * `--sk-sidebar-resize-inline-size`, a property only a drag or a restore ever writes, so a
+     * sidebar without a handle keeps its expanded width through the fallback. It used to read the
+     * markup with `:has()`, which cannot match a handle the parser has not reached yet and made a
+     * restored width land one layout late.
      *
      * It is a WINDOW SPLITTER, so the whole ARIA pattern applies and none of it is optional: a
      * focusable `separator` reports where it sits with `aria-valuenow`, which is why arrow keys move

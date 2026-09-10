@@ -221,7 +221,7 @@ const vanillaMount = vanillaMounts[canonical as keyof typeof vanillaMounts];
  * `href` is ABSOLUTE, for the `hreflang` links. That is one of the few places a relative URL is not
  * merely untidy: the rule for these is a fully-qualified URL, transport included, and a relative one
  * is skipped without a word rather than reported, so the two translations stop announcing each other
- * and start competing as duplicates. `Astro.site` (astro.config.mjs) is the single place the origin
+ * and start competing as duplicates. `Astro.site` (astro.config.ts) is the single place the origin
  * is written. The fallback keeps this rendering if `site` is ever unset instead of throwing on every
  * page: a wrong hreflang is a quiet SEO cost, a build that cannot render is a loud one.
  *

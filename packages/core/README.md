@@ -14,7 +14,7 @@ packages/core/            ← this package (tokens + shared contract)
     primitives/_palettes.scss  explicit default public palettes
     semantic.scss           tier-2 purpose tokens (light-dark, density, motion, state layer)
     semantic/               tier-2 source partials (color, space, size, radius, type, motion, state)
-    scripts/build-css.mjs   generates dist/*.css: the batteries-included bundle, tokens.css, and
+    scripts/build-css.ts   generates dist/*.css: the batteries-included bundle, tokens.css, and
                              compiled modes/dimensions, all minified, for <link> without a bundler
     modes/hc.scss           opt-in Sass high-contrast: overrides tier-2 color
     dimensions/radius.scss  opt-in Sass roundness dimension: overrides tier-2 radius roles
@@ -23,8 +23,8 @@ packages/core/            ← this package (tokens + shared contract)
     patterns/scrollbar.css    opt-in: paint native scrollbar (always-on or reveal on hover)
     patterns/scroll-lock.css  opt-in: freeze page behind dialog:modal + stable scrollbar gutter
   contrast-pairs.json       the contrast contract the validator checks
-  scripts/parse.mjs         the stylesheet parser, shared by the validator and docs reference
-  scripts/lint.mjs          the stylesheet-native validator, five rules
+  scripts/parse.ts         the stylesheet parser, shared by the validator and docs reference
+  scripts/lint.ts          the stylesheet-native validator, five rules
 ```
 
 `tokens.scss` is the complete token entrypoint. It ships one public palette set; consumers replace complete
@@ -50,7 +50,7 @@ entrypoint includes the public palettes, so no second import or selector is need
 
 The rule: **references point down, never up, and tier 3 may never skip to tier 1.** A component hook
 that reaches straight into a palette bypasses the mode-switching in tier 2, so it, and only it, breaks
-in dark mode, which nobody notices until production. `scripts/lint.mjs` fails on it. That single
+in dark mode, which nobody notices until production. `scripts/lint.ts` fails on it. That single
 constraint is what a three-tier system buys you; without enforcement it is just three folders.
 
 Tier 3 is **opt-in**: `components/button.css` is scoped to `.sk-button`, never `:root`. A consumer

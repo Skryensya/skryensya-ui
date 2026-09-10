@@ -9,7 +9,7 @@
  * depends on), a stale test-results.json only degrades one tab's icons, not the page, so failing the
  * whole build over it would be the wrong trade. Run it by hand after touching a tracked test file:
  *
- *   node scripts/build-test-report.mjs
+ *   node scripts/build-test-report.ts
  */
 import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
@@ -125,7 +125,13 @@ const TARGETS = [
   { pkg: "packages/vanilla", file: "src/components/marquee.test.ts" },
 ];
 
-const results = {};
+interface VitestJsonReport {
+  testResults: {
+    assertionResults: { title: string; status: string }[];
+  }[];
+}
+
+const results: Record<string, Record<string, string>> = {};
 
 for (const { pkg, file } of TARGETS) {
   const cwd = join(root, pkg);
@@ -134,9 +140,9 @@ for (const { pkg, file } of TARGETS) {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "inherit"],
   });
-  const report = JSON.parse(stdout);
+  const report = JSON.parse(stdout) as VitestJsonReport;
   const repoPath = `${pkg}/${file}`;
-  const byTitle = {};
+  const byTitle: Record<string, string> = {};
   for (const suite of report.testResults) {
     for (const assertion of suite.assertionResults) {
       byTitle[assertion.title] = assertion.status;

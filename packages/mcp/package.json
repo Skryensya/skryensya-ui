@@ -5,10 +5,10 @@
   "type": "module",
   "description": "MCP server over the compiled manifest: get_catalog, get_contract and validate_ui. Rebuilt from zero; the v1 server that read docs/ai/schemas is gone (tag ai-v1).",
   "scripts": {
-    "build": "node scripts/build.mjs",
+    "build": "node scripts/build.ts",
     "start": "node dist/index.js",
     "start:http": "node dist/http.js",
-    "check": "node scripts/build.mjs && tsc -p tsconfig.json --noEmit && vitest run",
+    "check": "node scripts/build.ts && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.scripts.json && vitest run",
     "lint": "tsc -p tsconfig.json --noEmit",
     "inspector": "npx @modelcontextprotocol/inspector node dist/index.js"
   },

@@ -5,7 +5,7 @@
  * <kbd> element with the look of a physical key, and, like Badge, it is STATIC: no state, no
  * machine, no vanilla enhancer.
  *
- * Every hook resolves to a TIER-2 token, never a palette or raw color, scripts/lint.mjs enforces it.
+ * Every hook resolves to a TIER-2 token, never a palette or raw color, scripts/lint.ts enforces it.
  *
  * THE DEFAULT IS A PHYSICAL KEY, not an accent chip. Accent is a tone you opt into (`data-tone`),
  * the same knob Badge uses, for a shortcut that has to shout. At rest the key sits raised; a key

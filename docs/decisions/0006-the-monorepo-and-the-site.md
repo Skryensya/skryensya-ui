@@ -21,7 +21,7 @@ Turborepo with pnpm workspaces:
 - **`packages/core`**, tokens, styling hooks and the shared component contract. Zero runtime
   dependencies, publishable; the `css/` folder is the
   [artifact](./0019-public-palettes-and-constant-semantics.md), `src/` publishes shared parts/types and
-  `scripts/lint.mjs` is the [validator](./0019-public-palettes-and-constant-semantics.md). The monorepo's
+  `scripts/lint.ts` is the [validator](./0019-public-palettes-and-constant-semantics.md). The monorepo's
   tooling (turbo, pnpm) lives at the root and in devDependencies; it never enters the package's runtime.
 - **`apps/docs`**, the site, an Astro app. It declares `"@skryensya/core": "workspace:*"`; pnpm symlinks
   it into `node_modules`, and the site imports it as a real package.

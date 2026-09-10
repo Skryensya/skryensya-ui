@@ -722,7 +722,7 @@
      * `patterns/dialog-vaul.css` gives its own block-end composition, for the same reason: a radius
      * on the edge side would show a sliver of page under the panel. */
     /* `--radius-surface`, not `--radius-lg`: that is the name of a step on the primitive scale, not of
-     * a semantic role, and the role layer is the only one this file may read (scripts/lint.mjs checks
+     * a semantic role, and the role layer is the only one this file may read (scripts/lint.ts checks
      * it). A sheet is a SURFACE, so it rounds like all of them. */
     --sk-vaul-radius: var(--radius-surface) var(--radius-surface) 0 0;
     padding: var(--space-inset-md);

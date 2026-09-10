@@ -2,7 +2,7 @@
  * The parsed token corpus, for any page that needs it at build time.
  *
  * The css/ folder is located through the package's EXPORTS MAP, the same contract the site
- * documents (ADR-19), rather than through parse.mjs's own file location. The parser defaults
+ * documents (ADR-19), rather than through parse.ts's own file location. The parser defaults
  * to guessing its directory from import.meta.dirname, which is right when the validator runs it
  * from inside the package and wrong the moment a bundler inlines it into a chunk elsewhere.
  * Asking the resolver is true in both worlds, and it finds the Sass bundle by the exact route a
@@ -10,26 +10,16 @@
  */
 import { createRequire } from "node:module";
 import { dirname } from "node:path";
-import { parseTokens } from "@skryensya/core/parse";
+import { parseTokens, type Token } from "@skryensya/core/parse";
 
-export interface Token {
-  name: string;
-  tier: "primitive" | "semantic" | "component";
-  /** The authored form, var() chain intact, this IS the tier architecture. */
-  value: string;
-  refs: string[];
-  file: string;
-  modeAware: boolean;
-}
+export type { Token };
 
 const require = createRequire(import.meta.url);
 export const CSS_DIR = dirname(require.resolve("@skryensya/core/tokens.scss"));
 
 const corpus = parseTokens(CSS_DIR);
 
-/* parse.mjs is plain JS, so it infers `tier: string`. This is the ONE boundary where the corpus
- * becomes typed; the validator (scripts/lint.mjs) is what guarantees the tier is one of the three. */
-export const tokens: Token[] = corpus.tokens as Token[];
+export const tokens: Token[] = corpus.tokens;
 export const byName = new Map(tokens.map((t) => [t.name, t] as const));
 
 /** Tier 3 is element-scoped, never on :root (ADR-19): its styling hooks need an element to exist in. */

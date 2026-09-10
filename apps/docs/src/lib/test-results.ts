@@ -3,7 +3,7 @@ import report from "@artifacts/test-results.json";
 /*
  * THE TEST RESULTS, AS THE PAGE READS THEM.
  *
- * Source is `artifacts/test-results.json`, written by `scripts/build-test-report.mjs` from a real
+ * Source is `artifacts/test-results.json`, written by `scripts/build-test-report.ts` from a real
  * `vitest run --reporter=json`, not a status hand-typed next to each description. A hand-typed
  * "passed" would still say passed after the test broke; this can only say what the last real run
  * said. Keyed by `[repoPath][it-title]`, so it stays a lookup rather than a second list to keep in
@@ -36,7 +36,7 @@ export function testStatus(file: string, name: string): Status | "unknown" {
   if (!warned.has(key)) {
     warned.add(key);
     console.warn(
-      `[docs] test-results.json has no entry for "${name}" in ${file}. Run \`node scripts/build-test-report.mjs\`, ` +
+      `[docs] test-results.json has no entry for "${name}" in ${file}. Run \`node scripts/build-test-report.ts\`, ` +
         "or check the name matches the real it() title verbatim.",
     );
   }

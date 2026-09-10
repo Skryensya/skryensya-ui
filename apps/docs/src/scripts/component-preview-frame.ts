@@ -65,7 +65,7 @@ const frameReadyAttribute = "data-sk-component-preview-frame-ready";
  * Card page, a media card reported 454px at ready and settled at 466px twenty-two milliseconds
  * later. Everything downstream trusts the flag and gets that wrong: `component-preview.css` drops
  * the reserved height on it (so the stage snaps to a pre-final number), and
- * `build-preview-heights.mjs` had to grow its own stabilisation wait to work around it, which is a
+ * `build-preview-heights.ts` had to grow its own stabilisation wait to work around it, which is a
  * workaround admitting the flag was lying.
  *
  * CAPPED, because this delays the loader coming off: a frame whose image never resolves must still

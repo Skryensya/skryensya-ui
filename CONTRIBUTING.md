@@ -167,10 +167,10 @@ A component page can carry a "Tests" tab showing a real pass/fail per test, not 
 Wiring a new one takes three steps, and skipping any of them shows a neutral "not run" clock instead
 of lying:
 
-1. Add the test file to `TARGETS` in `scripts/build-test-report.mjs`.
+1. Add the test file to `TARGETS` in `scripts/build-test-report.ts`.
 2. Pass `tests={[{ file, tests: [{ name, description }] }]}` to the component's `*Page.astro`, where
    `name` matches the real `it(...)` title **verbatim**. That string is the lookup key.
-3. Run `node scripts/build-test-report.mjs` to regenerate `artifacts/test-results.json`.
+3. Run `node scripts/build-test-report.ts` to regenerate `artifacts/test-results.json`.
 
 The report is deliberately not part of `check` or `build`: a stale report should degrade one tab, not
 fail the whole build.
@@ -206,7 +206,7 @@ gates down with it.
 
 New versions wait **30 days** before they can be installed (`minimumReleaseAge` in
 `pnpm-workspace.yaml`). The quarantine is only safe because something watches for CVEs during it,
-which is what `scripts/audit-gate.mjs` does on every push.
+which is what `scripts/audit-gate.ts` does on every push.
 
 When a fix is needed sooner, except that one package rather than lowering the global number, and say
 why in the file:

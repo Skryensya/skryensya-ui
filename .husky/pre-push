@@ -14,7 +14,7 @@
 # becomes a delay nobody sees. It fails on high/critical; with no network it warns and continues (the
 # script explains why).
 echo "pre-push: checking dependencies..."
-if ! node scripts/audit-gate.mjs; then
+if ! node scripts/audit-gate.ts; then
   echo "" >&2
   echo "pre-push: there are high or higher severity vulnerabilities in the dependencies." >&2
   echo "  Above is each one with its path and how to fix it." >&2

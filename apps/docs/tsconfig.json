@@ -13,7 +13,7 @@
     /*
      * IMPORT ALIASES, and Astro reads them from here: `paths` in this file is what configures Vite's
      * resolver, so a specifier below works in .astro frontmatter, in .ts, and in the type checker
-     * from ONE declaration. There is no matching list in astro.config.mjs on purpose; two lists is
+     * from ONE declaration. There is no matching list in astro.config.ts on purpose; two lists is
      * how the two drift.
      *
      * `@/*` is this app. The other four are the repo the docs document, and they exist because the
@@ -36,6 +36,6 @@
       "@artifacts/*": ["../../artifacts/*"]
     }
   },
-  "include": [".astro/types.d.ts", "src/**/*", "scripts/**/*", "astro.config.mjs"],
+  "include": [".astro/types.d.ts", "src/**/*", "scripts/**/*", "astro.config.ts"],
   "exclude": ["dist"]
 }

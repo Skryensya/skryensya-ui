@@ -1,6 +1,7 @@
 {
   "name": "skryensya-ui",
   "private": true,
+  "type": "module",
   "license": "MIT",
   "packageManager": "pnpm@10.18.2",
   "engines": {
@@ -9,18 +10,20 @@
   "description": "Turborepo for skryensya/ui. Core contains tokens and the framework-agnostic component contract.",
   "scripts": {
     "lint": "turbo run lint",
-    "check": "turbo run check --filter=!@skryensya/ai-gates --concurrency=1",
+    "check": "tsc -p scripts/tsconfig.json --noEmit && turbo run check --filter=!@skryensya/ai-gates --concurrency=1",
     "check:gates": "turbo run check --filter=@skryensya/ai-gates",
-    "check:all": "turbo run check --concurrency=1",
-    "audit:gate": "node scripts/audit-gate.mjs",
+    "check:all": "tsc -p scripts/tsconfig.json --noEmit && turbo run check --concurrency=1",
+    "audit:gate": "node scripts/audit-gate.ts",
     "build": "turbo run build",
     "dev": "turbo run dev --filter=@skryensya/docs",
     "dev:all": "turbo run dev",
     "prepare": "husky"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "husky": "^9.1.7",
-    "turbo": "^2.3.3"
+    "turbo": "^2.3.3",
+    "typescript": "^5.9.3"
   },
   "pnpm": {
     "comment-overrides": [

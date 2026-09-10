@@ -429,8 +429,8 @@
       "types": "./src/tree-view.ts",
       "default": "./src/tree-view.ts"
     },
-    "./parse": "./scripts/parse.mjs",
-    "./emit-icon-set": "./scripts/emit-icon-set.mjs",
+    "./parse": "./scripts/parse.ts",
+    "./emit-icon-set": "./scripts/emit-icon-set.ts",
     "./skryensya.css": "./dist/skryensya.css",
     "./tokens.css": "./dist/tokens.css",
     "./tokens.scss": "./css/tokens.scss",
@@ -471,12 +471,13 @@
     }
   },
   "scripts": {
-    "build": "node scripts/build-css.mjs && tsc -p tsconfig.json",
-    "build:css": "node scripts/build-css.mjs",
-    "check": "node scripts/lint.mjs && node --test scripts/*.test.mjs && vitest run && tsc -p tsconfig.json --noEmit",
-    "lint": "node scripts/lint.mjs && node --test scripts/*.test.mjs && vitest run && tsc -p tsconfig.json --noEmit"
+    "build": "node scripts/build-css.ts && tsc -p tsconfig.json",
+    "build:css": "node scripts/build-css.ts",
+    "check": "node scripts/lint.ts && node --test scripts/*.test.ts && vitest run && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.scripts.json",
+    "lint": "node scripts/lint.ts && node --test scripts/*.test.ts && vitest run && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.scripts.json"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "lightningcss": "^1.33.0",
     "sass": "^1.83.0",
     "typescript": "^5.9.3",

@@ -13,12 +13,12 @@
  * is read by `apps/docs/src/lib/preview-heights.ts` and reserved as the stage's floor BEFORE the
  * frame reports, so the loading box and the settled box are the same box.
  *
- * IN `ai-gates` AND NOT IN ROOT `scripts/` next to `build-test-report.mjs`, which is the sibling it
+ * IN `ai-gates` AND NOT IN ROOT `scripts/` next to `build-test-report.ts`, which is the sibling it
  * otherwise resembles: this needs a real browser, and `@playwright/test` is a dependency of exactly
  * one package in this repo. A root script would have to reach into `packages/ai-gates/node_modules`
  * by hand to find it, which is a worse lie about where the dependency lives than living beside it.
  *
- * NOT WIRED INTO `turbo check`, for `build-test-report.mjs`'s own reason: a stale entry degrades one
+ * NOT WIRED INTO `turbo check`, for `build-test-report.ts`'s own reason: a stale entry degrades one
  * preview back to today's jump, it does not break a page, and a six-minute build inside `check`
  * would be the wrong trade. Run it by hand after adding or reshaping a demo:
  *
@@ -33,10 +33,21 @@
  */
 import { execFileSync } from "node:child_process";
 import { createReadStream, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { createServer } from "node:http";
+import { createServer, type Server } from "node:http";
+import type { AddressInfo } from "node:net";
 import { dirname, extname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { chromium } from "@playwright/test";
+import { chromium, type BrowserContext, type Page } from "@playwright/test";
+
+interface StageRow {
+  id: string;
+  label: string;
+  ready: boolean;
+  height: number;
+}
+
+type PageHeights = Record<string, number>;
+type HeightsByPage = Record<string, PageHeights>;
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..", "..");
@@ -120,7 +131,7 @@ const PAGE_ATTEMPTS = 2;
 const SELECTOR = "iframe.sk-component-preview__stage";
 const VANILLA = '[data-sk-component-preview-binding="vanilla"]';
 
-const MIME = {
+const MIME: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".mjs": "text/javascript; charset=utf-8",
@@ -161,8 +172,12 @@ function serve() {
     res.writeHead(200, { "content-type": MIME[extname(file)] ?? "application/octet-stream" });
     createReadStream(file).pipe(res);
   });
-  return new Promise((resolve) => {
-    server.listen(0, "127.0.0.1", () => resolve({ server, port: server.address().port }));
+  return new Promise<{ server: Server; port: number }>((resolve) => {
+    server.listen(0, "127.0.0.1", () => {
+      const addr = server.address();
+      if (!addr || typeof addr === "string") throw new Error("expected a TCP address");
+      resolve({ server, port: (addr as AddressInfo).port });
+    });
   });
 }
 
@@ -200,34 +215,34 @@ function previewPages() {
  * visible at a time, and vanilla is what a first-time reader lands on. A React stage that settles
  * taller keeps the jump it has today rather than being reserved for wrongly.
  */
-async function measurePage(page, url, origin) {
+async function measurePage(page: Page, url: string, origin: string) {
   await page.goto(origin + url, { waitUntil: "domcontentloaded", timeout: NAV_BUDGET_MS });
 
   /* Indices into the page's full stage list, one per preview: Vanilla where there is one. */
   const indices = await page.evaluate(
-    ([sel, vanilla]) => {
+    ([sel, vanilla]: [string, string]) => {
       const all = [...document.querySelectorAll(sel)];
-      const picked = [];
+      const picked: number[] = [];
       for (const root of document.querySelectorAll(".sk-component-preview")) {
         const stage = root.querySelector(`${sel}${vanilla}`) ?? root.querySelector(sel);
         if (stage) picked.push(all.indexOf(stage));
       }
       return picked;
     },
-    [SELECTOR, VANILLA],
+    [SELECTOR, VANILLA] as [string, string],
   );
 
   const stages = page.locator(SELECTOR);
-  const rows = [];
+  const rows: StageRow[] = [];
 
   for (const index of indices) {
     const stage = stages.nth(index);
     await stage.scrollIntoViewIfNeeded();
     try {
       await page.waitForFunction(
-        ([sel, i]) =>
+        ([sel, i]: [string, number]) =>
           document.querySelectorAll(sel)[i]?.hasAttribute("data-sk-component-preview-frame-ready"),
-        [SELECTOR, index],
+        [SELECTOR, index] as [string, number],
         { timeout: STAGE_BUDGET_MS },
       );
       /*
@@ -245,15 +260,15 @@ async function measurePage(page, url, origin) {
        * perfect match while the reader still sees the jump.
        */
       await page.waitForFunction(
-        ([sel, i]) => {
+        ([sel, i]: [string, number]) => {
           const el = document.querySelectorAll(sel)[i];
-          if (!el) return false;
+          if (!(el instanceof HTMLElement)) return false;
           const height = Math.round(el.getBoundingClientRect().height);
           const settled = el.dataset.skHeightProbe === String(height);
           el.dataset.skHeightProbe = String(height);
           return settled;
         },
-        [SELECTOR, index],
+        [SELECTOR, index] as [string, number],
         { timeout: STAGE_BUDGET_MS, polling: 250 },
       );
     } catch {
@@ -290,8 +305,8 @@ async function measurePage(page, url, origin) {
  * both rather than reserve a confidently wrong height for one of them. Ids are unique per page
  * already, so the whole problem is gone rather than handled.
  */
-function collapse(rows, url, unsettled) {
-  const page = {};
+function collapse(rows: StageRow[], url: string, unsettled: string[]): PageHeights {
+  const page: PageHeights = {};
   for (const row of rows) {
     if (!row.ready) {
       unsettled.push(`${url} · ${row.label || row.id}`);
@@ -320,7 +335,7 @@ const browser = await chromium.launch();
  * BLOCKS (13 pages in a row, then a recovery, then 5 more), which is memory pressure, not 26
  * separately broken pages. A fresh tab costs milliseconds and hands the whole realm back at close.
  */
-const contexts = new Map();
+const contexts = new Map<number, BrowserContext>();
 for (const width of WIDTHS) {
   contexts.set(width, await browser.newContext({ viewport: { width, height: VIEWPORT.height } }));
 }
@@ -334,11 +349,11 @@ for (const width of WIDTHS) {
  * fallback over a network blip. "Opened it and one preview is gone" DOES say something: the demo
  * was renamed or removed, and keeping its old entry would leave a key nothing can ever match.
  */
-const previous = (() => {
+const previous: HeightsByPage = (() => {
   const file = join(root, "artifacts", "preview-heights.json");
   if (!existsSync(file)) return {};
   try {
-    return JSON.parse(readFileSync(file, "utf8")).pages ?? {};
+    return (JSON.parse(readFileSync(file, "utf8")) as { pages?: HeightsByPage }).pages ?? {};
   } catch {
     return {};
   }
@@ -353,9 +368,9 @@ const previous = (() => {
  * it visited every page that has a preview, so anything it did not produce is a page that no longer
  * has one, and carrying that forward would keep a key nothing can ever match.
  */
-const pages = only ? { ...previous } : {};
-const unsettled = [];
-const failed = [];
+const pages: HeightsByPage = only ? { ...previous } : {};
+const unsettled: string[] = [];
+const failed: string[] = [];
 let measured = 0;
 
 /*
@@ -363,23 +378,26 @@ let measured = 0;
  *
  * The loop below used to let a navigation timeout throw, which ended the run before the single
  * write at the bottom: 186 pages measured, nothing on disk, and a stale artifact left in place with
- * no sign anything had gone wrong. That is the same shape as `scripts/build-test-report.mjs`, where
+ * no sign anything had gone wrong. That is the same shape as `scripts/build-test-report.ts`, where
  * one flaky target still means the whole report silently never regenerates. A partial pass is worth
  * keeping, because a preview that measured is a preview that no longer shifts, whatever happened
  * three pages later.
  */
 for (const [index, url] of urls.entries()) {
   /* One pass per width; the smallest height a preview reported anywhere is the one stored. */
-  const perWidth = [];
+  const perWidth: PageHeights[] = [];
   let anyFailed = false;
   for (const width of WIDTHS) {
-    let rows = null;
+    let rows: StageRow[] | null = null;
     for (let attempt = 1; attempt <= PAGE_ATTEMPTS && rows === null; attempt += 1) {
-      const page = await contexts.get(width).newPage();
+      const context = contexts.get(width);
+      if (!context) throw new Error(`no browser context for ${width}px`);
+      const page = await context.newPage();
       try {
         rows = await measurePage(page, url, origin);
       } catch (error) {
-        if (attempt === PAGE_ATTEMPTS) failed.push(`${url} @${width}px  (${error.message.split("\n")[0]})`);
+        const message = error instanceof Error ? error.message : String(error);
+        if (attempt === PAGE_ATTEMPTS) failed.push(`${url} @${width}px  (${message.split("\n")[0]})`);
       } finally {
         await page.close();
       }
@@ -392,7 +410,7 @@ for (const [index, url] of urls.entries()) {
     console.log(`  [${String(index + 1).padStart(3)}/${urls.length}] FAILED   ${url}`);
     continue;
   }
-  const collapsed = {};
+  const collapsed: PageHeights = {};
   for (const sample of perWidth) {
     for (const [id, height] of Object.entries(sample)) {
       collapsed[id] = collapsed[id] === undefined ? height : Math.min(collapsed[id], height);

@@ -15,7 +15,7 @@ import { defineConfig } from "vite";
  * project root by default; without this, every run's JSON and every kit stylesheet 404s.
  *
  * `src/frame/document.ts` imports `entry.tsx` as `?worker&url` (exactly what `apps/docs`'s own
- * preview frame does, see its astro.config.mjs) to get a self-contained ESM bundle loadable from an
+ * preview frame does, see its astro.config.ts) to get a self-contained ESM bundle loadable from an
  * iframe's `srcdoc`, which has no relationship to this document's own Vite client.
  *
  * `worker.plugins` still gets `svelte()` for vanilla's Svelte-backed enhancers, but NOT `react()`:

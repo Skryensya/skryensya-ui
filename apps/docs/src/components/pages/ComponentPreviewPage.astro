@@ -12,8 +12,12 @@ import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { buildPreviewFrameDocument } from "../../lib/preview-frame";
-import { SaveActionDemo, ScreensGridDemo } from "../../components/react-demos/component-preview";
-import { componentPreviewBareTree } from "../../demos/component-preview";
+import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
+import {
+  componentPreviewBareTree,
+  componentPreviewButtonTree,
+  componentPreviewScreensTree,
+} from "../../demos/component-preview";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/component-preview.yaml?raw";
 import coreSource from "@core/src/component-preview.ts?raw";
@@ -35,9 +39,19 @@ const styles = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/components/code-preview.css";
 @import "@skryensya/core/components/component-preview.css";`;
 
-const demoHtml = `<button class="sk-button sk-interactive" data-sk-button type="button">
-  Guardar cambios
-</button>`;
+/*
+ * EMITTED from the tree the first preview renders, not typed out beside it.
+ *
+ * This is the page that teaches what a ComponentPreview is for, and it was the page contradicting
+ * itself: the literal that used to sit here said "Guardar cambios" in both locales while the React
+ * island beside it said "Save changes", so the English page's two bindings disagreed about the one
+ * button they were both supposed to be showing. The snippet, the nested frame's body and the live
+ * stage all read this one string now.
+ */
+const demoHtml = emitMarkup(componentPreviewButtonTree(t), { fillDefaults: false });
+/* The other half of the same authoring, for the full-anatomy specimen further down: it renders BOTH
+   source panels, so it needs the React spelling of the very button its Vanilla panel is quoting. */
+const demoReact = emitReactSource(componentPreviewButtonTree(t), { component: "SaveAction" }).component;
 
 const demoJs = `const button = document.querySelector("[data-sk-button]");
 button?.addEventListener("click", saveChanges);`;
@@ -47,64 +61,7 @@ button?.addEventListener("click", saveChanges);`;
    different band (mobile 1, tablet 2, libre 3), which is the claim the prose makes, shown instead
    of asserted. The media queries resolve against the FRAME's viewport, which is the preset width;
    that is what the iframe buys over a container query on a plain div. */
-const screensHtml = `<div class="sk-grid" data-multicol data-columns="3">
-  <a class="sk-tile sk-tile--interactive sk-interactive" href="#">
-    <span class="sk-tile__content">
-      <span class="sk-tile__title">Facturación</span>
-      <span class="sk-tile__description">Planes, pagos y recibos.</span>
-    </span>
-  </a>
-  <a class="sk-tile sk-tile--interactive sk-interactive" href="#">
-    <span class="sk-tile__content">
-      <span class="sk-tile__title">Equipo</span>
-      <span class="sk-tile__description">Personas, roles y permisos.</span>
-    </span>
-  </a>
-  <a class="sk-tile sk-tile--interactive sk-interactive" href="#">
-    <span class="sk-tile__content">
-      <span class="sk-tile__title">Dominios</span>
-      <span class="sk-tile__description">DNS y certificados.</span>
-    </span>
-  </a>
-  <a class="sk-tile sk-tile--interactive sk-interactive" href="#">
-    <span class="sk-tile__content">
-      <span class="sk-tile__title">Registros</span>
-      <span class="sk-tile__description">Actividad y auditoría.</span>
-    </span>
-  </a>
-  <a class="sk-tile sk-tile--interactive sk-interactive" href="#">
-    <span class="sk-tile__content">
-      <span class="sk-tile__title">Integraciones</span>
-      <span class="sk-tile__description">Webhooks y llaves de API.</span>
-    </span>
-  </a>
-  <a class="sk-tile sk-tile--interactive sk-interactive" href="#">
-    <span class="sk-tile__content">
-      <span class="sk-tile__title">Notificaciones</span>
-      <span class="sk-tile__description">Correo y alertas.</span>
-    </span>
-  </a>
-</div>`;
 
-const screensReact = `import { Grid } from "@skryensya/react/grid";
-import { TileLink } from "@skryensya/react/tile-link";
-
-// Grid does not have a \`multicol\` prop yet; the attribute passes straight through the props.
-<Grid columns={3} data-multicol>
-  <TileLink href="/facturacion">
-    <span className="sk-tile__content">
-      <span className="sk-tile__title">Facturación</span>
-      <span className="sk-tile__description">Planes, pagos y recibos.</span>
-    </span>
-  </TileLink>
-  {/* … */}
-</Grid>;`;
-
-const demoReact = `import { Button } from "@skryensya/react/button";
-
-export function SaveAction() {
-  return <Button onClick={saveChanges}>Guardar cambios</Button>;
-}`;
 
 const anatomy = `<div class="sk-component-preview" data-sk-component-preview>
   <header class="sk-component-preview__header">
@@ -343,11 +300,7 @@ const sourceFiles = [
   <Fragment slot="usage">
     <p class="lede" set:html={t("componentPreview.lede")} />
 
-    <ComponentPreview html={demoHtml} js={demoJs} react={demoReact} label="Button">
-      <Fragment slot="react">
-        <SaveActionDemo client:visible />
-      </Fragment>
-    </ComponentPreview>
+    <ComponentPreview tree={componentPreviewButtonTree(t)} js={demoJs} label="Button" />
 
     <h3>{t("componentPreview.responsibilitiesTitle")}</h3>
     <ul>
@@ -418,11 +371,11 @@ const sourceFiles = [
     <p set:html={t("componentPreview.screenBody1")} />
     <p set:html={t("componentPreview.screenBody2")} />
     <p set:html={t("componentPreview.screenBody3")} />
-    <ComponentPreview label="Grid multicol" note={t("componentPreview.screenNote")} html={screensHtml} react={screensReact}>
-      <Fragment slot="react">
-        <ScreensGridDemo client:visible />
-      </Fragment>
-    </ComponentPreview>
+    <ComponentPreview
+      tree={componentPreviewScreensTree(t)}
+      label="Grid multicol"
+      note={t("componentPreview.screenNote")}
+    />
     <p set:html={t("componentPreview.screenBody4")} />
     <p set:html={t("componentPreview.screenBody5")} />
     <p set:html={t("componentPreview.screenBody6")} />

@@ -29,20 +29,28 @@
   justify-self: start;
 }
 
-/* A media Tile lays out media then body in its grid; the body owns its inset, so drop the root gap
- * and let the media sit flush against the top edge. The body takes the leftover height (`1fr`) so
- * that three cards with descriptions of different lengths still line their footers up. */
+/* A media Tile lays out media, copy and footer in its own grid; each text row owns its inset, so
+ * drop the root gap and let the media sit flush against the top edge. The FOOTER takes the leftover
+ * height (`1fr`) so three cards with descriptions of different lengths still line their calls to
+ * action up. */
 .sk-tile:has(.sk-image-frame) {
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto 1fr;
   gap: 0;
 }
 
+/* Inside a Tile the copy block is `TileContent` itself (`sk-tile__content`), not a wrapper around
+ * it: the contract says TileContent sits directly under its tile, and the hand-written version of
+ * this example only got away with a padded `<span class="sk-card-body">` in between because it
+ * spelled `sk-tile__title` by hand instead of asking for the signature. Padding-block-end goes to
+ * the footer below, so the two rows share one inset rather than stacking two. */
 .sk-tile > .sk-card-body {
-  grid-template-rows: auto auto 1fr;
+  padding: var(--space-inset-lg);
+  padding-block-end: 0;
 }
 
-.sk-tile > .sk-card-body > .sk-inline {
+.sk-tile > .sk-card-cta {
   align-self: end;
+  padding: var(--space-inset-lg);
 }
 
 /* Resource / shortcut card: an icon well and its chevron on one row ABOVE the text, not beside it.
@@ -56,12 +64,8 @@
   align-content: start;
 }
 
-.sk-card-link-head {
-  display: flex;
-  gap: var(--space-inline-sm);
-  align-items: center;
-  justify-content: space-between;
-}
+/* The row's LAYOUT is the contract's now: it is an `Inline` at `justify="between"`, so this class
+ * is left holding only the job no option covers, the `:has()` hook above. */
 
 .sk-card-link-icon {
   display: inline-grid;

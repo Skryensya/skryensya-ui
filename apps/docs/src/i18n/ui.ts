@@ -64,6 +64,7 @@ import { drawerMessages } from "./messages/components/drawer";
 import { editorMessages } from "./messages/components/editor";
 import { emptyStateMessages } from "./messages/components/empty-state";
 import { fadeEdgeMessages } from "./messages/components/fade-edge";
+import { qrCodeMessages } from "./messages/components/qr-code";
 import { feedMessages } from "./messages/components/feed";
 import { fileUploadMessages } from "./messages/components/file-upload";
 import { folderMessages } from "./messages/components/folder";
@@ -179,6 +180,7 @@ export const ui = {
     ...editorMessages.es,
     ...emptyStateMessages.es,
     ...fadeEdgeMessages.es,
+    ...qrCodeMessages.es,
     ...feedMessages.es,
     ...fileUploadMessages.es,
     ...folderMessages.es,
@@ -291,6 +293,7 @@ export const ui = {
     ...editorMessages.en,
     ...emptyStateMessages.en,
     ...fadeEdgeMessages.en,
+    ...qrCodeMessages.en,
     ...feedMessages.en,
     ...fileUploadMessages.en,
     ...folderMessages.en,

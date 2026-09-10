@@ -64,6 +64,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-08",
+            "en": {
+              "body": "<code>size</code> takes a fourth value, <code>xl</code>, meant for the portrait on a profile card rather than for a row of UI. It is the one size that falls off the control ramp: the ramp stops at <code>lg</code> on purpose and there is no control past 48px to justify minting <code>--size-control-xl</code>, so the disc measures itself in <code>components/avatar.css</code> as <code>calc(var(--size-control-lg) * 4 / 3)</code>, which still answers density the way the other three do. The initials step up to <code>--font-size-heading-h3</code> so they keep the proportion <code>lg</code> already has.",
+              "title": "Avatar gains an xl size, for portraits"
+            },
+            "es": {
+              "body": "<code>size</code> acepta un cuarto valor, <code>xl</code>, pensado para el retrato de una ficha de perfil y no para una fila de interfaz. Es el único tamaño que cae fuera de la rampa de controles: la rampa termina en <code>lg</code> a propósito y no hay ningún control de más de 48px que justifique inventar <code>--size-control-xl</code>, así que el disco se mide en <code>components/avatar.css</code> como <code>calc(var(--size-control-lg) * 4 / 3)</code>, y sigue respondiendo a la densidad igual que los otros tres. Las iniciales suben a <code>--font-size-heading-h3</code> para conservar la proporción que <code>lg</code> ya tiene.",
+              "title": "Avatar suma el tamaño xl, para retratos"
+            },
+            "kind": "feature",
+            "target": "size"
+          },
+          {
             "date": "2026-08-17",
             "en": {
               "body": "<code>AvatarGroup</code> now authors <code>role=\"group\"</code> and gains a <code>label</code> option (→ <code>aria-label</code>), the same pair <code>SplitButton</code> already uses to name a container of related controls. Before, the name only arrived if whoever composed the piece passed <code>aria-label</code> outside the contract, and without <code>role=\"group\"</code> a generic named <code>&lt;div&gt;</code> is not guaranteed to announce itself as one unit to assistive technology.",
@@ -1140,6 +1153,30 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-09",
+            "en": {
+              "body": "Paint order in a <code>FolderStack</code> is source order, deliberately: the folder you are touching still sits behind the ones in front of it. The one exception is KEYBOARD focus, which raises it to meet WCAG 2.2 SC 2.4.11, and that rule was written with <code>:focus-within</code>: since <code>Folder.link</code> is an anchor, holding the mouse down focused it and the folder climbed to the front until the button came back up. The rule now uses <code>:focus-visible</code>, which is that distinction as the browser draws it.",
+              "title": "A folder held under the mouse no longer jumps in front of the ones over it"
+            },
+            "es": {
+              "body": "En un <code>FolderStack</code> el orden de pintado es el del documento, a propósito: la carpeta que estás tocando sigue estando detrás de las que tiene delante. La única excepción es el foco de TECLADO, que la levanta para cumplir WCAG 2.2 SC 2.4.11, y estaba escrita con <code>:focus-within</code>: como <code>Folder.link</code> es un enlace, mantener el botón apretado la enfocaba y la carpeta saltaba al frente hasta soltar. Ahora la regla usa <code>:focus-visible</code>, que es esa distinción dibujada por el navegador.",
+              "title": "Una carpeta apretada con el mouse ya no se adelanta a las de adelante"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-09",
+            "en": {
+              "body": "The ground a folder is invisible against is MEASURED (no rule can ask what colour is behind an element), so it was a literal that went stale the moment light and dark swapped: a theme change moves no box, and the <code>ResizeObserver</code> never came back for it. Both bindings now listen for the scheme and re-measure. The revealed fill also steps DOWN in light mode: the elevation ramp lifts by getting lighter, and in light every rung is the same white, so the reveal was a white sheet on white paper.",
+              "title": "A folder repaints on a theme change, and its reveal is visible in light mode"
+            },
+            "es": {
+              "body": "El fondo contra el que una carpeta es invisible se MIDE (ninguna regla puede preguntar qué color hay detrás de un elemento), así que era un literal que quedaba viejo al pasar de claro a oscuro: cambiar de tema no mueve ninguna caja, y el <code>ResizeObserver</code> nunca volvía a pasar. Ahora los dos bindings escuchan el esquema y vuelven a medir. Además el relleno revelado en modo claro baja un paso: la rampa de elevación aclara, y en claro todos los escalones son el mismo blanco, así que el revelado era una hoja blanca sobre papel blanco.",
+              "title": "La carpeta se repinta al cambiar de tema, y el revelado se ve en modo claro"
+            },
+            "kind": "bugfix"
+          },
+          {
             "date": "2026-09-04",
             "en": {
               "body": "It joins the catalogue with <code>Folder</code>, <code>Folder.link</code> and <code>FolderStack</code>, <code>FolderLink</code> and <code>FolderPreview</code>: a surface whose tab flows out of its body as one silhouette, drawn as a single <code>&lt;path&gt;</code> that the binding measures and writes. The geometry is a pure function in core (<code>folderPath</code>), so both bindings draw one shape rather than two that resemble each other; the only measurement is where the tab ends, which is where its label ends. A folder is NEVER visible at rest, and there is no option to make it so: it is painted the colour of whatever is behind it and reveals on <code>:hover</code> and <code>:focus-within</code>, never hover alone, and on coarse pointers it is simply painted. The stack is the default use. Touch has neither hover nor focus-on-tap, so <code>active</code> is the third way into the reveal: the composition sets it, usually on whichever folder is nearest the middle of the screen. An optional <code>previews</code> slot fans out a handful of <code>Folder.preview</code>s on those same states, each holding whatever picture you put in it: decorative by construction, since the layer is <code>aria-hidden</code> and takes no pointer. Every folder is the same colour and none carries a border: what separates one from its ground is an upward shadow, and a slight forward lean sets it on the plane. Options: <code>active</code>, <code>href</code>, <code>overlap</code>. Its stylesheet is <code>components/folder.css</code>, which publishes the silhouette's five numbers as hooks.",
@@ -1596,6 +1633,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-09",
+            "en": {
+              "body": "<code>dividers</code> was declared on the contract, read by the stylesheet and already taken as a prop by the React binding, but no signature exposed it and it had no <code>falseValue</code>: a tree could ask for <code>dividers: false</code> and the emitter wrote nothing, so the rules stayed on. <code>List</code> and <code>OrderedList</code> declare it now, and <code>false</code> emits <code>data-dividers=\"none\"</code>, which is what the stylesheet always expected. Nothing new is published; the option stops being hidden.",
+              "title": "dividers stops being unreachable from a usage tree"
+            },
+            "es": {
+              "body": "<code>dividers</code> estaba declarada en el contrato, la hoja la leía y el binding React ya la tomaba como prop, pero ninguna signature la exponía y no tenía <code>falseValue</code>: un árbol podía pedir <code>dividers: false</code> y el emisor no escribía nada, así que las líneas seguían ahí. Ahora <code>List</code> y <code>OrderedList</code> la declaran y <code>false</code> emite <code>data-dividers=\"none\"</code>, que es lo que la hoja siempre esperó. Nada nuevo se publica: la opción deja de estar escondida.",
+              "title": "dividers deja de ser inalcanzable desde un usage tree"
+            },
+            "kind": "feature"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -2300,6 +2349,62 @@
         "version": "0.1.0-dev"
       }
     ],
+    "qr-code": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-09",
+            "en": {
+              "body": "It joins the catalogue with <code>QR</code>: a string made scannable. The symbol is drawn as ONE <code>path</code> rather than an element per module, which at version 40 is 16,020 elements and 669KB against one and 113KB. Options: <code>value</code>, <code>label</code>, <code>level</code>, <code>moduleShape</code>, <code>quietZone</code>, <code>logoRatio</code> and <code>qrSize</code>; the <code>logo</code> slot takes any published node. Its stylesheet is <code>components/qr-code.css</code>.",
+              "title": "QR is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>QR</code>: un texto hecho escaneable. El símbolo se dibuja como UN solo <code>path</code> y no como un elemento por módulo, que a versión 40 son 16.020 elementos y 669KB contra uno y 113KB. Opciones: <code>value</code>, <code>label</code>, <code>level</code>, <code>moduleShape</code>, <code>quietZone</code>, <code>logoRatio</code> y <code>qrSize</code>; el slot <code>logo</code> acepta cualquier nodo publicado. La hoja es <code>components/qr-code.css</code>.",
+              "title": "QR se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-09",
+            "en": {
+              "body": "<code>tone</code> paints the modules from Chart's palette and <code>polarity</code> decides which way the contrast runs. <code>light</code> by default  -  dark modules on light paper, pinned  -  because the colours used to follow the page's scheme, so in dark mode the symbol inverted itself and stopped scanning. The <code>level</code> default moves from <code>M</code> to <code>Q</code>: this contract ships a logo, a tint and shapes, which are what spends the error budget. <code>logoRatio</code> now serializes as a custom property, without which the logo box measured zero.",
+              "title": "QR gains tone and polarity, and its correction default moves to Q"
+            },
+            "es": {
+              "body": "<code>tone</code> pinta los módulos con la paleta de Chart y <code>polarity</code> decide de qué lado va el contraste. <code>light</code> por defecto  -  módulos oscuros sobre papel claro, fijo  -  porque los colores seguían el esquema de la página y en modo oscuro el símbolo se invertía solo y dejaba de escanear. El default de <code>level</code> pasa de <code>M</code> a <code>Q</code>: este contrato trae logo, tinte y formas, que son lo que gasta el presupuesto de corrección. <code>logoRatio</code> ahora se serializa como custom property, sin la cual la caja del logo medía cero.",
+              "title": "QR suma tone y polarity, y su default de corrección pasa a Q"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-09",
+            "en": {
+              "body": "A third value for <code>polarity</code>: <code>auto</code> inherits <code>color-scheme</code> instead of pinning it, so the symbol flips with light and dark mode, and it is the default. The colours always came from the same tokens and the SVG was always inline with <code>fill=\"currentColor\"</code>; each value only chooses which branch of <code>light-dark()</code> wins. It is a trade: the standard only guarantees dark-on-light, so anything printed or projected should ask for <code>light</code>.",
+              "title": "polarity gains auto, and auto becomes the default"
+            },
+            "es": {
+              "body": "Tercer valor para <code>polarity</code>: <code>auto</code> hereda el <code>color-scheme</code> en vez de fijarlo, así que el símbolo se da vuelta con el modo claro/oscuro, y es el default. Los colores siempre salieron de los mismos tokens y el SVG siempre fue inline con <code>fill=\"currentColor\"</code>; cada valor sólo elige qué rama de <code>light-dark()</code> gana. Es una decisión con costo: la norma sólo garantiza oscuro-sobre-claro, así que para imprimir o proyectar hay que pedir <code>light</code>.",
+              "title": "polarity suma auto y pasa a ser el default"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-09",
+            "en": {
+              "body": "The signature is <code>QRCode</code> and the contract id is <code>qr-code</code>. That moves the imports (<code>@skryensya/core/qr-code</code>, <code>@skryensya/react/qr-code</code>), the stylesheet (<code>components/qr-code.css</code>), the classes (<code>.sk-qr-code</code>), the size tokens (<code>--size-qr-code-*</code>) and the docs route (<code>/components/qr-code</code>). The short name read as ambiguous on its own: QR is the format, not the component. Search now reaches the page through <em>quick response code</em>, <em>código de respuesta rápida</em> and the other aliases.",
+              "title": "QR is renamed QRCode, and the contract publishes as qr-code"
+            },
+            "es": {
+              "body": "La signature es <code>QRCode</code> y el id del contrato es <code>qr-code</code>. Con eso se mueven los imports (<code>@skryensya/core/qr-code</code>, <code>@skryensya/react/qr-code</code>), la hoja (<code>components/qr-code.css</code>), las clases (<code>.sk-qr-code</code>), los tokens de tamaño (<code>--size-qr-code-*</code>) y la ruta de la documentación (<code>/components/qr-code</code>). El nombre corto era ambiguo escrito solo: QR es el formato, no el componente. El buscador ahora encuentra la página por <em>quick response code</em>, <em>código de respuesta rápida</em> y demás alias.",
+              "title": "QR pasa a llamarse QRCode, y el contrato se publica como qr-code"
+            },
+            "kind": "breaking"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "radio-group": [
       {
         "date": null,
@@ -2426,6 +2531,31 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-09",
+            "en": {
+              "body": "The background of the <code>aria-current=\"page\"</code> row is no longer the pattern's <code>--color-bg-accent-subtle</code>, which in light is one step off white on a surface that is already white: down a rail of two hundred rows it read as a rendering artifact rather than as \"you are here\". It is now mixed against the sidebar's own background, so a repainted rail keeps the relationship. Dark mode is unchanged: there the same token is already a step above its ground.",
+              "title": "The current page is marked more strongly in light mode"
+            },
+            "es": {
+              "body": "El fondo de la fila con <code>aria-current=\"page\"</code> deja de ser el <code>--color-bg-accent-subtle</code> del patrón, que en claro está a un paso del blanco sobre una superficie que ya es blanca: en un riel de doscientas filas eso se leía como un artefacto de render y no como \"estás acá\". Ahora se mezcla contra el fondo propio de la barra, así que una barra repintada mantiene la relación. Modo oscuro sin cambios: ahí el mismo token ya es un escalón por encima de su fondo.",
+              "title": "La página actual se marca más fuerte en modo claro"
+            },
+            "kind": "rework"
+          },
+          {
+            "date": "2026-09-08",
+            "en": {
+              "body": "The width <code>clamp()</code> lived on <code>.sk-sidebar:has(.sk-sidebar__resize-handle)</code>, and <code>:has()</code> cannot match a handle the parser has not reached yet: the handle is the panel's last child, so a page that restored a stored width before first paint laid the bar out twice, once at its expanded width and again at the remembered one, and since <code>inline-size</code> is in the transition list, that jump ANIMATED and dragged the content column along with it. The clamp now lives in the base rule and always reads <code>--sk-sidebar-resize-inline-size</code>, a property only a drag or a restore writes: the width no longer depends on when the handle parses. Side effect: the bounds now hold for a bar that was never dragged, so a <code>--sk-sidebar-expanded-inline-size</code> outside <code>--sk-sidebar-min-inline-size</code> and <code>--sk-sidebar-max-inline-size</code> is clamped instead of winning.",
+              "title": "A remembered width no longer widens the bar after first paint"
+            },
+            "es": {
+              "body": "El <code>clamp()</code> del ancho vivía en <code>.sk-sidebar:has(.sk-sidebar__resize-handle)</code>, y <code>:has()</code> no puede ver un handle que el parser todavía no leyó: el handle es el último hijo del panel, así que una página que restauraba el ancho guardado antes del primer pintado maquetaba la barra dos veces, primero en su ancho expandido y después en el recordado, y como <code>inline-size</code> tiene transición, el salto se ANIMABA y arrastraba la columna del contenido con él. Ahora el clamp está en la regla base y lee siempre <code>--sk-sidebar-resize-inline-size</code>, una propiedad que sólo escribe un arrastre o una restauración: el ancho ya no depende de cuándo se parsea el handle. Efecto lateral: los extremos ahora también acotan a una barra que nunca se arrastró, así que un <code>--sk-sidebar-expanded-inline-size</code> fuera de <code>--sk-sidebar-min-inline-size</code> y <code>--sk-sidebar-max-inline-size</code> se recorta en vez de ganar.",
+              "title": "Un ancho recordado ya no ensancha la barra después del primer pintado"
+            },
+            "kind": "bugfix",
+            "target": "SidebarResizeHandle"
+          },
           {
             "date": "2026-08-19",
             "en": {
@@ -3531,7 +3661,8 @@
           "values": [
             "sm",
             "md",
-            "lg"
+            "lg",
+            "xl"
           ]
         },
         "src": {
@@ -6154,6 +6285,7 @@
                   {
                     "element": "div",
                     "part": "viewport",
+                    "preserveWhitespace": true,
                     "slot": "children"
                   }
                 ],
@@ -6347,6 +6479,7 @@
                     },
                     "element": "div",
                     "part": "viewport",
+                    "preserveWhitespace": true,
                     "slot": "condensed"
                   },
                   {
@@ -6355,6 +6488,7 @@
                     },
                     "element": "div",
                     "part": "viewport",
+                    "preserveWhitespace": true,
                     "slot": "full"
                   }
                 ],
@@ -11816,6 +11950,7 @@
         "dividers": {
           "attr": "data-dividers",
           "default": true,
+          "falseValue": "none",
           "type": "boolean"
         },
         "href": {
@@ -11888,7 +12023,8 @@
             "inbox"
           ],
           "options": [
-            "density"
+            "density",
+            "dividers"
           ],
           "react": {
             "from": "@skryensya/react/list",
@@ -12119,7 +12255,8 @@
             "ranked-records"
           ],
           "options": [
-            "density"
+            "density",
+            "dividers"
           ],
           "react": {
             "from": "@skryensya/react/list",
@@ -15611,6 +15748,232 @@
                 "property": "--sk-progress-fill"
               }
             ]
+          }
+        }
+      }
+    },
+    "qr-code": {
+      "css": "@skryensya/core/components/qr-code.css",
+      "id": "qr-code",
+      "options": {
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "level": {
+          "attr": "data-level",
+          "computedInput": true,
+          "default": "Q",
+          "type": "enum",
+          "values": [
+            "L",
+            "M",
+            "Q",
+            "H"
+          ]
+        },
+        "logoRatio": {
+          "default": 0,
+          "styleProperty": "--sk-qr-code-logo-ratio",
+          "type": "number"
+        },
+        "mask": {
+          "attr": "data-mask",
+          "computedInput": true,
+          "default": "auto",
+          "type": "enum",
+          "values": [
+            "auto",
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ]
+        },
+        "moduleShape": {
+          "attr": "data-module-shape",
+          "computedInput": true,
+          "default": "square",
+          "prop": "shape",
+          "type": "enum",
+          "values": [
+            "square",
+            "dot",
+            "rounded"
+          ]
+        },
+        "polarity": {
+          "attr": "data-polarity",
+          "default": "auto",
+          "type": "enum",
+          "values": [
+            "auto",
+            "light",
+            "dark"
+          ]
+        },
+        "qrSize": {
+          "attr": "data-size",
+          "default": "md",
+          "prop": "size",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg",
+            "xl"
+          ]
+        },
+        "quietZone": {
+          "attr": "data-quiet-zone",
+          "computedInput": true,
+          "default": 4,
+          "type": "number"
+        },
+        "tone": {
+          "attr": "data-tone",
+          "default": "neutral",
+          "type": "enum",
+          "values": [
+            "neutral",
+            "accent",
+            "success",
+            "warning",
+            "danger",
+            "info"
+          ]
+        },
+        "value": {
+          "attr": "data-value",
+          "computedInput": true,
+          "type": "string"
+        }
+      },
+      "parts": {
+        "frame": "sk-qr-code__frame",
+        "logo": "sk-qr-code__logo",
+        "modules": "sk-qr-code__modules",
+        "root": "sk-qr-code"
+      },
+      "semantics": {
+        "QRCode": {
+          "alternatives": [
+            "Link",
+            "CodePreview"
+          ],
+          "avoidWhen": [
+            "el lector ya está en el mismo dispositivo; ahí un enlace común es más rápido y accesible que apuntar una cámara",
+            "el contenido es largo o cambia seguido; el símbolo crece hasta volverse ilegible y queda desactualizado impreso",
+            "es el único camino a una acción importante; un QR sin enlace escrito al lado deja afuera a quien no puede escanear",
+            "se quiere decorar con un logo enorme; a partir de cierto tamaño el símbolo deja de escanear y eso no es un problema de estilo"
+          ],
+          "useWhen": [
+            "hay que llevar al lector desde una superficie física  -  una mesa, un afiche, una pantalla ajena  -  hasta una URL, sin que la tipee",
+            "el destino es corto y estable: un enlace, un identificador, una credencial de wifi",
+            "el código se imprime o se proyecta, y por eso necesita contraste real y una zona de silencio de verdad"
+          ]
+        }
+      },
+      "signatures": {
+        "QRCode": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "qr",
+            "qr-code",
+            "quick-response-code",
+            "2d-barcode",
+            "scannable-link",
+            "scan-to-open",
+            "link-to-a-phone"
+          ],
+          "options": [
+            "value",
+            "level",
+            "mask",
+            "moduleShape",
+            "quietZone",
+            "logoRatio",
+            "tone",
+            "polarity",
+            "qrSize",
+            "label"
+          ],
+          "react": {
+            "from": "@skryensya/react/qr-code",
+            "name": "QRCode"
+          },
+          "requires": [
+            "value",
+            "label"
+          ],
+          "slots": {
+            "logo": {
+              "accepts": "node"
+            }
+          },
+          "template": {
+            "attrs": {
+              "role": "img"
+            },
+            "children": [
+              {
+                "attrComputed": {
+                  "attr": "viewBox",
+                  "compute": "qr-viewbox",
+                  "from": [
+                    "value",
+                    "level",
+                    "mask",
+                    "moduleShape",
+                    "quietZone",
+                    "logoRatio"
+                  ]
+                },
+                "attrs": {
+                  "aria-hidden": "true",
+                  "focusable": "false",
+                  "xmlns": "http://www.w3.org/2000/svg"
+                },
+                "children": [
+                  {
+                    "attrComputed": {
+                      "attr": "d",
+                      "compute": "qr-path",
+                      "from": [
+                        "value",
+                        "level",
+                        "mask",
+                        "moduleShape",
+                        "quietZone",
+                        "logoRatio"
+                      ]
+                    },
+                    "attrs": {
+                      "fill": "currentColor"
+                    },
+                    "element": "path",
+                    "part": "modules"
+                  }
+                ],
+                "element": "svg",
+                "part": "frame"
+              },
+              {
+                "element": "div",
+                "part": "logo",
+                "slot": "logo",
+                "whenGiven": "logo"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
           }
         }
       }
@@ -21312,5 +21675,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "f1a5cc15e8c91fa4"
+  "sourceHash": "5da6bbda4a8d33c4"
 }

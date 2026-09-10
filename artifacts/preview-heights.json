@@ -1,0 +1,1034 @@
+{
+  "generatedAt": "2026-09-09T21:37:41.655Z",
+  "viewport": {
+    "width": 1920,
+    "height": 1000
+  },
+  "widths": [
+    1920
+  ],
+  "pages": {
+    "/anchoring": {
+      "html": 172
+    },
+    "/components/accordion": {
+      "accordion-multiple": 325,
+      "accordion-of-one-item": 141,
+      "accordion-single": 325,
+      "details-with-a-shared-name": 406
+    },
+    "/components/avatar": {
+      "colors": 112,
+      "in-a-composition": 146,
+      "sizes": 112,
+      "stacked-avatars": 88,
+      "with-an-image": 96
+    },
+    "/components/back-to-top": {
+      "backtotop-always-shown": 144,
+      "backtotop-on-scroll": 288
+    },
+    "/components/badge": {
+      "badge": 76,
+      "badge-dot": 56,
+      "badge-dot-in-the-corner": 92,
+      "badge-sm": 76,
+      "pulsing-badge-dot": 56
+    },
+    "/components/box": {
+      "box": 275
+    },
+    "/components/breadcrumb": {
+      "breadcrumb-that-collapses-to-fit": 72,
+      "breadcrumb-with-an-icon-separator": 72,
+      "breadcrumb-with-long-labels": 72,
+      "multi-level-breadcrumb": 72,
+      "two-level-breadcrumb": 72
+    },
+    "/components/button": {
+      "button-as-a-link": 96,
+      "button-with-icon": 92,
+      "button-xs-sm-md-lg": 96,
+      "ghost-danger-and-solid-danger": 92,
+      "icon-only": 92,
+      "icon-only-sm": 80,
+      "off-and-on-per-emphasis": 168,
+      "the-full-matrix-4-emphases-x-3-tones": 306,
+      "the-same-matrix-sm-and-icon-only": 258,
+      "tilebutton": 144
+    },
+    "/components/calendar": {
+      "calendar": 367,
+      "calendar-min-max": 367,
+      "calendar-range": 367
+    },
+    "/components/callout": {
+      "info-callout": 143,
+      "neutral-callout": 143,
+      "success-callout": 174,
+      "warning-callout": 179
+    },
+    "/components/card": {
+      "account-preferences": 184,
+      "business-summary": 186,
+      "case-studies": 342,
+      "featured-stories": 467,
+      "guides-with-cover": 422,
+      "latest-posts": 267,
+      "project-actions": 236,
+      "recent-articles": 442,
+      "shortcuts": 236,
+      "subscription-plans": 345,
+      "team-notes": 179,
+      "visits-over-the-last-eight-weeks": 400
+    },
+    "/components/carousel": {
+      "card-carousel": 420,
+      "focus-inside-a-card": 470,
+      "multi-up-autoplay": 438,
+      "no-controls": 215,
+      "no-js-native-css": 284
+    },
+    "/components/changelog": {
+      "changelog": 536
+    },
+    "/components/charts": {
+      "budget-by-team-five-categories": 416,
+      "bundle-weight-per-week": 352,
+      "contributions-over-the-last-five-months": 575,
+      "documented-components-per-quarter": 352,
+      "four-chart-cards-different-options": 572,
+      "interaction-latency-per-version": 352,
+      "latency-by-endpoint-with-detail": 384,
+      "quarterly-revenue-this-year-against-last": 416,
+      "revenue-by-quarter": 564,
+      "revenue-users-and-errors-per-week": 483,
+      "site-traffic-by-period": 416,
+      "visits-over-the-last-eight-weeks": 416,
+      "whole-home-power-usage": 511
+    },
+    "/components/checkbox": {
+      "checkbox": 72,
+      "checkboxgroup": 168,
+      "tilecheckbox": 168
+    },
+    "/components/color-picker": {
+      "accent": 384,
+      "background-color": 117,
+      "brand-color": 384,
+      "color-with-presets": 384,
+      "colorpicker-disabled": 121
+    },
+    "/components/combobox": {
+      "combobox": 288
+    },
+    "/components/command-palette": {
+      "commandpalette": 384
+    },
+    "/components/comment-thread": {
+      "comment-with-actions": 184,
+      "comments-loading": 314,
+      "deep-thread": 888,
+      "deep-thread-with-no-folding": 888,
+      "one-comment-on-its-own": 144,
+      "sample-comments": 660,
+      "thread-with-progressive-loading": 382
+    },
+    "/components/component-preview": {
+      "button": 92,
+      "componentpreview": 291,
+      "componentpreview-2": 395,
+      "componentpreview-bare": 333,
+      "grid-multicol": 272
+    },
+    "/components/data-grid": {
+      "quick-actions": 131,
+      "scores-by-round": 172
+    },
+    "/components/date-picker": {
+      "custom-datepicker": 384,
+      "datepicker-disabled": 123,
+      "native-datepicker": 123
+    },
+    "/components/dialog": {
+      "confirm": 384,
+      "dialog-vaul": 384
+    },
+    "/components/drawer": {
+      "html": 384,
+      "native-drawer": 384
+    },
+    "/components/editor": {
+      "editor": 276,
+      "editor-with-a-compact-bar": 217
+    },
+    "/components/empty-state": {
+      "empty-state": 291
+    },
+    "/components/feed": {
+      "feed": 348
+    },
+    "/components/file-upload": {
+      "fileupload": 227
+    },
+    "/components/folder": {
+      "folderstack": 724,
+      "folderstack-with-no-previews": 632,
+      "on-a-raised-surface": 492,
+      "on-a-sunken-surface": 492,
+      "the-second-folder-with-active-held-on": 724
+    },
+    "/components/footer": {
+      "credit-line": 102,
+      "site-footer": 239
+    },
+    "/components/form-field": {
+      "formfield": 173,
+      "formfield-select": 123
+    },
+    "/components/grid": {
+      "grid": 106,
+      "multi-column-layout": 357,
+      "responsive-grid": 254
+    },
+    "/components/heading": {
+      "compact-heading": 186,
+      "content-hierarchy": 488,
+      "display-scale": 444,
+      "flush-heading": 109,
+      "h1-h6-scale": 847,
+      "page-title": 226
+    },
+    "/components/hero": {
+      "centered-minimal": 464,
+      "pitch-with-actions": 464,
+      "split-with-media": 464,
+      "with-a-code-preview": 464,
+      "with-a-logo-wall": 464,
+      "with-a-pricing-toggle": 464,
+      "with-a-testimonial": 464,
+      "with-a-video-demo": 768,
+      "with-an-eyebrow-label": 464,
+      "with-app-store-badges": 464,
+      "with-audience-tabs": 464,
+      "with-email-capture": 464,
+      "with-social-proof": 464
+    },
+    "/components/icon": {
+      "icon": 72,
+      "icon-sm-md-lg": 72
+    },
+    "/components/image-frame": {
+      "aspect": 486,
+      "fit": 388,
+      "imageframe": 596,
+      "position": 388
+    },
+    "/components/inline": {
+      "action-bar": 228
+    },
+    "/components/input": {
+      "input": 147,
+      "textarea": 235
+    },
+    "/components/kbd": {
+      "kbd": 71,
+      "kbd-accent": 71
+    },
+    "/components/layout-grid": {
+      "layout-grid": 536,
+      "layout-grid-both-rails": 340,
+      "layout-grid-rail": 242,
+      "layout-grid-rail-start": 242
+    },
+    "/components/link": {
+      "link": 72,
+      "tilelink": 144
+    },
+    "/components/list": {
+      "1-just-the-list": 288,
+      "2-title-and-description": 337,
+      "3-leading-media": 337,
+      "4-trailing-meta": 337,
+      "5-the-row-acts": 337,
+      "6-everything-together": 247
+    },
+    "/components/loader": {
+      "blend-analysis": 178,
+      "loader-in-context": 193,
+      "loader-sizes": 191,
+      "loader-speeds": 191
+    },
+    "/components/marquee": {
+      "autoplay-marquee-no-control": 96,
+      "column-of-update-cards": 288,
+      "marquee-waiting-for-play": 144,
+      "strip-of-release-badges": 96,
+      "strip-of-team-avatars": 112,
+      "the-same-row-with-fade-none-cut-off-flat": 96,
+      "the-same-strip-with-the-control": 144
+    },
+    "/components/megamenu": {
+      "megamenu": 384
+    },
+    "/components/menu": {
+      "as-a-context-menu": 336,
+      "compact-density": 288,
+      "menu": 288,
+      "nested-submenus": 288,
+      "pointer-intent-safety-triangle": 480
+    },
+    "/components/menubar": {
+      "as-nav-list": 288,
+      "dropdowns-with-a-submenu": 480,
+      "menu-bar": 288
+    },
+    "/components/meter": {
+      "meter": 191
+    },
+    "/components/navbar": {
+      "navbar": 160
+    },
+    "/components/number-field": {
+      "numberfield": 123
+    },
+    "/components/pagination": {
+      "pagination": 80
+    },
+    "/components/placeholder": {
+      "layout-with-placeholder": 593,
+      "placeholder-content": 616,
+      "skeleton-and-real-text-same-role": 201,
+      "the-four-signatures": 240
+    },
+    "/components/popover": {
+      "popover": 384,
+      "popover-in-all-four-placements": 384,
+      "popover-with-a-header-and-footer": 384
+    },
+    "/components/popup": {
+      "popup": 288
+    },
+    "/components/primitives": {
+      "primitives": 369
+    },
+    "/components/process-list": {
+      "processlist": 461
+    },
+    "/components/progress": {
+      "progress": 104
+    },
+    "/components/radio-group": {
+      "radiogroup": 136,
+      "tileradiogroup": 144
+    },
+    "/components/segmented": {
+      "segmented": 80
+    },
+    "/components/select": {
+      "enhanced-select": 288,
+      "native-select": 288
+    },
+    "/components/sidebar": {
+      "resizable-sidebar": 352,
+      "sidebar": 352,
+      "sidebar-floating-trigger": 352
+    },
+    "/components/skip-link": {
+      "both-in-order": 48,
+      "skiplink": 48
+    },
+    "/components/slider": {
+      "price-range": 80,
+      "slider": 124
+    },
+    "/components/split-button": {
+      "splitbutton": 288,
+      "splitbutton-danger-variant": 288,
+      "splitbutton-ghost-variant": 288,
+      "splitbutton-menu-first": 288,
+      "splitbutton-small-size": 288,
+      "splitbutton-subtle-variant": 288,
+      "splitbutton-translucent-variant": 288
+    },
+    "/components/stack": {
+      "stack": 237
+    },
+    "/components/stat": {
+      "animated-stat-cards": 202,
+      "stat": 186
+    },
+    "/components/steps": {
+      "steps": 137,
+      "vertical-steps": 225
+    },
+    "/components/switch": {
+      "switch": 72,
+      "tileswitch": 144
+    },
+    "/components/table": {
+      "compact-table-0-6-system": 421,
+      "performance-by-region-resizable": 231,
+      "sticky-first-column": 231,
+      "sticky-header-row": 269,
+      "table": 228,
+      "table-in-box": 262,
+      "table-pagination": 392,
+      "wide-table-1-2-system": 421
+    },
+    "/components/tabs": {
+      "basic-tabs": 161,
+      "sm-and-md-tabs": 282,
+      "tabs-with-states": 193,
+      "vertical-tabs-with-manual-control": 253
+    },
+    "/components/tag": {
+      "link-tags": 76,
+      "removable-tags": 76,
+      "simple-tag": 76,
+      "tones": 76
+    },
+    "/components/text": {
+      "inline-text": 72,
+      "title-block": 209,
+      "update-text": 131,
+      "validation-message": 69
+    },
+    "/components/time-field": {
+      "every-15-minutes": 288,
+      "forcing-24-hour-form-without-depending-on-the-locale": 288,
+      "native-time-input": 121,
+      "timefield": 288
+    },
+    "/components/toast": {
+      "simple-toast": 288,
+      "toast-after-an-action": 288,
+      "toast-stack": 384,
+      "toast-with-an-action": 288,
+      "toast-with-state": 384
+    },
+    "/components/toc": {
+      "h2-and-h3": 192,
+      "text": 192,
+      "with-icons": 192
+    },
+    "/components/toolbar": {
+      "toolbar": 90,
+      "toolbar-with-a-nested-segmented": 90
+    },
+    "/components/tooltip": {
+      "tooltip": 288
+    },
+    "/components/tree-view": {
+      "disabled-node": 152,
+      "files-with-icons": 246,
+      "minimal-treeview": 120,
+      "multiple-selection-and-three-levels": 224,
+      "open-and-selected-from-the-start": 224
+    },
+    "/components/treegrid": {
+      "sample-file-explorer": 657,
+      "sample-inbox": 277
+    },
+    "/components/wrapper": {
+      "wrapper": 183
+    },
+    "/density": {
+      "local-scope-in-action": 352
+    },
+    "/elevation": {
+      "box-native-surface": 122,
+      "the-five-levels": 144
+    },
+    "/es/anclaje": {
+      "anclaje": 172
+    },
+    "/es/componentes/accordion": {
+      "accordion-de-un-item": 141,
+      "accordion-multiple": 325,
+      "accordion-single": 325,
+      "details-con-name-compartido": 406
+    },
+    "/es/componentes/avatar": {
+      "avatares-apilados": 88,
+      "colores": 112,
+      "con-imagen": 96,
+      "en-composicion": 146,
+      "tamanos": 112
+    },
+    "/es/componentes/back-to-top": {
+      "backtotop-al-scrollear": 288,
+      "backtotop-siempre-visible": 144
+    },
+    "/es/componentes/badge": {
+      "badge": 76,
+      "badge-dot": 56,
+      "badge-dot-en-la-esquina": 92,
+      "badge-dot-pulsante": 56,
+      "badge-sm": 76
+    },
+    "/es/componentes/box": {
+      "box": 275
+    },
+    "/es/componentes/breadcrumb": {
+      "breadcrumb-con-etiquetas-largas": 72,
+      "breadcrumb-con-separador-de-icono": 72,
+      "breadcrumb-de-dos-niveles": 72,
+      "breadcrumb-de-varios-niveles": 72,
+      "breadcrumb-que-colapsa-para-entrar": 72
+    },
+    "/es/componentes/button": {
+      "apagado-y-encendido-por-enfasis": 168,
+      "button-como-enlace": 96,
+      "button-con-icono": 92,
+      "button-xs-sm-md-lg": 96,
+      "ghost-danger-y-solid-danger": 92,
+      "la-matriz-completa-4-enfasis-x-3-tonos": 306,
+      "la-misma-matriz-sm-e-icon-only": 258,
+      "solo-icono": 92,
+      "solo-icono-sm": 80,
+      "tilebutton": 144
+    },
+    "/es/componentes/calendar": {
+      "calendar": 367,
+      "calendar-min-max": 367,
+      "calendar-rango": 367
+    },
+    "/es/componentes/callout": {
+      "callout-info": 143,
+      "callout-neutral": 143,
+      "callout-success": 174,
+      "callout-warning": 179
+    },
+    "/es/componentes/card": {
+      "accesos-directos": 236,
+      "acciones-del-proyecto": 236,
+      "articulos-recientes": 466,
+      "casos-de-estudio": 342,
+      "guias-con-portada": 422,
+      "historias-destacadas": 467,
+      "notas-del-equipo": 203,
+      "planes-de-suscripcion": 321,
+      "preferencias-de-la-cuenta": 184,
+      "resumen-del-negocio": 186,
+      "ultimas-publicaciones": 267,
+      "visitas-de-las-ultimas-ocho-semanas": 400
+    },
+    "/es/componentes/carousel": {
+      "carrusel-de-tarjetas": 420,
+      "foco-dentro-de-una-tarjeta": 470,
+      "multi-up-autoplay": 438,
+      "sin-controles": 215,
+      "sin-js-css-nativo": 284
+    },
+    "/es/componentes/changelog": {
+      "changelog": 582
+    },
+    "/es/componentes/charts": {
+      "aportes-de-los-ultimos-cinco-meses": 575,
+      "componentes-documentados-por-trimestre": 352,
+      "consumo-electrico-de-toda-la-casa": 511,
+      "cuatro-chart-cards-distintas-opciones": 572,
+      "ingresos-del-trimestre-este-ano-contra-el-anterior": 416,
+      "ingresos-por-trimestre": 564,
+      "ingresos-usuarios-y-errores-por-semana": 483,
+      "latencia-de-interaccion-por-version": 352,
+      "latencia-por-endpoint-con-detalle": 384,
+      "peso-del-bundle-por-semana": 352,
+      "presupuesto-por-equipo-cinco-categorias": 416,
+      "trafico-del-sitio-por-periodo": 416,
+      "visitas-de-las-ultimas-ocho-semanas": 416
+    },
+    "/es/componentes/checkbox": {
+      "checkbox": 72,
+      "checkboxgroup": 168,
+      "tilecheckbox": 168
+    },
+    "/es/componentes/color-picker": {
+      "acento": 384,
+      "color-con-presets": 384,
+      "color-de-fondo": 117,
+      "color-de-marca": 384,
+      "colorpicker-disabled": 121
+    },
+    "/es/componentes/combobox": {
+      "combobox": 288
+    },
+    "/es/componentes/command-palette": {
+      "commandpalette": 384
+    },
+    "/es/componentes/comment-thread": {
+      "comentario-con-acciones": 184,
+      "comentarios-cargando": 314,
+      "comentarios-de-ejemplo": 660,
+      "hilo-con-carga-progresiva": 382,
+      "hilo-profundo": 888,
+      "hilo-profundo-sin-plegado": 888,
+      "un-comentario-suelto": 144
+    },
+    "/es/componentes/component-preview": {
+      "button": 92,
+      "componentpreview": 291,
+      "componentpreview-2": 395,
+      "componentpreview-bare": 333,
+      "grid-multicol": 272
+    },
+    "/es/componentes/data-grid": {
+      "acciones-rapidas": 131,
+      "puntajes-por-ronda": 172
+    },
+    "/es/componentes/date-picker": {
+      "datepicker-custom": 384,
+      "datepicker-disabled": 123,
+      "datepicker-nativo": 123
+    },
+    "/es/componentes/dialog": {
+      "confirm": 384,
+      "dialog-vaul": 384
+    },
+    "/es/componentes/drawer": {
+      "drawer-nativo": 384,
+      "html": 384
+    },
+    "/es/componentes/editor": {
+      "editor": 276,
+      "editor-con-barra-compacta": 217
+    },
+    "/es/componentes/empty-state": {
+      "empty-state": 291
+    },
+    "/es/componentes/fade-edge": {
+      "fade-a-color": 242,
+      "fade-to-bottom": 258,
+      "fade-to-left": 110,
+      "fade-to-right": 110,
+      "fade-to-top": 258,
+      "intensidad-del-desvanecido": 351
+    },
+    "/es/componentes/feed": {
+      "feed": 348
+    },
+    "/es/componentes/file-upload": {
+      "fileupload": 227
+    },
+    "/es/componentes/folder": {
+      "folderstack": 724,
+      "folderstack-sin-previews": 632,
+      "la-segunda-carpeta-con-active-puesto": 724,
+      "sobre-una-superficie-elevada": 492,
+      "sobre-una-superficie-hundida": 492
+    },
+    "/es/componentes/footer": {
+      "credit-line": 102,
+      "site-footer": 239
+    },
+    "/es/componentes/form-field": {
+      "formfield": 173,
+      "formfield-select": 123
+    },
+    "/es/componentes/grid": {
+      "grid": 106,
+      "grid-responsivo": 254,
+      "multi-column-layout": 357
+    },
+    "/es/componentes/heading": {
+      "escala-display": 444,
+      "escala-h1-h6": 847,
+      "heading-compacto": 186,
+      "heading-flush": 109,
+      "jerarquia-de-contenido": 488,
+      "titulo-de-pagina": 226
+    },
+    "/es/componentes/hero": {
+      "centered-minimal": 464,
+      "pitch-with-actions": 464,
+      "split-with-media": 464,
+      "with-a-code-preview": 464,
+      "with-a-logo-wall": 464,
+      "with-a-pricing-toggle": 464,
+      "with-a-testimonial": 464,
+      "with-a-video-demo": 768,
+      "with-an-eyebrow-label": 464,
+      "with-app-store-badges": 464,
+      "with-audience-tabs": 464,
+      "with-email-capture": 464,
+      "with-social-proof": 464
+    },
+    "/es/componentes/icon": {
+      "icon": 72,
+      "icon-sm-md-lg": 72
+    },
+    "/es/componentes/image-frame": {
+      "aspect": 486,
+      "fit": 388,
+      "imageframe": 596,
+      "position": 388
+    },
+    "/es/componentes/inline": {
+      "barra-de-acciones": 228
+    },
+    "/es/componentes/input": {
+      "input": 147,
+      "textarea": 235
+    },
+    "/es/componentes/kbd": {
+      "kbd": 71,
+      "kbd-accent": 71
+    },
+    "/es/componentes/layout-grid": {
+      "layout-grid": 536,
+      "layout-grid-both-rails": 342,
+      "layout-grid-rail": 244,
+      "layout-grid-rail-start": 244
+    },
+    "/es/componentes/link": {
+      "link": 72,
+      "tilelink": 144
+    },
+    "/es/componentes/list": {
+      "1-solo-la-lista": 288,
+      "2-titulo-y-descripcion": 337,
+      "3-media-al-inicio": 337,
+      "4-meta-al-final": 337,
+      "5-la-fila-actua": 337,
+      "6-todo-junto": 247
+    },
+    "/es/componentes/loader": {
+      "analisis-de-mezcla": 178,
+      "loader-en-contexto": 200,
+      "tamanos-de-loader": 191,
+      "velocidades-de-loader": 191
+    },
+    "/es/componentes/marquee": {
+      "columna-de-tarjetas-de-novedades": 288,
+      "franja-de-avatares-del-equipo": 112,
+      "franja-de-badges-de-lanzamiento": 96,
+      "la-misma-fila-con-fade-none-cortada-en-seco": 96,
+      "la-misma-franja-con-control": 144,
+      "marquee-con-autoplay-sin-control": 96,
+      "marquee-que-espera-play": 144
+    },
+    "/es/componentes/megamenu": {
+      "megamenu": 384
+    },
+    "/es/componentes/menu": {
+      "como-context-menu": 336,
+      "densidad-compacta": 288,
+      "intencion-del-puntero-safety-triangle": 480,
+      "menu": 288,
+      "submenus-anidados": 288
+    },
+    "/es/componentes/menubar": {
+      "barra-de-menu": 288,
+      "como-nav-list": 288,
+      "desplegables-con-submenu": 480
+    },
+    "/es/componentes/meter": {
+      "meter": 191
+    },
+    "/es/componentes/navbar": {
+      "navbar": 160
+    },
+    "/es/componentes/number-field": {
+      "numberfield": 123
+    },
+    "/es/componentes/pagination": {
+      "pagination": 80
+    },
+    "/es/componentes/placeholder": {
+      "las-cuatro-firmas": 240,
+      "layout-con-placeholder": 593,
+      "placeholder-contenido": 616,
+      "skeleton-y-texto-real-mismo-rol": 201
+    },
+    "/es/componentes/popover": {
+      "popover": 384,
+      "popover-con-encabezado-y-pie": 384,
+      "popover-en-las-cuatro-colocaciones": 384
+    },
+    "/es/componentes/popup": {
+      "popup": 288
+    },
+    "/es/componentes/primitivas": {
+      "primitivas": 369
+    },
+    "/es/componentes/process-list": {
+      "processlist": 461
+    },
+    "/es/componentes/progress": {
+      "progress": 104
+    },
+    "/es/componentes/radio-group": {
+      "radiogroup": 136,
+      "tileradiogroup": 144
+    },
+    "/es/componentes/segmented": {
+      "segmented": 80
+    },
+    "/es/componentes/select": {
+      "select-enhanced": 288,
+      "select-nativo": 288
+    },
+    "/es/componentes/sidebar": {
+      "sidebar": 352,
+      "sidebar-redimensionable": 352,
+      "sidebar-trigger-flotante": 352
+    },
+    "/es/componentes/skip-link": {
+      "los-dos-en-orden": 48,
+      "skiplink": 48
+    },
+    "/es/componentes/slider": {
+      "rango-de-precio": 80,
+      "slider": 124
+    },
+    "/es/componentes/split-button": {
+      "splitbutton": 288,
+      "splitbutton-menu-primero": 288,
+      "splitbutton-tamano-small": 288,
+      "splitbutton-variante-danger": 288,
+      "splitbutton-variante-ghost": 288,
+      "splitbutton-variante-subtle": 288,
+      "splitbutton-variante-translucent": 288
+    },
+    "/es/componentes/stack": {
+      "stack": 237
+    },
+    "/es/componentes/stat": {
+      "stat": 186,
+      "stat-cards-animadas": 202
+    },
+    "/es/componentes/steps": {
+      "steps": 137,
+      "steps-vertical": 225
+    },
+    "/es/componentes/switch": {
+      "switch": 72,
+      "tileswitch": 144
+    },
+    "/es/componentes/table": {
+      "fila-de-encabezado-sticky": 269,
+      "primera-columna-sticky": 231,
+      "rendimiento-por-region-redimensionable": 231,
+      "table": 228,
+      "table-amplia-1-2-del-sistema": 421,
+      "table-compacta-0-6-del-sistema": 421,
+      "table-en-box": 262,
+      "table-pagination": 392
+    },
+    "/es/componentes/tabs": {
+      "tabs-basicos": 161,
+      "tabs-con-estados": 193,
+      "tabs-sm-y-md": 282,
+      "tabs-verticales-con-control-manual": 253
+    },
+    "/es/componentes/tag": {
+      "tag-simple": 76,
+      "tags-enlace": 76,
+      "tags-removibles": 76,
+      "tonos": 76
+    },
+    "/es/componentes/text": {
+      "bloque-de-titulo": 209,
+      "mensaje-de-validacion": 69,
+      "texto-de-actualizacion": 131,
+      "texto-inline": 72
+    },
+    "/es/componentes/time-field": {
+      "cada-15-minutos": 288,
+      "forzar-24-horas-sin-depender-del-locale": 288,
+      "input-de-hora-nativo": 121,
+      "timefield": 288
+    },
+    "/es/componentes/toast": {
+      "pila-de-toasts": 384,
+      "toast-con-accion": 288,
+      "toast-con-estado": 384,
+      "toast-despues-de-una-accion": 288,
+      "toast-simple": 288
+    },
+    "/es/componentes/toc": {
+      "con-iconos": 192,
+      "h2-y-h3": 192,
+      "texto": 192
+    },
+    "/es/componentes/toolbar": {
+      "toolbar": 90,
+      "toolbar-con-segmented-anidado": 90
+    },
+    "/es/componentes/tooltip": {
+      "tooltip": 288
+    },
+    "/es/componentes/tree-view": {
+      "abierto-y-seleccionado-de-entrada": 224,
+      "archivos-con-iconos": 246,
+      "nodo-deshabilitado": 152,
+      "seleccion-multiple-y-tres-niveles": 224,
+      "treeview-minimo": 120
+    },
+    "/es/componentes/treegrid": {
+      "bandeja-de-entrada-de-ejemplo": 277,
+      "explorador-de-archivos-de-ejemplo": 657
+    },
+    "/es/componentes/wrapper": {
+      "wrapper": 183
+    },
+    "/es/densidad": {
+      "scope-local-en-accion": 384
+    },
+    "/es/elevacion": {
+      "box-surface-nativo": 122,
+      "los-cinco-niveles": 144
+    },
+    "/es/gradientes": {
+      "card-con-media": 650,
+      "edges": 783
+    },
+    "/es/iconos": {
+      "vocabulario-estable": 479
+    },
+    "/es/instalacion": {
+      "button": 92
+    },
+    "/es/nav-list": {
+      "navegacion-de-documentacion": 212,
+      "navegacion-de-producto": 348,
+      "principal": 144
+    },
+    "/es/primer-componente": {
+      "button": 92
+    },
+    "/es/recetas": {
+      "app-shell-cargando": 272,
+      "app-shell-con-datos": 273,
+      "app-shell-error": 272,
+      "app-shell-vacio": 272,
+      "browse-cargando": 296,
+      "browse-con-datos": 168,
+      "browse-error": 271,
+      "browse-vacio": 411,
+      "chart-period-panel-cargando": 287,
+      "chart-period-panel-con-datos": 319,
+      "chart-period-panel-error": 310,
+      "chart-period-panel-vacio": 402,
+      "chart-table-report-cargando": 168,
+      "chart-table-report-con-datos": 333,
+      "chart-table-report-error": 151,
+      "chart-table-report-vacio": 267,
+      "checkout-cargando": 152,
+      "checkout-con-datos": 279,
+      "checkout-error": 323,
+      "checkout-vacio": 593,
+      "data-table-cargando": 94,
+      "data-table-con-datos": 298,
+      "data-table-error": 221,
+      "data-table-vacio": 253,
+      "destructive-confirm-cargando": 145,
+      "destructive-confirm-con-datos": 151,
+      "destructive-confirm-error": 308,
+      "destructive-confirm-vacio": 201,
+      "detail-cargando": 149,
+      "detail-con-datos": 294,
+      "detail-error": 276,
+      "detail-vacio": 238,
+      "form-cargando": 435,
+      "form-con-datos": 276,
+      "form-error": 572,
+      "form-vacio": 461,
+      "metric-panel-cargando": 327,
+      "metric-panel-con-datos": 436,
+      "metric-panel-error": 310,
+      "metric-panel-vacio": 426,
+      "settings-cargando": 149,
+      "settings-con-datos": 328,
+      "settings-error": 424,
+      "settings-vacio": 332,
+      "upload-cargando": 233,
+      "upload-con-datos": 151,
+      "upload-error": 384,
+      "upload-vacio": 217
+    },
+    "/es/scrollbar": {
+      "sk-scrollbar": 224,
+      "sk-scrollbar-reveal": 224
+    },
+    "/es/splitter": {
+      "sidebar-redimensionable": 352
+    },
+    "/es/state-layer": {
+      "proyeccion-y-acciones": 308,
+      "superficie-con-currentcolor": 116,
+      "superficie-neutra": 116
+    },
+    "/es/styling-hooks": {
+      "src-examples-styling-hook-override-css": 92
+    },
+    "/es/vaul": {
+      "compartir-archivo": 760,
+      "confirmar-eliminacion": 760,
+      "filtros-de-busqueda": 760
+    },
+    "/first-component": {
+      "button": 92
+    },
+    "/gradients": {
+      "card-media-gradient": 650,
+      "edges": 783
+    },
+    "/icons": {
+      "stable-vocabulary": 479
+    },
+    "/installation": {
+      "button": 92
+    },
+    "/nav-list": {
+      "documentation-navigation": 212,
+      "primary": 144,
+      "product-navigation": 348
+    },
+    "/scrollbar": {
+      "sk-scrollbar": 224,
+      "sk-scrollbar-reveal": 224
+    },
+    "/splitter": {
+      "resizable-sidebar": 352
+    },
+    "/state-layer": {
+      "neutral-surface": 116,
+      "projection-and-actions": 308,
+      "surface-with-currentcolor": 116
+    },
+    "/styling-hooks": {
+      "src-examples-styling-hook-override-css": 92
+    },
+    "/vaul": {
+      "confirm-deletion": 760,
+      "search-filters": 760,
+      "share-file": 760
+    },
+    "/components/qr-code": {
+      "correction-levels": 185,
+      "module-shapes": 225,
+      "qr-beside-its-written-link": 368,
+      "qr-in-a-popover": 288,
+      "qrcode": 152,
+      "sizes": 273,
+      "the-eight-masks": 185,
+      "ticket": 388,
+      "tints": 506,
+      "with-a-logo": 192
+    },
+    "/es/componentes/qr-code": {
+      "con-logo": 192,
+      "entrada": 388,
+      "formas-de-modulo": 225,
+      "las-ocho-mascaras": 185,
+      "niveles-de-correccion": 185,
+      "qr-con-su-enlace-escrito": 368,
+      "qr-en-un-popover": 288,
+      "qrcode": 152,
+      "tamanos": 273,
+      "tintes": 506
+    }
+  }
+}

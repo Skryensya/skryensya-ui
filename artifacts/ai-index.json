@@ -2710,6 +2710,41 @@
       ]
     },
     {
+      "css": "@skryensya/core/components/qr-code.css",
+      "id": "qr-code",
+      "signatures": [
+        {
+          "alternatives": [
+            "Link",
+            "CodePreview"
+          ],
+          "avoidWhen": [
+            "el lector ya está en el mismo dispositivo; ahí un enlace común es más rápido y accesible que apuntar una cámara",
+            "el contenido es largo o cambia seguido; el símbolo crece hasta volverse ilegible y queda desactualizado impreso",
+            "es el único camino a una acción importante; un QR sin enlace escrito al lado deja afuera a quien no puede escanear",
+            "se quiere decorar con un logo enorme; a partir de cierto tamaño el símbolo deja de escanear y eso no es un problema de estilo"
+          ],
+          "host": "div",
+          "id": "QRCode",
+          "intent": [
+            "qr",
+            "qr-code",
+            "quick-response-code",
+            "2d-barcode",
+            "scannable-link",
+            "scan-to-open",
+            "link-to-a-phone"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay que llevar al lector desde una superficie física  -  una mesa, un afiche, una pantalla ajena  -  hasta una URL, sin que la tipee",
+            "el destino es corto y estable: un enlace, un identificador, una credencial de wifi",
+            "el código se imprime o se proyecta, y por eso necesita contraste real y una zona de silencio de verdad"
+          ]
+        }
+      ]
+    },
+    {
       "css": "@skryensya/core/components/radio-group.css",
       "id": "radio-group",
       "signatures": [
@@ -4250,5 +4285,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "f1a5cc15e8c91fa4"
+  "sourceHash": "5da6bbda4a8d33c4"
 }

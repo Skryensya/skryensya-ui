@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-08T11:54:11.206Z",
+  "generatedAt": "2026-09-09T23:27:34.629Z",
   "results": {
     "packages/react/src/components/accordion.test.tsx": {
       "keeps exactly one item open in single mode": "passed",
@@ -23,6 +23,7 @@
       "derives initials from the name when there is no image": "passed",
       "uses the first two characters of a single-word username": "passed",
       "renders the image inside ImageFrame when src is given": "passed",
+      "serializes the xl size onto the same attribute both structures use": "passed",
       "caps visible avatars and collapses the rest into a +N counter": "passed",
       "exposes itself as a named group when a label is given": "passed",
       "is still a group without a label": "passed"
@@ -99,7 +100,9 @@
     },
     "packages/vanilla/src/components/tile-checkbox.svelte.test.ts": {
       "toggles checked state and root data-state on click, emitting sk:checkedchange": "passed",
-      "is form-associated and honours its default-checked": "passed"
+      "is form-associated and honours its default-checked": "passed",
+      "treats a valueless data-default-checked as checked, the way the emitter writes it": "passed",
+      "leaves an explicit data-default-checked=\"false\" unchecked": "passed"
     },
     "packages/vanilla/src/components/code-preview.test.ts": {
       "switches density, expands, collapses and mounts idempotently": "passed",
@@ -127,6 +130,8 @@
     "packages/vanilla/src/components/component-preview.test.ts": {
       "switches binding and nested Vanilla source panels idempotently": "passed",
       "shares Vanilla | React across every preview on the page": "passed",
+      "never hides the only binding a preview has": "passed",
+      "never hides a Vanilla-only preview when the preference is React": "passed",
       "hands the stage height to the reader on drag and back to the content on double click": "passed",
       "keeps a reader-set height across a stage reload": "passed",
       "reloads the srcdoc stage from the authored document": "passed",
@@ -324,6 +329,7 @@
       "collects both ends of a range": "passed",
       "escalates the view instead of offering two selects": "passed",
       "turns the month with the header's own triggers": "passed",
+      "paints every control in the calendar at one size tier, day cells included": "passed",
       "marks a disabled calendar as one": "passed",
       "names every accessible string in Spanish by default, not Zag's own English": "passed",
       "switches every accessible string to English when the locale says so": "passed",
@@ -849,6 +855,7 @@
       "renders the tab, the content and a decorative silhouette behind them": "passed",
       "draws the silhouette from the folder's own box and its tab's width": "passed",
       "marks the root ready only once a real path has been written": "passed",
+      "re-samples the ground when the colour scheme flips, which resizes nothing": "passed",
       "fans previews into an aria-hidden layer, and renders none without the slot": "passed",
       "publishes the silhouette as a clip for the state layer to follow": "passed",
       "writes active as the attribute the stylesheet reads, and omits it when off": "passed",
@@ -863,6 +870,8 @@
       "marks the root ready only once a real path has been written": "passed",
       "draws nothing, and stays unready, for a folder with no measurable box": "passed",
       "re-measures when either box changes, and observes both": "passed",
+      "re-samples the ground when the colour scheme flips, which resizes nothing": "passed",
+      "stops watching the scheme once the folder is destroyed": "passed",
       "publishes the silhouette as a clip for the state layer to follow": "passed",
       "refuses a root missing the nodes it has to draw into": "passed",
       "mounts once per root and leaves an already-enhanced folder alone": "passed"
@@ -881,8 +890,39 @@
       "passes triggerVariant/triggerSize/triggerIconOnly through to the trigger button": "passed",
       "leaves the trigger's variant/size/icon-only attributes off when unset": "passed"
     },
+    "packages/core/src/qr-code.test.ts": {
+      "round-trips every encoding mode the contract promises": "passed",
+      "round-trips at every error correction level": "passed",
+      "carries Japanese text through byte mode": "passed",
+      "still scans with a logo hole punched through the middle": "passed",
+      "clears a hole the stylesheet's cover can actually match": "passed",
+      "grows to fit rather than truncating, and refuses what cannot fit at all": "passed",
+      "reserves the quiet zone in the viewBox without moving the modules": "passed",
+      "draws the same symbol whatever shape the modules are": "passed",
+      "merges the dark modules into runs instead of drawing one subpath each": "passed",
+      "carries the identical payload under all eight": "passed",
+      "defaults to the scored choice rather than to a fixed pattern": "passed",
+      "leaves the payload alone: colour is paint, not data": "passed",
+      "is Q, one step above the conventional M": "passed",
+      "leaves room a logo can actually be punched out of": "passed",
+      "says nothing when there is no logo": "passed",
+      "warns that a logo needs real error correction behind it": "passed",
+      "warns when the logo is larger than the level can recover": "passed"
+    },
+    "packages/react/src/components/qr-code.test.tsx": {
+      "paints the same geometry the markup emitter would": "passed",
+      "names the code by what it does, not by its value": "passed",
+      "hides the symbol itself from assistive technology": "passed",
+      "re-encodes when the value changes": "passed",
+      "renders a logo only when one is given": "passed",
+      "clears the modules behind a logo rather than covering them": "passed",
+      "serializes size onto the attribute the stylesheet reads": "passed"
+    },
     "apps/docs/src/examples/card-sources.test.ts": {
       "keeps every example's data array at exactly three cards": "passed",
+      "covers the whole ladder: one tree per labelled example": "passed",
+      "keeps every example valid against the contracts it composes": "passed",
+      "emits both bindings of every example from the one authoring": "passed",
       "marks the select example's initial state on the label, not on the input": "passed"
     },
     "apps/docs/src/components/pages/CardPage.test.ts": {

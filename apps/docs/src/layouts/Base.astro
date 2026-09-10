@@ -216,16 +216,24 @@ const vanillaMount = vanillaMounts[canonical as keyof typeof vanillaMounts];
 /* Every translation of this page that actually EXISTS: advertising one that 404s is worse than
  * advertising none, so the list comes from the page directory rather than from the locale list. */
 /*
- * ABSOLUTE, not the path. `hreflang` is one of the few places a relative URL is not merely untidy:
- * the rule for these is a fully-qualified URL, transport included, and a relative one is skipped
- * without a word rather than reported, so the two translations stop announcing each other and start
- * competing as duplicates. `Astro.site` (astro.config.mjs) is the single place the origin is
- * written. The fallback keeps this rendering if `site` is ever unset instead of throwing on every
+ * BOTH FORMS, because the two consumers want opposite things and one value cannot be both.
+ *
+ * `href` is ABSOLUTE, for the `hreflang` links. That is one of the few places a relative URL is not
+ * merely untidy: the rule for these is a fully-qualified URL, transport included, and a relative one
+ * is skipped without a word rather than reported, so the two translations stop announcing each other
+ * and start competing as duplicates. `Astro.site` (astro.config.mjs) is the single place the origin
+ * is written. The fallback keeps this rendering if `site` is ever unset instead of throwing on every
  * page: a wrong hreflang is a quiet SEO cost, a build that cannot render is a loud one.
+ *
+ * `path` is what the language redirect navigates to, and it has to stay a path. The redirect is a
+ * NAVIGATION, not a declaration: an absolute URL there is an origin, and the only correct origin for
+ * it is whichever one the reader is already on. When this list was made absolute for the hreflang
+ * (f8181b7), `LANG_REDIRECT.hrefs` was reading the same field two declarations down, so the dev
+ * server started throwing readers at production the moment their browser asked for Spanish.
  */
 const alternates = availableLocales(canonical).map((code) => {
   const path = localizePath(canonical, code);
-  return { code, href: Astro.site ? new URL(path, Astro.site).href : path };
+  return { code, path, href: Astro.site ? new URL(path, Astro.site).href : path };
 });
 
 /*
@@ -234,7 +242,8 @@ const alternates = availableLocales(canonical).map((code) => {
  * from a real declaration rather than re-typed.
  *
  *   - `hrefs` is only the translations that ACTUALLY EXIST for this page (from `alternates`), so the
- *     script can never redirect a reader onto a 404.
+ *     script can never redirect a reader onto a 404. It takes their PATHS, never the absolute
+ *     `href` beside them: this navigates, so it has to stay on the origin the reader is on.
  *   - `current` / `def` let it tell "an explicit `/en/` URL" (respect it) from "an unprefixed page"
  *     (the only place browser-language auto-detection runs).
  *   - `slot` is `languagePreference`'s, so a stored explicit choice overrides the browser guess.
@@ -245,7 +254,7 @@ const LANG_REDIRECT = {
   current: locale,
   def: defaultLocale,
   locales,
-  hrefs: Object.fromEntries(alternates.map((alternate) => [alternate.code, alternate.href])),
+  hrefs: Object.fromEntries(alternates.map((alternate) => [alternate.code, alternate.path])),
 };
 
 

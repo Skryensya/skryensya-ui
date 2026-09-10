@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "c6b45e74f2feefbf"
+surface: "27d23045545a8e41"
 entries:
   - date: 2026-08-11
     kind: feature
@@ -25,3 +25,24 @@ entries:
         prose written beside it. There is no enhancer: the markup is complete on its own, so both
         bindings are the same markup twice. Options: <code>density</code>, <code>dividers</code>,
         <code>href</code>, <code>disabled</code>. Its stylesheet is <code>components/list.css</code>.
+
+  - date: 2026-09-09
+    kind: feature
+    es:
+      title: dividers deja de ser inalcanzable desde un usage tree
+      body: >-
+        <code>dividers</code> estaba declarada en el contrato, la hoja la leía y el binding React ya
+        la tomaba como prop, pero ninguna signature la exponía y no tenía <code>falseValue</code>:
+        un árbol podía pedir <code>dividers: false</code> y el emisor no escribía nada, así que las
+        líneas seguían ahí. Ahora <code>List</code> y <code>OrderedList</code> la declaran y
+        <code>false</code> emite <code>data-dividers="none"</code>, que es lo que la hoja siempre
+        esperó. Nada nuevo se publica: la opción deja de estar escondida.
+    en:
+      title: dividers stops being unreachable from a usage tree
+      body: >-
+        <code>dividers</code> was declared on the contract, read by the stylesheet and already taken
+        as a prop by the React binding, but no signature exposed it and it had no
+        <code>falseValue</code>: a tree could ask for <code>dividers: false</code> and the emitter
+        wrote nothing, so the rules stayed on. <code>List</code> and <code>OrderedList</code> declare
+        it now, and <code>false</code> emits <code>data-dividers="none"</code>, which is what the
+        stylesheet always expected. Nothing new is published; the option stops being hidden.

@@ -73,6 +73,14 @@ export const test = base.extend<{}, WorkerFixtures>({
     { scope: "worker" },
   ],
 
+  /*
+   * ITS OWN CLOCK. Rendering the stage is 175 canonical trees in both bindings: ~6.5s warm, and the
+   * first one after the server starts is the cold module graph (`global-setup.ts` pays that once).
+   * A fixture that slow sharing the test budget reports "test timeout" on whichever test the worker
+   * happened to start with, which reads as a defect in that component and is really a stopwatch on
+   * the harness. Separating them means a slow stage says so as a slow FIXTURE, and the test budget
+   * stays a budget for assertions.
+   */
   stagePage: [
     async ({ stageContext }, use) => {
       const page = await stageContext.newPage();
@@ -88,7 +96,7 @@ export const test = base.extend<{}, WorkerFixtures>({
 
       await use(page);
     },
-    { scope: "worker" },
+    { scope: "worker", timeout: 300_000 },
   ],
 
   axePage: [
@@ -98,7 +106,9 @@ export const test = base.extend<{}, WorkerFixtures>({
       await stagePage.addScriptTag({ content: axeSource });
       await use(stagePage);
     },
-    { scope: "worker" },
+    /* It builds on `stagePage`, so it waits for that render before it injects anything: the same
+     * clock, for the same reason. */
+    { scope: "worker", timeout: 300_000 },
   ],
 });
 

@@ -702,8 +702,24 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
   const reload = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.reload));
   const fullscreen = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.fullscreen));
 
+  /*
+   * A PREVIEW THAT ONLY HAS ONE BINDING HAS NOTHING TO SWITCH, and must not be switched away from.
+   *
+   * The reader's binding preference is a document-wide attribute, so it arrives at previews that
+   * cannot honour it: a demo authored with only a `react` slot (no `html`, so no Vanilla stage) was
+   * being handed `"vanilla"` and hid the one stage it had. The card then showed nothing at all, and
+   * its spinner ran forever, because the rule that hides the loader
+   * (`component-preview.css`) waits for a stage that is BOTH ready and `:not([hidden])` - the frame
+   * was ready the whole time, just hidden. The mirror case is a Vanilla-only preview meeting a
+   * reader whose preference is React.
+   *
+   * Bailing when no panel carries the requested binding fixes both, and leaves a two-binding
+   * preview switching exactly as before.
+   */
   const showBinding = (binding: ComponentPreviewBinding) => {
-    root.querySelectorAll<HTMLElement>(selector(componentPreviewAttrs.binding)).forEach((panel) => {
+    const panels = [...root.querySelectorAll<HTMLElement>(selector(componentPreviewAttrs.binding))];
+    if (!panels.some((panel) => panel.getAttribute(componentPreviewAttrs.binding) === binding)) return;
+    panels.forEach((panel) => {
       panel.hidden = panel.getAttribute(componentPreviewAttrs.binding) !== binding;
     });
   };

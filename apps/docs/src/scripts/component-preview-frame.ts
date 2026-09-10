@@ -56,6 +56,42 @@ const allowScroll = document.body.hasAttribute(
   "data-sk-component-preview-scroll",
 );
 const frameReadyAttribute = "data-sk-component-preview-frame-ready";
+
+/*
+ * WHAT `frame-ready` IS SUPPOSED TO MEAN: the height this frame reports is the height it will keep.
+ *
+ * It used to mean only "boot finished", which is a different and weaker claim. `fitFrame` measures
+ * the document as it stands, and a frame's own webfonts and images land AFTER that: measured on the
+ * Card page, a media card reported 454px at ready and settled at 466px twenty-two milliseconds
+ * later. Everything downstream trusts the flag and gets that wrong: `component-preview.css` drops
+ * the reserved height on it (so the stage snaps to a pre-final number), and
+ * `build-preview-heights.mjs` had to grow its own stabilisation wait to work around it, which is a
+ * workaround admitting the flag was lying.
+ *
+ * CAPPED, because this delays the loader coming off: a frame whose image never resolves must still
+ * become ready. The cap is generous enough for a real image over a cold connection and short enough
+ * that nobody watches a spinner over a stage that is already the right size, which is exactly what
+ * the reservation buys us: the box is correct from first paint whether the flag has landed or not.
+ */
+const CONTENT_SETTLE_CAP_MS = 2000;
+
+async function settleContent(): Promise<void> {
+  const deadline = new Promise<void>((resolve) => setTimeout(resolve, CONTENT_SETTLE_CAP_MS));
+
+  const fonts = document.fonts?.ready ?? Promise.resolve();
+  const images = [...document.images]
+    .filter((image) => !image.complete)
+    .map(
+      (image) =>
+        new Promise<void>((resolve) => {
+          image.addEventListener("load", () => resolve(), { once: true });
+          image.addEventListener("error", () => resolve(), { once: true });
+        }),
+    );
+
+  await Promise.race([Promise.all([fonts, ...images]).then(() => undefined), deadline]);
+}
+
 const previewViewportBlockSize = "--sk-component-preview-viewport-block-size";
 
 function hostIframe(): HTMLIFrameElement | null {
@@ -762,6 +798,11 @@ async function boot(): Promise<void> {
   } else if (frame) {
     frame.setAttribute("data-sk-component-preview-scroll", "");
   }
+
+  /* The flag now means "final", so the last measurement has to happen after the content that moves
+     it has landed. See `settleContent` above for the cap and why it is safe to wait. */
+  await settleContent();
+  if (!scrolls()) fitFrame();
 
   document.documentElement.setAttribute(
     "data-sk-component-preview-frame-ready",

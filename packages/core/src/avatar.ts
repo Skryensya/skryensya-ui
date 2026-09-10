@@ -7,7 +7,7 @@ import type { ComponentContract } from "./contract.js";
  * Appearance is CSS; `avatarInitials` is the shared derivation so React and vanilla stay aligned.
  * Picking a color is still the consumer's call.
  */
-export type AvatarSize = "sm" | "md" | "lg";
+export type AvatarSize = "sm" | "md" | "lg" | "xl";
 
 export const avatarParts = {
   root: "sk-avatar",
@@ -51,7 +51,7 @@ export const avatarContract = {
   parts: avatarParts,
 
   options: {
-    size: { type: "enum", values: ["sm", "md", "lg"], default: "md", attr: "data-size" },
+    size: { type: "enum", values: ["sm", "md", "lg", "xl"], default: "md", attr: "data-size" },
     /** The accessible name when initials are the fallback. */
     name: { type: "string", attr: "aria-label" },
     /** The image's alt text; React calls this prop `name`. */

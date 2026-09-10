@@ -3,8 +3,31 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "182d3f2ac51d9034"
+surface: "a0d1dc96551ff589"
 entries:
+  - date: 2026-09-08
+    kind: feature
+    target: size
+    es:
+      title: Avatar suma el tamaño xl, para retratos
+      body: >-
+        <code>size</code> acepta un cuarto valor, <code>xl</code>, pensado para el retrato de una
+        ficha de perfil y no para una fila de interfaz. Es el único tamaño que cae fuera de la rampa
+        de controles: la rampa termina en <code>lg</code> a propósito y no hay ningún control de más
+        de 48px que justifique inventar <code>--size-control-xl</code>, así que el disco se mide en
+        <code>components/avatar.css</code> como <code>calc(var(--size-control-lg) * 4 / 3)</code>, y
+        sigue respondiendo a la densidad igual que los otros tres. Las iniciales suben a
+        <code>--font-size-heading-h3</code> para conservar la proporción que <code>lg</code> ya tiene.
+    en:
+      title: Avatar gains an xl size, for portraits
+      body: >-
+        <code>size</code> takes a fourth value, <code>xl</code>, meant for the portrait on a profile
+        card rather than for a row of UI. It is the one size that falls off the control ramp: the
+        ramp stops at <code>lg</code> on purpose and there is no control past 48px to justify
+        minting <code>--size-control-xl</code>, so the disc measures itself in
+        <code>components/avatar.css</code> as <code>calc(var(--size-control-lg) * 4 / 3)</code>,
+        which still answers density the way the other three do. The initials step up to
+        <code>--font-size-heading-h3</code> so they keep the proportion <code>lg</code> already has.
   - date: 2026-08-17
     kind: bugfix
     es:

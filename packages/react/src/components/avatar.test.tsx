@@ -23,6 +23,22 @@ describe("Avatar", () => {
     expect(img.closest(".sk-image-frame")).toBeTruthy();
     expect(img.closest(".sk-avatar")).toBeTruthy();
   });
+
+  it("serializes the xl size onto the same attribute both structures use", () => {
+    const initials = render(<Avatar name="Ada Lovelace" size="xl" />);
+
+    expect(initials.getByLabelText("Ada Lovelace").getAttribute("data-size")).toBe("xl");
+
+    /*
+     * The photo branch is a genuinely different tree (an ImageFrame nested inside the disc), so
+     * asserting it separately is not the same assertion twice: `data-size` has to stay on the DISC,
+     * which is the element avatar.css sizes, and not drift onto the frame that merely fills it.
+     */
+    const photo = render(<Avatar name="Grace Hopper" size="xl" src="/grace.png" />);
+    const disc = photo.getByRole("img", { name: "Grace Hopper" }).closest(".sk-avatar");
+
+    expect(disc?.getAttribute("data-size")).toBe("xl");
+  });
 });
 
 describe("AvatarGroup", () => {

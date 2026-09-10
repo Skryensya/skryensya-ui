@@ -1,10 +1,10 @@
 /*
  * TIER 3, AVATAR + AVATAR GROUP
  *
- * A circular token sized on the control scale. Photo avatars nest ImageFrame (1/1, cover, pill);
- * without media the fallback (initials or a glyph) centres on a sunken surface. A group overlaps
- * its children and rings each in the surface color so the stack reads as separate discs on any
- * background.
+ * A circular token sized on the control scale, plus one xl step past it for portraits. Photo
+ * avatars nest ImageFrame (1/1, cover, pill); without media the fallback (initials or a glyph)
+ * centres on a sunken surface. A group overlaps its children and rings each in the surface color
+ * so the stack reads as separate discs on any background.
  */
 @layer components {
   .sk-avatar {
@@ -41,6 +41,22 @@
   }
   .sk-avatar[data-size="sm"] { --sk-avatar-size: var(--size-control-sm); font-size: var(--font-size-caption); }
   .sk-avatar[data-size="lg"] { --sk-avatar-size: var(--size-control-lg); font-size: var(--font-size-body); }
+  /*
+   * XL IS THE ONE SIZE OFF THE CONTROL RAMP, and it is written as a multiple of `lg` rather than as
+   * a new `--size-control-xl` because there is no 48px-plus CONTROL in this system to name: the
+   * ramp stops at lg on purpose (`primitives/_size.scss`), Button's own enum stops there too, and a
+   * token minted for exactly one consumer is a system-wide promise nobody else can keep. An xl
+   * avatar is not a control at all: it is the profile-header portrait, a display element, so it
+   * sizes itself here, in its own sheet, the same way Calendar sizes its grid and Placeholder its
+   * type. `calc(lg * 4 / 3)` and not a flat `64px` so density still reaches it: every other avatar
+   * size shrinks with `--sk-density` through `--size-control-*`, and one that did not would be the
+   * only disc on the page that ignored the reader's setting.
+   *
+   * The initials step to `heading-h3` (20px), which is the ratio `lg` already runs at (48/16 = 3);
+   * `body-lg` would have left 18px letters floating in a 64px disc. A heading token used purely as
+   * a SIZE on non-heading text is `placeholder.css`'s own pattern, not a new idea here.
+   */
+  .sk-avatar[data-size="xl"] { --sk-avatar-size: calc(var(--size-control-lg) * 4 / 3); font-size: var(--font-size-heading-h3); }
 
   /* ImageFrame fills the fixed disc; aspect/fit/radius stay on the pattern. */
   .sk-avatar > .sk-image-frame {

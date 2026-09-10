@@ -51,8 +51,16 @@ export const listContract = {
      * class. So this has no default to serialize: writing one would be an attribute nothing reads.
      */
     density: { type: "enum", values: ["compact"], attr: "data-density" },
-    /** Dividers are the default; this turns them off, which is why the attribute reads `none`. */
-    dividers: { type: "boolean", default: true, attr: "data-dividers" },
+    /*
+     * Dividers are the default; this turns them off, which is why the attribute reads `none`.
+     *
+     * `falseValue` is what makes that sentence true of the EMITTER as well as of the CSS and the
+     * React prop, which both already spelled it. Without it a tree asking for `dividers: false`
+     * emitted no attribute at all and the rules stayed on: the option was declared, exposed by no
+     * signature, and unserializable, all three of which are now fixed together. True writes nothing,
+     * per the `falseValue`-without-`trueValue` rule in the emitter.
+     */
+    dividers: { type: "boolean", default: true, attr: "data-dividers", falseValue: "none" },
     href: { type: "string", attr: "href" },
     disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "" },
   },
@@ -61,7 +69,13 @@ export const listContract = {
     List: {
       intent: ["rows", "list-of-records", "settings-rows", "inbox"],
       host: { element: "ul" },
-      options: ["density"],
+      /*
+       * `dividers` was declared above and exposed by NO signature, so the option existed in the
+       * contract, in the CSS and as a React prop, and was unreachable from a usage tree: an authored
+       * list could turn the rules off and an emitted one could not. Nothing new is published here;
+       * the signature just stops hiding what the contract already says.
+       */
+      options: ["density", "dividers"],
       slots: { children: { accepts: "signature", required: true, of: ["ListItemPlain", "ListItem", "ListItemLink"] } },
       /*
        * `role="list"` compensates for `list-style: none` (list.css): WebKit drops the implicit
@@ -76,7 +90,7 @@ export const listContract = {
     OrderedList: {
       intent: ["ordered-rows", "steps-with-rich-row-anatomy", "ranked-records"],
       host: { element: "ol" },
-      options: ["density"],
+      options: ["density", "dividers"],
       slots: { children: { accepts: "signature", required: true, of: ["ListItemPlain", "ListItem", "ListItemLink"] } },
       template: { element: "ol", part: "root", host: true, attrs: { role: "list" }, slot: "children" },
       react: { from: "@skryensya/react/list", name: "OrderedList" },

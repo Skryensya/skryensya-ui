@@ -1,8 +1,16 @@
 ---
+/* The composition demo nests the avatar in a Box; layout/typography are already global (Base.astro). */
+import "@skryensya/core/patterns/box.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { avatarImageTree, avatarSizesTree, avatarColorsTree, avatarGroupTree } from "../../demos/avatar";
+import {
+  avatarImageTree,
+  avatarSizesTree,
+  avatarColorsTree,
+  avatarGroupTree,
+  avatarProfileTree,
+} from "../../demos/avatar";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/avatar.yaml?raw";
 import coreSource from "@core/src/avatar.ts?raw";
@@ -13,6 +21,20 @@ import reactTestSource from "@react/src/components/avatar.test.tsx?raw";
 const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
+
+/*
+ * `max` is React's own shorthand, not a contract option, so it cannot be shown as a usage tree: the
+ * contract publishes the overflow as a SLOT, which is what lets the vanilla layer write the same
+ * group with no JavaScript. This block is the one place the React-only affordance is spelled out.
+ */
+const groupMax = `import { Avatar, AvatarGroup } from "@skryensya/react/avatar";
+
+<AvatarGroup label="${t("demo.avatar.groupLabel")}" max={3}>
+  <Avatar name="Ada Lovelace" />
+  <Avatar name="Alan Turing" />
+  <Avatar name="Grace Hopper" />
+  <Avatar name="Edsger Dijkstra" />
+</AvatarGroup>;`;
 
 /*
  * Demo photos, as dummyimage.com placeholders painted in the accent fill.
@@ -97,7 +119,13 @@ const sourceFiles = [
         { name: "derives initials from the name when there is no image", description: t("avatar.test1") },
         { name: "uses the first two characters of a single-word username", description: t("avatar.test2") },
         { name: "renders the image inside ImageFrame when src is given", description: t("avatar.test3") },
+        {
+          name: "serializes the xl size onto the same attribute both structures use",
+          description: t("avatar.test5"),
+        },
         { name: "caps visible avatars and collapses the rest into a +N counter", description: t("avatar.test4") },
+        { name: "exposes itself as a named group when a label is given", description: t("avatar.test6") },
+        { name: "is still a group without a label", description: t("avatar.test7") },
       ],
     },
   ]}
@@ -124,6 +152,12 @@ const sourceFiles = [
     <h3>{t("avatar.groupTitle")}</h3>
     <p set:html={t("avatar.groupBody")} />
     <ComponentPreview tree={avatarGroupTree(t)} label={t("avatar.groupTitle")} />
+    <p set:html={t("avatar.groupMaxBody")} />
+    <CodeBlock code={groupMax} label="React" lang="tsx" note={t("avatar.groupMaxNote")} />
+
+    <h3>{t("avatar.profileTitle")}</h3>
+    <p set:html={t("avatar.profileBody")} />
+    <ComponentPreview tree={avatarProfileTree(t)} label={t("avatar.profileTitle")} />
 
     <p set:html={t("avatar.body")} />
     <p set:html={t("component.reactNote")} />

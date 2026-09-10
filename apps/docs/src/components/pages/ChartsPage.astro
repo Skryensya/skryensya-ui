@@ -22,6 +22,7 @@ import { ChartComparisonDemo } from "../react-demos/chart-more";
 import {
   chartAnalyticsCardTree,
   chartComparisonOverlays,
+  chartAnalyticsCardSource,
   chartComparisonTree,
   chartGalleryOverlays,
   chartGalleryTree,
@@ -65,49 +66,8 @@ const periodHtml = emitChartWithOverlay(chartPeriodCardTree(t), "bar", []);
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const installLine = `pnpm add @skryensya/charts`;
 
-const analyticsSource = `import { Chart } from "@skryensya/charts/react";
-import { Button } from "@skryensya/react/button";
-import { Icon } from "@skryensya/react/icon";
-import { Box, Inline, Stack } from "@skryensya/react/layout";
-import { Stat } from "@skryensya/react/stat";
-import { Heading } from "@skryensya/react/typography";
-
-const compactCount = (n) =>
-  new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(n);
-
-<Box as="article" border="subtle" padding="lg" surface="surface">
-  <Stack gap="lg">
-    <Inline align="start" justify="between">
-      <Stack gap="xs">
-        <Heading as="h3" flush size="h4">
-          Analytics
-        </Heading>
-        <Stat
-          animate
-          change={<><Icon name="arrow-up" size="sm" /> +10%</>}
-          count={418200}
-          format={compactCount}
-          label="Visits this month"
-          trend="up"
-          value="418.2K"
-        />
-      </Stack>
-      <Button size="sm" variant="translucent">
-        View Analytics
-      </Button>
-    </Inline>
-    <Chart
-      flush
-      format="compact"
-      height="md"
-      kind="area"
-      label="Visits per week"
-      labels={false}
-      points={visits}
-      tone="neutral"
-    />
-  </Stack>
-</Box>;`;
+/* The analytics card's React source lives with its tree (`demos/charts.ts`): the Card page shows
+   the same card, and one string is what keeps the two pages from drifting apart. */
 
 const lineSource = `import { Chart } from "@skryensya/charts/react";
 
@@ -265,7 +225,7 @@ const tanstackSource = `import { TanStackChart } from "@skryensya/charts/react/t
     <p set:html={t("chartsPage.analyticsBody")} />
     <ComponentPreview
       html={analyticsHtml}
-      react={analyticsSource}
+      react={chartAnalyticsCardSource}
       label={t("chartsPage.analyticsLabel")}
       note={t("chartsPage.analyticsNote")}
       minHeight="26rem"

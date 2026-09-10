@@ -4,7 +4,7 @@ import heights from "@artifacts/preview-heights.json";
  * THE HEIGHT A PREVIEW WILL SETTLE AT, SO THE PAGE CAN RESERVE IT BEFORE IT DOES.
  *
  * Source is `artifacts/preview-heights.json`, written by
- * `packages/ai-gates/scripts/build-preview-heights.mjs` from a real browser reading a real
+ * `packages/ai-gates/scripts/build-preview-heights.ts` from a real browser reading a real
  * production build. It cannot be derived here: a stage is an iframe, an iframe has no content
  * height, and the number only exists once `fitFrame` has measured the document inside it and
  * written it back. Until that lands the stage stands at one global 12rem floor and then snaps, so

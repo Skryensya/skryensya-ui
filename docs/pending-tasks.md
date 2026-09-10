@@ -42,7 +42,7 @@ haya progreso visible seguido en vez de quedar atascado en el ítem más grande 
 
 `astro <7.2.8` arrastra una advisory **CRITICAL** (ejecución remota de código a través de la
 optimización de imágenes AVIF, `apps/docs > astro`), y el gate de `pre-push`
-(`scripts/audit-gate.mjs`) la bloquea: **hoy no se puede pushear a `origin/main` sin `--no-verify`.**
+(`scripts/audit-gate.ts`) la bloquea: **hoy no se puede pushear a `origin/main` sin `--no-verify`.**
 
 Intentado y revertido el 2026-09-09, con todo el detalle porque el próximo intento no debería
 redescubrirlo:
@@ -70,7 +70,7 @@ política funcionando como fue diseñada, no un rodeo.
 Señal: `apps/docs/src/components/pages/*Page.astro` con `contractId` real (no una página de
 survey/índice) y sin prop `tests={...}`. Verificado en vivo el 2026-09-03. Completar un ítem es:
 escribir la suite en la capa que le falte (`packages/{core,react,vanilla}/src/*.test.ts(x)`),
-sumarla a `scripts/build-test-report.mjs` / `artifacts/test-results.json`, agregar `tests` +
+sumarla a `scripts/build-test-report.ts` / `artifacts/test-results.json`, agregar `tests` +
 `TARGETS` + claves i18n en la página (`feedback-wire-tests-into-docs-tab` en la memoria del
 agente tiene el checklist completo), y correr `turbo check`.
 
@@ -92,7 +92,7 @@ agente tiene el checklist completo), y correr `turbo check`.
   `packages/vanilla/src/components/breadcrumb.test.ts`, 5 tests) - el gap era solo de wiring, no de
   cobertura. Se agregaron a `sourceFiles` + prop `tests={[...]}` en `BreadcrumbPage.astro`, las 9
   claves `breadcrumb.testN` (es/en) en `ui.ts`, las 2 entradas a `TARGETS` en
-  `scripts/build-test-report.mjs`, se corrió el script (9/9 passed) y se verificó en vivo contra
+  `scripts/build-test-report.ts`, se corrió el script (9/9 passed) y se verificó en vivo contra
   `:4173` - las dos tablas del tab Tests muestran los 9 checks en verde, cero fallidos/pendientes.
 - [x] **Footer** (`/componentes/footer`) - hecho ✅ (2026-09-03): no había ninguna suite (el
   binding React vive en `layout.tsx`, junto a Box/Stack/Grid/etc., y su test file
@@ -101,7 +101,7 @@ agente tiene el checklist completo), y correr `turbo check`.
   documentados (landmark `contentinfo`, `data-surface="sunken"`, `data-padding="lg"`,
   `data-divider=""`) y overrides + `as` dropeando el landmark. Wireado a `FooterPage.astro`
   (`sourceFiles` + `tests={[...]}`), 2 claves `footer.testN` (es/en) en `ui.ts` - `layout.test.tsx`
-  ya estaba en `TARGETS`, no hizo falta tocar `build-test-report.mjs`. Corrido (7/7 en
+  ya estaba en `TARGETS`, no hizo falta tocar `build-test-report.ts`. Corrido (7/7 en
   `layout.test.tsx`, los 2 nuevos incluidos) y verificado en vivo contra `:4173`: ambos checks en
   verde. Nota al pasar: el primer intento de regenerar `test-results.json` chocó con un flake
   preexistente y no relacionado en `packages/react/src/components/menu.test.tsx` (el mismo timing
@@ -136,7 +136,7 @@ agente tiene el checklist completo), y correr `turbo check`.
   Core + 8 del enhancer), el gap era solo de wiring. Se agregaron a `sourceFiles` + prop
   `tests={[...]}` en `BackToTopPage.astro` (21 entradas, mapeadas 1:1 contra los `it()` verbatim),
   21 claves `backToTop.testN` (es/en) en `ui.ts`, las 2 entradas a `TARGETS` en
-  `build-test-report.mjs`. Corridas aisladas primero (7/7 y 14/14) para no chocar de nuevo con el
+  `build-test-report.ts`. Corridas aisladas primero (7/7 y 14/14) para no chocar de nuevo con el
   flake de `menu.test.tsx`, después el script completo (21/21, sin colisión esta vez) y verificado
   en vivo contra `:4173`: 21 checks en verde en las dos tablas, cero fallidos/pendientes.
 - [x] **Nav list** (`/nav-list`, `contractId="nav-list"`) - hecho ✅ (2026-09-03). Las dos suites

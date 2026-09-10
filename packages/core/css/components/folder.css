@@ -8,7 +8,7 @@
  * silhouette without touching a binding.
  *
  * THE INVARIANT, same as every other component sheet: each hook resolves to a TIER-2 token, never a
- * palette entry, never a raw colour. `scripts/lint.mjs` fails the build on a `--palette-*` here.
+ * palette entry, never a raw colour. `scripts/lint.ts` fails the build on a `--palette-*` here.
  *
  * WHY THE SHAPE IS BEHIND, NOT AROUND. The folder's paint and the folder's box are different
  * things: the box is an ordinary block that lays its content out, and the silhouette is a picture

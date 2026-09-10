@@ -4,7 +4,7 @@
  *
  * The three tiers are authored as CSS plus Sass where CSS has no macro. Anything that wants to
  * know what the system contains reads those source stylesheets. Two things do: the validator
- * (scripts/lint.mjs) and the docs site's token reference. This module is the one parser they
+ * (scripts/lint.ts) and the docs site's token reference. This module is the one parser they
  * share, if it drifts, both break, which is the point.
  *
  * It carries BOTH forms of every token:
@@ -26,26 +26,74 @@ import { compile } from "sass";
 const PKG_ROOT = join(import.meta.dirname, "..");
 
 export const CSS_DIR = join(PKG_ROOT, "css");
-export const TIER_RANK = { primitive: 1, semantic: 2, component: 3 };
+export const TIER_RANK = { primitive: 1, semantic: 2, component: 3 } as const;
+
+export type TokenTier = keyof typeof TIER_RANK;
+
+export interface Declaration {
+  name: string;
+  value: string;
+}
+
+export interface VarRef {
+  ref: string;
+  hasFallback: boolean;
+}
+
+export interface OklchColor {
+  L: number;
+  C: number;
+  H: number;
+  toString(): string;
+}
+
+export interface CorpusFile {
+  path: string;
+  rel: string;
+  tier: TokenTier | null;
+  css: string;
+  decls: Declaration[];
+}
+
+export interface Token {
+  name: string;
+  tier: TokenTier;
+  /** The authored form, var() chain intact, this IS the tier architecture. */
+  value: string;
+  refs: string[];
+  file: string;
+  modeAware: boolean;
+}
+
+export interface TokenCorpus {
+  files: CorpusFile[];
+  tokens: Token[];
+  declaredTier: Map<string, TokenTier>;
+  baseSemantic: Map<string, string>;
+  hcByName: Map<string, Set<string>>;
+  declsIn: (suffix: string) => Declaration[];
+  paletteMap: () => Map<string, string>;
+  resolveColor: (name: string, mode: string, palettes: Map<string, string>) => OklchColor | null;
+}
 
 // ── primitives of the parser ────────────────────────────────────────────────
 
-const stripComments = (css) => css.replace(/\/\*[\s\S]*?\*\//g, "");
+const stripComments = (css: string) => css.replace(/\/\*[\s\S]*?\*\//g, "");
 
-function sourceFiles(dir) {
-  return readdirSync(dir, { recursive: true })
-    .filter((f) => (f.endsWith(".css") || f.endsWith(".scss")) && !f.split("/").at(-1).startsWith("_"))
+function sourceFiles(dir: string): string[] {
+  return readdirSync(dir, { recursive: true, encoding: "utf8" })
+    .filter((f) => (f.endsWith(".css") || f.endsWith(".scss")) && !f.split("/").at(-1)?.startsWith("_"))
     .map((f) => join(dir, f));
 }
 
-function readStylesheet(path) {
+function readStylesheet(path: string): string {
   return extname(path) === ".scss"
     ? compile(path, { loadPaths: [CSS_DIR], style: "expanded" }).css
     : readFileSync(path, "utf8");
 }
 
 /** Which tier a file's declarations belong to. `null` = barrel/unknown, contributes nothing. */
-export function tierOfFile(path) {
+export function tierOfFile(path: string): TokenTier | null {
   const p = path.replace(/\\/g, "/");
   if (p.includes("/components/") || p.includes("/patterns/")) return "component";
   if (p.includes("/modes/")) return "semantic"; // color override
@@ -56,15 +104,15 @@ export function tierOfFile(path) {
 }
 
 /** All `--name: value` declarations in a file (comments already stripped). */
-export function declarationsOf(css) {
-  const out = [];
+export function declarationsOf(css: string): Declaration[] {
+  const out: Declaration[] = [];
   for (const m of css.matchAll(/(--[\w-]+)\s*:\s*([^;{}]+);/g)) {
     out.push({ name: m[1], value: m[2].trim() });
   }
   return out;
 }
 
-export const refsOf = (value) =>
+export const refsOf = (value: string) =>
   [...value.matchAll(/var\(\s*(--[\w-]+)/g)].map((m) => m[1]);
 
 /**
@@ -72,10 +120,10 @@ export const refsOf = (value) =>
  * `var(--x, fallback)` remains valid when `--x` is undeclared, so the validator must not treat
  * the reference as dangling.
  */
-export function varRefs(value) {
-  const out = [];
+export function varRefs(value: string): VarRef[] {
+  const out: VarRef[] = [];
   const re = /var\(\s*(--[\w-]+)/g;
-  let m;
+  let m: RegExpExecArray | null;
   while ((m = re.exec(value))) {
     let depth = 1,
       hasFallback = false;
@@ -91,8 +139,8 @@ export function varRefs(value) {
 }
 
 /** Split on top-level commas, respecting parens (so light-dark(var(a), var(b)) → 2 parts). */
-export function splitTopLevel(str) {
-  const parts = [];
+export function splitTopLevel(str: string): string[] {
+  const parts: string[] = [];
   let depth = 0,
     cur = "";
   for (const ch of str) {
@@ -114,7 +162,7 @@ export function splitTopLevel(str) {
  * Sass entries are compiled in memory; no generated CSS artifacts are written or required.
  * Pure from the caller's perspective: touches the filesystem, mutates nothing, throws only fs/Sass errors.
  */
-export function parseTokens(cssDir = CSS_DIR) {
+export function parseTokens(cssDir = CSS_DIR): TokenCorpus {
   const files = sourceFiles(cssDir).map((path) => {
     const css = stripComments(readStylesheet(path));
     // `css` is carried, not just `decls`: the component-ships-structure rule has to see the
@@ -123,22 +171,23 @@ export function parseTokens(cssDir = CSS_DIR) {
   });
 
   // name → tier of the file that declares it. Palettes and scales are primitive; colors and modes are semantic.
-  const declaredTier = new Map();
+  const declaredTier = new Map<string, TokenTier>();
   for (const f of files) {
     if (!f.tier) continue;
     for (const d of f.decls) if (!declaredTier.has(d.name)) declaredTier.set(d.name, f.tier);
   }
 
-  const declsIn = (suffix) => files.find((f) => f.path.endsWith(suffix))?.decls ?? [];
+  const declsIn = (suffix: string) => files.find((f) => f.path.endsWith(suffix))?.decls ?? [];
 
   const baseSemantic = new Map(declsIn("semantic.scss").map((d) => [d.name, d.value]));
 
   // hc declares each token twice (attribute block + prefers-contrast block); collect the set
   // of distinct values per name so the validator can prove the two copies haven't drifted.
-  const hcByName = new Map();
+  const hcByName = new Map<string, Set<string>>();
   for (const d of declsIn(join("modes", "hc.scss"))) {
-    if (!hcByName.has(d.name)) hcByName.set(d.name, new Set());
-    hcByName.get(d.name).add(d.value);
+    const values = hcByName.get(d.name) ?? new Set<string>();
+    values.add(d.value);
+    hcByName.set(d.name, values);
   }
   /** Tier-1 palette values compiled into the primitive entrypoint. */
   function paletteMap() {
@@ -149,7 +198,7 @@ export function parseTokens(cssDir = CSS_DIR) {
    * Resolve a semantic color token to a concrete oklch(), in a color mode. `palettes` carries the
    * root tier-1 declarations, so evalColor can chase `var(--palette-…)` to a real color.
    */
-  function resolveColor(name, mode, palettes) {
+  function resolveColor(name: string, mode: string, palettes: Map<string, string>) {
     const isHc = mode.startsWith("hc-");
     const raw = isHc ? [...(hcByName.get(name) ?? [])][0] : baseSemantic.get(name);
     if (!raw) return null;
@@ -169,8 +218,8 @@ export function parseTokens(cssDir = CSS_DIR) {
   // This is what the docs reference renders; the resolved value is a runtime concern
   // (the density tokens are calc()/round()/max() expressions, ADR-19, so only the browser
   // knows the number).
-  const tokens = [];
-  const seen = new Set();
+  const tokens: Token[] = [];
+  const seen = new Set<string>();
   for (const f of files) {
     if (!f.tier) continue;
     for (const d of f.decls) {
@@ -194,7 +243,7 @@ export function parseTokens(cssDir = CSS_DIR) {
 // No getComputedStyle in Node, so the contrast maths is ours. Implemented once, here,
 // and consumed by the validator (ADR-3/ADR-19).
 
-export function contrastRatio(a, b) {
+export function contrastRatio(a: string | OklchColor, b: string | OklchColor) {
   const la = relLuminance(a),
     lb = relLuminance(b);
   if (la == null || lb == null) return 21; // non-color → pass
@@ -202,16 +251,16 @@ export function contrastRatio(a, b) {
   return (hi + 0.05) / (lo + 0.05);
 }
 
-export function relLuminance(color) {
+export function relLuminance(color: string | OklchColor) {
   const c = parseOklch(color);
   if (!c) return null;
   const { r, g, b } = oklchToSrgb(c);
-  const lin = (x) => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4);
+  const lin = (x: number) => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4);
   return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b);
 }
 
-export function parseOklch(str) {
-  if (str && typeof str === "object" && "L" in str) return str; // already an evaluated color
+export function parseOklch(str: string | OklchColor | null | undefined): OklchColor | null {
+  if (str && typeof str === "object" && "L" in str) return str;
   const m = String(str).match(/oklch\(\s*([\d.]+)%?\s+([\d.]+)\s+(?:([\d.]+)|none)/i);
   if (!m) return null;
   let L = parseFloat(m[1]);
@@ -225,25 +274,25 @@ export function parseOklch(str) {
 // would, so contrast is measured against the CSS that actually ships.
 
 /** An oklch value that also prints as `oklch(…)` for validator messages. */
-function oklchLit(L, C, H) {
+function oklchLit(L: number, C: number, H: number): OklchColor {
   return { L, C, H, toString: () => `oklch(${(L * 100).toFixed(2)}% ${C.toFixed(4)} ${H.toFixed(2)})` };
 }
 
-export function oklchToOklab({ L, C, H }) {
+export function oklchToOklab({ L, C, H }: OklchColor) {
   const h = (H * Math.PI) / 180;
   return { L, a: C * Math.cos(h), b: C * Math.sin(h) };
 }
 
-function oklabToOklch({ L, a, b }) {
+function oklabToOklch({ L, a, b }: { L: number; a: number; b: number }) {
   const C = Math.hypot(a, b);
   let H = (Math.atan2(b, a) * 180) / Math.PI;
   if (H < 0) H += 360;
   return oklchLit(L, C, H);
 }
 
-const NAMED_COLORS = { white: [1, 0, 0], black: [0, 0, 0] };
+const NAMED_COLORS: Record<string, readonly [number, number, number]> = { white: [1, 0, 0], black: [0, 0, 0] };
 
-const balancedParens = (s) => {
+const balancedParens = (s: string) => {
   let depth = 0;
   for (const ch of s) {
     if (ch === "(") depth++;
@@ -257,14 +306,14 @@ const balancedParens = (s) => {
  * is a trailing token OUTSIDE any parens, so the `%` inside `oklch(50% …)` is never mistaken for a
  * mix weight (the exact ambiguity that makes a naive last-`%` scan wrong).
  */
-function splitColorPct(arg) {
+function splitColorPct(arg: string) {
   const m = arg.match(/\s([\d.]+)%\s*$/);
   if (m) {
     const color = arg.slice(0, arg.length - m[0].length).trim();
     if (balancedParens(color)) return { color, pct: parseFloat(m[1]) };
   }
 
-  return { color: arg.trim(), pct: null };
+  return { color: arg.trim(), pct: null as number | null };
 }
 
 
@@ -275,7 +324,7 @@ function splitColorPct(arg) {
  *   - `var(--x)` and `var(--x, fallback)`  (looked up in `env`, else the fallback)
  *   - `color-mix(in oklab|oklch, A [p%], B [q%])`, nested to any depth
  */
-export function evalColor(expr, env, depth = 0) {
+export function evalColor(expr: string | null | undefined, env: Map<string, string> | null | undefined, depth = 0): OklchColor | null {
   if (expr == null || depth > 24) return null;
   expr = String(expr).trim();
 
@@ -294,7 +343,7 @@ export function evalColor(expr, env, depth = 0) {
   return parseOklch(expr);
 }
 
-function evalMix(expr, env, depth) {
+function evalMix(expr: string, env: Map<string, string> | null | undefined, depth: number) {
   const inner = expr.slice(expr.indexOf("(") + 1, expr.lastIndexOf(")"));
   const parts = splitTopLevel(inner);
   const space = /^in\s+(oklab|oklch)\b/.exec(parts[0] ?? "");
@@ -307,11 +356,10 @@ function evalMix(expr, env, depth) {
 
   // Percent normalisation, per CSS: an omitted weight is 100 − the other; both omitted → 50/50;
   // weights that don't sum to 100 are scaled.
-  let wa = a.pct,
-    wb = b.pct;
-  if (wa == null && wb == null) wa = wb = 50;
-  else if (wa == null) wa = 100 - wb;
-  else if (wb == null) wb = 100 - wa;
+  const wa0 = a.pct;
+  const wb0 = b.pct;
+  const wa = wa0 == null ? (wb0 == null ? 50 : 100 - wb0) : wa0;
+  const wb = wb0 == null ? (wa0 == null ? 50 : 100 - wa0) : wb0;
   const sum = wa + wb;
   if (sum <= 0) return null;
   const t = wb / sum; // fraction toward B
@@ -328,7 +376,7 @@ function evalMix(expr, env, depth) {
   return oklabToOklch({ L: la.L + (lb.L - la.L) * t, a: la.a + (lb.a - la.a) * t, b: la.b + (lb.b - la.b) * t });
 }
 
-export function oklchToSrgb({ L, C, H }) {
+export function oklchToSrgb({ L, C, H }: OklchColor) {
   const hr = (H * Math.PI) / 180;
   const a = C * Math.cos(hr),
     b = C * Math.sin(hr);
@@ -341,7 +389,7 @@ export function oklchToSrgb({ L, C, H }) {
   const lr = +4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s;
   const lg = -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s;
   const lb = -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s;
-  const gamma = (x) => {
+  const gamma = (x: number) => {
     const cl = Math.max(0, Math.min(1, x));
     return cl <= 0.0031308 ? 12.92 * cl : 1.055 * cl ** (1 / 2.4) - 0.055;
   };

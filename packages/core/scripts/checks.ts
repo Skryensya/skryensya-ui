@@ -1,13 +1,13 @@
 /*
  * The validator's RULES, the judging, pulled out of the shell.
  *
- * Everything about *reading* CSS lives in parse.mjs; everything about *judging* it lives here; and
- * everything about *running* it (reading the pairs file, printing, exiting) lives in lint.mjs. That
+ * Everything about *reading* CSS lives in parse.ts; everything about *judging* it lives here; and
+ * everything about *running* it (reading the pairs file, printing, exiting) lives in lint.ts. That
  * three-way split is the whole point of this file: `runChecks` is a pure function, corpus in,
  * `Problem[]` out, so the rules the whole tier system rests on finally have a test surface. Import
  * this module and it does nothing; call it and it judges. No fs, no process.exit, no import-time work.
  *
- * The reading helpers it borrows from parse.mjs (`varRefs`, `splitTopLevel`, `contrastRatio`, the tier
+ * The reading helpers it borrows from parse.ts (`varRefs`, `splitTopLevel`, `contrastRatio`, the tier
  * ranks) are themselves pure, so importing them here keeps `runChecks` pure too.
  *
  * Checks:
@@ -19,26 +19,59 @@
  *   5. name-shape       declared names are lowercase kebab
  */
 
-import { TIER_RANK, contrastRatio, splitTopLevel, varRefs } from "./parse.mjs";
+import {
+  TIER_RANK,
+  contrastRatio,
+  splitTopLevel,
+  varRefs,
+  type Declaration,
+  type OklchColor,
+  type TokenTier,
+} from "./parse.ts";
 
-/**
- * @typedef {{ rule: string, where: string, msg: string }} Problem
- */
+/** Fixture-friendly file shape. `parseTokens` returns the complete `CorpusFile`. */
+export interface CheckableFile {
+  path?: string;
+  rel?: string;
+  tier?: TokenTier | null;
+  css?: string;
+  decls: Declaration[];
+}
+
+export interface CheckableCorpus {
+  files: CheckableFile[];
+  declaredTier: Map<string, TokenTier>;
+  baseSemantic: Map<string, string>;
+  hcByName: Map<string, Set<string>>;
+  paletteMap: () => Map<string, string>;
+  resolveColor: (name: string, mode: string, palettes: Map<string, string>) => OklchColor | null;
+}
+
+export interface Problem {
+  rule: string;
+  where: string;
+  msg: string;
+}
+
+export interface ContrastPair {
+  fg: string;
+  bg: string;
+  min: number;
+  modes: string[];
+}
 
 /**
  * Judge a parsed corpus against every rule and return the problems it found, empty when clean.
  *
  * `corpus` is exactly what {@link parseTokens} returns. `pairs` is the parsed `contrast-pairs.json`
  * array, or `null`/`undefined` to skip the contrast check (as the shell does when the file is absent).
- *
- * @param {ReturnType<import("./parse.mjs").parseTokens>} corpus
- * @param {Array<{fg:string,bg:string,min:number,modes:string[]}> | null} [pairs]
- * @returns {Problem[]}
  */
-export function runChecks({ files, declaredTier, baseSemantic, hcByName, paletteMap, resolveColor }, pairs = null) {
-  /** @type {Problem[]} */
-  const problems = [];
-  const fail = (rule, where, msg) => problems.push({ rule, where, msg });
+export function runChecks(
+  { files, declaredTier, baseSemantic, hcByName, paletteMap, resolveColor }: CheckableCorpus,
+  pairs: ContrastPair[] | null = null,
+): Problem[] {
+  const problems: Problem[] = [];
+  const fail = (rule: string, where: string, msg: string) => problems.push({ rule, where, msg });
 
   // ── 1 + 2: refs-resolve and tier-direction ─────────────────────────────────
   for (const f of files) {

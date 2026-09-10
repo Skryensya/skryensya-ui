@@ -11,7 +11,7 @@
  * hooks above it are how you change it without touching a selector.
  *
  * THE INVARIANT: every hook resolves to a TIER-2 token, never a palette, never a raw color. A hook
- * reaching into --palette-* bypasses the semantic layer. scripts/lint.mjs fails on it.
+ * reaching into --palette-* bypasses the semantic layer. scripts/lint.ts fails on it.
  *
  * NAMING: the group segment (primary/danger/sm) is DROPPED from the hook name. Base and every
  * variant all declare --sk-button-bg; the more specific selector wins. That is what makes these

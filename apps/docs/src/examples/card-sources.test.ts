@@ -42,7 +42,7 @@ describe("card examples", () => {
 
   it("keeps every example valid against the contracts it composes", () => {
     /* ONE test over all eleven rather than `it.each`, because the Tests tab on this page keys a row
-     * by the verbatim `it()` title (`scripts/build-test-report.mjs`): eleven generated titles would
+     * by the verbatim `it()` title (`scripts/build-test-report.ts`): eleven generated titles would
      * be eleven rows nobody wrote and none of them would match. The example's name rides in the
      * assertion message instead, where a failure still names it. */
     const problems = builders.flatMap(([name, build]) =>

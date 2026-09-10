@@ -4,37 +4,38 @@
  * This is the test surface that didn't exist while the rules ran at import time and exited the
  * process: `runChecks(corpus) → Problem[]` is a pure function, so a rule is exercised by feeding it a
  * corpus and asserting the problems it returns. The first test proves the REAL system is clean (the
- * same judgement `lint.mjs` makes); the rest are negative fixtures, one per rule, that a hand-built
+ * same judgement `lint.ts` makes); the rest are negative fixtures, one per rule, that a hand-built
  * corpus violating exactly one thing lights up exactly that rule.
  *
- * Run: `node --test scripts/checks.test.mjs`
+ * Run: `node --test scripts/checks.test.ts`
  */
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { CSS_DIR, parseTokens } from "./parse.mjs";
-import { runChecks } from "./checks.mjs";
+import { CSS_DIR, parseTokens } from "./parse.ts";
+import { runChecks, type CheckableCorpus, type ContrastPair, type Problem } from "./checks.ts";
 
 const PKG_ROOT = join(import.meta.dirname, "..");
 
 /** A minimal corpus with every field runChecks destructures, so a fixture sets only what it tests. */
-function corpus({ files = [], declaredTier = new Map(), baseSemantic = new Map(), hcByName = new Map() } = {}) {
+function corpus(partial: Partial<CheckableCorpus> = {}): CheckableCorpus {
   return {
-    files,
-    declaredTier,
-    baseSemantic,
-    hcByName,
+    files: [],
+    declaredTier: new Map(),
+    baseSemantic: new Map(),
+    hcByName: new Map(),
     paletteMap: () => new Map(),
     resolveColor: () => null,
+    ...partial,
   };
 }
 
-const rules = (problems) => new Set(problems.map((p) => p.rule));
+const rules = (problems: Problem[]) => new Set(problems.map((p) => p.rule));
 
-test("the real corpus is clean, same judgement lint.mjs makes", () => {
-  const pairs = JSON.parse(readFileSync(join(PKG_ROOT, "contrast-pairs.json"), "utf8")).pairs;
+test("the real corpus is clean, same judgement lint.ts makes", () => {
+  const pairs = (JSON.parse(readFileSync(join(PKG_ROOT, "contrast-pairs.json"), "utf8")) as { pairs: ContrastPair[] }).pairs;
   const problems = runChecks(parseTokens(CSS_DIR), pairs);
   assert.deepEqual(problems, [], `expected a clean system, got:\n${JSON.stringify(problems, null, 2)}`);
 });

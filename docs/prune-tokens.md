@@ -20,9 +20,9 @@ El peso real del token layer tiene dos multiplicadores, y ninguno es la indirecc
 Este doc ataca el punto 1. El punto 2 se resuelve enviando menos brands (una app de producción usa uno,
 no ocho) y es independiente de esto.
 
-## El tool: `packages/core/scripts/prune-tokens.mjs`
+## El tool: `packages/core/scripts/prune-tokens.ts`
 
-Reutiliza `scripts/parse.mjs`, el mismo parser que corren el validador y la referencia de la docs
+Reutiliza `scripts/parse.ts`, el mismo parser que corren el validador y la referencia de la docs
 ([decisión sobre el parser compartido](./decisions/)), así que lee el grafo de tokens de una sola fuente.
 
 Es **report-first**: por defecto solo reporta. El `--emit` es opt-in. Nunca reescribe de forma
@@ -30,16 +30,16 @@ destructiva, por la razón del safelist más abajo.
 
 ```bash
 # Reportar contra un set de componentes (lo que la app realmente importa)
-node scripts/prune-tokens.mjs --used button,tile,input,typography --brand default
+node scripts/prune-tokens.ts --used button,tile,input,typography --brand default
 
 # Emitir el CSS de tokens podado
-node scripts/prune-tokens.mjs --used button,tile,input,typography --brand default --emit tokens.pruned.css
+node scripts/prune-tokens.ts --used button,tile,input,typography --brand default --emit tokens.pruned.css
 
 # Ver qué tokens se podarían
-node scripts/prune-tokens.mjs --used button,tile --brand default --verbose
+node scripts/prune-tokens.ts --used button,tile --brand default --verbose
 
 # Proteger tokens que la app usa dinámicamente (ver "El safelist" abajo)
-node scripts/prune-tokens.mjs --used button --safelist --color-accent-500,--z-sticky
+node scripts/prune-tokens.ts --used button --safelist --color-accent-500,--z-sticky
 ```
 
 ## Cómo decide qué se queda

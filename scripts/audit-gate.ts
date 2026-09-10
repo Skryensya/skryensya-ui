@@ -21,16 +21,31 @@
  *    something it prints the two real exits: the override, or the cooldown exception when the patch
  *    exists but is newer than the quarantine.
  *
- * Usage:  node scripts/audit-gate.mjs [--level=high|moderate|low]
+ * Usage:  node scripts/audit-gate.ts [--level=high|moderate|low]
  */
 
 import { spawn } from "node:child_process";
 
-const ORDER = ["low", "moderate", "high", "critical"];
+const ORDER = ["low", "moderate", "high", "critical"] as const;
+type Severity = (typeof ORDER)[number];
+
+interface Advisory {
+  severity: Severity;
+  module_name: string;
+  title: string;
+  vulnerable_versions: string;
+  patched_versions: string;
+  findings?: { paths?: string[] }[];
+}
+
+interface AuditReport {
+  metadata: unknown;
+  advisories?: Record<string, Advisory>;
+}
 
 const levelArg = process.argv.find((a) => a.startsWith("--level="));
-const level = levelArg ? levelArg.slice("--level=".length) : "high";
-if (!ORDER.includes(level)) {
+const level = (levelArg ? levelArg.slice("--level=".length) : "high") as Severity;
+if (!(ORDER as readonly string[]).includes(level)) {
   console.error(`audit-gate: --level tiene que ser uno de: ${ORDER.join(", ")}. Recibido: "${level}".`);
   process.exit(2);
 }
@@ -41,17 +56,17 @@ const floor = ORDER.indexOf(level);
  * code does not distinguish "there are vulnerabilities" from "I could not query". What does distinguish
  * them is whether what it wrote parses as the expected JSON: that only happens when the query worked.
  */
-function runAudit() {
+function runAudit(): Promise<{ ok: true; report: AuditReport } | { ok: false; reason: string }> {
   return new Promise((resolve) => {
     const child = spawn("pnpm", ["audit", "--json"], { stdio: ["ignore", "pipe", "pipe"] });
     let out = "";
     let err = "";
-    child.stdout.on("data", (d) => (out += d));
-    child.stderr.on("data", (d) => (err += d));
+    child.stdout.on("data", (d: Buffer) => (out += d));
+    child.stderr.on("data", (d: Buffer) => (err += d));
     child.on("error", () => resolve({ ok: false, reason: "no se pudo ejecutar pnpm" }));
     child.on("close", () => {
       try {
-        const parsed = JSON.parse(out);
+        const parsed = JSON.parse(out) as AuditReport;
         if (!parsed || typeof parsed !== "object" || !parsed.metadata) {
           return resolve({ ok: false, reason: "respuesta inesperada del registry" });
         }

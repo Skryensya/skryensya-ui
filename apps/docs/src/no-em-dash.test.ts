@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 const forbidden = "\u2014";
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "../../..");
 /* Skipped BY NAME, so a build output directory that is not literally called `dist` has to be named
-   here too: `build-preview-heights.mjs` writes a full production build of this very site, and a
+   here too: `build-preview-heights.ts` writes a full production build of this very site, and a
    bundle carries the em dashes of whatever prose went into it. Scanning it turns a guard about what
    we WRITE into a guard about what Vite emitted. */
 const skippedDirectories = {

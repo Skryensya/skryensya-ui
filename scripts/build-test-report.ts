@@ -123,6 +123,9 @@ const TARGETS = [
   { pkg: "packages/vanilla", file: "src/components/back-to-top.test.ts" },
   { pkg: "packages/react", file: "src/components/marquee.test.tsx" },
   { pkg: "packages/vanilla", file: "src/components/marquee.test.ts" },
+  { pkg: "packages/core", file: "src/annotation.test.ts" },
+  { pkg: "packages/react", file: "src/components/annotation.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/annotation.test.ts" },
 ];
 
 interface VitestJsonReport {

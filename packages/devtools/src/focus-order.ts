@@ -11,6 +11,10 @@
  * practice and the number exists to catch OTHER classes of bugs (an element skipped entirely, one
  * included twice, a dialog that should have trapped focus but did not).
  *
+ * A native button or link with tabindex="-1" is not a tab stop (Annotation writes that on every
+ * control inside a specimen). Those must not match the element selectors below, or a frozen
+ * accordion still wears a badge. The [tabindex] row already excluded -1; the natives did not.
+ *
  * Pure CSS counters + generated content, the same shape as the density scope's outline+label: no
  * JS measures a position, so nothing here can trail a scroll or resize by a frame, and it costs
  * nothing when the attribute is not set. It is also what lets this work inside a component-preview
@@ -39,11 +43,11 @@ const STYLE_ID = "sk-devtools-focus-order-style";
 
 /** Also read by `apps/docs`'s Base.astro, whose early copy of this rule must match exactly. */
 export const FOCUSABLE_SELECTORS = [
-  "a[href]",
-  "button:not([disabled])",
-  'input:not([disabled]):not([type="hidden"])',
-  "select:not([disabled])",
-  "textarea:not([disabled])",
+  'a[href]:not([tabindex="-1"])',
+  'button:not([disabled]):not([tabindex="-1"])',
+  'input:not([disabled]):not([type="hidden"]):not([tabindex="-1"])',
+  'select:not([disabled]):not([tabindex="-1"])',
+  'textarea:not([disabled]):not([tabindex="-1"])',
   '[tabindex]:not([tabindex="-1"])',
 ] as const;
 
@@ -65,6 +69,16 @@ export const FOCUS_ORDER_CSS = `
     ${scoped(FOCUSABLE_SELECTORS, "")} {
       position: relative;
       counter-increment: sk-devtools-focus-order;
+    }
+    /*
+     * An inert subtree is out of the tab order by definition. Annotation's specimen is the case
+     * that made this visible: an accordion inside a diagram still matched button here and wore
+     * a badge, even though Tab skipped it. Do not increment, and do not paint a number, for
+     * anything inside an inert subtree.
+     */
+    html[${FOCUS_ORDER_ATTR}] [inert],
+    html[${FOCUS_ORDER_ATTR}] [inert] * {
+      counter-increment: none;
     }
     ${scoped(FOCUSABLE_SELECTORS, "::after")} {
       content: counter(sk-devtools-focus-order);
@@ -105,6 +119,10 @@ export const FOCUS_ORDER_CSS = `
       text-align: center;
       z-index: 2147483000;
       pointer-events: none;
+    }
+    html[${FOCUS_ORDER_ATTR}] [inert]::after,
+    html[${FOCUS_ORDER_ATTR}] [inert] *::after {
+      content: none;
     }
   `;
 

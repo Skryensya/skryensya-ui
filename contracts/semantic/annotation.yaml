@@ -1,0 +1,19 @@
+# The structure lives in packages/core/src/annotation.ts. Here, only why it is chosen.
+
+Annotated:
+  useWhen:
+    - "hay que señalar las piezas de algo que ya está renderizado y decir cómo se llama cada una: la anatomía de un componente, las partes de una composición, un diagrama de armado"
+    - "las etiquetas no pueden taparlo: viven en los cuatro márgenes de una grilla y el sujeto ocupa la celda del medio, así que el solape no se evita, no se puede representar"
+    - "cada etiqueta llega a su parte por una línea guía de uno o dos tramos, sólo rectos o de 45 grados: la menor cantidad que alcanza"
+    - "el dibujo se recalcula solo cuando cambia el tamaño del contenedor, cuando el sujeto reflowea o cuando llega una tipografía: dónde cae una parte no es un valor que se pueda escribir al componer"
+    - "el sujeto es una muestra y no un control: `inert` viene prendido, no toma puntero, ni foco, ni teclado, y sale del árbol de accesibilidad"
+  avoidWhen:
+    - "lo que se quiere es una leyenda numerada debajo de la imagen: eso es una List o una Table, y hace que quien lee tenga que sostener seis números en la cabeza mientras el ojo viaja"
+    - "la etiqueta tiene que aparecer al pasar el puntero o al enfocar: eso es Tooltip, que es chrome flotante y efímero; esto está siempre dibujado"
+    - "hay que explicar un dato al lado de un control dentro de un formulario real: eso es el `hint` de FormField, que además queda enlazado por aria-describedby"
+    - "el sujeto tiene que seguir siendo usable: `inert` es todo o nada, así que un diagrama sobre una UI viva es dos cosas peleando por el mismo markup"
+    - "el diagrama es de cajas y flechas entre nodos, no de partes de una sola cosa: esto ancla cada etiqueta a un selector adentro del sujeto, no dibuja un grafo"
+  alternatives:
+    - Tooltip
+    - FormField
+    - List

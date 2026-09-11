@@ -44,11 +44,13 @@
    */
   .sk-inline {
     --sk-inline-gap: var(--space-inline-md);
+    --sk-inline-block-start: 0;
 
     display: flex;
     flex-wrap: wrap;
     gap: var(--sk-inline-gap);
     align-items: flex-end;
+    margin-block-start: var(--sk-inline-block-start);
   }
 
   .sk-inline[data-align="start"] { align-items: flex-start; }
@@ -67,6 +69,33 @@
   .sk-inline[data-gap="sm"] { --sk-inline-gap: var(--space-inline-sm); }
   .sk-inline[data-gap="lg"] { --sk-inline-gap: var(--space-inline-lg); }
   .sk-inline[data-gap="xl"] { --sk-inline-gap: var(--space-inset-xl); }
+  .sk-inline[data-block-start="none"] { --sk-inline-block-start: 0; }
+  .sk-inline[data-block-start="xs"] { --sk-inline-block-start: var(--space-stack-xs); }
+  .sk-inline[data-block-start="sm"] { --sk-inline-block-start: var(--space-stack-sm); }
+  .sk-inline[data-block-start="md"] { --sk-inline-block-start: var(--space-stack-md); }
+  .sk-inline[data-block-start="lg"] { --sk-inline-block-start: var(--space-stack-lg); }
+  .sk-inline[data-block-start="xl"] { --sk-inline-block-start: var(--space-stack-xl); }
+  .sk-inline[data-block-start="auto"] { --sk-inline-block-start: auto; }
+
+  /*
+   * CARD FLOOR. `data-block-start="auto"` only does work if the parent is taller than its content.
+   * A Box whose last child is that Inline becomes a flex column filling its grid cell, so a row of
+   * cards of uneven copy still line their action rows up. A Stack that itself ends on that Inline
+   * fills the Box the same way, for the composition that wraps title + body + actions in one Stack.
+   * Opt-in via the attribute: an ordinary Inline inside a Box does not turn that Box into a column.
+   */
+  .sk-box:has(> .sk-inline[data-block-start="auto"]:last-child),
+  .sk-box:has(> .sk-stack:has(> .sk-inline[data-block-start="auto"]:last-child)) {
+    display: flex;
+    flex-direction: column;
+    min-block-size: 100%;
+  }
+
+  .sk-box > .sk-stack:has(> .sk-inline[data-block-start="auto"]:last-child),
+  .sk-stack:has(> .sk-inline[data-block-start="auto"]:last-child) {
+    flex: 1 1 auto;
+    min-block-size: 100%;
+  }
 
   .sk-grid {
     --sk-grid-columns: 1;

@@ -1,0 +1,423 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  annotationAnatomyTree,
+  annotationDemoCss,
+  annotationElbowTree,
+  annotationPluralCss,
+  annotationPluralTree,
+  annotationSidesTree,
+} from "../../demos/annotation";
+import { getLocale, useTranslations } from "../../i18n";
+import contractSource from "@contracts/semantic/annotation.yaml?raw";
+import coreSource from "@core/src/annotation.ts?raw";
+import coreTestSource from "@core/src/annotation.test.ts?raw";
+import cssSource from "@core/css/components/annotation.css?raw";
+import reactSource from "@react/src/components/annotation.tsx?raw";
+import reactTestSource from "@react/src/components/annotation.test.tsx?raw";
+import vanillaMountSource from "@vanilla/src/components/annotation.ts?raw";
+import vanillaTestSource from "@vanilla/src/components/annotation.test.ts?raw";
+/* The sheet itself, not only its source: the Style hooks table resolves each hook against a real
+   element, and a page that never loads this stylesheet shows every value blank. */
+import "@skryensya/core/components/annotation.css";
+/* The specimens' own stylesheets, for the same reason one level down: an Accordion measured without
+   `tile.css` is a stack of unstyled blocks, and every leader on this page would point at the wrong
+   box. Here the CSS is not decoration, it is the input. */
+import "@skryensya/core/components/accordion.css";
+import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/stat.css";
+import "@skryensya/core/components/badge.css";
+import "@skryensya/core/components/breadcrumb.css";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/annotation.css";`;
+
+const html = `<div class="sk-annotated" data-sk-annotated role="group" aria-label="Anatomía de Accordion">
+  <div class="sk-annotated__subject" inert>
+    <!-- cualquier composición: acá va el Accordion entero -->
+  </div>
+
+  <span class="sk-annotation" data-for=".sk-accordion" data-side="block-start">sk-accordion</span>
+  <span class="sk-annotation" data-for=".sk-tile" data-side="inline-start">sk-tile</span>
+  <span class="sk-annotation" data-for=".sk-tile__trigger" data-side="inline-start">sk-tile__trigger</span>
+  <span class="sk-annotation" data-for=".sk-tile__chevron" data-side="inline-end">sk-tile__chevron</span>
+
+  <!-- vacío a propósito: el enhancer dibuja acá, con números que sólo existen medidos -->
+  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
+</div>`;
+
+const react = `import { Annotated } from "@skryensya/react/annotation";
+import { Accordion } from "@skryensya/react/accordion";
+
+<Annotated
+  label="Anatomía de Accordion"
+  inert
+  subject={
+    <Accordion>
+      <Accordion.Item value="envio" defaultOpen>
+        <Accordion.Trigger>¿Cuánto tarda el envío?</Accordion.Trigger>
+        <Accordion.Content>Entre tres y cinco días hábiles.</Accordion.Content>
+      </Accordion.Item>
+    </Accordion>
+  }
+  annotations={[
+    { for: ".sk-accordion", side: "block-start", children: "sk-accordion" },
+    { for: ".sk-tile", side: "inline-start", children: "sk-tile" },
+    { for: ".sk-tile__trigger", side: "inline-start", children: "sk-tile__trigger" },
+    { for: ".sk-tile__chevron", side: "inline-end", children: "sk-tile__chevron" },
+  ]}
+/>`;
+
+/* The hooks a diagram actually retunes, and the one nobody guesses: the type family is inherited,
+   because a label is not always a class name. */
+const hooks = `.mi-diagrama {
+  /* las etiquetas de esta pagina SON clases, asi que piden la familia de codigo */
+  --sk-annotation-font-family: var(--font-family-code);
+  /* el gap de la grilla: con las tres columnas en auto, es la distancia entre cada
+     etiqueta y lo que nombra */
+  --sk-annotated-gap: var(--space-inline-lg);
+  /* el unico acento: la anotacion que se esta leyendo. En reposo todo queda gris. */
+  --sk-annotation-ring-color: var(--color-border-accent);
+  --sk-annotation-color-active: var(--color-text-accent);
+  --sk-annotation-bubble-bg-active: var(--color-bg-accent-subtle);
+  /* de que lado del borde va el anillo y cuanto: ringPlacement / ringDistance en el arbol */
+  /* el sujeto va en escala de grises; un diagrama SOBRE el color lo pone en none */
+  --sk-annotated-subject-filter: grayscale(1);
+}`;
+
+const sourceFiles = [
+  { id: "contracts/semantic/annotation.yaml", source: contractSource, language: "yaml" },
+  { id: "packages/core/src/annotation.ts", source: coreSource, language: "ts" },
+  { id: "packages/core/src/annotation.test.ts", source: coreTestSource, language: "ts" },
+  { id: "packages/core/css/components/annotation.css", source: cssSource, language: "css" },
+  { id: "packages/vanilla/src/components/annotation.ts", source: vanillaMountSource, language: "ts" },
+  { id: "packages/vanilla/src/components/annotation.test.ts", source: vanillaTestSource, language: "ts" },
+  { id: "packages/react/src/components/annotation.tsx", source: reactSource, language: "tsx" },
+  { id: "packages/react/src/components/annotation.test.tsx", source: reactTestSource, language: "tsx" },
+] as const;
+---
+
+<ComponentPageShell
+  title="Annotation"
+  description={t("annotation.description")}
+  badge={t("annotation.betaBadge")}
+  contractId="annotation"
+  styleGroups={[{ file: "components/annotation.css", probe: "sk-annotated", title: "Annotated" }]}
+  sourceFiles={sourceFiles}
+  tests={[
+    {
+      file: "packages/core/src/annotation.test.ts",
+      tests: [
+        { name: "names the four gutters logically, so they swap themselves in RTL", description: t("annotation.test1") },
+        { name: "recognises only those four", description: t("annotation.test2") },
+        { name: "draws a level leader as one straight segment", description: t("annotation.test3") },
+        { name: "runs straight and then turns 45 degrees when there is room to", description: t("annotation.test4") },
+        { name: "collapses to a single pure diagonal when the two axes match", description: t("annotation.test5") },
+        {
+          name: "takes the diagonal first and finishes straight when the cross axis is longer",
+          description: t("annotation.test6"),
+        },
+        {
+          name: "never needs more than two segments, in either direction, on either axis",
+          description: t("annotation.test7"),
+        },
+        { name: "mirrors the whole rule on the block axis", description: t("annotation.test8") },
+        { name: "draws nothing for a leader with no length", description: t("annotation.test9") },
+        { name: "writes path data a browser can read back", description: t("annotation.test10") },
+        { name: "reads the gutter off the boxes, not off the request", description: t("annotation.test11") },
+        { name: "swaps the two inline gutters in a right-to-left frame", description: t("annotation.test12") },
+        {
+          name: "lets the request win a corner, where two readings are both true",
+          description: t("annotation.test52"),
+        },
+        {
+          name: "still reclassifies a label that is nowhere near the side it asked for",
+          description: t("annotation.test53"),
+        },
+        {
+          name: "keeps the request when the label overlaps the subject on both axes",
+          description: t("annotation.test13"),
+        },
+        { name: "leaves labels exactly where they asked when nothing collides", description: t("annotation.test14") },
+        { name: "pushes apart what would overlap, and only by what it takes", description: t("annotation.test15") },
+        { name: "keeps the targets' own order rather than the authoring order", description: t("annotation.test16") },
+        { name: "pulls a run that overflowed the far end back inside", description: t("annotation.test17") },
+        { name: "packs from the start when the labels simply do not fit", description: t("annotation.test18") },
+        {
+          name: "lifts a label level with its target and draws one straight segment",
+          description: t("annotation.test19"),
+        },
+        { name: "treats a target with no box as no target at all", description: t("annotation.test49") },
+        {
+          name: "keeps a hairline target pointable: no area is the rule, not no thickness",
+          description: t("annotation.test50"),
+        },
+        {
+          name: "meets the ring's edge, and can be asked to stand off it instead",
+          description: t("annotation.test66"),
+        },
+        {
+          name: "lets one mark override the frame's ring placement",
+          description: t("annotation.test72"),
+        },
+        {
+          name: "lets the frame choose that radius, and one mark override it",
+          description: t("annotation.test73"),
+        },
+        {
+          name: "names every match when asked to, one leader each from the same label",
+          description: t("annotation.test74"),
+        },
+        {
+          name: "sits level with the middle of everything it names, not with the first of them",
+          description: t("annotation.test75"),
+        },
+        { name: "drops the matches that have no box, and keeps the rest", description: t("annotation.test76") },
+        {
+          name: "spreads a label's own leaders along its edge rather than starting them all at one point",
+          description: t("annotation.test78"),
+        },
+        {
+          name: "hands those origins out in the targets' own order, so a label's leaders never cross",
+          description: t("annotation.test79"),
+        },
+        {
+          name: "still starts a singular name's leader at the middle of its edge",
+          description: t("annotation.test80"),
+        },
+        { name: "names the two sides of a part's edge, and only those two", description: t("annotation.test57") },
+        { name: "turns a placement and a distance into one signed inset", description: t("annotation.test58") },
+        {
+          name: "reads a negative distance as a magnitude, never as an inverted ring",
+          description: t("annotation.test59"),
+        },
+        {
+          name: "falls back to the default distance on a number that is not one",
+          description: t("annotation.test60"),
+        },
+        { name: "draws the ring outside the part when asked to offset it", description: t("annotation.test61") },
+        { name: "lets the distance be chosen, in either direction", description: t("annotation.test62") },
+        {
+          name: "never inverts a part too thin to inset, and has no such limit going outward",
+          description: t("annotation.test63"),
+        },
+        {
+          name: "gives every ring the same radius, whatever shape the part is",
+          description: t("annotation.test64"),
+        },
+        { name: "clamps the radius on a part too small to hold it", description: t("annotation.test65") },
+        { name: "leaves a label with no target in flow, and draws no leader for it", description: t("annotation.test20") },
+        { name: "keeps a targetless label out of the distribution entirely", description: t("annotation.test21") },
+        { name: "distributes two labels whose targets nearly coincide", description: t("annotation.test22") },
+        { name: "turns once when the label could not reach its target's level", description: t("annotation.test23") },
+        { name: "leaves a label in the block gutter downward, and slides it sideways", description: t("annotation.test24") },
+        { name: "reads a right-to-left frame's gutters the other way round", description: t("annotation.test25") },
+        {
+          name: "rounds every coordinate, so two bindings of the same width write the same string",
+          description: t("annotation.test26"),
+        },
+      ],
+    },
+    {
+      file: "packages/vanilla/src/components/annotation.test.ts",
+      tests: [
+        { name: "makes the specimen a specimen: inert, and nothing inside it a tab stop", description: t("annotation.test86") },
+        { name: "lifts each label level with the part it names", description: t("annotation.test27") },
+        {
+          name: "draws one mark per label, each a leader and a ring, in the labels' own order",
+          description: t("annotation.test67"),
+        },
+        {
+          name: "keeps one mark per label even when a label has nothing to point at",
+          description: t("annotation.test68"),
+        },
+        {
+          name: "names every match when the label asks for all of them",
+          description: t("annotation.test74"),
+        },
+        { name: "still takes only the first match by default", description: t("annotation.test77") },
+        {
+          name: "reveals one mark at a time, pairing it with the label being read",
+          description: t("annotation.test69"),
+        },
+        {
+          name: "reveals on focus too, so the marks are reachable without a pointer",
+          description: t("annotation.test70"),
+        },
+        { name: "writes back which gutter the label actually landed in", description: t("annotation.test29") },
+        { name: "costs one bad selector its own leader and nothing else", description: t("annotation.test30") },
+        { name: "finds a target only inside the subject, never elsewhere on the page", description: t("annotation.test31") },
+        { name: "re-measures when the frame resizes, and follows the part that moved", description: t("annotation.test32") },
+        {
+          name: "reconstructs the flow box from the offset it wrote, so a second pass does not compound",
+          description: t("annotation.test33"),
+        },
+        { name: "writes nothing at all when a pass decides the same thing twice", description: t("annotation.test34") },
+        {
+          name: "watches the frame, the specimen, every label AND every part it names",
+          description: t("annotation.test85"),
+        },
+        {
+          name: "ignores selector matches in an aria-hidden measurement copy",
+          description: t("annotation.test81"),
+        },
+        { name: "names a target that is itself aria-hidden", description: t("annotation.test82") },
+        {
+          name: "draws a leader when a target appears after the first measurement",
+          description: t("annotation.test83"),
+        },
+        {
+          name: "picks up a part that only gets its box after the first pass",
+          description: t("annotation.test84"),
+        },
+        { name: "stops measuring once cleaned up", description: t("annotation.test36") },
+        { name: "does nothing, rather than throwing, on a frame that lost a part", description: t("annotation.test37") },
+        { name: "mounts once per authored root", description: t("annotation.test38") },
+      ],
+    },
+    {
+      file: "packages/react/src/components/annotation.test.tsx",
+      tests: [
+        { name: "renders the specimen, one label each, and an overlay to draw into", description: t("annotation.test39") },
+        { name: "leaves the frame unnamed rather than adding an anonymous group", description: t("annotation.test40") },
+        { name: "makes the specimen inert by default, and never the labels with it", description: t("annotation.test41") },
+        { name: "leaves the specimen live when inert is refused", description: t("annotation.test87") },
+        { name: "lifts each label level with the part it names", description: t("annotation.test42") },
+        { name: "draws the same marks the enhancer draws, in the same shape", description: t("annotation.test71") },
+        {
+          name: "keeps one mark per label even when a label has nothing to point at",
+          description: t("annotation.test68"),
+        },
+        {
+          name: "names every match when the label asks for all of them",
+          description: t("annotation.test74"),
+        },
+        { name: "still takes only the first match by default", description: t("annotation.test77") },
+        {
+          name: "reveals one mark at a time, pairing it with the label being read",
+          description: t("annotation.test69"),
+        },
+        {
+          name: "reveals on focus too, so the marks are reachable without a pointer",
+          description: t("annotation.test70"),
+        },
+        { name: "writes back which gutter the label actually landed in", description: t("annotation.test44") },
+        { name: "costs one bad selector its own leader and nothing else", description: t("annotation.test45") },
+        {
+          name: "settles instead of spinning: a pass that decides nothing new renders nothing new",
+          description: t("annotation.test46"),
+        },
+        {
+          name: "reconstructs the flow box from the offset it painted, so a second pass does not compound",
+          description: t("annotation.test47"),
+        },
+        {
+          name: "survives a second pass that runs before the first one has committed",
+          description: t("annotation.test51"),
+        },
+        {
+          name: "ignores selector matches in an aria-hidden measurement copy",
+          description: t("annotation.test81"),
+        },
+        { name: "names a target that is itself aria-hidden", description: t("annotation.test82") },
+        {
+          name: "draws a leader when a target appears after the first measurement",
+          description: t("annotation.test83"),
+        },
+        {
+          name: "picks up a part that only gets its box after the first pass",
+          description: t("annotation.test84"),
+        },
+        { name: "stops measuring once unmounted", description: t("annotation.test48") },
+      ],
+    },
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("annotation.lede")} />
+
+    <h3>{t("annotation.whenTitle")}</h3>
+    <p set:html={t("annotation.whenBody1")} />
+    <p set:html={t("annotation.whenBody2")} />
+
+    <h3>{t("annotation.anatomyTitle")}</h3>
+    <p set:html={t("annotation.anatomyBody")} />
+    <p set:html={t("annotation.anatomyNote")} />
+    <ComponentPreview
+      tree={annotationAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("annotation.anatomyPreviewLabel")}
+      note={t("annotation.anatomyHint")}
+    />
+
+    <h3>{t("annotation.ringPlacementTitle")}</h3>
+    <p set:html={t("annotation.ringPlacementBody")} />
+
+    <h3>{t("annotation.sidesTitle")}</h3>
+    <p set:html={t("annotation.sidesBody")} />
+    <ComponentPreview
+      tree={annotationSidesTree(t)}
+      css={annotationDemoCss}
+      label={t("annotation.sidesPreviewLabel")}
+    />
+
+    <h3>{t("annotation.pluralTitle")}</h3>
+    <p set:html={t("annotation.pluralBody")} />
+    <ComponentPreview
+      tree={annotationPluralTree(t)}
+      css={annotationPluralCss}
+      label={t("annotation.pluralPreviewLabel")}
+    />
+
+    <h3>{t("annotation.elbowTitle")}</h3>
+    <p set:html={t("annotation.elbowBody")} />
+    <ComponentPreview
+      tree={annotationElbowTree(t)}
+      css={annotationDemoCss}
+      label={t("annotation.elbowPreviewLabel")}
+      minHeight="24rem"
+    />
+
+    <h3>{t("annotation.revealTitle")}</h3>
+    <p set:html={t("annotation.revealBody")} />
+
+    <h3>{t("annotation.ringTitle")}</h3>
+    <p set:html={t("annotation.ringBody")} />
+
+    <h3>{t("annotation.runtimeTitle")}</h3>
+    <p set:html={t("annotation.runtimeBody1")} />
+    <p set:html={t("annotation.runtimeBody2")} />
+
+    <h3>{t("annotation.optionsTitle")}</h3>
+    <p set:html={t("annotation.optionsBody")} />
+
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("annotation.contractItem1")} />
+      <li set:html={t("annotation.contractItem2")} />
+      <li set:html={t("annotation.contractItem3")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+    <CodeBlock code={html} label="HTML" lang="html" />
+    <CodeBlock code={react} label="React" lang="tsx" />
+
+    <h4>{t("annotation.cssTitle")}</h4>
+    <p set:html={t("annotation.cssBody")} />
+    <CodeBlock code={hooks} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("annotation.a11yP1")} />
+    <p set:html={t("annotation.a11yP2")} />
+  </Fragment>
+</ComponentPageShell>

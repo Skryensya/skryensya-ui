@@ -12,7 +12,7 @@ export const cardMessages = {
       'No existen <code>sk-card</code>, <code>@skryensya/react/card</code> ni <code>components/card.css</code>. Importa las piezas que la card realmente usa.',
     "cardPage.chooseTitle": "Elige por comportamiento",
     "cardPage.chooseBody":
-      "«Card» describe la forma visual, pero no dice qué hace. Empieza por la semántica y la interacción; después compón el contenido con Stack, Inline, Heading, Text, Badge, Stat u otras piezas.",
+      "«Card» describe la forma visual, pero no dice qué hace. Empieza por la semántica y la interacción; después compón el contenido con Stack, Inline, Heading, Text, Badge, Stat u otras piezas. Una fila de botones al pie de varias cards de distinta altura es <a href=\"/components/inline\">Inline</a> con <code>blockStart=\"auto\"</code>, no un componente Card ni un ButtonWrapper.",
     "cardPage.tableHeadSurface": "La superficie…",
     "cardPage.tableHeadUses": "Usa",
     "cardPage.tableHeadElement": "Elemento real",
@@ -136,7 +136,7 @@ export const cardMessages = {
       "There is no <code>sk-card</code>, <code>@skryensya/react/card</code>, or <code>components/card.css</code>. Import whichever pieces the card actually uses.",
     "cardPage.chooseTitle": "Choose by behavior",
     "cardPage.chooseBody":
-      "\"Card\" describes the visual shape, but says nothing about what it does. Start from semantics and interaction; then compose the content with Stack, Inline, Heading, Text, Badge, Stat, or other pieces.",
+      "\"Card\" describes the visual shape, but says nothing about what it does. Start from semantics and interaction; then compose the content with Stack, Inline, Heading, Text, Badge, Stat, or other pieces. A wrapping button row that should sit on the floor of a grid of uneven cards is <a href=\"/en/components/inline\">Inline</a> with <code>blockStart=\"auto\"</code>, not a Card component and not a ButtonWrapper.",
     "cardPage.tableHeadSurface": "The surface…",
     "cardPage.tableHeadUses": "Use",
     "cardPage.tableHeadElement": "Real element",

@@ -24,6 +24,10 @@
       "types": "./src/accordion.ts",
       "default": "./src/accordion.ts"
     },
+    "./annotation": {
+      "types": "./src/annotation.ts",
+      "default": "./src/annotation.ts"
+    },
     "./anchored": {
       "types": "./src/anchored.ts",
       "default": "./src/anchored.ts"

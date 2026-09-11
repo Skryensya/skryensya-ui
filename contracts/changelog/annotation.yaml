@@ -1,0 +1,84 @@
+# Qué cambió en annotation, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
+# hash nuevo.
+surface: "7e633f2187af284c"
+entries:
+  - date: 2026-09-11
+    kind: bugfix
+    target: inert
+    es:
+      title: La muestra anotada ya no recibe foco
+      body: >-
+        <code>inert</code> queda prendido por defecto: el acordeón, el breadcrumb o lo que sea
+        que se esté anotando es una muestra, no un control. Tab lo saltea, y los bindings le
+        sacan el <code>tabindex</code> a todo lo de adentro para que nada se publicite como
+        parada. Las etiquetas siguen siendo enfocables, que es como se revela una marca sin
+        puntero. <code>inert={false}</code> sigue existiendo para el diagrama sobre una UI viva.
+    en:
+      title: An annotated specimen no longer takes focus
+      body: >-
+        <code>inert</code> is now on by default: the accordion, breadcrumb or whatever is being
+        annotated is a specimen, not a control. Tab skips it, and both bindings take
+        <code>tabindex</code> off everything inside so nothing advertises itself as a stop. The
+        labels stay focusable, which is how a mark is revealed without a pointer.
+        <code>inert={false}</code> still exists for a diagram over a live UI.
+  - date: 2026-09-10
+    kind: feature
+    es:
+      title: Annotation se publica como contrato, con una signature
+      body: >-
+        Entra al catálogo con <code>Annotated</code>: un marco que nombra las partes de lo que tiene
+        adentro. El sujeto ocupa la celda del medio de una grilla de tres por tres y las etiquetas
+        viven en los cuatro márgenes, que se dimensionan solos según lo que contienen, así que una
+        etiqueta no puede quedar encima de la pieza que nombra. Cada etiqueta apunta con
+        <code>for</code>, un selector CSS resuelto dentro del sujeto, y pide un margen con
+        <code>side</code> (<code>inline-start</code>, <code>inline-end</code>,
+        <code>block-start</code>, <code>block-end</code>); la línea guía que las une es de uno o dos
+        tramos, sólo rectos o de 45 grados, que es la menor cantidad que siempre alcanza, y termina
+        en un anillo (<code>sk-annotated__ring</code>) que rodea la parte entera, apenas por dentro
+        de su caja, con la forma que dibuja <code>:focus-visible</code>. En reposo no hay ningún
+        anillo: aparece el de la etiqueta que se está leyendo, con el puntero o con el foco, y por
+        eso las etiquetas son enfocables. <code>ringPlacement</code> elige de qué lado del borde de
+        la parte va el anillo (<code>inset</code> por defecto, <code>offset</code> para partes que
+        son líneas de texto sueltas), <code>ringDistance</code> cuántos píxeles y
+        <code>ringRadius</code> el redondeo de la esquina; las tres se pueden pisar por etiqueta,
+        para la parte que no se parece a sus vecinas. Con <code>match: "all"</code> una etiqueta
+        nombra <strong>todas</strong> las coincidencias de su selector en vez de la primera, con una
+        guía a cada una saliendo del mismo borde: para el nombre que es genuinamente plural, como el
+        <code>sk-breadcrumb__item</code> de un Breadcrumb, que no es la primera miga sino todas. El
+        marco
+        toma <code>label</code> (lo nombra y lo convierte en un <code>group</code>) e
+        <code>inert</code> (el sujeto es una muestra: no toma puntero, ni foco, ni teclado). La
+        geometría es pura y vive en <code>@skryensya/core/annotation</code>; las dos bindings sólo
+        miden con un <code>ResizeObserver</code> y escriben un <code>translate</code> por etiqueta y
+        el <code>d</code> de cada guía, así que el dibujo se rehace cuando cambia el tamaño del
+        contenedor. La hoja es <code>components/annotation.css</code>.
+    en:
+      title: Annotation is published as a contract, with one signature
+      body: >-
+        It joins the catalogue with <code>Annotated</code>: a frame that names the parts of whatever
+        is inside it. The subject holds the middle cell of a three-by-three grid and the labels hold
+        the four margins, which size themselves to what they contain, so a label cannot end up over
+        the piece it names. Each label points with <code>for</code>, a CSS selector resolved inside
+        the subject, and asks for a margin with <code>side</code> (<code>inline-start</code>,
+        <code>inline-end</code>, <code>block-start</code>, <code>block-end</code>); the leader line
+        joining them is one or two segments, axis-aligned or at exactly 45 degrees, which is the
+        fewest that always reaches, and it ends in a ring (<code>sk-annotated__ring</code>) that
+        outlines the whole part, just inside its box, in the shape <code>:focus-visible</code> draws.
+        At rest no ring is drawn at all: the one belonging to the label being read comes up on hover
+        or focus, which is why the labels are focusable. <code>ringPlacement</code> picks which side
+        of a part's edge the ring sits on (<code>inset</code> by default, <code>offset</code> for
+        parts that are single lines of text), <code>ringDistance</code> how many pixels and
+        <code>ringRadius</code> the corner; all three can be overridden per label, for the part that
+        is unlike its neighbours. With <code>match: "all"</code> a label names <strong>every</strong>
+        match of its selector rather than the first, with one leader to each leaving the same edge:
+        for the name that is genuinely plural, such as a Breadcrumb's <code>sk-breadcrumb__item</code>,
+        which is not the first crumb but all of them. The
+        frame takes <code>label</code> (names it and makes it a
+        <code>group</code>) and <code>inert</code> (the subject is a specimen: no pointer, no focus,
+        no keyboard). The geometry is pure and lives in <code>@skryensya/core/annotation</code>; both
+        bindings only measure with a <code>ResizeObserver</code> and write a <code>translate</code>
+        per label plus each leader's <code>d</code>, so the drawing is redone whenever the container
+        changes size. Its stylesheet is <code>components/annotation.css</code>.

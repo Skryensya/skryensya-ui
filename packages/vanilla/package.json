@@ -33,6 +33,10 @@
       "types": "./src/icon.ts",
       "default": "./src/icon.ts"
     },
+    "./annotation": {
+      "types": "./src/components/annotation.ts",
+      "default": "./src/components/annotation.ts"
+    },
     "./back-to-top": {
       "types": "./src/components/back-to-top.ts",
       "default": "./src/components/back-to-top.ts"

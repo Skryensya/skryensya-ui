@@ -3,8 +3,31 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "c9e5768a67b90638"
+surface: "fb145adc000926c0"
 entries:
+  - date: 2026-09-10
+    kind: feature
+    target: blockStart
+    es:
+      title: Inline gana blockStart, incluido auto para el piso de una card
+      body: >-
+        La opción nueva <code>blockStart</code> (<code>data-block-start</code>) pone aire encima
+        de la fila: los mismos pasos de la escala de stack, más <code>auto</code>. El default es
+        <code>none</code>, así un Inline de rótulo y valor no crece un hueco que nadie pidió.
+        <code>auto</code> es el caso del piso de una card: la altura que sobra en la columna queda
+        ARRIBA de la fila, y un Box cuya última hija es esa Inline se vuelve una columna flex que
+        llena su celda. No hay un componente <code>ButtonWrapper</code>; la fila de botones ya era
+        el intent <code>button-row</code> de Inline.
+    en:
+      title: Inline gains blockStart, including auto for a card's floor
+      body: >-
+        The new <code>blockStart</code> option (<code>data-block-start</code>) puts space above the
+        row: the same steps as the stack scale, plus <code>auto</code>. The default is
+        <code>none</code>, so a label-and-value Inline does not grow a gap nobody asked for.
+        <code>auto</code> is the card-floor case: leftover height in the column sits ABOVE the row,
+        and a Box whose last child is that Inline becomes a flex column that fills its cell. There
+        is no <code>ButtonWrapper</code> component; the button row was already Inline's
+        <code>button-row</code> intent.
   - date: 2026-09-04
     kind: breaking
     es:

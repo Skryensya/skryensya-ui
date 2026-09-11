@@ -8,8 +8,10 @@ Stack:
 Inline:
   useWhen:
     - "las cosas van una al lado de otra: una fila de botones, un rótulo con su valor"
+    - "una fila de acciones es lo último de una card y debe sentarse en el piso cuando las cards vecinas crecen; eso es blockStart auto, no un segundo componente llamado button-wrapper"
   avoidWhen:
     - "son columnas de igual ancho; eso es un Grid"
+    - "el empty state, el dialog o el toolbar ya tienen su propia parte de acciones; no sustituyas esa anatomía por un Inline"
   alternatives:
     - Grid
 

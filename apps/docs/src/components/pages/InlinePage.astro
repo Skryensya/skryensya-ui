@@ -2,7 +2,7 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { inlineTree } from "../../demos/layout";
+import { inlineCardFloorTree, inlineTree } from "../../demos/layout";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/layout.yaml?raw";
 import coreSource from "@core/src/layout.ts?raw";
@@ -33,6 +33,10 @@ const sourceFiles = [
           name: "renders Stack, Inline and Grid as the documented layout contracts",
           description: t("inlinePage.test1"),
         },
+        {
+          name: "omits data-block-start when Inline's space above is the default none",
+          description: t("inlinePage.test2"),
+        },
       ],
     },
   ]}
@@ -40,6 +44,13 @@ const sourceFiles = [
   <Fragment slot="usage">
     <p class="lede" set:html={t("inlinePage.lede")} />
     <ComponentPreview tree={inlineTree(t)} label={t("inlinePage.previewLabel")} note={t("inlinePage.previewNote")} />
+
+    <h3>{t("inlinePage.floorTitle")}</h3>
+    <p set:html={t("inlinePage.floorBody")} />
+    <ComponentPreview tree={inlineCardFloorTree(t)} label={t("inlinePage.floorPreviewLabel")} note={t("inlinePage.floorPreviewNote")} />
+
+    <h3>{t("inlinePage.whereTitle")}</h3>
+    <p set:html={t("inlinePage.whereBody")} />
 
     <h3>{t("inlinePage.htmlTitle")}</h3>
     <p set:html={t("inlinePage.htmlBody")} />
@@ -53,6 +64,7 @@ const sourceFiles = [
       <li set:html={t("inlinePage.contractItem3")} />
       <li set:html={t("inlinePage.contractItem4")} />
       <li set:html={t("inlinePage.contractItem5")} />
+      <li set:html={t("inlinePage.contractItem6")} />
     </ul>
   </Fragment>
 

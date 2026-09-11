@@ -1,4 +1,5 @@
 export { mountAccordion } from "./components/accordion.js";
+export { connectAnnotated, mountAnnotated } from "./components/annotation.js";
 export { connectBackToTop, mountBackToTop } from "./components/back-to-top.js";
 export { mountButton } from "./components/button.js";
 export { connectMarquee, mountMarquee } from "./components/marquee.js";

@@ -147,6 +147,12 @@ interface Props {
    */
   hideSource?: boolean;
   /**
+   * Drop the card chrome: title, note, binding/screen toggles and the overflow menu. The Vanilla
+   * stage stays; React is omitted too. For a specimen that should read as the thing itself, not as
+   * a teaching card with controls around it.
+   */
+  chrome?: boolean;
+  /**
    * Named span on the page's `.sk-layout-grid` (`packages/core/css/patterns/layout.css`). Each tab
    * panel is its own layout grid, so a preview sits at `content` measure by default and only reaches
    * for `breakout` (or narrower) when the demo itself needs the room. A settings List does, a Badge
@@ -177,6 +183,7 @@ const {
   screenScope,
   defaultScreen = "mobile",
   hideSource = false,
+  chrome = true,
   width,
 } = Astro.props;
 const locale = getLocale(Astro.url);
@@ -238,8 +245,9 @@ const vanillaCode = code ?? treeHtml ?? html;
  */
 const reactSlotHtml = Astro.slots.has("react") ? await Astro.slots.render("react") : undefined;
 const hasReact = Boolean(tree) || Boolean(treeReact ?? react) || Boolean(reactSlotHtml);
-const hasBindingTabs = Boolean(vanillaCode && hasReact);
+const hasBindingTabs = chrome && Boolean(vanillaCode && hasReact);
 const hasSourceTabs = Boolean(vanillaCode && (js || css));
+const showReactStage = chrome && Boolean(tree || reactSlotHtml);
 const slotHtml = Astro.slots.has("default") ? await Astro.slots.render("default") : undefined;
 const previewHtml = treeStageHtml ?? slotHtml ?? html ?? "";
 /*
@@ -413,9 +421,12 @@ const stageStyle =
   data-width={width}
   data-sk-component-preview-screen-local={screenScope === "local" ? "" : undefined}
   data-sk-preview-source={previewSource}
+  data-sk-component-preview-chrome={chrome ? undefined : "false"}
   id={previewId}
   style={stageStyle}
 >
+  {
+    chrome && (
   <header class="sk-component-preview__header">
     {
       /*
@@ -615,6 +626,8 @@ const stageStyle =
       </div>
     </div>
   </header>
+    )
+  }
 
   {
     hasVanillaStage && (
@@ -653,7 +666,7 @@ const stageStyle =
      * same isolation, theme sync, auto-fit and screen presets as the Vanilla one: the two bindings
      * are the same component seen twice, so they get the same box.
      */
-    (tree || reactSlotHtml) && (
+    showReactStage && (
       <div
         class="sk-component-preview__react-stage"
         data-sk-component-preview-binding="react"
@@ -692,7 +705,8 @@ const stageStyle =
       </div>
     )
   }
-  {/* Drag the stage's bottom edge for more or less height; doble clic vuelve al alto del contenido. */}
+  {
+    chrome && (
   <div
     class="sk-component-preview__resizer"
     data-sk-component-preview-resizer
@@ -702,6 +716,8 @@ const stageStyle =
     title="Arrastra para ajustar el alto · doble clic para restablecer"
     tabindex="0"
   />
+    )
+  }
   <div class="sk-component-preview__loading">
     <span
       class="sk-loader"
@@ -1005,10 +1021,10 @@ const stageStyle =
    * flipping pressed state Vanilla → React on load, and stops a persisted preset from painting
    * full-width first and snapping to phone size once the enhancer arrives.
    */
-  (hasBindingTabs || screens) && (
+  (hasBindingTabs || (chrome && screens)) && (
     <script
       is:inline
-      define:vars={{ previewId, hasBindingTabs, screens, zoomedDesktop, screenScope, defaultScreen }}
+      define:vars={{ previewId, hasBindingTabs, screens: chrome && screens, zoomedDesktop, screenScope, defaultScreen }}
     >
       (function () {
         var d = document.documentElement;

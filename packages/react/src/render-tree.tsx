@@ -25,6 +25,7 @@ import * as marqueeModule from "./components/marquee.js";
 import * as treeViewModule from "./components/tree-view.js";
 import * as sidebarModule from "./components/sidebar.js";
 import * as backToTopModule from "./components/back-to-top.js";
+import * as annotationModule from "./components/annotation.js";
 import * as skipLinkModule from "./components/skip-link.js";
 import * as accordionModule from "./components/accordion.js";
 import * as tileModule from "./components/tile.js";
@@ -99,6 +100,7 @@ import {
  * contract joins the map when it joins the catalogue.
  */
 const modules: Record<string, Record<string, unknown>> = {
+  "@skryensya/react/annotation": annotationModule,
   "@skryensya/react/select": selectModule,
   "@skryensya/react/menu": menuModule,
   "@skryensya/react/combobox": comboboxModule,

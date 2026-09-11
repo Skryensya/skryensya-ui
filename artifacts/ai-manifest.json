@@ -59,6 +59,26 @@
         "version": "0.1.0-dev"
       }
     ],
+    "annotation": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-10",
+            "en": {
+              "body": "It joins the catalogue with <code>Annotated</code>: a frame that names the parts of whatever is inside it. The subject holds the middle cell of a three-by-three grid and the labels hold the four margins, which size themselves to what they contain, so a label cannot end up over the piece it names. Each label points with <code>for</code>, a CSS selector resolved inside the subject, and asks for a margin with <code>side</code> (<code>inline-start</code>, <code>inline-end</code>, <code>block-start</code>, <code>block-end</code>); the leader line joining them is one or two segments, axis-aligned or at exactly 45 degrees, which is the fewest that always reaches, and it ends in a ring (<code>sk-annotated__ring</code>) that outlines the whole part, just inside its box, in the shape <code>:focus-visible</code> draws. At rest no ring is drawn at all: the one belonging to the label being read comes up on hover or focus, which is why the labels are focusable. <code>ringPlacement</code> picks which side of a part's edge the ring sits on (<code>inset</code> by default, <code>offset</code> for parts that are single lines of text), <code>ringDistance</code> how many pixels and <code>ringRadius</code> the corner; all three can be overridden per label, for the part that is unlike its neighbours. With <code>match: \"all\"</code> a label names <strong>every</strong> match of its selector rather than the first, with one leader to each leaving the same edge: for the name that is genuinely plural, such as a Breadcrumb's <code>sk-breadcrumb__item</code>, which is not the first crumb but all of them. The frame takes <code>label</code> (names it and makes it a <code>group</code>) and <code>inert</code> (the subject is a specimen: no pointer, no focus, no keyboard). The geometry is pure and lives in <code>@skryensya/core/annotation</code>; both bindings only measure with a <code>ResizeObserver</code> and write a <code>translate</code> per label plus each leader's <code>d</code>, so the drawing is redone whenever the container changes size. Its stylesheet is <code>components/annotation.css</code>.",
+              "title": "Annotation is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Annotated</code>: un marco que nombra las partes de lo que tiene adentro. El sujeto ocupa la celda del medio de una grilla de tres por tres y las etiquetas viven en los cuatro márgenes, que se dimensionan solos según lo que contienen, así que una etiqueta no puede quedar encima de la pieza que nombra. Cada etiqueta apunta con <code>for</code>, un selector CSS resuelto dentro del sujeto, y pide un margen con <code>side</code> (<code>inline-start</code>, <code>inline-end</code>, <code>block-start</code>, <code>block-end</code>); la línea guía que las une es de uno o dos tramos, sólo rectos o de 45 grados, que es la menor cantidad que siempre alcanza, y termina en un anillo (<code>sk-annotated__ring</code>) que rodea la parte entera, apenas por dentro de su caja, con la forma que dibuja <code>:focus-visible</code>. En reposo no hay ningún anillo: aparece el de la etiqueta que se está leyendo, con el puntero o con el foco, y por eso las etiquetas son enfocables. <code>ringPlacement</code> elige de qué lado del borde de la parte va el anillo (<code>inset</code> por defecto, <code>offset</code> para partes que son líneas de texto sueltas), <code>ringDistance</code> cuántos píxeles y <code>ringRadius</code> el redondeo de la esquina; las tres se pueden pisar por etiqueta, para la parte que no se parece a sus vecinas. Con <code>match: \"all\"</code> una etiqueta nombra <strong>todas</strong> las coincidencias de su selector en vez de la primera, con una guía a cada una saliendo del mismo borde: para el nombre que es genuinamente plural, como el <code>sk-breadcrumb__item</code> de un Breadcrumb, que no es la primera miga sino todas. El marco toma <code>label</code> (lo nombra y lo convierte en un <code>group</code>) e <code>inert</code> (el sujeto es una muestra: no toma puntero, ni foco, ni teclado). La geometría es pura y vive en <code>@skryensya/core/annotation</code>; las dos bindings sólo miden con un <code>ResizeObserver</code> y escriben un <code>translate</code> por etiqueta y el <code>d</code> de cada guía, así que el dibujo se rehace cuando cambia el tamaño del contenedor. La hoja es <code>components/annotation.css</code>.",
+              "title": "Annotation se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.1.0-dev"
+      }
+    ],
     "avatar": [
       {
         "date": null,
@@ -1541,6 +1561,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-10",
+            "en": {
+              "body": "The new <code>blockStart</code> option (<code>data-block-start</code>) puts space above the row: the same steps as the stack scale, plus <code>auto</code>. The default is <code>none</code>, so a label-and-value Inline does not grow a gap nobody asked for. <code>auto</code> is the card-floor case: leftover height in the column sits ABOVE the row, and a Box whose last child is that Inline becomes a flex column that fills its cell. There is no <code>ButtonWrapper</code> component; the button row was already Inline's <code>button-row</code> intent.",
+              "title": "Inline gains blockStart, including auto for a card's floor"
+            },
+            "es": {
+              "body": "La opción nueva <code>blockStart</code> (<code>data-block-start</code>) pone aire encima de la fila: los mismos pasos de la escala de stack, más <code>auto</code>. El default es <code>none</code>, así un Inline de rótulo y valor no crece un hueco que nadie pidió. <code>auto</code> es el caso del piso de una card: la altura que sobra en la columna queda ARRIBA de la fila, y un Box cuya última hija es esa Inline se vuelve una columna flex que llena su celda. No hay un componente <code>ButtonWrapper</code>; la fila de botones ya era el intent <code>button-row</code> de Inline.",
+              "title": "Inline gana blockStart, incluido auto para el piso de una card"
+            },
+            "kind": "feature",
+            "target": "blockStart"
+          },
           {
             "date": "2026-09-04",
             "en": {
@@ -3645,6 +3678,243 @@
               "headingLevel": "aria-level"
             },
             "part": "triggerHeading"
+          }
+        }
+      }
+    },
+    "annotation": {
+      "a11y": [
+        {
+          "because": "un sujeto inerte sale del árbol de accesibilidad, así que sin `label` el grupo queda como una lista de nombres de partes sin decir de qué son las partes",
+          "requiresOneOf": [
+            "label"
+          ],
+          "when": {
+            "inert": "present"
+          }
+        }
+      ],
+      "css": "@skryensya/core/components/annotation.css",
+      "id": "annotation",
+      "options": {
+        "for": {
+          "attr": "data-for",
+          "type": "string"
+        },
+        "inert": {
+          "attr": "inert",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "ringDistance": {
+          "attr": "data-ring-distance",
+          "default": 2,
+          "machineInput": true,
+          "type": "number"
+        },
+        "ringPlacement": {
+          "attr": "data-ring-placement",
+          "default": "inset",
+          "machineInput": true,
+          "type": "enum",
+          "values": [
+            "inset",
+            "offset"
+          ]
+        },
+        "ringRadius": {
+          "attr": "data-ring-radius",
+          "default": 6,
+          "machineInput": true,
+          "type": "number"
+        },
+        "side": {
+          "attr": "data-side",
+          "default": "inline-start",
+          "type": "enum",
+          "values": [
+            "inline-start",
+            "inline-end",
+            "block-start",
+            "block-end"
+          ]
+        }
+      },
+      "parts": {
+        "label": "sk-annotation",
+        "leader": "sk-annotated__leader",
+        "leaders": "sk-annotated__leaders",
+        "mark": "sk-annotated__mark",
+        "ring": "sk-annotated__ring",
+        "root": "sk-annotated",
+        "subject": "sk-annotated__subject"
+      },
+      "semantics": {
+        "Annotated": {
+          "alternatives": [
+            "Tooltip",
+            "FormField",
+            "List"
+          ],
+          "avoidWhen": [
+            "lo que se quiere es una leyenda numerada debajo de la imagen: eso es una List o una Table, y hace que quien lee tenga que sostener seis números en la cabeza mientras el ojo viaja",
+            "la etiqueta tiene que aparecer al pasar el puntero o al enfocar: eso es Tooltip, que es chrome flotante y efímero; esto está siempre dibujado",
+            "hay que explicar un dato al lado de un control dentro de un formulario real: eso es el `hint` de FormField, que además queda enlazado por aria-describedby",
+            "el sujeto tiene que seguir siendo usable: `inert` es todo o nada, así que un diagrama sobre una UI viva es dos cosas peleando por el mismo markup",
+            "el diagrama es de cajas y flechas entre nodos, no de partes de una sola cosa: esto ancla cada etiqueta a un selector adentro del sujeto, no dibuja un grafo"
+          ],
+          "useWhen": [
+            "hay que señalar las piezas de algo que ya está renderizado y decir cómo se llama cada una: la anatomía de un componente, las partes de una composición, un diagrama de armado",
+            "las etiquetas no pueden taparlo: viven en los cuatro márgenes de una grilla y el sujeto ocupa la celda del medio, así que el solape no se evita, no se puede representar",
+            "cada etiqueta llega a su parte por una línea guía de uno o dos tramos, sólo rectos o de 45 grados: la menor cantidad que alcanza",
+            "el dibujo se recalcula solo cuando cambia el tamaño del contenedor, cuando el sujeto reflowea o cuando llega una tipografía: dónde cae una parte no es un valor que se pueda escribir al componer",
+            "con `inert`, el sujeto es una muestra y no un control: no toma puntero, ni foco, ni teclado, y sale del árbol de accesibilidad"
+          ]
+        }
+      },
+      "signatures": {
+        "Annotated": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "annotate-parts",
+            "anatomy-diagram",
+            "composition-diagram",
+            "callout-labels",
+            "label-the-pieces",
+            "leader-line"
+          ],
+          "mount": "data-sk-annotated",
+          "options": [
+            "label",
+            "inert",
+            "ringPlacement",
+            "ringDistance",
+            "ringRadius"
+          ],
+          "react": {
+            "from": "@skryensya/react/annotation",
+            "name": "Annotated"
+          },
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "options": {
+                  "for": {
+                    "attr": "data-for",
+                    "type": "string"
+                  },
+                  "match": {
+                    "attr": "data-match",
+                    "default": "first",
+                    "machineInput": true,
+                    "type": "enum",
+                    "values": [
+                      "first",
+                      "all"
+                    ]
+                  },
+                  "ringDistance": {
+                    "attr": "data-ring-distance",
+                    "machineInput": true,
+                    "type": "number"
+                  },
+                  "ringPlacement": {
+                    "attr": "data-ring-placement",
+                    "machineInput": true,
+                    "type": "enum",
+                    "values": [
+                      "inset",
+                      "offset"
+                    ]
+                  },
+                  "ringRadius": {
+                    "attr": "data-ring-radius",
+                    "machineInput": true,
+                    "type": "number"
+                  },
+                  "side": {
+                    "attr": "data-side",
+                    "default": "inline-start",
+                    "type": "enum",
+                    "values": [
+                      "inline-start",
+                      "inline-end",
+                      "block-start",
+                      "block-end"
+                    ]
+                  }
+                },
+                "slots": {
+                  "children": {
+                    "accepts": "node",
+                    "required": true
+                  }
+                }
+              },
+              "prop": "annotations",
+              "required": true
+            },
+            "subject": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "attrsWhen": [
+              {
+                "attrs": {
+                  "role": "group"
+                },
+                "given": true,
+                "option": "label"
+              }
+            ],
+            "children": [
+              {
+                "element": "div",
+                "options": [
+                  "inert"
+                ],
+                "part": "subject",
+                "slot": "subject"
+              },
+              {
+                "attrs": {
+                  "tabindex": "0"
+                },
+                "element": "span",
+                "itemOptions": [
+                  "for",
+                  "side",
+                  "match",
+                  "ringPlacement",
+                  "ringDistance",
+                  "ringRadius"
+                ],
+                "itemSlot": "children",
+                "part": "label",
+                "repeat": "items"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "focusable": "false"
+                },
+                "element": "svg",
+                "part": "leaders"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
           }
         }
       }
@@ -11654,6 +11924,20 @@
             "stretch"
           ]
         },
+        "blockStart": {
+          "attr": "data-block-start",
+          "default": "none",
+          "type": "enum",
+          "values": [
+            "none",
+            "xs",
+            "sm",
+            "md",
+            "lg",
+            "xl",
+            "auto"
+          ]
+        },
         "columns": {
           "attr": "data-columns",
           "default": "1",
@@ -11754,10 +12038,12 @@
             "Grid"
           ],
           "avoidWhen": [
-            "son columnas de igual ancho; eso es un Grid"
+            "son columnas de igual ancho; eso es un Grid",
+            "el empty state, el dialog o el toolbar ya tienen su propia parte de acciones; no sustituyas esa anatomía por un Inline"
           ],
           "useWhen": [
-            "las cosas van una al lado de otra: una fila de botones, un rótulo con su valor"
+            "las cosas van una al lado de otra: una fila de botones, un rótulo con su valor",
+            "una fila de acciones es lo último de una card y debe sentarse en el piso cuando las cards vecinas crecen; eso es blockStart auto, no un segundo componente llamado button-wrapper"
           ]
         },
         "LayoutGrid": {
@@ -11837,7 +12123,8 @@
             "inlineAlign",
             "justify",
             "wrap",
-            "equal"
+            "equal",
+            "blockStart"
           ],
           "react": {
             "from": "@skryensya/react/layout",
@@ -21687,5 +21974,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "8b321dc4639ca5dd"
+  "sourceHash": "a88e76a9d597fd32"
 }

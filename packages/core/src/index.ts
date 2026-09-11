@@ -4,6 +4,7 @@ export * from "./anchored.js";
 export * from "./icon-toggle.js";
 export * from "./icon-state-button.js";
 export * from "./avatar.js";
+export * from "./annotation.js";
 export * from "./back-to-top.js";
 export * from "./badge.js";
 export * from "./breadcrumb.js";

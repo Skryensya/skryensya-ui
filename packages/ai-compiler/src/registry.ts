@@ -22,6 +22,7 @@ import { marqueeContract } from "@skryensya/core/marquee";
 import { treeViewContract } from "@skryensya/core/tree-view";
 import { sidebarContract } from "@skryensya/core/sidebar";
 import { skipLinkContract } from "@skryensya/core/skip-link";
+import { annotationContract } from "@skryensya/core/annotation";
 import { backToTopContract } from "@skryensya/core/back-to-top";
 import { accordionContract } from "@skryensya/core/accordion";
 import { tileContract } from "@skryensya/core/tile";
@@ -168,6 +169,7 @@ export const contracts = {
   details: detailsContract,
   vaul: vaulContract,
   "component-preview": componentPreviewContract,
+  annotation: annotationContract,
 } as const satisfies Record<string, ComponentContract>;
 
 export type ContractId = keyof typeof contracts;

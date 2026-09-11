@@ -1,0 +1,380 @@
+/*
+ * TIER 3, ANNOTATION
+ *
+ * A frame that names the parts of whatever is inside it, the way a technical illustration does: the
+ * specimen sits in the middle, the labels sit in margins that hug it, and a leader line reaches from
+ * each label to a focus-ring-style outline drawn around the part it names.
+ *
+ * THE WHOLE LAYOUT IS ONE THREE-BY-THREE GRID, and that is the load-bearing decision, not a
+ * convenience. The alternative every diagram reaches for first is absolute positioning over the
+ * specimen, which needs a z-index, needs collision avoidance, and covers the very part it is naming.
+ * Here the subject holds the middle cell and each gutter is an `auto` track, so the four margins
+ * SIZE THEMSELVES to the labels they hold: a longer name (a translation, a longer part class) widens
+ * the margin and squeezes the specimen instead of landing on top of it. Overlap is not avoided, it
+ * is unrepresentable.
+ *
+ * EVERY LABEL ON ONE SIDE SHARES ONE CELL. `.sk-annotation` places itself by `grid-area`, so three
+ * labels asking for `inline-start` are three items stacked in cell 2/1. An `auto` track sized by
+ * items in the same cell takes the widest of them, which is exactly the margin width wanted, while
+ * the cell's block size comes from the row (the specimen's own height) rather than from the sum of
+ * the labels. That is what leaves the binding free to move them: it writes a `translate`, which
+ * changes nothing about layout and therefore cannot feed back into the measurement it came from.
+ *
+ * THE NUMBERS COME FROM JAVASCRIPT AND THE RULES COME FROM HERE, in both directions. The binding
+ * writes three things and only three: a `translate` on each label, the `d` of each leader, and each
+ * ring's rectangle (see `@skryensya/core/annotation`). It writes no placement. So a consumer
+ * who moves the labels somewhere else with their own media query does not fight this file or that
+ * module: the binding re-reads where each label LANDED (`annotationExitSide`) and the leaders
+ * follow. Everything below is therefore a default, including which cell a `data-side` means.
+ *
+ * NOTHING HERE IS INTERACTIVE. There is no hover, no focus and no state: a diagram is a drawing.
+ * Whether the specimen itself responds to anything is the `inert` option's decision, one level up.
+ */
+@layer components {
+  .sk-annotated {
+    /* The clearance between the specimen and its margins. It is the grid's `gap`, so it is also the
+       shortest a leader can ever be. */
+    --sk-annotated-gap: var(--space-inline-lg);
+    /*
+     * THE SPECIMEN IS DESATURATED, so that colour in a diagram means exactly one thing: annotation.
+     *
+     * This is the last step of the same argument the accent note below makes. Once the apparatus is
+     * grey at rest and only the mark being read is coloured, the remaining competition for the eye
+     * is the specimen itself: a blue Button, a red Badge, a green delta all read as emphasis,
+     * because in this system they ARE emphasis, and here they are emphasising nothing. Draining them
+     * also says something true that no label can, which is that this is a SAMPLE and not a live
+     * interface, the same claim `inert` makes about behaviour.
+     *
+     * A hook rather than a hard rule, because one diagram in ten is about colour: a palette, a
+     * Callout's tones, a chart's series. Those set it to `none` and get their colour back.
+     */
+    --sk-annotated-subject-filter: grayscale(1);
+    /*
+     * A label is CAPTION-sized on purpose and the type role says why: it is apparatus around a
+     * drawing, not content in it. At body size the names start competing with the specimen for the
+     * reader's eye, which inverts what the diagram is for.
+     */
+    --sk-annotation-font-size: var(--font-size-caption);
+    --sk-annotation-line-height: var(--font-line-height-caption);
+    --sk-annotation-font-family: inherit;
+    --sk-annotation-font-weight: var(--font-weight-label);
+
+    /*
+     * THE ACCENT IS SPENT ON THE ONE ANNOTATION BEING READ, and nothing else. Two earlier versions
+     * got this wrong in opposite directions and both are worth remembering.
+     *
+     * Painting the WHOLE APPARATUS accent (bubble, border, text and leader) is four things shouting
+     * at one volume: a diagram where everything is emphasised has nothing emphasised, the eye finds
+     * no entry point, and the specimen, which is the thing being documented, ends up the quietest
+     * object on its own drawing.
+     *
+     * Quieting all of that and leaving every RING accent is better and still too much: seven rings
+     * on an Accordion is a cage laid over the specimen, and it answers a question nobody asked.
+     * "Which part is this name about?" is a question about ONE name.
+     *
+     * So at rest the whole thing is chrome-grey, rings included and faded besides. Hovering or
+     * focusing a label brings up its ring, its leader and its own bubble, in accent, together. One
+     * mark, one question, one answer.
+     */
+    --sk-annotation-color: var(--color-text-secondary);
+    --sk-annotation-bubble-bg: var(--color-bg-surface-raised);
+    --sk-annotation-bubble-border-color: var(--color-border-subtle);
+    /* What the one being read turns into. */
+    --sk-annotation-color-active: var(--color-text-accent);
+    --sk-annotation-bubble-bg-active: var(--color-bg-accent-subtle);
+    --sk-annotation-bubble-border-color-active: var(--color-border-accent);
+    --sk-annotation-bubble-radius: var(--radius-pill);
+    /*
+     * A CHIP, not a pill with a body. Inline padding keeps the text off the curve; block padding
+     * is only a hair, the same floor Badge uses, so a stack of names stays a list of marks and
+     * not a column of capsules. Depth comes from the raised elevation, not from bulk.
+     */
+    --sk-annotation-bubble-padding-inline: var(--space-inline-sm);
+    --sk-annotation-bubble-padding-block: var(--space-inset-xs);
+    --sk-annotation-bubble-shadow: var(--elevation-raised);
+    --sk-annotation-bubble-wash: var(--elevation-wash-raised);
+
+    --sk-annotation-leader-width: 1px;
+    /*
+     * THE RING AND ITS LEADER ARE ONE MARK. Keeping their rest colour and fade on the same hooks
+     * ensures the line reaches the named part without becoming more prominent than its outline.
+     * Its radius and its position stay the binding's, written as `r`/`cx`/`cy` per instance, because
+     * the leader has to stop short of the ring and stopping short is a length: the geometry needs
+     * that number, and one circle cannot have two owners. See `@skryensya/core/annotation`'s own
+     * comment on `ANNOTATION_RING_RADIUS`.
+     */
+    /*
+     * THE MARK AT REST: present but barely, so the drawing says up front that every name has a part
+     * outlined somewhere without turning seven outlines and leaders into a cage over the specimen.
+     */
+    --sk-annotation-ring-color-rest: var(--color-border-default);
+    --sk-annotation-ring-opacity-rest: 0.18;
+    /* And what the one being read turns into. */
+    --sk-annotation-ring-color: var(--color-border-accent);
+    --sk-annotation-ring-width: 2px;
+
+    /*
+     * `relative` is STRUCTURE: the leader overlay is `position: absolute` and this is the containing
+     * block it resolves against, which is also the coordinate space the binding measures in. Written
+     * explicitly rather than inherited from anything, because a diagram whose lines land in the
+     * wrong place is the least debuggable failure this component has.
+     */
+    position: relative;
+    display: grid;
+    /*
+     * FULL WIDTH, so the diagram can CENTRE ITSELF in whatever it is given. Stated rather than left
+     * to the default, because a block-level grid is only automatically full width in a block
+     * container: the docs preview stage is a flex container (and a consumer's could be a grid),
+     * where an item shrink-wraps instead and the whole diagram hugs one edge with dead space beside
+     * it. `max-inline-size` keeps that from overflowing a narrow parent.
+     */
+    inline-size: 100%;
+    max-inline-size: 100%;
+    /*
+     * EVERY TRACK IS `auto`, AND THE SET OF THEM IS CENTRED. This is the difference between labels
+     * that sit NEAR the specimen and labels stranded at the frame's edges.
+     *
+     * The middle track used to be `minmax(0, 1fr)`, which is the obvious way to let a diagram fill
+     * its container. It also makes the middle track as wide as the whole frame while the specimen
+     * inside it is only as wide as it is, so every label sat against the outer edge with a rule
+     * running across empty space to reach a part in the far middle. Sizing the middle track to the
+     * specimen and centring the three tracks as a group puts each gutter exactly
+     * `--sk-annotated-gap` from what it is naming, and the diagram is still centred as a whole.
+     *
+     * `minmax(0, auto)` rather than bare `auto` so a specimen with an intrinsic minimum (a table, a
+     * long unbroken string) can still shrink instead of pushing the frame past its container.
+     */
+    grid-template-columns: auto minmax(0, auto) auto;
+    grid-template-rows: auto minmax(0, auto) auto;
+    gap: var(--sk-annotated-gap);
+    justify-content: center;
+    align-content: center;
+  }
+
+  /*
+   * The specimen IS the middle track now (see the `auto` tracks above), so there is nothing left to
+   * align it against: it defines the cell rather than sitting somewhere in it.
+   */
+  .sk-annotated__subject {
+    grid-area: 2 / 2;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    /*
+     * `filter` and not a colour override, because the specimen is arbitrary: it is whatever tree the
+     * author put in, painting itself with its own tokens, its own images and its own borders. There
+     * is no set of properties to reach for. A filter takes whatever it renders and drains it, and it
+     * does not touch layout, so every rectangle the binding measures is the one it would have
+     * measured anyway.
+     *
+     * It DOES make this a containing block for fixed descendants and a new stacking context, which
+     * is the one thing to know: a specimen containing `position: fixed` chrome will resolve against
+     * this box. For a diagram that is the better answer anyway, and a consumer who needs otherwise
+     * turns the filter off.
+     */
+    filter: var(--sk-annotated-subject-filter);
+  }
+
+  /*
+   * THE LABEL IS A BUBBLE: a pill with its own surface, not loose text in a margin.
+   *
+   * Loose text sitting beside a specimen is ambiguous about whether it is a caption, a heading, or
+   * part of the thing being drawn. Giving it an edge and a ground makes it unmistakably a mark laid
+   * ON the diagram, the same way a sticky note is obviously not part of the page it is stuck to, and
+   * it gives the leader a real boundary to leave from instead of the ragged edge of a text run.
+   *
+   * A QUIET surface, though: see the accent note on the root. The bubble's job is to be legible and
+   * obviously separate from the specimen, not to compete with it.
+   *
+   * `align-self: start` (or `justify-self: start` on the block axis) is what makes the label's flow
+   * position a known constant the binding can translate FROM: stretched or centred, its resting
+   * place would depend on its own size and on its neighbours', and the offset the binding computes
+   * would be measuring one thing and correcting another.
+   */
+  .sk-annotation {
+    grid-area: 2 / 1;
+    justify-self: end;
+    align-self: start;
+    margin: 0;
+    border: 1px solid var(--sk-annotation-bubble-border-color);
+    border-radius: var(--sk-annotation-bubble-radius);
+    padding: var(--sk-annotation-bubble-padding-block) var(--sk-annotation-bubble-padding-inline);
+    background: var(--sk-annotation-bubble-wash), var(--sk-annotation-bubble-bg);
+    box-shadow: var(--sk-annotation-bubble-shadow);
+    color: var(--sk-annotation-color);
+    font-family: var(--sk-annotation-font-family);
+    font-size: var(--sk-annotation-font-size);
+    font-weight: var(--sk-annotation-font-weight);
+    line-height: var(--sk-annotation-line-height);
+    text-align: center;
+    /* A part name is one token: a second line makes a label ambiguous and its leader unreadable. */
+    white-space: nowrap;
+    cursor: default;
+    transition:
+      background-color var(--motion-state-change-duration) var(--motion-state-change-easing),
+      border-color var(--motion-state-change-duration) var(--motion-state-change-easing),
+      color var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  /*
+   * THE ONE BEING READ. `:hover` and `:focus-visible` alike, because the labels are focusable
+   * precisely so this reveal is reachable without a pointer (see the contract's note on `tabindex`),
+   * and `[data-sk-active]` because the binding writes that on the label at the same moment it writes
+   * it on the mark: the two have to light up together or the pairing the reveal exists to show is
+   * exactly what goes missing.
+   */
+  .sk-annotation:is(:hover, :focus-visible, [data-sk-active]) {
+    border-color: var(--sk-annotation-bubble-border-color-active);
+    background: var(--sk-annotation-bubble-wash), var(--sk-annotation-bubble-bg-active);
+    color: var(--sk-annotation-color-active);
+  }
+
+  .sk-annotation[data-side="inline-end"] {
+    grid-area: 2 / 3;
+    justify-self: start;
+  }
+
+  /*
+   * On the block axis a label is one item in a row of them, so it starts at the inline start and the
+   * binding slides it sideways. `justify-self: start` (not `stretch`) for the same reason the inline
+   * gutters use `align-self: start`.
+   */
+  .sk-annotation[data-side="block-start"] {
+    grid-area: 1 / 2;
+    justify-self: start;
+    align-self: end;
+  }
+
+  .sk-annotation[data-side="block-end"] {
+    grid-area: 3 / 2;
+    justify-self: start;
+    align-self: start;
+  }
+
+  /*
+   * A narrow screen has room to read the specimen or the labels beside it, never both. Keep the
+   * drawing rather than shrinking it: the four gutters become two ordered stacks, one above and one
+   * below the specimen. They participate in normal flow, so the frame grows to contain every label;
+   * a translated lane cannot push a bubble beyond the viewport. The bindings retain the measured
+   * boxes for their leaders but skip lane distribution at this breakpoint.
+   */
+  @media (max-width: 40rem) {
+    .sk-annotated {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .sk-annotated__subject {
+      order: 1;
+      min-inline-size: 0;
+      position: relative;
+      z-index: 0;
+    }
+
+    .sk-annotation {
+      /*
+       * The subject's filter creates a stacking context. Above it, labels remain readable even where
+       * their expanded mobile stack reaches the specimen's visual edge; leaders sit below the labels.
+       */
+      position: relative;
+      z-index: 2;
+      inline-size: fit-content;
+      max-inline-size: 100%;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      font-size: calc(var(--sk-annotation-font-size) * 0.875);
+      line-height: calc(var(--sk-annotation-line-height) * 0.875);
+    }
+
+    .sk-annotation:is([data-side="inline-start"], [data-side="block-start"]) {
+      order: 0;
+      align-self: flex-start;
+    }
+
+    .sk-annotation:is([data-side="inline-end"], [data-side="block-end"]) {
+      order: 2;
+      align-self: flex-start;
+    }
+
+    .sk-annotation[data-mobile-align="end"] {
+      align-self: flex-end;
+    }
+    .sk-annotated__leaders {
+      z-index: 1;
+    }
+  }
+
+  /*
+   * THE OVERLAY IS OUT OF FLOW, which is why it claims no cell and cannot widen a gutter. `inset: 0`
+   * against a positioned grid container resolves to the PADDING box, so its user units and the
+   * binding's measurements share one origin with nothing to convert (the binding subtracts the
+   * root's own border with `clientLeft`/`clientTop`; see `connectAnnotated`).
+   *
+   * `overflow: visible` because a leader legitimately reaches a ring that sits on the frame's own
+   * edge, and half a stroke width past it. Clipping there would shave every outermost mark.
+   */
+  .sk-annotated__leaders {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .sk-annotated__leader {
+    fill: none;
+    stroke: var(--sk-annotation-ring-color-rest);
+    stroke-width: var(--sk-annotation-leader-width);
+    /* `opacity` and not a pre-mixed colour, so the leader always matches the ring's fade. */
+    opacity: var(--sk-annotation-ring-opacity-rest);
+    /* `round` on both, so a 45-degree knee is a corner and not a notch at hairline widths. */
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition:
+      opacity var(--motion-state-change-duration) var(--motion-state-change-easing),
+      stroke var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  /* The leader belongs to the mark being read, so it takes the accent and full opacity with the ring. */
+  .sk-annotated__mark[data-sk-active] .sk-annotated__leader {
+    stroke: var(--sk-annotation-ring-color);
+    opacity: 1;
+  }
+
+  /*
+   * THE RING: a focus ring around the whole named part, not a bead beside it.
+   *
+   * A rounded rectangle just inside the element's own box, which is what the browser draws for
+   * `:focus-visible`, and that is the point of the shape: every reader already knows it means "this
+   * one", and unlike a dot or a small circle it leaves no question about WHICH element is being
+   * named, because the marked thing is whatever is inside it. `@skryensya/core/annotation` has the
+   * two shapes this replaced and what went wrong with each, and why it is drawn inside rather than
+   * outside.
+   *
+   * FAINT AT REST, ACCENT ON REQUEST: see the accent note on the root for why it is drawn at all
+   * when nothing is being read, and why it is barely drawn.
+   */
+  .sk-annotated__ring {
+    fill: none;
+    stroke: var(--sk-annotation-ring-color-rest);
+    stroke-width: var(--sk-annotation-ring-width);
+    /* `opacity` and not a pre-mixed colour, so a consumer retuning `--sk-annotation-ring-color-rest`
+       gets the fade for free instead of having to compute a second value to match. */
+    opacity: var(--sk-annotation-ring-opacity-rest);
+    transition:
+      opacity var(--motion-state-change-duration) var(--motion-state-change-easing),
+      stroke var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  .sk-annotated__mark[data-sk-active] .sk-annotated__ring {
+    stroke: var(--sk-annotation-ring-color);
+    opacity: 1;
+  }
+
+  /*
+   * NO `prefers-reduced-motion` BLOCK, deliberately: nothing here moves. The labels are translated to
+   * a new resting place when the frame resizes, and animating that would mean a diagram whose lines
+   * are wrong for the length of a transition. A drawing snaps.
+   */
+}

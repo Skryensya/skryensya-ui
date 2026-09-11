@@ -729,6 +729,106 @@ export const inlineTree = (t: Translate): UsageTree => ({
   },
 });
 
+/** Two cards of different copy lengths; `blockStart: "auto"` pins both action rows to the floor. */
+export const inlineCardFloorTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Grid",
+  options: { columns: "2", gap: "md" },
+  attrs: { "aria-label": t("inlinePage.floorPreviewLabel") },
+  children: [
+    {
+      contract: "box",
+      signature: "Box",
+      options: { surface: "raised", border: "subtle", padding: "lg" },
+      children: [
+        {
+          contract: "layout",
+          signature: "Stack",
+          options: { gap: "xs" },
+          children: [
+            {
+              contract: "typography",
+              signature: "Heading",
+              options: { headingSize: "h4", flush: true },
+              children: t("demo.inline.floorShortTitle"),
+            },
+            {
+              contract: "typography",
+              signature: "Text",
+              options: { tone: "secondary" },
+              children: t("demo.inline.floorShortBody"),
+            },
+          ],
+        },
+        {
+          contract: "layout",
+          signature: "Inline",
+          options: { gap: "sm", blockStart: "auto" },
+          children: [
+            {
+              contract: "button",
+              signature: "Button.action",
+              options: { variant: "ghost" },
+              children: t("demo.inline.floorSecondary"),
+            },
+            {
+              contract: "button",
+              signature: "Button.action",
+              options: { tone: "accent" },
+              children: t("demo.inline.floorPrimary"),
+            },
+          ],
+        },
+      ],
+    },
+    {
+      contract: "box",
+      signature: "Box",
+      options: { surface: "raised", border: "subtle", padding: "lg" },
+      children: [
+        {
+          contract: "layout",
+          signature: "Stack",
+          options: { gap: "xs" },
+          children: [
+            {
+              contract: "typography",
+              signature: "Heading",
+              options: { headingSize: "h4", flush: true },
+              children: t("demo.inline.floorLongTitle"),
+            },
+            {
+              contract: "typography",
+              signature: "Text",
+              options: { tone: "secondary" },
+              children: t("demo.inline.floorLongBody"),
+            },
+          ],
+        },
+        {
+          contract: "layout",
+          signature: "Inline",
+          options: { gap: "sm", blockStart: "auto" },
+          children: [
+            {
+              contract: "button",
+              signature: "Button.action",
+              options: { variant: "ghost" },
+              children: t("demo.inline.floorSecondary"),
+            },
+            {
+              contract: "button",
+              signature: "Button.action",
+              options: { tone: "accent" },
+              children: t("demo.inline.floorPrimary"),
+            },
+          ],
+        },
+      ],
+    },
+  ],
+});
+
 /**
  * A raised summary beside a three-column grid: the layout + typography vocabulary on one stage.
  * Locale-owned destination comes from the page.

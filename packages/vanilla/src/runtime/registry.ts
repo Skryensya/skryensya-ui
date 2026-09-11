@@ -230,6 +230,19 @@ const registrations: readonly Registration[] = [
     selector: "[data-sk-breadcrumb]",
     load: async () => (await import("../components/breadcrumb.js")).mountBreadcrumb,
   },
+  /*
+   * LAST ON PURPOSE, and it is the only entry in this table whose POSITION means anything.
+   *
+   * An annotated frame measures whatever is inside it, and what is inside it is usually other
+   * enhanced markup. `initComponents` runs the mounts in this table's own order, so an annotation
+   * mounted early measures a subject whose own enhancers have not run yet, draws its leaders against
+   * boxes that are about to change, and only recovers if something happens to resize afterwards.
+   * Mounting last means the specimen is already finished when the first leader is drawn.
+   */
+  {
+    selector: "[data-sk-annotated]",
+    load: async () => (await import("../components/annotation.js")).mountAnnotated,
+  },
 ];
 
 function containsSelector(root: Document | Element, selector: string): boolean {

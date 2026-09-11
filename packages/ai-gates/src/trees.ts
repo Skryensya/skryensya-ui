@@ -2599,6 +2599,47 @@ const signatureTrees: readonly Canonical[] = [
       slots: { label: "Fondo" },
     },
   },
+  /*
+   * ANNOTATED is the one case here whose comparable output is MEASURED rather than authored: the
+   * leaders' path data and each label's translate come out of the live layout, so this fixture is
+   * asking a question no other one asks, which is whether the two bindings agree on a drawing.
+   *
+   * They can, and the stage is why: both halves are block-level children of the same `<section>`
+   * (harness/main.tsx), so they lay out at the same width over the same content, and everything the
+   * bindings write is rounded to whole pixels on the way out (`placeAnnotations`) so a half-pixel of
+   * subpixel noise cannot read as a divergence. Three labels on three different sides, because the
+   * gutters are where the geometry differs.
+   */
+  {
+    name: "annotation/anatomy",
+    enhanced: true,
+    tree: {
+      contract: "annotation",
+      signature: "Annotated",
+      options: { label: "Anatomía de Stat", inert: true },
+      slots: {
+        subject: {
+          contract: "stat",
+          signature: "Stat",
+          slots: { label: "Ingresos", value: "38.2K" },
+        },
+        items: [
+          {
+            options: { for: ".sk-stat", side: "block-start" },
+            slots: { children: "sk-stat" },
+          },
+          {
+            options: { for: ".sk-stat__label", side: "inline-start" },
+            slots: { children: "sk-stat__label" },
+          },
+          {
+            options: { for: ".sk-stat__value", side: "inline-end" },
+            slots: { children: "sk-stat__value" },
+          },
+        ],
+      },
+    },
+  },
 ];
 
 /*

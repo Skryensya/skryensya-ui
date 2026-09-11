@@ -38,6 +38,7 @@ import { vanillaMessages } from "./messages/_chrome/vanilla";
 import { architectureMessages } from "./messages/architecture";
 import { accordionMessages } from "./messages/components/accordion";
 import { avatarMessages } from "./messages/components/avatar";
+import { annotationMessages } from "./messages/components/annotation";
 import { backToTopMessages } from "./messages/components/back-to-top";
 import { badgeMessages } from "./messages/components/badge";
 import { boxMessages } from "./messages/components/box";
@@ -154,6 +155,7 @@ export const ui = {
     ...architectureMessages.es,
     ...accordionMessages.es,
     ...avatarMessages.es,
+    ...annotationMessages.es,
     ...backToTopMessages.es,
     ...badgeMessages.es,
     ...boxMessages.es,
@@ -267,6 +269,7 @@ export const ui = {
     ...architectureMessages.en,
     ...accordionMessages.en,
     ...avatarMessages.en,
+    ...annotationMessages.en,
     ...backToTopMessages.en,
     ...badgeMessages.en,
     ...boxMessages.en,

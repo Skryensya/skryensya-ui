@@ -12,6 +12,10 @@ const componentDescriptions = {
     es: "Agrupa secciones extensas que se abren una a la vez.",
     en: "Groups long sections that open one at a time.",
   },
+  "/components/annotation": {
+    es: "Nombra las partes de algo ya dibujado, con etiquetas en los márgenes y una línea guía a cada pieza.",
+    en: "Names the parts of something already drawn, with labels in the margins and a leader line to each piece.",
+  },
   "/components/avatar": {
     es: "Representa la identidad de una persona con foto o iniciales.",
     en: "Represents a person's identity with a photo or initials.",

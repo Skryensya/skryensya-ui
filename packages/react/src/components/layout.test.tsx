@@ -21,7 +21,7 @@ describe("layout primitives", () => {
     const ui = render(
       <>
         <Stack as="ul" align="stretch" gap="lg"><li>One</li></Stack>
-        <Inline align="baseline" equal gap="sm" justify="between" wrap={false}>Inline</Inline>
+        <Inline align="baseline" blockStart="auto" equal gap="sm" justify="between" wrap={false}>Inline</Inline>
         <Grid columns={3} gap="xs" multicol>Grid</Grid>
       </>,
     );
@@ -32,6 +32,12 @@ describe("layout primitives", () => {
     expect(ui.container.querySelector(".sk-inline")?.hasAttribute("data-equal")).toBe(true);
     expect(ui.container.querySelector(".sk-grid")?.getAttribute("data-columns")).toBe("3");
     expect(ui.container.querySelector(".sk-grid")?.hasAttribute("data-multicol")).toBe(true);
+  });
+
+  it("omits data-block-start when Inline's space above is the default none", () => {
+    const ui = render(<Inline>Inline</Inline>);
+
+    expect(ui.container.querySelector(".sk-inline")?.hasAttribute("data-block-start")).toBe(false);
   });
 
   it("switches Grid into responsive rows and lets a child request a wider span", () => {

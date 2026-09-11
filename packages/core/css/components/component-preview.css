@@ -137,6 +137,20 @@
     background: var(--sk-component-preview-header-bg);
   }
 
+  /*
+   * No header: the stage is the first grid row and owns the start corners the header normally
+   * clipped. Row 2 would leave an empty track above the specimen.
+   */
+  .sk-component-preview[data-sk-component-preview-chrome="false"] .sk-component-preview__stage,
+  .sk-component-preview[data-sk-component-preview-chrome="false"] .sk-component-preview__loading {
+    grid-row: 1;
+  }
+
+  .sk-component-preview[data-sk-component-preview-chrome="false"] .sk-component-preview__stage {
+    border-start-start-radius: var(--radius-surface);
+    border-start-end-radius: var(--radius-surface);
+  }
+
   .sk-component-preview__title,
   .sk-component-preview__note {
     font-family: var(--font-family-code);

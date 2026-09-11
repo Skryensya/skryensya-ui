@@ -201,6 +201,10 @@
       "types": "./src/components/sidebar.tsx",
       "default": "./src/components/sidebar.tsx"
     },
+    "./annotation": {
+      "types": "./src/components/annotation.tsx",
+      "default": "./src/components/annotation.tsx"
+    },
     "./back-to-top": {
       "types": "./src/components/back-to-top.tsx",
       "default": "./src/components/back-to-top.tsx"

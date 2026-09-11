@@ -1,3 +1,4 @@
+import { actionRowInCardsSnippet } from "./action-row-in-cards.js";
 import { calloutErrorWithRetrySnippet } from "./callout-error-with-retry.js";
 import { footerCreditLineSnippet } from "./footer-credit-line.js";
 import { formFieldHintAndErrorSnippet } from "./form-field-hint-and-error.js";
@@ -38,6 +39,7 @@ export const snippets: readonly Snippet[] = [
   footerCreditLineSnippet,
   paginationStandaloneSnippet,
   settingsRowWithSwitchSnippet,
+  actionRowInCardsSnippet,
   productCardInGridSnippet,
   iconButtonToolbarWithTooltipsSnippet,
   tableWithPaginationSnippet,

@@ -21,6 +21,9 @@ import "@skryensya/core/components/accordion.css";
    styles ITS page loaded; a page that never imports this sheet gets a bare <details> with the
    browser's own marker on that stage. */
 import "@skryensya/core/components/details.css";
+/* Structure diagram: same Annotated Accordion specimen as the Annotation page; the frame only
+   clones styles this page loaded, so Annotation's sheet has to land here too. */
+import "@skryensya/core/components/annotation.css";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
@@ -32,6 +35,7 @@ import {
   accordionSingleTree,
   detailsGroupTree,
 } from "../../demos/accordion";
+import { annotationAnatomyTree, annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
 import contractSource from "@contracts/semantic/accordion.yaml?raw";
 import coreSource from "@core/src/accordion.ts?raw";
@@ -109,6 +113,15 @@ const sourceFiles = [
   ]}
 >
   <Fragment slot="usage">
+    <ComponentPreview
+      tree={annotationAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("annotation.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <div class="sk-callout" data-tone="info">
       <div class="sk-callout__content">
         <p set:html={t("accordion.intro", { detailsLink })} />

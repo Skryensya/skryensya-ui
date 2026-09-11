@@ -6,6 +6,11 @@ export type BoxBorder = "none" | "subtle" | "default";
 export type LayoutAlign = "start" | "center" | "end" | "stretch";
 export type InlineAlign = "start" | "center" | "end" | "baseline" | "stretch";
 export type InlineJustify = "start" | "center" | "end" | "between";
+/**
+ * Space above an Inline, or `auto` to absorb leftover height in a flex/grid column (a card's
+ * action row sitting on the floor while siblings in the same grid grow taller).
+ */
+export type InlineBlockStart = Space | "auto";
 export type GridColumns = 1 | 2 | 3 | 4 | 5;
 /**
  * Named spans a direct LayoutGrid child may request with `data-width`.
@@ -97,6 +102,18 @@ export const layoutContract = {
      * state nobody meant.
      */
     wrap: { type: "boolean", default: true, attr: "data-wrap", trueValue: "true", falseValue: "false" },
+    /*
+     * Space above the row. Named in CSS (`block-start`), never `marginTop`. `auto` is the card-floor
+     * case: leftover height in the parent column goes above the row so a set of cards line their
+     * actions up. Default `none` so an Inline used as a label-and-value pair does not grow a gap
+     * it never asked for.
+     */
+    blockStart: {
+      type: "enum",
+      values: ["none", "xs", "sm", "md", "lg", "xl", "auto"],
+      default: "none",
+      attr: "data-block-start",
+    },
     columns: { type: "enum", values: ["1", "2", "3", "4", "5"], default: "1", attr: "data-columns" },
     multicol: { type: "boolean", default: false, attr: "data-multicol", trueValue: "" },
     responsive: { type: "boolean", default: false, attr: "data-responsive", trueValue: "" },
@@ -115,7 +132,7 @@ export const layoutContract = {
     Inline: {
       intent: ["things-side-by-side", "button-row", "label-and-value"],
       host: { element: "div" },
-      options: ["gap", "inlineAlign", "justify", "wrap", "equal"],
+      options: ["gap", "inlineAlign", "justify", "wrap", "equal", "blockStart"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "div", part: "inline", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "Inline" },

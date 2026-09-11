@@ -5,6 +5,7 @@ import {
   type BoxSurface,
   type GridColumns,
   type InlineAlign,
+  type InlineBlockStart,
   type InlineJustify,
   type LayoutAlign,
   type Space,
@@ -111,6 +112,7 @@ export type InlineProps<Element extends ElementType = "div"> = PolymorphicProps<
   Element,
   LayoutChildren & {
     align?: InlineAlign;
+    blockStart?: InlineBlockStart;
     equal?: boolean;
     gap?: Space;
     justify?: InlineJustify;
@@ -121,6 +123,7 @@ export type InlineProps<Element extends ElementType = "div"> = PolymorphicProps<
 export function Inline<Element extends ElementType = "div">({
   as,
   align = "end",
+  blockStart = "none",
   className,
   equal = false,
   gap = "md",
@@ -134,6 +137,7 @@ export function Inline<Element extends ElementType = "div">({
       {...props}
       className={classes(layoutParts.inline, className)}
       data-align={align}
+      data-block-start={blockStart === "none" ? undefined : blockStart}
       data-equal={equal ? "" : undefined}
       data-gap={gap}
       data-justify={justify}

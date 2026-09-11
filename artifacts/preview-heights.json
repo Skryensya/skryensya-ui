@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-09T21:37:41.655Z",
+  "generatedAt": "2026-09-11T11:46:01.778Z",
   "viewport": {
     "width": 1920,
     "height": 1000
@@ -1029,6 +1029,18 @@
       "qrcode": 152,
       "tamanos": 273,
       "tintes": 506
+    },
+    "/components/annotation": {
+      "accordion-part-by-part": 391,
+      "four-leaders-that-have-to-turn": 384,
+      "one-label-per-margin": 240,
+      "visible-crumbs-and-collapsed-levels": 236
+    },
+    "/es/componentes/annotation": {
+      "accordion-parte-por-parte": 391,
+      "cuatro-guias-que-tienen-que-doblar": 384,
+      "migas-visibles-y-niveles-colapsados": 236,
+      "una-etiqueta-por-margen": 240
     }
   }
 }

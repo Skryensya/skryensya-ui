@@ -1,4 +1,5 @@
 import { mountAccordion } from "@skryensya/vanilla/accordion";
+import { mountAnnotated } from "@skryensya/vanilla/annotation";
 import { mountBackToTop } from "@skryensya/vanilla/back-to-top";
 import { mountBreadcrumb } from "@skryensya/vanilla/breadcrumb";
 import { initComponents } from "@skryensya/vanilla/auto";
@@ -63,6 +64,7 @@ import { describe, expect, it } from "vitest";
  */
 const mounts = [
   mountAccordion,
+  mountAnnotated,
   mountBackToTop,
   mountBreadcrumb,
   mountButton,
@@ -111,7 +113,7 @@ const mounts = [
 describe("Vanilla public entry points", () => {
   it("publishes the lazy auto-loader and one mount for every regular enhanced module", () => {
     expect(initComponents).toBeTypeOf("function");
-    expect(mounts).toHaveLength(44);
+    expect(mounts).toHaveLength(45);
     expect(mounts.every((mount) => typeof mount === "function")).toBe(true);
   });
 
@@ -152,6 +154,7 @@ describe("Vanilla public entry points", () => {
     const named = new Set(
       Object.entries({
         mountAccordion,
+        mountAnnotated,
         mountBackToTop,
         mountBreadcrumb,
         mountButton,

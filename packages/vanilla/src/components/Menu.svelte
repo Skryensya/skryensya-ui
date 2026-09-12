@@ -26,18 +26,16 @@
   /*
    * Derived from the contract's own mount attributes; see `selectorsFor`.
    *
-   * The two exceptions below accept EITHER an attribute or the BEM class. The class half comes from
-   * `menuParts`, so it has one declaration like everything else. The attribute half does not:
-   * `menuAttrs` publishes no `itemLabel`/`itemIndicator`, so nothing in the emitter ever writes
-   * `data-sk-menu-item-label`, and the only markup carrying it is this layer's own test fixtures.
-   * In real emitted markup the class is what matches. Kept spelled out rather than derived because
-   * deriving it would imply the contract declares it, and the honest reading is that this is a gap:
-   * see docs/pending-tasks.md.
+   * The two exceptions below are found by their BEM class and not by an attribute, because these
+   * two parts have no mount attribute: `menuAttrs` publishes none, no template writes one, and the
+   * emitter therefore never produces one. The selectors used to accept `[data-sk-menu-item-label]`
+   * as well, which matched nothing outside this layer's own test fixtures. Looking for an attribute
+   * that is never written is not a fallback, it is a suggestion that the attribute exists.
    */
   const selector = {
     ...selectorsFor(menuAttrs),
-    itemLabel: `[data-sk-menu-item-label], .${menuParts.itemLabel}`,
-    itemIndicator: `[data-sk-menu-item-indicator], .${menuParts.itemIndicator}`,
+    itemLabel: `.${menuParts.itemLabel}`,
+    itemIndicator: `.${menuParts.itemIndicator}`,
   } as const;
 
   type AuthoredItem = {

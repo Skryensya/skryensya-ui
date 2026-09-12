@@ -489,8 +489,7 @@
   "scripts": {
     "build": "node scripts/build-css.ts && tsc -p tsconfig.json",
     "build:css": "node scripts/build-css.ts",
-    "check": "node scripts/lint.ts && node --test scripts/*.test.ts && vitest run && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.scripts.json",
-    "lint": "node scripts/lint.ts && node --test scripts/*.test.ts && vitest run && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.scripts.json"
+    "check": "node scripts/lint.ts && node --test scripts/*.test.ts && vitest run && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.scripts.json"
   },
   "devDependencies": {
     "@types/node": "catalog:",
@@ -501,8 +500,6 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.2",
-    "qrcode": "^1.5.4",
-    "@zag-js/accordion": "^1.43.3",
     "@zag-js/carousel": "1.43.3",
     "@zag-js/checkbox": "^1.43.3",
     "@zag-js/collapsible": "^1.43.3",
@@ -518,6 +515,7 @@
     "@zag-js/splitter": "1.43.3",
     "@zag-js/tabs": "^1.43.3",
     "@zag-js/tooltip": "1.43.3",
-    "@zag-js/tree-view": "^1.43.3"
+    "@zag-js/tree-view": "^1.43.3",
+    "qrcode": "^1.5.4"
   }
 }

@@ -13,12 +13,21 @@
  * in core) stops being true. It is accepted because a machine is NOT a tenant: it names no brand and no
  * provider, it is platform-agnostic behavior, which is exactly what core publishes. An icon's geometry
  * still cannot live here; a machine can. See ADR-0010.
+ *
+ * WHAT IS NOT HERE, and why. ADR-0010's cut is "one machine, TWO adapters". Three re-exports did
+ * not meet it and were costing every consumer of Core a dependency for nothing:
+ *   - `accordion` had zero importers anywhere. `Accordion.svelte` says in prose that it runs one
+ *     `@zag-js/collapsible` per item INSTEAD of a single accordion machine, and the re-export
+ *     simply outlived that decision.
+ * `carousel` and `splitter` stay, with a note: each has exactly ONE adapter today (both Vanilla),
+ * so by ADR-0010's own "two adapters" test they are not yet earning this place. Moving them to
+ * Vanilla was tried and reverted: pnpm re-resolves a dependency that moves package, and the 30-day
+ * `minimumReleaseAge` quarantine then refuses it. An exclusion exists for CVEs, not for tidiness.
  */
 
 export * as tabs from "@zag-js/tabs";
 export * as carousel from "@zag-js/carousel";
 export * as collapsible from "@zag-js/collapsible";
-export * as accordion from "@zag-js/accordion";
 export * as checkbox from "@zag-js/checkbox";
 export * as colorPicker from "@zag-js/color-picker";
 export * as radioGroup from "@zag-js/radio-group";

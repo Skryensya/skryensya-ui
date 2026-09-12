@@ -205,21 +205,15 @@ Dos salidas, las dos con costo real, por eso queda como decision:
 | `data-sk-table-colgroup`, `-treegrid-colgroup`, `-treegrid-disclosure`, `-column-resizer` | correcto: el enhancer **crea** esos elementos, no los espera del autor |
 | `data-sk-command-palette-lazy` | correcto: lo autora el sitio de doc como opt-in de montaje. Es vocabulario del registry de vanilla, no una parte de componente |
 
-### Menu: `group` en los items de radio no existe en el contrato
+### Menu: `group` en los items de radio, hecho ✅ (2026-09-12)
 
-`apps/docs/src/demos/data/menu.ts` pasa `{ kind: "radio", group: "align" }` en tres entradas de
-`menuCompactItems`, y el contrato de Menu no declara `group`: sus items aceptan `value`, `disabled`,
-`kind`, `tone`, `href`. Lo levanta `apps/docs/src/demos/trees.test.ts`, que desde ahora valida todo
-el corpus de `src/demos` (fue el único árbol inválido que quedó sin resolver de los seis que
-encontró la primera corrida).
-
-Son dos caminos y **la decisión es de contrato**, por eso queda anotado en vez de resuelto:
-
-1. **Sacar `group` del demo.** Gratis, pero se pierde la intención: sin agrupar, los tres
-   `menuitemradio` quedan como radios sueltos y no como un grupo de alineación.
-2. **Publicar `group` como opción de item.** Es lo que pide la APG (un conjunto de
-   `menuitemradio` va dentro de un `role="group"`), pero es superficie pública nueva: entrada de
-   changelog, hash de Surface, y las dos bindings.
+Resuelto en `2be7e48` publicando `group` como opcion de item (`attr: "data-group"`) en
+`menuItemShape`, y restaurandolo en `menuCompactItems`. **No era API nueva**: el tipo `MenuItem` de
+Core ya lo declaraba y las dos bindings ya lo usaban para la exclusion mutua de radios
+(`menu.tsx`: `candidate.group === changedItem.group`; `Menu.svelte`: `node.dataset.group`). Lo unico
+que faltaba era la declaracion en el contrato, que es lo que hacia que `validateUsageTree` rechazara
+una composicion que las bindings resolvian bien. Entrada de changelog en `menu` y en `menubar`, las
+dos, porque Menubar comparte `menuItemShape` tal cual.
 
 ---
 

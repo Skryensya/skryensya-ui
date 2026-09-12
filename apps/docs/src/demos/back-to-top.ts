@@ -1,5 +1,51 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
+
+/*
+ * THE ANATOMY: labelled pill so every part is painted. Default chrome clips the label to a name-only
+ * box; a diagram that named an invisible part would be worse than omitting it. Threshold 0 keeps the
+ * control revealed without a scroll listener (same move the static specimen uses). Anatomy CSS below
+ * parks it in flow and un-clips the label.
+ */
+export const backToTopAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("backToTop.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "back-to-top",
+      signature: "BackToTop",
+      options: { threshold: 0 },
+      children: t("backToTop.demoLabel"),
+    },
+    items: [
+      namePart(".sk-back-to-top", "block-start"),
+      namePart(".sk-back-to-top__icon", "inline-start"),
+      namePart(".sk-back-to-top__label", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
+  },
+});
+
+/** In-flow labelled pill for the anatomy frame: not the page-corner placement the live demos use. */
+export const backToTopAnatomyCss = `.sk-annotated {
+  --sk-annotation-font-family: var(--font-family-code);
+}
+
+.sk-annotated__subject .sk-back-to-top {
+  position: static;
+  --sk-back-to-top-size: auto;
+  padding-inline: var(--space-inset-md);
+  gap: var(--space-inline-xs);
+}
+
+.sk-annotated__subject .sk-back-to-top__label {
+  position: static;
+  inline-size: auto;
+  block-size: auto;
+  overflow: visible;
+  clip-path: none;
+}`;
 
 /*
  * TWO demos, because the component has two things worth seeing and one frame cannot show both at

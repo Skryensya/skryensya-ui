@@ -15,6 +15,10 @@ export const sidebarMessages = {
     "sidebarPage.description": "Sidebar: el shell que se contrae a un riel, con la lista de navegación como pattern invitado.",
     "sidebarPage.lede":
       "Sidebar es el <strong>shell</strong>: un header, un medio que scrollea, un footer, y el colapso. Se contrae a un <strong>riel</strong>, se angosta, nunca se esconde.",
+    "sidebarPage.anatomyBody":
+      "Este diagrama nombra header, content, footer y el control de colapso. El espécimen está congelado; los sidebars vivos empiezan abajo.",
+    "sidebarPage.anatomyLabel": "Anatomía de Sidebar",
+    "sidebarPage.anatomyPreviewLabel": "Sidebar, parte por parte",
     "sidebarPage.contentTitle": "Una cosa es el sidebar; otra, su contenido",
     "sidebarPage.contentBody":
       'Lo que va adentro no es asunto del sidebar. La lista de destinos es el pattern <a href="/nav-list"><code>nav-list</code></a>, invitada aquí y con la misma estructura que usa el navbar en horizontal. Por eso no hay un <code>sk-sidebar__link</code>: esa lista nunca fue del sidebar, y nombrarla así sería nombrar a un inquilino.',
@@ -52,7 +56,7 @@ export const sidebarMessages = {
     "sidebarPage.floatingTriggerBody":
       "<code>floating</code> es una decisión de pintura, no un segundo padre legal: el trigger se sigue autorando adentro de <code>Sidebar</code>, <code>SidebarHeader</code> o <code>SidebarFooter</code>, pero se levanta visualmente al rincón superior del panel. Este demo no tiene <code>SidebarHeader</code> en absoluto: es exactamente el caso donde no hay una fila propia para dibujar un trigger, así que flota sobre el panel en vez de competir por lugar. <code>--elevation-raised</code> es lo que lo separa del contenido sobre el que se apoya.",
     "sidebarPage.floatingTriggerLabel": "Sidebar · trigger flotante",
-    "sidebarPage.htmlTitle": "HTML autorado",
+    "sidebarPage.htmlTitle": "HTML escrito a mano",
     "sidebarPage.htmlBody1":
       "El enhancer busca <code>[data-sk-sidebar]</code>, acepta un <code>[data-sk-sidebar-trigger]</code> o un <code>[data-sk-sidebar-resize]</code> y parchea <code>aria-expanded</code>, <code>aria-controls</code> y <code>data-state</code>. No escribe markup ni clases. El markup completo está en la pestaña <strong>Vanilla</strong> del preview.",
     "sidebarPage.htmlBody2":
@@ -84,6 +88,10 @@ export const sidebarMessages = {
     "sidebarPage.description": "Sidebar: the shell that collapses to a rail, with the navigation list as a guest pattern.",
     "sidebarPage.lede":
       "Sidebar is the <strong>shell</strong>: a header, a scrolling middle, a footer, and the collapse. It collapses to a <strong>rail</strong>, narrows, and never hides.",
+    "sidebarPage.anatomyBody":
+      "This diagram names the header, content, footer, and collapse control. The specimen is frozen; the live sidebars start below.",
+    "sidebarPage.anatomyLabel": "Sidebar anatomy",
+    "sidebarPage.anatomyPreviewLabel": "Sidebar, part by part",
     "sidebarPage.contentTitle": "The sidebar is one thing; its content is another",
     "sidebarPage.contentBody":
       'What goes inside is not the sidebar\'s business. The destination list is the <a href="/en/nav-list"><code>nav-list</code></a> pattern, a guest here, with the same structure the navbar uses horizontally. That is why there is no <code>sk-sidebar__link</code>: that list was never the sidebar\'s, and naming it that way would be naming a tenant.',

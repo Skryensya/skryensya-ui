@@ -2,7 +2,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import ts from "typescript";
 import type { ComponentContract } from "@skryensya/core/contract";
-import { contracts } from "./registry.js";
+import { contracts } from "@skryensya/core/registry";
 
 /*
  * G1, and the one job left to the TypeScript Compiler API: proving a binding REALIZES its contract

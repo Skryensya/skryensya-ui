@@ -3,8 +3,37 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
 # hash nuevo.
-surface: "7e633f2187af284c"
+surface: "c3eacda38371af2a"
 entries:
+  - date: 2026-09-11
+    kind: rework
+    target: ringRadius
+    es:
+      title: El anillo toma la esquina de la parte que envuelve
+      body: >-
+        <code>ringRadius</code> se queda sin default: en vez de un radio fijo para todo el dibujo,
+        cada anillo ahora lee el <code>border-radius</code> de la parte que rodea, así una píldora
+        se marca como píldora y una tarjeta como tarjeta. El anillo queda concéntrico con la parte
+        (la distancia se le descuenta a la esquina igual que a la caja), y si el marco o una
+        etiqueta escriben <code>ringRadius</code>, ese número manda sobre todas las esquinas que
+        tiene abajo, que es lo que quiere un diagrama donde las partes tienen formas distintas y
+        las marcas no deberían. Aparte, en reposo la marca adelgazó: el anillo pasó de 2px a 1px,
+        el mismo pelo que su guía, y el gris de reposo lleva el alfa en el color
+        (<code>--sk-annotation-ring-color-rest</code>), así el aparato queda por encima de la
+        muestra sin pisarla.
+    en:
+      title: A ring takes the corner of the part it wraps
+      body: >-
+        <code>ringRadius</code> loses its default: instead of one fixed corner for the whole
+        drawing, every ring now reads the <code>border-radius</code> of the part it outlines, so a
+        pill is marked as a pill and a card as a card. The ring stays concentric with its part (the
+        distance comes off the corner the same way it comes off the box), and a
+        <code>ringRadius</code> written on the frame or on one label still overrides every corner
+        under it, which is what a diagram wants when the parts are different shapes and the marks
+        should not be. Separately, the mark at rest got thinner: the ring drops from 2px to
+        1px, the same hairline as its leader, and the resting grey carries its alpha in the colour
+        (<code>--sk-annotation-ring-color-rest</code>), so the apparatus sits over the specimen
+        rather than on it.
   - date: 2026-09-11
     kind: bugfix
     target: inert

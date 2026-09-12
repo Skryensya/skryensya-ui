@@ -3,12 +3,16 @@ export const selectMessages = {
     "demo.select.label": "Plan",
 
     "selectPage.description": "Select: un listbox enhanced con máquina, para Vanilla y React.",
+    "selectPage.anatomyBody":
+      "Un Select cerrado es un trigger: el positioner, el content y las filas sólo existen mientras el listbox está arriba. Por eso el espécimen se dibuja abierto y se queda así. Está congelado; el Select vivo es el de abajo.",
+    "selectPage.anatomyLabel": "Anatomía de Select",
+    "selectPage.anatomyPreviewLabel": "Select abierto, parte por parte",
     "selectPage.lede":
       "El selector principal cuando la interacción necesita typeahead, highlight, popup controlado y posicionamiento. <code>Select</code> comparte su contrato de parts en <code>@skryensya/vanilla</code> y <code>@skryensya/react</code>; la máquina de cada binding es un detalle interno.",
     "selectPage.nativeLinkBody": 'Para una elección estándar de formulario, usa el <a href="#select-nativo">Select nativo</a> documentado al final: no carga un enhancer, conserva el comportamiento de plataforma y estiliza su picker mediante mejora progresiva.',
     "selectPage.enhancedLabel": "Select enhanced",
     "selectPage.densityBody": "La densidad compacta el espacio alrededor del selector, no sus objetivos táctiles: el trigger y cada opción conservan un mínimo de <code>44px</code> de alto.",
-    "selectPage.htmlTitle": "HTML autorado",
+    "selectPage.htmlTitle": "HTML escrito a mano",
     "selectPage.htmlBody":
       "Los items <strong>son</strong> la colección: el enhancer los lee del DOM, igual que tabs lee sus triggers. Cada <code>data-sk-select-item</code> necesita un <code>data-value</code>. El markup completo está en la pestaña <strong>Vanilla</strong> del preview.",
     "selectPage.vanillaInitTitle": "Inicializar Vanilla",
@@ -16,7 +20,7 @@ export const selectMessages = {
     "selectPage.formsTitle": "Formularios y fallback sin JavaScript",
     "selectPage.enhancedContractTitle": "Contrato enhanced",
     "selectPage.enhancedContractItem1": "La raíz lleva <code>data-sk-select</code> y la anatomía de parts documentada.",
-    "selectPage.enhancedContractItem2": "El enhancer no renderiza markup ni inventa clases; sólo conecta los nodos autorados.",
+    "selectPage.enhancedContractItem2": "El enhancer no renderiza markup ni inventa clases; sólo conecta los nodos escritos a mano.",
     "selectPage.enhancedContractItem3": "El texto del valor lo posee la máquina; placeholder, opciones e ids siguen siendo del consumidor.",
     "selectPage.enhancedContractItem4": "React renderiza el mismo contrato y no hidrata el markup Vanilla.",
     "selectPage.nativeTitle": "Select nativo",
@@ -37,13 +41,17 @@ export const selectMessages = {
     "selectPage.iconsComment": "Los iconos se autoran como placeholders <span data-sk-icon>;\nmountIcons los reemplaza por el <svg> del set enlazado.",
     "selectPage.formsComment": "Opcional: hace que el Select se envíe en un form, y es lo\n     que queda sin JS. Sus <option> tienen que coincidir con\n     los items, o el enhancer tira.",
     "selectPage.test1": "Usa la máquina de Zag select para la selección del popup y el valor del form.",
-    "selectPage.test2": "Conduce la máquina sobre el markup autorado: ARIA, selección y el texto del valor.",
+    "selectPage.test2": "Conduce la máquina sobre el markup escrito a mano: ARIA, selección y el texto del valor.",
     "selectPage.test3": "Emite <code>sk-value-change</code>, y el cleanup detiene la máquina.",
   },
   en: {
     "demo.select.label": "Plan",
 
     "selectPage.description": "Select: a machine-enhanced listbox, for Vanilla and React.",
+    "selectPage.anatomyBody":
+      "A closed Select is a trigger: the positioner, the content and the rows only exist while the listbox is up. So the specimen is drawn open and stays open. It is frozen; the live Select is the one below.",
+    "selectPage.anatomyLabel": "Select anatomy",
+    "selectPage.anatomyPreviewLabel": "An open Select, part by part",
     "selectPage.lede":
       "The main picker for when the interaction needs typeahead, highlighting, a controlled popup, and positioning. <code>Select</code> shares its parts contract across <code>@skryensya/vanilla</code> and <code>@skryensya/react</code>; each binding's machine is an internal detail.",
     "selectPage.nativeLinkBody": 'For a standard form choice, use the <a href="#native-select">native Select</a> documented at the end: it loads no enhancer, keeps platform behavior, and styles its picker through progressive enhancement.',

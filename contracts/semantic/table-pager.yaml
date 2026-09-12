@@ -2,7 +2,7 @@
 
 TablePager:
   useWhen:
-    - "una tabla autorada necesita paginar filas en el cliente y cambiar cuántas se ven"
+    - "una tabla escrita a mano necesita paginar filas en el cliente y cambiar cuántas se ven"
   avoidWhen:
     - "los datos vienen paginados del servidor; la aplicación debe controlar esa consulta"
   alternatives:

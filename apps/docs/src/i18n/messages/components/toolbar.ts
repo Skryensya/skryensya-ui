@@ -12,6 +12,10 @@ export const toolbarMessages = {
     "demo.toolbar.binding": "Binding",
 
     "toolbarPage.description": "Agrupa controles relacionados y permite recorrerlos con flechas.",
+    "toolbarPage.anatomyBody":
+      "Este diagrama nombra la barra, el grupo y el separador. El espécimen está congelado; los Toolbar vivos empiezan abajo.",
+    "toolbarPage.anatomyLabel": "Anatomía de Toolbar",
+    "toolbarPage.anatomyPreviewLabel": "Toolbar, parte por parte",
     "toolbarPage.betaBadge": "Beta",
     "toolbarPage.contractBody": "Toolbar agrupa controles; no reemplaza Navbar ni Menu. Los grupos internos usan role=group.",
     "toolbarPage.a11yBody": "Flechas recorren controles; Home y End saltan a los extremos. Tab entra y sale de la barra.",
@@ -36,6 +40,10 @@ export const toolbarMessages = {
     "demo.toolbar.binding": "Binding",
 
     "toolbarPage.description": "Groups related controls and lets you move through them with arrows.",
+    "toolbarPage.anatomyBody":
+      "This diagram names the bar, the group and the separator. The specimen is frozen; the live Toolbars begin below.",
+    "toolbarPage.anatomyLabel": "Toolbar anatomy",
+    "toolbarPage.anatomyPreviewLabel": "Toolbar, part by part",
     "toolbarPage.betaBadge": "Beta",
     "toolbarPage.contractBody": "Toolbar groups controls; it does not replace Navbar or Menu. Internal groups use role=group.",
     "toolbarPage.a11yBody": "Arrows move through controls; Home and End jump to the ends. Tab enters and exits the bar.",

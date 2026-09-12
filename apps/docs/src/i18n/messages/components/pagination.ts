@@ -7,6 +7,10 @@ export const paginationMessages = {
     "paginationPage.description": "Pagination: ventana de páginas como función pura del core, con primera, última y elipsis.",
     "paginationPage.lede":
       "Pagination recorre un conjunto paginado, una página a la vez. La ventana visible es la parte interesante, y vive como función pura en el core: primera y última siempre presentes, la actual con un hermano a cada lado, y las corridas ocultas colapsan en una elipsis.",
+    "paginationPage.anatomyBody":
+      "Este diagrama nombra prev, los ítems, la elipsis y next. El espécimen está congelado; la paginación viva empieza abajo.",
+    "paginationPage.anatomyLabel": "Anatomía de Pagination",
+    "paginationPage.anatomyPreviewLabel": "Pagination, parte por parte",
     "paginationPage.body":
       'Prev/next usan los roles <code>chevron-left</code> y <code>chevron-right</code> del set. La página actual lleva <code>aria-current="page"</code>; prev/next se deshabilitan en los bordes. La elipsis es texto inerte, no un objetivo. Los targets llevan <code>sk-interactive</code>.',
     "paginationPage.rangeTitle": "La ventana, en el core",
@@ -23,6 +27,10 @@ export const paginationMessages = {
     "paginationPage.description": "Pagination: a page window as a pure function from core, with first, last, and ellipsis.",
     "paginationPage.lede":
       "Pagination moves through a paginated set, one page at a time. The visible window is the interesting part, and it lives as a pure function in core: first and last always present, the current page with one sibling on each side, and hidden runs collapsing into an ellipsis.",
+    "paginationPage.anatomyBody":
+      "This diagram names prev, the items, the ellipsis, and next. The specimen is frozen; the live pagination starts below.",
+    "paginationPage.anatomyLabel": "Pagination anatomy",
+    "paginationPage.anatomyPreviewLabel": "Pagination, part by part",
     "paginationPage.body":
       'Prev/next use the set\'s <code>chevron-left</code> and <code>chevron-right</code> roles. The current page carries <code>aria-current="page"</code>; prev/next disable at the edges. The ellipsis is inert text, never a target. The targets carry <code>sk-interactive</code>.',
     "paginationPage.rangeTitle": "The window, in core",

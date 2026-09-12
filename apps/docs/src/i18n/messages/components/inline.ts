@@ -13,6 +13,10 @@ export const inlineMessages = {
     "demo.inline.floorPrimary": "Elegir",
 
     "inlinePage.description": "Inline, el pattern de layout horizontal y adaptable.",
+    "inlinePage.anatomyBody":
+      "El mismo dibujo que el de Stack girado noventa grados, que es toda la diferencia entre los dos primitivos: las franjas de <code>data-gap</code> ahora son verticales. Las etiquetas giran con él, porque nombrar una fila desde un margen lateral obligaría a cruzar cada caja para llegar a la última.",
+    "inlinePage.anatomyLabel": "Anatomía de Inline",
+    "inlinePage.anatomyPreviewLabel": "Inline, parte por parte",
     "inlinePage.lede":
       "Organiza elementos en horizontal y los devuelve a otra línea cuando el espacio se agota. Úsalo para barras de acciones y pares label–control; la semántica pertenece al elemento que eliges. No hay un <code>ButtonWrapper</code>: esa fila ya es Inline.",
     "inlinePage.previewLabel": "Barra de acciones",
@@ -25,7 +29,7 @@ export const inlineMessages = {
     "inlinePage.whereTitle": "Dónde componerlo",
     "inlinePage.whereBody":
       "Úsalo donde <em>vos</em> autorás los botones: CTAs de un <a href=\"/components/hero\">Hero</a>, pie de una card con <a href=\"/components/box\">Box</a>, un par label–control, el pie de un formulario que no tiene parte propia. No sustituyas la anatomía de <a href=\"/components/empty-state\">EmptyState</a> (<code>__actions</code>), el footer de un <a href=\"/components/dialog\">Dialog</a> ni un <a href=\"/components/toolbar\">Toolbar</a>: esas piezas ya dueñas de su fila.",
-    "inlinePage.htmlTitle": "HTML autorado",
+    "inlinePage.htmlTitle": "HTML escrito a mano",
     "inlinePage.htmlBody": "Usa <code>sk-inline</code> en el elemento semántico que corresponda. Los atributos describen el espaciado, la alineación vertical, la distribución horizontal, si la fila puede envolver sus hijos y el aire encima (<code>data-block-start</code>).",
     "inlinePage.contractItem1": "<code>as</code> elige el elemento raíz; por defecto es <code>div</code>.",
     "inlinePage.contractItem2": "<code>gap</code> acepta <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> o <code>xl</code>; por defecto es <code>md</code>.",
@@ -51,6 +55,10 @@ export const inlineMessages = {
     "demo.inline.floorPrimary": "Choose",
 
     "inlinePage.description": "Inline, the horizontal, wrapping layout pattern.",
+    "inlinePage.anatomyBody":
+      "The same drawing as Stack’s, turned ninety degrees, which is the whole difference between the two primitives: the <code>data-gap</code> bands are vertical now. The labels turn with it, because naming a row from a side gutter would cross every box to reach the far one.",
+    "inlinePage.anatomyLabel": "Inline anatomy",
+    "inlinePage.anatomyPreviewLabel": "Inline, part by part",
     "inlinePage.lede":
       "Lays out elements horizontally and wraps them onto another line once space runs out. Use it for action bars and label–control pairs; the semantics belong to whichever element you choose. There is no <code>ButtonWrapper</code>: that row is already Inline.",
     "inlinePage.previewLabel": "Action bar",

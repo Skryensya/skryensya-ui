@@ -37,15 +37,6 @@ import {
 } from "../../demos/accordion";
 import { annotationAnatomyTree, annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/accordion.yaml?raw";
-import coreSource from "@core/src/accordion.ts?raw";
-import cssSource from "@core/css/components/accordion.css?raw";
-import vanillaMountSource from "@vanilla/src/components/accordion.ts?raw";
-import vanillaCoordinatorSource from "@vanilla/src/components/Accordion.svelte?raw";
-import vanillaItemSource from "@vanilla/src/components/AccordionItem.svelte?raw";
-import vanillaTestSource from "@vanilla/src/components/accordion.svelte.test.ts?raw";
-import reactSource from "@react/src/components/accordion.tsx?raw";
-import reactTestSource from "@react/src/components/accordion.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -67,25 +58,12 @@ const nativeStyles = `@import "@skryensya/core/components/details.css";`;
    differs by locale, so it is built here from `accordion.detailsNativoLabel` and spliced into
    those strings as {detailsLink}, the same `set:html` + var pattern the footer uses for `{core}`. */
 const detailsLink = `<a href="#details-nativo">${t("accordion.detailsNativoLabel")}</a>`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/accordion.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/accordion.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/accordion.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/accordion.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/Accordion.svelte", source: vanillaCoordinatorSource, language: "svelte" },
-  { id: "packages/vanilla/src/components/AccordionItem.svelte", source: vanillaItemSource, language: "svelte" },
-  { id: "packages/vanilla/src/components/accordion.svelte.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/accordion.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/accordion.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Accordion"
   description={t("accordion.description")}
   contractId="accordion"
-  sourceFiles={sourceFiles}
   styleGroups={[
     { file: "components/accordion.css", probe: "sk-accordion", title: "Accordion" },
     { file: "components/details.css", probe: "sk-details", title: t("accordion.detailsNativoLabel") },

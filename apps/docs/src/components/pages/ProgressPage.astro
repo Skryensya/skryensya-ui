@@ -1,26 +1,16 @@
 ---
 import "@skryensya/core/components/progress.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { progressTree } from "../../demos/progress";
+import { progressAnatomyTree, progressTree } from "../../demos/progress";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/progress.yaml?raw";
-import coreSource from "@core/src/progress.ts?raw";
-import cssSource from "@core/css/components/progress.css?raw";
-import reactSource from "@react/src/components/progress.tsx?raw";
-import reactTestSource from "@react/src/components/progress.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 const install = `pnpm add @skryensya/core @skryensya/react`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/progress.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/progress.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/progress.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/progress.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/progress.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -28,7 +18,6 @@ const sourceFiles = [
   description={t("progressPage.description")}
   contractId="progress"
   styleGroups={[{ file: "components/progress.css", probe: "sk-progress" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/progress.test.tsx",
@@ -47,6 +36,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("progressPage.lede")} />
+
+    <p set:html={t("progressPage.anatomyBody")} />
+    <ComponentPreview
+      tree={progressAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("progressPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={progressTree(t)} label="Progress" />
     <p set:html={t("progressPage.body")} />
     <p set:html={t("component.reactNote")} />

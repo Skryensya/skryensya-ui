@@ -115,14 +115,23 @@ export const annotationAnatomyTree = (t: Translate): UsageTree => ({
         options: { for: ".sk-tile__trigger", side: "inline-start" },
         slots: { children: "sk-tile__trigger" },
       },
-      { options: { for: ".sk-tile__title", side: "inline-end" }, slots: { children: "sk-tile__title" } },
       /*
-       * THE ONE PART HERE THAT IS NOT A BOX. Every other name on this diagram points at something
-       * with its own surface and its own padding (a card, a button, a panel), where a ring drawn
-       * just inside the edge sits in that padding and touches nothing. The description is a single
-       * line of text whose box IS the text, so the same inset ring lands on the glyphs and reads as
-       * a rule struck through the words. It overrides the frame, and nothing else does.
+       * THE TWO PARTS HERE THAT ARE NOT BOXES, and they are the pair of text runs: the title and the
+       * description. Every other name on this diagram points at something with its own surface and
+       * its own padding (a card, a button, a panel), where a ring drawn just inside the edge sits in
+       * that padding and touches nothing. A line of text has no padding at all, its box IS the
+       * glyphs, so the same inset ring lands on them and reads as a rule struck through the words.
+       * Both go outside; nothing else on this diagram does.
        */
+      {
+        options: {
+          for: ".sk-tile__title",
+          side: "inline-end",
+          ringPlacement: "offset",
+          ringDistance: 4,
+        },
+        slots: { children: "sk-tile__title" },
+      },
       {
         options: {
           for: ".sk-tile__description",

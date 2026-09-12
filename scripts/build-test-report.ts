@@ -22,6 +22,10 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
  *  second page adopts the Tests tab. */
 const TARGETS = [
   { pkg: "packages/react", file: "src/components/accordion.test.tsx" },
+  { pkg: "packages/vanilla", file: "src/components/checkbox-group.svelte.test.ts" },
+  { pkg: "packages/vanilla", file: "src/components/color-picker.svelte.test.ts" },
+  { pkg: "packages/vanilla", file: "src/components/menubar.svelte.test.ts" },
+  { pkg: "packages/core", file: "src/slider-range.test.ts" },
   { pkg: "packages/vanilla", file: "src/components/accordion.svelte.test.ts" },
   { pkg: "packages/react", file: "src/components/skip-link.test.tsx" },
   { pkg: "packages/react", file: "src/components/avatar.test.tsx" },

@@ -3,6 +3,119 @@ import { DEMO_IMAGE_FRAME_SRC } from "./image-frame.js";
 import type { Translate } from "../i18n";
 
 /*
+ * THE ANATOMY SPECIMEN: frozen open markup. A live Megamenu cannot be held open in an inert frame
+ * (hover-intent and dismiss close it on the first pointer press). No mount attributes, so
+ * `initComponents` never attaches. `data-state="open"` paints the panel; the positioner is forced
+ * static in `megamenuAnatomyCss` so the floating panel contributes to Annotated's measured box.
+ *
+ * Structure matches the emitter on a one-trigger Megamenu with two NavListGroup columns, minus
+ * mounts and the shared-ruler machinery the live page uses.
+ */
+const megamenuAnatomySpecimen = (t: Translate): string => `<nav class="sk-megamenu sk-anchor" aria-label="${t("demo.megamenu.label")}">
+  <ul class="sk-megamenu__list" role="list">
+    <li class="sk-megamenu__item">
+      <button class="sk-megamenu__trigger sk-interactive" type="button" aria-expanded="true" tabindex="-1">
+        ${t("demo.megamenu.trigger1")}
+      </button>
+      <div class="sk-megamenu__positioner sk-anchored sk-megamenu">
+        <div class="sk-megamenu__content" data-state="open">
+          <div class="sk-nav-list__group" data-heading="">
+            <h3 class="sk-nav-list__group-label">${t("demo.megamenu.group1")}</h3>
+            <ul class="sk-nav-list__list" role="list">
+              <li class="sk-nav-list__item">
+                <a class="sk-nav-list__link sk-interactive" href="#">
+                  <span class="sk-nav-list__label">${t("demo.megamenu.link1")}</span>
+                </a>
+              </li>
+              <li class="sk-nav-list__item">
+                <a class="sk-nav-list__link sk-interactive" href="#">
+                  <span class="sk-nav-list__label">${t("demo.megamenu.link2")}</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="sk-nav-list__group" data-heading="">
+            <h3 class="sk-nav-list__group-label">${t("demo.megamenu.group2")}</h3>
+            <ul class="sk-nav-list__list" role="list">
+              <li class="sk-nav-list__item">
+                <a class="sk-nav-list__link sk-interactive" href="#">
+                  <span class="sk-nav-list__label">${t("demo.megamenu.link4")}</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="sk-megamenu__item">
+      <button class="sk-megamenu__trigger sk-interactive" type="button" aria-expanded="false" tabindex="-1">
+        ${t("demo.megamenu.trigger2")}
+      </button>
+    </li>
+  </ul>
+</nav>`;
+
+const label = (target: string, side: string, text: string, extra = ""): string =>
+  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
+
+export const megamenuAnatomyHtml = (t: Translate): string => `<div
+  class="sk-annotated"
+  data-sk-annotated
+  aria-label="${t("megamenuPage.anatomyLabel")}"
+  data-ring-placement="inset"
+  data-ring-distance="2"
+  role="group"
+>
+  <div class="sk-annotated__subject" inert>
+    ${megamenuAnatomySpecimen(t)}
+  </div>
+  ${label(".sk-megamenu", "block-start", "sk-megamenu", ' data-ring-placement="offset" data-ring-distance="8"')}
+  ${label(".sk-megamenu__list", "inline-start", "sk-megamenu__list")}
+  ${label(".sk-megamenu__item", "inline-start", "sk-megamenu__item", ' data-ring-placement="offset" data-ring-distance="2"')}
+  ${label(".sk-megamenu__trigger", "inline-end", "sk-megamenu__trigger")}
+  ${label(".sk-megamenu__positioner", "inline-start", "sk-megamenu__positioner")}
+  ${label(".sk-megamenu__content", "inline-end", "sk-megamenu__content")}
+  ${label(".sk-nav-list__group", "inline-start", "sk-nav-list__group", ' data-ring-placement="offset" data-ring-distance="3"')}
+  ${label(".sk-nav-list__link", "inline-end", "sk-nav-list__link", ' data-ring-placement="offset" data-ring-distance="2"')}
+  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
+</div>`;
+
+export const megamenuAnatomyCss = `.sk-annotated {
+  --sk-annotation-font-family: var(--font-family-code);
+}
+
+.sk-annotated__subject > .sk-megamenu {
+  display: grid;
+  justify-items: stretch;
+  gap: var(--space-stack-md);
+  inline-size: min(100%, 28rem);
+}
+
+.sk-annotated__subject > .sk-megamenu > .sk-megamenu__list {
+  display: flex;
+  gap: var(--space-inline-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sk-annotated .sk-megamenu__item > .sk-megamenu__positioner {
+  position: static;
+  inline-size: 100%;
+}
+
+.sk-annotated .sk-megamenu__content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-inline-md);
+  padding: var(--space-inset-md);
+}
+
+.sk-annotated__subject {
+  text-align: center;
+}`;
+
+/*
  * Two categories, `Producto` (4 columns) and `Recursos` (3 columns). Both inside the contract's
  * documented 2-4 range, and different enough from each other that the ruler's own constant-height
  * behavior visibly does something. Every links column is `NavListGroup` with `heading: true` (a real

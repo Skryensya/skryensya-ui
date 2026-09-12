@@ -426,7 +426,7 @@ describe("placeAnnotations", () => {
     /*
      * The breadcrumb-separator case: several marks named from below. Once the label is slid under
      * their span, each separator's centre projects onto the bubble, and the leader is one vertical
-     * segment — not an elbow forced by an evenly-spaced fan.
+     * segment, not an elbow forced by an evenly-spaced fan.
      */
     const [placement] = placeAnnotations(
       [
@@ -488,22 +488,51 @@ describe("placeAnnotations", () => {
     expect(placement!.marks).toHaveLength(1);
   });
 
-  it("gives every ring the same radius, whatever shape the part is", () => {
-    // A mark is a convention. One that changes shape per instance is not one, so a pill and a card
-    // get the same corner and the reader learns to read it once.
+  it("gives a ring the corner of the part it wraps", () => {
+    // The ring's whole claim is that it is the outline of the thing inside it, and a browser has
+    // never drawn that outline square around a pill: a chip's corner and a card's are different
+    // numbers because the parts are different shapes.
+    const [chip] = placeAnnotations(
+      [measurement({ targets: [{ ...box(200, 100, 80, 24), radius: 999 }] })],
+      subject,
+    );
+    const [card] = placeAnnotations(
+      [measurement({ targets: [{ ...box(200, 40, 300, 200), radius: 12 }] })],
+      subject,
+    );
+    // Clamped to half the shorter side, which is what turns a pill token into an actual pill.
+    expect(only(chip)!.ring!.radius).toBe(10);
+    // Concentric: the part's 12 less the 2 the ring was pulled in by.
+    expect(only(card)!.ring!.radius).toBe(10);
+  });
+
+  it("grows that corner instead when the ring is drawn outside the part", () => {
+    // Same sign convention as the box itself: `offset` pushes out, so the corner opens up by as much
+    // and the two curves stay parallel.
+    const [placement] = placeAnnotations(
+      [measurement({ targets: [{ ...box(200, 40, 300, 200), radius: 12 }] })],
+      subject,
+      { ringInset: annotationRingInset("offset", 4) },
+    );
+    expect(only(placement)!.ring!.radius).toBe(16);
+  });
+
+  it("falls back to one shared corner for a part that reports none", () => {
+    // A caller measuring bare rectangles (no computed style to read) still gets a drawable mark.
     const [chip] = placeAnnotations([measurement({ target: box(200, 100, 80, 24) })], subject);
     const [card] = placeAnnotations([measurement({ target: box(200, 40, 300, 200) })], subject);
     expect(only(chip)!.ring!.radius).toBe(6);
     expect(only(card)!.ring!.radius).toBe(6);
   });
 
-  it("lets the frame choose that radius, and one mark override it", () => {
-    // A default, not a law: a diagram of pill-shaped chips says so once on the frame, and the odd
-    // part out says so for itself.
+  it("lets the frame choose one radius for every ring, and one mark override it", () => {
+    // The part's own corner is the default, not a law: a diagram that wants one shape regardless
+    // says so once on the frame, and the odd part out says so for itself. Neither is converted the
+    // way a part's own corner is: an authored number is already a statement about the ring.
     const [shared, odd] = placeAnnotations(
       [
-        measurement({ target: box(200, 40, 300, 200) }),
-        measurement({ target: box(200, 40, 300, 200), ringRadius: 0 }),
+        measurement({ targets: [{ ...box(200, 40, 300, 200), radius: 12 }] }),
+        measurement({ targets: [{ ...box(200, 40, 300, 200), radius: 12 }], ringRadius: 0 }),
       ],
       subject,
       { ringRadius: 20 },

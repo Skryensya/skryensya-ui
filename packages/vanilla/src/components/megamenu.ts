@@ -3,6 +3,7 @@ import { imageFrameParts } from "@skryensya/core/image-frame";
 import { megamenuAttrs, megamenuParts } from "@skryensya/core/megamenu";
 import { resolveMegamenuEvent, type MegamenuEvent, type MegamenuState } from "@skryensya/core/megamenu";
 import { createConnectMount, uniqueId } from "../runtime/svelte-hydrate.js";
+import { selectorsFor } from "@skryensya/core/selectors";
 
 /*
  * MEGAMENU: no `@zag-js/*` machine, by design (`megamenu.ts`'s own header comment): activation is
@@ -49,12 +50,15 @@ import { createConnectMount, uniqueId } from "../runtime/svelte-hydrate.js";
 const OPEN_DELAY_MS = 150;
 const CLOSE_DELAY_MS = 150;
 
+/* Derived from the contract's own mount attributes; see `selectorsFor`. */
 const selector = {
-  root: "[data-sk-megamenu]",
-  trigger: "[data-sk-megamenu-trigger]",
-  item: `.${"sk-megamenu__item"}`,
-  positioner: "[data-sk-megamenu-positioner]",
-  content: "[data-sk-megamenu-content]",
+  ...selectorsFor(megamenuAttrs),
+  /*
+   * The one entry that is NOT a mount attribute: an item is found by its BEM class, because the
+   * item is a structural wrapper the author writes and the contract gives no attribute for. Taken
+   * from `megamenuParts` rather than spelled out, so it still has a single declaration in Core.
+   */
+  item: `.${megamenuParts.item}`,
 } as const;
 
 type ParsedEntry = {

@@ -18,6 +18,10 @@ export const stepsMessages = {
     "stepsPage.description": "Steps: indicador de progreso lineal con estados complete / current / upcoming.",
     "stepsPage.lede":
       "Steps muestra el avance sobre una secuencia ordenada. Cada paso reporta uno de tres estados <code>complete</code>, <code>current</code>, <code>upcoming</code>; el componente exhibe la secuencia, no gobierna cuál está activo ni guarda la navegación entre pasos.",
+    "stepsPage.anatomyBody":
+      "Este diagrama nombra el recorrido, el ítem, el marcador, la etiqueta y la descripción. El espécimen está congelado; los Steps vivos empiezan abajo.",
+    "stepsPage.anatomyLabel": "Anatomía de Steps",
+    "stepsPage.anatomyPreviewLabel": "Steps, parte por parte",
     "stepsPage.body": "En React, <code>current</code> deriva el estado de los pasos que no declaran el suyo; un paso puede sobrescribirlo con <code>status</code>. <code>description</code> agrega contexto sin convertir el paso en una tarjeta.",
     "stepsPage.mobileTitle": "En móvil",
     "stepsPage.mobileBody":
@@ -48,6 +52,10 @@ export const stepsMessages = {
     "stepsPage.description": "Steps: a linear progress indicator with complete / current / upcoming states.",
     "stepsPage.lede":
       "Steps shows progress across an ordered sequence. Every step reports one of three states: <code>complete</code>, <code>current</code>, <code>upcoming</code>: the component displays the sequence; it does not govern which one is active or keep navigation between steps.",
+    "stepsPage.anatomyBody":
+      "This diagram names the trail, the item, the marker, the label, and the description. The specimen is frozen; the live Steps start below.",
+    "stepsPage.anatomyLabel": "Steps anatomy",
+    "stepsPage.anatomyPreviewLabel": "Steps, part by part",
     "stepsPage.body": "In React, <code>current</code> derives the state of steps that declare none of their own; a step can override it with <code>status</code>. <code>description</code> adds context without turning the step into a card.",
     "stepsPage.mobileTitle": "On mobile",
     "stepsPage.mobileBody":

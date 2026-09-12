@@ -49,6 +49,10 @@ export const listMessages = {
       "List: colección semántica de filas (ul/ol) con anatomía real (leading, contenido, trailing), divisores, filas interactivas y orden.",
     "listPage.lede":
       "Una <strong>lista con UI</strong>, no un <code>&lt;li&gt;</code> con tipografía. Por debajo es un <code>&lt;ul&gt;</code> o <code>&lt;ol&gt;</code> real (el lector oye una lista de N ítems), y encima aporta la anatomía de fila: <strong>leading</strong> (icono, avatar, número), <strong>contenido</strong> (título y descripción) y <strong>trailing</strong> (meta, badge, acción), con divisores. Es composable por partes y funcional: una fila que actúa es un <code>&lt;a&gt;</code>/<code>&lt;button&gt;</code> real, nunca un <code>onClick</code> en el <code>&lt;li&gt;</code>.",
+    "listPage.anatomyBody":
+      "Este diagrama nombra cada parte de una fila completa: leading, content, trailing. El espécimen está congelado; las listas vivas empiezan abajo.",
+    "listPage.anatomyLabel": "Anatomía de List",
+    "listPage.anatomyPreviewLabel": "List, parte por parte",
     "listPage.stepsTitle": "La fila, un slot a la vez",
     "listPage.stepsBody":
       "Los seis ejemplos que siguen son <strong>la misma lista</strong>, y cada uno agrega exactamente una pieza sobre el anterior. Se leen en orden: lo que aparece de nuevo en cada paso es lo único que cambió en el markup.",
@@ -141,6 +145,10 @@ export const listMessages = {
       "List: a semantic row collection (ul/ol) with real anatomy (leading, content, trailing), dividers, interactive rows, and ordering.",
     "listPage.lede":
       "A <strong>list with UI</strong>, not an <code>&lt;li&gt;</code> with typography. Underneath it is a real <code>&lt;ul&gt;</code> or <code>&lt;ol&gt;</code> (a reader hears a list of N items), and on top of that it adds row anatomy: <strong>leading</strong> (icon, avatar, number), <strong>content</strong> (title and description), and <strong>trailing</strong> (meta, badge, action), with dividers. It composes piece by piece and stays functional: a row that acts is a real <code>&lt;a&gt;</code>/<code>&lt;button&gt;</code>, never an <code>onClick</code> on the <code>&lt;li&gt;</code>.",
+    "listPage.anatomyBody":
+      "This diagram names every part of a complete row: leading, content, trailing. The specimen is frozen; the live lists start below.",
+    "listPage.anatomyLabel": "List anatomy",
+    "listPage.anatomyPreviewLabel": "List, part by part",
     "listPage.stepsTitle": "The row, one slot at a time",
     "listPage.stepsBody":
       "The six examples below are <strong>the same list</strong>, and each one adds exactly one piece over the last. Read them in order: whatever shows up new at each step is the only thing that changed in the markup.",

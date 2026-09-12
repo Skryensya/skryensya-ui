@@ -1,6 +1,7 @@
 import { avatarInitials } from "@skryensya/core/avatar";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate, UIKey } from "../i18n";
+import { namePart } from "./annotation-parts";
 
 /*
  * FIVE DEMOS, in the order the page teaches them: one comment, that comment with its action row, a
@@ -292,21 +293,97 @@ const BARBARA: [UIKey, string] = ["demo.commentThread.author6", "red-700"];
 
 /** THE SIMPLEST PIECE: who, when, and what they said. No thread, no chrome, no fold control. */
 export const commentAloneTree = (t: Translate): UsageTree => ({
-  ...comment(t, { who: ADA, time: "demo.commentThread.time1", body: "demo.commentThread.body1" }),
+  ...thread(t, [comment(t, { who: ADA, time: "demo.commentThread.time1", body: "demo.commentThread.body1" })]),
   // Fills the stage for the same reason the interactive demos do; see `interactive` above.
   attrs: { style: "inline-size: 100%" },
+});
+
+/*
+ * ONE comment with a reply and its action row: enough parts to name the anatomy without the
+ * thread's own composer, dialogs or templates that the live demos need.
+ *
+ * ITS OWN, SHORTER TEXT (`anatomyBody`/`anatomyReply`) rather than the lorem every live demo shares.
+ * A comment's body is the one part here whose height is the author's to decide, and three wrapped
+ * lines of it make the box tall enough that the labels beside it get pushed a lane apart to clear
+ * each other, which is the diagram spending its vertical space on the part it has least to say
+ * about. One line each keeps the header, the body and the action row within one screenful of one
+ * another, which is what lets their leaders stay short and level.
+ *
+ * THE HEADER READS FROM ABOVE. The name and the time sit side by side on the comment's first row,
+ * which is the top edge of the drawing: a label in the block-start gutter lands almost straight
+ * down onto each of them, and the two leaders stay as far apart as the words themselves are. From
+ * the inline gutter they had to share one side with everything else in the column, which put two
+ * one-line targets into the same lane contest as the message and the control row under them.
+ *
+ * THE TWO INLINE GUTTERS TAKE THE ROW'S TWO ENDS. The action row spans the content column, and the
+ * vote group leads it: so the vote is named from the inline-start side, where it already is, and
+ * the row itself from the inline-end side, where its own far edge is. Named the other way round,
+ * each label had to cross the whole row to reach a target sitting against the opposite margin, and
+ * the vote's leader in particular ended up running over the two labelled buttons beside it, which
+ * reads as naming them.
+ *
+ * The avatar and the collapse control keep the start gutter for the same reason: both sit in the
+ * rail outside the content column, and a label beside them reaches straight across.
+ *
+ * BOTH ROW RINGS GO OUTSIDE. Neither box has an edge of its own to draw inside of: the row is a
+ * bare flex line and the vote group is three controls with no surface, so an inset ring lands on
+ * the arrows and the count instead of around them.
+ *
+ * The comment's own ring goes OUTSIDE (`offset`), unlike every other box in these diagrams: a
+ * comment has no border and no surface of its own, so an inset ring is a rectangle drawn over the
+ * message rather than around it, and the first thing it crosses is the body text it is supposed to
+ * contain.
+ */
+export const commentAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("commentThread.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      ...thread(t, [
+        comment(t, {
+          who: ADA,
+          time: "demo.commentThread.time1",
+          body: "demo.commentThread.anatomyBody",
+          actions: actions("up", "4", { deletable: true }),
+          replies: comment(t, {
+            who: GRACE,
+            time: "demo.commentThread.time2",
+            body: "demo.commentThread.anatomyReply",
+            actions: actions("none", "1"),
+          }),
+        }),
+      ]),
+      attrs: { style: "inline-size: 100%" },
+    },
+    items: [
+      namePart(".sk-comment", "block-start", { ringPlacement: "offset", ringDistance: 4 }),
+      namePart(".sk-comment__avatar", "inline-start"),
+      namePart(".sk-comment__collapse", "inline-start"),
+      namePart(".sk-comment__author", "block-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-comment__timestamp", "block-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-comment-vote", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-comment__body", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      /* Four rather than two, because this ring encloses the vote's: at the same distance the two
+         would run a hairline apart down the row's leading edge and read as one thick line. */
+      namePart(".sk-comment-actions", "inline-end", { ringPlacement: "offset", ringDistance: 4 }),
+      namePart(".sk-comment__replies", "block-end"),
+    ],
+  },
 });
 
 /** THE SAME COMMENT plus its row: a vote group, and the reply and delete triggers. */
 export const commentActionsTree = (t: Translate): UsageTree =>
   interactive(t, [
-    comment(t, {
-    id: "c1",
-    who: ADA,
-    time: "demo.commentThread.time1",
-    body: "demo.commentThread.body1",
-    actions: actions("up", "4", { deletable: true }),
-    }),
+    thread(t, [
+      comment(t, {
+        id: "c1",
+        who: ADA,
+        time: "demo.commentThread.time1",
+        body: "demo.commentThread.body1",
+        actions: actions("up", "4", { deletable: true }),
+      }),
+    ]),
   ]);
 
 /*

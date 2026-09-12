@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { contractIds, getContract } from "./registry.js";
+import { contractIds, getContract } from "@skryensya/core/registry";
 import { surfaceHash } from "./surface.js";
 
 /*

@@ -6,6 +6,10 @@ export const commentThreadMessages = {
     "commentThread.betaBadge": "Beta",
     "commentThread.lede":
       "Cinco piezas, no un componente con todo adentro. La más simple es <code>Comment</code>: quién escribió, cuándo y qué dijo, válido sin hilo alrededor. Encima se componen <code>CommentActions</code>, <code>CommentVote</code>, <code>CommentComposer</code> y <code>CommentThread</code>. Las respuestas recursan por composición: <code>Comment</code> adentro de <code>Comment</code>, a cualquier profundidad. Nada de esto llama a una API ni guarda un borrador: cada acción se devuelve a quien lo usa.",
+    "commentThread.anatomyBody":
+      "Este diagrama nombra las partes de un comentario con respuesta y fila de acciones. El espécimen está congelado; los hilos vivos empiezan abajo.",
+    "commentThread.anatomyLabel": "Anatomía de Comment",
+    "commentThread.anatomyPreviewLabel": "Comment, parte por parte",
     "commentThread.whenTitle": "Cuándo usarlo",
     "commentThread.whenBody1":
       "Cuando hay una conversación con respuestas anidadas de verdad: cada comentario puede tener los suyos, a cualquier profundidad. Un stream plano de publicaciones sin hilos es <a href=\"/componentes/feed\">Feed</a>; una jerarquía SELECCIONABLE (archivos, un índice) es <a href=\"/componentes/tree-view\">TreeView</a>. Este componente es para contenido de solo lectura con acciones (votar, responder, borrar), no para elegir un ítem.",
@@ -47,7 +51,7 @@ export const commentThreadMessages = {
     "commentThread.behaviorBody1":
       "Un clic en votar o borrar solo despacha el evento (<code>onVote</code>/<code>onDelete</code> en React, un <code>CustomEvent</code> en Vanilla) - el estado que se ve (<code>aria-pressed</code>, <code>data-voted</code>) es SIEMPRE el que trae el dato de quien lo usa, nunca algo que este componente decida por su cuenta. Plegar un hilo y abrir/cerrar el cuadro de respuesta sí son estado propio, y usan el mismo patrón de disclosure de <code>NavListGroup</code> (<code>aria-expanded</code> + <code>hidden</code>): no hay máquina de Zag, no hace falta una para un click que alterna un booleano.",
     "commentThread.behaviorBody2":
-      "Sin <code>role=\"feed\"</code> ni <code>role=\"tree\"</code>: cada comentario es un <code>&lt;article&gt;</code>, y sus respuestas son <code>&lt;article&gt;</code> anidados dentro - la jerarquía que un lector de pantalla ya calcula solo, sin <code>aria-level</code> autorado a mano (la misma exención que la spec normativa de WAI-ARIA da al patrón Tree cuando el árbol entero ya está en el DOM).",
+      "Sin <code>role=\"feed\"</code> ni <code>role=\"tree\"</code>: cada comentario es un <code>&lt;article&gt;</code>, y sus respuestas son <code>&lt;article&gt;</code> anidados dentro - la jerarquía que un lector de pantalla ya calcula solo, sin <code>aria-level</code> escrito a mano (la misma exención que la spec normativa de WAI-ARIA da al patrón Tree cuando el árbol entero ya está en el DOM).",
     "commentThread.optionsTitle": "Opciones",
     "commentThread.optionsBody":
       "<code>label</code>: el nombre accesible del hilo. <code>nodes</code>: el árbol de comentarios (cada uno con <code>id</code>, <code>author</code>, <code>timestamp</code>, <code>voteCount</code>, <code>body</code>, y opcionalmente <code>votedByMe</code>, <code>canDelete</code>, <code>replies</code>). <code>composer</code>: la caja para publicar un comentario nuevo, opcional. Los textos de cada control (<code>replyLabel</code>, <code>deleteLabel</code>, <code>voteUpLabel</code>…) son props separadas, nunca texto fijo en un idioma.",
@@ -60,7 +64,7 @@ export const commentThreadMessages = {
       "Cuatro cosas y ninguna más: <strong>escuchar</strong> los tres eventos, <strong>vetar</strong> uno con <code>preventDefault()</code>, <strong>escribir</strong> estado con <code>setCommentVote</code>, y <strong>crear</strong> un comentario clonando un <code>CommentTemplate</code>.",
     "commentThread.vanillaApiBody2":
       "Para crear se clona un blueprint y se llenan los campos por los hooks <code>data-sk-comment-*</code>, nunca por las clases de parte: esas son de la hoja de estilos y se mueven cuando cambia la pintura. Es el mismo idiom que usa <a href=\"/componentes/toast\">Toast</a> con su propio <code>ToastTemplate</code>.",
-    "commentThread.htmlTitle": "HTML autorado",
+    "commentThread.htmlTitle": "HTML escrito a mano",
     "commentThread.htmlBody":
       "Un comentario recursivo se compone repitiendo esta misma forma dentro de <code>.sk-comment-thread__replies</code>. El <code>FormField</code>/<code>Textarea</code> del formulario de respuesta queda a criterio de quien lo usa - acá se omite por brevedad.",
     "commentThread.reactTitle": "React",
@@ -121,6 +125,10 @@ export const commentThreadMessages = {
     "demo.commentThread.author1": "Ada",
     "demo.commentThread.time1": "hace 3h",
     "demo.commentThread.body1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    /* The anatomy specimen's own text, short on purpose: the diagram names the BOX a message lives
+       in, and three lines of lorem make that box tall enough to push its own labels apart. */
+    "demo.commentThread.anatomyBody": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "demo.commentThread.anatomyReply": "Sed do eiusmod tempor incididunt.",
     "demo.commentThread.author2": "Grace",
     "demo.commentThread.time2": "hace 1h",
     "demo.commentThread.body2": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
@@ -146,6 +154,10 @@ export const commentThreadMessages = {
     "commentThread.betaBadge": "Beta",
     "commentThread.lede":
       "Five pieces, not one component with everything folded in. The simplest is <code>Comment</code>: who wrote it, when, and what they said, valid with no thread around it. On top of that compose <code>CommentActions</code>, <code>CommentVote</code>, <code>CommentComposer</code> and <code>CommentThread</code>. Replies recurse by composition: a <code>Comment</code> inside a <code>Comment</code>, at any depth. None of it calls an API or persists a draft: every action is handed back to the consumer.",
+    "commentThread.anatomyBody":
+      "This diagram names the parts of a comment with a reply and an action row. The specimen is frozen; the live threads start below.",
+    "commentThread.anatomyLabel": "Comment anatomy",
+    "commentThread.anatomyPreviewLabel": "Comment, part by part",
     "commentThread.whenTitle": "When to use it",
     "commentThread.whenBody1":
       "When there is a conversation with genuinely nested replies: any comment can have its own, at any depth. A flat stream of posts with no threading is <a href=\"/en/components/feed\">Feed</a>; a SELECTABLE hierarchy (files, an index) is <a href=\"/en/components/tree-view\">TreeView</a>. This one is for read-only content with actions (vote, reply, delete), not for picking an item.",
@@ -261,6 +273,10 @@ export const commentThreadMessages = {
     "demo.commentThread.author1": "Ada",
     "demo.commentThread.time1": "3h ago",
     "demo.commentThread.body1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    /* The anatomy specimen's own text, short on purpose: the diagram names the BOX a message lives
+       in, and three lines of lorem make that box tall enough to push its own labels apart. */
+    "demo.commentThread.anatomyBody": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    "demo.commentThread.anatomyReply": "Sed do eiusmod tempor incididunt.",
     "demo.commentThread.author2": "Grace",
     "demo.commentThread.time2": "1h ago",
     "demo.commentThread.body2": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",

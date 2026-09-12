@@ -66,7 +66,7 @@ entries:
         primitivo compartido (<code>@skryensya/core/splitter</code>) que ya usan el separador de
         <code>Sidebar</code> y el redimensionador de columnas de <code>Treegrid</code>. Requiere
         <code>resizeLabel</code> (nueva opción, gate de a11y): el separador es binding-insertado,
-        nunca autorado, así que nada más lo nombra para un lector de pantalla. La primera entrada
+        nunca escrito a mano, así que nada más lo nombra para un lector de pantalla. La primera entrada
         de este archivo decía "no tiene enhancer: el markup está completo por sí solo". Eso sigue
         siendo la regla por defecto: el binding Vanilla solo enhancea un <code>&lt;table&gt;</code>
         que trae <code>data-resizable-columns</code>, así que cualquier tabla que no la pida sigue

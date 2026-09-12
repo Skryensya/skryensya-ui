@@ -1,9 +1,13 @@
 ---
 import "@skryensya/core/components/tile.css";
+/* Structure diagram: the Annotated specimen below is drawn by Annotation's own sheet, and a preview
+   frame only ever copies the styles ITS page loaded, so it has to land here too. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  buttonAnatomyTree,
   buttonAsLinkTree,
   buttonIconOnlySmTree,
   buttonIconOnlyTree,
@@ -15,15 +19,8 @@ import {
   buttonPressedTree,
   tileButtonTree,
 } from "../../demos/button";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/button.yaml?raw";
-import coreSource from "@core/src/button.ts?raw";
-import cssSource from "@core/css/components/button.css?raw";
-import vanillaMountSource from "@vanilla/src/components/button.ts?raw";
-import vanillaTileButtonSource from "@vanilla/src/components/tile-button.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/button.test.ts?raw";
-import reactSource from "@react/src/components/button.tsx?raw";
-import reactTestSource from "@react/src/components/button.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 /* The link demo points at a real docs page, and that page's path differs per locale. */
@@ -58,24 +55,12 @@ const tileButtonVanilla = `import { createTileButton } from "@skryensya/vanilla/
 const button = createTileButton();
 button.textContent = "Run deployment";
 button.addEventListener("click", runDeployment);`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/button.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/button.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/button.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/button.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/tile-button.ts", source: vanillaTileButtonSource, language: "ts" },
-  { id: "packages/vanilla/src/components/button.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/button.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/button.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Button"
   description={t("button.description")}
   contractId="button"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/button.css", probe: "sk-button" }]}
   tests={[
     {
@@ -107,6 +92,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("button.lede")} />
+
+    <p set:html={t("button.anatomyBody")} />
+    <ComponentPreview
+      tree={buttonAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("button.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("button.variantsTitle")}</h3>
     <p set:html={t("button.variantsBody")} />

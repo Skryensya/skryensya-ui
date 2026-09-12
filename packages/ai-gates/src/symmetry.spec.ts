@@ -1,6 +1,6 @@
 import type { Locator } from "@playwright/test";
 import type { ContractSlot, ContractTemplate } from "@skryensya/core/contract";
-import { contracts } from "@skryensya/ai-compiler/registry";
+import { contracts } from "@skryensya/core/registry";
 import { canonicalTrees } from "./trees.js";
 import { expect, test } from "./fixtures.js";
 

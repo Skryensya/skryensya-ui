@@ -21,6 +21,14 @@
     --sk-space-3: var(--space-inline-md);
     --sk-space-4: var(--space-inset-md);
     --sk-tile-padding: var(--space-inset-md);
+    /*
+     * ONE RADIUS FOR THE SURFACE AND FOR WHAT SITS AT ITS EDGE. A hook rather than the token
+     * inline, because two rules need the same number and one of them is not this box: an expandable
+     * tile's trigger occupies the top of the card, so it carries the card's top corners, and a
+     * consumer retuning the corner has to move both or the two disagree. Accordion drives this same
+     * hook to 0 when it flattens its items into one frame.
+     */
+    --sk-tile-radius: var(--radius-surface);
     --sk-font-heading-sm: var(--font-size-heading-sm);
     --sk-font-body-sm: var(--font-size-body-sm);
     --sk-tile-shadow: var(--elevation-flat);
@@ -33,7 +41,7 @@
     min-block-size: var(--size-control-lg);
     padding: var(--sk-tile-padding);
     border: 1px solid var(--sk-tile-border-color);
-    border-radius: var(--radius-surface);
+    border-radius: var(--sk-tile-radius);
     background: var(--color-bg-surface);
     box-shadow: var(--sk-tile-shadow);
     color: var(--sk-color-text-primary);
@@ -201,6 +209,30 @@
     cursor: pointer;
   }
 
+
+  /*
+   * THE TRIGGER IS THE TOP OF THE CARD, so it carries the card's top corners.
+   *
+   * The tile already clips to its own radius (`overflow: hidden`), so the trigger's hover and press
+   * layers have always LOOKED right. What was missing is the trigger SAYING so: its computed corners
+   * were square while the box it occupies is round, and anything reading the element rather than the
+   * painted result got the wrong shape. An anatomy diagram is where that shows up first, since a
+   * ring takes the `border-radius` of the part it wraps, and it drew a square mark around a rounded
+   * corner.
+   *
+   * The top two only: the bottom of the card belongs to the expandable content, not to the trigger,
+   * even while that content is closed and the trigger happens to be the last thing painted.
+   *
+   * `[role="heading"]` rather than Accordion's own class for the wrapper case, because this file is
+   * the one Accordion builds ON: the shape to match is "a `display: contents` heading between the
+   * section and its button", which is what the role says, and tile has no business naming the
+   * component that happens to put one there.
+   */
+  .sk-tile--expandable > .sk-tile__trigger,
+  .sk-tile--expandable > :where([role="heading"]) > .sk-tile__trigger {
+    border-start-start-radius: var(--sk-tile-radius);
+    border-start-end-radius: var(--sk-tile-radius);
+  }
 
   .sk-tile__trigger:disabled,
   .sk-tile__trigger[data-disabled] {

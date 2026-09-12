@@ -1,26 +1,22 @@
 ---
+/* The anatomy diagram at the top of the page is an Annotated frame, so this page needs its sheet. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  carouselAnatomyTree,
   carouselAutoplayTree,
   carouselBareTree,
   carouselCardsTree,
   carouselFocusableTree,
   carouselNativeTree,
 } from "../../demos/carousel";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/carousel.css";
 import "@skryensya/icons-lucide/carousel.css";
 import "../../examples/carousel.css";
-import contractSource from "@contracts/semantic/carousel.yaml?raw";
-import coreSource from "@core/src/carousel.ts?raw";
-import cssSource from "@core/css/components/carousel.css?raw";
-import vanillaMountSource from "@vanilla/src/components/carousel.ts?raw";
-import vanillaCoordinatorSource from "@vanilla/src/components/Carousel.svelte?raw";
-import vanillaTestSource from "@vanilla/src/components/carousel.svelte.test.ts?raw";
-import reactSource from "@react/src/components/carousel.tsx?raw";
-import reactTestSource from "@react/src/components/carousel.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -68,17 +64,6 @@ carousel.dispatchEvent(new CustomEvent("sk-carousel-goto", { detail: { index: 2 
 carousel.addEventListener("sk-carousel-change", (event) => {
   console.log(event.detail); // ${t("carousel.apiComment3")}
 });`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/carousel.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/carousel.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/carousel.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/carousel.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/Carousel.svelte", source: vanillaCoordinatorSource, language: "svelte" },
-  { id: "packages/vanilla/src/components/carousel.svelte.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/carousel.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/carousel.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -86,7 +71,6 @@ const sourceFiles = [
   description={t("carousel.description")}
   badge={t("carousel.betaBadge")}
   contractId="carousel"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/carousel.css", probe: "sk-carousel" }]}
   tests={[
     {
@@ -117,6 +101,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("carousel.lede")} />
+
+    <p set:html={t("carousel.anatomyBody")} />
+    <ComponentPreview
+      tree={carouselAnatomyTree(t)}
+      css={annotationDemoCss}
+      js={bootstrap}
+      label={t("carousel.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("carousel.cardsTitle")}</h3>
     <p set:html={t("carousel.cardsBody")} />

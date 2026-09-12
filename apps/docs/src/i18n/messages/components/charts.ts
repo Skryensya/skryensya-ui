@@ -6,6 +6,10 @@ export const chartsMessages = {
       "Una serie de valores con nombre hecha visible. Las barras viven en Core; línea y área son un renderer opcional. La card alrededor es una composición.",
     "chartsPage.lede":
       "Chart es un contrato: <code>points</code>, <code>kind</code> y un <code>label</code> que dice qué miden los números. No es la API de una librería de gráficos. Las barras se pintan desde markup. Línea y área cambian el import a <code>@skryensya/charts/react</code>, un drop-in que dibuja un overlay sobre el mismo listado. TanStack existe, en otro subpath, para el caso que este contrato no cubre.",
+    "chartsPage.anatomyBody":
+      "Este diagrama nombra el caption, el plot, la serie y cada punto (barra, etiqueta, valor). El espécimen está congelado; los charts vivos empiezan abajo.",
+    "chartsPage.anatomyLabel": "Anatomía de Chart",
+    "chartsPage.anatomyPreviewLabel": "Chart, parte por parte",
     "chartsPage.calloutBody":
       "<strong>No hay <code>ChartCard</code>.</strong> Título, acción, superficie y números de apoyo son de <a href=\"/componentes/box\">Box</a>, <a href=\"/componentes/heading\">Heading</a>, <a href=\"/componentes/stat\">Stat</a> y <a href=\"/componentes/button\">Button</a>. El gráfico sólo pinta la serie. Publicarlo como variante de card habría crecido exactamente el componente que Card se niega a ser; la receta está en <code>metric-panel</code>.",
     "chartsPage.cardsTitle": "Una card con un chart",
@@ -31,7 +35,7 @@ export const chartsMessages = {
       "Cuando no hay card alrededor, Chart sigue siendo la misma signature: una lista de entradas, cada una con etiqueta y número. <code>kind</code> elige la forma.",
     "chartsPage.barTitle": "Barras, sin renderer",
     "chartsPage.barBody":
-      "Cada entrada trae su valor y la hoja divide por el máximo de la serie. Un gráfico de barras se pinta desde markup autorado. No hace falta <code>@skryensya/charts</code>.",
+      "Cada entrada trae su valor y la hoja divide por el máximo de la serie. Un gráfico de barras se pinta desde markup escrito a mano. No hace falta <code>@skryensya/charts</code>.",
     "chartsPage.barLabel": "Componentes documentados por trimestre",
     "chartsPage.barNote": "Chart · kind bar",
     "chartsPage.lineTitle": "Línea, con el renderer opcional",
@@ -255,6 +259,10 @@ export const chartsMessages = {
       "A series of labelled values made visible. Bars live in Core; line and area are an optional renderer. The card around them is a composition.",
     "chartsPage.lede":
       "Chart is a contract: <code>points</code>, <code>kind</code>, and a <code>label</code> that says what the numbers measure. It is not a charting library's API. Bars paint from markup. Line and area swap the import to <code>@skryensya/charts/react</code>, a drop-in that draws an overlay on the same list. TanStack exists, on another subpath, for the job this contract does not cover.",
+    "chartsPage.anatomyBody":
+      "This diagram names the caption, plot, series and each point (bar, label, value). The specimen is frozen; the live charts start below.",
+    "chartsPage.anatomyLabel": "Chart anatomy",
+    "chartsPage.anatomyPreviewLabel": "Chart, part by part",
     "chartsPage.calloutBody":
       "<strong>There is no <code>ChartCard</code>.</strong> Title, action, surface, and supporting numbers belong to <a href=\"/en/components/box\">Box</a>, <a href=\"/en/components/heading\">Heading</a>, <a href=\"/en/components/stat\">Stat</a>, and <a href=\"/en/components/button\">Button</a>. The chart only paints the series. Publishing it as a card variant would have grown exactly the component Card refuses to be; the recipe lives in <code>metric-panel</code>.",
     "chartsPage.cardsTitle": "A card with a chart",

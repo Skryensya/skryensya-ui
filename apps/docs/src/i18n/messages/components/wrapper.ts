@@ -5,6 +5,10 @@ export const wrapperMessages = {
     "demo.wrapper.body": "El contenido se centra y deja de crecer al llegar al techo.",
 
     "wrapperPage.description": "Wrapper: columna de página con un techo de ancho de una escala.",
+    "wrapperPage.anatomyBody":
+      "De afuera hacia adentro: el aire a los costados es lo que <code>data-size</code> devolvió, el anillo de afuera es la columna a su medida, y la franja de adentro es el <code>padding-inline</code> propio del Wrapper, que es la parte que todo el mundo olvida que tiene. Es el único espécimen de esta serie que ocupa todo el ancho del marco, porque una columna dimensionada a su contenido esconde justo lo único que hace.",
+    "wrapperPage.anatomyLabel": "Anatomía de Wrapper",
+    "wrapperPage.anatomyPreviewLabel": "Wrapper, parte por parte",
     "wrapperPage.lede":
       "Wrapper es la columna de página: un máximo de ancho centrado, con padding inline. Es lo que otros llaman <em>container</em>, pero ese nombre ya es de las <em>container queries</em>, así que aquí el rol se llama <strong>wrapper</strong>. El tamaño es una <strong>escala</strong> (<code>sm</code>, <code>md</code>, <code>lg</code>, <code>full</code>), no un nombre de uso: el techo dice qué tan ancha puede crecer la columna; el trabajo que hace lo decide quien la escribe.",
     "wrapperPage.ceilingTitle": "Un techo de ancho",
@@ -36,6 +40,10 @@ export const wrapperMessages = {
     "demo.wrapper.body": "Content centres and stops growing once it reaches the ceiling.",
 
     "wrapperPage.description": "Wrapper: a page column with a width ceiling from a scale.",
+    "wrapperPage.anatomyBody":
+      "Outside in: the air on either side is what <code>data-size</code> gave back, the outer ring is the column at its measure, and the band inside it is the Wrapper’s own <code>padding-inline</code>, the part people forget it has. It is the one specimen in this series that fills the frame, because a column sized to its contents hides the only thing it does.",
+    "wrapperPage.anatomyLabel": "Wrapper anatomy",
+    "wrapperPage.anatomyPreviewLabel": "Wrapper, part by part",
     "wrapperPage.lede":
       "Wrapper is the page column: a centered max width, with inline padding. It is what others call a <em>container</em>, but that name already belongs to <em>container queries</em>, so here the role is called <strong>wrapper</strong>. Size is a <strong>scale</strong> (<code>sm</code>, <code>md</code>, <code>lg</code>, <code>full</code>), not a usage name: the ceiling says how wide the column can grow; whoever writes it decides what job it does.",
     "wrapperPage.ceilingTitle": "A width ceiling",

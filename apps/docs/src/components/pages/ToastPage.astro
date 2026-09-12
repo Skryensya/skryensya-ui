@@ -1,10 +1,14 @@
 ---
 import "@skryensya/core/components/toast.css";
+import "@skryensya/core/components/callout.css";
+/* The anatomy diagram at the top of the page is an Annotated frame, so this page needs its sheet. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
   toastActionTree,
+  toastAnatomyTree,
   toastEmitScript,
   toastEmitTree,
   toastSimpleTree,
@@ -13,10 +17,8 @@ import {
   toastStatusScript,
   toastStatusTree,
 } from "../../demos/toast";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import cssSource from "@core/css/components/toast.css?raw";
-import vanillaMountSource from "@vanilla/src/components/toast.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/toast.test.ts?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -93,19 +95,12 @@ import { lucideIcons } from "@skryensya/icons-lucide";
 mountIcons(document, lucideIcons);
 
 await initComponents();`;
-
-const sourceFiles = [
-  { id: "packages/core/css/components/toast.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/toast.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/toast.test.ts", source: vanillaTestSource, language: "ts" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Toast"
   description={t("toastPage.description")}
   contractId="content"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/toast.css", probe: "sk-toast" }]}
   tests={[
     {
@@ -126,6 +121,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("toastPage.lede")} />
+
+    <p set:html={t("toastPage.anatomyBody")} />
+    <ComponentPreview
+      tree={toastAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("toastPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("toastPage.emitTitle")}</h3>
     <p set:html={t("toastPage.emitBody")} />

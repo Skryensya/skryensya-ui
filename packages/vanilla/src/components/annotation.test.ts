@@ -182,6 +182,33 @@ describe("connectAnnotated", () => {
     expect(ring!.getAttribute("height")).toBe("56");
   });
 
+  it("gives the ring the corner of the part it wraps, and lets the frame override it", () => {
+    /*
+     * jsdom lays nothing out, but it does report an inline corner through `getComputedStyle`, which
+     * is the one channel `annotationElementRadius` reads. The LONGHAND, because jsdom (unlike every
+     * browser) does not expand the `border-radius` shorthand into the four corners its computed
+     * style then reports as `0`. Setting one corner also pins the "largest of the four" rule: a ring
+     * is one rounded rect, so one rounded corner rounds the mark.
+     *
+     * A part rounded to 12 gets a ring at 10: concentric with it, the 2px the ring was pulled in by
+     * taken off the corner as well as off the box.
+     */
+    const root = frame([{ for: ".part-a", text: "part a" }]);
+    layOut(root);
+    root.querySelector<HTMLElement>(".part-a")!.style.borderTopLeftRadius = "12px";
+    connectAnnotated(root);
+    expect(overlayOf(root).querySelector("rect")!.getAttribute("rx")).toBe("10");
+
+    /* Stated on the frame, that one number is every ring's corner, unconverted: an authored radius
+       is already a statement about the ring rather than about the part. */
+    const fixed = frame([{ for: ".part-a", text: "part a" }]);
+    layOut(fixed);
+    fixed.querySelector<HTMLElement>(".part-a")!.style.borderTopLeftRadius = "12px";
+    fixed.setAttribute("data-ring-radius", "0");
+    connectAnnotated(fixed);
+    expect(overlayOf(fixed).querySelector("rect")!.getAttribute("rx")).toBe("0");
+  });
+
   it("keeps one mark per label even when a label has nothing to point at", () => {
     /*
      * The reveal pairs a label with its mark BY INDEX, so a shorter list of marks would light up the
@@ -237,6 +264,22 @@ describe("connectAnnotated", () => {
     subject.insertAdjacentHTML("beforeend", '<span class="separator" aria-hidden="true">/</span>');
     layOut(root);
     withBox(subject.querySelector(".separator")!, { x: 300, y: 100, width: 12, height: 20 });
+    connectAnnotated(root);
+
+    expect(overlayOf(root).children[0]!.childElementCount).toBe(2);
+  });
+
+  it("names a target whose only match lives inside an aria-hidden decorative host", () => {
+    /* QRCode's modules path: the SVG is aria-hidden (role=img is on the root), and that path is the
+       only `.modules` in the subject  -  not a measurement clone of a visible twin. */
+    const root = frame([{ for: ".modules", text: "modules" }]);
+    const subject = root.querySelector<HTMLElement>(`.${annotationParts.subject}`)!;
+    subject.insertAdjacentHTML(
+      "beforeend",
+      '<svg aria-hidden="true"><path class="modules" d="M0 0h10v10H0z"></path></svg>',
+    );
+    layOut(root);
+    withBox(subject.querySelector(".modules")!, { x: 220, y: 120, width: 80, height: 80 });
     connectAnnotated(root);
 
     expect(overlayOf(root).children[0]!.childElementCount).toBe(2);

@@ -20,6 +20,10 @@ export const calloutMessages = {
       "Callout es un mensaje inline que permanece en el layout mientras dure su condición. A diferencia de Toast, transitorio y montado en una región flotante, Callout vive en el flujo del contenido. Un solo peso visual, el panel con borde: el tono es la única variable, así que dos Callouts nunca compiten por cuál se ve más urgente.",
     "callout.lede2":
       "Es puramente informativo: muestra algo, no ejecuta nada. No tiene cierre; a diferencia de Toast, Callout no se puede descartar, porque nada en la página depende de que desaparezca. La única pieza interactiva que puede llevar es una acción de recuperación, y el contrato la limita a <code>translucent</code> o <code>danger</code> para que nunca compita con la acción primaria real de la página.",
+    "callout.anatomyBody":
+      "Un Callout es un panel con dos columnas: el ícono a un lado y <code>sk-callout__content</code> al otro, con el título arriba de la descripción, y las acciones en su propia fila abajo, alineadas con esa columna y nunca al lado del texto. Sólo <code>children</code> es obligatorio; el ícono, el título y las acciones son opcionales y el espécimen los trae todos para poder nombrarlos. Está congelado y en gris: este dibujo es sobre las partes, y los tonos tienen cuatro paneles vivos más abajo.",
+    "callout.anatomyLabel": "Anatomía de Callout",
+    "callout.anatomyPreviewLabel": "Callout, parte por parte",
     "callout.tonesTitle": "Tonos",
     "callout.tonesBody1":
       'El tono decide si el panel se pinta con color semántico. <code>info</code>, <code>success</code>, <code>warning</code> y <code>danger</code> colorean el mensaje. Solo <code>danger</code> se anuncia como <code>role="alert"</code> (assertive); el resto usa <code>role="status"</code> (polite); es la minoría de casos que de verdad interrumpe, no el nombre del componente, el que decide eso.',
@@ -73,6 +77,10 @@ export const calloutMessages = {
       "Callout is an inline message that stays in the layout for as long as its condition holds. Unlike Toast, transient and mounted in a floating region, Callout lives in the flow of content. One visual weight, the bordered panel: tone is the only variable, so two Callouts never compete over which looks more urgent.",
     "callout.lede2":
       "It is purely informational: it shows something, it runs nothing. It has no dismiss; unlike Toast, a Callout cannot be dismissed, because nothing on the page depends on it going away. The one interactive piece it can carry is a recovery action, and the contract narrows it to <code>translucent</code> or <code>danger</code> so it never competes with the page's real accent action.",
+    "callout.anatomyBody":
+      "A Callout is a panel of two columns: the icon on one side and <code>sk-callout__content</code> on the other, the title stacked over the description, and the actions on their own row below, aligned with that column and never beside the text. Only <code>children</code> is required; the icon, the title and the actions are optional, and the specimen carries all of them so each can be named. It is frozen and drained to grey: this drawing is about the parts, and the tones have four live panels further down.",
+    "callout.anatomyLabel": "Callout anatomy",
+    "callout.anatomyPreviewLabel": "Callout, part by part",
     "callout.tonesTitle": "Tones",
     "callout.tonesBody1":
       'The tone decides whether the panel paints with semantic color. <code>info</code>, <code>success</code>, <code>warning</code> and <code>danger</code> color the message. Only <code>danger</code> announces as <code>role="alert"</code> (assertive); the rest use <code>role="status"</code> (polite); it is the minority of cases that truly interrupt, not the component\'s name, that decides that.',

@@ -13,6 +13,13 @@ export const inputMessages = {
     "inputPage.oneClassTitle": "Una clase para todo control de texto",
     "inputPage.oneClassBody":
       "<code>sk-input</code> va en el <code>&lt;input&gt;</code> y en el <code>&lt;textarea&gt;</code>: es el mismo control visual, así que es un solo set de hooks. Una segunda clase sería un segundo set que mantener sincronizado con el primero.",
+    "demo.input.anatomyEmail": "vos@ejemplo.com",
+    "demo.input.anatomyEmailLabel": "Email",
+    "demo.input.anatomyNotes": "Escribí acá",
+    "inputPage.anatomyBody":
+      "El dibujo tiene una sola etiqueta porque el contrato publica una sola clase; lo que vale la pena ver es <strong>cuántos elementos</strong> la llevan. Un anillo por cada uno, saliendo de la misma burbuja: el <code>&lt;input type=\"email\"&gt;</code>, el <code>&lt;textarea&gt;</code> y un <code>&lt;input type=\"time\"&gt;</code> nativo de verdad. Y no hay nada más nombrado: el rótulo, la pista y el error son del FormField, y están dibujados en su propia anatomía.",
+    "inputPage.anatomyLabel": "Anatomía de Input",
+    "inputPage.anatomyPreviewLabel": "Una clase, tres elementos",
     "inputPage.formFieldTitle": "El rótulo no es del Input",
     "inputPage.formFieldBody":
       'Los dos demos de arriba están envueltos en un <a href="/components/form-field">FormField</a>, y no por costumbre: el rótulo, la ayuda, el mensaje de error y los seis ids que los atan viven ahí. Por eso este contrato no tiene <code>invalid</code> ni <code>id</code> propios: un control que trajera su propio <code>aria-invalid</code> podría contradecir al mensaje que tiene al lado. Un <code>Input</code> fuera de un <code>FormField</code> igual es un control válido, siempre que lleve su <code>aria-label</code>.',
@@ -37,6 +44,13 @@ export const inputMessages = {
     "inputPage.oneClassTitle": "One class for every text control",
     "inputPage.oneClassBody":
       "<code>sk-input</code> goes on both the <code>&lt;input&gt;</code> and the <code>&lt;textarea&gt;</code>: it is the same visual control, so it is one set of hooks. A second class would be a second set to keep in sync with the first.",
+    "demo.input.anatomyEmail": "you@example.com",
+    "demo.input.anatomyEmailLabel": "Email",
+    "demo.input.anatomyNotes": "Write here",
+    "inputPage.anatomyBody":
+      "The drawing carries one label because the contract publishes one class; what is worth seeing is <strong>how many elements</strong> wear it. One ring each, from a single bubble: the <code>&lt;input type=\"email\"&gt;</code>, the <code>&lt;textarea&gt;</code>, and a real native <code>&lt;input type=\"time\"&gt;</code>. Nothing else is named: the label, the hint and the error are FormField's, and they are drawn on FormField's own anatomy.",
+    "inputPage.anatomyLabel": "Input anatomy",
+    "inputPage.anatomyPreviewLabel": "One class, three elements",
     "inputPage.formFieldTitle": "The label is not the Input's",
     "inputPage.formFieldBody":
       'Both demos above are wrapped in a <a href="/en/components/form-field">FormField</a>, and not out of habit: the label, the hint, the error message and the six ids that tie them together all live there. That is why this contract has no <code>invalid</code> and no <code>id</code> of its own: a control carrying its own <code>aria-invalid</code> could contradict the message sitting next to it. An <code>Input</code> outside a <code>FormField</code> is still a valid control, as long as it carries its own <code>aria-label</code>.',

@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { accordionContract } from "@skryensya/core/accordion";
 import { readChangelogs } from "./changelog.js";
-import { contractIds, getContract } from "./registry.js";
+import { contractIds, getContract } from "@skryensya/core/registry";
 import { surfaceHash } from "./surface.js";
 
 /*

@@ -1,26 +1,16 @@
 ---
 import "@skryensya/core/components/steps.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { stepsTree, stepsVerticalTree } from "../../demos/steps";
+import { stepsAnatomyTree, stepsTree, stepsVerticalTree } from "../../demos/steps";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/steps.yaml?raw";
-import coreSource from "@core/src/steps.ts?raw";
-import cssSource from "@core/css/components/steps.css?raw";
-import reactSource from "@react/src/components/steps.tsx?raw";
-import reactTestSource from "@react/src/components/steps.test.tsx?raw";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
-
-const sourceFiles = [
-  { id: "contracts/semantic/steps.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/steps.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/steps.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/steps.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/steps.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -28,7 +18,6 @@ const sourceFiles = [
   description={t("stepsPage.description")}
   contractId="steps"
   styleGroups={[{ file: "components/steps.css", probe: "sk-steps" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/steps.test.tsx",
@@ -41,6 +30,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("stepsPage.lede")} />
+
+    <p set:html={t("stepsPage.anatomyBody")} />
+    <ComponentPreview
+      tree={stepsAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("stepsPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={stepsTree(t)} label="Steps" />
     <p set:html={t("stepsPage.body")} />
 

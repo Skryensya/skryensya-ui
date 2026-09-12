@@ -17,6 +17,10 @@ export const treeViewMessages = {
     "treeViewPage.betaBadge": "Beta",
     "treeViewPage.lede":
       'Una jerarquía que se recorre con el teclado: las ramas se abren y cierran, los nodos se seleccionan. Usa TreeView cuando la relación padre-hijo <em>es</em> el contenido: archivos, categorías, una organización. Para divulgaciones hermanas sin jerarquía usa <a href="/components/accordion">Accordion</a>; para navegar por secciones, <a href="/components/sidebar">Sidebar</a>.',
+    "treeViewPage.anatomyBody":
+      "Este diagrama nombra la raíz, las ramas y las hojas. El espécimen está congelado; los árboles vivos empiezan abajo.",
+    "treeViewPage.anatomyLabel": "Anatomía de TreeView",
+    "treeViewPage.anatomyPreviewLabel": "TreeView, parte por parte",
     "treeViewPage.minimalTitle": "Árbol mínimo",
     "treeViewPage.minimalBody":
       "Lo mínimo es la anatomía completa y nada más: una raíz, la lista, y por cada nodo una rama (<code>branch</code> + <code>branch-control</code> + <code>branch-content</code>) o una hoja (<code>item</code>). Sin atributos de estado, todo arranca cerrado y sin selección.",
@@ -51,7 +55,7 @@ export const treeViewMessages = {
       "La sangría, el inset de la fila y la guía vertical son hooks: el árbol viene angosto a propósito, porque la sangría se paga una vez por nivel. Ensancha el paso, dale aire a las filas o apaga la guía sin tocar el resto.",
     "treeViewPage.a11yBody":
       'La máquina publica <code>role="tree"</code>/<code>treeitem</code> con el nivel y la posición de cada nodo, y gestiona el teclado: flechas para moverse, <kbd class="sk-kbd">→</kbd>/<kbd class="sk-kbd">←</kbd> para abrir y cerrar ramas, <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> y typeahead por letra. El foco es roving: el árbol entero es una sola parada de tabulación, no una por nodo.',
-    "treeViewPage.test1": "Parcha la semántica de árbol sobre el markup autorado y monta una sola vez.",
+    "treeViewPage.test1": "Parcha la semántica de árbol sobre el markup escrito a mano y monta una sola vez.",
     "treeViewPage.test2": "Expande una rama desde su control y lo comunica.",
     "treeViewPage.test3": "Selecciona una hoja y reporta el valor que escribió la composición.",
 
@@ -84,6 +88,10 @@ export const treeViewMessages = {
     "treeViewPage.betaBadge": "Beta",
     "treeViewPage.lede":
       'A hierarchy you move through with the keyboard: branches open and close, nodes get selected. Use TreeView when the parent-child relationship <em>is</em> the content: files, categories, an organization. For sibling disclosures with no hierarchy use <a href="/en/components/accordion">Accordion</a>; to navigate between sections, <a href="/en/components/sidebar">Sidebar</a>.',
+    "treeViewPage.anatomyBody":
+      "This diagram names the root, branches, and leaves. The specimen is frozen; the live trees start below.",
+    "treeViewPage.anatomyLabel": "TreeView anatomy",
+    "treeViewPage.anatomyPreviewLabel": "TreeView, part by part",
     "treeViewPage.minimalTitle": "Minimal tree",
     "treeViewPage.minimalBody":
       "The minimum is the complete anatomy and nothing else: a root, the list, and for every node a branch (<code>branch</code> + <code>branch-control</code> + <code>branch-content</code>) or a leaf (<code>item</code>). With no state attributes, everything starts closed and unselected.",

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { validateUsageTree } from "./validate.js";
-import type { UsageTree } from "./usage-tree.js";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 
 const rules = (tree: UsageTree) => validateUsageTree(tree).problems.map((p) => p.rule);
 const messageFor = (tree: UsageTree, rule: string) =>

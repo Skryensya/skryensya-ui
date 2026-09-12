@@ -34,8 +34,11 @@
     display: contents;
   }
 
-  /* The root owns the outer frame; items keep Tile anatomy without a second border or radius. */
+  /* The root owns the outer frame; items keep Tile anatomy without a second border or radius. The
+     hook goes with the property: it is also what rounds a standalone tile's trigger (see tile.css),
+     and a mid-stack trigger sits under a divider with square ends. */
   .sk-accordion > .sk-tile--expandable {
+    --sk-tile-radius: 0;
     inline-size: 100%;
     min-inline-size: 0;
     border: 0;
@@ -45,8 +48,48 @@
     box-shadow: none;
   }
 
+  /*
+   * THE FIRST ITEM IS THE TOP OF THE FRAME, the same way its trigger is, so it carries the frame's
+   * top corners and nothing else. Items are flattened to `border-radius: 0` above because the root
+   * owns the outer shape; that is right for the seam between two items and wrong at the one edge an
+   * item shares with the frame. `overflow: hidden` on the tile clips to this, so the trigger rounded
+   * just below cannot paint a square corner back over it.
+   *
+   * THE TOP TWO ONLY, on this item only: the bottom of the frame is the last item's business, and
+   * everything between two items is a straight divider on both sides.
+   */
   .sk-accordion > .sk-tile--expandable:first-child {
     border-block-start: 0;
+    border-start-start-radius: var(--sk-accordion-radius);
+    border-start-end-radius: var(--sk-accordion-radius);
+  }
+
+  /*
+   * THE FIRST TRIGGER IS THE TOP OF THE FRAME, so it carries the frame's corner rather than its
+   * tile's. Tile already rounds an expandable trigger's top two corners against `--sk-tile-radius`;
+   * inside an accordion that hook is 0, because the frame owns the outer shape, so the one trigger
+   * that does reach the frame's corner is re-rounded here against the frame's own number.
+   *
+   * The root clips to `--sk-accordion-radius` (`overflow: hidden`), so the trigger's hover and press
+   * layers have always LOOKED right. What was missing is the trigger SAYING so: its computed corners
+   * were square while the box it occupies is round, and anything reading the element rather than the
+   * painted result got the wrong shape. The anatomy diagram is where that showed up first, since a
+   * ring takes the `border-radius` of the part it wraps (`annotationElementRadius`), and it drew a
+   * square mark around a rounded corner.
+   *
+   * FIRST CHILD ONLY, and the top corners only. Every trigger below it sits under a divider with
+   * square ends, and the bottom of the frame belongs to the last item's content, not to a trigger.
+   *
+   * Both markups, because the `role="heading"` wrapper is authored rather than stamped: with it and
+   * without it. Neither selector can reach past the item into a nested accordion's own triggers.
+   */
+  .sk-accordion > .sk-tile--expandable:first-child > .sk-tile__trigger,
+  .sk-accordion
+    > .sk-tile--expandable:first-child
+    > .sk-accordion__trigger-heading
+    > .sk-tile__trigger {
+    border-start-start-radius: var(--sk-accordion-radius);
+    border-start-end-radius: var(--sk-accordion-radius);
   }
 
   /* Open body: equal inset; sunken so it recesses from the trigger in light and dark. Keyed on

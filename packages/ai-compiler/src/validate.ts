@@ -4,7 +4,7 @@ import type {
   ContractSignature,
   ContractSlot,
 } from "@skryensya/core/contract";
-import { getContract, getSignature, contractIds } from "./registry.js";
+import { getContract, getSignature, contractIds } from "@skryensya/core/registry";
 import {
   collectionItems,
   isUsageTree,
@@ -12,7 +12,7 @@ import {
   slotsOf,
   type ItemInput,
   type UsageTree,
-} from "./usage-tree.js";
+} from "@skryensya/core/usage-tree";
 
 /*
  * Gates G0 and G3 over a usage tree: shape, options, requires/forbids, slots, parents and the

@@ -22,6 +22,10 @@ export const splitButtonMessages = {
     "demo.splitButton.dangerItem2": "Mover a la papelera",
 
     "splitButtonPage.description": "Acción principal estable y menú adyacente con acciones alternativas.",
+    "splitButtonPage.anatomyBody":
+      "Este diagrama nombra el grupo soldado, el Button de acción y el trigger del Menu. El espécimen está congelado; los SplitButton vivos empiezan abajo.",
+    "splitButtonPage.anatomyLabel": "Anatomía de SplitButton",
+    "splitButtonPage.anatomyPreviewLabel": "SplitButton, parte por parte",
     "splitButtonPage.contractBody": "La acción accent no cambia silenciosamente al elegir el menú. Si no hay una acción dominante, usa Menu.",
     "splitButtonPage.a11yBody": "Son dos botones independientes: uno ejecuta y el otro anuncia y abre las alternativas.",
 
@@ -40,7 +44,7 @@ export const splitButtonMessages = {
     "splitButtonPage.smallBody": "Las dos mitades escalan juntas: <code>size</code> en el Button de acción, <code>triggerSize</code> en el trigger del Menu.",
     "splitButtonPage.smallLabel": "SplitButton, tamaño small",
     "splitButtonPage.menuFirstTitle": "El menú primero",
-    "splitButtonPage.menuFirstBody": "Compuesto a mano con <code>Inline</code> en vez del contrato de SplitButton: que siempre ordena la acción antes que el menú, el patrón real de un split button (el trigger va después, y solo pasa a la izquierda por espejado <code>dir=\"rtl\"</code>, nunca como elección autorada en el mismo idioma). Esto demuestra que <code>weldStart</code>/<code>weldEnd</code> funcionan en cualquier orden, no solo en el que arma SplitButton.",
+    "splitButtonPage.menuFirstBody": "Compuesto a mano con <code>Inline</code> en vez del contrato de SplitButton: que siempre ordena la acción antes que el menú, el patrón real de un split button (el trigger va después, y solo pasa a la izquierda por espejado <code>dir=\"rtl\"</code>, nunca como elección escrita a mano en el mismo idioma). Esto demuestra que <code>weldStart</code>/<code>weldEnd</code> funcionan en cualquier orden, no solo en el que arma SplitButton.",
     "splitButtonPage.menuFirstLabel": "SplitButton, menú primero",
     "splitButtonPage.subtleTitle": "Variante subtle",
     "splitButtonPage.subtleBody": "<code>variant: \"subtle\"</code> en las dos mitades: nunca una variante distinta por lado, para que se lea como un solo control. \"Archivar\" en vez de \"Guardar\": una acción de menor énfasis, el registro que <code>subtle</code> pinta.",
@@ -78,6 +82,10 @@ export const splitButtonMessages = {
     "demo.splitButton.dangerItem2": "Move to trash",
 
     "splitButtonPage.description": "A stable accent action with an adjacent menu of alternative actions.",
+    "splitButtonPage.anatomyBody":
+      "This diagram names the welded group, the action Button and the Menu trigger. The specimen is frozen; the live SplitButtons begin below.",
+    "splitButtonPage.anatomyLabel": "SplitButton anatomy",
+    "splitButtonPage.anatomyPreviewLabel": "SplitButton, part by part",
     "splitButtonPage.contractBody": "The accent action never silently changes when the menu is chosen. If there is no dominant action, use Menu.",
     "splitButtonPage.a11yBody": "They are two independent buttons: one runs the action, and the other announces and opens the alternatives.",
 

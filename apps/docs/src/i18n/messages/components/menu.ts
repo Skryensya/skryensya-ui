@@ -42,7 +42,15 @@ export const menuMessages = {
     "demo.menu.safety.pdfHighRes": "Alta resolución",
     "demo.menu.safety.pdfCompressed": "Comprimido",
     "demo.menu.safety.delete": "Eliminar",
+    "demo.menu.anatomy.label": "Acciones del documento",
+    "demo.menu.anatomy.trigger": "Acciones",
+    "demo.menu.anatomy.delete": "Eliminar",
 
+    "menuPage.betaBadge": "Beta",
+    "menuPage.anatomyBody":
+      "Un menú cerrado es un botón: el positioner, el content, las filas y la regla que las separa sólo existen mientras el popup está arriba. Por eso el espécimen se dibuja abierto y se queda así. Está congelado, no responde al puntero ni al teclado; el menú vivo es el de abajo.",
+    "menuPage.anatomyLabel": "Anatomía de Menu",
+    "menuPage.anatomyPreviewLabel": "Menu abierto, parte por parte",
     "menuPage.description": "Acciones, checkboxes y radios con navegación por teclado y typeahead.",
     "menuPage.contractBody":
       "Menu ejecuta acciones, también como context menu mediante <code>contextTarget</code> o <code>data-sk-menu-context-trigger</code>. Un item con <code>children</code> crea un submenú. Para elegir un valor de formulario usa Select; para sugerencias editables, Combobox.",
@@ -147,7 +155,15 @@ export const menuMessages = {
     "demo.menu.safety.pdfHighRes": "High resolution",
     "demo.menu.safety.pdfCompressed": "Compressed",
     "demo.menu.safety.delete": "Delete",
+    "demo.menu.anatomy.label": "Document actions",
+    "demo.menu.anatomy.trigger": "Actions",
+    "demo.menu.anatomy.delete": "Delete",
 
+    "menuPage.betaBadge": "Beta",
+    "menuPage.anatomyBody":
+      "A closed menu is a button: the positioner, the content, the rows and the rule between them only exist while the popup is up. So the specimen is drawn open and stays open. It is frozen: no pointer, no keyboard; the live menu is the one below.",
+    "menuPage.anatomyLabel": "Menu anatomy",
+    "menuPage.anatomyPreviewLabel": "An open Menu, part by part",
     "menuPage.description": "Actions, checkboxes, and radios with keyboard navigation and typeahead.",
     "menuPage.contractBody":
       "Menu runs actions, and also works as a context menu through <code>contextTarget</code> or <code>data-sk-menu-context-trigger</code>. An item with <code>children</code> creates a submenu. To pick a form value use Select; for editable suggestions, Combobox.",

@@ -29,7 +29,6 @@ import Base from "../../layouts/Base.astro";
 import ContractChangelog from "../ContractChangelog.astro";
 import ContractReference from "../ContractReference.astro";
 import StylingHooks, { type HookGroup } from "../StylingHooks.astro";
-import type { SourceFile } from "../SourceViewer.astro";
 import TestCoverage, { type TestGroup } from "../TestCoverage.astro";
 import { changelogFor } from "../../lib/contract-reference";
 import { getLocale, useTranslations } from "../../i18n";
@@ -42,8 +41,6 @@ interface Props {
    *  Cambios drop out rather than reading a contract that does not describe the page. */
   contractId?: string;
   styleGroups?: readonly HookGroup[];
-  /** Legacy prop accepted by component pages that still collect source files; Referencia no longer renders a source browser. */
-  sourceFiles?: readonly SourceFile[];
   /** One-line-per-test summaries, grouped by test file. Omit while a component has none curated yet. */
   tests?: readonly TestGroup[];
   hideVanillaMount?: boolean;

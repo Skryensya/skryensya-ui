@@ -27,7 +27,7 @@ entries:
         "Uso" (nunca envueltos en otro elemento): el indexador de documentos de <code>Base.astro</code>
         (<code>lib/document-index.ts</code>, <code>indexHeroTabPanel</code>) camina <code>h3</code>/
         <code>h4</code> a profundidad 0 de ese panel, así que cada <code>h4</code> aparece como una
-        fila anidada bajo "HTML autorado" en el riel "En esta página", un patrón encontrable por
+        fila anidada bajo "HTML escrito a mano" en el riel "En esta página", un patrón encontrable por
         nombre en vez de un bloque sin nombre adentro de esa sección.
     en:
       title: Catalogue trimmed to 13 patterns, email capture redesigned as a full-width band

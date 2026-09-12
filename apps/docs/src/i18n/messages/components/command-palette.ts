@@ -6,8 +6,17 @@ export const commandPaletteMessages = {
     "demo.commandPalette.button": "Button",
     "demo.commandPalette.dialog": "Dialog",
     "demo.commandPalette.toc": "Toc",
+    "demo.commandPalette.placeholder": "Buscar…",
+    "demo.commandPalette.close": "Cerrar",
+    "demo.commandPalette.results": "Resultados",
+    "demo.commandPalette.empty": "Sin resultados.",
+    "demo.commandPalette.footer": "↵ para abrir",
 
     "commandPalette.description": "CommandPalette: listbox buscable dentro de un Dialog nativo, con atajo opt-in y cierre por IconButton.",
+    "commandPalette.anatomyBody":
+      "La paleta vive en un <code>&lt;dialog&gt;</code>: search, input, close, list, option, empty y footer. El listado y el footer sólo se llenan al abrir, así que el espécimen se dibuja abierto y congelado; la paleta viva es la de abajo.",
+    "commandPalette.anatomyLabel": "Anatomía de CommandPalette",
+    "commandPalette.anatomyPreviewLabel": "CommandPalette abierta, parte por parte",
     "commandPalette.lede":
       'Una <strong>paleta de comandos</strong>: un campo que filtra un índice y un listbox con <code>aria-activedescendant</code>, alojados en un <a href="/components/dialog"><code>Dialog</code></a> nativo (<code>showModal</code>, Esc, foco). El atajo (<a href="/hotkey">Hotkey</a>) es opt-in por atributo; este sitio lo usa con {hotkey}.',
     "commandPalette.contractItem1": 'Raíz: <code>&lt;dialog class="sk-dialog sk-command-palette" data-sk-command-palette&gt;</code>.',
@@ -32,8 +41,17 @@ export const commandPaletteMessages = {
     "demo.commandPalette.button": "Button",
     "demo.commandPalette.dialog": "Dialog",
     "demo.commandPalette.toc": "Toc",
+    "demo.commandPalette.placeholder": "Search…",
+    "demo.commandPalette.close": "Close",
+    "demo.commandPalette.results": "Results",
+    "demo.commandPalette.empty": "No results.",
+    "demo.commandPalette.footer": "↵ to open",
 
     "commandPalette.description": "CommandPalette: a searchable listbox inside a native Dialog, with an opt-in shortcut and an IconButton close.",
+    "commandPalette.anatomyBody":
+      "The palette lives in a <code>&lt;dialog&gt;</code>: search, input, close, list, option, empty and footer. The list and footer only fill on open, so the specimen is drawn open and frozen; the live palette is the one below.",
+    "commandPalette.anatomyLabel": "CommandPalette anatomy",
+    "commandPalette.anatomyPreviewLabel": "An open CommandPalette, part by part",
     "commandPalette.lede":
       'A <strong>command palette</strong>: a field that filters an index, and a listbox with <code>aria-activedescendant</code>, hosted in a native <a href="/en/components/dialog"><code>Dialog</code></a> (<code>showModal</code>, Esc, focus). The shortcut (<a href="/en/hotkey">Hotkey</a>) is opt-in by attribute; this site uses it with {hotkey}.',
     "commandPalette.contractItem1": 'Root: <code>&lt;dialog class="sk-dialog sk-command-palette" data-sk-command-palette&gt;</code>.',

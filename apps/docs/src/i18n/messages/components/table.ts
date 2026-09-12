@@ -38,6 +38,10 @@ export const tableMessages = {
     "tablePage.description": "Tabla nativa legible con scroll horizontal y filas o columnas sticky.",
     "tablePage.lede":
       "Table mantiene la semántica nativa de <code>&lt;table&gt;</code>. El wrapper de overflow preserva un ancho legible por columna y desplaza la tabla en vez de comprimirla. Header y primera columna sticky son opt-in y usan el mismo contrato en móvil y desktop.",
+    "tablePage.anatomyBody":
+      "Este diagrama nombra caption, head, body y foot en el orden que HTML exige. El espécimen está congelado; las tablas vivas empiezan abajo.",
+    "tablePage.anatomyLabel": "Anatomía de Table",
+    "tablePage.anatomyPreviewLabel": "Table, parte por parte",
     "tablePage.scrollTitle": "Scroll horizontal sin comprimir",
     "tablePage.scrollBody":
       'Dentro de <code>.sk-table-scroll</code>, cada celda conserva el piso <code>--sk-table-cell-min-inline-size</code>; los encabezados de fila conservan uno mayor. Una tabla <code>data-layout="fixed"</code> usa además <code>--sk-table-fixed-min-inline-size</code>. En pantallas estrechas aparece scroll, no columnas de 56px ni texto letra por letra. El wrapper admite foco para desplazamiento por teclado y pinta un scrollbar compacto pero visible.',
@@ -108,6 +112,10 @@ export const tableMessages = {
     "tablePage.description": "Readable native table with horizontal scroll and sticky rows or columns.",
     "tablePage.lede":
       "Table keeps native <code>&lt;table&gt;</code> semantics. The overflow wrapper preserves a readable per-column width and scrolls the table instead of compressing it. Sticky header and sticky first column are opt-in and share the same contract on mobile and desktop.",
+    "tablePage.anatomyBody":
+      "This diagram names caption, head, body, and foot in the order HTML requires. The specimen is frozen; the live tables start below.",
+    "tablePage.anatomyLabel": "Table anatomy",
+    "tablePage.anatomyPreviewLabel": "Table, part by part",
     "tablePage.scrollTitle": "Horizontal scroll without compressing",
     "tablePage.scrollBody":
       'Inside <code>.sk-table-scroll</code>, every cell keeps the <code>--sk-table-cell-min-inline-size</code> floor; row headers keep a larger one. A <code>data-layout="fixed"</code> table also uses <code>--sk-table-fixed-min-inline-size</code>. On narrow screens, scroll appears: not 56px columns or letter-by-letter text. The wrapper accepts focus for keyboard scrolling and paints a compact but visible scrollbar.',

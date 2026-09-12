@@ -393,3 +393,85 @@ export const tileButtonTree = (_t: Translate): UsageTree => ({
     },
   },
 });
+
+/*
+ * THE ANATOMY: ONE button, named part by part, the same `Annotated` specimen the Accordion page
+ * opens with.
+ *
+ * One, and that is the whole lesson rather than a smaller version of the matrix below. An accordion
+ * is a composition (a root, a trigger, a chevron, a panel), so its diagram walks a tree; a button is
+ * a single native `<button>`, and what a reader needs to see is exactly what rides on that one box:
+ * the root class, the shared state layer beside it, and the children they authored themselves.
+ *
+ * TWO RINGS ON THE SAME BOX, concentric, on purpose. `sk-button` and `sk-interactive` are both
+ * on the host (the contract's `also`), so the inner ring is the class that paints the control and
+ * the outer one is the layer that answers to hover, press and focus. Same element, two jobs, and the
+ * diagram says so instead of the page having to.
+ *
+ * ONE LABEL PER INLINE GUTTER, which is what keeps the button ITSELF centred in the stage. The
+ * whole diagram is centred as a group (three `auto` tracks, `justify-content: center`), so a label
+ * in one inline gutter and nothing in the other pushes the specimen sideways by that gutter's full
+ * width. Naming the host on one side and its one child on the other balances them; `sk-interactive`
+ * takes the block gutter above, where it widens nothing.
+ *
+ * The icon reads from the START gutter and the host from the END one, which is the order the
+ * specimen itself is in: the glyph leads the label, so a leader coming from the left reaches it
+ * without crossing the word, and the host's leader only has to touch the nearest edge.
+ *
+ * `inert` is what makes it a specimen: it mounts and paints, Tab walks past it, and clicking does
+ * nothing. The live buttons are the twelve in the matrix right below it.
+ */
+export const buttonAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("button.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "button",
+      signature: "Button.action",
+      /* `lg` because the specimen is being pointed at rather than clicked: the bigger face keeps the
+         icon's own ring clear of the button's, which at `md` sit about four pixels apart. */
+      options: { tone: "accent", size: "lg" },
+      children: [
+        { contract: "icon", signature: "Icon", options: { name: "download" } },
+        t("demo.button.download"),
+      ],
+    },
+    items: [
+      /*
+       * BOTH RINGS GO OUTSIDE, and the inset default is what forced it: this button is a filled
+       * accent, so a ring drawn just inside it is a pale line on a dark ground and the eye reads it
+       * as part of the paint rather than as a mark. Concentric instead, 2 then 8: the inner ring is
+       * the class that paints the control, the outer one the layer wrapped around it.
+       */
+      {
+        options: {
+          for: ".sk-button",
+          side: "inline-end",
+          ringPlacement: "offset",
+          ringDistance: 2,
+        },
+        slots: { children: "sk-button" },
+      },
+      {
+        options: {
+          for: ".sk-button",
+          side: "block-start",
+          ringPlacement: "offset",
+          ringDistance: 8,
+        },
+        slots: { children: "sk-interactive" },
+      },
+      /*
+       * THE ONLY PART THAT IS NOT THE HOST, and the one call this diagram has to make: a glyph's box
+       * IS the glyph (the padding around it belongs to the button, not to the icon), so an inset
+       * ring would land on the drawing. It goes outside, the same decision the Annotation page's
+       * text runs make.
+       */
+      {
+        options: { for: ".sk-icon", side: "inline-start", ringPlacement: "offset", ringDistance: 4 },
+        slots: { children: "sk-icon" },
+      },
+    ],
+  },
+});

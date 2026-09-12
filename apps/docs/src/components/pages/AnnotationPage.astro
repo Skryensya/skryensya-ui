@@ -11,14 +11,6 @@ import {
   annotationSidesTree,
 } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/annotation.yaml?raw";
-import coreSource from "@core/src/annotation.ts?raw";
-import coreTestSource from "@core/src/annotation.test.ts?raw";
-import cssSource from "@core/css/components/annotation.css?raw";
-import reactSource from "@react/src/components/annotation.tsx?raw";
-import reactTestSource from "@react/src/components/annotation.test.tsx?raw";
-import vanillaMountSource from "@vanilla/src/components/annotation.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/annotation.test.ts?raw";
 /* The sheet itself, not only its source: the Style hooks table resolves each hook against a real
    element, and a page that never loads this stylesheet shows every value blank. */
 import "@skryensya/core/components/annotation.css";
@@ -82,23 +74,17 @@ const hooks = `.mi-diagrama {
   --sk-annotated-gap: var(--space-inline-lg);
   /* el unico acento: la anotacion que se esta leyendo. En reposo todo queda gris. */
   --sk-annotation-ring-color: var(--color-border-accent);
+  /* el gris de reposo: un pelo de trazo con alfa, para que el aparato quede
+     por encima de la muestra sin pisarla */
+  --sk-annotation-ring-color-rest: color-mix(
+    in oklab, var(--color-border-default) 45%, transparent);
+  --sk-annotation-ring-width: 1px;
   --sk-annotation-color-active: var(--color-text-accent);
   --sk-annotation-bubble-bg-active: var(--color-bg-accent-subtle);
   /* de que lado del borde va el anillo y cuanto: ringPlacement / ringDistance en el arbol */
   /* el sujeto va en escala de grises; un diagrama SOBRE el color lo pone en none */
   --sk-annotated-subject-filter: grayscale(1);
 }`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/annotation.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/annotation.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/src/annotation.test.ts", source: coreTestSource, language: "ts" },
-  { id: "packages/core/css/components/annotation.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/annotation.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/annotation.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/annotation.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/annotation.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -107,7 +93,6 @@ const sourceFiles = [
   badge={t("annotation.betaBadge")}
   contractId="annotation"
   styleGroups={[{ file: "components/annotation.css", probe: "sk-annotated", title: "Annotated" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/core/src/annotation.test.ts",
@@ -165,7 +150,7 @@ const sourceFiles = [
           description: t("annotation.test72"),
         },
         {
-          name: "lets the frame choose that radius, and one mark override it",
+          name: "lets the frame choose one radius for every ring, and one mark override it",
           description: t("annotation.test73"),
         },
         {
@@ -206,8 +191,16 @@ const sourceFiles = [
           description: t("annotation.test63"),
         },
         {
-          name: "gives every ring the same radius, whatever shape the part is",
+          name: "gives a ring the corner of the part it wraps",
           description: t("annotation.test64"),
+        },
+        {
+          name: "grows that corner instead when the ring is drawn outside the part",
+          description: t("annotation.test88"),
+        },
+        {
+          name: "falls back to one shared corner for a part that reports none",
+          description: t("annotation.test89"),
         },
         { name: "clamps the radius on a part too small to hold it", description: t("annotation.test65") },
         { name: "leaves a label with no target in flow, and draws no leader for it", description: t("annotation.test20") },
@@ -230,6 +223,10 @@ const sourceFiles = [
         {
           name: "draws one mark per label, each a leader and a ring, in the labels' own order",
           description: t("annotation.test67"),
+        },
+        {
+          name: "gives the ring the corner of the part it wraps, and lets the frame override it",
+          description: t("annotation.test90"),
         },
         {
           name: "keeps one mark per label even when a label has nothing to point at",
@@ -288,6 +285,10 @@ const sourceFiles = [
         { name: "leaves the specimen live when inert is refused", description: t("annotation.test87") },
         { name: "lifts each label level with the part it names", description: t("annotation.test42") },
         { name: "draws the same marks the enhancer draws, in the same shape", description: t("annotation.test71") },
+        {
+          name: "gives the ring the corner of the part it wraps, and lets the frame override it",
+          description: t("annotation.test90"),
+        },
         {
           name: "keeps one mark per label even when a label has nothing to point at",
           description: t("annotation.test68"),

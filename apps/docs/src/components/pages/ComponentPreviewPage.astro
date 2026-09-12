@@ -13,19 +13,17 @@ import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { buildPreviewFrameDocument } from "../../lib/preview-frame";
 import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
+/* The anatomy diagram is an Annotated frame, so this page needs its sheet the way every other
+   component page with one does. */
+import "@skryensya/core/components/annotation.css";
+import { annotationDemoCss } from "../../demos/annotation";
 import {
+  componentPreviewAnatomyTree,
   componentPreviewBareTree,
   componentPreviewButtonTree,
   componentPreviewScreensTree,
 } from "../../demos/component-preview";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/component-preview.yaml?raw";
-import coreSource from "@core/src/component-preview.ts?raw";
-import cssSource from "@core/css/components/component-preview.css?raw";
-import vanillaMountSource from "@vanilla/src/components/component-preview.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/component-preview.test.ts?raw";
-import reactSource from "@react/src/components/component-preview.tsx?raw";
-import reactTestSource from "@react/src/components/component-preview.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -240,16 +238,6 @@ import { mountIcons } from "@skryensya/vanilla/icon";
 
 mountIcons(document, lucideIcons);
 await initComponents(document);`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/component-preview.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/component-preview.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/component-preview.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/component-preview.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/component-preview.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/component-preview.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/component-preview.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -257,7 +245,6 @@ const sourceFiles = [
   description={t("componentPreview.description")}
   contractId="component-preview"
   styleGroups={[{ file: "components/component-preview.css", probe: "sk-component-preview" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/vanilla/src/components/component-preview.test.ts",
@@ -301,6 +288,16 @@ const sourceFiles = [
     <p class="lede" set:html={t("componentPreview.lede")} />
 
     <ComponentPreview tree={componentPreviewButtonTree(t)} js={demoJs} label="Button" />
+
+    <p set:html={t("componentPreview.anatomyBody")} />
+    <ComponentPreview
+      tree={componentPreviewAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("componentPreview.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("componentPreview.responsibilitiesTitle")}</h3>
     <ul>

@@ -33,6 +33,10 @@ export const tabsMessages = {
     "tabsPage.description": "Cuatro ejemplos de Tabs, de la anatomía básica al tamaño del trigger.",
     "tabsPage.lede":
       "Empieza con dos vistas, añade estados e iconos, sigue con una navegación vertical controlada y termina en el tamaño del trigger. La anatomía no cambia al crecer: lista, triggers y un panel por cada valor.",
+    "tabsPage.anatomyBody":
+      "Este diagrama nombra la lista, los triggers y el panel. El espécimen está congelado; los Tabs vivos empiezan abajo.",
+    "tabsPage.anatomyLabel": "Anatomía de Tabs",
+    "tabsPage.anatomyPreviewLabel": "Tabs, parte por parte",
     "tabsPage.basicTitle": "1. Básico",
     "tabsPage.basicBody": "Dos triggers y dos paneles. <code>data-value</code> enlaza cada opción con su contenido; el enhancer completa roles, foco y ARIA.",
     "tabsPage.basicLabel": "Tabs básicos",
@@ -92,6 +96,10 @@ export const tabsMessages = {
     "tabsPage.description": "Four Tabs examples, from basic anatomy to trigger size.",
     "tabsPage.lede":
       "Start with two views, add states and icons, move on to controlled vertical navigation, and end with trigger size. The anatomy does not change as it grows: a list, triggers, and one panel per value.",
+    "tabsPage.anatomyBody":
+      "This diagram names the list, the triggers and the panel. The specimen is frozen; the live Tabs begin below.",
+    "tabsPage.anatomyLabel": "Tabs anatomy",
+    "tabsPage.anatomyPreviewLabel": "Tabs, part by part",
     "tabsPage.basicTitle": "1. Basic",
     "tabsPage.basicBody":
       "Two triggers and two panels. <code>data-value</code> links each option to its content; the enhancer fills in roles, focus, and ARIA.",

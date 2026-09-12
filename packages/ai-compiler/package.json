@@ -31,14 +31,6 @@
       "types": "./src/emit.ts",
       "default": "./src/emit.ts"
     },
-    "./registry": {
-      "types": "./src/registry.ts",
-      "default": "./src/registry.ts"
-    },
-    "./usage-tree": {
-      "types": "./src/usage-tree.ts",
-      "default": "./src/usage-tree.ts"
-    },
     "./validate": {
       "types": "./src/validate.ts",
       "default": "./src/validate.ts"

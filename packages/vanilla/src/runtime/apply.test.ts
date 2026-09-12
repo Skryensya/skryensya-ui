@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { applyZagProps } from "./apply";
 
 describe("applyZagProps", () => {
-  it("deja intacto un atributo autorado que las props traen en undefined", () => {
+  it("deja intacto un atributo escrito a mano que las props traen en undefined", () => {
     // The real case: Zag tooltip's `getTriggerProps` returns `"data-value": undefined` when it is passed
     // no `value`, and the trigger is also the option of a Segmented that authored its own `data-value`.
     const node = document.createElement("button");

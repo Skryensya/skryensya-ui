@@ -3,38 +3,30 @@ import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  imageFrameAnatomyTree,
   imageFrameAspectTree,
   imageFrameFitTree,
   imageFramePositionTree,
   imageFrameTree,
 } from "../../demos/image-frame";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/image-frame.yaml?raw";
-import coreSource from "@core/src/image-frame.ts?raw";
-import cssSource from "@core/css/patterns/image-frame.css?raw";
-import reactSource from "@react/src/components/image-frame.tsx?raw";
-import reactTestSource from "@react/src/components/image-frame.test.tsx?raw";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
+import "@skryensya/core/patterns/image-frame.css";
+import "@skryensya/core/patterns/media-gradient.css";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const styles = `@import "@skryensya/core/patterns/image-frame.css";
 /* or patterns/layout.css, which already includes it */`;
 
 const t = useTranslations(getLocale(Astro.url));
-
-const sourceFiles = [
-  { id: "contracts/semantic/image-frame.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/image-frame.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/patterns/image-frame.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/image-frame.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/image-frame.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="ImageFrame"
   description={t("imageFrame.description")}
   contractId="image-frame"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "patterns/image-frame.css", probe: "sk-image-frame" }]}
   tests={[
     {
@@ -52,6 +44,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("imageFrame.lede")} />
+
+    <p set:html={t("imageFrame.anatomyBody")} />
+    <ComponentPreview
+      tree={imageFrameAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("imageFrame.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={imageFrameTree(t)} label="ImageFrame" />
 
     <h3>{t("imageFrame.aspectTitle")}</h3>

@@ -5,6 +5,28 @@
 # hash.
 surface: "36acaa8ff122da65"
 entries:
+  - date: 2026-09-11
+    kind: bugfix
+    es:
+      title: El trigger de un tile expandible redondea sus esquinas de arriba
+      body: >-
+        El trigger ocupa el borde superior de la tarjeta, así que ahora declara ese radio en sus dos
+        esquinas de arriba. Pintado se veía igual, porque el tile recorta con
+        <code>overflow: hidden</code>; lo que cambia es que el elemento dice la forma que tiene, así
+        cualquier cosa que lea el elemento en vez del resultado pintado (un diagrama de anatomía,
+        una capa de estado propia) deja de dibujar una esquina cuadrada sobre una redonda. Con eso
+        aparece <code>--sk-tile-radius</code>, un hook nuevo: es el radio del tile y el de esas dos
+        esquinas a la vez, para que cambiar uno no deje al otro atrás.
+    en:
+      title: An expandable tile's trigger rounds its top corners
+      body: >-
+        The trigger occupies the top edge of the card, so it now declares that radius on its two top
+        corners. Painted it looked the same already, because the tile clips with
+        <code>overflow: hidden</code>; what changes is that the element states the shape it has, so
+        anything reading the element rather than the painted result (an anatomy diagram, a state
+        layer of your own) stops drawing a square corner over a round one. That brings a new hook,
+        <code>--sk-tile-radius</code>: the tile's corner and those two corners are one number now, so
+        retuning one cannot leave the other behind.
   - date: 2026-08-11
     kind: feature
     es:

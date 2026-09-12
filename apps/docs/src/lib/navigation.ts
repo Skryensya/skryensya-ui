@@ -119,6 +119,19 @@ const componentItems = [
   },
   { href: "/components/box", label: "Box", aliases: ["caja"] },
   {
+    href: "/components/tile",
+    label: "Tile",
+    aliases: [
+      "baldosa",
+      "superficie interactiva",
+      "interactive surface",
+      "tile link",
+      "tile button",
+      "tile checkbox",
+      "expandable tile",
+    ],
+  },
+  {
     href: "/components/footer",
     label: "Footer",
     trailing: "Beta",
@@ -801,6 +814,7 @@ export const componentNavigation = [
       "/components/inline",
       "/scrollbar",
       "/components/stack",
+      "/components/tile",
       "/components/wrapper",
     ),
   },

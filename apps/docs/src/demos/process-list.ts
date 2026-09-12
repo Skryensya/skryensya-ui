@@ -1,5 +1,55 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
+
+
+/** Ordered list, step, content and title: two steps without nested chrome. */
+export const processListAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("processListPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "process-list",
+      signature: "ProcessList",
+      attrs: { "aria-label": t("demo.processList.label") },
+      children: [
+        {
+          contract: "process-list",
+          signature: "ProcessListItem",
+          slots: {
+            title: t("demo.processList.install.title"),
+            children: {
+              contract: "typography",
+              signature: "Text",
+              options: { tone: "secondary" },
+              children: t("demo.processList.install.body"),
+            },
+          },
+        },
+        {
+          contract: "process-list",
+          signature: "ProcessListItem",
+          slots: {
+            title: t("demo.processList.import.title"),
+            children: {
+              contract: "typography",
+              signature: "Text",
+              options: { tone: "secondary" },
+              children: t("demo.processList.import.body"),
+            },
+          },
+        },
+      ],
+    },
+    items: [
+      namePart(".sk-process-list", "block-start"),
+      namePart(".sk-process-list__item", "inline-start"),
+      namePart(".sk-process-list__content", "inline-end", { ringPlacement: "offset", ringDistance: 4 }),
+      namePart(".sk-process-list__title", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
+  },
+});
 
 /*
  * The three steps of installing the library, as instructions rather than as prose.

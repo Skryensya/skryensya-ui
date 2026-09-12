@@ -5,17 +5,14 @@ import "@skryensya/core/patterns/vaul.css";
 import "@skryensya/core/components/list.css";
 import "@skryensya/core/components/checkbox.css";
 import "@skryensya/core/components/radio-group.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { VaulDeleteDemo, VaulFiltersDemo, VaulShareDemo } from "../react-demos/vaul";
+import { vaulAnatomyCss, vaulAnatomyTree } from "../../demos/vaul";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/vaul.yaml?raw";
-import coreSource from "@core/src/vaul.ts?raw";
-import cssSource from "@core/css/patterns/vaul.css?raw";
-import vanillaMountSource from "@vanilla/src/components/vaul.ts?raw";
-import vanillaGestureSource from "@vanilla/src/components/vaul-gesture.ts?raw";
-import reactSource from "@react/src/components/vaul.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -483,22 +480,12 @@ export function FiltersSheet() {
     </>
   );
 }`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/vaul.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/vaul.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/patterns/vaul.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/vaul.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/vaul-gesture.ts", source: vanillaGestureSource, language: "ts" },
-  { id: "packages/react/src/components/vaul.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Vaul"
   description={t("vaulPage.description")}
   contractId="vaul"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "patterns/vaul.css", probe: "sk-vaul" }]}
   tests={[
     {
@@ -529,6 +516,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("vaulPage.lede")} />
+
+    <p set:html={t("vaulPage.anatomyBody")} />
+    <ComponentPreview
+      tree={vaulAnatomyTree(t)}
+      css={vaulAnatomyCss}
+      label={t("vaulPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("vaulPage.completeTitle")}</h3>
     <p set:html={t("vaulPage.completeBody")} />

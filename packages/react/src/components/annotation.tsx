@@ -1,6 +1,6 @@
 import {
   ANNOTATION_RING_DISTANCE,
-  ANNOTATION_RING_RADIUS,
+  annotationElementRadius,
   annotationHitIndex,
   annotationParts,
   annotationRingInset,
@@ -16,6 +16,7 @@ import {
   type AnnotationPlacement,
   type AnnotationRingPlacement,
   type AnnotationSide,
+  type AnnotationTarget,
 } from "@skryensya/core/annotation";
 import {
   Fragment,
@@ -63,7 +64,10 @@ export type AnnotatedProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & 
   ringPlacement?: AnnotationRingPlacement;
   /** How far from that edge, in px. Default 2. */
   ringDistance?: number;
-  /** The corner radius every ring is drawn with. Default 6. */
+  /**
+   * One corner radius for every ring, overriding the corner each part asks for. Unset by default:
+   * a ring takes the `border-radius` of the element it wraps, so it outlines a pill as a pill.
+   */
   ringRadius?: number;
 };
 
@@ -97,7 +101,9 @@ export function Annotated({
   label,
   ringDistance = ANNOTATION_RING_DISTANCE,
   ringPlacement = "inset",
-  ringRadius = ANNOTATION_RING_RADIUS,
+  /* NOT defaulted to a number: `undefined` is what says nobody above the part has an opinion, which
+     is what lets the part's own corner answer. See `ANNOTATION_RING_RADIUS`. */
+  ringRadius,
   subject,
   ...props
 }: AnnotatedProps) {
@@ -145,6 +151,13 @@ export function Annotated({
       const box = element.getBoundingClientRect();
       return { x: box.left - originX, y: box.top - originY, width: box.width, height: box.height };
     };
+    /* A target carries its own corner along with its box, so a ring wraps a pill as a pill and a
+       card as a card. Read on every pass rather than once, because a part's radius is not a
+       constant: a container query or a mode swap can retune `--radius-*` under it. */
+    const asTarget = (element: Element): AnnotationTarget => ({
+      ...relative(element),
+      radius: annotationElementRadius(element),
+    });
 
     const measurements: AnnotationMeasurement[] = annotations.map((annotation, index) => {
       const element = labelRefs.current[index];
@@ -167,7 +180,7 @@ export function Annotated({
         ringInset: overridden,
         ringRadius: annotation.ringRadius,
         label: { ...live, x: live.x - offset.x, y: live.y - offset.y },
-        targets: found.map(relative),
+        targets: found.map(asTarget),
       };
     });
 
@@ -233,7 +246,7 @@ export function Annotated({
     /*
      * Hovering a named part: the specimen is `inert`, so targets never receive pointer events.
      * Listen on the frame and hit-test target boxes; the smallest containing box wins. Skip when
-     * the pointer is over a label — those handlers own the reveal themselves.
+     * the pointer is over a label: those handlers own the reveal themselves.
      */
     const onFramePointer = (event: PointerEvent): void => {
       if ((event.target as Element | null)?.closest?.(`.${annotationParts.label}`)) return;
@@ -353,9 +366,13 @@ export function Annotated({
 }
 
 /**
- * The elements a label points at: first match or every match when the label asked for `all`. A
- * target may itself be `aria-hidden` (a decorative separator is still a drawable part), but a target
- * inside an accessibility-hidden measurement copy is excluded.
+ * The elements a label points at: first match or every match when the label asked for `all`.
+ *
+ * A target may itself be `aria-hidden` (a decorative separator is still a drawable part). A target
+ * nested under an `aria-hidden` ancestor is usually a measurement copy (Breadcrumb's unconstrained
+ * clone) and is skipped WHEN a visible match exists. When every match lives under such a host  -
+ * QRCode's modules path inside its decorative `aria-hidden` SVG  -  those matches are kept: they are
+ * the only place the part exists, not a shadow of something else.
  *
  * Scoped for a reason that bites in exactly this component's home: a diagram documenting a component
  * is usually rendered on a page that USES that component, so a bare `.sk-tile__trigger` would find
@@ -366,9 +383,13 @@ function findTargets(subject: HTMLElement, selector: string, all: boolean): Elem
   if (!selector) return [];
   try {
     const matches = [...subject.querySelectorAll(selector)].filter(
-      (target) => !target.closest("[hidden]") && !target.parentElement?.closest('[aria-hidden="true"]'),
+      (target) => !target.closest("[hidden]"),
     );
-    return all ? matches : matches.slice(0, 1);
+    const preferred = matches.filter(
+      (target) => !target.parentElement?.closest('[aria-hidden="true"]'),
+    );
+    const chosen = preferred.length > 0 ? preferred : matches;
+    return all ? chosen : chosen.slice(0, 1);
   } catch {
     return [];
   }

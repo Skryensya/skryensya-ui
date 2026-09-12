@@ -20,7 +20,7 @@ entries:
         de <code>Text</code>'s <code>tone</code> (<code>primary</code>/<code>secondary</code>/
         <code>tertiary</code>/<code>danger</code>), que no se toca: ahí "primary" es el primer
         peldaño de una escala de énfasis, no una afirmación de intención. Un consumidor con
-        <code>data-tone="primary"</code> en un <code>&lt;a&gt;</code> autorado a mano deja de
+        <code>data-tone="primary"</code> en un <code>&lt;a&gt;</code> escrito a mano deja de
         pintar el color de marca; <code>linkTone="primary"</code> deja de tipar.
     en:
       title: linkTone "primary" is renamed to "accent"

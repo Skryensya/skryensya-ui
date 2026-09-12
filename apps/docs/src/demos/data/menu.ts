@@ -77,16 +77,22 @@ export const menuCompactItems = (t: Translate): readonly ItemInput[] => [
   { options: { value: "italic" }, slots: { label: t("demo.menu.compact.italic") } },
   { options: { value: "underline" }, slots: { label: t("demo.menu.compact.underline") } },
   { options: { value: "strikethrough" }, slots: { label: t("demo.menu.compact.strikethrough") } },
+  /*
+   * NO `group` HERE, though these three are one radio set and the APG says a set of
+   * `menuitemradio` belongs inside a `role="group"`. Menu's contract does not publish a `group`
+   * option, so the key emitted nothing and only made the tree fail validation. Removing it changes
+   * no output; publishing it is contract surface, and that decision is in docs/pending-tasks.md.
+   */
   {
-    options: { value: "align-left", kind: "radio", group: "align" },
+    options: { value: "align-left", kind: "radio" },
     slots: { label: t("demo.menu.compact.alignLeft") },
   },
   {
-    options: { value: "align-center", kind: "radio", group: "align" },
+    options: { value: "align-center", kind: "radio" },
     slots: { label: t("demo.menu.compact.alignCenter") },
   },
   {
-    options: { value: "align-right", kind: "radio", group: "align" },
+    options: { value: "align-right", kind: "radio" },
     slots: { label: t("demo.menu.compact.alignRight") },
   },
 ];

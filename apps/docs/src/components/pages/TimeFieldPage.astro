@@ -1,19 +1,23 @@
 ---
+import "@skryensya/core/components/button.css";
 import "@skryensya/core/components/time-field.css";
 import "@skryensya/core/patterns/anchored.css";
 import "@skryensya/core/components/select.css";
 import "@skryensya/core/patterns/scrollbar.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { timeFieldForced24Tree, timeFieldNativeTree, timeFieldQuarterHourTree, timeFieldTree } from "../../demos/time-field";
+import {
+  timeFieldAnatomyCss,
+  timeFieldAnatomyHtml,
+  timeFieldForced24Tree,
+  timeFieldNativeTree,
+  timeFieldQuarterHourTree,
+  timeFieldTree,
+} from "../../demos/time-field";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/time-field.yaml?raw";
-import coreSource from "@core/src/time-field.ts?raw";
-import cssSource from "@core/css/components/time-field.css?raw";
-import vanillaMountSource from "@vanilla/src/components/time-field.ts?raw";
-import vanillaComponentSource from "@vanilla/src/components/TimeField.svelte?raw";
-import reactSource from "@react/src/components/time-field.tsx?raw";
 
 const styles = `@import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/time-field.css";
@@ -25,22 +29,12 @@ const styles = `@import "@skryensya/core/components/button.css";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
-
-const sourceFiles = [
-  { id: "contracts/semantic/time-field.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/time-field.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/time-field.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/time-field.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/TimeField.svelte", source: vanillaComponentSource, language: "svelte" },
-  { id: "packages/react/src/components/time-field.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="TimeField"
   description={t("timeFieldPage.description")}
   contractId="time-field"
-  sourceFiles={sourceFiles}
   styleGroups={[
     { file: "components/time-field.css", probe: "sk-time-field", title: "TimeField" },
     { file: "components/button.css", probe: "sk-button", title: "Heredados de Button" },
@@ -64,6 +58,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("timeFieldPage.lede")} />
+
+    <p set:html={t("timeFieldPage.anatomyBody")} />
+    <ComponentPreview
+      html={timeFieldAnatomyHtml(t)}
+      css={timeFieldAnatomyCss}
+      label={t("timeFieldPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={timeFieldTree(t, { locale: "es-DO", name: "salida" })} label="TimeField" viewport="menu" />
 
     <h3>{t("component.contractNotesTitle")}</h3>

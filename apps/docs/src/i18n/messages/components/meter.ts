@@ -5,6 +5,10 @@ export const meterMessages = {
       "Meter: una medición dentro de un rango conocido, nunca el avance de una tarea.",
     "meterPage.lede":
       'Un valor medido ahora, no una tarea en curso: el rol WAI-ARIA <code>meter</code>, distinto de <code>progressbar</code>. Úsalo para uso de disco, nivel de batería, una calificación sobre una escala. Para el avance de una tarea con inicio y fin, usa <a href="/components/progress">Progress</a>.',
+    "meterPage.anatomyBody":
+      "Este diagrama nombra el grupo, el encabezado, la etiqueta, el valor, la pista y la barra. El espécimen está congelado; los meters vivos empiezan abajo.",
+    "meterPage.anatomyLabel": "Anatomía de Meter",
+    "meterPage.anatomyPreviewLabel": "Meter, parte por parte",
     "meterPage.body":
       "A diferencia de Progress, <code>min</code> es un parámetro real y con frecuencia distinto de cero: una calificación de 1 a 5, una temperatura. El relleno se calcula con <code>meterFraction(value, min, max)</code>, no con <code>value / max</code>.",
     "meterPage.test1": "Aplica role=meter con los tres atributos aria-value obligatorios.",
@@ -26,6 +30,10 @@ export const meterMessages = {
       "Meter: a measurement within a known range, never a task's completion.",
     "meterPage.lede":
       'A value measured right now, not a task in progress: the WAI-ARIA <code>meter</code> role, distinct from <code>progressbar</code>. Use it for disk usage, battery level, a rating on a scale. For a task\'s progress with a start and an end, use <a href="/en/components/progress">Progress</a>.',
+    "meterPage.anatomyBody":
+      "This diagram names the group, the header, the label, the value, the track, and the bar. The specimen is frozen; the live meters start below.",
+    "meterPage.anatomyLabel": "Meter anatomy",
+    "meterPage.anatomyPreviewLabel": "Meter, part by part",
     "meterPage.body":
       "Unlike Progress, <code>min</code> is a real parameter and often non-zero: a 1-to-5 rating, a temperature. The fill is computed with <code>meterFraction(value, min, max)</code>, not <code>value / max</code>.",
     "meterPage.test1": "Sets role=meter with the three required aria-value attributes.",

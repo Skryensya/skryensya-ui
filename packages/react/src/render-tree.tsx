@@ -75,8 +75,8 @@ import * as tabsModule from "./components/tabs.js";
 import * as tocModule from "./components/toc.js";
 import * as componentPreviewModule from "./components/component-preview.js";
 import type { ContractSlot } from "@skryensya/core/contract";
-import { getContract, getSignature } from "@skryensya/ai-compiler/registry";
-import { jsxPropName, parseInlineStyle } from "@skryensya/ai-compiler/emit";
+import { getContract, getSignature } from "@skryensya/core/registry";
+import { resolveReactProps } from "@skryensya/core/react-props";
 import {
   collectionItems,
   flattenCollectionEntry,
@@ -85,7 +85,7 @@ import {
   slotsOf,
   type ItemInput,
   type UsageTree,
-} from "@skryensya/ai-compiler/usage-tree";
+} from "@skryensya/core/usage-tree";
 
 /*
  * A usage tree, rendered by the React binding. THE renderer: the gates measure what it produces and
@@ -208,48 +208,17 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
   }
 
   /*
-   * Options under the names the BINDING uses. A contract key is unique across its family, but two
-   * signatures can each have a `size` over different values; the contract keys one `headingSize`
-   * and says the binding still calls it `size`.
+   * Options, attrs and style are RESOLVED IN CORE, by the same function the printed snippet uses.
+   * They were two walks making the same decisions, and each shipped a bug the other had already
+   * fixed; see `resolveReactProps`. What stays here is what genuinely differs: React keys, the
+   * portal container, slots, and building real child elements.
    */
-  // `attrs` are written in HTML spelling; React wants its own for a handful of them, and it has to
-  // be the SAME handful the emitter renames or the snippet stops describing the stage beside it.
+  const resolved = resolveReactProps(tree, contract, signature);
   const props: Record<string, unknown> = { key };
-  for (const [attr, value] of Object.entries(tree.attrs ?? {})) {
-    // `style` is CSS text (the only shape a flat `Record<string, string>` can hold), never a plain
-    // string prop: React's `style` takes an object and throws at runtime on anything else. Parsed
-    // here rather than assigned raw, same reason `emit.ts`'s React emitter parses it into the
-    // `style={{…}}` object it prints instead of printing the string as a prop.
-    if (attr === "style") {
-      props.style = Object.fromEntries(parseInlineStyle(value));
-      continue;
-    }
-    props[jsxPropName(attr)] = value;
-  }
+  for (const { name, value } of resolved.props) props[name] = value;
+  if (resolved.style) props.style = resolved.style;
   // Only the signatures that portal take a container; the rest would pass it to a DOM element.
   if (portalContainer && signature.portals) props.container = portalContainer;
-  const optionStyle: Record<string, string | number> = {};
-  for (const [option, value] of Object.entries(tree.options ?? {})) {
-    const declared = contract.options[option];
-    if (declared?.styleProperty) {
-      optionStyle[declared.styleProperty] = typeof value === "number" ? value : String(value);
-      /*
-       * ALSO the named prop, under the option's own key: a `styleProperty` option says where the
-       * value lands in MARKUP (an inline custom property, for the vanilla emitter and the static
-       * fallback), not how a React component wants to receive it, and some components (Sidebar's
-       * `minInlineSize`/`maxInlineSize`) take it as an ordinary named prop and build their OWN
-       * style entry from it rather than reading a caller-supplied `style`. Passing both costs
-       * nothing for a component that only reads `style` (Carousel), and is the only way one that
-       * reads the named prop instead ever sees the value at all.
-       */
-      props[option] = value;
-      continue;
-    }
-    props[declared?.prop ?? option] = value;
-  }
-  if (Object.keys(optionStyle).length > 0) {
-    props.style = { ...(props.style as object | undefined), ...optionStyle };
-  }
 
   const slots = slotsOf(tree);
   for (const [slot, content] of Object.entries(slots)) {

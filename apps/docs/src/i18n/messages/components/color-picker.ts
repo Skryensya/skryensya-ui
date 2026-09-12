@@ -10,6 +10,10 @@ export const colorPickerMessages = {
     "colorPicker.betaBadge": "Beta",
     "colorPicker.lede":
       'Tres formas de elegir un color. La <strong>nativa</strong> es un <code>&lt;input type="color"&gt;</code> con el picker del sistema operativo: sin JavaScript, sin presets, un solo hex plano. La <strong>custom</strong> monta un panel derivado de <code>@zag-js/color-picker</code> detrás de un botón swatch, con área 2D, rieles de matiz y alfa, y filas de canal editables en hex, RGB, HSL y OKLCH. OKLCH no lo entiende la máquina directamente (Zag sólo trae rgba/hsla/hsba); esa fila lee y escribe a través de una conversión propia (<code>@skryensya/core/color</code>) sobre el mismo color que la máquina expone, nunca un estado paralelo. La <strong>compact</strong> comparte el mismo control y abre el mismo tipo de panel, sólo que sin las filas de canal: área, riel de matiz y presets.',
+    "colorPicker.anatomyBody":
+      "El control (label, trigger, swatch) es markup; el panel (área, canales, presets, cuentagotas) es chrome derivado. El espécimen lo deja abierto y congelado para nombrar ambas mitades; los thumbs de los rieles quedan fuera a propósito.",
+    "colorPicker.anatomyLabel": "Anatomía de ColorPicker",
+    "colorPicker.anatomyPreviewLabel": "ColorPicker, parte por parte",
     "colorPicker.nativeTitle": "Nativo",
     "colorPicker.nativeBody": "El picker de plataforma, sin JavaScript ni enhancer.",
     "colorPicker.customTitle": "Custom",
@@ -24,11 +28,11 @@ export const colorPickerMessages = {
     "colorPicker.whichBody":
       "Empieza por el <strong>nativo</strong> cuando el color es un campo de formulario común, sin presets ni necesidad de ver los canales mientras se ajusta. Sube a <strong>custom</strong> (full o compact) cuando hace falta OKLCH, presets de marca, o ver y escribir el mismo color en varios formatos a la vez.",
     "colorPicker.contractBody":
-      'React ofrece <code>ColorPicker</code>, <code>CompactColorPicker</code> y <code>NativeColorPicker</code> sobre <code>@zag-js/color-picker</code>. Vanilla hidrata el <code>data-sk-color-picker</code> autorado: parcha el control (label, swatch, input oculto para el envío del formulario) y renderiza el panel con un componente compartido, igual que Calendar hace con DatePicker. El input <code>type="color"</code> nativo no necesita enhancer.',
+      'React ofrece <code>ColorPicker</code>, <code>CompactColorPicker</code> y <code>NativeColorPicker</code> sobre <code>@zag-js/color-picker</code>. Vanilla hidrata el <code>data-sk-color-picker</code> escrito a mano: parcha el control (label, swatch, input oculto para el envío del formulario) y renderiza el panel con un componente compartido, igual que Calendar hace con DatePicker. El input <code>type="color"</code> nativo no necesita enhancer.',
     "colorPicker.a11yBody":
       'El trigger es icon-only y su nombre accesible lo da <code>triggerLabel</code> ("Elegir color" por default); la máquina agrega su propio <code>aria-labelledby</code> apuntando al label del campo, y como ese atributo le gana a <code>aria-label</code> en el algoritmo de nombre accesible, ambos bindings lo quitan para que <code>triggerLabel</code> sea el que realmente se anuncia. El área 2D y ambos rieles son <code>role="slider"</code> operables por teclado (flechas, Av Pág/Re Pág).',
     "colorPicker.test1": "Rechaza markup al que le falta una parte que necesita parchar.",
-    "colorPicker.test2": "Parcha el control autorado y renderiza el popover alrededor de un panel.",
+    "colorPicker.test2": "Parcha el control escrito a mano y renderiza el popover alrededor de un panel.",
     "colorPicker.test3": "Muestra el color de partida en la custom property del root.",
     "colorPicker.test4": "Confirma un hex escrito a mano y llena cada fila de canal desde él.",
     "colorPicker.test5": "Elige un swatch preset y actualiza el color actual.",
@@ -46,6 +50,10 @@ export const colorPickerMessages = {
     "colorPicker.betaBadge": "Beta",
     "colorPicker.lede":
       'Three ways to pick a color. The <strong>native</strong> one is an <code>&lt;input type="color"&gt;</code> with the OS\'s own picker: no JavaScript, no presets, one flat hex value. The <strong>custom</strong> one mounts a panel derived from <code>@zag-js/color-picker</code> behind a swatch button, with a 2D area, hue and alpha rails, and channel rows editable in hex, RGB, HSL and OKLCH. The machine does not understand OKLCH directly (Zag only ships rgba/hsla/hsba); that row reads and writes through a conversion this system owns (<code>@skryensya/core/color</code>) over the same color the machine already exposes, never a parallel piece of state. The <strong>compact</strong> one shares the same control and opens the same kind of panel, just without the channel rows: area, hue rail and presets.',
+    "colorPicker.anatomyBody":
+      "The control (label, trigger, swatch) is markup; the panel (area, channels, presets, eyedropper) is derived chrome. The specimen holds it open and frozen so both halves can be named; rail thumbs stay out on purpose.",
+    "colorPicker.anatomyLabel": "ColorPicker anatomy",
+    "colorPicker.anatomyPreviewLabel": "ColorPicker, part by part",
     "colorPicker.nativeTitle": "Native",
     "colorPicker.nativeBody": "The platform's own picker, no JavaScript, no enhancer.",
     "colorPicker.customTitle": "Custom",

@@ -1,6 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
+
 /*
  * The three cases where a tooltip earns its place, shared by both pages and both bindings.
  *
@@ -18,6 +19,71 @@ import type { Translate } from "../i18n";
  * the demo taught a span. A paragraph inside an inline row reads the same and says something
  * slightly different; it is the smallest lie available until a bare inline-text signature exists.
  */
+
+
+/*
+ * THE ANATOMY SPECIMEN: frozen open markup. A live Tooltip dismisses on the first pointer press in
+ * an inert frame, and content is `display: none` until `data-state="open"`. No mount attributes so
+ * initComponents never claims this tree. The positioner is forced static in `tooltipAnatomyCss`.
+ */
+const tooltipAnatomySpecimen = (t: Translate): string => `<div class="sk-tooltip">
+  <span class="sk-tooltip__trigger sk-anchor">
+    <button class="sk-button sk-interactive" type="button" data-variant="ghost" data-icon-only data-size="md" aria-label="${t("demo.tooltip.export.label")}" tabindex="-1">
+      <span aria-hidden="true"><span data-sk-icon="download" data-sk-icon-size="md"></span></span>
+    </button>
+  </span>
+  <div class="sk-tooltip__positioner sk-anchored" data-sk-placement="block-end">
+    <span class="sk-anchored-arrow" aria-hidden="true"></span>
+    <div class="sk-tooltip__content" data-state="open" role="tooltip">${t("demo.tooltip.export.content")}</div>
+  </div>
+</div>`;
+
+const tooltipLabel = (target: string, side: string, text: string, extra = ""): string =>
+  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
+
+export const tooltipAnatomyHtml = (t: Translate): string => `<div
+  class="sk-annotated"
+  data-sk-annotated
+  aria-label="${t("tooltipPage.anatomyLabel")}"
+  data-ring-placement="inset"
+  data-ring-distance="2"
+  role="group"
+>
+  <div class="sk-annotated__subject" inert>
+    ${tooltipAnatomySpecimen(t)}
+  </div>
+  ${tooltipLabel(".sk-tooltip", "block-start", "sk-tooltip", ' data-ring-placement="offset" data-ring-distance="6"')}
+  ${tooltipLabel(".sk-tooltip__trigger", "inline-start", "sk-tooltip__trigger")}
+  ${tooltipLabel(".sk-tooltip__content", "inline-end", "sk-tooltip__content")}
+  ${tooltipLabel(".sk-anchored-arrow", "inline-end", "sk-anchored-arrow", ' data-ring-placement="offset" data-ring-distance="2"')}
+  ${tooltipLabel(".sk-tooltip__positioner", "block-end", "sk-tooltip__positioner", ' data-ring-placement="offset" data-ring-distance="4"')}
+  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
+</div>`;
+
+export const tooltipAnatomyCss = `.sk-annotated {
+  --sk-annotation-font-family: var(--font-family-code);
+}
+
+.sk-annotated__subject > .sk-tooltip {
+  display: inline-grid;
+  justify-items: center;
+  gap: var(--space-stack-md);
+}
+
+.sk-annotated__subject > .sk-tooltip > .sk-tooltip__positioner {
+  position: static;
+  pointer-events: none;
+  max-inline-size: none;
+}
+
+.sk-annotated__subject > .sk-tooltip > .sk-tooltip__positioner > .sk-tooltip__content {
+  display: block;
+}
+
+.sk-annotated__subject {
+  text-align: center;
+}
+`;
 
 /** An icon-only control whose `aria-label` is the name and whose tooltip is the description. */
 const iconTrigger = (name: string, label: string, size?: "sm"): UsageTree => ({

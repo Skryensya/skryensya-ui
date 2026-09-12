@@ -2,6 +2,7 @@ import {
   ANNOTATION_RING_DISTANCE,
   ANNOTATION_RING_RADIUS,
   annotationAttrs,
+  annotationElementRadius,
   annotationHitIndex,
   annotationParts,
   annotationRingInset,
@@ -18,6 +19,7 @@ import {
   type AnnotationPlacement,
   type AnnotationRingPlacement,
   type AnnotationSide,
+  type AnnotationTarget,
 } from "@skryensya/core/annotation";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
@@ -82,7 +84,12 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
    */
   const framePlacement = ringPlacementOf(root, "inset");
   const frameDistance = ringNumberOf(root, annotationAttrs.ringDistance, ANNOTATION_RING_DISTANCE);
-  const frameRadius = ringNumberOf(root, annotationAttrs.ringRadius, ANNOTATION_RING_RADIUS);
+  /* `undefined` when the frame said nothing, and that is load-bearing rather than tidy: a number
+     here would be indistinguishable from an author's own, and would override the corner each part
+     asks for (see `ANNOTATION_RING_RADIUS`). Only an authored attribute speaks. */
+  const frameRadius = root.hasAttribute(annotationAttrs.ringRadius)
+    ? ringNumberOf(root, annotationAttrs.ringRadius, ANNOTATION_RING_RADIUS)
+    : undefined;
   const ringInset = annotationRingInset(framePlacement, frameDistance);
   const labelRings = labels.map((label) => ({
     ringInset:
@@ -94,7 +101,7 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
           )
         : undefined,
     ringRadius: label.hasAttribute(annotationAttrs.ringRadius)
-      ? ringNumberOf(label, annotationAttrs.ringRadius, frameRadius)
+      ? ringNumberOf(label, annotationAttrs.ringRadius, frameRadius ?? ANNOTATION_RING_RADIUS)
       : undefined,
   }));
 
@@ -113,6 +120,13 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
       const rect = element.getBoundingClientRect();
       return { x: rect.left - originX, y: rect.top - originY, width: rect.width, height: rect.height };
     };
+    /* A target carries its own corner along with its box, so a ring wraps a pill as a pill and a
+       card as a card. Read on every pass rather than once, because a part's radius is not a
+       constant: a container query or a mode swap can retune `--radius-*` under it. */
+    const asTarget = (element: Element): AnnotationTarget => ({
+      ...relative(element),
+      radius: annotationElementRadius(element),
+    });
 
     const measurements: AnnotationMeasurement[] = labels.map((label, index) => {
       const live = relative(label);
@@ -127,7 +141,7 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
         side: sideOf(label),
         ...labelRings[index],
         label: { ...live, x: live.x - offset.x, y: live.y - offset.y },
-        targets: found.map(relative),
+        targets: found.map(asTarget),
       };
     });
 
@@ -314,9 +328,13 @@ const sideOf = (label: HTMLElement): AnnotationSide => {
 };
 
 /**
- * The elements a label points at: first match or every match when the label asked for `all`. A
- * target may itself be `aria-hidden` (a decorative separator is still a drawable part), but a target
- * inside an accessibility-hidden measurement copy is excluded.
+ * The elements a label points at: first match or every match when the label asked for `all`.
+ *
+ * A target may itself be `aria-hidden` (a decorative separator is still a drawable part). A target
+ * nested under an `aria-hidden` ancestor is usually a measurement copy (Breadcrumb's unconstrained
+ * clone) and is skipped WHEN a visible match exists. When every match lives under such a host  -
+ * QRCode's modules path inside its decorative `aria-hidden` SVG  -  those matches are kept: they are
+ * the only place the part exists, not a shadow of something else.
  *
  * Scoped to the subject rather than to the document, which is not only tidiness: a diagram that
  * documents a component is very often rendered on a page that USES that component, and a bare
@@ -327,9 +345,13 @@ function targetsOf(subject: HTMLElement, selector: string | null, all: boolean):
   if (!selector) return [];
   try {
     const matches = [...subject.querySelectorAll(selector)].filter(
-      (target) => !target.closest("[hidden]") && !target.parentElement?.closest('[aria-hidden="true"]'),
+      (target) => !target.closest("[hidden]"),
     );
-    return all ? matches : matches.slice(0, 1);
+    const preferred = matches.filter(
+      (target) => !target.parentElement?.closest('[aria-hidden="true"]'),
+    );
+    const chosen = preferred.length > 0 ? preferred : matches;
+    return all ? chosen : chosen.slice(0, 1);
   } catch {
     /* An invalid selector costs THAT label its leaders, never the whole drawing: one typo in one
        entry should not blank a diagram that is otherwise correct. */

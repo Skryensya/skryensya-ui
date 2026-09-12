@@ -4,6 +4,10 @@ export const marqueeMessages = {
     "marquee.betaBadge": "Beta",
     "marquee.lede":
       "Marquee repite una fila corta de logotipos inertes. La diferencia importante no es la velocidad: es <strong>quién pidió el movimiento</strong>. <code>Marquee</code> espera un Play; <code>Marquee.autoplay</code> empieza sola y carga con el costo completo de hacerlo bien.",
+    "marquee.anatomyBody":
+      "Este diagrama nombra la ventana, la pista, el contenido y el control Play/Pausa. El espécimen está congelado; las franjas vivas empiezan abajo.",
+    "marquee.anatomyLabel": "Anatomía de Marquee",
+    "marquee.anatomyPreviewLabel": "Marquee, parte por parte",
     "marquee.whenTitle": "Dos firmas, dos causas",
     "marquee.whenBody":
       "Usa la versión pedida por defecto. Reserva autoplay para una franja secundaria cuyo movimiento aporte identidad o contexto; nunca para información necesaria ni para controles.",
@@ -39,7 +43,7 @@ export const marqueeMessages = {
     "marquee.behaviorBody2":
       "Los hijos deben ser inertes. Un link o botón duplicado crea dos paradas visualmente iguales y una copia escondida del árbol accesible. Para destinos, tarjetas o controles usa Carousel, Inline o List.",
     "marquee.behaviorBody3":
-      "Dos copias sólo se ven infinitas mientras una alcance a cubrir la ventana. Si la fila autorada es más corta, al completar un ciclo el hueco cruza la franja a la vista. Por eso el binding mide la ventana y ensancha todos los gaps, incluido el que separa la última marca de la primera de la copia siguiente, hasta que una sola fila la cubra: el ritmo queda parejo en la unión y el loop no se corta nunca.",
+      "Dos copias sólo se ven infinitas mientras una alcance a cubrir la ventana. Si la fila escrita a mano es más corta, al completar un ciclo el hueco cruza la franja a la vista. Por eso el binding mide la ventana y ensancha todos los gaps, incluido el que separa la última marca de la primera de la copia siguiente, hasta que una sola fila la cubra: el ritmo queda parejo en la unión y el loop no se corta nunca.",
     "marquee.optionsTitle": "Dirección, velocidad, desvanecido y control",
     "marquee.optionsBody":
       "<code>direction</code> acepta <code>left</code>, <code>right</code>, <code>up</code> o <code>down</code>. <code>speed</code> acepta <code>slow</code>, <code>normal</code> o <code>fast</code>; el enhancer mide el ancho o el alto real para mantener la velocidad percibida en vez de fijar una duración frágil. <code>fade</code> acepta <code>edges</code> (por defecto) o <code>none</code>, y el ancho de la banda sale de <code>--sk-marquee-fade-size</code>. <code>control</code> es booleano, apagado por defecto, y sólo existe en la firma con autoplay.",
@@ -48,14 +52,14 @@ export const marqueeMessages = {
     "marquee.a11yP2":
       "Con <code>prefers-reduced-motion: reduce</code> la animación no arranca y el control inerte se oculta. El contenido queda visible y estático.",
     "marquee.installBody":
-      "Importa la hoja y el auto-loader para HTML autorado, o usa una de las dos exportaciones React. FadeEdge se importa aparte porque sigue siendo una composición opcional.",
+      "Importa la hoja y el auto-loader para HTML escrito a mano, o usa una de las dos exportaciones React. FadeEdge se importa aparte porque sigue siendo una composición opcional.",
     "marquee.test1": "La versión pedida empieza pausada, cambia a Play/Pause y mantiene una sola copia semántica.",
     "marquee.test2": "Autoplay empieza reproduciendo y publica dirección, velocidad y estado en la raíz.",
     "marquee.test3": "Un cambio vivo a reduced motion detiene autoplay.",
     "marquee.test4": "La duración sale del ancho medido y de píxeles por segundo, no de una constante por contenido.",
     "marquee.test5": "Un ciclo de preferencia nunca deshace una pausa explícita.",
     "marquee.test6": "Una fila más corta que su ventana ensancha los gaps hasta cubrirla, y una fila que ya la cubre no toca nada.",
-    "marquee.test7": "El ancho que alimenta la duración es el de la fila ya ensanchada, no el autorado.",
+    "marquee.test7": "El ancho que alimenta la duración es el de la fila ya ensanchada, no el escrito a mano.",
     "marquee.test8": "El control es un Button real (sk-button, translucent, icon-only) con su glifo propio, y el fade viene encendido.",
     "marquee.test9": "Autoplay no emite botón salvo que se pida `control`, y sin botón nunca arranca pausada.",
     "marquee.test10": "El enhancer mide y sigue la preferencia igual cuando no hay ningún toggle en el DOM.",
@@ -83,6 +87,10 @@ export const marqueeMessages = {
     "marquee.betaBadge": "Beta",
     "marquee.lede":
       "Marquee repeats a short row of inert logos. The important difference is not speed; it is <strong>who requested the motion</strong>. <code>Marquee</code> waits for Play; <code>Marquee.autoplay</code> starts by itself and carries the full cost of doing that honestly.",
+    "marquee.anatomyBody":
+      "This diagram names the viewport, the track, the content, and the Play/Pause control. The specimen is frozen; the live strips start below.",
+    "marquee.anatomyLabel": "Marquee anatomy",
+    "marquee.anatomyPreviewLabel": "Marquee, part by part",
     "marquee.whenTitle": "Two signatures, two causes",
     "marquee.whenBody":
       "Default to the requested version. Reserve autoplay for secondary material whose movement adds identity or context; never use it for required information or controls.",

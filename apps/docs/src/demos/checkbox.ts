@@ -1,12 +1,36 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { checkboxGroupItems } from "./data/checkbox";
+import { namePart } from "./annotation-parts";
 
 const tileContent = (title: string, description: string): UsageTree => ({
   contract: "tile",
   signature: "TileContent",
   slots: { title, description },
 });
+
+/** Input, control, indicator and label: the native checkbox's painted parts. */
+export const checkboxAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("checkbox.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "checkbox",
+      signature: "Checkbox",
+      options: { name: "alerts-anatomy", value: "email", defaultChecked: true },
+      children: t("demo.checkbox.emailAlerts"),
+    },
+    items: [
+      namePart(".sk-checkbox", "block-start"),
+      namePart(".sk-checkbox__input", "inline-start"),
+      namePart(".sk-checkbox__control", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-checkbox__indicator", "inline-end"),
+      namePart(".sk-checkbox__label", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
+  },
+});
+
 export const checkboxTree = (t: Translate): UsageTree => ({
   contract: "checkbox",
   signature: "Checkbox",

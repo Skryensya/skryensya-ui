@@ -5,6 +5,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-11",
+            "en": {
+              "body": "The first section and its trigger now declare the frame's radius (<code>--sk-accordion-radius</code>) on the two corners they actually occupy; every section below stays flat, because the seam between two of them is a straight divider on both sides. Painted it looked the same already, because the frame clips with <code>overflow: hidden</code>; what changes is that the element now states the shape it has, so anything reading the element rather than the painted result (an anatomy diagram, a state layer of your own) stops drawing a square corner over a round one.",
+              "title": "The first section rounds its top corners"
+            },
+            "es": {
+              "body": "La primera sección y su trigger declaran el radio del marco (<code>--sk-accordion-radius</code>) en sus dos esquinas superiores, que son las que ocupan; el resto de las secciones sigue plano, porque entre dos de ellas hay un divisor recto de los dos lados. Pintado se veía igual, porque el marco recorta con <code>overflow: hidden</code>; lo que cambia es que el elemento ahora dice la forma que tiene, así cualquier cosa que lea el elemento en vez del resultado pintado (un diagrama de anatomía, una capa de estado propia) deja de dibujar una esquina cuadrada sobre una redonda.",
+              "title": "La primera sección redondea sus esquinas de arriba"
+            },
+            "kind": "bugfix"
+          },
+          {
             "date": "2026-08-14",
             "en": {
               "body": "<code>Accordion.Trigger</code> has a new <code>headingLevel</code> option (default <code>3</code>): it wraps the button in a <code>role=\"heading\"</code> node with <code>aria-level</code>, so a screen reader navigating by heading finds each section. The WAI-ARIA APG asks for this; no trigger had it before.",
@@ -63,6 +75,32 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-11",
+            "en": {
+              "body": "<code>ringRadius</code> loses its default: instead of one fixed corner for the whole drawing, every ring now reads the <code>border-radius</code> of the part it outlines, so a pill is marked as a pill and a card as a card. The ring stays concentric with its part (the distance comes off the corner the same way it comes off the box), and a <code>ringRadius</code> written on the frame or on one label still overrides every corner under it, which is what a diagram wants when the parts are different shapes and the marks should not be. Separately, the mark at rest got thinner: the ring drops from 2px to 1px, the same hairline as its leader, and the resting grey carries its alpha in the colour (<code>--sk-annotation-ring-color-rest</code>), so the apparatus sits over the specimen rather than on it.",
+              "title": "A ring takes the corner of the part it wraps"
+            },
+            "es": {
+              "body": "<code>ringRadius</code> se queda sin default: en vez de un radio fijo para todo el dibujo, cada anillo ahora lee el <code>border-radius</code> de la parte que rodea, así una píldora se marca como píldora y una tarjeta como tarjeta. El anillo queda concéntrico con la parte (la distancia se le descuenta a la esquina igual que a la caja), y si el marco o una etiqueta escriben <code>ringRadius</code>, ese número manda sobre todas las esquinas que tiene abajo, que es lo que quiere un diagrama donde las partes tienen formas distintas y las marcas no deberían. Aparte, en reposo la marca adelgazó: el anillo pasó de 2px a 1px, el mismo pelo que su guía, y el gris de reposo lleva el alfa en el color (<code>--sk-annotation-ring-color-rest</code>), así el aparato queda por encima de la muestra sin pisarla.",
+              "title": "El anillo toma la esquina de la parte que envuelve"
+            },
+            "kind": "rework",
+            "target": "ringRadius"
+          },
+          {
+            "date": "2026-09-11",
+            "en": {
+              "body": "<code>inert</code> is now on by default: the accordion, breadcrumb or whatever is being annotated is a specimen, not a control. Tab skips it, and both bindings take <code>tabindex</code> off everything inside so nothing advertises itself as a stop. The labels stay focusable, which is how a mark is revealed without a pointer. <code>inert={false}</code> still exists for a diagram over a live UI.",
+              "title": "An annotated specimen no longer takes focus"
+            },
+            "es": {
+              "body": "<code>inert</code> queda prendido por defecto: el acordeón, el breadcrumb o lo que sea que se esté anotando es una muestra, no un control. Tab lo saltea, y los bindings le sacan el <code>tabindex</code> a todo lo de adentro para que nada se publicite como parada. Las etiquetas siguen siendo enfocables, que es como se revela una marca sin puntero. <code>inert={false}</code> sigue existiendo para el diagrama sobre una UI viva.",
+              "title": "La muestra anotada ya no recibe foco"
+            },
+            "kind": "bugfix",
+            "target": "inert"
+          },
           {
             "date": "2026-09-10",
             "en": {
@@ -147,7 +185,7 @@
               "title": "BackToTop is published as a contract, with one signature"
             },
             "es": {
-              "body": "Entra al catálogo con <code>BackToTop</code>: un <code>&lt;button&gt;</code> que se fija a una esquina y devuelve un scroller a su inicio. Aparece sólo después de pasar <code>threshold</code> píxeles de scroll (400 por defecto) y se va sola al volver arriba; el markup viene con <code>hidden</code>, así que sin JavaScript no ocupa lugar. La marca visible es un <code>chevron-up</code> del set de iconos enlazado (el markup autorado emite el placeholder <code>[data-sk-icon]</code> que el enhancer reemplaza por el <code>&lt;svg&gt;</code> del set; React usa <code>&lt;Icon&gt;</code>), dentro de la parte <code>sk-back-to-top__icon</code>. El scroll lo hace la plataforma (<code>scrollTo</code>), suave salvo que se pida menos movimiento. Opciones: <code>threshold</code>, <code>scroller</code> (un selector para un panel con overflow propio, en vez de la ventana) y <code>target</code> (un selector de algo enfocable arriba al que mover el foco después del scroll, para que el siguiente Tab siga desde el principio). La parte pura (si pasó el umbral, si la animación se atenúa) vive en <code>@skryensya/core/back-to-top</code> y la comparten las dos bindings. La hoja es <code>components/back-to-top.css</code>.",
+              "body": "Entra al catálogo con <code>BackToTop</code>: un <code>&lt;button&gt;</code> que se fija a una esquina y devuelve un scroller a su inicio. Aparece sólo después de pasar <code>threshold</code> píxeles de scroll (400 por defecto) y se va sola al volver arriba; el markup viene con <code>hidden</code>, así que sin JavaScript no ocupa lugar. La marca visible es un <code>chevron-up</code> del set de iconos enlazado (el markup escrito a mano emite el placeholder <code>[data-sk-icon]</code> que el enhancer reemplaza por el <code>&lt;svg&gt;</code> del set; React usa <code>&lt;Icon&gt;</code>), dentro de la parte <code>sk-back-to-top__icon</code>. El scroll lo hace la plataforma (<code>scrollTo</code>), suave salvo que se pida menos movimiento. Opciones: <code>threshold</code>, <code>scroller</code> (un selector para un panel con overflow propio, en vez de la ventana) y <code>target</code> (un selector de algo enfocable arriba al que mover el foco después del scroll, para que el siguiente Tab siga desde el principio). La parte pura (si pasó el umbral, si la animación se atenúa) vive en <code>@skryensya/core/back-to-top</code> y la comparten las dos bindings. La hoja es <code>components/back-to-top.css</code>.",
               "title": "BackToTop se publica como contrato, con una signature"
             },
             "kind": "feature"
@@ -312,7 +350,7 @@
               "title": "The \"primary\" variant is renamed to \"accent\""
             },
             "es": {
-              "body": "Renombrado de <code>primary</code>: ese nombre describía un ROL: \"la acción principal de esta pantalla\". Que el propio botón no puede saber, es el autor quien decide cuál de sus botones es el destacado en un momento dado, y a veces es más de uno o ninguno. El variant solo pinta un relleno saturado; <code>accent</code> dice eso, no una jerarquía que el contrato no tiene forma de verificar. Es un rename del VALOR de la opción únicamente: el token semántico detrás (<code>--color-action-accent</code>) no cambia de nombre, es un detalle interno de <code>button.css</code> y no parte de lo que este contrato promete. Un consumidor con <code>data-variant=\"accent\"</code> autorado a mano deja de pintar el relleno (cae al <code>neutral</code> por defecto en silencio); <code>variant=\"accent\"</code> en un árbol de uso o en JSX deja de tipar.",
+              "body": "Renombrado de <code>primary</code>: ese nombre describía un ROL: \"la acción principal de esta pantalla\". Que el propio botón no puede saber, es el autor quien decide cuál de sus botones es el destacado en un momento dado, y a veces es más de uno o ninguno. El variant solo pinta un relleno saturado; <code>accent</code> dice eso, no una jerarquía que el contrato no tiene forma de verificar. Es un rename del VALOR de la opción únicamente: el token semántico detrás (<code>--color-action-accent</code>) no cambia de nombre, es un detalle interno de <code>button.css</code> y no parte de lo que este contrato promete. Un consumidor con <code>data-variant=\"accent\"</code> escrito a mano deja de pintar el relleno (cae al <code>neutral</code> por defecto en silencio); <code>variant=\"accent\"</code> en un árbol de uso o en JSX deja de tipar.",
               "title": "El variant \"primary\" pasa a llamarse \"accent\""
             },
             "kind": "breaking",
@@ -629,7 +667,7 @@
               "title": "Chart is published as a contract, a series of labelled values made visible"
             },
             "es": {
-              "body": "Entra al catálogo con una sola signature, <code>Chart</code>, y con una decisión que explica todo lo demás: <strong>los datos son una lista</strong>. Las entradas viven en un slot <code>items</code>, el mismo que ya usan <code>Tabs</code> y <code>Segmented</code> para sus colecciones, y no en un objeto opaco que se le pasa a una librería. Eso compra cuatro cosas a la vez. Accesibilidad de verdad y no un resumen: la serie es una lista real de texto real, así que un lector de pantalla lee \"Dic, 14, Ene, 23\" desde el DOM, en lugar del <code>&lt;svg aria-label=\"gráfico de aportes\"&gt;</code> de siempre, que avisa que hay datos y después se niega a decir cuáles. Barras sin motor: cada entrada trae su valor y la hoja <code>components/chart.css</code> lo divide por el máximo de la serie para sacar la altura, así que un gráfico de barras se pinta desde markup autorado. Un renderer que es opcional por construcción: <code>line</code> y <code>area</code> necesitan un path, y eso sí es geometría, así que <code>@skryensya/charts</code> lo dibuja como un overlay <code>aria-hidden</code> encima de este mismo markup; el motor es una MEJORA de un gráfico que ya funcionaba, no lo que lo hace funcionar, y cambiarlo nunca puede romper a nadie porque ningún consumidor lo nombró. Y validación: un slot <code>items</code> es data que el compilador revisa y que la MCP puede componer. Opciones: <code>kind</code> (<code>bar</code>/<code>line</code>/<code>area</code>), <code>tone</code>, <code>height</code>, <code>labels</code>, <code>values</code>, <code>grid</code>, <code>flush</code> (para el gráfico que ES el borde inferior de una card), <code>format</code>, <code>currency</code>, <code>locale</code>, <code>description</code> y <code>label</code>, requerida: una serie de números sin nada que diga qué miden es el único gráfico peor que ningún gráfico. Cada entrada toma <code>value</code>, un <code>tone</code> propio para destacarla contra sus hermanas, y los slots <code>label</code> y <code>text</code>. Lo que este contrato deliberadamente NO tiene: título, subtítulo, acción ni superficie propia. Todo eso es de lo que contenga al gráfico, y ponerlo acá habría hecho crecer exactamente la card con variantes que Card se niega a ser: un gráfico dentro de una card es una COMPOSICIÓN, publicada como recipe.",
+              "body": "Entra al catálogo con una sola signature, <code>Chart</code>, y con una decisión que explica todo lo demás: <strong>los datos son una lista</strong>. Las entradas viven en un slot <code>items</code>, el mismo que ya usan <code>Tabs</code> y <code>Segmented</code> para sus colecciones, y no en un objeto opaco que se le pasa a una librería. Eso compra cuatro cosas a la vez. Accesibilidad de verdad y no un resumen: la serie es una lista real de texto real, así que un lector de pantalla lee \"Dic, 14, Ene, 23\" desde el DOM, en lugar del <code>&lt;svg aria-label=\"gráfico de aportes\"&gt;</code> de siempre, que avisa que hay datos y después se niega a decir cuáles. Barras sin motor: cada entrada trae su valor y la hoja <code>components/chart.css</code> lo divide por el máximo de la serie para sacar la altura, así que un gráfico de barras se pinta desde markup escrito a mano. Un renderer que es opcional por construcción: <code>line</code> y <code>area</code> necesitan un path, y eso sí es geometría, así que <code>@skryensya/charts</code> lo dibuja como un overlay <code>aria-hidden</code> encima de este mismo markup; el motor es una MEJORA de un gráfico que ya funcionaba, no lo que lo hace funcionar, y cambiarlo nunca puede romper a nadie porque ningún consumidor lo nombró. Y validación: un slot <code>items</code> es data que el compilador revisa y que la MCP puede componer. Opciones: <code>kind</code> (<code>bar</code>/<code>line</code>/<code>area</code>), <code>tone</code>, <code>height</code>, <code>labels</code>, <code>values</code>, <code>grid</code>, <code>flush</code> (para el gráfico que ES el borde inferior de una card), <code>format</code>, <code>currency</code>, <code>locale</code>, <code>description</code> y <code>label</code>, requerida: una serie de números sin nada que diga qué miden es el único gráfico peor que ningún gráfico. Cada entrada toma <code>value</code>, un <code>tone</code> propio para destacarla contra sus hermanas, y los slots <code>label</code> y <code>text</code>. Lo que este contrato deliberadamente NO tiene: título, subtítulo, acción ni superficie propia. Todo eso es de lo que contenga al gráfico, y ponerlo acá habría hecho crecer exactamente la card con variantes que Card se niega a ser: un gráfico dentro de una card es una COMPOSICIÓN, publicada como recipe.",
               "title": "Chart se publica como contrato, una serie de valores con nombre hecha visible"
             },
             "kind": "feature",
@@ -1066,7 +1104,7 @@
               "title": "React accepts toolbarLabel, and the content gets an id in both bindings"
             },
             "es": {
-              "body": "<code>toolbarLabel</code> estaba publicado en el contrato desde siempre y el binding de React lo ignoraba: escribía \"Formato de texto\" a mano, así que quien lo configuraba lo obtenía en markup autorado y silenciosamente no en React. Ahora es una prop, y su valor por defecto se lee del contrato en vez de escribirse dos veces. El div de contenido recibe un id también desde el enhancer. Ese id es el que apunta el <code>for</code> de una etiqueta de <code>FormField</code>, y es exactamente el que <code>useFormFieldControl</code> genera del lado de React; nadie lo generaba cuando el enhancer construía el control. A cambio, la raíz dejó de recibir un id que no leía nadie.",
+              "body": "<code>toolbarLabel</code> estaba publicado en el contrato desde siempre y el binding de React lo ignoraba: escribía \"Formato de texto\" a mano, así que quien lo configuraba lo obtenía en markup escrito a mano y silenciosamente no en React. Ahora es una prop, y su valor por defecto se lee del contrato en vez de escribirse dos veces. El div de contenido recibe un id también desde el enhancer. Ese id es el que apunta el <code>for</code> de una etiqueta de <code>FormField</code>, y es exactamente el que <code>useFormFieldControl</code> genera del lado de React; nadie lo generaba cuando el enhancer construía el control. A cambio, la raíz dejó de recibir un id que no leía nadie.",
               "title": "React acepta toolbarLabel, y el contenido recibe un id en las dos bindings"
             },
             "kind": "bugfix"
@@ -1138,7 +1176,7 @@
               "title": "Feed.busy now writes aria-busy=\"false\" instead of omitting it"
             },
             "es": {
-              "body": "El binding React siempre escribe <code>aria-busy={busy}</code>, la lectura tri-state que WAI-ARIA pide (\"aria-busy se pone en true antes de un cambio... en false inmediatamente después\"); la opción del contrato no tenía <code>falseValue</code>, así que markup autorado con <code>busy</code> en falso omitía el atributo por completo en vez de escribirlo como <code>\"false\"</code>. Invisible hasta que un árbol canónico existió para comparar los dos bindings.",
+              "body": "El binding React siempre escribe <code>aria-busy={busy}</code>, la lectura tri-state que WAI-ARIA pide (\"aria-busy se pone en true antes de un cambio... en false inmediatamente después\"); la opción del contrato no tenía <code>falseValue</code>, así que markup escrito a mano con <code>busy</code> en falso omitía el atributo por completo en vez de escribirlo como <code>\"false\"</code>. Invisible hasta que un árbol canónico existió para comparar los dos bindings.",
               "title": "Feed.busy ahora escribe aria-busy=\"false\" en vez de omitirlo"
             },
             "kind": "bugfix",
@@ -1280,7 +1318,7 @@
               "title": "Catalogue trimmed to 13 patterns, email capture redesigned as a full-width band"
             },
             "es": {
-              "body": "Se sacan del catálogo <code>hero-with-search</code> y <code>hero-with-command-hint</code>: pedido directo, no un bug en ninguno de los dos. <code>hero-with-email-capture</code> se rediseña: antes era una columna angosta con el mismo fondo que el resto del hero, ahora es una franja de <code>box.Box</code> (<code>surface: \"sunken\"</code>) que ocupa el ANCHO COMPLETO del hero (sin <code>Wrapper</code> alrededor del <code>Box</code> mismo; el <code>Wrapper</code> se mueve adentro, centrando sólo la fila de contenido a la medida principal de la página), con el pitch y el campo de correo repartidos lado a lado (<code>justify: \"between\"</code>) en vez de apilados, para usar el ancho de la franja en vez de dejarlo vacío. Se evaluó <code>surface: \"raised\"</code> antes de <code>\"sunken\"</code>: Hero ya se apoya en <code>surface: \"surface\"</code>, así que un panel elevado competía por atención con la propia superficie del hero; uno hundido se lee como una región distinta sin esa competencia. Cada uno de los 13 patrones restantes gana su propio <code>&lt;h4&gt;</code> (título) y una descripción de una línea, ambos traducidos, como hermanos directos del panel \"Uso\" (nunca envueltos en otro elemento): el indexador de documentos de <code>Base.astro</code> (<code>lib/document-index.ts</code>, <code>indexHeroTabPanel</code>) camina <code>h3</code>/ <code>h4</code> a profundidad 0 de ese panel, así que cada <code>h4</code> aparece como una fila anidada bajo \"HTML autorado\" en el riel \"En esta página\", un patrón encontrable por nombre en vez de un bloque sin nombre adentro de esa sección.",
+              "body": "Se sacan del catálogo <code>hero-with-search</code> y <code>hero-with-command-hint</code>: pedido directo, no un bug en ninguno de los dos. <code>hero-with-email-capture</code> se rediseña: antes era una columna angosta con el mismo fondo que el resto del hero, ahora es una franja de <code>box.Box</code> (<code>surface: \"sunken\"</code>) que ocupa el ANCHO COMPLETO del hero (sin <code>Wrapper</code> alrededor del <code>Box</code> mismo; el <code>Wrapper</code> se mueve adentro, centrando sólo la fila de contenido a la medida principal de la página), con el pitch y el campo de correo repartidos lado a lado (<code>justify: \"between\"</code>) en vez de apilados, para usar el ancho de la franja en vez de dejarlo vacío. Se evaluó <code>surface: \"raised\"</code> antes de <code>\"sunken\"</code>: Hero ya se apoya en <code>surface: \"surface\"</code>, así que un panel elevado competía por atención con la propia superficie del hero; uno hundido se lee como una región distinta sin esa competencia. Cada uno de los 13 patrones restantes gana su propio <code>&lt;h4&gt;</code> (título) y una descripción de una línea, ambos traducidos, como hermanos directos del panel \"Uso\" (nunca envueltos en otro elemento): el indexador de documentos de <code>Base.astro</code> (<code>lib/document-index.ts</code>, <code>indexHeroTabPanel</code>) camina <code>h3</code>/ <code>h4</code> a profundidad 0 de ese panel, así que cada <code>h4</code> aparece como una fila anidada bajo \"HTML escrito a mano\" en el riel \"En esta página\", un patrón encontrable por nombre en vez de un bloque sin nombre adentro de esa sección.",
               "title": "Catálogo recortado a 13 patrones, email-capture rediseñado como franja de ancho completo"
             },
             "kind": "rework",
@@ -2952,7 +2990,7 @@
               "title": "New resizableColumns option, drag-to-resize columns"
             },
             "es": {
-              "body": "Se agrega <code>resizableColumns</code> (opt-in, apagada por defecto). Encendida, el binding inserta un separador WAI-ARIA APG \"Window Splitter\" real (<code>role=\"separator\"</code>, <code>aria-orientation=\"vertical\"</code>, flechas/Shift+flecha/Home/End/Enter) entre cada par de encabezados de columna. El mismo primitivo compartido (<code>@skryensya/core/splitter</code>) que ya usan el separador de <code>Sidebar</code> y el redimensionador de columnas de <code>Treegrid</code>. Requiere <code>resizeLabel</code> (nueva opción, gate de a11y): el separador es binding-insertado, nunca autorado, así que nada más lo nombra para un lector de pantalla. La primera entrada de este archivo decía \"no tiene enhancer: el markup está completo por sí solo\". Eso sigue siendo la regla por defecto: el binding Vanilla solo enhancea un <code>&lt;table&gt;</code> que trae <code>data-resizable-columns</code>, así que cualquier tabla que no la pida sigue sin JavaScript, exactamente como antes.",
+              "body": "Se agrega <code>resizableColumns</code> (opt-in, apagada por defecto). Encendida, el binding inserta un separador WAI-ARIA APG \"Window Splitter\" real (<code>role=\"separator\"</code>, <code>aria-orientation=\"vertical\"</code>, flechas/Shift+flecha/Home/End/Enter) entre cada par de encabezados de columna. El mismo primitivo compartido (<code>@skryensya/core/splitter</code>) que ya usan el separador de <code>Sidebar</code> y el redimensionador de columnas de <code>Treegrid</code>. Requiere <code>resizeLabel</code> (nueva opción, gate de a11y): el separador es binding-insertado, nunca escrito a mano, así que nada más lo nombra para un lector de pantalla. La primera entrada de este archivo decía \"no tiene enhancer: el markup está completo por sí solo\". Eso sigue siendo la regla por defecto: el binding Vanilla solo enhancea un <code>&lt;table&gt;</code> que trae <code>data-resizable-columns</code>, así que cualquier tabla que no la pida sigue sin JavaScript, exactamente como antes.",
               "title": "Nueva opción resizableColumns, columnas redimensionables por arrastre"
             },
             "kind": "feature",
@@ -3064,6 +3102,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-11",
+            "en": {
+              "body": "The trigger occupies the top edge of the card, so it now declares that radius on its two top corners. Painted it looked the same already, because the tile clips with <code>overflow: hidden</code>; what changes is that the element states the shape it has, so anything reading the element rather than the painted result (an anatomy diagram, a state layer of your own) stops drawing a square corner over a round one. That brings a new hook, <code>--sk-tile-radius</code>: the tile's corner and those two corners are one number now, so retuning one cannot leave the other behind.",
+              "title": "An expandable tile's trigger rounds its top corners"
+            },
+            "es": {
+              "body": "El trigger ocupa el borde superior de la tarjeta, así que ahora declara ese radio en sus dos esquinas de arriba. Pintado se veía igual, porque el tile recorta con <code>overflow: hidden</code>; lo que cambia es que el elemento dice la forma que tiene, así cualquier cosa que lea el elemento en vez del resultado pintado (un diagrama de anatomía, una capa de estado propia) deja de dibujar una esquina cuadrada sobre una redonda. Con eso aparece <code>--sk-tile-radius</code>, un hook nuevo: es el radio del tile y el de esas dos esquinas a la vez, para que cambiar uno no deje al otro atrás.",
+              "title": "El trigger de un tile expandible redondea sus esquinas de arriba"
+            },
+            "kind": "bugfix"
+          },
           {
             "date": "2026-08-11",
             "en": {
@@ -3291,7 +3341,7 @@
               "title": "New resizableColumns option, drag-to-resize columns"
             },
             "es": {
-              "body": "Se agrega <code>resizableColumns</code> (opt-in, apagada por defecto: el alcance auditado de <code>treegrid-1</code> sigue siendo texto plano sin chrome extra a menos que el consumidor lo pida). Encendida, el binding inserta un separador WAI-ARIA APG \"Window Splitter\" real (<code>role=\"separator\"</code>, <code>aria-orientation=\"vertical\"</code>, flechas/Shift+flecha/Home/End/Enter) entre cada par de encabezados de columna. Nunca el último, no tiene vecino siguiente con quien redistribuir ancho. Es el mismo primitivo compartido que ya usa el separador de <code>Sidebar</code> (<code>@skryensya/core/splitter</code>, publicado esta sesión: el emparejador de teclado y el umbral de arrastre puro en un solo lugar, en vez de reescritos en cada consumidor), con la diferencia real documentada en <code>resolveColumnResize</code>: <code>Sidebar</code> pinza UN valor contra un límite fijo vía CSS <code>clamp()</code>; una columna redistribuye ancho entre un PAR de vecinos cuya suma se mantiene fija, así que ninguna otra columna se mueve. Requiere <code>resizeLabel</code> (nueva opción, gate de a11y): el separador es binding-insertado, nunca autorado, así que nada más lo nombra para un lector de pantalla.",
+              "body": "Se agrega <code>resizableColumns</code> (opt-in, apagada por defecto: el alcance auditado de <code>treegrid-1</code> sigue siendo texto plano sin chrome extra a menos que el consumidor lo pida). Encendida, el binding inserta un separador WAI-ARIA APG \"Window Splitter\" real (<code>role=\"separator\"</code>, <code>aria-orientation=\"vertical\"</code>, flechas/Shift+flecha/Home/End/Enter) entre cada par de encabezados de columna. Nunca el último, no tiene vecino siguiente con quien redistribuir ancho. Es el mismo primitivo compartido que ya usa el separador de <code>Sidebar</code> (<code>@skryensya/core/splitter</code>, publicado esta sesión: el emparejador de teclado y el umbral de arrastre puro en un solo lugar, en vez de reescritos en cada consumidor), con la diferencia real documentada en <code>resolveColumnResize</code>: <code>Sidebar</code> pinza UN valor contra un límite fijo vía CSS <code>clamp()</code>; una columna redistribuye ancho entre un PAR de vecinos cuya suma se mantiene fija, así que ninguna otra columna se mueve. Requiere <code>resizeLabel</code> (nueva opción, gate de a11y): el separador es binding-insertado, nunca escrito a mano, así que nada más lo nombra para un lector de pantalla.",
               "title": "Nueva opción resizableColumns, columnas redimensionables por arrastre"
             },
             "kind": "feature",
@@ -3325,7 +3375,7 @@
               "title": "linkTone \"primary\" is renamed to \"accent\""
             },
             "es": {
-              "body": "Mismo cambio que <code>button</code> (misma fecha, mismo motivo): <code>linkTone</code> solo tenía un valor posible, <code>primary</code>, y ese nombre describía el color como una posición de jerarquía (\"el tono principal\") cuando en realidad es un interruptor binario. El link toma el color de la marca o no lo toma, sin escala entre medio. La cadena de tokens detrás (<code>--color-text-link</code> → <code>--color-text-accent</code>) ya decía \"accent\" dos niveles abajo; el nombre de la opción ahora dice lo mismo. Distinto de <code>Text</code>'s <code>tone</code> (<code>primary</code>/<code>secondary</code>/ <code>tertiary</code>/<code>danger</code>), que no se toca: ahí \"primary\" es el primer peldaño de una escala de énfasis, no una afirmación de intención. Un consumidor con <code>data-tone=\"primary\"</code> en un <code>&lt;a&gt;</code> autorado a mano deja de pintar el color de marca; <code>linkTone=\"primary\"</code> deja de tipar.",
+              "body": "Mismo cambio que <code>button</code> (misma fecha, mismo motivo): <code>linkTone</code> solo tenía un valor posible, <code>primary</code>, y ese nombre describía el color como una posición de jerarquía (\"el tono principal\") cuando en realidad es un interruptor binario. El link toma el color de la marca o no lo toma, sin escala entre medio. La cadena de tokens detrás (<code>--color-text-link</code> → <code>--color-text-accent</code>) ya decía \"accent\" dos niveles abajo; el nombre de la opción ahora dice lo mismo. Distinto de <code>Text</code>'s <code>tone</code> (<code>primary</code>/<code>secondary</code>/ <code>tertiary</code>/<code>danger</code>), que no se toca: ahí \"primary\" es el primer peldaño de una escala de énfasis, no una afirmación de intención. Un consumidor con <code>data-tone=\"primary\"</code> en un <code>&lt;a&gt;</code> escrito a mano deja de pintar el color de marca; <code>linkTone=\"primary\"</code> deja de tipar.",
               "title": "linkTone \"primary\" pasa a llamarse \"accent\""
             },
             "kind": "breaking",
@@ -3703,7 +3753,7 @@
         },
         "inert": {
           "attr": "inert",
-          "default": false,
+          "default": true,
           "trueValue": "",
           "type": "boolean"
         },
@@ -3729,7 +3779,6 @@
         },
         "ringRadius": {
           "attr": "data-ring-radius",
-          "default": 6,
           "machineInput": true,
           "type": "number"
         },
@@ -3773,7 +3822,7 @@
             "las etiquetas no pueden taparlo: viven en los cuatro márgenes de una grilla y el sujeto ocupa la celda del medio, así que el solape no se evita, no se puede representar",
             "cada etiqueta llega a su parte por una línea guía de uno o dos tramos, sólo rectos o de 45 grados: la menor cantidad que alcanza",
             "el dibujo se recalcula solo cuando cambia el tamaño del contenedor, cuando el sujeto reflowea o cuando llega una tipografía: dónde cae una parte no es un valor que se pueda escribir al componer",
-            "con `inert`, el sujeto es una muestra y no un control: no toma puntero, ni foco, ni teclado, y sale del árbol de accesibilidad"
+            "el sujeto es una muestra y no un control: `inert` viene prendido, no toma puntero, ni foco, ni teclado, y sale del árbol de accesibilidad"
           ]
         }
       },
@@ -3819,6 +3868,14 @@
                     "values": [
                       "first",
                       "all"
+                    ]
+                  },
+                  "mobileAlign": {
+                    "attr": "data-mobile-align",
+                    "type": "enum",
+                    "values": [
+                      "start",
+                      "end"
                     ]
                   },
                   "ringDistance": {
@@ -3894,6 +3951,7 @@
                 "itemOptions": [
                   "for",
                   "side",
+                  "mobileAlign",
                   "match",
                   "ringPlacement",
                   "ringDistance",
@@ -18647,7 +18705,7 @@
             "los datos vienen paginados del servidor; la aplicación debe controlar esa consulta"
           ],
           "useWhen": [
-            "una tabla autorada necesita paginar filas en el cliente y cambiar cuántas se ven"
+            "una tabla escrita a mano necesita paginar filas en el cliente y cambiar cuántas se ven"
           ]
         },
         "TablePagerBar": {
@@ -21974,5 +22032,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "a88e76a9d597fd32"
+  "sourceHash": "ce603ac99c8c13ef"
 }

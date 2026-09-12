@@ -18,6 +18,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",
     "@skryensya/ai-compiler": "workspace:*",
+    "@skryensya/core": "workspace:*",
     "@skryensya/recipes": "workspace:*",
     "@skryensya/snippets": "workspace:*",
     "zod": "^3.24.1"

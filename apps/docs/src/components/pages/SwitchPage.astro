@@ -1,15 +1,14 @@
 ---
 import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/switch.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { switchTree, tileSwitchTree } from "../../demos/switch";
+import { switchAnatomyTree, switchTree, tileSwitchTree } from "../../demos/switch";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/switch.yaml?raw";
-import cssSource from "@core/css/components/switch.css?raw";
-import reactSource from "@react/src/components/selection.tsx?raw";
-import vanillaMountSource from "@vanilla/src/components/tile-switch.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/tile-switch.svelte.test.ts?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -27,21 +26,12 @@ for (const root of document.querySelectorAll(
     console.log(root.dataset.value, event.detail.checked);
   });
 }`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/switch.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/css/components/switch.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/selection.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/vanilla/src/components/tile-switch.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/tile-switch.svelte.test.ts", source: vanillaTestSource, language: "ts" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Switch"
   description={t("switchPage.description")}
   contractId="switch"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/switch.css", probe: "sk-switch" }]}
   tests={[
     {
@@ -58,6 +48,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("switchPage.lede")} />
+
+    <p set:html={t("switchPage.anatomyBody")} />
+    <ComponentPreview
+      tree={switchAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("switchPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={switchTree(t)} label="Switch" />
     <p set:html={t("switchPage.body")} />
 

@@ -6,6 +6,10 @@ export const backToTopMessages = {
     "backToTop.betaBadge": "Beta",
     "backToTop.lede":
       "En una página larga hay un movimiento que se repite: volver al principio. El teclado tiene <kbd>Inicio</kbd> y el trackpad un envión fuerte, y ninguno se ve. Un botón visible mientras se baja es la señal de que ese movimiento existe. Dónde se ancla no lo decide el componente: acá va alineado al rail del índice, porque ese es el borde que ya responde \"dónde estoy, llevame a otro lado\".",
+    "backToTop.anatomyBody":
+      "Este diagrama nombra el root, el icono y la etiqueta. El espécimen es el pill con texto visible: por defecto la etiqueta está recortada a un nombre accesible, y un diagrama que nombrara una parte invisible sería peor que omitirla. Está congelado; el objeto vivo y el scroll empiezan abajo.",
+    "backToTop.anatomyLabel": "Anatomía de BackToTop",
+    "backToTop.anatomyPreviewLabel": "BackToTop, parte por parte",
     "backToTop.whenTitle": "Cuándo usarlo",
     "backToTop.whenBody1":
       "Cuando la página es larga y quien baja mucho quiere volver arriba sin arrastrar el scroll a mano. El botón viene con <code>hidden</code>: sin JavaScript no ocupa lugar, y con él aparece recién después de pasar <code>threshold</code> píxeles (400 por defecto) y se esconde de nuevo al volver.",
@@ -45,7 +49,7 @@ export const backToTopMessages = {
       "Un botón visible mientras se baja es la señal de que ese movimiento existe. No está desde el principio: aparece recién cuando ya te alejaste lo suficiente como para quererlo, y se esconde de nuevo cuando llegás. Cuando no hace falta, no ocupa lugar.",
     "backToTop.scrollDemoP3":
       "El scroll lo hace la plataforma con <code>scrollTo</code>: suave por defecto, instantáneo si pediste menos movimiento. Con <code>target</code>, además mueve el foco a algo enfocable de arriba, así el siguiente Tab arranca del principio y no de un control que se acaba de esconder.",
-    "backToTop.htmlTitle": "HTML autorado",
+    "backToTop.htmlTitle": "HTML escrito a mano",
     "backToTop.targetTitle": "Umbral y foco",
     "backToTop.targetBody":
       '<code>data-threshold</code> son los píxeles de scroll antes de aparecer. <code>data-target</code> es un selector de algo enfocable arriba: sin él, el foco se queda en un botón que ya no se ve; con él, el siguiente Tab sigue desde el principio. El destino tiene que poder recibir el foco (<code>tabindex="-1"</code> si es un landmark o un encabezado).',
@@ -72,7 +76,7 @@ export const backToTopMessages = {
     "backToTop.test18": "Mueve el foco a <code>target</code> después del scroll, sin iniciar uno segundo.",
     "backToTop.test19": "Actúa sobre un scroller interno nombrado en vez de la ventana.",
     "backToTop.test20": "Deja de sincronizar una vez limpiado (<code>off()</code>).",
-    "backToTop.test21": "Se monta una sola vez por raíz autorada; una segunda llamada no hace nada.",
+    "backToTop.test21": "Se monta una sola vez por raíz escrita a mano; una segunda llamada no hace nada.",
   },
   en: {
 
@@ -81,6 +85,10 @@ export const backToTopMessages = {
     "backToTop.betaBadge": "Beta",
     "backToTop.lede":
       "A long page has one move the reader makes over and over: get back to the start. The keyboard has <kbd>Home</kbd> and a trackpad has a hard flick, and neither is discoverable. A button that stays visible while scrolling is the affordance that says the move exists. Where it anchors is not the component's call: here it aligns to the index rail, the edge that already answers \"where am I, take me somewhere\".",
+    "backToTop.anatomyBody":
+      "This diagram names the root, the icon, and the label. The specimen is the labelled pill: by default the label is clipped to an accessible name, and a diagram that named an invisible part would be worse than omitting it. It is frozen; the live object and scroll demos start below.",
+    "backToTop.anatomyLabel": "BackToTop anatomy",
+    "backToTop.anatomyPreviewLabel": "BackToTop, part by part",
     "backToTop.whenTitle": "When to use it",
     "backToTop.whenBody1":
       "When the page is long and a reader who scrolled far wants back to the top without dragging the scrollbar by hand. The button ships <code>hidden</code>: with no JavaScript it takes no room, and with it, it appears only once the reader is <code>threshold</code> pixels past the top (400 by default) and hides again on the way back.",

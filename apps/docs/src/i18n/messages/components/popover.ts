@@ -15,6 +15,10 @@ export const popoverMessages = {
     "demo.popoverPlacement.inlineEnd": "Se abre al final en línea (derecha en LTR).",
 
     "popoverPage.description": "Contenido no modal con título, descripción y cierre explícito sobre top layer nativo.",
+    "popoverPage.anatomyBody":
+      "Este diagrama nombra el trigger, el panel abierto, el título, la descripción y el cierre. El espécimen está congelado; los popovers vivos empiezan abajo.",
+    "popoverPage.anatomyLabel": "Anatomía de Popover",
+    "popoverPage.anatomyPreviewLabel": "Popover abierto, parte por parte",
     "popoverPage.structuredTitle": "Contenido estructurado",
     "popoverPage.structuredBody":
       "El contrato no tiene un slot de <code>header</code> ni de <code>footer</code>, y no le hace falta: <code>children</code> acepta un nodo, así que una fila de encabezado (avatar y nombre) y una fila de acciones al final son composición, hechas con las mismas piezas publicadas (Inline, Stack, Avatar, Text, Button): nada de marcado propio de esta página.",
@@ -63,6 +67,10 @@ export const popoverMessages = {
     "demo.popoverPlacement.inlineEnd": "Opens at inline-end (right in LTR).",
 
     "popoverPage.description": "Non-modal content with a title, description, and explicit close over the native top layer.",
+    "popoverPage.anatomyBody":
+      "This diagram names the trigger, the open panel, the title, the description, and the close control. The specimen is frozen; the live popovers start below.",
+    "popoverPage.anatomyLabel": "Popover anatomy",
+    "popoverPage.anatomyPreviewLabel": "An open Popover, part by part",
     "popoverPage.structuredTitle": "Structured content",
     "popoverPage.structuredBody":
       "The contract has no <code>header</code> or <code>footer</code> slot, and does not need one: <code>children</code> accepts a node, so a header row (avatar and name) and an action row at the end are composition, built from the same published pieces (Inline, Stack, Avatar, Text, Button): no markup of this page's own.",

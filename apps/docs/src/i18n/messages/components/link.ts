@@ -12,7 +12,7 @@ export const linkMessages = {
     "linkPage.tileTitle": "Link de superficie: TileLink",
     "linkPage.tileBody1":
       "Cuando toda una superficie es un único destino, usa <code>TileLink</code>. También renderiza un <code>&lt;a&gt;</code>, pero no es <code>sk-link</code>: conserva la geometría Tile y su state layer porque el contexto, no un subrayado en prosa, comunica que la superficie es navegable.",
-    "linkPage.tileBody2": "El HTML autorado funciona sin inicialización. <code>createTileLink</code> solo crea el ancla cuando el árbol se genera desde JavaScript.",
+    "linkPage.tileBody2": "El HTML escrito a mano funciona sin inicialización. <code>createTileLink</code> solo crea el ancla cuando el árbol se genera desde JavaScript.",
     "linkPage.whyTitle": "Por qué un solo tipo, y no tres",
     "linkPage.whyBody1":
       'Un enlace dentro de un bloque de texto <strong>no se puede distinguir por color solo</strong>: es <a class="sk-link sk-interactive" href="https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html">WCAG 1.4.1 (Use of Color)</a>, nivel A. Solo hay dos formas de cumplir: un indicador que no sea color <em>en reposo</em>, un subrayado permanente, o un contraste de ≥3:1 entre el color del enlace y el del texto <em>más</em> una señal no-color en hover <em>y</em> foco.',

@@ -1,8 +1,12 @@
 ---
+/* The anatomy diagram at the top of the page is an Annotated frame, so this page needs its sheet. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  colorPickerAnatomyCss,
+  colorPickerAnatomyHtml,
   colorPickerTree,
   compactColorPickerTree,
   disabledColorPickerTree,
@@ -11,31 +15,14 @@ import {
 } from "../../demos/color-picker";
 import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/color-picker.css";
-import contractSource from "@contracts/semantic/color-picker.yaml?raw";
-import coreSource from "@core/src/color-picker.ts?raw";
-import colorSource from "@core/src/color.ts?raw";
-import cssSource from "@core/css/components/color-picker.css?raw";
-import vanillaSource from "@vanilla/src/components/ColorPicker.svelte?raw";
-import vanillaPanelSource from "@vanilla/src/components/ColorPickerPanel.svelte?raw";
-import vanillaMountSource from "@vanilla/src/components/color-picker.ts?raw";
-import reactSource from "@react/src/components/color-picker.tsx?raw";
+import "@skryensya/core/components/button.css";
+import "@skryensya/core/patterns/anchored.css";
 
 const t = useTranslations(getLocale(Astro.url));
 
 const styles = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/color-picker.css";`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/color-picker.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/color-picker.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/src/color.ts", source: colorSource, language: "ts" },
-  { id: "packages/core/css/components/color-picker.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/ColorPicker.svelte", source: vanillaSource, language: "svelte" },
-  { id: "packages/vanilla/src/components/ColorPickerPanel.svelte", source: vanillaPanelSource, language: "svelte" },
-  { id: "packages/vanilla/src/components/color-picker.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/react/src/components/color-picker.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -43,7 +30,6 @@ const sourceFiles = [
   description={t("colorPicker.description")}
   badge={t("colorPicker.betaBadge")}
   contractId="color-picker"
-  sourceFiles={sourceFiles}
   styleGroups={[
     { file: "components/color-picker.css", probe: "sk-color-picker", title: "ColorPicker" },
     { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
@@ -63,7 +49,7 @@ const sourceFiles = [
           description: t("colorPicker.test3"),
         },
         {
-          name: "commits a typed hex value and fills every channel row from it",
+          name: "commits a typed hex value and only shows the selected channel format",
           description: t("colorPicker.test4"),
         },
         {
@@ -84,6 +70,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("colorPicker.lede")} />
+
+    <p set:html={t("colorPicker.anatomyBody")} />
+    <ComponentPreview
+      html={colorPickerAnatomyHtml(t)}
+      css={colorPickerAnatomyCss}
+      label={t("colorPicker.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("colorPicker.nativeTitle")}</h3>
     <p set:html={t("colorPicker.nativeBody")} />

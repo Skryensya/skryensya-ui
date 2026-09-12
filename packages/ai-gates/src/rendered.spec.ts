@@ -1,6 +1,6 @@
 import { validateUsageTree } from "@skryensya/ai-compiler/validate";
 import { emitMarkup } from "@skryensya/ai-compiler/emit";
-import { contracts } from "@skryensya/ai-compiler/registry";
+import { contracts } from "@skryensya/core/registry";
 import {
   collectionItems,
   isUsageTree,
@@ -8,7 +8,7 @@ import {
   slotsOf,
   type SlotContent,
   type UsageTree,
-} from "@skryensya/ai-compiler/usage-tree";
+} from "@skryensya/core/usage-tree";
 import { canonicalTrees } from "./trees.js";
 /*
  * `test` comes from the fixtures, not from `@playwright/test`, for the worker-scoped `stagePage`

@@ -13,7 +13,7 @@ export const primitivesMessages = {
     "primitivasPage.lede":
       "Box, Wrapper, ImageFrame, Stack, Inline y Grid son patterns de layout. Text, Heading y Link expresan el rol de lectura; no reemplazan la semántica: eliges el elemento que corresponde al contenido.",
     "primitivasPage.previewLabel": "Primitivas",
-    "primitivasPage.htmlTitle": "HTML autorado",
+    "primitivasPage.htmlTitle": "HTML escrito a mano",
     "primitivasPage.htmlBody":
       "Importa <code>patterns/layout.css</code> para Box, Wrapper, ImageFrame, Stack, Inline y Grid, y <code>components/typography.css</code> para Text, Heading y Link. No requieren inicialización vanilla.",
     "primitivasPage.contractsTitle": "Contratos",

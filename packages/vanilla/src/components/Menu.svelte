@@ -6,7 +6,8 @@
     supportsAnchorPositioning,
   } from "@skryensya/core/anchored";
   import { menu } from "@skryensya/core/machines";
-  import { menuAttrs, type MenuItemKind } from "@skryensya/core/menu";
+  import { menuAttrs, menuParts, type MenuItemKind } from "@skryensya/core/menu";
+  import { selectorsFor } from "@skryensya/core/selectors";
   import { getIntentReadout, type IntentReadoutHandle } from "@skryensya/core/menu-intent-readout";
   import { createMenuSafeArea, type MenuSafeAreaHandle } from "@skryensya/core/menu-safe-area";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
@@ -22,15 +23,21 @@
    */
   const root = getRoot();
 
+  /*
+   * Derived from the contract's own mount attributes; see `selectorsFor`.
+   *
+   * The two exceptions below accept EITHER an attribute or the BEM class. The class half comes from
+   * `menuParts`, so it has one declaration like everything else. The attribute half does not:
+   * `menuAttrs` publishes no `itemLabel`/`itemIndicator`, so nothing in the emitter ever writes
+   * `data-sk-menu-item-label`, and the only markup carrying it is this layer's own test fixtures.
+   * In real emitted markup the class is what matches. Kept spelled out rather than derived because
+   * deriving it would imply the contract declares it, and the honest reading is that this is a gap:
+   * see docs/pending-tasks.md.
+   */
   const selector = {
-    trigger: "[data-sk-menu-trigger]",
-    contextTrigger: "[data-sk-menu-context-trigger]",
-    positioner: "[data-sk-menu-positioner]",
-    content: "[data-sk-menu-content]",
-    item: "[data-sk-menu-item]",
-    itemLabel: "[data-sk-menu-item-label], .sk-menu__item-label",
-    itemIndicator: "[data-sk-menu-item-indicator], .sk-menu__item-indicator",
-    root: "[data-sk-menu]",
+    ...selectorsFor(menuAttrs),
+    itemLabel: `[data-sk-menu-item-label], .${menuParts.itemLabel}`,
+    itemIndicator: `[data-sk-menu-item-indicator], .${menuParts.itemIndicator}`,
   } as const;
 
   type AuthoredItem = {

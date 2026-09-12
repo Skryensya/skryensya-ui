@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
 
 /*
  * The four page demos share the same Carousel contract. Authored options cover both former gaps:
@@ -87,6 +88,35 @@ function featureSlide(
     },
   };
 }
+
+/*
+ * Autoplay on, so the enhancer draws controls, dots AND the pause button. Two slides keep the
+ * specimen readable under a dense set of labels; individual dot thumbs stay out of the densest cut.
+ */
+export const carouselAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("carousel.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "carousel",
+      signature: "Carousel",
+      options: { autoplayDelay: 3500, slideSize: "min(70%, 18rem)" },
+      attrs: { "aria-label": t("demo.carousel.label") },
+      children: features.slice(0, 2).map(([feature, position]) => featureSlide(t, feature, position)),
+    },
+    items: [
+      namePart(".sk-carousel", "block-start"),
+      namePart(".sk-carousel__track", "inline-start"),
+      namePart(".sk-carousel__slide", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-carousel__controls", "block-end"),
+      namePart(".sk-carousel__button", "inline-start"),
+      namePart(".sk-carousel__autoplay", "inline-end"),
+      namePart(".sk-carousel__dots", "inline-end"),
+      namePart(".sk-carousel__dot", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
+  },
+});
 
 /** Four feature cards over the same scroll-snap track; controls remain enhancer-owned. */
 export const carouselCardsTree = (t: Translate): UsageTree => ({

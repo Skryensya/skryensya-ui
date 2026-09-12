@@ -2,18 +2,13 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { comboboxTree } from "../../demos/combobox";
+import { comboboxAnatomyCss, comboboxAnatomyHtml, comboboxTree } from "../../demos/combobox";
 import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/combobox.css";
 import "@skryensya/core/components/form-field.css";
 import "@skryensya/core/patterns/scrollbar.css";
-import contractSource from "@contracts/semantic/combobox.yaml?raw";
-import coreSource from "@core/src/combobox.ts?raw";
-import cssSource from "@core/css/components/combobox.css?raw";
-import vanillaMountSource from "@vanilla/src/components/combobox.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/combobox.test.ts?raw";
-import reactSource from "@react/src/components/combobox.tsx?raw";
-import reactTestSource from "@react/src/components/combobox.test.tsx?raw";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
@@ -31,16 +26,6 @@ import { initComponents } from "@skryensya/vanilla/auto";
 
 mountIcons(document, lucideIcons);
 initComponents();`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/combobox.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/combobox.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/combobox.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/combobox.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/combobox.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/combobox.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/combobox.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -48,7 +33,6 @@ const sourceFiles = [
   description={t("combobox.description")}
   badge={t("combobox.betaBadge")}
   contractId="combobox"
-  sourceFiles={sourceFiles}
   styleGroups={[
     { file: "components/combobox.css", probe: "sk-combobox", title: "Combobox" },
     { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
@@ -79,6 +63,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("combobox.lede")} />
+
+    <p set:html={t("combobox.anatomyBody")} />
+    <ComponentPreview
+      html={comboboxAnatomyHtml(t)}
+      css={comboboxAnatomyCss}
+      label={t("combobox.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={comboboxTree(t, locale)} js={js} label="Combobox" viewport="menu" />
 
     <h3>{t("component.contractNotesTitle")}</h3>

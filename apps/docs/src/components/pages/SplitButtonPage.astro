@@ -1,10 +1,13 @@
 ---
 import "@skryensya/core/components/split-button.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import "@skryensya/core/components/menu.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  splitButtonAnatomyTree,
   splitButtonTree,
   splitButtonSmallTree,
   splitButtonMenuFirstTree,
@@ -13,12 +16,8 @@ import {
   splitButtonGhostTree,
   splitButtonDangerTree,
 } from "../../demos/split-button";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/split-button.yaml?raw";
-import coreSource from "@core/src/split-button.ts?raw";
-import cssSource from "@core/css/components/split-button.css?raw";
-import reactSource from "@react/src/components/split-button.tsx?raw";
-import reactTestSource from "@react/src/components/split-button.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -33,21 +32,12 @@ import { initComponents } from "@skryensya/vanilla/auto";
 
 mountIcons(document, lucideIcons);
 initComponents();`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/split-button.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/split-button.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/split-button.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/split-button.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/split-button.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="SplitButton"
   description={t("splitButtonPage.description")}
   contractId="split-button"
-  sourceFiles={sourceFiles}
   styleGroups={[
     { file: "components/split-button.css", probe: "sk-split-button", title: "SplitButton" },
     { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
@@ -86,6 +76,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("splitButtonPage.description")} />
+
+    <p set:html={t("splitButtonPage.anatomyBody")} />
+    <ComponentPreview
+      tree={splitButtonAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("splitButtonPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={splitButtonTree(t)} js={js} label="SplitButton" viewport="menu" />
 
     <h3>{t("splitButtonPage.smallTitle")}</h3>

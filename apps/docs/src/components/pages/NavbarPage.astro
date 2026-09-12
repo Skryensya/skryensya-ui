@@ -1,15 +1,15 @@
 ---
 import "@skryensya/core/components/navbar.css";
+import "@skryensya/core/patterns/nav-list.css";
+import "@skryensya/core/components/button.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { navbarTree } from "../../demos/navbar";
+import { navbarAnatomyTree, navbarTree } from "../../demos/navbar";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/navbar.yaml?raw";
-import coreSource from "@core/src/navbar.ts?raw";
-import cssSource from "@core/css/components/navbar.css?raw";
-import reactSource from "@react/src/components/navbar.tsx?raw";
-import reactTestSource from "@react/src/components/navbar.test.tsx?raw";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
@@ -17,21 +17,12 @@ const t = useTranslations(getLocale(Astro.url));
 const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/components/navbar.css";
 @import "@skryensya/core/patterns/nav-list.css";`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/navbar.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/navbar.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/navbar.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/navbar.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/navbar.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Navbar"
   description={t("navbarPage.description")}
   contractId="navbar"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/navbar.css", probe: "sk-navbar" }]}
   tests={[
     {
@@ -47,6 +38,22 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("navbarPage.lede")} />
+
+    <p set:html={t("navbarPage.anatomyBody")} />
+    <ComponentPreview
+      tree={navbarAnatomyTree(t, {
+        home: "/",
+        projects: "/proyectos",
+        reports: "/reportes",
+        team: "/equipo",
+      })}
+      css={annotationDemoCss}
+      label={t("navbarPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
 
     <h3>{t("navbarPage.linksTitle")}</h3>
     <p set:html={t("navbarPage.linksBody")} />

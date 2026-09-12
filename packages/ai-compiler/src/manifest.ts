@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import type { ComponentContract } from "@skryensya/core/contract";
-import { contracts } from "./registry.js";
+import { contracts } from "@skryensya/core/registry";
 import { readOverlays, type ContractSemantics } from "./overlay.js";
 import { readChangelogs, type ContractChangelog, type ReleaseLedger } from "./changelog.js";
 

@@ -9,6 +9,10 @@ export const formFieldMessages = {
     "formFieldPage.title": "FormField",
     "formFieldPage.lede":
       "Un campo es cromo más un control, y lo que los une son seis ids. Escritos a mano, cada uno es una oportunidad de estar mal en silencio: un <code>aria-describedby</code> con un typo no se ve en pantalla y rompe a todos los lectores de pantalla que leen el formulario.",
+    "formFieldPage.anatomyBody":
+      "Este diagrama nombra el rótulo, el control, la ayuda y el error. El espécimen está congelado; los campos vivos empiezan abajo.",
+    "formFieldPage.anatomyLabel": "Anatomía de FormField",
+    "formFieldPage.anatomyPreviewLabel": "FormField, parte por parte",
     "formFieldPage.wiringTitle": "Seis ids a partir de un nombre",
     "formFieldPage.wiringBody":
       "El rótulo apunta al control, el control apunta de vuelta a la ayuda y al error, y cada uno de esos carga el id al que lo apuntan. El contrato los deriva todos del id del campo: ningún binding se inventa uno propio, y por eso los ids de React (<code>useId</code>) y los del emisor (un slug) pueden ser distintos sin que la relación cambie.",
@@ -41,6 +45,10 @@ export const formFieldMessages = {
     "formFieldPage.title": "FormField",
     "formFieldPage.lede":
       "A field is chrome plus a control, and what binds them is six ids. Written by hand, every one of them is a chance to be silently wrong: a mistyped <code>aria-describedby</code> shows nothing on screen and breaks every screen reader that reads the form.",
+    "formFieldPage.anatomyBody":
+      "This diagram names the label, control, hint, and error. The specimen is frozen; the live fields start below.",
+    "formFieldPage.anatomyLabel": "FormField anatomy",
+    "formFieldPage.anatomyPreviewLabel": "FormField, part by part",
     "formFieldPage.wiringTitle": "Six ids from one name",
     "formFieldPage.wiringBody":
       "The label points at the control, the control points back at the hint and the error, and each of those carries the id being pointed at. The contract derives all of them from the field's own id: neither binding invents one, which is why React's ids (<code>useId</code>) and the emitter's (a slug) can differ without the relationship changing.",

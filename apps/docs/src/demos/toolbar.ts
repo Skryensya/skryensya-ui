@@ -18,6 +18,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { toolbarBindingItems, toolbarScreenItems } from "./data/toolbar";
+import { namePart } from "./annotation-parts";
 
 const iconButton = (
   label: string,
@@ -37,6 +38,56 @@ const iconButton = (
       attrs: { "aria-label": label },
       children: { contract: "icon", signature: "Icon", options: { name: icon } },
     },
+  },
+});
+
+
+/** Bar, group and separator: toolbar chrome without nested tooltips cluttering the rings. */
+export const toolbarAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("toolbarPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "toolbar",
+      signature: "Toolbar",
+      options: { label: t("demo.toolbar.actions") },
+      children: [
+        {
+          contract: "toolbar",
+          signature: "ToolbarGroup",
+          children: [
+            {
+              contract: "button",
+              signature: "Button.action",
+              options: { iconOnly: true, size: "sm", variant: "ghost" },
+              attrs: { "aria-label": t("demo.toolbar.edit") },
+              children: { contract: "icon", signature: "Icon", options: { name: "edit" } },
+            },
+            {
+              contract: "button",
+              signature: "Button.action",
+              options: { iconOnly: true, size: "sm", variant: "ghost" },
+              attrs: { "aria-label": t("demo.toolbar.copy") },
+              children: { contract: "icon", signature: "Icon", options: { name: "copy" } },
+            },
+          ],
+        },
+        { contract: "toolbar", signature: "ToolbarSeparator" },
+        {
+          contract: "button",
+          signature: "Button.action",
+          options: { iconOnly: true, size: "sm", variant: "ghost" },
+          attrs: { "aria-label": t("demo.toolbar.delete") },
+          children: { contract: "icon", signature: "Icon", options: { name: "delete" } },
+        },
+      ],
+    },
+    items: [
+      namePart(".sk-toolbar", "block-start"),
+      namePart(".sk-toolbar__group", "inline-start"),
+      namePart(".sk-toolbar__separator", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
   },
 });
 

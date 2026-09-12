@@ -9,6 +9,18 @@ export const calendarMessages = {
     "calendar.betaBadge": "Beta",
     "calendar.lede":
       'El grid de fecha en sí, separado del campo que lo abre. <a href="/components/date-picker">DatePicker</a> lo nestea dentro de un popover; esta página es el mismo componente de pie, para cuando el calendario <em>es</em> la UI (una página de reservas, un filtro de dashboard) y no hace falta un input detrás.',
+    "calendar.anatomyBody":
+      "Vista de día: etiqueta, encabezado (anterior, view-trigger, siguiente), tabla, cabecera de días, cuerpo, celda y su trigger. Las vistas de mes y año siguen abajo.",
+    "calendar.anatomyLabel": "Anatomía de Calendar (día)",
+    "calendar.anatomyPreviewLabel": "Calendar, vista de día",
+    "calendar.anatomyMonthBody":
+      "Vista de mes: la misma tabla lleva el modificador <code>sk-calendar__month-grid</code> (no es marcado aparte). Sin cabecera de días de la semana; doce celdas en 4×3. Espécimen congelado: un Calendar vivo siempre abre en día.",
+    "calendar.anatomyMonthLabel": "Anatomía de Calendar (mes)",
+    "calendar.anatomyMonthPreviewLabel": "Calendar, vista de mes",
+    "calendar.anatomyYearBody":
+      "Vista de año/década: <code>sk-calendar__year-grid</code> es el modificador sobre la misma tabla. El view-trigger muestra el rango de la década; las celdas son años.",
+    "calendar.anatomyYearLabel": "Anatomía de Calendar (año)",
+    "calendar.anatomyYearPreviewLabel": "Calendar, vista de año",
     "calendar.gridTitle": "Grid",
     "calendar.gridBody":
       "Detrás sigue corriendo <code>@zag-js/date-picker</code> (no hay una máquina de calendario separada en este stack), configurada <code>inline</code>: la misma navegación por teclado, el mismo grid con seis semanas fijas.",
@@ -38,9 +50,9 @@ export const calendarMessages = {
       "<code>sk-calendar__cell-trigger</code> es el mismo botón de celda en día, mes y año: mismo tamaño, mismo estado de selección/hoy/deshabilitado.",
     "calendar.a11yBody":
       "El grid es <code>role=\"grid\"</code> navegable por teclado en las tres vistas. El locale determina meses y las abreviaturas de dos letras visibles en el grid de día; el nombre completo localizado permanece en cada <code>&lt;abbr&gt;</code>.",
-    "calendar.test1": "Genera todo el grid desde una raíz autorada vacía, una sola vez.",
-    "calendar.test2": "Nombra los días de la semana en el locale autorado.",
-    "calendar.test3": "Abre en la fecha autorada en vez de en hoy.",
+    "calendar.test1": "Genera todo el grid desde una raíz escrita a mano vacía, una sola vez.",
+    "calendar.test2": "Nombra los días de la semana en el locale escrito a mano.",
+    "calendar.test3": "Abre en la fecha escrita a mano en vez de en hoy.",
     "calendar.test4": "Pinta cada control del calendario en un solo escalón de tamaño, incluidas las celdas de día.",
   },
   en: {
@@ -53,6 +65,18 @@ export const calendarMessages = {
     "calendar.betaBadge": "Beta",
     "calendar.lede":
       'The date grid itself, separate from the field that opens it. <a href="/en/components/date-picker">DatePicker</a> nests it inside a popover; this page is the same component standing alone, for when the calendar <em>is</em> the UI (a reservations page, a dashboard filter) and no input is needed behind it.',
+    "calendar.anatomyBody":
+      "Day view: label, header (previous, view-trigger, next), table, weekday header, body, cell and its trigger. Month and year views follow below.",
+    "calendar.anatomyLabel": "Calendar anatomy (day)",
+    "calendar.anatomyPreviewLabel": "Calendar, day view",
+    "calendar.anatomyMonthBody":
+      "Month view: the same table carries the <code>sk-calendar__month-grid</code> modifier (not separate markup). No weekday header; twelve cells in a 4×3 grid. Frozen specimen: a live Calendar always opens on day.",
+    "calendar.anatomyMonthLabel": "Calendar anatomy (month)",
+    "calendar.anatomyMonthPreviewLabel": "Calendar, month view",
+    "calendar.anatomyYearBody":
+      "Year/decade view: <code>sk-calendar__year-grid</code> is the modifier on the same table. The view-trigger shows the decade range; cells are years.",
+    "calendar.anatomyYearLabel": "Calendar anatomy (year)",
+    "calendar.anatomyYearPreviewLabel": "Calendar, year view",
     "calendar.gridTitle": "Grid",
     "calendar.gridBody":
       "Underneath it still runs <code>@zag-js/date-picker</code> (there is no separate calendar machine in this stack), configured <code>inline</code>: the same keyboard navigation, the same grid with six fixed weeks.",

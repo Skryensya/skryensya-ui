@@ -1,28 +1,21 @@
 ---
+import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/button.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { annotationDemoCss } from "../../demos/annotation";
+import { expandableTileTree, tileAnatomyTree } from "../../demos/tile";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/tile.yaml?raw";
-import coreSource from "@core/src/tile.ts?raw";
-import coreContractsSource from "@core/src/tile-contracts.ts?raw";
-import cssSource from "@core/css/components/tile.css?raw";
-import reactSource from "@react/src/components/tile.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
-
-const sourceFiles = [
-  { id: "contracts/semantic/tile.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/tile.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/src/tile-contracts.ts", source: coreContractsSource, language: "ts" },
-  { id: "packages/core/css/components/tile.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/tile.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Tile"
   description={t("tilePage.description")}
   contractId="tile"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/tile.css", probe: "sk-tile" }]}
   tests={[
     {
@@ -43,6 +36,19 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("tilePage.lede")} />
+
+    <p set:html={t("tilePage.anatomyBody")} />
+    <ComponentPreview
+      tree={tileAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("tilePage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
+    <ComponentPreview tree={expandableTileTree(t)} label={t("tilePage.expandableLabel")} />
+
     <p set:html={t("tilePage.body1")} />
     <p set:html={t("tilePage.body2")} />
 

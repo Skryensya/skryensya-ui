@@ -12,6 +12,7 @@ import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import CodeBlock from "../CodeBlock.astro";
 import {
+  qrCodeAnatomyTree,
   qrCodeCardTree,
   qrCodeLevelsTree,
   qrCodeLogoTree,
@@ -23,15 +24,13 @@ import {
   qrCodeTonesTree,
   qrCodeTree,
 } from "../../demos/qr-code";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import semanticSource from "@contracts/semantic/qr-code.yaml?raw";
-import changelogSource from "@contracts/changelog/qr-code.yaml?raw";
-import coreSource from "@core/src/qr-code.ts?raw";
-import reactSource from "@react/src/components/qr-code.tsx?raw";
-import cssSource from "@core/css/components/qr-code.css?raw";
 /* The sheet itself, not only its source: the Style tab resolves each hook against a real element,
    and a page that never loads `components/qr-code.css` would show every value blank. */
 import "@skryensya/core/components/qr-code.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 /* Every family the demo trees below actually compose: the level and shape rows are Inline/Stack of
    Code labels, the logo is an Icon, and the closing card is a Box with a heading and a link. */
 import "@skryensya/core/patterns/layout.css";
@@ -50,14 +49,6 @@ import "@skryensya/core/components/button.css";
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 
-const sourceFiles = [
-  { id: "contracts/semantic/qr-code.yaml", source: semanticSource, language: "yaml" },
-  { id: "contracts/changelog/qr-code.yaml", source: changelogSource, language: "yaml" },
-  { id: "packages/core/src/qr-code.ts", source: coreSource, language: "ts" },
-  { id: "packages/react/src/components/qr-code.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/core/css/components/qr-code.css", source: cssSource, language: "css" },
-] as const;
-
 const install = `pnpm add @skryensya/core @skryensya/react`;
 
 const styles = `@import "@skryensya/core/tokens.scss";
@@ -70,7 +61,6 @@ const styles = `@import "@skryensya/core/tokens.scss";
   badge={t("qrCodePage.betaBadge")}
   contractId="qr-code"
   styleGroups={[{ file: "components/qr-code.css", probe: "sk-qr-code" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/core/src/qr-code.test.ts",
@@ -102,6 +92,17 @@ const styles = `@import "@skryensya/core/tokens.scss";
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("qrCodePage.lede")} />
+
+    <p set:html={t("qrCodePage.anatomyBody")} />
+    <ComponentPreview
+      tree={qrCodeAnatomyTree(t, locale)}
+      css={annotationDemoCss}
+      label={t("qrCodePage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
 
     <h3>{t("qrCodePage.basicTitle")}</h3>
     <p set:html={t("qrCodePage.basicBody")} />

@@ -23,9 +23,9 @@ export const copyButtonMessages = {
     "copyButton.contractItem6": "Los iconos son placeholders <code>data-sk-icon</code>; el set lo enlaza <code>mountIcons</code> (ADR-19).",
     "copyButton.iconsComment":
       "Los iconos se autoran como placeholders <span data-sk-icon>;\nmountIcons los reemplaza por el <svg> del set enlazado.",
-    "copyButton.test1": "Copia su blanco autorado, anuncia éxito y vuelve al estado inicial.",
+    "copyButton.test1": "Copia su blanco escrito a mano, anuncia éxito y vuelve al estado inicial.",
     "copyButton.test2": "Nombra el ancla que ata un botón a su propia bandera de estado.",
-    "copyButton.test3": "Reporta un blanco autorado que no existe.",
+    "copyButton.test3": "Reporta un blanco escrito a mano que no existe.",
   },
   en: {
     "demo.copyButton.label": "Copy code",

@@ -1,14 +1,15 @@
 ---
 import "@skryensya/core/components/select.css";
+import "@skryensya/core/components/button.css";
+import "@skryensya/core/components/switch.css";
+import "@skryensya/core/components/code-preview.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { codePreviewAnatomyCss, codePreviewAnatomyHtml } from "../../demos/code-preview";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/code-preview.yaml?raw";
-import coreSource from "@core/src/code-preview.ts?raw";
-import cssSource from "@core/css/components/code-preview.css?raw";
-import vanillaMountSource from "@vanilla/src/components/code-preview.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/code-preview.test.ts?raw";
-import reactSource from "@react/src/components/code-preview.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -44,15 +45,6 @@ const example = `const registrations = [
   { selector: "[data-sk-button]", load: () => import("./button.js") },
   { selector: "[data-sk-select]", load: () => import("./select.js") },
 ];`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/code-preview.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/code-preview.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/code-preview.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/code-preview.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/code-preview.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/code-preview.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -60,7 +52,6 @@ const sourceFiles = [
   description={t("codePreview.description")}
   contractId="code-preview"
   styleGroups={[{ file: "components/code-preview.css", probe: "sk-code-preview" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/vanilla/src/components/code-preview.test.ts",
@@ -80,6 +71,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("codePreview.lede")} />
+
+    <p set:html={t("codePreview.anatomyBody")} />
+    <ComponentPreview
+      html={codePreviewAnatomyHtml(t)}
+      css={codePreviewAnatomyCss}
+      label={t("codePreview.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <CodeBlock code={example} label="TypeScript" lang="ts" />
     <p set:html={t("codePreview.exampleNote")} />

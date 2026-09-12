@@ -1,4 +1,10 @@
 import { paginationRange } from "@skryensya/core/pagination";
+import { parseInlineStyle, splitInlineStyle } from "@skryensya/core/inline-style";
+import {
+  jsxPropName,
+  resolveReactProps,
+  type ResolvedReactProp,
+} from "@skryensya/core/react-props";
 import { placeholderLines } from "@skryensya/core/placeholder";
 import {
   qrGeometry,
@@ -13,7 +19,8 @@ import type {
   ContractSlot,
   ContractTemplate,
 } from "@skryensya/core/contract";
-import { getContract, getSignature, signatureOptions } from "./registry.js";
+import { getContract, getSignature } from "@skryensya/core/registry";
+import { signatureOptions } from "@skryensya/core/contract";
 import {
   collectionItems,
   flattenCollectionEntry,
@@ -23,7 +30,7 @@ import {
   type ItemInput,
   type SlotContent,
   type UsageTree,
-} from "./usage-tree.js";
+} from "@skryensya/core/usage-tree";
 
 /*
  * One tree, two renders (decision 29).
@@ -1417,76 +1424,56 @@ function renderJsx(
   // imported as `Accordion`, which is the whole point of the namespace.
   imports.get(from)!.add(name.split(".")[0]!);
 
+  /*
+   * Options, attrs and style are RESOLVED IN CORE, by the same function the live island uses.
+   * What is left here is SERIALIZATION, the only thing this path does differently: how a value is
+   * spelled in JSX text. Keeping the two apart is what makes the `defaultValue="65"` bug
+   * unrepresentable. This receives the number 65 and decides how to print it, instead of
+   * reconstructing a value from the tree and guessing at its type, which is how that one happened.
+   */
+  const resolved = resolveReactProps(tree, contract, signature);
   const props: string[] = [];
-  const optionStyles: string[] = [];
-  for (const [option, declared] of signatureOptions(contract, signature)) {
-    const value = tree.options?.[option];
-    // The binding's own name for it, when the contract had to choose a different key.
-    const name = declared.prop ?? option;
-    if (value === undefined) continue;
-    if (declared.styleProperty) {
-      optionStyles.push(
-        `${JSON.stringify(declared.styleProperty)}: ${
-          declared.type === "number" && typeof value === "number"
-            ? value
-            : JSON.stringify(String(value))
-        }`,
-      );
-      /*
-       * ALSO the named prop, under the option's own key; see `render-tree.tsx`'s identical fix
-       * for why: a `styleProperty` option says where the value lands in markup, not how a React
-       * component wants it, and a component that takes it as an ordinary prop (Sidebar's
-       * `minInlineSize`) never saw it here either. The live island and this printed snippet have
-       * to pass the same props for the same reason ADR-15 gives: the demo a reader watches and the
-       * evidence G2 collects are the same call.
-       */
-    }
+
+  const print = ({ name, value, option: declared }: ResolvedReactProp): void => {
     if (value === false) {
-      if (declared.default === true) props.push(`${name}={false}`);
-      continue;
+      // An explicit `false` is worth printing only against a `true` default; otherwise it is noise.
+      if (declared?.default === true) props.push(`${name}={false}`);
+      return;
     }
     if (value === true) {
       props.push(name);
-      continue;
+      return;
     }
-    /*
-     * A number goes in braces, because that is what the binding receives. The live island passes the
-     * tree's own value (a number) while this string said `defaultValue="65"`, so the snippet on the
-     * page and the component beside it were taking different types. Small, and exactly the drift one
-     * authoring is supposed to make impossible.
-     */
     props.push(
-      declared.type === "number" && typeof value === "number"
+      declared?.type === "number" && typeof value === "number"
         ? `${name}={${value}}`
         : jsxAttribute(name, String(value)),
     );
-  }
+  };
+
   /*
-   * `attrs.style` is authored as one CSS-text string, the only shape `attrs` (a flat
-   * `Record<string, string>`) can hold, and the ONLY shape vanilla's emission wants: `attr("style",
-   * value)` writes it straight into `style="…"`, valid HTML as-is. React's `style` prop is not a
-   * string, it is an object, so that same string, spread in with the same generic
-   * `jsxAttribute(name, value)` every other attr uses below, used to come out as
-   * `style="--sk-avatar-bg: …;"`: a JSX prop React throws on at runtime ("the `style` prop expects
-   * a mapping … not a string"). Parsed into declarations and folded into `optionStyles` instead, it
-   * joins whatever `styleProperty` options already contributed there and rides the SAME
-   * `style={{…}} as CSSProperties` object below, so authoring an inline style on a tree node works
-   * the same way in both bindings instead of only in one.
+   * Declared options first, then `style`, then the authored attrs: the order this has always
+   * printed, and the order `resolveReactProps` hands them back in. An entry with no `option` is one
+   * that came from `attrs`, which is what separates the two halves.
    */
-  if (tree.attrs?.style) {
-    for (const [property, value] of parseInlineStyle(tree.attrs.style)) {
-      optionStyles.push(`${JSON.stringify(property)}: ${JSON.stringify(value)}`);
-    }
-  }
-  if (optionStyles.length > 0) {
+  for (const prop of resolved.props) if (prop.option !== undefined) print(prop);
+
+  if (resolved.style) {
     if (!imports.has("react")) imports.set("react", new Set());
     imports.get("react")!.add("type CSSProperties");
-    props.push(styleProp(optionStyles, depth));
+    props.push(
+      styleProp(
+        Object.entries(resolved.style).map(
+          ([property, value]) =>
+            `${JSON.stringify(property)}: ${typeof value === "number" ? value : JSON.stringify(value)}`,
+        ),
+        depth,
+      ),
+    );
   }
-  for (const [attrName, value] of Object.entries(tree.attrs ?? {})) {
-    if (attrName === "style") continue;
-    props.push(jsxAttribute(jsxPropName(attrName), value));
-  }
+
+  for (const prop of resolved.props) if (prop.option === undefined) print(prop);
+
 
   const filled = slotsOf(tree);
   // Every slot except `children` is a prop in React; the template is what turns it into an element.
@@ -1665,39 +1652,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-/*
- * `attrs` reach the host element untouched, which is right for markup and wrong for JSX: React
- * spells a handful of HTML attributes in camelCase and warns on the hyphenated form. The snippet a
- * page shows is meant to be pasted, so it has to be the React spelling: `tabindex="0"` on a
- * TableScroll printed a console warning in every table demo.
- */
-const JSX_PROP_NAMES: Record<string, string> = {
-  class: "className",
-  for: "htmlFor",
-  accesskey: "accessKey",
-  autocapitalize: "autoCapitalize",
-  autocomplete: "autoComplete",
-  autofocus: "autoFocus",
-  cellpadding: "cellPadding",
-  cellspacing: "cellSpacing",
-  colspan: "colSpan",
-  contenteditable: "contentEditable",
-  crossorigin: "crossOrigin",
-  datetime: "dateTime",
-  enctype: "encType",
-  formaction: "formAction",
-  inputmode: "inputMode",
-  maxlength: "maxLength",
-  minlength: "minLength",
-  novalidate: "noValidate",
-  readonly: "readOnly",
-  rowspan: "rowSpan",
-  spellcheck: "spellCheck",
-  srcset: "srcSet",
-  tabindex: "tabIndex",
-  usemap: "useMap",
-};
-
 /**
  * The React spelling of a passthrough attribute name. Exported because the live island renders the
  * same tree through `renderTree`; if only the emitter renamed, the snippet and the thing beside it
@@ -1721,57 +1675,6 @@ export function jsxAttribute(name: string, value: string): string {
   return value.includes('"')
     ? `${name}={${JSON.stringify(value)}}`
     : `${name}=${JSON.stringify(value)}`;
-}
-
-export function jsxPropName(attr: string): string {
-  // `aria-*` and `data-*` keep their hyphens in JSX; everything else may need the camelCase name.
-  if (attr.startsWith("aria-") || attr.startsWith("data-")) return attr;
-  return JSX_PROP_NAMES[attr.toLowerCase()] ?? attr;
-}
-
-/**
- * `"--sk-avatar-bg: red; color: white"` → `[["--sk-avatar-bg", "red"], ["color", "white"]]`. A CSS
- * custom property's name is kept verbatim (`--sk-avatar-bg` stays hyphenated: React only recognizes
- * it as one if the object key is written exactly that way, never `camelCase`d); an ordinary property
- * is camelCased, the form the `style` object expects for everything else. Splits each declaration on
- * the FIRST `:` only, so a value that itself contains a colon (`url(http://…)`, a time, a ratio)
- * survives intact.
- *
- * Exported because this same string → `style` object gap exists in TWO places, not one:
- * `render-tree.tsx` (`@skryensya/react`) builds the SAME props at runtime for the live island, and
- * used to hit the identical React crash from its own copy of this problem. One parser, imported by
- * both, so the fix (and any future one) cannot land in only one of them again.
- */
-export function parseInlineStyle(css: string): Array<[string, string]> {
-  return splitInlineStyle(css).map(([property, value]) => [
-    property.startsWith("--")
-      ? property
-      : property.replace(/-([a-z])/g, (_, letter: string) => letter.toUpperCase()),
-    value,
-  ]);
-}
-
-/**
- * The same split with the property names left EXACTLY as written, for the binding that speaks CSS.
- *
- * `parseInlineStyle` above camelCases for React's `style` object, and markup emission borrowing it
- * turned an authored `block-size: 12rem` into `blockSize: 12rem` in a real `style` attribute, which
- * a browser ignores in silence. Two consumers, two spellings, one split.
- */
-export function splitInlineStyle(css: string): Array<[string, string]> {
-  return css
-    .split(";")
-    .map((declaration) => declaration.trim())
-    .filter(Boolean)
-    .map((declaration) => {
-      const colon = declaration.indexOf(":");
-      if (colon === -1) return null;
-      const property = declaration.slice(0, colon).trim();
-      const value = declaration.slice(colon + 1).trim();
-      if (!property || !value) return null;
-      return [property, value] as [string, string];
-    })
-    .filter((pair): pair is [string, string] => pair !== null);
 }
 
 /* ------------------------------------------------------------------------------------- shared */

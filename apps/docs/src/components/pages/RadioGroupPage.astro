@@ -1,16 +1,14 @@
 ---
 import "@skryensya/core/components/tile.css";
 import "@skryensya/core/components/radio-group.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { radioGroupTree, tileRadioGroupTree } from "../../demos/radio-group";
+import { radioGroupAnatomyTree, radioGroupTree, tileRadioGroupTree } from "../../demos/radio-group";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/radio-group.yaml?raw";
-import cssSource from "@core/css/components/radio-group.css?raw";
-import reactSource from "@react/src/components/selection.tsx?raw";
-import vanillaMountSource from "@vanilla/src/components/tile-radio-group.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/tile-radio-group.svelte.test.ts?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -25,21 +23,12 @@ const root = document.querySelector("[data-sk-tile-radio-group]");
 root.addEventListener("sk:valuechange", (event) => {
   console.log(event.detail.value);
 });`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/radio-group.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/css/components/radio-group.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/selection.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/vanilla/src/components/tile-radio-group.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/tile-radio-group.svelte.test.ts", source: vanillaTestSource, language: "ts" },
-] as const;
 ---
 
 <ComponentPageShell
   title="RadioGroup"
   description={t("radioGroupPage.description")}
   contractId="radio-group"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/radio-group.css", probe: "sk-radio-group" }]}
   tests={[
     {
@@ -56,6 +45,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("radioGroupPage.lede")} />
+
+    <p set:html={t("radioGroupPage.anatomyBody")} />
+    <ComponentPreview
+      tree={radioGroupAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("radioGroupPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={radioGroupTree(t)} label="RadioGroup" />
 
     <h3>{t("radioGroupPage.tileTitle")}</h3>

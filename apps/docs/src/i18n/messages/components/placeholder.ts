@@ -12,6 +12,10 @@ export const placeholderMessages = {
     "placeholderPage.description": "Placeholder: geometría decorativa para reservar el lugar del contenido mientras carga.",
     "placeholderPage.lede":
       "Placeholder reserva la forma del contenido que todavía no llegó. Reduce saltos de layout y ofrece una señal visual breve; el contenedor conserva la responsabilidad de explicar qué está cargando.",
+    "placeholderPage.anatomyBody":
+      "Este diagrama nombra el root y las líneas de un <code>Placeholder.paragraph</code>. Las demás firmas son un solo <code>sk-placeholder</code> sin parte hija; solo el párrafo hace que <code>sk-placeholder__line</code> valga la pena. Está congelado; los layouts vivos empiezan abajo.",
+    "placeholderPage.anatomyLabel": "Anatomía de Placeholder",
+    "placeholderPage.anatomyPreviewLabel": "Placeholder, parte por parte",
     "placeholderPage.calloutBody":
       'Placeholder siempre es decorativo. Usa <code>aria-busy="true"</code> y un mensaje de estado en la región que espera los datos.',
     "placeholderPage.layoutTitle": "Layout pendiente",
@@ -61,6 +65,10 @@ export const placeholderMessages = {
     "placeholderPage.description": "Placeholder: decorative geometry that reserves content's place while it loads.",
     "placeholderPage.lede":
       "Placeholder reserves the shape of content that has not arrived yet. It cuts layout shift and offers a brief visual signal; the container keeps the responsibility of explaining what is loading.",
+    "placeholderPage.anatomyBody":
+      "This diagram names the root and the lines of a <code>Placeholder.paragraph</code>. The other signatures are a single <code>sk-placeholder</code> with no child part; only the paragraph makes <code>sk-placeholder__line</code> worth naming. It is frozen; the live layouts start below.",
+    "placeholderPage.anatomyLabel": "Placeholder anatomy",
+    "placeholderPage.anatomyPreviewLabel": "Placeholder, part by part",
     "placeholderPage.calloutBody":
       'Placeholder is always decorative. Use <code>aria-busy="true"</code> and a status message on the region waiting for the data.',
     "placeholderPage.layoutTitle": "Pending layout",

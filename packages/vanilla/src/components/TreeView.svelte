@@ -1,10 +1,12 @@
 <script lang="ts">
   import { treeView } from "@skryensya/core/machines";
+import { treeViewAttrs } from "@skryensya/core/tree-view";
   import type { TreeNode } from "@skryensya/core/tree-view";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
   import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
+  import { selectorsFor } from "@skryensya/core/selectors";
 
   /*
    * TREE VIEW, a machine-backed enhancer over `@zag-js/tree-view` (the SAME machine React uses, via
@@ -13,16 +15,9 @@
    */
   const root = getRoot();
 
-  const selector = {
-    tree: "[data-sk-tree-view-tree]",
-    branch: "[data-sk-tree-view-branch]",
-    branchControl: "[data-sk-tree-view-branch-control]",
-    branchText: "[data-sk-tree-view-branch-text]",
-    branchIndicator: "[data-sk-tree-view-branch-indicator]",
-    branchContent: "[data-sk-tree-view-branch-content]",
-    item: "[data-sk-tree-view-item]",
-    itemText: "[data-sk-tree-view-item-text]",
-  } as const;
+  /* Derived from the contract's own mount attributes; see `selectorsFor`. */
+
+  const selector = selectorsFor(treeViewAttrs);
 
   type AuthoredNode = {
     node: TreeNode;

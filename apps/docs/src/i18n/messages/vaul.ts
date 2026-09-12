@@ -4,6 +4,13 @@ export const vaulMessages = {
     "vaulPage.description": "Panel modal anclado a un borde del viewport, con variantes de sheet, drawer y gesto.",
     "vaulPage.lede":
       "Vaul es la superficie modal que entra desde un borde. La página muestra sus formas principales: sheet de compartir, el mismo contrato en otros bordes, drag táctil opcional y los detalles que evitan duplicar Drawer o Dialog.",
+    "vaulPage.anatomyBody":
+      "Este diagrama nombra el panel y el handle. El contenido es composición libre (no hay <code>sk-vaul__content</code>); el espécimen solo trae título y texto para que el panel se lea como panel. Está congelado y en flujo; los sheets vivos empiezan abajo.",
+    "vaulPage.anatomyLabel": "Anatomía de Vaul",
+    "vaulPage.anatomyPreviewLabel": "Vaul, parte por parte",
+    "vaulPage.anatomyPanelLabel": "Panel de ejemplo",
+    "vaulPage.anatomyTitle": "Hoja inferior",
+    "vaulPage.anatomyBodyText": "El handle es el affordance del gesto; el resto lo compone quien lo usa.",
     "vaulPage.step1Eyebrow": "01 · base",
     "vaulPage.startTitle": "Un dialog, una clase, un borde",
     "vaulPage.startBody":
@@ -116,6 +123,13 @@ export const vaulMessages = {
     "vaulPage.description": "A modal panel anchored to a viewport edge, with sheet, drawer, and gesture variants.",
     "vaulPage.lede":
       "Vaul is the modal surface that enters from an edge. This page shows its main shapes: a sharing sheet, the same contract on other edges, optional touch drag, and the details that keep Drawer and Dialog from duplicating it.",
+    "vaulPage.anatomyBody":
+      "This diagram names the panel and the handle. Content is free-form composition (there is no <code>sk-vaul__content</code>); the specimen only carries a title and a line of text so the panel reads as a panel. It is frozen and in flow; the live sheets start below.",
+    "vaulPage.anatomyLabel": "Vaul anatomy",
+    "vaulPage.anatomyPreviewLabel": "Vaul, part by part",
+    "vaulPage.anatomyPanelLabel": "Example panel",
+    "vaulPage.anatomyTitle": "Bottom sheet",
+    "vaulPage.anatomyBodyText": "The handle is the gesture affordance; the rest is the consumer's composition.",
     "vaulPage.step1Eyebrow": "01 · base",
     "vaulPage.startTitle": "One dialog, one class, one edge",
     "vaulPage.startBody":

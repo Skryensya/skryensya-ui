@@ -10,6 +10,10 @@ export const tooltipMessages = {
     "tooltipPage.description": "Tooltip: una descripción auxiliar anclada al trigger, con aria-describedby, Escape y CSS anchor positioning.",
     "tooltipPage.lede":
       "Tooltip es una <strong>descripción auxiliar</strong>, nunca el nombre de un control ni el único lugar donde vive un dato. La máquina cuelga <code>aria-describedby</code> del trigger mientras está abierto, no <code>aria-labelledby</code>: el control ya tiene que tener nombre accesible por su cuenta, y el tooltip lo amplía.",
+    "tooltipPage.anatomyBody":
+      "Este diagrama nombra el root, el trigger, el positioner, el content y la flecha. El espécimen está congelado abierto; los Tooltip vivos empiezan abajo.",
+    "tooltipPage.anatomyLabel": "Anatomía de Tooltip",
+    "tooltipPage.anatomyPreviewLabel": "Tooltip, parte por parte",
     "tooltipPage.ruleTitle": "La regla que no puede verificar el sistema",
     "tooltipPage.ruleBody1":
       "Hay dos situaciones sin arreglo posible dentro del componente. En <strong>touch</strong> no hay hover: la máquina abre en <code>pointerenter</code> y en <code>focus</code>, así que en un teléfono el tooltip prácticamente no aparece. <strong>Sin JavaScript</strong> el contenido se pinta oculto y solo la máquina lo abre, así que tampoco aparece.",
@@ -42,6 +46,10 @@ export const tooltipMessages = {
     "tooltipPage.description": "Tooltip: an auxiliary description anchored to the trigger, with aria-describedby, Escape, and CSS anchor positioning.",
     "tooltipPage.lede":
       "Tooltip is an <strong>auxiliary description</strong>, never a control's name and never the only place a piece of data lives. The machine hangs <code>aria-describedby</code> off the trigger while it is open, not <code>aria-labelledby</code>: the control already has to have its own accessible name, and the tooltip expands on it.",
+    "tooltipPage.anatomyBody":
+      "This diagram names the root, the trigger, the positioner, the content and the arrow. The specimen is frozen open; the live Tooltips begin below.",
+    "tooltipPage.anatomyLabel": "Tooltip anatomy",
+    "tooltipPage.anatomyPreviewLabel": "Tooltip, part by part",
     "tooltipPage.ruleTitle": "The rule the system cannot verify",
     "tooltipPage.ruleBody1":
       "There are two situations with no fix possible inside the component. On <strong>touch</strong> there is no hover: the machine opens on <code>pointerenter</code> and on <code>focus</code>, so on a phone the tooltip practically never appears. <strong>With no JavaScript</strong>, the content paints hidden and only the machine opens it, so it does not appear either.",

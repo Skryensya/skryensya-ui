@@ -283,18 +283,62 @@ export function annotationRingInset(
 }
 
 /**
- * ONE RADIUS FOR EVERY RING BY DEFAULT, rather than each part's own.
+ * EVERY RING TAKES THE CORNER OF THE PART IT WRAPS, and this constant is only what it falls back to.
  *
- * Matching the element (which is what this did first) sounds more correct and reads worse: a diagram
- * then has a pill around one part, a square around another and a soft rectangle around a third, and
- * the reader has to work out that these are all the same KIND of mark before they can read any of
- * them. A mark is a convention, and a convention that changes shape per instance is not one.
+ * One shared radius for the whole drawing is what this did, on the argument that a mark is a
+ * convention and a convention that changes shape per instance is not one. The argument is right
+ * about MARKS and wrong about this mark: the ring's whole claim is that it is the outline of the
+ * thing inside it, the same claim `:focus-visible` makes, and a browser has never drawn that outline
+ * square around a pill. Shipped, the constant read as exactly what it was: a 6px rectangle cutting
+ * the corners off a pill-shaped chip, and the same 6px softening the corners of a square avatar.
+ * Neither one looked like an outline of its part; both looked like a box laid over it.
  *
- * A DEFAULT, though, not a law: a diagram of pill-shaped chips reads better with pill-shaped rings,
- * and a consumer says so once on the frame. `ringRadius` is settable per mark too, for the same
- * narrow reason `ringPlacement` is: the part that is unlike its neighbours.
+ * So the default now comes from the element (`annotationElementRadius` reads its computed
+ * `border-radius`), and `ringRadius` stays exactly where it was, on the frame and per mark, for the
+ * diagram that wants one shape regardless: setting it anywhere overrides every corner under it.
+ *
+ * This number survives as the answer when there is nothing to read: a binding with no computed style
+ * to consult, or a caller of `placeAnnotations` passing bare boxes (the tests do).
  */
 export const ANNOTATION_RING_RADIUS = 6;
+
+/**
+ * The corner radius of an element's own box, in px, or `undefined` when there is nothing to read.
+ *
+ * THE LARGEST OF THE FOUR CORNERS, not each corner its own, because the ring is one rounded rect and
+ * a rect has one radius: a part with three square corners and one rounded is drawn rounded, which
+ * overstates one corner by a few pixels and is invisible next to the alternative of understating a
+ * pill by all of them. `ringAround` clamps to half the smaller side afterwards anyway, which is what
+ * turns `--radius-pill`'s 9999px into an actual pill rather than a number that means nothing.
+ *
+ * Percentages resolve against the element's own box, the way the platform resolves them, so a
+ * `border-radius: 50%` avatar gets a circular ring instead of a square one.
+ */
+export function annotationElementRadius(element: Element): number | undefined {
+  if (typeof getComputedStyle !== "function") return undefined;
+  const style = getComputedStyle(element);
+  const box = element.getBoundingClientRect();
+  const corners = [
+    style.borderTopLeftRadius,
+    style.borderTopRightRadius,
+    style.borderBottomRightRadius,
+    style.borderBottomLeftRadius,
+  ];
+  let largest = 0;
+  let read = false;
+  for (const corner of corners) {
+    /* An elliptical corner is written `10px 20px`; the horizontal radius is the one a single-radius
+       rect can honour, and it is the first. */
+    const [horizontal] = corner.trim().split(/\s+/);
+    if (!horizontal) continue;
+    const value = Number.parseFloat(horizontal);
+    if (!Number.isFinite(value)) continue;
+    read = true;
+    const px = horizontal.endsWith("%") ? (value / 100) * box.width : value;
+    if (px > largest) largest = px;
+  }
+  return read ? largest : undefined;
+}
 
 /**
  * Clear space between where the leader stops and the ring's edge, and it is ZERO on purpose: the
@@ -565,7 +609,9 @@ export const ANNOTATION_SPECIMEN_TABBABLE =
  * this on every stamp without looping.
  */
 export function defocusAnnotationSpecimen(subject: HTMLElement): void {
-  for (const node of subject.querySelectorAll(ANNOTATION_SPECIMEN_TABBABLE)) {
+  /* `Array.from` rather than iterating the NodeList: this module is DOM-touching but it is compiled
+     by node packages too (`ai-compiler`, `mcp`), whose `lib` has no `DOM.Iterable`. */
+  for (const node of Array.from(subject.querySelectorAll(ANNOTATION_SPECIMEN_TABBABLE))) {
     if (!(node instanceof HTMLElement) && !(node instanceof SVGElement)) continue;
     if (node.tabIndex < 0) continue;
     node.setAttribute("tabindex", "-1");
@@ -607,7 +653,7 @@ export type AnnotationMeasurement = {
    * count is the author's call (`match`), but once they do, they are all the same annotation: one
    * label, one bubble, one line per thing it names.
    */
-  readonly targets: readonly AnnotationBox[];
+  readonly targets: readonly AnnotationTarget[];
   /**
    * This ONE mark's signed inset, when it differs from the frame's. Absent means the frame decides.
    *
@@ -619,9 +665,22 @@ export type AnnotationMeasurement = {
    * override: nothing is set here unless the author says so.
    */
   readonly ringInset?: number;
-  /** The same, for this mark's corner radius. Absent means the frame decides. */
+  /**
+   * The same, for this mark's corner radius. Absent means the frame decides, and a frame that has
+   * not decided either leaves each ring to the corner of the part it wraps (`targets[n].radius`).
+   */
   readonly ringRadius?: number;
 };
+
+/**
+ * One thing a label points at: its box, plus the corner its own `border-radius` asks the ring for.
+ *
+ * The radius is OPTIONAL and travels with the box rather than with the label, because one label can
+ * name several parts (`match: "all"`) and those parts are not obliged to be the same shape: a
+ * breadcrumb's trail is pill-shaped crumbs and a square separator. A binding that cannot read a
+ * computed style leaves it off and the frame's default applies, unchanged.
+ */
+export type AnnotationTarget = AnnotationBox & { readonly radius?: number };
 
 /** The rounded rectangle drawn around a named part. A rect, so a binding writes it straight out. */
 export type AnnotationRing = AnnotationBox & { readonly radius: number };
@@ -681,7 +740,9 @@ export function placeAnnotations(
   const gap = options.gap ?? ANNOTATION_LANE_GAP;
   const tipInset = options.tipInset ?? ANNOTATION_TIP_INSET;
   const ringInset = options.ringInset ?? ANNOTATION_RING_DISTANCE;
-  const ringRadius = options.ringRadius ?? ANNOTATION_RING_RADIUS;
+  /* NOT defaulted here: `undefined` is the whole signal that nothing above this level has an
+     opinion, which is what lets each target's own corner answer instead. See `ringFor`. */
+  const ringRadius = options.ringRadius;
   const ringGap = options.ringGap ?? ANNOTATION_RING_GAP;
   const direction = options.direction ?? "ltr";
   const distribute = options.distribute ?? true;
@@ -752,11 +813,23 @@ export function placeAnnotations(
      */
     const origins = leaderRoute === "direct" ? spreadAlong(label, gutter, targets[index]!) : [];
     const marks = targets[index]!.map((target, at) => {
-      const ring = ringAround(
-        target,
-        measurement.ringInset ?? ringInset,
-        measurement.ringRadius ?? ringRadius,
-      );
+      const inset = measurement.ringInset ?? ringInset;
+      /* Narrowest opinion first: this one mark, then the frame, then the part's own corner, then the
+         constant for a caller that measured no corners at all.
+
+         The part's corner is the only one that gets CONVERTED on the way in, and it has to be: an
+         authored `ringRadius` is a statement about the RING, while `target.radius` is a statement
+         about the element the ring is drawn beside. A 12px card outlined 2px inside itself is
+         concentric at 10px and visibly not at 12px, the corners bowing apart exactly where the eye
+         is checking whether the mark belongs to the box. Same sign convention as everywhere here, so
+         an `offset` ring (negative inset) grows its corner instead. */
+      const authored = measurement.ringRadius ?? ringRadius;
+      const radius =
+        authored ??
+        (target.radius === undefined
+          ? ANNOTATION_RING_RADIUS
+          : Math.max(0, target.radius - inset));
+      const ring = ringAround(target, inset, radius);
       if (leaderRoute === "right-elbow") {
         const from = { x: label.x + label.width, y: label.y + label.height / 2 };
         const edge: PhysicalSide = from.y <= ring.y + ring.height / 2 ? "top" : "bottom";
@@ -793,8 +866,8 @@ function unionOf(boxes: readonly AnnotationBox[]): AnnotationBox {
 }
 
 /**
- * The ring itself: the target's own box inset by `inset` on every side, at the one shared radius.
- * A negative inset grows the box instead, which is how `offset` placement is drawn.
+ * The ring itself: the target's own box inset by `inset` on every side, at the radius its caller
+ * resolved. A negative inset grows the box instead, which is how `offset` placement is drawn.
  *
  * A part thinner than two insets cannot be pulled in on that axis without turning inside out, so it
  * keeps its own extent there: a hairline rule gets a ring exactly as thin as the rule is, which is
@@ -802,7 +875,7 @@ function unionOf(boxes: readonly AnnotationBox[]): AnnotationBox {
  * radius is clamped to half the smaller side for the same reason a browser clamps `border-radius`:
  * a 6px corner on a 4px-tall box is not a shape.
  */
-function ringAround(target: AnnotationBox, inset: number, radius: number): AnnotationRing {
+function ringAround(target: AnnotationTarget, inset: number, radius: number): AnnotationRing {
   const width = target.width > inset * 2 ? target.width - inset * 2 : target.width;
   const height = target.height > inset * 2 ? target.height - inset * 2 : target.height;
   return {
@@ -1008,13 +1081,15 @@ export const annotationContract = {
       machineInput: true,
     },
     /**
-     * The corner radius every ring is drawn with. One shared value rather than each part's own, so
-     * the mark stays one convention across a drawing; see `ANNOTATION_RING_RADIUS`. A diagram of
-     * pill-shaped chips raises it once here and gets pill-shaped rings throughout.
+     * One corner radius for every ring, overriding what each part asks for.
+     *
+     * NO DEFAULT, and that is the option's whole shape: unset, a ring takes the `border-radius` of
+     * the element it wraps, so it outlines a pill as a pill and a square as a square (see
+     * `ANNOTATION_RING_RADIUS`). Set here, every ring under this frame is that one corner, which is
+     * what a diagram wants when the parts are different shapes and the marks should not be.
      */
     ringRadius: {
       type: "number",
-      default: ANNOTATION_RING_RADIUS,
       attr: annotationAttrs.ringRadius,
       machineInput: true,
     },

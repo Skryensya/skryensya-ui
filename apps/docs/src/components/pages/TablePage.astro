@@ -1,9 +1,13 @@
 ---
 import "@skryensya/core/components/select.css";
+import "@skryensya/core/components/table.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  tableAnatomyTree,
   tableInBoxTree,
   tableResizableColumnsTree,
   tableStickyColumnTree,
@@ -12,36 +16,17 @@ import {
   tableDensityTree,
   tablePagerTree,
 } from "../../demos/table";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/table.yaml?raw";
-import pagerContractSource from "@contracts/semantic/table-pager.yaml?raw";
-import coreSource from "@core/src/table.ts?raw";
-import cssSource from "@core/css/components/table.css?raw";
-import pagerCssSource from "@core/css/patterns/table-pager.css?raw";
-import vanillaPagerSource from "@vanilla/src/components/table-pager.ts?raw";
-import reactSource from "@react/src/components/table.tsx?raw";
-import reactTestSource from "@react/src/components/table.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 const install = `pnpm add @skryensya/core @skryensya/react`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/table.yaml", source: contractSource, language: "yaml" },
-  { id: "contracts/semantic/table-pager.yaml", source: pagerContractSource, language: "yaml" },
-  { id: "packages/core/src/table.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/table.css", source: cssSource, language: "css" },
-  { id: "packages/core/css/patterns/table-pager.css", source: pagerCssSource, language: "css" },
-  { id: "packages/vanilla/src/components/table-pager.ts", source: vanillaPagerSource, language: "ts" },
-  { id: "packages/react/src/components/table.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/table.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Table"
   description={t("tablePage.description")}
   contractId="table"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/table.css", probe: "sk-table" }]}
   tests={[
     {
@@ -61,6 +46,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("tablePage.lede")} />
+
+    <p set:html={t("tablePage.anatomyBody")} />
+    <ComponentPreview
+      tree={tableAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("tablePage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={tableTree(t)} label="Table" />
 
     <h3>{t("tablePage.scrollTitle")}</h3>

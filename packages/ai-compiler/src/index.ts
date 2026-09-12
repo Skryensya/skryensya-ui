@@ -17,9 +17,9 @@ export {
   contracts,
   getContract,
   getSignature,
-  signatureOptions,
   type ContractId,
-} from "./registry.js";
+} from "@skryensya/core/registry";
+export { signatureOptions } from "@skryensya/core/contract";
 export {
   isUsageTree,
   slotItems,
@@ -27,7 +27,7 @@ export {
   type OptionInput,
   type SlotContent,
   type UsageTree,
-} from "./usage-tree.js";
+} from "@skryensya/core/usage-tree";
 export {
   validateUsageTree,
   type Problem,

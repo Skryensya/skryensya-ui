@@ -3,6 +3,7 @@ import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  marqueeAnatomyTree,
   marqueeAutoplayTree,
   marqueeAvatarTree,
   marqueeBadgeTree,
@@ -11,17 +12,11 @@ import {
   marqueeNoFadeTree,
   marqueeVerticalTree,
 } from "../../demos/marquee";
+import { annotationDemoCss } from "../../demos/annotation";
 import { emitReactSource } from "@skryensya/ai-compiler/emit";
 import { getLocale, useTranslations } from "../../i18n";
-import semanticSource from "@contracts/semantic/marquee.yaml?raw";
-import changelogSource from "@contracts/changelog/marquee.yaml?raw";
-import coreSource from "@core/src/marquee.ts?raw";
-import cssSource from "@core/css/components/marquee.css?raw";
-import reactSource from "@react/src/components/marquee.tsx?raw";
-import reactTestSource from "@react/src/components/marquee.test.tsx?raw";
-import vanillaSource from "@vanilla/src/components/marquee.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/marquee.test.ts?raw";
 import "@skryensya/core/components/marquee.css";
+import "@skryensya/core/components/annotation.css";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -33,17 +28,6 @@ const vanilla = `import "@skryensya/vanilla/auto";`;
 const react = emitReactSource(marqueeAutoplayTree(), {
   component: "MarqueeExample",
 }).component;
-
-const sourceFiles = [
-  { id: "contracts/semantic/marquee.yaml", source: semanticSource, language: "yaml" },
-  { id: "contracts/changelog/marquee.yaml", source: changelogSource, language: "yaml" },
-  { id: "packages/core/src/marquee.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/marquee.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/marquee.ts", source: vanillaSource, language: "ts" },
-  { id: "packages/vanilla/src/components/marquee.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/marquee.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/marquee.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -54,7 +38,6 @@ const sourceFiles = [
   styleGroups={[
     { file: "components/marquee.css", probe: "sk-marquee", title: "Marquee" },
   ]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/marquee.test.tsx",
@@ -110,6 +93,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("marquee.lede")} />
+
+    <p set:html={t("marquee.anatomyBody")} />
+    <ComponentPreview
+      tree={marqueeAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("marquee.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("marquee.whenTitle")}</h3>
     <p set:html={t("marquee.whenBody")} />

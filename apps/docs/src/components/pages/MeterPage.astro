@@ -1,26 +1,16 @@
 ---
 import "@skryensya/core/components/meter.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { meterTree } from "../../demos/meter";
+import { meterAnatomyTree, meterTree } from "../../demos/meter";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/meter.yaml?raw";
-import coreSource from "@core/src/meter.ts?raw";
-import cssSource from "@core/css/components/meter.css?raw";
-import reactSource from "@react/src/components/meter.tsx?raw";
-import reactTestSource from "@react/src/components/meter.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 const install = `pnpm add @skryensya/core @skryensya/react`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/meter.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/meter.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/meter.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/meter.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/meter.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -28,7 +18,6 @@ const sourceFiles = [
   description={t("meterPage.description")}
   contractId="meter"
   styleGroups={[{ file: "components/meter.css", probe: "sk-meter" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/meter.test.tsx",
@@ -47,6 +36,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("meterPage.lede")} />
+
+    <p set:html={t("meterPage.anatomyBody")} />
+    <ComponentPreview
+      tree={meterAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("meterPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={meterTree(t)} label="Meter" />
     <p set:html={t("meterPage.body")} />
     <p set:html={t("component.reactNote")} />

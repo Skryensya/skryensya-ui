@@ -3,6 +3,7 @@ import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  commentAnatomyTree,
   commentActionsTree,
   commentAloneTree,
   commentDeepTree,
@@ -11,16 +12,10 @@ import {
   commentThreadInfiniteScrollTree,
   commentThreadTree,
 } from "../../demos/comment-thread";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
 import actionsScript from "../../demos/scripts/comment-thread-actions.ts?raw";
 import infiniteScrollScript from "../../demos/scripts/comment-thread-infinite-scroll.ts?raw";
-import contractSource from "@contracts/semantic/comment-thread.yaml?raw";
-import coreSource from "@core/src/comment-thread.ts?raw";
-import cssSource from "@core/css/components/comment-thread.css?raw";
-import reactSource from "@react/src/components/comment-thread.tsx?raw";
-import reactTestSource from "@react/src/components/comment-thread.test.tsx?raw";
-import vanillaMountSource from "@vanilla/src/components/comment-thread.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/comment-thread.test.ts?raw";
 /* The sheet itself, not only its source: the Style hooks table resolves each hook against a real
    element, and a page that never loads this stylesheet shows every value blank. */
 import "@skryensya/core/components/comment-thread.css";
@@ -30,6 +25,8 @@ import "@skryensya/core/components/dialog.css";
 /* The loading demos compose `Placeholder`; `loader.css` and `layout.css` are already global
    (`Base.astro`), but this sheet is not. */
 import "@skryensya/core/components/placeholder.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -171,16 +168,6 @@ thread.addEventListener(commentThreadEvents.reply, async (event) => {
   parentReplies.append(fresh);
   await initComponents(fresh);
 });`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/comment-thread.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/comment-thread.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/comment-thread.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/comment-thread.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/comment-thread.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/comment-thread.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/comment-thread.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -192,7 +179,6 @@ const sourceFiles = [
     { file: "components/comment-thread.css", probe: "sk-comment-thread", title: "CommentThread" },
     { file: "components/comment-thread.css", probe: "sk-comment", title: "Comment" },
   ]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/comment-thread.test.tsx",
@@ -267,7 +253,7 @@ const sourceFiles = [
           description: t("commentThread.test14"),
         },
         {
-          name: "toggles the reply composer's aria-expanded and hidden state, scoped to its own comment",
+          name: "toggles the reply composer's aria-expanded and open state, scoped to its own comment",
           description: t("commentThread.test15"),
         },
         {
@@ -320,6 +306,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("commentThread.lede")} />
+
+    <p set:html={t("commentThread.anatomyBody")} />
+    <ComponentPreview
+      tree={commentAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("commentThread.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("commentThread.whenTitle")}</h3>
     <p set:html={t("commentThread.whenBody1")} />

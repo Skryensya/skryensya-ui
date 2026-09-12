@@ -7,6 +7,7 @@ import {
   splitButtonGhostMenuItems,
   splitButtonDangerMenuItems,
 } from "./data/split-button";
+import { namePart } from "./annotation-parts";
 
 /*
  * Both halves are composed, real signatures. A real `Button.action` for the action, a real
@@ -76,6 +77,25 @@ export const splitButtonTree = (t: Translate): UsageTree => ({
         items: splitButtonMenuItems(t),
       },
     },
+  },
+});
+
+
+/*
+ * The weld itself: root group, action Button, Menu trigger. Menu's open panel is taught on Menu's
+ * own page; here the specimen stays closed so the hairline seam is the thing being named.
+ */
+export const splitButtonAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("splitButtonPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: splitButtonTree(t),
+    items: [
+      namePart(".sk-split-button", "block-start", { ringPlacement: "offset", ringDistance: 6 }),
+      namePart(".sk-button", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-menu__trigger", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
   },
 });
 

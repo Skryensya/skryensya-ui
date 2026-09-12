@@ -4,11 +4,6 @@ import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { iconSizeTree, iconTree } from "../../demos/icon";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/icon.yaml?raw";
-import coreSource from "@core/src/icon.ts?raw";
-import cssSource from "@core/css/patterns/icon.css?raw";
-import vanillaMountSource from "@vanilla/src/icon.ts?raw";
-import reactSource from "@react/src/components/icon.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -58,21 +53,12 @@ import { lucideIcons } from "@skryensya/icons-lucide";
 const sizesCss = `/* another size? you re-declare the hook, like every
    arbitrary value in the system */
 .hero .sk-icon { --sk-icon-size: 2rem; }`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/icon.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/icon.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/patterns/icon.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/icon.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/react/src/components/icon.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Icon"
   description={t("iconPage.description")}
   contractId="icon"
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/icon.test.tsx",

@@ -32,6 +32,10 @@ const componentDescriptions = {
     es: "Añade superficie, borde y espacio interior alrededor de un grupo.",
     en: "Adds surface, border, and inner spacing around a group.",
   },
+  "/components/tile": {
+    es: "Superficie con una sola intención interactiva: navegar, actuar, elegir o divulgar.",
+    en: "A surface with one interactive intent: navigate, act, choose, or disclose.",
+  },
   "/components/breadcrumb": {
     es: "Muestra la ruta jerárquica y permite volver a niveles superiores.",
     en: "Shows the hierarchical path and links back to higher levels.",

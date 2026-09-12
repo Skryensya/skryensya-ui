@@ -22,6 +22,10 @@ export const tagMessages = {
     "tagPage.lede":
       'Tag clasifica contenido sobre el que el usuario puede actuar: filtros, facetas, chips. Donde <a href="/components/badge">Badge</a> es una etiqueta de estado de solo lectura, Tag es más cuadrado (radio de control, no píldora) para leerse como accionable.',
     "tagPage.simpleTitle": "Tags de palabra clave",
+    "tagPage.anatomyBody":
+      "Este diagrama nombra el chip, la etiqueta y el botón de quitar. El espécimen está congelado; los Tag vivos empiezan abajo.",
+    "tagPage.anatomyLabel": "Anatomía de Tag",
+    "tagPage.anatomyPreviewLabel": "Tag, parte por parte",
     "tagPage.simpleBody":
       "Una etiqueta quieta categoriza contenido sin sugerir estado, alerta o eliminación.",
     "tagPage.simpleLabel": "Tag simple",
@@ -54,6 +58,10 @@ export const tagMessages = {
     "tagPage.lede":
       'Tag classifies content the user can act on: filters, facets, chips. Where <a href="/en/components/badge">Badge</a> is a read-only status label, Tag is more squared (control radius, not a pill) to read as actionable.',
     "tagPage.simpleTitle": "Keyword tags",
+    "tagPage.anatomyBody":
+      "This diagram names the chip, the label and the remove button. The specimen is frozen; the live Tags begin below.",
+    "tagPage.anatomyLabel": "Tag anatomy",
+    "tagPage.anatomyPreviewLabel": "Tag, part by part",
     "tagPage.simpleBody":
       "A quiet label categorizes content without implying status, warning, or removal.",
     "tagPage.simpleLabel": "Simple tag",

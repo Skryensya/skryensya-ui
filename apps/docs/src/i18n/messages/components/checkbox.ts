@@ -14,6 +14,10 @@ export const checkboxMessages = {
 
     "checkbox.description": "Checkbox nativo: estado independiente, indeterminado y formulario sin máquina.",
     "checkbox.lede": 'Una elección independiente. Conserva un <code>input type="checkbox"</code>: submit, reset, teclado y validación pertenecen al browser.',
+    "checkbox.anatomyBody":
+      "Este diagrama nombra el input, el control visual, el indicador y la etiqueta. El espécimen está congelado; los checkboxes vivos empiezan abajo.",
+    "checkbox.anatomyLabel": "Anatomía de Checkbox",
+    "checkbox.anatomyPreviewLabel": "Checkbox, parte por parte",
     "checkbox.body":
       "El control usa los roles <code>check</code> y <code>remove</code> del set de iconos, no un trazo CSS. Importa <code>@skryensya/core/components/checkbox.css</code> y llama <code>initComponents()</code> una vez.",
     "checkbox.groupTitle": "Un checkbox que agrupa a otros: CheckboxGroup",
@@ -73,6 +77,10 @@ export const checkboxMessages = {
 
     "checkbox.description": "Native checkbox: independent state, indeterminate, and form handling with no machine.",
     "checkbox.lede": 'An independent choice. It keeps an <code>input type="checkbox"</code>: submit, reset, keyboard and validation belong to the browser.',
+    "checkbox.anatomyBody":
+      "This diagram names the input, the visual control, the indicator, and the label. The specimen is frozen; the live checkboxes start below.",
+    "checkbox.anatomyLabel": "Checkbox anatomy",
+    "checkbox.anatomyPreviewLabel": "Checkbox, part by part",
     "checkbox.body":
       "The control uses the icon set's <code>check</code> and <code>remove</code> roles, not a CSS stroke. Import <code>@skryensya/core/components/checkbox.css</code> and call <code>initComponents()</code> once.",
     "checkbox.groupTitle": "A checkbox that groups others: CheckboxGroup",

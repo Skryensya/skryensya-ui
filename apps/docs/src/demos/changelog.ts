@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
 
 /*
  * TWO RELEASES, AND ONE OF THEM HAS NOT SHIPPED, which is the only pair that shows what this
@@ -100,4 +101,53 @@ export const changelogTree = (t: Translate): UsageTree => ({
       ],
     },
   ],
+});
+
+/*
+ * ONE dated release and ONE entry: enough to name the rail, the heading and the entry body without
+ * stacking five kinds on a diagram whose job is the part names, not the tone legend (that is the
+ * live demo below).
+ */
+export const changelogAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("changelogPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "changelog",
+      signature: "Changelog",
+      attrs: { "aria-label": t("demo.changelog.label") },
+      children: [
+        {
+          contract: "changelog",
+          signature: "ChangelogRelease",
+          options: { date: "2026-07-29" },
+          slots: { version: "0.1.0", date: t("demo.changelog.date") },
+          children: [
+            {
+              contract: "changelog",
+              signature: "ChangelogEntry",
+              options: { kind: "feature" },
+              slots: {
+                kind: t("demo.changelog.kind.feature"),
+                title: t("demo.changelog.feature.title"),
+              },
+              children: t("demo.changelog.feature.body"),
+            },
+          ],
+        },
+      ],
+    },
+    items: [
+      namePart(".sk-changelog", "block-start"),
+      namePart(".sk-changelog__release", "inline-start"),
+      namePart(".sk-changelog__marker", "inline-start"),
+      namePart(".sk-changelog__version", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-changelog__date", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-changelog__entries", "inline-start", { ringPlacement: "offset", ringDistance: 6 }),
+      namePart(".sk-changelog__entry", "inline-end", { ringPlacement: "offset", ringDistance: 3 }),
+      namePart(".sk-changelog__title", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-changelog__text", "block-end", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
+  },
 });

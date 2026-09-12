@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildManifest, canonical } from "./manifest.js";
-import { contractIds } from "./registry.js";
+import { contractIds } from "@skryensya/core/registry";
 
 /*
  * What makes the compiled artifact trustworthy: it is reproducible, and it refuses to emit when two

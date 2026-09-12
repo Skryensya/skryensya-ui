@@ -1,14 +1,12 @@
 ---
+/* The anatomy diagram is an Annotated frame, so this page needs its sheet. */
+import "@skryensya/core/components/annotation.css";
+import { annotationDemoCss } from "../../demos/annotation";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { inputTree, textareaTree } from "../../demos/input";
+import { inputAnatomyTree, inputTree, textareaTree } from "../../demos/input";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/input.yaml?raw";
-import coreSource from "@core/src/input.ts?raw";
-import cssSource from "@core/css/components/input.css?raw";
-import reactSource from "@react/src/components/input.tsx?raw";
-import reactTestSource from "@react/src/components/input.test.tsx?raw";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
@@ -16,21 +14,12 @@ const t = useTranslations(getLocale(Astro.url));
 const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/components/input.css";
 @import "@skryensya/core/components/form-field.css";`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/input.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/input.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/input.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/input.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/input.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title={t("inputPage.title")}
   description={t("inputPage.description")}
   contractId="input"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/input.css", probe: "sk-input", title: "Input" }]}
   tests={[
     {
@@ -54,6 +43,16 @@ const sourceFiles = [
     <h3>{t("inputPage.oneClassTitle")}</h3>
     <p set:html={t("inputPage.oneClassBody")} />
     <ComponentPreview tree={textareaTree(t)} label="Textarea" />
+
+    <p set:html={t("inputPage.anatomyBody")} />
+    <ComponentPreview
+      tree={inputAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("inputPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("inputPage.formFieldTitle")}</h3>
     <p set:html={t("inputPage.formFieldBody")} />

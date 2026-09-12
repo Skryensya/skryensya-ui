@@ -1,35 +1,25 @@
 ---
+import "@skryensya/core/components/form-field.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { formFieldAroundSelectTree, formFieldTree } from "../../demos/form-field";
+import { formFieldAnatomyTree, formFieldAroundSelectTree, formFieldTree } from "../../demos/form-field";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/form-field.yaml?raw";
-import coreSource from "@core/src/form-field.ts?raw";
-import cssSource from "@core/css/components/form-field.css?raw";
-import reactSource from "@react/src/components/form-field.tsx?raw";
-import reactTestSource from "@react/src/components/form-field.test.tsx?raw";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
 
 const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/components/form-field.css";`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/form-field.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/form-field.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/form-field.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/form-field.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/form-field.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title={t("formFieldPage.title")}
   description={t("formFieldPage.description")}
   contractId="form-field"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/form-field.css", probe: "sk-form-field", title: "FormField" }]}
   tests={[
     {
@@ -46,6 +36,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("formFieldPage.lede")} />
+
+    <p set:html={t("formFieldPage.anatomyBody")} />
+    <ComponentPreview
+      tree={formFieldAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("formFieldPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={formFieldTree(t)} label="FormField" />
 
     <h3>{t("formFieldPage.wiringTitle")}</h3>

@@ -14,11 +14,6 @@ import {
   loaderSpeedsTree,
 } from "../../demos/loader";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/loader.yaml?raw";
-import coreSource from "@core/src/loader.ts?raw";
-import cssSource from "@core/css/components/loader.css?raw";
-import reactSource from "@react/src/components/loader.tsx?raw";
-import reactTestSource from "@react/src/components/loader.test.tsx?raw";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const styles = `@import "@skryensya/core/components/loader.css";`;
@@ -27,21 +22,12 @@ const t = useTranslations(getLocale(Astro.url));
 const customSpeed = `.sk-loader.mi-loader {
   --sk-loader-duration: 2s;
 }`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/loader.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/loader.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/loader.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/loader.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/loader.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Loader"
   description={t("loaderPage.description")}
   contractId="loader"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/loader.css", probe: "sk-loader" }]}
   tests={[
     {

@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
 
 const tag = (children: string, options: Record<string, string | boolean> = {}): UsageTree => ({
   contract: "tag",
@@ -13,6 +14,31 @@ const tagLink = (children: string, href: string, options: Record<string, string 
   signature: "Tag.link",
   options: { href, ...options },
   children,
+});
+
+
+/** Chip, label and remove control: the removable tag shows every Tag part. */
+export const tagAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("tagPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "tag",
+      signature: "Tag",
+      options: {
+        tone: "accent",
+        removable: true,
+        removeLabel: t("demo.tag.remove", { name: "react" }),
+      },
+      children: "react",
+    },
+    items: [
+      namePart(".sk-tag", "block-start", { ringPlacement: "offset", ringDistance: 4 }),
+      namePart(".sk-tag__label", "inline-start"),
+      namePart(".sk-tag__remove", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
+  },
 });
 
 /* The smallest honest tag: a keyword attached to content, no status semantics and no action. */

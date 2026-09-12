@@ -2,35 +2,29 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { datePickerDisabledTree, datePickerTree, nativeDatePickerTree } from "../../demos/date-picker";
+import {
+  datePickerAnatomyCss,
+  datePickerAnatomyHtml,
+  datePickerDisabledTree,
+  datePickerTree,
+  nativeDatePickerTree,
+} from "../../demos/date-picker";
 import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/date-picker.css";
-import contractSource from "@contracts/semantic/date-picker.yaml?raw";
-import coreSource from "@core/src/date-picker.ts?raw";
-import cssSource from "@core/css/components/date-picker.css?raw";
-import vanillaMountSource from "@vanilla/src/components/date-picker.ts?raw";
-import reactSource from "@react/src/components/date-picker.tsx?raw";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 
 const t = useTranslations(getLocale(Astro.url));
 
 const styles = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/date-picker.css";`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/date-picker.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/date-picker.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/date-picker.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/date-picker.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/react/src/components/date-picker.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="DatePicker"
   description={t("datePicker.description")}
   contractId="date-picker"
-  sourceFiles={sourceFiles}
   styleGroups={[
     { file: "components/date-picker.css", probe: "sk-date-picker", title: "DatePicker" },
     { file: "components/calendar.css", probe: "sk-calendar", title: "Heredados de Calendar" },
@@ -56,6 +50,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("datePicker.lede")} />
+
+    <p set:html={t("datePicker.anatomyBody")} />
+    <ComponentPreview
+      html={datePickerAnatomyHtml(t)}
+      css={datePickerAnatomyCss}
+      label={t("datePicker.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("datePicker.nativeTitle")}</h3>
     <p set:html={t("datePicker.nativeBody")} />

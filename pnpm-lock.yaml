@@ -517,6 +517,9 @@ importers:
       '@skryensya/ai-compiler':
         specifier: workspace:*
         version: link:../ai-compiler
+      '@skryensya/core':
+        specifier: workspace:*
+        version: link:../core
       '@skryensya/recipes':
         specifier: workspace:*
         version: link:../../contracts/recipes
@@ -545,9 +548,6 @@ importers:
 
   packages/react:
     dependencies:
-      '@skryensya/ai-compiler':
-        specifier: workspace:*
-        version: link:../ai-compiler
       '@skryensya/core':
         specifier: workspace:*
         version: link:../core

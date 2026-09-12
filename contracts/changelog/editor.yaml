@@ -44,7 +44,7 @@ entries:
       body: >-
         <code>toolbarLabel</code> estaba publicado en el contrato desde siempre y el binding de React
         lo ignoraba: escribía "Formato de texto" a mano, así que quien lo configuraba lo obtenía en
-        markup autorado y silenciosamente no en React. Ahora es una prop, y su valor por defecto se
+        markup escrito a mano y silenciosamente no en React. Ahora es una prop, y su valor por defecto se
         lee del contrato en vez de escribirse dos veces.
         El div de contenido recibe un id también desde el enhancer. Ese id es el que apunta el
         <code>for</code> de una etiqueta de <code>FormField</code>, y es exactamente el que

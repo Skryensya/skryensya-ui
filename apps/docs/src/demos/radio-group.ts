@@ -1,8 +1,34 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { radioGroupItems, tileRadioGroupItems } from "./data/radio-group";
+import { namePart } from "./annotation-parts";
 
 /* Native and tile radio groups share one authored choice model: see `data/radio-group.ts`. */
+
+
+/** Group, option, input, control, indicator and label: one exclusive choice named at rest. */
+export const radioGroupAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("radioGroupPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "radio-group",
+      signature: "RadioGroup",
+      options: { name: "plan-anatomy", value: "pro", orientation: "vertical" },
+      attrs: { "aria-label": t("demo.radioGroup.label") },
+      slots: { items: radioGroupItems },
+    },
+    items: [
+      namePart(".sk-radio-group", "block-start"),
+      namePart(".sk-radio", "inline-start"),
+      namePart(".sk-radio__input", "inline-start"),
+      namePart(".sk-radio__control", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-radio__indicator", "inline-end"),
+      namePart(".sk-radio__label", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
+  },
+});
 
 /** An exclusive choice between three plans. */
 export const radioGroupTree = (t: Translate): UsageTree => ({

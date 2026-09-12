@@ -13,6 +13,10 @@ export const folderMessages = {
     "folderPage.description": "Folder: una superficie con pestaña, dibujada como una sola silueta que el binding mide.",
     "folderPage.lede":
       "Una carpeta no es una caja con otra caja encima: la pestaña sale del cuerpo en una curva, y esa curva es la razón de que este componente tenga geometría. La silueta es un solo <code>&lt;path&gt;</code>, y el único número que no se puede escribir de antemano es dónde termina la pestaña, porque termina donde termina su rótulo.",
+    "folderPage.anatomyBody":
+      "Forma, pestaña, contenido y previews. El espécimen está en <code>active</code> para que la silueta se vea: en reposo una carpeta se pinta del color de su fondo. Congelado.",
+    "folderPage.anatomyLabel": "Anatomía de Folder",
+    "folderPage.anatomyPreviewLabel": "Folder, parte por parte",
     "folderPage.shapeTitle": "Cómo se dibuja",
     "folderPage.shapeBody":
       "La geometría es una función pura de core, <code>folderPath</code>, y las dos bindings la llaman con los mismos números: miden la caja de la carpeta y el ancho de la pestaña, y escriben el <code>d</code> resultante. Los cinco números de la forma (alto de pestaña, barrido de entrada, hombro, esquina superior y radio inferior) son hooks CSS, así que una marca reafina la silueta en su propia hoja sin tocar una binding.",
@@ -115,6 +119,10 @@ export const folderMessages = {
     "folderPage.description": "Folder: a surface with a tab, drawn as one silhouette the binding measures.",
     "folderPage.lede":
       "A folder is not a box with another box stuck on top: the tab flows out of the body through a curve, and that curve is the whole reason this component needs geometry. The silhouette is a single <code>&lt;path&gt;</code>, and the only number that cannot be written ahead of time is where the tab ends, because it ends wherever its label ends.",
+    "folderPage.anatomyBody":
+      "Shape, tab, content, and previews. The specimen is held <code>active</code> so the silhouette is visible: at rest a folder paints itself the colour of its ground. Frozen.",
+    "folderPage.anatomyLabel": "Folder anatomy",
+    "folderPage.anatomyPreviewLabel": "Folder, part by part",
     "folderPage.shapeTitle": "How it is drawn",
     "folderPage.shapeBody":
       "The geometry is a pure function in core, <code>folderPath</code>, and both bindings call it with the same numbers: they measure the folder's box and the tab's width, and write the resulting <code>d</code>. The shape's five numbers (tab height, leading sweep, shoulder, top corner and bottom radius) are CSS hooks, so a brand retunes the silhouette in its own stylesheet without touching a binding.",

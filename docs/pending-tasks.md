@@ -157,6 +157,22 @@ agente tiene el checklist completo), y correr `turbo check`.
 - [ ] **Toolbar** (`/componentes/toolbar`) - roving tabindex real, la más involucrada del lote:
   navegación por flechas, wrap, orientación.
 
+### Menu: `group` en los items de radio no existe en el contrato
+
+`apps/docs/src/demos/data/menu.ts` pasa `{ kind: "radio", group: "align" }` en tres entradas de
+`menuCompactItems`, y el contrato de Menu no declara `group`: sus items aceptan `value`, `disabled`,
+`kind`, `tone`, `href`. Lo levanta `apps/docs/src/demos/trees.test.ts`, que desde ahora valida todo
+el corpus de `src/demos` (fue el único árbol inválido que quedó sin resolver de los seis que
+encontró la primera corrida).
+
+Son dos caminos y **la decisión es de contrato**, por eso queda anotado en vez de resuelto:
+
+1. **Sacar `group` del demo.** Gratis, pero se pierde la intención: sin agrupar, los tres
+   `menuitemradio` quedan como radios sueltos y no como un grupo de alineación.
+2. **Publicar `group` como opción de item.** Es lo que pide la APG (un conjunto de
+   `menuitemradio` va dentro de un `role="group"`), pero es superficie pública nueva: entrada de
+   changelog, hash de Surface, y las dos bindings.
+
 ---
 
 ## Nivel 2 - Beta sin bloqueador documentado

@@ -162,7 +162,6 @@ export const statContract = {
   css: "@skryensya/core/components/stat.css",
   parts: statParts,
   hooks: [
-    "--sk-icon-size",
     "--sk-stat-change-fg",
     "--sk-stat-count-duration",
   ],

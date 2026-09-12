@@ -48,7 +48,6 @@ export const splitButtonContract = {
   css: "@skryensya/core/components/split-button.css",
   parts: splitButtonParts,
   hooks: [
-    "--sk-split-button-divider-color",
     "--sk-split-button-shadow",
     "--sk-split-button-wash",
   ],

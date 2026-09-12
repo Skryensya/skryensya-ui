@@ -57,7 +57,6 @@ export const treeViewContract = {
   css: "@skryensya/core/components/tree-view.css",
   parts: treeViewParts,
   hooks: [
-    "--sk-icon-size",
     "--sk-tree-guide-color",
     "--sk-tree-guide-width",
     "--sk-tree-indent",

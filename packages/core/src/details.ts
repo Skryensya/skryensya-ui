@@ -52,10 +52,8 @@ export const detailsContract = {
     "--sk-details-title-font-size",
     "--sk-font-body-sm",
     "--sk-font-heading-sm",
-    "--sk-icon-size",
     "--sk-space-2",
     "--sk-space-3",
-    "--sk-tile-padding",
   ],
 
   options: {

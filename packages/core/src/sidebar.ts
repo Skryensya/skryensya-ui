@@ -133,12 +133,6 @@ export const sidebarContract = {
   css: "@skryensya/core/components/sidebar.css",
   parts: sidebarParts,
   hooks: [
-    "--sk-nav-list-duration",
-    "--sk-nav-list-easing",
-    "--sk-nav-list-group-label-opacity",
-    "--sk-nav-list-label-opacity",
-    "--sk-nav-list-link-current-bg",
-    "--sk-nav-list-link-padding-x",
     "--sk-sidebar-bg",
     "--sk-sidebar-border-color",
     "--sk-sidebar-border-width",
@@ -170,10 +164,6 @@ export const sidebarContract = {
     "--sk-sidebar-trigger-shadow",
     "--sk-sidebar-trigger-size",
     "--sk-sidebar-trigger-wash",
-    "--sk-splitter-active-color",
-    "--sk-splitter-color",
-    "--sk-splitter-hit",
-    "--sk-splitter-line",
   ],
 
   options: {

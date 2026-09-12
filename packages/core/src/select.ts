@@ -103,13 +103,6 @@ export const selectContract = {
   css: "@skryensya/core/components/select.css",
   parts: selectParts,
   hooks: [
-    "--sk-anchored-align",
-    "--sk-anchored-justify",
-    "--sk-anchored-offset",
-    "--sk-anchored-position-area",
-    "--sk-anchored-position-try",
-    "--sk-anchored-size",
-    "--sk-icon-size",
     "--sk-select-bg",
     "--sk-select-border-color",
     "--sk-select-border-width",

@@ -88,7 +88,6 @@ export const paginationContract = {
   css: "@skryensya/core/components/pagination.css",
   parts: paginationParts,
   hooks: [
-    "--sk-icon-size",
     "--sk-pagination-current-bg",
     "--sk-pagination-current-border-color",
     "--sk-pagination-current-fg",
@@ -206,7 +205,6 @@ export const tablePagerContract = {
   css: "@skryensya/core/patterns/table-pager.css",
   parts: tablePagerParts,
   hooks: [
-    "--sk-icon-size",
     "--sk-pagination-current-bg",
     "--sk-pagination-current-border-color",
     "--sk-pagination-current-fg",

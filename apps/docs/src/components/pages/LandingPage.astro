@@ -9,7 +9,7 @@ import Base from "../../layouts/Base.astro";
 import SiteFooter from "../SiteFooter.astro";
 import { getNavigation } from "../../lib/navigation";
 import { getLocale, localizePath, useTranslations, type Translate } from "../../i18n";
-import { emitMarkup } from "@skryensya/ai-compiler/emit";
+import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 
 import { calloutInfoTree, calloutSuccessTree } from "../../demos/callout";
@@ -65,6 +65,9 @@ import "@skryensya/core/components/segmented.css";
 import "@skryensya/core/components/checkbox.css";
 import "@skryensya/core/components/accordion.css";
 import "@skryensya/core/components/select.css";
+/* The hero is a Hero band holding a live specimen and its own source. */
+import "@skryensya/core/patterns/hero.css";
+import "@skryensya/core/components/code-preview.css";
 import "@skryensya/core/components/slider.css";
 /* The two ultrawide lanes and the closing band: skeletons behind a bottom fade, then the site's own
    footer, which a `fullBleed` page does not get from Base (see the `SiteFooter` note there). */
@@ -495,17 +498,83 @@ const GALLERY_FILL_HEIGHT = 1191;
  * the snippet is long enough to be recognisably a component and short enough to read whole.
  */
 const heroSpecimenTree = (t: Translate): UsageTree => ({
-  contract: "select",
-  signature: "Select",
-  options: { name: "runtime", controlSize: "md" },
-  slots: {
-    label: t("landing.hero.specimenLabel"),
-    options: [
-      { options: { value: "html" }, slots: { children: "HTML" } },
-      { options: { value: "vanilla", selected: true }, slots: { children: "JavaScript" } },
-      { options: { value: "react" }, slots: { children: "React" } },
-    ],
-  },
+  contract: "callout",
+  signature: "Callout",
+  options: { tone: "info" },
+  /*
+   * NO `icon`, and the reason is the column beside it: with one, the JSX opening tag runs 68
+   * characters and wraps inside the panel, which turns a three-line declaration into five and puts
+   * a line break in the middle of the thing a reader is meant to take in at a glance.
+   *
+   * THE BODY IS A SENTENCE, not two words, for the same reason from the other direction: under the
+   * emitter's print width the whole element comes back as ONE line, which then wraps in the panel
+   * and breaks after `>An`, mid-tag. Past the width it comes back in the shape everybody recognises
+   * (opening tag, indented content, closing tag). The text is doing layout work here, which is
+   * worth knowing before someone shortens it back.
+   */
+  slots: { title: t("landing.hero.specimenTitle") },
+  children: t("landing.hero.specimenBody"),
+});
+
+/*
+ * THE HERO'S RIGHT-HAND HALF, as a tree, because that is the half where drift would be invisible.
+ *
+ * The band itself is authored below in the page's own markup, with the kit's classes: `sk-hero`,
+ * `sk-heading`, `sk-text`, `sk-button`. Authored HTML is a first-class runtime here, not a
+ * shortcut around the catalogue, and it is the only runtime that can give this page an `<h1>`:
+ * `Heading` emits an `h2` on purpose, since a component cannot know it is the page title. Emitting
+ * the copy side would have traded the document's one top-level heading for a tag the contract is
+ * right to refuse to decide.
+ *
+ * What IS emitted is the specimen and, from the very same tree, the source shown under it. Two
+ * copies of one declaration, so the code cannot drift from the control above it. A hand-written
+ * snippet would be the single place on this site where a component and its documentation were kept
+ * in agreement by hand, on the page whose whole claim is that they never are.
+ */
+/*
+ * THE REACT SOURCE, not the emitted HTML, and the first version showed the HTML.
+ *
+ * Measured on the page: the same Callout is nineteen lines of markup against three of JSX, and the
+ * markup only reaches nineteen because every attribute wraps inside this column. A hero has three
+ * seconds; a reader who has to unwrap `aria-live` from the middle of a line has spent them. The JSX
+ * is also the truer answer to the label above it: `sk-callout__title` is what the system RENDERS,
+ * `title="New version"` is what an author WRITES, and this column is about the writing.
+ *
+ * THE ELEMENT, sliced out of the emitted module rather than retyped: `emitReactSource` returns a
+ * whole file (two imports, an exported function, the `return (`), which is right for a docs panel a
+ * reader is going to copy and wrong for a hero, where the imports would be the tallest thing in the
+ * column. Slicing keeps the one property that matters, which is that these lines come from the same
+ * tree as the Callout above them and cannot be edited out of agreement with it. If the emitter ever
+ * stops producing that shape the slice fails closed, showing the whole module rather than nothing.
+ */
+const heroSpecimenSource = (t: Translate): string => {
+  const component = emitReactSource(heroSpecimenTree(t)).component;
+  const open = component.indexOf("return (");
+  const close = component.lastIndexOf(");");
+  if (open === -1 || close <= open) return component;
+
+  const body = component.slice(open + "return (".length, close).replace(/^\n|\n$/g, "");
+  const indent = Math.min(
+    ...body.split("\n").filter((row) => row.trim()).map((row) => row.length - row.trimStart().length),
+  );
+  return body
+    .split("\n")
+    .map((row) => row.slice(indent))
+    .join("\n");
+};
+
+const heroProofTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "sm" },
+  children: [
+    heroSpecimenTree(t),
+    {
+      contract: "code-preview",
+      signature: "CodePreview",
+      slots: { label: t("landing.hero.specimenSource"), children: heroSpecimenSource(t) },
+    },
+  ],
 });
 
 /*
@@ -685,29 +754,30 @@ const columns: GalleryTile[][] = [
   <div class="sk-layout-grid" style="row-gap: var(--space-stack-xl)">
     {/*
       `breakout` rather than `narrow`: the gallery under it runs the full bleed of the page, and a
-      hero set to the narrowest measure on the grid read as a paragraph someone had left above a
-      wall of cards. The lede keeps its own measure inside that band (`landing-hero__lede`) so the
-      headline gets the width and the sentence under it stays at a readable line length, which is
-      the pair of things a wider hero has to hold apart.
+      hero at the grid's narrowest measure read as a paragraph someone had left above a wall of
+      cards. The band is a `Hero` from the kit now rather than a Box with a stack inside it, for the
+      reason this whole page exists: the site does not get to hand-roll a shape the catalogue
+      publishes. The headline's `h1` comes from `Heading`'s own `headingSize`, so the one thing lost
+      in the move is a hand-written tag name.
     */}
     <section data-width="breakout" class="landing-hero">
-      <div class="sk-box" data-padding="xl">
-        <div class="sk-stack" data-gap="lg">
-          <header class="sk-stack" data-gap="md">
-            <h1 class="sk-heading" data-size="display-lg" data-flush>{t("landing.hero.title")}</h1>
-            <p class="sk-text landing-hero__lede" data-tone="secondary" data-size="lg">{t("landing.hero.lede")}</p>
-          </header>
-          <div class="sk-inline" data-gap="sm">
-            <a
-              class="sk-button sk-interactive"
-              data-sk-button
-              data-tone="accent"
-              data-size="md"
-              href={href("/components")}
-            >
-              {t("landing.hero.ctaComponents")}
-            </a>
+      <div class="sk-hero" data-surface="none" data-padding="xl" data-align="start">
+        <div class="sk-inline landing-hero__split" data-gap="xl" data-align="start" data-justify="between">
+          <div class="sk-stack landing-hero__copy" data-gap="lg" data-align="start">
+            <header class="sk-stack" data-gap="md">
+              <h1 class="sk-heading" data-size="display-lg" data-flush>{t("landing.hero.title")}</h1>
+              <p class="sk-text landing-hero__lede" data-tone="secondary" data-size="lg">{t("landing.hero.lede")}</p>
+            </header>
+            <div class="sk-inline" data-gap="sm">
+              <a class="sk-button sk-interactive" data-sk-button data-tone="accent" data-size="md" href={href("/components")}>
+                {t("landing.hero.ctaComponents")}
+              </a>
+              <a class="sk-button sk-interactive" data-sk-button data-variant="ghost" data-size="md" href={href("/installation")}>
+                {t("landing.hero.ctaInstall")}
+              </a>
+            </div>
           </div>
+          <div class="landing-hero__proof" set:html={emitMarkup(heroProofTree(t), { fillDefaults: false })} />
         </div>
       </div>
     </section>
@@ -787,12 +857,49 @@ const columns: GalleryTile[][] = [
   galleryFillHeight: `${GALLERY_FILL_HEIGHT}px`,
 }}>
   /*
-   * A HEADLINE WANTS THE BAND, A SENTENCE WANTS A MEASURE. The hero is `breakout` now, which is the
+   * A HEADLINE WANTS THE BAND, A SENTENCE WANTS A MEASURE. The hero is `breakout`, which is the
    * right width for the h1 and about twice the right width for the line under it, so the lede caps
    * itself where prose stops being readable and the heading keeps the whole band.
    */
   .landing-hero__lede {
-    max-inline-size: 52ch;
+    max-inline-size: 46ch;
+  }
+
+  /*
+   * THE SPLIT. The copy takes what it needs and the proof takes a fixed column, rather than the two
+   * sharing the band evenly: a 50/50 hero would set the headline at half of `breakout`, which wraps
+   * a six-word line into three, and hand the Callout twice the width it has anything to say at.
+   *
+   * `flex-wrap` is the whole responsive story. Below the point where both fit, the proof drops
+   * under the copy and takes the full measure, which is also the order a reader wants them in: the
+   * claim, then the evidence.
+   */
+  /*
+   * `start`, not `center`. The proof column is the taller of the two, so centring pushed the
+   * headline down its middle and left the specimen floating above the first line of it. Aligned to
+   * the top, the headline and the rendered Callout start on the same line, which is the pairing the
+   * split is making.
+   */
+  .landing-hero__split {
+    align-items: start;
+  }
+
+  .landing-hero__copy {
+    flex: 1 1 30rem;
+  }
+
+  .landing-hero__proof {
+    flex: 0 1 26rem;
+    min-inline-size: 0;
+  }
+
+  /*
+   * The source panel under the specimen is the quieter half of the pair: the eye should land on the
+   * rendered Callout first and read the markup second, so the code sits at a smaller size and the
+   * panel keeps its own surface rather than competing with the specimen's tone.
+   */
+  .landing-hero__proof .sk-code-preview {
+    font-size: var(--font-size-caption);
   }
 
   /*

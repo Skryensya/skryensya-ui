@@ -185,10 +185,6 @@ export const componentPreviewContract = {
   css: "@skryensya/core/components/component-preview.css",
   parts: componentPreviewParts,
   hooks: [
-    "--sk-anchored-justify",
-    "--sk-anchored-position-area",
-    "--sk-code-preview-bg",
-    "--sk-code-preview-footer-bg",
     "--sk-component-preview-bg",
     "--sk-component-preview-border-color",
     "--sk-component-preview-grip-active-fg",
@@ -211,10 +207,6 @@ export const componentPreviewContract = {
     "--sk-component-preview-stage-min-block-size",
     "--sk-component-preview-stage-padding",
     "--sk-component-preview-title-fg",
-    "--sk-drawer-inline-size",
-    "--sk-tabs-gap",
-    "--sk-tabs-list-border-color",
-    "--sk-tabs-panel-padding-block",
   ],
 
   options: {},

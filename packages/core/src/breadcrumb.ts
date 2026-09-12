@@ -64,7 +64,6 @@ export const breadcrumbContract = {
     "--sk-breadcrumb-link-color",
     "--sk-breadcrumb-link-max",
     "--sk-breadcrumb-separator-color",
-    "--sk-icon-size",
   ],
 
   options: {

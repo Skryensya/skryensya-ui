@@ -46,9 +46,6 @@ export const popoverContract = {
   css: "@skryensya/core/components/popover.css",
   parts: popoverParts,
   hooks: [
-    "--sk-anchored-arrow-bg",
-    "--sk-anchored-arrow-border-color",
-    "--sk-anchored-name",
     "--sk-popover-bg",
     "--sk-popover-border-color",
     "--sk-popover-fg",

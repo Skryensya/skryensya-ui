@@ -46,8 +46,6 @@ export const tableContract = {
   css: "@skryensya/core/components/table.css",
   parts: tableParts,
   hooks: [
-    "--sk-splitter-line",
-    "--sk-splitter-rest-color",
     "--sk-table-bg",
     "--sk-table-border-color",
     "--sk-table-caption-fg",

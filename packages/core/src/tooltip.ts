@@ -139,10 +139,6 @@ export const tooltipContract = {
   css: "@skryensya/core/components/tooltip.css",
   parts: tooltipParts,
   hooks: [
-    "--sk-anchored-arrow-bg",
-    "--sk-anchored-offset",
-    "--sk-anchored-position-area",
-    "--sk-anchored-position-try",
     "--sk-tooltip-bg",
     "--sk-tooltip-fg",
     "--sk-tooltip-font-size",

@@ -232,10 +232,6 @@ export const commentThreadContract = {
   css: "@skryensya/core/components/comment-thread.css",
   parts: commentThreadParts,
   hooks: [
-    "--sk-button-accent",
-    "--sk-button-border-color",
-    "--sk-button-fg",
-    "--sk-button-ink",
     "--sk-comment-actions-optical",
     "--sk-comment-avatar-gap",
     "--sk-comment-avatar-ring-color",
@@ -259,9 +255,6 @@ export const commentThreadContract = {
     "--sk-comment-replies-gap",
     "--sk-comment-sib-gap",
     "--sk-comment-thread-gap",
-    "--sk-icon-size",
-    "--sk-vaul-block-size",
-    "--sk-vaul-radius",
   ],
 
   options: {

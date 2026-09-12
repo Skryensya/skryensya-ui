@@ -50,7 +50,7 @@ export const imageFrameMessages = {
 
     "imageFrame.description": "ImageFrame: a frame that crops and positions media with aspect-ratio, object-fit and object-position.",
     "imageFrame.lede":
-      'ImageFrame is the <strong>media frame</strong>: a box that fixes an aspect ratio, crops with a radius/border, and decides how the image fills it (<code>object-fit</code>) and from where (<code>object-position</code>). It is not a CDN image component or an Avatar: it is the pattern Card, Tile, and galleries reuse instead of copying <code>aspect-ratio</code> by hand. For type over the photo, compose with <a href="/en/gradients">Gradients</a> (<code>sk-media-gradient</code>).',
+      'ImageFrame is the <strong>media frame</strong>: a box that fixes an aspect ratio, crops with a radius/border, and decides how the image fills it (<code>object-fit</code>) and from where (<code>object-position</code>). It is not a CDN image component or an Avatar: it is the pattern Card, Tile, and galleries reuse instead of copying <code>aspect-ratio</code> by hand. For type over the photo, compose with <a href="/gradients">Gradients</a> (<code>sk-media-gradient</code>).',
     "imageFrame.anatomyBody":
       "This diagram names the frame, the media, and a caption with wash. Caption and gradient belong to MediaCaption/MediaGradient (parents of ImageFrame), not to the frame's own parts; the specimen includes them because that composition is what the contract teaches. It is frozen; the live aspect/fit/position demos start below.",
     "imageFrame.anatomyLabel": "ImageFrame anatomy",

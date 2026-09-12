@@ -141,13 +141,13 @@ export const qrCodeMessages = {
     "qrCodePage.logoBody":
       "<code>logoRatio</code> does two things at once, and both are needed: it <strong>clears</strong> the modules in the middle and it sizes the box the <code>logo</code> slot's content sits in. Clearing them matters  -  a logo laid over live modules leaves half-painted cells a scanner reads as noise, while a clean hole is exactly what error correction is designed to recover.",
     "qrCodePage.logoBody2":
-      "The slot takes any published node in the kit: an <a href=\"/en/components/icon\">Icon</a>, an <a href=\"/en/components/avatar\">Avatar</a>, an <a href=\"/en/components/image-frame\">ImageFrame</a>. The hole is paid for in capacity, so a logo wants level <code>Q</code> or <code>H</code>; below that the contract says so.",
+      "The slot takes any published node in the kit: an <a href=\"/components/icon\">Icon</a>, an <a href=\"/components/avatar\">Avatar</a>, an <a href=\"/components/image-frame\">ImageFrame</a>. The hole is paid for in capacity, so a logo wants level <code>Q</code> or <code>H</code>; below that the contract says so.",
     "qrCodePage.logoLabel": "With a logo",
     "qrCodePage.logoNote": "level H, logoRatio 0.22",
 
     "qrCodePage.compositionTitle": "The code does not travel alone",
     "qrCodePage.compositionBody":
-      "The contract carries no title, surface, download button or share affordance: those belong to whatever holds it. Below is the composition actually worth copying  -  a <a href=\"/en/components/box\">Box</a>, a heading, and <strong>the same link written out</strong>. That link is not decoration: it is what makes the card usable by someone who cannot point a camera at it, and it is the accessibility floor a QR alone never meets.",
+      "The contract carries no title, surface, download button or share affordance: those belong to whatever holds it. Below is the composition actually worth copying  -  a <a href=\"/components/box\">Box</a>, a heading, and <strong>the same link written out</strong>. That link is not decoration: it is what makes the card usable by someone who cannot point a camera at it, and it is the accessibility floor a QR alone never meets.",
     "qrCodePage.compositionLabel": "QR beside its written link",
     "qrCodePage.compositionNote": "a composition, not an option on the contract",
 
@@ -167,7 +167,7 @@ export const qrCodeMessages = {
 
     "qrCodePage.tonesTitle": "Tints and polarity",
     "qrCodePage.tonesBody":
-      "<code>tone</code> paints the modules from the same palette <a href=\"/en/components/charts\">Chart</a> uses, always at a dark step. <code>polarity</code> decides which way the contrast runs, across three values: <code>auto</code> (the default) follows the page's colour scheme and flips with the theme; <code>light</code> pins dark modules on light paper  -  the polarity the standard specifies  -  and <code>dark</code> is the pinned inversion, for a dark poster or a dark surface.",
+      "<code>tone</code> paints the modules from the same palette <a href=\"/components/charts\">Chart</a> uses, always at a dark step. <code>polarity</code> decides which way the contrast runs, across three values: <code>auto</code> (the default) follows the page's colour scheme and flips with the theme; <code>light</code> pins dark modules on light paper  -  the polarity the standard specifies  -  and <code>dark</code> is the pinned inversion, for a dark poster or a dark surface.",
     "qrCodePage.tonesBody2":
       "The symbol is always painted from the same tokens  -  it is an inline SVG drawing in <code>fill=\"currentColor\"</code>  -  and all three values do is decide which branch of <code>light-dark()</code> wins, through <code>color-scheme</code> on the box. That is why <code>auto</code> flips on its own and the other two do not. <strong>Reach for <code>light</code> the moment the code leaves the screen</strong>: the standard only guarantees dark-on-light, so an inverted symbol is read by current phone cameras  -  iOS and Android both handle it  -  and not by every reader that exists. On screen that is enough; printed or projected, it is not.",
     "qrCodePage.tonesLabel": "Tints",
@@ -175,7 +175,7 @@ export const qrCodeMessages = {
 
     "qrCodePage.popoverTitle": "Handing the page to a phone",
     "qrCodePage.popoverBody":
-      "The case a QR is genuinely best at: the reader is at a desktop and wants to carry this page to the device in their pocket. It goes in a <a href=\"/en/components/popover\">Popover</a> because the code is an aside  -  it answers a question nobody asked until they asked it, and it should not occupy the layout until then.",
+      "The case a QR is genuinely best at: the reader is at a desktop and wants to carry this page to the device in their pocket. It goes in a <a href=\"/components/popover\">Popover</a> because the code is an aside  -  it answers a question nobody asked until they asked it, and it should not occupy the layout until then.",
     "qrCodePage.popoverLabel": "QR in a popover",
     "qrCodePage.popoverNote": "open it to see the code",
 

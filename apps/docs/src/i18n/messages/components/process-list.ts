@@ -63,9 +63,9 @@ export const processListMessages = {
     "processListPage.anatomyPreviewLabel": "ProcessList, part by part",
     "processListPage.whenTitle": "When to use it",
     "processListPage.whenItem1": "Use ProcessList for recipes, installs, and procedures whose order matters.",
-    "processListPage.whenItem2": 'Use <a href="/en/components/list">List</a> for static or interactive row collections.',
+    "processListPage.whenItem2": 'Use <a href="/components/list">List</a> for static or interactive row collections.',
     "processListPage.whenItem3":
-      'Use <a href="/en/components/steps">Steps</a> when there are <code>complete</code>, <code>current</code>, or <code>upcoming</code> states.',
+      'Use <a href="/components/steps">Steps</a> when there are <code>complete</code>, <code>current</code>, or <code>upcoming</code> states.',
     "processListPage.contractItem1": 'The root is always <code>&lt;ol class="sk-process-list"&gt;</code>.',
     "processListPage.contractItem2": 'Every instruction is an <code>&lt;li class="sk-process-list__item"&gt;</code>.',
     "processListPage.contractItem3":

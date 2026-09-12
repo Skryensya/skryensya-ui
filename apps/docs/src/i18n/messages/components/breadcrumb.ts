@@ -81,7 +81,7 @@ export const breadcrumbMessages = {
     "breadcrumb.multiLabel": "Multi-level breadcrumb",
     "breadcrumb.iconTitle": "Icon separator",
     "breadcrumb.iconBody":
-      'The separator is a content slot: leave it empty and the template writes <code>/</code>, or fill it with text (<code>·</code>, <code>›</code>) or an <a href="/en/components/icon">Icon</a>, such as <code>chevron-right</code>. Nothing else: punctuation with a heading inside it is not punctuation.',
+      'The separator is a content slot: leave it empty and the template writes <code>/</code>, or fill it with text (<code>·</code>, <code>›</code>) or an <a href="/components/icon">Icon</a>, such as <code>chevron-right</code>. Nothing else: punctuation with a heading inside it is not punctuation.',
     "breadcrumb.iconLabel": "Breadcrumb with an icon separator",
     "breadcrumb.longTitle": "Long labels",
     "breadcrumb.longBody":
@@ -93,19 +93,19 @@ export const breadcrumbMessages = {
     "breadcrumb.longLabel": "Breadcrumb with long labels",
     "breadcrumb.collapseTitle": "Collapsing to fit",
     "breadcrumb.collapseBody":
-      'When the trail does not fit on one line, an enhancer hides the ancestor levels: never the first one or the current page. Behind a "…" disclosure that opens a real <a href="/en/components/menu">Menu</a> holding those same levels: an ARIA menu\'s own keyboard pattern (arrow keys, Home/End, typeahead), not a plain list. Without JavaScript, or under four levels, the markup is still complete on its own.',
+      'When the trail does not fit on one line, an enhancer hides the ancestor levels: never the first one or the current page. Behind a "…" disclosure that opens a real <a href="/components/menu">Menu</a> holding those same levels: an ARIA menu\'s own keyboard pattern (arrow keys, Home/End, typeahead), not a plain list. Without JavaScript, or under four levels, the markup is still complete on its own.',
     "breadcrumb.collapseLabel": "Breadcrumb that collapses to fit",
     "breadcrumb.collapseTriggerLabel": "Show hidden levels",
     "breadcrumb.contractBody": "Use nav + ol; the last item carries aria-current=page and is not a link.",
     "breadcrumb.a11yBody":
-      'The label tells these crumbs apart from other navigation on the page. A collapsed trail\'s "…" disclosure carries its own <code>aria-label</code> (<code>collapsedLabel</code>) and opens a real <a href="/en/components/menu">Menu</a>, <code>role="menu"</code>: arrow-key navigation, Home/End, typeahead and Escape to close all come from the menu pattern, not something this component reimplements.',
+      'The label tells these crumbs apart from other navigation on the page. A collapsed trail\'s "…" disclosure carries its own <code>aria-label</code> (<code>collapsedLabel</code>) and opens a real <a href="/components/menu">Menu</a>, <code>role="menu"</code>: arrow-key navigation, Home/End, typeahead and Escape to close all come from the menu pattern, not something this component reimplements.',
     "breadcrumb.test1": "A short trail renders uncollapsed: there is no \"…\" worth showing.",
-    "breadcrumb.test2": "The \"…\" trigger exposes its <code>aria-label</code> and <code>aria-haspopup=\"menu\"</code>, and opens a real <a href=\"/en/components/menu\">Menu</a> of the hidden levels.",
+    "breadcrumb.test2": "The \"…\" trigger exposes its <code>aria-label</code> and <code>aria-haspopup=\"menu\"</code>, and opens a real <a href=\"/components/menu\">Menu</a> of the hidden levels.",
     "breadcrumb.test3": "A trail that fits on one line stays uncollapsed.",
     "breadcrumb.test4": "The collapse is re-measured on every resize, even shrinking back from an already-expanded state.",
     "breadcrumb.test5": "A short trail doesn't even grow the \"…\" item: nothing is worth hiding.",
     "breadcrumb.test6": "A trail that fits on one line leaves every crumb untouched: the \"…\" stays hidden.",
-    "breadcrumb.test7": "With no room, the \"…\" opens a real <a href=\"/en/components/menu\">Menu</a> of the hidden crumbs, each one a navigable link; the first crumb and the current page stay visible either way.",
+    "breadcrumb.test7": "With no room, the \"…\" opens a real <a href=\"/components/menu\">Menu</a> of the hidden crumbs, each one a navigable link; the first crumb and the current page stay visible either way.",
     "breadcrumb.test8": "Every resize re-measures the trail: it expands first, so it never gets stuck over-collapsed.",
     "breadcrumb.test9": "Unmounting the enhancer restores every crumb to visible.",
   },

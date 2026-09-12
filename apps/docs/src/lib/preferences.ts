@@ -46,7 +46,7 @@ export const palettePreference = definePreference<string>({
  * The reader's chosen documentation language.
  *
  * Language is normally the URL and nothing else (`i18n/index.ts`): every page is a real file under
- * `/` or `/en/`, and a shared link opens in the language it names. This preference is the ONE piece
+ * `/` or `/`, and a shared link opens in the language it names. This preference is the ONE piece
  * of client state layered on top, and it exists for one reason: a reader who picked a language once
  * must not be overridden by the browser-language redirect on every later visit to an unprefixed
  * page. `LanguageMenu.astro` writes it on click; the pre-paint redirect in `Base.astro` reads it

@@ -31,9 +31,9 @@ export const indexMessages = {
     "landing.description":
       "Componentes, primitives y fundamentos para construir interfaces que funcionan como un sistema.",
     "landing.brand": "skryensya/ui",
-    "landing.hero.title": "Piezas para construir interfaces que funcionan como un sistema.",
+    "landing.hero.title": "Declara un componente una vez. Úsalo donde sea.",
     "landing.hero.lede":
-      "Construye interfaces web con componentes, primitives y fundamentos que se combinan entre sí. Un contrato compartido mantiene estructura, comportamiento y estilos coherentes en HTML, JavaScript y React.",
+      "La estructura, las opciones y el comportamiento viven en un solo contrato. El HTML plano, el runtime vanilla y React se generan desde ahí, y esta documentación también: por eso ninguno de los tres puede desviarse de los otros.",
     "landing.hero.ctaComponents": "Explorar componentes",
 
     "landing.gallery.title": "Cada pieza, por separado.",
@@ -283,7 +283,7 @@ export const indexMessages = {
     "indexPage.title": "Explore components",
     "indexPage.description": "Components, patterns, and primitives organized by the task they solve.",
     "indexPage.lede":
-      'Start with the task: capture data, provide orientation, present content, or communicate status. Each card explains when to use the piece. For icon roles, sets, and rules, go to <a href="/en/foundations">Foundations</a>.',
+      'Start with the task: capture data, provide orientation, present content, or communicate status. Each card explains when to use the piece. For icon roles, sets, and rules, go to <a href="/foundations">Foundations</a>.',
     "indexPage.searchLabel": "Search components",
     "indexPage.countSuffix": "components",
 
@@ -291,9 +291,9 @@ export const indexMessages = {
     "landing.description":
       "Components, primitives and foundations for building interfaces that work as a system.",
     "landing.brand": "skryensya/ui",
-    "landing.hero.title": "Pieces for building interfaces that work as a system.",
+    "landing.hero.title": "Declare a component once. Use it anywhere.",
     "landing.hero.lede":
-      "Build web interfaces from components, primitives and foundations that compose together. One shared contract keeps structure, behavior and styling coherent across HTML, JavaScript and React.",
+      "Structure, options and behaviour live in a single contract. Plain HTML, the vanilla runtime and React are all generated from it, and so is this documentation: which is why none of the three can drift away from the others.",
     "landing.hero.ctaComponents": "Explore components",
 
     "landing.gallery.title": "Every piece, on its own.",

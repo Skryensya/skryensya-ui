@@ -87,7 +87,7 @@ export const treeViewMessages = {
     "treeViewPage.description": "Expandable hierarchies with single or multiple selection.",
     "treeViewPage.betaBadge": "Beta",
     "treeViewPage.lede":
-      'A hierarchy you move through with the keyboard: branches open and close, nodes get selected. Use TreeView when the parent-child relationship <em>is</em> the content: files, categories, an organization. For sibling disclosures with no hierarchy use <a href="/en/components/accordion">Accordion</a>; to navigate between sections, <a href="/en/components/sidebar">Sidebar</a>.',
+      'A hierarchy you move through with the keyboard: branches open and close, nodes get selected. Use TreeView when the parent-child relationship <em>is</em> the content: files, categories, an organization. For sibling disclosures with no hierarchy use <a href="/components/accordion">Accordion</a>; to navigate between sections, <a href="/components/sidebar">Sidebar</a>.',
     "treeViewPage.anatomyBody":
       "This diagram names the root, branches, and leaves. The specimen is frozen; the live trees start below.",
     "treeViewPage.anatomyLabel": "TreeView anatomy",

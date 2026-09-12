@@ -71,7 +71,7 @@ export const ProcessListDemo = framed(function ProcessListDemo() {
           <code>{"<ProcessList>…</ProcessList>"}</code>
           <Inline gap="sm">
             <Badge tone="success">Installation lista</Badge>
-            <Link href="/en/components/process-list">Open documentation</Link>
+            <Link href="/components/process-list">Open documentation</Link>
           </Inline>
         </Stack>
       </ProcessListItem>

@@ -160,7 +160,7 @@ export const commentThreadMessages = {
     "commentThread.anatomyPreviewLabel": "Comment, part by part",
     "commentThread.whenTitle": "When to use it",
     "commentThread.whenBody1":
-      "When there is a conversation with genuinely nested replies: any comment can have its own, at any depth. A flat stream of posts with no threading is <a href=\"/en/components/feed\">Feed</a>; a SELECTABLE hierarchy (files, an index) is <a href=\"/en/components/tree-view\">TreeView</a>. This one is for read-only content with actions (vote, reply, delete), not for picking an item.",
+      "When there is a conversation with genuinely nested replies: any comment can have its own, at any depth. A flat stream of posts with no threading is <a href=\"/components/feed\">Feed</a>; a SELECTABLE hierarchy (files, an index) is <a href=\"/components/tree-view\">TreeView</a>. This one is for read-only content with actions (vote, reply, delete), not for picking an item.",
     "commentThread.whenBody2":
       "Per-node moderation by role and rich mention autocomplete (<code>@</code>/<code>#</code>) are deliberately out of this first version: those are each app's own domain decisions, not the design system's.",
     "commentThread.demoTitle": "The object, from the simplest piece to a deep thread",
@@ -211,7 +211,7 @@ export const commentThreadMessages = {
     "commentThread.vanillaApiBody1":
       "Four things and no more: <strong>listen</strong> to the three events, <strong>veto</strong> one with <code>preventDefault()</code>, <strong>write</strong> state with <code>setCommentVote</code>, and <strong>create</strong> a comment by cloning a <code>CommentTemplate</code>.",
     "commentThread.vanillaApiBody2":
-      "Creating means cloning a blueprint and filling it through the <code>data-sk-comment-*</code> hooks, never through part classes: those belong to the stylesheet and move whenever the paint does. It is the same idiom <a href=\"/en/components/toast\">Toast</a> uses with its own <code>ToastTemplate</code>.",
+      "Creating means cloning a blueprint and filling it through the <code>data-sk-comment-*</code> hooks, never through part classes: those belong to the stylesheet and move whenever the paint does. It is the same idiom <a href=\"/components/toast\">Toast</a> uses with its own <code>ToastTemplate</code>.",
     "commentThread.htmlTitle": "Authored HTML",
     "commentThread.htmlBody":
       "A recursive comment is composed by repeating this same shape inside <code>.sk-comment-thread__replies</code>. The reply form's <code>FormField</code>/<code>Textarea</code> is the consumer's own composition - omitted here for brevity.",

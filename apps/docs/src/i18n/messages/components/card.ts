@@ -131,12 +131,12 @@ export const cardMessages = {
 
     "cardPage.description": "Card is not a component: a guide for composing semantic cards with Box, Tile, and content components.",
     "cardPage.lede":
-      'Card is a <strong>composition result</strong>, not a system component. Content decides its structure; interaction decides whether the surface is born from <a href="/en/components/box">Box</a> or from <a href="/en/components/tile">Tile</a>.',
+      'Card is a <strong>composition result</strong>, not a system component. Content decides its structure; interaction decides whether the surface is born from <a href="/components/box">Box</a> or from <a href="/components/tile">Tile</a>.',
     "cardPage.calloutBody":
       "There is no <code>sk-card</code>, <code>@skryensya/react/card</code>, or <code>components/card.css</code>. Import whichever pieces the card actually uses.",
     "cardPage.chooseTitle": "Choose by behavior",
     "cardPage.chooseBody":
-      "\"Card\" describes the visual shape, but says nothing about what it does. Start from semantics and interaction; then compose the content with Stack, Inline, Heading, Text, Badge, Stat, or other pieces. A wrapping button row that should sit on the floor of a grid of uneven cards is <a href=\"/en/components/inline\">Inline</a> with <code>blockStart=\"auto\"</code>, not a Card component and not a ButtonWrapper.",
+      "\"Card\" describes the visual shape, but says nothing about what it does. Start from semantics and interaction; then compose the content with Stack, Inline, Heading, Text, Badge, Stat, or other pieces. A wrapping button row that should sit on the floor of a grid of uneven cards is <a href=\"/components/inline\">Inline</a> with <code>blockStart=\"auto\"</code>, not a Card component and not a ButtonWrapper.",
     "cardPage.tableHeadSurface": "The surface…",
     "cardPage.tableHeadUses": "Use",
     "cardPage.tableHeadElement": "Real element",
@@ -156,27 +156,27 @@ export const cardMessages = {
       "Box and Tile both start from the same surface, subtle border, radius, and <code>lg</code> padding here. Tile keeps that content and adds <code>sk-interactive</code>'s state layer; the visible difference shows up on hover, focus, or press, not in a second card recipe.",
     "cardPage.plainMediaTitle": "Plain content, no container",
     "cardPage.plainMediaBody":
-      'The actual floor of the ladder: no <a href="/en/components/box">Box</a>, no surface of any kind, just a <a href="/en/components/primitives">Stack</a> on an <code>article</code>, with a photo above the text. There is no border, background, or shadow grouping the card. With no Box to clip its corners, <a href="/en/components/image-frame">ImageFrame</a> asks for its own radius instead of <code>none</code>: the image carries its own geometry because there is nothing left to borrow it from.',
+      'The actual floor of the ladder: no <a href="/components/box">Box</a>, no surface of any kind, just a <a href="/components/primitives">Stack</a> on an <code>article</code>, with a photo above the text. There is no border, background, or shadow grouping the card. With no Box to clip its corners, <a href="/components/image-frame">ImageFrame</a> asks for its own radius instead of <code>none</code>: the image carries its own geometry because there is nothing left to borrow it from.',
     "cardPage.plainMediaNote": "Stack + ImageFrame + Heading + Text",
     "cardPage.basicTitle": "Basic card",
     "cardPage.basicBody":
-      'One step up from plain content: the same title-and-paragraph pair, now inside a surface. Nothing here is interactive, so the root is <a href="/en/components/box">Box</a> on an <code>article</code>. No <code>card</code> class is in play, just the surface, the subtle border, and <code>lg</code> padding.',
+      'One step up from plain content: the same title-and-paragraph pair, now inside a surface. Nothing here is interactive, so the root is <a href="/components/box">Box</a> on an <code>article</code>. No <code>card</code> class is in play, just the surface, the subtle border, and <code>lg</code> padding.',
     "cardPage.basicNote": "Box + Stack + Heading + Text",
     "cardPage.metaTitle": "Status and date",
     "cardPage.metaBody":
-      'The same Box, now with hierarchy: <a href="/en/components/badge">Badge</a> states the status and a <code>caption</code>-sized Text states the date. The card grew no API, it grew content.',
+      'The same Box, now with hierarchy: <a href="/components/badge">Badge</a> states the status and a <code>caption</code>-sized Text states the date. The card grew no API, it grew content.',
     "cardPage.metaNote": "Box + Inline + Badge + Text",
     "cardPage.statTitle": "Metric card",
     "cardPage.statBody":
-      '<a href="/en/components/stat">Stat</a> supplies the metric and Box supplies the card. The collection drops into a grid without Stat turning into a surface or growing a <code>card</code> variant in its API.',
+      '<a href="/components/stat">Stat</a> supplies the metric and Box supplies the card. The collection drops into a grid without Stat turning into a surface or growing a <code>card</code> variant in its API.',
     "cardPage.statNote": "Box + Stat + Icon",
     "cardPage.chartTitle": "Card with an optional chart",
     "cardPage.chartBody":
-      'The chart lives in the <code>Chart</code> contract: a list of points, not a library API. The card remains a composition: Box owns the surface, Badge and Button the rest, and the area owns only the trend. <code>flush</code> reaches the edge. More shapes live on <a href="/en/components/charts">Charts</a>.',
+      'The chart lives in the <code>Chart</code> contract: a list of points, not a library API. The card remains a composition: Box owns the surface, Badge and Button the rest, and the area owns only the trend. <code>flush</code> reaches the edge. More shapes live on <a href="/components/charts">Charts</a>.',
     "cardPage.chartLabel": "Visits over the last eight weeks",
     "cardPage.chartNote": "Box + Badge + Button + Chart area · optional package for the area",
     "cardPage.chartMore":
-      'This rung is the card, not the chart. The three compositions, the shapes, and the optional renderer live on <a href="/en/components/charts">Charts</a>.',
+      'This rung is the card, not the chart. The three compositions, the shapes, and the optional renderer live on <a href="/components/charts">Charts</a>.',
     "cardPage.linkTitle": "Card that navigates",
     "cardPage.linkBody":
       "First interactive rung. The whole surface leads to <strong>one</strong> destination, so the root is the <code>a[href]</code> itself: a TileLink. There is no CSS-stretched link and no <code>onClick</code> on a <code>div</code>, and the title is what names the link.",
@@ -191,7 +191,7 @@ export const cardMessages = {
     "cardPage.selectNote": "TileCheckbox",
     "cardPage.mediaTitle": "Card with an image",
     "cardPage.mediaBody":
-      'Media arrives. The Box carries no padding: it already clips through <code>overflow</code>, so an <a href="/en/components/image-frame">ImageFrame</a> at <code>data-radius="none"</code> reaches the edge and inherits the rounded corner. The text inset gets restored by <code>.sk-card-body</code>, because padding on the root would have inset the photo too.',
+      'Media arrives. The Box carries no padding: it already clips through <code>overflow</code>, so an <a href="/components/image-frame">ImageFrame</a> at <code>data-radius="none"</code> reaches the edge and inherits the rounded corner. The text inset gets restored by <code>.sk-card-body</code>, because padding on the root would have inset the photo too.',
     "cardPage.mediaNote": "Box + ImageFrame + Badge",
     "cardPage.gradientTitle": "Card with a gradient",
     "cardPage.gradientBody":
@@ -227,7 +227,7 @@ export const cardMessages = {
     "cardPage.a11yP2":
       "Each card's title uses <code>h3</code> in these examples because they live under this tab's own hidden <code>h2</code>; on your page, match the level to the card's real place in the heading outline instead of copying it literally.",
     "cardPage.a11yP3":
-      'A <a href="/en/components/tile">Tile</a>\'s visible focus covers the whole interactive surface, never just an icon or an inner link; Box never receives <code>tabindex</code> or an <code>onClick</code> of its own: see Do &amp; Don\'t above.',
+      'A <a href="/components/tile">Tile</a>\'s visible focus covers the whole interactive surface, never just an icon or an inner link; Box never receives <code>tabindex</code> or an <code>onClick</code> of its own: see Do &amp; Don\'t above.',
     "cardPage.a11yP4":
       "A content image (guides, case studies, articles) carries a real <code>alt</code>; the wash that protects text over a photo is purely decorative and gets <code>aria-hidden</code>.",
     "cardPage.a11yP5":

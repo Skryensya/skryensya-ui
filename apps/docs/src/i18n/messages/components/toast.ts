@@ -100,7 +100,7 @@ export const toastMessages = {
 
     "toastPage.description": "Toast: transient feedback in a floating region. Same anatomy as Callout, with the app's own lifecycle.",
     "toastPage.lede":
-      'Toast communicates transient feedback in a floating region. The item is a <a href="/en/components/callout">Callout</a>, same markup, same tones, wrapped in <code>sk-toast-region</code> and in the toast\'s own lifecycle (mount, dismiss, optional timeout).',
+      'Toast communicates transient feedback in a floating region. The item is a <a href="/components/callout">Callout</a>, same markup, same tones, wrapped in <code>sk-toast-region</code> and in the toast\'s own lifecycle (mount, dismiss, optional timeout).',
     "toastPage.anatomyBody":
       "The region and one full toast: icon, content, title, description, actions, and dismiss. The item reuses Callout parts; only the close control is Toast's own. Frozen.",
     "toastPage.anatomyLabel": "Toast anatomy",
@@ -112,7 +112,7 @@ export const toastMessages = {
     "toastPage.emitNote": "Press the button",
     "toastPage.simpleTitle": "Simple",
     "toastPage.simpleBody":
-      'tone="neutral" (the default). In a toast, color should almost never be the action signal: it already floats and retires. Neutral lets the text carry the notice without painting extra urgency, and it floats over a <strong>raised</strong> surface (<code>--color-bg-surface-raised</code> + <code>--elevation-raised</code>) to read as elevated chrome, not a page panel. See the same rule in <a href="/en/components/callout">Callout</a>.',
+      'tone="neutral" (the default). In a toast, color should almost never be the action signal: it already floats and retires. Neutral lets the text carry the notice without painting extra urgency, and it floats over a <strong>raised</strong> surface (<code>--color-bg-surface-raised</code> + <code>--elevation-raised</code>) to read as elevated chrome, not a page panel. See the same rule in <a href="/components/callout">Callout</a>.',
     "toastPage.simpleLabel": "Simple toast",
     "toastPage.statusTitle": "With state",
     "toastPage.statusBody1": 'Status tones color the panel. <code>danger</code> announces as <code>role="alert"</code> (assertive); the rest as <code>role="status"</code> (polite).',
@@ -140,12 +140,12 @@ export const toastMessages = {
       "The JavaScript is the same as the first example, and so is the HTML: clone, insert, mount, and remove on <code>sk-dismiss</code>. There is nothing extra to add for stacking. The hooks belong to the region: <code>--sk-toast-peek</code> (how much each one peeks out), <code>--sk-toast-shrink</code> (how much each step back shrinks), and <code>--sk-toast-cascade</code> (how far apart they open in time). No toast knows it is in a stack.",
     "toastPage.closeTitle": "The close control is a Button",
     "toastPage.closeBody1":
-      'The ✕ is built as an icon-only <a href="/en/components/button">Button</a> at <code>sm</code> size (<code>data-size="sm" data-icon-only data-variant="ghost"</code>), not an ad hoc control. That way it inherits what Button already solved: the 32px face, the 44px hit target <code>::after</code> expands past that face, the hover/press state layer, and focus. With no visible text, <code>aria-label</code> is mandatory.',
+      'The ✕ is built as an icon-only <a href="/components/button">Button</a> at <code>sm</code> size (<code>data-size="sm" data-icon-only data-variant="ghost"</code>), not an ad hoc control. That way it inherits what Button already solved: the 32px face, the 44px hit target <code>::after</code> expands past that face, the hover/press state layer, and focus. With no visible text, <code>aria-label</code> is mandatory.',
     "toastPage.closeBody2":
       "It also carries the <code>sk-toast__dismiss</code> part class: Toast's own, not borrowed from Callout: it is the hook the enhancer looks for to wire up the dismiss, the one that makes the glyph read the tone's own color (<code>currentColor</code>) instead of the accent a normal ghost would paint, and the one that fixes the <strong>optical position</strong>. An icon-only ghost is almost all air: a 16px glyph inside a 32px box, plus the panel's own inset, leaves the ✕ floating in a gap. The part pulls it back half an inset unit, so the <em>glyph</em> lands where the padding says the content's edge is, without the click area losing a single pixel.",
     "toastPage.lifecycleTitle": "The lifecycle belongs to the app",
     "toastPage.lifecycleBody1":
-      'Toast manages no queues and no persistence: those lifecycles belong to the application. The component supplies the region, reuses <a href="/en/components/callout">Callout</a>\'s anatomy. Icon, title, description, actions. Plus its own dismiss, announces the tone, and signals when it wants to leave.',
+      'Toast manages no queues and no persistence: those lifecycles belong to the application. The component supplies the region, reuses <a href="/components/callout">Callout</a>\'s anatomy. Icon, title, description, actions. Plus its own dismiss, announces the tone, and signals when it wants to leave.',
     "toastPage.lifecycleBody2":
       '\nIn Vanilla, <code>data-sk-toast</code> on a <code>sk-callout</code> registers the native dismiss and announces the tone. <code>data-timeout</code> is optional; on expiry it fires <code>sk-dismiss</code> (same as the ✕) with <code>detail.reason</code>, <code>"timeout"</code> or <code>"dismiss"</code>, in case the app distinguishes "it left on its own" from "someone closed it." The component never removes the node: whoever placed it does that.',
     "toastPage.reactBody":

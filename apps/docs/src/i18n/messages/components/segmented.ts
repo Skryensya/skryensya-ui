@@ -28,7 +28,7 @@ export const segmentedMessages = {
 
     "segmentedPage.description": "SegmentedControl: a single, visible choice over a small group, with radiogroup semantics.",
     "segmentedPage.lede":
-      'SegmentedControl is a single choice from a small, fixed set, shown all at once: a radiogroup dressed as a button bar. To navigate between panels use <a href="/en/components/tabs">Tabs</a>; for many options or free text, <a href="/en/components/select">Select</a>.',
+      'SegmentedControl is a single choice from a small, fixed set, shown all at once: a radiogroup dressed as a button bar. To navigate between panels use <a href="/components/tabs">Tabs</a>; for many options or free text, <a href="/components/select">Select</a>.',
     "segmentedPage.body":
       "The vanilla enhancer selects on click and with arrows; <code>Home</code> and <code>End</code> jump to the first and last segment. The chosen option lands in <code>data-value</code> and announces through <code>aria-checked</code>. Every segment paints at <code>--size-control-sm</code> and keeps a <code>44px</code> hit target through <code>::after</code> (the indicator follows the painted box).",
     "segmentedPage.anatomyBody":

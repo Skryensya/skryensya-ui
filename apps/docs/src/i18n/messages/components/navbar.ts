@@ -41,7 +41,7 @@ export const navbarMessages = {
     "navbarPage.anatomyPreviewLabel": "Navbar, part by part",
     "navbarPage.linksTitle": "The links do not belong to the navbar",
     "navbarPage.linksBody":
-      "They are the <a href=\"/en/nav-list\"><code>nav-list</code></a> pattern, laid out horizontally, the same structure that hosts the sidebar vertically. That two components need this exact structure is what makes it a pattern rather than a component: before, the navbar and the sidebar each had their own list, with the same rules written twice and free to drift apart.",
+      "They are the <a href=\"/nav-list\"><code>nav-list</code></a> pattern, laid out horizontally, the same structure that hosts the sidebar vertically. That two components need this exact structure is what makes it a pattern rather than a component: before, the navbar and the sidebar each had their own list, with the same rules written twice and free to drift apart.",
     "navbarPage.currentTitle": "The current page belongs to the platform",
     "navbarPage.currentBody":
       'The current link is marked with <code>aria-current="page"</code>, which the consumer already has to write for screen readers. The styling hooks follow it instead of asking for a modifier class, and a <code>state</code> would be written by a machine; there is none here.',

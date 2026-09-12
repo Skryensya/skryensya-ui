@@ -51,7 +51,7 @@ export const tileMessages = {
   en: {
 
     "tilePage.description": "A visual pattern for a single interaction; Box for static surfaces or several controls.",
-    "tilePage.lede": 'Strict invariant: every Tile has exactly one interactive intent. A Tile is never a static surface. For static content or several independent controls, use <a href="/en/components/box">Box</a>.',
+    "tilePage.lede": 'Strict invariant: every Tile has exactly one interactive intent. A Tile is never a static surface. For static content or several independent controls, use <a href="/components/box">Box</a>.',
     "tilePage.anatomyBody":
       "This diagram names the trigger, content, title, description, chevron and expandable panel. The specimen is open and frozen; the live ExpandableTile starts below.",
     "tilePage.anatomyLabel": "Tile anatomy",
@@ -65,7 +65,7 @@ export const tileMessages = {
     "demo.tile.expandable.description": "Timelines, costs and restrictions.",
     "demo.tile.expandable.body": "Orders ship within 24 business hours. International delivery takes five to ten days.",
     "tilePage.body1": "Tile is a visual recipe the semantic components apply over the correct native element. TileLink, TileButton, TileCheckbox, TileSwitch, and TileRadioGroup's demos and contracts live beside Link, Button, Checkbox, Switch, and RadioGroup.",
-    "tilePage.body2": 'The <a href="/en/components/card">Card</a> guide compares these roots against Box across real content, news, product, link, action, selection, and metric cards.',
+    "tilePage.body2": 'The <a href="/components/card">Card</a> guide compares these roots against Box across real content, news, product, link, action, selection, and metric cards.',
     "tilePage.chooseTitle": "Choose by behavior",
     "tilePage.headNeed": "Need",
     "tilePage.headComponent": "Component",
@@ -89,7 +89,7 @@ export const tileMessages = {
     "tilePage.contractItem2":
       "Checkbox, switch, radio group, and Accordion keep real inputs or a real button. Their Vanilla enhancers read the <code>data-part</code> hooks documented on the semantic components. A single disclosure is Accordion with one item.",
     "tilePage.contractItem3":
-      'Never nest interactive controls inside a Tile. If independent actions are needed, use <a href="/en/components/box">Box</a> and leave the controls as siblings.',
+      'Never nest interactive controls inside a Tile. If independent actions are needed, use <a href="/components/box">Box</a> and leave the controls as siblings.',
     "tilePage.contractItem4": "The React bindings render the same semantic contract; they never mount the Vanilla enhancer.",
     "tilePage.contractItem5":
       "Every Tile accepts <code>data-padding</code> with <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code>, or <code>xl</code>; React exposes the same value as <code>padding</code>. The default is <code>md</code>.",

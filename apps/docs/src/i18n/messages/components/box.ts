@@ -78,11 +78,11 @@ export const boxMessages = {
       "Box only owns surface, border and padding. Whoever uses it chooses the semantic element. It adds no interaction and does not turn the content into a destination or an action.",
     "box.whenTitle": "When to use it",
     "box.whenBody1":
-      'Use Box for static content or for a surface with several independent controls. If the whole surface represents exactly one interaction, choose the matching semantic component instead: <a href="/en/components/link">Link</a>, <a href="/en/components/button">Button</a>, <a href="/en/components/checkbox">Checkbox</a>, <a href="/en/components/radio-group">RadioGroup</a> or <a href="/en/components/accordion">Accordion</a>.',
+      'Use Box for static content or for a surface with several independent controls. If the whole surface represents exactly one interaction, choose the matching semantic component instead: <a href="/components/link">Link</a>, <a href="/components/button">Button</a>, <a href="/components/checkbox">Checkbox</a>, <a href="/components/radio-group">RadioGroup</a> or <a href="/components/accordion">Accordion</a>.',
     "box.whenBody2":
       'Box and Tile share surface, border, radius and the <code>padding</code> vocabulary. Use <code>data-padding="none"</code> in HTML or <code>padding="none"</code> in React when a header or the content\'s image needs to touch the border; that child is the one declaring its own inset. The only difference between the two is the interaction Tile owns and Box does not.',
     "box.whenBody3":
-      'The <a href="/en/components/card">Card</a> guide applies this decision to content, news, product, link, action, selection and metric cards.',
+      'The <a href="/components/card">Card</a> guide applies this decision to content, news, product, link, action, selection and metric cards.',
     "box.htmlTitle": "Authored HTML",
     "box.contractItem1": 'In HTML, pick the semantic element and add the <code>sk-box</code> class.',
     "box.contractItem2":

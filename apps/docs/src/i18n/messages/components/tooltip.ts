@@ -67,7 +67,7 @@ export const tooltipMessages = {
     "tooltipPage.positioningBody1":
       "Where <a href=\"https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning\" rel=\"noopener noreferrer\" target=\"_blank\">CSS anchor positioning</a> exists, the browser places the tooltip: no layout loop, no measuring on every scroll. The enhancer stamps a unique <code>anchor-name</code> and stops handing Zag inline styles, so there are never two positioning engines fighting each other. Browsers without the API fall back to Zag's JS positioning, which is the fallback, not a lesser path.",
     "tooltipPage.positioningBody2":
-      "The <strong>arrow</strong> follows the same split: it comes off the <em>trigger</em>, not the box's center, so it keeps pointing at the control even after the box has shifted to stay on screen, and it flips right along with it. It lives inside the positioner and still anchors to the trigger, because it is <code>fixed</code>: a fixed element is contained by the viewport, not its parent. In the fallback, the machine places it. It is covered in <a href=\"/en/anchoring\">Anchoring</a>.",
+      "The <strong>arrow</strong> follows the same split: it comes off the <em>trigger</em>, not the box's center, so it keeps pointing at the control even after the box has shifted to stay on screen, and it flips right along with it. It lives inside the positioner and still anchors to the trigger, because it is <code>fixed</code>: a fixed element is contained by the viewport, not its parent. In the fallback, the machine places it. It is covered in <a href=\"/anchoring\">Anchoring</a>.",
     "tooltipPage.test1": "Describes the trigger rather than naming it.",
     "tooltipPage.test2": "Stays closed while disabled.",
   },

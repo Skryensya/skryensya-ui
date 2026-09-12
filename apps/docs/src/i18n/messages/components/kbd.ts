@@ -27,7 +27,7 @@ export const kbdMessages = {
   en: {
     "kbdPage.description": "Kbd: a drawn key, the native <kbd> with styling hooks and a React wrapper.",
     "kbdPage.lede":
-      'Kbd is a <strong>drawn key</strong>: the native <code>&lt;kbd&gt;</code> with the look of a physical key. You use it to show a shortcut, the ⌘K on the search bar above, the Esc in a <a href="/en/components/command-palette">CommandPalette</a>\'s footer. It is static, like Badge: no state, no machine, no vanilla enhancer. The <code>&lt;kbd&gt;</code>\'s semantics belong to the platform; the component only adds the look. Rest is <code>neutral</code>; <code>tone="accent"</code> is the brand chip.',
+      'Kbd is a <strong>drawn key</strong>: the native <code>&lt;kbd&gt;</code> with the look of a physical key. You use it to show a shortcut, the ⌘K on the search bar above, the Esc in a <a href="/components/command-palette">CommandPalette</a>\'s footer. It is static, like Badge: no state, no machine, no vanilla enhancer. The <code>&lt;kbd&gt;</code>\'s semantics belong to the platform; the component only adds the look. Rest is <code>neutral</code>; <code>tone="accent"</code> is the brand chip.',
     "kbdPage.toneTitle": "With accent and without",
     "kbdPage.toneBody":
       'The default is a plastic key: a raised surface, a light bevel on top and a ledge underneath. <code>data-tone="accent"</code> (in React, <code>tone="accent"</code>) is the same cap painted with the brand, for a shortcut that has to shout. The chrome ⌘K and the palette footer stay on the default.',
@@ -36,7 +36,7 @@ export const kbdMessages = {
       'A single key (<kbd class="sk-kbd">K</kbd>, <kbd class="sk-kbd">⌘</kbd>, <kbd class="sk-kbd">↑</kbd>) takes a square minimum instead of reading as a sliver; a longer label (<kbd class="sk-kbd">Esc</kbd>, <kbd class="sk-kbd">Enter</kbd>) grows with its text. The minimum is <code>--sk-kbd-min-size</code>, relative to the key\'s own typography, so it stays square at any size.',
     "kbdPage.pressedTitle": "The pressed state",
     "kbdPage.pressedBody1":
-      'Kbd is not a control, it is not clicked, so its one state <strong>reflects</strong> an external event: <code>data-pressed</code>, which turns on while its physical key is held down, the same way a component reflects a machine\'s <code>data-state</code>. Whoever is watching the keyboard writes it, not the kbd. Neutral sinks: the bevel inverts and the fill goes sunken. Accent also takes the action colour: "this shortcut is live" is information. The transition uses the <code>feedback</code> intent (<a href="/en/motion">motion</a>).',
+      'Kbd is not a control, it is not clicked, so its one state <strong>reflects</strong> an external event: <code>data-pressed</code>, which turns on while its physical key is held down, the same way a component reflects a machine\'s <code>data-state</code>. Whoever is watching the keyboard writes it, not the kbd. Neutral sinks: the bevel inverts and the fill goes sunken. Accent also takes the action colour: "this shortcut is live" is information. The transition uses the <code>feedback</code> intent (<a href="/motion">motion</a>).',
     "kbdPage.pressedBody2":
       'Try it: press any of these and it lights up on its own; hold <kbd class="sk-kbd" data-key="meta">⌘</kbd> and add another to see the combination.',
     "kbdPage.echoAriaLabel": "Keys that react to the keyboard",

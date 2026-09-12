@@ -118,7 +118,7 @@ export const dialogMessages = {
     "dialog.contractItem1":
       'Opens a <code>&lt;dialog class="sk-dialog"&gt;</code> with <code>showModal()</code>, not a <code>div</code> imitating the roles.',
     "dialog.contractItem2":
-      'Anatomy: <code>sk-dialog__header</code> (<code>sk-heading sk-dialog__title</code> + <code>sk-dialog__close</code>), <code>sk-dialog__body</code>, <code>sk-dialog__footer</code> (controls, optional). The title is a <a class="sk-link sk-interactive" href="/en/components/heading">Heading</a> (almost always with <code>data-flush</code>).',
+      'Anatomy: <code>sk-dialog__header</code> (<code>sk-heading sk-dialog__title</code> + <code>sk-dialog__close</code>), <code>sk-dialog__body</code>, <code>sk-dialog__footer</code> (controls, optional). The title is a <a class="sk-link sk-interactive" href="/components/heading">Heading</a> (almost always with <code>data-flush</code>).',
     "dialog.contractItem3":
       'Associates the title with <code>aria-labelledby</code> pointing at the Heading\'s <code>id</code> (or an equivalent accessible name).',
     "dialog.contractItem4":
@@ -126,9 +126,9 @@ export const dialogMessages = {
     "dialog.contractItem5":
       "Don't add a focus trap of your own: <code>showModal()</code> already contains focus and restores it on close.",
     "dialog.contractItem6":
-      'Import <a class="sk-link sk-interactive" href="/en/scroll-lock">scroll lock</a> if you want to freeze the page behind it with no CLS when the scrollbar disappears.',
+      'Import <a class="sk-link sk-interactive" href="/scroll-lock">scroll lock</a> if you want to freeze the page behind it with no CLS when the scrollbar disappears.',
     "dialog.contractItem7":
-      'With <a class="sk-link sk-interactive" href="/en/transparency"><code>prefers-reduced-transparency</code></a>, the backdrop drops the translucent blend for an opaque one; modality does not change.',
+      'With <a class="sk-link sk-interactive" href="/transparency"><code>prefers-reduced-transparency</code></a>, the backdrop drops the translucent blend for an opaque one; modality does not change.',
     "dialog.vaulTitle": "Option: Dialog Vaul",
     "dialog.vaulIntro":
       "When content asks for an edge-anchored surface on mobile, the same <code>&lt;dialog&gt;</code> can opt into <strong>Dialog Vaul</strong>: it adds slide, light-dismiss and drag-to-dismiss. Modality (focus, Escape, inert) still comes from <code>showModal()</code>.",

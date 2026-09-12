@@ -477,6 +477,38 @@ const GALLERY_XL_MAX_WIDTH = 2200;
 const GALLERY_FILL_HEIGHT = 1191;
 
 /*
+ * THE HERO, and the right-hand half of it is the argument rather than a picture of one.
+ *
+ * A page whose whole claim is "declare a component once, use it anywhere" cannot open by ASSERTING
+ * that and then showing a photograph. What it can do is show the two halves of the claim next to
+ * each other at the size a reader can check in a second: a real, mounted Select on top, and the
+ * markup that produced it underneath.
+ *
+ * THE SNIPPET IS EMITTED FROM THE TREE THAT RENDERS THE COMPONENT (`heroSpecimenTree`, through
+ * `emitMarkup`, the same machinery ComponentPreview's own demo already uses on this page). Two
+ * copies of one source, so the code under the control cannot drift from the control above it. A
+ * hand-written snippet here would be the one place on the site where the documentation and the
+ * thing it documents were kept in agreement by hand, on the page that says they never are.
+ *
+ * A SELECT rather than a Button: a button is a box with a word in it and its markup reads as one
+ * line of nothing much. A Select is a label, a control and a native `<select>` with its options, so
+ * the snippet is long enough to be recognisably a component and short enough to read whole.
+ */
+const heroSpecimenTree = (t: Translate): UsageTree => ({
+  contract: "select",
+  signature: "Select",
+  options: { name: "runtime", controlSize: "md" },
+  slots: {
+    label: t("landing.hero.specimenLabel"),
+    options: [
+      { options: { value: "html" }, slots: { children: "HTML" } },
+      { options: { value: "vanilla", selected: true }, slots: { children: "JavaScript" } },
+      { options: { value: "react" }, slots: { children: "React" } },
+    ],
+  },
+});
+
+/*
  * THE ULTRAWIDE LANES, and they are skeletons on purpose.
  *
  * Above `ultrawide` the five real lanes stop growing (`GALLERY_MAX_WIDTH`) and the page ends up
@@ -576,6 +608,16 @@ const SKELETONS: Record<SkeletonKind, () => UsageTree> = {
   }),
 };
 
+/*
+ * THE ARC, in numbers: how far each lane starts below the top of the row, by distance from the
+ * middle. The centre lane leads, the pair beside it drops a step, the outer pair another, and the
+ * skeleton lanes at the tier drop one more (`SKELETON_LANE_DROP`), which is what keeps the shape
+ * reading as one curve across all seven rather than five staggered lanes with two flat ones stuck
+ * on the ends. Read by the stylesheet at the foot of this file, and only from `ultrawide` up.
+ */
+const LANE_DROPS = ["3rem", "1.5rem", "0rem", "1.5rem", "3rem"];
+const SKELETON_LANE_DROP = "4.5rem";
+
 /* Two lanes, each a different reading order, so the pair does not look like one column mirrored. */
 const skeletonLanes: UsageTree[][] = [
   skeletonLane(["media", "person", "metric", "list", "control", "paragraph", "person"]),
@@ -641,12 +683,19 @@ const columns: GalleryTile[][] = [
 
 <Base fullBleed title={t("landing.title")} description={t("landing.description")} hideVanillaMount alwaysShowNavTrigger={false}>
   <div class="sk-layout-grid" style="row-gap: var(--space-stack-xl)">
-    <section data-width="narrow">
+    {/*
+      `breakout` rather than `narrow`: the gallery under it runs the full bleed of the page, and a
+      hero set to the narrowest measure on the grid read as a paragraph someone had left above a
+      wall of cards. The lede keeps its own measure inside that band (`landing-hero__lede`) so the
+      headline gets the width and the sentence under it stays at a readable line length, which is
+      the pair of things a wider hero has to hold apart.
+    */}
+    <section data-width="breakout" class="landing-hero">
       <div class="sk-box" data-padding="xl">
         <div class="sk-stack" data-gap="lg">
           <header class="sk-stack" data-gap="md">
-            <h1 class="sk-heading" data-size="display-md" data-flush>{t("landing.hero.title")}</h1>
-            <p class="sk-text" data-tone="secondary" data-size="lg">{t("landing.hero.lede")}</p>
+            <h1 class="sk-heading" data-size="display-lg" data-flush>{t("landing.hero.title")}</h1>
+            <p class="sk-text landing-hero__lede" data-tone="secondary" data-size="lg">{t("landing.hero.lede")}</p>
           </header>
           <div class="sk-inline" data-gap="sm">
             <a
@@ -688,7 +737,7 @@ const columns: GalleryTile[][] = [
           static, so there is no viewport to branch on at build time, and a lane that appears by
           stylesheet cannot disagree with the column template that makes room for it.
         */}
-        <div class="landing-gallery__skeleton sk-fade-edge" data-direction="to-bottom" aria-hidden="true">
+        <div class="landing-gallery__skeleton sk-fade-edge" data-direction="to-bottom" aria-hidden="true" style={`--landing-lane-drop: ${SKELETON_LANE_DROP}`}>
           <div class="sk-stack" data-gap="sm">
             {skeletonLanes[0].map((tree) => (
               <div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" set:html={emitMarkup(tree, { fillDefaults: false })} />
@@ -696,8 +745,8 @@ const columns: GalleryTile[][] = [
           </div>
         </div>
         {
-          columns.map((column) => (
-            <div class="sk-stack" data-gap="sm">
+          columns.map((column, lane) => (
+            <div class="sk-stack" data-gap="sm" style={`--landing-lane-drop: ${LANE_DROPS[lane]}`}>
               {column.map(({ tree, frame, idPrefix }) => (
                 <div
                   class="sk-box"
@@ -710,7 +759,7 @@ const columns: GalleryTile[][] = [
             </div>
           ))
         }
-        <div class="landing-gallery__skeleton sk-fade-edge" data-direction="to-bottom" aria-hidden="true">
+        <div class="landing-gallery__skeleton sk-fade-edge" data-direction="to-bottom" aria-hidden="true" style={`--landing-lane-drop: ${SKELETON_LANE_DROP}`}>
           <div class="sk-stack" data-gap="sm">
             {skeletonLanes[1].map((tree) => (
               <div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" set:html={emitMarkup(tree, { fillDefaults: false })} />
@@ -738,6 +787,15 @@ const columns: GalleryTile[][] = [
   galleryFillHeight: `${GALLERY_FILL_HEIGHT}px`,
 }}>
   /*
+   * A HEADLINE WANTS THE BAND, A SENTENCE WANTS A MEASURE. The hero is `breakout` now, which is the
+   * right width for the h1 and about twice the right width for the line under it, so the lede caps
+   * itself where prose stops being readable and the heading keeps the whole band.
+   */
+  .landing-hero__lede {
+    max-inline-size: 52ch;
+  }
+
+  /*
    * The skeleton lanes are laid out by this sheet alone; the grid itself keeps its five-lane inline
    * style at every width below the tier. `display: none` rather than `visibility` or opacity: a
    * hidden-but-present lane would still claim a grid track, and below the tier the template has no
@@ -745,6 +803,34 @@ const columns: GalleryTile[][] = [
    */
   .landing-gallery__skeleton {
     display: none;
+  }
+
+  /*
+   * THE ARC. The lanes do not all start at the same y: the centre one sits highest, its two
+   * neighbours drop a step, the outer pair drops another, and at the tier the skeleton lanes drop
+   * one more. Five identical tops read as a wall, and the eye lands on the whole block at once
+   * instead of on anything in it; a shallow arc gives it an entry point (the middle, which is also
+   * the widest lane) and a direction to leave by.
+   *
+   * `margin-block-start`, not `translate`: the offset has to COST height, or the lanes at the
+   * bottom of the arc would hang past the section while the grid still believed everything ended
+   * level. Margin pushes the grid's own box down with them.
+   *
+   * ONLY FROM `ultrawide` UP, where all five lanes are genuinely side by side. Below it the grid
+   * falls to four, three, two and finally one lane (`data-responsive`), and an offset keyed to a
+   * lane's position in a five-lane row becomes a random gap above a stacked column.
+   *
+   * WHICH lane gets which step is written on the lane itself (`--landing-lane-drop`, `LANE_DROPS`
+   * below), not selected for here. `:nth-of-type` was the first attempt and it is the wrong tool
+   * twice over: it counts ELEMENTS of a type, so `.sk-stack:nth-of-type(1)` never matched the first
+   * real lane once a skeleton div preceded it, and the two skeleton lanes appearing at the tier
+   * shift every index under it anyway. The markup already knows a lane's position; asking CSS to
+   * re-derive it from the DOM was the bug.
+   */
+  @media (min-width: 90rem) {
+    .landing-gallery > * {
+      margin-block-start: var(--landing-lane-drop, 0rem);
+    }
   }
 
   @media (min-width: 120rem) {

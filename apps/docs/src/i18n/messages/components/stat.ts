@@ -53,7 +53,7 @@ export const statMessages = {
     "statPage.anatomyPreviewLabel": "Stat, part by part",
     "statPage.cardTitle": "Stat Card",
     "statPage.cardBody":
-      '<a href="/en/components/card#stat-card">Card</a> adds no extra variant to Stat: <a href="/en/components/box">Box</a> supplies the surface and Grid organizes the collection. The arrow points down on cancellations, but <code>trend="up"</code> communicates that the change is favorable.',
+      '<a href="/components/card#stat-card">Card</a> adds no extra variant to Stat: <a href="/components/box">Box</a> supplies the surface and Grid organizes the collection. The arrow points down on cancellations, but <code>trend="up"</code> communicates that the change is favorable.',
     "statPage.animateTitle": "Animating the value",
     "statPage.animateBody":
       "The count-up is <strong>opt-in</strong>: the same Stat Card, with <code>animate</code> / <code>data-animate</code> and a numeric value. Without it, the markup stays static. The duration comes from <code>--motion-count-duration</code>; under <code>prefers-reduced-motion</code> it jumps straight to the end.",

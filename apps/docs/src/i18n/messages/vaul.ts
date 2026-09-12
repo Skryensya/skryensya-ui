@@ -153,7 +153,7 @@ export const vaulMessages = {
     "vaulPage.detailsTitle": "Contract details",
     "vaulPage.whyPatternTitle": "Why it is a pattern",
     "vaulPage.whyPatternBody1":
-      '<a href="/en/components/drawer">Drawer</a> is the same Vaul pinned to an inline edge. Sharing the structure avoids maintaining two almost-identical sheets.',
+      '<a href="/components/drawer">Drawer</a> is the same Vaul pinned to an inline edge. Sharing the structure avoids maintaining two almost-identical sheets.',
     "vaulPage.whyPatternBody2": "Vaul ships hooks and structure; each composition decides the content.",
     "vaulPage.nativeTitle": "Modality is native",
     "vaulPage.nativeBody":
@@ -179,7 +179,7 @@ export const vaulMessages = {
     "vaulPage.motionBody1":
       "Entering, leaving, and releasing use different tokens. With reduced motion, the decorative trip drops; modality and landing remain.",
     "vaulPage.motionBody2":
-      '<a href="/en/transparency"><code>prefers-reduced-transparency</code></a> makes the backdrop opaque; it does not remove it.',
+      '<a href="/transparency"><code>prefers-reduced-transparency</code></a> makes the backdrop opaque; it does not remove it.',
     "vaulPage.motionBody3": "Release has its own intent because it finishes the hand's momentum, not an exit animation.",
     "vaulPage.demoOpenLabel": "Share file",
     "vaulPage.demoTitle": "Q3 commercial proposal",

@@ -1,4 +1,5 @@
 import type { ComponentContract } from "./contract.js";
+import { clampedFraction } from "./fraction.js";
 
 /*
  * CHART, a small series of labelled values made visible.
@@ -126,8 +127,7 @@ export function chartMax(values: readonly number[]): number {
 /** One entry's height as a fraction (0-1) of the series maximum. Clamped: a negative value is not a
  *  bar that points downward, it is a bar that is not there. */
 export function chartFraction(value: number, max: number): number {
-  if (!Number.isFinite(value) || !Number.isFinite(max) || max <= 0) return 0;
-  return Math.min(Math.max(value / max, 0), 1);
+  return clampedFraction(value, 0, max);
 }
 
 /** One entry of a series. The React binding's `points`, the contract's `items`. */

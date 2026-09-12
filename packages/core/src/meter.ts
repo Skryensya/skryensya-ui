@@ -1,4 +1,5 @@
 import type { ComponentContract } from "./contract.js";
+import { clampedFraction } from "./fraction.js";
 import { barTones, type BarTone } from "./progress.js";
 
 /*
@@ -47,8 +48,7 @@ export type MeterTone = BarTone;
  *  `progressFraction`, `min` is a real, commonly non-zero parameter here. A progress bar's task
  *  always starts at 0, a measurement's scale (temperature, a rating) very often does not. */
 export function meterFraction(value: number, min: number, max: number): number {
-  if (!Number.isFinite(value) || !Number.isFinite(min) || !Number.isFinite(max) || max <= min) return 0;
-  return Math.min(Math.max((value - min) / (max - min), 0), 1);
+  return clampedFraction(value, min, max);
 }
 
 export const meterContract = {

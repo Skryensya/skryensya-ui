@@ -36,21 +36,31 @@ export function checkStylingHooks(): HookProblem[] {
   for (const id of contractIds()) {
     const contract = getContract(id);
     if (!contract?.hooks?.length) continue; // inert until a contract declares its hooks
-    const rel = contract.css.replace(/^@skryensya\/core\//, "");
-    const sheet = byRel.get(rel);
-    if (!sheet) {
-      problems.push({
-        sheet: rel,
-        rule: "hook-broken",
-        message: `contract "${contract.id}" names this stylesheet and the corpus has no such file`,
-      });
+    /*
+     * EVERY sheet this contract publishes, not just `css`. A contract whose styling spans more than
+     * one stylesheet says so with `hookSheets`, and the union is what `hooks` is reconciled against.
+     */
+    const rels = [contract.css, ...(contract.hookSheets ?? [])].map((c) =>
+      c.replace(/^@skryensya\/core\//, ""),
+    );
+    const missingSheets = rels.filter((rel) => !byRel.get(rel));
+    if (missingSheets.length > 0) {
+      for (const rel of missingSheets) {
+        problems.push({
+          sheet: rel,
+          rule: "hook-broken",
+          message: `contract "${contract.id}" names this stylesheet and the corpus has no such file`,
+        });
+      }
       continue;
     }
 
-    const declarations = sheet.decls as readonly { name: string }[];
-    const inSheet = new Set(
-      declarations.filter((d) => d.name.startsWith("--sk-")).map((d) => d.name),
-    );
+    const rel = rels[0]!;
+    const inSheet = new Set<string>();
+    for (const each of rels) {
+      const declarations = byRel.get(each)!.decls as readonly { name: string }[];
+      for (const d of declarations) if (d.name.startsWith("--sk-")) inSheet.add(d.name);
+    }
     const promised = new Set(contract.hooks);
 
     /*
@@ -63,7 +73,7 @@ export function checkStylingHooks(): HookProblem[] {
       problems.push({
         sheet: rel,
         rule: "hook-undeclared",
-        message: `${name} is declared in the stylesheet but missing from "${contract.id}".hooks, so nothing documents it`,
+        message: `${name} is declared in one of this contract's stylesheets but missing from "${contract.id}".hooks, so nothing documents it`,
       });
     }
     for (const name of promised) {
@@ -71,7 +81,7 @@ export function checkStylingHooks(): HookProblem[] {
       problems.push({
         sheet: rel,
         rule: "hook-broken",
-        message: `"${contract.id}".hooks promises ${name} and this stylesheet never declares it: an override of it does nothing, silently`,
+        message: `"${contract.id}".hooks promises ${name} and none of its stylesheets declares it: an override of it does nothing, silently`,
       });
     }
   }

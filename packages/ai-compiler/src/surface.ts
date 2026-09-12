@@ -49,6 +49,7 @@ export function contractSurface(contract: ComponentContract) {
     events: contract.events,
     a11y: contract.a11y,
     hooks: contract.hooks,
+    hookSheets: contract.hookSheets,
     signatures: Object.fromEntries(
       Object.entries(contract.signatures)
         .sort(([a], [b]) => a.localeCompare(b))

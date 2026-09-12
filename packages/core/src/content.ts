@@ -75,8 +75,10 @@ export const contentContract = {
   parts: contentParts,
   hooks: [
     "--sk-button-fg",
+    "--sk-callout-accent",
     "--sk-callout-bg",
     "--sk-callout-content-gap",
+    "--sk-callout-fg",
     "--sk-callout-padding",
     "--sk-toast-cascade",
     "--sk-toast-depth",
@@ -84,6 +86,10 @@ export const contentContract = {
     "--sk-toast-shadow",
     "--sk-toast-shrink",
     "--sk-toast-wash",
+  ],
+  /* This component's styling does not fit in one stylesheet; see `hookSheets` on the contract. */
+  hookSheets: [
+    "@skryensya/core/components/callout.css",
   ],
 
   options: {

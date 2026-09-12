@@ -73,6 +73,12 @@ export const boxContract = {
     "--sk-box-radius",
     "--sk-box-shadow",
     "--sk-box-wash",
+    "--sk-wrapper-max",
+    "--sk-wrapper-padding-inline",
+  ],
+  /* This component's styling does not fit in one stylesheet; see `hookSheets` on the contract. */
+  hookSheets: [
+    "@skryensya/core/patterns/wrapper.css",
   ],
 
   options: {
@@ -99,6 +105,13 @@ export const layoutContract = {
   css: "@skryensya/core/patterns/layout.css",
   parts: layoutGridParts,
   hooks: [
+    "--sk-box-bg",
+    "--sk-box-border-color",
+    "--sk-box-border-width",
+    "--sk-box-padding",
+    "--sk-box-radius",
+    "--sk-box-shadow",
+    "--sk-box-wash",
     "--sk-grid-columns",
     "--sk-grid-gap",
     "--sk-inline-block-start",
@@ -113,6 +126,13 @@ export const layoutContract = {
     "--sk-layout-rail-inline-size",
     "--sk-layout-rail-row-span",
     "--sk-stack-gap",
+    "--sk-wrapper-max",
+    "--sk-wrapper-padding-inline",
+  ],
+  /* This component's styling does not fit in one stylesheet; see `hookSheets` on the contract. */
+  hookSheets: [
+    "@skryensya/core/patterns/box.css",
+    "@skryensya/core/patterns/wrapper.css",
   ],
 
   options: {
@@ -210,8 +230,19 @@ export const wrapperContract = {
   css: "@skryensya/core/patterns/wrapper.css",
   parts: layoutParts,
   hooks: [
+    "--sk-box-bg",
+    "--sk-box-border-color",
+    "--sk-box-border-width",
+    "--sk-box-padding",
+    "--sk-box-radius",
+    "--sk-box-shadow",
+    "--sk-box-wash",
     "--sk-wrapper-max",
     "--sk-wrapper-padding-inline",
+  ],
+  /* This component's styling does not fit in one stylesheet; see `hookSheets` on the contract. */
+  hookSheets: [
+    "@skryensya/core/patterns/box.css",
   ],
 
   options: {

@@ -17,6 +17,18 @@
             "kind": "feature"
           },
           {
+            "date": "2026-09-12",
+            "en": {
+              "body": "This component paints from more than one stylesheet, so the contract now names them with <code>hookSheets</code> and its <code>hooks</code> list covers all of them. Before, only the sheet <code>css</code> names could be reconciled, so the hooks in the others were public surface nobody documented and nothing checked. No styling changes: what changes is that they are declared now, and the compiler checks them.",
+              "title": "The contract declares the other stylesheets its styling lives in"
+            },
+            "es": {
+              "body": "Este componente se pinta desde mas de una hoja, asi que el contrato ahora las nombra con <code>hookSheets</code> y su lista de <code>hooks</code> cubre todas. Antes solo se podia reconciliar contra la hoja de <code>css</code>, asi que los hooks de las otras eran superficie publica que nadie documentaba ni verificaba. No cambia ningun estilo: cambia que ahora estan declarados y el compilador los chequea.",
+              "title": "El contrato declara las otras hojas donde vive su estilo"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-09-11",
             "en": {
               "body": "The first section and its trigger now declare the frame's radius (<code>--sk-accordion-radius</code>) on the two corners they actually occupy; every section below stays flat, because the seam between two of them is a straight divider on both sides. Painted it looked the same already, because the frame clips with <code>overflow: hidden</code>; what changes is that the element now states the shape it has, so anything reading the element rather than the painted result (an anatomy diagram, a state layer of your own) stops drawing a square corner over a round one.",
@@ -323,6 +335,18 @@
             "es": {
               "body": "El contrato ahora publica los <code>7</code> styling hooks de este componente. Nada de lo que hayas escrito cambia: son los mismos hooks, con los mismos nombres, y la hoja de estilos no se tocó. Lo nuevo es que el contrato los declara, así que el compilador falla si la hoja declara uno que el contrato no publica, o si el contrato promete uno que la hoja no declara. Esa segunda mitad es la que importa: hasta ahora, redeclarar un hook que ya no existía no daba error, daba silencio.",
               "title": "Los styling hooks de box quedan declarados en el contrato"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-12",
+            "en": {
+              "body": "This component paints from more than one stylesheet, so the contract now names them with <code>hookSheets</code> and its <code>hooks</code> list covers all of them. Before, only the sheet <code>css</code> names could be reconciled, so the hooks in the others were public surface nobody documented and nothing checked. No styling changes: what changes is that they are declared now, and the compiler checks them.",
+              "title": "The contract declares the other stylesheets its styling lives in"
+            },
+            "es": {
+              "body": "Este componente se pinta desde mas de una hoja, asi que el contrato ahora las nombra con <code>hookSheets</code> y su lista de <code>hooks</code> cubre todas. Antes solo se podia reconciliar contra la hoja de <code>css</code>, asi que los hooks de las otras eran superficie publica que nadie documentaba ni verificaba. No cambia ningun estilo: cambia que ahora estan declarados y el compilador los chequea.",
+              "title": "El contrato declara las otras hojas donde vive su estilo"
             },
             "kind": "feature"
           },
@@ -850,6 +874,18 @@
             "kind": "feature"
           },
           {
+            "date": "2026-09-12",
+            "en": {
+              "body": "This component paints from more than one stylesheet, so the contract now names them with <code>hookSheets</code> and its <code>hooks</code> list covers all of them. Before, only the sheet <code>css</code> names could be reconciled, so the hooks in the others were public surface nobody documented and nothing checked. No styling changes: what changes is that they are declared now, and the compiler checks them.",
+              "title": "The contract declares the other stylesheets its styling lives in"
+            },
+            "es": {
+              "body": "Este componente se pinta desde mas de una hoja, asi que el contrato ahora las nombra con <code>hookSheets</code> y su lista de <code>hooks</code> cubre todas. Antes solo se podia reconciliar contra la hoja de <code>css</code>, asi que los hooks de las otras eran superficie publica que nadie documentaba ni verificaba. No cambia ningun estilo: cambia que ahora estan declarados y el compilador los chequea.",
+              "title": "El contrato declara las otras hojas donde vive su estilo"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-08-13",
             "en": {
               "body": "The second signature: a group with a parent that checks and unchecks them all, and shows <code>indeterminate</code> when its children disagree. Until now that was a <code>&lt;script&gt;</code> copied into every page that needed it; it is now <code>CheckboxGroup</code>, with its own enhancer (<code>data-sk-checkbox-group</code>) and React component. The parent's state is <strong>derived</strong>: it takes no <code>checked</code>, and which children start checked is per-entry data (<code>defaultChecked</code>), not the group's. A <code>disabled</code> child is not a vote, and a form <code>reset</code> re-derives. It emits <code>sk:checkboxgroupvaluechange</code> with <code>{ value, checked }</code>. Options: <code>name</code> (required), <code>orientation</code>, <code>disabled</code>, <code>required</code>. New classes: <code>sk-checkbox-group</code> and <code>sk-checkbox-group__items</code>.",
@@ -1227,6 +1263,18 @@
             "es": {
               "body": "El contrato ahora publica los <code>10</code> styling hooks de este componente. Nada de lo que hayas escrito cambia: son los mismos hooks, con los mismos nombres, y la hoja de estilos no se tocó. Lo nuevo es que el contrato los declara, así que el compilador falla si la hoja declara uno que el contrato no publica, o si el contrato promete uno que la hoja no declara. Esa segunda mitad es la que importa: hasta ahora, redeclarar un hook que ya no existía no daba error, daba silencio.",
               "title": "Los styling hooks de content quedan declarados en el contrato"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-12",
+            "en": {
+              "body": "This component paints from more than one stylesheet, so the contract now names them with <code>hookSheets</code> and its <code>hooks</code> list covers all of them. Before, only the sheet <code>css</code> names could be reconciled, so the hooks in the others were public surface nobody documented and nothing checked. No styling changes: what changes is that they are declared now, and the compiler checks them.",
+              "title": "The contract declares the other stylesheets its styling lives in"
+            },
+            "es": {
+              "body": "Este componente se pinta desde mas de una hoja, asi que el contrato ahora las nombra con <code>hookSheets</code> y su lista de <code>hooks</code> cubre todas. Antes solo se podia reconciliar contra la hoja de <code>css</code>, asi que los hooks de las otras eran superficie publica que nadie documentaba ni verificaba. No cambia ningun estilo: cambia que ahora estan declarados y el compilador los chequea.",
+              "title": "El contrato declara las otras hojas donde vive su estilo"
             },
             "kind": "feature"
           },
@@ -2102,6 +2150,18 @@
             "es": {
               "body": "El contrato ahora publica los <code>14</code> styling hooks de este componente. Nada de lo que hayas escrito cambia: son los mismos hooks, con los mismos nombres, y la hoja de estilos no se tocó. Lo nuevo es que el contrato los declara, así que el compilador falla si la hoja declara uno que el contrato no publica, o si el contrato promete uno que la hoja no declara. Esa segunda mitad es la que importa: hasta ahora, redeclarar un hook que ya no existía no daba error, daba silencio.",
               "title": "Los styling hooks de layout quedan declarados en el contrato"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-12",
+            "en": {
+              "body": "This component paints from more than one stylesheet, so the contract now names them with <code>hookSheets</code> and its <code>hooks</code> list covers all of them. Before, only the sheet <code>css</code> names could be reconciled, so the hooks in the others were public surface nobody documented and nothing checked. No styling changes: what changes is that they are declared now, and the compiler checks them.",
+              "title": "The contract declares the other stylesheets its styling lives in"
+            },
+            "es": {
+              "body": "Este componente se pinta desde mas de una hoja, asi que el contrato ahora las nombra con <code>hookSheets</code> y su lista de <code>hooks</code> cubre todas. Antes solo se podia reconciliar contra la hoja de <code>css</code>, asi que los hooks de las otras eran superficie publica que nadie documentaba ni verificaba. No cambia ningun estilo: cambia que ahora estan declarados y el compilador los chequea.",
+              "title": "El contrato declara las otras hojas donde vive su estilo"
             },
             "kind": "feature"
           },
@@ -3254,6 +3314,18 @@
             "kind": "feature"
           },
           {
+            "date": "2026-09-12",
+            "en": {
+              "body": "This component paints from more than one stylesheet, so the contract now names them with <code>hookSheets</code> and its <code>hooks</code> list covers all of them. Before, only the sheet <code>css</code> names could be reconciled, so the hooks in the others were public surface nobody documented and nothing checked. No styling changes: what changes is that they are declared now, and the compiler checks them.",
+              "title": "The contract declares the other stylesheets its styling lives in"
+            },
+            "es": {
+              "body": "Este componente se pinta desde mas de una hoja, asi que el contrato ahora las nombra con <code>hookSheets</code> y su lista de <code>hooks</code> cubre todas. Antes solo se podia reconciliar contra la hoja de <code>css</code>, asi que los hooks de las otras eran superficie publica que nadie documentaba ni verificaba. No cambia ningun estilo: cambia que ahora estan declarados y el compilador los chequea.",
+              "title": "El contrato declara las otras hojas donde vive su estilo"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>RadioGroup</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>name</code>, <code>value</code>, <code>orientation</code>, <code>disabled</code>, <code>required</code>. Its stylesheet is <code>components/radio-group.css</code>.",
@@ -3795,6 +3867,18 @@
             "kind": "feature"
           },
           {
+            "date": "2026-09-12",
+            "en": {
+              "body": "This component paints from more than one stylesheet, so the contract now names them with <code>hookSheets</code> and its <code>hooks</code> list covers all of them. Before, only the sheet <code>css</code> names could be reconciled, so the hooks in the others were public surface nobody documented and nothing checked. No styling changes: what changes is that they are declared now, and the compiler checks them.",
+              "title": "The contract declares the other stylesheets its styling lives in"
+            },
+            "es": {
+              "body": "Este componente se pinta desde mas de una hoja, asi que el contrato ahora las nombra con <code>hookSheets</code> y su lista de <code>hooks</code> cubre todas. Antes solo se podia reconciliar contra la hoja de <code>css</code>, asi que los hooks de las otras eran superficie publica que nadie documentaba ni verificaba. No cambia ningun estilo: cambia que ahora estan declarados y el compilador los chequea.",
+              "title": "El contrato declara las otras hojas donde vive su estilo"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-09-02",
             "en": {
               "body": "The off track no longer uses <code>--color-bg-surface-sunken</code>, which collapsed onto the canvas in both modes and made an off switch look disabled. It now uses <code>--color-border-default</code>, a mid grey identical in light and dark; the thumb is a bright puck (<code>--color-text-on-media</code>) in every state, with a soft shadow that lifts it off the track, and the on thumb is no longer near-black in dark. Disabled gains a <code>--sk-switch-disabled-thumb-bg</code> hook so it sits one step flatter than off.",
@@ -3906,6 +3990,18 @@
             "es": {
               "body": "El contrato ahora publica los <code>7</code> styling hooks de este componente. Nada de lo que hayas escrito cambia: son los mismos hooks, con los mismos nombres, y la hoja de estilos no se tocó. Lo nuevo es que el contrato los declara, así que el compilador falla si la hoja declara uno que el contrato no publica, o si el contrato promete uno que la hoja no declara. Esa segunda mitad es la que importa: hasta ahora, redeclarar un hook que ya no existía no daba error, daba silencio.",
               "title": "Los styling hooks de table-pager quedan declarados en el contrato"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-12",
+            "en": {
+              "body": "This component paints from more than one stylesheet, so the contract now names them with <code>hookSheets</code> and its <code>hooks</code> list covers all of them. Before, only the sheet <code>css</code> names could be reconciled, so the hooks in the others were public surface nobody documented and nothing checked. No styling changes: what changes is that they are declared now, and the compiler checks them.",
+              "title": "The contract declares the other stylesheets its styling lives in"
+            },
+            "es": {
+              "body": "Este componente se pinta desde mas de una hoja, asi que el contrato ahora las nombra con <code>hookSheets</code> y su lista de <code>hooks</code> cubre todas. Antes solo se podia reconciliar contra la hoja de <code>css</code>, asi que los hooks de las otras eran superficie publica que nadie documentaba ni verificaba. No cambia ningun estilo: cambia que ahora estan declarados y el compilador los chequea.",
+              "title": "El contrato declara las otras hojas donde vive su estilo"
             },
             "kind": "feature"
           },
@@ -4484,6 +4580,18 @@
             "kind": "feature"
           },
           {
+            "date": "2026-09-12",
+            "en": {
+              "body": "This component paints from more than one stylesheet, so the contract now names them with <code>hookSheets</code> and its <code>hooks</code> list covers all of them. Before, only the sheet <code>css</code> names could be reconciled, so the hooks in the others were public surface nobody documented and nothing checked. No styling changes: what changes is that they are declared now, and the compiler checks them.",
+              "title": "The contract declares the other stylesheets its styling lives in"
+            },
+            "es": {
+              "body": "Este componente se pinta desde mas de una hoja, asi que el contrato ahora las nombra con <code>hookSheets</code> y su lista de <code>hooks</code> cubre todas. Antes solo se podia reconciliar contra la hoja de <code>css</code>, asi que los hooks de las otras eran superficie publica que nadie documentaba ni verificaba. No cambia ningun estilo: cambia que ahora estan declarados y el compilador los chequea.",
+              "title": "El contrato declara las otras hojas donde vive su estilo"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-08-11",
             "en": {
               "body": "It joins the catalogue with <code>Wrapper</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>wrapperSize</code>. Its stylesheet is <code>patterns/wrapper.css</code>.",
@@ -4512,7 +4620,27 @@
         "--sk-accordion-divider-color",
         "--sk-accordion-open-bg",
         "--sk-accordion-radius",
-        "--sk-tile-radius"
+        "--sk-color-border-selected",
+        "--sk-color-border-strong",
+        "--sk-color-border-subtle",
+        "--sk-color-focus",
+        "--sk-color-selection-selected",
+        "--sk-color-text-disabled",
+        "--sk-color-text-primary",
+        "--sk-color-text-secondary",
+        "--sk-font-body-sm",
+        "--sk-font-heading-sm",
+        "--sk-icon-size",
+        "--sk-space-2",
+        "--sk-space-3",
+        "--sk-space-4",
+        "--sk-tile-border-color",
+        "--sk-tile-padding",
+        "--sk-tile-radius",
+        "--sk-tile-shadow"
+      ],
+      "hookSheets": [
+        "@skryensya/core/components/tile.css"
       ],
       "id": "accordion",
       "options": {
@@ -5627,7 +5755,12 @@
         "--sk-box-padding",
         "--sk-box-radius",
         "--sk-box-shadow",
-        "--sk-box-wash"
+        "--sk-box-wash",
+        "--sk-wrapper-max",
+        "--sk-wrapper-padding-inline"
+      ],
+      "hookSheets": [
+        "@skryensya/core/patterns/wrapper.css"
       ],
       "id": "box",
       "options": {
@@ -7299,7 +7432,41 @@
         "--sk-checkbox-selected-bg",
         "--sk-checkbox-selected-border-color",
         "--sk-checkbox-selected-fg",
-        "--sk-icon-size"
+        "--sk-icon-size",
+        "--sk-radio-bg",
+        "--sk-radio-border-color",
+        "--sk-radio-border-width",
+        "--sk-radio-control-size",
+        "--sk-radio-disabled-bg",
+        "--sk-radio-disabled-border-color",
+        "--sk-radio-disabled-fg",
+        "--sk-radio-fg",
+        "--sk-radio-gap",
+        "--sk-radio-group-gap",
+        "--sk-radio-hit-size",
+        "--sk-radio-selected-bg",
+        "--sk-radio-selected-border-color",
+        "--sk-radio-selected-fg",
+        "--sk-switch-bg",
+        "--sk-switch-block-size",
+        "--sk-switch-border-color",
+        "--sk-switch-border-width",
+        "--sk-switch-disabled-bg",
+        "--sk-switch-disabled-border-color",
+        "--sk-switch-disabled-fg",
+        "--sk-switch-disabled-thumb-bg",
+        "--sk-switch-fg",
+        "--sk-switch-gap",
+        "--sk-switch-inline-size",
+        "--sk-switch-padding",
+        "--sk-switch-selected-bg",
+        "--sk-switch-selected-border-color",
+        "--sk-switch-selected-thumb-bg",
+        "--sk-switch-thumb-bg"
+      ],
+      "hookSheets": [
+        "@skryensya/core/components/radio-group.css",
+        "@skryensya/core/components/switch.css"
       ],
       "id": "checkbox",
       "options": {
@@ -10186,8 +10353,10 @@
       "css": "@skryensya/core/components/toast.css",
       "hooks": [
         "--sk-button-fg",
+        "--sk-callout-accent",
         "--sk-callout-bg",
         "--sk-callout-content-gap",
+        "--sk-callout-fg",
         "--sk-callout-padding",
         "--sk-toast-cascade",
         "--sk-toast-depth",
@@ -10195,6 +10364,9 @@
         "--sk-toast-shadow",
         "--sk-toast-shrink",
         "--sk-toast-wash"
+      ],
+      "hookSheets": [
+        "@skryensya/core/components/callout.css"
       ],
       "id": "content",
       "options": {
@@ -13665,6 +13837,13 @@
     "layout": {
       "css": "@skryensya/core/patterns/layout.css",
       "hooks": [
+        "--sk-box-bg",
+        "--sk-box-border-color",
+        "--sk-box-border-width",
+        "--sk-box-padding",
+        "--sk-box-radius",
+        "--sk-box-shadow",
+        "--sk-box-wash",
         "--sk-grid-columns",
         "--sk-grid-gap",
         "--sk-inline-block-start",
@@ -13678,7 +13857,13 @@
         "--sk-layout-rail-gap",
         "--sk-layout-rail-inline-size",
         "--sk-layout-rail-row-span",
-        "--sk-stack-gap"
+        "--sk-stack-gap",
+        "--sk-wrapper-max",
+        "--sk-wrapper-padding-inline"
+      ],
+      "hookSheets": [
+        "@skryensya/core/patterns/box.css",
+        "@skryensya/core/patterns/wrapper.css"
       ],
       "id": "layout",
       "options": {
@@ -18331,6 +18516,23 @@
     "radio-group": {
       "css": "@skryensya/core/components/radio-group.css",
       "hooks": [
+        "--sk-checkbox-bg",
+        "--sk-checkbox-border-color",
+        "--sk-checkbox-border-width",
+        "--sk-checkbox-control-size",
+        "--sk-checkbox-disabled-bg",
+        "--sk-checkbox-disabled-border-color",
+        "--sk-checkbox-disabled-fg",
+        "--sk-checkbox-fg",
+        "--sk-checkbox-gap",
+        "--sk-checkbox-group-gap",
+        "--sk-checkbox-group-indent",
+        "--sk-checkbox-label-fg",
+        "--sk-checkbox-radius",
+        "--sk-checkbox-selected-bg",
+        "--sk-checkbox-selected-border-color",
+        "--sk-checkbox-selected-fg",
+        "--sk-icon-size",
         "--sk-radio-bg",
         "--sk-radio-border-color",
         "--sk-radio-border-width",
@@ -18344,7 +18546,27 @@
         "--sk-radio-hit-size",
         "--sk-radio-selected-bg",
         "--sk-radio-selected-border-color",
-        "--sk-radio-selected-fg"
+        "--sk-radio-selected-fg",
+        "--sk-switch-bg",
+        "--sk-switch-block-size",
+        "--sk-switch-border-color",
+        "--sk-switch-border-width",
+        "--sk-switch-disabled-bg",
+        "--sk-switch-disabled-border-color",
+        "--sk-switch-disabled-fg",
+        "--sk-switch-disabled-thumb-bg",
+        "--sk-switch-fg",
+        "--sk-switch-gap",
+        "--sk-switch-inline-size",
+        "--sk-switch-padding",
+        "--sk-switch-selected-bg",
+        "--sk-switch-selected-border-color",
+        "--sk-switch-selected-thumb-bg",
+        "--sk-switch-thumb-bg"
+      ],
+      "hookSheets": [
+        "@skryensya/core/components/checkbox.css",
+        "@skryensya/core/components/switch.css"
       ],
       "id": "radio-group",
       "options": {
@@ -20207,6 +20429,37 @@
     "switch": {
       "css": "@skryensya/core/components/switch.css",
       "hooks": [
+        "--sk-checkbox-bg",
+        "--sk-checkbox-border-color",
+        "--sk-checkbox-border-width",
+        "--sk-checkbox-control-size",
+        "--sk-checkbox-disabled-bg",
+        "--sk-checkbox-disabled-border-color",
+        "--sk-checkbox-disabled-fg",
+        "--sk-checkbox-fg",
+        "--sk-checkbox-gap",
+        "--sk-checkbox-group-gap",
+        "--sk-checkbox-group-indent",
+        "--sk-checkbox-label-fg",
+        "--sk-checkbox-radius",
+        "--sk-checkbox-selected-bg",
+        "--sk-checkbox-selected-border-color",
+        "--sk-checkbox-selected-fg",
+        "--sk-icon-size",
+        "--sk-radio-bg",
+        "--sk-radio-border-color",
+        "--sk-radio-border-width",
+        "--sk-radio-control-size",
+        "--sk-radio-disabled-bg",
+        "--sk-radio-disabled-border-color",
+        "--sk-radio-disabled-fg",
+        "--sk-radio-fg",
+        "--sk-radio-gap",
+        "--sk-radio-group-gap",
+        "--sk-radio-hit-size",
+        "--sk-radio-selected-bg",
+        "--sk-radio-selected-border-color",
+        "--sk-radio-selected-fg",
         "--sk-switch-bg",
         "--sk-switch-block-size",
         "--sk-switch-border-color",
@@ -20223,6 +20476,10 @@
         "--sk-switch-selected-border-color",
         "--sk-switch-selected-thumb-bg",
         "--sk-switch-thumb-bg"
+      ],
+      "hookSheets": [
+        "@skryensya/core/components/checkbox.css",
+        "@skryensya/core/components/radio-group.css"
       ],
       "id": "switch",
       "options": {
@@ -20824,6 +21081,31 @@
     "table-pager": {
       "css": "@skryensya/core/patterns/table-pager.css",
       "hooks": [
+        "--sk-icon-size",
+        "--sk-pagination-current-bg",
+        "--sk-pagination-current-border-color",
+        "--sk-pagination-current-fg",
+        "--sk-pagination-current-font-weight",
+        "--sk-pagination-current-highlight",
+        "--sk-pagination-current-ledge",
+        "--sk-pagination-current-shadow",
+        "--sk-pagination-current-wash",
+        "--sk-pagination-disabled-bg",
+        "--sk-pagination-disabled-border-color",
+        "--sk-pagination-disabled-fg",
+        "--sk-pagination-ellipsis-fg",
+        "--sk-pagination-gap",
+        "--sk-pagination-hit-size",
+        "--sk-pagination-item-bg",
+        "--sk-pagination-item-border-color",
+        "--sk-pagination-item-border-width",
+        "--sk-pagination-item-fg",
+        "--sk-pagination-item-font-size",
+        "--sk-pagination-item-font-weight",
+        "--sk-pagination-item-radius",
+        "--sk-pagination-item-shadow",
+        "--sk-pagination-item-size",
+        "--sk-pagination-item-wash",
         "--sk-table-pager-bar-gap",
         "--sk-table-pager-end-gap",
         "--sk-table-pager-gap",
@@ -20831,6 +21113,9 @@
         "--sk-table-pager-status-fg",
         "--sk-table-pager-status-font-size",
         "--sk-table-pager-status-min"
+      ],
+      "hookSheets": [
+        "@skryensya/core/components/pagination.css"
       ],
       "id": "table-pager",
       "options": {
@@ -24318,8 +24603,18 @@
     "wrapper": {
       "css": "@skryensya/core/patterns/wrapper.css",
       "hooks": [
+        "--sk-box-bg",
+        "--sk-box-border-color",
+        "--sk-box-border-width",
+        "--sk-box-padding",
+        "--sk-box-radius",
+        "--sk-box-shadow",
+        "--sk-box-wash",
         "--sk-wrapper-max",
         "--sk-wrapper-padding-inline"
+      ],
+      "hookSheets": [
+        "@skryensya/core/patterns/box.css"
       ],
       "id": "wrapper",
       "options": {
@@ -24391,5 +24686,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "9aa1d8dfe9b5172d"
+  "sourceHash": "714305e607513344"
 }

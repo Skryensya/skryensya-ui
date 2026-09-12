@@ -545,6 +545,27 @@ export type ComponentContract = {
    */
   readonly hooks?: readonly string[];
   /**
+   * The OTHER stylesheets whose hooks this contract also publishes, when its styling does not fit
+   * in the one sheet `css` names.
+   *
+   * 19 of 81 contracts are in that position, for three different reasons, and none of them is an
+   * accident: one contract file can serve several signatures that are separate components
+   * (`selection.ts` publishes Checkbox, RadioGroup and Switch, each with its own sheet); a
+   * component can compose another and inherit its parts (Accordion's parts ARE Tile's classes); and
+   * a pattern can have variants in sheets of their own (Vaul, with `dialog-vaul.css`).
+   *
+   * Before this field, `hooks` could only be reconciled against `css`, so every hook in the other
+   * sheet was invisible: Accordion publishes 6 hooks and the `tile.css` its parts actually use
+   * declares 18, of which 17 no contract could name. A consumer overriding `--sk-tile-bg` on an
+   * Accordion was overriding real public surface that nothing documented and nothing checked.
+   *
+   * TWO CONTRACTS MAY NAME THE SAME SHEET, and both then declare its hooks. That duplication is
+   * deliberate: Checkbox and Switch sharing `switch.css`'s hooks is a true statement about the
+   * system, not a bookkeeping error, and the alternative (one owner per sheet) would force an
+   * arbitrary choice about which of the two is allowed to describe its own surface.
+   */
+  readonly hookSheets?: readonly string[];
+  /**
    * The DOM events the component dispatches, by the name the code calls them: `valueChange` →
    * `sk:accordionvaluechange`.
    *

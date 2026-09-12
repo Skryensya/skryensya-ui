@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "09c1788e7977e6ec"
+surface: "0579fc0a32ad66f8"
 entries:
   - date: 2026-09-10
     kind: feature
@@ -224,3 +224,21 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-12
+    kind: feature
+    es:
+      title: El contrato declara las otras hojas donde vive su estilo
+      body: >-
+        Este componente se pinta desde mas de una hoja, asi que el contrato ahora las nombra con
+        <code>hookSheets</code> y su lista de <code>hooks</code> cubre todas. Antes solo se podia
+        reconciliar contra la hoja de <code>css</code>, asi que los hooks de las otras eran
+        superficie publica que nadie documentaba ni verificaba. No cambia ningun estilo: cambia que
+        ahora estan declarados y el compilador los chequea.
+    en:
+      title: The contract declares the other stylesheets its styling lives in
+      body: >-
+        This component paints from more than one stylesheet, so the contract now names them with
+        <code>hookSheets</code> and its <code>hooks</code> list covers all of them. Before, only the
+        sheet <code>css</code> names could be reconciled, so the hooks in the others were public
+        surface nobody documented and nothing checked. No styling changes: what changes is that they
+        are declared now, and the compiler checks them.

@@ -175,9 +175,18 @@ proposito; un consumidor compone `IconStateButton` a mano. theme-toggle es el mi
 en ninguna de las dos capas, y la hoja la consume solo el chrome del sitio de doc. Publicarles
 contrato seria re-litigar una decision documentada.
 
-**Queda abierto el modelo**, que es lo que destapo drawer: `hooks` reconcilia **una hoja por
-contrato**. Fusionar funciono porque el drawer era un skin de una sola clase; un componente cuyo
-estilo viva de verdad en dos hojas sigue sin poder decirlo.
+**El modelo, resuelto ✅ (2026-09-12)**: `ComponentContract.hookSheets` deja que un contrato nombre
+las otras hojas donde vive su estilo, y `hooks` se reconcilia contra la union. Son **9 contratos**,
+por tres motivos distintos y ninguno accidental: un archivo que sirve varias firmas que son
+componentes aparte (`selection.ts` -> checkbox, radio-group, switch; `layout.ts` -> box, wrapper), y
+un componente que compone a otro y hereda sus partes (Accordion usa las clases de Tile, Toast las de
+Callout, table-pager las de Pagination).
+
+Lo que gana, medido: Accordion declaraba 6 hooks y las clases que usa se pintan desde `tile.css`, que
+declara 18. Ahora borrar `--sk-tile-shadow` de `tile.css` falla **tambien** por Accordion, no solo
+por Tile. Dos contratos pueden nombrar la misma hoja y los dos declaran sus hooks: esa duplicacion es
+a proposito, porque que Checkbox y Switch compartan superficie es un hecho del sistema, no un error
+de contabilidad.
 
 ### FileUpload: el boton de limpiar, hecho ✅ (2026-09-12)
 

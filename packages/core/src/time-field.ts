@@ -266,13 +266,6 @@ export const timeFieldContract = {
   css: "@skryensya/core/components/time-field.css",
   parts: timeFieldParts,
   hooks: [
-    "--sk-button-bg",
-    "--sk-button-border-color",
-    "--sk-button-border-width",
-    "--sk-button-fg",
-    "--sk-button-radius",
-    "--sk-button-shadow",
-    "--sk-select-content-max-block-size",
     "--sk-time-field-affordance-color",
     "--sk-time-field-bg",
     "--sk-time-field-border-color",

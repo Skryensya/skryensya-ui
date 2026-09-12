@@ -43,12 +43,6 @@ export const numberFieldContract = {
   css: "@skryensya/core/components/number-field.css",
   parts: numberFieldParts,
   hooks: [
-    "--sk-button-bg",
-    "--sk-button-border-color",
-    "--sk-button-border-width",
-    "--sk-button-fg",
-    "--sk-button-radius",
-    "--sk-button-shadow",
     "--sk-number-field-bg",
     "--sk-number-field-border-color",
     "--sk-number-field-border-width",

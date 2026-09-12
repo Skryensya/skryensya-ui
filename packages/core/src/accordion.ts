@@ -73,7 +73,6 @@ export const accordionContract = {
     "--sk-color-text-secondary",
     "--sk-font-body-sm",
     "--sk-font-heading-sm",
-    "--sk-icon-size",
     "--sk-space-2",
     "--sk-space-3",
     "--sk-space-4",

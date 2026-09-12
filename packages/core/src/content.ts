@@ -74,18 +74,15 @@ export const contentContract = {
   css: "@skryensya/core/components/toast.css",
   parts: contentParts,
   hooks: [
-    "--sk-button-fg",
     "--sk-callout-accent",
     "--sk-callout-bg",
     "--sk-callout-content-gap",
     "--sk-callout-fg",
     "--sk-callout-padding",
     "--sk-toast-cascade",
-    "--sk-toast-depth",
     "--sk-toast-peek",
     "--sk-toast-shadow",
     "--sk-toast-shrink",
-    "--sk-toast-wash",
   ],
   /* This component's styling does not fit in one stylesheet; see `hookSheets` on the contract. */
   hookSheets: [

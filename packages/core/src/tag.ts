@@ -32,11 +32,6 @@ export const tagContract = {
   css: "@skryensya/core/components/tag.css",
   parts: tagParts,
   hooks: [
-    "--sk-button-border-width",
-    "--sk-button-fg",
-    "--sk-button-height",
-    "--sk-button-radius",
-    "--sk-button-shadow",
     "--sk-tag-bg",
     "--sk-tag-border",
     "--sk-tag-fg",

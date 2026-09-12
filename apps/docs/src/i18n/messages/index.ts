@@ -34,7 +34,11 @@ export const indexMessages = {
     "landing.hero.title": "Declara un componente una vez. Úsalo donde sea.",
     "landing.hero.lede":
       "La estructura, las opciones y el comportamiento viven en un solo contrato. El HTML plano, el runtime vanilla y React se generan desde ahí, y esta documentación también: por eso ninguno de los tres puede desviarse de los otros.",
-    "landing.hero.ctaComponents": "Explorar componentes",
+    "landing.hero.ctaComponents": "Ver componentes",
+    "landing.hero.ctaInstall": "Instalarlo",
+    "landing.hero.specimenTitle": "Nueva versión",
+    "landing.hero.specimenBody": "La versión 1.2 ya se puede instalar.",
+    "landing.hero.specimenSource": "Lo que escribes",
 
     "landing.gallery.title": "Cada pieza, por separado.",
     "landing.gallery.lede":
@@ -294,7 +298,11 @@ export const indexMessages = {
     "landing.hero.title": "Declare a component once. Use it anywhere.",
     "landing.hero.lede":
       "Structure, options and behaviour live in a single contract. Plain HTML, the vanilla runtime and React are all generated from it, and so is this documentation: which is why none of the three can drift away from the others.",
-    "landing.hero.ctaComponents": "Explore components",
+    "landing.hero.ctaComponents": "See the components",
+    "landing.hero.ctaInstall": "Install it",
+    "landing.hero.specimenTitle": "New version",
+    "landing.hero.specimenBody": "Version 1.2 is ready to install.",
+    "landing.hero.specimenSource": "What you write",
 
     "landing.gallery.title": "Every piece, on its own.",
     "landing.gallery.lede":

@@ -81,18 +81,6 @@ export const comboboxContract = {
   css: "@skryensya/core/components/combobox.css",
   parts: comboboxParts,
   hooks: [
-    "--sk-anchored-align",
-    "--sk-anchored-justify",
-    "--sk-anchored-offset",
-    "--sk-anchored-position-area",
-    "--sk-anchored-position-try",
-    "--sk-anchored-size",
-    "--sk-button-bg",
-    "--sk-button-border-color",
-    "--sk-button-border-width",
-    "--sk-button-fg",
-    "--sk-button-radius",
-    "--sk-button-shadow",
     "--sk-combobox-bg",
     "--sk-combobox-border-color",
     "--sk-combobox-content-bg",
@@ -111,7 +99,6 @@ export const comboboxContract = {
     "--sk-combobox-readonly-bg",
     "--sk-combobox-shadow",
     "--sk-combobox-wash",
-    "--sk-icon-size",
   ],
 
   options: {

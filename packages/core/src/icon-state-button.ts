@@ -69,10 +69,6 @@ export const iconStateButtonContract = {
     "--sk-icon-state-button-rest-scale",
     "--sk-icon-state-button-transition-duration",
     "--sk-icon-state-button-transition-easing",
-    "--sk-icon-toggle-rest-blur",
-    "--sk-icon-toggle-rest-scale",
-    "--sk-icon-toggle-transition-duration",
-    "--sk-icon-toggle-transition-easing",
   ],
 
   options: {

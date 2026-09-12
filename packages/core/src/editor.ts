@@ -113,17 +113,10 @@ export const editorContract = {
   css: "@skryensya/core/components/editor.css",
   parts: editorParts,
   hooks: [
-    "--sk-button-bg",
-    "--sk-button-fg",
     "--sk-editor-placeholder-fg",
     "--sk-editor-pressed-bg",
     "--sk-editor-pressed-fg",
     "--sk-editor-toolbar-bg",
-    "--sk-input-bg",
-    "--sk-input-border-color",
-    "--sk-input-fg",
-    "--sk-toolbar-gap",
-    "--sk-toolbar-padding",
   ],
 
   options: {

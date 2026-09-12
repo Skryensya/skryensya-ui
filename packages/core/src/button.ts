@@ -36,7 +36,6 @@ export const buttonContract = {
     "--sk-button-shadow",
     "--sk-button-wash",
     "--sk-button-width",
-    "--sk-icon-size",
   ],
 
   options: {

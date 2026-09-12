@@ -319,11 +319,6 @@ export const menuContract = {
   css: "@skryensya/core/components/menu.css",
   parts: menuParts,
   hooks: [
-    "--sk-anchored-align",
-    "--sk-anchored-justify",
-    "--sk-anchored-offset",
-    "--sk-anchored-position-area",
-    "--sk-anchored-position-try",
     "--sk-menu-bg",
     "--sk-menu-border-color",
     "--sk-menu-fg",

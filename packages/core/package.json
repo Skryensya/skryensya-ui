@@ -484,6 +484,10 @@
     "./details": {
       "types": "./src/details.ts",
       "default": "./src/details.ts"
+    },
+    "./fraction": {
+      "types": "./src/fraction.ts",
+      "default": "./src/fraction.ts"
     }
   },
   "scripts": {

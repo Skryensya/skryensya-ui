@@ -1,4 +1,5 @@
 import type { ComponentContract } from "./contract.js";
+import { clampedFraction } from "./fraction.js";
 
 /*
  * SLIDER, backed by @zag-js/slider.
@@ -47,8 +48,7 @@ export const sliderAttrs = {
 
 /** Filled fraction (0–1) for a value within [min, max]. Guards an empty or inverted range. */
 export function sliderFill(value: number, min: number, max: number): number {
-  if (!Number.isFinite(value) || !Number.isFinite(min) || !Number.isFinite(max) || max <= min) return 0;
-  return Math.min(Math.max((value - min) / (max - min), 0), 1);
+  return clampedFraction(value, min, max);
 }
 
 /** Each thumb's runtime `min`/`max`, bounded by where the OTHER thumb currently sits. */

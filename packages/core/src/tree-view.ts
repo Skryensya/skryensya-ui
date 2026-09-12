@@ -56,6 +56,17 @@ export const treeViewContract = {
   id: "tree-view",
   css: "@skryensya/core/components/tree-view.css",
   parts: treeViewParts,
+  hooks: [
+    "--sk-icon-size",
+    "--sk-tree-guide-color",
+    "--sk-tree-guide-width",
+    "--sk-tree-indent",
+    "--sk-tree-indicator-size",
+    "--sk-tree-item-gap",
+    "--sk-tree-node-icon-size",
+    "--sk-tree-row-gap",
+    "--sk-tree-row-inset",
+  ],
 
   options: {
     /** The tree's accessible name. A tree with no name is a list of words with no subject. */

@@ -1,4 +1,6 @@
 import Tooltip from "./Tooltip.svelte";
+import { rootSelectorFor } from "@skryensya/core/selectors";
+import { tooltipAttrs } from "@skryensya/core/tooltip";
 import { createSvelteMount } from "../runtime/svelte-hydrate.js";
 
 /** Mounts only authored Tooltip roots; it never scans or imports another enhancer. */
@@ -11,6 +13,6 @@ export const mountTooltip = createSvelteMount({
    * cannot tell from a real one, because a contract can only declare the mount it named.
    */
   key: "anchor",
-  rootSelector: "[data-sk-anchor]",
+  rootSelector: rootSelectorFor(tooltipAttrs),
   Component: Tooltip,
 });

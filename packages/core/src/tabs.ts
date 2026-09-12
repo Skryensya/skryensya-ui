@@ -35,6 +35,23 @@ export const tabsContract = {
   id: "tabs",
   css: "@skryensya/core/components/tabs.css",
   parts: tabsParts,
+  hooks: [
+    "--sk-tabs-gap",
+    "--sk-tabs-indicator-bg",
+    "--sk-tabs-indicator-size",
+    "--sk-tabs-list-border-color",
+    "--sk-tabs-list-gap",
+    "--sk-tabs-panel-fg",
+    "--sk-tabs-panel-padding-block",
+    "--sk-tabs-trigger-disabled-fg",
+    "--sk-tabs-trigger-fg",
+    "--sk-tabs-trigger-font-size",
+    "--sk-tabs-trigger-gap",
+    "--sk-tabs-trigger-height",
+    "--sk-tabs-trigger-padding-x",
+    "--sk-tabs-trigger-radius",
+    "--sk-tabs-trigger-selected-fg",
+  ],
 
   options: {
     orientation: {

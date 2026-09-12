@@ -1,15 +1,7 @@
-import {
-  computeTreegridVisibility,
-  defaultTreegridColumnWeights,
-  diffTreegridVisibility,
-  resolveColumnResize,
-  resolveTreegridKey,
-  treegridParts,
-  TREEGRID_EXIT_FALLBACK_MS,
-  TREEGRID_MIN_COLUMN_WIDTH as MIN_COLUMN_WIDTH,
-  type TreegridFocus,
-  type TreegridRowTransition,
-} from "@skryensya/core/treegrid";
+import { computeTreegridVisibility, defaultTreegridColumnWeights, diffTreegridVisibility, resolveColumnResize, resolveTreegridKey, treegridParts, TREEGRID_EXIT_FALLBACK_MS, TREEGRID_MIN_COLUMN_WIDTH as MIN_COLUMN_WIDTH, type TreegridFocus, type TreegridRowTransition, treegridContract } from "@skryensya/core/treegrid";
+
+/* Derived, never restated: the default lives in the contract. */
+const { resizableColumns: resizableColumnsOption } = treegridContract.options;
 import {
   hasCrossedDragThreshold,
   resolveSplitterKey,
@@ -150,7 +142,7 @@ export function Treegrid({
   label,
   onActivate,
   onExpandedChange,
-  resizableColumns = false,
+  resizableColumns = resizableColumnsOption.default,
   resizeLabel,
   columnWeights,
   ...props

@@ -307,6 +307,23 @@ export const menuContract = {
   id: "menu",
   css: "@skryensya/core/components/menu.css",
   parts: menuParts,
+  hooks: [
+    "--sk-anchored-align",
+    "--sk-anchored-justify",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-menu-bg",
+    "--sk-menu-border-color",
+    "--sk-menu-fg",
+    "--sk-menu-item-gap",
+    "--sk-menu-item-min-height",
+    "--sk-menu-radius",
+    "--sk-menu-separator-color",
+    "--sk-menu-separator-margin",
+    "--sk-menu-shadow",
+    "--sk-menu-wash",
+  ],
 
   options: {
     /** The menu's accessible name: the root's own. An item's name is its label. */

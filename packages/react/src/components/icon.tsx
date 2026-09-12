@@ -6,9 +6,12 @@
  * platform does not give, and an icon has no behavior. A vanilla consumer writes the `<svg>` by hand;
  * the markup contract is documented and never shipped (decision 8).
  */
-import { renderIconBox, type IconData, type IconSet, type IconSize, type StableIconName } from "@skryensya/core/icon";
+import { renderIconBox, type IconData, type IconSet, type IconSize, type StableIconName, iconContract } from "@skryensya/core/icon";
 import { phosphorIcons } from "@skryensya/icons-phosphor";
 import { createContext, useContext, type ReactNode, type SVGAttributes } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { size: sizeOption } = iconContract.options;
 
 /*
  * The bound set. It goes through context and not through a prop because the foundational components
@@ -66,7 +69,7 @@ type IconBaseProps = Omit<
 export type IconProps = IconBaseProps &
   ({ name: StableIconName; data?: never } | { data: IconData; name?: never });
 
-export function Icon({ name, data, label, size = "md", className, ...props }: IconProps) {
+export function Icon({ name, data, label, size = sizeOption.default, className, ...props }: IconProps) {
   // The context always has a set: Phosphor by default, or whichever an IconSetProvider higher up binds.
   // `data` does not read the context, it is project geometry, portable without a set (decision 15).
   const set = useContext(IconSetContext);

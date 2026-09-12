@@ -57,6 +57,15 @@ export const breadcrumbContract = {
   id: "breadcrumb",
   css: "@skryensya/core/components/breadcrumb.css",
   parts: breadcrumbParts,
+  hooks: [
+    "--sk-breadcrumb-current-color",
+    "--sk-breadcrumb-current-weight",
+    "--sk-breadcrumb-gap",
+    "--sk-breadcrumb-link-color",
+    "--sk-breadcrumb-link-max",
+    "--sk-breadcrumb-separator-color",
+    "--sk-icon-size",
+  ],
 
   options: {
     /** Names the landmark. A page with a second nav needs each one told apart. */

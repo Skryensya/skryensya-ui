@@ -85,6 +85,20 @@ export const codePreviewContract = {
   id: "code-preview",
   css: "@skryensya/core/components/code-preview.css",
   parts: codePreviewParts,
+  hooks: [
+    "--sk-code-preview-bg",
+    "--sk-code-preview-border-color",
+    "--sk-code-preview-collapsed-padding-block",
+    "--sk-code-preview-copy-scroll-inset",
+    "--sk-code-preview-copy-sticky-top",
+    "--sk-code-preview-count-fg",
+    "--sk-code-preview-fg",
+    "--sk-code-preview-font-size",
+    "--sk-code-preview-footer-bg",
+    "--sk-code-preview-label-active-fg",
+    "--sk-code-preview-label-fg",
+    "--sk-code-preview-window",
+  ],
 
   options: {
     /** The panel is taller than its window, so it gets a disclosure control. */

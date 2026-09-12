@@ -1,5 +1,8 @@
-import { meterFraction, meterParts, type MeterTone } from "@skryensya/core/meter";
+import { meterFraction, meterParts, type MeterTone, meterContract } from "@skryensya/core/meter";
 import { type CSSProperties, type HTMLAttributes } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { max: maxOption, min: minOption, tone: toneOption } = meterContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -20,9 +23,9 @@ export type MeterProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
 export function Meter({
   className,
   label,
-  max = 100,
-  min = 0,
-  tone = "accent",
+  max = maxOption.default,
+  min = minOption.default,
+  tone = toneOption.default,
   value,
   valueText,
   ...props

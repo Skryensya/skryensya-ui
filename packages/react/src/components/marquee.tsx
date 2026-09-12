@@ -1,13 +1,4 @@
-import {
-  marqueeDurationSeconds,
-  marqueeGapFill,
-  marqueeParts,
-  marqueeProperties,
-  type MarqueeDirection,
-  type MarqueeFade,
-  type MarqueeSpeed,
-  type MarqueeStart,
-} from "@skryensya/core/marquee";
+import { marqueeDurationSeconds, marqueeGapFill, marqueeParts, marqueeProperties, type MarqueeDirection, type MarqueeFade, type MarqueeSpeed, type MarqueeStart, marqueeContract } from "@skryensya/core/marquee";
 import {
   useEffect,
   useRef,
@@ -16,6 +7,9 @@ import {
   type ReactNode,
 } from "react";
 import { Button } from "./button.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { direction: directionOption, fade: fadeOption, speed: speedOption, control: controlOption } = marqueeContract.options;
 
 type MarqueeBaseProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   children: ReactNode;
@@ -64,11 +58,11 @@ function MarqueeRoot({
   children,
   className,
   control,
-  direction = "left",
-  fade = "edges",
+  direction = directionOption.default,
+  fade = fadeOption.default,
   pauseLabel,
   playLabel,
-  speed = "normal",
+  speed = speedOption.default,
   start,
   style,
   ...props
@@ -197,6 +191,6 @@ export function Marquee(props: MarqueeProps) {
 }
 
 /** A continuous strip that starts on its own. `control` adds the persistent Pause button. */
-export function AutoplayMarquee({ control = false, ...props }: AutoplayMarqueeProps) {
+export function AutoplayMarquee({ control = controlOption.default, ...props }: AutoplayMarqueeProps) {
   return <MarqueeRoot {...props} control={control} start="auto" />;
 }

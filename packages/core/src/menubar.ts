@@ -42,6 +42,13 @@ export const menubarContract = {
   id: "menubar",
   css: "@skryensya/core/components/menubar.css",
   parts: menubarParts,
+  hooks: [
+    "--sk-button-bg",
+    "--sk-button-fg",
+    "--sk-menubar-gap",
+    "--sk-nav-list-link-bg",
+    "--sk-nav-list-link-fg",
+  ],
 
   options: {
     /** The bar's accessible name. `role="menubar"` carries no implicit one. */

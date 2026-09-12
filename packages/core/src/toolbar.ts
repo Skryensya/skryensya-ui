@@ -25,6 +25,15 @@ export const toolbarContract = {
   id: "toolbar",
   css: "@skryensya/core/components/toolbar.css",
   parts: toolbarParts,
+  hooks: [
+    "--sk-toolbar-bg",
+    "--sk-toolbar-border-color",
+    "--sk-toolbar-border-width",
+    "--sk-toolbar-gap",
+    "--sk-toolbar-padding",
+    "--sk-toolbar-radius",
+    "--sk-toolbar-separator-color",
+  ],
 
   options: {
     orientation: {

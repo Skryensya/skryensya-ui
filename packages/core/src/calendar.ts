@@ -174,6 +174,26 @@ export const calendarContract = {
   id: "calendar",
   css: "@skryensya/core/components/calendar.css",
   parts: calendarParts,
+  hooks: [
+    "--sk-button-bg",
+    "--sk-button-border-color",
+    "--sk-button-fg",
+    "--sk-button-height",
+    "--sk-button-padding-x",
+    "--sk-button-radius",
+    "--sk-button-shadow",
+    "--sk-button-width",
+    "--sk-calendar-affordance-color",
+    "--sk-calendar-cell-radius",
+    "--sk-calendar-cell-size",
+    "--sk-calendar-fg",
+    "--sk-calendar-gap",
+    "--sk-calendar-header-gap",
+    "--sk-calendar-inline-size",
+    "--sk-calendar-row-size",
+    "--sk-calendar-selected-bg",
+    "--sk-calendar-selected-fg",
+  ],
 
   options: {
     /**

@@ -1,9 +1,8 @@
-import {
-  mediaGradientParts,
-  type MediaGradientEdge,
-  type MediaGradientStrength,
-} from "@skryensya/core/media-gradient";
+import { mediaGradientParts, type MediaGradientEdge, type MediaGradientStrength, mediaGradientContract } from "@skryensya/core/media-gradient";
 import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { strength: strengthOption, edge: edgeOption } = mediaGradientContract.options;
 
 type PolymorphicProps<Element extends ElementType, OwnProps> = OwnProps & {
   as?: Element;
@@ -28,7 +27,7 @@ export type MediaGradientProps<Element extends ElementType = "div"> = Polymorphi
 export function MediaGradient<Element extends ElementType = "div">({
   as,
   className,
-  strength = "md",
+  strength = strengthOption.default,
   ...props
 }: MediaGradientProps<Element>) {
   const Component = as ?? "div";
@@ -61,7 +60,7 @@ export function MediaCaption<Element extends ElementType = "div">({
   as,
   children,
   className,
-  edge = "bottom",
+  edge = edgeOption.default,
   strength,
   ...props
 }: MediaCaptionProps<Element>) {

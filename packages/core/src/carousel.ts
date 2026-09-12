@@ -95,6 +95,25 @@ export const carouselContract = {
   id: "carousel",
   css: "@skryensya/core/components/carousel.css",
   parts: carouselParts,
+  hooks: [
+    "--sk-carousel-control-bg",
+    "--sk-carousel-control-border",
+    "--sk-carousel-control-disabled-fg",
+    "--sk-carousel-control-fg",
+    "--sk-carousel-control-size",
+    "--sk-carousel-dot-active-color",
+    "--sk-carousel-dot-color",
+    "--sk-carousel-dot-gap",
+    "--sk-carousel-dot-size",
+    "--sk-carousel-gap",
+    "--sk-carousel-motion-duration",
+    "--sk-carousel-motion-easing",
+    "--sk-carousel-native-next-disabled-icon",
+    "--sk-carousel-native-next-icon",
+    "--sk-carousel-native-previous-disabled-icon",
+    "--sk-carousel-native-previous-icon",
+    "--sk-carousel-slide-size",
+  ],
 
   options: {
     /** Wrap around past either end. */

@@ -1,5 +1,8 @@
-import { formFieldParts } from "@skryensya/core/form-field";
+import { formFieldParts, formFieldContract } from "@skryensya/core/form-field";
 import { createContext, useContext, useId, type ReactNode } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { disabled: disabledOption, labelHidden: labelHiddenOption, required: requiredOption } = formFieldContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -58,13 +61,13 @@ export type FormFieldProps = {
 export function FormField({
   children,
   className,
-  disabled = false,
+  disabled = disabledOption.default,
   error,
   hint,
   id,
   label,
-  labelHidden = false,
-  required = false,
+  labelHidden = labelHiddenOption.default,
+  required = requiredOption.default,
 }: FormFieldProps) {
   const generatedId = useId();
   const controlId = id ?? generatedId;

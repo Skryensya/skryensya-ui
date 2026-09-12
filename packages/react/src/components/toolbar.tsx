@@ -2,6 +2,9 @@ import { resolveToolbarKey, toolbarContract, toolbarParts } from "@skryensya/cor
 import type { OptionValue } from "@skryensya/core/contract";
 import { useRef, type HTMLAttributes, type KeyboardEvent, type ReactNode } from "react";
 
+/* Derived, never restated: the default lives in the contract. */
+const { loopFocus: loopFocusOption, orientation: orientationOption } = toolbarContract.options;
+
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
 const controlsSelector = "button:not([disabled]), a[href], input:not([disabled]), select:not([disabled])";
@@ -30,8 +33,8 @@ export function Toolbar({
   children,
   className,
   label,
-  loopFocus = true,
-  orientation = "horizontal",
+  loopFocus = loopFocusOption.default,
+  orientation = orientationOption.default,
   ...rest
 }: ToolbarProps) {
   const ref = useRef<HTMLDivElement>(null);

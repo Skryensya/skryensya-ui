@@ -49,6 +49,11 @@ export const avatarContract = {
   id: "avatar",
   css: "@skryensya/core/components/avatar.css",
   parts: avatarParts,
+  hooks: [
+    "--sk-avatar-bg",
+    "--sk-avatar-fg",
+    "--sk-avatar-size",
+  ],
 
   options: {
     size: { type: "enum", values: ["sm", "md", "lg", "xl"], default: "md", attr: "data-size" },

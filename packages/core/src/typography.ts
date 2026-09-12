@@ -49,6 +49,17 @@ export const typographyContract = {
   id: "typography",
   css: "@skryensya/core/components/typography.css",
   parts: typographyParts,
+  hooks: [
+    "--sk-heading-fg",
+    "--sk-heading-font-size",
+    "--sk-heading-font-weight",
+    "--sk-heading-line-height",
+    "--sk-link-fg",
+    "--sk-text-fg",
+    "--sk-text-font-size",
+    "--sk-text-font-weight",
+    "--sk-text-line-height",
+  ],
 
   options: {
     tone: {

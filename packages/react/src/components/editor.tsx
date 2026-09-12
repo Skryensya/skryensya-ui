@@ -36,6 +36,9 @@ import { Popover } from "./popover.js";
 import { Icon } from "./icon.js";
 import { useFormFieldControl } from "./form-field.js";
 
+/* Derived, never restated: the default lives in the contract. */
+const { toolbarCompact: toolbarCompactOption, disabled: disabledOption, readOnly: readOnlyOption } = editorContract.options;
+
 const cx = (...classes: (string | undefined)[]) => classes.filter(Boolean).join(" ");
 
 export type EditorValue = { html: string; markdown: string; doc: PMNode };
@@ -330,15 +333,15 @@ export const Editor = forwardRef<EditorHandle, EditorWithToolbarProps>(function 
   {
     autoFocus,
     className,
-    compact = false,
+    compact = toolbarCompactOption.default,
     defaultValue,
-    disabled = false,
+    disabled = disabledOption.default,
     id,
     label,
     name,
     onChange,
     placeholder,
-    readOnly = false,
+    readOnly = readOnlyOption.default,
     toolbarLabel = editorContract.options.toolbarLabel.default,
   },
   ref,

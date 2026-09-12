@@ -44,6 +44,23 @@ export const listContract = {
   id: "list",
   css: "@skryensya/core/components/list.css",
   parts: listParts,
+  hooks: [
+    "--sk-list-description-fg",
+    "--sk-list-description-font-size",
+    "--sk-list-disabled-fg",
+    "--sk-list-divider-color",
+    "--sk-list-fg",
+    "--sk-list-leading-fg",
+    "--sk-list-row-gap",
+    "--sk-list-row-min-height",
+    "--sk-list-row-padding-x",
+    "--sk-list-row-padding-y",
+    "--sk-list-row-radius",
+    "--sk-list-title-fg",
+    "--sk-list-title-font-size",
+    "--sk-list-title-font-weight",
+    "--sk-list-trailing-fg",
+  ],
 
   options: {
     /**

@@ -331,6 +331,14 @@ export const qrCodeContract = {
   id: "qr-code",
   css: "@skryensya/core/components/qr-code.css",
   parts: qrCodeParts,
+  hooks: [
+    "--sk-icon-size",
+    "--sk-qr-code-logo-ratio",
+    "--sk-qr-code-modules",
+    "--sk-qr-code-paper",
+    "--sk-qr-code-radius",
+    "--sk-qr-code-size",
+  ],
 
   options: {
     /*

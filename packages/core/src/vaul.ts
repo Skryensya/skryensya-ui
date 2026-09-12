@@ -73,6 +73,27 @@ export const vaulContract = {
   id: "vaul",
   css: "@skryensya/core/patterns/vaul.css",
   parts: vaulParts,
+  hooks: [
+    "--sk-vaul-backdrop-bg",
+    "--sk-vaul-bg",
+    "--sk-vaul-border-color",
+    "--sk-vaul-border-width",
+    "--sk-vaul-drag-offset",
+    "--sk-vaul-drag-progress",
+    "--sk-vaul-elevation",
+    "--sk-vaul-enter-duration",
+    "--sk-vaul-enter-easing",
+    "--sk-vaul-exit-duration",
+    "--sk-vaul-exit-easing",
+    "--sk-vaul-fg",
+    "--sk-vaul-material",
+    "--sk-vaul-overpull",
+    "--sk-vaul-radius",
+    "--sk-vaul-release-duration",
+    "--sk-vaul-release-easing",
+    "--sk-vaul-size",
+    "--sk-vaul-wash",
+  ],
 
   options: {
     /** Where the panel is anchored. Logical, so the inline edges follow writing direction. */

@@ -64,6 +64,16 @@ export const iconStateButtonContract = {
   id: "icon-state-button",
   css: "@skryensya/core/components/icon-state-button.css",
   parts: iconStateButtonParts,
+  hooks: [
+    "--sk-icon-state-button-rest-blur",
+    "--sk-icon-state-button-rest-scale",
+    "--sk-icon-state-button-transition-duration",
+    "--sk-icon-state-button-transition-easing",
+    "--sk-icon-toggle-rest-blur",
+    "--sk-icon-toggle-rest-scale",
+    "--sk-icon-toggle-transition-duration",
+    "--sk-icon-toggle-transition-easing",
+  ],
 
   options: {
     /** Which face's `name` is current. Absent means no face carries `data-active` at all. */

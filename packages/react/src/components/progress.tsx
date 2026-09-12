@@ -1,5 +1,8 @@
-import { progressFraction, progressParts, type ProgressTone } from "@skryensya/core/progress";
+import { progressFraction, progressParts, type ProgressTone, progressContract } from "@skryensya/core/progress";
 import { type CSSProperties, type HTMLAttributes } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { max: maxOption, tone: toneOption } = progressContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -14,7 +17,7 @@ export type ProgressProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   label: string;
 };
 
-export function Progress({ className, label, max = 100, tone = "accent", value, ...props }: ProgressProps) {
+export function Progress({ className, label, max = maxOption.default, tone = toneOption.default, value, ...props }: ProgressProps) {
   const fraction = progressFraction(value, max);
   const clamped = Math.round(fraction * max * 100) / 100;
   const style = { ...props.style, "--sk-progress-fill": `${fraction * 100}%` } as CSSProperties;

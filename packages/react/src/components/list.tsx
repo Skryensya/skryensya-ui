@@ -1,4 +1,7 @@
-import { listParts, type ListDensity } from "@skryensya/core/list";
+import { listParts, type ListDensity, listContract } from "@skryensya/core/list";
+
+/* Derived, never restated: the default lives in the contract. */
+const { dividers: dividersOption } = listContract.options;
 import {
   forwardRef,
   type AnchorHTMLAttributes,
@@ -31,7 +34,7 @@ export function List({
   children,
   className,
   density,
-  dividers = true,
+  dividers = dividersOption.default,
   ordered,
   ...props
 }: ListProps) {

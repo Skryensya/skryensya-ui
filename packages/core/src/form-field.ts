@@ -41,6 +41,21 @@ export const formFieldContract = {
   id: "form-field",
   css: "@skryensya/core/components/form-field.css",
   parts: formFieldParts,
+  hooks: [
+    "--sk-form-field-disabled-fg",
+    "--sk-form-field-error-fg",
+    "--sk-form-field-error-font-size",
+    "--sk-form-field-error-gap",
+    "--sk-form-field-error-line-height",
+    "--sk-form-field-gap",
+    "--sk-form-field-hint-fg",
+    "--sk-form-field-hint-font-size",
+    "--sk-form-field-hint-line-height",
+    "--sk-form-field-label-fg",
+    "--sk-form-field-label-font-size",
+    "--sk-form-field-label-font-weight",
+    "--sk-form-field-required-fg",
+  ],
 
   options: {
     /**

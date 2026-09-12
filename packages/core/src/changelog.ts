@@ -135,6 +135,27 @@ export const changelogContract = {
   id: "changelog",
   css: "@skryensya/core/components/changelog.css",
   parts: changelogParts,
+  hooks: [
+    "--sk-changelog-bead",
+    "--sk-changelog-connector-color",
+    "--sk-changelog-connector-size",
+    "--sk-changelog-date-fg",
+    "--sk-changelog-entry-gap",
+    "--sk-changelog-fade",
+    "--sk-changelog-heading-gap",
+    "--sk-changelog-marker-color",
+    "--sk-changelog-marker-gap",
+    "--sk-changelog-marker-offset",
+    "--sk-changelog-marker-shift",
+    "--sk-changelog-marker-size",
+    "--sk-changelog-measure",
+    "--sk-changelog-rail",
+    "--sk-changelog-release-gap",
+    "--sk-changelog-target-fg",
+    "--sk-changelog-text-fg",
+    "--sk-changelog-title-fg",
+    "--sk-changelog-version-fg",
+  ],
 
   options: {
     /**

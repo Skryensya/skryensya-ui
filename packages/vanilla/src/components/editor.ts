@@ -1,4 +1,5 @@
 import { editorParts, editorAttrs, type EditorCommandName } from "@skryensya/core/editor";
+import { rootSelectorFor } from "@skryensya/core/selectors";
 import { editorIcons, type EditorIconName } from "@skryensya/core/editor-icons";
 import { renderIconBox } from "@skryensya/core/icon";
 import { toolbarParts } from "@skryensya/core/toolbar";
@@ -358,6 +359,6 @@ function connect(root: HTMLElement): () => void {
 
 export const mountEditor = createConnectMount({
   key: "editor",
-  rootSelector: "[data-sk-editor]",
+  rootSelector: rootSelectorFor(editorAttrs),
   connect,
 });

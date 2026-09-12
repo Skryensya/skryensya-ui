@@ -25,6 +25,20 @@ export const kbdContract = {
   id: "kbd",
   css: "@skryensya/core/components/kbd.css",
   parts: kbdParts,
+  hooks: [
+    "--sk-kbd-bg",
+    "--sk-kbd-border-color",
+    "--sk-kbd-border-width",
+    "--sk-kbd-fg",
+    "--sk-kbd-font-family",
+    "--sk-kbd-font-size",
+    "--sk-kbd-line-height",
+    "--sk-kbd-min-size",
+    "--sk-kbd-padding-x",
+    "--sk-kbd-radius",
+    "--sk-kbd-shadow",
+    "--sk-kbd-wash",
+  ],
   options: {
     tone: {
       type: "enum",

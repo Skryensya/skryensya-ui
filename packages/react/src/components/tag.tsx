@@ -1,7 +1,10 @@
-import { tagParts, type TagTone } from "@skryensya/core/tag";
+import { tagParts, type TagTone, tagContract } from "@skryensya/core/tag";
 import { type AnchorHTMLAttributes, type HTMLAttributes, type ReactNode } from "react";
 import { Button } from "./button.js";
 import { Icon } from "./icon.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { tone: toneOption, removeLabel: removeLabelOption } = tagContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -35,7 +38,7 @@ type LinkTagProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children"> &
 
 export type TagProps = StaticTagProps | LinkTagProps;
 
-export function Tag({ children, className, tone = "neutral", ...props }: TagProps) {
+export function Tag({ children, className, tone = toneOption.default, ...props }: TagProps) {
   if (props.href !== undefined) {
     return (
       <a {...props} className={cx(`${tagParts.root} sk-interactive`, className)} data-tone={tone}>
@@ -44,7 +47,7 @@ export function Tag({ children, className, tone = "neutral", ...props }: TagProp
     );
   }
 
-  const { onRemove, removable, removeLabel = "Remove", ...spanProps } = props;
+  const { onRemove, removable, removeLabel = removeLabelOption.default, ...spanProps } = props;
   const hasRemove = removable ?? onRemove !== undefined;
   return (
     <span

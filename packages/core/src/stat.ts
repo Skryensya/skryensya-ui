@@ -161,6 +161,11 @@ export const statContract = {
   id: "stat",
   css: "@skryensya/core/components/stat.css",
   parts: statParts,
+  hooks: [
+    "--sk-icon-size",
+    "--sk-stat-change-fg",
+    "--sk-stat-count-duration",
+  ],
 
   options: {
     /** Which way the change points. Paired with the change text, never the only cue. */

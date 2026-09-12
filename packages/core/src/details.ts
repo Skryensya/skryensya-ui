@@ -35,6 +35,28 @@ export const detailsContract = {
   id: "details",
   css: "@skryensya/core/components/details.css",
   parts: detailsParts,
+  hooks: [
+    "--sk-color-border-subtle",
+    "--sk-color-text-primary",
+    "--sk-color-text-secondary",
+    "--sk-details-bg",
+    "--sk-details-border-color",
+    "--sk-details-content-bg",
+    "--sk-details-content-fg",
+    "--sk-details-description-font-size",
+    "--sk-details-fg",
+    "--sk-details-gap",
+    "--sk-details-heading-gap",
+    "--sk-details-indicator-fg",
+    "--sk-details-padding",
+    "--sk-details-title-font-size",
+    "--sk-font-body-sm",
+    "--sk-font-heading-sm",
+    "--sk-icon-size",
+    "--sk-space-2",
+    "--sk-space-3",
+    "--sk-tile-padding",
+  ],
 
   options: {
     /**

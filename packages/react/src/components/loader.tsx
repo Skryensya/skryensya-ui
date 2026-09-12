@@ -1,10 +1,8 @@
-import {
-  loaderParts,
-  type LoaderSize,
-  type LoaderSpeed,
-  type LoaderVariant,
-} from "@skryensya/core/loader";
+import { loaderParts, type LoaderSize, type LoaderSpeed, type LoaderVariant, loaderContract } from "@skryensya/core/loader";
 import { type HTMLAttributes } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { size: sizeOption, speed: speedOption, variant: variantOption } = loaderContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -24,9 +22,9 @@ export type LoaderProps = Omit<
 export function Loader({
   className,
   label,
-  size = "md",
-  speed = "normal",
-  variant = "ring",
+  size = sizeOption.default,
+  speed = speedOption.default,
+  variant = variantOption.default,
   ...props
 }: LoaderProps) {
   const decorative = label === undefined;

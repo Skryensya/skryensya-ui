@@ -1,5 +1,8 @@
-import { badgeParts, type BadgeSize, type BadgeTone } from "@skryensya/core/badge";
+import { badgeParts, type BadgeSize, type BadgeTone, badgeContract } from "@skryensya/core/badge";
 import { type HTMLAttributes, type ReactNode } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { size: sizeOption, tone: toneOption, pulse: pulseOption } = badgeContract.options;
 
 export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   children: ReactNode;
@@ -7,7 +10,7 @@ export type BadgeProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   size?: BadgeSize;
 };
 
-export function Badge({ children, className, size = "md", tone = "neutral", ...props }: BadgeProps) {
+export function Badge({ children, className, size = sizeOption.default, tone = toneOption.default, ...props }: BadgeProps) {
   const classes = className ? `${badgeParts.root} ${className}` : badgeParts.root;
 
   return (
@@ -24,7 +27,7 @@ export type BadgeDotProps = Omit<HTMLAttributes<HTMLSpanElement>, "aria-label"> 
   label: string;
 };
 
-export function BadgeDot({ className, label, pulse = false, tone = "neutral", ...props }: BadgeDotProps) {
+export function BadgeDot({ className, label, pulse = pulseOption.default, tone = toneOption.default, ...props }: BadgeDotProps) {
   const classes = className ? `${badgeParts.root} ${className}` : badgeParts.root;
   return (
     <span

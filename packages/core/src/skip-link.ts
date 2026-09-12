@@ -55,6 +55,20 @@ export const skipLinkContract = {
   id: "skip-link",
   css: "@skryensya/core/components/skip-link.css",
   parts: skipLinkParts,
+  hooks: [
+    "--sk-skip-link-bg",
+    "--sk-skip-link-border-color",
+    "--sk-skip-link-fg",
+    "--sk-skip-link-font-size",
+    "--sk-skip-link-font-weight",
+    "--sk-skip-link-offset",
+    "--sk-skip-link-padding-block",
+    "--sk-skip-link-padding-inline",
+    "--sk-skip-link-radius",
+    "--sk-skip-link-shadow",
+    "--sk-skip-link-wash",
+    "--sk-skip-link-z",
+  ],
 
   options: {
     /**

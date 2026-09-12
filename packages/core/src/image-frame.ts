@@ -31,6 +31,15 @@ export const imageFrameContract = {
   id: "image-frame",
   css: "@skryensya/core/patterns/image-frame.css",
   parts: imageFrameParts,
+  hooks: [
+    "--sk-image-frame-aspect",
+    "--sk-image-frame-bg",
+    "--sk-image-frame-border-color",
+    "--sk-image-frame-border-width",
+    "--sk-image-frame-fit",
+    "--sk-image-frame-position",
+    "--sk-image-frame-radius",
+  ],
 
   options: {
     /** The frame box. `auto` keeps the media's intrinsic measure. */

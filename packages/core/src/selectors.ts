@@ -29,3 +29,13 @@ export function selectorsFor<T extends Readonly<Record<string, string>>>(
   for (const key of Object.keys(attrs) as (keyof T)[]) out[key] = `[${attrs[key]}]`;
   return out;
 }
+
+/**
+ * The selector for a component's authored root: `rootSelectorFor(tabsAttrs)` gives `"[data-sk-tabs]"`.
+ *
+ * Split from `selectorsFor` because a mount shim needs exactly this one string and nothing else, and
+ * building the whole map to read a single key reads like an accident.
+ */
+export function rootSelectorFor(attrs: { readonly root: string }): string {
+  return `[${attrs.root}]`;
+}

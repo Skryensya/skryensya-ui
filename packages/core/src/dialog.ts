@@ -28,6 +28,21 @@ export const dialogContract = {
   id: "dialog",
   css: "@skryensya/core/components/dialog.css",
   parts: dialogParts,
+  hooks: [
+    "--sk-dialog-backdrop-bg",
+    "--sk-dialog-bg",
+    "--sk-dialog-border-color",
+    "--sk-dialog-border-width",
+    "--sk-dialog-elevation",
+    "--sk-dialog-fg",
+    "--sk-dialog-footer-border-color",
+    "--sk-dialog-footer-gap",
+    "--sk-dialog-header-border-color",
+    "--sk-dialog-inline-size",
+    "--sk-dialog-padding",
+    "--sk-dialog-radius",
+    "--sk-dialog-wash",
+  ],
 
   options: {
     /** What the closing control announces. */

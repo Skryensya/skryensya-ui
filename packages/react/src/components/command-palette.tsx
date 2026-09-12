@@ -1,11 +1,9 @@
-import {
-  commandPaletteParts,
-  commandPaletteOptionContext,
-  filterCommandPaletteEntries,
-  type CommandPaletteEntry,
-} from "@skryensya/core/command-palette";
+import { commandPaletteParts, commandPaletteOptionContext, filterCommandPaletteEntries, type CommandPaletteEntry, commandPaletteContract } from "@skryensya/core/command-palette";
 import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Icon } from "./icon.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { emptyLabel: emptyLabelOption, open: openOption, placeholder: placeholderOption } = commandPaletteContract.options;
 
 /*
  * COMMAND PALETTE: the React half, which did not exist.
@@ -41,13 +39,13 @@ export type CommandPaletteProps = {
 
 export function CommandPalette({
   closeLabel = "Cerrar",
-  emptyLabel = "Sin resultados.",
+  emptyLabel = emptyLabelOption.default,
   footer,
   id,
   items: itemsProp = [],
   label,
-  open = false,
-  placeholder = "Buscar…",
+  open = openOption.default,
+  placeholder = placeholderOption.default,
 }: CommandPaletteProps) {
   const dialog = useRef<HTMLDialogElement>(null);
   const list = useRef<HTMLUListElement>(null);

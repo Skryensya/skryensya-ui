@@ -138,6 +138,21 @@ export const tooltipContract = {
   id: "tooltip",
   css: "@skryensya/core/components/tooltip.css",
   parts: tooltipParts,
+  hooks: [
+    "--sk-anchored-arrow-bg",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-tooltip-bg",
+    "--sk-tooltip-fg",
+    "--sk-tooltip-font-size",
+    "--sk-tooltip-max-inline-size",
+    "--sk-tooltip-offset",
+    "--sk-tooltip-padding",
+    "--sk-tooltip-radius",
+    "--sk-tooltip-shadow",
+    "--sk-tooltip-wash",
+  ],
 
   options: {
     placement: {

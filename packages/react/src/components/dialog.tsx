@@ -1,6 +1,9 @@
-import { dialogParts } from "@skryensya/core/dialog";
+import { dialogParts, dialogContract } from "@skryensya/core/dialog";
 import { useId, type DialogHTMLAttributes, type ReactNode } from "react";
 import { Icon } from "./icon.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { alert: alertOption, closeLabel: closeLabelOption, vaul: vaulOption } = dialogContract.options;
 
 /*
  * DIALOG: the centred modal box, and a binding that is markup and nothing else.
@@ -35,13 +38,13 @@ export type DialogProps = DialogHTMLAttributes<HTMLDialogElement> & {
 };
 
 export function Dialog({
-  alert = false,
+  alert = alertOption.default,
   children,
   className,
-  closeLabel = "Cerrar",
+  closeLabel = closeLabelOption.default,
   footer,
   title,
-  vaul = false,
+  vaul = vaulOption.default,
   ...props
 }: DialogProps) {
   const titleId = useId();

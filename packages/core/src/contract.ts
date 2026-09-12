@@ -526,6 +526,25 @@ export type ComponentContract = {
   readonly signatures: Readonly<Record<string, ContractSignature>>;
   readonly a11y?: readonly ContractA11yRule[];
   /**
+   * The STYLING HOOKS this component publishes: the tier-3 custom properties a consumer may
+   * re-declare to restyle it, in the stylesheet `css` names.
+   *
+   * CONTEXT.md calls a styling hook "the public override surface of a component" and a Contract
+   * "everything Core declares about one component", and until this field existed those two
+   * sentences contradicted each other: 983 hooks lived in the CSS and the contract named 47 of
+   * them, all in prose. Nothing could check either direction, so a hook could vanish from the
+   * stylesheet and the only signal a consumer got was their override silently doing nothing.
+   *
+   * AUTHORED, NOT GENERATED. Deriving this list from the CSS would make it incapable of
+   * disagreeing, and a check that cannot fail is not a check. Declaring it by hand is what lets
+   * the validator report BOTH directions: a hook the stylesheet has and the contract does not
+   * (undeclared), and a hook the contract promises and the stylesheet never declares (broken).
+   *
+   * Optional while the corpus is being filled in: a contract that declares none is skipped, not
+   * failed, so the rule can land before the data does.
+   */
+  readonly hooks?: readonly string[];
+  /**
    * The DOM events the component dispatches, by the name the code calls them: `valueChange` →
    * `sk:accordionvaluechange`.
    *

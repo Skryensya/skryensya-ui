@@ -1,13 +1,8 @@
-import {
-  animateStatCount,
-  formatStatCount,
-  prefersReducedMotion,
-  readStatCountDuration,
-  statCountFractionDigits,
-  statParts,
-  type StatTrend,
-} from "@skryensya/core/stat";
+import { animateStatCount, formatStatCount, prefersReducedMotion, readStatCountDuration, statCountFractionDigits, statParts, type StatTrend, statContract } from "@skryensya/core/stat";
 import { useEffect, useMemo, useRef, useState, type HTMLAttributes, type ReactNode } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { animate: animateOption } = statContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -42,7 +37,7 @@ export type StatProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
 };
 
 export function Stat({
-  animate = false,
+  animate = animateOption.default,
   change,
   className,
   count,

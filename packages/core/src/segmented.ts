@@ -33,6 +33,22 @@ export const segmentedContract = {
   id: "segmented",
   css: "@skryensya/core/components/segmented.css",
   parts: segmentedParts,
+  hooks: [
+    "--sk-segmented-bg",
+    "--sk-segmented-border-color",
+    "--sk-segmented-border-width",
+    "--sk-segmented-gap",
+    "--sk-segmented-option-fg",
+    "--sk-segmented-padding",
+    "--sk-segmented-radius",
+    "--sk-segmented-selected-bg",
+    "--sk-segmented-selected-elevation",
+    "--sk-segmented-selected-fg",
+    "--sk-segmented-selected-ring",
+    "--sk-segmented-selected-wash",
+    "--sk-segmented-shadow",
+    "--sk-segmented-wash",
+  ],
 
   options: {
     /**

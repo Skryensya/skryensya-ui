@@ -53,6 +53,13 @@ export interface Problem {
   msg: string;
 }
 
+/**
+ * What each component contract says its styling hooks are, keyed by the stylesheet it names
+ * (`components/badge.css`). Built by `lint.ts` from the contracts; absent in a fixture, which is
+ * what keeps `checks.test.ts` free of the whole catalogue.
+ */
+export type DeclaredHooks = ReadonlyMap<string, readonly string[]>;
+
 export interface ContrastPair {
   fg: string;
   bg: string;
@@ -69,6 +76,7 @@ export interface ContrastPair {
 export function runChecks(
   { files, declaredTier, baseSemantic, hcByName, paletteMap, resolveColor }: CheckableCorpus,
   pairs: ContrastPair[] | null = null,
+  declaredHooks: DeclaredHooks | null = null,
 ): Problem[] {
   const problems: Problem[] = [];
   const fail = (rule: string, where: string, msg: string) => problems.push({ rule, where, msg });
@@ -204,6 +212,45 @@ export function runChecks(
 
     fail("component-ships-hooks", f.rel,
       "component sheet paints structure but declares no --sk-* hook, so it has no public restyle surface (and its docs styling-hooks table is empty); lift its themeable values to --sk-<name>-* hooks");
+  }
+
+  // ── styling hooks: the contract and the stylesheet have to agree ───────────
+  /*
+   * The two directions are NOT symmetric, which is why they are two rules.
+   *
+   * A hook the stylesheet declares and the contract does not is UNDECLARED: it works, but no
+   * consumer can discover it and no docs table lists it.
+   *
+   * A hook the contract promises and the stylesheet never declares is BROKEN, and it is the worse
+   * of the two by a distance: a consumer re-declares it, nothing reads it, and they get silence.
+   * Silence is the failure mode this system has the least defence against, so that one says so.
+   *
+   * A sheet no contract points at is skipped rather than failed. That is what exempts the shared
+   * patterns (`patterns/anchored.css`, `patterns/state-layer.css`): a Pattern is structure several
+   * components share, so it has no single contract to declare its hooks, by definition. A sheet a
+   * contract DOES name is checked whether it sits in `components/` or `patterns/`.
+   */
+  if (declaredHooks) {
+    for (const f of files) {
+      if (!f.rel) continue;
+      const declared = declaredHooks.get(f.rel);
+      // No contract names this sheet, or its contract has not declared hooks yet: inert.
+      if (!declared || declared.length === 0) continue;
+
+      const inSheet = new Set(f.decls.filter((d) => d.name.startsWith("--sk-")).map((d) => d.name));
+      const promised = new Set(declared);
+
+      for (const name of inSheet) {
+        if (promised.has(name)) continue;
+        fail("hook-undeclared", f.rel,
+          `${name} is declared in the stylesheet but not in the contract's \`hooks\`, so nothing documents it and nothing checks it`);
+      }
+      for (const name of promised) {
+        if (inSheet.has(name)) continue;
+        fail("hook-broken", f.rel,
+          `the contract promises ${name} and this stylesheet never declares it: a consumer re-declaring it gets SILENCE, not an error`);
+      }
+    }
   }
 
   return problems;

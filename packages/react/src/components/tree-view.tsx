@@ -4,6 +4,9 @@ import { treeView } from "@skryensya/core/machines";
 import { normalizeProps, useMachine } from "@zag-js/react";
 import { useId, useMemo, type ReactNode } from "react";
 
+/* Derived, never restated: the default lives in the contract. */
+const { selectionMode: selectionModeOption } = treeViewContract.options;
+
 export type TreeViewProps = {
   id?: string;
   label: string;
@@ -121,7 +124,7 @@ export function TreeView({
   onExpandedChange,
   onSelectionChange,
   selectedValue,
-  selectionMode = "single",
+  selectionMode = selectionModeOption.default,
 }: TreeViewProps) {
   const generatedId = useId();
   const defaultExpandedValue =

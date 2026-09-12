@@ -1,14 +1,8 @@
-import {
-  qrGeometry,
-  qrCodeParts,
-  type QrLevel,
-  type QrMask,
-  type QrModuleShape,
-  type QrPolarity,
-  type QrSize,
-  type QrTone,
-} from "@skryensya/core/qr-code";
+import { qrGeometry, qrCodeParts, type QrLevel, type QrMask, type QrModuleShape, type QrPolarity, type QrSize, type QrTone, qrCodeContract } from "@skryensya/core/qr-code";
 import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { level: levelOption, mask: maskOption, logoRatio: logoRatioOption, polarity: polarityOption, quietZone: quietZoneOption, moduleShape: moduleShapeOption, qrSize: qrSizeOption, tone: toneOption } = qrCodeContract.options;
 
 type QRCodeStyle = CSSProperties & { "--sk-qr-code-logo-ratio"?: number };
 
@@ -44,16 +38,16 @@ export type QRCodeProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
 export function QRCode({
   className,
   label,
-  level = "Q",
-  mask = "auto",
+  level = levelOption.default,
+  mask = maskOption.default,
   logo,
-  logoRatio = 0,
-  polarity = "auto",
-  quietZone = 4,
-  shape = "square",
-  size = "md",
+  logoRatio = logoRatioOption.default,
+  polarity = polarityOption.default,
+  quietZone = quietZoneOption.default,
+  shape = moduleShapeOption.default,
+  size = qrSizeOption.default,
   style,
-  tone = "neutral",
+  tone = toneOption.default,
   value,
   ...props
 }: QRCodeProps) {

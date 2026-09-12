@@ -17,6 +17,12 @@ export const fadeEdgeContract = {
   id: "fade-edge",
   css: "@skryensya/core/components/fade-edge.css",
   parts: fadeEdgeParts,
+  hooks: [
+    "--sk-fade-edge-color",
+    "--sk-fade-edge-mask-ramp",
+    "--sk-fade-edge-ramp",
+    "--sk-fade-edge-size",
+  ],
   options: {
     mode: {
       type: "enum",

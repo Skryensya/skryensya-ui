@@ -25,6 +25,17 @@ export const dataGridContract = {
   id: "data-grid",
   css: "@skryensya/core/components/data-grid.css",
   parts: dataGridParts,
+  hooks: [
+    "--sk-data-grid-bg",
+    "--sk-data-grid-border-color",
+    "--sk-data-grid-cell-gap",
+    "--sk-data-grid-cell-min-block-size",
+    "--sk-data-grid-cell-padding-x",
+    "--sk-data-grid-cell-padding-y",
+    "--sk-data-grid-fg",
+    "--sk-data-grid-row-border-color",
+    "--sk-data-grid-row-gap",
+  ],
 
   options: {
     /** The grid's accessible name. `role="grid"` carries no implicit one. */

@@ -30,6 +30,14 @@ export const loaderContract = {
   id: "loader",
   css: "@skryensya/core/components/loader.css",
   parts: loaderParts,
+  hooks: [
+    "--sk-loader-duration",
+    "--sk-loader-easing",
+    "--sk-loader-oscillation-easing",
+    "--sk-loader-size",
+    "--sk-loader-stroke-width",
+    "--sk-loader-track-color",
+  ],
 
   options: {
     size: { type: "enum", values: ["sm", "md", "lg"], default: "md", attr: "data-size" },

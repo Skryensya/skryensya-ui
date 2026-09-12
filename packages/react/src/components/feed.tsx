@@ -1,5 +1,8 @@
-import { feedParts } from "@skryensya/core/feed";
+import { feedParts, feedContract } from "@skryensya/core/feed";
 import { useId, type HTMLAttributes, type ReactNode } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { busy: busyOption } = feedContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -14,7 +17,7 @@ export type FeedProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
  * A purely presentational stream; see `feed.ts`'s own banner for why: WAI-ARIA APG says the
  * `feed` role has no well-established keyboard convention, so there is no machine here to run.
  */
-export function Feed({ busy = false, children, className, label, ...props }: FeedProps) {
+export function Feed({ busy = busyOption.default, children, className, label, ...props }: FeedProps) {
   return (
     <div {...props} aria-busy={busy} aria-label={label} className={cx(feedParts.root, className)} role="feed">
       {children}

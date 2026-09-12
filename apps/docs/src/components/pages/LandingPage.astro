@@ -6,6 +6,8 @@
  * chrome, no code panel. What's on screen IS the example.
  */
 import Base from "../../layouts/Base.astro";
+import SiteFooter from "../SiteFooter.astro";
+import { getNavigation } from "../../lib/navigation";
 import { getLocale, localizePath, useTranslations, type Translate } from "../../i18n";
 import { emitMarkup } from "@skryensya/ai-compiler/emit";
 import type { UsageTree } from "@skryensya/core/usage-tree";
@@ -64,10 +66,19 @@ import "@skryensya/core/components/checkbox.css";
 import "@skryensya/core/components/accordion.css";
 import "@skryensya/core/components/select.css";
 import "@skryensya/core/components/slider.css";
+/* The two ultrawide lanes and the closing band: skeletons behind a bottom fade, then the site's own
+   footer, which a `fullBleed` page does not get from Base (see the `SiteFooter` note there). */
+import "@skryensya/core/components/placeholder.css";
+import "@skryensya/core/components/fade-edge.css";
+import "@skryensya/core/patterns/footer.css";
+import "@skryensya/core/patterns/nav-list.css";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 const href = (path: string) => localizePath(path, locale);
+/* The same sections `Base` hands the footer on a railed page: the band builds its three link
+   columns out of them (see `SiteFooter`), so it wants the section tree, not the global item list. */
+const navigation = getNavigation(locale);
 
 
 /*
@@ -440,11 +451,134 @@ const GALLERY_MAX_WIDTH = 1800;
  *  `data-fill` grid's columns instead of leaving them even. */
 const GALLERY_COLUMN_WEIGHTS = "0.9fr 1fr 1.15fr 1fr 0.9fr";
 
+/*
+ * THE NEXT TIER UP, and the two numbers below are what keeps it from disturbing the five.
+ *
+ * `--breakpoint-*` stops at `ultrawide` (90rem) because that is the widest a page column ever gets;
+ * this is a GALLERY width, not a page one, so the literal lives here rather than joining the shared
+ * map: the 120rem in the `@media` at the foot of this file is a 1920px monitor, the first size
+ * where seven lanes have room at all. It is a literal there because a media query cannot read a
+ * custom property, the same reason `_breakpoints.scss` exists at all.
+ *
+ * The skeleton lanes are FIXED, not weighted, and that is the whole trick. As `fr` shares they
+ * would scale with the viewport and keep taking a seventh of it forever; as a constant
+ * `GALLERY_SKELETON_WIDTH` each they cost the five a fixed 22rem no matter how wide the screen
+ * gets, so the five keep growing past the tier instead of being cut down by two more shares.
+ *
+ * They are still narrower at the tier than they would be with no skeleton lanes at all, and that is
+ * the trade this makes knowingly: measured, the five run 292/324/373/324/292 at 2100px against
+ * 252/280/322/280/252 at 1500px, so a reader crossing into the tier sees the gallery get WIDER, not
+ * narrower. Only against a hypothetical seven-lane-free ultrawide does it lose anything. The cap
+ * moves up with it (`GALLERY_XL_MAX_WIDTH`) so the pair has somewhere to go on a screen wide enough
+ * to reach it.
+ */
+const GALLERY_SKELETON_WIDTH = "11rem";
+const GALLERY_XL_MAX_WIDTH = 2200;
+
 /** The tallest of the five column totals below (px, Chromium/1900, each column's own weighted
  *  share of `GALLERY_MAX_WIDTH`) - roughly double the pre-`data-fill` single-screen height, so
  *  each column is a short scroll of its own. Thirty-one distinct molecules fill most of it; five
  *  get one repeat each (`idPrefix`) to top a column off. */
 const GALLERY_FILL_HEIGHT = 1191;
+
+/*
+ * THE ULTRAWIDE LANES, and they are skeletons on purpose.
+ *
+ * Above `ultrawide` the five real lanes stop growing (`GALLERY_MAX_WIDTH`) and the page ends up
+ * with two hundred pixels of bare canvas down each side. The honest fix is not a sixth and seventh
+ * lane of real molecules: the five are placed by MEASUREMENT (see the note above, each tile in the
+ * lane whose width it measures shortest in), and two more lanes of real tiles would be two more
+ * columns to re-measure every time any of them changes. Skeletons carry no such debt. They are also
+ * the truer thing to put there: the gallery is a window onto a catalogue that does not end at the
+ * frame, and the shape of content just past the edge is exactly what a skeleton draws.
+ *
+ * DIFFERENT SHAPES, not one repeated: a media card, a person, a metric, a paragraph, a list. Each
+ * is a composition of `placeholder`'s own signatures, which is the same vocabulary a consumer would
+ * reach for while their data is in flight, so these read as loading UI rather than as grey boxes.
+ *
+ * THE SAME HEIGHT AS EACH OTHER AND AS THE GRID'S FLOOR (`GALLERY_FILL_HEIGHT`), clipped there
+ * rather than allowed to end: a skeleton lane that stopped on its own last tile would read as a
+ * column that ran out, which is the opposite of the claim. `FadeEdge` takes the bottom of the clip
+ * (`sk-fade-edge`, `to-bottom`), so the lane dissolves instead of being cut.
+ *
+ * `aria-hidden`, like every Placeholder: a picture of absence has nothing to announce, and this one
+ * is decoration on top of that.
+ */
+const skeletonLane = (kinds: readonly SkeletonKind[]): UsageTree[] => kinds.map((kind) => SKELETONS[kind]());
+
+type SkeletonKind = "media" | "person" | "metric" | "paragraph" | "list" | "control";
+
+const line = (text: string, width: string): UsageTree => ({
+  contract: "placeholder",
+  signature: "Placeholder",
+  options: { text, width },
+});
+
+const SKELETONS: Record<SkeletonKind, () => UsageTree> = {
+  /* A product card: image, then its title and two lines under it. */
+  media: () => ({
+    contract: "layout",
+    signature: "Stack",
+    options: { gap: "sm" },
+    children: [
+      { contract: "placeholder", signature: "Placeholder.block", options: { height: "7rem" } },
+      line("h4", "70%"),
+      { contract: "placeholder", signature: "Placeholder.paragraph", options: { lines: 2 } },
+    ],
+  }),
+  /* A person row: the disc beside two lines, the same shape `profileRowTree` loads into. */
+  person: () => ({
+    contract: "layout",
+    signature: "Inline",
+    options: { gap: "sm", inlineAlign: "center" },
+    children: [
+      { contract: "placeholder", signature: "Placeholder.circle", options: { size: "md" } },
+      {
+        contract: "layout",
+        signature: "Stack",
+        options: { gap: "xs" },
+        children: [line("body", "8rem"), line("caption", "5rem")],
+      },
+    ],
+  }),
+  /* A metric: the number, then what it counts. */
+  metric: () => ({
+    contract: "layout",
+    signature: "Stack",
+    options: { gap: "xs" },
+    children: [line("caption", "45%"), line("display-sm", "60%")],
+  }),
+  paragraph: () => ({
+    contract: "layout",
+    signature: "Stack",
+    options: { gap: "sm" },
+    children: [line("h5", "55%"), { contract: "placeholder", signature: "Placeholder.paragraph", options: { lines: 4 } }],
+  }),
+  /* A titled list: a heading over four rows of even length, which is what a list is and a paragraph
+     is not (the ragged last line is the difference). */
+  list: () => ({
+    contract: "layout",
+    signature: "Stack",
+    options: { gap: "sm" },
+    children: [
+      line("h5", "40%"),
+      ...["85%", "72%", "88%", "64%"].map((width) => line("body", width)),
+    ],
+  }),
+  /* A control row: a label over a field-height block, the shape every form tile loads into. */
+  control: () => ({
+    contract: "layout",
+    signature: "Stack",
+    options: { gap: "xs" },
+    children: [line("caption", "35%"), { contract: "placeholder", signature: "Placeholder.block", options: { height: "2.5rem" } }],
+  }),
+};
+
+/* Two lanes, each a different reading order, so the pair does not look like one column mirrored. */
+const skeletonLanes: UsageTree[][] = [
+  skeletonLane(["media", "person", "metric", "list", "control", "paragraph", "person"]),
+  skeletonLane(["paragraph", "control", "media", "metric", "person", "list", "metric"]),
+];
 
 const columns: GalleryTile[][] = [
   // col 0, 319px (narrow) - productCard leads: the one tile that measures WORSE at width, so it
@@ -538,7 +672,7 @@ const columns: GalleryTile[][] = [
         <p class="sk-text" data-tone="secondary" data-size="lg">{t("landing.gallery.lede")}</p>
       </div>
       <div
-        class="sk-grid"
+        class="sk-grid landing-gallery"
         data-responsive
         data-fill
         data-columns="5"
@@ -546,6 +680,19 @@ const columns: GalleryTile[][] = [
         data-width="full-width"
         style={`--sk-grid-fill: ${GALLERY_FILL_HEIGHT}px; --sk-grid-template: ${GALLERY_COLUMN_WEIGHTS}; max-width: ${GALLERY_MAX_WIDTH}px; margin-inline: auto; padding-inline: var(--space-inset-lg)`}
       >
+        {/*
+          The first skeleton lane. Both of them are rendered at every width and revealed only at the
+          XL tier (`display: none` below), rather than being emitted conditionally: this page is
+          static, so there is no viewport to branch on at build time, and a lane that appears by
+          stylesheet cannot disagree with the column template that makes room for it.
+        */}
+        <div class="landing-gallery__skeleton sk-fade-edge" data-direction="to-bottom" aria-hidden="true">
+          <div class="sk-stack" data-gap="sm">
+            {skeletonLanes[0].map((tree) => (
+              <div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" set:html={emitMarkup(tree, { fillDefaults: false })} />
+            ))}
+          </div>
+        </div>
         {
           columns.map((column) => (
             <div class="sk-stack" data-gap="sm">
@@ -561,9 +708,64 @@ const columns: GalleryTile[][] = [
             </div>
           ))
         }
+        <div class="landing-gallery__skeleton sk-fade-edge" data-direction="to-bottom" aria-hidden="true">
+          <div class="sk-stack" data-gap="sm">
+            {skeletonLanes[1].map((tree) => (
+              <div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" set:html={emitMarkup(tree, { fillDefaults: false })} />
+            ))}
+          </div>
+        </div>
       </div>
       <script is:inline set:html={dialogConfirmScript} />
     </section>
 
+    {/*
+      THE CLOSING BAND. `Base` renders `<SiteFooter>` only on railed pages (its own note says why:
+      the footer is site chrome that sits beside the document pair), and this page is `fullBleed`,
+      so it had none. Rendered here rather than moved into the layout's unconditional branch
+      because the two pages want it in different places: a docs page ends after its pager, this one
+      ends after the gallery, and `data-width="full-width"` inside this same `sk-layout-grid` is
+      what lets the band bleed while its own content returns to the page measure.
+    */}
+    <SiteFooter nav={navigation} locale={locale} />
   </div>
 </Base>
+
+<style define:vars={{
+  galleryXlMaxWidth: `${GALLERY_XL_MAX_WIDTH}px`,
+  gallerySkeletonWidth: GALLERY_SKELETON_WIDTH,
+  galleryFillHeight: `${GALLERY_FILL_HEIGHT}px`,
+}}>
+  /*
+   * The skeleton lanes are laid out by this sheet alone; the grid itself keeps its five-lane inline
+   * style at every width below the tier. `display: none` rather than `visibility` or opacity: a
+   * hidden-but-present lane would still claim a grid track, and below the tier the template has no
+   * track to give it, so the lane would wrap into a row of its own under the gallery.
+   */
+  .landing-gallery__skeleton {
+    display: none;
+  }
+
+  @media (min-width: 120rem) {
+    /* Seven tracks: the same five weights as before, with a fixed lane bolted on each end. The
+       five therefore keep the widths their tile heights were measured at. */
+    .landing-gallery {
+      max-width: var(--galleryXlMaxWidth) !important;
+      --sk-grid-template:
+        var(--gallerySkeletonWidth) 0.9fr 1fr 1.15fr 1fr 0.9fr var(--gallerySkeletonWidth) !important;
+    }
+
+    /*
+     * Clipped to the grid's own floor, so both lanes end at exactly the height the five real ones
+     * start at, and faded over the last third of it. `align-self: start` because the grid stretches
+     * a cell to its row otherwise, which would undo the clip it was just given.
+     */
+    .landing-gallery__skeleton {
+      display: block;
+      align-self: start;
+      block-size: var(--galleryFillHeight);
+      overflow: hidden;
+      --sk-fade-edge-size: 16rem;
+    }
+  }
+</style>

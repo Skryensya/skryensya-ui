@@ -29,6 +29,7 @@ import Base from "../../layouts/Base.astro";
 import ContractChangelog from "../ContractChangelog.astro";
 import ContractReference from "../ContractReference.astro";
 import StylingHooks, { type HookGroup } from "../StylingHooks.astro";
+import { getContract } from "@skryensya/core/registry";
 import TestCoverage, { type TestGroup } from "../TestCoverage.astro";
 import { changelogFor } from "../../lib/contract-reference";
 import { getLocale, useTranslations } from "../../i18n";
@@ -63,7 +64,27 @@ const t = useTranslations(getLocale(Astro.url));
 const hasContract = Boolean(contractId);
 const hasChanges = contractId ? changelogFor(contractId).length > 0 : false;
 const hasInstall = Astro.slots.has("install");
-const hasStyle = styleGroups.length > 0 || Astro.slots.has("style");
+/*
+ * The styling-hooks table is DERIVED from the contract when a page does not say otherwise.
+ *
+ * A `HookGroup` is a stylesheet and the class that scopes it at runtime, and a contract already
+ * declares both: `css` names the sheet, `parts.root` names the class. 49 pages were passing the
+ * same two strings back by hand, which is one more copy of "which sheet is this component's" to
+ * keep in step, and `lib/tokens.ts` kept a third in its `PROBES` map.
+ *
+ * A page still wins when it passes `styleGroups` itself, and 18 do: a page that documents several
+ * component surfaces at once needs one group per surface, and Meter deliberately probes
+ * `sk-meter` rather than its contract's `sk-meter-group` root.
+ */
+const derivedStyleGroups: readonly HookGroup[] = (() => {
+  if (styleGroups.length > 0 || !contractId) return styleGroups;
+  const contract = getContract(contractId);
+  const probe = contract?.parts.root;
+  if (!contract || !probe) return styleGroups;
+  return [{ file: contract.css.replace(/^@skryensya\/core\//, ""), probe }];
+})();
+
+const hasStyle = derivedStyleGroups.length > 0 || Astro.slots.has("style");
 const hasA11y = Astro.slots.has("a11y");
 const hasTests = tests.length > 0;
 ---
@@ -216,7 +237,7 @@ const hasTests = tests.length > 0;
       {
         hasStyle && (
           <div class="sk-tabs__content sk-layout-grid" data-sk-tabs-content data-value="style">
-            {styleGroups.length > 0 && <StylingHooks groups={styleGroups} />}
+            {derivedStyleGroups.length > 0 && <StylingHooks groups={derivedStyleGroups} />}
             <slot name="style" />
           </div>
         )

@@ -1,10 +1,8 @@
-import {
-  placeholderLines,
-  placeholderParts,
-  type PlaceholderCircleSize,
-  type PlaceholderTextRole,
-} from "@skryensya/core/placeholder";
+import { placeholderLines, placeholderParts, type PlaceholderCircleSize, type PlaceholderTextRole, placeholderContract } from "@skryensya/core/placeholder";
 import { type CSSProperties, type HTMLAttributes } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { text: textOption, lines: linesOption, size: sizeOption } = placeholderContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -37,7 +35,7 @@ export type PlaceholderProps = SkeletonProps & {
 };
 
 /** One bar standing in for one line of text, sized by the role it replaces. */
-export function Placeholder({ className, style, text = "body", width, ...props }: PlaceholderProps) {
+export function Placeholder({ className, style, text = textOption.default, width, ...props }: PlaceholderProps) {
   return (
     <span
       {...props}
@@ -68,9 +66,9 @@ export type PlaceholderParagraphProps = SkeletonProps & {
 export function PlaceholderParagraph({
   className,
   lastLine,
-  lines = 3,
+  lines = linesOption.default,
   style,
-  text = "body",
+  text = textOption.default,
   ...props
 }: PlaceholderParagraphProps) {
   return (
@@ -127,7 +125,7 @@ export type PlaceholderCircleProps = SkeletonProps & {
 };
 
 /** A disc standing in for an avatar, on the same scale Avatar uses. */
-export function PlaceholderCircle({ className, size = "md", ...props }: PlaceholderCircleProps) {
+export function PlaceholderCircle({ className, size = sizeOption.default, ...props }: PlaceholderCircleProps) {
   return (
     <span
       {...props}

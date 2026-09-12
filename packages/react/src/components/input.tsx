@@ -1,6 +1,9 @@
-import { inputParts, type InputSize } from "@skryensya/core/input";
+import { inputParts, type InputSize, inputContract } from "@skryensya/core/input";
 import { forwardRef, type InputHTMLAttributes, type TextareaHTMLAttributes } from "react";
 import { useFormFieldControl } from "./form-field.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { type: typeOption } = inputContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -11,7 +14,7 @@ export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { className, controlSize, type = "text", ...props },
+  { className, controlSize, type = typeOption.default, ...props },
   ref,
 ) {
   const control = useFormFieldControl(props);

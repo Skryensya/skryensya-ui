@@ -238,6 +238,16 @@ export const marqueeContract = {
   id: "marquee",
   css: "@skryensya/core/components/marquee.css",
   parts: marqueeParts,
+  hooks: [
+    "--sk-marquee-cadence-duration",
+    "--sk-marquee-duration",
+    "--sk-marquee-fade-lead",
+    "--sk-marquee-fade-size",
+    "--sk-marquee-fade-trail",
+    "--sk-marquee-gap",
+    "--sk-marquee-gap-fill",
+    "--sk-marquee-run-gap",
+  ],
   options: marqueeOptions,
   signatures: {
     Marquee: {

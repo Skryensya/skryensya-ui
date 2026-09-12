@@ -119,6 +119,26 @@ export const tileContract = {
   id: "tile",
   css: "@skryensya/core/components/tile.css",
   parts: tileParts,
+  hooks: [
+    "--sk-color-border-selected",
+    "--sk-color-border-strong",
+    "--sk-color-border-subtle",
+    "--sk-color-focus",
+    "--sk-color-selection-selected",
+    "--sk-color-text-disabled",
+    "--sk-color-text-primary",
+    "--sk-color-text-secondary",
+    "--sk-font-body-sm",
+    "--sk-font-heading-sm",
+    "--sk-icon-size",
+    "--sk-space-2",
+    "--sk-space-3",
+    "--sk-space-4",
+    "--sk-tile-border-color",
+    "--sk-tile-padding",
+    "--sk-tile-radius",
+    "--sk-tile-shadow",
+  ],
 
   options: {
     /** Inner spacing, on the same scale Box uses. Absent means the stylesheet's own. */

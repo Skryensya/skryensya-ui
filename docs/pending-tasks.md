@@ -157,6 +157,58 @@ agente tiene el checklist completo), y correr `turbo check`.
 - [ ] **Toolbar** (`/componentes/toolbar`) - roving tabindex real, la más involucrada del lote:
   navegación por flechas, wrap, orientación.
 
+### Tres hojas de `components/` con 31 styling hooks y ningun contrato detras
+
+`ComponentContract.hooks` ya esta declarado en los 81 contratos y el compilador reconcilia las dos
+direcciones (`hook-undeclared` / `hook-broken`, en `packages/ai-compiler/src/hooks.ts`). La reconciliacion
+solo alcanza a una hoja que **algun contrato nombre**, y estas tres no las nombra nadie:
+
+| hoja | hooks | por que |
+|---|---|---|
+| `components/copy-button.css` | 15 | `core/src/copy-button.ts` existe pero no exporta ningun `ComponentContract` |
+| `components/drawer.css` | 15 | no hay `core/src/drawer.ts`; segun CONTEXT.md un drawer **es** un Vaul |
+| `components/theme-toggle.css` | 1 | mismo caso que copy-button |
+
+Son 31 hooks que publican una superficie de override que no aparece en ningun contrato, no sale en la
+tabla de la doc, y ahora ademas son los unicos de `components/` que el gate no puede ver. Los
+`patterns/` quedan fuera a proposito (un Pattern es estructura compartida, no tiene un contrato
+unico), pero estos tres viven en `components/`, que es justamente donde la regla deberia aplicar.
+
+Cada uno es una pregunta distinta, no una sola:
+
+- **copy-button / theme-toggle**: o publican contrato (y entran al catalogo, al changelog y a las dos
+  bindings), o sus hooks dejan de ser publicos y pasan a ser variables internas de la hoja.
+- **drawer**: la hoja existe sin contrato porque el drawer **es** un Vaul. Si eso sigue siendo cierto,
+  los hooks deberian estar declarados por el contrato de `vaul`, y la hoja pasar a `patterns/`.
+
+### Nueve `data-sk-*` que la capa vanilla busca y ningun contrato declara
+
+`packages/core/src/selectors.ts` dejo que los enhancers deriven sus selectores del contrato en vez de
+volver a tipearlos. De los 201 selectores que quedan en la capa vanilla, **188 ya estan declarados en
+core**; estos nueve no lo estan en ningun lado:
+
+| atributo | lo busca |
+|---|---|
+| `data-sk-tile-ready` | AccordionItem.svelte, ExpandableTile.svelte |
+| `data-sk-file-upload-clear` | FileUpload.svelte |
+| `data-sk-menu-item-label` | Menu.svelte |
+| `data-sk-menu-item-indicator` | Menu.svelte |
+| `data-sk-table-colgroup` | table.ts |
+| `data-sk-column-resizer` | table.ts, treegrid.ts, splitter.ts |
+| `data-sk-treegrid-disclosure` | treegrid.ts |
+| `data-sk-treegrid-colgroup` | treegrid.ts |
+| `data-sk-command-palette-lazy` | vaul.ts, registry.ts |
+
+Los dos de Menu son el caso mas claro y valen como muestra del resto: el selector acepta
+`[data-sk-menu-item-label], .sk-menu__item-label`, pero **el atributo no lo escribe nadie**. No esta en
+`menuAttrs`, no esta en el template, y el unico markup que lo lleva son los fixtures de los tests de
+esta misma capa. En markup emitido de verdad, la mitad que matchea siempre es la clase.
+
+Cada uno es la misma pregunta: o el contrato publica el atributo (superficie nueva: changelog, hash de
+Surface, las dos bindings), o el enhancer deja de buscarlo y se queda con la clase. **Decidir de a uno**,
+no de a nueve: `data-sk-column-resizer` lo comparten tres componentes y probablemente quiera vivir en un
+contrato compartido, mientras que `data-sk-tile-ready` huele a estado de runtime y no a parte autorada.
+
 ### Menu: `group` en los items de radio no existe en el contrato
 
 `apps/docs/src/demos/data/menu.ts` pasa `{ kind: "radio", group: "align" }` en tres entradas de

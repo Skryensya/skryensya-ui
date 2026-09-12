@@ -1,9 +1,4 @@
-import {
-  datePickerContract,
-  datePickerParts,
-  defaultContentLabel,
-  defaultTriggerLabel,
-} from "@skryensya/core/date-picker";
+import { datePickerContract, datePickerParts, defaultContentLabel, defaultTriggerLabel } from "@skryensya/core/date-picker";
 import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import {
   calendarParts,
@@ -20,6 +15,9 @@ import { useId, type ReactNode, type RefObject } from "react";
 import { useAnchored } from "./anchored.js";
 import { asDate, asDates, CalendarBody } from "./calendar.js";
 import { Icon } from "./icon.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { clearLabel: clearLabelOption, locale: localeOption, selectionMode: selectionModeOption, timeZone: timeZoneOption } = datePickerContract.options;
 
 // `selectionMode` comes from the contract, so Core stays the only place its values are defined.
 export type DatePickerProps = Pick<
@@ -69,7 +67,7 @@ export type DatePickerProps = Pick<
  * instance (popover-mode, not inline) and the field around it.
  */
 export function DatePicker({
-  clearLabel = "Limpiar",
+  clearLabel = clearLabelOption.default,
   container,
   contentLabel,
   dayLabel,
@@ -78,7 +76,7 @@ export function DatePicker({
   id,
   invalid,
   label,
-  locale = "es",
+  locale = localeOption.default,
   max,
   min,
   name,
@@ -90,8 +88,8 @@ export function DatePicker({
   previousIcon,
   readOnly,
   required,
-  selectionMode = "single",
-  timeZone = "UTC",
+  selectionMode = selectionModeOption.default,
+  timeZone = timeZoneOption.default,
   triggerIcon,
   triggerLabel,
   value,

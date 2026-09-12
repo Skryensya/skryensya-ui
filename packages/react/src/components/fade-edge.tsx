@@ -1,9 +1,8 @@
-import {
-  fadeEdgeParts,
-  type FadeEdgeDirection,
-  type FadeEdgeMode,
-} from "@skryensya/core/fade-edge";
+import { fadeEdgeParts, type FadeEdgeDirection, type FadeEdgeMode, fadeEdgeContract } from "@skryensya/core/fade-edge";
 import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { direction: directionOption, mode: modeOption } = fadeEdgeContract.options;
 
 type FadeEdgeStyle = CSSProperties & {
   "--sk-fade-edge-size"?: string;
@@ -23,8 +22,8 @@ export function FadeEdge({
   children,
   className,
   color,
-  direction = "to-bottom",
-  mode = "transparent",
+  direction = directionOption.default,
+  mode = modeOption.default,
   size,
   style,
   ...props

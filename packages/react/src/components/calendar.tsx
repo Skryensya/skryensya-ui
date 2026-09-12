@@ -19,6 +19,9 @@ import { useId, type MouseEvent, type ReactNode } from "react";
 import { Button } from "./button.js";
 import { Icon } from "./icon.js";
 
+/* Derived, never restated: the default lives in the contract. */
+const { locale: localeOption, selectionMode: selectionModeOption, timeZone: timeZoneOption } = calendarContract.options;
+
 // Without depending on `@zag-js/date-picker` directly (react does not bring it as a dependency of its
 // own, core only re-exports it via `machines.ts`): the `api`'s type comes from the same `connect` function.
 type DatePickerApi = ReturnType<typeof datePicker.connect<PropTypes>>;
@@ -301,7 +304,7 @@ export function Calendar({
   disabled,
   id,
   label,
-  locale = "es",
+  locale = localeOption.default,
   max,
   min,
   nextIcon,
@@ -310,8 +313,8 @@ export function Calendar({
   prevTriggerLabel,
   previousIcon,
   readOnly,
-  selectionMode = "single",
-  timeZone = "UTC",
+  selectionMode = selectionModeOption.default,
+  timeZone = timeZoneOption.default,
   value,
   viewIcon,
   viewTriggerLabel,

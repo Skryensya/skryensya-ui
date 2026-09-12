@@ -1,7 +1,10 @@
-import { codePreviewAttrs, codePreviewParts } from "@skryensya/core/code-preview";
+import { codePreviewAttrs, codePreviewParts, codePreviewContract } from "@skryensya/core/code-preview";
 import { selectionParts } from "@skryensya/core/selection";
 import { useId, useState, type ReactNode } from "react";
 import { Icon } from "./icon.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { collapsible: collapsibleOption, lessLabel: lessLabelOption, moreLabel: moreLabelOption, switchLabel: switchLabelOption } = codePreviewContract.options;
 
 /*
  * CODE PREVIEW: the React half, which did not exist.
@@ -48,11 +51,11 @@ export function CodePreview({
   ownViewports = false,
   rootAttrs,
   children,
-  collapsible = false,
-  lessLabel = "Contraer",
+  collapsible = collapsibleOption.default,
+  lessLabel = lessLabelOption.default,
   lines,
   label,
-  moreLabel = "Expandir",
+  moreLabel = moreLabelOption.default,
   note,
   previewLines,
 }: CodePreviewProps) {
@@ -139,7 +142,7 @@ export function CodePreviewDensity({
   condensedLabel = "Condensado",
   full,
   fullLabel = "Completo",
-  switchLabel = "Mostrar la versión completa",
+  switchLabel = switchLabelOption.default,
   ...rest
 }: CodePreviewDensityProps) {
   // Single source of truth for which panel shows, same as the Vanilla enhancer's

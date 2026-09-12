@@ -42,6 +42,28 @@ export const numberFieldContract = {
   id: "number-field",
   css: "@skryensya/core/components/number-field.css",
   parts: numberFieldParts,
+  hooks: [
+    "--sk-button-bg",
+    "--sk-button-border-color",
+    "--sk-button-border-width",
+    "--sk-button-fg",
+    "--sk-button-radius",
+    "--sk-button-shadow",
+    "--sk-number-field-bg",
+    "--sk-number-field-border-color",
+    "--sk-number-field-border-width",
+    "--sk-number-field-fg",
+    "--sk-number-field-gap",
+    "--sk-number-field-hint-color",
+    "--sk-number-field-label-color",
+    "--sk-number-field-min-inline-size",
+    "--sk-number-field-radius",
+    "--sk-number-field-shadow",
+    "--sk-number-field-step-color",
+    "--sk-number-field-step-inset",
+    "--sk-number-field-step-radius",
+    "--sk-number-field-wash",
+  ],
 
   options: {
     /** Submitted with the form. The machine writes it onto the real input. */

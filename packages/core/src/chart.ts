@@ -182,6 +182,14 @@ export const chartContract = {
   id: "chart",
   css: "@skryensya/core/components/chart.css",
   parts: chartParts,
+  hooks: [
+    "--sk-chart-color",
+    "--sk-chart-gap",
+    "--sk-chart-max",
+    "--sk-chart-plot-size",
+    "--sk-chart-radius",
+    "--sk-chart-value",
+  ],
 
   options: {
     kind: { type: "enum", values: chartKinds, default: "bar", attr: "data-kind" },

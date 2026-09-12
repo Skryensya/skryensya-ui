@@ -1,6 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { checkBindingConformance } from "./conformance.js";
+import { checkStylingHooks } from "./hooks.js";
 import { buildManifest, canonical } from "./manifest.js";
 import { checkRecipes } from "./recipes.js";
 import { checkSnippets } from "./snippets.js";
@@ -25,6 +26,21 @@ if (drift.length > 0) {
   console.error("\n  BINDING_DRIFT: nothing emitted\n");
   for (const problem of drift) {
     console.error(`    ${problem.file}:${problem.line}`);
+    console.error(`      ${problem.message}\n`);
+  }
+  process.exit(1);
+}
+
+/*
+ * Then the styling hooks. A contract that declares an override surface the stylesheet does not have
+ * is advertising something a consumer cannot use, and the failure reaches them as silence.
+ */
+const badHooks = checkStylingHooks();
+
+if (badHooks.length > 0) {
+  console.error("\n  HOOK_MISMATCH: nothing emitted\n");
+  for (const problem of badHooks) {
+    console.error(`    ${problem.sheet}  [${problem.rule}]`);
     console.error(`      ${problem.message}\n`);
   }
   process.exit(1);

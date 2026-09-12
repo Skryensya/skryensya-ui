@@ -1,4 +1,7 @@
-import { tableParts } from "@skryensya/core/table";
+import { tableParts, tableContract } from "@skryensya/core/table";
+
+/* Derived, never restated: the default lives in the contract. */
+const { stickyColumn: stickyColumnOption, stickyHeader: stickyHeaderOption, resizableColumns: resizableColumnsOption, scope: scopeOption } = tableContract.options;
 import {
   hasCrossedDragThreshold,
   resolveColumnResize,
@@ -97,8 +100,8 @@ export const TableScroll = forwardRef<
   {
     children,
     className,
-    stickyColumn = false,
-    stickyHeader = false,
+    stickyColumn = stickyColumnOption.default,
+    stickyHeader = stickyHeaderOption.default,
     ...props
   },
   ref,
@@ -185,7 +188,7 @@ function measureColumnContentWidth(table: HTMLTableElement, columnIndex: number,
 export function Table({
   children,
   className,
-  resizableColumns = false,
+  resizableColumns = resizableColumnsOption.default,
   resizeLabel,
   columnWeights,
   ...props
@@ -387,7 +390,7 @@ export function TableRow(publicProps: TableRowProps) {
 type InjectedTableHeaderProps = TableHeaderProps & { columnIndex?: number; columnCount?: number };
 
 export function TableHeader(publicProps: TableHeaderProps) {
-  const { children, className, scope = "col", columnIndex, columnCount, ...props } =
+  const { children, className, scope = scopeOption.default, columnIndex, columnCount, ...props } =
     publicProps as InjectedTableHeaderProps;
   const context = useContext(TableContext);
   const headerRef = useRef<HTMLTableCellElement>(null);

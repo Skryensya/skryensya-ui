@@ -65,6 +65,15 @@ export const boxContract = {
   id: "box",
   css: "@skryensya/core/patterns/box.css",
   parts: layoutParts,
+  hooks: [
+    "--sk-box-bg",
+    "--sk-box-border-color",
+    "--sk-box-border-width",
+    "--sk-box-padding",
+    "--sk-box-radius",
+    "--sk-box-shadow",
+    "--sk-box-wash",
+  ],
 
   options: {
     padding: { type: "enum", values: ["none", "xs", "sm", "md", "lg", "xl"], default: "none", attr: "data-padding" },
@@ -89,6 +98,22 @@ export const layoutContract = {
   id: "layout",
   css: "@skryensya/core/patterns/layout.css",
   parts: layoutGridParts,
+  hooks: [
+    "--sk-grid-columns",
+    "--sk-grid-gap",
+    "--sk-inline-block-start",
+    "--sk-inline-gap",
+    "--sk-layout-breakout",
+    "--sk-layout-breakout-track",
+    "--sk-layout-content",
+    "--sk-layout-gutter",
+    "--sk-layout-narrow",
+    "--sk-layout-narrow-track",
+    "--sk-layout-rail-gap",
+    "--sk-layout-rail-inline-size",
+    "--sk-layout-rail-row-span",
+    "--sk-stack-gap",
+  ],
 
   options: {
     gap: { type: "enum", values: ["none", "xs", "sm", "md", "lg", "xl"], default: "md", attr: "data-gap" },
@@ -184,6 +209,10 @@ export const wrapperContract = {
   id: "wrapper",
   css: "@skryensya/core/patterns/wrapper.css",
   parts: layoutParts,
+  hooks: [
+    "--sk-wrapper-max",
+    "--sk-wrapper-padding-inline",
+  ],
 
   options: {
     wrapperSize: { type: "enum", values: ["sm", "md", "lg", "full"], default: "md", attr: "data-size", prop: "size" },

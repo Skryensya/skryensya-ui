@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "ee5395d301b35705"
+surface: "5ab362e948da14fe"
 entries:
   - date: 2026-09-01
     kind: bugfix
@@ -108,3 +108,23 @@ entries:
         this contract's header says both bindings exist to avoid. It is now derived from the result
         count on both sides. "Sin resultados" also waits until something has been asked: over an
         untouched palette it answered a question nobody put.
+  - date: 2026-09-12
+    kind: feature
+    es:
+      title: Los styling hooks de command-palette quedan declarados en el contrato
+      body: >-
+        El contrato ahora publica los <code>14</code> styling hooks de este componente. Nada
+        de lo que hayas escrito cambia: son los mismos hooks, con los mismos nombres, y la hoja de
+        estilos no se tocó. Lo nuevo es que el contrato los declara, así que el compilador falla si
+        la hoja declara uno que el contrato no publica, o si el contrato promete uno que la hoja no
+        declara. Esa segunda mitad es la que importa: hasta ahora, redeclarar un hook que ya no
+        existía no daba error, daba silencio.
+    en:
+      title: command-palette's styling hooks are now declared in the contract
+      body: >-
+        The contract now publishes this component's <code>14</code> styling hooks. Nothing you
+        wrote changes: the same hooks, under the same names, and the stylesheet was not touched.
+        What is new is that the contract declares them, so the compiler fails when the stylesheet
+        declares one the contract does not publish, or the contract promises one the stylesheet
+        never declares. That second half is the one that matters: until now, re-declaring a hook
+        that no longer existed was not an error, it was silence.

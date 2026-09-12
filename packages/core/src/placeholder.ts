@@ -115,6 +115,19 @@ export const placeholderContract = {
   id: "placeholder",
   css: "@skryensya/core/components/placeholder.css",
   parts: placeholderParts,
+  hooks: [
+    "--sk-placeholder-block-size",
+    "--sk-placeholder-fill",
+    "--sk-placeholder-font-size",
+    "--sk-placeholder-highlight",
+    "--sk-placeholder-ink",
+    "--sk-placeholder-inline-size",
+    "--sk-placeholder-last-line",
+    "--sk-placeholder-leading",
+    "--sk-placeholder-line-box",
+    "--sk-placeholder-line-gap",
+    "--sk-placeholder-size",
+  ],
   options: placeholderOptions,
 
   signatures: {

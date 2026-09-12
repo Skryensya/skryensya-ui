@@ -1,4 +1,4 @@
-import { commentThreadParts, type CommentVoteState } from "@skryensya/core/comment-thread";
+import { commentThreadParts, type CommentVoteState, commentThreadContract } from "@skryensya/core/comment-thread";
 import {
   forwardRef,
   useCallback,
@@ -10,6 +10,9 @@ import {
   type ReactNode,
 } from "react";
 import { Icon } from "./icon.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { composerTriggerLabel: composerTriggerLabelOption, collapseLabel: collapseLabelOption, collapsible: collapsibleOption, deletable: deletableOption, deleteLabel: deleteLabelOption, reply: replyOption, replyLabel: replyLabelOption, voteDownLabel: voteDownLabelOption, voteUpLabel: voteUpLabelOption, voted: votedOption, cancelLabel: cancelLabelOption, cancellable: cancellableOption, submitLabel: submitLabelOption } = commentThreadContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -89,7 +92,7 @@ export function CommentThread({
   children,
   className,
   composer,
-  composerTriggerLabel = "Escribir un comentario",
+  composerTriggerLabel = composerTriggerLabelOption.default,
   label,
   ...props
 }: CommentThreadProps) {
@@ -184,8 +187,8 @@ export function Comment({
   avatar,
   children,
   className,
-  collapseLabel = "Ocultar respuestas",
-  collapsible = false,
+  collapseLabel = collapseLabelOption.default,
+  collapsible = collapsibleOption.default,
   id,
   profileHref,
   replies,
@@ -322,12 +325,12 @@ export type CommentActionsProps = Omit<HTMLAttributes<HTMLDivElement>, "children
 export function CommentActions({
   children,
   className,
-  deletable = false,
-  deleteLabel = "Eliminar",
+  deletable = deletableOption.default,
+  deleteLabel = deleteLabelOption.default,
   onDelete,
   onReply,
-  reply = false,
-  replyLabel = "Responder",
+  reply = replyOption.default,
+  replyLabel = replyLabelOption.default,
   replyOpen = false,
   ...props
 }: CommentActionsProps) {
@@ -392,9 +395,9 @@ export function CommentVote({
   className,
   count,
   onVote,
-  voteDownLabel = "Votar en contra",
-  voteUpLabel = "Votar a favor",
-  voted = "none",
+  voteDownLabel = voteDownLabelOption.default,
+  voteUpLabel = voteUpLabelOption.default,
+  voted = votedOption.default,
   ...props
 }: CommentVoteProps) {
   return (
@@ -477,7 +480,7 @@ export type CommentComposerProps = {
  * `submit` listener, so both bindings read a reply the same way whatever control is inside.
  */
 export const CommentComposer = forwardRef<HTMLFormElement, CommentComposerProps>(function CommentComposer(
-  { cancelLabel = "Cancelar", cancellable = false, children, className, onCancel, onSubmit, submitLabel = "Publicar" },
+  { cancelLabel = cancelLabelOption.default, cancellable = cancellableOption.default, children, className, onCancel, onSubmit, submitLabel = submitLabelOption.default },
   ref,
 ) {
   const read = (form: HTMLFormElement) => {

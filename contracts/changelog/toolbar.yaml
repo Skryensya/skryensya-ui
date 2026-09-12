@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "2103f0f433f16533"
+surface: "258173868337529c"
 entries:
   - date: 2026-08-11
     kind: feature
@@ -26,3 +26,23 @@ entries:
         whatever needs no JavaScript works before any runs. Options: <code>orientation</code>,
         <code>label</code>, <code>loopFocus</code>. Its stylesheet is
         <code>components/toolbar.css</code>.
+  - date: 2026-09-12
+    kind: feature
+    es:
+      title: Los styling hooks de toolbar quedan declarados en el contrato
+      body: >-
+        El contrato ahora publica los <code>7</code> styling hooks de este componente. Nada
+        de lo que hayas escrito cambia: son los mismos hooks, con los mismos nombres, y la hoja de
+        estilos no se tocó. Lo nuevo es que el contrato los declara, así que el compilador falla si
+        la hoja declara uno que el contrato no publica, o si el contrato promete uno que la hoja no
+        declara. Esa segunda mitad es la que importa: hasta ahora, redeclarar un hook que ya no
+        existía no daba error, daba silencio.
+    en:
+      title: toolbar's styling hooks are now declared in the contract
+      body: >-
+        The contract now publishes this component's <code>7</code> styling hooks. Nothing you
+        wrote changes: the same hooks, under the same names, and the stylesheet was not touched.
+        What is new is that the contract declares them, so the compiler fails when the stylesheet
+        declares one the contract does not publish, or the contract promises one the stylesheet
+        never declares. That second half is the one that matters: until now, re-declaring a hook
+        that no longer existed was not an error, it was silence.

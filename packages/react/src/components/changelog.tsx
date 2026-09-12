@@ -1,6 +1,9 @@
 import { badgeParts } from "@skryensya/core/badge";
-import { changeKindTones, changelogParts, type ChangeKind } from "@skryensya/core/changelog";
+import { changeKindTones, changelogParts, type ChangeKind, changelogContract } from "@skryensya/core/changelog";
 import { type LiHTMLAttributes, type OlHTMLAttributes, type ReactNode } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { kind: kindOption } = changelogContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -91,7 +94,7 @@ export function ChangelogEntry({
   className,
   // Resolved rather than left absent: the contract declares this default and the emitter writes it
   // into markup, so an undefined here would make the two bindings differ on an unmarked entry.
-  kind = "chore",
+  kind = kindOption.default,
   kindLabel,
   target,
   title,

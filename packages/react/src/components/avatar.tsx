@@ -1,7 +1,10 @@
-import { avatarInitials, avatarParts, type AvatarSize } from "@skryensya/core/avatar";
+import { avatarInitials, avatarParts, type AvatarSize, avatarContract } from "@skryensya/core/avatar";
 import { imageFrameParts } from "@skryensya/core/image-frame";
 import { Children, type HTMLAttributes, type ImgHTMLAttributes, type ReactNode } from "react";
 import { ImageFrame } from "./image-frame.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { size: sizeOption } = avatarContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -15,7 +18,7 @@ export type AvatarProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   children?: ReactNode;
 } & Pick<ImgHTMLAttributes<HTMLImageElement>, "loading">;
 
-export function Avatar({ children, className, loading, name, size = "md", src, ...props }: AvatarProps) {
+export function Avatar({ children, className, loading, name, size = sizeOption.default, src, ...props }: AvatarProps) {
   const fallback = children ?? (name ? avatarInitials(name) : null);
 
   // With an image, ImageFrame clips the media and <img alt> carries the semantics. Without one,

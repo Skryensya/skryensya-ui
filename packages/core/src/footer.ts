@@ -56,6 +56,15 @@ export const footerContract = {
   id: "footer",
   css: "@skryensya/core/patterns/footer.css",
   parts: footerParts,
+  hooks: [
+    "--sk-footer-bg",
+    "--sk-footer-divider-color",
+    "--sk-footer-divider-width",
+    "--sk-footer-padding",
+    "--sk-footer-radius",
+    "--sk-footer-shadow",
+    "--sk-footer-wash",
+  ],
 
   options: {
     padding: {

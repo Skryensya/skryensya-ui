@@ -72,6 +72,18 @@ export const fileUploadContract = {
   id: "file-upload",
   css: "@skryensya/core/components/file-upload.css",
   parts: fileUploadParts,
+  hooks: [
+    "--sk-file-upload-dropzone-accent",
+    "--sk-file-upload-dropzone-bg",
+    "--sk-file-upload-dropzone-border-color",
+    "--sk-file-upload-dropzone-padding",
+    "--sk-file-upload-dropzone-radius",
+    "--sk-file-upload-gap",
+    "--sk-file-upload-item-bg",
+    "--sk-file-upload-item-border-color",
+    "--sk-file-upload-item-radius",
+    "--sk-file-upload-label-color",
+  ],
 
   options: {
     name: { type: "string", attr: "name", machineInput: true },

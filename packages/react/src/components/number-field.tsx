@@ -1,8 +1,11 @@
-import { numberFieldParts } from "@skryensya/core/number-field";
+import { numberFieldParts, numberFieldContract } from "@skryensya/core/number-field";
 import { numberInput } from "@skryensya/core/machines";
 import { normalizeProps, useMachine } from "@zag-js/react";
 import { useId, type ReactNode } from "react";
 import { Icon } from "./icon.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { decrementLabel: decrementLabelOption, incrementLabel: incrementLabelOption } = numberFieldContract.options;
 
 export type NumberFieldProps = {
   id?: string;
@@ -28,13 +31,13 @@ export type NumberFieldProps = {
 
 export function NumberField({
   decrementIcon,
-  decrementLabel = "Disminuir",
+  decrementLabel = decrementLabelOption.default,
   defaultValue,
   disabled,
   formatOptions,
   id,
   incrementIcon,
-  incrementLabel = "Aumentar",
+  incrementLabel = incrementLabelOption.default,
   invalid,
   label,
   locale = "es",

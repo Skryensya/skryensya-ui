@@ -1,4 +1,5 @@
-import { resolveToolbarKey } from "@skryensya/core/toolbar";
+import { resolveToolbarKey, toolbarAttrs } from "@skryensya/core/toolbar";
+import { rootSelectorFor } from "@skryensya/core/selectors";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
 const controlsSelector =
@@ -45,6 +46,6 @@ function connect(root: HTMLElement): () => void {
 }
 export const mountToolbar = createConnectMount({
   key: "toolbar",
-  rootSelector: "[data-sk-toolbar]",
+  rootSelector: rootSelectorFor(toolbarAttrs),
   connect,
 });

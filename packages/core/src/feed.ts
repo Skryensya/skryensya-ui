@@ -24,6 +24,11 @@ export const feedContract = {
   id: "feed",
   css: "@skryensya/core/components/feed.css",
   parts: feedParts,
+  hooks: [
+    "--sk-feed-article-label-gap",
+    "--sk-feed-article-padding",
+    "--sk-feed-gap",
+  ],
 
   options: {
     /** The feed's accessible name. `role="feed"` carries no implicit one. */

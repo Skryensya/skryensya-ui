@@ -1,4 +1,7 @@
-import { dataGridFocusableSelector, dataGridParts, resolveDataGridKey, type DataGridFocus } from "@skryensya/core/data-grid";
+import { dataGridFocusableSelector, dataGridParts, resolveDataGridKey, type DataGridFocus, dataGridContract } from "@skryensya/core/data-grid";
+
+/* Derived, never restated: the default lives in the contract. */
+const { wrapCols: wrapColsOption, wrapRows: wrapRowsOption } = dataGridContract.options;
 import {
   Children,
   cloneElement,
@@ -60,7 +63,7 @@ export type DataGridProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   wrapRows?: boolean;
 };
 
-export function DataGrid({ children, className, label, wrapCols = false, wrapRows = false, ...props }: DataGridProps) {
+export function DataGrid({ children, className, label, wrapCols = wrapColsOption.default, wrapRows = wrapRowsOption.default, ...props }: DataGridProps) {
   const [focus, setFocus] = useState<DataGridFocus>({ row: 0, col: 0 });
   const elements = useRef(new Map<string, HTMLElement>());
   const key = (row: number, col: number) => `${row}:${col}`;

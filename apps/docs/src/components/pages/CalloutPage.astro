@@ -24,7 +24,6 @@ const t = useTranslations(getLocale(Astro.url));
   description={t("callout.description")}
   badge={t("callout.betaBadge")}
   contractId="callout"
-  styleGroups={[{ file: "components/callout.css", probe: "sk-callout" }]}
   tests={[
     {
       file: "packages/react/src/components/callout.test.tsx",

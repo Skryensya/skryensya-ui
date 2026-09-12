@@ -57,6 +57,14 @@ export const accordionContract = {
     trigger: "sk-tile__trigger",
     content: "sk-tile__expandable-content",
   },
+  hooks: [
+    "--sk-accordion-bg",
+    "--sk-accordion-border-color",
+    "--sk-accordion-divider-color",
+    "--sk-accordion-open-bg",
+    "--sk-accordion-radius",
+    "--sk-tile-radius",
+  ],
   events: accordionEvents,
 
   options: {

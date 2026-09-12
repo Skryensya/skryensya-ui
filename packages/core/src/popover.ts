@@ -45,6 +45,18 @@ export const popoverContract = {
   id: "popover",
   css: "@skryensya/core/components/popover.css",
   parts: popoverParts,
+  hooks: [
+    "--sk-anchored-arrow-bg",
+    "--sk-anchored-arrow-border-color",
+    "--sk-anchored-name",
+    "--sk-popover-bg",
+    "--sk-popover-border-color",
+    "--sk-popover-fg",
+    "--sk-popover-padding",
+    "--sk-popover-radius",
+    "--sk-popover-shadow",
+    "--sk-popover-wash",
+  ],
 
   options: {
     /** The id that ties the trigger to the panel. Authored, because the platform needs a real id. */

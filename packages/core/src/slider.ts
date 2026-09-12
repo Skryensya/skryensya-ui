@@ -70,6 +70,16 @@ export const sliderContract = {
   id: "slider",
   css: "@skryensya/core/components/slider.css",
   parts: sliderParts,
+  hooks: [
+    "--sk-slider-fill-color",
+    "--sk-slider-thumb",
+    "--sk-slider-thumb-hit",
+    "--sk-slider-thumb-ring",
+    "--sk-slider-thumb-ring-size",
+    "--sk-slider-thumb-size",
+    "--sk-slider-track",
+    "--sk-slider-track-size",
+  ],
 
   options: {
     value: { type: "number", default: 0, attr: "data-value", prop: "defaultValue", machineInput: true },

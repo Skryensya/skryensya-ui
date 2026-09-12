@@ -16,7 +16,6 @@ const t = useTranslations(getLocale(Astro.url));
   description={t("emptyState.description")}
   badge={t("emptyState.betaBadge")}
   contractId="empty-state"
-  styleGroups={[{ file: "components/empty-state.css", probe: "sk-empty-state", title: "EmptyState" }]}
   tests={[
     {
       file: "packages/react/src/components/empty-state.test.tsx",

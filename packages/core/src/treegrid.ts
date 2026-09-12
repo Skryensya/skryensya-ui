@@ -42,6 +42,12 @@ export const treegridContract = {
   id: "treegrid",
   css: "@skryensya/core/components/treegrid.css",
   parts: treegridParts,
+  hooks: [
+    "--sk-treegrid-glyph-size",
+    "--sk-treegrid-guide-color",
+    "--sk-treegrid-indent",
+    "--sk-treegrid-indicator-size",
+  ],
 
   options: {
     /** The grid's accessible name. `role="treegrid"` carries no implicit one. */

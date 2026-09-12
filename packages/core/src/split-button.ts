@@ -47,6 +47,11 @@ export const splitButtonContract = {
   id: "split-button",
   css: "@skryensya/core/components/split-button.css",
   parts: splitButtonParts,
+  hooks: [
+    "--sk-split-button-divider-color",
+    "--sk-split-button-shadow",
+    "--sk-split-button-wash",
+  ],
 
   options: {
     /** The group's own accessible name; see this file's own `role="group"` doc for why it is

@@ -69,6 +69,14 @@ export const heroContract = {
   id: "hero",
   css: "@skryensya/core/patterns/hero.css",
   parts: heroParts,
+  hooks: [
+    "--sk-hero-bg",
+    "--sk-hero-min-height",
+    "--sk-hero-padding",
+    "--sk-hero-radius",
+    "--sk-hero-shadow",
+    "--sk-hero-wash",
+  ],
 
   options: {
     padding: { type: "enum", values: ["none", "xs", "sm", "md", "lg", "xl"], default: "xl", attr: "data-padding" },

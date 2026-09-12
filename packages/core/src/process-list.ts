@@ -26,6 +26,23 @@ export const processListContract = {
   id: "process-list",
   css: "@skryensya/core/components/process-list.css",
   parts: processListParts,
+  hooks: [
+    "--sk-process-list-connector-color",
+    "--sk-process-list-connector-size",
+    "--sk-process-list-content-gap",
+    "--sk-process-list-fg",
+    "--sk-process-list-item-gap",
+    "--sk-process-list-item-padding-x",
+    "--sk-process-list-item-padding-y",
+    "--sk-process-list-marker-bg",
+    "--sk-process-list-marker-border-color",
+    "--sk-process-list-marker-fg",
+    "--sk-process-list-marker-ring-color",
+    "--sk-process-list-marker-size",
+    "--sk-process-list-title-fg",
+    "--sk-process-list-title-font-size",
+    "--sk-process-list-title-font-weight",
+  ],
   options: {},
 
   signatures: {

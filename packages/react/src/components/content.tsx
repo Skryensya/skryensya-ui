@@ -1,7 +1,10 @@
-import { contentParts, getToastLiveRegion, hasToastTimeout, toastLiveRegions, type ToastOptions, type ToastTone } from "@skryensya/core/content";
+import { contentParts, getToastLiveRegion, hasToastTimeout, toastLiveRegions, type ToastOptions, type ToastTone, contentContract } from "@skryensya/core/content";
 import { Button } from "./button.js";
 import { Icon } from "./icon.js";
 import { useCallback, useEffect, useRef, type HTMLAttributes, type ReactNode } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { dismissLabel: dismissLabelOption, tone: toneOption } = contentContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -31,13 +34,13 @@ export function Toast({
   actions,
   children,
   className,
-  dismissLabel = "Dismiss notification",
+  dismissLabel = dismissLabelOption.default,
   dismissible,
   icon,
   onDismiss,
   timeout,
   title,
-  tone = "neutral",
+  tone = toneOption.default,
   ...props
 }: ToastProps) {
   const dismissed = useRef(false);

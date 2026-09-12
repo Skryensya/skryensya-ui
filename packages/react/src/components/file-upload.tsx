@@ -1,7 +1,10 @@
-import { fileUploadErrorMessage, fileUploadParts } from "@skryensya/core/file-upload";
+import { fileUploadErrorMessage, fileUploadParts, fileUploadContract } from "@skryensya/core/file-upload";
 import { fileUpload } from "@skryensya/core/machines";
 import { normalizeProps, useMachine } from "@zag-js/react";
 import { useId, useState, type ReactNode } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { multiple: multipleOption } = fileUploadContract.options;
 
 export type FileUploadProps = {
   id?: string;
@@ -43,7 +46,7 @@ export function FileUpload({
   maxFileSize,
   maxFiles,
   minFileSize,
-  multiple = false,
+  multiple = multipleOption.default,
   name,
   onFileChange,
   required,

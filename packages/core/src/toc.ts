@@ -55,6 +55,13 @@ export const tocContract = {
   id: "toc",
   css: "@skryensya/core/components/toc.css",
   parts: tocParts,
+  hooks: [
+    "--sk-toc-gutter",
+    "--sk-toc-indent",
+    "--sk-toc-inline-size",
+    "--sk-toc-marker-inline-size",
+    "--sk-toc-sticky-top",
+  ],
 
   options: {
     /** The caption above the list, and the accessible name of the `<nav>` beside it. */

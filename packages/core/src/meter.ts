@@ -55,6 +55,10 @@ export const meterContract = {
   id: "meter",
   css: "@skryensya/core/components/meter.css",
   parts: meterParts,
+  hooks: [
+    "--sk-meter-color",
+    "--sk-meter-fill",
+  ],
 
   options: {
     value: { type: "number", default: 0, attr: "aria-valuenow" },

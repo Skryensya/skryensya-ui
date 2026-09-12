@@ -1,5 +1,8 @@
-import { calloutParts, getCalloutLiveRegion, type CalloutTone } from "@skryensya/core/callout";
+import { calloutParts, getCalloutLiveRegion, type CalloutTone, calloutContract } from "@skryensya/core/callout";
 import { type HTMLAttributes, type ReactNode } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { tone: toneOption } = calloutContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -16,7 +19,7 @@ export type CalloutProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   tone?: CalloutTone;
 };
 
-export function Callout({ actions, children, className, icon, title, tone = "neutral", ...props }: CalloutProps) {
+export function Callout({ actions, children, className, icon, title, tone = toneOption.default, ...props }: CalloutProps) {
   const live = calloutLiveRegionFor(tone);
 
   return (

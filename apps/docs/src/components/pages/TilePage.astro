@@ -16,7 +16,6 @@ const t = useTranslations(getLocale(Astro.url));
   title="Tile"
   description={t("tilePage.description")}
   contractId="tile"
-  styleGroups={[{ file: "components/tile.css", probe: "sk-tile" }]}
   tests={[
     {
       file: "packages/react/src/components/tile.test.tsx",

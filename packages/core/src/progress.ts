@@ -40,6 +40,10 @@ export const progressContract = {
   id: "progress",
   css: "@skryensya/core/components/progress.css",
   parts: progressParts,
+  hooks: [
+    "--sk-progress-color",
+    "--sk-progress-fill",
+  ],
 
   options: {
     value: { type: "number", default: 0, attr: "aria-valuenow" },

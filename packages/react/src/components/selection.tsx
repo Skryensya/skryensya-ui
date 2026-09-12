@@ -1,14 +1,9 @@
-import {
-  checkboxParts,
-  selectionParts,
-  type CheckboxGroupValueChangeDetails,
-  type CheckedChangeDetails,
-  type CheckedState,
-  type RadioGroupOrientation,
-  type RadioValueChangeDetails,
-} from "@skryensya/core/selection";
+import { checkboxParts, selectionParts, type CheckboxGroupValueChangeDetails, type CheckedChangeDetails, type CheckedState, type RadioGroupOrientation, type RadioValueChangeDetails, checkboxContract } from "@skryensya/core/selection";
 import { forwardRef, useEffect, useId, useMemo, useRef, useState, type ChangeEvent, type HTMLAttributes, type InputHTMLAttributes, type ReactNode } from "react";
 import { Icon } from "./icon.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { orientation: orientationOption } = checkboxContract.options;
 
 function classes(...values: readonly (string | undefined)[]) {
   return values.filter(Boolean).join(" ");
@@ -111,7 +106,7 @@ function groupState(items: readonly CheckboxGroupItem[], selected: ReadonlySet<s
 }
 
 export const CheckboxGroup = forwardRef<HTMLDivElement, CheckboxGroupProps>(function CheckboxGroup(
-  { className, defaultValue, disabled, items, label, name, onValueChange, orientation = "vertical", required, value, ...props },
+  { className, defaultValue, disabled, items, label, name, onValueChange, orientation = orientationOption.default, required, value, ...props },
   ref,
 ) {
   const labelId = useId();
@@ -251,7 +246,7 @@ export type RadioGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue
 };
 
 export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function RadioGroup(
-  { className, defaultValue, disabled, items, name, onValueChange, orientation = "vertical", required, value, ...props },
+  { className, defaultValue, disabled, items, name, onValueChange, orientation = orientationOption.default, required, value, ...props },
   ref,
 ) {
   const controlled = value !== undefined;

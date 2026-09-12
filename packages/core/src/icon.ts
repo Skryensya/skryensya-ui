@@ -263,6 +263,9 @@ export const iconContract = {
   id: "icon",
   css: "@skryensya/core/patterns/icon.css",
   parts: { root: "sk-icon" },
+  hooks: [
+    "--sk-icon-size",
+  ],
 
   options: {
     /**

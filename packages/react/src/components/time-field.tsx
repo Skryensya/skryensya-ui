@@ -1,23 +1,6 @@
 import { select } from "@skryensya/core/machines";
 import { selectParts } from "@skryensya/core/select";
-import {
-  formatTimeValue,
-  generateTimeOptions,
-  getPeriodLabels,
-  getTimeFieldTokens,
-  parseTimeValue,
-  resolveHourCycle,
-  segmentBounds,
-  timeFieldParts,
-  to12Hour,
-  to24Hour,
-  type HourCycle,
-  type Period,
-  type TimeFieldOption,
-  type TimeFieldSegmentType,
-  type TimeFieldValueChangeDetails,
-  type TimeValue,
-} from "@skryensya/core/time-field";
+import { formatTimeValue, generateTimeOptions, getPeriodLabels, getTimeFieldTokens, parseTimeValue, resolveHourCycle, segmentBounds, timeFieldParts, to12Hour, to24Hour, type HourCycle, type Period, type TimeFieldOption, type TimeFieldSegmentType, type TimeFieldValueChangeDetails, type TimeValue, timeFieldContract } from "@skryensya/core/time-field";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
 import {
   useEffect,
@@ -31,6 +14,9 @@ import {
 } from "react";
 import { useAnchored } from "./anchored.js";
 import { Icon } from "./icon.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { clearLabel: clearLabelOption, hourLabel: hourLabelOption, locale: localeOption, minuteLabel: minuteLabelOption, minuteStep: minuteStepOption, optionsLabel: optionsLabelOption, optionsStep: optionsStepOption, periodLabel: periodLabelOption } = timeFieldContract.options;
 
 const cx = (...classes: Array<string | undefined>) => classes.filter(Boolean).join(" ");
 
@@ -141,24 +127,24 @@ export type TimeFieldProps = {
  * own `connect.js`, not assumed).
  */
 export function TimeField({
-  clearLabel = "Limpiar hora",
+  clearLabel = clearLabelOption.default,
   container,
   defaultValue,
   disabled,
   hint,
   hourCycle: hourCycleOverride,
-  hourLabel = "Hora",
+  hourLabel = hourLabelOption.default,
   id,
   invalid,
   label,
-  locale = "es",
-  minuteLabel = "Minuto",
-  minuteStep = 1,
+  locale = localeOption.default,
+  minuteLabel = minuteLabelOption.default,
+  minuteStep = minuteStepOption.default,
   name,
   onValueChange,
-  optionsLabel = "Elegir de la lista",
-  optionsStep = 30,
-  periodLabel = "Periodo",
+  optionsLabel = optionsLabelOption.default,
+  optionsStep = optionsStepOption.default,
+  periodLabel = periodLabelOption.default,
   readOnly,
   required,
   value,

@@ -2,6 +2,9 @@ import { navListContract, navListParts } from "@skryensya/core/nav-list";
 import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import { forwardRef, useId, useState, type AnchorHTMLAttributes, type HTMLAttributes, type ReactNode } from "react";
 
+/* Derived, never restated: the default lives in the contract. */
+const { collapsible: collapsibleOption, heading: headingOption } = navListContract.options;
+
 /*
  * A BINDING (decision 28). The three exports below are three signatures of one contract, and the
  * five-element structure they produce is that contract's part template, not this file's invention.
@@ -67,9 +70,9 @@ export type NavListGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "children">
 export function NavListGroup({
   children,
   className,
-  collapsible = false,
+  collapsible = collapsibleOption.default,
   defaultOpen = true,
-  heading = false,
+  heading = headingOption.default,
   label,
   ...props
 }: NavListGroupProps) {

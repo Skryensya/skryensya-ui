@@ -22,6 +22,21 @@ export const navbarContract = {
   id: "navbar",
   css: "@skryensya/core/components/navbar.css",
   parts: navbarParts,
+  hooks: [
+    "--sk-navbar-actions-gap",
+    "--sk-navbar-bg",
+    "--sk-navbar-border-color",
+    "--sk-navbar-brand-fg",
+    "--sk-navbar-brand-font-size",
+    "--sk-navbar-brand-font-weight",
+    "--sk-navbar-elevation",
+    "--sk-navbar-fg",
+    "--sk-navbar-gap",
+    "--sk-navbar-min-height",
+    "--sk-navbar-padding-x",
+    "--sk-navbar-padding-y",
+    "--sk-navbar-wash",
+  ],
   options: {},
 
   signatures: {

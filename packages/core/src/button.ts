@@ -20,6 +20,24 @@ export const buttonContract = {
   id: "button",
   css: "@skryensya/core/components/button.css",
   parts: buttonParts,
+  hooks: [
+    "--sk-button-accent",
+    "--sk-button-bg",
+    "--sk-button-border-color",
+    "--sk-button-border-width",
+    "--sk-button-fg",
+    "--sk-button-font-size",
+    "--sk-button-font-weight",
+    "--sk-button-gap",
+    "--sk-button-height",
+    "--sk-button-ink",
+    "--sk-button-padding-x",
+    "--sk-button-radius",
+    "--sk-button-shadow",
+    "--sk-button-wash",
+    "--sk-button-width",
+    "--sk-icon-size",
+  ],
 
   options: {
     /*

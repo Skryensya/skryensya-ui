@@ -53,6 +53,13 @@ export const calloutContract = {
   id: "callout",
   css: "@skryensya/core/components/callout.css",
   parts: calloutParts,
+  hooks: [
+    "--sk-callout-accent",
+    "--sk-callout-bg",
+    "--sk-callout-content-gap",
+    "--sk-callout-fg",
+    "--sk-callout-padding",
+  ],
 
   options: {
     tone: {

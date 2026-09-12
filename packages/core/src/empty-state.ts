@@ -17,6 +17,19 @@ export const emptyStateContract = {
   id: "empty-state",
   css: "@skryensya/core/components/empty-state.css",
   parts: emptyStateParts,
+  hooks: [
+    "--sk-empty-state-actions-gap",
+    "--sk-empty-state-description-color",
+    "--sk-empty-state-fg",
+    "--sk-empty-state-gap",
+    "--sk-empty-state-icon-bg",
+    "--sk-empty-state-icon-fg",
+    "--sk-empty-state-icon-radius",
+    "--sk-empty-state-icon-size",
+    "--sk-empty-state-max-inline-size",
+    "--sk-empty-state-padding",
+    "--sk-empty-state-title-size",
+  ],
   options: {},
 
   signatures: {

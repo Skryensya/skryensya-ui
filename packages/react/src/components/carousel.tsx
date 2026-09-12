@@ -1,5 +1,8 @@
 import { carouselContract, carouselEvents, carouselParts, type CarouselGotoDetail } from "@skryensya/core/carousel";
 import type { OptionValue } from "@skryensya/core/contract";
+
+/* Derived, never restated: the default lives in the contract. */
+const { mounted: mountedOption } = carouselContract.options;
 import {
   forwardRef,
   useImperativeHandle,
@@ -46,7 +49,7 @@ export type CarouselProps = HTMLAttributes<HTMLElement> & {
  * through the same goto event any consumer can dispatch.
  */
 export const Carousel = forwardRef<CarouselHandle, CarouselProps>(function Carousel(
-  { autoplay, children, className, controls, loop, mounted = true, mouseDrag, orientation, slideSize, style, ...props },
+  { autoplay, children, className, controls, loop, mounted = mountedOption.default, mouseDrag, orientation, slideSize, style, ...props },
   ref,
 ) {
   const rootRef = useRef<HTMLElement>(null);

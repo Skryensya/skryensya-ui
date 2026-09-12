@@ -73,6 +73,18 @@ export const contentContract = {
   id: "content",
   css: "@skryensya/core/components/toast.css",
   parts: contentParts,
+  hooks: [
+    "--sk-button-fg",
+    "--sk-callout-bg",
+    "--sk-callout-content-gap",
+    "--sk-callout-padding",
+    "--sk-toast-cascade",
+    "--sk-toast-depth",
+    "--sk-toast-peek",
+    "--sk-toast-shadow",
+    "--sk-toast-shrink",
+    "--sk-toast-wash",
+  ],
 
   options: {
     tone: {

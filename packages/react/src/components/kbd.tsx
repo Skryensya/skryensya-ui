@@ -1,5 +1,8 @@
-import { kbdParts, type KbdTone } from "@skryensya/core/kbd";
+import { kbdParts, type KbdTone, kbdContract } from "@skryensya/core/kbd";
 import { type HTMLAttributes, type ReactNode } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { tone: toneOption } = kbdContract.options;
 
 export type { KbdTone };
 
@@ -14,7 +17,7 @@ export type KbdProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
  * <kbd> element (its semantics are the platform's; the component only adds the look). Static: no state,
  * no machine, so there is no vanilla enhancer, only this wrapper and the core hooks.
  */
-export function Kbd({ children, className, tone = "neutral", ...props }: KbdProps) {
+export function Kbd({ children, className, tone = toneOption.default, ...props }: KbdProps) {
   const classes = className ? `${kbdParts.root} ${className}` : kbdParts.root;
 
   return (

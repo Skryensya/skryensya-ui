@@ -1,13 +1,8 @@
-import {
-  accordionDataParts,
-  accordionParts,
-  accordionScope,
-  type AccordionOptions,
-  type AccordionType,
-  type AccordionValue,
-  type AccordionValueChangeDetails,
-} from "@skryensya/core/accordion";
+import { accordionDataParts, accordionParts, accordionScope, type AccordionOptions, type AccordionType, type AccordionValue, type AccordionValueChangeDetails, accordionContract } from "@skryensya/core/accordion";
 import { ExpandableTile, ExpandableTileContent, ExpandableTileTrigger } from "./tile.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { collapsible: collapsibleOption, disabled: disabledOption, type: typeOption, headingLevel: headingLevelOption } = accordionContract.options;
 import {
   createContext,
   forwardRef,
@@ -69,7 +64,7 @@ type AccordionComponent = ForwardRefExoticComponent<AccordionProps & { ref?: Ref
 };
 
 const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(function Accordion(
-  { children, className, collapsible = true, defaultValue, disabled = false, onValueChange, type = "single", value, ...props },
+  { children, className, collapsible = collapsibleOption.default, defaultValue, disabled = disabledOption.default, onValueChange, type = typeOption.default, value, ...props },
   ref,
 ) {
   const [uncontrolledValue, setUncontrolledValue] = useState(() => normalizeValue(defaultValue, type));
@@ -104,7 +99,7 @@ const AccordionRoot = forwardRef<HTMLDivElement, AccordionProps>(function Accord
 });
 
 const AccordionItem = forwardRef<HTMLElement, AccordionItemProps>(function AccordionItem(
-  { as, children, className, disabled = false, value, ...props },
+  { as, children, className, disabled = disabledOption.default, value, ...props },
   ref,
 ) {
   const accordion = useContext(AccordionContext);
@@ -133,7 +128,7 @@ const AccordionItem = forwardRef<HTMLElement, AccordionItemProps>(function Accor
 });
 
 const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerProps>(function AccordionTrigger(
-  { children, headingLevel = 3, ...props },
+  { children, headingLevel = headingLevelOption.default, ...props },
   ref,
 ) {
   return (

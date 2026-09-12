@@ -5,12 +5,13 @@
     stripPositioningStyle,
     supportsAnchorPositioning,
   } from "@skryensya/core/anchored";
-  import { selectEvents, type SelectOption, type SelectValueChangeDetails } from "@skryensya/core/select";
+  import { selectAttrs, selectEvents, type SelectOption, type SelectValueChangeDetails } from "@skryensya/core/select";
   import { select } from "@skryensya/core/machines";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
   import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
+  import { selectorsFor } from "@skryensya/core/selectors";
 
   /*
    * SELECT, a machine-backed enhancer over `@zag-js/select` (the SAME machine React uses, via
@@ -23,19 +24,8 @@
    */
   const root = getRoot();
 
-  const selector = {
-    hidden: "[data-sk-select-hidden]",
-    label: "[data-sk-select-label]",
-    control: "[data-sk-select-control]",
-    trigger: "[data-sk-select-trigger]",
-    value: "[data-sk-select-value]",
-    indicator: "[data-sk-select-indicator]",
-    positioner: "[data-sk-select-positioner]",
-    content: "[data-sk-select-content]",
-    item: "[data-sk-select-item]",
-    itemText: "[data-sk-select-item-text]",
-    itemIndicator: "[data-sk-select-item-indicator]",
-  } as const;
+  /* Derived from the contract's own mount attributes; see `selectorsFor`. */
+  const selector = selectorsFor(selectAttrs);
 
   const trigger = root.querySelector<HTMLElement>(selector.trigger);
   const valueEl = root.querySelector<HTMLElement>(selector.value);

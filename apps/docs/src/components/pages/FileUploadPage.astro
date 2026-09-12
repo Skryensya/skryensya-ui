@@ -19,7 +19,6 @@ const t = useTranslations(getLocale(Astro.url));
   title="FileUpload"
   description={t("fileUploadPage.description")}
   contractId="file-upload"
-  styleGroups={[{ file: "components/file-upload.css", probe: "sk-file-upload", title: "FileUpload" }]}
   tests={[
     {
       file: "packages/vanilla/src/components/file-upload.test.ts",

@@ -39,6 +39,11 @@ export const stepsContract = {
   id: "steps",
   css: "@skryensya/core/components/steps.css",
   parts: stepsParts,
+  hooks: [
+    "--sk-steps-connector-size",
+    "--sk-steps-item-padding",
+    "--sk-steps-marker-size",
+  ],
 
   options: {},
 

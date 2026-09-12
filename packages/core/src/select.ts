@@ -26,6 +26,27 @@ export const selectEvents = {
   valueChange: "sk-value-change",
 } as const;
 
+/*
+ * The mount attributes, named once instead of spelled out at each `mount:` in the template.
+ * This is the shape 31 other contracts already use, and what lets the vanilla layer derive
+ * its selectors (`selectorsFor`) rather than retyping every one of these as `[data-sk-...]`.
+ * The VALUES are unchanged: this renames nothing a consumer authors or an emitter writes.
+ */
+export const selectAttrs = {
+  root: "data-sk-select",
+  hidden: "data-sk-select-hidden",
+  control: "data-sk-select-control",
+  label: "data-sk-select-label",
+  trigger: "data-sk-select-trigger",
+  value: "data-sk-select-value",
+  indicator: "data-sk-select-indicator",
+  positioner: "data-sk-select-positioner",
+  content: "data-sk-select-content",
+  item: "data-sk-select-item",
+  itemText: "data-sk-select-item-text",
+  itemIndicator: "data-sk-select-item-indicator",
+} as const;
+
 export const selectParts = {
   native: "sk-select-native",
   root: "sk-select",
@@ -81,6 +102,39 @@ export const selectContract = {
   id: "select",
   css: "@skryensya/core/components/select.css",
   parts: selectParts,
+  hooks: [
+    "--sk-anchored-align",
+    "--sk-anchored-justify",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-anchored-size",
+    "--sk-icon-size",
+    "--sk-select-bg",
+    "--sk-select-border-color",
+    "--sk-select-border-width",
+    "--sk-select-content-bg",
+    "--sk-select-content-border-color",
+    "--sk-select-content-max-block-size",
+    "--sk-select-content-padding",
+    "--sk-select-content-shadow",
+    "--sk-select-content-wash",
+    "--sk-select-disabled-bg",
+    "--sk-select-disabled-border-color",
+    "--sk-select-disabled-fg",
+    "--sk-select-fg",
+    "--sk-select-font-size",
+    "--sk-select-height",
+    "--sk-select-item-disabled-fg",
+    "--sk-select-item-fg",
+    "--sk-select-item-padding",
+    "--sk-select-item-radius",
+    "--sk-select-padding-x",
+    "--sk-select-radius",
+    "--sk-select-shadow",
+    "--sk-select-state-opacity",
+    "--sk-select-wash",
+  ],
 
   options: {
     /** Submitted under this name, and what makes the hidden native control worth rendering. */
@@ -140,7 +194,7 @@ export const selectContract = {
     Select: {
       intent: ["controlled-collection", "item-markup", "positioned-listbox", "value-change-event"],
       host: { element: "div" },
-      mount: "data-sk-select",
+      mount: selectAttrs.root,
       options: ["name", "value", "placeholder", "disabled", "required"],
       portals: true,
       slots: {
@@ -165,7 +219,7 @@ export const selectContract = {
            */
           {
             element: "select",
-            mount: "data-sk-select-hidden",
+            mount: selectAttrs.hidden,
             attrs: {
               "aria-hidden": "true",
               tabindex: "-1",
@@ -190,12 +244,12 @@ export const selectContract = {
           {
             element: "div",
             part: "control",
-            mount: "data-sk-select-control",
+            mount: selectAttrs.control,
             children: [
               {
                 element: "label",
                 part: "label",
-                mount: "data-sk-select-label",
+                mount: selectAttrs.label,
                 slot: "label",
                 whenGiven: "label",
               },
@@ -203,14 +257,14 @@ export const selectContract = {
                 element: "button",
                 part: "trigger",
                 also: ["sk-anchor", "sk-interactive"],
-                mount: "data-sk-select-trigger",
+                mount: selectAttrs.trigger,
                 attrs: { type: "button" },
                 children: [
-                  { element: "span", part: "value", mount: "data-sk-select-value" },
+                  { element: "span", part: "value", mount: selectAttrs.value },
                   {
                     element: "span",
                     part: "indicator",
-                    mount: "data-sk-select-indicator",
+                    mount: selectAttrs.indicator,
                     attrs: { "aria-hidden": "true" },
                     children: [
                       {
@@ -233,31 +287,31 @@ export const selectContract = {
             element: "div",
             part: "positioner",
             also: ["sk-anchored"],
-            mount: "data-sk-select-positioner",
+            mount: selectAttrs.positioner,
             children: [
               {
                 element: "ul",
                 part: "content",
-                mount: "data-sk-select-content",
+                mount: selectAttrs.content,
                 children: [
                   {
                     element: "li",
                     part: "item",
                     also: ["sk-interactive"],
-                    mount: "data-sk-select-item",
+                    mount: selectAttrs.item,
                     repeat: "items",
                     itemOptions: ["value", "disabled"],
                     children: [
                       {
                         element: "span",
                         part: "itemText",
-                        mount: "data-sk-select-item-text",
+                        mount: selectAttrs.itemText,
                         itemSlot: "label",
                       },
                       {
                         element: "span",
                         part: "itemIndicator",
-                        mount: "data-sk-select-item-indicator",
+                        mount: selectAttrs.itemIndicator,
                         children: [{ element: "span", attrs: { "data-sk-icon": "check", "data-sk-icon-size": "md" } }],
                       },
                     ],

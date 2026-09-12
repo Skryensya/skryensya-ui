@@ -20,6 +20,21 @@ export const badgeContract = {
   id: "badge",
   css: "@skryensya/core/components/badge.css",
   parts: badgeParts,
+  hooks: [
+    "--sk-badge-bg",
+    "--sk-badge-border",
+    "--sk-badge-dot-color",
+    "--sk-badge-dot-ring-color",
+    "--sk-badge-dot-ring-width",
+    "--sk-badge-dot-size",
+    "--sk-badge-fg",
+    "--sk-badge-font-size",
+    "--sk-badge-font-weight",
+    "--sk-badge-line-height",
+    "--sk-badge-padding-x",
+    "--sk-badge-padding-y",
+    "--sk-badge-radius",
+  ],
 
   options: {
     /** Named by ROLE, never by hue: a brand may swap what colour `accent` is and the name stays true. */

@@ -1,8 +1,4 @@
-import {
-  breadcrumbParts,
-  collapsibleBreadcrumbRange,
-  type BreadcrumbItem,
-} from "@skryensya/core/breadcrumb";
+import { breadcrumbParts, collapsibleBreadcrumbRange, type BreadcrumbItem, breadcrumbContract } from "@skryensya/core/breadcrumb";
 import { menuParts, type MenuItem } from "@skryensya/core/menu";
 import {
   useId,
@@ -13,6 +9,9 @@ import {
 } from "react";
 import { useAnchored } from "./anchored.js";
 import { MenuPopup, useMenuMachine } from "./menu.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { label: labelOption, collapsedLabel: collapsedLabelOption } = breadcrumbContract.options;
 
 const cx = (...classes: Array<string | undefined>) => classes.filter(Boolean).join(" ");
 
@@ -75,9 +74,9 @@ function FlatCrumbs({ items, separator }: { items: readonly BreadcrumbItem[]; se
 
 export function Breadcrumb({
   items,
-  label = "Migas de pan",
+  label = labelOption.default,
   separator = "/",
-  collapsedLabel = "Mostrar niveles ocultos",
+  collapsedLabel = collapsedLabelOption.default,
 }: BreadcrumbProps) {
   const range = collapsibleBreadcrumbRange(items.length);
 

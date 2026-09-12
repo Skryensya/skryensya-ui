@@ -1,5 +1,5 @@
 # What changed in fade-edge, in the words its users read. Only appended to, never rewritten.
-surface: "35edf1b78486b737"
+surface: "4688ab635a697db7"
 entries:
   - date: 2026-09-07
     kind: feature
@@ -17,3 +17,23 @@ entries:
         wraps any content without changing its semantics or behavior, and exposes <code>mode</code>,
         <code>direction</code>, <code>size</code>, and <code>color</code>. Marquee can be composed inside
         when it needs a soft edge; the effect does not become part of Marquee's contract.
+  - date: 2026-09-12
+    kind: feature
+    es:
+      title: Los styling hooks de fade-edge quedan declarados en el contrato
+      body: >-
+        El contrato ahora publica los <code>4</code> styling hooks de este componente. Nada
+        de lo que hayas escrito cambia: son los mismos hooks, con los mismos nombres, y la hoja de
+        estilos no se tocó. Lo nuevo es que el contrato los declara, así que el compilador falla si
+        la hoja declara uno que el contrato no publica, o si el contrato promete uno que la hoja no
+        declara. Esa segunda mitad es la que importa: hasta ahora, redeclarar un hook que ya no
+        existía no daba error, daba silencio.
+    en:
+      title: fade-edge's styling hooks are now declared in the contract
+      body: >-
+        The contract now publishes this component's <code>4</code> styling hooks. Nothing you
+        wrote changes: the same hooks, under the same names, and the stylesheet was not touched.
+        What is new is that the contract declares them, so the compiler fails when the stylesheet
+        declares one the contract does not publish, or the contract promises one the stylesheet
+        never declares. That second half is the one that matters: until now, re-declaring a hook
+        that no longer existed was not an error, it was silence.

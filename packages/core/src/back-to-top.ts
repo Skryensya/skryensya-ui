@@ -92,6 +92,18 @@ export const backToTopContract = {
   id: "back-to-top",
   css: "@skryensya/core/components/back-to-top.css",
   parts: backToTopParts,
+  hooks: [
+    "--sk-back-to-top-bg",
+    "--sk-back-to-top-border-color",
+    "--sk-back-to-top-border-color-hover",
+    "--sk-back-to-top-enter-scale",
+    "--sk-back-to-top-fg",
+    "--sk-back-to-top-radius",
+    "--sk-back-to-top-shadow",
+    "--sk-back-to-top-size",
+    "--sk-back-to-top-travel",
+    "--sk-back-to-top-wash",
+  ],
 
   options: {
     /**

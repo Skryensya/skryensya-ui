@@ -111,6 +111,22 @@ export const commandPaletteContract = {
   id: "command-palette",
   css: "@skryensya/core/components/command-palette.css",
   parts: commandPaletteParts,
+  hooks: [
+    "--sk-button-bg",
+    "--sk-button-border-color",
+    "--sk-button-border-width",
+    "--sk-button-fg",
+    "--sk-button-shadow",
+    "--sk-command-palette-border-color",
+    "--sk-command-palette-footer-bg",
+    "--sk-command-palette-footer-fg",
+    "--sk-command-palette-inline-size",
+    "--sk-command-palette-list-max-block-size",
+    "--sk-command-palette-list-min-block-size",
+    "--sk-command-palette-option-bg-selected",
+    "--sk-dialog-bg",
+    "--sk-dialog-inline-size",
+  ],
 
   options: {
     /** Names the dialog for anyone who cannot see it. An option, not a slot: both bindings put it

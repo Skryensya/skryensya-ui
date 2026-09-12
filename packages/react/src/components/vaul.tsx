@@ -1,5 +1,8 @@
-import { vaulDataParts, vaulParts, vaulScope, type VaulEdge } from "@skryensya/core/vaul";
+import { vaulDataParts, vaulParts, vaulScope, type VaulEdge, vaulContract } from "@skryensya/core/vaul";
 import type { DialogHTMLAttributes, ReactNode } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { edge: edgeOption } = vaulContract.options;
 
 /*
  * VAUL: the React half, which did not exist.
@@ -35,7 +38,7 @@ export type VaulProps = Omit<DialogHTMLAttributes<HTMLDialogElement>, "aria-labe
   drawer?: boolean;
 };
 
-export function Vaul({ children, className, drawer = false, edge = "block-end", label, ...props }: VaulProps) {
+export function Vaul({ children, className, drawer = false, edge = edgeOption.default, label, ...props }: VaulProps) {
   return (
     <dialog
       {...props}

@@ -29,6 +29,20 @@ export const mediaGradientContract = {
   id: "media-gradient",
   css: "@skryensya/core/patterns/media-gradient.css",
   parts: mediaGradientParts,
+  hooks: [
+    "--sk-media-caption-fg",
+    "--sk-media-caption-gap",
+    "--sk-media-caption-padding",
+    "--sk-media-gradient-base",
+    "--sk-media-gradient-direction",
+    "--sk-media-gradient-ink",
+    "--sk-media-gradient-ink-mid",
+    "--sk-media-gradient-mix",
+    "--sk-media-gradient-opacity",
+    "--sk-media-gradient-tint",
+    "--sk-media-gradient-tint-edge",
+    "--sk-media-gradient-tint-mid",
+  ],
 
   options: {
     /** Which edge of the media the caption sits on. The wash fades toward the photo from there. */

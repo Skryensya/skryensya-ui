@@ -1,23 +1,7 @@
-import {
-  ANNOTATION_RING_DISTANCE,
-  annotationElementRadius,
-  annotationHitIndex,
-  annotationParts,
-  annotationRingInset,
-  annotationTranslate,
-  watchAnnotationSpecimenFocus,
-  placeAnnotations,
-  readAnnotationTranslate,
-  type AnnotationBox,
-  type AnnotationDirection,
-  type AnnotationMeasurement,
-  type AnnotationMatch,
-  type AnnotationMobileAlign,
-  type AnnotationPlacement,
-  type AnnotationRingPlacement,
-  type AnnotationSide,
-  type AnnotationTarget,
-} from "@skryensya/core/annotation";
+import { ANNOTATION_RING_DISTANCE, annotationElementRadius, annotationHitIndex, annotationParts, annotationRingInset, annotationTranslate, watchAnnotationSpecimenFocus, placeAnnotations, readAnnotationTranslate, type AnnotationBox, type AnnotationDirection, type AnnotationMeasurement, type AnnotationMatch, type AnnotationMobileAlign, type AnnotationPlacement, type AnnotationRingPlacement, type AnnotationSide, type AnnotationTarget, annotationContract } from "@skryensya/core/annotation";
+
+/* Derived, never restated: the default lives in the contract. */
+const { inert: inertOption, ringPlacement: ringPlacementOption } = annotationContract.options;
 import {
   Fragment,
   useCallback,
@@ -97,10 +81,10 @@ export type AnnotatedProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & 
 export function Annotated({
   annotations,
   className,
-  inert = true,
+  inert = inertOption.default,
   label,
   ringDistance = ANNOTATION_RING_DISTANCE,
-  ringPlacement = "inset",
+  ringPlacement = ringPlacementOption.default,
   /* NOT defaulted to a number: `undefined` is what says nobody above the part has an opinion, which
      is what lets the part's own corner answer. See `ANNOTATION_RING_RADIUS`. */
   ringRadius,

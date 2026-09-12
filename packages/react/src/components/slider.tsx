@@ -1,7 +1,10 @@
 import { slider } from "@skryensya/core/machines";
-import { clampSliderRange, sliderParts } from "@skryensya/core/slider";
+import { clampSliderRange, sliderParts, sliderContract } from "@skryensya/core/slider";
 import { normalizeProps, useMachine } from "@zag-js/react";
 import { useId, type CSSProperties, type HTMLAttributes } from "react";
+
+/* Derived, never restated: the default lives in the contract. */
+const { max: maxOption, min: minOption } = sliderContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -28,8 +31,8 @@ export function Slider({
   defaultValue,
   disabled,
   id,
-  max = 100,
-  min = 0,
+  max = maxOption.default,
+  min = minOption.default,
   name,
   onValueChange,
   step,
@@ -110,8 +113,8 @@ export function SliderRange({
   id,
   lowLabel,
   lowName,
-  max = 100,
-  min = 0,
+  max = maxOption.default,
+  min = minOption.default,
   onValueChange,
   step,
 }: SliderRangeProps) {

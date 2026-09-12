@@ -1,11 +1,4 @@
-import {
-  SIDEBAR_WIDTH_PROPERTY,
-  sidebarParts,
-  sidebarWidthPercent,
-  sidebarWidthPreference,
-  type SidebarOptions,
-  type SidebarResizeChangeDetails,
-} from "@skryensya/core/sidebar";
+import { SIDEBAR_WIDTH_PROPERTY, sidebarParts, sidebarWidthPercent, sidebarWidthPreference, type SidebarOptions, type SidebarResizeChangeDetails, sidebarContract } from "@skryensya/core/sidebar";
 import { hasCrossedDragThreshold, resolveSplitterKey, splitterDirectionSign } from "@skryensya/core/splitter";
 import {
   createContext,
@@ -26,6 +19,9 @@ import {
   type RefObject,
 } from "react";
 import { useStoredPreference } from "./storage.js";
+
+/* Derived, never restated: the default lives in the contract. */
+const { defaultCollapsed: defaultCollapsedOption } = sidebarContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -68,7 +64,7 @@ export function Sidebar({
   children,
   className,
   collapsed: collapsedProp,
-  defaultCollapsed = false,
+  defaultCollapsed = defaultCollapsedOption.default,
   landmarkLabel,
   maxInlineSize,
   minInlineSize,

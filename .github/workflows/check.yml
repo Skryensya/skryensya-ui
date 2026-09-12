@@ -41,7 +41,13 @@ jobs:
       # be resolved.
       - run: pnpm install --frozen-lockfile
 
-      # The browser gates are excluded for the same reason `pre-push` excludes them: about 15
+      # THE CVE WATCH, and it belongs here specifically. The 30-day `minimumReleaseAge` quarantine
+      # is only safe because something looks for advisories DURING the wait, and that something was
+      # `scripts/audit-gate.ts` in `pre-push` alone. A hook lives on the author's machine, so a pull
+      # request from a fork, which is the exact case this workflow exists for, got no watch at all.
+      - run: pnpm audit:gate
+
+      # The browser gates are excluded for the same reason `pre-push` excludes them: about 19
       # minutes, a browser download, and a sensitivity to machine load that makes a red result on a
       # shared runner weak evidence. They stay a local, deliberate run.
       - run: pnpm check

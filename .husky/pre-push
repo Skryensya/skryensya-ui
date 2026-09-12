@@ -23,9 +23,10 @@ if ! node scripts/audit-gate.ts; then
 fi
 
 # ─────────────────────────────────────────────────────────────────────────────────────────────────
-# 2. CHECK. Lint + tests + tsc across the 16 deterministic packages.
+# 2. CHECK. Tests + tsc across the 15 packages that define one.
 #
-# `@skryensya/ai-gates` is left OUT on purpose: 730 Playwright tests, about 19 minutes, and today they
+# The BROWSER half of `@skryensya/ai-gates` is left OUT on purpose: 730 Playwright tests, ~19 minutes,
+# and today they
 # collapse partway through because of the stage rather than because of regressions (the ones that pass
 # take 10-13s, the ones that fail 0.3-2s, symmetry aborts at 1ms). A push that takes 20 minutes and
 # ends red because of something you did not break teaches people to use --no-verify, and that habit

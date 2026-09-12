@@ -652,7 +652,15 @@ const columns: GalleryTile[][] = [
 ---
 
 <Base fullBleed title={t("landing.title")} description={t("landing.description")} hideVanillaMount alwaysShowNavTrigger={false}>
-  <div class="sk-layout-grid" style="row-gap: var(--space-stack-xl)">
+  {/*
+    THE PAGE'S OWN LIGHT. Fixed to the viewport rather than sized to a section, because what it is
+    lighting is the whole document: the gallery scrolls through it and the grain stays put, so the
+    page reads as one surface with the content moving over it rather than as a tinted band with
+    ordinary page below. `aria-hidden` and `pointer-events: none`: it is paint, and nothing else.
+  */}
+  <div class="landing-backdrop" aria-hidden="true"></div>
+
+  <div class="sk-layout-grid landing-canvas" style="row-gap: var(--space-stack-xl)">
     {/*
       `breakout` rather than `narrow`: the gallery under it runs the full bleed of the page, and a
       hero at the grid's narrowest measure read as a paragraph someone had left above a wall of
@@ -778,49 +786,80 @@ const columns: GalleryTile[][] = [
    * band re-tints itself with whatever accent the reader picked, and it goes dark-mode-correct for
    * free because both halves of the mix are already mode-aware.
    */
-  .landing-hero__band {
-    /* The bloom alone. The grain is a layer of its own below, because a background layer cannot be
-       given its own opacity and blending it at full strength is what turned the first attempt into
-       a grey noisy box with the accent lost somewhere inside it. */
-    --sk-hero-wash:
-      radial-gradient(
-        105% 88% at 50% 112%,
-        color-mix(in oklab, var(--color-action-accent) 62%, transparent) 0%,
-        color-mix(in oklab, var(--color-action-accent) 30%, transparent) 34%,
-        color-mix(in oklab, var(--color-action-accent) 9%, transparent) 62%,
-        transparent 82%
-      );
-    --sk-hero-min-height: 22rem;
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
+  /*
+   * THE BACKDROP: one wide, shallow field of accent light rising from the foot of the viewport.
+   *
+   * SHAPED AFTER LUMOS'S OWN, which is the reference asked for and is readable straight out of
+   * their stylesheet: `radial-gradient(75% 60% at 50% 88%, brand 14%, transparent 72%)` on a
+   * `pointer-events: none` layer, plus a canvas above it masked with
+   * `radial-gradient(90% 75% at 50% 92%, #000, #00000080 45%, #0000 78%)`. Three things are worth
+   * taking from that and one is worth leaving.
+   *
+   * WIDE AND LOW, not a disc in the middle. Their ellipse is three quarters of the viewport across
+   * and sits at 88% of its height, so the light reads as something the page is standing ON. A
+   * centred circle (what this was) reads as a spotlight pointed at the middle of the text, and on a
+   * wide screen it is a blob with cold canvas either side of it, which is what "the width of the
+   * whole page" was asking to fix.
+   *
+   * FAINT. Theirs is 14% of the brand colour. This one runs a little warmer at 22% because it also
+   * has grain over it, which eats some of the light, but the direction is the same: the field is
+   * the room the page sits in, not a thing to look at.
+   *
+   * MASKED AT THE EDGES, which is the detail that separates this from a gradient someone dropped in
+   * a div. The texture fades out before it reaches the sides instead of tiling to a hard stop
+   * against them.
+   *
+   * What is NOT taken: the animated canvas. Their aurora drifts, ours does not. A page whose whole
+   * subject is a catalogue of components does not need its background moving behind them, and
+   * `prefers-reduced-motion` would have to turn it off anyway.
+   */
+  .landing-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: clip;
+    background: radial-gradient(
+      120% 68% at 50% 88%,
+      color-mix(in oklab, var(--color-action-accent) 22%, transparent) 0%,
+      color-mix(in oklab, var(--color-action-accent) 9%, transparent) 42%,
+      transparent 72%
+    );
   }
 
   /*
-   * THE GRAIN, as its own layer so it can have its own opacity: 12%, which is where it reads as a
-   * surface rather than as either dirt (the first attempt, unblended, a grey noisy box with the
-   * accent lost inside it) or nothing at all (5%, measured on screen as no visible difference). `feTurbulence` rendered once into a data URI and tiled at 180px;
-   * `baseFrequency: 0.9` keeps it fine enough to stay grain rather than blotches on a 4K display.
-   * `overlay`, not `multiply`: multiply only ever darkens, so on the dark palette it landed on an
-   * already-dark band and did nothing at all (confirmed on screen: a smooth bloom with no texture
-   * in dark mode). Overlay darkens what is light and lightens what is dark, so one declaration
-   * gives both palettes the same amount of grain.
+   * THE GRAIN, `feTurbulence` as `fractalNoise` in a data URI: the technique CSS-Tricks published
+   * and every version since has copied. `baseFrequency: 0.7` and `numOctaves: 4`, which is the one
+   * number every source agrees on, since past four the cost is real and the difference is not.
+   *
+   * Its own layer, because a background layer cannot carry an opacity of its own: noise and colour
+   * in one `background-image` list can only be balanced by blending them into each other, which is
+   * what turned an earlier pass into a grey box with the accent lost inside it.
+   *
+   * `overlay` rather than multiply, because multiply only darkens: on the dark palette it landed on
+   * an already-dark page and did nothing at all. Overlay works from both ends, so one declaration
+   * grains both palettes. Masked with Lumos's own curve so the texture dies out toward the edges.
    */
-  .landing-hero__band::after {
+  .landing-backdrop::after {
     content: "";
     position: absolute;
     inset: 0;
-    z-index: -1;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
-    background-size: 180px 180px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 240px 240px;
     mix-blend-mode: overlay;
-    opacity: 0.12;
-    pointer-events: none;
+    opacity: 0.34;
+    mask-image: radial-gradient(110% 80% at 50% 92%, #000 0%, rgb(0 0 0 / 50%) 45%, transparent 78%);
   }
 
-  /* A reader who asked for less contrast gets the flat bloom and no texture at all. */
+  /* Everything the page renders sits over the light, in its own layer. */
+  .landing-canvas {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* A reader who asked for less contrast keeps the light and loses the texture. */
   @media (prefers-contrast: more) {
-    .landing-hero__band::after {
+    .landing-backdrop::after {
       display: none;
     }
   }

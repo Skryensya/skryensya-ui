@@ -206,7 +206,9 @@ gates down with it.
 
 New versions wait **30 days** before they can be installed (`minimumReleaseAge` in
 `pnpm-workspace.yaml`). The quarantine is only safe because something watches for CVEs during it,
-which is what `scripts/audit-gate.ts` does on every push.
+which is what `scripts/audit-gate.ts` does on every push, and in CI on every pull request. It
+runs in both places because a hook lives on the author's machine: a pull request from a fork, the
+case CI exists for, used to get no watch at all.
 
 When a fix is needed sooner, except that one package rather than lowering the global number, and say
 why in the file:

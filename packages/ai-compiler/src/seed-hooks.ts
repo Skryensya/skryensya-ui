@@ -11,18 +11,23 @@
 import { readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseTokens, CSS_DIR } from "@skryensya/core/parse";
+import { publishedBySheet } from "./hooks.js";
 
 const root = process.argv[2] ?? process.cwd();
 const dry = process.argv.includes("--dry");
 const srcDir = join(root, "packages/core/src");
 
+/*
+ * PUBLISHED, not merely declared, and it shares that definition with the gate rather than keeping
+ * its own. The first version of this script had its own, looser rule ("every `--sk-*` the sheet
+ * declares"), which recorded a component tuning someone else's hook as publishing it: 17 contracts
+ * ended up claiming `--sk-icon-size`. Correcting the data without correcting this script would have
+ * left a landmine that silently re-introduced the bug the next time anyone ran it.
+ */
 const corpus = parseTokens(CSS_DIR);
+const published = publishedBySheet(corpus.files as readonly { rel?: string; css?: string }[]);
 const hooksBySheet = new Map<string, string[]>();
-for (const f of corpus.files) {
-  const declarations = f.decls as readonly { name: string }[];
-  const names = [...new Set(declarations.map((d) => d.name).filter((n) => n.startsWith("--sk-")))].sort();
-  if (f.rel && names.length) hooksBySheet.set(f.rel, names);
-}
+for (const [rel, hooks] of published) hooksBySheet.set(rel, [...hooks].sort());
 
 /** The end of the object literal that starts at `open`. */
 function closeOf(source: string, open: number): number {

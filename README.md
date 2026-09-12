@@ -46,8 +46,8 @@ pnpm --filter @skryensya/docs dev       # docs site at http://localhost:4173
 pnpm check
 ```
 
-That is what `pre-push` runs, and it skips the browser gates. `pnpm check:gates` runs those alone
-(about 19 minutes, worth it for anything visual) and `pnpm check:all` runs both.
+That is what `pre-push` AND CI run, and it skips the browser gates. `pnpm check:gates` runs those
+alone (about 19 minutes, worth it for anything visual) and `pnpm check:all` runs both.
 
 [**ui.skryensya.dev**](https://ui.skryensya.dev) is the primary reference: every contract has a page
 with live previews in both bindings, its options, its accessibility notes, and a real pass/fail test
@@ -118,13 +118,13 @@ contract lives in Core and the frameworks are bindings.
 
 | Command | What it does |
 |---|---|
-| `pnpm check` | Typecheck, lint and test every package except the browser gates. The everyday loop, and what `pre-push` runs. Cached by Turbo: unchanged packages do not re-run. |
+| `pnpm check` | Typecheck and test every package, browser gates excepted. The everyday loop, and what both `pre-push` and CI run. Cached by Turbo: unchanged packages do not re-run. |
 | `pnpm check:gates` | The browser gates (Playwright, ~19 min). Their dependencies build first, from cache if nothing moved. |
-| `pnpm check:all` | Both. The full gate, and what CI runs on a pull request. |
+| `pnpm check:all` | Both. The fullest local gate; CI runs `pnpm check` alone, because the browser half is too load-sensitive to be evidence on a shared runner. |
 | `pnpm lint` | Token validator across the repo (cached by Turbo). |
 | `pnpm build` | Build every package. The docs site's static output lands in `apps/docs/dist`. |
 | `pnpm --filter @skryensya/docs dev` | Docs site on port 4173. |
-| `pnpm --filter @skryensya/ai-gates check` | The browser gates alone. About 15 minutes, and sensitive to machine load: run them with the machine otherwise idle, or use `--workers=1` to judge a failure. |
+| `pnpm check:gates` | The browser gates alone. About 19 minutes, and sensitive to machine load: run them with the machine otherwise idle, or use `--workers=1` to judge a failure. |
 
 Turbo caches aggressively, so an unchanged run replays in milliseconds.
 

@@ -55,6 +55,32 @@ minimumReleaseAge: 43200
 # the cooldown again. Verified by removing them and reinstalling: nothing changes today. They are
 # insurance for the next `pnpm install` that does have to resolve, not a patch for something broken now.
 minimumReleaseAgeExclude:
+  # DELETE WHEN astro 7.2.x IS 30 DAYS OLD.
+  # `astro < 7.2.8` carries a CRITICAL advisory (remote code execution through AVIF image
+  # optimization), which is the one case this quarantine must not be allowed to sit on. Getting onto
+  # 7.2.x also pulls `@bruits/satteri-*`, the per-platform native binaries of astro's markdown
+  # engine, published inside the window. pnpm omits an OPTIONAL dependency in SILENCE when the
+  # cooldown blocks it, so the install looks clean and `astro check` then dies with "Cannot find
+  # native binding": that is what made the first attempt, on 2026-09-09, look like it had failed for
+  # an unrelated reason. Every platform binary is listed, not only this machine's, so a Linux or
+  # Windows clone resolves the same tree.
+  - "astro"
+  - "@astrojs/compiler-rs"
+  - "@astrojs/compiler-binding"
+  - "@astrojs/internal-helpers"
+  - "@astrojs/markdown-satteri"
+  - "@bruits/satteri-darwin-arm64"
+  - "@bruits/satteri-darwin-x64"
+  - "@bruits/satteri-linux-arm64-gnu"
+  - "@bruits/satteri-linux-arm64-musl"
+  - "@bruits/satteri-linux-x64-gnu"
+  - "@bruits/satteri-linux-x64-musl"
+  - "@bruits/satteri-win32-arm64-msvc"
+  - "@bruits/satteri-win32-x64-msvc"
+  - "unifont"
+  # Both reached by that same bump, and both the floor of their own patched range.
+  - "smol-toml"
+  - "svgo"
   # DELETE AFTER 2026-10-02.
   # `packages/editor` asks for `prosemirror-transform: ^1.12.1`, and 1.12.1 (2026-09-02) is the only
   # version that range admits: the previous one is 1.12.0, from March, which `^1.12.1` leaves out.

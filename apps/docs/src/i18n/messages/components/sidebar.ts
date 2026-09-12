@@ -94,7 +94,7 @@ export const sidebarMessages = {
     "sidebarPage.anatomyPreviewLabel": "Sidebar, part by part",
     "sidebarPage.contentTitle": "The sidebar is one thing; its content is another",
     "sidebarPage.contentBody":
-      'What goes inside is not the sidebar\'s business. The destination list is the <a href="/en/nav-list"><code>nav-list</code></a> pattern, a guest here, with the same structure the navbar uses horizontally. That is why there is no <code>sk-sidebar__link</code>: that list was never the sidebar\'s, and naming it that way would be naming a tenant.',
+      'What goes inside is not the sidebar\'s business. The destination list is the <a href="/nav-list"><code>nav-list</code></a> pattern, a guest here, with the same structure the navbar uses horizontally. That is why there is no <code>sk-sidebar__link</code>: that list was never the sidebar\'s, and naming it that way would be naming a tenant.',
     "sidebarPage.collapseBody": "Collapse the sidebar with the button: the list becomes a rail of icons, and it is all still there.",
     "sidebarPage.widthTitle": "Width belongs to the reader",
     "sidebarPage.widthBody1":
@@ -108,7 +108,7 @@ export const sidebarMessages = {
     "sidebarPage.widthBody5":
       "It is a full splitter, not just a drag: the arrows move it in small steps (faster with <kbd class=\"sk-kbd\">Shift</kbd>), <kbd class=\"sk-kbd\">Home</kbd> and <kbd class=\"sk-kbd\">End</kbd> jump to the extremes, and a double-click or <kbd class=\"sk-kbd\">Enter</kbd> return the default width. With <code>storageKey</code> the width survives a reload; without it, it lasts the session, which is this preview's case.",
     "sidebarPage.widthBody6":
-      'A <a href="/en/components/tree-view">TreeView</a> sits inside on purpose: it is the guest whose correct width nobody can know ahead of time. A name that does not fit gets ellipsized, and the panel never scrolls horizontally; widening it is the answer, not a side scrollbar.',
+      'A <a href="/components/tree-view">TreeView</a> sits inside on purpose: it is the guest whose correct width nobody can know ahead of time. A name that does not fit gets ellipsized, and the panel never scrolls horizontally; widening it is the answer, not a side scrollbar.',
     "sidebarPage.resizableLabel": "Resizable sidebar",
     "sidebarPage.detailsTitle": "Why it is not a <code>&lt;details&gt;</code>",
     "sidebarPage.detailsBody1":

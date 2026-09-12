@@ -22,7 +22,7 @@ export const footerMessages = {
     "footer.whenBody1":
       "Usa Footer para el cierre de la página: la banda final que dice «la página termina acá», con navegación secundaria, aviso legal o una línea de crédito. El host es un <code>&lt;footer&gt;</code>, y a nivel de documento ese elemento YA es el landmark <code>contentinfo</code> sin escribir <code>role</code>.",
     "footer.whenBody2":
-      'Footer no impone anatomía: no hay slots con nombre para columnas ni una barra inferior. Compón adentro con <a href="/components/grid">Grid</a> para la fila de columnas, <a href="/components/nav-list">NavList</a> para cada columna (con su propio nombre accesible) y <a href="/components/wrapper">Wrapper</a> para sostener la medida de la página.',
+      'Footer no impone anatomía: no hay slots con nombre para columnas ni una barra inferior. Compón adentro con <a href="/components/grid">Grid</a> para la fila de columnas, <a href="/nav-list">NavList</a> para cada columna (con su propio nombre accesible) y <a href="/components/wrapper">Wrapper</a> para sostener la medida de la página.',
     "footer.whenBody3":
       'Si sólo hace falta separar una sección del resto en medio de la página, usa <a href="/components/box">Box</a>. Una fila de botones de confirmación abajo de un panel o un diálogo se compone con <a href="/components/inline">Inline</a> dentro de ese contenedor, no con Footer.',
     "footer.htmlTitle": "HTML escrito a mano",
@@ -45,7 +45,7 @@ export const footerMessages = {
     "footer.a11yP2":
       'Debe haber como mucho UN <code>&lt;footer&gt;</code> de documento por página, la misma regla que <code>banner</code> o <code>main</code>. Un footer que pertenece de verdad a un <code>&lt;article&gt;</code> sigue siendo válido, sólo que deja de ser el landmark.',
     "footer.a11yP3":
-      'Una fila de columnas de enlaces es navegación: cada columna es un <a href="/components/nav-list">NavList</a> con su propio nombre accesible (<code>aria-label</code> o un encabezado visible), para que la lista de landmarks diga «Footer / Recursos», no una <code>navigation</code> sin nombre por columna.',
+      'Una fila de columnas de enlaces es navegación: cada columna es un <a href="/nav-list">NavList</a> con su propio nombre accesible (<code>aria-label</code> o un encabezado visible), para que la lista de landmarks diga «Footer / Recursos», no una <code>navigation</code> sin nombre por columna.',
     "footer.test1":
       "Por defecto emite el landmark <code>contentinfo</code> con la superficie hundida, el padding grande y el divisor superior que documenta el contrato.",
     "footer.test2":
@@ -95,14 +95,14 @@ export const footerMessages = {
     "footer.description": "A page's close: a band with a surface of its own, a rule above it, and room to breathe. Free anatomy.",
     "footer.betaBadge": "Beta",
     "footer.lede":
-      "Footer owns only <code>padding</code>, <code>surface</code> and <code>divider</code>, with defaults tuned to close the page rather than disappear into it: <code>surface: \"sunken\"</code>, <code>divider</code> on, and <code>padding: \"lg\"</code>. Columns, the legal line and the credit stay free composition: <a href=\"/en/components/grid\">Grid</a>, <a href=\"/en/components/nav-list\">NavList</a> and <a href=\"/en/components/typography\">Text</a> inside.",
+      "Footer owns only <code>padding</code>, <code>surface</code> and <code>divider</code>, with defaults tuned to close the page rather than disappear into it: <code>surface: \"sunken\"</code>, <code>divider</code> on, and <code>padding: \"lg\"</code>. Columns, the legal line and the credit stay free composition: <a href=\"/components/grid\">Grid</a>, <a href=\"/nav-list\">NavList</a> and <a href=\"/components/typography\">Text</a> inside.",
     "footer.whenTitle": "When to use it",
     "footer.whenBody1":
       "Use Footer for a page's close: the final band that says “the page ends here”, with secondary navigation, a legal line or a credit. The host is a <code>&lt;footer&gt;</code>, and at document level that element already IS the <code>contentinfo</code> landmark with no <code>role</code> written.",
     "footer.whenBody2":
-      'Footer imposes no anatomy: there are no named slots for columns or a bottom bar. Compose inside with <a href="/en/components/grid">Grid</a> for the column row, <a href="/en/components/nav-list">NavList</a> for each column (with its own accessible name) and <a href="/en/components/wrapper">Wrapper</a> to hold the page\'s measure.',
+      'Footer imposes no anatomy: there are no named slots for columns or a bottom bar. Compose inside with <a href="/components/grid">Grid</a> for the column row, <a href="/nav-list">NavList</a> for each column (with its own accessible name) and <a href="/components/wrapper">Wrapper</a> to hold the page\'s measure.',
     "footer.whenBody3":
-      'To separate a section from the rest mid-page, use <a href="/en/components/box">Box</a>. A row of confirm buttons at the bottom of a panel or dialog is composed with <a href="/en/components/inline">Inline</a> inside that container, not with Footer.',
+      'To separate a section from the rest mid-page, use <a href="/components/box">Box</a>. A row of confirm buttons at the bottom of a panel or dialog is composed with <a href="/components/inline">Inline</a> inside that container, not with Footer.',
     "footer.htmlTitle": "Authored HTML",
     "footer.patternSiteTitle": "Site footer",
     "footer.patternSiteDescription":
@@ -123,7 +123,7 @@ export const footerMessages = {
     "footer.a11yP2":
       "There must be AT MOST ONE document-level <code>&lt;footer&gt;</code> per page, the same rule as <code>banner</code> or <code>main</code>. A footer that genuinely belongs to one <code>&lt;article&gt;</code> is still valid, it just is not the landmark.",
     "footer.a11yP3":
-      'A row of link columns is navigation: each column is a <a href="/en/components/nav-list">NavList</a> with its own accessible name (<code>aria-label</code> or a visible heading), so the landmark list reads “Footer / Resources”, not one unnamed <code>navigation</code> per column.',
+      'A row of link columns is navigation: each column is a <a href="/nav-list">NavList</a> with its own accessible name (<code>aria-label</code> or a visible heading), so the landmark list reads “Footer / Resources”, not one unnamed <code>navigation</code> per column.',
     "footer.test1":
       "Emits the <code>contentinfo</code> landmark by default, with the sunken surface, large padding and top divider the contract documents.",
     "footer.test2":

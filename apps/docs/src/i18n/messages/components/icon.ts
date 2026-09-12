@@ -44,7 +44,7 @@ export const iconMessages = {
     "iconPage.description":
       "Icon: the sk-icon pattern in React and vanilla, with vocabulary roles, your own geometry, sizes, and a11y at the call site.",
     "iconPage.lede":
-      'How you put an icon on screen: <code>&lt;Icon&gt;</code> in React, <code>data-sk-icon</code> + <code>mountIcons</code> in vanilla, or a hand-written <code>&lt;svg class="sk-icon"&gt;</code>. The role vocabulary, sets as a brand choice, and why the CSS never touches fill/stroke live in <a href="/en/icons">Iconography</a>.',
+      'How you put an icon on screen: <code>&lt;Icon&gt;</code> in React, <code>data-sk-icon</code> + <code>mountIcons</code> in vanilla, or a hand-written <code>&lt;svg class="sk-icon"&gt;</code>. The role vocabulary, sets as a brand choice, and why the CSS never touches fill/stroke live in <a href="/icons">Iconography</a>.',
     "iconPage.reactTitle": "React",
     "iconPage.reactBody1":
       "<code>Icon</code> takes <code>name</code> <strong>or</strong> <code>data</code>, never both. <code>name</code> is a portable role that survives a set change; <code>data</code> is your own geometry, deliberately coupled and visible at the call site.",

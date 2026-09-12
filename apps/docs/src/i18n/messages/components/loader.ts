@@ -131,7 +131,7 @@ export const loaderMessages = {
     "loaderPage.semanticsItem2": "With no <code>label</code>, React makes it decorative, to pair with text without duplicating it.",
     "loaderPage.semanticsItem3": 'It marks the affected region with <code>aria-busy="true"</code>; Loader does not control the operation.',
     "loaderPage.semanticsItem4":
-      'If you know the progress, use <a href="/en/components/progress">Progress</a>, not a different speed.',
+      'If you know the progress, use <a href="/components/progress">Progress</a>, not a different speed.',
     "loaderPage.reducedTitle": "Reduced motion",
     "loaderPage.reducedBody":
       "All four designs keep a recognizable silhouette and stop all motion under <code>prefers-reduced-motion: reduce</code>. The status text stays: reducing motion cannot turn a pending operation into an invisible signal.",

@@ -46,7 +46,7 @@ export const menubarMessages = {
     "menubarPage.description":
       "Menubar: a persistent horizontal bar of commands, some opening a dropdown.",
     "menubarPage.lede":
-      'The WAI-ARIA <code>menubar</code> pattern: <code>menubar-editor</code>, the example it is named after. Not <a href="/en/components/menu">Menu</a> (one trigger, one popup): here there are SEVERAL items in a single roving-tabindex row, where Left/Right moves between them, and the detail a naive implementation misses: moving to an adjacent item while a dropdown is open closes the old one and opens the new one too, not just moves a highlight.',
+      'The WAI-ARIA <code>menubar</code> pattern: <code>menubar-editor</code>, the example it is named after. Not <a href="/components/menu">Menu</a> (one trigger, one popup): here there are SEVERAL items in a single roving-tabindex row, where Left/Right moves between them, and the detail a naive implementation misses: moving to an adjacent item while a dropdown is open closes the old one and opens the new one too, not just moves a highlight.',
     "menubarPage.anatomyBody":
       "This diagram names the bar, the wrapper, the open item, and the Menu popup that hangs from it. The specimen is frozen; the live bars start below.",
     "menubarPage.anatomyLabel": "Menubar anatomy",

@@ -53,7 +53,7 @@ export const commandPaletteMessages = {
     "commandPalette.anatomyLabel": "CommandPalette anatomy",
     "commandPalette.anatomyPreviewLabel": "An open CommandPalette, part by part",
     "commandPalette.lede":
-      'A <strong>command palette</strong>: a field that filters an index, and a listbox with <code>aria-activedescendant</code>, hosted in a native <a href="/en/components/dialog"><code>Dialog</code></a> (<code>showModal</code>, Esc, focus). The shortcut (<a href="/en/hotkey">Hotkey</a>) is opt-in by attribute; this site uses it with {hotkey}.',
+      'A <strong>command palette</strong>: a field that filters an index, and a listbox with <code>aria-activedescendant</code>, hosted in a native <a href="/components/dialog"><code>Dialog</code></a> (<code>showModal</code>, Esc, focus). The shortcut (<a href="/hotkey">Hotkey</a>) is opt-in by attribute; this site uses it with {hotkey}.',
     "commandPalette.contractItem1": 'Root: <code>&lt;dialog class="sk-dialog sk-command-palette" data-sk-command-palette&gt;</code>.',
     "commandPalette.contractItem2":
       'JSON index via <code>data-sk-command-palette-index</code> (the id of the <code>&lt;script type="application/json"&gt;</code>).',

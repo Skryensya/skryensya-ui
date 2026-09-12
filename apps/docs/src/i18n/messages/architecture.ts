@@ -75,6 +75,6 @@ export const architectureMessages = {
     "architecture.exampleBody":
       "Accordion uses the whole model: its Contract declares root, item, trigger, and content; its Markup contract says how to nest those parts; its signatures separate disclosure uses; the machine coordinates which sections are open; and React or Vanilla realize the same behavior through different bindings.",
     "architecture.nextBody":
-      'It comes from <a href="/en/foundations">Foundations</a>. The next cut is visual: <a href="/en/tiers">Tiers</a> explains how primitive, semantic, and styling hook order tokens. For specific option lookup, use <a href="/en/reference">Reference</a>.',
+      'It comes from <a href="/foundations">Foundations</a>. The next cut is visual: <a href="/tiers">Tiers</a> explains how primitive, semantic, and styling hook order tokens. For specific option lookup, use <a href="/reference">Reference</a>.',
   },
 } as const;

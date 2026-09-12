@@ -54,16 +54,16 @@ el.classList.add("sk-fx-pulse");`;
   <p class="lede">
     An effect is <strong>a class added</strong> onto an element that already exists, whether that is
     your own markup or the root of a component the kit already ships. It is not a
-    <a href="/en/architecture">Contract</a>: no signature, not compiled by the
+    <a href="/architecture">Contract</a>: no signature, not compiled by the
     <code>ai-compiler</code>, not in the MCP. It is CSS, opt-in, built on the same
-    <a href="/en/motion">motion intent tokens</a> every component already consumes.
+    <a href="/motion">motion intent tokens</a> every component already consumes.
   </p>
 
   <div class="sk-callout" data-tone="info">
     <div class="sk-callout__content">
       <p>
         Why a fourth CSS tier instead of a Contract:
-        <a href="/decisions/0020-effects-are-opt-in-css-over-motion-tokens">ADR-20</a>.
+        <a href="https://github.com/Skryensya/skryensya-ui/blob/main/docs/decisions/0020-effects-are-opt-in-css-over-motion-tokens.md">ADR-20</a>.
       </p>
     </div>
   </div>
@@ -130,7 +130,7 @@ el.classList.add("sk-fx-pulse");`;
     changes, it is always the small bar; what disappears is a separate spacer, exactly as tall as the
     collapse range, and the title simply renders larger than the bar measures, hanging over the top
     edge onto the spacer. It is the mechanism behind every component page's masthead
-    (<a href="/en/components/accordion">scroll it there to see it live</a>), generalised in ADR-20.
+    (<a href="/components/accordion">scroll it there to see it live</a>), generalised in ADR-20.
   </p>
   <CodeBlock code={importCollapse} label="CSS" />
   <CodeBlock code={collapseMarkup} label="HTML" />
@@ -193,7 +193,7 @@ el.classList.add("sk-fx-pulse");`;
   <h2>Reduced motion</h2>
   <p>
     No effect declares its own <code>@media (prefers-reduced-motion)</code> to turn itself off: they
-    inherit the same mechanism every component does, the <a href="/en/motion">intent tokens</a>.
+    inherit the same mechanism every component does, the <a href="/motion">intent tokens</a>.
     <code>reveal</code> and <code>collapse-header</code> only run inside <code>no-preference</code>,
     so reduced motion leaves them in their resting state with no separate rule to keep in sync.
     <code>pulse</code> reads <code>--motion-emphasize-duration</code>, which already drops to 0 under

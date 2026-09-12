@@ -45,7 +45,7 @@ export const dataGridMessages = {
       "Data Grid: 2D roving-tabindex navigation for tabular data or grouped widgets.",
     "dataGridPage.betaBadge": "Beta",
     "dataGridPage.lede":
-      'The WAI-ARIA spec itself treats "data grids" and "layout grids" as the same pattern. Identical roles, identical roving-tabindex mechanics, so this is ONE contract, not two. Use it when a grid of cells needs 2D navigation: <a href="/en/components/table">Table</a> already covers STATIC tabular data with no keyboard model of its own.',
+      'The WAI-ARIA spec itself treats "data grids" and "layout grids" as the same pattern. Identical roles, identical roving-tabindex mechanics, so this is ONE contract, not two. Use it when a grid of cells needs 2D navigation: <a href="/components/table">Table</a> already covers STATIC tabular data with no keyboard model of its own.',
     "dataGridPage.dataTitle": "Tabular data",
     "dataGridPage.anatomyBody":
       "This diagram names the grid, the row and the cell. The specimen is frozen; the live DataGrids begin below.",

@@ -3,7 +3,7 @@
  * given page live in the other one.
  *
  * The site is static and multi-page, so a locale is a URL PREFIX and nothing else: no runtime
- * negotiation, no cookie, no client state. `/components/avatar` is Spanish, `/en/components/avatar`
+ * negotiation, no cookie, no client state. `/components/avatar` is Spanish, `/components/avatar`
  * is English, and both are real files on disk. That is deliberate: every dimension this site already
  * has (brand, mode, contrast, density) resolves in the browser from custom properties, but language
  * changes the HTML, so it has to resolve at build.
@@ -180,7 +180,7 @@ const pageModules = import.meta.glob("../pages/**/*.astro", {
   import: "default",
 });
 
-/** `../pages/en/components/avatar.astro` → `/en/components/avatar` (and `index` → its directory). */
+/** `../pages/en/components/avatar.astro` → `/components/avatar` (and `index` → its directory). */
 function routeFromModulePath(modulePath: string): string {
   const route = modulePath
     .replace(/^\.\.\/pages/, "")

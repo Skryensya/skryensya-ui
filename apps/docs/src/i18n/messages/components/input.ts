@@ -53,7 +53,7 @@ export const inputMessages = {
     "inputPage.anatomyPreviewLabel": "One class, three elements",
     "inputPage.formFieldTitle": "The label is not the Input's",
     "inputPage.formFieldBody":
-      'Both demos above are wrapped in a <a href="/en/components/form-field">FormField</a>, and not out of habit: the label, the hint, the error message and the six ids that tie them together all live there. That is why this contract has no <code>invalid</code> and no <code>id</code> of its own: a control carrying its own <code>aria-invalid</code> could contradict the message sitting next to it. An <code>Input</code> outside a <code>FormField</code> is still a valid control, as long as it carries its own <code>aria-label</code>.',
+      'Both demos above are wrapped in a <a href="/components/form-field">FormField</a>, and not out of habit: the label, the hint, the error message and the six ids that tie them together all live there. That is why this contract has no <code>invalid</code> and no <code>id</code> of its own: a control carrying its own <code>aria-invalid</code> could contradict the message sitting next to it. An <code>Input</code> outside a <code>FormField</code> is still a valid control, as long as it carries its own <code>aria-label</code>.',
     "inputPage.nativeTitle": "NativeInput: the control without the appearance",
     "inputPage.nativeBody":
       'The contract\'s third signature is <code>NativeInput</code>: the same element without <code>sk-input</code>, for when what you are teaching is the behaviour the browser ships rather than the system\'s appearance. It is what the plain <code>&lt;input type="time"&gt;</code> demo on TimeField uses.',

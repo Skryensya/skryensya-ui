@@ -174,7 +174,7 @@ const boxNativeTree: UsageTree = {
     that's why its shadow is <code>inset</code> instead of cast:
     <code>inset 0 1px 2px 0 var(--shadow-sm)</code>, the same ingredient <code>raised</code> already
     uses, pointed inward instead of outward. Until now, <code>surface="sunken"</code>
-    (<a href="/en/components/box">Box</a>, <a href="/en/components/hero">Hero</a>) only ever changed
+    (<a href="/components/box">Box</a>, <a href="/components/hero">Hero</a>) only ever changed
     the background (<code>--color-bg-surface-sunken</code>) with no shadow reinforcing "pressed in":
     the one surface of the four where <code>raised</code> went up with background + shadow but its
     opposite went down with background alone, nothing else. Not anymore:
@@ -183,7 +183,7 @@ const boxNativeTree: UsageTree = {
     the other side, same hook, same rule.
   </p>
   <p>
-    Fields (<a href="/en/components/input">Input</a>, <a href="/en/components/select">Select</a>,
+    Fields (<a href="/components/input">Input</a>, <a href="/components/select">Select</a>,
     Combobox, NumberField, TimeField, DatePicker, ColorPicker's own channel inputs) just moved to
     <code>sunken</code> too: a field is the well you write into, not a card resting on the surface.
     <code>select.css</code> and <code>input.css</code> had the opposite reasoning written by hand:
@@ -255,7 +255,7 @@ const boxNativeTree: UsageTree = {
   <h2>Live, with nothing overridden</h2>
   <p>
     The swatches above force all five levels by hand so they can show
-    <code>overlay</code>/<code>modal</code>, which <a href="/en/components/box">Box</a> does not
+    <code>overlay</code>/<code>modal</code>, which <a href="/components/box">Box</a> does not
     publish. But if what's actually needed is a sunken or lifted Box, the real path is shorter: its
     own <code>surface</code>. No shadow is written on this page, <code>box.css</code> paints it.
   </p>
@@ -359,7 +359,7 @@ const boxNativeTree: UsageTree = {
   <p>
     Elevation is <strong>never the only signal</strong> that something floats or blocks; every
     component that reaches <code>overlay</code> or <code>modal</code> already ships its own real
-    border as a backup. Same principle as <a href="/en/state-layer">the state layer</a>: a decorative
+    border as a backup. Same principle as <a href="/state-layer">the state layer</a>: a decorative
     layer never carries meaning alone.
   </p>
 
@@ -437,9 +437,9 @@ const boxNativeTree: UsageTree = {
     <strong>example coverage</strong>, not CSS: no docs page demonstrated a <code>Hero</code> at
     <code>surface="raised"</code>, nor <code>Sidebar</code> with its trigger in
     <code>data-floating</code> mode, even though both hooks already resolved correctly. Both now have
-    a live example: <a href="/en/components/hero">Hero</a> ("Centered, minimal", the one pattern on
+    a live example: <a href="/components/hero">Hero</a> ("Centered, minimal", the one pattern on
     that page asking for <code>surface="raised"</code>) and
-    <a href="/en/components/sidebar">Sidebar</a> ("The floating trigger").
+    <a href="/components/sidebar">Sidebar</a> ("The floating trigger").
   </p>
 
   <CodeBlock code={elevationSource} label="src/examples/elevation.css" note="the CSS behind the swatches above ↑" />

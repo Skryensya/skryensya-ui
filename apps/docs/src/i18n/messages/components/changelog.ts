@@ -122,9 +122,9 @@ export const changelogMessages = {
     "changelogPage.whenItem1":
       "Use Changelog for release notes and for a contract's history: things that happened, each with its own day.",
     "changelogPage.whenItem2":
-      'Use <a href="/en/components/process-list">ProcessList</a> for instructions in order. It numbers its markers with a CSS <code>counter()</code>, so a list with the newest on top would count backward through time.',
+      'Use <a href="/components/process-list">ProcessList</a> for instructions in order. It numbers its markers with a CSS <code>counter()</code>, so a list with the newest on top would count backward through time.',
     "changelogPage.whenItem3":
-      'Use <a href="/en/components/steps">Steps</a> when there is progress: <code>complete</code>, <code>current</code>, <code>upcoming</code>. Its connector says how much work is left behind, which is not a claim anyone can make about a change that already shipped.',
+      'Use <a href="/components/steps">Steps</a> when there is progress: <code>complete</code>, <code>current</code>, <code>upcoming</code>. Its connector says how much work is left behind, which is not a claim anyone can make about a change that already shipped.',
     "changelogPage.contractItem1":
       'The root is <code>&lt;ol class="sk-changelog" reversed&gt;</code>. <code>reversed</code> is fixed, not an option: newest on top is what a changelog <em>is</em>. Nobody draws the numbers, but the accessibility tree reads them, and there they have to count backward.',
     "changelogPage.contractItem2":

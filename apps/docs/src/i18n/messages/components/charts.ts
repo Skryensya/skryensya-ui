@@ -264,7 +264,7 @@ export const chartsMessages = {
     "chartsPage.anatomyLabel": "Chart anatomy",
     "chartsPage.anatomyPreviewLabel": "Chart, part by part",
     "chartsPage.calloutBody":
-      "<strong>There is no <code>ChartCard</code>.</strong> Title, action, surface, and supporting numbers belong to <a href=\"/en/components/box\">Box</a>, <a href=\"/en/components/heading\">Heading</a>, <a href=\"/en/components/stat\">Stat</a>, and <a href=\"/en/components/button\">Button</a>. The chart only paints the series. Publishing it as a card variant would have grown exactly the component Card refuses to be; the recipe lives in <code>metric-panel</code>.",
+      "<strong>There is no <code>ChartCard</code>.</strong> Title, action, surface, and supporting numbers belong to <a href=\"/components/box\">Box</a>, <a href=\"/components/heading\">Heading</a>, <a href=\"/components/stat\">Stat</a>, and <a href=\"/components/button\">Button</a>. The chart only paints the series. Publishing it as a card variant would have grown exactly the component Card refuses to be; the recipe lives in <code>metric-panel</code>.",
     "chartsPage.cardsTitle": "A card with a chart",
     "chartsPage.cardsBody":
       "The first thing anyone asks for. Three compositions, not three components: the number lives in the text, the chart lives in the shape, and the button says where to go next.",
@@ -349,7 +349,7 @@ export const chartsMessages = {
     "chartsPage.doItem2":
       "Write a <code>description</code> carrying the shape of the data: range, trend, and units.",
     "chartsPage.doItem3":
-      "Put the number that matters in a <a href=\"/en/components/stat\">Stat</a>, not on the axis.",
+      "Put the number that matters in a <a href=\"/components/stat\">Stat</a>, not on the axis.",
     "chartsPage.doItem4":
       "Use the series <code>tone</code> and, when needed, an entry's own. Color follows the tokens.",
     "chartsPage.doItem5":
@@ -359,7 +359,7 @@ export const chartsMessages = {
     "chartsPage.dontItem1":
       "Don't import TanStack on the documented path. The contract does not name it.",
     "chartsPage.dontItem2":
-      "Don't use a chart for three values: a <a href=\"/en/components/table\">table</a> or a Stat reads better.",
+      "Don't use a chart for three values: a <a href=\"/components/table\">table</a> or a Stat reads better.",
     "chartsPage.dontItem3":
       "Don't encode information in color alone: the label and value stay in the DOM on purpose.",
     "chartsPage.dontItem4":

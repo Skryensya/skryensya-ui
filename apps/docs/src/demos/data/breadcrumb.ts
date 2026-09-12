@@ -6,7 +6,7 @@ import type { Translate } from "../../i18n";
  * only by a separator: keeping the trails here is what makes that visible in `breadcrumb.ts`.
  *
  * The hrefs are passed in, not written: they are locale-owned paths the PAGE knows (a Spanish page
- * links to `/componentes/...`, an English one to `/en/components/...`), and the crumbs are demo
+ * links to `/componentes/...`, an English one to `/components/...`), and the crumbs are demo
  * destinations rather than real docs routes.
  */
 

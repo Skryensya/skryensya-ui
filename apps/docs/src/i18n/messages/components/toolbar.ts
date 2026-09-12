@@ -53,6 +53,6 @@ export const toolbarMessages = {
     "toolbarPage.compositeLabel": "Toolbar with a nested Segmented",
     "toolbarPage.wysiwygTitle": "Toolbar heading an editor",
     "toolbarPage.wysiwygBody":
-      'The use that names the pattern, <code>editor-toolbar</code>, in the contract: grouping a rich-text editor\'s own formatting controls. For a real editor built on this same Toolbar - with the commands actually wired up - see <a href="/en/components/editor">Editor</a>.',
+      'The use that names the pattern, <code>editor-toolbar</code>, in the contract: grouping a rich-text editor\'s own formatting controls. For a real editor built on this same Toolbar - with the commands actually wired up - see <a href="/components/editor">Editor</a>.',
   },
 } as const;

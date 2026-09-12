@@ -106,7 +106,7 @@ export const treegridMessages = {
     "treegridPage.description": "Hierarchical rows with columns: expand or collapse one without losing the rest of its values.",
     "treegridPage.betaBadge": "Beta",
     "treegridPage.lede":
-      'Combines hierarchy and columns at once: the WAI-ARIA <code>treegrid</code> pattern. Use it when every row needs several independent values IN ADDITION to its place in the hierarchy (a message with a sender, a file with a size and a date). For a single column of hierarchical text use <a href="/en/components/tree-view">TreeView</a>; for columns with no hierarchy, <a href="/en/components/table">Table</a>.',
+      'Combines hierarchy and columns at once: the WAI-ARIA <code>treegrid</code> pattern. Use it when every row needs several independent values IN ADDITION to its place in the hierarchy (a message with a sender, a file with a size and a date). For a single column of hierarchical text use <a href="/components/tree-view">TreeView</a>; for columns with no hierarchy, <a href="/components/table">Table</a>.',
     "treegridPage.minimalTitle": "Inbox",
     "treegridPage.anatomyBody":
       "This diagram names the scroll, the table, head, body, rows, cells and the disclosure. The specimen is frozen; the live Treegrids begin below.",

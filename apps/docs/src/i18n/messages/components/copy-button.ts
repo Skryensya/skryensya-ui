@@ -42,7 +42,7 @@ export const copyButtonMessages = {
     "copyButton.contractItem4":
       "That same label appears beside the button as a small flag with an arrow, for exactly as long as the check icon shows, in the success tone (or danger if it failed). It is not a tooltip: it never traps the pointer, so a second click still reaches the button.",
     "copyButton.contractItem5":
-      'The flag is placed with the <a href="/en/anchoring">Anchoring</a> pattern: the root also carries <code>sk-anchor</code>, and the flag carries <code>sk-anchored</code> with <code>data-sk-placement="inline-start"</code>. With no anchor positioning in the browser it does not draw, because there is no machine here to place it; the icon and the live region stay the same.',
+      'The flag is placed with the <a href="/anchoring">Anchoring</a> pattern: the root also carries <code>sk-anchor</code>, and the flag carries <code>sk-anchored</code> with <code>data-sk-placement="inline-start"</code>. With no anchor positioning in the browser it does not draw, because there is no machine here to place it; the icon and the live region stay the same.',
     "copyButton.contractItem6": "The icons are <code>data-sk-icon</code> placeholders; <code>mountIcons</code> links the set (ADR-19).",
     "copyButton.iconsComment":
       "Icons are authored as <span data-sk-icon> placeholders;\nmountIcons replaces them with the <svg> of the linked set.",

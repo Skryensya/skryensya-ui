@@ -53,7 +53,7 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
 >
   <h1>Iconography</h1>
   <p class="lede">
-    The system names <strong>roles</strong>, not drawings. A set (Lucide, Phosphor, Material) is a brand: it chooses the geometry that each role occupies, just as a brand chooses the hue of <code>--palette-blue-600</code>. How you mount the SVG in React or vanilla is in <a href="/en/components/icon">Icon</a>.
+    The system names <strong>roles</strong>, not drawings. A set (Lucide, Phosphor, Material) is a brand: it chooses the geometry that each role occupies, just as a brand chooses the hue of <code>--palette-blue-600</code>. How you mount the SVG in React or vanilla is in <a href="/components/icon">Icon</a>.
   </p>
 
   <ComponentPreview tree={vocabTree} css={vocabCss} label="Stable vocabulary" />
@@ -63,7 +63,7 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
 
   <h2>A pattern, not an extra</h2>
   <p>
-    Like the <a href="/en/state-layer">state layer</a>, the pattern comes in <code>tokens.scss</code>. An icon is not an add-on that a component opts into: just something that displays a chevron, a close, or a state glyph needs this same box. The rules are inert until an element has <code>sk-icon</code>, so they do not matter on a page without icons. The decision is in <a href="/decisions/0019-public-palettes-and-constant-semantics">ADR-19</a>.
+    Like the <a href="/state-layer">state layer</a>, the pattern comes in <code>tokens.scss</code>. An icon is not an add-on that a component opts into: just something that displays a chevron, a close, or a state glyph needs this same box. The rules are inert until an element has <code>sk-icon</code>, so they do not matter on a page without icons. The decision is in <a href="https://github.com/Skryensya/skryensya-ui/blob/main/docs/decisions/0019-public-palettes-and-constant-semantics.md">ADR-19</a>.
   </p>
 
   <h2>The stable vocabulary</h2>
@@ -140,6 +140,6 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
 
   <h2>Use the pattern</h2>
   <p>
-    React (<code>&lt; Icon&gt; </code>), vanilla (<code>mountIcons</code>), sizes and accessibility in the call site: <a href="/en/components/icon">Icon</a>.
+    React (<code>&lt; Icon&gt; </code>), vanilla (<code>mountIcons</code>), sizes and accessibility in the call site: <a href="/components/icon">Icon</a>.
   </p>
 </Base>

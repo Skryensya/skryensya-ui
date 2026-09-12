@@ -84,7 +84,7 @@ export const heroMessages = {
     "hero.whenBody1":
       "Usa Hero para el momento de apertura de una página: necesita distinguirse visualmente de las secciones que la siguen, con más aire y una superficie propia en vez de la del fondo de la página.",
     "hero.whenBody2":
-      'Hero no impone anatomía: no hay slots con nombre para titular, bajada o acción. Compón adentro con <a href="/components/stack">Stack</a>, <a href="/components/typography">Heading/Text</a> y <a href="/components/button">Button</a>, igual que en cualquier otra sección de la página.',
+      'Hero no impone anatomía: no hay slots con nombre para titular, bajada o acción. Compón adentro con <a href="/components/stack">Stack</a>, <a href="/components/heading">Heading/Text</a> y <a href="/components/button">Button</a>, igual que en cualquier otra sección de la página.',
     "hero.whenBody3":
       'Si sólo hace falta relleno, borde o superficie sin ser la apertura de la página, usa <a href="/components/box">Box</a>: comparten el mismo vocabulario de <code>padding</code>/<code>surface</code>, sólo cambian los valores por defecto.',
     "hero.htmlTitle": "HTML escrito a mano",
@@ -221,7 +221,7 @@ export const heroMessages = {
     "hero.whenBody1":
       "Use Hero for a page's opening moment: it needs to read as distinct from the sections that follow it, with more room and a surface of its own instead of the page background's.",
     "hero.whenBody2":
-      'Hero imposes no anatomy: there are no named slots for a headline, sub-line or action. Compose inside it with <a href="/components/stack">Stack</a>, <a href="/components/typography">Heading/Text</a> and <a href="/components/button">Button</a>, same as any other section of the page.',
+      'Hero imposes no anatomy: there are no named slots for a headline, sub-line or action. Compose inside it with <a href="/components/stack">Stack</a>, <a href="/components/heading">Heading/Text</a> and <a href="/components/button">Button</a>, same as any other section of the page.',
     "hero.whenBody3":
       'If all you need is padding, a border or a surface without being the page\'s opening, use <a href="/components/box">Box</a>: they share the same <code>padding</code>/<code>surface</code> vocabulary, only the defaults differ.',
     "hero.htmlTitle": "Authored HTML",

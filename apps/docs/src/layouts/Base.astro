@@ -243,7 +243,7 @@ const alternates = availableLocales(canonical).map((code) => {
  *   - `hrefs` is only the translations that ACTUALLY EXIST for this page (from `alternates`), so the
  *     script can never redirect a reader onto a 404. It takes their PATHS, never the absolute
  *     `href` beside them: this navigates, so it has to stay on the origin the reader is on.
- *   - `current` / `def` let it tell "an explicit `/en/` URL" (respect it) from "an unprefixed page"
+ *   - `current` / `def` let it tell "an explicit `/` URL" (respect it) from "an unprefixed page"
  *     (the only place browser-language auto-detection runs).
  *   - `slot` is `languagePreference`'s, so a stored explicit choice overrides the browser guess.
  */
@@ -325,7 +325,7 @@ const drawerSections: readonly DrawerSection[] = [
  * One rail follows the reader through the whole library. Catalog and reference subpages inherit
  * the section that explains their context.
  */
-/* Matched on `canonical`, so one rule covers `/componentes/...` and `/en/components/...` alike. */
+/* Matched on `canonical`, so one rule covers `/componentes/...` and `/components/...` alike. */
 const currentSection =
   canonical === "/components" || canonical.startsWith("/componentes/")
     ? componentSection ?? navigation[0]
@@ -405,7 +405,7 @@ const mainRowCount =
   1;
 
 
-const searchIndexSrc = locale === "en" ? "/en/search-index.json" : "/search-index.json";
+const searchIndexSrc = locale === "en" ? "/search-index.json" : "/search-index.json";
 
 const searchIcon = iconMarkup("search");
 const closeIcon = iconMarkup("close");
@@ -418,7 +418,7 @@ const backToTopIcon = iconMarkup("chevron-up", { size: "sm" });
 
 /*
  * The footer's "Report an issue" link, pre-filled with the page the reader is actually standing on:
- * `Astro.url.href` rather than `canonical`, so a `?tab=install` deep link or an `/en/` translation
+ * `Astro.url.href` rather than `canonical`, so a `?tab=install` deep link or an `/` translation
  * shows up in the issue exactly as the reader saw it, not normalised away.
  */
 const issueUrl = reportIssueUrl(title, t("footer.reportIssue.body", { url: Astro.url.href }));
@@ -443,10 +443,10 @@ const PALETTE_PRESETS = palettePresets(locale);
       negotiation layered on top, and it is deliberately narrow:
 
         - A stored explicit choice (`languagePreference`, set from `LanguageMenu`) ALWAYS wins, both
-          directions. A reader who picked Español once is sent back to Español even from an `/en/`
+          directions. A reader who picked Español once is sent back to Español even from an `/`
           link, because "remember my choice" is what they asked for.
         - With NO stored choice, the browser's own language list decides, but ONLY on an unprefixed
-          (default-locale) page. An explicit `/en/` URL (a shared link, a bookmark) is left exactly
+          (default-locale) page. An explicit `/` URL (a shared link, a bookmark) is left exactly
           where it points; auto-detection never touches it.
         - A redirect only ever fires toward a translation that EXISTS (`LANG_REDIRECT.hrefs` is built
           from `alternates`), so an untranslated page never becomes a 404.
@@ -468,7 +468,7 @@ const PALETTE_PRESETS = palettePresets(locale);
         var known = R.locales.indexOf(stored) !== -1;
         var target;
         if (known) {
-          /* Explicit choice: honoured everywhere, even over an `/en/` URL. */
+          /* Explicit choice: honoured everywhere, even over an `/` URL. */
           target = stored;
         } else if (R.current === R.def) {
           /* No choice yet, and this is an unprefixed page: let the browser decide. */
@@ -482,7 +482,7 @@ const PALETTE_PRESETS = palettePresets(locale);
           }
           if (!target) target = R.def;
         } else {
-          /* No choice, explicit `/en/` URL: respect it. */
+          /* No choice, explicit `/` URL: respect it. */
           return;
         }
 

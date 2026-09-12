@@ -64,7 +64,7 @@ export const calendarMessages = {
       "Standalone date grid for a day, month, or year/decade view, with no field or popover and the same button switching views.",
     "calendar.betaBadge": "Beta",
     "calendar.lede":
-      'The date grid itself, separate from the field that opens it. <a href="/en/components/date-picker">DatePicker</a> nests it inside a popover; this page is the same component standing alone, for when the calendar <em>is</em> the UI (a reservations page, a dashboard filter) and no input is needed behind it.',
+      'The date grid itself, separate from the field that opens it. <a href="/components/date-picker">DatePicker</a> nests it inside a popover; this page is the same component standing alone, for when the calendar <em>is</em> the UI (a reservations page, a dashboard filter) and no input is needed behind it.',
     "calendar.anatomyBody":
       "Day view: label, header (previous, view-trigger, next), table, weekday header, body, cell and its trigger. Month and year views follow below.",
     "calendar.anatomyLabel": "Calendar anatomy (day)",

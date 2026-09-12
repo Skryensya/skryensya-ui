@@ -27,7 +27,7 @@ export const progressMessages = {
       "This diagram names the track and the fill bar. The specimen is frozen; the live Progress bars begin below.",
     "progressPage.anatomyLabel": "Progress anatomy",
     "progressPage.anatomyPreviewLabel": "Progress, part by part",
-    "progressPage.body": 'For work with no measurable value, use <a href="/en/components/loader">Loader</a>: its semantics are indeterminate.',
+    "progressPage.body": 'For work with no measurable value, use <a href="/components/loader">Loader</a>: its semantics are indeterminate.',
     "progressPage.test1": "Exposes the value on the progressbar role and paints the matching fill.",
     "progressPage.test2": "Clamps an out-of-range value so the paint and aria-valuenow agree.",
   },

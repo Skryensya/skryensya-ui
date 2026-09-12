@@ -70,7 +70,7 @@ export const inlineMessages = {
     "inlinePage.floorPreviewNote": "Grid + Box + Inline blockStart auto",
     "inlinePage.whereTitle": "Where to compose it",
     "inlinePage.whereBody":
-      "Use it where <em>you</em> author the buttons: a <a href=\"/en/components/hero\">Hero</a> CTA, the footer of a card built with <a href=\"/en/components/box\">Box</a>, a label–control pair, a form footer that has no part of its own. Do not replace <a href=\"/en/components/empty-state\">EmptyState</a>'s <code>__actions</code> part, a <a href=\"/en/components/dialog\">Dialog</a> footer, or a <a href=\"/en/components/toolbar\">Toolbar</a>: those already own their row.",
+      "Use it where <em>you</em> author the buttons: a <a href=\"/components/hero\">Hero</a> CTA, the footer of a card built with <a href=\"/components/box\">Box</a>, a label–control pair, a form footer that has no part of its own. Do not replace <a href=\"/components/empty-state\">EmptyState</a>'s <code>__actions</code> part, a <a href=\"/components/dialog\">Dialog</a> footer, or a <a href=\"/components/toolbar\">Toolbar</a>: those already own their row.",
     "inlinePage.htmlTitle": "Authored HTML",
     "inlinePage.htmlBody": "Use <code>sk-inline</code> on the matching semantic element. The attributes describe spacing, cross-axis alignment, horizontal distribution, whether the row can wrap its children, and the space above it (<code>data-block-start</code>).",
     "inlinePage.contractItem1": "<code>as</code> chooses the root element; the default is <code>div</code>.",

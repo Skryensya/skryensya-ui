@@ -78,7 +78,7 @@ export const drawerMessages = {
     "drawer.description": "A Vaul on the inline edge, running the full height of the screen. Ships hooks and no structure.",
     "drawer.betaBadge": "Beta",
     "drawer.lede":
-      'A drawer <strong>is</strong> a <a href="/en/vaul">Vaul</a> on the inline edge, running the full height of the screen. That sentence is the whole component: the edge, the slide, the backdrop, the drag and the top layer belong to the pattern, and this file only says <em>which Vaul is a drawer</em> and how it looks.',
+      'A drawer <strong>is</strong> a <a href="/vaul">Vaul</a> on the inline edge, running the full height of the screen. That sentence is the whole component: the edge, the slide, the backdrop, the drag and the top layer belong to the pattern, and this file only says <em>which Vaul is a drawer</em> and how it looks.',
     "drawer.hooksTitle": "Ships hooks and no structure",
     "drawer.hooksBody1":
       "By the system's own rule: every line of structure a drawer could have is structure a bottom sheet would need identically, and that shared structure <strong>is</strong> the pattern. A drawer that reimplemented the panel would be a second Vaul under another name.",
@@ -90,13 +90,13 @@ export const drawerMessages = {
     "drawer.whenRow1Need": "Side navigation or filters, full height",
     "drawer.whenRow1Use": "<code>sk-drawer</code>",
     "drawer.whenRow2Need": "A sheet that rises from the bottom on mobile",
-    "drawer.whenRow2Use": '<a href="/en/components/dialog">Dialog</a> (Vaul option)',
+    "drawer.whenRow2Use": '<a href="/components/dialog">Dialog</a> (Vaul option)',
     "drawer.whenRow3Need": "A centered box",
-    "drawer.whenRow3Use": '<a href="/en/components/dialog">Dialog</a>',
+    "drawer.whenRow3Use": '<a href="/components/dialog">Dialog</a>',
     "drawer.whenRow4Need": "A permanent rail that never covers the page",
-    "drawer.whenRow4Use": '<a href="/en/components/sidebar">Sidebar</a>',
+    "drawer.whenRow4Use": '<a href="/components/sidebar">Sidebar</a>',
     "drawer.whenBody":
-      'The sidebar and the drawer do not compete: a <a href="/en/components/sidebar">sidebar</a> is a shell that lives in the layout, and a drawer is modal and covers the page. This site uses both, the rail above 52rem, the drawer below, with <strong>a single</strong> nav-list inside either one.',
+      'The sidebar and the drawer do not compete: a <a href="/components/sidebar">sidebar</a> is a shell that lives in the layout, and a drawer is modal and covers the page. This site uses both, the rail above 52rem, the drawer below, with <strong>a single</strong> nav-list inside either one.',
     "drawer.markupTitle": "Markup contract",
     "drawer.markupBody":
       "The root carries <code>sk-vaul sk-drawer</code> over a native <code>&lt;dialog&gt;</code>, which Vaul requires, plus its <code>data-edge</code>. The handle is optional: without it there is no drag, and the drawer is still complete.",

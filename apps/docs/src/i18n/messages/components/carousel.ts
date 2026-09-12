@@ -150,7 +150,7 @@ export const carouselMessages = {
     "carousel.anatomyPreviewLabel": "Carousel, part by part",
     "carousel.cardsTitle": "Card carousel",
     "carousel.cardsBody":
-      'With <code>data-sk-carousel</code> the enhancer runs the machine: prev/next (disabled at the ends), one dot per <strong>page</strong>, keyboard, drag, and re-measuring on resize. Here every slide is a card with <a href="/en/components/image-frame">ImageFrame</a> and a body composed of <code>Box</code>, <code>Stack</code> and <code>Text</code>, with no local classes. The default CSS size lets the next one peek through.',
+      'With <code>data-sk-carousel</code> the enhancer runs the machine: prev/next (disabled at the ends), one dot per <strong>page</strong>, keyboard, drag, and re-measuring on resize. Here every slide is a card with <a href="/components/image-frame">ImageFrame</a> and a body composed of <code>Box</code>, <code>Stack</code> and <code>Text</code>, with no local classes. The default CSS size lets the next one peek through.',
     "carousel.cardsLabel": "Card carousel",
     "carousel.dotsTitle": "One dot per page, not per slide",
     "carousel.dotsBody":

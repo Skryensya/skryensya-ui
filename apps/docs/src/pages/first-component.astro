@@ -67,12 +67,12 @@ const fouc = `<script>
   <p>Only what you send. A buttonless consumer never downloads this file.</p>
   <CodeBlock code={step3} label="CSS" />
   <p>
-    With that you now have a button. <code>button.css</code> brings the <em>class and</em> its <a href="/en/styling-hooks">styling hooks</a>: there is no step where you have to write the structural CSS for something to be seen. The order of the imports does not matter, the <a href="/en/tiers">cascade layers</a> decide the precedence.
+    With that you now have a button. <code>button.css</code> brings the <em>class and</em> its <a href="/styling-hooks">styling hooks</a>: there is no step where you have to write the structural CSS for something to be seen. The order of the imports does not matter, the <a href="/tiers">cascade layers</a> decide the precedence.
   </p>
 
   <h2>4. Uselo</h2>
   <p>
-    Variants and sizes are attributes. You do not need new classes or branching in your CSS: all <a href="/en/styling-hooks">variants re-declare the same</a> styling hook.
+    Variants and sizes are attributes. You do not need new classes or branching in your CSS: all <a href="/styling-hooks">variants re-declare the same</a> styling hook.
   </p>
   <ComponentPreview tree={firstComponentButtonsTree(t)} label="Button" />
 
@@ -84,7 +84,7 @@ const fouc = `<script>
 
   <h2>6. Interactive states</h2>
   <p>
-    Hover, focus and pressed are not button colors: they are provided by the <a href="/en/state-layer">state layer</a>, an overlay of <code>currentColor</code> shared by every interactive component. It is the system interaction mechanism and comes in <code>tokens.scss</code>, there is nothing to import separately. Just add <code>sk-interactive</code>: zero state colors to your CSS, and the focus ring is included.
+    Hover, focus and pressed are not button colors: they are provided by the <a href="/state-layer">state layer</a>, an overlay of <code>currentColor</code> shared by every interactive component. It is the system interaction mechanism and comes in <code>tokens.scss</code>, there is nothing to import separately. Just add <code>sk-interactive</code>: zero state colors to your CSS, and the focus ring is included.
   </p>
   <CodeBlock code={step6html} label="HTML" note="one more class" />
 

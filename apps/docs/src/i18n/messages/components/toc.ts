@@ -68,7 +68,7 @@ export const tocMessages = {
 
     "tocPage.description": "Toc: the index of a long document. Lists its sections (h2/h3) and marks the current one with a scroll-spy.",
     "tocPage.lede":
-      'A document\'s index: a list of links to its sections (<code>h2</code>/<code>h3</code>), with the current one marked by a scroll-spy. Every row is a link carrying <a href="/en/state-layer"><code>sk-interactive</code></a> (state layer) at caption size: an index gets scanned, not read, and at prose size it competed with the document it indexes. The icon is optional.',
+      'A document\'s index: a list of links to its sections (<code>h2</code>/<code>h3</code>), with the current one marked by a scroll-spy. Every row is a link carrying <a href="/state-layer"><code>sk-interactive</code></a> (state layer) at caption size: an index gets scanned, not read, and at prose size it competed with the document it indexes. The icon is optional.',
     "tocPage.anatomyBody":
       "This diagram names the aside, the nav, the title, and each part of an icon link. The specimen is frozen; the live indexes start below.",
     "tocPage.anatomyLabel": "Toc anatomy",

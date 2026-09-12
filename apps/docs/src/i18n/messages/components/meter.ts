@@ -29,7 +29,7 @@ export const meterMessages = {
     "meterPage.description":
       "Meter: a measurement within a known range, never a task's completion.",
     "meterPage.lede":
-      'A value measured right now, not a task in progress: the WAI-ARIA <code>meter</code> role, distinct from <code>progressbar</code>. Use it for disk usage, battery level, a rating on a scale. For a task\'s progress with a start and an end, use <a href="/en/components/progress">Progress</a>.',
+      'A value measured right now, not a task in progress: the WAI-ARIA <code>meter</code> role, distinct from <code>progressbar</code>. Use it for disk usage, battery level, a rating on a scale. For a task\'s progress with a start and an end, use <a href="/components/progress">Progress</a>.',
     "meterPage.anatomyBody":
       "This diagram names the group, the header, the label, the value, the track, and the bar. The specimen is frozen; the live meters start below.",
     "meterPage.anatomyLabel": "Meter anatomy",

@@ -4,6 +4,15 @@ export const codePreviewMessages = {
     "codePreview.description": "Preview de código Shiki con resaltado en build/SSR y comportamiento Vanilla opt-in.",
     "codePreview.lede":
       "Superficie para HTML resaltado por Shiki, con copiar, vista condensada/completa y preview de bloques largos. Shiki termina su trabajo en build o SSR; el navegador recibe HTML y sólo monta los controles que el documento autoró.",
+    "demo.codePreview.label": "example.ts",
+    "demo.codePreview.note": "TypeScript",
+    "demo.codePreview.condensed": "const registrations = [\n  { selector: \"[data-sk-button]\" },\n];",
+    "demo.codePreview.full":
+      "const registrations = [\n  { selector: \"[data-sk-button]\", load: () => import(\"./button.js\") },\n  { selector: \"[data-sk-select]\", load: () => import(\"./select.js\") },\n];",
+    "codePreview.anatomyBody":
+      "Este diagrama nombra la etiqueta, la meta, el interruptor de densidad, el preview, el viewport y el toggle. El espécimen está congelado; el bloque vivo de abajo es un CodeBlock real.",
+    "codePreview.anatomyLabel": "Anatomía de CodePreview",
+    "codePreview.anatomyPreviewLabel": "CodePreview, parte por parte",
     "codePreview.exampleNote": 'Para presentar este bloque debajo del render real de un componente, usa <a href="/components/component-preview">ComponentPreview</a>.',
     "codePreview.contractTitle": "Contrato de carga",
     "codePreview.contractItem1":
@@ -28,6 +37,15 @@ export const codePreviewMessages = {
     "codePreview.description": "Shiki code preview with build/SSR highlighting and opt-in Vanilla behavior.",
     "codePreview.lede":
       "A surface for HTML highlighted by Shiki, with copy, condensed/full views and a preview for long blocks. Shiki finishes its work at build or SSR time; the browser receives HTML and only mounts the controls the document authored.",
+    "demo.codePreview.label": "example.ts",
+    "demo.codePreview.note": "TypeScript",
+    "demo.codePreview.condensed": "const registrations = [\n  { selector: \"[data-sk-button]\" },\n];",
+    "demo.codePreview.full":
+      "const registrations = [\n  { selector: \"[data-sk-button]\", load: () => import(\"./button.js\") },\n  { selector: \"[data-sk-select]\", load: () => import(\"./select.js\") },\n];",
+    "codePreview.anatomyBody":
+      "This diagram names the label, meta, density switch, preview, viewport and toggle. The specimen is frozen; the live block below is a real CodeBlock.",
+    "codePreview.anatomyLabel": "CodePreview anatomy",
+    "codePreview.anatomyPreviewLabel": "CodePreview, part by part",
     "codePreview.exampleNote": 'To present this block underneath a component\'s real render, use <a href="/en/components/component-preview">ComponentPreview</a>.',
     "codePreview.contractTitle": "Loading contract",
     "codePreview.contractItem1":

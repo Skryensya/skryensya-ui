@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse } from "yaml";
 import type { ComponentContract } from "@skryensya/core/contract";
-import { contractIds, getContract } from "./registry.js";
+import { contractIds, getContract } from "@skryensya/core/registry";
 import { surfaceHash, targetableNames } from "./surface.js";
 
 /*

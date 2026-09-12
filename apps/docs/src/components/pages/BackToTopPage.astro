@@ -2,18 +2,19 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { backToTopDemoCss, backToTopScrollTree, backToTopTree } from "../../demos/back-to-top";
+import {
+  backToTopAnatomyCss,
+  backToTopAnatomyTree,
+  backToTopDemoCss,
+  backToTopScrollTree,
+  backToTopTree,
+} from "../../demos/back-to-top";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/back-to-top.yaml?raw";
-import coreSource from "@core/src/back-to-top.ts?raw";
-import cssSource from "@core/css/components/back-to-top.css?raw";
-import reactSource from "@react/src/components/back-to-top.tsx?raw";
-import reactTestSource from "@react/src/components/back-to-top.test.tsx?raw";
-import vanillaMountSource from "@vanilla/src/components/back-to-top.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/back-to-top.test.ts?raw";
 /* The sheet itself, not only its source: the Style hooks table resolves each hook against a real
    element, and a page that never loads this stylesheet shows every value blank. */
 import "@skryensya/core/components/back-to-top.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -64,16 +65,6 @@ const pill = `.mi-back-to-top {
   block-size: auto;
   clip-path: none;
 }`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/back-to-top.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/back-to-top.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/back-to-top.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/back-to-top.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/back-to-top.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/back-to-top.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/back-to-top.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -82,7 +73,6 @@ const sourceFiles = [
   badge={t("backToTop.betaBadge")}
   contractId="back-to-top"
   styleGroups={[{ file: "components/back-to-top.css", probe: "sk-back-to-top", title: "BackToTop" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/back-to-top.test.tsx",
@@ -164,6 +154,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("backToTop.lede")} />
+
+    <p set:html={t("backToTop.anatomyBody")} />
+    <ComponentPreview
+      tree={backToTopAnatomyTree(t)}
+      css={backToTopAnatomyCss}
+      label={t("backToTop.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("backToTop.whenTitle")}</h3>
     <p set:html={t("backToTop.whenBody1")} />

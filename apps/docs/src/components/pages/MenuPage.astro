@@ -1,18 +1,22 @@
 ---
 import "@skryensya/core/components/menu.css";
+/* Structure diagram: the Annotated specimen is drawn by Annotation's own sheet, and a preview frame
+   only ever copies the styles ITS page loaded, so it has to land here too. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { menuTree, menuMultilevelTree, menuCompactTree, menuSafetyTree, menuContextCss } from "../../demos/menu";
+import {
+  menuAnatomyCss,
+  menuAnatomyHtml,
+  menuTree,
+  menuMultilevelTree,
+  menuCompactTree,
+  menuSafetyTree,
+  menuContextCss,
+} from "../../demos/menu";
 import { MenuContextDemo } from "../react-demos/menu-context";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/menu.yaml?raw";
-import coreSource from "@core/src/menu.ts?raw";
-import cssSource from "@core/css/components/menu.css?raw";
-import vanillaMountSource from "@vanilla/src/components/menu.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/menu.test.ts?raw";
-import reactSource from "@react/src/components/menu.tsx?raw";
-import reactTestSource from "@react/src/components/menu.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -87,23 +91,13 @@ const contextMenuReact = `<Menu
     { value: "delete", label: "${t("demo.menu.context.delete")}", tone: "danger" },
   ]}
 />`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/menu.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/menu.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/menu.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/menu.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/menu.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/menu.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/menu.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Menu"
   description={t("menuPage.description")}
+  badge={t("menuPage.betaBadge")}
   contractId="menu"
-  sourceFiles={sourceFiles}
   styleGroups={[
     { file: "components/menu.css", probe: "sk-menu", title: "Menu" },
     { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
@@ -192,6 +186,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("menuPage.description")} />
+
+    <p set:html={t("menuPage.anatomyBody")} />
+    <ComponentPreview
+      html={menuAnatomyHtml(t)}
+      css={menuAnatomyCss}
+      label={t("menuPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={menuTree(t)} js={js} label="Menu" viewport="menu" />
 
     <h3>{t("component.contractNotesTitle")}</h3>

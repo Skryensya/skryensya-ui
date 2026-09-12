@@ -6,11 +6,6 @@ import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { skipLinkPairTree, skipLinkTree } from "../../demos/skip-link";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/skip-link.yaml?raw";
-import coreSource from "@core/src/skip-link.ts?raw";
-import cssSource from "@core/css/components/skip-link.css?raw";
-import reactSource from "@react/src/components/skip-link.tsx?raw";
-import reactTestSource from "@react/src/components/skip-link.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -39,21 +34,12 @@ const pair = `<body>
   <nav id="main-nav" tabindex="-1" aria-label="Principal">…</nav>
   <main id="main-content" tabindex="-1">…</main>
 </body>`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/skip-link.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/skip-link.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/skip-link.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/skip-link.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/skip-link.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="SkipLink"
   description={t("skipLink.description")}
   contractId="skip-link"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/skip-link.css", probe: "sk-skip-link", title: "SkipLink" }]}
   tests={[
     {

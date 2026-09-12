@@ -12,13 +12,25 @@
     "contrast-pairs.json"
   ],
   "exports": {
-    ".": {
-      "types": "./src/index.ts",
-      "default": "./src/index.ts"
-    },
     "./contract": {
       "types": "./src/contract.ts",
       "default": "./src/contract.ts"
+    },
+    "./registry": {
+      "types": "./src/registry.ts",
+      "default": "./src/registry.ts"
+    },
+    "./inline-style": {
+      "types": "./src/inline-style.ts",
+      "default": "./src/inline-style.ts"
+    },
+    "./react-props": {
+      "types": "./src/react-props.ts",
+      "default": "./src/react-props.ts"
+    },
+    "./selectors": {
+      "types": "./src/selectors.ts",
+      "default": "./src/selectors.ts"
     },
     "./accordion": {
       "types": "./src/accordion.ts",

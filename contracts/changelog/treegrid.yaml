@@ -68,7 +68,7 @@ entries:
         pinza UN valor contra un límite fijo vía CSS <code>clamp()</code>; una columna redistribuye
         ancho entre un PAR de vecinos cuya suma se mantiene fija, así que ninguna otra columna se
         mueve. Requiere <code>resizeLabel</code> (nueva opción, gate de a11y): el separador es
-        binding-insertado, nunca autorado, así que nada más lo nombra para un lector de pantalla.
+        binding-insertado, nunca escrito a mano, así que nada más lo nombra para un lector de pantalla.
     en:
       title: New resizableColumns option, drag-to-resize columns
       body: >-

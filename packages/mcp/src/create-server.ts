@@ -2,7 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
 import { validateUsageTree } from "@skryensya/ai-compiler/validate";
-import type { OptionInput, UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import type { OptionInput, UsageTree } from "@skryensya/core/usage-tree";
 import { recipes } from "@skryensya/recipes";
 import { snippets } from "@skryensya/snippets";
 import { catalogueIndex, manifest, provenance } from "./manifest.js";

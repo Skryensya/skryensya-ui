@@ -2,31 +2,19 @@
 // The preview clones the sheets from the page's <head>, so whatever the demo uses has to be imported
 // here: `.sk-truncate` belongs to the demo, not to the package.
 import "../../examples/tooltip.css";
+import "@skryensya/core/components/tooltip.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
+import "@skryensya/core/patterns/anchored.css";
+import "@skryensya/core/components/button.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { tooltipTree } from "../../demos/tooltip";
+import { tooltipAnatomyCss, tooltipAnatomyHtml, tooltipTree } from "../../demos/tooltip";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/tooltip.yaml?raw";
-import coreSource from "@core/src/tooltip.ts?raw";
-import cssSource from "@core/css/components/tooltip.css?raw";
-import vanillaMountSource from "@vanilla/src/components/tooltip.ts?raw";
-import vanillaCoordinatorSource from "@vanilla/src/components/Tooltip.svelte?raw";
-import reactSource from "@react/src/components/tooltip.tsx?raw";
-import reactTestSource from "@react/src/components/tooltip.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/tooltip.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/tooltip.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/tooltip.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/tooltip.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/Tooltip.svelte", source: vanillaCoordinatorSource, language: "svelte" },
-  { id: "packages/react/src/components/tooltip.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/tooltip.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -34,7 +22,6 @@ const sourceFiles = [
   description={t("tooltipPage.description")}
   contractId="tooltip"
   styleGroups={[{ file: "components/tooltip.css", probe: "sk-tooltip" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/tooltip.test.tsx",
@@ -47,6 +34,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("tooltipPage.lede")} />
+
+    <p set:html={t("tooltipPage.anatomyBody")} />
+    <ComponentPreview
+      html={tooltipAnatomyHtml(t)}
+      css={tooltipAnatomyCss}
+      label={t("tooltipPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
 
     {/* `menu`: the tooltip paints out of flow, and in a stage sized to the content it would have
         nowhere to go, so the real placement would never be visible. */}

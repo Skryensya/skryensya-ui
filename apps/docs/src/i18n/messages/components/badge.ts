@@ -2,11 +2,16 @@ export const badgeMessages = {
   es: {
     "demo.badge.settings": "Configuración",
     "demo.badge.unread": "Novedades sin leer",
+    "demo.badge.anatomyTag": "En revisión",
     "demo.badge.online": "En línea",
 
     "badge.description": "Badge: etiqueta estática con tonos semánticos, styling hooks y componente React.",
     "badge.lede":
       "Badge es una etiqueta visual estática para estados, categorías o metadatos cortos. No comunica selección, contador ni navegación por sí sola; esa semántica pertenece al contenido o al contenedor.",
+    "badge.anatomyBody":
+      "<code>sk-badge</code> es una sola clase con dos formas, así que el dibujo trae las dos: un dot pulsante en la esquina de su holder y una etiqueta con texto suelta en el flujo. La etiqueta señala a las dos, porque el nombre cubre a las dos; <code>sk-badge-holder</code> es singular y su única guía dice cuál de los dos espécimenes lo tiene. Están congelados; los tonos y el pulse vivos empiezan abajo.",
+    "badge.anatomyLabel": "Anatomía de Badge",
+    "badge.anatomyPreviewLabel": "Badge, parte por parte",
     "badge.tagTitle": "Etiqueta",
     "badge.tagBody":
       "La forma con texto: un estado, una categoría o un metadato corto. Cada tono lleva un borde de su propio color, así el neutral, cuyo fondo es el lienzo, no queda como un rectángulo invisible.",
@@ -33,11 +38,16 @@ export const badgeMessages = {
   en: {
     "demo.badge.settings": "Settings",
     "demo.badge.unread": "Unread news",
+    "demo.badge.anatomyTag": "In review",
     "demo.badge.online": "Online",
 
     "badge.description": "Badge: static tag with semantic tones, styling hooks and a React component.",
     "badge.lede":
       "Badge is a static visual label for statuses, categories or short metadata. It does not communicate selection, a counter or navigation on its own; that semantics belongs to the content or the container.",
+    "badge.anatomyBody":
+      "<code>sk-badge</code> is one class with two shapes, so the drawing carries both: a pulsing dot in its holder's corner, and a standalone tag with text in the flow. The label names both, because the name covers both; <code>sk-badge-holder</code> is singular, and its one leader says which of the two specimens has one. They are frozen; the live tones and pulse start below.",
+    "badge.anatomyLabel": "Badge anatomy",
+    "badge.anatomyPreviewLabel": "Badge, part by part",
     "badge.tagTitle": "Label",
     "badge.tagBody":
       "The shape with text: a status, a category or a short piece of metadata. Every tone carries a border in its own color, so neutral, whose background is the canvas: never reads as an invisible rectangle.",

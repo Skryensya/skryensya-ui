@@ -9,11 +9,6 @@ import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { drawerScript, drawerTree } from "../../demos/drawer";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/vaul.yaml?raw";
-import coreSource from "@core/src/vaul.ts?raw";
-import cssSource from "@core/css/components/drawer.css?raw";
-import vaulCssSource from "@core/css/patterns/vaul.css?raw";
-import vanillaMountSource from "@vanilla/src/components/vaul.ts?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -73,14 +68,6 @@ const drawer = document.getElementById("native-drawer");
 trigger?.addEventListener("click", () => {
   if (drawer instanceof HTMLDialogElement) drawer.showModal();
 });`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/vaul.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/vaul.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/drawer.css", source: cssSource, language: "css" },
-  { id: "packages/core/css/patterns/vaul.css", source: vaulCssSource, language: "css" },
-  { id: "packages/vanilla/src/components/vaul.ts", source: vanillaMountSource, language: "ts" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -88,7 +75,6 @@ const sourceFiles = [
   description={t("drawer.description")}
   badge={t("drawer.betaBadge")}
   contractId="vaul"
-  sourceFiles={sourceFiles}
   styleGroups={[
     { file: "components/drawer.css", probe: "sk-drawer", title: "Drawer" },
     { file: "patterns/vaul.css", probe: "sk-vaul", title: "Heredados de Vaul" },

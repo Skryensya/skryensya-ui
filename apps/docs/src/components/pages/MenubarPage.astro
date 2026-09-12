@@ -1,19 +1,14 @@
 ---
 import "@skryensya/core/components/menubar.css";
+import "@skryensya/core/components/menu.css";
 import "@skryensya/core/patterns/state-layer.css";
+/* Structure diagram: the Annotated specimen is drawn by Annotation's own sheet. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { menubarNavTree, menubarSubmenuTree, menubarTree } from "../../demos/menubar";
+import { menubarAnatomyCss, menubarAnatomyHtml, menubarNavTree, menubarSubmenuTree, menubarTree } from "../../demos/menubar";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/menubar.yaml?raw";
-import coreSource from "@core/src/menubar.ts?raw";
-import coreTestSource from "@core/src/menubar.test.ts?raw";
-import cssSource from "@core/css/components/menubar.css?raw";
-import vanillaMountSource from "@vanilla/src/components/menubar.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/menubar.svelte.test.ts?raw";
-import reactSource from "@react/src/components/menubar.tsx?raw";
-import reactTestSource from "@react/src/components/menubar.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -25,24 +20,12 @@ import { initComponents } from "@skryensya/vanilla/auto";
 
 mountIcons(document, lucideIcons);
 initComponents();`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/menubar.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/menubar.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/src/menubar.test.ts", source: coreTestSource, language: "ts" },
-  { id: "packages/core/css/components/menubar.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/menubar.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/menubar.svelte.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/menubar.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/menubar.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Menubar"
   description={t("menubarPage.description")}
   contractId="menubar"
-  sourceFiles={sourceFiles}
   styleGroups={[
     { file: "components/menubar.css", probe: "sk-menubar", title: "Menubar" },
     { file: "patterns/state-layer.css", probe: "sk-interactive", title: "Heredados de State layer" },
@@ -83,6 +66,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("menubarPage.lede")} />
+
+    <p set:html={t("menubarPage.anatomyBody")} />
+    <ComponentPreview
+      html={menubarAnatomyHtml(t)}
+      css={menubarAnatomyCss}
+      label={t("menubarPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={menubarTree(t)} js={js} label={t("menubarPage.label")} viewport="menu" />
 
     <h3>{t("component.contractNotesTitle")}</h3>

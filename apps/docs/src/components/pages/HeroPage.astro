@@ -17,9 +17,6 @@ import {
   heroVideoDemoTree,
 } from "../../demos/layout";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/hero.yaml?raw";
-import coreSource from "@core/src/hero.ts?raw";
-import cssSource from "@core/css/patterns/hero.css?raw";
 /* The sheet itself, not only its source: the Style hooks table resolves each hook
    against a real element, and a page that never loads `patterns/hero.css` would show every
    value blank. */
@@ -52,18 +49,8 @@ import "@skryensya/core/components/tabs.css";
 /* `patterns/icon.css`, for the audience-tabs pattern's own feature rows (a leading `Icon` beside
    each line). */
 import "@skryensya/core/patterns/icon.css";
-import reactSource from "@react/src/components/layout.tsx?raw";
-import reactTestSource from "@react/src/components/layout.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
-
-const sourceFiles = [
-  { id: "contracts/semantic/hero.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/hero.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/patterns/hero.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/layout.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/layout.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 
 /*
  * Thirteen real patterns, all valid against the same minimal contract: the same range an agent
@@ -74,7 +61,7 @@ const sourceFiles = [
  * `<h4>` title and one-line description right above its card: `Base.astro`'s own document indexer
  * walks `h3`/`h4` inside this "usage" panel (`lib/document-index.ts`'s `indexHeroTabPanel`, `depth
  * === 0` only, so these headings sit as direct siblings here, never nested in another wrapper) and
- * an `h4` is what surfaces as a NESTED row under "HTML autorado" in the page's own "En esta
+ * an `h4` is what surfaces as a NESTED row under "HTML escrito a mano" in the page's own "En esta
  * página" rail, one entry per pattern instead of the rail knowing only that section exists.
  *
  * A `search` and a `command-hint` pattern were tried and dropped: reported back as not earning
@@ -101,7 +88,6 @@ const heroQuoteTree = heroTestimonialTree(t);
   badge={t("hero.betaBadge")}
   contractId="hero"
   styleGroups={[{ file: "patterns/hero.css", probe: "sk-hero" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/layout.test.tsx",

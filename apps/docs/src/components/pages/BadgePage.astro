@@ -3,13 +3,17 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { badgeDotsTree, badgeHoldersTree, badgePulseTree, badgeSmallTree } from "../../demos/badge";
+import {
+  badgeAnatomyTree,
+  badgeDotsTree,
+  badgeHoldersTree,
+  badgePulseTree,
+  badgeSmallTree,
+} from "../../demos/badge";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/badge.yaml?raw";
-import coreSource from "@core/src/badge.ts?raw";
-import cssSource from "@core/css/components/badge.css?raw";
-import reactSource from "@react/src/components/badge.tsx?raw";
-import reactTestSource from "@react/src/components/badge.test.tsx?raw";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -31,21 +35,12 @@ const tree = {
     { contract: "badge", signature: "Badge", options: { tone: "danger" }, children: "Danger" },
   ],
 } as const satisfies UsageTree;
-
-const sourceFiles = [
-  { id: "contracts/semantic/badge.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/badge.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/badge.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/badge.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/badge.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Badge"
   description={t("badge.description")}
   contractId="badge"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/badge.css", probe: "sk-badge" }]}
   tests={[
     {
@@ -59,6 +54,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("badge.lede")} />
+
+    <p set:html={t("badge.anatomyBody")} />
+    <ComponentPreview
+      tree={badgeAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("badge.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("badge.tagTitle")}</h3>
     <p set:html={t("badge.tagBody")} />

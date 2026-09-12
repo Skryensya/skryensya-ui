@@ -10,11 +10,6 @@ import {
   fadeTopTree,
 } from "../../demos/fade-edge";
 import { getLocale, useTranslations } from "../../i18n";
-import semanticSource from "@contracts/semantic/fade-edge.yaml?raw";
-import changelogSource from "@contracts/changelog/fade-edge.yaml?raw";
-import coreSource from "@core/src/fade-edge.ts?raw";
-import reactSource from "@react/src/components/fade-edge.tsx?raw";
-import cssSource from "@core/css/components/fade-edge.css?raw";
 import "@skryensya/core/components/fade-edge.css";
 import "@skryensya/core/patterns/box.css";
 import "@skryensya/core/patterns/layout.css";
@@ -28,14 +23,6 @@ import "@skryensya/core/patterns/scrollbar.css";
 import "@skryensya/core/components/input.css";
 
 const t = useTranslations(getLocale(Astro.url));
-
-const sourceFiles = [
-  { id: "contracts/semantic/fade-edge.yaml", source: semanticSource, language: "yaml" },
-  { id: "contracts/changelog/fade-edge.yaml", source: changelogSource, language: "yaml" },
-  { id: "packages/core/src/fade-edge.ts", source: coreSource, language: "ts" },
-  { id: "packages/react/src/components/fade-edge.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/core/css/components/fade-edge.css", source: cssSource, language: "css" },
-] as const;
 
 /*
  * THE DEMOS THEMSELVES LIVE IN `demos/fade-edge.ts`, AS TREES.
@@ -80,7 +67,6 @@ sync();
   badge={t("fadeEdge.betaBadge")}
   contractId="fade-edge"
   styleGroups={[{ file: "components/fade-edge.css", probe: "sk-fade-edge" }]}
-  sourceFiles={sourceFiles}
 >
   <Fragment slot="usage">
     <p class="lede">FadeEdge desvanece un borde del contenido, en CSS puro. Dos formas de hacerlo: hacia transparencia, dejando ver lo que hay detrás, o hacia un color determinado, pintando un degradé encima. Úsalo para indicar que hay más contenido por descubrir, en vez de cortarlo de golpe con <code>overflow: hidden</code>.</p>

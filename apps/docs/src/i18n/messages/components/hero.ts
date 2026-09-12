@@ -87,7 +87,7 @@ export const heroMessages = {
       'Hero no impone anatomía: no hay slots con nombre para titular, bajada o acción. Compón adentro con <a href="/components/stack">Stack</a>, <a href="/components/typography">Heading/Text</a> y <a href="/components/button">Button</a>, igual que en cualquier otra sección de la página.',
     "hero.whenBody3":
       'Si sólo hace falta relleno, borde o superficie sin ser la apertura de la página, usa <a href="/components/box">Box</a>: comparten el mismo vocabulario de <code>padding</code>/<code>surface</code>, sólo cambian los valores por defecto.',
-    "hero.htmlTitle": "HTML autorado",
+    "hero.htmlTitle": "HTML escrito a mano",
     "hero.contractItem1": 'En HTML, usa un <code>&lt;div&gt;</code> (o el elemento semántico que corresponda) con la clase <code>sk-hero</code>.',
     "hero.contractItem2":
       '<code>data-surface</code> acepta <code>none</code>, <code>sunken</code>, <code>surface</code> (default) o <code>raised</code>.',

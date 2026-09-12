@@ -9,27 +9,15 @@ import {
   textInlineTree,
 } from "../../demos/typography";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/typography.yaml?raw";
-import coreSource from "@core/src/typography.ts?raw";
-import cssSource from "@core/css/components/typography.css?raw";
-import reactSource from "@react/src/components/typography.tsx?raw";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
-
-const sourceFiles = [
-  { id: "contracts/semantic/typography.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/typography.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/typography.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/typography.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Text"
   description={t("textPage.description")}
   contractId="typography"
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/typography.test.tsx",

@@ -26,6 +26,10 @@ export const dialogMessages = {
       "El dialog centrado de la plataforma. Opcional: Dialog Vaul cuando el contenido pide una superficie desde el borde en móvil.",
     "dialog.lede":
       'Un <code>&lt;dialog class="sk-dialog"&gt;</code> centrado. <code>showModal()</code> entrega foco, Escape, página inerte y backdrop; el sistema pinta la superficie. Sin enhancer: el único JavaScript es abrir.',
+    "dialog.anatomyBody":
+      "Este diagrama nombra header, body y footer del dialog abierto. El espécimen está congelado; el confirm vivo empieza abajo.",
+    "dialog.anatomyLabel": "Anatomía de Dialog",
+    "dialog.anatomyPreviewLabel": "Dialog, parte por parte",
     "dialog.confirmTitle": "Confirm",
     "dialog.confirmJsComment": "Opcional: leer qué botón cerró el form.",
     "dialog.confirmAnatomy":
@@ -51,7 +55,7 @@ export const dialogMessages = {
       "Cuando el contenido pide una superficie desde el borde en móvil, el mismo <code>&lt;dialog&gt;</code> puede optar en <strong>Dialog Vaul</strong>: añade slide, light-dismiss y drag-to-dismiss. La modalidad (foco, Escape, inert) sigue siendo de <code>showModal()</code>.",
     "dialog.vaulAddsTitle": "Qué añade",
     "dialog.vaulAddsItem1":
-      'Abre y cierra con triggers y closers autorados (<code>data-sk-dialog-vaul-open</code> / <code>-close</code>).',
+      'Abre y cierra con triggers y closers escritos a mano (<code>data-sk-dialog-vaul-open</code> / <code>-close</code>).',
     "dialog.vaulAddsItem2": "Por debajo de <code>52rem</code>, deja arrastrar el handle hacia <code>block-end</code>.",
     "dialog.vaulAddsItem3": "Light-dismiss al pulsar fuera del rectángulo del panel.",
     "dialog.vaulAddsItem4":
@@ -101,6 +105,10 @@ export const dialogMessages = {
       "The platform's centered dialog. Optional: Dialog Vaul when content asks for an edge-anchored surface on mobile.",
     "dialog.lede":
       'A centered <code>&lt;dialog class="sk-dialog"&gt;</code>. <code>showModal()</code> hands you focus, Escape, an inert page and a backdrop; the system paints the surface. No enhancer: the only JavaScript is opening it.',
+    "dialog.anatomyBody":
+      "This diagram names the dialog's header, body, and footer while open. The specimen is frozen; the live confirm starts below.",
+    "dialog.anatomyLabel": "Dialog anatomy",
+    "dialog.anatomyPreviewLabel": "Dialog, part by part",
     "dialog.confirmTitle": "Confirm",
     "dialog.confirmJsComment": "Optional: read which button closed the form.",
     "dialog.confirmAnatomy":

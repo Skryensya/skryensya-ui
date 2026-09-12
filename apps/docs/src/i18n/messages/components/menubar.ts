@@ -5,6 +5,10 @@ export const menubarMessages = {
       "Menubar: una barra horizontal persistente de comandos, algunos con desplegable.",
     "menubarPage.lede":
       'El patrón WAI-ARIA <code>menubar</code>: <code>menubar-editor</code>, el ejemplo que le da nombre. No es <a href="/components/menu">Menu</a> (un solo trigger, un solo popup): acá son VARIOS ítems en una sola fila de roving tabindex, donde flecha izquierda/derecha mueve entre ellos, y el detalle que una implementación ingenua se pierde: moverse a un ítem adyacente mientras un desplegable está abierto cierra el viejo y abre el nuevo, no solo mueve un resaltado.',
+    "menubarPage.anatomyBody":
+      "Este diagrama nombra la barra, el wrapper, el ítem abierto y el popup Menu que cuelga de él. El espécimen está congelado; las barras vivas empiezan abajo.",
+    "menubarPage.anatomyLabel": "Anatomía de Menubar",
+    "menubarPage.anatomyPreviewLabel": "Menubar abierto, parte por parte",
     "menubarPage.contractBody":
       'Sin máquina <code>@zag-js/*</code> propia: igual que <code>Treegrid</code>/<code>DataGrid</code>, escrito a mano y compartido por ambos bindings. Alcance de v1, de la BARRA misma: UN desplegable por ítem de nivel superior, y ni siquiera eso lo maneja <code>Menubar</code> a mano: moverse a un ítem vecino con el desplegable abierto cierra el viejo y abre el nuevo, todo vía la propia <code>api.setOpen()</code> de <code>Menu</code>. El CONTENIDO de un desplegable no tiene ese límite: es un <code>Menu</code> real, así que anida submenús tan profundo como <code>Menu</code> permite (ver «Desplegables con submenú» más abajo).',
     "menubarPage.label": "Barra de menú",
@@ -43,6 +47,10 @@ export const menubarMessages = {
       "Menubar: a persistent horizontal bar of commands, some opening a dropdown.",
     "menubarPage.lede":
       'The WAI-ARIA <code>menubar</code> pattern: <code>menubar-editor</code>, the example it is named after. Not <a href="/en/components/menu">Menu</a> (one trigger, one popup): here there are SEVERAL items in a single roving-tabindex row, where Left/Right moves between them, and the detail a naive implementation misses: moving to an adjacent item while a dropdown is open closes the old one and opens the new one too, not just moves a highlight.',
+    "menubarPage.anatomyBody":
+      "This diagram names the bar, the wrapper, the open item, and the Menu popup that hangs from it. The specimen is frozen; the live bars start below.",
+    "menubarPage.anatomyLabel": "Menubar anatomy",
+    "menubarPage.anatomyPreviewLabel": "An open Menubar, part by part",
     "menubarPage.contractBody":
       'No <code>@zag-js/*</code> machine of its own: same as <code>Treegrid</code>/<code>DataGrid</code>, hand-rolled and shared by both bindings. v1 scope, of the BAR itself: ONE dropdown per top-level item, and even that is not hand-managed: moving to a neighboring item while a dropdown is open closes the old one and opens the new one through <code>Menu</code>\'s own <code>api.setOpen()</code>. A dropdown\'s own CONTENT has no such limit: it is a real <code>Menu</code>, so it nests submenus exactly as deep as <code>Menu</code> allows (see "Dropdowns with a submenu" below).',
     "menubarPage.label": "Menu bar",

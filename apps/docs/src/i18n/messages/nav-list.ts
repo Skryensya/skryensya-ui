@@ -28,6 +28,10 @@ export const navListMessages = {
       "Nav list: el pattern para navegación principal o secundaria en sidebar, navbar y drawer.",
     "navListPage.lede":
       "Nav list es una lista de <strong>destinos</strong>, no de acciones: <code>&lt;nav&gt;</code>, grupos, links reales, página actual con <code>aria-current</code> y metadata opcional al final.",
+    "navListPage.anatomyBody":
+      "Este diagrama nombra el landmark, el grupo, la lista y cada parte del enlace. El espécimen está congelado; las navegaciones vivas empiezan abajo.",
+    "navListPage.anatomyLabel": "Anatomía de NavList",
+    "navListPage.anatomyPreviewLabel": "NavList, parte por parte",
     "navListPage.productTitle": "Como sidebar de producto",
     "navListPage.productBody":
       "El caso común no son dos links sueltos: son secciones de trabajo, conteos pendientes y rutas hijas que siguen perteneciendo al mismo destino. La lista no decide el ancho; lo decide el shell que la hospeda.",
@@ -50,7 +54,7 @@ export const navListMessages = {
     "navListPage.test6": "Un grupo anidado dentro de un enlace vive en el mismo <code>&lt;li&gt;</code>, independiente del grupo padre.",
     "navListPage.test7": "<code>defaultOpen={false}</code> arranca cerrado.",
     "navListPage.test8": "Al montar genera un id y cablea <code>aria-controls</code> a la lista.",
-    "navListPage.test9": "Respeta un id autorado en vez de generar uno segundo.",
+    "navListPage.test9": "Respeta un id escrito a mano en vez de generar uno segundo.",
     "navListPage.test10": "El clic alterna <code>aria-expanded</code> y el <code>hidden</code> de la lista.",
     "navListPage.test11": "Arranca oculto si se autora con <code>aria-expanded=\"false\"</code>.",
     "navListPage.test12": "Enter/Espacio lo alternan: comportamiento nativo del <code>&lt;button&gt;</code>, no algo que el enhancer cablee.",
@@ -87,6 +91,10 @@ export const navListMessages = {
       "Nav list: the pattern for main or secondary navigation in a sidebar, navbar, and drawer.",
     "navListPage.lede":
       "Nav list is a list of <strong>destinations</strong>, not actions: <code>&lt;nav&gt;</code>, groups, real links, the current page through <code>aria-current</code>, and optional trailing metadata.",
+    "navListPage.anatomyBody":
+      "This diagram names the landmark, the group, the list, and each part of the link. The specimen is frozen; the live navigations start below.",
+    "navListPage.anatomyLabel": "NavList anatomy",
+    "navListPage.anatomyPreviewLabel": "NavList, part by part",
     "navListPage.productTitle": "As product sidebar navigation",
     "navListPage.productBody":
       "The common case is not two loose links: it is work sections, pending counts, and child routes that still belong to one destination. The list does not decide width; its host shell does.",

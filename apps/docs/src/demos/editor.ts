@@ -1,8 +1,39 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
 
 const seedHTML =
   "<h2>Notas de lanzamiento</h2><p>Esta versión agrega <strong>negrita</strong>, <em>cursiva</em> y <u>subrayado</u>, además de listas:</p><ul><li><p>Encabezados H1–H3</p></li><li><p>Citas y bloques de código</p></li></ul><blockquote><p>Un editor real, no una maqueta.</p></blockquote>";
+
+/*
+ * Root, toolbar (Toolbar's own class), a format button, the content surface and the hidden input.
+ * The enhancer fills the bar on mount; inert keeps the specimen from editing.
+ */
+export const editorAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("editorPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "editor",
+      signature: "Editor",
+      options: {
+        name: "anatomy-content",
+        defaultValue: "<p>Un párrafo <strong>corto</strong> para nombrar las partes.</p>",
+        placeholder: t("demo.editor.placeholder"),
+        label: t("demo.editor.label"),
+      },
+      attrs: { style: "inline-size: min(100%, 22rem)" },
+    },
+    items: [
+      namePart(".sk-editor", "block-start"),
+      namePart(".sk-toolbar", "inline-start"),
+      namePart(".sk-editor__toolbar-button", "inline-end"),
+      namePart(".sk-editor__content", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-editor__hidden-input", "block-end"),
+    ],
+  },
+});
 
 export const editorTree = (t: Translate): UsageTree => ({
   contract: "editor",

@@ -2,40 +2,25 @@
 import "@skryensya/core/patterns/state-layer.css";
 import "@skryensya/core/components/button.css";
 import "@skryensya/core/components/number-field.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { numberFieldTree } from "../../demos/number-field";
+import { numberFieldAnatomyTree, numberFieldTree } from "../../demos/number-field";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/number-field.yaml?raw";
-import coreSource from "@core/src/number-field.ts?raw";
-import cssSource from "@core/css/components/number-field.css?raw";
-import vanillaMountSource from "@vanilla/src/components/number-field.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/number-field.test.ts?raw";
-import reactSource from "@react/src/components/number-field.tsx?raw";
-import reactTestSource from "@react/src/components/number-field.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 const styles = `@import "@skryensya/core/patterns/state-layer.css";
 @import "@skryensya/core/components/button.css";
 @import "@skryensya/core/components/number-field.css";`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/number-field.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/number-field.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/number-field.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/number-field.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/number-field.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/number-field.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/number-field.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="NumberField"
   description={t("numberFieldPage.description")}
   contractId="number-field"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/number-field.css", probe: "sk-number-field", title: "NumberField" }]}
   tests={[
     {
@@ -124,6 +109,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("numberFieldPage.description")} />
+
+    <p set:html={t("numberFieldPage.anatomyBody")} />
+    <ComponentPreview
+      tree={numberFieldAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("numberFieldPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={numberFieldTree(t)} label="NumberField" viewport="auto" />
 
     <h3>{t("component.contractNotesTitle")}</h3>

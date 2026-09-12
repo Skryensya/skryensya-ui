@@ -1,16 +1,13 @@
 ---
+import "@skryensya/core/patterns/nav-list.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { navListCollapsibleTree, navListHorizontalTree, navListProductTree } from "../../demos/nav-list";
+import { navListAnatomyTree, navListCollapsibleTree, navListHorizontalTree, navListProductTree } from "../../demos/nav-list";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/nav-list.yaml?raw";
-import coreSource from "@core/src/nav-list.ts?raw";
-import cssSource from "@core/css/patterns/nav-list.css?raw";
-import vanillaSource from "@vanilla/src/components/nav-list.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/nav-list.test.ts?raw";
-import reactSource from "@react/src/components/nav-list.tsx?raw";
-import reactTestSource from "@react/src/components/nav-list.test.tsx?raw";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
@@ -21,16 +18,6 @@ const tokenHref = isEnglish ? "/en/reference" : "/reference";
 const startHref = isEnglish ? "/en/installation" : "/installation";
 
 const styles = `@import "@skryensya/core/patterns/nav-list.css";`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/nav-list.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/nav-list.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/patterns/nav-list.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/nav-list.ts", source: vanillaSource, language: "ts" },
-  { id: "packages/vanilla/src/components/nav-list.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/nav-list.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/nav-list.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -38,7 +25,6 @@ const sourceFiles = [
   description={t("navListPage.description")}
   contractId="nav-list"
   styleGroups={[{ file: "patterns/nav-list.css", probe: "sk-nav-list", title: "Nav list" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/nav-list.test.tsx",
@@ -111,6 +97,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("navListPage.lede")} />
+
+    <p set:html={t("navListPage.anatomyBody")} />
+    <ComponentPreview
+      tree={navListAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("navListPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("navListPage.productTitle")}</h3>
     <p set:html={t("navListPage.productBody")} />

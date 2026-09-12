@@ -1,27 +1,17 @@
 ---
 import "@skryensya/core/components/stat.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { statAnimatedTree, statCardsTree } from "../../demos/stat";
+import { statAnatomyTree, statAnimatedTree, statCardsTree } from "../../demos/stat";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/stat.yaml?raw";
-import coreSource from "@core/src/stat.ts?raw";
-import cssSource from "@core/css/components/stat.css?raw";
-import vanillaMountSource from "@vanilla/src/components/stat.ts?raw";
-import reactSource from "@react/src/components/stat.tsx?raw";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 const install = `pnpm add @skryensya/core @skryensya/react`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/stat.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/stat.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/stat.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/stat.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/react/src/components/stat.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -29,7 +19,6 @@ const sourceFiles = [
   description={t("statPage.description")}
   contractId="stat"
   styleGroups={[{ file: "components/stat.css", probe: "sk-stat" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/stat.test.tsx",
@@ -43,6 +32,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("statPage.lede")} />
+
+    <p set:html={t("statPage.anatomyBody")} />
+    <ComponentPreview
+      tree={statAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("statPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("statPage.cardTitle")}</h3>
     <p set:html={t("statPage.cardBody")} />

@@ -1,14 +1,13 @@
 ---
+import "@skryensya/core/components/toc.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { tocIconsTree, tocNestedTree, tocPlainTree } from "../../demos/toc";
+import { tocAnatomyTree, tocIconsTree, tocNestedTree, tocPlainTree } from "../../demos/toc";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/toc.yaml?raw";
-import coreSource from "@core/src/toc.ts?raw";
-import cssSource from "@core/css/components/toc.css?raw";
-import vanillaMountSource from "@vanilla/src/components/toc.ts?raw";
-import reactSource from "@react/src/components/toc.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -46,21 +45,12 @@ const items = headings.map((h) => ({ href: \`#\${h.id}\`, label: h.label, level:
   <Fragment set:html={html} />
 </main>
 <Toc items={items} />`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/toc.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/toc.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/toc.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/toc.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/react/src/components/toc.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Toc"
   description={t("tocPage.description")}
   contractId="toc"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/toc.css", probe: "sk-toc" }]}
   tests={[
     {
@@ -79,6 +69,16 @@ const sourceFiles = [
   <Fragment slot="usage">
     <p class="lede" set:html={t("tocPage.lede")} />
 
+    <p set:html={t("tocPage.anatomyBody")} />
+    <ComponentPreview
+      tree={tocAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("tocPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     {
       /*
        * `minHeight` HERE IS ABOUT CLS, not about a cramped specimen. A stage reserves
@@ -94,9 +94,9 @@ const sourceFiles = [
        * the frame's bottom edge.
        */
     }
-    <h3 id="anatomia">{t("tocPage.anatomyTitle")}</h3>
-    <p set:html={t("tocPage.anatomyBody")} />
-    <ComponentPreview tree={tocPlainTree(t)} label={t("tocPage.anatomyLabel")} flush minHeight="12rem" />
+    <h3 id="texto">{t("tocPage.plainTitle")}</h3>
+    <p set:html={t("tocPage.plainBody")} />
+    <ComponentPreview tree={tocPlainTree(t)} label={t("tocPage.plainLabel")} flush minHeight="12rem" />
 
     <h3 id="niveles">{t("tocPage.levelsTitle")}</h3>
     <p set:html={t("tocPage.levelsBody")} />

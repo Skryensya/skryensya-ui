@@ -94,24 +94,46 @@
     --sk-annotation-bubble-shadow: var(--elevation-raised);
     --sk-annotation-bubble-wash: var(--elevation-wash-raised);
 
+    /*
+     * A HAIRLINE, and the ring below matches it. The apparatus is the quietest thing on a diagram
+     * that is about the specimen, and weight is what the eye reads first: at 2px the ring was a
+     * drawn border, thick enough to look like part of the component rather than a mark laid over it,
+     * and seven of them read as a cage. One device pixel is enough to say "this one" and little
+     * enough to disappear the moment the reader stops looking for it.
+     */
     --sk-annotation-leader-width: 1px;
     /*
-     * THE RING AND ITS LEADER ARE ONE MARK. Keeping their rest colour and fade on the same hooks
-     * ensures the line reaches the named part without becoming more prominent than its outline.
-     * Its radius and its position stay the binding's, written as `r`/`cx`/`cy` per instance, because
-     * the leader has to stop short of the ring and stopping short is a length: the geometry needs
-     * that number, and one circle cannot have two owners. See `@skryensya/core/annotation`'s own
-     * comment on `ANNOTATION_RING_RADIUS`.
+     * THE RING AND ITS LEADER ARE ONE MARK. Keeping their rest colour on one hook ensures the line
+     * reaches the named part without becoming more prominent than its outline.
+     * Its rectangle and its corner stay the binding's, written per instance, because the leader has
+     * to stop at the ring's edge and stopping there is a length: the geometry needs those numbers,
+     * and one shape cannot have two owners. That corner now comes from the part being wrapped rather
+     * than from a constant; see `@skryensya/core/annotation`'s own comment on
+     * `ANNOTATION_RING_RADIUS`.
      */
     /*
      * THE MARK AT REST: present but barely, so the drawing says up front that every name has a part
      * outlined somewhere without turning seven outlines and leaders into a cage over the specimen.
+     *
+     * TRANSLUCENT, and mixed with `transparent` rather than with a ground colour. Pre-mixing into
+     * `--color-bg-surface` was tried, on the argument that two marks crossing then cannot composite
+     * into a third, darker mark. It buys that and pays twice for it: the grey is only correct on the
+     * one ground it assumed (a diagram on a sunken panel or a tinted card wears a stroke that is
+     * subtly the wrong colour, and nothing in the markup says why), and an opaque hairline sits ON
+     * the specimen instead of over it, which is the register a diagram is supposed to avoid. At one
+     * device pixel the overlap it was protecting against is barely a reading: two hairlines crossing
+     * at this alpha are a slightly darker dot, not a mark anyone mistakes for a mark.
+     *
+     * So: alpha in the colour, still one hook, still one value to retune. NOT an `opacity` on the
+     * element, which was the earlier arrangement and made the fade a second thing to keep in step
+     * with this one.
      */
-    --sk-annotation-ring-color-rest: var(--color-border-default);
-    --sk-annotation-ring-opacity-rest: 0.18;
+    --sk-annotation-ring-color-rest: color-mix(in oklab, var(--color-border-default) 45%, transparent);
     /* And what the one being read turns into. */
     --sk-annotation-ring-color: var(--color-border-accent);
-    --sk-annotation-ring-width: 2px;
+    /* Same hairline as the leader: the ring and the line into it are one mark, so they are one
+       weight. */
+    --sk-annotation-ring-width: 1px;
 
     /*
      * `relative` is STRUCTURE: the leader overlay is `position: absolute` and this is the containing
@@ -326,20 +348,15 @@
     fill: none;
     stroke: var(--sk-annotation-ring-color-rest);
     stroke-width: var(--sk-annotation-leader-width);
-    /* `opacity` and not a pre-mixed colour, so the leader always matches the ring's fade. */
-    opacity: var(--sk-annotation-ring-opacity-rest);
     /* `round` on both, so a 45-degree knee is a corner and not a notch at hairline widths. */
     stroke-linecap: round;
     stroke-linejoin: round;
-    transition:
-      opacity var(--motion-state-change-duration) var(--motion-state-change-easing),
-      stroke var(--motion-state-change-duration) var(--motion-state-change-easing);
+    transition: stroke var(--motion-state-change-duration) var(--motion-state-change-easing);
   }
 
-  /* The leader belongs to the mark being read, so it takes the accent and full opacity with the ring. */
+  /* The leader belongs to the mark being read, so it takes the accent with the ring. */
   .sk-annotated__mark[data-sk-active] .sk-annotated__leader {
     stroke: var(--sk-annotation-ring-color);
-    opacity: 1;
   }
 
   /*
@@ -352,24 +369,25 @@
    * two shapes this replaced and what went wrong with each, and why it is drawn inside rather than
    * outside.
    *
-   * FAINT AT REST, ACCENT ON REQUEST: see the accent note on the root for why it is drawn at all
-   * when nothing is being read, and why it is barely drawn.
+   * QUIET AT REST, ACCENT ON REQUEST: see the accent note on the root for why it is drawn at all
+   * when nothing is being read, why it is a hairline, and why the fade lives in the colour rather
+   * than in an `opacity` of its own.
+   *
+   * ITS CORNER FOLLOWS THE PART IT WRAPS by default, read off that element's own `border-radius`
+   * (see `annotationElementRadius`). A shared constant is what this did, and it drew square marks
+   * around pill-shaped chips and round-cornered cards alike; a ring that is a different shape from
+   * the thing inside it stops reading as that thing's outline and starts reading as a box laid over
+   * it. `ringRadius` still overrides, on the frame or on the one label that needs it.
    */
   .sk-annotated__ring {
     fill: none;
     stroke: var(--sk-annotation-ring-color-rest);
     stroke-width: var(--sk-annotation-ring-width);
-    /* `opacity` and not a pre-mixed colour, so a consumer retuning `--sk-annotation-ring-color-rest`
-       gets the fade for free instead of having to compute a second value to match. */
-    opacity: var(--sk-annotation-ring-opacity-rest);
-    transition:
-      opacity var(--motion-state-change-duration) var(--motion-state-change-easing),
-      stroke var(--motion-state-change-duration) var(--motion-state-change-easing);
+    transition: stroke var(--motion-state-change-duration) var(--motion-state-change-easing);
   }
 
   .sk-annotated__mark[data-sk-active] .sk-annotated__ring {
     stroke: var(--sk-annotation-ring-color);
-    opacity: 1;
   }
 
   /*

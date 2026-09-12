@@ -7,6 +7,10 @@ export const editorMessages = {
     "editorPage.betaBadge": "Beta",
     "editorPage.lede":
       "Un <code>&lt;textarea&gt;</code> con barra de herramientas arriba, pero de verdad: negrita, cursiva, subrayado, enlaces, títulos, listas, citas y bloques de código, con deshacer y rehacer. Cada cambio entrega el contenido en tres formatos a la vez.",
+    "editorPage.anatomyBody":
+      "Este diagrama nombra la raíz, la barra, un botón de formato, la superficie y el input oculto. El espécimen está congelado; el editor vivo empieza abajo.",
+    "editorPage.anatomyLabel": "Anatomía de Editor",
+    "editorPage.anatomyPreviewLabel": "Editor, parte por parte",
     "editorPage.formatsTitle": "Formatos de salida",
     "editorPage.formatsBody":
       "Cada cambio entrega <code>html</code> (vía <code>DOMSerializer</code>), <code>markdown</code> (vía <code>prosemirror-markdown</code>) y <code>doc</code>, el nodo de ProseMirror sin serializar, los tres a la vez. El subrayado no tiene sintaxis nativa en CommonMark: se exporta como <code>&lt;u&gt;</code> HTML embebido - una salida válida, pero una entrada con pérdida, ya que el editor nunca vuelve a leer su propio Markdown en uso normal.",
@@ -33,6 +37,10 @@ export const editorMessages = {
     "editorPage.betaBadge": "Beta",
     "editorPage.lede":
       "A <code>&lt;textarea&gt;</code> with a toolbar on top, for real: bold, italic, underline, links, headings, lists, blockquotes and code blocks, with undo/redo. Every change reports the content in three formats at once.",
+    "editorPage.anatomyBody":
+      "This diagram names the root, the bar, a format button, the content surface, and the hidden input. The specimen is frozen; the live editor starts below.",
+    "editorPage.anatomyLabel": "Editor anatomy",
+    "editorPage.anatomyPreviewLabel": "Editor, part by part",
     "editorPage.formatsTitle": "Output formats",
     "editorPage.formatsBody":
       "Every change reports <code>html</code> (via <code>DOMSerializer</code>), <code>markdown</code> (via <code>prosemirror-markdown</code>) and <code>doc</code>, the raw ProseMirror node, all three at once. Underline has no native CommonMark syntax: it serializes as raw embedded <code>&lt;u&gt;</code> HTML - a valid output, but a lossy input, since the editor never re-reads its own Markdown in normal use.",

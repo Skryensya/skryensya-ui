@@ -1,7 +1,51 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
 
 /* The anatomy ladder. Each demo adds one slot to the row before it. */
+
+/*
+ * ONE complete row, every part supplied: leading, title, description, trailing. The ladder below
+ * builds the same shape step by step; this drawing names the finished row at once.
+ */
+export const listAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("listPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "list",
+      signature: "List",
+      attrs: { "aria-label": t("demo.list.preferences") },
+      children: [
+        {
+          contract: "list",
+          signature: "ListItem",
+          slots: {
+            leading: { contract: "icon", signature: "Icon", options: { name: "info" } },
+            title: t("demo.list.notifications.title"),
+            description: t("demo.list.notifications.description"),
+            trailing: {
+              contract: "badge",
+              signature: "Badge",
+              options: { tone: "success" },
+              children: t("demo.list.active"),
+            },
+          },
+        },
+      ],
+    },
+    items: [
+      namePart(".sk-list", "block-start"),
+      namePart(".sk-list__item", "inline-start"),
+      namePart(".sk-list__leading", "inline-start"),
+      namePart(".sk-list__content", "inline-end", { ringPlacement: "offset", ringDistance: 6 }),
+      namePart(".sk-list__title", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-list__description", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-list__trailing", "block-end"),
+    ],
+  },
+});
 
 /** The rows the middle of the ladder repeats, so a step differs from the last one by one field. */
 const preferences = () =>

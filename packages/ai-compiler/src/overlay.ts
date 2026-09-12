@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse } from "yaml";
-import { contractIds, getContract } from "./registry.js";
+import { contractIds, getContract } from "@skryensya/core/registry";
 
 /*
  * The half of the truth a machine cannot infer: when to reach for a signature, when not to, and what to

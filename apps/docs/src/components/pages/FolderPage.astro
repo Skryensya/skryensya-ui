@@ -1,5 +1,7 @@
 ---
 import "@skryensya/core/components/folder.css";
+/* The anatomy diagram at the top of the page is an Annotated frame, so this page needs its sheet. */
+import "@skryensya/core/components/annotation.css";
 /* Not Folder's own sheet: every demo below stands the folders on a `Box`, because a folder at rest
  * is invisible by being its GROUND's colour and needs one to disappear against. Without this the
  * React stage renders that Box unpainted, the binding finds nothing painted to match, and the
@@ -10,13 +12,16 @@ import "@skryensya/core/patterns/image-frame.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { folderActiveTree, folderPlainTree, folderRaisedTree, folderSunkenTree, folderTree } from "../../demos/folder";
+import {
+  folderActiveTree,
+  folderAnatomyTree,
+  folderPlainTree,
+  folderRaisedTree,
+  folderSunkenTree,
+  folderTree,
+} from "../../demos/folder";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/folder.yaml?raw";
-import coreSource from "@core/src/folder.ts?raw";
-import cssSource from "@core/css/components/folder.css?raw";
-import vanillaSource from "@vanilla/src/components/folder.ts?raw";
-import reactSource from "@react/src/components/folder.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -28,21 +33,12 @@ const styles = `@import "@skryensya/core/components/folder.css";
 const js = `import { mountFolder } from "@skryensya/vanilla/folder";
 
 mountFolder();`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/folder.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/folder.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/folder.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/folder.ts", source: vanillaSource, language: "ts" },
-  { id: "packages/react/src/components/folder.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Folder"
   description={t("folderPage.description")}
   contractId="folder"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/folder.css", probe: "sk-folder", title: "Folder" }]}
   tests={[
     {
@@ -183,6 +179,18 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("folderPage.lede")} />
+
+    <p set:html={t("folderPage.anatomyBody")} />
+    <ComponentPreview
+      tree={folderAnatomyTree(t)}
+      css={annotationDemoCss}
+      js={js}
+      label={t("folderPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={folderTree(t)} js={js} label="FolderStack" viewport="auto" />
 
     <h3>{t("folderPage.revealTitle")}</h3>

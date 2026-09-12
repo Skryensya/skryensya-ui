@@ -5,6 +5,10 @@ export const gridMessages = {
 
     "grid.description": "Grid: columnas iguales con gap nombrado y semántica elegida por quien lo usa.",
     "grid.betaBadge": "Beta",
+    "grid.anatomyBody":
+      "<code>data-columns</code> es una cuenta, así que el dibujo es contable: tres celdas en <code>columns=\"3\"</code> ponen un anillo en cada columna, y las dos franjas entre ellos son el mismo <code>data-gap</code> que Stack dibuja en horizontal.",
+    "grid.anatomyLabel": "Anatomía de Grid",
+    "grid.anatomyPreviewLabel": "Grid, parte por parte",
     "grid.lede":
       "Una grilla de columnas iguales para grupos de contenido. Cada columna usa <code>minmax(0, 1fr)</code>: evita que el tamaño mínimo intrínseco ensanche las columnas.",
     "grid.multicolTitle": "CSS Multi-column Layout",
@@ -15,7 +19,7 @@ export const gridMessages = {
     "grid.multicolLabel": "Multi-column layout",
     "grid.multicolBody3":
       "Las columnas llenan un carril de arriba hacia abajo antes de pasar al siguiente. Conserva un orden útil en el DOM y úsalo para tarjetas independientes; no para una secuencia cuyo orden visual de izquierda a derecha tenga significado.",
-    "grid.htmlTitle": "HTML autorado",
+    "grid.htmlTitle": "HTML escrito a mano",
     "grid.htmlBody": "Elige el elemento semántico, como <code>section</code>, y aplica <code>sk-grid</code>. No requiere inicialización vanilla.",
     "grid.reactBody": "La prop <code>as</code> conserva esa elección semántica.",
     "grid.contractItem1":
@@ -43,6 +47,10 @@ export const gridMessages = {
 
     "grid.description": "Grid: equal columns with a named gap and semantics chosen by whoever uses it.",
     "grid.betaBadge": "Beta",
+    "grid.anatomyBody":
+      "<code>data-columns</code> is a count, so the drawing is countable: three cells at <code>columns=\"3\"</code> put one ring in each column, and the two bands between them are the same <code>data-gap</code> Stack draws horizontally.",
+    "grid.anatomyLabel": "Grid anatomy",
+    "grid.anatomyPreviewLabel": "Grid, part by part",
     "grid.lede":
       "An equal-column grid for groups of content. Every column uses <code>minmax(0, 1fr)</code>: it keeps the intrinsic minimum size from widening the columns.",
     "grid.multicolTitle": "CSS Multi-column Layout",

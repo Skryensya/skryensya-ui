@@ -1,5 +1,8 @@
 ---
 import "@skryensya/core/components/breadcrumb.css";
+/* The anatomy diagram at the top of the page is an Annotated frame, so this page needs its sheet
+   the same way Accordion's and Button's do. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
@@ -10,29 +13,16 @@ import {
   breadcrumbMultiTree,
   breadcrumbTwoTree,
 } from "../../demos/breadcrumb";
+/* THE SAME TREE the Annotation page draws, not a copy of it: that page uses this drawing to teach
+   `match: "all"`, and this one uses it as Breadcrumb's anatomy. One diagram, so the two cannot
+   drift into disagreeing about what a crumb is called. */
+import { annotationPluralCss, annotationPluralTree } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/breadcrumb.yaml?raw";
-import coreSource from "@core/src/breadcrumb.ts?raw";
-import cssSource from "@core/css/components/breadcrumb.css?raw";
-import reactSource from "@react/src/components/breadcrumb.tsx?raw";
-import reactTestSource from "@react/src/components/breadcrumb.test.tsx?raw";
-import vanillaMountSource from "@vanilla/src/components/breadcrumb.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/breadcrumb.test.ts?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const styles = `@import "@skryensya/core/components/breadcrumb.css";`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/breadcrumb.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/breadcrumb.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/breadcrumb.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/breadcrumb.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/breadcrumb.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/breadcrumb.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/breadcrumb.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -40,7 +30,6 @@ const sourceFiles = [
   description={t("breadcrumb.description")}
   badge={t("breadcrumb.betaBadge")}
   contractId="breadcrumb"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/breadcrumb.css", probe: "sk-breadcrumb", title: "Breadcrumb" }]}
   tests={[
     {
@@ -84,6 +73,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("breadcrumb.description")} />
+
+    <p set:html={t("breadcrumb.anatomyBody")} />
+    <ComponentPreview
+      tree={annotationPluralTree(t)}
+      css={annotationPluralCss}
+      label={t("annotation.pluralLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("breadcrumb.examplesTitle")}</h3>
 

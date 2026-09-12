@@ -1,35 +1,24 @@
 ---
+/* The anatomy diagram at the top of the page is an Annotated frame, so this page needs its sheet. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { fileUploadTree } from "../../demos/file-upload";
+import {
+  fileUploadAnatomyCss,
+  fileUploadAnatomyHtml,
+  fileUploadTree,
+} from "../../demos/file-upload";
 import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/file-upload.css";
-import contractSource from "@contracts/semantic/file-upload.yaml?raw";
-import coreSource from "@core/src/file-upload.ts?raw";
-import cssSource from "@core/css/components/file-upload.css?raw";
-import vanillaMountSource from "@vanilla/src/components/file-upload.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/file-upload.test.ts?raw";
-import reactSource from "@react/src/components/file-upload.tsx?raw";
-import reactTestSource from "@react/src/components/file-upload.test.tsx?raw";
+import "@skryensya/core/components/button.css";
 
 const t = useTranslations(getLocale(Astro.url));
-
-const sourceFiles = [
-  { id: "contracts/semantic/file-upload.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/file-upload.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/file-upload.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/file-upload.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/file-upload.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/file-upload.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/file-upload.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="FileUpload"
   description={t("fileUploadPage.description")}
   contractId="file-upload"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/file-upload.css", probe: "sk-file-upload", title: "FileUpload" }]}
   tests={[
     {
@@ -86,6 +75,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("fileUploadPage.description")} />
+
+    <p set:html={t("fileUploadPage.anatomyBody")} />
+    <ComponentPreview
+      html={fileUploadAnatomyHtml(t)}
+      css={fileUploadAnatomyCss}
+      label={t("fileUploadPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={fileUploadTree(t)} label="FileUpload" viewport="auto" />
 
     <h3>{t("component.contractNotesTitle")}</h3>

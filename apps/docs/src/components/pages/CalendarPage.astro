@@ -1,32 +1,18 @@
 ---
 import "@skryensya/core/components/calendar.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { calendarMinMaxTree, calendarRangeTree, calendarTree } from "../../demos/calendar";
+import { calendarAnatomyTree, calendarMonthAnatomyHtml, calendarYearAnatomyHtml, calendarMinMaxTree, calendarRangeTree, calendarTree } from "../../demos/calendar";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/calendar.yaml?raw";
-import coreSource from "@core/src/calendar.ts?raw";
-import cssSource from "@core/css/components/calendar.css?raw";
-import vanillaMountSource from "@vanilla/src/components/calendar.ts?raw";
-import vanillaCoordinatorSource from "@vanilla/src/components/Calendar.svelte?raw";
-import vanillaViewSource from "@vanilla/src/components/CalendarView.svelte?raw";
-import reactSource from "@react/src/components/calendar.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 const styles = `@import "@skryensya/core/components/calendar.css";`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/calendar.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/calendar.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/calendar.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/calendar.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/Calendar.svelte", source: vanillaCoordinatorSource, language: "svelte" },
-  { id: "packages/vanilla/src/components/CalendarView.svelte", source: vanillaViewSource, language: "svelte" },
-  { id: "packages/react/src/components/calendar.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -34,7 +20,6 @@ const sourceFiles = [
   description={t("calendar.description")}
   badge={t("calendar.betaBadge")}
   contractId="calendar"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/calendar.css", probe: "sk-calendar", title: "Calendar" }]}
   tests={[
     {
@@ -56,6 +41,36 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("calendar.lede")} />
+
+    <p set:html={t("calendar.anatomyBody")} />
+    <ComponentPreview
+      tree={calendarAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("calendar.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
+    <p set:html={t("calendar.anatomyMonthBody")} />
+    <ComponentPreview
+      html={calendarMonthAnatomyHtml(t)}
+      css={annotationDemoCss}
+      label={t("calendar.anatomyMonthPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
+    <p set:html={t("calendar.anatomyYearBody")} />
+    <ComponentPreview
+      html={calendarYearAnatomyHtml(t)}
+      css={annotationDemoCss}
+      label={t("calendar.anatomyYearPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("calendar.gridTitle")}</h3>
     <p set:html={t("calendar.gridBody")} />

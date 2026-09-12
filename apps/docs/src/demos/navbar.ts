@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
 
 /*
  * The bar holds a brand, a horizontal nav-list guest, and two actions. "Atlas" stays written: it
@@ -76,3 +77,24 @@ export const navbarTree = (
     },
   ],
 });
+
+
+/** Brand, nav guest and actions: the three regions a Navbar always composes. */
+export const navbarAnatomyTree = (
+  t: Translate,
+  hrefs: { home: string; projects: string; reports: string; team: string },
+): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("navbarPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: navbarTree(t, hrefs),
+    items: [
+      namePart(".sk-navbar", "block-start"),
+      namePart(".sk-navbar__brand", "inline-start"),
+      namePart(".sk-nav-list", "block-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-navbar__actions", "inline-end"),
+    ],
+  },
+});
+

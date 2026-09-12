@@ -1,30 +1,22 @@
 ---
+/* The anatomy diagram at the top of the page is an Annotated frame, so this page needs its sheet the
+   same way Accordion's, Button's and Breadcrumb's do. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  calloutAnatomyTree,
   calloutInfoTree,
   calloutNeutralTree,
   calloutSuccessTree,
   calloutWarningTree,
 } from "../../demos/callout";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/callout.yaml?raw";
-import coreSource from "@core/src/callout.ts?raw";
-import cssSource from "@core/css/components/callout.css?raw";
-import reactSource from "@react/src/components/callout.tsx?raw";
-import reactTestSource from "@react/src/components/callout.test.tsx?raw";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
-
-const sourceFiles = [
-  { id: "contracts/semantic/callout.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/callout.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/callout.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/callout.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/callout.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -33,7 +25,6 @@ const sourceFiles = [
   badge={t("callout.betaBadge")}
   contractId="callout"
   styleGroups={[{ file: "components/callout.css", probe: "sk-callout" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/callout.test.tsx",
@@ -48,6 +39,16 @@ const sourceFiles = [
   <Fragment slot="usage">
     <p class="lede" set:html={t("callout.lede1")} />
     <p class="lede" set:html={t("callout.lede2")} />
+
+    <p set:html={t("callout.anatomyBody")} />
+    <ComponentPreview
+      tree={calloutAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("callout.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("callout.tonesTitle")}</h3>
     <p set:html={t("callout.tonesBody1")} />

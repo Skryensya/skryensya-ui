@@ -2,10 +2,15 @@
 /* Without this the preview frame copies zero `.sk-list*` rules (a preview frame only ever inherits
    the stylesheets ITS OWN page loaded), so every demo below fell back to a bare, bulleted `<ul>`. */
 import "@skryensya/core/components/list.css";
+/* Trailing Badge in the anatomy specimen (and step 4 / full demos) needs its own sheet. */
+import "@skryensya/core/components/badge.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  listAnatomyTree,
   listFullTree,
   listLeadingTree,
   listLinksTree,
@@ -13,12 +18,8 @@ import {
   listTrailingTree,
   listPlainTree,
 } from "../../demos/list";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/list.yaml?raw";
-import coreSource from "@core/src/list.ts?raw";
-import cssSource from "@core/css/components/list.css?raw";
-import reactSource from "@react/src/components/list.tsx?raw";
-import reactTestSource from "@react/src/components/list.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 /* Both link demos point at real docs routes, and a docs route differs per locale. */
@@ -27,21 +28,12 @@ const TEAM_HREFS = ["/equipo/john-doe", "/equipo/jane-doe", "/equipo/richard-roe
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 const styles = `@import "@skryensya/core/components/list.css";`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/list.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/list.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/list.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/list.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/list.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="List"
   description={t("listPage.description")}
   contractId="list"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/list.css", probe: "sk-list" }]}
   tests={[
     {
@@ -55,6 +47,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("listPage.lede")} />
+
+    <p set:html={t("listPage.anatomyBody")} />
+    <ComponentPreview
+      tree={listAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("listPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("listPage.stepsTitle")}</h3>
     <p set:html={t("listPage.stepsBody")} />

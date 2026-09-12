@@ -19,6 +19,10 @@ export const processListMessages = {
     "processListPage.description": "ProcessList: secuencia ordenada de instrucciones con marcadores conectados y contenido arbitrario.",
     "processListPage.lede":
       "Una secuencia estática de instrucciones donde el contenido es lo principal. Usa un <code>&lt;ol&gt;</code> real, numera cada <code>&lt;li&gt;</code> y conecta visualmente los pasos sin convertirlos en estados de progreso.",
+    "processListPage.anatomyBody":
+      "Este diagrama nombra la lista, el paso, el contenido y el título. El espécimen está congelado; los ProcessList vivos empiezan abajo.",
+    "processListPage.anatomyLabel": "Anatomía de ProcessList",
+    "processListPage.anatomyPreviewLabel": "ProcessList, parte por parte",
     "processListPage.whenTitle": "Cuándo usarlo",
     "processListPage.whenItem1": "Usa ProcessList para recetas, instalaciones y procedimientos cuyo orden importa.",
     "processListPage.whenItem2": 'Usa <a href="/components/list">List</a> para colecciones de filas estáticas o interactivas.',
@@ -53,6 +57,10 @@ export const processListMessages = {
     "processListPage.description": "ProcessList: an ordered instruction sequence with connected markers and arbitrary content.",
     "processListPage.lede":
       "A static instruction sequence where the content is what matters. It uses a real <code>&lt;ol&gt;</code>, numbers each <code>&lt;li&gt;</code>, and visually connects the steps without turning them into progress states.",
+    "processListPage.anatomyBody":
+      "This diagram names the list, the step, the content and the title. The specimen is frozen; the live ProcessLists begin below.",
+    "processListPage.anatomyLabel": "ProcessList anatomy",
+    "processListPage.anatomyPreviewLabel": "ProcessList, part by part",
     "processListPage.whenTitle": "When to use it",
     "processListPage.whenItem1": "Use ProcessList for recipes, installs, and procedures whose order matters.",
     "processListPage.whenItem2": 'Use <a href="/en/components/list">List</a> for static or interactive row collections.',

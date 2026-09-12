@@ -1,10 +1,13 @@
 ---
 import "@skryensya/core/components/select.css";
 import "@skryensya/core/components/tree-view.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  treeViewAnatomyTree,
   treeViewDisabledTree,
   treeViewEventsScript,
   treeViewEventsTree,
@@ -12,13 +15,8 @@ import {
   treeViewMinimalTree,
   treeViewMultipleTree,
 } from "../../demos/tree-view";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/tree-view.yaml?raw";
-import coreSource from "@core/src/tree-view.ts?raw";
-import cssSource from "@core/css/components/tree-view.css?raw";
-import vanillaMountSource from "@vanilla/src/components/tree-view.ts?raw";
-import reactSource from "@react/src/components/tree-view.tsx?raw";
-import reactTestSource from "@react/src/components/tree-view.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -30,15 +28,6 @@ const indentHook = `.sk-tree-view {
   --sk-tree-row-inset: var(--space-inset-sm);
   --sk-tree-guide-color: transparent;
 }`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/tree-view.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/tree-view.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/tree-view.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/tree-view.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/react/src/components/tree-view.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/tree-view.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -46,7 +35,6 @@ const sourceFiles = [
   description={t("treeViewPage.description")}
   badge={t("treeViewPage.betaBadge")}
   contractId="tree-view"
-  sourceFiles={sourceFiles}
   styleGroups={[
     { file: "components/tree-view.css", probe: "sk-tree-view", title: "TreeView" },
     { file: "patterns/state-layer.css", probe: "sk-interactive", title: "Heredados de State layer" },
@@ -103,6 +91,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("treeViewPage.lede")} />
+
+    <p set:html={t("treeViewPage.anatomyBody")} />
+    <ComponentPreview
+      tree={treeViewAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("treeViewPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("treeViewPage.minimalTitle")}</h3>
     <p set:html={t("treeViewPage.minimalBody")} />

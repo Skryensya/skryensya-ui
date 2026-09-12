@@ -13,9 +13,13 @@ export const tocMessages = {
     "tocPage.description": "Toc: el índice de un documento largo. Lista sus secciones (h2/h3) y marca la actual con scroll-spy.",
     "tocPage.lede":
       'El índice de un documento: una lista de enlaces a sus secciones (<code>h2</code>/<code>h3</code>), con la actual marcada por un scroll-spy. Cada fila es un enlace con <a href="/state-layer"><code>sk-interactive</code></a> (state layer) en tamaño caption: un índice se escanea, no se lee, y a tamaño de prosa competía con el documento que indexa. El icono es opcional.',
-    "tocPage.anatomyTitle": "Anatomía",
-    "tocPage.anatomyBody": "Raíz <code>&lt;aside&gt;</code> y dentro un <code>&lt;nav&gt;</code> con el título y la lista de enlaces. No hay shell que abrir: el índice se ve desde el primer paint.",
-    "tocPage.anatomyLabel": "Texto",
+    "tocPage.anatomyBody":
+      "Este diagrama nombra el aside, el nav, el título y cada parte del enlace con icono. El espécimen está congelado; los índices vivos empiezan abajo.",
+    "tocPage.anatomyLabel": "Anatomía de Toc",
+    "tocPage.anatomyPreviewLabel": "Toc, parte por parte",
+    "tocPage.plainTitle": "Lista",
+    "tocPage.plainBody": "Raíz <code>&lt;aside&gt;</code> y dentro un <code>&lt;nav&gt;</code> con el título y la lista de enlaces. No hay shell que abrir: el índice se ve desde el primer paint.",
+    "tocPage.plainLabel": "Texto",
     "tocPage.levelsTitle": "Niveles",
     "tocPage.levelsBody":
       'Un <code>h3</code> marca <code>data-level="h3"</code> y se sangra bajo su <code>h2</code>. La sangría la lleva el enlace, nunca el ítem: en el ítem movería el borde inicial de la fila y con él la columna donde se pinta la marca de la sección actual, que dejaría de ser una sola línea vertical.',
@@ -65,9 +69,13 @@ export const tocMessages = {
     "tocPage.description": "Toc: the index of a long document. Lists its sections (h2/h3) and marks the current one with a scroll-spy.",
     "tocPage.lede":
       'A document\'s index: a list of links to its sections (<code>h2</code>/<code>h3</code>), with the current one marked by a scroll-spy. Every row is a link carrying <a href="/en/state-layer"><code>sk-interactive</code></a> (state layer) at caption size: an index gets scanned, not read, and at prose size it competed with the document it indexes. The icon is optional.',
-    "tocPage.anatomyTitle": "Anatomy",
-    "tocPage.anatomyBody": "Root <code>&lt;aside&gt;</code> and, inside it, a <code>&lt;nav&gt;</code> holding the caption and the link list. There is no shell to open: the index is readable from first paint.",
-    "tocPage.anatomyLabel": "Text",
+    "tocPage.anatomyBody":
+      "This diagram names the aside, the nav, the title, and each part of an icon link. The specimen is frozen; the live indexes start below.",
+    "tocPage.anatomyLabel": "Toc anatomy",
+    "tocPage.anatomyPreviewLabel": "Toc, part by part",
+    "tocPage.plainTitle": "List",
+    "tocPage.plainBody": "Root <code>&lt;aside&gt;</code> and, inside it, a <code>&lt;nav&gt;</code> holding the caption and the link list. There is no shell to open: the index is readable from first paint.",
+    "tocPage.plainLabel": "Text",
     "tocPage.levelsTitle": "Levels",
     "tocPage.levelsBody":
       "An <code>h3</code> is marked <code>data-level=\"h3\"</code> and indents under its <code>h2</code>. The link carries the indent, never the item: on the item it would shift the row's own leading edge and, with it, the column where the current-section mark is painted, which would stop being one straight vertical line.",

@@ -12,6 +12,8 @@
  */
 import "@skryensya/core/components/chart.css";
 import "@skryensya/core/components/stat.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
@@ -32,6 +34,8 @@ import {
   chartPeriodCardTree,
   chartPeriodScript,
   chartPointDetailTree,
+  chartsAnatomyCss,
+  chartsAnatomyTree,
   chartsAreaTree,
   chartsBarTree,
   chartsLineTree,
@@ -211,6 +215,16 @@ const tanstackSource = `import { TanStackChart } from "@skryensya/charts/react/t
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("chartsPage.lede")} />
+
+    <p set:html={t("chartsPage.anatomyBody")} />
+    <ComponentPreview
+      tree={chartsAnatomyTree(t)}
+      css={chartsAnatomyCss}
+      label={t("chartsPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <div class="sk-callout" data-tone="info">
       <div class="sk-callout__content">

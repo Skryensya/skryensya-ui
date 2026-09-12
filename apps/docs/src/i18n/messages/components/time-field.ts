@@ -2,12 +2,17 @@ export const timeFieldMessages = {
   es: {
     "demo.timeField.label": "Salida",
     "demo.timeField.forced24Label": "Llegada (24 horas)",
+    "demo.timeField.optionsLabel": "Elegir de la lista",
 
     "timeFieldPage.description": "Un campo de hora segmentado con un desplegable integrado: hora, minuto y AM/PM como partes editables, más una lista de horarios preestablecidos, todo operable por teclado.",
     "timeFieldPage.lede":
       'Un campo para una hora de reloj local, sin fecha, sin zona horaria. Hora, minuto y (en un locale de 12 horas) AM/PM son tres segmentos editables independientes en un solo campo, en vez del chrome del propio <code>&lt;input type="time"&gt;</code>, que difiere lo suficiente entre Chrome, Firefox y Safari como para no poder estilarse ni confiar en que se vea igual dos veces. No existe una machine <code>@zag-js/time-picker</code> para esos segmentos, así que esa parte es estado a mano, como Slider y Segmented: pero SÍ hay un desplegable, siempre presente, con una lista simple y navegable con flechas (nada de buscador: para una lista acotada y ordenada, uno de más). Dos cosas se probaron y se descartaron antes de llegar ahí: un selector de ruedas (ni más simple ni más accesible que los segmentos mismos) y una lista con buscador tipo Combobox (demasiada máquina para una lista corta).',
+    "timeFieldPage.anatomyBody":
+      "Un TimeField cerrado es un control segmentado: el positioner, el content y las filas del listbox sólo existen mientras el desplegable está abierto. Por eso el espécimen se dibuja abierto y se queda así. Está congelado; el TimeField vivo es el de abajo.",
+    "timeFieldPage.anatomyLabel": "Anatomía de TimeField",
+    "timeFieldPage.anatomyPreviewLabel": "TimeField abierto, parte por parte",
     "timeFieldPage.contractBody":
-      "El orden de los segmentos y el separador entre ellos se leen del propio <code>formatToParts</code> de <code>Intl.DateTimeFormat</code>, no se asumen: algunos locales ponen el periodo del día antes de la hora, y el separador no siempre es <code>\":\"</code>. El valor público sigue siendo el string canónico <code>HH:mm</code>, la misma forma que envía un <code>&lt;input type=\"time\"&gt;</code> plano, llevado en un input oculto, así que un formulario detrás de TimeField nunca tiene que parsear un string dependiente del locale. React lo guarda como estado del componente (<code>value</code>/<code>defaultValue</code>, un callback <code>onValueChange</code>). Vanilla hidrata el <code>data-sk-time-field</code> autorado: el consumidor sólo autora la raíz y su label, y el componente genera los segmentos a partir de <code>data-locale</code>.",
+      "El orden de los segmentos y el separador entre ellos se leen del propio <code>formatToParts</code> de <code>Intl.DateTimeFormat</code>, no se asumen: algunos locales ponen el periodo del día antes de la hora, y el separador no siempre es <code>\":\"</code>. El valor público sigue siendo el string canónico <code>HH:mm</code>, la misma forma que envía un <code>&lt;input type=\"time\"&gt;</code> plano, llevado en un input oculto, así que un formulario detrás de TimeField nunca tiene que parsear un string dependiente del locale. React lo guarda como estado del componente (<code>value</code>/<code>defaultValue</code>, un callback <code>onValueChange</code>). Vanilla hidrata el <code>data-sk-time-field</code> escrito a mano: el consumidor sólo autora la raíz y su label, y el componente genera los segmentos a partir de <code>data-locale</code>.",
     "timeFieldPage.editTitle": "Editar un segmento",
     "timeFieldPage.editBody":
       'Escribir un dígito llena el segmento enfocado y avanza en cuanto ningún otro dígito podría mantenerlo válido: escribir <kbd class="sk-kbd">1</kbd> en el segmento de hora de un campo de 12 horas espera brevemente un posible segundo dígito (<code>10</code>–<code>12</code>), escribir <kbd class="sk-kbd">9</kbd> avanza de inmediato, porque ningún segundo dígito podría seguirlo y seguir siendo ≤ 12. Las flechas arriba/abajo suben o bajan el valor y dan la vuelta en los extremos; <kbd class="sk-kbd">Retroceso</kbd> limpia el segmento; <kbd class="sk-kbd">←</kbd>/<kbd class="sk-kbd">→</kbd> mueven entre segmentos; escribir la primera letra de la etiqueta AM/PM del locale en ese segmento lo fija directamente.',
@@ -24,17 +29,22 @@ export const timeFieldMessages = {
     "timeFieldPage.optionsQuarterHourTitle": "Cada 15 minutos",
     "timeFieldPage.a11yBody":
       'Cada segmento es <code>role="spinbutton"</code> dentro de un <code>role="group"</code> nombrado por el label del campo: <code>aria-valuenow</code>/<code>aria-valuetext</code> llevan su valor actual (un placeholder amistoso como «hh» antes de fijar nada, no un string vacío), y <code>aria-valuemin</code>/<code>aria-valuemax</code> su rango real: 1–12 para un segmento de hora en un locale de 12 horas, 0–23 en uno de 24. Cada segmento es su propia parada de tabulación, igual que ya funciona un input de fecha nativo de varias partes, así que el uso por teclado no necesita nada más que Tab y las flechas documentadas arriba: más <code>Alt+Flecha-abajo</code> para abrir el desplegable sin llegar hasta su botón, y las flechas/Inicio/Fin/Escape ya provistas por <code>@zag-js/select</code> una vez adentro de la lista.',
-    "timeFieldPage.test1": "Monta una sola vez y nombra el grupo a partir del label autorado.",
+    "timeFieldPage.test1": "Monta una sola vez y nombra el grupo a partir del label escrito a mano.",
     "timeFieldPage.test2": "Deriva los segmentos del locale, no del markup.",
     "timeFieldPage.test3": "Empieza vacío, con placeholders en vez de una hora inventada.",
   },
   en: {
     "demo.timeField.label": "Departure",
     "demo.timeField.forced24Label": "Arrival (24-hour)",
+    "demo.timeField.optionsLabel": "Choose from the list",
 
     "timeFieldPage.description": "A segmented time field with a built-in dropdown: hour, minute, and AM/PM as editable parts, plus a list of preset times, all keyboard-operable.",
     "timeFieldPage.lede":
       "A field for a local clock time, no date, no timezone. Hour, minute, and (in a 12-hour locale) AM/PM are three independent editable segments in a single field, instead of the native <code>&lt;input type=\"time\"&gt;</code>'s own chrome, which differs enough between Chrome, Firefox, and Safari that it cannot be styled or trusted to look the same twice. There is no <code>@zag-js/time-picker</code> machine for those segments, so that part is hand-rolled state, like Slider and Segmented: but there IS a dropdown, always present, a plain arrow-key-navigable list (no search box: too much machine for a short, ordered list). Two things were tried and dropped on the way there: a wheel picker (neither simpler nor more accessible than the segments themselves) and a searchable Combobox-style list (too much machine for a short list).",
+    "timeFieldPage.anatomyBody":
+      "A closed TimeField is a segmented control: the positioner, content and listbox rows only exist while the dropdown is open. That is why the specimen is drawn open and stays that way. It is frozen; the live TimeField is the one below.",
+    "timeFieldPage.anatomyLabel": "TimeField anatomy",
+    "timeFieldPage.anatomyPreviewLabel": "An open TimeField, part by part",
     "timeFieldPage.contractBody":
       "The order of the segments and the separator between them are read from <code>Intl.DateTimeFormat</code>'s own <code>formatToParts</code>, never assumed: some locales put the period of day before the hour, and the separator is not always <code>\":\"</code>. The public value stays the canonical <code>HH:mm</code> string, the same shape a plain <code>&lt;input type=\"time\"&gt;</code> sends, carried in a hidden input, so a form behind TimeField never has to parse a locale-dependent string. React keeps it as component state (<code>value</code>/<code>defaultValue</code>, an <code>onValueChange</code> callback). Vanilla hydrates the authored <code>data-sk-time-field</code>: the consumer only authors the root and its label, and the component generates the segments from <code>data-locale</code>.",
     "timeFieldPage.editTitle": "Editing a segment",

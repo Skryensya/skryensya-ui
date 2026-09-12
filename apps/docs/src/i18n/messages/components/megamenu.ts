@@ -3,13 +3,17 @@ export const megamenuMessages = {
 
     "megamenuPage.description":
       "Categorías de navegación que despliegan un panel borde a borde con varias columnas de enlaces.",
+    "megamenuPage.anatomyBody":
+      "Este diagrama nombra la barra, el trigger y el panel abierto con sus columnas NavList. El espécimen está congelado; el megamenu vivo empieza abajo.",
+    "megamenuPage.anatomyLabel": "Anatomía de Megamenu",
+    "megamenuPage.anatomyPreviewLabel": "Megamenu abierto, parte por parte",
     "megamenuPage.contractBody":
       "Megamenu es distinto de Menu/Menubar: sin <code>role=\"menu\"</code>, sin flechas ni typeahead. Cada categoría es un <code>&lt;button aria-expanded&gt;</code> y su panel son 2-4 <code>NavListGroup</code> (el mismo componente que usa NavList), enlaces comunes que se recorren con Tab. El panel mide el mismo ancho que la barra entera (anclado a la barra, no al trigger).",
     "megamenuPage.a11yBody":
       "Tab recorre los enlaces del panel en orden normal del documento, sin trampa de foco. Escape cierra el panel abierto y devuelve el foco a su trigger. El hover con intención (~150ms) es una mejora sólo para mouse; click/Enter/Space funcionan igual en cualquier dispositivo.",
 
     "megamenuPage.testVanilla1":
-      "Las N posicionadoras autoradas colapsan en un solo panel compartido, dimensionado por una regla oculta con las columnas de cada trigger.",
+      "Las N posicionadoras escritas a mano colapsan en un solo panel compartido, dimensionado por una regla oculta con las columnas de cada trigger.",
     "megamenuPage.testVanilla2":
       "Un click abre el panel de ese trigger con sus propias columnas.",
     "megamenuPage.testVanilla3": "Un click en el MISMO trigger lo cierra. Un toggle.",
@@ -66,6 +70,10 @@ export const megamenuMessages = {
 
     "megamenuPage.description":
       "Navigation categories that open an edge-to-edge panel of several link columns.",
+    "megamenuPage.anatomyBody":
+      "This diagram names the bar, the trigger, and the open panel with its NavList columns. The specimen is frozen; the live megamenu starts below.",
+    "megamenuPage.anatomyLabel": "Megamenu anatomy",
+    "megamenuPage.anatomyPreviewLabel": "An open Megamenu, part by part",
     "megamenuPage.contractBody":
       "Megamenu is deliberately unlike Menu/Menubar: no <code>role=\"menu\"</code>, no arrow keys or typeahead. Each category is a plain <code>&lt;button aria-expanded&gt;</code> and its panel is 2-4 <code>NavListGroup</code>s (the same component NavList uses), ordinary links you Tab through. The panel matches the whole bar's own width (anchored to the bar, not the trigger).",
     "megamenuPage.a11yBody":

@@ -408,7 +408,6 @@
     "lint": "tsc -p tsconfig.json --noEmit && vitest run"
   },
   "dependencies": {
-    "@skryensya/ai-compiler": "workspace:*",
     "@skryensya/core": "workspace:*",
     "@skryensya/icons-phosphor": "workspace:*",
     "@zag-js/react": "^1.43.3"

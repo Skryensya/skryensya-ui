@@ -4,6 +4,10 @@ export const qrCodeMessages = {
     "qrCodePage.betaBadge": "Beta",
     "qrCodePage.lede":
       "QRCode convierte un texto corto  -  casi siempre una URL  -  en un símbolo que una cámara puede leer. El contrato calcula la geometría y la emite como <strong>un solo <code>path</code></strong>, así que el binding Vanilla no necesita JavaScript para pintarlo y los dos bindings dibujan exactamente el mismo símbolo.",
+    "qrCodePage.anatomyBody":
+      "Este diagrama nombra el root, el frame, los módulos y el logo. El espécimen está congelado; los QRCode vivos empiezan abajo.",
+    "qrCodePage.anatomyLabel": "Anatomía de QRCode",
+    "qrCodePage.anatomyPreviewLabel": "QRCode, parte por parte",
 
     "qrCodePage.basicTitle": "Lo mínimo",
     "qrCodePage.basicBody":
@@ -106,6 +110,10 @@ export const qrCodeMessages = {
     "qrCodePage.betaBadge": "Beta",
     "qrCodePage.lede":
       "QRCode turns a short string  -  almost always a URL  -  into a symbol a camera can read. The contract computes the geometry and emits it as <strong>one <code>path</code></strong>, so the Vanilla binding needs no JavaScript to paint it and both bindings draw exactly the same symbol.",
+    "qrCodePage.anatomyBody":
+      "This diagram names the root, the frame, the modules and the logo. The specimen is frozen; the live QRCodes begin below.",
+    "qrCodePage.anatomyLabel": "QRCode anatomy",
+    "qrCodePage.anatomyPreviewLabel": "QRCode, part by part",
 
     "qrCodePage.basicTitle": "The floor",
     "qrCodePage.basicBody":

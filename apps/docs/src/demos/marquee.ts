@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate, UIKey } from "../i18n";
+import { namePart } from "./annotation-parts";
 
 /*
  * MARQUEE DEMOS.
@@ -9,6 +10,35 @@ import type { Translate, UIKey } from "../i18n";
  * logo, an icon and a loose line of text: from that a reader cannot tell "accepts anything" apart
  * from "unfinished", and only the uniform strip is a thing anyone would ship.
  */
+
+/** Manual strip with its Play control: viewport, track, content and toggle all present to name. */
+export const marqueeAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("marquee.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "marquee",
+      signature: "Marquee",
+      options: { speed: "slow" },
+      attrs: { style: "inline-size: min(100%, 22rem)" },
+      slots: {
+        playLabel: t("demo.marquee.play"),
+        pauseLabel: t("demo.marquee.pause"),
+        children: logoStrip().slice(0, 3),
+      },
+    },
+    items: [
+      namePart(".sk-marquee", "block-start"),
+      namePart(".sk-marquee__viewport", "inline-start"),
+      namePart(".sk-marquee__track", "block-end", { ringPlacement: "offset", ringDistance: 4 }),
+      namePart(".sk-marquee__content", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-marquee__toggle", "inline-end"),
+      namePart(".sk-marquee__glyph", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-marquee__label", "block-end"),
+    ],
+  },
+});
 
 /**
  * Placeholder brands, the case Marquee exists for. The mark is an asset and the wordmark is real

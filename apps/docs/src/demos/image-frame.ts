@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
 
 /**
  * A dummyimage.com placeholder, 800×500. Same measure the old local asset had, so every demo
@@ -11,6 +12,60 @@ import type { Translate } from "../i18n";
  * label position, not in what part of a photo survived. A real loss, accepted deliberately.
  */
 export const DEMO_IMAGE_FRAME_SRC = "https://dummyimage.com/800x500/9ca3af/374151.png";
+
+/*
+ * Frame, media, and an optional caption wash: every part the contract can emit. Caption and gradient
+ * are MediaCaption/MediaGradient (parents of ImageFrame), not ImageFrame's own parts, but the page
+ * teaches the composition the frame is built for, so the diagram names what that composition draws.
+ */
+export const imageFrameAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("imageFrame.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "image-frame",
+      signature: "ImageFrame",
+      options: {
+        aspect: "16/9",
+        fit: "cover",
+        position: "center",
+        radius: "surface",
+        border: "subtle",
+        src: DEMO_IMAGE_FRAME_SRC,
+        alt: t("demo.imageFrame.alt"),
+      },
+      slots: {
+        caption: {
+          contract: "media-gradient",
+          signature: "MediaCaption",
+          options: { edge: "bottom" },
+          children: [
+            {
+              contract: "media-gradient",
+              signature: "MediaGradient",
+              options: { strength: "md" },
+            },
+            {
+              contract: "typography",
+              signature: "Text",
+              options: { size: "sm", weight: "label" },
+              attrs: { style: "color: var(--palette-white);" },
+              children: t("demo.imageFrame.anatomyCaption"),
+            },
+          ],
+        },
+      },
+    },
+    items: [
+      namePart(".sk-image-frame", "block-start"),
+      namePart(".sk-image-frame__media", "inline-start"),
+      namePart(".sk-media-caption", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-media-gradient", "block-end"),
+    ],
+  },
+});
+
 
 /*
  * The whole page converts.

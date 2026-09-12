@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { emitMarkup, emitReact, emitReactSource } from "./emit.js";
 import { validateUsageTree } from "./validate.js";
-import type { UsageTree } from "./usage-tree.js";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 
 /*
  * F2's exit gate: the emitter has to produce, from the canonical trees, the markup a human wrote by

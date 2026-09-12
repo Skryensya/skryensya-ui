@@ -1,6 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { sidebarFileNodes } from "./data/sidebar";
+import { namePart } from "./annotation-parts";
 
 /*
  * A collapsible shell with NavList as its guest, and enough adjacent content to make the rail legible.
@@ -13,6 +14,61 @@ import { sidebarFileNodes } from "./data/sidebar";
  * the tree or no framing at all. The cost is two `sk-box` wrappers in the snippet, which the page
  * names in prose. Do not "clean" them out.
  */
+
+/** Header, trigger, content, separator, footer and resize handle: the shell's own parts. */
+export const sidebarAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("sidebarPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "sidebar",
+      signature: "Sidebar",
+      options: { defaultCollapsed: false },
+      attrs: { style: "min-block-size: 14rem; inline-size: 14rem" },
+      children: [
+        {
+          contract: "sidebar",
+          signature: "SidebarResizeHandle",
+          options: { label: t("demo.sidebar.resize") },
+        },
+        {
+          contract: "sidebar",
+          signature: "SidebarHeader",
+          children: {
+            contract: "sidebar",
+            signature: "SidebarTrigger",
+            options: { label: t("demo.sidebar.collapse") },
+            slots: {
+              icon: { contract: "icon", signature: "Icon", options: { name: "menu" } },
+            },
+          },
+        },
+        {
+          contract: "sidebar",
+          signature: "SidebarContent",
+          children: t("demo.sidebar.nav"),
+        },
+        { contract: "sidebar", signature: "SidebarSeparator" },
+        {
+          contract: "sidebar",
+          signature: "SidebarFooter",
+          children: t("demo.sidebar.workspace"),
+        },
+      ],
+    },
+    items: [
+      namePart(".sk-sidebar", "block-start"),
+      namePart(".sk-sidebar__resize-handle", "inline-start"),
+      namePart(".sk-sidebar__header", "block-start"),
+      namePart(".sk-sidebar__trigger", "inline-end"),
+      namePart(".sk-sidebar__content", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-sidebar__separator", "inline-start", { ringPlacement: "offset", ringDistance: 3 }),
+      namePart(".sk-sidebar__footer", "block-end"),
+    ],
+  },
+});
+
 export const sidebarTree = (
   t: Translate,
   hrefs: { home: string; reports: string },

@@ -1,16 +1,14 @@
 ---
 import "@skryensya/core/components/table.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import "@skryensya/core/components/treegrid.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { treegridInboxTree, treegridStressTree } from "../../demos/treegrid";
+import { treegridAnatomyTree, treegridInboxTree, treegridStressTree } from "../../demos/treegrid";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/treegrid.yaml?raw";
-import coreSource from "@core/src/treegrid.ts?raw";
-import cssSource from "@core/css/components/treegrid.css?raw";
-import vanillaMountSource from "@vanilla/src/components/treegrid.ts?raw";
-import reactSource from "@react/src/components/treegrid.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -28,14 +26,6 @@ const indentHook = `.sk-treegrid {
   --sk-treegrid-indent: var(--space-inset-xl);
   --sk-treegrid-indicator-size: var(--size-icon-sm);
 }`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/treegrid.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/treegrid.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/treegrid.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/treegrid.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/react/src/components/treegrid.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -43,7 +33,6 @@ const sourceFiles = [
   description={t("treegridPage.description")}
   badge={t("treegridPage.betaBadge")}
   contractId="treegrid"
-  sourceFiles={sourceFiles}
   styleGroups={[
     { file: "components/table.css", probe: "sk-table", title: "Heredados de Table" },
     { file: "components/treegrid.css", probe: "sk-treegrid", title: "Treegrid" },
@@ -85,6 +74,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("treegridPage.lede")} />
+
+    <p set:html={t("treegridPage.anatomyBody")} />
+    <ComponentPreview
+      tree={treegridAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("treegridPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
 
     <h3>{t("treegridPage.minimalTitle")}</h3>
     <p set:html={t("treegridPage.minimalBody")} />

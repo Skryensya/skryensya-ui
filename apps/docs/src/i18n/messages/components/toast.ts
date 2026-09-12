@@ -23,6 +23,10 @@ export const toastMessages = {
     "toastPage.description": "Toast: feedback transitorio en una región flotante. Misma anatomía que Callout, con ciclo de vida de la app.",
     "toastPage.lede":
       'Toast comunica feedback transitorio en una región flotante. El ítem es un <a href="/components/callout">Callout</a>, mismo markup, mismos tonos, envuelto en <code>sk-toast-region</code> y en el ciclo de vida del toast (montaje, dismiss, timeout opcional).',
+    "toastPage.anatomyBody":
+      "La región y un toast completo: ícono, contenido, título, descripción, acciones y dismiss. El ítem reutiliza las partes de Callout; sólo el cierre es propio de Toast. Congelado.",
+    "toastPage.anatomyLabel": "Anatomía de Toast",
+    "toastPage.anatomyPreviewLabel": "Toast, parte por parte",
     "toastPage.emitTitle": "Después de una acción",
     "toastPage.emitBody":
       "Es el caso real: un toast no se escribe ya visible, aparece porque algo pasó. Lo que sí es estable en el HTML son tres piezas: el control que dispara la acción, una <code>sk-toast-region</code> <strong>vacía</strong>, y un <code>&lt;template&gt;</code> con el ítem. La app clona, inserta y vuelve a montar; <code>initComponents</code> es idempotente, así que sólo toca lo recién insertado.",
@@ -70,8 +74,8 @@ export const toastMessages = {
       'El código está en la pestaña <strong>React</strong> de cada preview. La API refleja Callout (<code>title</code>, <code>icon</code>, <code>actions</code>, <code>tone</code>) más <code>timeout</code> y <code>onDismiss</code> con razón. Sin <code>tone</code>, es neutral.',
     "toastPage.vanillaComment": "Los iconos se escriben como placeholders <span data-sk-icon>;\nmountIcons los reemplaza por el <svg> del set enlazado.",
     "toastPage.test1": "Aplica la semántica compartida de región viva y reporta el cierre por botón nativo.",
-    "toastPage.test2": "Solo agenda los timeouts autorados y los limpia durante el cleanup.",
-    "toastPage.test3": "Monta el markup de toast autorado a través del enhancer del registro.",
+    "toastPage.test2": "Solo agenda los timeouts escritos a mano y los limpia durante el cleanup.",
+    "toastPage.test3": "Monta el markup de toast escrito a mano a través del enhancer del registro.",
   },
   en: {
     "demo.toast.dismiss": "Dismiss",
@@ -97,6 +101,10 @@ export const toastMessages = {
     "toastPage.description": "Toast: transient feedback in a floating region. Same anatomy as Callout, with the app's own lifecycle.",
     "toastPage.lede":
       'Toast communicates transient feedback in a floating region. The item is a <a href="/en/components/callout">Callout</a>, same markup, same tones, wrapped in <code>sk-toast-region</code> and in the toast\'s own lifecycle (mount, dismiss, optional timeout).',
+    "toastPage.anatomyBody":
+      "The region and one full toast: icon, content, title, description, actions, and dismiss. The item reuses Callout parts; only the close control is Toast's own. Frozen.",
+    "toastPage.anatomyLabel": "Toast anatomy",
+    "toastPage.anatomyPreviewLabel": "Toast, part by part",
     "toastPage.emitTitle": "After an action",
     "toastPage.emitBody":
       "This is the real case: a toast is never authored already visible, it appears because something happened. What stays stable in the HTML are three pieces: the control that fires the action, an <strong>empty</strong> <code>sk-toast-region</code>, and a <code>&lt;template&gt;</code> holding the item. The app clones, inserts, and mounts again; <code>initComponents</code> is idempotent, so it only touches what was just inserted.",

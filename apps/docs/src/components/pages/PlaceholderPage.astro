@@ -8,18 +8,17 @@ import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  placeholderAnatomyTree,
   placeholderMatchTree,
   placeholderVocabularyTree,
   publicationPlaceholderTree,
   publicationSwapScript,
   publicationSwapTree,
 } from "../../demos/placeholder";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/placeholder.yaml?raw";
-import coreSource from "@core/src/placeholder.ts?raw";
-import cssSource from "@core/css/components/placeholder.css?raw";
-import reactSource from "@react/src/components/placeholder.tsx?raw";
-import reactTestSource from "@react/src/components/placeholder.test.tsx?raw";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
@@ -29,21 +28,12 @@ const styles = `@import "@skryensya/core/components/placeholder.css";
 @import "@skryensya/core/components/badge.css";
 @import "@skryensya/core/components/avatar.css";
 @import "@skryensya/core/components/typography.css";`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/placeholder.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/placeholder.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/placeholder.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/placeholder.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/placeholder.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Placeholder"
   description={t("placeholderPage.description")}
   contractId="placeholder"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/placeholder.css", probe: "sk-placeholder" }]}
   tests={[
     {
@@ -79,6 +69,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("placeholderPage.lede")} />
+
+    <p set:html={t("placeholderPage.anatomyBody")} />
+    <ComponentPreview
+      tree={placeholderAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("placeholderPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <div class="sk-callout" data-tone="info">
       <div class="sk-callout__content">

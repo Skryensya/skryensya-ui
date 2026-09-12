@@ -7,6 +7,10 @@ export const dataGridMessages = {
     "dataGridPage.lede":
       'La propia especificación WAI-ARIA trata "data grids" y "layout grids" como el mismo patrón. Mismos roles, misma mecánica de roving tabindex, así que este es UN contrato, no dos. Úsalo cuando una grilla de celdas necesita navegación 2D: <a href="/components/table">Table</a> ya cubre el caso de datos tabulares ESTÁTICOS, sin modelo de teclado propio.',
     "dataGridPage.dataTitle": "Datos tabulares",
+    "dataGridPage.anatomyBody":
+      "Este diagrama nombra la grilla, la fila y la celda. El espécimen está congelado; los DataGrid vivos empiezan abajo.",
+    "dataGridPage.anatomyLabel": "Anatomía de DataGrid",
+    "dataGridPage.anatomyPreviewLabel": "DataGrid, parte por parte",
     "dataGridPage.dataBody": "Celdas de solo texto: la parada de foco es la celda misma.",
     "dataGridPage.dataLabel": "Puntajes por ronda",
     "dataGridPage.layoutTitle": "Widgets agrupados",
@@ -43,6 +47,10 @@ export const dataGridMessages = {
     "dataGridPage.lede":
       'The WAI-ARIA spec itself treats "data grids" and "layout grids" as the same pattern. Identical roles, identical roving-tabindex mechanics, so this is ONE contract, not two. Use it when a grid of cells needs 2D navigation: <a href="/en/components/table">Table</a> already covers STATIC tabular data with no keyboard model of its own.',
     "dataGridPage.dataTitle": "Tabular data",
+    "dataGridPage.anatomyBody":
+      "This diagram names the grid, the row and the cell. The specimen is frozen; the live DataGrids begin below.",
+    "dataGridPage.anatomyLabel": "DataGrid anatomy",
+    "dataGridPage.anatomyPreviewLabel": "DataGrid, part by part",
     "dataGridPage.dataBody": "Plain text cells: the focus stop is the cell itself.",
     "dataGridPage.dataLabel": "Scores by round",
     "dataGridPage.layoutTitle": "Grouped widgets",

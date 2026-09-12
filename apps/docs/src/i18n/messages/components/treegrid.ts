@@ -6,6 +6,10 @@ export const treegridMessages = {
     "treegridPage.lede":
       'Combina jerarquía y columnas a la vez: el patrón WAI-ARIA <code>treegrid</code>. Úsalo cuando cada fila necesita varios valores independientes ADEMÁS de su lugar en la jerarquía (un mensaje con remitente, un archivo con tamaño y fecha). Para una sola columna de texto jerárquico usa <a href="/components/tree-view">TreeView</a>; para columnas sin jerarquía, <a href="/components/table">Table</a>.',
     "treegridPage.minimalTitle": "Bandeja de entrada",
+    "treegridPage.anatomyBody":
+      "Este diagrama nombra el scroll, la tabla, cabecera, cuerpo, filas, celdas y el disclosure. El espécimen está congelado; los Treegrid vivos empiezan abajo.",
+    "treegridPage.anatomyLabel": "Anatomía de Treegrid",
+    "treegridPage.anatomyPreviewLabel": "Treegrid, parte por parte",
     "treegridPage.minimalBody":
       "El ejemplo que la propia especificación WAI-ARIA usa: dos columnas (Asunto, De), una carpeta abierta con dos mensajes, una carpeta colapsada cuyo único mensaje queda oculto, y un mensaje suelto en la raíz.",
     "treegridPage.minimalLabel": "Bandeja de entrada de ejemplo",
@@ -20,7 +24,7 @@ export const treegridMessages = {
     "treegridPage.contractItem5":
       "<code>expanded</code> sólo se autoría en una fila que TIENE hijos: su ausencia, no un valor <code>false</code>, es lo que marca una fila como hoja. <code>true</code>/<code>false</code> controla si sus descendientes están visibles en este momento.",
     "treegridPage.contractItem6":
-      'Cada <code>TreegridCell</code> es un <code>&lt;td role="gridcell"&gt;</code> común; la primera celda de una fila con hijos gana la sangría por CSS y un botón de apertura real que el binding inserta: nunca autorado, y decorativo para el lector de pantalla (<code>aria-expanded</code> en la fila ya anuncia el estado).',
+      'Cada <code>TreegridCell</code> es un <code>&lt;td role="gridcell"&gt;</code> común; la primera celda de una fila con hijos gana la sangría por CSS y un botón de apertura real que el binding inserta: nunca escrito a mano, y decorativo para el lector de pantalla (<code>aria-expanded</code> en la fila ya anuncia el estado).',
     "treegridPage.contractItem7":
       '<code>resizableColumns</code> (apagada por defecto) inserta un separador <code>role="separator"</code> real entre cada par de encabezados: el mismo primitivo compartido de <code>@skryensya/core/splitter</code> que usa el separador de <code>Sidebar</code>. Exige <code>resizeLabel</code>: el separador es binding-insertado, así que nada más lo nombra para un lector de pantalla.',
     "treegridPage.hooksBody":
@@ -104,6 +108,10 @@ export const treegridMessages = {
     "treegridPage.lede":
       'Combines hierarchy and columns at once: the WAI-ARIA <code>treegrid</code> pattern. Use it when every row needs several independent values IN ADDITION to its place in the hierarchy (a message with a sender, a file with a size and a date). For a single column of hierarchical text use <a href="/en/components/tree-view">TreeView</a>; for columns with no hierarchy, <a href="/en/components/table">Table</a>.',
     "treegridPage.minimalTitle": "Inbox",
+    "treegridPage.anatomyBody":
+      "This diagram names the scroll, the table, head, body, rows, cells and the disclosure. The specimen is frozen; the live Treegrids begin below.",
+    "treegridPage.anatomyLabel": "Treegrid anatomy",
+    "treegridPage.anatomyPreviewLabel": "Treegrid, part by part",
     "treegridPage.minimalBody":
       "The exact example the WAI-ARIA spec itself uses: two columns (Subject, From), a folder that starts open with two messages, a collapsed folder whose one message stays hidden, and a loose message at the root.",
     "treegridPage.minimalLabel": "Sample inbox",

@@ -9,8 +9,12 @@ export const sliderMessages = {
     "sliderPage.description": "Slider: control Zag con pista real, extremos alcanzables y componente React.",
     "sliderPage.lede":
       "Slider usa <code>@zag-js/slider</code>: el pulgar se centra sobre una pista real, así que 0% y 100% son los extremos visuales de la línea. Zag mantiene teclado, foco y participación en formularios con un input oculto.",
+    "sliderPage.anatomyBody":
+      "Este diagrama nombra la pista, el relleno y el pulgar. El espécimen está congelado; los sliders vivos empiezan abajo.",
+    "sliderPage.anatomyLabel": "Anatomía de Slider",
+    "sliderPage.anatomyPreviewLabel": "Slider, parte por parte",
     "sliderPage.body1":
-      "En Vanilla, <code>data-sk-slider</code> monta la misma máquina que React y parchea la anatomía autorada. En React, <code>&lt;Slider&gt;</code> conecta esa máquina directamente y reporta el cambio como número vía <code>onValueChange</code>.",
+      "En Vanilla, <code>data-sk-slider</code> monta la misma máquina que React y parchea la anatomía escrita a mano. En React, <code>&lt;Slider&gt;</code> conecta esa máquina directamente y reporta el cambio como número vía <code>onValueChange</code>.",
     "sliderPage.body2":
       "El <code>value</code> del contrato es <strong>dónde arranca el pulgar</strong>, y cada binding lo escribe con su nombre: <code>data-value</code> en el markup, <code>defaultValue</code> en React. No es cosmético: <code>value</code> en React significa controlado, así que emitirlo entregaba un slider que no se podía mover.",
     "sliderPage.test1": "Expone la semántica ARIA de slider desde la máquina Zag y reporta cambios como números.",
@@ -36,6 +40,10 @@ export const sliderMessages = {
     "sliderPage.description": "Slider: a Zag control with a real track, reachable ends, and a React component.",
     "sliderPage.lede":
       "Slider uses <code>@zag-js/slider</code>: the thumb is centered over a real track, so 0% and 100% are the visual ends of the line. Zag keeps keyboard, focus, and form participation through a hidden input.",
+    "sliderPage.anatomyBody":
+      "This diagram names the track, the fill, and the thumb. The specimen is frozen; the live sliders start below.",
+    "sliderPage.anatomyLabel": "Slider anatomy",
+    "sliderPage.anatomyPreviewLabel": "Slider, part by part",
     "sliderPage.body1":
       "In Vanilla, <code>data-sk-slider</code> mounts the same machine React uses and patches the authored anatomy. In React, <code>&lt;Slider&gt;</code> connects that machine directly and reports changes as numbers through <code>onValueChange</code>.",
     "sliderPage.body2":

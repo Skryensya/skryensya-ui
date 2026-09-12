@@ -33,6 +33,10 @@ export const carouselMessages = {
     "carousel.betaBadge": "Beta",
     "carousel.lede":
       "Secciones desplazables <strong>nativas</strong>: la pista es un <code>&lt;div&gt;</code> con <code>scroll-snap-type</code>, así que el desplazamiento, el momentum táctil y los puntos de anclaje son de la plataforma, no de un script. Encima van dos capas de control sobre ese mismo sustrato: una base <strong>sin JS</strong> con los pseudo-elementos nativos de carrusel, y un enhancer <strong>machine-backed</strong> sobre <code>@zag-js/carousel</code> que mide la pista, deriva las páginas y dibuja botones y dots. Cada slide es cualquier contenido: una card, una imagen, un stat.",
+    "carousel.anatomyBody":
+      "Pista, slide, controles, dots y el botón de autoplay cuando <code>data-autoplay</code> está puesto. El espécimen está congelado; los carruseles vivos empiezan abajo.",
+    "carousel.anatomyLabel": "Anatomía de Carousel",
+    "carousel.anatomyPreviewLabel": "Carousel, parte por parte",
     "carousel.cardsTitle": "Carrusel de tarjetas",
     "carousel.cardsBody":
       'Con <code>data-sk-carousel</code> el enhancer corre la máquina: prev/next (se deshabilitan en los extremos), un dot por <strong>página</strong>, teclado, arrastre y re-medición al cambiar de tamaño. Aquí cada slide es una card con <a href="/components/image-frame">ImageFrame</a> y un cuerpo compuesto con <code>Box</code>, <code>Stack</code> y <code>Text</code>, sin clases locales. El tamaño base de CSS deja asomar la siguiente.',
@@ -140,6 +144,10 @@ export const carouselMessages = {
     "carousel.betaBadge": "Beta",
     "carousel.lede":
       "Scrollable sections that are <strong>native</strong>: the track is a <code>&lt;div&gt;</code> with <code>scroll-snap-type</code>, so scrolling, touch momentum and anchor points belong to the platform, not a script. On top of that sit two control layers over the same substrate: a <strong>JS-free</strong> base using native carousel pseudo-elements, and a <strong>machine-backed</strong> enhancer over <code>@zag-js/carousel</code> that measures the track, derives the pages, and draws buttons and dots. Each slide is any content: a card, an image, a stat.",
+    "carousel.anatomyBody":
+      "Track, slide, controls, dots, and the autoplay button when <code>data-autoplay</code> is set. The specimen is frozen; the live carousels start below.",
+    "carousel.anatomyLabel": "Carousel anatomy",
+    "carousel.anatomyPreviewLabel": "Carousel, part by part",
     "carousel.cardsTitle": "Card carousel",
     "carousel.cardsBody":
       'With <code>data-sk-carousel</code> the enhancer runs the machine: prev/next (disabled at the ends), one dot per <strong>page</strong>, keyboard, drag, and re-measuring on resize. Here every slide is a card with <a href="/en/components/image-frame">ImageFrame</a> and a body composed of <code>Box</code>, <code>Stack</code> and <code>Text</code>, with no local classes. The default CSS size lets the next one peek through.',

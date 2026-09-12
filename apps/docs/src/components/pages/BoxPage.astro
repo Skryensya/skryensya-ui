@@ -1,25 +1,18 @@
 ---
+/* The anatomy diagram is an Annotated frame, so this page needs its sheet. */
+import "@skryensya/core/components/annotation.css";
+import { annotationDemoCss } from "../../demos/annotation";
+import { boxAnatomyTree } from "../../demos/layout-anatomy";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { boxTree } from "../../demos/layout";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/box.yaml?raw";
-import coreSource from "@core/src/layout.ts?raw";
-import cssSource from "@core/css/patterns/box.css?raw";
 /* The sheet itself, not only its source: the Style hooks table resolves each hook
    against a real element, and a page that never loads `patterns/box.css` would show every
    value blank. */
 import "@skryensya/core/patterns/box.css";
-import reactSource from "@react/src/components/layout.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
-
-const sourceFiles = [
-  { id: "contracts/semantic/box.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/layout.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/patterns/box.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/layout.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -27,7 +20,6 @@ const sourceFiles = [
   description={t("box.description")}
   contractId="box"
   styleGroups={[{ file: "patterns/box.css", probe: "sk-box" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/layout.test.tsx",
@@ -42,6 +34,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("box.lede")} />
+
+    <p set:html={t("box.anatomyBody")} />
+    <ComponentPreview
+      tree={boxAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("box.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("box.whenTitle")}</h3>
     <p set:html={t("box.whenBody1")} />

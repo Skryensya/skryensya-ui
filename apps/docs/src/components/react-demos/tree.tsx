@@ -24,7 +24,7 @@
  * before it ever calls `flushSync`, so the tree is already loaded the one time this renders.
  */
 import { menuAttrs } from "@skryensya/core/menu";
-import type { UsageTree } from "@skryensya/ai-compiler/usage-tree";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 import { framedIn, type FramedOverrides } from "./framed";
 
 /*

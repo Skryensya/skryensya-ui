@@ -15,6 +15,68 @@ export const boxTree = (t: Translate): UsageTree => ({
   ],
 });
 
+const boxFace = (
+  surface: "sunken" | "surface" | "raised",
+  title: string,
+  body: string,
+): UsageTree => ({
+  contract: "box",
+  signature: "Box",
+  options: { surface, border: "subtle", padding: "md" },
+  children: [
+    { contract: "typography", signature: "Heading", options: { headingSize: "sm", flush: true }, children: title },
+    { contract: "typography", signature: "Text", options: { tone: "secondary", size: "sm" }, children: body },
+  ],
+});
+
+/** Three faces of `surface` side by side: sunken, surface, raised. */
+export const boxSurfacesTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Grid",
+  options: { gap: "md", columns: "3", responsive: true },
+  children: [
+    boxFace("sunken", t("demo.box.surface.sunken.title"), t("demo.box.surface.sunken.body")),
+    boxFace("surface", t("demo.box.surface.surface.title"), t("demo.box.surface.surface.body")),
+    boxFace("raised", t("demo.box.surface.raised.title"), t("demo.box.surface.raised.body")),
+  ],
+});
+
+/*
+ * SEVERAL independent controls inside one Box: the case that forbids Tile. Two buttons and a
+ * switch sit as siblings; none of them owns the surface.
+ */
+export const boxControlsTree = (t: Translate): UsageTree => ({
+  contract: "box",
+  signature: "Box",
+  options: { surface: "surface", border: "subtle", padding: "lg" },
+  children: [
+    {
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "md" },
+      children: [
+        { contract: "typography", signature: "Heading", options: { headingSize: "sm", flush: true }, children: t("demo.box.controls.title") },
+        { contract: "typography", signature: "Text", options: { tone: "secondary" }, children: t("demo.box.controls.body") },
+        {
+          contract: "layout",
+          signature: "Inline",
+          options: { gap: "sm", wrap: true },
+          children: [
+            { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: t("demo.box.controls.primary") },
+            { contract: "button", signature: "Button.action", options: { tone: "neutral", variant: "soft" }, children: t("demo.box.controls.secondary") },
+          ],
+        },
+        {
+          contract: "switch",
+          signature: "Switch",
+          options: { name: "box-notify" },
+          children: t("demo.box.controls.switch"),
+        },
+      ],
+    },
+  ],
+});
+
 /**
  * FIVE real hero patterns, all valid against the SAME minimal contract (no anatomy of Hero's own
  * beyond `padding`/`surface`/`align`). Everything else in each is ordinary Stack/Heading/Text/Button

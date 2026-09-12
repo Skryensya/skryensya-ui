@@ -1,19 +1,17 @@
 <script lang="ts">
   import { slider } from "@skryensya/core/machines";
+import { sliderAttrs } from "@skryensya/core/slider";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
   import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
+  import { selectorsFor } from "@skryensya/core/selectors";
 
   const root = getRoot();
 
-  const selector = {
-    control: "[data-sk-slider-control]",
-    track: "[data-sk-slider-track]",
-    range: "[data-sk-slider-range-part]",
-    thumb: "[data-sk-slider-thumb]",
-    input: "[data-sk-slider-input]",
-  } as const;
+  /* Derived from the contract's own mount attributes; see `selectorsFor`. */
+
+  const selector = selectorsFor(sliderAttrs);
 
   const numberAttr = (name: string, fallback: number): number => {
     const raw = root.getAttribute(name);

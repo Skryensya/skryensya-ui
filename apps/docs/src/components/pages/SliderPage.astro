@@ -1,42 +1,16 @@
 ---
 import "@skryensya/core/components/slider.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { sliderRangeTree, sliderTree } from "../../demos/slider";
+import { sliderAnatomyTree, sliderRangeTree, sliderTree } from "../../demos/slider";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/slider.yaml?raw";
-import coreSource from "@core/src/slider.ts?raw";
-import coreRangeTestSource from "@core/src/slider-range.test.ts?raw";
-import cssSource from "@core/css/components/slider.css?raw";
-import vanillaMountSource from "@vanilla/src/components/slider.ts?raw";
-import vanillaRangeSource from "@vanilla/src/components/slider-range.ts?raw";
-import vanillaRangeTestSource from "@vanilla/src/components/slider-range.test.ts?raw";
-import reactSource from "@react/src/components/slider.tsx?raw";
-import reactRangeTestSource from "@react/src/components/slider-range.test.tsx?raw";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
-
-const sourceFiles = [
-  { id: "contracts/semantic/slider.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/slider.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/src/slider-range.test.ts", source: coreRangeTestSource, language: "ts" },
-  { id: "packages/core/css/components/slider.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/slider.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/slider-range.ts", source: vanillaRangeSource, language: "ts" },
-  {
-    id: "packages/vanilla/src/components/slider-range.test.ts",
-    source: vanillaRangeTestSource,
-    language: "ts",
-  },
-  { id: "packages/react/src/components/slider.tsx", source: reactSource, language: "tsx" },
-  {
-    id: "packages/react/src/components/slider-range.test.tsx",
-    source: reactRangeTestSource,
-    language: "tsx",
-  },
-] as const;
 ---
 
 <ComponentPageShell
@@ -44,7 +18,6 @@ const sourceFiles = [
   description={t("sliderPage.description")}
   contractId="slider"
   styleGroups={[{ file: "components/slider.css", probe: "sk-slider" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/slider.test.tsx",
@@ -95,6 +68,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("sliderPage.lede")} />
+
+    <p set:html={t("sliderPage.anatomyBody")} />
+    <ComponentPreview
+      tree={sliderAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("sliderPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={sliderTree(t)} label="Slider" />
     <p set:html={t("sliderPage.body1")} />
     <p set:html={t("sliderPage.body2")} />

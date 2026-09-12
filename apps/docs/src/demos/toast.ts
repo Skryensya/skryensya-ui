@@ -1,8 +1,56 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
 import dismissScript from "./scripts/toast-dismiss.ts?raw";
 import emitScript from "./scripts/toast-emit.ts?raw";
 import stackScript from "./scripts/toast-stack.ts?raw";
+
+/*
+ * Region plus one full toast: icon, title, description, actions and dismiss. Toast reuses Callout
+ * parts for everything but dismiss, so the labels name both sheets on purpose.
+ */
+export const toastAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("toastPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "content",
+      signature: "ToastRegion",
+      attrs: { "data-stack": "off" },
+      children: {
+        contract: "content",
+        signature: "Toast",
+        options: {
+          tone: "info",
+          dismissible: true,
+          dismissLabel: t("demo.toast.dismiss"),
+        },
+        slots: {
+          icon: { contract: "icon", signature: "Icon", options: { name: "info" } },
+          title: t("demo.toast.documentArchived"),
+          actions: {
+            contract: "button",
+            signature: "Button.action",
+            options: { size: "sm", variant: "solid" },
+            children: t("demo.toast.undo"),
+          },
+        },
+        children: t("demo.toast.movedToArchived"),
+      },
+    },
+    items: [
+      namePart(".sk-toast-region", "block-start"),
+      namePart(".sk-callout", "inline-start"),
+      namePart(".sk-callout__icon", "inline-start"),
+      namePart(".sk-callout__content", "inline-end", { ringPlacement: "offset", ringDistance: 6 }),
+      namePart(".sk-callout__title", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-callout__description", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-callout__actions", "block-end"),
+      namePart(".sk-toast__dismiss", "inline-end"),
+    ],
+  },
+});
 
 /* Static and runtime Toast compositions share the same emitted anatomy. */
 export const toastSimpleTree = (t: Translate): UsageTree => ({

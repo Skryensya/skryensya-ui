@@ -45,6 +45,10 @@ export const changelogMessages = {
     "changelogPage.betaBadge": "Beta",
     "changelogPage.lede":
       "Un historial fechado, lo más nuevo arriba. La fecha encabeza cada entrada porque es lo que el lector viene a buscar, y el punto del riel es una marca neutra que dice <em>cuándo</em>: el <em>qué</em> lo dice la palabra al lado. Es estático: no hay enhancer ni estado.",
+    "changelogPage.anatomyBody":
+      "Este diagrama nombra el release, el marcador, la versión, la fecha, las entries y el título y texto de una entrada. El espécimen está congelado; el Changelog vivo empieza abajo.",
+    "changelogPage.anatomyLabel": "Anatomía de Changelog",
+    "changelogPage.anatomyPreviewLabel": "Changelog, parte por parte",
     "changelogPage.previewNote": "cuatro tipos",
     "changelogPage.whenTitle": "Cuándo usarlo",
     "changelogPage.whenItem1":
@@ -109,6 +113,10 @@ export const changelogMessages = {
     "changelogPage.betaBadge": "Beta",
     "changelogPage.lede":
       "A dated history, newest on top. The date heads every entry because that is what the reader came looking for, and the rail's marker is a neutral mark that says <em>when</em>: the <em>what</em> is the word beside it. It is static: no enhancer, no state.",
+    "changelogPage.anatomyBody":
+      "This diagram names the release, marker, version, date, entries, and an entry's title and text. The specimen is frozen; the live Changelog starts below.",
+    "changelogPage.anatomyLabel": "Changelog anatomy",
+    "changelogPage.anatomyPreviewLabel": "Changelog, part by part",
     "changelogPage.previewNote": "four kinds",
     "changelogPage.whenTitle": "When to use it",
     "changelogPage.whenItem1":

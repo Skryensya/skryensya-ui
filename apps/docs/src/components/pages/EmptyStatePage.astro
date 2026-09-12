@@ -1,24 +1,14 @@
 ---
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { emptyStateTree } from "../../demos/empty-state";
+import { emptyStateAnatomyTree, emptyStateTree } from "../../demos/empty-state";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/empty-state.css";
-import contractSource from "@contracts/semantic/empty-state.yaml?raw";
-import coreSource from "@core/src/empty-state.ts?raw";
-import cssSource from "@core/css/components/empty-state.css?raw";
-import reactSource from "@react/src/components/empty-state.tsx?raw";
-import reactTestSource from "@react/src/components/empty-state.test.tsx?raw";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 
 const t = useTranslations(getLocale(Astro.url));
-
-const sourceFiles = [
-  { id: "contracts/semantic/empty-state.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/empty-state.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/empty-state.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/empty-state.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/empty-state.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -26,7 +16,6 @@ const sourceFiles = [
   description={t("emptyState.description")}
   badge={t("emptyState.betaBadge")}
   contractId="empty-state"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/empty-state.css", probe: "sk-empty-state", title: "EmptyState" }]}
   tests={[
     {
@@ -48,6 +37,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("emptyState.description")} />
+
+    <p set:html={t("emptyState.anatomyBody")} />
+    <ComponentPreview
+      tree={emptyStateAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("emptyState.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={emptyStateTree(t)} label="Empty State" />
 
     <h3>{t("component.contractNotesTitle")}</h3>

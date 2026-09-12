@@ -12,18 +12,20 @@
 import "@skryensya/core/components/dialog.css";
 import "@skryensya/core/patterns/dialog-vaul.css";
 import "@skryensya/core/components/list.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { dialogConfirmScript, dialogConfirmTree, dialogVaulScript, dialogVaulTree } from "../../demos/dialog";
+import {
+  dialogAnatomyTree,
+  dialogConfirmScript,
+  dialogConfirmTree,
+  dialogVaulScript,
+  dialogVaulTree,
+} from "../../demos/dialog";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/dialog.yaml?raw";
-import coreSource from "@core/src/dialog.ts?raw";
-import cssSource from "@core/css/components/dialog.css?raw";
-import vaulCssSource from "@core/css/patterns/dialog-vaul.css?raw";
-import vaulMountSource from "@vanilla/src/components/vaul.ts?raw";
-import vaulGestureSource from "@vanilla/src/components/vaul-gesture.ts?raw";
-import reactSource from "@react/src/components/dialog.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -52,23 +54,12 @@ const vaulStyles = `@import "@skryensya/core/components/dialog.css";
 const vaulJs = `import { initComponents } from "@skryensya/vanilla/auto";
 
 await initComponents();`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/dialog.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/dialog.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/dialog.css", source: cssSource, language: "css" },
-  { id: "packages/core/css/patterns/dialog-vaul.css", source: vaulCssSource, language: "css" },
-  { id: "packages/vanilla/src/components/vaul.ts", source: vaulMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/vaul-gesture.ts", source: vaulGestureSource, language: "ts" },
-  { id: "packages/react/src/components/dialog.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Dialog"
   description={t("dialog.description")}
   contractId="dialog"
-  sourceFiles={sourceFiles}
   styleGroups={[
     { file: "components/dialog.css", probe: "sk-dialog", title: "Dialog" },
     { file: "patterns/dialog-vaul.css", probe: "data-sk-dialog-vaul", title: "Dialog Vaul" },
@@ -89,6 +80,16 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("dialog.lede")} />
+
+    <p set:html={t("dialog.anatomyBody")} />
+    <ComponentPreview
+      tree={dialogAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("dialog.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("dialog.confirmTitle")}</h3>
     <p set:html={t("dialog.confirmAnatomy")} />

@@ -3,12 +3,18 @@ export const comboboxMessages = {
     "demo.combobox.label": "País",
     "demo.combobox.placeholder": "Buscar país",
     "demo.combobox.hint": "Escribí para filtrar la lista",
+    "demo.combobox.anatomy.item1": "República Dominicana",
+    "demo.combobox.anatomy.item2": "Estados Unidos",
 
     "combobox.description": "Sugerencias editables con estados claros, ayuda contextual y navegación completa por teclado.",
     "combobox.betaBadge": "Beta",
     "combobox.lede": "Sugerencias editables con contexto, estados claros y navegación completa por teclado.",
+    "combobox.anatomyBody":
+      "Un Combobox cerrado es un campo: el positioner, el content y las filas sólo existen mientras la lista está arriba. Por eso el espécimen se dibuja abierto y se queda así. Está congelado; el Combobox vivo es el de abajo.",
+    "combobox.anatomyLabel": "Anatomía de Combobox",
+    "combobox.anatomyPreviewLabel": "Combobox abierto, parte por parte",
     "combobox.contractBody1":
-      "Combobox filtra una colección autorada sin reemplazar sus opciones. Select conserva una lista cerrada e Input no muestra sugerencias.",
+      "Combobox filtra una colección escrita a mano sin reemplazar sus opciones. Select conserva una lista cerrada e Input no muestra sugerencias.",
     "combobox.contractBody2":
       "Lo escrito es trabajo del usuario: salir del campo sin elegir nada (desenfocar, clic afuera, Escape) cierra la lista pero <strong>no borra la búsqueda</strong>. Sólo elegir una opción reescribe el input (con la etiqueta elegida), y sólo el ✕ lo vacía. Al reabrir, el filtro vuelve a la lista completa: lo que se ve es la selección, no el último texto tipeado.",
     "combobox.a11yBody1":
@@ -25,10 +31,16 @@ export const comboboxMessages = {
     "demo.combobox.label": "Country",
     "demo.combobox.placeholder": "Search country",
     "demo.combobox.hint": "Type to filter the list",
+    "demo.combobox.anatomy.item1": "Dominican Republic",
+    "demo.combobox.anatomy.item2": "United States",
 
     "combobox.description": "Editable suggestions with clear states, contextual help, and full keyboard navigation.",
     "combobox.betaBadge": "Beta",
     "combobox.lede": "Editable suggestions with context, clear states, and full keyboard navigation.",
+    "combobox.anatomyBody":
+      "A closed Combobox is a field: the positioner, the content and the rows only exist while the list is up. So the specimen is drawn open and stays open. It is frozen; the live Combobox is the one below.",
+    "combobox.anatomyLabel": "Combobox anatomy",
+    "combobox.anatomyPreviewLabel": "An open Combobox, part by part",
     "combobox.contractBody1":
       "Combobox filters an authored collection without replacing its options. Select keeps a closed list, and Input shows no suggestions.",
     "combobox.contractBody2":

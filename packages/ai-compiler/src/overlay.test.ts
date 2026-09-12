@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { readOverlays } from "./overlay.js";
-import { contractIds, getContract } from "./registry.js";
+import { contractIds, getContract } from "@skryensya/core/registry";
 
 /*
  * The overlay is the half of the truth a machine cannot infer: when to reach for a signature and

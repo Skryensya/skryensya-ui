@@ -5,9 +5,21 @@ export const datePickerMessages = {
     "demo.datePicker.label": "Reserva",
     "demo.datePicker.placeholder": "dd/mm/aaaa",
     "demo.datePicker.clear": "Limpiar fecha",
+    "demo.datePicker.anatomy.month": "sep 2026",
+    "demo.datePicker.anatomy.dow1": "lu",
+    "demo.datePicker.anatomy.dow2": "ma",
+    "demo.datePicker.anatomy.dow3": "mi",
+    "demo.datePicker.anatomy.dow4": "ju",
+    "demo.datePicker.anatomy.dow5": "vi",
+    "demo.datePicker.anatomy.dow6": "sá",
+    "demo.datePicker.anatomy.dow7": "do",
 
     "datePicker.description":
       "Campo de fecha único o en rango, con nativo type=date y calendario custom detrás de un trigger.",
+    "datePicker.anatomyBody":
+      "Un DatePicker cerrado es un campo: el positioner y el content (con el Calendar nesteado) sólo existen mientras el popover está arriba. Por eso el espécimen se dibuja abierto y se queda así. El grid en sí se documenta en Calendar; aquí se nombran las parts del campo y del shell.",
+    "datePicker.anatomyLabel": "Anatomía de DatePicker",
+    "datePicker.anatomyPreviewLabel": "DatePicker abierto, parte por parte",
     "datePicker.lede":
       'Dos versiones, un solo campo. La <strong>nativa</strong> es un <code>&lt;input type="date"&gt;</code> con el chrome del sistema: teclado, formulario y calendario del SO vienen de la plataforma, sin JavaScript. La <strong>custom</strong> monta un <a href="/components/calendar">Calendar</a> detrás de un trigger con la misma forma de campo, para cuando necesitas rango, localización explícita o un calendario consistente entre navegadores. Las dos comparten <code>.sk-date-picker__control</code>, así que se ven igual. El calendario en sí (encabezado, vistas, grillas) es responsabilidad de Calendar, no de este componente: DatePicker sólo lo nestea dentro de su popover.',
     "datePicker.nativeTitle": "Nativo",
@@ -24,14 +36,14 @@ export const datePickerMessages = {
     "datePicker.whichBody":
       "Empieza por el <strong>nativo</strong>: es el que funciona sin JS y el que el sistema operativo ya sabe presentar en cada plataforma. Sube al <strong>custom</strong> sólo cuando el nativo no alcanza: selección de <em>rango</em>, una zona horaria y un locale que no pueden quedar como string ambiguo, o un calendario que se vea igual en todos los navegadores. Es la misma decisión que Select nativo vs. Select custom.",
     "datePicker.contractBody":
-      'React ofrece <code>DatePicker</code> sobre la misma máquina que <code>Calendar</code> (<code>@zag-js/date-picker</code>), y reusa el mismo cuerpo de calendario: no hay dos implementaciones del grid. Vanilla hidrata el <code>data-sk-date-picker</code> autorado: parchea el control y renderiza el calendario con el componente compartido de Calendar. El input <code>type="date"</code> nativo no necesita enhancer.',
+      'React ofrece <code>DatePicker</code> sobre la misma máquina que <code>Calendar</code> (<code>@zag-js/date-picker</code>), y reusa el mismo cuerpo de calendario: no hay dos implementaciones del grid. Vanilla hidrata el <code>data-sk-date-picker</code> escrito a mano: parchea el control y renderiza el calendario con el componente compartido de Calendar. El input <code>type="date"</code> nativo no necesita enhancer.',
     "datePicker.mobileTitle": "En móvil",
     "datePicker.mobileBody":
       'Bajo el breakpoint de escritorio (30rem) el calendario custom deja de colgar del campo y se vuelve una <strong>hoja inferior</strong>: el positioner llena la pantalla como scrim y el contenido se ancla al borde inferior, a todo el ancho, y sube. Toma el <em>aspecto</em> del Vaul, no el arrastre (es un popover de Zag, no un <code>&lt;dialog&gt;</code> nativo), pero cierra igual al tocar fuera o con <kbd class="sk-kbd">Esc</kbd>. Es el mismo corte responsivo que <a href="/components/dialog">Dialog Vaul</a>.',
     "datePicker.a11yBody":
       'La fecha usa valores <code>DateValue</code> y zona horaria explícita; no se modela como string ambiguo de locale. El control conserva nombre accesible por su <code>label</code>. La accesibilidad del grid en sí (rol, navegación por teclado, cambio de vista) es contrato de <a href="/components/calendar">Calendar</a>.',
     "datePicker.test1": "Rechaza markup al que le falta una parte que necesita parchar.",
-    "datePicker.test2": "Parcha el control autorado y renderiza el popover alrededor de un calendario.",
+    "datePicker.test2": "Parcha el control escrito a mano y renderiza el popover alrededor de un calendario.",
     "datePicker.test3": "Llena el campo con el día que eligió quien lee.",
   },
   en: {
@@ -40,9 +52,21 @@ export const datePickerMessages = {
     "demo.datePicker.label": "Booking",
     "demo.datePicker.placeholder": "mm/dd/yyyy",
     "demo.datePicker.clear": "Clear date",
+    "demo.datePicker.anatomy.month": "Sep 2026",
+    "demo.datePicker.anatomy.dow1": "Mo",
+    "demo.datePicker.anatomy.dow2": "Tu",
+    "demo.datePicker.anatomy.dow3": "We",
+    "demo.datePicker.anatomy.dow4": "Th",
+    "demo.datePicker.anatomy.dow5": "Fr",
+    "demo.datePicker.anatomy.dow6": "Sa",
+    "demo.datePicker.anatomy.dow7": "Su",
 
     "datePicker.description":
       "A single or range date field, with a native type=date and a custom calendar behind a trigger.",
+    "datePicker.anatomyBody":
+      "A closed DatePicker is a field: the positioner and the content (with Calendar nested inside) only exist while the popover is up. So the specimen is drawn open and stays open. The grid itself is documented on Calendar; here the field and shell parts are named.",
+    "datePicker.anatomyLabel": "DatePicker anatomy",
+    "datePicker.anatomyPreviewLabel": "An open DatePicker, part by part",
     "datePicker.lede":
       "Two versions, one field. The <strong>native</strong> one is an <code>&lt;input type=\"date\"&gt;</code> with the system's own chrome: keyboard, form handling and the OS calendar come from the platform, no JavaScript. The <strong>custom</strong> one mounts a <a href=\"/en/components/calendar\">Calendar</a> behind a trigger with the same field shape, for when you need a range, an explicit locale, or a calendar that looks the same across browsers. Both share <code>.sk-date-picker__control</code>, so they look alike. The calendar itself (header, views, grids) is Calendar's responsibility, not this component's: DatePicker only nests it inside its popover.",
     "datePicker.nativeTitle": "Native",

@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
 import { DEMO_IMAGE_FRAME_SRC } from "./image-frame";
 
 /*
@@ -78,6 +79,37 @@ const folder = ({ title, body: copy, href, previews = 0, active }: FolderSpec): 
     label: heading(title),
     children: body(copy),
     ...(previews ? { previews: Array.from({ length: previews }, preview) } : {}),
+  },
+});
+
+/*
+ * One folder held `active`, with previews fanned, so shape, tab, content and preview all exist to
+ * be named. A folder at rest is invisible against its ground; without `active` the diagram would
+ * name parts the eye cannot see.
+ */
+export const folderAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("folderPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: on(
+      "sunken",
+      folder({
+        title: t("demo.folder.radioTitle"),
+        body: t("demo.folder.radioBody"),
+        href: "#folder-anatomy",
+        previews: 3,
+        active: true,
+      }),
+    ),
+    items: [
+      namePart(".sk-folder", "block-start"),
+      namePart(".sk-folder__shape", "inline-start"),
+      namePart(".sk-folder__tab", "block-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-folder__content", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-folder__previews", "inline-end"),
+      namePart(".sk-folder__preview", "block-end", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
   },
 });
 

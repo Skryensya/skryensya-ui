@@ -1,30 +1,22 @@
 ---
+/* The anatomy diagram is an Annotated frame, so this page needs its sheet. */
+import "@skryensya/core/components/annotation.css";
+import { annotationDemoCss } from "../../demos/annotation";
+import { inlineAnatomyTree } from "../../demos/layout-anatomy";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { inlineCardFloorTree, inlineTree } from "../../demos/layout";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/layout.yaml?raw";
-import coreSource from "@core/src/layout.ts?raw";
-import cssSource from "@core/css/patterns/layout.css?raw";
-import reactSource from "@react/src/components/layout.tsx?raw";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
-
-const sourceFiles = [
-  { id: "contracts/semantic/layout.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/layout.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/patterns/layout.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/layout.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Inline"
   description={t("inlinePage.description")}
   contractId="layout"
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/layout.test.tsx",
@@ -44,6 +36,16 @@ const sourceFiles = [
   <Fragment slot="usage">
     <p class="lede" set:html={t("inlinePage.lede")} />
     <ComponentPreview tree={inlineTree(t)} label={t("inlinePage.previewLabel")} note={t("inlinePage.previewNote")} />
+
+    <p set:html={t("inlinePage.anatomyBody")} />
+    <ComponentPreview
+      tree={inlineAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("inlinePage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
 
     <h3>{t("inlinePage.floorTitle")}</h3>
     <p set:html={t("inlinePage.floorBody")} />

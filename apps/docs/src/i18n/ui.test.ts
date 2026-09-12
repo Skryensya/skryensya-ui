@@ -53,6 +53,7 @@ describe("ui.ts locale parity", () => {
     "demo.commentThread.body6",
     "demo.commentThread.body7",
     "demo.commentThread.body8",
+    "demo.commentThread.anatomyBody",
     // Component-name / feature lists, `·` or `+`-joined: naming is locale-invariant on purpose.
     "cardPage.gradientNote",
     "carousel.multiNote",
@@ -73,6 +74,10 @@ describe("ui.ts locale parity", () => {
     "imageFrame.contractItem5",
     "imageFrame.contractItem6",
     "imageFrame.contractItem7",
+    /* The source CodePreview renders. It is TypeScript, not prose: translating an identifier or a
+     * selector would make the demo show code that does not compile. */
+    "demo.codePreview.condensed",
+    "demo.codePreview.full",
     // A literal filename shown as a demo prop.
     "demo.treegridStress.formatUtil",
   ];

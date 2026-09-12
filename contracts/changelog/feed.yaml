@@ -13,7 +13,7 @@ entries:
       body: >-
         El binding React siempre escribe <code>aria-busy={busy}</code>, la lectura tri-state que
         WAI-ARIA pide ("aria-busy se pone en true antes de un cambio... en false inmediatamente
-        después"); la opción del contrato no tenía <code>falseValue</code>, así que markup autorado
+        después"); la opción del contrato no tenía <code>falseValue</code>, así que markup escrito a mano
         con <code>busy</code> en falso omitía el atributo por completo en vez de escribirlo como
         <code>"false"</code>. Invisible hasta que un árbol canónico existió para comparar los dos
         bindings.

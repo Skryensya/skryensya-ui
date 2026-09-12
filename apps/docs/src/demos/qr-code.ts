@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
-import type { Locale } from "../i18n";
+import type { Locale, Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
 
 /*
  * THE QRCODE EXAMPLES, AS USAGE TREES.
@@ -40,6 +41,36 @@ const copy = (locale: Locale): Copy =>
         orBrowse: "Or go straight there in the browser:",
         label: "Open the QR documentation",
       };
+
+
+/** Frame, modules and logo: a level-H symbol with every QRCode part present. */
+export const qrCodeAnatomyTree = (t: Translate, locale: Locale): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("qrCodePage.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "qr-code",
+      signature: "QRCode",
+      options: {
+        value: qrCodeDocsUrl(locale),
+        label: copy(locale).label,
+        level: "H",
+        logoRatio: 0.22,
+        qrSize: "lg",
+      },
+      slots: {
+        logo: { contract: "icon", signature: "Icon", options: { name: "settings", size: "lg" } },
+      },
+    },
+    items: [
+      namePart(".sk-qr-code", "block-start", { ringPlacement: "offset", ringDistance: 6 }),
+      namePart(".sk-qr-code__frame", "inline-start"),
+      namePart(".sk-qr-code__modules", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-qr-code__logo", "block-end", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
+  },
+});
 
 /** 1. The floor: a value and a name for it. Everything else is defaulted. */
 export const qrCodeTree = (locale: Locale): UsageTree => ({

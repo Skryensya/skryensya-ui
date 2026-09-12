@@ -1,6 +1,7 @@
 import type { ChartPoint } from "@skryensya/core/chart";
 import type { ItemInput, UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
 import {
   budgetByTeam,
   bundleWeightPerWeek,
@@ -218,6 +219,51 @@ export const chartsBarTree = (t: Translate): UsageTree => ({
   },
   slots: { items: chartItems(documentedPerQuarter) },
 });
+
+/*
+ * EVERY BAR PART filled: values painted so `sk-chart__value` has a box to name. Overlay stays empty
+ * on `kind: "bar"` (no path to draw), so it is not labelled. Three quarters keep the plot readable
+ * beside a gutter of class names.
+ */
+export const chartsAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("chartsPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "chart",
+      signature: "Chart",
+      options: {
+        kind: "bar",
+        height: "md",
+        values: true,
+        label: t("demo.charts.bar.label"),
+        description: t("demo.charts.bar.description"),
+      },
+      slots: { items: chartItems(documentedPerQuarter.slice(0, 3)) },
+    },
+    items: [
+      namePart(".sk-chart", "block-start"),
+      namePart(".sk-chart__caption", "inline-start"),
+      namePart(".sk-chart__plot", "inline-start"),
+      namePart(".sk-chart__series", "inline-start", { ringPlacement: "offset", ringDistance: 4 }),
+      namePart(".sk-chart__point", "inline-end", { ringPlacement: "offset", ringDistance: 3 }),
+      namePart(".sk-chart__bar", "inline-end"),
+      namePart(".sk-chart__label", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-chart__value", "block-end", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
+  },
+});
+
+/* Caption is `display: none` by default (a composition's own heading usually names the series). Show
+ * it here so the diagram can point at `sk-chart__caption` instead of labelling a hidden box. */
+export const chartsAnatomyCss = `.sk-annotated {
+  --sk-annotation-font-family: var(--font-family-code);
+}
+
+.sk-annotated .sk-chart {
+  --sk-chart-caption-display: block;
+}`;
 
 /** Chart + Table: the same series, read two ways. Two separate accessible names on purpose - see
  *  `chart-integrations.tsx`'s own header for why. */

@@ -25,7 +25,7 @@ export const footerMessages = {
       'Footer no impone anatomía: no hay slots con nombre para columnas ni una barra inferior. Compón adentro con <a href="/components/grid">Grid</a> para la fila de columnas, <a href="/components/nav-list">NavList</a> para cada columna (con su propio nombre accesible) y <a href="/components/wrapper">Wrapper</a> para sostener la medida de la página.',
     "footer.whenBody3":
       'Si sólo hace falta separar una sección del resto en medio de la página, usa <a href="/components/box">Box</a>. Una fila de botones de confirmación abajo de un panel o un diálogo se compone con <a href="/components/inline">Inline</a> dentro de ese contenedor, no con Footer.',
-    "footer.htmlTitle": "HTML autorado",
+    "footer.htmlTitle": "HTML escrito a mano",
     "footer.patternSiteTitle": "Footer de sitio",
     "footer.patternSiteDescription":
       "Una fila de columnas de enlaces sobre una línea legal, todo dentro de un Wrapper a la medida de la página.",

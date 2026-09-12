@@ -5,11 +5,15 @@ export const numberFieldMessages = {
     "demo.numberField.increment": "Aumentar",
 
     "numberFieldPage.description": "Entrada numérica localizada con límites, pasos y controles de incremento.",
+    "numberFieldPage.anatomyBody":
+      "Este diagrama nombra la etiqueta, el control y ambos steppers. El espécimen está congelado; el NumberField vivo empieza abajo.",
+    "numberFieldPage.anatomyLabel": "Anatomía de NumberField",
+    "numberFieldPage.anatomyPreviewLabel": "NumberField, parte por parte",
     "numberFieldPage.contractBody": "El valor público conserva string y valueAsNumber. Intl.NumberFormat controla la presentación.",
     "numberFieldPage.a11yBody": "Los triggers tienen nombres propios y el input anuncia min, max, valor actual y estado inválido.",
 
     "numberFieldPage.testVanilla1":
-      'Los triggers montan con el <code class="sk-code">aria-label</code> autorado en el markup.',
+      'Los triggers montan con el <code class="sk-code">aria-label</code> escrito a mano en el markup.',
     "numberFieldPage.testVanilla2":
       'Cada trigger suma o resta un <code class="sk-code">step</code> y emite <code class="sk-code">sk-value-change</code>.',
     "numberFieldPage.testVanilla3":
@@ -20,7 +24,7 @@ export const numberFieldMessages = {
     "numberFieldPage.testVanilla6":
       "Un valor tipeado por encima del máximo se recorta al límite al salir del campo.",
     "numberFieldPage.testVanilla7":
-      "El input y ambos triggers quedan deshabilitados cuando el input autorado lo está.",
+      "El input y ambos triggers quedan deshabilitados cuando el input escrito a mano lo está.",
     "numberFieldPage.testVanilla8":
       'Monta <code class="sk-code">role="spinbutton"</code> con <code class="sk-code">aria-valuemin</code>/<code class="sk-code">aria-valuemax</code>/<code class="sk-code">aria-valuenow</code>.',
     "numberFieldPage.testVanilla9":
@@ -49,6 +53,10 @@ export const numberFieldMessages = {
     "demo.numberField.increment": "Increase",
 
     "numberFieldPage.description": "Localized numeric entry with limits, steps, and increment controls.",
+    "numberFieldPage.anatomyBody":
+      "This diagram names the label, the control, and both steppers. The specimen is frozen; the live NumberField starts below.",
+    "numberFieldPage.anatomyLabel": "NumberField anatomy",
+    "numberFieldPage.anatomyPreviewLabel": "NumberField, part by part",
     "numberFieldPage.contractBody": "The public value keeps both string and valueAsNumber. Intl.NumberFormat controls the presentation.",
     "numberFieldPage.a11yBody": "The triggers carry their own names, and the input announces min, max, current value, and invalid state.",
 

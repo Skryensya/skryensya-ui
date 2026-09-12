@@ -20,7 +20,7 @@ entries:
         <code>&lt;svg aria-label="gráfico de aportes"&gt;</code> de siempre, que avisa que hay datos y
         después se niega a decir cuáles. Barras sin motor: cada entrada trae su valor y la hoja
         <code>components/chart.css</code> lo divide por el máximo de la serie para sacar la altura, así
-        que un gráfico de barras se pinta desde markup autorado. Un renderer que es opcional por
+        que un gráfico de barras se pinta desde markup escrito a mano. Un renderer que es opcional por
         construcción: <code>line</code> y <code>area</code> necesitan un path, y eso sí es geometría, así
         que <code>@skryensya/charts</code> lo dibuja como un overlay <code>aria-hidden</code> encima de
         este mismo markup; el motor es una MEJORA de un gráfico que ya funcionaba, no lo que lo hace

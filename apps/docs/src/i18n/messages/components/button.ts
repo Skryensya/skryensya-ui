@@ -22,6 +22,10 @@ export const buttonMessages = {
 
     "button.description": "Button: hooks de estilo, enhancer vanilla mínimo y componente React.",
     "button.lede": 'Styling hooks sobre el <code>&lt;button&gt;</code> nativo, un enhancer vanilla y un componente React.',
+    "button.anatomyBody":
+      "Un botón es una sola caja: el <code>&lt;button&gt;</code> nativo con la clase raíz, la capa de estado compartida encima y los hijos que le pongas adentro. El espécimen está congelado; los botones vivos empiezan en la matriz de abajo.",
+    "button.anatomyLabel": "Anatomía de Button",
+    "button.anatomyPreviewLabel": "Button, parte por parte",
     "button.variantsTitle": "Dos ejes: énfasis y tono",
     "button.variantsBody":
       "Un botón responde dos preguntas independientes, y por eso son dos opciones. <code>variant</code> dice <strong>qué tan fuerte</strong> es: <code>solid</code>, <code>soft</code>, <code>ghost</code>, <code>translucent</code>. <code>tone</code> dice <strong>qué significa</strong>: <code>neutral</code>, <code>accent</code>, <code>danger</code>. Elegir uno no elige el otro; abajo cada fila es un énfasis y cada columna un tono.",
@@ -66,7 +70,7 @@ export const buttonMessages = {
     "button.test1": "Es un <code>&lt;button&gt;</code> nativo que no envía formularios por defecto.",
     "button.test2": "El estado deshabilitado llega al control nativo y a la tecnología de asistencia.",
     "button.test3": "Como enlace, renderiza con la apariencia de Button y los atributos del ancla.",
-    "button.test4": "El enhancer da un <code>type</code> seguro a los botones autorados, y montar dos veces es idempotente.",
+    "button.test4": "El enhancer da un <code>type</code> seguro a los botones escritos a mano, y montar dos veces es idempotente.",
     "button.test5": "Un botón solo-icono sin nombre accesible es rechazado por el enhancer.",
     "button.test6": "El tamaño <code>xs</code> viaja por el mismo <code>data-size</code> que los otros tres.",
   },
@@ -93,6 +97,10 @@ export const buttonMessages = {
 
     "button.description": "Button: style hooks, a minimal vanilla enhancer and a React component.",
     "button.lede": 'Styling hooks over the native <code>&lt;button&gt;</code>, a vanilla enhancer, and a React component.',
+    "button.anatomyBody":
+      "A button is a single box: the native <code>&lt;button&gt;</code> carrying the root class, the shared state layer beside it, and whatever children you put inside. The specimen is frozen; the live buttons start with the matrix below.",
+    "button.anatomyLabel": "Button anatomy",
+    "button.anatomyPreviewLabel": "Button, part by part",
     "button.variantsTitle": "Two axes: emphasis and tone",
     "button.variantsBody":
       "A button answers two independent questions, which is why there are two options. <code>variant</code> says <strong>how loud</strong> it is: <code>solid</code>, <code>soft</code>, <code>ghost</code>, <code>translucent</code>. <code>tone</code> says <strong>what it means</strong>: <code>neutral</code>, <code>accent</code>, <code>danger</code>. Choosing one does not choose the other; below, each row is an emphasis and each column a tone.",

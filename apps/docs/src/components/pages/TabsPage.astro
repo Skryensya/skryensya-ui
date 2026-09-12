@@ -1,23 +1,20 @@
 ---
+import "@skryensya/core/components/tabs.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
   tabsAdvancedScript,
   tabsAdvancedTree,
+  tabsAnatomyTree,
   tabsBasicTree,
   tabsSizeTree,
   tabsStatesTree,
 } from "../../demos/tabs";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/tabs.yaml?raw";
-import coreSource from "@core/src/tabs.ts?raw";
-import cssSource from "@core/css/components/tabs.css?raw";
-import vanillaMountSource from "@vanilla/src/components/tabs.ts?raw";
-import vanillaCoordinatorSource from "@vanilla/src/components/Tabs.svelte?raw";
-import vanillaTestSource from "@vanilla/src/components/tabs.test.ts?raw";
-import reactSource from "@react/src/components/tabs.tsx?raw";
-import reactTestSource from "@react/src/components/tabs.test.tsx?raw";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -34,24 +31,12 @@ mountIcons(document, lucideIcons);
 await initComponents();`;
 
 const t = useTranslations(getLocale(Astro.url));
-
-const sourceFiles = [
-  { id: "contracts/semantic/tabs.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/tabs.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/tabs.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/tabs.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/Tabs.svelte", source: vanillaCoordinatorSource, language: "svelte" },
-  { id: "packages/vanilla/src/components/tabs.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/tabs.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/tabs.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Tabs"
   description={t("tabsPage.description")}
   contractId="tabs"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/tabs.css", probe: "sk-tabs", title: "Tabs" }]}
   tests={[
     {
@@ -69,6 +54,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("tabsPage.lede")} />
+
+    <p set:html={t("tabsPage.anatomyBody")} />
+    <ComponentPreview
+      tree={tabsAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("tabsPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
 
     <h3>{t("tabsPage.basicTitle")}</h3>
     <p set:html={t("tabsPage.basicBody")} />

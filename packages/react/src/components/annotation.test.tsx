@@ -219,6 +219,37 @@ describe("Annotated", () => {
     expect(ring!.getAttribute("width")).toBe("396");
   });
 
+  it("gives the ring the corner of the part it wraps, and lets the frame override it", () => {
+    /*
+     * The mirror of the Vanilla suite's own radius test, down to the numbers, because a ring drawn
+     * at a different corner in the two bindings is exactly what the symmetry gate exists to catch.
+     * The LONGHAND is set because jsdom (unlike every browser) does not expand `border-radius` into
+     * the four corners its computed style reports.
+     */
+    const { container } = render(
+      <Annotated annotations={[{ for: ".part-a", children: "part a" }]} subject={specimen} />,
+    );
+    layOut(container);
+    container.querySelector<HTMLElement>(".part-a")!.style.borderTopLeftRadius = "12px";
+    act(() => fire!());
+    // Concentric with the part: its 12 less the 2 the ring was pulled in by.
+    expect(overlayOf(container).querySelector("rect")!.getAttribute("rx")).toBe("10");
+
+    const fixed = render(
+      <Annotated
+        annotations={[{ for: ".part-a", children: "part a" }]}
+        ringRadius={0}
+        subject={specimen}
+      />,
+    );
+    layOut(fixed.container);
+    fixed.container.querySelector<HTMLElement>(".part-a")!.style.borderTopLeftRadius = "12px";
+    act(() => fire!());
+    /* Stated on the frame, that number is the ring's corner as written: an authored radius is
+       already a statement about the mark rather than about the part. */
+    expect(overlayOf(fixed.container).querySelector("rect")!.getAttribute("rx")).toBe("0");
+  });
+
   it("keeps one mark per label even when a label has nothing to point at", () => {
     // The reveal pairs a label with its mark by index; a shorter list would light up the wrong ring
     // for every label after the gap.
@@ -310,6 +341,28 @@ describe("Annotated", () => {
     withBox(root, { x: 0, y: 0, width: 600, height: 300 });
     withBox(subject, { x: 200, y: 0, width: 400, height: 300 });
     withBox(subject.querySelector(".separator")!, { x: 300, y: 100, width: 12, height: 20 });
+    withBox(labelsOf(container)[0]!, { x: 0, y: 0, width: 140, height: 20 });
+    act(() => fire!());
+
+    expect(overlayOf(container).children[0]!.childElementCount).toBe(2);
+  });
+
+  it("names a target whose only match lives inside an aria-hidden decorative host", () => {
+    const { container } = render(
+      <Annotated
+        annotations={[{ for: ".modules", children: "modules" }]}
+        subject={
+          <svg aria-hidden="true">
+            <path className="modules" d="M0 0h10v10H0z" />
+          </svg>
+        }
+      />,
+    );
+    const root = container.querySelector<HTMLElement>(`.${annotationParts.root}`)!;
+    const subject = container.querySelector<HTMLElement>(`.${annotationParts.subject}`)!;
+    withBox(root, { x: 0, y: 0, width: 600, height: 300 });
+    withBox(subject, { x: 200, y: 0, width: 400, height: 300 });
+    withBox(subject.querySelector(".modules")!, { x: 220, y: 120, width: 80, height: 80 });
     withBox(labelsOf(container)[0]!, { x: 0, y: 0, width: 140, height: 20 });
     act(() => fire!());
 

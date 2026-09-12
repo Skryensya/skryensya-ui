@@ -2,6 +2,116 @@ import type { ItemInput, UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /*
+ * THE ANATOMY SPECIMEN: frozen open markup. A live Menubar cannot hold a dropdown open in an inert
+ * frame (Menu's dismiss layer closes it on the first pointer press). No mount attributes. The open
+ * item's dropdown reuses Menu's positioner/content with `data-state="open"`; static positioning in
+ * `menubarAnatomyCss` keeps the panel in Annotated's measured box.
+ */
+const menubarAnatomySpecimen = (t: Translate): string => `<div class="sk-menubar" role="menubar" aria-label="${t("demo.menubar.label")}">
+  <div class="sk-menubar__item-wrapper sk-menu">
+    <button
+      class="sk-menubar__item sk-button sk-interactive sk-anchor"
+      type="button"
+      role="menuitem"
+      aria-expanded="true"
+      aria-haspopup="menu"
+      data-variant="ghost"
+      data-size="sm"
+      tabindex="-1"
+    >
+      ${t("demo.menubar.file")}
+      <span class="sk-menubar__item-indicator" aria-hidden="true">
+        <span data-sk-icon="chevron-down" data-sk-icon-size="md"></span>
+      </span>
+    </button>
+    <div class="sk-menu__positioner sk-anchored">
+      <div class="sk-menu__content" data-state="open" role="menu">
+        <div class="sk-menu__item sk-interactive" role="menuitem">
+          <span class="sk-menu__item-label">${t("demo.menubar.new")}</span>
+        </div>
+        <div class="sk-menu__item sk-interactive" role="menuitem">
+          <span class="sk-menu__item-label">${t("demo.menubar.open")}</span>
+        </div>
+        <div class="sk-menu__item sk-interactive" role="menuitem">
+          <span class="sk-menu__item-label">${t("demo.menubar.save")}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sk-menubar__item-wrapper sk-menu">
+    <button
+      class="sk-menubar__item sk-button sk-interactive sk-anchor"
+      type="button"
+      role="menuitem"
+      aria-expanded="false"
+      aria-haspopup="menu"
+      data-variant="ghost"
+      data-size="sm"
+      tabindex="-1"
+    >
+      ${t("demo.menubar.edit")}
+      <span class="sk-menubar__item-indicator" aria-hidden="true">
+        <span data-sk-icon="chevron-down" data-sk-icon-size="md"></span>
+      </span>
+    </button>
+  </div>
+</div>`;
+
+const label = (target: string, side: string, text: string, extra = ""): string =>
+  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
+
+export const menubarAnatomyHtml = (t: Translate): string => `<div
+  class="sk-annotated"
+  data-sk-annotated
+  aria-label="${t("menubarPage.anatomyLabel")}"
+  data-ring-placement="inset"
+  data-ring-distance="2"
+  role="group"
+>
+  <div class="sk-annotated__subject" inert>
+    ${menubarAnatomySpecimen(t)}
+  </div>
+  ${label(".sk-menubar", "block-start", "sk-menubar", ' data-ring-placement="offset" data-ring-distance="8"')}
+  ${label(".sk-menubar__item-wrapper", "inline-start", "sk-menubar__item-wrapper")}
+  ${label(".sk-menubar__item", "inline-start", "sk-menubar__item", ' data-ring-placement="offset" data-ring-distance="2"')}
+  ${label(".sk-menubar__item-indicator", "inline-end", "sk-menubar__item-indicator")}
+  ${label(".sk-menu__positioner", "inline-start", "sk-menu__positioner")}
+  ${label(".sk-menu__content", "inline-end", "sk-menu__content")}
+  ${label(".sk-menu__item", "inline-end", "sk-menu__item", ' data-ring-placement="offset" data-ring-distance="3"')}
+  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
+</div>`;
+
+export const menubarAnatomyCss = `.sk-annotated {
+  --sk-annotation-font-family: var(--font-family-code);
+  --sk-demo-menu-panel: 9.5rem;
+}
+
+.sk-annotated .sk-menu__content {
+  min-inline-size: var(--sk-demo-menu-panel);
+}
+
+.sk-annotated__subject > .sk-menubar {
+  display: inline-flex;
+  gap: var(--space-inline-xs);
+  align-items: flex-start;
+}
+
+.sk-annotated .sk-menubar__item-wrapper {
+  display: inline-grid;
+  justify-items: start;
+  gap: var(--space-stack-md);
+}
+
+.sk-annotated .sk-menubar__item-wrapper > .sk-menu__positioner {
+  position: static;
+  inline-size: max-content;
+}
+
+.sk-annotated__subject {
+  text-align: center;
+}`;
+
+/*
  * `menubar-editor`, the WAI-ARIA APG example this pattern is named after: File/Edit, each opening
  * one level of commands. `MenubarItem`'s own label is its `children` slot (text); the dropdown
  * itself is a SEPARATE slot, `items`. The contract's own vocabulary, distinct from the React

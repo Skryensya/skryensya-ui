@@ -8,6 +8,10 @@ export const switchMessages = {
 
     "switchPage.description": "Switch: una preferencia binaria persistente sobre checkbox nativo.",
     "switchPage.lede": "Un estado binario que toma efecto inmediatamente: encendido o apagado. Para una selección que requiere guardar, usa Checkbox.",
+    "switchPage.anatomyBody":
+      "Este diagrama nombra el input, el control, el thumb y la etiqueta. El espécimen está congelado; los Switch vivos empiezan abajo.",
+    "switchPage.anatomyLabel": "Anatomía de Switch",
+    "switchPage.anatomyPreviewLabel": "Switch, parte por parte",
     "switchPage.body": "No requiere inicialización Vanilla: el checkbox nativo conserva teclado, reset y submit de formularios. React sólo encapsula ese mismo control.",
     "switchPage.tileTitle": "Switch de superficie: TileSwitch",
     "switchPage.tileBody1":
@@ -33,6 +37,10 @@ export const switchMessages = {
     "switchPage.description": "Switch: a persistent binary preference over a native checkbox.",
     "switchPage.lede":
       "A binary state that takes effect immediately: on or off. For a selection that needs saving, use Checkbox.",
+    "switchPage.anatomyBody":
+      "This diagram names the input, the control, the thumb and the label. The specimen is frozen; the live Switches begin below.",
+    "switchPage.anatomyLabel": "Switch anatomy",
+    "switchPage.anatomyPreviewLabel": "Switch, part by part",
     "switchPage.body":
       "Needs no Vanilla initialization: the native checkbox already keeps keyboard, reset and form submission. React only wraps that same control.",
     "switchPage.tileTitle": "Surface switch: TileSwitch",

@@ -578,3 +578,16 @@ export type SignatureOptionsOf<
 /** The signature ids of a contract, for anything that has to name one. */
 export type SignatureId<C extends { readonly signatures: Readonly<Record<string, ContractSignature>> }> =
   keyof C["signatures"] & string;
+
+/**
+ * The options a signature accepts, in the contract's declaration order. Order is the emitted order.
+ *
+ * Here rather than in the catalogue: it needs the contract TYPES and nothing else, and a caller
+ * that only wants to read one signature's options should not have to load all 83 contracts to do it.
+ */
+export function signatureOptions(
+  contract: ComponentContract,
+  signature: ContractSignature,
+): readonly [string, ContractOption][] {
+  return Object.entries(contract.options).filter(([name]) => signature.options.includes(name));
+}

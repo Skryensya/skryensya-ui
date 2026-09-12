@@ -1,5 +1,54 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
+
+/*
+ * ONE group with a labelled list, an icon link, a trailing count, and a nested sub-list: enough of
+ * the pattern's own parts to name the landmark without filling the frame with a full product nav.
+ */
+export const navListAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("navListPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "nav-list",
+      signature: "NavList",
+      attrs: { "aria-label": t("demo.navList.productLabel"), style: "inline-size: 14rem" },
+      children: [
+        {
+          contract: "nav-list",
+          signature: "NavListGroup",
+          slots: { label: t("demo.navList.groupWork") },
+          children: [
+            link(t("demo.navList.dashboard"), "/app/dashboard", "info", { current: true }),
+            link(t("demo.navList.inbox"), "/app/inbox", "file", { trailing: "8" }),
+            link(t("demo.navList.customers"), "/app/customers", "user", {
+              nested: {
+                contract: "nav-list",
+                signature: "NavListGroup",
+                children: [
+                  link(t("demo.navList.allCustomers"), "/app/customers"),
+                  link(t("demo.navList.segments"), "/app/segments"),
+                ],
+              },
+            }),
+          ],
+        },
+      ],
+    },
+    items: [
+      namePart(".sk-nav-list", "block-start"),
+      namePart(".sk-nav-list__group", "inline-start"),
+      namePart(".sk-nav-list__group-label", "inline-end"),
+      namePart(".sk-nav-list__list", "inline-start", { ringPlacement: "offset", ringDistance: 4 }),
+      namePart(".sk-nav-list__item", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-nav-list__link", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-nav-list__label", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-nav-list__trailing", "block-end"),
+    ],
+  },
+});
 
 const icon = (name: string): UsageTree => ({
   contract: "icon",

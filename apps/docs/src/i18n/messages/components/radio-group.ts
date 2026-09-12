@@ -10,6 +10,10 @@ export const radioGroupMessages = {
 
     "radioGroupPage.description": "RadioGroup: una opción exclusiva con inputs nativos y formulario real.",
     "radioGroupPage.lede": "Una elección exclusiva entre alternativas relacionadas. Cada opción es un radio nativo; el nombre compartido impone la exclusión.",
+    "radioGroupPage.anatomyBody":
+      "Este diagrama nombra el grupo, cada opción, el input, el control, el indicador y la etiqueta. El espécimen está congelado; los RadioGroup vivos empiezan abajo.",
+    "radioGroupPage.anatomyLabel": "Anatomía de RadioGroup",
+    "radioGroupPage.anatomyPreviewLabel": "RadioGroup, parte por parte",
     "radioGroupPage.tileTitle": "Opciones de superficie: TileRadioGroup",
     "radioGroupPage.tileBody1":
       "Cuando cada alternativa necesita título, descripción y una superficie completa, usa <code>TileRadioGroup</code>. Cada item conserva un radio nativo; el grupo no impone disposición.",
@@ -38,6 +42,10 @@ export const radioGroupMessages = {
 
     "radioGroupPage.description": "RadioGroup: an exclusive choice with native inputs and a real form.",
     "radioGroupPage.lede": "An exclusive choice among related alternatives. Every option is a native radio; the shared name enforces the exclusion.",
+    "radioGroupPage.anatomyBody":
+      "This diagram names the group, each option, the input, the control, the indicator and the label. The specimen is frozen; the live RadioGroups begin below.",
+    "radioGroupPage.anatomyLabel": "RadioGroup anatomy",
+    "radioGroupPage.anatomyPreviewLabel": "RadioGroup, part by part",
     "radioGroupPage.tileTitle": "Surface options: TileRadioGroup",
     "radioGroupPage.tileBody1":
       "When each alternative needs a title, a description, and a whole surface, use <code>TileRadioGroup</code>. Every item keeps a native radio; the group imposes no layout.",

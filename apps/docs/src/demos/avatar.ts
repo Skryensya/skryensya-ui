@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
 
 const ACCENT_HEX = "1f5fc3";
 const ON_ACCENT_HEX = "ffffff";
@@ -74,6 +75,53 @@ const AVATAR_COLOR_SIZES: readonly ("xl" | "lg" | "md" | "sm")[] = [
   "md", "md", "md", "md",
   "sm", "sm", "sm", "sm",
 ];
+
+
+/** Group, disc, fallback and overflow: the stacked set with every avatar part present. */
+export const avatarAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("avatar.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "avatar",
+      signature: "AvatarGroup",
+      options: { label: t("demo.avatar.groupLabel") },
+      slots: {
+        children: [
+          {
+            contract: "avatar",
+            signature: "Avatar.initials",
+            options: { name: t("demo.avatar.personOne") },
+            attrs: { style: AVATAR_FALLBACK_STYLE },
+            children: "P1",
+          },
+          {
+            contract: "avatar",
+            signature: "Avatar.initials",
+            options: { name: t("demo.avatar.personTwo") },
+            attrs: { style: AVATAR_FALLBACK_STYLE },
+            children: "P2",
+          },
+          {
+            contract: "avatar",
+            signature: "Avatar.initials",
+            options: { name: t("demo.avatar.personThree") },
+            attrs: { style: AVATAR_FALLBACK_STYLE },
+            children: "P3",
+          },
+        ],
+        overflow: "+1",
+      },
+    },
+    items: [
+      namePart(".sk-avatar-group", "block-start", { ringPlacement: "offset", ringDistance: 6 }),
+      namePart(".sk-avatar", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-avatar__fallback", "inline-end"),
+      namePart(".sk-avatar-group__overflow", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
+  },
+});
 
 /** Photo identities, cropped by ImageFrame inside the Avatar contract. */
 export const avatarImageTree = (t: Translate): UsageTree => ({

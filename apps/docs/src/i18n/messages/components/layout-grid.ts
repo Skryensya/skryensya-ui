@@ -9,6 +9,10 @@ export const layoutGridMessages = {
     "demo.layoutGridRail.railStart": "rail-start. Antes del contenido, p. ej. un índice.",
     "layoutGridPage.description":
       "Layout Grid: un flujo de página con medidas narrow, content, breakout y full-width.",
+    "layoutGridPage.anatomyBody":
+      "Es el único primitivo de layout cuyos hijos <em>sí</em> están marcados, y eso es su anatomía: un hijo directo pide una medida con <code>data-width</code>. Por eso el dibujo nombra el atributo y no el elemento; el hijo del medio no lleva ninguno y muestra la pista que recibe por no decir nada.",
+    "layoutGridPage.anatomyLabel": "Anatomía de Layout Grid",
+    "layoutGridPage.anatomyPreviewLabel": "Layout Grid, parte por parte",
     "layoutGridPage.lede":
       "Layout Grid da cuatro anchos nombrados a un único flujo de contenido. El elemento raíz conserva su semántica -puede ser <code>main</code>, <code>article</code> o una sección- y cada hijo directo decide si necesita otra medida con <code>data-width</code>.",
     "layoutGridPage.exampleKicker": "Guía de publicación",
@@ -66,6 +70,10 @@ export const layoutGridMessages = {
     "demo.layoutGridRail.railStart": "rail-start. Before the content, e.g. an index.",
     "layoutGridPage.description":
       "Layout Grid: one page flow with narrow, content, breakout, and full-width measures.",
+    "layoutGridPage.anatomyBody":
+      "It is the one layout primitive whose children <em>are</em> marked, and that is its anatomy: a direct child opts into a measure with <code>data-width</code>. So the drawing names the attribute rather than the element; the middle child carries none, and shows the track it gets by saying nothing at all.",
+    "layoutGridPage.anatomyLabel": "Layout Grid anatomy",
+    "layoutGridPage.anatomyPreviewLabel": "Layout Grid, part by part",
     "layoutGridPage.lede":
       "Layout Grid gives one content flow four named widths. The root keeps its semantics -it can be <code>main</code>, <code>article</code>, or a section- and each direct child chooses another measure only when it needs one with <code>data-width</code>.",
     "layoutGridPage.exampleKicker": "Publishing guide",

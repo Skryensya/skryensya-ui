@@ -4,8 +4,14 @@ export const fileUploadMessages = {
     "demo.fileUpload.label": "Adjuntos",
     "demo.fileUpload.dropzone": "Arrastra archivos aquí",
     "demo.fileUpload.trigger": "Elegir archivos",
+    "demo.fileUpload.anatomyHint": "PDF o imagen, hasta 10 MB",
+    "demo.fileUpload.anatomyItem": "informe.pdf",
 
     "fileUploadPage.description": "Selección y drag-and-drop con límites, rechazo y lista de archivos.",
+    "fileUploadPage.anatomyBody":
+      "La dropzone, el hint y la lista de archivos elegidos. El espécimen trae un ítem ya aceptado para poder nombrar <code>item-group</code> e <code>item</code>; está congelado.",
+    "fileUploadPage.anatomyLabel": "Anatomía de FileUpload",
+    "fileUploadPage.anatomyPreviewLabel": "FileUpload, parte por parte",
     "fileUploadPage.contractBody": "Vanilla emite sk-file-change y nunca inventa una carga remota. React expone archivos aceptados y rechazados.",
     "fileUploadPage.a11yBody": "El input real permanece disponible para formularios y tecnología asistiva; la dropzone no lo sustituye.",
 
@@ -21,7 +27,7 @@ export const fileUploadMessages = {
       "El botón de quitar se queda oculto hasta que se acepta un archivo, y aparece cuando eso pasa.",
     "fileUploadPage.testVanilla5":
       "Hacer click en el botón de quitar vacía los archivos aceptados y se vuelve a ocultar.",
-    "fileUploadPage.testVanilla6": "Sin dropzone/input/trigger autorados no hace nada, ni tira un error.",
+    "fileUploadPage.testVanilla6": "Sin dropzone/input/trigger escritos a mano no hace nada, ni tira un error.",
     "fileUploadPage.testVanilla7": "Destruir el mount detiene la máquina y deja de emitir eventos.",
 
     "fileUploadPage.testReact1": "Anuncia el motivo del rechazo de un archivo en vez de fallar en silencio.",
@@ -32,8 +38,14 @@ export const fileUploadMessages = {
     "demo.fileUpload.label": "Attachments",
     "demo.fileUpload.dropzone": "Drag files here",
     "demo.fileUpload.trigger": "Choose files",
+    "demo.fileUpload.anatomyHint": "PDF or image, up to 10 MB",
+    "demo.fileUpload.anatomyItem": "report.pdf",
 
     "fileUploadPage.description": "Selection and drag-and-drop with limits, rejection, and a file list.",
+    "fileUploadPage.anatomyBody":
+      "The dropzone, the hint, and the chosen-file list. The specimen already holds an accepted item so <code>item-group</code> and <code>item</code> can be named; it is frozen.",
+    "fileUploadPage.anatomyLabel": "FileUpload anatomy",
+    "fileUploadPage.anatomyPreviewLabel": "FileUpload, part by part",
     "fileUploadPage.contractBody": "Vanilla emits sk-file-change and never invents a remote upload. React exposes accepted and rejected files.",
     "fileUploadPage.a11yBody": "The real input stays available to forms and assistive technology; the dropzone does not replace it.",
 

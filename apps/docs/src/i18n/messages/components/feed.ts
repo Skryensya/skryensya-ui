@@ -8,6 +8,10 @@ export const feedMessages = {
     "feedPage.body":
       'WAI-ARIA es explícito: el rol <code>feed</code> "no está asociado a ninguna convención de teclado bien establecida": Page Up/Page Down/Ctrl+Home/Ctrl+End son recomendaciones, no requisitos. Esta versión se queda puramente estática: sin máquina, sin manejo de teclado propio.',
     "feedPage.test1": "Aplica role=feed, lo nombra, y refleja aria-busy.",
+    "feedPage.anatomyBody":
+      "Este diagrama nombra el feed, el artículo y su etiqueta. El espécimen está congelado; los Feed vivos empiezan abajo.",
+    "feedPage.anatomyLabel": "Anatomía de Feed",
+    "feedPage.anatomyPreviewLabel": "Feed, parte por parte",
     "feedPage.test2":
       "Cada artículo recibe role=article con aria-posinset/aria-setsize y un nombre real enlazado.",
     "feedPage.test3":
@@ -32,6 +36,10 @@ export const feedMessages = {
     "feedPage.body":
       'WAI-ARIA is explicit: the <code>feed</code> role "is not associated with any well-established keyboard conventions": Page Up/Page Down/Ctrl+Home/Ctrl+End are recommendations, not requirements. This version stays purely static: no machine, no keyboard handling of its own.',
     "feedPage.test1": "Sets role=feed, names it, and reflects aria-busy.",
+    "feedPage.anatomyBody":
+      "This diagram names the feed, the article and its label. The specimen is frozen; the live Feeds begin below.",
+    "feedPage.anatomyLabel": "Feed anatomy",
+    "feedPage.anatomyPreviewLabel": "Feed, part by part",
     "feedPage.test2":
       "Each article gets role=article with aria-posinset/aria-setsize and a real labelled name.",
     "feedPage.test3": "Allows setSize=-1 for an undetermined total, per WAI's own allowance.",

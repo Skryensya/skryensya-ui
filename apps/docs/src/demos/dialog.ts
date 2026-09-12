@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
 
 /*
  * A confirmation, composed the way `command-palette` solved the same problem: the tree emits the
@@ -14,6 +15,53 @@ import type { Translate } from "../i18n";
  * The footer is a `<form method="dialog">` in the contract, which is what makes the two buttons
  * close and report WHICH one did it through `returnValue`, with no handler each.
  */
+
+/*
+ * `open` renders the dialog NON-modally already showing: the platform attribute the contract
+ * exposes for authored markup. The live demos below still call `showModal()`; this specimen only
+ * needs every part on screen to be named.
+ */
+export const dialogAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("dialog.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "dialog",
+      signature: "Dialog",
+      options: { open: true },
+      slots: {
+        title: t("demo.dialog.title"),
+        children: t("demo.dialog.body"),
+        footer: [
+          {
+            contract: "button",
+            signature: "Button.action",
+            options: { variant: "ghost" },
+            attrs: { type: "submit", value: "cancel" },
+            children: t("demo.dialog.cancel"),
+          },
+          {
+            contract: "button",
+            signature: "Button.action",
+            options: { tone: "danger" },
+            attrs: { type: "submit", value: "confirm" },
+            children: t("demo.dialog.confirm"),
+          },
+        ],
+      },
+    },
+    items: [
+      namePart(".sk-dialog", "block-start"),
+      namePart(".sk-dialog__header", "block-start"),
+      namePart(".sk-dialog__title", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-dialog__close", "inline-end"),
+      namePart(".sk-dialog__body", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-dialog__footer", "block-end"),
+    ],
+  },
+});
+
 export const dialogConfirmTree = (t: Translate): UsageTree => ({
   contract: "layout",
   signature: "Stack",

@@ -15,6 +15,8 @@ export const breadcrumbMessages = {
 
     "breadcrumb.description": "Ubicación jerárquica con enlaces reales y página actual explícita.",
     "breadcrumb.betaBadge": "Beta",
+    "breadcrumb.anatomyBody":
+      "Un trail son partes que <em>se repiten</em>: <code>sk-breadcrumb__item</code> no es la primera miga, son todas las que quedan visibles, y lo mismo vale para los separadores. Las singulares son dos: <code>sk-breadcrumb__collapse-trigger</code>, el control que representa a los ancestros escondidos cuando no entran, y <code>sk-breadcrumb__current</code>, porque un trail tiene exactamente una página actual. El espécimen está congelado y angosto a propósito, para que el colapso se vea; los trails vivos empiezan abajo.",
     "breadcrumb.examplesTitle": "Ejemplos",
     "breadcrumb.twoTitle": "Dos niveles",
     "breadcrumb.twoBody": "El caso mínimo: un enlace al nivel anterior y la página actual, sin enlace ni separador final.",
@@ -68,6 +70,8 @@ export const breadcrumbMessages = {
 
     "breadcrumb.description": "Hierarchical location with real links and an explicit current page.",
     "breadcrumb.betaBadge": "Beta",
+    "breadcrumb.anatomyBody":
+      "A trail is made of parts that <em>repeat</em>: <code>sk-breadcrumb__item</code> is not the first crumb, it is all of the ones that stay visible, and the same goes for the separators. Two names are singular: <code>sk-breadcrumb__collapse-trigger</code>, the control standing in for the ancestors that no longer fit, and <code>sk-breadcrumb__current</code>, because a trail has exactly one current page. The specimen is frozen, and narrow on purpose so the collapse shows; the live trails start below.",
     "breadcrumb.examplesTitle": "Examples",
     "breadcrumb.twoTitle": "Two levels",
     "breadcrumb.twoBody": "The minimum case: a link to the previous level and the current page, with no trailing link or separator.",

@@ -1,16 +1,13 @@
 ---
 import "@skryensya/core/components/popover.css";
 import "@skryensya/core/patterns/box.css";
+/* Structure diagram: the Annotated specimen is drawn by Annotation's own sheet. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { popoverTree, popoverStructuredTree, popoverPlacementTree } from "../../demos/popover";
+import { popoverAnatomyCss, popoverAnatomyHtml, popoverTree, popoverStructuredTree, popoverPlacementTree } from "../../demos/popover";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/popover.yaml?raw";
-import coreSource from "@core/src/popover.ts?raw";
-import cssSource from "@core/css/components/popover.css?raw";
-import reactSource from "@react/src/components/popover.tsx?raw";
-import reactTestSource from "@react/src/components/popover.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -20,21 +17,12 @@ const js = `import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 
 mountIcons(document, lucideIcons);`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/popover.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/popover.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/popover.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/popover.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/popover.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Popover"
   description={t("popoverPage.description")}
   contractId="popover"
-  sourceFiles={sourceFiles}
   styleGroups={[
     { file: "components/popover.css", probe: "sk-popover", title: "Popover" },
     { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
@@ -97,6 +85,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("popoverPage.description")} />
+
+    <p set:html={t("popoverPage.anatomyBody")} />
+    <ComponentPreview
+      html={popoverAnatomyHtml(t)}
+      css={popoverAnatomyCss}
+      label={t("popoverPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={popoverTree(t)} js={js} label="Popover" viewport="overlay" />
 
     <h3>{t("popoverPage.structuredTitle")}</h3>

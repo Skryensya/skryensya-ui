@@ -1,17 +1,14 @@
 ---
 import "@skryensya/core/components/megamenu.css";
+import "@skryensya/core/patterns/nav-list.css";
+import "@skryensya/core/patterns/anchored.css";
+/* Structure diagram: the Annotated specimen is drawn by Annotation's own sheet. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { megamenuTree } from "../../demos/megamenu";
+import { megamenuAnatomyCss, megamenuAnatomyHtml, megamenuTree } from "../../demos/megamenu";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/megamenu.yaml?raw";
-import coreSource from "@core/src/megamenu.ts?raw";
-import cssSource from "@core/css/components/megamenu.css?raw";
-import vanillaMountSource from "@vanilla/src/components/megamenu.ts?raw";
-import vanillaTestSource from "@vanilla/src/components/megamenu.test.ts?raw";
-import reactSource from "@react/src/components/megamenu.tsx?raw";
-import reactTestSource from "@react/src/components/megamenu.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -27,23 +24,12 @@ mountIcons(document, lucideIcons);
 initComponents();`;
 
 const hrefs = { overview: "#", pricing: "#", integrations: "#", teams: "#", enterprise: "#" };
-
-const sourceFiles = [
-  { id: "contracts/semantic/megamenu.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/megamenu.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/megamenu.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/megamenu.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/megamenu.test.ts", source: vanillaTestSource, language: "ts" },
-  { id: "packages/react/src/components/megamenu.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/megamenu.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Megamenu"
   description={t("megamenuPage.description")}
   contractId="megamenu"
-  sourceFiles={sourceFiles}
   styleGroups={[
     { file: "components/megamenu.css", probe: "sk-megamenu", title: "Megamenu" },
     { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
@@ -160,6 +146,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("megamenuPage.description")} />
+
+    <p set:html={t("megamenuPage.anatomyBody")} />
+    <ComponentPreview
+      html={megamenuAnatomyHtml(t)}
+      css={megamenuAnatomyCss}
+      label={t("megamenuPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={megamenuTree(t, hrefs)} js={js} label="Megamenu" viewport="overlay" flush />
 
     <h3>{t("component.contractNotesTitle")}</h3>

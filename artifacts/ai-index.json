@@ -119,7 +119,7 @@
             "las etiquetas no pueden taparlo: viven en los cuatro márgenes de una grilla y el sujeto ocupa la celda del medio, así que el solape no se evita, no se puede representar",
             "cada etiqueta llega a su parte por una línea guía de uno o dos tramos, sólo rectos o de 45 grados: la menor cantidad que alcanza",
             "el dibujo se recalcula solo cuando cambia el tamaño del contenedor, cuando el sujeto reflowea o cuando llega una tipografía: dónde cae una parte no es un valor que se pueda escribir al componer",
-            "con `inert`, el sujeto es una muestra y no un control: no toma puntero, ni foco, ni teclado, y sale del árbol de accesibilidad"
+            "el sujeto es una muestra y no un control: `inert` viene prendido, no toma puntero, ni foco, ni teclado, y sale del árbol de accesibilidad"
           ]
         }
       ]
@@ -3418,7 +3418,7 @@
           ],
           "parents": [],
           "useWhen": [
-            "una tabla autorada necesita paginar filas en el cliente y cambiar cuántas se ven"
+            "una tabla escrita a mano necesita paginar filas en el cliente y cambiar cuántas se ven"
           ]
         },
         {
@@ -4325,5 +4325,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "a88e76a9d597fd32"
+  "sourceHash": "ce603ac99c8c13ef"
 }

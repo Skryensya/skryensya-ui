@@ -1,5 +1,33 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { namePart } from "./annotation-parts";
+
+/*
+ * A paragraph skeleton: the root and the lines it expands into. Other signatures are a single
+ * `sk-placeholder` with no child part; only `.paragraph` makes `sk-placeholder__line` worth naming.
+ */
+export const placeholderAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("placeholderPage.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "placeholder",
+      signature: "Placeholder.paragraph",
+      options: { text: "body", lines: 3 },
+      attrs: { style: "inline-size: min(100%, 18rem);" },
+    },
+    items: [
+      namePart(".sk-placeholder", "block-start"),
+      namePart(".sk-placeholder__line", "inline-end", {
+        match: "all",
+        ringPlacement: "offset",
+        ringDistance: 2,
+      }),
+    ],
+  },
+});
+
 
 const mediaSrc = "/demos/media-gradient.svg";
 

@@ -1,19 +1,14 @@
 ---
 import "@skryensya/core/components/tile.css";
 import "@skryensya/core/components/checkbox.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { checkboxGroupTree, checkboxTree, tileCheckboxTree } from "../../demos/checkbox";
+import { checkboxAnatomyTree, checkboxGroupTree, checkboxTree, tileCheckboxTree } from "../../demos/checkbox";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/checkbox.yaml?raw";
-import cssSource from "@core/css/components/checkbox.css?raw";
-import reactSource from "@react/src/components/selection.tsx?raw";
-import vanillaMountSource from "@vanilla/src/components/tile-checkbox.ts?raw";
-import vanillaCoordinatorSource from "@vanilla/src/components/TileCheckbox.svelte?raw";
-import vanillaTestSource from "@vanilla/src/components/tile-checkbox.svelte.test.ts?raw";
-import groupSource from "@vanilla/src/components/checkbox-group.ts?raw";
-import groupTestSource from "@vanilla/src/components/checkbox-group.svelte.test.ts?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -36,24 +31,12 @@ for (const root of document.querySelectorAll(
     console.log(root.dataset.value, event.detail.checked);
   });
 }`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/checkbox.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/css/components/checkbox.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/selection.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/vanilla/src/components/checkbox-group.ts", source: groupSource, language: "ts" },
-  { id: "packages/vanilla/src/components/checkbox-group.svelte.test.ts", source: groupTestSource, language: "ts" },
-  { id: "packages/vanilla/src/components/tile-checkbox.ts", source: vanillaMountSource, language: "ts" },
-  { id: "packages/vanilla/src/components/TileCheckbox.svelte", source: vanillaCoordinatorSource, language: "svelte" },
-  { id: "packages/vanilla/src/components/tile-checkbox.svelte.test.ts", source: vanillaTestSource, language: "ts" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Checkbox"
   description={t("checkbox.description")}
   contractId="checkbox"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/checkbox.css", probe: "sk-checkbox" }]}
   tests={[
     {
@@ -95,6 +78,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("checkbox.lede")} />
+
+    <p set:html={t("checkbox.anatomyBody")} />
+    <ComponentPreview
+      tree={checkboxAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("checkbox.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={checkboxTree(t)} label="Checkbox" />
     <p set:html={t("checkbox.body")} />
 

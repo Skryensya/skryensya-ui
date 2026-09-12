@@ -1,4 +1,4 @@
-import { act, fireEvent, render } from "@testing-library/react";
+import { act, fireEvent, render, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Menubar, MenubarItem } from "./menubar.js";
 
@@ -68,6 +68,28 @@ describe("Menubar React contracts, dropdowns as real Menu instances", () => {
     await tick();
     expect(archivo!.getAttribute("aria-expanded")).toBe("true");
     expect(ui.getByRole("menuitem", { name: "Nuevo" })).toBeTruthy();
+  });
+
+  it("Escape closes the open dropdown and returns focus to its trigger", async () => {
+    const ui = render(<Fixture />);
+    const [archivo] = triggers(ui);
+    fireEvent.click(archivo!);
+    await tick();
+    expect(archivo!.getAttribute("aria-expanded")).toBe("true");
+
+    /*
+     * Zag attaches its dismissable listeners (Escape, outside press) behind raf + raf +
+     * setTimeout(0), so an Escape fired straight after the open lands before anything is listening
+     * and the dropdown stays open. `waitFor` RE-FIRES it on every poll instead of guessing at a
+     * fixed delay, which is what makes this deterministic rather than timing-lucky.
+     */
+    await waitFor(() => {
+      fireEvent.keyDown(document.activeElement ?? document.body, { key: "Escape" });
+      expect(archivo!.getAttribute("aria-expanded")).toBe("false");
+    });
+
+    // The APG asks for the focus to come back to the trigger, not to be dropped on the body.
+    expect(document.activeElement).toBe(archivo);
   });
 
   it("clicking a sibling trigger while one dropdown is open closes the first", async () => {

@@ -1,6 +1,7 @@
 export const componentPreviewMessages = {
   es: {
     "demo.componentPreview.title": "Botón primario",
+    "demo.componentPreview.anatomyNote": "tono accent",
     "demo.componentPreview.button": "Guardar",
     "demo.componentPreview.saveChanges": "Guardar cambios",
     "demo.componentPreview.billingTitle": "Facturación",
@@ -20,6 +21,10 @@ export const componentPreviewMessages = {
       "Render de un componente y su código en una superficie documentada, con bindings y fuentes opcionales.",
     "componentPreview.lede":
       "Une el <strong>render real del componente</strong> y su implementación en una sola superficie. El stage es un <code>iframe srcdoc</code> estático: no crea una ruta, pero sí su propio DOM, viewport y top layer. Debajo, CodePreview muestra el código.",
+    "componentPreview.anatomyBody":
+      "El diagrama nombra lo que publica el contrato, que es <code>ComponentPreview.bare</code>: una cabecera con su título y una nota opcional, el stage, y debajo el panel de fuente. Ese panel lleva su propia clase, <code>sk-code-preview</code>, porque es un CodePreview compuesto acá y no una parte reimplementada. El interruptor de binding, los presets de pantalla y el botón de recarga son chrome de <em>este sitio</em>: no tienen árbol, así que no están en el dibujo. El espécimen está congelado; los vivos empiezan arriba.",
+    "componentPreview.anatomyLabel": "Anatomía de ComponentPreview",
+    "componentPreview.anatomyPreviewLabel": "ComponentPreview.bare, parte por parte",
     "componentPreview.responsibilitiesTitle": "Responsabilidades",
     "componentPreview.respItem1":
       "<strong>ComponentPreview</strong> posee el marco, la cabecera, el stage renderizado y los paneles de binding o fuente.",
@@ -28,7 +33,7 @@ export const componentPreviewMessages = {
     "componentPreview.respItem3":
       "El frame queda en <code>about:srcdoc</code>. Toast, Dialog, Drawer, estilos fixed y queries de viewport se resuelven contra el ejemplo, no contra el chrome de documentación.",
     "componentPreview.crossBody":
-      "CSS y JavaScript no atraviesan el límite del documento automáticamente. El adapter de este sitio copia sus stylesheets, sincroniza modo, contraste, radio y densidad, y ejecuta el mismo bootstrap Vanilla dentro del realm del frame. El contenido es autorado y de confianza; no se usa para HTML arbitrario de terceros.",
+      "CSS y JavaScript no atraviesan el límite del documento automáticamente. El adapter de este sitio copia sus stylesheets, sincroniza modo, contraste, radio y densidad, y ejecuta el mismo bootstrap Vanilla dentro del realm del frame. El contenido es escrito a mano y de confianza; no se usa para HTML arbitrario de terceros.",
     "componentPreview.minimalTitle": "Anatomía mínima",
     "componentPreview.minimalBody":
       "El stage de este ejemplo es otro ComponentPreview: el mismo <code>srcdoc</code>, un nivel más adentro. El frame anidado clona los estilos de su padre y monta su propio runtime, así que recargar, arrastrar el borde o cambiar el modo de color funcionan en los dos niveles a la vez.",
@@ -72,7 +77,7 @@ export const componentPreviewMessages = {
     "componentPreview.test2": "El toggle Vanilla | React se comparte entre todos los previews de la página.",
     "componentPreview.test3":
       "Recorre libre → tablet → mobile → libre al hacer click, marcando el stage y limpiándolo para libre.",
-    "componentPreview.test4": "Recarga el stage del srcdoc desde el documento autorado.",
+    "componentPreview.test4": "Recarga el stage del srcdoc desde el documento escrito a mano.",
 
     "componentPreview.testReact1": "Renderiza el título, el stage y el código en orden.",
     "componentPreview.testReact2": "Muestra una nota al lado del título cuando se da.",
@@ -81,6 +86,7 @@ export const componentPreviewMessages = {
   },
   en: {
     "demo.componentPreview.title": "Primary button",
+    "demo.componentPreview.anatomyNote": "accent tone",
     "demo.componentPreview.button": "Save",
     "demo.componentPreview.saveChanges": "Save changes",
     "demo.componentPreview.billingTitle": "Billing",
@@ -100,6 +106,10 @@ export const componentPreviewMessages = {
       "Renders a component and its code on a documented surface, with optional bindings and sources.",
     "componentPreview.lede":
       "Joins the component's <strong>real render</strong> and its implementation on a single surface. The stage is a static <code>iframe srcdoc</code>: it creates no route, but it does get its own DOM, viewport and top layer. Below it, CodePreview shows the code.",
+    "componentPreview.anatomyBody":
+      "The diagram names what the contract actually publishes, which is <code>ComponentPreview.bare</code>: a header carrying its title and an optional note, the stage, and the source panel under it. That panel wears its own class, <code>sk-code-preview</code>, because it is a CodePreview composed here rather than a part reimplemented. The binding switch, the screen presets and the reload control are <em>this site's</em> chrome: they have no tree, so they are not in the drawing. The specimen is frozen; the live ones start above.",
+    "componentPreview.anatomyLabel": "ComponentPreview anatomy",
+    "componentPreview.anatomyPreviewLabel": "ComponentPreview.bare, part by part",
     "componentPreview.responsibilitiesTitle": "Responsibilities",
     "componentPreview.respItem1":
       "<strong>ComponentPreview</strong> owns the frame, the header, the rendered stage, and the binding or source panels.",

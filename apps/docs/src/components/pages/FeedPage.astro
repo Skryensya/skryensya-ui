@@ -1,26 +1,16 @@
 ---
 import "@skryensya/core/components/feed.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { feedTree } from "../../demos/feed";
+import { feedAnatomyTree, feedTree } from "../../demos/feed";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/feed.yaml?raw";
-import coreSource from "@core/src/feed.ts?raw";
-import cssSource from "@core/css/components/feed.css?raw";
-import reactSource from "@react/src/components/feed.tsx?raw";
-import reactTestSource from "@react/src/components/feed.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 const install = `pnpm add @skryensya/core @skryensya/react`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/feed.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/feed.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/feed.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/feed.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/feed.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -28,7 +18,6 @@ const sourceFiles = [
   description={t("feedPage.description")}
   contractId="feed"
   styleGroups={[{ file: "components/feed.css", probe: "sk-feed" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/feed.test.tsx",
@@ -51,6 +40,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("feedPage.lede")} />
+
+    <p set:html={t("feedPage.anatomyBody")} />
+    <ComponentPreview
+      tree={feedAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("feedPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={feedTree(t)} label="Feed" />
     <p set:html={t("feedPage.body")} />
     <p set:html={t("component.reactNote")} />

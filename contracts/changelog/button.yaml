@@ -55,7 +55,7 @@ entries:
         contrato no tiene forma de verificar. Es un rename del VALOR de la opción únicamente: el
         token semántico detrás (<code>--color-action-accent</code>) no cambia de nombre, es un
         detalle interno de <code>button.css</code> y no parte de lo que este contrato promete. Un
-        consumidor con <code>data-variant="accent"</code> autorado a mano deja de pintar el
+        consumidor con <code>data-variant="accent"</code> escrito a mano deja de pintar el
         relleno (cae al <code>neutral</code> por defecto en silencio); <code>variant="accent"</code>
         en un árbol de uso o en JSX deja de tipar.
     en:

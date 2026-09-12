@@ -27,7 +27,7 @@ export const compositionInputTree = (t: Translate): UsageTree => ({
 export const compositionInputButtonTree = (t: Translate): UsageTree => ({
   contract: "layout",
   signature: "Inline",
-  options: { gap: "sm", align: "end" },
+  options: { gap: "sm", inlineAlign: "end" },
   children: [
     {
       contract: "form-field",
@@ -60,7 +60,7 @@ export const compositionInputButtonListboxTree = (t: Translate): UsageTree => ({
     {
       contract: "layout",
       signature: "Inline",
-      options: { gap: "sm", align: "end" },
+      options: { gap: "sm", inlineAlign: "end" },
       children: [
         {
           contract: "form-field",

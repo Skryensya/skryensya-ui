@@ -1,22 +1,22 @@
 ---
 /* The composition demo nests the avatar in a Box; layout/typography are already global (Base.astro). */
 import "@skryensya/core/patterns/box.css";
+import "@skryensya/core/components/avatar.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  avatarAnatomyTree,
   avatarImageTree,
   avatarSizesTree,
   avatarColorsTree,
   avatarGroupTree,
   avatarProfileTree,
 } from "../../demos/avatar";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/avatar.yaml?raw";
-import coreSource from "@core/src/avatar.ts?raw";
-import cssSource from "@core/css/components/avatar.css?raw";
-import reactSource from "@react/src/components/avatar.tsx?raw";
-import reactTestSource from "@react/src/components/avatar.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -95,14 +95,6 @@ const observer = new MutationObserver(retint);
 observer.observe(document.documentElement, { attributes: true });
 window.addEventListener("pagehide", () => observer.disconnect(), { once: true });
 `;
-
-const sourceFiles = [
-  { id: "contracts/semantic/avatar.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/avatar.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/avatar.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/avatar.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/avatar.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -111,7 +103,6 @@ const sourceFiles = [
   badge={t("avatar.betaBadge")}
   contractId="avatar"
   styleGroups={[{ file: "components/avatar.css", probe: "sk-avatar" }]}
-  sourceFiles={sourceFiles}
   tests={[
     {
       file: "packages/react/src/components/avatar.test.tsx",
@@ -132,6 +123,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("avatar.lede")} />
+
+    <p set:html={t("avatar.anatomyBody")} />
+    <ComponentPreview
+      tree={avatarAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("avatar.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
 
     <h3>{t("avatar.imagesTitle")}</h3>
     <p set:html={t("avatar.imagesBody")} />

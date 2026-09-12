@@ -9,6 +9,28 @@
 # hash.
 surface: "4956b78cd51d4ebd"
 entries:
+  - date: 2026-09-11
+    kind: bugfix
+    es:
+      title: La primera sección redondea sus esquinas de arriba
+      body: >-
+        La primera sección y su trigger declaran el radio del marco
+        (<code>--sk-accordion-radius</code>) en sus dos esquinas superiores, que son las que
+        ocupan; el resto de las secciones sigue plano, porque entre dos de ellas hay un divisor
+        recto de los dos lados. Pintado se veía igual, porque el marco recorta con <code>overflow: hidden</code>;
+        lo que cambia es que el elemento ahora dice la forma que tiene, así cualquier cosa que lea
+        el elemento en vez del resultado pintado (un diagrama de anatomía, una capa de estado
+        propia) deja de dibujar una esquina cuadrada sobre una redonda.
+    en:
+      title: The first section rounds its top corners
+      body: >-
+        The first section and its trigger now declare the frame's radius
+        (<code>--sk-accordion-radius</code>) on the two corners they actually occupy; every section
+        below stays flat, because the seam between two of them is a straight divider on both sides. Painted it
+        looked the same already, because the frame clips with <code>overflow: hidden</code>; what
+        changes is that the element now states the shape it has, so anything reading the element
+        rather than the painted result (an anatomy diagram, a state layer of your own) stops
+        drawing a square corner over a round one.
   - date: 2026-08-14
     kind: feature
     target: headingLevel

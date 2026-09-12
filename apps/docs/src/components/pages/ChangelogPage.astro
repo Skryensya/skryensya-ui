@@ -1,28 +1,18 @@
 ---
 import "@skryensya/core/components/changelog.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { changelogTree } from "../../demos/changelog";
+import { changelogAnatomyTree, changelogTree } from "../../demos/changelog";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/changelog.yaml?raw";
-import coreSource from "@core/src/changelog.ts?raw";
-import cssSource from "@core/css/components/changelog.css?raw";
-import reactSource from "@react/src/components/changelog.tsx?raw";
-import reactTestSource from "@react/src/components/changelog.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core`;
 const styles = `@import "@skryensya/core/components/changelog.css";`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/changelog.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/changelog.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/changelog.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/changelog.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/changelog.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -30,7 +20,6 @@ const sourceFiles = [
   description={t("changelogPage.description")}
   badge={t("changelogPage.betaBadge")}
   contractId="changelog"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/changelog.css", probe: "sk-changelog" }]}
   tests={[
     {
@@ -52,6 +41,17 @@ const sourceFiles = [
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("changelogPage.lede")} />
+
+    <p set:html={t("changelogPage.anatomyBody")} />
+    <ComponentPreview
+      tree={changelogAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("changelogPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={changelogTree(t)} label="Changelog" note={t("changelogPage.previewNote")} />
 
     <h3>{t("changelogPage.whenTitle")}</h3>

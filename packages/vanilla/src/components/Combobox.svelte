@@ -6,11 +6,12 @@
     supportsAnchorPositioning,
   } from "@skryensya/core/anchored";
   import { combobox } from "@skryensya/core/machines";
-  import { comboboxParts, type ComboboxItem } from "@skryensya/core/combobox";
+  import { comboboxAttrs, comboboxParts, type ComboboxItem } from "@skryensya/core/combobox";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
   import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
+  import { selectorsFor } from "@skryensya/core/selectors";
 
   /*
    * COMBOBOX, a machine-backed enhancer over `@zag-js/combobox` (the SAME machine React uses, via
@@ -20,25 +21,9 @@
    */
   const root = getRoot();
 
-  const selector = {
-    label: "[data-sk-combobox-label]",
-    hint: "[data-sk-combobox-hint]",
-    error: "[data-sk-combobox-error]",
-    control: "[data-sk-combobox-control]",
-    value: "[data-sk-combobox-value]",
-    selectedItems: "[data-sk-combobox-selected-items]",
-    removeTrigger: "[data-sk-combobox-remove-trigger]",
-    input: "[data-sk-combobox-input]",
-    trigger: "[data-sk-combobox-trigger]",
-    clear: "[data-sk-combobox-clear]",
-    positioner: "[data-sk-combobox-positioner]",
-    content: "[data-sk-combobox-content]",
-    item: "[data-sk-combobox-item]",
-    itemText: "[data-sk-combobox-item-text]",
-    itemIndicator: "[data-sk-combobox-item-indicator]",
-    empty: "[data-sk-combobox-empty]",
-    status: "[data-sk-combobox-status]",
-  } as const;
+  /* Derived from the contract's own mount attributes; see `selectorsFor`. */
+
+  const selector = selectorsFor(comboboxAttrs);
 
   // The keys that move the highlight inside the listbox (the same ones the machine handles).
   const navigationKeys = new Set(["ArrowDown", "ArrowUp", "Home", "End", "PageUp", "PageDown"]);

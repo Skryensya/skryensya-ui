@@ -1,6 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { deploymentRows, pageSizeItems } from "./data/table";
+import { namePart } from "./annotation-parts";
 
 /*
  * The deepest composition the catalogue has: eight signatures, nested four levels, with two rules
@@ -86,6 +87,27 @@ export const tableTree = (t: Translate): UsageTree => ({
           },
         },
       },
+    ],
+  },
+});
+
+/** Caption, head, body and foot: the HTML order the contract enforces, named part by part. */
+export const tableAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("tablePage.anatomyLabel"), inert: true },
+  slots: {
+    subject: tableTree(t),
+    items: [
+      namePart(".sk-table-scroll", "block-start"),
+      namePart(".sk-table", "inline-start"),
+      namePart(".sk-table__caption", "block-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-table__head", "inline-end"),
+      namePart(".sk-table__header", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-table__body", "inline-start"),
+      namePart(".sk-table__row", "inline-start", { ringPlacement: "offset", ringDistance: 3 }),
+      namePart(".sk-table__cell", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-table__foot", "block-end"),
     ],
   },
 });

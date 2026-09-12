@@ -4,16 +4,14 @@ import "@skryensya/core/components/toolbar.css";
 import "@skryensya/core/components/input.css";
 import "@skryensya/core/components/popover.css";
 import "@skryensya/core/patterns/anchored.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { editorCompactTree, editorTree } from "../../demos/editor";
+import { editorAnatomyTree, editorCompactTree, editorTree } from "../../demos/editor";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/editor.yaml?raw";
-import coreSource from "@core/src/editor.ts?raw";
-import cssSource from "@core/css/components/editor.css?raw";
-import vanillaSource from "@vanilla/src/components/editor.ts?raw";
-import reactSource from "@react/src/components/editor.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -30,14 +28,6 @@ const styles = `@import "@skryensya/core/components/editor.css";
 const js = `import { mountEditor } from "@skryensya/vanilla/editor";
 
 mountEditor();`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/editor.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/editor.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/editor.css", source: cssSource, language: "css" },
-  { id: "packages/vanilla/src/components/editor.ts", source: vanillaSource, language: "ts" },
-  { id: "packages/react/src/components/editor.tsx", source: reactSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
@@ -45,11 +35,22 @@ const sourceFiles = [
   description={t("editorPage.description")}
   badge={t("editorPage.betaBadge")}
   contractId="editor"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/editor.css", probe: "sk-editor", title: "Editor" }]}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("editorPage.lede")} />
+
+    <p set:html={t("editorPage.anatomyBody")} />
+    <ComponentPreview
+      tree={editorAnatomyTree(t)}
+      css={annotationDemoCss}
+      js={js}
+      label={t("editorPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
     <ComponentPreview tree={editorTree(t)} js={js} label="Editor" viewport="auto" />
 
     <h3>{t("editorPage.formatsTitle")}</h3>

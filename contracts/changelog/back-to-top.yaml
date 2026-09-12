@@ -14,7 +14,7 @@ entries:
         esquina y devuelve un scroller a su inicio. Aparece sólo después de pasar <code>threshold</code>
         píxeles de scroll (400 por defecto) y se va sola al volver arriba; el markup viene con
         <code>hidden</code>, así que sin JavaScript no ocupa lugar. La marca visible es un
-        <code>chevron-up</code> del set de iconos enlazado (el markup autorado emite el placeholder
+        <code>chevron-up</code> del set de iconos enlazado (el markup escrito a mano emite el placeholder
         <code>[data-sk-icon]</code> que el enhancer reemplaza por el <code>&lt;svg&gt;</code> del set;
         React usa <code>&lt;Icon&gt;</code>), dentro de la parte <code>sk-back-to-top__icon</code>. El
         scroll lo hace la plataforma (<code>scrollTo</code>), suave salvo que se pida menos

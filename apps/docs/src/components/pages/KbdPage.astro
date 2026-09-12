@@ -5,29 +5,15 @@ import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { kbdAccentTree, kbdTree } from "../../demos/kbd";
 import { getLocale, useTranslations } from "../../i18n";
-import contractSource from "@contracts/semantic/kbd.yaml?raw";
-import coreSource from "@core/src/kbd.ts?raw";
-import cssSource from "@core/css/components/kbd.css?raw";
-import reactSource from "@react/src/components/kbd.tsx?raw";
-import reactTestSource from "@react/src/components/kbd.test.tsx?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 const install = `pnpm add @skryensya/core @skryensya/react`;
-
-const sourceFiles = [
-  { id: "contracts/semantic/kbd.yaml", source: contractSource, language: "yaml" },
-  { id: "packages/core/src/kbd.ts", source: coreSource, language: "ts" },
-  { id: "packages/core/css/components/kbd.css", source: cssSource, language: "css" },
-  { id: "packages/react/src/components/kbd.tsx", source: reactSource, language: "tsx" },
-  { id: "packages/react/src/components/kbd.test.tsx", source: reactTestSource, language: "tsx" },
-] as const;
 ---
 
 <ComponentPageShell
   title="Kbd"
   description={t("kbdPage.description")}
   contractId="kbd"
-  sourceFiles={sourceFiles}
   styleGroups={[{ file: "components/kbd.css", probe: "sk-kbd" }]}
   tests={[
     {

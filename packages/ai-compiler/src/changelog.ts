@@ -143,6 +143,7 @@ export function readChangelogs(dir: string): ChangelogReadResult {
   const changelog: Record<string, ContractChangelog> = {};
   const conflicts: string[] = [];
   const ledger = readLedger(dir, conflicts);
+  const shared = readShared(dir, conflicts);
 
   for (const file of listYaml(dir)) {
     const id = file.replace(/\.ya?ml$/, "");
@@ -156,7 +157,9 @@ export function readChangelogs(dir: string): ChangelogReadResult {
     }
 
     const parsed = (parse(readFileSync(join(dir, file), "utf8")) ?? {}) as { entries?: ChangeEntry[]; surface?: unknown };
-    changelog[id] = readOne(file, contract, parsed, ledger, conflicts);
+    /* A shared entry is this contract's entry too, validated here against THIS contract. */
+    const withShared = { ...parsed, entries: [...(parsed.entries ?? []), ...(shared.get(id) ?? [])] };
+    changelog[id] = readOne(file, contract, withShared, ledger, conflicts);
   }
 
   for (const id of contractIds()) {
@@ -378,10 +381,55 @@ function push(buckets: Map<string, ChangeEntry[]>, key: string, entry: ChangeEnt
   else buckets.set(key, [entry]);
 }
 
+/*
+ * ONE ENTRY, MANY CONTRACTS.
+ *
+ * The Surface hash is per contract, so a change that is identical across all 81 used to force 81
+ * near-identical entries. Two such batches in one day left 28% of the whole changelog corpus saying
+ * the same thing twice over, in a record CONTEXT.md defines as "what changed, in the words its
+ * users read". The hashes still move one by one, because each contract's surface really did change;
+ * what stops repeating is the prose.
+ *
+ * An entry here is an ordinary entry plus `contracts: [...]`, and it is appended to each of those
+ * contracts' own entries, validated against each one (a `target` has to be targetable in every
+ * contract that claims the entry, or it is not a shared change).
+ */
+const SHARED = "_shared.yaml";
+
+type SharedEntry = ChangeEntry & { contracts?: readonly string[] };
+
+function readShared(dir: string, conflicts: string[]): ReadonlyMap<string, ChangeEntry[]> {
+  const byContract = new Map<string, ChangeEntry[]>();
+  let parsed: { entries?: SharedEntry[] };
+  try {
+    parsed = (parse(readFileSync(join(dir, SHARED), "utf8")) ?? {}) as { entries?: SharedEntry[] };
+  } catch {
+    return byContract; // absent is the normal case
+  }
+
+  for (const [index, entry] of (parsed.entries ?? []).entries()) {
+    const where = `${SHARED}: entries[${index}]`;
+    const ids = entry?.contracts ?? [];
+    if (ids.length === 0) {
+      conflicts.push(`${where} names no \`contracts\`, so nothing would ever show it.`);
+      continue;
+    }
+    for (const id of ids) {
+      if (!getContract(id)) {
+        conflicts.push(`${where} claims contract "${id}", which no published contract declares.`);
+        continue;
+      }
+      const { contracts: _ignored, ...rest } = entry;
+      byContract.set(id, [...(byContract.get(id) ?? []), rest as ChangeEntry]);
+    }
+  }
+  return byContract;
+}
+
 function listYaml(dir: string): readonly string[] {
   try {
     return readdirSync(dir)
-      .filter((file) => /\.ya?ml$/.test(file) && file !== LEDGER)
+      .filter((file) => /\.ya?ml$/.test(file) && file !== LEDGER && file !== SHARED)
       .sort();
   } catch {
     return [];

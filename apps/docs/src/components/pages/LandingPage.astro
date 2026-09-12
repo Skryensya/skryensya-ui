@@ -9,7 +9,7 @@ import Base from "../../layouts/Base.astro";
 import SiteFooter from "../SiteFooter.astro";
 import { getNavigation } from "../../lib/navigation";
 import { getLocale, localizePath, useTranslations, type Translate } from "../../i18n";
-import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
+import { emitMarkup } from "@skryensya/ai-compiler/emit";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 
 import { calloutInfoTree, calloutSuccessTree } from "../../demos/callout";
@@ -65,9 +65,8 @@ import "@skryensya/core/components/segmented.css";
 import "@skryensya/core/components/checkbox.css";
 import "@skryensya/core/components/accordion.css";
 import "@skryensya/core/components/select.css";
-/* The hero is a Hero band holding a live specimen and its own source. */
+/* The hero is a Hero band; the page paints its own background into the contract's wash hook. */
 import "@skryensya/core/patterns/hero.css";
-import "@skryensya/core/components/code-preview.css";
 import "@skryensya/core/components/slider.css";
 /* The two ultrawide lanes and the closing band: skeletons behind a bottom fade, then the site's own
    footer, which a `fullBleed` page does not get from Base (see the `SiteFooter` note there). */
@@ -480,104 +479,6 @@ const GALLERY_XL_MAX_WIDTH = 2200;
 const GALLERY_FILL_HEIGHT = 1191;
 
 /*
- * THE HERO, and the right-hand half of it is the argument rather than a picture of one.
- *
- * A page whose whole claim is "declare a component once, use it anywhere" cannot open by ASSERTING
- * that and then showing a photograph. What it can do is show the two halves of the claim next to
- * each other at the size a reader can check in a second: a real, mounted Select on top, and the
- * markup that produced it underneath.
- *
- * THE SNIPPET IS EMITTED FROM THE TREE THAT RENDERS THE COMPONENT (`heroSpecimenTree`, through
- * `emitMarkup`, the same machinery ComponentPreview's own demo already uses on this page). Two
- * copies of one source, so the code under the control cannot drift from the control above it. A
- * hand-written snippet here would be the one place on the site where the documentation and the
- * thing it documents were kept in agreement by hand, on the page that says they never are.
- *
- * A SELECT rather than a Button: a button is a box with a word in it and its markup reads as one
- * line of nothing much. A Select is a label, a control and a native `<select>` with its options, so
- * the snippet is long enough to be recognisably a component and short enough to read whole.
- */
-const heroSpecimenTree = (t: Translate): UsageTree => ({
-  contract: "callout",
-  signature: "Callout",
-  options: { tone: "info" },
-  /*
-   * NO `icon`, and the reason is the column beside it: with one, the JSX opening tag runs 68
-   * characters and wraps inside the panel, which turns a three-line declaration into five and puts
-   * a line break in the middle of the thing a reader is meant to take in at a glance.
-   *
-   * THE BODY IS A SENTENCE, not two words, for the same reason from the other direction: under the
-   * emitter's print width the whole element comes back as ONE line, which then wraps in the panel
-   * and breaks after `>An`, mid-tag. Past the width it comes back in the shape everybody recognises
-   * (opening tag, indented content, closing tag). The text is doing layout work here, which is
-   * worth knowing before someone shortens it back.
-   */
-  slots: { title: t("landing.hero.specimenTitle") },
-  children: t("landing.hero.specimenBody"),
-});
-
-/*
- * THE HERO'S RIGHT-HAND HALF, as a tree, because that is the half where drift would be invisible.
- *
- * The band itself is authored below in the page's own markup, with the kit's classes: `sk-hero`,
- * `sk-heading`, `sk-text`, `sk-button`. Authored HTML is a first-class runtime here, not a
- * shortcut around the catalogue, and it is the only runtime that can give this page an `<h1>`:
- * `Heading` emits an `h2` on purpose, since a component cannot know it is the page title. Emitting
- * the copy side would have traded the document's one top-level heading for a tag the contract is
- * right to refuse to decide.
- *
- * What IS emitted is the specimen and, from the very same tree, the source shown under it. Two
- * copies of one declaration, so the code cannot drift from the control above it. A hand-written
- * snippet would be the single place on this site where a component and its documentation were kept
- * in agreement by hand, on the page whose whole claim is that they never are.
- */
-/*
- * THE REACT SOURCE, not the emitted HTML, and the first version showed the HTML.
- *
- * Measured on the page: the same Callout is nineteen lines of markup against three of JSX, and the
- * markup only reaches nineteen because every attribute wraps inside this column. A hero has three
- * seconds; a reader who has to unwrap `aria-live` from the middle of a line has spent them. The JSX
- * is also the truer answer to the label above it: `sk-callout__title` is what the system RENDERS,
- * `title="New version"` is what an author WRITES, and this column is about the writing.
- *
- * THE ELEMENT, sliced out of the emitted module rather than retyped: `emitReactSource` returns a
- * whole file (two imports, an exported function, the `return (`), which is right for a docs panel a
- * reader is going to copy and wrong for a hero, where the imports would be the tallest thing in the
- * column. Slicing keeps the one property that matters, which is that these lines come from the same
- * tree as the Callout above them and cannot be edited out of agreement with it. If the emitter ever
- * stops producing that shape the slice fails closed, showing the whole module rather than nothing.
- */
-const heroSpecimenSource = (t: Translate): string => {
-  const component = emitReactSource(heroSpecimenTree(t)).component;
-  const open = component.indexOf("return (");
-  const close = component.lastIndexOf(");");
-  if (open === -1 || close <= open) return component;
-
-  const body = component.slice(open + "return (".length, close).replace(/^\n|\n$/g, "");
-  const indent = Math.min(
-    ...body.split("\n").filter((row) => row.trim()).map((row) => row.length - row.trimStart().length),
-  );
-  return body
-    .split("\n")
-    .map((row) => row.slice(indent))
-    .join("\n");
-};
-
-const heroProofTree = (t: Translate): UsageTree => ({
-  contract: "layout",
-  signature: "Stack",
-  options: { gap: "sm" },
-  children: [
-    heroSpecimenTree(t),
-    {
-      contract: "code-preview",
-      signature: "CodePreview",
-      slots: { label: t("landing.hero.specimenSource"), children: heroSpecimenSource(t) },
-    },
-  ],
-});
-
-/*
  * THE ULTRAWIDE LANES, and they are skeletons on purpose.
  *
  * Above `ultrawide` the five real lanes stop growing (`GALLERY_MAX_WIDTH`) and the page ends up
@@ -761,23 +662,20 @@ const columns: GalleryTile[][] = [
       in the move is a hand-written tag name.
     */}
     <section data-width="breakout" class="landing-hero">
-      <div class="sk-hero" data-surface="none" data-padding="xl" data-align="start">
-        <div class="sk-inline landing-hero__split" data-gap="xl" data-align="start" data-justify="between">
-          <div class="sk-stack landing-hero__copy" data-gap="lg" data-align="start">
-            <header class="sk-stack" data-gap="md">
-              <h1 class="sk-heading" data-size="display-lg" data-flush>{t("landing.hero.title")}</h1>
-              <p class="sk-text landing-hero__lede" data-tone="secondary" data-size="lg">{t("landing.hero.lede")}</p>
-            </header>
-            <div class="sk-inline" data-gap="sm">
-              <a class="sk-button sk-interactive" data-sk-button data-tone="accent" data-size="md" href={href("/components")}>
-                {t("landing.hero.ctaComponents")}
-              </a>
-              <a class="sk-button sk-interactive" data-sk-button data-variant="ghost" data-size="md" href={href("/installation")}>
-                {t("landing.hero.ctaInstall")}
-              </a>
-            </div>
+      <div class="sk-hero landing-hero__band" data-surface="none" data-padding="xl" data-align="center">
+        <div class="sk-stack landing-hero__copy" data-gap="lg" data-align="center">
+          <header class="sk-stack" data-gap="md" data-align="center">
+            <h1 class="sk-heading" data-size="display-lg" data-flush>{t("landing.hero.title")}</h1>
+            <p class="sk-text landing-hero__lede" data-tone="secondary" data-size="lg">{t("landing.hero.lede")}</p>
+          </header>
+          <div class="sk-inline" data-gap="sm">
+            <a class="sk-button sk-interactive" data-sk-button data-tone="accent" data-size="md" href={href("/components")}>
+              {t("landing.hero.ctaComponents")}
+            </a>
+            <a class="sk-button sk-interactive" data-sk-button data-variant="ghost" data-size="md" href={href("/installation")}>
+              {t("landing.hero.ctaInstall")}
+            </a>
           </div>
-          <div class="landing-hero__proof" set:html={emitMarkup(heroProofTree(t), { fillDefaults: false })} />
         </div>
       </div>
     </section>
@@ -857,49 +755,90 @@ const columns: GalleryTile[][] = [
   galleryFillHeight: `${GALLERY_FILL_HEIGHT}px`,
 }}>
   /*
-   * A HEADLINE WANTS THE BAND, A SENTENCE WANTS A MEASURE. The hero is `breakout`, which is the
-   * right width for the h1 and about twice the right width for the line under it, so the lede caps
-   * itself where prose stops being readable and the heading keeps the whole band.
+   * THE BAND'S OWN PAINT, into `--sk-hero-wash`, which is the hook `hero.css` publishes for exactly
+   * this. That stylesheet's own note says why it ships flat: a glow lived in the contract briefly
+   * and came out again, because decoration is "a call for a consumer's own page to make, not this
+   * contract's". This page is that consumer, and this is the one place on the site that gets to be
+   * loud.
+   *
+   * TWO LAYERS, IN THIS ORDER: grain on top, accent light underneath.
+   *
+   * The light is a wide radial bloom rising from just below the bottom edge, not a top-down linear
+   * ramp. A ramp reads as a coloured header band with a seam where it stops; a bloom has no edge to
+   * see, so the accent gathers behind the buttons (where the page wants the eye to end up) and is
+   * gone by the headline, which therefore keeps full contrast against plain canvas.
+   *
+   * The grain is `feTurbulence` rendered once into a data URI, tiled at 180px. It is what keeps the
+   * bloom from reading as the default soft-gradient-blob every landing page has: at 4% opacity the
+   * noise is invisible as texture and visible as a REFUSAL to be a smooth gradient, which is the
+   * whole point of asking for grain. `baseFrequency` is high (0.9) so the grain stays fine at any
+   * zoom rather than turning into visible blotches on a 4K display.
+   *
+   * `color-mix` against the accent token rather than a hex: the docs ship a brand switcher, so this
+   * band re-tints itself with whatever accent the reader picked, and it goes dark-mode-correct for
+   * free because both halves of the mix are already mode-aware.
+   */
+  .landing-hero__band {
+    /* The bloom alone. The grain is a layer of its own below, because a background layer cannot be
+       given its own opacity and blending it at full strength is what turned the first attempt into
+       a grey noisy box with the accent lost somewhere inside it. */
+    --sk-hero-wash:
+      radial-gradient(
+        105% 88% at 50% 112%,
+        color-mix(in oklab, var(--color-action-accent) 62%, transparent) 0%,
+        color-mix(in oklab, var(--color-action-accent) 30%, transparent) 34%,
+        color-mix(in oklab, var(--color-action-accent) 9%, transparent) 62%,
+        transparent 82%
+      );
+    --sk-hero-min-height: 22rem;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  /*
+   * THE GRAIN, as its own layer so it can have its own opacity: 12%, which is where it reads as a
+   * surface rather than as either dirt (the first attempt, unblended, a grey noisy box with the
+   * accent lost inside it) or nothing at all (5%, measured on screen as no visible difference). `feTurbulence` rendered once into a data URI and tiled at 180px;
+   * `baseFrequency: 0.9` keeps it fine enough to stay grain rather than blotches on a 4K display.
+   * `overlay`, not `multiply`: multiply only ever darkens, so on the dark palette it landed on an
+   * already-dark band and did nothing at all (confirmed on screen: a smooth bloom with no texture
+   * in dark mode). Overlay darkens what is light and lightens what is dark, so one declaration
+   * gives both palettes the same amount of grain.
+   */
+  .landing-hero__band::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+    mix-blend-mode: overlay;
+    opacity: 0.12;
+    pointer-events: none;
+  }
+
+  /* A reader who asked for less contrast gets the flat bloom and no texture at all. */
+  @media (prefers-contrast: more) {
+    .landing-hero__band::after {
+      display: none;
+    }
+  }
+
+  /*
+   * A HEADLINE WANTS THE BAND, A SENTENCE WANTS A MEASURE, and centred copy makes the second half
+   * load-bearing: a centred line that runs the full `breakout` width gives the reader no reliable
+   * left edge to return to, which is the failure mode centred type has and ranged-left type does
+   * not. Capped and centred in the band instead.
    */
   .landing-hero__lede {
     max-inline-size: 46ch;
-  }
-
-  /*
-   * THE SPLIT. The copy takes what it needs and the proof takes a fixed column, rather than the two
-   * sharing the band evenly: a 50/50 hero would set the headline at half of `breakout`, which wraps
-   * a six-word line into three, and hand the Callout twice the width it has anything to say at.
-   *
-   * `flex-wrap` is the whole responsive story. Below the point where both fit, the proof drops
-   * under the copy and takes the full measure, which is also the order a reader wants them in: the
-   * claim, then the evidence.
-   */
-  /*
-   * `start`, not `center`. The proof column is the taller of the two, so centring pushed the
-   * headline down its middle and left the specimen floating above the first line of it. Aligned to
-   * the top, the headline and the rendered Callout start on the same line, which is the pairing the
-   * split is making.
-   */
-  .landing-hero__split {
-    align-items: start;
+    margin-inline: auto;
+    text-align: center;
   }
 
   .landing-hero__copy {
-    flex: 1 1 30rem;
-  }
-
-  .landing-hero__proof {
-    flex: 0 1 26rem;
-    min-inline-size: 0;
-  }
-
-  /*
-   * The source panel under the specimen is the quieter half of the pair: the eye should land on the
-   * rendered Callout first and read the markup second, so the code sits at a smaller size and the
-   * panel keeps its own surface rather than competing with the specimen's tone.
-   */
-  .landing-hero__proof .sk-code-preview {
-    font-size: var(--font-size-caption);
+    text-align: center;
   }
 
   /*

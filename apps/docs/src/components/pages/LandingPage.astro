@@ -819,36 +819,57 @@ const columns: GalleryTile[][] = [
     z-index: 0;
     pointer-events: none;
     overflow: clip;
-    background: radial-gradient(
-      120% 68% at 50% 88%,
-      color-mix(in oklab, var(--color-action-accent) 22%, transparent) 0%,
-      color-mix(in oklab, var(--color-action-accent) 9%, transparent) 42%,
-      transparent 72%
-    );
+    /*
+     * TWO ELLIPSES, not one, which is what gives the field a middle instead of a flat wash: a wide
+     * shallow one for the room, and a tighter, hotter core sitting inside it where the buttons are.
+     * A single stop list can only fade outward at one rate, so a light bright enough to read at the
+     * centre was a bruise by the time it reached the sides. Layered, the core carries the intensity
+     * and the field carries the reach.
+     */
+    background:
+      radial-gradient(
+        58% 40% at 50% 92%,
+        color-mix(in oklab, var(--color-action-accent) 34%, transparent) 0%,
+        color-mix(in oklab, var(--color-action-accent) 12%, transparent) 55%,
+        transparent 82%
+      ),
+      radial-gradient(
+        125% 72% at 50% 88%,
+        color-mix(in oklab, var(--color-action-accent) 26%, transparent) 0%,
+        color-mix(in oklab, var(--color-action-accent) 11%, transparent) 45%,
+        transparent 74%
+      );
   }
 
   /*
-   * THE GRAIN, `feTurbulence` as `fractalNoise` in a data URI: the technique CSS-Tricks published
-   * and every version since has copied. `baseFrequency: 0.7` and `numOctaves: 4`, which is the one
-   * number every source agrees on, since past four the cost is real and the difference is not.
+   * THE GRAIN, and the filter chain is the part that changed: `fractalNoise`, then `feColorMatrix`
+   * to drain the colour out of it, then `feComponentTransfer` to push what is left toward black and
+   * white.
    *
-   * Its own layer, because a background layer cannot carry an opacity of its own: noise and colour
-   * in one `background-image` list can only be balanced by blending them into each other, which is
-   * what turned an earlier pass into a grey box with the accent lost inside it.
+   * Raw turbulence is RGB noise, which is coloured static: at any opacity where you can see it, you
+   * can see that it is red and green speckle sitting on a blue field. Desaturating first is what
+   * turns it into grain rather than interference, and the linear transfer (`slope 1.9`,
+   * `intercept -0.45`) is the contrast boost that gives it edges instead of a soft grey fog. Same
+   * two moves every published film-grain filter makes, in the same order.
    *
-   * `overlay` rather than multiply, because multiply only darkens: on the dark palette it landed on
-   * an already-dark page and did nothing at all. Overlay works from both ends, so one declaration
-   * grains both palettes. Masked with Lumos's own curve so the texture dies out toward the edges.
+   * A GENERATED TILE, not a texture downloaded from somewhere. Every source that offers both says
+   * the same thing, and it is the right call here for a second reason: a PNG off the web arrives
+   * with a licence this repo would then have to carry, for something 700 bytes of SVG does exactly
+   * as well. `stitchTiles` is what makes the 240px tile repeat without a visible seam.
+   *
+   * `overlay` at 46%: overlay because it works from both ends (multiply only darkens, and on the
+   * dark palette it did nothing at all), and 46% because the contrast boost made the same texture
+   * read quieter than the flat noise it replaced.
    */
   .landing-backdrop::after {
     content: "";
     position: absolute;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.62' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.9' intercept='-0.45'/%3E%3CfeFuncG type='linear' slope='1.9' intercept='-0.45'/%3E%3CfeFuncB type='linear' slope='1.9' intercept='-0.45'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E");
     background-size: 240px 240px;
     mix-blend-mode: overlay;
-    opacity: 0.34;
-    mask-image: radial-gradient(110% 80% at 50% 92%, #000 0%, rgb(0 0 0 / 50%) 45%, transparent 78%);
+    opacity: 0.46;
+    mask-image: radial-gradient(115% 82% at 50% 92%, #000 0%, rgb(0 0 0 / 55%) 48%, transparent 80%);
   }
 
   /* Everything the page renders sits over the light, in its own layer. */

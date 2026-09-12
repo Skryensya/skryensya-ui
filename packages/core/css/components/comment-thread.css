@@ -709,7 +709,6 @@
    * Nothing about the panel, the edge, the slide, the backdrop, the drag or the reduced-motion
    * behaviour is written here: all of it is `patterns/vaul.css`, reached through the class. Only the
    * hooks that make this particular Vaul a COMMENT composer are reassigned, which is the same deal
-   * `components/drawer.css` keeps with the same pattern (decision 9: a drawer that re-implemented the
    * panel would be a second Vaul with a different name).
    */
   .sk-comment__reply-slot.sk-vaul,

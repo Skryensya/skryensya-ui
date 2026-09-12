@@ -77,6 +77,31 @@ describe("Placeholder", () => {
     expect(circle?.dataset.size).toBe("sm");
   });
 
+  it("writes the still opt-out and nothing at all for the running default", () => {
+    /*
+     * The asymmetry is the point: `data-shimmer="false"` when an author turns the sweep off, and no
+     * attribute when they do not, so every skeleton already in the wild keeps the markup it had.
+     * That is also exactly what the emitter writes (`falseValue` with no `trueValue`), which is what
+     * lets the two bindings agree byte for byte.
+     */
+    const ui = render(
+      <main aria-busy="true">
+        <Placeholder shimmer={false} />
+        <PlaceholderParagraph lines={2} shimmer={false} />
+        <PlaceholderBlock shimmer={false} />
+        <PlaceholderCircle shimmer={false} />
+        <Placeholder />
+        <PlaceholderBlock shimmer />
+      </main>,
+    );
+    const [...nodes] = ui.container.querySelectorAll<HTMLElement>(".sk-placeholder");
+    const still = nodes.slice(0, 4);
+    const running = nodes.slice(4);
+
+    expect(still.every((node) => node.dataset.shimmer === "false")).toBe(true);
+    expect(running.every((node) => node.hasAttribute("data-shimmer"))).toBe(false);
+  });
+
   it("keeps every signature out of the accessibility tree", () => {
     const ui = render(
       <main aria-busy="true">

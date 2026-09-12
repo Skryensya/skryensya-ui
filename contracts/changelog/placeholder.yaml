@@ -3,8 +3,31 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "f7d0f0306ff16850"
+surface: "bfc56b268036473c"
 entries:
+  - date: 2026-09-12
+    kind: feature
+    target: shimmer
+    es:
+      title: El brillo del skeleton se puede apagar
+      body: >-
+        Nueva opción <code>shimmer</code> en las cuatro signatures, prendida por defecto: el barrido
+        es lo que dice que el contenido viene en camino, y una caja gris quieta sólo dice que es
+        gris. <code>shimmer: false</code> es para el skeleton que <em>no</em> está esperando nada:
+        decoración, una captura de pantalla, el dibujo de un estado de carga. En el markup se
+        escribe <code>data-shimmer="false"</code> y nada cuando está prendido, así que todo skeleton
+        ya publicado queda igual. <code>prefers-reduced-motion</code> sigue mandando por encima de
+        las dos: es una preferencia de quien lee, no de quien compone.
+    en:
+      title: A skeleton's shimmer can be turned off
+      body: >-
+        A new <code>shimmer</code> option on all four signatures, on by default: the sweep is what
+        says the content is on its way, and a still grey box says only that it is grey.
+        <code>shimmer: false</code> is for the skeleton that is <em>not</em> waiting for anything:
+        decoration, a screenshot, a drawing of a loading state. It writes
+        <code>data-shimmer="false"</code> in the markup and nothing at all when on, so every
+        skeleton already published is unchanged. <code>prefers-reduced-motion</code> still wins over
+        either: it is the reader's preference, not the author's.
   - date: 2026-08-11
     kind: feature
     es:

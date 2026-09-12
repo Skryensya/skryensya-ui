@@ -452,7 +452,7 @@ const GALLERY_MAX_WIDTH = 1800;
 const GALLERY_COLUMN_WEIGHTS = "0.9fr 1fr 1.15fr 1fr 0.9fr";
 
 /*
- * THE NEXT TIER UP, and the two numbers below are what keeps it from disturbing the five.
+ * THE NEXT TIER UP.
  *
  * `--breakpoint-*` stops at `ultrawide` (90rem) because that is the widest a page column ever gets;
  * this is a GALLERY width, not a page one, so the literal lives here rather than joining the shared
@@ -460,19 +460,14 @@ const GALLERY_COLUMN_WEIGHTS = "0.9fr 1fr 1.15fr 1fr 0.9fr";
  * where seven lanes have room at all. It is a literal there because a media query cannot read a
  * custom property, the same reason `_breakpoints.scss` exists at all.
  *
- * The skeleton lanes are FIXED, not weighted, and that is the whole trick. As `fr` shares they
- * would scale with the viewport and keep taking a seventh of it forever; as a constant
- * `GALLERY_SKELETON_WIDTH` each they cost the five a fixed 22rem no matter how wide the screen
- * gets, so the five keep growing past the tier instead of being cut down by two more shares.
- *
- * They are still narrower at the tier than they would be with no skeleton lanes at all, and that is
- * the trade this makes knowingly: measured, the five run 292/324/373/324/292 at 2100px against
- * 252/280/322/280/252 at 1500px, so a reader crossing into the tier sees the gallery get WIDER, not
- * narrower. Only against a hypothetical seven-lane-free ultrawide does it lose anything. The cap
- * moves up with it (`GALLERY_XL_MAX_WIDTH`) so the pair has somewhere to go on a screen wide enough
- * to reach it.
+ * THE TWO NEW LANES ARE LANES, not a margin decorated with skeletons: they take the SAME weight as
+ * the outer real lanes they sit beside (`0.9fr`, the narrow end of `GALLERY_COLUMN_WEIGHTS`), so
+ * the seven read as one grid of the same stuff rather than as five columns with two strips glued
+ * to the sides. A fixed width was tried first, on the argument that a constant costs the five less
+ * than two more `fr` shares do; what it actually bought was two lanes visibly narrower than every
+ * card beside them, which made them read as chrome. The cap moves up (`GALLERY_XL_MAX_WIDTH`) so
+ * seven lanes of real width have somewhere to go.
  */
-const GALLERY_SKELETON_WIDTH = "11rem";
 const GALLERY_XL_MAX_WIDTH = 2200;
 
 /** The tallest of the five column totals below (px, Chromium/1900, each column's own weighted
@@ -508,10 +503,17 @@ const skeletonLane = (kinds: readonly SkeletonKind[]): UsageTree[] => kinds.map(
 
 type SkeletonKind = "media" | "person" | "metric" | "paragraph" | "list" | "control";
 
+/*
+ * EVERY SKELETON HERE IS STILL (`shimmer: false`), and that is a statement rather than a taste.
+ * Nothing in these lanes is loading: they stand in for a catalogue that continues past the frame,
+ * so a sweep would be promising an arrival that is never coming. Fourteen shimmering tiles beside
+ * the real gallery would also be the loudest thing on a page whose whole subject is the quiet
+ * stuff next to them.
+ */
 const line = (text: string, width: string): UsageTree => ({
   contract: "placeholder",
   signature: "Placeholder",
-  options: { text, width },
+  options: { text, width, shimmer: false },
 });
 
 const SKELETONS: Record<SkeletonKind, () => UsageTree> = {
@@ -521,9 +523,9 @@ const SKELETONS: Record<SkeletonKind, () => UsageTree> = {
     signature: "Stack",
     options: { gap: "sm" },
     children: [
-      { contract: "placeholder", signature: "Placeholder.block", options: { height: "7rem" } },
+      { contract: "placeholder", signature: "Placeholder.block", options: { height: "7rem", shimmer: false } },
       line("h4", "70%"),
-      { contract: "placeholder", signature: "Placeholder.paragraph", options: { lines: 2 } },
+      { contract: "placeholder", signature: "Placeholder.paragraph", options: { lines: 2, shimmer: false } },
     ],
   }),
   /* A person row: the disc beside two lines, the same shape `profileRowTree` loads into. */
@@ -532,7 +534,7 @@ const SKELETONS: Record<SkeletonKind, () => UsageTree> = {
     signature: "Inline",
     options: { gap: "sm", inlineAlign: "center" },
     children: [
-      { contract: "placeholder", signature: "Placeholder.circle", options: { size: "md" } },
+      { contract: "placeholder", signature: "Placeholder.circle", options: { size: "md", shimmer: false } },
       {
         contract: "layout",
         signature: "Stack",
@@ -552,7 +554,7 @@ const SKELETONS: Record<SkeletonKind, () => UsageTree> = {
     contract: "layout",
     signature: "Stack",
     options: { gap: "sm" },
-    children: [line("h5", "55%"), { contract: "placeholder", signature: "Placeholder.paragraph", options: { lines: 4 } }],
+    children: [line("h5", "55%"), { contract: "placeholder", signature: "Placeholder.paragraph", options: { lines: 4, shimmer: false } }],
   }),
   /* A titled list: a heading over four rows of even length, which is what a list is and a paragraph
      is not (the ragged last line is the difference). */
@@ -570,7 +572,7 @@ const SKELETONS: Record<SkeletonKind, () => UsageTree> = {
     contract: "layout",
     signature: "Stack",
     options: { gap: "xs" },
-    children: [line("caption", "35%"), { contract: "placeholder", signature: "Placeholder.block", options: { height: "2.5rem" } }],
+    children: [line("caption", "35%"), { contract: "placeholder", signature: "Placeholder.block", options: { height: "2.5rem", shimmer: false } }],
   }),
 };
 
@@ -733,7 +735,6 @@ const columns: GalleryTile[][] = [
 
 <style define:vars={{
   galleryXlMaxWidth: `${GALLERY_XL_MAX_WIDTH}px`,
-  gallerySkeletonWidth: GALLERY_SKELETON_WIDTH,
   galleryFillHeight: `${GALLERY_FILL_HEIGHT}px`,
 }}>
   /*
@@ -747,12 +748,11 @@ const columns: GalleryTile[][] = [
   }
 
   @media (min-width: 120rem) {
-    /* Seven tracks: the same five weights as before, with a fixed lane bolted on each end. The
-       five therefore keep the widths their tile heights were measured at. */
+    /* Seven tracks: the five weights as before, with the new lanes taking the same 0.9fr the outer
+       real lanes take, so a skeleton card is exactly as wide as the card next to it. */
     .landing-gallery {
       max-width: var(--galleryXlMaxWidth) !important;
-      --sk-grid-template:
-        var(--gallerySkeletonWidth) 0.9fr 1fr 1.15fr 1fr 0.9fr var(--gallerySkeletonWidth) !important;
+      --sk-grid-template: 0.9fr 0.9fr 1fr 1.15fr 1fr 0.9fr 0.9fr !important;
     }
 
     /*

@@ -74,6 +74,13 @@ export const vaulContract = {
   css: "@skryensya/core/patterns/vaul.css",
   parts: vaulParts,
   hooks: [
+    "--sk-drawer-bg",
+    "--sk-drawer-border-color",
+    "--sk-drawer-border-width",
+    "--sk-drawer-elevation",
+    "--sk-drawer-fg",
+    "--sk-drawer-inline-size",
+    "--sk-drawer-wash",
     "--sk-vaul-backdrop-bg",
     "--sk-vaul-bg",
     "--sk-vaul-border-color",

@@ -240,6 +240,22 @@
     to { transform: translateX(100%); }
   }
 
+  /*
+   * THE STILL SKELETON, `data-shimmer="false"` (see the option's own note in `placeholder.ts`).
+   *
+   * `display: none` on the sweep rather than `animation: none`: a stopped shimmer is not an absent
+   * one, it is a band of highlight frozen at whatever offset it stopped at, which reads as a streak
+   * across the bar. Removing the layer leaves the plain inked surface, which is the thing being
+   * asked for.
+   *
+   * Written against the ROOT for both, because a paragraph's lines are its children and an author
+   * turning the sweep off means the block, not one line of it.
+   */
+  .sk-placeholder[data-shimmer="false"]::after,
+  .sk-placeholder[data-shimmer="false"] .sk-placeholder__line::after {
+    display: none;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .sk-placeholder:not([data-shape="paragraph"])::after,
     .sk-placeholder__line::after {

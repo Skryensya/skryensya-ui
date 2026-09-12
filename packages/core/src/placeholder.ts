@@ -109,6 +109,26 @@ const placeholderOptions = {
    * signal that the block is prose rather than a table.
    */
   lastLine: { type: "string", default: "62%", styleProperty: "--sk-placeholder-last-line" },
+  /**
+   * Whether the shimmer runs.
+   *
+   * ON BY DEFAULT, because a skeleton's job is to say "this is coming", and a still grey box says
+   * only "this is grey". The sweep is what separates content on its way from content that failed to
+   * arrive, and it is the reason a reader waits rather than reloads.
+   *
+   * OFF FOR A SKELETON THAT IS NOT WAITING FOR ANYTHING. The case that asked for this: a decorative
+   * lane of skeletons at the edge of a gallery, standing in for "the catalogue continues past this
+   * frame". Nothing is loading there, so a shimmer would be a promise the page cannot keep, and
+   * seven lanes of sweeping highlight next to real content is noise besides. The same applies to a
+   * skeleton in a screenshot, a print stylesheet, or a diagram of a loading state, where motion is
+   * either impossible or beside the point.
+   *
+   * Written as `data-shimmer="false"` and nothing at all when true (`falseValue` with no
+   * `trueValue`, the same shape `labels` uses in `chart`): every skeleton already published stays
+   * byte-identical, and only the opt-out shows up in the markup. `prefers-reduced-motion` still
+   * turns the sweep off regardless of this option; it is a reader's setting, not an author's.
+   */
+  shimmer: { type: "boolean", default: true, attr: "data-shimmer", falseValue: "false" },
 } as const;
 
 export const placeholderContract = {
@@ -135,7 +155,7 @@ export const placeholderContract = {
     Placeholder: {
       intent: ["loading-skeleton", "content-not-yet-loaded", "shape-of-absent-content", "skeleton-line"],
       host: { element: "span" },
-      options: ["text", "width"],
+      options: ["text", "width", "shimmer"],
       slots: {},
       template: {
         element: "span",
@@ -155,7 +175,7 @@ export const placeholderContract = {
     "Placeholder.paragraph": {
       intent: ["loading-paragraph", "skeleton-text-block", "multiple-skeleton-lines"],
       host: { element: "span" },
-      options: ["text", "lines", "lastLine"],
+      options: ["text", "lines", "lastLine", "shimmer"],
       slots: {},
       template: {
         element: "span",
@@ -184,7 +204,7 @@ export const placeholderContract = {
     "Placeholder.block": {
       intent: ["loading-media", "skeleton-rectangle", "image-not-yet-loaded"],
       host: { element: "span" },
-      options: ["width", "height", "fill"],
+      options: ["width", "height", "fill", "shimmer"],
       slots: {},
       template: {
         element: "span",
@@ -199,7 +219,7 @@ export const placeholderContract = {
     "Placeholder.circle": {
       intent: ["loading-avatar", "skeleton-circle", "person-not-yet-loaded"],
       host: { element: "span" },
-      options: ["size"],
+      options: ["size", "shimmer"],
       slots: {},
       template: {
         element: "span",

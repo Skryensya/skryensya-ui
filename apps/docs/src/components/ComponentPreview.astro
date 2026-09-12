@@ -31,7 +31,6 @@ import "@skryensya/core/patterns/anchored.css";
 import "@skryensya/core/components/tooltip.css";
 import "@skryensya/core/components/menu.css";
 import "@skryensya/core/patterns/vaul.css";
-import "@skryensya/core/components/drawer.css";
 import "@skryensya/core/patterns/scrollbar.css";
 import { buildPreviewFrameDocument } from "../lib/preview-frame";
 import { exampleComponentName } from "../lib/example-component-name";
@@ -978,7 +977,6 @@ const stageStyle =
      * centred, with `mountVaul`'s drag-to-dismiss and light-dismiss on top. `data-sk-vaul` is what
      * that SITE-WIDE enhancer (already running via `initComponents()`, see `Base.astro`'s own
      * mobile nav drawer) scans for; this root needs no enhancer of its own. `sk-drawer` supplies
-     * only tokens (`components/drawer.css`'s own header: "ships hooks and no structure"), so the
      * header/title/body below are this card's own classes, the same split `docs-drawer` uses in
      * `site.css`.
      */

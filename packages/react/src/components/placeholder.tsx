@@ -14,7 +14,21 @@ const cx = (base: string, className: string | undefined) => (className ? `${base
 type SkeletonProps = Omit<
   HTMLAttributes<HTMLSpanElement>,
   "children" | "role" | "aria-label" | "aria-hidden"
->;
+> & {
+  /**
+   * Whether the shimmer runs. On by default: the sweep is what says the content is on its way.
+   * Turn it off for a skeleton that is not waiting for anything (decoration, a screenshot, a
+   * diagram of a loading state). A reader's `prefers-reduced-motion` still wins over either.
+   */
+  shimmer?: boolean;
+};
+
+/*
+ * The one option every signature shares: whether the sweep runs. Written the way the emitter writes
+ * it, `data-shimmer="false"` or nothing at all, so a still skeleton is the same markup on both
+ * sides and a running one is unchanged from every skeleton already shipped.
+ */
+const shimmerAttr = (shimmer: boolean | undefined) => (shimmer === false ? "false" : undefined);
 
 /** A style object with the contract's custom properties allowed alongside real CSS. */
 type SkeletonStyle = CSSProperties & Record<`--${string}`, string | undefined>;
@@ -35,13 +49,14 @@ export type PlaceholderProps = SkeletonProps & {
 };
 
 /** One bar standing in for one line of text, sized by the role it replaces. */
-export function Placeholder({ className, style, text = textOption.default, width, ...props }: PlaceholderProps) {
+export function Placeholder({ className, shimmer, style, text = textOption.default, width, ...props }: PlaceholderProps) {
   return (
     <span
       {...props}
       aria-hidden="true"
       className={cx(placeholderParts.root, className)}
       data-shape="text"
+      data-shimmer={shimmerAttr(shimmer)}
       data-text={text}
       style={skeletonStyle(style, { "--sk-placeholder-inline-size": width })}
     />
@@ -67,6 +82,7 @@ export function PlaceholderParagraph({
   className,
   lastLine,
   lines = linesOption.default,
+  shimmer,
   style,
   text = textOption.default,
   ...props
@@ -77,6 +93,7 @@ export function PlaceholderParagraph({
       aria-hidden="true"
       className={cx(placeholderParts.root, className)}
       data-shape="paragraph"
+      data-shimmer={shimmerAttr(shimmer)}
       data-text={text}
       style={skeletonStyle(style, { "--sk-placeholder-last-line": lastLine })}
     >
@@ -100,6 +117,7 @@ export function PlaceholderBlock({
   className,
   fill,
   height,
+  shimmer,
   style,
   width,
   ...props
@@ -111,6 +129,7 @@ export function PlaceholderBlock({
       className={cx(placeholderParts.root, className)}
       data-fill={fill ? "" : undefined}
       data-shape="block"
+      data-shimmer={shimmerAttr(shimmer)}
       style={skeletonStyle(style, {
         "--sk-placeholder-inline-size": width,
         "--sk-placeholder-block-size": height,
@@ -125,13 +144,14 @@ export type PlaceholderCircleProps = SkeletonProps & {
 };
 
 /** A disc standing in for an avatar, on the same scale Avatar uses. */
-export function PlaceholderCircle({ className, size = sizeOption.default, ...props }: PlaceholderCircleProps) {
+export function PlaceholderCircle({ className, shimmer, size = sizeOption.default, ...props }: PlaceholderCircleProps) {
   return (
     <span
       {...props}
       aria-hidden="true"
       className={cx(placeholderParts.root, className)}
       data-shape="circle"
+      data-shimmer={shimmerAttr(shimmer)}
       data-size={size}
     />
   );

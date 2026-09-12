@@ -3,7 +3,6 @@
  * the consumer for. Without them the demo's `<dialog>` falls back to the browser's default style: a
  * centered box with a 3px black border instead of a panel flush against the inline edge. */
 import "@skryensya/core/patterns/vaul.css";
-import "@skryensya/core/components/drawer.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
@@ -14,7 +13,6 @@ const t = useTranslations(getLocale(Astro.url));
 
 const import_ = `/* ${t("drawer.compositionComment")} */
 @import "@skryensya/core/patterns/vaul.css";
-@import "@skryensya/core/components/drawer.css";
 @import "@skryensya/core/patterns/scroll-lock.css";`;
 
 const composition = `/* El drawer no declara panel, borde, slide ni
@@ -76,7 +74,6 @@ trigger?.addEventListener("click", () => {
   badge={t("drawer.betaBadge")}
   contractId="vaul"
   styleGroups={[
-    { file: "components/drawer.css", probe: "sk-drawer", title: "Drawer" },
     { file: "patterns/vaul.css", probe: "sk-vaul", title: "Heredados de Vaul" },
   ]}
   tests={[
@@ -97,7 +94,6 @@ trigger?.addEventListener("click", () => {
 
     <h3>{t("drawer.hooksTitle")}</h3>
     <p set:html={t("drawer.hooksBody1")} />
-    <CodeBlock code={composition} label="components/drawer.css" lang="css" />
     <p set:html={t("drawer.hooksBody2")} />
     <CodeBlock code={tuning} label="CSS" lang="css" />
 

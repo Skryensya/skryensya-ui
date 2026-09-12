@@ -19,8 +19,8 @@ function markup() {
       <button type="button" role="menuitem" data-sk-menubar-item data-sk-menu-trigger>Archivo</button>
       <div data-sk-menu-positioner>
         <div data-sk-menu-content role="menu">
-          <div data-sk-menu-item data-value="new"><span data-sk-menu-item-label>Nuevo</span></div>
-          <div data-sk-menu-item data-value="open"><span data-sk-menu-item-label>Abrir</span></div>
+          <div data-sk-menu-item data-value="new"><span>Nuevo</span></div>
+          <div data-sk-menu-item data-value="open"><span>Abrir</span></div>
         </div>
       </div>
     </div>
@@ -28,8 +28,8 @@ function markup() {
       <button type="button" role="menuitem" data-sk-menubar-item data-sk-menu-trigger>Editar</button>
       <div data-sk-menu-positioner>
         <div data-sk-menu-content role="menu">
-          <div data-sk-menu-item data-value="cut"><span data-sk-menu-item-label>Cortar</span></div>
-          <div data-sk-menu-item data-value="paste"><span data-sk-menu-item-label>Pegar</span></div>
+          <div data-sk-menu-item data-value="cut"><span>Cortar</span></div>
+          <div data-sk-menu-item data-value="paste"><span>Pegar</span></div>
         </div>
       </div>
     </div>
@@ -146,7 +146,7 @@ describe("Menubar vanilla enhancer, dropdowns as real Menu instances", () => {
       <button type="button" data-sk-menu-trigger>Ir a</button>
       <div data-sk-menu-positioner>
         <div data-sk-menu-content role="menu">
-          <a data-sk-menu-item data-value="docs" href="/docs"><span data-sk-menu-item-label>Documentación</span></a>
+          <a data-sk-menu-item data-value="docs" href="/docs"><span>Documentación</span></a>
         </div>
       </div>
     </div>`;
@@ -174,7 +174,7 @@ describe("Menubar vanilla enhancer, dropdowns as real Menu instances", () => {
         </button>
         <div data-sk-menu-positioner>
           <div data-sk-menu-content role="menu">
-            <a data-sk-menu-item data-value="docs" href="/docs"><span data-sk-menu-item-label>Documentación</span></a>
+            <a data-sk-menu-item data-value="docs" href="/docs"><span>Documentación</span></a>
           </div>
         </div>
       </div>

@@ -121,6 +121,17 @@ export const menuItemShape: NonNullable<ContractSlot["item"]> = {
      * way the indicator does for the other two.
      */
     kind: { type: "enum", values: ["checkbox", "radio", "separator"], attr: "data-type" },
+    /*
+     * Which radio SET this item belongs to, so two independent groups of `menuitemradio` can sit in
+     * one menu without one clearing the other. Both bindings already read it, and Core's own
+     * `MenuItem` type already declares it; only this list did not, so a composition the bindings
+     * handle correctly was rejected by `validateUsageTree` as an unknown item option. Declaring it
+     * aligns the contract with what already ships rather than adding behaviour.
+     *
+     * Named for the SET and not for the ARIA container: the APG wants a `role="group"` around such
+     * a set, which is the `group` PART below; this is the value that says which one.
+     */
+    group: { type: "string", attr: "data-group" },
     /**
      * Marks a destructive command (Delete, Remove, …). The ONLY value is `"danger"`, the same
      * one-value-enum shape `disabled` and `kind` already use elsewhere in this system for "there is

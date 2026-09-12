@@ -157,57 +157,53 @@ agente tiene el checklist completo), y correr `turbo check`.
 - [ ] **Toolbar** (`/componentes/toolbar`) - roving tabindex real, la más involucrada del lote:
   navegación por flechas, wrap, orientación.
 
-### Tres hojas de `components/` con 31 styling hooks y ningun contrato detras
+### Las tres hojas sin contrato: dos son correctas, la tercera destapa un limite del modelo
 
-`ComponentContract.hooks` ya esta declarado en los 81 contratos y el compilador reconcilia las dos
-direcciones (`hook-undeclared` / `hook-broken`, en `packages/ai-compiler/src/hooks.ts`). La reconciliacion
-solo alcanza a una hoja que **algun contrato nombre**, y estas tres no las nombra nadie:
+Revisadas `copy-button.css` (15 hooks), `theme-toggle.css` (1) y `drawer.css` (15), la recomendacion
+anterior de "publicarles contrato" estaba **mal en dos de los tres casos**:
 
-| hoja | hooks | por que |
-|---|---|---|
-| `components/copy-button.css` | 15 | `core/src/copy-button.ts` existe pero no exporta ningun `ComponentContract` |
-| `components/drawer.css` | 15 | no hay `core/src/drawer.ts`; segun CONTEXT.md un drawer **es** un Vaul |
-| `components/theme-toggle.css` | 1 | mismo caso que copy-button |
+- **copy-button**: `core/src/copy-button.ts` lo dice en su propio docstring: *"No contract lives here
+  any more (decision 33, reversed)"*. El contrato se saco a proposito; un consumidor compone
+  `IconStateButton` a mano. Publicarle contrato seria re-litigar una decision documentada.
+- **theme-toggle**: mismo caso. No tiene binding en React ni en vanilla, y la hoja la consume solo el
+  chrome del sitio de doc.
 
-Son 31 hooks que publican una superficie de override que no aparece en ningun contrato, no sale en la
-tabla de la doc, y ahora ademas son los unicos de `components/` que el gate no puede ver. Los
-`patterns/` quedan fuera a proposito (un Pattern es estructura compartida, no tiene un contrato
-unico), pero estos tres viven en `components/`, que es justamente donde la regla deberia aplicar.
+Lo que si queda abierto es **drawer**, y no como "falta un contrato":
 
-Cada uno es una pregunta distinta, no una sola:
+`components/drawer.css` la consumen `core/src/vaul.ts` y `react/src/components/vaul.tsx`, o sea que
+el drawer **es** parte de la implementacion de Vaul, tal como dice CONTEXT.md. Sus 15 hooks deberian
+estar declarados por el contrato de `vaul`, pero no se puede: la regla nueva reconcilia **una hoja
+por contrato** (`contract.css`), y `vaul` ya nombra la suya. Un componente cuyo estilo vive en dos
+hojas no tiene forma de decirlo.
 
-- **copy-button / theme-toggle**: o publican contrato (y entran al catalogo, al changelog y a las dos
-  bindings), o sus hooks dejan de ser publicos y pasan a ser variables internas de la hoja.
-- **drawer**: la hoja existe sin contrato porque el drawer **es** un Vaul. Si eso sigue siendo cierto,
-  los hooks deberian estar declarados por el contrato de `vaul`, y la hoja pasar a `patterns/`.
+Entonces la decision no es sobre drawer, es sobre el modelo: o `hooks` se reconcilia contra varias
+hojas por contrato, o `drawer.css` se fusiona en la hoja de `vaul`, o se acepta que estas hojas
+queden fuera del gate y se anote por que.
 
-### Nueve `data-sk-*` que la capa vanilla busca y ningun contrato declara
+### `data-sk-file-upload-clear`: la capa vanilla tiene un boton que React no
 
-`packages/core/src/selectors.ts` dejo que los enhancers deriven sus selectores del contrato en vez de
-volver a tipearlos. De los 201 selectores que quedan en la capa vanilla, **188 ya estan declarados en
-core**; estos nueve no lo estan en ningun lado:
+Revisados los nueve `data-sk-*` que ningun contrato declaraba, **seis no eran gaps** y uno ya se
+arreglo. Lo que queda es uno solo, y no es una declaracion que falte: es drift entre bindings.
 
-| atributo | lo busca |
+`FileUpload.svelte` busca `[data-sk-file-upload-clear]` al lado de `dropzone`, `input` y `trigger`,
+que si estan declarados. React no lo menciona **ni una vez**. O sea: la capa vanilla soporta un boton
+de "limpiar todo" que el contrato no publica y que la otra binding no implementa, que es exactamente
+el drift que este sistema existe para prevenir.
+
+Dos salidas, las dos con costo real, por eso queda como decision:
+
+1. **Publicarlo**: slot opcional en el contrato + implementarlo en React + entrada de changelog. Es
+   una feature nueva, no un arreglo.
+2. **Sacarlo de vanilla**: mas barato y honesto si nadie lo usa, pero es perdida de funcionalidad.
+
+**Los otros ocho, ya resueltos o correctos como estan:**
+
+| atributo | veredicto |
 |---|---|
-| `data-sk-tile-ready` | AccordionItem.svelte, ExpandableTile.svelte |
-| `data-sk-file-upload-clear` | FileUpload.svelte |
-| `data-sk-menu-item-label` | Menu.svelte |
-| `data-sk-menu-item-indicator` | Menu.svelte |
-| `data-sk-table-colgroup` | table.ts |
-| `data-sk-column-resizer` | table.ts, treegrid.ts, splitter.ts |
-| `data-sk-treegrid-disclosure` | treegrid.ts |
-| `data-sk-treegrid-colgroup` | treegrid.ts |
-| `data-sk-command-palette-lazy` | vaul.ts, registry.ts |
-
-Los dos de Menu son el caso mas claro y valen como muestra del resto: el selector acepta
-`[data-sk-menu-item-label], .sk-menu__item-label`, pero **el atributo no lo escribe nadie**. No esta en
-`menuAttrs`, no esta en el template, y el unico markup que lo lleva son los fixtures de los tests de
-esta misma capa. En markup emitido de verdad, la mitad que matchea siempre es la clase.
-
-Cada uno es la misma pregunta: o el contrato publica el atributo (superficie nueva: changelog, hash de
-Surface, las dos bindings), o el enhancer deja de buscarlo y se queda con la clase. **Decidir de a uno**,
-no de a nueve: `data-sk-column-resizer` lo comparten tres componentes y probablemente quiera vivir en un
-contrato compartido, mientras que `data-sk-tile-ready` huele a estado de runtime y no a parte autorada.
+| `data-sk-menu-item-label`, `-item-indicator` | **arreglado**: no los escribia nadie. El selector ahora usa solo la clase, y se borraron 17 apariciones muertas de los fixtures (los 20 tests siguen verdes, que es la prueba de que estaban muertos) |
+| `data-sk-tile-ready` | correcto: lo **escribe** el enhancer. Es State (CONTEXT.md), no una parte autorada |
+| `data-sk-table-colgroup`, `-treegrid-colgroup`, `-treegrid-disclosure`, `-column-resizer` | correcto: el enhancer **crea** esos elementos, no los espera del autor |
+| `data-sk-command-palette-lazy` | correcto: lo autora el sitio de doc como opt-in de montaje. Es vocabulario del registry de vanilla, no una parte de componente |
 
 ### Menu: `group` en los items de radio no existe en el contrato
 

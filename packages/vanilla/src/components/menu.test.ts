@@ -19,37 +19,37 @@ function markup(): HTMLElement {
     <div class="sk-menu__positioner" data-sk-menu-positioner>
       <div class="sk-menu__content" data-sk-menu-content>
         <div class="sk-menu__item sk-interactive" data-sk-menu-item data-value="new" data-value-text="New file">
-          <span class="sk-menu__item-label" data-sk-menu-item-label>New file</span>
+          <span class="sk-menu__item-label">New file</span>
         </div>
         <div class="sk-menu__item sk-interactive" data-sk-menu-item data-value="delete" data-value-text="Delete" disabled>
-          <span class="sk-menu__item-label" data-sk-menu-item-label>Delete</span>
+          <span class="sk-menu__item-label">Delete</span>
         </div>
         <div class="sk-menu__item sk-interactive" data-sk-menu-item data-value="wrap" data-type="checkbox" data-value-text="Word wrap">
-          <span class="sk-menu__item-label" data-sk-menu-item-label>Word wrap</span>
-          <span class="sk-menu__item-indicator" data-sk-menu-item-indicator aria-hidden="true"></span>
+          <span class="sk-menu__item-label">Word wrap</span>
+          <span class="sk-menu__item-indicator" aria-hidden="true"></span>
         </div>
         <div class="sk-menu__item sk-interactive" data-sk-menu-item data-value="left" data-type="radio" data-group="align" data-value-text="Left">
-          <span class="sk-menu__item-label" data-sk-menu-item-label>Left</span>
-          <span class="sk-menu__item-indicator" data-sk-menu-item-indicator aria-hidden="true"></span>
+          <span class="sk-menu__item-label">Left</span>
+          <span class="sk-menu__item-indicator" aria-hidden="true"></span>
         </div>
         <div class="sk-menu__item sk-interactive" data-sk-menu-item data-value="right" data-type="radio" data-group="align" data-value-text="Right">
-          <span class="sk-menu__item-label" data-sk-menu-item-label>Right</span>
-          <span class="sk-menu__item-indicator" data-sk-menu-item-indicator aria-hidden="true"></span>
+          <span class="sk-menu__item-label">Right</span>
+          <span class="sk-menu__item-indicator" aria-hidden="true"></span>
         </div>
         <div class="sk-menu" data-sk-menu>
           <button class="sk-menu__item sk-interactive sk-anchor" data-sk-menu-trigger type="button">
-            <span class="sk-menu__item-label" data-sk-menu-item-label>Share</span>
+            <span class="sk-menu__item-label">Share</span>
           </button>
           <div class="sk-menu__positioner" data-sk-menu-positioner data-sk-submenu>
             <div class="sk-menu__content" data-sk-menu-content>
               <div class="sk-menu__item sk-interactive" data-sk-menu-item data-value="email" data-value-text="Email">
-                <span class="sk-menu__item-label" data-sk-menu-item-label>Email</span>
+                <span class="sk-menu__item-label">Email</span>
               </div>
             </div>
           </div>
         </div>
         <a class="sk-menu__item sk-interactive" data-sk-menu-item data-value="docs" data-value-text="Documentation" href="/docs">
-          <span class="sk-menu__item-label" data-sk-menu-item-label>Documentation</span>
+          <span class="sk-menu__item-label">Documentation</span>
         </a>
       </div>
     </div>

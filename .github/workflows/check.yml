@@ -44,7 +44,7 @@ jobs:
       # The browser gates are excluded for the same reason `pre-push` excludes them: about 15
       # minutes, a browser download, and a sensitivity to machine load that makes a red result on a
       # shared runner weak evidence. They stay a local, deliberate run.
-      - run: pnpm turbo run check --filter='!@skryensya/ai-gates' --concurrency=1
+      - run: pnpm check
 
   commits:
     name: commit messages

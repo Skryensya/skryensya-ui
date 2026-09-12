@@ -5,12 +5,12 @@
   "type": "module",
   "description": "Runtime gates: renders every canonical usage tree in BOTH bindings and proves they land on the same DOM (G2), plus accessibility and visual checks.",
   "scripts": {
-    "check": "playwright test",
+    "check": "tsc -p tsconfig.json --noEmit && vitest run",
     "test": "playwright test",
     "test:quick": "playwright test src/hidden.spec.ts src/recipes.spec.ts src/rendered.spec.ts",
     "test:ui": "playwright test --ui",
     "heights": "node scripts/build-preview-heights.ts",
-    "lint": "tsc -p tsconfig.json --noEmit"
+    "test:browser": "playwright test"
   },
   "dependencies": {
     "@skryensya/ai-compiler": "workspace:*",
@@ -32,6 +32,7 @@
     "react-dom": "^19.2.7",
     "svelte": "^5.0.0",
     "typescript": "^5.9.3",
-    "vite": "^8.1.5"
+    "vite": "^8.1.5",
+    "vitest": "^4.1.10"
   }
 }

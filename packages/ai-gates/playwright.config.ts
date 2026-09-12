@@ -2,6 +2,10 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./src",
+  /* Only the browser gates. `*.test.ts` in this same directory belongs to vitest (the checks that
+   * need no browser and therefore run on every pull request); without this, Playwright's default
+   * match would collect those too and fail on their missing fixtures. */
+  testMatch: "**/*.spec.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   // Local runs only: the shared-page fixtures (fixtures.ts) already collapse most of the resource

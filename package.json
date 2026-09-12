@@ -9,10 +9,9 @@
   },
   "description": "Turborepo for skryensya/ui. Core contains tokens and the framework-agnostic component contract.",
   "scripts": {
-    "lint": "turbo run lint",
-    "check": "tsc -p scripts/tsconfig.json --noEmit && turbo run check --filter=!@skryensya/ai-gates --concurrency=1",
-    "check:gates": "turbo run check --filter=@skryensya/ai-gates",
-    "check:all": "tsc -p scripts/tsconfig.json --noEmit && turbo run check --concurrency=1",
+    "check": "tsc -p scripts/tsconfig.json --noEmit && turbo run check --concurrency=1",
+    "check:gates": "turbo run test:browser --filter=@skryensya/ai-gates",
+    "check:all": "pnpm check && pnpm check:gates",
     "audit:gate": "node scripts/audit-gate.ts",
     "build": "turbo run build",
     "dev": "turbo run dev --filter=@skryensya/docs",

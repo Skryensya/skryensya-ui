@@ -24,8 +24,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "check": "tsc -p tsconfig.json --noEmit && vitest run",
-    "lint": "tsc -p tsconfig.json --noEmit && vitest run"
+    "check": "tsc -p tsconfig.json --noEmit && vitest run"
   },
   "dependencies": {
     "@skryensya/core": "workspace:*"

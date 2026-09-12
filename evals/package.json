@@ -6,7 +6,6 @@
   "description": "F7: a corpus of product intents in Spanish and English, each paired with a hand-composed, MCP-validated usage tree. Re-validates every tree against G0-G3 on every run, so a contract change that breaks a known-good composition fails here first.",
   "scripts": {
     "check": "tsc -p tsconfig.json --noEmit && tsx run.ts",
-    "lint": "tsc -p tsconfig.json --noEmit",
     "agent": "tsx run-agent.ts"
   },
   "dependencies": {

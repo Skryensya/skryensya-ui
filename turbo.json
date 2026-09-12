@@ -11,19 +11,6 @@
     "contracts/changelog/**"
   ],
   "tasks": {
-    "lint": {
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        "scss/**",
-        "css/**",
-        "contrast-pairs.json",
-        "scripts/**",
-        "src/**",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": []
-    },
     "check": {
       "dependsOn": [
         "^check",
@@ -57,6 +44,15 @@
         "dist/**",
         "css/**"
       ]
+    },
+    /* The browser gates, kept OUT of `check` on purpose: about 19 minutes, and load-sensitive
+     * enough that a red result on a contended machine is weak evidence (CONTRIBUTING says so at
+     * length). `pnpm check:gates` runs this; `pnpm check` no longer has to filter the package out,
+     * because ai-gates' own `check` is now the cheap half: a typecheck plus the two deterministic
+     * gates that never needed a browser. */
+    "test:browser": {
+      "cache": false,
+      "persistent": false
     },
     "dev": {
       "cache": false,

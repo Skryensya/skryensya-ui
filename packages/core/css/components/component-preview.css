@@ -762,7 +762,6 @@
   }
 
   /*
-   * The contract drawer: a plain `Vaul.drawer` (patterns/vaul.css + components/drawer.css already
    * supply the edge, the slide, the backdrop and the drag), widened past the drawer default because
    * a code block reads worse at 20rem than the nav drawer's own links do. Structure only, same as
    * `docs-drawer`'s own header/content split in site.css (Vaul ships hooks and no anatomy  -  see

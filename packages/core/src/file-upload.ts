@@ -50,6 +50,7 @@ export const fileUploadAttrs = {
   dropzone: "data-sk-file-upload-dropzone",
   input: "data-sk-file-upload-input",
   trigger: "data-sk-file-upload-trigger",
+  clear: "data-sk-file-upload-clear",
   itemGroup: "data-sk-file-upload-item-group",
   item: "data-sk-file-upload-item",
   itemDelete: "data-sk-file-upload-item-delete",
@@ -109,6 +110,8 @@ export const fileUploadContract = {
         /** What the dropzone says. It is an instruction, so it is content, not a placeholder. */
         dropzoneLabel: { accepts: "text" },
         triggerLabel: { accepts: "text" },
+        /** The "remove everything" button's own label. Absent means the binding's default. */
+        clearLabel: { accepts: "text" },
       },
       mount: "data-sk-file-upload",
       template: {
@@ -149,6 +152,29 @@ export const fileUploadContract = {
              * nothing validates a hand-written attribute the way a usage tree gets validated. */
             attrs: { type: "button" },
             slot: "triggerLabel",
+          },
+          /*
+           * REMOVE EVERYTHING, and `hidden` in the authored markup on purpose: with no files chosen
+           * there is nothing to clear, so a page with no enhancer running shows no button rather
+           * than a dead one. Both bindings drive it from the same Zag trigger and both toggle that
+           * same `hidden` off once a file lands, so the static markup is the honest initial state
+           * rather than a thing the binding has to undo.
+           *
+           * Declared here because both bindings already shipped it and neither could say so: React
+           * renders `api.getClearTriggerProps()` with a `clearLabel` prop, the Vanilla enhancer
+           * patches `[data-sk-file-upload-clear]`, and the contract named neither.
+           */
+          {
+            element: "button",
+            also: ["sk-button", "sk-interactive"],
+            mount: "data-sk-file-upload-clear",
+            /* OPT-IN: no `clearLabel`, no button. The Vanilla enhancer already treats it that way
+             * (`if (clear)`), so emitting one unasked would give an author a control they never
+             * requested, and an empty one at that. Every tree written before this keeps emitting
+             * byte-identical markup. */
+            whenGiven: "clearLabel",
+            attrs: { type: "button", "data-variant": "ghost", hidden: "" },
+            slot: "clearLabel",
           },
         ],
       },

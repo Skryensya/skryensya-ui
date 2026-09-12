@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "71c1dc743d2a6ec1"
+surface: "3c1b6c9281103cc0"
 entries:
   - date: 2026-08-17
     kind: bugfix
@@ -71,3 +71,22 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-12
+    kind: feature
+    es:
+      title: FileUpload publica el boton de limpiar que las dos bindings ya tenian
+      body: >-
+        El contrato suma el slot <code>clearLabel</code> y la parte
+        <code>data-sk-file-upload-clear</code>. Las dos bindings ya lo implementaban con el mismo
+        trigger de Zag y ninguna podia decirlo: React renderiza <code>getClearTriggerProps()</code>
+        con su prop <code>clearLabel</code> y el enhancer de vanilla parchea ese atributo. Es opt-in:
+        sin <code>clearLabel</code> no se emite boton, asi que todo arbol ya escrito sale igual.
+    en:
+      title: FileUpload publishes the clear button both bindings already had
+      body: >-
+        The contract adds the <code>clearLabel</code> slot and the
+        <code>data-sk-file-upload-clear</code> part. Both bindings already implemented it off the
+        same Zag trigger and neither could say so: React renders <code>getClearTriggerProps()</code>
+        with its <code>clearLabel</code> prop, and the Vanilla enhancer patches that attribute. It
+        is opt-in: with no <code>clearLabel</code> no button is emitted, so every tree written
+        before this emits byte-identical markup.

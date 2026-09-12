@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "0fef2fd63a08b689"
+surface: "0df1e5844b403bb4"
 entries:
   - date: 2026-08-17
     kind: breaking
@@ -64,3 +64,21 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-12
+    kind: rework
+    es:
+      title: El skin del drawer se muda a la hoja de Vaul, y sus hooks quedan declarados
+      body: >-
+        <code>components/drawer.css</code> deja de existir: su unica clase se mudo a
+        <code>patterns/vaul.css</code>, que es donde ya vivia todo lo demas del drawer. Si importabas
+        las dos hojas, ahora alcanza con la de Vaul; si importabas solo la de drawer, te faltaba la
+        de Vaul igual (esa hoja siempre lo dijo). Los 7 hooks <code>--sk-drawer-*</code> quedan
+        declarados por el contrato de Vaul, asi que por primera vez el compilador los verifica.
+    en:
+      title: The drawer skin moves into Vaul's stylesheet, and its hooks become declared
+      body: >-
+        <code>components/drawer.css</code> is gone: its single class moved into
+        <code>patterns/vaul.css</code>, where the rest of the drawer already lived. If you imported
+        both sheets, Vaul's is now enough; if you imported only drawer's, you were already missing
+        Vaul's (that sheet always said so). The 7 <code>--sk-drawer-*</code> hooks are now declared
+        by the Vaul contract, so the compiler checks them for the first time.

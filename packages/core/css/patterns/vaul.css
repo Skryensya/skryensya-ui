@@ -416,4 +416,52 @@
       background: CanvasText;
     }
   }
+
+  /*
+   * THE DRAWER SKIN, merged in from the sheet it used to have of its own.
+   *
+   * It lives here because a drawer IS a Vaul on the inline edge (ADR-8): it ships hooks and no
+   * structure, every line of structure it could have belongs to the pattern above, and the contract
+   * already owns it as the `Vaul.drawer` signature rather than as a component of its own.
+   *
+   * It moved for a concrete reason as well. The hook rule reconciles ONE stylesheet per contract
+   * (`contract.css`), so while these fifteen hooks sat in a sheet no contract named, nothing could
+   * check them: not that they exist, and not that a contract promising them is telling the truth.
+   * Here they are Vaul's, and they are checked like everything else.
+   *
+   * NOTE what this cost: `scripts/checks.ts`'s "a component sheet may declare hooks and no
+   * structure" rule was written for this file, and now has no real instance left, only its fixture.
+   */
+  .sk-drawer {
+    --sk-drawer-inline-size: min(20rem, 85dvw);
+    /* Same reasoning as Dialog's own: the modal tier gets this system's lightest surface tint,
+     * not the base surface it used to share with the page it blocks. See /elevacion. */
+    --sk-drawer-bg: var(--color-bg-surface-overlay);
+    --sk-drawer-fg: var(--color-text-primary);
+    --sk-drawer-border-color: var(--color-border-subtle);
+    --sk-drawer-border-width: 1px;
+    --sk-drawer-elevation: var(--elevation-modal);
+    --sk-drawer-wash: var(--elevation-wash-modal);
+
+    /* The drawer's hooks ARE Vaul's, re-declared. A consumer tunes `--sk-drawer-*` and never
+     * learns that Vaul is underneath; the pattern stays an implementation detail rather than a
+     * second public surface to keep in sync. */
+    --sk-vaul-size: var(--sk-drawer-inline-size);
+    --sk-vaul-bg: var(--sk-drawer-bg);
+    --sk-vaul-fg: var(--sk-drawer-fg);
+    --sk-vaul-border-color: var(--sk-drawer-border-color);
+    --sk-vaul-border-width: var(--sk-drawer-border-width);
+    --sk-vaul-elevation: var(--sk-drawer-elevation);
+    --sk-vaul-wash: var(--sk-drawer-wash);
+    /* square: a drawer meets three viewport edges, and a radius against them reads as a mistake */
+    --sk-vaul-radius: 0;
+  }
+
+  @media (forced-colors: active) {
+    .sk-drawer {
+      --sk-drawer-border-color: CanvasText;
+      --sk-drawer-bg: Canvas;
+      --sk-drawer-fg: CanvasText;
+    }
+  }
 }

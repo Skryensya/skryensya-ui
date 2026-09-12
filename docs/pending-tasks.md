@@ -157,53 +157,40 @@ agente tiene el checklist completo), y correr `turbo check`.
 - [ ] **Toolbar** (`/componentes/toolbar`) - roving tabindex real, la más involucrada del lote:
   navegación por flechas, wrap, orientación.
 
-### Las tres hojas sin contrato: dos son correctas, la tercera destapa un limite del modelo
+### Las tres hojas sin contrato: drawer resuelto ✅ (2026-09-12), las otras dos son correctas
 
-Revisadas `copy-button.css` (15 hooks), `theme-toggle.css` (1) y `drawer.css` (15), la recomendacion
-anterior de "publicarles contrato" estaba **mal en dos de los tres casos**:
+**drawer, hecho**: `components/drawer.css` se fusiono en `patterns/vaul.css`. Era una sola clase, 15
+hooks y cero estructura, y ya declaraba en su propio encabezado que requeria la hoja de Vaul. Los 7
+hooks `--sk-drawer-*` quedan declarados por el contrato de `vaul` y el gate los verifica. Los cinco
+importadores reales ya importaban `vaul.css`, asi que la fusion no dejo a nadie sin estilos.
 
-- **copy-button**: `core/src/copy-button.ts` lo dice en su propio docstring: *"No contract lives here
-  any more (decision 33, reversed)"*. El contrato se saco a proposito; un consumidor compone
-  `IconStateButton` a mano. Publicarle contrato seria re-litigar una decision documentada.
-- **theme-toggle**: mismo caso. No tiene binding en React ni en vanilla, y la hoja la consume solo el
-  chrome del sitio de doc.
+Lo que costo, anotado tambien en el comentario de `vaul.css`: la regla `component-ships-hooks` de
+`scripts/checks.ts` se escribio **para** `drawer.css`, y ahora se queda sin instancia real; le queda
+solo el fixture sintetico de `checks.test.ts`. Y quien importe `vaul.css` ahora carga tambien las
+reglas de `.sk-drawer`, inertes salvo que se use la clase.
 
-Lo que si queda abierto es **drawer**, y no como "falta un contrato":
+**copy-button y theme-toggle, correctas como estan**: `core/src/copy-button.ts` lo dice en su propio
+docstring, *"No contract lives here any more (decision 33, reversed)"*. El contrato se saco a
+proposito; un consumidor compone `IconStateButton` a mano. theme-toggle es el mismo caso: sin binding
+en ninguna de las dos capas, y la hoja la consume solo el chrome del sitio de doc. Publicarles
+contrato seria re-litigar una decision documentada.
 
-`components/drawer.css` la consumen `core/src/vaul.ts` y `react/src/components/vaul.tsx`, o sea que
-el drawer **es** parte de la implementacion de Vaul, tal como dice CONTEXT.md. Sus 15 hooks deberian
-estar declarados por el contrato de `vaul`, pero no se puede: la regla nueva reconcilia **una hoja
-por contrato** (`contract.css`), y `vaul` ya nombra la suya. Un componente cuyo estilo vive en dos
-hojas no tiene forma de decirlo.
+**Queda abierto el modelo**, que es lo que destapo drawer: `hooks` reconcilia **una hoja por
+contrato**. Fusionar funciono porque el drawer era un skin de una sola clase; un componente cuyo
+estilo viva de verdad en dos hojas sigue sin poder decirlo.
 
-Entonces la decision no es sobre drawer, es sobre el modelo: o `hooks` se reconcilia contra varias
-hojas por contrato, o `drawer.css` se fusiona en la hoja de `vaul`, o se acepta que estas hojas
-queden fuera del gate y se anote por que.
+### FileUpload: el boton de limpiar, hecho ✅ (2026-09-12)
 
-### `data-sk-file-upload-clear`: la capa vanilla tiene un boton que React no
+**La nota anterior estaba mal**: decia que React no lo implementaba. Si lo implementa, en
+`file-upload.tsx:152-159`, con `api.getClearTriggerProps()` y una prop `clearLabel`. El hallazgo de
+"drift entre bindings" fue un falso negativo de mi propio grep: busque `\bclear\b`, que no matchea
+`clearLabel`.
 
-Revisados los nueve `data-sk-*` que ningun contrato declaraba, **seis no eran gaps** y uno ya se
-arreglo. Lo que queda es uno solo, y no es una declaracion que falte: es drift entre bindings.
-
-`FileUpload.svelte` busca `[data-sk-file-upload-clear]` al lado de `dropzone`, `input` y `trigger`,
-que si estan declarados. React no lo menciona **ni una vez**. O sea: la capa vanilla soporta un boton
-de "limpiar todo" que el contrato no publica y que la otra binding no implementa, que es exactamente
-el drift que este sistema existe para prevenir.
-
-Dos salidas, las dos con costo real, por eso queda como decision:
-
-1. **Publicarlo**: slot opcional en el contrato + implementarlo en React + entrada de changelog. Es
-   una feature nueva, no un arreglo.
-2. **Sacarlo de vanilla**: mas barato y honesto si nadie lo usa, pero es perdida de funcionalidad.
-
-**Los otros ocho, ya resueltos o correctos como estan:**
-
-| atributo | veredicto |
-|---|---|
-| `data-sk-menu-item-label`, `-item-indicator` | **arreglado**: no los escribia nadie. El selector ahora usa solo la clase, y se borraron 17 apariciones muertas de los fixtures (los 20 tests siguen verdes, que es la prueba de que estaban muertos) |
-| `data-sk-tile-ready` | correcto: lo **escribe** el enhancer. Es State (CONTEXT.md), no una parte autorada |
-| `data-sk-table-colgroup`, `-treegrid-colgroup`, `-treegrid-disclosure`, `-column-resizer` | correcto: el enhancer **crea** esos elementos, no los espera del autor |
-| `data-sk-command-palette-lazy` | correcto: lo autora el sitio de doc como opt-in de montaje. Es vocabulario del registry de vanilla, no una parte de componente |
+Lo que faltaba era solo la declaracion. Resuelto sumando al contrato el slot `clearLabel`, el
+atributo `clear` en `fileUploadAttrs` y el nodo de template correspondiente, **opt-in via
+`whenGiven`**: sin `clearLabel` no se emite boton, asi que todo arbol ya escrito emite markup
+byte-identico. Lo mismo que paso con `group` en Menu: las dos bindings ya lo tenian y el contrato era
+lo unico que no podia decirlo.
 
 ### Menu: `group` en los items de radio, hecho ✅ (2026-09-12)
 

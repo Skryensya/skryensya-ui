@@ -1558,6 +1558,18 @@
             "kind": "feature"
           },
           {
+            "date": "2026-09-12",
+            "en": {
+              "body": "The contract adds the <code>clearLabel</code> slot and the <code>data-sk-file-upload-clear</code> part. Both bindings already implemented it off the same Zag trigger and neither could say so: React renders <code>getClearTriggerProps()</code> with its <code>clearLabel</code> prop, and the Vanilla enhancer patches that attribute. It is opt-in: with no <code>clearLabel</code> no button is emitted, so every tree written before this emits byte-identical markup.",
+              "title": "FileUpload publishes the clear button both bindings already had"
+            },
+            "es": {
+              "body": "El contrato suma el slot <code>clearLabel</code> y la parte <code>data-sk-file-upload-clear</code>. Las dos bindings ya lo implementaban con el mismo trigger de Zag y ninguna podia decirlo: React renderiza <code>getClearTriggerProps()</code> con su prop <code>clearLabel</code> y el enhancer de vanilla parchea ese atributo. Es opt-in: sin <code>clearLabel</code> no se emite boton, asi que todo arbol ya escrito sale igual.",
+              "title": "FileUpload publica el boton de limpiar que las dos bindings ya tenian"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-08-17",
             "en": {
               "body": "<code>onFileChange</code> always received <code>rejectedFiles</code> with their errors, but neither binding ever displayed it: a file that was too large or the wrong type vanished with no visible or announced message, even though the contract already had a dedicated part (<code>rejection</code>) with its own stylesheet waiting. React now renders that part with <code>role=\"alert\"</code> when there are rejections, naming the file and the reason in prose (new shared <code>fileUploadErrorMessage</code> function, so Vanilla: which never draws its own markup, by design. Can build the same message from <code>sk-file-change</code>).",
@@ -2540,6 +2552,19 @@
             "kind": "feature"
           },
           {
+            "date": "2026-09-12",
+            "en": {
+              "body": "An item now accepts <code>group</code>, which authors <code>data-group</code> and says which radio set it belongs to, so two independent groups can live in one menu without one clearing the other. Both bindings already implemented it and Core's own <code>MenuItem</code> type already declared it; only the contract did not, so a composition the bindings handled correctly was rejected by the validator.",
+              "title": "Menu's radio items publish group"
+            },
+            "es": {
+              "body": "Un item ahora acepta <code>group</code>, que autoría <code>data-group</code> y dice a qué conjunto de radios pertenece, para que dos grupos independientes convivan en un mismo menú sin que uno limpie al otro. Las dos bindings ya lo implementaban y el tipo <code>MenuItem</code> de Core ya lo declaraba; lo único que faltaba era publicarlo en el contrato, así que una composición que las bindings resolvían bien la rechazaba el validador.",
+              "title": "Los items de radio de Menu publican group"
+            },
+            "kind": "feature",
+            "target": "group"
+          },
+          {
             "date": "2026-09-07",
             "en": {
               "body": "Alongside <code>triggerVariant</code>, <code>triggerTone</code> now forwards to the trigger button's <code>data-tone</code>. It is the counterpart of the second axis Button just published: without it a SplitButton could pair its two halves' emphasis but not their intent, and a destructive split button's trigger came out neutral.",
@@ -2686,6 +2711,19 @@
               "title": "Los styling hooks de menubar quedan declarados en el contrato"
             },
             "kind": "feature"
+          },
+          {
+            "date": "2026-09-12",
+            "en": {
+              "body": "An item now accepts <code>group</code>, which authors <code>data-group</code> and says which radio set it belongs to, so two independent groups can live in one menu without one clearing the other. Both bindings already implemented it and Core's own <code>MenuItem</code> type already declared it; only the contract did not, so a composition the bindings handled correctly was rejected by the validator.",
+              "title": "Menubar's radio items publish group"
+            },
+            "es": {
+              "body": "Un item ahora acepta <code>group</code>, que autoría <code>data-group</code> y dice a qué conjunto de radios pertenece, para que dos grupos independientes convivan en un mismo menú sin que uno limpie al otro. Las dos bindings ya lo implementaban y el tipo <code>MenuItem</code> de Core ya lo declaraba; lo único que faltaba era publicarlo en el contrato, así que una composición que las bindings resolvían bien la rechazaba el validador.",
+              "title": "Los items de radio de Menubar publican group"
+            },
+            "kind": "feature",
+            "target": "group"
           },
           {
             "date": "2026-08-19",
@@ -2970,6 +3008,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-12",
+            "en": {
+              "body": "A new <code>shimmer</code> option on all four signatures, on by default: the sweep is what says the content is on its way, and a still grey box says only that it is grey. <code>shimmer: false</code> is for the skeleton that is <em>not</em> waiting for anything: decoration, a screenshot, a drawing of a loading state. It writes <code>data-shimmer=\"false\"</code> in the markup and nothing at all when on, so every skeleton already published is unchanged. <code>prefers-reduced-motion</code> still wins over either: it is the reader's preference, not the author's.",
+              "title": "A skeleton's shimmer can be turned off"
+            },
+            "es": {
+              "body": "Nueva opción <code>shimmer</code> en las cuatro signatures, prendida por defecto: el barrido es lo que dice que el contenido viene en camino, y una caja gris quieta sólo dice que es gris. <code>shimmer: false</code> es para el skeleton que <em>no</em> está esperando nada: decoración, una captura de pantalla, el dibujo de un estado de carga. En el markup se escribe <code>data-shimmer=\"false\"</code> y nada cuando está prendido, así que todo skeleton ya publicado queda igual. <code>prefers-reduced-motion</code> sigue mandando por encima de las dos: es una preferencia de quien lee, no de quien compone.",
+              "title": "El brillo del skeleton se puede apagar"
+            },
+            "kind": "feature",
+            "target": "shimmer"
+          },
           {
             "date": "2026-09-12",
             "en": {
@@ -4374,6 +4425,18 @@
               "title": "Los styling hooks de vaul quedan declarados en el contrato"
             },
             "kind": "feature"
+          },
+          {
+            "date": "2026-09-12",
+            "en": {
+              "body": "<code>components/drawer.css</code> is gone: its single class moved into <code>patterns/vaul.css</code>, where the rest of the drawer already lived. If you imported both sheets, Vaul's is now enough; if you imported only drawer's, you were already missing Vaul's (that sheet always said so). The 7 <code>--sk-drawer-*</code> hooks are now declared by the Vaul contract, so the compiler checks them for the first time.",
+              "title": "The drawer skin moves into Vaul's stylesheet, and its hooks become declared"
+            },
+            "es": {
+              "body": "<code>components/drawer.css</code> deja de existir: su unica clase se mudo a <code>patterns/vaul.css</code>, que es donde ya vivia todo lo demas del drawer. Si importabas las dos hojas, ahora alcanza con la de Vaul; si importabas solo la de drawer, te faltaba la de Vaul igual (esa hoja siempre lo dijo). Los 7 hooks <code>--sk-drawer-*</code> quedan declarados por el contrato de Vaul, asi que por primera vez el compilador los verifica.",
+              "title": "El skin del drawer se muda a la hoja de Vaul, y sus hooks quedan declarados"
+            },
+            "kind": "rework"
           },
           {
             "date": "2026-08-17",
@@ -12051,6 +12114,9 @@
             "name": "FileUpload"
           },
           "slots": {
+            "clearLabel": {
+              "accepts": "text"
+            },
             "dropzoneLabel": {
               "accepts": "text"
             },
@@ -12107,6 +12173,21 @@
                 "element": "button",
                 "mount": "data-sk-file-upload-trigger",
                 "slot": "triggerLabel"
+              },
+              {
+                "also": [
+                  "sk-button",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "data-variant": "ghost",
+                  "hidden": "",
+                  "type": "button"
+                },
+                "element": "button",
+                "mount": "data-sk-file-upload-clear",
+                "slot": "clearLabel",
+                "whenGiven": "clearLabel"
               }
             ],
             "element": "div",
@@ -15277,6 +15358,10 @@
                     "trueValue": "",
                     "type": "boolean"
                   },
+                  "group": {
+                    "attr": "data-group",
+                    "type": "string"
+                  },
                   "href": {
                     "attr": "href",
                     "type": "string"
@@ -15687,6 +15772,10 @@
                     "default": false,
                     "trueValue": "",
                     "type": "boolean"
+                  },
+                  "group": {
+                    "attr": "data-group",
+                    "type": "string"
                   },
                   "href": {
                     "attr": "href",
@@ -17196,6 +17285,12 @@
           "default": 3,
           "type": "number"
         },
+        "shimmer": {
+          "attr": "data-shimmer",
+          "default": true,
+          "falseValue": "false",
+          "type": "boolean"
+        },
         "size": {
           "attr": "data-size",
           "default": "md",
@@ -17301,7 +17396,8 @@
           ],
           "options": [
             "text",
-            "width"
+            "width",
+            "shimmer"
           ],
           "react": {
             "from": "@skryensya/react/placeholder",
@@ -17330,7 +17426,8 @@
           "options": [
             "width",
             "height",
-            "fill"
+            "fill",
+            "shimmer"
           ],
           "react": {
             "from": "@skryensya/react/placeholder",
@@ -17357,7 +17454,8 @@
             "person-not-yet-loaded"
           ],
           "options": [
-            "size"
+            "size",
+            "shimmer"
           ],
           "react": {
             "from": "@skryensya/react/placeholder",
@@ -17386,7 +17484,8 @@
           "options": [
             "text",
             "lines",
-            "lastLine"
+            "lastLine",
+            "shimmer"
           ],
           "react": {
             "from": "@skryensya/react/placeholder",
@@ -24033,6 +24132,13 @@
     "vaul": {
       "css": "@skryensya/core/patterns/vaul.css",
       "hooks": [
+        "--sk-drawer-bg",
+        "--sk-drawer-border-color",
+        "--sk-drawer-border-width",
+        "--sk-drawer-elevation",
+        "--sk-drawer-fg",
+        "--sk-drawer-inline-size",
+        "--sk-drawer-wash",
         "--sk-vaul-backdrop-bg",
         "--sk-vaul-bg",
         "--sk-vaul-border-color",
@@ -24285,5 +24391,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "c01666c01c0beef9"
+  "sourceHash": "9aa1d8dfe9b5172d"
 }

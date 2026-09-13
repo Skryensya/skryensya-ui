@@ -1,6 +1,6 @@
 {
   "name": "@skryensya/editor",
-  "version": "0.1.0",
+  "version": "0.0.1-dev",
   "private": true,
   "type": "module",
   "description": "The ProseMirror engine behind the Editor contract: schema, commands, keymap, HTML/Markdown/JSON serialization. Framework-agnostic - no React, no Svelte.",

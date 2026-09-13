@@ -104,7 +104,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "annotation": [
@@ -174,7 +174,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "avatar": [
@@ -231,7 +231,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "back-to-top": [
@@ -275,7 +275,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "badge": [
@@ -343,7 +343,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "box": [
@@ -387,7 +387,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "breadcrumb": [
@@ -443,7 +443,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "button": [
@@ -589,7 +589,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "calendar": [
@@ -633,7 +633,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "callout": [
@@ -677,7 +677,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "carousel": [
@@ -722,7 +722,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "changelog": [
@@ -895,7 +895,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "chart": [
@@ -940,7 +940,7 @@
             "target": "Chart"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "checkbox": [
@@ -1008,7 +1008,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "code-preview": [
@@ -1040,7 +1040,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "color-picker": [
@@ -1096,7 +1096,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "combobox": [
@@ -1140,7 +1140,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "command-palette": [
@@ -1232,7 +1232,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "comment-thread": [
@@ -1361,7 +1361,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "component-preview": [
@@ -1405,7 +1405,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "content": [
@@ -1461,7 +1461,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "data-grid": [
@@ -1481,7 +1481,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "date-picker": [
@@ -1525,7 +1525,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "details": [
@@ -1569,7 +1569,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "dialog": [
@@ -1639,7 +1639,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "editor": [
@@ -1695,7 +1695,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "empty-state": [
@@ -1727,7 +1727,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "fade-edge": [
@@ -1759,7 +1759,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "feed": [
@@ -1792,7 +1792,7 @@
             "target": "Feed"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "file-upload": [
@@ -1848,7 +1848,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "folder": [
@@ -1904,7 +1904,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "footer": [
@@ -1924,7 +1924,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "form-field": [
@@ -1980,7 +1980,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "hero": [
@@ -2065,7 +2065,7 @@
             "target": "Hero"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "icon": [
@@ -2136,7 +2136,7 @@
             "target": "name"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "icon-state-button": [
@@ -2218,7 +2218,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "image-frame": [
@@ -2250,7 +2250,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "input": [
@@ -2307,7 +2307,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "kbd": [
@@ -2352,7 +2352,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "layout": [
@@ -2493,7 +2493,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "list": [
@@ -2537,7 +2537,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "loader": [
@@ -2569,7 +2569,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "marquee": [
@@ -2685,7 +2685,7 @@
             "kind": "rework"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "media-gradient": [
@@ -2729,7 +2729,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "megamenu": [
@@ -2834,7 +2834,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "menu": [
@@ -3007,7 +3007,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "menubar": [
@@ -3077,7 +3077,7 @@
             "kind": "breaking"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "meter": [
@@ -3110,7 +3110,7 @@
             "target": "Meter"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "nav-list": [
@@ -3207,7 +3207,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "navbar": [
@@ -3251,7 +3251,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "number-field": [
@@ -3295,7 +3295,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "pagination": [
@@ -3351,7 +3351,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "placeholder": [
@@ -3408,7 +3408,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "popover": [
@@ -3464,7 +3464,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "process-list": [
@@ -3496,7 +3496,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "progress": [
@@ -3528,7 +3528,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "qr-code": [
@@ -3608,7 +3608,7 @@
             "kind": "breaking"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "radio-group": [
@@ -3664,7 +3664,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "segmented": [
@@ -3745,13 +3745,26 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "select": [
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-13",
+            "en": {
+              "body": "React invented <code>\"Select option\"</code> and Vanilla used <code>\"\"</code> when the author passed no <code>placeholder</code>. The contract now owns the default as <code>\"\"</code>, and both bindings read the same one: no invented English copy.",
+              "title": "The default placeholder is empty in both bindings"
+            },
+            "es": {
+              "body": "React inventaba <code>\"Select option\"</code> y Vanilla usaba <code>\"\"</code> cuando el autor no pasaba <code>placeholder</code>. El contrato ahora fija el default en <code>\"\"</code>, y los dos bindings lo leen igual: sin texto inventado en inglés.",
+              "title": "El placeholder por defecto es vacío en ambos bindings"
+            },
+            "kind": "bugfix",
+            "target": "placeholder"
+          },
           {
             "date": "2026-09-12",
             "en": {
@@ -3802,7 +3815,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "sidebar": [
@@ -3910,7 +3923,7 @@
             "kind": "rework"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "skip-link": [
@@ -3954,7 +3967,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "slider": [
@@ -4038,7 +4051,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "split-button": [
@@ -4145,7 +4158,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "stat": [
@@ -4189,7 +4202,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "steps": [
@@ -4221,7 +4234,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "switch": [
@@ -4289,7 +4302,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "table": [
@@ -4372,7 +4385,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "table-pager": [
@@ -4428,7 +4441,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "tabs": [
@@ -4473,7 +4486,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "tag": [
@@ -4530,7 +4543,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "tile": [
@@ -4586,7 +4599,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "time-field": [
@@ -4654,7 +4667,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "toc": [
@@ -4711,7 +4724,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "toolbar": [
@@ -4743,7 +4756,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "tooltip": [
@@ -4799,7 +4812,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "tree-view": [
@@ -4856,7 +4869,7 @@
             "target": "branchIcon"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "treegrid": [
@@ -4928,7 +4941,7 @@
             "target": "TreegridRow"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "typography": [
@@ -4973,7 +4986,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "vaul": [
@@ -5030,7 +5043,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ],
     "wrapper": [
@@ -5074,7 +5087,7 @@
             "kind": "feature"
           }
         ],
-        "version": "0.0.2-dev"
+        "version": "0.0.1-dev"
       }
     ]
   },
@@ -19224,6 +19237,7 @@
         },
         "placeholder": {
           "attr": "data-placeholder",
+          "default": "",
           "machineInput": true,
           "type": "string"
         },
@@ -24905,8 +24919,8 @@
   },
   "releases": {
     "releases": [],
-    "working": "0.0.2"
+    "working": "0.0.1"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "45a10bffa4e17f1d"
+  "sourceHash": "5e5cb27b6c94586a"
 }

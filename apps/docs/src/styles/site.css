@@ -113,10 +113,30 @@ body {
 }
 
 
-/* The auto margin sits on the FIRST of the trailing group (search), so search + options travel to the
-   trailing edge together; a margin on options alone would strand search next to the brand. The field
+/* The auto margin sits on the FIRST of the trailing group so search + prefs travel to the trailing
+   edge together. That first item is the version control when an archive exists, otherwise the search
+   field (see `:has` below). A margin on prefs alone would strand search next to the brand. The field
    is a real `<input readonly>` now (search-trigger.ts has the full reasoning), this wrapper is purely
    the field's own chrome: the sunken well, the border, the icon and kbd hint around the input. */
+.dimensions__version-menu {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-inline-xs);
+  margin-inline-start: auto;
+}
+
+.dimensions__version-menu__caption {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-label);
+  white-space: nowrap;
+}
+
+.dimensions__version-menu__value {
+  font-variant-numeric: tabular-nums;
+}
+
 .dimensions__search-trigger {
   margin-inline-start: auto;
   display: inline-flex;
@@ -141,6 +161,10 @@ body {
   background: var(--color-bg-surface-sunken);
   box-shadow: var(--elevation-sunken);
   border: 1px solid var(--color-border-default);
+}
+
+.dimensions__content:has(.dimensions__version-menu) .dimensions__search-trigger {
+  margin-inline-start: 0;
 }
 
 .dimensions__search-trigger .sk-icon {
@@ -268,9 +292,9 @@ body {
 }
 
 
-/* The language menu is the LAST control in the header, so its panel opens against the window edge.
-   Menu's own placement is start-aligned (`block-end span-inline-end` + `justify-self: start`, see
-   menu.css), which for this trigger means a panel that starts 24px from the right edge and needs
+/* The language menu is near the trailing edge of the header, so its panel opens against the window
+   edge. Menu's own placement is start-aligned (`block-end span-inline-end` + `justify-self: start`,
+   see menu.css), which for this trigger means a panel that starts near the right edge and needs
    ~190px it does not have: measured, the engine shifted it back on screen and left it flush against
    the window, overshooting the header's own gutter. End-aligned instead, so the panel's end edge
    lines up with the trigger's, exactly the mirror of the default. Asked for through the Anclaje
@@ -324,7 +348,8 @@ body {
   }
 
   .dimensions__global,
-  .dimensions__prefs {
+  .dimensions__prefs,
+  .dimensions__version-menu {
     display: none;
   }
 

@@ -28,10 +28,16 @@ Cambios estructurales que propone esta versión del plan:
 | 4 | **`document id` ya existe: `canonicalPath()`.** Lo que falta no es el mapa, es la **estabilidad** frente a renombres. | `src/i18n/index.ts` ya normaliza cualquier ruta a su forma canónica en inglés. Ver §4. |
 | 5 | **Gate de activación explícito.** Nada de esto se construye hasta que se cumplan tres condiciones medibles. | Hoy `releases: []`: cero versiones publicadas, cero consumidores anclados. Ver §9. |
 | 6 | **SEO, prefetch, search y gates entran al plan como superficies de primera clase.** | Duplicar ~190 rutas por versión y por locale rompe cosas que hoy funcionan por accidente. Ver §7 y §8. |
+| 7 | **La versión no vive en el router de la docs viva.** Latest = URLs bare. Los archives se montan en el host/CDN bajo `/v<version>/`, no como páginas duplicadas en `src/pages/`. | Es cómo lo hacen Docusaurus, Next.js y la mayoría de docs de frameworks. Ver §3.3 y §7.1. |
 
 Lo que **sobrevive** del borrador: el vocabulario, el corte a mano alineado a major, la idea de
 tombstone (que aquí es un redirect), el switcher, la regla "locale y versión son ejes
 independientes", y la recomendación final de no prometer demos históricos antes de tiempo.
+
+Lo que **este plan rechaza explícitamente** (y que un prototipo de 2026-09-13 exploró): copiar el
+árbol de rutas bajo `apps/docs/src/pages/v0.0.1-dev/**` y enseñar dos filas `v0.0.1-dev` en el
+switcher. Esa forma mete la versión en el router de la app live, duplica ~190 rutas en source y
+confunde "current" con "archive" cuando aún no hay un corte real distinto.
 
 ### 0.1 Principio rector: nada de estado nuevo por si acaso
 
@@ -65,15 +71,17 @@ documentos que existían en v1 está dentro de v1; no hace falta una tabla que l
 - **Docs version**: el número del release del que se cortó, escrito **igual** que en
   `contracts/changelog/releases.yaml` (`0.0.1-dev`, luego `0.0.1`, `0.2.0`, ...). No es una
   numeración propia, y por eso no existe la pregunta "¿qué docs version corresponde al release
-  1.2?": es la misma cadena, y es también el nombre del directorio en la URL.
-- **Current**: la versión editable. Es el árbol de trabajo tal como existe hoy, servido en las URLs
-  bare de siempre.
+  1.2?": es la misma cadena, y es también el nombre del directorio en la URL **del archive**.
+- **Current / latest**: la versión editable. Es el árbol de trabajo tal como existe hoy, servido en
+  las URLs **bare** de siempre (`/components/button`). No lleva prefijo de versión en el path.
 - **Frozen version**: corte ya publicado. Inmutable salvo hotfix explícito con runbook (§10.2).
+  Se sirve bajo `/v<version>/…` en el deploy, no como rutas Astro en el source de `current`.
 - **Document id**: identidad estable de una página, independiente del locale y de la versión.
 - **Surface**: cada panel versionable de una página (`usage`, `install`, `contract`, `style`, `a11y`,
   `tests`, `changes`). Es la unidad real de política, ver §2.
 - **Cut**: la operación que convierte `current` en una frozen version y abre la siguiente.
-- **Archive**: el output construido de una frozen version, almacenado como artefacto de release.
+- **Archive**: el output construido de una frozen version, almacenado como artefacto de release y
+  montado en el host bajo `/v<version>/`.
 
 ---
 
@@ -106,12 +114,14 @@ Por eso la política se declara **por superficie** (§6), en código y no en pro
 ### 3.1 La decisión
 
 > **Una frozen version es el output construido del árbol en el momento del corte, archivado y
-> servido bajo `/v<version>/`. `current` sigue siendo exactamente lo que es hoy. La herencia entre
-> versiones la provee git, no un resolver en runtime.**
+> servido bajo `/v<version>/` en el deploy. `current` sigue siendo exactamente lo que es hoy, en
+> URLs bare. La herencia entre versiones la provee git, no un resolver en runtime. La versión no
+> existe como árbol de rutas en el source de la docs viva.**
 
-Operativamente: cortar `0.0.1` es un tag (`docs-v0.0.1`), un build con `base: "/v0.0.1"`, y el archivo del
-output. `/v0.0.1-dev/components/button` es HTML tal como se veía ese día, con sus demos, su Referencia y
-sus tests, todos verdaderos **entre sí**.
+Operativamente: cortar `0.0.1` es un tag (`docs-v0.0.1`), un build, un pase de rebase de URLs sobre
+`dist`, y el archivo del output montado en el CDN en `/v0.0.1/`.
+`https://ui…/v0.0.1/components/button` es HTML tal como se veía ese día. `https://ui…/components/button`
+sigue siendo latest. El source de `apps/docs` no gana un directorio `pages/v0.0.1/`.
 
 ### 3.2 Por qué, contra el store de entries
 
@@ -129,15 +139,37 @@ El store de entries paga complejidad permanente (resolver, tombstones, `since`, 
 versión x locale, tests de herencia) para ahorrar espacio en disco. El snapshot paga disco para
 ahorrar complejidad. En un sitio de 190 rutas con demos ejecutables, el disco es el recurso barato.
 
-### 3.3 Lo que el snapshot compra gratis
+### 3.3 La versión no vive en el router de `current`
+
+Las docs serias (Docusaurus, Next.js, Vue, la mayoría de design systems) hacen lo mismo:
+
+| | Latest | Archive histórico |
+| --- | --- | --- |
+| URL | bare (`/docs/...`, `/components/...`) | prefijo (`/docs/14/...`, `/v1/...`) o a veces nada |
+| Source | el árbol editable | un **build** montado en el host, no un segundo árbol en el repo |
+
+Consecuencia para este plan:
+
+1. **`apps/docs/src/pages/` no contiene `v*/`.** Ningún stub, ninguna página hand-frozen bajo un
+   prefijo. El source es solo `current`.
+2. **`/v<version>/` aparece en el CDN** cuando un cut publica un archive y el deploy lo monta.
+   Hasta entonces el switcher muestra **una** versión (la de `releases.yaml` / `working`) y apunta
+   a las URLs bare.
+3. **No hay dos filas `v0.0.1-dev`.** Si working y el único archive se llamarían igual, no hay
+   archive que listar: latest **es** esa versión.
+4. Un prototipo que duplicó rutas bajo `pages/v0.0.1-dev/**` queda **fuera del plan**; se retira del
+   source en la misma limpieza que alinea el código con este documento.
+
+### 3.4 Lo que el snapshot compra gratis
 
 - Fidelidad histórica **completa**: las 7 superficies son verdaderas entre sí, no solo la prosa.
 - Cero cambios al modelo de escritura. Nadie aprende un formato nuevo.
 - Cero resolver, cero tombstone en runtime, cero matriz versión x locale en código.
+- Cero contaminación del router de `current` con prefijos de versión.
 - La pregunta "¿qué decían las docs el día del release 1.0?" se contesta con un artefacto, no con
   una reconstrucción.
 
-### 3.4 Lo que el snapshot cuesta, y su mitigación
+### 3.5 Lo que el snapshot cuesta, y su mitigación
 
 | Coste | Mitigación |
 | --- | --- |
@@ -202,7 +234,7 @@ no hay cadena `V-1, V-2`.
 `contracts/changelog/releases.yaml` ya existe y ya contesta "qué versiones hay", con una regla
 explícita: cada entrada pertenece al release más antiguo cuya fecha la alcanza, `working` es la que
 se está escribiendo, y **cortar una versión es una línea en ese archivo**. Hoy dice
-`working: "0.1.0"` y `releases: []`.
+`working: "0.0.1"` y `releases: []`.
 
 Añadir `apps/docs/versions.yaml` con numeración propia crea dos respuestas a la misma pregunta y una
 tercera pregunta nueva ("¿qué docs version corresponde al release 1.2?"). Es la clase de duplicación
@@ -224,7 +256,7 @@ principio 0.1 la elimina.
 | Dónde vive el archive | Convención: el artefacto adjunto a ese release | No |
 | Qué `ai-manifest` describía esa versión | Ya está horneado dentro del snapshot (`sourceHash`) | No |
 | Qué documentos tenía | Están en el archive, son sus rutas | No |
-| Qué versiones se sirven | Lo que el deploy tiene montado bajo `/v0.0.1-dev/`, `/v2/`, ... | No |
+| Qué versiones se sirven | Lo que el deploy tiene montado bajo `/v0.0.1/`, `/v0.2.0/`, ... | No |
 | **Si una versión está `deprecated`** | **No es derivable: es una decisión editorial** | El único bit |
 
 Ese bit vive donde se usa y en ninguna parte más: una constante en el módulo que pinta el banner y
@@ -281,16 +313,22 @@ es un problema de SEO de primer orden antes que de UX.
 
 ### 7.1 Forma de las URLs
 
-- `current` / latest: las URLs de hoy, sin prefijo. **No cambia nada para nadie.**
-- Frozen: `/v0.0.1-dev/components/button` y `/v0.0.1-dev/es/componentes/button`.
-  - Decisión: **la versión va antes del locale**. Un archive es un build completo con `base: /v0.0.1-dev`,
-    y meter el locale por delante (`/es/v0.0.1-dev/...`) obligaría a dos bases por versión o a reescribir
-    rutas en el CDN. `/v0.0.1-dev/es/...` cae solo del build.
-  - Esto contradice el ejemplo del borrador (`/es/v0.0.1-dev/...`); es un cambio consciente.
-  - **Un solo segmento, `v0.0.1-dev`, no `v/0.0.1-dev`.** El prefijo es el nombre de un archive, no una colección
-    con miembros: `/v/` por su cuenta tendría que significar algo, y no significa nada. Un segmento
-    también es un `base` más simple y una regla de CDN menos.
-- `/vlatest/...` o `/v/latest/...` **no existe**. Un alias que se mueve es un enlace que miente con el tiempo.
+- **`current` / latest: las URLs de hoy, sin prefijo.** `/components/button`, `/es/componentes/button`.
+  **No cambia nada para nadie.** La versión actual **no** se escribe en el path del router de
+  `apps/docs`.
+- **Frozen: solo en el deploy**, bajo `/v<version>/…`, montando el archive del cut.
+  - Ejemplo: `/v0.0.1/components/button` y `/v0.0.1/es/componentes/button`.
+  - Decisión: **la versión va antes del locale**. Un archive es un build completo rebaseado a
+    `/v0.0.1`, y meter el locale por delante (`/es/v0.0.1/...`) obligaría a dos bases por versión o
+    a reescribir rutas en el CDN. `/v0.0.1/es/...` cae solo del rebase.
+  - **Un solo segmento, `v0.0.1`, no `v/0.0.1`.** El prefijo es el nombre de un archive, no una
+    colección con miembros.
+  - **No hay rutas `pages/v*/` en el source.** El prefijo no se declara en Astro; lo declara el
+    deploy al montar el tarball.
+- `/vlatest/...` o `/v/latest/...` **no existe**. Un alias que se mueve es un enlace que miente con
+  el tiempo.
+- Mientras `releases: []` y no hay archive montado, el sitio tiene **una** versión visible (la de
+  `working`) y el switcher no ofrece un segundo destino con el mismo número.
 
 ### 7.2 Reglas de indexación (obligatorias, no opcionales)
 
@@ -301,10 +339,10 @@ Sin esto se publican ~380 páginas duplicadas por versión y se canibaliza el ra
 2. `<meta name="robots" content="noindex, follow">` en todo `/v<version>/`. `follow` para no cortar el flujo
    de enlaces internos.
 3. `sitemap.xml` incluye **solo** latest.
-4. `robots.txt` no bloquea `/v0.0.1-dev/` ni sus hermanos: bloquearlo impediría a los crawlers ver el `canonical` y el
+4. `robots.txt` no bloquea `/v<version>/` ni sus hermanos: bloquearlo impediría a los crawlers ver el `canonical` y el
    `noindex`, que es justo lo que se les quiere comunicar.
 5. Los `hreflang` alternates de `Base.astro` (hoy absolutos contra `site: https://ui.skryensya.dev`)
-   deben quedarse **dentro de la misma versión**. Un `hreflang` de `/v0.0.1-dev/components/button` a
+   deben quedarse **dentro de la misma versión**. Un `hreflang` de `/v0.0.1/components/button` a
    `/es/componentes/button` mezcla eras y es un error difícil de ver.
 
 ### 7.3 Search
@@ -312,7 +350,7 @@ Sin esto se publican ~380 páginas duplicadas por versión y se canibaliza el ra
 `buildSearchIndex()` deriva de `navigation.ts`, así que el índice horneado en un snapshot describe
 el catálogo de su era: correcto por construcción. Falta solo que los `href` lleven el `base`, lo
 cual Astro no hace automáticamente porque son strings construidos a mano en `navigation.ts` y
-`localizePath`. **Riesgo concreto de Fase 2**: el ⌘K de `/v0.0.1-dev/` navegando a URLs de latest.
+`localizePath`. **Riesgo concreto de Fase 2**: el ⌘K de `/v0.0.1/` navegando a URLs de latest.
 Mitigación: un helper `versionedPath()` en el punto donde hoy se llama `localizePath`, y un gate que
 falle si algún `href` del índice de un snapshot no empieza por su base.
 
@@ -351,9 +389,12 @@ documento indicado por `supersededBy`, y si no hay ninguno, a la home de latest.
 
 ### 8.2 Switcher
 
-- En latest: lista completa derivada de los tags `docs-v*` en build, y salta al mismo `docId` en la versión
-  elegida, o deshabilita la opción si ese documento no existía entonces (dato conocido: está en el
-  archive).
+- En latest: lista las versiones **montadas en el deploy** (derivadas de tags `docs-v*` ∩ lo que el
+  CDN sirve), más la fila de `current` (URLs bare, etiqueta `v{working}-dev` o el release vigente).
+  Salta al mismo `docId` en la versión elegida, o deshabilita la opción si ese documento no existía
+  entonces (dato conocido: está en el archive).
+- **No listar dos veces el mismo número.** Si el único archive se llamaría igual que `working`, no
+  hay archive que ofrecer: una sola fila, bare URLs.
 - En frozen: **no es una lista**. Es un solo enlace a latest. Un switcher completo en un snapshot
   quedaría congelado y desactualizado el día que se corte la siguiente versión.
 
@@ -412,7 +453,7 @@ enlace roto masivo, o un problema legal.
 
 1. Issue que justifique el hotfix, con la categoría de arriba.
 2. `git checkout docs-v0.0.1`, arreglar, commit en una rama `docs-v0.0.1-hotfix`.
-3. Rebuild con `base: /v0.0.1-dev` y reemplazo del archive. El tag original no se mueve: el hotfix es su
+3. Rebuild con `base: /v0.0.1` y reemplazo del archive. El tag original no se mueve: el hotfix es su
    propio tag (`docs-v0.0.1-patch1`), que es a la vez el registro de que ocurrió y su fecha.
 4. Nota visible en la página corregida indicando que ese contenido se corrigió después del corte.
 
@@ -433,7 +474,7 @@ honesto y acotado.
 ### 11.1 El agujero conocido: el MCP y el catálogo para agentes
 
 `artifacts/ai-index.json`, `ai-manifest.json` y el servidor MCP publican **una** versión del
-catálogo: la actual. Un lector humano en `/v0.0.1-dev/` y un agente consultando el MCP en la misma sesión
+catálogo: la actual. Un lector humano en `/v0.0.1/` y un agente consultando el MCP en la misma sesión
 recibirán respuestas de eras distintas, y el agente no tiene forma de saberlo.
 
 En un repositorio cuya tesis es que el catálogo cabe en el contexto (ADR-0016) y que el usage tree
@@ -497,30 +538,24 @@ cut es un problema de post-proceso de 5 formas conocidas y no una refactorizaci�
 
 ### Fase 2: el cut (solo tras el gate de §9)
 
-> **Estado real del árbol (2026-09-13).** Existe un PROTOTIPO de la UX de esta fase, construido a
-> pedido y por delante del gate:
+> **Estado real del árbol (2026-09-13, actualizado).** Existió un PROTOTIPO que metía archives en el
+> **source** (`pages/v0.0.1-dev/**`, switcher con eje de versión en i18n, stubs que reexportaban
+> páginas live). Ese enfoque **queda descartado** por §3.3: la versión no pertenece al router de
+> `current`. La limpieza alineada a este plan es:
 >
-> - eje de versión en el i18n (`splitVersion`, `versionOf`, `localizePath(path, locale, version)`),
->   con tests (`lib/docs-versions.test.ts`);
-> - índice derivado `lib/docs-versions.ts`, más `archiveHref`, que mantiene un enlace dentro del
->   archive cuando el archive tiene ese documento y lo deja apuntando al sitio vivo cuando no;
-> - control de versión en el navbar y en la hoja de preferencias móvil;
-> - el rail, el drawer y el footer se reescriben dentro del archive por el mismo helper;
-> - índice de search propio del archive (`pages/v0.0.1-dev/search-index.json.ts`, y su gemelo ES),
->   porque si no el ⌘K es el control que te saca de la versión sin avisar;
-> - `noindex, follow` + `canonical` a la página viva en toda página archivada;
-> - tres documentos archivados, a propósito no solo componentes: Button, **Fundamentos y Densidad**,
->   en ambos locales, con el índice de Fundamentos enlazando a Densidad *dentro* del archive.
+> - retirar `apps/docs/src/pages/v*/**` y las páginas hand-frozen bajo
+>   `components/pages/frozen/` del camino crítico de `current` (o dejarlas solo como material de
+>   laboratorio hasta borrarlas);
+> - dejar el badge/switcher mostrando **una** versión (la de `working`) contra URLs bare;
+> - no volver a generar stubs de archive en source.
 >
-> **No hay script de cut, ni archive construido, ni tag**: las páginas están puestas a mano y su
-> texto vive inline dentro de ellas, que es como se comporta un snapshot pero no como se produce.
-> Tampoco tienen las pestañas derivadas (Referencia, Tests, Cambios): un cut real las hornea, el
-> prototipo las omite. Lo que el gate sigue bloqueando es lo de abajo.
+> Lo que el gate de §9 sigue bloqueando es el cut real (script, tarball, mount en CDN). El prototipo
+> de source-routes **no** cuenta como Fase 2 hecha.
 
-
+- [ ] Retirar del source el árbol `pages/v*/` y el chrome que asume archives en-repo (§3.3).
 - [ ] `scripts/docs-cut.ts` con los 9 pasos del runbook.
 - [ ] Gate de snapshot: enlaces, canonical, `noindex`, search dentro de base, banner presente.
-- [ ] Banner y switcher (latest con lista, frozen con enlace único).
+- [ ] Banner y switcher (latest con lista de archives **montados**; frozen con enlace único a latest).
 - [ ] Truncado de `changes` y sello de fecha en `tests`.
 
 ### Fase 3: servir
@@ -540,18 +575,19 @@ cut es un problema de post-proceso de 5 formas conocidas y no una refactorizaci�
 ## 13. Criterios de aceptación, medibles
 
 1. Editar Button en `current` no crea una docs version. No hay archivo que tocar: solo un tag lo haría.
-2. Tras el corte de v1, `/v0.0.1-dev/components/button` muestra la prosa, los demos, la Referencia y los
+2. `apps/docs/src/pages/` no contiene ningún árbol `v*/`. Latest se sirve solo en URLs bare.
+3. Tras el corte de v1, `/v0.0.1/components/button` muestra la prosa, los demos, la Referencia y los
    tests del día del corte, y el `sourceHash` del manifest horneado en esa página coincide con el
    del commit que lleva el tag `docs-v0.0.1`.
-3. Ninguna página bajo `/v0.0.1-dev/`, `/v2/`, ... aparece en `sitemap.xml`; todas llevan `noindex, follow` y un
+4. Ninguna página bajo `/v0.0.1/`, `/v0.2.0/`, ... aparece en `sitemap.xml`; todas llevan `noindex, follow` y un
    `canonical` que resuelve con 200 en latest o apunta a sí misma si hay tombstone.
-4. El ⌘K dentro de `/v0.0.1-dev/` no produce ni una sola navegación fuera de `/v0.0.1-dev/`.
-5. Un locale ausente sigue siendo 404 dentro de la versión. La versión no rellena traducción.
-6. El build de `current` no se hace más lento: el corte es un proceso aparte y el CI de PR
+5. El ⌘K dentro de `/v0.0.1/` no produce ni una sola navegación fuera de `/v0.0.1/`.
+6. Un locale ausente sigue siendo 404 dentro de la versión. La versión no rellena traducción.
+7. El build de `current` no se hace más lento: el corte es un proceso aparte y el CI de PR
    (`check.yml`) no construye snapshots. Umbral: delta de tiempo de `pnpm check` menor al 5%.
-7. Los gates de navegador (`@skryensya/ai-gates`, ~14.5 min en frío) siguen recorriendo **solo**
+8. Los gates de navegador (`@skryensya/ai-gates`, ~14.5 min en frío) siguen recorriendo **solo**
    `current`. Un gate que empiece a crawlear los prefijos de versión se detecta porque su tiempo se duplica.
-8. `artifacts/preview-heights.json` no crece con rutas versionadas.
+9. `artifacts/preview-heights.json` no crece con rutas versionadas.
 
 ---
 
@@ -580,9 +616,10 @@ cut es un problema de post-proceso de 5 formas conocidas y no una refactorizaci�
 | # | Decisión | Recomendación | Cerrar antes de |
 | --- | --- | --- | --- |
 | D1 | Snapshot inmutable, o store de entries con herencia | **Snapshot** (§3). Es la decisión que hace que las otras sean pequeñas. | Fase 1 (es el ADR) |
-| D2 | Orden de los segmentos: `/v0.0.1-dev/es/...` o `/es/v0.0.1-dev/...` | **`/v0.0.1-dev/es/...`**: sale del build, sin reescrituras en el CDN (§7.1) | Fase 1 |
+| D2 | Orden de los segmentos: `/v0.0.1/es/...` o `/es/v0.0.1/...` | **`/v0.0.1/es/...`**: sale del rebase del archive, sin reescrituras raras en el CDN (§7.1) | Fase 1 |
 | D1b | ¿Base-agnóstico en el fuente, o rebase de la salida? | **Rebase de la salida** (Fase 1). 950 enlaces en 186 archivos, la mayoría dentro de prosa traducida, contra un pase de 5 formas conocidas | Cerrada, ADR-0022 |
 | D2b | ¿Hace falta un archivo que liste las versiones? | **No** (§0.1, §5). Tags para la lista, deploy para el estado, y una constante de una línea para el único bit editorial | Fase 2 |
+| D2c | ¿La versión vive en el router de `apps/docs` (`pages/v*/`)? | **No** (§3.3). Latest = bare. Archives = mount en CDN. El prototipo source-routes se retira | Fase 2 (limpieza) |
 | D3 | Dónde vive el archive | Artefacto de GitHub Release, **no** commiteado. ~110 MB por versión no van al repo | Fase 2 |
 | D4 | Cuántas versiones se sirven | Las dos últimas frozen; el resto `eol` con 301 | Fase 3 |
 | D5 | ¿Se versiona el catálogo MCP? | **No en el MVP**, con el campo `docsVersion` como mitigación mínima (§11.1) | Fase 1 |

@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parse } from "yaml";
 import type { ComponentContract } from "@skryensya/core/contract";
+import { changeKinds, type ChangeKind as CoreChangeKind } from "@skryensya/core/changelog";
 import { contractIds, getContract } from "@skryensya/core/registry";
 import { surfaceHash, targetableNames } from "./surface.js";
 
@@ -34,16 +35,21 @@ import { surfaceHash, targetableNames } from "./surface.js";
  */
 
 /*
- * The vocabulary, restated from `@skryensya/core/changelog` rather than imported, for the reason the
- * file header gives: this is a build tool and Core must not depend on it, so the dependency cannot
- * run the other way either without making the two modules circular at the package level. They agree
- * because there is one vocabulary and this reader is what refuses anything outside it.
+ * The vocabulary, IMPORTED from `@skryensya/core/changelog`, which is its only authoring.
  *
- * Ordered loudest first, same as Core's. Why these five and not Keep a Changelog's is argued there.
+ * It used to be restated here, and the reason given was that importing it would make the two modules
+ * "circular at the package level". That was not so, and this file was already the proof: it imports
+ * `@skryensya/core/contract` and `@skryensya/core/registry` four lines up. Core declares no workspace
+ * dependency at all, so the edge has only ever run one way. The half of the argument that IS true -
+ * Core must not depend on a build tool to know what a change looks like - is untouched by importing
+ * in this direction.
+ *
+ * Core is the right home on merit, not only by elimination: it owns `changeKindTones`, and the
+ * five-and-not-six argument ties the kinds to Badge's five tones. Why these five rather than Keep a
+ * Changelog's is argued there.
  */
-export const CHANGE_KINDS = ["breaking", "feature", "bugfix", "rework", "chore"] as const;
-
-export type ChangeKind = (typeof CHANGE_KINDS)[number];
+export const CHANGE_KINDS = changeKinds;
+export type ChangeKind = CoreChangeKind;
 
 /**
  * One entry in one language: the change as a HEADLINE and the change EXPLAINED.

@@ -52,24 +52,41 @@
 
   const api = $derived(numberInput.connect(service, normalizeProps));
 
-  // Incomplete markup: the enhancer stays silent, like the imperative connector it replaces (it never
-  // breaks the page over a badly authored root).
+  /*
+   * Incomplete markup: the enhancer stays silent, like the imperative connector it replaces (it never
+   * breaks the page over a badly authored root).
+   *
+   * ONE PREDICATE, READ BY BOTH HOOKS. It used to be written twice and the two disagreed: the patch
+   * required all five parts, the event wiring required only the three interactive ones. A root with
+   * an input and both buttons but no `[data-sk-number-field-label]` therefore got LIVE LISTENERS AND
+   * ZERO ATTRIBUTES - pressing increment ran the machine and nothing was ever written back to the
+   * DOM. Silent in the way that matters least: the component looked authored and behaved dead.
+   */
+  const parts =
+    label && control && input && decrement && increment
+      ? { label, control, input, decrement, increment }
+      : null;
+
   $effect(() => {
-    if (!label || !control || !input || !decrement || !increment) return;
+    if (!parts) return;
     applyZagProps(root, api.getRootProps() as DomProps);
-    applyZagProps(label, api.getLabelProps() as DomProps);
-    applyZagProps(control, api.getControlProps() as DomProps);
-    applyZagProps(input, api.getInputProps() as DomProps);
-    applyZagProps(decrement, api.getDecrementTriggerProps() as DomProps);
-    applyZagProps(increment, api.getIncrementTriggerProps() as DomProps);
+    applyZagProps(parts.label, api.getLabelProps() as DomProps);
+    applyZagProps(parts.control, api.getControlProps() as DomProps);
+    applyZagProps(parts.input, api.getInputProps() as DomProps);
+    applyZagProps(parts.decrement, api.getDecrementTriggerProps() as DomProps);
+    applyZagProps(parts.increment, api.getIncrementTriggerProps() as DomProps);
   });
 
   const cleanups: Array<() => void> = [];
   onMount(() => {
-    if (!input || !decrement || !increment) return;
-    cleanups.push(bindZagEvents(input, () => api.getInputProps() as DomProps));
-    cleanups.push(bindZagEvents(decrement, () => api.getDecrementTriggerProps() as DomProps));
-    cleanups.push(bindZagEvents(increment, () => api.getIncrementTriggerProps() as DomProps));
+    if (!parts) return;
+    cleanups.push(bindZagEvents(parts.input, () => api.getInputProps() as DomProps));
+    cleanups.push(
+      bindZagEvents(parts.decrement, () => api.getDecrementTriggerProps() as DomProps),
+    );
+    cleanups.push(
+      bindZagEvents(parts.increment, () => api.getIncrementTriggerProps() as DomProps),
+    );
   });
   onDestroy(() => {
     for (const cleanup of cleanups) cleanup();

@@ -1,6 +1,6 @@
 {
   "name": "@skryensya/ai-compiler",
-  "version": "0.0.2-dev",
+  "version": "0.0.1-dev",
   "private": true,
   "type": "module",
   "description": "Imports the contracts Core declares, reconciles them with the semantic overlay, and emits the manifest plus the usage-tree emitter that turns a composition into markup or TSX.",
@@ -37,6 +37,10 @@
     "./manifest": {
       "types": "./src/manifest.ts",
       "default": "./src/manifest.ts"
+    },
+    "./sheets-for-tree": {
+      "types": "./src/sheets-for-tree.ts",
+      "default": "./src/sheets-for-tree.ts"
     }
   }
 }

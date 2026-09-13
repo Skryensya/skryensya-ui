@@ -587,12 +587,22 @@ export type ComponentContract = {
 
 type EnumValueOf<O> = O extends { readonly values: readonly (infer V)[] } ? V : string;
 
-/** The TypeScript type one option admits. */
+/**
+ * The TypeScript type one option admits.
+ *
+ * The `number` branch is not decoration: 42 options across 25 contracts declare `type: "number"`
+ * (slider's `value`, meter's `min`/`max`, pagination's `page`, number-field's `step`), and without it
+ * every one of them derived as `string` - so a derived type accepted `"not a number"` and rejected
+ * `65`. Nothing broke because only two modules derive today and nothing imports either result; the
+ * branch is here so that stops being the reason it is safe.
+ */
 export type OptionValue<O extends ContractOption> = O extends { readonly type: "enum" }
   ? EnumValueOf<O>
   : O extends { readonly type: "boolean" }
     ? boolean
-    : string;
+    : O extends { readonly type: "number" }
+      ? number
+      : string;
 
 /** Every option of a contract, as optional props. The binding narrows from here; it never re-declares. */
 export type OptionsOf<C extends { readonly options: Readonly<Record<string, ContractOption>> }> = {

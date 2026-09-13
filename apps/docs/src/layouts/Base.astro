@@ -54,7 +54,7 @@ import "@skryensya/core/components/tabs.css";
 /* Anchoring: the placement shared by tooltip, popover, popup, menu, select, combobox and date picker
  * (decision 25). It goes before them because they are its consumers. */
 import "@skryensya/core/patterns/anchored.css";
-/* The header's language menu (`LanguageMenu.astro`) is the chrome's only Menu, and this sheet is
+/* The header's language and version menus (`LanguageMenu` / `VersionMenu`) need this sheet:
  * opt-in: without it the panel does not hide at rest (`display: none` lives here, not in the browser)
  * and it would appear expanded under the header. Same rule as dialog/drawer/sidebar above: an opt-in
  * sheet is imported where the markup that uses it lives, and this markup lives in the layout. */
@@ -857,6 +857,13 @@ const PALETTE_PRESETS = palettePresets(locale);
 
 
         {/*
+          Docs version: caption + ghost button BEFORE search on desktop. It is a document axis
+          (ADR-0022), not a reader preference, so it does not sit in `.dimensions__prefs`. Renders
+          only once an archive exists; mobile keeps the list inside `#docs-prefs-sheet`.
+        */}
+        <VersionMenu />
+
+        {/*
           The command-palette trigger is the shortest path to any documentation destination. The
           trailing controls keep only reader preferences: scheme and contrast.
 
@@ -976,13 +983,6 @@ const PALETTE_PRESETS = palettePresets(locale);
 
           <PrefTooltip label={t("prefs.language")}>
             <LanguageMenu />
-          </PrefTooltip>
-
-          {/* Docs version, beside language for the reason they are the same kind of control: two
-              independent axes over one document (ADR-0022). It renders only once an archive
-              exists. */}
-          <PrefTooltip label={t("version.control")}>
-            <VersionMenu />
           </PrefTooltip>
         </div>
 

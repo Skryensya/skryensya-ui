@@ -49,14 +49,17 @@ describe("identity does not include the version", () => {
 });
 
 describe("links inside an archive", () => {
-  it("stays in the archive for a document the archive holds", () => {
+  it("stays in the archive for a document the archive holds, including fallback stubs", () => {
     expect(archiveHref("/components/button", "en", "0.0.1-dev")).toBe("/v0.0.1-dev/components/button");
     expect(archiveHref("/es/componentes/button", "es", "0.0.1-dev")).toBe("/v0.0.1-dev/es/componentes/button");
+    expect(archiveHref("/components/avatar", "en", "0.0.1-dev")).toBe("/v0.0.1-dev/components/avatar");
   });
 
   it("leaves a link the archive does not hold pointing at the living page", () => {
     /* A 404 dressed up as history is worse than an honest exit from the archive. */
-    expect(archiveHref("/components/avatar", "en", "0.0.1-dev")).toBe("/components/avatar");
+    expect(archiveHref("/components/this-page-does-not-exist", "en", "0.0.1-dev")).toBe(
+      "/components/this-page-does-not-exist",
+    );
   });
 
   it("does not touch fragments, external links, or a path read outside any archive", () => {

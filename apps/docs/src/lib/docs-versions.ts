@@ -12,9 +12,11 @@
  * it, so every route would end up carrying every other route's stylesheet. Only the KEYS are read
  * here; the values are never touched.
  *
- * NOTE ON THE PROTOTYPE. A real cut produces the whole site under `/v<version>/`. What exists today is one
- * page, hand-placed, so the switcher must cope with a version that holds a single document: that is
- * what `versionsOf` is for, and why the control never offers a version this document is not in.
+ * NOTE ON THE PROTOTYPE. A real cut produces the whole site under `/v<version>/`. Until then the
+ * archive is filled with fallback stubs that re-export the living page for every route the live
+ * tree has, plus a few hand-frozen pages (Button, Foundations, Density) that carry a captured copy.
+ * The switcher can therefore offer the base version on every document, not only on the few pages
+ * someone froze by hand.
  */
 import { canonicalPath, getLocale, locales, localizePath, splitVersion, type Locale } from "../i18n";
 

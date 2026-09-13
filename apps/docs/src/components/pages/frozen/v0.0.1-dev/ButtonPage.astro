@@ -4,23 +4,25 @@
  *
  * Every word and every snippet on this page comes from `button.frozen.json`, which
  * `freeze-archive-code.mts` captured from the LIVING page: the message tree for the prose, the
- * emitter for the code. Nothing here is typed by hand, and that is the point. An archive written by
- * hand is a second account of the docs that drifts from the first one; an archive CAPTURED is the
- * same account, stopped.
+ * emitter for the code. Nothing here is typed by hand.
  *
  * WHY THE CODE HAD TO BE CAPTURED AND NOT RE-EMITTED. A usage tree is input, not source: the
  * emitter and the contract it reads both move forward with the repository, so emitting a tree while
- * this page renders would print today's markup under this version's heading, which is exactly what
- * the version axis exists to prevent (ADR-0022). The strings below were emitted once, on the day the
- * capture says.
+ * this page renders would print today's markup under this version's heading (ADR-0022). The strings
+ * below were emitted once, on the day the capture says.
  *
- * WHY THERE ARE NO LIVE STAGES. A `ComponentPreview` mounts the workspace as it is today. Under a
- * frozen URL that is not a convenience, it is a claim the archive cannot back. A real cut, which
- * builds the whole site at a tag, gets the rendered stage for free; until then the archive shows the
- * code it generated and says so in a line the reader can see.
+ * THE STAGES ARE RENDERED from that captured HTML (and the paired React source in the code panel).
+ * The frame still paints with today's CSS from the workspace, which is the honest limit of a
+ * hand-placed prototype archive until a real cut builds the whole site at a tag. What must not
+ * happen is showing only code blocks: the reader expects the same preview shape as the living page,
+ * with that version's button markup on the stage.
  */
+import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/annotation.css";
 import FrozenPage from "../../../FrozenPage.astro";
 import CodeBlock from "../../../CodeBlock.astro";
+import ComponentPreview from "../../../ComponentPreview.astro";
+import { annotationDemoCss } from "../../../../demos/annotation";
 import { getLocale } from "../../../../i18n";
 import frozen from "./button.frozen.json";
 
@@ -31,22 +33,28 @@ const snippets = frozen.snippets[locale];
 /** A captured string, by its message key. The keys are the living page's own. */
 const say = (key: string): string => copy[`button.${key}` as keyof typeof copy] ?? "";
 
-/**
- * The page's sections, in the order the living page teaches them. Each names its heading, its
- * prose, and the tree whose captured code it shows. This is the one thing the capture does NOT
- * carry, because structure is markup rather than data: a real cut freezes the rendered HTML and
- * does not need it at all.
- */
-const sections = [
-  { title: "variantsTitle", body: ["variantsBody", "toneCountBody", "translucentBody"], tree: "buttonMatrixTree" },
-  { title: "pressedTitle", body: ["pressedBody"], tree: "buttonPressedTree" },
-  { title: "destructiveTitle", body: ["destructiveBody"], tree: "buttonDestructivePairTree" },
-  { title: "sizesTitle", body: [], tree: "buttonSizesTree" },
-  { title: "iconTitle", body: ["iconBody"], tree: "buttonIconTree" },
-  { title: "iconOnlyTitle", body: [], tree: "buttonIconOnlyTree" },
-  { title: "linkTitle", body: ["linkBody"], tree: "buttonAsLinkTree" },
-  { title: "tileTitle", body: ["tileBody"], tree: "tileButtonTree" },
-] as const;
+type Snippet = { html: string; react: string };
+const demo = (tree: keyof typeof snippets): Snippet => snippets[tree];
+
+const sizeHit = `/* ${say("sizeHitComment").split("\n").join("\n   ")} */
+.sk-button::after {
+  content: "";
+  position: absolute;
+  inset-block: min(
+    0px,
+    calc((100% - var(--size-touch-target)) / 2)
+  );
+  inset-inline: min(
+    0px,
+    calc((100% - var(--size-touch-target)) / 2)
+  );
+}`;
+
+const tileButtonVanilla = `import { createTileButton } from "@skryensya/vanilla/tile-button";
+
+const button = createTileButton();
+button.textContent = "Run deployment";
+button.addEventListener("click", runDeployment);`;
 ---
 
 <FrozenPage
@@ -54,21 +62,94 @@ const sections = [
   description={say("description")}
   version={frozen.version}
   frozenAt={frozen.capturedAt}
-  demosOmitted
 >
   <p class="lede" set:html={say("lede")} />
-  <p set:html={say("anatomyBody")} />
 
-  {
-    sections.map((section) => (
-      <Fragment>
-        <h2>{say(section.title)}</h2>
-        {section.body.map((key) => (
-          <p set:html={say(key)} />
-        ))}
-        <CodeBlock code={snippets[section.tree].html} label="HTML" lang="html" />
-        <CodeBlock code={snippets[section.tree].react} label="React" lang="tsx" />
-      </Fragment>
-    ))
-  }
+  <p set:html={say("anatomyBody")} />
+  <ComponentPreview
+    html={demo("buttonAnatomyTree").html}
+    react={demo("buttonAnatomyTree").react}
+    css={annotationDemoCss}
+    label={say("anatomyPreviewLabel")}
+    screens={false}
+    hideSource
+    chrome={false}
+  />
+
+  <h2>{say("variantsTitle")}</h2>
+  <p set:html={say("variantsBody")} />
+  <ComponentPreview
+    html={demo("buttonMatrixTree").html}
+    react={demo("buttonMatrixTree").react}
+    label={say("variantsLabel")}
+  />
+  <p set:html={say("matrixIconBody")} />
+  <ComponentPreview
+    html={demo("buttonMatrixIconTree").html}
+    react={demo("buttonMatrixIconTree").react}
+    label={say("matrixIconLabel")}
+  />
+  <p set:html={say("toneCountBody")} />
+  <p set:html={say("translucentBody")} />
+
+  <h2>{say("pressedTitle")}</h2>
+  <p set:html={say("pressedBody")} />
+  <ComponentPreview
+    html={demo("buttonPressedTree").html}
+    react={demo("buttonPressedTree").react}
+    label={say("pressedLabel")}
+  />
+
+  <h2>{say("destructiveTitle")}</h2>
+  <p set:html={say("destructiveBody")} />
+  <ComponentPreview
+    html={demo("buttonDestructivePairTree").html}
+    react={demo("buttonDestructivePairTree").react}
+    label={say("destructiveLabel")}
+  />
+
+  <h2>{say("sizesTitle")}</h2>
+  <ComponentPreview
+    html={demo("buttonSizesTree").html}
+    react={demo("buttonSizesTree").react}
+    label={say("sizesLabel")}
+  />
+  <CodeBlock code={sizeHit} label="components/button.css" lang="css" note={say("sizeHitNote")} />
+
+  <h2>{say("iconTitle")}</h2>
+  <p set:html={say("iconBody")} />
+  <ComponentPreview
+    html={demo("buttonIconTree").html}
+    react={demo("buttonIconTree").react}
+    label={say("iconLabel")}
+  />
+
+  <h2>{say("iconOnlyTitle")}</h2>
+  <ComponentPreview
+    html={demo("buttonIconOnlyTree").html}
+    react={demo("buttonIconOnlyTree").react}
+    label={say("iconOnlyLabel")}
+  />
+  <ComponentPreview
+    html={demo("buttonIconOnlySmTree").html}
+    react={demo("buttonIconOnlySmTree").react}
+    label={say("iconOnlySmLabel")}
+  />
+
+  <h2>{say("linkTitle")}</h2>
+  <p set:html={say("linkBody")} />
+  <ComponentPreview
+    html={demo("buttonAsLinkTree").html}
+    react={demo("buttonAsLinkTree").react}
+    label={say("linkLabel")}
+  />
+
+  <h2>{say("tileTitle")}</h2>
+  <p set:html={say("tileBody")} />
+  <ComponentPreview
+    html={demo("tileButtonTree").html}
+    react={demo("tileButtonTree").react}
+    label={say("tileLabel")}
+  />
+  <CodeBlock code={tileButtonVanilla} label="JavaScript" />
 </FrozenPage>

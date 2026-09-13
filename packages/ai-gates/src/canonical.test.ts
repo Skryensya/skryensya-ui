@@ -1,4 +1,5 @@
 import { validateUsageTree } from "@skryensya/ai-compiler/validate";
+import { sheetsForTree } from "@skryensya/ai-compiler/sheets-for-tree";
 import { contracts } from "@skryensya/core/registry";
 import {
   collectionItems,
@@ -78,4 +79,31 @@ test("the corpus is big enough that these two gates mean something", () => {
    * would turn both checks above into green no-ops. `public-exports.test.ts` records what that
    * failure looks like when nobody guards against it. */
   expect(canonicalTrees.length).toBeGreaterThan(100);
+});
+
+test("every class a canonical tree emits has a stylesheet in its closure", () => {
+  /*
+   * THE COMPLETENESS CLAIM the architecture review named: nothing used to relate the classes the
+   * emitter writes to the stylesheets a stage ships, so chart.css / dialog.css / toast→button.css
+   * could go missing and only surface as a "binding divergence" or a bare UA button. `unplaced`
+   * is that relation; empty means every exclusive `sk-*` class has its sheet in `sheets`.
+   */
+  const gaps = canonicalTrees.flatMap(({ name, tree }) => {
+    const { unplaced } = sheetsForTree(tree);
+    return unplaced.length > 0 ? [`${name}: ${unplaced.join(", ")}`] : [];
+  });
+  expect(gaps).toEqual([]);
+});
+
+test("a Toast template places button.css via nested also", () => {
+  /* Regression for the playground/MCP miss: `also: ["sk-button"]` lives on the dismiss node, not
+   * the Toast root, so a root-only walk shipped toast.css alone. Walking the full template finds it
+   * even when the usage tree omits a dismiss control. */
+  const { sheets, classes } = sheetsForTree({
+    contract: "content",
+    signature: "Toast",
+    options: { title: "Saved" },
+  });
+  expect(classes).toContain("sk-button");
+  expect(sheets.some((sheet) => sheet.endsWith("/button.css"))).toBe(true);
 });

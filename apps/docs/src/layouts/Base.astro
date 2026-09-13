@@ -128,7 +128,6 @@ import { indexDocument, indexHeroTabPanel } from "../lib/document-index";
 import { vanillaMountSections } from "../lib/vanilla-mount-sections";
 import VanillaMount from "../components/VanillaMount.astro";
 import { vanillaMounts } from "../lib/vanilla-mounts";
-import { archiveHref, frozenLocales } from "../lib/docs-versions";
 import { iconMarkup, siteIconSet } from "../icons";
 import { getGlobalNavigation, getNavigation, type NavigationItem, type NavigationSection } from "../lib/navigation";
 import type { DrawerSection } from "../components/DrawerNav.astro";
@@ -137,7 +136,6 @@ import { palettePresets } from "../lib/palette-presets";
 import { reportIssueUrl } from "../lib/report-issue";
 import {
   availableLocales,
-  versionOf,
   canonicalPath,
   defaultLocale,
   getLocale,
@@ -233,16 +231,12 @@ const vanillaMount = vanillaMounts[canonical as keyof typeof vanillaMounts];
  * (f8181b7), `LANG_REDIRECT.hrefs` was reading the same field two declarations down, so the dev
  * server started throwing readers at production the moment their browser asked for Spanish.
  */
-/* The alternates STAY INSIDE THE VERSION being read. An `hreflang` from `/v1/components/button` to
- * the latest Spanish page would tell a crawler that two different eras of this document are
- * translations of each other, which is the one thing the version axis must never claim. In a frozen
- * archive the locales come from what that archive published, not from the live page directory. */
-const version = versionOf(Astro.url);
-const alternateLocales = version === null ? availableLocales(canonical) : frozenLocales(version, canonical);
-/** Where this document lives in the live site, which is what a frozen page canonicalises to. */
-const latestOfThisDocument = localizePath(canonical, locale, null);
+/* Latest lives on bare URLs (VERSIONED_DOCS_PLAN §3.3). Archives, when they exist, are CDN mounts
+ * of a built cut — not routes in this source tree — so alternates always come from the live page
+ * directory. */
+const alternateLocales = availableLocales(canonical);
 const alternates = alternateLocales.map((code) => {
-  const path = localizePath(canonical, code, version);
+  const path = localizePath(canonical, code);
   return { code, path, href: Astro.site ? new URL(path, Astro.site).href : path };
 });
 
@@ -273,27 +267,8 @@ const LANG_REDIRECT = {
  * The navigation lives in lib/navigation.ts, shared with the catalog so the same task grouping
  * cannot drift between exploration and navigation.
  */
-/*
- * INSIDE AN ARCHIVE, THE RAIL POINTS INTO THE ARCHIVE. A frozen version is a whole site, so a
- * reader who clicks Density while reading version 0.0.1-dev should get that version's Density. Every
- * consumer of these two values (the rail, the mobile drawer, the footer, the section lookup below)
- * inherits the rewrite from here, which is why it happens once and at the source rather than in each
- * of them. A link the archive does not hold is left pointing at the living site: see `archiveHref`.
- */
-const inArchive = (href: string): string => archiveHref(href, locale, version);
-const liveNavigation = getNavigation(locale) satisfies readonly NavigationSection[];
-const navigation: readonly NavigationSection[] =
-  version === null
-    ? liveNavigation
-    : liveNavigation.map((section) => ({
-        ...section,
-        href: section.href === undefined ? undefined : inArchive(section.href),
-        groups: section.groups.map((group) => ({
-          ...group,
-          items: group.items.map((item) => ({ ...item, href: inArchive(item.href) })),
-        })),
-      }));
-const globalNavigation = getGlobalNavigation(locale).map((item) => ({ ...item, href: inArchive(item.href) }));
+const navigation = getNavigation(locale) satisfies readonly NavigationSection[];
+const globalNavigation = getGlobalNavigation(locale);
 /* By stable id, never by visible title: the titles are translated now and would stop matching. */
 const componentSection = navigation.find((section) => section.id === "components");
 const foundationsSection = navigation.find((section) => section.id === "foundations");
@@ -436,17 +411,10 @@ const mainRowCount =
 
 
 /*
- * WHICH INDEX THE PALETTE READS. Inside an archive it must be the ARCHIVE's index, or ⌘K, the one
- * control a reader uses to move around, is also the one that drops them out of the version they
- * chose without saying so. The endpoint lives next to the archive's pages
- * (`pages/v<version>/search-index.json.ts`), which is where a real cut would put it too, since a
- * cut copies the whole site including its endpoints.
- *
- * The ternary on `locale` is gone rather than kept: both of its branches were the same string. The
- * locale is already in the path prefix, so `localizePath` answers it the way it answers everything
- * else.
+ * Search index for the live site. Archives, when mounted at deploy, ship their own index next to
+ * the cut; this source tree only serves latest.
  */
-const searchIndexSrc = localizePath("/search-index.json", locale, version);
+const searchIndexSrc = localizePath("/search-index.json", locale);
 
 const searchIcon = iconMarkup("search");
 const closeIcon = iconMarkup("close");
@@ -540,22 +508,6 @@ const PALETTE_PRESETS = palettePresets(locale);
     {alternates.map((alternate) => (
       <link rel="alternate" hreflang={alternate.code} href={alternate.href} />
     ))}
-
-    {/*
-      A FROZEN VERSION IS NOT A SEARCH RESULT. Every archived page is a near-duplicate of the live
-      one, so left alone `/v1/components/button` competes with `/components/button` for the same
-      query and sometimes wins, which sends a reader to documentation that is deliberately out of
-      date. `noindex` keeps it out of the index, `follow` keeps the link graph intact, and the
-      canonical names the living page as the one that should rank. `robots.txt` must NOT disallow
-      `/v1/` and friends: a crawler has to fetch the page to read these two lines (ADR-0022, and the plan's SEO
-      section).
-    */}
-    {version !== null && (
-      <Fragment>
-        <meta name="robots" content="noindex, follow" />
-        <link rel="canonical" href={Astro.site ? new URL(latestOfThisDocument, Astro.site).href : latestOfThisDocument} />
-      </Fragment>
-    )}
 
     {/*
       Docs has a fixed visual contract: Phosphor icons, medium density and medium rounding. The reader
@@ -857,9 +809,9 @@ const PALETTE_PRESETS = palettePresets(locale);
 
 
         {/*
-          Docs version: caption + ghost button BEFORE search on desktop. It is a document axis
-          (ADR-0022), not a reader preference, so it does not sit in `.dimensions__prefs`. Renders
-          only once an archive exists; mobile keeps the list inside `#docs-prefs-sheet`.
+          Docs version label BEFORE search on desktop. It is a document axis (ADR-0022), not a
+          reader preference, so it does not sit in `.dimensions__prefs`. Until a cut mounts archives
+          on the CDN this is a chip naming `working`, not a switcher.
         */}
         <VersionMenu />
 

@@ -1,37 +1,19 @@
 ---
 /*
- * Header chrome: switch docs version, staying on the SAME document.
+ * Header chrome: name the docs version you are reading.
  *
- * Desktop: a quiet "Versión" / "Version" caption, then a bordered Button that names the cut you
- * are reading (`v0.0.1-dev`) and carries a chevron, opening a Menu of version numbers (never a
- * vague "Actual"/"Latest" row). It sits BEFORE search in the header, not in the icon preference
- * cluster: version is a document axis, not a reader preference.
+ * Until a real cut mounts an archive under `/v<version>/` on the CDN (VERSIONED_DOCS_PLAN §3.3),
+ * there is only one version: `working` from `releases.yaml`, served on bare URLs. This control is a
+ * LABEL, not a switcher — a menu of one destination would pretend choice where none exists.
  *
- * Mobile: the WHOLE list inside the preference sheet (`tile`), one row each. Cycling would be wrong
- * here: the list grows with every cut, and the reader is choosing one they already have in mind.
- *
- * Every row is a real `<a href>` through Menu's own item `href`, the current row is a `radio`
- * carrying `data-checked`, and nothing here is client state: the URL is what says which version you
- * read. WHICH ROWS EXIST is derived (ADR-0022): `lib/docs-versions.ts` reads the page directory.
- *
- * A ROW THIS DOCUMENT DOES NOT HAVE IS DISABLED, not hidden: better "version 1 does not have this
- * page" than a control that silently changes shape from page to page.
+ * Desktop: caption + bordered chip before search. Mobile: the same chip inside the prefs sheet.
+ * When archives exist again, this is the place to grow back into a Menu of mounted cuts.
  */
-import {
-  canonicalPath,
-  getLocale,
-  localizePath,
-  useTranslations,
-  versionOf,
-} from "../i18n";
+import { getLocale, useTranslations } from "../i18n";
 import { currentVersion } from "../lib/contract-reference";
-import { frozenHasTranslation, frozenVersions } from "../lib/docs-versions";
-import { iconMarkup } from "../icons";
 
 interface Props {
-  /**
-   * Render the mobile form: the WHOLE list of versions inside the preference sheet, one row each.
-   */
+  /** Render inside the mobile preference sheet instead of the desktop header. */
   tile?: boolean;
   /** Visible title inside the tile. Only read when `tile`. */
   label?: string;
@@ -42,105 +24,21 @@ interface Props {
 const { tile = false, label, description } = Astro.props;
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
-const canonical = canonicalPath(Astro.url.pathname);
-const current = versionOf(Astro.url);
-const live = currentVersion();
-
-/**
- * One row per version number. The working tree is always first (`value: null` → bare URL).
- * A frozen cut that is THE SAME id as `live` (today: both `0.0.1-dev`) is omitted: two menu
- * entries both labelled `v0.0.1-dev` would be the same version twice. Older / future cuts still
- * appear. Reading `/v0.0.1-dev/…` still counts as that version for `data-checked`.
- */
-const rows = [
-  {
-    value: null as string | null,
-    label: `v${live}`,
-    href: localizePath(canonical, locale, null),
-    available: true,
-  },
-  ...frozenVersions
-    .filter((version) => version !== live)
-    .map((version) => ({
-      value: version as string | null,
-      label: `v${version}`,
-      href: localizePath(canonical, locale, version),
-      available: frozenHasTranslation(version, canonical, locale),
-    })),
-];
-
-/** True when this row is the version the URL is already on (live and matching archive included). */
-const rowIsCurrent = (value: string | null): boolean =>
-  value === current || (value === null && current === live) || (value === live && current === null);
-
-const currentLabel = rows.find((row) => rowIsCurrent(row.value))?.label ?? `v${current ?? live}`;
-const versionText = currentLabel;
-const chevronIcon = iconMarkup("chevron-down", { size: "sm" });
+const versionLabel = `v${currentVersion()}`;
 const listId = "docs-prefs-version-label";
 ---
 
 {
-  tile && frozenVersions.length > 0 && (
-    <nav class="sk-nav-list docs-prefs-versions" aria-labelledby={listId}>
-      <div class="sk-nav-list__group">
-        <div class="sk-nav-list__group-label" id={listId}>{label ?? t("version.control")}</div>
-        {description && <p class="docs-prefs-versions__hint">{description}</p>}
-        <ul class="sk-nav-list__list" aria-labelledby={listId}>
-          {rows.map((row) => (
-            <li class="sk-nav-list__item" data-todo={row.available ? undefined : ""}>
-              <a
-                class="sk-nav-list__link sk-interactive"
-                href={row.available ? row.href : undefined}
-                aria-current={rowIsCurrent(row.value) ? "page" : undefined}
-                aria-disabled={row.available ? undefined : "true"}
-              >
-                <span class="sk-nav-list__label">{row.label}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </nav>
-  )
-}
-
-{
-  !tile && frozenVersions.length > 0 && (
-    <div class="sk-menu dimensions__version-menu" data-sk-menu aria-label={t("version.control")}>
+  tile ? (
+    <div class="docs-prefs-versions" aria-labelledby={listId}>
+      <div class="docs-prefs-versions__label" id={listId}>{label ?? t("version.control")}</div>
+      {description && <p class="docs-prefs-versions__hint">{description}</p>}
+      <p class="docs-prefs-versions__value">{versionLabel}</p>
+    </div>
+  ) : (
+    <div class="dimensions__version-menu" aria-label={t("version.named", { name: versionLabel })}>
       <span class="dimensions__version-menu__caption">{t("version.control")}</span>
-      <button
-        class="sk-menu__trigger sk-button sk-interactive sk-anchor"
-        data-sk-menu-trigger
-        data-size="sm"
-        type="button"
-        aria-label={t("version.named", { name: currentLabel })}
-      >
-        <span class="dimensions__version-menu__value">{versionText}</span>
-        <span class="sk-button__post" aria-hidden="true">
-          <Fragment set:html={chevronIcon} />
-        </span>
-      </button>
-      <div class="sk-menu__positioner sk-anchored" data-sk-menu-positioner>
-        <div class="sk-menu__content" data-sk-menu-content>
-          {rows.map((row) => (
-            <a
-              class="sk-menu__item sk-interactive"
-              data-sk-menu-item
-              data-value={row.value ?? "latest"}
-              data-type="radio"
-              data-checked={rowIsCurrent(row.value) ? "" : undefined}
-              data-disabled={row.available ? undefined : ""}
-              aria-disabled={row.available ? undefined : "true"}
-              href={row.available ? row.href : undefined}
-            >
-              <span class="sk-menu__item-label">{row.label}</span>
-              <span class="sk-menu__item-indicator" aria-hidden="true">
-                <span data-sk-icon="check" data-sk-icon-size="md" />
-              </span>
-            </a>
-          ))}
-        </div>
-      </div>
+      <span class="dimensions__version-menu__chip">{versionLabel}</span>
     </div>
   )
 }

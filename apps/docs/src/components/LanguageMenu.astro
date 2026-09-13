@@ -39,9 +39,7 @@ import {
   localeNames,
   localizePath,
   useTranslations,
-  versionOf,
 } from "../i18n";
-import { frozenLocales } from "../lib/docs-versions";
 import { iconMarkup } from "../icons";
 
 interface Props {
@@ -62,11 +60,7 @@ const { tile = false, label, description } = Astro.props;
 const current = getLocale(Astro.url);
 const t = useTranslations(current);
 const canonical = canonicalPath(Astro.url.pathname);
-/* Switching language must not switch VERSION. Inside a frozen archive the translations on offer are
- * the ones that archive published, and every row below keeps the `/vN` prefix the reader arrived
- * with; `localizePath` preserves it unless a caller names another version. */
-const version = versionOf(Astro.url);
-const locales = version === null ? availableLocales(canonical) : frozenLocales(version, canonical);
+const locales = availableLocales(canonical);
 
 /* The glyph, not the code: "ES"/"EN" was a label the reader had to decode, and it was also the one
  * control in the preference cluster that was text where its neighbours are icons. `language` is a
@@ -84,7 +78,7 @@ const nextLocale = locales[(locales.indexOf(current) + 1) % locales.length];
       data-scope="tile"
       data-part="root"
       data-padding="md"
-      href={localizePath(canonical, nextLocale, version)}
+      href={localizePath(canonical, nextLocale)}
       hreflang={nextLocale}
       lang={nextLocale}
       data-sk-lang-set={nextLocale}
@@ -122,7 +116,7 @@ const nextLocale = locales[(locales.indexOf(current) + 1) % locales.length];
               data-type="radio"
               data-checked={locale === current ? "" : undefined}
               data-sk-lang-set={locale}
-              href={localizePath(canonical, locale, version)}
+              href={localizePath(canonical, locale)}
               hreflang={locale}
               lang={locale}
             >

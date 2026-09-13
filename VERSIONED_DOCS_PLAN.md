@@ -72,7 +72,8 @@ documentos que existían en v1 está dentro de v1; no hace falta una tabla que l
   `contracts/changelog/releases.yaml` (`0.0.1-dev`, luego `0.0.1`, `0.2.0`, ...). No es una
   numeración propia, y por eso no existe la pregunta "¿qué docs version corresponde al release
   1.2?": es la misma cadena, y es también el nombre del directorio en la URL **del archive**.
-- **Current / latest**: la versión editable. Es el árbol de trabajo tal como existe hoy, servido en
+  En el chrome, el switcher y el header muestran solo el **major** (`v0`); el tip completo vive
+  en el footer y como subtítulo de cada fila del selector.- **Current / latest**: la versión editable. Es el árbol de trabajo tal como existe hoy, servido en
   las URLs **bare** de siempre (`/components/button`). No lleva prefijo de versión en el path.
 - **Frozen version**: corte ya publicado. Inmutable salvo hotfix explícito con runbook (§10.2).
   Se sirve bajo `/v<version>/…` en el deploy, no como rutas Astro en el source de `current`.
@@ -389,12 +390,13 @@ documento indicado por `supersededBy`, y si no hay ninguno, a la home de latest.
 
 ### 8.2 Switcher
 
-- En latest: lista las versiones **montadas en el deploy** (derivadas de tags `docs-v*` ∩ lo que el
-  CDN sirve), más la fila de `current` (URLs bare, etiqueta `v{working}-dev` o el release vigente).
-  Salta al mismo `docId` en la versión elegida, o deshabilita la opción si ese documento no existía
-  entonces (dato conocido: está en el archive).
-- **No listar dos veces el mismo número.** Si el único archive se llamaría igual que `working`, no
-  hay archive que ofrecer: una sola fila, bare URLs.
+- En latest: lista **majors** (no cada minor). Cada fila muestra el major (`v0`) y, debajo, el
+  **último tip** de ese major (`0.0.1-dev`, luego `0.2.0`, …). El trigger del header muestra solo el
+  major actual. El tip completo sigue en el footer.
+- La docs se corta por major: un minor/patch no abre fila nueva en el switcher.
+- Destinos: el major actual → URLs bare. Majors anteriores → archive montado en el CDN cuando
+  exista; si no hay mount, la fila queda deshabilitada.
+- **No listar dos veces el mismo major.** Un solo tip por major (el más nuevo del ledger).
 - En frozen: **no es una lista**. Es un solo enlace a latest. Un switcher completo en un snapshot
   quedaría congelado y desactualizado el día que se corte la siguiente versión.
 

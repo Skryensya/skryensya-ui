@@ -809,9 +809,8 @@ const PALETTE_PRESETS = palettePresets(locale);
 
 
         {/*
-          Docs version label BEFORE search on desktop. It is a document axis (ADR-0022), not a
-          reader preference, so it does not sit in `.dimensions__prefs`. Until a cut mounts archives
-          on the CDN this is a chip naming `working`, not a switcher.
+          Docs major BEFORE search on desktop. The trigger names only the major (`v0`); the menu
+          discloses each major's latest tip. The full tip stays in the footer.
         */}
         <VersionMenu />
 

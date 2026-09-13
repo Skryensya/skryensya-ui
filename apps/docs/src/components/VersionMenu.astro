@@ -1,19 +1,23 @@
 ---
 /*
- * Header chrome: name the docs version you are reading.
+ * Header chrome: switch docs major, and name which tip that major is on.
  *
- * Until a real cut mounts an archive under `/v<version>/` on the CDN (VERSIONED_DOCS_PLAN §3.3),
- * there is only one version: `working` from `releases.yaml`, served on bare URLs. This control is a
- * LABEL, not a switcher — a menu of one destination would pretend choice where none exists.
+ * Docs change on majors (VERSIONED_DOCS_PLAN). The trigger therefore shows only `v0` / `v1`, never
+ * the full `0.0.1-dev` string — that full tip lives in the footer and as the secondary line of each
+ * menu row ("latest minor of this major"). Until archives mount on the CDN there is usually one
+ * row, which still earns a menu: opening it is how a reader learns which tip the major points at.
  *
- * Desktop: caption + bordered chip before search. Mobile: the same chip inside the prefs sheet.
- * When archives exist again, this is the place to grow back into a Menu of mounted cuts.
+ * Desktop: caption + bordered Button with chevron before search. Mobile: the same list inside the
+ * prefs sheet. Rows without a mounted archive stay on the live bare URL when they are current, and
+ * are disabled otherwise (no destination yet).
  */
-import { getLocale, useTranslations } from "../i18n";
-import { currentVersion } from "../lib/contract-reference";
+import { canonicalPath, getLocale, localizePath, useTranslations } from "../i18n";
+import { releaseLedger } from "../lib/contract-reference";
+import { majorLinesFromLedger } from "../lib/docs-version-display";
+import { iconMarkup } from "../icons";
 
 interface Props {
-  /** Render inside the mobile preference sheet instead of the desktop header. */
+  /** Render the mobile form: the list of majors inside the preference sheet. */
   tile?: boolean;
   /** Visible title inside the tile. Only read when `tile`. */
   label?: string;
@@ -24,21 +28,90 @@ interface Props {
 const { tile = false, label, description } = Astro.props;
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
-const versionLabel = `v${currentVersion()}`;
+const canonical = canonicalPath(Astro.url.pathname);
+const lines = majorLinesFromLedger(releaseLedger());
+const current = lines.find((line) => line.isCurrent) ?? lines[0]!;
+const majorLabel = `v${current.major}`;
+const chevronIcon = iconMarkup("chevron-down", { size: "sm" });
 const listId = "docs-prefs-version-label";
+const liveHref = localizePath(canonical, locale);
+
+const rows = lines.map((line) => ({
+  ...line,
+  label: `v${line.major}`,
+  href: line.isCurrent ? liveHref : undefined,
+  available: line.isCurrent,
+}));
 ---
 
 {
-  tile ? (
-    <div class="docs-prefs-versions" aria-labelledby={listId}>
-      <div class="docs-prefs-versions__label" id={listId}>{label ?? t("version.control")}</div>
-      {description && <p class="docs-prefs-versions__hint">{description}</p>}
-      <p class="docs-prefs-versions__value">{versionLabel}</p>
-    </div>
-  ) : (
-    <div class="dimensions__version-menu" aria-label={t("version.named", { name: versionLabel })}>
+  tile && (
+    <nav class="sk-nav-list docs-prefs-versions" aria-labelledby={listId}>
+      <div class="sk-nav-list__group">
+        <div class="sk-nav-list__group-label" id={listId}>{label ?? t("version.control")}</div>
+        {description && <p class="docs-prefs-versions__hint">{description}</p>}
+        <ul class="sk-nav-list__list" aria-labelledby={listId}>
+          {rows.map((row) => (
+            <li class="sk-nav-list__item" data-todo={row.available ? undefined : ""}>
+              <a
+                class="sk-nav-list__link sk-interactive"
+                href={row.available ? row.href : undefined}
+                aria-current={row.isCurrent ? "page" : undefined}
+                aria-disabled={row.available ? undefined : "true"}
+              >
+                <span class="sk-nav-list__label">
+                  <span class="docs-prefs-versions__major">{row.label}</span>
+                  <span class="docs-prefs-versions__latest">{t("version.latestOfMajor", { version: row.latest })}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </nav>
+  )
+}
+
+{
+  !tile && (
+    <div class="sk-menu dimensions__version-menu" data-sk-menu aria-label={t("version.control")}>
       <span class="dimensions__version-menu__caption">{t("version.control")}</span>
-      <span class="dimensions__version-menu__chip">{versionLabel}</span>
+      <button
+        class="sk-menu__trigger sk-button sk-interactive sk-anchor"
+        data-sk-menu-trigger
+        data-size="sm"
+        type="button"
+        aria-label={t("version.named", { name: majorLabel })}
+      >
+        <span class="dimensions__version-menu__value">{majorLabel}</span>
+        <span class="sk-button__post" aria-hidden="true">
+          <Fragment set:html={chevronIcon} />
+        </span>
+      </button>
+      <div class="sk-menu__positioner sk-anchored" data-sk-menu-positioner>
+        <div class="sk-menu__content" data-sk-menu-content>
+          {rows.map((row) => (
+            <a
+              class="sk-menu__item sk-interactive"
+              data-sk-menu-item
+              data-value={row.major}
+              data-type="radio"
+              data-checked={row.isCurrent ? "" : undefined}
+              data-disabled={row.available ? undefined : ""}
+              aria-disabled={row.available ? undefined : "true"}
+              href={row.available ? row.href : undefined}
+            >
+              <span class="sk-menu__item-label dimensions__version-menu__row">
+                <span class="dimensions__version-menu__row-major">{row.label}</span>
+                <span class="dimensions__version-menu__row-latest">{t("version.latestOfMajor", { version: row.latest })}</span>
+              </span>
+              <span class="sk-menu__item-indicator" aria-hidden="true">
+                <span data-sk-icon="check" data-sk-icon-size="md" />
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

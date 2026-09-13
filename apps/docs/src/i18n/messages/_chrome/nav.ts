@@ -13,6 +13,7 @@ export const navMessages = {
     "nav.components": "Componentes",
     "nav.presets": "Presets",
     "nav.templates": "Templates",
+    "nav.recipes": "Recetas",
     "nav.comingSoon": "Próximamente",
     "nav.resizeRail": "Cambiar el ancho de la navegación",
     /* The document's first two links, invisible until they receive focus. They name the DESTINATION
@@ -38,6 +39,7 @@ export const navMessages = {
     "nav.components": "Components",
     "nav.presets": "Presets",
     "nav.templates": "Templates",
+    "nav.recipes": "Recipes",
     "nav.comingSoon": "Coming soon",
     "nav.resizeRail": "Resize the navigation",
     "nav.skipToContent": "Go to content",

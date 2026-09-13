@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-11T11:46:01.778Z",
+  "generatedAt": "2026-09-13T10:47:49.380Z",
   "viewport": {
     "width": 1920,
     "height": 1000
@@ -36,9 +36,11 @@
       "pulsing-badge-dot": 56
     },
     "/components/box": {
-      "box": 275
+      "box": 275,
+      "box-part-by-part": 172
     },
     "/components/breadcrumb": {
+      "breadcrumb-anatomy": 212,
       "breadcrumb-that-collapses-to-fit": 72,
       "breadcrumb-with-an-icon-separator": 72,
       "breadcrumb-with-long-labels": 72,
@@ -63,6 +65,7 @@
       "calendar-range": 367
     },
     "/components/callout": {
+      "callout-part-by-part": 287,
       "info-callout": 143,
       "neutral-callout": 143,
       "success-callout": 174,
@@ -139,6 +142,7 @@
       "componentpreview": 291,
       "componentpreview-2": 395,
       "componentpreview-bare": 333,
+      "componentpreview-bare-part-by-part": 461,
       "grid-multicol": 272
     },
     "/components/data-grid": {
@@ -188,6 +192,7 @@
     },
     "/components/grid": {
       "grid": 106,
+      "grid-part-by-part": 178,
       "multi-column-layout": 357,
       "responsive-grid": 254
     },
@@ -225,10 +230,13 @@
       "position": 388
     },
     "/components/inline": {
-      "action-bar": 228
+      "action-bar": 228,
+      "action-row-on-the-floor": 247,
+      "inline-part-by-part": 178
     },
     "/components/input": {
       "input": 147,
+      "one-class-three-elements": 382,
       "textarea": 235
     },
     "/components/kbd": {
@@ -238,6 +246,7 @@
     "/components/layout-grid": {
       "layout-grid": 536,
       "layout-grid-both-rails": 340,
+      "layout-grid-part-by-part": 262,
       "layout-grid-rail": 242,
       "layout-grid-rail-start": 242
     },
@@ -307,7 +316,8 @@
       "popover-with-a-header-and-footer": 384
     },
     "/components/popup": {
-      "popup": 288
+      "popup": 288,
+      "popup-part-by-part": 226
     },
     "/components/primitives": {
       "primitives": 369
@@ -352,7 +362,8 @@
       "splitbutton-translucent-variant": 288
     },
     "/components/stack": {
-      "stack": 237
+      "stack": 237,
+      "stack-part-by-part": 238
     },
     "/components/stat": {
       "animated-stat-cards": 202,
@@ -431,7 +442,8 @@
       "sample-inbox": 277
     },
     "/components/wrapper": {
-      "wrapper": 183
+      "wrapper": 183,
+      "wrapper-part-by-part": 178
     },
     "/density": {
       "local-scope-in-action": 352
@@ -468,9 +480,11 @@
       "badge-sm": 76
     },
     "/es/componentes/box": {
-      "box": 275
+      "box": 275,
+      "box-parte-por-parte": 172
     },
     "/es/componentes/breadcrumb": {
+      "anatomia-de-breadcrumb": 212,
       "breadcrumb-con-etiquetas-largas": 72,
       "breadcrumb-con-separador-de-icono": 72,
       "breadcrumb-de-dos-niveles": 72,
@@ -497,6 +511,7 @@
     "/es/componentes/callout": {
       "callout-info": 143,
       "callout-neutral": 143,
+      "callout-parte-por-parte": 287,
       "callout-success": 174,
       "callout-warning": 179
     },
@@ -571,6 +586,7 @@
       "componentpreview": 291,
       "componentpreview-2": 395,
       "componentpreview-bare": 333,
+      "componentpreview-bare-parte-por-parte": 461,
       "grid-multicol": 272
     },
     "/es/componentes/data-grid": {
@@ -628,6 +644,7 @@
     },
     "/es/componentes/grid": {
       "grid": 106,
+      "grid-parte-por-parte": 178,
       "grid-responsivo": 254,
       "multi-column-layout": 357
     },
@@ -665,11 +682,14 @@
       "position": 388
     },
     "/es/componentes/inline": {
-      "barra-de-acciones": 228
+      "barra-de-acciones": 228,
+      "fila-de-acciones-al-piso": 247,
+      "inline-parte-por-parte": 178
     },
     "/es/componentes/input": {
       "input": 147,
-      "textarea": 235
+      "textarea": 235,
+      "una-clase-tres-elementos": 382
     },
     "/es/componentes/kbd": {
       "kbd": 71,
@@ -678,6 +698,7 @@
     "/es/componentes/layout-grid": {
       "layout-grid": 536,
       "layout-grid-both-rails": 342,
+      "layout-grid-parte-por-parte": 262,
       "layout-grid-rail": 244,
       "layout-grid-rail-start": 244
     },
@@ -747,7 +768,8 @@
       "popover-en-las-cuatro-colocaciones": 384
     },
     "/es/componentes/popup": {
-      "popup": 288
+      "popup": 288,
+      "popup-parte-por-parte": 226
     },
     "/es/componentes/primitivas": {
       "primitivas": 369
@@ -792,7 +814,8 @@
       "splitbutton-variante-translucent": 288
     },
     "/es/componentes/stack": {
-      "stack": 237
+      "stack": 237,
+      "stack-parte-por-parte": 238
     },
     "/es/componentes/stat": {
       "stat": 186,
@@ -871,7 +894,8 @@
       "explorador-de-archivos-de-ejemplo": 657
     },
     "/es/componentes/wrapper": {
-      "wrapper": 183
+      "wrapper": 183,
+      "wrapper-parte-por-parte": 178
     },
     "/es/densidad": {
       "scope-local-en-accion": 384
@@ -966,7 +990,8 @@
     "/es/vaul": {
       "compartir-archivo": 760,
       "confirmar-eliminacion": 760,
-      "filtros-de-busqueda": 760
+      "filtros-de-busqueda": 760,
+      "vaul-parte-por-parte": 251
     },
     "/first-component": {
       "button": 92
@@ -1004,7 +1029,8 @@
     "/vaul": {
       "confirm-deletion": 760,
       "search-filters": 760,
-      "share-file": 760
+      "share-file": 760,
+      "vaul-part-by-part": 251
     },
     "/components/qr-code": {
       "correction-levels": 185,
@@ -1041,6 +1067,56 @@
       "cuatro-guias-que-tienen-que-doblar": 384,
       "migas-visibles-y-niveles-colapsados": 236,
       "una-etiqueta-por-margen": 240
+    },
+    "/recipes": {
+      "app-shell-empty": 272,
+      "app-shell-error": 272,
+      "app-shell-loading": 272,
+      "app-shell-with-data": 273,
+      "browse-empty": 411,
+      "browse-error": 271,
+      "browse-loading": 296,
+      "browse-with-data": 168,
+      "chart-period-panel-empty": 402,
+      "chart-period-panel-error": 310,
+      "chart-period-panel-loading": 287,
+      "chart-period-panel-with-data": 319,
+      "chart-table-report-empty": 267,
+      "chart-table-report-error": 151,
+      "chart-table-report-loading": 168,
+      "chart-table-report-with-data": 333,
+      "checkout-empty": 593,
+      "checkout-error": 323,
+      "checkout-loading": 152,
+      "checkout-with-data": 279,
+      "data-table-empty": 253,
+      "data-table-error": 221,
+      "data-table-loading": 94,
+      "data-table-with-data": 298,
+      "destructive-confirm-empty": 201,
+      "destructive-confirm-error": 308,
+      "destructive-confirm-loading": 145,
+      "destructive-confirm-with-data": 151,
+      "detail-empty": 238,
+      "detail-error": 276,
+      "detail-loading": 149,
+      "detail-with-data": 294,
+      "form-empty": 461,
+      "form-error": 572,
+      "form-loading": 435,
+      "form-with-data": 276,
+      "metric-panel-empty": 426,
+      "metric-panel-error": 310,
+      "metric-panel-loading": 327,
+      "metric-panel-with-data": 436,
+      "settings-empty": 332,
+      "settings-error": 424,
+      "settings-loading": 149,
+      "settings-with-data": 328,
+      "upload-empty": 217,
+      "upload-error": 384,
+      "upload-loading": 233,
+      "upload-with-data": 151
     }
   }
 }

@@ -43,13 +43,16 @@ import { ChartCardDemo } from "../react-demos/chart-card";
 import { chartAnalyticsCardSource, chartAnalyticsCardTree } from "../../demos/charts";
 import { emitChartWithOverlay } from "../../demos/chart-overlay";
 import { visitsPerWeek } from "../../demos/data/charts";
-import { getLocale, useTranslations } from "../../i18n";
+import { getLocale, localizePath, useTranslations } from "../../i18n";
 
 /* The eleven examples are a LADDER: each rung adds one decision to the one before it, and every
  * rung is shown as a grid of three, because a card that only looks right on its own is a card whose
  * height, media and footer were never tested against its siblings. */
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
+/* Every internal link resolves in the locale being read: a hardcoded `/components/x` sends a
+   Spanish reader to the English page, which is the bug this page had six times. */
+const href = (path: string) => localizePath(path, locale);
 const copy = cardCopy[locale];
 
 /* Same snippet Primitivas installs: Card asks nothing beyond the two packages every example here
@@ -132,12 +135,12 @@ const chartCardHtml = emitChartWithOverlay(chartAnalyticsCardTree(t), "area", vi
           <tr class="sk-table__row"><th class="sk-table__header">{t("cardPage.tableHeadSurface")}</th><th class="sk-table__header">{t("cardPage.tableHeadUses")}</th><th class="sk-table__header">{t("cardPage.tableHeadElement")}</th></tr>
         </thead>
         <tbody class="sk-table__body">
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow1Surface")}</td><td class="sk-table__cell"><a href="/components/box">Box</a></td><td set:html={t("cardPage.tableRow1Element")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow2Surface")}</td><td class="sk-table__cell"><a href="/components/link">TileLink</a></td><td set:html={t("cardPage.tableRow2Element")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow3Surface")}</td><td class="sk-table__cell"><a href="/components/button">TileButton</a></td><td set:html={t("cardPage.tableRow3Element")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow4Surface")}</td><td class="sk-table__cell"><a href="/components/checkbox">TileCheckbox</a></td><td set:html={t("cardPage.tableRow4Element")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow5Surface")}</td><td class="sk-table__cell"><a href="/components/radio-group">TileRadioGroup</a></td><td set:html={t("cardPage.tableRow5Element")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow6Surface")}</td><td class="sk-table__cell"><a href="/components/accordion">Accordion</a></td><td set:html={t("cardPage.tableRow6Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow1Surface")}</td><td class="sk-table__cell"><a href={href("/components/box")}>Box</a></td><td set:html={t("cardPage.tableRow1Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow2Surface")}</td><td class="sk-table__cell"><a href={href("/components/link")}>TileLink</a></td><td set:html={t("cardPage.tableRow2Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow3Surface")}</td><td class="sk-table__cell"><a href={href("/components/button")}>TileButton</a></td><td set:html={t("cardPage.tableRow3Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow4Surface")}</td><td class="sk-table__cell"><a href={href("/components/checkbox")}>TileCheckbox</a></td><td set:html={t("cardPage.tableRow4Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow5Surface")}</td><td class="sk-table__cell"><a href={href("/components/radio-group")}>TileRadioGroup</a></td><td set:html={t("cardPage.tableRow5Element")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("cardPage.tableRow6Surface")}</td><td class="sk-table__cell"><a href={href("/components/accordion")}>Accordion</a></td><td set:html={t("cardPage.tableRow6Element")} class="sk-table__cell" /></tr>
         </tbody>
       </table>
     </div>

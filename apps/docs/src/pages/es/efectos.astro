@@ -53,9 +53,9 @@ el.classList.add("sk-fx-pulse");`;
   <h1>Efectos</h1>
   <p class="lede">
     Un efecto es <strong>una clase que se agrega</strong> sobre un elemento que ya existe, sea
-    markup propio o la raíz de un componente del kit. No es un <a href="/architecture">Contract</a>:
+    markup propio o la raíz de un componente del kit. No es un <a href="/es/arquitectura">Contract</a>:
     no tiene signature, no lo compila el <code>ai-compiler</code>, no aparece en la MCP. Es CSS,
-    opt-in, construido sobre los mismos <a href="/motion">tokens de intención de motion</a> que ya
+    opt-in, construido sobre los mismos <a href="/es/motion">tokens de intención de motion</a> que ya
     usa cada componente.
   </p>
 
@@ -131,7 +131,7 @@ el.classList.add("sk-fx-pulse");`;
     header nunca cambia, siempre es el bar chico; lo que desaparece es un spacer aparte, del alto
     exacto del rango de colapso, y el título simplemente se dibuja más grande de lo que el bar mide,
     sobresaliendo hacia arriba sobre el spacer. Es el mecanismo detrás del masthead de cada página de
-    componente (<a href="/components/accordion">scrollealo ahí para verlo en vivo</a>), generalizado
+    componente (<a href="/es/componentes/accordion">scrollealo ahí para verlo en vivo</a>), generalizado
     en ADR-20.
   </p>
   <CodeBlock code={importCollapse} label="CSS" />
@@ -195,7 +195,7 @@ el.classList.add("sk-fx-pulse");`;
   <h2>Reduced motion</h2>
   <p>
     Ningún efecto declara su propio <code>@media (prefers-reduced-motion)</code> para apagarse:
-    heredan el mismo mecanismo que cada componente, los <a href="/motion">tokens de intención</a>.
+    heredan el mismo mecanismo que cada componente, los <a href="/es/motion">tokens de intención</a>.
     <code>reveal</code> y <code>collapse-header</code> corren solo dentro de
     <code>no-preference</code>, así que motion reducido los deja en su estado de reposo sin una regla
     aparte que mantener sincronizada. <code>pulse</code> lee <code>--motion-emphasize-duration</code>,

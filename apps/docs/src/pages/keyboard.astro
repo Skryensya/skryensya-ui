@@ -29,9 +29,9 @@ import Base from "../layouts/Base.astro";
 
   <h2>Real focus and virtual focus</h2>
   <p>
-    Most widgets move real DOM focus from one control to another. A separate group. The ones showing
-    a floating list while the user keeps typing: never move focus at all: it stays on the input, and
-    the highlighted option is signaled with <code>aria-activedescendant</code>. Confusing the two
+    Most widgets move real DOM focus from one control to the next. One group does not: the ones that
+    show a floating list while the user keeps typing never move focus at all. It stays on the input,
+    and the highlighted option is announced with <code>aria-activedescendant</code>. Confusing the two
     breaks a test (waiting for <code>document.activeElement</code> to change where it does not, or the
     reverse), so they are kept separate from the start.
   </p>

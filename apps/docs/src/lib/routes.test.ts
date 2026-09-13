@@ -61,6 +61,42 @@ for (const file of walk(root)) {
   }
 }
 
+/*
+ * A LITERAL INTERNAL HREF IN SHARED MARKUP IS A LOCALE LEAK.
+ *
+ * `src/components/**` and `src/layouts/**` render in EVERY locale: the same file produces the
+ * English page and the Spanish one. So an `href="/components/box"` written there is not a link to
+ * "Box", it is a link to the ENGLISH Box, and a Spanish reader who follows it leaves the language
+ * they were reading in. Measured when this test was written: fourteen of them, thirteen in
+ * `CardPage`/`TilePage` and one in the footer, where the surviving fossil was a ternary whose two
+ * branches were the same English path.
+ *
+ * The rule is not "no absolute hrefs", it is "not in a file that renders twice": a page under
+ * `src/pages/es/` may write `/es/...` freely, because it only ever renders in that locale.
+ * `localizePath(path, locale)` is the seam, and the test below is what keeps the next one from
+ * being written by hand.
+ */
+describe("locale-independent markup", () => {
+  const shared = walk(root).filter(
+    (file) => /\.astro$/.test(file) && /[/\\](components|layouts)[/\\]/.test(file),
+  );
+
+  it("has shared components to check", () => {
+    expect(shared.length).toBeGreaterThan(20);
+  });
+
+  it("never hardcodes a link to a real route, in any locale", () => {
+    const leaks: string[] = [];
+    for (const file of shared) {
+      for (const m of readFileSync(file, "utf8").matchAll(/href=["'](\/[^"'#?{]*)["']/g)) {
+        const href = m[1]!;
+        if (resolves(href)) leaks.push(`${href}  (${relative(root, file)})`);
+      }
+    }
+    expect([...new Set(leaks)].sort()).toEqual([]);
+  });
+});
+
 describe("internal links", () => {
   it("found enough routes and links to be worth checking", () => {
     /* Floors, not exact counts: a glob that silently matched nothing would make the assertion

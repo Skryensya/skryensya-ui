@@ -111,6 +111,11 @@ import { MediaCaption } from "@skryensya/react/media-gradient";
       <code>strength</code>) and <code>MediaGradient</code> from
       <code>@skryensya/react/media-gradient</code>.
     </li>
+    <li>
+      Not this pattern: to cover the whole page behind a modal dialog, reach for the Backdrop; for
+      interaction feedback on a control, reach for <a href="/state-layer">the state layer</a>.
+      <code>data-strength</code> changes opacity and mix, never how much of the photo is covered.
+    </li>
   </ul>
 
   <StylingHooks

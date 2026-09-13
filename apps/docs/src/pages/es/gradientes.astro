@@ -6,116 +6,118 @@ import StylingHooks from "../../components/StylingHooks.astro";
 import { mediaGradientCardTree, mediaGradientEdgesTree } from "../../demos/media-gradient";
 import { getLocale, useTranslations } from "../../i18n";
 
-const install = `@import "@skryensya/core/patterns/image-frame.css";
-@import "@skryensya/core/patterns/media-gradient.css";`;
+const install = `@import "@skryensya/core/patterns/media-gradient.css";
+@import "@skryensya/core/patterns/image-frame.css";`;
 
 const t = useTranslations(getLocale(Astro.url));
 
-const vanillaApi = `<div class="sk-image-frame" data-aspect="16/9">
-  <img class="sk-image-frame__media" src="/foto.jpg" alt="Bosque al amanecer" />
+const vanillaApi = `<!-- El wash vive ADENTRO del caption: mide lo que mide el texto -->
+<div class="sk-image-frame" data-aspect="16/9">
+  <img class="sk-image-frame__media" src="/foto.jpg" alt="…" />
   <div class="sk-media-caption" data-edge="bottom">
     <div
       class="sk-media-gradient"
       data-strength="md"
       aria-hidden="true"
     ></div>
-    <h3 class="sk-heading" data-size="h4" data-flush>
-      Informe de impacto
-    </h3>
+    <h3 class="sk-heading" data-size="h4" data-flush>Título</h3>
   </div>
-</div>`;
+</div>
+
+<!-- Más opacidad o más tinte (no más cobertura de la foto) -->
+<style>
+  .hero-media .sk-media-gradient {
+    --sk-media-gradient-mix: 48%;
+    --sk-media-gradient-opacity: 88%;
+  }
+</style>`;
 
 const reactApi = `import { ImageFrame } from "@skryensya/react/image-frame";
 import { MediaCaption } from "@skryensya/react/media-gradient";
 
-<ImageFrame
-  aspect="16/9"
-  src="/foto.jpg"
-  alt="Bosque al amanecer"
-  caption={
-    <MediaCaption edge="bottom" strength="md">
-      <h3 className="sk-heading" data-size="h4" data-flush>
-        Informe de impacto
-      </h3>
-    </MediaCaption>
-  }
-/>;`;
-
-const tune = `.hero-media .sk-media-gradient {
-  --sk-media-gradient-tint: var(--color-action-accent);
-  --sk-media-gradient-mix: 48%;
-  --sk-media-gradient-opacity: 88%;
-}`;
+<ImageFrame aspect="16/9" src="/foto.jpg" alt="…" caption={
+  <MediaCaption edge="bottom" strength="md">
+    <h3 className="sk-heading" data-size="h4" data-flush>
+      Título
+    </h3>
+  </MediaCaption>
+} />;`;
 ---
 
 <Base
   title="Gradientes"
   documentLayout="grid"
-  description="Media gradient: Pattern que crea un wash legible sobre media sin cubrir toda la imagen."
+  description="Media gradient: un wash del tamaño del texto, con tinte de accent, para tener contraste sobre fotos."
 >
   <h1>Gradientes</h1>
   <p class="lede">
-    <strong>Media gradient es un Pattern</strong>: un wash dentro del caption para que el texto siga
-    siendo legible sobre una foto. No es Backdrop, no es State layer y no es una capa que tape toda la
-    media.
+    Cuando la tipografía vive <strong>sobre una foto</strong>, el contraste no lo garantiza el token
+    de texto: lo garantiza un wash. <code>sk-media-gradient</code> vive <strong>adentro</strong> del
+    caption, así que es tan alto (o tan ancho) como el texto que protege, no un velo sobre la imagen
+    entera. Teñido con accent. No es el Backdrop de un dialog ni la capa de estado de un control.
   </p>
 
-  <h2>Consumidores</h2>
+  <h2>Card con media</h2>
   <p>
-    Lo consumen composiciones con media y texto encima: ImageFrame, héroes editoriales y cards hechas
-    con <a href="/components/box">Box</a>. ImageFrame recorta la media; Media gradient protege el
-    caption; la card o la superficie pública siguen siendo responsabilidad del componente que las
-    contiene.
+    ImageFrame recorta; el caption carga la tipografía y el wash a su propia medida. La card de abajo
+    sigue siendo <a href="/es/componentes/box">Box</a> más composición (no existe ningún
+    <code>sk-card</code>).
   </p>
-  <ComponentPreview tree={mediaGradientCardTree(t)} label="Card con media" />
+  <ComponentPreview tree={mediaGradientCardTree(t)} label="Card + media gradient" />
 
-  <h2>Mecanismo</h2>
+  <h2>Instalar</h2>
+  <CodeBlock code={install} label="CSS" />
+
+  <h2>Desde el código</h2>
   <p>
-    El wash vive dentro de <code>sk-media-caption</code>, así que mide lo que mide el texto que
-    protege. En <code>top</code> y <code>bottom</code> ocupa una banda horizontal; en
-    <code>start</code> y <code>end</code>, una banda vertical. El tinte viene del accent por defecto y
-    puede re-declararse con styling hooks.
+    El caption lleva <code>data-edge</code>; el wash que cuelga de él lleva <code>data-strength</code>
+    (opacidad y tinte). En React, <code>MediaCaption strength</code> inyecta el wash. El tinte sale de
+    <code>--sk-media-gradient-tint</code> (por defecto <code>--color-action-accent</code>). ImageFrame
+    toma el caption como slot o prop, no como una segunda fuente de media.
   </p>
-  <CodeBlock code={vanillaApi} label="HTML" />
+  <CodeBlock code={vanillaApi} label="HTML + CSS" />
   <CodeBlock code={reactApi} label="React" lang="tsx" />
 
   <h2>Edges</h2>
   <p>
-    Las edges son lógicas para respetar escritura y dirección. Piden dónde se apoya el caption, no una
-    variante visual de la imagen.
+    <code>top</code>/<code>bottom</code>: la banda es tan alta como el texto (ancho completo).
+    <code>start</code>/<code>end</code>: tan ancha como el texto (alto hasta el contenido).
   </p>
   <ComponentPreview tree={mediaGradientEdgesTree()} label="Edges" />
 
-  <h2>Restricciones</h2>
+  <h2>Contrato</h2>
   <ul>
     <li>
-      El host debe estar posicionado. <code>sk-image-frame</code> ya lo está, por eso es el consumidor
-      común.
+      El host tiene que estar posicionado: <code>sk-image-frame</code> ya es
+      <code>position: relative</code>.
     </li>
     <li>
-      <code>sk-media-gradient</code> es hijo del caption, lleva <code>aria-hidden="true"</code> y no
-      contiene texto.
+      Caption: <code>sk-media-caption</code> con <code>data-edge</code>
+      (<code>top|bottom|start|end</code>). Su caja es la medida del wash.
     </li>
     <li>
-      <code>data-strength="sm|md|lg"</code> cambia opacidad y mezcla, no el tamaño de cobertura.
+      Wash: <code>sk-media-gradient</code> <strong>hijo</strong> del caption, con
+      <code>aria-hidden="true"</code> y <code>data-strength</code> (<code>sm|md|lg</code>).
     </li>
     <li>
-      Si necesitas cubrir toda la página detrás de un dialog modal, usa Backdrop. Si necesitas feedback
-      de interacción, usa State layer.
+      Con <a href="/es/transparencias"><code>prefers-reduced-transparency</code></a>, el degradado se
+      reemplaza por el color base opaco dentro de la misma caja del caption.
+    </li>
+    <li>
+      Tinte: <code>--sk-media-gradient-tint</code>, <code>--sk-media-gradient-mix</code>,
+      <code>--sk-media-gradient-opacity</code>.
+    </li>
+    <li>
+      React: <code>ImageFrame caption</code>, <code>MediaCaption</code> (con
+      <code>strength</code> opcional) y <code>MediaGradient</code>, desde
+      <code>@skryensya/react/media-gradient</code>.
+    </li>
+    <li>
+      Lo que no es este patrón: para cubrir toda la página detrás de un dialog modal, va el Backdrop;
+      para feedback de interacción sobre un control, va <a href="/es/state-layer">la capa de estado</a>.
+      <code>data-strength</code> cambia opacidad y mezcla, nunca cuánta foto queda tapada.
     </li>
   </ul>
-
-  <h2>Compatibilidad y fallback</h2>
-  <p>
-    Con <a href="/transparency"><code>prefers-reduced-transparency</code></a>, el degradado se
-    reemplaza por el color base opaco dentro de la misma caja del caption. Sin soporte para la
-    preferencia, la regla segura sigue siendo el contraste del caption y no la opacidad global de la
-    imagen.
-  </p>
-  <CodeBlock code={tune} label="CSS" />
-
-  <h2>Instalar</h2>
-  <CodeBlock code={install} label="CSS" />
 
   <StylingHooks
     groups={[

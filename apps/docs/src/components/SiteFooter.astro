@@ -42,7 +42,7 @@
 import { getGlobalNavigation, type NavigationSection } from "../lib/navigation";
 import { currentVersion } from "../lib/contract-reference";
 import { iconMarkup } from "../icons";
-import { useTranslations, type Locale } from "../i18n";
+import { localizePath, useTranslations, type Locale } from "../i18n";
 
 interface Props {
   nav: readonly NavigationSection[];
@@ -57,7 +57,10 @@ const REPO_URL = "https://github.com/Skryensya/skryensya-ui";
    may use this needs to read, and the copy in the repo is the one that governs. */
 const LICENSE_URL = `${REPO_URL}/blob/main/LICENSE`;
 const AUTHOR_URL = "https://allison.sh";
-const changelogHref = locale === "en" ? "/components/changelog" : "/components/changelog";
+/* Through `localizePath`, like every other link in this footer. It used to be a ternary whose two
+   branches were the same English path, so a Spanish reader following "Changelog" left the language
+   they were reading in, alone among the fourteen links around it. */
+const changelogHref = localizePath("/components/changelog", locale);
 const year = new Date().getFullYear();
 const version = currentVersion();
 /** Same role, same trailing position, `Base.astro`'s own `reportIssueIcon`: it names "this leaves

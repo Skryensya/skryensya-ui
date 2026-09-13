@@ -49,27 +49,36 @@ const overrideTree: UsageTree = {
   documentLayout="grid"
   description="A styling hook is the public knob for a component: what it means, how they are named, and how to step on them."
 >
-  <h1>The</h1>
+  <h1>The styling hooks contract</h1>
   <p class="lede">
-    styling hooks contract Import <code>components/button.css</code> gives you a <em>button and</em> {buttonHooks.length} styling hooks. Class is what you see; hooks are how you change it without touching a selector. That is the contract.
+    Importing <code>components/button.css</code> gives you a button <em>and</em> {buttonHooks.length} styling
+    hooks. The class is what you see; the hooks are how you change it without writing a selector of your own.
+    That is the contract.
   </p>
 
   <div class="sk-callout" data-tone="info">
     <div class="sk-callout__content">
     <p>
-      This <strong>changed</strong>. For a long time the system sent the hooks and nothing more: the structure was written by each consumer. It was reversed, because it was not sustained, <a href="https://github.com/Skryensya/skryensya-ui/blob/main/docs/decisions/0002-what-tier-3-ships.md">decision 8</a> tells what was measured. What hasn't changed is why a hook exists: it is not a replacement for the missing structure, it is the knob.
+      This <strong>changed</strong>. For a long time the kit shipped the hooks and nothing else, and every
+      consumer wrote the structure themselves. That was reversed because it did not hold up;
+      <a href="https://github.com/Skryensya/skryensya-ui/blob/main/docs/decisions/0002-what-tier-3-ships.md">decision 8</a>
+      records what was measured. What has not changed is why a hook exists: it is not a stand-in for structure
+      the kit failed to ship, it is the knob on structure the kit does ship.
     </p>
     </div>
   </div>
 
   <h2>Why hooks and not one class per variant</h2>
   <p>
-    Because a component has a base look, variants and sizes, and those combinations are multiplied. A styling hook collapses them: it is a custom property, and a custom property does not care what element carries it or how many selectors re-declare it. Also, what you do not import <strong>does not weigh</strong>: a consumer that does not send buttons does not download a single byte of <code>button.css</code>.
+    A component has a base look, then variants, then sizes, and those multiply together. A styling hook
+    collapses that: it is a custom property, and a custom property does not care which element carries it or
+    how many selectors re-declare it. What you do not import <strong>costs nothing</strong> either: a consumer
+    who ships no buttons downloads no byte of <code>button.css</code>.
   </p>
 
   <h2>Styling hooks lose the group segment</h2>
   <p>
-    Naive coding gives each variant its own variable, and ends up in a bang that your CSS has to disambiguate with conditionals:
+    The obvious approach gives every variant its own variable, and leaves your CSS branching between them:
   </p>
   <CodeBlock code={naive} label="what we do not do" />
 
@@ -79,25 +88,31 @@ const overrideTree: UsageTree = {
   <CodeBlock code={actual} label="components/button.css" />
   <CodeBlock code={consumer} label="CSS" note="one line, zero branches" />
 
-  <h2>That is why stepping on a styling hook is totally trivial</h2>
+  <h2>Which is what makes an override one line</h2>
   <p>
-    Since all variants read the same styling hook, one line restyles them all within a scope. And there is no specificity fight because any rule without a layer beats all layers.
+    Because every variant reads the same styling hook, one declaration restyles all of them inside a scope.
+    There is no specificity fight either: any rule outside a cascade layer beats every rule inside one.
   </p>
 
   <ComponentPreview tree={overrideTree} css={overrideSource} label="src/examples/styling-hook-override.css" note="the override that paints the demo" />
 
   <p>
-    The three buttons above are the same variants of the home button. Three lines restyled them all, without touching the design system and without inventing a new token.
+    The three buttons above are the same variants this page has been describing. Three lines restyled all of
+    them, without touching the design system and without inventing a token.
   </p>
 
   <h2>The risk of specificity</h2>
   <p>
-    Variants gain by selector specificity. A consumer who types a more specific selector may inadvertently step on a variant. We accept that risk to keep few styling hooks, without nesting them by variant.
+    Variants win by selector specificity, so a consumer who writes a more specific selector can override one
+    without meaning to. That risk is accepted on purpose: the alternative is a hook per variant, which is the
+    pile this page opened by rejecting.
   </p>
 
   <h2>All button styling hooks</h2>
   <p>
-    These are the {buttonHooks.length} sent by <code>components/button.css</code>. They live in <code>.sk-button</code>, never in <code>: root</code>, they do not exist until an element opts for them.
+    These are the {buttonHooks.length} that <code>components/button.css</code> ships. They live on
+    <code>.sk-button</code> and never on <code>:root</code>: until an element opts into the class, they do not
+    exist.
   </p>
 
   <div class="sk-table-scroll">
@@ -105,7 +120,7 @@ const overrideTree: UsageTree = {
       <thead class="sk-table__head">
         <tr class="sk-table__row">
           <th class="sk-table__header">Hook</th>
-          <th class="sk-table__header">Apunta a</th>
+          <th class="sk-table__header">Points at</th>
         </tr>
       </thead>
       <tbody class="sk-table__body">
@@ -122,6 +137,7 @@ const overrideTree: UsageTree = {
   </div>
 
   <p>
-    Note that none point to a <code>--palette-*</code>. It is not discipline: it is <a href="/tiers">the tier-skip rule</a>, and it breaks the build.
+    None of them point at a <code>--palette-*</code>, and that is not discipline holding:
+    <a href="/tiers">the tier-skip rule</a> fails the build if one does.
   </p>
 </Base>

@@ -1,4 +1,5 @@
 ---
+import "@skryensya/core/components/slider.css";
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import type { UsageTree } from "@skryensya/core/usage-tree";
@@ -38,7 +39,7 @@ const absoluteDensity = `<section
   data-sk-density-scope
   style="--sk-density: 0.72"
 >
-  <!-- normal component content -->
+  <!-- the component's ordinary content -->
 </section>`;
 
 const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEach((lab) => {
@@ -66,7 +67,7 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
     const factor = value / 100;
 
     target.style.setProperty("--sk-density-factor", String(factor));
-    thumb?.setAttribute("aria-valuetext", \`\${factor.toFixed(2)} veces la densidad del sistema\`);
+    thumb?.setAttribute("aria-valuetext", \`\${factor.toFixed(2)} times the system density\`);
     factorOutput.textContent = \`\${factor.toFixed(2)}×\`;
 
     const density = Number.parseFloat(getComputedStyle(target).getPropertyValue("--sk-density"));
@@ -96,7 +97,7 @@ const densityPreviewTree: UsageTree = {
           options: { gap: "sm", inlineAlign: "baseline" },
           children: ["Local factor", { contract: "typography", signature: "Code", attrs: { "data-density-factor-output": "" }, children: "1.00×" }],
         },
-        { contract: "slider", signature: "Slider", options: { value: 72, min: 50, max: 120, step: 1 }, attrs: { id: "density-factor-control", "aria-label": "Local factor", "data-density-slider": "", "aria-valuetext": "0.72 veces la densidad del sistema" } },
+        { contract: "slider", signature: "Slider", options: { value: 72, min: 50, max: 120, step: 1 }, attrs: { id: "density-factor-control", "aria-label": "Local factor", "data-density-slider": "", "aria-valuetext": "0.72 times the system density" } },
       ],
     },
     {
@@ -148,36 +149,44 @@ const densityPreviewTree: UsageTree = {
 >
   <h1>Component Density</h1>
   <p class="lede">
-    Local density is not a component variant. It is a scope that recalculates the <strong>space and control tokens at the boundary of your</strong> component, without touching its neighbors or the density chosen for the application.
+    Local density is not a component variant. It is a scope that recalculates the <strong>spacing and control tokens at your component's boundary</strong>, without touching its neighbours or the density the application chose.
   </p>
 
   <div class="sk-callout" data-tone="info">
     <div class="sk-callout__content">
       <p>
-        <strong>The entire contract lives on the same node: </strong> <code>data-sk-density-scope</code> triggers local reprojection; <code>--sk-density-factor</code> or <code>--sk-density</code>, written in <code>style</code>, decides its value. This scope does not add classes, selectors, required presets or a prop to each component.
+        <strong>The entire contract lives on the same node: </strong> <code>data-sk-density-scope</code> turns local reprojection on; <code>--sk-density-factor</code> or <code>--sk-density</code>, written in <code>style</code>, sets the value. The scope adds no classes, no selectors, no mandatory presets and no prop on each component.
       </p>
     </div>
   </div>
 
-  <h2>Set it to the limit you already have</h2>
+  <h2>The global scope comes first</h2>
   <p>
-    Put the attribute once, at the root of the component you want to compact, and write the value there as an inline style. Their descendants continue to read the same semantic tokens; you do not need to create a class for the scope or mark each button, field or row separately.
+    The application-wide value lives in <code>--sk-density</code>, usually on <code>html</code>. The semantic
+    spacing and control tokens read it at runtime, so no component takes a density prop: everything below
+    that declaration already resolves against it.
+  </p>
+  <CodeBlock code={`html { --sk-density: 0.8; }`} label="CSS" />
+
+  <h2>Put the local scope on the boundary you already have</h2>
+  <p>
+    Put the attribute once, on the root of the component you want to compact, and write the value there as an inline style. Its descendants go on reading the same semantic tokens: no class to invent for the scope, and no marking each button, field or row one by one.
   </p>
   <CodeBlock code={componentMarkup} label="Component HTML" />
 
   <h2>Use a relative factor by default</h2>
   <p>
-    <code>--sk-density-factor</code> preserves the user's intent. If the application is in <code>0.8</code> and the component uses <code>0.72</code>, its effective density is <code>0.576</code>. The value can be any valid number, without depending on presets.
+    <code>--sk-density-factor</code> keeps the reader's own choice in play. If the application is at <code>0.8</code> and the component asks for <code>0.72</code>, its effective density is <code>0.576</code>. The value can be any valid number; it does not have to come from a preset.
   </p>
 
   <p>
-    Use an absolute value only when the component needs an application-independent measurement. The absolute value wins over the factor; choose one or the other, not both.
+    Use an absolute value only when the component needs a measurement independent of the application. An absolute value beats a factor, so use one or the other and never both.
   </p>
   <CodeBlock code={absoluteDensity} label="HTML with absolute value" />
 
   <h2>Test an isolated component</h2>
   <p>
-    Control is out of scope. Drag it: change the padding, gaps and semantic sizes within the summary; the rest of the page does not move.
+    The control below sits outside the scope. Drag it: padding, gaps and semantic sizes change inside the panel, and the rest of the page stays where it is.
   </p>
   <ComponentPreview tree={densityPreviewTree} previewScript={densityLabScript} label="Local Scope in action" note="scope and value live inline on the same node" />
 
@@ -185,25 +194,30 @@ const densityPreviewTree: UsageTree = {
   <div class="sk-table-scroll">
     <table class="sk-table">
       <thead class="sk-table__head">
-        <tr class="sk-table__row"><th class="sk-table__header">Within the scope</th><th class="sk-table__header">Comportamiento</th></tr>
+        <tr class="sk-table__row"><th class="sk-table__header">Within the scope</th><th class="sk-table__header">Behaviour</th></tr>
       </thead>
       <tbody class="sk-table__body">
-        <tr class="sk-table__row"><td class="sk-table__cell"><code>--space-*</code></td><td class="sk-table__cell">Padding, gaps and insets are recalculated with the effective density.</td></tr>
-        <tr class="sk-table__row"><td class="sk-table__cell"><code>--size-control-*</code></td><td class="sk-table__cell">They are recalculated, with the minimum floor size incorporated.</td></tr>
-        <tr class="sk-table__row"><td class="sk-table__cell">Typography, icons and radio</td><td class="sk-table__cell">They remain invariant: density brings content closer, the visual scale does not change.</td></tr>
-        <tr class="sk-table__row"><td class="sk-table__cell">Focus ring and touch area</td><td class="sk-table__cell">They remain protected. A default Button does not drop <code>44px</code> paint; <code>data-size="sm"</code> can paint at 32px and the hit is still on <code>44px</code>.</td></tr>
-        <tr class="sk-table__row"><td class="sk-table__cell">Wrappers y <code>--space-section</code></td><td class="sk-table__cell">Not compacted: The page geometry does not belong to the component.</td></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell"><code>--space-*</code></td><td class="sk-table__cell">Padding, gaps and insets are recalculated against the effective density.</td></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell"><code>--size-control-*</code></td><td class="sk-table__cell">Recalculated too, with the minimum-size floor already inside them.</td></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell">Typography, icons and radius</td><td class="sk-table__cell">Invariant: density pulls content closer together, it does not change the visual scale.</td></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell">Focus ring and touch area</td><td class="sk-table__cell">Protected. A default Button never paints below <code>44px</code>; <code>data-size="sm"</code> may paint at 32px and still keep its hit area at <code>44px</code>.</td></tr>
+        <tr class="sk-table__row"><td class="sk-table__cell">Wrappers and <code>--space-section</code></td><td class="sk-table__cell">Not compacted: page geometry does not belong to the component.</td></tr>
       </tbody>
     </table>
   </div>
 
-  <h2>Nested Scopes do not shrink twice</h2>
+  <h2>Nested scopes do not shrink twice</h2>
   <p>
-    Each scope calculates its factor against the captured density of the system, not against the parent scope. A <code>0.72</code> component inside a <code>0.72</code> component still resolves to <code>0.72 × sistema</code>, not <code>0.5184 × sistema</code>. Thus a subcomponent is not made unreadable by accidental composition.
+    Each scope computes its factor against the system density it captured, never against the scope above it. A <code>0.72</code> component inside another <code>0.72</code> component still resolves to <code>0.72 × system</code>, not <code>0.5184 × system</code>, so nesting two of them by accident cannot shrink a subcomponent out of legibility.
   </p>
 
+  <h2>Limits</h2>
   <p>
-    To configure the density of the entire application, use <a href="/dimensions#densidad--un-multiplicador-con-el-piso-adentro">the</a> global dimension. For a local exception, keep the scope at the edge of the component and let its tokens do the rest.
+    Density never touches type, radius, focus or touch area. To set it for the whole application, use
+    <a href="/dimensions">the global dimension</a>, which is where the axis itself is defined. For a local
+    exception, keep the scope on the component's own boundary and let its tokens do the rest. It continues in
+    <a href="/elevation">Elevation</a>, which shows the visual fallbacks, and in
+    <a href="/reference">Reference</a>, for looking up the resolved values.
   </p>
 </Base>
 

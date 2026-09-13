@@ -161,6 +161,20 @@ Client-side modules must import `i18n/locales`, **never** `i18n/ui`. The diction
 spreading ~110 route shards, which a bundler cannot prove pure, so importing it from the browser
 retains every translated string in the bundle.
 
+### Renaming or retiring a page
+
+A route's path is its identity: it is the key `canonicalPath()` derives, the anchor every external
+link points at, and the name a frozen docs archive will one day be matched against. So a rename is
+not a file move, it is a move plus a forwarding address.
+
+When you rename or retire a page, add the old path to `redirects` in `apps/docs/astro.config.ts`,
+pointing at the new one (or at the nearest surviving page, if the content is gone for good). Both
+locales, since `/components/tile` and `/es/componentes/tile` are two routes.
+
+There is no registry of page identities to update, and there should not be one: the redirect IS the
+record of the rename, and it is the thing a reader with an old link actually needs. See
+`docs/decisions/0022-frozen-documentation-is-a-built-archive.md`.
+
 ## The Tests tab
 
 A component page can carry a "Tests" tab showing a real pass/fail per test, not a hand-typed status.

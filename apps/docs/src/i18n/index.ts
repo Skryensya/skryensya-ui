@@ -27,6 +27,42 @@ export function isLocale(value: string | undefined | null): value is Locale {
   return typeof value === "string" && localeSet.has(value);
 }
 
+/*
+ * THE VERSION AXIS, `/v1/...`.
+ *
+ * A frozen docs version is a whole built site mounted under `/vN/` (ADR-0022), so the version is a
+ * prefix that sits OUTSIDE the locale: `/v1/es/componentes/button`, never `/es/v1/...`. An archive
+ * is produced by one build with one base, and putting the locale first would mean two bases per
+ * version or a rewrite rule in the CDN for something the build already knows.
+ *
+ * ONE SEGMENT, `v0.0.1-dev`, not two. The prefix is the NAME of an archive, not a collection with
+ * members: `/v/0.0.1-dev/` would make `/v/` have to mean something, and it does not.
+ *
+ * DOTS SURVIVE IN A PATH, and that was measured here rather than assumed: a directory segment may
+ * hold them freely, and only the LAST segment of a static URL is ever read as a filename, which is
+ * `button` and not the version. So the archive is named exactly what the release is called, with no
+ * second spelling to translate between. If a host ever refuses the dots, the fallback is `_` and it
+ * changes this regex and the directory name, nothing else.
+ *
+ * Everything below reads the version off the front and then treats the rest exactly as it always
+ * did, which is what keeps `canonicalPath` the document's identity: the same document in v1 and in
+ * latest canonicalises to the SAME path, because a version is not part of what a page IS.
+ */
+const versionSegment = /^v(\d+(?:\.\d+){0,2}(?:-[0-9A-Za-z.-]+)?)$/;
+
+/** A path split into its version prefix (if any) and the rest, which is a normal site path. */
+export function splitVersion(pathname: string): { version: string | null; path: string } {
+  const segments = pathname.split("/").filter(Boolean);
+  const match = segments[0] === undefined ? null : versionSegment.exec(segments[0]);
+  if (match) return { version: match[1]!, path: `/${segments.slice(1).join("/")}` };
+  return { version: null, path: pathname.startsWith("/") ? pathname : `/${pathname}` };
+}
+
+/** The docs version a URL belongs to, or `null` for latest (the unprefixed, editable site). */
+export function versionOf(url: URL | string): string | null {
+  return splitVersion(typeof url === "string" ? url : url.pathname).version;
+}
+
 /**
  * The locale of a URL, from its first segment.
  *
@@ -36,7 +72,7 @@ export function isLocale(value: string | undefined | null): value is Locale {
  */
 export function getLocale(url: URL | string): Locale {
   const pathname = typeof url === "string" ? url : url.pathname;
-  const first = pathname.split("/").filter(Boolean)[0];
+  const first = splitVersion(pathname).path.split("/").filter(Boolean)[0];
   return isLocale(first) ? first : defaultLocale;
 }
 
@@ -121,7 +157,7 @@ const stripLocale = (pathname: string): string => {
  * direction of `routeSegments` is the only thing that decides it.
  */
 export function canonicalPath(pathname: string): string {
-  const bare = stripLocale(pathname);
+  const bare = stripLocale(splitVersion(pathname).path);
   if (bare === "/") return "/";
   const segments = bare
     .split("/")
@@ -135,9 +171,17 @@ export function canonicalPath(pathname: string): string {
  * (`localizePath("/components/avatar", "en")`) and for the language switcher, which hands it
  * whatever the reader is currently looking at.
  */
-export function localizePath(pathname: string, locale: Locale): string {
+export function localizePath(pathname: string, locale: Locale, version?: string | null): string {
   const canonical = canonicalPath(pathname);
-  const prefix = locale === defaultLocale ? "" : `/${locale}`;
+  /*
+   * The version STAYS unless the caller names another one. A reader inside `/v1/` who switches
+   * language is still reading version 1, so the language control must not quietly move them to
+   * latest; the version control is the one that changes this axis, and it passes `version`
+   * explicitly. `undefined` means "keep what the path had", `null` means "latest".
+   */
+  const target = version === undefined ? splitVersion(pathname).version : version;
+  const versionPrefix = target === null ? "" : `/v${target}`;
+  const prefix = `${versionPrefix}${locale === defaultLocale ? "" : `/${locale}`}`;
   if (canonical === "/") return prefix || "/";
   const segments = canonical
     .split("/")
@@ -193,6 +237,10 @@ function routeFromModulePath(modulePath: string): string {
 const pagesByCanonical = new Map<string, Set<Locale>>();
 for (const modulePath of Object.keys(pageModules)) {
   const route = routeFromModulePath(modulePath);
+  /* Frozen archives are a different axis and have their own index (`lib/docs-versions.ts`). Folding
+   * them in here would make `hasTranslation` answer "yes" for a translation that only ever existed
+   * in an old version, and light up the language switcher on a page that cannot honour it. */
+  if (splitVersion(route).version !== null) continue;
   const canonical = canonicalPath(route);
   const locale = getLocale(route);
   const existing = pagesByCanonical.get(canonical) ?? new Set<Locale>();

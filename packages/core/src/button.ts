@@ -3,6 +3,10 @@ import type { ComponentContract, OptionsOf, OptionValue } from "./contract.js";
 export const buttonParts = {
   root: "sk-button",
   interactive: "sk-interactive",
+  /** Leading slot: icon (or other affordance) before the label. */
+  pre: "sk-button__pre",
+  /** Trailing slot: icon (or other affordance) after the label. */
+  post: "sk-button__post",
 } as const;
 
 export type ButtonPart = keyof typeof buttonParts;
@@ -168,7 +172,19 @@ export const buttonContract = {
       intent: ["action", "submit", "destructive-action"],
       host: { element: "button", when: { href: "absent" } },
       options: ["variant", "tone", "size", "iconOnly", "weldStart", "weldEnd", "pressed", "disabled"],
-      slots: { children: { accepts: "node", required: true } },
+      slots: {
+        /**
+         * Reserved place BEFORE the label. An icon that names the kind of action (download, add)
+         * lands here; omitting it leaves no empty box in the flex row.
+         */
+        pre: { accepts: "node" },
+        children: { accepts: "node", required: true },
+        /**
+         * Reserved place AFTER the label. An icon that points where the action goes (arrow, chevron)
+         * lands here; same omit-when-empty rule as `pre`.
+         */
+        post: { accepts: "node" },
+      },
       template: {
         element: "button",
         part: "root",
@@ -177,7 +193,11 @@ export const buttonContract = {
         // The announcement, beside the behaviour: `disabled` stops the click, `aria-disabled` is
         // what a screen reader reads on a control it can still land on.
         attrsWhen: [{ option: "disabled", equals: "true", attrs: { "aria-disabled": "true" } }],
-        slot: "children",
+        children: [
+          { element: "span", part: "pre", whenGiven: "pre", slot: "pre" },
+          { slot: "children" },
+          { element: "span", part: "post", whenGiven: "post", slot: "post" },
+        ],
       },
       react: { from: "@skryensya/react/button", name: "Button" },
       mount: "data-sk-button",
@@ -189,13 +209,21 @@ export const buttonContract = {
       options: ["variant", "tone", "size", "iconOnly", "weldStart", "weldEnd", "href"],
       requires: ["href"],
       forbids: ["disabled", "type", "pressed"],
-      slots: { children: { accepts: "node", required: true } },
+      slots: {
+        pre: { accepts: "node" },
+        children: { accepts: "node", required: true },
+        post: { accepts: "node" },
+      },
       template: {
         element: "a",
         part: "root",
         also: [buttonParts.interactive],
         host: true,
-        slot: "children",
+        children: [
+          { element: "span", part: "pre", whenGiven: "pre", slot: "pre" },
+          { slot: "children" },
+          { element: "span", part: "post", whenGiven: "post", slot: "post" },
+        ],
       },
       react: { from: "@skryensya/react/button", name: "Button" },
       mount: "data-sk-button",

@@ -1,4 +1,5 @@
 import { fireEvent, render } from "@testing-library/react";
+import { buttonParts } from "@skryensya/core/button";
 import { describe, expect, it, vi } from "vitest";
 import { Button } from "./button.js";
 
@@ -57,17 +58,28 @@ describe("Button", () => {
     expect(onClick).not.toHaveBeenCalled();
   });
 
-  it("carries a leading icon alongside its label", () => {
+  it("carries a leading icon in the pre slot alongside its label", () => {
     const ui = render(
-      <Button tone="accent">
-        <svg className="sk-icon" data-icon="check" aria-hidden="true" />
+      <Button tone="accent" pre={<svg className="sk-icon" data-icon="check" aria-hidden="true" />}>
         Guardar
       </Button>,
     );
     const button = ui.getByRole("button", { name: "Guardar" });
 
-    // the decorative icon is present but does not contribute to the accessible name
-    expect(button.querySelector("svg.sk-icon")).not.toBeNull();
+    expect(button.querySelector(`.${buttonParts.pre} svg.sk-icon`)).not.toBeNull();
+    expect(button.querySelector(`.${buttonParts.post}`)).toBeNull();
+  });
+
+  it("carries a trailing icon in the post slot alongside its label", () => {
+    const ui = render(
+      <Button tone="accent" post={<svg className="sk-icon" data-icon="arrow-right" aria-hidden="true" />}>
+        Continuar
+      </Button>,
+    );
+    const button = ui.getByRole("button", { name: "Continuar" });
+
+    expect(button.querySelector(`.${buttonParts.pre}`)).toBeNull();
+    expect(button.querySelector(`.${buttonParts.post} svg.sk-icon`)).not.toBeNull();
   });
 
   it("renders an icon-only button as a named square", () => {

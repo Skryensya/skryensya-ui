@@ -3,8 +3,29 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "5edc4bccd5481c07"
+surface: "51ea2207a5ae7098"
 entries:
+  - date: 2026-09-12
+    kind: feature
+    target: pre
+    es:
+      title: Slots pre y post para iconos a ambos lados del label
+      body: >-
+        <code>Button.action</code> y <code>Button.navigation</code> ganan los slots opcionales
+        <code>pre</code> y <code>post</code> (<code>sk-button__pre</code> / <code>sk-button__post</code>):
+        el lugar reservado antes y después del label para un icono u otra affordance. Un slot vacío
+        no se renderiza. El icono sigue siendo <code>sk-icon</code>; lo que cambia es que ya no
+        depende del orden libre dentro de <code>children</code>. Aditivo: un botón solo con label
+        no cambia.
+    en:
+      title: Pre and post slots for icons on either side of the label
+      body: >-
+        <code>Button.action</code> and <code>Button.navigation</code> gain optional
+        <code>pre</code> and <code>post</code> slots (<code>sk-button__pre</code> /
+        <code>sk-button__post</code>): the reserved places before and after the label for an icon
+        or other affordance. An empty slot is not rendered. The icon is still <code>sk-icon</code>;
+        what changes is that it no longer depends on free order inside <code>children</code>.
+        Additive: a label-only button is unchanged.
   - date: 2026-09-07
     kind: feature
     target: size

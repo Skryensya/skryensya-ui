@@ -453,6 +453,19 @@
           {
             "date": "2026-09-12",
             "en": {
+              "body": "<code>Button.action</code> and <code>Button.navigation</code> gain optional <code>pre</code> and <code>post</code> slots (<code>sk-button__pre</code> / <code>sk-button__post</code>): the reserved places before and after the label for an icon or other affordance. An empty slot is not rendered. The icon is still <code>sk-icon</code>; what changes is that it no longer depends on free order inside <code>children</code>. Additive: a label-only button is unchanged.",
+              "title": "Pre and post slots for icons on either side of the label"
+            },
+            "es": {
+              "body": "<code>Button.action</code> y <code>Button.navigation</code> ganan los slots opcionales <code>pre</code> y <code>post</code> (<code>sk-button__pre</code> / <code>sk-button__post</code>): el lugar reservado antes y después del label para un icono u otra affordance. Un slot vacío no se renderiza. El icono sigue siendo <code>sk-icon</code>; lo que cambia es que ya no depende del orden libre dentro de <code>children</code>. Aditivo: un botón solo con label no cambia.",
+              "title": "Slots pre y post para iconos a ambos lados del label"
+            },
+            "kind": "feature",
+            "target": "pre"
+          },
+          {
+            "date": "2026-09-12",
+            "en": {
               "body": "The contract now publishes this component's <code>16</code> styling hooks. Nothing you wrote changes: the same hooks, under the same names, and the stylesheet was not touched. What is new is that the contract declares them, so the compiler fails when the stylesheet declares one the contract does not publish, or the contract promises one the stylesheet never declares. That second half is the one that matters: until now, re-declaring a hook that no longer existed was not an error, it was silence.",
               "title": "button's styling hooks are now declared in the contract"
             },
@@ -6555,6 +6568,8 @@
       },
       "parts": {
         "interactive": "sk-interactive",
+        "post": "sk-button__post",
+        "pre": "sk-button__pre",
         "root": "sk-button"
       },
       "semantics": {
@@ -6640,6 +6655,12 @@
             "children": {
               "accepts": "node",
               "required": true
+            },
+            "post": {
+              "accepts": "node"
+            },
+            "pre": {
+              "accepts": "node"
             }
           },
           "template": {
@@ -6655,10 +6676,26 @@
                 "option": "disabled"
               }
             ],
+            "children": [
+              {
+                "element": "span",
+                "part": "pre",
+                "slot": "pre",
+                "whenGiven": "pre"
+              },
+              {
+                "slot": "children"
+              },
+              {
+                "element": "span",
+                "part": "post",
+                "slot": "post",
+                "whenGiven": "post"
+              }
+            ],
             "element": "button",
             "host": true,
-            "part": "root",
-            "slot": "children"
+            "part": "root"
           }
         },
         "Button.navigation": {
@@ -6698,16 +6735,38 @@
             "children": {
               "accepts": "node",
               "required": true
+            },
+            "post": {
+              "accepts": "node"
+            },
+            "pre": {
+              "accepts": "node"
             }
           },
           "template": {
             "also": [
               "sk-interactive"
             ],
+            "children": [
+              {
+                "element": "span",
+                "part": "pre",
+                "slot": "pre",
+                "whenGiven": "pre"
+              },
+              {
+                "slot": "children"
+              },
+              {
+                "element": "span",
+                "part": "post",
+                "slot": "post",
+                "whenGiven": "post"
+              }
+            ],
             "element": "a",
             "host": true,
-            "part": "root",
-            "slot": "children"
+            "part": "root"
           }
         }
       }
@@ -24836,5 +24895,5 @@
     "working": "0.1.0"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "de6c65fe93835abf"
+  "sourceHash": "c97ea3561d8a40ca"
 }

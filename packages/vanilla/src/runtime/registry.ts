@@ -257,6 +257,16 @@ function containsSelector(root: Document | Element, selector: string): boolean {
  * Dynamically import and mount only enhancer types whose authored selectors exist below `root`.
  * Re-run after inserting DOM; individual mounts remain idempotent.
  */
+/**
+ * Every authored root this layer knows how to enhance, as selectors.
+ *
+ * Exported so the enhancers can be checked from OUTSIDE against the markup the emitter produces:
+ * `packages/ai-gates` mounts each canonical tree and asserts that a root this list matches was
+ * actually enhanced. Without it a test has to guess the mapping from a contract to its enhancer,
+ * and guessing wrong looks exactly like the failure it is hunting: a selector that matches nothing.
+ */
+export const registeredSelectors: readonly string[] = registrations.map(({ selector }) => selector);
+
 export async function initComponents(
   target?: Document | Element,
 ): Promise<number> {

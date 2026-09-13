@@ -588,6 +588,11 @@ const SKELETONS: Record<SkeletonKind, () => UsageTree> = {
 const LANE_DROPS = ["3rem", "1.5rem", "0rem", "1.5rem", "3rem"];
 const SKELETON_LANE_DROP = "4.5rem";
 
+/* How many steps behind the centre lane each one enters, which is just its distance from the
+   middle. The skeleton lanes are one step further out again. */
+const LANE_STEPS = [2, 1, 0, 1, 2];
+const SKELETON_LANE_STEP = 3;
+
 /* Two lanes, each a different reading order, so the pair does not look like one column mirrored. */
 const skeletonLanes: UsageTree[][] = [
   skeletonLane(["media", "person", "metric", "list", "control", "paragraph", "person"]),
@@ -713,32 +718,37 @@ const columns: GalleryTile[][] = [
           static, so there is no viewport to branch on at build time, and a lane that appears by
           stylesheet cannot disagree with the column template that makes room for it.
         */}
-        <div class="landing-gallery__skeleton sk-fade-edge" data-direction="to-bottom" aria-hidden="true" style={`--landing-lane-drop: ${SKELETON_LANE_DROP}`}>
+        <div class="landing-gallery__skeleton sk-fade-edge" data-direction="to-bottom" aria-hidden="true" style={`--landing-lane-drop: ${SKELETON_LANE_DROP}; --lane-step: ${SKELETON_LANE_STEP}`}>
           <div class="sk-stack" data-gap="sm">
-            {skeletonLanes[0].map((tree) => (
-              <div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" set:html={emitMarkup(tree, { fillDefaults: false })} />
+            {skeletonLanes[0].map((tree, tile) => (
+              <div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" style={`--tile-step: ${tile}`} set:html={emitMarkup(tree, { fillDefaults: false })} />
             ))}
           </div>
         </div>
         {
           columns.map((column, lane) => (
-            <div class="sk-stack" data-gap="sm" style={`--landing-lane-drop: ${LANE_DROPS[lane]}`}>
-              {column.map(({ tree, frame, idPrefix }) => (
+            <div
+              class="sk-stack"
+              data-gap="sm"
+              style={`--landing-lane-drop: ${LANE_DROPS[lane]}; --lane-step: ${LANE_STEPS[lane]}`}
+            >
+              {column.map(({ tree, frame, idPrefix }, tile) => (
                 <div
                   class="sk-box"
                   data-surface={frame.surface}
                   data-border={frame.border}
                   data-padding={frame.padding}
+                  style={`--tile-step: ${tile}`}
                   set:html={emitMarkup(tree, { fillDefaults: false, idPrefix })}
                 />
               ))}
             </div>
           ))
         }
-        <div class="landing-gallery__skeleton sk-fade-edge" data-direction="to-bottom" aria-hidden="true" style={`--landing-lane-drop: ${SKELETON_LANE_DROP}`}>
+        <div class="landing-gallery__skeleton sk-fade-edge" data-direction="to-bottom" aria-hidden="true" style={`--landing-lane-drop: ${SKELETON_LANE_DROP}; --lane-step: ${SKELETON_LANE_STEP}`}>
           <div class="sk-stack" data-gap="sm">
-            {skeletonLanes[1].map((tree) => (
-              <div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" set:html={emitMarkup(tree, { fillDefaults: false })} />
+            {skeletonLanes[1].map((tree, tile) => (
+              <div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" style={`--tile-step: ${tile}`} set:html={emitMarkup(tree, { fillDefaults: false })} />
             ))}
           </div>
         </div>
@@ -819,57 +829,126 @@ const columns: GalleryTile[][] = [
     z-index: 0;
     pointer-events: none;
     overflow: clip;
-    /*
-     * TWO ELLIPSES, not one, which is what gives the field a middle instead of a flat wash: a wide
-     * shallow one for the room, and a tighter, hotter core sitting inside it where the buttons are.
-     * A single stop list can only fade outward at one rate, so a light bright enough to read at the
-     * centre was a bruise by the time it reached the sides. Layered, the core carries the intensity
-     * and the field carries the reach.
-     */
-    background:
-      radial-gradient(
-        58% 40% at 50% 92%,
-        color-mix(in oklab, var(--color-action-accent) 34%, transparent) 0%,
-        color-mix(in oklab, var(--color-action-accent) 12%, transparent) 55%,
-        transparent 82%
-      ),
-      radial-gradient(
-        125% 72% at 50% 88%,
-        color-mix(in oklab, var(--color-action-accent) 26%, transparent) 0%,
-        color-mix(in oklab, var(--color-action-accent) 11%, transparent) 45%,
-        transparent 74%
-      );
   }
 
   /*
-   * THE GRAIN, and the filter chain is the part that changed: `fractalNoise`, then `feColorMatrix`
-   * to drain the colour out of it, then `feComponentTransfer` to push what is left toward black and
-   * white.
+   * THE LIGHT, on its own layer so it can move without dragging the grain with it: a transform on
+   * the parent would scale the noise tile too, and grain that breathes is grain that reads as a
+   * rendering artefact.
    *
-   * Raw turbulence is RGB noise, which is coloured static: at any opacity where you can see it, you
-   * can see that it is red and green speckle sitting on a blue field. Desaturating first is what
-   * turns it into grain rather than interference, and the linear transfer (`slope 1.9`,
-   * `intercept -0.45`) is the contrast boost that gives it edges instead of a soft grey fog. Same
-   * two moves every published film-grain filter makes, in the same order.
-   *
-   * A GENERATED TILE, not a texture downloaded from somewhere. Every source that offers both says
-   * the same thing, and it is the right call here for a second reason: a PNG off the web arrives
-   * with a licence this repo would then have to carry, for something 700 bytes of SVG does exactly
-   * as well. `stitchTiles` is what makes the 240px tile repeat without a visible seam.
-   *
-   * `overlay` at 46%: overlay because it works from both ends (multiply only darkens, and on the
-   * dark palette it did nothing at all), and 46% because the contrast boost made the same texture
-   * read quieter than the flat noise it replaced.
+   * A CIRCLE, stated as one (`circle <length> at …`) rather than left to a percentage pair, which
+   * resolves against the box and therefore comes out an ellipse on every viewport that is not
+   * square. The radius is in `rem` so the disc is the same physical size on a laptop and on a
+   * 4K panel instead of growing with the window.
    */
-  .landing-backdrop::after {
+  .landing-backdrop::before {
     content: "";
     position: absolute;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.62' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.9' intercept='-0.45'/%3E%3CfeFuncG type='linear' slope='1.9' intercept='-0.45'/%3E%3CfeFuncB type='linear' slope='1.9' intercept='-0.45'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23g)'/%3E%3C/svg%3E");
-    background-size: 240px 240px;
-    mix-blend-mode: overlay;
-    opacity: 0.46;
-    mask-image: radial-gradient(115% 82% at 50% 92%, #000 0%, rgb(0 0 0 / 55%) 48%, transparent 80%);
+    background:
+      radial-gradient(
+        circle 26rem at 50% 76%,
+        color-mix(in oklab, var(--color-action-accent) 34%, transparent) 0%,
+        color-mix(in oklab, var(--color-action-accent) 13%, transparent) 52%,
+        transparent 78%
+      ),
+      radial-gradient(
+        circle 44rem at 50% 78%,
+        color-mix(in oklab, var(--color-action-accent) 20%, transparent) 0%,
+        color-mix(in oklab, var(--color-action-accent) 8%, transparent) 48%,
+        transparent 76%
+      );
+    transform-origin: 50% 78%;
+    /*
+     * THE RESTING STATE, written on the element rather than left to the animation's last frame.
+     * Two readers have to land here: the one whose pulse has finished, and the one who never got a
+     * pulse because they asked for less motion. Declaring it once is what guarantees those two see
+     * the same page rather than the second one seeing whatever the base happened to be.
+     */
+    opacity: 0.92;
+  }
+
+  /*
+   * ONE PULSE, ON ARRIVAL. It was looping every nine seconds, which is a light with a heartbeat:
+   * fine for two breaths, then it is a thing moving in the corner of the eye for as long as the tab
+   * is open, and nothing on the page ever changes in response to it. Once, as the content comes in,
+   * says the same thing and then stops saying it.
+   *
+   * The shape is a lamp coming on rather than a throb: it starts small and dim, overshoots the
+   * resting size by a hair, and settles. `both` so it holds that resting frame afterwards instead
+   * of snapping back to the declaration above.
+   *
+   * AN OPT-IN, not an override. A reader who asked for reduced motion never enters this block, so
+   * they get the static light declared above, and so does anyone whose browser the query cannot
+   * read. Same for the gallery's reveal further down: the tiles animate inside a
+   * `no-preference` block and are simply present outside it.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    .landing-backdrop::before {
+      animation: landing-pulse 2.4s var(--scale-easing-enter, cubic-bezier(0.16, 1, 0.3, 1)) both;
+    }
+  }
+
+  /*
+   * Scale and opacity move together throughout: scaling alone reads as the window resizing, fading
+   * alone reads as a flicker, and the two together read as light.
+   */
+  @keyframes landing-pulse {
+    from {
+      transform: scale(0.92);
+      opacity: 0.4;
+    }
+    60% {
+      transform: scale(1.05);
+      opacity: 1;
+    }
+    to {
+      transform: scale(1);
+      opacity: 0.92;
+    }
+  }
+
+  /*
+   * THE REVEAL: one orchestrated moment on load, ordered from the middle of the gallery outward.
+   *
+   * TWO STAGGERS NESTED. The lanes go first, by distance from the centre (`--lane-step`, written on
+   * each lane), so the middle column arrives, then the pair beside it, then the outer pair, then the
+   * skeleton lanes at the tier. Inside each lane the tiles follow on their own step
+   * (`--tile-step`), so a column fills downward rather than appearing whole. The delay each tile
+   * actually waits is its lane's head start plus its own position, which is one multiplication in
+   * the markup and nothing for the stylesheet to work out.
+   *
+   * It agrees with the arc the lanes already sit in: the centre lane starts highest AND first, the
+   * outer ones start lowest AND last, so the eye is pulled along the same curve twice.
+   *
+   * RISE AND FADE, 8px. Far enough to be a direction, close enough that a reader who blinks has
+   * missed nothing: the page is readable at rest and the motion is how it got there, not a thing to
+   * watch. The whole sequence is over in under a second at the furthest tile.
+   *
+   * `backwards` fill so a tile waiting its turn is already invisible rather than flashing at full
+   * opacity for the length of its own delay.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Both lane shapes: a real lane IS the stack, a skeleton lane WRAPS one (it needs the fade-edge
+       element around it), so its tiles sit a level deeper. Selecting `> * > *` alone reached the
+       stack inside the skeleton lane rather than the tiles in it, and those never animated. */
+    .landing-gallery > .sk-stack > *,
+    .landing-gallery > .landing-gallery__skeleton > .sk-stack > * {
+      animation: landing-rise var(--motion-enter-duration, 240ms) var(--motion-enter-easing, ease-out)
+        both;
+      animation-delay: calc(var(--lane-step, 0) * 90ms + var(--tile-step, 0) * 55ms);
+    }
+  }
+
+  @keyframes landing-rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 
   /* Everything the page renders sits over the light, in its own layer. */
@@ -886,15 +965,46 @@ const columns: GalleryTile[][] = [
   }
 
   /*
-   * A HEADLINE WANTS THE BAND, A SENTENCE WANTS A MEASURE, and centred copy makes the second half
-   * load-bearing: a centred line that runs the full `breakout` width gives the reader no reliable
-   * left edge to return to, which is the failure mode centred type has and ranged-left type does
-   * not. Capped and centred in the band instead.
+   * THE OPENING SCREEN. The band takes most of the first viewport and centres its copy in what it
+   * takes, so the page opens on the sentence rather than on the sentence plus a strip of gallery
+   * peeking in under it. `min()` rather than a flat `vh`: on a short laptop window 78vh is the
+   * right share of the screen, and on a tall monitor a hero that keeps growing with the glass is
+   * just a bigger empty room, so 42rem caps it.
+   *
+   * `justify-content: center` is already `hero.css`'s own doing (it centres its single child
+   * unconditionally, see its note on the min-height), which is why raising the floor is all this
+   * takes to put the copy in the middle of the screen.
    */
+  .landing-hero__band {
+    --sk-hero-min-height: min(78vh, 42rem);
+  }
+
+  /*
+   * TYPE THAT SCALES WITH THE PAGE. `display-lg` is the largest step the scale publishes, and it is
+   * sized for a page heading inside a document, not for the one line a landing page opens on: at
+   * `breakout` width it filled about half the measure and read as a section title that happened to
+   * be first. `clamp` takes the token as its floor, so nothing gets SMALLER than the scale on a
+   * phone, and lets it grow with the viewport up to 5.25rem.
+   *
+   * The lede moves with it, a step under `lg`'s own size: a headline that grows while the line
+   * under it stays put stops reading as a pair.
+   */
+  .landing-hero__copy .sk-heading {
+    font-size: clamp(var(--font-size-display-lg), 5.2vw, 5.25rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+  }
+
   .landing-hero__lede {
-    max-inline-size: 46ch;
+    /*
+     * A CENTRED LINE NEEDS A MEASURE more than a ranged-left one does: with no reliable left edge
+     * to return to, a long centred line is read by hunting for where the next one starts. Capped at
+     * 42ch and centred in the band.
+     */
+    max-inline-size: 42ch;
     margin-inline: auto;
     text-align: center;
+    font-size: clamp(var(--font-size-body-lg, 1.125rem), 1.35vw, 1.5rem);
   }
 
   .landing-hero__copy {

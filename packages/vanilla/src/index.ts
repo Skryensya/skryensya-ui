@@ -53,7 +53,7 @@ export { connectCommandPalette, mountCommandPalette } from "./components/command
 export { mountCommentThread } from "./components/comment-thread.js";
 export { mountTimeField } from "./components/time-field.js";
 export { connectToc, mountToc } from "./components/toc.js";
-export { initComponents } from "./runtime/registry.js";
+export { initComponents, registeredSelectors } from "./runtime/registry.js";
 export { destroyMount, destroyEnhancer } from "./runtime/svelte-hydrate.js";
 export { applyAttrs, bindEvents } from "./runtime/apply.js";
 export { connectVaul, mountVaul } from "./components/vaul.js";

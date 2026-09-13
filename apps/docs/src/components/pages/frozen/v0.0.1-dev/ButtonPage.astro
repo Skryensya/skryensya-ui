@@ -16,16 +16,25 @@
  * Under a frozen URL that is not a convenience, it is a lie: the prose would describe this version
  * while the demo underneath it runs the next one's code. The archive shows its code samples, says so
  * in a line the reader can see, and sends anyone who wants a live control to the latest version.
+ *
+ * WHERE THE CODE COMES FROM, and this is the part that matters: `button.emitted.json`, which is the
+ * OUTPUT of the emitter at the cut, not a tree emitted while this page renders. A tree is input; the
+ * compiler and the contract it reads both move forward, so emitting here would print today's markup
+ * under this version's prose. `freeze-archive-code.mts` is what produced the file, and the trees it
+ * read are in `button.trees.ts` beside it, kept so a regeneration is reviewable rather than retyped.
  */
 import FrozenPage from "../../../FrozenPage.astro";
 import CodeBlock from "../../../CodeBlock.astro";
-import { getLocale } from "../../../../i18n";
+import { getLocale, useTranslations } from "../../../../i18n";
+import emitted from "./button.emitted.json";
 
 /** The day this cut was taken. In a real archive it is the tag's date, read by the cut script. */
 const FROZEN_AT = "2026-06-30";
 const VERSION = "0.0.1-dev";
 
 const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+const { snippets } = emitted;
 
 
 /* The page's own words, as they read at the cut. Both locales, because one archive holds both. */
@@ -39,9 +48,6 @@ const copy = {
     sizesTitle: "Tamaños",
     sizesBody:
       "Tres tamaños: <code>sm</code>, <code>md</code> y <code>lg</code>. El área de toque nunca baja del mínimo aunque la caja visible sea más chica.",
-    iconTitle: "Con icono",
-    iconBody:
-      "Un icono acompaña al texto, nunca lo reemplaza, salvo en la forma icon-only, que exige un nombre accesible explícito.",
     linkTitle: "Como enlace",
     linkBody: "Cuando la acción navega, el elemento correcto es un <code>&lt;a&gt;</code> con la apariencia de Button.",
     installTitle: "Instalación",
@@ -55,9 +61,6 @@ const copy = {
     sizesTitle: "Sizes",
     sizesBody:
       "Three sizes: <code>sm</code>, <code>md</code> and <code>lg</code>. The hit area never drops below the minimum even when the painted box is smaller.",
-    iconTitle: "With an icon",
-    iconBody:
-      "An icon accompanies the label, never replaces it, except in the icon-only shape, which requires an explicit accessible name.",
     linkTitle: "As a link",
     linkBody: "When the action navigates, the right element is an <code>&lt;a&gt;</code> wearing Button's appearance.",
     installTitle: "Installation",
@@ -66,13 +69,6 @@ const copy = {
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
-const markup = `<button class="sk-button" data-variant="solid" data-size="md">
-  Guardar
-</button>`;
-
-const iconOnly = `<button class="sk-button" data-variant="ghost" data-icon-only aria-label="Cerrar">
-  <span data-sk-icon="close"></span>
-</button>`;
 ---
 
 <FrozenPage
@@ -86,17 +82,18 @@ const iconOnly = `<button class="sk-button" data-variant="ghost" data-icon-only 
 
   <h2>{copy.variantsTitle}</h2>
   <p set:html={copy.variantsBody} />
-  <CodeBlock code={markup} label="HTML" lang="html" />
+  <CodeBlock code={snippets.variants.html} label="HTML" lang="html" />
+  <CodeBlock code={snippets.variants.react} label="React" lang="tsx" />
 
   <h2>{copy.sizesTitle}</h2>
   <p set:html={copy.sizesBody} />
-
-  <h2>{copy.iconTitle}</h2>
-  <p set:html={copy.iconBody} />
-  <CodeBlock code={iconOnly} label="HTML" lang="html" />
+  <CodeBlock code={snippets.sizes.html} label="HTML" lang="html" />
+  <CodeBlock code={snippets.sizes.react} label="React" lang="tsx" />
 
   <h2>{copy.linkTitle}</h2>
   <p set:html={copy.linkBody} />
+  <CodeBlock code={snippets.link.html} label="HTML" lang="html" />
+  <CodeBlock code={snippets.link.react} label="React" lang="tsx" />
 
   <h2>{copy.installTitle}</h2>
   <CodeBlock code={install} label="terminal" />

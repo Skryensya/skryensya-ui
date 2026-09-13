@@ -27,7 +27,15 @@ import { frozenHasTranslation, frozenVersions } from "../lib/docs-versions";
 import { iconMarkup } from "../icons";
 
 interface Props {
-  /** Full-width Tile Button for the mobile preference sheet, same contract as `LanguageMenu`. */
+  /**
+   * Render the mobile form: the WHOLE list of versions inside the preference sheet, one row each.
+   *
+   * Not a Tile Button that cycles to the next version, which is what the other rows of that sheet
+   * do and what this used to do. Cycling is right for a dimension with two or three states a reader
+   * flips between (theme, contrast) and wrong for a version: the list grows with every cut, the
+   * reader is CHOOSING one they already have in mind, and a control that only moves forward makes
+   * them tap through the archive to reach it. A list says what exists and lets them pick.
+   */
   tile?: boolean;
   /** Visible title inside the tile. Only read when `tile`. */
   label?: string;
@@ -59,29 +67,32 @@ const rows = [
 
 const currentLabel = rows.find((row) => row.value === current)?.label ?? t("version.latest");
 
-/* Tile variant: one tap to the next version this document actually has, wrapping. */
-const reachable = rows.filter((row) => row.available);
-const next = reachable[(reachable.findIndex((row) => row.value === current) + 1) % reachable.length];
-
 const versionIcon = iconMarkup("clock");
+const listId = "docs-prefs-version-label";
 ---
 
 {
-  tile && frozenVersions.length > 0 && next && (
-    <a
-      class="sk-interactive sk-tile sk-tile--interactive docs-prefs-tile"
-      data-scope="tile"
-      data-part="root"
-      data-padding="md"
-      href={next.href}
-      aria-label={t("version.named", { name: currentLabel })}
-    >
-      <span class="sk-tile__content" data-part="content">
-        <span class="sk-tile__title">{label ?? t("version.control")}</span>
-        {description && <span class="sk-tile__description">{description}</span>}
-      </span>
-      <span class="docs-prefs-tile__value">{currentLabel}</span>
-    </a>
+  tile && frozenVersions.length > 0 && (
+    <nav class="sk-nav-list docs-prefs-versions" aria-labelledby={listId}>
+      <div class="sk-nav-list__group">
+        <div class="sk-nav-list__group-label" id={listId}>{label ?? t("version.control")}</div>
+        {description && <p class="docs-prefs-versions__hint">{description}</p>}
+        <ul class="sk-nav-list__list" aria-labelledby={listId}>
+          {rows.map((row) => (
+            <li class="sk-nav-list__item" data-todo={row.available ? undefined : ""}>
+              <a
+                class="sk-nav-list__link sk-interactive"
+                href={row.available ? row.href : undefined}
+                aria-current={row.value === current ? "page" : undefined}
+                aria-disabled={row.available ? undefined : "true"}
+              >
+                <span class="sk-nav-list__label">{row.label}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </nav>
   )
 }
 

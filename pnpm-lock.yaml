@@ -188,6 +188,9 @@ importers:
       '@skryensya/recipes':
         specifier: workspace:*
         version: link:../../contracts/recipes
+      '@skryensya/snippets':
+        specifier: workspace:*
+        version: link:../../contracts/snippets
       '@skryensya/vanilla':
         specifier: workspace:*
         version: link:../../packages/vanilla

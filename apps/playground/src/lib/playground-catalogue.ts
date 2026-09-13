@@ -1,4 +1,6 @@
 import { validateUsageTree } from "@skryensya/ai-compiler/validate";
+import { recipes } from "@skryensya/recipes";
+import { snippets } from "@skryensya/snippets";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import { componentNavigation } from "./navigation";
 import type { Translate } from "../i18n";
@@ -119,6 +121,8 @@ export function playgroundCatalogue(t: Translate): readonly PlaygroundComponent[
   for (const [path, module] of Object.entries(modules).sort(([a], [b]) => a.localeCompare(b))) {
     const id = moduleId(path);
     const examples: PlaygroundExample[] = [];
+    /** Slugs already taken inside THIS component, so a second one cannot reuse an id. */
+    const claimed = new Set<string>();
 
     for (const [exportName, value] of Object.entries(module)) {
       const extra = EXTRA_ARGUMENTS[exportName];
@@ -150,8 +154,26 @@ export function playgroundCatalogue(t: Translate): readonly PlaygroundComponent[
       const problems = validateUsageTree(tree as UsageTree).problems;
       if (problems.some((problem) => problem.severity === "error")) continue;
 
-      const label = humanise(exportName, id);
-      examples.push({ id: slugify(label) || exportName.toLowerCase(), label, tree: tree as UsageTree });
+      /*
+       * THE PREFIX STRIP CAN COLLIDE, so the slug is claimed rather than assumed. `humanise` removes
+       * the component prefix from the export name, which is what turns `buttonIconOnlyTree` into
+       * "Icon only": but in `demos/layout.ts` both `gridTree` and `layoutGridTree` come out "Grid",
+       * because stripping `layout` from the second leaves exactly the first. That shipped two rail
+       * entries reading "Grid", two catalogue ids reading `grid`, and React warning about duplicate
+       * keys on every render of the rail.
+       *
+       * On a collision the FULL export name is used instead, which is unique by construction: a
+       * module cannot export the same name twice. So the second one reads "Layout grid", which is
+       * also the more accurate name for it.
+       */
+      let label = humanise(exportName, id);
+      let slug = slugify(label) || exportName.toLowerCase();
+      if (claimed.has(slug)) {
+        label = humanise(exportName, "");
+        slug = slugify(label) || exportName.toLowerCase();
+      }
+      claimed.add(slug);
+      examples.push({ id: slug, label, tree: tree as UsageTree });
     }
 
     if (examples.length === 0) continue;
@@ -160,8 +182,60 @@ export function playgroundCatalogue(t: Translate): readonly PlaygroundComponent[
     components.push({
       id,
       label: page?.label ?? humanise(id, ""),
-      docs: page?.href ?? `/componentes/${id}`,
+      docs: page?.href ?? `/components/${id}`,
       examples: examples.sort((a, b) => a.label.localeCompare(b.label, "es")),
+    });
+  }
+
+  /*
+   * THE TWO EXAMPLE SOURCES THAT ARE NOT PER-COMPONENT.
+   *
+   * The glob above reaches `docs/src/demos/`, which is organised one module per component, and that
+   * shape is the rail. `@skryensya/snippets` and `@skryensya/recipes` are the other two places this
+   * repo keeps established trees, and they are not per-component by design: a snippet is a few
+   * families composed into one small piece of UI, a recipe is a whole screen in four states. Left
+   * out, the playground offered every Button variant and nothing that showed Button inside anything.
+   *
+   * They arrive as packages rather than a glob because that is what they already are: the compiler
+   * validates both on every build, so a tree that stopped matching its contract fails there instead
+   * of turning up broken here.
+   */
+  const snippetExamples = snippets
+    .filter((snippet) => snippet.tree.contract !== "annotation")
+    .filter((snippet) => !validateUsageTree(snippet.tree).problems.some((p) => p.severity === "error"))
+    .map((snippet) => ({ id: snippet.id, label: humanise(snippet.id, ""), tree: snippet.tree }));
+
+  if (snippetExamples.length > 0) {
+    components.push({
+      id: "snippets",
+      label: t("nav.snippets"),
+      /* No page of its own yet, so the nearest honest destination is the catalogue it composes. */
+      docs: "/components",
+      examples: [...snippetExamples].sort((a, b) => a.label.localeCompare(b.label, "es")),
+    });
+  }
+
+  /* Reading order, not alphabetical, and the same order `/recipes` renders: a screen is nothing
+     until it has come back, and the state that teaches the most is the one everybody skips. */
+  const stateOrder = ["loading", "empty", "error", "success"] as const;
+  const recipeExamples = recipes.flatMap((recipe) =>
+    stateOrder
+      .map((state) => ({ state, tree: recipe.states[state] }))
+      .filter(({ tree }) => tree && tree.contract !== "annotation")
+      .filter(({ tree }) => !validateUsageTree(tree).problems.some((p) => p.severity === "error"))
+      .map(({ state, tree }) => ({
+        id: `${recipe.id}-${state}`,
+        label: `${humanise(recipe.id, "")} · ${state}`,
+        tree,
+      })),
+  );
+
+  if (recipeExamples.length > 0) {
+    components.push({
+      id: "recipes",
+      label: t("nav.recipes"),
+      docs: "/recipes",
+      examples: recipeExamples,
     });
   }
 

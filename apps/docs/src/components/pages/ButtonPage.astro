@@ -20,11 +20,12 @@ import {
   tileButtonTree,
 } from "../../demos/button";
 import { annotationDemoCss } from "../../demos/annotation";
-import { getLocale, useTranslations } from "../../i18n";
+import { getLocale, localizePath, useTranslations } from "../../i18n";
 
 const t = useTranslations(getLocale(Astro.url));
-/* The link demo points at a real docs page, and that page's path differs per locale. */
-const LINK_HREF = "/first-component";
+/* The link demo points at a real docs page, and that page's path differs per locale, which is
+   what this resolves: a Spanish reader clicking the demo used to land on the English page. */
+const LINK_HREF = localizePath("/first-component", getLocale(Astro.url));
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 const js = `import { initComponents } from "@skryensya/vanilla/auto";

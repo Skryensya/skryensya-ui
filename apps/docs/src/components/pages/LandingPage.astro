@@ -693,16 +693,17 @@ const columns: GalleryTile[][] = [
       </div>
     </section>
 
+    {/*
+      NO VISIBLE HEADING over the gallery: the columns say what they are by being components, and a
+      title plus a subtitle in front of them was the page explaining a picture that had already
+      finished making its point.
+
+      `aria-label` stays, and matters MORE now rather than less: it is the region's only name, so a
+      reader moving by landmark still hears what this stretch of the page is instead of arriving at
+      an unnamed region full of cards. `landing.gallery.title` is therefore still in use; its lede
+      is not, and is gone.
+    */}
     <section aria-label={t("landing.gallery.title")} data-width="full-width">
-      <div
-        class="sk-stack"
-        data-gap="md"
-        data-width="full-width"
-        style={`margin-block-end: var(--space-stack-lg); max-width: ${GALLERY_MAX_WIDTH}px; margin-inline: auto; padding-inline: var(--space-inset-lg)`}
-      >
-        <h2 class="sk-heading" data-size="h2" data-flush>{t("landing.gallery.title")}</h2>
-        <p class="sk-text" data-tone="secondary" data-size="lg">{t("landing.gallery.lede")}</p>
-      </div>
       <div
         class="sk-grid landing-gallery"
         data-responsive
@@ -840,6 +841,13 @@ const columns: GalleryTile[][] = [
    * resolves against the box and therefore comes out an ellipse on every viewport that is not
    * square. The radius is in `rem` so the disc is the same physical size on a laptop and on a
    * 4K panel instead of growing with the window.
+   *
+   * BIG, and bigger than looks right in the stylesheet: 42rem and 70rem are 672px and 1120px, so on
+   * a laptop the outer disc is wider than the window and only its middle is ever on screen. That is
+   * the point. A circle small enough to see the whole of reads as an object sitting on the page,
+   * something with an edge that the content happens to be arranged around; one whose edge never
+   * arrives reads as the light the page is lit by. The earlier pair (26/44rem) fell on the wrong
+   * side of that line.
    */
   .landing-backdrop::before {
     content: "";
@@ -847,13 +855,13 @@ const columns: GalleryTile[][] = [
     inset: 0;
     background:
       radial-gradient(
-        circle 26rem at 50% 76%,
+        circle 42rem at 50% 72%,
         color-mix(in oklab, var(--color-action-accent) 34%, transparent) 0%,
         color-mix(in oklab, var(--color-action-accent) 13%, transparent) 52%,
         transparent 78%
       ),
       radial-gradient(
-        circle 44rem at 50% 78%,
+        circle 70rem at 50% 74%,
         color-mix(in oklab, var(--color-action-accent) 20%, transparent) 0%,
         color-mix(in oklab, var(--color-action-accent) 8%, transparent) 48%,
         transparent 76%
@@ -976,38 +984,50 @@ const columns: GalleryTile[][] = [
    * takes to put the copy in the middle of the screen.
    */
   .landing-hero__band {
-    --sk-hero-min-height: min(78vh, 42rem);
+    --sk-hero-min-height: min(64vh, 34rem);
+    /*
+     * The band's own padding, asymmetric: full room above the headline, a third of it below the
+     * buttons. `data-padding="xl"` pads all four sides equally, which is right for a Hero standing
+     * alone and wrong for one whose whole job is to hand off to the gallery underneath it: the
+     * even version stacked xl of hero padding on top of the layout grid's own row gap, and the two
+     * together read as a page break between the sentence and the thing it is talking about.
+     */
+    --sk-hero-padding: var(--space-inset-xl) var(--space-inset-lg) var(--space-inset-sm);
   }
 
   /*
-   * TYPE THAT SCALES WITH THE PAGE. `display-lg` is the largest step the scale publishes, and it is
-   * sized for a page heading inside a document, not for the one line a landing page opens on: at
-   * `breakout` width it filled about half the measure and read as a section title that happened to
-   * be first. `clamp` takes the token as its floor, so nothing gets SMALLER than the scale on a
-   * phone, and lets it grow with the viewport up to 5.25rem.
-   *
-   * The lede moves with it, a step under `lg`'s own size: a headline that grows while the line
-   * under it stays put stops reading as a pair.
+   * THE COPY COLUMN, capped well inside the band. The hero section is `breakout` because the light
+   * behind it wants the width, but the WORDS do not: a headline free to run the full 1440px sets
+   * one enormous line across the screen and a reader's eye has to travel the whole of it to take in
+   * six words. Holding the column at 42rem is what lets the type be smaller AND the line still
+   * break where it should.
    */
-  .landing-hero__copy .sk-heading {
-    font-size: clamp(var(--font-size-display-lg), 5.2vw, 5.25rem);
-    line-height: 1.04;
-    letter-spacing: -0.02em;
-  }
-
-  .landing-hero__lede {
-    /*
-     * A CENTRED LINE NEEDS A MEASURE more than a ranged-left one does: with no reliable left edge
-     * to return to, a long centred line is read by hunting for where the next one starts. Capped at
-     * 42ch and centred in the band.
-     */
-    max-inline-size: 42ch;
+  .landing-hero__copy {
+    max-inline-size: 42rem;
     margin-inline: auto;
     text-align: center;
-    font-size: clamp(var(--font-size-body-lg, 1.125rem), 1.35vw, 1.5rem);
   }
 
-  .landing-hero__copy {
+  /*
+   * SMALLER THAN IT WAS, by a lot: this ran at `clamp(display-lg, 5.2vw, 5.25rem)`, which is 84px
+   * on a wide screen and reads as a poster rather than as the opening of a page with work under it.
+   * The top now lands at `display-md`, the step the scale already publishes for a display heading,
+   * and the clamp only stops it getting silly on a phone or an ultrawide.
+   */
+  .landing-hero__copy .sk-heading {
+    font-size: clamp(var(--font-size-display-sm), 3.1vw, var(--font-size-display-md));
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+  }
+
+  /*
+   * The lede drops its own clamp and sits at the scale's `lg` body size. It carries more text than
+   * it did, and past about twenty words the thing that makes a paragraph readable is the measure
+   * and the leading, not the size: a bigger face here just meant fewer words per line.
+   */
+  .landing-hero__lede {
+    max-inline-size: 46ch;
+    margin-inline: auto;
     text-align: center;
   }
 

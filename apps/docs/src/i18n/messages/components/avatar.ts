@@ -16,9 +16,13 @@ export const avatarMessages = {
     "avatar.lede":
       'Avatar es el token visual de una persona o entidad: una foto recortada con <strong>ImageFrame</strong> (1/1, cover, pill) o, sin imagen, las dos primeras letras del nombre. <strong>AvatarGroup</strong> apila un conjunto y colapsa el excedente en un contador «+N».',
     "avatar.anatomyBody":
-      "Este diagrama nombra el grupo, el disco, el fallback y el overflow. El espécimen está congelado; los Avatar vivos empiezan abajo.",
+      "El contrato se bifurca en <code>src</code>, así que el diagrama dibuja las dos ramas: con foto el disco contiene un <strong>ImageFrame</strong>, sin ella contiene el fallback. <code>sk-avatar</code> lleva un anillo en cada una porque la raíz es la misma de los dos lados. El espécimen está congelado; los Avatar vivos empiezan abajo.",
     "avatar.anatomyLabel": "Anatomía de Avatar",
     "avatar.anatomyPreviewLabel": "Avatar, parte por parte",
+    "avatar.groupAnatomyBody":
+      "Apilar agrega dos partes que un avatar suelto no tiene: el contenedor del grupo y el contador de excedente. El anillo del medio marca un miembro cualquiera de la pila.",
+    "avatar.groupAnatomyLabel": "Anatomía de AvatarGroup",
+    "avatar.groupAnatomyPreviewLabel": "AvatarGroup, parte por parte",
     "avatar.body":
       'Con imagen, el avatar anida <code>sk-image-frame</code> y el <code>&lt;img alt&gt;</code> aporta la semántica. Sin ella, el contenedor toma <code>role="img"</code> y las iniciales quedan decorativas. En React, <code>avatarInitials(name)</code> deriva el fallback cuando no pasas hijos: dos palabras → primera letra de cada una; una sola → los dos primeros caracteres.',
     "avatar.imagesTitle": "Con imagen",
@@ -66,9 +70,13 @@ export const avatarMessages = {
     "avatar.lede":
       'Avatar is the visual token for a person or entity: a cropped photo with <strong>ImageFrame</strong> (1/1, cover, pill), or, with no image, the first two letters of the name. <strong>AvatarGroup</strong> stacks a set and collapses the overflow into a "+N" counter.',
     "avatar.anatomyBody":
-      "This diagram names the group, the disc, the fallback and the overflow. The specimen is frozen; the live Avatars begin below.",
+      "The contract forks on <code>src</code>, so the diagram draws both branches: with a photo the disc holds an <strong>ImageFrame</strong>, without one it holds the fallback. <code>sk-avatar</code> is ringed on each, because the root is the same either way. The specimen is frozen; the live Avatars begin below.",
     "avatar.anatomyLabel": "Avatar anatomy",
     "avatar.anatomyPreviewLabel": "Avatar, part by part",
+    "avatar.groupAnatomyBody":
+      "Stacking adds two parts a lone avatar does not have: the group container and the overflow counter. The ring in the middle marks any one member of the stack.",
+    "avatar.groupAnatomyLabel": "AvatarGroup anatomy",
+    "avatar.groupAnatomyPreviewLabel": "AvatarGroup, part by part",
     "avatar.body":
       'With an image, the avatar nests <code>sk-image-frame</code> and the <code>&lt;img alt&gt;</code> carries the semantics. Without one, the container takes <code>role="img"</code> and the initials stay decorative. In React, <code>avatarInitials(name)</code> derives the fallback when you pass no children: two words → first letter of each; a single word → its first two characters.',
     "avatar.imagesTitle": "With an image",

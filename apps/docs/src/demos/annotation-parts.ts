@@ -3,6 +3,7 @@ type Side = "block-start" | "block-end" | "inline-start" | "inline-end";
 type PartExtras = {
   ringPlacement?: "inset" | "offset";
   ringDistance?: number;
+  ringRadius?: number;
   match?: "first" | "all";
 };
 

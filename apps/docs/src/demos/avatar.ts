@@ -77,11 +77,88 @@ const AVATAR_COLOR_SIZES: readonly ("xl" | "lg" | "md" | "sm")[] = [
 ];
 
 
-/** Group, disc, fallback and overflow: the stacked set with every avatar part present. */
+/*
+ * TWO DIAGRAMS, NOT ONE, and the split is the point.
+ *
+ * One drawing used to name all four parts at once, on a group of three overlapping discs, which put
+ * `sk-avatar` and `sk-avatar__fallback` on the SAME circle from opposite gutters: two names, two
+ * leaders, one box, and no way for a reader to tell which ring belonged to which. It also meant the
+ * lone Avatar  -  the thing the page is actually about  -  was never drawn on its own.
+ *
+ * So: one diagram for an Avatar, one for a group of them. Each names only what it contains.
+ */
+
+/*
+ * AN AVATAR, BOTH WAYS. The contract forks on `src` and the two branches do not share a child: with
+ * a photo the disc holds an ImageFrame, without one it holds the fallback span. Drawing one branch
+ * would name half the contract, so both specimens stand here and `sk-avatar` is matched `all`  -  one
+ * name, two rings, which is exactly the claim that the root is the same either way.
+ *
+ * `xl`, because the parts have to be distinguishable: at `md` the fallback span and its disc are 40px
+ * of concentric circles, and two rings 3px apart on that read as one thick ring.
+ */
 export const avatarAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
   options: { label: t("avatar.anatomyLabel"), inert: true },
+  slots: {
+    subject: {
+      contract: "layout",
+      signature: "Inline",
+      options: { gap: "xl", inlineAlign: "center" },
+      children: [
+        {
+          contract: "avatar",
+          signature: "Avatar.image",
+          options: { imageName: t("demo.avatar.personOne"), size: "xl", src: demoSrc("AL") },
+        },
+        {
+          contract: "avatar",
+          signature: "Avatar.initials",
+          options: { name: t("demo.avatar.personTwo"), size: "xl" },
+          attrs: { style: AVATAR_FALLBACK_STYLE },
+          children: "AT",
+        },
+      ],
+    },
+    items: [
+      /* The disc is a circle, so its own corner is what the ring takes: no `ringRadius` here, or the
+         mark comes back a rounded rectangle laid over a round thing. */
+      namePart(".sk-avatar", "block-start", {
+        match: "all",
+        ringPlacement: "offset",
+        ringDistance: 6,
+      }),
+      /*
+       * Cross-contract, and named anyway for the reason the lede gives: with a photo the avatar IS an
+       * ImageFrame with a pill radius, and a diagram that hides that makes the crop look like the
+       * avatar's own trick.
+       *
+       * INSET, alone on this diagram, and that is the whole reason it is legible. The frame fills its
+       * disc exactly, so an offset ring lands OUTSIDE `sk-avatar`'s  -  two concentric circles drawn
+       * in the order that says the child contains the parent. Inside, the nesting reads off the
+       * drawing without a word.
+       */
+      namePart(".sk-image-frame", "inline-start", { ringPlacement: "inset", ringDistance: 4 }),
+      /*
+       * The other branch's child is NOT the same box: `.sk-avatar` is an `inline-grid` with
+       * `place-items: center`, so the fallback is a text-sized box floating at the middle of the
+       * disc. Offset and rounded, which draws a small mark around the letters, visibly inside the
+       * disc and visibly not the disc.
+       */
+      namePart(".sk-avatar__fallback", "inline-end", { ringPlacement: "offset", ringDistance: 4, ringRadius: 6 }),
+    ],
+  },
+});
+
+/*
+ * A GROUP OF THEM. Only the two parts that exist because there is a group, plus one member ringed to
+ * show what the stack is made of.
+ */
+export const avatarGroupAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { label: t("avatar.groupAnatomyLabel"), inert: true },
   slots: {
     subject: {
       contract: "avatar",
@@ -115,10 +192,14 @@ export const avatarAnatomyTree = (t: Translate): UsageTree => ({
       },
     },
     items: [
-      namePart(".sk-avatar-group", "block-start", { ringPlacement: "offset", ringDistance: 6 }),
-      namePart(".sk-avatar", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
-      namePart(".sk-avatar__fallback", "inline-end"),
-      namePart(".sk-avatar-group__overflow", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+      /* Default size, deliberately: `.sk-avatar-group__overflow` hard-sizes itself to
+         `--size-control-md` while the discs follow `data-size`, so an `lg` stack draws a counter
+         visibly smaller than the avatars it counts. True, and not what this diagram is about. */
+      namePart(".sk-avatar-group", "block-start", { ringPlacement: "offset", ringDistance: 8, ringRadius: 10 }),
+      /* The first disc only. `all` would ring every member including the overflow's neighbours and
+         turn the stack into a row of circles with no figure left to read. */
+      namePart(".sk-avatar", "inline-start", { ringPlacement: "offset", ringDistance: 4 }),
+      namePart(".sk-avatar-group__overflow", "inline-end", { ringPlacement: "offset", ringDistance: 4 }),
     ],
   },
 });

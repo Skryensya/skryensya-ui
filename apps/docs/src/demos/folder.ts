@@ -83,32 +83,66 @@ const folder = ({ title, body: copy, href, previews = 0, active }: FolderSpec): 
 });
 
 /*
- * One folder held `active`, with previews fanned, so shape, tab, content and preview all exist to
- * be named. A folder at rest is invisible against its ground; without `active` the diagram would
+ * One folder held `active`, with previews fanned, so tab, content, silhouette and preview all exist
+ * to be named. A folder at rest is invisible against its ground; without `active` the diagram would
  * name parts the eye cannot see.
+ *
+ * NOT wrapped in the demo `Box`: that ground is useful for live stacks, but as an Annotated subject
+ * it inflates the measured middle track and puts every leader one padding away from the folder.
+ * Ground and fan headroom come from `folderAnatomyCss` instead.
+ *
+ * WHAT IS NAMED (and what is not):
+ *   - root, tab, content, shape-path, preview (all three, one label)
+ *   - NOT `shape` (absolute inset 0, same box as the root) and NOT `previews` (`block-size: 0`, a
+ *     zero-height strip across the top that drew a hairline ring and nothing else)
+ *
+ * FLAT: the live lean (`perspective` + `rotateX`) turns every getBoundingClientRect into a skewed
+ * AABB no ring can honestly wrap. The diagram drops it; the demos below keep it.
  */
+export const folderAnatomyCss = `.sk-annotated {
+  --sk-annotation-font-family: var(--font-family-code);
+}
+
+.sk-annotated__subject {
+  /* Same headroom FolderStack reserves for the first folder's fan. */
+  padding-block-start: var(--sk-folder-preview-rise, 92px);
+  padding-block-end: var(--space-inset-lg);
+  padding-inline: var(--space-inset-xl);
+  background: var(--color-bg-sunken);
+  text-align: center;
+}
+
+.sk-annotated__subject > .sk-folder,
+.sk-annotated__subject > .sk-folder[data-active] {
+  transform: none;
+  translate: none;
+  margin-inline: auto;
+  /* What a Box ground would have given the binding to copy. */
+  --sk-folder-ground: var(--color-bg-sunken);
+}`;
+
 export const folderAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
   options: { label: t("folderPage.anatomyLabel"), inert: true },
   slots: {
-    subject: on(
-      "sunken",
-      folder({
-        title: t("demo.folder.radioTitle"),
-        body: t("demo.folder.radioBody"),
-        href: "#folder-anatomy",
-        previews: 3,
-        active: true,
-      }),
-    ),
+    subject: folder({
+      title: t("demo.folder.radioTitle"),
+      body: t("demo.folder.radioBody"),
+      href: "#folder-anatomy",
+      previews: 3,
+      active: true,
+    }),
     items: [
-      namePart(".sk-folder", "block-start"),
-      namePart(".sk-folder__shape", "inline-start"),
-      namePart(".sk-folder__tab", "block-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-folder", "block-start", { ringPlacement: "offset", ringDistance: 12 }),
+      namePart(".sk-folder__shape-path", "inline-start", { ringPlacement: "offset", ringDistance: 4 }),
+      namePart(".sk-folder__tab", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-folder__content", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
-      namePart(".sk-folder__previews", "inline-end"),
-      namePart(".sk-folder__preview", "block-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-folder__preview", "block-start", {
+        match: "all",
+        ringPlacement: "offset",
+        ringDistance: 3,
+      }),
     ],
   },
 });

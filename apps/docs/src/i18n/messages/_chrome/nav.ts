@@ -15,6 +15,7 @@ export const navMessages = {
     "nav.templates": "Templates",
     "nav.recipes": "Recetas",
     "nav.playground": "Playground",
+    "nav.snippets": "Snippets",
     "nav.comingSoon": "Próximamente",
     "nav.resizeRail": "Cambiar el ancho de la navegación",
     /* The document's first two links, invisible until they receive focus. They name the DESTINATION
@@ -42,6 +43,7 @@ export const navMessages = {
     "nav.templates": "Templates",
     "nav.recipes": "Recipes",
     "nav.playground": "Playground",
+    "nav.snippets": "Snippets",
     "nav.comingSoon": "Coming soon",
     "nav.resizeRail": "Resize the navigation",
     "nav.skipToContent": "Go to content",

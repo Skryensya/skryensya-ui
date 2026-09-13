@@ -451,6 +451,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-13",
+            "en": {
+              "body": "An <code>iconOnly</code> button named by visually hidden text inside <code>pre</code> or <code>post</code> was accepted by the vanilla layer (which reads the whole button's <code>textContent</code>) and rejected by React, which walked <code>children</code> only. React now walks both slots, so the two bindings enforce the same rule.",
+              "title": "The accessible name may live in the pre and post slots"
+            },
+            "es": {
+              "body": "Un <code>iconOnly</code> nombrado por texto visually-hidden dentro de <code>pre</code> o <code>post</code> era aceptado por la capa vanilla (que lee el <code>textContent</code> del boton entero) y rechazado por React, que solo recorria <code>children</code>. React ahora recorre tambien los dos slots, asi que las dos capas exigen la misma regla.",
+              "title": "El nombre accesible puede vivir en los slots pre y post"
+            },
+            "kind": "bugfix",
+            "target": "pre"
+          },
+          {
             "date": "2026-09-12",
             "en": {
               "body": "<code>Button.action</code> and <code>Button.navigation</code> gain optional <code>pre</code> and <code>post</code> slots (<code>sk-button__pre</code> / <code>sk-button__post</code>): the reserved places before and after the label for an icon or other affordance. An empty slot is not rendered. The icon is still <code>sk-icon</code>; what changes is that it no longer depends on free order inside <code>children</code>. Additive: a label-only button is unchanged.",
@@ -24895,5 +24908,5 @@
     "working": "0.0.1"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "bbc32ccbfe12e6ab"
+  "sourceHash": "6b7a850ef91d4f6b"
 }

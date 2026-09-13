@@ -9,6 +9,7 @@ import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
   avatarAnatomyTree,
+  avatarGroupAnatomyTree,
   avatarImageTree,
   avatarSizesTree,
   avatarColorsTree,
@@ -128,6 +129,7 @@ window.addEventListener("pagehide", () => observer.disconnect(), { once: true })
       tree={avatarAnatomyTree(t)}
       css={annotationDemoCss}
       label={t("avatar.anatomyPreviewLabel")}
+      previewScript={previewScript}
       screens={false}
       hideSource
       chrome={false}
@@ -152,6 +154,18 @@ window.addEventListener("pagehide", () => observer.disconnect(), { once: true })
 
     <h3>{t("avatar.groupTitle")}</h3>
     <p set:html={t("avatar.groupBody")} />
+    {/* The group's own anatomy sits HERE, not beside the Avatar diagram at the top: the two parts it
+        names only exist once there is a stack, and the section that introduces the stack is where a
+        reader is asking what it is made of. */}
+    <p set:html={t("avatar.groupAnatomyBody")} />
+    <ComponentPreview
+      tree={avatarGroupAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("avatar.groupAnatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
     <ComponentPreview tree={avatarGroupTree(t)} label={t("avatar.groupTitle")} />
     <p set:html={t("avatar.groupMaxBody")} />
     <CodeBlock code={groupMax} label="React" lang="tsx" note={t("avatar.groupMaxNote")} />

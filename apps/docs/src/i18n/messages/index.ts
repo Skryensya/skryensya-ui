@@ -31,9 +31,9 @@ export const indexMessages = {
     "landing.description":
       "Componentes, primitives y fundamentos para construir interfaces que funcionan como un sistema.",
     "landing.brand": "skryensya/ui",
-    "landing.hero.title": "Declara un componente una vez. Úsalo donde sea.",
+    "landing.hero.title": "Deja de construir el mismo componente dos veces.",
     "landing.hero.lede":
-      "La estructura, las opciones y el comportamiento viven en un solo contrato. El HTML plano, el runtime vanilla y React se generan desde ahí, y esta documentación también: por eso ninguno de los tres puede desviarse de los otros.",
+      "Un botón hecho para HTML y otro hecho para React se separan apenas alguien arregla uno de los dos. Acá son el mismo componente, así que no pueden separarse: se ven igual, se comportan igual y los ejemplos de esta documentación son ese mismo componente.",
     "landing.hero.ctaComponents": "Ver componentes",
     "landing.hero.ctaInstall": "Instalarlo",
     "landing.hero.specimenTitle": "Nueva versión",
@@ -41,8 +41,6 @@ export const indexMessages = {
     "landing.hero.specimenSource": "Lo que escribes",
 
     "landing.gallery.title": "Cada pieza, por separado.",
-    "landing.gallery.lede":
-      "Los mismos componentes que arman las pantallas de abajo, uno por uno.",
 
     "landing.showcase.title": "De una pieza a una pantalla.",
     "landing.showcase.lede":
@@ -295,9 +293,9 @@ export const indexMessages = {
     "landing.description":
       "Components, primitives and foundations for building interfaces that work as a system.",
     "landing.brand": "skryensya/ui",
-    "landing.hero.title": "Declare a component once. Use it anywhere.",
+    "landing.hero.title": "Stop building the same component twice.",
     "landing.hero.lede":
-      "Structure, options and behaviour live in a single contract. Plain HTML, the vanilla runtime and React are all generated from it, and so is this documentation: which is why none of the three can drift away from the others.",
+      "A button written for HTML and a button written for React drift apart the moment someone fixes one of them. Here they are the same component, so they cannot: they look alike, behave alike, and the examples in these docs are that component too.",
     "landing.hero.ctaComponents": "See the components",
     "landing.hero.ctaInstall": "Install it",
     "landing.hero.specimenTitle": "New version",
@@ -305,8 +303,6 @@ export const indexMessages = {
     "landing.hero.specimenSource": "What you write",
 
     "landing.gallery.title": "Every piece, on its own.",
-    "landing.gallery.lede":
-      "The same components that build the screens below, one at a time.",
 
     "landing.showcase.title": "From one piece to a screen.",
     "landing.showcase.lede":

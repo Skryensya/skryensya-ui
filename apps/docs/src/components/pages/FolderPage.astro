@@ -14,6 +14,7 @@ import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
   folderActiveTree,
+  folderAnatomyCss,
   folderAnatomyTree,
   folderPlainTree,
   folderRaisedTree,
@@ -182,7 +183,7 @@ mountFolder();`;
     <p set:html={t("folderPage.anatomyBody")} />
     <ComponentPreview
       tree={folderAnatomyTree(t)}
-      css={annotationDemoCss}
+      css={`${annotationDemoCss}\n${folderAnatomyCss}`}
       js={js}
       label={t("folderPage.anatomyPreviewLabel")}
       screens={false}

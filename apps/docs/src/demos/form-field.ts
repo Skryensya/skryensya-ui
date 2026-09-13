@@ -19,11 +19,22 @@ export const formFieldAnatomyTree = (t: Translate): UsageTree => ({
   slots: {
     subject: formFieldTree(t),
     items: [
-      namePart(".sk-form-field", "block-start"),
-      namePart(".sk-form-field__label", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
-      namePart(".sk-form-field__required", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
-      namePart(".sk-form-field__hint", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
-      namePart(".sk-form-field__error", "block-end", { ringPlacement: "offset", ringDistance: 2 }),
+      /* The field's own box has no corner of its own to borrow, and its parts sit flush against its
+         edges: an inset ring would trace the same line as the label's. Offset far enough to read as
+         the box AROUND them, with a corner so it reads as a mark and not as a crop. */
+      namePart(".sk-form-field", "block-start", { ringPlacement: "offset", ringDistance: 10, ringRadius: 10 }),
+      /* Text has square corners and no edge to speak of, so a ring drawn 2px off the glyphs reads as
+         an underline that failed. Clear of the text, and rounded, so each one reads as one mark. */
+      namePart(".sk-form-field__label", "inline-start", { ringPlacement: "offset", ringDistance: 3, ringRadius: 6 }),
+      /* THE SLOTTED CONTROL, and the only name here that belongs to another contract. It is named
+         anyway because that is the claim: the chrome holds a control it never asks about, and a hole
+         with no name in the middle of the drawing states the opposite. No `ringRadius`: the input
+         has a corner of its own, and letting the ring take it is what says the ring is ITS outline
+         and not one more box the diagram laid on top. */
+      namePart(".sk-input", "inline-start", { ringPlacement: "offset", ringDistance: 3 }),
+      namePart(".sk-form-field__required", "inline-end", { ringPlacement: "offset", ringDistance: 3, ringRadius: 6 }),
+      namePart(".sk-form-field__hint", "inline-end", { ringPlacement: "offset", ringDistance: 3, ringRadius: 6 }),
+      namePart(".sk-form-field__error", "block-end", { ringPlacement: "offset", ringDistance: 3, ringRadius: 6 }),
     ],
   },
 });

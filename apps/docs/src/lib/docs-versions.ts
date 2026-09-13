@@ -16,7 +16,7 @@
  * page, hand-placed, so the switcher must cope with a version that holds a single document: that is
  * what `versionsOf` is for, and why the control never offers a version this document is not in.
  */
-import { canonicalPath, getLocale, locales, splitVersion, type Locale } from "../i18n";
+import { canonicalPath, getLocale, locales, localizePath, splitVersion, type Locale } from "../i18n";
 
 /*
  * The WHOLE page tree, filtered below by `splitVersion`, rather than a narrower glob like
@@ -61,8 +61,11 @@ for (const modulePath of Object.keys(versionedPages)) {
  * precedes. Both are wrong on the day they happen and silent until then. This compares the numeric
  * parts as numbers, and then puts a finished release ABOVE its own prerelease: `0.0.1` is newer
  * than `0.0.1-dev`, because the prerelease is what came first.
+ *
+ * Exported for its test. Ordering is exactly the kind of rule that stays silent until the day it is
+ * wrong, and that day is whichever release ships tenth.
  */
-function compareVersions(a: string, b: string): number {
+export function compareVersions(a: string, b: string): number {
   const parse = (version: string) => {
     const [core = "", prerelease = ""] = version.split("-", 2);
     const parts = core.split(".").map(Number);
@@ -97,4 +100,33 @@ export function frozenLocales(version: string, canonical: string): readonly Loca
 /** Does `version` hold this document in this locale? */
 export function frozenHasTranslation(version: string, canonical: string, locale: Locale): boolean {
   return frozenLocales(version, canonical).includes(locale);
+}
+
+/*
+ * A LINK INSIDE AN ARCHIVE STAYS INSIDE THE ARCHIVE, wherever the archive can honour it.
+ *
+ * This is what makes a frozen version feel like a site rather than a single stranded page: reading
+ * `/v0.0.1-dev/foundations` and clicking through to Density should land on that version's Density,
+ * not on today's. A real cut holds the whole site, so every link resolves in-version and the reader
+ * never leaves by accident.
+ *
+ * WHAT HAPPENS TO A LINK THE ARCHIVE DOES NOT HAVE: it is left exactly as it was, pointing at the
+ * living site. That is the honest answer for a PARTIAL archive (the prototype's case, and a real
+ * one's too whenever a document was added after the cut): the alternative is a link into a page
+ * that does not exist, which is a 404 dressed up as history.
+ */
+export function archiveHref(href: string, locale: Locale, version: string | null): string {
+  if (version === null) return href;
+  /* Fragments, query strings and anything that leaves the site are not document paths. */
+  if (!href.startsWith("/")) return href;
+  const [path = "", suffix = ""] = splitAtFirst(href, /[#?]/);
+  const canonical = canonicalPath(path);
+  if (!frozenHasTranslation(version, canonical, locale)) return href;
+  return `${localizePath(canonical, locale, version)}${suffix}`;
+}
+
+/** `"/a/b#c"` -> `["/a/b", "#c"]`. Keeps the separator with the tail, where it belongs. */
+function splitAtFirst(value: string, separator: RegExp): [string, string] {
+  const index = value.search(separator);
+  return index === -1 ? [value, ""] : [value.slice(0, index), value.slice(index)];
 }

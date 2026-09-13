@@ -498,12 +498,24 @@ cut es un problema de post-proceso de 5 formas conocidas y no una refactorizaci�
 ### Fase 2: el cut (solo tras el gate de §9)
 
 > **Estado real del árbol (2026-09-13).** Existe un PROTOTIPO de la UX de esta fase, construido a
-> pedido y por delante del gate: el eje de versión en el i18n (`splitVersion`, `versionOf`,
-> `localizePath(path, locale, version)`), el índice derivado `lib/docs-versions.ts`, el control de
-> versión en el navbar y en la hoja de preferencias móvil, y un archive de una sola página en
-> `/v0.0.1-dev/components/button` (+ ES). **No hay script de cut, ni archive construido, ni tag**: la
-> página de esa versión está puesta a mano y su texto vive inline dentro de ella, que es como se comporta un
-> snapshot pero no como se produce. Lo que el gate sigue bloqueando es lo de abajo.
+> pedido y por delante del gate:
+>
+> - eje de versión en el i18n (`splitVersion`, `versionOf`, `localizePath(path, locale, version)`),
+>   con tests (`lib/docs-versions.test.ts`);
+> - índice derivado `lib/docs-versions.ts`, más `archiveHref`, que mantiene un enlace dentro del
+>   archive cuando el archive tiene ese documento y lo deja apuntando al sitio vivo cuando no;
+> - control de versión en el navbar y en la hoja de preferencias móvil;
+> - el rail, el drawer y el footer se reescriben dentro del archive por el mismo helper;
+> - índice de search propio del archive (`pages/v0.0.1-dev/search-index.json.ts`, y su gemelo ES),
+>   porque si no el ⌘K es el control que te saca de la versión sin avisar;
+> - `noindex, follow` + `canonical` a la página viva en toda página archivada;
+> - tres documentos archivados, a propósito no solo componentes: Button, **Fundamentos y Densidad**,
+>   en ambos locales, con el índice de Fundamentos enlazando a Densidad *dentro* del archive.
+>
+> **No hay script de cut, ni archive construido, ni tag**: las páginas están puestas a mano y su
+> texto vive inline dentro de ellas, que es como se comporta un snapshot pero no como se produce.
+> Tampoco tienen las pestañas derivadas (Referencia, Tests, Cambios): un cut real las hornea, el
+> prototipo las omite. Lo que el gate sigue bloqueando es lo de abajo.
 
 
 - [ ] `scripts/docs-cut.ts` con los 9 pasos del runbook.

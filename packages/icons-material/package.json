@@ -1,6 +1,6 @@
 {
   "name": "@skryensya/icons-material",
-  "version": "0.0.1-dev",
+  "version": "0.0.2-dev",
   "private": true,
   "type": "module",
   "description": "Material Symbols bound to skryensya/ui's stable icon vocabulary. Generated from the library; ships data, not a runtime.",

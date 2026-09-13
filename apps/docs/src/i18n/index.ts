@@ -238,9 +238,9 @@ function routeFromModulePath(modulePath: string): string {
 const pagesByCanonical = new Map<string, Set<Locale>>();
 for (const modulePath of Object.keys(pageModules)) {
   const route = routeFromModulePath(modulePath);
-  /* Frozen archives are a different axis and have their own index (`lib/docs-versions.ts`). Folding
-   * them in here would make `hasTranslation` answer "yes" for a translation that only ever existed
-   * in an old version, and light up the language switcher on a page that cannot honour it. */
+  /* Versioned archive routes are not part of this source tree (VERSIONED_DOCS_PLAN §3.3). If a
+   * version-prefixed page ever lands here by mistake, skip it so `hasTranslation` does not light up
+   * the language switcher for a translation that only exists under an archive prefix. */
   if (splitVersion(route).version !== null) continue;
   const canonical = canonicalPath(route);
   const locale = getLocale(route);

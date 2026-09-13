@@ -113,11 +113,11 @@ body {
 }
 
 
-/* The auto margin sits on the FIRST of the trailing group so search + prefs travel to the trailing
-   edge together. That first item is the version control when an archive exists, otherwise the search
-   field (see `:has` below). A margin on prefs alone would strand search next to the brand. The field
-   is a real `<input readonly>` now (search-trigger.ts has the full reasoning), this wrapper is purely
-   the field's own chrome: the sunken well, the border, the icon and kbd hint around the input. */
+/* The auto margin sits on the FIRST of the trailing group so version + search + prefs travel to the
+   trailing edge together. That first item is the version label; see `:has` below. A margin on prefs
+   alone would strand search next to the brand. The field is a real `<input readonly>` now
+   (search-trigger.ts has the full reasoning), this wrapper is purely the field's own chrome: the
+   sunken well, the border, the icon and kbd hint around the input. */
 .dimensions__version-menu {
   display: inline-flex;
   flex: none;
@@ -133,8 +133,17 @@ body {
   white-space: nowrap;
 }
 
-.dimensions__version-menu__value {
+.dimensions__version-menu__chip {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: max(var(--size-control-sm), var(--size-touch-target));
+  padding-inline: var(--space-inset-sm);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-control);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .dimensions__search-trigger {
@@ -3107,17 +3116,30 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .d
 }
 
 /*
- * THE VERSION LIST IN THE PREFERENCE SHEET. Every other row of that sheet is a Tile Button that
- * cycles; this one is a `nav-list`, because choosing a docs version is picking one item out of a
- * list that grows with every cut, not flipping between two states. The hint sits under the group
- * label, where a Tile Button would have put its description.
+ * THE VERSION LABEL IN THE PREFERENCE SHEET. Until a cut mounts archives on the CDN there is only
+ * one version to name, so this is a caption + value, not a nav-list of cuts.
  */
 .docs-prefs-versions {
-  --sk-nav-list-group-label-font-size: var(--font-size-sm);
+  display: grid;
+  gap: var(--space-stack-3xs);
+  padding: var(--space-inset-md);
+}
+
+.docs-prefs-versions__label {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-label);
 }
 
 .docs-prefs-versions__hint {
-  margin: 0 0 var(--space-stack-2xs);
+  margin: 0;
   color: var(--color-fg-muted);
   font-size: var(--font-size-sm);
+}
+
+.docs-prefs-versions__value {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
 }

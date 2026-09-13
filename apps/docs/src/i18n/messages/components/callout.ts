@@ -41,7 +41,7 @@ export const calloutMessages = {
     "callout.warningLabel": "Callout warning",
     "callout.successTitle": "Success, con un Button translucent",
     "callout.successBody":
-      'Cuando la acción es un <a href="/components/button">Button</a>, el slot solo acepta <code>variant="translucent"</code> o <code>variant="danger"</code>; nunca <code>accent</code> ni el default <code>neutral</code>: un Callout no es el lugar de la llamada a la acción accent de la página. Usa <code>translucent</code> para botones que se mezclan con el fondo coloreado del callout, y <code>danger</code> cuando necesites una acción destructiva que destaque visualmente.',
+      'Cuando la acción es un <a href="/es/componentes/button">Button</a>, el slot solo acepta <code>variant="translucent"</code> o <code>variant="danger"</code>; nunca <code>accent</code> ni el default <code>neutral</code>: un Callout no es el lugar de la llamada a la acción accent de la página. Usa <code>translucent</code> para botones que se mezclan con el fondo coloreado del callout, y <code>danger</code> cuando necesites una acción destructiva que destaque visualmente.',
     "callout.successLabel": "Callout success",
     "callout.anatomyTitle": "Anatomía",
     "callout.anatomyItem1": "<code>sk-callout__icon</code> es decorativo y solo aparece cuando aporta una señal visual.",
@@ -51,7 +51,7 @@ export const calloutMessages = {
     "callout.anatomyItem4":
       "<code>data-tone</code> acepta <code>neutral</code> (default), <code>info</code>, <code>success</code>, <code>warning</code> o <code>danger</code>.",
     "callout.reactBody":
-      'El código está en la pestaña <strong>React</strong> de cada ejemplo. <code>actions</code> es el único punto de interactividad: un <code>ReactNode</code> que el consumidor arma con el <code>Link</code> o el <code>Button</code> (<code>translucent</code>/<code>danger</code>) que necesite. No hay <code>dismissible</code> ni <code>onDismiss</code>; si necesitas que el mensaje se pueda cerrar, es un <a href="/components/toast">Toast</a>, no un Callout.',
+      'El código está en la pestaña <strong>React</strong> de cada ejemplo. <code>actions</code> es el único punto de interactividad: un <code>ReactNode</code> que el consumidor arma con el <code>Link</code> o el <code>Button</code> (<code>translucent</code>/<code>danger</code>) que necesite. No hay <code>dismissible</code> ni <code>onDismiss</code>; si necesitas que el mensaje se pueda cerrar, es un <a href="/es/componentes/toast">Toast</a>, no un Callout.',
     "callout.test1": "El tono danger se anuncia asertivo (<code>role=\"alert\"</code>); los demás, con cortesía.",
     "callout.test2": "Nunca renderiza un control para cerrarlo: no es dismissible.",
     "callout.test3": "El icono y las acciones opcionales se renderizan como partes explícitas.",

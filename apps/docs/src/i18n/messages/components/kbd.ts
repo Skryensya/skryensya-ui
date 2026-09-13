@@ -2,7 +2,7 @@ export const kbdMessages = {
   es: {
     "kbdPage.description": "Kbd: una tecla dibujada, el <kbd> nativo con styling hooks y wrapper React.",
     "kbdPage.lede":
-      'Kbd es una <strong>tecla dibujada</strong>: el <code>&lt;kbd&gt;</code> nativo con el aspecto de una tecla física. La usas para mostrar un atajo, el ⌘K del buscador de arriba, el Esc en el pie de una <a href="/components/command-palette">CommandPalette</a>. Es estática, como Badge: sin estado, sin máquina, sin enhancer vanilla. La semántica del <code>&lt;kbd&gt;</code> es de la plataforma; el componente solo aporta la pinta. El reposo es <code>neutral</code>; <code>tone="accent"</code> es el chip de marca.',
+      'Kbd es una <strong>tecla dibujada</strong>: el <code>&lt;kbd&gt;</code> nativo con el aspecto de una tecla física. La usas para mostrar un atajo, el ⌘K del buscador de arriba, el Esc en el pie de una <a href="/es/componentes/command-palette">CommandPalette</a>. Es estática, como Badge: sin estado, sin máquina, sin enhancer vanilla. La semántica del <code>&lt;kbd&gt;</code> es de la plataforma; el componente solo aporta la pinta. El reposo es <code>neutral</code>; <code>tone="accent"</code> es el chip de marca.',
     "kbdPage.toneTitle": "Con acento y sin acento",
     "kbdPage.toneBody":
       'El default es una tecla de plástico: superficie raised, bisel claro arriba y un peldaño abajo. <code>data-tone="accent"</code> (en React, <code>tone="accent"</code>) es el mismo capuchón pintado con la marca, para un atajo que tiene que gritar. El ⌘K del chrome y el pie de la paleta se quedan en el default.',
@@ -11,14 +11,14 @@ export const kbdMessages = {
       'Una sola tecla (<kbd class="sk-kbd">K</kbd>, <kbd class="sk-kbd">⌘</kbd>, <kbd class="sk-kbd">↑</kbd>) toma un mínimo cuadrado en vez de quedar como una astilla; una etiqueta más larga (<kbd class="sk-kbd">Esc</kbd>, <kbd class="sk-kbd">Enter</kbd>) crece con su texto. El mínimo es <code>--sk-kbd-min-size</code>, relativo a la propia tipografía de la tecla, así que se mantiene cuadrada a cualquier tamaño.',
     "kbdPage.pressedTitle": "El estado apretado",
     "kbdPage.pressedBody1":
-      'Kbd no es un control, no se clickea, así que su único estado <strong>refleja</strong> un evento externo: <code>data-pressed</code>, que lo prende mientras su tecla física está apretada, igual que un componente refleja el <code>data-state</code> de una máquina. Lo escribe quien mira el teclado, no el kbd. Neutral se hunde: el bisel se invierte y el relleno pasa a sunken. Accent, además, toma el color de acción: "este atajo está vivo" es información. La transición usa la intención <code>feedback</code> (<a href="/motion">motion</a>).',
+      'Kbd no es un control, no se clickea, así que su único estado <strong>refleja</strong> un evento externo: <code>data-pressed</code>, que lo prende mientras su tecla física está apretada, igual que un componente refleja el <code>data-state</code> de una máquina. Lo escribe quien mira el teclado, no el kbd. Neutral se hunde: el bisel se invierte y el relleno pasa a sunken. Accent, además, toma el color de acción: "este atajo está vivo" es información. La transición usa la intención <code>feedback</code> (<a href="/es/motion">motion</a>).',
     "kbdPage.pressedBody2":
       'Pruébalo: aprieta cualquiera de estas y se prende sola; mantén <kbd class="sk-kbd" data-key="meta">⌘</kbd> y suma otra para ver la combinación.',
     "kbdPage.echoAriaLabel": "Teclas que reaccionan al teclado",
     "kbdPage.chordBody":
       'Un acorde entero también, como una unidad, aprieta <kbd class="sk-kbd" data-hotkey="mod+enter">⌘ ↵</kbd> y se prende cuando la combinación completa está abajo:',
     "kbdPage.scriptBody":
-      'Lo pone un script chico de la doc mientras la tecla física está apretada; para el acorde usa el <code>matchesHotkey</code> del <a href="/hotkey">primitivo de hotkey</a>, el mismo matcher que el atajo. El badge ⌘K del buscador de arriba nace de esa pareja: <code>formatHotkey</code> da el texto por plataforma, Kbd le pone la caja.',
+      'Lo pone un script chico de la doc mientras la tecla física está apretada; para el acorde usa el <code>matchesHotkey</code> del <a href="/es/hotkey">primitivo de hotkey</a>, el mismo matcher que el atajo. El badge ⌘K del buscador de arriba nace de esa pareja: <code>formatHotkey</code> da el texto por plataforma, Kbd le pone la caja.',
     "kbdPage.test1": "Renderiza un <code>&lt;kbd&gt;</code> nativo con la clase de la parte.",
     "kbdPage.test2": "Conserva la className del consumidor junto a la de la parte.",
     "kbdPage.test3": "Reenvía los atributos nativos.",

@@ -21,7 +21,7 @@ export const sidebarMessages = {
     "sidebarPage.anatomyPreviewLabel": "Sidebar, parte por parte",
     "sidebarPage.contentTitle": "Una cosa es el sidebar; otra, su contenido",
     "sidebarPage.contentBody":
-      'Lo que va adentro no es asunto del sidebar. La lista de destinos es el pattern <a href="/nav-list"><code>nav-list</code></a>, invitada aquí y con la misma estructura que usa el navbar en horizontal. Por eso no hay un <code>sk-sidebar__link</code>: esa lista nunca fue del sidebar, y nombrarla así sería nombrar a un inquilino.',
+      'Lo que va adentro no es asunto del sidebar. La lista de destinos es el pattern <a href="/es/nav-list"><code>nav-list</code></a>, invitada aquí y con la misma estructura que usa el navbar en horizontal. Por eso no hay un <code>sk-sidebar__link</code>: esa lista nunca fue del sidebar, y nombrarla así sería nombrar a un inquilino.',
     "sidebarPage.collapseBody": "Contrae el sidebar con el botón: la lista se vuelve un riel de iconos, y sigue toda ahí.",
     "sidebarPage.widthTitle": "El ancho lo decide quien lee",
     "sidebarPage.widthBody1":
@@ -35,7 +35,7 @@ export const sidebarMessages = {
     "sidebarPage.widthBody5":
       "Es un splitter completo, no sólo un arrastre: las flechas lo mueven de a poco (con <kbd class=\"sk-kbd\">Shift</kbd>, más rápido), <kbd class=\"sk-kbd\">Home</kbd> y <kbd class=\"sk-kbd\">End</kbd> van a los extremos, y doble clic o <kbd class=\"sk-kbd\">Enter</kbd> devuelven el ancho por defecto. Con <code>storageKey</code> el ancho sobrevive a la recarga; sin él, dura la sesión, que es el caso de este preview.",
     "sidebarPage.widthBody6":
-      'Adentro va un <a href="/components/tree-view">TreeView</a> a propósito: es el invitado cuyo ancho correcto nadie puede saber de antemano. El nombre que no entra se corta con puntos suspensivos y el panel nunca scrollea en horizontal; ensancharlo es la respuesta, no una barra de scroll lateral.',
+      'Adentro va un <a href="/es/componentes/tree-view">TreeView</a> a propósito: es el invitado cuyo ancho correcto nadie puede saber de antemano. El nombre que no entra se corta con puntos suspensivos y el panel nunca scrollea en horizontal; ensancharlo es la respuesta, no una barra de scroll lateral.',
     "sidebarPage.resizableLabel": "Sidebar redimensionable",
     "sidebarPage.detailsTitle": "Por qué no es un <code>&lt;details&gt;</code>",
     "sidebarPage.detailsBody1":

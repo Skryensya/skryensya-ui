@@ -22,9 +22,9 @@ export const footerMessages = {
     "footer.whenBody1":
       "Usa Footer para el cierre de la página: la banda final que dice «la página termina acá», con navegación secundaria, aviso legal o una línea de crédito. El host es un <code>&lt;footer&gt;</code>, y a nivel de documento ese elemento YA es el landmark <code>contentinfo</code> sin escribir <code>role</code>.",
     "footer.whenBody2":
-      'Footer no impone anatomía: no hay slots con nombre para columnas ni una barra inferior. Compón adentro con <a href="/components/grid">Grid</a> para la fila de columnas, <a href="/nav-list">NavList</a> para cada columna (con su propio nombre accesible) y <a href="/components/wrapper">Wrapper</a> para sostener la medida de la página.',
+      'Footer no impone anatomía: no hay slots con nombre para columnas ni una barra inferior. Compón adentro con <a href="/es/componentes/grid">Grid</a> para la fila de columnas, <a href="/es/nav-list">NavList</a> para cada columna (con su propio nombre accesible) y <a href="/es/componentes/wrapper">Wrapper</a> para sostener la medida de la página.',
     "footer.whenBody3":
-      'Si sólo hace falta separar una sección del resto en medio de la página, usa <a href="/components/box">Box</a>. Una fila de botones de confirmación abajo de un panel o un diálogo se compone con <a href="/components/inline">Inline</a> dentro de ese contenedor, no con Footer.',
+      'Si sólo hace falta separar una sección del resto en medio de la página, usa <a href="/es/componentes/box">Box</a>. Una fila de botones de confirmación abajo de un panel o un diálogo se compone con <a href="/es/componentes/inline">Inline</a> dentro de ese contenedor, no con Footer.',
     "footer.htmlTitle": "HTML escrito a mano",
     "footer.patternSiteTitle": "Footer de sitio",
     "footer.patternSiteDescription":
@@ -45,7 +45,7 @@ export const footerMessages = {
     "footer.a11yP2":
       'Debe haber como mucho UN <code>&lt;footer&gt;</code> de documento por página, la misma regla que <code>banner</code> o <code>main</code>. Un footer que pertenece de verdad a un <code>&lt;article&gt;</code> sigue siendo válido, sólo que deja de ser el landmark.',
     "footer.a11yP3":
-      'Una fila de columnas de enlaces es navegación: cada columna es un <a href="/nav-list">NavList</a> con su propio nombre accesible (<code>aria-label</code> o un encabezado visible), para que la lista de landmarks diga «Footer / Recursos», no una <code>navigation</code> sin nombre por columna.',
+      'Una fila de columnas de enlaces es navegación: cada columna es un <a href="/es/nav-list">NavList</a> con su propio nombre accesible (<code>aria-label</code> o un encabezado visible), para que la lista de landmarks diga «Footer / Recursos», no una <code>navigation</code> sin nombre por columna.',
     "footer.test1":
       "Por defecto emite el landmark <code>contentinfo</code> con la superficie hundida, el padding grande y el divisor superior que documenta el contrato.",
     "footer.test2":

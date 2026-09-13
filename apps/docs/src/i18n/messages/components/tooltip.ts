@@ -31,7 +31,7 @@ export const tooltipMessages = {
     "tooltipPage.positioningBody1":
       'Donde hay <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_anchor_positioning" rel="noopener noreferrer" target="_blank">CSS anchor positioning</a>, el navegador coloca el tooltip: sin bucle de layout y sin medir en cada scroll. El enhancer estampa un <code>anchor-name</code> único y deja de pasarle a Zag los estilos inline, para que no haya dos motores de posicionamiento peleando. Los navegadores sin la API se quedan con el posicionamiento JS de Zag, que es el fallback, no un camino inferior.',
     "tooltipPage.positioningBody2":
-      'La <strong>flecha</strong> sigue el mismo reparto: sale del <em>trigger</em> y no del centro de la caja, así que sigue apuntando al control aunque la caja se haya corrido para no salirse de pantalla, y voltea junto con ella. Vive adentro del positioner y aun así se ancla al trigger, porque es <code>fixed</code>: un fijo lo contiene el viewport, no su padre. En el fallback la coloca la máquina. Está contado en <a href="/anchoring">Anclaje</a>.',
+      'La <strong>flecha</strong> sigue el mismo reparto: sale del <em>trigger</em> y no del centro de la caja, así que sigue apuntando al control aunque la caja se haya corrido para no salirse de pantalla, y voltea junto con ella. Vive adentro del positioner y aun así se ancla al trigger, porque es <code>fixed</code>: un fijo lo contiene el viewport, no su padre. En el fallback la coloca la máquina. Está contado en <a href="/es/anclaje">Anclaje</a>.',
     "tooltipPage.test1": "Describe el trigger en vez de nombrarlo.",
     "tooltipPage.test2": "Se mantiene cerrado mientras está deshabilitado.",
   },

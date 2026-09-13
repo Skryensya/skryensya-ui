@@ -74,7 +74,7 @@ export const listMessages = {
     "listPage.step4Note": "+ trailing + Badge",
     "listPage.step5Title": "5 · La fila actúa",
     "listPage.step5Body":
-      'Misma anatomía, ahora envuelta en un <code>a[href]</code> real con <code>sk-list__action sk-interactive</code>. El foco y el teclado son nativos, y el hover, foco y press vienen del <a href="/state-layer">state layer</a>. El <code>&lt;li&gt;</code> pasa a ser sólo el que lleva el divisor.',
+      'Misma anatomía, ahora envuelta en un <code>a[href]</code> real con <code>sk-list__action sk-interactive</code>. El foco y el teclado son nativos, y el hover, foco y press vienen del <a href="/es/state-layer">state layer</a>. El <code>&lt;li&gt;</code> pasa a ser sólo el que lleva el divisor.',
     "listPage.step5Note": "+ a[href] + state layer",
     "listPage.step6Title": "6 · Todo junto",
     "listPage.step6Body":
@@ -85,11 +85,11 @@ export const listMessages = {
     "listPage.contractItem2":
       "Anatomía de fila: <code>sk-list__leading</code>, <code>sk-list__content</code> (con <code>sk-list__title</code> y <code>sk-list__description</code>) y <code>sk-list__trailing</code>. Todas opcionales; compón las que uses.",
     "listPage.contractItem3":
-      'Secuencias de instrucciones: usa <a href="/components/process-list">ProcessList</a>, que conserva un <code>&lt;ol&gt;</code> y posee los marcadores, conectores y contenido de cada paso.',
+      'Secuencias de instrucciones: usa <a href="/es/componentes/process-list">ProcessList</a>, que conserva un <code>&lt;ol&gt;</code> y posee los marcadores, conectores y contenido de cada paso.',
     "listPage.contractItem4":
       'Fila funcional: un <code>&lt;a&gt;</code>/<code>&lt;button&gt;</code> con <code>sk-list__action sk-interactive</code> dentro del <code>&lt;li&gt;</code>. Llena la fila y hereda foco, teclado y state layer.',
     "listPage.contractItem5":
-      'Estado persistente: ninguno. List no modela selección ni destino actual; para navegación activa usa <a href="/nav-list">Nav list</a>.',
+      'Estado persistente: ninguno. List no modela selección ni destino actual; para navegación activa usa <a href="/es/nav-list">Nav list</a>.',
     "listPage.contractItem6": 'Variantes: <code>data-density="compact"</code> y <code>data-dividers="none"</code>.',
     "listPage.contractItem7": "Sin inicialización: el comportamiento es del <code>&lt;a&gt;</code>/<code>&lt;button&gt;</code> nativo.",
     "listPage.test1": "Renderiza una lista semántica con filas estáticas, de enlace y de botón.",

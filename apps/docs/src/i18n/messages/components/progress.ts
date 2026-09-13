@@ -11,7 +11,7 @@ export const progressMessages = {
       "Este diagrama nombra la pista y la barra de relleno. El espécimen está congelado; los Progress vivos empiezan abajo.",
     "progressPage.anatomyLabel": "Anatomía de Progress",
     "progressPage.anatomyPreviewLabel": "Progress, parte por parte",
-    "progressPage.body": 'Para trabajo sin un valor medible usa <a href="/components/loader">Loader</a>: su semántica es indeterminada.',
+    "progressPage.body": 'Para trabajo sin un valor medible usa <a href="/es/componentes/loader">Loader</a>: su semántica es indeterminada.',
     "progressPage.test1": "Expone el valor en el rol <code>progressbar</code> y pinta el relleno correspondiente.",
     "progressPage.test2": "Recorta un valor fuera de rango para que el relleno y <code>aria-valuenow</code> coincidan.",
   },

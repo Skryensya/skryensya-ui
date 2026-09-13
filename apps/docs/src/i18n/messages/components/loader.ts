@@ -60,7 +60,7 @@ export const loaderMessages = {
     "loaderPage.semanticsItem2": "Sin <code>label</code>, React lo vuelve decorativo para acompañar texto sin duplicarlo.",
     "loaderPage.semanticsItem3": 'Marca la región afectada con <code>aria-busy="true"</code>; Loader no controla la operación.',
     "loaderPage.semanticsItem4":
-      'Si conoces el avance, usa <a href="/components/progress">Progress</a>, no una velocidad distinta.',
+      'Si conoces el avance, usa <a href="/es/componentes/progress">Progress</a>, no una velocidad distinta.',
     "loaderPage.reducedTitle": "Movimiento reducido",
     "loaderPage.reducedBody":
       "Los cuatro diseños conservan una silueta reconocible y detienen todo movimiento con <code>prefers-reduced-motion: reduce</code>. El texto de estado permanece: reducir movimiento no puede convertir una operación pendiente en una señal invisible.",

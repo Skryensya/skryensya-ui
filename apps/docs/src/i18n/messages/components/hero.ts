@@ -84,9 +84,9 @@ export const heroMessages = {
     "hero.whenBody1":
       "Usa Hero para el momento de apertura de una página: necesita distinguirse visualmente de las secciones que la siguen, con más aire y una superficie propia en vez de la del fondo de la página.",
     "hero.whenBody2":
-      'Hero no impone anatomía: no hay slots con nombre para titular, bajada o acción. Compón adentro con <a href="/components/stack">Stack</a>, <a href="/components/heading">Heading/Text</a> y <a href="/components/button">Button</a>, igual que en cualquier otra sección de la página.',
+      'Hero no impone anatomía: no hay slots con nombre para titular, bajada o acción. Compón adentro con <a href="/es/componentes/stack">Stack</a>, <a href="/es/componentes/heading">Heading/Text</a> y <a href="/es/componentes/button">Button</a>, igual que en cualquier otra sección de la página.',
     "hero.whenBody3":
-      'Si sólo hace falta relleno, borde o superficie sin ser la apertura de la página, usa <a href="/components/box">Box</a>: comparten el mismo vocabulario de <code>padding</code>/<code>surface</code>, sólo cambian los valores por defecto.',
+      'Si sólo hace falta relleno, borde o superficie sin ser la apertura de la página, usa <a href="/es/componentes/box">Box</a>: comparten el mismo vocabulario de <code>padding</code>/<code>surface</code>, sólo cambian los valores por defecto.',
     "hero.htmlTitle": "HTML escrito a mano",
     "hero.contractItem1": 'En HTML, usa un <code>&lt;div&gt;</code> (o el elemento semántico que corresponda) con la clase <code>sk-hero</code>.',
     "hero.contractItem2":
@@ -97,7 +97,7 @@ export const heroMessages = {
     "hero.contractItem5": 'En React, <code>align</code> acepta <code>start</code> (default) o <code>center</code>.',
 
     "hero.contentRulesTitle": "Reglas de contenido",
-    "hero.contentRule1": 'Adentro siempre va un <strong>encabezado real</strong> (<a href="/components/heading">Heading</a>), nunca sólo texto grande. Si el hero abre la página entera, ese encabezado es el <code>&lt;h1&gt;</code> de la página; si abre una sección, es el encabezado de esa sección.',
+    "hero.contentRule1": 'Adentro siempre va un <strong>encabezado real</strong> (<a href="/es/componentes/heading">Heading</a>), nunca sólo texto grande. Si el hero abre la página entera, ese encabezado es el <code>&lt;h1&gt;</code> de la página; si abre una sección, es el encabezado de esa sección.',
     "hero.contentRule2": "Como mucho <strong>una acción primaria y una secundaria</strong> más silenciosa. Una fila de botones de igual peso deshace la única decisión que un hero debe señalar; si el mensaje necesita más de dos acciones, ese contenido pertenece a otra sección.",
     "hero.contentRule3": 'Cualquier imagen adentro lleva <code>alt</code> real si aporta información (una captura, una foto de producto), o <code>alt=""</code> si es puramente decorativa. La imagen acompaña al titular, nunca lo reemplaza.',
 

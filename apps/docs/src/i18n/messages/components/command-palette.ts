@@ -18,7 +18,7 @@ export const commandPaletteMessages = {
     "commandPalette.anatomyLabel": "Anatomía de CommandPalette",
     "commandPalette.anatomyPreviewLabel": "CommandPalette abierta, parte por parte",
     "commandPalette.lede":
-      'Una <strong>paleta de comandos</strong>: un campo que filtra un índice y un listbox con <code>aria-activedescendant</code>, alojados en un <a href="/components/dialog"><code>Dialog</code></a> nativo (<code>showModal</code>, Esc, foco). El atajo (<a href="/hotkey">Hotkey</a>) es opt-in por atributo; este sitio lo usa con {hotkey}.',
+      'Una <strong>paleta de comandos</strong>: un campo que filtra un índice y un listbox con <code>aria-activedescendant</code>, alojados en un <a href="/es/componentes/dialog"><code>Dialog</code></a> nativo (<code>showModal</code>, Esc, foco). El atajo (<a href="/es/hotkey">Hotkey</a>) es opt-in por atributo; este sitio lo usa con {hotkey}.',
     "commandPalette.contractItem1": 'Raíz: <code>&lt;dialog class="sk-dialog sk-command-palette" data-sk-command-palette&gt;</code>.',
     "commandPalette.contractItem2":
       'Índice JSON vía <code>data-sk-command-palette-index</code> (id del <code>&lt;script type="application/json"&gt;</code>).',

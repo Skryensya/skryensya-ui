@@ -54,9 +54,9 @@ export const changelogMessages = {
     "changelogPage.whenItem1":
       "Usa Changelog para release notes y para el historial de un contrato: cosas que pasaron, cada una con su día.",
     "changelogPage.whenItem2":
-      'Usa <a href="/components/process-list">ProcessList</a> para instrucciones en orden. Numera sus marcadores con un <code>counter()</code> de CSS, así que una lista con lo más nuevo arriba se numeraría al revés del tiempo.',
+      'Usa <a href="/es/componentes/process-list">ProcessList</a> para instrucciones en orden. Numera sus marcadores con un <code>counter()</code> de CSS, así que una lista con lo más nuevo arriba se numeraría al revés del tiempo.',
     "changelogPage.whenItem3":
-      'Usa <a href="/components/steps">Steps</a> cuando haya progreso: <code>complete</code>, <code>current</code>, <code>upcoming</code>. Su conector dice cuánto trabajo queda atrás, que de un cambio ya publicado no es una afirmación que nadie pueda hacer.',
+      'Usa <a href="/es/componentes/steps">Steps</a> cuando haya progreso: <code>complete</code>, <code>current</code>, <code>upcoming</code>. Su conector dice cuánto trabajo queda atrás, que de un cambio ya publicado no es una afirmación que nadie pueda hacer.',
     "changelogPage.contractItem1":
       'La raíz es <code>&lt;ol class="sk-changelog" reversed&gt;</code>. El <code>reversed</code> es fijo, no una opción: lo más nuevo arriba es lo que un changelog <em>es</em>. Nadie dibuja los números, pero el árbol de accesibilidad los lee, y ahí tienen que contar hacia atrás.',
     "changelogPage.contractItem2":

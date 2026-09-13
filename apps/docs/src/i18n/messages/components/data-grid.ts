@@ -5,7 +5,7 @@ export const dataGridMessages = {
       "Data Grid: navegación 2D con roving tabindex para datos tabulares o widgets agrupados.",
     "dataGridPage.betaBadge": "Beta",
     "dataGridPage.lede":
-      'La propia especificación WAI-ARIA trata "data grids" y "layout grids" como el mismo patrón. Mismos roles, misma mecánica de roving tabindex, así que este es UN contrato, no dos. Úsalo cuando una grilla de celdas necesita navegación 2D: <a href="/components/table">Table</a> ya cubre el caso de datos tabulares ESTÁTICOS, sin modelo de teclado propio.',
+      'La propia especificación WAI-ARIA trata "data grids" y "layout grids" como el mismo patrón. Mismos roles, misma mecánica de roving tabindex, así que este es UN contrato, no dos. Úsalo cuando una grilla de celdas necesita navegación 2D: <a href="/es/componentes/table">Table</a> ya cubre el caso de datos tabulares ESTÁTICOS, sin modelo de teclado propio.',
     "dataGridPage.dataTitle": "Datos tabulares",
     "dataGridPage.anatomyBody":
       "Este diagrama nombra la grilla, la fila y la celda. El espécimen está congelado; los DataGrid vivos empiezan abajo.",

@@ -20,7 +20,7 @@ export const tagMessages = {
 
     "tagPage.description": "Tag: chip de palabra clave opcionalmente removible, con tonos y componente React.",
     "tagPage.lede":
-      'Tag clasifica contenido sobre el que el usuario puede actuar: filtros, facetas, chips. Donde <a href="/components/badge">Badge</a> es una etiqueta de estado de solo lectura, Tag es más cuadrado (radio de control, no píldora) para leerse como accionable.',
+      'Tag clasifica contenido sobre el que el usuario puede actuar: filtros, facetas, chips. Donde <a href="/es/componentes/badge">Badge</a> es una etiqueta de estado de solo lectura, Tag es más cuadrado (radio de control, no píldora) para leerse como accionable.',
     "tagPage.simpleTitle": "Tags de palabra clave",
     "tagPage.anatomyBody":
       "Este diagrama nombra el chip, la etiqueta y el botón de quitar. El espécimen está congelado; los Tag vivos empiezan abajo.",

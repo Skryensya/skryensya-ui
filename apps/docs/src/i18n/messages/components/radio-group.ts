@@ -18,7 +18,7 @@ export const radioGroupMessages = {
     "radioGroupPage.tileBody1":
       "Cuando cada alternativa necesita título, descripción y una superficie completa, usa <code>TileRadioGroup</code>. Cada item conserva un radio nativo; el grupo no impone disposición.",
     "radioGroupPage.tileBody2":
-      'En este preview las opciones van en fila con <a href="/components/inline"><code>sk-inline</code></a> y cada Tile toma <code>flex: 1</code>. En una columna, omite <code>sk-inline</code>.',
+      'En este preview las opciones van en fila con <a href="/es/componentes/inline"><code>sk-inline</code></a> y cada Tile toma <code>flex: 1</code>. En una columna, omite <code>sk-inline</code>.',
     "radioGroupPage.tileBody3":
       'El enhancer <code>tile-radio-group</code> (Svelte + <code>@zag-js/radio-group</code>, la misma máquina que React) hidrata la raíz <code>data-sk-tile-radio-group</code> con <code>initComponents()</code>: garantiza la exclusión mutua y sincroniza el estado de cada <code>[data-part="item"]</code> con su radio real.',
     "radioGroupPage.tileBody4": "Importa <code>@skryensya/core/components/radio-group.css</code> y llama <code>initComponents()</code> una vez.",

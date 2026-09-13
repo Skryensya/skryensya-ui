@@ -4,7 +4,7 @@ export const iconMessages = {
     "iconPage.description":
       "Icon: el pattern sk-icon en React y vanilla, con roles del vocabulario, geometría propia, tamaños y a11y en el call site.",
     "iconPage.lede":
-      'Cómo pones un icono en pantalla: <code>&lt;Icon&gt;</code> en React, <code>data-sk-icon</code> + <code>mountIcons</code> en vanilla, o el <code>&lt;svg class="sk-icon"&gt;</code> a mano. El vocabulario de roles, los sets como marca y por qué el CSS no toca fill/stroke viven en <a href="/icons">Iconografía</a>.',
+      'Cómo pones un icono en pantalla: <code>&lt;Icon&gt;</code> en React, <code>data-sk-icon</code> + <code>mountIcons</code> en vanilla, o el <code>&lt;svg class="sk-icon"&gt;</code> a mano. El vocabulario de roles, los sets como marca y por qué el CSS no toca fill/stroke viven en <a href="/es/iconos">Iconografía</a>.',
     "iconPage.reactTitle": "React",
     "iconPage.reactBody1":
       "<code>Icon</code> toma <code>name</code> <strong>o</strong> <code>data</code>, nunca los dos. <code>name</code> es un rol portable que sobrevive un cambio de set; <code>data</code> es geometría tuya, acoplada a propósito y visible en el call site.",

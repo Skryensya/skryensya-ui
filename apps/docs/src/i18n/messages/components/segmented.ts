@@ -7,7 +7,7 @@ export const segmentedMessages = {
 
     "segmentedPage.description": "SegmentedControl: elección única y visible sobre un grupo pequeño, con semántica radiogroup.",
     "segmentedPage.lede":
-      'SegmentedControl es una elección única de un conjunto pequeño y fijo, mostrado de una vez: un radiogroup con ropa de barra de botones. Para navegar entre paneles usa <a href="/components/tabs">Tabs</a>; para muchas opciones o texto libre, <a href="/components/select">Select</a>.',
+      'SegmentedControl es una elección única de un conjunto pequeño y fijo, mostrado de una vez: un radiogroup con ropa de barra de botones. Para navegar entre paneles usa <a href="/es/componentes/tabs">Tabs</a>; para muchas opciones o texto libre, <a href="/es/componentes/select">Select</a>.',
     "segmentedPage.body":
       "El enhancer vanilla selecciona con click y con flechas; <code>Home</code> y <code>End</code> saltan al primer y último segmento. La opción elegida queda en <code>data-value</code> y se anuncia con <code>aria-checked</code>. Cada segmento pinta a <code>--size-control-sm</code> y conserva un hit de <code>44px</code> vía <code>::after</code> (el indicador sigue la caja pintada).",
     "segmentedPage.anatomyBody":

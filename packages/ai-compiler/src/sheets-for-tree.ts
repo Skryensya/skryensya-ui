@@ -12,7 +12,7 @@
  * The architecture review's completeness claim is exactly `unplaced.length === 0` over the
  * canonical corpus.
  */
-import { contracts, type ContractId } from "@skryensya/core/registry";
+import { contractIds, getContract } from "@skryensya/core/registry";
 import type { ContractTemplate } from "@skryensya/core/contract";
 import {
   collectionItems,
@@ -35,7 +35,14 @@ export type SheetsForTree = {
 /** Part class → the one stylesheet that owns it, only when a single contract claims it. */
 const classToCss: ReadonlyMap<string, string> = (() => {
   const claimants = new Map<string, Set<string>>();
-  for (const contract of Object.values(contracts)) {
+  /*
+   * Through `getContract`, not `Object.values(contracts)`: the catalogue is `as const`, so optional
+   * fields like `hookSheets` are missing from the narrowed literals. The accessor widens to
+   * `ComponentContract` (same reason `hooks.ts` uses it).
+   */
+  for (const id of contractIds()) {
+    const contract = getContract(id);
+    if (!contract) continue;
     const css = contract.css;
     if (typeof css !== "string" || !contract.parts) continue;
     for (const className of Object.values(contract.parts)) {
@@ -80,7 +87,7 @@ export function sheetsForTree(tree: UsageTree): SheetsForTree {
   const classes = new Set<string>();
 
   const visit = (node: UsageTree): void => {
-    const contract = contracts[node.contract as ContractId];
+    const contract = getContract(node.contract);
     if (!contract) return;
     if (typeof contract.css === "string") sheets.add(contract.css);
     for (const hook of contract.hookSheets ?? []) sheets.add(hook);

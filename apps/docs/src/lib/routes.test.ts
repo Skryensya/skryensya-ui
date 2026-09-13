@@ -107,12 +107,54 @@ describe("locale-independent markup", () => {
     expect([...new Set(leaks)].sort()).toEqual([]);
   });
 
+  /*
+   * THREE SHAPES, because a link is written three ways here and all three leaked at least once: as
+   * an attribute in markup, as an `href` OPTION inside a usage tree (the landing page's card), and
+   * as a named constant handed to a demo (Button's `LINK_HREF`, whose own comment said the path
+   * differs per locale while the value never did).
+   *
+   * The filter is "does it resolve to a real route", not "is it absolute": a demo linking to
+   * `/people/ada` is showing what a link looks like, and asserting that resolves would be asserting
+   * the demos are a real site. A path that IS a page of this site is a navigation, and a navigation
+   * has a locale.
+   */
+  const LINK_SHAPES = [
+    /href=["'](\/[^"'#?{]*)["']/g,
+    /href:\s*["'](\/[^"'#?]*)["']/g,
+    /\b[A-Za-z_]*(?:HREF|Href)\s*=\s*["'](\/[^"'#?]*)["']/g,
+  ];
+
   it("never hardcodes a link to a real route, in any locale", () => {
     const leaks: string[] = [];
     for (const file of shared) {
-      for (const m of readFileSync(file, "utf8").matchAll(/href=["'](\/[^"'#?{]*)["']/g)) {
+      const source = readFileSync(file, "utf8");
+      for (const shape of LINK_SHAPES) {
+        for (const m of source.matchAll(shape)) {
+          const href = m[1]!;
+          if (resolves(href)) leaks.push(`${href}  (${relative(root, file)})`);
+        }
+      }
+    }
+    expect([...new Set(leaks)].sort()).toEqual([]);
+  });
+
+  /*
+   * AND THE SPANISH PAGES THEMSELVES. A file under `src/pages/es/` renders in one locale only, so it
+   * may write `/es/...` freely, but a bare `/foundations` there is still a door out of the language.
+   * Only the TEMPLATE is scanned, not the frontmatter: the code samples a page declares up there are
+   * markup being TAUGHT, and `<a href="/">Ver docs</a>` inside one is a demonstration of a link, not
+   * a link.
+   */
+  it("keeps every Spanish page inside Spanish routes", () => {
+    const leaks: string[] = [];
+    for (const file of walk(pagesDir)) {
+      if (!/\.astro$/.test(file) || !/[/\\]es[/\\]/.test(file)) continue;
+      const source = readFileSync(file, "utf8");
+      /* Everything after the frontmatter fence is what the page RENDERS. */
+      const template = source.startsWith("---") ? source.slice(source.indexOf("\n---", 3) + 4) : source;
+      for (const m of template.matchAll(/href=["'](\/[^"'#?{]*)["']/g)) {
         const href = m[1]!;
-        if (resolves(href)) leaks.push(`${href}  (${relative(root, file)})`);
+        if (!href.startsWith("/es") && resolves(href)) leaks.push(`${href}  (${relative(root, file)})`);
       }
     }
     expect([...new Set(leaks)].sort()).toEqual([]);

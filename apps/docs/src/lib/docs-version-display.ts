@@ -7,7 +7,7 @@
  * selector row still discloses the latest minor of that major so the mapping is visible without
  * stuffing the full string into the trigger.
  *
- * Pure helpers only — page code wires them to `releaseLedger()` so this file stays testable
+ * Pure helpers only: page code wires them to `releaseLedger()` so this file stays testable
  * without Vite's `@artifacts` alias.
  */
 
@@ -57,11 +57,11 @@ export type DocsMajorLine = {
 
 /**
  * One row per major present in the ledger (plus the live tip), newest major first.
- * Until archives mount on the CDN this list is usually a single current major — still useful,
+ * Until archives mount on the CDN this list is usually a single current major: still useful,
  * because the selector can show `v0` up top and `0.0.1-dev` as that major's tip.
  *
  * "Current" is the major of `working` (the tree being edited), not necessarily the major of the
- * last published release the footer pins — those can diverge the day a new major opens.
+ * last published release the footer pins: those can diverge the day a new major opens.
  */
 export function majorLinesFromLedger(ledger: {
   readonly working: string;

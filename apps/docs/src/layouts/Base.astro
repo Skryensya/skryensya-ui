@@ -232,7 +232,7 @@ const vanillaMount = vanillaMounts[canonical as keyof typeof vanillaMounts];
  * server started throwing readers at production the moment their browser asked for Spanish.
  */
 /* Latest lives on bare URLs (VERSIONED_DOCS_PLAN §3.3). Archives, when they exist, are CDN mounts
- * of a built cut — not routes in this source tree — so alternates always come from the live page
+ * of a built cut, not routes in this source tree, so alternates always come from the live page
  * directory. */
 const alternateLocales = availableLocales(canonical);
 const alternates = alternateLocales.map((code) => {

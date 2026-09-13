@@ -7,9 +7,13 @@ import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { annotationDemoCss } from "../../demos/annotation";
 import { expandableTileTree, tileAnatomyTree } from "../../demos/tile";
-import { getLocale, useTranslations } from "../../i18n";
+import { getLocale, localizePath, useTranslations } from "../../i18n";
 
-const t = useTranslations(getLocale(Astro.url));
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+/* Every internal link resolves in the locale being read: a hardcoded `/components/x` sends a
+   Spanish reader to the English page, which is the bug this page had thirteen times. */
+const href = (path: string) => localizePath(path, locale);
 ---
 
 <ComponentPageShell
@@ -58,13 +62,13 @@ const t = useTranslations(getLocale(Astro.url));
           <tr class="sk-table__row"><th class="sk-table__header">{t("tilePage.headNeed")}</th><th class="sk-table__header">{t("tilePage.headComponent")}</th><th class="sk-table__header">{t("tilePage.headNative")}</th></tr>
         </thead>
         <tbody class="sk-table__body">
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("tilePage.row1Need")}</td><td class="sk-table__cell"><a href="/components/box">Box</a></td><td set:html={t("tilePage.row1Native")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("tilePage.row2Need")}</td><td class="sk-table__cell"><a href="/components/link">Link</a></td><td set:html={t("tilePage.row2Native")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("tilePage.row3Need")}</td><td class="sk-table__cell"><a href="/components/button">Button</a></td><td set:html={t("tilePage.row3Native")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("tilePage.row4Need")}</td><td class="sk-table__cell"><a href="/components/checkbox">Checkbox</a></td><td set:html={t("tilePage.row4Native")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("tilePage.row5Need")}</td><td class="sk-table__cell"><a href="/components/switch">Switch</a></td><td set:html={t("tilePage.row5Native")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("tilePage.row6Need")}</td><td class="sk-table__cell"><a href="/components/radio-group">RadioGroup</a></td><td set:html={t("tilePage.row6Native")} class="sk-table__cell" /></tr>
-          <tr class="sk-table__row"><td class="sk-table__cell">{t("tilePage.row7Need")}</td><td class="sk-table__cell"><a href="/components/accordion">Accordion</a></td><td set:html={t("tilePage.row7Native")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("tilePage.row1Need")}</td><td class="sk-table__cell"><a href={href("/components/box")}>Box</a></td><td set:html={t("tilePage.row1Native")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("tilePage.row2Need")}</td><td class="sk-table__cell"><a href={href("/components/link")}>Link</a></td><td set:html={t("tilePage.row2Native")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("tilePage.row3Need")}</td><td class="sk-table__cell"><a href={href("/components/button")}>Button</a></td><td set:html={t("tilePage.row3Native")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("tilePage.row4Need")}</td><td class="sk-table__cell"><a href={href("/components/checkbox")}>Checkbox</a></td><td set:html={t("tilePage.row4Native")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("tilePage.row5Need")}</td><td class="sk-table__cell"><a href={href("/components/switch")}>Switch</a></td><td set:html={t("tilePage.row5Native")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("tilePage.row6Need")}</td><td class="sk-table__cell"><a href={href("/components/radio-group")}>RadioGroup</a></td><td set:html={t("tilePage.row6Native")} class="sk-table__cell" /></tr>
+          <tr class="sk-table__row"><td class="sk-table__cell">{t("tilePage.row7Need")}</td><td class="sk-table__cell"><a href={href("/components/accordion")}>Accordion</a></td><td set:html={t("tilePage.row7Native")} class="sk-table__cell" /></tr>
         </tbody>
       </table>
     </div>

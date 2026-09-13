@@ -20,9 +20,9 @@ import TokenTable from "../components/TokenTable.astro";
     References point <strong>down or sideways, never up</strong>, and tier 3 cannot jump to tier 1. That is not convention: the validator enforces it. A <code>--palette-*</code> within a component's CSS is the visible sign that someone skipped the semantic layer and broke dark mode for that component alone.
   </p>
   <p>
-    The <span class="sk-badge" data-tone="success">component</span> tokens live on the element, not
-    in <code>:root</code>, so they resolve against a test element carried by the class. Yes
-    <em>appears unresolved in this context</em>, it is not a bug: it is the tier 3 scoping showing. that
-    token does not exist until an element opts for it.
+    The <span class="sk-badge" data-tone="success">component</span> tokens live on the element rather than on
+    <code>:root</code>, so they are resolved here against a test element carrying the class. If one reads
+    <em>unresolved in this context</em>, that is not a bug but tier 3 scoping showing through: the token does
+    not exist until an element opts into it.
   </p>
 </Base>

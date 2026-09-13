@@ -1,0 +1,95 @@
+---
+/*
+ * The recipes, rendered.
+ *
+ * Nothing on this page is written twice. The trees live in `contracts/recipes/`, the compiler
+ * validates all four states of each against the contracts before it will emit a catalogue, and this
+ * page hands the same trees to `ComponentPreview`, which emits the markup, the TSX and the live React
+ * island from them.
+ *
+ * So a recipe cannot rot into prose that no longer works: the build fails first.
+ */
+import Base from "../layouts/Base.astro";
+import ComponentPreview from "../components/ComponentPreview.astro";
+import { recipes, type RecipeState } from "@skryensya/recipes";
+
+import "@skryensya/core/components/callout.css";
+import "@skryensya/core/components/accordion.css";
+import "@skryensya/core/components/chart.css";
+import "@skryensya/core/components/empty-state.css";
+import "@skryensya/core/components/loader.css";
+import "@skryensya/core/components/navbar.css";
+import "@skryensya/core/components/pagination.css";
+import "@skryensya/core/components/placeholder.css";
+import "@skryensya/core/components/segmented.css";
+import "@skryensya/core/components/sidebar.css";
+import "@skryensya/core/components/stat.css";
+import "@skryensya/core/components/table.css";
+import "@skryensya/core/components/theme-toggle.css";
+import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/toolbar.css";
+
+/*
+ * Reading order, not alphabetical: a screen is nothing until it has come back, and the state that
+ * teaches the most is the one everybody skips. Success last, on purpose.
+ */
+const stateOrder: readonly RecipeState[] = ["loading", "empty", "error", "success"];
+
+const stateLabel: Record<RecipeState, string> = {
+  loading: "Loading",
+  empty: "Empty",
+  error: "Error",
+  success: "With data",
+};
+
+const stateBlurb: Record<RecipeState, string> = {
+  loading: "It has not arrived yet. The navigation stays put; what changes is the column.",
+  empty: "It arrived, and there is nothing. That is a different screen from \"not yet\".",
+  error: "It could not arrive. It says what happened and offers a way out.",
+  success: "It arrived with data.",
+};
+---
+
+<Base
+  title="Recipes"
+  description="Whole screens as usage trees: app shell, form, table, preferences and destructive confirmation, each in all four of its states."
+  documentLayout="grid"
+>
+  <h1>Recipes</h1>
+  <p class="lede">
+    The catalogue answers <em>which component</em>. A recipe answers <em>what a whole screen looks
+    like</em>, and above all what it looks like before it has loaded, when it comes back empty, and when
+    it fails, which is where a generated interface usually gets it wrong.
+  </p>
+  <p>
+    Each recipe is one <a href="https://github.com/Skryensya/skryensya-ui/blob/main/docs/ai-ui-platform.md">usage tree</a> per state, kept in
+    <code>contracts/recipes/</code>. The compiler validates all four against the contracts before it will
+    emit a catalogue: a recipe naming a signature that changed <strong>breaks the build</strong> instead
+    of going on teaching something that no longer works. The markup, the TSX and the React demo below all
+    come out of that same tree.
+  </p>
+
+  {
+    recipes.map((recipe) => (
+      <section>
+        <h2 id={recipe.id}>{recipe.intent}</h2>
+        <ul>
+          {recipe.notes.map((note) => (
+            <li set:html={note.replace(/`([^`]+)`/g, "<code>$1</code>")} />
+          ))}
+        </ul>
+        {stateOrder.map((state) => (
+          <>
+            <h3>{stateLabel[state]}</h3>
+            <p>{stateBlurb[state]}</p>
+            <ComponentPreview
+              tree={recipe.states[state]}
+              label={`${recipe.id} · ${stateLabel[state]}`}
+              flush
+            />
+          </>
+        ))}
+      </section>
+    ))
+  }
+</Base>

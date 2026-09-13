@@ -841,6 +841,7 @@ export const globalNavigation = [
   { href: "/foundations", label: "nav.foundations" },
   { href: "/components", label: "nav.components" },
   { href: "/templates", label: "nav.templates" },
+  { href: "/recipes", label: "nav.recipes" },
   { href: "/presets", label: "nav.presets" },
 ] satisfies readonly NavigationItem[];
 

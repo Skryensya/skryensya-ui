@@ -7,34 +7,42 @@ import StylingHooks from "../../components/StylingHooks.astro";
 
 const import_ = `@import "@skryensya/core/patterns/anchored.css";`;
 
-const anatomy = `<!-- ANCHOR: the element everything is measured against. -->
+const anatomy = `<!-- EL ANCLA: aquello contra lo que medís. Casi siempre el trigger. -->
 <button class="sk-button sk-interactive sk-anchor" data-sk-anchor-trigger>
   Guardar
 </button>
 
-<!-- POSITIONER: placement, with no paint or interaction of its own. -->
+<!-- EL POSICIONADOR: solo colocación, nunca pintura, nunca clic. -->
 <span class="sk-tooltip__positioner sk-anchored" data-sk-placement="block-start">
-  <!-- ARROW: opcional y decorativa. -->
+  <!-- LA FLECHA, opcional. Va adentro, pero se coloca contra EL ANCLA. -->
   <span class="sk-anchored-arrow" aria-hidden="true"></span>
-
-  <!-- CONTENT: the visible, interactive box. -->
+  <!-- EL CONTENIDO: lo que se ve. -->
   <span class="sk-tooltip__content" data-sk-anchor-content>
-    Se guarda solo cada 30 segundos
+    Guarda solo cada 30 segundos
   </span>
 </span>`;
 
-const sameWidth = `@supports (anchor-name: --a) {
-  .sk-select__positioner {
-    --sk-anchored-size: anchor-size(width);
-  }
-}`;
-
-const submenu = `.sk-menu__positioner[data-sk-submenu] {
+const escapeHatch = `/* Un submenú aparece al costado y alineado hacia arriba: no es ninguno de los cuatro.
+   Se pide por el hook, no agregando un quinto al vocabulario público. */
+.sk-menu__positioner[data-sk-submenu] {
   --sk-anchored-position-area: inline-end span-block-end;
   --sk-anchored-justify: auto;
   --sk-anchored-align: start;
   --sk-anchored-position-try: flip-inline;
 }`;
+
+const sameWidth = `/* El listbox mide lo que mide su trigger. Va adentro del @supports:
+   anchor-size() sin un ancla resuelta es inválido. */
+@supports (anchor-name: --a) {
+  .sk-select__positioner {
+    --sk-anchored-size: anchor-size(width);
+  }
+}`;
+
+const arrow = `<span class="sk-tooltip__positioner sk-anchored" data-sk-placement="block-start">
+  <span class="sk-anchored-arrow" aria-hidden="true"></span>
+  <span class="sk-tooltip__content">…</span>
+</span>`;
 
 const arrowReact = `<Tooltip arrow content="Se guarda solo">
   <button className="sk-button sk-interactive">Guardar</button>
@@ -68,164 +76,178 @@ const anchorTree: UsageTree = {
 <Base
   title="Anclaje"
   documentLayout="grid"
-  description="Pattern compartido para colocar contenido contra un elemento: anchor, positioner, content y arrow."
+  description="Un patrón: colocar una caja contra otro elemento, con el navegador como motor y la máquina como fallback."
 >
   <h1>Anclaje</h1>
   <p class="lede">
-    <strong>Anclaje es un Pattern</strong>: coloca una caja contra un elemento, no contra la
-    página. Tooltip, Popover, Popup, Menu, Select, Combobox y DatePicker consumen la misma estructura:
-    <strong>anchor</strong>, <strong>positioner</strong>, <strong>content</strong> y
-    <strong>arrow</strong> opcional.
+    Una caja colocada contra <strong>otro</strong> elemento, no contra la página: se abre por un lado del ancla, se voltea al lado opuesto cuando no entra, y desaparece si el ancla sale de la pantalla. Es lo que hacen tooltip, popover, popup, menu y sus submenús, select, combobox y date picker.
   </p>
 
-  <ComponentPreview tree={anchorTree} label="Anclaje" />
+  <ComponentPreview tree={anchorTree} label="HTML" />
 
-  <h2>Consumidores</h2>
+  <h2>Por qué es un patrón y no un componente</h2>
   <p>
-    El Pattern existe porque varios componentes necesitan el mismo Markup contract geométrico. La
-    pintura y la Machine siguen siendo de cada componente; el Pattern solo fija dónde vive la
-    colocación.
+    La regla es una sola pregunta: <em>¿podría un segundo componente necesitar esta estructura exacta?</em> Acá no hay nada que predecir, <strong>nueve ya la necesitan</strong>. Así que el anclaje publica <strong>hooks y estructura</strong>, como hace <a href="/es/vaul">Vaul</a>, no solo variables.
+  </p>
+  <p>
+    No lo confundas con Vaul, aunque los dos hablen de anclar: un Vaul se ancla a un <strong>borde del viewport</strong>, esto se ancla a <strong>otro elemento</strong>.
+  </p>
+
+  <h2>Las tres partes</h2>
+  <p>
+    Dos clases planas que <strong>componen</strong> con las partes propias de un componente, igual que <code>sk-interactive</code> compone con <code>sk-button</code>, más una tercera opcional. No son un par BEM porque el ancla no está adentro del posicionador, y en React el posicionador se portea al <code>&lt;body&gt;</code>: anidar una bajo la otra nombraría una contención que no existe.
+  </p>
+  <CodeBlock code={anatomy} label="HTML" />
+  <ul>
+    <li>
+      <code>sk-anchor</code>, el <strong>ancla</strong>: aquello contra lo que se mide el panel. Casi siempre el trigger, pero nunca de forma automática, porque anclar es un rol geométrico y abrir es uno interactivo. Combobox y DatePicker anclan el control <em>entero</em>, porque la lista se alinea con el campo donde se escribe y no con el chevron de 32px que tiene al lado.
+    </li>
+    <li>
+      <code>sk-anchored</code>, el <strong>posicionador</strong>. Carga la colocación y nada más: no pinta y no intercepta el puntero, así que la caja invisible que reserva no puede bloquear lo que hay debajo. Su hijo, el contenido, es lo que se ve y lo que se clickea.
+    </li>
+    <li>
+      <code>sk-anchored-arrow</code>, la <strong>flecha</strong>, opcional. Se escribe a mano o no existe. Va adentro del posicionador, y aun así se coloca contra el <strong>ancla</strong>, no contra la caja.
+    </li>
+  </ul>
+
+  <h2>El que coloca es el navegador</h2>
+  <p>
+    Donde existe la API de <em>CSS Anchor Positioning</em>, coloca el navegador: sin loop de layout, sin medir en cada scroll, con el volteo y el ancla desaparecida resueltos dentro del motor de layout, que es donde esa información ya vive. Donde no existe, coloca la máquina de Zag.
+  </p>
+  <p>
+    El <strong>fallback no es un camino menor</strong>, es el mismo contrato ejecutado por otro motor. Lo que sí exige es que los dos nunca corran a la vez: en el camino del navegador el binding le saca al posicionador el <code>style</code> inline que escribe la máquina. Esa es también la razón por la que las declaraciones del propio patrón prescinden de <code>!important</code>, y la omisión es estructural, no un descuido: <code>position-try</code> solo puede voltear declaraciones que <strong>no</strong> sean <code>!important</code>.
+  </p>
+
+  <h2>Cuatro placements, sobre ejes lógicos</h2>
+  <p>
+    <code>block-start</code>, <code>block-end</code>, <code>inline-start</code> e <code>inline-end</code>, pedidos con <code>data-sk-placement</code> en el <strong>posicionador</strong> y no en la raíz, porque en React el posicionador se portea y la herencia desde la raíz no llega ahí. Se dan vuelta solos en RTL.
+  </p>
+  <p>
+    Es una <strong>preferencia, no una garantía</strong>: si no entra, el navegador lo voltea al lado opuesto del <em>mismo eje</em>. Quien pide <code>inline-end</code> quiere la caja al costado, y caer encima sería desobedecer, no adaptarse.
+  </p>
+
+  <h2>Los casos raros usan el hook, no un quinto placement</h2>
+  <p>
+    El vocabulario no se agranda con las excepciones. Un submenú quiere aparecer al costado y alineado hacia arriba, y eso se pide sobreescribiendo el hook directo, que es para lo que está un hook. Dejar que la excepción escriba el contrato es como un vocabulario de cuatro termina siendo uno de nueve.
+  </p>
+  <CodeBlock code={escapeHatch} label="CSS" />
+  <p>
+    El otro hook que se usa de verdad es el ancho. Select y Combobox miden lo que mide su ancla:
+  </p>
+  <CodeBlock code={sameWidth} label="CSS" />
+
+  <h2>La flecha es opcional, y se escribe a mano</h2>
+  <p>
+    Un cuadrado rotado 45° que asoma por el borde de la caja hacia el ancla. Si el markup no incluye <code>.sk-anchored-arrow</code>, no hay flecha, y ese es el default. Un <a href="/es/componentes/tooltip">tooltip</a> o un <a href="/es/componentes/popover">popover</a> la quieren porque son chrome flotante que tiene que decir <em>de qué control</em> está hablando; un menu o un select no, porque ahí el borde compartido ya enuncia la relación.
+  </p>
+  <CodeBlock code={arrow} label="HTML" />
+  <p>En React es una prop, apagada por defecto:</p>
+  <CodeBlock code={arrowReact} label="React" />
+  <p>
+    Es <strong>decorativa</strong>, así que siempre lleva <code>aria-hidden</code>: no agrega información, repite lo que el placement ya dice.
+  </p>
+
+  <h3>Sale del ancla, no del centro de la caja</h3>
+  <p>
+    La diferencia se ve apenas la caja se mueve: <code>anchor-center</code> la centra en el <em>ancla</em> pero la empuja de vuelta a la pantalla si no entra, así que un trigger cerca del borde deja la caja desplazada, y una flecha dibujada al 50% de esa caja termina apuntando a cualquier lado menos al control. Por eso la flecha no se coloca contra la caja: es <strong>una segunda caja anclada</strong> a la misma ancla, con el mismo <code>position-area</code> y el mismo volteo.
+  </p>
+  <p>
+    Y aun así <strong>vive adentro</strong> del posicionador, lo que debería ser imposible: la spec solo permite anclarse a algo que sea <em>descendiente del bloque contenedor</em> del elemento, y el trigger no cuelga del posicionador. Lo que lo resuelve es <code>position: fixed</code>: el bloque contenedor de un elemento fijo es el <strong>viewport</strong>, donde el trigger sí vive, aunque en el DOM la flecha siga adentro. Con <code>absolute</code> el bloque contenedor sería el posicionador y <code>anchor()</code> y <code>anchor-center</code> serían inválidos <em>en silencio</em>.
+  </p>
+  <p>
+    Quedarse adentro tampoco es prolijidad, es lo que necesitan tres cosas a la vez. La caja de un <a href="/es/componentes/popover">Popover</a> se va al <em>top layer</em> cuando se abre, y ahí solo entra con sus hijos. Como hija posicionada, la flecha pinta <strong>por encima</strong> del fondo y del borde de la caja, que es lo que hace desaparecer la costura. Y en el <strong>fallback</strong> coloca la máquina, que busca la flecha adentro del elemento flotante.
+  </p>
+  <p>
+    <em>Se voltea junto con la caja</em> porque toma la altura de la caja como margen hacia afuera (<code>anchor-size()</code>): las dos tienen la misma huella, así que cruzan el umbral de <code>position-try</code> en el mismo momento.
+  </p>
+  <p>
+    <strong>A qué se reduce el costo:</strong> al voltear, <code>position-try</code> voltea márgenes y alineación pero no el <code>rotate</code>, que no es una propiedad que acepte. El rombo es simétrico a 180°, así que la forma no cambia, solo cambia cuáles de sus lados llevan el borde: invisible en la flecha sin borde de un tooltip, una línea del lado que no es apenas se pinta un borde.
+  </p>
+
+  <h2>Quién lo usa</h2>
+  <p>
+    Siete componentes componen <code>sk-anchored</code> hoy. La última columna dice quién resuelve la colocación: casi todos se quedan en la ruta del navegador, y el único que además lleva posicionamiento por máquina es el tooltip.
   </p>
   <div class="sk-table-scroll">
     <table class="sk-table">
       <thead class="sk-table__head">
         <tr class="sk-table__row">
           <th scope="col" class="sk-table__header">Componente</th>
-          <th scope="col" class="sk-table__header">Anchor</th>
-          <th scope="col" class="sk-table__header">Arrow</th>
-          <th scope="col" class="sk-table__header">Motor</th>
+          <th scope="col" class="sk-table__header">A qué se ancla</th>
+          <th scope="col" class="sk-table__header">Flecha</th>
+          <th scope="col" class="sk-table__header">Coloca</th>
         </tr>
       </thead>
       <tbody class="sk-table__body">
         <tr class="sk-table__row">
-          <td class="sk-table__cell"><a href="/components/tooltip">Tooltip</a></td>
-          <td class="sk-table__cell">trigger</td>
+          <td class="sk-table__cell"><a href="/es/componentes/tooltip">Tooltip</a></td>
+          <td class="sk-table__cell">el trigger</td>
           <td class="sk-table__cell">sí</td>
-          <td class="sk-table__cell">navegador + Machine de Zag</td>
+          <td class="sk-table__cell">navegador + máquina (Zag)</td>
         </tr>
         <tr class="sk-table__row">
-          <td class="sk-table__cell"><a href="/components/popover">Popover</a></td>
-          <td class="sk-table__cell">trigger</td>
+          <td class="sk-table__cell"><a href="/es/componentes/popover">Popover</a></td>
+          <td class="sk-table__cell">el trigger</td>
           <td class="sk-table__cell">sí</td>
           <td class="sk-table__cell">navegador</td>
         </tr>
         <tr class="sk-table__row">
-          <td class="sk-table__cell"><a href="/components/popup">Popup</a></td>
-          <td class="sk-table__cell">trigger</td>
-          <td class="sk-table__cell">opt-in</td>
+          <td class="sk-table__cell"><a href="/es/componentes/popup">Popup</a></td>
+          <td class="sk-table__cell">el trigger</td>
+          <td class="sk-table__cell">sí, opt-in</td>
           <td class="sk-table__cell">navegador</td>
         </tr>
         <tr class="sk-table__row">
-          <td class="sk-table__cell"><a href="/components/menu">Menu</a></td>
-          <td class="sk-table__cell">trigger o ítem padre</td>
+          <td class="sk-table__cell"><a href="/es/componentes/menu">Menu</a> y sus submenús</td>
+          <td class="sk-table__cell">el trigger; el ítem padre en el submenú</td>
           <td class="sk-table__cell">no</td>
           <td class="sk-table__cell">navegador</td>
         </tr>
         <tr class="sk-table__row">
-          <td class="sk-table__cell"><a href="/components/select">Select</a></td>
-          <td class="sk-table__cell">control entero</td>
+          <td class="sk-table__cell"><a href="/es/componentes/select">Select</a></td>
+          <td class="sk-table__cell">el control entero</td>
           <td class="sk-table__cell">no</td>
           <td class="sk-table__cell">navegador</td>
         </tr>
         <tr class="sk-table__row">
-          <td class="sk-table__cell"><a href="/components/combobox">Combobox</a></td>
-          <td class="sk-table__cell">control entero</td>
+          <td class="sk-table__cell"><a href="/es/componentes/combobox">Combobox</a></td>
+          <td class="sk-table__cell">el control entero</td>
           <td class="sk-table__cell">no</td>
           <td class="sk-table__cell">navegador</td>
         </tr>
         <tr class="sk-table__row">
-          <td class="sk-table__cell"><a href="/components/date-picker">DatePicker</a></td>
-          <td class="sk-table__cell">control entero</td>
+          <td class="sk-table__cell"><a href="/es/componentes/date-picker">DatePicker</a></td>
+          <td class="sk-table__cell">el control entero</td>
           <td class="sk-table__cell">no</td>
           <td class="sk-table__cell">navegador</td>
         </tr>
       </tbody>
     </table>
   </div>
-
-  <h2>Mecanismo</h2>
   <p>
-    CSS Anchor Positioning coloca el positioner, lo voltea al lado opuesto del mismo eje cuando no
-    entra y lo oculta si el anchor sale de pantalla. Donde la API no está disponible, el Binding usa
-    la Machine que ya gobierna el componente. Los dos caminos realizan el mismo Contract: nunca se
-    dejan activos a la vez, para que los estilos inline del fallback no ganen sobre el Pattern.
+    Los dos cortes de la tabla son los argumentos de más arriba, ya aplicados. La flecha es de los tres que son <strong>chrome flotante</strong> y tienen que decir de qué control hablan; menu, select y combobox no, porque ahí el borde compartido con el ancla ya enuncia la relación. Y los que anclan el <em>control entero</em> son aquellos en los que se escribe: la lista se alinea con el campo, no con el chevron de 32px que tiene al lado.
   </p>
-  <CodeBlock code={anatomy} label="HTML" />
-
-  <h2>Restricciones</h2>
-  <ul>
-    <li>
-      <code>sk-anchor</code> nombra el rol geométrico. Casi siempre es el trigger, pero Select,
-      Combobox y DatePicker anclan el control entero para alinear la lista con el campo.
-    </li>
-    <li>
-      <code>sk-anchored</code> es el positioner. No pinta, no recibe clicks y lleva
-      <code>data-sk-placement</code> porque en React puede portearse fuera del root.
-    </li>
-    <li>
-      El content es hijo del positioner y conserva la pintura del componente consumidor.
-    </li>
-    <li>
-      <code>sk-anchored-arrow</code> se autora solo cuando la relación visual lo necesita. Es
-      decorativa y siempre lleva <code>aria-hidden="true"</code>.
-    </li>
-  </ul>
-
-  <h2>Placement y styling hooks</h2>
-  <p>
-    Las cuatro colocaciones públicas son lógicas: <code>block-start</code>, <code>block-end</code>,
-    <code>inline-start</code> e <code>inline-end</code>. Una colocación es preferencia, no garantía:
-    el navegador puede voltear dentro del mismo eje, pero no cambiar un costado por arriba.
-  </p>
-  <p>
-    Las excepciones no agregan valores al vocabulario público. Un submenú que sale al costado y se
-    alinea por arriba redefine el styling hook del positioner:
-  </p>
-  <CodeBlock code={submenu} label="CSS" />
-  <p>Select y Combobox usan el mismo escape hatch para igualar el ancho al anchor:</p>
-  <CodeBlock code={sameWidth} label="CSS" />
-
-  <h2>Arrow</h2>
-  <p>
-    Tooltip, Popover y Popup pueden mostrar una arrow porque son chrome flotante que debe señalar el
-    control que describe. Menu y Select no la usan: el borde compartido con el anchor ya expresa la
-    relación. En React, la arrow sigue siendo opt-in.
-  </p>
-  <CodeBlock code={arrowReact} label="React" lang="tsx" />
-
-  <h2>Compatibilidad y fallback</h2>
-  <ul>
-    <li>
-      El camino de plataforma exige <code>@supports (anchor-name: --a)</code>. Los styling hooks que
-      usan <code>anchor-size()</code> viven dentro de ese bloque porque sin anchor resuelto son inválidos.
-    </li>
-    <li>
-      El fallback por Machine conserva la misma geometría observable y existe para navegadores sin
-      CSS Anchor Positioning.
-    </li>
-    <li>
-      No se usa <code>!important</code>: <code>position-try</code> solo puede voltear declaraciones
-      normales.
-    </li>
-    <li>
-      Vaul no consume este Pattern. Vaul se ancla a un borde del viewport; Anclaje se ancla a otro
-      elemento.
-    </li>
-  </ul>
 
   <h2>Instalar</h2>
+  <p>
+    Es opt-in, como todo patrón: se importa antes de los componentes que lo consumen.
+  </p>
   <CodeBlock code={import_} label="CSS" />
 
   <StylingHooks groups={[{ file: "patterns/anchored.css", probe: "sk-anchored" }]} />
 </Base>
 
 <style is:global>
+  /* La piel del demo es del consumidor, como siempre: el patrón trae hooks y estructura, no pintura.
+     `is:global`: el HTML escrito a mano vive adentro del srcdoc y no lleva el atributo de scope de Astro. */
   .sk-anclaje-demo {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-inline-md);
     align-items: center;
     justify-content: center;
+    /* Aire arriba y abajo para que un tooltip en block-start tenga adónde ir sin que el navegador
+       tenga que voltearlo: el demo muestra el placement pedido, no el fallback. */
     padding-block: var(--space-stack-xl);
   }
 </style>

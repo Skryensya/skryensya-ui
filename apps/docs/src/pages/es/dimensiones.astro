@@ -2,7 +2,10 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import Used from "../../components/Used.astro";
+import { tokens } from "../../lib/tokens";
 import { palettes } from "../../lib/palettes";
+
+const modeAware = tokens.filter((t) => t.modeAware).length;
 
 const accentBundle =
   `/* brand-accent.css: re-declara el bundle semántico completo. */\n:root {\n` +
@@ -15,32 +18,32 @@ const accentBundle =
 const densityUse = `/* Un multiplicador, no una segunda escala. */
 html { --sk-density: 0.8; }`;
 
-const radiusUse = `<!-- A preset of the multiplier… -->
+const radiusUse = `<!-- Un preset del multiplicador… -->
 <html data-radius="xl">
 
-<!-- …or a continuous value outside the ladder. -->
+<!-- …o un valor continuo fuera de la escalera de presets. -->
 <html style="--radius-multiplier: 1.25">`;
 ---
 
 <Base
-  title="Dimensiones visuales"
+  title="Cuatro dimensiones"
   documentLayout="grid"
-  description="Modo de color, alto contraste, densidad y radio componen en la cascada. Accent cambia un bundle semántico, no agrega otra dimensión."
+  description="Modo de color, alto contraste, densidad y radio: cuatro ejes que componen en la cascada. La marca re-declara bundles semánticos."
 >
-  <h1>Dimensiones visuales</h1>
+  <h1>Cuatro dimensiones</h1>
   <p class="lede">
-    Modo de color, alto contraste, densidad y radio son ejes independientes. Cada uno re-declara una
-    capa distinta del grafo de tokens, por eso componen en la cascada en vez de multiplicarse en una
-    matriz de temas.
+    Modo de color, alto contraste, densidad y radio: cuatro ejes independientes que <strong>componen en la cascada</strong> en vez de estar enumerados en disco.
   </p>
 
   <p>
-    Accent no es una quinta dimensión. Es un significado de marca dentro de semantic: se cambia
-    re-declarando el bundle completo de tokens de acento, sin tocar primitive ni crear una paleta con
-    significado de producto.
+    Las paletas del tier 1 son materia prima sin significado. Una marca no elige un bundle semántico de una
+    lista: re-declara el bundle semántico de acento sobre <code>:root</code>, y todos los demás tokens
+    conservan su significado. No hay catálogo de marcas, ni selector, ni atributo que mantener dentro de Core.
   </p>
 
-  <h2>Mecanismo de cada dimensión</h2>
+  <h2>Cada dimensión tiene una capa distinta</h2>
+  <p>Esa es toda la razón por la que componen en vez de multiplicarse.</p>
+
   <div class="sk-table-scroll">
     <table class="sk-table">
       <thead class="sk-table__head">
@@ -48,82 +51,167 @@ const radiusUse = `<!-- A preset of the multiplier… -->
           <th class="sk-table__header">Dimensión</th>
           <th class="sk-table__header">Posee</th>
           <th class="sk-table__header">Mecanismo</th>
-          <th class="sk-table__header">Activación</th>
+          <th class="sk-table__header">Se enciende con</th>
         </tr>
       </thead>
       <tbody class="sk-table__body">
         <tr class="sk-table__row">
           <td class="sk-table__cell"><strong>Modo de color</strong></td>
-          <td class="sk-table__cell">color semantic</td>
-          <td class="sk-table__cell"><code>light-dark()</code> elige claro u oscuro</td>
+          <td class="sk-table__cell">color, tier 2</td>
+          <td class="sk-table__cell"><code>light-dark()</code> elige el slot</td>
           <td class="sk-table__cell mono">color-scheme</td>
         </tr>
         <tr class="sk-table__row">
           <td class="sk-table__cell"><strong>Alto contraste</strong></td>
-          <td class="sk-table__cell">color semantic</td>
-          <td class="sk-table__cell">re-declara los mismos tokens con pares más fuertes</td>
+          <td class="sk-table__cell">color, tier 2</td>
+          <td class="sk-table__cell">re-declara los mismos tokens, en pares más fuertes</td>
           <td class="sk-table__cell mono">data-contrast</td>
         </tr>
         <tr class="sk-table__row">
           <td class="sk-table__cell"><strong>Densidad</strong></td>
-          <td class="sk-table__cell">espacio semantic</td>
-          <td class="sk-table__cell">multiplicador de runtime con piso incorporado</td>
+          <td class="sk-table__cell">espaciado, tier 2</td>
+          <td class="sk-table__cell">un multiplicador de runtime, con el piso adentro</td>
           <td class="sk-table__cell mono">--sk-density</td>
         </tr>
         <tr class="sk-table__row">
           <td class="sk-table__cell"><strong>Radio</strong></td>
-          <td class="sk-table__cell">redondez semantic</td>
-          <td class="sk-table__cell">preset o multiplicador de runtime</td>
+          <td class="sk-table__cell">redondez, tier 2</td>
+          <td class="sk-table__cell">un preset, o un multiplicador de runtime</td>
           <td class="sk-table__cell mono">data-radius / --radius-multiplier</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <h2>Accent: bundle semántico explícito</h2>
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+    <p>
+      <strong>La separación sigue siendo estructural:</strong> las paletas son tier 1 y los tokens semánticos
+      nombran significado. Reemplazar el acento nunca pisa modo, contraste, densidad ni radio: cada eje se
+      mantiene independiente.
+    </p>
+    </div>
+  </div>
+
+  <h2>Accent, un bundle explícito</h2>
   <p>
-    La marca no pasa un color raíz para que Core derive combinaciones. Re-declara todos los semantic
-    tokens de acento que deben moverse juntos: acción, texto, borde y fondos sutiles.
+    <code>tokens.scss</code> incluye las paletas públicas y los semánticos por defecto. Tu herramienta de marca
+    genera CSS sin capas que reemplaza el bundle semántico completo; Core no recibe un color raíz ni deriva
+    combinaciones en runtime. Este ejemplo muestra parte del bundle de acento.
   </p>
   <CodeBlock code={accentBundle} label="brand-accent.css" />
 
-  <h2>Modo y contraste comparten tokens de color</h2>
+  <h2>Modo de color, dos slots, y solo dos</h2>
   <p>
-    <code>light-dark()</code> solo acepta dos slots y solo produce colores. Alto contraste no cabe como
-    tercer slot; por eso es un bloque de override que re-declara los mismos semantic tokens y conserva
-    la composición claro/oscuro.
+    <code>light-dark()</code> toma <strong>exactamente dos</strong> argumentos, y solo es válida donde es válido un <code>&lt;color&gt;</code>. Acá no se esquiva ninguna de las dos restricciones; se aceptan las dos, y entre ellas le dan forma al resto del modelo.
   </p>
+  <ul>
+    <li>
+      <strong>Tres modos no entran en dos slots</strong>, así que el alto contraste no es un tercer argumento: es
+      un bloque de override aparte que re-declara los mismos tokens, todavía dentro de
+      <code>light-dark()</code>, porque compone con el eje claro/oscuro.
+    </li>
+    <li>
+      <strong>Lo que no es color no puede ser mode-aware.</strong> Una sombra, un largo, una familia
+      tipográfica: ninguno puede vivir nunca dentro de <code>light-dark()</code>.
+    </li>
+  </ul>
   <p>
-    El límite es deliberado: sombras, largos, tipografía y radio no son mode-aware. Cuando necesitan
-    responder a contraste, usan su propio mecanismo. Elevación, por ejemplo, combina sombra, fondo,
-    tinte y fallback de borde.
+    Por eso <strong>todos los tokens mode-aware del sistema son tokens de color</strong>, los {modeAware}, y por eso la elevación se modela como color más un composite en vez de como una sombra por modo. Eso sale de la plataforma, no del gusto.
   </p>
 
-  <h2>Densidad: un multiplicador, no otra escala</h2>
+  <h2>Densidad, un multiplicador con el piso adentro</h2>
   <p>
-    La densidad global vive en <code>--sk-density</code>. Multiplica espacio y tamaños de control, pero
-    deja invariantes tipografía, radio, foco y área táctil.
+    Un solo número, <code>--sk-density</code> (1 es cómodo). No hay una segunda escala de espaciado, solo esta
+    multiplicando a la primera. Es continuo, así que sirve cualquier valor, y los <strong>controles de
+    arriba</strong> ofrecen cinco presets como atajo, de <em>spacious</em> (1.2) a <em>condensed</em> (0.5).
   </p>
   <CodeBlock code={densityUse} label="CSS" />
+
+  <p>
+    Para cambiar un solo contenedor, se agrega <code>data-sk-density-scope</code>. Su <code>--sk-density-factor</code> multiplica la densidad del sistema, mientras que un <code>--sk-density</code> escrito dentro del scope fija un valor absoluto en su lugar. Los presets son solo nombres cómodos; cualquier número válido sigue funcionando.
+  </p>
+
+  <p>
+    <a href="/es/densidad">La guía de densidad por componente</a> muestra ese scope local sobre un componente real,
+    y cuándo conviene un factor relativo antes que un valor absoluto.
+  </p>
+
+  <p>
+    Poné la densidad en <em>dense</em> arriba y mirá estos dos:
+  </p>
   <div class="sk-box" data-surface="surface" data-border="subtle" data-padding="lg">
     <p>
       <code>--space-inset-md</code> → <Used token="--space-inset-md" /><br />
       <code>--size-control-md</code> → <Used token="--size-control-md" />
     </p>
   </div>
+
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+    <p>
+      <strong>El piso de accesibilidad está adentro del token, no en la documentación.</strong> Los tamaños
+      interactivos resuelven a <code>max(round(calc(base × density), 2px), 24px)</code>. Ese <code>max()</code>
+      es el mínimo de WCAG 2.2 SC 2.5.8: ningún equipo puede multiplicar hasta bajar de 24px, le asigne lo que
+      le asigne a <code>--sk-density</code>. El piso se sostiene por construcción, no por code review.
+    </p>
+    </div>
+  </div>
+
   <p>
-    Para variar solo un componente, se usa <a href="/density">un scope local de densidad</a>. Ese
-    scope puede multiplicar la densidad global o fijar un valor absoluto.
+    El <code>round(…, 2px)</code> tampoco es decoración: <code>calc(4px * 0.6)</code> da 2.4px, que cae fuera
+    de la grilla de píxeles, y unos cuantos de esos juntos hacen que una UI compacta se vea temblorosa. En
+    densidad 1 no hace absolutamente nada.
   </p>
 
-  <h2>Radio: redondez global, no marca</h2>
+  <h3>¿Qué es deliberadamente invariante a la densidad?</h3>
   <p>
-    <code>--radius-multiplier</code> escala roles semánticos de redondez. Los presets
-    <code>none · sm · md · lg · xl</code> son atajos sobre el mismo multiplicador; <code>md</code> es
-    la base. <code>--radius-pill</code> no se mueve porque un pill es una forma, no un grado de
-    redondez.
+    La tipografía, porque escalar el font-size sin corregir el line-height se lee peor, y la densidad es un
+    asunto de espaciado y no de tipografía. El radio de las esquinas, porque la redondez es su propia
+    dimensión. El ancho del anillo de foco, porque un anillo que se encoge deja de verse. Y el área táctil, que
+    tiene permiso de pintarse chica y seguir respondiendo grande.
+  </p>
+
+  <h3>Área táctil, 44px por chico que se pinte</h3>
+  <p>
+    <code>--size-touch-target</code> es un valor fijo, <strong>44px</strong> (iOS HIG), que no responde a la
+    densidad. Button e Input lo consumen con <code>max(control-size, size-touch-target)</code>: el control
+    nunca puede terminar más chico que 44px por más que se comprima la escala de tamaños, pero sí puede
+    pintarse más grande cuando su propio tamaño visual ya pasa ese piso (<code>lg</code>, por ejemplo).
+  </p>
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+      <p>
+        <strong>Pintado chico, área de clic grande.</strong> Un botón de solo ícono en <code>sm</code> se pinta
+        en su tamaño visual real, más chico que 44px: pero un <code>::after</code> invisible extiende el área
+        clickeable hasta el piso táctil sin agrandar el control en pantalla. Es el mismo patrón que usa
+        RadioGroup (<code>--sk-radio-hit-size</code>, un círculo de captura más grande que el punto visible), y
+        Switch lo resuelve distinto: ahí el área táctil es la etiqueta entera, así que el track visual no
+        necesita cargar el piso por su cuenta.
+      </p>
+    </div>
+  </div>
+  <p>
+    Hoy hay 17 componentes bajo <code>packages/core/css/components</code> que consumen el token, entre ellos
+    Combobox, Select, DatePicker y CommandPalette. Cualquier control interactivo nuevo debería sumarse a esa
+    lista en vez de inventar su propio mínimo.
+  </p>
+
+  <h2>Radio, la redondez como eje y no como valor de marca</h2>
+  <p>
+    Un <strong>multiplicador</strong>, no un valor plano igual para todo: <code>--radius-multiplier</code>
+    escala una escalera donde cada rol conserva su lugar, así que <code>control</code> y <code>surface</code>
+    siguen siendo distintos en cualquier ajuste. Toma prestado el mecanismo de la densidad, no el del alto
+    contraste. Los cinco presets bajo <code>data-radius</code> (<code>none 0 · sm .5 · md 1 · lg 1.5 · xl
+    2</code>, con <code>md</code> como base) fijan solo ese multiplicador, y un producto puede clavar un valor
+    continuo fuera de la escalera (<code>1.25</code>, por ejemplo). Es ortogonal a la marca: la misma marca se
+    lee viva o suave sin cambiar un solo color de la paleta.
   </p>
   <CodeBlock code={radiusUse} label="HTML" />
+
+  <p>
+    Cambiá el radio arriba y mirá los dos roles que se mueven:
+  </p>
   <div class="sk-box" data-surface="surface" data-border="subtle" data-padding="lg">
     <p>
       <code>--radius-control</code> → <Used token="--radius-control" /><br />
@@ -131,14 +219,25 @@ const radiusUse = `<!-- A preset of the multiplier… -->
     </p>
   </div>
 
+  <div class="sk-callout" data-tone="info">
+    <div class="sk-callout__content">
+    <p>
+      <strong>El invariante de la dimensión: <code>--radius-pill</code> no se mueve.</strong> El eje mueve los
+      dos roles de la redondez, control y superficie, y deja la forma quieta: un pill es una pastilla
+      completamente redonda, no un grado de redondez, y cuadrarlo en <code>none</code> borraría lo que es. Cada
+      dimensión lleva su invariante adentro: la densidad tiene el piso de WCAG, el radio tiene el pill.
+    </p>
+    </div>
+  </div>
+
   <h2>Límites</h2>
   <p>
-    Una dimensión no es cualquier preferencia de producto. Si un eje no posee una capa del grafo, se
-    modela como token semántico, styling hook o componente, no como otra dimensión global.
+    Una dimensión no es cualquier preferencia de producto. Si un eje no posee una capa del grafo de tokens, se
+    modela como token semántico, styling hook o componente, nunca como otra dimensión global.
   </p>
   <p>
-    Viene de <a href="/tiers">Tiers</a>, donde se define por qué estas overrides viven en semantic.
-    Sigue en <a href="/density">Densidad</a>, que baja el eje global a scopes locales, y en
-    <a href="/elevation">Elevación</a>, que muestra cómo una dimensión de color afecta una escala compuesta.
+    Viene de <a href="/es/tiers">Tiers</a>, donde se define por qué estos overrides viven en el tier semántico.
+    Sigue en <a href="/es/densidad">Densidad</a>, que baja el eje global a scopes locales, y en
+    <a href="/es/elevacion">Elevación</a>, que muestra qué le hace una dimensión de color a una escala compuesta.
   </p>
 </Base>

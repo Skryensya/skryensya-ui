@@ -70,15 +70,15 @@ const fouc = `<script>
   <CodeBlock code={step3} label="CSS" />
   <p>
     Con eso ya tienes un botón. <code>button.css</code> trae la clase <em>y</em> sus
-    <a href="/styling-hooks">styling hooks</a>: no hay un paso donde tengas que escribir tú el CSS
+    <a href="/es/styling-hooks">styling hooks</a>: no hay un paso donde tengas que escribir tú el CSS
     estructural para que algo se vea. El orden de los imports no importa, las
-    <a href="/tiers">cascade layers</a> deciden la precedencia.
+    <a href="/es/tiers">cascade layers</a> deciden la precedencia.
   </p>
 
   <h2>4. Usarlo</h2>
   <p>
     Las variantes y los tamaños son atributos. No necesitas clases nuevas ni ramificar en tu CSS:
-    todas las variantes re-declaran <a href="/styling-hooks">el mismo styling hook</a>.
+    todas las variantes re-declaran <a href="/es/styling-hooks">el mismo styling hook</a>.
   </p>
   <ComponentPreview tree={firstComponentButtonsTree(t)} label="Button" />
 
@@ -94,7 +94,7 @@ const fouc = `<script>
   <h2>6. Estados interactivos</h2>
   <p>
     Hover, focus y pressed no son colores del botón: los aporta el
-    <a href="/state-layer">state layer</a>, un overlay de <code>currentColor</code> compartido por
+    <a href="/es/state-layer">state layer</a>, un overlay de <code>currentColor</code> compartido por
     todo componente interactivo. Es el mecanismo de interacción del sistema y viene en
     <code>tokens.scss</code>, no hay nada que importar aparte. Solo agrega
     <code>sk-interactive</code>: cero colores de estado en tu CSS, y el anillo de foco viene incluido.

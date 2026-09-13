@@ -30,7 +30,7 @@ const linterOutput = `✗ 1 problem(s):
 >
   <h1>Three tiers</h1>
   <p class="lede">
-    A tier is not defined by the folder where it lives, but by <strong>which</strong> can reference. Three folders called primitive/semantic/component do not make a three-tier system; makes it the obligatory address of references.
+    A tier is not defined by the folder it lives in, but by <strong>what it is allowed to reference</strong>. Three folders named primitive, semantic and component do not make a three-tier system; the rule about which way references may point does.
   </p>
 
   <div class="sk-table-scroll">
@@ -68,10 +68,10 @@ const linterOutput = `✗ 1 problem(s):
 
   <h2>The string, live</h2>
   <p>
-    Each rung shows its currently used value. Change the <strong>mark to</strong> above and see what moves: the literal below changes hue, and the names above do not notice. That indifference is the entire mechanism.
+    Each rung shows the value it currently resolves to. Change the <strong>brand</strong> above and watch what moves: the literal at the bottom changes hue, and every name above it carries on unchanged. That indifference is the whole mechanism.
   </p>
   <p>
-    The chain is split into two where there is a mode-aware token, because <code>light-dark()</code> has two parents. Change the <strong>mode to</strong> and you will see which of the two slots is using your value above.
+    The chain forks wherever a token is mode-aware, because <code>light-dark()</code> holds two values at once. Change the <strong>mode</strong> above and you will see which of the two slots the value is coming from.
   </p>
 
   <Chain
@@ -86,10 +86,10 @@ const linterOutput = `✗ 1 problem(s):
 
   <h2>Why references only go down</h2>
   <p>
-    A semanticist can point to a primitive or sideways to another semanticist. A styling hook can point to a semantic hook. Nothing points up, and tier 3 <strong>cannot jump to tier 1</strong>.
+    A semantic token may point down to a primitive, or sideways to another semantic token. A styling hook may point to a semantic token. Nothing points upward, and tier 3 <strong>cannot jump to tier 1</strong>.
   </p>
   <p>
-    That jump is the one that seems harmless and is not. A styling hook that takes <code>--palette-blue-600</code> directly skips the layer where <code>light-dark()</code> lives. That component, and only that one, no longer has a dark mode. The defect is not seen until someone looks at the page in darkness.
+    That jump is the one that looks harmless and is not. A styling hook reading <code>--palette-blue-600</code> directly skips the layer where <code>light-dark()</code> lives, so that one component, and only that one, loses its dark mode. Nobody sees the defect until somebody opens the page in the dark.
   </p>
 
   <CodeBlock code={badExample} label="components/button.css" note="tier 3 → tier 1" />
@@ -98,19 +98,19 @@ const linterOutput = `✗ 1 problem(s):
   <div class="sk-callout" data-tone="info">
     <div class="sk-callout__content">
     <p>
-      It is not a documented convention: it is an executable rule. The validator runs over the CSS before each build, in <em>all</em> marks, because a rule that is only satisfied in the default palette is not a rule. The output above is real: it comes from aiming a styling hook at a ramp on purpose.
+      This is not a documented convention, it is an executable rule. The validator walks the CSS before every build, across <em>every</em> brand, because a rule that only holds in the default palette is not a rule. The output above is real: it comes from pointing a styling hook at a palette ramp on purpose.
     </p>
     </div>
   </div>
 
   <h2>The prefix marks the tier</h2>
   <p>
-    A primitive reads <code>--palette-blue-600</code>; a semantic, <code>--color-action-accent</code>. The different prefix is intentional: seeing a <code>--palette-*</code> within the CSS of a component is the visible sign, at first glance, that someone has skipped a tier. Flattening <code>--accent-600</code> would lose that signal.
+    A primitive reads <code>--palette-blue-600</code>; a semantic one reads <code>--color-action-accent</code>. The different prefix is deliberate: a <code>--palette-*</code> inside a component's CSS is the tell, visible at a glance, that someone skipped a tier. Flattening both into <code>--accent-600</code> would throw that signal away.
   </p>
 
   <h2>The edge of the tier is a cascade layer</h2>
   <p>
-    The precedence between tiers does not depend on the order of the <code>@import</code>: it is in the cascade. A later layer wins, so mark and contrast overrides always beat base semantics, regardless of import order.
+    Precedence between tiers does not depend on <code>@import</code> order, it is held by the cascade. A later layer wins, so brand and contrast overrides always beat the base semantics no matter how the files are imported.
   </p>
   <CodeBlock
     code={`@layer primitives, semantic, components, overrides;`}
@@ -118,7 +118,7 @@ const linterOutput = `✗ 1 problem(s):
     note="the order that decides everything"
   />
   <p>
-    And it has a benefit: since <strong>any rule without a layer beats all layers</strong>, your app can step on a styling hook without fighting specificity.
+    It buys one more thing: because <strong>any rule outside a layer beats every rule inside one</strong>, your own app can override a styling hook without a specificity fight.
   </p>
   <CodeBlock code={`.hero .sk-button { --sk-button-bg: rebeccapurple; }`} label="CSS" />
 </Base>

@@ -1,6 +1,6 @@
 {
   "name": "@skryensya/react",
-  "version": "0.0.1-dev",
+  "version": "0.0.2-dev",
   "private": true,
   "type": "module",
   "description": "React components that render skryensya/ui's shared markup contracts.",

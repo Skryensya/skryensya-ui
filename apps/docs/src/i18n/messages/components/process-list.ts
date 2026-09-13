@@ -25,9 +25,9 @@ export const processListMessages = {
     "processListPage.anatomyPreviewLabel": "ProcessList, parte por parte",
     "processListPage.whenTitle": "Cuándo usarlo",
     "processListPage.whenItem1": "Usa ProcessList para recetas, instalaciones y procedimientos cuyo orden importa.",
-    "processListPage.whenItem2": 'Usa <a href="/components/list">List</a> para colecciones de filas estáticas o interactivas.',
+    "processListPage.whenItem2": 'Usa <a href="/es/componentes/list">List</a> para colecciones de filas estáticas o interactivas.',
     "processListPage.whenItem3":
-      'Usa <a href="/components/steps">Steps</a> cuando existan estados <code>complete</code>, <code>current</code> o <code>upcoming</code>.',
+      'Usa <a href="/es/componentes/steps">Steps</a> cuando existan estados <code>complete</code>, <code>current</code> o <code>upcoming</code>.',
     "processListPage.contractItem1": 'La raíz siempre es <code>&lt;ol class="sk-process-list"&gt;</code>.',
     "processListPage.contractItem2": 'Cada instrucción es un <code>&lt;li class="sk-process-list__item"&gt;</code>.',
     "processListPage.contractItem3":

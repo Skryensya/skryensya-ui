@@ -85,6 +85,28 @@ describe("locale-independent markup", () => {
     expect(shared.length).toBeGreaterThan(20);
   });
 
+  /*
+   * THE SAME LEAK, IN THE PROSE. A message shard holds both locales side by side, so an `href` in
+   * the `es` half is Spanish text pointing wherever it says. Measured when this was written: 109 of
+   * them across 46 shards sent a Spanish reader to the English page, and the `en` half had zero of
+   * the mirror mistake, which is what says this was drift in one direction rather than a convention.
+   */
+  it("keeps the Spanish half of every message shard inside Spanish routes", () => {
+    const leaks: string[] = [];
+    for (const file of walk(join(root, "i18n"))) {
+      if (!file.endsWith(".ts") || file.endsWith(".test.ts")) continue;
+      const source = readFileSync(file, "utf8");
+      const esStart = source.indexOf("es: {");
+      const enStart = source.indexOf("en: {");
+      if (esStart < 0 || enStart < esStart) continue;
+      for (const m of source.slice(esStart, enStart).matchAll(/href=\\?["'](\/[^"'#?\\]*)/g)) {
+        const href = m[1]!;
+        if (!href.startsWith("/es/") && resolves(href)) leaks.push(`${href}  (${relative(root, file)})`);
+      }
+    }
+    expect([...new Set(leaks)].sort()).toEqual([]);
+  });
+
   it("never hardcodes a link to a real route, in any locale", () => {
     const leaks: string[] = [];
     for (const file of shared) {

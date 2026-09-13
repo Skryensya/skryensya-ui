@@ -8,7 +8,7 @@ export const calendarMessages = {
       "Grid de fecha independiente: día, mes o año/década, sin campo ni popover, con el mismo botón cambiando de vista.",
     "calendar.betaBadge": "Beta",
     "calendar.lede":
-      'El grid de fecha en sí, separado del campo que lo abre. <a href="/components/date-picker">DatePicker</a> lo nestea dentro de un popover; esta página es el mismo componente de pie, para cuando el calendario <em>es</em> la UI (una página de reservas, un filtro de dashboard) y no hace falta un input detrás.',
+      'El grid de fecha en sí, separado del campo que lo abre. <a href="/es/componentes/date-picker">DatePicker</a> lo nestea dentro de un popover; esta página es el mismo componente de pie, para cuando el calendario <em>es</em> la UI (una página de reservas, un filtro de dashboard) y no hace falta un input detrás.',
     "calendar.anatomyBody":
       "Vista de día: etiqueta, encabezado (anterior, view-trigger, siguiente), tabla, cabecera de días, cuerpo, celda y su trigger. Las vistas de mes y año siguen abajo.",
     "calendar.anatomyLabel": "Anatomía de Calendar (día)",

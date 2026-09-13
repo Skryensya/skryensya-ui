@@ -39,7 +39,7 @@ export const carouselMessages = {
     "carousel.anatomyPreviewLabel": "Carousel, parte por parte",
     "carousel.cardsTitle": "Carrusel de tarjetas",
     "carousel.cardsBody":
-      'Con <code>data-sk-carousel</code> el enhancer corre la máquina: prev/next (se deshabilitan en los extremos), un dot por <strong>página</strong>, teclado, arrastre y re-medición al cambiar de tamaño. Aquí cada slide es una card con <a href="/components/image-frame">ImageFrame</a> y un cuerpo compuesto con <code>Box</code>, <code>Stack</code> y <code>Text</code>, sin clases locales. El tamaño base de CSS deja asomar la siguiente.',
+      'Con <code>data-sk-carousel</code> el enhancer corre la máquina: prev/next (se deshabilitan en los extremos), un dot por <strong>página</strong>, teclado, arrastre y re-medición al cambiar de tamaño. Aquí cada slide es una card con <a href="/es/componentes/image-frame">ImageFrame</a> y un cuerpo compuesto con <code>Box</code>, <code>Stack</code> y <code>Text</code>, sin clases locales. El tamaño base de CSS deja asomar la siguiente.',
     "carousel.cardsLabel": "Carrusel de tarjetas",
     "carousel.dotsTitle": "Un dot por página, no por slide",
     "carousel.dotsBody":

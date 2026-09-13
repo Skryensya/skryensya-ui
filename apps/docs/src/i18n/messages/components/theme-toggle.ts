@@ -14,7 +14,7 @@ export const themeToggleMessages = {
       "Las caras usan los roles estables <code>mode-system</code>, <code>mode-light</code> y <code>mode-dark</code>, marcadas con <code>data-sk-theme-toggle-icon</code>.",
     "themeTogglePage.contractItem2": "El enhancer aplica el modo en <code>document.documentElement</code> y dispara <code>sk-theme-toggle-change</code> con <code>detail.value</code>.",
     "themeTogglePage.contractItem3":
-      'Un script FOUC en el <code>&lt;head&gt;</code> debe leer la preferencia guardada y pintar <code>data-scheme</code> / <code>color-scheme</code> antes del primer paint (ver <a href="/first-component">Primer componente</a>).',
+      'Un script FOUC en el <code>&lt;head&gt;</code> debe leer la preferencia guardada y pintar <code>data-scheme</code> / <code>color-scheme</code> antes del primer paint (ver <a href="/es/primer-componente">Primer componente</a>).',
     "themeTogglePage.test1": "Monta una sola vez y recorre sistema → claro → oscuro al hacer click.",
     "themeTogglePage.test2": "Dispara <code>sk-theme-toggle-change</code> con el nuevo modo.",
     "themeTogglePage.test3": "Mantiene sincronizados todos los ThemeToggle cuando uno cambia.",

@@ -4,7 +4,7 @@ export const meterMessages = {
     "meterPage.description":
       "Meter: una medición dentro de un rango conocido, nunca el avance de una tarea.",
     "meterPage.lede":
-      'Un valor medido ahora, no una tarea en curso: el rol WAI-ARIA <code>meter</code>, distinto de <code>progressbar</code>. Úsalo para uso de disco, nivel de batería, una calificación sobre una escala. Para el avance de una tarea con inicio y fin, usa <a href="/components/progress">Progress</a>.',
+      'Un valor medido ahora, no una tarea en curso: el rol WAI-ARIA <code>meter</code>, distinto de <code>progressbar</code>. Úsalo para uso de disco, nivel de batería, una calificación sobre una escala. Para el avance de una tarea con inicio y fin, usa <a href="/es/componentes/progress">Progress</a>.',
     "meterPage.anatomyBody":
       "Este diagrama nombra el grupo, el encabezado, la etiqueta, el valor, la pista y la barra. El espécimen está congelado; los meters vivos empiezan abajo.",
     "meterPage.anatomyLabel": "Anatomía de Meter",

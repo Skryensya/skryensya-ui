@@ -2,7 +2,7 @@ export const tileMessages = {
   es: {
 
     "tilePage.description": "Patrón visual para una única interacción; Box para superficies estáticas o varios controles.",
-    "tilePage.lede": 'Invariante estricta: cada Tile tiene exactamente una intención interactiva. Un Tile nunca es una superficie estática. Para contenido estático o varios controles independientes, usa <a href="/components/box">Box</a>.',
+    "tilePage.lede": 'Invariante estricta: cada Tile tiene exactamente una intención interactiva. Un Tile nunca es una superficie estática. Para contenido estático o varios controles independientes, usa <a href="/es/componentes/box">Box</a>.',
     "tilePage.anatomyBody":
       "Este diagrama nombra el trigger, el content, el título, la descripción, el chevron y el panel expandible. El espécimen está abierto y congelado; el ExpandableTile vivo empieza abajo.",
     "tilePage.anatomyLabel": "Anatomía de Tile",
@@ -16,7 +16,7 @@ export const tileMessages = {
     "demo.tile.expandable.description": "Plazos, costos y restricciones.",
     "demo.tile.expandable.body": "Los pedidos salen en 24 horas hábiles. El envío internacional tarda entre cinco y diez días.",
     "tilePage.body1": "Tile es una receta visual que los componentes semánticos aplican sobre el elemento nativo correcto. Las demos y los contratos de TileLink, TileButton, TileCheckbox, TileSwitch y TileRadioGroup viven junto a Link, Button, Checkbox, Switch y RadioGroup.",
-    "tilePage.body2": 'La guía <a href="/components/card">Card</a> compara estas raíces con Box en cards reales de contenido, noticia, producto, enlace, acción, selección y métricas.',
+    "tilePage.body2": 'La guía <a href="/es/componentes/card">Card</a> compara estas raíces con Box en cards reales de contenido, noticia, producto, enlace, acción, selección y métricas.',
     "tilePage.chooseTitle": "Elige por comportamiento",
     "tilePage.headNeed": "Necesidad",
     "tilePage.headComponent": "Componente",
@@ -40,7 +40,7 @@ export const tileMessages = {
     "tilePage.contractItem2":
       "Checkbox, switch, radio group y Accordion conservan inputs o botón reales. Sus enhancers Vanilla leen los hooks <code>data-part</code> documentados en los componentes semánticos. Una sola divulgación es Accordion con un item.",
     "tilePage.contractItem3":
-      'No anides controles interactivos dentro de un Tile. Si hacen falta acciones independientes, usa <a href="/components/box">Box</a> y deja los controles como hermanos.',
+      'No anides controles interactivos dentro de un Tile. Si hacen falta acciones independientes, usa <a href="/es/componentes/box">Box</a> y deja los controles como hermanos.',
     "tilePage.contractItem4": "Los bindings React renderizan el mismo contrato semántico; no montan el enhancer Vanilla.",
     "tilePage.contractItem5":
       "Todos los Tile aceptan <code>data-padding</code> con <code>none</code>, <code>xs</code>, <code>sm</code>, <code>md</code>, <code>lg</code> o <code>xl</code>; React expone el mismo valor como <code>padding</code>. El default es <code>md</code>.",

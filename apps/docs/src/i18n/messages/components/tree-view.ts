@@ -16,7 +16,7 @@ export const treeViewMessages = {
     "treeViewPage.description": "Jerarquías expandibles con selección simple o múltiple.",
     "treeViewPage.betaBadge": "Beta",
     "treeViewPage.lede":
-      'Una jerarquía que se recorre con el teclado: las ramas se abren y cierran, los nodos se seleccionan. Usa TreeView cuando la relación padre-hijo <em>es</em> el contenido: archivos, categorías, una organización. Para divulgaciones hermanas sin jerarquía usa <a href="/components/accordion">Accordion</a>; para navegar por secciones, <a href="/components/sidebar">Sidebar</a>.',
+      'Una jerarquía que se recorre con el teclado: las ramas se abren y cierran, los nodos se seleccionan. Usa TreeView cuando la relación padre-hijo <em>es</em> el contenido: archivos, categorías, una organización. Para divulgaciones hermanas sin jerarquía usa <a href="/es/componentes/accordion">Accordion</a>; para navegar por secciones, <a href="/es/componentes/sidebar">Sidebar</a>.',
     "treeViewPage.anatomyBody":
       "Este diagrama nombra la raíz, las ramas y las hojas. El espécimen está congelado; los árboles vivos empiezan abajo.",
     "treeViewPage.anatomyLabel": "Anatomía de TreeView",

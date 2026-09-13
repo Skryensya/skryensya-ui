@@ -78,10 +78,6 @@ describe("ui.ts locale parity", () => {
      * selector would make the demo show code that does not compile. */
     "demo.codePreview.condensed",
     "demo.codePreview.full",
-    /* One link whose whole content is a component's name, which does not translate. It only
-     * stopped being identical while the English half carried a dead `/en/` prefix; removing that
-     * (the route flip in ADR-0021 never created `/en`) made the two halves agree, correctly. */
-    "drawer.whenRow4Use",
     // A literal filename shown as a demo prop.
     "demo.treegridStress.formatUtil",
   ];

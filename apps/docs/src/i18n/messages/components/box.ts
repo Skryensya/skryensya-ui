@@ -31,11 +31,11 @@ export const boxMessages = {
       "Box sólo posee superficie, borde y padding. Quien lo usa elige el elemento semántico. No aporta interacción ni convierte el contenido en un destino o acción.",
     "box.whenTitle": "Cuándo usarlo",
     "box.whenBody1":
-      'Usa Box para contenido estático o para una superficie con varios controles independientes. Si toda la superficie representa exactamente una interacción, elige el componente semántico correspondiente: <a href="/components/link">Link</a>, <a href="/components/button">Button</a>, <a href="/components/checkbox">Checkbox</a>, <a href="/components/radio-group">RadioGroup</a> o <a href="/components/accordion">Accordion</a>.',
+      'Usa Box para contenido estático o para una superficie con varios controles independientes. Si toda la superficie representa exactamente una interacción, elige el componente semántico correspondiente: <a href="/es/componentes/link">Link</a>, <a href="/es/componentes/button">Button</a>, <a href="/es/componentes/checkbox">Checkbox</a>, <a href="/es/componentes/radio-group">RadioGroup</a> o <a href="/es/componentes/accordion">Accordion</a>.',
     "box.whenBody2":
       'Box y Tile comparten superficie, borde, radio y el vocabulario de <code>padding</code>. Usa <code>data-padding="none"</code> en HTML o <code>padding="none"</code> en React cuando el header o la imagen del contenido deban tocar el borde; ese hijo es quien declara su propio inset. La diferencia entre ambos es exclusivamente la interacción que Tile sí posee.',
     "box.whenBody3":
-      'La guía <a href="/components/card">Card</a> aplica esta decisión a cards de contenido, noticia, producto, enlace, acción, selección y métricas.',
+      'La guía <a href="/es/componentes/card">Card</a> aplica esta decisión a cards de contenido, noticia, producto, enlace, acción, selección y métricas.',
     "box.htmlTitle": "HTML escrito a mano",
     "box.contractItem1": 'En HTML, elige el elemento semántico y añade la clase <code>sk-box</code>.',
     "box.contractItem2":

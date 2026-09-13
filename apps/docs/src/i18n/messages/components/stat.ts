@@ -21,7 +21,7 @@ export const statMessages = {
     "statPage.anatomyPreviewLabel": "Stat, parte por parte",
     "statPage.cardTitle": "Stat Card",
     "statPage.cardBody":
-      '<a href="/componentes/card#stat-card">Card</a> no añade otra variante a Stat: <a href="/components/box">Box</a> aporta la superficie y Grid organiza la colección. La flecha baja en cancelaciones, pero <code>trend="up"</code> comunica que ese cambio es favorable.',
+      '<a href="/componentes/card#stat-card">Card</a> no añade otra variante a Stat: <a href="/es/componentes/box">Box</a> aporta la superficie y Grid organiza la colección. La flecha baja en cancelaciones, pero <code>trend="up"</code> comunica que ese cambio es favorable.',
     "statPage.animateTitle": "Animar el valor",
     "statPage.animateBody":
       "El count-up es <strong>opt-in</strong>: el mismo Stat Card, con <code>animate</code> / <code>data-animate</code> y un valor numérico. Sin él el markup sigue estático. La duración sale de <code>--motion-count-duration</code>; con <code>prefers-reduced-motion</code> salta al final.",

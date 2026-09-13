@@ -17,7 +17,7 @@ export const navbarMessages = {
     "navbarPage.anatomyPreviewLabel": "Navbar, parte por parte",
     "navbarPage.linksTitle": "Los links no son del navbar",
     "navbarPage.linksBody":
-      "Son el pattern <a href=\"/nav-list\"><code>nav-list</code></a> en horizontal, la misma estructura que hospeda el sidebar en vertical. Que dos componentes necesiten esta estructura exacta es lo que la vuelve un pattern y no un componente: antes el navbar y el sidebar tenían cada uno su lista, con las mismas reglas escritas dos veces y libres de divergir.",
+      "Son el pattern <a href=\"/es/nav-list\"><code>nav-list</code></a> en horizontal, la misma estructura que hospeda el sidebar en vertical. Que dos componentes necesiten esta estructura exacta es lo que la vuelve un pattern y no un componente: antes el navbar y el sidebar tenían cada uno su lista, con las mismas reglas escritas dos veces y libres de divergir.",
     "navbarPage.currentTitle": "La página actual es de la plataforma",
     "navbarPage.currentBody":
       'El link actual se marca con <code>aria-current="page"</code>, que el consumidor ya tiene que escribir para los lectores de pantalla. Los styling hooks lo siguen en vez de pedir una clase modificadora, y un <code>state</code> lo escribe una máquina; aquí no hay ninguna.',

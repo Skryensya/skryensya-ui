@@ -25,7 +25,7 @@ export const toolbarMessages = {
     "toolbarPage.compositeLabel": "Toolbar con Segmented anidado",
     "toolbarPage.wysiwygTitle": "Toolbar como barra de un editor",
     "toolbarPage.wysiwygBody":
-      'El uso que le da nombre al patrón, <code>editor-toolbar</code>, en el contrato: agrupar los controles de formato de un editor de texto enriquecido. Para un editor real construido sobre este mismo Toolbar - con los comandos efectivamente conectados - ver <a href="/components/editor">Editor</a>.',
+      'El uso que le da nombre al patrón, <code>editor-toolbar</code>, en el contrato: agrupar los controles de formato de un editor de texto enriquecido. Para un editor real construido sobre este mismo Toolbar - con los comandos efectivamente conectados - ver <a href="/es/componentes/editor">Editor</a>.',
   },
   en: {
     "demo.toolbar.actions": "Document actions",

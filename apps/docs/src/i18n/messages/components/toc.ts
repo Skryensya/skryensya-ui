@@ -12,7 +12,7 @@ export const tocMessages = {
 
     "tocPage.description": "Toc: el índice de un documento largo. Lista sus secciones (h2/h3) y marca la actual con scroll-spy.",
     "tocPage.lede":
-      'El índice de un documento: una lista de enlaces a sus secciones (<code>h2</code>/<code>h3</code>), con la actual marcada por un scroll-spy. Cada fila es un enlace con <a href="/state-layer"><code>sk-interactive</code></a> (state layer) en tamaño caption: un índice se escanea, no se lee, y a tamaño de prosa competía con el documento que indexa. El icono es opcional.',
+      'El índice de un documento: una lista de enlaces a sus secciones (<code>h2</code>/<code>h3</code>), con la actual marcada por un scroll-spy. Cada fila es un enlace con <a href="/es/state-layer"><code>sk-interactive</code></a> (state layer) en tamaño caption: un índice se escanea, no se lee, y a tamaño de prosa competía con el documento que indexa. El icono es opcional.',
     "tocPage.anatomyBody":
       "Este diagrama nombra el aside, el nav, el título y cada parte del enlace con icono. El espécimen está congelado; los índices vivos empiezan abajo.",
     "tocPage.anatomyLabel": "Anatomía de Toc",

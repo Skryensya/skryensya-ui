@@ -26,7 +26,7 @@ export const breadcrumbMessages = {
     "breadcrumb.multiLabel": "Breadcrumb de varios niveles",
     "breadcrumb.iconTitle": "Separador con ícono",
     "breadcrumb.iconBody":
-      'El separador es una ranura de contenido: sin llenarla el template escribe <code>/</code>, y acepta texto (<code>·</code>, <code>›</code>) o un <a href="/components/icon">Icon</a>, como <code>chevron-right</code>. Nada más: puntuación con un título adentro no es puntuación.',
+      'El separador es una ranura de contenido: sin llenarla el template escribe <code>/</code>, y acepta texto (<code>·</code>, <code>›</code>) o un <a href="/es/componentes/icon">Icon</a>, como <code>chevron-right</code>. Nada más: puntuación con un título adentro no es puntuación.',
     "breadcrumb.iconLabel": "Breadcrumb con separador de ícono",
     "breadcrumb.longTitle": "Etiquetas largas",
     "breadcrumb.longBody":
@@ -38,12 +38,12 @@ export const breadcrumbMessages = {
     "breadcrumb.longLabel": "Breadcrumb con etiquetas largas",
     "breadcrumb.collapseTitle": "Colapsa para entrar",
     "breadcrumb.collapseBody":
-      'Cuando la senda no entra en una sola línea, un enhancer esconde los niveles ancestro. Nunca el primero ni la página actual. Detrás de un disclosure «…» que abre un <a href="/components/menu">Menu</a> real con esos mismos niveles: el patrón de teclado de un menú ARIA (flechas, Home/End, typeahead), no una lista plana. Sin JavaScript, o con menos de cuatro niveles, el markup sigue completo por sí solo.',
+      'Cuando la senda no entra en una sola línea, un enhancer esconde los niveles ancestro. Nunca el primero ni la página actual. Detrás de un disclosure «…» que abre un <a href="/es/componentes/menu">Menu</a> real con esos mismos niveles: el patrón de teclado de un menú ARIA (flechas, Home/End, typeahead), no una lista plana. Sin JavaScript, o con menos de cuatro niveles, el markup sigue completo por sí solo.',
     "breadcrumb.collapseLabel": "Breadcrumb que colapsa para entrar",
     "breadcrumb.collapseTriggerLabel": "Mostrar niveles ocultos",
     "breadcrumb.contractBody": "Usa nav + ol; el último elemento lleva aria-current=page y no es un enlace.",
     "breadcrumb.a11yBody":
-      'El label distingue estas migas de otras navegaciones de la página. El disclosure «…» de una senda colapsada lleva su propio <code>aria-label</code> (<code>collapsedLabel</code>) y abre un <a href="/components/menu">Menu</a> real, <code>role="menu"</code>: navegación con flechas, Home/End, typeahead y cierre con Escape son del patrón de menú, no algo que este componente reimplemente.',
+      'El label distingue estas migas de otras navegaciones de la página. El disclosure «…» de una senda colapsada lleva su propio <code>aria-label</code> (<code>collapsedLabel</code>) y abre un <a href="/es/componentes/menu">Menu</a> real, <code>role="menu"</code>: navegación con flechas, Home/End, typeahead y cierre con Escape son del patrón de menú, no algo que este componente reimplemente.',
     "breadcrumb.test1": "Una senda corta se renderiza sin colapsar: no hay «…» que valga la pena mostrar.",
     "breadcrumb.test2": "El trigger «…» expone su <code>aria-label</code> y <code>aria-haspopup=\"menu\"</code>, y abre un <a href=\"/componentes/menu\">Menu</a> real con los niveles ocultos.",
     "breadcrumb.test3": "Una senda que entra en una línea queda sin colapsar.",

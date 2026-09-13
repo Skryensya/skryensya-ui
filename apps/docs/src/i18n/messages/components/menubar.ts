@@ -4,7 +4,7 @@ export const menubarMessages = {
     "menubarPage.description":
       "Menubar: una barra horizontal persistente de comandos, algunos con desplegable.",
     "menubarPage.lede":
-      'El patrón WAI-ARIA <code>menubar</code>: <code>menubar-editor</code>, el ejemplo que le da nombre. No es <a href="/components/menu">Menu</a> (un solo trigger, un solo popup): acá son VARIOS ítems en una sola fila de roving tabindex, donde flecha izquierda/derecha mueve entre ellos, y el detalle que una implementación ingenua se pierde: moverse a un ítem adyacente mientras un desplegable está abierto cierra el viejo y abre el nuevo, no solo mueve un resaltado.',
+      'El patrón WAI-ARIA <code>menubar</code>: <code>menubar-editor</code>, el ejemplo que le da nombre. No es <a href="/es/componentes/menu">Menu</a> (un solo trigger, un solo popup): acá son VARIOS ítems en una sola fila de roving tabindex, donde flecha izquierda/derecha mueve entre ellos, y el detalle que una implementación ingenua se pierde: moverse a un ítem adyacente mientras un desplegable está abierto cierra el viejo y abre el nuevo, no solo mueve un resaltado.',
     "menubarPage.anatomyBody":
       "Este diagrama nombra la barra, el wrapper, el ítem abierto y el popup Menu que cuelga de él. El espécimen está congelado; las barras vivas empiezan abajo.",
     "menubarPage.anatomyLabel": "Anatomía de Menubar",

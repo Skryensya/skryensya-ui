@@ -4,7 +4,7 @@ export const treegridMessages = {
     "treegridPage.description": "Filas jerárquicas con columnas: expande o colapsa una sin perder el resto de sus valores.",
     "treegridPage.betaBadge": "Beta",
     "treegridPage.lede":
-      'Combina jerarquía y columnas a la vez: el patrón WAI-ARIA <code>treegrid</code>. Úsalo cuando cada fila necesita varios valores independientes ADEMÁS de su lugar en la jerarquía (un mensaje con remitente, un archivo con tamaño y fecha). Para una sola columna de texto jerárquico usa <a href="/components/tree-view">TreeView</a>; para columnas sin jerarquía, <a href="/components/table">Table</a>.',
+      'Combina jerarquía y columnas a la vez: el patrón WAI-ARIA <code>treegrid</code>. Úsalo cuando cada fila necesita varios valores independientes ADEMÁS de su lugar en la jerarquía (un mensaje con remitente, un archivo con tamaño y fecha). Para una sola columna de texto jerárquico usa <a href="/es/componentes/tree-view">TreeView</a>; para columnas sin jerarquía, <a href="/es/componentes/table">Table</a>.',
     "treegridPage.minimalTitle": "Bandeja de entrada",
     "treegridPage.anatomyBody":
       "Este diagrama nombra el scroll, la tabla, cabecera, cuerpo, filas, celdas y el disclosure. El espécimen está congelado; los Treegrid vivos empiezan abajo.",

@@ -13,7 +13,7 @@ export const codePreviewMessages = {
       "Este diagrama nombra la etiqueta, la meta, el interruptor de densidad, el preview, el viewport y el toggle. El espécimen está congelado; el bloque vivo de abajo es un CodeBlock real.",
     "codePreview.anatomyLabel": "Anatomía de CodePreview",
     "codePreview.anatomyPreviewLabel": "CodePreview, parte por parte",
-    "codePreview.exampleNote": 'Para presentar este bloque debajo del render real de un componente, usa <a href="/components/component-preview">ComponentPreview</a>.',
+    "codePreview.exampleNote": 'Para presentar este bloque debajo del render real de un componente, usa <a href="/es/componentes/component-preview">ComponentPreview</a>.',
     "codePreview.contractTitle": "Contrato de carga",
     "codePreview.contractItem1":
       "<code>@skryensya/core/components/code-preview.css</code> contiene la anatomía y consume las variables duales <code>--shiki-light</code> y <code>--shiki-dark</code>.",

@@ -68,6 +68,11 @@ type Manifest = {
 
 const compiled = manifest as unknown as Manifest;
 
+/** The shared release ledger, as compiled into the manifest. */
+export function releaseLedger(): Manifest["releases"] {
+  return compiled.releases;
+}
+
 /**
  * The version a reader can currently count on, from the shared ledger, NOT from any package's
  * `version` field: a contract is realized by Core, React and Vanilla together, so
@@ -76,7 +81,7 @@ const compiled = manifest as unknown as Manifest;
  * `<working>-dev`; once a release is cut it is that release's version.
  */
 export function currentVersion(): string {
-  const { working, releases } = compiled.releases;
+  const { working, releases } = releaseLedger();
   return releases.length > 0 ? releases[0].version : `${working}-dev`;
 }
 

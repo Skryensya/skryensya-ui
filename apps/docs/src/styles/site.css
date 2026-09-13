@@ -133,17 +133,29 @@ body {
   white-space: nowrap;
 }
 
-.dimensions__version-menu__chip {
-  display: inline-flex;
-  align-items: center;
-  min-block-size: max(var(--size-control-sm), var(--size-touch-target));
-  padding-inline: var(--space-inset-sm);
-  border: 1px solid var(--color-border-default);
-  border-radius: var(--radius-control);
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
+.dimensions__version-menu__value {
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+}
+
+.dimensions__version-menu .sk-menu__trigger {
+  border: 1px solid var(--color-border-default);
+}
+
+.dimensions__version-menu__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-stack-3xs);
+  min-inline-size: 0;
+}
+
+.dimensions__version-menu__row-major {
+  font-variant-numeric: tabular-nums;
+}
+
+.dimensions__version-menu__row-latest {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-caption);
+  font-variant-numeric: tabular-nums;
 }
 
 .dimensions__search-trigger {
@@ -3116,30 +3128,27 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .d
 }
 
 /*
- * THE VERSION LABEL IN THE PREFERENCE SHEET. Until a cut mounts archives on the CDN there is only
- * one version to name, so this is a caption + value, not a nav-list of cuts.
+ * THE VERSION LIST IN THE PREFERENCE SHEET. Majors only; each row discloses that major's latest
+ * full tip. Until archives mount, only the current major is a real link.
  */
 .docs-prefs-versions {
-  display: grid;
-  gap: var(--space-stack-3xs);
-  padding: var(--space-inset-md);
-}
-
-.docs-prefs-versions__label {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-label);
+  --sk-nav-list-group-label-font-size: var(--font-size-sm);
 }
 
 .docs-prefs-versions__hint {
-  margin: 0;
+  margin: 0 0 var(--space-stack-2xs);
   color: var(--color-fg-muted);
   font-size: var(--font-size-sm);
 }
 
-.docs-prefs-versions__value {
-  margin: 0;
-  color: var(--color-text-primary);
-  font-size: var(--font-size-sm);
+.docs-prefs-versions__major {
+  display: block;
+  font-variant-numeric: tabular-nums;
+}
+
+.docs-prefs-versions__latest {
+  display: block;
+  color: var(--color-fg-muted);
+  font-size: var(--font-size-caption);
   font-variant-numeric: tabular-nums;
 }

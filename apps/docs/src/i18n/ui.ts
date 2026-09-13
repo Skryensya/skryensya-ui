@@ -128,6 +128,7 @@ import { gradientsMessages } from "./messages/gradients";
 import { indexMessages } from "./messages/index";
 import { navListMessages } from "./messages/nav-list";
 import { referenceMessages } from "./messages/reference";
+import { playgroundMessages } from "./messages/playground";
 import { templatesMessages } from "./messages/templates";
 import { vaulMessages } from "./messages/vaul";
 
@@ -246,6 +247,7 @@ export const ui = {
     ...indexMessages.es,
     ...navListMessages.es,
     ...referenceMessages.es,
+    ...playgroundMessages.es,
     ...templatesMessages.es,
     ...vaulMessages.es,
   },
@@ -361,6 +363,7 @@ export const ui = {
     ...indexMessages.en,
     ...navListMessages.en,
     ...referenceMessages.en,
+    ...playgroundMessages.en,
     ...templatesMessages.en,
     ...vaulMessages.en,
   },

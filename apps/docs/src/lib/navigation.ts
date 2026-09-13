@@ -836,12 +836,27 @@ if (
  * component names and identical in every language; the ones that are actually Spanish words are
  * overridden per locale in `i18n/ui.ts` (`navLabel`), keyed by href.
  */
+/*
+ * THE PLAYGROUND IS A DIFFERENT APP, and since the split it is a different ORIGIN too: its own
+ * Astro build, its own nginx container (`Dockerfile.playground`), its own port in development. So
+ * this is the one entry in the rail that cannot be a bare path resolved against this site.
+ *
+ * The default is still `/playground`, because the deployment puts both behind one host and that is
+ * the shape every other link here has. In development it points at the port `apps/playground`
+ * actually serves, so the entry works the moment both are running instead of 404ing against a route
+ * this app does not have. `PUBLIC_PLAYGROUND_URL` overrides both for any other topology.
+ */
+const playgroundUrl =
+  import.meta.env.PUBLIC_PLAYGROUND_URL ??
+  (import.meta.env.DEV ? "http://localhost:4174/playground" : "/playground");
+
 export const globalNavigation = [
   { href: "/", label: "nav.home" },
   { href: "/foundations", label: "nav.foundations" },
   { href: "/components", label: "nav.components" },
   { href: "/templates", label: "nav.templates" },
   { href: "/recipes", label: "nav.recipes" },
+  { href: playgroundUrl, label: "nav.playground" },
   { href: "/presets", label: "nav.presets" },
 ] satisfies readonly NavigationItem[];
 

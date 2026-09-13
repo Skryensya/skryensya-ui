@@ -81,6 +81,26 @@ minimumReleaseAgeExclude:
   # Both reached by that same bump, and both the floor of their own patched range.
   - "smol-toml"
   - "svgo"
+  # DELETE AFTER 2026-09-20, when @zag-js 1.43.3 (published 08-20) ages out.
+  # ALL SIX ARE ALREADY IN THE LOCKFILE at exactly these versions, and already installed. Same
+  # reasoning as `prosemirror-transform` below: blocking them avoids no risk, it only stops a
+  # re-resolution from describing what this machine already runs.
+  #
+  # Surfaced on 2026-09-13 by adding `apps/playground`. A new workspace package forces a
+  # re-resolution, and a re-resolution puts every version back through the cooldown, settled ones
+  # included. The first two are transitives of astro 7.2.10; the four @zag-js are the 1.43.3 line
+  # that `packages/core` and `packages/react` already pin.
+  #
+  # @zag-js/react IS THE ONE THAT EARNS ITS PLACE. Without it the playground falls back to 1.43.0 and
+  # the tree carries TWO copies of @zag-js/utils, types and dom-query, one per line. Pinned to
+  # ^1.43.3 like `packages/react`, it is one tree: which for a Sandpack host that hands the browser a
+  # single prebuilt React bundle is the difference between one dispatcher and two.
+  - "find-proc"
+  - "@jridgewell/sourcemap-codec"
+  - "@zag-js/dom-query"
+  - "@zag-js/react"
+  - "@zag-js/types"
+  - "@zag-js/utils"
   # DELETE AFTER 2026-10-02.
   # `packages/editor` asks for `prosemirror-transform: ^1.12.1`, and 1.12.1 (2026-09-02) is the only
   # version that range admits: the previous one is 1.12.0, from March, which `^1.12.1` leaves out.

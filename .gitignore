@@ -46,8 +46,16 @@ apps/docs/check-trees.mts
 # regenerates the lot before anything reads it, `types.d.ts` included, which is the one this app's
 # `tsconfig.json` names in its `include`.
 apps/docs/.astro/
+apps/playground/.astro/
 
 # Output of evals/run-agent.ts: one folder per run, read locally in apps/eval-viewer or a plain
 # editor. It's a measurement of THIS run against the current catalogue, not a fixture to keep.
 evals/agent/runs/
 
+
+# THE KIT, COMPILED FOR SANDPACK. `apps/playground/scripts/build-sandbox-bundles.mjs` writes ~2.1MB
+# of bundles here (`skryensya-react.js`, `skryensya-vanilla.js`, the per-component CSS and their
+# manifests) because Sandpack cannot install unpublished `@skryensya/*` from npm and has to be handed
+# the files instead. It is build output, not source: `pnpm --filter @skryensya/playground dev` and
+# `build` both regenerate it first, and it was never tracked before the split either.
+apps/playground/public/sandbox/

@@ -2,8 +2,7 @@
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import ComponentPreview from "../components/ComponentPreview.astro";
-import type { UsageTree } from "@skryensya/core/usage-tree";
-import { stableIconNames } from "@skryensya/core/icon";
+import { iconVocabTree } from "../demos/icons";
 import { allSets, iconMarkup } from "../icons";
 
 /* The roles shown side by side. A handful is enough to see that the drawing changes and the name
@@ -18,20 +17,6 @@ const vocabCss = `.sk-grid {
   font-size: var(--font-size-caption);
 }`;
 
-const vocabTree: UsageTree = {
-  contract: "layout",
-  signature: "Grid",
-  options: { gap: "md" },
-  children: stableIconNames.map((name) => ({
-    contract: "layout",
-    signature: "Stack",
-    options: { gap: "xs", align: "center" },
-    children: [
-      { contract: "icon", signature: "Icon", options: { name, size: "lg" } },
-      { contract: "typography", signature: "Code", children: name },
-    ],
-  })),
-};
 
 const bind = `# nothing: Phosphor is the @skryensya/react default
 # another set? install it, and only then is it bundled:
@@ -56,7 +41,7 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
     The system names <strong>roles</strong>, not drawings. A set (Lucide, Phosphor, Material) is a brand: it chooses the geometry that each role occupies, just as a brand chooses the hue of <code>--palette-blue-600</code>. How you mount the SVG in React or vanilla is in <a href="/components/icon">Icon</a>.
   </p>
 
-  <ComponentPreview tree={vocabTree} css={vocabCss} label="Stable vocabulary" />
+  <ComponentPreview tree={iconVocabTree} css={vocabCss} label="Stable vocabulary" />
   <p>
     Change brand, mode or contrast above: the icons follow, and do not declare a single color token. They inherit <code>currentColor</code>.
   </p>

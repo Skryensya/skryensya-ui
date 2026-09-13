@@ -129,6 +129,9 @@ import { indexMessages } from "./messages/index";
 import { navListMessages } from "./messages/nav-list";
 import { referenceMessages } from "./messages/reference";
 import { playgroundMessages } from "./messages/playground";
+import { densityMessages } from "./messages/density";
+import { scrollbarMessages } from "./messages/scrollbar";
+import { stateLayerMessages } from "./messages/state-layer";
 import { templatesMessages } from "./messages/templates";
 import { vaulMessages } from "./messages/vaul";
 
@@ -248,6 +251,9 @@ export const ui = {
     ...navListMessages.es,
     ...referenceMessages.es,
     ...playgroundMessages.es,
+    ...densityMessages.es,
+    ...scrollbarMessages.es,
+    ...stateLayerMessages.es,
     ...templatesMessages.es,
     ...vaulMessages.es,
   },
@@ -364,6 +370,9 @@ export const ui = {
     ...navListMessages.en,
     ...referenceMessages.en,
     ...playgroundMessages.en,
+    ...densityMessages.en,
+    ...scrollbarMessages.en,
+    ...stateLayerMessages.en,
     ...templatesMessages.en,
     ...vaulMessages.en,
   },

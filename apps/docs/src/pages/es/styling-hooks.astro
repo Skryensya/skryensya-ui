@@ -1,7 +1,8 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import type { UsageTree } from "@skryensya/core/usage-tree";
+import { stylingHookOverrideTree } from "../../demos/styling-hooks";
+import { getLocale, useTranslations } from "../../i18n";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 
 import "../../examples/styling-hook-override.css";
@@ -35,31 +36,7 @@ const consumedHook = `.sk-button {
   background: var(--sk-button-bg);
 }`;
 
-const overrideTree: UsageTree = {
-  contract: "layout",
-  signature: "Inline",
-  attrs: { class: "promo", style: "display: contents" },
-  children: [
-    {
-      contract: "button",
-      signature: "Button.action",
-      options: { tone: "accent" },
-      children: "Guardar",
-    },
-    {
-      contract: "button",
-      signature: "Button.action",
-      options: { variant: "solid" },
-      children: "Cancelar",
-    },
-    {
-      contract: "button",
-      signature: "Button.action",
-      options: { tone: "danger" },
-      children: "Borrar",
-    },
-  ],
-};
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base
@@ -101,7 +78,7 @@ const overrideTree: UsageTree = {
     de un botón sin inventar una clase paralela ni duplicar la anatomía del componente.
   </p>
   <ComponentPreview
-    tree={overrideTree}
+    tree={stylingHookOverrideTree(t)}
     css={overrideSource}
     label="src/examples/styling-hook-override.css"
     note="el override que pinta la demo"

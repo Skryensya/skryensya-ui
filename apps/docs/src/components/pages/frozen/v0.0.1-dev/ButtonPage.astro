@@ -1,100 +1,74 @@
 ---
 /*
- * THE BUTTON PAGE, AS VERSION 0.0.1-dev SHIPPED IT.
+ * BUTTON, AS VERSION 0.0.1-dev HAS IT.
  *
- * A frozen docs version is normally a whole built site, produced by the cut and mounted under
- * `/v<version>/` (ADR-0022). This file is the prototype of that: one page, hand-placed, so the routing,
- * the switcher and the chrome can be seen working before the cut script exists.
+ * Every word and every snippet on this page comes from `button.frozen.json`, which
+ * `freeze-archive-code.mts` captured from the LIVING page: the message tree for the prose, the
+ * emitter for the code. Nothing here is typed by hand, and that is the point. An archive written by
+ * hand is a second account of the docs that drifts from the first one; an archive CAPTURED is the
+ * same account, stopped.
  *
- * WHY THE TEXT IS INLINE AND NOT `t("button.…")`. That is the whole point of a frozen page. Reading
- * from the live message tree would mean this archive silently rewrites itself every time someone
- * edits the current Button page, which is exactly the failure versioned docs exist to prevent. A
- * snapshot's words are baked into the snapshot; the only thing it still reads from the app is the
- * chrome around it.
+ * WHY THE CODE HAD TO BE CAPTURED AND NOT RE-EMITTED. A usage tree is input, not source: the
+ * emitter and the contract it reads both move forward with the repository, so emitting a tree while
+ * this page renders would print today's markup under this version's heading, which is exactly what
+ * the version axis exists to prevent (ADR-0022). The strings below were emitted once, on the day the
+ * capture says.
  *
- * WHY THERE ARE NO INTERACTIVE PREVIEWS. A `ComponentPreview` renders the workspace as it is TODAY.
- * Under a frozen URL that is not a convenience, it is a lie: the prose would describe this version
- * while the demo underneath it runs the next one's code. The archive shows its code samples, says so
- * in a line the reader can see, and sends anyone who wants a live control to the latest version.
- *
- * WHERE THE CODE COMES FROM, and this is the part that matters: `button.emitted.json`, which is the
- * OUTPUT of the emitter at the cut, not a tree emitted while this page renders. A tree is input; the
- * compiler and the contract it reads both move forward, so emitting here would print today's markup
- * under this version's prose. `freeze-archive-code.mts` is what produced the file, and the trees it
- * read are in `button.trees.ts` beside it, kept so a regeneration is reviewable rather than retyped.
+ * WHY THERE ARE NO LIVE STAGES. A `ComponentPreview` mounts the workspace as it is today. Under a
+ * frozen URL that is not a convenience, it is a claim the archive cannot back. A real cut, which
+ * builds the whole site at a tag, gets the rendered stage for free; until then the archive shows the
+ * code it generated and says so in a line the reader can see.
  */
 import FrozenPage from "../../../FrozenPage.astro";
 import CodeBlock from "../../../CodeBlock.astro";
-import { getLocale, useTranslations } from "../../../../i18n";
-import emitted from "./button.emitted.json";
-
-/** The day this cut was taken. In a real archive it is the tag's date, read by the cut script. */
-const FROZEN_AT = "2026-06-30";
-const VERSION = "0.0.1-dev";
+import { getLocale } from "../../../../i18n";
+import frozen from "./button.frozen.json";
 
 const locale = getLocale(Astro.url);
-const t = useTranslations(locale);
-const { snippets } = emitted;
+const copy = frozen.copy[locale];
+const snippets = frozen.snippets[locale];
 
+/** A captured string, by its message key. The keys are the living page's own. */
+const say = (key: string): string => copy[`button.${key}` as keyof typeof copy] ?? "";
 
-/* The page's own words, as they read at the cut. Both locales, because one archive holds both. */
-const copy = {
-  es: {
-    description: "El control que ejecuta una acción. Cuatro variantes, tres tamaños y un solo contrato.",
-    lede: "Button es el único control que ejecuta una acción inmediata. Si navega, es un enlace; si cambia un valor, es un Switch o un Checkbox.",
-    variantsTitle: "Variantes",
-    variantsBody:
-      "Cuatro: <code>solid</code> para la acción principal de la vista, <code>outline</code> para las que la acompañan, <code>ghost</code> para las que viven dentro de otra superficie y <code>link</code> para las que se leen como texto.",
-    sizesTitle: "Tamaños",
-    sizesBody:
-      "Tres tamaños: <code>sm</code>, <code>md</code> y <code>lg</code>. El área de toque nunca baja del mínimo aunque la caja visible sea más chica.",
-    linkTitle: "Como enlace",
-    linkBody: "Cuando la acción navega, el elemento correcto es un <code>&lt;a&gt;</code> con la apariencia de Button.",
-    installTitle: "Instalación",
-  },
-  en: {
-    description: "The control that performs an action. Four variants, three sizes, one contract.",
-    lede: "Button is the only control that performs an immediate action. If it navigates it is a link; if it changes a value it is a Switch or a Checkbox.",
-    variantsTitle: "Variants",
-    variantsBody:
-      "Four: <code>solid</code> for the view's primary action, <code>outline</code> for the ones beside it, <code>ghost</code> for the ones living inside another surface, and <code>link</code> for the ones that read as text.",
-    sizesTitle: "Sizes",
-    sizesBody:
-      "Three sizes: <code>sm</code>, <code>md</code> and <code>lg</code>. The hit area never drops below the minimum even when the painted box is smaller.",
-    linkTitle: "As a link",
-    linkBody: "When the action navigates, the right element is an <code>&lt;a&gt;</code> wearing Button's appearance.",
-    installTitle: "Installation",
-  },
-}[locale];
-
-const install = `pnpm add @skryensya/core @skryensya/vanilla`;
-
+/**
+ * The page's sections, in the order the living page teaches them. Each names its heading, its
+ * prose, and the tree whose captured code it shows. This is the one thing the capture does NOT
+ * carry, because structure is markup rather than data: a real cut freezes the rendered HTML and
+ * does not need it at all.
+ */
+const sections = [
+  { title: "variantsTitle", body: ["variantsBody", "toneCountBody", "translucentBody"], tree: "buttonMatrixTree" },
+  { title: "pressedTitle", body: ["pressedBody"], tree: "buttonPressedTree" },
+  { title: "destructiveTitle", body: ["destructiveBody"], tree: "buttonDestructivePairTree" },
+  { title: "sizesTitle", body: [], tree: "buttonSizesTree" },
+  { title: "iconTitle", body: ["iconBody"], tree: "buttonIconTree" },
+  { title: "iconOnlyTitle", body: [], tree: "buttonIconOnlyTree" },
+  { title: "linkTitle", body: ["linkBody"], tree: "buttonAsLinkTree" },
+  { title: "tileTitle", body: ["tileBody"], tree: "tileButtonTree" },
+] as const;
 ---
 
 <FrozenPage
   title="Button"
-  description={copy.description}
-  version={VERSION}
-  frozenAt={FROZEN_AT}
+  description={say("description")}
+  version={frozen.version}
+  frozenAt={frozen.capturedAt}
   demosOmitted
 >
-  <p class="lede">{copy.lede}</p>
+  <p class="lede" set:html={say("lede")} />
+  <p set:html={say("anatomyBody")} />
 
-  <h2>{copy.variantsTitle}</h2>
-  <p set:html={copy.variantsBody} />
-  <CodeBlock code={snippets.variants.html} label="HTML" lang="html" />
-  <CodeBlock code={snippets.variants.react} label="React" lang="tsx" />
-
-  <h2>{copy.sizesTitle}</h2>
-  <p set:html={copy.sizesBody} />
-  <CodeBlock code={snippets.sizes.html} label="HTML" lang="html" />
-  <CodeBlock code={snippets.sizes.react} label="React" lang="tsx" />
-
-  <h2>{copy.linkTitle}</h2>
-  <p set:html={copy.linkBody} />
-  <CodeBlock code={snippets.link.html} label="HTML" lang="html" />
-  <CodeBlock code={snippets.link.react} label="React" lang="tsx" />
-
-  <h2>{copy.installTitle}</h2>
-  <CodeBlock code={install} label="terminal" />
+  {
+    sections.map((section) => (
+      <Fragment>
+        <h2>{say(section.title)}</h2>
+        {section.body.map((key) => (
+          <p set:html={say(key)} />
+        ))}
+        <CodeBlock code={snippets[section.tree].html} label="HTML" lang="html" />
+        <CodeBlock code={snippets[section.tree].react} label="React" lang="tsx" />
+      </Fragment>
+    ))
+  }
 </FrozenPage>

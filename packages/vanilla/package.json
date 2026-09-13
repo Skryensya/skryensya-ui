@@ -236,6 +236,10 @@
     "./calendar": {
       "types": "./src/components/calendar.ts",
       "default": "./src/components/calendar.ts"
+    },
+    "./test-setup": {
+      "types": "./src/test-setup.ts",
+      "default": "./src/test-setup.ts"
     }
   },
   "scripts": {

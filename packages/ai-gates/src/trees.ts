@@ -247,6 +247,81 @@ const signatureTrees: readonly Canonical[] = [
   },
   {
     /*
+     * RESIZABLE COLUMNS, which is the only reason `table`'s enhancer exists. Added because nothing
+     * exercised it: the selector `table.sk-table[data-resizable-columns]` matched no canonical
+     * markup, so neither G2 nor the vanilla conformance gate had ever compared that path.
+     */
+    name: "table/resizable",
+    enhanced: true,
+    tree: {
+      contract: "table",
+      signature: "Table",
+      options: { resizableColumns: true, resizeLabel: "Redimensionar columna" },
+      children: [
+        {
+          contract: "table",
+          signature: "TableHead",
+          children: {
+            contract: "table",
+            signature: "TableRow",
+            children: [
+              { contract: "table", signature: "TableHeader", children: "Plan" },
+              { contract: "table", signature: "TableHeader", children: "Precio" },
+            ],
+          },
+        },
+        {
+          contract: "table",
+          signature: "TableBody",
+          children: {
+            contract: "table",
+            signature: "TableRow",
+            children: [
+              { contract: "table", signature: "TableCell", children: "Base" },
+              { contract: "table", signature: "TableCell", children: "0" },
+            ],
+          },
+        },
+      ],
+    },
+  },
+  {
+    /* The count-up, Stat's only enhanced path, and the one `[data-sk-stat][data-animate]` looks
+     * for. Every other Stat is finished markup, which is why nothing reached this before. */
+    name: "stat/animated",
+    enhanced: true,
+    tree: {
+      contract: "stat",
+      signature: "Stat",
+      options: { animate: true, count: 1284 },
+      slots: { label: "Usuarios activos", value: "1.284" },
+    },
+  },
+  {
+    /* A collapsible group, which is what `[data-sk-nav-list-group-trigger]` enhances. The labelled
+     * case below is static, so the trigger existed with no tree behind it. */
+    name: "nav-list/collapsible",
+    enhanced: true,
+    tree: {
+      contract: "nav-list",
+      signature: "NavList",
+      attrs: { "aria-label": "Principal" },
+      children: {
+        contract: "nav-list",
+        signature: "NavListGroup",
+        options: { collapsible: true },
+        slots: { label: "Espacio" },
+        children: {
+          contract: "nav-list",
+          signature: "NavListLink",
+          options: { href: "/" },
+          children: "Inicio",
+        },
+      },
+    },
+  },
+  {
+    /*
      * Order and cardinality, which nothing else in the catalogue needed. HTML fixes both: the caption
      * comes first and there is at most one, the body is required, and a footer written before the body
      * is markup the parser silently moves, while the page still looks right.

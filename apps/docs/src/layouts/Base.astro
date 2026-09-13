@@ -128,7 +128,7 @@ import { indexDocument, indexHeroTabPanel } from "../lib/document-index";
 import { vanillaMountSections } from "../lib/vanilla-mount-sections";
 import VanillaMount from "../components/VanillaMount.astro";
 import { vanillaMounts } from "../lib/vanilla-mounts";
-import { frozenLocales } from "../lib/docs-versions";
+import { archiveHref, frozenLocales } from "../lib/docs-versions";
 import { iconMarkup, siteIconSet } from "../icons";
 import { getGlobalNavigation, getNavigation, type NavigationItem, type NavigationSection } from "../lib/navigation";
 import type { DrawerSection } from "../components/DrawerNav.astro";
@@ -273,8 +273,27 @@ const LANG_REDIRECT = {
  * The navigation lives in lib/navigation.ts, shared with the catalog so the same task grouping
  * cannot drift between exploration and navigation.
  */
-const navigation = getNavigation(locale) satisfies readonly NavigationSection[];
-const globalNavigation = getGlobalNavigation(locale);
+/*
+ * INSIDE AN ARCHIVE, THE RAIL POINTS INTO THE ARCHIVE. A frozen version is a whole site, so a
+ * reader who clicks Density while reading version 0.0.1-dev should get that version's Density. Every
+ * consumer of these two values (the rail, the mobile drawer, the footer, the section lookup below)
+ * inherits the rewrite from here, which is why it happens once and at the source rather than in each
+ * of them. A link the archive does not hold is left pointing at the living site: see `archiveHref`.
+ */
+const inArchive = (href: string): string => archiveHref(href, locale, version);
+const liveNavigation = getNavigation(locale) satisfies readonly NavigationSection[];
+const navigation: readonly NavigationSection[] =
+  version === null
+    ? liveNavigation
+    : liveNavigation.map((section) => ({
+        ...section,
+        href: section.href === undefined ? undefined : inArchive(section.href),
+        groups: section.groups.map((group) => ({
+          ...group,
+          items: group.items.map((item) => ({ ...item, href: inArchive(item.href) })),
+        })),
+      }));
+const globalNavigation = getGlobalNavigation(locale).map((item) => ({ ...item, href: inArchive(item.href) }));
 /* By stable id, never by visible title: the titles are translated now and would stop matching. */
 const componentSection = navigation.find((section) => section.id === "components");
 const foundationsSection = navigation.find((section) => section.id === "foundations");
@@ -416,7 +435,18 @@ const mainRowCount =
   1;
 
 
-const searchIndexSrc = locale === "en" ? "/search-index.json" : "/search-index.json";
+/*
+ * WHICH INDEX THE PALETTE READS. Inside an archive it must be the ARCHIVE's index, or ⌘K, the one
+ * control a reader uses to move around, is also the one that drops them out of the version they
+ * chose without saying so. The endpoint lives next to the archive's pages
+ * (`pages/v<version>/search-index.json.ts`), which is where a real cut would put it too, since a
+ * cut copies the whole site including its endpoints.
+ *
+ * The ternary on `locale` is gone rather than kept: both of its branches were the same string. The
+ * locale is already in the path prefix, so `localizePath` answers it the way it answers everything
+ * else.
+ */
+const searchIndexSrc = localizePath("/search-index.json", locale, version);
 
 const searchIcon = iconMarkup("search");
 const closeIcon = iconMarkup("close");

@@ -1,0 +1,110 @@
+---
+/*
+ * FUNDAMENTOS, AS VERSION 0.0.1-dev SHIPPED IT.
+ *
+ * Here to prove the version axis is not a components feature. The live page builds its list from
+ * `getNavigation()`, which is exactly why it needs freezing like everything else: that list is the
+ * shape of the system on a given day, and reading it live under an archived URL would show today's
+ * foundations under yesterday's heading.
+ *
+ * So the list below is BAKED, and each row goes through `archiveHref`: a topic this archive holds
+ * (Density) stays inside the archive, and one it does not hold points at the living page, which is
+ * the honest answer rather than a link into a page that was never cut.
+ */
+import FrozenPage from "../../../FrozenPage.astro";
+import { getLocale, localizePath } from "../../../../i18n";
+import { archiveHref } from "../../../../lib/docs-versions";
+
+const FROZEN_AT = "2026-06-30";
+const VERSION = "0.0.1-dev";
+
+const locale = getLocale(Astro.url);
+const href = (canonical: string) => archiveHref(localizePath(canonical, locale, null), locale, VERSION);
+
+const copy = {
+  es: {
+    description: "Las decisiones que todo componente da por sentadas: color, espacio, tipografía, movimiento.",
+    lede: "Un componente es la parte visible. Los fundamentos son lo que comparte con todos los demás, y por eso se leen una vez y se aplican en todas partes.",
+    listTitle: "Los fundamentos, por tema",
+    groups: [
+      {
+        title: "Escala y espacio",
+        blurb: "Cuánto mide cada cosa y cuánto aire hay entre ellas.",
+        items: [
+          { canonical: "/density", label: "Densidad" },
+          { canonical: "/dimensions", label: "Dimensiones" },
+        ],
+      },
+      {
+        title: "Superficie",
+        blurb: "Cómo se separan los planos y qué los distingue.",
+        items: [
+          { canonical: "/elevation", label: "Elevación" },
+          { canonical: "/transparency", label: "Transparencias" },
+        ],
+      },
+      {
+        title: "Movimiento",
+        blurb: "Cuándo algo se mueve y con qué intención.",
+        items: [{ canonical: "/motion", label: "Motion" }],
+      },
+    ],
+  },
+  en: {
+    description: "The decisions every component takes for granted: color, space, type, motion.",
+    lede: "A component is the visible part. The foundations are what it shares with every other one, which is why they are read once and applied everywhere.",
+    listTitle: "The foundations, by topic",
+    groups: [
+      {
+        title: "Scale and space",
+        blurb: "How big each thing is, and how much air sits between them.",
+        items: [
+          { canonical: "/density", label: "Density" },
+          { canonical: "/dimensions", label: "Dimensions" },
+        ],
+      },
+      {
+        title: "Surface",
+        blurb: "How planes separate, and what tells them apart.",
+        items: [
+          { canonical: "/elevation", label: "Elevation" },
+          { canonical: "/transparency", label: "Transparency" },
+        ],
+      },
+      {
+        title: "Motion",
+        blurb: "When something moves, and with what intent.",
+        items: [{ canonical: "/motion", label: "Motion" }],
+      },
+    ],
+  },
+}[locale];
+
+const slug = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+---
+
+<FrozenPage
+  title={locale === "es" ? "Fundamentos" : "Foundations"}
+  description={copy.description}
+  version={VERSION}
+  frozenAt={FROZEN_AT}
+>
+  <p class="lede">{copy.lede}</p>
+
+  <h2>{copy.listTitle}</h2>
+  {
+    copy.groups.map((group) => (
+      <section aria-labelledby={`foundation-${slug(group.title)}`}>
+        <h3 id={`foundation-${slug(group.title)}`}>{group.title}</h3>
+        <p>{group.blurb}</p>
+        <ul>
+          {group.items.map((item) => (
+            <li>
+              <a href={href(item.canonical)}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</FrozenPage>

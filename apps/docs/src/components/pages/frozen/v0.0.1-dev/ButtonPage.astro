@@ -17,28 +17,16 @@
  * while the demo underneath it runs the next one's code. The archive shows its code samples, says so
  * in a line the reader can see, and sends anyone who wants a live control to the latest version.
  */
-import "@skryensya/core/components/callout.css";
-import Base from "../../../../layouts/Base.astro";
+import FrozenPage from "../../../FrozenPage.astro";
 import CodeBlock from "../../../CodeBlock.astro";
-import { canonicalPath, getLocale, localizePath, useTranslations } from "../../../../i18n";
+import { getLocale } from "../../../../i18n";
 
 /** The day this cut was taken. In a real archive it is the tag's date, read by the cut script. */
 const FROZEN_AT = "2026-06-30";
 const VERSION = "0.0.1-dev";
 
 const locale = getLocale(Astro.url);
-const t = useTranslations(locale);
-const canonical = canonicalPath(Astro.url.pathname);
-const latestHref = localizePath(canonical, locale, null);
 
-/* `timeZone: "UTC"`, or the build machine's offset moves the cut date by a day: a tag dated the
- * 30th rendered as the 29th for anyone west of Greenwich, this machine included. */
-const frozenDate = new Intl.DateTimeFormat(locale === "es" ? "es-CL" : "en-GB", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-  timeZone: "UTC",
-}).format(new Date(`${FROZEN_AT}T00:00:00Z`));
 
 /* The page's own words, as they read at the cut. Both locales, because one archive holds both. */
 const copy = {
@@ -87,20 +75,14 @@ const iconOnly = `<button class="sk-button" data-variant="ghost" data-icon-only 
 </button>`;
 ---
 
-<Base title="Button" documentLayout="grid" description={copy.description}>
-  <div class="sk-callout" data-tone="warning">
-    <div class="sk-callout__content">
-      <p>
-        <strong>{t("version.frozenTitle", { number: VERSION, date: frozenDate })}</strong>
-      </p>
-      <p>{t("version.frozenBody")}</p>
-      <p><a href={latestHref}>{t("version.frozenLink")}</a></p>
-    </div>
-  </div>
-
-  <h1>Button</h1>
+<FrozenPage
+  title="Button"
+  description={copy.description}
+  version={VERSION}
+  frozenAt={FROZEN_AT}
+  demosOmitted
+>
   <p class="lede">{copy.lede}</p>
-  <p><em>{t("version.noDemos")}</em></p>
 
   <h2>{copy.variantsTitle}</h2>
   <p set:html={copy.variantsBody} />
@@ -118,4 +100,4 @@ const iconOnly = `<button class="sk-button" data-variant="ghost" data-icon-only 
 
   <h2>{copy.installTitle}</h2>
   <CodeBlock code={install} label="terminal" />
-</Base>
+</FrozenPage>

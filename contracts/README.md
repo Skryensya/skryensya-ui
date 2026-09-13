@@ -61,7 +61,7 @@ que nadie anunció.
 
 Una entrada **no** dice su versión. `changelog/releases.yaml` es el único lugar que decide eso: una
 entrada cae en el release más viejo cuya fecha la alcanza, y lo que quedó después del último release
-se muestra bajo la versión de trabajo (hoy `0.1.0-dev`).
+se muestra bajo la versión de trabajo (hoy `0.0.1-dev`).
 
 Cortar una versión es una línea ahí. Por eso el ledger existe en vez de un campo `version:` por
 entrada: con el campo habría que abrir los 65 changelogs y sellar a mano cada entrada suelta, que es

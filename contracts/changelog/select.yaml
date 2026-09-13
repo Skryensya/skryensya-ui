@@ -3,8 +3,23 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "b130b2c41d494ea4"
+surface: "c563374aec253c75"
 entries:
+  - date: 2026-09-13
+    kind: bugfix
+    target: placeholder
+    es:
+      title: El placeholder por defecto es vacío en ambos bindings
+      body: >-
+        React inventaba <code>"Select option"</code> y Vanilla usaba <code>""</code> cuando el autor
+        no pasaba <code>placeholder</code>. El contrato ahora fija el default en <code>""</code>, y
+        los dos bindings lo leen igual: sin texto inventado en inglés.
+    en:
+      title: The default placeholder is empty in both bindings
+      body: >-
+        React invented <code>"Select option"</code> and Vanilla used <code>""</code> when the author
+        passed no <code>placeholder</code>. The contract now owns the default as <code>""</code>, and
+        both bindings read the same one: no invented English copy.
   - date: 2026-08-24
     kind: bugfix
     target: item

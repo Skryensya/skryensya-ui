@@ -138,8 +138,8 @@ export const selectContract = {
      * carry: Segmented's absence was measured as a demo nobody could click.
      */
     value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
-    /** Shown in the trigger while nothing is selected. */
-    placeholder: { type: "string", attr: "data-placeholder", machineInput: true },
+    /** Shown in the trigger while nothing is selected. Empty until the author names one. */
+    placeholder: { type: "string", default: "", attr: "data-placeholder", machineInput: true },
     disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "", machineInput: true },
     required: { type: "boolean", default: false, attr: "data-required", trueValue: "", machineInput: true },
   },

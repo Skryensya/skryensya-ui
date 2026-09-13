@@ -477,12 +477,28 @@ const classToCss: ReadonlyMap<string, string> = (() => {
   return index;
 })();
 
-/** The `also` classes a node's own signature borrows from another contract's template, if any. */
+/** Every `also` class anywhere in a signature's template (nested dismiss buttons included). */
 function alsoClassesFor(node: UsageTree): readonly string[] {
   const contract = manifest.contracts[node.contract] as
-    | { signatures?: Record<string, { template?: { also?: readonly string[] } }> }
+    | {
+        signatures?: Record<
+          string,
+          { template?: { also?: readonly string[]; children?: readonly unknown[] } }
+        >;
+      }
     | undefined;
-  return contract?.signatures?.[node.signature]?.template?.also ?? [];
+  const template = contract?.signatures?.[node.signature]?.template;
+  if (!template) return [];
+  const into: string[] = [];
+  const walk = (part: { also?: readonly string[]; children?: readonly unknown[] } | undefined) => {
+    if (!part) return;
+    for (const className of part.also ?? []) into.push(className);
+    for (const child of part.children ?? []) {
+      walk(child as { also?: readonly string[]; children?: readonly unknown[] });
+    }
+  };
+  walk(template);
+  return into;
 }
 
 /*

@@ -1,6 +1,6 @@
 {
   "name": "@skryensya/core",
-  "version": "0.0.2-dev",
+  "version": "0.0.1-dev",
   "private": true,
   "type": "module",
   "description": "The contract for skryensya/ui: design tokens, component parts, shared option types and the pure behaviour both bindings call. Not framework-agnostic: every signature names its React module, and the machines are re-exported here (ADR-0010).",

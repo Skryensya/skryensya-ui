@@ -8,6 +8,10 @@
     "strict": true,
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
+    // `build-test-report.ts` imports `apps/docs/src/lib/test-suite.ts` by its real path, because
+    // that is what `node --experimental-strip-types` resolves at runtime. Safe here and nowhere
+    // else: this program never emits, so an extension TypeScript would have rewritten cannot leak.
+    "allowImportingTsExtensions": true,
     "noEmit": true
   },
   "include": ["./**/*.ts"]

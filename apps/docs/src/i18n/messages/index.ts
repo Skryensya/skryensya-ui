@@ -31,9 +31,9 @@ export const indexMessages = {
     "landing.description":
       "Componentes, primitives y fundamentos para construir interfaces que funcionan como un sistema.",
     "landing.brand": "skryensya/ui",
-    "landing.hero.title": "Deja de construir el mismo componente dos veces.",
+    "landing.hero.title": "Un componente. Dos bindings.",
     "landing.hero.lede":
-      "Un botón hecho para HTML y otro hecho para React se separan apenas alguien arregla uno de los dos. Acá son el mismo componente, así que no pueden separarse: se ven igual, se comportan igual y los ejemplos de esta documentación son ese mismo componente.",
+      "HTML y React dejan de divergir: el mismo contrato, el mismo aspecto, los mismos ejemplos.",
     "landing.hero.ctaComponents": "Ver componentes",
     "landing.hero.ctaInstall": "Instalarlo",
     "landing.hero.specimenTitle": "Nueva versión",
@@ -293,9 +293,9 @@ export const indexMessages = {
     "landing.description":
       "Components, primitives and foundations for building interfaces that work as a system.",
     "landing.brand": "skryensya/ui",
-    "landing.hero.title": "Stop building the same component twice.",
+    "landing.hero.title": "One component. Two bindings.",
     "landing.hero.lede":
-      "A button written for HTML and a button written for React drift apart the moment someone fixes one of them. Here they are the same component, so they cannot: they look alike, behave alike, and the examples in these docs are that component too.",
+      "HTML and React stop drifting apart: the same contract, the same look, the same examples.",
     "landing.hero.ctaComponents": "See the components",
     "landing.hero.ctaInstall": "Install it",
     "landing.hero.specimenTitle": "New version",

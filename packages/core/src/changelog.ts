@@ -3,10 +3,10 @@ import type { ComponentContract } from "./contract.js";
 /*
  * CHANGELOG, the history of one thing, grouped by the version it shipped in.
  *
- * The kinds are the ones `packages/ai-compiler/src/changelog.ts` already validates, restated here
- * rather than imported: that module is a build tool that reads YAML off disk, and Core must not
- * depend on it to know what a change looks like. They agree because there is one vocabulary, and a
- * gate reads both.
+ * THE KINDS ARE AUTHORED HERE, and `packages/ai-compiler/src/changelog.ts` imports them to validate
+ * the YAML it reads off disk. The edge runs that way and only that way: Core must not depend on a
+ * build tool to know what a change looks like, and Core declares no workspace dependency at all.
+ * They used to be written in both places, each file citing a cycle that never existed.
  *
  * ── WHY THESE FIVE WORDS ────────────────────────────────────────────────────
  * They used to be Keep a Changelog's. Added, changed, fixed, removed, breaking, which name what

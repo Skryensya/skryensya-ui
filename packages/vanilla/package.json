@@ -1,6 +1,6 @@
 {
   "name": "@skryensya/vanilla",
-  "version": "0.0.2-dev",
+  "version": "0.0.1-dev",
   "private": true,
   "type": "module",
   "description": "Vanilla enhancers for authored skryensya/ui markup.",

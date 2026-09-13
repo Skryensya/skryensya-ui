@@ -38,7 +38,7 @@ export function Select({
   required,
   value,
   defaultValue,
-  placeholder = "Select option",
+  placeholder = "",
   options,
   onValueChange,
 }: SelectProps) {

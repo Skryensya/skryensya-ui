@@ -1,6 +1,6 @@
 {
   "name": "@skryensya/ai-gates",
-  "version": "0.0.2-dev",
+  "version": "0.0.1-dev",
   "private": true,
   "type": "module",
   "description": "Runtime gates: renders every canonical usage tree in BOTH bindings and proves they land on the same DOM (G2), plus accessibility and visual checks.",

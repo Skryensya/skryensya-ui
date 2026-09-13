@@ -247,7 +247,15 @@ console.log(`  foundation.css  ${size("foundation.css")}`);
  * transitive `@import` closure, so `Playground.tsx` can fetch exactly the files a name it detects in
  * an example's source actually needs.
  */
-const IMPORT_RE = /@import\s+url\(["']\.\/([\w-]+\.css)["']\)\s*;/g;
+/*
+ * `./sibling.css` AND `../group/sheet.css`. The `./`-only form this used to require captured 5 of the
+ * 11 `@import` edges in `packages/core/css` and missed all 6 that CROSS between `components/` and
+ * `patterns/` (`menubar->nav-list`, `sidebar->splitter`, `table->splitter`, `treegrid->splitter`,
+ * `copy-button->icon-toggle`, `icon-state-button->icon-toggle`, `theme-toggle->icon-toggle`) - while
+ * the comment above it asserted that nothing crosses. It did; the regex simply could not see it.
+ * Group 1 is the directory when the edge crosses, undefined when it does not.
+ */
+const IMPORT_RE = /@import\s+url\(["']\.(?:\.\/([\w-]+)|)\/([\w-]+\.css)["']\)\s*;/g;
 
 /*
  * CROSS-CUTTING DEPENDENCIES, invisible to `@import` AND to the compiled CSS itself. `copy-button.ts`
@@ -276,10 +284,32 @@ const CROSS_CUTTING = [
   { rule: /iconToggleParts|"sk-icon-toggle"/, provides: "patterns/icon-toggle.css" },
 ];
 
-function contractCrossDeps(stem) {
-  const file = join(coreSrcDir, `${stem}.ts`);
-  if (!existsSync(file)) return [];
-  const code = readFileSync(file, "utf8");
+/*
+ * STYLESHEET -> THE MODULE THAT DECLARES IT, read from `css:` rather than guessed from the filename.
+ *
+ * The guess was `packages/core/src/<stem>.ts`, and it is wrong for every sheet whose contract lives in
+ * a MULTI-CONTRACT module: `toast.css` is declared by `contentContract` in `content.ts`,
+ * and `checkbox.css`/`radio-group.css`/`switch.css` by `selection.ts`. Four of the 92 sheets have no
+ * file at their own name, so `contractCrossDeps` returned `[]` for them unconditionally - and
+ * `contentContract` declares `also: ["sk-button", "sk-interactive"]`, which is why every toast in the
+ * playground shipped with no `.sk-button` chrome at all.
+ *
+ * One module may declare several sheets (layout.ts) and one sheet is declared by exactly one module,
+ * so the map is keyed by sheet and the scan is a single pass over core's source.
+ */
+const CSS_DECL_RE = /css:\s*"@skryensya\/core\/([\w-]+)\/([\w-]+)\.css"/g;
+
+const declaringModule = new Map();
+for (const file of readdirSync(coreSrcDir).filter((f) => f.endsWith(".ts") && !f.includes(".test."))) {
+  const code = readFileSync(join(coreSrcDir, file), "utf8");
+  for (const [, group, stem] of code.matchAll(CSS_DECL_RE)) {
+    declaringModule.set(`${group}/${stem}`, code);
+  }
+}
+
+function contractCrossDeps(group, stem) {
+  const code = declaringModule.get(`${group}/${stem}`);
+  if (code === undefined) return [];
   return CROSS_CUTTING.filter(({ rule }) => rule.test(code)).map(({ provides }) => provides);
 }
 
@@ -295,8 +325,10 @@ function readCssGroup(group) {
     const css = readFileSync(join(srcDir, file), "utf8");
     copyFileSync(join(srcDir, file), join(destDir, file));
     const key = `${group}/${file}`;
-    const deps = new Set([...css.matchAll(IMPORT_RE)].map((m) => `${group}/${m[1]}`));
-    for (const provides of contractCrossDeps(file.replace(/\.css$/, ""))) {
+    const deps = new Set(
+      [...css.matchAll(IMPORT_RE)].map((m) => `${m[1] ?? group}/${m[2]}`),
+    );
+    for (const provides of contractCrossDeps(group, file.replace(/\.css$/, ""))) {
       if (provides !== key) deps.add(provides);
     }
     entries.set(key, deps);

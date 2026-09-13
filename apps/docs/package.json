@@ -1,7 +1,7 @@
 {
   "name": "@skryensya/docs",
   "private": true,
-  "version": "0.0.2-dev",
+  "version": "0.0.1-dev",
   "type": "module",
   "description": "Documentation site for skryensya/ui. Consumes @skryensya/core through the same exports map it documents.",
   "scripts": {

@@ -34,3 +34,4 @@ export {
   type Severity,
   type ValidationResult,
 } from "./validate.js";
+export { sheetsForTree, type SheetsForTree } from "./sheets-for-tree.js";

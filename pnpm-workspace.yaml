@@ -116,6 +116,11 @@ minimumReleaseAgeExclude:
   # evals harness, which is not published in any of the 9 npm packages, so the patch weighs more than
   # the wait. On 2026-09-28 it turns 30 days old and this line stops doing anything.
   - "qs"
+  # DELETE AFTER 2026-09-25.
+  # js-yaml 4.3.2 (2026-08-26) patches HIGH "maxTotalMergeKeys does not limit CPU use for empty
+  # merge sources". The override already asks for ^4.3.2; without this exclude the cooldown keeps
+  # resolving 4.3.1 and pre-push refuses. Comes in under apps/docs > @astrojs/react.
+  - "js-yaml"
 
 # NOTHING RUNS CODE ON INSTALL, and the list is empty on purpose, not by oversight.
 #

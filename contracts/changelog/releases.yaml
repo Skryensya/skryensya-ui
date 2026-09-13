@@ -13,17 +13,22 @@
 # THE VERSIONS BELONG TO THE CONTRACTS, not to a package. A contract is realized by Core, React and
 # Vanilla at once, so `@skryensya/core`'s version is not the answer to "since when can I count on
 # this?" for anyone using the kit. This is.
+#
+# The packages start at `0.0.1-dev` and this ledger starts at the same number, on purpose: two
+# numerators that disagree on day one are a question nobody can answer later. They are free to drift
+# afterwards, because they measure different things, and when they do it is this number that a
+# changelog entry means.
 
 # The version being written right now, still unpublished. Whatever did not make it into any release is
 # shown as `<working>-dev`, which is what it is: the number it will carry when it ships, marked as not
 # shipped. When a release is cut it is added below and this number goes up.
-working: "0.1.0"
+working: "0.0.1"
 
 # Empty on purpose: none of this has been published yet. When the first release is cut this becomes
 #
 #   releases:
-#     - version: "0.1.0"
-#       date: 2026-08-05
+#     - version: "0.0.1"
+#       date: 2026-10-05
 #
-# and every entry dated up to that day groups itself under `0.1.0`, without touching a changelog.
+# and every entry dated up to that day groups itself under `0.0.1`, without touching a changelog.
 releases: []

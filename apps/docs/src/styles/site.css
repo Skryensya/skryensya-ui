@@ -3080,3 +3080,19 @@ main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .d
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/*
+ * THE VERSION LIST IN THE PREFERENCE SHEET. Every other row of that sheet is a Tile Button that
+ * cycles; this one is a `nav-list`, because choosing a docs version is picking one item out of a
+ * list that grows with every cut, not flipping between two states. The hint sits under the group
+ * label, where a Tile Button would have put its description.
+ */
+.docs-prefs-versions {
+  --sk-nav-list-group-label-font-size: var(--font-size-sm);
+}
+
+.docs-prefs-versions__hint {
+  margin: 0 0 var(--space-stack-2xs);
+  color: var(--color-fg-muted);
+  font-size: var(--font-size-sm);
+}

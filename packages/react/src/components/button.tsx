@@ -22,6 +22,10 @@ const iconOnlyRule = buttonContract.a11y[0];
 /** The appearance props ARE the action signature's options. `href` is added by the union below. */
 type ButtonAppearanceProps = SignatureOptionsOf<typeof buttonContract, "Button.action"> & {
   children: ReactNode;
+  /** Leading slot: icon (or other affordance) before the label. */
+  pre?: ReactNode;
+  /** Trailing slot: icon (or other affordance) after the label. */
+  post?: ReactNode;
 };
 
 /*
@@ -87,6 +91,8 @@ export function Button({
   tone = toneOption.default,
   pressed,
   size = sizeOption.default,
+  pre,
+  post,
   ...props
 }: ButtonProps) {
   warnMissingAccessibleName(iconOnly, [props["aria-label"], props["aria-labelledby"]], children);
@@ -112,11 +118,19 @@ export function Button({
       ? {}
       : { [pressedOption.attr]: pressed ? pressedOption.trueValue : pressedOption.falseValue };
 
+  const body = (
+    <>
+      {pre != null ? <span className={buttonParts.pre}>{pre}</span> : null}
+      {children}
+      {post != null ? <span className={buttonParts.post}>{post}</span> : null}
+    </>
+  );
+
   if (props.href !== undefined) {
     const { href, ...anchorProps } = props;
     return (
       <a {...anchorProps} {...shared} {...toggle} href={href}>
-        {children}
+        {body}
       </a>
     );
   }
@@ -131,7 +145,7 @@ export function Button({
       disabled={disabled}
       type={type}
     >
-      {children}
+      {body}
     </button>
   );
 }

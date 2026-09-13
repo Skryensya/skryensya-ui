@@ -23,7 +23,7 @@ export const buttonMessages = {
     "button.description": "Button: hooks de estilo, enhancer vanilla mínimo y componente React.",
     "button.lede": 'Styling hooks sobre el <code>&lt;button&gt;</code> nativo, un enhancer vanilla y un componente React.',
     "button.anatomyBody":
-      "Un botón es una sola caja: el <code>&lt;button&gt;</code> nativo con la clase raíz, la capa de estado compartida encima y los hijos que le pongas adentro. El espécimen está congelado; los botones vivos empiezan en la matriz de abajo.",
+      "Un botón es una sola caja con lugares reservados: <code>sk-button__pre</code> antes del label y <code>sk-button__post</code> después. El icono es un solo <code>sk-icon</code> (el mismo en cualquiera de los dos slots). El espécimen llena ambos para nombrarlos; los botones vivos empiezan en la matriz de abajo.",
     "button.anatomyLabel": "Anatomía de Button",
     "button.anatomyPreviewLabel": "Button, parte por parte",
     "button.variantsTitle": "Dos ejes: énfasis y tono",
@@ -50,7 +50,7 @@ export const buttonMessages = {
     "button.sizeHitNote": "ya incluido: la cara xs pinta a 24px, el hit sigue en 44px",
     "button.iconTitle": "Con icono",
     "button.iconBody":
-      "El icono va antes o después del texto según lo que necesite decir primero: adelante para anticipar el tipo de acción, atrás para señalar hacia dónde lleva. Es solo el orden en <code>children</code>: el mismo <code>gap</code> entre icono y texto en los dos casos.",
+      "El icono va en el slot <code>pre</code> (antes del label) o en <code>post</code> (después), según lo que necesite decir primero: adelante para anticipar el tipo de acción, atrás para señalar hacia dónde lleva. El mismo <code>gap</code> entre slot y texto en los dos casos; un slot vacío no se renderiza.",
     "button.iconLabel": "Button con icono",
     "button.iconOnlyTitle": "Solo icono",
     "button.iconOnlyLabel": "Solo icono",
@@ -98,7 +98,7 @@ export const buttonMessages = {
     "button.description": "Button: style hooks, a minimal vanilla enhancer and a React component.",
     "button.lede": 'Styling hooks over the native <code>&lt;button&gt;</code>, a vanilla enhancer, and a React component.',
     "button.anatomyBody":
-      "A button is a single box: the native <code>&lt;button&gt;</code> carrying the root class, the shared state layer beside it, and whatever children you put inside. The specimen is frozen; the live buttons start with the matrix below.",
+      "A button is a single box with reserved places: <code>sk-button__pre</code> before the label and <code>sk-button__post</code> after. The icon is one <code>sk-icon</code> (the same part in either slot). The specimen fills both so they can be named; the live buttons start with the matrix below.",
     "button.anatomyLabel": "Button anatomy",
     "button.anatomyPreviewLabel": "Button, part by part",
     "button.variantsTitle": "Two axes: emphasis and tone",
@@ -125,7 +125,7 @@ export const buttonMessages = {
     "button.sizeHitNote": "ships already: the xs face paints at 24px, the hit stays 44px",
     "button.iconTitle": "With icon",
     "button.iconBody":
-      "The icon sits before or after the label depending on what needs saying first: leading to signal the kind of action, trailing to point where it goes. It is only the order in <code>children</code>: the same <code>gap</code> between icon and text either way.",
+      "The icon goes in the <code>pre</code> slot (before the label) or the <code>post</code> slot (after), depending on what needs saying first: leading to signal the kind of action, trailing to point where it goes. The same <code>gap</code> between slot and text either way; an empty slot is not rendered.",
     "button.iconLabel": "Button with icon",
     "button.iconOnlyTitle": "Icon only",
     "button.iconOnlyLabel": "Icon only",

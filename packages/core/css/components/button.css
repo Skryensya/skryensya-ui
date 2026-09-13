@@ -443,6 +443,25 @@
     --sk-icon-size: var(--size-icon-lg);
   }
 
+  /*
+   * THE RESERVED ICON PLACES. Optional slots on either side of the label (`pre` before, `post`
+   * after). They exist only when filled (`whenGiven` in the contract), and `:empty` is the safety
+   * net if authored markup leaves a hollow span: an empty flex item would still eat `--sk-button-gap`
+   * and push the label off-centre.
+   */
+  .sk-button__pre,
+  .sk-button__post {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sk-button__pre:empty,
+  .sk-button__post:empty {
+    display: none;
+  }
+
   /* xs is the one step where the off-by-one above runs out: `--size-icon-sm` IS the bottom of the
    * icon scale, so the 24px face takes the pattern's own sm rather than reaching a step up. */
   .sk-button[data-size="xs"] .sk-icon {

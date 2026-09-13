@@ -205,14 +205,11 @@ export const buttonSizesTree = (t: Translate): UsageTree => ({
 });
 
 /*
- * No hook for icon + text: the button is already an inline-flex row with a gap. The icon is
- * DECORATIVE (the label names the action), so it carries no `label` option.
+ * Icon beside a label: the reserved `pre` / `post` slots, not free order inside `children`.
  *
- * Two buttons, not one, because "icon beside a label" has two valid orders and they are not the
- * same lesson: leading reads as "here is the kind of action" (download, before you know what gets
- * downloaded), trailing reads as "here is where this goes" (continue, into whatever is next). Both
- * are just `children` order: the tree's array order IS the DOM order IS the visual order in an
- * inline-flex row, so there is no second option to teach, only the one array flipped.
+ * Leading (`pre`) reads as "here is the kind of action" (download, before you know what gets
+ * downloaded); trailing (`post`) reads as "here is where this goes" (continue, into whatever is
+ * next). Both slots omit themselves when empty, so a button with only a label stays a label.
  */
 export const buttonIconTree = (t: Translate): UsageTree => ({
   contract: "layout",
@@ -222,19 +219,15 @@ export const buttonIconTree = (t: Translate): UsageTree => ({
       contract: "button",
       signature: "Button.action",
       options: { tone: "accent" },
-      children: [
-        { contract: "icon", signature: "Icon", options: { name: "download" } },
-        t("demo.button.download"),
-      ],
+      slots: { pre: { contract: "icon", signature: "Icon", options: { name: "download" } } },
+      children: t("demo.button.download"),
     },
     {
       contract: "button",
       signature: "Button.action",
       options: { tone: "accent" },
-      children: [
-        t("demo.button.continue"),
-        { contract: "icon", signature: "Icon", options: { name: "arrow-right" } },
-      ],
+      slots: { post: { contract: "icon", signature: "Icon", options: { name: "arrow-right" } } },
+      children: t("demo.button.continue"),
     },
   ],
 });
@@ -336,10 +329,8 @@ export const buttonAsLinkTree = (t: Translate, href: string): UsageTree => ({
       contract: "button",
       signature: "Button.navigation",
       options: { href },
-      children: [
-        { contract: "icon", signature: "Icon", options: { name: "download" } },
-        t("demo.button.withIcon"),
-      ],
+      slots: { pre: { contract: "icon", signature: "Icon", options: { name: "download" } } },
+      children: t("demo.button.withIcon"),
     },
     {
       contract: "button",
@@ -401,22 +392,17 @@ export const tileButtonTree = (_t: Translate): UsageTree => ({
  * One, and that is the whole lesson rather than a smaller version of the matrix below. An accordion
  * is a composition (a root, a trigger, a chevron, a panel), so its diagram walks a tree; a button is
  * a single native `<button>`, and what a reader needs to see is exactly what rides on that one box:
- * the root class, the shared state layer beside it, and the children they authored themselves.
+ * the root class, the shared state layer beside it, and the reserved places for children.
  *
  * TWO RINGS ON THE SAME BOX, concentric, on purpose. `sk-button` and `sk-interactive` are both
  * on the host (the contract's `also`), so the inner ring is the class that paints the control and
  * the outer one is the layer that answers to hover, press and focus. Same element, two jobs, and the
  * diagram says so instead of the page having to.
  *
- * ONE LABEL PER INLINE GUTTER, which is what keeps the button ITSELF centred in the stage. The
- * whole diagram is centred as a group (three `auto` tracks, `justify-content: center`), so a label
- * in one inline gutter and nothing in the other pushes the specimen sideways by that gutter's full
- * width. Naming the host on one side and its one child on the other balances them; `sk-interactive`
- * takes the block gutter above, where it widens nothing.
- *
- * The icon reads from the START gutter and the host from the END one, which is the order the
- * specimen itself is in: the glyph leads the label, so a leader coming from the left reaches it
- * without crossing the word, and the host's leader only has to touch the nearest edge.
+ * PRE AND POST are the reserved icon places: one before the label, one after. The specimen fills
+ * both so both boxes exist to be named. `sk-icon` is ONE label with `match: "all"`: the part is the
+ * same class in both slots, not two different parts. Host rings take the block gutters so each
+ * inline gutter holds one slot label and the button stays centred.
  *
  * `inert` is what makes it a specimen: it mounts and paints, Tab walks past it, and clicking does
  * nothing. The live buttons are the twelve in the matrix right below it.
@@ -430,12 +416,13 @@ export const buttonAnatomyTree = (t: Translate): UsageTree => ({
       contract: "button",
       signature: "Button.action",
       /* `lg` because the specimen is being pointed at rather than clicked: the bigger face keeps the
-         icon's own ring clear of the button's, which at `md` sit about four pixels apart. */
+         icons' own rings clear of the button's, which at `md` sit about four pixels apart. */
       options: { tone: "accent", size: "lg" },
-      children: [
-        { contract: "icon", signature: "Icon", options: { name: "download" } },
-        t("demo.button.download"),
-      ],
+      slots: {
+        pre: { contract: "icon", signature: "Icon", options: { name: "download" } },
+        post: { contract: "icon", signature: "Icon", options: { name: "arrow-right" } },
+      },
+      children: t("demo.button.download"),
     },
     items: [
       /*
@@ -447,7 +434,7 @@ export const buttonAnatomyTree = (t: Translate): UsageTree => ({
       {
         options: {
           for: ".sk-button",
-          side: "inline-end",
+          side: "block-end",
           ringPlacement: "offset",
           ringDistance: 2,
         },
@@ -462,14 +449,36 @@ export const buttonAnatomyTree = (t: Translate): UsageTree => ({
         },
         slots: { children: "sk-interactive" },
       },
+      {
+        options: {
+          for: ".sk-button__pre",
+          side: "inline-start",
+          ringPlacement: "offset",
+          ringDistance: 6,
+        },
+        slots: { children: "sk-button__pre" },
+      },
+      {
+        options: {
+          for: ".sk-button__post",
+          side: "inline-end",
+          ringPlacement: "offset",
+          ringDistance: 6,
+        },
+        slots: { children: "sk-button__post" },
+      },
       /*
-       * THE ONLY PART THAT IS NOT THE HOST, and the one call this diagram has to make: a glyph's box
-       * IS the glyph (the padding around it belongs to the button, not to the icon), so an inset
-       * ring would land on the drawing. It goes outside, the same decision the Annotation page's
-       * text runs make.
+       * ONE label for every icon in the specimen. A glyph's box IS the glyph, so the ring goes
+       * outside; `match: "all"` is what keeps it a single name pointing at both slots.
        */
       {
-        options: { for: ".sk-icon", side: "inline-start", ringPlacement: "offset", ringDistance: 4 },
+        options: {
+          for: ".sk-icon",
+          side: "block-end",
+          match: "all",
+          ringPlacement: "offset",
+          ringDistance: 4,
+        },
         slots: { children: "sk-icon" },
       },
     ],

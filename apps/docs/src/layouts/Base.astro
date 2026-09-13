@@ -115,6 +115,7 @@ import "../styles/shell.scss";
  */
 import { FOCUS_ORDER_CSS } from "../../../../packages/devtools/src/focus-order";
 import LanguageMenu from "../components/LanguageMenu.astro";
+import VersionMenu from "../components/VersionMenu.astro";
 import PrefTooltip from "../components/PrefTooltip.astro";
 import CommandPalette from "../components/CommandPalette.astro";
 import ContrastToggle from "../components/ContrastToggle.astro";
@@ -127,6 +128,7 @@ import { indexDocument, indexHeroTabPanel } from "../lib/document-index";
 import { vanillaMountSections } from "../lib/vanilla-mount-sections";
 import VanillaMount from "../components/VanillaMount.astro";
 import { vanillaMounts } from "../lib/vanilla-mounts";
+import { frozenLocales } from "../lib/docs-versions";
 import { iconMarkup, siteIconSet } from "../icons";
 import { getGlobalNavigation, getNavigation, type NavigationItem, type NavigationSection } from "../lib/navigation";
 import type { DrawerSection } from "../components/DrawerNav.astro";
@@ -135,6 +137,7 @@ import { palettePresets } from "../lib/palette-presets";
 import { reportIssueUrl } from "../lib/report-issue";
 import {
   availableLocales,
+  versionOf,
   canonicalPath,
   defaultLocale,
   getLocale,
@@ -230,8 +233,16 @@ const vanillaMount = vanillaMounts[canonical as keyof typeof vanillaMounts];
  * (f8181b7), `LANG_REDIRECT.hrefs` was reading the same field two declarations down, so the dev
  * server started throwing readers at production the moment their browser asked for Spanish.
  */
-const alternates = availableLocales(canonical).map((code) => {
-  const path = localizePath(canonical, code);
+/* The alternates STAY INSIDE THE VERSION being read. An `hreflang` from `/v1/components/button` to
+ * the latest Spanish page would tell a crawler that two different eras of this document are
+ * translations of each other, which is the one thing the version axis must never claim. In a frozen
+ * archive the locales come from what that archive published, not from the live page directory. */
+const version = versionOf(Astro.url);
+const alternateLocales = version === null ? availableLocales(canonical) : frozenLocales(version, canonical);
+/** Where this document lives in the live site, which is what a frozen page canonicalises to. */
+const latestOfThisDocument = localizePath(canonical, locale, null);
+const alternates = alternateLocales.map((code) => {
+  const path = localizePath(canonical, code, version);
   return { code, path, href: Astro.site ? new URL(path, Astro.site).href : path };
 });
 
@@ -499,6 +510,22 @@ const PALETTE_PRESETS = palettePresets(locale);
     {alternates.map((alternate) => (
       <link rel="alternate" hreflang={alternate.code} href={alternate.href} />
     ))}
+
+    {/*
+      A FROZEN VERSION IS NOT A SEARCH RESULT. Every archived page is a near-duplicate of the live
+      one, so left alone `/v1/components/button` competes with `/components/button` for the same
+      query and sometimes wins, which sends a reader to documentation that is deliberately out of
+      date. `noindex` keeps it out of the index, `follow` keeps the link graph intact, and the
+      canonical names the living page as the one that should rank. `robots.txt` must NOT disallow
+      `/v1/` and friends: a crawler has to fetch the page to read these two lines (ADR-0022, and the plan's SEO
+      section).
+    */}
+    {version !== null && (
+      <Fragment>
+        <meta name="robots" content="noindex, follow" />
+        <link rel="canonical" href={Astro.site ? new URL(latestOfThisDocument, Astro.site).href : latestOfThisDocument} />
+      </Fragment>
+    )}
 
     {/*
       Docs has a fixed visual contract: Phosphor icons, medium density and medium rounding. The reader
@@ -920,6 +947,13 @@ const PALETTE_PRESETS = palettePresets(locale);
           <PrefTooltip label={t("prefs.language")}>
             <LanguageMenu />
           </PrefTooltip>
+
+          {/* Docs version, beside language for the reason they are the same kind of control: two
+              independent axes over one document (ADR-0022). It renders only once an archive
+              exists. */}
+          <PrefTooltip label={t("version.control")}>
+            <VersionMenu />
+          </PrefTooltip>
         </div>
 
       </div>
@@ -1013,6 +1047,7 @@ const PALETTE_PRESETS = palettePresets(locale);
           <span class="dimensions__palette-dot" aria-hidden="true"></span>
         </button>
         <LanguageMenu tile label={t("prefs.language")} description={t("prefs.languageHint")} />
+        <VersionMenu tile label={t("version.control")} description={t("version.controlHint")} />
       </div>
     </dialog>
 

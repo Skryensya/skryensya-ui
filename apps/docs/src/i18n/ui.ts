@@ -22,6 +22,7 @@ import { codeMessages } from "./messages/_chrome/code";
 import { componentMessages } from "./messages/_chrome/component";
 import { contractMessages } from "./messages/_chrome/contract";
 import { copyMessages } from "./messages/_chrome/copy";
+import { docsVersionMessages } from "./messages/_chrome/docs-version";
 import { groupMessages } from "./messages/_chrome/group";
 import { hookPlaygroundMessages } from "./messages/_chrome/hook-playground";
 import { hooksMessages } from "./messages/_chrome/hooks";
@@ -144,6 +145,7 @@ export const ui = {
     ...hooksMessages.es,
     ...navMessages.es,
     ...prefsMessages.es,
+    ...docsVersionMessages.es,
     ...previewMessages.es,
     ...searchMessages.es,
     ...sectionMessages.es,
@@ -258,6 +260,7 @@ export const ui = {
     ...hooksMessages.en,
     ...navMessages.en,
     ...prefsMessages.en,
+    ...docsVersionMessages.en,
     ...previewMessages.en,
     ...searchMessages.en,
     ...sectionMessages.en,

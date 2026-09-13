@@ -1,0 +1,121 @@
+---
+/*
+ * THE BUTTON PAGE, AS VERSION 0.0.1-dev SHIPPED IT.
+ *
+ * A frozen docs version is normally a whole built site, produced by the cut and mounted under
+ * `/v<version>/` (ADR-0022). This file is the prototype of that: one page, hand-placed, so the routing,
+ * the switcher and the chrome can be seen working before the cut script exists.
+ *
+ * WHY THE TEXT IS INLINE AND NOT `t("button.…")`. That is the whole point of a frozen page. Reading
+ * from the live message tree would mean this archive silently rewrites itself every time someone
+ * edits the current Button page, which is exactly the failure versioned docs exist to prevent. A
+ * snapshot's words are baked into the snapshot; the only thing it still reads from the app is the
+ * chrome around it.
+ *
+ * WHY THERE ARE NO INTERACTIVE PREVIEWS. A `ComponentPreview` renders the workspace as it is TODAY.
+ * Under a frozen URL that is not a convenience, it is a lie: the prose would describe this version
+ * while the demo underneath it runs the next one's code. The archive shows its code samples, says so
+ * in a line the reader can see, and sends anyone who wants a live control to the latest version.
+ */
+import "@skryensya/core/components/callout.css";
+import Base from "../../../../layouts/Base.astro";
+import CodeBlock from "../../../CodeBlock.astro";
+import { canonicalPath, getLocale, localizePath, useTranslations } from "../../../../i18n";
+
+/** The day this cut was taken. In a real archive it is the tag's date, read by the cut script. */
+const FROZEN_AT = "2026-06-30";
+const VERSION = "0.0.1-dev";
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+const canonical = canonicalPath(Astro.url.pathname);
+const latestHref = localizePath(canonical, locale, null);
+
+/* `timeZone: "UTC"`, or the build machine's offset moves the cut date by a day: a tag dated the
+ * 30th rendered as the 29th for anyone west of Greenwich, this machine included. */
+const frozenDate = new Intl.DateTimeFormat(locale === "es" ? "es-CL" : "en-GB", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "UTC",
+}).format(new Date(`${FROZEN_AT}T00:00:00Z`));
+
+/* The page's own words, as they read at the cut. Both locales, because one archive holds both. */
+const copy = {
+  es: {
+    description: "El control que ejecuta una acción. Cuatro variantes, tres tamaños y un solo contrato.",
+    lede: "Button es el único control que ejecuta una acción inmediata. Si navega, es un enlace; si cambia un valor, es un Switch o un Checkbox.",
+    variantsTitle: "Variantes",
+    variantsBody:
+      "Cuatro: <code>solid</code> para la acción principal de la vista, <code>outline</code> para las que la acompañan, <code>ghost</code> para las que viven dentro de otra superficie y <code>link</code> para las que se leen como texto.",
+    sizesTitle: "Tamaños",
+    sizesBody:
+      "Tres tamaños: <code>sm</code>, <code>md</code> y <code>lg</code>. El área de toque nunca baja del mínimo aunque la caja visible sea más chica.",
+    iconTitle: "Con icono",
+    iconBody:
+      "Un icono acompaña al texto, nunca lo reemplaza, salvo en la forma icon-only, que exige un nombre accesible explícito.",
+    linkTitle: "Como enlace",
+    linkBody: "Cuando la acción navega, el elemento correcto es un <code>&lt;a&gt;</code> con la apariencia de Button.",
+    installTitle: "Instalación",
+  },
+  en: {
+    description: "The control that performs an action. Four variants, three sizes, one contract.",
+    lede: "Button is the only control that performs an immediate action. If it navigates it is a link; if it changes a value it is a Switch or a Checkbox.",
+    variantsTitle: "Variants",
+    variantsBody:
+      "Four: <code>solid</code> for the view's primary action, <code>outline</code> for the ones beside it, <code>ghost</code> for the ones living inside another surface, and <code>link</code> for the ones that read as text.",
+    sizesTitle: "Sizes",
+    sizesBody:
+      "Three sizes: <code>sm</code>, <code>md</code> and <code>lg</code>. The hit area never drops below the minimum even when the painted box is smaller.",
+    iconTitle: "With an icon",
+    iconBody:
+      "An icon accompanies the label, never replaces it, except in the icon-only shape, which requires an explicit accessible name.",
+    linkTitle: "As a link",
+    linkBody: "When the action navigates, the right element is an <code>&lt;a&gt;</code> wearing Button's appearance.",
+    installTitle: "Installation",
+  },
+}[locale];
+
+const install = `pnpm add @skryensya/core @skryensya/vanilla`;
+
+const markup = `<button class="sk-button" data-variant="solid" data-size="md">
+  Guardar
+</button>`;
+
+const iconOnly = `<button class="sk-button" data-variant="ghost" data-icon-only aria-label="Cerrar">
+  <span data-sk-icon="close"></span>
+</button>`;
+---
+
+<Base title="Button" documentLayout="grid" description={copy.description}>
+  <div class="sk-callout" data-tone="warning">
+    <div class="sk-callout__content">
+      <p>
+        <strong>{t("version.frozenTitle", { number: VERSION, date: frozenDate })}</strong>
+      </p>
+      <p>{t("version.frozenBody")}</p>
+      <p><a href={latestHref}>{t("version.frozenLink")}</a></p>
+    </div>
+  </div>
+
+  <h1>Button</h1>
+  <p class="lede">{copy.lede}</p>
+  <p><em>{t("version.noDemos")}</em></p>
+
+  <h2>{copy.variantsTitle}</h2>
+  <p set:html={copy.variantsBody} />
+  <CodeBlock code={markup} label="HTML" lang="html" />
+
+  <h2>{copy.sizesTitle}</h2>
+  <p set:html={copy.sizesBody} />
+
+  <h2>{copy.iconTitle}</h2>
+  <p set:html={copy.iconBody} />
+  <CodeBlock code={iconOnly} label="HTML" lang="html" />
+
+  <h2>{copy.linkTitle}</h2>
+  <p set:html={copy.linkBody} />
+
+  <h2>{copy.installTitle}</h2>
+  <CodeBlock code={install} label="terminal" />
+</Base>

@@ -43,14 +43,16 @@ export default defineConfig({
   prefetch: isDev ? false : { prefetchAll: true, defaultStrategy: "hover" },
 
   /*
-   * Spanish is the default and keeps its BARE paths (`prefixDefaultLocale: false`): every URL the
-   * site has today keeps working, and English is additive under `/en/`. Routes are real files:
-   * `src/pages/**` is Spanish, `src/pages/en/**` is English, because a docs page is prose, and prose
-   * is translated, not parameterised.
+   * English is the default and keeps the BARE paths (`prefixDefaultLocale: false`, and ADR-0021:
+   * English is the repository language), so Spanish is additive under `/es/`. Routes are real
+   * files: `src/pages/**` is English and `src/pages/es/**` is Spanish, because a docs page is
+   * prose, and prose is translated, not parameterised. `canonicalPath()` in `src/i18n/index.ts` is
+   * what reads a Spanish path back to its English identity, which is the key every
+   * locale-independent lookup uses.
    *
-   * `redirectToDefaultLocale: false` leaves `/` as the Spanish home rather than bouncing it, and
-   * `fallback` is deliberately absent: an untranslated page should 404 in English instead of silently
-   * serving Spanish under an `/en/` URL that then looks translated to a crawler.
+   * `redirectToDefaultLocale: false` leaves `/` as the English home rather than bouncing it, and
+   * `fallback` is deliberately absent: an untranslated page should 404 in Spanish instead of
+   * silently serving English under an `/es/` URL that then looks translated to a crawler.
    */
   i18n: {
     defaultLocale: "en",

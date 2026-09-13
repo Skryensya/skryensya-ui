@@ -1,0 +1,124 @@
+---
+/*
+ * Header chrome: switch docs version, staying on the SAME document.
+ *
+ * Built on the same shape as `LanguageMenu.astro`, deliberately: version and locale are two
+ * independent axes over one document id (`canonicalPath`), so the two controls answer the same
+ * question about different dimensions and should not be two different kinds of widget. Every row is
+ * a real `<a href>` through Menu's own item `href`, the current row is a `radio` carrying
+ * `data-checked`, and nothing here is client state: the URL is what says which version you read.
+ *
+ * WHICH ROWS EXIST is derived, never declared (ADR-0022): `lib/docs-versions.ts` reads the page
+ * directory, so a version appears here because an archive of this page exists, not because someone
+ * remembered to add it to a list.
+ *
+ * A ROW THIS DOCUMENT DOES NOT HAVE IS DISABLED, not hidden. An archive is normally a whole site, so
+ * this only happens while the tree holds a partial one, but the reader is better served by "version
+ * 1 does not have this page" than by a control that silently changes shape from page to page.
+ */
+import {
+  canonicalPath,
+  getLocale,
+  localizePath,
+  useTranslations,
+  versionOf,
+} from "../i18n";
+import { frozenHasTranslation, frozenVersions } from "../lib/docs-versions";
+import { iconMarkup } from "../icons";
+
+interface Props {
+  /** Full-width Tile Button for the mobile preference sheet, same contract as `LanguageMenu`. */
+  tile?: boolean;
+  /** Visible title inside the tile. Only read when `tile`. */
+  label?: string;
+  /** Secondary line under the title. Only read when `tile`. */
+  description?: string;
+}
+
+const { tile = false, label, description } = Astro.props;
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+const canonical = canonicalPath(Astro.url.pathname);
+const current = versionOf(Astro.url);
+
+/** Latest first, then every frozen cut, newest first: the reading order of a version list. */
+const rows = [
+  {
+    value: null as string | null,
+    label: t("version.latest"),
+    href: localizePath(canonical, locale, null),
+    available: true,
+  },
+  ...frozenVersions.map((version) => ({
+    value: version as string | null,
+    label: t("version.numbered", { number: version }),
+    href: localizePath(canonical, locale, version),
+    available: frozenHasTranslation(version, canonical, locale),
+  })),
+];
+
+const currentLabel = rows.find((row) => row.value === current)?.label ?? t("version.latest");
+
+/* Tile variant: one tap to the next version this document actually has, wrapping. */
+const reachable = rows.filter((row) => row.available);
+const next = reachable[(reachable.findIndex((row) => row.value === current) + 1) % reachable.length];
+
+const versionIcon = iconMarkup("clock");
+---
+
+{
+  tile && frozenVersions.length > 0 && next && (
+    <a
+      class="sk-interactive sk-tile sk-tile--interactive docs-prefs-tile"
+      data-scope="tile"
+      data-part="root"
+      data-padding="md"
+      href={next.href}
+      aria-label={t("version.named", { name: currentLabel })}
+    >
+      <span class="sk-tile__content" data-part="content">
+        <span class="sk-tile__title">{label ?? t("version.control")}</span>
+        {description && <span class="sk-tile__description">{description}</span>}
+      </span>
+      <span class="docs-prefs-tile__value">{currentLabel}</span>
+    </a>
+  )
+}
+
+{
+  !tile && frozenVersions.length > 0 && (
+    <div class="sk-menu dimensions__language-menu" data-sk-menu aria-label={t("version.control")}>
+      <button
+        class="sk-menu__trigger sk-button sk-interactive sk-anchor"
+        data-sk-menu-trigger
+        data-variant="ghost"
+        data-icon-only
+        type="button"
+        aria-label={t("version.named", { name: currentLabel })}
+      >
+        <Fragment set:html={versionIcon} />
+      </button>
+      <div class="sk-menu__positioner sk-anchored" data-sk-menu-positioner>
+        <div class="sk-menu__content" data-sk-menu-content>
+          {rows.map((row) => (
+            <a
+              class="sk-menu__item sk-interactive"
+              data-sk-menu-item
+              data-value={row.value ?? "latest"}
+              data-type="radio"
+              data-checked={row.value === current ? "" : undefined}
+              data-disabled={row.available ? undefined : ""}
+              aria-disabled={row.available ? undefined : "true"}
+              href={row.available ? row.href : undefined}
+            >
+              <span class="sk-menu__item-label">{row.label}</span>
+              <span class="sk-menu__item-indicator" aria-hidden="true">
+                <span data-sk-icon="check" data-sk-icon-size="md" />
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}

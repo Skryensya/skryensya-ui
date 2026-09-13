@@ -35,9 +35,17 @@ verify-stages*.mjs
 shot-stages*.mjs
 apps/docs/check-trees.mts
 
-# The dev server writes its own PID and port here on every run. Tracked once by accident, and
-# stripped out of every commit by hand since, which is a chore that only ever ends one way.
-apps/docs/.astro/dev.json
+# ASTRO'S GENERATED DIRECTORY, all of it. The dev server writes its PID and port here on every run,
+# and the content layer writes a cache keyed by the config digest, so editing `astro.config.ts` or
+# any page rewrites files nobody authored. Six of them were tracked, and the history says what that
+# costs: `b65e454` is a commit whose entire content is "update the astro content cache", and the same
+# noise rode along inside unrelated commits before and after it.
+#
+# Nothing is lost by ignoring them: `astro check` calls `sync()` before it type-checks
+# (astro/dist/cli/check/index.js), and `astro build` and `astro dev` do the same, so a fresh clone
+# regenerates the lot before anything reads it, `types.d.ts` included, which is the one this app's
+# `tsconfig.json` names in its `include`.
+apps/docs/.astro/
 
 # Output of evals/run-agent.ts: one folder per run, read locally in apps/eval-viewer or a plain
 # editor. It's a measurement of THIS run against the current catalogue, not a fixture to keep.

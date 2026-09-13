@@ -105,6 +105,24 @@ describe("Button", () => {
     expect(spy).toHaveBeenCalledWith(expect.stringMatching(/accessible name/i));
     spy.mockRestore();
   });
+
+  /*
+   * The `pre` and `post` slots are part of the name too, and the vanilla enhancer has always agreed:
+   * it reads `root.textContent`, which is the WHOLE button, spans included. React walked only
+   * `children`, so a visually hidden label placed in a slot was rejected here and accepted there,
+   * which is the exact divergence the walk exists to prevent (see the note above `hasTextContent`).
+   */
+  it("accepts a visually hidden name supplied through a slot rather than children", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    render(
+      <Button iconOnly post={<span className="sk-visually-hidden">Close</span>}>
+        <svg className="sk-icon" data-icon="close" aria-hidden="true" />
+      </Button>,
+    );
+
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
+  });
 });
 
 describe("Button.navigation", () => {

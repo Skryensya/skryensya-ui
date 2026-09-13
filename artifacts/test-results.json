@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-12T17:12:36.947Z",
+  "generatedAt": "2026-09-13T10:45:24.823Z",
   "results": {
     "packages/react/src/components/accordion.test.tsx": {
       "keeps exactly one item open in single mode": "passed",
@@ -79,9 +79,11 @@
       "encodes both default appearance axes and the interaction contract": "passed",
       "serializes the xs size onto the same attribute as every other size": "passed",
       "exposes disabled state to both native controls and assistive technology": "passed",
-      "carries a leading icon alongside its label": "passed",
+      "carries a leading icon in the pre slot alongside its label": "passed",
+      "carries a trailing icon in the post slot alongside its label": "passed",
       "renders an icon-only button as a named square": "passed",
       "warns in development when an icon-only button has no accessible name": "passed",
+      "accepts a visually hidden name supplied through a slot rather than children": "passed",
       "renders navigation with Button appearance and anchor attributes": "passed"
     },
     "packages/vanilla/src/components/button.test.ts": {
@@ -91,6 +93,7 @@
       "accepts an icon-only button named by aria-label": "passed",
       "refuses an icon-only button with no accessible name": "passed",
       "accepts an icon-only button named by visually-hidden text": "passed",
+      "accepts a name the author put in a slot rather than beside the icon": "passed",
       "enhances an authored anchor without changing its navigation semantics": "passed",
       "refuses an anchor without href": "passed",
       "refuses a disabled link that could still navigate": "passed"
@@ -245,6 +248,7 @@
       "draws a paragraph as real lines, clamped, with the raggedness authored on the root": "passed",
       "clamps the rendered line count the same way the emitter does": "passed",
       "gives a filled block its parent's whole box, and a circle the avatar scale": "passed",
+      "writes the still opt-out and nothing at all for the running default": "passed",
       "keeps every signature out of the accessibility tree": "passed",
       "has no serious accessibility violations inside a labelled busy region": "passed"
     },

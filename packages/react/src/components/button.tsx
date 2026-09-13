@@ -72,9 +72,16 @@ function hasTextContent(node: ReactNode): boolean {
 function warnMissingAccessibleName(
   iconOnly: boolean | undefined,
   present: readonly (string | undefined)[],
-  children: ReactNode,
+  /*
+   * EVERYTHING THE BUTTON RENDERS, not only `children`: the `pre` and `post` slots are inside the
+   * control, so text in one of them names it exactly as text in `children` does. The vanilla
+   * enhancer already agreed, because it reads `root.textContent` and that is the whole element,
+   * spans included. Walking `children` alone meant React rejected markup the enhancer accepts, which
+   * is the divergence the note above `hasTextContent` says this walk exists to prevent.
+   */
+  rendered: ReactNode,
 ): void {
-  if (!dev || !iconOnly || present.some(Boolean) || hasTextContent(children)) return;
+  if (!dev || !iconOnly || present.some(Boolean) || hasTextContent(rendered)) return;
   console.error(
     `<Button iconOnly> has no accessible name. ${iconOnlyRule.because} Give it one of: ` +
       `${iconOnlyRule.requiresOneOf.join(", ")}.`,
@@ -95,7 +102,7 @@ export function Button({
   post,
   ...props
 }: ButtonProps) {
-  warnMissingAccessibleName(iconOnly, [props["aria-label"], props["aria-labelledby"]], children);
+  warnMissingAccessibleName(iconOnly, [props["aria-label"], props["aria-labelledby"]], [pre, children, post]);
 
   const shared = {
     className: buttonClasses(className),

@@ -73,6 +73,10 @@ export const buttonMessages = {
     "button.test4": "El enhancer da un <code>type</code> seguro a los botones escritos a mano, y montar dos veces es idempotente.",
     "button.test5": "Un botón solo-icono sin nombre accesible es rechazado por el enhancer.",
     "button.test6": "El tamaño <code>xs</code> viaja por el mismo <code>data-size</code> que los otros tres.",
+    "button.test7":
+      "Un nombre accesible escondido dentro del slot <code>post</code> es aceptado por React, igual que por la capa vanilla.",
+    "button.test8":
+      "El enhancer acepta el nombre puesto en un slot, no solo junto al icono: las dos capas exigen la misma regla.",
   },
   en: {
     "demo.button.action": "Action",
@@ -148,5 +152,9 @@ export const buttonMessages = {
     "button.test4": "The enhancer gives authored buttons a safe <code>type</code>, and mounting twice is idempotent.",
     "button.test5": "An icon-only button with no accessible name is refused by the enhancer.",
     "button.test6": "The <code>xs</code> size travels on the same <code>data-size</code> as the other three.",
+    "button.test7":
+      "An accessible name hidden inside the <code>post</code> slot is accepted by React, as it already was by the vanilla layer.",
+    "button.test8":
+      "The enhancer accepts a name placed in a slot, not only beside the icon: both layers enforce the same rule.",
   },
 } as const;

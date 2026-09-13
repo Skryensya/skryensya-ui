@@ -5,6 +5,23 @@
 # hash.
 surface: "51ea2207a5ae7098"
 entries:
+  - date: 2026-09-13
+    kind: bugfix
+    target: pre
+    es:
+      title: El nombre accesible puede vivir en los slots pre y post
+      body: >-
+        Un <code>iconOnly</code> nombrado por texto visually-hidden dentro de <code>pre</code> o
+        <code>post</code> era aceptado por la capa vanilla (que lee el <code>textContent</code> del
+        boton entero) y rechazado por React, que solo recorria <code>children</code>. React ahora
+        recorre tambien los dos slots, asi que las dos capas exigen la misma regla.
+    en:
+      title: The accessible name may live in the pre and post slots
+      body: >-
+        An <code>iconOnly</code> button named by visually hidden text inside <code>pre</code> or
+        <code>post</code> was accepted by the vanilla layer (which reads the whole button's
+        <code>textContent</code>) and rejected by React, which walked <code>children</code> only.
+        React now walks both slots, so the two bindings enforce the same rule.
   - date: 2026-09-12
     kind: feature
     target: pre

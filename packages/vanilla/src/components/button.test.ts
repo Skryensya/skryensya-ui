@@ -57,6 +57,20 @@ describe("Button Vanilla contracts", () => {
 
     expect(() => mountButton(root)).not.toThrow();
   });
+
+  /*
+   * The same name, in the `post` slot this time. Written down because it is the side of a PARITY
+   * that used to hold by accident: this check reads `root.textContent`, so a slot was always
+   * included, while React walked `children` only and rejected the same markup. The React binding now
+   * walks its slots too, and this test is what says the agreement is deliberate.
+   */
+  it("accepts a name the author put in a slot rather than beside the icon", () => {
+    const root = mount(
+      '<button class="sk-button sk-interactive" data-sk-button data-icon-only><svg class="sk-icon" data-icon="close"></svg><span class="sk-button__post"><span class="sk-visually-hidden">Cerrar</span></span></button>',
+    );
+
+    expect(() => mountButton(root)).not.toThrow();
+  });
 });
 
 describe("Button.navigation Vanilla contracts", () => {

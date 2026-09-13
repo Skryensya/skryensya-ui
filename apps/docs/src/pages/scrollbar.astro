@@ -1,7 +1,8 @@
 ---
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
-import type { UsageTree } from "@skryensya/core/usage-tree";
+import { scrollbarAlwaysTree, scrollbarRevealTree } from "../demos/scrollbar";
+import { getLocale, useTranslations } from "../i18n";
 import ComponentPreview from "../components/ComponentPreview.astro";
 import StylingHooks from "../components/StylingHooks.astro";
 
@@ -9,41 +10,8 @@ const import_ = `@import "@skryensya/core/patterns/scrollbar.css";`;
 
 
 
-const alwaysTree: UsageTree = {
-  contract: "layout",
-  signature: "Stack",
-  attrs: { class: "sk-scrollbar demo-scroll", tabindex: "0" },
-  children: [
-    "Length: medium",
-    "State: synchronized",
-    "Render: vanilla",
-    "Binding: React",
-    "Contract: published",
-    "Gate: green",
-    "Source hash: current",
-    "Preview: tree",
-    "Scroll: native",
-    "Thumb: visible",
-  ],
-};
 
-const revealTree: UsageTree = {
-  contract: "layout",
-  signature: "Stack",
-  attrs: { class: "sk-scrollbar demo-scroll sk-scrollbar--reveal", tabindex: "0" },
-  children: [
-    "Length: medium",
-    "State: synchronized",
-    "Render: vanilla",
-    "Binding: React",
-    "Contract: published",
-    "Gate: green",
-    "Source hash: current",
-    "Preview: tree",
-    "Scroll: native",
-    "Thumb: visible",
-  ],
-};
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base
@@ -79,13 +47,13 @@ const revealTree: UsageTree = {
   <p>
     <code>sk-scrollbar</code> leaves track and thumb visible. Use it when the scroll is part of the UI map (a code panel, a wide table).
   </p>
-  <ComponentPreview tree={alwaysTree} label="sk-scrollbar" />
+  <ComponentPreview tree={scrollbarAlwaysTree(t)} label="sk-scrollbar" />
 
   <h2>Reveal on hover (and focus)</h2>
   <p>
     <code>sk-scrollbar sk-scrollbar--reveal</code> reserves the gutter so as not to move the layout, and leaves the thumb transparent until <code>: hover</code> or <code>: focus-within</code>. When revealed, only the thumb appears, not a filled track.
   </p>
-  <ComponentPreview tree={revealTree} label="sk-scrollbar--reveal" note="hover or tab to reveal" />
+  <ComponentPreview tree={scrollbarRevealTree(t)} label="sk-scrollbar--reveal" note="hover or tab to reveal" />
   <p>
     The sidebar rail in this documentation uses exactly this variant: still at rest, readable when you touch it.
   </p>

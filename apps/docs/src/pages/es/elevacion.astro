@@ -3,43 +3,22 @@ import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import Used from "../../components/Used.astro";
-import type { UsageTree } from "@skryensya/core/usage-tree";
+import { elevationScaleTree, elevationBoxSurfacesTree } from "../../demos/elevation";
+import { elevationLevels } from "../../demos/data/elevation";
 
 import "../../examples/elevation.css";
 import elevationSource from "../../examples/elevation.css?raw";
 
-const scale = [
-  {
-    level: "sunken",
-    name: "Sunken",
-    token: "--elevation-sunken",
-    note: "Hundido en el canvas, el único peldaño negativo: presión hacia adentro, no levante.",
-  },
-  {
-    level: "flat",
-    name: "Flat",
-    token: "--elevation-flat",
-    note: "En reposo, sin separación del canvas: el estado por defecto de casi todo.",
-  },
-  {
-    level: "raised",
-    name: "Raised",
-    token: "--elevation-raised",
-    note: "Levantado de forma permanente, pero sin flotar por encima del resto del contenido.",
-  },
-  {
-    level: "overlay",
-    name: "Overlay",
-    token: "--elevation-overlay",
-    note: "Una superficie flotante independiente, sin un trigger del que colgar: un peldaño sobre raised.",
-  },
-  {
-    level: "modal",
-    name: "Modal",
-    token: "--elevation-modal",
-    note: "Bloquea el resto de la página mientras está abierta.",
-  },
-] as const;
+const notes: Record<string, string> = {
+  sunken: "Hundido en el canvas, el único peldaño negativo: presión hacia adentro, no levante.",
+  flat: "En reposo, sin separación del canvas: el estado por defecto de casi todo.",
+  raised: "Levantado de forma permanente, pero sin flotar por encima del resto del contenido.",
+  overlay: "Una superficie flotante independiente, sin un trigger del que colgar: un peldaño sobre raised.",
+  modal: "Bloquea el resto de la página mientras está abierta.",
+};
+
+/* The rungs come from the shared demo data; only the prose beside them is this page's. */
+const scale = elevationLevels.map((level) => ({ ...level, note: notes[level.level]! }));
 
 const usage = `<!-- Box ya trae el styling hook: surface="raised" usa --elevation-raised -->
 <div class="sk-box" data-surface="raised" data-padding="lg">…</div>
@@ -52,58 +31,7 @@ const usage = `<!-- Box ya trae el styling hook: surface="raised" usa --elevatio
   }
 </style>`;
 
-/*
- * `Box` solo alcanza tres de los cinco peldaños por sí mismo (`surface="sunken"`/`"raised"` son
- * comportamiento real de `box.css`; `overlay`/`modal` no son opciones que Box publique, a propósito:
- * nada en este sistema flota ni bloquea por ser un Box). Así que los cinco swatches se pintan del
- * MISMO modo: `.ev-swatch[data-level]` (examples/elevation.css) sobreescribe `--sk-box-shadow` Y
- * `background` directo, exactamente el patrón "declara tu hook y sobreescribilo" que el CodeBlock de
- * más abajo explica en prosa (pinta el `--color-bg-surface-*` real que usaría el componente de cada
- * nivel, no solo la sombra: sin eso, tres de los cinco swatches compartían un fondo plano y la
- * diferencia la cargaba solo la sombra, comprobado en vivo). Sigue siendo un nodo real del contrato
- * `box` y emite markup real de Box: lo único que viene del override de la página es la pintura, no
- * `data-surface`.
- */
-const scaleTree: UsageTree = {
-  contract: "layout",
-  signature: "Grid",
-  options: { gap: "md", columns: "5" },
-  children: scale.map((step) => ({
-    contract: "box",
-    signature: "Box",
-    options: { border: "subtle", padding: "lg" },
-    attrs: { class: "ev-swatch", "data-level": step.level },
-    children: step.name,
-  })),
-};
 
-/** Los tres peldaños PROPIOS de Box, con su opción `surface` real: sin ningún override, a diferencia
- * de los cinco swatches de arriba. El camino que la mayoría quiere: buscar Box, no un hook. */
-const boxNativeTree: UsageTree = {
-  contract: "layout",
-  signature: "Grid",
-  options: { gap: "md", columns: "3" },
-  children: [
-    {
-      contract: "box",
-      signature: "Box",
-      options: { surface: "sunken", border: "subtle", padding: "lg" },
-      children: "surface: sunken",
-    },
-    {
-      contract: "box",
-      signature: "Box",
-      options: { surface: "surface", border: "subtle", padding: "lg" },
-      children: "surface: surface",
-    },
-    {
-      contract: "box",
-      signature: "Box",
-      options: { surface: "raised", padding: "lg" },
-      children: "surface: raised",
-    },
-  ],
-};
 ---
 
 <Base
@@ -129,7 +57,7 @@ const boxNativeTree: UsageTree = {
     <code>box.css</code> más el override que muestra la sección "Cómo se usa") y el valor al que
     resuelve cada uno ahora mismo, en el modo activo.
   </p>
-  <ComponentPreview tree={scaleTree} label="Los cinco niveles" />
+  <ComponentPreview tree={elevationScaleTree} label="Los cinco niveles" />
   <div class="sk-table-scroll">
     <table class="sk-table">
       <thead class="sk-table__head">
@@ -262,7 +190,7 @@ const boxNativeTree: UsageTree = {
     <code>surface</code>. En esta página no se escribe ninguna sombra, la pinta
     <code>box.css</code>.
   </p>
-  <ComponentPreview tree={boxNativeTree} label="Box · surface nativo" />
+  <ComponentPreview tree={elevationBoxSurfacesTree} label="Box · surface nativo" />
 
   <h2>Cómo se usa</h2>
   <p>

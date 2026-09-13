@@ -2,7 +2,8 @@
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
 import ComponentPreview from "../../components/ComponentPreview.astro";
-import type { UsageTree } from "@skryensya/core/usage-tree";
+import { installUsageTree } from "../../demos/installation";
+import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -12,29 +13,7 @@ const imports = `/* Base: ramps, escala, semánticos y state layer. */
 /* Opt-in: import only the components you ship. */
 @import "@skryensya/core/components/button.css";`;
 
-const usageTree: UsageTree = {
-  contract: "layout",
-  signature: "Inline",
-  children: [
-    {
-      contract: "button",
-      signature: "Button.action",
-      options: { tone: "accent" },
-      children: "Guardar",
-    },
-    {
-      contract: "button",
-      signature: "Button.action",
-      children: "Cancelar",
-    },
-    {
-      contract: "button",
-      signature: "Button.action",
-      options: { tone: "danger" },
-      children: "Borrar",
-    },
-  ],
-};
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base
@@ -66,7 +45,7 @@ const usageTree: UsageTree = {
     <code>@skryensya/react</code> renderiza el mismo contrato.
   </p>
 
-  <ComponentPreview tree={usageTree} label="Button" />
+  <ComponentPreview tree={installUsageTree(t)} label="Button" />
 
   <h2>Componentes con comportamiento</h2>
   <p>

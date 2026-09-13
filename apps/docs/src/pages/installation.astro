@@ -2,7 +2,8 @@
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
 import ComponentPreview from "../components/ComponentPreview.astro";
-import type { UsageTree } from "@skryensya/core/usage-tree";
+import { installUsageTree } from "../demos/installation";
+import { getLocale, useTranslations } from "../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/vanilla`;
 
@@ -12,29 +13,7 @@ const imports = `/* Base: palettes, scale, semantics and state layer. */
 /* Opt-in: Import only the components you ship. */
 @import "@skryensya/core/components/button.css";`;
 
-const usageTree: UsageTree = {
-  contract: "layout",
-  signature: "Inline",
-  children: [
-    {
-      contract: "button",
-      signature: "Button.action",
-      options: { tone: "accent" },
-      children: "Save",
-    },
-    {
-      contract: "button",
-      signature: "Button.action",
-      children: "Cancel",
-    },
-    {
-      contract: "button",
-      signature: "Button.action",
-      options: { tone: "danger" },
-      children: "Delete",
-    },
-  ],
-};
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base
@@ -61,7 +40,7 @@ const usageTree: UsageTree = {
     For static components, the class is enough: the CSS brings the structure and its styling hooks. For machined components, <code>@skryensya/vanilla</code> hydrates the authored HTML and <code>@skryensya/react</code> renders the same contract.
   </p>
 
-  <ComponentPreview tree={usageTree} label="Button" />
+  <ComponentPreview tree={installUsageTree(t)} label="Button" />
 
   <h2>Components with behavior</h2>
   <p>

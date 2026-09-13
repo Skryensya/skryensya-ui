@@ -2,7 +2,8 @@
 import "@skryensya/core/components/slider.css";
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import type { UsageTree } from "@skryensya/core/usage-tree";
+import { densityLabTree } from "../../demos/density";
+import { getLocale, useTranslations } from "../../i18n";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 
 /* The site remains an honest consumer: input/field needs its authored paint rules. */
@@ -80,66 +81,7 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
   render();
 });`;
 
-const densityPreviewTree: UsageTree = {
-  contract: "layout",
-  signature: "Stack",
-  options: { gap: "lg" },
-  attrs: { "data-density-lab": "", style: "inline-size: 100%" },
-  children: [
-    {
-      contract: "layout",
-      signature: "Stack",
-      options: { gap: "xs" },
-      children: [
-        {
-          contract: "layout",
-          signature: "Inline",
-          options: { gap: "sm", inlineAlign: "baseline" },
-          children: ["Factor local", { contract: "typography", signature: "Code", attrs: { "data-density-factor-output": "" }, children: "1.00×" }],
-        },
-        { contract: "slider", signature: "Slider", options: { value: 72, min: 50, max: 120, step: 1 }, attrs: { id: "density-factor-control", "aria-label": "Factor local", "data-density-slider": "", "aria-valuetext": "0.72 veces la densidad del sistema" } },
-      ],
-    },
-    {
-      // Raw `data-sk-density-scope` + `--sk-density-factor`, hand-authored on the attrs the same
-      // way `CopyButton.astro` and the presets gallery already do it: the scope is a plain
-      // attribute contract, not something that ever needed its own signature to exist.
-      contract: "box",
-      signature: "Box",
-      options: { surface: "surface", border: "subtle", padding: "lg" },
-      attrs: {
-        class: "sk-stack",
-        "data-density-target": "",
-        "data-gap": "sm",
-        "data-sk-density-scope": "",
-        style: "--sk-density-factor: 0.72",
-      },
-      children: [
-        "Resumen del pedido",
-        {
-          contract: "form-field",
-          signature: "FormField",
-          slots: {
-            label: "Email",
-            children: { contract: "input", signature: "Input", options: { type: "email" }, attrs: { id: "delivery-email" } },
-          },
-        },
-        { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: "Guardar cambios" },
-        {
-          contract: "layout",
-          signature: "Inline",
-          options: { gap: "sm", inlineAlign: "baseline" },
-          children: [
-            { contract: "button", signature: "Button.action", options: { variant: "ghost" }, children: "Cancelar" },
-            { contract: "typography", signature: "Code", attrs: { "data-density-effective-output": "" }, children: "0.72×" },
-            { contract: "typography", signature: "Code", attrs: { "data-density-padding-output": "" }, children: "0px" },
-            { contract: "typography", signature: "Code", attrs: { "data-density-button-output": "" }, children: "44px" },
-          ],
-        },
-      ],
-    },
-  ],
-};
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base
@@ -188,7 +130,7 @@ const densityPreviewTree: UsageTree = {
   <p>
     El control de abajo queda fuera del scope. Arrastralo: adentro del panel cambian padding, gaps y tamaños semánticos, y el resto de la página se queda donde está.
   </p>
-  <ComponentPreview tree={densityPreviewTree} previewScript={densityLabScript} label="Scope local en acción" note="scope y valor viven inline en el mismo nodo" />
+  <ComponentPreview tree={densityLabTree(t)} previewScript={densityLabScript} label="Scope local en acción" note="scope y valor viven inline en el mismo nodo" />
 
   <h2>Qué cambia, y qué no</h2>
   <div class="sk-table-scroll">

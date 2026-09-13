@@ -1,7 +1,8 @@
 ---
 import Base from "../layouts/Base.astro";
 import CodeBlock from "../components/CodeBlock.astro";
-import type { UsageTree } from "@skryensya/core/usage-tree";
+import { stateLayerBareTree, stateLayerCurrentColorTree, stateLayerLabTree } from "../demos/state-layer";
+import { getLocale, useTranslations } from "../i18n";
 import ComponentPreview from "../components/ComponentPreview.astro";
 import Used from "../components/Used.astro";
 
@@ -104,103 +105,11 @@ const stillToken = [
   ["Repointing the tint", "When currentColor is the wrong color (a danger item in a Menu) you change --state-layer-color. Still one token, not a per-state set."],
 ];
 
-const stateLabels = [
-  { label: "Interactive" },
-  { label: "Hover", peek: "hover" },
-  { label: "Focus", peek: "focus" },
-  { label: "Pressed", peek: "pressed" },
-  { label: "Selected", selected: "true" },
-  { label: "Disabled", disabled: "true" },
-];
 
-const stateAttrs = (baseClass: string, item: (typeof stateLabels)[number]) => ({
-  class: baseClass,
-  ...(item.peek ? { "data-peek": item.peek } : {}),
-  ...(item.selected ? { "aria-selected": item.selected } : {}),
-  ...(item.disabled ? { "aria-disabled": item.disabled } : {}),
-});
 
-const bareTree: UsageTree = {
-  contract: "layout",
-  signature: "Grid",
-  attrs: { class: "sl-tiles" },
-  children: stateLabels.map((item) => ({
-    contract: "button",
-    signature: "Button.action",
-    attrs: stateAttrs("sl-tile", item),
-    children: item.label,
-  })),
-};
 
-const currentColorTree: UsageTree = {
-  contract: "layout",
-  signature: "Grid",
-  attrs: { class: "sl-tiles" },
-  children: stateLabels.map((item) => ({
-    contract: "button",
-    signature: "Button.action",
-    attrs: stateAttrs("sl-tile sl-current-tile", item),
-    children: item.label,
-  })),
-};
 
-const labTree: UsageTree = {
-  contract: "layout",
-  signature: "Stack",
-  attrs: { class: "sl-lab" },
-  children: [
-    {
-      contract: "typography",
-      signature: "Text",
-      attrs: { class: "sl-lab__caption" },
-      children: "List with selection, hover and disabled",
-    },
-    {
-      contract: "layout",
-      signature: "Stack",
-      attrs: { class: "sl-list" },
-      children: [
-        {
-          contract: "button",
-          signature: "Button.action",
-          attrs: { class: "sl-item", "aria-selected": "true" },
-          children: "Inbox 24",
-        },
-        {
-          contract: "button",
-          signature: "Button.action",
-          attrs: { class: "sl-item", "data-peek": "hover" },
-          children: "Archive 8",
-        },
-        {
-          contract: "button",
-          signature: "Button.action",
-          attrs: { class: "sl-item", "aria-disabled": "true" },
-          children: "Drafts 0",
-        },
-      ],
-    },
-    {
-      contract: "layout",
-      signature: "Inline",
-      attrs: { class: "sl-actions" },
-      children: [
-        {
-          contract: "button",
-          signature: "Button.action",
-          options: { tone: "accent" },
-          children: "Save",
-        },
-        {
-          contract: "button",
-          signature: "Button.action",
-          options: { variant: "solid" },
-          children: "Cancel",
-        },
-      ],
-    },
-  ],
-};
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base
@@ -284,8 +193,8 @@ const labTree: UsageTree = {
     contains a native input.
   </p>
   <CodeBlock code={usage} label="HTML" note="the target owns the state" />
-  <ComponentPreview tree={bareTree} label="Neutral surface" />
-  <ComponentPreview tree={currentColorTree} label="Surface with currentColor" />
+  <ComponentPreview tree={stateLayerBareTree(t)} label="Neutral surface" />
+  <ComponentPreview tree={stateLayerCurrentColorTree(t)} label="Surface with currentColor" />
 
   <h2>Projected connection</h2>
   <p>
@@ -295,7 +204,7 @@ const labTree: UsageTree = {
     translates them into the same opacity ladder.
   </p>
   <CodeBlock code={projectedUsage} label="HTML" note="written by the adapter" />
-  <ComponentPreview tree={labTree} label="Projection and actions" />
+  <ComponentPreview tree={stateLayerLabTree(t)} label="Projection and actions" />
 
   <h2>Mechanism</h2>
   <p>

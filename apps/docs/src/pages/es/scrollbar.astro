@@ -1,7 +1,8 @@
 ---
 import Base from "../../layouts/Base.astro";
 import CodeBlock from "../../components/CodeBlock.astro";
-import type { UsageTree } from "@skryensya/core/usage-tree";
+import { scrollbarAlwaysTree, scrollbarRevealTree } from "../../demos/scrollbar";
+import { getLocale, useTranslations } from "../../i18n";
 import ComponentPreview from "../../components/ComponentPreview.astro";
 import StylingHooks from "../../components/StylingHooks.astro";
 
@@ -9,41 +10,8 @@ const import_ = `@import "@skryensya/core/patterns/scrollbar.css";`;
 
 
 
-const alwaysTree: UsageTree = {
-  contract: "layout",
-  signature: "Stack",
-  attrs: { class: "sk-scrollbar demo-scroll", tabindex: "0" },
-  children: [
-    "Longitud: medio",
-    "Estado: sincronizado",
-    "Render: vanilla",
-    "Binding: React",
-    "Contrato: publicado",
-    "Gate: verde",
-    "Source hash: actual",
-    "Preview: árbol",
-    "Scroll: nativo",
-    "Thumb: visible",
-  ],
-};
 
-const revealTree: UsageTree = {
-  contract: "layout",
-  signature: "Stack",
-  attrs: { class: "sk-scrollbar demo-scroll sk-scrollbar--reveal", tabindex: "0" },
-  children: [
-    "Longitud: medio",
-    "Estado: sincronizado",
-    "Render: vanilla",
-    "Binding: React",
-    "Contrato: publicado",
-    "Gate: verde",
-    "Source hash: actual",
-    "Preview: árbol",
-    "Scroll: nativo",
-    "Thumb: visible",
-  ],
-};
+const t = useTranslations(getLocale(Astro.url));
 ---
 
 <Base
@@ -87,7 +55,7 @@ const revealTree: UsageTree = {
     <code>sk-scrollbar</code> deja track y thumb a la vista. Úsalo cuando el scroll es parte
     del mapa de la UI (un panel de código, una tabla ancha).
   </p>
-  <ComponentPreview tree={alwaysTree} label="sk-scrollbar" />
+  <ComponentPreview tree={scrollbarAlwaysTree(t)} label="sk-scrollbar" />
 
   <h2>Reveal al hover (y al foco)</h2>
   <p>
@@ -95,7 +63,7 @@ const revealTree: UsageTree = {
     deja el thumb transparente hasta <code>:hover</code> o <code>:focus-within</code>. Al
     revelar solo aparece el thumb, no un track relleno.
   </p>
-  <ComponentPreview tree={revealTree} label="sk-scrollbar--reveal" note="hover o tab para revelar" />
+  <ComponentPreview tree={scrollbarRevealTree(t)} label="sk-scrollbar--reveal" note="hover o tab para revelar" />
   <p>
     El rail del sidebar de esta documentación usa exactamente esta variante: quieto en reposo,
     legible cuando lo tocas.

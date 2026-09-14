@@ -74,14 +74,32 @@ const VOID_ELEMENTS = new Set([
 ]);
 
 /**
- * The column an emitter wraps an opening tag AND a run of text against. ~75ch is the classic measure
- * for a readable line, and it is close to what the docs' own code column fits (72 monospace
- * characters at the narrowest layout that still shows one, 82 from 1024px up), so it does not
- * reintroduce the horizontal scroll this exists to remove.
+ * The column an emitter wraps an OPENING TAG against. ~75ch is the classic measure for a readable
+ * line, and it is close to what the docs' own code column fits (72 monospace characters at the
+ * narrowest layout that still shows one, 82 from 1024px up), so it does not reintroduce the
+ * horizontal scroll this exists to remove.
  *
  * Markup starts at column zero and gets the measure itself.
  */
 const PRINT_WIDTH = 75;
+
+/**
+ * And the column a run of PROSE wraps against, which is a narrower one and deliberately not the same
+ * number.
+ *
+ * The two are one decision only if you read them in the same place, and nobody does. An attribute
+ * list is scanned: the eye runs down the left edge looking for a name, and breaking it earlier than
+ * it has to turns a tag anyone could read at a glance into a column of one-word lines (measured at
+ * 56: `<a class="sk-breadcrumb__link" href="/" title="Inicio">` became five lines, and a separator
+ * holding a single `/` became five more). A sentence is READ, left to right, and the surface it is
+ * read on is never the full window: the Playground puts the editor beside the thing it runs, a docs
+ * source panel sits inside a card inside a document column, and either can be dragged narrower.
+ *
+ * So prose gets the narrow pane's measure and tags keep the wide one's. The cost is accepted on
+ * purpose: a long sentence takes four or five lines where it used to take three, and no line of a
+ * snippet runs off the edge of a half-window pane.
+ */
+const TEXT_PRINT_WIDTH = 56;
 
 /**
  * JSX gets five columns more, and the reason is the wrapper rather than a change of mind about what
@@ -95,6 +113,10 @@ const PRINT_WIDTH = 75;
  * The breaks came from four characters of indentation, not from anything about the code.
  */
 const JSX_PRINT_WIDTH = 80;
+
+/** Prose in JSX: {@link TEXT_PRINT_WIDTH} plus the same four columns the component wrapper costs, so
+ *  a sentence breaks at the same words on both sides of the binding toggle. */
+const JSX_TEXT_PRINT_WIDTH = 60;
 
 /* ------------------------------------------------------------------ markup (the vanilla binding) */
 
@@ -496,6 +518,13 @@ function renderTemplate(
   ) {
     const text = children[0]!.trim();
     const inline = `${openLines[0]}${text}</${node.element}>`;
+    /*
+     * STAYING INLINE is still the tag's question, and the prose measure is the wrong one to ask it
+     * with: a separator holding a single `/` inside a two-attribute span is a 66-column line whose
+     * length is the TAG's doing, and breaking it into three lines to rescue one character helps
+     * nobody. Once the line does not fit, what gets wrapped is the sentence, and THAT is measured as
+     * prose (`wrapText`'s own default, below).
+     */
     if (inline.length <= PRINT_WIDTH) return [inline];
     return [openLines[0]!, ...wrapText(text, depth + 1), `${pad}</${node.element}>`];
   }
@@ -534,7 +563,7 @@ function htmlOpening(
  * JSX runtime both collapse the whitespace a line break leaves behind, so breaking a sentence across
  * lines is safe on either side, not a JSX-only trick.
  */
-function wrapText(text: string, depth: number, measure = PRINT_WIDTH): string[] {
+function wrapText(text: string, depth: number, measure = TEXT_PRINT_WIDTH): string[] {
   const pad = "  ".repeat(depth);
   const width = Math.max(1, measure - pad.length);
   const words = text.trim().split(/\s+/);
@@ -989,7 +1018,7 @@ function textLines(
 ): string[] {
   const content = raw ? text : escapeText(text);
   const line = `${"  ".repeat(depth)}${content}`;
-  if (raw || preserve || line.length <= PRINT_WIDTH) return [line];
+  if (raw || preserve || line.length <= TEXT_PRINT_WIDTH) return [line];
   return wrapText(content, depth);
 }
 
@@ -1531,7 +1560,23 @@ function renderJsx(
   const childRendered = childItems.map((item) =>
     isUsageTree(item)
       ? renderJsx(item, depth + 1, ctx)
-      : [`${"  ".repeat(depth + 1)}${item.trim()}`],
+      /*
+       * A TEXT CHILD IS WRAPPED HERE TOO, not only when it is the element's ONLY child.
+       *
+       * The single-child case below has always measured its text against `JSX_PRINT_WIDTH`; this
+       * path, the one a slot takes as soon as it holds anything else (a `<Code>` mid-sentence, a
+       * second paragraph), printed whatever it was handed on one line. Measured on the corpus:
+       * `accordion/exclusive`'s healthcheck sentence came out at 132 columns, in a pane whose whole
+       * point is reading code, while its Vanilla twin wrapped the identical sentence at 77 - the
+       * markup emitter has always run every text child through `textLines`. One binding wrapping and
+       * the other not is the kind of disagreement the two emitters exist to avoid.
+       *
+       * Safe against JSX's whitespace rules for the same reason the single-child path is: breaking
+       * INSIDE a text run is joined back into one space by the transform, and the boundaries between
+       * items - the only place a space can be lost - are `joinJsxInlineItems`'s business, decided by
+       * `{" "}` there rather than by where a line happens to end here.
+       */
+      : wrapText(item.trim(), depth + 1, JSX_TEXT_PRINT_WIDTH),
   );
   const children = joinJsxInlineItems(childItems, childRendered);
 
@@ -1543,11 +1588,13 @@ function renderJsx(
     const inlineOpen =
       props.length > 0 ? `<${name} ${props.join(" ")}>` : `<${name}>`;
     const inline = `${pad}${inlineOpen}${text}</${name}>`;
+    /* The tag's measure decides whether it stays on one line, the prose measure decides how the
+     * sentence breaks once it does not. Same split as the markup emitter, same reason. */
     if (inline.length <= JSX_PRINT_WIDTH) return [inline];
 
     return [
       ...opening,
-      ...wrapText(text, depth + 1, JSX_PRINT_WIDTH),
+      ...wrapText(text, depth + 1, JSX_TEXT_PRINT_WIDTH),
       `${pad}</${name}>`,
     ];
   }

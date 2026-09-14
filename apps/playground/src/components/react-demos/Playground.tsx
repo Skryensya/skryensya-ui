@@ -34,7 +34,6 @@ import {
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
   type ReactNode,
   type RefObject,
   type SyntheticEvent,
@@ -898,22 +897,28 @@ function FileSync({
 }
 
 /*
- * THE SEARCH TRIGGER, RENDERED HERE AND SHOWN IN THE CHROME.
+ * THE CHROME IS ONE ROW, AND THE ISLAND FILLS IT.
  *
- * The bar above the code is the tool's own, one pane wide; search covers the whole catalogue, so it
- * belongs in the row that spans the window (`layouts/Tool.astro`). That row is Astro, this island is
- * where the palette, its entries and the ⌘K binding live, and duplicating any of that into the layout
- * would be two controls claiming one shortcut. A portal keeps one control and moves only its box.
+ * This tool used to wear two bars: the layout's (`layouts/Tool.astro`: the way back, search, the two
+ * preferences) and its own, right under it (the rail's switch, the heading, the docs link, the
+ * binding switch, the reload and the pane layout). Two strips of chrome, two hairlines, ~99px of
+ * height before a line of code - and the split ran along a line the reader has no reason to know
+ * about, which is WHICH OF THE TWO PROGRAMS RENDERS A CONTROL.
+ *
+ * So there is one row now, and the ownership problem is solved the way the search already solved it:
+ * the layout leaves named slots, the island renders its controls where its state lives, and a portal
+ * moves the boxes. The alternative - lifting the catalogue, the binding and the Sandpack client up
+ * into an Astro layout - is not a layout change, it is a rewrite.
  *
  * `null` until mounted: the island is `client:only`, so there is no server pass to mismatch, and the
  * slot is in the document by the time this runs either way.
  */
-function ChromeSearch({ children }: { readonly children: ReactNode }) {
+function ChromeSlot({ name, children }: { readonly name: string; readonly children: ReactNode }) {
   const [slot, setSlot] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
-    setSlot(document.querySelector<HTMLElement>("[data-playground-chrome-search]"));
-  }, []);
+    setSlot(document.querySelector<HTMLElement>(`[data-playground-chrome-${name}]`));
+  }, [name]);
 
   return slot ? createPortal(children, slot) : null;
 }
@@ -964,7 +969,6 @@ function EditorFiles({ files, label }: { readonly files: readonly string[]; read
             path === active ? <SandpackCodeEditor showLineNumbers showTabs={false} style={{ height: "100%" }} /> : null,
         }))}
         onValueChange={({ value }) => sandpack.setActiveFile(value)}
-        size="sm"
         value={active}
       />
     </div>
@@ -1011,7 +1015,7 @@ function PreviewLoading({ label }: { readonly label: string }) {
  * THE PREVIEW'S OWN RELOAD, reachable from a bar that is not inside the sandbox.
  *
  * `useSandpackNavigation` is a hook, so it only exists under the provider, while the control that
- * uses it belongs in the tool's chrome above (`.playground__bar`), which renders during the wait
+ * uses it belongs in the tool's chrome above (the `ChromeSlot` portals), which renders during the wait
  * and the failure states too, where there is no provider at all. So the hook is consumed HERE, by a
  * component that renders nothing, and hands the one function out through a ref the bar can call.
  *
@@ -1070,7 +1074,15 @@ export default function Playground({ catalogue, strings }: Props) {
     setExampleId(handoffComponentId);
     setBinding("vanilla");
   }, [handoff]);
-  const [railHidden, setRailHidden] = useState(false);
+  /*
+   * CLOSED WHERE IT WOULD EAT THE TOOL. The rail is a fixed 208px, and at phone width that left the
+   * stage 222px of a 430px window: a code pane narrower than a line of JSX, with the rail showing a
+   * catalogue the reader did not come here to read. Read once, on mount, and never again: from then
+   * on it is the reader's toggle, and a window resize is not a request to reopen a rail they closed.
+   */
+  const [railHidden, setRailHidden] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(width < 60rem)").matches,
+  );
   const [paneLayout, setPaneLayout] = useStoredPreference(paneLayoutPreference);
   const stacked = paneLayout === "stacked";
   const { bundles, blocked } = useBundles(catalogue);
@@ -1463,20 +1475,15 @@ createRoot(document.getElementById("root")).render(
         storageKey="playground-rail"
       >
         {/*
-          A DENSITY SCOPE, which is the system's own answer to "this chrome should be tighter" and
-          the same one `ComponentPreview` uses for its source tabs, at the same 0.72.
-          `data-sk-density-scope` re-projects the density-sensitive tokens for this subtree only, so
-          the tree's rows and the gaps inside them close up without a single tree-view rule being
-          overridden from out here.
-          Nothing can go too far, either: `--size-control-sm` floors at `--scale-fixed-target-min`
-          (24px, WCAG 2.2 SC 2.5.8) INSIDE the token, so a row lands on the accessible minimum and
-          stops. 0.72 is what puts it exactly there - 32px × 0.72 rounds to 24.
+          THE RAIL IS AT THE SYSTEM'S OWN DENSITY, and it used to be at 0.72 - the same scope
+          `ComponentPreview` puts on its source tabs, which drove a row to exactly 24px, the floor
+          `--size-control-sm` refuses to go below (WCAG 2.2 SC 2.5.8). It was chosen when the tool
+          wore two bars and every pixel was being fought over; sixty rows at the accessible MINIMUM,
+          six pixels apart, read as a wall rather than as a list, and a catalogue you scan is the one
+          thing this rail is for. At 1 a row is 32px with 8px between rows, which is the same rhythm
+          as every other rail in the kit.
         */}
-        <SidebarContent
-          className="sk-scrollbar sk-scrollbar--reveal"
-          data-sk-density-scope
-          style={{ "--sk-density-factor": "0.72" } as CSSProperties}
-        >
+        <SidebarContent className="sk-scrollbar sk-scrollbar--reveal">
           {/*
             A TREE, not a list of links, because the shape of this catalogue IS a tree: a component
             has examples, and an example belongs to exactly one component. NavList could only render
@@ -1514,8 +1521,7 @@ createRoot(document.getElementById("root")).render(
       </Sidebar>
 
       <div className="playground__stage" data-pane-layout={paneLayout}>
-        <header className="playground__bar">
-          <div className="playground__heading">
+        <ChromeSlot name="rail">
             {/* The rail's switch, in the one place that is still there when the rail is not. */}
             <button
               aria-expanded={!railHidden}
@@ -1530,8 +1536,12 @@ createRoot(document.getElementById("root")).render(
               {/* The kit's own answer for this control: `SidebarTrigger`'s demo and the site's
                   drawer trigger both draw it with `menu`. A shape drawn by hand here would be a
                   second icon vocabulary for one button. */}
-              <Icon name="menu" />
-            </button>
+            <Icon name="menu" />
+          </button>
+        </ChromeSlot>
+
+        <ChromeSlot name="context">
+          <div className="playground__heading">
             {/* `data-flush` is the docs site's opt-out from its global `h1:not([data-flush])` rule,
                 which outranks a class and would typeset this at display size. This app no longer
                 loads that stylesheet (`layouts/Tool.astro` replaced the docs shell), so the
@@ -1543,7 +1553,31 @@ createRoot(document.getElementById("root")).render(
             </h1>
             <p className="playground__example">{example.label}</p>
           </div>
-          <ChromeSearch>
+        </ChromeSlot>
+
+        {/*
+          WHICH BINDING, ON THE ROW'S CENTRE LINE. It asks the same question the heading does ("what
+          am I looking at") rather than doing something to the preview, and it is the only control in
+          the bar that changes the example itself - so it gets the one position a row has that is not
+          an end: the middle (`playground-chrome__binding`, sized by the grid in `tool.css`).
+        */}
+        <ChromeSlot name="binding">
+          <SegmentedControl
+            label={strings.bindingLabel}
+            onValueChange={(next) => setBinding(next as "react" | "vanilla")}
+            options={
+              component.id !== handoffComponentId
+                ? [
+                    { label: strings.react, value: "react" },
+                    { label: strings.vanilla, value: "vanilla" },
+                  ]
+                : [{ label: strings.vanilla, value: "vanilla" }]
+            }
+            value={binding}
+          />
+        </ChromeSlot>
+
+        <ChromeSlot name="search">
             {/*
               SEARCH, AS A FIELD, which is the same control the documentation's own header carries
               (`Base.astro` + `.dimensions__search-trigger`) and for the same reasons written out in
@@ -1590,94 +1624,7 @@ createRoot(document.getElementById("root")).render(
                   it a second time in a vocabulary screen readers pronounce badly. */}
               <Kbd aria-hidden="true">{hotkeyLabel}</Kbd>
             </div>
-          </ChromeSearch>
-
-          <div className="playground__actions">
-            {/*
-              THE EXACT EXAMPLE. `example.docs` is resolved at build time
-              (`playground-catalogue.ts`): the page that actually imports this tree, in this
-              locale, on the docs origin, opened on its usage tab with the fragment set to the
-              tree's own anchor (`docs/src/lib/tree-anchor.ts`), which that page's preview carries.
-              A demo handed over from a docs preview brings its own address instead.
-
-              `target="_blank"`: this leaves the Playground tab open and untouched behind it,
-              which is also why it needs no confirmation of its own (see the `beforeunload` guard
-              below) - the reader's edits are still sitting right there when they come back.
-            */}
-            {(example.docs || component.docs) && (
-              <Button
-                className="playground__docs-link"
-                href={example.docs || component.docs}
-                post={<Icon name="external-link" size="sm" />}
-                rel="noopener noreferrer"
-                size="sm"
-                target="_blank"
-                variant="ghost"
-              >
-                {strings.docsLink}
-              </Button>
-            )}
-            <SegmentedControl
-              label={strings.bindingLabel}
-              onValueChange={(next) => setBinding(next as "react" | "vanilla")}
-              options={
-                component.id !== handoffComponentId
-                  ? [
-                      { label: strings.react, value: "react" },
-                      { label: strings.vanilla, value: "vanilla" },
-                    ]
-                  : [{ label: strings.vanilla, value: "vanilla" }]
-              }
-              value={binding}
-            />
-            {/*
-              THE PREVIEW, FROM ITS FIRST FRAME AGAIN. See `PreviewControls` for why the call has to
-              arrive through a ref, and for why a recompile is not the same thing as a restart.
-              Disabled while there is no sandbox to reload, rather than hidden: a control that
-              disappears for a second during every wait is a control that moves the two beside it.
-            */}
-            {/*
-              WRAPPED THE WAY THE DOCUMENTATION WRAPS ITS OWN HEADER CONTROLS (`PrefTooltip`): an
-              icon-only button carries its name on `aria-label`, which is everything a screen reader
-              needs and nothing at all for the reader who can see it. The Tooltip contract exists for
-              exactly that redundancy, and it is what these two had been missing next to a row where
-              every other control says what it is in words.
-            */}
-            <Tooltip content={strings.reload} placement="block-end">
-              <Button
-                aria-label={strings.reload}
-                disabled={!files || Boolean(blocked)}
-                iconOnly
-                onClick={() => previewActionsRef.current?.refresh()}
-                size="sm"
-                variant="ghost"
-              >
-                {/* One circular arrow, not the vocabulary's two-arrow cycle: see `reloadIcon`. */}
-                <Icon data={reloadIcon} size="sm" />
-              </Button>
-            </Tooltip>
-            {/*
-              WHICH WAY THE PANES SIT. One button and not a two-option switch: there are exactly two
-              arrangements, so the control is the OTHER one, and its icon and its name both say where
-              pressing it goes rather than where it already is (the same shape as the rail's own
-              hide/show trigger up in the heading).
-            */}
-            <Tooltip
-              content={stacked ? strings.layoutSideBySide : strings.layoutStacked}
-              placement="block-end"
-            >
-              <Button
-                aria-label={stacked ? strings.layoutSideBySide : strings.layoutStacked}
-                iconOnly
-                onClick={() => setPaneLayout(stacked ? "side-by-side" : "stacked")}
-                size="sm"
-                variant="ghost"
-              >
-                <Icon data={stacked ? splitVerticalIcon : splitHorizontalIcon} size="sm" />
-              </Button>
-            </Tooltip>
-          </div>
-        </header>
+        </ChromeSlot>
 
         {blocked ? (
           <p className="playground__state" role="status">
@@ -1748,12 +1695,72 @@ createRoot(document.getElementById("root")).render(
                   what the editor left (`flex: 1`) with a floor of nothing, which is the same thing
                   said on the other axis.
                 */}
-                <SandpackPreview
-                  showOpenInCodeSandbox={false}
-                  style={stacked ? { flex: "1 1 0", minBlockSize: 0 } : { height: "100%" }}
-                >
-                  <PreviewLoading label={strings.loading} />
-                </SandpackPreview>
+                {/*
+                  THE PREVIEW PANE, WITH A BAR OF ITS OWN.
+
+                  These three controls do something to the RUNNING DEMO and nothing to anything else:
+                  reload it, flip which side it sits on, and leave for the page that documents it. In
+                  the tool's top row they read as global chrome and sat a full window away from the
+                  thing they act on; here they are the pane's own header, the way the file tabs are
+                  the editor's. The pane is what Sandpack's row sizes, so the wrapper takes the sizing
+                  the preview used to carry and the preview fills what the bar leaves.
+                */}
+                <div className="playground__preview" data-pane-layout={paneLayout}>
+                  <div className="playground__preview-bar">
+                    <div className="playground__preview-tools">
+                      <Tooltip content={strings.reload} placement="block-end">
+                        <Button
+                          aria-label={strings.reload}
+                          disabled={!files || Boolean(blocked)}
+                          iconOnly
+                          onClick={() => previewActionsRef.current?.refresh()}
+                          size="sm"
+                          /*
+                           * `soft`, not `ghost`: this pane's bar has no other chrome in it, and a
+                           * borderless icon on a plain strip does not read as a control until you
+                           * hover it. `soft` is the kit's own quiet-but-bordered emphasis (a subtle
+                           * ring over a surface fill), which is the same answer CopyButton reaches
+                           * for over a code panel.
+                           */
+                          variant="soft"
+                        >
+                          {/* One circular arrow, not the vocabulary's two-arrow cycle: see `reloadIcon`. */}
+                          <Icon data={reloadIcon} size="sm" />
+                        </Button>
+                      </Tooltip>
+                      <Tooltip
+                        content={stacked ? strings.layoutSideBySide : strings.layoutStacked}
+                        placement="block-end"
+                      >
+                        <Button
+                          aria-label={stacked ? strings.layoutSideBySide : strings.layoutStacked}
+                          iconOnly
+                          onClick={() => setPaneLayout(stacked ? "side-by-side" : "stacked")}
+                          size="sm"
+                          variant="soft"
+                        >
+                          <Icon data={stacked ? splitVerticalIcon : splitHorizontalIcon} size="sm" />
+                        </Button>
+                      </Tooltip>
+                    </div>
+                    {(example.docs || component.docs) && (
+                      <Button
+                        className="playground__docs-link"
+                        href={example.docs || component.docs}
+                        post={<Icon name="external-link" size="sm" />}
+                        rel="noopener noreferrer"
+                        size="sm"
+                        target="_blank"
+                        variant="ghost"
+                      >
+                        {strings.docsLink}
+                      </Button>
+                    )}
+                  </div>
+                  <SandpackPreview showOpenInCodeSandbox={false} style={{ flex: "1 1 0", minBlockSize: 0 }}>
+                    <PreviewLoading label={strings.loading} />
+                  </SandpackPreview>
+                </div>
               </SandpackLayout>
             </SandpackProvider>
           </div>

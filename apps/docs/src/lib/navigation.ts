@@ -874,15 +874,23 @@ if (
 /** Exported because a ComponentPreview links into it too, not only the global rail. */
 export const playgroundUrl: string | null =
   import.meta.env.PUBLIC_PLAYGROUND_URL ??
-  (import.meta.env.DEV ? "http://localhost:4174/playground" : null);
+  (import.meta.env.DEV ? "http://localhost:4174/" : null);
 
+/*
+ * LAST, AND THAT IS THE POINT OF THE ORDER. Everything before it is a place on this site, and the
+ * row reads as one journey through the documentation: start, foundations, the catalogue, what you
+ * can build from it. The Playground is not a further step along that path, it is a different
+ * application at a different origin, opened in a tab of its own (`external`), so it sits after the
+ * site's own destinations rather than between two of them. The launch mark the header draws beside
+ * it (`Base.astro`) says the same thing in the same row.
+ */
 export const globalNavigation = [
   { href: "/", label: "nav.home" },
   { href: "/foundations", label: "nav.foundations" },
   { href: "/components", label: "nav.components" },
   { href: "/templates", label: "nav.templates" },
-  ...(playgroundUrl ? [{ href: playgroundUrl, label: "nav.playground", external: true }] : []),
   { href: "/presets", label: "nav.presets" },
+  ...(playgroundUrl ? [{ href: playgroundUrl, label: "nav.playground", external: true }] : []),
 ] satisfies readonly NavigationItem[];
 
 export const documentationNavigation = [

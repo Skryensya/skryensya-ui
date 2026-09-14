@@ -129,7 +129,16 @@ const strings = {
      * at visibly different heights. Overridden through the hook the component publishes for it, so
      * the inline padding (and everything else) stays the component's.
      */
-    --sk-sidebar-padding-block: var(--space-inset-xs);
+    --sk-sidebar-padding-block: var(--space-inset-sm);
+    /*
+     * ROOM BETWEEN THE ROWS, through the hooks the tree publishes for it. At the component's default
+     * caption type the rows are 24px tall and 6px apart, and sixty of them in a column read as a wall
+     * rather than as a list you scan. One step on each hook (8px inset, 8px between rows) is what
+     * turns it back into rows; the TYPE stays the component's, because a rail that speaks a different
+     * size than every other rail in the kit is a different rail.
+     */
+    --sk-tree-row-inset: var(--space-inset-sm);
+    --sk-tree-row-gap: var(--space-stack-xs);
 
     border-inline-end: 1px solid var(--color-border-subtle);
   }
@@ -183,35 +192,11 @@ const strings = {
   }
 
   /*
-   * ONE ROW, and as short as a row can honestly be. This is a tool: every pixel the chrome takes is
-   * a pixel of code the reader cannot see, and the bar carries four things that all fit on a line.
-   * The block padding is the floor of the scale, so the height is the CONTROLS' height rather than
-   * padding around them, which is the same reason the kit sizes a control from its own box.
+   * WHERE YOU ARE, inside the chrome row (`layouts/Tool.astro`): the heading is portalled up there
+   * (`ChromeSlot`), so what used to be a strip of its own is now a group in one bar. The rules below
+   * are what the group needs and nothing the strip needed: no padding, no border, no wrapping - the
+   * row owns those now.
    */
-  /*
-   * ONE GAP, AND IT IS THE KIT'S. `component-preview__header` is this exact bar one layer down - a
-   * title on the left, a binding switch on the right - and it spaces itself with a single
-   * `--space-inline-sm` and `--space-inset-md` across. This had grown three different gaps (12 / 8 /
-   * 12), which is three decisions where the system already made one.
-   *
-   * The BLOCK padding is the one deliberate departure: `--space-inset-xs` rather than the card's
-   * `sm`, because a tool's strip is denser than a card's header and every pixel here is a pixel of
-   * code the reader cannot see. The height is the segmented control's anyway, which is the floor
-   * nothing in this file can lower.
-   */
-  .playground__bar {
-    display: flex;
-    /* The row carries five controls now beside the heading, which is more than a narrow window can
-       hold on one line: wrapping puts them on a second row instead of pushing the heading off the
-       start edge or opening a horizontal scroll across the whole tool. */
-    flex-wrap: wrap;
-    gap: var(--space-inline-sm);
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-inset-xs) var(--space-inset-md);
-    border-block-end: 1px solid var(--color-border-subtle);
-  }
-
   .playground__heading {
     display: flex;
     gap: var(--space-inline-sm);
@@ -229,7 +214,12 @@ const strings = {
    * display size and the bar cannot get shorter no matter what is written here.
    */
   .playground__title {
+    /* The one field in the row that must not be clipped away entirely: it names what everything else
+       in the bar acts on. It truncates like the example beside it rather than wrapping the row. */
+    overflow: hidden;
     margin: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: var(--font-size-body);
     font-weight: var(--font-weight-label);
     line-height: var(--font-line-height-display);
@@ -243,6 +233,55 @@ const strings = {
     line-height: var(--font-line-height-display);
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  /*
+   * THE PREVIEW PANE AND ITS OWN BAR.
+   *
+   * The wrapper is what Sandpack's row now sizes (the preview used to be the flex child itself), so
+   * it carries the flex rules and the preview fills whatever the bar above it leaves. A column, not
+   * a row, in both arrangements: the bar is always across the top of the pane it belongs to.
+   */
+  .playground__preview {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    min-inline-size: 0;
+    min-block-size: 0;
+  }
+
+  /*
+   * ITS BAR IS THE EDITOR'S TAB STRIP, on the other side of the split: same height, same hairline
+   * underneath, same inline inset, so the two panes start at one line rather than at two.
+   *
+   * The two controls that act on the running demo sit at the leading edge, where the pane's own
+   * content starts; the way OUT - the link to the page that documents this example - sits at the
+   * trailing edge, which is where this tool already puts the things that leave it (the chrome's own
+   * preferences, the wordmark's arrow read the other way). A reader scanning the pane meets what it
+   * can do to itself first, and the exit last.
+   */
+  .playground__preview-bar {
+    display: flex;
+    gap: var(--space-inline-sm);
+    align-items: center;
+    justify-content: space-between;
+    min-block-size: calc(var(--size-control-md) + 1px);
+    padding-inline: var(--space-inset-md);
+    border-block-end: 1px solid var(--color-border-subtle);
+    background: var(--color-bg-canvas);
+  }
+
+  .playground__preview-tools {
+    display: flex;
+    gap: var(--space-inline-xs);
+    align-items: center;
+    /* The pane can be narrow; these two never wrap away from each other, the link beside them gives
+       up its width first (`.playground__docs-link`). */
+    flex: none;
+    /* First in the bar and first in the source: with `space-between` above, an absent docs link (a
+       demo handed over from a docs preview has none) leaves these two exactly where they already
+       were, instead of sliding across the pane. */
+    order: -1;
   }
 
   /*
@@ -354,6 +393,30 @@ const strings = {
    * into side-by-side columns rather than growing, so a pane that cannot fit would end up beside its
    * neighbour in the arrangement that exists precisely to put it below.
    */
+  /*
+   * WHERE SANDPACK ITSELF STOPS PUTTING THE PANES SIDE BY SIDE.
+   *
+   * `@media screen and (max-width: 768px)` is written into the library's own stylesheet (read in
+   * `dist/index.js`): at that width its row wraps and each stack goes to `min-width: 100%`. Ours kept
+   * a 50% flex-basis through it, so the editor sat alone on a full-width line at half its width, and
+   * the preview below it kept a height meant for a row - measured at 768px: a 384px editor on a 768px
+   * line, with a 818px preview inside a 819px stage.
+   *
+   * Matching the number rather than guessing near it, and then reusing the arrangement this tool
+   * already has a control for: below it, the panes ARE the stacked layout, with the same clamp and
+   * the same custom property the splitter writes.
+   */
+  @media (width <= 48rem) {
+    .playground__stage .sp-layout {
+      flex-direction: column;
+      flex-wrap: nowrap;
+    }
+
+    .playground__stage .sp-layout > .playground__files {
+      flex: 0 0 clamp(6rem, var(--playground-editor-block-size, 50%), calc(100% - 6rem));
+    }
+  }
+
   .playground__stage[data-pane-layout="stacked"] .sp-layout {
     flex-direction: column;
     flex-wrap: nowrap;
@@ -378,7 +441,12 @@ const strings = {
     contain: size;
     display: flex;
     min-inline-size: 0;
-    min-block-size: 0;
+    /* THE FLOOR SIZE CONTAINMENT MAKES NECESSARY. A contained box contributes nothing to its flex
+       line, which is exactly what stops a long file from stretching the row - and which collapses
+       the pane to ZERO when Sandpack's own row WRAPS (side-by-side, under about 48rem: the editor
+       gets a line of its own, and a line whose only item contributes nothing is 0px tall). Measured
+       at 768px and 430px before this: the code pane was not short, it was gone. */
+    min-block-size: 16rem;
     background: var(--color-bg-canvas);
   }
 
@@ -396,7 +464,7 @@ const strings = {
   }
 
   .playground__files .sk-tabs__list {
-    padding-inline: var(--space-inset-sm);
+    padding-inline: var(--space-inset-md);
     overflow-x: auto;
     scrollbar-width: none;
   }

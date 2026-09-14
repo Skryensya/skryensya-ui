@@ -63,9 +63,14 @@ export const splitHorizontalIcon = {
  * Phosphor's `arrow-clockwise` at regular weight (MIT, the same library `@skryensya/icons-phosphor`
  * vendors and this tool draws the rest of its chrome with), carried here as project geometry because
  * "restart this preview" is this tool's action and not a role the kit owes three icon sets.
+ *
+ * DRAWN COUNTER-CLOCKWISE, by mirroring that same path across the box's centre rather than carrying a
+ * second one: an arrow that sweeps back the way it came reads as "again, from the start", which is
+ * what this button does to the preview. One geometry, one transform, and the two can never drift.
  */
 export const reloadIcon = {
   viewBox: "0 0 256 256",
   attrs: { fill: "currentColor" },
-  body: '<path d="M240,56v48a8,8,0,0,1-8,8H184a8,8,0,0,1,0-16H211.4L184.81,71.64l-.25-.24a80,80,0,1,0-1.67,114.78,8,8,0,0,1,11,11.63A95.44,95.44,0,0,1,128,224h-1.32A96,96,0,1,1,195.75,60L224,85.8V56a8,8,0,1,1,16,0Z"/>',
+  body:
+    '<g transform="translate(256 0) scale(-1 1)"><path d="M240,56v48a8,8,0,0,1-8,8H184a8,8,0,0,1,0-16H211.4L184.81,71.64l-.25-.24a80,80,0,1,0-1.67,114.78,8,8,0,0,1,11,11.63A95.44,95.44,0,0,1,128,224h-1.32A96,96,0,1,1,195.75,60L224,85.8V56a8,8,0,1,1,16,0Z"/></g>',
 } as const;

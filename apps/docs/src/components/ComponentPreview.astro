@@ -362,7 +362,16 @@ const reloadIcon = iconMarkup("refresh", { size: "sm" });
 const sourceToggleIcon = iconMarkup("chevron-down", { size: "sm" });
 const contractIcon = iconMarkup("file", { size: "sm" });
 /* `code`: the Playground is where this demo stops being a specimen and becomes source you can run. */
-const playgroundIcon = iconMarkup("code", { size: "sm" });
+/*
+ * LAUNCH, not `code`, and the difference is where the row goes rather than what it shows you.
+ *
+ * Every other item in this menu acts on the card in front of the reader: Reload re-runs this stage,
+ * View contract opens a drawer beside it. This one is the only row that LEAVES, into a tab of its
+ * own, and `external-link` is the vocabulary's name for exactly that (the arrow out of a box every
+ * platform draws for "opens elsewhere"). `code` said "source", which is what the panels under the
+ * stage already say without going anywhere.
+ */
+const playgroundIcon = iconMarkup("external-link", { size: "sm" });
 /*
  * Screen presets. The name is a stable ROLE, not a device drawing, which is why the accessible
  * name spells out the actual viewport: `screen-tablet` tells you the class of screen, `768 × 1024`

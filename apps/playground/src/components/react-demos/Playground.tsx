@@ -5,18 +5,29 @@ import {
   SandpackProvider,
   useLoadingOverlayState,
   useSandpack,
+  useSandpackNavigation,
 } from "@codesandbox/sandpack-react";
 import type { SandpackTheme } from "@codesandbox/sandpack-react";
 import { Button } from "@skryensya/react/button";
+import { CommandPalette } from "@skryensya/react/command-palette";
 import { Dialog } from "@skryensya/react/dialog";
+import { useHotkey } from "@skryensya/react/hotkey";
 import { Icon } from "@skryensya/react/icon";
+import { Kbd } from "@skryensya/react/kbd";
+import { Tooltip } from "@skryensya/react/tooltip";
 import { Loader } from "@skryensya/react/loader";
 import { SegmentedControl } from "@skryensya/react/segmented";
 import { Tabs } from "@skryensya/react/tabs";
 import { Sidebar, SidebarContent, SidebarResizeHandle } from "@skryensya/react/sidebar";
+import { useStoredPreference } from "@skryensya/react/storage";
 import { TreeView } from "@skryensya/react/tree-view";
+import type { CommandPaletteEntry } from "@skryensya/core/command-palette";
+import { detectMac, formatHotkey } from "@skryensya/core/hotkey";
+import { definePreference, oneOf } from "@skryensya/core/storage";
 import { PaneSplitter } from "./PaneSplitter";
+import { reloadIcon, splitHorizontalIcon, splitVerticalIcon } from "../../icons";
 import { vanillaScriptPath, vanillaScriptSource } from "../../lib/vanilla-script";
+import { createPortal } from "react-dom";
 import {
   useCallback,
   useEffect,
@@ -24,6 +35,8 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type ReactNode,
+  type RefObject,
   type SyntheticEvent,
 } from "react";
 
@@ -96,6 +109,16 @@ export type PlaygroundStrings = {
   readonly discardCancel: string;
   readonly discardConfirm: string;
   readonly resizePanes: string;
+  readonly resizePanesBlock: string;
+  readonly search: string;
+  readonly searchPlaceholder: string;
+  readonly searchEmpty: string;
+  readonly searchHintNavigate: string;
+  readonly searchHintOpen: string;
+  readonly searchHintClose: string;
+  readonly reload: string;
+  readonly layoutSideBySide: string;
+  readonly layoutStacked: string;
 };
 
 type Props = {
@@ -139,6 +162,22 @@ const handoffComponentId = "preview";
  *  collides, and a plain string is what `document.getElementById` (the platform's own way to reach
  *  a `<dialog>`, the same one every other demo in this kit uses) needs to find it. */
 const discardDialogId = "playground-discard-dialog";
+/** The search palette, reached the same way and for the same reason. */
+const searchDialogId = "playground-search-dialog";
+
+/*
+ * HOW THE TWO PANES SIT, remembered.
+ *
+ * A preference and not state, because it is a preference: which way a reader wants the code and
+ * what it runs arranged depends on their screen and on what they are reading, and answering that
+ * again on every visit is the kind of question a tool should only ask once. Same slot machinery,
+ * the same store and the same tab-to-tab sync as the rail width and the editor size beside it.
+ */
+const paneLayoutPreference = definePreference<"side-by-side" | "stacked">({
+  slot: "playground-pane-layout",
+  fallback: "side-by-side",
+  parse: oneOf(["side-by-side", "stacked"]),
+});
 
 function parseHandoff(encoded: unknown): PlaygroundHandoff | null {
   if (typeof encoded !== "string") return null;
@@ -859,6 +898,27 @@ function FileSync({
 }
 
 /*
+ * THE SEARCH TRIGGER, RENDERED HERE AND SHOWN IN THE CHROME.
+ *
+ * The bar above the code is the tool's own, one pane wide; search covers the whole catalogue, so it
+ * belongs in the row that spans the window (`layouts/Tool.astro`). That row is Astro, this island is
+ * where the palette, its entries and the ⌘K binding live, and duplicating any of that into the layout
+ * would be two controls claiming one shortcut. A portal keeps one control and moves only its box.
+ *
+ * `null` until mounted: the island is `client:only`, so there is no server pass to mismatch, and the
+ * slot is in the document by the time this runs either way.
+ */
+function ChromeSearch({ children }: { readonly children: ReactNode }) {
+  const [slot, setSlot] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setSlot(document.querySelector<HTMLElement>("[data-playground-chrome-search]"));
+  }, []);
+
+  return slot ? createPortal(children, slot) : null;
+}
+
+/*
  * THE EXAMPLE'S FILES, AS THE KIT'S OWN TABS.
  *
  * Sandpack draws a tab strip of its own, and it was the one piece of chrome on this screen in
@@ -947,6 +1007,41 @@ function PreviewLoading({ label }: { readonly label: string }) {
   );
 }
 
+/*
+ * THE PREVIEW'S OWN RELOAD, reachable from a bar that is not inside the sandbox.
+ *
+ * `useSandpackNavigation` is a hook, so it only exists under the provider, while the control that
+ * uses it belongs in the tool's chrome above (`.playground__bar`), which renders during the wait
+ * and the failure states too, where there is no provider at all. So the hook is consumed HERE, by a
+ * component that renders nothing, and hands the one function out through a ref the bar can call.
+ *
+ * A ref and not state on purpose: the bar's button does not need to re-render when the client
+ * reconnects, it only needs to reach whatever `refresh` is current the moment it is pressed, and
+ * lifting a new function into state on every Sandpack reconnection would re-render the whole tool
+ * for nothing.
+ *
+ * WHY A RELOAD AT ALL, when the bundler recompiles on every keystroke: recompiling is not
+ * restarting. A demo that has been clicked into some state (a dialog left open, a form half filled,
+ * a carousel three slides in) keeps that state across a recompile, and the reader who wants to see
+ * the FIRST frame again has, until now, had to switch examples and come back.
+ */
+function PreviewControls({
+  actionsRef,
+}: {
+  readonly actionsRef: RefObject<{ refresh: () => void } | null>;
+}) {
+  const { refresh } = useSandpackNavigation();
+
+  useEffect(() => {
+    actionsRef.current = { refresh };
+    return () => {
+      actionsRef.current = null;
+    };
+  }, [actionsRef, refresh]);
+
+  return null;
+}
+
 export default function Playground({ catalogue, strings }: Props) {
   /*
    * Empty until the catalogue lands, and the ids are held rather than the objects: the selection is
@@ -976,6 +1071,8 @@ export default function Playground({ catalogue, strings }: Props) {
     setBinding("vanilla");
   }, [handoff]);
   const [railHidden, setRailHidden] = useState(false);
+  const [paneLayout, setPaneLayout] = useStoredPreference(paneLayoutPreference);
+  const stacked = paneLayout === "stacked";
   const { bundles, blocked } = useBundles(catalogue);
   const components = useMemo(() => {
     const catalogueComponents = bundles?.components ?? [];
@@ -1031,6 +1128,31 @@ export default function Playground({ catalogue, strings }: Props) {
   );
 
   /*
+   * WHICH BRANCHES ARE OPEN IS THE TOOL'S NOW, not the tree's own uncontrolled state, and the search
+   * palette is why. A reader who picks "Ghost" out of ⌘K lands on that example in the stage while
+   * the rail, if Button happened to be closed, would still be showing them no sign of where they
+   * are. Controlled, `selectFromSearch` can open the branch it just selected into.
+   *
+   * Seeded rather than initialised: the first component only exists once the catalogue lands, and
+   * the seeding effect below leaves alone anything the reader has already opened or closed.
+   */
+  const [expandedValue, setExpandedValue] = useState<string[]>(() =>
+    urlSelection?.componentId ? [urlSelection.componentId] : [],
+  );
+
+  /*
+   * ONLY THE FIRST ONE OPEN, once there is a first one. Expanding every branch was right when the
+   * catalogue was one component; at fifty-nine it puts a hundred and forty rows on screen at once
+   * and the rail becomes a wall to scroll rather than an index to scan. The rest is the reader's to
+   * open, which is the whole reason this is a tree.
+   */
+  const firstComponentId = components[0]?.id;
+  useEffect(() => {
+    if (!firstComponentId) return;
+    setExpandedValue((current) => (current.length ? current : [firstComponentId]));
+  }, [firstComponentId]);
+
+  /*
    * Only a LEAF is a selection. Clicking a component's own row expands it, which is what a branch
    * control is for, and the machine reports that as a selection all the same - acting on it would
    * swap the sandbox for whatever example happened to be first, which nobody asked for.
@@ -1077,6 +1199,76 @@ export default function Playground({ catalogue, strings }: Props) {
     setComponentId(pending.componentId);
     setExampleId(pending.exampleId);
   };
+
+  /*
+   * THE CATALOGUE AS AN INDEX TO SEARCH, which is the second shape the same data has to take.
+   *
+   * The rail is a tree because that is what the catalogue IS: a component has examples, and an
+   * example belongs to one component. But a tree answers "show me what Button has" and not "where
+   * was the example with the ghost buttons in it", and past fifty-nine components the second
+   * question is the common one. Both shapes, one source: these entries are the same nodes, flattened,
+   * with the component's own name carried along as each row's context so a query can reach an example
+   * through either half of its name.
+   *
+   * The handoff is deliberately absent. `preview` names no catalogue entry (see
+   * `writePlaygroundUrlSelection`), so a row for it would be a search result pointing at a demo that
+   * exists only in this tab, in this session.
+   *
+   * The href is a REAL playground address rather than a synthetic key: it is what a row would carry
+   * if this palette navigated the way the docs' own does, it is unique per example (which is all
+   * React's `key` needs), and it is what `selectFromSearch` reads the pair back out of.
+   */
+  const searchEntries = useMemo<readonly CommandPaletteEntry[]>(
+    () =>
+      components
+        .filter((entry) => entry.id !== handoffComponentId)
+        .flatMap((entry) =>
+          entry.examples.map((item) => ({
+            label: item.label,
+            context: entry.label,
+            /* The component's name matches as a NAME and not only as context: "button" should rank
+             * every Button example above a page that merely mentions one. */
+            aliases: [entry.label],
+            href: `?${COMPONENT_PARAM}=${encodeURIComponent(entry.id)}&${EXAMPLE_PARAM}=${encodeURIComponent(item.id)}`,
+          })),
+        ),
+    [components],
+  );
+
+  /** The palette is a `<dialog>` like the discard confirmation beside it, and it is opened the way
+   *  the platform opens one: `showModal()` on the node, the only call that lights the backdrop and
+   *  traps focus. */
+  const openSearch = useCallback(() => {
+    const dialog = document.getElementById(searchDialogId);
+    if (dialog instanceof HTMLDialogElement && !dialog.open) dialog.showModal();
+  }, []);
+
+  /*
+   * ⌘K, from the kit's own primitive rather than a `keydown` listener written here: `useHotkey`
+   * carries the platform detection, the parsing and the "not while typing" rule that the badge in
+   * the bar (`formatHotkey`, below) is rendered from, so the shortcut and the hint it advertises can
+   * only ever come from the same string.
+   */
+  useHotkey("mod+k", openSearch);
+
+  /** A palette row, applied: the same path as clicking the rail (edits are still confirmed first),
+   *  plus opening the branch it lives in so the rail agrees with the stage about where we are. */
+  const selectFromSearch = (entry: CommandPaletteEntry) => {
+    const params = new URLSearchParams(entry.href.startsWith("?") ? entry.href.slice(1) : entry.href);
+    const componentPart = params.get(COMPONENT_PARAM);
+    const examplePart = params.get(EXAMPLE_PARAM);
+    if (!componentPart || !examplePart) return;
+
+    setExpandedValue((current) => (current.includes(componentPart) ? current : [...current, componentPart]));
+    select({ selectedValue: [leafId(componentPart, examplePart)] });
+  };
+
+  /** The badge in the bar, in the reader's own platform: ⌘K on a Mac, Ctrl+K everywhere else. Read
+   *  once, on the client, because this island never renders on the server (`client:only`). */
+  const hotkeyLabel = useMemo(() => formatHotkey("mod+k", detectMac()), []);
+
+  /** What the bar's reload button calls, once there is a running client to call it on. */
+  const previewActionsRef = useRef<{ refresh: () => void } | null>(null);
 
   /*
    * THE ADDRESS BAR, KEPT IN SYNC - keyed off `component`/`example` (the FALLBACK-resolved values),
@@ -1307,16 +1499,13 @@ createRoot(document.getElementById("root")).render(
           */}
           <TreeView
             branchIcon={<Icon name="folder" size="sm" />}
-            /*
-             * ONLY THE FIRST ONE OPEN. Expanding every branch was right when the catalogue was one
-             * component; at fifty-nine it puts a hundred and forty rows on screen at once and the
-             * rail becomes a wall to scroll rather than an index to scan. The rest is the reader's
-             * to open, which is the whole reason this is a tree.
-             */
-            defaultExpandedValue={components[0] ? [components[0].id] : []}
+            /* Controlled, so a pick out of the search palette can open the branch it landed in. The
+             * seeding (only the first component open) is up where that state lives. */
+            expandedValue={expandedValue}
             label={strings.componentsLabel}
             leafIcon={<Icon name="file" size="sm" />}
             nodes={nodes}
+            onExpandedChange={(details) => setExpandedValue(details.expandedValue)}
             onSelectionChange={select}
             selectedValue={[leafId(component.id, example.id)]}
           />
@@ -1324,7 +1513,7 @@ createRoot(document.getElementById("root")).render(
         <SidebarResizeHandle label={strings.resizeRail} />
       </Sidebar>
 
-      <div className="playground__stage">
+      <div className="playground__stage" data-pane-layout={paneLayout}>
         <header className="playground__bar">
           <div className="playground__heading">
             {/* The rail's switch, in the one place that is still there when the rail is not. */}
@@ -1354,6 +1543,55 @@ createRoot(document.getElementById("root")).render(
             </h1>
             <p className="playground__example">{example.label}</p>
           </div>
+          <ChromeSearch>
+            {/*
+              SEARCH, AS A FIELD, which is the same control the documentation's own header carries
+              (`Base.astro` + `.dimensions__search-trigger`) and for the same reasons written out in
+              `search-trigger.ts`: a real `<input>` rather than a button, because a button brings its
+              `:active` squeeze and its raised shadow along, and neither belongs on something that
+              reads as a box you type into. `readonly` + `inputmode="none"` keep it from ever taking a
+              query, because the real query box is the palette's own, opened on top of this one.
+
+              The ⌘K badge is not decoration: it is the only place the shortcut is advertised, and it
+              is rendered from the same string `useHotkey` binds (`hotkeyLabel`, above), so the two
+              cannot drift apart.
+
+              OPENED ON CLICK AND ON ENTER/SPACE, never on FOCUS, which is the one trap this shape
+              has: closing the palette returns focus to whatever opened it (the platform's own
+              `<dialog>` behaviour), so a focus handler would reopen it in the same tick and Escape
+              would look like it did nothing. A keydown has no such loop, since closing a dialog
+              synthesizes a focus event and never a keypress.
+            */}
+            <div className="playground-chrome__search-field">
+              {/* The default size, which is the same call the documentation's own header makes
+                  (`iconMarkup("search")`, no size): one component, one size, and the same
+                  `--space-inline-sm` between it and the placeholder. An `sm` icon here made the
+                  field read as a smaller control than the one it is a copy of. */}
+              <Icon name="search" />
+              <input
+                aria-controls={searchDialogId}
+                aria-keyshortcuts="Meta+K Control+K"
+                aria-label={strings.search}
+                autoComplete="off"
+                className="playground-chrome__search-input"
+                inputMode="none"
+                onClick={openSearch}
+                onKeyDown={(event) => {
+                  if (event.key !== "Enter" && event.key !== " ") return;
+                  event.preventDefault();
+                  openSearch();
+                }}
+                placeholder={strings.search}
+                readOnly
+                type="text"
+              />
+              {/* Hidden from the accessibility tree: the shortcut is already announced by
+                  `aria-keyshortcuts` on the field, and a keycap read aloud after the label would say
+                  it a second time in a vocabulary screen readers pronounce badly. */}
+              <Kbd aria-hidden="true">{hotkeyLabel}</Kbd>
+            </div>
+          </ChromeSearch>
+
           <div className="playground__actions">
             {/*
               THE EXACT EXAMPLE. `example.docs` is resolved at build time
@@ -1368,6 +1606,7 @@ createRoot(document.getElementById("root")).render(
             */}
             {(example.docs || component.docs) && (
               <Button
+                className="playground__docs-link"
                 href={example.docs || component.docs}
                 post={<Icon name="external-link" size="sm" />}
                 rel="noopener noreferrer"
@@ -1391,6 +1630,52 @@ createRoot(document.getElementById("root")).render(
               }
               value={binding}
             />
+            {/*
+              THE PREVIEW, FROM ITS FIRST FRAME AGAIN. See `PreviewControls` for why the call has to
+              arrive through a ref, and for why a recompile is not the same thing as a restart.
+              Disabled while there is no sandbox to reload, rather than hidden: a control that
+              disappears for a second during every wait is a control that moves the two beside it.
+            */}
+            {/*
+              WRAPPED THE WAY THE DOCUMENTATION WRAPS ITS OWN HEADER CONTROLS (`PrefTooltip`): an
+              icon-only button carries its name on `aria-label`, which is everything a screen reader
+              needs and nothing at all for the reader who can see it. The Tooltip contract exists for
+              exactly that redundancy, and it is what these two had been missing next to a row where
+              every other control says what it is in words.
+            */}
+            <Tooltip content={strings.reload} placement="block-end">
+              <Button
+                aria-label={strings.reload}
+                disabled={!files || Boolean(blocked)}
+                iconOnly
+                onClick={() => previewActionsRef.current?.refresh()}
+                size="sm"
+                variant="ghost"
+              >
+                {/* One circular arrow, not the vocabulary's two-arrow cycle: see `reloadIcon`. */}
+                <Icon data={reloadIcon} size="sm" />
+              </Button>
+            </Tooltip>
+            {/*
+              WHICH WAY THE PANES SIT. One button and not a two-option switch: there are exactly two
+              arrangements, so the control is the OTHER one, and its icon and its name both say where
+              pressing it goes rather than where it already is (the same shape as the rail's own
+              hide/show trigger up in the heading).
+            */}
+            <Tooltip
+              content={stacked ? strings.layoutSideBySide : strings.layoutStacked}
+              placement="block-end"
+            >
+              <Button
+                aria-label={stacked ? strings.layoutSideBySide : strings.layoutStacked}
+                iconOnly
+                onClick={() => setPaneLayout(stacked ? "side-by-side" : "stacked")}
+                size="sm"
+                variant="ghost"
+              >
+                <Icon data={stacked ? splitVerticalIcon : splitHorizontalIcon} size="sm" />
+              </Button>
+            </Tooltip>
           </div>
         </header>
 
@@ -1431,17 +1716,42 @@ createRoot(document.getElementById("root")).render(
                 path={entryPath}
                 data={binding === "react" ? sourceExample?.reactData : undefined}
               />
+              {/* Renders nothing; it is how the bar's reload button reaches the running client. */}
+              <PreviewControls actionsRef={previewActionsRef} />
               <SandpackLayout>
                 <EditorFiles files={editorFiles} label={strings.filesLabel} />
-                {/* Between the two panes, and it resizes the one before it. See `PaneSplitter`. */}
-                <PaneSplitter label={strings.resizePanes} />
+                {/*
+                  Between the two panes, and it resizes the one before it. See `PaneSplitter`.
+
+                  KEYED BY THE LAYOUT, so flipping the arrangement gives the splitter for that axis a
+                  fresh mount: it restores its own remembered size (the two axes are two preferences,
+                  for the reason that file gives) and takes its first measurement on the pane as it
+                  now stands, both of which happen at mount and neither of which a prop change can
+                  stand in for.
+                */}
+                <PaneSplitter
+                  key={paneLayout}
+                  label={stacked ? strings.resizePanesBlock : strings.resizePanes}
+                  orientation={stacked ? "horizontal" : "vertical"}
+                />
                 {/*
                   `showOpenInCodeSandbox={false}`: the button opens a COPY of this sandbox on
                   codesandbox.io, which is a different product with a different kit in it, and it sat
                   in the corner of every example plus in the middle of every wait. The way out of
                   this tool is the documentation link in the bar above.
                 */}
-                <SandpackPreview showOpenInCodeSandbox={false} style={{ height: "100%" }}>
+                {/*
+                  `height: 100%` is what makes the preview fill the row when the panes sit side by
+                  side, and is exactly wrong when they are stacked: in a column, height IS the main
+                  size, so a pane asking for the container's full height would push the editor off
+                  the bottom instead of sharing the space the splitter divided. Stacked, it takes
+                  what the editor left (`flex: 1`) with a floor of nothing, which is the same thing
+                  said on the other axis.
+                */}
+                <SandpackPreview
+                  showOpenInCodeSandbox={false}
+                  style={stacked ? { flex: "1 1 0", minBlockSize: 0 } : { height: "100%" }}
+                >
                   <PreviewLoading label={strings.loading} />
                 </SandpackPreview>
               </SandpackLayout>
@@ -1477,6 +1787,39 @@ createRoot(document.getElementById("root")).render(
       >
         {strings.discardBody}
       </Dialog>
+
+      {/*
+        THE SEARCH PALETTE, and it is the kit's own: the same contract the documentation's ⌘K
+        composes, over this tool's index instead of that site's. Nothing about "a searchable listbox
+        in a modal dialog" is different here, so nothing about it is written again here; what this
+        app supplies is the index (`searchEntries`) and what activating a row MEANS (`onSelect`),
+        which for a tool that is already running is a selection and not a navigation.
+
+        The footer is the same three hints the docs palette shows, drawn with `Kbd`, the component
+        that exists for exactly this.
+      */}
+      <CommandPalette
+        emptyLabel={strings.searchEmpty}
+        footer={
+          <>
+            <span>
+              <Kbd>↑</Kbd>
+              <Kbd>↓</Kbd> {strings.searchHintNavigate}
+            </span>
+            <span>
+              <Kbd>↵</Kbd> {strings.searchHintOpen}
+            </span>
+            <span>
+              <Kbd>Esc</Kbd> {strings.searchHintClose}
+            </span>
+          </>
+        }
+        id={searchDialogId}
+        items={searchEntries}
+        label={strings.search}
+        onSelect={selectFromSearch}
+        placeholder={strings.searchPlaceholder}
+      />
     </div>
   );
 }

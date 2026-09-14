@@ -37,6 +37,17 @@ export interface SplitterKeyChord {
   readonly shiftKey?: boolean;
 }
 
+/**
+ * Which way the BAR runs, the same value the consumer writes on `aria-orientation`, and WAI's own
+ * naming rather than the panes': a `vertical` separator is the upright bar between two panes sitting
+ * side by side, a `horizontal` one is the rule between a pane above and a pane below.
+ *
+ * It decides which arrow keys mean anything. The APG is explicit that the off-axis pair does
+ * nothing at all (Up/Down against a vertical splitter, Left/Right against a horizontal one), which
+ * is why they resolve to `"none"` here rather than to a delta nobody asked for.
+ */
+export type SplitterOrientation = "vertical" | "horizontal";
+
 export type SplitterKeyAction =
   | { readonly kind: "delta"; readonly delta: number }
   | { readonly kind: "home" }
@@ -51,19 +62,32 @@ export type SplitterKeyAction =
  * resolving what that minimum or maximum IS (a measured bound, `+Infinity` for a clamp to saturate
  * against) is left to the caller, the same way `resolveTreegridKey` leaves "which row is home" to
  * its own.
+ *
+ * `orientation` decides which arrow pair is this splitter's (see {@link SplitterOrientation}); it
+ * defaults to `vertical`, the upright bar every consumer here had when this file only knew one
+ * axis. A delta stays a SIGNED SCALAR either way, never a point: the caller already knows which
+ * measurement it is moving, and a splitter that handed back `{ x, y }` would be asking every
+ * consumer to unpack an axis it chose itself.
  */
 export function resolveSplitterKey(
   event: SplitterKeyChord,
-  options: { readonly step?: number; readonly coarseStep?: number } = {},
+  options: {
+    readonly step?: number;
+    readonly coarseStep?: number;
+    readonly orientation?: SplitterOrientation;
+  } = {},
 ): SplitterKeyAction {
   const step = options.step ?? SPLITTER_DEFAULTS.step;
   const coarseStep = options.coarseStep ?? SPLITTER_DEFAULTS.coarseStep;
+  const orientation = options.orientation ?? "vertical";
   const magnitude = event.shiftKey ? coarseStep : step;
+  const decrease = orientation === "horizontal" ? "ArrowUp" : "ArrowLeft";
+  const increase = orientation === "horizontal" ? "ArrowDown" : "ArrowRight";
+
+  if (event.key === decrease) return { kind: "delta", delta: -magnitude };
+  if (event.key === increase) return { kind: "delta", delta: magnitude };
+
   switch (event.key) {
-    case "ArrowLeft":
-      return { kind: "delta", delta: -magnitude };
-    case "ArrowRight":
-      return { kind: "delta", delta: magnitude };
     case "Home":
       return { kind: "home" };
     case "End":

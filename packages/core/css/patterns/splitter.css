@@ -59,6 +59,36 @@
     transition: background-color var(--motion-feedback-duration) var(--motion-feedback-easing);
   }
 
+  /*
+   * THE OTHER AXIS, and it is the same bar turned ninety degrees, not a second pattern.
+   *
+   * Keyed on `aria-orientation`, which the consumer already has to write for WAI's Window Splitter
+   * pattern (`role="separator"` + the orientation of the BAR: `vertical` is the upright rule
+   * between two panes side by side, `horizontal` the one between a pane above and a pane below).
+   * Reading the attribute rather than inventing a `data-orientation` beside it means the paint
+   * cannot disagree with what the separator announces to a screen reader: there is one declaration
+   * of which way this thing runs, and both halves read it.
+   *
+   * The extent is a flat `100%` here where the vertical bar takes `--sk-splitter-block-size`: that
+   * hook exists for Table's column dividers, which are drawn past their own header cell down the
+   * whole table, and a horizontal splitter has no equivalent consumer to answer for yet. The hit
+   * region, the line thickness and every colour stay shared - only the axis flips.
+   */
+  .sk-splitter[aria-orientation="horizontal"] {
+    inset-block: auto 0;
+    inset-inline: 0;
+    inline-size: 100%;
+    block-size: var(--sk-splitter-hit);
+    cursor: row-resize;
+  }
+
+  .sk-splitter[aria-orientation="horizontal"]::before {
+    inset-block: auto 0;
+    inset-inline: 0;
+    inline-size: auto;
+    block-size: var(--sk-splitter-line);
+  }
+
   .sk-splitter:hover::before {
     background: var(--sk-splitter-color);
   }

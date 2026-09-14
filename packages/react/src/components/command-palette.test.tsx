@@ -84,6 +84,65 @@ describe("CommandPalette", () => {
     expect(ui.container.querySelector("[role='option']")?.textContent).toContain("Tokens");
   });
 
+  it("walks the listbox from the field, which never gives up focus", () => {
+    const ui = render(<CommandPalette id="cmd" items={items} label="Buscar" open />);
+    const input = open(ui);
+
+    fireEvent.change(input, { target: { value: " " } });
+    expect(input.getAttribute("aria-activedescendant")).toBe("cmd-option-0");
+
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    expect(input.getAttribute("aria-activedescendant")).toBe("cmd-option-1");
+
+    fireEvent.keyDown(input, { key: "End" });
+    expect(input.getAttribute("aria-activedescendant")).toBe("cmd-option-2");
+    // The ends hold rather than wrapping, the same as the enhancer's own clamps.
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    expect(input.getAttribute("aria-activedescendant")).toBe("cmd-option-2");
+
+    fireEvent.keyDown(input, { key: "Home" });
+    expect(input.getAttribute("aria-activedescendant")).toBe("cmd-option-0");
+    fireEvent.keyDown(input, { key: "ArrowUp" });
+    expect(input.getAttribute("aria-activedescendant")).toBe("cmd-option-0");
+
+    expect(document.activeElement === input || document.activeElement === document.body).toBe(true);
+  });
+
+  it("hands the chosen entry to onSelect, on Enter and on a click alike", () => {
+    const chosen: string[] = [];
+    const ui = render(
+      <CommandPalette
+        id="cmd"
+        items={items}
+        label="Buscar"
+        onSelect={(entry) => chosen.push(entry.href)}
+        open
+      />,
+    );
+    const input = open(ui);
+
+    fireEvent.change(input, { target: { value: "dialogo" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+    expect(chosen).toEqual(["/componentes/dialogo"]);
+
+    fireEvent.change(input, { target: { value: "tokens" } });
+    fireEvent.click(ui.container.querySelector("[role='option']")!);
+    expect(chosen).toEqual(["/componentes/dialogo", "/tokens"]);
+  });
+
+  it("activates nothing when a query matched nothing", () => {
+    const chosen: string[] = [];
+    const ui = render(
+      <CommandPalette id="cmd" items={items} label="Buscar" onSelect={(entry) => chosen.push(entry.href)} open />,
+    );
+    const input = open(ui);
+
+    fireEvent.change(input, { target: { value: "zzz" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    expect(chosen).toEqual([]);
+  });
+
   it("closes through the dialog form and names itself for the reader", () => {
     const ui = render(
       <CommandPalette

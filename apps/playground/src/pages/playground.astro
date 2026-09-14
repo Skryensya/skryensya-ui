@@ -26,6 +26,14 @@ import "@skryensya/core/components/tree-view.css";
 import "@skryensya/core/components/segmented.css";
 import "@skryensya/core/components/tabs.css";
 import "@skryensya/core/components/dialog.css";
+/* The search palette over this tool's own catalogue, and the keycaps its footer and its trigger
+ * badge are drawn with. Both are the kit's, composed here rather than restated. */
+import "@skryensya/core/components/command-palette.css";
+import "@skryensya/core/components/kbd.css";
+/* The two icon-only controls in the bar say what they are on hover and on focus, the way the
+ * documentation's own header controls do. Tooltip is an anchored box, so the pattern comes with it. */
+import "@skryensya/core/components/tooltip.css";
+import "@skryensya/core/patterns/anchored.css";
 /* The drag edge between the two panes composes the splitter pattern, and the wait inside the preview
  * is the kit's own Loader. Both are opt-in sheets, imported where the markup that uses them lives -
  * even though `sidebar.css` happens to pull the splitter in for its own rail, which is a fact about
@@ -55,6 +63,19 @@ const strings = {
   discardCancel: t("playground.discardCancel"),
   discardConfirm: t("playground.discardConfirm"),
   resizePanes: t("playground.resizePanes"),
+  resizePanesBlock: t("playground.resizePanesBlock"),
+  search: t("playground.search"),
+  searchPlaceholder: t("playground.searchPlaceholder"),
+  /* The three hints and the empty sentence are the CHROME's, shared with the documentation's own
+   * palette: "navigate", "open", "close" and "no results" say the same thing in either app, and a
+   * second copy here would be a second thing to keep translated. */
+  searchEmpty: t("search.empty"),
+  searchHintNavigate: t("search.hintNavigate"),
+  searchHintOpen: t("search.hintOpen"),
+  searchHintClose: t("search.hintClose"),
+  reload: t("playground.reload"),
+  layoutSideBySide: t("playground.layoutSideBySide"),
+  layoutStacked: t("playground.layoutStacked"),
 };
 ---
 
@@ -180,6 +201,10 @@ const strings = {
    */
   .playground__bar {
     display: flex;
+    /* The row carries five controls now beside the heading, which is more than a narrow window can
+       hold on one line: wrapping puts them on a second row instead of pushing the heading off the
+       start edge or opening a horizontal scroll across the whole tool. */
+    flex-wrap: wrap;
     gap: var(--space-inline-sm);
     align-items: center;
     justify-content: space-between;
@@ -220,10 +245,37 @@ const strings = {
     white-space: nowrap;
   }
 
+  /*
+   * Wraps for the same reason the bar around it does, and it is the half that actually overflowed: a
+   * phone-width window cannot hold a sentence-long link to the documentation, a two-option switch and
+   * two icon controls on one line, and a flex row that cannot wrap pushes them off the end edge into
+   * a horizontal scroll of the whole tool instead. Aligned to the end so a wrapped line stays under
+   * the controls it belongs to rather than drifting to the middle.
+   */
   .playground__actions {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--space-inline-sm);
     align-items: center;
+    justify-content: flex-end;
+    /* The floor the link below needs to be ALLOWED to shorten: a flex item's automatic minimum is
+       its content, so without this the cluster keeps its full width and hands the overflow up to the
+       tool instead of down to the one control that knows how to shrink. */
+    min-inline-size: 0;
+  }
+
+  /*
+   * THE LINK NAMES ITS DESTINATION IN FULL, and gives up the width when there is none.
+   *
+   * "See the component in the docs" is a sentence, and at phone width, next to a rail that does not
+   * collapse, the row it sits in is narrower than the sentence: a flex item's automatic minimum is
+   * its content, so the link pushed the whole tool into a horizontal scroll rather than giving way.
+   * Flooring that minimum hands the decision to the component, which already knows what to do with a
+   * label longer than its box (`components/button.css` truncates it), so the link shortens to an
+   * ellipsis and the row stays inside the window.
+   */
+  .playground__docs-link {
+    min-inline-size: 0;
   }
 
   .playground__note,
@@ -286,6 +338,29 @@ const strings = {
    */
   .playground__stage .sp-layout > .playground__files {
     flex: 0 0 clamp(16rem, var(--playground-editor-size, 50%), calc(100% - 16rem));
+  }
+
+  /*
+   * THE OTHER ARRANGEMENT: the preview UNDER the code rather than beside it.
+   *
+   * One flex-direction, and everything else follows from it, which is the whole reason the panes are
+   * a flex row in the first place: the splitter already writes its size as a custom property on the
+   * row (a different one per axis, see `PaneSplitter`), and a `flex-basis` means the main axis
+   * whichever way that axis runs. So the clamp below is the same rule as the side-by-side one with
+   * a floor suited to its own axis: 6rem is about four lines of code plus the tab strip, which is
+   * where an editor stops being an editor.
+   *
+   * `flex-wrap: nowrap` is not decoration. Sandpack's own layout wraps, and a wrapping COLUMN breaks
+   * into side-by-side columns rather than growing, so a pane that cannot fit would end up beside its
+   * neighbour in the arrangement that exists precisely to put it below.
+   */
+  .playground__stage[data-pane-layout="stacked"] .sp-layout {
+    flex-direction: column;
+    flex-wrap: nowrap;
+  }
+
+  .playground__stage[data-pane-layout="stacked"] .sp-layout > .playground__files {
+    flex: 0 0 clamp(6rem, var(--playground-editor-block-size, 50%), calc(100% - 6rem));
   }
 
   /*

@@ -18,12 +18,20 @@
  * (`pages/playground.astro`), which is what keeps a drag at pointer speed rather than at render
  * speed - the same trade `SidebarResizeHandle` documents, and for the same reason: nothing here owns
  * arithmetic the CSS can do.
+ *
+ * EITHER AXIS, because the reader chooses the arrangement (the layout control in the bar): the same
+ * handle is the upright rule between two panes side by side and the horizontal one between a pane
+ * above and a pane below. `orientation` picks the axis once and everything downstream reads it - the
+ * property written, the dimension measured, the pointer coordinate tracked, the arrows the core
+ * resolves, and, through `aria-orientation`, the cursor and the bar the pattern paints. Two
+ * arrangements, one component, and one declaration of which way it runs.
  */
 import {
   hasCrossedDragThreshold,
   resolveSplitterKey,
   splitterDirectionSign,
   splitterValuePercent,
+  type SplitterOrientation,
 } from "@skryensya/core/splitter";
 import { definePreference, numberValue } from "@skryensya/core/storage";
 import { useStoredPreference } from "@skryensya/react/storage";
@@ -36,8 +44,16 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 
-/** The property a drag writes. The stylesheet clamps it; nothing here does. */
+/** The property a drag writes when the panes sit side by side. The stylesheet clamps it; nothing
+ *  here does. */
 export const EDITOR_SIZE_PROPERTY = "--playground-editor-size";
+/**
+ * And the one it writes when they are stacked. TWO properties rather than one, because they are two
+ * different quantities: a width the reader chose for a tall editor says nothing about the height
+ * they want for a wide one, and storing a single number would make every flip of the layout control
+ * land the other axis somewhere arbitrary.
+ */
+export const EDITOR_BLOCK_SIZE_PROPERTY = "--playground-editor-block-size";
 
 /**
  * How wide the reader left the editor, remembered. Bounded at parse time the same way Sidebar's own
@@ -51,21 +67,42 @@ const editorSizePreference = definePreference<number | null>({
   parse: (raw) => numberValue(0, 10000)(raw),
 });
 
+/** The same slot for the stacked layout, for the reason the two properties above are two. */
+const editorBlockSizePreference = definePreference<number | null>({
+  slot: "playground-editor-block-size",
+  fallback: null,
+  parse: (raw) => numberValue(0, 10000)(raw),
+});
+
 export type PaneSplitterProps = {
   /** The separator's accessible name: a bare strip between two panes describes nothing on its own. */
   readonly label: string;
+  /**
+   * Which way the BAR runs, WAI's own naming and the value that lands on `aria-orientation`:
+   * `vertical` is the upright rule between two panes side by side, `horizontal` the one between the
+   * code and the preview stacked. It picks the axis for everything below - the property written, the
+   * dimension measured, the arrow keys the core resolves (`resolveSplitterKey`) and the cursor the
+   * pattern paints - so the two layouts are one component and not two.
+   */
+  readonly orientation?: SplitterOrientation;
 };
 
-export function PaneSplitter({ label }: PaneSplitterProps) {
+export function PaneSplitter({ label, orientation = "vertical" }: PaneSplitterProps) {
+  const horizontal = orientation === "horizontal";
+  const sizeProperty = horizontal ? EDITOR_BLOCK_SIZE_PROPERTY : EDITOR_SIZE_PROPERTY;
   const stripRef = useRef<HTMLDivElement>(null);
   const boundsRef = useRef({ min: 0, max: 0 });
-  const dragRef = useRef<{ pointerId: number; startX: number; startSize: number; dragging: boolean } | null>(
+  /* `start` is the pointer coordinate ALONG THIS SPLITTER'S AXIS, not an x: the gesture is the same
+     one either way, so the axis is resolved once (`pointerPosition`) and never again below. */
+  const dragRef = useRef<{ pointerId: number; start: number; startSize: number; dragging: boolean } | null>(
     null,
   );
   /* The even split the stylesheet starts from, replaced by a real reading once there is a layout to
    * measure. Rendered rather than patched, so React owns the attribute it printed. */
   const [percent, setPercent] = useState(50);
-  const [storedSize, setStoredSize, clearStoredSize] = useStoredPreference(editorSizePreference);
+  const [storedSize, setStoredSize, clearStoredSize] = useStoredPreference(
+    horizontal ? editorBlockSizePreference : editorSizePreference,
+  );
 
   /** The row both panes are in: the property is written here, so both of them inherit it. */
   const row = useCallback(() => stripRef.current?.parentElement ?? null, []);
@@ -74,7 +111,17 @@ export function PaneSplitter({ label }: PaneSplitterProps) {
     () => (stripRef.current?.previousElementSibling as HTMLElement | null) ?? null,
     [],
   );
-  const settled = useCallback(() => pane()?.getBoundingClientRect().width ?? 0, [pane]);
+  const settled = useCallback(() => {
+    const box = pane()?.getBoundingClientRect();
+    if (!box) return 0;
+    return horizontal ? box.height : box.width;
+  }, [horizontal, pane]);
+
+  /** The pointer, on this splitter's axis and no other. */
+  const pointerPosition = useCallback(
+    (event: { clientX: number; clientY: number }) => (horizontal ? event.clientY : event.clientX),
+    [horizontal],
+  );
 
   const describe = useCallback(() => {
     const { min, max } = boundsRef.current;
@@ -94,26 +141,31 @@ export function PaneSplitter({ label }: PaneSplitterProps) {
     const measured = pane();
     if (!target || !measured) return { min: 0, max: 0 };
 
-    const previous = target.style.getPropertyValue(EDITOR_SIZE_PROPERTY);
-    target.style.setProperty(EDITOR_SIZE_PROPERTY, "0px");
-    const min = measured.getBoundingClientRect().width;
-    target.style.setProperty(EDITOR_SIZE_PROPERTY, "100000px");
-    const max = measured.getBoundingClientRect().width;
+    const extent = () => {
+      const box = measured.getBoundingClientRect();
+      return horizontal ? box.height : box.width;
+    };
 
-    if (previous) target.style.setProperty(EDITOR_SIZE_PROPERTY, previous);
-    else target.style.removeProperty(EDITOR_SIZE_PROPERTY);
+    const previous = target.style.getPropertyValue(sizeProperty);
+    target.style.setProperty(sizeProperty, "0px");
+    const min = extent();
+    target.style.setProperty(sizeProperty, "100000px");
+    const max = extent();
+
+    if (previous) target.style.setProperty(sizeProperty, previous);
+    else target.style.removeProperty(sizeProperty);
     return { min, max };
-  }, [pane, row]);
+  }, [horizontal, pane, row, sizeProperty]);
 
   const apply = useCallback(
     (size: number | null) => {
       const target = row();
       if (!target) return;
-      if (size === null) target.style.removeProperty(EDITOR_SIZE_PROPERTY);
-      else target.style.setProperty(EDITOR_SIZE_PROPERTY, `${Math.round(size)}px`);
+      if (size === null) target.style.removeProperty(sizeProperty);
+      else target.style.setProperty(sizeProperty, `${Math.round(size)}px`);
       describe();
     },
-    [describe, row],
+    [describe, row, sizeProperty],
   );
 
   /** The end of an adjustment: what the stylesheet granted is what gets remembered. */
@@ -128,12 +180,20 @@ export function PaneSplitter({ label }: PaneSplitterProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /*
+   * Which way is "give the editor more room". On the inline axis that is a question about writing
+   * direction, and the core answers it (`splitterDirectionSign`); on the block axis it is not a
+   * question at all - these two panes are stacked top to bottom, and dragging down grows the one on
+   * top in every writing mode this kit supports.
+   */
   const towardWider = useCallback(
     () =>
-      splitterDirectionSign(
-        stripRef.current && getComputedStyle(stripRef.current).direction === "rtl" ? "rtl" : "ltr",
-      ),
-    [],
+      horizontal
+        ? 1
+        : splitterDirectionSign(
+            stripRef.current && getComputedStyle(stripRef.current).direction === "rtl" ? "rtl" : "ltr",
+          ),
+    [horizontal],
   );
 
   /** One adjustment, with the bounds re-measured: the panes can be resized by the window too. */
@@ -157,19 +217,21 @@ export function PaneSplitter({ label }: PaneSplitterProps) {
      * The strip is the handle's CONTAINING BLOCK, which is the one thing `patterns/splitter.css`
      * asks of a consumer: it positions itself absolutely inside whatever box it is given (Sidebar
      * gives it the panel edge, Treegrid a header cell). Here that box is a flex item between the two
-     * panes, as wide as the pattern's own hit region.
+     * panes, as thick as the pattern's own hit region on whichever axis it separates.
      */
-    <div className="playground__splitter" ref={stripRef}>
+    <div className="playground__splitter" data-orientation={orientation} ref={stripRef}>
       <div
         aria-label={label}
-        aria-orientation="vertical"
+        /* Read by the pattern's stylesheet as well as by a screen reader: one declaration of which
+         * way this bar runs, so the paint and the announcement cannot disagree. */
+        aria-orientation={orientation}
         aria-valuemax={100}
         aria-valuemin={0}
         aria-valuenow={percent}
         className="sk-splitter"
         onDoubleClick={reset}
         onKeyDown={(event: ReactKeyboardEvent<HTMLDivElement>) => {
-          const action = resolveSplitterKey(event);
+          const action = resolveSplitterKey(event, { orientation });
 
           switch (action.kind) {
             case "delta":
@@ -210,24 +272,31 @@ export function PaneSplitter({ label }: PaneSplitterProps) {
           // pointer stops reporting here the moment it crosses into the preview's iframe, which is
           // exactly where this drag is going.
           event.preventDefault();
-          dragRef.current = { pointerId: event.pointerId, startX: event.clientX, startSize: 0, dragging: false };
+          dragRef.current = {
+            pointerId: event.pointerId,
+            start: pointerPosition(event),
+            startSize: 0,
+            dragging: false,
+          };
           event.currentTarget.setPointerCapture(event.pointerId);
         }}
         onPointerMove={(event: ReactPointerEvent<HTMLDivElement>) => {
           const drag = dragRef.current;
           if (!drag || drag.pointerId !== event.pointerId) return;
 
+          const position = pointerPosition(event);
+
           if (!drag.dragging) {
-            if (!hasCrossedDragThreshold(drag.startX, event.clientX)) return;
+            if (!hasCrossedDragThreshold(drag.start, position)) return;
             // The gesture is a drag. Measure from HERE, so the pane does not jump by the slop.
             boundsRef.current = measure();
             drag.dragging = true;
-            drag.startX = event.clientX;
+            drag.start = position;
             drag.startSize = settled();
             event.currentTarget.setAttribute("data-dragging", "");
           }
 
-          apply(drag.startSize + (event.clientX - drag.startX) * towardWider());
+          apply(drag.startSize + (position - drag.start) * towardWider());
         }}
         onPointerUp={(event: ReactPointerEvent<HTMLDivElement>) => {
           const drag = dragRef.current;

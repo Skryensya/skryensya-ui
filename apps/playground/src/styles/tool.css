@@ -42,15 +42,32 @@ body {
 }
 
 /*
- * ONE ROW, as short as the controls inside it. Same reasoning as `.playground__bar` one layer down
- * (see `pages/playground.astro`): every pixel of chrome is a pixel of code the reader cannot see,
- * so the block padding is the floor of the scale and the height is the buttons' own.
+ * ONE ROW, AND IT IS THE DOCUMENTATION'S ROW, not a tighter cousin of it.
+ *
+ * The height is the same expression the docs header is built from (`--docs-header-block-size` in
+ * `site.css`: a medium control plus its inset above and below plus the hairline), written here in
+ * the same tokens rather than imported, because this app deliberately does not load that
+ * stylesheet. A reader moving between the site and the tool crosses one bar, not two bars of
+ * different heights, and the field in the middle of it is the same field at the same size.
+ *
+ * It is the one place in this app that buys height instead of spending it. The strip BELOW it
+ * (`.playground__bar`) is still as short as its controls, because that one is the tool's own and
+ * every pixel of it is a pixel of code the reader cannot see; this one is the site's furniture, and
+ * furniture that changes size as you walk through a door reads as a different building.
  */
 .playground-chrome {
+  --playground-chrome-block-size: calc(var(--size-control-md) + var(--space-inset-sm) * 2 + 1px);
+
   display: flex;
   gap: var(--space-inline-sm);
   align-items: center;
-  padding: var(--space-inset-xs) var(--space-inset-md);
+  /* The height comes from the minimum, not from padding around the controls, which is how the docs
+     header reaches the same number: its own field is taller than the inset would make the row, so
+     block padding here would stack on top of it and the two bars would miss each other. The extra
+     pixel is this row's own hairline: over there the sticky bar draws its border UNDER a content row
+     already that tall, so the same bar measures one pixel more than the token that names it. */
+  min-block-size: calc(var(--playground-chrome-block-size) + 1px);
+  padding-inline: var(--space-inset-md);
   border-block-end: 1px solid var(--color-border-subtle);
   background: var(--color-bg-surface);
 }
@@ -72,11 +89,82 @@ body {
   font-size: var(--font-size-body-sm);
 }
 
+/* The search trigger, portalled in by the island. `margin-inline-start: auto` here and not on the
+   actions block: the search is what pushes off the title, and the actions then sit beside it. */
+.playground-chrome__search {
+  display: flex;
+  align-items: center;
+  margin-inline-start: auto;
+}
+
+/*
+ * THE SAME SEARCH FIELD THE DOCUMENTATION HEADER CARRIES, down to the tokens.
+ *
+ * `.dimensions__search-trigger` (site.css) is the original and this is that decision applied here,
+ * not a second one: the sunken well `.sk-input` sits in, `--color-border-default` for an edge a
+ * reader's eye reads as "typeable", the control radius, and a size that keeps the row at the height
+ * above. The two apps are separate origins and share no stylesheet, so the only way for one control
+ * to look like one control is for both to be written from the same tokens.
+ *
+ * Why a well and not a button: the markup says the same thing (`Playground.tsx`, where this field
+ * is rendered), and `search-trigger.ts` in the docs has the full reasoning.
+ */
+.playground-chrome__search-field {
+  display: inline-flex;
+  gap: var(--space-inline-sm);
+  align-items: center;
+  min-inline-size: min(18rem, 40vw);
+  min-block-size: max(var(--size-control-md), var(--size-touch-target));
+  padding-inline: var(--space-inset-md);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-control);
+  background: var(--color-bg-surface-sunken);
+  box-shadow: var(--elevation-sunken);
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+}
+
+.playground-chrome__search-field .sk-icon {
+  flex: none;
+  pointer-events: none;
+}
+
+/* The input paints nothing of its own: the wrapper above IS the field's fill, border and shadow, and
+   a bordered input inside a bordered box would draw the edge twice. The same split
+   `.sk-command-palette__search`/`__input` already makes between a bordered row and its borderless,
+   `flex: 1` input, which is the box this one opens. */
+.playground-chrome__search-input {
+  flex: 1;
+  min-inline-size: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: inherit;
+}
+
+.playground-chrome__search-input::placeholder {
+  color: inherit;
+  opacity: 1;
+}
+
+/* No ring on the bare input: focus lands on it, but the ring belongs to the whole FIELD, the icon
+   and the keycap included, which is the same unit the fill and the border already draw as one piece
+   (`.sk-input:focus-visible` rings the control, never a sliver of it). */
+.playground-chrome__search-input:focus {
+  outline: none;
+}
+
+.playground-chrome__search-field:focus-within {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
 .playground-chrome__actions {
   display: flex;
   gap: var(--space-inline-xs);
   align-items: center;
-  margin-inline-start: auto;
 }
 
 /* Below the phone breakpoint the wordmark is the first thing worth losing: the back arrow still
@@ -85,6 +173,30 @@ body {
   .playground-chrome__brand-text,
   .playground-chrome__name {
     display: none;
+  }
+
+  /*
+   * The field collapses to its icon rather than to a second control. The documentation swaps in a
+   * real `<button>` at this width, and its own comment says why: the field shape only earns an
+   * input's mobile quirks while it is SHOWING a placeholder and a hint. Here the same swap would
+   * mean a second trigger, in another language, portalled from another place, for a tool whose
+   * narrow-width story is one column of editor; hiding the two parts that need the room is the
+   * cheaper half of that trade, and the input keeps its own accessible name.
+   */
+  .playground-chrome__search-field {
+    min-inline-size: 0;
+    padding-inline: var(--space-inset-sm);
+  }
+
+  .playground-chrome__search-field .sk-kbd,
+  .playground-chrome__search-input::placeholder {
+    display: none;
+    opacity: 0;
+  }
+
+  .playground-chrome__search-input {
+    flex: 0 1 auto;
+    inline-size: 0;
   }
 }
 

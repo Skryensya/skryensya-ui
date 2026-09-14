@@ -1,31 +1,94 @@
+# syntax=docker/dockerfile:1.7
 # Playground app only (@skryensya/playground). Build context must be the monorepo root.
-# Dokploy: Dockerfile path = Dockerfile.playground
+# Dokploy: Dockerfile path = Dockerfile.playground, Docker context path = .
 
-FROM node:22-bookworm-slim AS build
+# POR DIGEST, no sólo por tag, y los MISMOS que Dockerfile.docs: un tag es un puntero que se mueve, y
+# dos builds del mismo commit pueden traer imágenes distintas sin que nada acá cambie. Para sacar el
+# de hoy:
+#   docker buildx imagetools inspect node:22-bookworm-slim
+FROM node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5 AS build
+
+ENV PNPM_HOME=/pnpm
+ENV PATH="$PNPM_HOME:$PATH"
 
 RUN corepack enable && corepack prepare pnpm@10.18.2 --activate
 
 WORKDIR /app
 
+# Los manifests primero, y sólo los manifests: la capa de dependencias se invalida cuando cambia una
+# dependencia, no cuando cambia una línea de código. Mismo orden que Dockerfile.docs.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
-COPY apps ./apps
-COPY packages ./packages
+COPY apps/docs/package.json ./apps/docs/package.json
+COPY apps/eval-viewer/package.json ./apps/eval-viewer/package.json
+COPY apps/playground/package.json ./apps/playground/package.json
+COPY packages/ai-compiler/package.json ./packages/ai-compiler/package.json
+COPY packages/ai-gates/package.json ./packages/ai-gates/package.json
+COPY packages/charts/package.json ./packages/charts/package.json
+COPY packages/core/package.json ./packages/core/package.json
+COPY packages/devtools/package.json ./packages/devtools/package.json
+COPY packages/editor/package.json ./packages/editor/package.json
+COPY packages/icons-lucide/package.json ./packages/icons-lucide/package.json
+COPY packages/icons-material/package.json ./packages/icons-material/package.json
+COPY packages/icons-phosphor/package.json ./packages/icons-phosphor/package.json
+COPY packages/mcp/package.json ./packages/mcp/package.json
+COPY packages/react/package.json ./packages/react/package.json
+COPY packages/vanilla/package.json ./packages/vanilla/package.json
+COPY contracts/snippets/package.json ./contracts/snippets/package.json
+COPY evals/package.json ./evals/package.json
+
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+  pnpm config set store-dir /pnpm/store && pnpm fetch --frozen-lockfile
+
+RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
+  pnpm config set store-dir /pnpm/store && pnpm install --frozen-lockfile --offline
+
+# APPS/DOCS IS A SOURCE DEPENDENCY, not a sibling that happens to be in the tree: the catalogue reads
+# the demos out of `apps/docs/src/demos`, and the rail, the i18n and the docs addresses come from
+# `apps/docs/src/{lib,i18n}`. The playground is the same examples in an editor (see
+# `lib/playground-catalogue.ts`), so there is nothing to build here without them.
+COPY apps/docs ./apps/docs
+COPY apps/playground ./apps/playground
+COPY packages/ai-compiler ./packages/ai-compiler
+COPY packages/charts ./packages/charts
+COPY packages/core ./packages/core
+COPY packages/devtools ./packages/devtools
+# `@skryensya/editor` is an OPTIONAL peer dependency of `@skryensya/vanilla`, and optional is what
+# makes its absence dangerous here rather than loud: install succeeds without it and Vite swaps every
+# import for a stub, so the failure surfaces much later as MISSING_EXPORT errors. Same note as
+# Dockerfile.docs.
+COPY packages/editor ./packages/editor
+COPY packages/icons-lucide ./packages/icons-lucide
+COPY packages/icons-material ./packages/icons-material
+COPY packages/icons-phosphor ./packages/icons-phosphor
+COPY packages/react ./packages/react
+COPY packages/vanilla ./packages/vanilla
 COPY contracts ./contracts
-COPY evals ./evals
 COPY artifacts ./artifacts
-COPY scripts ./scripts
 
-RUN pnpm install --frozen-lockfile
+# WHERE THE DOCUMENTATION LIVES, and it has to be known HERE, at image build time. Astro inlines
+# `import.meta.env.PUBLIC_DOCS_URL` into the static output (`src/lib/docs-origin.ts`), and this image
+# ships nginx: a runtime environment variable would reach nothing. Unset, the "Ver en docs" links are
+# bare paths, which is correct only when both apps sit behind ONE host. On its own domain, set it.
+# Dokploy: Environment -> Build Time Arguments (`PUBLIC_DOCS_URL=https://…`).
+ARG PUBLIC_DOCS_URL
+ENV PUBLIC_DOCS_URL=$PUBLIC_DOCS_URL
 
-# Core's dist/foundation.css is an input to the playground sandbox bundle. The rest of the
-# playground imports workspace package source through exports maps, so building every dependency via
-# Turbo would run compiler contract publication checks that are not required to produce this app.
+# Core's dist/foundation.css is an input to the playground sandbox bundle. The rest of the playground
+# imports workspace package source through exports maps, so building every dependency via Turbo would
+# run compiler contract publication checks that are not required to produce this app.
 ENV NODE_OPTIONS=--max-old-space-size=4096
 RUN pnpm --filter @skryensya/core build && pnpm --filter @skryensya/playground build
 
-FROM nginx:1.27-alpine AS runtime
+#   docker buildx imagetools inspect nginx:1.27-alpine
+FROM nginx:1.27-alpine@sha256:65645c7bb6a0661892a8b03b89d0743208a18dd2f3f17a54ef4b76fb8e2f2a10 AS runtime
 
 COPY nginx.playground.conf /etc/nginx/conf.d/default.conf
+
+# LA PÁGINA POR DEFECTO DE NGINX SE VA, no se deja tapada: el `dist` se copia ENCIMA de este
+# directorio, y como esta app no tiene ruta `/`, su `index.html` quedaba servido en la raíz - un
+# "Welcome to nginx!" en el dominio del playground. Verificado corriendo la imagen antes de borrarlo.
+RUN rm -f /usr/share/nginx/html/index.html /usr/share/nginx/html/50x.html
+
 COPY --from=build /app/apps/playground/dist /usr/share/nginx/html
 
 EXPOSE 80

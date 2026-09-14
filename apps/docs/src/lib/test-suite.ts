@@ -19,8 +19,32 @@
  * nothing else - no `../i18n`, no Astro, no docs types - so neither program can manufacture an error
  * in the other's half.
  */
-import { readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+
+/**
+ * The workspace root, found by looking for the file that defines it.
+ *
+ * `TestCoverage.astro` used to count directories from its own `import.meta.url`, which is right in
+ * the source tree and wrong in a build: Astro bundles that component into
+ * `dist/.prerender/chunks/*.mjs`, so the same four `..` landed on `apps/` and every page with a Tests
+ * tab died with `ENOENT: /app/apps/packages/react/src/components/accordion.test.tsx`. It only ever
+ * worked because dev renders the file where it lies.
+ *
+ * Walking up for `pnpm-workspace.yaml` asks the question that actually has an answer: the root is
+ * where the workspace is declared, whatever the caller's depth, whether the build runs from
+ * `apps/docs` (`pnpm --filter`) or from the root (`turbo`), bundled or not.
+ */
+export function workspaceRoot(from: string = process.cwd()): string {
+  let dir = resolve(from);
+
+  for (;;) {
+    if (existsSync(join(dir, "pnpm-workspace.yaml"))) return dir;
+    const parent = dirname(dir);
+    if (parent === dir) throw new Error(`No pnpm-workspace.yaml above ${from}`);
+    dir = parent;
+  }
+}
 
 /** A test file one or more pages ask the report to run, split the way the report invokes vitest. */
 export type DemandedFile = {

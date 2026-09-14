@@ -6,7 +6,7 @@
 import "@skryensya/core/components/list.css";
 import { getLocale, useTranslations } from "../i18n";
 import { testStatus } from "../lib/test-results";
-import { suite, type SuiteRow } from "../lib/test-suite";
+import { suite, workspaceRoot, type SuiteRow } from "../lib/test-suite";
 
 export type TestGroup = {
   /** Test file path, shown as the group's aria-label and looked up in test-results.json. */
@@ -52,9 +52,11 @@ if (!groups && !files) throw new Error("TestCoverage needs either `groups` or `f
  * same rows `groups` already produces, so the markup below never learns which shape a page used.
  * That is what lets pages move one at a time instead of all 81 in one change.
  *
- * `process.cwd()` is `apps/docs` during a build, and `suite()` wants the repo root.
+ * The root is FOUND, not counted: this component is bundled into `dist/.prerender/chunks/` for the
+ * build, where its own distance from the root is not the distance it has in the source tree. See
+ * `workspaceRoot`.
  */
-const repoRoot = new URL("../../../..", import.meta.url).pathname;
+const repoRoot = workspaceRoot();
 
 const rendered: readonly { file: string; rows: readonly SuiteRow[] }[] = files
   ? files.map((file) => suite(repoRoot, file))

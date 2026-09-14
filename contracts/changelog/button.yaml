@@ -5,6 +5,38 @@
 # hash.
 surface: "51ea2207a5ae7098"
 entries:
+  - date: 2026-09-14
+    kind: bugfix
+    target: disabled
+    es:
+      title: Un boton deshabilitado ya pinta como deshabilitado en todos los tonos
+      body: >-
+        Un <code>disabled</code> (o <code>aria-disabled</code>) con <code>tone="accent"</code> o
+        <code>tone="danger"</code> conservaba su relleno de tono: un <code>solid</code>
+        <code>danger</code> deshabilitado pintaba el rojo completo con tinta blanca, identico al
+        boton habilitado que tenia al lado, y lo unico que lo distinguia era el cursor.
+        <code>soft</code> y <code>translucent</code> fallaban igual; <code>ghost</code> era la unica
+        celda que salia bien. La causa era de especificidad: <code>:not()</code> e <code>:is()</code>
+        toman la de su argumento mas especifico, asi que las reglas de tono resolvian en (0,3,0) y
+        <code>.sk-button:disabled</code> en (0,2,0). Ahora cada regla de apariencia lleva el guardia
+        <code>:not(:disabled):not([aria-disabled="true"])</code>, la misma regla de la casa que ya
+        siguen checkbox y switch: no disponible gana a cualquier eje de apariencia. Un toggle
+        deshabilitado deja de pintar su tono y sigue anunciando <code>aria-pressed</code>.
+    en:
+      title: A disabled button now paints as disabled in every tone
+      body: >-
+        A <code>disabled</code> (or <code>aria-disabled</code>) button with
+        <code>tone="accent"</code> or <code>tone="danger"</code> kept its tone fill: a disabled
+        <code>solid</code> <code>danger</code> painted the full red on white ink, identical to the
+        enabled button beside it, and the only thing distinguishing them was the cursor.
+        <code>soft</code> and <code>translucent</code> were wrong in the same direction;
+        <code>ghost</code> was the one cell that came out right. The cause was specificity:
+        <code>:not()</code> and <code>:is()</code> take that of their most specific argument, so the
+        tone rules resolved at (0,3,0) and <code>.sk-button:disabled</code> at (0,2,0). Every
+        appearance rule now carries the <code>:not(:disabled):not([aria-disabled="true"])</code>
+        guard, the same house rule checkbox and switch already follow: unavailable outranks every
+        appearance axis. A disabled toggle stops painting its tone and keeps announcing
+        <code>aria-pressed</code>.
   - date: 2026-09-13
     kind: bugfix
     target: pre

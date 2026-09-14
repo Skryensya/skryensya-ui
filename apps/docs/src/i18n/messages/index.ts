@@ -31,9 +31,9 @@ export const indexMessages = {
     "landing.description":
       "Componentes, primitives y fundamentos para construir interfaces que funcionan como un sistema.",
     "landing.brand": "skryensya/ui",
-    "landing.hero.title": "Un componente. Dos bindings.",
+    "landing.hero.title": "Construir interfaces hecho simple",
     "landing.hero.lede":
-      "HTML y React dejan de divergir: el mismo contrato, el mismo aspecto, los mismos ejemplos.",
+      "Componentes que ya traen consistencia y accesibilidad para que no reinventes lo mismo en cada pantalla. Acelerás la interfaz y el sistema sostiene la calidad.",
     "landing.hero.ctaComponents": "Ver componentes",
     "landing.hero.ctaInstall": "Instalarlo",
     "landing.hero.specimenTitle": "Nueva versión",
@@ -41,6 +41,24 @@ export const indexMessages = {
     "landing.hero.specimenSource": "Lo que escribes",
 
     "landing.gallery.title": "Cada pieza, por separado.",
+
+    "landing.faq.title": "Preguntas frecuentes",
+    "landing.faq.lede": "Lo esencial antes de abrir el catálogo.",
+    "landing.faq.what.q": "¿Qué es skryensya/ui?",
+    "landing.faq.what.a":
+      "Un sistema de diseño framework-agnóstico: un contrato compartido, dos runtimes (Vanilla y React) y cero desvíos entre ellos. Los componentes, los tokens y el comportamiento salen de la misma fuente.",
+    "landing.faq.runtime.q": "¿Tengo que elegir React o Vanilla?",
+    "landing.faq.runtime.a":
+      "No al principio. El contrato es el mismo; elegís el binding cuando montás. Podés empezar en HTML y pasar a React, o al revés, sin reaprender la pieza.",
+    "landing.faq.adopt.q": "¿Hace falta adoptar el sistema entero?",
+    "landing.faq.adopt.a":
+      "No. Podés tomar un componente, un primitive o un fundamento y dejar el resto. Las piezas están hechas para encontrarse cuando las necesites, no para obligarte a un big bang.",
+    "landing.faq.version.q": "¿Qué significa el número de versión del pie?",
+    "landing.faq.version.a":
+      "Es la versión del contrato del kit, no de un paquete suelto. Las notas de versión agrupan lo que se movió en cada corte; el historial de un componente vive en su propia pestaña Changelog.",
+    "landing.faq.start.q": "¿Por dónde empiezo?",
+    "landing.faq.start.a":
+      "Si querés construir ya, instalá e importá un componente. Si querés entender el modelo, leé Fundamentos. Si querés explorar por tarea, abrí el catálogo de componentes.",
 
     "landing.showcase.title": "De una pieza a una pantalla.",
     "landing.showcase.lede":
@@ -293,9 +311,9 @@ export const indexMessages = {
     "landing.description":
       "Components, primitives and foundations for building interfaces that work as a system.",
     "landing.brand": "skryensya/ui",
-    "landing.hero.title": "One component. Two bindings.",
+    "landing.hero.title": "Building interfaces made simple",
     "landing.hero.lede":
-      "HTML and React stop drifting apart: the same contract, the same look, the same examples.",
+      "Components that already carry consistency and accessibility so you do not reinvent the same pieces on every screen. You ship the interface faster and the system holds the quality.",
     "landing.hero.ctaComponents": "See the components",
     "landing.hero.ctaInstall": "Install it",
     "landing.hero.specimenTitle": "New version",
@@ -303,6 +321,24 @@ export const indexMessages = {
     "landing.hero.specimenSource": "What you write",
 
     "landing.gallery.title": "Every piece, on its own.",
+
+    "landing.faq.title": "Frequently asked questions",
+    "landing.faq.lede": "The essentials before you open the catalogue.",
+    "landing.faq.what.q": "What is skryensya/ui?",
+    "landing.faq.what.a":
+      "A framework-agnostic design system: one shared contract, two runtimes (Vanilla and React), and zero drift between them. Components, tokens, and behaviour come from the same source.",
+    "landing.faq.runtime.q": "Do I have to choose React or Vanilla?",
+    "landing.faq.runtime.a":
+      "Not up front. The contract is the same; you pick the binding when you mount. You can start in HTML and move to React, or the other way, without relearning the piece.",
+    "landing.faq.adopt.q": "Do I need to adopt the whole system?",
+    "landing.faq.adopt.a":
+      "No. Take one component, one primitive, or one foundation and leave the rest. The pieces are designed to meet when you need them, not to force a big-bang adoption.",
+    "landing.faq.version.q": "What does the footer version number mean?",
+    "landing.faq.version.a":
+      "It is the kit contract version, not any one package's. Release notes group what moved in each cut; a single component's history lives on that component's own Changelog tab.",
+    "landing.faq.start.q": "Where should I start?",
+    "landing.faq.start.a":
+      "If you want to build now, install and import a component. If you want the model, read Foundations. If you want to browse by task, open the component catalogue.",
 
     "landing.showcase.title": "From one piece to a screen.",
     "landing.showcase.lede":

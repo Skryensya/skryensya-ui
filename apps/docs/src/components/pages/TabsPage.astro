@@ -10,6 +10,7 @@ import {
   tabsAdvancedTree,
   tabsAnatomyTree,
   tabsBasicTree,
+  tabsHangingTree,
   tabsSizeTree,
   tabsStatesTree,
 } from "../../demos/tabs";
@@ -37,19 +38,7 @@ const t = useTranslations(getLocale(Astro.url));
   title="Tabs"
   description={t("tabsPage.description")}
   contractId="tabs"
-  tests={[
-    {
-      file: "packages/react/src/components/tabs.test.tsx",
-      tests: [
-        { name: "connects the selected tab with its labelled panel", description: t("tabsPage.test1") },
-        { name: "mirrors selection on the root data attribute", description: t("tabsPage.test2") },
-        {
-          name: "moves roving focus with ArrowRight without changing manual selection",
-          description: t("tabsPage.test3"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/tabs.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("tabsPage.lede")} />
@@ -80,6 +69,10 @@ const t = useTranslations(getLocale(Astro.url));
     <h3>{t("tabsPage.sizeTitle")}</h3>
     <p set:html={t("tabsPage.sizeBody")} />
     <ComponentPreview tree={tabsSizeTree(t)} label={t("tabsPage.sizeLabel")} />
+
+    <h3>{t("tabsPage.hangingTitle")}</h3>
+    <p set:html={t("tabsPage.hangingBody")} />
+    <ComponentPreview tree={tabsHangingTree(t)} label={t("tabsPage.hangingLabel")} />
 
     <h3>{t("component.contractNotesTitle")}</h3>
     <ul>

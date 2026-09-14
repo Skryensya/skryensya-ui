@@ -6,6 +6,7 @@
 import "@skryensya/core/components/list.css";
 import { getLocale, useTranslations } from "../i18n";
 import { testStatus } from "../lib/test-results";
+import { suite, type SuiteRow } from "../lib/test-suite";
 
 export type TestGroup = {
   /** Test file path, shown as the group's aria-label and looked up in test-results.json. */
@@ -19,14 +20,48 @@ export type TestGroup = {
 };
 
 interface Props {
-  groups: readonly TestGroup[];
+  /**
+   * Rows quoted by the page: a file plus every `it()` title it wants to show, retyped verbatim.
+   *
+   * The older of the two shapes, kept while pages still use it. Its cost is that the title is a
+   * byte-for-byte lookup key living in two files at once, so rewording a test silently turns its row
+   * into a "not run" clock.
+   */
+  groups?: readonly TestGroup[];
+  /**
+   * Rows DERIVED from the test files themselves: the page names paths, and every title the file
+   * declares becomes a row, in declaration order.
+   *
+   * Nothing to retype and nothing to keep in step, at the price of showing every test rather than a
+   * curated subset - so a row with no authored prose shows its real title and its real status, which
+   * is more honest than hiding a test that exists.
+   */
+  files?: readonly string[];
   /** False only for a page with no `contractId` (Card, Primitivas): there is no generated
    *  Referencia tab, so the intro should avoid pointing at one. */
   hasReference?: boolean;
 }
 
-const { groups, hasReference = true } = Astro.props;
+const { groups, files, hasReference = true } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
+
+if (!groups && !files) throw new Error("TestCoverage needs either `groups` or `files`.");
+
+/*
+ * BOTH SHAPES, ONE RENDER. `files` is read through `suite()` at build time and flattened into the
+ * same rows `groups` already produces, so the markup below never learns which shape a page used.
+ * That is what lets pages move one at a time instead of all 81 in one change.
+ *
+ * `process.cwd()` is `apps/docs` during a build, and `suite()` wants the repo root.
+ */
+const repoRoot = new URL("../../../..", import.meta.url).pathname;
+
+const rendered: readonly { file: string; rows: readonly SuiteRow[] }[] = files
+  ? files.map((file) => suite(repoRoot, file))
+  : (groups ?? []).map((group) => ({
+      file: group.file,
+      rows: group.tests.map(({ name, description }) => ({ title: name, description })),
+    }));
 
 /** Only "passed"/"failed" get their own icon and tone; a skipped, todo, or missing result all read
  *  the same to a reader ("nothing to show yet"), so they collapse into one neutral "unknown". */
@@ -42,15 +77,15 @@ function statusDisplay(file: string, name: string) {
 <p>{hasReference ? t("tests.intro") : t("tests.introNoReference")}</p>
 
 {
-  groups.map((group) => (
+  rendered.map((group) => (
     <>
       <p class="docs-tests__file">
         <span data-sk-icon="file" data-sk-icon-size="sm" aria-hidden="true"></span>
         <span class="mono">{group.file}</span>
       </p>
       <ul class="sk-list" aria-label={group.file}>
-        {group.tests.map(({ name, description }) => {
-          const display = statusDisplay(group.file, name);
+        {group.rows.map(({ title, description }) => {
+          const display = statusDisplay(group.file, title);
           return (
             <li class="sk-list__item">
               <span class="sk-list__leading" data-tone={display.tone} role="img" aria-label={t(display.labelKey)}>
@@ -62,7 +97,9 @@ function statusDisplay(file: string, name: string) {
                   inline text, so wrapping the mixed content there keeps the code chips inline with the
                   words around them, and gives the row its single flex child. */}
               <span class="sk-list__content">
-                <span class="sk-list__title" set:html={description} />
+                {/* A derived row with no authored prose shows the test's real title: the row is
+                    evidence either way, and an undescribed one is still true. */}
+                <span class="sk-list__title" set:html={description ?? title} />
               </span>
             </li>
           );

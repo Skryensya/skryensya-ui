@@ -30,27 +30,7 @@ const hotkeyHint = `<kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd>`
   title="CommandPalette"
   description={t("commandPalette.description")}
   contractId="command-palette"
-  tests={[
-    {
-      file: "packages/react/src/components/command-palette.test.tsx",
-      tests: [
-        {
-          name: "claims nothing at rest: no options and no expanded popup",
-          description: t("commandPalette.test1"),
-        },
-        {
-          name: "filters as the reader types and points at the first hit",
-          description: t("commandPalette.test2"),
-        },
-      ],
-    },
-    {
-      file: "packages/vanilla/src/components/command-palette.test.ts",
-      tests: [
-        { name: "opens from its trigger and fills the list only then", description: t("commandPalette.test3") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/command-palette.test.tsx", "packages/vanilla/src/components/command-palette.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("commandPalette.lede", { hotkey: hotkeyHint })} />

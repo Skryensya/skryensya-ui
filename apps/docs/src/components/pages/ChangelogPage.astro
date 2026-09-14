@@ -20,23 +20,7 @@ const styles = `@import "@skryensya/core/components/changelog.css";`;
   description={t("changelogPage.description")}
   badge={t("changelogPage.betaBadge")}
   contractId="changelog"
-  tests={[
-    {
-      file: "packages/react/src/components/changelog.test.tsx",
-      tests: [
-        { name: "renders a reversed ordered list of releases", description: t("changelogPage.test1") },
-        {
-          name: "marks a release with no date as unreleased and renders no time at all",
-          description: t("changelogPage.test2"),
-        },
-        { name: "draws the kind as a Badge", description: t("changelogPage.test3") },
-        {
-          name: "renders the title and the description as separate parts",
-          description: t("changelogPage.test4"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/changelog.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("changelogPage.lede")} />

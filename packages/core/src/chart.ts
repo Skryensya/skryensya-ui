@@ -36,8 +36,7 @@ import { clampedFraction } from "./fraction.js";
  * WHAT THIS CONTRACT DELIBERATELY DOES NOT HAVE: a title, a subtitle, an action, a legend row of its
  * own, or a surface. Those belong to whatever the chart sits inside, and inventing them here would
  * have grown exactly the `sk-card`-with-variants that Card refuses to be (see the Card page). A
- * chart in a card is a COMPOSITION, published as a recipe (`contracts/recipes`), not an option on
- * this contract.
+ * chart in a card is a COMPOSITION, not an option on this contract.
  *
  * `height` is an enum of tokens rather than a pixel number, and `format` a closed vocabulary rather
  * than a formatter function, for the same reason the data is a list: every hole shaped like

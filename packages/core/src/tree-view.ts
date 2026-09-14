@@ -11,7 +11,6 @@ export const treeViewParts = {
   root: "sk-tree-view",
   tree: "sk-tree-view__tree",
   item: "sk-tree-view__item",
-  itemIndicator: "sk-tree-view__item-indicator",
   itemIcon: "sk-tree-view__item-icon",
   itemText: "sk-tree-view__item-text",
   branch: "sk-tree-view__branch",
@@ -57,11 +56,15 @@ export const treeViewContract = {
   css: "@skryensya/core/components/tree-view.css",
   parts: treeViewParts,
   hooks: [
+    "--sk-tree-branch-icon-color",
     "--sk-tree-guide-color",
     "--sk-tree-guide-width",
     "--sk-tree-indent",
+    "--sk-tree-indicator-color",
     "--sk-tree-indicator-size",
     "--sk-tree-item-gap",
+    "--sk-tree-leaf-icon-color",
+    "--sk-tree-node-icon-color",
     "--sk-tree-node-icon-size",
     "--sk-tree-row-gap",
     "--sk-tree-row-inset",
@@ -155,13 +158,22 @@ export const treeViewContract = {
                                 whenGiven: "branchIndicator",
                                 slot: "branchIndicator",
                               },
+                              /*
+                               * NO SLOT, NO TEXT: the span ships empty and the stylesheet draws the
+                               * chevron into it (`:not(:has(*))`, tree-view.css). It used to write a
+                               * literal "›", which is the one text-glyph fallback left in the system
+                               * and the reason this component's own docs showed a thin, undersized
+                               * mark next to every other chevron on the page, all real icons: the
+                               * character renders in whatever the reader's font ships for that code
+                               * point. Treegrid's disclosure already made this move and says the same
+                               * thing at its own `mask-image`.
+                               */
                               {
                                 element: "span",
                                 part: "branchIndicator",
                                 mount: "data-sk-tree-view-branch-indicator",
                                 attrs: { "aria-hidden": "true" },
                                 whenMissing: "branchIndicator",
-                                text: "›",
                               },
                               {
                                 element: "span",
@@ -189,11 +201,6 @@ export const treeViewContract = {
                         mount: "data-sk-tree-view-item",
                         itemOptions: ["id", "disabled"],
                         children: [
-                          /*
-                           * The chevron's column, kept empty on a leaf. Without it the labels of one
-                           * level do not line up with the labels of the level above.
-                           */
-                          { element: "span", part: "itemIndicator", attrs: { "aria-hidden": "true" } },
                           {
                             element: "span",
                             part: "itemIcon",

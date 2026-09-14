@@ -13,7 +13,6 @@
     "@skryensya/core": "workspace:*",
     "yaml": "^2.9.0",
     "typescript": "^5.9.3",
-    "@skryensya/recipes": "workspace:*",
     "@skryensya/snippets": "workspace:*"
   },
   "devDependencies": {
@@ -41,6 +40,10 @@
     "./sheets-for-tree": {
       "types": "./src/sheets-for-tree.ts",
       "default": "./src/sheets-for-tree.ts"
+    },
+    "./artifact": {
+      "types": "./src/artifact.ts",
+      "default": "./src/artifact.ts"
     }
   }
 }

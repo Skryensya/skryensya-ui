@@ -48,6 +48,12 @@ async function initRouteDocument(): Promise<void> {
   initPrefsSheet();
   initReportIssue();
 
+  /* The 404 is one static file served for every missing path, so what the reader asked for and what
+     it nearly matched can only be worked out here. Loaded on that page alone. */
+  if (document.querySelector("[data-docs-not-found]")) {
+    const { initNotFound } = await import("./not-found");
+    initNotFound();
+  }
   if (document.querySelector("[data-docs-copy-cells]")) {
     const { initCopyCells } = await import("./copy-cells");
     initCopyCells();

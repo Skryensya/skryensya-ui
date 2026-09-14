@@ -3,15 +3,20 @@ import {
   SandpackLayout,
   SandpackPreview,
   SandpackProvider,
+  useLoadingOverlayState,
   useSandpack,
 } from "@codesandbox/sandpack-react";
 import type { SandpackTheme } from "@codesandbox/sandpack-react";
 import { Button } from "@skryensya/react/button";
 import { Dialog } from "@skryensya/react/dialog";
 import { Icon } from "@skryensya/react/icon";
+import { Loader } from "@skryensya/react/loader";
 import { SegmentedControl } from "@skryensya/react/segmented";
+import { Tabs } from "@skryensya/react/tabs";
 import { Sidebar, SidebarContent, SidebarResizeHandle } from "@skryensya/react/sidebar";
 import { TreeView } from "@skryensya/react/tree-view";
+import { PaneSplitter } from "./PaneSplitter";
+import { vanillaScriptPath, vanillaScriptSource } from "../../lib/vanilla-script";
 import {
   useCallback,
   useEffect,
@@ -40,7 +45,12 @@ import {
  * The rail's own view of a component: labels only, no source. What `nodes` (below) needs to draw
  * the tree, and nothing more - fetching this for every component up front costs a few KB total.
  */
-export type PlaygroundIndexExample = { readonly id: string; readonly label: string };
+export type PlaygroundIndexExample = {
+  readonly id: string;
+  readonly label: string;
+  /** Absolute docs address for this exact example; empty when no docs page renders it. */
+  readonly docs: string;
+};
 export type PlaygroundIndexComponent = {
   readonly id: string;
   readonly label: string;
@@ -77,6 +87,7 @@ export type PlaygroundStrings = {
   readonly failed: string;
   readonly offline: string;
   readonly docsLink: string;
+  readonly filesLabel: string;
   readonly hideRail: string;
   readonly showRail: string;
   readonly resizeRail: string;
@@ -84,6 +95,7 @@ export type PlaygroundStrings = {
   readonly discardBody: string;
   readonly discardCancel: string;
   readonly discardConfirm: string;
+  readonly resizePanes: string;
 };
 
 type Props = {
@@ -100,9 +112,27 @@ type Props = {
 type PlaygroundHandoff = {
   readonly label: string;
   readonly vanilla: string;
+  /** The docs page and preview the demo was opened from, so "See the docs" can go back to it. */
+  readonly docs: string;
 };
 
-const handoffStorageKey = "skryensya-playground-handoff";
+/** Only a plain web address is followed: the payload comes from another window and ends up in an href. */
+function safeDocsUrl(value: unknown): string {
+  if (typeof value !== "string") return "";
+  try {
+    const url = new URL(value);
+    return url.protocol === "http:" || url.protocol === "https:" ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
+/*
+ * WHAT THE TWO APPS AGREE ON. Neither imports the other, so these strings ARE the interface; the
+ * docs side declares the same pair in `@skryensya/vanilla/component-preview`.
+ */
+const readyMessage = "sk-playground-ready";
+const handoffMessage = "sk-playground-handoff";
 const handoffComponentId = "preview";
 
 /** Static, not `useId()`: one `Playground` mounts per page (`client:only`), so nothing here ever
@@ -110,21 +140,59 @@ const handoffComponentId = "preview";
  *  a `<dialog>`, the same one every other demo in this kit uses) needs to find it. */
 const discardDialogId = "playground-discard-dialog";
 
-function readPlaygroundHandoff(): PlaygroundHandoff | null {
-  if (typeof window === "undefined") return null;
-
-  const encoded = sessionStorage.getItem(handoffStorageKey);
-  if (!encoded) return null;
-  sessionStorage.removeItem(handoffStorageKey);
-
+function parseHandoff(encoded: unknown): PlaygroundHandoff | null {
+  if (typeof encoded !== "string") return null;
   try {
     const value = JSON.parse(decodeURIComponent(encoded)) as Partial<PlaygroundHandoff>;
     return typeof value.label === "string" && typeof value.vanilla === "string"
-      ? { label: value.label, vanilla: value.vanilla }
+      ? { label: value.label, vanilla: value.vanilla, docs: safeDocsUrl(value.docs) }
       : null;
   } catch {
     return null;
   }
+}
+
+/**
+ * Takes delivery of a demo handed over from a docs preview.
+ *
+ * A HANDSHAKE, not a read, and the reason is that the two apps are not necessarily the same origin.
+ * This used to pull the source out of `sessionStorage`, which is partitioned per origin: it worked
+ * when both sat behind one host and did nothing at all under `pnpm dev`, where they are two ports.
+ * `postMessage` crosses that line, has no size limit (the largest demo in the corpus is 18 KB, well
+ * past what a shareable URL should carry) and leaves the address bar clean.
+ *
+ * WHO WE TRUST: the opener, and only the opener. `event.source === window.opener` is what makes this
+ * safe without hard-coding a docs origin - anything else posting the same string is ignored, and the
+ * payload is parsed rather than evaluated, so the worst a hostile opener achieves is putting its own
+ * text in an editor the reader already asked to open.
+ *
+ * Announcing readiness is our half: the other side cannot know when a document in another origin has
+ * booted, so it waits to be told.
+ */
+function usePlaygroundHandoff(): [PlaygroundHandoff | null, (next: PlaygroundHandoff | null) => void] {
+  const [handoff, setHandoff] = useState<PlaygroundHandoff | null>(null);
+
+  useEffect(() => {
+    if (!window.opener) return;
+
+    const onMessage = (event: MessageEvent) => {
+      if (event.source !== window.opener) return;
+      const data = event.data as { type?: unknown; payload?: unknown } | null;
+      if (data?.type !== handoffMessage) return;
+
+      const parsed = parseHandoff(data.payload);
+      if (parsed) setHandoff(parsed);
+    };
+
+    window.addEventListener("message", onMessage);
+    /* `"*"`: this says only "I am listening", carries nothing, and we do not know the opener's origin
+     * to narrow it to. The payload travels the other way, where the origin IS pinned. */
+    window.opener.postMessage({ type: readyMessage }, "*");
+
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
+
+  return [handoff, setHandoff];
 }
 
 /*
@@ -189,8 +257,8 @@ function handoffDetail(handoff: PlaygroundHandoff): PlaygroundDetailComponent {
   return {
     id: handoffComponentId,
     label: handoff.label,
-    docs: "",
-    examples: [{ id: handoffComponentId, label: handoff.label, react: "", vanilla: handoff.vanilla }],
+    docs: handoff.docs,
+    examples: [{ id: handoffComponentId, label: handoff.label, docs: handoff.docs, react: "", vanilla: handoff.vanilla }],
   };
 }
 
@@ -199,12 +267,15 @@ const BUNDLES = {
   /** Tokens, semantic layer, high-contrast mode, the two dimensions - everything a component's own
    * CSS assumes is already there. No patterns, no components: those are fetched per part, below. */
   foundation: "/sandbox/foundation.css",
-  react: "/sandbox/skryensya-react.js",
+  /** The React package as a module GRAPH, keyed by the file name each module is mounted at: one
+   * entry per published subpath plus the chunks they share. One asset rather than 200 requests, and
+   * Sandpack transpiles only what the example's own imports reach. See the build script for the
+   * measurement that made this a graph instead of a single file. */
+  react: "/sandbox/react-modules.json",
   vanilla: "/sandbox/skryensya-vanilla.js",
-  subpaths: "/sandbox/react-subpaths.json",
-  /** Filename stem → the CSS files it needs (itself plus whatever it `@import`s), resolved at build
-   * time so the client never has to parse CSS to find out. See `useComponentCss` for how a name is
-   * detected from an example's source in the first place. */
+  /** `{ base, parts }`: the sheets every example needs, and part class name → the files that part
+   * needs (the sheet its contract declares, plus that sheet's own `@import` closure), both resolved
+   * at build time so the client never has to parse CSS to find out. See `useComponentCss`. */
   cssManifest: "/sandbox/css-manifest.json",
 } as const;
 
@@ -314,14 +385,41 @@ const SYNTAX_COLOR_TOKENS = {
  * `light-dark()`/`color-mix()` actually computed, rather than `getPropertyValue` on the custom
  * property itself, which would hand back the unresolved `light-dark(...)` source text.
  */
+/*
+ * A resolved color, as BYTES, because `isDarkColor` cannot read anything else.
+ *
+ * Reading the probe's `color` back gives whatever color space the author wrote, and this kit is
+ * written in `oklch()` - which Sandpack's parser (above) drops through to its `split(",")` branch,
+ * counts fewer than three components, and calls dark. So every theme this site handed it was "dark"
+ * no matter the mode, and since Sandpack writes `color-scheme` onto its own wrapper from that
+ * verdict, every `light-dark()` token inside the sandbox subtree - ours included, in the loading
+ * overlay and the preview's own ground - resolved to its DARK value on a light page.
+ *
+ * A 1x1 canvas is the conversion: the engine parses the color, paints it, and `getImageData` hands
+ * back sRGB bytes. It converts anything the CSS parser understands, so it keeps working when the
+ * palette moves to a color space that does not exist yet. Alpha is kept (their parser reads the
+ * first three components of an `rgba()` just as happily), because a token that is translucent
+ * should stay translucent in the editor's chrome.
+ */
 function readSandpackTheme(): SandpackTheme {
   const probe = document.createElement("span");
   probe.style.cssText = "position:fixed;inset:0;visibility:hidden;pointer-events:none;";
   document.body.append(probe);
 
+  const paint = document.createElement("canvas").getContext("2d", { willReadFrequently: true });
+
   const resolve = (token: string): string => {
     probe.style.color = `var(${token})`;
-    return getComputedStyle(probe).color;
+    const computed = getComputedStyle(probe).color;
+    if (!paint) return computed;
+
+    paint.clearRect(0, 0, 1, 1);
+    paint.fillStyle = computed;
+    paint.fillRect(0, 0, 1, 1);
+    const [red, green, blue, alpha] = paint.getImageData(0, 0, 1, 1).data;
+    return alpha === 255
+      ? `rgb(${red}, ${green}, ${blue})`
+      : `rgba(${red}, ${green}, ${blue}, ${(alpha / 255).toFixed(3)})`;
   };
 
   const theme: SandpackTheme = {
@@ -402,12 +500,16 @@ function useThemeState(): ThemeState {
  * path and a banner explained why. The banner was the tell that the code was not the code.)
  *
  * The subpaths need one more step, which the guide does not cover: `main` gives the bare specifier
- * only, and every emitted snippet imports `@skryensya/react/button`. Each published subpath gets a
- * file that re-exports the bundle, so `/button` resolves to `/button.js` by ordinary node
- * resolution. Every subpath, not only the ones this example uses - the reader can edit the code, and
- * an import that works in their app should work here.
+ * only, and every emitted snippet imports `@skryensya/react/button`. So the package is mounted as the
+ * module graph the build emits - `button.js` beside `index.js` beside the chunks they share - and
+ * `/button` resolves to `/button.js` by ordinary node resolution, with no re-export shim in between.
+ *
+ * EVERY module, not only the ones this example imports, and that is affordable now: Sandpack walks
+ * the graph from the entry, so a file nothing requires is never transpiled. The reader can edit the
+ * code, and an import that works in their app should work here - which is exactly what the previous
+ * shape could not afford, because there every subpath dragged the whole 1.16MB kit through Babel.
  */
-function reactPackageFiles(bundle: string, subpaths: readonly string[]) {
+function reactPackageFiles(modules: Readonly<Record<string, string>>) {
   const root = `/node_modules/${REACT_PACKAGE}`;
 
   return {
@@ -415,12 +517,8 @@ function reactPackageFiles(bundle: string, subpaths: readonly string[]) {
       code: JSON.stringify({ name: REACT_PACKAGE, main: "./index.js" }, null, 2),
       hidden: true,
     },
-    [`${root}/index.js`]: { code: bundle, hidden: true },
     ...Object.fromEntries(
-      subpaths.map((subpath) => [
-        `${root}/${subpath}.js`,
-        { code: `export * from "./index.js";\n`, hidden: true },
-      ]),
+      Object.entries(modules).map(([file, code]) => [`${root}/${file}`, { code, hidden: true }]),
     ),
   };
 }
@@ -442,12 +540,17 @@ function reactPackageFiles(bundle: string, subpaths: readonly string[]) {
  */
 const BUNDLER_ORIGIN = "https://2-19-8-sandpack.codesandbox.io/";
 
+/** The shape `css-manifest.json` is written in; see `BUNDLES.cssManifest`. */
+type CssManifest = {
+  readonly base: readonly string[];
+  readonly parts: Readonly<Record<string, readonly string[]>>;
+};
+
 type Bundles = {
   readonly foundation: string;
-  readonly react: string;
+  readonly react: Readonly<Record<string, string>>;
   readonly vanilla: string;
-  readonly subpaths: readonly string[];
-  readonly cssManifest: Readonly<Record<string, readonly string[]>>;
+  readonly cssManifest: CssManifest;
   readonly components: readonly PlaygroundIndexComponent[];
 };
 
@@ -466,7 +569,7 @@ function useBundles(catalogue: string): { bundles: Bundles | null; blocked: Bloc
     let cancelled = false;
 
     const assets = Promise.all(
-      [BUNDLES.foundation, BUNDLES.react, BUNDLES.vanilla, BUNDLES.subpaths, BUNDLES.cssManifest, catalogue].map(
+      [BUNDLES.foundation, BUNDLES.react, BUNDLES.vanilla, BUNDLES.cssManifest, catalogue].map(
         async (url) => {
           const response = await fetch(url);
           if (!response.ok) throw new Error(`${url}: ${response.status}`);
@@ -483,7 +586,7 @@ function useBundles(catalogue: string): { bundles: Bundles | null; blocked: Bloc
     const bundler = fetch(BUNDLER_ORIGIN, { mode: "no-cors" });
 
     assets
-      .then(async ([foundation, react, vanilla, subpaths, cssManifest, components]) => {
+      .then(async ([foundation, react, vanilla, cssManifest, components]) => {
         try {
           await bundler;
         } catch {
@@ -493,10 +596,9 @@ function useBundles(catalogue: string): { bundles: Bundles | null; blocked: Bloc
         if (!cancelled) {
           setBundles({
             foundation,
-            react,
+            react: JSON.parse(react) as Record<string, string>,
             vanilla,
-            subpaths: JSON.parse(subpaths) as string[],
-            cssManifest: JSON.parse(cssManifest) as Record<string, readonly string[]>,
+            cssManifest: JSON.parse(cssManifest) as CssManifest,
             components: JSON.parse(components) as PlaygroundIndexComponent[],
           });
         }
@@ -514,6 +616,34 @@ function useBundles(catalogue: string): { bundles: Bundles | null; blocked: Bloc
 }
 
 /**
+ * "Is this island still mounted", for the fetches below: the one thing a late response must not do is
+ * `setState` into a component that is gone. Everything else about a late response is fine - see
+ * `useComponentCss`.
+ */
+function useMounted() {
+  const alive = useRef(true);
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
+  return alive;
+}
+
+/** Every file at once, as text, with a non-ok response treated as the failure it is rather than
+ *  cached as a body of HTML that says "404". */
+async function fetchAll(files: readonly string[]): Promise<readonly (readonly [string, string])[]> {
+  return Promise.all(
+    files.map(async (file) => {
+      const response = await fetch(`${CSS_BASE}${file}`);
+      if (!response.ok) throw new Error(`${file}: ${response.status}`);
+      return [file, await response.text()] as const;
+    }),
+  );
+}
+
+/**
  * One component's real source, fetched only once it is selected. `catalogue` is the INDEX url
  * (`/playground-catalogue-es.json`); the detail route sits one hop away
  * (`playground-catalogue-[locale]-[component].json.ts`), named by inserting the id before `.json`.
@@ -528,70 +658,83 @@ function useComponentDetail(
 ): Map<string, PlaygroundDetailComponent> {
   const [cache, setCache] = useState<Map<string, PlaygroundDetailComponent>>(new Map());
   const requested = useRef(new Set<string>());
+  const alive = useMounted();
 
   useEffect(() => {
     if (!componentId || componentId === handoffComponentId) return;
     if (requested.current.has(componentId)) return;
     requested.current.add(componentId);
 
-    let cancelled = false;
     const url = catalogue.replace(/\.json$/, `-${componentId}.json`);
 
     fetch(url)
       .then((response) => (response.ok ? (response.json() as Promise<PlaygroundDetailComponent>) : null))
       .then((detail) => {
-        if (cancelled || !detail) return;
+        if (!alive.current || !detail) return;
         setCache((previous) => new Map(previous).set(componentId, detail));
       })
+      /* Same two rules as `useComponentCss` below, for the same reasons: a response that arrives
+       * after the reader moved on is still this component's source and belongs in the cache (the
+       * alternative strands it - `requested` would hold an id nothing ever fetched again, so coming
+       * BACK to that component would load forever), and a failure un-marks so a later render retries. */
       .catch(() => {
-        // Left uncached on purpose: the render path's `!files` branch already reads as "loading"
-        // forever, which is the same honest state a slow network leaves it in.
+        requested.current.delete(componentId);
       });
-
-    return () => {
-      cancelled = true;
-    };
   }, [catalogue, componentId]);
 
   return cache;
 }
 
 /**
- * Which CSS parts an example's own source names, read from the source itself rather than assumed
- * from the component id - a composed example can reach for a part its own top-level component's CSS
- * never `@import`s (Calendar's demo of a bare Button inside it, say), so the id alone would
- * undercount. React names come from the import lines the emitter always writes
- * (`@skryensya/react/accordion`); Vanilla has no such line - its markup carries `data-sk-*` roots
- * and `.sk-*` classes directly, so every `sk-<name>` token in the document is the same signal.
+ * Which parts an example uses, read from its EMITTED MARKUP - for both bindings, from the same
+ * string.
+ *
+ * The markup is the whole DOM of the tree: every `data-sk-*` root and every `.sk-*` class the
+ * example realizes, including the ones a component composes internally and nobody authored. React's
+ * source cannot say the same thing, because a React component's internals are inside the component:
+ * this used to read the emitter's `from "@skryensya/react/accordion"` import lines instead, which
+ * name only what the AUTHOR reached for. Details renders its own chevron with `<Icon>`, Summary
+ * carries `sk-interactive`, and neither has an import line - so the React preview came out with no
+ * icon sizing and no state layer while the Vanilla one, reading the markup, had both.
+ *
+ * The two bindings render the same usage tree and therefore the same parts (that is the contract, not
+ * an assumption this file makes), so ONE detection for both is not a shortcut - it is the only way
+ * the two previews cannot disagree about what to paint. Same reason the emitted sources are built
+ * from one tree rather than authored twice.
  */
-const REACT_SUBPATH_RE = /from ["']@skryensya\/react\/([a-z0-9-]+)["']/g;
 const SK_NAME_RE = /\bsk-([a-z0-9]+(?:-[a-z0-9]+)*)\b/g;
 
-function detectPartNames(binding: "react" | "vanilla", code: string): readonly string[] {
-  if (!code) return [];
-  const re = binding === "react" ? REACT_SUBPATH_RE : SK_NAME_RE;
-  return [...new Set([...code.matchAll(re)].map((match) => match[1]))];
+function detectPartNames(markup: string): readonly string[] {
+  if (!markup) return [];
+  return [...new Set([...markup.matchAll(SK_NAME_RE)].map((match) => match[1]))];
 }
 
 /**
  * The CSS `names` (above) resolve to, fetched and cached per file so switching between components
- * already visited costs nothing. `cssManifest[name]` is a name's transitive `@import` closure
- * (`build-sandbox-bundles.mjs`), so a name with cross-file dependencies (Calendar needing Button's
- * CSS) still resolves to every file it needs, not just its own.
+ * already visited costs nothing. `manifest.parts[name]` is the transitive closure of the sheet whose
+ * CONTRACT declares that part (`build-sandbox-bundles.mjs`), so a name with cross-file dependencies
+ * (Calendar needing Button's CSS) still resolves to every file it needs, not just its own.
+ *
+ * `manifest.base` goes in unconditionally: `tokens.scss` ships three patterns in base (state layer,
+ * visually-hidden, icon) that core's `foundation.css` strips when it compiles, so they are part of
+ * "everything before a component" and no example has to name them.
  *
  * Same "cache is state, requests are a ref" split as `useComponentDetail`, for the same reason: a
  * completed fetch must not make the effect below re-evaluate `files` and re-request them.
  */
 function useComponentCss(
-  cssManifest: Readonly<Record<string, readonly string[]>> | null,
+  cssManifest: CssManifest | null,
   names: readonly string[],
 ): { css: string; ready: boolean } {
   const [cache, setCache] = useState<Map<string, string>>(new Map());
   const requested = useRef(new Set<string>());
+  const alive = useMounted();
 
   const files = useMemo(() => {
     if (!cssManifest) return [];
-    return [...new Set(names.flatMap((name) => cssManifest[name] ?? []))].sort();
+    return [
+      ...new Set([...cssManifest.base, ...names.flatMap((name) => cssManifest.parts[name] ?? [])]),
+    ].sort();
   }, [cssManifest, names]);
 
   useEffect(() => {
@@ -599,21 +742,34 @@ function useComponentCss(
     if (missing.length === 0) return;
     for (const file of missing) requested.current.add(file);
 
-    let cancelled = false;
-    Promise.all(
-      missing.map(async (file) => [file, await (await fetch(`${CSS_BASE}${file}`)).text()] as const),
-    ).then((entries) => {
-      if (cancelled) return;
-      setCache((previous) => {
-        const next = new Map(previous);
-        for (const [file, text] of entries) next.set(file, text);
-        return next;
+    /*
+     * NO PER-BATCH CANCELLATION, and that is the whole bug this hook used to have.
+     *
+     * `files` changes as soon as the example's own parts arrive, so the effect re-ran and its cleanup
+     * cancelled the batch already in flight - which was the batch fetching the BASE sheets, still
+     * needed by every example there is. Its response landed, was discarded as "stale", and
+     * `requested` kept the three files marked, so nothing ever asked for them again: `ready` stayed
+     * false and the preview sat on "Loading the kit…" forever. It only ever appeared when the two
+     * batches overlapped, which is why it read as one component being broken rather than a race.
+     *
+     * A stylesheet's content does not go stale inside a session, and the cache is keyed by file, so a
+     * response that arrives late is simply a response: caching it is always right. The only thing
+     * worth guarding is a `setState` after the island is gone.
+     */
+    fetchAll(missing)
+      .then((entries) => {
+        if (!alive.current) return;
+        setCache((previous) => {
+          const next = new Map(previous);
+          for (const [file, text] of entries) next.set(file, text);
+          return next;
+        });
+      })
+      /* A failed batch un-marks itself, or one dropped request would strand the preview on "loading"
+       * for the rest of the session: `requested` is a promise to fetch, not a record of having. */
+      .catch(() => {
+        for (const file of missing) requested.current.delete(file);
       });
-    });
-
-    return () => {
-      cancelled = true;
-    };
   }, [files]);
 
   const ready = files.every((file) => cache.has(file));
@@ -702,22 +858,123 @@ function FileSync({
   return null;
 }
 
+/*
+ * THE EXAMPLE'S FILES, AS THE KIT'S OWN TABS.
+ *
+ * Sandpack draws a tab strip of its own, and it was the one piece of chrome on this screen in
+ * someone else's language. This is `Tabs` from `@skryensya/react`: the same roving focus, indicator
+ * and sizes a docs page's source tabs use, controlled by Sandpack's `activeFile` so the two can never
+ * disagree about which file is open (`FileSync` still moves it to the entry on every new example).
+ *
+ * ONE EDITOR, rendered only inside the open panel. The panels are what make these real tabs rather
+ * than buttons that look like them (`aria-controls` has somewhere to point), and the editor is cheap
+ * to mount: the files live in the provider, not in CodeMirror, so switching loses only the cursor.
+ *
+ * The code's own scroller wears the kit's scrollbar. CodeMirror creates `.cm-scroller` itself and
+ * re-creates it whenever the editor remounts, so the class is applied on every mutation under the
+ * pane rather than once.
+ */
+function EditorFiles({ files, label }: { readonly files: readonly string[]; readonly label: string }) {
+  const { sandpack } = useSandpack();
+  const active = files.includes(sandpack.activeFile) ? sandpack.activeFile : files[0]!;
+  const paneRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const pane = paneRef.current;
+    if (!pane) return;
+    const dress = () => {
+      for (const scroller of pane.querySelectorAll(".cm-scroller:not(.sk-scrollbar)")) {
+        scroller.classList.add("sk-scrollbar", "sk-scrollbar--reveal");
+      }
+    };
+    dress();
+    const observer = new MutationObserver(dress);
+    observer.observe(pane, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div className="playground__files" ref={paneRef}>
+      <Tabs
+        aria-label={label}
+        items={files.map((path) => ({
+          value: path,
+          label: path.replace(/^\//, ""),
+          children:
+            path === active ? <SandpackCodeEditor showLineNumbers showTabs={false} style={{ height: "100%" }} /> : null,
+        }))}
+        onValueChange={({ value }) => sandpack.setActiveFile(value)}
+        size="sm"
+        value={active}
+      />
+    </div>
+  );
+}
+
+/*
+ * THE WAIT, IN THE KIT'S OWN LANGUAGE.
+ *
+ * Sandpack ships a loading overlay of its own and it is not wrong, it is just someone else's: a
+ * spinner this site never uses, over a white pane, with a progress line in the corner. This one is
+ * `Loader` - the same component every other wait in this kit is drawn with - on the canvas the
+ * preview itself will paint once it is running, so the first frame of a sandbox looks like the
+ * hundredth rather than like a blank browser window.
+ *
+ * TWO SIGNALS, because neither covers the whole wait. `useLoadingOverlayState` is Sandpack's own
+ * (it listens for the bundler's `start` and `done` and fades afterwards), but it answers "HIDDEN"
+ * while the client is still being CREATED - which is the first second or two, and exactly the part
+ * that used to be a white rectangle. `sandpack.status` covers that opening; the overlay state covers
+ * the compile and the fade.
+ *
+ * `TIMEOUT` is deliberately NOT covered: Sandpack renders its own "try again" panel for that, which
+ * is an action the reader needs, and sitting a spinner on top of it would hide the way out.
+ */
+function PreviewLoading({ label }: { readonly label: string }) {
+  const { sandpack } = useSandpack();
+  const state = useLoadingOverlayState();
+
+  if (state === "TIMEOUT") return null;
+  if (state === "HIDDEN" && sandpack.status === "running") return null;
+
+  return (
+    /* `role="status"` on the box, and the Loader left decorative inside it: the component's own
+     * contract says a labelled Loader IS the status, so labelling both would announce the wait
+     * twice. */
+    <div className="playground__preview-loading" data-fading={state === "FADING" ? "" : undefined} role="status">
+      <Loader size="lg" />
+      <p className="playground__preview-loading-label">{label}</p>
+    </div>
+  );
+}
+
 export default function Playground({ catalogue, strings }: Props) {
   /*
    * Empty until the catalogue lands, and the ids are held rather than the objects: the selection is
    * the reader's and must survive the fetch resolving, which replaces every object it points at.
    */
-  const [handoff, setHandoff] = useState<PlaygroundHandoff | null>(readPlaygroundHandoff);
-  /* The handoff wins when both are present: it is the demo the reader just clicked "Ver en
-     Playground" on, which outranks whatever this tab's address bar held from a previous visit. */
-  const [urlSelection] = useState<PlaygroundUrlSelection | null>(() => (handoff ? null : readPlaygroundUrlSelection()));
-  const [componentId, setComponentId] = useState(() =>
-    handoff ? handoffComponentId : (urlSelection?.componentId ?? ""),
-  );
-  const [exampleId, setExampleId] = useState(() => (handoff ? handoffComponentId : (urlSelection?.exampleId ?? "")));
-  const [binding, setBinding] = useState<"react" | "vanilla">(() =>
-    handoff ? "vanilla" : (urlSelection?.binding ?? "react"),
-  );
+  const [handoff, setHandoff] = usePlaygroundHandoff();
+  const [urlSelection] = useState<PlaygroundUrlSelection | null>(readPlaygroundUrlSelection);
+  const [componentId, setComponentId] = useState(() => urlSelection?.componentId ?? "");
+  const [exampleId, setExampleId] = useState(() => urlSelection?.exampleId ?? "");
+  const [binding, setBinding] = useState<"react" | "vanilla">(() => urlSelection?.binding ?? "react");
+
+  /*
+   * SELECTING THE HANDOFF IS AN EFFECT, because the handoff now ARRIVES rather than being there.
+   *
+   * These four used to read it in their own initialisers: it came out of `sessionStorage`, which is
+   * synchronous, so it was simply present on the first render or not at all. It crosses a
+   * `postMessage` handshake now (the two apps are not necessarily the same origin), which means the
+   * first render always shows whatever the address bar held and the handoff replaces it a tick later.
+   *
+   * It still WINS, which is the part that has not changed: it is the demo the reader just clicked,
+   * and that outranks a URL this tab was carrying from a previous visit.
+   */
+  useEffect(() => {
+    if (!handoff) return;
+    setComponentId(handoffComponentId);
+    setExampleId(handoffComponentId);
+    setBinding("vanilla");
+  }, [handoff]);
   const [railHidden, setRailHidden] = useState(false);
   const { bundles, blocked } = useBundles(catalogue);
   const components = useMemo(() => {
@@ -728,8 +985,8 @@ export default function Playground({ catalogue, strings }: Props) {
       {
         id: handoffComponentId,
         label: handoff.label,
-        docs: "",
-        examples: [{ id: handoffComponentId, label: handoff.label }],
+        docs: handoff.docs,
+        examples: [{ id: handoffComponentId, label: handoff.label, docs: handoff.docs }],
       },
       ...catalogueComponents,
     ];
@@ -737,6 +994,7 @@ export default function Playground({ catalogue, strings }: Props) {
   const { sandpack: sandpackTheme, colorScheme } = useThemeState();
 
   const component = components.find((entry) => entry.id === componentId) ?? components[0];
+  const isHandoff = component?.id === handoffComponentId;
   const example = component?.examples.find((entry) => entry.id === exampleId) ?? component?.examples[0];
 
   /*
@@ -861,7 +1119,15 @@ export default function Playground({ catalogue, strings }: Props) {
   const entryPath = binding === "react" ? "/App.tsx" : "/index.html";
   const entryCode = binding === "react" ? sourceExample?.react : sourceExample?.vanilla;
 
-  const names = useMemo(() => detectPartNames(binding, entryCode ?? ""), [binding, entryCode]);
+  /** The example's own files, in the order the file tabs show them: the entry first, then what it loads. */
+  const editorFiles =
+    binding === "react"
+      ? [entryPath, ...(sourceExample?.reactData ? [sourceExample.reactData.path] : [])]
+      : [entryPath, ...(isHandoff ? [] : [vanillaScriptPath])];
+
+  /* The VANILLA source for both bindings, deliberately: see `detectPartNames`. It is the same tree
+     either way, and reading one of them is what keeps the two previews painted by the same sheets. */
+  const names = useMemo(() => detectPartNames(sourceExample?.vanilla ?? ""), [sourceExample]);
   const { css: componentCss, ready: cssReady } = useComponentCss(bundles?.cssManifest ?? null, names);
 
   const files = useMemo(() => {
@@ -876,7 +1142,7 @@ export default function Playground({ catalogue, strings }: Props) {
           ...(sourceExample.reactData
             ? { [sourceExample.reactData.path]: { code: sourceExample.reactData.code } }
             : {}),
-          ...reactPackageFiles(bundles.react, bundles.subpaths),
+          ...reactPackageFiles(bundles.react),
           "/styles.css": { code: previewCss, hidden: true },
           // The template's entry, rewritten only to pull the kit's stylesheet in beside React's own.
           "/index.tsx": {
@@ -896,10 +1162,13 @@ createRoot(document.getElementById("root")).render(
         }
       : {
           "/index.html": { code: sourceExample.vanilla },
+          // Its own file, so the markup and the script sit in two tabs. A handoff from a docs
+          // preview is a finished document with its script inline, and gets no file it never loads.
+          ...(isHandoff ? {} : { [vanillaScriptPath]: { code: vanillaScriptSource } }),
           "/skryensya-vanilla.js": { code: bundles.vanilla, hidden: true },
           "/skryensya.css": { code: previewCss, hidden: true },
         };
-  }, [bundles, binding, sourceExample, colorScheme, componentCss, cssReady]);
+  }, [bundles, binding, sourceExample, colorScheme, componentCss, cssReady, isHandoff]);
 
   /*
    * "Has the reader typed anything since this sandbox mounted", tracked coarsely rather than by
@@ -1074,9 +1343,12 @@ createRoot(document.getElementById("root")).render(
                   second icon vocabulary for one button. */}
               <Icon name="menu" />
             </button>
-            {/* `data-flush` is the site's own opt-out from its global heading rule
-                (`h1:not([data-flush])`), which outranks a class and would typeset this at display
-                size. Same escape hatch `Toc.astro` uses for the rail's own heading. */}
+            {/* `data-flush` is the docs site's opt-out from its global `h1:not([data-flush])` rule,
+                which outranks a class and would typeset this at display size. This app no longer
+                loads that stylesheet (`layouts/Tool.astro` replaced the docs shell), so the
+                attribute is inert here; it stays because the markup is still the docs' to read when
+                a page of theirs embeds this island, and an inert attribute costs nothing where a
+                missing one costs a display-sized heading. */}
             <h1 className="playground__title" data-flush>
               {component.label}
             </h1>
@@ -1084,28 +1356,27 @@ createRoot(document.getElementById("root")).render(
           </div>
           <div className="playground__actions">
             {/*
-              THE EXACT EXAMPLE, best-effort. `example.id` is `slugify(label)` (see
-              `playground-catalogue.ts`), the SAME algorithm `hero-tabs-toc.ts`'s `ensureId` runs
-              over each demo heading's own text to give it an id - so when a heading on the docs
-              page happens to read the same as this example's auto-derived label ("Variantes",
-              "TileButton"...), the fragment lands exactly on it. The two labels come from
-              independent places (one hand-written prose, one derived from an export name), so a
-              handful of examples land on the page without a matching heading and the browser just
-              scrolls to the top - never a broken link, just a less precise one.
+              THE EXACT EXAMPLE. `example.docs` is resolved at build time
+              (`playground-catalogue.ts`): the page that actually imports this tree, in this
+              locale, on the docs origin, opened on its usage tab with the fragment set to the
+              tree's own anchor (`docs/src/lib/tree-anchor.ts`), which that page's preview carries.
+              A demo handed over from a docs preview brings its own address instead.
 
               `target="_blank"`: this leaves the Playground tab open and untouched behind it,
               which is also why it needs no confirmation of its own (see the `beforeunload` guard
               below) - the reader's edits are still sitting right there when they come back.
             */}
-            {component.docs && (
-              <a
-                className="sk-link sk-interactive"
-                href={`${component.docs}#${example.id}`}
+            {(example.docs || component.docs) && (
+              <Button
+                href={example.docs || component.docs}
+                post={<Icon name="external-link" size="sm" />}
                 rel="noopener noreferrer"
+                size="sm"
                 target="_blank"
+                variant="ghost"
               >
                 {strings.docsLink}
-              </a>
+              </Button>
             )}
             <SegmentedControl
               label={strings.bindingLabel}
@@ -1161,12 +1432,18 @@ createRoot(document.getElementById("root")).render(
                 data={binding === "react" ? sourceExample?.reactData : undefined}
               />
               <SandpackLayout>
-                <SandpackCodeEditor
-                  showLineNumbers
-                  showTabs={binding === "react"}
-                  style={{ height: "100%" }}
-                />
-                <SandpackPreview style={{ height: "100%" }} />
+                <EditorFiles files={editorFiles} label={strings.filesLabel} />
+                {/* Between the two panes, and it resizes the one before it. See `PaneSplitter`. */}
+                <PaneSplitter label={strings.resizePanes} />
+                {/*
+                  `showOpenInCodeSandbox={false}`: the button opens a COPY of this sandbox on
+                  codesandbox.io, which is a different product with a different kit in it, and it sat
+                  in the corner of every example plus in the middle of every wait. The way out of
+                  this tool is the documentation link in the bar above.
+                */}
+                <SandpackPreview showOpenInCodeSandbox={false} style={{ height: "100%" }}>
+                  <PreviewLoading label={strings.loading} />
+                </SandpackPreview>
               </SandpackLayout>
             </SandpackProvider>
           </div>

@@ -38,39 +38,7 @@ const indentHook = `.sk-treegrid {
     { file: "components/treegrid.css", probe: "sk-treegrid", title: "Treegrid" },
     { file: "patterns/state-layer.css", probe: "sk-interactive", title: "Heredados de State layer" },
   ]}
-  tests={[
-    {
-      file: "packages/vanilla/src/components/treegrid.test.ts",
-      tests: [
-        {
-          name: "mounts once and hides the collapsed branch's descendant on connect",
-          description: t("treegridPage.testVanilla1"),
-        },
-        {
-          name: "Right Arrow on a collapsed branch's row expands it and reveals its child, without moving focus",
-          description: t("treegridPage.testVanilla2"),
-        },
-        {
-          name: "clicking a branch's first cell toggles it and moves focus to the row",
-          description: t("treegridPage.testVanilla3"),
-        },
-      ],
-    },
-    {
-      file: "packages/react/src/components/treegrid.test.tsx",
-      tests: [
-        {
-          name: "honors each row's own initial `expanded`, and hides only a collapsed branch's descendant",
-          description: t("treegridPage.testReact1"),
-        },
-        {
-          name: "Left Arrow on an expanded branch collapses it and hides its children",
-          description: t("treegridPage.testReact2"),
-        },
-        { name: "Enter activates a focused leaf row", description: t("treegridPage.testReact3") },
-      ],
-    },
-  ]}
+  testFiles={["packages/vanilla/src/components/treegrid.test.ts", "packages/react/src/components/treegrid.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("treegridPage.lede")} />

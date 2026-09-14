@@ -25,9 +25,9 @@ import type { Snippet } from "./snippet.js";
 
 /*
  * Every snippet, component-level first (one family, well-composed), then molecule-level (a few
- * families, one small piece of UI). Mirrors `@skryensya/recipes`' own `index.ts`: the compiler
- * validates every tree here against the contracts, so this list is not a catalogue of good
- * intentions. A snippet naming a signature that changed fails the build.
+ * families, one small piece of UI). The compiler validates every tree here against the contracts,
+ * so this list is not a catalogue of good intentions. A snippet naming a signature that changed
+ * fails the build.
  */
 export const snippets: readonly Snippet[] = [
   calloutErrorWithRetrySnippet,

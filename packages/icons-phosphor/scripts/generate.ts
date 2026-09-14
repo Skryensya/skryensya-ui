@@ -40,6 +40,7 @@ const MAP = {
   edit: "pencil-simple",
   delete: "trash",
   copy: "copy",
+  code: "code",
   filter: "funnel",
   refresh: "arrows-clockwise",
   "zoom-out": "magnifying-glass-minus",

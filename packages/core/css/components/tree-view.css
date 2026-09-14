@@ -21,24 +21,93 @@
      * to turn the guides off without touching the indent. */
     --sk-tree-guide-color: var(--color-border-subtle);
     --sk-tree-guide-width: 1px;
-    /* Column reserved for the branch chevron. Leaves keep it EMPTY instead of
-     * collapsing it, so every label on a level starts at the same x. */
+    /* Column reserved for the branch chevron, on a branch control only. A leaf has no
+     * disclosure to show, so it never reserves this column and its label starts at its own
+     * indent instead of trailing a dead space under the chevron above it. */
     --sk-tree-indicator-size: var(--size-icon-sm);
-    /* Column reserved for the folder/file icon when a consumer provides one. One size up from the
-     * indicator: the chevron is a structural glyph, the folder/file icon is content and reads as
-     * an afterthought at the same size, lost in the row's now-roomier gaps. */
-    --sk-tree-node-icon-size: var(--size-icon-md);
+    /* What the drawn chevron is painted with (below). Secondary, the same call Treegrid's own
+     * disclosure makes: the chevron is the row's structure, the label is its content. */
+    --sk-tree-indicator-color: var(--color-text-secondary);
+    /*
+     * Column reserved for the folder/file icon when a consumer provides one. THE SAME SIZE AS THE
+     * INDICATOR, and as the type beside it.
+     *
+     * This ran at `--size-icon-md` on the argument that the folder/file glyph is content and the
+     * chevron is structure, so content should be a size up. Measured on the page, that argument
+     * loses: the row sets 12px caption type (`--font-size-caption`, below), so a 20px glyph is
+     * over 1.6x the cap height of the name it is labelling and the eye lands on a column of
+     * identical folder shapes before it reaches a single filename. In a file tree the NAME is the
+     * content and the icon is the marker that types it. 16px matches the chevron, matches the
+     * caption, and lets the row read as one line of text with a glyph on it.
+     */
+    --sk-tree-node-icon-size: var(--size-icon-sm);
+    /*
+     * And a tone below the label, which is the other half of "too prominent": size alone does not
+     * fix it, because a consumer who already passed `size="sm"` on their icon (the docs' own demos,
+     * the Playground) was seeing a 16px glyph painted at full `--color-text-primary` beside 12px of
+     * the same ink, and a column of identical folder shapes at label weight competes with the
+     * filenames for the same eye.
+     *
+     * `--color-text-secondary`, the same relationship List already publishes between its own
+     * leading slot and its title (`--sk-list-leading-fg`, list.css) and NavList between its
+     * trailing meta and its label. A marker that TYPES the row sits under the row's own name.
+     *
+     * A HOOK, not a literal, for the same reason `--sk-tree-guide-color` is one: a file explorer
+     * that colours icons by kind needs somewhere to say so, and `currentColor` inside the glyph
+     * means one declaration here re-tints it.
+     */
+    --sk-tree-node-icon-color: var(--color-text-secondary);
+    /*
+     * AND SPLIT, so a branch's marker and a leaf's differ by more than their shape.
+     *
+     * THE ACCENT GOES ON THE BRANCH, and which side gets it was the whole question. A file tree is
+     * mostly leaves, so tinting THOSE spends the accent on the majority of the rows: rendered side
+     * by side it was 5 of 7 rows in blue, which stops reading as an accent and puts a column of
+     * coloured marks in front of the filenames - the same competition with the label that dropping
+     * these icons to 16px was fixing. It also inverts the hierarchy, because the branch is the row
+     * that actually does something when you click it. Two tinted containers against five quiet
+     * leaves reads the way a file manager does: structure first, then names.
+     *
+     * `--sk-tree-node-icon-color` above stays the single knob for BOTH (each of these falls back to
+     * it), so a consumer who wants one tone everywhere sets that one and these two follow.
+     *
+     * COLOUR IS THE LEVER HERE, NOT `fill`. Tinting one kind by filling its glyph does not survive
+     * a change of icon set: Lucide draws with `fill="none" stroke="currentColor"`, so a CSS `fill`
+     * turns its outline document into a solid blob AND fills the folded corner into a triangle,
+     * while Phosphor and Material already ship `fill="currentColor"` and would not change at all.
+     * Same declaration, three results. `icon.css` states the rule at the top of its own file and
+     * this is exactly the case it is describing. A consumer who wants a solid glyph passes the
+     * solid glyph: that is a choice their icon set already publishes (Phosphor's `-fill` weight),
+     * and it belongs in the slot, not in a stylesheet overriding the set's own geometry.
+     */
+    --sk-tree-branch-icon-color: var(--color-text-accent);
+    --sk-tree-leaf-icon-color: var(--sk-tree-node-icon-color);
     color: var(--color-text-primary);
   }
 
+
   /*
-   * `.sk-icon` defaults to --size-icon-md (icon/patterns/icon.css), same as the column reserved
-   * for it here (--sk-tree-node-icon-size). Scoped anyway, rather than left to that shared
-   * default: a consumer who passes an explicit `size` on their folder/file icon (the Playground's
-   * does) must not be able to drift the glyph out of the column the row actually laid out for it.
+   * Hold the glyph to the column the row laid out for it. A consumer who passes an explicit `size`
+   * on their folder/file icon (every one of the docs' own demos does, and the Playground) must not
+   * be able to drift it out of that column.
+   *
+   * THREE CLASSES DEEP ON PURPOSE. This was `.sk-tree-view .sk-icon`, which is (0,2,0) - exactly
+   * what `.sk-icon[data-size="sm"]` (icon.css) scores, so the winner came down to which file the
+   * bundle happened to concatenate last, and icon.css won: the docs rendered a 16px glyph centred
+   * in a 20px column, the one outcome this rule exists to prevent. Naming the icon slot as well
+   * takes it to (0,3,0) and settles it on specificity instead of on load order. Scoping it to the
+   * two icon slots rather than the whole tree is the other half: an icon a consumer puts inside a
+   * node LABEL is their own business and keeps its authored size.
    */
-  .sk-tree-view .sk-icon {
+  .sk-tree-view :is(.sk-tree-view__branch-icon, .sk-tree-view__item-icon) .sk-icon {
     --sk-icon-size: var(--sk-tree-node-icon-size);
+  }
+
+  /* Same for an authored `branchIndicator`, against ITS column. Without this the indicator slot was
+   * the one place a consumer's icon could still set its own size, which is how the docs ended up
+   * with chevrons that did not match each other across the page. */
+  .sk-tree-view .sk-tree-view__branch-indicator .sk-icon {
+    --sk-icon-size: var(--sk-tree-indicator-size);
   }
 
   .sk-tree-view__tree,
@@ -82,6 +151,19 @@
    * --sk-tree-indent past the floor gets rows flush against the guide, never rows pulled back
    * across it. */
   .sk-tree-view__branch-content {
+    /*
+     * ONE ROW GAP UNDER THE PARENT, so a branch and its first child are spaced like any other two
+     * rows. The grid `gap` below only separates SIBLINGS, so a folder sat flush against the file
+     * directly beneath it (measured 0px against the siblings' 8px) and the two rows read as one
+     * block with the folder's icon touching the file's.
+     *
+     * PADDING, NOT MARGIN, and that is the whole reason this works. The guide is
+     * `border-inline-start` on this same box, so it spans the border box: padding pushes the first
+     * child down while the rule still STARTS level with the parent's chevron, keeping the line
+     * attached to the control its children descend from. A margin would have moved the box itself
+     * and left the guide floating a gap below the chevron it is supposed to hang from.
+     */
+    padding-block-start: var(--sk-tree-row-gap);
     margin-inline-start: calc(
       var(--sk-tree-row-inset) + var(--sk-tree-indicator-size) / 2
     );
@@ -98,27 +180,47 @@
   }
 
   /*
-   * A row keeps the --size-control-sm height it shares with a small button, so a tree sitting
-   * next to one (a sidebar, a panel toolbar) reads as one density instead of the tree rows
-   * looming taller than everything beside them. The TYPE is --font-size-caption, not the
-   * button's body-sm: a tree is navigation chrome that pays for its own width once per level,
-   * and 12px is what the rest of the chrome that lives beside it already speaks (Menu items,
-   * NavList group labels, the Sidebar footer). `sk-interactive` (patterns/state-layer.css) owns
-   * hover / focus / pressed / selected and the focus ring; this only lays the row out.
+   * A ROW IS SIZED THE WAY A TOC ROW IS: block padding plus one line of its own type, with no
+   * control height pinning it open.
    *
-   * The HIG hit target doesn't shrink with the paint: `::after` below expands it to
-   * --size-touch-target the same way Button's own `::after` does, absolutely positioned against
-   * the containing block `sk-interactive` already establishes.
+   * It used to take `--size-control-sm` (32px), the height of a small Button, on the argument that
+   * a tree beside a small button should read as one density. Two things were wrong with that. The
+   * type never agreed - `--font-size-caption` below is 12px, while Button `sm` speaks `body-sm` at
+   * 14px - so the row was carrying small type inside a box built for bigger type, which is where
+   * the loose, too-tall feel came from. And the analogy was to the wrong component: Button is a
+   * thing you place, one or a few at a time, in its own space. A tree row is CHROME IN A RAIL,
+   * repeated dozens of times down a sidebar, and the component already in that position is Toc.
+   *
+   * So the height comes from `--space-inset-xs` on each side plus the caption line-height, exactly
+   * `.sk-toc__link`'s own recipe (toc.css): measured live, a Toc row is 26px and this row now is
+   * too. Deriving it rather than naming a number is the point - a consumer who retunes the caption
+   * step or the density moves Toc and TreeView together, instead of the tree staying pinned to a
+   * control size that no longer matches anything around it.
+   *
+   * `min-block-size` stays, but only as a FLOOR and not as the size: `--size-control-xs` is 24px
+   * because that is WCAG 2.2 SC 2.5.8's target minimum, so if a consumer tightens `--sk-density`
+   * far enough to pull the padding out from under the row, the target still cannot go under the
+   * criterion. At the shipped density it never binds (26px of content against a 24px floor).
+   *
+   * `sk-interactive` (patterns/state-layer.css) owns hover / focus / pressed / selected and the
+   * focus ring; this only lays the row out.
    */
   .sk-tree-view__item,
   .sk-tree-view__branch-control {
+    /*
+     * STATED, because the two halves of this selector are different ELEMENTS and the UA does not
+     * agree about them: a branch control is a `<button>` and already border-box, a leaf is a bare
+     * `<li>` and is content-box. It never showed while the row had `padding-block: 0` - with no
+     * padding the two boxes are the same box. The moment the row took its padding from Toc, the
+     * floor below started measuring the leaf's CONTENT box and stacking the padding on top of it:
+     * measured 32px leaves against 26px branches in the same tree.
+     */
+    box-sizing: border-box;
     display: grid;
-    grid-template-columns:
-      var(--sk-tree-indicator-size) var(--sk-tree-node-icon-size) minmax(0, 1fr);
     gap: var(--sk-tree-item-gap);
     align-items: center;
-    min-block-size: var(--size-control-sm);
-    padding-block: 0;
+    min-block-size: var(--size-control-xs);
+    padding-block: var(--space-inset-xs);
     padding-inline: var(--sk-tree-row-inset);
     border: 0;
     border-radius: var(--radius-control);
@@ -131,38 +233,96 @@
   }
 
   /*
-   * A TreeView that does not render a node icon has no middle column to reserve. Scoped to the
-   * whole tree so branches and leaves stay aligned when a consumer omits both icon slots.
+   * ONLY A BRANCH RESERVES THE CHEVRON COLUMN. A leaf has no disclosure to draw, so its base
+   * template is one track, the label, and it never carries a placeholder for a control it does not
+   * have. This used to run the other way - every leaf shipped an empty `itemIndicator` span so
+   * labels lined up under the branch above them - but that column was dead space with nothing in
+   * it, on every leaf, in every tree, whether or not the tree even had a branch. A mixed tree where
+   * the two kinds of row no longer share a label x is the honest rendering of a mixed tree.
    */
-  .sk-tree-view__tree:not(:has(.sk-tree-view__branch-icon, .sk-tree-view__item-icon))
-    .sk-tree-view__item,
-  .sk-tree-view__tree:not(:has(.sk-tree-view__branch-icon, .sk-tree-view__item-icon))
-    .sk-tree-view__branch-control {
+  .sk-tree-view__branch-control {
     grid-template-columns: var(--sk-tree-indicator-size) minmax(0, 1fr);
+  }
+  .sk-tree-view__item {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   /*
-   * A flat tree has no disclosure affordance to align with. Keep only its authored file icon; if
-   * it has none, the label starts directly at the row inset.
+   * THE ICON COLUMN IS PER ROW, and it is an opt-in rather than something to collapse afterwards.
+   *
+   * This used to run the other way: every row reserved a middle column, and one rule took it back
+   * when a `:not(:has())` over the WHOLE TREE found no icon anywhere in it. That works for the two
+   * symmetric cases and breaks on the two mixed ones, because the icon slots are independent
+   * (`branchIcon` and `leafIcon`, see the contract) and a consumer may pass either alone:
+   *
+   *   branchIcon only - the tree has icons, so nothing collapsed, and every LEAF kept a three-track
+   *     template while rendering two children. Grid auto-placement then dropped the filename into
+   *     the ICON track: measured at 20px wide with the 1fr track sitting empty beside it, so every
+   *     leaf in the tree ellipsised to "in…", "a…", "R…". Not cosmetic - the names were gone.
+   *   leafIcon only - the mirror. Branch labels landed in the icon track and sat 53px to the left
+   *     of the leaf labels they are supposed to head.
+   *
+   * Stating the column as an opt-in makes the template a function of the row's own children, so it
+   * cannot disagree with them in any combination, and a row with nothing to put there stops
+   * reserving the space. The cost is that in a mixed tree the two kinds of row no longer share a
+   * label x - which is the honest rendering of a mixed tree, and cheaper than a dead column on
+   * every row of the symmetric ones.
+   *
+   * `:has()` takes its specificity from its argument, so this scores (0,2,0) against the base
+   * rule's (0,1,0) and wins on specificity, not source order.
    */
-  .sk-tree-view__tree:not(:has(.sk-tree-view__branch)) .sk-tree-view__item {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
+  .sk-tree-view__branch-control:has(.sk-tree-view__branch-icon) {
+    grid-template-columns:
+      var(--sk-tree-indicator-size) var(--sk-tree-node-icon-size) minmax(0, 1fr);
   }
-  .sk-tree-view__tree:not(:has(.sk-tree-view__branch))
-    .sk-tree-view__item:has(.sk-tree-view__item-icon) {
+  .sk-tree-view__item:has(.sk-tree-view__item-icon) {
     grid-template-columns: var(--sk-tree-node-icon-size) minmax(0, 1fr);
-    gap: var(--sk-tree-item-gap);
-  }
-  .sk-tree-view__tree:not(:has(.sk-tree-view__branch)) .sk-tree-view__item-indicator {
-    display: none;
   }
 
+  /*
+   * A LEAF'S PAINT ALREADY STARTS WHERE ITS CONTENT STARTS.
+   *
+   * This used to need a rule of its own: a leaf kept an empty chevron column so labels lined up
+   * under the branch above them, but the state layer paints at `inset: 0` (`sk-interactive`), so a
+   * selected or hovered leaf's pill ran across that dead column too - measured on the docs' own
+   * "initial state" demo, the selected `button.tsx` pill began 31px to the left of its own text.
+   * Now that a leaf never reserves that column in the first place, `inset: 0` already lands on the
+   * content and there is nothing left to step over.
+   */
+
+  /*
+   * THE TOUCH PAD GROWS SIDEWAYS ONLY. On the block axis the hit area is exactly the face.
+   *
+   * It used to reach for `--size-touch-target` (44px) on both axes, the way Button's own `::after`
+   * does. That is right for a button, which usually stands in whitespace with nothing to steal
+   * from, and it was survivable at the old 32px row: the pad grew 6px each way into an 8px gap, so
+   * the next row's pad began 2px BELOW the row's own face ended, just clear of it.
+   *
+   * At a 24px row it is not survivable. The pad wants 10px each way on a 32px pitch, so the next
+   * row's pad starts at 22px while this row's face runs to 24px: the bottom 2px of every visible
+   * row would answer for the row below it. A hit target that activates a different control than
+   * the one under the cursor is worse than a small one.
+   *
+   * Capping the growth at half the row gap would now be SAFE - `--sk-tree-branch-content`'s own
+   * `padding-block-start` makes every adjacent spacing in the component one row gap, siblings and
+   * parent-to-first-child alike - but it is still not what this does, and the reason is worth
+   * keeping. A clamp is a rule that holds only as long as nobody changes the spacing it is
+   * clamped against; this component already broke that assumption once, when the flush
+   * parent-to-child edge made half-the-gap overreach by 4px on every branch row (measured by
+   * hit-testing every pixel of every row: leaves clean, branches losing 4px of their own face).
+   *
+   * No growth needs no assumption. Nothing real is given up either: the row measures 26px and is
+   * floored at 24px, WCAG 2.2 SC 2.5.8's target minimum, so the face satisfies the criterion by
+   * itself (see the row's own note above). Toc, the component this row is sized after, reaches for
+   * no touch pad either - its `::after` is the current-location marker, and its rows are
+   * hit-area-equals-face exactly like this. What is bought is a property that cannot be got subtly
+   * wrong later: what you can see is exactly what you can press.
+   */
   .sk-tree-view__item::after,
   .sk-tree-view__branch-control::after {
     content: "";
     position: absolute;
-    inset-block: min(0px, calc((100% - var(--size-touch-target)) / 2));
+    inset-block: 0;
     inset-inline: min(0px, calc((100% - var(--size-touch-target)) / 2));
     /* Follow the row's own corner so the hit area matches the paint, same `inherit`
      * the state layer's `::before` uses. Without it this pad is a square rectangle
@@ -189,11 +349,25 @@
     white-space: nowrap;
   }
 
+  /*
+   * `color` on the SLOT, not on the row: the label keeps `--color-text-primary` from the root while
+   * the marker sits a tone under it. `color` rather than `fill`/`stroke`, because the glyph draws
+   * in `currentColor` and icon.css is deliberate about never touching either (a declaration there
+   * would turn every outline set solid).
+   */
   .sk-tree-view__branch-icon,
   .sk-tree-view__item-icon {
     display: inline-grid;
     place-items: center;
     inline-size: var(--sk-tree-node-icon-size);
+  }
+
+  .sk-tree-view__branch-icon {
+    color: var(--sk-tree-branch-icon-color);
+  }
+
+  .sk-tree-view__item-icon {
+    color: var(--sk-tree-leaf-icon-color);
   }
 
   /* ── state layer bridge ────────────────────────────────────────────────────
@@ -213,16 +387,88 @@
   .sk-tree-view__item[data-disabled],
   .sk-tree-view__branch-control[data-disabled] {
     --state-layer-opacity: var(--state-layer-disabled-opacity);
+    /* The icon hook goes down with the label. Without this line the slot's own `color` would hold
+     * the glyph at secondary on a row whose name has greyed out, so a disabled row would read as
+     * half-disabled. Re-declaring the HOOK rather than restating the colour on the slot keeps the
+     * single definition in one place and lets a consumer's own override follow the same path. */
+    /*
+     * EVERY ICON HOOK, NAMED ONE BY ONE, and the leaf is the one that proves why.
+     *
+     * `--sk-tree-leaf-icon-color` is declared up on `.sk-tree-view` as `var(--sk-tree-node-icon-color)`,
+     * and a `var()` is substituted against the element it is DECLARED on, not the element that
+     * reads it. So the leaf hook computes to secondary at the root and inherits down already
+     * resolved: re-declaring the shared hook here, on a descendant, cannot reach back and change
+     * it. Measured before this line existed - a disabled row greyed its label, its chevron and its
+     * folder, and left the file icon at full secondary.
+     *
+     * (The shared hook still works as the single knob for a CONSUMER, because they set it on
+     * `.sk-tree-view` itself, where the leaf's own declaration can still see it. It is only this
+     * descendant rung that has to spell the derived hooks out.)
+     */
+    --sk-tree-node-icon-color: var(--color-text-disabled);
+    --sk-tree-branch-icon-color: var(--color-text-disabled);
+    --sk-tree-leaf-icon-color: var(--color-text-disabled);
+    --sk-tree-indicator-color: var(--color-text-disabled);
     color: var(--color-text-disabled);
     cursor: not-allowed;
   }
 
+  /*
+   * `color` on the SLOT, so the drawn chevron below and an AUTHORED one are the same mark. The
+   * drawn one could have taken `--sk-tree-indicator-color` directly, but then a consumer who passes
+   * a real `chevron-right` Icon would get it in `currentColor` - the row's primary text - while
+   * every tree that took the default got secondary, and the two would not look like one control on
+   * one page. Setting it here means the authored icon inherits the same tone, one hook re-tints
+   * both, and the disabled rung greys both by re-declaring the hook once.
+   */
   .sk-tree-view__branch-indicator {
     display: inline-grid;
     place-items: center;
     inline-size: var(--sk-tree-indicator-size);
+    color: var(--sk-tree-indicator-color);
     transition: rotate var(--motion-state-change-duration)
       var(--motion-state-change-easing);
+  }
+
+  /*
+   * THE DEFAULT CHEVRON, drawn here rather than written as a character.
+   *
+   * The contract used to emit a literal `›` when no `branchIndicator` slot was passed, which made
+   * this the last text-glyph affordance in the system: the mark came from whatever the reader's
+   * font ships for U+203A, so on the component's own docs page the four demos without an authored
+   * indicator showed a thin, undersized tick beside the one demo that passes a real
+   * `chevron-right`, and the two did not look like the same control. Treegrid's disclosure already
+   * draws its own for exactly this reason; this is the same path from the same icon set
+   * (`packages/icons-lucide` `chevron-right`: viewBox 0 0 24 24, `m9 18 6-6-6-6`, 2px round
+   * joins), so a tree and a treegrid on one page show one chevron.
+   *
+   * `mask-image`, not `background-image`: a mask paints with `background-color`, so the glyph
+   * takes `--sk-tree-indicator-color` and stays correct in both modes and under a re-theme. A
+   * background-image SVG would need its stroke colour baked into the data URI and frozen there.
+   *
+   * `:not(:has(*))` rather than `:empty` is what makes an AUTHORED indicator win: the emitter and
+   * React both wrap a passed slot in this same span, so the test is "does this span contain an
+   * element" - true for an authored `<svg class="sk-icon">`, false for the empty fallback. `:empty`
+   * would have been wrong twice over: it counts a whitespace text node as content, so the emitter's
+   * own pretty-printed newlines inside the span would already have defeated it.
+   */
+  .sk-tree-view__branch-indicator:not(:has(*))::after {
+    content: "";
+    inline-size: var(--sk-tree-indicator-size);
+    block-size: var(--sk-tree-indicator-size);
+    background-color: currentColor;
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E");
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: 100% 100%;
+  }
+
+  /* Forced colors drop `background-color` painting entirely, so the masked glyph would vanish.
+   * `CanvasText` is what the guide below already falls back to for the same reason. */
+  @media (forced-colors: active) {
+    .sk-tree-view__branch-indicator:not(:has(*))::after {
+      background-color: CanvasText;
+    }
   }
   .sk-tree-view__branch-control[data-state="open"]
     .sk-tree-view__branch-indicator {

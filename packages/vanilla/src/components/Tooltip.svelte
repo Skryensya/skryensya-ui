@@ -14,8 +14,8 @@
     type TooltipPlacement,
   } from "@skryensya/core/tooltip";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
-  import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { onDestroy } from "svelte";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
@@ -102,57 +102,68 @@
     unbindAnchor = bindAnchor(trigger, positioner, anchorNameFor(root.id));
   }
 
-  const positionerProps = (props: DomProps): DomProps =>
-    anchored ? (stripPositioningStyle(props) as DomProps) : props;
-
-  $effect(() => {
-    const contentProps = api.getContentProps() as DomProps;
-
-    if (trigger) applyZagProps(trigger, api.getTriggerProps() as DomProps);
-    if (positioner) applyZagProps(positioner, positionerProps(api.getPositionerProps() as DomProps));
+  /*
+   * `stripPositioningStyle` composes INTO the positioner's props thunk rather than becoming a kind of
+   * binding. The anchor trio divides cleanly: `supportsAnchorPositioning` and `bindAnchor` are one-time
+   * setup with their own teardown, and only this one is per-patch - so it is a props transform, which
+   * `bindParts` already takes.
+   */
+  const bindings: PartBinding[] = [
+    {
+      part: "trigger",
+      node: () => trigger,
+      props: () => api.getTriggerProps(),
+      events: true,
+    },
+    {
+      part: "positioner",
+      node: () => positioner,
+      props: () => {
+        const props = api.getPositionerProps();
+        return anchored ? stripPositioningStyle(props) : props;
+      },
+    },
+    {
+      part: "content",
+      node: () => content,
+      props: () => api.getContentProps(),
+      events: true,
+      after: (node) => {
+        // The CSS needs to know whether the content is reachable by the pointer; the state lives in the
+        // machine, so it is mirrored as an attribute instead of duplicating the condition in the sheet.
+        // Only the opt-out is written: reachable is the sheet's default.
+        if (interactive) node.removeAttribute("data-interactive");
+        else node.setAttribute("data-interactive", "false");
+      },
+    },
     /*
      * ON THE BROWSER PATH NOTHING IS WRITTEN TO THE ARROW: the stylesheet places it against the same
-     * anchor, and it reads its open state from the content with `:has()`.
+     * anchor, and it reads its open state from the content with `:has()`. Hence `node()` returning null
+     * when `anchored` - the absence is the binding.
      *
-     * On the fallback it is, because there the machine places it: `getArrowProps` marks it as
+     * On the fallback it is written, because there the machine places it: `getArrowProps` marks it as
      * `[data-part=arrow]`, which is how `@zag-js/popper` finds it to move it, and `data-side` (the side
      * the machine RESOLVED) is what the stylesheet reads to rotate it. That side is firm data only
-     * here: on the other path the one who decides where the box ended up is the browser, and the
-     * machine's opinion may not match. It is read from the props and not from the DOM so it does not
-     * depend on the order in which the nodes are patched.
+     * here: on the other path the browser decides where the box ended up, and the machine's opinion may
+     * not match.
+     *
+     * LAST IN THE ARRAY ON PURPOSE. The side is read off the content, which is patched above, so this
+     * reads a value already on the node instead of a second props object, which is what keeps this
+     * file free of casts entirely.
      */
-    if (arrow && !anchored) {
-      applyZagProps(arrow, api.getArrowProps() as DomProps);
-      const side = contentProps["data-side"];
-      if (typeof side === "string") arrow.setAttribute("data-side", side);
-    }
-    if (content) {
-      applyZagProps(content, contentProps);
-      // The CSS needs to know whether the content is reachable by the pointer; the state lives in the
-      // machine, so it is mirrored as an attribute instead of duplicating the condition in the sheet. Only
-      // the opt-out is written: reachable is the sheet's default.
-      if (interactive) content.removeAttribute("data-interactive");
-      else content.setAttribute("data-interactive", "false");
-    }
-  });
+    {
+      part: "arrow",
+      node: () => (anchored ? null : arrow),
+      props: () => api.getArrowProps(),
+      after: (node) => {
+        const side = content?.getAttribute("data-side");
+        if (side) node.setAttribute("data-side", side);
+      },
+    },
+  ];
 
-  // Zag's handlers are wired once and re-read on every firing: the machine changes state and with it
-  // the closure.
-  const cleanups: Array<() => void> = [];
-  onMount(() => {
-    if (trigger) {
-      cleanups.push(
-        bindZagEvents(trigger, () => api.getTriggerProps() as DomProps),
-      );
-    }
-    if (content) {
-      cleanups.push(
-        bindZagEvents(content, () => api.getContentProps() as DomProps),
-      );
-    }
-  });
-  onDestroy(() => {
-    for (const cleanup of cleanups) cleanup();
-    unbindAnchor?.();
-  });
+  bindParts(bindings);
+
+  // `bindAnchor`'s teardown is the enhancer's own: it was set up once, before any patch.
+  onDestroy(() => unbindAnchor?.());
 </script>

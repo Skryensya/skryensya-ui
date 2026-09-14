@@ -18,16 +18,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
   title="Stat"
   description={t("statPage.description")}
   contractId="stat"
-  tests={[
-    {
-      file: "packages/react/src/components/stat.test.tsx",
-      tests: [
-        { name: "colors the change by trend, not by sign", description: t("statPage.test1") },
-        { name: "omits the change element when no change is given", description: t("statPage.test2") },
-        { name: "counts a numeric value up when animate is on", description: t("statPage.test3") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/stat.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("statPage.lede")} />

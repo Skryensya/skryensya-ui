@@ -1,9 +1,9 @@
 /*
  * THE THREE DASHBOARD CARDS THE CHARTS PAGE OPENS WITH.
  *
- * There is no ChartCard component. Each one is a Box, a heading, a Stat or a Badge, a Chart and a Button,
- * the same composition the `metric-panel` recipe publishes. The chart owns only the series: surface,
- * title, action and supporting numbers belong to the pieces already in the kit.
+ * There is no ChartCard component. Each one is a Box, a heading, a Stat or a Badge, a Chart and a
+ * Button, composed here like anywhere else. The chart owns only the series: surface, title, action
+ * and supporting numbers belong to the pieces already in the kit.
  *
  * Bars come from `@skryensya/react/chart` (a list plus a division, no engine). Area comes from
  * `@skryensya/charts/react`, which is a drop-in that paints an overlay on the same markup. Nothing

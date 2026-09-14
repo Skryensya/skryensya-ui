@@ -11,7 +11,7 @@
   } from "@skryensya/core/calendar";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onMount } from "svelte";
-  import { applyZagProps, type DomProps } from "../runtime/apply";
+  import { bindParts } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
   import { remountIcons } from "../icon.js";
   import CalendarView from "./CalendarView.svelte";
@@ -69,9 +69,7 @@
 
   const api = $derived(datePicker.connect(service, normalizeProps));
 
-  $effect(() => {
-    applyZagProps(root, api.getRootProps() as DomProps);
-  });
+  bindParts([{ part: "root", node: () => root, props: () => api.getRootProps() }]);
 
   onMount(() => {
     remountIcons(root);

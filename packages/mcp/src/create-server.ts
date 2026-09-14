@@ -3,7 +3,7 @@ import { z } from "zod";
 import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
 import { validateUsageTree } from "@skryensya/ai-compiler/validate";
 import type { OptionInput, UsageTree } from "@skryensya/core/usage-tree";
-import { recipes } from "@skryensya/recipes";
+import type { ContractTemplate } from "@skryensya/core/contract";
 import { snippets } from "@skryensya/snippets";
 import { catalogueIndex, manifest, provenance } from "./manifest.js";
 
@@ -52,8 +52,8 @@ export function createServer(): McpServer {
         "the signature\" is not a reason to skip this  -  knowing the right SIGNATURE and knowing the " +
         "right SHAPE are different things, and get_examples is where the shape lives.\n\n" +
         "get_examples publishes established trees below the whole-catalogue scale: one component " +
-        "well-composed (\"component\"), a few components as one small piece of UI (\"molecule\"), or a " +
-        "whole screen across its loading/empty/error/success states (\"screen\"). Call it with no id " +
+        "well-composed (\"component\") or a few components as one small piece of UI (\"molecule\"). " +
+        "Call it with no id " +
         "first for the index (every example's id, level and intent, so you know what exists), then " +
         "call it again with an id for the one that fits. If one fits the task, adapt its CONTENT, not " +
         "just its shape, rather than composing the same thing from nothing  -  then validate whatever " +
@@ -156,10 +156,9 @@ export function createServer(): McpServer {
         "Call this BEFORE composing anything, even something you're confident you already know how to " +
         "build  -  knowing the right signature and knowing the right SHAPE are different things, and " +
         "this is where the shape lives. Established trees below the whole-catalogue scale: one " +
-        "component well-composed, a few as one small molecule, or a whole screen across its " +
-        "loading/empty/error/success states. Call with no id for the index (id, level, intent, notes, " +
-        "which contract families it touches, no trees). Call again with an id for that example's full " +
-        "tree(s)  -  a snippet returns one tree, a screen returns all four states. Adapt an example's " +
+        "component well-composed, or a few as one small molecule. Call with no id for the index (id, " +
+        "level, intent, notes, which contract families it touches, no trees). Call again with an id " +
+        "for that example's full tree. Adapt an example's " +
         "content rather than composing the same shape from nothing, then validate whatever you " +
         "adapted through validate_ui same as any tree: an example proves its tree matched a contract " +
         "when it was written, not that it still does.",
@@ -179,18 +178,6 @@ export function createServer(): McpServer {
           notes: snippet.notes,
           contracts: collectContracts(snippet.tree),
           tree: snippet.tree,
-        });
-      }
-
-      const recipe = recipes.find((entry) => entry.id === id);
-      if (recipe) {
-        return ok({
-          id: recipe.id,
-          level: "screen",
-          intent: recipe.intent,
-          notes: recipe.notes,
-          contracts: [...new Set(Object.values(recipe.states).flatMap((tree) => collectContracts(tree)))].sort(),
-          states: recipe.states,
         });
       }
 
@@ -281,45 +268,30 @@ const CATALOG_PAGE_SIZE = 10;
 
 /*
  * EXAMPLES: established trees below the whole-catalogue scale, so composing does not start from a
- * blank tree every time. Two sources, one response shape:
- *   - `@skryensya/snippets` ("component"/"molecule")  -  one family well-composed, or a few families
- *     as one small piece of UI. Single tree each.
- *   - `@skryensya/recipes` ("screen")  -  a whole screen across its four states. Already published
- *     for humans (`apps/docs`'s recetas page) and stress-tested against this very server
- *     (`server.test.ts`); this is the same data, reachable by the thing recipes were always meant
- *     for copying by, not just reading.
+ * blank tree every time. One source, `@skryensya/snippets` ("component"/"molecule"): one family
+ * well-composed, or a few families as one small piece of UI. Single tree each.
  *
  * Two calls, same shape as `get_catalog` -> `get_contract`: no `id` lists everything WITHOUT trees
  * (an index to scan, the same reason `get_catalog` has no search  -  small enough to read whole); an
- * `id` returns that one example's full tree(s). Trees are not returned in the list on purpose: a
- * recipe alone can run to several KB across its four states, and a model with a small context budget
- * (this exists partly FOR those) pays for every example's full tree on every call otherwise, most of
- * which it will not use.
+ * `id` returns that one example's full tree. Trees are not returned in the list on purpose: a model
+ * with a small context budget (this exists partly FOR those) pays for every example's full tree on
+ * every call otherwise, most of which it will not use.
  *
  * Computed ONCE at module scope, not inside `createServer()`: it is pure, static data derived from
- * `snippets`/`recipes`, shared safely by every server instance a stateless HTTP request creates.
- * Rebuilding it per request would be pure waste for the same result every time.
+ * `snippets`, shared safely by every server instance a stateless HTTP request creates. Rebuilding it
+ * per request would be pure waste for the same result every time.
  */
-const exampleIndex: readonly ExampleIndexEntry[] = [
-  ...snippets.map((snippet) => ({
-    id: snippet.id,
-    level: snippet.level,
-    intent: snippet.intent,
-    notes: snippet.notes,
-    contracts: collectContracts(snippet.tree),
-  })),
-  ...recipes.map((recipe) => ({
-    id: recipe.id,
-    level: "screen" as const,
-    intent: recipe.intent,
-    notes: recipe.notes,
-    contracts: [...new Set(Object.values(recipe.states).flatMap((tree) => collectContracts(tree)))].sort(),
-  })),
-];
+const exampleIndex: readonly ExampleIndexEntry[] = snippets.map((snippet) => ({
+  id: snippet.id,
+  level: snippet.level,
+  intent: snippet.intent,
+  notes: snippet.notes,
+  contracts: collectContracts(snippet.tree),
+}));
 
 type ExampleIndexEntry = {
   readonly id: string;
-  readonly level: "component" | "molecule" | "screen";
+  readonly level: "component" | "molecule";
   readonly intent: string;
   readonly notes: readonly string[];
   readonly contracts: readonly string[];
@@ -458,14 +430,13 @@ const usageTreeSchema: z.ZodType<UsageTree> = z.lazy(() =>
  */
 const classToCss: ReadonlyMap<string, string> = (() => {
   const claimants = new Map<string, Set<string>>();
+  // `contract.css` and `contract.parts` are plain property reads now: `manifest.contracts` is
+  // `Record<string, CompiledContract>` rather than `Record<string, unknown>`, so the three shape
+  // guards this loop opened with - each one re-deriving what the compiler already knew - are gone.
   for (const contract of Object.values(manifest.contracts)) {
-    const css = (contract as { css?: unknown }).css;
-    const parts = (contract as { parts?: unknown }).parts;
-    if (typeof css !== "string" || !parts || typeof parts !== "object") continue;
-    for (const className of Object.values(parts as Record<string, unknown>)) {
-      if (typeof className !== "string") continue;
+    for (const className of Object.values(contract.parts)) {
       const owners = claimants.get(className) ?? new Set<string>();
-      owners.add(css);
+      owners.add(contract.css);
       claimants.set(className, owners);
     }
   }
@@ -479,23 +450,20 @@ const classToCss: ReadonlyMap<string, string> = (() => {
 
 /** Every `also` class anywhere in a signature's template (nested dismiss buttons included). */
 function alsoClassesFor(node: UsageTree): readonly string[] {
-  const contract = manifest.contracts[node.contract] as
-    | {
-        signatures?: Record<
-          string,
-          { template?: { also?: readonly string[]; children?: readonly unknown[] } }
-        >;
-      }
-    | undefined;
-  const template = contract?.signatures?.[node.signature]?.template;
+  /*
+   * This used to cast to a GUESS, not to a type: a hand-written re-derivation of
+   * `ContractSignature["template"]["also"]`, three packages from where that is declared. It was added
+   * to fix a confirmed bug (IconStateButton emitting with its own sheet and no `button.css`: valid
+   * markup, silently unstyled), and a second bug in the same walk would have been exactly as
+   * invisible, because no type in this file could have disagreed with it.
+   */
+  const template = manifest.contracts[node.contract]?.signatures?.[node.signature]?.template;
   if (!template) return [];
   const into: string[] = [];
-  const walk = (part: { also?: readonly string[]; children?: readonly unknown[] } | undefined) => {
+  const walk = (part: ContractTemplate | undefined) => {
     if (!part) return;
     for (const className of part.also ?? []) into.push(className);
-    for (const child of part.children ?? []) {
-      walk(child as { also?: readonly string[]; children?: readonly unknown[] });
-    }
+    for (const child of part.children ?? []) walk(child);
   };
   walk(template);
   return into;

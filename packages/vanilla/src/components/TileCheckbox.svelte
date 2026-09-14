@@ -2,8 +2,7 @@
   import { checkbox } from "@skryensya/core/machines";
   import { tileEvents } from "@skryensya/core/tile";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
-  import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, ensureClasses, type DomProps } from "../runtime/apply";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
@@ -45,25 +44,30 @@
 
   const scopeTile = (el: HTMLElement) => el.setAttribute("data-scope", "tile");
 
-  $effect(() => {
-    applyZagProps(root, api.getRootProps() as DomProps);
-    applyZagProps(input, api.getHiddenInputProps() as DomProps);
-    // `checked`/`indeterminate` are live PROPERTIES of the input, not attributes: setAttribute does not
-    // sync them (and the browser's form.reset goes back to the attribute). We mirror them from Zag's
-    // state, which is the source of truth (restoration on reset included).
-    input.checked = api.checked;
-    input.indeterminate = api.indeterminate;
-    scopeTile(root);
-    input.setAttribute("data-part", "input");
-    ensureClasses(root, "sk-interactive");
-  });
+  const bindings: PartBinding[] = [
+    {
+      part: "root",
+      node: () => root,
+      props: () => api.getRootProps(),
+      events: true,
+      classes: ["sk-interactive"],
+      after: () => scopeTile(root),
+    },
+    {
+      part: "input",
+      node: () => input,
+      props: () => api.getHiddenInputProps(),
+      events: true,
+      after: () => {
+        // `checked`/`indeterminate` are live PROPERTIES of the input, not attributes: setAttribute does
+        // not sync them (and the browser's form.reset goes back to the attribute). We mirror them from
+        // Zag's state, which is the source of truth (restoration on reset included).
+        input.checked = api.checked;
+        input.indeterminate = api.indeterminate;
+        input.setAttribute("data-part", "input");
+      },
+    },
+  ];
 
-  const cleanups: Array<() => void> = [];
-  onMount(() => {
-    cleanups.push(bindZagEvents(root, () => api.getRootProps() as DomProps));
-    cleanups.push(bindZagEvents(input, () => api.getHiddenInputProps() as DomProps));
-  });
-  onDestroy(() => {
-    for (const cleanup of cleanups) cleanup();
-  });
+  bindParts(bindings);
 </script>

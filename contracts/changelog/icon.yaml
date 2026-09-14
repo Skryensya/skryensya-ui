@@ -3,8 +3,31 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "6c90bdc6b02e50ff"
+surface: "036e266e300b4588"
 entries:
+  - date: 2026-09-14
+    kind: feature
+    target: name
+    es:
+      title: El vocabulario estable gana code
+      body: >-
+        Un rol para "esto es código fuente", que los tres sets publicados ya cubren. Es un ROL y no un
+        dibujo, que es lo que esta lista pide: Lucide lo ocupa con dos chevrones enfrentados, Phosphor
+        con corchetes angulares y Material con su propio glifo, y las tres dicen lo mismo. Por eso el
+        nombre no es `brackets`: ese nombra el dibujo de UN set, y dejaría a los otros dos publicando
+        un icono llamado como algo que no dibujan. Como `IconSet` es completo, agregar un rol es
+        aditivo para quien consume y trabajo nuevo para quien dibuja un set; los tres del repo ya lo
+        traen.
+    en:
+      title: The stable vocabulary gains code
+      body: >-
+        A role for "this is source", already covered by all three published sets. It is a ROLE and not
+        a drawing, which is what this list asks for: Lucide fills it with two facing chevrons,
+        Phosphor with angle brackets and Material with its own glyph, and all three say the same
+        thing. That is why the name is not `brackets`: that is what ONE set calls the drawing, and it
+        would leave the other two publishing an icon named after something they do not draw. Because
+        `IconSet` is complete, adding a role is additive for a consumer and new work for whoever draws
+        a set; all three in this repo already ship it.
   - date: 2026-09-05
     kind: feature
     es:

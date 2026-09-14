@@ -34,7 +34,6 @@ COPY packages/icons-phosphor/package.json ./packages/icons-phosphor/package.json
 COPY packages/mcp/package.json ./packages/mcp/package.json
 COPY packages/react/package.json ./packages/react/package.json
 COPY packages/vanilla/package.json ./packages/vanilla/package.json
-COPY contracts/recipes/package.json ./contracts/recipes/package.json
 COPY contracts/snippets/package.json ./contracts/snippets/package.json
 COPY evals/package.json ./evals/package.json
 
@@ -53,7 +52,7 @@ COPY artifacts ./artifacts
 
 # The compiled manifest the server reads at runtime (packages/mcp/src/manifest.ts never falls back
 # to reading source, per its own header comment), then both of the server's own entry points,
-# bundled by esbuild with the whole workspace chain (ai-compiler -> core -> recipes -> snippets)
+# bundled by esbuild with the whole workspace chain (ai-compiler -> core -> snippets)
 # inlined. Only the two REAL npm dependencies packages/mcp/scripts/build.mjs leaves external
 # (@modelcontextprotocol/sdk, zod) are not in this bundle; the runtime stage installs those two
 # directly instead of copying this stage's own node_modules, whose @skryensya/* workspace symlinks

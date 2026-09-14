@@ -1,6 +1,7 @@
 ---
 /*
- * /playground, a root route beside /presets and, like it, a TOOL rather than a document.
+ * /playground: this app's only page, and a TOOL rather than a document. It wears its own chrome for
+ * exactly that reason (`layouts/Tool.astro`), not the documentation site's navbar.
  *
  * Everything a component page can tell you, it tells you about code you cannot touch. This route
  * exists for the next question, which is always "what if I change it": the same examples the
@@ -12,16 +13,25 @@
  * contracts or the trees, which is the same split every ComponentPreview on this site already makes.
  * They arrive as a fetched asset rather than as props on this page: see that endpoint for why.
  */
-import Base from "../../../docs/src/layouts/Base.astro";
+import Tool from "../layouts/Tool.astro";
 import Playground from "../components/react-demos/Playground.tsx";
 import { getLocale, useTranslations } from "../i18n";
 
-/* The kit's own paint for the chrome around the editor: the rail, the binding switch and the link
- * back to the documentation are all components, not one-off markup. */
+/* The kit's own paint for the tool itself: the rail, the binding switch and the discard
+ * confirmation are components, not one-off markup. Everything the CHROME around them needs - the
+ * tokens, Button, typography, the scrollbar - is the layout's, because the layout is what renders
+ * it. */
 import "@skryensya/core/components/sidebar.css";
 import "@skryensya/core/components/tree-view.css";
 import "@skryensya/core/components/segmented.css";
-import "@skryensya/core/components/typography.css";
+import "@skryensya/core/components/tabs.css";
+import "@skryensya/core/components/dialog.css";
+/* The drag edge between the two panes composes the splitter pattern, and the wait inside the preview
+ * is the kit's own Loader. Both are opt-in sheets, imported where the markup that uses them lives -
+ * even though `sidebar.css` happens to pull the splitter in for its own rail, which is a fact about
+ * that component and not a promise to this page. */
+import "@skryensya/core/patterns/splitter.css";
+import "@skryensya/core/components/loader.css";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
@@ -36,6 +46,7 @@ const strings = {
   failed: t("playground.failed"),
   offline: t("playground.offline"),
   docsLink: t("playground.docsLink"),
+  filesLabel: t("playground.files"),
   hideRail: t("playground.hideRail"),
   showRail: t("playground.showRail"),
   resizeRail: t("playground.resizeRail"),
@@ -43,10 +54,11 @@ const strings = {
   discardBody: t("playground.discardBody"),
   discardCancel: t("playground.discardCancel"),
   discardConfirm: t("playground.discardConfirm"),
+  resizePanes: t("playground.resizePanes"),
 };
 ---
 
-<Base fullBleed title={t("playground.title")} description={t("playground.description")}>
+<Tool title={t("playground.title")} description={t("playground.description")}>
   {/*
     `client:only` and not `client:load`: Sandpack mounts a bundler in an iframe and reads the
     document to size its editor, so there is no meaningful server render of it - and attempting one
@@ -54,7 +66,7 @@ const strings = {
     hydration anyway.
   */}
   <Playground client:only="react" catalogue={`/playground-catalogue-${locale}.json`} strings={strings} />
-</Base>
+</Tool>
 
 <style is:global>
   /*
@@ -72,12 +84,19 @@ const strings = {
    * wide as it is, the stage takes what is left, and one of them not being there is not a special
    * case.
    */
+  /*
+   * SIZED BY ITS PARENT, not by arithmetic against a bar it does not own.
+   *
+   * This used to be `calc(100dvh - var(--docs-header-block-size))`: the docs layout's own token for
+   * the height of the docs header, read from another app's stylesheet, in a page that no longer
+   * renders that header. `tool.css` makes the shell a viewport-tall flex column, so the tool simply
+   * takes what the chrome above it left - and a chrome that grows a row on a phone moves this with
+   * it, which a number never did.
+   */
   .playground {
     display: flex;
-    /* The header is `position: sticky`, so the tool owns exactly the rest of the viewport and the
-     * editor scrolls inside it instead of the page scrolling under it. `--docs-header-block-size`
-     * is the site's own token for that header (site.css), not a number guessed here. */
-    block-size: calc(100dvh - var(--docs-header-block-size));
+    flex: 1;
+    min-inline-size: 0;
     min-block-size: 0;
   }
 
@@ -247,5 +266,149 @@ const strings = {
 
   .playground__stage .sp-stack {
     block-size: auto;
+  }
+
+  /*
+   * THE SPLIT, OWNED BY THE READER.
+   *
+   * The size is a custom property the drag writes on the row (`PaneSplitter`), and the arithmetic
+   * that keeps it sane is HERE, in one `clamp()`: neither pane may fall under 16rem, which is about
+   * where a line of emitted JSX stops being readable, and the fallback is the even split Sandpack
+   * itself would have made. That is the whole value model - the handle writes a number of pixels and
+   * reads back what this rule granted, so nothing in JavaScript has to know where the ends are.
+   */
+  /*
+   * The child combinator is load-bearing, not decoration. Sandpack sizes its panes with
+   * `.sp-c-ikJbEZ > .sp-c-euXojQ { flex: 1 1 0 }` - two classes, exactly the specificity of
+   * `.playground__stage .sp-editor` - and it injects that stylesheet at runtime, so on a tie it
+   * comes last and wins. Naming the row as well puts this rule one class ahead of theirs, which is
+   * the smallest honest way to say "this pane's size is the reader's, not the library's".
+   */
+  .playground__stage .sp-layout > .playground__files {
+    flex: 0 0 clamp(16rem, var(--playground-editor-size, 50%), calc(100% - 16rem));
+  }
+
+  /*
+   * THE FILE TABS (`EditorFiles`): the kit's Tabs, laid out as a pane. The strip takes its own
+   * height, the open panel takes the rest, and Sandpack's editor fills that panel. The only
+   * departures from the component's defaults are spatial: no gap or panel padding, since the editor
+   * is the panel's whole content and runs to the pane's edges, and an inline inset on the strip so
+   * the first label lines up with the code's gutter rather than the pane border.
+   */
+  .playground__files {
+    /* Size containment: Sandpack's row wraps, and a wrapping flex line is as tall as its tallest
+     * item's CONTENT, so a long file stretched the whole screen instead of scrolling. Contained, the
+     * pane contributes nothing and is stretched to the height the row already has. Its inline size is
+     * the flex basis above, so containing that axis too costs nothing. */
+    contain: size;
+    display: flex;
+    min-inline-size: 0;
+    min-block-size: 0;
+    background: var(--color-bg-canvas);
+  }
+
+  .playground__files > .sk-tabs {
+    --sk-tabs-gap: 0;
+    --sk-tabs-panel-padding-block: 0;
+
+    flex: 1;
+    min-inline-size: 0;
+    min-block-size: 0;
+    /* Both tracks floored at zero: the component's grid sizes to content by default, which let a long
+     * line of code widen the pane and a long file push it past the viewport instead of scrolling. */
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .playground__files .sk-tabs__list {
+    padding-inline: var(--space-inset-sm);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .playground__files .sk-tabs__content {
+    display: flex;
+    min-inline-size: 0;
+    min-block-size: 0;
+    overflow: hidden;
+    border-radius: 0;
+  }
+
+  .playground__files .sk-tabs__content[hidden] {
+    display: none;
+  }
+
+  .playground__files .sp-editor {
+    flex: 1;
+    min-inline-size: 0;
+    min-block-size: 0;
+  }
+
+  /*
+   * The handle's containing block, which is all `patterns/splitter.css` asks of a consumer: it
+   * places itself absolutely inside whatever box it is given. As wide as the pattern's own hit
+   * region, so the strip IS the hit region rather than a second, different one.
+   */
+  .playground__splitter {
+    position: relative;
+    flex: 0 0 var(--space-inset-sm);
+  }
+
+  /*
+   * A LINE AT REST, which is the departure from the pattern's default and the hook it publishes for
+   * exactly this. Quiet-until-hovered is right for Sidebar's single edge, where the rail's own border
+   * already says where the panel ends. Here the strip IS the boundary between the code and what it
+   * runs, and a boundary that only appears once you find it reads as two panes touching.
+   */
+  .playground__splitter .sk-splitter {
+    --sk-splitter-rest-color: var(--color-border-subtle);
+  }
+
+  /*
+   * THE PREVIEW'S GROUND, painted before the preview can paint its own.
+   *
+   * Sandpack gives `.sp-preview-container` a literal white, and the iframe inside it is transparent
+   * until its document has parsed the stylesheet we hand it - so every sandbox boot, every binding
+   * switch and every theme flip flashed a white rectangle, in dark mode most of all. The canvas
+   * token is what the document will settle on anyway (`previewBodyCss`), so painting the box behind
+   * it with the same value makes the arrival invisible instead of a flash.
+   */
+  .playground__stage .sp-preview-container,
+  .playground__stage .sp-preview-iframe {
+    background: var(--color-bg-canvas);
+  }
+
+  /*
+   * THE WAIT (`PreviewLoading`), over the whole preview pane.
+   *
+   * `z-index: 4` is not arbitrary: Sandpack's own scale inside this container is base 1, overlay 2,
+   * top 3 (its theme's `zIndices`), and its progress line ("[3/3] Starting", bottom left) sits at
+   * the top of it. One above that covers their loading chrome entirely, which is the point - the
+   * reader should see one wait, in this kit's language, not two in two.
+   */
+  .playground__preview-loading {
+    position: absolute;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-sm);
+    align-items: center;
+    justify-content: center;
+    inset: 0;
+    background: var(--color-bg-canvas);
+    /* The fade is the state machine's, not a guess: `FADING` is the window Sandpack leaves between
+       "the bundle is done" and "the overlay is gone", and matching it means the preview appears
+       under a dissolve instead of a cut. */
+    transition: opacity var(--motion-feedback-duration) var(--motion-feedback-easing);
+  }
+
+  .playground__preview-loading[data-fading] {
+    opacity: 0;
+  }
+
+  .playground__preview-loading-label {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
   }
 </style>

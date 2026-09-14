@@ -9,7 +9,7 @@ import type { Locale, Translate } from "../i18n";
  * `catalogueDetail` for exactly the one component a reader selected (full source, both bindings).
  */
 
-export type CatalogueIndexExample = { readonly id: string; readonly label: string };
+export type CatalogueIndexExample = { readonly id: string; readonly label: string; readonly docs: string };
 export type CatalogueIndexComponent = {
   readonly id: string;
   readonly label: string;
@@ -39,7 +39,7 @@ function catalogueFor(locale: Locale, t: Translate): readonly PlaygroundComponen
   const cached = catalogueByLocale.get(locale);
   if (cached) return cached;
 
-  const computed = playgroundCatalogue(t);
+  const computed = playgroundCatalogue(t, locale);
   catalogueByLocale.set(locale, computed);
   return computed;
 }
@@ -50,7 +50,7 @@ export function catalogueIndex(locale: Locale, t: Translate): readonly Catalogue
     id: component.id,
     label: component.label,
     docs: component.docs,
-    examples: component.examples.map((example) => ({ id: example.id, label: example.label })),
+    examples: component.examples.map((example) => ({ id: example.id, label: example.label, docs: example.docs })),
   }));
 }
 
@@ -72,6 +72,7 @@ export function catalogueDetail(
       return {
         id: example.id,
         label: example.label,
+        docs: example.docs,
         react: react.code,
         ...(react.data ? { reactData: react.data } : {}),
         vanilla: vanillaSandboxSource(example.tree, `${component.label} · ${example.label}`),

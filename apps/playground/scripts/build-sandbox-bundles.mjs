@@ -9,12 +9,20 @@
  *
  * So the kit is compiled here, once, into files the sandbox is HANDED rather than fetches. They land
  * in `public/sandbox/` as ordinary static assets, which means the browser caches them like any other
- * file and the 400KB of React binding is not inlined into the page's HTML.
+ * file and the megabyte of compiled kit is not inlined into the page's HTML.
  *
  * WHY BUNDLES AND NOT SOURCE. Handing Sandpack the source tree would make the sandbox re-resolve
  * every bare specifier in it (`@skryensya/core/button`, `@zag-js/select`, …) with no node_modules to
- * resolve them against. One file per binding has no unresolved imports left except the ones the
+ * resolve them against. What is bundled here has no unresolved imports left except the ones the
  * sandbox really can install: React, and only for the React binding.
+ *
+ * ONE FILE FOR VANILLA, MANY FOR REACT, and the asymmetry is Babel's. Sandpack transpiles what it is
+ * handed, in the browser, on every boot - and it walks the graph from the ENTRY, so a module nothing
+ * imports is never touched. The Vanilla document loads its bundle with one `import`, so one file is
+ * exactly what it pays for. The React package is reached through ~97 subpaths, and as a single
+ * 1.16MB file every one of them pulled the whole kit through Babel: measured at 30-45s before a
+ * three-button example appeared, with `[BABEL] the code generator has deoptimised … exceeds the max
+ * of 500KB` in the sandbox console. Split per subpath, that same example transpiles 33KB.
  *
  * Run before `astro dev` and `astro build`; both scripts do it for you.
  */
@@ -136,68 +144,95 @@ async function bundle({ entry, file, external = [], plugins = [], format = "es" 
 
 console.log("sandbox bundles:");
 
+/*
+ * THE ENTRIES ARE THE EXPORTS MAP, one output module per published subpath.
+ *
+ * The barrel (`src/index.ts`) is a curated list and it is allowed to be: it is what a consumer gets
+ * from `@skryensya/react`, and it does not have to name everything every subpath does. The SANDBOX
+ * needs every subpath, because that is what the emitted snippets import - and a name published on a
+ * subpath but absent from the barrel is `undefined` at the point of use, which is what "Element type
+ * is invalid" means and exactly what `@skryensya/react/tile`'s `TileContent` did.
+ *
+ * SPLIT, NOT INLINED, which is the opposite of the choice the vanilla bundle below makes. Rollup
+ * gives each entry its own file and lifts what several of them share into common chunks, so the
+ * sandbox's Babel only ever sees the closure of the subpaths an example actually imports: 33KB for
+ * button + icon + layout, 369KB for the heaviest single component there is (the editor), against
+ * 1.16MB for every example when this was one file. `.` is an entry too, so a reader who types the
+ * bare specifier still gets the barrel - it simply costs nothing until they do.
+ */
 const reactPackage = JSON.parse(
   readFileSync(join(repo, "packages", "react", "package.json"), "utf8"),
 );
-const subpaths = Object.keys(reactPackage.exports)
-  .filter((entry) => entry !== ".")
-  .map((entry) => entry.replace(/^\.\//, ""))
-  .sort();
 
-writeFileSync(join(out, "react-subpaths.json"), JSON.stringify(subpaths));
-console.log(`  react-subpaths.json  ${subpaths.length} entries`);
-
-
-/*
- * THE ENTRY IS GENERATED FROM THE EXPORTS MAP, not `src/index.ts`.
- *
- * The barrel is a curated list and it is allowed to be: it is what a consumer gets from
- * `@skryensya/react`, and it does not have to name everything every subpath does. The SANDBOX needs
- * everything, because a subpath there is served by a file that re-exports this bundle, and a name
- * the bundle never had is `undefined` at the point of use - which is what "Element type is invalid"
- * means, and it is exactly what `@skryensya/react/tile`'s `TileContent` did: published on the
- * subpath, absent from the barrel.
- *
- * So the union of every published module is bundled instead. 63 modules behind 82 subpaths; the
- * exports map is the source, so a subpath that exists for a consumer exists here.
- */
-const modules = [
-  ...new Set(
-    Object.entries(reactPackage.exports)
-      .filter(([subpath]) => subpath !== ".")
-      .map(([, target]) => target.default),
-  ),
-];
-
-const entryFile = join(out, ".react-entry.ts");
-writeFileSync(
-  entryFile,
-  modules
-    .map((module) => `export * from ${JSON.stringify(join(repo, "packages", "react", module))};`)
-    .join("\n"),
+const reactEntries = Object.fromEntries(
+  Object.entries(reactPackage.exports).map(([subpath, target]) => [
+    subpath === "." ? "index" : subpath.replace(/^\.\//, ""),
+    join(repo, "packages", "react", target.default),
+  ]),
 );
 
-/*
- * React ITSELF is left out. Sandpack installs react/react-dom from npm for its own template, and a
- * second copy bundled in here would be a second React in one page: every hook in the kit would throw
- * on its first render. Same failure the docs site already documents in `astro.config.mjs`, one realm
- * further out.
- *
- * AND THE FORMAT IS CJS, which is the fix for the error this shipped with first. As ESM, Sandpack
- * transpiles the bundle itself, and its interop turns the `import * as React from "react"` that Zag
- * pulls in into a namespace whose hooks are missing: every example using `Icon` died with
- * `(0, e.useContext) is not a function`. CJS is what an npm package puts behind `main` - it is what
- * the local-dependencies guide's own tsup setup emits - so the bundler consumes it directly and the
- * interop is Rollup's, at build time, where it is correct and testable.
- */
-await bundle({
-  entry: entryFile,
-  file: "skryensya-react.js",
-  format: "cjs",
-  external: ["react", "react-dom", "react/jsx-runtime", "react-dom/client"],
+/* Built into a directory this script then reads and deletes: what the browser fetches is the JSON
+ * below, one cacheable asset, and 200-odd sibling files in `public/` would be 200 requests plus a
+ * second way to get the same bytes. */
+const reactModulesDir = join(out, ".react-modules");
+
+await build({
+  configFile: false,
+  logLevel: "warn",
+  plugins: [resolveImportMeta],
+  publicDir: false,
+  define: { "import.meta.env": JSON.stringify({ DEV: true }) },
+  build: {
+    emptyOutDir: false,
+    outDir: reactModulesDir,
+    minify: true,
+    target: "es2022",
+    /*
+     * React ITSELF is left out. Sandpack installs react/react-dom from npm for its own template, and
+     * a second copy bundled in here would be a second React in one page: every hook in the kit would
+     * throw on its first render. Same failure the docs site documents in its `astro.config.mjs`, one
+     * realm further out.
+     *
+     * AND THE FORMAT IS CJS, which is the fix for the error this shipped with first. As ESM, Sandpack
+     * transpiles the bundle itself, and its interop turns the `import * as React from "react"` that
+     * Zag pulls in into a namespace whose hooks are missing: every example using `Icon` died with
+     * `(0, e.useContext) is not a function`. CJS is what an npm package puts behind `main` - it is
+     * what the local-dependencies guide's own tsup setup emits - so the bundler consumes it directly
+     * and the interop is Rollup's, at build time, where it is correct and testable.
+     */
+    lib: { entry: reactEntries, formats: ["cjs"] },
+    rollupOptions: {
+      external: ["react", "react-dom", "react/jsx-runtime", "react-dom/client"],
+      /* Inside `rollupOptions` and not beside it: Vite 8 treats `rolldownOptions` as the same key, so
+       * a second object REPLACES this one. */
+      transform: {},
+      output: {
+        /* `[name].js` and nothing else: the file name IS the subpath, so `@skryensya/react/button`
+         * resolves to `/node_modules/@skryensya/react/button.js` by ordinary node resolution, with no
+         * re-export shim in between. The chunks are hashed because they are nobody's public name. */
+        entryFileNames: "[name].js",
+        chunkFileNames: "chunk-[name]-[hash].js",
+      },
+    },
+  },
 });
 
-rmSync(entryFile, { force: true });
+/** Every emitted file, keyed by the path it will be mounted at inside the sandbox's node_modules. */
+const reactModules = {};
+const collectModules = (dir, prefix = "") => {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) collectModules(path, `${prefix}${entry.name}/`);
+    else if (entry.name.endsWith(".js")) reactModules[`${prefix}${entry.name}`] = readFileSync(path, "utf8");
+  }
+};
+collectModules(reactModulesDir);
+rmSync(reactModulesDir, { force: true, recursive: true });
+
+writeFileSync(join(out, "react-modules.json"), JSON.stringify(reactModules));
+console.log(
+  `  react-modules.json  ${Object.keys(reactModules).length} modules, ${size("react-modules.json")}`,
+);
 
 /*
  * Vanilla, self-contained: the enhancers, their Zag machines and the Svelte runtime that hosts the
@@ -213,19 +248,6 @@ await bundle({
   plugins: [svelte({ emitCss: false })],
 });
 
-/*
- * THE SUBPATHS THE REACT PACKAGE PUBLISHES, so the sandbox can resolve the specifier a consumer
- * really writes.
- *
- * Sandpack takes an unpublished package as files under `/node_modules/<name>/`, with a
- * `package.json` and a `main` (its own guide: "Providing local dependencies"). That gives it
- * `@skryensya/react`. It says nothing about SUBPATHS, and every emitted snippet uses one -
- * `@skryensya/react/button` is what the docs show and what belongs in an app.
- *
- * So the list is exported here and the playground writes one re-export file per entry beside the
- * bundle. Taken from the package's own exports map rather than typed out: a subpath that exists for
- * a consumer exists in the sandbox, including for code the reader writes themselves after opening it.
- */
 /*
  * THE FOUNDATION, copied rather than rebuilt: `@skryensya/core` already publishes exactly this file
  * (built above, in `build-css.mjs`) for the no-toolchain path, and a second recipe for "everything
@@ -351,14 +373,94 @@ function closure(key, seen = new Set()) {
   return seen;
 }
 
+/*
+ * WHAT SHIPS BEFORE ANY COMPONENT, read from `tokens.scss` rather than listed here.
+ *
+ * `foundation.css` is copied above as "everything a component's own CSS assumes is already there",
+ * and for three sheets that is not true: `tokens.scss` pulls `state-layer`, `visually-hidden` and
+ * `icon` in with a native `@import url("./patterns/…")`, and core's own `build-css.ts` STRIPS those
+ * lines when it compiles `foundation.css` (they are only valid relative to `css/`, and it publishes
+ * from `dist/`). Its sibling `tokens.css` inlines them for exactly that reason; `foundation.css` does
+ * not, so the sandbox got the tokens of the state layer and none of its rules, and no `.sk-icon`
+ * sizing at all - which is why an `<Icon>` rendered by a React component (Details' own chevron, and
+ * every other one a component composes internally) came out invisible.
+ *
+ * Read from the same `@import` lines instead of retyping their names: a fourth base pattern upstream
+ * is then already here.
+ */
+/* Its own regex, and not `IMPORT_RE` above: these edges are written from `css/` and so name their
+   group (`./patterns/icon.css`), where a sheet importing a sibling never does (`./button.css`). */
+const BASE_IMPORT_RE = /@import\s+url\(["']\.\/([\w-]+)\/([\w-]+\.css)["']\)/g;
+
+const baseSheets = [
+  ...new Set(
+    [...readFileSync(join(repo, "packages", "core", "css", "tokens.scss"), "utf8").matchAll(BASE_IMPORT_RE)]
+      .map((m) => `${m[1]}/${m[2]}`)
+      .flatMap((key) => [...closure(key)]),
+  ),
+].sort();
+
+/*
+ * A PART CLASS -> THE SHEET THAT DECLARES IT, and not a filename that happens to match.
+ *
+ * This map used to be keyed by stylesheet STEM (`details` -> `components/details.css`), which works
+ * only while a part is named after its own file. Most are not: `.sk-stack` and `.sk-inline` are
+ * declared by `patterns/layout.css`, `.sk-heading` and `.sk-text` by `components/typography.css`,
+ * `.sk-interactive` by `patterns/state-layer.css`. Every one of those resolved to NOTHING, so an
+ * example composing a Stack of Headings got the component's sheet and no layout and no type - the
+ * two bindings then disagreed on spacing, because each detected a different half of the same tree.
+ *
+ * The contracts are where a part's ownership is actually written (`parts: { stack: "sk-stack" }`
+ * beside `css: "@skryensya/core/patterns/layout.css"`), so that is what is read. ONLY `parts`
+ * objects: a class named in an `also` list is composition, not ownership, and taking those too made
+ * `interactive` resolve to forty sheets and `button` to eighteen. Composition is already handled,
+ * one layer down, by `CROSS_CUTTING` on the sheet itself.
+ */
+const PARTS_BLOCK_RE = /(?:const \w*[Pp]arts\s*=|\bparts:)\s*\{/g;
+const CLASS_LITERAL_RE = /"(sk-[a-z0-9]+(?:-[a-z0-9]+)*)"/g;
+
+/** The `{ … }` starting at `open`, by brace matching - a parts object may nest or spread. */
+function objectAt(code, open) {
+  let depth = 0;
+  for (let i = open; i < code.length; i += 1) {
+    if (code[i] === "{") depth += 1;
+    else if (code[i] === "}") {
+      depth -= 1;
+      if (depth === 0) return code.slice(open, i + 1);
+    }
+  }
+  return "";
+}
+
 const cssManifest = {};
-for (const { group, files } of [componentsCss, patternsCss]) {
-  for (const file of files) {
-    cssManifest[file.replace(/\.css$/, "")] = [...closure(`${group}/${file}`)].sort();
+const declare = (name, sheetKey) => {
+  const closed = [...closure(sheetKey)];
+  cssManifest[name] = [...new Set([...(cssManifest[name] ?? []), ...closed])].sort();
+};
+
+for (const file of readdirSync(coreSrcDir).filter((f) => f.endsWith(".ts") && !f.includes(".test."))) {
+  const code = readFileSync(join(coreSrcDir, file), "utf8");
+  const sheets = [...new Set([...code.matchAll(CSS_DECL_RE)].map((m) => `${m[1]}/${m[2]}.css`))];
+  if (sheets.length === 0) continue;
+
+  for (const match of [...code.matchAll(PARTS_BLOCK_RE)]) {
+    const block = objectAt(code, match.index + match[0].length - 1);
+    for (const [, className] of block.matchAll(CLASS_LITERAL_RE)) {
+      for (const sheet of sheets) declare(className.slice(3), sheet);
+    }
   }
 }
 
-writeFileSync(join(out, "css-manifest.json"), JSON.stringify(cssManifest));
+/*
+ * The stylesheet's own stem stays a key as well. Nothing in the client asks for one any more (part
+ * names are read from the emitted markup), but a sheet whose contract declares no part object at all
+ * would otherwise be unreachable by any name, which is a silent hole rather than a decision.
+ */
+for (const { group, files } of [componentsCss, patternsCss]) {
+  for (const file of files) declare(file.replace(/\.css$/, ""), `${group}/${file}`);
+}
+
+writeFileSync(join(out, "css-manifest.json"), JSON.stringify({ base: baseSheets, parts: cssManifest }));
 console.log(
-  `  css/  ${componentsCss.files.length} components + ${patternsCss.files.length} patterns, css-manifest.json  ${Object.keys(cssManifest).length} entries`,
+  `  css/  ${componentsCss.files.length} components + ${patternsCss.files.length} patterns, css-manifest.json  ${Object.keys(cssManifest).length} part names, ${baseSheets.length} base`,
 );

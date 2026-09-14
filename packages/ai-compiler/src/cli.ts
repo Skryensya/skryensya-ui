@@ -3,7 +3,6 @@ import { join } from "node:path";
 import { checkBindingConformance } from "./conformance.js";
 import { checkStylingHooks } from "./hooks.js";
 import { buildManifest, canonical } from "./manifest.js";
-import { checkRecipes } from "./recipes.js";
 import { checkSnippets } from "./snippets.js";
 
 /*
@@ -47,23 +46,9 @@ if (badHooks.length > 0) {
 }
 
 /*
- * Then the recipes. They are published compositions, so a recipe naming a signature that changed is
- * the same failure as an overlay naming one: a screen an agent is invited to copy, teaching
+ * Then the snippets. They are published compositions, so a snippet naming a signature that changed
+ * is the same failure as an overlay naming one: a tree an agent is invited to copy, teaching
  * something the catalogue no longer does.
- */
-const badRecipes = checkRecipes();
-
-if (badRecipes.length > 0) {
-  console.error("\n  RECIPE_INVALID: nothing emitted\n");
-  for (const problem of badRecipes) console.error(`    ${problem}`);
-  console.error("");
-  process.exit(1);
-}
-
-/*
- * Then the snippets: one scope below recipes, same reasoning. A snippet naming a signature that
- * changed is the same failure  -  a tree an agent is invited to copy, teaching something the
- * catalogue no longer does.
  */
 const badSnippets = checkSnippets();
 
@@ -81,9 +66,14 @@ if (conflicts.length > 0) {
   process.exit(1);
 }
 
+/*
+ * The two halves go to disk as they came back. They used to be completed here - `{ ...(index as
+ * object), sourceHash }` - because `buildManifest` returned them without their own hash, which is
+ * what forced three casts into the writer of a value the compiler had just built itself.
+ */
 mkdirSync(outDir, { recursive: true });
-writeFileSync(join(outDir, "ai-index.json"), canonical({ ...(index as object), sourceHash }));
-writeFileSync(join(outDir, "ai-manifest.json"), canonical({ ...(manifest as object), sourceHash }));
+writeFileSync(join(outDir, "ai-index.json"), canonical(index));
+writeFileSync(join(outDir, "ai-manifest.json"), canonical(manifest));
 
-const families = Object.keys((manifest as { contracts: object }).contracts).length;
+const families = Object.keys(manifest.contracts).length;
 console.log(`  ai-index.json + ai-manifest.json: ${families} families, sourceHash ${sourceHash}`);

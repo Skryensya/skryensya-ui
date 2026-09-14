@@ -19,58 +19,7 @@ const t = useTranslations(getLocale(Astro.url));
   title="FileUpload"
   description={t("fileUploadPage.description")}
   contractId="file-upload"
-  tests={[
-    {
-      file: "packages/vanilla/src/components/file-upload.test.ts",
-      tests: [
-        {
-          name: "wires the dropzone as a real, tabbable button, and the trigger as a native one",
-          description: t("fileUploadPage.testVanilla1"),
-        },
-        {
-          name: "opens the file picker from the dropzone via Enter or Space, not just a pointer click",
-          description: t("fileUploadPage.testVanilla8"),
-        },
-        {
-          name: "selecting a valid file emits sk-file-change with it accepted",
-          description: t("fileUploadPage.testVanilla2"),
-        },
-        {
-          name: "selecting an oversized file emits sk-file-change with it rejected instead of accepted",
-          description: t("fileUploadPage.testVanilla3"),
-        },
-        {
-          name: "keeps the clear trigger hidden until a file is accepted, and shows it once one is",
-          description: t("fileUploadPage.testVanilla4"),
-        },
-        {
-          name: "clicking the clear trigger empties the accepted files and re-hides itself",
-          description: t("fileUploadPage.testVanilla5"),
-        },
-        {
-          name: "does nothing without an authored dropzone/input/trigger to scan",
-          description: t("fileUploadPage.testVanilla6"),
-        },
-        {
-          name: "stops the machine when the mount is destroyed",
-          description: t("fileUploadPage.testVanilla7"),
-        },
-      ],
-    },
-    {
-      file: "packages/react/src/components/file-upload.test.tsx",
-      tests: [
-        {
-          name: "announces a rejected file's reason instead of failing silently",
-          description: t("fileUploadPage.testReact1"),
-        },
-        {
-          name: "clears the rejection message once a valid selection follows",
-          description: t("fileUploadPage.testReact2"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/vanilla/src/components/file-upload.test.ts", "packages/react/src/components/file-upload.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("fileUploadPage.description")} />

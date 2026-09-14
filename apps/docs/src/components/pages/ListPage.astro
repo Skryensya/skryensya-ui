@@ -34,15 +34,7 @@ const styles = `@import "@skryensya/core/components/list.css";`;
   title="List"
   description={t("listPage.description")}
   contractId="list"
-  tests={[
-    {
-      file: "packages/react/src/components/list.test.tsx",
-      tests: [
-        { name: "renders a semantic list with static, link and button rows", description: t("listPage.test1") },
-        { name: "renders an ordered list when order is meaningful", description: t("listPage.test2") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/list.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("listPage.lede")} />

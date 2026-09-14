@@ -99,6 +99,9 @@ export const stableIconNames = [
   "edit",
   "delete",
   "copy",
+  /* Source, as a role: a set may draw angle brackets, a terminal prompt or a file with brackets on
+   * it, and "this is code" stays true of all three. Not "brackets", which names the drawing. */
+  "code",
   "filter",
   "refresh",
   /* Zooms the view out, it does not name a magnifying glass: a set may draw a minus in a circle or

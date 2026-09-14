@@ -2,8 +2,7 @@
   import { collapsible } from "@skryensya/core/machines";
   import { tileEvents, tileParts } from "@skryensya/core/tile";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
-  import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, ensureClasses, type DomProps } from "../runtime/apply";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
@@ -43,25 +42,34 @@
   // through `user-select: none`).
   const scopeTile = (el: HTMLElement) => el.setAttribute("data-scope", "tile");
 
-  $effect(() => {
-    applyZagProps(root, api.getRootProps() as DomProps);
-    applyZagProps(trigger, api.getTriggerProps() as DomProps);
-    applyZagProps(content, api.getContentProps() as DomProps);
-    scopeTile(root);
-    scopeTile(trigger);
-    scopeTile(content);
-    ensureClasses(root, tileParts.root, tileParts.expandable);
-    ensureClasses(trigger, tileParts.interactive, "sk-interactive");
-    // Same anti-flash handoff as `AccordionItem.svelte`: see that file's own comment and
-    // `tile.css`'s `:not([data-sk-tile-ready])` rule for why this is set once and never removed.
-    root.setAttribute("data-sk-tile-ready", "");
-  });
+  const bindings: PartBinding[] = [
+    {
+      part: "root",
+      node: () => root,
+      props: () => api.getRootProps(),
+      classes: [tileParts.root, tileParts.expandable],
+      after: () => {
+        scopeTile(root);
+        // Same anti-flash handoff as `AccordionItem.svelte`: see that file's own comment and
+        // `tile.css`'s `:not([data-sk-tile-ready])` rule for why this is set once and never removed.
+        root.setAttribute("data-sk-tile-ready", "");
+      },
+    },
+    {
+      part: "trigger",
+      node: () => trigger,
+      props: () => api.getTriggerProps(),
+      events: true,
+      classes: [tileParts.interactive, "sk-interactive"],
+      after: () => scopeTile(trigger),
+    },
+    {
+      part: "content",
+      node: () => content,
+      props: () => api.getContentProps(),
+      after: () => scopeTile(content),
+    },
+  ];
 
-  const cleanups: Array<() => void> = [];
-  onMount(() => {
-    cleanups.push(bindZagEvents(trigger, () => api.getTriggerProps() as DomProps));
-  });
-  onDestroy(() => {
-    for (const cleanup of cleanups) cleanup();
-  });
+  bindParts(bindings);
 </script>

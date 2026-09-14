@@ -12,7 +12,7 @@
   import { createMenuSafeArea, type MenuSafeAreaHandle } from "@skryensya/core/menu-safe-area";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { deleteMenuInstance, getMenuInstance, setMenuInstance } from "./menu-registry.js";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
@@ -156,17 +156,18 @@
   };
 
   /*
-   * `@zag-js/menu`'s connect() types its props against the SVELTE framework binding (`T["element"]`
-   * / `T["button"]`, Svelte's own `HTMLAttributes`/`HTMLButtonAttributes`), unlike most other Zag
-   * packages this migration touches, which return loose `Record<string, any>` regardless of
-   * framework. Those are structurally closed interfaces with no index signature, so a plain
-   * `as DomProps` is rejected; the values ARE plain objects at runtime, so `as unknown as` here is
-   * the same escape hatch this codebase already uses for other framework-typed values (test-setup.ts).
+   * `@zag-js/menu`'s connect() types its props against the SVELTE framework binding (`T["element"]` /
+   * `T["button"]`, Svelte's own `HTMLAttributes`/`HTMLButtonAttributes`), unlike most other Zag
+   * packages this layer touches, which return a loose record regardless of framework. Those are
+   * structurally closed interfaces with no index signature, which is why both helpers used to end in
+   * `as unknown as DomProps` - the double assertion, the loudest in the package.
+   *
+   * They return what the machine handed them now. `bindParts` takes `object`, so the widest thing a
+   * caller must satisfy is the one thing every props object already is.
    */
-  const triggerProps = (): DomProps =>
-    (parent ? parent.getApi().getTriggerItemProps(api) : api.getTriggerProps()) as unknown as DomProps;
+  const triggerProps = () => (parent ? parent.getApi().getTriggerItemProps(api) : api.getTriggerProps());
 
-  const itemProps = (item: AuthoredItem): DomProps => {
+  const itemProps = (item: AuthoredItem) => {
     const base =
       item.kind === "item"
         ? api.getItemProps({ value: item.value, valueText: item.label, disabled: boolAttr(item.node, "disabled") })
@@ -188,31 +189,63 @@
               );
             },
           });
-    return base as unknown as DomProps;
+    return base;
   };
 
-  $effect(() => {
-    if (!ready || !positioner || !content) return;
-    if (trigger) applyZagProps(trigger, triggerProps());
-    if (contextTrigger) applyZagProps(contextTrigger, api.getContextTriggerProps() as unknown as DomProps);
-    const positionerProps = api.getPositionerProps() as unknown as DomProps;
-    applyZagProps(positioner, anchorName ? (stripPositioningStyle(positionerProps) as DomProps) : positionerProps);
-    if (anchorName && anchorEl) unbindAnchor = bindAnchor(anchorEl, positioner, anchorName);
-    applyZagProps(content, api.getContentProps() as unknown as DomProps);
-    for (const item of items) {
-      applyZagProps(item.node, itemProps(item));
-      const baseProps = {
-        value: item.value,
-        valueText: item.label,
-        disabled: boolAttr(item.node, "disabled"),
-        checked: item.kind === "item" ? undefined : boolAttr(item.node, "data-checked"),
-      };
-      if (item.labelNode) applyZagProps(item.labelNode, api.getItemTextProps(baseProps) as unknown as DomProps);
-      if (item.indicatorNode) applyZagProps(item.indicatorNode, api.getItemIndicatorProps(baseProps) as unknown as DomProps);
-    }
-    syncSafeArea();
+  /** Every part reads the same gate, so a menu that is not ready binds nothing at all. */
+  const live = () => ready && positioner !== null && content !== null;
+
+  const itemBaseProps = (item: AuthoredItem) => ({
+    value: item.value,
+    valueText: item.label,
+    disabled: boolAttr(item.node, "disabled"),
+    checked: item.kind === "item" ? undefined : boolAttr(item.node, "data-checked"),
   });
 
+  const bindings: PartBinding[] = [
+    { part: "trigger", node: () => (live() ? trigger : null), props: triggerProps, events: true },
+    {
+      part: "contextTrigger",
+      node: () => (live() ? contextTrigger : null),
+      props: () => api.getContextTriggerProps(),
+      events: true,
+    },
+    {
+      part: "positioner",
+      node: () => (live() ? positioner : null),
+      props: () => {
+        const props = api.getPositionerProps();
+        return anchorName ? stripPositioningStyle(props) : props;
+      },
+      after: (node) => {
+        if (anchorName && anchorEl) unbindAnchor = bindAnchor(anchorEl, node, anchorName);
+      },
+    },
+    { part: "content", node: () => (live() ? content : null), props: () => api.getContentProps(), events: true },
+
+    ...items.flatMap((item): PartBinding[] => [
+      { part: "item", node: () => (live() ? item.node : null), props: () => itemProps(item), events: true },
+      {
+        part: "itemText",
+        node: () => (live() ? item.labelNode : null),
+        props: () => api.getItemTextProps(itemBaseProps(item)),
+      },
+      {
+        part: "itemIndicator",
+        node: () => (live() ? item.indicatorNode : null),
+        props: () => api.getItemIndicatorProps(itemBaseProps(item)),
+      },
+    ]),
+  ];
+
+  bindParts(bindings, { then: syncSafeArea });
+
+  /*
+   * THE LISTENERS THE MACHINE NEVER DECLARED, which keep their own array. Three families: the aiming
+   * `pointermove`, a submenu's arrow-key open, and the per-item `sk-select` dispatch. None of them are
+   * in Zag's props - they only ADD behaviour beside the machine's - so `bindParts` has nothing to say
+   * about them and does not pretend to.
+   */
   const cleanups: Array<() => void> = [];
   onMount(() => {
     if (!ready) return;
@@ -229,11 +262,6 @@
       menu.connect(service, normalizeProps).setParent(parent.service);
       parent.getApi().setChild(service);
     }
-
-    if (trigger) cleanups.push(bindZagEvents(trigger, () => triggerProps()));
-    if (contextTrigger) cleanups.push(bindZagEvents(contextTrigger, () => api.getContextTriggerProps() as unknown as DomProps));
-    if (content) cleanups.push(bindZagEvents(content, () => api.getContentProps() as unknown as DomProps));
-    for (const item of items) cleanups.push(bindZagEvents(item.node, () => itemProps(item)));
 
     /*
      * Aiming: while the pointer is OVER the trigger, not on `pointerleave` (which would already be an

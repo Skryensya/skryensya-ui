@@ -3,8 +3,25 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "b1bead0f0782ae62"
+surface: "7baf93fcbcf583a1"
 entries:
+  - date: 2026-09-14
+    kind: feature
+    target: variant
+    es:
+      title: Tabs suma la opción variant
+      body: >-
+        <code>variant="hanging"</code> pone la línea arriba de la lista: los triggers cuelgan de
+        ella con las esquinas redondeadas abajo, y la barra del seleccionado queda en el borde
+        superior. <code>underline</code> sigue siendo el valor por defecto. Es sólo CSS, ortogonal a
+        <code>size</code> y <code>orientation</code>.
+    en:
+      title: Tabs gains the variant option
+      body: >-
+        <code>variant="hanging"</code> moves the line to the top of the list: the triggers hang from
+        it with their rounded corners at the bottom, and the selected bar sits on the top edge.
+        <code>underline</code> stays the default. It is CSS-only, orthogonal to <code>size</code>
+        and <code>orientation</code>.
   - date: 2026-08-20
     kind: feature
     target: size

@@ -31,7 +31,6 @@ COPY packages/icons-phosphor/package.json ./packages/icons-phosphor/package.json
 COPY packages/mcp/package.json ./packages/mcp/package.json
 COPY packages/react/package.json ./packages/react/package.json
 COPY packages/vanilla/package.json ./packages/vanilla/package.json
-COPY contracts/recipes/package.json ./contracts/recipes/package.json
 COPY contracts/snippets/package.json ./contracts/snippets/package.json
 COPY evals/package.json ./evals/package.json
 

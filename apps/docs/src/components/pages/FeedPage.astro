@@ -17,25 +17,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
   title="Feed"
   description={t("feedPage.description")}
   contractId="feed"
-  tests={[
-    {
-      file: "packages/react/src/components/feed.test.tsx",
-      tests: [
-        {
-          name: "sets role=feed, names it, and reflects aria-busy",
-          description: t("feedPage.test1"),
-        },
-        {
-          name: "each article gets role=article with aria-posinset/aria-setsize and a real labelled name",
-          description: t("feedPage.test2"),
-        },
-        {
-          name: "allows setSize=-1 for an undetermined total, per WAI's own allowance",
-          description: t("feedPage.test3"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/feed.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("feedPage.lede")} />

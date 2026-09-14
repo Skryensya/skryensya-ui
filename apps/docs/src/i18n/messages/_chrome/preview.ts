@@ -2,7 +2,7 @@ export const previewMessages = {
   es: {
 
     "preview.reloadAction": "Recargar",
-    "preview.fullscreenAction": "Pantalla completa",
+    "preview.playgroundAction": "Abrir en el playground",
     "preview.moreActions": "Más acciones: {name}",
     "preview.screenToggleLabel": "Tamaño de pantalla ({name}): {hint}",
     "preview.bindingGroup": "Vínculo del código: {name}",
@@ -29,7 +29,7 @@ export const previewMessages = {
   en: {
 
     "preview.reloadAction": "Reload",
-    "preview.fullscreenAction": "Full screen",
+    "preview.playgroundAction": "Open in the playground",
     "preview.moreActions": "More actions: {name}",
     "preview.screenToggleLabel": "Screen size ({name}): {hint}",
     "preview.bindingGroup": "Code binding: {name}",

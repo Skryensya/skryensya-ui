@@ -20,19 +20,7 @@ const css = `@import "@skryensya/core/tokens.scss";
   title={t("inputPage.title")}
   description={t("inputPage.description")}
   contractId="input"
-  tests={[
-    {
-      file: "packages/react/src/components/input.test.tsx",
-      tests: [
-        { name: "stays a valid control outside a FormField", description: t("inputPage.test1") },
-        { name: "gives a textarea the same appearance contract as an input", description: t("inputPage.test2") },
-        {
-          name: "writes the control height to data-size, leaving the native size attribute alone",
-          description: t("inputPage.test3"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/input.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("inputPage.lede")} />

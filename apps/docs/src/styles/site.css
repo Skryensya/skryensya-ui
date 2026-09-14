@@ -1596,7 +1596,7 @@ main > :where(h2, h3) {
   display: none;
 }
 
-.docs-component-hero-tabs ~ [data-sk-tabs-content] :where(h2, h3, h4) {
+.docs-component-hero-tabs ~ [data-sk-tabs-content] :where(h2, h3, h4, .sk-component-preview__header[id]) {
   scroll-margin-top: calc(
     var(--docs-navbar-h, var(--docs-header-block-size)) + var(--sk-fx-collapse-bar-height, 0px) +
       var(--docs-hero-tabs-h, 0px) + var(--space-stack-md)

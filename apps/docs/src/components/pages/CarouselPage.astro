@@ -71,32 +71,7 @@ carousel.addEventListener("sk-carousel-change", (event) => {
   description={t("carousel.description")}
   badge={t("carousel.betaBadge")}
   contractId="carousel"
-  tests={[
-    {
-      file: "packages/react/src/components/carousel.test.tsx",
-      tests: [
-        {
-          name: "renders a section region with a scroll-snap track of slides",
-          description: t("carousel.test1"),
-        },
-      ],
-    },
-    {
-      file: "packages/vanilla/src/components/carousel.svelte.test.ts",
-      tests: [
-        { name: "names the region and every slide for assistive tech", description: t("carousel.test2") },
-        { name: "draws one dot per MEASURED page, not one per slide", description: t("carousel.test3") },
-        {
-          name: "snaps to a dot and reports the page on the change event",
-          description: t("carousel.test4"),
-        },
-        {
-          name: "pauses on focus landing INSIDE a slide's own content, not only on the prev/next chrome",
-          description: t("carousel.test5"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/carousel.test.tsx", "packages/vanilla/src/components/carousel.svelte.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("carousel.lede")} />

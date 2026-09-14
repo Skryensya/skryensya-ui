@@ -174,6 +174,16 @@ interface Props {
   description?: string;
   /** Full-width tool layout: drop the docs rail, toc, page-nav and footer, render the slot alone. */
   fullBleed?: boolean;
+  /**
+   * This page belongs to no section, so the rail shows the WHOLE index instead of one section.
+   *
+   * `currentSection` below falls back to `navigation[0]` when nothing matches the path, which is
+   * right for a page that sits inside a section the matcher simply missed, and wrong for a page that
+   * genuinely has no place in the index: the 404, where the reader is lost and the rail answered
+   * "Primeros pasos" as if that were where they had been. Opting in is per-page and explicit, so
+   * nothing else changes shape.
+   */
+  railIndex?: boolean;
   /** Content geometry inside the docs shell. Grid keeps the shell rails but exposes named content spans. */
   documentLayout?: "column" | "grid";
   /**
@@ -196,6 +206,7 @@ const {
   title,
   description,
   fullBleed = false,
+  railIndex = false,
   documentLayout = "column",
   hideVanillaMount = false,
   alwaysShowNavTrigger = fullBleed,
@@ -337,7 +348,7 @@ const currentSection =
     : canonical === "/foundations" || canonical.startsWith("/referencia/")
       ? foundationsSection ?? navigation[0]
       : navigation.find((section) => section.groups.some((group) => group.items.some((item) => item.href === path))) ?? navigation[0];
-const sectionNavigation = [currentSection] satisfies readonly NavigationSection[];
+const sectionNavigation = (railIndex ? navigation : [currentSection]) satisfies readonly NavigationSection[];
 const isGlobalItemCurrent = (href: string): boolean => {
   const itemCanonical = canonicalPath(href);
   if (itemCanonical === "/components") return canonical === "/components" || canonical.startsWith("/componentes/");
@@ -790,9 +801,14 @@ const PALETTE_PRESETS = palettePresets(locale);
                           <span class="sk-nav-list__label">{item.label}</span>
                         </button>
                       ) : (
+                        /* `external` leaves the site (the Playground is its own origin since the
+                           split), so it opens in a new tab rather than dropping the reader out of
+                           the docs with the back button as their only way home. */
                         <a
                           class="sk-nav-list__link sk-interactive"
                           href={item.href}
+                          target={item.external ? "_blank" : undefined}
+                          rel={item.external ? "noopener noreferrer" : undefined}
                           aria-current={isGlobalItemCurrent(item.href) ? "page" : undefined}
                         >
                           <span class="sk-nav-list__label">{item.label}</span>

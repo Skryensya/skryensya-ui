@@ -13,7 +13,7 @@ function markup({ root = "", tree = "" } = {}) {
     <ul class="sk-tree-view__tree" data-sk-tree-view-tree>
       <li class="sk-tree-view__branch" data-sk-tree-view-branch data-value="src" ${tree}>
         <button class="sk-tree-view__branch-control" data-sk-tree-view-branch-control type="button">
-          <span class="sk-tree-view__branch-indicator" data-sk-tree-view-branch-indicator aria-hidden="true">›</span>
+          <span class="sk-tree-view__branch-indicator" data-sk-tree-view-branch-indicator aria-hidden="true"></span>
           <span class="sk-tree-view__branch-text" data-sk-tree-view-branch-text>src</span>
         </button>
         <ul class="sk-tree-view__branch-content" data-sk-tree-view-branch-content>

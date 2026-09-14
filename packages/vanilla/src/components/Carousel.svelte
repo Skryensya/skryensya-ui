@@ -3,7 +3,7 @@
   import { carouselEvents, carouselParts, type CarouselGotoDetail } from "@skryensya/core/carousel";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
   import { remountIcons } from "../icon.js";
 
@@ -151,16 +151,24 @@
    * `x mandatory` in the same frame, the browser re-snaps on every dragged pixel and moving the mouse
    * 10px jumps a whole slide. The configuration is ours, the state is the machine's.
    */
-  let stylesWritten = false;
-  $effect(() => {
-    const style = !stylesWritten;
-    applyZagProps(root, api.getRootProps() as DomProps, { style });
-    applyZagProps(track, api.getItemGroupProps() as DomProps, { style });
-    slides.forEach((slide, index) => {
-      applyZagProps(slide, api.getItemProps({ index }) as DomProps, { style });
-    });
-    stylesWritten = true;
-  });
+  const bindings: PartBinding[] = [
+    { part: "root", node: () => root, props: () => api.getRootProps(), style: "once" },
+    {
+      part: "itemGroup",
+      node: () => track,
+      props: () => api.getItemGroupProps(),
+      style: "once",
+      events: true,
+    },
+    ...slides.map((slide, index): PartBinding => ({
+      part: "item",
+      node: () => slide,
+      props: () => api.getItemProps({ index }),
+      style: "once",
+    })),
+  ];
+
+  bindParts(bindings);
 
   /*
    * The public event contract, untouched: `sk-carousel-change` on page change (by scroll, button, key,
@@ -180,12 +188,6 @@
 
   const cleanups: Array<() => void> = [];
   onMount(() => {
-    // The track's handlers (focus/blur/wheel/touch/mousedown) are wired once and re-read on every
-    // firing: the machine changes state and with it Zag's closure.
-    cleanups.push(
-      bindZagEvents(track, () => api.getItemGroupProps() as DomProps),
-    );
-
     const onGoto = ((event: CustomEvent<CarouselGotoDetail>) => {
       const index = event.detail?.index ?? 0;
       // Asking for the page you are already on does not move the machine, so it would not move the scroll

@@ -40,22 +40,7 @@ const pair = `<body>
   title="SkipLink"
   description={t("skipLink.description")}
   contractId="skip-link"
-  tests={[
-    {
-      file: "packages/react/src/components/skip-link.test.tsx",
-      tests: [
-        { name: "is a real link, not a scripted jump", description: t("skipLink.test1") },
-        {
-          name: "is reachable at rest, because hidden here means clipped and not removed",
-          description: t("skipLink.test2"),
-        },
-        {
-          name: "hands the destination its own requirement as a value",
-          description: t("skipLink.test3"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/skip-link.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("skipLink.lede")} />

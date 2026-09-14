@@ -20,18 +20,7 @@ const css = `@import "@skryensya/core/tokens.scss";
   title={t("formFieldPage.title")}
   description={t("formFieldPage.description")}
   contractId="form-field"
-  tests={[
-    {
-      file: "packages/react/src/components/form-field.test.tsx",
-      tests: [
-        { name: "wires the label, hint and error to the control it wraps", description: t("formFieldPage.test1") },
-        { name: "treats the error message as what makes the field invalid", description: t("formFieldPage.test2") },
-        { name: "passes required and disabled down to the native control", description: t("formFieldPage.test3") },
-        { name: "wires a textarea exactly as it wires an input", description: t("formFieldPage.test4") },
-        { name: "passes axe on a field with a hint and an error", description: t("formFieldPage.test5") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/form-field.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("formFieldPage.lede")} />

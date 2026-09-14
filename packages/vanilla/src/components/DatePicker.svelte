@@ -19,7 +19,7 @@
   import { calendarParts } from "@skryensya/core/calendar";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, ensureClasses, type DomProps } from "../runtime/apply";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
   import { remountIcons } from "../icon.js";
   import CalendarView from "./CalendarView.svelte";
@@ -107,49 +107,59 @@
    */
   const anchored = supportsAnchorPositioning();
   let unbindAnchor: (() => void) | undefined;
-  const positionerProps = (props: DomProps): DomProps =>
-    anchored ? (stripPositioningStyle(props) as DomProps) : props;
+  /** Generic, so the template spread below needs no cast either: `stripPositioningStyle` takes any object. */
+  const positionerProps = <T extends object>(props: T) => (anchored ? stripPositioningStyle(props) : props);
 
-  $effect(() => {
-    applyZagProps(root, api.getRootProps() as DomProps);
-    if (label) applyZagProps(label, api.getLabelProps() as DomProps);
-    applyZagProps(control, api.getControlProps() as DomProps);
-    ensureClasses(control, anchoredParts.anchor);
-    applyZagProps(input, api.getInputProps({ index: 0 }) as DomProps);
-    if (authoredPlaceholder !== null) input.placeholder = authoredPlaceholder;
-    applyZagProps(trigger, api.getTriggerProps() as DomProps);
-    if (clear) {
-      applyZagProps(clear, api.getClearTriggerProps() as DomProps);
-      if (authoredClearLabel !== null) clear.setAttribute("aria-label", authoredClearLabel);
-      // Clear only makes sense with a date set; with no value it takes up no room in the field.
-      clear.hidden = api.value.length === 0;
-    }
-  });
+  /*
+   * The calendar's own triggers (prev/next/view/day) are rendered by CalendarView with their handlers
+   * already wired by Svelte, so only the authored control appears here.
+   */
+  const bindings: PartBinding[] = [
+    { part: "root", node: () => root, props: () => api.getRootProps() },
+    { part: "label", node: () => label, props: () => api.getLabelProps() },
+    {
+      part: "control",
+      node: () => control,
+      props: () => api.getControlProps(),
+      classes: [anchoredParts.anchor],
+    },
+    {
+      part: "input",
+      node: () => input,
+      props: () => api.getInputProps({ index: 0 }),
+      events: true,
+      after: () => {
+        if (authoredPlaceholder !== null) input.placeholder = authoredPlaceholder;
+      },
+    },
+    { part: "trigger", node: () => trigger, props: () => api.getTriggerProps(), events: true },
+    {
+      part: "clearTrigger",
+      node: () => clear,
+      props: () => api.getClearTriggerProps(),
+      events: true,
+      after: (node) => {
+        if (authoredClearLabel !== null) node.setAttribute("aria-label", authoredClearLabel);
+        // Clear only makes sense with a date set; with no value it takes up no room in the field.
+        node.hidden = api.value.length === 0;
+      },
+    },
+  ];
 
-  // Zag's handlers are wired once and re-read on every firing: the machine changes state and with it
-  // the closure. The calendar's triggers (prev/next/view/day) are rendered by CalendarView with their
-  // handlers already wired by Svelte, so only the authored control needs bindZagEvents.
-  const cleanups: Array<() => void> = [];
+  bindParts(bindings);
+
   onMount(() => {
-    cleanups.push(bindZagEvents(input, () => api.getInputProps({ index: 0 }) as DomProps));
-    cleanups.push(bindZagEvents(trigger, () => api.getTriggerProps() as DomProps));
-    if (clear) {
-      cleanups.push(bindZagEvents(clear, () => api.getClearTriggerProps() as DomProps));
-    }
-    // The anchor↔popup wiring, after the first render: the positioner comes from the template below.
+    // The anchor-to-popup wiring, after the first render: the positioner comes from the template below.
     if (anchored) unbindAnchor = bindAnchor(control, positioner, anchorNameFor(root.id));
     // The chevrons are authored as `data-sk-icon` placeholders and hydrated by the already-registered set.
     remountIcons(root);
   });
-  onDestroy(() => {
-    for (const cleanup of cleanups) cleanup();
-    unbindAnchor?.();
-  });
+  onDestroy(() => unbindAnchor?.());
 </script>
 
 <div
   bind:this={positioner}
-  {...positionerProps(api.getPositionerProps() as DomProps)}
+  {...positionerProps(api.getPositionerProps())}
   class="{datePickerParts.positioner} {anchoredParts.positioner}"
 >
   <div {...api.getContentProps()} class="{datePickerParts.content} {calendarParts.root}">

@@ -100,7 +100,7 @@ export const FOCUS_ORDER_CSS = `
        * control's full width as one long amber bar. "auto" hands sizing back to the content.
        *
        * (No backticks in any comment inside this string: it is a template literal, and one would
-       * end it. The same trap this repo's fullscreen-preview page documents for its own srcdoc.)
+       * end it. The same trap a srcdoc-based preview shell runs into.)
        */
       inset-block-end: auto;
       inset-inline-end: auto;

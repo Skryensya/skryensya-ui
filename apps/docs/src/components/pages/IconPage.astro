@@ -59,16 +59,7 @@ const sizesCss = `/* another size? you re-declare the hook, like every
   title="Icon"
   description={t("iconPage.description")}
   contractId="icon"
-  tests={[
-    {
-      file: "packages/react/src/components/icon.test.tsx",
-      tests: [
-        { name: "resolves a stable name against the bound set", description: t("iconPage.test1") },
-        { name: "renders project geometry without any binding", description: t("iconPage.test2") },
-        { name: "is decorative without a label, and content with one", description: t("iconPage.test3") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/icon.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("iconPage.lede")} />

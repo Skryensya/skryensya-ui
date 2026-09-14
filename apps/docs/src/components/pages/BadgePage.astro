@@ -41,15 +41,7 @@ const tree = {
   title="Badge"
   description={t("badge.description")}
   contractId="badge"
-  tests={[
-    {
-      file: "packages/react/src/components/badge.test.tsx",
-      tests: [
-        { name: "renders its accessible label and forwards semantic attributes", description: t("badge.test1") },
-        { name: "anchors an accessible status dot without adding visible content", description: t("badge.test2") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/badge.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("badge.lede")} />

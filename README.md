@@ -79,7 +79,6 @@ report. The command above serves the same site locally.
 
 | Package | What it is |
 |---|---|
-| [`@skryensya/recipes`](contracts/recipes) | Whole screens as usage trees, one per state, validated against the contracts. |
 | [`@skryensya/snippets`](contracts/snippets) | Established compositions below screen scale: one component well composed, or a small molecule. |
 | [`@skryensya/docs`](apps/docs) | The documentation site at [ui.skryensya.dev](https://ui.skryensya.dev) (Astro), and the system's own biggest consumer. |
 | [`@skryensya/eval-viewer`](apps/eval-viewer) | Local-only viewer for agent eval runs. |
@@ -93,8 +92,7 @@ report. The command above serves the same site locally.
 ├── contracts/
 │   ├── semantic/      one YAML per contract, the human-readable overlay (79 of them)
 │   ├── changelog/     one YAML per contract, its published history
-│   ├── recipes/       whole screens as usage trees
-│   └── snippets/      smaller established compositions
+│   └── snippets/      established compositions as usage trees
 ├── artifacts/         compiled output: ai-manifest.json, ai-index.json, test-results.json
 ├── docs/
 │   ├── decisions/    20 decision records, each with the alternatives rejected

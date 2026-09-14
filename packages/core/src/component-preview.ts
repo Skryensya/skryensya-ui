@@ -105,15 +105,31 @@ export const componentPreviewAttrs = {
    * position. Authoring the document here instead, and promoting it only once
    * {@link componentPreviewParts.stage} enters the shared `IntersectionObserver`'s band (the same one
    * `releaseComponentPreviewStages`/`restoreComponentPreviewStages` already use), is what actually
-   * defers it. `/f/{page}/{n}` (the fullscreen route) reads this same attribute off the page's own
-   * static HTML, not `srcdoc`, so a preview nobody has scrolled to yet still opens correctly there.
+   * defers it.
    */
   doc: "data-sk-component-preview-doc",
   viewport: "data-sk-component-preview-viewport",
   scroll: "data-sk-component-preview-scroll",
   reload: "data-sk-component-preview-reload",
-  /** The "..." menu's fullscreen action; opens the preview alone, at its own URL (`/f/{page}/{n}`). */
-  fullscreen: "data-sk-component-preview-fullscreen",
+  /**
+   * On the root: this demo's authored source, ready to hand to the Playground.
+   *
+   * The payload rather than a pointer: the Playground is a different build and, behind some
+   * topologies, a different origin, so it cannot re-read this page. The source travels with the
+   * click or not at all.
+   */
+  playground: "data-sk-component-preview-playground",
+  /**
+   * The "..." menu's Playground action. An `<a href>`, not a button, and that is deliberate: the
+   * handoff itself rides in `sessionStorage`, which is per-ORIGIN, and the Playground is only the
+   * same origin when both apps sit behind one host (the default deployment). Where they do not -
+   * `pnpm dev`, which serves them on two ports - the write is simply not readable at the other end.
+   *
+   * A real link degrades correctly there: the reader still arrives at the Playground, at its own
+   * catalogue, instead of meeting a button that looks like it did nothing. It also makes the action
+   * middle-clickable and focusable for free.
+   */
+  playgroundOpen: "data-sk-component-preview-playground-open",
   /**
    * On the stage, and only for a preset: `free` is the absence of the attribute, not a value, so
    * every rule that reserves, fits or scrolls keeps working unchanged when no preset is chosen.

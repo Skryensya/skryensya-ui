@@ -2,10 +2,10 @@ import type { ContractSlot } from "./contract.js";
 
 /*
  * A composition written as data (decision 29), and the shape of the data every consumer passes
- * around: the compiler emits from it, the gates render it, the recipes ARE it.
+ * around: the compiler emits from it, the gates render it, the snippets ARE it.
  *
  * It lives in Core, beside the contract it is written against, for a reason turbo said out loud: the
- * recipes are data the compiler CONSUMES, so having them import the compiler for this type made the
+ * snippets are data the compiler CONSUMES, so having them import the compiler for this type made the
  * two packages depend on each other. Data does not depend on its consumer.
  *
  * THE FUNCTIONS THAT READ A TREE NOW LIVE HERE TOO. They used to sit in the compiler, on the

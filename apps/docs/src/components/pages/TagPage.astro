@@ -17,17 +17,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
   title="Tag"
   description={t("tagPage.description")}
   contractId="tag"
-  tests={[
-    {
-      file: "packages/react/src/components/tag.test.tsx",
-      tests: [
-        { name: "carries its tone and label", description: t("tagPage.test1") },
-        { name: "exposes a named remove control only when onRemove is given", description: t("tagPage.test2") },
-        { name: "removes with a real small icon-only button, not a lookalike", description: t("tagPage.test3") },
-        { name: "renders a navigable tag as a link and never as dismissible", description: t("tagPage.testLink") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/tag.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("tagPage.lede")} />

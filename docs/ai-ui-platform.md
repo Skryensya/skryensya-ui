@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Estado** | En construcción · F0–F5 verdes; F4 publica 69 familias / 158 firmas; F6 en curso (9 recipes, 29 previews de docs medidos: 29 usan usage tree, 0 siguen autoreados a mano); F7 en curso (red de regresión estática verde; harness de agente vivo con tres providers, corrido en vivo contra el server real vía `claude -p`) |
+| **Estado** | En construcción · F0–F5 verdes; F4 publica 69 familias / 158 firmas; F6 en curso (29 previews de docs medidos: 29 usan usage tree, 0 siguen autoreados a mano); F7 en curso (red de regresión estática verde; harness de agente vivo con tres providers, corrido en vivo contra el server real vía `claude -p`) |
 | **Fecha** | 24 de agosto de 2026 |
 | **Supersede** | `apps/docs/01_arquitectura_objetivo_skryensya_ai_ui.md` y `apps/docs/02_plan_reconstruccion_desde_cero_skryensya_ai_ui.md`, que quedan como material de origen y no dirigen el trabajo |
 | **Decisiones** | [28](./decisions/0013-the-contract-lives-in-core-and-frameworks-are-bindings.md) · [29](./decisions/0014-the-usage-tree-is-the-single-currency.md) · [30](./decisions/0015-evidence-is-rendered-in-both-bindings.md) · [31](./decisions/0016-the-catalogue-fits-in-the-context.md) |
@@ -71,7 +71,7 @@ Once puntos, y ninguno es de detalle:
 | 8 | BM25 ponderado, corpus, Recall@k, MRR, aliases bilingües | **Sin ranker** ni aliases: el índice completo va al contexto | El ranker actual documenta que listar todo funciona mejor, y los aliases sólo existían para alimentarlo |
 | 9 | Evals miden la recuperación | **Evals miden la composición final** | Sin intermediario, no hay posición que medir |
 | 10 | Matriz de 8 responsables, 12 PRs, aprobaciones cruzadas | **Un autor, fases con exit gate binario** | Es la realidad de este repositorio |
-| 11 | Recipes destilados de stories | **Recipes autoreados, pero renderizados por una página real** | Un recipe que nada renderiza no es evidencia de nada |
+| 11 | Pantallas destiladas de stories | **Pantallas autoreadas, pero renderizadas por una página real** (la galería `/templates`) | Una pantalla que nada renderiza no es evidencia de nada |
 
 ---
 
@@ -578,10 +578,9 @@ publicado. Verificado extremo a extremo: catálogo → contrato → árbol → c
 >   plausible, y ante una opción ajena la descarta en silencio. Código sacado de un árbol inválido se
 >   ve bien y está mal.
 
-### F6 · El sitio y los recipes: en curso
-`ComponentPreview` recibe usage trees ✅. Los recipes están escritos, validados, renderizados y pasan
-los runtime gates completos ✅. Medido hoy, las 29 llamadas a `ComponentPreview` en páginas docs usan
-`tree`; ya no queda ningún preview con `html`/`code`/`react` autoreado a mano.
+### F6 · El sitio y las pantallas: en curso
+`ComponentPreview` recibe usage trees ✅. Medido hoy, las 29 llamadas a `ComponentPreview` en páginas
+docs usan `tree`; ya no queda ningún preview con `html`/`code`/`react` autoreado a mano.
 **Salida:** una página completa se construye desde el catálogo publicado, se renderiza y pasa G2–G5.
 
 **`<ComponentPreview tree={…} />`** emite los tres: el markup autoreado en el escenario vanilla, el TSX al
@@ -599,14 +598,17 @@ misma llamada.
 patterns CSS y overrides siguen mostrando CSS cuando corresponde, pero la estructura renderizada sale
 del contrato publicado.
 
-**Los recipes** viven en `contracts/recipes/` como datos, no como prosa, y son un paquete del
-workspace para que el compilador, los gates, el MCP y el sitio importen el MISMO módulo: nueve pantallas
-(`app-shell`, `browse`, `detail`, `form`, `checkout`, `upload`, `data-table`, `settings`,
-`destructive-confirm`), cada una en sus cuatro estados. `checkRecipes` pasa los 36 árboles por el
-mismo validador que `validate_ui`, y el build **no emite nada** si uno falla. `/recetas` los renderiza
-todos, en los dos bindings.
+**Las pantallas enteras viven en la galería `/templates`** (`apps/docs/src/demos/templates/` más el
+app shell), no en un paquete de contratos. Hubo un intento anterior, `contracts/recipes`: nueve
+pantallas como datos, cada una en sus cuatro estados (`loading`/`empty`/`error`/`success`), validadas
+en el build por `checkRecipes` y publicadas al MCP como nivel `"screen"` de `get_examples`. **Se
+eliminó**: la galería de templates ya enseñaba las mismas pantallas y mantener dos publicaciones de
+lo mismo costaba más de lo que enseñaba. Lo que sobrevive como ejemplo publicado para un agente es
+`contracts/snippets`, por debajo de la escala de pantalla.
 
-> **Escribir los recipes encontró cuatro bugs de contrato**
+Lo que encontró escribirlas, en cambio, sigue siendo cierto y por eso queda anotado acá.
+
+> **Escribir las pantallas encontró cuatro bugs de contrato**
 >
 > - `Button.action` **no se podía deshabilitar**. El binding React escribe `disabled` y
 >   `aria-disabled`; el contrato nunca declaró la opción, así que todo estado «guardando…» era
@@ -625,19 +627,8 @@ todos, en los dos bindings.
 > columna de contenido caía debajo del sidebar en vez de al lado. Válida, renderizada, y la pantalla
 > equivocada.
 
-**Las nueve recetas** cubren pantallas completas, no una matriz artificial de firmas. No es el objetivo
-que cada receta exista para tapar una signature: una receta existe porque una **pantalla** vale la pena
-enseñarse. La cobertura exhaustiva de firmas vive en los árboles canónicos de `packages/ai-gates`;
-si una firma publicada no aparece allí, `rendered.spec.ts` falla antes de llamar completa a F4/F6.
-
-Los **36 árboles de recipes** pasan por los runtime gates derivados de `recipes` en vez de copiados:
-son 72 renders de binding (Vanilla + React) sin un segundo origen de datos. Además hay dos chequeos
-que sólo tienen sentido en una receta, porque un contrato no puede pedirlos:
-
-| Chequeo | Dónde | Qué atrapa |
-|---|---|---|
-| El estado `error` ofrece una salida | Compilador, rompe el build | Una pantalla de la que sólo se sale con el botón atrás |
-| Los cuatro estados son cuatro pantallas | Gates, árbol ARIA | Dos estados que son la misma pantalla con otro string |
+La cobertura exhaustiva de firmas vive en los árboles canónicos de `packages/ai-gates`; si una firma
+publicada no aparece allí, `rendered.spec.ts` falla antes de llamar completa a F4/F6.
 
 > **Lo que encontraron los gates al mirar composiciones**
 >
@@ -653,17 +644,17 @@ que sólo tienen sentido en una receta, porque un contrato no puede pedirlos:
 > - **No había forma de decir «estás en la última página»**, porque eso es `page === total` y ningún
 >   lado es un literal. Ahora dos opciones se comparan entre sí (`equalsOption`).
 >
-> Y turbo encontró un ciclo: las recetas importaban el compilador para `UsageTree` mientras el
-> compilador importaba las recetas para validarlas. **Un dato no depende de su consumidor**, así que la
+> Y turbo encontró un ciclo: las pantallas importaban el compilador para `UsageTree` mientras el
+> compilador las importaba para validarlas. **Un dato no depende de su consumidor**, así que la
 > forma se mudó a `@skryensya/core/usage-tree` (al lado del contrato contra el que está escrita) y las
 > funciones que recorren un árbol se quedaron en el compilador, que reexporta los tipos para que nadie
-> cambie un import. Romper el ciclo además hizo que **TypeScript chequee las recetas por primera vez**.
+> cambie un import.
 
 > **Un hueco nombrado y sin tapar: el esqueleto no se anuncia**
 >
-> El estado `loading` de `browse` son Placeholders, que es lo correcto en pantalla: la forma de lo que
-> viene ya se conoce. Pero un esqueleto **no dice nada** a quien no lo ve: no hay región viva, así que
-> un lector de pantalla encuentra una página quieta.
+> Un estado de carga hecho de Placeholders es lo correcto en pantalla: la forma de lo que viene ya se
+> conoce. Pero un esqueleto **no dice nada** a quien no lo ve: no hay región viva, así que un lector
+> de pantalla encuentra una página quieta.
 >
 > La pieza que falta es un **status visualmente oculto**, y el catálogo no la tiene: `Loader` con
 > `label` anuncia pero dibuja un spinner, que es justo lo que el esqueleto vino a evitar. Preferible

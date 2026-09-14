@@ -35,58 +35,7 @@ const react = emitReactSource(marqueeAutoplayTree(), {
   description={t("marquee.description")}
   badge={t("marquee.betaBadge")}
   contractId="marquee"
-  tests={[
-    {
-      file: "packages/react/src/components/marquee.test.tsx",
-      tests: [
-        {
-          name: "renders one semantic run, one hidden visual copy, and waits for Play",
-          description: t("marquee.test1"),
-        },
-        {
-          name: "starts autoplay with a pressed Pause control",
-          description: t("marquee.test2"),
-        },
-        {
-          name: "stops autoplay when the live reduced-motion preference turns on",
-          description: t("marquee.test3"),
-        },
-        {
-          name: "fills a short run up to its viewport so the loop leaves no hole",
-          description: t("marquee.test6"),
-        },
-        {
-          name: "puts the Play/Pause control in a real Button and fades its own edges by default",
-          description: t("marquee.test8"),
-        },
-        {
-          name: "ships no control unless asked, and then never starts paused",
-          description: t("marquee.test9"),
-        },
-      ],
-    },
-    {
-      file: "packages/vanilla/src/components/marquee.test.ts",
-      tests: [
-        {
-          name: "starts autoplay and derives duration from measured content",
-          description: t("marquee.test4"),
-        },
-        {
-          name: "never lets a preference cycle override an explicit pause",
-          description: t("marquee.test5"),
-        },
-        {
-          name: "fills a short run up to its viewport and times the widened run, not the authored one",
-          description: t("marquee.test7"),
-        },
-        {
-          name: "runs an uncontrolled autoplay strip without a toggle to talk to",
-          description: t("marquee.test10"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/marquee.test.tsx", "packages/vanilla/src/components/marquee.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("marquee.lede")} />

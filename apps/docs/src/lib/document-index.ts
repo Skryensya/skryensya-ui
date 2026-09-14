@@ -254,8 +254,8 @@ export function indexDocument(source: string): DocumentIndex {
      * Consumed WHOLE, closing tag included, so the count is untouched by an element that opened and
      * closed. Stopping at `</script` instead let the loop meet a closing tag whose opening tag it
      * had skipped, and every script on the page took the depth down a level it never went up: on
-     * /recetas, twenty-seven headings nested inside previews came out reading as sections of the
-     * page. Any page with an inline script before its own nested headings had the same bug waiting.
+     * a gallery page, twenty-seven headings nested inside previews came out reading as sections of
+     * the page. Any page with an inline script before its own nested headings had the same bug waiting.
      */
     if (RAW_TEXT_ELEMENTS.has(element) && !closes) {
       const close = source.indexOf(`</${element}`, end);

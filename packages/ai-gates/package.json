@@ -7,7 +7,7 @@
   "scripts": {
     "check": "tsc -p tsconfig.json --noEmit && vitest run",
     "test": "playwright test",
-    "test:quick": "playwright test src/hidden.spec.ts src/recipes.spec.ts src/rendered.spec.ts",
+    "test:quick": "playwright test src/hidden.spec.ts src/rendered.spec.ts",
     "test:ui": "playwright test --ui",
     "heights": "node scripts/build-preview-heights.ts",
     "test:browser": "playwright test"
@@ -21,7 +21,6 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.62.0",
-    "@skryensya/recipes": "workspace:*",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
     "@types/node": "catalog:",
     "@types/react": "^19.0.0",

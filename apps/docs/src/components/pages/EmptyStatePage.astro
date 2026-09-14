@@ -16,23 +16,7 @@ const t = useTranslations(getLocale(Astro.url));
   description={t("emptyState.description")}
   badge={t("emptyState.betaBadge")}
   contractId="empty-state"
-  tests={[
-    {
-      file: "packages/react/src/components/empty-state.test.tsx",
-      tests: [
-        {
-          name: "renders the title as a heading, with no icon, description or actions by default",
-          description: t("emptyState.testReact1"),
-        },
-        {
-          name: "renders an icon, hidden from assistive tech, only when given",
-          description: t("emptyState.testReact2"),
-        },
-        { name: "renders a description only when given", description: t("emptyState.testReact3") },
-        { name: "renders actions only when given", description: t("emptyState.testReact4") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/empty-state.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("emptyState.description")} />

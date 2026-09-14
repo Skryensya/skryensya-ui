@@ -56,7 +56,9 @@ function NodeView({
             className={treeViewParts.branchIndicator}
             aria-hidden="true"
           >
-            {branchIndicator ?? "›"}
+            {/* Empty when no slot is passed: the stylesheet draws the chevron. See the contract's
+                own note at the matching `whenMissing` template node. */}
+            {branchIndicator}
           </span>
           {branchIcon ? (
             <span className={treeViewParts.branchIcon} aria-hidden="true">
@@ -94,8 +96,6 @@ function NodeView({
       {...api.getItemProps(nodeProps)}
       className={`${treeViewParts.item} sk-interactive`}
     >
-      {/* The disclosure column stays empty on a leaf so labels align with sibling branches. */}
-      <span className={treeViewParts.itemIndicator} aria-hidden="true" />
       {leafIcon ? (
         <span className={treeViewParts.itemIcon} aria-hidden="true">
           {leafIcon}

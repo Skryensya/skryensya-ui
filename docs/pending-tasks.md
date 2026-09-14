@@ -236,7 +236,7 @@ paso de cada ítem es abrir la página + el contrato y decidir. Orden alfabétic
   usuario lo quiere eventualmente; **no programado**. `packages/mcp` hoy es stdio-only; mantener
   las asunciones de transporte sueltas en cualquier cambio a ese paquete, no bloquear en esto.
 - [ ] **Pipeline de consumo por IA (F6/F7)** - `docs/ai-ui-platform.md`, secciones "F6 · El sitio
-  y los recipes" y "F7 · Evals", ambas "en curso" a la fecha de ese documento (2026-08-24). **Ese
+  y las pantallas" y "F7 · Evals", ambas "en curso" a la fecha de ese documento (2026-08-24). **Ese
   documento es la fuente de verdad de este ítem, no este archivo**: verificado el 2026-09-03 que su
   propia lista de "familias sin publicar" ya está desactualizada (`calendar`, `combobox`,
   `popover`, `select`, `dialog`, `vaul`, `toc`, `tooltip` ya están publicadas; el manifest pasó de
@@ -247,8 +247,8 @@ paso de cada ítem es abrir la página + el contrato y decidir. Orden alfabétic
   246 files), the templated headers of all 79 changelog and 78 semantic files, and
   `package.json`'s `pnpm.comment-overrides`. Items below are written in English because ADR-0021 now
   requires it, which is why this file reads mixed until its own row is taken.
-  - [ ] `contracts/semantic/*.yaml` `useWhen`/`avoidWhen` and `contracts/recipes/*.ts` `intent`/`notes`
-    (~2,105 lines, 72 files). **Take this first.** It is the only Spanish with no counterpart at all
+  - [ ] `contracts/semantic/*.yaml` `useWhen`/`avoidWhen` (81 files). **Take this first.** It is the
+    only Spanish with no counterpart at all
     (zero `en:` keys, against 14 in `contracts/changelog/button.yaml`), and it is not inert: it reaches
     agents through `get_catalog`/`get_contract` and renders on component pages, which now sit on the
     English base routes. Translate the prose only; `id`, signature names and option keys are

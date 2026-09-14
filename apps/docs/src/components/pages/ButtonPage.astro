@@ -62,41 +62,7 @@ button.addEventListener("click", runDeployment);`;
   title="Button"
   description={t("button.description")}
   contractId="button"
-  tests={[
-    {
-      file: "packages/react/src/components/button.test.tsx",
-      tests: [
-        { name: "renders a native button that does not submit forms by default", description: t("button.test1") },
-        {
-          name: "exposes disabled state to both native controls and assistive technology",
-          description: t("button.test2"),
-        },
-        {
-          name: "serializes the xs size onto the same attribute as every other size",
-          description: t("button.test6"),
-        },
-        { name: "renders navigation with Button appearance and anchor attributes", description: t("button.test3") },
-        {
-          name: "accepts a visually hidden name supplied through a slot rather than children",
-          description: t("button.test7"),
-        },
-      ],
-    },
-    {
-      file: "packages/vanilla/src/components/button.test.ts",
-      tests: [
-        {
-          name: "enhances authored buttons with a safe type and idempotent mounting",
-          description: t("button.test4"),
-        },
-        { name: "refuses an icon-only button with no accessible name", description: t("button.test5") },
-        {
-          name: "accepts a name the author put in a slot rather than beside the icon",
-          description: t("button.test8"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/button.test.tsx", "packages/vanilla/src/components/button.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("button.lede")} />

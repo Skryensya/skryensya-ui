@@ -11,6 +11,10 @@
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./checks": {
+      "types": "./src/checks.ts",
+      "default": "./src/checks.ts"
     }
   },
   "scripts": {

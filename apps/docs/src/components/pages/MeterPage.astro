@@ -18,21 +18,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
   description={t("meterPage.description")}
   contractId="meter"
   styleGroups={[{ file: "components/meter.css", probe: "sk-meter" }]}
-  tests={[
-    {
-      file: "packages/react/src/components/meter.test.tsx",
-      tests: [
-        {
-          name: "sets role=meter with the three required aria-value attributes",
-          description: t("meterPage.test1"),
-        },
-        {
-          name: "honors a non-zero min when painting the fill, unlike Progress",
-          description: t("meterPage.test2"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/meter.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("meterPage.lede")} />

@@ -42,32 +42,7 @@ await initComponents();`;
   title="Sidebar"
   description={t("sidebarPage.description")}
   contractId="sidebar"
-  tests={[
-    {
-      file: "packages/react/src/components/sidebar.test.tsx",
-      tests: [
-        { name: "collapses uncontrolled and reports the change", description: t("sidebarPage.test1") },
-        { name: "points the trigger at the content it controls", description: t("sidebarPage.test2") },
-      ],
-    },
-    {
-      file: "packages/vanilla/src/components/sidebar.test.ts",
-      tests: [
-        {
-          name: "writes collapsed state, emits the change, and cleanup removes listeners",
-          description: t("sidebarPage.test3"),
-        },
-        {
-          name: "writes the width property while dragging, and only while dragging",
-          description: t("sidebarPage.test4"),
-        },
-        {
-          name: "restores a stored width on mount, and leaves an unkeyed sidebar alone",
-          description: t("sidebarPage.test5"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/sidebar.test.tsx", "packages/vanilla/src/components/sidebar.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("sidebarPage.lede")} />

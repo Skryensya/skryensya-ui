@@ -33,18 +33,7 @@ for (const root of document.querySelectorAll(
   description={t("switchPage.description")}
   contractId="switch"
   styleGroups={[{ file: "components/switch.css", probe: "sk-switch" }]}
-  tests={[
-    {
-      file: "packages/vanilla/src/components/tile-switch.svelte.test.ts",
-      tests: [
-        {
-          name: "toggles checked state and root data-state on click, emitting sk:checkedchange",
-          description: t("switchPage.test1"),
-        },
-        { name: "is form-associated and honours its default-checked", description: t("switchPage.test2") },
-      ],
-    },
-  ]}
+  testFiles={["packages/vanilla/src/components/tile-switch.svelte.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("switchPage.lede")} />

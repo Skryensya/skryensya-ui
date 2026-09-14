@@ -44,6 +44,14 @@ describe("Tabs", () => {
     expect(ui.container.querySelector(".sk-tabs")?.getAttribute("data-size")).toBe("sm");
   });
 
+  it("defaults to the underline variant and honors hanging", () => {
+    const ui = render(<Tabs defaultValue="overview" id="account-tabs" items={items} />);
+    expect(ui.container.querySelector(".sk-tabs")?.getAttribute("data-variant")).toBe("underline");
+
+    ui.rerender(<Tabs defaultValue="overview" id="account-tabs" items={items} variant="hanging" />);
+    expect(ui.container.querySelector(".sk-tabs")?.getAttribute("data-variant")).toBe("hanging");
+  });
+
   it("mirrors selection on the root data attribute", async () => {
     const ui = render(<Tabs defaultValue="overview" id="account-tabs" items={items} />);
     fireEvent.click(ui.getByRole("tab", { name: "Activity" }));
@@ -64,6 +72,7 @@ describe("Tabs", () => {
         orientation: "vertical",
         value: "overview",
         size: "sm",
+        variant: "hanging",
       },
       attrs: { "aria-label": "Account" },
       slots: {
@@ -86,6 +95,7 @@ describe("Tabs", () => {
     expect(root?.getAttribute("data-orientation")).toBe("vertical");
     expect(root?.getAttribute("data-value")).toBe("overview");
     expect(root?.getAttribute("data-size")).toBe("sm");
+    expect(root?.getAttribute("data-variant")).toBe("hanging");
 
     fireEvent.click(ui.getByRole("tab", { name: "Activity" }));
     await waitFor(() => expect(root?.getAttribute("data-value")).toBe("activity"));

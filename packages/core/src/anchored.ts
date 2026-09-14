@@ -182,8 +182,17 @@ export function bindAnchor(
  * Drop a machine's `style` from its positioner props so it stops positioning, used on the browser
  * path only. Attributes it also owns, id, dir, hidden, are kept: the machine still runs the popup,
  * it just does not place it.
+ *
+ * `T extends object`, NOT `Record<string, unknown>`, and the difference is load-bearing for every
+ * caller. A Zag `connect()` types its props against a framework's own attribute interfaces, which are
+ * closed and carry no index signature, so they do not satisfy `Record<string, unknown>` - which is why
+ * all seven vanilla call sites used to cast around this function. `object` accepts them as they are,
+ * and the rest destructure works the same either way.
  */
-export function stripPositioningStyle<T extends Record<string, unknown>>(props: T): Omit<T, "style"> {
-  const { style: _style, ...rest } = props;
-  return rest;
+export function stripPositioningStyle<T extends object>(props: T): Omit<T, "style"> {
+  // The one assertion, here rather than at each caller. `T extends object` admits `{}`, which has no
+  // `style` to destructure, so the narrowing has to happen somewhere; doing it once inside is the
+  // whole point of widening the constraint.
+  const { style: _style, ...rest } = props as T & { style?: unknown };
+  return rest as Omit<T, "style">;
 }

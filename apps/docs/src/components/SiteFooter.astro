@@ -57,10 +57,10 @@ const REPO_URL = "https://github.com/Skryensya/skryensya-ui";
    may use this needs to read, and the copy in the repo is the one that governs. */
 const LICENSE_URL = `${REPO_URL}/blob/main/LICENSE`;
 const AUTHOR_URL = "https://allison.sh";
-/* Through `localizePath`, like every other link in this footer. It used to be a ternary whose two
-   branches were the same English path, so a Spanish reader following "Changelog" left the language
-   they were reading in, alone among the fourteen links around it. */
-const changelogHref = localizePath("/components/changelog", locale);
+/* Through `localizePath`, like every other link in this footer. It used to point at the Changelog
+   *component* page; that documents how to render a history list, not what shipped in this kit
+   version. The site-wide release notes are the answer the badge's number is asking. */
+const releaseNotesHref = localizePath("/release-notes", locale);
 const year = new Date().getFullYear();
 const version = currentVersion();
 /** Same role, same trailing position, `Base.astro`'s own `reportIssueIcon`: it names "this leaves
@@ -139,7 +139,7 @@ const columns = [
             class="sk-badge site-footer__version sk-interactive"
             data-tone="accent"
             data-size="sm"
-            href={changelogHref}
+            href={releaseNotesHref}
             aria-label={t("siteFooter.versionLabel", { version })}
           >
             v{version}
@@ -147,10 +147,10 @@ const columns = [
         </p>
         <p class="site-footer__tagline">{t("siteFooter.tagline")}</p>
         {/*
-          Changelog dropped from here: the version badge above already goes there, with its own
-          `aria-label` naming the destination. Two links to the identical href, one a prominent
-          badge and one three lines below it in tiny type, was the redundant one; GitHub is the
-          only place left this row actually earns.
+          A separate "Changelog" meta link used to sit here too. The version badge above already
+          goes to the kit release notes, with its own `aria-label` naming the destination. Two links
+          to the same place, one a badge and one tiny type below it, was the redundant one; GitHub
+          is the only place left this row actually earns.
         */}
         <p class="site-footer__meta">
           <a class="site-footer__meta-link" href={REPO_URL} target="_blank" rel="noopener noreferrer">
@@ -177,7 +177,12 @@ const columns = [
                 <ul class="sk-nav-list__list">
                   {column.items.map((item) => (
                     <li class="sk-nav-list__item">
-                      <a class="sk-nav-list__link sk-interactive" href={item.href}>
+                      <a
+                        class="sk-nav-list__link sk-interactive"
+                        href={item.href}
+                        target={item.external ? "_blank" : undefined}
+                        rel={item.external ? "noopener noreferrer" : undefined}
+                      >
                         <span class="sk-nav-list__label">{item.label}</span>
                       </a>
                     </li>

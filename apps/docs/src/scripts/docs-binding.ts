@@ -45,11 +45,11 @@ export function initDocsBinding(): void {
   }
 
   /*
-   * Fullscreen reconstructs one card in a srcdoc whose `<html>` has no screen pref (XL is
-   * docs-column-only and was stripped). Writing that absence back to storage would clobber the
-   * catalogue tab's own preset. Listeners above still persist a choice made IN this frame.
+   * A guard used to sit here for the fullscreen route: it reconstructed one card in a srcdoc whose
+   * `<html>` carried no screen preference, and writing that absence back would have clobbered the
+   * real tab's preset. The route is gone and nothing writes `data-sk-fullscreen-preview` any more,
+   * so the guard could only ever have been false.
    */
-  if (root.hasAttribute("data-sk-fullscreen-preview")) return;
 
   // If the pre-paint script already wrote the attributes, keep storage aligned (first paint, or a
   // value another tab wrote while this one was closed).

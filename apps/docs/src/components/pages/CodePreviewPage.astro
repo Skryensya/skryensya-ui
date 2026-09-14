@@ -51,22 +51,7 @@ const example = `const registrations = [
   title="CodePreview"
   description={t("codePreview.description")}
   contractId="code-preview"
-  tests={[
-    {
-      file: "packages/vanilla/src/components/code-preview.test.ts",
-      tests: [
-        {
-          name: "switches density, expands, collapses and mounts idempotently",
-          description: t("codePreview.test1"),
-        },
-        { name: "keeps disclosure available when Condensed itself is long", description: t("codePreview.test2") },
-        {
-          name: "says the count in the author's language, and only the number without one",
-          description: t("codePreview.test3"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/vanilla/src/components/code-preview.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("codePreview.lede")} />

@@ -21,7 +21,7 @@
   } from "@skryensya/core/time-field";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply.js";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte.js";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate.js";
   import { remountIcons } from "../icon.js";
 
@@ -189,65 +189,79 @@
    * name resolves to nothing; omitting the key entirely (confirmed reading `@zag-js/select`'s own
    * `connect.js`, not assumed) is what lets the authored `aria-label` stand.
    */
-  function withoutLabelledBy(props: DomProps): DomProps {
-    const next: DomProps = { ...props };
-    delete next["aria-labelledby"];
-    return next;
+  function withoutLabelledBy<T extends object>(props: T): Omit<T, "aria-labelledby"> {
+    // One assertion inside, none at the call sites - the same shape `stripPositioningStyle` uses, and
+    // for the same reason: `T extends object` admits a type with no such key to destructure.
+    const { "aria-labelledby": _omit, ...rest } = props as T & { "aria-labelledby"?: unknown };
+    return rest as Omit<T, "aria-labelledby">;
   }
 
-  $effect(() => {
-    if (triggerEl) applyZagProps(triggerEl, withoutLabelledBy(pickerApi.getTriggerProps() as DomProps));
+  /** The row at `index`, looked up when the patch runs: these are rendered by this file's own template. */
+  const itemNode = (index: number) =>
+    contentEl?.querySelectorAll<HTMLLIElement>(`.${selectParts.item}`)[index] ?? null;
 
-    // On the anchor path, CSS owns placement (`select.css`), so drop Zag's inline positioning
-    // styles entirely. The same reasoning `Select.svelte`'s own effect gives for the identical
-    // line, leaving them would fight the browser's own positioner.
-    const positionerProps = pickerApi.getPositionerProps() as DomProps;
-    if (positionerEl)
-      applyZagProps(positionerEl, anchorName ? (stripPositioningStyle(positionerProps) as DomProps) : positionerProps);
+  const pickerBindings: PartBinding[] = [
+    {
+      part: "trigger",
+      node: () => triggerEl,
+      props: () => withoutLabelledBy(pickerApi.getTriggerProps()),
+      events: true,
+    },
+    {
+      part: "positioner",
+      node: () => positionerEl,
+      // On the anchor path, CSS owns placement (`select.css`), so drop Zag's inline positioning styles
+      // entirely. The same reasoning `Select.svelte` gives for the identical line: leaving them would
+      // fight the browser's own positioner.
+      props: () => {
+        const props = pickerApi.getPositionerProps();
+        return anchorName ? stripPositioningStyle(props) : props;
+      },
+      after: (node) => {
+        // Re-asserted here, not once at mount: the positioner's patch rewrites its inline style every
+        // render, dropping the hook set earlier. Stamping right after keeps it stable across every
+        // open/close. Idempotent, so repeating it is free.
+        if (anchorName && controlEl) unbindAnchor = bindAnchor(controlEl, node, anchorName);
+      },
+    },
+    {
+      part: "content",
+      node: () => contentEl,
+      props: () => withoutLabelledBy(pickerApi.getContentProps()),
+      events: true,
+    },
 
-    if (contentEl) applyZagProps(contentEl, withoutLabelledBy(pickerApi.getContentProps() as DomProps));
+    ...optionsList.flatMap((item, index): PartBinding[] => [
+      {
+        part: "item",
+        node: () => itemNode(index),
+        events: true,
+        /*
+         * Zag's `aria-selected` tracks the COMMITTED value, not the row under
+         * `aria-activedescendant`: the same gap `Select`'s own React/Vanilla bindings already fix for
+         * the identical machine (`select.tsx`'s own comment on it).
+         */
+        props: () => ({
+          ...pickerApi.getItemProps({ item }),
+          "aria-selected": item.value === pickerApi.highlightedValue ? "true" : undefined,
+        }),
+      },
+      {
+        part: "itemText",
+        node: () => itemNode(index)?.querySelector<HTMLElement>(`.${selectParts.itemText}`) ?? null,
+        props: () => pickerApi.getItemTextProps({ item }),
+      },
+      {
+        part: "itemIndicator",
+        node: () => itemNode(index)?.querySelector<HTMLElement>(`.${selectParts.itemIndicator}`) ?? null,
+        props: () => pickerApi.getItemIndicatorProps({ item }),
+      },
+    ]),
+  ];
 
-    const itemEls = contentEl ? Array.from(contentEl.querySelectorAll<HTMLLIElement>(`.${selectParts.item}`)) : [];
-    itemEls.forEach((el, index) => {
-      const item = optionsList[index];
-      if (!item) return;
-      /*
-       * Zag's `aria-selected` tracks the COMMITTED value, not the row under
-       * `aria-activedescendant`: the same gap `Select`'s own React/Vanilla bindings already fix
-       * for the identical machine (`select.tsx`'s own comment on it).
-       */
-      const itemProps = pickerApi.getItemProps({ item }) as DomProps;
-      itemProps["aria-selected"] = item.value === pickerApi.highlightedValue ? "true" : undefined;
-      applyZagProps(el, itemProps);
+  bindParts(pickerBindings);
 
-      const text = el.querySelector<HTMLElement>(`.${selectParts.itemText}`);
-      if (text) applyZagProps(text, pickerApi.getItemTextProps({ item }) as DomProps);
-      const indicator = el.querySelector<HTMLElement>(`.${selectParts.itemIndicator}`);
-      if (indicator) applyZagProps(indicator, pickerApi.getItemIndicatorProps({ item }) as DomProps);
-    });
-
-    // Re-asserted here, not once at mount: the positioner spread above rewrites its inline style
-    // every render, dropping the hook set earlier. Stamping after the spread keeps it stable
-    // across every open/close. Idempotent, so repeating it is free.
-    if (anchorName && positionerEl && controlEl) unbindAnchor = bindAnchor(controlEl, positionerEl, anchorName);
-  });
-
-  const pickerCleanups: Array<() => void> = [];
-  onMount(() => {
-    if (triggerEl) pickerCleanups.push(bindZagEvents(triggerEl, () => pickerApi.getTriggerProps() as DomProps));
-    if (contentEl) {
-      pickerCleanups.push(bindZagEvents(contentEl, () => pickerApi.getContentProps() as DomProps));
-      const itemEls = Array.from(contentEl.querySelectorAll<HTMLLIElement>(`.${selectParts.item}`));
-      itemEls.forEach((el, index) => {
-        const item = optionsList[index];
-        if (item) pickerCleanups.push(bindZagEvents(el, () => pickerApi.getItemProps({ item }) as DomProps));
-      });
-    }
-  });
-  onDestroy(() => {
-    for (const cleanup of pickerCleanups) cleanup();
-    unbindAnchor?.();
-  });
+  onDestroy(() => unbindAnchor?.());
 
   /*
    * EXTERNAL DRIVERS. `root.dataset.value` is read once, above, at mount. The same "authored

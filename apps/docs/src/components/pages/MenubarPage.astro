@@ -30,39 +30,7 @@ initComponents();`;
     { file: "components/menubar.css", probe: "sk-menubar", title: "Menubar" },
     { file: "patterns/state-layer.css", probe: "sk-interactive", title: "Heredados de State layer" },
   ]}
-  tests={[
-    {
-      file: "packages/core/src/menubar.test.ts",
-      tests: [
-        {
-          name: "keeps the NEXT item's dropdown open when the current one was open. The detail a plain roving tabindex misses",
-          description: t("menubarPage.testCore1"),
-        },
-      ],
-    },
-    {
-      file: "packages/react/src/components/menubar.test.tsx",
-      tests: [
-        {
-          name: "moving Right while a dropdown is open closes it and opens the adjacent item's dropdown",
-          description: t("menubarPage.testReact1"),
-        },
-        {
-          name: "Escape closes the open dropdown and returns focus to its trigger",
-          description: t("menubarPage.testReact2"),
-        },
-      ],
-    },
-    {
-      file: "packages/vanilla/src/components/menubar.svelte.test.ts",
-      tests: [
-        {
-          name: "clicking a sibling trigger while one dropdown is open closes the first",
-          description: t("menubarPage.testVanilla1"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/core/src/menubar.test.ts", "packages/react/src/components/menubar.test.tsx", "packages/vanilla/src/components/menubar.svelte.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("menubarPage.lede")} />

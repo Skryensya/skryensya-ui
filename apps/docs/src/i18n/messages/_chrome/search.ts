@@ -7,6 +7,8 @@ export const searchMessages = {
     /* The catalogue's narrowed palette: it only searches among the components the page lists. */
     "search.componentsDialog": "Buscar entre los componentes",
     "search.componentsPlaceholder": "Buscar un componente…",
+    "search.foundationsDialog": "Buscar entre los fundamentos",
+    "search.foundationsPlaceholder": "Buscar un fundamento…",
     "search.results": "Resultados",
     "search.empty": "Sin resultados.",
     "search.hintNavigate": "navegar",
@@ -22,6 +24,8 @@ export const searchMessages = {
     "search.placeholder": "Search components and pages…",
     "search.componentsDialog": "Search the components",
     "search.componentsPlaceholder": "Search for a component…",
+    "search.foundationsDialog": "Search the foundations",
+    "search.foundationsPlaceholder": "Search for a foundation…",
     "search.results": "Results",
     "search.empty": "No results.",
     "search.hintNavigate": "navigate",

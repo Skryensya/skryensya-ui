@@ -99,9 +99,9 @@ describe("the vanilla layer over emitted markup", () => {
       /*
        * BOTH SIGNALS, because neither alone is right.
        *
-       * `enhanced` is per CASE and a recipe carries it for the whole recipe, so its `loading` state
-       * is a skeleton with nothing to enhance and still arrives marked enhanced. And a `<template>`
-       * is inert by spec, so `content/toast-template` has no root in the document at all. Requiring
+       * `enhanced` is per CASE, so a case marked enhanced can still emit a variant with nothing to
+       * enhance. And a `<template>` is inert by spec, so `content/toast-template` has no root in the
+       * document at all. Requiring
        * a registered root to be PRESENT covers those without weakening anything: a rename, which
        * removes the root from the markup, is caught by the corpus-level assertion above instead.
        */

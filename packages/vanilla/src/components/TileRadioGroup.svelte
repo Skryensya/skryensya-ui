@@ -2,8 +2,7 @@
   import { radioGroup as radio } from "@skryensya/core/machines";
   import { tileEvents, type TileRadioOrientation } from "@skryensya/core/tile";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
-  import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, ensureClasses, type DomProps } from "../runtime/apply";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
@@ -57,42 +56,57 @@
 
   const scopeTile = (el: HTMLElement) => el.setAttribute("data-scope", "tile");
 
-  $effect(() => {
-    applyZagProps(root, api.getRootProps() as DomProps);
-    scopeTile(root);
-    for (const item of items) {
-      const props = { value: item.value };
-      applyZagProps(item.label, api.getItemProps(props) as DomProps);
-      applyZagProps(item.input, api.getItemHiddenInputProps(props) as DomProps);
-      // `checked` is a live property of the radio; setAttribute does not sync it. Source of truth: api.value.
-      item.input.checked = api.value === item.value;
-      // The machine's part names are the radio group's (`item-text`, `item-control`); the tile's
-      // vocabulary is `content` and `indicator`, and the CSS reads the tile's. Restored after the
-      // patch, exactly as `data-scope` is. React does the same by writing them after the spread.
-      if (item.text) {
-        applyZagProps(item.text, api.getItemTextProps(props) as DomProps);
-        item.text.setAttribute("data-part", "content");
-      }
-      if (item.control) {
-        applyZagProps(item.control, api.getItemControlProps(props) as DomProps);
-        item.control.setAttribute("data-part", "indicator");
-      }
-      scopeTile(item.label);
-      item.label.setAttribute("data-part", "item");
-      item.input.setAttribute("data-part", "input");
-      ensureClasses(item.label, "sk-interactive");
-    }
-  });
+  const bindings: PartBinding[] = [
+    {
+      part: "root",
+      node: () => root,
+      props: () => api.getRootProps(),
+      after: () => scopeTile(root),
+    },
 
-  const cleanups: Array<() => void> = [];
-  onMount(() => {
-    for (const item of items) {
-      const props = { value: item.value };
-      cleanups.push(bindZagEvents(item.input, () => api.getItemHiddenInputProps(props) as DomProps));
-      cleanups.push(bindZagEvents(item.label, () => api.getItemProps(props) as DomProps));
-    }
-  });
-  onDestroy(() => {
-    for (const cleanup of cleanups) cleanup();
-  });
+    ...items.flatMap((item): PartBinding[] => [
+      {
+        part: "item",
+        node: () => item.label,
+        props: () => api.getItemProps({ value: item.value }),
+        events: true,
+        classes: ["sk-interactive"],
+        after: (node) => {
+          scopeTile(node);
+          node.setAttribute("data-part", "item");
+        },
+      },
+      {
+        part: "item-input",
+        node: () => item.input,
+        props: () => api.getItemHiddenInputProps({ value: item.value }),
+        events: true,
+        after: () => {
+          // `checked` is a live property of the radio; setAttribute does not sync it. Source of truth
+          // is `api.value`.
+          item.input.checked = api.value === item.value;
+          item.input.setAttribute("data-part", "input");
+        },
+      },
+      /*
+       * The machine's part names are the radio group's (`item-text`, `item-control`); the tile's
+       * vocabulary is `content` and `indicator`, and the CSS reads the tile's. Restored after the
+       * patch, exactly as `data-scope` is. React does the same by writing them after the spread.
+       */
+      {
+        part: "item-text",
+        node: () => item.text,
+        props: () => api.getItemTextProps({ value: item.value }),
+        after: (node) => node.setAttribute("data-part", "content"),
+      },
+      {
+        part: "item-control",
+        node: () => item.control,
+        props: () => api.getItemControlProps({ value: item.value }),
+        after: (node) => node.setAttribute("data-part", "indicator"),
+      },
+    ]),
+  ];
+
+  bindParts(bindings);
 </script>

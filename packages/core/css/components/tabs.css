@@ -163,6 +163,47 @@
     padding-block: 0;
   }
 
+  /* HANGING: the same recipe mirrored across the list's line. The line moves to the TOP of the list,
+   * the triggers hang from it with their rounded corners at the bottom, and the selected bar straddles
+   * the top line with its rounded side facing down, into the tab. Only edges change: parts, state
+   * layer and transitions are the underline recipe untouched. */
+  .sk-tabs[data-variant="hanging"] .sk-tabs__list {
+    border-block-end: 0;
+    border-block-start: 1px solid var(--sk-tabs-list-border-color);
+  }
+
+  .sk-tabs[data-variant="hanging"] .sk-tabs__trigger {
+    border-radius: 0 0 var(--sk-tabs-trigger-radius) var(--sk-tabs-trigger-radius);
+  }
+
+  .sk-tabs[data-variant="hanging"] .sk-tabs__trigger::after {
+    inset-block-start: -1px;
+    inset-block-end: auto;
+    border-radius: 0;
+    border-end-start-radius: var(--radius-pill);
+    border-end-end-radius: var(--radius-pill);
+  }
+
+  /* Vertical + hanging: the rail's line moves to its inline-START edge and the triggers round on the
+   * inline end, the vertical rule above mirrored the same way. */
+  .sk-tabs[data-variant="hanging"][data-orientation="vertical"] .sk-tabs__list {
+    border-block-start: 0;
+    border-inline-end: 0;
+    border-inline-start: 1px solid var(--sk-tabs-list-border-color);
+  }
+
+  .sk-tabs[data-variant="hanging"][data-orientation="vertical"] .sk-tabs__trigger {
+    border-radius: 0;
+    border-start-end-radius: var(--sk-tabs-trigger-radius);
+    border-end-end-radius: var(--sk-tabs-trigger-radius);
+  }
+
+  .sk-tabs[data-variant="hanging"][data-orientation="vertical"] .sk-tabs__trigger::after {
+    inset-block: 0;
+    inset-inline: -1px auto;
+    border-radius: var(--radius-pill);
+  }
+
   @media (forced-colors: active) {
     .sk-tabs__trigger[data-selected]::after {
       background: Highlight;

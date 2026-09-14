@@ -19,7 +19,6 @@
     "@skryensya/icons-material": "workspace:*",
     "@skryensya/icons-phosphor": "workspace:*",
     "@skryensya/react": "workspace:*",
-    "@skryensya/recipes": "workspace:*",
     "@skryensya/snippets": "workspace:*",
     "@skryensya/vanilla": "workspace:*",
     "@zag-js/react": "^1.43.3",

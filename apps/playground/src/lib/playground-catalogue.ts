@@ -1,9 +1,10 @@
 import { validateUsageTree } from "@skryensya/ai-compiler/validate";
-import { recipes } from "@skryensya/recipes";
 import { snippets } from "@skryensya/snippets";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import { componentNavigation } from "./navigation";
-import type { Translate } from "../i18n";
+import { docsHref } from "./docs-origin";
+import { treeAnchorId } from "../../../docs/src/lib/tree-anchor";
+import { localizePath, type Locale, type Translate } from "../i18n";
 
 /*
  * WHAT THE PLAYGROUND OFFERS, and where it comes from.
@@ -28,6 +29,8 @@ export type PlaygroundExample = {
   readonly id: string;
   readonly label: string;
   readonly tree: UsageTree;
+  /** The docs page that renders THIS tree, opened on its usage tab and scrolled to the demo. */
+  readonly docs: string;
 };
 
 export type PlaygroundComponent = {
@@ -108,6 +111,70 @@ const slugify = (label: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 
+/*
+ * WHICH DOCS PAGE RENDERS WHICH DEMO, read off the pages' own imports.
+ *
+ * Guessing the page from the module name (`demos/tabs.ts` -> `/components/tabs`) is right for most of
+ * the catalogue and wrong exactly where it matters: `demos/layout.ts` feeds Grid, Stack, Inline and
+ * Box, `demos/typography.ts` feeds Text and Heading, and neither `/components/layout` nor
+ * `/components/typography` exists, so "See the docs" opened a 404. The page that imports
+ * `stackTree` is the page that shows it, so that is the question asked.
+ *
+ * Two hops, because a route file is usually a one-line wrapper (`<GridPage />`) and the imports live
+ * in the page component it renders. Only default-locale routes are read; `localizePath` finds the
+ * other language's address from there. `debug/` pages import demos too and are not destinations.
+ */
+const pageComponentSources = import.meta.glob<string>("../../../docs/src/components/pages/*.astro", {
+  eager: true,
+  query: "?raw",
+  import: "default",
+});
+const routeSources = import.meta.glob<string>(
+  ["../../../docs/src/pages/**/*.astro", "!../../../docs/src/pages/es/**", "!../../../docs/src/pages/debug/**"],
+  { eager: true, query: "?raw", import: "default" },
+);
+
+/** Every demo export an Astro source imports, as `module:exportName`. */
+function importedDemos(source: string): Set<string> {
+  const found = new Set<string>();
+  for (const match of source.matchAll(/import\s*\{([^}]*)\}\s*from\s*["'][^"']*\/demos\/([\w-]+)(?:\.ts)?["']/g)) {
+    for (const name of match[1]!.split(",")) {
+      const exported = name.trim().split(/\s+as\s+/)[0];
+      if (exported) found.add(`${match[2]}:${exported}`);
+    }
+  }
+  return found;
+}
+
+const demosByPageComponent = new Map(
+  Object.entries(pageComponentSources).map(([path, source]) => [path.split("/").pop()!, importedDemos(source)]),
+);
+
+/** `../../../docs/src/pages/components/grid.astro` -> `/components/grid`, and every demo it shows. */
+const demoRoutes = Object.entries(routeSources).map(([path, source]) => {
+  const route = `/${path.split("/docs/src/pages/")[1]!.replace(/\.astro$/, "").replace(/(^|\/)index$/, "")}`;
+  const demos = importedDemos(source);
+  for (const match of source.matchAll(/import\s+\w+\s+from\s*["'][^"']*\/([\w-]+\.astro)["']/g)) {
+    for (const demo of demosByPageComponent.get(match[1]!) ?? []) demos.add(demo);
+  }
+  return { route: route.replace(/\/$/, "") || "/", demos };
+});
+
+/**
+ * The route that renders `module:exportName`. When more than one does (Card borrows a chart demo),
+ * the page named after the module wins, then a component page over any other.
+ */
+function routeFor(moduleName: string, exportName: string): string | undefined {
+  const key = `${moduleName}:${exportName}`;
+  const candidates = demoRoutes.filter((entry) => entry.demos.has(key)).map((entry) => entry.route);
+  const rank = (route: string) => (route.endsWith(`/${moduleName}`) ? 0 : route.startsWith("/components/") ? 1 : 2);
+  return candidates.sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))[0];
+}
+
+/** An absolute, localized docs address: on the usage tab, at the demo when the page carries its anchor. */
+const docsUrl = (route: string, locale: Locale, tree?: UsageTree): string =>
+  docsHref(`${localizePath(route, locale)}${route.startsWith("/components/") ? "?tab=usage" : ""}${tree ? `#${treeAnchorId(tree)}` : ""}`);
+
 /** Component labels and destinations, from the same catalogue the site's own index is built from. */
 const componentPages = new Map(
   componentNavigation
@@ -115,7 +182,7 @@ const componentPages = new Map(
     .map((item) => [item.href.split("/").pop()!, item] as const),
 );
 
-export function playgroundCatalogue(t: Translate): readonly PlaygroundComponent[] {
+export function playgroundCatalogue(t: Translate, locale: Locale): readonly PlaygroundComponent[] {
   const components: PlaygroundComponent[] = [];
 
   for (const [path, module] of Object.entries(modules).sort(([a], [b]) => a.localeCompare(b))) {
@@ -173,7 +240,13 @@ export function playgroundCatalogue(t: Translate): readonly PlaygroundComponent[
         slug = slugify(label) || exportName.toLowerCase();
       }
       claimed.add(slug);
-      examples.push({ id: slug, label, tree: tree as UsageTree });
+      const route = routeFor(id, exportName) ?? componentPages.get(id)?.href;
+      examples.push({
+        id: slug,
+        label,
+        tree: tree as UsageTree,
+        docs: route ? docsUrl(route, locale, tree as UsageTree) : "",
+      });
     }
 
     if (examples.length === 0) continue;
@@ -182,60 +255,43 @@ export function playgroundCatalogue(t: Translate): readonly PlaygroundComponent[
     components.push({
       id,
       label: page?.label ?? humanise(id, ""),
-      docs: page?.href ?? `/components/${id}`,
+      /* The component's own page when it has one, else wherever its first example lives. Never a
+       * guessed `/components/${id}`: that is the 404 this used to open for layout and typography. */
+      docs: page?.href ? docsUrl(page.href, locale) : (examples.find((example) => example.docs)?.docs ?? ""),
       examples: examples.sort((a, b) => a.label.localeCompare(b.label, "es")),
     });
   }
 
   /*
-   * THE TWO EXAMPLE SOURCES THAT ARE NOT PER-COMPONENT.
+   * THE EXAMPLE SOURCE THAT IS NOT PER-COMPONENT.
    *
    * The glob above reaches `docs/src/demos/`, which is organised one module per component, and that
-   * shape is the rail. `@skryensya/snippets` and `@skryensya/recipes` are the other two places this
-   * repo keeps established trees, and they are not per-component by design: a snippet is a few
-   * families composed into one small piece of UI, a recipe is a whole screen in four states. Left
-   * out, the playground offered every Button variant and nothing that showed Button inside anything.
+   * shape is the rail. `@skryensya/snippets` is the other place this repo keeps established trees,
+   * and it is not per-component by design: a snippet is a few families composed into one small piece
+   * of UI. Left out, the playground offered every Button variant and nothing that showed Button
+   * inside anything.
    *
-   * They arrive as packages rather than a glob because that is what they already are: the compiler
-   * validates both on every build, so a tree that stopped matching its contract fails there instead
+   * It arrives as a package rather than a glob because that is what it already is: the compiler
+   * validates it on every build, so a tree that stopped matching its contract fails there instead
    * of turning up broken here.
    */
   const snippetExamples = snippets
     .filter((snippet) => snippet.tree.contract !== "annotation")
     .filter((snippet) => !validateUsageTree(snippet.tree).problems.some((p) => p.severity === "error"))
-    .map((snippet) => ({ id: snippet.id, label: humanise(snippet.id, ""), tree: snippet.tree }));
+    .map((snippet) => ({
+      id: snippet.id,
+      label: humanise(snippet.id, ""),
+      tree: snippet.tree,
+      docs: docsUrl("/components", locale),
+    }));
 
   if (snippetExamples.length > 0) {
     components.push({
       id: "snippets",
       label: t("nav.snippets"),
       /* No page of its own yet, so the nearest honest destination is the catalogue it composes. */
-      docs: "/components",
+      docs: docsUrl("/components", locale),
       examples: [...snippetExamples].sort((a, b) => a.label.localeCompare(b.label, "es")),
-    });
-  }
-
-  /* Reading order, not alphabetical, and the same order `/recipes` renders: a screen is nothing
-     until it has come back, and the state that teaches the most is the one everybody skips. */
-  const stateOrder = ["loading", "empty", "error", "success"] as const;
-  const recipeExamples = recipes.flatMap((recipe) =>
-    stateOrder
-      .map((state) => ({ state, tree: recipe.states[state] }))
-      .filter(({ tree }) => tree && tree.contract !== "annotation")
-      .filter(({ tree }) => !validateUsageTree(tree).problems.some((p) => p.severity === "error"))
-      .map(({ state, tree }) => ({
-        id: `${recipe.id}-${state}`,
-        label: `${humanise(recipe.id, "")} · ${state}`,
-        tree,
-      })),
-  );
-
-  if (recipeExamples.length > 0) {
-    components.push({
-      id: "recipes",
-      label: t("nav.recipes"),
-      docs: "/recipes",
-      examples: recipeExamples,
     });
   }
 

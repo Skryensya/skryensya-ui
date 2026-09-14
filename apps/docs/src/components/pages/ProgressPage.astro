@@ -17,21 +17,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
   title="Progress"
   description={t("progressPage.description")}
   contractId="progress"
-  tests={[
-    {
-      file: "packages/react/src/components/progress.test.tsx",
-      tests: [
-        {
-          name: "exposes the value on the progressbar role and paints the matching fill",
-          description: t("progressPage.test1"),
-        },
-        {
-          name: "clamps an out-of-range value so the paint and aria-valuenow agree",
-          description: t("progressPage.test2"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/progress.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("progressPage.lede")} />

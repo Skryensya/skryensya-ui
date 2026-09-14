@@ -41,6 +41,7 @@ const MAP = {
   edit: "edit",
   delete: "delete",
   copy: "content_copy",
+  code: "code",
   filter: "filter_alt",
   refresh: "refresh",
   "zoom-out": "zoom_out",

@@ -54,30 +54,7 @@ const forms = `<div
     { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
     { file: "components/select.css", probe: "sk-select-native" },
   ]}
-  tests={[
-    {
-      file: "packages/react/src/components/select.test.tsx",
-      tests: [
-        {
-          name: "uses the Zag select machine for popup selection and form value",
-          description: t("selectPage.test1"),
-        },
-      ],
-    },
-    {
-      file: "packages/vanilla/src/components/select.test.ts",
-      tests: [
-        {
-          name: "drives the machine over authored markup: ARIA, selection and the value text",
-          description: t("selectPage.test2"),
-        },
-        {
-          name: "emits sk-value-change, and destroying the mount stops the machine",
-          description: t("selectPage.test3"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/select.test.tsx", "packages/vanilla/src/components/select.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("selectPage.lede")} />

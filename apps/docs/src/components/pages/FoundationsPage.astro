@@ -1,32 +1,120 @@
 ---
+/*
+ * The foundations CATALOG, same card grid as the components explorer: a directory of destinations,
+ * not a topic page with tabs. Hero + grouped cards, with a scoped search palette that indexes only
+ * this section's entries.
+ */
 import Base from "../../layouts/Base.astro";
+import CommandPalette from "../CommandPalette.astro";
 import { getLocale, useTranslations } from "../../i18n";
+import { iconMarkup } from "../../icons";
+import { getFoundationDescription } from "../../lib/foundation-catalog";
 import { getNavigation } from "../../lib/navigation";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 const foundationsSection = getNavigation(locale).find((section) => section.id === "foundations");
 if (!foundationsSection) throw new Error("Missing foundations navigation section");
+
+const searchIcon = iconMarkup("search");
+
+const foundationsSearchIndex = foundationsSection.groups.flatMap((group) =>
+  group.items
+    .filter((item) => !item.todo)
+    .map((item) => ({
+      label: item.label,
+      aliases: item.aliases ?? [],
+      href: item.href,
+      context: group.group,
+    })),
+);
+
+/*
+ * Same placeholder trick as the components catalog: pad every label to one shared character count
+ * so dummyimage scales the type the same size on every card.
+ */
+const placeholderChars = Math.max(
+  ...foundationsSection.groups.flatMap((group) => group.items.map((item) => item.label.length)),
+);
+
+const placeholderSrc = (label: string) => {
+  const pad = Math.max(0, placeholderChars - label.length);
+  const left = Math.floor(pad / 2);
+  const text = `${" ".repeat(left)}${label}${" ".repeat(pad - left)}`;
+  return `https://dummyimage.com/400x240/667eea/ffffff?text=${encodeURIComponent(text)}`;
+};
 ---
 
 <Base title={t("foundationsPage.title")} description={t("foundationsPage.description")} documentLayout="grid">
-  <h1>{t("foundationsPage.title")}</h1>
+  <header class="docs-component-hero">
+    <h1>{t("foundationsPage.title")}</h1>
+  </header>
+
   <p class="lede">{t("foundationsPage.lede")}</p>
 
-  <h2>{t("foundationsPage.listTitle")}</h2>
+  <button
+    class="sk-button sk-interactive docs-catalog-search"
+    data-variant="ghost"
+    type="button"
+    aria-controls="docs-cmdk-foundations"
+    aria-expanded="false"
+    data-sk-command-palette-open
+  >
+    <Fragment set:html={searchIcon} />
+    <span class="docs-catalog-search__label">{t("foundationsPage.searchLabel")}</span>
+  </button>
+
+  <CommandPalette
+    slot="palette"
+    id="docs-cmdk-foundations"
+    entries={foundationsSearchIndex}
+    label={t("search.foundationsDialog")}
+    placeholder={t("search.foundationsPlaceholder")}
+  />
+
   {
-    foundationsSection.groups.map((group) => (
-      <section aria-labelledby={`foundation-${group.group.toLowerCase().replace(/\s+/g, "-")}`}>
-        <h3 id={`foundation-${group.group.toLowerCase().replace(/\s+/g, "-")}`}>{group.group}</h3>
-        {group.blurb && <p>{group.blurb}</p>}
-        <ul>
-          {group.items.map((item) => (
-            <li>
-              <a href={item.href}>{item.label}</a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    ))
+    foundationsSection.groups.map((group, groupIndex) => {
+      const headingId = `foundations-group-${groupIndex}`;
+
+      return (
+        <Fragment>
+          <h2 class="docs-catalog-section__title" id={headingId} data-flush>
+            <span class="docs-catalog-section__title-text">{group.group}</span>
+            <span class="docs-catalog-section__count" data-toc-ignore>
+              {group.items.length} {t("foundationsPage.countSuffix")}
+            </span>
+          </h2>
+          {group.blurb && <p class="docs-catalog-section__blurb">{group.blurb}</p>}
+
+          <section class="docs-catalog-section" aria-labelledby={headingId}>
+            <ul class="docs-catalog">
+              {group.items.map((item) => (
+                <li class="docs-catalog__item">
+                  <a href={item.href} class="docs-catalog__card sk-interactive">
+                    <img
+                      class="docs-catalog__image"
+                      src={placeholderSrc(item.label)}
+                      alt=""
+                      loading="lazy"
+                    />
+                    <div class="docs-catalog__content">
+                      <h3 class="docs-catalog__title">
+                        <span class="docs-catalog__name">{item.label}</span>
+                        {item.trailing && (
+                          <span class="sk-badge" data-size="sm" data-tone="warning">{item.trailing}</span>
+                        )}
+                      </h3>
+                      <p class="docs-catalog__description">
+                        {getFoundationDescription(item.href, locale)}
+                      </p>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </Fragment>
+      );
+    })
   }
 </Base>

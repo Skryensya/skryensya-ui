@@ -179,38 +179,7 @@ const tanstackSource = `import { TanStackChart } from "@skryensya/charts/react/t
   description={t("chartsPage.description")}
   contractId="chart"
   badge={t("chartsPage.betaBadge")}
-  tests={[
-    {
-      file: "packages/charts/src/react/chart.test.tsx",
-      tests: [
-        {
-          name: "paints no overlay for bars: they never need this package",
-          description: t("chartsPage.testBarsNoEngine"),
-        },
-        {
-          name: "paints a line into the overlay and flags the chart as rendered",
-          description: t("chartsPage.testLineOverlay"),
-        },
-        {
-          name: "keeps the series as a real list of text, which is the accessible rendering",
-          description: t("chartsPage.testListIsData"),
-        },
-      ],
-    },
-    {
-      file: "apps/docs/src/components/pages/ChartsPage.test.ts",
-      tests: [
-        {
-          name: "composes the dashboard cards from Box, Stat, Chart and Button",
-          description: t("chartsPage.testCardsAreComposition"),
-        },
-        {
-          name: "does not expose TanStack's grammar on the documented path",
-          description: t("chartsPage.testNoTanstackApi"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/charts/src/react/chart.test.tsx", "apps/docs/src/components/pages/ChartsPage.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("chartsPage.lede")} />

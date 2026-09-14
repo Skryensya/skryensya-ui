@@ -26,7 +26,7 @@ export const personalLandingPageCase: EvalCase = {
   },
   notes: [
     "El primer caso del corpus a escala de PÁGINA COMPLETA, no de componente ni de molécula. Sigue " +
-      "siendo un `EvalCase`  -  un solo `tree`, no los cuatro estados de un `Recipe`  -  pero ejercita " +
+      "siendo un `EvalCase`  -  un solo `tree`  -  pero ejercita " +
       "muchas más familias a la vez que cualquier otro caso: layout (Stack/Inline/Main), wrapper, " +
       "navbar, typography, button, box, image-frame, list y avatar, todas anidadas correctamente en " +
       "una sola composición. Es exactamente el tipo de prompt que separa a un agente que compone " +

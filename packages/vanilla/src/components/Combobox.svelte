@@ -10,6 +10,7 @@
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
   import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
   import { selectorsFor } from "@skryensya/core/selectors";
 
@@ -295,31 +296,96 @@
     return authored.filter((candidate) => dirty.has(candidate.item.value));
   };
 
+  /** Every part reads the same gate: incomplete markup binds nothing. */
+  const live = () => Boolean(ready && label && control && input && trigger && positioner && content);
+
+  const bindings: PartBinding[] = [
+    { part: "root", node: () => (live() ? root : null), props: () => api.getRootProps() },
+    { part: "label", node: () => (live() ? label : null), props: () => api.getLabelProps() },
+    {
+      part: "control",
+      node: () => (live() ? control : null),
+      props: () => api.getControlProps(),
+      after: (node) => {
+        if (input?.readOnly) node.setAttribute("data-readonly", "");
+      },
+    },
+    {
+      part: "input",
+      node: () => (live() ? input : null),
+      props: () => api.getInputProps(),
+      events: true,
+      after: (node) => {
+        if (describedBy) node.setAttribute("aria-describedby", describedBy);
+        if (error) node.setAttribute("aria-errormessage", error.id);
+      },
+    },
+    {
+      // Decorative only (see `combobox.ts`'s own note on `part: "trigger"`): no `getTriggerProps()`,
+      // no wiring. `data-state` alone drives the open/closed chevron swap, so this binding writes
+      // nothing and exists for its `after`.
+      part: "trigger",
+      node: () => (live() ? trigger : null),
+      props: () => ({}),
+      after: (node) => {
+        node.dataset.state = api.open ? "open" : "closed";
+      },
+    },
+    {
+      part: "clearTrigger",
+      node: () => (live() ? clear : null),
+      props: () => api.getClearTriggerProps(),
+      events: true,
+      after: (node) => {
+        node.hidden = !(api.hasSelectedItems || (input?.value.length ?? 0) > 0);
+        node.tabIndex = 0;
+      },
+    },
+    {
+      part: "positioner",
+      node: () => (live() ? positioner : null),
+      props: () => {
+        const props = api.getPositionerProps();
+        return anchorName ? stripPositioningStyle(props) : props;
+      },
+      after: (node) => {
+        if (anchorName && control) unbindAnchor = bindAnchor(control, node, anchorName);
+      },
+    },
+    {
+      part: "content",
+      node: () => (live() ? content : null),
+      props: () => api.getContentProps(),
+      events: true,
+    },
+  ];
+
+  bindParts(bindings, {
+    then: () => {
+      if (!live()) return;
+      if (emptyEl) emptyEl.hidden = visible.length > 0;
+      const announcement = api.open ? resultText(visible.length) : "";
+      if (statusEl && statusEl.textContent !== announcement) statusEl.textContent = announcement;
+      renderSelectedItems();
+      applyHighlightSource();
+    },
+  });
+
+  /*
+   * THE ROWS STAY HAND-WRITTEN, and this is the one place in the layer where that is the right answer.
+   *
+   * `dirtyItems()` is not a predicate - it is a diff that MUTATES `appliedHighlight`,
+   * `appliedSelection` and `patchedOnce`, so it is only correct when called exactly once per round.
+   * Expressed as one `PartBinding` per row, each row's `props()` would call it again and every call
+   * after the first would see a set the previous one had already consumed.
+   *
+   * It could be forced - a leading binding that computes the set into a variable the rows then read -
+   * but that is a hook pretending to be a part, and the optimisation it protects is measured and real:
+   * 194 rows, 31ms against 98ms across a filter session with naive re-application. A seam that has to
+   * be tricked to fit is the wrong seam for this loop.
+   */
   $effect(() => {
-    if (!ready || !label || !control || !input || !trigger || !positioner || !content) return;
-    applyZagProps(root, api.getRootProps() as DomProps);
-    applyZagProps(label, api.getLabelProps() as DomProps);
-    applyZagProps(control, api.getControlProps() as DomProps);
-    if (input.readOnly) control.setAttribute("data-readonly", "");
-    applyZagProps(input, api.getInputProps() as DomProps);
-    if (describedBy) input.setAttribute("aria-describedby", describedBy);
-    if (error) input.setAttribute("aria-errormessage", error.id);
-    // Decorative only (see `combobox.ts`'s own note on `part: "trigger"`): no `getTriggerProps()`
-    // spread, no click/focus wiring below. `data-state` alone drives the open/closed chevron swap.
-    trigger.dataset.state = api.open ? "open" : "closed";
-    if (clear) {
-      applyZagProps(clear, api.getClearTriggerProps() as DomProps);
-      clear.hidden = !(api.hasSelectedItems || input.value.length > 0);
-      clear.tabIndex = 0;
-    }
-    const positionerProps = api.getPositionerProps() as DomProps;
-    applyZagProps(positioner, anchorName ? (stripPositioningStyle(positionerProps) as DomProps) : positionerProps);
-    if (anchorName) unbindAnchor = bindAnchor(control, positioner, anchorName);
-    applyZagProps(content, api.getContentProps() as DomProps);
-    if (emptyEl) emptyEl.hidden = visible.length > 0;
-    const announcement = api.open ? resultText(visible.length) : "";
-    if (statusEl && statusEl.textContent !== announcement) statusEl.textContent = announcement;
-    renderSelectedItems();
+    if (!live()) return;
     for (const candidate of dirtyItems()) {
       const itemProps = api.getItemProps({ item: candidate.item }) as DomProps;
       if (!multiple) itemProps["aria-selected"] = candidate.item.value === api.highlightedValue ? "true" : undefined;
@@ -327,15 +393,13 @@
       if (candidate.text) applyZagProps(candidate.text, api.getItemTextProps({ item: candidate.item }) as DomProps);
       if (candidate.indicator) applyZagProps(candidate.indicator, api.getItemIndicatorProps({ item: candidate.item }) as DomProps);
     }
-    applyHighlightSource();
   });
 
   const cleanups: Array<() => void> = [];
   onMount(() => {
     if (!ready || !input || !trigger || !content) return;
-    cleanups.push(bindZagEvents(input, () => api.getInputProps() as DomProps));
-    if (clear) cleanups.push(bindZagEvents(clear, () => api.getClearTriggerProps() as DomProps));
-    cleanups.push(bindZagEvents(content, () => api.getContentProps() as DomProps));
+
+    // The rows' handlers, beside the rows' patch: both halves of the row stay in this file together.
     for (const candidate of authored)
       cleanups.push(bindZagEvents(candidate.node, () => api.getItemProps({ item: candidate.item }) as DomProps));
 

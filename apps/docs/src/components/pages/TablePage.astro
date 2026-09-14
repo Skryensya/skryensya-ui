@@ -27,21 +27,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
   title="Table"
   description={t("tablePage.description")}
   contractId="table"
-  tests={[
-    {
-      file: "packages/react/src/components/table.test.tsx",
-      tests: [
-        {
-          name: "renders the native table structure with every stable part class",
-          description: t("tablePage.test1"),
-        },
-        {
-          name: "defaults headers to columns while preserving explicit row scope",
-          description: t("tablePage.test2"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/table.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("tablePage.lede")} />

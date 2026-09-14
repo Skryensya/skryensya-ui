@@ -44,9 +44,15 @@ const { title, description } = Astro.props;
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 
-/** `/playground` in the default locale, `/<locale>/playground` in every other. */
-const playgroundPath = (target: Locale) =>
-  target === defaultLocale ? "/playground" : `/${target}/playground`;
+/*
+ * `/` in the default locale, `/<locale>/` in every other.
+ *
+ * THE TOOL IS THE SITE HERE. It used to live at `/playground` on a host it shared with nothing, which
+ * meant the only address anyone could type (`playground.skryensya.dev`) was not a page: the server
+ * had to redirect it to the one route that existed. A host whose whole purpose is one app should
+ * serve that app at its root.
+ */
+const playgroundPath = (target: Locale) => (target === defaultLocale ? "/" : `/${target}/`);
 
 /* Two locales, so the switch is a LINK to the other one rather than a menu. The docs' own
  * `LanguageMenu` is right for a site of hundreds of pages with uneven translation coverage; this app
@@ -124,46 +130,73 @@ const PREPAINT = {
         needs from a nav bar here. The wordmark is the visible label; the accessible name says where
         it goes, because "skryensya/ui" on its own does not.
       */}
-      <a
-        class="sk-link sk-interactive playground-chrome__brand"
-        href={docsHref("/")}
-        aria-label={t("playground.backToDocs")}
-      >
+      {/*
+        THE RAIL'S SWITCH, at the leading edge and aligned with the rail it opens: the island renders
+        it (it owns that state) and portals it here, the same way the search field and the tool's own
+        controls arrive. Empty until the island mounts, which is also true of the rail itself.
+      */}
+      {/*
+        THREE BOXES, because the middle one has to be on the row's CENTRE and not merely between two
+        others: `1fr auto 1fr` is what makes the binding switch land on the window's midline whatever
+        the heading beside it is called. Below the width where that fits, the grid stands down and the
+        same three boxes are an ordinary wrapping flex row (see `tool.css`).
+      */}
+      <div class="playground-chrome__lead">
+        <div class="playground-chrome__rail-toggle" data-playground-chrome-rail></div>
+
+          <a
+          class="sk-link sk-interactive playground-chrome__brand"
+          href={docsHref("/")}
+          aria-label={t("playground.backToDocs")}
+        >
         {/* `arrow-left` and not `chevron-left`: the vocabulary's own split is that an arrow moves
             and navigates while a chevron reveals and attaches (`core/src/icon.ts`), and this one
             leaves the app. `sm` because everything else in this row is `sm`; a link is not a
             control, so nothing sizes its icon for it. */}
-        <span data-sk-icon="arrow-left" data-sk-icon-size="sm" aria-hidden="true"></span>
-        <span class="playground-chrome__brand-text">skryensya/ui</span>
-      </a>
-      <p class="playground-chrome__name">{t("playground.title")}</p>
-
-      {/*
-        WHERE THE SEARCH LIVES, and it is empty here on purpose. The palette, its entries and the
-        ⌘K binding all belong to the island below (it is the one that knows the catalogue), so the
-        trigger is rendered there and portalled into this node - one control, in the chrome, with no
-        second copy of the shortcut or of what it opens. Nothing draws until the island mounts.
-      */}
-      <div class="playground-chrome__search" data-playground-chrome-search></div>
-
-      <div class="playground-chrome__actions">
-        {/*
-          `hreflang` and `lang` per link: the destination is in that language and so is the label, so
-          a screen reader announces "Español" in Spanish. Same two attributes the docs' own language
-          menu writes on each of its rows, for the same reason.
-        */}
-        <a
-          class="sk-button sk-interactive"
-          data-variant="ghost"
-          data-size="sm"
-          href={playgroundPath(otherLocale)}
-          hreflang={otherLocale}
-          lang={otherLocale}
-        >
-          <span data-sk-icon="language" aria-hidden="true"></span>
-          {localeNames[otherLocale]}
+          <span data-sk-icon="arrow-left" data-sk-icon-size="sm" aria-hidden="true"></span>
+          <span class="playground-chrome__brand-text">skryensya/ui</span>
         </a>
-        <ThemeToggle size="sm" />
+      {/*
+        WHERE YOU ARE, which used to be the word "Playground" and is now the thing actually being
+        edited: the island portals its `<h1>` and the example's name in here. The app's own name was
+        the row's least useful field the moment this became one bar - the tab title says it, the
+        wordmark beside it says it, and the reader is looking at a component, not at a product.
+      */}
+        <div class="playground-chrome__context" data-playground-chrome-context></div>
+      </div>
+
+      {/* WHICH BINDING, on the row's centre line: it is the one control here that changes what the
+          example IS rather than what the tool does with it. The island portals it in. */}
+      <div class="playground-chrome__binding" data-playground-chrome-binding></div>
+
+      <div class="playground-chrome__trail">
+        {/*
+          WHERE THE SEARCH LIVES, and it is empty here on purpose. The palette, its entries and the
+          ⌘K binding all belong to the island below (it is the one that knows the catalogue), so the
+          trigger is rendered there and portalled into this node - one control, in the chrome, with no
+          second copy of the shortcut or of what it opens. Nothing draws until the island mounts.
+        */}
+        <div class="playground-chrome__search" data-playground-chrome-search></div>
+
+        <div class="playground-chrome__actions">
+          {/*
+            `hreflang` and `lang` per link: the destination is in that language and so is the label,
+            so a screen reader announces "Español" in Spanish. Same two attributes the docs' own
+            language menu writes on each of its rows, for the same reason.
+          */}
+          <a
+            class="sk-button sk-interactive"
+            data-variant="ghost"
+            data-size="md"
+            href={playgroundPath(otherLocale)}
+            hreflang={otherLocale}
+            lang={otherLocale}
+          >
+            <span data-sk-icon="language" aria-hidden="true"></span>
+            {localeNames[otherLocale]}
+          </a>
+          <ThemeToggle size="md" />
+        </div>
       </div>
     </header>
 

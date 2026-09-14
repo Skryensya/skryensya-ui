@@ -1,6 +1,6 @@
 import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
 import type { UsageTree } from "@skryensya/core/usage-tree";
-import { vanillaScriptPath } from "./vanilla-script";
+import { vanillaImportMap, vanillaScriptPath } from "./vanilla-script";
 
 /*
  * A usage tree, turned into something a sandbox can RUN.
@@ -73,6 +73,11 @@ export function reactSandboxSource(tree: UsageTree): ReactSandbox {
  * stylesheet paints it, and one script hydrates whatever in the page asked to be hydrated. A reader
  * who deletes the script tag sees exactly what this binding promises: everything that does not need
  * JavaScript still works.
+ *
+ * The import map above the script is what lets `main.js` import `@skryensya/vanilla/auto` rather than
+ * a file path (see `vanilla-script.ts`): the same specifier an application writes, resolved the way a
+ * page with no build step resolves it. It comes BEFORE the module that uses it, which the platform
+ * requires: a map added after a module graph has started loading is ignored.
  */
 export function vanillaSandboxSource(tree: UsageTree, title: string): string {
   return `<!doctype html>
@@ -82,6 +87,9 @@ export function vanillaSandboxSource(tree: UsageTree, title: string): string {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${title}</title>
     <link rel="stylesheet" href="./skryensya.css" />
+    <script type="importmap">
+${indent(JSON.stringify(vanillaImportMap, null, 2), "      ")}
+    </script>
     <script type="module" src=".${vanillaScriptPath}"></script>
   </head>
   <body>

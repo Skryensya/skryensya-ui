@@ -2415,8 +2415,23 @@ p:not(.sk-text) {
  * match, this rule would repaint that `currentColor` brand-blue and the card's hover wash would come
  * out accent-tinted rather than the sober neutral the catalog wants. The `:not()` list is the fence
  * for "anchors that are their own object"; the card is one, whether or not it ships from `core`.
+ *
+ * `.sk-menu__item` is the same fence around a ROW. ComponentPreview's actions menu renders one item
+ * as an anchor, because that item is the only one that navigates (`ComponentPreview.astro`), and the
+ * row came out brand-blue between two neutral ones for no reason a reader could see: the menu paints
+ * its own `--sk-menu-fg`, and being a link is a fact about where the row goes, not about how it
+ * should read in a list of three. Its own state layer tints with `currentColor` too, exactly as the
+ * card above does.
  */
-main a:not(.sk-link, .sk-nav-list__link, .sk-toc__link, .sk-button, .sk-tile, .docs-catalog__card) {
+main a:not(
+    .sk-link,
+    .sk-nav-list__link,
+    .sk-toc__link,
+    .sk-button,
+    .sk-tile,
+    .sk-menu__item,
+    .docs-catalog__card
+  ) {
   color: var(--color-text-link);
 }
 

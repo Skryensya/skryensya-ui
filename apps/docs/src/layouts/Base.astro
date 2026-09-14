@@ -434,6 +434,10 @@ const settingsIcon = iconMarkup("settings");
 const previousIcon = iconMarkup("arrow-left");
 const nextIcon = iconMarkup("arrow-right");
 const reportIssueIcon = iconMarkup("external-link", { size: "sm" });
+/* The same glyph, for the one global destination that leaves this site (the Playground). Its own
+   constant rather than a second use of the one above, because these two are not one decision: that
+   one marks a link in the footer, this one marks a row in the nav. */
+const launchIcon = iconMarkup("external-link", { size: "sm" });
 const backToTopIcon = iconMarkup("chevron-up", { size: "sm" });
 
 /*
@@ -812,6 +816,19 @@ const PALETTE_PRESETS = palettePresets(locale);
                           aria-current={isGlobalItemCurrent(item.href) ? "page" : undefined}
                         >
                           <span class="sk-nav-list__label">{item.label}</span>
+                          {/*
+                            The launch mark, in the part NavList publishes for exactly this
+                            (`sk-nav-list__trailing`: pinned to the end, never squashed by a long
+                            label, and already dimmed to tertiary so it reads as metadata and not as
+                            a second word). Decorative on purpose: `target="_blank"` is the fact, the
+                            glyph is the redundant visible hint, and a screen reader that announced
+                            it would be reading a picture of the thing the link already is.
+                          */}
+                          {item.external && (
+                            <span class="sk-nav-list__trailing" aria-hidden="true">
+                              <Fragment set:html={launchIcon} />
+                            </span>
+                          )}
                         </a>
                       )}
                     </li>

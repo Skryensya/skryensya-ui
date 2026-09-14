@@ -30,45 +30,7 @@ const styles = `@import "@skryensya/core/components/breadcrumb.css";`;
   description={t("breadcrumb.description")}
   badge={t("breadcrumb.betaBadge")}
   contractId="breadcrumb"
-  tests={[
-    {
-      file: "packages/react/src/components/breadcrumb.test.tsx",
-      tests: [
-        {
-          name: "renders a plain, uncollapsed trail when it is short enough that nothing is worth collapsing",
-          description: t("breadcrumb.test1"),
-        },
-        {
-          name: "opens a real Menu of the hidden ancestors when the trail overflows its container",
-          description: t("breadcrumb.test2"),
-        },
-        { name: "leaves a trail that fits on one line uncollapsed", description: t("breadcrumb.test3") },
-        {
-          name: "re-measures on every resize, even shrinking from an already-expanded state",
-          description: t("breadcrumb.test4"),
-        },
-      ],
-    },
-    {
-      file: "packages/vanilla/src/components/breadcrumb.test.ts",
-      tests: [
-        {
-          name: "does nothing to a trail short enough that nothing is worth collapsing",
-          description: t("breadcrumb.test5"),
-        },
-        { name: "leaves a trail that fits on one line untouched", description: t("breadcrumb.test6") },
-        {
-          name: "opens a real Menu of the hidden ancestors when the trail does not fit",
-          description: t("breadcrumb.test7"),
-        },
-        {
-          name: "re-derives the collapse on every resize, expanding first so it never gets stuck",
-          description: t("breadcrumb.test8"),
-        },
-        { name: "restores every crumb to visible on unmount", description: t("breadcrumb.test9") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/breadcrumb.test.tsx", "packages/vanilla/src/components/breadcrumb.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("breadcrumb.description")} />

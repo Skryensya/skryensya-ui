@@ -83,40 +83,7 @@ const chartCardHtml = emitChartWithOverlay(chartAnalyticsCardTree(t), "area", vi
     { file: "components/checkbox.css", probe: "sk-checkbox", title: "Checkbox" },
     { file: "patterns/image-frame.css", probe: "sk-image-frame", title: "ImageFrame" },
   ]}
-  tests={[
-    {
-      file: "apps/docs/src/examples/card-sources.test.ts",
-      tests: [
-        { name: "keeps every example's data array at exactly three cards", description: t("cardPage.testGridOfThree") },
-        {
-          name: "covers the whole ladder: one tree per labelled example",
-          description: t("cardPage.testLadderCovered"),
-        },
-        {
-          name: "keeps every example valid against the contracts it composes",
-          description: t("cardPage.testTreesValid"),
-        },
-        {
-          name: "emits both bindings of every example from the one authoring",
-          description: t("cardPage.testBothBindings"),
-        },
-        {
-          name: "marks the select example's initial state on the label, not on the input",
-          description: t("cardPage.testSelectDefaultChecked"),
-        },
-      ],
-    },
-    {
-      file: "apps/docs/src/components/pages/CardPage.test.ts",
-      tests: [
-        { name: "imports tile.css, which Base.astro never loads globally", description: t("cardPage.testImportsTile") },
-        {
-          name: "imports checkbox.css, without which every indicator paints both the check and the dash glyph at once",
-          description: t("cardPage.testImportsCheckbox"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["apps/docs/src/examples/card-sources.test.ts", "apps/docs/src/components/pages/CardPage.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("cardPage.lede")} />

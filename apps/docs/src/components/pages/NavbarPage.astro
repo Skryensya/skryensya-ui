@@ -23,17 +23,7 @@ const css = `@import "@skryensya/core/tokens.scss";
   title="Navbar"
   description={t("navbarPage.description")}
   contractId="navbar"
-  tests={[
-    {
-      file: "packages/react/src/components/navbar.test.tsx",
-      tests: [
-        {
-          name: "uses a header landmark while leaving navigation to its NavList child",
-          description: t("navbarPage.test1"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/navbar.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("navbarPage.lede")} />

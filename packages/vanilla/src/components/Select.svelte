@@ -5,11 +5,17 @@
     stripPositioningStyle,
     supportsAnchorPositioning,
   } from "@skryensya/core/anchored";
-  import { selectAttrs, selectEvents, type SelectOption, type SelectValueChangeDetails } from "@skryensya/core/select";
+  import {
+    selectAttrs,
+    selectEvents,
+    selectPositioning,
+    type SelectOption,
+    type SelectValueChangeDetails,
+  } from "@skryensya/core/select";
   import { select } from "@skryensya/core/machines";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
-  import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { onDestroy } from "svelte";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
   import { selectorsFor } from "@skryensya/core/selectors";
 
@@ -130,13 +136,9 @@
     disabled: root.hasAttribute("data-disabled"),
     required: root.hasAttribute("data-required"),
     defaultValue: readDefaultValue(),
-    positioning: {
-      placement: "bottom-start" as const,
-      sameWidth: true,
-      gutter: 8,
-      flip: true,
-      boundary: root.closest("dialog") ? document.documentElement : undefined,
-    },
+    /* Shared with React (`selectPositioning`); `boundary` stays here because it is a DOM lookup and
+     * the shared const holds no DOM. */
+    positioning: { ...selectPositioning, boundary: root.closest("dialog") ? document.documentElement : undefined },
     onValueChange(details: { value: string[] }) {
       const change: SelectValueChangeDetails = { value: details.value };
       root.dispatchEvent(
@@ -147,63 +149,83 @@
 
   const api = $derived(select.connect(service, normalizeProps));
 
-  $effect(() => {
-    applyZagProps(root, api.getRootProps() as DomProps);
-    if (hidden) applyZagProps(hidden, api.getHiddenSelectProps() as DomProps);
-    const label = root.querySelector<HTMLElement>(selector.label);
-    if (label) applyZagProps(label, api.getLabelProps() as DomProps);
-    const control = root.querySelector<HTMLElement>(selector.control);
-    if (control) applyZagProps(control, api.getControlProps() as DomProps);
-    applyZagProps(trigger, api.getTriggerProps() as DomProps);
-    if (valueEl) applyZagProps(valueEl, api.getValueTextProps() as DomProps);
-    const indicator = root.querySelector<HTMLElement>(selector.indicator);
-    if (indicator) applyZagProps(indicator, api.getIndicatorProps() as DomProps);
+  // Hoisted out of the patch: these are authored markup, so they are found once rather than re-queried
+  // on every state change.
+  const labelEl = root.querySelector<HTMLElement>(selector.label);
+  const controlEl = root.querySelector<HTMLElement>(selector.control);
+  const indicatorEl = root.querySelector<HTMLElement>(selector.indicator);
 
-    // On the anchor path, CSS owns placement (select.css), so drop Zag's inline positioning styles
-    // entirely; leaving them would fight the browser's positioner.
-    const positionerProps = api.getPositionerProps() as DomProps;
-    if (positioner)
-      applyZagProps(positioner, anchorName ? (stripPositioningStyle(positionerProps) as DomProps) : positionerProps);
-    applyZagProps(content, api.getContentProps() as DomProps);
+  const bindings: PartBinding[] = [
+    { part: "root", node: () => root, props: () => api.getRootProps() },
+    { part: "hiddenSelect", node: () => hidden, props: () => api.getHiddenSelectProps() },
+    { part: "label", node: () => labelEl, props: () => api.getLabelProps() },
+    { part: "control", node: () => controlEl, props: () => api.getControlProps() },
+    { part: "trigger", node: () => trigger, props: () => api.getTriggerProps(), events: true },
+    {
+      part: "valueText",
+      node: () => valueEl,
+      props: () => api.getValueTextProps(),
+      after: (node) => {
+        /* The displayed value is the machine's, it changes on every selection, so this is the one
+         * place this writes CONTENT rather than attributes. The placeholder is still theirs. */
+        node.textContent = api.valueAsString || placeholder;
+      },
+    },
+    { part: "indicator", node: () => indicatorEl, props: () => api.getIndicatorProps() },
+    {
+      part: "positioner",
+      node: () => positioner,
+      // On the anchor path, CSS owns placement (select.css), so drop Zag's inline positioning styles
+      // entirely; leaving them would fight the browser's positioner.
+      props: () => {
+        const props = api.getPositionerProps();
+        return anchorName ? stripPositioningStyle(props) : props;
+      },
+      after: (node) => {
+        // Re-asserted HERE, not once at mount: the positioner's patch rewrites its inline style on
+        // every render, dropping the hook set earlier. Stamping right after keeps it stable across
+        // every open/close; idempotent, so it is free to repeat.
+        if (anchorName) unbindAnchor = bindAnchor(trigger, node, anchorName);
+      },
+    },
+    { part: "content", node: () => content, props: () => api.getContentProps(), events: true },
 
-    itemEls.forEach((el, index) => {
+    ...itemEls.flatMap((el, index): PartBinding[] => {
       const item = items[index]!;
-      const itemProps = api.getItemProps({ item }) as DomProps;
-      /*
-       * Zag's `aria-selected` tracks the COMMITTED value, not the row under
-       * `aria-activedescendant`. The WAI reference implementation moves `aria-selected="true"` onto
-       * whichever option is highlighted as you arrow through the list, before Enter commits
-       * anything.
-       */
-      itemProps["aria-selected"] = item.value === api.highlightedValue ? "true" : undefined;
-      applyZagProps(el, itemProps);
-      const text = el.querySelector<HTMLElement>(selector.itemText);
-      if (text) applyZagProps(text, api.getItemTextProps({ item }) as DomProps);
-      const indicatorEl = el.querySelector<HTMLElement>(selector.itemIndicator);
-      if (indicatorEl) applyZagProps(indicatorEl, api.getItemIndicatorProps({ item }) as DomProps);
-    });
+      return [
+        {
+          part: "item",
+          node: () => el,
+          events: true,
+          /*
+           * Zag's `aria-selected` tracks the COMMITTED value, not the row under
+           * `aria-activedescendant`. The WAI reference implementation moves `aria-selected="true"`
+           * onto whichever option is highlighted as you arrow through the list, before Enter commits
+           * anything.
+           *
+           * Spread into a new object rather than mutated in place: the correction is the same, and a
+           * fresh plain object is what lets this stay free of casts.
+           */
+          props: () => ({
+            ...api.getItemProps({ item }),
+            "aria-selected": item.value === api.highlightedValue ? "true" : undefined,
+          }),
+        },
+        {
+          part: "itemText",
+          node: () => el.querySelector<HTMLElement>(selector.itemText),
+          props: () => api.getItemTextProps({ item }),
+        },
+        {
+          part: "itemIndicator",
+          node: () => el.querySelector<HTMLElement>(selector.itemIndicator),
+          props: () => api.getItemIndicatorProps({ item }),
+        },
+      ];
+    }),
+  ];
 
-    /* The displayed value is the machine's, it changes on every selection, so this is the one
-     * place this writes CONTENT rather than attributes. The placeholder is still theirs. */
-    if (valueEl) valueEl.textContent = api.valueAsString || placeholder;
+  bindParts(bindings);
 
-    // Re-assert the anchor wiring HERE, not once at mount: the positioner spread above rewrites
-    // its inline style each render, dropping the hook set earlier. Stamping after the spread keeps
-    // it stable across every open/close; idempotent, so it's free to repeat.
-    if (anchorName && positioner) unbindAnchor = bindAnchor(trigger, positioner, anchorName);
-  });
-
-  const cleanups: Array<() => void> = [];
-  onMount(() => {
-    cleanups.push(bindZagEvents(trigger, () => api.getTriggerProps() as DomProps));
-    if (content) cleanups.push(bindZagEvents(content, () => api.getContentProps() as DomProps));
-    itemEls.forEach((el, index) => {
-      const item = items[index]!;
-      cleanups.push(bindZagEvents(el, () => api.getItemProps({ item }) as DomProps));
-    });
-  });
-  onDestroy(() => {
-    for (const cleanup of cleanups) cleanup();
-    unbindAnchor?.();
-  });
+  onDestroy(() => unbindAnchor?.());
 </script>

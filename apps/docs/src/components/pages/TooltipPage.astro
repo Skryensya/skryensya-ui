@@ -21,15 +21,7 @@ const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
   title="Tooltip"
   description={t("tooltipPage.description")}
   contractId="tooltip"
-  tests={[
-    {
-      file: "packages/react/src/components/tooltip.test.tsx",
-      tests: [
-        { name: "describes the trigger rather than naming it", description: t("tooltipPage.test1") },
-        { name: "stays closed while disabled", description: t("tooltipPage.test2") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/tooltip.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("tooltipPage.lede")} />

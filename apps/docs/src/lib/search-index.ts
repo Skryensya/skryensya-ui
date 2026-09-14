@@ -46,12 +46,5 @@ export function buildSearchIndex(locale: Locale): CommandPaletteEntry[] {
       section: t("group.global"),
       group: t("nav.presets"),
     },
-    {
-      label: t("nav.recipes"),
-      aliases: ["recetas", "screens", "pantallas", "loading", "empty", "error", "vacío", "estados"],
-      href: localizePath("/recipes", locale),
-      section: t("group.global"),
-      group: t("nav.recipes"),
-    },
   ];
 }

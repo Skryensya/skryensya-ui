@@ -4,14 +4,11 @@ import { phosphorIcons } from "@skryensya/icons-phosphor";
 import { renderTree, setPortalContainer } from "@skryensya/react/render-tree";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 /*
- * Reached around `@skryensya/devtools`'s own public entry (`.` only exports `mountDebugPanel`), the
- * SAME move `apps/docs`'s `Base.astro` already makes for this exact package, for this exact reason  - 
- * see that file's own `FOCUS_ORDER_CSS` import. These three are the underlying CSS-injection
- * primitives the panel's checks are built on, usable without the panel's own UI attached.
+ * One specifier, where this used to reach around `@skryensya/devtools`'s public entry three times by
+ * relative path. `./checks` publishes exactly the two names a second realm needs: the attributes to
+ * mirror, and the one call that installs their rules.
  */
-import { HIT_AREA_ATTR, ensureHitAreaStyleTag } from "../../../../packages/devtools/src/overlay.js";
-import { FOCUS_ORDER_ATTR, ensureFocusOrderStyleTag } from "../../../../packages/devtools/src/focus-order.js";
-import { SLOW_MO_ATTR, ensureSlowMoStyleTag } from "../../../../packages/devtools/src/motion.js";
+import { CHECK_ATTRIBUTES, installChecks } from "@skryensya/devtools/checks";
 
 /*
  * Loaded via `<script type="module">` inside the preview iframe's OWN document (see `document.ts`),
@@ -51,7 +48,9 @@ function readFrameData(): FrameData {
  * effect instead of duplicating its control surface: one source of truth (the outer `<html>`), every
  * iframe just reflects it.
  */
-const MIRRORED_ATTRS = ["data-scheme", HIT_AREA_ATTR, FOCUS_ORDER_ATTR, SLOW_MO_ATTR] as const;
+/* `data-scheme` is this app's own; the rest come from the one list devtools publishes - which also
+ * closes a gap, since the hand-written version omitted the menu safety-triangle flag entirely. */
+const MIRRORED_ATTRS = ["data-scheme", ...CHECK_ATTRIBUTES] as const;
 
 function syncRootState(): void {
   const parentRoot = window.parent.document.documentElement;
@@ -103,9 +102,7 @@ async function boot(): Promise<void> {
    * attribute is what makes an ALREADY-ON check visible the instant this frame boots, not one paint
    * late.
    */
-  ensureHitAreaStyleTag();
-  ensureFocusOrderStyleTag();
-  ensureSlowMoStyleTag();
+  installChecks();
   syncRootState();
   new MutationObserver(syncRootState).observe(window.parent.document.documentElement, { attributes: true });
 

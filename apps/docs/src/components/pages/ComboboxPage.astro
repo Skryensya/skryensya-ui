@@ -38,28 +38,7 @@ initComponents();`;
     { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
     { file: "components/button.css", probe: "sk-button", title: "Heredados de Button" },
   ]}
-  tests={[
-    {
-      file: "packages/react/src/components/combobox.test.tsx",
-      tests: [
-        {
-          name: "keeps the typed search when the field is left without a selection",
-          description: t("combobox.test1"),
-        },
-        { name: "writes the chosen label and reopens on the whole list", description: t("combobox.test2") },
-      ],
-    },
-    {
-      file: "packages/vanilla/src/components/combobox.test.ts",
-      tests: [
-        { name: "spends the query on each chip when multiple", description: t("combobox.test3") },
-        {
-          name: "hands the filtered collection to the machine before it renders",
-          description: t("combobox.test4"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/combobox.test.tsx", "packages/vanilla/src/components/combobox.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("combobox.lede")} />

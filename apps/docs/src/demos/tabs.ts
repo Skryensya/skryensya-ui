@@ -95,4 +95,14 @@ export const tabsSizeTree = (t: Translate): UsageTree => ({
   ],
 });
 
+/** The basic panels with the strip hanging from a top line: rounded corners at the bottom, the
+ * selected bar on the top edge. */
+export const tabsHangingTree = (t: Translate): UsageTree => ({
+  contract: "tabs",
+  signature: "Tabs",
+  options: { value: "summary", variant: "hanging" },
+  attrs: { "aria-label": t("demo.tabs.hanging.label") },
+  slots: { items: tabsBasicItems(t) },
+});
+
 export { default as tabsAdvancedScript } from "./scripts/tabs-status.ts?raw";

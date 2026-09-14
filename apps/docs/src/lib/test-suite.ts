@@ -64,11 +64,29 @@ export function demandedFiles(repoRoot: string): readonly DemandedFile[] {
   const seen = new Set<string>();
 
   for (const page of readdirSync(pagesDir).filter((name) => name.endsWith("Page.astro"))) {
-    const block = testsBlock(readFileSync(join(pagesDir, page), "utf8"));
-    if (block === undefined) continue;
+    const source = readFileSync(join(pagesDir, page), "utf8");
 
-    for (const match of block.matchAll(/\bfile:\s*"((?:[^"\\]|\\.)*)"/g)) {
-      seen.add(match[1]!.replace(/\\(.)/g, "$1"));
+    /*
+     * BOTH SHAPES, because the tab has two and the report has to run whatever either one names.
+     *
+     * Reading only `tests={[…]}` is not a hypothetical gap: migrating 67 pages to `testFiles` took
+     * this function from 106 files to 4 in one change, which would have quietly stopped the report
+     * running almost every suite the docs display. The rows would still have rendered - as "not run"
+     * clocks, the failure mode this whole module exists to remove.
+     */
+    const block = testsBlock(source);
+    if (block !== undefined) {
+      for (const match of block.matchAll(/\bfile:\s*"((?:[^"\\]|\\.)*)"/g)) {
+        seen.add(match[1]!.replace(/\\(.)/g, "$1"));
+      }
+    }
+
+    const at = source.indexOf("testFiles={[");
+    if (at !== -1) {
+      const close = source.indexOf("]", at);
+      for (const match of source.slice(at, close).matchAll(/"((?:[^"\\]|\\.)*)"/g)) {
+        seen.add(match[1]!.replace(/\\(.)/g, "$1"));
+      }
     }
   }
 
@@ -93,4 +111,58 @@ export function demandedFiles(repoRoot: string): readonly DemandedFile[] {
     }
     return { pkg: segments.slice(0, 2).join("/"), file: segments.slice(2).join("/") };
   });
+}
+
+/** One row of the Tests tab: a real `it()` title, and whatever prose a page has authored for it. */
+export type SuiteRow = {
+  /** The title exactly as the test file declares it. THE key `test-results.json` is written under. */
+  readonly title: string;
+  /** Authored, translated prose. Absent until someone writes it. */
+  readonly description?: string;
+};
+
+export type Suite = {
+  /** Repo-relative, exactly as the report keys it. */
+  readonly file: string;
+  /** Declaration order, as the file reads. */
+  readonly rows: readonly SuiteRow[];
+  /**
+   * Titles this reader deliberately does not treat as rows: a template literal or an `it.each` has no
+   * fixed string to look up, and `tests-prop.test.ts` already conceded the point ("a template literal
+   * is not a lookup key anyway"). Reported rather than dropped silently, so an author can see that a
+   * test exists and is simply not addressable here.
+   */
+  readonly skipped: number;
+};
+
+/**
+ * Every title `file` declares, in declaration order.
+ *
+ * THE POINT OF READING THEM RATHER THAN QUOTING THEM: the title and the test move together. A page
+ * that quotes a title gets a "not run" clock the moment someone rewords it - indistinguishable, to a
+ * reader, from a test that genuinely did not run. Seven rows had drifted that way before
+ * `tests-prop.test.ts` was written to catch it, and that check is a regex over two file formats
+ * precisely because neither side was a value anything could import.
+ *
+ * Reads the TEST SOURCE, never `artifacts/test-results.json`. That keeps CONTRIBUTING's rule intact:
+ * "a stale report should degrade one tab, not fail the whole build". A missing report still renders
+ * every row with a neutral clock; a missing test file is a build error, because a page naming a test
+ * that does not exist is always wrong.
+ */
+export function suite(repoRoot: string, file: string): Suite {
+  const source = readFileSync(join(repoRoot, file), "utf8");
+
+  const quoted = [...source.matchAll(/\bit(?:\.\w+)?\(\s*(["'])((?:[^\\]|\\.)*?)\1/g)].map((match) =>
+    match[2]!.replace(/\\(.)/g, "$1"),
+  );
+  const templated = [...source.matchAll(/\bit(?:\.\w+)?\(\s*`/g)].length;
+
+  if (quoted.length === 0 && templated === 0) {
+    throw new Error(
+      `No it(...) titles in ${file}. A page names it as a test file, so either the path is wrong or ` +
+        `the file stopped declaring tests.`,
+    );
+  }
+
+  return { file, rows: quoted.map((title) => ({ title })), skipped: templated };
 }

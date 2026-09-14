@@ -1,0 +1,140 @@
+---
+/*
+ * Diagnostic only: a `break` harness for Box. One scenario per row, the REAL
+ * `@skryensya/react` Box in each, labels and fixed-width containers around it and nothing else.
+ *
+ * The environment is the site's own: `tokens.scss`, `patterns/box.css` and `styles/site.css`,
+ * the same three the docs shell imports. No fonts, colours or token overrides of this page's own -
+ * a Box observed under those is a different Box.
+ *
+ * Not linked from the site nav. `noindex`, like `/debug/button-break`.
+ *
+ * Dev-only: `astro build` runs with NODE_ENV=production (see astro.config.ts), so this 404s out of
+ * the static build instead of shipping the break-* classes and the BoxBreak island into dist.
+ */
+if (import.meta.env.PROD) {
+  return new Response(null, { status: 404 });
+}
+
+import "@skryensya/core/tokens.scss";
+import "@skryensya/core/patterns/box.css";
+import "../../styles/site.css";
+import { siteIconSet } from "../../icons";
+import { BoxBreak } from "../../components/react-demos/debug-box-break";
+---
+
+<!doctype html>
+<html
+  lang="en"
+  class="sk-scrollbar"
+  data-scheme="system"
+  data-icon-set={siteIconSet}
+  data-radius="md"
+  style="--sk-density: 1"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>break: box</title>
+    <style is:global>
+      .break-page {
+        padding: var(--space-inset-lg);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-stack-xl);
+      }
+      .break-intro {
+        max-inline-size: 60ch;
+        color: var(--color-text-secondary);
+      }
+      .break-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-stack-lg);
+        padding-block-start: var(--space-stack-md);
+        border-block-start: 1px solid var(--color-border-subtle);
+      }
+      .break-group__title {
+        margin: 0;
+        font-family: var(--font-family-mono);
+        font-size: var(--font-size-body-sm);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--color-text-secondary);
+      }
+      .break-case {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-stack-xs);
+      }
+      .break-case__label {
+        margin: 0;
+        font-family: var(--font-family-mono);
+        font-size: var(--font-size-caption);
+        color: var(--color-text-primary);
+      }
+      .break-case__note {
+        margin: 0;
+        font-size: var(--font-size-caption);
+        color: var(--color-text-secondary);
+      }
+      /* Marks a scenario that visibly broke. Written by the run, read as the report. */
+      .break-case__broke {
+        margin: 0;
+        font-family: var(--font-family-mono);
+        font-size: var(--font-size-caption);
+        color: var(--color-text-danger);
+      }
+      .break-case__stage {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-stack-sm);
+      }
+      /* The only thing the page adds to a scenario: a fixed width to render inside. */
+      .break-w-220 {
+        inline-size: 220px;
+        outline: 1px dashed var(--color-border-default);
+      }
+      .break-w-320 {
+        inline-size: 320px;
+        outline: 1px dashed var(--color-border-default);
+      }
+      .break-w-1100 {
+        inline-size: min(1100px, 100%);
+        outline: 1px dashed var(--color-border-default);
+      }
+      .break-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-inline-sm);
+      }
+      .break-squeeze {
+        display: flex;
+        align-items: center;
+        gap: var(--space-inline-sm);
+      }
+      .break-squeeze__text {
+        flex: 1;
+        margin: 0;
+        font-size: var(--font-size-body-sm);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="break-page">
+      <header>
+        <h1>break: Box</h1>
+        <p class="break-intro">
+          One scenario per row, the real <code>@skryensya/react</code> Box in each. Dashed outlines
+          are the container the scenario renders inside, not part of the component. Toggle OS dark
+          mode and forced colors while this page is open: those are viewing modes, so the page
+          renders nothing for them. Box's `raised`/`sunken` surfaces are the ones with a specific
+          forced-colors carve-out in `patterns/box.css`, worth checking by hand.
+        </p>
+      </header>
+      <BoxBreak client:load />
+    </div>
+  </body>
+</html>

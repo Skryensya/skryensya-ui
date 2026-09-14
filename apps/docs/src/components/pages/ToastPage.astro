@@ -102,22 +102,7 @@ await initComponents();`;
   description={t("toastPage.description")}
   contractId="content"
   styleGroups={[{ file: "components/toast.css", probe: "sk-toast" }]}
-  tests={[
-    {
-      file: "packages/vanilla/src/components/toast.test.ts",
-      tests: [
-        {
-          name: "applies the shared live-region semantics and reports native button dismissal",
-          description: t("toastPage.test1"),
-        },
-        {
-          name: "only schedules authored timeouts and clears them during cleanup",
-          description: t("toastPage.test2"),
-        },
-        { name: "mounts authored toast markup through the registry enhancer", description: t("toastPage.test3") },
-      ],
-    },
-  ]}
+  testFiles={["packages/vanilla/src/components/toast.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("toastPage.lede")} />

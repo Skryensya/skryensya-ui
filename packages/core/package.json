@@ -488,6 +488,10 @@
     "./fraction": {
       "types": "./src/fraction.ts",
       "default": "./src/fraction.ts"
+    },
+    "./jsdom-floor": {
+      "types": "./src/jsdom-floor.ts",
+      "default": "./src/jsdom-floor.ts"
     }
   },
   "scripts": {

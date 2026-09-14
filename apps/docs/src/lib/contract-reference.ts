@@ -1,4 +1,12 @@
-import type { ComponentContract } from "@skryensya/core/contract";
+import {
+  asCompiledManifest,
+  type ChangeEntry,
+  type ChangeKind,
+  type ChangeText,
+  type CompiledContract,
+  type ContractSemantics,
+  type Release,
+} from "@skryensya/ai-compiler/artifact";
 import manifest from "@artifacts/ai-manifest.json";
 import type { Locale } from "../i18n";
 
@@ -16,60 +24,34 @@ import type { Locale } from "../i18n";
  * rebuilt artifact hot-reloads the page in dev instead of needing the server restarted.
  */
 
-/** The five kinds, ordered loudest first. Why these words rather than Keep a Changelog's is argued
- *  in `packages/core/src/changelog.ts`, next to the tone each one wears. */
-export type ChangeKind = "breaking" | "feature" | "bugfix" | "rework" | "chore";
+/*
+ * THE SHAPES COME FROM THE COMPILER, and they did not use to.
+ *
+ * This file carried its own `ChangeKind`, `ChangeText`, `ChangeEntry`, `Release`,
+ * `SignatureSemantics`, `ContractDoc` and `Manifest` - seven types describing bytes written by a
+ * compiler that knew them exactly, and reached through one `as unknown as`. `ChangeKind` alone was
+ * declared in four places across three packages.
+ *
+ * `ContractDoc` keeps its name: it is what a PAGE calls the thing, and it reads better at the two
+ * call sites than `CompiledContract` would.
+ */
+export type ContractDoc = CompiledContract;
+export type { ChangeEntry, ChangeKind, ChangeText, Release };
+export type SignatureSemantics = ContractSemantics;
 
-/** One entry in one language: the headline a reader scans for, and the reasoning under it. */
-export type ChangeText = {
-  readonly title: string;
-  /** HTML the compiler validated, so it lands as real markup rather than escaped text. */
-  readonly body: string;
-};
-
-export type ChangeEntry = {
-  readonly date: string;
-  readonly kind: ChangeKind;
-  /** An option, part or signature name. The compiler already refused any other value. */
-  readonly target?: string;
-  readonly es: ChangeText;
-  readonly en: ChangeText;
-};
-
-/** One version and everything that shipped in it. `date` is `null` on a version that has not. */
-export type Release = {
-  readonly version: string;
-  readonly date: string | null;
-  readonly entries: readonly ChangeEntry[];
-};
-
-export type SignatureSemantics = {
-  readonly useWhen?: readonly string[];
-  readonly avoidWhen?: readonly string[];
-  readonly alternatives?: readonly string[];
-};
-
-export type ContractDoc = ComponentContract & {
-  readonly semantics: Readonly<Record<string, SignatureSemantics>>;
-};
-
-type Manifest = {
-  readonly schemaVersion: string;
-  readonly sourceHash: string;
-  readonly contracts: Readonly<Record<string, ContractDoc>>;
-  /** Keyed like `contracts`, and separate from it: a component's history is not its shape. */
-  readonly changelogs: Readonly<Record<string, readonly Release[]>>;
-  /** The shared release ledger (`contracts/changelog/releases.yaml`), compiled in. */
-  readonly releases: {
-    readonly working: string;
-    readonly releases: readonly { readonly version: string; readonly date: string }[];
-  };
-};
-
-const compiled = manifest as unknown as Manifest;
+/*
+ * Checked, not asserted. `asCompiledManifest` verifies the schema version and the top-level key set,
+ * so a rebuilt-but-stale artifact fails the docs BUILD with a message naming the rebuild command,
+ * rather than rendering a reference table for a shape that is no longer there.
+ *
+ * It cannot check the pair - this side only ever holds the manifest, because it comes through the
+ * bundler alias rather than off disk (deliberately: a rebuilt artifact then hot-reloads the page).
+ * That gap is real and is why `asCompiledManifest` is a separate function rather than a default.
+ */
+const compiled = asCompiledManifest(manifest);
 
 /** The shared release ledger, as compiled into the manifest. */
-export function releaseLedger(): Manifest["releases"] {
+export function releaseLedger() {
   return compiled.releases;
 }
 
@@ -113,6 +95,68 @@ export function contractDoc(id: string): ContractDoc {
  */
 export function changelogFor(id: string): readonly Release[] {
   return compiled.changelogs[id] ?? [];
+}
+
+/** One contract's slice of a kit release, for the site-wide release notes page. */
+export type KitReleaseSurface = {
+  readonly id: string;
+  readonly entries: readonly ChangeEntry[];
+};
+
+/** One kit version with every contract that moved in it, newest versions first. */
+export type KitRelease = {
+  readonly version: string;
+  readonly date: string | null;
+  readonly surfaces: readonly KitReleaseSurface[];
+};
+
+/**
+ * Every contract changelog, folded into the shared release ledger.
+ *
+ * The footer version badge and `/release-notes` read this: a reader asking "what shipped in the
+ * version I am on" wants the kit answer, not one component's history and not the Changelog
+ * component's own doc page. Empty surfaces are dropped; versions with nothing recorded disappear.
+ */
+export function kitReleaseNotes(): readonly KitRelease[] {
+  const byVersion = new Map<string, { date: string | null; surfaces: Map<string, ChangeEntry[]> }>();
+
+  for (const [id, releases] of Object.entries(compiled.changelogs)) {
+    for (const release of releases) {
+      let bucket = byVersion.get(release.version);
+      if (!bucket) {
+        bucket = { date: release.date, surfaces: new Map() };
+        byVersion.set(release.version, bucket);
+      } else if (bucket.date === null && release.date !== null) {
+        bucket.date = release.date;
+      }
+      const entries = bucket.surfaces.get(id) ?? [];
+      entries.push(...release.entries);
+      bucket.surfaces.set(id, entries);
+    }
+  }
+
+  const { working, releases } = releaseLedger();
+  const preferredOrder = [`${working}-dev`, ...releases.map((r) => r.version)];
+  const seen = new Set<string>();
+  const ordered: string[] = [];
+  for (const version of preferredOrder) {
+    if (byVersion.has(version) && !seen.has(version)) {
+      ordered.push(version);
+      seen.add(version);
+    }
+  }
+  for (const version of byVersion.keys()) {
+    if (!seen.has(version)) ordered.push(version);
+  }
+
+  return ordered.map((version) => {
+    const bucket = byVersion.get(version)!;
+    const surfaces = [...bucket.surfaces.entries()]
+      .filter(([, entries]) => entries.length > 0)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([id, entries]) => ({ id, entries }));
+    return { version, date: bucket.date, surfaces };
+  });
 }
 
 /**

@@ -3,8 +3,24 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "b496ef44e9bfefa5"
+surface: "54ba238bfbc1264e"
 entries:
+  - date: 2026-09-14
+    kind: feature
+    es:
+      title: Alcanza el rol code, que el vocabulario acaba de sumar
+      body: >-
+        Este control nombra sus iconos con el vocabulario estable, así que un rol nuevo ahí llega acá
+        sin que este contrato cambie de forma: `code` ya se puede pedir. La superficie se movió porque
+        el conjunto de nombres que acepta es parte de lo que un consumidor puede depender, no porque
+        haya cambiado nada de cómo se usa.
+    en:
+      title: Reaches the code role the vocabulary just gained
+      body: >-
+        This control names its icons with the stable vocabulary, so a new role there arrives here
+        without this contract changing shape: `code` can now be asked for. The surface moved because
+        the set of names it accepts is part of what a consumer can depend on, not because anything
+        about how it is used changed.
   - date: 2026-09-05
     kind: feature
     es:

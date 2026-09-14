@@ -83,8 +83,8 @@ async function stage(): Promise<void> {
     vanilla.dataset.binding = "vanilla";
     /*
      * Every case shares ONE document, so the generated ids are namespaced by case name. Without
-     * this, three states of the same recipe emitted the same field id and each label pointed at the
-     * first input on the page: a divergence the gate reported as real when it was the stage's own.
+     * this, two cases over the same signature emitted the same field id and each label pointed at
+     * the first input on the page: a divergence the gate reported as real when it was the stage's own.
      * A real page never needs this: each preview is its own srcdoc document.
      */
     /*

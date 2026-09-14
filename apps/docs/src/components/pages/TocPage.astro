@@ -51,19 +51,7 @@ const items = headings.map((h) => ({ href: \`#\${h.id}\`, label: h.label, level:
   title="Toc"
   description={t("tocPage.description")}
   contractId="toc"
-  tests={[
-    {
-      file: "packages/react/src/components/toc.test.tsx",
-      tests: [
-        { name: "names the nav after the caption and levels each item", description: t("tocPage.test1") },
-        {
-          name: "seeds aria-current from the composition before the spy reports",
-          description: t("tocPage.test2"),
-        },
-        { name: "moves aria-current as headings enter the band", description: t("tocPage.test3") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/toc.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("tocPage.lede")} />

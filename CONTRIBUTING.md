@@ -252,5 +252,4 @@ and a gate behind it, so the useful conversation is about whether it should exis
 called, and that is cheaper before the code than after.
 
 If the answer turns out to be "this is a composition, not a component", that is a real outcome: see
-[`contracts/snippets`](contracts/snippets) and [`contracts/recipes`](contracts/recipes) for where
-compositions live.
+[`contracts/snippets`](contracts/snippets) for where compositions live.

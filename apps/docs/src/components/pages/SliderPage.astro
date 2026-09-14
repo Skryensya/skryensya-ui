@@ -17,53 +17,7 @@ const t = useTranslations(getLocale(Astro.url));
   title="Slider"
   description={t("sliderPage.description")}
   contractId="slider"
-  tests={[
-    {
-      file: "packages/react/src/components/slider.test.tsx",
-      tests: [
-        {
-          name: "uses the Zag slider machine anatomy and value state",
-          description: t("sliderPage.test1"),
-        },
-      ],
-    },
-    {
-      file: "packages/vanilla/src/components/slider.test.ts",
-      tests: [
-        {
-          name: "mounts the Zag slider machine over authored markup",
-          description: t("sliderPage.test2"),
-        },
-      ],
-    },
-    {
-      file: "packages/core/src/slider-range.test.ts",
-      tests: [
-        {
-          name: "bounds the low thumb's max at the high thumb's current value, and vice versa",
-          description: t("sliderPage.testRange1"),
-        },
-      ],
-    },
-    {
-      file: "packages/react/src/components/slider-range.test.tsx",
-      tests: [
-        {
-          name: "bounds each thumb's max/min at the other's CURRENT value",
-          description: t("sliderPage.testRange2"),
-        },
-      ],
-    },
-    {
-      file: "packages/vanilla/src/components/slider-range.test.ts",
-      tests: [
-        {
-          name: "paints the fill bar's start/end offsets from each thumb's value",
-          description: t("sliderPage.testRange3"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/slider.test.tsx", "packages/vanilla/src/components/slider.test.ts", "packages/core/src/slider-range.test.ts", "packages/react/src/components/slider-range.test.tsx", "packages/vanilla/src/components/slider-range.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("sliderPage.lede")} />

@@ -55,7 +55,6 @@ function resetBindingState(): void {
   resetSharedComponentPreviewScreen();
   document.documentElement.removeAttribute("data-sk-component-preview-pref");
   document.documentElement.removeAttribute("data-sk-component-preview-screen-pref");
-  document.documentElement.removeAttribute("data-sk-fullscreen-preview");
 }
 
 function mockForcedMobileViewport(matches: boolean): { setMatches: (next: boolean) => void } {
@@ -664,20 +663,6 @@ describe("ComponentPreview opt-in enhancer", () => {
       );
     });
 
-    it("treats xl as free inside a fullscreen preview even when the option is still in the DOM", () => {
-      resetBindingState();
-      document.documentElement.setAttribute("data-sk-fullscreen-preview", "");
-      document.documentElement.setAttribute("data-sk-component-preview-screen-pref", "xl");
-      screenMarkup();
-      const { tabs, stage } = parts();
-
-      mountAll();
-
-      expect(stage.hasAttribute("data-sk-component-preview-screen")).toBe(false);
-      expect(tabs.getAttribute("data-value")).toBe("free");
-
-      document.documentElement.removeAttribute("data-sk-fullscreen-preview");
-    });
 
     it("applies the shared preset to a preview that has no toggle of its own", () => {
       resetBindingState();

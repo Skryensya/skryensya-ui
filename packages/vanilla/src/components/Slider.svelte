@@ -1,9 +1,8 @@
 <script lang="ts">
   import { slider } from "@skryensya/core/machines";
-import { sliderAttrs } from "@skryensya/core/slider";
+  import { sliderAttrs } from "@skryensya/core/slider";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
-  import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
   import { selectorsFor } from "@skryensya/core/selectors";
 
@@ -59,21 +58,24 @@ import { sliderAttrs } from "@skryensya/core/slider";
 
   const api = $derived(slider.connect(service, normalizeProps));
 
-  $effect(() => {
-    applyZagProps(root, api.getRootProps() as DomProps);
-    applyZagProps(control, api.getControlProps() as DomProps);
-    applyZagProps(track, api.getTrackProps() as DomProps);
-    applyZagProps(range, api.getRangeProps() as DomProps);
-    applyZagProps(thumb, api.getThumbProps({ index: 0 }) as DomProps);
-    if (input) applyZagProps(input, api.getHiddenInputProps({ index: 0, name }) as DomProps);
-  });
+  const bindings: PartBinding[] = [
+    { part: "root", node: () => root, props: () => api.getRootProps() },
+    { part: "control", node: () => control, props: () => api.getControlProps(), events: true },
+    { part: "track", node: () => track, props: () => api.getTrackProps() },
+    { part: "range", node: () => range, props: () => api.getRangeProps() },
+    {
+      part: "thumb",
+      node: () => thumb,
+      props: () => api.getThumbProps({ index: 0 }),
+      events: true,
+    },
+    // Absent when the slider is not in a form, so the guard is the binding rather than an `if`.
+    {
+      part: "input",
+      node: () => input,
+      props: () => api.getHiddenInputProps({ index: 0, name }),
+    },
+  ];
 
-  const cleanups: Array<() => void> = [];
-  onMount(() => {
-    cleanups.push(bindZagEvents(control, () => api.getControlProps() as DomProps));
-    cleanups.push(bindZagEvents(thumb, () => api.getThumbProps({ index: 0 }) as DomProps));
-  });
-  onDestroy(() => {
-    for (const cleanup of cleanups) cleanup();
-  });
+  bindParts(bindings);
 </script>

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { fileUpload } from "@skryensya/core/machines";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
-  import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { onMount } from "svelte";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
@@ -55,32 +55,53 @@
 
   const api = $derived(fileUpload.connect(service, normalizeProps));
 
-  // Incomplete markup: the enhancer stays silent, like the imperative connector it replaces.
-  $effect(() => {
-    if (!label || !dropzone || !input || !trigger) return;
-    applyZagProps(root, api.getRootProps() as DomProps);
-    applyZagProps(label, api.getLabelProps() as DomProps);
-    applyZagProps(dropzone, api.getDropzoneProps() as DomProps);
-    applyZagProps(input, api.getHiddenInputProps() as DomProps);
-    applyZagProps(trigger, api.getTriggerProps() as DomProps);
-    if (clear) {
-      applyZagProps(clear, api.getClearTriggerProps() as DomProps);
-      clear.hidden = api.acceptedFiles.length === 0;
-    }
-  });
+  /*
+   * Incomplete markup: the enhancer stays silent, like the imperative connector it replaces. Every
+   * `node()` reads the same `complete`, which is the all-or-nothing rule the two hooks used to state
+   * separately - and could therefore state differently.
+   */
+  const complete = label && dropzone && input && trigger ? { label, dropzone, input, trigger } : null;
 
-  const cleanups: Array<() => void> = [];
+  const bindings: PartBinding[] = [
+    { part: "root", node: () => (complete ? root : null), props: () => api.getRootProps() },
+    { part: "label", node: () => complete?.label, props: () => api.getLabelProps() },
+    {
+      part: "dropzone",
+      node: () => complete?.dropzone,
+      props: () => api.getDropzoneProps(),
+      events: true,
+    },
+    { part: "input", node: () => complete?.input, props: () => api.getHiddenInputProps() },
+    {
+      part: "trigger",
+      node: () => complete?.trigger,
+      props: () => api.getTriggerProps(),
+      events: true,
+    },
+    {
+      part: "clear",
+      node: () => (complete ? clear : null),
+      props: () => api.getClearTriggerProps(),
+      events: true,
+      after: (node) => {
+        node.hidden = api.acceptedFiles.length === 0;
+      },
+    },
+  ];
+
+  bindParts(bindings);
+
+  /*
+   * THE ONE LISTENER `bindParts` DOES NOT COVER, and it keeps its own teardown rather than being bent
+   * to fit. `input`'s native `input` event is not in Zag's props: the hidden input is the browser's
+   * file picker, and this is how its selection reaches the machine. `bindParts` binds what `connect()`
+   * returns; a listener the machine never declared is the enhancer's own, and saying so is cheaper
+   * than widening the interface for one case.
+   */
   onMount(() => {
-    if (!dropzone || !input || !trigger) return;
-    cleanups.push(bindZagEvents(dropzone, () => api.getDropzoneProps() as DomProps));
-    cleanups.push(bindZagEvents(trigger, () => api.getTriggerProps() as DomProps));
-    if (clear) cleanups.push(bindZagEvents(clear, () => api.getClearTriggerProps() as DomProps));
-
-    const selectFiles = () => api.setFiles(Array.from(input.files ?? []));
-    input.addEventListener("input", selectFiles);
-    cleanups.push(() => input.removeEventListener("input", selectFiles));
-  });
-  onDestroy(() => {
-    for (const cleanup of cleanups) cleanup();
+    if (!complete) return;
+    const selectFiles = () => api.setFiles(Array.from(complete.input.files ?? []));
+    complete.input.addEventListener("input", selectFiles);
+    return () => complete.input.removeEventListener("input", selectFiles);
   });
 </script>

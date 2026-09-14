@@ -36,7 +36,7 @@ entries:
         slots <code>label</code> y <code>text</code>. Lo que este contrato deliberadamente NO tiene:
         título, subtítulo, acción ni superficie propia. Todo eso es de lo que contenga al gráfico, y
         ponerlo acá habría hecho crecer exactamente la card con variantes que Card se niega a ser: un
-        gráfico dentro de una card es una COMPOSICIÓN, publicada como recipe.
+        gráfico dentro de una card es una COMPOSICIÓN.
     en:
       title: Chart is published as a contract, a series of labelled values made visible
       body: >-
@@ -65,7 +65,7 @@ entries:
         <code>text</code> slots. What this contract deliberately does NOT have: a title, a subtitle,
         an action, or a surface of its own. Those belong to whatever contains the chart, and putting
         them here would have grown exactly the card-with-variants that Card refuses to be: a chart in
-        a card is a COMPOSITION, published as a recipe.
+        a card is a COMPOSITION.
   - date: 2026-09-07
     kind: bugfix
     es:

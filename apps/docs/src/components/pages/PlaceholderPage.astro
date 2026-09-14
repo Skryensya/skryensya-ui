@@ -34,37 +34,7 @@ const styles = `@import "@skryensya/core/components/placeholder.css";
   title="Placeholder"
   description={t("placeholderPage.description")}
   contractId="placeholder"
-  tests={[
-    {
-      file: "packages/react/src/components/placeholder.test.tsx",
-      tests: [
-        {
-          name: "sizes a line by the type role it replaces, not by a hand-written length",
-          description: t("placeholderPage.test1"),
-        },
-        {
-          name: "draws a paragraph as real lines, clamped, with the raggedness authored on the root",
-          description: t("placeholderPage.test3"),
-        },
-        {
-          name: "clamps the rendered line count the same way the emitter does",
-          description: t("placeholderPage.test4"),
-        },
-        {
-          name: "gives a filled block its parent's whole box, and a circle the avatar scale",
-          description: t("placeholderPage.test5"),
-        },
-        {
-          name: "keeps every signature out of the accessibility tree",
-          description: t("placeholderPage.test6"),
-        },
-        {
-          name: "has no serious accessibility violations inside a labelled busy region",
-          description: t("placeholderPage.test2"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/placeholder.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("placeholderPage.lede")} />

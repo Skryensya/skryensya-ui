@@ -397,23 +397,15 @@
    * never all the way to nothing: the grid stays legible under the frame, just quieter.
    */
   /*
-   * TWO HOSTS, ONE RECIPE. The card paints this in its own stage row, where the stage is a direct
-   * child. A host that MOVES the stage somewhere else cannot use that `:has(> …)`. The fullscreen
-   * shell (`apps/docs/src/pages/f/[...path].astro`) lifts the stage into a pane of its own, so the
-   * selector stopped matching and a preset there letterboxed against flat background instead of the
-   * halftone, the same class of miss that file already documents for the loader's own `:has(> …)`.
+   * The card paints this in its own stage row, where the stage is a direct child.
    *
-   * `[data-sk-component-preview-mat]` is that host's opt-in: it declares itself the wall, supplies
-   * its own grid placement (its cell is not this card's stage row), and inherits every
-   * `--sk-component-preview-mat-*` from the card it still lives inside. The paint below stays
-   * defined exactly once, which is the point. A second copy of a two-gradient halftone is a fork
-   * that drifts the first time either side is touched.
+   * A second selector used to sit beside this one, `[data-sk-component-preview-mat]`, for a host that
+   * MOVED the stage out of that row and so could not use `:has(> …)`: the fullscreen shell, which
+   * lifted it into a pane of its own. That route is gone and nothing else ever declared itself the
+   * wall, so the opt-in went with it.
    */
   .sk-component-preview:has(
     > .sk-component-preview__stage[data-sk-component-preview-screen]
-  )::before,
-  [data-sk-component-preview-mat]:has(
-    .sk-component-preview__stage[data-sk-component-preview-screen]
   )::before {
     content: "";
     border-block-end: 1px solid var(--sk-component-preview-border-color);

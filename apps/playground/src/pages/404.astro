@@ -1,0 +1,73 @@
+---
+/*
+ * THE PLAYGROUND'S OWN 404, which until now did not exist: this app shipped three pages and an nginx
+ * config borrowed from the docs, so every other path fell through to the server's built-in "404 Not
+ * Found" - white, unstyled, and with no way back to either site.
+ *
+ * It wears the tool's chrome (`Tool.astro`), so the way out is the same link the reader would use
+ * from any other page here. One page, in the default locale: this app has one real route, and a
+ * missing path carries no evidence of which language the reader wanted.
+ */
+import Tool from "../layouts/Tool.astro";
+import { getLocale, localizePath, useTranslations } from "../i18n";
+import { docsHref } from "../lib/docs-origin";
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+---
+
+<Tool title={t("notFound.title")} description={t("notFound.description")}>
+  <section class="playground-not-found" aria-labelledby="playground-not-found-title">
+    <p class="playground-not-found__status" aria-hidden="true">404</p>
+    <h1 id="playground-not-found-title">{t("playground.notFoundHeading")}</h1>
+    <p class="playground-not-found__lede">{t("playground.notFoundLede")}</p>
+
+    <div class="sk-inline" data-gap="sm">
+      <a class="sk-button sk-interactive" data-tone="accent" href={localizePath("/playground", locale)}>
+        {t("playground.title")}
+      </a>
+      <a class="sk-button sk-interactive" data-variant="ghost" href={docsHref("/")}>
+        {t("playground.backToDocs")}
+      </a>
+    </div>
+  </section>
+</Tool>
+
+<style>
+  /*
+   * Centred in what the chrome left, because this page has nothing else in it. Everything else here
+   * is a tool that fills the viewport; this is the one page that is just a message.
+   */
+  .playground-not-found {
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: var(--space-stack-sm);
+    flex: 1;
+    padding: var(--space-inset-lg);
+    text-align: center;
+  }
+
+  .playground-not-found__status {
+    margin: 0;
+    color: var(--color-text-tertiary);
+    font-family: var(--font-family-code);
+    font-size: clamp(calc(var(--font-size-heading-lg) * 2), 12vw, calc(var(--font-size-heading-lg) * 3));
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-heading);
+    letter-spacing: -0.08em;
+    line-height: 0.82;
+    user-select: none;
+  }
+
+  .playground-not-found h1 {
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .playground-not-found__lede {
+    max-inline-size: 34rem;
+    margin: 0 0 var(--space-stack-sm);
+    color: var(--color-text-secondary);
+  }
+</style>

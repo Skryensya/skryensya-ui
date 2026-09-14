@@ -9,6 +9,7 @@ export const tabsMessages = {
       "Tres cambios aprobados durante la última semana.",
     "demo.tabs.size.smLabel": "Proyecto (sm)",
     "demo.tabs.size.mdLabel": "Proyecto (md)",
+    "demo.tabs.hanging.label": "Proyecto (colgantes)",
     "demo.tabs.states.label": "Revisión",
     "demo.tabs.states.details": "Detalles",
     "demo.tabs.states.detailsTitle": "Solicitud #248",
@@ -30,9 +31,9 @@ export const tabsMessages = {
     "demo.tabs.metrics.body": "Rendimiento y uso del proyecto.",
     "demo.tabs.settings.body": "Preferencias del espacio de trabajo.",
 
-    "tabsPage.description": "Cuatro ejemplos de Tabs, de la anatomía básica al tamaño del trigger.",
+    "tabsPage.description": "Cinco ejemplos de Tabs, de la anatomía básica a la variante colgante.",
     "tabsPage.lede":
-      "Empieza con dos vistas, añade estados e iconos, sigue con una navegación vertical controlada y termina en el tamaño del trigger. La anatomía no cambia al crecer: lista, triggers y un panel por cada valor.",
+      "Empieza con dos vistas, añade estados e iconos, sigue con una navegación vertical controlada pasa por el tamaño del trigger y termina en la variante colgante. La anatomía no cambia al crecer: lista, triggers y un panel por cada valor.",
     "tabsPage.anatomyBody":
       "Este diagrama nombra la lista, los triggers y el panel. El espécimen está congelado; los Tabs vivos empiezan abajo.",
     "tabsPage.anatomyLabel": "Anatomía de Tabs",
@@ -50,6 +51,9 @@ export const tabsMessages = {
     "tabsPage.sizeTitle": "4. Tamaño",
     "tabsPage.sizeBody": "<code>size</code> es sólo CSS, ortogonal a la orientación y al modo de activación: <code>sm</code> reduce alto, relleno y tipografía del trigger; <code>md</code> es el valor por defecto.",
     "tabsPage.sizeLabel": "Tabs sm y md",
+    "tabsPage.hangingTitle": "5. Colgantes",
+    "tabsPage.hangingBody": "<code>variant=\"hanging\"</code> invierte la tira: la línea va arriba, los triggers cuelgan de ella con las esquinas redondeadas abajo y la barra del seleccionado queda en el borde superior. Es sólo CSS; el orden del DOM y el teclado no cambian.",
+    "tabsPage.hangingLabel": "Tabs colgantes",
     "tabsPage.vanillaInitTitle": "Inicializar vanilla",
     "tabsPage.vanillaInitBody": "<code>initComponents</code> conecta los Tabs. Los iconos se montan por separado con el set elegido por la aplicación.",
     "tabsPage.contractItem1": "La raíz usa <code>data-sk-tabs</code> y conserva el valor activo en <code>data-value</code>.",
@@ -72,6 +76,7 @@ export const tabsMessages = {
       "Three changes approved during the last week.",
     "demo.tabs.size.smLabel": "Project (sm)",
     "demo.tabs.size.mdLabel": "Project (md)",
+    "demo.tabs.hanging.label": "Project (hanging)",
     "demo.tabs.states.label": "Review",
     "demo.tabs.states.details": "Details",
     "demo.tabs.states.detailsTitle": "Request #248",
@@ -93,9 +98,9 @@ export const tabsMessages = {
     "demo.tabs.metrics.body": "Project performance and usage.",
     "demo.tabs.settings.body": "Workspace preferences.",
 
-    "tabsPage.description": "Four Tabs examples, from basic anatomy to trigger size.",
+    "tabsPage.description": "Five Tabs examples, from basic anatomy to the hanging variant.",
     "tabsPage.lede":
-      "Start with two views, add states and icons, move on to controlled vertical navigation, and end with trigger size. The anatomy does not change as it grows: a list, triggers, and one panel per value.",
+      "Start with two views, add states and icons, move on to controlled vertical navigation, cover trigger size, and end with the hanging variant. The anatomy does not change as it grows: a list, triggers, and one panel per value.",
     "tabsPage.anatomyBody":
       "This diagram names the list, the triggers and the panel. The specimen is frozen; the live Tabs begin below.",
     "tabsPage.anatomyLabel": "Tabs anatomy",
@@ -116,6 +121,10 @@ export const tabsMessages = {
     "tabsPage.sizeBody":
       "<code>size</code> is CSS-only, orthogonal to orientation and activation mode: <code>sm</code> shrinks the trigger's height, padding and type; <code>md</code> is the default.",
     "tabsPage.sizeLabel": "sm and md Tabs",
+    "tabsPage.hangingTitle": "5. Hanging",
+    "tabsPage.hangingBody":
+      '<code>variant="hanging"</code> flips the strip: the line runs along the top, the triggers hang from it with their rounded corners at the bottom, and the selected bar sits on the top edge. It is CSS-only; DOM order and keyboard behavior do not change.',
+    "tabsPage.hangingLabel": "Hanging Tabs",
     "tabsPage.vanillaInitTitle": "Initializing vanilla",
     "tabsPage.vanillaInitBody":
       "<code>initComponents</code> connects Tabs. Icons mount separately with the set the application chooses.",

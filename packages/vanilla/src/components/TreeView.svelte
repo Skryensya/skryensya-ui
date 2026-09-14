@@ -1,10 +1,9 @@
 <script lang="ts">
   import { treeView } from "@skryensya/core/machines";
-import { treeViewAttrs } from "@skryensya/core/tree-view";
+  import { treeViewAttrs } from "@skryensya/core/tree-view";
   import type { TreeNode } from "@skryensya/core/tree-view";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
-  import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
   import { selectorsFor } from "@skryensya/core/selectors";
 
@@ -111,46 +110,85 @@ import { treeViewAttrs } from "@skryensya/core/tree-view";
 
   const api = $derived(treeView.connect(service, normalizeProps));
 
-  // A single `connect` per effect: every call rebuilds the whole api, so asking for one per node would
-  // make the patch O(nodes²) on large trees.
-  $effect(() => {
-    if (!tree) return;
-    applyZagProps(root, api.getRootProps() as DomProps);
-    applyZagProps(tree, api.getTreeProps() as DomProps);
-    for (const entry of all) {
-      const props = { indexPath: entry.indexPath, node: entry.node };
-      applyZagProps(
-        entry.element,
-        entry.children.length ? (api.getBranchProps(props) as DomProps) : (api.getItemProps(props) as DomProps),
-      );
-      if (entry.children.length && entry.control && entry.content) {
-        applyZagProps(entry.control, api.getBranchControlProps(props) as DomProps);
-        applyZagProps(entry.content, api.getBranchContentProps(props) as DomProps);
-        if (entry.text) applyZagProps(entry.text, api.getBranchTextProps(props) as DomProps);
-        if (entry.indicator) applyZagProps(entry.indicator, api.getBranchIndicatorProps(props) as DomProps);
-      } else if (entry.text) {
-        applyZagProps(entry.text, api.getItemTextProps(props) as DomProps);
-      }
-    }
+  /*
+   * A BRANCH AND A LEAF ARE DIFFERENT ANATOMIES, so each entry contributes the bindings its own shape
+   * has. Which shape it is comes from the authored markup and is read once, at initialisation: an
+   * entry does not become a branch while mounted.
+   *
+   * The wiring target follows from that and no longer has to be computed separately: a branch's events
+   * belong on its control (which is also where `getBranchControlProps` is patched) and a leaf's on its
+   * element. Those two used to be worked out in a second loop, from a second expression.
+   */
+  const propsFor = (entry: (typeof all)[number]) => ({
+    indexPath: entry.indexPath,
+    node: entry.node,
   });
 
-  const cleanups: Array<() => void> = [];
-  onMount(() => {
-    if (!tree) return;
-    cleanups.push(bindZagEvents(tree, () => api.getTreeProps() as DomProps));
-    for (const entry of all) {
-      const target = entry.children.length && entry.control ? entry.control : entry.element;
-      cleanups.push(
-        bindZagEvents(target, () => {
-          const props = { indexPath: entry.indexPath, node: entry.node };
-          return entry.children.length
-            ? (api.getBranchControlProps(props) as DomProps)
-            : (api.getItemProps(props) as DomProps);
-        }),
-      );
-    }
-  });
-  onDestroy(() => {
-    for (const cleanup of cleanups) cleanup();
-  });
+  const bindings: PartBinding[] = [
+    { part: "root", node: () => (tree ? root : null), props: () => api.getRootProps() },
+    { part: "tree", node: () => tree, props: () => api.getTreeProps(), events: true },
+
+    ...all.flatMap((entry): PartBinding[] => {
+      /*
+       * THREE CONDITIONS, NOT ONE, because the original drew the line in three different places and
+       * collapsing them would be a behaviour change wearing a refactor's clothes:
+       *
+       *   `hasChildren`   decides the ELEMENT's props (branch or item). Children alone.
+       *   `full`          decides whether the branch SUB-PARTS are patched at all. A node with
+       *                   children but no authored control/content is a branch whose chrome was never
+       *                   written, and it gets branch props on the element and nothing else.
+       *   `wiresControl`  decides WHERE the events land - the control when there is one, else the
+       *                   element. `control && children` is the original's own test, and it is not
+       *                   the same as `full`: it does not ask about content.
+       */
+      const hasChildren = entry.children.length > 0;
+      const full = hasChildren && Boolean(entry.control) && Boolean(entry.content);
+      const wiresControl = hasChildren && Boolean(entry.control);
+
+      const element: PartBinding = {
+        part: hasChildren ? "branch" : "item",
+        node: () => (tree ? entry.element : null),
+        props: () => (hasChildren ? api.getBranchProps(propsFor(entry)) : api.getItemProps(propsFor(entry))),
+        events: !wiresControl,
+      };
+
+      if (!full) {
+        return [
+          element,
+          {
+            part: "item-text",
+            node: () => (tree ? entry.text : null),
+            props: () => api.getItemTextProps(propsFor(entry)),
+          },
+        ];
+      }
+
+      return [
+        element,
+        {
+          part: "branch-control",
+          node: () => (tree ? entry.control : null),
+          props: () => api.getBranchControlProps(propsFor(entry)),
+          events: true,
+        },
+        {
+          part: "branch-content",
+          node: () => (tree ? entry.content : null),
+          props: () => api.getBranchContentProps(propsFor(entry)),
+        },
+        {
+          part: "branch-text",
+          node: () => (tree ? entry.text : null),
+          props: () => api.getBranchTextProps(propsFor(entry)),
+        },
+        {
+          part: "branch-indicator",
+          node: () => (tree ? entry.indicator : null),
+          props: () => api.getBranchIndicatorProps(propsFor(entry)),
+        },
+      ];
+    }),
+  ];
+
+  bindParts(bindings);
 </script>

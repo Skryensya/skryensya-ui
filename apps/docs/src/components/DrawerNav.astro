@@ -146,6 +146,8 @@ const itemsFor = (section: DrawerSection): readonly NavigationItem[] => {
                 <a
                   class="sk-nav-list__link sk-interactive"
                   href={item.href}
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noopener noreferrer" : undefined}
                   aria-current={path === item.href ? "page" : undefined}
                   aria-disabled={item.todo ? "true" : undefined}
                   title={item.todo ? t("nav.notWritten") : undefined}

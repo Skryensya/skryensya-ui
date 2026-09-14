@@ -25,7 +25,6 @@
     "@skryensya/icons-material": "workspace:*",
     "@skryensya/icons-phosphor": "workspace:*",
     "@skryensya/react": "workspace:*",
-    "@skryensya/recipes": "workspace:*",
     "@skryensya/vanilla": "workspace:*",
     "@tanstack/charts": "0.15.0",
     "react": "^19.0.0",

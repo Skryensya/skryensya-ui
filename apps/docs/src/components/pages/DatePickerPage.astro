@@ -31,22 +31,7 @@ const styles = `@import "@skryensya/core/patterns/anchored.css";
     { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
     { file: "components/button.css", probe: "sk-button", title: "Heredados de Button" },
   ]}
-  tests={[
-    {
-      file: "packages/vanilla/src/components/date-picker.svelte.test.ts",
-      tests: [
-        {
-          name: "refuses markup that is missing a part it must patch",
-          description: t("datePicker.test1"),
-        },
-        {
-          name: "patches the authored control and renders the popover around a calendar",
-          description: t("datePicker.test2"),
-        },
-        { name: "fills the field with the day the reader picked", description: t("datePicker.test3") },
-      ],
-    },
-  ]}
+  testFiles={["packages/vanilla/src/components/date-picker.svelte.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("datePicker.lede")} />

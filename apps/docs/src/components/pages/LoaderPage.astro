@@ -28,19 +28,7 @@ const customSpeed = `.sk-loader.mi-loader {
   title="Loader"
   description={t("loaderPage.description")}
   contractId="loader"
-  tests={[
-    {
-      file: "packages/react/src/components/loader.test.tsx",
-      tests: [
-        { name: "exposes labelled indeterminate work as a polite status", description: t("loaderPage.test1") },
-        { name: "writes orthogonal variant and speed axes onto the root", description: t("loaderPage.test2") },
-        {
-          name: "stays decorative when the surrounding control already carries the status meaning",
-          description: t("loaderPage.test3"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/loader.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("loaderPage.lede")} />

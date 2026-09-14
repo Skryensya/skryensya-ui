@@ -20,23 +20,7 @@ const styles = `@import "@skryensya/core/components/calendar.css";`;
   description={t("calendar.description")}
   badge={t("calendar.betaBadge")}
   contractId="calendar"
-  tests={[
-    {
-      file: "packages/vanilla/src/components/calendar.svelte.test.ts",
-      tests: [
-        {
-          name: "generates the whole grid from an empty authored root, once",
-          description: t("calendar.test1"),
-        },
-        { name: "names the weekdays in the authored locale", description: t("calendar.test2") },
-        { name: "opens on the authored date rather than on today", description: t("calendar.test3") },
-        {
-          name: "paints every control in the calendar at one size tier, day cells included",
-          description: t("calendar.test4"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/vanilla/src/components/calendar.svelte.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("calendar.lede")} />

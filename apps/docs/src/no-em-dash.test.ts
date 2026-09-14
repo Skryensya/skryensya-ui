@@ -18,8 +18,8 @@ const skippedDirectories = {
   dist: true,
   node_modules: true,
   /* `apps/playground/public/sandbox/`: the kit compiled for Sandpack, which is build output that is
-     not called `dist` for the same reason `.preview-heights-dist` is not. `skryensya-react.js` is
-     1.1MB of bundled kit, and it carries the em dashes of whatever component prose went into it. */
+     not called `dist` for the same reason `.preview-heights-dist` is not. `react-modules.json` alone
+     is 1.2MB of bundled kit, and it carries the em dashes of whatever component prose went into it. */
   sandbox: true,
 } satisfies Record<string, true>;
 const checkedExtensions = {

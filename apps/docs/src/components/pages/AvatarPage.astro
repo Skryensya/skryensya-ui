@@ -103,23 +103,7 @@ window.addEventListener("pagehide", () => observer.disconnect(), { once: true })
   description={t("avatar.description")}
   badge={t("avatar.betaBadge")}
   contractId="avatar"
-  tests={[
-    {
-      file: "packages/react/src/components/avatar.test.tsx",
-      tests: [
-        { name: "derives initials from the name when there is no image", description: t("avatar.test1") },
-        { name: "uses the first two characters of a single-word username", description: t("avatar.test2") },
-        { name: "renders the image inside ImageFrame when src is given", description: t("avatar.test3") },
-        {
-          name: "serializes the xl size onto the same attribute both structures use",
-          description: t("avatar.test5"),
-        },
-        { name: "caps visible avatars and collapses the rest into a +N counter", description: t("avatar.test4") },
-        { name: "exposes itself as a named group when a label is given", description: t("avatar.test6") },
-        { name: "is still a group without a label", description: t("avatar.test7") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/avatar.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("avatar.lede")} />

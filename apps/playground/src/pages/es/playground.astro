@@ -1,0 +1,13 @@
+---
+/*
+ * The Spanish route. The page reads its locale from `Astro.url` (`getLocale`), so rendering the same
+ * component under this prefix is the whole translation: the rail's labels, the emitted demo source
+ * and the catalogue endpoint it fetches all follow from it.
+ *
+ * It was missing, which the language switch in `Tool.astro` made impossible to ignore: this app
+ * shipped `/playground` and `/en/playground` - the default locale twice - and nothing at all for the
+ * other one the dictionary has been carrying all along.
+ */
+import PlaygroundPage from "../playground.astro";
+---
+<PlaygroundPage />

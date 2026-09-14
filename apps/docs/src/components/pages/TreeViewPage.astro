@@ -39,55 +39,7 @@ const indentHook = `.sk-tree-view {
     { file: "components/tree-view.css", probe: "sk-tree-view", title: "TreeView" },
     { file: "patterns/state-layer.css", probe: "sk-interactive", title: "Heredados de State layer" },
   ]}
-  tests={[
-    {
-      file: "packages/vanilla/src/components/tree-view.test.ts",
-      tests: [
-        {
-          name: "patches tree semantics onto authored markup and mounts once",
-          description: t("treeViewPage.test1"),
-        },
-        { name: "expands a branch from its control and says so", description: t("treeViewPage.test2") },
-        {
-          name: "selects a leaf and reports the value the composition wrote",
-          description: t("treeViewPage.test3"),
-        },
-      ],
-    },
-    {
-      file: "packages/react/src/components/tree-view.test.tsx",
-      tests: [
-        {
-          name: "wires tree semantics onto the rendered nodes",
-          description: t("treeViewPage.testReact1"),
-        },
-        {
-          name: "expands a branch from its control and calls onExpandedChange",
-          description: t("treeViewPage.testReact2"),
-        },
-        {
-          name: "seeds the open branches from defaultExpandedValue",
-          description: t("treeViewPage.testReact3"),
-        },
-        {
-          name: "selects a leaf and calls onSelectionChange",
-          description: t("treeViewPage.testReact4"),
-        },
-        {
-          name: "replaces the selection in single mode",
-          description: t("treeViewPage.testReact5"),
-        },
-        {
-          name: "extends the selection in multiple mode with the platform's own modifier",
-          description: t("treeViewPage.testReact6"),
-        },
-        {
-          name: "leaves a disabled node out of the selection",
-          description: t("treeViewPage.testReact7"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/vanilla/src/components/tree-view.test.ts", "packages/react/src/components/tree-view.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("treeViewPage.lede")} />

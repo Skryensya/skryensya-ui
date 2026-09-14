@@ -451,6 +451,43 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-14",
+            "en": {
+              "body": "A long label used to carry the button out of the box it was put in: measured, a translated sentence in a 320px column rendered an 815px button with 495px outside the column, and the <code>post</code> chevron landed 559px out. <code>white-space: nowrap</code> decides that a label is one line, not that the CONTROL may be wider than its box, and there was no wrap opportunity anywhere in the string. The button now carries <code>max-inline-size: 100%</code>, <code>min-inline-size: 0</code> (for the grid or flex case, where the track itself grew to the content minimum) and <code>overflow: clip</code> with a margin. <code>clip</code> and not <code>hidden</code> on purpose: <code>hidden</code> clipped the <code>::after</code> that expands the hit area to 44px with it, so an <code>xs</code> button silently stopped clearing the touch minimum. The label clips at the edge; there is still no ellipsis, which would need a published <code>sk-button__label</code> part.",
+              "title": "A button no longer escapes its container"
+            },
+            "es": {
+              "body": "Una etiqueta larga arrastraba al boton fuera de la caja donde estaba: medido, una frase traducida en una columna de 320px daba un boton de 815px con 495px fuera de la columna, y el chevron de <code>post</code> caia 559px afuera. <code>white-space: nowrap</code> decide que la etiqueta ocupa una linea, no que el control pueda ser mas ancho que su caja, y no habia ninguna oportunidad de corte dentro de la cadena. Ahora el boton lleva <code>max-inline-size: 100%</code>, <code>min-inline-size: 0</code> (para el caso de grid o flex, donde la pista misma crecia hasta el minimo de contenido) y <code>overflow: clip</code> con margen. <code>clip</code> y no <code>hidden</code> a proposito: <code>hidden</code> recortaba tambien el <code>::after</code> que lleva el area de toque a 44px, asi que un boton <code>xs</code> dejaba de cumplir el minimo sin que se notara. La etiqueta se corta en el borde; todavia no hay elipsis, que necesitaria una parte <code>sk-button__label</code> publicada.",
+              "title": "Un boton ya no se sale de su contenedor"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-14",
+            "en": {
+              "body": "<code>children</code> is required and an empty string satisfies it, so <code>&lt;Button&gt;{\"\"}&lt;/Button&gt;</code> rendered a 34x44 control that is focusable and clickable, and on <code>variant=\"ghost\"</code> painted nothing at all: a hole in the page you can still tab to. React now warns in development and the vanilla enhancer throws, the same split the two already had for the accessible name. The question asked is the narrow one (was anything passed AT ALL), not the text walk: an element counts as content whatever it renders, so <code>&lt;Button&gt;&lt;Label /&gt;&lt;/Button&gt;</code> does not warn.",
+              "title": "A button with no content is reported in both bindings"
+            },
+            "es": {
+              "body": "<code>children</code> es obligatorio y una cadena vacia lo cumple, asi que <code>&lt;Button&gt;{\"\"}&lt;/Button&gt;</code> renderizaba un control de 34x44 enfocable y clicable, y en <code>variant=\"ghost\"</code> sin pintar nada: un hueco en la pagina al que se llega con el teclado. React ahora avisa en desarrollo y el enhancer de vanilla lanza, la misma division que ya tenian para el nombre accesible. La pregunta es la estrecha (no se paso NADA), no la del recorrido de texto: un elemento cuenta como contenido rinda lo que rinda, asi que <code>&lt;Button&gt;&lt;Label /&gt;&lt;/Button&gt;</code> no avisa.",
+              "title": "Un boton sin contenido se reporta en las dos capas"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-14",
+            "en": {
+              "body": "A <code>disabled</code> (or <code>aria-disabled</code>) button with <code>tone=\"accent\"</code> or <code>tone=\"danger\"</code> kept its tone fill: a disabled <code>solid</code> <code>danger</code> painted the full red on white ink, identical to the enabled button beside it, and the only thing distinguishing them was the cursor. <code>soft</code> and <code>translucent</code> were wrong in the same direction; <code>ghost</code> was the one cell that came out right. The cause was specificity: <code>:not()</code> and <code>:is()</code> take that of their most specific argument, so the tone rules resolved at (0,3,0) and <code>.sk-button:disabled</code> at (0,2,0). Every appearance rule now carries the <code>:not(:disabled):not([aria-disabled=\"true\"])</code> guard, the same house rule checkbox and switch already follow: unavailable outranks every appearance axis. A disabled toggle stops painting its tone and keeps announcing <code>aria-pressed</code>.",
+              "title": "A disabled button now paints as disabled in every tone"
+            },
+            "es": {
+              "body": "Un <code>disabled</code> (o <code>aria-disabled</code>) con <code>tone=\"accent\"</code> o <code>tone=\"danger\"</code> conservaba su relleno de tono: un <code>solid</code> <code>danger</code> deshabilitado pintaba el rojo completo con tinta blanca, identico al boton habilitado que tenia al lado, y lo unico que lo distinguia era el cursor. <code>soft</code> y <code>translucent</code> fallaban igual; <code>ghost</code> era la unica celda que salia bien. La causa era de especificidad: <code>:not()</code> e <code>:is()</code> toman la de su argumento mas especifico, asi que las reglas de tono resolvian en (0,3,0) y <code>.sk-button:disabled</code> en (0,2,0). Ahora cada regla de apariencia lleva el guardia <code>:not(:disabled):not([aria-disabled=\"true\"])</code>, la misma regla de la casa que ya siguen checkbox y switch: no disponible gana a cualquier eje de apariencia. Un toggle deshabilitado deja de pintar su tono y sigue anunciando <code>aria-pressed</code>.",
+              "title": "Un boton deshabilitado ya pinta como deshabilitado en todos los tonos"
+            },
+            "kind": "bugfix",
+            "target": "disabled"
+          },
+          {
             "date": "2026-09-13",
             "en": {
               "body": "An <code>iconOnly</code> button named by visually hidden text inside <code>pre</code> or <code>post</code> was accepted by the vanilla layer (which reads the whole button's <code>textContent</code>) and rejected by React, which walked <code>children</code> only. React now walks both slots, so the two bindings enforce the same rule.",
@@ -929,11 +966,11 @@
           {
             "date": "2026-08-26",
             "en": {
-              "body": "It joins the catalogue with one signature, <code>Chart</code>, and with one decision that explains every other: <strong>the data is a list</strong>. Entries live in an <code>items</code> slot, the same one <code>Tabs</code> and <code>Segmented</code> already use for their collections, rather than in an opaque object handed to a library. That buys four things at once. Real accessibility instead of a summary: the series is a real list of real text, so a screen reader reads \"Dec, 14, Jan, 23\" off the DOM, instead of the usual <code>&lt;svg aria-label=\"a chart of contributions\"&gt;</code>, which announces that data exists and then refuses to say what it is. Bars with no engine: each entry carries its value and <code>components/chart.css</code> divides it by the series maximum to get a height, so a bar chart paints from authored markup. A renderer that is optional by construction: <code>line</code> and <code>area</code> need a path, and that really is geometry, so <code>@skryensya/charts</code> draws it as an <code>aria-hidden</code> overlay on top of this same markup; the engine is an UPGRADE to a chart that already worked, not the thing that makes it work, and swapping it can never break anyone because no consumer ever named it. And validation: an <code>items</code> slot is data the compiler checks and the MCP can compose. Options: <code>kind</code> (<code>bar</code>/<code>line</code>/<code>area</code>), <code>tone</code>, <code>height</code>, <code>labels</code>, <code>values</code>, <code>grid</code>, <code>flush</code> (for the chart that IS the bottom edge of a card), <code>format</code>, <code>currency</code>, <code>locale</code>, <code>description</code> and <code>label</code>, required: a series of numbers with nothing saying what it measures is the one chart worse than no chart. Each entry takes a <code>value</code>, its own <code>tone</code> to emphasize it against its siblings, and the <code>label</code> and <code>text</code> slots. What this contract deliberately does NOT have: a title, a subtitle, an action, or a surface of its own. Those belong to whatever contains the chart, and putting them here would have grown exactly the card-with-variants that Card refuses to be: a chart in a card is a COMPOSITION, published as a recipe.",
+              "body": "It joins the catalogue with one signature, <code>Chart</code>, and with one decision that explains every other: <strong>the data is a list</strong>. Entries live in an <code>items</code> slot, the same one <code>Tabs</code> and <code>Segmented</code> already use for their collections, rather than in an opaque object handed to a library. That buys four things at once. Real accessibility instead of a summary: the series is a real list of real text, so a screen reader reads \"Dec, 14, Jan, 23\" off the DOM, instead of the usual <code>&lt;svg aria-label=\"a chart of contributions\"&gt;</code>, which announces that data exists and then refuses to say what it is. Bars with no engine: each entry carries its value and <code>components/chart.css</code> divides it by the series maximum to get a height, so a bar chart paints from authored markup. A renderer that is optional by construction: <code>line</code> and <code>area</code> need a path, and that really is geometry, so <code>@skryensya/charts</code> draws it as an <code>aria-hidden</code> overlay on top of this same markup; the engine is an UPGRADE to a chart that already worked, not the thing that makes it work, and swapping it can never break anyone because no consumer ever named it. And validation: an <code>items</code> slot is data the compiler checks and the MCP can compose. Options: <code>kind</code> (<code>bar</code>/<code>line</code>/<code>area</code>), <code>tone</code>, <code>height</code>, <code>labels</code>, <code>values</code>, <code>grid</code>, <code>flush</code> (for the chart that IS the bottom edge of a card), <code>format</code>, <code>currency</code>, <code>locale</code>, <code>description</code> and <code>label</code>, required: a series of numbers with nothing saying what it measures is the one chart worse than no chart. Each entry takes a <code>value</code>, its own <code>tone</code> to emphasize it against its siblings, and the <code>label</code> and <code>text</code> slots. What this contract deliberately does NOT have: a title, a subtitle, an action, or a surface of its own. Those belong to whatever contains the chart, and putting them here would have grown exactly the card-with-variants that Card refuses to be: a chart in a card is a COMPOSITION.",
               "title": "Chart is published as a contract, a series of labelled values made visible"
             },
             "es": {
-              "body": "Entra al catálogo con una sola signature, <code>Chart</code>, y con una decisión que explica todo lo demás: <strong>los datos son una lista</strong>. Las entradas viven en un slot <code>items</code>, el mismo que ya usan <code>Tabs</code> y <code>Segmented</code> para sus colecciones, y no en un objeto opaco que se le pasa a una librería. Eso compra cuatro cosas a la vez. Accesibilidad de verdad y no un resumen: la serie es una lista real de texto real, así que un lector de pantalla lee \"Dic, 14, Ene, 23\" desde el DOM, en lugar del <code>&lt;svg aria-label=\"gráfico de aportes\"&gt;</code> de siempre, que avisa que hay datos y después se niega a decir cuáles. Barras sin motor: cada entrada trae su valor y la hoja <code>components/chart.css</code> lo divide por el máximo de la serie para sacar la altura, así que un gráfico de barras se pinta desde markup escrito a mano. Un renderer que es opcional por construcción: <code>line</code> y <code>area</code> necesitan un path, y eso sí es geometría, así que <code>@skryensya/charts</code> lo dibuja como un overlay <code>aria-hidden</code> encima de este mismo markup; el motor es una MEJORA de un gráfico que ya funcionaba, no lo que lo hace funcionar, y cambiarlo nunca puede romper a nadie porque ningún consumidor lo nombró. Y validación: un slot <code>items</code> es data que el compilador revisa y que la MCP puede componer. Opciones: <code>kind</code> (<code>bar</code>/<code>line</code>/<code>area</code>), <code>tone</code>, <code>height</code>, <code>labels</code>, <code>values</code>, <code>grid</code>, <code>flush</code> (para el gráfico que ES el borde inferior de una card), <code>format</code>, <code>currency</code>, <code>locale</code>, <code>description</code> y <code>label</code>, requerida: una serie de números sin nada que diga qué miden es el único gráfico peor que ningún gráfico. Cada entrada toma <code>value</code>, un <code>tone</code> propio para destacarla contra sus hermanas, y los slots <code>label</code> y <code>text</code>. Lo que este contrato deliberadamente NO tiene: título, subtítulo, acción ni superficie propia. Todo eso es de lo que contenga al gráfico, y ponerlo acá habría hecho crecer exactamente la card con variantes que Card se niega a ser: un gráfico dentro de una card es una COMPOSICIÓN, publicada como recipe.",
+              "body": "Entra al catálogo con una sola signature, <code>Chart</code>, y con una decisión que explica todo lo demás: <strong>los datos son una lista</strong>. Las entradas viven en un slot <code>items</code>, el mismo que ya usan <code>Tabs</code> y <code>Segmented</code> para sus colecciones, y no en un objeto opaco que se le pasa a una librería. Eso compra cuatro cosas a la vez. Accesibilidad de verdad y no un resumen: la serie es una lista real de texto real, así que un lector de pantalla lee \"Dic, 14, Ene, 23\" desde el DOM, en lugar del <code>&lt;svg aria-label=\"gráfico de aportes\"&gt;</code> de siempre, que avisa que hay datos y después se niega a decir cuáles. Barras sin motor: cada entrada trae su valor y la hoja <code>components/chart.css</code> lo divide por el máximo de la serie para sacar la altura, así que un gráfico de barras se pinta desde markup escrito a mano. Un renderer que es opcional por construcción: <code>line</code> y <code>area</code> necesitan un path, y eso sí es geometría, así que <code>@skryensya/charts</code> lo dibuja como un overlay <code>aria-hidden</code> encima de este mismo markup; el motor es una MEJORA de un gráfico que ya funcionaba, no lo que lo hace funcionar, y cambiarlo nunca puede romper a nadie porque ningún consumidor lo nombró. Y validación: un slot <code>items</code> es data que el compilador revisa y que la MCP puede componer. Opciones: <code>kind</code> (<code>bar</code>/<code>line</code>/<code>area</code>), <code>tone</code>, <code>height</code>, <code>labels</code>, <code>values</code>, <code>grid</code>, <code>flush</code> (para el gráfico que ES el borde inferior de una card), <code>format</code>, <code>currency</code>, <code>locale</code>, <code>description</code> y <code>label</code>, requerida: una serie de números sin nada que diga qué miden es el único gráfico peor que ningún gráfico. Cada entrada toma <code>value</code>, un <code>tone</code> propio para destacarla contra sus hermanas, y los slots <code>label</code> y <code>text</code>. Lo que este contrato deliberadamente NO tiene: título, subtítulo, acción ni superficie propia. Todo eso es de lo que contenga al gráfico, y ponerlo acá habría hecho crecer exactamente la card con variantes que Card se niega a ser: un gráfico dentro de una card es una COMPOSICIÓN.",
               "title": "Chart se publica como contrato, una serie de valores con nombre hecha visible"
             },
             "kind": "feature",
@@ -2073,6 +2110,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-14",
+            "en": {
+              "body": "A role for \"this is source\", already covered by all three published sets. It is a ROLE and not a drawing, which is what this list asks for: Lucide fills it with two facing chevrons, Phosphor with angle brackets and Material with its own glyph, and all three say the same thing. That is why the name is not `brackets`: that is what ONE set calls the drawing, and it would leave the other two publishing an icon named after something they do not draw. Because `IconSet` is complete, adding a role is additive for a consumer and new work for whoever draws a set; all three in this repo already ship it.",
+              "title": "The stable vocabulary gains code"
+            },
+            "es": {
+              "body": "Un rol para \"esto es código fuente\", que los tres sets publicados ya cubren. Es un ROL y no un dibujo, que es lo que esta lista pide: Lucide lo ocupa con dos chevrones enfrentados, Phosphor con corchetes angulares y Material con su propio glifo, y las tres dicen lo mismo. Por eso el nombre no es `brackets`: ese nombra el dibujo de UN set, y dejaría a los otros dos publicando un icono llamado como algo que no dibujan. Como `IconSet` es completo, agregar un rol es aditivo para quien consume y trabajo nuevo para quien dibuja un set; los tres del repo ya lo traen.",
+              "title": "El vocabulario estable gana code"
+            },
+            "kind": "feature",
+            "target": "name"
+          },
+          {
             "date": "2026-09-12",
             "en": {
               "body": "The contract now publishes this component's <code>1</code> styling hooks. Nothing you wrote changes: the same hooks, under the same names, and the stylesheet was not touched. What is new is that the contract declares them, so the compiler fails when the stylesheet declares one the contract does not publish, or the contract promises one the stylesheet never declares. That second half is the one that matters: until now, re-declaring a hook that no longer existed was not an error, it was silence.",
@@ -2143,6 +2193,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-14",
+            "en": {
+              "body": "This control names its icons with the stable vocabulary, so a new role there arrives here without this contract changing shape: `code` can now be asked for. The surface moved because the set of names it accepts is part of what a consumer can depend on, not because anything about how it is used changed.",
+              "title": "Reaches the code role the vocabulary just gained"
+            },
+            "es": {
+              "body": "Este control nombra sus iconos con el vocabulario estable, así que un rol nuevo ahí llega acá sin que este contrato cambie de forma: `code` ya se puede pedir. La superficie se movió porque el conjunto de nombres que acepta es parte de lo que un consumidor puede depender, no porque haya cambiado nada de cómo se usa.",
+              "title": "Alcanza el rol code, que el vocabulario acaba de sumar"
+            },
+            "kind": "feature"
+          },
           {
             "date": "2026-09-12",
             "en": {
@@ -4449,6 +4511,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-14",
+            "en": {
+              "body": "<code>variant=\"hanging\"</code> moves the line to the top of the list: the triggers hang from it with their rounded corners at the bottom, and the selected bar sits on the top edge. <code>underline</code> stays the default. It is CSS-only, orthogonal to <code>size</code> and <code>orientation</code>.",
+              "title": "Tabs gains the variant option"
+            },
+            "es": {
+              "body": "<code>variant=\"hanging\"</code> pone la línea arriba de la lista: los triggers cuelgan de ella con las esquinas redondeadas abajo, y la barra del seleccionado queda en el borde superior. <code>underline</code> sigue siendo el valor por defecto. Es sólo CSS, ortogonal a <code>size</code> y <code>orientation</code>.",
+              "title": "Tabs suma la opción variant"
+            },
+            "kind": "feature",
+            "target": "variant"
+          },
+          {
             "date": "2026-09-12",
             "en": {
               "body": "The contract now publishes this component's <code>15</code> styling hooks. Nothing you wrote changes: the same hooks, under the same names, and the stylesheet was not touched. What is new is that the contract declares them, so the compiler fails when the stylesheet declares one the contract does not publish, or the contract promises one the stylesheet never declares. That second half is the one that matters: until now, re-declaring a hook that no longer existed was not an error, it was silence.",
@@ -4819,6 +4894,121 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-14",
+            "en": {
+              "body": "<code>branchIcon</code> and <code>leafIcon</code> are independent slots, but the icon column was decided by looking at the whole tree: one icon anywhere and EVERY row reserved the space. With only one of the two slots passed, the other kind of row kept three tracks and rendered two children, and the name landed inside the icon track: measured at <code>20px</code> wide, so every leaf ellipsised to <code>in…</code> beside an empty track. The column is now opted into by each row that actually carries an icon, so the template can never disagree with its children, and a row without one starts its label at its own indent. A tree with both slots passed, or with neither, is unchanged.",
+              "title": "A row with no icon stops reserving the column for one"
+            },
+            "es": {
+              "body": "<code>branchIcon</code> y <code>leafIcon</code> son ranuras independientes, pero la columna del icono se decidía mirando el árbol entero: bastaba un icono en cualquier parte para que TODAS las filas reservaran el hueco. Con una sola de las dos ranuras puesta, las filas de la otra quedaban con tres pistas y dos hijos, y el nombre caía dentro de la pista del icono: medido, <code>20px</code> de ancho, así que cada hoja se recortaba a <code>in…</code> junto a una pista vacía. Ahora la columna la pide cada fila que de verdad lleva icono, así que la plantilla nunca contradice a sus hijos y la que no lo lleva empieza la etiqueta pegada a su sangría. En un árbol con las dos ranuras puestas, o con ninguna, nada cambia.",
+              "title": "Una fila sin icono deja de reservarle la columna"
+            },
+            "kind": "bugfix",
+            "target": "itemIcon"
+          },
+          {
+            "date": "2026-09-14",
+            "en": {
+              "body": "<code>--sk-tree-node-icon-size</code> moves from <code>--size-icon-md</code> to <code>--size-icon-sm</code>: the row sets <code>--font-size-caption</code> (12px), so a 20px glyph ran well above the name it was labelling and the eye landed on a column of identical folders before reaching a single filename. The new <code>--sk-tree-node-icon-color</code> also paints it <code>--color-text-secondary</code>, the same relationship List already publishes between its leading slot and its title. Both are hooks: if you want the previous size or colour, one declaration puts them back.",
+              "title": "The folder/file icon drops to 16px and sits a tone under the label"
+            },
+            "es": {
+              "body": "<code>--sk-tree-node-icon-size</code> pasa de <code>--size-icon-md</code> a <code>--size-icon-sm</code>: la fila escribe en <code>--font-size-caption</code> (12px), así que un glifo de 20px iba muy por encima del nombre que etiquetaba y la vista aterrizaba en una columna de carpetas iguales antes de leer un solo archivo. El nuevo <code>--sk-tree-node-icon-color</code> lo pinta además en <code>--color-text-secondary</code>, la misma relación que List ya publica entre su ranura inicial y su título. Los dos son hooks: si querías el tamaño o el color anteriores, se recuperan con una declaración.",
+              "title": "El icono de carpeta/archivo baja a 16px y se pinta un tono por debajo de la etiqueta"
+            },
+            "kind": "rework"
+          },
+          {
+            "date": "2026-09-14",
+            "en": {
+              "body": "With no <code>branchIndicator</code> slot the template wrote a literal <code>›</code>: the last text glyph left in the system, rendered with whatever the reader's font ships for that code point, so it came out thin and smaller than every other chevron on the page. The span now ships empty and the stylesheet draws it with <code>mask-image</code>, the same <code>chevron-right</code> path from the icon set that Treegrid's disclosure already uses. Your own <code>branchIndicator</code> still wins; the new <code>--sk-tree-indicator-color</code> tints both alike, so the drawn one and a hand-written one are the same mark.",
+              "title": "The default chevron is drawn, no longer the › character"
+            },
+            "es": {
+              "body": "Sin ranura <code>branchIndicator</code>, el template escribía un <code>›</code> literal: el último glifo de texto que quedaba en el sistema, renderizado con lo que la fuente del lector traiga para ese punto de código, así que salía fino y más chico que cualquier otro chevron de la página. Ahora el span sale vacío y la hoja lo dibuja con <code>mask-image</code>, el mismo trazo <code>chevron-right</code> del set de iconos que ya usa la divulgación de Treegrid. Un <code>branchIndicator</code> tuyo sigue ganando; el nuevo <code>--sk-tree-indicator-color</code> tiñe los dos por igual, así que el dibujado y el escrito a mano son la misma marca.",
+              "title": "El chevron por defecto se dibuja, ya no es el carácter ›"
+            },
+            "kind": "rework",
+            "target": "branchIndicator"
+          },
+          {
+            "date": "2026-09-14",
+            "en": {
+              "body": "A leaf keeps the chevron column empty so labels on a level line up, but the state layer paints at <code>inset: 0</code>, so a selected leaf's pill ran across that dead stretch too: measured, it began 31px to the left of its own text. A full-bleed row can carry empty space; a rounded pill cannot, it reads as a button drawn where there is nothing to press. The paint now starts where the content starts. The hit area is untouched: the whole row still responds.",
+              "title": "A leaf stops painting over its empty chevron column"
+            },
+            "es": {
+              "body": "Una hoja conserva la columna del chevron vacía para que las etiquetas de un nivel se alineen, pero la capa de estado se pinta a <code>inset: 0</code>, así que la píldora de una hoja seleccionada cruzaba también ese tramo muerto: medido, empezaba 31px a la izquierda de su propio texto. Una fila a sangre entera puede cargar espacio vacío; una píldora redondeada no, se lee como un botón puesto donde no hay nada que pulsar. Ahora la pintura empieza donde empieza el contenido. El área clicable no se toca: la fila entera sigue respondiendo.",
+              "title": "La hoja deja de pintarse sobre su columna vacía de chevron"
+            },
+            "kind": "rework"
+          },
+          {
+            "date": "2026-09-14",
+            "en": {
+              "body": "<code>--sk-tree-branch-icon-color</code> and <code>--sk-tree-leaf-icon-color</code> split the two markers, which until now differed only in shape. The default puts the branch on <code>--color-text-accent</code> and leaves the leaf secondary: a tree is mostly leaves, so tinting those spends the accent on the majority of the rows and puts a column of coloured marks in front of the names. The branch is also the row that does something when you press it. <code>--sk-tree-node-icon-color</code> is still the single knob: the leaf falls back to it, and redeclaring the branch alongside moves both.",
+              "title": "Folder and file icons tint separately, and the folder takes the accent"
+            },
+            "es": {
+              "body": "<code>--sk-tree-branch-icon-color</code> y <code>--sk-tree-leaf-icon-color</code> separan los dos marcadores, que hasta ahora solo se distinguían por su forma. El default pone la rama en <code>--color-text-accent</code> y deja la hoja en secundario: un árbol es mayormente hojas, así que teñir esas gasta el accent en la mayoría de las filas y pone una columna de marcas de color delante de los nombres. La rama, además, es la fila que hace algo al pulsarla. <code>--sk-tree-node-icon-color</code> sigue siendo la perilla única: la hoja cae en ella y moverla mueve las dos si redeclaras también la rama.",
+              "title": "El icono de carpeta y el de archivo se tiñen por separado, y la carpeta va en accent"
+            },
+            "kind": "feature",
+            "target": "branchIcon"
+          },
+          {
+            "date": "2026-09-14",
+            "en": {
+              "body": "Its height came from <code>--size-control-sm</code> (32px), a small Button's, but the row's type has always been <code>--font-size-caption</code> (12px) against the 14px that button speaks: small type inside a box built for bigger type, which is where the tall, loose feel came from. The analogy also pointed at the wrong component. A Button is something you place one at a time; a tree row is chrome in a rail, repeated dozens of times, and the component already in that position is Toc. The height now derives the way <code>.sk-toc__link</code> does, <code>--space-inset-xs</code> a side plus the caption line-height: 26px measured, the same as Toc. Retune the density or the caption step and the two move together.",
+              "title": "The row drops from 32px to 26px, measured like a Toc row rather than a button"
+            },
+            "es": {
+              "body": "La altura salia de <code>--size-control-sm</code> (32px), la de un Button pequeño, pero el tipo de la fila siempre fue <code>--font-size-caption</code> (12px) contra los 14px que habla ese boton: tipo chico dentro de una caja pensada para tipo grande, que es de donde venia la sensacion de filas altas y sueltas. Ademas la analogia apuntaba al componente equivocado. Un Button es algo que colocas de a uno; una fila de arbol es chrome de un riel, repetido decenas de veces, y el componente que ya vive en esa posicion es Toc. Ahora la altura se deriva igual que <code>.sk-toc__link</code>, <code>--space-inset-xs</code> por lado mas el interlineado de caption: 26px medidos, los mismos que Toc. Si retocas la densidad o el paso de caption, los dos se mueven juntos.",
+              "title": "La fila baja de 32px a 26px, medida como la de Toc y no como un boton"
+            },
+            "kind": "rework",
+            "target": "item"
+          },
+          {
+            "date": "2026-09-14",
+            "en": {
+              "body": "The touch pad stretched every row to <code>--size-touch-target</code> (44px) on both axes, the way Button does. At a 32px row that still worked: it grew 6px into an 8px gap. At a shorter row it stops working, because the next row's pad begins before this row's face ends, and a click on a name could open the one below it. Capping it at half the gap is not enough: the gap only separates siblings, and a branch sits flush against its first child, so the real spacing there is 0. Hit-tested pixel by pixel, every branch was still losing 4px of its own face. It no longer grows vertically: the hit area is exactly the face, as in Toc, and 26px already clears WCAG 2.2 SC 2.5.8's 24px minimum on its own.",
+              "title": "A row's hit area stops reaching into its neighbour"
+            },
+            "es": {
+              "body": "El pad de toque estiraba cada fila hasta <code>--size-touch-target</code> (44px) en los dos ejes, como hace Button. A 32px de fila todavia daba: crecia 6px dentro de un hueco de 8px. A una fila mas baja deja de dar, porque el pad de la fila siguiente empieza antes de que termine la cara de esta, y un click sobre un nombre podia abrir el de abajo. Limitarlo a la mitad del hueco no alcanza: el hueco solo separa hermanos, y una rama y su primer hijo van pegados, asi que ahi la separacion real es 0. Medido pixel por pixel, cada rama seguia perdiendo 4px de su propia cara. Ahora no crece en vertical: el area clicable es exactamente la cara, como en Toc, y los 26px ya cumplen el minimo de 24px de WCAG 2.2 SC 2.5.8 por si solos.",
+              "title": "El area clicable de una fila deja de invadir la fila vecina"
+            },
+            "kind": "bugfix",
+            "target": "item"
+          },
+          {
+            "date": "2026-09-14",
+            "en": {
+              "body": "The grid <code>gap</code> only separates SIBLINGS, so a folder sat 0px from the file directly beneath it (against the 8px between siblings) and the two rows read as one block, the folder icon touching the file icon. <code>--sk-tree-row-gap</code> now applies under the parent row too, as <code>padding-block-start</code> rather than a margin: the guide is a <code>border-inline-start</code> on that same box, so the padding pushes the first child down while the line still starts level with the chevron it hangs from. Measured, every spacing in the tree is now equal.",
+              "title": "A branch and its first child stop sitting flush"
+            },
+            "es": {
+              "body": "El <code>gap</code> de la grilla solo separa HERMANOS, asi que una carpeta quedaba a 0px del archivo justo debajo (contra los 8px que habia entre hermanos) y las dos filas se leian como un bloque, con el icono de carpeta tocando el de archivo. Ahora <code>--sk-tree-row-gap</code> tambien se aplica bajo la fila padre, con <code>padding-block-start</code> y no con margen: la guia es un <code>border-inline-start</code> de esa misma caja, asi que el padding empuja al primer hijo pero la linea sigue arrancando a la altura del chevron del que cuelga. Medido, todas las separaciones del arbol son ahora iguales.",
+              "title": "Una rama y su primer hijo dejan de ir pegados"
+            },
+            "kind": "bugfix",
+            "target": "branchContent"
+          },
+          {
+            "date": "2026-09-14",
+            "en": {
+              "body": "A leaf has no disclosure, so the empty column it used to carry existed only so its label started under the branch label above it. That alignment was paid for on every leaf, in every tree, whether or not the tree even had a branch beside it. A leaf's template is now a single track, the label, starting at its own indent. In a mixed tree the leaves and branches no longer share a label x, which is the honest read: a leaf no longer pretends to a control it does not have.",
+              "title": "A leaf stops reserving the chevron column it never draws"
+            },
+            "es": {
+              "body": "Una hoja no tiene divulgación, así que la columna vacía que cargaba solo existía para que su etiqueta arrancara bajo la de la rama de arriba. Esa alineación se paga siempre, en cada hoja de cada árbol, tenga o no ramas al lado. Ahora la plantilla de una hoja es una sola pista, la etiqueta, y arranca en su propia sangría. En un árbol mixto las hojas y las ramas dejan de compartir la misma x de etiqueta, que es lo honesto: una hoja ya no finge tener un control que no tiene.",
+              "title": "La hoja ya no reserva la columna del chevron que nunca dibuja"
+            },
+            "kind": "rework",
+            "target": "item"
+          },
           {
             "date": "2026-09-12",
             "en": {
@@ -13544,6 +13734,7 @@
             "edit",
             "delete",
             "copy",
+            "code",
             "filter",
             "refresh",
             "zoom-out",
@@ -13710,6 +13901,7 @@
                       "edit",
                       "delete",
                       "copy",
+                      "code",
                       "filter",
                       "refresh",
                       "zoom-out",
@@ -21754,6 +21946,15 @@
           "machineInput": true,
           "prop": "defaultValue",
           "type": "string"
+        },
+        "variant": {
+          "attr": "data-variant",
+          "default": "underline",
+          "type": "enum",
+          "values": [
+            "underline",
+            "hanging"
+          ]
         }
       },
       "parts": {
@@ -21797,7 +21998,8 @@
             "orientation",
             "activationMode",
             "value",
-            "size"
+            "size",
+            "variant"
           ],
           "react": {
             "from": "@skryensya/react/tabs",
@@ -23594,11 +23796,15 @@
     "tree-view": {
       "css": "@skryensya/core/components/tree-view.css",
       "hooks": [
+        "--sk-tree-branch-icon-color",
         "--sk-tree-guide-color",
         "--sk-tree-guide-width",
         "--sk-tree-indent",
+        "--sk-tree-indicator-color",
         "--sk-tree-indicator-size",
         "--sk-tree-item-gap",
+        "--sk-tree-leaf-icon-color",
+        "--sk-tree-node-icon-color",
         "--sk-tree-node-icon-size",
         "--sk-tree-row-gap",
         "--sk-tree-row-inset"
@@ -23640,7 +23846,6 @@
         "branchText": "sk-tree-view__branch-text",
         "item": "sk-tree-view__item",
         "itemIcon": "sk-tree-view__item-icon",
-        "itemIndicator": "sk-tree-view__item-indicator",
         "itemText": "sk-tree-view__item-text",
         "root": "sk-tree-view",
         "tree": "sk-tree-view__tree"
@@ -23765,7 +23970,6 @@
                                     "element": "span",
                                     "mount": "data-sk-tree-view-branch-indicator",
                                     "part": "branchIndicator",
-                                    "text": "›",
                                     "whenMissing": "branchIndicator"
                                   },
                                   {
@@ -23814,13 +24018,6 @@
                               "sk-interactive"
                             ],
                             "children": [
-                              {
-                                "attrs": {
-                                  "aria-hidden": "true"
-                                },
-                                "element": "span",
-                                "part": "itemIndicator"
-                              },
                               {
                                 "attrs": {
                                   "aria-hidden": "true"
@@ -24922,5 +25119,5 @@
     "working": "0.0.1"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "5e5cb27b6c94586a"
+  "sourceHash": "c07f52724c394e6a"
 }

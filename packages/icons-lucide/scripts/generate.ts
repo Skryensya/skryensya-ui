@@ -42,6 +42,7 @@ const MAP = {
   edit: "Pencil",
   delete: "Trash2",
   copy: "Copy",
+  code: "Code",
   filter: "Funnel",
   refresh: "RefreshCw",
   "zoom-out": "ZoomOut",

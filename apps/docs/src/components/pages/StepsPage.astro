@@ -17,15 +17,7 @@ const t = useTranslations(getLocale(Astro.url));
   title="Steps"
   description={t("stepsPage.description")}
   contractId="steps"
-  tests={[
-    {
-      file: "packages/react/src/components/steps.test.tsx",
-      tests: [
-        { name: "derives complete / current / upcoming from the current index", description: t("stepsPage.test1") },
-        { name: "lets a step override its status explicitly", description: t("stepsPage.test2") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/steps.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("stepsPage.lede")} />

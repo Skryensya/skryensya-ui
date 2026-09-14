@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "538535979414b743"
+surface: "f4e10cd1fd46fdc5"
 entries:
   - date: 2026-08-06
     kind: rework
@@ -57,3 +57,215 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-14
+    kind: bugfix
+    target: itemIcon
+    es:
+      title: Una fila sin icono deja de reservarle la columna
+      body: >-
+        <code>branchIcon</code> y <code>leafIcon</code> son ranuras independientes, pero la columna
+        del icono se decidía mirando el árbol entero: bastaba un icono en cualquier parte para que
+        TODAS las filas reservaran el hueco. Con una sola de las dos ranuras puesta, las filas de la
+        otra quedaban con tres pistas y dos hijos, y el nombre caía dentro de la pista del icono:
+        medido, <code>20px</code> de ancho, así que cada hoja se recortaba a <code>in…</code> junto a
+        una pista vacía. Ahora la columna la pide cada fila que de verdad lleva icono, así que la
+        plantilla nunca contradice a sus hijos y la que no lo lleva empieza la etiqueta pegada a su
+        sangría. En un árbol con las dos ranuras puestas, o con ninguna, nada cambia.
+    en:
+      title: A row with no icon stops reserving the column for one
+      body: >-
+        <code>branchIcon</code> and <code>leafIcon</code> are independent slots, but the icon column
+        was decided by looking at the whole tree: one icon anywhere and EVERY row reserved the space.
+        With only one of the two slots passed, the other kind of row kept three tracks and rendered
+        two children, and the name landed inside the icon track: measured at <code>20px</code> wide,
+        so every leaf ellipsised to <code>in…</code> beside an empty track. The column is now opted
+        into by each row that actually carries an icon, so the template can never disagree with its
+        children, and a row without one starts its label at its own indent. A tree with both slots
+        passed, or with neither, is unchanged.
+  - date: 2026-09-14
+    kind: rework
+    es:
+      title: El icono de carpeta/archivo baja a 16px y se pinta un tono por debajo de la etiqueta
+      body: >-
+        <code>--sk-tree-node-icon-size</code> pasa de <code>--size-icon-md</code> a
+        <code>--size-icon-sm</code>: la fila escribe en <code>--font-size-caption</code> (12px), así
+        que un glifo de 20px iba muy por encima del nombre que etiquetaba y la vista aterrizaba en
+        una columna de carpetas iguales antes de leer un solo archivo. El nuevo
+        <code>--sk-tree-node-icon-color</code> lo pinta además en
+        <code>--color-text-secondary</code>, la misma relación que List ya publica entre su ranura
+        inicial y su título. Los dos son hooks: si querías el tamaño o el color anteriores, se
+        recuperan con una declaración.
+    en:
+      title: The folder/file icon drops to 16px and sits a tone under the label
+      body: >-
+        <code>--sk-tree-node-icon-size</code> moves from <code>--size-icon-md</code> to
+        <code>--size-icon-sm</code>: the row sets <code>--font-size-caption</code> (12px), so a 20px
+        glyph ran well above the name it was labelling and the eye landed on a column of identical
+        folders before reaching a single filename. The new
+        <code>--sk-tree-node-icon-color</code> also paints it <code>--color-text-secondary</code>,
+        the same relationship List already publishes between its leading slot and its title. Both are
+        hooks: if you want the previous size or colour, one declaration puts them back.
+  - date: 2026-09-14
+    kind: rework
+    target: branchIndicator
+    es:
+      title: El chevron por defecto se dibuja, ya no es el carácter ›
+      body: >-
+        Sin ranura <code>branchIndicator</code>, el template escribía un <code>›</code> literal: el
+        último glifo de texto que quedaba en el sistema, renderizado con lo que la fuente del lector
+        traiga para ese punto de código, así que salía fino y más chico que cualquier otro chevron de
+        la página. Ahora el span sale vacío y la hoja lo dibuja con <code>mask-image</code>, el mismo
+        trazo <code>chevron-right</code> del set de iconos que ya usa la divulgación de Treegrid. Un
+        <code>branchIndicator</code> tuyo sigue ganando; el nuevo
+        <code>--sk-tree-indicator-color</code> tiñe los dos por igual, así que el dibujado y el
+        escrito a mano son la misma marca.
+    en:
+      title: The default chevron is drawn, no longer the › character
+      body: >-
+        With no <code>branchIndicator</code> slot the template wrote a literal <code>›</code>: the
+        last text glyph left in the system, rendered with whatever the reader's font ships for that
+        code point, so it came out thin and smaller than every other chevron on the page. The span
+        now ships empty and the stylesheet draws it with <code>mask-image</code>, the same
+        <code>chevron-right</code> path from the icon set that Treegrid's disclosure already uses.
+        Your own <code>branchIndicator</code> still wins; the new
+        <code>--sk-tree-indicator-color</code> tints both alike, so the drawn one and a hand-written
+        one are the same mark.
+  - date: 2026-09-14
+    kind: rework
+    es:
+      title: La hoja deja de pintarse sobre su columna vacía de chevron
+      body: >-
+        Una hoja conserva la columna del chevron vacía para que las etiquetas de un nivel se
+        alineen, pero la capa de estado se pinta a <code>inset: 0</code>, así que la píldora de una
+        hoja seleccionada cruzaba también ese tramo muerto: medido, empezaba 31px a la izquierda de
+        su propio texto. Una fila a sangre entera puede cargar espacio vacío; una píldora redondeada
+        no, se lee como un botón puesto donde no hay nada que pulsar. Ahora la pintura empieza donde
+        empieza el contenido. El área clicable no se toca: la fila entera sigue respondiendo.
+    en:
+      title: A leaf stops painting over its empty chevron column
+      body: >-
+        A leaf keeps the chevron column empty so labels on a level line up, but the state layer
+        paints at <code>inset: 0</code>, so a selected leaf's pill ran across that dead stretch too:
+        measured, it began 31px to the left of its own text. A full-bleed row can carry empty space;
+        a rounded pill cannot, it reads as a button drawn where there is nothing to press. The paint
+        now starts where the content starts. The hit area is untouched: the whole row still responds.
+  - date: 2026-09-14
+    kind: feature
+    target: branchIcon
+    es:
+      title: El icono de carpeta y el de archivo se tiñen por separado, y la carpeta va en accent
+      body: >-
+        <code>--sk-tree-branch-icon-color</code> y <code>--sk-tree-leaf-icon-color</code> separan los
+        dos marcadores, que hasta ahora solo se distinguían por su forma. El default pone la rama en
+        <code>--color-text-accent</code> y deja la hoja en secundario: un árbol es mayormente hojas,
+        así que teñir esas gasta el accent en la mayoría de las filas y pone una columna de marcas de
+        color delante de los nombres. La rama, además, es la fila que hace algo al pulsarla.
+        <code>--sk-tree-node-icon-color</code> sigue siendo la perilla única: la hoja cae en ella y
+        moverla mueve las dos si redeclaras también la rama.
+    en:
+      title: Folder and file icons tint separately, and the folder takes the accent
+      body: >-
+        <code>--sk-tree-branch-icon-color</code> and <code>--sk-tree-leaf-icon-color</code> split the
+        two markers, which until now differed only in shape. The default puts the branch on
+        <code>--color-text-accent</code> and leaves the leaf secondary: a tree is mostly leaves, so
+        tinting those spends the accent on the majority of the rows and puts a column of coloured
+        marks in front of the names. The branch is also the row that does something when you press
+        it. <code>--sk-tree-node-icon-color</code> is still the single knob: the leaf falls back to
+        it, and redeclaring the branch alongside moves both.
+  - date: 2026-09-14
+    kind: rework
+    target: item
+    es:
+      title: La fila baja de 32px a 26px, medida como la de Toc y no como un boton
+      body: >-
+        La altura salia de <code>--size-control-sm</code> (32px), la de un Button pequeño, pero el
+        tipo de la fila siempre fue <code>--font-size-caption</code> (12px) contra los 14px que habla
+        ese boton: tipo chico dentro de una caja pensada para tipo grande, que es de donde venia la
+        sensacion de filas altas y sueltas. Ademas la analogia apuntaba al componente equivocado. Un
+        Button es algo que colocas de a uno; una fila de arbol es chrome de un riel, repetido decenas
+        de veces, y el componente que ya vive en esa posicion es Toc. Ahora la altura se deriva igual
+        que <code>.sk-toc__link</code>, <code>--space-inset-xs</code> por lado mas el interlineado de
+        caption: 26px medidos, los mismos que Toc. Si retocas la densidad o el paso de caption, los
+        dos se mueven juntos.
+    en:
+      title: The row drops from 32px to 26px, measured like a Toc row rather than a button
+      body: >-
+        Its height came from <code>--size-control-sm</code> (32px), a small Button's, but the row's
+        type has always been <code>--font-size-caption</code> (12px) against the 14px that button
+        speaks: small type inside a box built for bigger type, which is where the tall, loose feel
+        came from. The analogy also pointed at the wrong component. A Button is something you place
+        one at a time; a tree row is chrome in a rail, repeated dozens of times, and the component
+        already in that position is Toc. The height now derives the way <code>.sk-toc__link</code>
+        does, <code>--space-inset-xs</code> a side plus the caption line-height: 26px measured, the
+        same as Toc. Retune the density or the caption step and the two move together.
+  - date: 2026-09-14
+    kind: bugfix
+    target: item
+    es:
+      title: El area clicable de una fila deja de invadir la fila vecina
+      body: >-
+        El pad de toque estiraba cada fila hasta <code>--size-touch-target</code> (44px) en los dos
+        ejes, como hace Button. A 32px de fila todavia daba: crecia 6px dentro de un hueco de 8px. A
+        una fila mas baja deja de dar, porque el pad de la fila siguiente empieza antes de que
+        termine la cara de esta, y un click sobre un nombre podia abrir el de abajo. Limitarlo a la
+        mitad del hueco no alcanza: el hueco solo separa hermanos, y una rama y su primer hijo van
+        pegados, asi que ahi la separacion real es 0. Medido pixel por pixel, cada rama seguia
+        perdiendo 4px de su propia cara. Ahora no crece en vertical: el area clicable es exactamente
+        la cara, como en Toc, y los 26px ya cumplen el minimo de 24px de WCAG 2.2 SC 2.5.8 por si
+        solos.
+    en:
+      title: A row's hit area stops reaching into its neighbour
+      body: >-
+        The touch pad stretched every row to <code>--size-touch-target</code> (44px) on both axes,
+        the way Button does. At a 32px row that still worked: it grew 6px into an 8px gap. At a
+        shorter row it stops working, because the next row's pad begins before this row's face ends,
+        and a click on a name could open the one below it. Capping it at half the gap is not enough:
+        the gap only separates siblings, and a branch sits flush against its first child, so the real
+        spacing there is 0. Hit-tested pixel by pixel, every branch was still losing 4px of its own
+        face. It no longer grows vertically: the hit area is exactly the face, as in Toc, and 26px
+        already clears WCAG 2.2 SC 2.5.8's 24px minimum on its own.
+  - date: 2026-09-14
+    kind: bugfix
+    target: branchContent
+    es:
+      title: Una rama y su primer hijo dejan de ir pegados
+      body: >-
+        El <code>gap</code> de la grilla solo separa HERMANOS, asi que una carpeta quedaba a 0px del
+        archivo justo debajo (contra los 8px que habia entre hermanos) y las dos filas se leian como
+        un bloque, con el icono de carpeta tocando el de archivo. Ahora
+        <code>--sk-tree-row-gap</code> tambien se aplica bajo la fila padre, con
+        <code>padding-block-start</code> y no con margen: la guia es un
+        <code>border-inline-start</code> de esa misma caja, asi que el padding empuja al primer hijo
+        pero la linea sigue arrancando a la altura del chevron del que cuelga. Medido, todas las
+        separaciones del arbol son ahora iguales.
+    en:
+      title: A branch and its first child stop sitting flush
+      body: >-
+        The grid <code>gap</code> only separates SIBLINGS, so a folder sat 0px from the file directly
+        beneath it (against the 8px between siblings) and the two rows read as one block, the folder
+        icon touching the file icon. <code>--sk-tree-row-gap</code> now applies under the parent row
+        too, as <code>padding-block-start</code> rather than a margin: the guide is a
+        <code>border-inline-start</code> on that same box, so the padding pushes the first child down
+        while the line still starts level with the chevron it hangs from. Measured, every spacing in
+        the tree is now equal.
+  - date: 2026-09-14
+    kind: rework
+    target: item
+    es:
+      title: La hoja ya no reserva la columna del chevron que nunca dibuja
+      body: >-
+        Una hoja no tiene divulgación, así que la columna vacía que cargaba solo existía para que su
+        etiqueta arrancara bajo la de la rama de arriba. Esa alineación se paga siempre, en cada hoja
+        de cada árbol, tenga o no ramas al lado. Ahora la plantilla de una hoja es una sola pista, la
+        etiqueta, y arranca en su propia sangría. En un árbol mixto las hojas y las ramas dejan de
+        compartir la misma x de etiqueta, que es lo honesto: una hoja ya no finge tener un control que
+        no tiene.
+    en:
+      title: A leaf stops reserving the chevron column it never draws
+      body: >-
+        A leaf has no disclosure, so the empty column it used to carry existed only so its label
+        started under the branch label above it. That alignment was paid for on every leaf, in every
+        tree, whether or not the tree even had a branch beside it. A leaf's template is now a single
+        track, the label, starting at its own indent. In a mixed tree the leaves and branches no
+        longer share a label x, which is the honest read: a leaf no longer pretends to a control it
+        does not have.

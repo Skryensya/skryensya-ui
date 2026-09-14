@@ -44,6 +44,12 @@ interface Props {
   styleGroups?: readonly HookGroup[];
   /** One-line-per-test summaries, grouped by test file. Omit while a component has none curated yet. */
   tests?: readonly TestGroup[];
+  /**
+   * Test files whose rows are DERIVED rather than quoted. The newer of the two shapes: a page names
+   * paths and every `it()` the file declares becomes a row, so a reworded title can never turn into a
+   * silent "not run" clock. Either prop lights the tab; a page uses one or the other.
+   */
+  testFiles?: readonly string[];
   hideVanillaMount?: boolean;
   /** Short status word next to the title ("Beta"). Omit for every page whose contract has settled;
    *  this is a per-page callout, not the catalog's own maturity axis (see `navigation.ts`'s
@@ -57,6 +63,7 @@ const {
   contractId,
   styleGroups = [],
   tests = [],
+  testFiles,
   hideVanillaMount = true,
   badge,
 } = Astro.props;
@@ -86,7 +93,7 @@ const derivedStyleGroups: readonly HookGroup[] = (() => {
 
 const hasStyle = derivedStyleGroups.length > 0 || Astro.slots.has("style");
 const hasA11y = Astro.slots.has("a11y");
-const hasTests = tests.length > 0;
+const hasTests = tests.length > 0 || (testFiles?.length ?? 0) > 0;
 ---
 
 <Base title={title} description={description} documentLayout="grid" hideVanillaMount={hideVanillaMount}>
@@ -255,7 +262,7 @@ const hasTests = tests.length > 0;
       {
         hasTests && (
           <div class="sk-tabs__content sk-layout-grid" data-sk-tabs-content data-value="tests">
-            <TestCoverage groups={tests} hasReference={hasContract} />
+            <TestCoverage files={testFiles} groups={testFiles ? undefined : tests} hasReference={hasContract} />
           </div>
         )
       }

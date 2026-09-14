@@ -20,22 +20,7 @@ const href = (path: string) => localizePath(path, locale);
   title="Tile"
   description={t("tilePage.description")}
   contractId="tile"
-  tests={[
-    {
-      file: "packages/react/src/components/tile.test.tsx",
-      tests: [
-        {
-          name: "renders every React Tile root with an explicit interactive or disclosure variant",
-          description: t("tilePage.test1"),
-        },
-        {
-          name: "renders the shared title and description anatomy for selectable tiles",
-          description: t("tilePage.test2"),
-        },
-        { name: "supports uncontrolled checkbox changes", description: t("tilePage.test3") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/tile.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("tilePage.lede")} />

@@ -27,6 +27,35 @@ export const selectEvents = {
 } as const;
 
 /*
+ * HOW THE MACHINE PLACES THE LISTBOX when the browser cannot - the fallback for a browser with no CSS
+ * anchor positioning. Shared, because the two bindings had written it separately and disagreed:
+ * React passed `{ sameWidth: false }` and the Vanilla enhancer passed a five-key object including
+ * `sameWidth: true`. Same machine, same contract, two different listboxes.
+ *
+ * NOT A CONTRACT OPTION, and that distinction is the reason this is a plain const beside
+ * `selectEvents` rather than an entry in `selectContract.options`. An option is a value a consumer
+ * AUTHORS and that lands on an attribute; positioning is neither. It is configuration one machine
+ * takes, which is exactly what `selectEvents` already is, and ADR-0010 already put this class of
+ * shared non-contract fact in Core.
+ *
+ * `sameWidth: false` RESOLVES THE DISAGREEMENT TOWARD THE STYLESHEET. `select.css` gives the content
+ * `inline-size: max-content` with `min-inline-size: var(--reference-width)` - at least as wide as the
+ * trigger, free to grow past it. `sameWidth: true` pins the width to the trigger exactly, which
+ * contradicts the sheet the same component ships; `false` leaves the sheet in charge on both paths.
+ *
+ * WHAT NOTHING PROVES: the browser gates run Chromium only, Chromium has the anchor API, and on that
+ * path the machine's placement is the dead fallback with its style stripped before it reaches the DOM.
+ * So this makes the two bindings SAY the same thing. Whether what they now say is right is as untested
+ * after this as it was before, in both bindings.
+ */
+export const selectPositioning = {
+  placement: "bottom-start",
+  sameWidth: false,
+  gutter: 8,
+  flip: true,
+} as const;
+
+/*
  * The mount attributes, named once instead of spelled out at each `mount:` in the template.
  * This is the shape 31 other contracts already use, and what lets the vanilla layer derive
  * its selectors (`selectorsFor`) rather than retyping every one of these as `[data-sk-...]`.

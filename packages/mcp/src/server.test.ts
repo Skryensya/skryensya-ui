@@ -1,5 +1,4 @@
 import { join } from "node:path";
-import { recipes } from "@skryensya/recipes";
 import { snippets } from "@skryensya/snippets";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
@@ -78,7 +77,7 @@ describe("the surface", () => {
      * KIND of content (a worked tree, not a bare contract) that none of the other three can answer,
      * the same way get_contract answers a question get_catalog cannot. Folding it into get_catalog
      * would mean either shipping every example's full tree on every catalogue read (defeats "small
-     * enough to read whole" the moment a recipe's four states are in there) or growing get_catalog a
+     * enough to read whole" the moment every example's tree is in there) or growing get_catalog a
      * second, unrelated query shape it was never meant to have. A fifth tool is the one to be
      * suspicious of, not this one.
      */
@@ -173,10 +172,10 @@ describe("get_contract", () => {
 });
 
 describe("get_examples", () => {
-  it("lists every snippet and recipe, without shipping a tree nobody asked for yet", async () => {
+  it("lists every snippet, without shipping a tree nobody asked for yet", async () => {
     const { payload } = await call("get_examples");
 
-    expect(payload.examples.length).toBe(snippets.length + recipes.length);
+    expect(payload.examples.length).toBe(snippets.length);
     const productCard = payload.examples.find((entry: { id: string }) => entry.id === "product-card-in-grid");
     expect(productCard.level).toBe("molecule");
     expect(productCard.contracts).toEqual(
@@ -194,13 +193,6 @@ describe("get_examples", () => {
     expect(payload.tree.options.total).toBe(9);
   });
 
-  it("returns a recipe's all four states by id, tagged as a screen", async () => {
-    const { payload } = await call("get_examples", { id: recipes[0]!.id });
-
-    expect(payload.level).toBe("screen");
-    expect(Object.keys(payload.states).sort()).toEqual(["empty", "error", "loading", "success"]);
-  });
-
   it("names what IS published when asked for an id that is not", async () => {
     const { isError, payload } = await call("get_examples", { id: "nonesuch" });
 
@@ -209,9 +201,17 @@ describe("get_examples", () => {
   });
 
   /*
-   * Every snippet, through the real door  -  same discipline as "accepts every recipe" below, and the
-   * same two bugs that check exists because of are exactly what a snippet is small enough to slip
-   * past by accident: a collection item missing `slots: {}`, an option sent as the wrong type.
+   * Every snippet, through the real door.
+   *
+   * The two bugs this file exists because of: collections, then numbers; were both found by driving
+   * the server as a CLIENT after everything else was green, and both were shapes the catalogue
+   * publishes and no test happened to send. So rather than add a case per shape and hope the next gap
+   * is one somebody predicted, this sends every composition there is  -  and they are exactly what a
+   * snippet is small enough to slip past by accident: a collection item missing `slots: {}`, an
+   * option sent as the wrong type.
+   *
+   * A snippet the door rejects is a snippet an agent cannot copy, which is the whole point of
+   * publishing them.
    */
   it("every snippet's tree is a tree validate_ui actually accepts", async () => {
     for (const snippet of snippets) {
@@ -364,27 +364,6 @@ describe("the tool schema accepts everything the compiler's model does", () => {
    * A guard in `index.ts` now fails to COMPILE when the type widens. This is the runtime half: the
    * shapes an agent actually sends, through the real server.
    */
-  /*
-   * Every recipe, through the real door.
-   *
-   * The two bugs this file exists because of: collections, then numbers; were both found by driving
-   * the server as a CLIENT after everything else was green, and both were shapes the catalogue
-   * publishes and no test happened to send. So rather than add a case per shape and hope the next gap
-   * is one somebody predicted, this sends the richest compositions there are: nine screens, thirty-six
-   * states, collections nested in collections, numbers, signatures inside named slots.
-   *
-   * A recipe that the door rejects is a recipe an agent cannot copy, which is the whole point of
-   * publishing them.
-   */
-  it("accepts every recipe, which is every shape the catalogue publishes at once", async () => {
-    for (const recipe of recipes) {
-      for (const [state, tree] of Object.entries(recipe.states)) {
-        const { payload } = await call("validate_ui", { tree });
-        expect(payload.valid, `${recipe.id} · ${state}`).toBe(true);
-      }
-    }
-  });
-
   it("accepts numeric options, which half the catalogue is made of", async () => {
     for (const tree of [
       { contract: "pagination", signature: "Pagination", options: { page: 4, total: 12 } },

@@ -24,16 +24,7 @@ const t = useTranslations(getLocale(Astro.url));
   description={t("callout.description")}
   badge={t("callout.betaBadge")}
   contractId="callout"
-  tests={[
-    {
-      file: "packages/react/src/components/callout.test.tsx",
-      tests: [
-        { name: "announces danger assertively and everything else politely", description: t("callout.test1") },
-        { name: "renders no dismiss control, ever", description: t("callout.test2") },
-        { name: "renders an icon and optional actions through explicit parts", description: t("callout.test3") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/callout.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("callout.lede1")} />

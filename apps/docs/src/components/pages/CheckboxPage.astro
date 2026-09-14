@@ -38,43 +38,7 @@ for (const root of document.querySelectorAll(
   description={t("checkbox.description")}
   contractId="checkbox"
   styleGroups={[{ file: "components/checkbox.css", probe: "sk-checkbox" }]}
-  tests={[
-    {
-      file: "packages/vanilla/src/components/checkbox-group.svelte.test.ts",
-      tests: [
-        {
-          name: "derives the parent's three states from its children on mount and on every change",
-          description: t("checkbox.groupTest1"),
-        },
-        {
-          name: "checks and unchecks every child from the parent, and reports what changed",
-          description: t("checkbox.groupTest2"),
-        },
-        {
-          name: "leaves a disabled child alone and does not let it hold the parent back from 'all'",
-          description: t("checkbox.groupTest3"),
-        },
-        {
-          name: "counts only its own children, never a nested group's",
-          description: t("checkbox.groupTest4"),
-        },
-        {
-          name: "re-derives the parent after a form reset, which restores the children silently",
-          description: t("checkbox.groupTest5"),
-        },
-      ],
-    },
-    {
-      file: "packages/vanilla/src/components/tile-checkbox.svelte.test.ts",
-      tests: [
-        {
-          name: "toggles checked state and root data-state on click, emitting sk:checkedchange",
-          description: t("checkbox.test1"),
-        },
-        { name: "is form-associated and honours its default-checked", description: t("checkbox.test2") },
-      ],
-    },
-  ]}
+  testFiles={["packages/vanilla/src/components/checkbox-group.svelte.test.ts", "packages/vanilla/src/components/tile-checkbox.svelte.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("checkbox.lede")} />

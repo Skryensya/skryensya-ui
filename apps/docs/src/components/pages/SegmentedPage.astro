@@ -21,18 +21,7 @@ await initComponents();`;
   title="SegmentedControl"
   description={t("segmentedPage.description")}
   contractId="segmented"
-  tests={[
-    {
-      file: "packages/vanilla/src/components/segmented.test.ts",
-      tests: [
-        { name: "patches the authored parts into one roving radiogroup", description: t("segmentedPage.test1") },
-        {
-          name: "selects on click and arrow navigation, skipping disabled options",
-          description: t("segmentedPage.test2"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/vanilla/src/components/segmented.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("segmentedPage.lede")} />

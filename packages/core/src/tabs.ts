@@ -86,13 +86,26 @@ export const tabsContract = {
       default: "md",
       attr: "data-size",
     },
+    /**
+     * Which edge the tab strip hangs from. `underline` (default) sits the triggers ON the list's
+     * line: rounded top, selected bar on the bottom edge. `hanging` flips that: the line runs along
+     * the TOP of the list, the triggers hang below it with their rounded corners at the bottom, and
+     * the selected bar sits on the top edge. CSS-only like `size`: DOM order, roving tabindex and
+     * selection are identical, so the panel still follows the list for every reader.
+     */
+    variant: {
+      type: "enum",
+      values: ["underline", "hanging"],
+      default: "underline",
+      attr: "data-variant",
+    },
   },
 
   signatures: {
     Tabs: {
       intent: ["tabs", "switch-between-panels", "sections-in-one-region"],
       host: { element: "div" },
-      options: ["orientation", "activationMode", "value", "size"],
+      options: ["orientation", "activationMode", "value", "size", "variant"],
       slots: {
         items: {
           accepts: "items",
@@ -161,6 +174,7 @@ export const tabsContract = {
 
 export type TabsOrientation = OptionValue<typeof tabsContract.options.orientation>;
 export type TabsSize = OptionValue<typeof tabsContract.options.size>;
+export type TabsVariant = OptionValue<typeof tabsContract.options.variant>;
 
 /*
  * The machine's own inputs. Deliberately NOT derived from the contract: these are runtime wiring

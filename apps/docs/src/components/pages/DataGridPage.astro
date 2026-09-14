@@ -33,34 +33,7 @@ initComponents();`;
     { file: "components/data-grid.css", probe: "sk-data-grid", title: "Data Grid" },
     { file: "patterns/state-layer.css", probe: "sk-interactive", title: "Heredados de State layer" },
   ]}
-  tests={[
-    {
-      file: "packages/react/src/components/data-grid.test.tsx",
-      tests: [
-        {
-          name: "hands the roving stop to a cell's OWN interactive descendant, not the cell div",
-          description: t("dataGridPage.testReact1"),
-        },
-        {
-          name: "clamps into a shorter row's last real cell on vertical movement (ragged grid)",
-          description: t("dataGridPage.testReact2"),
-        },
-      ],
-    },
-    {
-      file: "packages/vanilla/src/components/data-grid.test.ts",
-      tests: [
-        {
-          name: "wraps columns into the next row when data-wrap-cols is set",
-          description: t("dataGridPage.testVanilla1"),
-        },
-        {
-          name: "clicking a cell moves the roving stop there",
-          description: t("dataGridPage.testVanilla2"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/data-grid.test.tsx", "packages/vanilla/src/components/data-grid.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("dataGridPage.lede")} />

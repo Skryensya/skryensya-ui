@@ -1,12 +1,13 @@
 ---
 /*
  * Marketing home. Hero, then a showcase of real screens sitting directly in the page: the same
- * markup `contracts/recipes/` (plus one hand-composed Combobox) would emit anywhere else in this
+ * markup the emitter (plus one hand-composed Combobox) would produce anywhere else in this
  * system, mounted by the site's own enhancers like everything around it: no iframe, no preview
  * chrome, no code panel. What's on screen IS the example.
  */
 import Base from "../../layouts/Base.astro";
 import SiteFooter from "../SiteFooter.astro";
+import { LandingFaq } from "../LandingFaq";
 import { getNavigation } from "../../lib/navigation";
 import { getLocale, localizePath, useTranslations, type Translate } from "../../i18n";
 import { emitMarkup } from "@skryensya/ai-compiler/emit";
@@ -448,19 +449,25 @@ const bare: GalleryFrame = { padding: "none" };
  *  of by a named Wrapper step so a 4K monitor doesn't stretch five columns into five ribbons. */
 const GALLERY_MAX_WIDTH = 1800;
 
+/** Narrowest a lane may get. Below this, cards read as ribbons; the gallery stays on fewer columns
+ *  until the viewport can pay for this width on every lane (see the stylesheet at the foot). */
+const GALLERY_LANE_MIN = "18rem";
+
 /** Center lane a little wider, the two flanking it equal to each other, the two outer ones a
  *  little narrower - `--sk-grid-template`'s own escape hatch (layout.css) for weighting a
- *  `data-fill` grid's columns instead of leaving them even. */
-const GALLERY_COLUMN_WEIGHTS = "0.9fr 1fr 1.15fr 1fr 0.9fr";
+ *  `data-fill` grid's columns instead of leaving them even. Each track is `minmax` against
+ *  `--landing-lane-min` so `fr` redistribution cannot crush a lane under that floor. */
+const GALLERY_COLUMN_WEIGHTS =
+  "minmax(var(--landing-lane-min), 0.9fr) minmax(var(--landing-lane-min), 1fr) minmax(var(--landing-lane-min), 1.15fr) minmax(var(--landing-lane-min), 1fr) minmax(var(--landing-lane-min), 0.9fr)";
 
 /*
  * THE NEXT TIER UP.
  *
  * `--breakpoint-*` stops at `ultrawide` (90rem) because that is the widest a page column ever gets;
  * this is a GALLERY width, not a page one, so the literal lives here rather than joining the shared
- * map: the 120rem in the `@media` at the foot of this file is a 1920px monitor, the first size
- * where seven lanes have room at all. It is a literal there because a media query cannot read a
- * custom property, the same reason `_breakpoints.scss` exists at all.
+ * map: seven lanes unlock at `140rem` in the stylesheet below (not at the kit's `120rem`), the first
+ * size where seven tracks can each clear `--landing-lane-min`. It is a literal there because a media
+ * query cannot read a custom property, the same reason `_breakpoints.scss` exists at all.
  *
  * THE TWO NEW LANES ARE LANES, not a margin decorated with skeletons: they take the SAME weight as
  * the outer real lanes they sit beside (`0.9fr`, the narrow end of `GALLERY_COLUMN_WEIGHTS`), so
@@ -471,12 +478,17 @@ const GALLERY_COLUMN_WEIGHTS = "0.9fr 1fr 1.15fr 1fr 0.9fr";
  * seven lanes of real width have somewhere to go.
  */
 const GALLERY_XL_MAX_WIDTH = 2200;
+const GALLERY_XL_COLUMN_WEIGHTS =
+  "minmax(var(--landing-lane-min), 0.9fr) minmax(var(--landing-lane-min), 0.9fr) minmax(var(--landing-lane-min), 1fr) minmax(var(--landing-lane-min), 1.15fr) minmax(var(--landing-lane-min), 1fr) minmax(var(--landing-lane-min), 0.9fr) minmax(var(--landing-lane-min), 0.9fr)";
 
 /** The tallest of the five column totals below (px, Chromium/1900, each column's own weighted
  *  share of `GALLERY_MAX_WIDTH`) - roughly double the pre-`data-fill` single-screen height, so
  *  each column is a short scroll of its own. Thirty-one distinct molecules fill most of it; five
  *  get one repeat each (`idPrefix`) to top a column off. */
 const GALLERY_FILL_HEIGHT = 1191;
+/* How tall the dissolve at the foot of the gallery is. Long enough that a card mid-clip reads as
+   fading rather than cut; short enough that most of each column stays fully legible above it. */
+const GALLERY_FADE_SIZE = "10rem";
 
 /*
  * THE ULTRAWIDE LANES, and they are skeletons on purpose.
@@ -588,10 +600,12 @@ const SKELETONS: Record<SkeletonKind, () => UsageTree> = {
 const LANE_DROPS = ["3rem", "1.5rem", "0rem", "1.5rem", "3rem"];
 const SKELETON_LANE_DROP = "4.5rem";
 
-/* How many steps behind the centre lane each one enters, which is just its distance from the
-   middle. The skeleton lanes are one step further out again. */
+/* How many steps behind the centre content column each lane enters. The centre opens first (0),
+   then the pair beside it (1), then the outer pair (2). Skeleton lanes bookend the row one step
+   past that outer ring, so the bloom finishes at the edges. */
 const LANE_STEPS = [2, 1, 0, 1, 2];
-const SKELETON_LANE_STEP = 3;
+const SKELETON_LANE_STEP_LEFT = 3;
+const SKELETON_LANE_STEP_RIGHT = 3;
 
 /* Two lanes, each a different reading order, so the pair does not look like one column mirrored. */
 const skeletonLanes: UsageTree[][] = [
@@ -654,6 +668,14 @@ const columns: GalleryTile[][] = [
     { tree: alertRetryTree(t), frame: bare, idPrefix: "r1" }, // 172
   ],
 ];
+
+const faqItems = (
+  ["what", "runtime", "adopt", "version", "start"] as const
+).map((id) => ({
+  id,
+  question: t(`landing.faq.${id}.q`),
+  answer: t(`landing.faq.${id}.a`),
+}));
 ---
 
 <Base fullBleed title={t("landing.title")} description={t("landing.description")} hideVanillaMount alwaysShowNavTrigger={false}>
@@ -704,57 +726,84 @@ const columns: GalleryTile[][] = [
       is not, and is gone.
     */}
     <section aria-label={t("landing.gallery.title")} data-width="full-width">
+      {/*
+        THE WHOLE GALLERY FALLS INTO A FADE, not each skeleton lane on its own. A hard clip at the
+        floor used to read as a wall of cards cut mid-tile; FadeEdge (`to-bottom`) dissolves that
+        edge into the page so the FAQ below can pick up without a seam. Height is capped so the
+        columns always have something to fade through, even when a lane grows past the floor.
+
+        `data-width="full-width"` LIVES HERE, on the fade, because this is the element the layout
+        grid actually places: `layout.css` only reads `data-width` off a direct child of
+        `.sk-layout-grid` (and one level deeper, off a direct child of a `full-width` child, which
+        is exactly this). It used to sit on the grid inside instead, where nothing matched it, so
+        the fade fell back to the `content` track (1024px) and the lanes - whose tracks have a hard
+        `minmax(--landing-lane-min)` floor - overflowed it sideways from the five-lane tier up and
+        were clipped off-centre by the `overflow-x: clip` below. The grid re-centres itself inside
+        the full bleed with its own `max-width` + `margin-inline: auto`.
+      */}
       <div
-        class="sk-grid landing-gallery"
-        data-responsive
-        data-fill
-        data-columns="5"
-        data-gap="md"
+        class="sk-fade-edge landing-gallery-fade"
+        data-direction="to-bottom"
         data-width="full-width"
-        style={`--sk-grid-fill: ${GALLERY_FILL_HEIGHT}px; --sk-grid-template: ${GALLERY_COLUMN_WEIGHTS}; max-width: ${GALLERY_MAX_WIDTH}px; margin-inline: auto; padding-inline: var(--space-inset-lg)`}
+        style={`--sk-fade-edge-size: ${GALLERY_FADE_SIZE}`}
       >
-        {/*
-          The first skeleton lane. Both of them are rendered at every width and revealed only at the
-          XL tier (`display: none` below), rather than being emitted conditionally: this page is
-          static, so there is no viewport to branch on at build time, and a lane that appears by
-          stylesheet cannot disagree with the column template that makes room for it.
-        */}
-        <div class="landing-gallery__skeleton sk-fade-edge" data-direction="to-bottom" aria-hidden="true" style={`--landing-lane-drop: ${SKELETON_LANE_DROP}; --lane-step: ${SKELETON_LANE_STEP}`}>
-          <div class="sk-stack" data-gap="sm">
-            {skeletonLanes[0].map((tree, tile) => (
-              <div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" style={`--tile-step: ${tile}`} set:html={emitMarkup(tree, { fillDefaults: false })} />
-            ))}
-          </div>
-        </div>
-        {
-          columns.map((column, lane) => (
-            <div
-              class="sk-stack"
-              data-gap="sm"
-              style={`--landing-lane-drop: ${LANE_DROPS[lane]}; --lane-step: ${LANE_STEPS[lane]}`}
-            >
-              {column.map(({ tree, frame, idPrefix }, tile) => (
-                <div
-                  class="sk-box"
-                  data-surface={frame.surface}
-                  data-border={frame.border}
-                  data-padding={frame.padding}
-                  style={`--tile-step: ${tile}`}
-                  set:html={emitMarkup(tree, { fillDefaults: false, idPrefix })}
-                />
+        <div
+          class="sk-grid landing-gallery"
+          data-responsive
+          data-fill
+          data-columns="5"
+          data-gap="md"
+          style={`--sk-grid-fill: ${GALLERY_FILL_HEIGHT}px; --sk-grid-template: ${GALLERY_COLUMN_WEIGHTS}; max-width: ${GALLERY_MAX_WIDTH}px; margin-inline: auto; padding-inline: var(--space-inset-lg)`}
+        >
+          <div class="landing-gallery__skeleton" data-lane="skeleton-start" aria-hidden="true" style={`--landing-lane-drop: ${SKELETON_LANE_DROP}; --lane-step: ${SKELETON_LANE_STEP_LEFT}`}>
+            <div class="sk-stack" data-gap="sm">
+              {skeletonLanes[0].map((tree) => (
+                <div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" set:html={emitMarkup(tree, { fillDefaults: false })} />
               ))}
             </div>
-          ))
-        }
-        <div class="landing-gallery__skeleton sk-fade-edge" data-direction="to-bottom" aria-hidden="true" style={`--landing-lane-drop: ${SKELETON_LANE_DROP}; --lane-step: ${SKELETON_LANE_STEP}`}>
-          <div class="sk-stack" data-gap="sm">
-            {skeletonLanes[1].map((tree, tile) => (
-              <div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" style={`--tile-step: ${tile}`} set:html={emitMarkup(tree, { fillDefaults: false })} />
-            ))}
+          </div>
+          {
+            columns.map((column, lane) => (
+              <div
+                class="sk-stack"
+                data-lane={lane}
+                data-gap="sm"
+                style={`--landing-lane-drop: ${LANE_DROPS[lane]}; --lane-step: ${LANE_STEPS[lane]}`}
+              >
+                {column.map(({ tree, frame, idPrefix }) => (
+                  <div
+                    class="sk-box"
+                    data-surface={frame.surface}
+                    data-border={frame.border}
+                    data-padding={frame.padding}
+                    set:html={emitMarkup(tree, { fillDefaults: false, idPrefix })}
+                  />
+                ))}
+              </div>
+            ))
+          }
+          <div class="landing-gallery__skeleton" data-lane="skeleton-end" aria-hidden="true" style={`--landing-lane-drop: ${SKELETON_LANE_DROP}; --lane-step: ${SKELETON_LANE_STEP_RIGHT}`}>
+            <div class="sk-stack" data-gap="sm">
+              {skeletonLanes[1].map((tree) => (
+                <div class="sk-box" data-surface="raised" data-border="subtle" data-padding="md" set:html={emitMarkup(tree, { fillDefaults: false })} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
       <script is:inline set:html={dialogConfirmScript} />
+    </section>
+
+    <section class="landing-faq" data-width="breakout" aria-labelledby="landing-faq-title">
+      <div class="sk-stack landing-faq__inner" data-gap="lg">
+        <header class="sk-stack" data-gap="sm" data-align="center">
+          <h2 class="sk-heading" id="landing-faq-title" data-size="display-sm" data-flush>
+            {t("landing.faq.title")}
+          </h2>
+          <p class="sk-text landing-faq__lede" data-tone="secondary" data-size="lg">{t("landing.faq.lede")}</p>
+        </header>
+        <LandingFaq client:load label={t("landing.faq.title")} items={faqItems} />
+      </div>
     </section>
 
     {/*
@@ -762,7 +811,7 @@ const columns: GalleryTile[][] = [
       the footer is site chrome that sits beside the document pair), and this page is `fullBleed`,
       so it had none. Rendered here rather than moved into the layout's unconditional branch
       because the two pages want it in different places: a docs page ends after its pager, this one
-      ends after the gallery, and `data-width="full-width"` inside this same `sk-layout-grid` is
+      ends after the FAQ, and `data-width="full-width"` inside this same `sk-layout-grid` is
       what lets the band bleed while its own content returns to the page measure.
     */}
     <SiteFooter nav={navigation} locale={locale} />
@@ -772,6 +821,8 @@ const columns: GalleryTile[][] = [
 <style define:vars={{
   galleryXlMaxWidth: `${GALLERY_XL_MAX_WIDTH}px`,
   galleryFillHeight: `${GALLERY_FILL_HEIGHT}px`,
+  landingLaneMin: GALLERY_LANE_MIN,
+  galleryXlTemplate: GALLERY_XL_COLUMN_WEIGHTS,
 }}>
   /*
    * THE BAND'S OWN PAINT, into `--sk-hero-wash`, which is the hook `hero.css` publishes for exactly
@@ -917,45 +968,41 @@ const columns: GalleryTile[][] = [
   }
 
   /*
-   * THE REVEAL: one orchestrated moment on load, ordered from the middle of the gallery outward.
+   * THE REVEAL: one orchestrated moment on load. Only the lanes move; tiles inside them arrive
+   * already composed. Centre out: step 0 is the middle column, each ring waits one more stagger
+   * beat. The stagger is enter (moderate / 200ms) so rings OVERLAP; the motion itself runs on
+   * expand (slow / 320ms), the kit's tempo for a larger surface settling, with enter easing so it
+   * decelerates into place rather than snapping. Materialise recipe matches Popover/Toast
+   * (opacity + scale + rise + soft blur), travel on navigate distance so the longer beat has
+   * room to read.
    *
-   * TWO STAGGERS NESTED. The lanes go first, by distance from the centre (`--lane-step`, written on
-   * each lane), so the middle column arrives, then the pair beside it, then the outer pair, then the
-   * skeleton lanes at the tier. Inside each lane the tiles follow on their own step
-   * (`--tile-step`), so a column fills downward rather than appearing whole. The delay each tile
-   * actually waits is its lane's head start plus its own position, which is one multiplication in
-   * the markup and nothing for the stylesheet to work out.
-   *
-   * It agrees with the arc the lanes already sit in: the centre lane starts highest AND first, the
-   * outer ones start lowest AND last, so the eye is pulled along the same curve twice.
-   *
-   * RISE AND FADE, 8px. Far enough to be a direction, close enough that a reader who blinks has
-   * missed nothing: the page is readable at rest and the motion is how it got there, not a thing to
-   * watch. The whole sequence is over in under a second at the furthest tile.
-   *
-   * `backwards` fill so a tile waiting its turn is already invisible rather than flashing at full
+   * `both` fill so a lane waiting its turn is already invisible rather than flashing at full
    * opacity for the length of its own delay.
    */
   @media (prefers-reduced-motion: no-preference) {
-    /* Both lane shapes: a real lane IS the stack, a skeleton lane WRAPS one (it needs the fade-edge
-       element around it), so its tiles sit a level deeper. Selecting `> * > *` alone reached the
-       stack inside the skeleton lane rather than the tiles in it, and those never animated. */
-    .landing-gallery > .sk-stack > *,
-    .landing-gallery > .landing-gallery__skeleton > .sk-stack > * {
-      animation: landing-rise var(--motion-enter-duration, 240ms) var(--motion-enter-easing, ease-out)
-        both;
-      animation-delay: calc(var(--lane-step, 0) * 90ms + var(--tile-step, 0) * 55ms);
+    .landing-gallery {
+      --landing-lane-stagger: var(--motion-enter-duration);
+    }
+
+    .landing-gallery > .sk-stack,
+    .landing-gallery > .landing-gallery__skeleton {
+      animation: landing-lane-enter var(--motion-expand-duration) var(--motion-enter-easing) both;
+      animation-delay: calc(var(--lane-step, 0) * var(--landing-lane-stagger));
     }
   }
 
-  @keyframes landing-rise {
+  @keyframes landing-lane-enter {
     from {
       opacity: 0;
-      transform: translateY(8px);
+      translate: 0 var(--motion-navigate-distance);
+      scale: var(--motion-materialize-scale);
+      filter: blur(var(--motion-materialize-blur));
     }
     to {
       opacity: 1;
-      transform: none;
+      translate: 0 0;
+      scale: 1;
+      filter: blur(0);
     }
   }
 
@@ -1041,53 +1088,124 @@ const columns: GalleryTile[][] = [
     display: none;
   }
 
+  .landing-gallery {
+    --landing-lane-min: var(--landingLaneMin);
+  }
+
   /*
-   * THE ARC. The lanes do not all start at the same y: the centre one sits highest, its two
-   * neighbours drop a step, the outer pair drops another, and at the tier the skeleton lanes drop
-   * one more. Five identical tops read as a wall, and the eye lands on the whole block at once
-   * instead of on anything in it; a shallow arc gives it an entry point (the middle, which is also
-   * the widest lane) and a direction to leave by.
+   * ODD LANE COUNTS ONLY. The centre content lane (`data-lane="2"`) has to stay in the middle of
+   * whatever is visible. Even counts (2, 4) shove it off-centre and, with a hard `minmax(18rem)`,
+   * also overflow the page. So this gallery opts out of the kit's 2/4 steps: 1 → 3 → 5 → 7, and
+   * only unlocks the next count when `N × --landing-lane-min` fits. Tracks use `minmax(0, 1fr)`
+   * (never a pixel floor on the track itself); the floor is enforced by waiting to add lanes.
    *
-   * `margin-block-start`, not `translate`: the offset has to COST height, or the lanes at the
-   * bottom of the arc would hang past the section while the grid still believed everything ended
-   * level. Margin pushes the grid's own box down with them.
-   *
-   * ONLY FROM `ultrawide` UP, where all five lanes are genuinely side by side. Below it the grid
-   * falls to four, three, two and finally one lane (`data-responsive`), and an offset keyed to a
-   * lane's position in a five-lane row becomes a random gap above a stacked column.
-   *
-   * WHICH lane gets which step is written on the lane itself (`--landing-lane-drop`, `LANE_DROPS`
-   * below), not selected for here. `:nth-of-type` was the first attempt and it is the wrong tool
-   * twice over: it counts ELEMENTS of a type, so `.sk-stack:nth-of-type(1)` never matched the first
-   * real lane once a skeleton div preceded it, and the two skeleton lanes appearing at the tier
-   * shift every index under it anyway. The markup already knows a lane's position; asking CSS to
-   * re-derive it from the DOM was the bug.
+   * Specificity beats `.sk-grid[data-responsive][data-fill]` from layout.css so a later kit tier
+   * cannot quietly reinstall a five-track template while we are still hiding the outer lanes.
    */
-  @media (min-width: 90rem) {
+  .landing-gallery.sk-grid[data-responsive][data-fill][data-columns="5"] {
+    --sk-grid-columns: 1;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /*
+   * THREE LANES: hide the outer content columns so the visible set is 1-2-3 with 2 in the middle.
+   * `64rem` clears `3 × 18rem` plus gap and inset without horizontal scroll.
+   */
+  @media (min-width: 64rem) {
+    .landing-gallery.sk-grid[data-responsive][data-fill][data-columns="5"] {
+      --sk-grid-columns: 3;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .landing-gallery > [data-lane="0"],
+    .landing-gallery > [data-lane="4"] {
+      display: none;
+    }
+  }
+
+  @media (min-width: 64rem) and (max-width: 111.98rem) {
+    .landing-gallery > [data-lane="1"],
+    .landing-gallery > [data-lane="3"] {
+      margin-block-start: 1.5rem;
+    }
+  }
+
+  /*
+   * FIVE LANES: restore the outer columns and the measured weights. Near `GALLERY_MAX_WIDTH` so
+   * each track clears `--landing-lane-min` without overflowing.
+   */
+  @media (min-width: 112rem) {
+    .landing-gallery.sk-grid[data-responsive][data-fill][data-columns="5"] {
+      --sk-grid-columns: 5;
+      grid-template-columns: var(--sk-grid-template);
+    }
+
+    .landing-gallery > [data-lane="0"],
+    .landing-gallery > [data-lane="4"] {
+      display: revert;
+    }
+
     .landing-gallery > * {
       margin-block-start: var(--landing-lane-drop, 0rem);
     }
   }
 
-  @media (min-width: 120rem) {
-    /* Seven tracks: the five weights as before, with the new lanes taking the same 0.9fr the outer
-       real lanes take, so a skeleton card is exactly as wide as the card next to it. */
+  /*
+   * THE GALLERY'S FLOOR FADE. Clip at the measured column floor, then dissolve the last band so
+   * the FAQ can sit under a soft edge instead of a sawtooth of half-cut cards.
+   *
+   * NOT a viewport fraction. An earlier `min(78vh, …)` made laptop screens show a short stub of
+   * each lane (hero already spent most of the first screen), and the columns read as cramped.
+   * The floor was measured to be about two screens of column; that length is the point.
+   */
+  .landing-gallery-fade {
+    max-block-size: var(--galleryFillHeight);
+    overflow-x: clip;
+    overflow-y: hidden;
+  }
+
+  /*
+   * FAQ: one composition under the dissolve. Measure matches the hero copy column so the questions
+   * read as prose, not as a wide wall of tiles.
+   */
+  .landing-faq {
+    position: relative;
+    z-index: 1;
+    margin-block-start: 0;
+    padding-block: var(--space-stack-xl) var(--space-stack-lg);
+  }
+
+  .landing-faq__inner {
+    max-inline-size: 42rem;
+    margin-inline: auto;
+  }
+
+  .landing-faq__lede {
+    max-inline-size: 46ch;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .landing-faq__inner > .sk-stack[data-align="center"] {
+    text-align: center;
+  }
+
+  /*
+   * SEVEN LANES only when each can still clear the floor. `120rem` (1920px) is too tight for
+   * `7 × 18rem`; wait until the XL cap (`2200px`) has room to breathe.
+   */
+  @media (min-width: 140rem) {
     .landing-gallery {
       max-width: var(--galleryXlMaxWidth) !important;
-      --sk-grid-template: 0.9fr 0.9fr 1fr 1.15fr 1fr 0.9fr 0.9fr !important;
+      --sk-grid-template: var(--galleryXlTemplate) !important;
+      grid-template-columns: var(--galleryXlTemplate) !important;
     }
 
-    /*
-     * Clipped to the grid's own floor, so both lanes end at exactly the height the five real ones
-     * start at, and faded over the last third of it. `align-self: start` because the grid stretches
-     * a cell to its row otherwise, which would undo the clip it was just given.
-     */
     .landing-gallery__skeleton {
       display: block;
       align-self: start;
       block-size: var(--galleryFillHeight);
       overflow: hidden;
-      --sk-fade-edge-size: 16rem;
     }
   }
 </style>

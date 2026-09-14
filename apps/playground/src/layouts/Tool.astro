@@ -1,0 +1,171 @@
+---
+/*
+ * THE PLAYGROUND'S OWN LAYOUT, and the reason it is not the docs' `Base.astro`.
+ *
+ * This app started as a route on the documentation site, so it rendered inside that site's shell and
+ * inherited its navbar. Since the split that is no longer a shortcut, it is a lie: the global nav
+ * points at routes this origin does not serve, the command palette searches another site's index,
+ * and the drawer, the footer, the version switcher and the ~40 component stylesheets behind them are
+ * chrome for reading documents. This is a tool. What it owes the reader is a way back to the docs,
+ * the two preferences that change what they are looking at, and every other pixel given to the code.
+ *
+ * WHAT IS REUSED AND WHAT IS NOT. The two apps still share the things that are genuinely one
+ * decision: the i18n dictionary, the color-mode storage slot (so a mode picked on either side is the
+ * same mode) and `ThemeToggle`'s markup and behaviour. What is NOT shared is the navigation, which is
+ * the docs' own and always was.
+ */
+import "@skryensya/core/tokens.scss"; // brings the state layer and the icon pattern with it
+import "@skryensya/core/modes/hc.scss"; // the `data-contrast` the pre-paint script below can write
+import "@skryensya/core/dimensions/radius.scss";
+import "@skryensya/core/dimensions/press-scale.scss";
+import "@skryensya/core/components/button.css";
+import "@skryensya/core/components/typography.css"; // `.sk-link`, and the island's own text parts
+/* The theme toggle is an icon-toggle underneath: the pattern first, then the component that
+ * re-declares its hooks. Opt-in sheets, imported where the markup that uses them lives - and that
+ * markup is this layout's. */
+import "@skryensya/core/patterns/icon-toggle.css";
+import "@skryensya/core/components/theme-toggle.css";
+import "@skryensya/core/patterns/scrollbar.css"; // `<html class="sk-scrollbar">`, and the rail's
+import "../styles/tool.css";
+
+import { STORAGE_KEY } from "@skryensya/core/storage";
+import ThemeToggle from "../../../docs/src/components/ThemeToggle.astro";
+import { colorModePreference, contrastPreference } from "../../../docs/src/lib/preferences";
+import { defaultLocale, getLocale, localeNames, locales, useTranslations, type Locale } from "../i18n";
+import { toolIconSet } from "../icons";
+import { docsHref } from "../lib/docs-origin";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+
+/** `/playground` in the default locale, `/<locale>/playground` in every other. */
+const playgroundPath = (target: Locale) =>
+  target === defaultLocale ? "/playground" : `/${target}/playground`;
+
+/* Two locales, so the switch is a LINK to the other one rather than a menu. The docs' own
+ * `LanguageMenu` is right for a site of hundreds of pages with uneven translation coverage; this app
+ * is one page that exists in both, and a control with a single destination should be a link. */
+const otherLocale = locales.find((entry) => entry !== locale) ?? defaultLocale;
+
+/*
+ * What the pre-paint script is allowed to know: the storage key and the slot names, taken from the
+ * declarations rather than re-typed. That script cannot import - running before any module is the
+ * entire thing it exists to do - so this is how it stays tied to one source. Same shape, and the
+ * same two slots, as the docs' own; this app has no palette, no density and no binding preference to
+ * restore, so it reads neither.
+ */
+const PREPAINT = {
+  key: STORAGE_KEY,
+  scheme: colorModePreference.slot,
+  contrast: contrastPreference.slot,
+};
+---
+
+<html
+  lang={locale}
+  class="sk-scrollbar"
+  data-scheme="system"
+  data-icon-set={toolIconSet}
+  data-radius="md"
+  style="--sk-density: 1"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title} · skryensya/ui</title>
+    {description && <meta name="description" content={description} />}
+    {
+      locales.map((entry) => (
+        <link rel="alternate" hreflang={entry} href={playgroundPath(entry)} />
+      ))
+    }
+
+    {/*
+      THE READER'S MODE, APPLIED BEFORE FIRST PAINT, or the tool flashes light and then goes dark.
+
+      It also has to land before the island mounts for a second reason this page has and the docs do
+      not: `Playground.tsx` reads `<html data-scheme>` to build the sandbox's own theme, and resolves
+      every editor colour through a probe element. A scheme applied after that first read would leave
+      the editor painted for the other mode until something re-rendered it.
+    */}
+    <script is:inline define:vars={{ PREPAINT, toolIconSet }}>
+      (function () {
+        var d = document.documentElement;
+        var s = {};
+        try {
+          s = JSON.parse(localStorage.getItem(PREPAINT.key) || "{}");
+        } catch (e) {}
+        var stored = function (slot) {
+          return s && typeof s === "object" ? s[slot] : undefined;
+        };
+        var schemeValue = stored(PREPAINT.scheme);
+        var scheme = schemeValue === "light" || schemeValue === "dark" ? schemeValue : "system";
+        d.setAttribute("data-scheme", scheme);
+        d.style.colorScheme = scheme === "system" ? "light dark" : scheme;
+        if (stored(PREPAINT.contrast) === "high") d.setAttribute("data-contrast", "high");
+        else d.removeAttribute("data-contrast");
+        d.setAttribute("data-icon-set", toolIconSet);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <header class="playground-chrome" data-playground-chrome>
+      {/*
+        The way out, and the only navigation this tool has. The arrow is not decoration: this link
+        leaves for another origin, and "back to the documentation" is the whole of what the reader
+        needs from a nav bar here. The wordmark is the visible label; the accessible name says where
+        it goes, because "skryensya/ui" on its own does not.
+      */}
+      <a
+        class="sk-link sk-interactive playground-chrome__brand"
+        href={docsHref("/")}
+        aria-label={t("playground.backToDocs")}
+      >
+        {/* `arrow-left` and not `chevron-left`: the vocabulary's own split is that an arrow moves
+            and navigates while a chevron reveals and attaches (`core/src/icon.ts`), and this one
+            leaves the app. `sm` because everything else in this row is `sm`; a link is not a
+            control, so nothing sizes its icon for it. */}
+        <span data-sk-icon="arrow-left" data-sk-icon-size="sm" aria-hidden="true"></span>
+        <span class="playground-chrome__brand-text">skryensya/ui</span>
+      </a>
+      <p class="playground-chrome__name">{t("playground.title")}</p>
+
+      <div class="playground-chrome__actions">
+        {/*
+          `hreflang` and `lang` per link: the destination is in that language and so is the label, so
+          a screen reader announces "Español" in Spanish. Same two attributes the docs' own language
+          menu writes on each of its rows, for the same reason.
+        */}
+        <a
+          class="sk-button sk-interactive"
+          data-variant="ghost"
+          data-size="sm"
+          href={playgroundPath(otherLocale)}
+          hreflang={otherLocale}
+          lang={otherLocale}
+        >
+          <span data-sk-icon="language" aria-hidden="true"></span>
+          {localeNames[otherLocale]}
+        </a>
+        <ThemeToggle size="sm" />
+      </div>
+    </header>
+
+    <main class="playground-main">
+      <slot />
+    </main>
+
+    <script>
+      import { initToolChrome } from "../scripts/tool-chrome";
+      initToolChrome();
+    </script>
+  </body>
+</html>

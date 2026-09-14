@@ -1,0 +1,162 @@
+---
+/*
+ * THE 404, ONE PAGE FOR BOTH LANGUAGES.
+ *
+ * It used to be two files, each with its own copy of the markup and its own hardcoded strings - and
+ * they had already drifted: the ENGLISH page offered "Prerrequisitos" and "Dimensiones" as its
+ * onward links, because the labels were typed in rather than read from the dictionary. One component
+ * with `t()` cannot do that.
+ *
+ * WHAT A 404 OWES THE READER, in order: what they asked for, where it probably was, and the whole
+ * index if neither of those is it. The first two cannot be rendered here (a static 404 is one file
+ * served for every missing path, so it has no idea which one it was) and arrive from
+ * `scripts/not-found.ts`; the third is the rail, which is why this page asks the layout for the FULL
+ * index instead of the one section a router had to guess.
+ */
+import { getLocale, localizePath, useTranslations } from "../../i18n";
+import { iconMarkup } from "../../icons";
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+const searchIcon = iconMarkup("search");
+
+/* The index the suggestions are matched against: the same endpoint ⌘K reads, per locale. */
+const searchIndex = localizePath("/search-index.json", locale);
+---
+
+<section class="docs-not-found" aria-labelledby="not-found-title" data-docs-not-found={searchIndex}>
+  <p class="docs-not-found__status" aria-hidden="true">404</p>
+
+  <div class="docs-not-found__copy">
+    <h1 id="not-found-title">{t("notFound.heading")}</h1>
+    <p class="lede">{t("notFound.lede")}</p>
+
+    {/*
+      The path that failed, filled in by the script. Rendered as a definition rather than a sentence
+      so the URL is a quotable object on the page, and left EMPTY on the server: this file is served
+      for every missing path, so any value written here would be wrong for all but one of them.
+    */}
+    <p class="docs-not-found__requested">
+      <span>{t("notFound.requested")}</span>
+      <code class="docs-not-found__path" data-docs-not-found-path></code>
+    </p>
+  </div>
+
+  {/*
+    Hidden until there is something in it: an empty "you may have meant" is a worse answer than no
+    answer. `hidden` and not a class, so it leaves the accessibility tree too until the script has
+    filled the list.
+
+    THE ATTRIBUTE IS ON A PLAIN BOX, NOT ON THE NAV-LIST, and that is not a stylistic choice:
+    `.sk-nav-list` declares `display: grid`, an AUTHOR rule, which beats the UA stylesheet's
+    `[hidden] { display: none }` on origin - the pattern carries that fix for its own `__list` (see
+    `nav-list.css`) and not for its root, because a root that hides itself is the host's business.
+    Hiding this page's own wrapper needs no override of anybody's stylesheet.
+  */}
+  <div class="docs-not-found__suggestions" data-docs-not-found-suggestions hidden>
+    <nav class="sk-nav-list" aria-labelledby="not-found-suggestions">
+      <div class="sk-nav-list__group">
+        <div class="sk-nav-list__group-label" id="not-found-suggestions">{t("notFound.suggestions")}</div>
+        <ul class="sk-nav-list__list" aria-labelledby="not-found-suggestions" data-docs-not-found-list></ul>
+      </div>
+    </nav>
+  </div>
+
+  <div class="sk-inline docs-not-found__actions" data-gap="sm">
+    <a class="sk-button sk-interactive" data-tone="accent" href={localizePath("/", locale)}>
+      {t("notFound.home")}
+    </a>
+    {/*
+      The palette, opened by its published attribute rather than by a listener of this page's own:
+      `data-sk-command-palette-open` is the contract's trigger, and `search-trigger.ts` already binds
+      every element carrying it.
+    */}
+    <button
+      class="sk-button sk-interactive"
+      data-variant="ghost"
+      type="button"
+      aria-controls="docs-cmdk"
+      aria-expanded="false"
+      aria-keyshortcuts="Meta+K Control+K"
+      data-sk-command-palette-open
+    >
+      <Fragment set:html={searchIcon} />
+      {t("notFound.searchHint")}
+      <kbd class="sk-kbd" data-sk-command-palette-hint aria-hidden="true">⌘K</kbd>
+    </button>
+  </div>
+</section>
+
+<style>
+  /* A route failure is still part of the library: familiar shell, one explicit recovery decision. */
+  .docs-not-found {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    padding-block: var(--space-section);
+  }
+
+  .docs-not-found__status {
+    margin: 0;
+    color: var(--color-text-tertiary);
+    font-family: var(--font-family-code);
+    font-size: clamp(
+      calc(var(--font-size-heading-lg) * 2),
+      14vw,
+      calc(var(--font-size-heading-lg) * 4)
+    );
+    font-variant-numeric: tabular-nums;
+    font-weight: var(--font-weight-heading);
+    letter-spacing: -0.08em;
+    line-height: 0.82;
+    user-select: none;
+  }
+
+  .docs-not-found__copy {
+    max-inline-size: 42rem;
+  }
+
+  .docs-not-found__copy h1 {
+    text-wrap: balance;
+  }
+
+  /*
+   * The failed path. `overflow-wrap: anywhere` because a URL is not made of words: a long one would
+   * otherwise push the page into a horizontal scroll on a phone, which is a second failure on top of
+   * the one being explained.
+   */
+  .docs-not-found__requested {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-xs);
+    align-items: baseline;
+    margin-block: var(--space-stack-md) 0;
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-body-sm);
+  }
+
+  .docs-not-found__path {
+    color: var(--color-text-secondary);
+    font-family: var(--font-family-code);
+    overflow-wrap: anywhere;
+  }
+
+  /* Empty until the script fills it, so it reserves nothing: the actions below sit where the eye
+     already is, and the list appears above them rather than pushing them down. */
+  .docs-not-found__suggestions {
+    margin-block-start: var(--space-stack-lg);
+    /* The rail's own width is the right measure for a list of page names; full-bleed link rows
+       across a 42rem column read as a table of contents nobody asked for. */
+    min-inline-size: min(100%, 22rem);
+  }
+
+  .docs-not-found__actions {
+    margin-block-start: var(--space-stack-lg);
+  }
+
+  @media (max-width: 40rem) {
+    .docs-not-found__status {
+      font-size: calc(var(--font-size-heading-lg) * 2.5);
+    }
+  }
+</style>

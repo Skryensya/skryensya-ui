@@ -167,7 +167,7 @@ A composition written as data: signatures, the options given to each, and their 
 once and rendered by both bindings, so it is simultaneously the example, the snippet, the thing an
 agent proposes and the thing the gates check. Written in signatures, never in parts, because
 selecting meaning is the author's job and expanding it into structure is the template's.
-_Avoid_: usage plan, spec, recipe (a recipe is a named usage tree, not a synonym)
+_Avoid_: usage plan, spec, recipe
 
 ## Native and enhanced
 

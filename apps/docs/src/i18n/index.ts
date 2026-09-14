@@ -127,13 +127,13 @@ const routeSegments: Record<string, Partial<Record<Locale, string>>> = {
   gradients: { es: "gradientes" },
   icons: { es: "iconos" },
   foundations: { es: "fundamentos" },
+  "release-notes": { es: "notas-de-version" },
   installation: { es: "instalacion" },
   prerequisites: { es: "prerrequisitos" },
   keyboard: { es: "teclado" },
   "first-component": { es: "primer-componente" },
   "automatic-mounting": { es: "montaje-automatico" },
   transparency: { es: "transparencias" },
-  recipes: { es: "recetas" },
 };
 
 /** The reverse table, built once, so a Spanish path can be read back to its English identity. */

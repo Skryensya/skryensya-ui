@@ -96,14 +96,16 @@ describe("reconciliation", () => {
 
 describe("the index is what discovery reads", () => {
   it("carries the reason to choose a signature, not its structure", () => {
+    // No shape assertion any more: `buildManifest` returns `CompiledIndex`, so `contracts` and
+    // `signatures` are already what they say they are. The two casts this test used to open with were
+    // the test re-deriving the artifact's shape, the same thing every consumer was doing.
     const { index } = buildManifest(OVERLAYS);
-    const entry = (index as { contracts: { id: string; signatures: unknown[] }[] }).contracts.find(
-      (c) => c.id === "button",
-    );
+    const entry = index.contracts.find((c) => c.id === "button");
 
-    const action = entry!.signatures.find(
-      (s) => (s as { id: string }).id === "Button.action",
-    ) as Record<string, unknown>;
+    const action = entry!.signatures.find((s) => s.id === "Button.action") as unknown as Record<
+      string,
+      unknown
+    >;
 
     expect(action.useWhen).toBeDefined();
     expect(action.avoidWhen).toBeDefined();

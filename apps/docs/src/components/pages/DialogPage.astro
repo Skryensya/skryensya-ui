@@ -64,19 +64,7 @@ await initComponents();`;
     { file: "components/dialog.css", probe: "sk-dialog", title: "Dialog" },
     { file: "patterns/dialog-vaul.css", probe: "data-sk-dialog-vaul", title: "Dialog Vaul" },
   ]}
-  tests={[
-    {
-      file: "packages/react/src/components/dialog.test.tsx",
-      tests: [
-        {
-          name: "closes through the platform's own form rather than a handler",
-          description: t("dialog.test1"),
-        },
-        { name: "renders the anatomy the stylesheet contracts against", description: t("dialog.test2") },
-        { name: "omits the footer form when there is nothing to put in it", description: t("dialog.test3") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/dialog.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("dialog.lede")} />

@@ -1,5 +1,6 @@
 import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
 import type { UsageTree } from "@skryensya/core/usage-tree";
+import { vanillaScriptPath } from "./vanilla-script";
 
 /*
  * A usage tree, turned into something a sandbox can RUN.
@@ -69,7 +70,7 @@ export function reactSandboxSource(tree: UsageTree): ReactSandbox {
  * The Vanilla entry: a whole document, because that is what the Vanilla binding is.
  *
  * There is no component to mount and no framework to hand it to. The markup IS the component, the
- * stylesheet paints it, and one call hydrates whatever in the page asked to be hydrated. A reader
+ * stylesheet paints it, and one script hydrates whatever in the page asked to be hydrated. A reader
  * who deletes the script tag sees exactly what this binding promises: everything that does not need
  * JavaScript still works.
  */
@@ -81,17 +82,10 @@ export function vanillaSandboxSource(tree: UsageTree, title: string): string {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${title}</title>
     <link rel="stylesheet" href="./skryensya.css" />
+    <script type="module" src=".${vanillaScriptPath}"></script>
   </head>
   <body>
 ${indent(emitMarkup(tree, { fillDefaults: false }), "    ")}
-
-    <script type="module">
-      // The two calls a no-build consumer makes: mount every authored [data-sk-*] root, then bind
-      // an icon set. Which set is the consumer\'s choice, which is why it is passed and not assumed.
-      import { initComponents, mountIcons, phosphorIcons } from "./skryensya-vanilla.js";
-      await initComponents();
-      mountIcons(document, phosphorIcons);
-    </script>
   </body>
 </html>
 `;

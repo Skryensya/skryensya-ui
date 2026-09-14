@@ -60,34 +60,7 @@ const styles = `@import "@skryensya/core/tokens.scss";
   description={t("qrCodePage.description")}
   badge={t("qrCodePage.betaBadge")}
   contractId="qr-code"
-  tests={[
-    {
-      file: "packages/core/src/qr-code.test.ts",
-      tests: [
-        {
-          name: "round-trips every encoding mode the contract promises",
-          description: t("qrCodePage.testRoundTrip"),
-        },
-        {
-          name: "still scans with a logo hole punched through the middle",
-          description: t("qrCodePage.testLogoScans"),
-        },
-        {
-          name: "draws the same symbol whatever shape the modules are",
-          description: t("qrCodePage.testShapes"),
-        },
-      ],
-    },
-    {
-      file: "packages/react/src/components/qr-code.test.tsx",
-      tests: [
-        {
-          name: "paints the same geometry the markup emitter would",
-          description: t("qrCodePage.testSameGeometry"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/core/src/qr-code.test.ts", "packages/react/src/components/qr-code.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("qrCodePage.lede")} />

@@ -1,9 +1,9 @@
-import { tabsContract, tabsParts, type TabsOptions, type TabsSize } from "@skryensya/core/tabs";
+import { tabsContract, tabsParts, type TabsOptions, type TabsSize, type TabsVariant } from "@skryensya/core/tabs";
 import { tabs } from "@skryensya/core/machines";
 import { normalizeProps, useMachine } from "@zag-js/react";
 import { useId, type ReactNode } from "react";
 
-const { size: sizeOption } = tabsContract.options;
+const { size: sizeOption, variant: variantOption } = tabsContract.options;
 
 export type TabsItem = {
   value: string;
@@ -26,6 +26,8 @@ export type TabsProps = TabsOptions & {
   /** Paint size for the trigger row. CSS-only, so it is not one of `TabsOptions`. The Zag machine
    * never sees it, it lands straight on `data-size`. */
   size?: TabsSize;
+  /** Which edge the strip hangs from. CSS-only like `size`: it lands straight on `data-variant`. */
+  variant?: TabsVariant;
 };
 
 export function Tabs({
@@ -34,6 +36,7 @@ export function Tabs({
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
   size = sizeOption.default,
+  variant = variantOption.default,
   ...options
 }: TabsProps) {
   const generatedId = useId();
@@ -48,6 +51,7 @@ export function Tabs({
       data-sk-tabs=""
       data-size={size}
       data-value={api.value}
+      data-variant={variant}
     >
       <div
         {...api.getListProps()}

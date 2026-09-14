@@ -1,8 +1,7 @@
 <script lang="ts">
   import { numberInput } from "@skryensya/core/machines";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
-  import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   /*
@@ -67,28 +66,26 @@
       ? { label, control, input, decrement, increment }
       : null;
 
-  $effect(() => {
-    if (!parts) return;
-    applyZagProps(root, api.getRootProps() as DomProps);
-    applyZagProps(parts.label, api.getLabelProps() as DomProps);
-    applyZagProps(parts.control, api.getControlProps() as DomProps);
-    applyZagProps(parts.input, api.getInputProps() as DomProps);
-    applyZagProps(parts.decrement, api.getDecrementTriggerProps() as DomProps);
-    applyZagProps(parts.increment, api.getIncrementTriggerProps() as DomProps);
-  });
+  const bindings: PartBinding[] = [
+    // Every `node()` is gated on the same `parts`, which is what keeps the all-or-nothing rule: an
+    // incomplete root binds nothing at all, not even its own attributes.
+    { part: "root", node: () => (parts ? root : null), props: () => api.getRootProps() },
+    { part: "label", node: () => parts?.label, props: () => api.getLabelProps() },
+    { part: "control", node: () => parts?.control, props: () => api.getControlProps() },
+    { part: "input", node: () => parts?.input, props: () => api.getInputProps(), events: true },
+    {
+      part: "decrement",
+      node: () => parts?.decrement,
+      props: () => api.getDecrementTriggerProps(),
+      events: true,
+    },
+    {
+      part: "increment",
+      node: () => parts?.increment,
+      props: () => api.getIncrementTriggerProps(),
+      events: true,
+    },
+  ];
 
-  const cleanups: Array<() => void> = [];
-  onMount(() => {
-    if (!parts) return;
-    cleanups.push(bindZagEvents(parts.input, () => api.getInputProps() as DomProps));
-    cleanups.push(
-      bindZagEvents(parts.decrement, () => api.getDecrementTriggerProps() as DomProps),
-    );
-    cleanups.push(
-      bindZagEvents(parts.increment, () => api.getIncrementTriggerProps() as DomProps),
-    );
-  });
-  onDestroy(() => {
-    for (const cleanup of cleanups) cleanup();
-  });
+  bindParts(bindings);
 </script>

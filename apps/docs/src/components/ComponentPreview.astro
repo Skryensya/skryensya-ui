@@ -36,8 +36,10 @@ import { buildPreviewFrameDocument } from "../lib/preview-frame";
 import { exampleComponentName } from "../lib/example-component-name";
 import { compileDemoScript } from "../lib/demo-script";
 import { getLocale, useTranslations } from "../i18n";
+import { playgroundUrl } from "../lib/navigation";
 import { previewHeight } from "../lib/preview-heights";
 import { slugify } from "../lib/document-index";
+import { treeAnchorId } from "../lib/tree-anchor";
 
 type CodeLanguage = "bash" | "css" | "html" | "ts" | "tsx";
 
@@ -121,8 +123,7 @@ interface Props {
    *
    * OFF by default. Desktop / Tablet / Mobile are a question any component can answer; this one
    * only earns its keep on layouts that actually change past the docs column. Navbar, Layout Grid,
-   * and the same class of wide chrome. Fullscreen never shows it: that page already IS the
-   * viewport this preset pretends to be.
+   * and the same class of wide chrome.
    */
   zoomedDesktop?: boolean;
   /**
@@ -211,6 +212,7 @@ const treeHtml = tree ? emitMarkup(tree, { fillDefaults: false }) : undefined;
  * decision for the CSS or the contract to settle, and it is worth settling.
  */
 const treeStageHtml = tree ? emitMarkup(tree) : undefined;
+
 /*
  * React arrives as up to TWO files: the component, and the module its collections were moved to.
  * `data` is what the second tab shows. A `<Menu>` whose items were serialized into the tag buried
@@ -231,12 +233,35 @@ const reactData = reactSource?.data;
  * Drawer (`Vaul.drawer`, patterns/vaul.css), never a third tab or binding among the Vanilla/React
  * source panels below. It has no live stage (a usage tree renders nothing) and no per-binding home
  * (both were emitted from it equally), so it sits with the card's other secondary actions
- * (Reload, Fullscreen) instead of competing for space with either source panel. Copyable as-is into
+ * (Reload, Open in the playground) instead of competing for space with either source panel. Copyable as-is into
  * `validate_ui` (see the MCP server instructions): the same shape, not a description of it.
  */
 const treeJson = tree ? JSON.stringify(tree, null, 2) : undefined;
 
 const vanillaCode = code ?? treeHtml ?? html;
+
+/*
+ * THE PLAYGROUND HANDOFF, prepared at build time and carried on the root.
+ *
+ * `vanillaCode` is the SAME source the panel below shows - `code` when the author overrode it, the
+ * emitted authored markup when there is a tree, the raw `html` otherwise. Handing over anything else
+ * would open an editor on code the reader was not just looking at.
+ *
+ * Not gated on having a tree. It was at first, on the reasoning that a raw-`html` preview has
+ * "nothing to hand over" - which was simply wrong: that markup IS its source, and it is exactly what
+ * `vanillaCode` already resolves for the panel. The gate is having source at all.
+ *
+ * AND having somewhere to send it. `playgroundUrl` is null where no playground is reachable (see its
+ * own note in `lib/navigation.ts`), and handing source to a link that 404s is the same broken item
+ * the rail used to carry, one menu deeper.
+ *
+ * Encoded as `Playground.tsx` decodes it: `encodeURIComponent` over the JSON. The two apps share no
+ * module, so this string is the whole interface between them.
+ */
+const playgroundHandoff =
+  vanillaCode && playgroundUrl
+    ? encodeURIComponent(JSON.stringify({ label: label ?? tree?.contract ?? "", vanilla: vanillaCode }))
+    : undefined;
 /*
  * The `react` slot carries the LIVE demo (an actual `@skryensya/react` component, `client:visible`);
  * the `react` string prop stays the source shown under it. Either alone still counts as "there is a
@@ -270,9 +295,7 @@ const encodedPreviewScript = compiledPreviewScript
   : "";
 /**
  * A STABLE id, not a random one: the FOUC inline script needs any unique target, and
- * "Ver en la documentación" hashes back to it. `/f/{page}/{n}` finds the card by counting
- * `[data-sk-component-preview]` in DOM order at click time (`openComponentPreviewFullscreen`), not
- * by this id and not by any number rendered into the card.
+ * "Ver en la documentación" hashes back to it.
  *
  * `Astro.locals` resets once per page render (unlike a module-level counter, which would keep
  * counting across every OTHER page built in the same process): slugging `label` and deduping
@@ -294,6 +317,20 @@ const previewId = ((): string => {
   }
   used.add(candidate);
   return candidate;
+})();
+/*
+ * A SECOND ADDRESS, derived from the tree rather than the label, so the Playground's "See the docs"
+ * can land on this exact demo (see `lib/tree-anchor.ts`). It sits on the header, not the root: the
+ * root's id is `previewId` above, which existing links already point at. Deduped like `previewId`,
+ * because a page may render the same tree twice and the first one is the one worth landing on.
+ */
+const treeAnchor = ((): string | undefined => {
+  if (!tree) return undefined;
+  const used = ((locals as { componentPreviewTreeAnchors?: Set<string> }).componentPreviewTreeAnchors ??= new Set());
+  const id = treeAnchorId(tree);
+  if (used.has(id)) return undefined;
+  used.add(id);
+  return id;
 })();
 const hasVanillaStage = previewHtml.length > 0;
 const frameDocument = hasVanillaStage
@@ -323,17 +360,9 @@ const reloadIcon = iconMarkup("refresh", { size: "sm" });
  * every OTHER collapsible code block on the site.
  */
 const sourceToggleIcon = iconMarkup("chevron-down", { size: "sm" });
-/*
- * `external-link`, a STABLE role, where this used to draw `screen-fullscreen` as geometry of its own.
- * The glyph was describing the wrong action: "Ver en pantalla completa" does not put this page into
- * fullscreen, it calls `window.open(…, "_blank")` (`openComponentPreviewFullscreen`) and launches the
- * demo alone in a new tab. Corner brackets say "expand in place"; a launch arrow says "this leaves
- * here", which is what actually happens. Being a stable role also puts it back in reach of the site's
- * icon-set switch, which skipped the bespoke one (`iconDataMarkup`'s own doc: `applyIconSet` ignores
- * unknown `data-icon` keys), so this control was the one glyph in the header that never changed set.
- */
-const launchIcon = iconMarkup("external-link", { size: "sm" });
 const contractIcon = iconMarkup("file", { size: "sm" });
+/* `code`: the Playground is where this demo stops being a specimen and becomes source you can run. */
+const playgroundIcon = iconMarkup("code", { size: "sm" });
 /*
  * Screen presets. The name is a stable ROLE, not a device drawing, which is why the accessible
  * name spells out the actual viewport: `screen-tablet` tells you the class of screen, `768 × 1024`
@@ -419,6 +448,7 @@ const stageStyle =
   data-sk-component-preview
   data-width={width}
   data-sk-component-preview-screen-local={screenScope === "local" ? "" : undefined}
+  data-sk-component-preview-playground={playgroundHandoff}
   data-sk-preview-source={previewSource}
   data-sk-component-preview-chrome={chrome ? undefined : "false"}
   id={previewId}
@@ -426,19 +456,13 @@ const stageStyle =
 >
   {
     chrome && (
-  <header class="sk-component-preview__header">
+  <header class="sk-component-preview__header" id={treeAnchor}>
     {
       /*
        * THE LABEL ALONE. The card used to open with its 1-based position on the page, which was only
-       * ever an implementation detail leaking into the chrome: nothing reads it (see the `previewN`
-       * note that used to sit above. Both the fullscreen opener and `/f/{page}/{n}` count DOM order
-       * at click time, never a rendered number), and a reader gets nothing from "this is the third
-       * demo" that the demo's own name does not already tell them better.
-       *
-       * It also poisoned the fullscreen page's title: `/f/…` sets `document.title` from this
-       * element's `textContent` (`pages/f/[...path].astro`), so the tab read "1Texto" rather than
-       * "Texto". Dropping the span fixes the header and that title in one move, because they were
-       * always the same string.
+       * ever an implementation detail leaking into the chrome: nothing read it, and a reader gets
+       * nothing from "this is the third demo" that the demo's own name does not already tell them
+       * better.
        */
     }
     <span class="sk-component-preview__title">{label}</span>
@@ -582,21 +606,44 @@ const stageStyle =
               <span class="sk-menu__item-label">{t("preview.reloadAction")}</span>
               <span class="sk-component-preview__menu-icon"><Fragment set:html={reloadIcon} /></span>
             </div>
-            <div
-              class="sk-menu__item sk-interactive"
-              data-sk-menu-item
-              data-value="fullscreen"
-              data-sk-component-preview-fullscreen
-            >
-              <span class="sk-menu__item-label">{t("preview.fullscreenAction")}</span>
-              <span class="sk-component-preview__menu-icon"><Fragment set:html={launchIcon} /></span>
-            </div>
+            {
+              /*
+               * OPEN IN THE PLAYGROUND. An `<a>`, not a `<div>` like its neighbours, because it is
+               * the only item here that genuinely NAVIGATES: Reload acts on this page,
+               * and View contract opens a drawer beside it.
+               *
+               * That also buys the graceful half of the handoff. The source travels in
+               * `sessionStorage` (the Playground's own contract), which is per-origin, and the two
+               * apps only share an origin when they sit behind one host. Where they do not, this is
+               * still a link to the Playground and the reader lands on its catalogue - a button
+               * would just have looked broken.
+               *
+               * Only when there is a tree: a preview authored from raw `html` has no emitted source
+               * to hand over, and an item that opens an empty editor is worse than no item.
+               */
+              playgroundHandoff && playgroundUrl && (
+                <a
+                  class="sk-menu__item sk-interactive"
+                  data-sk-menu-item
+                  data-value="playground"
+                  data-sk-component-preview-playground-open
+                  href={playgroundUrl}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <span class="sk-menu__item-label">{t("preview.playgroundAction")}</span>
+                  <span class="sk-component-preview__menu-icon">
+                    <Fragment set:html={playgroundIcon} />
+                  </span>
+                </a>
+              )
+            }
             {
               /*
                * `data-sk-vaul-open` is Vaul's OWN trigger attribute (`packages/vanilla/src/
                * components/vaul.ts`, `mountVaul`), not a ComponentPreview one: `initComponents()`
                * already runs it site-wide (see the docs' own mobile nav drawer, `Base.astro`), so
-               * this item needs no click handler of its own, unlike Reload/Fullscreen above.
+               * this item needs no click handler of its own, unlike Reload above.
                */
               treeJson && (
                 <div
@@ -611,14 +658,6 @@ const stageStyle =
                   </span>
                 </div>
               )
-            }
-            {/*
-              * No "Ver en la documentación" item here: on the docs page itself, a link back to the
-              * docs page would just point at the page a reader is already reading. It is added
-              * client-side ONLY by `/f/{page}/{n}` (`apps/docs/src/pages/f/[...path].astro`),
-              * which is the one context that has left the docs page behind and actually needs a way
-              * back to it.
-              */
             }
           </div>
         </div>
@@ -638,9 +677,7 @@ const stageStyle =
        * attribute's job here, and it never worked). `connectStageLifecycle`
        * (`@skryensya/vanilla/component-preview`) promotes it to `srcdoc` the same way it already
        * restores a released one: through the shared `IntersectionObserver`, once the stage is near
-       * view. `/f/{page}/{n}` (the fullscreen route) reads the `-doc` attribute straight off this
-       * page's own static HTML, never a live DOM, so a preview nobody has scrolled to yet still
-       * opens correctly there.
+       * view.
        */
       <iframe
         class="sk-component-preview__stage"

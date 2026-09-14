@@ -24,75 +24,7 @@ const styles = `@import "@skryensya/core/patterns/nav-list.css";`;
   title="Nav list"
   description={t("navListPage.description")}
   contractId="nav-list"
-  tests={[
-    {
-      file: "packages/react/src/components/nav-list.test.tsx",
-      tests: [
-        {
-          name: "renders a named navigation landmark with a labelled list of links",
-          description: t("navListPage.test1"),
-        },
-        {
-          name: "does not invent menu semantics for destination links",
-          description: t("navListPage.test2"),
-        },
-        {
-          name: "collapsible: renders a button with aria-expanded/aria-controls, open by default",
-          description: t("navListPage.test3"),
-        },
-        {
-          name: "collapsible: toggles aria-expanded and the list's hidden state on click",
-          description: t("navListPage.test4"),
-        },
-        {
-          name: "collapsible: Escape closes the open dropdown from anywhere inside it and returns focus to the trigger",
-          description: t("navListPage.test5"),
-        },
-        {
-          name: "nested: a link's own sub-destinations render inside the same <li>, independent of the parent group",
-          description: t("navListPage.test6"),
-        },
-        { name: "collapsible: honors defaultOpen=false", description: t("navListPage.test7") },
-      ],
-    },
-    {
-      file: "packages/vanilla/src/components/nav-list.test.ts",
-      tests: [
-        {
-          name: "generates an id and wires aria-controls to the list, on mount",
-          description: t("navListPage.test8"),
-        },
-        {
-          name: "preserves an authored id instead of generating a second one",
-          description: t("navListPage.test9"),
-        },
-        {
-          name: "toggles aria-expanded and the list's hidden state on click",
-          description: t("navListPage.test10"),
-        },
-        {
-          name: "starts hidden when authored with aria-expanded=false",
-          description: t("navListPage.test11"),
-        },
-        {
-          name: "Enter/Space toggle it. Native <button> behavior, nothing this enhancer has to wire itself",
-          description: t("navListPage.test12"),
-        },
-        {
-          name: "Escape closes the open dropdown from anywhere inside it and returns focus to the trigger",
-          description: t("navListPage.test13"),
-        },
-        {
-          name: "Escape does nothing when the dropdown is already closed",
-          description: t("navListPage.test14"),
-        },
-        {
-          name: "wires a NavListLink's own nested group independently of its parent group",
-          description: t("navListPage.test15"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/nav-list.test.tsx", "packages/vanilla/src/components/nav-list.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("navListPage.lede")} />

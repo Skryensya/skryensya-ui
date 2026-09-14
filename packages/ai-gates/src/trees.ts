@@ -1,5 +1,4 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
-import { recipes } from "@skryensya/recipes";
 
 /*
  * The canonical usage trees: one per signature, plus one per state that is materially different.
@@ -2715,28 +2714,40 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
+
+  /*
+   * CHART, as a series with an overlay. `line`/`area` are the only kinds that need an enhancer, and
+   * it only paints the overlay: the bars underneath are CSS over the values, so the fixture is
+   * `area` on purpose. The labels stay on, unlike a sparkline in a card, because this is the gate's
+   * only look at the label and value parts.
+   */
+  {
+    name: "chart/area",
+    enhanced: true,
+    tree: {
+      contract: "chart",
+      signature: "Chart",
+      options: {
+        kind: "area",
+        tone: "accent",
+        height: "sm",
+        format: "compact",
+        label: "Visitas por semana, últimas ocho semanas",
+      },
+      slots: {
+        items: [
+          { options: { value: 38200 }, slots: { label: "Sem 1" } },
+          { options: { value: 41500 }, slots: { label: "Sem 2" } },
+          { options: { value: 39800 }, slots: { label: "Sem 3" } },
+          { options: { value: 47200 }, slots: { label: "Sem 4" } },
+          { options: { value: 44100 }, slots: { label: "Sem 5" } },
+          { options: { value: 52600 }, slots: { label: "Sem 6" } },
+          { options: { value: 57300 }, slots: { label: "Sem 7" } },
+          { options: { value: 61400 }, slots: { label: "Sem 8" } },
+        ],
+      },
+    },
+  },
 ];
 
-/*
- * The recipes, as gate cases.
- *
- * DERIVED, not copied. A recipe is already a usage tree per state, and the gates already know how to
- * render, diff and photograph a usage tree, so writing them out again here would be the duplication
- * this whole system argues against, and the copy would be the one that goes stale.
- *
- * They earn their place because a recipe exercises what a single-signature fixture cannot: a FormField
- * inside a Stack inside a shell, a Toast inside its region, a Callout whose actions are two buttons.
- * The composition is where the two bindings have room to disagree, and until now nothing was looking.
- *
- * All marked `enhanced`: a recipe usually contains something machine-backed, and running the
- * enhancers over markup that has none is a no-op.
- */
-const recipeTrees: readonly Canonical[] = recipes.flatMap((recipe) =>
-  Object.entries(recipe.states).map(([state, tree]) => ({
-    name: `recipe/${recipe.id}/${state}`,
-    enhanced: true,
-    tree,
-  })),
-);
-
-export const canonicalTrees: readonly Canonical[] = [...signatureTrees, ...recipeTrees];
+export const canonicalTrees: readonly Canonical[] = signatureTrees;

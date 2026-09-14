@@ -33,6 +33,23 @@ function testsBlock(source: string): string | undefined {
   return undefined;
 }
 
+/** Every path a page names through `testFiles={[…]}`, deduped: the derived half of the tab. */
+const derivedFiles = [
+  ...new Set(
+    readdirSync(pagesDir)
+      .filter((f) => f.endsWith("Page.astro"))
+      .flatMap((page) => {
+        const source = readFileSync(join(pagesDir, page), "utf8");
+        const at = source.indexOf("testFiles={[");
+        if (at === -1) return [];
+        const close = source.indexOf("]", at);
+        return [...source.slice(at, close).matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((m) =>
+          m[1]!.replace(/\\(.)/g, "$1"),
+        );
+      }),
+  ),
+];
+
 const quoted: { page: string; file: string; name: string }[] = [];
 for (const page of readdirSync(pagesDir).filter((f) => f.endsWith("Page.astro"))) {
   const block = testsBlock(readFileSync(join(pagesDir, page), "utf8"));
@@ -55,9 +72,31 @@ function titlesIn(file: string): Set<string> {
   );
 }
 
-describe("the Tests tab's quoted titles", () => {
-  it("quotes enough rows to be worth checking", () => {
-    expect(quoted.length).toBeGreaterThan(500);
+/*
+ * THE TAB NOW HAS TWO SHAPES, and this file guards both.
+ *
+ *   `testFiles={[…]}`  derived: the page names paths and every `it()` in them becomes a row. There is
+ *                      nothing to keep in step, so the only thing to check is that the paths resolve.
+ *   `tests={[…]}`      quoted: still correct for a test file SHARED by several pages
+ *                      (`layout.test.tsx` covers Box, Stack, Grid and Wrapper), where deriving would
+ *                      show each of them the other three's tests. Those keep the verbatim key, and
+ *                      keep needing the drift check below.
+ */
+describe("the Tests tab", () => {
+  it("still has pages on each shape, so neither check is covering nothing", () => {
+    /*
+     * A floor, not a count. It used to read `> 500`, because every page quoted every title it showed;
+     * 67 pages have since moved to `testFiles` and the quoted rows are down to the shared-file pages
+     * alone. Asserting presence rather than a number is what keeps this from going stale again the
+     * next time a page moves.
+     */
+    expect(quoted.length, "no page quotes a title any more").toBeGreaterThan(0);
+    expect(derivedFiles.length, "no page names a test file").toBeGreaterThan(0);
+  });
+
+  it("names only test files that exist and declare titles", () => {
+    const broken = derivedFiles.filter((file) => titlesIn(file).size === 0);
+    expect(broken).toEqual([]);
   });
 
   const byFile = new Map<string, typeof quoted>();

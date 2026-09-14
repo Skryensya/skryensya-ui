@@ -20,18 +20,7 @@ const styles = `@import "@skryensya/core/components/process-list.css";
   title="ProcessList"
   description={t("processListPage.description")}
   contractId="process-list"
-  tests={[
-    {
-      file: "packages/react/src/components/process-list.test.tsx",
-      tests: [
-        { name: "renders a native ordered sequence of instructions", description: t("processListPage.test1") },
-        {
-          name: "keeps each title and arbitrary step content inside its item",
-          description: t("processListPage.test2"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/process-list.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("processListPage.lede")} />

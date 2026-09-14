@@ -2,6 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { SCHEMA_VERSION } from "@skryensya/ai-compiler/artifact";
 
 /*
  * The runtime reads ONE compiled pair and never walks a directory of authored files, so the two
@@ -13,16 +14,36 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  */
 let dir: string;
 
-function artifacts({ indexHash = "abc123", manifestHash = "abc123", write = true } = {}) {
+/*
+ * THE FIXTURE WRITES THE WHOLE ARTIFACT, and it did not use to.
+ *
+ * It wrote three top-level keys and `schemaVersion: "1"`, because it was shaped by this package's own
+ * hand-written `Manifest` type - which named those same three keys while the real artifact has five.
+ * The fixture and the type were wrong in exactly the same way, so neither could catch the other. Now
+ * the shape comes from the compiler and `asCompiledPair` refuses anything that is not it, which is
+ * what made this fixture's own gap visible.
+ */
+function artifacts({
+  indexHash = "abc123",
+  manifestHash = "abc123",
+  schemaVersion = SCHEMA_VERSION,
+  write = true,
+} = {}) {
   dir = mkdtempSync(join(tmpdir(), "sk-artifacts-"));
   if (write) {
     writeFileSync(
       join(dir, "ai-index.json"),
-      JSON.stringify({ contracts: [], schemaVersion: "1", sourceHash: indexHash }),
+      JSON.stringify({ contracts: [], schemaVersion, sourceHash: indexHash }),
     );
     writeFileSync(
       join(dir, "ai-manifest.json"),
-      JSON.stringify({ contracts: {}, schemaVersion: "1", sourceHash: manifestHash }),
+      JSON.stringify({
+        contracts: {},
+        changelogs: {},
+        releases: { working: "0.0.0", releases: [] },
+        schemaVersion,
+        sourceHash: manifestHash,
+      }),
     );
   }
   vi.stubEnv("SK_ARTIFACTS", dir);
@@ -48,7 +69,7 @@ describe("manifest", () => {
 
     // Every response carries this, so a report can be reproduced against the same artifact
     // rather than against "whatever was on disk".
-    expect(loaded.provenance).toEqual({ schemaVersion: "1", sourceHash: "deadbeef" });
+    expect(loaded.provenance).toEqual({ schemaVersion: SCHEMA_VERSION, sourceHash: "deadbeef" });
     expect(loaded.catalogueIndex.contracts).toEqual([]);
     expect(loaded.manifest.contracts).toEqual({});
   });

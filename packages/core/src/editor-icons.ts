@@ -2,7 +2,7 @@ import type { IconData } from "./icon.js";
 
 /*
  * Real vector geometry for the Editor toolbar, the same shape `apps/docs/src/icons.ts`'s own
- * `sparkle`/`screenFullscreen`/`play`/`pause` constants already use for a role too narrow to
+ * `sparkle`/`play`/`pause` constants already use for a role too narrow to
  * belong in `stableIconNames`: "IconSet is complete" (icon.ts's own comment) means adding a role
  * there is an obligation for every set author, and a rich-text toolbar's bold/italic/heading/list/
  * undo glyphs are PRODUCT concepts of this one component, not roles every consumer of the design

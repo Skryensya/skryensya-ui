@@ -33,8 +33,8 @@ type DemoProps = { lang?: "es" | "en" };
 
 /* ---------------------------------------------------------------------------------------------
  * 1. PERIOD SELECTOR: a Segmented control swaps which series Chart draws. The heading, the
- * control and the card's own identity stay constant; only the data changes, the same rule the
- * `metric-panel` recipe's four states follow for a chart's OWN content versus its frame.
+ * control and the card's own identity stay constant; only the data changes: the frame is not the
+ * chart's content, and swapping one must not redraw the other.
  * ------------------------------------------------------------------------------------------- */
 type Period = "7d" | "30d" | "90d";
 

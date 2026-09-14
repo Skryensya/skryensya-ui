@@ -30,18 +30,7 @@ root.addEventListener("sk:valuechange", (event) => {
   description={t("radioGroupPage.description")}
   contractId="radio-group"
   styleGroups={[{ file: "components/radio-group.css", probe: "sk-radio-group" }]}
-  tests={[
-    {
-      file: "packages/vanilla/src/components/tile-radio-group.svelte.test.ts",
-      tests: [
-        {
-          name: "is a radiogroup, honours the default, and keeps values mutually exclusive + emits",
-          description: t("radioGroupPage.test1"),
-        },
-        { name: "marks the selected item's data-state", description: t("radioGroupPage.test2") },
-      ],
-    },
-  ]}
+  testFiles={["packages/vanilla/src/components/tile-radio-group.svelte.test.ts"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("radioGroupPage.lede")} />

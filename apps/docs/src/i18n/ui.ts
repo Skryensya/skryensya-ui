@@ -128,8 +128,10 @@ import { gradientsMessages } from "./messages/gradients";
 import { indexMessages } from "./messages/index";
 import { navListMessages } from "./messages/nav-list";
 import { referenceMessages } from "./messages/reference";
+import { notFoundMessages } from "./messages/not-found";
 import { playgroundMessages } from "./messages/playground";
 import { densityMessages } from "./messages/density";
+import { releaseNotesMessages } from "./messages/release-notes";
 import { scrollbarMessages } from "./messages/scrollbar";
 import { stateLayerMessages } from "./messages/state-layer";
 import { templatesMessages } from "./messages/templates";
@@ -250,8 +252,10 @@ export const ui = {
     ...indexMessages.es,
     ...navListMessages.es,
     ...referenceMessages.es,
+    ...notFoundMessages.es,
     ...playgroundMessages.es,
     ...densityMessages.es,
+    ...releaseNotesMessages.es,
     ...scrollbarMessages.es,
     ...stateLayerMessages.es,
     ...templatesMessages.es,
@@ -369,8 +373,10 @@ export const ui = {
     ...indexMessages.en,
     ...navListMessages.en,
     ...referenceMessages.en,
+    ...notFoundMessages.en,
     ...playgroundMessages.en,
     ...densityMessages.en,
+    ...releaseNotesMessages.en,
     ...scrollbarMessages.en,
     ...stateLayerMessages.en,
     ...templatesMessages.en,

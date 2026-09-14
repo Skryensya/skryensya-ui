@@ -8,8 +8,7 @@ export const confirmationDialogCase: EvalCase = {
   },
   notes: [
     "Amplitud, no regresión: una confirmación destructiva completa (título, cuerpo, dos acciones en " +
-      "el footer que cierran vía `<form method=\"dialog\">` sin handler propio), el mismo patrón que " +
-      "resuelve `destructive-confirm` en contracts/recipes.",
+      "el footer que cierran vía `<form method=\"dialog\">` sin handler propio).",
   ],
   tree: {
     contract: "dialog",

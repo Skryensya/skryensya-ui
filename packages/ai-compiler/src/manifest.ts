@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import type { ComponentContract } from "@skryensya/core/contract";
 import { contracts } from "@skryensya/core/registry";
+import { SCHEMA_VERSION, type CompiledIndex, type CompiledManifest } from "./artifact.js";
 import { readOverlays, type ContractSemantics } from "./overlay.js";
 import { readChangelogs, type ContractChangelog, type ReleaseLedger } from "./changelog.js";
 
@@ -16,11 +17,11 @@ import { readChangelogs, type ContractChangelog, type ReleaseLedger } from "./ch
  * never satisfy "same input, same bytes", and without that the hash means nothing.
  */
 
-export const SCHEMA_VERSION = "2.0";
+export { SCHEMA_VERSION } from "./artifact.js";
 
 export type ManifestBuild = {
-  readonly index: unknown;
-  readonly manifest: unknown;
+  readonly index: CompiledIndex;
+  readonly manifest: CompiledManifest;
   readonly conflicts: readonly string[];
   readonly sourceHash: string;
 };
@@ -78,11 +79,24 @@ export function buildManifest(overlayDir: string, changelogDir?: string): Manife
     ),
   };
 
+  /*
+   * THE HASH IS TAKEN OVER THE BARE VALUES, then spliced into both halves.
+   *
+   * That order is the whole reason this used to leak. The builder returned `index` and `manifest`
+   * WITHOUT `sourceHash`, so what it handed back was not the artifact - it was the artifact minus one
+   * field - and `cli.ts` completed it on the way to disk. `unknown` was an accurate description of
+   * that, not laziness: there was no type that was true of the returned value.
+   *
+   * Completing it here makes the returned value the artifact, which is what lets it be typed at all.
+   * The bytes do not move: the hash is still computed before the splice, and `canonical()` sorts keys.
+   */
+  const sourceHash = hash([index, manifest]);
+
   return {
-    index,
-    manifest,
+    index: { ...index, sourceHash },
+    manifest: { ...manifest, sourceHash },
     conflicts: [...conflicts, ...changes.conflicts],
-    sourceHash: hash([index, manifest]),
+    sourceHash,
   };
 }
 

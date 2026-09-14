@@ -1,4 +1,4 @@
-import { selectParts, type SelectOption, type SelectOptions } from "@skryensya/core/select";
+import { selectParts, selectPositioning, type SelectOption, type SelectOptions } from "@skryensya/core/select";
 import { select } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
 import { useMemo, useId, type ReactNode, type RefObject } from "react";
@@ -71,7 +71,7 @@ export function Select({
     value: asValues(value),
     defaultValue: asValues(defaultValue),
     onValueChange,
-    positioning: { sameWidth: false },
+    positioning: selectPositioning,
   });
   const api = select.connect(service, normalizeProps);
 

@@ -27,19 +27,7 @@ const t = useTranslations(getLocale(Astro.url));
   title="ImageFrame"
   description={t("imageFrame.description")}
   contractId="image-frame"
-  tests={[
-    {
-      file: "packages/react/src/components/image-frame.test.tsx",
-      tests: [
-        { name: "maps geometry props to data attributes on the authored root", description: t("imageFrame.test1") },
-        {
-          name: "renders a media img from src/alt when children are omitted",
-          description: t("imageFrame.test2"),
-        },
-        { name: "keeps a caption beside the src media", description: t("imageFrame.test3") },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/image-frame.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("imageFrame.lede")} />

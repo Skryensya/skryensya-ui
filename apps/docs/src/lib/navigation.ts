@@ -16,6 +16,24 @@ export type NavigationItem = {
    */
   status?: ComponentStatus;
   /**
+   * This entry leaves the site, so it opens in a new tab.
+   *
+   * ONE ENTRY HAS THIS TODAY and it is the Playground (see `playgroundUrl`): since the split it is a
+   * different app on a different ORIGIN, and a same-tab navigation there drops the reader out of the
+   * docs with the back button as their only way home. Every other entry in every rail is a path on
+   * this site.
+   *
+   * It is a FLAG rather than a `startsWith("http")` test at each render site, because "absolute URL"
+   * and "leaves this site" are not the same fact: `PUBLIC_PLAYGROUND_URL` may well name the same
+   * host in a deployment that puts both apps behind one origin, and the sniff would then get it
+   * wrong in the quiet direction. The three places that render an item (the header nav in
+   * `Base.astro`, `SiteFooter.astro` and `DrawerNav.astro`) all read this.
+   *
+   * `rel="noopener noreferrer"` travels with it, and no separate "opens in a new tab" text: that is
+   * what every other external link in this site's prose already does.
+   */
+  external?: boolean;
+  /**
    * Short trailing text next to the label, the same word `nav-list.ts`'s own `trailing` slot uses
    * ("a count, a badge"). Not `status`: that field is a maturity axis nothing downstream renders
    * yet, and wiring it up now would light up every "wip" entry in the catalog at once, not just the
@@ -841,22 +859,29 @@ if (
  * Astro build, its own nginx container (`Dockerfile.playground`), its own port in development. So
  * this is the one entry in the rail that cannot be a bare path resolved against this site.
  *
- * The default is still `/playground`, because the deployment puts both behind one host and that is
- * the shape every other link here has. In development it points at the port `apps/playground`
- * actually serves, so the entry works the moment both are running instead of 404ing against a route
- * this app does not have. `PUBLIC_PLAYGROUND_URL` overrides both for any other topology.
+ * NULL WHEN THERE IS NO PLAYGROUND TO POINT AT, and everything that links into it is hidden rather
+ * than pointed somewhere hopeful. The old default was a bare `/playground`, on the reasoning that
+ * the deployment puts both apps behind one host. Nothing in this repo does that: `nginx.docs.conf`
+ * serves this app's own dist and has no `location /playground`, so the rail's Playground entry was a
+ * 404 on the deployed site (measured: `https://ui.skryensya.dev/playground` answers 404, and no
+ * playground host resolves at all). A rail entry that cannot work is worse than one that is not
+ * there: it reads as a broken site rather than as a feature that is not deployed yet.
+ *
+ * In development it still points at the port `apps/playground` actually serves, so the entry works
+ * the moment both are running. In every other topology `PUBLIC_PLAYGROUND_URL` names the origin, and
+ * setting it is what turns the entry back on: there is no second place to edit.
  */
-const playgroundUrl =
+/** Exported because a ComponentPreview links into it too, not only the global rail. */
+export const playgroundUrl: string | null =
   import.meta.env.PUBLIC_PLAYGROUND_URL ??
-  (import.meta.env.DEV ? "http://localhost:4174/playground" : "/playground");
+  (import.meta.env.DEV ? "http://localhost:4174/playground" : null);
 
 export const globalNavigation = [
   { href: "/", label: "nav.home" },
   { href: "/foundations", label: "nav.foundations" },
   { href: "/components", label: "nav.components" },
   { href: "/templates", label: "nav.templates" },
-  { href: "/recipes", label: "nav.recipes" },
-  { href: playgroundUrl, label: "nav.playground" },
+  ...(playgroundUrl ? [{ href: playgroundUrl, label: "nav.playground", external: true }] : []),
   { href: "/presets", label: "nav.presets" },
 ] satisfies readonly NavigationItem[];
 

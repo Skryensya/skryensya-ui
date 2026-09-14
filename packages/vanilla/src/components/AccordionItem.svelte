@@ -2,8 +2,7 @@
   import { tileParts } from "@skryensya/core/tile";
   import { collapsible } from "@skryensya/core/machines";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
-  import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, ensureClasses, type DomProps } from "../runtime/apply";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
 
   /*
    * ACCORDION ITEM, one `@zag-js/collapsible` per item, the same way React composes its accordion (see
@@ -49,39 +48,40 @@
     node.setAttribute("data-part", part);
   };
 
-  $effect(() => {
-    applyZagProps(el, api.getRootProps() as DomProps);
-    asTile(el, "item");
-    // `sk-interactive` goes on the trigger, not on the section (same fix as `ExpandableTile.svelte`):
-    // the section wraps trigger AND content, so the layer painted behind all of it tinted the revealed
-    // content on hover.
-    ensureClasses(el, tileParts.root, tileParts.expandable);
-    // Turns off `tile.css`'s anti-flash shim (`:not([data-sk-tile-ready])`): before this effect, the
-    // authored content has neither `hidden` nor `data-state`, so it was visible open for an instant even
-    // if the section starts closed. It is set once and never removed, so a panel settled open (which
-    // later loses `data-state` through Zag's own optimization) does not fall back under that shim.
-    el.setAttribute("data-sk-tile-ready", "");
-    el.dataset.value = value;
-    if (trigger) {
-      applyZagProps(trigger, api.getTriggerProps() as DomProps);
-      asTile(trigger, "trigger");
-      ensureClasses(trigger, tileParts.interactive, "sk-interactive");
-    }
-    if (content) {
-      applyZagProps(content, api.getContentProps() as DomProps);
-      asTile(content, "content");
-    }
-  });
+  const bindings: PartBinding[] = [
+    {
+      part: "root",
+      node: () => el,
+      props: () => api.getRootProps(),
+      // `sk-interactive` goes on the trigger, not on the section (same fix as `ExpandableTile.svelte`):
+      // the section wraps trigger AND content, so the layer painted behind all of it tinted the
+      // revealed content on hover.
+      classes: [tileParts.root, tileParts.expandable],
+      after: () => {
+        asTile(el, "item");
+        // Turns off `tile.css`'s anti-flash shim (`:not([data-sk-tile-ready])`): before this runs, the
+        // authored content has neither `hidden` nor `data-state`, so it was visible open for an instant
+        // even if the section starts closed. It is set once and never removed, so a panel settled open
+        // (which later loses `data-state` through Zag's own optimization) does not fall back under it.
+        el.setAttribute("data-sk-tile-ready", "");
+        el.dataset.value = value;
+      },
+    },
+    {
+      part: "trigger",
+      node: () => trigger,
+      props: () => api.getTriggerProps(),
+      events: true,
+      classes: [tileParts.interactive, "sk-interactive"],
+      after: (node) => asTile(node, "trigger"),
+    },
+    {
+      part: "content",
+      node: () => content,
+      props: () => api.getContentProps(),
+      after: (node) => asTile(node, "content"),
+    },
+  ];
 
-  const cleanups: Array<() => void> = [];
-  onMount(() => {
-    if (trigger) {
-      cleanups.push(
-        bindZagEvents(trigger, () => api.getTriggerProps() as DomProps),
-      );
-    }
-  });
-  onDestroy(() => {
-    for (const cleanup of cleanups) cleanup();
-  });
+  bindParts(bindings);
 </script>

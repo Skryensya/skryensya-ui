@@ -2,8 +2,7 @@
   import { slider } from "@skryensya/core/machines";
   import { clampSliderRange } from "@skryensya/core/slider";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
-  import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
 
   const root = getRoot();
@@ -72,24 +71,35 @@
 
   const api = $derived(slider.connect(service, normalizeProps));
 
-  $effect(() => {
-    applyZagProps(root, api.getRootProps() as DomProps);
-    applyZagProps(control, api.getControlProps() as DomProps);
-    applyZagProps(track, api.getTrackProps() as DomProps);
-    applyZagProps(fill, api.getRangeProps() as DomProps);
-    applyZagProps(lowThumb, api.getThumbProps({ index: 0, name: lowName }) as DomProps);
-    applyZagProps(highThumb, api.getThumbProps({ index: 1, name: highName }) as DomProps);
-    if (lowInput) applyZagProps(lowInput, api.getHiddenInputProps({ index: 0, name: lowName }) as DomProps);
-    if (highInput) applyZagProps(highInput, api.getHiddenInputProps({ index: 1, name: highName }) as DomProps);
-  });
+  const bindings: PartBinding[] = [
+    { part: "root", node: () => root, props: () => api.getRootProps() },
+    { part: "control", node: () => control, props: () => api.getControlProps(), events: true },
+    { part: "track", node: () => track, props: () => api.getTrackProps() },
+    { part: "range", node: () => fill, props: () => api.getRangeProps() },
+    {
+      part: "thumb-low",
+      node: () => lowThumb,
+      props: () => api.getThumbProps({ index: 0, name: lowName }),
+      events: true,
+    },
+    {
+      part: "thumb-high",
+      node: () => highThumb,
+      props: () => api.getThumbProps({ index: 1, name: highName }),
+      events: true,
+    },
+    // Both absent when the slider is not in a form.
+    {
+      part: "input-low",
+      node: () => lowInput,
+      props: () => api.getHiddenInputProps({ index: 0, name: lowName }),
+    },
+    {
+      part: "input-high",
+      node: () => highInput,
+      props: () => api.getHiddenInputProps({ index: 1, name: highName }),
+    },
+  ];
 
-  const cleanups: Array<() => void> = [];
-  onMount(() => {
-    cleanups.push(bindZagEvents(control, () => api.getControlProps() as DomProps));
-    cleanups.push(bindZagEvents(lowThumb, () => api.getThumbProps({ index: 0, name: lowName }) as DomProps));
-    cleanups.push(bindZagEvents(highThumb, () => api.getThumbProps({ index: 1, name: highName }) as DomProps));
-  });
-  onDestroy(() => {
-    for (const cleanup of cleanups) cleanup();
-  });
+  bindParts(bindings);
 </script>

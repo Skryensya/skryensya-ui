@@ -1,0 +1,141 @@
+---
+/*
+ * KIT RELEASE NOTES. Destination of the footer version badge.
+ *
+ * Distinct from `/components/changelog`, which documents the Changelog *component*. This page folds
+ * every contract changelog into the shared release ledger so a reader who taps `v0.0.1-dev` learns
+ * what that number means for the kit, not how to render an `<ol class="sk-changelog">`.
+ */
+import Base from "../../layouts/Base.astro";
+import "@skryensya/core/components/changelog.css";
+import { badgeParts } from "@skryensya/core/badge";
+import { changeKindTones, changelogParts } from "@skryensya/core/changelog";
+import { entryText, kitReleaseNotes } from "../../lib/contract-reference";
+import { getLocale, hasTranslation, localizePath, useTranslations, type UIKey } from "../../i18n";
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+const releases = kitReleaseNotes();
+const dateFormat = new Intl.DateTimeFormat(locale, { dateStyle: "long", timeZone: "UTC" });
+
+const surfaceLabel = (id: string) =>
+  id
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+
+const surfaceHref = (id: string) => {
+  const canonical = `/components/${id}`;
+  return hasTranslation(canonical, locale) ? localizePath(canonical, locale) : null;
+};
+---
+
+<Base title={t("releaseNotes.title")} description={t("releaseNotes.description")} documentLayout="grid">
+  <header class="docs-component-hero">
+    <h1>{t("releaseNotes.title")}</h1>
+  </header>
+  <p class="lede" set:html={t("releaseNotes.lede")} />
+
+  {
+    releases.length === 0 ? (
+      <p>{t("releaseNotes.empty")}</p>
+    ) : (
+      <ol class={changelogParts.root} reversed>
+        {releases.map((release) => (
+          <li class={changelogParts.release} data-unreleased={release.date === null ? "" : undefined}>
+            <span class={changelogParts.marker} aria-hidden="true" />
+            <span class={changelogParts.version}>{release.version}</span>
+            {release.date !== null ? (
+              <time class={changelogParts.date} datetime={release.date}>
+                {dateFormat.format(new Date(release.date))}
+              </time>
+            ) : (
+              <span class={changelogParts.date}>{t("releaseNotes.unreleased")}</span>
+            )}
+
+            {/*
+              ONE body cell under the version heading. The changelog contract's release grid is two
+              rows (heading + changes); stuffing N surface sections as direct children would fight
+              over `grid-row: 2`. The body owns that cell; each surface's entry list is ordinary flow.
+            */}
+            <div class="release-notes__body">
+              <p class="release-notes__count">
+                {t("releaseNotes.surfaceCount", { count: String(release.surfaces.length) })}
+              </p>
+
+              {release.surfaces.map((surface) => {
+                const name = surfaceLabel(surface.id);
+                const href = surfaceHref(surface.id);
+                return (
+                  <section class="release-notes__surface">
+                    <p class="release-notes__surface-title">
+                      {href ? (
+                        <a class="sk-link" href={href}>
+                          {name}
+                        </a>
+                      ) : (
+                        name
+                      )}
+                    </p>
+                    <ol class={changelogParts.entries}>
+                      {surface.entries.map((entry) => {
+                        const text = entryText(entry, locale);
+                        return (
+                          <li class={changelogParts.entry} data-kind={entry.kind}>
+                            <span
+                              class={`${changelogParts.kind} ${badgeParts.root}`}
+                              data-tone={changeKindTones[entry.kind]}
+                            >
+                              {t(`changelog.kind.${entry.kind}` as UIKey)}
+                            </span>
+                            {entry.target && <code class={changelogParts.target}>{entry.target}</code>}
+                            <span class={changelogParts.title}>{text.title}</span>
+                            <div class={changelogParts.text} set:html={text.body} />
+                          </li>
+                        );
+                      })}
+                    </ol>
+                  </section>
+                );
+              })}
+            </div>
+          </li>
+        ))}
+      </ol>
+    )
+  }
+</Base>
+
+<style>
+  .release-notes__body {
+    grid-column: 3;
+    grid-row: 2;
+    display: grid;
+    gap: var(--space-stack-md);
+    min-inline-size: 0;
+  }
+
+  .release-notes__count {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption);
+  }
+
+  .release-notes__surface {
+    display: grid;
+    gap: var(--space-stack-sm);
+  }
+
+  .release-notes__surface-title {
+    margin: 0;
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-label);
+  }
+
+  /* Nested under the body cell, so drop the release-grid placement the contract assumes. */
+  .release-notes__body :global(.sk-changelog__entries) {
+    grid-column: unset;
+    grid-row: unset;
+  }
+</style>

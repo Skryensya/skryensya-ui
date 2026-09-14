@@ -10,7 +10,7 @@
   import { colorPickerParts } from "@skryensya/core/color-picker";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
-  import { applyZagProps, bindZagEvents, ensureClasses, type DomProps } from "../runtime/apply";
+  import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
   import ColorPickerPanel from "./ColorPickerPanel.svelte";
 
@@ -67,42 +67,50 @@
   // untouched and Zag positions.
   const anchored = supportsAnchorPositioning();
   let unbindAnchor: (() => void) | undefined;
-  const positionerProps = (props: DomProps): DomProps =>
-    anchored ? (stripPositioningStyle(props) as DomProps) : props;
+  /** Generic, so the template spread below needs no cast either: `stripPositioningStyle` takes any object. */
+  const positionerProps = <T extends object>(props: T) => (anchored ? stripPositioningStyle(props) : props);
 
-  $effect(() => {
-    applyZagProps(root, api.getRootProps() as DomProps);
-    if (label) applyZagProps(label, api.getLabelProps() as DomProps);
-    if (hiddenInput) applyZagProps(hiddenInput, api.getHiddenInputProps() as DomProps);
-    applyZagProps(control, api.getControlProps() as DomProps);
-    ensureClasses(control, anchoredParts.anchor);
-    applyZagProps(trigger, api.getTriggerProps() as DomProps);
-    /*
-     * Zag ALWAYS sends an `aria-labelledby` pointing at the field's label, in addition to its own
-     * `aria-label` ("select color. current color is ..."). In the accessible name algorithm,
-     * `aria-labelledby` beats `aria-label`, so that `aria-labelledby` silenced the contract's
-     * `triggerLabel` (which ALWAYS has a value, by default), no matter what `aria-label` said.
-     * `triggerLabel` is this contract's naming mechanism: Zag's `aria-labelledby` is removed so the
-     * `aria-label` (authored or the default) is in charge.
-     */
-    trigger.removeAttribute("aria-labelledby");
-    if (authoredTriggerLabel !== null) trigger.setAttribute("aria-label", authoredTriggerLabel);
-  });
+  const bindings: PartBinding[] = [
+    { part: "root", node: () => root, props: () => api.getRootProps() },
+    { part: "label", node: () => label, props: () => api.getLabelProps() },
+    { part: "hiddenInput", node: () => hiddenInput, props: () => api.getHiddenInputProps() },
+    {
+      part: "control",
+      node: () => control,
+      props: () => api.getControlProps(),
+      classes: [anchoredParts.anchor],
+    },
+    {
+      part: "trigger",
+      node: () => trigger,
+      props: () => api.getTriggerProps(),
+      events: true,
+      after: (node) => {
+        /*
+         * Zag ALWAYS sends an `aria-labelledby` pointing at the field's label, in addition to its own
+         * `aria-label` ("select color. current color is ..."). In the accessible name algorithm,
+         * `aria-labelledby` beats `aria-label`, so that `aria-labelledby` silenced the contract's
+         * `triggerLabel` (which ALWAYS has a value, by default), no matter what `aria-label` said.
+         * `triggerLabel` is this contract's naming mechanism: Zag's `aria-labelledby` is removed so the
+         * `aria-label` (authored or the default) is in charge.
+         */
+        node.removeAttribute("aria-labelledby");
+        if (authoredTriggerLabel !== null) node.setAttribute("aria-label", authoredTriggerLabel);
+      },
+    },
+  ];
 
-  const cleanups: Array<() => void> = [];
+  bindParts(bindings);
+
   onMount(() => {
-    cleanups.push(bindZagEvents(trigger, () => api.getTriggerProps() as DomProps));
     if (anchored) unbindAnchor = bindAnchor(control, positioner, anchorNameFor(root.id));
   });
-  onDestroy(() => {
-    for (const cleanup of cleanups) cleanup();
-    unbindAnchor?.();
-  });
+  onDestroy(() => unbindAnchor?.());
 </script>
 
 <div
   bind:this={positioner}
-  {...positionerProps(api.getPositionerProps() as DomProps)}
+  {...positionerProps(api.getPositionerProps())}
   class="{colorPickerParts.positioner} {anchoredParts.positioner}"
 >
   <div {...api.getContentProps()} class={colorPickerParts.content}>

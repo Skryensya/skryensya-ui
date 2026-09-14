@@ -29,6 +29,7 @@ const styles = `@import "@skryensya/core/components/button.css";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
+
 ---
 
 <ComponentPageShell
@@ -39,22 +40,7 @@ const t = useTranslations(locale);
     { file: "components/time-field.css", probe: "sk-time-field", title: "TimeField" },
     { file: "components/button.css", probe: "sk-button", title: "Heredados de Button" },
   ]}
-  tests={[
-    {
-      file: "packages/vanilla/src/components/time-field.svelte.test.ts",
-      tests: [
-        {
-          name: "mounts once and names the group from the authored label",
-          description: t("timeFieldPage.test1"),
-        },
-        { name: "derives the segments from the locale, not from the markup", description: t("timeFieldPage.test2") },
-        {
-          name: "starts empty, with placeholders instead of a made-up time",
-          description: t("timeFieldPage.test3"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/vanilla/src/components/time-field.svelte.test.ts"]}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("timeFieldPage.lede")} />

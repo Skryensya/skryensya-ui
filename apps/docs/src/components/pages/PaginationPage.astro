@@ -22,21 +22,7 @@ paginationRange(5, 20);
   title="Pagination"
   description={t("paginationPage.description")}
   contractId="pagination"
-  tests={[
-    {
-      file: "packages/react/src/components/pagination.test.tsx",
-      tests: [
-        {
-          name: "marks the current page and disables prev/next at the bounds",
-          description: t("paginationPage.test1"),
-        },
-        {
-          name: "collapses far pages behind an ellipsis and reports clicks clamped to range",
-          description: t("paginationPage.test2"),
-        },
-      ],
-    },
-  ]}
+  testFiles={["packages/react/src/components/pagination.test.tsx"]}}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("paginationPage.lede")} />

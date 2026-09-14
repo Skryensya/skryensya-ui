@@ -1,0 +1,100 @@
+/*
+ * THE PLAYGROUND'S OWN SHELL.
+ *
+ * This app used to render inside the docs layout, which meant it also rendered the docs NAVBAR: a
+ * global nav whose every entry pointed at a route this origin does not serve, a command palette
+ * searching another site's index, a drawer, a footer and the ~40 component stylesheets behind all
+ * of it. A tool that lives at its own origin should not wear another site's navigation; what it
+ * needs is a strip saying where you are and how to get back, and every remaining pixel given to the
+ * editor.
+ *
+ * So this file is the whole shell: a page reset, one row of chrome, and a main that takes the rest.
+ * It replaces `apps/docs/src/styles/site.css` for this app - the rules below are the handful that
+ * file contributed here, and nothing else from it was ever used.
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+/*
+ * A COLUMN THE HEIGHT OF THE VIEWPORT, which is what makes the editor fill what is left without
+ * anyone doing arithmetic. The docs shell sized this page with
+ * `calc(100dvh - var(--docs-header-block-size))` against a token owned by the OTHER app's header -
+ * so this app's layout depended on the exact height of a bar it no longer renders. A flex column
+ * has no such number: the header is as tall as its own controls, `main` takes the remainder.
+ *
+ * `overflow: hidden` because this is a tool and not a document: the editor scrolls inside its own
+ * panes, and a page scrollbar here would only ever move the chrome off screen.
+ */
+body {
+  display: flex;
+  flex-direction: column;
+  block-size: 100dvh;
+  margin: 0;
+  overflow: hidden;
+  background: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-body);
+  line-height: var(--font-line-height-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * ONE ROW, as short as the controls inside it. Same reasoning as `.playground__bar` one layer down
+ * (see `pages/playground.astro`): every pixel of chrome is a pixel of code the reader cannot see,
+ * so the block padding is the floor of the scale and the height is the buttons' own.
+ */
+.playground-chrome {
+  display: flex;
+  gap: var(--space-inline-sm);
+  align-items: center;
+  padding: var(--space-inset-xs) var(--space-inset-md);
+  border-block-end: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-surface);
+}
+
+/* The way back, and the only navigation this app has: one link to the site that explains the kit. */
+.playground-chrome__brand {
+  display: inline-flex;
+  gap: var(--space-inline-xs);
+  align-items: center;
+  min-inline-size: 0;
+  font-weight: var(--font-weight-label);
+}
+
+/* Where you are. Not an `<h1>`: the tool's own heading is the component being edited, and it is
+   rendered by the island below (`.playground__title`). Two of them would be one too many. */
+.playground-chrome__name {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-body-sm);
+}
+
+.playground-chrome__actions {
+  display: flex;
+  gap: var(--space-inline-xs);
+  align-items: center;
+  margin-inline-start: auto;
+}
+
+/* Below the phone breakpoint the wordmark is the first thing worth losing: the back arrow still
+   says "out of here" on its own, and the room goes to the tool. */
+@media (width < 40rem) {
+  .playground-chrome__brand-text,
+  .playground-chrome__name {
+    display: none;
+  }
+}
+
+/*
+ * Both floors are load-bearing: without them a flex item refuses to shrink below its content, and
+ * the editor's own scrollers would push the shell into a scroll of its own instead.
+ */
+.playground-main {
+  display: flex;
+  flex: 1;
+  min-inline-size: 0;
+  min-block-size: 0;
+}

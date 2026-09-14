@@ -2,11 +2,11 @@ import { snippets } from "@skryensya/snippets";
 import { validateUsageTree } from "./validate.js";
 
 /*
- * Snippets, checked against the catalogue that has to keep them true  -  same reasoning as
- * `recipes.ts`'s own `checkRecipes`, one scope down: a snippet is a tree an agent is invited to
- * copy, so a stale one is worse than none at all. No loading/error-specific rules here, unlike
- * recipes: those exist because a RECIPE claims to be a whole screen's states, and a snippet claims
- * no such thing  -  it is one correct instance of a component or a small molecule, not a life cycle.
+ * Snippets, checked against the catalogue that has to keep them true: a snippet is a tree an agent
+ * is invited to copy, so a stale one is worse than none at all. It teaches a composition the
+ * contracts no longer accept, with the authority of having been published. No state-specific rules
+ * here: a snippet claims to be one correct instance of a component or a small molecule, not a life
+ * cycle.
  */
 
 /** Every problem across every snippet, as lines ready to print. Empty means all of them compose. */

@@ -69,6 +69,43 @@ function hasTextContent(node: ReactNode): boolean {
   return false;
 }
 
+/*
+ * PROVABLY nothing, which is a different question from `hasTextContent`'s.
+ *
+ * `children` is required by the contract, and `""` satisfies that requirement and TypeScript both
+ * while rendering a 34x44 control with no label, no icon and, on `ghost`, no paint whatsoever:
+ * invisible, focusable, clickable. It turned up on the break harness, where the `ghost` twin of the
+ * empty button simply was not on the page.
+ *
+ * The walk above asks "is there text anywhere in here", cannot see through a component boundary, and
+ * gets away with it because an icon-only button rendering a text component is a contradiction.
+ * Asking the same question of EVERY button would warn on `<Button><Label /></Button>`, which is
+ * fine markup. So this asks the narrower one that has no false positives: did the caller hand this
+ * button anything at all? An element counts as content whatever it turns out to render.
+ */
+function rendersNothing(node: ReactNode): boolean {
+  if (node === null || node === undefined || typeof node === "boolean") return true;
+  if (typeof node === "string") return node.trim().length === 0;
+  if (Array.isArray(node)) return node.every(rendersNothing);
+  return false;
+}
+
+/*
+ * A button with no content at all, named or not. `aria-label` does NOT excuse it: a name makes the
+ * control announceable, and this one still paints nothing for everybody else, so it is a hole in the
+ * page that happens to be reachable by keyboard. Separate from the accessible-name warning below
+ * because it is a separate failure with a separate fix - put something in it, or do not render it.
+ */
+function warnEmptyButton(pre: ReactNode, children: ReactNode, post: ReactNode): void {
+  if (!dev) return;
+  if (!rendersNothing(pre) || !rendersNothing(children) || !rendersNothing(post)) return;
+  console.error(
+    "<Button> renders nothing: children is empty and neither `pre` nor `post` was given. " +
+      "The control still takes its full size and stays focusable and clickable, and on " +
+      "`variant=\"ghost\"` it paints nothing at all. Give it a label, an icon, or do not render it.",
+  );
+}
+
 function warnMissingAccessibleName(
   iconOnly: boolean | undefined,
   present: readonly (string | undefined)[],
@@ -102,6 +139,7 @@ export function Button({
   post,
   ...props
 }: ButtonProps) {
+  warnEmptyButton(pre, children, post);
   warnMissingAccessibleName(iconOnly, [props["aria-label"], props["aria-labelledby"]], [pre, children, post]);
 
   const shared = {

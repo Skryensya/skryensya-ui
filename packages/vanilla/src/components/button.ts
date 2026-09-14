@@ -32,6 +32,21 @@ export function connectButton(root: HTMLElement): () => void {
     );
   }
 
+  /* NOTHING TO READ AND NOTHING TO SEE. A button with no text and no child element renders a full
+   * control that is focusable, clickable, and on `ghost` paints nothing at all: a hole in the page
+   * you can still tab to. The React binding warns on the same shape (`warnEmptyButton`); the
+   * enhancer throws, the way it already throws for a missing class, because at this point the markup
+   * is in the document and the author is the only one who can put something in it.
+   *
+   * `childElementCount` and not a text check alone: an icon-only button's content is an `<svg>` with
+   * no text in it, and that is content. This is the narrower question the empty case needs. */
+  if (root.childElementCount === 0 && (root.textContent ?? "").trim().length === 0) {
+    throw new Error(
+      `Button (${rootSelector}) renders nothing: no label, no icon, no slot content. It still takes ` +
+        "its full size and stays focusable and clickable. Give it a label, an icon, or do not render it.",
+    );
+  }
+
   /* An icon-only button is a square with no visible text, so its accessible name has to be authored:
    * aria-label, or aria-labelledby. The enhancer never invents one, it patches attributes, it does
    * not write content, so a missing name is the author's bug, and it is caught here rather than

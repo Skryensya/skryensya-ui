@@ -39,6 +39,28 @@ entries:
         <code>sk-button__label</code> part.
   - date: 2026-09-14
     kind: bugfix
+    es:
+      title: Un boton sin contenido se reporta en las dos capas
+      body: >-
+        <code>children</code> es obligatorio y una cadena vacia lo cumple, asi que
+        <code>&lt;Button&gt;{""}&lt;/Button&gt;</code> renderizaba un control de 34x44 enfocable y
+        clicable, y en <code>variant="ghost"</code> sin pintar nada: un hueco en la pagina al que se
+        llega con el teclado. React ahora avisa en desarrollo y el enhancer de vanilla lanza, la
+        misma division que ya tenian para el nombre accesible. La pregunta es la estrecha (no se paso
+        NADA), no la del recorrido de texto: un elemento cuenta como contenido rinda lo que rinda,
+        asi que <code>&lt;Button&gt;&lt;Label /&gt;&lt;/Button&gt;</code> no avisa.
+    en:
+      title: A button with no content is reported in both bindings
+      body: >-
+        <code>children</code> is required and an empty string satisfies it, so
+        <code>&lt;Button&gt;{""}&lt;/Button&gt;</code> rendered a 34x44 control that is focusable and
+        clickable, and on <code>variant="ghost"</code> painted nothing at all: a hole in the page you
+        can still tab to. React now warns in development and the vanilla enhancer throws, the same
+        split the two already had for the accessible name. The question asked is the narrow one (was
+        anything passed AT ALL), not the text walk: an element counts as content whatever it renders,
+        so <code>&lt;Button&gt;&lt;Label /&gt;&lt;/Button&gt;</code> does not warn.
+  - date: 2026-09-14
+    kind: bugfix
     target: disabled
     es:
       title: Un boton deshabilitado ya pinta como deshabilitado en todos los tonos

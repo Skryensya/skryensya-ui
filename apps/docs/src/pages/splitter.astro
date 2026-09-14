@@ -53,13 +53,27 @@ const columnHtml = `<!-- Table / Treegrid: redistributes between a PAIR of neigh
 </th>`;
 
 const keyboard = [
-  ["←", "One step (16px by default) toward the start edge."],
-  ["→", "One step toward the end edge."],
-  ["Shift + ←/→", "Coarse step (64px by default): the same key, four times farther."],
+  ["←", "A vertical splitter, one step (16px by default) toward the start edge."],
+  ["→", "A vertical splitter, one step toward the end edge."],
+  ["↑", "A horizontal splitter, one step up. Does nothing on a vertical one."],
+  ["↓", "A horizontal splitter, one step down. Does nothing on a vertical one."],
+  ["Shift + arrow", "Coarse step (64px by default): the same key, four times farther."],
   ["Home", "Jumps to the minimum of its travel."],
   ["End", "Jumps to the maximum of its travel."],
   ["Enter", "Resets to the default value. By convention, double-click does the same."],
 ];
+
+const stackedHtml = `<!-- Stacked panes: the same bar, turned ninety degrees -->
+<div
+  class="sk-splitter"
+  role="separator"
+  aria-orientation="horizontal"
+  aria-label="Resize the editor's height"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow="50"
+  tabindex="0"
+></div>`;
 ---
 
 <Base
@@ -122,6 +136,25 @@ const keyboard = [
   </p>
   <CodeBlock code={handleHtml} label="HTML · Sidebar" note="one value, CSS clamp" />
   <CodeBlock code={columnHtml} label="HTML · Table / Treegrid" note="pair of neighboring columns" />
+
+  <h2>Both axes</h2>
+  <p>
+    <code>aria-orientation</code> is not only an announcement: the stylesheet reads it too, so one
+    declaration decides which way the bar runs for a screen reader and for the paint alike.
+    <code>vertical</code> (the default, and every consumer in this kit today) is the upright rule
+    between two panes side by side: it fills its containing block's height, wears
+    <code>col-resize</code>, and moves on ←/→. <code>horizontal</code> is the rule between a pane
+    above and a pane below: full width, <code>row-resize</code>, and ↑/↓.
+  </p>
+  <p>
+    The behaviour follows from the same place. <code>resolveSplitterKey(event, { orientation })</code>
+    resolves the arrows for the axis it is given and returns <code>none</code> for the other pair,
+    which is the APG's own rule: an off-axis arrow against a splitter does nothing at all. The delta
+    it hands back is a signed number either way, never a point, because the consumer already knows
+    which measurement it is moving. The Playground's editor/preview split is the first consumer of
+    the horizontal form.
+  </p>
+  <CodeBlock code={stackedHtml} label="HTML · stacked panes" note="horizontal bar, ↑/↓ keys" />
 
   <h2>Live</h2>
   <p>

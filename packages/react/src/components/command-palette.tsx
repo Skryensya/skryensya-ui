@@ -1,5 +1,5 @@
 import { commandPaletteParts, commandPaletteOptionContext, filterCommandPaletteEntries, type CommandPaletteEntry, commandPaletteContract } from "@skryensya/core/command-palette";
-import { useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Icon } from "./icon.js";
 
 /* Derived, never restated: the default lives in the contract. */
@@ -35,6 +35,16 @@ export type CommandPaletteProps = {
   closeLabel?: string;
   open?: boolean;
   footer?: ReactNode;
+  /**
+   * What activating a result means, when it is not "go to its address".
+   *
+   * Without it, Enter and a click do what the Vanilla enhancer does and what an index of links
+   * implies: navigate to `entry.href`. With it, the host decides instead - the Playground's own
+   * palette selects an example inside a tool that is already running, where a navigation would
+   * throw away the sandbox and the reader's edits with it. The dialog closes either way, because
+   * the palette's job ends the moment a choice is made.
+   */
+  onSelect?: (entry: CommandPaletteEntry) => void;
 };
 
 export function CommandPalette({
@@ -44,10 +54,12 @@ export function CommandPalette({
   id,
   items: itemsProp = [],
   label,
+  onSelect,
   open = openOption.default,
   placeholder = placeholderOption.default,
 }: CommandPaletteProps) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const input = useRef<HTMLInputElement>(null);
   const list = useRef<HTMLUListElement>(null);
   const items = useMemo(
     () => (typeof itemsProp === "string" ? (JSON.parse(itemsProp) as CommandPaletteEntry[]) : itemsProp),
@@ -63,7 +75,76 @@ export function CommandPalette({
    * on open; the two only ever agreed by accident.
    */
   const [queried, setQueried] = useState(false);
+  /* Controlled, so a palette that is reopened starts empty the way the enhancer's `open()` does:
+   * clearing an uncontrolled field would mean writing to the DOM node behind React's back. */
+  const [query, setQuery] = useState("");
   const optionId = (i: number) => `${id}-option-${i}`;
+
+  const runQuery = (value: string) => {
+    const next = filterCommandPaletteEntries(items, value);
+    setQuery(value);
+    setResults(next);
+    setActive(next.length ? 0 : -1);
+    /* Whether anything was ASKED, which is a different question from whether anything was found:
+     * the empty message answers the first, `aria-expanded` the second. */
+    setQueried(value.trim() !== "");
+  };
+
+  /* The open-watcher below is bound once, for the life of the component, so it reaches the current
+   * filter through a ref: the closure it would otherwise capture holds the index as it was on the
+   * first render, and a palette whose index arrives later (the Playground's does: it is fetched)
+   * would reopen filtering against nothing. */
+  const runQueryRef = useRef(runQuery);
+  runQueryRef.current = runQuery;
+
+  /*
+   * ACTIVATION, which this binding simply did not have.
+   *
+   * The enhancer answers Enter and a click by going to the row's address; React rendered the same
+   * rows and did nothing with either, so the palette was a search field that could find a
+   * destination and never reach it. Both halves now do the same thing, and `onSelect` is the one
+   * seam a host can put itself into (see the prop's own note).
+   *
+   * The dialog closes first either way: a modal left open over a navigation is the sort of thing
+   * that survives a bfcache restore and greets the reader with a palette they already dismissed.
+   */
+  const choose = (entry: CommandPaletteEntry | undefined) => {
+    if (!entry) return;
+    dialog.current?.close();
+    if (onSelect) onSelect(entry);
+    else if (entry.href) window.location.assign(entry.href);
+  };
+
+  /*
+   * A PALETTE THAT OPENS TAKES FOCUS AND STARTS BLANK, matching `connectCommandPalette`'s `open()`.
+   *
+   * It watches the `open` ATTRIBUTE rather than the prop, because the host that opens a modal
+   * palette does it the way the platform does - `showModal()` on the node, which is the only call
+   * that lights the backdrop and traps focus, and which React's `open` prop cannot express (it
+   * renders a NON-modal dialog). So the component listens for the state the platform actually
+   * writes.
+   *
+   * Never on the first commit: a demo rendered `open` inside a docs preview would otherwise pull
+   * focus into an iframe on page load, scrolling the reader somewhere they never asked to go.
+   */
+  useEffect(() => {
+    const node = dialog.current;
+    if (!node) return;
+
+    let wasOpen = node.open;
+    const observer = new MutationObserver(() => {
+      if (node.open === wasOpen) return;
+      wasOpen = node.open;
+      if (!node.open) return;
+      runQueryRef.current("");
+      /* After the dialog is on screen: `showModal()` moves focus itself, so focusing the input in
+       * the same tick would be overwritten by the platform's own default. */
+      requestAnimationFrame(() => input.current?.focus());
+    });
+    observer.observe(node, { attributes: true, attributeFilter: ["open"] });
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /*
    * Feed the rows' natural height to the stylesheet as a length so `.sk-command-palette__list`
@@ -105,18 +186,37 @@ export function CommandPalette({
           aria-expanded={results.length > 0}
           autoComplete="off"
           className={commandPaletteParts.input}
-          onChange={(event) => {
-            const next = filterCommandPaletteEntries(items, event.target.value);
-            setResults(next);
-            setActive(next.length ? 0 : -1);
-            /* Whether anything was ASKED, which is a different question from whether anything was
-             * found: the empty message below answers the first, `aria-expanded` the second. */
-            setQueried(event.target.value.trim() !== "");
+          onChange={(event) => runQuery(event.target.value)}
+          /*
+           * The listbox is walked from the FIELD, which never gives up focus: that is what
+           * `aria-activedescendant` is for, and it is the same set of keys the enhancer binds.
+           * Enter activates whatever the pointer never touched; Escape is left to the platform,
+           * which closes a modal dialog without any help from here.
+           */
+          onKeyDown={(event) => {
+            if (event.key === "ArrowDown") {
+              event.preventDefault();
+              setActive((current) => Math.min(current + 1, results.length - 1));
+            } else if (event.key === "ArrowUp") {
+              event.preventDefault();
+              setActive((current) => Math.max(current - 1, 0));
+            } else if (event.key === "Home") {
+              event.preventDefault();
+              setActive(results.length ? 0 : -1);
+            } else if (event.key === "End") {
+              event.preventDefault();
+              setActive(results.length - 1);
+            } else if (event.key === "Enter") {
+              event.preventDefault();
+              if (active >= 0) choose(results[active]);
+            }
           }}
           placeholder={placeholder}
+          ref={input}
           role="combobox"
           spellCheck={false}
           type="text"
+          value={query}
         />
         <form method="dialog">
           <button
@@ -148,6 +248,10 @@ export function CommandPalette({
               data-href={entry.href}
               id={optionId(i)}
               key={entry.href}
+              /* A row is activated on the pointer too, the same as the enhancer's own list click.
+               * `onMouseDown` is not the handler: the field must keep focus, and a click that has
+               * already closed the dialog never needs the option to have been focused at all. */
+              onClick={() => choose(entry)}
               role="option"
             >
               <span className={commandPaletteParts.optionLabel}>{entry.label}</span>

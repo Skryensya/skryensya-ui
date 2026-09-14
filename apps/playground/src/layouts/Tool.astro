@@ -138,6 +138,14 @@ const PREPAINT = {
       </a>
       <p class="playground-chrome__name">{t("playground.title")}</p>
 
+      {/*
+        WHERE THE SEARCH LIVES, and it is empty here on purpose. The palette, its entries and the
+        ⌘K binding all belong to the island below (it is the one that knows the catalogue), so the
+        trigger is rendered there and portalled into this node - one control, in the chrome, with no
+        second copy of the shortcut or of what it opens. Nothing draws until the island mounts.
+      */}
+      <div class="playground-chrome__search" data-playground-chrome-search></div>
+
       <div class="playground-chrome__actions">
         {/*
           `hreflang` and `lang` per link: the destination is in that language and so is the label, so

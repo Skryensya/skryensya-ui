@@ -41,6 +41,30 @@ describe("resolveSplitterKey", () => {
     expect(resolveSplitterKey({ key: "Tab" })).toEqual({ kind: "none" });
     expect(resolveSplitterKey({ key: "a" })).toEqual({ kind: "none" });
   });
+
+  it("a horizontal splitter moves on Up/Down instead, with the same signs", () => {
+    const horizontal = { orientation: "horizontal" } as const;
+    expect(resolveSplitterKey({ key: "ArrowUp" }, horizontal)).toEqual({ kind: "delta", delta: -16 });
+    expect(resolveSplitterKey({ key: "ArrowDown" }, horizontal)).toEqual({ kind: "delta", delta: 16 });
+    expect(resolveSplitterKey({ key: "ArrowDown", shiftKey: true }, horizontal)).toEqual({
+      kind: "delta",
+      delta: 64,
+    });
+  });
+
+  it("ignores the off-axis arrows, which is the APG's own rule", () => {
+    expect(resolveSplitterKey({ key: "ArrowUp" })).toEqual({ kind: "none" });
+    expect(resolveSplitterKey({ key: "ArrowDown" })).toEqual({ kind: "none" });
+    expect(resolveSplitterKey({ key: "ArrowLeft" }, { orientation: "horizontal" })).toEqual({ kind: "none" });
+    expect(resolveSplitterKey({ key: "ArrowRight" }, { orientation: "horizontal" })).toEqual({ kind: "none" });
+  });
+
+  it("Home/End/Enter mean the same thing on either axis", () => {
+    const horizontal = { orientation: "horizontal" } as const;
+    expect(resolveSplitterKey({ key: "Home" }, horizontal)).toEqual({ kind: "home" });
+    expect(resolveSplitterKey({ key: "End" }, horizontal)).toEqual({ kind: "end" });
+    expect(resolveSplitterKey({ key: "Enter" }, horizontal)).toEqual({ kind: "reset" });
+  });
 });
 
 describe("hasCrossedDragThreshold", () => {

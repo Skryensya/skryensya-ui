@@ -1185,6 +1185,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-14",
+            "en": {
+              "body": "React drew the results and did nothing with them: the arrows did not move the active row, Enter opened nothing, and neither did a click. The Vanilla enhancer did all four, so one half of what shipped as a contract was a search field that could find a destination and never reach it. Both bindings now answer <code>ArrowUp</code>/<code>ArrowDown</code>/ <code>Home</code>/<code>End</code>, <code>Enter</code> and a click, and a palette opened with <code>showModal()</code> takes focus into the field and starts with an empty query, the same as Vanilla's <code>open()</code>. New <code>onSelect</code>: without it, activating a row navigates to its <code>href</code> as before; with it, the host decides (the playground selects an example without reloading the sandbox).",
+              "title": "The React binding is operable from the keyboard, and choosing a row now does something"
+            },
+            "es": {
+              "body": "React dibujaba los resultados y no hacía nada con ellos: las flechas no movían la fila activa, Enter no abría nada y un click tampoco. El enhancer Vanilla hacía las cuatro cosas, así que lo que se publicaba como un contrato era, de un lado, un campo de búsqueda que encontraba un destino y no podía llegar a él. Ahora los dos bindings responden a <code>ArrowUp</code>/<code>ArrowDown</code>/<code>Home</code>/<code>End</code>, a <code>Enter</code> y al click, y una paleta que se abre con <code>showModal()</code> toma el foco del campo y arranca con la búsqueda vacía, igual que <code>open()</code> en Vanilla. Nuevo <code>onSelect</code>: sin él, activar una fila navega a su <code>href</code> como siempre; con él, lo decide el host (el playground selecciona un ejemplo sin recargar el sandbox).",
+              "title": "El binding React ya se maneja con el teclado, y elegir una fila hace algo"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-09-12",
             "en": {
               "body": "The contract now publishes this component's <code>14</code> styling hooks. Nothing you wrote changes: the same hooks, under the same names, and the stylesheet was not touched. What is new is that the contract declares them, so the compiler fails when the stylesheet declares one the contract does not publish, or the contract promises one the stylesheet never declares. That second half is the one that matters: until now, re-declaring a hook that no longer existed was not an error, it was silence.",
@@ -25119,5 +25131,5 @@
     "working": "0.0.1"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "c07f52724c394e6a"
+  "sourceHash": "c66e6da5bc0ffc9f"
 }

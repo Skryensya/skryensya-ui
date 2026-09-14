@@ -59,6 +59,14 @@ COPY packages/vanilla ./packages/vanilla
 COPY contracts ./contracts
 COPY artifacts ./artifacts
 
+# WHERE THE PLAYGROUND LIVES, known HERE because Astro inlines `import.meta.env.PUBLIC_PLAYGROUND_URL`
+# into the static output (`src/lib/navigation.ts`). Unset in production, `playgroundUrl` is `null` and
+# the rail's Playground entry is not rendered at all, on purpose: an entry that 404s reads as a broken
+# site. Setting it here is what turns it back on.
+# Dokploy: Environment -> Build Time Arguments (`PUBLIC_PLAYGROUND_URL=https://…/playground`).
+ARG PUBLIC_PLAYGROUND_URL
+ENV PUBLIC_PLAYGROUND_URL=$PUBLIC_PLAYGROUND_URL
+
 # Core's built CSS is the only package build artifact docs needs at image build time. The docs app
 # imports workspace source for catalogues, demos and compilers; using Turbo here also runs compiler
 # contract publication checks, which can fail independently of whether the static docs app builds.

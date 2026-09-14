@@ -7,6 +7,38 @@ surface: "51ea2207a5ae7098"
 entries:
   - date: 2026-09-14
     kind: bugfix
+    es:
+      title: Un boton ya no se sale de su contenedor
+      body: >-
+        Una etiqueta larga arrastraba al boton fuera de la caja donde estaba: medido, una frase
+        traducida en una columna de 320px daba un boton de 815px con 495px fuera de la columna, y el
+        chevron de <code>post</code> caia 559px afuera. <code>white-space: nowrap</code> decide que
+        la etiqueta ocupa una linea, no que el control pueda ser mas ancho que su caja, y no habia
+        ninguna oportunidad de corte dentro de la cadena. Ahora el boton lleva
+        <code>max-inline-size: 100%</code>, <code>min-inline-size: 0</code> (para el caso de grid o
+        flex, donde la pista misma crecia hasta el minimo de contenido) y <code>overflow: clip</code>
+        con margen. <code>clip</code> y no <code>hidden</code> a proposito: <code>hidden</code>
+        recortaba tambien el <code>::after</code> que lleva el area de toque a 44px, asi que un boton
+        <code>xs</code> dejaba de cumplir el minimo sin que se notara. La etiqueta se corta en el
+        borde; todavia no hay elipsis, que necesitaria una parte <code>sk-button__label</code>
+        publicada.
+    en:
+      title: A button no longer escapes its container
+      body: >-
+        A long label used to carry the button out of the box it was put in: measured, a translated
+        sentence in a 320px column rendered an 815px button with 495px outside the column, and the
+        <code>post</code> chevron landed 559px out. <code>white-space: nowrap</code> decides that a
+        label is one line, not that the CONTROL may be wider than its box, and there was no wrap
+        opportunity anywhere in the string. The button now carries
+        <code>max-inline-size: 100%</code>, <code>min-inline-size: 0</code> (for the grid or flex
+        case, where the track itself grew to the content minimum) and <code>overflow: clip</code>
+        with a margin. <code>clip</code> and not <code>hidden</code> on purpose: <code>hidden</code>
+        clipped the <code>::after</code> that expands the hit area to 44px with it, so an
+        <code>xs</code> button silently stopped clearing the touch minimum. The label clips at the
+        edge; there is still no ellipsis, which would need a published
+        <code>sk-button__label</code> part.
+  - date: 2026-09-14
+    kind: bugfix
     target: disabled
     es:
       title: Un boton deshabilitado ya pinta como deshabilitado en todos los tonos

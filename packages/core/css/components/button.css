@@ -66,6 +66,51 @@
     min-block-size: var(--sk-button-height);
     /* auto for a normal button, a square's side for the icon-only shape, one hook, two shapes. */
     inline-size: var(--sk-button-width);
+    /*
+     * THE BUTTON NEVER LEAVES ITS CONTAINER, whatever the label turns out to be.
+     *
+     * `white-space: nowrap` above is the decision that a label is one line; it is not a decision
+     * that the CONTROL may be wider than the box it was put in, and until this pair existed that is
+     * exactly what happened. Measured on the break harness: a translated sentence in a 320px column
+     * rendered an 815px button, 495px of it outside the column, and the `post` chevron landed 559px
+     * out. Nothing wrapped and nothing truncated, because there was no wrap opportunity in the
+     * string at all. A label is `children`, so it comes from whoever calls this, and a site with a
+     * second locale gets strings nobody sized the button for.
+     *
+     * `clip`, NOT `hidden`, and that is the whole reason this is two properties instead of one.
+     * `hidden` clips the `::after` hit area below with it: measured, a point 8px outside an `xs`
+     * button stopped hitting the button at all, so a control that still LOOKED like it cleared the
+     * 44px touch minimum silently stopped doing it. `clip` plus a margin keeps the paint contained
+     * and the target intact (re-measured at 10px out, the widest the `xs` face needs).
+     *
+     * A PLAIN LENGTH, and it has to be: `overflow-clip-margin` rejects `calc()` outright in Chrome
+     * (comment-thread.css measured the same thing at its own connector - a literal and a plain-length
+     * var both compute, any `calc()` computes to 0), and every spacing token is itself a
+     * `round(calc(...))`. So this is an ALLOWANCE with headroom rather than a measurement: the
+     * `::after` reaches out by `(44 - 24) / 2 = 10px` at the smallest face, and 12 clears it.
+     *
+     * WHAT THIS DOES NOT DO is truncate with an ellipsis. `text-overflow` needs a block container,
+     * and the label is an anonymous flex item between the `pre` and `post` spans, so there is
+     * nothing to put it on; an ellipsis needs a published `sk-button__label` part, which is a
+     * contract change and not this.
+     */
+    max-inline-size: 100%;
+    /*
+     * AND THE CAP HAS TO BE REACHABLE. `max-inline-size: 100%` resolves against the containing
+     * block, and for a grid or flex ITEM that block is sized partly by the item's own automatic
+     * minimum (`min-width: auto`, the content-based minimum), which a nowrap label makes as wide as
+     * the whole string. So the track grew to 815px and the button dutifully filled 100% of it: the
+     * cap was satisfied and the column still blew out. Measured on the harness, this is the one case
+     * `max-inline-size` alone could not reach, a plain `display: grid` column, which is what a form
+     * footer or a stacked action column is.
+     *
+     * Re-measured across every case on the harness after adding it: the four sizes, the two-button
+     * row, the flex squeeze and all four welded pairs came out at byte-identical widths. It only
+     * ever releases a control that was going to overflow anyway.
+     */
+    min-inline-size: 0;
+    overflow: clip;
+    overflow-clip-margin: 12px;
     padding-block: 0;
     padding-inline: var(--sk-button-padding-x);
     border: var(--sk-button-border-width) solid var(--sk-button-border-color);

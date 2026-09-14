@@ -94,6 +94,41 @@ describe("Button", () => {
     expect(button.textContent).toBe(""); // the name is the label, not visible text
   });
 
+  it("warns in development when a button renders nothing at all", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    render(<Button>{""}</Button>);
+
+    expect(spy).toHaveBeenCalledWith(expect.stringMatching(/renders nothing/i));
+    spy.mockRestore();
+  });
+
+  /*
+   * PROVABLY empty, not "no text found". `hasTextContent` cannot see through a component boundary, so
+   * reusing it here would warn on perfectly good markup whose label lives inside a child component.
+   * These two are the boundary of the narrower question `rendersNothing` asks.
+   */
+  it("does not warn when the only content is an element, whatever it renders", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const Label = () => <>Guardar</>;
+    render(
+      <Button>
+        <Label />
+      </Button>,
+    );
+
+    expect(spy).not.toHaveBeenCalled();
+    spy.mockRestore();
+  });
+
+  it("warns when children is empty even though an aria-label names the button", () => {
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    // A name makes it announceable; it still paints nothing for everybody else.
+    render(<Button aria-label="Guardar">{""}</Button>);
+
+    expect(spy).toHaveBeenCalledWith(expect.stringMatching(/renders nothing/i));
+    spy.mockRestore();
+  });
+
   it("warns in development when an icon-only button has no accessible name", () => {
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
     render(

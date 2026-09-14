@@ -42,6 +42,23 @@ describe("Button Vanilla contracts", () => {
     expect(root.getAttribute("type")).toBe("button");
   });
 
+  it("refuses a button that renders nothing at all", () => {
+    const root = mount('<button class="sk-button sk-interactive" data-sk-button></button>');
+
+    /* Full size, focusable, clickable, and on `ghost` invisible. The React binding warns on the same
+     * shape; here the markup is already in the document, so the enhancer throws. */
+    expect(() => mountButton(root)).toThrow(/renders nothing/);
+  });
+
+  it("accepts a button whose only content is an icon element", () => {
+    const root = mount(
+      '<button class="sk-button sk-interactive" data-sk-button aria-label="Close"><svg class="sk-icon" data-icon="close"></svg></button>',
+    );
+
+    // An `<svg>` carries no text, and it is still content: the empty check asks for either.
+    expect(() => mountButton(root)).not.toThrow();
+  });
+
   it("refuses an icon-only button with no accessible name", () => {
     const root = mount(
       '<button class="sk-button sk-interactive" data-sk-button data-icon-only><svg class="sk-icon" data-icon="close"></svg></button>',

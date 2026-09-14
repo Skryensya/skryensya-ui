@@ -151,6 +151,18 @@
    * The tone rules below set only `--sk-button-accent`, the ONE colour an emphasis then decides how
    * to spend: as a fill (`solid`), as a wash (`soft`), or as ink (`ghost`). Adding a tone is one
    * declaration; adding an emphasis is one rule that spends the hook differently.
+   *
+   * EVERY RULE THAT SPENDS IT IS GUARDED `:not(:disabled):not([aria-disabled="true"])`, the same
+   * guard the `:active` squeeze above already carries and for a harder reason than taste. `:not()`
+   * and `:is()` take the specificity of their most specific argument, so a toned rule here lands at
+   * (0,3,0) and the disabled rule at the bottom of this file is a plain (0,2,0): tone was WINNING.
+   * Measured on the page, a `disabled` solid/danger painted the full danger red on white ink,
+   * pixel-identical to the enabled button beside it, and the only thing that said "unavailable" was
+   * the cursor. Guarding here rather than out-specifying there is what checkbox.css and switch.css
+   * already do (a disabled checked box is grey, not blue): unavailable outranks every appearance
+   * axis, and the guard makes that true by NOT MATCHING instead of by winning a specificity race a
+   * later edit could quietly lose again. `aria-pressed` is untouched by this: a disabled toggle
+   * still announces that it is on, it just stops painting its tone.
    */
 
   /* Neutral is the default, and it is the one tone whose ink is not its accent: an action with no
@@ -185,7 +197,7 @@
    * of those neutral, which is the whole bug this selector shape exists to prevent. The same reason
    * marquee's fade reads `:not([data-fade="none"])`.
    */
-  .sk-button:not([data-variant="soft"], [data-variant="ghost"], [data-variant="translucent"]):is(
+  .sk-button:not(:disabled):not([aria-disabled="true"]):not([data-variant="soft"], [data-variant="ghost"], [data-variant="translucent"]):is(
       [data-tone="accent"],
       [data-tone="danger"]
     ) {
@@ -207,7 +219,7 @@
     --sk-button-border-color: var(--color-border-subtle);
   }
 
-  .sk-button[data-variant="soft"]:is([data-tone="accent"], [data-tone="danger"]) {
+  .sk-button:not(:disabled):not([aria-disabled="true"])[data-variant="soft"]:is([data-tone="accent"], [data-tone="danger"]) {
     --sk-button-bg: color-mix(in oklab, var(--sk-button-accent) 14%, var(--color-bg-surface));
     --sk-button-fg: var(--sk-button-ink);
     --sk-button-border-color: color-mix(in oklab, var(--sk-button-accent) 28%, transparent);
@@ -232,7 +244,7 @@
     );
   }
 
-  .sk-button[data-variant="translucent"]:is([data-tone="accent"], [data-tone="danger"]) {
+  .sk-button:not(:disabled):not([aria-disabled="true"])[data-variant="translucent"]:is([data-tone="accent"], [data-tone="danger"]) {
     --sk-button-fg: var(--sk-button-ink);
   }
 
@@ -291,7 +303,7 @@
     --sk-button-wash: none;
   }
 
-  .sk-button[aria-pressed="true"]:is([data-tone="accent"], [data-tone="danger"]) {
+  .sk-button:not(:disabled):not([aria-disabled="true"])[aria-pressed="true"]:is([data-tone="accent"], [data-tone="danger"]) {
     --sk-button-bg: color-mix(in oklab, var(--sk-button-accent) 16%, var(--color-bg-surface));
     --sk-button-border-color: color-mix(in oklab, var(--sk-button-accent) 30%, transparent);
   }
@@ -301,7 +313,7 @@
    * solid accent button made it lighter than its unpressed self, which reads as released. Matched
    * by absence for the same reason the solid rules above are; `solid` is the default nobody writes.
    */
-  .sk-button:not([data-variant="soft"], [data-variant="ghost"], [data-variant="translucent"])[aria-pressed="true"]:is(
+  .sk-button:not(:disabled):not([aria-disabled="true"]):not([data-variant="soft"], [data-variant="ghost"], [data-variant="translucent"])[aria-pressed="true"]:is(
       [data-tone="accent"],
       [data-tone="danger"]
     ) {
@@ -312,7 +324,7 @@
 
   @media (forced-colors: active) {
     /* The system's own "this one is on" pair, so a toggle survives where every mix collapses. */
-    .sk-button[aria-pressed="true"] {
+    .sk-button:not(:disabled):not([aria-disabled="true"])[aria-pressed="true"] {
       --sk-button-bg: Highlight;
       --sk-button-fg: HighlightText;
       background: Highlight;
@@ -501,7 +513,7 @@
      * palette has one "this is the emphasized thing" pair (Highlight/HighlightText) and no separate
      * destructive colour, so accent and danger land on the same one rather than inventing a
      * difference the user's own palette does not have. */
-    .sk-button:not([data-variant="soft"], [data-variant="ghost"], [data-variant="translucent"]):is(
+    .sk-button:not(:disabled):not([aria-disabled="true"]):not([data-variant="soft"], [data-variant="ghost"], [data-variant="translucent"]):is(
         [data-tone="accent"],
         [data-tone="danger"]
       ) {
@@ -514,7 +526,7 @@
 
     /* A toned SOFT keeps its own surface here: the wash it paints in the base tier does not survive
      * forced colors, and without this it would be indistinguishable from a solid. */
-    .sk-button[data-variant="soft"]:is([data-tone="accent"], [data-tone="danger"]) {
+    .sk-button:not(:disabled):not([aria-disabled="true"])[data-variant="soft"]:is([data-tone="accent"], [data-tone="danger"]) {
       --sk-button-bg: Canvas;
       --sk-button-fg: CanvasText;
       --sk-button-border-color: Highlight;

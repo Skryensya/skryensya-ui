@@ -202,9 +202,9 @@
           ],
           "avoidWhen": [
             "la página entra entera en una pantalla: no hay de dónde volver",
-            "lo que se quiere es saltear el chrome de arriba para llegar al contenido: eso es SkipLink, va primero en el foco y usa un ancla real",
+            "lo que se quiere es saltar el chrome de arriba para llegar al contenido: eso es SkipLink, va primero en el foco y usa un ancla real",
             "el destino es una sección concreta y no el principio del scroller: eso es un enlace de ancla dentro del texto, o Toc",
-            "el foco tiene que viajar siempre al volver arriba: pasale `target` con el id de algo enfocable al inicio, o mirá SkipLink",
+            "el foco tiene que viajar siempre al volver arriba: pásale `target` con el id de algo enfocable al inicio, o mira SkipLink",
             "hay que restaurar la posición de scroll al navegar entre páginas: eso lo hace el router, no un botón"
           ],
           "host": "button",
@@ -548,7 +548,7 @@
           "alternatives": [],
           "avoidWhen": [
             "fuera de un Changelog: el riel y el orden los dibuja la lista, no el release suelto",
-            "querés marcar 'sin publicar' con una opción aparte; la ausencia de fecha ya lo dice, y dos campos que dicen lo mismo se pueden contradecir"
+            "quieres marcar 'sin publicar' con una opción aparte; la ausencia de fecha ya lo dice, y dos campos que dicen lo mismo se pueden contradecir"
           ],
           "host": "li",
           "id": "ChangelogRelease",
@@ -601,7 +601,7 @@
             "es UNA medición dentro de un rango conocido, no una serie; eso es Meter",
             "es el avance de una tarea; eso es Progress",
             "los valores hay que poder leerlos con precisión, compararlos fila por fila u ordenarlos; eso es una Table, y un gráfico de cinco barras es una tabla peor",
-            "la serie tiene decenas de entradas: las barras se vuelven líneas de un pixel y las etiquetas se pisan; agrupá los datos antes de dibujarlos"
+            "la serie tiene decenas de entradas: las barras se vuelven líneas de un pixel y las etiquetas se pisan; agrupa los datos antes de dibujarlos"
           ],
           "host": "figure",
           "id": "Chart",
@@ -1491,7 +1491,7 @@
           "useWhen": [
             "un bloque de contenido necesita decir de qué es ANTES de que lo leas: la pestaña es un rótulo, no un título más",
             "hay una colección de cosas del mismo tipo y conviene que cada una se lea como un objeto aparte",
-            "conviene que en reposo se lea como texto limpio: una carpeta nunca se ve hasta que la tocás"
+            "conviene que en reposo se lea como texto limpio: una carpeta nunca se ve hasta que la tocas"
           ]
         },
         {
@@ -1501,7 +1501,7 @@
           ],
           "avoidWhen": [
             "la carpeta hace algo en la página en vez de navegar; eso es un TileButton",
-            "adentro hay más de un destino; dos links anidados no existen, poné los links en el cuerpo de un Folder"
+            "adentro hay más de un destino; dos links anidados no existen, pon los links en el cuerpo de un Folder"
           ],
           "host": "a",
           "id": "FolderLink",
@@ -1574,7 +1574,7 @@
             "sólo hace falta separar una sección del resto con relleno o borde en medio de la página; eso es un Box",
             "es una barra de acciones pegada abajo de un panel o un diálogo (una fila de botones de confirmación); eso se compone con layout.Inline dentro del contenedor, no con Footer",
             "cada columna de enlaces iría sin nombre accesible: una fila de navigation sin nombre en la lista de landmarks es peor que no tenerla; cada columna es un NavList con aria-label o encabezado visible",
-            "el footer necesita más de dos niveles jerárquicos compitiendo (columnas, franja de newsletter, barra legal, sub-crédito, todo a la vez sin orden): separá lo que sobra en su propia región antes del footer"
+            "el footer necesita más de dos niveles jerárquicos compitiendo (columnas, franja de newsletter, barra legal, sub-crédito, todo a la vez sin orden): separa lo que sobra en su propia región antes del footer"
           ],
           "host": "footer",
           "id": "Footer",
@@ -1587,7 +1587,7 @@
           ],
           "parents": [],
           "useWhen": [
-            "es el cierre de la página: la banda final que dice \"la página termina acá\", con navegación secundaria, aviso legal o crédito",
+            "es el cierre de la página: la banda final que dice \"la página termina aquí\", con navegación secundaria, aviso legal o crédito",
             "el host es un <footer> a nivel de documento, y eso YA es el landmark contentinfo sin escribir role: nunca se pone role=\"contentinfo\" a mano",
             "hay como mucho UN <footer> de documento por página; un footer que pertenece de verdad a un <article> es válido pero deja de ser el landmark, y esa es una decisión de quien compone",
             "la anatomía es libre, igual que Hero: adentro se compone con layout.Grid para la fila de columnas, nav-list.NavList para cada columna (con su propio nombre accesible), typography.Text para el aviso legal, wrapper.Wrapper para sostener la medida de la página",
@@ -2115,7 +2115,7 @@
             "logos, nombres o palabras forman un ritmo visual continuo y no son destinos ni controles",
             "una columna breve de marcas o actualizaciones inertes necesita viajar hacia arriba o abajo dentro de una altura visible definida",
             "una vez iniciada por la persona, la franja conserva su ritmo al pasar el puntero: hover no revoca una decisión explícita",
-            "hace falta un control de Play/Pausa sí o sí: acá el botón no es opcional, es la única causa de movimiento que tiene"
+            "hace falta un control de Play/Pausa sí o sí: aquí el botón no es opcional, es la única causa de movimiento que tiene"
           ]
         },
         {
@@ -2948,7 +2948,7 @@
             "Sidebar"
           ],
           "useWhen": [
-            "es el medio que scrollea; acá adentro va la NavList"
+            "es el medio que scrollea; aquí adentro va la NavList"
           ]
         },
         {
@@ -2994,7 +2994,7 @@
           ],
           "avoidWhen": [
             "se espera que oculte la barra; angosta, nunca esconde",
-            "la lista tiene subniveles (grupos anidados, un árbol de archivos): no hay una fila por nivel que mostrar en un riel de íconos; angostá con SidebarResizeHandle en cambio",
+            "la lista tiene subniveles (grupos anidados, un árbol de archivos): no hay una fila por nivel que mostrar en un riel de íconos; angosta con SidebarResizeHandle en cambio",
             "algún destino no tiene ícono propio; un riel colapsado con huecos es peor que uno que no colapsa"
           ],
           "host": "button",
@@ -3050,8 +3050,8 @@
             "Link"
           ],
           "avoidWhen": [
-            "el destino no es enfocable: sin tabindex=\"-1\" el Tab siguiente vuelve al chrome que se quiso saltear",
-            "hay algo enfocable antes: entonces ese algo es el bloque que nadie puede saltear",
+            "el destino no es enfocable: sin tabindex=\"-1\" el Tab siguiente vuelve al chrome que se quiso saltar",
+            "hay algo enfocable antes: entonces ese algo es el bloque que nadie puede saltar",
             "el destino puede no estar en la página: un enlace a algo que no existe es una promesa que no se puede seguir",
             "es un enlace visible dentro del texto; eso es Link",
             "se quiere esconder texto que nadie va a enfocar: eso es la clase sk-visually-hidden"
@@ -3068,7 +3068,7 @@
           "parents": [],
           "useWhen": [
             "la página empieza con chrome que se repite en todas: marca, navegación global, buscador",
-            "hay que cumplir WCAG 2.4.1: quien navega con teclado necesita saltear ese bloque",
+            "hay que cumplir WCAG 2.4.1: quien navega con teclado necesita saltar ese bloque",
             "va primero en el documento y no se ve hasta que recibe el foco",
             "puede haber más de uno; el primero apunta al contenido, que es lo que casi todo el mundo vino a leer"
           ]
@@ -4325,5 +4325,5 @@
     }
   ],
   "schemaVersion": "2.0",
-  "sourceHash": "c66e6da5bc0ffc9f"
+  "sourceHash": "68ea1673948db002"
 }

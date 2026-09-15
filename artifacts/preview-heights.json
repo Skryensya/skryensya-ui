@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-13T10:47:49.380Z",
+  "generatedAt": "2026-09-15T13:00:17.095Z",
   "viewport": {
     "width": 1920,
     "height": 1000
@@ -9,7 +9,7 @@
   ],
   "pages": {
     "/anchoring": {
-      "html": 172
+      "html": 368
     },
     "/components/accordion": {
       "accordion-multiple": 325,
@@ -453,7 +453,7 @@
       "the-five-levels": 144
     },
     "/es/anclaje": {
-      "anclaje": 172
+      "html": 368
     },
     "/es/componentes/accordion": {
       "accordion-de-un-item": 141,

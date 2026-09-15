@@ -21,6 +21,12 @@
   --scale-font-weight-medium: 500;
   --scale-font-weight-semibold: 600;
   --scale-font-weight-bold: 700;
-  --scale-font-family-sans: Inter, system-ui, sans-serif;
+  /*
+   * The system's own face, shipped with the package (`css/fonts/hanken-grotesk.css`, which carries
+   * the reasoning and the licence). This line only NAMES it: an app that never imports that sheet
+   * falls straight through to the metric-matched fallback and then to `system-ui`, which is what
+   * this token resolved to on every surface back when it named a family nobody loaded.
+   */
+  --scale-font-family-sans: "Hanken Grotesk", "Hanken Grotesk Fallback", system-ui, sans-serif;
   --scale-font-family-mono: "JetBrains Mono", ui-monospace, monospace;
 }

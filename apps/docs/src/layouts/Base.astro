@@ -4,6 +4,9 @@
  * exact path this site tells consumers to take (ADR-19). If the map breaks, the build breaks;
  * the docs can't drift from the contract without failing.
  */
+/* The system's own face, before the tokens that name it: the sheet only declares @font-face, so it
+   has to be parsed by the time the first rule reads --scale-font-family-sans. */
+import "@skryensya/core/fonts/hanken-grotesk.css";
 import "@skryensya/core/tokens.scss"; // trae el state layer en base, no es un import aparte
 import "@skryensya/core/modes/hc.scss";
 import "@skryensya/core/dimensions/radius.scss";

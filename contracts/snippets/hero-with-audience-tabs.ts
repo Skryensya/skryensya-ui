@@ -55,7 +55,7 @@ export const heroWithAudienceTabsSnippet: Snippet = {
       "which is `Tabs`'s own `useWhen` (\"sections-in-one-region\"); `Segmented` is for a single " +
       "value that changes what ONE piece of content reads, the shape `hero-with-pricing-toggle`'s " +
       "own notes use it for instead.",
-    "`aria-label` (\"Elegí tu perfil\") on the `Tabs` host, not left implicit: this contract's own " +
+    "`aria-label` (\"Elige tu perfil\") on the `Tabs` host, not left implicit: this contract's own " +
       "a11y rule requires one whenever the tab list needs distinguishing from any other region on " +
       "the page, and a hero's own tab switcher has no visible page heading of its own to borrow one " +
       "from otherwise.",

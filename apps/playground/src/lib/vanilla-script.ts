@@ -17,10 +17,10 @@
 export const vanillaScriptPath = "/main.js";
 export const vanillaScriptSource = `import { initComponents } from "@skryensya/vanilla/auto";
 import { mountIcons } from "@skryensya/vanilla/icon";
-import { phosphorIcons } from "@skryensya/icons-phosphor";
+import { lucideIcons } from "@skryensya/icons-lucide";
 
 await initComponents();
-mountIcons(document, phosphorIcons);
+mountIcons(document, lucideIcons);
 `;
 
 /**
@@ -32,7 +32,7 @@ mountIcons(document, phosphorIcons);
  * that has to be explained away; it is the no-build install, written out.
  *
  * THREE SPECIFIERS, ONE FILE, because the sandbox is handed ONE bundle: `src/sandbox/entry.ts`
- * re-exports all three (`initComponents`, `mountIcons`, `phosphorIcons`) and
+ * re-exports all three (`initComponents`, `mountIcons`, `lucideIcons`) and
  * `build-sandbox-bundles.mjs` inlines it into a single module, for the reason that file gives (the
  * registry's dynamic imports would otherwise become sixty sibling chunks nothing can fetch). The
  * browser loads that module once and every specifier resolves into the same instance.
@@ -44,6 +44,6 @@ export const vanillaImportMap = {
     "@skryensya/vanilla/auto": `.${vanillaBundlePath}`,
     "@skryensya/vanilla/icon": `.${vanillaBundlePath}`,
     "@skryensya/vanilla/runtime": `.${vanillaBundlePath}`,
-    "@skryensya/icons-phosphor": `.${vanillaBundlePath}`,
+    "@skryensya/icons-lucide": `.${vanillaBundlePath}`,
   },
 } as const;

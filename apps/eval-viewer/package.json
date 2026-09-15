@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@skryensya/core": "workspace:*",
-    "@skryensya/icons-phosphor": "workspace:*",
+    "@skryensya/icons-lucide": "workspace:*",
     "@skryensya/react": "workspace:*",
     "@skryensya/vanilla": "workspace:*",
     "react": "^19.2.7",

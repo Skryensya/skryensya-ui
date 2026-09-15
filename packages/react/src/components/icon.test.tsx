@@ -43,7 +43,7 @@ describe("Icon React contracts", () => {
     expect(container.querySelector("svg")!.innerHTML).toContain("M12 3l2.2 5.8");
   });
 
-  it("falls back to the default set (Phosphor) with no provider bound", () => {
+  it("falls back to the default set (Lucide) with no provider bound", () => {
     // ADR-19 revisited: a stable name renders zero-config against the default set, the way
     // brands/default.scss ships in core. Opting out is still explicit, install another set and
     // wrap the tree in <IconSetProvider set={…} />.
@@ -52,8 +52,11 @@ describe("Icon React contracts", () => {
 
     // viewBox is exact (an attribute); the body is asserted by a distinctive substring because jsdom
     // re-serializes the self-closing <path/> into <path></path>, the same way the data= test does.
-    expect(svg.getAttribute("viewBox")).toBe(phosphorIcons.close.viewBox);
-    expect(svg.innerHTML).toContain("M205.66,194.34a8,8,0,0,1-11.32,11.32");
+    expect(svg.getAttribute("viewBox")).toBe(lucideIcons.close.viewBox);
+    expect(svg.innerHTML).toContain("M18 6 6 18");
+    // The set that used to be the default must now only ever arrive through a provider: this is the
+    // assertion that catches the default quietly sliding back.
+    expect(svg.innerHTML).not.toContain(phosphorIcons.close.body.slice(0, 24));
   });
 
   it("is decorative without a label, and content with one", () => {

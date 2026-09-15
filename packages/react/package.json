@@ -408,13 +408,13 @@
   },
   "dependencies": {
     "@skryensya/core": "workspace:*",
-    "@skryensya/icons-phosphor": "workspace:*",
+    "@skryensya/icons-lucide": "workspace:*",
     "@zag-js/react": "^1.43.3"
   },
   "peerDependencies": {
     "@skryensya/editor": "workspace:*",
-    "@skryensya/icons-lucide": "workspace:*",
     "@skryensya/icons-material": "workspace:*",
+    "@skryensya/icons-phosphor": "workspace:*",
     "react": ">=19",
     "react-dom": ">=19"
   },
@@ -422,17 +422,17 @@
     "@skryensya/editor": {
       "optional": true
     },
-    "@skryensya/icons-lucide": {
+    "@skryensya/icons-material": {
       "optional": true
     },
-    "@skryensya/icons-material": {
+    "@skryensya/icons-phosphor": {
       "optional": true
     }
   },
   "devDependencies": {
     "@skryensya/editor": "workspace:*",
-    "@skryensya/icons-lucide": "workspace:*",
     "@skryensya/icons-material": "workspace:*",
+    "@skryensya/icons-phosphor": "workspace:*",
     "@testing-library/react": "^16.3.2",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",

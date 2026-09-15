@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 import { mountComponentsWithIcons } from "@skryensya/vanilla/auto";
-import { phosphorIcons } from "@skryensya/icons-phosphor";
+import { lucideIcons } from "@skryensya/icons-lucide";
 import { renderTree, setPortalContainer } from "@skryensya/react/render-tree";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 /*
@@ -110,7 +110,7 @@ async function boot(): Promise<void> {
 
   if (data.binding === "vanilla") {
     stage.innerHTML = data.vanillaHtml ?? "";
-    await mountComponentsWithIcons(document, phosphorIcons);
+    await mountComponentsWithIcons(document, lucideIcons);
   } else if (data.tree) {
     setPortalContainer({ current: stage as HTMLElement });
     createRoot(stage).render(renderTree(data.tree));

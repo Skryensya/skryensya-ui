@@ -113,3 +113,28 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-14
+    kind: breaking
+    es:
+      title: El set por defecto de React pasa a ser Lucide
+      body: >-
+        <code>&lt;Icon name="…" /&gt;</code> sin <code>IconSetProvider</code> dibujaba con Phosphor,
+        que era el set que viajaba dentro de <code>@skryensya/react</code>. Ahora viaja Lucide, y
+        Phosphor pasa a ser opt-in como Material: se instala y se envuelve la app una vez. El cambio
+        no toca ningún call site ni ningún nombre estable, que es justo lo que el vocabulario
+        compra; lo que cambia es el dibujo que sale cuando nadie eligió. Motivo: todas las
+        superficies de este repo ya dibujaban Lucide, así que el default tiraba para el otro lado y
+        cada una lo tenía que desactivar envolviendo el árbol. Si quieres Phosphor:
+        <code>pnpm add @skryensya/icons-phosphor</code> y
+        <code>&lt;IconSetProvider set={phosphorIcons}&gt;</code>.
+    en:
+      title: React's default icon set is now Lucide
+      body: >-
+        <code>&lt;Icon name="…" /&gt;</code> with no <code>IconSetProvider</code> used to draw with
+        Phosphor, the set that travelled inside <code>@skryensya/react</code>. Lucide travels now,
+        and Phosphor becomes opt-in the way Material already was: install it and wrap the app once.
+        No call site and no stable name moves, which is exactly what the vocabulary buys; what
+        changes is the drawing you get when nobody chose. Why: every surface in this repo already
+        drew Lucide, so the default pulled the other way and each one had to talk it out of Phosphor
+        by wrapping its tree. For Phosphor: <code>pnpm add @skryensya/icons-phosphor</code> and
+        <code>&lt;IconSetProvider set={phosphorIcons}&gt;</code>.

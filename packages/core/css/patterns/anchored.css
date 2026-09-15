@@ -106,6 +106,28 @@
       justify-self: var(--sk-anchored-justify);
       align-self: var(--sk-anchored-align);
       margin: var(--sk-anchored-offset);
+      /*
+       * THE FLIP IS DECIDED ONCE, AGAINST THE ROOM THERE WAS AT THAT MOMENT, and it does not come
+       * back when the room does. Measured in Blink on 2026-09-15, on this site's own anchoring
+       * preview and in BOTH bindings: open a `block-end` box with 161px free below it (it goes
+       * below, correctly), shrink its containing block until only 3px are left (it flips above,
+       * correctly), then grow the containing block back to the original height while the box is
+       * still open. It stays above, with those 161px free under it again, and a `resize` event
+       * dispatched by hand does not re-run the selection either.
+       *
+       * WHAT THAT COSTS A CONSUMER: a box whose FIRST evaluation happens while its containing block
+       * is briefly smaller than final keeps the fallback it chose then, and reads as "it ignores the
+       * placement I asked for". The docs' own React previews hit exactly this: an auto-fit frame
+       * mounts at its content height (measured: 151px) and grows to its settled one (368px) four
+       * frames later, so anything evaluated in that window is stuck on the wrong side. It looked
+       * like a React-only bug for a while; it is a timing one, and the vanilla path only escapes it
+       * by rendering with the document instead of after it.
+       *
+       * Nothing here can fix that: re-running `position-try` is the engine's call, not a property.
+       * What a consumer can do is not open an anchored box inside a box that is still growing, or
+       * close and re-open it once the layout settles. `--sk-anchored-position-try: none` is the
+       * other way out, and it is what a specimen that must show the side it names already does.
+       */
       position-try-fallbacks: var(--sk-anchored-position-try);
       /* Something anchored whose anchor left the screen lies: it floats over something else and seems to describe it. */
       position-visibility: anchors-visible;

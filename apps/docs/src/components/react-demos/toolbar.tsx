@@ -1,8 +1,10 @@
 /*
  * Live React demo for /components/toolbar. The "nested Segmented" preview on this page ships no
  * `react` source (see toolbar.astro) so it stays vanilla-only; only the plain-buttons example gets
- * a live island. `bold`/`italic`/`link` aren't in the default Phosphor stable vocabulary, so this
- * demo links lucide the same way theme-toggle.tsx does.
+ * a live island. `bold`/`italic`/`link` are not in the STABLE vocabulary at all (no set-independent
+ * role names them), so this demo binds a set that draws them, the same way theme-toggle.tsx does.
+ * Lucide is the binding's own default now, and the provider below is still what makes that explicit
+ * rather than inherited: the cast under it is only sound while some set that draws these is bound.
  */
 import { IconSetProvider, Icon } from "@skryensya/react/icon";
 import type { StableIconName } from "@skryensya/core/icon";

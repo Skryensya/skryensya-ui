@@ -26,7 +26,7 @@ export const marqueeMessages = {
     "marquee.controlLabel": "La misma franja con control",
     "marquee.anyChildTitle": "Acepta cualquier hijo, uno por franja",
     "marquee.anyChildBody":
-      "El contrato no nombra qué va adentro: recibe nodos inertes y los repite. Eso no es permiso para mezclarlos. Una franja con un logotipo, un ícono y una línea suelta no se lee como <em>acepta cualquier cosa</em>, se lee como sin terminar. Cada ejemplo de acá lleva un solo tipo de hijo; la variedad está entre las franjas, nunca dentro de una.",
+      "El contrato no nombra qué va adentro: recibe nodos inertes y los repite. Eso no es permiso para mezclarlos. Una franja con un logotipo, un ícono y una línea suelta no se lee como <em>acepta cualquier cosa</em>, se lee como sin terminar. Cada ejemplo de aquí lleva un solo tipo de hijo; la variedad está entre las franjas, nunca dentro de una.",
     "marquee.badgeLabel": "Franja de badges de lanzamiento",
     "marquee.avatarLabel": "Franja de avatares del equipo",
     "marquee.verticalTitle": "También puede viajar en vertical",

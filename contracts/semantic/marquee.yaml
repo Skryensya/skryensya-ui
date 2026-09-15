@@ -6,7 +6,7 @@ Marquee:
     - "logos, nombres o palabras forman un ritmo visual continuo y no son destinos ni controles"
     - "una columna breve de marcas o actualizaciones inertes necesita viajar hacia arriba o abajo dentro de una altura visible definida"
     - "una vez iniciada por la persona, la franja conserva su ritmo al pasar el puntero: hover no revoca una decisión explícita"
-    - "hace falta un control de Play/Pausa sí o sí: acá el botón no es opcional, es la única causa de movimiento que tiene"
+    - "hace falta un control de Play/Pausa sí o sí: aquí el botón no es opcional, es la única causa de movimiento que tiene"
   avoidWhen:
     - "el contenido tiene enlaces, botones o cualquier parada de foco; duplicarlos crea controles repetidos y eso es Carousel o una lista"
     - "cada ítem importa por separado o se tiene que comparar; el movimiento baja su legibilidad"

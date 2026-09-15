@@ -19,17 +19,17 @@ export const megamenuMessages = {
     "megamenuPage.testVanilla3": "Un click en el MISMO trigger lo cierra. Un toggle.",
     "megamenuPage.testVanilla4":
       "Un click en un trigger DISTINTO cambia el contenido del panel compartido, de forma excluyente.",
-    "megamenuPage.testVanilla5": "Abre por intención de hover recién cuando pasa su demora, no al instante.",
+    "megamenuPage.testVanilla5": "Abre por intención de hover solo cuando pasa su demora, no al instante.",
     "megamenuPage.testVanilla6": "Sacar el puntero antes de que pase la demora cancela la apertura por hover.",
     "megamenuPage.testVanilla7":
-      "Cierra por intención de hover recién cuando pasa su propia demora, una vez que el puntero deja el trigger Y el panel.",
+      "Cierra por intención de hover solo cuando pasa su propia demora, una vez que el puntero deja el trigger Y el panel.",
     "megamenuPage.testVanilla8": "Volver a entrar al panel compartido cancela su cierre pendiente.",
     "megamenuPage.testVanilla9": "Escape cierra el panel abierto y devuelve el foco a su trigger.",
     "megamenuPage.testVanilla10": "El foco saliendo de toda la barra cierra el panel abierto.",
     "megamenuPage.testVanilla11":
       "El foco moviéndose de un trigger a su propio panel (portado afuera) NO lo cierra.",
     "megamenuPage.testVanilla12":
-      "Pasar el puntero por un enlace con preview cambia la imagen, revirtiendo recién al dejar todos los enlaces con preview.",
+      "Pasar el puntero por un enlace con preview cambia la imagen, revirtiendo solo al dejar todos los enlaces con preview.",
 
     "megamenuPage.testReact1":
       "Renderiza un solo panel compartido, dimensionado por una regla oculta con las columnas de cada trigger.",
@@ -38,17 +38,17 @@ export const megamenuMessages = {
     "megamenuPage.testReact3": "Un click en el MISMO trigger lo cierra. Un toggle.",
     "megamenuPage.testReact4":
       "Un click en un trigger DISTINTO cambia el contenido del panel compartido, de forma excluyente.",
-    "megamenuPage.testReact5": "Abre por intención de hover recién cuando pasa su demora, no al instante.",
+    "megamenuPage.testReact5": "Abre por intención de hover solo cuando pasa su demora, no al instante.",
     "megamenuPage.testReact6": "Sacar el puntero antes de que pase la demora cancela la apertura por hover.",
     "megamenuPage.testReact7":
-      "Cierra por intención de hover recién cuando pasa su propia demora, una vez que el puntero deja el trigger Y el panel.",
+      "Cierra por intención de hover solo cuando pasa su propia demora, una vez que el puntero deja el trigger Y el panel.",
     "megamenuPage.testReact8": "Volver a entrar al panel compartido cancela su cierre pendiente.",
     "megamenuPage.testReact9": "Escape cierra el panel abierto y devuelve el foco a su trigger.",
     "megamenuPage.testReact10": "El foco saliendo de toda la barra cierra el panel abierto.",
     "megamenuPage.testReact11":
       "El foco moviéndose de un trigger a su propio panel (portado afuera) NO lo cierra.",
     "megamenuPage.testReact12":
-      "Pasar el puntero por un enlace con preview cambia la imagen, revirtiendo recién al dejar todos los enlaces con preview.",
+      "Pasar el puntero por un enlace con preview cambia la imagen, revirtiendo solo al dejar todos los enlaces con preview.",
     "demo.megamenu.label": "Navegación principal",
     "demo.megamenu.trigger1": "Producto",
     "demo.megamenu.trigger2": "Recursos",

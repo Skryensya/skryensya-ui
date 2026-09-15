@@ -1,7 +1,7 @@
 # Qué cambió en qr-code, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
 #
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
-# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
+# que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
 surface: "7a3a1136a6a287a7"
 entries:

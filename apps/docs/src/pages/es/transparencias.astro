@@ -164,14 +164,14 @@ const manualReduction = `.legacy-glass {
 
   <h2>Instalar</h2>
   <p>
-    El patrón es opt-in. Importá primero los tokens y los estilos del componente que querés pintar;
+    El patrón es opt-in. Importa primero los tokens y los estilos del componente que quieres pintar;
     <code>transparency.css</code> trae la clase componible y su política de accesibilidad.
   </p>
   <CodeBlock code={install} label="CSS" />
 
   <h2>Una clase, tres intensidades</h2>
   <p>
-    Agregá <code>sk-translucent</code> al mismo nodo que ya pinta la superficie. Sin
+    Agrega <code>sk-translucent</code> al mismo nodo que ya pinta la superficie. Sin
     <code>data-strength</code>, el valor es <code>md</code>. La intensidad describe cuánto se percibe el
     efecto: <code>lg</code> deja ver más backdrop y lo desenfoca más fuerte.
   </p>
@@ -219,7 +219,7 @@ const manualReduction = `.legacy-glass {
 
   <h3>Navbar: persistente y discreto</h3>
   <p>
-    Usá <code>sm</code>: la navegación se queda estable mientras el contenido pasa por detrás.
+    Usa <code>sm</code>: la navegación se queda estable mientras el contenido pasa por detrás.
   </p>
   <CodeBlock code={navbarReact} label="React · Navbar" lang="tsx" />
 
@@ -233,7 +233,7 @@ const manualReduction = `.legacy-glass {
   <h3>Dialog: el panel y el backdrop son cosas distintas</h3>
   <p>
     La clase pinta el panel. El <code>::backdrop</code> sigue siendo de Dialog, y se vuelve opaco con la
-    transparencia reducida. Para un modal, quedate en <code>sm</code>: lo que tiene que dominar es la tarea,
+    transparencia reducida. Para un modal, quédate en <code>sm</code>: lo que tiene que dominar es la tarea,
     no el fondo.
   </p>
   <CodeBlock code={dialogHtml} label="HTML · Dialog" lang="html" />
@@ -241,8 +241,8 @@ const manualReduction = `.legacy-glass {
   <h2>Personalizar sin romper el fallback</h2>
   <p>
     <code>--sk-translucent-surface</code> es la superficie opaca real. Los otros tres hooks solo afectan a la
-    mejora translúcida. Cambiar el alpha nunca debería ser la forma de arreglar el contraste: primero elegí
-    una superficie opaca correcta, y validá texto y bordes contra esa.
+    mejora translúcida. Cambiar el alpha nunca debería ser la forma de arreglar el contraste: primero elige
+    una superficie opaca correcta, y valida texto y bordes contra esa.
   </p>
   <CodeBlock code={customize} label="CSS · hooks" />
 
@@ -250,14 +250,14 @@ const manualReduction = `.legacy-glass {
   <ul>
     <li>Sobre un canvas plano: no hay contexto útil que revelar.</li>
     <li>En tablas, formularios largos o UI densa: el backdrop compite con la lectura.</li>
-    <li>Como única separación entre dos regiones: conservá el borde, el espacio o la elevación.</li>
+    <li>Como única separación entre dos regiones: conserva el borde, el espacio o la elevación.</li>
     <li>Aplicando <code>opacity</code> al contenedor: eso vuelve translúcido también el contenido.</li>
     <li>Sobre la capa de estado: ese alpha comunica interacción, no es una superficie de vidrio.</li>
   </ul>
 
   <h2>Superficies heredadas</h2>
   <p>
-    Si no podés adoptar <code>sk-translucent</code>, escribí la reducción a mano. Esta forma sirve para
+    Si no puedes adoptar <code>sk-translucent</code>, escribe la reducción a mano. Esta forma sirve para
     código viejo, pero la línea base queda transparente en navegadores sin soporte; para código nuevo, la
     clase del sistema es la más segura.
   </p>

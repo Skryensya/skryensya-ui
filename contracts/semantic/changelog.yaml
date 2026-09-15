@@ -18,7 +18,7 @@ ChangelogRelease:
     - "hay trabajo sin publicar: se escribe la versión con sufijo -dev y se omite la fecha"
   avoidWhen:
     - "fuera de un Changelog: el riel y el orden los dibuja la lista, no el release suelto"
-    - "querés marcar 'sin publicar' con una opción aparte; la ausencia de fecha ya lo dice, y dos campos que dicen lo mismo se pueden contradecir"
+    - "quieres marcar 'sin publicar' con una opción aparte; la ausencia de fecha ya lo dice, y dos campos que dicen lo mismo se pueden contradecir"
   alternatives: []
 
 ChangelogEntry:

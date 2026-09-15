@@ -8,7 +8,7 @@ Chart:
     - "es UNA medición dentro de un rango conocido, no una serie; eso es Meter"
     - "es el avance de una tarea; eso es Progress"
     - "los valores hay que poder leerlos con precisión, compararlos fila por fila u ordenarlos; eso es una Table, y un gráfico de cinco barras es una tabla peor"
-    - "la serie tiene decenas de entradas: las barras se vuelven líneas de un pixel y las etiquetas se pisan; agrupá los datos antes de dibujarlos"
+    - "la serie tiene decenas de entradas: las barras se vuelven líneas de un pixel y las etiquetas se pisan; agrupa los datos antes de dibujarlos"
   alternatives:
     - Meter
     - Progress

@@ -11,7 +11,7 @@ export const tooltipAnchoredPublishedCase: EvalCase = {
       "date-picker, calendar, split-button), bloqueadas en su momento por la divergencia " +
       "portal-vs-markup entre bindings (ver ai-ui-platform.md). `artifacts/ai-manifest.json` " +
       "confirma que las 65 familias publicadas ya incluyen las ocho; esta entrada existe para que " +
-      "una regresión que las vuelva a bloquear falle acá primero, no en un agente en producción.",
+      "una regresión que las vuelva a bloquear falle aquí primero, no en un agente en producción.",
   ],
   tree: {
     contract: "tooltip",

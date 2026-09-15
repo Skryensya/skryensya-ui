@@ -18,7 +18,7 @@ export const tooltipMessages = {
     "tooltipPage.ruleBody1":
       "Hay dos situaciones sin arreglo posible dentro del componente. En <strong>touch</strong> no hay hover: la máquina abre en <code>pointerenter</code> y en <code>focus</code>, así que en un teléfono el tooltip prácticamente no aparece. <strong>Sin JavaScript</strong> el contenido se pinta oculto y solo la máquina lo abre, así que tampoco aparece.",
     "tooltipPage.ruleBody2":
-      "En los dos casos no se pierde información <em>porque</em> el contrato prohíbe que haya información ahí que no esté en otro lado. Un tooltip que es la única fuente de algo es un bug de quien lo usa, y el validador no lo puede detectar: por eso está escrito acá y en el contrato de <code>@skryensya/core/tooltip</code>.",
+      "En los dos casos no se pierde información <em>porque</em> el contrato prohíbe que haya información ahí que no esté en otro lado. Un tooltip que es la única fuente de algo es un bug de quien lo usa, y el validador no lo puede detectar: por eso está escrito aquí y en el contrato de <code>@skryensya/core/tooltip</code>.",
     "tooltipPage.wcagTitle": "WCAG 1.4.13",
     "tooltipPage.wcagBody1":
       "El criterio <em>Content on Hover or Focus</em> pide tres cosas, y las tres se cumplen por defecto. <strong>Descartable</strong>: <kbd class=\"sk-kbd\">Esc</kbd> cierra sin mover el puntero ni el foco. <strong>Persistente</strong>: no se cierra sola por un temporizador. <strong>Hoverable</strong>: el puntero puede llegar hasta el tooltip sin que desaparezca.",

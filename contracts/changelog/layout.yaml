@@ -41,7 +41,7 @@ entries:
         (<code>semantic/_density.scss</code>), autorable a mano en cualquier elemento - es
         exactamente como ya lo usan <code>CopyButton</code> y la galería de presets, ninguno de los
         dos pasaba por este signature. Lo que se retira es sólo la envoltura de árbol de uso que
-        escribía ese atributo por vos; una migración cambia un nodo
+        escribía ese atributo por ti; una migración cambia un nodo
         <code>{ contract: "layout", signature: "DensityScope", options: { densityFactor } }</code>
         por un <code>Box</code>/<code>Stack</code> con
         <code>attrs: { "data-sk-density-scope": "", style: "--sk-density-factor: …" }</code>.

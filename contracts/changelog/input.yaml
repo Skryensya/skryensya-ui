@@ -33,7 +33,7 @@ entries:
       body: >-
         El padre que ambas signatures declaran pasa de <code>Field</code> a <code>FormField</code>, que
         es el mismo contrato con su nombre nuevo. Un árbol que anide <code>Input</code> bajo
-        <code>Field</code> deja de validar: cambiá el <code>contract</code> a <code>form-field</code> y
+        <code>Field</code> deja de validar: cambia el <code>contract</code> a <code>form-field</code> y
         la <code>signature</code> a <code>FormField</code>. El control en sí no cambió, sigue sin
         <code>invalid</code> y sin <code>id</code> propios porque los dos llegan del cableado del padre.
     en:

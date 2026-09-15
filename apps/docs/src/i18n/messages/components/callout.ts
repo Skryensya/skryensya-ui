@@ -28,7 +28,7 @@ export const calloutMessages = {
     "callout.tonesBody1":
       'El tono decide si el panel se pinta con color semántico. <code>info</code>, <code>success</code>, <code>warning</code> y <code>danger</code> colorean el mensaje. Solo <code>danger</code> se anuncia como <code>role="alert"</code> (assertive); el resto usa <code>role="status"</code> (polite); es la minoría de casos que de verdad interrumpe, no el nombre del componente, el que decide eso.',
     "callout.tonesBody2":
-      "Los cuatro leen un <strong>rol de feedback</strong>, nunca el acento: el tono dice qué pasó, así que no puede cambiar cuando cambia la marca. <code>info</code> tuvo su propia rampa recién en la decisión 26 (<code>docs/decisions/0019-public-palettes-and-constant-semantics.md</code>); antes leía <code>accent</code>, y una marca magenta pintaba de magenta cada aviso informativo.",
+      "Los cuatro leen un <strong>rol de feedback</strong>, nunca el acento: el tono dice qué pasó, así que no puede cambiar cuando cambia la marca. <code>info</code> no tuvo su propia rampa hasta la decisión 26 (<code>docs/decisions/0019-public-palettes-and-constant-semantics.md</code>); antes leía <code>accent</code>, y una marca magenta pintaba de magenta cada aviso informativo.",
     "callout.neutralTitle": "Neutral",
     "callout.neutralBody":
       "El default: superficie y borde, sin pintura semántica. Existe para cuando el color no debería ser la señal prominente, el texto ya carga el mensaje. Úsalo en avisos ordinarios, confirmaciones breves o cualquier caso donde pintar el panel de “éxito” o “info” añadiría urgencia que el contenido no tiene.",

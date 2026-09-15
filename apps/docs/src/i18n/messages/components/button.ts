@@ -66,7 +66,7 @@ export const buttonMessages = {
     "button.iconsComment":
       "Los iconos se autoran como placeholders <span data-sk-icon>;\nmountIcons los reemplaza por el <svg> del set enlazado.",
     "button.sizeHitComment":
-      "Ya viene en components/button.css. No hay que\n   escribirlo: está acá porque es la parte del componente\n   que más sorprende, y conviene saber que existe.\n\n   El positioning NO se declara acá a propósito: lo pone\n   .sk-interactive (state layer). Un position propio haría\n   de cualquier botón el bloque contenedor de lo que tenga\n   dentro en absoluto.",
+      "Ya viene en components/button.css. No hay que\n   escribirlo: está aquí porque es la parte del componente\n   que más sorprende, y conviene saber que existe.\n\n   El positioning NO se declara aquí a propósito: lo pone\n   .sk-interactive (state layer). Un position propio haría\n   de cualquier botón el bloque contenedor de lo que tenga\n   dentro en absoluto.",
     "button.test1": "Es un <code>&lt;button&gt;</code> nativo que no envía formularios por defecto.",
     "button.test2": "El estado deshabilitado llega al control nativo y a la tecnología de asistencia.",
     "button.test3": "Como enlace, renderiza con la apariencia de Button y los atributos del ancla.",

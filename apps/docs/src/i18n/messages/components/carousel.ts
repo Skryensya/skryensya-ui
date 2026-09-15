@@ -43,7 +43,7 @@ export const carouselMessages = {
     "carousel.cardsLabel": "Carrusel de tarjetas",
     "carousel.dotsTitle": "Un dot por página, no por slide",
     "carousel.dotsBody":
-      "Es la razón concreta por la que acá hay una máquina y no un contador. Las posiciones de anclaje <strong>alcanzables</strong> no son una por slide: cuando un slide asoma, los últimos se recortan todos contra el scroll máximo y colapsan en la misma posición. Un carrusel hecho a mano dibuja ahí un dot por slide y termina con dots que <em>nunca</em> se pueden activar y un botón «siguiente» que nunca se deshabilita. La máquina deriva las páginas de <code>getScrollSnapPositions</code> (medidas, recortadas y deduplicadas), así que los dots y el scroll coinciden por construcción. Se ve achicando la ventana sobre cualquiera de los ejemplos: cambian los slides que entran, cambia la cantidad de dots, y el último siempre se puede alcanzar.",
+      "Es la razón concreta por la que aquí hay una máquina y no un contador. Las posiciones de anclaje <strong>alcanzables</strong> no son una por slide: cuando un slide asoma, los últimos se recortan todos contra el scroll máximo y colapsan en la misma posición. Un carrusel hecho a mano dibuja ahí un dot por slide y termina con dots que <em>nunca</em> se pueden activar y un botón «siguiente» que nunca se deshabilita. La máquina deriva las páginas de <code>getScrollSnapPositions</code> (medidas, recortadas y deduplicadas), así que los dots y el scroll coinciden por construcción. Se ve achicando la ventana sobre cualquiera de los ejemplos: cambian los slides que entran, cambia la cantidad de dots, y el último siempre se puede alcanzar.",
     "carousel.multiTitle": "Multi-up, loop y autoplay",
     "carousel.multiBody1":
       "Slides más angostos entran de a varios por página, y la máquina las cuenta midiendo. Con <code>data-loop</code> el carrusel da la vuelta, con <code>data-autoplay</code> avanza solo (vacío para los 4000 ms por defecto, o un retardo en ms).",
@@ -60,11 +60,11 @@ export const carouselMessages = {
     "carousel.focusNote": "Link real por tarjeta · Tab para probar la pausa",
     "carousel.bareTitle": "Sin controles",
     "carousel.bareBody1":
-      "<code>data-controls=\"none\"</code> apaga las <strong>dos</strong> capas: ni botones y dots del enhancer, ni <code>::scroll-button</code> y <code>::scroll-marker</code> nativos. Queda la pista desnuda, que sigue siendo un scroller con snap: cada slide es una parada (<code>scroll-snap-stop: always</code>), así que deslizar nunca se saltea una card.",
+      "<code>data-controls=\"none\"</code> apaga las <strong>dos</strong> capas: ni botones y dots del enhancer, ni <code>::scroll-button</code> y <code>::scroll-marker</code> nativos. Queda la pista desnuda, que sigue siendo un scroller con snap: cada slide es una parada (<code>scroll-snap-stop: always</code>), así que deslizar nunca se salta una card.",
     "carousel.bareBody2":
       "Lo que no cambia es el comportamiento: los controles eran el chrome. El teclado sigue andando con el foco en la pista, y <code>sk-carousel-goto</code> / <code>sk-carousel-change</code> siguen siendo el mismo par de eventos.",
     "carousel.bareBody3":
-      "Y acá se ve por qué el <strong>arrastre con mouse viene prendido</strong>: una rueda vertical scrollea la <em>página</em>, no la pista horizontal que tienes debajo del cursor. Sin arrastre, un puntero de escritorio no tendría ninguna forma de recorrer esto. El cursor <code>grab</code> es todo el aviso, y sólo aparece donde el arrastre de verdad funciona. Desactívalo con <code>data-mouse-drag=\"off\"</code> cuando el texto de los slides esté para seleccionarse: el arrastre suprime la selección.",
+      "Y aquí se ve por qué el <strong>arrastre con mouse viene activado</strong>: una rueda vertical scrollea la <em>página</em>, no la pista horizontal que tienes debajo del cursor. Sin arrastre, un puntero de escritorio no tendría ninguna forma de recorrer esto. El cursor <code>grab</code> es todo el aviso, y sólo aparece donde el arrastre de verdad funciona. Desactívalo con <code>data-mouse-drag=\"off\"</code> cuando el texto de los slides esté para seleccionarse: el arrastre suprime la selección.",
     "carousel.bareLabel": "Sin controles",
     "carousel.bareNote": 'data-controls="none" · arrastra y desliza',
     "carousel.nativeTitle": "Sin JS: controles nativos",
@@ -83,7 +83,7 @@ export const carouselMessages = {
     "carousel.contractItem3":
       'Opciones en la raíz: <code>data-controls="none"</code>, <code>data-loop</code>, <code>data-autoplay</code> (vacío o ms), <code>data-orientation="vertical"</code>.',
     "carousel.contractItem4":
-      'Arrastre con mouse: <strong>prendido</strong>. <code>data-mouse-drag="off"</code> lo apaga, para slides cuyo texto se tenga que poder seleccionar.',
+      'Arrastre con mouse: <strong>activado</strong>. <code>data-mouse-drag="off"</code> lo apaga, para slides cuyo texto se tenga que poder seleccionar.',
     "carousel.contractItem5":
       "Snap: cada slide es una parada, con <code>scroll-snap-stop: always</code>, así que deslizar nunca salta una. Las paradas <em>alcanzables</em> se recortan contra el fin del scroll, por eso los últimos slides pueden compartir la última.",
     "carousel.contractItem6":

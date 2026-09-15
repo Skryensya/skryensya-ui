@@ -38,7 +38,7 @@ export const placeholderMessages = {
     "placeholderPage.shapesLabel": "Las cuatro firmas",
     "placeholderPage.matchTitle": "El skeleton mide lo que va a reemplazar",
     "placeholderPage.matchBody":
-      "<code>text=\"h3\"</code> no es \"más o menos alto como un h3\": resuelve al mismo par de tokens de tamaño e interlineado que lee <code>Heading</code>. Acá cada fila es un Placeholder al lado del texto real del mismo rol. Coinciden porque leen lo mismo, no porque alguien los midió; si cambia la escala tipográfica, se mueven juntos.",
+      "<code>text=\"h3\"</code> no es \"más o menos alto como un h3\": resuelve al mismo par de tokens de tamaño e interlineado que lee <code>Heading</code>. Aquí cada fila es un Placeholder al lado del texto real del mismo rol. Coinciden porque leen lo mismo, no porque alguien los midió; si cambia la escala tipográfica, se mueven juntos.",
     "placeholderPage.matchLabel": "Skeleton y texto real, mismo rol",
     "placeholderPage.matchNote": "h1 · h3 · body · caption",
     "placeholderPage.reducedTitle": "Movimiento reducido",

@@ -19,7 +19,7 @@ SidebarHeader:
 
 SidebarContent:
   useWhen:
-    - "es el medio que scrollea; acá adentro va la NavList"
+    - "es el medio que scrollea; aquí adentro va la NavList"
   avoidWhen:
     - "tiene que quedar fijo al scrollear; eso es el header o el footer"
   alternatives: []
@@ -44,7 +44,7 @@ SidebarTrigger:
     - "la lista es de UN solo nivel y cada destino tiene su propio ícono: colapsado sólo quedan los íconos, así que sin ellos (o sin ese nivel único) el riel no dice nada"
   avoidWhen:
     - "se espera que oculte la barra; angosta, nunca esconde"
-    - "la lista tiene subniveles (grupos anidados, un árbol de archivos): no hay una fila por nivel que mostrar en un riel de íconos; angostá con SidebarResizeHandle en cambio"
+    - "la lista tiene subniveles (grupos anidados, un árbol de archivos): no hay una fila por nivel que mostrar en un riel de íconos; angosta con SidebarResizeHandle en cambio"
     - "algún destino no tiene ícono propio; un riel colapsado con huecos es peor que uno que no colapsa"
   alternatives:
     - SidebarResizeHandle

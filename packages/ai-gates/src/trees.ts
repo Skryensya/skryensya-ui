@@ -641,7 +641,7 @@ const signatureTrees: readonly Canonical[] = [
       slots: {
         icon: { contract: "icon", signature: "Icon", options: { name: "search" } },
         title: "No hay resultados",
-        description: "Probá con otros términos.",
+        description: "Prueba con otros términos.",
       },
     },
   },
@@ -657,7 +657,7 @@ const signatureTrees: readonly Canonical[] = [
         icon: { contract: "icon", signature: "Icon", options: { name: "danger" } },
         title: "No se pudo guardar",
       },
-      children: "Revisá la conexión e intentá de nuevo.",
+      children: "Revisa la conexión e intenta de nuevo.",
     },
   },
   {
@@ -1353,7 +1353,7 @@ const signatureTrees: readonly Canonical[] = [
       contract: "popover",
       signature: "Popover.bare",
       options: { panelId: "filters-popup", bare: true },
-      slots: { trigger: "Filtros", children: "Cualquier cosa cabe acá." },
+      slots: { trigger: "Filtros", children: "Cualquier cosa cabe aquí." },
     },
   },
   /* Two panels and a switch: a second anatomy, not a flag on the first. */
@@ -1446,7 +1446,7 @@ const signatureTrees: readonly Canonical[] = [
       options: { name: "country", placeholder: "Buscar país" },
       slots: {
         label: "País",
-        hint: "Escribí para filtrar la lista",
+        hint: "Escribe para filtrar la lista",
         items: [
           { options: { value: "cl" }, slots: { label: "Chile", description: "América del Sur" } },
           { options: { value: "mx" }, slots: { label: "México" } },
@@ -1886,11 +1886,11 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "form-field",
       signature: "FormField",
-      slots: { label: "Comentario", hint: "Contanos qué te pasó, con el detalle que puedas." },
+      slots: { label: "Comentario", hint: "Cuéntanos qué te pasó, con el detalle que puedas." },
       children: {
         contract: "input",
         signature: "Textarea",
-        options: { name: "comentario", placeholder: "Escribí acá" },
+        options: { name: "comentario", placeholder: "Escribe aquí" },
       },
     },
   },
@@ -1956,7 +1956,7 @@ const signatureTrees: readonly Canonical[] = [
       contract: "wrapper",
       signature: "Wrapper",
       options: { wrapperSize: "lg" },
-      children: { contract: "typography", signature: "Text", children: "El ancho de medida vive acá." },
+      children: { contract: "typography", signature: "Text", children: "El ancho de medida vive aquí." },
     },
   },
   {
@@ -2296,7 +2296,7 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "editor",
       signature: "Editor",
-      options: { label: "Notas", placeholder: "Escribí algo", toolbarLabel: "Formato" },
+      options: { label: "Notas", placeholder: "Escribe algo", toolbarLabel: "Formato" },
     },
   },
   {

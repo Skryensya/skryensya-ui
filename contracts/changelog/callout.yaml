@@ -32,7 +32,7 @@ entries:
         botón y qué significa, así que "que no compita con la llamada a la acción de la página" sólo
         se podía escribir prohibiendo el relleno de acento. Ahora que son dos ejes, la regla dice lo
         que siempre quiso decir y limita <code>tone</code> a <code>neutral</code>/<code>danger</code>.
-        El énfasis queda libre: una acción destructiva acá puede ser <code>solid</code> para
+        El énfasis queda libre: una acción destructiva aquí puede ser <code>solid</code> para
         destacarse, y una neutral puede ser <code>translucent</code> para integrarse al color del
         callout.
     en:

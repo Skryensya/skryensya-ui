@@ -3,7 +3,7 @@ export const indexMessages = {
     "demo.settingsRow.title": "Modo oscuro",
     "demo.settingsRow.description": "Cambia toda la aplicación a una paleta oscura.",
     "demo.alertRetry.title": "No pudimos guardar tus cambios",
-    "demo.alertRetry.body": "El último intento falló. Revisá tu conexión e intentá de nuevo.",
+    "demo.alertRetry.body": "El último intento falló. Revisa tu conexión e intenta de nuevo.",
     "demo.alertRetry.action": "Reintentar",
     "demo.profile.status": "En línea",
     "demo.pricingCard.plan": "Pro",
@@ -33,7 +33,7 @@ export const indexMessages = {
     "landing.brand": "skryensya/ui",
     "landing.hero.title": "Construir interfaces hecho simple",
     "landing.hero.lede":
-      "Componentes que ya traen consistencia y accesibilidad para que no reinventes lo mismo en cada pantalla. Acelerás la interfaz y el sistema sostiene la calidad.",
+      "Componentes que ya traen consistencia y accesibilidad para que no reinventes lo mismo en cada pantalla. Aceleras la interfaz y el sistema sostiene la calidad.",
     "landing.hero.ctaComponents": "Ver componentes",
     "landing.hero.ctaInstall": "Instalarlo",
     "landing.hero.specimenTitle": "Nueva versión",
@@ -49,16 +49,16 @@ export const indexMessages = {
       "Un sistema de diseño framework-agnóstico: un contrato compartido, dos runtimes (Vanilla y React) y cero desvíos entre ellos. Los componentes, los tokens y el comportamiento salen de la misma fuente.",
     "landing.faq.runtime.q": "¿Tengo que elegir React o Vanilla?",
     "landing.faq.runtime.a":
-      "No al principio. El contrato es el mismo; elegís el binding cuando montás. Podés empezar en HTML y pasar a React, o al revés, sin reaprender la pieza.",
+      "No al principio. El contrato es el mismo; eliges el binding cuando montas. Puedes empezar en HTML y pasar a React, o al revés, sin reaprender la pieza.",
     "landing.faq.adopt.q": "¿Hace falta adoptar el sistema entero?",
     "landing.faq.adopt.a":
-      "No. Podés tomar un componente, un primitive o un fundamento y dejar el resto. Las piezas están hechas para encontrarse cuando las necesites, no para obligarte a un big bang.",
+      "No. Puedes tomar un componente, un primitive o un fundamento y dejar el resto. Las piezas están hechas para encontrarse cuando las necesites, no para obligarte a un big bang.",
     "landing.faq.version.q": "¿Qué significa el número de versión del pie?",
     "landing.faq.version.a":
       "Es la versión del contrato del kit, no de un paquete suelto. Las notas de versión agrupan lo que se movió en cada corte; el historial de un componente vive en su propia pestaña Changelog.",
     "landing.faq.start.q": "¿Por dónde empiezo?",
     "landing.faq.start.a":
-      "Si querés construir ya, instalá e importá un componente. Si querés entender el modelo, leé Fundamentos. Si querés explorar por tarea, abrí el catálogo de componentes.",
+      "Si quieres construir ya, instala e importa un componente. Si quieres entender el modelo, lee Fundamentos. Si quieres explorar por tarea, abre el catálogo de componentes.",
 
     "landing.showcase.title": "De una pieza a una pantalla.",
     "landing.showcase.lede":

@@ -24,7 +24,7 @@ export const editorMessages = {
       "El motor (<code>@skryensya/editor</code>) es un peer dependency opcional de React y Vanilla: importar cualquier otro componente nunca instala ProseMirror.",
     "editorPage.compactTitle": "Barra compacta",
     "editorPage.compactBody":
-      "<code>toolbarCompact</code> reduce el padding y el gap de la barra - la misma anatomía, más chica, no un juego distinto de botones. Es una opción, no una segunda signature: a diferencia de <code>ColorPicker.compact</code> (que quita filas enteras del panel), acá sólo cambia el espaciado, así que sigue la misma lógica que <code>CodePreview.density</code>. Pensada para un espacio angosto - un comentario, una respuesta corta.",
+      "<code>toolbarCompact</code> reduce el padding y el gap de la barra - la misma anatomía, más chica, no un juego distinto de botones. Es una opción, no una segunda signature: a diferencia de <code>ColorPicker.compact</code> (que quita filas enteras del panel), aquí sólo cambia el espaciado, así que sigue la misma lógica que <code>CodePreview.density</code>. Pensada para un espacio angosto - un comentario, una respuesta corta.",
     "editorPage.compactLabel": "Editor con barra compacta",
     "editorPage.a11yBody":
       "La superficie es <code>role=\"textbox\"</code> con <code>aria-multiline=\"true\"</code>; dentro de un FormField hereda su <code>id</code>/<code>aria-describedby</code>/<code>aria-invalid</code>. Cada botón de la barra anuncia su estado con <code>aria-pressed</code>, y la barra hereda el roving tabindex de Toolbar: las flechas se mueven entre botones y Tab entra y sale de la barra en un solo paso.",

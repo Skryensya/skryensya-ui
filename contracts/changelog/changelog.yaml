@@ -26,7 +26,7 @@ entries:
         <code>warning</code>, <code>neutral</code>, en ese orden- derivado igual que antes desde la
         opción, así que la columna de badges contesta "¿algo de esto es para mí?" antes de que se
         lea una palabra. El default pasa de <code>changed</code> a <code>chore</code>: una entrada a
-        la que se le olvidó el tipo debe leerse como que no es para vos, nunca como una novedad que
+        la que se le olvidó el tipo debe leerse como que no es para ti, nunca como una novedad que
         nadie anunció.
     en:
       title: The change kinds were renamed, and each one now carries its own colour
@@ -70,7 +70,7 @@ entries:
       title: El tipo de cambio se dibuja como Badge
       body: >-
         La parte <code>kind</code> compone <code>sk-badge</code> en vez de volver a dibujar una
-        píldora acá, igual que Avatar compone <code>sk-image-frame</code>. El tono se DERIVA de la
+        píldora aquí, igual que Avatar compone <code>sk-image-frame</code>. El tono se DERIVA de la
         opción <code>kind</code> con <code>attrsWhen</code>, nunca se pasa: no hay forma de archivar
         un cambio <code>breaking</code> bajo un badge tranquilo. Sigue siendo un tono solo,
         <code>danger</code> para <code>breaking</code> y <code>neutral</code> para todo lo demás,
@@ -92,7 +92,7 @@ entries:
         Los cambios se escalonan un paso bajo el release al que pertenecen, así que un historial se
         lee como grupos y no como una columna sola. El componente además se limita a
         <code>85ch</code> (<code>--sk-changelog-measure</code>) y declara
-        <code>word-break: normal</code>, porque un sitio que corta URLs largas heredaba acá y partía
+        <code>word-break: normal</code>, porque un sitio que corta URLs largas heredaba aquí y partía
         palabras comunes a la mitad. Sólo el código puede partirse, que es lo único sin espacios
         donde cortar.
     en:
@@ -113,7 +113,7 @@ entries:
         <code>ChangelogRelease</code>, y las entradas ahora cuelgan de ella. Quien lee un changelog
         viene a saber si ya tiene el cambio que está leyendo, y eso lo contesta una versión, no una
         fecha. Un árbol que ponía <code>ChangelogEntry</code> directo bajo <code>Changelog</code> ya
-        no valida: envolvelo en un release.
+        no valida: envuélvelo en un release.
     en:
       title: The history groups by version
       body: >-

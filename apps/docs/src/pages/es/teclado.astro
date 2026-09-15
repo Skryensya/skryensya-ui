@@ -33,7 +33,7 @@ import Base from "../../layouts/Base.astro";
     los que muestran una lista flotante mientras la persona sigue escribiendo nunca mueven el foco. Se
     queda en el input, y la opción resaltada se anuncia con <code>aria-activedescendant</code>. Confundir
     los dos rompe una prueba (esperar que <code>document.activeElement</code> cambie donde no cambia, o al
-    revés), así que acá se separan desde el principio.
+    revés), así que aquí se separan desde el principio.
   </p>
 
   <div class="sk-table-scroll">
@@ -207,7 +207,7 @@ import Base from "../../layouts/Base.astro";
         <tr class="sk-table__row">
           <td class="sk-table__cell">Toolbar</td>
           <td class="sk-table__cell">Flechas según <code>aria-orientation</code>, con wrap; <kbd class="sk-kbd">Home</kbd>/<kbd class="sk-kbd">End</kbd> al primero y al último</td>
-          <td class="sk-table__cell">Un control con <code>disabled</code> nativo se saltea solo, porque el navegador ya lo saca del orden de tabulación.</td>
+          <td class="sk-table__cell">Un control con <code>disabled</code> nativo se salta solo, porque el navegador ya lo saca del orden de tabulación.</td>
         </tr>
         <tr class="sk-table__row">
           <td class="sk-table__cell">Menubar</td>
@@ -270,9 +270,9 @@ import Base from "../../layouts/Base.astro";
 
   <h2>Checklist</h2>
   <ul>
-    <li>Recorré el flujo entero sin mouse: si un control no se alcanza con <kbd class="sk-kbd">Tab</kbd>, no existe.</li>
-    <li>En cualquier popup, confirmá que <kbd class="sk-kbd">Esc</kbd> lo cierra y que el foco vuelve al disparador, no a <code>&lt;body&gt;</code>.</li>
-    <li>En un Toolbar/Menubar, confirmá que un widget compuesto anidado cuenta como una sola parada, no varias.</li>
+    <li>Recorre el flujo entero sin mouse: si un control no se alcanza con <kbd class="sk-kbd">Tab</kbd>, no existe.</li>
+    <li>En cualquier popup, confirma que <kbd class="sk-kbd">Esc</kbd> lo cierra y que el foco vuelve al disparador, no a <code>&lt;body&gt;</code>.</li>
+    <li>En un Toolbar/Menubar, confirma que un widget compuesto anidado cuenta como una sola parada, no varias.</li>
     <li>El <a href="/es/state-layer">anillo de foco</a> tiene que verse en cada parada, sin excepciones.</li>
   </ul>
 

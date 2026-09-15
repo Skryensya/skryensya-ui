@@ -9,9 +9,9 @@ composiciones que se publican como ejemplo.
 | `changelog/` | qué cambió en cada contrato, fechado y en los dos idiomas. **Sólo se agrega, nunca se reescribe.** | quien ya lo estaba usando |
 | `snippets/` | composiciones establecidas como árboles de uso, validadas en cada build | quien arranca algo nuevo |
 
-La estructura no está acá: vive en `packages/core/src/<componente>.ts`, que es su único autor.
+La estructura no está aquí: vive en `packages/core/src/<componente>.ts`, que es su único autor.
 
-## Si cambiás un componente, escribí su entrada
+## Si cambias un componente, escribe su entrada
 
 **La regla:** cualquier cambio que un consumidor pueda notar va al changelog de ese contrato, en el
 mismo cambio que lo produce. No al final, no en el release: ahí es donde se olvida.
@@ -27,7 +27,7 @@ Something a consumer can depend on changed. Add an entry and set `surface: "fe56
 
 El mensaje trae el hash nuevo para pegar, así el gate no se vuelve un trámite.
 
-**Lo que el gate NO ve**, y por lo tanto te toca a vos:
+**Lo que el gate NO ve**, y por lo tanto te toca a ti:
 
 - Un cambio de comportamiento con la misma superficie: un default que se calcula distinto, un
   enhancer que ahora escucha otro evento, un fix que cambia lo que alguien veía.
@@ -45,7 +45,7 @@ entries:
     target: variant         # opcional: la opción, parte o signature exacta
     es:
       title: …              # texto plano: es la línea que alguien escanea
-      body: >-              # admite HTML; acá va el porqué
+      body: >-              # admite HTML; aquí va el porqué
         …
     en:
       title: …
@@ -54,7 +54,7 @@ entries:
 ```
 
 `breaking` es para lo que obliga a actuar, incluido quitar algo publicado. El default es `chore`:
-una entrada a la que se le olvidó el tipo debe leerse como "no es para vos", nunca como una novedad
+una entrada a la que se le olvidó el tipo debe leerse como "no es para ti", nunca como una novedad
 que nadie anunció.
 
 ## Versiones

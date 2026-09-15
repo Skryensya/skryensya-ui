@@ -265,7 +265,7 @@ const componentDescriptions = {
     en: "Holds persistent navigation or tools beside the content.",
   },
   "/components/skip-link": {
-    es: "Saltea el chrome repetido: el primer enlace, invisible hasta que recibe el foco.",
+    es: "Salta el chrome repetido: el primer enlace, invisible hasta que recibe el foco.",
     en: "Bypasses the repeated chrome: the first link, invisible until it is focused.",
   },
   "/components/slider": {

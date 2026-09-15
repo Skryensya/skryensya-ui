@@ -2,7 +2,7 @@ export const comboboxMessages = {
   es: {
     "demo.combobox.label": "País",
     "demo.combobox.placeholder": "Buscar país",
-    "demo.combobox.hint": "Escribí para filtrar la lista",
+    "demo.combobox.hint": "Escribe para filtrar la lista",
     "demo.combobox.anatomy.item1": "República Dominicana",
     "demo.combobox.anatomy.item2": "Estados Unidos",
 

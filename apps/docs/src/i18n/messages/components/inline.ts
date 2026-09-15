@@ -28,7 +28,7 @@ export const inlineMessages = {
     "inlinePage.floorPreviewNote": "Grid + Box + Inline blockStart auto",
     "inlinePage.whereTitle": "Dónde componerlo",
     "inlinePage.whereBody":
-      "Úsalo donde <em>vos</em> autorás los botones: CTAs de un <a href=\"/es/componentes/hero\">Hero</a>, pie de una card con <a href=\"/es/componentes/box\">Box</a>, un par label–control, el pie de un formulario que no tiene parte propia. No sustituyas la anatomía de <a href=\"/es/componentes/empty-state\">EmptyState</a> (<code>__actions</code>), el footer de un <a href=\"/es/componentes/dialog\">Dialog</a> ni un <a href=\"/es/componentes/toolbar\">Toolbar</a>: esas piezas ya dueñas de su fila.",
+      "Úsalo donde <em>tú</em> escribes los botones: CTAs de un <a href=\"/es/componentes/hero\">Hero</a>, pie de una card con <a href=\"/es/componentes/box\">Box</a>, un par label–control, el pie de un formulario que no tiene parte propia. No sustituyas la anatomía de <a href=\"/es/componentes/empty-state\">EmptyState</a> (<code>__actions</code>), el footer de un <a href=\"/es/componentes/dialog\">Dialog</a> ni un <a href=\"/es/componentes/toolbar\">Toolbar</a>: esas piezas ya dueñas de su fila.",
     "inlinePage.htmlTitle": "HTML escrito a mano",
     "inlinePage.htmlBody": "Usa <code>sk-inline</code> en el elemento semántico que corresponda. Los atributos describen el espaciado, la alineación vertical, la distribución horizontal, si la fila puede envolver sus hijos y el aire encima (<code>data-block-start</code>).",
     "inlinePage.contractItem1": "<code>as</code> elige el elemento raíz; por defecto es <code>div</code>.",

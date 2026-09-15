@@ -66,7 +66,7 @@ export const commentThreadMessages = {
       "Para crear se clona un blueprint y se llenan los campos por los hooks <code>data-sk-comment-*</code>, nunca por las clases de parte: esas son de la hoja de estilos y se mueven cuando cambia la pintura. Es el mismo idiom que usa <a href=\"/componentes/toast\">Toast</a> con su propio <code>ToastTemplate</code>.",
     "commentThread.htmlTitle": "HTML escrito a mano",
     "commentThread.htmlBody":
-      "Un comentario recursivo se compone repitiendo esta misma forma dentro de <code>.sk-comment-thread__replies</code>. El <code>FormField</code>/<code>Textarea</code> del formulario de respuesta queda a criterio de quien lo usa - acá se omite por brevedad.",
+      "Un comentario recursivo se compone repitiendo esta misma forma dentro de <code>.sk-comment-thread__replies</code>. El <code>FormField</code>/<code>Textarea</code> del formulario de respuesta queda a criterio de quien lo usa - aquí se omite por brevedad.",
     "commentThread.reactTitle": "React",
     "commentThread.contractItem1":
       "Las respuestas recursan por COMPOSICIÓN, no como colección de datos: <code>Comment.replies</code> acepta <code>Comment</code>, igual que <code>NavListLink.nested</code> acepta <code>NavListGroup</code>. Por eso cada slot a cualquier profundidad admite contenido compuesto, cosa que una colección no podía: una entrada de colección es DATA, y un subárbol adentro se aplanaba a su texto.",
@@ -105,12 +105,12 @@ export const commentThreadMessages = {
     "commentThread.test27": "Una respuesta vetada con <code>preventDefault()</code> conserva el borrador y la caja.",
     "commentThread.test24": "El avatar va en el canal, aparte del nombre, para que la línea del hilo pueda colgar de él.",
     "commentThread.test28":
-      "El control de plegado es un Button solo-icono en tamaño <code>xs</code>, no una cara achicada acá.",
+      "El control de plegado es un Button solo-icono en tamaño <code>xs</code>, no una cara achicada aquí.",
     "demo.commentThread.label": "Comentarios",
     "demo.commentThread.replyFieldLabel": "Respuesta",
-    "demo.commentThread.replyPlaceholder": "Escribí una respuesta…",
+    "demo.commentThread.replyPlaceholder": "Escribe una respuesta…",
     "demo.commentThread.send": "Responder",
-    "demo.commentThread.now": "recién",
+    "demo.commentThread.now": "hace un momento",
     "demo.commentThread.loadingLabel": "Cargando comentarios",
     "demo.commentThread.loadingMoreLabel": "Cargando más comentarios",
     "demo.commentThread.deleteTitle": "¿Eliminar el comentario?",

@@ -83,7 +83,7 @@ const result = await runAudit();
 if (!result.ok) {
   // Point 1: no network does not block. Said loudly so it does not pass for healthy.
   console.warn(`audit-gate: no se pudo consultar el registry (${result.reason}).`);
-  console.warn("           NO se revisaron las dependencias en esta corrida. Corré `pnpm audit` con red.");
+  console.warn("           NO se revisaron las dependencias en esta corrida. Ejecuta `pnpm audit` con red.");
   process.exit(0);
 }
 
@@ -115,11 +115,11 @@ for (const a of blocking) {
 
 // Point 3: the two real exits, not "update your dependencies".
 console.error("Cómo se arregla:");
-console.error("  · Transitiva (la ruta de arriba pasa por otro paquete): agregá el rango parcheado");
-console.error("    a `pnpm.overrides` en el package.json raíz. Usá ^ para quedarte en el major que");
-console.error("    el árbol ya usa, y confirmá antes que no haya dos majors del paquete en el lockfile.");
-console.error("  · Directa: subí el rango en el package.json que la declara.");
+console.error("  · Transitiva (la ruta de arriba pasa por otro paquete): agrega el rango parcheado");
+console.error("    a `pnpm.overrides` en el package.json raíz. Usa ^ para quedarte en el major que");
+console.error("    el árbol ya usa, y confirma antes que no haya dos majors del paquete en el lockfile.");
+console.error("  · Directa: sube el rango en el package.json que la declara.");
 console.error("  · Si el parche existe pero es más nuevo que `minimumReleaseAge` (30 días), la espera");
-console.error("    es lo que está bloqueando: agregá ese paquete a `minimumReleaseAgeExclude` en");
+console.error("    es lo que está bloqueando: agrega ese paquete a `minimumReleaseAgeExclude` en");
 console.error("    pnpm-workspace.yaml, con la fecha en que deja de hacer falta.");
 process.exit(1);

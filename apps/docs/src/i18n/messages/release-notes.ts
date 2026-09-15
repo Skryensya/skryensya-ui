@@ -3,7 +3,7 @@ export const releaseNotesMessages = {
     "releaseNotes.title": "Notas de versión",
     "releaseNotes.description": "Qué cambió en cada versión del kit, por contrato.",
     "releaseNotes.lede":
-      "El número del pie es la versión del <em>contrato</em>, no de un paquete suelto. Acá está lo que se movió en cada una, agrupado por superficie. El historial de un componente solo vive en la pestaña Changelog de su propia página.",
+      "El número del pie es la versión del <em>contrato</em>, no de un paquete suelto. Aquí está lo que se movió en cada una, agrupado por superficie. El historial de un componente solo vive en la pestaña Changelog de su propia página.",
     "releaseNotes.empty": "Todavía no hay entradas registradas.",
     "releaseNotes.unreleased": "Sin publicar",
     "releaseNotes.surfaceCount": "{count} contratos",

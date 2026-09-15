@@ -30,12 +30,12 @@ describe("Popover (React)", () => {
 
   it("renders a title and description in the full (non-bare) anatomy", () => {
     const ui = render(
-      <Popover trigger="Open" title="Filtros" description="Elegí una categoría.">
+      <Popover trigger="Open" title="Filtros" description="Elige una categoría.">
         Content
       </Popover>,
     );
     expect(ui.getByRole("heading", { name: "Filtros", hidden: true })).toBeTruthy();
-    expect(ui.getByText("Elegí una categoría.")).toBeTruthy();
+    expect(ui.getByText("Elige una categoría.")).toBeTruthy();
   });
 
   /*
@@ -45,12 +45,12 @@ describe("Popover (React)", () => {
    */
   it("links the panel to its own title/description via aria-labelledby/aria-describedby", () => {
     const ui = render(
-      <Popover trigger="Open" title="Filtros" description="Elegí una categoría.">
+      <Popover trigger="Open" title="Filtros" description="Elige una categoría.">
         Content
       </Popover>,
     );
     const heading = ui.getByRole("heading", { name: "Filtros", hidden: true });
-    const description = ui.getByText("Elegí una categoría.");
+    const description = ui.getByText("Elige una categoría.");
     const content = ui.container.querySelector("[popover]")!;
 
     expect(content.getAttribute("aria-labelledby")).toBe(heading.id);
@@ -68,7 +68,7 @@ describe("Popover (React)", () => {
 
   it("carries neither aria-labelledby nor aria-describedby in bare mode, even with title/description given", () => {
     const ui = render(
-      <Popover trigger="Open" title="Filtros" description="Elegí una categoría." bare>
+      <Popover trigger="Open" title="Filtros" description="Elige una categoría." bare>
         Content
       </Popover>,
     );
@@ -85,12 +85,12 @@ describe("Popover (React)", () => {
 
   it("omits the title, description and close button entirely in bare mode", () => {
     const ui = render(
-      <Popover trigger="Open" title="Filtros" description="Elegí una categoría." bare>
+      <Popover trigger="Open" title="Filtros" description="Elige una categoría." bare>
         Content
       </Popover>,
     );
     expect(ui.queryByRole("heading", { name: "Filtros", hidden: true })).toBeNull();
-    expect(ui.queryByText("Elegí una categoría.")).toBeNull();
+    expect(ui.queryByText("Elige una categoría.")).toBeNull();
     expect(ui.queryByRole("button", { name: "Cerrar", hidden: true })).toBeNull();
   });
 

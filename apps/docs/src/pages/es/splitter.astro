@@ -12,7 +12,7 @@ const t = useTranslations(getLocale(Astro.url));
 const import_ = `@import "@skryensya/core/patterns/splitter.css";`;
 
 /*
- * Escritos a mano, no sacados del corpus de lib/tokens.ts: `--sk-splitter-*` se declara acá, en
+ * Escritos a mano, no sacados del corpus de lib/tokens.ts: `--sk-splitter-*` se declara aquí, en
  * patterns/splitter.css, Y se vuelve a declarar como override adentro de components/sidebar.css (el
  * hook propio de su handle de resize). El corpus deduplica por nombre, gana el primer archivo, y
  * `components/` ordena antes que `patterns/`: así que los cuatro se atribuirían a sidebar.css, y la
@@ -126,8 +126,8 @@ const keyboard = [
 
   <h2>En vivo</h2>
   <p>
-    El mismo demo que <a href="/es/componentes/sidebar">Sidebar</a>: arrastrá el borde del panel con el
-    puntero, o enfocalo y usá las flechas.
+    El mismo demo que <a href="/es/componentes/sidebar">Sidebar</a>: arrastra el borde del panel con el
+    puntero, o enfócalo y usa las flechas.
   </p>
   <ComponentPreview
     tree={sidebarResizableTree(t)}

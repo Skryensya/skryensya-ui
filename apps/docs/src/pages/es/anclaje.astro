@@ -7,7 +7,7 @@ import StylingHooks from "../../components/StylingHooks.astro";
 
 const import_ = `@import "@skryensya/core/patterns/anchored.css";`;
 
-const anatomy = `<!-- EL ANCLA: aquello contra lo que medís. Casi siempre el trigger. -->
+const anatomy = `<!-- EL ANCLA: aquello contra lo que mides. Casi siempre el trigger. -->
 <button class="sk-button sk-interactive sk-anchor" data-sk-anchor-trigger>
   Guardar
 </button>
@@ -68,7 +68,7 @@ const arrowReact = `<Tooltip arrow content="Se guarda solo">
 
   <h2>Por qué es un patrón y no un componente</h2>
   <p>
-    La regla es una sola pregunta: <em>¿podría un segundo componente necesitar esta estructura exacta?</em> Acá no hay nada que predecir, <strong>nueve ya la necesitan</strong>. Así que el anclaje publica <strong>hooks y estructura</strong>, como hace <a href="/es/vaul">Vaul</a>, no solo variables.
+    La regla es una sola pregunta: <em>¿podría un segundo componente necesitar esta estructura exacta?</em> Aquí no hay nada que predecir, <strong>nueve ya la necesitan</strong>. Así que el anclaje publica <strong>hooks y estructura</strong>, como hace <a href="/es/vaul">Vaul</a>, no solo variables.
   </p>
   <p>
     No lo confundas con Vaul, aunque los dos hablen de anclar: un Vaul se ancla a un <strong>borde del viewport</strong>, esto se ancla a <strong>otro elemento</strong>.
@@ -136,7 +136,7 @@ const arrowReact = `<Tooltip arrow content="Se guarda solo">
     Y aun así <strong>vive adentro</strong> del posicionador, lo que debería ser imposible: la spec solo permite anclarse a algo que sea <em>descendiente del bloque contenedor</em> del elemento, y el trigger no cuelga del posicionador. Lo que lo resuelve es <code>position: fixed</code>: el bloque contenedor de un elemento fijo es el <strong>viewport</strong>, donde el trigger sí vive, aunque en el DOM la flecha siga adentro. Con <code>absolute</code> el bloque contenedor sería el posicionador y <code>anchor()</code> y <code>anchor-center</code> serían inválidos <em>en silencio</em>.
   </p>
   <p>
-    Quedarse adentro tampoco es prolijidad, es lo que necesitan tres cosas a la vez. La caja de un <a href="/es/componentes/popover">Popover</a> se va al <em>top layer</em> cuando se abre, y ahí solo entra con sus hijos. Como hija posicionada, la flecha pinta <strong>por encima</strong> del fondo y del borde de la caja, que es lo que hace desaparecer la costura. Y en el <strong>fallback</strong> coloca la máquina, que busca la flecha adentro del elemento flotante.
+    Quedarse adentro tampoco es pulcritud, es lo que necesitan tres cosas a la vez. La caja de un <a href="/es/componentes/popover">Popover</a> se va al <em>top layer</em> cuando se abre, y ahí solo entra con sus hijos. Como hija posicionada, la flecha pinta <strong>por encima</strong> del fondo y del borde de la caja, que es lo que hace desaparecer la costura. Y en el <strong>fallback</strong> coloca la máquina, que busca la flecha adentro del elemento flotante.
   </p>
   <p>
     <em>Se voltea junto con la caja</em> porque toma la altura de la caja como margen hacia afuera (<code>anchor-size()</code>): las dos tienen la misma huella, así que cruzan el umbral de <code>position-try</code> en el mismo momento.

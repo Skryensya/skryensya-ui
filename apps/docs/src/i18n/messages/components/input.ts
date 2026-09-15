@@ -1,9 +1,9 @@
 export const inputMessages = {
   es: {
-    "demo.input.hint": "Te escribimos acá si algo sale mal.",
+    "demo.input.hint": "Te escribimos aquí si algo sale mal.",
     "demo.input.notesLabel": "Notas",
-    "demo.input.notesHint": "Contanos qué te pasó, con el detalle que puedas.",
-    "demo.input.notesPlaceholder": "Escribí acá",
+    "demo.input.notesHint": "Cuéntanos qué te pasó, con el detalle que puedas.",
+    "demo.input.notesPlaceholder": "Escribe aquí",
 
     "inputPage.description": "Input: el control de texto nativo, con una clase para el input y el textarea.",
     "inputPage.title": "Input",
@@ -13,9 +13,9 @@ export const inputMessages = {
     "inputPage.oneClassTitle": "Una clase para todo control de texto",
     "inputPage.oneClassBody":
       "<code>sk-input</code> va en el <code>&lt;input&gt;</code> y en el <code>&lt;textarea&gt;</code>: es el mismo control visual, así que es un solo set de hooks. Una segunda clase sería un segundo set que mantener sincronizado con el primero.",
-    "demo.input.anatomyEmail": "vos@ejemplo.com",
+    "demo.input.anatomyEmail": "tu@ejemplo.com",
     "demo.input.anatomyEmailLabel": "Email",
-    "demo.input.anatomyNotes": "Escribí acá",
+    "demo.input.anatomyNotes": "Escribe aquí",
     "inputPage.anatomyBody":
       "El dibujo tiene una sola etiqueta porque el contrato publica una sola clase; lo que vale la pena ver es <strong>cuántos elementos</strong> la llevan. Un anillo por cada uno, saliendo de la misma burbuja: el <code>&lt;input type=\"email\"&gt;</code>, el <code>&lt;textarea&gt;</code> y un <code>&lt;input type=\"time\"&gt;</code> nativo de verdad. Y no hay nada más nombrado: el rótulo, la pista y el error son del FormField, y están dibujados en su propia anatomía.",
     "inputPage.anatomyLabel": "Anatomía de Input",
@@ -25,7 +25,7 @@ export const inputMessages = {
       'Los dos demos de arriba están envueltos en un <a href="/es/componentes/form-field">FormField</a>, y no por costumbre: el rótulo, la ayuda, el mensaje de error y los seis ids que los atan viven ahí. Por eso este contrato no tiene <code>invalid</code> ni <code>id</code> propios: un control que trajera su propio <code>aria-invalid</code> podría contradecir al mensaje que tiene al lado. Un <code>Input</code> fuera de un <code>FormField</code> igual es un control válido, siempre que lleve su <code>aria-label</code>.',
     "inputPage.nativeTitle": "NativeInput: el control sin la apariencia",
     "inputPage.nativeBody":
-      'La tercera signature del contrato es <code>NativeInput</code>: el mismo elemento sin <code>sk-input</code>, para cuando lo que querés enseñar es el comportamiento que trae el navegador y no la apariencia del sistema. Es lo que usa el demo del <code>&lt;input type="time"&gt;</code> plano en TimeField.',
+      'La tercera signature del contrato es <code>NativeInput</code>: el mismo elemento sin <code>sk-input</code>, para cuando lo que quieres enseñar es el comportamiento que trae el navegador y no la apariencia del sistema. Es lo que usa el demo del <code>&lt;input type="time"&gt;</code> plano en TimeField.',
     "inputPage.test1": "Sigue siendo un control válido fuera de un FormField.",
     "inputPage.test2": "Le da al textarea el mismo contrato de apariencia que al input.",
     "inputPage.test3": "Escribe el alto en data-size y deja en paz al atributo size nativo.",

@@ -10,7 +10,7 @@ export const prefsMessages = {
     "prefs.contrast": "Contraste",
     "prefs.contrastHint": "Más contraste entre el texto y el fondo.",
     "prefs.theme": "Tema",
-    "prefs.themeHint": "Sigue el sistema, o elegilo vos.",
+    "prefs.themeHint": "Sigue el sistema, o elígelo tú.",
     "prefs.language": "Idioma",
     "prefs.languageHint": "Cambia el idioma de esta página.",
     "prefs.modeSystem": "Modo: sistema",

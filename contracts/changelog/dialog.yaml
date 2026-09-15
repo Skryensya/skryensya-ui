@@ -32,7 +32,7 @@ entries:
         <code>alert</code> pone <code>role="alertdialog"</code>, <code>aria-modal="true"</code> y
         <code>aria-describedby</code> apuntando al body, para una confirmación destructiva o un
         error bloqueante que necesita atención inmediata. El foco sigue siendo del consumidor:
-        poné <code>autofocus</code> en la acción menos destructiva.
+        pon <code>autofocus</code> en la acción menos destructiva.
     en:
       title: New alert option for the Alert Dialog pattern
       body: >-

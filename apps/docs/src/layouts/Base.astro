@@ -76,7 +76,7 @@ import "@skryensya/core/components/sidebar.css";
 import "@skryensya/core/components/skip-link.css";
 /* Its counterpart at the end of the reading, same reason: layout chrome, not a page's. It appears only
  * after scrolling down a certain amount and returns to the same focusable destination as the skip link
- * above (`#docs-content`), so the focus it gives back is the same one the jump offers. */
+ * above (`#main-content`), so the focus it gives back is the same one the jump offers. */
 import "@skryensya/core/components/back-to-top.css";
 /* icon.css is NOT imported here: it travels in tokens.scss, like the state layer. An icon is not an
  * extra a component opts into (decision 15). */
@@ -409,20 +409,6 @@ const currentNavIndex = navItems.findIndex((item) => item.href === path);
 const previousNavItem = currentNavIndex > 0 ? navItems[currentNavIndex - 1] : undefined;
 const nextNavItem = currentNavIndex >= 0 ? navItems[currentNavIndex + 1] : undefined;
 
-/*
- * `<main>` is `display: contents` for a grid-layout page (site.css): its direct children become
- * grid items of `.docs-document-pair` itself, sharing rows with the Toc rail beside them. This is
- * every one of those children, in the same order Base.astro renders them below: the document's own
- * top-level elements, the optional vanilla-mount block, the optional prev/next nav, and the footer
- * (always). The rail spans exactly this many rows (`--docs-main-row-count`, site.css) so it sits
- * beside all of main's content without over- or under-shooting it.
- */
-const mainRowCount =
-  (documentIndex?.topLevelCount ?? 0) +
-  (documentIndex && !hideVanillaMount && vanillaMount ? 1 : 0) +
-  (currentNavIndex >= 0 ? 1 : 0) +
-  1;
-
 
 /*
  * Search index for the live site. Archives, when mounted at deploy, ship their own index next to
@@ -754,7 +740,7 @@ const PALETTE_PRESETS = palettePresets(locale);
       drawer trigger is the first control in the header at those widths, so the index is already one
       Tab away.
     */}
-    <a class={`${skipLinkParts.root} sk-interactive docs-skip-link`} href="#docs-content">
+    <a class={`${skipLinkParts.root} sk-interactive docs-skip-link`} href="#main-content">
       {t("nav.skipToContent")}
     </a>
     {!fullBleed && (
@@ -1136,7 +1122,7 @@ const PALETTE_PRESETS = palettePresets(locale);
         main region and only one of these two ever renders. `tabindex="-1"` is what makes an element
         a focus target without adding a tab stop; see the rail's own copy of this comment. */}
     {fullBleed ? (
-      <main class="sk-main" id="docs-content" tabindex="-1">
+      <main class="sk-main" id="main-content" tabindex="-1">
         <slot />
       </main>
     ) : (
@@ -1245,20 +1231,17 @@ const PALETTE_PRESETS = palettePresets(locale);
       </aside>
 
       {/*
-        THE SKIP LINK'S DESTINATION MOVED HERE, off `<main>`. A grid-layout `<main>` is
-        `display: contents` below (site.css) so its children can share `.docs-document-pair`'s grid
-        with the Toc rail, and a `display: contents` element generates no box, so it cannot be a
-        focus target regardless of `tabindex`. This wrapper always has a real box in both layouts,
-        sits at exactly the same position `<main>` used to, and `tabindex="-1"` here does the same
-        job the rail's own copy of this comment already explains: out of the tab order, in reach of
-        a following `scrollIntoView`/`.focus()`.
+        THE SKIP LINK'S DESTINATION IS `<main>` AGAIN, and this wrapper is back to being a wrapper.
+        It carried the id for a while because a grid-layout `<main>` was `display: contents` and an
+        element with no box cannot take focus or scroll (measured, both). The cost was that "skip to
+        content" landed the reader HERE, one level up, before the table of contents this box also
+        holds - a promise the link did not keep, at an id nobody reading the markup would recognise
+        as the document. `subgrid` (site.css) gives main a real box without moving its children off
+        this grid, so the destination goes back where it belongs.
       */}
       <div
         class={`docs-document-pair${documentLayout === "grid" ? " sk-layout-grid" : ""}`}
         data-document-layout={documentLayout}
-        id="docs-content"
-        tabindex="-1"
-        style={documentLayout === "grid" ? `--docs-main-row-count: ${mainRowCount}` : undefined}
       >
       {/*
         BEFORE `<main>`, on purpose. The rail is compiled with the page, but a first paint cannot
@@ -1271,6 +1254,8 @@ const PALETTE_PRESETS = palettePresets(locale);
         class={documentLayout === "grid" ? "sk-layout-grid" : "sk-wrapper"}
         data-document-layout={documentLayout}
         data-size={documentLayout === "column" ? "md" : undefined}
+        id="main-content"
+        tabindex="-1"
       >
         <Fragment set:html={documentIndex!.html} />
         {!hideVanillaMount && vanillaMount && <VanillaMount {...vanillaMount} />}
@@ -1497,8 +1482,8 @@ const PALETTE_PRESETS = palettePresets(locale);
       ternary on purpose. `/personalizar` has no document column and no footer, but it is still a
       page a reader can scroll, so it keeps the same way back up as every other one.
 
-      RETURNS TO THE SKIP LINK'S OWN DESTINATION (`data-target="#docs-content"`): that id is already
-      `tabindex="-1"` on both layout branches (see the comment on `.docs-document-pair` above), the
+      RETURNS TO THE SKIP LINK'S OWN DESTINATION (`data-target="#main-content"`): that id is
+      `<main>` itself, `tabindex="-1"` on both layout branches, the
       exact focusable landing spot `nav.skipToContent` jumps to. Reusing it means a keyboard reader
       who tabs back up to entering the page again from a fresh Tab lands in the SAME place a skip
       link would have put them, not a second destination this component invented on its own.
@@ -1513,7 +1498,7 @@ const PALETTE_PRESETS = palettePresets(locale);
       class={`${backToTopParts.root} sk-interactive`}
       type="button"
       data-sk-back-to-top
-      data-target="#docs-content"
+      data-target="#main-content"
       hidden
     >
       <span aria-hidden="true" class={backToTopParts.icon}>
@@ -1656,6 +1641,20 @@ const PALETTE_PRESETS = palettePresets(locale);
 
       This listens for clicks on same-page anchors only (`href="#id"` resolving to an element in this
       document) and animates just that one scroll by calling `scrollIntoView` directly.
+
+      AND IT HAS TO MOVE THE FOCUS, because `preventDefault()` cancels the navigation and the focus
+      move is part of that navigation, not part of the scroll. Measured on this site: "Go to content"
+      scrolled the document and left focus on the skip link itself, so the reader's next Tab was "Go
+      to navigation" - the chrome they had just asked to skip. Every Toc link had the same shape: the
+      page moved, the keyboard stayed in the rail. That is the exact failure `SkipLink`'s own contract
+      warns about ("following an in-page link scrolls in every browser but moves FOCUS in only some"),
+      arriving here through our own handler rather than through a browser.
+
+      `preventScroll: true` so the focus call does not fight the smooth scroll that just started, and
+      `tabindex="-1"` is added only when the target cannot already take focus: a heading or a `<main>`
+      needs it (it is what the contract hands consumers as `skipLinkTarget`), while a target that is
+      itself a link or a button must not get it, because `-1` would pull a real control out of the tab
+      order to fix a scroll.
     */}
     <script is:inline>
       document.addEventListener("click", function (event) {
@@ -1668,6 +1667,13 @@ const PALETTE_PRESETS = palettePresets(locale);
         event.preventDefault();
         target.scrollIntoView({ behavior: "smooth", block: "start" });
         history.pushState(null, "", hash);
+        if (
+          !target.hasAttribute("tabindex") &&
+          !target.matches("a[href], button, input, select, textarea, summary, [contenteditable]")
+        ) {
+          target.setAttribute("tabindex", "-1");
+        }
+        target.focus({ preventScroll: true });
       });
     </script>
 

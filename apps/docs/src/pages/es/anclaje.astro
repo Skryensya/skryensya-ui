@@ -219,16 +219,80 @@ const arrowReact = `<Tooltip arrow content="Se guarda solo">
 </Base>
 
 <style is:global>
-  /* La piel del demo es del consumidor, como siempre: el patrón trae hooks y estructura, no pintura.
-     `is:global`: el HTML escrito a mano vive adentro del srcdoc y no lleva el atributo de scope de Astro. */
-  .sk-anclaje-demo {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-inline-md);
-    align-items: center;
-    justify-content: center;
-    /* Aire arriba y abajo para que un tooltip en block-start tenga adónde ir sin que el navegador
-       tenga que voltearlo: el demo muestra el placement pedido, no el fallback. */
-    padding-block: var(--space-stack-xl);
+  /*
+   * LO QUE LE QUEDA A LA PÁGINA, que es el ESCENARIO y no el componente. Cómo se compone el demo (un
+   * Box con padding alrededor de una fila centrada con gap) es del árbol (`demos/anchoring.ts`), así
+   * que el snippet que copia quien lee se comporta igual que el de esta página. Estas tres reglas son
+   * de la caja donde se MUESTRA el demo, y quien copie el código no debería heredar ninguna.
+   *
+   * `is:global`: el HTML escrito a mano vive adentro del srcdoc y no lleva el atributo de scope de
+   * Astro. La clase va en el elemento mismo en los dos bindings, así que un selector alcanza al
+   * escenario Vanilla y al de React por igual (una regla contra `frame-body > *` no: React monta un
+   * envoltorio `display: contents` más adentro).
+   *
+   * ESTA CLASE ANTES NO EXISTÍA ACÁ: esta página estilaba `.sk-anclaje-demo` y el árbol escribe
+   * `sk-anchoring-demo`, así que en español el demo salía sin centrar y sin aire, y el tooltip de
+   * block-start se volteaba para abajo porque no tenía lugar arriba.
+   */
+  .sk-anchoring-demo {
+    /* El escenario es una FILA flex que envuelve, así que un espécimen se mide por su contenido y
+       queda pegado al inicio: el Box tiene que tomar la línea antes de poder centrar nada adentro. */
+    inline-size: 100%;
+  }
+
+  /*
+   * AIRE PARA LOS PLACEMENTS LATERALES, lo único que la escala de gap no puede decir.
+   *
+   * `inline-start` e `inline-end` abren al costado del trigger, y el tooltip mide ~60px más los 8px
+   * de offset del patrón: con el gap más grande de la escala (`xl`, 32px) la caja abría justo encima
+   * del botón vecino y el demo parecía roto, que es exactamente lo que mostraba: cuatro tooltips
+   * apretados en una fila que nadie escribiría así. 5rem es el aire medido, redeclarado por el hook
+   * que el patrón publica para eso en vez de pisar una regla de layout.
+   *
+   * Queda acá y no en el árbol porque es por mostrar CUATRO a la vez: una fila real muestra un
+   * tooltip por vez, y para eso el `gap="xl"` del árbol es la respuesta correcta.
+   */
+  .sk-anchoring-demo > .sk-inline {
+    --sk-inline-gap: 5rem;
+    /*
+     * MÁS ALTO DE LO QUE EL DEMO NECESITA, a propósito, y con el piso en la FILA y no en el Box que
+     * la rodea: la fila ya es una línea flex con `align-items: center` (lo pide el árbol), así que
+     * el alto que se le da es alto en cuyo medio quedan los triggers. En el Box, el mismo número los
+     * dejaba arriba con un cuarto del escenario vacío abajo.
+     *
+     * Es un piso y no un alto: el marco sigue reportando su contenido, así que no se corta nada
+     * cuando la fila envuelve en un ancho angosto.
+     */
+    min-block-size: 16rem;
+  }
+  /*
+   * EL DEMO MUESTRA EL PLACEMENT QUE NOMBRA, así que el fallback queda apagado para estos cuatro.
+   *
+   * Toda caja anclada de este sistema se voltea cuando no entra (`--sk-anchored-position-try`), y eso
+   * está bien en todos lados menos acá: una fila que dice `block-end` y se dibuja arriba del trigger
+   * le está enseñando a quien lee la palabra equivocada. El volteo tiene su propia sección en esta
+   * página, con su propia prosa; el espécimen de arriba tiene que ser literal.
+   *
+   * Además esquiva una diferencia real entre los dos bindings, medida en esta página: en React uno de
+   * los cuatro (el de `block-end`) sale INVERTIDO: pida el lado que pida, Blink aplica `flip-block` y
+   * lo dibuja del lado contrario, con 138px de lugar sin usar del lado que rechazó. Volver a etiquetar
+   * ese mismo elemento como `block-start` lo dibuja en block-end, y sus tres hermanos se comportan
+   * bien, así que no es el placement ni el lugar. En Vanilla, el mismo markup y el mismo escenario,
+   * los cuatro salen bien. Queda escrito acá en vez de quedar como misterio: sin fallback que
+   * aplicar, los dos bindings muestran los mismos cuatro lados.
+   *
+   * NO va bajo `.sk-anchoring-demo`, y no es un descuido: React portalea cada positioner al body, así
+   * que ya no está adentro del demo. Esta página renderiza exactamente un preview, y estos estilos se
+   * copian solo a los marcos de ese preview, así que nombrar la parte alcanza.
+   *
+   * UN SOLO HOOK ALCANZA TAMBIÉN A LA FLECHA, cosa que no pasaba hasta que esta página lo pidió: las
+   * reglas de la flecha tenían `flip-block`/`flip-inline` escritos a mano mientras la caja leía
+   * `--sk-anchored-position-try`, así que apagar el volteo acá dejaba la caja donde se le pidió y la
+   * flecha seguía volteándose: un rombo abandonado del otro lado del trigger. Ahora el patrón lee el
+   * mismo hook en las dos, con el volteo de cada eje como default (`patterns/anchored.css`), que es
+   * lo que su propio comentario ("lo que hace que las dos SE VOLTEEN JUNTAS") quiso decir siempre.
+   */
+  .sk-component-preview__frame-body .sk-anchored[data-sk-placement] {
+    --sk-anchored-position-try: none;
   }
 </style>

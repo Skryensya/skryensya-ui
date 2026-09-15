@@ -277,7 +277,13 @@
     .sk-anchored[data-sk-placement="block-end"] > .sk-anchored-arrow,
     .sk-anchored:not([data-sk-placement]) > .sk-anchored-arrow {
       position-area: block-end span-all;
-      position-try-fallbacks: flip-block;
+      /* The SAME hook the box reads (`.sk-anchored` above), not a second hard-coded
+       * `flip-block`: the paragraph above says the arrow and the box have to flip together, and they
+       * only do while both answer to one switch. A consumer that turns the flip off for a box - the
+       * anchoring page's own specimen does, to show the placement it names rather than the fallback -
+       * used to turn it off for the box ALONE, and the arrow went on flipping: a diamond left on the
+       * far side of the trigger, pointing at nothing, while the box sat where it was asked to. */
+      position-try-fallbacks: var(--sk-anchored-position-try, flip-block);
       justify-self: anchor-center;
       align-self: start;
       margin-block-start: var(--sk-anchored-arrow-near);
@@ -290,7 +296,13 @@
 
     .sk-anchored[data-sk-placement="block-start"] > .sk-anchored-arrow {
       position-area: block-start span-all;
-      position-try-fallbacks: flip-block;
+      /* The SAME hook the box reads (`.sk-anchored` above), not a second hard-coded
+       * `flip-block`: the paragraph above says the arrow and the box have to flip together, and they
+       * only do while both answer to one switch. A consumer that turns the flip off for a box - the
+       * anchoring page's own specimen does, to show the placement it names rather than the fallback -
+       * used to turn it off for the box ALONE, and the arrow went on flipping: a diamond left on the
+       * far side of the trigger, pointing at nothing, while the box sat where it was asked to. */
+      position-try-fallbacks: var(--sk-anchored-position-try, flip-block);
       justify-self: anchor-center;
       align-self: end;
       margin-block-start: calc(
@@ -305,7 +317,9 @@
      * measures the box, the inline one. */
     .sk-anchored[data-sk-placement="inline-start"] > .sk-anchored-arrow {
       position-area: inline-start;
-      position-try-fallbacks: flip-inline;
+      /* Same hook as the block pair above, with this axis's own default: box and arrow flip
+       * together, or they do not flip at all. */
+      position-try-fallbacks: var(--sk-anchored-position-try, flip-inline);
       align-self: anchor-center;
       justify-self: end;
       margin-inline-start: calc(
@@ -318,7 +332,9 @@
 
     .sk-anchored[data-sk-placement="inline-end"] > .sk-anchored-arrow {
       position-area: inline-end;
-      position-try-fallbacks: flip-inline;
+      /* Same hook as the block pair above, with this axis's own default: box and arrow flip
+       * together, or they do not flip at all. */
+      position-try-fallbacks: var(--sk-anchored-position-try, flip-inline);
       align-self: anchor-center;
       justify-self: start;
       margin-inline-start: var(--sk-anchored-arrow-near);

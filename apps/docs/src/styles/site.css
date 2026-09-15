@@ -589,27 +589,76 @@ html:has(dialog:modal) .sk-toc {
    (`minmax(--sk-layout-gutter, 1fr)` on both sides of the rails, layout.css) can absorb leftover
    width and keep start-rail + content + end-rail centered as a unit, with the same air to either
    edge of this column. `justify-self: center` would shrink-wrap a track list that still contains
-   `1fr` and fight that centering. Two bridge lines hand the pattern the site-specific values it
+   `1fr` and fight that centering. One bridge line hands the pattern the site-specific value it
    cannot know on its own: the Toc's width (zeroed when the page has no headings, same
-   `--docs-toc-inline-size` the empty-toc collapse below already drives) and how many rows `<main>`'s
-   own content occupies (`--docs-main-row-count`, computed at build in Base.astro from the same scan
-   that indexes the page's headings. The pattern has no way to know this by itself). */
+   `--docs-toc-inline-size` the empty-toc collapse below already drives).
+
+   THE ROW SPAN IS GONE, and that is the second thing `<main>` having a box bought. The rail used to
+   span `--docs-main-row-count` rows because main's children WERE this grid's rows, and the count had
+   to be computed at build from the same scan that indexes the page's headings. Now main is one item
+   occupying one row, and the rail spans that row: the pattern's own default of 1 is the right answer
+   again, and a number nobody could check by reading the page stopped being load-bearing. It was also
+   not free, `.shell`'s `row-gap` applied once per empty row past main's own, which measured ~300px
+   of phantom height at the foot of a long component page. */
 .docs-document-pair[data-document-layout="grid"] {
   justify-self: stretch;
   padding-block-start: var(--space-inset-lg);
   overflow-x: clip;
   --sk-layout-rail-inline-size: var(--docs-toc-inline-size);
-  --sk-layout-rail-row-span: var(--docs-main-row-count, 1);
 }
 
-/* `<main>` generates no box of its own here, so ITS children (the document's own top-level
-   elements, `data-width` and all) become direct grid items of `.docs-document-pair`. Exactly the
-   nesting `[data-width="full-width"]` already does one level down (layout.css), just with `<main>`
-   as the transparent level instead of an authored wrapper. Modern engines keep the `main` landmark
-   in the accessibility tree across `display: contents` (the old Chromium/Firefox bugs that stripped
-   it are long fixed), so nothing here costs the page its landmark. */
+/*
+ * `<main>` SPANS THE WHOLE GRID AND HANDS ITS OWN TRACKS BACK, which is what `subgrid` is for.
+ *
+ * Its children (the document's own top-level elements, `data-width` and all) have to land on
+ * `.docs-document-pair`'s columns: that is what lets a breakout image or a full-width preview reach
+ * past the reading measure while the Toc rail keeps its own column beside them. This used to be
+ * `display: contents` - main generated no box at all and its children became direct items of the
+ * pair.
+ *
+ * WHAT THAT COST, and why this rule changed: an element with no box is not a focusable area, so the
+ * skip link could not point at `<main>` at all. Its destination was a wrapper `<div>` around main
+ * AND the Toc, which meant "skip to content" landed the reader before the table of contents, on an
+ * id no one reading the markup would recognise as the document. Measured in Chrome: a
+ * `display: contents` element with `tabindex="-1"` takes neither focus nor the scroll.
+ *
+ * `subgrid` gives main a real box that spans every column (so `full-width` still reaches the
+ * gutters) while passing the parent's own line names - `content-start`, `narrow-end`,
+ * `breakout-start` - straight through to its children, so every `.sk-layout-grid > *` placement
+ * resolves exactly as it did. Measured against the old rule: identical geometry for content,
+ * breakout, full-width and the rail, and `<main>` now takes focus and scroll like any other box.
+ *
+ * ROWS ARE MAIN'S OWN, deliberately not `subgrid` as well: main occupies ONE row of the pair and
+ * its children stack in its own rows. That is what lets the rail go back to spanning a single row
+ * (the block above): the row it spans is main's, so it is exactly as tall as the document, with no
+ * build-time count of main's children to keep true.
+ */
 main[data-document-layout="grid"] {
-  display: contents;
+  display: grid;
+  grid-template-columns: subgrid;
+  /* Beats `.sk-layout-grid > *`'s own `content-start / content-end` on specificity (0,1,1 against
+     0,1,0), which is what a nested level has to do to reach the outer gutters. */
+  grid-column: full-width-start / full-width-end;
+  /*
+   * THE SAME ROW AS THE RAIL, stated rather than left to auto-placement, which is the one thing a
+   * box needs that `display: contents` did not.
+   *
+   * The Toc claims row 1 explicitly (`[data-width="rail"]`, layout.css) in the rail columns. Main
+   * spans every column, so auto-placement cannot fit it in row 1 beside the rail and drops it to row
+   * 2: measured, the whole document started 228px lower, under the rail, and the page grew by the
+   * rail's own height. Row 1 for both puts them side by side again. They overlap in the rail's
+   * columns and that is harmless - main paints nothing there, and its children stop at
+   * `content-end`, exactly as the old full-width children of the pair already did.
+   */
+  grid-row: 1;
+  /*
+   * AND THE TOP INSET IS THE PAIR'S, not main's own. `main { padding-block-start }` above is the
+   * document's inset on every other layout; here it was inert, because an element with no box has no
+   * padding either, and `.docs-document-pair[data-document-layout="grid"]` grew one instead so the
+   * document and the Toc rail beside it would start level. Giving main a box made both apply and the
+   * document dropped 24px below the rail. One inset, on the box that holds both columns.
+   */
+  padding-block-start: 0;
 }
 
 /*

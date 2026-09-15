@@ -269,3 +269,23 @@ entries:
         track, the label, starting at its own indent. In a mixed tree the leaves and branches no
         longer share a label x, which is the honest read: a leaf no longer pretends to a control it
         does not have.
+  - date: 2026-09-15
+    kind: bugfix
+    target: branchControl
+    es:
+      title: El área clicable de una rama ahora llega hasta el borde
+      body: >-
+        El control de una rama es el único <code>&lt;button&gt;</code> del árbol y su
+        <code>&lt;li&gt;</code> es una caja de bloque, así que se encogía al ancho de su etiqueta
+        mientras cada hoja, que sí es ítem de grilla, ocupaba toda su pista. Medido en un riel de
+        207px: hojas de 155px contra ramas de 114px, o sea 40px de fila que se ven clicables y no
+        lo son, con la capa de estado pintando un muñón en vez de la fila. La rama ahora ocupa el
+        100% del ancho disponible: la pista de la etiqueta crece y nada más se mueve.
+    en:
+      title: A branch row is now clickable end to end
+      body: >-
+        A branch control is the tree's only <code>&lt;button&gt;</code> and its <code>&lt;li&gt;</code>
+        is a block box, so it shrank to its own label while every leaf, which is a grid item, filled
+        its track. Measured in a 207px rail: 155px leaves against 114px branches, which is 40px of row
+        that looks clickable and is not, with the state layer washing a stub instead of the row. The
+        branch now takes the full available width: its label track grows and nothing else moves.

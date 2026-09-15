@@ -241,6 +241,21 @@
    * the two kinds of row no longer share a label x is the honest rendering of a mixed tree.
    */
   .sk-tree-view__branch-control {
+    /*
+     * FULL WIDTH, AND IT IS A TARGET SIZE FIX, not an alignment one. A branch control is the one
+     * row in this tree that is a `<button>`, and its parent `.sk-tree-view__branch` is an ordinary
+     * `<li>`: a block box, not a grid. So while every LEAF is itself a grid item and stretches to
+     * its track, the button shrank to fit its own label. Measured in the Playground rail at 207px
+     * wide: leaves 155px, branches 114-118px, which is 40px of row that looks clickable (the
+     * pointer is over the row, the row is the target everywhere else in the tree) and is not. The
+     * state layer showed it too: hovering a folder washed a short stub instead of the row.
+     *
+     * The grid of a branch already ends in `minmax(0, 1fr)`, so widening the box widens the LABEL
+     * track and nothing else moves: the chevron column, the icon column and the text all keep their
+     * positions, the ellipsis still fires at the same place, and `box-sizing: border-box` above
+     * keeps the row inset inside the 100%.
+     */
+    inline-size: 100%;
     grid-template-columns: var(--sk-tree-indicator-size) minmax(0, 1fr);
   }
   .sk-tree-view__item {

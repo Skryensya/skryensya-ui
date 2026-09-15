@@ -1219,8 +1219,15 @@ const PALETTE_PRESETS = palettePresets(locale);
           })();
         </script>
 
-        <hr class="sk-sidebar__separator" />
-        <div class="sk-sidebar__footer">skryensya/ui</div>
+        {/*
+          NO `sk-sidebar__footer` HERE. The rail used to close with a hairline and the wordmark
+          repeated under it, which is the one thing in the rail nobody needs: the header of the page
+          already carries the wordmark, and the site footer carries it again with the version beside
+          it. The contract's own footer part stays published for consumers who have something to put
+          there (an account row, a workspace switcher); this site does not, so the index simply runs
+          to the bottom and the resize handle follows it. The separator went with it: a hairline that
+          divides the index from nothing is a rule with no second side.
+        */}
         <div
           class="sk-sidebar__resize-handle"
           data-sk-sidebar-resize

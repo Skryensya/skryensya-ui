@@ -33,6 +33,10 @@ import "@skryensya/core/components/kbd.css";
 /* The two icon-only controls in the bar say what they are on hover and on focus, the way the
  * documentation's own header controls do. Tooltip is an anchored box, so the pattern comes with it. */
 import "@skryensya/core/components/tooltip.css";
+/* The copy button in the file strip: an icon-toggle's faces over a button, which is the composition
+ * decision 33 leaves to each consumer now that no CopyButton contract owns that markup. */
+import "@skryensya/core/patterns/icon-toggle.css";
+import "@skryensya/core/components/icon-state-button.css";
 import "@skryensya/core/patterns/anchored.css";
 /* The drag edge between the two panes composes the splitter pattern, and the wait inside the preview
  * is the kit's own Loader. Both are opt-in sheets, imported where the markup that uses them lives -
@@ -74,6 +78,8 @@ const strings = {
   searchHintOpen: t("search.hintOpen"),
   searchHintClose: t("search.hintClose"),
   reload: t("playground.reload"),
+  copy: t("playground.copy"),
+  copied: t("playground.copied"),
   layoutSideBySide: t("playground.layoutSideBySide"),
   layoutStacked: t("playground.layoutStacked"),
 };
@@ -453,7 +459,6 @@ const strings = {
      * pane contributes nothing and is stretched to the height the row already has. Its inline size is
      * the flex basis above, so containing that axis too costs nothing. */
     contain: size;
-    display: flex;
     min-inline-size: 0;
     /* THE FLOOR SIZE CONTAINMENT MAKES NECESSARY. A contained box contributes nothing to its flex
        line, which is exactly what stops a long file from stretching the row - and which collapses
@@ -464,27 +469,64 @@ const strings = {
     background: var(--color-bg-canvas);
   }
 
+  /*
+   * THE PANE OWNS THE GRID, and Tabs hands its two parts to it.
+   *
+   * The file action (copy) belongs in the strip's own row, at its end, and a component that
+   * renders its list and its panel as one grid cannot have a third thing placed between them from
+   * outside. `display: contents` drops the Tabs box out of layout and leaves its two parts as items
+   * of THIS grid, which can then give the actions a column of their own. Nothing is lost by dropping
+   * that box: `.sk-tabs` paints nothing (tabs.css declares hooks and `display: grid` on it, and the
+   * line under the strip belongs to `__list`), and this pane already re-declared the component's own
+   * track list anyway.
+   *
+   * TWO COLUMNS, and the second is why this arrangement exists: the strip scrolls when an example
+   * has more files than fit, and `auto` reserves exactly what the button measures, so the scroller
+   * ENDS where it begins. A long file list can never pass under it, over it, or push it out of the
+   * row - three things a strip and a floating button in the same corner do to each other, which is
+   * what this replaced.
+   */
+  .playground__files {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    /* Both tracks floored at zero: the component's grid sizes to content by default, which let a long
+     * line of code widen the pane and a long file push it past the viewport instead of scrolling. */
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
   .playground__files > .sk-tabs {
     --sk-tabs-gap: 0;
     --sk-tabs-panel-padding-block: 0;
 
-    flex: 1;
-    min-inline-size: 0;
-    min-block-size: 0;
-    /* Both tracks floored at zero: the component's grid sizes to content by default, which let a long
-     * line of code widen the pane and a long file push it past the viewport instead of scrolling. */
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr);
+    display: contents;
   }
 
   .playground__files .sk-tabs__list {
-    padding-inline: var(--space-inset-md);
+    grid-area: 1 / 1;
+    min-inline-size: 0;
+    padding-inline-start: var(--space-inset-md);
     overflow-x: auto;
     scrollbar-width: none;
   }
 
-  .playground__files .sk-tabs__content {
+  /*
+   * THE ACTION'S OWN CELL, on the strip's line and sharing its hairline so the header reads as one
+   * row rather than as a strip with something parked beside it.
+   */
+  .playground__file-actions {
     display: flex;
+    grid-area: 1 / 2;
+    gap: var(--space-inline-xs);
+    align-items: center;
+    padding-inline: var(--space-inset-sm);
+    border-block-end: 1px solid var(--sk-tabs-list-border-color, var(--color-border-subtle));
+  }
+
+  .playground__files .sk-tabs__content {
+    /* The whole row under the header, both columns: the editor is as wide as the pane, not as wide
+       as the strip that lost a column to the buttons. */
+    display: flex;
+    grid-area: 2 / 1 / 3 / 3;
     min-inline-size: 0;
     min-block-size: 0;
     overflow: hidden;

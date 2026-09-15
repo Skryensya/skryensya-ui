@@ -29,6 +29,11 @@ export const playgroundMessages = {
     "playground.search": "Buscar un ejemplo",
     "playground.searchPlaceholder": "Buscar un componente o un ejemplo…",
     "playground.reload": "Recargar la vista previa",
+    /* El botón de copiar de la tira de archivos. Mismos verbos que el de la documentación
+       (`copy.*`), pero con clave propia: aquí el sujeto es el ARCHIVO abierto, no "el código" de un
+       panel. */
+    "playground.copy": "Copiar el archivo",
+    "playground.copied": "Copiado",
     /* El control ofrece siempre la OTRA disposición, así que cada nombre dice adónde lleva
        apretarlo, no dónde ya estamos. */
     "playground.layoutSideBySide": "Poner el código y la vista previa lado a lado",
@@ -63,6 +68,8 @@ export const playgroundMessages = {
     "playground.search": "Search an example",
     "playground.searchPlaceholder": "Search a component or an example…",
     "playground.reload": "Reload the preview",
+    "playground.copy": "Copy the file",
+    "playground.copied": "Copied",
     "playground.layoutSideBySide": "Put the code and the preview side by side",
     "playground.layoutStacked": "Put the preview below the code",
     "playground.hideRail": "Hide the component list",

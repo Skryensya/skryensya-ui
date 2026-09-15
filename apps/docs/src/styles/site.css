@@ -612,6 +612,65 @@ main[data-document-layout="grid"] {
   display: contents;
 }
 
+/*
+ * THE SKIP LINK'S RING GOES ON THE TITLE, NOT ON MAIN'S OWN BOX.
+ *
+ * `<main>` spans every column (`subgrid`, `full-width-start / full-width-end`, above) and is
+ * exactly as tall as the document, which is right for layout and wrong for a focus ring: measured
+ * on the Button page the UA drew it at 1189 x 5520px, past the Toc rail on the right and five
+ * screens down, so what the reader actually saw after "Ir al contenido" was two vertical lines
+ * running off both ends of the viewport. A rectangle that large cannot say "focus landed here",
+ * which is the only thing this ring is for. Main's box is not the problem; it was the wrong box to
+ * draw.
+ *
+ * The document's `h1` is the right one: it is where reading starts, it sits in the content column,
+ * and every page carries exactly one inside main (component pages, Fundamentos, the catalogue,
+ * Presets and the landing all measured). A preview's own headings live inside a srcdoc iframe, a
+ * separate document, so this selector can never reach into a demo.
+ *
+ * `:focus-visible`, never `:focus`: main carries `tabindex="-1"` so the skip link can land on it,
+ * which also means clicking the gap beside a block focuses it, and a click must not ring anything.
+ *
+ * `:has(h1)` guards the swap: a document with no title of its own keeps the ring on main rather
+ * than moving focus with no indicator at all.
+ */
+main:focus-visible:has(h1) {
+  outline: none;
+}
+
+/*
+ * THE RING GOES ON THE TITLE'S CONTAINER, `:has(> h1)`, never on the `h1` itself. A ring drawn
+ * tight around a line of text reads as "this text is a control", which it is not: nothing here is
+ * focusable but `<main>`, and the ring is only reporting where its focus landed. The title's own
+ * block (the hero on a component page, the header on Fundamentos, the headline block on the
+ * landing) is a box the reader already sees as one thing, so the ring lands on something the page
+ * itself drew.
+ *
+ * `:has(> h1)` is the DIRECT parent and nothing above it, so the ring cannot creep out to the
+ * document wrapper on a page that nests its title deeper.
+ */
+main:focus-visible :has(> h1) {
+  border-radius: var(--radius-control);
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/*
+ * AND THE JUMP HAS TO CLEAR THE NAVBAR. Focusing an element scrolls it into view, and `<main>`
+ * starts at the very top of the document, so "Ir al contenido" parked main's top edge at the
+ * viewport's top edge: measured `scrollY: 58`, exactly the header's height, with the first 58px of
+ * the document (a component page's eyebrow, the top of its hero band) sitting behind the sticky
+ * header the reader had just asked to skip.
+ *
+ * The same expression the anchored headings above already use, so a jump to the document and a jump
+ * to a heading inside it clear the same chrome by the same margin: the MEASURED navbar height
+ * (`--docs-navbar-h`, written by the shell) with the token as the fallback before the script runs,
+ * plus one stack step so the content does not land flush against the underside of the bar.
+ */
+main {
+  scroll-margin-top: calc(var(--docs-navbar-h, var(--docs-header-block-size)) + var(--space-stack-md));
+}
+
 .shell[data-document-layout="grid"] {
   --docs-layout-grid-canvas: calc(var(--size-wrapper-lg) + var(--space-inset-lg) * 2);
   --docs-document-max: var(--docs-layout-grid-canvas);

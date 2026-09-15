@@ -126,10 +126,24 @@ const strings = {
      * The rail's first row starts level with the bar's title beside it. The component's own block
      * padding is `md`, which is right for a rail that begins at the top of a page; here there is a
      * strip of chrome to its right, and 16px against that strip's 4px left the two columns starting
-     * at visibly different heights. Overridden through the hook the component publishes for it, so
-     * the inline padding (and everything else) stays the component's.
+     * at visibly different heights. Overridden through the hook the component publishes for it.
      */
     --sk-sidebar-padding-block: var(--space-inset-sm);
+    /*
+     * ONE STEP OFF THE INLINE INSET TOO, `md` (16px) down to `sm` (8px), and for a reason the block
+     * padding above already states in the other axis: this rail is a CATALOGUE, not a page margin.
+     * The tree already carries its own 8px row inset, so at the component's default the first
+     * character of every row sat 24px in from the panel edge while the rail itself is only 13rem
+     * wide. Halving the container's inset gives those pixels back to the longest component names
+     * (`ComponentPreview`, `CommandPalette`) instead of to blank gutter.
+     *
+     * The base `--sk-sidebar-padding` hook is the one turned, not `--sk-sidebar-padding-inline`
+     * directly: the component derives the inline value as `min(padding, inline-size / 4)`, so
+     * setting the base keeps that narrow-rail clamp alive (sidebar.css) instead of pinning a flat
+     * number the drag handle could then out-narrow. NOTHING ABOUT THE TREE MOVES: its own
+     * `--sk-tree-row-inset` / `--sk-tree-row-gap` / type stay exactly as set below.
+     */
+    --sk-sidebar-padding: var(--space-inset-sm);
     /*
      * ROOM BETWEEN THE ROWS, through the hooks the tree publishes for it. At the component's default
      * caption type the rows are 24px tall and 6px apart, and sixty of them in a column read as a wall

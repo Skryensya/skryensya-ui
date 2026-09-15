@@ -13,6 +13,7 @@ import { CommandPalette } from "@skryensya/react/command-palette";
 import { Dialog } from "@skryensya/react/dialog";
 import { useHotkey } from "@skryensya/react/hotkey";
 import { Icon, IconSetProvider } from "@skryensya/react/icon";
+import { IconStateButton } from "@skryensya/react/icon-state-button";
 import { Kbd } from "@skryensya/react/kbd";
 import { Tooltip } from "@skryensya/react/tooltip";
 import { Loader } from "@skryensya/react/loader";
@@ -22,6 +23,7 @@ import { Sidebar, SidebarContent, SidebarResizeHandle } from "@skryensya/react/s
 import { useStoredPreference } from "@skryensya/react/storage";
 import { TreeView } from "@skryensya/react/tree-view";
 import type { CommandPaletteEntry } from "@skryensya/core/command-palette";
+import { writeClipboard } from "@skryensya/core/copy-button";
 import { detectMac, formatHotkey } from "@skryensya/core/hotkey";
 import { definePreference, oneOf } from "@skryensya/core/storage";
 import { PaneSplitter } from "./PaneSplitter";
@@ -116,6 +118,8 @@ export type PlaygroundStrings = {
   readonly searchHintOpen: string;
   readonly searchHintClose: string;
   readonly reload: string;
+  readonly copy: string;
+  readonly copied: string;
   readonly layoutSideBySide: string;
   readonly layoutStacked: string;
 };
@@ -939,10 +943,43 @@ function ChromeSlot({ name, children }: { readonly name: string; readonly childr
  * re-creates it whenever the editor remounts, so the class is applied on every mutation under the
  * pane rather than once.
  */
-function EditorFiles({ files, label }: { readonly files: readonly string[]; readonly label: string }) {
+function EditorFiles({
+  files,
+  label,
+  strings,
+}: {
+  readonly files: readonly string[];
+  readonly label: string;
+  readonly strings: PlaygroundStrings;
+}) {
   const { sandpack } = useSandpack();
   const active = files.includes(sandpack.activeFile) ? sandpack.activeFile : files[0]!;
   const paneRef = useRef<HTMLDivElement>(null);
+  /*
+   * COPIED, for as long as a reader needs to see that it worked. The same shape the documentation's
+   * own copy button has (a face swap plus a timed reset); what is shared with it is the part worth
+   * sharing - `writeClipboard`, the kit's one clipboard call with its pre-`navigator.clipboard`
+   * fallback - rather than the markup, which decision 33 deliberately left to each consumer.
+   */
+  const [copied, setCopied] = useState<"idle" | "copied" | "error">("idle");
+  const copiedTimer = useRef<number | null>(null);
+
+  useEffect(
+    () => () => {
+      if (copiedTimer.current !== null) window.clearTimeout(copiedTimer.current);
+    },
+    [],
+  );
+
+  const codeOf = (path: string) => sandpack.files[path]?.code ?? "";
+
+  const copyActive = () => {
+    void writeClipboard(codeOf(active)).then((ok) => {
+      setCopied(ok ? "copied" : "error");
+      if (copiedTimer.current !== null) window.clearTimeout(copiedTimer.current);
+      copiedTimer.current = window.setTimeout(() => setCopied("idle"), 1800);
+    });
+  };
 
   useEffect(() => {
     const pane = paneRef.current;
@@ -971,6 +1008,37 @@ function EditorFiles({ files, label }: { readonly files: readonly string[]; read
         onValueChange={({ value }) => sandpack.setActiveFile(value)}
         value={active}
       />
+      {/*
+        IN THE TAB STRIP'S OWN ROW, at its end, with a column of its own: the strip scrolls when an
+        example has more files than fit, and this must never be what it scrolls under. It sits in the
+        header beside the tabs rather than floating over the code, so a long file list is clipped by
+        its own scroller and stops at its edge (see the grid in `pages/index.astro`).
+
+        It copies the file the tabs have OPEN, which is the one the reader is looking at: the strip
+        is the only thing that picks another, and there is no second way to say which file.
+      */}
+      <div className="playground__file-actions">
+        {/*
+          A KIT BUTTON, in the same three attributes every other icon control on this screen wears:
+          ghost, `sm`, icon-only. `IconStateButton` is the composition the kit prescribes for a
+          control whose icon reports state (decision 33: no `CopyButton` contract owns this markup
+          any more), and it renders a real `.sk-button`, so the button's own shape rules apply to it
+          the moment it is told which shape it is.
+        */}
+        <IconStateButton
+          aria-label={copied === "copied" ? strings.copied : strings.copy}
+          current={copied}
+          data-icon-only=""
+          data-size="sm"
+          data-variant="ghost"
+          faces={[
+            { name: "idle", icon: "copy" },
+            { name: "copied", icon: "check" },
+            { name: "error", icon: "warning" },
+          ]}
+          onClick={copyActive}
+        />
+      </div>
     </div>
   );
 }
@@ -1689,7 +1757,7 @@ createRoot(document.getElementById("root")).render(
               {/* Renders nothing; it is how the bar's reload button reaches the running client. */}
               <PreviewControls actionsRef={previewActionsRef} />
               <SandpackLayout>
-                <EditorFiles files={editorFiles} label={strings.filesLabel} />
+                <EditorFiles files={editorFiles} label={strings.filesLabel} strings={strings} />
                 {/*
                   Between the two panes, and it resizes the one before it. See `PaneSplitter`.
 

@@ -155,7 +155,7 @@
               "title": "An annotated specimen no longer takes focus"
             },
             "es": {
-              "body": "<code>inert</code> queda prendido por defecto: el acordeón, el breadcrumb o lo que sea que se esté anotando es una muestra, no un control. Tab lo saltea, y los bindings le sacan el <code>tabindex</code> a todo lo de adentro para que nada se publicite como parada. Las etiquetas siguen siendo enfocables, que es como se revela una marca sin puntero. <code>inert={false}</code> sigue existiendo para el diagrama sobre una UI viva.",
+              "body": "<code>inert</code> queda prendido por defecto: el acordeón, el breadcrumb o lo que sea que se esté anotando es una muestra, no un control. Tab lo salta, y los bindings le sacan el <code>tabindex</code> a todo lo de adentro para que nada se publicite como parada. Las etiquetas siguen siendo enfocables, que es como se revela una marca sin puntero. <code>inert={false}</code> sigue existiendo para el diagrama sobre una UI viva.",
               "title": "La muestra anotada ya no recibe foco"
             },
             "kind": "bugfix",
@@ -696,7 +696,7 @@
               "title": "The action row now restricts tone rather than emphasis"
             },
             "es": {
-              "body": "El slot <code>actions</code> limitaba <code>variant</code> a <code>translucent</code>/<code>danger</code>. Era la misma regla de siempre dicha en el vocabulario que Button tenía entonces: un solo enum cargaba a la vez qué tan fuerte es un botón y qué significa, así que \"que no compita con la llamada a la acción de la página\" sólo se podía escribir prohibiendo el relleno de acento. Ahora que son dos ejes, la regla dice lo que siempre quiso decir y limita <code>tone</code> a <code>neutral</code>/<code>danger</code>. El énfasis queda libre: una acción destructiva acá puede ser <code>solid</code> para destacarse, y una neutral puede ser <code>translucent</code> para integrarse al color del callout.",
+              "body": "El slot <code>actions</code> limitaba <code>variant</code> a <code>translucent</code>/<code>danger</code>. Era la misma regla de siempre dicha en el vocabulario que Button tenía entonces: un solo enum cargaba a la vez qué tan fuerte es un botón y qué significa, así que \"que no compita con la llamada a la acción de la página\" sólo se podía escribir prohibiendo el relleno de acento. Ahora que son dos ejes, la regla dice lo que siempre quiso decir y limita <code>tone</code> a <code>neutral</code>/<code>danger</code>. El énfasis queda libre: una acción destructiva aquí puede ser <code>solid</code> para destacarse, y una neutral puede ser <code>translucent</code> para integrarse al color del callout.",
               "title": "La fila de acciones ahora restringe el tono, no el énfasis"
             },
             "kind": "rework"
@@ -785,7 +785,7 @@
               "title": "The change kinds were renamed, and each one now carries its own colour"
             },
             "es": {
-              "body": "<code>added</code>, <code>changed</code>, <code>fixed</code> y <code>removed</code> ya no validan. El vocabulario pasa a ser <code>breaking</code>, <code>feature</code>, <code>bugfix</code>, <code>rework</code> y <code>chore</code>: los anteriores nombraban lo que le pasó al ARCHIVO, éstos nombran lo que le pasa a quien consume el paquete, que es el único lector que tiene un changelog. <code>removed</code> se escribe <code>breaking</code>, porque una opción publicada que deja de existir es algo sobre lo que hay que actuar, y ése es el significado del badge rojo. Además cada tipo lleva ahora su propio tono -<code>danger</code>, <code>success</code>, <code>accent</code>, <code>warning</code>, <code>neutral</code>, en ese orden- derivado igual que antes desde la opción, así que la columna de badges contesta \"¿algo de esto es para mí?\" antes de que se lea una palabra. El default pasa de <code>changed</code> a <code>chore</code>: una entrada a la que se le olvidó el tipo debe leerse como que no es para vos, nunca como una novedad que nadie anunció.",
+              "body": "<code>added</code>, <code>changed</code>, <code>fixed</code> y <code>removed</code> ya no validan. El vocabulario pasa a ser <code>breaking</code>, <code>feature</code>, <code>bugfix</code>, <code>rework</code> y <code>chore</code>: los anteriores nombraban lo que le pasó al ARCHIVO, éstos nombran lo que le pasa a quien consume el paquete, que es el único lector que tiene un changelog. <code>removed</code> se escribe <code>breaking</code>, porque una opción publicada que deja de existir es algo sobre lo que hay que actuar, y ése es el significado del badge rojo. Además cada tipo lleva ahora su propio tono -<code>danger</code>, <code>success</code>, <code>accent</code>, <code>warning</code>, <code>neutral</code>, en ese orden- derivado igual que antes desde la opción, así que la columna de badges contesta \"¿algo de esto es para mí?\" antes de que se lea una palabra. El default pasa de <code>changed</code> a <code>chore</code>: una entrada a la que se le olvidó el tipo debe leerse como que no es para ti, nunca como una novedad que nadie anunció.",
               "title": "Los tipos de cambio se renombraron y ahora cada uno tiene su color"
             },
             "kind": "breaking",
@@ -811,7 +811,7 @@
               "title": "The kind is drawn as a Badge"
             },
             "es": {
-              "body": "La parte <code>kind</code> compone <code>sk-badge</code> en vez de volver a dibujar una píldora acá, igual que Avatar compone <code>sk-image-frame</code>. El tono se DERIVA de la opción <code>kind</code> con <code>attrsWhen</code>, nunca se pasa: no hay forma de archivar un cambio <code>breaking</code> bajo un badge tranquilo. Sigue siendo un tono solo, <code>danger</code> para <code>breaking</code> y <code>neutral</code> para todo lo demás, porque un color por tipo hace una página verde que se lee como reporte de logros.",
+              "body": "La parte <code>kind</code> compone <code>sk-badge</code> en vez de volver a dibujar una píldora aquí, igual que Avatar compone <code>sk-image-frame</code>. El tono se DERIVA de la opción <code>kind</code> con <code>attrsWhen</code>, nunca se pasa: no hay forma de archivar un cambio <code>breaking</code> bajo un badge tranquilo. Sigue siendo un tono solo, <code>danger</code> para <code>breaking</code> y <code>neutral</code> para todo lo demás, porque un color por tipo hace una página verde que se lee como reporte de logros.",
               "title": "El tipo de cambio se dibuja como Badge"
             },
             "kind": "rework",
@@ -824,7 +824,7 @@
               "title": "Entries indent under their version, and the measure caps at 85ch"
             },
             "es": {
-              "body": "Los cambios se escalonan un paso bajo el release al que pertenecen, así que un historial se lee como grupos y no como una columna sola. El componente además se limita a <code>85ch</code> (<code>--sk-changelog-measure</code>) y declara <code>word-break: normal</code>, porque un sitio que corta URLs largas heredaba acá y partía palabras comunes a la mitad. Sólo el código puede partirse, que es lo único sin espacios donde cortar.",
+              "body": "Los cambios se escalonan un paso bajo el release al que pertenecen, así que un historial se lee como grupos y no como una columna sola. El componente además se limita a <code>85ch</code> (<code>--sk-changelog-measure</code>) y declara <code>word-break: normal</code>, porque un sitio que corta URLs largas heredaba aquí y partía palabras comunes a la mitad. Sólo el código puede partirse, que es lo único sin espacios donde cortar.",
               "title": "Las entradas se indentan bajo su versión y la medida se corta en 85ch"
             },
             "kind": "rework"
@@ -836,7 +836,7 @@
               "title": "The history groups by version"
             },
             "es": {
-              "body": "Entre <code>Changelog</code> y sus entradas hay una firma nueva, <code>ChangelogRelease</code>, y las entradas ahora cuelgan de ella. Quien lee un changelog viene a saber si ya tiene el cambio que está leyendo, y eso lo contesta una versión, no una fecha. Un árbol que ponía <code>ChangelogEntry</code> directo bajo <code>Changelog</code> ya no valida: envolvelo en un release.",
+              "body": "Entre <code>Changelog</code> y sus entradas hay una firma nueva, <code>ChangelogRelease</code>, y las entradas ahora cuelgan de ella. Quien lee un changelog viene a saber si ya tiene el cambio que está leyendo, y eso lo contesta una versión, no una fecha. Un árbol que ponía <code>ChangelogEntry</code> directo bajo <code>Changelog</code> ya no valida: envuélvelo en un release.",
               "title": "El historial se agrupa por versión"
             },
             "kind": "breaking",
@@ -970,7 +970,7 @@
               "title": "Chart is published as a contract, a series of labelled values made visible"
             },
             "es": {
-              "body": "Entra al catálogo con una sola signature, <code>Chart</code>, y con una decisión que explica todo lo demás: <strong>los datos son una lista</strong>. Las entradas viven en un slot <code>items</code>, el mismo que ya usan <code>Tabs</code> y <code>Segmented</code> para sus colecciones, y no en un objeto opaco que se le pasa a una librería. Eso compra cuatro cosas a la vez. Accesibilidad de verdad y no un resumen: la serie es una lista real de texto real, así que un lector de pantalla lee \"Dic, 14, Ene, 23\" desde el DOM, en lugar del <code>&lt;svg aria-label=\"gráfico de aportes\"&gt;</code> de siempre, que avisa que hay datos y después se niega a decir cuáles. Barras sin motor: cada entrada trae su valor y la hoja <code>components/chart.css</code> lo divide por el máximo de la serie para sacar la altura, así que un gráfico de barras se pinta desde markup escrito a mano. Un renderer que es opcional por construcción: <code>line</code> y <code>area</code> necesitan un path, y eso sí es geometría, así que <code>@skryensya/charts</code> lo dibuja como un overlay <code>aria-hidden</code> encima de este mismo markup; el motor es una MEJORA de un gráfico que ya funcionaba, no lo que lo hace funcionar, y cambiarlo nunca puede romper a nadie porque ningún consumidor lo nombró. Y validación: un slot <code>items</code> es data que el compilador revisa y que la MCP puede componer. Opciones: <code>kind</code> (<code>bar</code>/<code>line</code>/<code>area</code>), <code>tone</code>, <code>height</code>, <code>labels</code>, <code>values</code>, <code>grid</code>, <code>flush</code> (para el gráfico que ES el borde inferior de una card), <code>format</code>, <code>currency</code>, <code>locale</code>, <code>description</code> y <code>label</code>, requerida: una serie de números sin nada que diga qué miden es el único gráfico peor que ningún gráfico. Cada entrada toma <code>value</code>, un <code>tone</code> propio para destacarla contra sus hermanas, y los slots <code>label</code> y <code>text</code>. Lo que este contrato deliberadamente NO tiene: título, subtítulo, acción ni superficie propia. Todo eso es de lo que contenga al gráfico, y ponerlo acá habría hecho crecer exactamente la card con variantes que Card se niega a ser: un gráfico dentro de una card es una COMPOSICIÓN.",
+              "body": "Entra al catálogo con una sola signature, <code>Chart</code>, y con una decisión que explica todo lo demás: <strong>los datos son una lista</strong>. Las entradas viven en un slot <code>items</code>, el mismo que ya usan <code>Tabs</code> y <code>Segmented</code> para sus colecciones, y no en un objeto opaco que se le pasa a una librería. Eso compra cuatro cosas a la vez. Accesibilidad de verdad y no un resumen: la serie es una lista real de texto real, así que un lector de pantalla lee \"Dic, 14, Ene, 23\" desde el DOM, en lugar del <code>&lt;svg aria-label=\"gráfico de aportes\"&gt;</code> de siempre, que avisa que hay datos y después se niega a decir cuáles. Barras sin motor: cada entrada trae su valor y la hoja <code>components/chart.css</code> lo divide por el máximo de la serie para sacar la altura, así que un gráfico de barras se pinta desde markup escrito a mano. Un renderer que es opcional por construcción: <code>line</code> y <code>area</code> necesitan un path, y eso sí es geometría, así que <code>@skryensya/charts</code> lo dibuja como un overlay <code>aria-hidden</code> encima de este mismo markup; el motor es una MEJORA de un gráfico que ya funcionaba, no lo que lo hace funcionar, y cambiarlo nunca puede romper a nadie porque ningún consumidor lo nombró. Y validación: un slot <code>items</code> es data que el compilador revisa y que la MCP puede componer. Opciones: <code>kind</code> (<code>bar</code>/<code>line</code>/<code>area</code>), <code>tone</code>, <code>height</code>, <code>labels</code>, <code>values</code>, <code>grid</code>, <code>flush</code> (para el gráfico que ES el borde inferior de una card), <code>format</code>, <code>currency</code>, <code>locale</code>, <code>description</code> y <code>label</code>, requerida: una serie de números sin nada que diga qué miden es el único gráfico peor que ningún gráfico. Cada entrada toma <code>value</code>, un <code>tone</code> propio para destacarla contra sus hermanas, y los slots <code>label</code> y <code>text</code>. Lo que este contrato deliberadamente NO tiene: título, subtítulo, acción ni superficie propia. Todo eso es de lo que contenga al gráfico, y ponerlo aquí habría hecho crecer exactamente la card con variantes que Card se niega a ser: un gráfico dentro de una card es una COMPOSICIÓN.",
               "title": "Chart se publica como contrato, una serie de valores con nombre hecha visible"
             },
             "kind": "feature",
@@ -1331,7 +1331,7 @@
               "title": "The reply-fold control is now a real xs Button"
             },
             "es": {
-              "body": "El handle que monta sobre la línea del hilo dejaba de ser una cara achicada a mano: era un <code>sm</code> recortado a <code>--size-icon-md</code> (20px) con los hooks de Button desde el CSS de comment-thread. Ahora es <code>data-size=\"xs\"</code>, un tamaño que la escala publica (ver el changelog de <code>button</code>), así que el nodo mide 24px, que es lo que <code>xs</code> pinta en todos lados. Se ve un poco más grande que antes (20px a 24px) y esa es la única diferencia visible. A cambio, la medida ya no vive acá: cualquier otro componente que necesite un nodo del mismo tamaño lo pide por su nombre, y el piso de 24px es el de WCAG 2.2 SC 2.5.8 en vez de un número que había quedado atado al token de un icono. El área de click era 44px y sigue siendo 44px. Nada que se autore a mano se rompe: quien haya escrito el markup del control con <code>data-size=\"sm\"</code> lo sigue viendo funcionar, sólo que con la cara vieja.",
+              "body": "El handle que monta sobre la línea del hilo dejaba de ser una cara achicada a mano: era un <code>sm</code> recortado a <code>--size-icon-md</code> (20px) con los hooks de Button desde el CSS de comment-thread. Ahora es <code>data-size=\"xs\"</code>, un tamaño que la escala publica (ver el changelog de <code>button</code>), así que el nodo mide 24px, que es lo que <code>xs</code> pinta en todos lados. Se ve un poco más grande que antes (20px a 24px) y esa es la única diferencia visible. A cambio, la medida ya no vive aquí: cualquier otro componente que necesite un nodo del mismo tamaño lo pide por su nombre, y el piso de 24px es el de WCAG 2.2 SC 2.5.8 en vez de un número que había quedado atado al token de un icono. El área de click era 44px y sigue siendo 44px. Nada que se autore a mano se rompe: quien haya escrito el markup del control con <code>data-size=\"sm\"</code> lo sigue viendo funcionar, sólo que con la cara vieja.",
               "title": "El control que pliega las respuestas ahora es un Button xs de verdad"
             },
             "kind": "feature",
@@ -1344,7 +1344,7 @@
               "title": "On a phone the composer is a Vaul, and stays in flow above it"
             },
             "es": {
-              "body": "Las dos cajas de escribir (la respuesta de un comentario y el composer del hilo) pasan de `&lt;div&gt;` a `&lt;dialog&gt;`. Debajo de <code>--breakpoint-desktop</code> el binding las abre con <code>showModal()</code> y quedan ancladas al borde inferior; por encima siguen en flujo, exactamente donde estaban. Es UN nodo en dos presentaciones y no dos nodos: duplicarlo duplicaría el control que pasa quien lo usa, con ids y labels repetidos y el borrador partido en dos. Toda la pintura del panel viene del pattern Vaul a través de la clase <code>sk-vaul</code>, que pone el binding; acá sólo se reasignan sus hooks, igual que hace Drawer. Sin enhancer la caja se queda en flujo a cualquier ancho, que es el mismo fallback que describe la decisión 9. El disparador de responder ahora declara <code>aria-haspopup=\"dialog\"</code> además de <code>aria-expanded</code>: lo primero dice qué abre, lo segundo si está abierto. Y como el composer del hilo siempre estuvo abierto en flujo, en móvil necesita una forma de entrar: <code>composerTriggerLabel</code> nombra ese control, que sólo existe donde la caja es una hoja.",
+              "body": "Las dos cajas de escribir (la respuesta de un comentario y el composer del hilo) pasan de `&lt;div&gt;` a `&lt;dialog&gt;`. Debajo de <code>--breakpoint-desktop</code> el binding las abre con <code>showModal()</code> y quedan ancladas al borde inferior; por encima siguen en flujo, exactamente donde estaban. Es UN nodo en dos presentaciones y no dos nodos: duplicarlo duplicaría el control que pasa quien lo usa, con ids y labels repetidos y el borrador partido en dos. Toda la pintura del panel viene del pattern Vaul a través de la clase <code>sk-vaul</code>, que pone el binding; aquí sólo se reasignan sus hooks, igual que hace Drawer. Sin enhancer la caja se queda en flujo a cualquier ancho, que es el mismo fallback que describe la decisión 9. El disparador de responder ahora declara <code>aria-haspopup=\"dialog\"</code> además de <code>aria-expanded</code>: lo primero dice qué abre, lo segundo si está abierto. Y como el composer del hilo siempre estuvo abierto en flujo, en móvil necesita una forma de entrar: <code>composerTriggerLabel</code> nombra ese control, que sólo existe donde la caja es una hoja.",
               "title": "En un teléfono el composer es un Vaul, y arriba sigue en flujo"
             },
             "kind": "feature"
@@ -1656,7 +1656,7 @@
               "title": "New alert option for the Alert Dialog pattern"
             },
             "es": {
-              "body": "<code>alert</code> pone <code>role=\"alertdialog\"</code>, <code>aria-modal=\"true\"</code> y <code>aria-describedby</code> apuntando al body, para una confirmación destructiva o un error bloqueante que necesita atención inmediata. El foco sigue siendo del consumidor: poné <code>autofocus</code> en la acción menos destructiva.",
+              "body": "<code>alert</code> pone <code>role=\"alertdialog\"</code>, <code>aria-modal=\"true\"</code> y <code>aria-describedby</code> apuntando al body, para una confirmación destructiva o un error bloqueante que necesita atención inmediata. El foco sigue siendo del consumidor: pon <code>autofocus</code> en la acción menos destructiva.",
               "title": "Nueva opción alert para el patrón Alert Dialog"
             },
             "kind": "feature",
@@ -1999,7 +1999,7 @@
               "title": "FormField gains labelHidden"
             },
             "es": {
-              "body": "Recorta el label a una caja de solo-nombre en vez de sacarlo: el control sigue teniendo label, la conexión `for` sigue apuntando ahí y un lector de pantalla lo sigue leyendo; lo único que cambia es que el ojo no. Para un campo al que la composición de alrededor ya nombró, como la caja de respuesta debajo del comentario que contesta, donde repetir la palabra es ruido que hay que saltear. No es \"sin label\": el slot sigue siendo obligatorio, porque un campo sin él es un control que nada anuncia. La misma distinción que ya hacen `SkipLink` y cualquier Button icon-only.",
+              "body": "Recorta el label a una caja de solo-nombre en vez de sacarlo: el control sigue teniendo label, la conexión `for` sigue apuntando ahí y un lector de pantalla lo sigue leyendo; lo único que cambia es que el ojo no. Para un campo al que la composición de alrededor ya nombró, como la caja de respuesta debajo del comentario que contesta, donde repetir la palabra es ruido que hay que saltar. No es \"sin label\": el slot sigue siendo obligatorio, porque un campo sin él es un control que nada anuncia. La misma distinción que ya hacen `SkipLink` y cualquier Button icon-only.",
               "title": "FormField gana labelHidden"
             },
             "kind": "feature"
@@ -2068,7 +2068,7 @@
               "title": "Testimonial fixed (its content broke its own rule), audience tabs rewritten"
             },
             "es": {
-              "body": "Dos correcciones al catálogo de patrones, no al contrato. `hero-with-testimonial` usaba una <code>typography.Text</code> grande para la cita, justificado como \"una excepción deliberada\" a la regla de contenido de Hero. Era simplemente la mostraron: la propia regla (<code>hero.contentRule1</code>, \"adentro siempre va un encabezado real, nunca sólo texto grande\") describe exactamente esa forma como el error que nombra. Ahora la cita ES el <code>Heading</code> (<code>headingSize: \"h1\"</code>, no <code>\"display-sm\"</code>: una oración completa a ese tamaño se envuelve en tres o cuatro líneas y grita en vez de citar). `hero-with-audience-tabs` dejó de estar centrado (<code>align: \"start\"</code>, el default): centrado, la línea inferior de <code>Tabs</code> (que sigue el ancho del panel más ancho, no el de las dos etiquetas) quedaba visiblemente descentrada respecto a sus propias etiquetas. Cada panel gana una lista corta de tres filas (antes una sola oración): confirmado en vivo, cambiar de pestaña desmonta un panel y monta el otro, así que dos paneles de alturas distintas hacían saltar el contenido de la página debajo del hero en el cambio mismo; igualar la forma exacta entre ambos paneles mantiene ese salto en prácticamente cero. Cada fila es un <code>layout.Inline</code> con un <code>Icon</code> (\"check\") y un <code>Text</code>, no <code>list.List</code>/<code>ListItem</code>: se probó primero con <code>List</code>, pero su opción <code>dividers</code> no está conectada a la firma <code>List</code> (<code>get_contract(\"list\")</code> expone <code>List.options</code> como sólo <code>[\"density\"]</code>), así que <code>dividers: false</code> no hacía nada y cada fila seguía dibujando su divisor. <code>validate_ui</code> aceptó igual el árbol: confirmado por separado que no revisa las opciones del contenido anidado dentro del slot <code>children</code> de un panel de <code>Tabs.items</code> de la misma forma que en cualquier otro lugar, que es cómo pasó la opción inválida sin avisar. Ese hueco del validador es un bug real en <code>ai-compiler</code>, no de este contrato; queda reportado, no arreglado acá.",
+              "body": "Dos correcciones al catálogo de patrones, no al contrato. `hero-with-testimonial` usaba una <code>typography.Text</code> grande para la cita, justificado como \"una excepción deliberada\" a la regla de contenido de Hero. Era simplemente la mostraron: la propia regla (<code>hero.contentRule1</code>, \"adentro siempre va un encabezado real, nunca sólo texto grande\") describe exactamente esa forma como el error que nombra. Ahora la cita ES el <code>Heading</code> (<code>headingSize: \"h1\"</code>, no <code>\"display-sm\"</code>: una oración completa a ese tamaño se envuelve en tres o cuatro líneas y grita en vez de citar). `hero-with-audience-tabs` dejó de estar centrado (<code>align: \"start\"</code>, el default): centrado, la línea inferior de <code>Tabs</code> (que sigue el ancho del panel más ancho, no el de las dos etiquetas) quedaba visiblemente descentrada respecto a sus propias etiquetas. Cada panel gana una lista corta de tres filas (antes una sola oración): confirmado en vivo, cambiar de pestaña desmonta un panel y monta el otro, así que dos paneles de alturas distintas hacían saltar el contenido de la página debajo del hero en el cambio mismo; igualar la forma exacta entre ambos paneles mantiene ese salto en prácticamente cero. Cada fila es un <code>layout.Inline</code> con un <code>Icon</code> (\"check\") y un <code>Text</code>, no <code>list.List</code>/<code>ListItem</code>: se probó primero con <code>List</code>, pero su opción <code>dividers</code> no está conectada a la firma <code>List</code> (<code>get_contract(\"list\")</code> expone <code>List.options</code> como sólo <code>[\"density\"]</code>), así que <code>dividers: false</code> no hacía nada y cada fila seguía dibujando su divisor. <code>validate_ui</code> aceptó igual el árbol: confirmado por separado que no revisa las opciones del contenido anidado dentro del slot <code>children</code> de un panel de <code>Tabs.items</code> de la misma forma que en cualquier otro lugar, que es cómo pasó la opción inválida sin avisar. Ese hueco del validador es un bug real en <code>ai-compiler</code>, no de este contrato; queda reportado, no arreglado aquí.",
               "title": "Testimonio corregido (el contenido rompía su propia regla), tabs de audiencia reescrito"
             },
             "kind": "bugfix",
@@ -2081,7 +2081,7 @@
               "title": "Ten more patterns, surveyed against real hero-section galleries"
             },
             "es": {
-              "body": "Se agregan diez patrones nuevos a los cinco que ya publicaba <code>get_examples</code> (<code>contracts/snippets/hero-*.ts</code>), buscados contra catálogos reales de hero sections (el propio catálogo de Saaspo nombra \"Email CTA\", \"Logos\" y \"Tabs\" como categorías reconocidas, no inventadas acá): captura de correo con un <code>form-field.FormField</code> real (no un placeholder haciendo de label), badges de tienda de apps, un muro de marcas de confianza en texto (nunca fotos genéricas haciendo de logo), un buscador estilo marketplace, un switch de precios mensual/anual con <code>segmented.Segmented</code>, un hero de herramienta para desarrolladores con <code>code-preview.CodePreview</code> en vez de una captura de pantalla, un hint de atajo de teclado (<code>kbd.Kbd</code>) para una home de documentación, un demo en video con miniatura pausada, un selector de audiencia con <code>tabs.Tabs</code> (un solo <code>Heading</code> compartido arriba, sólo el pitch y la acción cambian por pestaña) y un pull-quote de testimonio. El contrato en sí no cambió: <code>options</code> sigue siendo sólo <code>padding</code>/<code>surface</code>/<code>align</code>, todos los quince patrones siguen validando contra la misma anatomía mínima.",
+              "body": "Se agregan diez patrones nuevos a los cinco que ya publicaba <code>get_examples</code> (<code>contracts/snippets/hero-*.ts</code>), buscados contra catálogos reales de hero sections (el propio catálogo de Saaspo nombra \"Email CTA\", \"Logos\" y \"Tabs\" como categorías reconocidas, no inventadas aquí): captura de correo con un <code>form-field.FormField</code> real (no un placeholder haciendo de label), badges de tienda de apps, un muro de marcas de confianza en texto (nunca fotos genéricas haciendo de logo), un buscador estilo marketplace, un switch de precios mensual/anual con <code>segmented.Segmented</code>, un hero de herramienta para desarrolladores con <code>code-preview.CodePreview</code> en vez de una captura de pantalla, un hint de atajo de teclado (<code>kbd.Kbd</code>) para una home de documentación, un demo en video con miniatura pausada, un selector de audiencia con <code>tabs.Tabs</code> (un solo <code>Heading</code> compartido arriba, sólo el pitch y la acción cambian por pestaña) y un pull-quote de testimonio. El contrato en sí no cambió: <code>options</code> sigue siendo sólo <code>padding</code>/<code>surface</code>/<code>align</code>, todos los quince patrones siguen validando contra la misma anatomía mínima.",
               "title": "Diez patrones más, surveados contra galerías reales de hero sections"
             },
             "kind": "feature",
@@ -2212,7 +2212,7 @@
               "title": "Reaches the code role the vocabulary just gained"
             },
             "es": {
-              "body": "Este control nombra sus iconos con el vocabulario estable, así que un rol nuevo ahí llega acá sin que este contrato cambie de forma: `code` ya se puede pedir. La superficie se movió porque el conjunto de nombres que acepta es parte de lo que un consumidor puede depender, no porque haya cambiado nada de cómo se usa.",
+              "body": "Este control nombra sus iconos con el vocabulario estable, así que un rol nuevo ahí llega aquí sin que este contrato cambie de forma: `code` ya se puede pedir. La superficie se movió porque el conjunto de nombres que acepta es parte de lo que un consumidor puede depender, no porque haya cambiado nada de cómo se usa.",
               "title": "Alcanza el rol code, que el vocabulario acaba de sumar"
             },
             "kind": "feature"
@@ -2363,7 +2363,7 @@
               "title": "Input and Textarea now nest under FormField"
             },
             "es": {
-              "body": "El padre que ambas signatures declaran pasa de <code>Field</code> a <code>FormField</code>, que es el mismo contrato con su nombre nuevo. Un árbol que anide <code>Input</code> bajo <code>Field</code> deja de validar: cambiá el <code>contract</code> a <code>form-field</code> y la <code>signature</code> a <code>FormField</code>. El control en sí no cambió, sigue sin <code>invalid</code> y sin <code>id</code> propios porque los dos llegan del cableado del padre.",
+              "body": "El padre que ambas signatures declaran pasa de <code>Field</code> a <code>FormField</code>, que es el mismo contrato con su nombre nuevo. Un árbol que anide <code>Input</code> bajo <code>Field</code> deja de validar: cambia el <code>contract</code> a <code>form-field</code> y la <code>signature</code> a <code>FormField</code>. El control en sí no cambió, sigue sin <code>invalid</code> y sin <code>id</code> propios porque los dos llegan del cableado del padre.",
               "title": "Input y Textarea ahora se anidan bajo FormField"
             },
             "kind": "breaking"
@@ -2477,7 +2477,7 @@
               "title": "DensityScope leaves the contract"
             },
             "es": {
-              "body": "El signature <code>DensityScope</code> y la opción <code>densityFactor</code> de <code>layout</code> ya no existen; con ellos se va también el componente React <code>&lt;DensityScope&gt;</code>. El motor que quedaba debajo NO se tocó: <code>--sk-density</code>, <code>--sk-density-factor</code> y el atributo <code>data-sk-density-scope</code> siguen siendo el mismo mecanismo semántico (<code>semantic/_density.scss</code>), autorable a mano en cualquier elemento - es exactamente como ya lo usan <code>CopyButton</code> y la galería de presets, ninguno de los dos pasaba por este signature. Lo que se retira es sólo la envoltura de árbol de uso que escribía ese atributo por vos; una migración cambia un nodo <code>{ contract: \"layout\", signature: \"DensityScope\", options: { densityFactor } }</code> por un <code>Box</code>/<code>Stack</code> con <code>attrs: { \"data-sk-density-scope\": \"\", style: \"--sk-density-factor: …\" }</code>.",
+              "body": "El signature <code>DensityScope</code> y la opción <code>densityFactor</code> de <code>layout</code> ya no existen; con ellos se va también el componente React <code>&lt;DensityScope&gt;</code>. El motor que quedaba debajo NO se tocó: <code>--sk-density</code>, <code>--sk-density-factor</code> y el atributo <code>data-sk-density-scope</code> siguen siendo el mismo mecanismo semántico (<code>semantic/_density.scss</code>), autorable a mano en cualquier elemento - es exactamente como ya lo usan <code>CopyButton</code> y la galería de presets, ninguno de los dos pasaba por este signature. Lo que se retira es sólo la envoltura de árbol de uso que escribía ese atributo por ti; una migración cambia un nodo <code>{ contract: \"layout\", signature: \"DensityScope\", options: { densityFactor } }</code> por un <code>Box</code>/<code>Stack</code> con <code>attrs: { \"data-sk-density-scope\": \"\", style: \"--sk-density-factor: …\" }</code>.",
               "title": "DensityScope se retira del contrato"
             },
             "kind": "breaking"
@@ -2971,7 +2971,7 @@
               "title": "The keyboard-highlighted item shows its focus ring again"
             },
             "es": {
-              "body": "Navegar un menú con las flechas no dibujaba ningún anillo: la regla lo pedía con <code>:focus-visible</code>, y en un menú el foco real nunca llega al ítem: Zag lo sigue con <code>aria-activedescendant</code> sobre el panel -, así que no coincidía nunca. Al lector de teclado le quedaba sólo el tinte, exactamente el mismo que pinta el hover del mouse, sin nada que distinguiera \"acá están las flechas\" de \"acá está el puntero\". El anillo ahora lo pide <code>[data-highlighted]:not(:hover)</code>: sale cuando el resaltado lo movió el teclado y no cuando lo puso el puntero. Alcanza igual a los desplegables de <code>Menubar</code>, que son este mismo ítem.",
+              "body": "Navegar un menú con las flechas no dibujaba ningún anillo: la regla lo pedía con <code>:focus-visible</code>, y en un menú el foco real nunca llega al ítem: Zag lo sigue con <code>aria-activedescendant</code> sobre el panel -, así que no coincidía nunca. Al lector de teclado le quedaba sólo el tinte, exactamente el mismo que pinta el hover del mouse, sin nada que distinguiera \"aquí están las flechas\" de \"aquí está el puntero\". El anillo ahora lo pide <code>[data-highlighted]:not(:hover)</code>: sale cuando el resaltado lo movió el teclado y no cuando lo puso el puntero. Alcanza igual a los desplegables de <code>Menubar</code>, que son este mismo ítem.",
               "title": "El ítem resaltado con el teclado vuelve a mostrar su anillo de foco"
             },
             "kind": "bugfix",
@@ -3764,7 +3764,7 @@
               "title": "The track now reads as a control, not as a recessed well"
             },
             "es": {
-              "body": "<code>--sk-segmented-bg</code> pasa de <code>--color-bg-surface-sunken</code> a <code>--color-action-neutral</code> y <code>--sk-segmented-border-color</code> de <code>--color-border-subtle</code> a <code>--color-border-default</code>: los mismos dos tokens que usa el variant <code>neutral</code> de <code>Button</code>. Sentado en una fila junto a un botón, el track hundido con un borde casi invisible se leía más liviano y turbio que sus vecinos, más cerca de una superficie deshabilitada que de algo que se presiona. <code>ComponentPreview</code> ya venía pisando esos dos hooks en su propio header por exactamente esa razón. Un consumidor arreglándose el componente para sí mismo mientras el resto se quedaba con la versión liviana -; ese override se borró y ésta es la apariencia publicada. La geometría no cambia (alto, padding, radio, gap), y el anillo de acento del thumb es lo que lo mantiene visible sin depender de que el track sea oscuro. <strong>Si querés el pozo de vuelta:</strong> redeclará esos dos hooks en tu propio scope.",
+              "body": "<code>--sk-segmented-bg</code> pasa de <code>--color-bg-surface-sunken</code> a <code>--color-action-neutral</code> y <code>--sk-segmented-border-color</code> de <code>--color-border-subtle</code> a <code>--color-border-default</code>: los mismos dos tokens que usa el variant <code>neutral</code> de <code>Button</code>. Sentado en una fila junto a un botón, el track hundido con un borde casi invisible se leía más liviano y turbio que sus vecinos, más cerca de una superficie deshabilitada que de algo que se presiona. <code>ComponentPreview</code> ya venía pisando esos dos hooks en su propio header por exactamente esa razón. Un consumidor arreglándose el componente para sí mismo mientras el resto se quedaba con la versión liviana -; ese override se borró y ésta es la apariencia publicada. La geometría no cambia (alto, padding, radio, gap), y el anillo de acento del thumb es lo que lo mantiene visible sin depender de que el track sea oscuro. <strong>Si quieres el pozo de vuelta:</strong> redeclará esos dos hooks en tu propio scope.",
               "title": "El track pasa a leerse como un control, no como un hueco hundido"
             },
             "kind": "rework"
@@ -3927,7 +3927,7 @@
               "title": "The current page is marked more strongly in light mode"
             },
             "es": {
-              "body": "El fondo de la fila con <code>aria-current=\"page\"</code> deja de ser el <code>--color-bg-accent-subtle</code> del patrón, que en claro está a un paso del blanco sobre una superficie que ya es blanca: en un riel de doscientas filas eso se leía como un artefacto de render y no como \"estás acá\". Ahora se mezcla contra el fondo propio de la barra, así que una barra repintada mantiene la relación. Modo oscuro sin cambios: ahí el mismo token ya es un escalón por encima de su fondo.",
+              "body": "El fondo de la fila con <code>aria-current=\"page\"</code> deja de ser el <code>--color-bg-accent-subtle</code> del patrón, que en claro está a un paso del blanco sobre una superficie que ya es blanca: en un riel de doscientas filas eso se leía como un artefacto de render y no como \"estás aquí\". Ahora se mezcla contra el fondo propio de la barra, así que una barra repintada mantiene la relación. Modo oscuro sin cambios: ahí el mismo token ya es un escalón por encima de su fondo.",
               "title": "La página actual se marca más fuerte en modo claro"
             },
             "kind": "rework"
@@ -4780,7 +4780,7 @@
               "title": "Toc publishes one shape, always open"
             },
             "es": {
-              "body": "Se van el <code>&lt;details&gt;</code>, el <code>&lt;summary&gt;</code> y el chevron: el índice ya no se abre ni se cierra, se ve desde el primer paint. Con ellos se van las partes <code>disclosure</code>, <code>summary</code> y <code>chevron</code>, el atributo <code>data-sk-toc-disclosure</code> y el opt-in <code>data-sk-toc-rail</code>: que además nunca estuvo en el contrato: era un string mágico re-tipeado en la hoja de estilos, el enhancer y cada consumidor que quisiera el rail. El motivo: toda la apariencia de rail vivía detrás de ese atributo Y de un <code>min-width: 72rem</code>, así que la propia página del componente no podía renderizar la forma sobre la que corre el sitio de docs. Un frame de preview mide 1022px y la compuerta pedía 1152px. Lo único que sigue detrás de <code>wide</code> son <code>position: sticky</code> y el ancho fijo. <strong>Migración:</strong> borrá <code>data-sk-toc-rail</code> de tu markup y no envuelvas la lista en un <code>&lt;details&gt;</code>; el emisor ya produce la forma nueva. La marca de sección actual pasa de un chip de fondo a una regla en el gutter.",
+              "body": "Se van el <code>&lt;details&gt;</code>, el <code>&lt;summary&gt;</code> y el chevron: el índice ya no se abre ni se cierra, se ve desde el primer paint. Con ellos se van las partes <code>disclosure</code>, <code>summary</code> y <code>chevron</code>, el atributo <code>data-sk-toc-disclosure</code> y el opt-in <code>data-sk-toc-rail</code>: que además nunca estuvo en el contrato: era un string mágico re-tipeado en la hoja de estilos, el enhancer y cada consumidor que quisiera el rail. El motivo: toda la apariencia de rail vivía detrás de ese atributo Y de un <code>min-width: 72rem</code>, así que la propia página del componente no podía renderizar la forma sobre la que corre el sitio de docs. Un frame de preview mide 1022px y la compuerta pedía 1152px. Lo único que sigue detrás de <code>wide</code> son <code>position: sticky</code> y el ancho fijo. <strong>Migración:</strong> borra <code>data-sk-toc-rail</code> de tu markup y no envuelvas la lista en un <code>&lt;details&gt;</code>; el emisor ya produce la forma nueva. La marca de sección actual pasa de un chip de fondo a una regla en el gutter.",
               "title": "Toc publica una sola forma, siempre abierta"
             },
             "kind": "breaking"
@@ -4906,6 +4906,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-15",
+            "en": {
+              "body": "A branch control is the tree's only <code>&lt;button&gt;</code> and its <code>&lt;li&gt;</code> is a block box, so it shrank to its own label while every leaf, which is a grid item, filled its track. Measured in a 207px rail: 155px leaves against 114px branches, which is 40px of row that looks clickable and is not, with the state layer washing a stub instead of the row. The branch now takes the full available width: its label track grows and nothing else moves.",
+              "title": "A branch row is now clickable end to end"
+            },
+            "es": {
+              "body": "El control de una rama es el único <code>&lt;button&gt;</code> del árbol y su <code>&lt;li&gt;</code> es una caja de bloque, así que se encogía al ancho de su etiqueta mientras cada hoja, que sí es ítem de grilla, ocupaba toda su pista. Medido en un riel de 207px: hojas de 155px contra ramas de 114px, o sea 40px de fila que se ven clicables y no lo son, con la capa de estado pintando un muñón en vez de la fila. La rama ahora ocupa el 100% del ancho disponible: la pista de la etiqueta crece y nada más se mueve.",
+              "title": "El área clicable de una rama ahora llega hasta el borde"
+            },
+            "kind": "bugfix",
+            "target": "branchControl"
+          },
           {
             "date": "2026-09-14",
             "en": {
@@ -5150,6 +5163,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-15",
+            "en": {
+              "body": "<code>--scale-font-family-sans</code> named <code>Inter</code> and nothing in the kit ever loaded it, so every surface resolved to <code>system-ui</code>: SF on a Mac, Segoe on Windows, Roboto on Android, three rhythms for one system. The package now ships the family (<code>@skryensya/core/fonts/hanken-grotesk.css</code>, an optional import): a variable 100-900 weight axis, a drawn italic, latin and latin-ext subsets, and a fallback face built from <code>local()</code> sources with the real font's measured metrics on it, so the swap changes the drawing and not the layout (0.38% width difference at 12px). The choice was measured on these very pages; the reasoning and the table live in <code>docs/decisions/0023-the-kit-ships-its-own-default-sans.md</code>. If your brand uses a different family, that is still a preset: override <code>--font-family-body</code> and do not import the sheet.",
+              "title": "The kit now ships its own typeface, Hanken Grotesk"
+            },
+            "es": {
+              "body": "<code>--scale-font-family-sans</code> nombraba <code>Inter</code> y nada en el kit la cargaba, así que toda superficie caía a <code>system-ui</code>: SF en un Mac, Segoe en Windows, Roboto en Android, tres ritmos para un solo sistema. Ahora el paquete trae la familia (<code>@skryensya/core/fonts/hanken-grotesk.css</code>, un import opcional): eje variable de 100 a 900, itálica dibujada, subsets latin y latin-ext, y una cara de respaldo con <code>local()</code> y las métricas reales medidas encima, para que el intercambio cambie el dibujo y no el layout (0.38% de diferencia de ancho a 12px). La elección se midió sobre estas mismas páginas; el razonamiento y la tabla están en <code>docs/decisions/0023-the-kit-ships-its-own-default-sans.md</code>. Si tu marca usa otra familia, sigue siendo un preset: pisás <code>--font-family-body</code> y no importás la hoja.",
+              "title": "El kit ahora trae su propia tipografía, Hanken Grotesk"
+            },
+            "kind": "rework"
+          },
           {
             "date": "2026-09-12",
             "en": {
@@ -6141,9 +6166,9 @@
           ],
           "avoidWhen": [
             "la página entra entera en una pantalla: no hay de dónde volver",
-            "lo que se quiere es saltear el chrome de arriba para llegar al contenido: eso es SkipLink, va primero en el foco y usa un ancla real",
+            "lo que se quiere es saltar el chrome de arriba para llegar al contenido: eso es SkipLink, va primero en el foco y usa un ancla real",
             "el destino es una sección concreta y no el principio del scroller: eso es un enlace de ancla dentro del texto, o Toc",
-            "el foco tiene que viajar siempre al volver arriba: pasale `target` con el id de algo enfocable al inicio, o mirá SkipLink",
+            "el foco tiene que viajar siempre al volver arriba: pásale `target` con el id de algo enfocable al inicio, o mira SkipLink",
             "hay que restaurar la posición de scroll al navegar entre páginas: eso lo hace el router, no un botón"
           ],
           "useWhen": [
@@ -7594,7 +7619,7 @@
           "alternatives": [],
           "avoidWhen": [
             "fuera de un Changelog: el riel y el orden los dibuja la lista, no el release suelto",
-            "querés marcar 'sin publicar' con una opción aparte; la ausencia de fecha ya lo dice, y dos campos que dicen lo mismo se pueden contradecir"
+            "quieres marcar 'sin publicar' con una opción aparte; la ausencia de fecha ya lo dice, y dos campos que dicen lo mismo se pueden contradecir"
           ],
           "useWhen": [
             "una versión y todo lo que salió en ella",
@@ -7967,7 +7992,7 @@
             "es UNA medición dentro de un rango conocido, no una serie; eso es Meter",
             "es el avance de una tarea; eso es Progress",
             "los valores hay que poder leerlos con precisión, compararlos fila por fila u ordenarlos; eso es una Table, y un gráfico de cinco barras es una tabla peor",
-            "la serie tiene decenas de entradas: las barras se vuelven líneas de un pixel y las etiquetas se pisan; agrupá los datos antes de dibujarlos"
+            "la serie tiene decenas de entradas: las barras se vuelven líneas de un pixel y las etiquetas se pisan; agrupa los datos antes de dibujarlos"
           ],
           "useWhen": [
             "hay una SERIE de valores con nombre y hace falta ver su forma: un total por mes, por hora, por versión",
@@ -13055,7 +13080,7 @@
           "useWhen": [
             "un bloque de contenido necesita decir de qué es ANTES de que lo leas: la pestaña es un rótulo, no un título más",
             "hay una colección de cosas del mismo tipo y conviene que cada una se lea como un objeto aparte",
-            "conviene que en reposo se lea como texto limpio: una carpeta nunca se ve hasta que la tocás"
+            "conviene que en reposo se lea como texto limpio: una carpeta nunca se ve hasta que la tocas"
           ]
         },
         "FolderLink": {
@@ -13065,7 +13090,7 @@
           ],
           "avoidWhen": [
             "la carpeta hace algo en la página en vez de navegar; eso es un TileButton",
-            "adentro hay más de un destino; dos links anidados no existen, poné los links en el cuerpo de un Folder"
+            "adentro hay más de un destino; dos links anidados no existen, pon los links en el cuerpo de un Folder"
           ],
           "useWhen": [
             "la carpeta entera va a un lugar: el rectángulo completo es el destino",
@@ -13390,10 +13415,10 @@
             "sólo hace falta separar una sección del resto con relleno o borde en medio de la página; eso es un Box",
             "es una barra de acciones pegada abajo de un panel o un diálogo (una fila de botones de confirmación); eso se compone con layout.Inline dentro del contenedor, no con Footer",
             "cada columna de enlaces iría sin nombre accesible: una fila de navigation sin nombre en la lista de landmarks es peor que no tenerla; cada columna es un NavList con aria-label o encabezado visible",
-            "el footer necesita más de dos niveles jerárquicos compitiendo (columnas, franja de newsletter, barra legal, sub-crédito, todo a la vez sin orden): separá lo que sobra en su propia región antes del footer"
+            "el footer necesita más de dos niveles jerárquicos compitiendo (columnas, franja de newsletter, barra legal, sub-crédito, todo a la vez sin orden): separa lo que sobra en su propia región antes del footer"
           ],
           "useWhen": [
-            "es el cierre de la página: la banda final que dice \"la página termina acá\", con navegación secundaria, aviso legal o crédito",
+            "es el cierre de la página: la banda final que dice \"la página termina aquí\", con navegación secundaria, aviso legal o crédito",
             "el host es un <footer> a nivel de documento, y eso YA es el landmark contentinfo sin escribir role: nunca se pone role=\"contentinfo\" a mano",
             "hay como mucho UN <footer> de documento por página; un footer que pertenece de verdad a un <article> es válido pero deja de ser el landmark, y esa es una decisión de quien compone",
             "la anatomía es libre, igual que Hero: adentro se compone con layout.Grid para la fila de columnas, nav-list.NavList para cada columna (con su propio nombre accesible), typography.Text para el aviso legal, wrapper.Wrapper para sostener la medida de la página",
@@ -15389,7 +15414,7 @@
             "logos, nombres o palabras forman un ritmo visual continuo y no son destinos ni controles",
             "una columna breve de marcas o actualizaciones inertes necesita viajar hacia arriba o abajo dentro de una altura visible definida",
             "una vez iniciada por la persona, la franja conserva su ritmo al pasar el puntero: hover no revoca una decisión explícita",
-            "hace falta un control de Play/Pausa sí o sí: acá el botón no es opcional, es la única causa de movimiento que tiene"
+            "hace falta un control de Play/Pausa sí o sí: aquí el botón no es opcional, es la única causa de movimiento que tiene"
           ]
         },
         "Marquee.autoplay": {
@@ -19885,7 +19910,7 @@
             "tiene que quedar fijo al scrollear; eso es el header o el footer"
           ],
           "useWhen": [
-            "es el medio que scrollea; acá adentro va la NavList"
+            "es el medio que scrollea; aquí adentro va la NavList"
           ]
         },
         "SidebarFooter": {
@@ -19935,7 +19960,7 @@
           ],
           "avoidWhen": [
             "se espera que oculte la barra; angosta, nunca esconde",
-            "la lista tiene subniveles (grupos anidados, un árbol de archivos): no hay una fila por nivel que mostrar en un riel de íconos; angostá con SidebarResizeHandle en cambio",
+            "la lista tiene subniveles (grupos anidados, un árbol de archivos): no hay una fila por nivel que mostrar en un riel de íconos; angosta con SidebarResizeHandle en cambio",
             "algún destino no tiene ícono propio; un riel colapsado con huecos es peor que uno que no colapsa"
           ],
           "useWhen": [
@@ -20225,15 +20250,15 @@
             "Link"
           ],
           "avoidWhen": [
-            "el destino no es enfocable: sin tabindex=\"-1\" el Tab siguiente vuelve al chrome que se quiso saltear",
-            "hay algo enfocable antes: entonces ese algo es el bloque que nadie puede saltear",
+            "el destino no es enfocable: sin tabindex=\"-1\" el Tab siguiente vuelve al chrome que se quiso saltar",
+            "hay algo enfocable antes: entonces ese algo es el bloque que nadie puede saltar",
             "el destino puede no estar en la página: un enlace a algo que no existe es una promesa que no se puede seguir",
             "es un enlace visible dentro del texto; eso es Link",
             "se quiere esconder texto que nadie va a enfocar: eso es la clase sk-visually-hidden"
           ],
           "useWhen": [
             "la página empieza con chrome que se repite en todas: marca, navegación global, buscador",
-            "hay que cumplir WCAG 2.4.1: quien navega con teclado necesita saltear ese bloque",
+            "hay que cumplir WCAG 2.4.1: quien navega con teclado necesita saltar ese bloque",
             "va primero en el documento y no se ve hasta que recibe el foco",
             "puede haber más de uno; el primero apunta al contenido, que es lo que casi todo el mundo vino a leer"
           ]
@@ -25131,5 +25156,5 @@
     "working": "0.0.1"
   },
   "schemaVersion": "2.0",
-  "sourceHash": "c66e6da5bc0ffc9f"
+  "sourceHash": "68ea1673948db002"
 }

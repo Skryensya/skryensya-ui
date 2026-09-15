@@ -1,7 +1,7 @@
 /*
  * The site's set, imported from `../icons` like any other consumer. It used to be hardcoded to
- * `lucideIcons` in here: while the site painted Phosphor, the demo's icons came out with different
- * geometry from the chrome around them. The set is named in ONE place and this realm reads it.
+ * `lucideIcons` in here, which was the same value by luck rather than by reference: the set is named
+ * in ONE place now and this realm reads it, so a site that rebinds is a one-line change again.
  */
 import { siteIcons } from "../icons";
 import { mountComponentsWithIcons } from "@skryensya/vanilla/auto";
@@ -481,11 +481,13 @@ async function mountReactDemo(): Promise<void> {
   document.body.append(host);
 
   /*
-   * Bound here, not left to `Icon`'s own default: the frame's icon-mounted Vanilla stage always
-   * draws `siteIcons` (see the note atop this file), and an unwrapped React demo falls back to
-   * `Icon`'s module default (Phosphor) instead: same tree, two geometries, side by side. A demo
-   * that binds its own set (`ToolbarDemo`'s `<IconSetProvider set={lucideIcons}>`) still wins for
-   * its own subtree; nesting just re-affirms the same set for everyone else.
+   * Bound here, not left to `Icon`'s own default. The two agree today (the package's default is
+   * Lucide and so is this site's set), and that is exactly the kind of agreement worth writing down
+   * rather than relying on: an unwrapped React demo resolves against whatever the PACKAGE decides,
+   * while the frame's icon-mounted Vanilla stage always draws `siteIcons`, and the day those two
+   * part company the same tree would render in two geometries side by side with nothing here edited.
+   * A demo that binds its own set (`ToolbarDemo`'s `<IconSetProvider set={lucideIcons}>`) still wins
+   * for its own subtree; nesting just re-affirms the same set for everyone else.
    */
   const root = createRoot(host);
   flushSync(() => {

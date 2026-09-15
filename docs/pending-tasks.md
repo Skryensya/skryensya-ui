@@ -204,6 +204,36 @@ dos, porque Menubar comparte `menuItemShape` tal cual.
 
 ---
 
+## Nivel 1 - bloqueador conocido: un Tooltip de React se voltea al reves
+
+Señal, verificable en un build (`pnpm --filter @skryensya/docs build`, servir `dist`, abrir
+`/anchoring`, pasar al binding React y hacer hover en el trigger `block-end`): la caja sale ARRIBA del
+trigger con 138px de lugar sin usar abajo. La misma composicion en Vanilla, en el mismo escenario,
+sale bien.
+
+Medido el 2026-09-15, en el orden en que se descarto cada cosa:
+
+- No es el placement pedido. Al re-etiquetar ese mismo elemento a `block-start`, se dibuja
+  block-end: **queda invertido pida lo que pida**. Sus tres hermanos (`block-start`, `inline-start`,
+  `inline-end`) se comportan bien, y un hermano re-etiquetado a `block-end` tambien.
+- No es el portal. Mover el positioner de Vanilla al `<body>` ANTES de abrirlo (que es donde React lo
+  monta) no lo hace voltear.
+- No es el escenario del preview: ni `max-inline-size: 100%` de la hoja del stage, ni
+  `position-visibility`, ni `justify-self: anchor-center`, ni el `display: flex` del frame body, ni la
+  flecha, ni el `inset`. Se probo cada uno por separado sobre el build.
+- No es una evaluacion vieja: forzar relayout no lo corrige, y el estado es estable.
+- Es `position-try`. Con `position-try-fallbacks: none` inline, la caja cae en `block-end` (top=214,
+  el trigger termina en 206), o sea que el area base es correcta y lo que decide mal es el fallback.
+
+Queda `--sk-anchored-position-try: none` en el demo de `/anchoring` y `/es/anclaje` (es lo correcto
+ahi por otra razon: esa pagina tiene que mostrar el placement que nombra, no el fallback), asi que la
+pagina ya no miente. De paso salio un bug real del patron, ya arreglado: la flecha tenia
+`flip-block`/`flip-inline` escritos a mano mientras la caja leia `--sk-anchored-position-try`, asi que
+apagar el volteo movia una sola de las dos y la flecha quedaba colgada del otro lado del trigger.
+Ahora las dos leen el mismo hook (`patterns/anchored.css`). Lo que falta es entender por que Blink aplica `flip-block` a ESE elemento con
+lugar de sobra, y si hay algo en el binding React que lo provoque: mientras no se sepa, cualquier
+Tooltip `block-end` de React puede salir del lado contrario sin que nadie lo note.
+
 ## Nivel 2 - Beta sin bloqueador documentado
 
 Los 14 que **ya tienen** Tests tab pero siguen marcados Beta. Nadie dejó escrito por qué; el primer

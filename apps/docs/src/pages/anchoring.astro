@@ -223,16 +223,77 @@ const arrowReact = `<Tooltip arrow content="It keeps itself">
 </Base>
 
 <style is:global>
-  /* The demo's skin belongs to the consumer, as always: the pattern brings hooks and structure, not paint.
-     `is:global`: the authored HTML lives inside the srcdoc and does not carry Astro's scope attribute. */
+  /*
+   * WHAT IS LEFT FOR THE PAGE, which is the STAGE and not the component. How the demo is composed -
+   * a padded Box around a centred row with a gap - is the tree's (`demos/anchoring.ts`), so the
+   * snippet a reader copies behaves like the one on this page. These three are about the box this
+   * demo is being SHOWN in, and a reader copying the code should not inherit any of them.
+   *
+   * `is:global`: the authored HTML lives inside the srcdoc and does not carry Astro's scope
+   * attribute. The class sits on the element itself in both bindings, so one selector reaches the
+   * Vanilla stage and the React one alike (a rule written against `frame-body > *` would not: React
+   * mounts one `display: contents` wrapper deeper).
+   */
   .sk-anchoring-demo {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-inline-md);
-    align-items: center;
-    justify-content: center;
-    /* Room above and below so a block-start tooltip has somewhere to go without the browser
-       having to flip it: the demo shows the requested placement, not the fallback. */
-    padding-block: var(--space-stack-xl);
+    /* The stage is a wrapping flex ROW, so a specimen is sized by its content and lands at the start
+       edge: the Box has to claim the line before anything inside it can be centred in the frame. */
+    inline-size: 100%;
+  }
+
+  /*
+   * CLEARANCE FOR THE SIDE PLACEMENTS, which is the one thing the gap scale cannot say.
+   *
+   * `inline-start` and `inline-end` open beside the trigger, and the tooltip is ~60px wide plus the
+   * pattern's own 8px offset: at the scale's widest gap (`xl`, 32px) the box opened straight over the
+   * neighbouring button and the demo looked broken - which is exactly what it was showing, four
+   * tooltips crowded into a row nobody would ship. 5rem is the measured clearance, re-declared
+   * through the hook the pattern publishes for it rather than by overriding a layout rule.
+   *
+   * It stays here rather than in the tree because it is about showing FOUR at once: a real row shows
+   * one tooltip at a time, and the tree's `gap="xl"` is the right answer for that.
+   */
+  .sk-anchoring-demo > .sk-inline {
+    --sk-inline-gap: 5rem;
+    /*
+     * TALLER THAN THE DEMO NEEDS, on purpose, and floored on the ROW rather than on the Box around
+     * it: the row is already a flex line with `align-items: center` (the tree asks for it), so the
+     * height it is given is height the triggers sit in the middle of. On the Box the same number
+     * parked them at the top with a quarter of the stage empty underneath.
+     *
+     * A floor, not a height: the frame still reports its content size, so nothing is clipped when
+     * the row wraps at a narrow width.
+     */
+    min-block-size: 16rem;
+  }
+  /*
+   * THE DEMO SHOWS THE PLACEMENT IT NAMES, so the fallback is off for these four.
+   *
+   * Every anchored box in this system flips when it does not fit (`--sk-anchored-position-try`), and
+   * that is right everywhere except here: a row labelled `block-end` that renders above the trigger
+   * is teaching the reader the wrong word. The flip has its own section on this page, with its own
+   * prose; the specimen at the top has to be literal.
+   *
+   * It also routes around a real disagreement between the two bindings, measured on this page: in
+   * React one of the four (the `block-end` one) comes out INVERTED - whatever side it asks for, Blink
+   * applies `flip-block` and renders the opposite, with 138px of unused room on the side it refused.
+   * Re-tagging that same element to `block-start` renders it block-end, and its three siblings behave
+   * correctly, so it is not the placement and not the room. Vanilla, same markup, same stage, places
+   * all four correctly. Written down here rather than left as a mystery: with no fallback to apply,
+   * both bindings show the same four sides.
+   *
+   * NOT scoped under `.sk-anchoring-demo`, and that is not an oversight: React portals every
+   * positioner to the body, so it is not inside the demo any more. This page renders exactly one
+   * preview, and these styles are copied only into that preview's frames, so naming the part is
+   * enough.
+   *
+   * ONE HOOK REACHES THE ARROW TOO, which it did not until this page asked for it: the arrow's own
+   * rules hard-coded `flip-block`/`flip-inline` while the box read `--sk-anchored-position-try`, so
+   * turning the flip off here left the box where it was asked and the arrow still flipping - a
+   * diamond stranded on the far side of the trigger. The pattern now reads the same hook on both,
+   * with each axis's flip as its default (`patterns/anchored.css`), which is what its own comment
+   * ("what makes the two FLIP TOGETHER") always meant.
+   */
+  .sk-component-preview__frame-body .sk-anchored[data-sk-placement] {
+    --sk-anchored-position-try: none;
   }
 </style>

@@ -62,14 +62,16 @@ export interface DocumentIndex {
   html: string;
   /** Its sections, in reading order. */
   headings: DocHeading[];
-  /**
-   * How many elements sit at the fragment's own top level. Exactly the row count `<main>`'s content
-   * contributes once it is a `display: contents` pass-through into `.docs-document-pair`'s grid
-   * (site.css). A rail sharing that grid needs to span every one of those rows to sit beside all of
-   * them; unlike the heading count, this includes every top-level element, not only `h2`/`h3`.
-   */
-  topLevelCount: number;
 }
+
+/*
+ * `topLevelCount` used to live here: how many elements sit at the fragment's own top level, which
+ * was the row count `<main>`'s content contributed while main was a `display: contents` pass-through
+ * into `.docs-document-pair`'s grid, and therefore how many rows the Toc rail beside it had to span.
+ * `<main>` is a real `subgrid` box now (site.css), the rail spans its single row, and a number that
+ * had to be recomputed from the markup on every build - and that nobody could check by reading the
+ * page - stopped being load-bearing. The scan no longer counts it.
+ */
 
 /**
  * The end of a tag, as an index one past its `>`.
@@ -194,7 +196,6 @@ export function indexDocument(source: string): DocumentIndex {
   const taken = authoredIds(source);
 
   let depth = 0;
-  let topLevelCount = 0;
   let i = 0;
 
   while (i < source.length) {
@@ -263,7 +264,6 @@ export function indexDocument(source: string): DocumentIndex {
       continue;
     }
 
-    if (depth === 0) topLevelCount++;
     if (!closes) depth++;
     i = end;
   }
@@ -274,7 +274,7 @@ export function indexDocument(source: string): DocumentIndex {
     html = html.slice(0, insert.at) + insert.text + html.slice(insert.at);
   }
 
-  return { html, headings, topLevelCount };
+  return { html, headings };
 }
 
 const VALUE_ATTR = /data-value\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i;

@@ -7,7 +7,7 @@ export const siteFooterMessages = {
     "siteFooter.repo": "GitHub",
     "siteFooter.legal": "© {year} skryensya/ui · Licencia {license}",
     "siteFooter.versionLabel": "Versión actual {version}, ver las notas de versión",
-    "siteFooter.credit": "Sitio compuesto a mano por {author} utilizando skryensya/ui.",
+    "siteFooter.credit": "Diseñado y desarrollado por {author}.",
   },
   en: {
 
@@ -17,6 +17,6 @@ export const siteFooterMessages = {
     "siteFooter.repo": "GitHub",
     "siteFooter.legal": "© {year} skryensya/ui · Licensed under {license}",
     "siteFooter.versionLabel": "Current version {version}, see the release notes",
-    "siteFooter.credit": "Site hand-composed by {author} using skryensya/ui.",
+    "siteFooter.credit": "Designed and built by {author}.",
   },
 } as const;

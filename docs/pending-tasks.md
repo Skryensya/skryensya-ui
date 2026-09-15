@@ -204,7 +204,7 @@ dos, porque Menubar comparte `menuItemShape` tal cual.
 
 ---
 
-## Nivel 1 - bloqueador conocido: un Tooltip de React se voltea al reves
+## Nivel 1 - hecho ✅ (2026-09-15): el Tooltip que se volteaba no era de React, era de tiempo
 
 Señal, verificable en un build (`pnpm --filter @skryensya/docs build`, servir `dist`, abrir
 `/anchoring`, pasar al binding React y hacer hover en el trigger `block-end`): la caja sale ARRIBA del
@@ -230,9 +230,27 @@ ahi por otra razon: esa pagina tiene que mostrar el placement que nombra, no el 
 pagina ya no miente. De paso salio un bug real del patron, ya arreglado: la flecha tenia
 `flip-block`/`flip-inline` escritos a mano mientras la caja leia `--sk-anchored-position-try`, asi que
 apagar el volteo movia una sola de las dos y la flecha quedaba colgada del otro lado del trigger.
-Ahora las dos leen el mismo hook (`patterns/anchored.css`). Lo que falta es entender por que Blink aplica `flip-block` a ESE elemento con
-lugar de sobra, y si hay algo en el binding React que lo provoque: mientras no se sepa, cualquier
-Tooltip `block-end` de React puede salir del lado contrario sin que nadie lo note.
+Ahora las dos leen el mismo hook (`patterns/anchored.css`).
+
+**Lo que faltaba entender, medido el 2026-09-15 sobre el build servido desde `dist`:** el volteo se
+decide UNA vez, contra el lugar que habia en ese instante, y no se rehace cuando el lugar vuelve.
+Secuencia, reproducida en los DOS bindings: abrir el `block-end` con 161px libres abajo (sale abajo,
+bien), encoger el bloque contenedor hasta dejar 3px (se voltea arriba, bien), y devolverle la altura
+original con la caja todavia abierta: se queda arriba, con esos 161px otra vez libres debajo, y un
+evento `resize` disparado a mano tampoco la reevalua. Eso explica las dos cosas que no cerraban: por
+que quedaba "invertido pida lo que pida" (el estado ya estaba elegido) y por que forzar relayout no
+lo corregia.
+
+**Y por que parecia de React:** el frame auto-fit de la preview monta a la altura de su contenido y
+crece despues. Medido con un rAF por cuadro al cambiar de binding: `0 -> 151px -> 368px` en cuatro
+milisegundos. Lo que se evalue en esa ventana queda del lado equivocado. Vanilla no lo pisa porque
+renderiza con el documento, no despues: nunca fue el portal ni el binding, era el momento.
+
+Queda escrito donde vive el codigo (`patterns/anchored.css`, sobre `position-try-fallbacks`), con la
+salida para un consumidor: no abrir una caja anclada dentro de algo que todavia esta creciendo, o
+cerrarla y reabrirla cuando el layout se asiente. Rehacer `position-try` es del motor, no hay
+propiedad que lo pida. Lo unico que queda abierto, y es de la app y no del kit, es que la preview de
+React reserve su altura final antes de montar en vez de crecer despues.
 
 ## Nivel 2 - Beta sin bloqueador documentado
 

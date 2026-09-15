@@ -459,6 +459,7 @@
     "./dimensions/press-scale.css": "./dist/dimensions/press-scale.css",
     "./dimensions/*": "./css/dimensions/*",
     "./components/*": "./css/components/*",
+    "./fonts/*": "./css/fonts/*",
     "./patterns/*": "./css/patterns/*",
     "./effects/*": "./css/effects/*",
     "./vaul": {

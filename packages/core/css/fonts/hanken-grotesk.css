@@ -1,0 +1,119 @@
+/*
+ * THE SYSTEM'S DEFAULT SANS, SHIPPED WITH IT.
+ *
+ * `--scale-font-family-sans` used to NAME a family (`Inter`) that nothing in this repo ever loaded,
+ * so every surface fell through to `system-ui` and the type was whatever the reader's OS happened to
+ * be: SF on a Mac, Segoe on Windows, Roboto on Android, three different rhythms for one design
+ * system. Naming a face is not shipping it. This file is the other half.
+ *
+ * WHY HANKEN GROTESK, measured on this site's own pages rather than picked from a specimen:
+ *   - x-height holds at 12px, the size of the densest chrome here (the tree rail, the Toc, badges,
+ *     the footer bar). `ComponentPreview` sets 105px against Inter's 111px at that size, so a rail
+ *     fits more name before it truncates, and the Toc's long entries drop from two lines to one
+ *     (measured: the whole block goes from 318px to 300px).
+ *   - It is the most contained of the candidates at display size (`Button` at 60px/700 sets 182px
+ *     against 193-201px for the rest), which matters because this scale climbs to 60px.
+ *   - Real tabular figures, verified by measuring `1111111111` against `0000000000` under
+ *     `font-variant-numeric: tabular-nums`: eight sheets in this kit ask for them (chart, meter,
+ *     time-field, list, table-pager, nav-list, code-preview).
+ *   - One variable weight axis covering 100-900, so the four rungs the system actually uses
+ *     (400 body / 500 label / 600 emphasis / 700 heading) are drawn, never synthesised.
+ *
+ * AND WHY THIS ONE AND NOT A BIG-TECH FAMILY: it is drawn by Alfredo Marco Pradil (Hanken Design
+ * Co.) and its OFL copyright is held by the project's own authors, not by a platform vendor. The
+ * files here are the upstream ones, `OFL.txt` beside them is the licence they ship under, and both
+ * travel inside this package: nothing on this site or in a consumer's app fetches type from someone
+ * else's CDN.
+ *
+ * SUBSETS: latin and latin-ext, the two this product's languages need (Spanish's own accents and
+ * `¿ ¡ ñ « »` live in the first, the rest of the Latin diacritics in the second). Each is its own
+ * face with its own `unicode-range`, so a page that never types a character from the second never
+ * downloads its 20KB.
+ *
+ * IMPORT IT ONCE, at the app's root, before the token sheet. A consumer who wants a different
+ * family sets `--scale-font-family-sans` and simply never imports this file.
+ */
+
+/* latin */
+@font-face {
+  font-family: "Hanken Grotesk";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("./files/hanken-grotesk-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* latin-ext */
+@font-face {
+  font-family: "Hanken Grotesk";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("./files/hanken-grotesk-latin-ext-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+    U+2C60-2C7F, U+A720-A7FF;
+}
+
+/*
+ * THE ITALICS ARE DRAWN, NOT SLANTED. Without a real italic face the browser synthesises one by
+ * shearing the upright, which is a different letterform in the middle of prose that uses `<em>`
+ * constantly. Same two subsets, same variable weight axis.
+ */
+
+/* latin, italic */
+@font-face {
+  font-family: "Hanken Grotesk";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("./files/hanken-grotesk-latin-wght-italic.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* latin-ext, italic */
+@font-face {
+  font-family: "Hanken Grotesk";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("./files/hanken-grotesk-latin-ext-wght-italic.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
+    U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
+    U+2C60-2C7F, U+A720-A7FF;
+}
+
+/*
+ * THE FALLBACK, WITH THE REAL FONT'S METRICS ON IT.
+ *
+ * `font-display: swap` above means the first paint uses whatever comes next in the stack, and a
+ * plain `system-ui` there is a different width and a different vertical rhythm, so the swap shifts
+ * every dense row on the page: the rail's labels, the Toc, the meta bar. This face is the same local
+ * system font, re-metricised to the shape of Hanken Grotesk, so the swap is a change of drawing and
+ * not a change of layout.
+ *
+ * The three numbers are MEASURED, not guessed (Chrome, canvas `measureText` at 100px, a pangram
+ * carrying both languages' letters and the ten digits):
+ *   - Hanken sets that pangram at 4908.30px and Arial at 4874.71px, so the fallback is scaled to
+ *     100.69% to set the same width.
+ *   - Hanken's own ascent/descent are 100/30 per 100px against Arial's 91/21. Divided by the
+ *     size-adjust, that is 99.32% / 29.79%, which is what the overrides below declare: the taller
+ *     box is why an unadjusted fallback made every dense row jump on swap.
+ *   - `line-gap-override: 0%` because the face carries none, and leaving it unstated lets the local
+ *     font's own gap back into the line box.
+ *
+ * `local()` only, and several of them: this face downloads nothing, it just re-shapes a font the
+ * reader already has. Arial and Helvetica cover Mac and Windows, Roboto and DejaVu Sans cover
+ * Android and most Linux desktops.
+ */
+@font-face {
+  font-family: "Hanken Grotesk Fallback";
+  src: local("Arial"), local("Helvetica"), local("Roboto"), local("DejaVu Sans");
+  size-adjust: 100.69%;
+  ascent-override: 99.32%;
+  descent-override: 29.79%;
+  line-gap-override: 0%;
+}

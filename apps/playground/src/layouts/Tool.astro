@@ -14,6 +14,8 @@
  * same mode) and `ThemeToggle`'s markup and behaviour. What is NOT shared is the navigation, which is
  * the docs' own and always was.
  */
+/* Same first import as the docs shell: the face this system names has to be loaded, not just named. */
+import "@skryensya/core/fonts/hanken-grotesk.css";
 import "@skryensya/core/tokens.scss"; // brings the state layer and the icon pattern with it
 import "@skryensya/core/modes/hc.scss"; // the `data-contrast` the pre-paint script below can write
 import "@skryensya/core/dimensions/radius.scss";

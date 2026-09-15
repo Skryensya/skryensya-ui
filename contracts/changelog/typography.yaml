@@ -78,3 +78,32 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-15
+    kind: rework
+    es:
+      title: El kit ahora trae su propia tipografía, Hanken Grotesk
+      body: >-
+        <code>--scale-font-family-sans</code> nombraba <code>Inter</code> y nada en el kit la cargaba,
+        así que toda superficie caía a <code>system-ui</code>: SF en un Mac, Segoe en Windows, Roboto en
+        Android, tres ritmos para un solo sistema. Ahora el paquete trae la familia
+        (<code>@skryensya/core/fonts/hanken-grotesk.css</code>, un import opcional): eje variable de
+        100 a 900, itálica dibujada, subsets latin y latin-ext, y una cara de respaldo con
+        <code>local()</code> y las métricas reales medidas encima, para que el intercambio cambie el
+        dibujo y no el layout (0.38% de diferencia de ancho a 12px). La elección se midió sobre estas
+        mismas páginas; el razonamiento y la tabla están en
+        <code>docs/decisions/0023-the-kit-ships-its-own-default-sans.md</code>. Si tu marca usa otra
+        familia, sigue siendo un preset: pisás <code>--font-family-body</code> y no importás la hoja.
+    en:
+      title: The kit now ships its own typeface, Hanken Grotesk
+      body: >-
+        <code>--scale-font-family-sans</code> named <code>Inter</code> and nothing in the kit ever
+        loaded it, so every surface resolved to <code>system-ui</code>: SF on a Mac, Segoe on Windows,
+        Roboto on Android, three rhythms for one system. The package now ships the family
+        (<code>@skryensya/core/fonts/hanken-grotesk.css</code>, an optional import): a variable 100-900
+        weight axis, a drawn italic, latin and latin-ext subsets, and a fallback face built from
+        <code>local()</code> sources with the real font's measured metrics on it, so the swap changes
+        the drawing and not the layout (0.38% width difference at 12px). The choice was measured on
+        these very pages; the reasoning and the table live in
+        <code>docs/decisions/0023-the-kit-ships-its-own-default-sans.md</code>. If your brand uses a
+        different family, that is still a preset: override <code>--font-family-body</code> and do not
+        import the sheet.

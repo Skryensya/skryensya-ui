@@ -18,15 +18,15 @@ const vocabCss = `.sk-grid {
 }`;
 
 
-const bind = `# nothing: Phosphor is the @skryensya/react default
+const bind = `# nothing: Lucide is the @skryensya/react default
 # another set? install it, and only then is it bundled:
-pnpm add @skryensya/icons-lucide     # or @skryensya/icons-material`;
+pnpm add @skryensya/icons-phosphor   # or @skryensya/icons-material`;
 
-const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
-+ import { phosphorIcons } from "@skryensya/icons-phosphor";
+const swap = `- import { phosphorIcons } from "@skryensya/icons-phosphor";
++ import { materialIcons } from "@skryensya/icons-material";
 
-- <IconSetProvider set={lucideIcons}>
-+ <IconSetProvider set={phosphorIcons}>
+- <IconSetProvider set={phosphorIcons}>
++ <IconSetProvider set={materialIcons}>
 
   // and nothing more. Not a <Icon name="…"> moves.`;
 ---
@@ -64,7 +64,7 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
 
   <h2>Choose a set</h2>
   <p>
-    <strong>An icon set is a brand.</strong> <code>@skryensya/core</code> names the position (<code>chevron-down</code>) and the set says which drawing occupies it. <strong>Phosphor is the default</strong> (travels with React); Lucide and Material are interchangeable, opt-in:
+    <strong>An icon set is a brand.</strong> <code>@skryensya/core</code> names the position (<code>chevron-down</code>) and the set says which drawing occupies it. <strong>Lucide is the default</strong> (travels with React); Phosphor and Material are interchangeable, opt-in:
   </p>
   <div class="sk-table-scroll">
   <table class="sk-table">
@@ -81,7 +81,7 @@ const swap = `- import { lucideIcons } from "@skryensya/icons-lucide";
   <p>
     None live in <code>@skryensya/core</code>: core does not name tenants, and their <code>dependencies</code> are empty. They are separate packages.
   </p>
-  <CodeBlock code={bind} label="install" note="Default Phosphor; the others, opt-in" />
+  <CodeBlock code={bind} label="install" note="Default Lucide; the others, opt-in" />
 
   <h2>The same name, three drawings</h2>
   <p>

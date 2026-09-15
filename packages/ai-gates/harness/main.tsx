@@ -4,7 +4,7 @@ import { emitMarkup } from "@skryensya/ai-compiler/emit";
 import { mountComponentsWithIcons } from "@skryensya/vanilla/auto";
 import { mountCodePreview } from "@skryensya/vanilla/code-preview";
 import { mountEditor } from "@skryensya/vanilla/editor";
-import { phosphorIcons } from "@skryensya/icons-phosphor";
+import { lucideIcons } from "@skryensya/icons-lucide";
 import { canonicalTrees } from "../src/trees.js";
 import { renderTree, setPortalContainer } from "./react-render.js";
 
@@ -122,7 +122,7 @@ async function stage(): Promise<void> {
   /*
    * One pass over the whole document: the enhancers find every authored root at once, and the icon
    * set binds alongside them (`initComponents` never binds one itself, choosing a set is an install,
-   * decision 15). React's binding defaults to Phosphor, so the gate binds Phosphor here for the same
+   * decision 15). React's binding defaults to Lucide, so the gate binds Lucide here for the same
    * reason: to compare the two paths, both have to have made the same choice.
    *
    * `mountComponentsWithIcons` is the SAME sequence the docs preview frame boots with (icons, mount,
@@ -131,7 +131,7 @@ async function stage(): Promise<void> {
    * frame defended against and this gate could not see at all; sharing the sequence is what makes a
    * regression in that race show up here too.
    */
-  await mountComponentsWithIcons(document, phosphorIcons);
+  await mountComponentsWithIcons(document, lucideIcons);
 
   // Another opt-in mount `initComponents` deliberately excludes (`code-preview.ts`'s own doc):
   // without this, the vanilla side of every code-preview canonical tree never enhances at all, so

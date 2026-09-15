@@ -7,7 +7,7 @@
  * the markup contract is documented and never shipped (decision 8).
  */
 import { renderIconBox, type IconData, type IconSet, type IconSize, type StableIconName, iconContract } from "@skryensya/core/icon";
-import { phosphorIcons } from "@skryensya/icons-phosphor";
+import { lucideIcons } from "@skryensya/icons-lucide";
 import { createContext, useContext, type ReactNode, type SVGAttributes } from "react";
 
 /* Derived, never restated: the default lives in the contract. */
@@ -21,13 +21,23 @@ const { size: sizeOption } = iconContract.options;
  * And it goes through context and not a global module registry because the site, the real consumer
  * (decision 12), will want to show two sets on the same page, and a module variable can only hold one.
  *
- * The default is Phosphor: `<Icon name="close" />` draws with no configuration (decision 15, revised).
- * The price is that Phosphor, and only Phosphor, travels in every React consumer's bundle, just like
+ * The default is LUCIDE: `<Icon name="close" />` draws with no configuration (decision 15, revised).
+ * The price is that Lucide, and only Lucide, travels in every React consumer's bundle, just like
  * `brands/default.scss` travels in core. Stepping outside the default is still opt-in: you install
- * `@skryensya/icons-lucide` or `@skryensya/icons-material` and wrap the tree in
+ * `@skryensya/icons-phosphor` or `@skryensya/icons-material` and wrap the tree in
  * `<IconSetProvider set={…}>`. Those two are NOT bundled until they are imported.
+ *
+ * WHY LUCIDE AND NOT PHOSPHOR, which this default used to be. The default is not a statement about
+ * which set is better, it is a statement about which set a consumer gets when they say nothing, and
+ * the one thing it must not do is disagree with the app around it. Every surface in this repo draws
+ * Lucide: the documentation binds it (`apps/docs/src/icons.ts`), so did every preview frame, which
+ * had to wrap each React demo in an `IconSetProvider` for no reason except to talk this default out
+ * of Phosphor (`component-preview-frame.ts` says so in its own comment), and the Playground picked
+ * Phosphor for its chrome only because the island inside it could not cheaply be anything else. One
+ * set is a choice; two, with a default pulling one way and the app pulling the other, is a bug
+ * waiting for the one call site that forgets to wrap.
  */
-const IconSetContext = createContext<IconSet>(phosphorIcons);
+const IconSetContext = createContext<IconSet>(lucideIcons);
 
 export type IconSetProviderProps = {
   /** The set that occupies the stable vocabulary. Binding it is the same as choosing a brand. */
@@ -70,7 +80,7 @@ export type IconProps = IconBaseProps &
   ({ name: StableIconName; data?: never } | { data: IconData; name?: never });
 
 export function Icon({ name, data, label, size = sizeOption.default, className, ...props }: IconProps) {
-  // The context always has a set: Phosphor by default, or whichever an IconSetProvider higher up binds.
+  // The context always has a set: Lucide by default, or whichever an IconSetProvider higher up binds.
   // `data` does not read the context, it is project geometry, portable without a set (decision 15).
   const set = useContext(IconSetContext);
   const icon = name !== undefined ? set[name] : data!;

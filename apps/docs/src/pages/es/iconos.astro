@@ -17,15 +17,15 @@ const vocabCss = `.sk-grid {
 }`;
 
 
-const install = `# Phosphor comes with @skryensya/react.
+const install = `# Lucide comes with @skryensya/react.
 # Another set is installed only when it is chosen as the brand:
-pnpm add @skryensya/icons-lucide
+pnpm add @skryensya/icons-phosphor
 pnpm add @skryensya/icons-material`;
 
-const swap = `import { phosphorIcons } from "@skryensya/icons-phosphor";
+const swap = `import { materialIcons } from "@skryensya/icons-material";
 import { IconSetProvider } from "@skryensya/react";
 
-<IconSetProvider set={phosphorIcons}>
+<IconSetProvider set={materialIcons}>
   <App />
 </IconSetProvider>`;
 ---

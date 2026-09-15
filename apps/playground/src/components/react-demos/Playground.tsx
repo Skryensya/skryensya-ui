@@ -12,7 +12,7 @@ import { Button } from "@skryensya/react/button";
 import { CommandPalette } from "@skryensya/react/command-palette";
 import { Dialog } from "@skryensya/react/dialog";
 import { useHotkey } from "@skryensya/react/hotkey";
-import { Icon } from "@skryensya/react/icon";
+import { Icon, IconSetProvider } from "@skryensya/react/icon";
 import { Kbd } from "@skryensya/react/kbd";
 import { Tooltip } from "@skryensya/react/tooltip";
 import { Loader } from "@skryensya/react/loader";
@@ -25,7 +25,7 @@ import type { CommandPaletteEntry } from "@skryensya/core/command-palette";
 import { detectMac, formatHotkey } from "@skryensya/core/hotkey";
 import { definePreference, oneOf } from "@skryensya/core/storage";
 import { PaneSplitter } from "./PaneSplitter";
-import { reloadIcon, splitHorizontalIcon, splitVerticalIcon } from "../../icons";
+import { reloadIcon, splitHorizontalIcon, splitVerticalIcon, toolIcons } from "../../icons";
 import { vanillaScriptPath, vanillaScriptSource } from "../../lib/vanilla-script";
 import { createPortal } from "react-dom";
 import {
@@ -1046,7 +1046,30 @@ function PreviewControls({
   return null;
 }
 
-export default function Playground({ catalogue, strings }: Props) {
+/*
+ * THE APP'S ICON SET, BOUND AROUND THE ISLAND, and it is the whole reason this export is a wrapper.
+ *
+ * An icon set is a consumer decision (`src/icons.ts`), and until this existed the decision could not
+ * reach in here: everything the island draws goes through `@skryensya/react`'s `Icon`, which resolves
+ * a stable name against whatever set is in context and falls back to the PACKAGE's default when
+ * nothing bound one. So the tool's chrome was picked to match that default rather than the other way
+ * round, and the day the package changed its mind the rail and the header would have come out in two
+ * different drawings, silently, with nothing in this app edited.
+ *
+ * One provider at the top settles it: the same set `mountIcons` binds for the chrome outside the
+ * island and the same one the sandbox's own documents load. The documentation's preview frame wraps
+ * every React demo for exactly this reason (`component-preview-frame.ts`), which is the second time
+ * the same gap was patched at the call site - the fix here is that the app now says it ONCE.
+ */
+export default function Playground(props: Props) {
+  return (
+    <IconSetProvider set={toolIcons}>
+      <PlaygroundTool {...props} />
+    </IconSetProvider>
+  );
+}
+
+function PlaygroundTool({ catalogue, strings }: Props) {
   /*
    * Empty until the catalogue lands, and the ids are held rather than the objects: the selection is
    * the reader's and must survive the fetch resolving, which replaces every object it points at.

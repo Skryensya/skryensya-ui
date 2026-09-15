@@ -16,4 +16,4 @@
 export { initComponents } from "@skryensya/vanilla/auto";
 export { mountIcons, remountIcons } from "@skryensya/vanilla/icon";
 export { destroyMount } from "@skryensya/vanilla/runtime";
-export { phosphorIcons } from "@skryensya/icons-phosphor";
+export { lucideIcons } from "@skryensya/icons-lucide";

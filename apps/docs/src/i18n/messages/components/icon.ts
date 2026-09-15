@@ -10,7 +10,7 @@ export const iconMessages = {
       "<code>Icon</code> toma <code>name</code> <strong>o</strong> <code>data</code>, nunca los dos. <code>name</code> es un rol portable que sobrevive un cambio de set; <code>data</code> es geometría tuya, acoplada a propósito y visible en el call site.",
     "iconPage.reactNote": "React renderiza (decisión 14)",
     "iconPage.reactBody2":
-      '<code>&lt;Icon name="…"&gt;</code> dibuja sin configuración: Phosphor viaja con <code>@skryensya/react</code>. Para otro set, lo instalas y envuelves la app una vez.',
+      '<code>&lt;Icon name="…"&gt;</code> dibuja sin configuración: Lucide viaja con <code>@skryensya/react</code>. Para otro set, lo instalas y envuelves la app una vez.',
     "iconPage.providerNote": "Lucide/Material son opt-in",
     "iconPage.providerLabel": "cambiar el set por defecto",
     "iconPage.vanillaTitle": "Vanilla: hidratar por nombre, o escribir el markup",
@@ -50,7 +50,7 @@ export const iconMessages = {
       "<code>Icon</code> takes <code>name</code> <strong>or</strong> <code>data</code>, never both. <code>name</code> is a portable role that survives a set change; <code>data</code> is your own geometry, deliberately coupled and visible at the call site.",
     "iconPage.reactNote": "React renders it (decision 14)",
     "iconPage.reactBody2":
-      '<code>&lt;Icon name="…"&gt;</code> draws with no configuration: Phosphor ships with <code>@skryensya/react</code>. For a different set, install it and wrap the app once.',
+      '<code>&lt;Icon name="…"&gt;</code> draws with no configuration: Lucide ships with <code>@skryensya/react</code>. For a different set, install it and wrap the app once.',
     "iconPage.providerNote": "Lucide/Material are opt-in",
     "iconPage.providerLabel": "switching the default set",
     "iconPage.vanillaTitle": "Vanilla: hydrate by name, or write the markup",

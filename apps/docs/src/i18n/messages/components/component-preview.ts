@@ -22,7 +22,7 @@ export const componentPreviewMessages = {
     "componentPreview.lede":
       "Une el <strong>render real del componente</strong> y su implementación en una sola superficie. El stage es un <code>iframe srcdoc</code> estático: no crea una ruta, pero sí su propio DOM, viewport y top layer. Debajo, CodePreview muestra el código.",
     "componentPreview.anatomyBody":
-      "El diagrama nombra lo que publica el contrato, que es <code>ComponentPreview.bare</code>: una cabecera con su título y una nota opcional, el stage, y debajo el panel de fuente. Ese panel lleva su propia clase, <code>sk-code-preview</code>, porque es un CodePreview compuesto acá y no una parte reimplementada. El interruptor de binding, los presets de pantalla y el botón de recarga son chrome de <em>este sitio</em>: no tienen árbol, así que no están en el dibujo. El espécimen está congelado; los vivos empiezan arriba.",
+      "El diagrama nombra lo que publica el contrato, que es <code>ComponentPreview.bare</code>: una cabecera con su título y una nota opcional, el stage, y debajo el panel de fuente. Ese panel lleva su propia clase, <code>sk-code-preview</code>, porque es un CodePreview compuesto aquí y no una parte reimplementada. El interruptor de binding, los presets de pantalla y el botón de recarga son chrome de <em>este sitio</em>: no tienen árbol, así que no están en el dibujo. El espécimen está congelado; los vivos empiezan arriba.",
     "componentPreview.anatomyLabel": "Anatomía de ComponentPreview",
     "componentPreview.anatomyPreviewLabel": "ComponentPreview.bare, parte por parte",
     "componentPreview.responsibilitiesTitle": "Responsabilidades",

@@ -79,7 +79,7 @@ entries:
         <code>children</code> de un panel de <code>Tabs.items</code> de la misma forma que en
         cualquier otro lugar, que es cómo pasó la opción inválida sin avisar. Ese hueco del
         validador es un bug real en <code>ai-compiler</code>, no de este contrato; queda reportado,
-        no arreglado acá.
+        no arreglado aquí.
     en:
       title: Testimonial fixed (its content broke its own rule), audience tabs rewritten
       body: >-
@@ -115,7 +115,7 @@ entries:
         Se agregan diez patrones nuevos a los cinco que ya publicaba <code>get_examples</code>
         (<code>contracts/snippets/hero-*.ts</code>), buscados contra catálogos reales de hero
         sections (el propio catálogo de Saaspo nombra "Email CTA", "Logos" y "Tabs" como categorías
-        reconocidas, no inventadas acá): captura de correo con un <code>form-field.FormField</code>
+        reconocidas, no inventadas aquí): captura de correo con un <code>form-field.FormField</code>
         real (no un placeholder haciendo de label), badges de tienda de apps, un muro de marcas de
         confianza en texto (nunca fotos genéricas haciendo de logo), un buscador estilo
         marketplace, un switch de precios mensual/anual con <code>segmented.Segmented</code>, un

@@ -42,7 +42,7 @@ entries:
         escala publica (ver el changelog de <code>button</code>), así que el nodo mide 24px, que
         es lo que <code>xs</code> pinta en todos lados.
         Se ve un poco más grande que antes (20px a 24px) y esa es la única diferencia visible. A
-        cambio, la medida ya no vive acá: cualquier otro componente que necesite un nodo del mismo
+        cambio, la medida ya no vive aquí: cualquier otro componente que necesite un nodo del mismo
         tamaño lo pide por su nombre, y el piso de 24px es el de WCAG 2.2 SC 2.5.8 en vez de un
         número que había quedado atado al token de un icono. El área de click era 44px y sigue
         siendo 44px.
@@ -74,7 +74,7 @@ entries:
         exactamente donde estaban. Es UN nodo en dos presentaciones y no dos nodos: duplicarlo
         duplicaría el control que pasa quien lo usa, con ids y labels repetidos y el borrador partido
         en dos. Toda la pintura del panel viene del pattern Vaul a través de la clase
-        <code>sk-vaul</code>, que pone el binding; acá sólo se reasignan sus hooks, igual que hace
+        <code>sk-vaul</code>, que pone el binding; aquí sólo se reasignan sus hooks, igual que hace
         Drawer. Sin enhancer la caja se queda en flujo a cualquier ancho, que es el mismo fallback
         que describe la decisión 9. El disparador de responder ahora declara
         <code>aria-haspopup="dialog"</code> además de <code>aria-expanded</code>: lo primero dice qué

@@ -2,45 +2,45 @@ export const skipLinkMessages = {
   es: {
 
     "skipLink.description":
-      "SkipLink: el primer enlace del documento, invisible hasta que recibe el foco, para saltear el chrome que se repite.",
+      "SkipLink: el primer enlace del documento, invisible hasta que recibe el foco, para saltar el chrome que se repite.",
     "skipLink.lede":
-      'SkipLink es el <strong>primer enlace del documento</strong> y el único componente cuyo éxito se ve como ausencia: quien navega con mouse no se entera nunca de que está. Toda página abre con el mismo chrome -la marca, la navegación global, el buscador-, y quien lee con teclado lo recorre entero antes de llegar a lo que vino a buscar, en cada página. Eso es lo que la <abbr title="Web Content Accessibility Guidelines">WCAG</abbr> 2.4.1 llama un bloque que hay que poder saltear. Este enlace es el salto, y es el de la plataforma: un <code>href</code> a un id de la misma página, así que funciona antes de que corra un solo script.',
+      'SkipLink es el <strong>primer enlace del documento</strong> y el único componente cuyo éxito se ve como ausencia: quien navega con mouse no se entera nunca de que está. Toda página abre con el mismo chrome -la marca, la navegación global, el buscador-, y quien lee con teclado lo recorre entero antes de llegar a lo que vino a buscar, en cada página. Eso es lo que la <abbr title="Web Content Accessibility Guidelines">WCAG</abbr> 2.4.1 llama un bloque que hay que poder saltar. Este enlace es el salto, y es el de la plataforma: un <code>href</code> a un id de la misma página, así que funciona antes de que corra un solo script.',
     "skipLink.demoContentLabel": "Ir al contenido",
     "skipLink.demoNavLabel": "Ir a la navegación",
     "skipLink.tryItBody":
-      'Este sitio usa dos: apretá <kbd class="sk-kbd">Tab</kbd> con el foco al principio de esta página y va a aparecer arriba a la izquierda “Ir al contenido”; otro Tab más y aparece “Ir a la navegación”. En la vista de abajo pasa lo mismo, pero adentro del marco: el enlace está ahí desde el primer render, sólo que mide un píxel hasta que lo enfocás.',
+      'Este sitio usa dos: presiona <kbd class="sk-kbd">Tab</kbd> con el foco al principio de esta página y va a aparecer arriba a la izquierda “Ir al contenido”; otro Tab más y aparece “Ir a la navegación”. En la vista de abajo pasa lo mismo, pero adentro del marco: el enlace está ahí desde el primer render, sólo que mide un píxel hasta que lo enfocas.',
     "skipLink.severalTitle": "Puede haber más de uno, y el orden es la decisión",
     "skipLink.severalBody1":
       'Una página con un índice permanente razonablemente ofrece dos: uno al contenido y otro a la navegación. No son un grupo ni una lista: son dos enlaces sueltos que resultan ser las dos primeras cosas del documento, y por eso la signature toma <em>un</em> destino en vez de una colección. Con una colección, el caso común -exactamente uno- tendría que escribirse como arreglo, y el orden quedaría adentro de una opción, donde nadie lo mira.',
     "skipLink.severalBody2":
-      'El primero es el que recibe todo el mundo, así que tiene que contestar la pregunta con la que llegó la mayoría, y esa pregunta casi siempre es “dejame leer esta página”, no “llevame a otra”. Por eso el contenido va primero. Quien sí quería el índice está a un Tab más; al revés, quien quería la página pagaría varios.',
+      'El primero es el que recibe todo el mundo, así que tiene que contestar la pregunta con la que llegó la mayoría, y esa pregunta casi siempre es “déjame leer esta página”, no “llévame a otra”. Por eso el contenido va primero. Quien sí quería el índice está a un Tab más; al revés, quien quería la página pagaría varios.',
     "skipLink.severalLabel": "Los dos, en orden",
     "skipLink.severalBody3":
       'Sólo se ve el que tiene el foco: los dos ocupan la misma esquina del marco y se turnan, así que en la vista de arriba hay que apretar <kbd class="sk-kbd">Tab</kbd> dos veces para verlos a los dos. El Stack que los envuelve es de la demo, no del patrón: un árbol de uso tiene una sola raíz y estos son hermanos. En un documento real van sueltos arriba del <code>&lt;body&gt;</code>, como muestra el HTML.',
     "skipLink.targetTitle": "El destino tiene que poder recibir el foco",
     "skipLink.targetBody1":
-      'Es la mitad que nadie recuerda y la que decide si el enlace sirve. Seguir un enlace interno hace scroll en todos los navegadores, pero mueve el <em>foco</em> sólo en algunos. Donde no lo mueve, el Tab siguiente sigue desde el enlace y devuelve a quien lee al chrome que acababa de pedir saltear: un enlace de salto que en silencio no hace nada es peor que no tener ninguno, porque ya le dijimos que funcionaba.',
+      'Es la mitad que nadie recuerda y la que decide si el enlace sirve. Seguir un enlace interno hace scroll en todos los navegadores, pero mueve el <em>foco</em> sólo en algunos. Donde no lo mueve, el Tab siguiente sigue desde el enlace y devuelve a quien lee al chrome que acababa de pedir saltar: un enlace de salto que en silencio no hace nada es peor que no tener ninguno, porque ya le dijimos que funcionaba.',
     "skipLink.targetBody2":
       '<code>tabindex="-1"</code> en el destino cierra ese hueco. Lo saca del <em>orden</em> de tabulación -no agrega una parada nueva- y lo vuelve un blanco válido para el foco. En React viene como valor, <code>skipLinkTarget</code>, y no como una frase en la documentación: una regla escrita en prosa es una regla que alguien copia mal una vez.',
     "skipLink.hiddenTitle": "Escondido quiere decir recortado, nunca borrado",
     "skipLink.hiddenBody1":
       'Ni <code>display: none</code> ni <code>visibility: hidden</code>: los dos sacan al elemento del árbol de accesibilidad, y lo que está fuera de ese árbol tampoco lo alcanza el Tab, que es lo único que este componente tiene que ser. En reposo es una caja de un píxel recortada con <code>clip-path</code>, exactamente como el patrón <a href="/es/styling-hooks">visually-hidden</a>.',
     "skipLink.hiddenBody2":
-      'Lo que sí lo separa de ese patrón es una declaración con consecuencia: <code>visually-hidden</code> vuelve a <code>position: static</code> al recibir el foco, así que el enlace entra al layout y todo lo de abajo se mueve, justo cuando quien lee está tratando de entender dónde cayó. Acá la posición es <code>fixed</code> en los dos estados -escondido y visible son la misma caja fuera de flujo-, así que enfocarlo cambia lo que se pinta y nada más. La página no se mueve nunca.',
+      'Lo que sí lo separa de ese patrón es una declaración con consecuencia: <code>visually-hidden</code> vuelve a <code>position: static</code> al recibir el foco, así que el enlace entra al layout y todo lo de abajo se mueve, justo cuando quien lee está tratando de entender dónde cayó. Aquí la posición es <code>fixed</code> en los dos estados -escondido y visible son la misma caja fuera de flujo-, así que enfocarlo cambia lo que se pinta y nada más. La página no se mueve nunca.',
     "skipLink.firstTitle": "Va primero, o no es un salto",
     "skipLink.firstBody":
-      'Cualquier cosa enfocable antes del enlace es, por definición, un bloque que nadie puede saltear. Por eso el lugar es el principio del <code>&lt;body&gt;</code> y no “arriba de todo visualmente”: las dos cosas coinciden acá porque es <code>fixed</code>, pero la que importa es el orden del documento.',
+      'Cualquier cosa enfocable antes del enlace es, por definición, un bloque que nadie puede saltar. Por eso el lugar es el principio del <code>&lt;body&gt;</code> y no “arriba de todo visualmente”: las dos cosas coinciden aquí porque es <code>fixed</code>, pero la que importa es el orden del documento.',
     "skipLink.contractBody":
       'Una sola signature y una sola opción, <code>href</code>, requerida: un enlace de salto sin destino no es nada. El contrato no declara reglas <code>a11y</code> y esa ausencia es deliberada -las que tiene (que el destino sea enfocable, que no haya nada enfocable antes, y que el contenido se ofrezca antes que la navegación cuando hay dos) hablan de elementos y de hermanos que el árbol de uso no contiene, y una regla que ninguna máquina puede decidir no debería figurar como si alguien la chequeara.',
     "skipLink.a11yIntro": "Lo que este componente resuelve y lo que sigue siendo tuyo:",
     "skipLink.a11yItem1":
-      "<strong>WCAG 2.4.1 (Bypass Blocks), nivel A.</strong> Es el criterio que pide una forma de saltear el contenido que se repite en todas las páginas.",
+      "<strong>WCAG 2.4.1 (Bypass Blocks), nivel A.</strong> Es el criterio que pide una forma de saltar el contenido que se repite en todas las páginas.",
     "skipLink.a11yItem2":
-      'Poné <code>tabindex="-1"</code> en el destino. Sin eso, en varios navegadores el enlace hace scroll y deja el foco donde estaba.',
+      'Pon <code>tabindex="-1"</code> en el destino. Sin eso, en varios navegadores el enlace hace scroll y deja el foco donde estaba.',
     "skipLink.a11yItem3":
-      "Que sea lo primero enfocable del documento. Si hay algo antes, ese algo es el bloque que no se puede saltear.",
+      "Que sea lo primero enfocable del documento. Si hay algo antes, ese algo es el bloque que no se puede saltar.",
     "skipLink.a11yItem4":
-      'Nombralo por el <em>destino</em>, no por la acción: “Ir al contenido” dice adónde lleva, “Saltar” no. Es lo primero que escucha quien entra a la página.',
+      'Nómbralo por el <em>destino</em>, no por la acción: “Ir al contenido” dice adónde lleva, “Saltar” no. Es lo primero que escucha quien entra a la página.',
     "skipLink.a11yItem5":
       "Si hay dos, el contenido va primero. El primero es el único que muchos van a usar, y tiene que ser el que la mayoría necesita.",
     "skipLink.test1":

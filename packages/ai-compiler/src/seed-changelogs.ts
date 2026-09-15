@@ -31,7 +31,7 @@ for (const id of contractIds()) {
     `# Qué cambió en ${id}, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.\n` +
       `#\n` +
       `# \`surface\` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice\n` +
-      `# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el\n` +
+      `# que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el\n` +
       `# hash nuevo.\n` +
       `surface: "${surfaceHash(contract)}"\n` +
       `entries: []\n`,

@@ -32,8 +32,8 @@ type Copy = { scanToOpen: string; orBrowse: string; label: string };
 const copy = (locale: Locale): Copy =>
   locale === "es"
     ? {
-        scanToOpen: "Escaneá para abrir esta página",
-        orBrowse: "O entrá directo desde el navegador:",
+        scanToOpen: "Escanea para abrir esta página",
+        orBrowse: "O entra directo desde el navegador:",
         label: "Abrir la documentación de QR",
       }
     : {

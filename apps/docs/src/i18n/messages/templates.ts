@@ -4,10 +4,10 @@ export const templatesMessages = {
     "templates.description":
       "Composiciones completas de layout para copiar, adaptar y combinar con el kit.",
     "templates.lede":
-      "Esta página reúne layouts completos, no documentación de un componente aislado. Cada template combina contratos del kit en una estructura de aplicación que podés copiar y adaptar.",
+      "Esta página reúne layouts completos, no documentación de un componente aislado. Cada template combina contratos del kit en una estructura de aplicación que puedes copiar y adaptar.",
     "templates.appShellTitle": "App shell de operaciones",
     "templates.appShellBody":
-      "El primer template junta <code>Navbar</code> y <code>Sidebar</code> colapsable alrededor de un <code>main</code> vacío, listo para que la aplicación instale su contenido. Contraé el sidebar para ver que el <code>main</code> recupera el ancho del riel.",
+      "El primer template junta <code>Navbar</code> y <code>Sidebar</code> colapsable alrededor de un <code>main</code> vacío, listo para que la aplicación instale su contenido. Contrae el sidebar para ver que el <code>main</code> recupera el ancho del riel.",
     "templates.appShellLabel": "App shell con sidebar colapsable",
     "templates.appShellNavLabel": "App shell",
     "templates.explorerTitle": "App shell con navegación anidada",
@@ -37,14 +37,14 @@ export const templatesMessages = {
     "demo.marketing.signIn": "Entrar",
     "demo.marketing.cta": "Empezar gratis",
     "demo.marketing.heroTag": "Novedad · v3",
-    "demo.marketing.heroTitle": "Publicá tu producto sin pelear con el layout",
+    "demo.marketing.heroTitle": "Publica tu producto sin pelear con el layout",
     "demo.marketing.heroBody":
       "Un sistema de diseño que trae tipografía, espaciado y color resueltos, para que tu equipo escriba producto en vez de CSS.",
     "demo.marketing.heroPrimary": "Crear cuenta",
     "demo.marketing.heroSecondary": "Ver demo",
     "demo.marketing.feature1Title": "Tokens, no valores sueltos",
     "demo.marketing.feature1Body":
-      "Cada color, radio y espacio sale de un token con nombre. Cambiás la marca en un lugar y la aplicación entera lo sigue.",
+      "Cada color, radio y espacio sale de un token con nombre. Cambias la marca en un lugar y la aplicación entera lo sigue.",
     "demo.marketing.feature2Title": "Accesible de fábrica",
     "demo.marketing.feature2Body":
       "Foco visible, roles correctos y contraste medido en cada componente, antes de que llegue a tu página.",
@@ -58,7 +58,7 @@ export const templatesMessages = {
     "demo.marketing.proof2Value": "69",
     "demo.marketing.proof3Label": "Tiempo de integración",
     "demo.marketing.proof3Value": "1 día",
-    "demo.marketing.ctaTitle": "Empezá con el kit hoy",
+    "demo.marketing.ctaTitle": "Empieza con el kit hoy",
     "demo.marketing.ctaBody": "Sin tarjeta, sin instalación local. Un import y ya estás componiendo.",
 
     /* Sitio de documentación. */
@@ -84,13 +84,13 @@ export const templatesMessages = {
       "De cero a un componente en pantalla en tres pasos. Al final de esta página vas a tener el kit instalado y un botón renderizando con tus tokens.",
     "demo.docsSite.calloutTitle": "Antes de empezar",
     "demo.docsSite.calloutBody":
-      "Necesitás Node 20 o superior. Si venís de la v2, leé primero la guía de migración: los nombres de token cambiaron.",
+      "Necesitas Node 20 o superior. Si vienes de la v2, lee primero la guía de migración: los nombres de token cambiaron.",
     "demo.docsSite.sectionInstall": "Instalar el paquete",
     "demo.docsSite.sectionInstallBody":
       "El kit se publica como un único paquete con los estilos separados por componente, así una página sólo carga el CSS que usa.",
-    "demo.docsSite.step1": "Instalá el paquete desde tu gestor de siempre.",
-    "demo.docsSite.step2": "Importá la hoja de tokens una vez, en la raíz de la aplicación.",
-    "demo.docsSite.step3": "Importá el CSS del componente donde lo uses.",
+    "demo.docsSite.step1": "Instala el paquete desde tu gestor de siempre.",
+    "demo.docsSite.step2": "Importa la hoja de tokens una vez, en la raíz de la aplicación.",
+    "demo.docsSite.step3": "Importa el CSS del componente donde lo uses.",
     "demo.docsSite.step1Short": "Instalar",
     "demo.docsSite.step2Short": "Importar tokens",
     "demo.docsSite.sectionNext": "Qué sigue",
@@ -163,7 +163,7 @@ export const templatesMessages = {
     "demo.checkout.total": "Total",
     "demo.checkout.taxNote": "IVA incluido",
     "demo.checkout.pay": "Pagar el pedido",
-    "demo.checkout.terms": "Al pagar aceptás los términos de venta y la política de devoluciones.",
+    "demo.checkout.terms": "Al pagar aceptas los términos de venta y la política de devoluciones.",
     "demo.appShell.collapse": "Contraer navegación",
     "demo.appShell.navigation": "Navegación del espacio de trabajo",
     "demo.appShell.workspace": "Espacio",

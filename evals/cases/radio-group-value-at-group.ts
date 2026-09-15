@@ -15,7 +15,7 @@ export const radioGroupValueAtGroupCase: EvalCase = {
     contract: "radio-group",
     signature: "RadioGroup",
     options: { name: "plan", value: "pro", orientation: "vertical" },
-    attrs: { "aria-label": "Elegí tu plan" },
+    attrs: { "aria-label": "Elige tu plan" },
     slots: {
       items: [
         { options: { value: "free" }, slots: { label: "Gratis" } },

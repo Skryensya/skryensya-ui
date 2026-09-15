@@ -1,7 +1,7 @@
 /*
  * THE HERO TAB LIVES IN THE URL, so a reader can link to the tab they are talking about.
  *
- * "Mirá la sección de instalación" is a link to a page plus a sentence telling you what to click
+ * "Mira la sección de instalación" is a link to a page plus a sentence telling you what to click
  * once you get there. This makes it just a link: `/componentes/accordion?tab=install` opens on that
  * panel, and every switch rewrites the address bar so whatever is on screen is what gets copied.
  *

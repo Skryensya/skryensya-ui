@@ -21,7 +21,7 @@ export const qrCodeMessages = {
 
     "qrCodePage.levelsTitle": "Corrección de errores",
     "qrCodePage.levelsBody":
-      "Cuatro niveles, de <code>L</code> a <code>H</code>, que recuperan aproximadamente 7, 15, 25 y 30 por ciento del símbolo dañado. El default es <code>Q</code> y no el <code>M</code> habitual: este contrato trae logo, tinte y formas de módulo, que son justo las tres cosas que gastan el presupuesto de corrección, así que un default que sólo sirve para el caso sin decorar le tira el fallo encima a quien usa las funciones que el componente promociona. Más corrección significa más módulos, o sea un símbolo más denso para el mismo texto: se ve abajo. Subí el nivel cuando el código se va a imprimir, a doblar o a tapar en parte  -  y obligatoriamente si le vas a poner un logo.",
+      "Cuatro niveles, de <code>L</code> a <code>H</code>, que recuperan aproximadamente 7, 15, 25 y 30 por ciento del símbolo dañado. El default es <code>Q</code> y no el <code>M</code> habitual: este contrato trae logo, tinte y formas de módulo, que son justo las tres cosas que gastan el presupuesto de corrección, así que un default que sólo sirve para el caso sin decorar le tira el fallo encima a quien usa las funciones que el componente promociona. Más corrección significa más módulos, o sea un símbolo más denso para el mismo texto: se ve abajo. Sube el nivel cuando el código se va a imprimir, a doblar o a tapar en parte  -  y obligatoriamente si le vas a poner un logo.",
     "qrCodePage.levelsLabel": "Niveles de corrección",
     "qrCodePage.levelsNote": "el mismo texto, cuatro niveles",
 
@@ -47,7 +47,7 @@ export const qrCodeMessages = {
 
     "qrCodePage.sizesTitle": "Tamaños",
     "qrCodePage.sizesBody":
-      "<code>size</code> cambia la huella y nada más: los cuatro símbolos de abajo llevan el mismo texto con la misma cantidad de módulos. Elegí por distancia de lectura, no por hueco en la maqueta  -  <code>sm</code> sirve en pantalla a un palmo, <code>xl</code> es para proyectar o imprimir. La densidad la fija el nivel de corrección, no esto.",
+      "<code>size</code> cambia la huella y nada más: los cuatro símbolos de abajo llevan el mismo texto con la misma cantidad de módulos. Elige por distancia de lectura, no por hueco en la maqueta  -  <code>sm</code> sirve en pantalla a un palmo, <code>xl</code> es para proyectar o imprimir. La densidad la fija el nivel de corrección, no esto.",
     "qrCodePage.sizesLabel": "Tamaños",
     "qrCodePage.sizesNote": "sm · md · lg · xl",
 
@@ -63,7 +63,7 @@ export const qrCodeMessages = {
     "qrCodePage.tonesBody":
       "<code>tone</code> pinta los módulos con la misma paleta que usa <a href=\"/es/componentes/charts\">Chart</a>, siempre en un paso oscuro. <code>polarity</code> decide de qué lado está el contraste, en tres valores: <code>auto</code> (por defecto) sigue el esquema de la página y se da vuelta con el tema; <code>light</code> fija módulos oscuros sobre papel claro  -  la polaridad que especifica la norma  -  y <code>dark</code> es la inversión fija, para un afiche o una superficie oscura.",
     "qrCodePage.tonesBody2":
-      "El símbolo siempre se pinta con los mismos tokens  -  es un SVG inline con <code>fill=\"currentColor\"</code>  -  y lo único que cambia entre los tres valores es qué rama de <code>light-dark()</code> gana, vía <code>color-scheme</code> en la caja. Por eso <code>auto</code> se da vuelta solo y los otros dos no. <strong>Elegí <code>light</code> en cuanto el código se vaya de la pantalla</strong>: la norma sólo garantiza oscuro-sobre-claro, así que un símbolo invertido lo leen las cámaras de teléfono actuales  -  iOS y Android lo hacen  -  y no cualquier lector que exista. En pantalla eso alcanza; impreso o proyectado, no.",
+      "El símbolo siempre se pinta con los mismos tokens  -  es un SVG inline con <code>fill=\"currentColor\"</code>  -  y lo único que cambia entre los tres valores es qué rama de <code>light-dark()</code> gana, vía <code>color-scheme</code> en la caja. Por eso <code>auto</code> se da vuelta solo y los otros dos no. <strong>Elige <code>light</code> en cuanto el código se vaya de la pantalla</strong>: la norma sólo garantiza oscuro-sobre-claro, así que un símbolo invertido lo leen las cámaras de teléfono actuales  -  iOS y Android lo hacen  -  y no cualquier lector que exista. En pantalla eso alcanza; impreso o proyectado, no.",
     "qrCodePage.tonesLabel": "Tintes",
     "qrCodePage.tonesNote": "light, dark y auto",
 
@@ -71,7 +71,7 @@ export const qrCodeMessages = {
     "qrCodePage.popoverBody":
       "El caso en el que un QR es de verdad la mejor herramienta: quien lee está en el escritorio y quiere llevarse esta página al bolsillo. Va en un <a href=\"/es/componentes/popover\">Popover</a> porque el código es un aparte  -  responde una pregunta que nadie se hizo hasta que se la hizo, y no debería ocupar la maqueta hasta entonces.",
     "qrCodePage.popoverLabel": "QR en un popover",
-    "qrCodePage.popoverNote": "abrilo para ver el código",
+    "qrCodePage.popoverNote": "ábrelo para ver el código",
 
     "qrCodePage.ticketTitle": "Cuando el código es el contenido",
     "qrCodePage.ticketBody":
@@ -85,16 +85,16 @@ export const qrCodeMessages = {
     "qrCodePage.limitsItem2":
       "<strong>No decodifica.</strong> Leer un QR con la cámara es otro problema  -  binarización, detección de perspectiva  -  y no es lo que hace un design system.",
     "qrCodePage.limitsItem3":
-      "<strong>No hay descarga como imagen.</strong> El símbolo ya es un SVG en el DOM: guardarlo o convertirlo a PNG es del consumidor, y meterlo acá sería agregarle un botón a un contrato que deliberadamente no tiene ninguno.",
+      "<strong>No hay descarga como imagen.</strong> El símbolo ya es un SVG en el DOM: guardarlo o convertirlo a PNG es del consumidor, y meterlo aquí sería agregarle un botón a un contrato que deliberadamente no tiene ninguno.",
 
     "qrCodePage.a11yP1":
       "La raíz es <code>role=\"img\"</code> con el <code>label</code> como nombre accesible, y el <code>&lt;svg&gt;</code> de adentro va <code>aria-hidden</code>: es un dibujo del payload, y exponerlo anunciaría una segunda imagen sin nombre.",
     "qrCodePage.a11yP2":
       "Nunca uses el valor como nombre. Un lector de pantalla deletrea una URL carácter por carácter, y quien escucha eso no puede escanear ni entender qué le ofrecen.",
     "qrCodePage.a11yP3":
-      "Un QR no puede ser el único camino a una acción importante. Escribí el enlace al lado, como en la composición de arriba: hay gente sin cámara, sin una segunda pantalla, o leyendo desde el mismo dispositivo donde está el código.",
+      "Un QR no puede ser el único camino a una acción importante. Escribe el enlace al lado, como en la composición de arriba: hay gente sin cámara, sin una segunda pantalla, o leyendo desde el mismo dispositivo donde está el código.",
     "qrCodePage.a11yP4":
-      "El contraste acá es una propiedad de <em>funcionamiento</em>, no de estilo: una cámara necesita módulos oscuros sobre fondo claro, en ese orden. Invertirlo está fuera de especificación y varios lectores lo rechazan, así que en <code>forced-colors</code> la hoja fija los dos colores del sistema en vez de heredar un tema invertido.",
+      "El contraste aquí es una propiedad de <em>funcionamiento</em>, no de estilo: una cámara necesita módulos oscuros sobre fondo claro, en ese orden. Invertirlo está fuera de especificación y varios lectores lo rechazan, así que en <code>forced-colors</code> la hoja fija los dos colores del sistema en vez de heredar un tema invertido.",
 
     "qrCodePage.testRoundTrip":
       "Cada modo que el contrato promete vuelve a leerse: los tests decodifican el símbolo con un lector independiente, porque un QR con los bytes equivocados se ve idéntico a uno correcto.",

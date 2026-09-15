@@ -22,7 +22,7 @@ export const folderMessages = {
       "La geometría es una función pura de core, <code>folderPath</code>, y las dos bindings la llaman con los mismos números: miden la caja de la carpeta y el ancho de la pestaña, y escriben el <code>d</code> resultante. Los cinco números de la forma (alto de pestaña, barrido de entrada, hombro, esquina superior y radio inferior) son hooks CSS, así que una marca reafina la silueta en su propia hoja sin tocar una binding.",
     "folderPage.revealTitle": "Nunca se ve en reposo",
     "folderPage.revealBody":
-      "Una carpeta nunca se ve en reposo, y no hay opción para que se vea: es lo que el componente ES. Una página de carpetas se lee como texto limpio hasta que el puntero, o el foco del teclado, llega a una, y recién ahí la forma se resuelve bajo su propio rótulo. Responde a <code>:hover</code> y a <code>:focus-within</code>, nunca sólo a hover; en punteros gruesos, que no tienen hover con qué responder, se pinta siempre. Si querés la forma visible siempre, eso es un <code>Box</code> con un encabezado adentro, y el catálogo ya tiene uno.",
+      "Una carpeta nunca se ve en reposo, y no hay opción para que se vea: es lo que el componente ES. Una página de carpetas se lee como texto limpio hasta que el puntero, o el foco del teclado, llega a una, y solo entonces la forma se resuelve bajo su propio rótulo. Responde a <code>:hover</code> y a <code>:focus-within</code>, nunca sólo a hover; en punteros gruesos, que no tienen hover con qué responder, se pinta siempre. Si quieres la forma visible siempre, eso es un <code>Box</code> con un encabezado adentro, y el catálogo ya tiene uno.",
     "folderPage.revealLabel": "FolderStack que aparece al interactuar",
     "folderPage.previewsTitle": "Previews",
     "folderPage.previewsBody":
@@ -39,7 +39,7 @@ export const folderMessages = {
     "folderPage.groundRaisedLabel": "Sobre una superficie elevada",
     "folderPage.stackTitle": "El solape",
     "folderPage.stackBody":
-      "<code>FolderStack</code> solapa las carpetas como están en un cajón: cada una muestra su pestaña y una franja de cuerpo. El solape es una sola regla entre hermanos, sin elemento envoltorio ni índice por ítem, y sin <code>z-index</code> en ninguna parte: la carpeta que tocás sigue estando detrás de las que van adelante, igual que en un cajón de verdad. <code>overlap</code> es cuánto se esconde cada una detrás de la anterior.",
+      "<code>FolderStack</code> solapa las carpetas como están en un cajón: cada una muestra su pestaña y una franja de cuerpo. El solape es una sola regla entre hermanos, sin elemento envoltorio ni índice por ítem, y sin <code>z-index</code> en ninguna parte: la carpeta que tocas sigue estando detrás de las que van adelante, igual que en un cajón de verdad. <code>overlap</code> es cuánto se esconde cada una detrás de la anterior.",
     "folderPage.stackLabel": "FolderStack",
     "folderPage.contractItem1":
       "<code>label</code> es un slot, no un string: la pestaña de una carpeta casi siempre lleva un encabezado, y un encabezado es markup.",
@@ -69,7 +69,7 @@ export const folderMessages = {
     "folderPage.testCore10": "Cae al default por propiedad, así un hook redeclarado no se lleva el resto de la silueta.",
     "folderPage.testReact1": "Renderiza la pestaña, el contenido y una silueta decorativa detrás.",
     "folderPage.testReact2": "Dibuja la silueta a partir de la caja de la carpeta y del ancho de su pestaña.",
-    "folderPage.testReact3": "Marca la raíz como lista recién cuando escribió un path real.",
+    "folderPage.testReact3": "Marca la raíz como lista solo cuando escribió un path real.",
     "folderPage.testReactScheme":
       "Vuelve a leer el fondo cuando se da vuelta el esquema de color, que no mueve ninguna caja.",
     "folderPage.testReact4": "No escribe atributo de reveal: una carpeta nunca se ve en reposo.",
@@ -79,7 +79,7 @@ export const folderMessages = {
     "folderPage.testReact8": "La pila contiene carpetas directamente, sin elemento envoltorio entre medio.",
     "folderPage.testReact9": "Pasa <code>overlap</code> como la custom property que lee la hoja.",
     "folderPage.testVanilla1": "Dibuja la silueta a partir de la caja de la carpeta y del ancho de su pestaña.",
-    "folderPage.testVanilla2": "Marca la raíz como lista recién cuando escribió un path real.",
+    "folderPage.testVanilla2": "Marca la raíz como lista solo cuando escribió un path real.",
     "folderPage.testVanilla3": "No dibuja nada, y no queda lista, si la caja no se puede medir.",
     "folderPage.testVanilla4": "Vuelve a medir cuando cambia cualquiera de las dos cajas, y observa las dos.",
     "folderPage.testVanillaScheme":
@@ -90,7 +90,7 @@ export const folderMessages = {
     "folderPage.testCore11": "Mide hasta el borde lejano de la pestaña, no sólo su ancho.",
     "folderPage.testCore12": "En RTL mide desde el borde inline-start, que es el derecho.",
     "folderPage.testCore13": "Toma el primer ancestro que efectivamente pinta algo.",
-    "folderPage.testCore14": "Se saltea todas las formas de escribir un fondo totalmente transparente.",
+    "folderPage.testCore14": "Omite todas las formas de escribir un fondo totalmente transparente.",
     "folderPage.testCore15": "Responde <code>null</code> cuando nada en el árbol pinta.",
     "folderPage.testCore16": "Responde <code>null</code> para una carpeta sin padre.",
     "folderPage.testCore17": "Pone el pliegue a la altura medida de la pestaña, sin importar el default.",

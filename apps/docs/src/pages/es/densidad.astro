@@ -110,25 +110,25 @@ const t = useTranslations(getLocale(Astro.url));
   </p>
   <CodeBlock code={`html { --sk-density: 0.8; }`} label="CSS" />
 
-  <h2>Poné el scope local en el límite que ya tenés</h2>
+  <h2>Pon el scope local en el límite que ya tienes</h2>
   <p>
-    Poné el atributo una vez, en la raíz del componente que querés compactar, y escribí ahí el valor como estilo inline. Sus descendientes siguen leyendo los mismos tokens semánticos: no hay que inventar una clase para el scope, ni marcar botón por botón, campo por campo, fila por fila.
+    Pon el atributo una vez, en la raíz del componente que quieres compactar, y escribe ahí el valor como estilo inline. Sus descendientes siguen leyendo los mismos tokens semánticos: no hay que inventar una clase para el scope, ni marcar botón por botón, campo por campo, fila por fila.
   </p>
   <CodeBlock code={componentMarkup} label="HTML del componente" />
 
-  <h2>Usá un factor relativo por defecto</h2>
+  <h2>Usa un factor relativo por defecto</h2>
   <p>
     <code>--sk-density-factor</code> mantiene en juego la elección de quien lee. Si la aplicación está en <code>0.8</code> y el componente pide <code>0.72</code>, su densidad efectiva es <code>0.576</code>. El valor puede ser cualquier número válido; no tiene por qué salir de un preset.
   </p>
 
   <p>
-    Usá un valor absoluto solo cuando el componente necesita una medida independiente de la aplicación. El valor absoluto le gana al factor, así que usá uno u otro y nunca los dos.
+    Usa un valor absoluto solo cuando el componente necesita una medida independiente de la aplicación. El valor absoluto le gana al factor, así que usa uno u otro y nunca los dos.
   </p>
   <CodeBlock code={absoluteDensity} label="HTML con valor absoluto" />
 
-  <h2>Probá un componente aislado</h2>
+  <h2>Prueba un componente aislado</h2>
   <p>
-    El control de abajo queda fuera del scope. Arrastralo: adentro del panel cambian padding, gaps y tamaños semánticos, y el resto de la página se queda donde está.
+    El control de abajo queda fuera del scope. Arrástralo: adentro del panel cambian padding, gaps y tamaños semánticos, y el resto de la página se queda donde está.
   </p>
   <ComponentPreview tree={densityLabTree(t)} previewScript={densityLabScript} label="Scope local en acción" note="scope y valor viven inline en el mismo nodo" />
 
@@ -155,9 +155,9 @@ const t = useTranslations(getLocale(Astro.url));
 
   <h2>Límites</h2>
   <p>
-    La densidad nunca toca tipografía, radio, foco ni área táctil. Para fijarla en toda la aplicación, usá
+    La densidad nunca toca tipografía, radio, foco ni área táctil. Para fijarla en toda la aplicación, usa
     <a href="/es/dimensiones">la dimensión global</a>, que es donde se define el eje. Para una excepción local,
-    mantené el scope en el límite del propio componente y dejá que sus tokens hagan el resto. Sigue en
+    mantén el scope en el límite del propio componente y deja que sus tokens hagan el resto. Sigue en
     <a href="/es/elevacion">Elevación</a>, que muestra los fallbacks visuales, y en
     <a href="/es/referencia">Referencia</a>, para buscar los valores resueltos.
   </p>

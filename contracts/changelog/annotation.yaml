@@ -1,7 +1,7 @@
 # Qué cambió en annotation, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
 #
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
-# que no coincide, algo de lo que un consumidor depende se movió: escribí la entrada y pegá el
+# que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
 surface: "f4b945e83ade0a2b"
 entries:
@@ -41,7 +41,7 @@ entries:
       title: La muestra anotada ya no recibe foco
       body: >-
         <code>inert</code> queda prendido por defecto: el acordeón, el breadcrumb o lo que sea
-        que se esté anotando es una muestra, no un control. Tab lo saltea, y los bindings le
+        que se esté anotando es una muestra, no un control. Tab lo salta, y los bindings le
         sacan el <code>tabindex</code> a todo lo de adentro para que nada se publicite como
         parada. Las etiquetas siguen siendo enfocables, que es como se revela una marca sin
         puntero. <code>inert={false}</code> sigue existiendo para el diagrama sobre una UI viva.

@@ -15,7 +15,7 @@ entries:
         <code>:focus-visible</code>, y en un menú el foco real nunca llega al ítem: Zag lo sigue con
         <code>aria-activedescendant</code> sobre el panel -, así que no coincidía nunca. Al lector de
         teclado le quedaba sólo el tinte, exactamente el mismo que pinta el hover del mouse, sin nada
-        que distinguiera "acá están las flechas" de "acá está el puntero". El anillo ahora lo pide
+        que distinguiera "aquí están las flechas" de "aquí está el puntero". El anillo ahora lo pide
         <code>[data-highlighted]:not(:hover)</code>: sale cuando el resaltado lo movió el teclado y no
         cuando lo puso el puntero. Alcanza igual a los desplegables de <code>Menubar</code>, que son
         este mismo ítem.

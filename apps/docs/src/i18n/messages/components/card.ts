@@ -79,7 +79,7 @@ export const cardMessages = {
     "cardPage.mediaLinkNote": "TileLink + ImageFrame + MediaGradient",
     "cardPage.productTitle": "Card de producto",
     "cardPage.productBody":
-      "El techo de la escalera, y el ejemplo que prueba la regla. Acá viven <strong>dos</strong> decisiones independientes (ver detalle y añadir), así que la raíz no puede ser un Tile: un enlace y un botón anidados dentro de un <code>a</code> son HTML inválido, y un click de superficie completa sólo podría significar una de las dos. Para esto existe Box.",
+      "El techo de la escalera, y el ejemplo que prueba la regla. Aquí viven <strong>dos</strong> decisiones independientes (ver detalle y añadir), así que la raíz no puede ser un Tile: un enlace y un botón anidados dentro de un <code>a</code> son HTML inválido, y un click de superficie completa sólo podría significar una de las dos. Para esto existe Box.",
     "cardPage.productNote": "Box + Badge + Link + Button",
     "cardPage.doTitle": "Do · Haz",
     "cardPage.doHeading": "Deja que el comportamiento elija la raíz",

@@ -35,7 +35,7 @@ entries:
         toma <code>value</code>, un <code>tone</code> propio para destacarla contra sus hermanas, y los
         slots <code>label</code> y <code>text</code>. Lo que este contrato deliberadamente NO tiene:
         título, subtítulo, acción ni superficie propia. Todo eso es de lo que contenga al gráfico, y
-        ponerlo acá habría hecho crecer exactamente la card con variantes que Card se niega a ser: un
+        ponerlo aquí habría hecho crecer exactamente la card con variantes que Card se niega a ser: un
         gráfico dentro de una card es una COMPOSICIÓN.
     en:
       title: Chart is published as a contract, a series of labelled values made visible

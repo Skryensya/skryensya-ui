@@ -32,7 +32,7 @@ export const commandPaletteMessages = {
       "<code>entries</code> es una opción del contrato, no del uso normal: existe para que un árbol (como el de arriba) pueda sembrar el índice del demo: se emite como el <code>&lt;script&gt;</code> mismo en Vanilla, y como el prop <code>items</code> (parseado) en React. Una composición real sigue autorando su propio índice.",
     "commandPalette.test1": "No reclama nada en reposo: sin opciones y sin popup expandido.",
     "commandPalette.test2": "Filtra a medida que se tipea y apunta al primer resultado.",
-    "commandPalette.test3": "Abre desde su trigger y recién ahí llena la lista.",
+    "commandPalette.test3": "Abre desde su trigger y solo entonces llena la lista.",
   },
   en: {
     "demo.commandPalette.open": "Open palette",

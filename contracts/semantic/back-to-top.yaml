@@ -8,9 +8,9 @@ BackToTop:
     - "el scroller puede no ser el documento: con `scroller` apunta a un panel con overflow propio"
   avoidWhen:
     - "la página entra entera en una pantalla: no hay de dónde volver"
-    - "lo que se quiere es saltear el chrome de arriba para llegar al contenido: eso es SkipLink, va primero en el foco y usa un ancla real"
+    - "lo que se quiere es saltar el chrome de arriba para llegar al contenido: eso es SkipLink, va primero en el foco y usa un ancla real"
     - "el destino es una sección concreta y no el principio del scroller: eso es un enlace de ancla dentro del texto, o Toc"
-    - "el foco tiene que viajar siempre al volver arriba: pasale `target` con el id de algo enfocable al inicio, o mirá SkipLink"
+    - "el foco tiene que viajar siempre al volver arriba: pásale `target` con el id de algo enfocable al inicio, o mira SkipLink"
     - "hay que restaurar la posición de scroll al navegar entre páginas: eso lo hace el router, no un botón"
   alternatives:
     - SkipLink

@@ -13,7 +13,7 @@ entries:
         El fondo de la fila con <code>aria-current="page"</code> deja de ser el
         <code>--color-bg-accent-subtle</code> del patrón, que en claro está a un paso del blanco
         sobre una superficie que ya es blanca: en un riel de doscientas filas eso se leía como un
-        artefacto de render y no como "estás acá". Ahora se mezcla contra el fondo propio de la
+        artefacto de render y no como "estás aquí". Ahora se mezcla contra el fondo propio de la
         barra, así que una barra repintada mantiene la relación. Modo oscuro sin cambios: ahí el
         mismo token ya es un escalón por encima de su fondo.
     en:

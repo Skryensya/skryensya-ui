@@ -52,7 +52,7 @@ Esto no cambia con el idioma:
 La persona gramatical no es una preferencia de quien escribe, depende de qué tipo de documento es:
 
 - **Tutorial o página de componente** → se dirige al lector directamente (segunda persona). Enseña a
-  alguien a hacer algo, paso a paso: "Si activa una acción, usa Button. Si navega, pasale `href` y
+  alguien a hacer algo, paso a paso: "Si activa una acción, usa Button. Si navega, pásale `href` y
   Button se renderiza como `<a>`" (`componentes/button.astro`).
 - **Referencia o regla** (`CONTEXT.md`, ADRs, `docs/ai-ui-platform.md`) → impersonal, con "se". Describe
   un sistema, no acompaña a nadie: "no se usa `as="a"`", "el icono queda decorativo" (`docs/ai/README.md`,
@@ -70,8 +70,11 @@ documento está leyendo.
 Cuando un documento se dirige al lector, la forma es **tú** (`necesitas` en `accordion.astro` y
 `dialog.astro`, `quieres` en `flyout.astro`, `usas` en `kbd.astro`, `usa Button` en `button.astro`).
 Nunca **usted** (registro distante, no encaja con el tono directo del resto) ni **vos**
-(regionalismo rioplatense: existen dos slips reales hoy, `tenés` y `necesitás` en páginas de
-`componentes/`, que son inconsistencias a corregir, no un segundo registro válido).
+(regionalismo rioplatense). El voseo que quedaba en el copy en español se barrió el 2026-09-14: los
+imperativos (`probá`, `usá`, `elegí`) pasaron a tuteo (`prueba`, `usa`, `elige`) y con ellos el léxico
+rioplatense que los acompañaba: `acá` -> `aquí`, `saltear` -> `saltar`, `degradé` -> `degradado`,
+`recién` + verbo conjugado -> `solo`. Un slip nuevo es una inconsistencia a corregir, no un segundo
+registro válido.
 
 ### Code-switching: qué se traduce y qué no
 

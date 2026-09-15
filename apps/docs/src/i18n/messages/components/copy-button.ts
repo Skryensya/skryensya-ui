@@ -19,7 +19,7 @@ export const copyButtonMessages = {
     "copyButton.contractItem4":
       "Ese mismo label aparece al lado del botón como una banderita con flecha, justo lo que dura el icono de check, en el tono de success (o de danger si falló). No es un tooltip: nunca se queda con el puntero, así que un segundo clic sigue llegando al botón.",
     "copyButton.contractItem5":
-      'La banderita se coloca con el pattern <a href="/es/anclaje">Anclaje</a>: el root lleva además <code>sk-anchor</code> y ella <code>sk-anchored</code> con <code>data-sk-placement="inline-start"</code>. Sin anchor positioning en el navegador no se dibuja, porque acá no hay machine que la coloque; el icono y el live region siguen igual.',
+      'La banderita se coloca con el pattern <a href="/es/anclaje">Anclaje</a>: el root lleva además <code>sk-anchor</code> y ella <code>sk-anchored</code> con <code>data-sk-placement="inline-start"</code>. Sin anchor positioning en el navegador no se dibuja, porque aquí no hay machine que la coloque; el icono y el live region siguen igual.',
     "copyButton.contractItem6": "Los iconos son placeholders <code>data-sk-icon</code>; el set lo enlaza <code>mountIcons</code> (ADR-19).",
     "copyButton.iconsComment":
       "Los iconos se autoran como placeholders <span data-sk-icon>;\nmountIcons los reemplaza por el <svg> del set enlazado.",

@@ -14,7 +14,7 @@ function markup({ clear = false, multiple = true, maxFileSize = "" } = {}): HTML
   document.body.innerHTML = `<div data-sk-file-upload${maxFileSize ? ` data-max-file-size="${maxFileSize}"` : ""}>
     <label data-sk-file-upload-label>Subir archivos</label>
     <div data-sk-file-upload-dropzone>
-      <span>Arrastrá un archivo o hacé click</span>
+      <span>Arrastra un archivo o haz clic</span>
     </div>
     <input data-sk-file-upload-input type="file" ${multiple ? "multiple" : ""} />
     <button data-sk-file-upload-trigger type="button">Elegir archivo</button>

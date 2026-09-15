@@ -4,7 +4,7 @@ export const fadeEdgeMessages = {
     "fadeEdge.betaBadge": "Beta",
 
     "fadeEdge.lede":
-      "FadeEdge desvanece un borde del contenido, en CSS puro. Dos formas de hacerlo: hacia transparencia, dejando ver lo que hay detrás, o hacia un color determinado, pintando un degradé encima. Úsalo para indicar que hay más contenido por descubrir, en vez de cortarlo de golpe con <code>overflow: hidden</code>.",
+      "FadeEdge desvanece un borde del contenido, en CSS puro. Dos formas de hacerlo: hacia transparencia, dejando ver lo que hay detrás, o hacia un color determinado, pintando un degradado encima. Úsalo para indicar que hay más contenido por descubrir, en vez de cortarlo de golpe con <code>overflow: hidden</code>.",
 
     "fadeEdge.whenTitle": "Cuándo usarlo",
     "fadeEdge.whenItem1":
@@ -15,12 +15,12 @@ export const fadeEdgeMessages = {
 
     "fadeEdge.bottomTitle": "Fundido hacia abajo",
     "fadeEdge.bottomBody":
-      "Una lista con scroll real y altura acotada: el borde inferior se desvanece para señalar que faltan filas por ver. Desplazate adentro del recuadro y vas a ver que el degradé queda fijo en el borde mientras el contenido pasa debajo.",
+      "Una lista con scroll real y altura acotada: el borde inferior se desvanece para señalar que faltan filas por ver. Desplázate adentro del recuadro y vas a ver que el degradado queda fijo en el borde mientras el contenido pasa debajo.",
     "fadeEdge.bottomLabel": "Fundido hacia abajo",
 
     "fadeEdge.topTitle": "Fundido hacia arriba",
     "fadeEdge.topBody":
-      "El mismo feed, arrancando ya scrolleado hasta el final: lo que falta está arriba, y el degradé lo señala ahí. Subí el scroll para verlo desaparecer.",
+      "El mismo feed, arrancando ya scrolleado hasta el final: lo que falta está arriba, y el degradado lo señala ahí. Sube el scroll para verlo desaparecer.",
     "fadeEdge.topLabel": "Fundido hacia arriba",
 
     "fadeEdge.rightTitle": "Fundido hacia la derecha",
@@ -35,35 +35,35 @@ export const fadeEdgeMessages = {
 
     "fadeEdge.colorTitle": "Fundido a un color determinado",
     "fadeEdge.colorBody":
-      'Cuando no hay una superficie plana detrás para revelar, una foto por ejemplo, <code>data-fade="color"</code> pinta un degradé opaco encima en vez de hacer transparente el contenido. Es el patrón clásico del scrim: un texto legible sobre una imagen, sin importar qué colores tenga la foto.',
+      'Cuando no hay una superficie plana detrás para revelar, una foto por ejemplo, <code>data-fade="color"</code> pinta un degradado opaco encima en vez de hacer transparente el contenido. Es el patrón clásico del scrim: un texto legible sobre una imagen, sin importar qué colores tenga la foto.',
     "fadeEdge.colorLabel": "Fundido a un color",
 
     "fadeEdge.intensityTitle": "Ajustar la intensidad",
     "fadeEdge.intensityBody":
-      "La variable <code>--sk-fade-edge-size</code> controla qué tan ancha es la zona que se desvanece (por defecto <code>4rem</code>), en cualquiera de los dos modos. Movés el control y el CSS se actualiza en vivo sobre el mismo feed con scroll de arriba.",
+      "La variable <code>--sk-fade-edge-size</code> controla qué tan ancha es la zona que se desvanece (por defecto <code>4rem</code>), en cualquiera de los dos modos. Mueves el control y el CSS se actualiza en vivo sobre el mismo feed con scroll de arriba.",
     "fadeEdge.intensityLabel": "Intensidad del desvanecido",
 
     "fadeEdge.apiTitle": "Variables y atributos",
     "fadeEdge.apiItem1":
-      "<code>data-fade</code>: <code>transparent</code> (por defecto, revela el fondo detrás) o <code>color</code> (pinta un degradé opaco encima)",
+      "<code>data-fade</code>: <code>transparent</code> (por defecto, revela el fondo detrás) o <code>color</code> (pinta un degradado opaco encima)",
     "fadeEdge.apiItem2":
       "<code>data-direction</code>: <code>to-bottom</code> (por defecto), <code>to-top</code>, <code>to-right</code>, <code>to-left</code>",
     "fadeEdge.apiItem3":
       "<code>--sk-fade-edge-size</code>: el alto o ancho de la zona que se desvanece (por defecto: <code>4rem</code>)",
     "fadeEdge.apiItem4":
-      "<code>--sk-fade-edge-color</code>: el color de destino del degradé en modo <code>color</code> (por defecto: <code>var(--color-bg-canvas)</code>); no tiene efecto en modo <code>transparent</code>",
+      "<code>--sk-fade-edge-color</code>: el color de destino del degradado en modo <code>color</code> (por defecto: <code>var(--color-bg-canvas)</code>); no tiene efecto en modo <code>transparent</code>",
 
     "fadeEdge.notesTitle": "Notas de implementación",
     "fadeEdge.notesItem1":
       "Modo <code>transparent</code>: usa <code>mask-image</code> con un <code>linear-gradient</code>. El contenido sigue en el DOM y es seleccionable, solo se enmascara visualmente. Se nota únicamente si lo que hay detrás es un fondo sólido que contrasta con el contenido",
     "fadeEdge.notesItem2":
-      "Modo <code>color</code>: un <code>::after</code> posicionado encima pinta el degradé, así que el elemento necesita <code>position: relative</code> (ya lo trae por defecto) y el resto de tu contenido no debe competir por ese mismo pseudo-elemento",
+      "Modo <code>color</code>: un <code>::after</code> posicionado encima pinta el degradado, así que el elemento necesita <code>position: relative</code> (ya lo trae por defecto) y el resto de tu contenido no debe competir por ese mismo pseudo-elemento",
     "fadeEdge.notesItem3":
       "El desvanecido queda fijo en el borde del elemento aunque el contenido interno tenga scroll: no hace falta recalcularlo al desplazarse",
     "fadeEdge.notesItem4":
-      "Ponele <code>overflow: auto</code> (o <code>hidden</code>, si no necesitás scroll) al mismo elemento cuando el contenido interno se desborda, para que no se vea por fuera del área desvanecida",
+      "Ponle <code>overflow: auto</code> (o <code>hidden</code>, si no necesitas scroll) al mismo elemento cuando el contenido interno se desborda, para que no se vea por fuera del área desvanecida",
     "fadeEdge.notesItem5":
-      "Para accesibilidad, asegurate de que el contenido crítico no quede oculto detrás del desvanecido",
+      "Para accesibilidad, asegúrate de que el contenido crítico no quede oculto detrás del desvanecido",
   },
   en: {
     "fadeEdge.description": "Pure CSS fade-out effect to smoothly hide content at the edges.",

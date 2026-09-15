@@ -2,21 +2,21 @@ export const playgroundMessages = {
   es: {
     "playground.title": "Playground",
     "playground.description":
-      "Editá y ejecutá los ejemplos de cada componente, en React y en Vanilla, sin instalar nada.",
+      "Edita y ejecuta los ejemplos de cada componente, en React y en Vanilla, sin instalar nada.",
     /* The only navigation this app has: it lives at its own origin, so "back" is a real destination
        and not a browser button. */
     "playground.backToDocs": "Volver a la documentación",
-    /* El 404 del playground: esta app tiene una sola ruta real, así que una ruta perdida acá casi
+    /* El 404 del playground: esta app tiene una sola ruta real, así que una ruta perdida aquí casi
        siempre es un enlace viejo a la documentación. El encabezado es propio y no el de la
        documentación ("Esta ruta no está en la documentación") porque este no es ese sitio. */
-    "playground.notFoundHeading": "Esta dirección no existe acá.",
+    "playground.notFoundHeading": "Esta dirección no existe aquí.",
     "playground.notFoundLede":
-      "Esta dirección no es del playground. Puede que el enlace sea viejo, o que la página que buscás esté en la documentación.",
+      "Esta dirección no es del playground. Puede que el enlace sea viejo, o que la página que buscas esté en la documentación.",
     "playground.components": "Componentes",
     "playground.binding": "Binding",
     "playground.loading": "Cargando el kit…",
     "playground.failed":
-      "No se pudo cargar el kit. Recargá la página; si sigue, revisá que exista apps/playground/public/sandbox (pnpm --filter @skryensya/playground sandbox).",
+      "No se pudo cargar el kit. Recarga la página; si sigue, revisa que exista apps/playground/public/sandbox (pnpm --filter @skryensya/playground sandbox).",
     "playground.offline":
       "El sandbox no puede alcanzar codesandbox.io, que es donde compila y corre el código. Suele ser una VPN, un proxy o un bloqueador de contenido; el resto del sitio no lo necesita.",
     /* El enlace se lee en una barra llena de controles, así que dice lo corto: adónde va. A QUÉ

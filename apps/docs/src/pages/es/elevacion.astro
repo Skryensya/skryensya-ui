@@ -114,7 +114,7 @@ const usage = `<!-- Box ya trae el styling hook: surface="raised" usa --elevatio
   <p>
     Los campos (<a href="/es/componentes/input">Input</a>, <a href="/es/componentes/select">Select</a>,
     Combobox, NumberField, TimeField, DatePicker y los inputs de canal del ColorPicker) también
-    pasaron a <code>sunken</code>: un campo es el pozo donde escribís, no una tarjeta apoyada sobre la
+    pasaron a <code>sunken</code>: un campo es el pozo donde escribes, no una tarjeta apoyada sobre la
     superficie. <code>select.css</code> e <code>input.css</code> tenían escrito a mano el razonamiento
     contrario: <em>"en modo oscuro <code>sunken</code> resuelve a neutral-1000, más oscuro que
     cualquier superficie, así que el control parecía un agujero perforado en el diálogo"</em>. Era
@@ -164,7 +164,7 @@ const usage = `<!-- Box ya trae el styling hook: surface="raised" usa --elevatio
     <div class="ev-demo__dialog">
       ¿Eliminar «Proyectos»?
       <p>Esta acción no se puede deshacer. En la práctica cubre toda la página con un scrim detrás;
-      acá está separado para comparar peso visual, no posición real.</p>
+      aquí está separado para comparar peso visual, no posición real.</p>
       <span class="ev-demo__tag">modal</span>
     </div>
   </div>
@@ -221,7 +221,7 @@ const usage = `<!-- Box ya trae el styling hook: surface="raised" usa --elevatio
     <code>surface</code>/<code>surface-raised</code> a ese tono. No es un TERCER paso propio para
     <code>modal</code>: <code>contrast-pairs.json</code> exige que TODO token de texto, incluido el
     más pálido (<code>text-tertiary</code>), pase 4.5:1 sobre cualquier superficie de uso corriente,
-    la garantía de "combiná cualquier texto con cualquier superficie sin revisar" que Material no se
+    la garantía de "combina cualquier texto con cualquier superficie sin revisar" que Material no se
     exige a sí mismo. Medido: <code>text-tertiary</code> cae por debajo de 4.5:1 pasado más o menos L
     33.5%; <code>surface-raised</code> ya está en L 26.8%. Eso deja unos 6 o 7 puntos de margen, que
     alcanzan para un paso visible, no para dos.
@@ -255,7 +255,7 @@ const usage = `<!-- Box ya trae el styling hook: surface="raised" usa --elevatio
     <code>prefers-contrast: more</code>): esto no es <code>forced-colors</code>, es un tema de color
     común y corriente que empuja cada token a un peldaño más fuerte. En modo claro aplana
     <code>-raised</code>/<code>-overlay</code> al mismo blanco que
-    <code>-surface</code>/<code>-canvas</code> (el comentario del propio código: "acá la separación la
+    <code>-surface</code>/<code>-canvas</code> (el comentario del propio código: "aquí la separación la
     cargan los bordes, no una diferencia de luminosidad apenas perceptible"), pero dejaba
     <code>--shadow-sm</code>/<code>-md</code>/<code>-lg</code> copiados sin cambios del tier base.
     Resultado: la misma invisibilidad que con <code>forced-colors</code>, en el mismo caso (un

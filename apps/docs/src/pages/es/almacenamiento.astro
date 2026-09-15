@@ -115,7 +115,7 @@ const PREPAINT = {
 
   <h3>3. Leer nunca falla</h3>
   <p>
-    Un store ilegible, un valor que no parsea, un <code>localStorage</code> que <strong>tira excepción</strong> porque quien lee está en modo privado: los tres devuelven el fallback. Mirá el tercero, porque es el caso que se rompe en producción y nunca en tu máquina. Un <code>localStorage</code> bloqueado no "devuelve null", <em>tira al acceder a la propiedad</em>, así que un <code>localStorage.getItem</code> pelado a nivel de módulo se lleva puesta la página entera para esas personas. Acá cada acceso está protegido, y un store inalcanzable degrada a memoria: la preferencia deja de persistir y nada más cambia.
+    Un store ilegible, un valor que no parsea, un <code>localStorage</code> que <strong>tira excepción</strong> porque quien lee está en modo privado: los tres devuelven el fallback. Mira el tercero, porque es el caso que se rompe en producción y nunca en tu máquina. Un <code>localStorage</code> bloqueado no "devuelve null", <em>tira al acceder a la propiedad</em>, así que un <code>localStorage.getItem</code> pelado a nivel de módulo se lleva puesta la página entera para esas personas. Aquí cada acceso está protegido, y un store inalcanzable degrada a memoria: la preferencia deja de persistir y nada más cambia.
   </p>
 
   <h2>El antes y el después</h2>
@@ -159,6 +159,6 @@ const PREPAINT = {
     Las preferencias se declaran al lado del módulo que es dueño del <em>tipo</em>. <code>colorModePreference</code> vive con ThemeToggle, y las dos de ComponentPreview viven con ComponentPreview: el nombre del slot y su guarda son parte del contrato que un segundo consumidor tendría que igualar, y un slot re-tipeado en dos apps es un slot que va a diferir en alguna. Lo que es del producto (una paleta de docs es asunto del tenant) lo declara la app: en este sitio, juntas en <code>src/lib/preferences.ts</code>.
   </p>
   <p>
-    Esa regla es la que lo vuelve verificable: buscá <code>localStorage</code> fuera de esos archivos y el único resultado debería ser el script de prepaint.
+    Esa regla es la que lo vuelve verificable: busca <code>localStorage</code> fuera de esos archivos y el único resultado debería ser el script de prepaint.
   </p>
 </Base>

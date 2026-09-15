@@ -23,6 +23,6 @@ export const calloutWithRetryCase: EvalCase = {
         children: "Reintentar",
       },
     },
-    children: "Revisá tu conexión y volvé a intentar.",
+    children: "Revisa tu conexión y vuelve a intentar.",
   },
 };

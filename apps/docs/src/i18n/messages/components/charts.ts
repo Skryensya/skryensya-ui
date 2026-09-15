@@ -63,7 +63,7 @@ export const chartsMessages = {
     "chartsPage.tableNote": "Chart bar + Table",
     "chartsPage.detailTitle": "Un detalle por punto, con Tooltip",
     "chartsPage.detailBody":
-      "La barra de Chart es <code>aria-hidden</code> y no tiene nombre propio, así que no es un trigger válido para Tooltip: el contrato de Tooltip exige que su contenido envuelva un control con su propio nombre accesible. Acá el trigger es un <code>Button.action</code> real por punto, debajo del gráfico; no duplica el overlay ni toca la lista accesible.",
+      "La barra de Chart es <code>aria-hidden</code> y no tiene nombre propio, así que no es un trigger válido para Tooltip: el contrato de Tooltip exige que su contenido envuelva un control con su propio nombre accesible. Aquí el trigger es un <code>Button.action</code> real por punto, debajo del gráfico; no duplica el overlay ni toca la lista accesible.",
     "chartsPage.detailLabel": "Latencia por endpoint, con detalle",
     "chartsPage.detailNote": "Chart bar + Tooltip + Button",
     "chartsPage.galleryTitle": "Formatos y tamaños, lado a lado",

@@ -29,7 +29,7 @@ export const accordionMessages = {
       'Si el estado puede vivir en el HTML y te alcanza con un grupo exclusivo nativo, la opción más simple es {detailsLink}, al final de esta página. Elige Accordion cuando necesites valor controlado, <code>multiple</code> o escuchar los cambios de estado.',
     "accordion.detailsNativoLabel": "Details nativo",
     "accordion.iconsNote":
-      'Los chevrons son placeholders (<code>&lt;span data-sk-icon="chevron-*"&gt;</code>): ningún componente monta un set de iconos por vos, así que hace falta esta línea además.',
+      'Los chevrons son placeholders (<code>&lt;span data-sk-icon="chevron-*"&gt;</code>): ningún componente monta un set de iconos por ti, así que hace falta esta línea además.',
     "accordion.oneItemTitle": "Accordion de un solo item",
     "accordion.oneItemBody":
       "Para una divulgación aislada, usa Accordion con un único item: la raíz aporta el marco y el Tile conserva la superficie y el state layer.",

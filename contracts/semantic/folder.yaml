@@ -4,7 +4,7 @@ Folder:
   useWhen:
     - "un bloque de contenido necesita decir de qué es ANTES de que lo leas: la pestaña es un rótulo, no un título más"
     - "hay una colección de cosas del mismo tipo y conviene que cada una se lea como un objeto aparte"
-    - "conviene que en reposo se lea como texto limpio: una carpeta nunca se ve hasta que la tocás"
+    - "conviene que en reposo se lea como texto limpio: una carpeta nunca se ve hasta que la tocas"
   avoidWhen:
     - "es una superficie sin rótulo propio; eso es un Box, que no dibuja nada"
     - "la superficie entera es un control; eso es un TileLink o un TileButton, que ya traen el estado y el foco de un control"
@@ -20,7 +20,7 @@ FolderLink:
     - "hace falta que el revelado responda al teclado sin depender de lo que haya adentro"
   avoidWhen:
     - "la carpeta hace algo en la página en vez de navegar; eso es un TileButton"
-    - "adentro hay más de un destino; dos links anidados no existen, poné los links en el cuerpo de un Folder"
+    - "adentro hay más de un destino; dos links anidados no existen, pon los links en el cuerpo de un Folder"
   alternatives:
     - Folder
     - TileLink

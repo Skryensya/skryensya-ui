@@ -14,7 +14,7 @@ entries:
         label, la conexión `for` sigue apuntando ahí y un lector de pantalla lo sigue leyendo; lo
         único que cambia es que el ojo no. Para un campo al que la composición de alrededor ya
         nombró, como la caja de respuesta debajo del comentario que contesta, donde repetir la
-        palabra es ruido que hay que saltear. No es "sin label": el slot sigue siendo obligatorio,
+        palabra es ruido que hay que saltar. No es "sin label": el slot sigue siendo obligatorio,
         porque un campo sin él es un control que nada anuncia. La misma distinción que ya hacen
         `SkipLink` y cualquier Button icon-only.
     en:

@@ -20,8 +20,8 @@ describe("EmptyState (React)", () => {
   });
 
   it("renders a description only when given", () => {
-    const ui = render(<EmptyState title="Sin resultados" description="Probá otra búsqueda." />);
-    expect(ui.getByText("Probá otra búsqueda.")).toBeTruthy();
+    const ui = render(<EmptyState title="Sin resultados" description="Prueba otra búsqueda." />);
+    expect(ui.getByText("Prueba otra búsqueda.")).toBeTruthy();
   });
 
   it("renders actions only when given", () => {

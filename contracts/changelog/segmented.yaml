@@ -21,7 +21,7 @@ entries:
         resto se quedaba con la versión liviana -; ese override se borró y ésta es la apariencia
         publicada. La geometría no cambia (alto, padding, radio, gap), y el anillo de acento del
         thumb es lo que lo mantiene visible sin depender de que el track sea oscuro.
-        <strong>Si querés el pozo de vuelta:</strong> redeclará esos dos hooks en tu propio scope.
+        <strong>Si quieres el pozo de vuelta:</strong> redeclará esos dos hooks en tu propio scope.
     en:
       title: The track now reads as a control, not as a recessed well
       body: >-

@@ -328,7 +328,7 @@ function ColorPickerPanelBody({
           data-variant="ghost"
         >
           {/* Un cuentagotas no está entre los roles estables del set de iconos (`icon.ts`); es la
-              única afordancia de este componente, así que se dibuja acá en vez de sumar un rol
+              única afordancia de este componente, así que se dibuja aquí en vez de sumar un rol
               nuevo al vocabulario compartido por un solo consumidor. */}
           <svg
             aria-hidden="true"

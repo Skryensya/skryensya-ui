@@ -20,7 +20,7 @@ entries:
         componente no podía renderizar la forma sobre la que corre el sitio de docs. Un frame de
         preview mide 1022px y la compuerta pedía 1152px. Lo único que sigue detrás de
         <code>wide</code> son <code>position: sticky</code> y el ancho fijo. <strong>Migración:</strong>
-        borrá <code>data-sk-toc-rail</code> de tu markup y no envuelvas la lista en un
+        borra <code>data-sk-toc-rail</code> de tu markup y no envuelvas la lista en un
         <code>&lt;details&gt;</code>; el emisor ya produce la forma nueva. La marca de sección actual
         pasa de un chip de fondo a una regla en el gutter.
     en:

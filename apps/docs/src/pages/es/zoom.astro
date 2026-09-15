@@ -148,9 +148,9 @@ const localScrollCss = `.table-scroll,
 
   <h2>Reglas de implementación</h2>
 
-  <h3>Dejá crecer al texto y a la media</h3>
+  <h3>Deja crecer al texto y a la media</h3>
   <p>
-    Evitá alturas fijas en cajas que llevan contenido. Imágenes, video e iframes se quedan dentro del ancho
+    Evita alturas fijas en cajas que llevan contenido. Imágenes, video e iframes se quedan dentro del ancho
     disponible sin distorsionar su proporción. Cuando una signature acepta contenido largo, ese caso pertenece
     al contrato: no se delega al producto que la consume.
   </p>
@@ -168,7 +168,7 @@ const localScrollCss = `.table-scroll,
 
   <h3>1. Que decida el contenedor</h3>
   <p>
-    Un componente no debería conocer el ancho del dispositivo. Dale un ancho flexible, dejá que sus hijos se encojan con <code>min-inline-size: 0</code>, y que el contenedor cambie columnas, wrapping o distribución según el espacio real.
+    Un componente no debería conocer el ancho del dispositivo. Dale un ancho flexible, deja que sus hijos se encojan con <code>min-inline-size: 0</code>, y que el contenedor cambie columnas, wrapping o distribución según el espacio real.
   </p>
 
   <h3>2. Un contrato de reflow por componente</h3>
@@ -205,17 +205,17 @@ const localScrollCss = `.table-scroll,
     </table>
   </div>
 
-  <h3>3. Auditá todos los caminos</h3>
+  <h3>3. Audita todos los caminos</h3>
   <p>
-    Corré una matriz de todos los caminos contra los anchos efectivos de 200% y 400%. La prueba detecta sola
+    Ejecuta una matriz de todos los caminos contra los anchos efectivos de 200% y 400%. La prueba detecta sola
     el overflow global; lo que agrega cada flujo son sus propias interacciones esenciales, porque una interfaz
     que se ve puede igual haber perdido funcionalidad.
   </p>
   <CodeBlock code={auditTs} label="Matriz de reflow en Playwright" lang="ts" />
 
-  <h3>4. Cerrá con zoom real</h3>
+  <h3>4. Cierra con zoom real</h3>
   <p>
-    Un viewport angosto en automatización prueba la geometría y no reemplaza la pasada final: abrí el navegador al 200% y al 400%, recorré la página con el teclado y probá menús, diálogos, tooltips, validaciones y estados con contenido largo.
+    Un viewport angosto en automatización prueba la geometría y no reemplaza la pasada final: abre el navegador al 200% y al 400%, recorre la página con el teclado y prueba menús, diálogos, tooltips, validaciones y estados con contenido largo.
   </p>
 
   <h2>Qué se rompe con medidas fijas</h2>
@@ -249,12 +249,12 @@ const localScrollCss = `.table-scroll,
 
   <h2>Checklist</h2>
   <ul>
-    <li>Probá el texto al 200%, no solamente un viewport móvil.</li>
-    <li>Probá el 400% desde 1280px o directo a 320 px CSS.</li>
-    <li>Leé la página entera usando solo scroll vertical.</li>
-    <li>Abrí menús, diálogos y popovers: que se vean no quiere decir que se puedan operar.</li>
-    <li>Cambiá tema y preferencias para detectar controles superpuestos.</li>
-    <li>Confirmá que el orden de foco y el de lectura siguen al orden visual.</li>
+    <li>Prueba el texto al 200%, no solamente un viewport móvil.</li>
+    <li>Prueba el 400% desde 1280px o directo a 320 px CSS.</li>
+    <li>Lee la página entera usando solo scroll vertical.</li>
+    <li>Abre menús, diálogos y popovers: que se vean no quiere decir que se puedan operar.</li>
+    <li>Cambia tema y preferencias para detectar controles superpuestos.</li>
+    <li>Confirma que el orden de foco y el de lectura siguen al orden visual.</li>
   </ul>
 
   <p>

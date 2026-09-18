@@ -1,7 +1,12 @@
-import { commentThreadParts, type CommentVoteState, commentThreadContract } from "@skryensya/core/comment-thread";
+import {
+  commentThreadAttrs,
+  commentThreadEvents,
+  commentThreadParts,
+  type CommentVoteState,
+  commentThreadContract,
+} from "@skryensya/core/comment-thread";
 import {
   forwardRef,
-  useCallback,
   useEffect,
   useRef,
   useState,
@@ -15,6 +20,16 @@ import { Icon } from "./icon.js";
 const { composerTriggerLabel: composerTriggerLabelOption, collapseLabel: collapseLabelOption, collapsible: collapsibleOption, deletable: deletableOption, deleteLabel: deleteLabelOption, reply: replyOption, replyLabel: replyLabelOption, voteDownLabel: voteDownLabelOption, voteUpLabel: voteUpLabelOption, voted: votedOption, cancelLabel: cancelLabelOption, cancellable: cancellableOption, submitLabel: submitLabelOption } = commentThreadContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
+
+/** Closest comment's `data-value`, matching the Vanilla enhancer's `commentId`. */
+function commentIdOf(el: Element): string | null {
+  return el.closest(`[${commentThreadAttrs.comment}]`)?.getAttribute("data-value") ?? null;
+}
+
+/** Same cancelable CustomEvent the Vanilla enhancer re-announces on the thread root. */
+function emitCommentEvent(el: Element, name: string, detail: unknown): boolean {
+  return el.dispatchEvent(new CustomEvent(name, { bubbles: true, cancelable: true, detail }));
+}
 
 /**
  * Whether a composer is currently a sheet, mirroring the Vanilla enhancer's own `sheetMedia`.
@@ -113,6 +128,7 @@ export function CommentThread({
       className={cx(commentThreadParts.root, className)}
       /* The contract lands this option on the host; the binding has to as well. */
       data-composer-trigger-label={composerTriggerLabel}
+      {...{ [commentThreadAttrs.root]: "" }}
       ref={rootRef}
     >
       {composer ? (
@@ -164,7 +180,7 @@ export type CommentProps = Omit<HTMLAttributes<HTMLElement>, "children" | "id"> 
   /** Makes the author's avatar and name one link to this profile URL. */
   profileHref?: string;
   /** Pre-formatted ("3h ago"). This component never computes relative time. */
-  timestamp?: ReactNode;
+  timestamp?: string;
   /** This comment's identity, for whatever the consumer's own handlers report back. */
   id?: string;
   /** Gives this comment a fold control. Off by default; the simplest comment has none. */
@@ -216,6 +232,7 @@ export function Comment({
       data-collapse-label={collapseLabel}
       data-collapsible={collapsible ? "" : undefined}
       data-value={id}
+      {...{ [commentThreadAttrs.comment]: "" }}
       ref={rootRef}
     >
       <div className={commentThreadParts.commentSelf}>
@@ -283,7 +300,9 @@ export function Comment({
           ) : null}
         </div>
         <div className={commentThreadParts.commentContent}>
-          <div className={commentThreadParts.commentBody}>{children}</div>
+          <div className={commentThreadParts.commentBody} {...{ [commentThreadAttrs.body]: "" }}>
+            {children}
+          </div>
           {actions}
         </div>
       </div>
@@ -312,13 +331,13 @@ export type CommentActionsProps = Omit<HTMLAttributes<HTMLDivElement>, "children
   children?: ReactNode;
   /** Renders the reply trigger. */
   reply?: boolean;
-  replyLabel?: ReactNode;
+  replyLabel?: string;
   onReply?: () => void;
   /** Whether the reply box this row's trigger opens is showing. */
   replyOpen?: boolean;
   /** Renders the delete trigger. Ownership is the consumer's to decide. */
   deletable?: boolean;
-  deleteLabel?: ReactNode;
+  deleteLabel?: string;
   onDelete?: () => void;
 };
 
@@ -334,6 +353,8 @@ export function CommentActions({
   replyOpen = false,
   ...props
 }: CommentActionsProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+
   return (
     <div
       {...props}
@@ -341,9 +362,11 @@ export function CommentActions({
       /* Every option this signature declares lands on its host in the contract, so it lands here
        * too. Presence-only for the booleans, which is how the emitter writes them. */
       data-deletable={deletable ? "" : undefined}
-      data-delete-label={typeof deleteLabel === "string" ? deleteLabel : undefined}
+      data-delete-label={deleteLabel}
       data-reply={reply ? "" : undefined}
-      data-reply-label={typeof replyLabel === "string" ? replyLabel : undefined}
+      data-reply-label={replyLabel}
+      {...{ [commentThreadAttrs.actions]: "" }}
+      ref={rootRef}
     >
       {children}
       {reply ? (
@@ -368,7 +391,11 @@ export function CommentActions({
           data-size="sm"
           data-tone="danger"
           data-variant="ghost"
-          onClick={onDelete}
+          onClick={(event) => {
+            const host = rootRef.current ?? event.currentTarget;
+            emitCommentEvent(host, commentThreadEvents.delete, { id: commentIdOf(host) });
+            onDelete?.();
+          }}
           type="button"
         >
           <span aria-hidden="true">
@@ -383,7 +410,7 @@ export function CommentActions({
 
 export type CommentVoteProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "onChange"> & {
   /** The tally, pre-formatted and rendered as-is. */
-  count: ReactNode;
+  count: string;
   /** The viewer's own past vote. Never inferred from the count. */
   voted?: CommentVoteState;
   voteUpLabel?: string;
@@ -400,13 +427,28 @@ export function CommentVote({
   voted = votedOption.default,
   ...props
 }: CommentVoteProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  const cast = (direction: "up" | "down") => {
+    const host = rootRef.current;
+    if (host) {
+      emitCommentEvent(host, commentThreadEvents.vote, {
+        direction,
+        id: commentIdOf(host),
+      });
+    }
+    onVote?.(direction);
+  };
+
   return (
     <div
       {...props}
       className={cx(commentThreadParts.vote, className)}
-      data-vote-down-label={typeof voteDownLabel === "string" ? voteDownLabel : undefined}
-      data-vote-up-label={typeof voteUpLabel === "string" ? voteUpLabel : undefined}
+      data-vote-down-label={voteDownLabel}
+      data-vote-up-label={voteUpLabel}
       data-voted={voted}
+      {...{ [commentThreadAttrs.vote]: "" }}
+      ref={rootRef}
     >
       <button
         aria-pressed={voted === "up"}
@@ -414,7 +456,7 @@ export function CommentVote({
         data-icon-only=""
         data-size="sm"
         data-variant="ghost"
-        onClick={() => onVote?.("up")}
+        onClick={() => cast("up")}
         type="button"
       >
         <span aria-hidden="true">
@@ -429,7 +471,7 @@ export function CommentVote({
         data-icon-only=""
         data-size="sm"
         data-variant="ghost"
-        onClick={() => onVote?.("down")}
+        onClick={() => cast("down")}
         type="button"
       >
         <span aria-hidden="true">
@@ -460,10 +502,10 @@ export type CommentComposerProps = {
    *  ships none of them, which is the whole point of it being a slot. */
   children: ReactNode;
   className?: string;
-  submitLabel?: ReactNode;
+  submitLabel?: string;
   /** Renders the cancel control. An always-open composer has nothing to cancel back to. */
   cancellable?: boolean;
-  cancelLabel?: ReactNode;
+  cancelLabel?: string;
   /** The written body, already trimmed. Nothing is submitted when it is empty. */
   onSubmit?: (body: string) => void;
   /**
@@ -495,6 +537,15 @@ export const CommentComposer = forwardRef<HTMLFormElement, CommentComposerProps>
     const form = event.currentTarget;
     const body = read(form);
     if (!body) return;
+    /* Cleared only if nobody objected: same cancelable `sk:commentreply` the Vanilla enhancer uses. */
+    if (
+      !emitCommentEvent(form, commentThreadEvents.reply, {
+        body,
+        parentId: commentIdOf(form),
+      })
+    ) {
+      return;
+    }
     onSubmit?.(body);
     form.reset();
   };
@@ -503,9 +554,10 @@ export const CommentComposer = forwardRef<HTMLFormElement, CommentComposerProps>
     <form
       className={cx(commentThreadParts.composer, className)}
       /* Both land on this host in the contract, so both land here. */
-      data-cancel-label={typeof cancelLabel === "string" ? cancelLabel : undefined}
+      data-cancel-label={cancelLabel}
       data-cancellable={cancellable ? "" : undefined}
-      data-submit-label={typeof submitLabel === "string" ? submitLabel : undefined}
+      data-submit-label={submitLabel}
+      {...{ [commentThreadAttrs.composer]: "" }}
       onSubmit={handleSubmit}
       ref={ref}
     >
@@ -516,7 +568,17 @@ export const CommentComposer = forwardRef<HTMLFormElement, CommentComposerProps>
             className={cx(commentThreadParts.composerCancel, "sk-button sk-interactive")}
             data-size="sm"
             data-variant="ghost"
-            onClick={(event) => onCancel?.(read(event.currentTarget.form!))}
+            onClick={(event) => {
+              const form = event.currentTarget.form!;
+              const body = read(form);
+              if (body) {
+                emitCommentEvent(form, commentThreadEvents.discard, {
+                  body,
+                  parentId: commentIdOf(form),
+                });
+              }
+              onCancel?.(body);
+            }}
             type="button"
           >
             {cancelLabel}

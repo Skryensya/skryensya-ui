@@ -13,6 +13,7 @@ import { mountColorPicker } from "@skryensya/vanilla/color-picker";
 import { mountCombobox } from "@skryensya/vanilla/combobox";
 import { mountCommandPalette } from "@skryensya/vanilla/command-palette";
 import { mountCommentThread } from "@skryensya/vanilla/comment-thread";
+import { mountQuestionnaire } from "@skryensya/vanilla/questionnaire";
 import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
 import { mountDataGrid } from "@skryensya/vanilla/data-grid";
 import { mountDatePicker } from "@skryensya/vanilla/date-picker";
@@ -20,6 +21,7 @@ import { mountEditor } from "@skryensya/vanilla/editor";
 import { mountExpandableTile } from "@skryensya/vanilla/expandable-tile";
 import { mountFileUpload } from "@skryensya/vanilla/file-upload";
 import { mountFolder } from "@skryensya/vanilla/folder";
+import { mountLoader } from "@skryensya/vanilla/loader";
 import { mountMarquee } from "@skryensya/vanilla/marquee";
 import { mountMegamenu } from "@skryensya/vanilla/megamenu";
 import { mountMenu } from "@skryensya/vanilla/menu";
@@ -76,11 +78,13 @@ const mounts = [
   mountCombobox,
   mountCommandPalette,
   mountCommentThread,
+  mountQuestionnaire,
   mountDataGrid,
   mountDatePicker,
   mountExpandableTile,
   mountFileUpload,
   mountFolder,
+  mountLoader,
   mountMarquee,
   mountMegamenu,
   mountMenu,
@@ -113,7 +117,7 @@ const mounts = [
 describe("Vanilla public entry points", () => {
   it("publishes the lazy auto-loader and one mount for every regular enhanced module", () => {
     expect(initComponents).toBeTypeOf("function");
-    expect(mounts).toHaveLength(45);
+    expect(mounts).toHaveLength(47);
     expect(mounts.every((mount) => typeof mount === "function")).toBe(true);
   });
 
@@ -166,11 +170,13 @@ describe("Vanilla public entry points", () => {
         mountCombobox,
         mountCommandPalette,
         mountCommentThread,
+        mountQuestionnaire,
         mountDataGrid,
         mountDatePicker,
         mountExpandableTile,
         mountFileUpload,
         mountFolder,
+        mountLoader,
         mountMarquee,
         mountMegamenu,
         mountMenu,

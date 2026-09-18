@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "3c59f5ac2fad005e"
+surface: "596e0b834a83e7bd"
 entries:
   - date: 2026-08-11
     kind: feature
@@ -59,3 +59,59 @@ entries:
         sheet <code>css</code> names could be reconciled, so the hooks in the others were public
         surface nobody documented and nothing checked. No styling changes: what changes is that they
         are declared now, and the compiler checks them.
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: Wrapper publica sólo su parte y sus hooks
+      body: >-
+        El contrato compartía las partes de todo layout y declaraba <code>box.css</code> como hoja
+        propia, así que anunciaba los hooks <code>--sk-box-*</code> y cualquier composición con un
+        Wrapper cargaba esa hoja sin usarla. Ahora publica sólo <code>sk-wrapper</code>,
+        <code>--sk-wrapper-max</code> y <code>--sk-wrapper-padding-inline</code>. El markup y los
+        estilos no cambian. La guía de uso aclara que <code>full</code> conserva los gutters y que
+        los Wrappers no se anidan.
+    en:
+      title: Wrapper publishes only its own part and hooks
+      body: >-
+        The contract shared every layout part and named <code>box.css</code> as one of its sheets,
+        so it advertised the <code>--sk-box-*</code> hooks and any composition holding a Wrapper
+        loaded that sheet for nothing. It now publishes only <code>sk-wrapper</code>,
+        <code>--sk-wrapper-max</code> and <code>--sk-wrapper-padding-inline</code>. Markup and
+        styling are unchanged. The usage guidance now says <code>full</code> keeps its gutters and
+        that Wrappers do not nest.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Wrapper elige su elemento desde el árbol
+      body: >-
+        <code>wrapperElement</code> acepta <code>div</code>, <code>section</code>, <code>article</code>,
+        <code>aside</code>, <code>header</code>, <code>footer</code>, <code>nav</code> y
+        <code>main</code>. React ya lo permitía con <code>as</code>, pero un árbol sólo podía emitir
+        un <code>div</code>, así que una región o un landmark no tenía forma de escribirse.
+    en:
+      title: Wrapper choose their element from the tree
+      body: >-
+        <code>wrapperElement</code> takes <code>div</code>, <code>section</code>, <code>article</code>,
+        <code>aside</code>, <code>header</code>, <code>footer</code>, <code>nav</code> and
+        <code>main</code>. React already allowed it through <code>as</code>, but a tree could only
+        emit a <code>div</code>, so a region or a landmark had no way to be written.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: Un Wrapper no puede ir dentro de otro
+      body: >-
+        El validador rechaza un Wrapper anidado en otro a cualquier profundidad: sumaba dos juegos de gutters y el techo de afuera mandaba igual.
+    en:
+      title: A Wrapper cannot sit inside another
+      body: >-
+        The validator rejects a Wrapper nested in another at any depth: it added a second set of gutters while the outer ceiling won anyway.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie cubre también las restricciones
+      body: >-
+        El hash de superficie ahora incluye las restricciones entre opciones (<code>implies</code>, <code>excludes</code>, <code>notInside</code>, <code>pairs</code>) y <code>outputHooks</code>. Este contrato no cambió; sólo cambió lo que el hash mide.
+    en:
+      title: The surface hash also covers constraints
+      body: >-
+        The surface hash now covers the constraints between options (<code>implies</code>, <code>excludes</code>, <code>notInside</code>, <code>pairs</code>) and <code>outputHooks</code>. This contract did not change; only what the hash measures did.

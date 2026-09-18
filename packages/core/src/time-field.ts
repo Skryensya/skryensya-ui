@@ -261,11 +261,55 @@ export function segmentBounds(type: TimeFieldSegmentType, cycle: HourCycle): { m
  * The value on the wire is the canonical `HH:mm` on a hidden input, so a form behind this field
  * never parses a locale-formatted string.
  */
+/** The DOM events this family dispatches on its root, `sk:<family><event>` like every other. */
+export const timeFieldEvents = {
+  /** Detail: `{ value: string }`. */
+  valueChange: "sk:timefieldvaluechange",
+} as const;
+
 export const timeFieldContract = {
   id: "time-field",
+  category: "forms",
   css: "@skryensya/core/components/time-field.css",
   parts: timeFieldParts,
+  events: timeFieldEvents,
+  eventDetails: {
+    valueChange: { detail: { value: "string" }, reactProp: "onValueChange", source: "root", trigger: "segment" },
+  },
   hooks: [
+    "--sk-anchored-align",
+    "--sk-anchored-arrow-edge",
+    "--sk-anchored-arrow-near",
+    "--sk-anchored-justify",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-anchored-size",
+    "--sk-anchored-z",
+    "--sk-select-bg",
+    "--sk-select-border-color",
+    "--sk-select-border-width",
+    "--sk-select-content-bg",
+    "--sk-select-content-border-color",
+    "--sk-select-content-max-block-size",
+    "--sk-select-content-padding",
+    "--sk-select-content-shadow",
+    "--sk-select-content-wash",
+    "--sk-select-disabled-bg",
+    "--sk-select-disabled-border-color",
+    "--sk-select-disabled-fg",
+    "--sk-select-fg",
+    "--sk-select-font-size",
+    "--sk-select-height",
+    "--sk-select-item-disabled-fg",
+    "--sk-select-item-fg",
+    "--sk-select-item-padding",
+    "--sk-select-item-radius",
+    "--sk-select-padding-x",
+    "--sk-select-radius",
+    "--sk-select-shadow",
+    "--sk-select-state-opacity",
+    "--sk-select-wash",
     "--sk-time-field-affordance-color",
     "--sk-time-field-bg",
     "--sk-time-field-border-color",
@@ -282,11 +326,22 @@ export const timeFieldContract = {
     "--sk-time-field-shadow",
     "--sk-time-field-wash",
   ],
+  /*
+   * The preset listbox reuses Select's positioner/content/item classes and Anchored placement
+   * (`selectParts` + `sk-anchored` in both bindings). Those classes have no unique owner on this
+   * contract's parts, so `sheetsForTree` cannot discover the sheets from class names alone; name
+   * them here. Hooks from those sheets are listed above so the hook gate stays closed (same shape
+   * as Select/Combobox + anchored, and Breadcrumb + menu).
+   */
+  hookSheets: [
+    "@skryensya/core/components/select.css",
+    "@skryensya/core/patterns/anchored.css",
+  ],
 
   options: {
     name: { type: "string", attr: "data-name", machineInput: true },
     /** Decides the hour cycle, the segment order and the separators. Not decoration. */
-    locale: { type: "string", default: "es", attr: "data-locale", machineInput: true },
+    locale: { type: "string", default: "en", attr: "data-locale", machineInput: true },
     /**
      * Forces the hour segment to 12- or 24-hour form, overriding `getHourCycle`'s own locale-based
      * guess; see `resolveHourCycle`'s own doc for why that guess cannot be trusted to land the same
@@ -298,31 +353,44 @@ export const timeFieldContract = {
      * `defaultValue` in React; same rename Slider makes, for the same reason: React's `value` is
      * controlled, and a usage tree has no change handler to feed it.
      */
-    value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
+    value: {
+      type: "string",
+      attr: "data-value",
+      prop: "defaultValue",
+      machineInput: true,
+      /* The parser's own expression, so the validator can never accept what `parseTimeValue` drops. */
+      pattern: { source: TIME_PATTERN.source, example: "14:30" },
+    },
     /** How far an arrow key moves the minutes. */
-    minuteStep: { type: "number", default: 1, attr: "data-minute-step", machineInput: true },
+    minuteStep: { type: "number", default: 1, min: 1, max: 59, integer: true, attr: "data-minute-step", machineInput: true },
     disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "", machineInput: true },
     readOnly: { type: "boolean", default: false, attr: "data-readonly", trueValue: "", machineInput: true },
     required: { type: "boolean", default: false, attr: "data-required", trueValue: "", machineInput: true },
+    /**
+     * The field failed validation. Paints the control (`[data-invalid]`, time-field.css) AND marks
+     * every segment `aria-invalid`: React had the prop and only the paint, so the error was seen and
+     * never announced, and Vanilla had neither.
+     */
+    invalid: { type: "boolean", default: false, attr: "data-invalid", trueValue: "" },
     /*
      * Each segment is a spinbutton with no visible label of its own, so these ARE their accessible
      * names; "14" announced alone is a number, not an hour.
      */
-    hourLabel: { type: "string", default: "Hora", attr: "data-hour-label", machineInput: true },
-    minuteLabel: { type: "string", default: "Minuto", attr: "data-minute-label", machineInput: true },
-    periodLabel: { type: "string", default: "Periodo", attr: "data-period-label", machineInput: true },
-    clearLabel: { type: "string", default: "Limpiar hora", attr: "data-clear-label", machineInput: true },
+    hourLabel: { type: "string", default: "Hour", attr: "data-hour-label", machineInput: true },
+    minuteLabel: { type: "string", default: "Minute", attr: "data-minute-label", machineInput: true },
+    periodLabel: { type: "string", default: "Period", attr: "data-period-label", machineInput: true },
+    clearLabel: { type: "string", default: "Clear time", attr: "data-clear-label", machineInput: true },
     /**
      * How far apart the picker's own listbox rows sit, in minutes. Every full multiple of it
      * across the day (`generateTimeOptions`, below). Defaults to 30: enough rows to matter (48) and
      * few enough to arrow-key through without scrolling past most of them, the common case for
      * scheduling a meeting or an appointment.
      */
-    optionsStep: { type: "number", default: 30, attr: "data-options-step", machineInput: true },
+    optionsStep: { type: "number", default: 30, min: 1, max: 720, integer: true, attr: "data-options-step", machineInput: true },
     /** The picker trigger's own accessible name. It opens the listbox, so it needs one distinct
      * from the field's own label (WCAG 2.5.3, the same reasoning SplitButton's own `triggerLabel`
      * states), since the trigger carries no visible text of its own, only an icon. */
-    optionsLabel: { type: "string", default: "Elegir de la lista", attr: "data-options-label", machineInput: true },
+    optionsLabel: { type: "string", default: "Choose from list", attr: "data-options-label", machineInput: true },
   },
 
   signatures: {
@@ -338,6 +406,7 @@ export const timeFieldContract = {
         "disabled",
         "readOnly",
         "required",
+        "invalid",
         "hourLabel",
         "minuteLabel",
         "periodLabel",
@@ -345,6 +414,8 @@ export const timeFieldContract = {
         "optionsStep",
         "optionsLabel",
       ],
+      /** Host id / a11y; control state stays options. */
+      forward: ["id", "aria-*"],
       slots: {
         label: { accepts: "text", required: true },
         hint: { accepts: "text" },
@@ -358,7 +429,7 @@ export const timeFieldContract = {
        * own `portals: true`). Declared so the symmetry gate measures ONE subtree, container-scoped,
        * instead of comparing a nested tree against a body-portaled one as if they disagreed.
        */
-      portals: true,
+      portals: { container: true },
       template: {
         element: "div",
         part: "root",

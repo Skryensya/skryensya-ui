@@ -3,8 +3,33 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "6bf3352bc4099ae9"
+surface: "5377e9a2a46f77f9"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    target: MediaCaption
+    es:
+      title: MediaCaption declara compose de MediaGradient
+      body: >-
+        <code>compose</code> documenta el wash que React inyecta con <code>strength</code> (<code>systemOwned</code>).
+    en:
+      title: MediaCaption declares compose of MediaGradient
+      body: >-
+        <code>compose</code> documents the wash React injects via <code>strength</code> (<code>systemOwned</code>).
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: MediaCaption elige su elemento desde el árbol
+      body: >-
+        <code>captionElement</code> acepta <code>div</code> o <code>figcaption</code>, lo mismo que
+        React ya permitía con <code>as</code> (útil junto a
+        <code>ImageFrame.frameElement: figure</code>).
+    en:
+      title: MediaCaption chooses its element from the tree
+      body: >-
+        <code>captionElement</code> takes <code>div</code> or <code>figcaption</code>, what React
+        already allowed through <code>as</code> (pairs with
+        <code>ImageFrame.frameElement: figure</code>).
   - date: 2026-08-11
     kind: feature
     es:
@@ -43,3 +68,17 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: MediaGradient publica los 12 hooks del lavado y del pie
+      body: >-
+        El contrato vuelve a declarar los <code>12</code> styling hooks de la hoja (pie + lavado),
+        no sólo los tres del caption. Son el mismo override surface de siempre; lo que faltaba era
+        que el contrato los nombrara para que un agente pueda descubrirlos.
+    en:
+      title: MediaGradient publishes all 12 caption and wash hooks
+      body: >-
+        The contract again declares the stylesheet's <code>12</code> styling hooks (caption + wash),
+        not only the three caption ones. Same override surface as before; what was missing was naming
+        them so an agent can discover them.

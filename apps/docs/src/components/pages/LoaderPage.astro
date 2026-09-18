@@ -8,10 +8,12 @@ import {
   loaderContextsTree,
   loaderHookPlaygroundControls,
   loaderHookPlaygroundTree,
+  loaderPseudoVariantsTree,
   loaderSimulationScript,
   loaderSimulationTree,
   loaderSizesTree,
   loaderSpeedsTree,
+  loaderStaggeredVariantsTree,
 } from "../../demos/loader";
 import { getLocale, useTranslations } from "../../i18n";
 
@@ -59,6 +61,19 @@ const customSpeed = `.sk-loader.mi-loader {
       <li set:html={t("loaderPage.contextsItem3")} />
     </ul>
 
+    <h3>{t("loaderPage.variantsTitle")}</h3>
+    <p set:html={t("loaderPage.variantsBody")} />
+    <ComponentPreview
+      tree={loaderPseudoVariantsTree(t)}
+      label={t("loaderPage.pseudoVariantsLabel")}
+    />
+    <p set:html={t("loaderPage.staggeredVariantsBody")} />
+    <ComponentPreview
+      tree={loaderStaggeredVariantsTree(t)}
+      label={t("loaderPage.staggeredVariantsLabel")}
+      note={t("loaderPage.staggeredVariantsNote")}
+    />
+
     <h3>{t("loaderPage.sizeTitle")}</h3>
     <p set:html={t("loaderPage.sizeBody")} />
     <ComponentPreview tree={loaderSizesTree(t)} label={t("loaderPage.sizeLabel")} />
@@ -67,6 +82,9 @@ const customSpeed = `.sk-loader.mi-loader {
     <p set:html={t("loaderPage.speedBody")} />
     <ComponentPreview tree={loaderSpeedsTree(t)} label={t("loaderPage.speedLabel")} />
     <CodeBlock code={customSpeed} label={t("loaderPage.speedOverrideLabel")} lang="css" />
+
+    <h3>{t("loaderPage.tempoTitle")}</h3>
+    <p set:html={t("loaderPage.tempoBody")} />
 
     <h3>{t("loaderPage.semanticsTitle")}</h3>
     <ul>

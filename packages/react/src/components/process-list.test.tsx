@@ -34,4 +34,13 @@ describe("ProcessList", () => {
     expect(ui.getByText("Instala el paquete").className).toContain("sk-process-list__title");
     expect(ui.getByText("pnpm add @skryensya/core").tagName).toBe("CODE");
   });
+
+  it("types the title as string to match the contract text slot", () => {
+    const ui = render(
+      <ProcessList>
+        <ProcessListItem title="Solo el título" />
+      </ProcessList>,
+    );
+    expect(ui.getByText("Solo el título").tagName).toBe("SPAN");
+  });
 });

@@ -111,6 +111,16 @@ const registrations: readonly Registration[] = [
       (await import("../components/comment-thread.js")).mountCommentThread,
   },
   {
+    selector: "[data-sk-loader]",
+    load: async () => (await import("../components/loader.js")).mountLoader,
+  },
+  {
+    /* The questionnaire listens to the tiles inside it, so it mounts on its own root and never on theirs. */
+    selector: "[data-sk-questionnaire]",
+    load: async () =>
+      (await import("../components/questionnaire.js")).mountQuestionnaire,
+  },
+  {
     selector: "[data-sk-tile-checkbox]",
     load: async () =>
       (await import("../components/tile-checkbox.js")).mountTileCheckbox,

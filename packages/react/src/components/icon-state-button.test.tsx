@@ -10,7 +10,7 @@ const faces: readonly IconStateFace[] = [
 
 describe("IconStateButton (React)", () => {
   it("stacks every face as an icon and marks the current one active", () => {
-    const ui = render(<IconStateButton faces={faces} current="dark" />);
+    const ui = render(<IconStateButton faces={faces} current="dark" aria-label="Modo" />);
     const button = ui.getByRole("button");
     const icons = button.querySelectorAll("[data-face]");
 
@@ -19,15 +19,16 @@ describe("IconStateButton (React)", () => {
     expect(icons[0]!.hasAttribute("data-active")).toBe(false);
     expect(icons[1]!.getAttribute("data-face")).toBe("dark");
     expect(icons[1]!.getAttribute("data-active")).toBe("");
+    expect(button.hasAttribute("data-icon-only")).toBe(true);
   });
 
   it("writes data-current on the button itself", () => {
-    const ui = render(<IconStateButton faces={faces} current="light" />);
+    const ui = render(<IconStateButton faces={faces} current="light" aria-label="Modo" />);
     expect(ui.getByRole("button").getAttribute("data-current")).toBe("light");
   });
 
   it("marks no face active when current is absent", () => {
-    const ui = render(<IconStateButton faces={faces} />);
+    const ui = render(<IconStateButton faces={faces} aria-label="Modo" />);
     const button = ui.getByRole("button");
     expect(button.hasAttribute("data-current")).toBe(false);
     for (const icon of button.querySelectorAll("[data-face]")) {
@@ -37,7 +38,7 @@ describe("IconStateButton (React)", () => {
 
   it("forwards a click handler, same as any other button", () => {
     const onClick = vi.fn();
-    const ui = render(<IconStateButton faces={faces} current="light" onClick={onClick} />);
+    const ui = render(<IconStateButton faces={faces} current="light" aria-label="Modo" onClick={onClick} />);
     fireEvent.click(ui.getByRole("button"));
     expect(onClick).toHaveBeenCalled();
   });

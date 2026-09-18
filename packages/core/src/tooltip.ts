@@ -125,6 +125,11 @@ export const tooltipAttrs = {
 export type TooltipAttr = keyof typeof tooltipAttrs;
 export type TooltipAttrName = (typeof tooltipAttrs)[TooltipAttr];
 
+/** The DOM events Tooltip dispatches when open state changes. */
+export const tooltipEvents = {
+  openChange: "sk:tooltipopenchange",
+} as const;
+
 /*
  * A hint that expands a control's own name; never replaces it. Wired as `aria-describedby`, so the
  * control must already be named: a tooltip that IS the name disappears for anyone who never hovers.
@@ -136,9 +141,19 @@ export type TooltipAttrName = (typeof tooltipAttrs)[TooltipAttr];
  */
 export const tooltipContract = {
   id: "tooltip",
+  category: "overlays",
   css: "@skryensya/core/components/tooltip.css",
   parts: tooltipParts,
   hooks: [
+    "--sk-anchored-align",
+    "--sk-anchored-arrow-edge",
+    "--sk-anchored-arrow-near",
+    "--sk-anchored-justify",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-anchored-size",
+    "--sk-anchored-z",
     "--sk-tooltip-bg",
     "--sk-tooltip-fg",
     "--sk-tooltip-font-size",
@@ -149,6 +164,15 @@ export const tooltipContract = {
     "--sk-tooltip-shadow",
     "--sk-tooltip-wash",
   ],
+  /*
+   * Placement geometry lives in `patterns/anchored.css`. Those classes have no unique contract
+   * owner, so `sheetsForTree` cannot discover the sheet from `also` alone, name it here.
+   */
+  hookSheets: ["@skryensya/core/patterns/anchored.css"],
+  events: tooltipEvents,
+  eventDetails: {
+    openChange: { detail: { open: "boolean" }, reactProp: "onOpenChange", source: "root", trigger: "trigger" },
+  },
 
   options: {
     placement: {
@@ -178,10 +202,40 @@ export const tooltipContract = {
      * every emitted tooltip came out without one while all three documented demos draw one.
      *
      * The attribute is bookkeeping rather than wiring: the enhancer finds the arrow by the pattern's
-     * class, not by this. It is marked machine input so the gate reads it as configuration present
-     * on one side by construction, which is what it is.
+     * class, not by this.
      */
-    arrow: { type: "boolean", attr: "data-arrow", trueValue: "", machineInput: true },
+    arrow: { type: "boolean", default: false, attr: "data-arrow", trueValue: "" },
+    /**
+     * WCAG 1.4.13 "hoverable": the tooltip stays open if the pointer enters it. ON by default;
+     * `false` writes `data-interactive="false"` and fails the criterion knowingly.
+     */
+    interactive: {
+      type: "boolean",
+      default: true,
+      attr: "data-interactive",
+      falseValue: "false",
+      machineInput: true,
+    },
+    /** ms before opening on hover. Zag's default applies when absent. */
+    openDelay: { type: "number", min: 0, attr: "data-open-delay", machineInput: true },
+    /** ms before closing on leave. Zag's default applies when absent. */
+    closeDelay: { type: "number", min: 0, attr: "data-close-delay", machineInput: true },
+    /** Unavailable: the tooltip never opens. */
+    disabled: {
+      type: "boolean",
+      default: false,
+      attr: "data-disabled",
+      trueValue: "",
+      machineInput: true,
+    },
+    /** Starts open. Read once as the initial state; after that the machine owns it. */
+    defaultOpen: {
+      type: "boolean",
+      default: false,
+      attr: "data-default-open",
+      trueValue: "",
+      machineInput: true,
+    },
   },
 
   signatures: {
@@ -189,8 +243,10 @@ export const tooltipContract = {
       intent: ["hint", "expand-a-control-name", "explain-an-icon-button"],
       host: { element: "span" },
       mount: "data-sk-anchor",
-      options: ["placement", "arrow"],
-      portals: true,
+      options: ["placement", "arrow", "interactive", "openDelay", "closeDelay", "disabled", "defaultOpen"],
+      /** Host id / a11y on the tooltip wrapper. */
+      forward: ["id", "aria-*"],
+      portals: { container: true },
       slots: {
         /** The control being described. It carries its own accessible name. */
         children: { accepts: "signature", required: true },

@@ -248,7 +248,7 @@ export const tableInBoxTree = (t: Translate): UsageTree => ({
   children: tableTree(t),
 });
 
-function deploymentsTable(t: Translate, markPagerRows = false): UsageTree {
+function deploymentsTable(t: Translate): UsageTree {
   return {
     contract: "table",
     signature: "TableScroll",
@@ -274,7 +274,6 @@ function deploymentsTable(t: Translate, markPagerRows = false): UsageTree {
           children: deploymentRows.map(([id, service, environment, status, unit, amount]) => ({
             contract: "table",
             signature: "TableRow",
-            attrs: markPagerRows ? { "data-sk-table-pager-row": "" } : {},
             children: [
               {
                 contract: "table",
@@ -316,7 +315,7 @@ export const tablePagerTree = (t: Translate): UsageTree => ({
     pageLabel: t("demo.table.page"),
   },
   children: [
-    deploymentsTable(t, true),
+    deploymentsTable(t),
     {
       contract: "table-pager",
       signature: "TablePagerBar",

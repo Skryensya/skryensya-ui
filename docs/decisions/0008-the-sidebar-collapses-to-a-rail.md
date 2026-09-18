@@ -86,7 +86,7 @@ what `sk-icon` already ships, the duplication a pattern exists to prevent.
   when. The state already knows which one it is; the hook is one.
 - *Persisting the preference inside the enhancer.* `localStorage` is the app's decision, not the design
   system's, with what key, per user or per device, and whether it syncs. The enhancer emits
-  `sk-collapsed-change` and React calls `onCollapsedChange`; storing that belongs to the consumer.
+  `sk:sidebarcollapsedchange` and React calls `onCollapsedChange`; storing that belongs to the consumer.
 
 ## Cost
 

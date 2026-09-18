@@ -46,7 +46,7 @@ describe("Select Vanilla contracts", () => {
   it("drives the machine over authored markup: ARIA, selection and the value text", async () => {
     const root = mount(markup());
     const onValueChange = vi.fn();
-    root.addEventListener("sk-value-change", onValueChange);
+    root.addEventListener("sk:selectvaluechange", onValueChange);
 
     const trigger = root.querySelector("[data-sk-select-trigger]") as HTMLElement;
     expect(trigger.getAttribute("aria-haspopup")).toBe("listbox");
@@ -64,10 +64,10 @@ describe("Select Vanilla contracts", () => {
     expect(root.querySelector("[data-sk-select-value]")?.textContent).toBe("dusk");
   });
 
-  it("emits sk-value-change, and destroying the mount stops the machine", async () => {
+  it("emits sk:selectvaluechange, and destroying the mount stops the machine", async () => {
     const root = mount(markup());
     const handler = vi.fn();
-    root.addEventListener("sk-value-change", handler);
+    root.addEventListener("sk:selectvaluechange", handler);
 
     fireEvent.click(root.querySelector("[data-sk-select-trigger]") as HTMLElement);
     fireEvent.click(root.querySelector('[data-sk-select-item][data-value="ember"]') as HTMLElement);

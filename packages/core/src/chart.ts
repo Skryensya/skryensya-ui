@@ -179,6 +179,7 @@ export function formatChartValue(value: number, options: FormatChartValueOptions
 
 export const chartContract = {
   id: "chart",
+  category: "data",
   css: "@skryensya/core/components/chart.css",
   parts: chartParts,
   hooks: [
@@ -214,8 +215,13 @@ export const chartContract = {
      */
     flush: { type: "boolean", default: false, attr: "data-flush", trueValue: "" },
     format: { type: "enum", values: chartFormats, default: "number", attr: "data-format" },
-    /** Currency code, when `format` is `currency`. Meaningless otherwise. */
-    currency: { type: "string", attr: "data-currency", machineInput: true },
+    /** ISO 4217 code, when `format` is `currency`. Meaningless otherwise. */
+    currency: {
+      type: "string",
+      attr: "data-currency",
+      machineInput: true,
+      pattern: { source: String.raw`^[A-Z]{3}$`, example: "USD" },
+    },
     locale: { type: "string", attr: "data-locale", machineInput: true },
     /**
      * The accessible name. Required: a series of numbers with nothing saying what it measures is the
@@ -250,6 +256,7 @@ export const chartContract = {
        * paragraph that merely sits nearby.
        */
       host: { element: "figure" },
+      mount: chartAttrs.root,
       options: [
         "kind",
         "tone",
@@ -265,6 +272,9 @@ export const chartContract = {
         "description",
       ],
       requires: ["label"],
+      /* `Intl.NumberFormat` throws without a code when style is currency; the soft fallback in
+       * `formatChartValue` is for paint, not for authored trees that forgot the unit. */
+      implies: { "format=currency": ["currency"] },
       slots: {
         items: {
           accepts: "items",
@@ -272,6 +282,8 @@ export const chartContract = {
           /* The contract keys every collection `items`; a chart's entries are its `points`. */
           prop: "points",
           item: {
+            /* A point with no value is a label with nothing to plot; React's `ChartPoint` requires it. */
+            requires: ["value"],
             options: {
               /**
                * The number, as an attribute and nothing more.
@@ -312,7 +324,6 @@ export const chartContract = {
         element: "figure",
         part: "root",
         host: true,
-        mount: chartAttrs.root,
         children: [
           /*
            * THE CAPTION COMES FIRST IN THE MARKUP and is visually hidden by default, which is the

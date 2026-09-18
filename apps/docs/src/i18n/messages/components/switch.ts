@@ -25,7 +25,7 @@ export const switchMessages = {
     "switchPage.contractItem4": "Úsalo sólo si el cambio toma efecto de inmediato y hay exactamente dos estados: sin indeterminate, a diferencia de Checkbox.",
     "switchPage.contractItem5": "TileSwitch reutiliza <code>sk-switch__control</code> y el mismo thumb; no inventa otro control.",
     "switchPage.test1":
-      "Alterna el estado marcado y el <code>data-state</code> de la raíz al hacer click, emitiendo <code>sk:checkedchange</code>.",
+      "Alterna el estado marcado y el <code>data-state</code> de la raíz al hacer click, emitiendo <code>sk:tilecheckedchange</code>.",
     "switchPage.test2": "Está asociado al formulario y respeta su <code>default-checked</code>.",
   },
   en: {
@@ -59,7 +59,7 @@ export const switchMessages = {
     "switchPage.contractItem5":
       "TileSwitch reuses <code>sk-switch__control</code> and the same thumb; it invents no second control.",
     "switchPage.test1":
-      "Toggles checked state and the root's <code>data-state</code> on click, emitting <code>sk:checkedchange</code>.",
+      "Toggles checked state and the root's <code>data-state</code> on click, emitting <code>sk:tilecheckedchange</code>.",
     "switchPage.test2": "Is form-associated and honours its <code>default-checked</code>.",
   },
 } as const;

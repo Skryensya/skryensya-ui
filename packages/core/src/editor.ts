@@ -46,7 +46,8 @@ export const editorParts = {
   root: "sk-editor",
   /* The toolbar container itself uses Toolbar's OWN part class (`sk-toolbar`, via `also` on
    * `toolbarTemplate` below), not one of these - this is only the button's own CSS hook, dynamic
-   * content that has no Toolbar-contract equivalent to borrow. */
+   * content that has no Toolbar-contract equivalent to borrow. There is deliberately no `toolbar`
+   * key here: naming a part that is not in `parts` would emit `undefined` as a class. */
   toolbarButton: "sk-editor__toolbar-button",
   content: "sk-editor__content",
   hiddenInput: "sk-editor__hidden-input",
@@ -100,7 +101,7 @@ const contentTemplate = {
  * on `contentTemplate` above. */
 const toolbarTemplate = {
   element: "div",
-  part: "toolbar",
+  /* No `part`: the bar IS Toolbar's class (`also`), not an editor-owned BEM part. */
   also: ["sk-toolbar"],
   mount: "data-sk-toolbar",
   options: ["toolbarLabel"],
@@ -108,15 +109,55 @@ const toolbarTemplate = {
   attrs: { role: "toolbar" },
 } as const;
 
+/** The DOM events this family dispatches on its root, `sk:<family><event>` like every other. */
+export const editorEvents = {
+  change: "sk:editorchange",
+  ready: "sk:editorready",
+} as const;
+
 export const editorContract = {
   id: "editor",
+  category: "forms",
   css: "@skryensya/core/components/editor.css",
   parts: editorParts,
+  /* Toolbar command buttons are binding-filled into the empty toolbar shell. */
+  systemOwned: ["toolbarButton"],
+  events: editorEvents,
+  eventDetails: {
+    change: { detail: { html: "string", markdown: "string", doc: "ProseMirrorNode" }, reactProp: "onChange", reactDetail: "EditorValue", source: "root", trigger: "content" },
+    ready: { detail: { view: "EditorView", getHTML: "() => string", getMarkdown: "() => string", getJSON: "() => ProseMirrorNode", setContent: "(html: string) => void" }, reactProp: false, source: "root" },
+  },
   hooks: [
+    "--sk-anchored-align",
+    "--sk-anchored-arrow-edge",
+    "--sk-anchored-arrow-near",
+    "--sk-anchored-justify",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-anchored-size",
+    "--sk-anchored-z",
     "--sk-editor-placeholder-fg",
     "--sk-editor-pressed-bg",
     "--sk-editor-pressed-fg",
     "--sk-editor-toolbar-bg",
+    "--sk-popover-bg",
+    "--sk-popover-border-color",
+    "--sk-popover-fg",
+    "--sk-popover-padding",
+    "--sk-popover-radius",
+    "--sk-popover-shadow",
+    "--sk-popover-wash",
+  ],
+  /*
+   * The link control is a real Popover (both bindings), placed with `sk-anchor` / arrow. Those
+   * classes are binding-generated chrome, not in the static template, so `also` cannot discover
+   * the sheets - name them here. Hooks from those sheets are listed above (same shape as
+   * Breadcrumb's Menu collapse / ColorPicker's anchored panel).
+   */
+  hookSheets: [
+    "@skryensya/core/components/popover.css",
+    "@skryensya/core/patterns/anchored.css",
   ],
 
   options: {
@@ -125,13 +166,20 @@ export const editorContract = {
     placeholder: { type: "string", attr: "data-placeholder", machineInput: true },
     readOnly: { type: "boolean", default: false, attr: "data-readonly", trueValue: "", machineInput: true },
     disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "", machineInput: true },
-    autofocus: { type: "boolean", default: false, attr: "data-autofocus", trueValue: "", machineInput: true },
+    autofocus: {
+      type: "boolean",
+      default: false,
+      attr: "data-autofocus",
+      trueValue: "",
+      prop: "autoFocus",
+      machineInput: true,
+    },
     /** Names the content surface for a reader, when nothing external (a FormField's own label) already does. */
     label: { type: "string", attr: "aria-label" },
     /** Names the internal toolbar. Same reasoning as Toolbar's own required `label`: a page with
      *  more than one bar needs each told apart. Defaults to generic microcopy, the same shape
      *  ColorPicker's `triggerLabel` default already uses. */
-    toolbarLabel: { type: "string", default: "Formato de texto", attr: "aria-label" },
+    toolbarLabel: { type: "string", default: "Text formatting", attr: "aria-label" },
     /**
      * A smaller toolbar: tighter padding and gaps, not a different button set. An OPTION rather
      * than a second signature - `ColorPicker.compact` earns its own signature because whole
@@ -163,6 +211,13 @@ export const editorContract = {
         "label",
         "toolbarLabel",
         "toolbarCompact",
+      ],
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+        { of: "toolbar", sheets: ["@skryensya/core/components/toolbar.css"], systemOwned: true },
+        { of: "popover", sheets: ["@skryensya/core/components/popover.css"], systemOwned: true },
+        { of: "input", sheets: ["@skryensya/core/components/input.css"], systemOwned: true },
       ],
       slots: {},
       template: {

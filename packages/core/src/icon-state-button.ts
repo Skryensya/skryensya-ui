@@ -62,6 +62,7 @@ export function getIconState(root: HTMLElement, attr: string): string | null {
 
 export const iconStateButtonContract = {
   id: "icon-state-button",
+  category: "actions",
   css: "@skryensya/core/components/icon-state-button.css",
   parts: iconStateButtonParts,
   hooks: [
@@ -73,7 +74,7 @@ export const iconStateButtonContract = {
 
   options: {
     /** Which face's `name` is current. Absent means no face carries `data-active` at all. */
-    current: { type: "string", attr: iconStateButtonAttrs.current },
+    current: { type: "string", attr: iconStateButtonAttrs.current, keyOf: { slot: "faces" } },
   },
 
   signatures: {
@@ -81,13 +82,22 @@ export const iconStateButtonContract = {
       intent: ["icon-button-with-states", "multi-state-icon-button"],
       host: { element: "button" },
       options: ["current"],
+      /*
+       * Button look attrs (`data-variant` / `data-size`) stay on the host via `also: sk-button`, not
+       * re-declared as options here. Form association and a11y names mirror Button.action.
+       */
+      forward: ["id", "name", "form", "data-variant", "data-size", "aria-*"],
       slots: {
         /** One entry per state. `name` is what `current` is compared against; `icon` is the glyph. */
         faces: {
           accepts: "items",
           required: true,
+          /* One face is not a state button; that is a Button, or a Switch for on and off. */
+          minItems: 2,
           item: {
             key: "name",
+            /* A face with no glyph shows nothing when it becomes current. */
+            requires: ["icon"],
             options: {
               name: { type: "string", attr: iconStateButtonAttrs.face },
               icon: { type: "enum", values: stableIconNames, attr: "data-sk-icon" },
@@ -96,12 +106,22 @@ export const iconStateButtonContract = {
           },
         },
       },
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+      ],
       template: {
         element: "button",
         part: "root",
         host: true,
         also: ["sk-button", "sk-interactive", iconToggleParts.root],
-        attrs: { type: "button" },
+        /*
+         * Always icon-only: faces are glyphs, never a text label. Without `data-icon-only`,
+         * `button.css` keeps the default padded control width and the square shape the pattern
+         * documents never arrives. Variant/size stay Button's own attrs (ghost + sm is the common
+         * toolbar shape); this contract does not re-declare them.
+         */
+        attrs: { type: "button", "data-icon-only": "" },
         children: [
           {
             repeat: "faces",
@@ -127,4 +147,13 @@ export const iconStateButtonContract = {
       react: { from: "@skryensya/react/icon-state-button", name: "IconStateButton" },
     },
   },
+
+  a11y: [
+    {
+      when: {},
+      requiresOneOf: ["aria-label", "aria-labelledby"],
+      because:
+        "IconStateButton is always icon-only: faces are glyphs with no visible text, so the host owns the accessible name.",
+    },
+  ],
 } as const satisfies ComponentContract;

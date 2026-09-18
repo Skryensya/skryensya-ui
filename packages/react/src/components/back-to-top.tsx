@@ -11,7 +11,6 @@ import {
   useState,
   type ButtonHTMLAttributes,
   type MouseEvent,
-  type ReactNode,
 } from "react";
 import { Icon } from "./icon.js";
 
@@ -28,8 +27,8 @@ export type BackToTopProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   "children" | "type"
 > & {
-  /** The accessible name. A destination, not an instruction: "Back to top". */
-  children: ReactNode;
+  /** The accessible name. A destination, not an instruction: "Back to top". Matches the contract slot. */
+  children: string;
   /** Pixels scrolled from the start before it reveals itself. Default 400. */
   threshold?: number;
   /** A CSS selector for the scroll container to return to its start. Default: the window. */

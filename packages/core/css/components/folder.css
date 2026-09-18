@@ -91,6 +91,13 @@
      */
     --sk-folder-ground: var(--color-bg-canvas);
     /*
+     * Runtime outputs the binding writes on every measure: clip follows the silhouette `d`, and tail
+     * is how much empty card below the copy the next stack sibling may hide. Declared so the
+     * contract can name them as `outputHooks` (read them, never set them as brand overrides).
+     */
+    --sk-folder-clip: none;
+    --sk-folder-tail: 0px;
+    /*
      * Thrown UPWARD, and mixed from the text colour rather than taken from the elevation ramp: the
      * ramp's shadows are sized for a rectangle sitting on a surface, and this is a sheet lifting off
      * a pile - light gets under its top edge first. Two layers, a wide soft one and a tight one.
@@ -291,7 +298,7 @@
      * so an unmeasured folder never flashes a rectangle of ground over the folder behind it.
      */
     background: var(--sk-folder-ground);
-    clip-path: var(--sk-folder-clip, none);
+    clip-path: var(--sk-folder-clip);
   }
 
   /*
@@ -372,7 +379,7 @@
    * a rectangle of one.
    */
   .sk-folder.sk-interactive::before {
-    clip-path: var(--sk-folder-clip, none);
+    clip-path: var(--sk-folder-clip);
     border-radius: 0;
   }
 
@@ -664,7 +671,7 @@
    * than piling up wrongly.
    */
   .sk-folder-stack > .sk-folder:not(:last-child) {
-    margin-block-end: calc(-1 * min(var(--sk-folder-tail, 0px), var(--sk-folder-stack-overlap)));
+    margin-block-end: calc(-1 * min(var(--sk-folder-tail), var(--sk-folder-stack-overlap)));
   }
 
   /*

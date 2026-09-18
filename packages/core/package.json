@@ -265,6 +265,10 @@
       "types": "./src/tabs.ts",
       "default": "./src/tabs.ts"
     },
+    "./table-pager-dom": {
+      "types": "./src/table-pager-dom.ts",
+      "default": "./src/table-pager-dom.ts"
+    },
     "./toc": {
       "types": "./src/toc.ts",
       "default": "./src/toc.ts"
@@ -352,6 +356,10 @@
     "./comment-thread": {
       "types": "./src/comment-thread.ts",
       "default": "./src/comment-thread.ts"
+    },
+    "./questionnaire": {
+      "types": "./src/questionnaire.ts",
+      "default": "./src/questionnaire.ts"
     },
     "./date-picker": {
       "types": "./src/date-picker.ts",
@@ -441,6 +449,10 @@
       "types": "./src/toolbar.ts",
       "default": "./src/toolbar.ts"
     },
+    "./toolbar-dom": {
+      "types": "./src/toolbar-dom.ts",
+      "default": "./src/toolbar-dom.ts"
+    },
     "./tree-view": {
       "types": "./src/tree-view.ts",
       "default": "./src/tree-view.ts"
@@ -462,6 +474,10 @@
     "./fonts/*": "./css/fonts/*",
     "./patterns/*": "./css/patterns/*",
     "./effects/*": "./css/effects/*",
+    "./vaul-gesture": {
+      "types": "./src/vaul-gesture.ts",
+      "default": "./src/vaul-gesture.ts"
+    },
     "./vaul": {
       "types": "./src/vaul.ts",
       "default": "./src/vaul.ts"

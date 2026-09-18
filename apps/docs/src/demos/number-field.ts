@@ -12,6 +12,7 @@ export const numberFieldAnatomyTree = (t: Translate): UsageTree => ({
       contract: "number-field",
       signature: "NumberField",
       options: {
+        locale: t("kit.locale"),
         defaultValue: "5",
         decrementLabel: t("demo.numberField.decrement"),
         incrementLabel: t("demo.numberField.increment"),
@@ -38,6 +39,7 @@ export const numberFieldTree = (t: Translate): UsageTree => ({
   contract: "number-field",
   signature: "NumberField",
   options: {
+    locale: t("kit.locale"),
     defaultValue: "5",
     decrementLabel: t("demo.numberField.decrement"),
     incrementLabel: t("demo.numberField.increment"),

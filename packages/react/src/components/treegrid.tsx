@@ -1,4 +1,4 @@
-import { computeTreegridVisibility, defaultTreegridColumnWeights, diffTreegridVisibility, resolveColumnResize, resolveTreegridKey, treegridParts, TREEGRID_EXIT_FALLBACK_MS, TREEGRID_MIN_COLUMN_WIDTH as MIN_COLUMN_WIDTH, type TreegridFocus, type TreegridRowTransition, treegridContract } from "@skryensya/core/treegrid";
+import { computeTreegridVisibility, defaultTreegridColumnWeights, diffTreegridVisibility, resolveColumnResize, resolveTreegridKey, treegridParts, TREEGRID_EXIT_FALLBACK_MS, TREEGRID_MIN_COLUMN_WIDTH as MIN_COLUMN_WIDTH, type TreegridFocus, type TreegridRowTransition, treegridContract, treegridEvents } from "@skryensya/core/treegrid";
 
 /* Derived, never restated: the default lives in the contract. */
 const { resizableColumns: resizableColumnsOption } = treegridContract.options;
@@ -332,6 +332,9 @@ export function Treegrid({
 
     setExpandedById(nextExpandedById);
     onExpandedChange?.({ value: id, expanded });
+    tableRef.current?.dispatchEvent(
+      new CustomEvent(treegridEvents.expandedChange, { bubbles: true, detail: { value: id, expanded } }),
+    );
 
     if (changed.length === 0) return;
 
@@ -406,7 +409,12 @@ export function Treegrid({
       if (row) toggle(row.id, action.expanded);
     } else if (action.kind === "activate") {
       const row = visibleRows[action.row];
-      if (row) onActivate?.({ value: row.id });
+      if (row) {
+        onActivate?.({ value: row.id });
+        tableRef.current?.dispatchEvent(
+          new CustomEvent(treegridEvents.activate, { bubbles: true, detail: { value: row.id } }),
+        );
+      }
     }
   };
 
@@ -453,6 +461,7 @@ export function Treegrid({
         aria-label={label}
         className={cx(`${treegridParts.root} sk-table`, className)}
         data-resizable-columns={resizableColumns ? "" : undefined}
+        data-sk-treegrid=""
         onKeyDown={onKeyDown}
         ref={tableRef}
         role="treegrid"
@@ -684,6 +693,7 @@ export function TreegridRow({
       // `<td>` one column right (measured: Chromium 140). `TreegridCell` below still carries
       // `sk-interactive` for its own hover/press feedback.
       className={cx(`${treegridParts.row} sk-table__row`, className)}
+      data-sk-treegrid-row=""
       data-state={context.transitionOf(value)}
       data-value={value}
       hidden={hidden}

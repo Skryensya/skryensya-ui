@@ -3,8 +3,84 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "c563374aec253c75"
+surface: "61153803ebe43898"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    target: Select
+    es:
+      title: Select declara forward para id y aria-*
+      body: >-
+        La firma enhanced publica <code>forward</code> con <code>id</code>/<code>aria-*</code> (además de Select.native). Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Select declares forward for id and aria-*
+      body: >-
+        The enhanced signature publishes <code>forward</code> with <code>id</code>/<code>aria-*</code> (alongside Select.native). An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: portals declara container de React
+      body: >-
+        <code>portals: { container: true }</code> documenta el ref React-only que acota el portal (por defecto <code>document.body</code>). El markup sigue anclado en el subárbol.
+    en:
+      title: portals declares the React container
+      body: >-
+        <code>portals: { container: true }</code> documents the React-only ref that scopes the portal (default <code>document.body</code>). Markup stays in the subtree.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: feature
+    target: Select.native
+    es:
+      title: Select.native declara forward para attrs nativos restantes
+      body: >-
+        <code>name</code>/<code>value</code>/<code>disabled</code>/<code>required</code> siguen
+        siendo opciones. <code>forward</code> lista <code>id</code>/<code>form</code>/
+        <code>autocomplete</code> y <code>aria-*</code>.
+    en:
+      title: Select.native declares forward for remaining native attrs
+      body: >-
+        <code>name</code>/<code>value</code>/<code>disabled</code>/<code>required</code> stay
+        options. <code>forward</code> lists <code>id</code>/<code>form</code>/
+        <code>autocomplete</code> and <code>aria-*</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Select declara anchored y Select.native acepta valor inicial
+      body: >-
+        El contrato publica <code>hookSheets</code> de <code>anchored.css</code> (el listbox
+        compone <code>sk-anchor</code>/<code>sk-anchored</code>) y los hooks
+        <code>--sk-anchored-*</code>. <code>Select.native</code> acepta <code>value</code> con
+        <code>selected</code> en la opción, y emite <code>disabled</code>/<code>required</code>
+        reales en vez de <code>data-*</code>. React despacha <code>sk:selectvaluechange</code> y
+        sella los mounts.
+    en:
+      title: Select declares anchored sheets and Select.native takes an initial value
+      body: >-
+        The contract publishes <code>anchored.css</code> via <code>hookSheets</code> (the listbox
+        composes <code>sk-anchor</code>/<code>sk-anchored</code>) and the
+        <code>--sk-anchored-*</code> hooks. <code>Select.native</code> accepts <code>value</code>
+        with <code>selected</code> on the matching option, and emits real
+        <code>disabled</code>/<code>required</code> instead of <code>data-*</code>. React dispatches
+        <code>sk:selectvaluechange</code> and stamps the mounts.
   - date: 2026-09-13
     kind: bugfix
     target: placeholder
@@ -83,3 +159,31 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: El validador comprueba que el valor inicial nombre una entrada que existe
+      body: >-
+        <code>value</code> ahora declara que nombra entradas de <code>items</code> por su
+        <code>value</code>. Un árbol que apunta a una entrada inexistente deja de validar
+        (<code>unknown-key</code>) en vez de renderizar sin nada seleccionado ni decir por qué. El
+        markup y los bindings no cambian.
+    en:
+      title: The validator checks that the initial value names an entry that exist
+      body: >-
+        <code>value</code> now declares that it names entries of <code>items</code> by their
+        <code>value</code>. A tree pointing at an entry that does not exist stops validating
+        (<code>unknown-key</code>) instead of rendering with nothing selected and no reason given.
+        Markup and bindings are unchanged.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Cada evento lleva el nombre de su familia
+      body: >-
+        <code>sk-value-change</code> → <code>sk:selectvaluechange</code>. Un mismo nombre ya no lo despachan varias familias: un listener sobre una raíz deja
+        de recibir los eventos de un componente distinto anidado adentro. El contrato ahora los declara en <code>events</code>, así que el compilador los publica.
+    en:
+      title: Every event carries its family in its name
+      body: >-
+        <code>sk-value-change</code> → <code>sk:selectvaluechange</code>. No two families dispatch the same name any more: a listener on a root stops receiving
+        the events of a different component nested inside it. The contract now declares them in <code>events</code>, so the compiler publishes them.

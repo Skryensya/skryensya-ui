@@ -1,6 +1,6 @@
 import { anchorNameFor, bindAnchor } from "@skryensya/core/anchored";
 import { imageFrameParts } from "@skryensya/core/image-frame";
-import { megamenuAttrs, megamenuParts } from "@skryensya/core/megamenu";
+import { megamenuAttrs, megamenuEvents, megamenuParts } from "@skryensya/core/megamenu";
 import { resolveMegamenuEvent, type MegamenuEvent, type MegamenuState } from "@skryensya/core/megamenu";
 import { createConnectMount, uniqueId } from "../runtime/svelte-hydrate.js";
 import { selectorsFor } from "@skryensya/core/selectors";
@@ -201,6 +201,12 @@ function connect(root: HTMLElement): () => void {
     const openingDifferent = next.openIndex !== null && next.openIndex !== state.openIndex;
     state = next;
     triggers.forEach((trigger, index) => trigger.setAttribute("aria-expanded", String(state.openIndex === index)));
+    root.dispatchEvent(
+      new CustomEvent(megamenuEvents.openChange, {
+        bubbles: true,
+        detail: { open: state.openIndex !== null, index: state.openIndex },
+      }),
+    );
 
     if (state.openIndex === null) {
       // Content stays exactly as it was: the exit transition fades OUT what is already there,

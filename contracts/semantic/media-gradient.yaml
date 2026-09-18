@@ -15,6 +15,7 @@ MediaGradient:
     - "hay texto encima de una foto y necesita contraste para leerse"
   avoidWhen:
     - "está fuera de un MediaCaption; no tiene caja que llenar y no pinta nada"
-    - "oscurece un diálogo sobre la página; eso es un Backdrop"
+    - "oscurece un diálogo sobre la página; eso es el ::backdrop de Dialog, no este lavado"
   alternatives:
-    - MediaCaption
+    - Dialog
+    - FadeEdge

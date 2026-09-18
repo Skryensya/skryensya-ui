@@ -1,0 +1,53 @@
+/*
+ * The kit's own control labels, in the page's language. The kit ships English defaults (it is an
+ * English library); a demo on a Spanish page passes these instead of leaning on a default that would
+ * read in the wrong language.
+ */
+export const kitMessages = {
+  es: {
+    "kit.close": "Cerrar",
+    "kit.expand": "Expandir",
+    "kit.collapse": "Contraer",
+    "kit.showHiddenLevels": "Mostrar niveles ocultos",
+    "kit.chooseColor": "Elegir color",
+    "kit.search": "Buscar…",
+    "kit.noResults": "Sin resultados.",
+    "kit.hideReplies": "Ocultar respuestas",
+    "kit.upvote": "Votar a favor",
+    "kit.downvote": "Votar en contra",
+    "kit.reply": "Responder",
+    "kit.delete": "Eliminar",
+    "kit.cancel": "Cancelar",
+    "kit.writeComment": "Escribir un comentario",
+    "kit.textFormatting": "Formato de texto",
+    "kit.hour": "Hora",
+    "kit.minute": "Minuto",
+    "kit.period": "Periodo",
+    "kit.clearTime": "Limpiar hora",
+    "kit.chooseFromList": "Elegir de la lista",
+    "kit.locale": "es",
+  },
+  en: {
+    "kit.close": "Close",
+    "kit.expand": "Expand",
+    "kit.collapse": "Collapse",
+    "kit.showHiddenLevels": "Show hidden levels",
+    "kit.chooseColor": "Choose color",
+    "kit.search": "Search…",
+    "kit.noResults": "No results.",
+    "kit.hideReplies": "Hide replies",
+    "kit.upvote": "Upvote",
+    "kit.downvote": "Downvote",
+    "kit.reply": "Reply",
+    "kit.delete": "Delete",
+    "kit.cancel": "Cancel",
+    "kit.writeComment": "Write a comment",
+    "kit.textFormatting": "Text formatting",
+    "kit.hour": "Hour",
+    "kit.minute": "Minute",
+    "kit.period": "Period",
+    "kit.clearTime": "Clear time",
+    "kit.chooseFromList": "Choose from list",
+    "kit.locale": "en",
+  },
+} as const;

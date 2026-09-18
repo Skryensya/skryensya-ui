@@ -4,6 +4,7 @@ SplitButton:
   useWhen:
     - "hay una acción que casi todos quieren y unas pocas variantes de la misma acción"
     - "conviene que la principal esté a un clic y las otras no ocupen lugar"
+    - "la acción lleva weldEnd y el trigger del menú triggerWeldStart, con la misma variant y size en las dos mitades"
   avoidWhen:
     - "las acciones no son variantes de una misma cosa; eso es un Menu solo"
     - "hay una sola acción: eso es un Button"

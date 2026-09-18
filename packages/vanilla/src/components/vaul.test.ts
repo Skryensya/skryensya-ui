@@ -66,27 +66,40 @@ describe("Vaul Vanilla contracts", () => {
     );
   });
 
-  it("writes the scope markers and resolves an edge", () => {
+  it("writes the scope markers and resolves an edge to the contract's default", () => {
     const root = markup();
     connectVaul(root);
 
     expect(root.dataset.scope).toBe("vaul");
     expect(root.dataset.part).toBe("root");
-    expect(root.dataset.edge).toBe("inline-start");
+    // `block-end`, the same default the contract, the emitter and React use; this used to be
+    // `inline-start`, so unmarked markup dragged along the wrong axis.
+    expect(root.dataset.edge).toBe("block-end");
   });
 
   it("keeps the edge the markup already chose", () => {
-    const root = markup({ root: 'data-edge="block-end"' });
+    const root = markup({ root: 'data-edge="inline-end"' });
     connectVaul(root);
     // The edge is a layout decision the CSS made; the enhancer reads it rather than writing it.
-    expect(root.dataset.edge).toBe("block-end");
+    expect(root.dataset.edge).toBe("inline-end");
+  });
+
+  it("drags along the block axis when the markup names no edge", () => {
+    const root = markup();
+    connectVaul(root);
+    root.showModal();
+
+    fireEvent.pointerDown(handleOf(root), { buttons: 1, clientX: 0, clientY: 0, isPrimary: true, pointerId: 1 });
+    fireEvent.pointerMove(window, { buttons: 1, clientX: 0, clientY: 120, pointerId: 1 });
+
+    expect(root.style.getPropertyValue("--sk-vaul-drag-offset")).toBe("120px");
   });
 
   it("announces every close, to the DOM and to its caller", () => {
     const root = markup({ root: 'data-edge="block-end"' });
     const onOpenChange = vi.fn();
     const listener = vi.fn();
-    root.addEventListener("sk:openchange", listener);
+    root.addEventListener("sk:vaulopenchange", listener);
     connectVaul(root, { onOpenChange });
 
     root.showModal();
@@ -179,7 +192,7 @@ describe("Vaul Vanilla contracts", () => {
   it("does nothing but announce when there is no handle to grab", () => {
     const root = markup({ handle: false, root: 'data-edge="block-end"' });
     const listener = vi.fn();
-    root.addEventListener("sk:openchange", listener);
+    root.addEventListener("sk:vaulopenchange", listener);
 
     expect(() => connectVaul(root)).not.toThrow();
     root.showModal();

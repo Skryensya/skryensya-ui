@@ -3,8 +3,65 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "3c1b6c9281103cc0"
+surface: "99eefe93e54d1cee"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    target: FileUpload
+    es:
+      title: FileUpload declara forward para id y aria-*
+      body: >-
+        Publica <code>forward</code> con <code>id</code>/<code>aria-*</code> en el host. Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: FileUpload declares forward for id and aria-*
+      body: >-
+        Publishes <code>forward</code> with <code>id</code>/<code>aria-*</code> on the host. An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: FileUpload declara compose de Button
+      body: >-
+        <code>compose</code> documenta trigger/clear vía <code>also: sk-button</code> (<code>systemOwned</code>).
+    en:
+      title: FileUpload declares compose of Button
+      body: >-
+        <code>compose</code> documents trigger/clear via <code>also: sk-button</code> (<code>systemOwned</code>).
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Dropzone y trigger se nombran en el árbol, y clear es opt-in también en React
+      body: >-
+        <code>dropzoneLabel</code> y <code>triggerLabel</code> pasan a ser slots requeridos en el
+        árbol. React deja de inventar un <code>clearLabel</code> por defecto: sin prop no hay botón
+        de quitar todos, igual que el emit. Además React despacha <code>sk:fileuploadchange</code>
+        en la raíz, a la par de Vanilla.
+    en:
+      title: Dropzone and trigger are named in the tree, and clear is opt-in in React too
+      body: >-
+        <code>dropzoneLabel</code> and <code>triggerLabel</code> become required slots in the tree.
+        React no longer invents a default <code>clearLabel</code>: without the prop there is no
+        clear-all button, matching emit. React also dispatches <code>sk:fileuploadchange</code> on
+        the root, matching Vanilla.
   - date: 2026-08-17
     kind: bugfix
     es:
@@ -90,3 +147,25 @@ entries:
         with its <code>clearLabel</code> prop, and the Vanilla enhancer patches that attribute. It
         is opt-in: with no <code>clearLabel</code> no button is emitted, so every tree written
         before this emits byte-identical markup.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Cada evento lleva el nombre de su familia
+      body: >-
+        <code>sk-file-change</code> → <code>sk:fileuploadchange</code>. Un mismo nombre ya no lo despachan varias familias: un listener sobre una raíz deja
+        de recibir los eventos de un componente distinto anidado adentro. El contrato ahora los declara en <code>events</code>, así que el compilador los publica.
+    en:
+      title: Every event carries its family in its name
+      body: >-
+        <code>sk-file-change</code> → <code>sk:fileuploadchange</code>. No two families dispatch the same name any more: a listener on a root stops receiving
+        the events of a different component nested inside it. The contract now declares them in <code>events</code>, so the compiler publishes them.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: El contrato declara el rango de sus números
+      body: >-
+        <code>maxFiles</code> y <code>maxFileSize</code> son enteros desde 1. Un valor fuera de rango deja de validar en vez de llegar al binding.
+    en:
+      title: The contract declares the range of its numbers
+      body: >-
+        <code>maxFiles</code> and <code>maxFileSize</code> are whole numbers from 1. A value out of range stops validating instead of reaching the binding.

@@ -26,6 +26,7 @@ export type DialogPartClass = (typeof dialogParts)[DialogPart];
  */
 export const dialogContract = {
   id: "dialog",
+  category: "overlays",
   css: "@skryensya/core/components/dialog.css",
   parts: dialogParts,
   hooks: [
@@ -43,10 +44,16 @@ export const dialogContract = {
     "--sk-dialog-radius",
     "--sk-dialog-wash",
   ],
+  /*
+   * Dialog Vaul lives in a second sheet (`patterns/dialog-vaul.css`). Naming it here is what lets
+   * `sheetsForTree` load the composition when a tree opts into `vaul`, `also` cannot discover it
+   * because the pattern styles `.sk-dialog[data-sk-dialog-vaul]`, not a distinct part class.
+   */
+  hookSheets: ["@skryensya/core/patterns/dialog-vaul.css"],
 
   options: {
-    /** What the closing control announces. */
-    closeLabel: { type: "string", default: "Cerrar", attr: "data-close-label", machineInput: true },
+    /** What the closing control announces. Lives on the close button as `aria-label`, not the host. */
+    closeLabel: { type: "string", default: "Close", attr: "aria-label" },
     /**
      * Rendered already open, NON-modally; the platform's own attribute.
      *
@@ -84,6 +91,16 @@ export const dialogContract = {
       intent: ["modal-dialog", "blocking-confirmation", "focused-task"],
       host: { element: "dialog" },
       options: ["closeLabel", "open", "vaul", "alert"],
+      /*
+       * Close control is a system-owned Button (+ close icon), not an authored child. `also` already
+       * pulls button.css; compose is the machine-readable statement of that borrow.
+       */
+      /** Host id / extra a11y; closeLabel stays the option. */
+      forward: ["id", "aria-*"],
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+      ],
       slots: {
         /** Names the dialog. Required: a modal with no title is a box with no reason. */
         title: { accepts: "text", required: true },
@@ -107,8 +124,8 @@ export const dialogContract = {
          * `data-edge="block-end"` is not a choice here; `dialog-vaul.css` only ever slides from
          * the bottom, which is why `vaul` carries no `edge` option of its own. But the Vanilla
          * enhancer's drag axis is generic (`connectVaul` reads `root.dataset.edge` on ANY panel
-         * with a handle, `sk-vaul` or not), and defaults to `inline-start` when it finds nothing.
-         * Leaving the attribute off would silently hand a bottom sheet a horizontal drag.
+         * with a handle, `sk-vaul` or not). It now falls back to Vaul's own `block-end`, but the
+         * attribute stays explicit so the sheet's axis never depends on another contract's default.
          */
         attrsWhen: [
           { option: "vaul", given: true, attrs: { "data-edge": "block-end" } },
@@ -141,7 +158,6 @@ export const dialogContract = {
                     part: "close",
                     also: ["sk-button", "sk-interactive"],
                     options: ["closeLabel"],
-                    optionAttrs: { closeLabel: "aria-label" },
                     attrs: {
                       type: "submit",
                       value: "cancel",

@@ -1,12 +1,15 @@
 import { popoverContract, popoverParts, type PopoverPlacement } from "@skryensya/core/popover";
-import { useId, type HTMLAttributes, type ReactNode, type RefObject } from "react";
+import { useId, type HTMLAttributes, type ReactNode } from "react";
 import { anchoredParts } from "@skryensya/core/anchored";
 
 
 const cx = (...classes: Array<string | undefined>) => classes.filter(Boolean).join(" ");
 
 const {
+  closeLabel: closeLabelOption,
+  placement: placementOption,
   triggerVariant: triggerVariantOption,
+  triggerTone: triggerToneOption,
   triggerSize: triggerSizeOption,
   triggerIconOnly: triggerIconOnlyOption,
 } = popoverContract.options;
@@ -14,8 +17,9 @@ const {
 export type PopoverProps = Omit<HTMLAttributes<HTMLDivElement>, "content" | "title"> & {
   trigger: ReactNode;
   children: ReactNode;
-  title?: ReactNode;
-  description?: ReactNode;
+  /** Matches the contract slot: plain text that names the panel. */
+  title?: string;
+  description?: string;
   /** Draw a small arrow pointing at the trigger. Off by default; decorative, never announced. */
   arrow?: boolean;
   /**
@@ -34,35 +38,30 @@ export type PopoverProps = Omit<HTMLAttributes<HTMLDivElement>, "content" | "tit
    *  option doc. `Button`'s own `[data-variant="…"]`/`[data-size="…"]` rules (button.css) apply to
    *  the trigger directly once these are set; nothing here repeats their CSS. */
   triggerVariant?: string;
+  triggerTone?: string;
   triggerSize?: string;
   /** The SAME attribute `Button`'s own `iconOnly` option writes; see `popover.ts`'s identical
    *  option doc. Pair it with `triggerLabel`. */
   triggerIconOnly?: boolean;
-  /**
-   * Where the floating content is portalled. Defaults to `document.body`, which is right whenever
-   * an ancestor might clip it. Pass a ref to keep the content inside a subtree instead: a preview
-   * frame, a scoped test harness, or a dialog that owns its own stacking context.
-   */
-  container?: RefObject<HTMLElement>;
 };
 
-/** Native Popover API: the browser owns light-dismiss, Escape and top-layer behaviour. */
+/** Native Popover API: the browser owns light-dismiss, Escape and top-layer behaviour. No portal. */
 export function Popover({
   bare = false,
-  container,
   children,
   className,
-  closeLabel = "Cerrar",
+  closeLabel = closeLabelOption.default,
   contentClassName,
   description,
   id,
   arrow = false,
-  placement = "block-end",
+  placement = placementOption.default,
   trigger,
   triggerClassName,
   triggerIconOnly = false,
   triggerLabel,
   triggerSize,
+  triggerTone,
   triggerVariant,
   title,
   ...props
@@ -82,7 +81,12 @@ export function Popover({
   const hasDescription = Boolean(description) && !bare;
 
   return (
-    <div {...props} className={cx(popoverParts.root, className)}>
+    <div
+      {...props}
+      className={cx(popoverParts.root, className)}
+      data-arrow={arrow ? "" : undefined}
+      data-bare={bare ? "" : undefined}
+    >
       <button
         aria-label={triggerLabel}
         className={cx("sk-button", "sk-interactive", popoverParts.trigger, anchoredParts.anchor, triggerClassName)}
@@ -90,6 +94,7 @@ export function Popover({
         type="button"
         {...{
           [triggerVariantOption.attr]: triggerVariant,
+          [triggerToneOption.attr]: triggerTone,
           [triggerSizeOption.attr]: triggerSize,
           [triggerIconOnlyOption.attr]: triggerIconOnly ? triggerIconOnlyOption.trueValue : undefined,
         }}
@@ -117,14 +122,14 @@ export function Popover({
         ) : null}
         {children}
         {bare ? null : (
-        <button
-          className={cx("sk-button", "sk-interactive", popoverParts.close)}
-          popoverTarget={contentId}
-          popoverTargetAction="hide"
-          type="button"
-        >
-          {closeLabel}
-        </button>
+          <button
+            className={cx("sk-button", "sk-interactive", popoverParts.close)}
+            popoverTarget={contentId}
+            popoverTargetAction="hide"
+            type="button"
+          >
+            {closeLabel}
+          </button>
         )}
       </div>
     </div>

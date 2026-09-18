@@ -5,7 +5,6 @@ export const foundationsMessages = {
     "foundationsPage.lede":
       "Fundamentos documenta reglas que sobreviven a cualquier componente: qué promete un Contract, cómo viajan los tokens, dónde se puede ajustar estilo y qué garantías se mantienen cuando cambian entrada, viewport o preferencias.",
     "foundationsPage.searchLabel": "Buscar fundamentos",
-    "foundationsPage.countSuffix": "temas",
   },
   en: {
     "foundationsPage.title": "Foundations",
@@ -13,6 +12,5 @@ export const foundationsMessages = {
     "foundationsPage.lede":
       "Foundations documents rules that survive any one component: what a Contract promises, how tokens travel, where styling can be adjusted, and which guarantees hold when input, viewport, or preferences change.",
     "foundationsPage.searchLabel": "Search foundations",
-    "foundationsPage.countSuffix": "topics",
   },
 } as const;

@@ -73,6 +73,10 @@ export function initCollapseHeaderFallback(): void {
     /* Mirror the native path's `docs-hero-lead-close` keyframe: close the lead in lockstep with
        progress so the header pins the frame the collapse finishes, not `lead` px later. */
     spacer.style.marginBlockStart = `${lead * (1 - progress)}px`;
+    /* NOTHING FOR THE MARK. This used to walk its opacity and `scale` down in step with the collapse,
+       mirroring a `docs-hero-mark-close` keyframe on the native path; both are gone. The mark is
+       paint printed in the card's corner and stays exactly as it is, so the band's top half carries
+       it off-screen rather than it shrinking away under the reader. */
   };
   const onScroll = () => {
     if (queued) return;

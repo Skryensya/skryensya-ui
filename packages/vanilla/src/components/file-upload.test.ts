@@ -87,11 +87,11 @@ describe("FileUpload vanilla enhancer", () => {
     expect(openPicker).toHaveBeenCalledTimes(2);
   });
 
-  it("selecting a valid file emits sk-file-change with it accepted", () => {
+  it("selecting a valid file emits sk:fileuploadchange with it accepted", () => {
     const root = markup();
     const { input } = parts(root);
     const handler = vi.fn();
-    root.addEventListener("sk-file-change", handler);
+    root.addEventListener("sk:fileuploadchange", handler);
     const file = new File(["ok"], "chico.txt", { type: "text/plain" });
 
     selectFiles(input, [file]);
@@ -104,11 +104,11 @@ describe("FileUpload vanilla enhancer", () => {
     );
   });
 
-  it("selecting an oversized file emits sk-file-change with it rejected instead of accepted", () => {
+  it("selecting an oversized file emits sk:fileuploadchange with it rejected instead of accepted", () => {
     const root = markup({ maxFileSize: "10" });
     const { input } = parts(root);
     const handler = vi.fn();
-    root.addEventListener("sk-file-change", handler);
+    root.addEventListener("sk:fileuploadchange", handler);
     const big = new File(["x".repeat(100)], "grande.txt", { type: "text/plain" });
 
     selectFiles(input, [big]);
@@ -157,7 +157,7 @@ describe("FileUpload vanilla enhancer", () => {
     const root = markup();
     const { input } = parts(root);
     const handler = vi.fn();
-    root.addEventListener("sk-file-change", handler);
+    root.addEventListener("sk:fileuploadchange", handler);
 
     destroyMount(root);
     selectFiles(input, [new File(["ok"], "chico.txt")]);

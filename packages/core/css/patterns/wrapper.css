@@ -32,7 +32,7 @@
     --sk-wrapper-max: var(--size-wrapper-lg);
   }
 
-  /* No ceiling: still centres via the same padding, but the column is the viewport. */
+  /* No ceiling: the column fills its container and keeps the same inline gutters. */
   .sk-wrapper[data-size="full"] {
     --sk-wrapper-max: none;
     inline-size: 100%;

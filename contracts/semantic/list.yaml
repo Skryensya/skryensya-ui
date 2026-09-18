@@ -5,8 +5,22 @@ List:
     - "filas de cosas del mismo tipo: una bandeja, ajustes, resultados"
   avoidWhen:
     - "las filas tienen columnas comparables entre sí; eso es una Table"
+    - "son destinos de navegación del sitio o de la página; eso es NavList"
+    - "son instrucciones para leer y hacer, en orden; eso es ProcessList"
   alternatives:
     - Table
+    - NavList
+    - ProcessList
+
+OrderedList:
+  useWhen:
+    - "el orden de las filas comunica secuencia, prioridad o ranking"
+  avoidWhen:
+    - "reordenar las filas no cambia su significado; eso es List"
+    - "son pasos de un proceso con cuerpo rico por ítem; eso es ProcessList"
+  alternatives:
+    - List
+    - ProcessList
 
 ListItemPlain:
   useWhen:
@@ -21,10 +35,15 @@ ListItemLink:
     - "la fila entera navega, y el objetivo de foco y de clic es la fila"
   avoidWhen:
     - "sólo una parte de la fila es enlace; ahí el enlace va adentro, no envolviendo"
-OrderedList:
-  useWhen:
-    - "el orden de las filas comunica secuencia, prioridad o ranking"
-  avoidWhen:
-    - "reordenar las filas no cambia su significado; eso es List"
+    - "la fila dispara una acción sin cambiar de URL; eso es ListItemButton"
   alternatives:
-    - List
+    - ListItemButton
+
+ListItemButton:
+  useWhen:
+    - "la fila entera dispara una acción (enviar, cerrar sesión, abrir un diálogo), y el objetivo de foco y de clic es la fila"
+  avoidWhen:
+    - "la fila navega a otra URL; eso es ListItemLink"
+    - "sólo un control dentro de la fila es el botón; ahí el botón va adentro, no envolviendo"
+  alternatives:
+    - ListItemLink

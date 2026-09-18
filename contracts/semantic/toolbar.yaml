@@ -3,14 +3,17 @@
 Toolbar:
   useWhen:
     - "hay muchos controles juntos y el teclado no debería pagar una parada por cada uno"
+    - "adentro puede ir un Segmented o unas Tabs: la barra los cuenta como una sola parada"
   avoidWhen:
     - "son dos o tres botones sueltos; ahí un Inline alcanza"
+    - "los controles son links de navegación del sitio; eso es NavList o Navbar, no una barra de herramientas"
   alternatives:
     - Inline
+    - NavList
 
 ToolbarGroup:
   useWhen:
-    - "un subconjunto de controles que van juntos"
+    - "un subconjunto de controles que van juntos; con groupLabel si la barra tiene más de un tipo de grupo"
 
 ToolbarSeparator:
   useWhen:

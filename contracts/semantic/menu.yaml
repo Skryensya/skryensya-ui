@@ -8,6 +8,10 @@ Menu:
   avoidWhen:
     - "es una elección de un valor dentro de un formulario; eso es Select"
     - "el contenido es una descripción y no una lista de acciones; eso es Tooltip o Popover"
+    - "la barra es de comandos de aplicación (Archivo/Editar/Ver); eso es Menubar"
+    - "navegación de sitio con panel de varias columnas; eso es Megamenu"
   alternatives:
     - Select
     - Popover
+    - Menubar
+    - Megamenu

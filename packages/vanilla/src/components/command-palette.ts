@@ -49,8 +49,12 @@ export function connectCommandPalette(root: HTMLElement): Cleanup {
    * root already "ready" and never wired a single listener: no crash, just a search button and a
    * drawer trigger that silently did nothing. The registry's own selector now excludes command
    * palettes for the same reason (`registry.ts`); this call is what still gives them the gesture.
+   *
+   * The edge is PASSED, not read off `data-edge`: Dialog Vaul only ever slides from block-end, and
+   * relying on the markup to say so meant a palette emitted from the contract (which writes no
+   * `data-edge`) got `connectVaul`'s inline-start default and dragged sideways.
    */
-  const cleanupVaul = root.matches("[data-sk-dialog-vaul]") ? connectVaul(root) : null;
+  const cleanupVaul = root.matches("[data-sk-dialog-vaul]") ? connectVaul(root, { edge: "block-end" }) : null;
 
   const input = root.querySelector<HTMLInputElement>(`[${commandPaletteAttrs.input}]`);
   const list = root.querySelector<HTMLElement>(`[${commandPaletteAttrs.list}]`);

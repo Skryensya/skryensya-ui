@@ -3,8 +3,53 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "3ea2c77636eb90f2"
+surface: "ad014f31de44d33e"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: feature
+    target: Checkbox
+    es:
+      title: Checkbox declara forward para form e id
+      body: >-
+        Publica <code>forward</code> con <code>id</code>/<code>form</code>/<code>aria-*</code> en el host nativo. Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Checkbox declares forward for form and id
+      body: >-
+        Publishes <code>forward</code> with <code>id</code>/<code>form</code>/<code>aria-*</code> on the native host. An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
   - date: 2026-08-13
     kind: feature
     es:
@@ -97,3 +142,13 @@ entries:
         sheet <code>css</code> names could be reconciled, so the hooks in the others were public
         surface nobody documented and nothing checked. No styling changes: what changes is that they
         are declared now, and the compiler checks them.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Checkbox publica sus propios hooks y arranca con defaultChecked
+      body: >-
+        Publicaba las partes compartidas de selección y dieciséis hooks de Radio a través de las hojas de radio-group y switch; ahora publica sus partes y los <code>--sk-checkbox-*</code> de su hoja. La opción <code>checked</code> se va: en React es controlada y un árbol no tiene handler, así que una casilla marcada desde un árbol no se podía desmarcar. Queda <code>defaultChecked</code>.
+    en:
+      title: Checkbox publishes its own hooks and starts with defaultChecked
+      body: >-
+        It published the shared selection parts and sixteen Radio hooks through the radio-group and switch sheets; it now publishes its own parts and the <code>--sk-checkbox-*</code> hooks of its sheet. The <code>checked</code> option goes: React treats it as controlled and a tree has no handler, so a box checked from a tree could not be unchecked. <code>defaultChecked</code> remains.

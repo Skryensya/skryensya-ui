@@ -26,8 +26,6 @@
     --sk-details-padding: var(--sk-tile-padding);
     --sk-details-gap: var(--sk-space-3);
     --sk-details-heading-gap: var(--sk-space-2);
-    --sk-details-title-font-size: var(--sk-font-heading-sm);
-    --sk-details-description-font-size: var(--sk-font-body-sm);
     --sk-details-indicator-fg: var(--color-text-secondary);
 
     box-sizing: border-box;
@@ -65,27 +63,6 @@
 
   .sk-details__summary::marker {
     content: "";
-  }
-
-  .sk-details__heading {
-    display: grid;
-    gap: var(--sk-details-heading-gap);
-    min-inline-size: 0;
-  }
-
-  .sk-details__title {
-    min-inline-size: 0;
-    color: var(--sk-details-fg);
-    font-size: var(--sk-details-title-font-size);
-    font-weight: var(--font-weight-heading);
-    line-height: var(--line-height-heading);
-  }
-
-  .sk-details__description {
-    min-inline-size: 0;
-    color: var(--sk-details-content-fg);
-    font-size: var(--sk-details-description-font-size);
-    line-height: var(--line-height-body);
   }
 
   .sk-details__indicator,

@@ -73,8 +73,9 @@ export const sidebarTree = (
   t: Translate,
   hrefs: { home: string; reports: string },
 ): UsageTree => ({
-  contract: "box",
-  signature: "Box",
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "none" },
   attrs: { class: "app-shell" },
   children: [
     {
@@ -142,8 +143,9 @@ export const sidebarTree = (
       ],
     },
     {
-      contract: "box",
-      signature: "Box",
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "none" },
       attrs: { class: "app-shell__main" },
       children: {
         contract: "typography",
@@ -167,8 +169,9 @@ export const sidebarFloatingTriggerTree = (
   t: Translate,
   hrefs: { home: string; reports: string },
 ): UsageTree => ({
-  contract: "box",
-  signature: "Box",
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "none" },
   attrs: { class: "app-shell" },
   children: [
     {
@@ -230,8 +233,9 @@ export const sidebarFloatingTriggerTree = (
       ],
     },
     {
-      contract: "box",
-      signature: "Box",
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "none" },
       /*
        * `padding-block-start` bumped past `.app-shell__main`'s own `--space-inset-lg` (24px): the
        * floating trigger's box reaches `--sk-sidebar-trigger-offset-block` + `--sk-sidebar-trigger-
@@ -265,8 +269,9 @@ export const sidebarFloatingTriggerTree = (
  * come back resized for every later reader of the page, having stored a decision one of them made.
  */
 export const sidebarResizableTree = (t: Translate): UsageTree => ({
-  contract: "box",
-  signature: "Box",
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "none" },
   attrs: { class: "app-shell" },
   children: [
     {
@@ -301,8 +306,9 @@ export const sidebarResizableTree = (t: Translate): UsageTree => ({
       ],
     },
     {
-      contract: "box",
-      signature: "Box",
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "none" },
       attrs: { class: "app-shell__main" },
       children: {
         contract: "typography",

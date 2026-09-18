@@ -35,7 +35,7 @@ describe("Button Vanilla contracts", () => {
 
   it("accepts an icon-only button named by aria-label", () => {
     const root = mount(
-      '<button class="sk-button sk-interactive" data-sk-button data-icon-only aria-label="Cerrar"><svg class="sk-icon" data-icon="close"></svg></button>',
+      '<button class="sk-button sk-interactive" data-sk-button data-icon-only aria-label="Close"><svg class="sk-icon" data-icon="close"></svg></button>',
     );
 
     expect(() => mountButton(root)).not.toThrow();

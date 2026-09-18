@@ -76,11 +76,33 @@ export type ComboboxInputChangeDetails = { inputValue: string };
  * `textContent` is three strings glued together, not the label. `attrsFromItemSlot` copies the label
  * slot into the attribute the enhancer actually reads, which means the two can never disagree.
  */
+/** The DOM events Combobox dispatches (vanilla + React), `sk:<family><event>` like every other family. */
+export const comboboxEvents = {
+  /** Detail: `ComboboxValueChangeDetails`. */
+  valueChange: "sk:comboboxvaluechange",
+  /** Detail: `ComboboxInputChangeDetails`, on every keystroke in the input. */
+  inputValueChange: "sk:comboboxinputvaluechange",
+} as const;
+
 export const comboboxContract = {
   id: "combobox",
+  category: "forms",
   css: "@skryensya/core/components/combobox.css",
   parts: comboboxParts,
+  /*
+   * Multiple-selection chips (+ remove) are binding-filled; emit has them absent / hidden at rest.
+   */
+  systemOwned: ["selectedItems", "selectedItem", "selectedItemLabel", "removeTrigger"],
   hooks: [
+    "--sk-anchored-align",
+    "--sk-anchored-arrow-edge",
+    "--sk-anchored-arrow-near",
+    "--sk-anchored-justify",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-anchored-size",
+    "--sk-anchored-z",
     "--sk-combobox-bg",
     "--sk-combobox-border-color",
     "--sk-combobox-content-bg",
@@ -100,6 +122,20 @@ export const comboboxContract = {
     "--sk-combobox-shadow",
     "--sk-combobox-wash",
   ],
+  /*
+   * The listbox is placed with `sk-anchor` / `sk-anchored` (`also`). Those classes have no unique
+   * contract owner, so `sheetsForTree` cannot discover `anchored.css` from `also` alone. Status
+   * uses `sk-visually-hidden` the same way, name both sheets here. Anchored hooks are listed above.
+   */
+  hookSheets: [
+    "@skryensya/core/patterns/anchored.css",
+    "@skryensya/core/patterns/visually-hidden.css",
+  ],
+  events: comboboxEvents,
+  eventDetails: {
+    valueChange: { detail: { value: "string[]" }, reactProp: "onValueChange", source: "root", trigger: "item" },
+    inputValueChange: { detail: { inputValue: "string" }, reactProp: "onInputValueChange", source: "root", trigger: "input" },
+  },
 
   options: {
     /** Submitted under this name. Lives on the input, like every other form attribute here. */
@@ -141,7 +177,13 @@ export const comboboxContract = {
         "multiple",
         "allowCustomValue",
       ],
-      portals: true,
+      /** Host id / form association / a11y; name/disabled/required/readonly stay options. */
+      forward: ["id", "form", "autocomplete", "aria-*"],
+      portals: { container: true },
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+      ],
       slots: {
         /** Names the field. Required because the enhancer refuses to run without one. */
         label: { accepts: "text", required: true },

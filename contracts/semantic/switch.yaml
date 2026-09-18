@@ -4,6 +4,7 @@ Switch:
   useWhen:
     - "el cambio surte efecto en el momento: modo oscuro, notificaciones, una función que se enciende"
     - "no hay botón de guardar de por medio"
+    - "lleva nombre: el texto como children, o aria-label si el rótulo visible está al lado; defaultChecked si arranca encendido"
   avoidWhen:
     - "el valor se envía con un formulario; eso es un Checkbox"
     - "hace falta un tercer estado indeterminado; un switch está encendido o apagado"

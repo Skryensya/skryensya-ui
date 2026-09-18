@@ -103,7 +103,15 @@ const placeholderOptions = {
    * How many lines the paragraph runs. Input to the count, not something that lands in the markup:
    * once the lines exist they say it themselves.
    */
-  lines: { type: "number", default: 3, attr: "data-lines", computedInput: true },
+  lines: {
+    type: "number",
+    default: 3,
+    min: 1,
+    max: PLACEHOLDER_MAX_LINES,
+    integer: true,
+    attr: "data-lines",
+    computedInput: true,
+  },
   /**
    * How far the last line runs. A paragraph ends mid-measure, and that raggedness is the strongest
    * signal that the block is prose rather than a table.
@@ -133,6 +141,7 @@ const placeholderOptions = {
 
 export const placeholderContract = {
   id: "placeholder",
+  category: "feedback",
   css: "@skryensya/core/components/placeholder.css",
   parts: placeholderParts,
   hooks: [

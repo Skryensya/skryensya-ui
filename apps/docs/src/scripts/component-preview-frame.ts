@@ -106,8 +106,30 @@ function readerSized(): boolean {
 }
 
 
+/*
+ * A width preset must not move the page. Tablet and Mobile only narrow the stage, but a narrower frame
+ * reflows its content (a three-up grid stacks to one lane) and auto-fit used to follow it, so every
+ * switch shifted everything below the preview by hundreds of px. While one of those presets is on, the
+ * frame keeps the height it had at full width and scrolls inside it, like the device it stands for.
+ *
+ * NOT when the parent itself is phone-sized: `connectScreenTabs` forces `mobile` there, the stage is
+ * as wide as it would be anyway, and a nested scroll area on a touch screen is a trap, not a preview.
+ * `xl` is left out too: its CSS `zoom` changes the visual height on its own terms.
+ */
+const heightLockedScreens = new Set(["tablet", "mobile"]);
+const forcedMobileScreenQuery = "(max-width: 52rem)";
+/* On the element in the PARENT document, so it survives `releaseStage` swapping this document out. */
+const freeHeightAttribute = "data-sk-component-preview-free-height";
+
+function screenHeightLocked(): boolean {
+  if (!frame) return false;
+  const screen = frame.getAttribute("data-sk-component-preview-screen");
+  if (!screen || !heightLockedScreens.has(screen)) return false;
+  return !window.parent.matchMedia(forcedMobileScreenQuery).matches;
+}
+
 function scrolls(): boolean {
-  return allowScroll || readerSized();
+  return allowScroll || readerSized() || screenHeightLocked();
 }
 
 function applyOverflow(): void {
@@ -617,11 +639,60 @@ const viewportFloorPx: Record<string, number> = {
   "menu-deep": 480,
 };
 
+/*
+ * Leaving a locked preset is not over when the attribute goes: the stage WIDENS back over its
+ * `inline-size` transition, and every step of it is a narrower viewport whose content is taller.
+ * Measured on Card, Mobile → Desktop fitted 342 → 622 → 342 in under a second. So the held height
+ * stays until the stage has reached the width it is growing into, with a cap so a stage that never
+ * quite gets there still re-fits.
+ */
+const LOCK_RELEASE_CAP_MS = 1000;
+let releasingLock = false;
+let releaseTimer: ReturnType<typeof setTimeout> | undefined;
+
+function stillWidening(): boolean {
+  if (!frame || !releasingLock) return false;
+  /* The card, not `parentElement`: the React stage's parent is its `display: contents` mount host,
+     whose width reads 0. */
+  const target = (frame.closest(".sk-component-preview") ?? frame.parentElement)?.clientWidth ?? 0;
+  if (frame.getBoundingClientRect().width < target - 1) {
+    releaseTimer ??= setTimeout(() => {
+      releasingLock = false;
+      releaseTimer = undefined;
+      fitFrame();
+    }, LOCK_RELEASE_CAP_MS);
+    return true;
+  }
+  releasingLock = false;
+  clearTimeout(releaseTimer);
+  releaseTimer = undefined;
+  return false;
+}
+
 function fitFrame(): void {
   if (!frame || allowScroll || readerSized() || frameCollapsed()) return;
   const floor = viewportFloorPx[frame.dataset.skComponentPreviewViewport ?? ""] ?? 0;
+  if (screenHeightLocked()) {
+    releasingLock = true;
+    /*
+     * Keep the full-width height already on the frame. With none (a persisted preset the page loaded
+     * straight into, or a released stage coming back) take the last full-width fit, then the
+     * measured reservation, and only then this narrow width's own content.
+     */
+    if (frame.style.height) return;
+    const reserved = getComputedStyle(frame)
+      .getPropertyValue("--sk-component-preview-stage-reserved-block-size")
+      .trim();
+    frame.style.height =
+      frame.getAttribute(freeHeightAttribute) ||
+      reserved ||
+      `${Math.max(measureContentHeight(), floor)}px`;
+    return;
+  }
+  if (stillWidening()) return;
   const next = `${Math.max(measureContentHeight(), floor)}px`;
   if (frame.style.height !== next) frame.style.height = next;
+  frame.setAttribute(freeHeightAttribute, next);
 }
 
 async function boot(): Promise<void> {

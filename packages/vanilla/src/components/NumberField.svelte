@@ -1,5 +1,6 @@
 <script lang="ts">
   import { numberInput } from "@skryensya/core/machines";
+  import { numberFieldContract, numberFieldEvents, numberFieldParts } from "@skryensya/core/number-field";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
@@ -16,18 +17,24 @@
   const input = root.querySelector<HTMLInputElement>("[data-sk-number-field-input]");
   const decrement = root.querySelector<HTMLButtonElement>("[data-sk-number-field-decrement]");
   const increment = root.querySelector<HTMLButtonElement>("[data-sk-number-field-increment]");
+  /* The authored hint, tied to the input the way React ties it: the machine's own input props carry
+     no description, so a hint beside the field was never read with it. */
+  const hint = root.querySelector<HTMLElement>(`.${numberFieldParts.hint}`);
 
   // Captured ONCE, never re-read from the DOM: `getRootProps().id` returns a namespaced id that
   // `applyZagProps` writes back onto `root.id`. Reading it live from `useMachine`'s reactive factory
   // would feed that prefix back on every recomputation.
   const machineId = root.id || uniqueId("sk-number-field");
+  if (hint && !hint.id) hint.id = `${machineId}-hint`;
+  const authoredDescribedBy = input?.getAttribute("aria-describedby") ?? undefined;
+  const describedBy = [authoredDescribedBy, hint?.id].filter(Boolean).join(" ") || undefined;
 
   const numberOf = (value: string | undefined) => (!value ? undefined : Number(value));
 
   const service = useMachine(numberInput.machine, () => ({
     id: machineId,
     name: input?.name || undefined,
-    locale: root.lang || document.documentElement.lang || "es",
+    locale: root.lang || document.documentElement.lang || numberFieldContract.options.locale.default,
     defaultValue: input?.defaultValue,
     min: numberOf(input?.min),
     max: numberOf(input?.max),
@@ -35,13 +42,14 @@
     disabled: input?.disabled,
     readOnly: input?.readOnly,
     required: input?.required,
+    invalid: root.hasAttribute("data-invalid"),
     translations: {
-      decrementLabel: decrement?.getAttribute("aria-label") ?? "Disminuir",
-      incrementLabel: increment?.getAttribute("aria-label") ?? "Aumentar",
+      decrementLabel: decrement?.getAttribute("aria-label") ?? numberFieldContract.options.decrementLabel.default,
+      incrementLabel: increment?.getAttribute("aria-label") ?? numberFieldContract.options.incrementLabel.default,
     },
     onValueChange(details: { value: string; valueAsNumber: number }) {
       root.dispatchEvent(
-        new CustomEvent("sk-value-change", {
+        new CustomEvent(numberFieldEvents.valueChange, {
           bubbles: true,
           detail: { value: details.value, valueAsNumber: details.valueAsNumber },
         }),
@@ -72,7 +80,12 @@
     { part: "root", node: () => (parts ? root : null), props: () => api.getRootProps() },
     { part: "label", node: () => parts?.label, props: () => api.getLabelProps() },
     { part: "control", node: () => parts?.control, props: () => api.getControlProps() },
-    { part: "input", node: () => parts?.input, props: () => api.getInputProps(), events: true },
+    {
+      part: "input",
+      node: () => parts?.input,
+      props: () => ({ ...api.getInputProps(), "aria-describedby": describedBy }),
+      events: true,
+    },
     {
       part: "decrement",
       node: () => parts?.decrement,

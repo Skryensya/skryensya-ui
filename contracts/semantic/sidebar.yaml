@@ -6,9 +6,10 @@ Sidebar:
     - "hay muchas secciones y conviene que se vean sin abrir nada"
   avoidWhen:
     - "es un sitio de contenido con pocas secciones; eso es un Navbar"
-    - "aparece sobre el contenido y se cierra al elegir; eso es un Drawer"
+    - "aparece sobre el contenido y se cierra al elegir; eso es un Drawer / Vaul"
   alternatives:
     - Navbar
+    - Vaul
 
 SidebarHeader:
   useWhen:

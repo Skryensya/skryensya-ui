@@ -69,6 +69,36 @@ export const headingDocumentTree = (t: Translate): UsageTree => {
   };
 };
 
+/** Reading sizes caption → lg, each under its size / line-height caption. */
+export const textScaleTree = (t: Translate): UsageTree => {
+  const sample = t("demo.heading.sample");
+  const row = (label: string, size: "caption" | "sm" | "body" | "lg"): UsageTree => ({
+    contract: "layout",
+    signature: "Stack",
+    options: { gap: "none" },
+    children: [
+      {
+        contract: "typography",
+        signature: "Text",
+        options: { size: "caption", tone: "tertiary" },
+        children: label,
+      },
+      { contract: "typography", signature: "Text", options: { size }, children: sample },
+    ],
+  });
+  return {
+    contract: "layout",
+    signature: "Stack",
+    options: { gap: "xs" },
+    children: [
+      row("lg · 18 / 1.5", "lg"),
+      row("body · 16 / 1.5", "body"),
+      row("sm · 14 / 1.5", "sm"),
+      row("caption · 12 / 1.5", "caption"),
+    ],
+  };
+};
+
 /** Eyebrow + display title + lede: the page-open pattern. */
 export const headingPageTitleTree = (t: Translate): UsageTree => ({
   contract: "layout",
@@ -170,7 +200,7 @@ export const headingCompactTree = (t: Translate): UsageTree => ({
   ],
 });
 
-/** Eyebrow + heading + subtitle as one unit (`data-role` via attrs). */
+/** Eyebrow + heading + subtitle as one unit (`textRole`). */
 export const textTitleTree = (t: Translate): UsageTree => ({
   contract: "layout",
   signature: "Stack",
@@ -179,7 +209,7 @@ export const textTitleTree = (t: Translate): UsageTree => ({
     {
       contract: "typography",
       signature: "Text",
-      attrs: { "data-role": "eyebrow" },
+      options: { textRole: "eyebrow" },
       children: t("demo.text.title.eyebrow"),
     },
     {
@@ -191,7 +221,7 @@ export const textTitleTree = (t: Translate): UsageTree => ({
     {
       contract: "typography",
       signature: "Text",
-      attrs: { "data-role": "subtitle" },
+      options: { textRole: "subtitle" },
       children: t("demo.text.title.subtitle"),
     },
   ],
@@ -206,7 +236,7 @@ export const textReadingTree = (t: Translate): UsageTree => ({
     {
       contract: "typography",
       signature: "Text",
-      attrs: { "data-role": "eyebrow" },
+      options: { textRole: "eyebrow" },
       children: t("demo.text.reading.eyebrow"),
     },
     {

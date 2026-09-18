@@ -43,6 +43,7 @@ export type TablePartClass = (typeof tableParts)[TablePart];
  */
 export const tableContract = {
   id: "table",
+  category: "data",
   css: "@skryensya/core/components/table.css",
   parts: tableParts,
   hooks: [
@@ -83,9 +84,9 @@ export const tableContract = {
     /** The header row stays put while the body scrolls down. For a table longer than the viewport. */
     stickyHeader: { type: "boolean", default: false, attr: "data-sticky-header", trueValue: "" },
     /** Absolute density scope for one table preview. */
-    density: { type: "number", styleProperty: "--sk-density" },
+    density: { type: "number", min: 0, styleProperty: "--sk-density" },
     /** Multiplier relative to the table's density scope. */
-    densityFactor: { type: "number", styleProperty: "--sk-density-factor" },
+    densityFactor: { type: "number", min: 0, styleProperty: "--sk-density-factor" },
     /*
      * How many columns a cell spans. The one place a table's structure is a NUMBER, and it is real
      * structure: a footnote under a three-column table belongs across all three, and a note stranded
@@ -93,7 +94,13 @@ export const tableContract = {
      *
      * The DOM spells it `colspan` and React spells it `colSpan`, which is exactly what `prop` is for.
      */
-    colspan: { type: "number", attr: "colspan", prop: "colSpan" },
+    colspan: { type: "number", min: 1, max: 1000, integer: true, attr: "colspan", prop: "colSpan" },
+    /**
+     * How many rows a cell spans. The other half of a grouped table: a region name spanning its
+     * cities, a header over two header rows. HTML caps it at 65534; `prop` for the same reason as
+     * `colspan`.
+     */
+    rowspan: { type: "number", min: 1, max: 65534, integer: true, attr: "rowspan", prop: "rowSpan" },
     /**
      * Opt-in: a binding-inserted drag handle between each pair of column headers, WAI-ARIA APG's
      * "Window Splitter" pattern (`role="separator"`, `aria-orientation="vertical"`,
@@ -121,10 +128,17 @@ export const tableContract = {
      * meaningful alongside `resizableColumns`; omitted, every column starts equal, the prior
      * behaviour.
      */
-    columnWeights: { type: "string", attr: "data-column-weights" },
+    columnWeights: { type: "string", attr: "data-column-weights", list: { separator: ",", item: "positive-number", countFrom: "TableRow" } },
   },
 
   a11y: [
+    {
+      /* A data table is announced by its name: a caption, or a title elsewhere it points at. */
+      when: {},
+      requiresOneOf: ["TableCaption", "aria-label", "aria-labelledby"],
+      because: "A table with no name is announced as \"table\" and nothing else; a reader cannot tell two apart.",
+      signatures: ["Table"],
+    },
     {
       when: { resizableColumns: true },
       requiresOneOf: ["resizeLabel"],
@@ -238,9 +252,10 @@ export const tableContract = {
     },
 
     TableHeader: {
-      intent: ["column-header", "row-header"],
+      intent: ["column-header", "row-header", "grouped-header"],
       host: { element: "th" },
-      options: ["scope"],
+      /* A header spans too: the column group over its subcolumns is the common case, not a corner. */
+      options: ["scope", "colspan", "rowspan"],
       parents: ["TableRow"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "th", part: "header", host: true, slot: "children" },
@@ -250,7 +265,7 @@ export const tableContract = {
     TableCell: {
       intent: ["one-value", "table-cell"],
       host: { element: "td" },
-      options: ["colspan"],
+      options: ["colspan", "rowspan"],
       parents: ["TableRow"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "td", part: "cell", host: true, slot: "children" },

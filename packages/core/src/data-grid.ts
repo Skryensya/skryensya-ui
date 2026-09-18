@@ -23,6 +23,7 @@ export type DataGridPartClass = (typeof dataGridParts)[DataGridPart];
 
 export const dataGridContract = {
   id: "data-grid",
+  category: "data",
   css: "@skryensya/core/components/data-grid.css",
   parts: dataGridParts,
   hooks: [
@@ -57,6 +58,8 @@ export const dataGridContract = {
       host: { element: "div" },
       options: ["label", "wrapCols", "wrapRows"],
       requires: ["label"],
+      /** Host id / a11y; label stays the option. */
+      forward: ["id", "aria-*"],
       slots: { children: { accepts: "signature", required: true, of: ["DataGridRow"] } },
       template: {
         element: "div",
@@ -97,6 +100,8 @@ export const dataGridContract = {
       host: { element: "div" },
       options: [],
       parents: ["DataGridRow"],
+      /** Cell id / a11y on the gridcell host. */
+      forward: ["id", "aria-*"],
       slots: { children: { accepts: "node", required: true } },
       template: {
         element: "div",

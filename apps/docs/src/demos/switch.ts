@@ -12,7 +12,7 @@ export const switchAnatomyTree = (t: Translate): UsageTree => ({
     subject: {
       contract: "switch",
       signature: "Switch",
-      options: { name: "deploy-automatically-anatomy", checked: true },
+      options: { name: "deploy-automatically-anatomy", defaultChecked: true },
       children: t("demo.switch.deployAutomatically"),
     },
     items: [

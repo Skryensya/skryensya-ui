@@ -12,12 +12,17 @@ export type BadgePart = keyof typeof badgeParts;
 export type BadgePartClass = (typeof badgeParts)[BadgePart];
 
 /*
- * A count or a status, and nothing else. One part, one option: the simplest shape a contract takes,
- * and worth publishing precisely because an agent reaching for a coloured pill needs to be told that
- * `tone` is the only knob and that the tones are roles, never hues.
+ * A count or a status, and nothing else. Worth publishing because an agent reaching for a coloured
+ * pill needs to be told that `tone` is a role (never a hue), that the Dot has no visible content of
+ * its own, and that the Holder only exists to park a badge on another control's corner.
+ *
+ * Holder composition: one anchor (button or avatar) then one badge (pill or dot). Hit-testing is
+ * part of the Holder's promise (`hitTesting.childrenNone`): the anchored badge does not receive
+ * clicks so they reach the control underneath; badge.css realizes `pointer-events: none`.
  */
 export const badgeContract = {
   id: "badge",
+  category: "content",
   css: "@skryensya/core/components/badge.css",
   parts: badgeParts,
   hooks: [
@@ -52,10 +57,10 @@ export const badgeContract = {
 
   signatures: {
     Badge: {
-      intent: ["count", "status", "label-on-something", "unread-indicator"],
+      intent: ["count", "status", "status-pill", "count-label"],
       host: { element: "span" },
       options: ["tone", "size"],
-      slots: { children: { accepts: "node", required: true } },
+      slots: { children: { accepts: "text", required: true } },
       template: { element: "span", part: "root", host: true, slot: "children" },
       react: { from: "@skryensya/react/badge", name: "Badge" },
     },
@@ -83,16 +88,48 @@ export const badgeContract = {
     },
 
     BadgeHolder: {
-      intent: ["badge-anchored-to-control", "presence-on-avatar", "unread-on-button"],
+      intent: ["badge-anchored-to-control", "presence-on-avatar", "unread-on-button", "count-on-control"],
       host: { element: "span" },
       options: [],
       slots: {
         children: {
           accepts: "signature",
-          of: ["Button.action", "Button.navigation", "Avatar.initials", "BadgeDot"],
+          /*
+           * Anchor signatures first, badge signatures last. `ordered` keeps the badge after the
+           * control so the absolute corner styles in badge.css match DOM order. Each name is
+           * at most one, and `groupCardinality` below holds the pair.
+           */
+          of: [
+            "Button.action",
+            "Button.navigation",
+            "Avatar.initials",
+            "Avatar.image",
+            "Badge",
+            "BadgeDot",
+          ],
           required: true,
+          ordered: true,
+          cardinality: {
+            "Button.action": "optional",
+            "Button.navigation": "optional",
+            "Avatar.initials": "optional",
+            "Avatar.image": "optional",
+            Badge: "optional",
+            BadgeDot: "optional",
+          },
+          /* Exactly one anchor AND exactly one badge: a lone anchor has nothing to decorate, a lone
+             badge has nothing to sit on, and two anchors of different kinds used to slip through. */
+          groupCardinality: [
+            { of: ["Button.action", "Button.navigation", "Avatar.initials", "Avatar.image"], count: "one" },
+            { of: ["Badge", "BadgeDot"], count: "one" },
+          ],
         },
       },
+      /*
+       * Corner badge never intercepts the anchor: stylesheet sets `pointer-events: none` on
+       * `.sk-badge-holder > .sk-badge`. Declared so the manifest carries the promise.
+       */
+      hitTesting: { childrenNone: ["Badge", "BadgeDot"] },
       template: { element: "span", part: "holder", host: true, slot: "children" },
       react: { from: "@skryensya/react/badge", name: "BadgeHolder" },
     },

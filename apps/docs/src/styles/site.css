@@ -1321,6 +1321,26 @@ h2.docs-nav-section__title {
    heading longer than the current width ("Plataforma y accesibilidad") has to wrap to it, never
    hold the rail open or spill past its edge. `anywhere` also lets the flex text item shrink so a
    single long word still breaks when the rail is dragged very narrow. */
+/* The component glyphs in the rail and the drawer are a HINT, not a second label: at full size and
+   in the link's own colour, 87 of them stacked read as a column of noise beside the names. `sm` and
+   the tertiary text colour keep them findable; they take the link's colour back where the reader is
+   already looking, on hover and on the current page. nav-list has no hook for its icon's colour, so
+   this is the site's own rule, keyed to a class only these icons carry. */
+.sk-nav-list__link > .docs-nav-icon {
+  color: var(--color-text-tertiary);
+  transition: color var(--motion-state-change-duration) var(--motion-state-change-easing);
+}
+
+.sk-nav-list__link[aria-current="page"] > .docs-nav-icon {
+  color: inherit;
+}
+
+@media (any-hover: hover) {
+  .sk-nav-list__link:hover > .docs-nav-icon {
+    color: inherit;
+  }
+}
+
 .docs-sidebar .sk-nav-list__group-label {
   white-space: normal;
   overflow-wrap: anywhere;
@@ -1329,7 +1349,9 @@ h2.docs-nav-section__title {
 /* Same palette as the navbar trigger (`data-sk-command-palette-open`), one dialog, many openers. */
 .docs-catalog-search {
   display: flex;
-  inline-size: min(100%, 28rem);
+  /* A cap, not `min(100%, 28rem)`: the catalogs narrow this box with `margin-inline`, and `100%`
+     is the column before those margins, so the button overflowed the measure on a phone. */
+  max-inline-size: 28rem;
   margin-block: var(--space-stack-lg) var(--space-stack-xl);
   gap: var(--space-inline-sm);
   justify-content: flex-start;
@@ -1343,241 +1365,51 @@ h2.docs-nav-section__title {
 
 /*
  * Browse by job, not alphabet. The rail and this catalog read the same navigation groups; the page
- * adds the explanation and square TileLink treatment that make those groups useful for discovery.
+ * adds the explanation and one kit List (`list.css`) per group, a row per destination.
+ *
+ * TWO COLUMNS OF GROUPS, as a multi-column flow rather than a grid: the groups run from 5 to 12
+ * rows, and a grid would line each pair up on one row and leave the shorter one sitting on a hole.
+ * Columns pack them, and the order still reads down the first column and then the second, which is
+ * the DOM's order and the rail's. `columns: 18rem 2` is the whole breakpoint: two while the measure
+ * fits two 18rem columns, one below that, with no media query to keep in step with the measure.
  */
+.docs-catalog-groups {
+  columns: 18rem 2;
+  /* The GAP A READER SEES, plus the two row bleeds below (`--space-inset-md` each, the List's own
+     row padding): each list reaches that far into the gap, so a bare `space-inline-lg * 2` left the
+     two columns' dividers touching, measured at 0px apart. */
+  column-gap: calc(var(--space-inline-lg) * 2 + var(--space-inset-md) * 2);
+}
+
 .docs-catalog-section {
-  /*
-   * Collapses against whatever precedes it. The blurb's own bottom margin when there is one, the
-   * heading's smaller one when there is not, so the gap above the cards reads the same
-   * `--space-stack-md` either way without this rule needing to know which case it is.
-   */
-  margin-block-start: var(--space-stack-md);
+  /* A group is never cut between columns, and the space below it is margin rather than `gap`
+     (multi-column has no row gap). `padding-block-start: 1px` keeps the heading's own top margin
+     from collapsing through the box, which a column break would otherwise swallow. */
+  break-inside: avoid;
+  padding-block-start: 1px;
+  margin-block-end: var(--space-stack-xl);
   min-inline-size: 0;
 }
 
-/*
- * The heading itself carries the spacing and the divider now: it sits bare at the top level of
- * `<main>` (see `IndexPage.astro`, `indexDocument()`'s TOC scan only counts a heading with no
- * wrapping element around it), so there is no `.docs-catalog-groups`/`.docs-catalog-section__header`
- * wrapper left to hang a `gap` or an adjacent-sibling border on. `.docs-catalog-section` still
- * wraps each group's `<ul>` alone, one heading downstream of it in the DOM, which is what the
- * second rule below keys off of instead of sibling sections.
- */
 h2.docs-catalog-section__title {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-inline-md);
-  margin: var(--space-stack-xl) 0 var(--space-stack-xs);
-  font-size: var(--font-size-heading-md);
-  line-height: var(--font-line-height-heading);
-}
-
-/*
- * BOTH HALVES OF THE DIVIDER'S AIR BELONG TO THIS RULE, because the rule sits on the heading and the
- * line is the heading's own top border: `margin` is the space ABOVE that line, `padding` the space
- * below it. It used to declare only the padding, which left the line flush against the last row of
- * cards. Measured: 0px above, 40px below. That reads as a lid closing on the group that just ended
- * rather than as a break between two, and it puts the incoming title nearer to the cards it does NOT
- * describe than to the ones it does. Matching the two puts `--space-stack-xl` on each side. The
- * extra room comes from the side that had none, not from a bigger number: `xl` is already the top of
- * the stack scale, so there is no step above it to reach for.
- */
-.docs-catalog-section + h2.docs-catalog-section__title {
-  margin-block-start: var(--space-stack-xl);
-  padding-block-start: var(--space-stack-xl);
-  border-block-start: 1px solid var(--color-border-subtle);
-}
-
-.docs-catalog-section__title-text {
-  min-inline-size: 0;
+  margin: 0 0 var(--space-stack-xs);
   text-wrap: balance;
+  font-size: var(--font-size-heading-sm);
+  line-height: var(--font-line-height-heading-sm);
 }
 
 .docs-catalog-section__blurb {
-  margin: 0 0 var(--space-stack-md);
-  max-inline-size: 52ch;
+  margin: 0 0 var(--space-stack-sm);
   color: var(--color-text-secondary);
   font-size: var(--font-size-body-sm);
   text-wrap: pretty;
 }
 
-.docs-catalog-section__count {
-  flex: none;
-  color: var(--color-text-tertiary);
-  font-size: var(--font-size-caption);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.docs-catalog {
-  display: grid;
-  /* Wide enough that the longest real labels ("SegmentedControl", "CommandPalette") stay one line;
-     narrower and they wrap. `text-wrap: balance` on the title below is what keeps a label that DOES
-     wrap from breaking one word onto a lonely second line. */
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
-  gap: var(--space-stack-md);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.docs-catalog__item {
-  min-inline-size: 0;
-}
-
-/*
- * THE CARD IS NOT A TILE ANY MORE. It used to be `.sk-tile--interactive`, which owned the border,
- * the fill and the hover; a catalog entry is now a picture with its name under it, so the box is
- * gone and the image is the only thing left with edges. What that costs is precisely the hover: a
- * bordered tile could answer a pointer by darkening its own border, and a card with no border has
- * no border to darken.
- *
- * TWO HALVES, because the card has two and neither effect can reach the other's:
- *
- *  1. THE PICTURE ZOOMS INSIDE ITS OWN FRAME. `overflow: hidden` below clips the `<img>`, so
- *     `scale` grows the picture WITHOUT moving the card's own box by a pixel. That is the whole
- *     reason it is the image that moves and not the card: in a grid of sixty equal cards, anything
- *     that changes one card's footprint (a scale on the card, a shadow, a border that appears)
- *     pushes or overlaps its neighbours, and sixty of them reads as the page twitching under the
- *     pointer. A clipped zoom is the one "grow" that costs the layout nothing.
- *  2. THE CAPTION GETS THE STATE LAYER: `sk-interactive` on the card, the system's own hover
- *     mechanism (`patterns/state-layer.css`), NOT a background-colour transition hand-rolled here,
- *     which is the exact thing that file's own header exists to say no component should re-invent.
- *     The layer spans the whole card, but its `::before` sits below in-flow content (`--z-below`,
- *     under the pattern's own `isolation: isolate`), so the `<img>` occludes the top two thirds and
- *     what actually paints is a tint in exactly the strip the zoom cannot reach. One class, and the
- *     focus ring, the forced-colors keyline and the tint's own reduced-motion guard arrive with it
- *     rather than being written again here.
- *
- * TWO TEMPOS, the same split `button.css` draws between its own colour change and its press. The
- * tint is FEEDBACK ("the pointer is here"), 120ms, owned by the pattern. The zoom is a reveal, and
- * at that same 120ms it reads as a twitch instead of as a picture leaning in: `emphasize` (200ms,
- * a front-loaded settle) is the token pair the scale already names for that.
- */
-.docs-catalog__card {
-  /*
-   * Local, deliberately not a token: how far a docs page's own artwork leans in is a presentation
-   * choice for THIS page, not a system-wide motion decision. `1.04` is the smallest step that is
-   * still legible at this card size (~192px wide: ~4px of travel at each edge). Below it the
-   * picture only shimmers, above it the crop visibly loses content on every hover. If a second
-   * surface ever wants the same gesture, that is when it earns a real token.
-   */
-  --docs-catalog-zoom: 1.04;
-
-  display: flex;
-  flex-direction: column;
-  /* The picture and its caption are ONE object, not a stack of two: the gap belongs inside
-     `__content`'s own padding, so the caption plate the state layer tints starts flush against the
-     image's bottom edge instead of floating a few pixels under it. */
-  gap: 0;
-  border-radius: var(--radius-control);
-  /* Load-bearing twice over: it rounds the image's own corners to the card's radius (the `<img>`
-     has no radius of its own), and it is what clips the hover zoom to the frame. */
-  overflow: hidden;
-  color: inherit;
-  text-decoration: none;
-}
-
-.docs-catalog__image {
-  display: block;
-  inline-size: 100%;
-  block-size: auto;
-  aspect-ratio: 5 / 3;
-  object-fit: cover;
-  transition: scale var(--motion-emphasize-duration) var(--motion-emphasize-easing);
-}
-
-/*
- * EVEN INSET ON ALL FOUR SIDES. The heavier bottom step this used to carry was sized for a caption
- * floating free under a picture: the page's own background ran straight into it, so there was no
- * edge for the asymmetry to be measured against. The state layer now paints a real plate around this
- * box on hover, and against that edge a bottom inset twice the top's reads as the text sitting high
- * in its own container.
- *
- * No `gap`: it used to ask for `--space-stack-2xs`, which the scale does not define (`xs` is the
- * smallest stack step). An undefined custom property is invalid at computed-value time, so the
- * declaration was already resolving to the initial `normal`. 0 for a flex box, and the separation
- * between the title and its description has always come from their own line boxes. Removed rather
- * than left as a landmine: the day someone adds that token, this card would silently grow.
- */
-.docs-catalog__content {
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-inset-sm);
-}
-
-.docs-catalog__title {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-inline-xs);
-  margin: 0;
-  color: var(--color-text-primary);
-  font-size: var(--font-size-body-sm);
-  font-weight: var(--font-weight-heading);
-  text-wrap: balance;
-}
-
-.docs-catalog__description {
-  margin: 0;
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-caption);
-  line-height: var(--line-height-body);
-  text-wrap: pretty;
-}
-
-/* `any-hover`, never a bare `:hover`: WebKit leaves hover STUCK on the last-tapped element after a
-   touch, and a card frozen mid-zoom with no pointer near it reads as "this one is still loading" -
-   the same guard `patterns/state-layer.css` puts on its own hover rung, for the same reason. */
-@media (any-hover: hover) {
-  .docs-catalog__card:hover .docs-catalog__image {
-    scale: var(--docs-catalog-zoom);
-  }
-
-  /* Kept from before the picture existed. Colour and motion are both cues a reader may not
-     perceive. A tint that falls under someone's contrast threshold, a zoom removed by the reduced
-     motion query right below, and the underline is the one that survives either of those being
-     missed, on the element that is actually the link's own name. */
-  .docs-catalog__card:hover .docs-catalog__name {
-    text-decoration: underline;
-  }
-}
-
-@media (max-width: 36rem) {
-  h2.docs-catalog-section__title {
-    align-items: start;
-  }
-
-  .docs-catalog {
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
-    gap: var(--space-stack-sm);
-  }
-
-  /* One step down, still even on all four sides for the same reason the desktop inset is. */
-  .docs-catalog__content {
-    padding: var(--space-inset-xs);
-  }
-}
-
-/*
- * The zoom is REMOVED here, not merely un-animated. "Reduce" is a request for less movement, and a
- * picture that JUMPS to 104% the instant a pointer touches it is more motion at once, not less -
- * killing only the transition would be the worse of the two outcomes. The state layer's tint (its
- * own reduced-motion rule drops that fade) and the title's underline both still answer the pointer,
- * so the card is not left with no hover at all.
- *
- * Declared after the `any-hover` block above and at equal specificity (0,3,0), which is what makes
- * it win: same tie-break by source order the state layer's own priority ladder runs on.
- */
-@media (prefers-reduced-motion: reduce) {
-  .docs-catalog__image {
-    transition: none;
-  }
-
-  .docs-catalog__card:hover .docs-catalog__image {
-    scale: 1;
-  }
+/* The row's text, not its hover box, lines up with the heading above it: the List pads every row by
+   `--sk-list-row-padding-x`, so pulling the list out by that same hook puts the titles on the
+   column's edge and lets the state layer bleed into the gutter instead. */
+.docs-catalog-section > .sk-list {
+  margin-inline: calc(var(--sk-list-row-padding-x) * -1);
 }
 
 /* ── "En esta página", the index of the document ─────────────────────────── */
@@ -1657,6 +1489,23 @@ h2.docs-catalog-section__title {
   }
 }
 
+/*
+ * PINNED, THE RAIL'S TITLE IS LEVEL WITH THE TAB STRIP, not below it. At rest the rail starts at the
+ * top of its row; once scrolled it sticks where the strip sticks. Measured (`--docs-toc-sticky-top`,
+ * Base.astro's navbar script) because the strip's offset includes the hero's collapse bar, a custom
+ * property scoped to the component shell that the rail sits outside of. The shared formula above
+ * stays as the fallback before the script runs.
+ */
+.shell:has(.docs-component-hero-tabs) .sk-toc {
+  --sk-toc-sticky-top: var(
+    --docs-toc-sticky-top,
+    calc(
+      var(--docs-navbar-h, var(--docs-header-block-size)) + var(--sk-fx-collapse-bar-height, 0px) +
+        var(--docs-hero-tabs-h, 0px)
+    )
+  );
+}
+
 /* An anchored heading must clear the sticky header instead of hiding under it, measured height so it
    never stops a pixel short. */
 main > :where(h2, h3) {
@@ -1711,14 +1560,77 @@ main > :where(h2, h3) {
   );
 }
 
-/* A demo needs room for controls and code, not the whole lg canvas. Give it one medium
- * inset beyond prose on each side, while still deriving its ceiling from the Wrapper scale. The
- * nested tab-panel grid two levels down (main's own content, unaffected by the rail) keeps exactly
- * this simple form; the outer pair below needs a second, rail-aware one. */
+/* Tab prose uses the reading measure on desktop. A preview inherits that measure by
+ * default; its existing `width="breakout"` prop remains the explicit escape hatch
+ * for controls or source that need the panel's wider canvas. */
 main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid {
+  --sk-layout-content: 90ch;
   --sk-layout-breakout: min(
     var(--size-wrapper-lg),
     calc(var(--size-wrapper-md) + var(--space-inset-md) * 2)
+  );
+}
+
+/* The chrome around that prose reads at the SAME measure: the hero, the tab strip, and the tail of
+ * the document (report an issue, pager, colophon). They used to span the shell's full column while
+ * the prose sat 90ch wide and centered in it, so every edge of the page disagreed with the text's.
+ *
+ * The width is the panel grid's own `content-start / content-end` span, solved rather than
+ * approximated: the narrow track is `min(100% - gutter * 2, narrow)`, and the two narrow-side tracks
+ * only get what free space is left, split four ways with the breakout tracks (layout.css). A plain
+ * `min(100% - gutter * 2, 90ch)` matched at desktop and at phone width but ran ~24px wider than the
+ * prose in between, measured at a 1100px viewport. */
+/* Declared on `<main>` rather than on the boxes that spend it, so the ONE box that needs to line up
+ * with that measure without taking it as its own width can read it too: the component's mark is
+ * absolutely positioned against the shell (the full column), and half the leftover column is how it
+ * finds the card's edge (`.docs-component-hero__mark`). Every term still resolves at the USE site,
+ * which is what keeps this identical to the per-element version it replaced: `100%` against each
+ * element's own containing block, `90ch` against its own font. */
+main[data-document-layout="grid"]:has(> .docs-component-shell) {
+  --docs-measure-room: calc(100% - var(--space-inset-lg) * 2);
+  --docs-measure-narrow: min(var(--docs-measure-room), var(--size-wrapper-sm));
+  --docs-measure-solved: calc(
+    var(--docs-measure-narrow) +
+      min(90ch - var(--size-wrapper-sm), (var(--docs-measure-room) - var(--docs-measure-narrow)) / 2)
+  );
+}
+
+main[data-document-layout="grid"]:has(> .docs-component-shell) :is(.docs-component-hero__spacer, .docs-component-hero, .docs-component-hero-tabs),
+main[data-document-layout="grid"]:has(> .docs-component-shell) > :is(.docs-report-issue, .docs-page-nav, .docs-footer) {
+  inline-size: var(--docs-measure-solved);
+  margin-inline: auto;
+}
+
+/* THE CATALOGS (components, foundations) READ AT THAT SAME MEASURE, so leaving a component page
+ * for its index does not widen the page. Same solved width as above, with two differences, both
+ * because it applies to every top-level child rather than to three known boxes:
+ *
+ * - It is spent as `margin-inline`, not `inline-size`: the blurb and the lede carry their own
+ *   `max-inline-size`, and `inline-size` + `margin-inline: auto` would centre them in the column.
+ * - `90ch` is resolved once, on `<main>`, through a registered length. Left as a token it
+ *   resolves per element, so every `h2` came out wider than the text under it. */
+@property --docs-catalog-measure-ch {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+main[data-document-layout="grid"]:has(> .docs-catalog-groups) {
+  --docs-catalog-measure-ch: 90ch;
+}
+
+main[data-document-layout="grid"]:has(> .docs-catalog-groups) > * {
+  --docs-measure-room: calc(100% - var(--space-inset-lg) * 2);
+  --docs-measure-narrow: min(var(--docs-measure-room), var(--size-wrapper-sm));
+
+  margin-inline: calc(
+    (
+        100% - var(--docs-measure-narrow) -
+          min(
+            var(--docs-catalog-measure-ch) - var(--size-wrapper-sm),
+            (var(--docs-measure-room) - var(--docs-measure-narrow)) / 2
+          )
+      ) / 2
   );
 }
 
@@ -1742,13 +1654,20 @@ main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid {
   );
 }
 
-/* The panel is already sitting at the page's `content` measure (it's a plain child of `main`'s own
- * grid, same as the tab strip above it). Left at the base rule's default, its own unlabeled children
- * would read `content` a SECOND time at this nested grid's smaller sub-scale, indenting every
- * heading and paragraph under a tab strip that spans the panel's full box. Filling it instead keeps
- * prose flush with the tabs; `data-width="narrow"` still opts a specific child back in. */
-main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid > *:not([data-width]) {
-  grid-column: full-width-start / full-width-end;
+/* Keep tab content on the panel's reading measure. Individual specimens opt into
+ * the wider breakout span through ComponentPreview's `width` prop. */
+
+/* That breakout is room for the DESKTOP preset only. On Tablet or Mobile the stage is capped at 768px
+ * or 390px anyway, so the preview returns to the text's measure instead of sitting wider than the
+ * prose around a frame that no longer uses the room. */
+.sk-layout-grid
+  > .sk-component-preview[data-width="breakout"]:has(
+    .sk-component-preview__stage:is(
+      [data-sk-component-preview-screen="tablet"],
+      [data-sk-component-preview-screen="mobile"]
+    )
+  ) {
+  grid-column: content-start / content-end;
 }
 
 /*
@@ -1784,18 +1703,37 @@ main {
 .docs-page-nav {
   display: flex;
   gap: var(--space-inline-sm);
-  align-items: center;
+  /* `end`: the two buttons share a line even when only one side has its direction label wrap. */
+  align-items: end;
   margin-block-start: var(--space-section);
   padding-block-start: var(--space-stack-md);
   border-top: 1px solid var(--color-border-subtle);
 }
 
+/* `ghost`, not `soft`: the pager is a way off the page, not a control competing with it, so it has no
+   fill until hovered. */
 .docs-page-nav__link {
   text-decoration: none;
 }
 
-.docs-page-nav__link--next {
+/* The direction sits ABOVE the button, outside it: Button stays a one-line control. Its text is inset
+   by the button's own inline padding so it starts where the button's content does, not at the edge
+   of a fill that is invisible until hover. */
+.docs-page-nav__item {
+  display: grid;
+  gap: var(--space-stack-xs);
+  justify-items: start;
+}
+
+.docs-page-nav__item--next {
   margin-inline-start: auto;
+  justify-items: end;
+}
+
+.docs-page-nav__direction {
+  padding-inline: var(--space-inset-md);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-body-sm);
 }
 
 /* These prose-heading rules are UNLAYERED, so they beat anything in @layer components regardless of
@@ -1818,9 +1756,9 @@ main {
  * docs shell's own `Toc.astro` still writes `data-flush`, which is why the rail looked right while
  * every other rendering of the same component did not.
  *
- * `.sk-heading` is deliberately NOT excluded: that is the Heading component, whose whole job is to BE
- * a prose heading, and the comment above is about keeping its flush variant working. */
-h1:not([data-flush]) {
+ * `.sk-heading` is excluded for the same reason: Heading owns its size and carries no block margin,
+ * so a Heading in a preview or a card stays as tight as the component defines it without `flush`. */
+h1:not([data-flush], .sk-heading) {
   margin: 0 0 var(--space-stack-sm);
   font-size: var(--font-size-heading-lg);
   line-height: var(--font-line-height-heading);
@@ -1829,6 +1767,7 @@ h1:not([data-flush]) {
 
 h2:not(
     [data-flush],
+    .sk-heading,
     .sk-toc__title,
     .sk-dialog__title,
     .sk-popover__title,
@@ -1841,7 +1780,7 @@ h2:not(
   font-weight: var(--font-weight-heading);
 }
 
-h3:not([data-flush], .sk-nav-list__group-label) {
+h3:not([data-flush], .sk-heading, .sk-nav-list__group-label) {
   margin: var(--space-stack-lg) 0 var(--space-stack-xs);
   font-size: var(--font-size-heading-sm);
   line-height: var(--font-line-height-heading);
@@ -1851,7 +1790,7 @@ h3:not([data-flush], .sk-nav-list__group-label) {
 /* No "sm/md/lg" alias exists past h3 (the docs never needed a fourth prose level before the hero
    tabs pilot demoted a whole tier of headings by one step): `--font-size-heading-h4` is the type
    scale's own floor for h4 and up, so this reads it directly instead of inventing a new alias. */
-h4:not([data-flush]) {
+h4:not([data-flush], .sk-heading) {
   margin: var(--space-stack-md) 0 var(--space-stack-xs);
   font-size: var(--font-size-heading-h4);
   line-height: var(--font-line-height-heading);
@@ -1867,7 +1806,18 @@ h4:not([data-flush]) {
  * `align-items: center` against a sibling avatar. `Text` has no `flush` option the way `Heading`
  * does. A bare class exclusion is the whole fix it needs. */
 p:not(.sk-text) {
-  margin: 0 0 var(--space-stack-sm);
+  margin: 0 0 var(--space-stack-md);
+}
+
+/* A comfortable reading measure for the docs' own running text. The text and its
+ * containing blocks stay aligned to the start of the document column; tabs, code
+ * blocks, previews, tables and cards keep the column's full width. Scoped to `main`
+ * and unclassed elements, so a component's own paragraphs and lists retain the
+ * width they define. `margin-inline` only, so prose block margins remain intact. */
+main :where(p, ul, ol, blockquote, h1, h2, h3, h4):not([class]),
+main .lede {
+  max-inline-size: 90ch;
+  margin-inline: 0;
 }
 
 /* ── component hero (pilot: /componentes/accordion) ──────────────────────────
@@ -1958,6 +1908,30 @@ p:not(.sk-text) {
      (`max + (min - max) * progress`) and `--sk-fx-collapse-range` never invert. */
   --docs-hero-title-max: clamp(var(--font-size-heading-h2), 8.5vw, var(--font-size-display-lg));
   --docs-hero-title-min: var(--font-size-heading-h2);
+  /*
+   * Where the title currently is between those two ends, named once so the mark beside it can be a
+   * RATIO of the title rather than a second copy of this interpolation. Two copies of one expression
+   * is how both ends stay right while every frame between them drifts, the same failure the h1's own
+   * `line-height` note describes for a different pair of numbers.
+   */
+  --docs-hero-title-size: calc(
+    var(--docs-hero-title-max) +
+      (var(--docs-hero-title-min) - var(--docs-hero-title-max)) * var(--sk-fx-collapse-progress)
+  );
+  /* The band's own insets, resolved once here: the hero pads itself with them and the mark in the
+     corner positions itself against them, so both edges are the same number by construction. */
+  --docs-hero-pad-block-start: calc(
+    var(--docs-hero-pad-start-max) +
+      (var(--docs-hero-pad-start-min) - var(--docs-hero-pad-start-max)) * var(--sk-fx-collapse-progress)
+  );
+  --docs-hero-pad-block-end: calc(
+    var(--docs-hero-pad-end-max) +
+      (var(--docs-hero-pad-end-min) - var(--docs-hero-pad-end-max)) * var(--sk-fx-collapse-progress)
+  );
+  --docs-hero-pad-inline: calc(
+    var(--docs-hero-pad-inline-max) +
+      (var(--docs-hero-pad-inline-min) - var(--docs-hero-pad-inline-max)) * var(--sk-fx-collapse-progress)
+  );
   --docs-hero-eyebrow-line: calc(var(--font-size-caption) * var(--font-line-height-caption));
 }
 
@@ -1972,18 +1946,21 @@ p:not(.sk-text) {
    * Rounded for the same reason: a tinted rectangle running to a hard edge reads as bleed that got
    * clipped. With a radius it reads as a panel that was always meant to end there.
    */
-  padding-block-start: calc(
-    var(--docs-hero-pad-start-max) +
-      (var(--docs-hero-pad-start-min) - var(--docs-hero-pad-start-max)) * var(--sk-fx-collapse-progress)
-  );
-  padding-block-end: calc(
-    var(--docs-hero-pad-end-max) +
-      (var(--docs-hero-pad-end-min) - var(--docs-hero-pad-end-max)) * var(--sk-fx-collapse-progress)
-  );
-  padding-inline: calc(
-    var(--docs-hero-pad-inline-max) +
-      (var(--docs-hero-pad-inline-min) - var(--docs-hero-pad-inline-max)) * var(--sk-fx-collapse-progress)
-  );
+  /*
+   * The three interpolated insets are NAMED (in the token block above) rather than written inline,
+   * because the mark in the band's corner has to sit on the same inline edge: an absolutely
+   * positioned box gets its own insets, and a second copy of a collapse interpolation is how both
+   * ends stay right while every frame between them drifts.
+   *
+   * NO `position` HERE, deliberately. The effect makes this box `position: sticky` from inside
+   * `@layer components`, and an unlayered declaration on this class beats it regardless of source
+   * order: `position: relative` here silently un-pinned the whole masthead (the same trap the
+   * `.docs-component-head` note above records for the spacer's `display`). The mark is positioned
+   * against `.docs-component-shell` instead.
+   */
+  padding-block-start: var(--docs-hero-pad-block-start);
+  padding-block-end: var(--docs-hero-pad-block-end);
+  padding-inline: var(--docs-hero-pad-inline);
   /* Square at the collapsed end. Rounded reads as "a panel that meant to end there" while the band
      sits in the column; pinned under the navbar with the page sliding beneath it, the same corners
      would be two notches showing scrolling content through them. */
@@ -2059,12 +2036,76 @@ p:not(.sk-text) {
   overflow-wrap: anywhere;
 }
 
+/*
+ * THE COMPONENT'S MARK, the glyph the sidebar row and the catalogue card already use for this page,
+ * in the band's far corner.
+ *
+ * NOT BESIDE THE NAME. Tried there first and undone: at the title's own scale it reads as a bullet
+ * the name hangs off, which is the sidebar's job (a row needs a mark to be scannable against forty
+ * other rows) and not a masthead's. There is one component on this page and its name is already
+ * 60px tall, so a glyph in front of it argues about which one to read first. In the corner it is an
+ * emblem on the band instead: the page confirms the row you clicked without competing with it.
+ *
+ * OUT OF FLOW, and that is load-bearing, not tidiness. The hero's height is a sum of interpolated
+ * terms the collapse effect depends on (`--sk-fx-collapse-range` is computed from the same numbers).
+ * An in-flow glyph this size would set the band's height instead of the title doing it, and the
+ * collapsed bar would be sized for the mark. Absolute keeps the band's height exactly what the
+ * eyebrow and the title make it.
+ *
+ * IT SCALES WITH THE TITLE, unlike the badge, and the badge's own reasoning is why: what that rule
+ * refuses is a FOURTH thing collapsing on a schedule of its own. This shares the title's single
+ * schedule, so the corner keeps one proportion across the whole range.
+ */
+.docs-component-hero__mark {
+  --sk-icon-size: calc(var(--docs-hero-title-size) * 1.6);
+
+  /*
+   * Against `.docs-component-shell`, whose top edge IS the band's top: the hero box is only ever
+   * the COLLAPSED bar (the expanded look is the spacer above it plus type overflowing upward), so
+   * anchoring to the hero would put this mark partway down the band, not in its corner.
+   *
+   * One inset on both axes, so it reads as a corner rather than as something aligned to the title.
+   * It resolves CONSTANT despite naming an interpolated token: the collapse animates
+   * `--sk-fx-collapse-progress` on the header, and this box is the header's sibling, so the token
+   * resolves here at progress 0. Nothing about this corner moves at any scroll position: the mark is
+   * printed on the card and goes with it, it does not close on a schedule of its own.
+   */
+  position: absolute;
+  inset-block-start: var(--docs-hero-pad-inline);
+  /*
+   * ON THE CARD, NOT IN THE COLUMN, and the two are not the same box: the containing block is
+   * `.docs-component-shell`, which spans the whole grid column, while the band itself is the
+   * narrower reading measure centred inside it (`--docs-measure-solved`, the width the spacer, the
+   * bar and the tab strip all take). A plain inset off the shell put this glyph 35px PAST the band's
+   * right edge, measured at 1400px: the shell ran 264 -> 1125 and the card only 323 -> 1066, so the
+   * mark read as an emblem floating on the canvas beside the card instead of one printed on it.
+   *
+   * Half the leftover column is the band's own gutter, so that plus the band's inline padding is the
+   * card's inside corner, and it stays the card's inside corner at every width because it is solved
+   * from the same measure rather than guessed at one breakpoint.
+   */
+  inset-inline-end: calc((100% - var(--docs-measure-solved)) / 2 + var(--docs-hero-pad-inline));
+  /* Over the band's paint (backing 1, tab strip 2, the bar itself 3). */
+  z-index: 4;
+  /* Paint, not content: the `h1` beside it already names the component, and `renderIconBox` writes
+     `aria-hidden` on an unlabelled icon. */
+  pointer-events: none;
+  /* THE TITLE'S INK, NOT THE EYEBROW'S ACCENT. The mark belongs to the card it is printed on, and
+     the accent made it a second brand statement on a band that is already accent-tinted: a
+     saturated blue glyph on blue read as its own object sitting in the corner rather than as part
+     of the same panel. Sharing the `h1`'s colour leaves it an emblem in the card's own ink.
+
+     Held well back, and a PLAIN VALUE now: at full strength this much glyph stops being a mark on
+     the band and becomes a second illustration competing with the title. This used to be
+     `--docs-hero-mark-opacity`, named because both collapse paths read it as the rest value of an
+     animation neither one runs any more. */
+  color: var(--color-text-primary);
+  opacity: 0.22;
+}
+
 .docs-component-hero h1:not([data-flush]) {
   margin-block-end: 0;
-  font-size: calc(
-    var(--docs-hero-title-max) +
-      (var(--docs-hero-title-min) - var(--docs-hero-title-max)) * var(--sk-fx-collapse-progress)
-  );
+  font-size: var(--docs-hero-title-size);
   /* ONE ratio across the whole range, not display-lg's at the top and a heading's at the bottom.
      Interpolating both would make the line box the product of two moving numbers, and the collapse
      distance below is a sum of linear terms. The two ends would still land right and every frame
@@ -2227,7 +2268,7 @@ p:not(.sk-text) {
  */
 @keyframes docs-hero-lead-close {
   from {
-    margin-block-start: var(--space-inset-lg);
+    margin-block-start: var(--docs-hero-lead);
   }
   to {
     margin-block-start: 0;
@@ -2244,6 +2285,19 @@ p:not(.sk-text) {
      as every tab panel stacked inside `.sk-tabs` below the hero, not just the band. A background
      painted here would tint every gap in that entire column, not the hero's own corner. */
   min-inline-size: 0;
+  /* THE BAND'S RESTING LEAD, in one place: the air between the top of this shell and the top of the
+     card. Four boxes need the same number and three of them used to restate it - the spacer takes it
+     as its `margin-block-start` on both collapse paths, `@keyframes docs-hero-lead-close` starts
+     from it, the JS fallback reads it back off the spacer's computed style, and the mark's corner
+     inset has to clear it to land INSIDE the card rather than on its top edge. Declared
+     unconditionally even though only the collapse paths spend it, so the value cannot drift between
+     the native block and its JS twin. */
+  --docs-hero-lead: var(--space-inset-lg);
+  /* Positioned so the component's mark can hang off the band's top corner. It sits here rather than
+     on the hero because the hero is `position: sticky` from inside a layer, and an unlayered
+     `position` on that class wins and un-pins the masthead. `relative` leaves this a plain block,
+     which the note above requires. */
+  position: relative;
 }
 
 .docs-component-head {
@@ -2327,7 +2381,7 @@ p:not(.sk-text) {
       border-start-start-radius: var(--radius-surface);
       border-start-end-radius: var(--radius-surface);
       background: var(--docs-hero-bg);
-      margin-block-start: var(--space-inset-lg);
+      margin-block-start: var(--docs-hero-lead);
       /* LONGHANDS, never the `animation` shorthand: Lightning CSS (Vite's CSS transformer, through
          1.33.0) folds the following `animation-timeline` back into the shorthand as
          `animation: linear both docs-hero-lead-close scroll(root)`, which has no `<timeline>` slot,
@@ -2338,6 +2392,24 @@ p:not(.sk-text) {
       animation-fill-mode: both;
       animation-timeline: scroll(root block);
       animation-range: 0 var(--sk-fx-collapse-range);
+    }
+
+    /*
+     * ONLY the corner inset on this path, NO animation of its own. The mark used to walk itself out
+     * on the band's timeline (opacity to 0, `scale` to 0.6 over `--sk-fx-collapse-range`) so it
+     * "left because the band closed" rather than because the scroll carried it off. Undone: a
+     * printed emblem that shrinks while the reader scrolls past it is a fourth thing moving in the
+     * masthead, which is the exact objection the badge's own rule already records. It stays put and
+     * the band's top half simply carries it off-screen, like any other paint on the card.
+     *
+     * CLEAR THE LEAD. On this path the card's top edge is the shell's top plus the spacer's resting
+     * `margin-block-start`, so the base rule's plain inset put the mark's top edge exactly ON that
+     * edge (both at y=82, measured at 1400px), half a glyph hanging over the card. Off this block
+     * the spacer is `display: none` and the band starts at the shell's own top, which is what the
+     * unconditional inset is already right for.
+     */
+    .docs-component-shell .docs-component-hero__mark {
+      inset-block-start: calc(var(--docs-hero-lead) + var(--docs-hero-pad-inline));
     }
 
     /* The effect owns the sticky positioning, the `flex-end` column, the constant `block-size` and
@@ -2467,7 +2539,14 @@ p:not(.sk-text) {
     border-start-end-radius: var(--radius-surface);
     background: var(--docs-hero-bg);
     /* Rest value only; the fallback script walks this to 0 as it collapses (see the sync note above). */
-    margin-block-start: var(--space-inset-lg);
+    margin-block-start: var(--docs-hero-lead);
+  }
+
+  /* Twin of the `@supports` block's mark rule: the same lead to clear, so the corner sits inside the
+     card on this path too. Only the inset, not the animation - the fallback script walks the mark's
+     opacity and scale itself (`collapse-header-fallback.ts`). */
+  [data-sk-fx-collapse-js] .docs-component-shell .docs-component-hero__mark {
+    inset-block-start: calc(var(--docs-hero-lead) + var(--docs-hero-pad-inline));
   }
 
   [data-sk-fx-collapse-js] .docs-component-shell .docs-component-hero {
@@ -2494,12 +2573,6 @@ p:not(.sk-text) {
 }
 
 
-.lede {
-  font-size: var(--font-size-body-lg);
-  line-height: var(--font-line-height-body-relaxed);
-  color: var(--color-text-secondary);
-}
-
 /*
  * Bare anchors IN PROSE (ADRs, etc.). `.sk-link` owns its own tones, leave it alone or an
  * unlayered `a { color }` rule paints every link accent and kills the text-coloured default.
@@ -2517,19 +2590,12 @@ p:not(.sk-text) {
  * itself here. Anything that ships as a part belongs in this list; what is left is what this rule was
  * always about, a bare `<a>` someone typed in a sentence.
  *
- * `.docs-catalog__card` is in the list without shipping as a part, and it has to be for a reason
- * worth spelling out: it is a whole card. A picture, a title, a description: not a phrase in a
- * sentence, and it carries `sk-interactive`, whose state layer tints with `currentColor`. Left to
- * match, this rule would repaint that `currentColor` brand-blue and the card's hover wash would come
- * out accent-tinted rather than the sober neutral the catalog wants. The `:not()` list is the fence
- * for "anchors that are their own object"; the card is one, whether or not it ships from `core`.
- *
- * `.sk-menu__item` is the same fence around a ROW. ComponentPreview's actions menu renders one item
+ * `.sk-menu__item` is a fence around a ROW. ComponentPreview's actions menu renders one item
  * as an anchor, because that item is the only one that navigates (`ComponentPreview.astro`), and the
  * row came out brand-blue between two neutral ones for no reason a reader could see: the menu paints
  * its own `--sk-menu-fg`, and being a link is a fact about where the row goes, not about how it
- * should read in a list of three. Its own state layer tints with `currentColor` too, exactly as the
- * card above does.
+ * should read in a list of three. Its own state layer tints with `currentColor`, so a
+ * brand-blue anchor colour would tint its hover wash too.
  */
 main a:not(
     .sk-link,
@@ -2537,8 +2603,7 @@ main a:not(
     .sk-toc__link,
     .sk-button,
     .sk-tile,
-    .sk-menu__item,
-    .docs-catalog__card
+    .sk-menu__item
   ) {
   color: var(--color-text-link);
 }
@@ -2992,11 +3057,13 @@ main a:not(
   padding-block: var(--space-inset-lg);
   border-top: 1px solid var(--color-border-subtle);
   color: var(--color-text-tertiary);
-  font-size: var(--font-size-body-sm);
 }
 
+/* The smaller type is set on the paragraph, not the block: the block's width is measured in `ch`
+   (the component-page measure above) and has to resolve against the same body size the prose does. */
 .docs-footer p {
   margin: 0;
+  font-size: var(--font-size-body-sm);
 }
 
 /*

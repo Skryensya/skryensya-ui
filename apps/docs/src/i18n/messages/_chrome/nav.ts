@@ -7,6 +7,9 @@ export const navMessages = {
     "nav.sectionOverview": "Visión general",
     "nav.closeDrawer": "Cerrar navegación",
     "nav.between": "Navegación entre documentos",
+    /* The small line above each pager link's page name: which way the link goes. */
+    "nav.previous": "Anterior",
+    "nav.next": "Siguiente",
     "nav.notWritten": "Todavía no escrita",
     "nav.home": "Home",
     "nav.foundations": "Fundamentos",
@@ -34,6 +37,8 @@ export const navMessages = {
     "nav.sectionOverview": "Overview",
     "nav.closeDrawer": "Close navigation",
     "nav.between": "Document navigation",
+    "nav.previous": "Previous",
+    "nav.next": "Next",
     "nav.notWritten": "Not written yet",
     "nav.home": "Home",
     "nav.foundations": "Foundations",

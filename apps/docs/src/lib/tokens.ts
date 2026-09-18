@@ -86,7 +86,8 @@ export function probeProp(value: string): string {
   // otherwise catch the first `1px` in the list and read the token back as a nonsense `width`.
   if (/^\s*(inset\s+)?(-?[\d.]+(?:px|rem|em)?\s+){2,4}(var\(|#|rgb|hsl|oklch|oklab|currentColor|transparent)/i.test(v))
     return "box-shadow";
-  if (/(px|rem|em|ch|vh|vw|%)|^(calc|round|max|min|clamp)\(/i.test(v)) return "width";
+  // The unit must follow a digit: a font stack's `system-ui` holds an `em` too, and read as a width.
+  if (/\d(px|rem|em|ch|vh|vw|%)|^(calc|round|max|min|clamp)\(/i.test(v)) return "width";
   return ""; // plain numbers, font stacks, keywords, the specified value IS the value
 }
 

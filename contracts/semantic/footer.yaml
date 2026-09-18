@@ -17,3 +17,6 @@ Footer:
     - "es una barra de acciones pegada abajo de un panel o un diálogo (una fila de botones de confirmación); eso se compone con layout.Inline dentro del contenedor, no con Footer"
     - "cada columna de enlaces iría sin nombre accesible: una fila de navigation sin nombre en la lista de landmarks es peor que no tenerla; cada columna es un NavList con aria-label o encabezado visible"
     - "el footer necesita más de dos niveles jerárquicos compitiendo (columnas, franja de newsletter, barra legal, sub-crédito, todo a la vez sin orden): separa lo que sobra en su propia región antes del footer"
+  alternatives:
+    - Box
+    - Hero

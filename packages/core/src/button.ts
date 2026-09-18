@@ -22,8 +22,16 @@ export type ButtonPartClass = (typeof buttonParts)[ButtonPart];
  */
 export const buttonContract = {
   id: "button",
+  category: "actions",
   css: "@skryensya/core/components/button.css",
-  parts: buttonParts,
+  /* Own anatomy only. `sk-interactive` is composed via `also` (base bundle); claiming it as a part
+     made button.css the unique owner once List stopped claiming it too, so Toc/List trees pulled
+     button.css for every interactive row. */
+  parts: {
+    root: buttonParts.root,
+    pre: buttonParts.pre,
+    post: buttonParts.post,
+  },
   hooks: [
     "--sk-button-accent",
     "--sk-button-bg",
@@ -99,6 +107,12 @@ export const buttonContract = {
      * The icon-only shape: a control-sized square holding a single glyph. Orthogonal to variant and
      * size, any of those can be icon-only. Presence-only in the DOM, hence the empty `trueValue`.
      */
+    /*
+     * The native `type`, written always. A `<button>` with no type SUBMITS the form it sits in, so the
+     * emitted markup did while React (which defaults to "button") did not: one tree, two behaviours
+     * inside any form. `submit` is what a form's own confirm button asks for.
+     */
+    type: { type: "enum", values: ["button", "submit", "reset"], default: "button", attr: "type" },
     iconOnly: {
       type: "boolean",
       default: false,
@@ -171,7 +185,29 @@ export const buttonContract = {
     "Button.action": {
       intent: ["action", "submit", "destructive-action"],
       host: { element: "button", when: { href: "absent" } },
-      options: ["variant", "tone", "size", "iconOnly", "weldStart", "weldEnd", "pressed", "disabled"],
+      options: ["variant", "tone", "size", "iconOnly", "weldStart", "weldEnd", "pressed", "disabled", "type"],
+      compose: [{ of: "icon", systemOwned: true }],
+      hitTesting: { childrenNone: ["Icon"] },
+      /*
+       * Native form association and a11y names the contract does not own as options. `type` is an
+       * option (shadowed-attr); `name`/`form` stay attrs so a tree can submit without inventing
+       * Button-level form vocabulary. `value` travels with `name` - a submit button that names a
+       * field and cannot say what it submits is half an attribute - and `autofocus` is the
+       * platform's, on any focusable host.
+       */
+      forward: [
+        "id",
+        "name",
+        "value",
+        "form",
+        "formaction",
+        "formmethod",
+        "formenctype",
+        "formnovalidate",
+        "formtarget",
+        "autofocus",
+        "aria-*",
+      ],
       slots: {
         /**
          * Reserved place BEFORE the label. An icon that names the kind of action (download, add)
@@ -192,7 +228,7 @@ export const buttonContract = {
         host: true,
         // The announcement, beside the behaviour: `disabled` stops the click, `aria-disabled` is
         // what a screen reader reads on a control it can still land on.
-        attrsWhen: [{ option: "disabled", equals: "true", attrs: { "aria-disabled": "true" } }],
+        attrsWhen: [{ option: "disabled", given: true, attrs: { "aria-disabled": "true" } }],
         children: [
           { element: "span", part: "pre", whenGiven: "pre", slot: "pre" },
           { slot: "children" },
@@ -207,8 +243,12 @@ export const buttonContract = {
       intent: ["navigation", "single-destination"],
       host: { element: "a", when: { href: "present" } },
       options: ["variant", "tone", "size", "iconOnly", "weldStart", "weldEnd", "href"],
+      compose: [{ of: "icon", systemOwned: true }],
+      hitTesting: { childrenNone: ["Icon"] },
       requires: ["href"],
       forbids: ["disabled", "type", "pressed"],
+      /** Link host attrs the contract does not map: where it opens, how it is announced. */
+      forward: ["id", "target", "rel", "download", "aria-*"],
       slots: {
         pre: { accepts: "node" },
         children: { accepts: "node", required: true },

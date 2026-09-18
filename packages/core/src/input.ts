@@ -23,6 +23,7 @@ export type InputPartClass = (typeof inputParts)[InputPart];
  */
 export const inputContract = {
   id: "input",
+  category: "forms",
   css: "@skryensya/core/components/input.css",
   parts: inputParts,
   hooks: [
@@ -67,6 +68,12 @@ export const inputContract = {
       intent: ["text-entry", "single-line-input", "email", "password", "search-field"],
       host: { element: "input" },
       options: ["controlSize", "type", "name", "placeholder", "disabled"],
+      /*
+       * Native control state the CSS already paints (`:read-only`) and seed values. `id` /
+       * `aria-invalid` normally arrive from FormField wiring; authored `id` is still accepted when
+       * a tree stands the control alone or pins a known id.
+       */
+      forward: ["id", "readonly", "value", "autocomplete", "required", "maxlength", "minlength", "pattern", "min", "max", "step", "aria-*"],
       parents: ["FormField"],
       slots: {},
       template: { element: "input", part: "root", host: true },
@@ -75,15 +82,23 @@ export const inputContract = {
 
     /*
      * "Native" names the CONTROL (a real `<input type="time">`, `<input type="color">`), never
-     * its APPEARANCE: this still carries `sk-input`, the one appearance contract for every native
-     * text control, the same class `Input`/`Textarea` carry. A native time input with no border,
+     * a refusal of the shared appearance: this still carries `sk-input` and may take `controlSize`,
+     * the same class and height channel `Input`/`Textarea` use. A native time input with no border,
      * no shared height and a focus ring the browser invented is not what "native" was meant to
-     * buy here, only the platform owning selection/keyboard/validation/IME is.
+     * buy here, only the platform owning selection/keyboard/validation/IME is. It has no `parents`
+     * so it can stand alone (with an authored name) or sit under FormField for label wiring.
      */
     NativeInput: {
       intent: ["styled-native-input", "platform-control", "native-time-input"],
       host: { element: "input" },
-      options: ["type", "name", "disabled"],
+      options: ["controlSize", "type", "name", "disabled"],
+      forward: ["id", "readonly", "value", "autocomplete", "required", "maxlength", "minlength", "pattern", "min", "max", "step", "aria-*"],
+      /*
+       * `type` is the whole point of this signature: without it NativeInput is just Input that
+       * skipped FormField. Require it so a tree cannot quietly pick NativeInput for a plain text
+       * field.
+       */
+      requires: ["type"],
       slots: {},
       template: { element: "input", part: "root", host: true },
       react: { from: "@skryensya/react/input", name: "NativeInput" },
@@ -93,6 +108,7 @@ export const inputContract = {
       intent: ["multi-line-input", "long-text", "comment", "description-entry"],
       host: { element: "textarea" },
       options: ["controlSize", "name", "placeholder", "disabled"],
+      forward: ["id", "readonly", "value", "autocomplete", "required", "maxlength", "minlength", "rows", "cols", "aria-*"],
       parents: ["FormField"],
       slots: {},
       template: { element: "textarea", part: "root", host: true },

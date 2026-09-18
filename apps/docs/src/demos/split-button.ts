@@ -68,7 +68,7 @@ export const splitButtonTree = (t: Translate): UsageTree => ({
       options: {
         label: t("demo.splitButton.menuLabel"),
         triggerLabel: t("demo.splitButton.menuLabel"),
-        triggerVariant: "neutral",
+        triggerVariant: "solid",
         triggerSize: "md",
         triggerIconOnly: true,
         triggerWeldStart: true,
@@ -117,7 +117,7 @@ export const splitButtonSmallTree = (t: Translate): UsageTree => ({
       options: {
         label: t("demo.splitButton.menuLabel"),
         triggerLabel: t("demo.splitButton.menuLabel"),
-        triggerVariant: "neutral",
+        triggerVariant: "solid",
         triggerSize: "sm",
         triggerIconOnly: true,
         triggerWeldStart: true,
@@ -129,7 +129,7 @@ export const splitButtonSmallTree = (t: Translate): UsageTree => ({
   },
 });
 
-/** Same pairing as `splitButtonTree`, `variant: "subtle"` on both halves. The deliberate choice
+/** Same pairing as `splitButtonTree`, `variant: "soft"` on both halves. The deliberate choice
  *  this file's top comment argues for: one variant across the WHOLE control, never split
  *  between the two halves. Content swapped to Archive: a lower-emphasis action than Save, the
  *  kind `subtle` (visible but quiet background) actually fits. */
@@ -149,7 +149,7 @@ export const splitButtonSubtleTree = (t: Translate): UsageTree => ({
       options: {
         label: t("demo.splitButton.subtleMenuLabel"),
         triggerLabel: t("demo.splitButton.subtleMenuLabel"),
-        triggerVariant: "subtle",
+        triggerVariant: "soft",
         triggerSize: "md",
         triggerIconOnly: true,
         triggerWeldStart: true,
@@ -223,7 +223,7 @@ export const splitButtonGhostTree = (t: Translate): UsageTree => ({
   },
 });
 
-/** Same pairing as `splitButtonTree`, `variant: "danger"` on both halves. Content swapped to
+/** Same pairing as `splitButtonTree`, `tone: "danger"` on both halves. Content swapped to
  *  Delete: the one action `danger`'s coloring exists to warn about. */
 export const splitButtonDangerTree = (t: Translate): UsageTree => ({
   contract: "split-button",
@@ -241,7 +241,7 @@ export const splitButtonDangerTree = (t: Translate): UsageTree => ({
       options: {
         label: t("demo.splitButton.dangerMenuLabel"),
         triggerLabel: t("demo.splitButton.dangerMenuLabel"),
-        triggerVariant: "danger",
+        triggerTone: "danger",
         triggerSize: "md",
         triggerIconOnly: true,
         triggerWeldStart: true,
@@ -280,7 +280,7 @@ export const splitButtonMenuFirstTree = (t: Translate): UsageTree => ({
         options: {
           label: t("demo.splitButton.menuLabel"),
           triggerLabel: t("demo.splitButton.menuLabel"),
-          triggerVariant: "neutral",
+          triggerVariant: "solid",
           triggerSize: "md",
           triggerIconOnly: true,
           triggerWeldEnd: true,

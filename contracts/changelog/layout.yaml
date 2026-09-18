@@ -3,8 +3,58 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "0579fc0a32ad66f8"
+surface: "f6850f24ab31d02c"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    target: LayoutGrid
+    es:
+      title: data-width de LayoutGrid se autoría en attrs del hijo
+      body: >-
+        El canal UsageTree de <code>childAttrs.width</code> es el <code>attrs</code> del hijo
+        (<code>data-width</code>). El validador rechaza valores fuera del enum
+        (<code>invalid-attr-value</code>).
+    en:
+      title: LayoutGrid data-width is authored on the child attrs
+      body: >-
+        The UsageTree channel for <code>childAttrs.width</code> is the child's <code>attrs</code>
+        (<code>data-width</code>). The validator rejects values outside the enum
+        (<code>invalid-attr-value</code>).
+  - date: 2026-09-17
+    kind: feature
+    target: LayoutGrid
+    es:
+      title: LayoutGrid declara data-width en childAttrs
+      body: >-
+        El slot <code>children</code> de <code>LayoutGrid</code> publica
+        <code>childAttrs.width</code> (<code>data-width</code>: narrow/content/breakout/full-width/rail/rail-start).
+        Todavía no hay canal en UsageTree para autorarlo; el manifiesto ya nombra el vocabulario.
+    en:
+      title: LayoutGrid declares data-width on childAttrs
+      body: >-
+        <code>LayoutGrid</code>'s <code>children</code> slot publishes
+        <code>childAttrs.width</code> (<code>data-width</code>: narrow/content/breakout/full-width/rail/rail-start).
+        There is still no UsageTree authoring channel; the manifest now names the vocabulary.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Layout deja de reclamar Box y Wrapper
+      body: >-
+        El contrato ya no publica las partes <code>sk-box</code>/<code>sk-wrapper</code> ni sus
+        hooks, ni nombra <code>box.css</code>/<code>wrapper.css</code> en <code>hookSheets</code>.
+        Un árbol de Stack/Inline/Grid/LayoutGrid solo carga <code>layout.css</code>. La hoja sigue
+        importando box/wrapper/image-frame como atajo CSS; eso no es una promesa del contrato.
+        Grid gana la opción <code>fill</code> (<code>data-fill</code>) para el piso de columnas
+        responsive.
+    en:
+      title: Layout stops claiming Box and Wrapper
+      body: >-
+        The contract no longer publishes the <code>sk-box</code>/<code>sk-wrapper</code> parts or
+        their hooks, and no longer names <code>box.css</code>/<code>wrapper.css</code> in
+        <code>hookSheets</code>. A Stack/Inline/Grid/LayoutGrid tree only loads
+        <code>layout.css</code>. The stylesheet still imports box/wrapper/image-frame as a CSS
+        convenience; that is not a contract promise. Grid gains the <code>fill</code> option
+        (<code>data-fill</code>) for the responsive column floor.
   - date: 2026-09-10
     kind: feature
     target: blockStart
@@ -242,3 +292,19 @@ entries:
         sheet <code>css</code> names could be reconciled, so the hooks in the others were public
         surface nobody documented and nothing checked. No styling changes: what changes is that they
         are declared now, and the compiler checks them.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Stack, Inline, Grid y LayoutGrid elige su elemento desde el árbol
+      body: >-
+        <code>layoutElement</code> acepta <code>div</code>, <code>section</code>, <code>article</code>,
+        <code>aside</code>, <code>header</code>, <code>footer</code>, <code>nav</code> y
+        <code>main</code>. React ya lo permitía con <code>as</code>, pero un árbol sólo podía emitir
+        un <code>div</code>, así que una región o un landmark no tenía forma de escribirse.
+    en:
+      title: Stack, Inline, Grid and LayoutGrid choose their element from the tree
+      body: >-
+        <code>layoutElement</code> takes <code>div</code>, <code>section</code>, <code>article</code>,
+        <code>aside</code>, <code>header</code>, <code>footer</code>, <code>nav</code> and
+        <code>main</code>. React already allowed it through <code>as</code>, but a tree could only
+        emit a <code>div</code>, so a region or a landmark had no way to be written.

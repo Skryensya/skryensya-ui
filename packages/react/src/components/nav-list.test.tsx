@@ -138,4 +138,19 @@ describe("NavList", () => {
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
     expect(document.getElementById(trigger.getAttribute("aria-controls")!)!.hidden).toBe(true);
   });
+
+  it("collapsible: stamps contract attrs and enhancer mounts", () => {
+    const ui = render(
+      <NavList aria-label="Primary navigation">
+        <NavListGroup collapsible defaultOpen label="Settings">
+          <NavListLink href="/general">General</NavListLink>
+        </NavListGroup>
+      </NavList>,
+    );
+    const group = ui.getByRole("button", { name: "Settings" }).parentElement!;
+    expect(group.getAttribute("data-collapsible")).toBe("");
+    expect(group.getAttribute("data-default-open")).toBe("");
+    expect(group.querySelector("[data-sk-nav-list-group-trigger]")).not.toBeNull();
+    expect(group.querySelector("[data-sk-nav-list-group-list]")).not.toBeNull();
+  });
 });

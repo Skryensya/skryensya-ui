@@ -18,7 +18,6 @@ import "@skryensya/core/components/tile.css";
 import "@skryensya/core/components/checkbox.css";
 import "@skryensya/core/components/chart.css";
 import "@skryensya/core/components/stat.css";
-import "../../examples/card.css";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
@@ -140,31 +139,31 @@ const chartCardHtml = emitChartWithOverlay(chartAnalyticsCardTree(t), "area", vi
 
     <h3 id="enlace">{t("cardPage.linkTitle")}</h3>
     <p set:html={t("cardPage.linkBody")} />
-    <ComponentPreview tree={cardLinkTree(copy)} label={copy.labels.link} note={t("cardPage.linkNote")} />
+    <ComponentPreview tree={cardLinkTree(copy)} label={copy.labels.link} note={t("cardPage.linkNote")} width="breakout" />
 
     <h3 id="accion">{t("cardPage.actionTitle")}</h3>
     <p set:html={t("cardPage.actionBody")} />
-    <ComponentPreview tree={cardActionTree(copy)} label={copy.labels.action} note={t("cardPage.actionNote")} />
+    <ComponentPreview tree={cardActionTree(copy)} label={copy.labels.action} note={t("cardPage.actionNote")} width="breakout" />
 
     <h3 id="seleccion">{t("cardPage.selectTitle")}</h3>
     <p set:html={t("cardPage.selectBody")} />
-    <ComponentPreview tree={cardSelectTree(copy)} label={copy.labels.select} note={t("cardPage.selectNote")} />
+    <ComponentPreview tree={cardSelectTree(copy)} label={copy.labels.select} note={t("cardPage.selectNote")} width="breakout" />
 
     <h3 id="imagen">{t("cardPage.mediaTitle")}</h3>
     <p set:html={t("cardPage.mediaBody")} />
-    <ComponentPreview tree={cardMediaTree(copy)} label={copy.labels.media} note={t("cardPage.mediaNote")} />
+    <ComponentPreview tree={cardMediaTree(copy)} label={copy.labels.media} note={t("cardPage.mediaNote")} width="breakout" />
 
     <h3 id="gradiente">{t("cardPage.gradientTitle")}</h3>
     <p set:html={t("cardPage.gradientBody")} />
-    <ComponentPreview tree={cardGradientTree(copy)} label={copy.labels.gradient} note={t("cardPage.gradientNote")} />
+    <ComponentPreview tree={cardGradientTree(copy)} label={copy.labels.gradient} note={t("cardPage.gradientNote")} width="breakout" />
 
     <h3 id="imagen-enlace">{t("cardPage.mediaLinkTitle")}</h3>
     <p set:html={t("cardPage.mediaLinkBody")} />
-    <ComponentPreview tree={cardMediaLinkTree(copy)} label={copy.labels.mediaLink} note={t("cardPage.mediaLinkNote")} />
+    <ComponentPreview tree={cardMediaLinkTree(copy)} label={copy.labels.mediaLink} note={t("cardPage.mediaLinkNote")} width="breakout" />
 
     <h3 id="producto">{t("cardPage.productTitle")}</h3>
     <p set:html={t("cardPage.productBody")} />
-    <ComponentPreview tree={cardProductTree(copy)} label={copy.labels.product} note={t("cardPage.productNote")} />
+    <ComponentPreview tree={cardProductTree(copy)} label={copy.labels.product} note={t("cardPage.productNote")} width="breakout" />
 
     <h3>Do &amp; Don't</h3>
     <div class="sk-grid" data-columns="2" data-gap="md" data-multicol>

@@ -64,6 +64,7 @@ export function QRCode({
       {...props}
       aria-label={label}
       className={className ? `${qrCodeParts.root} ${className}` : qrCodeParts.root}
+      data-module-shape={shape}
       data-polarity={polarity}
       data-size={size}
       data-tone={tone}

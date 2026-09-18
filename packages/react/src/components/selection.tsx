@@ -1,9 +1,10 @@
-import { checkboxParts, selectionParts, type CheckboxGroupValueChangeDetails, type CheckedChangeDetails, type CheckedState, type RadioGroupOrientation, type RadioValueChangeDetails, checkboxContract } from "@skryensya/core/selection";
+import { checkboxParts, checkboxGroupEvents, selectionParts, type CheckboxGroupValueChangeDetails, type CheckedChangeDetails, type CheckedState, type RadioGroupOrientation, type RadioValueChangeDetails, checkboxContract, radioGroupContract } from "@skryensya/core/selection";
 import { forwardRef, useEffect, useId, useMemo, useRef, useState, type ChangeEvent, type HTMLAttributes, type InputHTMLAttributes, type ReactNode } from "react";
 import { Icon } from "./icon.js";
 
 /* Derived, never restated: the default lives in the contract. */
 const { orientation: orientationOption } = checkboxContract.options;
+const { orientation: radioOrientationOption } = radioGroupContract.options;
 
 function classes(...values: readonly (string | undefined)[]) {
   return values.filter(Boolean).join(" ");
@@ -119,6 +120,7 @@ export const CheckboxGroup = forwardRef<HTMLDivElement, CheckboxGroupProps>(func
   const itemId = (item: CheckboxGroupItem) => `${itemsIdBase}-${item.value}`;
   const controlled = value !== undefined;
   const parent = useRef<HTMLInputElement>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   /*
    * Seeded from the ITEMS' own defaults, not only from `defaultValue`: which children start checked
@@ -147,12 +149,16 @@ export const CheckboxGroup = forwardRef<HTMLDivElement, CheckboxGroupProps>(func
 
   const commit = (next: ReadonlySet<string>) => {
     if (!controlled) setUncontrolled(next);
-    onValueChange?.({
+    const details: CheckboxGroupValueChangeDetails = {
       // In the items' own order, never the Set's insertion order: the caller sees the group the way
       // it is written on screen, and a value that gets unchecked and rechecked does not move.
       value: items.filter((item) => next.has(item.value)).map((item) => item.value),
       checked: groupState(items, next),
-    });
+    };
+    onValueChange?.(details);
+    rootRef.current?.dispatchEvent(
+      new CustomEvent(checkboxGroupEvents.valueChange, { bubbles: true, detail: details }),
+    );
   };
 
   const onParentChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -176,13 +182,20 @@ export const CheckboxGroup = forwardRef<HTMLDivElement, CheckboxGroupProps>(func
     commit(values);
   };
 
+  const setRefs = (node: HTMLDivElement | null) => {
+    rootRef.current = node;
+    if (typeof ref === "function") ref(node);
+    else if (ref) ref.current = node;
+  };
+
   return (
     <div
       {...props}
       aria-labelledby={labelId}
       className={classes(checkboxParts.checkboxGroup, className)}
       data-orientation={orientation}
-      ref={ref}
+      data-sk-checkbox-group=""
+      ref={setRefs}
       role="group"
     >
       <label className={selectionParts.checkbox}>
@@ -234,19 +247,47 @@ export type RadioGroupItem = {
   value: string;
 };
 
-export type RadioGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "onChange"> & {
+export type RadioProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
+  children?: ReactNode;
+};
+
+/*
+ * ONE RADIO, on its own. `RadioGroup` is the answer for a list of options; this is the case it cannot
+ * serve: a matrix, where each cell holds a single radio and the row and column headers name it. Radios
+ * sharing a `name` are one group to the browser wherever they sit in the DOM.
+ */
+export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
+  { children, className, ...props },
+  ref,
+) {
+  return (
+    <label className={classes(selectionParts.radio, className)}>
+      <input {...props} className={selectionParts.radioInput} ref={ref} type="radio" />
+      <span aria-hidden="true" className={selectionParts.radioControl}>
+        <span className={selectionParts.radioIndicator} />
+      </span>
+      {children === undefined ? null : <span className={selectionParts.radioLabel}>{children}</span>}
+    </label>
+  );
+});
+
+export type RadioGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "onChange" | "aria-label"> & {
   defaultValue?: string | null;
   disabled?: boolean;
   items: readonly RadioGroupItem[];
+  /** The group's accessible name. WAI's Radio Group pattern expects one on `role="radiogroup"`. */
+  label?: string;
   name: string;
   onValueChange?: (details: RadioValueChangeDetails) => void;
   orientation?: RadioGroupOrientation;
   required?: boolean;
+  /** Every option the same width, across the whole group: what a scale is read as. */
+  spread?: boolean;
   value?: string | null;
 };
 
 export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function RadioGroup(
-  { className, defaultValue, disabled, items, name, onValueChange, orientation = orientationOption.default, required, value, ...props },
+  { className, defaultValue, disabled, items, label, name, onValueChange, orientation = radioOrientationOption.default, required, spread, value, ...props },
   ref,
 ) {
   const controlled = value !== undefined;
@@ -261,7 +302,16 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(function R
   };
 
   return (
-    <div {...props} aria-orientation={orientation} className={classes(selectionParts.radioGroup, className)} data-orientation={orientation} ref={ref} role="radiogroup">
+    <div
+      {...props}
+      aria-label={label}
+      aria-orientation={orientation}
+      className={classes(selectionParts.radioGroup, className)}
+      data-orientation={orientation}
+      data-spread={spread ? "" : undefined}
+      ref={ref}
+      role="radiogroup"
+    >
       {items.map((item) => (
         <label className={selectionParts.radio} key={item.value}>
           <input

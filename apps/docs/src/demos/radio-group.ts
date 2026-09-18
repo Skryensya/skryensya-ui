@@ -15,8 +15,12 @@ export const radioGroupAnatomyTree = (t: Translate): UsageTree => ({
     subject: {
       contract: "radio-group",
       signature: "RadioGroup",
-      options: { name: "plan-anatomy", value: "pro", orientation: "vertical" },
-      attrs: { "aria-label": t("demo.radioGroup.label") },
+      options: {
+        name: "plan-anatomy",
+        value: "pro",
+        orientation: "vertical",
+        label: t("demo.radioGroup.label"),
+      },
       slots: { items: radioGroupItems },
     },
     items: [
@@ -34,8 +38,12 @@ export const radioGroupAnatomyTree = (t: Translate): UsageTree => ({
 export const radioGroupTree = (t: Translate): UsageTree => ({
   contract: "radio-group",
   signature: "RadioGroup",
-  options: { name: "plan", value: "pro", orientation: "vertical" },
-  attrs: { "aria-label": t("demo.radioGroup.label") },
+  options: {
+    name: "plan",
+    value: "pro",
+    orientation: "vertical",
+    label: t("demo.radioGroup.label"),
+  },
   slots: { items: radioGroupItems },
 });
 
@@ -54,4 +62,141 @@ export const tileRadioGroupTree = (t: Translate): UsageTree => ({
    */
   attrs: { "aria-label": t("demo.radioGroup.label"), class: "sk-tile-grid" },
   slots: { items: tileRadioGroupItems(t) },
+});
+
+/*
+ * A LIKERT SCALE IS A COMPOSITION, NOT A COMPONENT. There is no `sk-likert`: a scale is this
+ * contract's own radio group laid across a Box, with the two ends named under it. Four points on
+ * purpose, so a reader with an opinion has to lean instead of parking on a middle; three, five or
+ * seven work the same way.
+ */
+const likertPoint = (value: string, label: string) => ({ options: { value }, slots: { label } });
+
+export const radioGroupLikertTree = (t: Translate): UsageTree => ({
+  /* A Wrapper, so the scale has a width to spread across: the preview stage sizes a demo to its content. */
+  contract: "wrapper",
+  signature: "Wrapper",
+  options: { wrapperSize: "sm" },
+  children: [
+    {
+      contract: "box",
+      signature: "Box",
+      options: { border: "subtle", padding: "sm" },
+      children: [
+        {
+          contract: "layout",
+          signature: "Stack",
+          options: { gap: "xs" },
+          children: [
+            {
+              contract: "radio-group",
+              signature: "RadioGroup",
+              options: {
+                name: "likert-clarity",
+                orientation: "horizontal",
+                /* Equal steps, whatever each label weighs: what makes it read as a scale. */
+                spread: true,
+                label: t("radioGroupPage.likertLabel"),
+              },
+              slots: {
+                items: [
+                  likertPoint("1", t("demo.likert.one")),
+                  likertPoint("2", t("demo.likert.two")),
+                  likertPoint("3", t("demo.likert.three")),
+                  likertPoint("4", t("demo.likert.four")),
+                ],
+              },
+            },
+            {
+              contract: "layout",
+              signature: "Inline",
+              options: { justify: "between", gap: "md" },
+              children: [
+                { contract: "typography", signature: "Text", options: { size: "caption", tone: "secondary" }, children: t("demo.likert.min") },
+                { contract: "typography", signature: "Text", options: { size: "caption", tone: "secondary" }, children: t("demo.likert.max") },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+});
+
+/*
+ * THE MATRIX: SEVERAL QUESTIONS, ONE SCALE. Every row is a question and every column a point, so the
+ * scale is named once in the head instead of repeated under every row. Each cell holds a single
+ * `Radio` whose `name` is its ROW: radios sharing a name are one group to the browser wherever they
+ * sit in the DOM, which is what makes a table of them behave like one question per row. The cell's
+ * radio carries no visible label, because the row header and the column header already name it.
+ *
+ * Four points, again on purpose: no middle to park on. Any count works, the head just grows.
+ */
+const matrixPoints = (t: Translate) => [
+  { value: "1", label: t("demo.likert.one") },
+  { value: "2", label: t("demo.likert.two") },
+  { value: "3", label: t("demo.likert.three") },
+  { value: "4", label: t("demo.likert.four") },
+];
+
+const matrixRow = (t: Translate, name: string, statement: string): UsageTree => ({
+  contract: "table",
+  signature: "TableRow",
+  children: [
+    {
+      contract: "table",
+      signature: "TableHeader",
+      options: { scope: "row" },
+      children: statement,
+    },
+    ...matrixPoints(t).map((point) => ({
+      contract: "table",
+      signature: "TableCell",
+      children: [
+        {
+          contract: "radio-group",
+          signature: "Radio",
+          options: { name, value: point.value },
+          /* Named by its row and its column: the statement plus the point, so a screen reader hears
+             "Es fácil de usar, 3" instead of a bare radio in a grid of them. */
+          attrs: { "aria-label": `${statement}: ${point.label}` },
+        },
+      ],
+    })),
+  ],
+});
+
+export const radioGroupMatrixTree = (t: Translate): UsageTree => ({
+  contract: "table",
+  signature: "Table",
+  children: [
+    { contract: "table", signature: "TableCaption", children: t("radioGroupPage.matrixCaption") },
+    {
+      contract: "table",
+      signature: "TableHead",
+      children: [
+        {
+          contract: "table",
+          signature: "TableRow",
+          children: [
+            { contract: "table", signature: "TableHeader", children: t("radioGroupPage.matrixStatement") },
+            ...matrixPoints(t).map((point) => ({
+              contract: "table",
+              signature: "TableHeader",
+              children: point.label,
+            })),
+          ],
+        },
+      ],
+    },
+    {
+      contract: "table",
+      signature: "TableBody",
+      children: [
+        matrixRow(t, "matrix-easy", t("demo.matrix.easy")),
+        matrixRow(t, "matrix-fast", t("demo.matrix.fast")),
+        matrixRow(t, "matrix-recommend", t("demo.matrix.recommend")),
+      ],
+    },
+  ],
 });

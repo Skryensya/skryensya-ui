@@ -90,6 +90,7 @@ export function backToTopScrollBehavior(prefersReducedMotion: boolean): "auto" |
 
 export const backToTopContract = {
   id: "back-to-top",
+  category: "navigation",
   css: "@skryensya/core/components/back-to-top.css",
   parts: backToTopParts,
   hooks: [
@@ -115,6 +116,7 @@ export const backToTopContract = {
     threshold: {
       type: "number",
       default: BACK_TO_TOP_DEFAULT_THRESHOLD,
+      min: 0,
       attr: "data-threshold",
       machineInput: true,
     },
@@ -153,6 +155,8 @@ export const backToTopContract = {
       host: { element: "button" },
       mount: backToTopAttrs.root,
       options: ["threshold", "scroller", "target"],
+      /** Host id / a11y names; label stays the text slot, not a forwarded attr. */
+      forward: ["id", "aria-*"],
       /*
        * A REQUIRED TEXT SLOT, and it is the accessible name. The visible affordance is a `chevron-up`
        * from the bound icon set (`Icon`, decision 2: Core names the ROLE, the set draws it); the
@@ -162,6 +166,8 @@ export const backToTopContract = {
        * labelled pill un-clips `sk-back-to-top__label` in CSS; the name is already there.
        */
       slots: { children: { accepts: "text", required: true } },
+      /* Baked chevron-up via `data-sk-icon` / React `Icon`; not an authored Icon child. */
+      compose: [{ of: "icon", systemOwned: true }],
       template: {
         element: "button",
         part: "root",

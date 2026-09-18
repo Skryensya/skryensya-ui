@@ -1,5 +1,15 @@
 export const checkboxMessages = {
   es: {
+    "demo.checkboxScale.mon": "Lunes",
+    "demo.checkboxScale.tue": "Martes",
+    "demo.checkboxScale.wed": "Miércoles",
+    "demo.checkboxScale.thu": "Jueves",
+    "demo.checkboxScale.min": "Principio de semana",
+    "demo.checkboxScale.max": "Fin de semana",
+    "checkboxPage.scaleTitle": "Componer: el equivalente de una escala",
+    "checkboxPage.scaleBody":
+      "La escala Likert de <a href=\"/es/componentes/radio-group\">RadioGroup</a> responde «cuánto» y admite una sola respuesta. Cuando la pregunta es «cuáles», la misma caja y los mismos extremos llevan checkboxes: cada punto se marca por separado. Nada nuevo se dibuja; son Box, Inline, Checkbox y Text.",
+    "checkboxPage.scaleLabel": "Escala de selección múltiple",
     "demo.checkbox.emailAlerts": "Alertas por email",
     "demo.checkbox.group": "Permisos del repositorio",
     "demo.checkbox.read": "Lectura",
@@ -50,7 +60,7 @@ export const checkboxMessages = {
       "Cada label se autora con data-sk-tile-checkbox (data-name, data-value,\ndata-default-checked) más su input y su indicador.",
     "checkbox.iconsComment4": "initComponents las hidrata con la máquina @zag-js/checkbox.",
     "checkbox.test1":
-      "Alterna el estado marcado y el <code>data-state</code> de la raíz al hacer click, emitiendo <code>sk:checkedchange</code>.",
+      "Alterna el estado marcado y el <code>data-state</code> de la raíz al hacer click, emitiendo <code>sk:tilecheckedchange</code>.",
     "checkbox.test2": "Está asociado al formulario y respeta su <code>default-checked</code>.",
     "checkbox.groupTest1":
       "Deriva los tres estados del padre a partir de los hijos, al montar y en cada cambio.",
@@ -63,6 +73,16 @@ export const checkboxMessages = {
       "Vuelve a derivar el padre tras un <code>reset</code> del formulario, que restaura a los hijos en silencio.",
   },
   en: {
+    "demo.checkboxScale.mon": "Monday",
+    "demo.checkboxScale.tue": "Tuesday",
+    "demo.checkboxScale.wed": "Wednesday",
+    "demo.checkboxScale.thu": "Thursday",
+    "demo.checkboxScale.min": "Start of the week",
+    "demo.checkboxScale.max": "End of the week",
+    "checkboxPage.scaleTitle": "Compose: the scale's twin",
+    "checkboxPage.scaleBody":
+      "<a href=\"/components/radio-group\">RadioGroup</a>'s Likert scale answers \"how much\" and takes one answer. When the question is \"which ones\", the same box and the same ends hold checkboxes: every point is ticked on its own. Nothing new is drawn; it is Box, Inline, Checkbox and Text.",
+    "checkboxPage.scaleLabel": "Multi-select scale",
     "demo.checkbox.emailAlerts": "Email alerts",
     "demo.checkbox.group": "Repository permissions",
     "demo.checkbox.read": "Read",
@@ -113,7 +133,7 @@ export const checkboxMessages = {
       "Every label is authored with data-sk-tile-checkbox (data-name, data-value,\ndata-default-checked) plus its input and its indicator.",
     "checkbox.iconsComment4": "initComponents hydrates them with the @zag-js/checkbox machine.",
     "checkbox.test1":
-      "Toggles checked state and the root's <code>data-state</code> on click, emitting <code>sk:checkedchange</code>.",
+      "Toggles checked state and the root's <code>data-state</code> on click, emitting <code>sk:tilecheckedchange</code>.",
     "checkbox.test2": "Is form-associated and honours its <code>default-checked</code>.",
     "checkbox.groupTest1":
       "Derives the parent's three states from its children, on mount and on every change.",

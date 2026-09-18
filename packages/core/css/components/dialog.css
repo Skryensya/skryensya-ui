@@ -29,6 +29,7 @@
       color-mix(in oklch, var(--color-bg-canvas) 80%, transparent)
     );
 
+    box-sizing: border-box;
     inline-size: var(--sk-dialog-inline-size);
     max-inline-size: none;
     margin: auto;

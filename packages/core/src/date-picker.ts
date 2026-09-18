@@ -1,4 +1,5 @@
 import type { ComponentContract } from "./contract.js";
+import { ISO_DATE_OR_RANGE_PATTERN, ISO_DATE_PATTERN } from "./calendar.js";
 export type { DateValue } from "@zag-js/date-picker";
 
 /*
@@ -60,11 +61,31 @@ export type DatePickerValueChangeDetails = { value: string[] };
  * could not express a starting date or a permitted range, while the React binding accepted all three
  * and the other half dropped them.
  */
+/** The DOM events this family dispatches on its root, `sk:<family><event>` like every other. */
+export const datePickerEvents = {
+  /** Detail: `{ value: string[] }`, ISO dates. */
+  valueChange: "sk:datepickervaluechange",
+} as const;
+
 export const datePickerContract = {
   id: "date-picker",
+  category: "forms",
   css: "@skryensya/core/components/date-picker.css",
   parts: datePickerParts,
+  events: datePickerEvents,
+  eventDetails: {
+    valueChange: { detail: { value: "string[]" }, reactProp: "onValueChange", source: "root", trigger: "input" },
+  },
   hooks: [
+    "--sk-anchored-align",
+    "--sk-anchored-arrow-edge",
+    "--sk-anchored-arrow-near",
+    "--sk-anchored-justify",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-anchored-size",
+    "--sk-anchored-z",
     "--sk-date-picker-affordance-color",
     "--sk-date-picker-backdrop-bg",
     "--sk-date-picker-bg",
@@ -87,6 +108,12 @@ export const datePickerContract = {
     "--sk-date-picker-shadow",
     "--sk-date-picker-wash",
   ],
+  /*
+   * The floating calendar uses `sk-anchor` / positioner (`also`). Those classes have no unique
+   * contract owner, so `sheetsForTree` cannot discover `anchored.css` from `also` alone, same
+   * shape as ColorPicker/Tooltip/Popover. Hooks from that sheet are listed above.
+   */
+  hookSheets: ["@skryensya/core/patterns/anchored.css"],
 
   options: {
     /** Submitted under this name. */
@@ -95,9 +122,15 @@ export const datePickerContract = {
      * The starting date, ISO. Space-separated names both ends of a range. React spells it
      * `defaultValue`; `value` there is the CONTROLLED prop.
      */
-    value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
-    min: { type: "string", attr: "data-min", machineInput: true },
-    max: { type: "string", attr: "data-max", machineInput: true },
+    value: {
+      type: "string",
+      attr: "data-value",
+      prop: "defaultValue",
+      machineInput: true,
+      pattern: ISO_DATE_OR_RANGE_PATTERN,
+    },
+    min: { type: "string", attr: "data-min", machineInput: true, pattern: ISO_DATE_PATTERN },
+    max: { type: "string", attr: "data-max", machineInput: true, pattern: ISO_DATE_PATTERN },
     selectionMode: {
       type: "enum",
       values: ["single", "range"],
@@ -105,11 +138,12 @@ export const datePickerContract = {
       attr: "data-selection-mode",
       machineInput: true,
     },
-    locale: { type: "string", default: "es", attr: "data-locale", machineInput: true },
+    locale: { type: "string", default: "en", attr: "data-locale", machineInput: true },
     timeZone: { type: "string", default: "UTC", attr: "data-time-zone", machineInput: true },
     disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "", machineInput: true },
     readOnly: { type: "boolean", default: false, attr: "data-readonly", trueValue: "", machineInput: true },
     required: { type: "boolean", default: false, attr: "data-required", trueValue: "", machineInput: true },
+    invalid: { type: "boolean", default: false, attr: "data-invalid", trueValue: "", machineInput: true },
     /** Shown in the input while it is empty. */
     placeholder: { type: "string", attr: "placeholder" },
     /**
@@ -117,7 +151,7 @@ export const datePickerContract = {
      * is the only user-visible STRING the component emits on its own, and a hardcoded one renders
      * Spanish on an English page.
      */
-    clearLabel: { type: "string", default: "Limpiar", attr: "aria-label" },
+    clearLabel: { type: "string", default: "Clear", attr: "aria-label" },
   },
 
   signatures: {
@@ -136,10 +170,22 @@ export const datePickerContract = {
         "disabled",
         "readOnly",
         "required",
+        "invalid",
         "placeholder",
         "clearLabel",
       ],
-      portals: true,
+      /** Host id / a11y; control state stays options. */
+      forward: ["id", "aria-*"],
+      portals: { container: true },
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+        {
+          of: "calendar",
+          sheets: ["@skryensya/core/components/calendar.css"],
+          systemOwned: true,
+        },
+      ],
       slots: {
         /** Names the field. */
         label: { accepts: "text" },
@@ -208,7 +254,14 @@ export const datePickerContract = {
     "DatePicker.native": {
       intent: ["a-standard-date-field", "form-field", "no-javascript"],
       host: { element: "div" },
-      options: ["name", "locale"],
+      /*
+       * `value`/`min`/`max` remapped below to real HTML attributes: the browser is the consumer,
+       * same split ColorPicker.native makes for `value`. `selectionMode` stays off this signature, 
+       * a native date input is always a single day.
+       */
+      options: ["name", "locale", "value", "min", "max", "disabled", "readOnly", "required"],
+      /** Host id / a11y; control state stays options. */
+      forward: ["id", "aria-*"],
       slots: {
         /** Names the field. Required: a bare date input announces only its format. */
         label: { accepts: "text", required: true },
@@ -227,11 +280,20 @@ export const datePickerContract = {
                 element: "input",
                 part: "input",
                 attrs: { type: "date" },
-                options: ["name", "locale"],
+                options: ["name", "locale", "value", "min", "max", "disabled", "readOnly", "required"],
                 /* The enhanced control reads these off data-attributes because its enhancer has no
                    other channel. A native input wants the real ones; the browser is the consumer
                    here, not a script. */
-                optionAttrs: { name: "name", locale: "lang" },
+                optionAttrs: {
+                  name: "name",
+                  locale: "lang",
+                  value: "value",
+                  min: "min",
+                  max: "max",
+                  disabled: "disabled",
+                  readOnly: "readonly",
+                  required: "required",
+                },
                 /*
                  * NAMED BY `aria-labelledby`, not by `for`, and the reason is the stage rather
                  * than the markup. `for`/`id` is the better pair here; it also focuses the input

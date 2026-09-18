@@ -3,8 +3,54 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "198cfc01188d7439"
+surface: "6dee59dcc21a5938"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Carousel declara systemOwned para controles inyectados
+      body: >-
+        <code>systemOwned</code> lista controls/button/autoplay/dots/dot que el enhancer (o los
+        pseudo-elementos nativos) aportan; el template sólo autentica track + slides.
+    en:
+      title: Carousel declares systemOwned for injected controls
+      body: >-
+        <code>systemOwned</code> lists controls/button/autoplay/dots/dot that the enhancer (or
+        native pseudo-elements) supply; the template only authors track + slides.
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: Carousel publica change y goto en el contrato
+      body: >-
+        <code>events.change</code> (<code>sk-carousel-change</code>) y <code>events.goto</code>
+        (<code>sk-carousel-goto</code>) ya existían en el módulo y en el enhancer; ahora el contrato
+        los declara para que un árbol y un agente los encuentren.
+    en:
+      title: Carousel publishes change and goto on the contract
+      body: >-
+        <code>events.change</code> (<code>sk-carousel-change</code>) and <code>events.goto</code>
+        (<code>sk-carousel-goto</code>) already lived in the module and enhancer; the contract now
+        declares them so a tree and an agent can find them.
   - date: 2026-08-14
     kind: bugfix
     target: root
@@ -63,3 +109,25 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Cada evento lleva el nombre de su familia
+      body: >-
+        <code>sk-carousel-change</code> → <code>sk:carouselchange</code>, <code>sk-carousel-goto</code> → <code>sk:carouselgoto</code>. Un mismo nombre ya no lo despachan varias familias: un listener sobre una raíz deja
+        de recibir los eventos de un componente distinto anidado adentro.
+    en:
+      title: Every event carries its family in its name
+      body: >-
+        <code>sk-carousel-change</code> → <code>sk:carouselchange</code>, <code>sk-carousel-goto</code> → <code>sk:carouselgoto</code>. No two families dispatch the same name any more: a listener on a root stops receiving
+        the events of a different component nested inside it.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: El contrato declara el rango de sus números
+      body: >-
+        <code>autoplayDelay</code> es al menos 1 ms. Un valor fuera de rango deja de validar en vez de llegar al binding.
+    en:
+      title: The contract declares the range of its numbers
+      body: >-
+        <code>autoplayDelay</code> is at least 1 ms. A value out of range stops validating instead of reaching the binding.

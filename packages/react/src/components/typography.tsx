@@ -4,9 +4,10 @@ import {
   type LinkTone,
   type TextSize,
   type TextTone,
+  type TextRole,
   type TextWeight,
 } from "@skryensya/core/typography";
-import type { AnchorHTMLAttributes, HTMLAttributes, ReactNode } from "react";
+import type { AnchorHTMLAttributes, HTMLAttributes, OutputHTMLAttributes, ReactNode } from "react";
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -16,11 +17,29 @@ export type TextProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   size?: TextSize;
   tone?: TextTone;
   weight?: TextWeight;
+  /** Title-block preset (`eyebrow` above a heading, `subtitle` under it); wins over size, tone and weight. */
+  textRole?: TextRole;
 };
 
-export function Text({ as: Component = "p", children, className, size = "body", tone = "primary", weight = "body", ...props }: TextProps) {
+export function Text({
+  as: Component = "p",
+  children,
+  className,
+  size = "body",
+  textRole,
+  tone = "primary",
+  weight = "body",
+  ...props
+}: TextProps) {
   return (
-    <Component {...props} className={cx(typographyParts.text, className)} data-size={size} data-tone={tone} data-weight={weight}>
+    <Component
+      {...props}
+      className={cx(typographyParts.text, className)}
+      data-role={textRole}
+      data-size={size}
+      data-tone={tone}
+      data-weight={weight}
+    >
       {children}
     </Component>
   );
@@ -34,7 +53,7 @@ export function Strong({ children, ...props }: StrongProps) {
   return <strong {...props}>{children}</strong>;
 }
 
-export type OutputProps = HTMLAttributes<HTMLOutputElement> & {
+export type OutputProps = OutputHTMLAttributes<HTMLOutputElement> & {
   children: ReactNode;
 };
 
@@ -50,7 +69,9 @@ export type HeadingProps = Omit<HTMLAttributes<HTMLHeadingElement>, "children"> 
   flush?: boolean;
 };
 
-export type CodeProps = HTMLAttributes<HTMLElement> & { children?: ReactNode };
+/* Children required, as the contract's slot is: an empty `<code>` is a tinted gap in a sentence.
+ * Plain text only (`accepts: "text"`); a highlighted block belongs to `code-preview`. */
+export type CodeProps = HTMLAttributes<HTMLElement> & { children: string };
 
 /** A literal inside a sentence. A whole block of code is `code-preview`, not this. */
 export function Code({ children, className, ...props }: CodeProps) {

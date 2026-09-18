@@ -19,8 +19,8 @@ const {
 const actionTemplate = buttonContract.signatures["Button.action"].template;
 const iconOnlyRule = buttonContract.a11y[0];
 
-/** The appearance props ARE the action signature's options. `href` is added by the union below. */
-type ButtonAppearanceProps = SignatureOptionsOf<typeof buttonContract, "Button.action"> & {
+/** Shared appearance: the navigation signature's options (no pressed / disabled). */
+type ButtonNavAppearance = SignatureOptionsOf<typeof buttonContract, "Button.navigation"> & {
   children: ReactNode;
   /** Leading slot: icon (or other affordance) before the label. */
   pre?: ReactNode;
@@ -28,18 +28,25 @@ type ButtonAppearanceProps = SignatureOptionsOf<typeof buttonContract, "Button.a
   post?: ReactNode;
 };
 
+/** Action signature adds toggle and unavailable state. */
+type ButtonActionAppearance = SignatureOptionsOf<typeof buttonContract, "Button.action"> & {
+  children: ReactNode;
+  pre?: ReactNode;
+  post?: ReactNode;
+};
+
 /*
  * `href` is the discriminant and the tag switch: every appearance works identically on either host,
  * only the semantics differ (`Button.action` vs `Button.navigation`), so one component picks the tag
  * instead of asking the caller to duplicate the same props on a second export. Passing `href` drops
- * `disabled` (a link cannot be disabled and stay a link) and `type`; omitting it keeps the native
- * button contract.
+ * `disabled` (a link cannot be disabled and stay a link) and `pressed` / `type`; omitting it keeps
+ * the native button contract.
  */
 export type ButtonProps =
   | (Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> &
-      ButtonAppearanceProps & { href?: undefined })
+      ButtonActionAppearance & { href?: undefined })
   | (Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "children" | "href"> &
-      ButtonAppearanceProps & { href: string });
+      ButtonNavAppearance & { href: string });
 
 type BundlerImportMeta = ImportMeta & { env?: { DEV?: boolean } };
 
@@ -138,12 +145,13 @@ export function Button({
   pre,
   post,
   ...props
-}: ButtonProps) {
+}: ButtonProps & { pressed?: boolean }) {
   warnEmptyButton(pre, children, post);
   warnMissingAccessibleName(iconOnly, [props["aria-label"], props["aria-labelledby"]], [pre, children, post]);
 
   const shared = {
     className: buttonClasses(className),
+    "data-sk-button": "",
     [iconOnlyOption.attr]: iconOnly ? iconOnlyOption.trueValue : undefined,
     [weldStartOption.attr]: weldStart ? weldStartOption.trueValue : undefined,
     [weldEndOption.attr]: weldEnd ? weldEndOption.trueValue : undefined,
@@ -159,7 +167,7 @@ export function Button({
    * did) silently lost it. Absent means "not a toggle" and has to mean absent from this object too.
    */
   const toggle =
-    pressed === undefined
+    pressed === undefined || props.href !== undefined
       ? {}
       : { [pressedOption.attr]: pressed ? pressedOption.trueValue : pressedOption.falseValue };
 
@@ -172,15 +180,20 @@ export function Button({
   );
 
   if (props.href !== undefined) {
-    const { href, ...anchorProps } = props;
+    /* `disabled` can still arrive from a loose JS call site; strip it so the anchor stays a link. */
+    const { href, disabled: _disabled, ...anchorProps } = props as Extract<ButtonProps, { href: string }> & {
+      disabled?: boolean;
+    };
     return (
-      <a {...anchorProps} {...shared} {...toggle} href={href}>
+      <a {...anchorProps} {...shared} href={href}>
         {body}
       </a>
     );
   }
 
-  const { disabled, type = "button", ...buttonProps } = props;
+  /* Narrowed by hand: a consumer's looser tsconfig (the playground's) does not discriminate the union
+     on `href` through the early return above. */
+  const { disabled, type = "button", ...buttonProps } = props as Extract<ButtonProps, { href?: undefined }>;
   return (
     <button
       {...buttonProps}

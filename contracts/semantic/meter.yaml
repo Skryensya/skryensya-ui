@@ -6,6 +6,8 @@ Meter:
   avoidWhen:
     - "es el avance de una tarea que empieza en 0 y termina en un 100% conocido; eso es Progress"
     - "el avance no tiene un largo conocido; eso es un Loader indeterminado"
+    - "hay que mostrar un número sin barra; eso es Stat o tipografía"
   alternatives:
     - Progress
     - Loader
+    - Stat

@@ -4,6 +4,8 @@ import { contracts } from "@skryensya/core/registry";
 import { SCHEMA_VERSION, type CompiledIndex, type CompiledManifest } from "./artifact.js";
 import { readOverlays, type ContractSemantics } from "./overlay.js";
 import { readChangelogs, type ContractChangelog, type ReleaseLedger } from "./changelog.js";
+import { bindingsOf, hookDetailsOf } from "./contract-details.js";
+import { vocabulary } from "./vocabulary.js";
 
 /*
  * The compiled artifact. Two files, because they answer two questions and an agent should not pay
@@ -67,6 +69,7 @@ export function buildManifest(overlayDir: string, changelogDir?: string): Manife
   const manifest = {
     schemaVersion: SCHEMA_VERSION,
     releases: changes.ledger,
+    vocabulary,
     contracts: Object.fromEntries(
       Object.entries(contracts)
         .sort(([a], [b]) => a.localeCompare(b))
@@ -103,6 +106,7 @@ export function buildManifest(overlayDir: string, changelogDir?: string): Manife
 function indexEntry(id: string, contract: ComponentContract, semantics: ContractSemantics) {
   return {
     id,
+    category: contract.category,
     css: contract.css,
     signatures: Object.entries(contract.signatures).map(([name, signature]) => ({
       id: name,
@@ -124,7 +128,7 @@ function indexEntry(id: string, contract: ComponentContract, semantics: Contract
  * past, which is a different subject that happens to share a key.
  */
 function manifestEntry(contract: ComponentContract, semantics: ContractSemantics) {
-  return { ...contract, semantics };
+  return { ...contract, semantics, bindings: bindingsOf(contract), hookDetails: hookDetailsOf(contract) };
 }
 
 /** Content hash over the canonical form, so the same sources always produce the same id. */

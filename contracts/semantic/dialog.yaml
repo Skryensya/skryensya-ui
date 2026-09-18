@@ -4,10 +4,15 @@ Dialog:
   useWhen:
     - "hay que decidir algo antes de seguir: confirmar un borrado, completar un paso corto"
     - "conviene que el resto de la página quede inerte mientras tanto"
+    - "en móvil el mismo dialog puede pedirse como hoja desde abajo (opción vaul)"
+    - "confirmación destructiva o error bloqueante que necesita atención inmediata (opción alert)"
   avoidWhen:
     - "es información auxiliar que no bloquea; eso es un Tooltip o un Popover"
     - "es una lista de acciones colgada de un botón; eso es un Menu"
     - "el contenido es largo o navegable: eso pide una página, no una caja modal"
+    - "el panel debe ocupar un borde entero a todo alto: eso es Vaul.drawer"
   alternatives:
     - Popover
     - Tooltip
+    - Menu
+    - Vaul.drawer

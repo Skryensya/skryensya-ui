@@ -47,6 +47,7 @@
   }
 
   .sk-steps__marker {
+    box-sizing: border-box;
     position: relative;
     z-index: 1;
     display: inline-grid;

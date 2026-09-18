@@ -3,8 +3,45 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
-surface: "f4b945e83ade0a2b"
+surface: "cadac3ad34b6f319"
 entries:
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Annotation declara systemOwned para leaders
+      body: >-
+        <code>systemOwned</code> lista mark/leader/ring que el binding dibuja tras medir; el template deja el SVG vacío.
+    en:
+      title: Annotation declares systemOwned for leaders
+      body: >-
+        <code>systemOwned</code> lists mark/leader/ring the binding draws after measure; the template leaves the SVG empty.
+  - date: 2026-09-16
+    kind: bugfix
+    target: for
+    es:
+      title: Annotated exige for único por etiqueta y deja de publicar side/for en el marco
+      body: >-
+        Cada entrada de <code>items</code> usa <code>for</code> como clave: sin selector la etiqueta
+        no nombra nada, y dos etiquetas con el mismo selector reclamarían la misma parte. Las
+        opciones <code>side</code> y <code>for</code> salen del bag del marco (solo viven en la
+        entrada), que es donde siempre se escribían.
+    en:
+      title: Annotated requires a unique for per label and drops frame-level side/for
+      body: >-
+        Each <code>items</code> entry uses <code>for</code> as its key: without a selector the label
+        names nothing, and two labels sharing a selector would claim the same part.
+        <code>side</code> and <code>for</code> leave the frame option bag (they only live on the
+        entry), which is where they were always authored.
   - date: 2026-09-11
     kind: rework
     target: ringRadius
@@ -131,3 +168,13 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: El contrato declara el rango de sus números
+      body: >-
+        <code>ringDistance</code> y <code>ringRadius</code> no bajan de 0. Un valor fuera de rango deja de validar en vez de llegar al binding.
+    en:
+      title: The contract declares the range of its numbers
+      body: >-
+        <code>ringDistance</code> and <code>ringRadius</code> do not go below 0. A value out of range stops validating instead of reaching the binding.

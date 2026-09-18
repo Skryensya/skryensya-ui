@@ -3,8 +3,35 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "3e62e0f7a150f4d5"
+surface: "f91549c36afb6b75"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: bugfix
+    target: Code
+    es:
+      title: React tipa Code children como texto
+      body: >-
+        <code>Code</code> declara <code>children: string</code>, igual que el slot del contrato
+        (<code>accepts: "text"</code>). Un bloque resaltado sigue siendo <code>code-preview</code>.
+    en:
+      title: React types Code children as text
+      body: >-
+        <code>Code</code> declares <code>children: string</code>, matching the contract slot
+        (<code>accepts: "text"</code>). A highlighted block remains <code>code-preview</code>.
   - date: 2026-08-23
     kind: breaking
     target: linkTone
@@ -107,3 +134,57 @@ entries:
         <code>docs/decisions/0023-the-kit-ships-its-own-default-sans.md</code>. If your brand uses a
         different family, that is still a preset: override <code>--font-family-body</code> and do not
         import the sheet.
+  - date: 2026-09-16
+    kind: feature
+    es:
+      title: Text publica sus roles de título y Output nombra sus entradas
+      body: >-
+        <code>textRole</code> (<code>eyebrow</code>, <code>subtitle</code>) entra al contrato: los
+        roles ya estaban en la hoja, pero un árbol sólo llegaba a ellos con un
+        <code>data-role</code> que nadie validaba. Output suma <code>outputFor</code>
+        (<code>htmlFor</code> en React). En React, <code>Code</code> ahora exige children, como su slot.
+    en:
+      title: Text publishes its title-block roles and Output names its inputs
+      body: >-
+        <code>textRole</code> (<code>eyebrow</code>, <code>subtitle</code>) joins the contract: the
+        roles were already in the stylesheet, but a tree could only reach them through a
+        <code>data-role</code> nothing validated. Output gains <code>outputFor</code>
+        (<code>htmlFor</code> in React). In React, <code>Code</code> now requires children, as its slot does.
+  - date: 2026-09-16
+    kind: feature
+    es:
+      title: Heading y Text eligen su elemento desde el árbol
+      body: >-
+        <code>headingElement</code> (<code>h1</code>–<code>h6</code>) y <code>textElement</code>
+        (<code>p</code>, <code>div</code>, <code>span</code>) llegan al contrato. Hasta ahora todo
+        Heading compuesto desde un árbol salía como <code>h2</code>, así que un título de página no
+        podía ser un <code>h1</code>. En React siguen siendo la prop <code>as</code>; el aspecto
+        sigue en <code>size</code>.
+    en:
+      title: Heading and Text choose their element from the tree
+      body: >-
+        <code>headingElement</code> (<code>h1</code>–<code>h6</code>) and <code>textElement</code>
+        (<code>p</code>, <code>div</code>, <code>span</code>) join the contract. Until now every
+        Heading composed from a tree came out as an <code>h2</code>, so a page title could not be an
+        <code>h1</code>. In React they are still the <code>as</code> prop; appearance stays on
+        <code>size</code>.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: textRole excluye size, tone y weight, y los alias de Heading avisan
+      body: >-
+        Un Text con <code>textRole</code> y además <code>size</code>, <code>tone</code> o <code>weight</code> deja de validar: el rol ya los fija y ganaba en silencio. <code>headingSize</code> <code>sm</code>, <code>md</code>, <code>lg</code> y <code>display</code> siguen siendo válidos, pero el validador sugiere <code>h3</code>, <code>h2</code>, <code>h1</code> y <code>display-sm</code>.
+    en:
+      title: textRole excludes size, tone and weight, and Heading's aliases advise
+      body: >-
+        A Text with <code>textRole</code> plus <code>size</code>, <code>tone</code> or <code>weight</code> stops validating: the role already sets them and silently won. <code>headingSize</code> <code>sm</code>, <code>md</code>, <code>lg</code> and <code>display</code> stay valid, but the validator suggests <code>h3</code>, <code>h2</code>, <code>h1</code> and <code>display-sm</code>.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie cubre también las restricciones
+      body: >-
+        El hash de superficie ahora incluye las restricciones entre opciones (<code>implies</code>, <code>excludes</code>, <code>notInside</code>, <code>pairs</code>) y <code>outputHooks</code>. Este contrato no cambió; sólo cambió lo que el hash mide.
+    en:
+      title: The surface hash also covers constraints
+      body: >-
+        The surface hash now covers the constraints between options (<code>implies</code>, <code>excludes</code>, <code>notInside</code>, <code>pairs</code>) and <code>outputHooks</code>. This contract did not change; only what the hash measures did.

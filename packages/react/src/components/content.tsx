@@ -1,4 +1,14 @@
-import { contentParts, getToastLiveRegion, hasToastTimeout, toastLiveRegions, type ToastOptions, type ToastTone, contentContract } from "@skryensya/core/content";
+import {
+  contentParts,
+  getToastLiveRegion,
+  hasToastTimeout,
+  toastEvents,
+  toastLiveRegions,
+  type ToastDismissDetails,
+  type ToastOptions,
+  type ToastTone,
+  contentContract,
+} from "@skryensya/core/content";
 import { Button } from "./button.js";
 import { Icon } from "./icon.js";
 import { useCallback, useEffect, useRef, type HTMLAttributes, type ReactNode } from "react";
@@ -7,8 +17,6 @@ import { useCallback, useEffect, useRef, type HTMLAttributes, type ReactNode } f
 const { dismissLabel: dismissLabelOption, tone: toneOption } = contentContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
-
-type WithChildren<T> = T & { children: ReactNode };
 
 export type ToastProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "title"> &
   ToastOptions & {
@@ -25,9 +33,37 @@ export type ToastProps = Omit<HTMLAttributes<HTMLDivElement>, "children" | "titl
     dismissLabel?: string;
     /** Optional decorative leading glyph. It is marked aria-hidden, meaning lives in the text. */
     icon?: ReactNode;
-    title?: ReactNode;
+    /** Title text. Contract slot is `text`; rich markup belongs in `children`. */
+    title?: string;
     tone?: ToastTone;
   };
+
+/** Longest resolved `transition-duration` after `data-dismissing` lands, in ms. Same as Vanilla. */
+function getExitDurationMs(root: HTMLElement): number {
+  return Math.max(
+    0,
+    ...getComputedStyle(root)
+      .transitionDuration.split(",")
+      .map((value) => parseFloat(value) * 1000 || 0),
+  );
+}
+
+function waitForExit(root: HTMLElement, durationMs: number): Promise<void> {
+  return new Promise((resolve) => {
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      root.removeEventListener("transitionend", onTransitionEnd);
+      resolve();
+    };
+    const onTransitionEnd = (event: TransitionEvent) => {
+      if (event.target === root) finish();
+    };
+    root.addEventListener("transitionend", onTransitionEnd);
+    setTimeout(finish, durationMs + 50);
+  });
+}
 
 /** Transient Callout: same anatomy, owned by a floating region and optional timeout. */
 export function Toast({
@@ -43,25 +79,49 @@ export function Toast({
   tone = toneOption.default,
   ...props
 }: ToastProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
   const dismissed = useRef(false);
-  const dismiss = useCallback(
-    (reason: "dismiss" | "timeout") => {
-      if (dismissed.current) return;
-
-      dismissed.current = true;
-      onDismiss?.({ reason });
-    },
-    [onDismiss],
-  );
   const liveRegion = toastLiveRegions[getToastLiveRegion(tone)];
   const hasDismiss = dismissible ?? Boolean(onDismiss);
 
+  const dismiss = useCallback(
+    (reason: ToastDismissDetails["reason"]) => {
+      if (dismissed.current) return;
+      dismissed.current = true;
+
+      const root = rootRef.current;
+      const finish = () => {
+        const details: ToastDismissDetails = { reason };
+        onDismiss?.(details);
+        root?.dispatchEvent(
+          new CustomEvent<ToastDismissDetails>(toastEvents.dismiss, { bubbles: true, detail: details }),
+        );
+      };
+
+      if (!root) {
+        finish();
+        return;
+      }
+
+      // Same exit contract as Vanilla: paint `data-dismissing` first, hold the event until the
+      // transition ends (or skip when duration is 0 / no stylesheet), then announce + callback.
+      root.setAttribute("data-dismissing", "");
+      const durationMs = getExitDurationMs(root);
+      if (durationMs <= 0) {
+        finish();
+        return;
+      }
+      void waitForExit(root, durationMs).then(finish);
+    },
+    [onDismiss],
+  );
+
   useEffect(() => {
-    if (!onDismiss || !hasToastTimeout(timeout)) return;
+    if (!hasToastTimeout(timeout)) return;
 
     const timer = window.setTimeout(() => dismiss("timeout"), timeout);
     return () => window.clearTimeout(timer);
-  }, [dismiss, onDismiss, timeout]);
+  }, [dismiss, timeout]);
 
   return (
     <div
@@ -70,8 +130,10 @@ export function Toast({
       aria-live={liveRegion.ariaLive}
       className={cx(contentParts.toast, className)}
       data-dismissible={hasDismiss ? "" : undefined}
-      data-tone={tone}
       data-sk-toast=""
+      data-timeout={hasToastTimeout(timeout) ? String(timeout) : undefined}
+      data-tone={tone}
+      ref={rootRef}
       role={liveRegion.role}
     >
       {icon ? (

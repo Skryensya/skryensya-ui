@@ -41,6 +41,7 @@ function artifacts({
         contracts: {},
         changelogs: {},
         releases: { working: "0.0.0", releases: [] },
+        vocabulary: {},
         schemaVersion,
         sourceHash: manifestHash,
       }),

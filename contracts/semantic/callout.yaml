@@ -8,4 +8,5 @@ Callout:
     - "el mensaje es efímero y se va solo; eso es un Toast"
     - "la región está vacía por no tener datos; eso es un EmptyState"
   alternatives:
+    - Toast
     - EmptyState

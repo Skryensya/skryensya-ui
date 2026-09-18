@@ -166,7 +166,7 @@ describe("TimeField Vanilla contracts", () => {
   it("reports every change on the root", async () => {
     const root = markup('data-locale="es" data-value="09:30"');
     const onChange = vi.fn();
-    root.addEventListener("sk-value-change", onChange);
+    root.addEventListener("sk:timefieldvaluechange", onChange);
 
     fireEvent.keyDown(segment("hour"), { key: "End" });
 
@@ -218,7 +218,7 @@ describe("TimeField Vanilla contracts", () => {
   it("resyncs its own segments when something ELSE sets data-value after mount", async () => {
     const root = markup('data-locale="es" data-value="09:30"');
     const onChange = vi.fn();
-    root.addEventListener("sk-value-change", (event) => onChange((event as CustomEvent).detail));
+    root.addEventListener("sk:timefieldvaluechange", (event) => onChange((event as CustomEvent).detail));
 
     root.setAttribute("data-value", "14:05");
 
@@ -247,7 +247,7 @@ describe("TimeField Vanilla contracts", () => {
 
     expect(trailingWrapper.className).toBe("sk-time-field__trailing");
     const trigger = trailingWrapper.querySelector<HTMLButtonElement>("button")!;
-    expect(trigger.getAttribute("aria-label")).toBe("Elegir de la lista");
+    expect(trigger.getAttribute("aria-label")).toBe("Choose from list");
     expect(trigger.getAttribute("role")).toBe("combobox");
     // Right after the clear button (a value is set), not before it.
     expect(children.at(-2)).toBe(control.querySelector(".sk-time-field__clear"));
@@ -334,5 +334,15 @@ describe("TimeField Vanilla contracts", () => {
     const hint = document.querySelector<HTMLElement>(".sk-time-field__hint")!;
     expect(group.getAttribute("aria-describedby")).toBe(hint.id);
     expect(segment("hour").getAttribute("aria-required")).toBe("true");
+  });
+
+  it("announces an authored invalid or read-only field on every segment", () => {
+    markup('data-value="09:30" data-invalid data-readonly');
+    const segments = document.querySelectorAll<HTMLElement>("[role='spinbutton']");
+    expect(segments.length).toBeGreaterThan(0);
+    for (const node of segments) {
+      expect(node.getAttribute("aria-invalid")).toBe("true");
+      expect(node.getAttribute("aria-readonly")).toBe("true");
+    }
   });
 });

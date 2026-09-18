@@ -5,9 +5,15 @@ ProcessList:
     - "son instrucciones a seguir y el contenido de cada paso es lo importante"
   avoidWhen:
     - "lo que importa es en qué paso está el usuario; eso es Steps"
+    - "son filas de una lista (enlaces, acciones, metadatos) sin cuerpo de instrucción; eso es List"
   alternatives:
     - Steps
+    - List
 
 ProcessListItem:
   useWhen:
     - "una instrucción dentro de la lista"
+  avoidWhen:
+    - "el ítem reporta complete/current/upcoming; eso es un step de Steps, no una instrucción"
+  alternatives:
+    - Steps

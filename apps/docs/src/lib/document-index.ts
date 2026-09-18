@@ -153,6 +153,14 @@ function textOf(html: string): string {
   return decodeEntities(text).replace(/\s+/g, " ").trim();
 }
 
+/**
+ * A wrapper that is LAYOUT, not content: `data-toc-transparent` on an element makes its children
+ * read as the level it sits at. The component catalog puts each group (heading + list) in a box so
+ * the groups can flow as two columns; without this, those headings would read as nested content and
+ * leave the rail empty, which is exactly what the flat markup there used to exist to avoid.
+ */
+const TOC_TRANSPARENT_ATTR = /\sdata-toc-transparent\b/;
+
 const ID_ATTR = /\sid\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i;
 
 /**
@@ -196,6 +204,8 @@ export function indexDocument(source: string): DocumentIndex {
   const taken = authoredIds(source);
 
   let depth = 0;
+  /** One entry per open element: whether it added a level (false for a transparent wrapper). */
+  const open: boolean[] = [];
   let i = 0;
 
   while (i < source.length) {
@@ -216,7 +226,7 @@ export function indexDocument(source: string): DocumentIndex {
     if (source.startsWith("</", lt)) {
       /* Clamped: a stray closing tag in authored HTML should cost this page its own indentation,
        * not send the count negative and file every heading after it as a section. */
-      depth = Math.max(0, depth - 1);
+      if (open.pop() ?? true) depth = Math.max(0, depth - 1);
       i = tagEnd(source, lt + 2);
       continue;
     }
@@ -264,7 +274,11 @@ export function indexDocument(source: string): DocumentIndex {
       continue;
     }
 
-    if (!closes) depth++;
+    if (!closes) {
+      const transparent = TOC_TRANSPARENT_ATTR.test(tag);
+      open.push(!transparent);
+      if (!transparent) depth++;
+    }
     i = end;
   }
 

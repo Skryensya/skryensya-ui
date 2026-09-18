@@ -3,8 +3,45 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "c2bde6fb0e63fecf"
+surface: "a9ddab0cddc730b9"
 entries:
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: CodePreview declara compose de Button, Icon y Switch
+      body: >-
+        <code>compose</code> documenta toggle/density vía <code>also</code>/<code>hookSheets</code> (<code>systemOwned</code>).
+    en:
+      title: CodePreview declares compose of Button, Icon, and Switch
+      body: >-
+        <code>compose</code> documents toggle/density via <code>also</code>/<code>hookSheets</code> (<code>systemOwned</code>).
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: CodePreview tipifica líneas, cablea lessLabel y declara switch.css
+      body: >-
+        <code>lines</code> y <code>previewLines</code> pasan a <code>number</code>.
+        <code>moreLabel</code> deja de inventar <code>data-more-label</code> (es texto del toggle) y
+        <code>lessLabel</code> se escribe en el botón. Density declara
+        <code>hookSheets</code> con <code>switch.css</code> porque <code>sk-switch</code> no tiene
+        dueño único.
+    en:
+      title: CodePreview types line counts, wires lessLabel, and names switch.css
+      body: >-
+        <code>lines</code> and <code>previewLines</code> become <code>number</code>.
+        <code>moreLabel</code> no longer invents <code>data-more-label</code> (it is toggle text) and
+        <code>lessLabel</code> lands on the button. Density declares <code>hookSheets</code> with
+        <code>switch.css</code> because <code>sk-switch</code> has no unique owner.
   - date: 2026-08-11
     kind: feature
     es:
@@ -47,3 +84,15 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Los textos por defecto pasan a inglés
+      body: >-
+        El kit es una librería en inglés y sus defaults estaban en español: <code>moreLabel</code> Expand, <code>lessLabel</code> Collapse, <code>switchLabel</code> Show the full version. Una interfaz en
+        otro idioma pasa sus propios textos, y el <code>locale</code> que corresponda.
+    en:
+      title: Default texts move to English
+      body: >-
+        The kit is an English library and its defaults were Spanish: <code>moreLabel</code> Expand, <code>lessLabel</code> Collapse, <code>switchLabel</code> Show the full version. An interface in another
+        language passes its own texts, and the <code>locale</code> it needs.

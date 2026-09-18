@@ -35,7 +35,7 @@ export function initHeroTabsToc(): void {
     disposeSpy = connectToc(tocRoot);
   };
 
-  tabsRoot.addEventListener("sk-value-change", (event) => {
+  tabsRoot.addEventListener("sk:tabsvaluechange", (event) => {
     const value = (event as CustomEvent<{ value: string }>).detail?.value;
     const next = value ? panelForHeroTab(tabsRoot, value) : null;
     if (!next) return;

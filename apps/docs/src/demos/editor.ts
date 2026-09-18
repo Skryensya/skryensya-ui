@@ -18,6 +18,7 @@ export const editorAnatomyTree = (t: Translate): UsageTree => ({
       contract: "editor",
       signature: "Editor",
       options: {
+        toolbarLabel: t("kit.textFormatting"),
         name: "anatomy-content",
         defaultValue: "<p>Un párrafo <strong>corto</strong> para nombrar las partes.</p>",
         placeholder: t("demo.editor.placeholder"),
@@ -39,6 +40,7 @@ export const editorTree = (t: Translate): UsageTree => ({
   contract: "editor",
   signature: "Editor",
   options: {
+    toolbarLabel: t("kit.textFormatting"),
     name: "content",
     defaultValue: seedHTML,
     placeholder: t("demo.editor.placeholder"),
@@ -56,6 +58,7 @@ export const editorCompactTree = (t: Translate): UsageTree => ({
   contract: "editor",
   signature: "Editor",
   options: {
+    toolbarLabel: t("kit.textFormatting"),
     name: "compact-content",
     defaultValue: "<p>Un comentario <strong>corto</strong> cabe mejor con una barra chica.</p>",
     placeholder: t("demo.editor.placeholder"),

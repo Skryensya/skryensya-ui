@@ -14,7 +14,7 @@ function markup({ value = "5", min = "0", max = "10", step = "1", disabled = fal
   document.body.innerHTML = `<div data-sk-number-field>
     <label data-sk-number-field-label>Quantity</label>
     <div data-sk-number-field-control>
-      <button data-sk-number-field-decrement type="button" aria-label="Disminuir">
+      <button data-sk-number-field-decrement type="button" aria-label="Decrease">
         <span data-sk-icon="remove"></span>
       </button>
       <input
@@ -27,7 +27,7 @@ function markup({ value = "5", min = "0", max = "10", step = "1", disabled = fal
         step="${step}"
         ${disabled ? "disabled" : ""}
       />
-      <button data-sk-number-field-increment type="button" aria-label="Aumentar">
+      <button data-sk-number-field-increment type="button" aria-label="Increase">
         <span data-sk-icon="add"></span>
       </button>
     </div>
@@ -96,15 +96,15 @@ describe("NumberField vanilla enhancer", () => {
   it("wires the accessible names from the authored aria-label onto the triggers", () => {
     const root = markup();
     const { decrement, increment } = parts(root);
-    expect(decrement.getAttribute("aria-label")).toBe("Disminuir");
-    expect(increment.getAttribute("aria-label")).toBe("Aumentar");
+    expect(decrement.getAttribute("aria-label")).toBe("Decrease");
+    expect(increment.getAttribute("aria-label")).toBe("Increase");
   });
 
-  it("increments and decrements by step, emitting sk-value-change", () => {
+  it("increments and decrements by step, emitting sk:numberfieldvaluechange", () => {
     const root = markup({ value: "5", step: "1" });
     const { input, decrement, increment } = parts(root);
     const handler = vi.fn();
-    root.addEventListener("sk-value-change", handler);
+    root.addEventListener("sk:numberfieldvaluechange", handler);
 
     press(increment);
     flushSync();
@@ -141,11 +141,11 @@ describe("NumberField vanilla enhancer", () => {
     expect(input.value).toBe("10");
   });
 
-  it("commits a typed value on blur and emits sk-value-change", async () => {
+  it("commits a typed value on blur and emits sk:numberfieldvaluechange", async () => {
     const root = markup({ value: "5" });
     const { input } = parts(root);
     const handler = vi.fn();
-    root.addEventListener("sk-value-change", handler);
+    root.addEventListener("sk:numberfieldvaluechange", handler);
 
     await type(input, "8");
     await leave(input);
@@ -215,5 +215,25 @@ describe("NumberField vanilla enhancer", () => {
     fireEvent.keyDown(input, { key: "ArrowDown" });
     flushSync();
     expect(input.value).toBe("0");
+  });
+
+  it("describes the input with an authored hint, the way React does", () => {
+    document.body.innerHTML = `<div data-sk-number-field>
+      <label data-sk-number-field-label>Quantity</label>
+      <div data-sk-number-field-control>
+        <button data-sk-number-field-decrement type="button" aria-label="Decrease"></button>
+        <input data-sk-number-field-input type="text" value="1" />
+        <button data-sk-number-field-increment type="button" aria-label="Increase"></button>
+      </div>
+      <span class="sk-number-field__hint">Up to 10 per order</span>
+    </div>`;
+    const root = document.body.firstElementChild as HTMLElement;
+    expect(mountNumberField(document)).toBe(1);
+    flushSync();
+    const hint = root.querySelector<HTMLElement>(".sk-number-field__hint")!;
+    const input = root.querySelector<HTMLInputElement>("[data-sk-number-field-input]")!;
+    expect(hint.id).not.toBe("");
+    expect(input.getAttribute("aria-describedby")).toContain(hint.id);
+    destroyMount(root);
   });
 });

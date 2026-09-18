@@ -1,3 +1,5 @@
+import { segmentedEvents } from "@skryensya/core/segmented";
+import { tabsEvents } from "@skryensya/core/tabs";
 import {
   componentPreviewAttrs,
   componentPreviewBindingChangeEvent,
@@ -58,7 +60,7 @@ function publishBinding(binding: ComponentPreviewBinding): void {
  *
  * A no-op when already correct: without this guard, syncing the instance that INITIATED the
  * change would re-click its own already-current option, which is at best redundant and at worst a
- * second `sk-value-change` in the middle of handling the first.
+ * second `segmentedEvents.valueChange` in the middle of handling the first.
  */
 function selectSegmentedOption(tabs: HTMLElement | null, optionAttr: string, value: string): void {
   if (!tabs || tabs.getAttribute("data-value") === value) return;
@@ -215,7 +217,7 @@ function publishScreen(screen: ComponentPreviewScreen): void {
 
 /**
  * Screen presets for the stage: a real Segmented (Libre | XL | Tablet | Móvil), the site's global
- * enhancer already knows how to run. This module only reacts to the `sk-value-change` it
+ * enhancer already knows how to run. This module only reacts to the `segmentedEvents.valueChange` it
  * dispatches on itself, the same way `sourceTabs` below reacts to Tabs' own event, rather than
  * re-implementing Segmented's click handling, aria-checked painting or sliding indicator.
  *
@@ -315,7 +317,7 @@ function connectScreenTabs(root: HTMLElement): Cleanup {
     }
   };
 
-  tabs?.addEventListener("sk-value-change", onValueChange);
+  tabs?.addEventListener(segmentedEvents.valueChange, onValueChange);
   if (!localScreen) document.addEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
   const onViewportChange = () => {
     applyEffectiveScreen(currentUnforcedScreen);
@@ -350,7 +352,7 @@ function connectScreenTabs(root: HTMLElement): Cleanup {
   return () => {
     resizeObserver?.disconnect();
     viewport?.removeEventListener("change", onViewportChange);
-    tabs?.removeEventListener("sk-value-change", onValueChange);
+    tabs?.removeEventListener(segmentedEvents.valueChange, onValueChange);
     if (!localScreen) document.removeEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
   };
 }
@@ -848,8 +850,8 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
   const disconnectSourceToggle = connectSourceToggles(root);
   const disconnectStageLifecycle = connectStageLifecycle(root);
 
-  bindingTabs?.addEventListener("sk-value-change", onBindingValueChange);
-  sourceTabs?.addEventListener("sk-value-change", onSourceChange);
+  bindingTabs?.addEventListener(segmentedEvents.valueChange, onBindingValueChange);
+  sourceTabs?.addEventListener(tabsEvents.valueChange, onSourceChange);
   document.addEventListener(componentPreviewBindingChangeEvent, onSharedBinding);
   reload?.addEventListener("click", onReload);
   playground?.addEventListener("click", onPlayground as EventListener);
@@ -870,8 +872,8 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
   if (initialSource === "html" || initialSource === "js") showSource(initialSource);
 
   return () => {
-    bindingTabs?.removeEventListener("sk-value-change", onBindingValueChange);
-    sourceTabs?.removeEventListener("sk-value-change", onSourceChange);
+    bindingTabs?.removeEventListener(segmentedEvents.valueChange, onBindingValueChange);
+    sourceTabs?.removeEventListener(tabsEvents.valueChange, onSourceChange);
     document.removeEventListener(componentPreviewBindingChangeEvent, onSharedBinding);
     reload?.removeEventListener("click", onReload);
     playground?.removeEventListener("click", onPlayground as EventListener);

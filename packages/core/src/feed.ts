@@ -22,6 +22,7 @@ export type FeedPartClass = (typeof feedParts)[FeedPart];
 
 export const feedContract = {
   id: "feed",
+  category: "content",
   css: "@skryensya/core/components/feed.css",
   parts: feedParts,
   hooks: [
@@ -43,11 +44,22 @@ export const feedContract = {
      */
     busy: { type: "boolean", default: false, attr: "aria-busy", trueValue: "true", falseValue: "false" },
     /** This article's 1-based position in the feed. */
-    posInset: { type: "number", attr: "aria-posinset" },
+    posInset: { type: "number", min: 1, integer: true, attr: "aria-posinset" },
     /** Total articles currently loaded (or the whole feed's length, if known). WAI allows `-1`
      *  when the true count is undetermined (an infinite-scroll feed with no known end). */
-    setSize: { type: "number", attr: "aria-setsize" },
+    setSize: { type: "number", min: -1, integer: true, attr: "aria-setsize" },
   },
+
+  a11y: [
+    {
+      signatures: ["Feed"],
+      when: { label: "absent" },
+      requiresOneOf: ["label"],
+      because:
+        'role="feed" carries no implicit name. Without one, a screen reader enters a stream of ' +
+        "articles with nothing saying what the stream is about.",
+    },
+  ],
 
   signatures: {
     Feed: {
@@ -55,7 +67,15 @@ export const feedContract = {
       host: { element: "div" },
       options: ["label", "busy"],
       requires: ["label"],
-      slots: { children: { accepts: "signature", required: true, of: ["FeedArticle"] } },
+      slots: {
+        children: {
+          accepts: "signature",
+          required: true,
+          of: ["FeedArticle"],
+          /* What each article tells a screen reader ("3 of 20") has to agree across the feed. */
+          positions: { posInset: "posInset", setSize: "setSize" },
+        },
+      },
       template: {
         element: "div",
         part: "root",

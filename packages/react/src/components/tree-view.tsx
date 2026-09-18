@@ -1,8 +1,8 @@
-import { treeViewContract, treeViewParts, type TreeNode } from "@skryensya/core/tree-view";
+import { treeViewContract, treeViewEvents, treeViewParts, type TreeNode } from "@skryensya/core/tree-view";
 import type { OptionValue } from "@skryensya/core/contract";
 import { treeView } from "@skryensya/core/machines";
 import { normalizeProps, useMachine } from "@zag-js/react";
-import { useId, useMemo, type ReactNode } from "react";
+import { useId, useMemo, useRef, type ReactNode } from "react";
 
 /* Derived, never restated: the default lives in the contract. */
 const { selectionMode: selectionModeOption } = treeViewContract.options;
@@ -127,6 +127,10 @@ export function TreeView({
   selectionMode = selectionModeOption.default,
 }: TreeViewProps) {
   const generatedId = useId();
+  /* The contract's events go out on the root, as the Vanilla enhancer sends them, beside the callbacks. */
+  const rootRef = useRef<HTMLDivElement>(null);
+  const announce = (name: string, detail: unknown) =>
+    rootRef.current?.dispatchEvent(new CustomEvent(name, { bubbles: true, detail }));
   const defaultExpandedValue =
     typeof defaultExpandedValueProp === "string"
       ? defaultExpandedValueProp.split(/[\s,]+/).filter(Boolean)
@@ -156,15 +160,17 @@ export function TreeView({
     translations: { treeLabel: label },
     onSelectionChange(details) {
       onSelectionChange?.({ selectedValue: details.selectedValue });
+      announce(treeViewEvents.selectionChange, { selectedValue: details.selectedValue });
     },
     onExpandedChange(details) {
       onExpandedChange?.({ expandedValue: details.expandedValue });
+      announce(treeViewEvents.expandedChange, { expandedValue: details.expandedValue });
     },
   });
   const api = treeView.connect(service, normalizeProps);
 
   return (
-    <div {...api.getRootProps()} className={treeViewParts.root}>
+    <div {...api.getRootProps()} className={treeViewParts.root} data-sk-tree-view="" ref={rootRef}>
       <ul {...api.getTreeProps()} className={treeViewParts.tree}>
         {nodes.map((node, index) => (
           <NodeView

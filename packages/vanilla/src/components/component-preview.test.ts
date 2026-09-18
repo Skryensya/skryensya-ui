@@ -37,8 +37,9 @@ function markup(id: string): string {
   `;
 }
 
-function changeValue(target: Element, value: string): void {
-  target.dispatchEvent(new CustomEvent("sk-value-change", { detail: { value }, bubbles: true }));
+/* The binding and screen switches are Segmented; the source switch is Tabs. Each dispatches its own. */
+function changeValue(target: Element, value: string, event = "sk:segmentedvaluechange"): void {
+  target.dispatchEvent(new CustomEvent(event, { detail: { value }, bubbles: true }));
 }
 
 /** jsdom ships no PointerEvent: a MouseEvent carrying the two fields the resizer reads. */
@@ -129,7 +130,7 @@ describe("ComponentPreview opt-in enhancer", () => {
     expect(vanillaOption.getAttribute("aria-checked")).toBe("true");
     expect(reactOption.getAttribute("aria-checked")).toBe("false");
 
-    changeValue(sourceTabs, "js");
+    changeValue(sourceTabs, "js", "sk:tabsvaluechange");
     expect(html.hidden).toBe(true);
     expect(js.hidden).toBe(false);
 

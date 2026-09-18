@@ -3,8 +3,42 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "d780b343280d5990"
+surface: "7292c19dfaecedeb"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    target: BadgeHolder
+    es:
+      title: BadgeHolder declara hitTesting para el badge anclado
+      body: >-
+        <code>BadgeHolder.hitTesting.childrenNone</code> nombra <code>Badge</code> y
+        <code>BadgeDot</code>: bajo el holder no reciben clics (<code>pointer-events: none</code>
+        en la hoja). El manifiesto y el vocabulario publican el canal.
+    en:
+      title: BadgeHolder declares hitTesting for the anchored badge
+      body: >-
+        <code>BadgeHolder.hitTesting.childrenNone</code> names <code>Badge</code> and
+        <code>BadgeDot</code>: under the holder they do not receive clicks
+        (<code>pointer-events: none</code> in the stylesheet). The manifest and vocabulary publish
+        the channel.
+  - date: 2026-09-16
+    kind: feature
+    target: BadgeHolder
+    es:
+      title: BadgeHolder acepta pills, avatares con foto, y ordena ancla → badge
+      body: >-
+        El slot de <code>BadgeHolder</code> ahora admite <code>Badge</code> (conteo en esquina) y
+        <code>Avatar.image</code> además de Dot e initials, con <code>ordered</code> y cardinalidad
+        por signature. El badge anclado sigue sin recibir clics (<code>pointer-events: none</code>
+        en la hoja). Los intents de <code>Badge</code> dejan de solaparse con unread-dot.
+    en:
+      title: BadgeHolder accepts pills, photo avatars, and orders anchor → badge
+      body: >-
+        <code>BadgeHolder</code>'s slot now allows <code>Badge</code> (corner counts) and
+        <code>Avatar.image</code> alongside Dot and initials, with <code>ordered</code> and
+        per-signature cardinality. The anchored badge still does not receive clicks
+        (<code>pointer-events: none</code> in the stylesheet). <code>Badge</code> intents no longer
+        overlap unread-dot.
   - date: 2026-08-27
     kind: feature
     es:
@@ -93,3 +127,13 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: BadgeHolder toma exactamente un ancla y un badge
+      body: >-
+        Antes cada firma era opcional por separado, así que un ancla sola, un badge solo o dos anclas distintas validaban. Ahora los anclas y los badges se cuentan como grupo: uno de cada.
+    en:
+      title: BadgeHolder takes exactly one anchor and one badge
+      body: >-
+        Each signature used to be optional on its own, so a lone anchor, a lone badge or two different anchors validated. Anchors and badges now count as groups: one of each.

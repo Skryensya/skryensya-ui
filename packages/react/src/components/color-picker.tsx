@@ -1,8 +1,9 @@
-import { colorPickerParts, colorPickerPanelParts } from "@skryensya/core/color-picker";
+import { colorPickerAttrs, colorPickerParts, colorPickerPanelParts, colorPickerEvents } from "@skryensya/core/color-picker";
+import { colorPickerContract } from "@skryensya/core/color-picker";
 import { oklchToRgb, rgbToOklch, type RgbColor } from "@skryensya/core/color";
 import { colorPicker } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine, type PropTypes } from "@zag-js/react";
-import { useId, useState, type ReactNode, type RefObject } from "react";
+import { useId, useRef, useState, type RefObject } from "react";
 import { useAnchored } from "./anchored.js";
 
 // Without depending on `@zag-js/color-picker` directly (react does not bring it as a dependency of its
@@ -15,7 +16,7 @@ export type ColorPickerProps = {
   container?: RefObject<HTMLElement>;
   id?: string;
   name?: string;
-  label?: ReactNode;
+  label?: string;
   value?: string;
   defaultValue?: string;
   disabled?: boolean;
@@ -52,11 +53,12 @@ function useColorPicker({
   onValueChange,
   readOnly,
   required,
+  rootRef,
   value,
 }: Pick<
   ColorPickerProps,
   "defaultValue" | "disabled" | "id" | "invalid" | "name" | "onValueChange" | "readOnly" | "required" | "value"
->) {
+> & { rootRef: RefObject<HTMLDivElement | null> }) {
   const generatedId = useId();
   const resolvedId = id ?? generatedId;
   const service = useMachine(colorPicker.machine, {
@@ -69,7 +71,11 @@ function useColorPicker({
     required,
     invalid,
     onValueChange(details) {
-      onValueChange?.({ value: details.valueAsString });
+      const next = { value: details.valueAsString };
+      onValueChange?.(next);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(colorPickerEvents.valueChange, { bubbles: true, detail: next }),
+      );
     },
   });
   return { api: colorPicker.connect(service, normalizeProps), resolvedId };
@@ -81,21 +87,29 @@ function ColorPickerField({
   container,
   label,
   resolvedId,
+  rootRef,
   swatches,
   triggerLabel,
 }: {
   anatomy: "full" | "compact";
   api: ColorPickerApi;
   container?: ColorPickerProps["container"];
-  label?: ReactNode;
+  label?: string;
   resolvedId: string;
+  rootRef: RefObject<HTMLDivElement | null>;
   swatches?: readonly string[];
   triggerLabel?: string;
 }) {
   const anchor = useAnchored(resolvedId);
 
   return (
-    <div {...api.getRootProps()} className={colorPickerParts.root} data-anatomy={anatomy}>
+    <div
+      {...api.getRootProps()}
+      className={colorPickerParts.root}
+      data-anatomy={anatomy}
+      ref={rootRef}
+      {...{ [colorPickerAttrs.root]: "" }}
+    >
       {label ? (
         <label {...api.getLabelProps()} className={colorPickerParts.label}>
           {label}
@@ -113,12 +127,12 @@ function ColorPickerField({
          * Zag ALWAYS sends an `aria-labelledby` (pointing at the field's label) in addition to its own
          * `aria-label` ("select color. current color is ..."); `aria-labelledby` beats `aria-label` in
          * the accessible name algorithm, so it is omitted here so that `triggerLabel`  -  THIS
-         * contract's naming mechanism, defaulting to "Elegir color"  -  is the one in charge, the same
+         * contract's naming mechanism, defaulting to the contract's own "Choose color"  -  is the one in charge, the same
          * way the Vanilla binding does it.
          */}
         <button
           {...api.getTriggerProps()}
-          aria-label={triggerLabel ?? "Elegir color"}
+          aria-label={triggerLabel ?? colorPickerContract.options.triggerLabel.default}
           aria-labelledby={undefined}
           className={`${colorPickerParts.trigger} sk-button sk-interactive`}
           data-icon-only=""
@@ -139,12 +153,14 @@ function ColorPickerField({
 }
 
 export function ColorPicker(props: ColorPickerProps) {
-  const { api, resolvedId } = useColorPicker(props);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const { api, resolvedId } = useColorPicker({ ...props, rootRef });
   return (
     <ColorPickerField
       anatomy="full"
       api={api}
       resolvedId={resolvedId}
+      rootRef={rootRef}
       {...props}
       swatches={asSwatches(props.swatches)}
     />
@@ -152,12 +168,14 @@ export function ColorPicker(props: ColorPickerProps) {
 }
 
 export function CompactColorPicker(props: ColorPickerProps) {
-  const { api, resolvedId } = useColorPicker(props);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const { api, resolvedId } = useColorPicker({ ...props, rootRef });
   return (
     <ColorPickerField
       anatomy="compact"
       api={api}
       resolvedId={resolvedId}
+      rootRef={rootRef}
       {...props}
       swatches={asSwatches(props.swatches)}
     />
@@ -350,7 +368,7 @@ function ColorPickerPanelBody({
 }
 
 export type NativeColorPickerProps = {
-  label: ReactNode;
+  label: string;
   name?: string;
   value?: string;
   defaultValue?: string;

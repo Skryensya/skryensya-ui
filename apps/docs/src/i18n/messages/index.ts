@@ -23,9 +23,8 @@ export const indexMessages = {
     "indexPage.title": "Explorar componentes",
     "indexPage.description": "Componentes, patrones y primitivas organizados según la tarea que resuelven.",
     "indexPage.lede":
-      'Empieza por la tarea: capturar datos, orientar, presentar contenido o comunicar estado. Cada tarjeta explica cuándo usar la pieza. Si buscas reglas, roles y sets de iconos, ve a <a href="/es/fundamentos">Fundamentos</a>.',
+      'Empieza por la tarea: capturar datos, orientar, presentar contenido o comunicar estado. Cada fila explica cuándo usar la pieza. Si buscas reglas, roles y sets de iconos, ve a <a href="/es/fundamentos">Fundamentos</a>.',
     "indexPage.searchLabel": "Buscar componentes",
-    "indexPage.countSuffix": "componentes",
 
     "landing.title": "skryensya/ui",
     "landing.description":
@@ -303,9 +302,8 @@ export const indexMessages = {
     "indexPage.title": "Explore components",
     "indexPage.description": "Components, patterns, and primitives organized by the task they solve.",
     "indexPage.lede":
-      'Start with the task: capture data, provide orientation, present content, or communicate status. Each card explains when to use the piece. For icon roles, sets, and rules, go to <a href="/foundations">Foundations</a>.',
+      'Start with the task: capture data, provide orientation, present content, or communicate status. Each row explains when to use the piece. For icon roles, sets, and rules, go to <a href="/foundations">Foundations</a>.',
     "indexPage.searchLabel": "Search components",
-    "indexPage.countSuffix": "components",
 
     "landing.title": "skryensya/ui",
     "landing.description":

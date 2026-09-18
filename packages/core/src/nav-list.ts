@@ -37,6 +37,7 @@ export type NavListPartClass = (typeof navListParts)[NavListPart];
  */
 export const navListContract = {
   id: "nav-list",
+  category: "navigation",
   css: "@skryensya/core/patterns/nav-list.css",
   parts: navListParts,
   hooks: [
@@ -150,6 +151,16 @@ export const navListContract = {
        * panel), never what it renders.
        */
       parents: ["NavList", "NavListLink", "MegamenuTrigger"],
+      /*
+       * A collapsible trigger with nothing to click, or a heading with nothing to announce, is not
+       * a quieter group: it is a broken disclosure / empty landmark. `heading` without `label` is
+       * the same hole the option's own doc already flags; `implies` is what makes the validator
+       * refuse it instead of trusting prose.
+       */
+      implies: { collapsible: ["label"], heading: ["label"] },
+      /* Collapsible already renders a real `<button>`; `heading` would be ignored (template
+       * `whenMissing: "collapsible"`). Saying both is stating the same landmark twice. */
+      excludes: { collapsible: ["heading"] },
       slots: {
         label: { accepts: "node" },
         children: { accepts: "signature", required: true, of: ["NavListLink"] },
@@ -245,6 +256,8 @@ export const navListContract = {
       options: ["href", "current"],
       parents: ["NavListGroup"],
       requires: ["href"],
+      /** Link host attrs beyond href/current (Button.navigation peer). */
+      forward: ["id", "target", "rel", "download", "aria-*"],
       slots: {
         /** Decorative: the label names the link, so the icon carries no label of its own. */
         icon: { accepts: "node" },

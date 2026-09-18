@@ -146,6 +146,7 @@
   }
 
   .sk-carousel__button {
+    box-sizing: border-box;
     display: inline-grid;
     place-items: center;
     flex: none;

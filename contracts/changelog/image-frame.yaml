@@ -3,8 +3,18 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "ad896dd88f554a7d"
+surface: "09688828bda4a24a"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: ImageFrame declara compose de media-gradient
+      body: >-
+        <code>compose</code> documenta el caption MediaCaption (contrato media-gradient) del slot.
+    en:
+      title: ImageFrame declares compose of media-gradient
+      body: >-
+        <code>compose</code> documents the MediaCaption (media-gradient contract) caption slot.
   - date: 2026-08-11
     kind: feature
     es:
@@ -45,3 +55,13 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: ImageFrame elige su elemento
+      body: >-
+        <code>frameElement</code> (<code>div</code> o <code>figure</code>), lo que React ya permitía con <code>as</code>: <code>figure</code> cuando un caption nombra la imagen.
+    en:
+      title: ImageFrame chooses its element
+      body: >-
+        <code>frameElement</code> (<code>div</code> or <code>figure</code>), what React already allowed through <code>as</code>: <code>figure</code> when a caption names the media.

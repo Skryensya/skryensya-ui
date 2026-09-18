@@ -171,8 +171,8 @@
   bindParts(bindings);
 
   /*
-   * The public event contract, untouched: `sk-carousel-change` on page change (by scroll, button, key,
-   * drag or goto) and `sk-carousel-goto` as an input command. `index` is the PAGE, which with the
+   * The public event contract, untouched: `sk:carouselchange` on page change (by scroll, button, key,
+   * drag or goto) and `sk:carouselgoto` as an input command. `index` is the PAGE, which with the
    * default of one slide per page is the slide's index.
    */
   let lastPage = -1;

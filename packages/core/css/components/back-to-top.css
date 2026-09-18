@@ -83,6 +83,7 @@
     /* Where the pop starts from. */
     --sk-back-to-top-enter-scale: 0.82;
 
+    box-sizing: border-box;
     /*
      * `relative` is STRUCTURE, not placement: `::after` (the touch target) and `__label` (the
      * clipped accessible name) are both `position: absolute` and need this box to be their

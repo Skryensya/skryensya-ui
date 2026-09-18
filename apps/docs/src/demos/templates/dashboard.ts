@@ -141,8 +141,9 @@ export const dashboardTree = (t: Translate, locale: "es" | "en"): UsageTree => {
         ],
       },
       {
-        contract: "box",
-        signature: "Box",
+        contract: "layout",
+        signature: "Stack",
+        options: { gap: "none" },
         attrs: { class: "app-shell" },
         children: [
           {

@@ -21,19 +21,27 @@
     gap: var(--sk-radio-group-gap);
   }
 
+  /*
+   * EVERY HOOK ABOVE IS READ WITH ITS OWN VALUE AS A FALLBACK, because a radio can now stand alone
+   * (`Radio`, one cell of a matrix) and the declarations live on the GROUP. Without the fallbacks a
+   * lone radio inherited nothing and painted a zero-sized control: present in the accessibility tree,
+   * invisible on screen. The group's declaration still wins wherever there is one, so a consumer
+   * retuning `.sk-radio-group { --sk-radio-hit-size }` keeps working exactly as before.
+   */
+
   /* Radio and TileRadio share the same face: a 20px outline with a 10px dot. Selection never fills
    * the outer circle by default, and these hooks can still customise selected colors independently
    * without tinting the label. */
   .sk-radio:has(.sk-radio__input:checked) {
-    --sk-radio-bg: var(--sk-radio-selected-bg);
-    --sk-radio-border-color: var(--sk-radio-selected-border-color);
+    --sk-radio-bg: var(--sk-radio-selected-bg, transparent);
+    --sk-radio-border-color: var(--sk-radio-selected-border-color, var(--color-border-accent));
   }
 
   .sk-radio:has(.sk-radio__input:disabled) {
-    --sk-radio-bg: var(--sk-radio-disabled-bg);
-    --sk-radio-fg: var(--sk-radio-disabled-fg);
-    --sk-radio-border-color: var(--sk-radio-disabled-border-color);
-    --sk-radio-selected-fg: var(--sk-radio-disabled-fg);
+    --sk-radio-bg: var(--sk-radio-disabled-bg, transparent);
+    --sk-radio-fg: var(--sk-radio-disabled-fg, var(--color-text-disabled));
+    --sk-radio-border-color: var(--sk-radio-disabled-border-color, var(--color-border-subtle));
+    --sk-radio-selected-fg: var(--sk-radio-disabled-fg, var(--color-text-disabled));
 
     cursor: not-allowed;
   }
@@ -43,11 +51,18 @@
     grid-auto-columns: max-content;
   }
 
+  /* `spread`: equal steps across the full width, which is what a scale is. Vertical groups ignore it;
+     a column is already as wide as its container. */
+  .sk-radio-group[data-orientation="horizontal"][data-spread] {
+    inline-size: 100%;
+    grid-auto-columns: minmax(0, 1fr);
+  }
+
   .sk-radio {
     display: inline-flex;
-    gap: var(--sk-radio-gap);
+    gap: var(--sk-radio-gap, var(--space-inline-xs));
     align-items: center;
-    color: var(--sk-radio-fg);
+    color: var(--sk-radio-fg, var(--color-text-primary));
     cursor: pointer;
   }
 
@@ -62,8 +77,8 @@
   .sk-radio__control {
     display: inline-grid;
     place-items: center;
-    inline-size: var(--sk-radio-hit-size);
-    block-size: var(--sk-radio-hit-size);
+    inline-size: var(--sk-radio-hit-size, var(--size-icon-lg));
+    block-size: var(--sk-radio-hit-size, var(--size-icon-lg));
     flex: none;
     border-radius: var(--radius-pill);
     /* The press squeeze lives here, on the hit-box, not on `::before`: ring and dot share this one
@@ -85,11 +100,11 @@
   .sk-radio__control::before {
     content: "";
     grid-area: 1 / 1;
-    inline-size: var(--sk-radio-control-size);
-    block-size: var(--sk-radio-control-size);
-    border: var(--sk-radio-border-width) solid var(--sk-radio-border-color);
+    inline-size: var(--sk-radio-control-size, var(--size-icon-md));
+    block-size: var(--sk-radio-control-size, var(--size-icon-md));
+    border: var(--sk-radio-border-width, 1px) solid var(--sk-radio-border-color, var(--color-border-strong));
     border-radius: inherit;
-    background: var(--sk-radio-bg);
+    background: var(--sk-radio-bg, transparent);
     /* The ring's border is the SELECTION, state-change intent, same as checkbox.css's control fill.
      * It used to snap the instant `:checked` flipped; the dot below already had somewhere to
      * transition FROM and TO, the ring did not. */
@@ -114,7 +129,7 @@
     inline-size: 0.625rem;
     block-size: 0.625rem;
     border-radius: inherit;
-    background: var(--sk-radio-selected-fg);
+    background: var(--sk-radio-selected-fg, var(--color-action-accent));
     opacity: 0;
     scale: 0.25;
     filter: blur(4px);

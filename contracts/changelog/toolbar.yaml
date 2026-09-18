@@ -3,8 +3,32 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "258173868337529c"
+surface: "8995f50c928b2042"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
   - date: 2026-08-11
     kind: feature
     es:
@@ -46,3 +70,35 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: ToolbarGroup admite groupLabel y loopFocus escribe false
+      body: >-
+        <code>ToolbarGroup</code> acepta <code>groupLabel</code> (<code>aria-label</code>).
+        <code>loopFocus</code> pasa a <code>falseValue: "false"</code> en vez de un atributo de
+        presencia, alineado con React.
+    en:
+      title: ToolbarGroup takes groupLabel and loopFocus writes false
+      body: >-
+        <code>ToolbarGroup</code> accepts <code>groupLabel</code> (<code>aria-label</code>).
+        <code>loopFocus</code> now uses <code>falseValue: "false"</code> instead of a presence
+        attribute, matching React.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: La barra tiene de verdad una sola parada de tabulación
+      body: >-
+        El contrato prometía una parada y ningún binding manejaba <code>tabindex</code>: las flechas
+        movían el foco, pero Tab seguía pasando por cada botón. Ahora los dos aplican roving
+        tabindex con la misma función de core (<code>toolbarStops</code>): un Segmented o unas Tabs
+        adentro cuentan como una parada, Tab vuelve al último control usado, y un control agregado
+        después del montaje entra en la cuenta la primera vez que el foco llega a la barra.
+    en:
+      title: The bar really has one tab stop
+      body: >-
+        The contract promised one stop and neither binding managed <code>tabindex</code>: arrow keys
+        moved focus, but Tab still visited every button. Both now apply a roving tabindex through the
+        same core function (<code>toolbarStops</code>): a Segmented or Tabs inside counts as one stop,
+        Tab returns to the last control used, and a control added after mount joins the first time
+        focus reaches the bar.

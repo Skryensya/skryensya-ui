@@ -38,13 +38,36 @@ export const menubarParts = {
 export type MenubarPart = keyof typeof menubarParts;
 export type MenubarPartClass = (typeof menubarParts)[MenubarPart];
 
+export const menubarAttrs = {
+  root: "data-sk-menubar",
+  item: "data-sk-menubar-item",
+} as const;
+
 export const menubarContract = {
   id: "menubar",
+  category: "actions",
   css: "@skryensya/core/components/menubar.css",
   parts: menubarParts,
   hooks: [
+    "--sk-anchored-align",
+    "--sk-anchored-arrow-edge",
+    "--sk-anchored-arrow-near",
+    "--sk-anchored-justify",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-anchored-size",
+    "--sk-anchored-z",
     "--sk-menubar-gap",
   ],
+  /*
+   * Each dropdown item embeds Menu's portable popup (`sk-anchor` / `sk-anchored`). Those classes
+   * have no unique owner in any contract's `parts`, so `sheetsForTree` cannot discover
+   * `anchored.css` from `also` alone. Hooks from that sheet are listed above so the hook gate
+   * stays closed (same shape as Menu/Megamenu/Breadcrumb). `menu.css` arrives via `also: sk-menu`
+   * on every item wrapper.
+   */
+  hookSheets: ["@skryensya/core/patterns/anchored.css"],
 
   options: {
     /** The bar's accessible name. `role="menubar"` carries no implicit one. */
@@ -66,6 +89,8 @@ export const menubarContract = {
       host: { element: "div" },
       options: ["label"],
       requires: ["label"],
+      /** Host id / a11y; label stays the option. */
+      forward: ["id", "aria-*"],
       slots: { children: { accepts: "signature", required: true, of: ["MenubarItem"] } },
       template: {
         element: "div",
@@ -74,7 +99,7 @@ export const menubarContract = {
         attrs: { role: "menubar" },
         slot: "children",
       },
-      mount: "data-sk-menubar",
+      mount: menubarAttrs.root,
       react: { from: "@skryensya/react/menubar", name: "Menubar" },
     },
 
@@ -86,6 +111,18 @@ export const menubarContract = {
      * the shape" rule `TreeView`'s branch-vs-leaf already uses.
      */
     MenubarItem: {
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        {
+          of: "menu",
+          sheets: [
+            "@skryensya/core/components/menu.css",
+            "@skryensya/core/patterns/anchored.css",
+          ],
+          systemOwned: true,
+        },
+        { of: "nav-list", sheets: ["@skryensya/core/patterns/nav-list.css"] },
+      ],
       intent: ["menubar-command", "menubar-dropdown-trigger"],
       // The HOST is a wrapper, not the button: a `<button>` cannot contain another interactive
       // element as a descendant (Menu's own popup, full of its own `menuitem`s, counts), so the
@@ -98,7 +135,7 @@ export const menubarContract = {
       /* Its dropdown is `Menu`'s own popup, and that portals. Same reason `Menu` itself declares
          this: React needs a container ref that keeps the floating content inside whatever subtree
          a scoped host (a preview frame, this repo's own symmetry gate) actually measures. */
-      portals: true,
+      portals: { container: true },
       slots: {
         children: { accepts: "text", required: true },
         /** Menu's own item shape, verbatim; see the header comment above. */
@@ -146,7 +183,7 @@ export const menubarContract = {
               "data-variant": "ghost",
               "data-size": "sm",
             },
-            mount: "data-sk-menubar-item",
+            mount: menubarAttrs.item,
             slot: "children",
             whenMissing: "nav",
             /*
@@ -185,7 +222,7 @@ export const menubarContract = {
               role: "menuitem",
               [menuAttrs.trigger]: "",
             },
-            mount: "data-sk-menubar-item",
+            mount: menubarAttrs.item,
             whenGiven: "nav",
             children: [
               { element: "span", also: ["sk-nav-list__label"], slot: "children" },

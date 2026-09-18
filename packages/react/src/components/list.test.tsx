@@ -37,4 +37,30 @@ describe("List", () => {
 
     expect(ui.getByRole("list").tagName).toBe("OL");
   });
+
+  it("turns dividers off and densifies rows when asked", () => {
+    const ui = render(
+      <List density="compact" dividers={false} aria-label="Inbox">
+        <ListItem title="Uno" />
+        <ListItemButton title="Actuar" />
+      </List>,
+    );
+
+    const list = ui.getByRole("list", { name: "Inbox" });
+    expect(list.getAttribute("data-density")).toBe("compact");
+    expect(list.getAttribute("data-dividers")).toBe("none");
+    expect(ui.getByRole("button", { name: "Actuar" }).className).toContain("sk-list__action");
+  });
+
+  it("disables ListItemButton with native disabled and aria-disabled", () => {
+    const ui = render(
+      <List aria-label="Acciones">
+        <ListItemButton disabled title="Cerrar sesión" />
+      </List>,
+    );
+
+    const button = ui.getByRole("button", { name: "Cerrar sesión" }) as HTMLButtonElement;
+    expect(button.disabled).toBe(true);
+    expect(button.getAttribute("aria-disabled")).toBe("true");
+  });
 });

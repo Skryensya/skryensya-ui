@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-14T18:25:15.279Z",
+  "generatedAt": "2026-09-18T04:56:05.241Z",
   "results": {
     "apps/docs/src/components/pages/CardPage.test.ts": {
       "imports tile.css, which Base.astro never loads globally": "passed",
@@ -151,6 +151,50 @@
       "warns that a logo needs real error correction behind it": "passed",
       "warns when the logo is larger than the level can recover": "passed"
     },
+    "packages/core/src/questionnaire.test.ts": {
+      "starts on the first enabled question with nothing answered": "passed",
+      "honours defaultItem, but never a disabled one": "passed",
+      "keeps only default answers the question can hold": "passed",
+      "single choice: selecting replaces the choice and clears the free text": "passed",
+      "single choice: typing an answer clears the choice": "passed",
+      "multiple choice keeps the definition's order and ignores disabled choices": "passed",
+      "deselecting the last choice removes the answer entirely": "passed",
+      "does not change state for unknown, disabled or text-less targets": "passed",
+      "whitespace alone is not an answer": "passed",
+      "next validates a required question, marks it attempted and asks for focus on the error": "passed",
+      "an error is only shown after an attempt, and clears once answered": "passed",
+      "moves past an answered question and skips disabled ones": "passed",
+      "previous goes back without validating, and does nothing on the first question": "passed",
+      "next does nothing on the last question; advance asks the binding to submit": "passed",
+      "goTo moves to any enabled question": "passed",
+      "reports position and what the buttons may do": "passed",
+      "is refused on a required question": "passed",
+      "settles an optional question without erasing its answer, and moves on": "passed",
+      "on the last question it stays put instead of submitting": "passed",
+      "answering a skipped question takes the skip back": "passed",
+      "jumps back to the first invalid question and focuses its answer": "passed",
+      "lets a valid questionnaire through with its values, leaving out skipped questions": "passed",
+      "single submits its choice or its text; multiple submits choices and text together": "passed",
+      "keeps answers for questions that survive and moves off a question that went away": "passed",
+      "auto-advances into the yes branch": "passed",
+      "auto-advances into the no branch": "passed",
+      "moves off a branch that closed when the gate answer changes": "passed",
+      "requires all selected values for showWhen.all": "passed",
+      "drops answers on hidden branches when the gate answer changes": "passed",
+      "clears everything and returns to the first question": "passed",
+      "counts answered and skipped questions and marks the steps": "passed",
+      "formats the position label": "passed",
+      "assigns keys to enabled choices only, in order": "passed",
+      "matches letters in either case": "passed",
+      "Mod+Enter advances from anywhere, but not on repeat": "passed",
+      "Enter on an answer advances only when it is chosen or filled": "passed",
+      "ArrowUp/Down move between answers, except inside a filled text answer or another field": "passed",
+      "ArrowLeft/Right change question, but leave radios and text alone": "passed",
+      "ArrowRight waits for an answer": "passed",
+      "shortcuts pick a choice, never while typing, never with modifiers, never during composition": "passed",
+      "wraps, enters from outside, and reports nowhere to go": "passed",
+      "notifies only on real changes and returns each event's effects": "passed"
+    },
     "packages/core/src/slider-range.test.ts": {
       "bounds the low thumb's max at the high thumb's current value, and vice versa": "passed",
       "collapses to a single point when both thumbs share a value. Neither can cross it": "passed",
@@ -159,11 +203,32 @@
       "swaps an inverted range so low is never greater than high": "passed",
       "leaves equal values as-is": "passed"
     },
+    "packages/core/src/vaul-gesture.test.ts": {
+      "dismisses a far-enough slow drag (distance alone)": "passed",
+      "keeps a too-short slow drag (springs back)": "passed",
+      "dismisses a fast short flick even when the distance is small": "passed",
+      "a flick BACK home overrules a far drag, direction beats distance": "passed",
+      "a gentle release below the velocity threshold does not count as a flick": "passed",
+      "a single sample (no movement) never dismisses": "passed",
+      "an empty sample list is a no-op, not a crash": "passed",
+      "a zero-size panel can't be dismissed by distance (no division by zero)": "passed",
+      "leaves the fingertip at 1∶1 for the first pixel (no dead zone)": "passed",
+      "never exceeds the cap, however hard you pull": "passed",
+      "is monotonic, pulling further always gives a little more": "passed",
+      "block-end drags along y, positive": "passed",
+      "inline-start closes leftward (negative x) in LTR": "passed",
+      "RTL mirrors only the inline edges": "passed"
+    },
     "packages/react/src/components/accordion.test.tsx": {
       "keeps exactly one item open in single mode": "passed",
       "allows independent open items in multiple mode": "passed",
       "renders and closes a single Accordion item": "passed",
-      "wraps each trigger in a heading so it is reachable by heading navigation": "passed"
+      "wraps each trigger in a heading so it is reachable by heading navigation": "passed",
+      "honours a controlled value without inventing local open state": "passed",
+      "seeds open state from item defaultOpen when the root has no defaultValue": "passed",
+      "lets root defaultValue win over item defaultOpen": "passed",
+      "clamps headingLevel to the 1..6 range aria-level means": "passed",
+      "dispatches the contract valueChange event on the root": "passed"
     },
     "packages/react/src/components/annotation.test.tsx": {
       "renders the specimen, one label each, and an overlay to draw into": "passed",
@@ -213,7 +278,9 @@
     },
     "packages/react/src/components/badge.test.tsx": {
       "renders its accessible label and forwards semantic attributes": "passed",
-      "anchors an accessible status dot without adding visible content": "passed"
+      "anchors an accessible status dot without adding visible content": "passed",
+      "anchors a count pill on a control the same way as a dot": "passed",
+      "anchors a presence dot on a photo avatar": "passed"
     },
     "packages/react/src/components/breadcrumb.test.tsx": {
       "renders a plain, uncollapsed trail when it is short enough that nothing is worth collapsing": "passed",
@@ -234,7 +301,9 @@
       "warns when children is empty even though an aria-label names the button": "passed",
       "warns in development when an icon-only button has no accessible name": "passed",
       "accepts a visually hidden name supplied through a slot rather than children": "passed",
-      "renders navigation with Button appearance and anchor attributes": "passed"
+      "renders navigation with Button appearance and anchor attributes": "passed",
+      "does not write aria-pressed or disabled on a navigation host": "passed",
+      "writes aria-pressed only when pressed is given": "passed"
     },
     "packages/react/src/components/callout.test.tsx": {
       "announces danger assertively and everything else politely": "passed",
@@ -268,7 +337,8 @@
       "spends the query on each chip when multiple": "passed",
       "marks the highlight as keyboard-driven so the option can carry the focus ring": "passed",
       "moves aria-selected onto the highlighted option before Enter commits anything": "passed",
-      "keeps aria-selected tied to the chosen chips when multiple, not the highlight": "passed"
+      "keeps aria-selected tied to the chosen chips when multiple, not the highlight": "passed",
+      "dispatches sk:comboboxvaluechange and sk:comboboxinputvaluechange for DOM parity with vanilla": "passed"
     },
     "packages/react/src/components/command-palette.test.tsx": {
       "claims nothing at rest: no options and no expanded popup": "passed",
@@ -279,7 +349,12 @@
       "walks the listbox from the field, which never gives up focus": "passed",
       "hands the chosen entry to onSelect, on Enter and on a click alike": "passed",
       "activates nothing when a query matched nothing": "passed",
-      "closes through the dialog form and names itself for the reader": "passed"
+      "closes through the dialog form and names itself for the reader": "passed",
+      "is a sheet by default, with a grab handle as a direct child": "passed",
+      "stays a centred box when the author opts out": "passed",
+      "follows the finger and closes past the threshold": "passed",
+      "does not wire the grab above the desktop breakpoint": "passed",
+      "does not drag at all when the author opts out": "passed"
     },
     "packages/react/src/components/comment-thread.test.tsx": {
       "renders an author, a timestamp and a body with no thread, actions or replies around it": "passed",
@@ -291,8 +366,12 @@
       "folds the REPLIES and leaves the comment itself readable": "passed",
       "nests replies as Comments of the same shape, at any depth": "passed",
       "reports the direction clicked and reflects the viewer's own past vote": "passed",
+      "dispatches sk:commentvote on the vote group, matching Vanilla": "passed",
       "renders only the triggers it was given, and reports each": "passed",
+      "dispatches sk:commentdelete when delete is pressed": "passed",
       "submits the body of whatever control it was given, then resets it": "passed",
+      "dispatches sk:commentreply and keeps the draft when preventDefault runs": "passed",
+      "dispatches sk:commentdiscard when cancel leaves a draft": "passed",
       "reads a single-line Input just as readily as a Textarea, since it ships neither": "passed",
       "submits nothing when the control is empty": "passed",
       "names the thread and renders its composer above the comments": "passed",
@@ -304,11 +383,11 @@
     "packages/react/src/components/component-preview.test.tsx": {
       "renders the title, stage and code in order": "passed",
       "renders a note beside the title when given": "passed",
-      "omits the header entirely when there is neither a title nor a note": "passed",
-      "keeps the header when only a note is given, with no title text": "passed"
+      "keeps the header when title is present without a note": "passed"
     },
     "packages/react/src/components/data-grid.test.tsx": {
       "sets role=grid/row/gridcell and names the grid": "passed",
+      "writes wrap attrs when wrapCols/wrapRows are set": "passed",
       "hands the roving stop to a cell's OWN interactive descendant, not the cell div": "passed",
       "derives a cell's row from its own DataGridRow's position when none is authored": "passed",
       "clamps into a shorter row's last real cell on vertical movement (ragged grid)": "passed",
@@ -333,13 +412,15 @@
       "renders actions only when given": "passed"
     },
     "packages/react/src/components/feed.test.tsx": {
-      "sets role=feed, names it, and reflects aria-busy": "passed",
+      "sets role=feed, names it, and writes aria-busy true and false": "passed",
       "each article gets role=article with aria-posinset/aria-setsize and a real labelled name": "passed",
       "allows setSize=-1 for an undetermined total, per WAI's own allowance": "passed"
     },
     "packages/react/src/components/file-upload.test.tsx": {
       "announces a rejected file's reason instead of failing silently": "passed",
-      "clears the rejection message once a valid selection follows": "passed"
+      "clears the rejection message once a valid selection follows": "passed",
+      "dispatches sk:fileuploadchange on the root for DOM parity with vanilla": "passed",
+      "omits the clear-all control until clearLabel is authored": "passed"
     },
     "packages/react/src/components/folder.test.tsx": {
       "renders the tab, the content and a decorative silhouette behind them": "passed",
@@ -352,6 +433,7 @@
       "writes no reveal attribute, because a folder is never visible at rest": "passed",
       "mirrors the silhouette inside an RTL subtree": "passed",
       "is a real anchor carrying the folder's own anatomy": "passed",
+      "writes data-active when reached for outside pointer/keyboard": "passed",
       "holds folders directly, with no wrapper element between them": "passed",
       "passes an overlap through as the custom property the stylesheet reads": "passed"
     },
@@ -359,13 +441,14 @@
       "wires the label, hint and error to the control it wraps": "passed",
       "treats the error message as what makes the field invalid": "passed",
       "passes required and disabled down to the native control": "passed",
+      "clips the label with labelHidden without dropping the accessible name": "passed",
       "wires a textarea exactly as it wires an input": "passed",
       "passes axe on a field with a hint and an error": "passed"
     },
     "packages/react/src/components/icon.test.tsx": {
       "resolves a stable name against the bound set": "passed",
       "renders project geometry without any binding": "passed",
-      "falls back to the default set (Phosphor) with no provider bound": "passed",
+      "falls back to the default set (Lucide) with no provider bound": "passed",
       "is decorative without a label, and content with one": "passed",
       "never makes the svg a tab stop": "passed",
       "carries the set's own fill and stroke, so an outline set stays outline": "passed",
@@ -388,7 +471,9 @@
       "gives a textarea the same appearance contract as an input": "passed",
       "writes the control height to data-size, leaving the native size attribute alone": "passed",
       "gives NativeInput the same appearance contract as Input, whatever its type": "passed",
-      "keeps an author-supplied className alongside NativeInput's own": "passed"
+      "keeps an author-supplied className alongside NativeInput's own": "passed",
+      "inherits FormField wiring the same way Input does": "passed",
+      "writes controlSize on NativeInput as data-size": "passed"
     },
     "packages/react/src/components/kbd.test.tsx": {
       "renders a native <kbd> carrying the part class": "passed",
@@ -401,9 +486,11 @@
       "renders Stack, Inline and Grid as the documented layout contracts": "passed",
       "omits data-block-start when Inline's space above is the default none": "passed",
       "switches Grid into responsive rows and lets a child request a wider span": "passed",
+      "writes data-fill when Grid asks for an equal resting floor": "passed",
       "renders LayoutGrid while leaving width on its semantic children": "passed",
       "renders Main as an empty application landmark": "passed",
       "renders Wrapper as a page column on the size scale": "passed",
+      "writes Wrapper's default md size and keeps the caller's class": "passed",
       "renders Footer as a contentinfo landmark with its documented defaults": "passed",
       "lets Footer opt out of the divider, change padding/surface, and drop the landmark via `as`": "passed",
       "renders Hero as a plain div with its documented defaults": "passed",
@@ -411,12 +498,16 @@
     },
     "packages/react/src/components/list.test.tsx": {
       "renders a semantic list with static, link and button rows": "passed",
-      "renders an ordered list when order is meaningful": "passed"
+      "renders an ordered list when order is meaningful": "passed",
+      "turns dividers off and densifies rows when asked": "passed",
+      "disables ListItemButton with native disabled and aria-disabled": "passed"
     },
     "packages/react/src/components/loader.test.tsx": {
       "exposes labelled indeterminate work as a polite status": "passed",
       "writes orthogonal variant and speed axes onto the root": "passed",
       "stays decorative when the surrounding control already carries the status meaning": "passed",
+      "gives a staggered design one real mark per tick, since a stagger cannot live on two pseudo-elements": "passed",
+      "leaves a pseudo-element design with no children at all": "passed",
       "announces a skeleton screen's wait without drawing anything": "passed",
       "has no serious accessibility violations in labelled and decorative uses": "passed"
     },
@@ -433,6 +524,7 @@
     "packages/react/src/components/megamenu.test.tsx": {
       "renders one shared panel, sized by a hidden ruler holding every trigger's columns": "passed",
       "clicking a trigger opens its panel with that trigger's own columns": "passed",
+      "dispatches sk:megamenuopenchange and stamps the mount attribute": "passed",
       "clicking the SAME trigger again closes it. A toggle": "passed",
       "clicking a DIFFERENT trigger switches the shared panel's content, exclusively": "passed",
       "opens on hover intent after its delay, not immediately": "passed",
@@ -446,11 +538,14 @@
     },
     "packages/react/src/components/menu.test.tsx": {
       "wires ARIA on mount and stays closed": "passed",
+      "renders no indicator slot at all when indicator is null": "passed",
       "opens on trigger click and closes on Escape, returning focus to the trigger": "passed",
       "closes on an outside pointer press": "passed",
       "selecting a plain item calls onSelect with its value and closes the menu": "passed",
       "never calls onSelect for a disabled item, and the menu stays open": "passed",
       "toggles a checkbox item and calls onCheckedChange": "passed",
+      "dispatches sk:menuopenchange when the menu opens and closes": "passed",
+      "stamps the contract mount attribute on the root": "passed",
       "keeps a radio group mutually exclusive within the same group": "passed",
       "renders an href entry as a real anchor": "passed",
       "ArrowDown moves the highlight through the item list, skipping the disabled one": "passed",
@@ -466,7 +561,8 @@
       "clicking a dropdown command fires onSelect with its value": "passed",
       "clicking a leaf item (no dropdown) activates it directly": "passed",
       "nav renders the trigger as nav-list's own link, not a Button, with behavior unchanged": "passed",
-      "a dropdown entry with an href renders as a real link, not a command div": "passed"
+      "a dropdown entry with an href renders as a real link, not a command div": "passed",
+      "stamps menubar/menu mount attrs and dispatches Menu DOM events from the item wrapper": "passed"
     },
     "packages/react/src/components/meter.test.tsx": {
       "sets role=meter with the three required aria-value attributes": "passed",
@@ -474,7 +570,8 @@
       "passes through aria-valuetext when given": "passed",
       "applies the tone data attribute, defaulting to accent": "passed",
       "paints label and valueText beside the bar, not just announces them": "passed",
-      "paints no value text when valueText is omitted, unlike the label": "passed"
+      "paints no value text when valueText is omitted, unlike the label": "passed",
+      "stamps the meter mount attribute on the track host": "passed"
     },
     "packages/react/src/components/nav-list.test.tsx": {
       "renders a named navigation landmark with a labelled list of links": "passed",
@@ -483,7 +580,8 @@
       "collapsible: toggles aria-expanded and the list's hidden state on click": "passed",
       "collapsible: Escape closes the open dropdown from anywhere inside it and returns focus to the trigger": "passed",
       "nested: a link's own sub-destinations render inside the same <li>, independent of the parent group": "passed",
-      "collapsible: honors defaultOpen=false": "passed"
+      "collapsible: honors defaultOpen=false": "passed",
+      "collapsible: stamps contract attrs and enhancer mounts": "passed"
     },
     "packages/react/src/components/navbar.test.tsx": {
       "uses a header landmark while leaving navigation to its NavList child": "passed"
@@ -493,6 +591,8 @@
       "increments and decrements by step, calling onValueChange": "passed",
       "disables the increment trigger at max and the decrement trigger at min": "passed",
       "pressing a disabled trigger at the bound is a no-op": "passed",
+      "dispatches sk:numberfieldvaluechange on the root for DOM parity with vanilla": "passed",
+      "stamps data-invalid and describes an optional hint": "passed",
       "commits a typed value on blur and calls onValueChange": "passed",
       "clamps a typed value past max down to the bound on blur": "passed",
       "disables the input and both triggers when disabled": "passed",
@@ -502,7 +602,9 @@
     "packages/react/src/components/pagination.test.tsx": {
       "marks the current page and disables prev/next at the bounds": "passed",
       "collapses far pages behind an ellipsis and reports clicks clamped to range": "passed",
-      "announces the visible row range as a polite, atomic live region": "passed"
+      "dispatches sk:paginationpagechange on the root for DOM listeners": "passed",
+      "announces the visible row range as a polite, atomic live region": "passed",
+      "actually pages its rows and builds the nav, instead of rendering only the shell": "passed"
     },
     "packages/react/src/components/placeholder.test.tsx": {
       "clamps a line count to something renderable": "passed",
@@ -526,11 +628,13 @@
       "writes the chosen placement onto the content": "passed",
       "names an icon-only trigger with triggerLabel": "passed",
       "passes triggerVariant/triggerSize/triggerIconOnly through to the trigger button": "passed",
-      "leaves the trigger's variant/size/icon-only attributes off when unset": "passed"
+      "leaves the trigger's variant/size/icon-only attributes off when unset": "passed",
+      "marks bare and arrow on the root the way the contract emits them": "passed"
     },
     "packages/react/src/components/process-list.test.tsx": {
       "renders a native ordered sequence of instructions": "passed",
-      "keeps each title and arbitrary step content inside its item": "passed"
+      "keeps each title and arbitrary step content inside its item": "passed",
+      "types the title as string to match the contract text slot": "passed"
     },
     "packages/react/src/components/progress.test.tsx": {
       "exposes the value on the progressbar role and paints the matching fill": "passed",
@@ -543,14 +647,34 @@
       "re-encodes when the value changes": "passed",
       "renders a logo only when one is given": "passed",
       "clears the modules behind a logo rather than covering them": "passed",
-      "serializes size onto the attribute the stylesheet reads": "passed"
+      "serializes size onto the attribute the stylesheet reads": "passed",
+      "serializes module shape for the stylesheet's shape-rendering switch": "passed"
+    },
+    "packages/react/src/components/questionnaire.test.tsx": {
+      "shows one question at a time, with its position and only the buttons that apply": "passed",
+      "marks itself mounted so the Vanilla enhancer never wires a second questionnaire over it": "passed",
+      "refuses to leave an unanswered required question and says why": "passed",
+      "moves on once answered, focuses the next question and announces the change": "passed",
+      "typing a free answer clears a single choice": "passed",
+      "skips an optional question without submitting, and submits the answers that count": "passed",
+      "a submit with an invalid earlier question goes back to it instead": "passed",
+      "keyboard: letter shortcuts pick, Mod+Enter advances, ArrowLeft goes back": "passed",
+      "draws each choice's shortcut key and announces it, from the same map the keyboard uses": "passed",
+      "numbers stop at the ninth choice, so no key is drawn that nothing answers to": "passed",
+      "a Likert question is the same radio group, laid out as a scale": "passed",
+      "bar progress fills with settled questions; steps progress lists each question": "passed",
+      "dispatches sk:questionnaireitemchange on the form": "passed",
+      "stamps the mount attrs the vanilla enhancer scans for": "passed",
+      "dispatches sk:questionnairesubmit before a valid submit proceeds": "passed"
     },
     "packages/react/src/components/select.test.tsx": {
       "uses the Zag select machine for popup selection and form value": "passed",
+      "dispatches sk:selectvaluechange on the root for DOM parity with vanilla": "passed",
       "moves aria-selected onto the highlighted option before Enter commits anything": "passed"
     },
     "packages/react/src/components/sidebar.test.tsx": {
       "collapses uncontrolled and reports the change": "passed",
+      "stamps mount attrs the vanilla enhancer scans for": "passed",
       "names the complementary landmark when a consumer supplies one": "passed",
       "lets a controlled caller own the state": "passed",
       "points the trigger at the content it controls": "passed",
@@ -569,10 +693,12 @@
     },
     "packages/react/src/components/slider-range.test.tsx": {
       "names each thumb distinctly and starts at the authored defaults": "passed",
-      "bounds each thumb's max/min at the other's CURRENT value": "passed"
+      "bounds each thumb's max/min at the other's CURRENT value": "passed",
+      "dispatches sk:slidervaluechange with { low, high } like vanilla": "passed"
     },
     "packages/react/src/components/slider.test.tsx": {
-      "uses the Zag slider machine anatomy and value state": "passed"
+      "uses the Zag slider machine anatomy and value state": "passed",
+      "dispatches sk:slidervaluechange with the same detail vanilla does": "passed"
     },
     "packages/react/src/components/split-button.test.tsx": {
       "renders a labelled group holding the action button and the menu's icon-only trigger": "passed",
@@ -619,7 +745,8 @@
     },
     "packages/react/src/components/tag.test.tsx": {
       "carries its tone and label": "passed",
-      "exposes a named remove control only when onRemove is given": "passed",
+      "exposes a named remove control only when removable is set": "passed",
+      "dispatches the contract remove event on the host when the control is used": "passed",
       "renders a navigable tag as a link and never as dismissible": "passed",
       "removes with a real small icon-only button, not a lookalike": "passed"
     },
@@ -640,6 +767,7 @@
       "supports uncontrolled checkbox changes": "passed",
       "supports radio group value changes": "passed",
       "supports ExpandableTile callbacks": "passed",
+      "dispatches contract DOM events alongside React callbacks": "passed",
       "puts the disclosure state layer on the trigger, not the Tile surface": "passed",
       "SSR hydrates without mounting Vanilla": "passed",
       "passes axe on the default button tile": "passed"
@@ -656,11 +784,13 @@
     },
     "packages/react/src/components/tooltip.test.tsx": {
       "describes the trigger rather than naming it": "passed",
-      "stays closed while disabled": "passed"
+      "stays closed while disabled": "passed",
+      "dispatches sk:tooltipopenchange on the root when open state changes": "passed"
     },
     "packages/react/src/components/tree-view.test.tsx": {
       "wires tree semantics onto the rendered nodes": "passed",
       "expands a branch from its control and calls onExpandedChange": "passed",
+      "dispatches the contract's DOM events on the root, as the Vanilla enhancer does": "passed",
       "seeds the open branches from defaultExpandedValue": "passed",
       "selects a leaf and calls onSelectionChange": "passed",
       "replaces the selection in single mode": "passed",
@@ -676,6 +806,7 @@
       "Down Arrow from a collapsed branch's row skips its hidden child entirely": "passed",
       "Enter activates a focused leaf row": "passed",
       "clicking a branch's first cell toggles it and reports the row's own value": "passed",
+      "dispatches the contract's DOM events on the table, as the Vanilla enhancer does": "passed",
       "clicking a non-first cell just moves focus, without toggling": "passed",
       "never puts `sk-interactive` on the <tr> itself. Its state layer breaks table column alignment": "passed",
       "renders a decorative disclosure button in a branch row's first cell, never a leaf's": "passed",
@@ -693,14 +824,25 @@
       "opts into flush with an explicit attribute, not by position": "passed",
       "floors h5 and h6 visual size at h4": "passed",
       "keeps Text semantic and applies its named reading role": "passed",
-      "renders a native link with the shared state layer for hover/press/focus": "passed"
+      "renders a native link with the shared state layer for hover/press/focus": "passed",
+      "writes a title-block role only when one is asked for": "passed",
+      "ties an Output to the inputs it is calculated from": "passed",
+      "renders inline code with its part class": "passed"
     },
     "packages/react/src/components/vaul.test.tsx": {
       "carries the enhancer's scope markers at rest": "passed",
-      "draws the handle as decoration, always": "passed",
+      "draws the handle hidden from assistive tech, always": "passed",
       "takes a logical edge and the consumer's own className": "passed",
       "adds the drawer modifier only for the drawer signature": "passed",
-      "forwards native dialog attributes untouched": "passed"
+      "forwards native dialog attributes untouched": "passed",
+      "hands the dialog to the consumer's ref, so showModal() is reachable": "passed",
+      "drags from the handle and dismisses past the threshold": "passed",
+      "follows dismissThreshold instead of the default": "passed",
+      "keeps the handle but not the drag when draggable is false": "passed",
+      "announces every close to the DOM and to onOpenChange": "passed",
+      "closes from a backdrop click and not from a click inside the panel": "passed",
+      "names the panel it controls and starts collapsed": "passed",
+      "opens the panel modally, and the close button inside shuts it and collapses the trigger": "passed"
     },
     "packages/vanilla/src/components/accordion.svelte.test.ts": {
       "keeps exactly one item open in single mode and emits": "passed",
@@ -793,7 +935,7 @@
       "draws one dot per MEASURED page, not one per slide": "passed",
       "disables the ends and moves a page at a time": "passed",
       "snaps to a dot and reports the page on the change event": "passed",
-      "accepts sk-carousel-goto as the snap command": "passed",
+      "accepts sk:carouselgoto as the snap command": "passed",
       "gives an autoplaying carousel a pause control, and none to a carousel that does not move on its own": "passed",
       "pauses autoplay on hover and resumes it when the mouse leaves": "passed",
       "pauses autoplay on keyboard focus and resumes it on blur": "passed",
@@ -856,7 +998,8 @@
       "survives an index that is missing or not JSON": "passed",
       "binds a hotkey only when the markup opts in, and badges it": "passed",
       "leaves the hotkey alone when nothing asked for one": "passed",
-      "unbinds everything it wired": "passed"
+      "unbinds everything it wired": "passed",
+      "drags from block-end even when the markup names no edge": "passed"
     },
     "packages/vanilla/src/components/comment-thread.test.ts": {
       "dispatches vote with the comment's id and the clicked direction, and never mutates the paint itself": "passed",
@@ -929,8 +1072,8 @@
     "packages/vanilla/src/components/file-upload.test.ts": {
       "wires the dropzone as a real, tabbable button, and the trigger as a native one": "passed",
       "opens the file picker from the dropzone via Enter or Space, not just a pointer click": "passed",
-      "selecting a valid file emits sk-file-change with it accepted": "passed",
-      "selecting an oversized file emits sk-file-change with it rejected instead of accepted": "passed",
+      "selecting a valid file emits sk:fileuploadchange with it accepted": "passed",
+      "selecting an oversized file emits sk:fileuploadchange with it rejected instead of accepted": "passed",
       "keeps the clear trigger hidden until a file is accepted, and shows it once one is": "passed",
       "clicking the clear trigger empties the accepted files and re-hides itself": "passed",
       "does nothing without an authored dropzone/input/trigger to scan": "passed",
@@ -962,6 +1105,7 @@
     "packages/vanilla/src/components/megamenu.test.ts": {
       "collapses the N authored positioners into one shared panel, sized by a hidden ruler": "passed",
       "clicking a trigger opens its panel with that trigger's own columns": "passed",
+      "dispatches sk:megamenuopenchange when a panel opens or closes": "passed",
       "clicking the SAME trigger again closes it. A toggle": "passed",
       "clicking a DIFFERENT trigger switches the shared panel's content, exclusively": "passed",
       "opens on hover intent after its delay, not immediately": "passed",
@@ -977,9 +1121,9 @@
       "wires ARIA on mount and stays closed": "passed",
       "opens on trigger click and closes on Escape, returning focus to the trigger": "passed",
       "closes on an outside pointer press": "passed",
-      "selecting a plain item emits sk-select with its value and closes the menu": "passed",
-      "never fires sk-select for a disabled item, and the menu stays open": "passed",
-      "toggles a checkbox item's data-checked and emits sk-checked-change": "passed",
+      "selecting a plain item emits sk:menuselect with its value and closes the menu": "passed",
+      "never fires sk:menuselect for a disabled item, and the menu stays open": "passed",
+      "toggles a checkbox item's data-checked and emits sk:menucheckedchange": "passed",
       "keeps a radio group mutually exclusive within the same data-group": "passed",
       "renders an href entry as a real anchor with role=menuitem": "passed",
       "ArrowDown moves the highlight through the item list, skipping the disabled one": "passed",
@@ -1009,14 +1153,30 @@
     },
     "packages/vanilla/src/components/number-field.test.ts": {
       "wires the accessible names from the authored aria-label onto the triggers": "passed",
-      "increments and decrements by step, emitting sk-value-change": "passed",
+      "increments and decrements by step, emitting sk:numberfieldvaluechange": "passed",
       "disables the increment trigger at max and the decrement trigger at min": "passed",
       "pressing a disabled trigger at the bound is a no-op": "passed",
-      "commits a typed value on blur and emits sk-value-change": "passed",
+      "commits a typed value on blur and emits sk:numberfieldvaluechange": "passed",
       "clamps a typed value past max down to the bound on blur": "passed",
       "disables the input and both triggers when the root's own input is authored disabled": "passed",
       "wires role=spinbutton with aria-valuemin/aria-valuemax/aria-valuenow": "passed",
-      "ArrowUp/ArrowDown step from the keyboard, Home/End jump to the bounds": "passed"
+      "ArrowUp/ArrowDown step from the keyboard, Home/End jump to the bounds": "passed",
+      "describes the input with an authored hint, the way React does": "passed"
+    },
+    "packages/vanilla/src/components/questionnaire.test.ts": {
+      "turns the long form into one question at a time": "passed",
+      "refuses an unanswered required question and shows the error as an alert": "passed",
+      "follows the tile's own change event, moves on and focuses the next question": "passed",
+      "typing a free answer clears the radio through the tile command": "passed",
+      "skip keeps an answer out of the submission; the last skip does not submit": "passed",
+      "a submit with an invalid earlier question goes back to it": "passed",
+      "keyboard: a letter picks, Mod+Enter advances, ArrowLeft goes back": "passed",
+      "starts from the authored defaults, so the state and the tiles never disagree": "passed",
+      "a Likert question is native radios in a Box, driven by the browser": "passed",
+      "writes each choice's shortcut key and announces it, skipping the disabled one": "passed",
+      "draws no key at all when shortcuts are off": "passed",
+      "bar progress fills with settled questions; steps progress marks the current one": "passed",
+      "honours data-default-item when mounting": "passed"
     },
     "packages/vanilla/src/components/segmented.test.ts": {
       "patches the authored parts into one roving radiogroup": "passed",
@@ -1024,7 +1184,7 @@
     },
     "packages/vanilla/src/components/select.test.ts": {
       "drives the machine over authored markup: ARIA, selection and the value text": "passed",
-      "emits sk-value-change, and destroying the mount stops the machine": "passed",
+      "emits sk:selectvaluechange, and destroying the mount stops the machine": "passed",
       "never writes a class: the consumer's stay exactly as authored": "passed",
       "keeps the id the consumer authored, rather than renaming it": "passed",
       "keeps an authored hidden select in sync for forms": "passed",
@@ -1056,17 +1216,19 @@
       "mounts the Zag slider machine over authored markup": "passed"
     },
     "packages/vanilla/src/components/tile-checkbox.svelte.test.ts": {
-      "toggles checked state and root data-state on click, emitting sk:checkedchange": "passed",
+      "toggles checked state and root data-state on click, emitting sk:tilecheckedchange": "passed",
+      "sets checked from sk:tilesetchecked and reports the change": "passed",
       "is form-associated and honours its default-checked": "passed",
       "treats a valueless data-default-checked as checked, the way the emitter writes it": "passed",
       "leaves an explicit data-default-checked=\"false\" unchecked": "passed"
     },
     "packages/vanilla/src/components/tile-radio-group.svelte.test.ts": {
       "is a radiogroup, honours the default, and keeps values mutually exclusive + emits": "passed",
+      "sets its value from sk:tilesetvalue, reports it back, and clears on null": "passed",
       "marks the selected item's data-state": "passed"
     },
     "packages/vanilla/src/components/tile-switch.svelte.test.ts": {
-      "toggles checked state and root data-state on click, emitting sk:checkedchange": "passed",
+      "toggles checked state and root data-state on click, emitting sk:tilecheckedchange": "passed",
       "is form-associated and honours its default-checked": "passed"
     },
     "packages/vanilla/src/components/time-field.svelte.test.ts": {
@@ -1096,7 +1258,8 @@
       "opens the picker with Alt+ArrowDown from any segment, leaving plain ArrowDown alone": "passed",
       "leaves the picker closed on a plain ArrowDown. That key is the segment's own": "passed",
       "omits the picker trigger entirely while disabled or read-only: nothing to browse to": "passed",
-      "describes itself with an authored hint and marks required segments": "passed"
+      "describes itself with an authored hint and marks required segments": "passed",
+      "announces an authored invalid or read-only field on every segment": "passed"
     },
     "packages/vanilla/src/components/toast.test.ts": {
       "applies the shared live-region semantics and reports native button dismissal": "passed",
@@ -1138,22 +1301,6 @@
       "Home/End jump to the resized pair's min/max extent": "passed",
       "Enter (and double-click) resets the pair to an even split": "passed",
       "reports its position as a percentage of the pair's REACHABLE travel, not a flat 0-100": "passed"
-    },
-    "packages/vanilla/src/components/vaul-gesture.test.ts": {
-      "dismisses a far-enough slow drag (distance alone)": "passed",
-      "keeps a too-short slow drag (springs back)": "passed",
-      "dismisses a fast short flick even when the distance is small": "passed",
-      "a flick BACK home overrules a far drag, direction beats distance": "passed",
-      "a gentle release below the velocity threshold does not count as a flick": "passed",
-      "a single sample (no movement) never dismisses": "passed",
-      "an empty sample list is a no-op, not a crash": "passed",
-      "a zero-size panel can't be dismissed by distance (no division by zero)": "passed",
-      "leaves the fingertip at 1∶1 for the first pixel (no dead zone)": "passed",
-      "never exceeds the cap, however hard you pull": "passed",
-      "is monotonic, pulling further always gives a little more": "passed",
-      "block-end drags along y, positive": "passed",
-      "inline-start closes leftward (negative x) in LTR": "passed",
-      "RTL mirrors only the inline edges": "passed"
     }
   }
 }

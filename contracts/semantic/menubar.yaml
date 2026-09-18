@@ -10,6 +10,8 @@ Menubar:
   alternatives:
     - Menu
     - NavList
+    - Megamenu
+    - Toolbar
 
 MenubarItem:
   useWhen:

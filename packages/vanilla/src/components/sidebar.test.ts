@@ -26,7 +26,7 @@ describe("Sidebar Vanilla contracts", () => {
   it("writes collapsed state, emits the change, and cleanup removes listeners", () => {
     const root = mount(markup);
     const handler = vi.fn();
-    root.addEventListener("sk-collapsed-change", handler);
+    root.addEventListener("sk:sidebarcollapsedchange", handler);
     const cleanup = connectSidebar(root);
 
     expect(root.dataset.state).toBe("expanded");
@@ -142,7 +142,7 @@ describe("Sidebar resizing", () => {
   it("a press that never travels is not a resize", () => {
     const root = mount(resizableMarkup);
     const handler = vi.fn();
-    root.addEventListener("sk-resize-change", handler);
+    root.addEventListener("sk:sidebarresizechange", handler);
     connectSidebar(root, { storageKey: "docs" });
 
     // Down and up on the same pixel: a click on the panel edge.
@@ -162,7 +162,7 @@ describe("Sidebar resizing", () => {
   it("moves with the arrow keys and announces the change", () => {
     const root = mount(resizableMarkup);
     const handler = vi.fn();
-    root.addEventListener("sk-resize-change", handler);
+    root.addEventListener("sk:sidebarresizechange", handler);
     connectSidebar(root);
     const handle = root.querySelector<HTMLElement>("[data-sk-sidebar-resize]")!;
 

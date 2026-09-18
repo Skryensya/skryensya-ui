@@ -3,6 +3,7 @@
 Table:
   useWhen:
     - "los datos tienen filas y columnas, y una celda significa algo por su cruce"
+    - "lleva nombre: un TableCaption, o aria-labelledby hacia un título visible"
     - "el usuario va a comparar valores entre filas"
   avoidWhen:
     - "es una lista de cosas sin columnas; eso es una List"
@@ -35,6 +36,7 @@ TableRow:
 TableHeader:
   useWhen:
     - "la celda nombra su columna, o nombra su fila con scope row"
+    - "un encabezado agrupa varias columnas (colspan) o varias filas de encabezado (rowspan)"
   avoidWhen:
     - "es un dato; eso es TableCell"
 

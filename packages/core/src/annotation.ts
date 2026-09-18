@@ -1015,8 +1015,11 @@ function clampInside(value: number, start: number, size: number, inset: number):
 
 export const annotationContract = {
   id: "annotation",
+  category: "content",
   css: "@skryensya/core/components/annotation.css",
   parts: annotationParts,
+  /* Leader SVG marks/rings are binding-written after measure; emit leaves the overlay empty. */
+  systemOwned: ["mark", "leader", "ring"],
   hooks: [
     "--sk-annotated-gap",
     "--sk-annotated-subject-filter",
@@ -1045,25 +1048,6 @@ export const annotationContract = {
      */
     inert: { type: "boolean", default: true, attr: "inert", trueValue: "" },
     /**
-     * Which gutter a label asks for. A request, not a guarantee: the stylesheet places it and
-     * `annotationExitSide` reads back where it landed.
-     */
-    side: {
-      type: "enum",
-      values: [...annotationSides],
-      default: "inline-start",
-      attr: annotationAttrs.side,
-    },
-    /**
-     * A CSS selector, resolved inside the subject, for the element this label names. The FIRST match
-     * wins: an anatomy diagram points at one representative of each part, and a selector that can
-     * only ever mean "the first trigger" is easier to read than an index beside it.
-     *
-     * `computedInput`, in spirit and in fact: it lands on the markup (the enhancer has no other
-     * channel to read it from) but nothing renders it, and what it produces is a measurement.
-     */
-    for: { type: "string", attr: annotationAttrs.target },
-    /**
      * Which side of a part's own edge its ring is drawn on. `inset` is unambiguous about which
      * element a mark belongs to and is right for a dense composition; `offset` is right where the
      * parts are lines of text with air around them, because an inset ring there is a box drawn ON
@@ -1081,6 +1065,7 @@ export const annotationContract = {
     ringDistance: {
       type: "number",
       default: ANNOTATION_RING_DISTANCE,
+      min: 0,
       attr: annotationAttrs.ringDistance,
       machineInput: true,
     },
@@ -1094,6 +1079,7 @@ export const annotationContract = {
      */
     ringRadius: {
       type: "number",
+      min: 0,
       attr: annotationAttrs.ringRadius,
       machineInput: true,
     },
@@ -1126,6 +1112,12 @@ export const annotationContract = {
           required: true,
           prop: "annotations",
           item: {
+            /*
+             * `for` is the entry's key: a label with no selector names nothing, and two labels that
+             * share a selector would both light the same part while claiming to be distinct names.
+             * React already requires `for` on `AnnotationEntry`; this is the UsageTree half of that.
+             */
+            key: "for",
             options: {
               for: { type: "string", attr: annotationAttrs.target },
               side: {
@@ -1161,12 +1153,14 @@ export const annotationContract = {
               /** The same, for the distance. */
               ringDistance: {
                 type: "number",
+                min: 0,
                 attr: annotationAttrs.ringDistance,
                 machineInput: true,
               },
               /** The same, for the corner radius. */
               ringRadius: {
                 type: "number",
+                min: 0,
                 attr: annotationAttrs.ringRadius,
                 machineInput: true,
               },

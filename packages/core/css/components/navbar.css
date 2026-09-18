@@ -1,8 +1,8 @@
 /*
  * TIER 3, NAVBAR
  *
- * No machine: a navbar is `<nav>`, a list and links, all of which the platform already ships
- * (decision 8).
+ * No machine: a navbar is a `<header>` shell. The nav landmark lives on the guest `NavList`
+ * inside it (decision 8). Nesting a second `<nav>` on the bar itself would announce two.
  *
  * The bar only. The links inside are the `nav-list` pattern in its horizontal variant, the same
  * structure the sidebar hosts, shipped once instead of twice (decision 17). Nothing below names a

@@ -12,10 +12,10 @@ DatePicker:
 
 DatePicker.native:
   useWhen:
-    - "una fecha común dentro de un formulario, sin rango ni reglas propias"
+    - "una fecha común dentro de un formulario, sin selección de rango"
     - "el teclado, el formato local y el envío deben pertenecer al navegador"
   avoidWhen:
-    - "hace falta un rango, un mínimo o un máximo: eso es DatePicker"
+    - "hace falta un rango (inicio y fin): eso es DatePicker con selectionMode range"
     - "el calendario tiene que verse siempre: eso es Calendar"
   alternatives:
     - DatePicker

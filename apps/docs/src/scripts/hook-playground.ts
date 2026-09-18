@@ -38,7 +38,7 @@ export function initHookPlayground(): void {
       if (input instanceof HTMLInputElement) {
         input.addEventListener("input", () => apply(control, input.value));
       } else {
-        input.addEventListener("sk-value-change", (event) => {
+        input.addEventListener("sk:slidervaluechange", (event) => {
           const value = event instanceof CustomEvent ? event.detail?.value : undefined;
           const fallback =
             input instanceof HTMLInputElement ? input.value : (input.getAttribute("data-value") ?? control.dataset.default ?? "");

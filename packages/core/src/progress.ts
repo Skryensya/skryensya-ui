@@ -38,6 +38,7 @@ export function progressFraction(value: number, max: number): number {
  */
 export const progressContract = {
   id: "progress",
+  category: "feedback",
   css: "@skryensya/core/components/progress.css",
   parts: progressParts,
   hooks: [
@@ -46,7 +47,7 @@ export const progressContract = {
   ],
 
   options: {
-    value: { type: "number", default: 0, attr: "aria-valuenow" },
+    value: { type: "number", default: 0, min: 0, between: { max: "max" }, attr: "aria-valuenow" },
     max: { type: "number", default: 100, attr: "aria-valuemax" },
     tone: {
       type: "enum",
@@ -64,6 +65,8 @@ export const progressContract = {
       host: { element: "div" },
       options: ["value", "max", "tone", "label"],
       requires: ["label"],
+      /** Host id / a11y; label stays the option. */
+      forward: ["id", "aria-*"],
       slots: {},
       template: {
         element: "div",

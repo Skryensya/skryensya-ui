@@ -14,7 +14,7 @@ export const sliderMessages = {
     "sliderPage.anatomyLabel": "Anatomía de Slider",
     "sliderPage.anatomyPreviewLabel": "Slider, parte por parte",
     "sliderPage.body1":
-      "En Vanilla, <code>data-sk-slider</code> monta la misma máquina que React y parchea la anatomía escrita a mano. En React, <code>&lt;Slider&gt;</code> conecta esa máquina directamente y reporta el cambio como número vía <code>onValueChange</code>.",
+      "En Vanilla, <code>data-sk-slider</code> monta la misma máquina que React y parchea la anatomía escrita a mano. En React, <code>&lt;Slider&gt;</code> conecta esa máquina directamente, reporta el cambio como número vía <code>onValueChange</code> y despacha <code>sk:slidervaluechange</code> en la raíz, el mismo evento DOM que Vanilla.",
     "sliderPage.body2":
       "El <code>value</code> del contrato es <strong>dónde arranca el pulgar</strong>, y cada binding lo escribe con su nombre: <code>data-value</code> en el markup, <code>defaultValue</code> en React. No es cosmético: <code>value</code> en React significa controlado, así que emitirlo entregaba un slider que no se podía mover.",
     "sliderPage.test1": "Expone la semántica ARIA de slider desde la máquina Zag y reporta cambios como números.",
@@ -45,7 +45,7 @@ export const sliderMessages = {
     "sliderPage.anatomyLabel": "Slider anatomy",
     "sliderPage.anatomyPreviewLabel": "Slider, part by part",
     "sliderPage.body1":
-      "In Vanilla, <code>data-sk-slider</code> mounts the same machine React uses and patches the authored anatomy. In React, <code>&lt;Slider&gt;</code> connects that machine directly and reports changes as numbers through <code>onValueChange</code>.",
+      "In Vanilla, <code>data-sk-slider</code> mounts the same machine React uses and patches the authored anatomy. In React, <code>&lt;Slider&gt;</code> connects that machine directly, reports changes as numbers through <code>onValueChange</code>, and dispatches <code>sk:slidervaluechange</code> on the root, the same DOM event Vanilla uses.",
     "sliderPage.body2":
       "The contract's <code>value</code> is <strong>where the thumb starts</strong>, and each binding writes it under its own name: <code>data-value</code> in markup, <code>defaultValue</code> in React. It is not cosmetic: <code>value</code> in React means controlled, so emitting it produced a slider that could not move.",
     "sliderPage.test1": "Exposes slider ARIA semantics from the Zag machine and reports changes as numbers.",

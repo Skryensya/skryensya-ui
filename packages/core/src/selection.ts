@@ -81,36 +81,47 @@ export const checkboxParts = {
  */
 export const checkboxContract = {
   id: "checkbox",
+  category: "forms",
   css: "@skryensya/core/components/checkbox.css",
-  parts: checkboxParts,
+  /* Its own parts and hooks. It used to publish the shared `selectionParts` (radio and switch
+     classes included) and sixteen `--sk-radio-*` hooks through radio-group.css and switch.css,
+     while checkbox.css's own `--sk-checkbox-*` went unlisted. */
+  parts: {
+    checkbox: selectionParts.checkbox,
+    checkboxInput: selectionParts.checkboxInput,
+    checkboxControl: selectionParts.checkboxControl,
+    checkboxIndicator: selectionParts.checkboxIndicator,
+    checkboxLabel: selectionParts.checkboxLabel,
+    checkboxGroup: checkboxParts.checkboxGroup,
+    checkboxGroupItems: checkboxParts.checkboxGroupItems,
+  },
   hooks: [
+    "--sk-checkbox-bg",
+    "--sk-checkbox-border-color",
+    "--sk-checkbox-border-width",
+    "--sk-checkbox-control-size",
+    "--sk-checkbox-disabled-bg",
+    "--sk-checkbox-disabled-border-color",
+    "--sk-checkbox-disabled-fg",
+    "--sk-checkbox-fg",
+    "--sk-checkbox-gap",
     "--sk-checkbox-group-gap",
     "--sk-checkbox-group-indent",
-    "--sk-radio-bg",
-    "--sk-radio-border-color",
-    "--sk-radio-border-width",
-    "--sk-radio-control-size",
-    "--sk-radio-disabled-bg",
-    "--sk-radio-disabled-border-color",
-    "--sk-radio-disabled-fg",
-    "--sk-radio-fg",
-    "--sk-radio-gap",
-    "--sk-radio-group-gap",
-    "--sk-radio-hit-size",
-    "--sk-radio-selected-bg",
-    "--sk-radio-selected-border-color",
-    "--sk-radio-selected-fg",
-  ],
-  /* This component's styling does not fit in one stylesheet; see `hookSheets` on the contract. */
-  hookSheets: [
-    "@skryensya/core/components/radio-group.css",
-    "@skryensya/core/components/switch.css",
+    "--sk-checkbox-label-fg",
+    "--sk-checkbox-radius",
+    "--sk-checkbox-selected-bg",
+    "--sk-checkbox-selected-border-color",
+    "--sk-checkbox-selected-fg",
   ],
 
   options: {
     name: { type: "string", attr: "name" },
     value: { type: "string", attr: "value" },
-    checked: { type: "boolean", default: false, attr: "checked", trueValue: "" },
+    /*
+     * Where it STARTS. React spells it `defaultChecked`; a separate `checked` option used to map to
+     * React's controlled `checked`, which a tree has no handler for: a box checked from a tree could
+     * not be unchecked.
+     */
     defaultChecked: {
       type: "boolean",
       default: false,
@@ -139,7 +150,9 @@ export const checkboxContract = {
     Checkbox: {
       intent: ["boolean-choice", "opt-in", "accept-terms", "toggle-one-setting"],
       host: { element: "input" },
-      options: ["name", "value", "checked", "defaultChecked", "defaultIndeterminate", "disabled", "required"],
+      options: ["name", "value", "defaultChecked", "defaultIndeterminate", "disabled", "required"],
+      /** Native form association beyond owned options (`name`/`value`/`disabled`/`required`). */
+      forward: ["id", "form", "aria-*"],
       slots: {
         /** The visible text. Absent means the control is named by something else nearby. */
         children: { accepts: "node" },
@@ -208,6 +221,8 @@ export const checkboxContract = {
       options: ["name", "orientation", "disabled", "required"],
       requires: ["name"],
       mount: "data-sk-checkbox-group",
+      /** Host id / form / a11y; name stays the option. */
+      forward: ["id", "form", "aria-*"],
       slots: {
         /** The parent's text, and the group's accessible name via `labelledBySlot` below. */
         label: { accepts: "node", required: true },
@@ -320,6 +335,9 @@ export const checkboxContract = {
   },
 
   events: checkboxGroupEvents,
+  eventDetails: {
+    valueChange: { detail: { checked: "boolean | \"indeterminate\"", value: "string[]" }, reactProp: "onValueChange", source: "checkboxGroup", trigger: "checkboxInput" },
+  },
 } as const satisfies ComponentContract;
 
 /*
@@ -329,44 +347,64 @@ export const checkboxContract = {
  */
 export const switchContract = {
   id: "switch",
+  category: "forms",
   css: "@skryensya/core/components/switch.css",
-  parts: selectionParts,
+  /* Its own parts and its own hooks. It used to publish the shared `selectionParts` and sixteen
+     RADIO hooks through checkbox.css and radio-group.css, while switch.css's own `--sk-switch-*`
+     went unlisted: every override a consumer could actually use was undocumented. */
+  parts: {
+    switch: selectionParts.switch,
+    switchInput: selectionParts.switchInput,
+    switchControl: selectionParts.switchControl,
+    switchThumb: selectionParts.switchThumb,
+    switchLabel: selectionParts.switchLabel,
+  },
   hooks: [
-    "--sk-checkbox-group-gap",
-    "--sk-checkbox-group-indent",
-    "--sk-radio-bg",
-    "--sk-radio-border-color",
-    "--sk-radio-border-width",
-    "--sk-radio-control-size",
-    "--sk-radio-disabled-bg",
-    "--sk-radio-disabled-border-color",
-    "--sk-radio-disabled-fg",
-    "--sk-radio-fg",
-    "--sk-radio-gap",
-    "--sk-radio-group-gap",
-    "--sk-radio-hit-size",
-    "--sk-radio-selected-bg",
-    "--sk-radio-selected-border-color",
-    "--sk-radio-selected-fg",
-  ],
-  /* This component's styling does not fit in one stylesheet; see `hookSheets` on the contract. */
-  hookSheets: [
-    "@skryensya/core/components/checkbox.css",
-    "@skryensya/core/components/radio-group.css",
+    "--sk-switch-bg",
+    "--sk-switch-block-size",
+    "--sk-switch-border-color",
+    "--sk-switch-border-width",
+    "--sk-switch-disabled-bg",
+    "--sk-switch-disabled-border-color",
+    "--sk-switch-disabled-fg",
+    "--sk-switch-disabled-thumb-bg",
+    "--sk-switch-fg",
+    "--sk-switch-gap",
+    "--sk-switch-inline-size",
+    "--sk-switch-padding",
+    "--sk-switch-selected-bg",
+    "--sk-switch-selected-border-color",
+    "--sk-switch-selected-thumb-bg",
+    "--sk-switch-thumb-bg",
   ],
 
   options: {
     name: { type: "string", attr: "name" },
     value: { type: "string", attr: "value" },
-    checked: { type: "boolean", default: false, attr: "checked", trueValue: "" },
+    /*
+     * Where it STARTS. React spells it `defaultChecked`: its `checked` is controlled, and a tree has
+     * no handler to feed it, so an emitted `<Switch checked>` was a switch nobody could turn off.
+     */
+    defaultChecked: { type: "boolean", default: false, attr: "checked", trueValue: "", prop: "defaultChecked" },
     disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "" },
   },
+
+  a11y: [
+    {
+      when: {},
+      requiresOneOf: ["children", "aria-label", "aria-labelledby"],
+      because: "A switch is a form control; with no visible label beside it, it needs an accessible name.",
+      signatures: ["Switch"],
+    },
+  ],
 
   signatures: {
     Switch: {
       intent: ["on-off", "immediate-setting", "enable-feature"],
       host: { element: "input" },
-      options: ["name", "value", "checked", "disabled"],
+      options: ["name", "value", "defaultChecked", "disabled"],
+      /** Native form association beyond owned options (`name`/`value`/`disabled`). */
+      forward: ["id", "form", "aria-*"],
       slots: { children: { accepts: "node" } },
       template: {
         element: "label",
@@ -396,14 +434,27 @@ export const switchContract = {
  * correctly on each one, the same class of invariant a tab's key is, and the same answer: entries.
  *
  * `required` is likewise the group's: a set where one option is required means the SET is required.
+ *
+ * No custom DOM event and no enhancer: the browser's native `change` on each input is the whole
+ * interaction. CheckboxGroup needs a custom event because the parent/child coordination is ours;
+ * here exclusivity is the platform's.
  */
 export const radioGroupContract = {
   id: "radio-group",
+  category: "forms",
   css: "@skryensya/core/components/radio-group.css",
-  parts: selectionParts,
+  /* Own parts and own hooks only. It used to publish the shared `selectionParts` plus checkbox
+     group / switch sheets: every override a radio consumer could use lived next to classes and
+     hooks that never painted this surface. */
+  parts: {
+    radioGroup: selectionParts.radioGroup,
+    radio: selectionParts.radio,
+    radioInput: selectionParts.radioInput,
+    radioControl: selectionParts.radioControl,
+    radioIndicator: selectionParts.radioIndicator,
+    radioLabel: selectionParts.radioLabel,
+  },
   hooks: [
-    "--sk-checkbox-group-gap",
-    "--sk-checkbox-group-indent",
     "--sk-radio-bg",
     "--sk-radio-border-color",
     "--sk-radio-border-width",
@@ -419,11 +470,6 @@ export const radioGroupContract = {
     "--sk-radio-selected-border-color",
     "--sk-radio-selected-fg",
   ],
-  /* This component's styling does not fit in one stylesheet; see `hookSheets` on the contract. */
-  hookSheets: [
-    "@skryensya/core/components/checkbox.css",
-    "@skryensya/core/components/switch.css",
-  ],
 
   options: {
     /** Shared by every input, and what makes the choice exclusive. The group's, never an option's. */
@@ -437,12 +483,21 @@ export const radioGroupContract = {
      * markup's `data-value` is a starting point the machine then owns, which is what
      * `defaultValue` means. Same reasoning, same fix as Slider, Tabs and TimeField.
      */
-    value: { type: "string", attr: "data-value", machineInput: true, prop: "defaultValue" },
+    value: { type: "string", attr: "data-value", machineInput: true, prop: "defaultValue", keyOf: { slot: "items" } },
     /**
      * Two attributes, one value: the CSS reads `data-orientation` and the accessibility tree reads
      * `aria-orientation`, and a radiogroup owes the second one: arrow keys move along the axis it
      * announces. The template writes both from this single option.
      */
+    /*
+     * Every option the same width, across the whole group. A horizontal radio group sizes itself to
+     * its options, which is right for two or three words side by side and wrong for a SCALE: a Likert
+     * is read as equal steps, so the points have to be equally spaced whatever their labels weigh.
+     * Layout only; the group is still a group and the browser still owns the choice.
+     */
+    spread: { type: "boolean", default: false, attr: "data-spread", trueValue: "" },
+    /** A lone Radio's initial state. The group picks with `value`; one radio has no group to ask. */
+    radioDefaultChecked: { type: "boolean", default: false, attr: "checked", trueValue: "", prop: "defaultChecked" },
     orientation: {
       type: "enum",
       values: ["vertical", "horizontal"],
@@ -450,16 +505,69 @@ export const radioGroupContract = {
       attr: "data-orientation",
       alsoAttr: "aria-orientation",
     },
+    /*
+     * Claimed on each input (not the host div): a `disabled` attribute on a radiogroup wrapper does
+     * nothing to the radios inside. React already OR'd group+item onto every input; emit now matches.
+     */
     disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "" },
     required: { type: "boolean", default: false, attr: "required", trueValue: "" },
+    /** The group's accessible name. WAI's Radio Group pattern expects one on `role="radiogroup"`. */
+    label: { type: "string", attr: "aria-label" },
   },
 
+  a11y: [
+    {
+      when: {},
+      requiresOneOf: ["label", "aria-label", "aria-labelledby"],
+      because: "A radiogroup needs an accessible name; with no visible group label, pass label or aria-labelledby.",
+      signatures: ["RadioGroup"],
+    },
+  ],
+
   signatures: {
+    /*
+     * ONE RADIO, ON ITS OWN. `RadioGroup` is the answer for a list of options and stays the default;
+     * this is the case it cannot serve: a MATRIX, where every row is a question and every column a
+     * point, so each cell holds a single radio. Radios sharing a `name` are one group to the browser
+     * wherever they sit in the DOM, which is what makes a table of them work at all. The visible label
+     * is optional here because in a matrix the row and column headers already name the cell; give it
+     * `aria-label` (or `aria-labelledby`) when nothing else does.
+     */
+    Radio: {
+      intent: ["one-radio", "matrix-cell", "radio-in-a-table", "grid-of-choices"],
+      host: { element: "input" },
+      options: ["name", "value", "radioDefaultChecked", "disabled", "required"],
+      requires: ["name"],
+      /** Native form association and the naming a matrix needs, beyond the owned options. */
+      forward: ["id", "form", "aria-*"],
+      slots: {
+        /** The visible text. Absent means the control is named by something else nearby. */
+        children: { accepts: "node" },
+      },
+      template: {
+        element: "label",
+        part: "radio",
+        children: [
+          { element: "input", part: "radioInput", host: true, attrs: { type: "radio" } },
+          {
+            element: "span",
+            part: "radioControl",
+            attrs: { "aria-hidden": "true" },
+            children: [{ element: "span", part: "radioIndicator" }],
+          },
+          { element: "span", part: "radioLabel", whenGiven: "children", slot: "children" },
+        ],
+      },
+      react: { from: "@skryensya/react/selection", name: "Radio" },
+    },
+
     RadioGroup: {
       intent: ["one-of-many", "exclusive-choice", "pick-a-single-option"],
       host: { element: "div" },
-      options: ["name", "value", "orientation", "disabled", "required"],
+      options: ["name", "value", "orientation", "spread", "disabled", "required", "label"],
       requires: ["name"],
+      /** Host id / a11y names beyond owned `label` / `name` options. */
+      forward: ["id", "aria-*"],
       slots: {
         items: {
           accepts: "items",
@@ -491,7 +599,8 @@ export const radioGroupContract = {
                 element: "input",
                 part: "radioInput",
                 attrs: { type: "radio" },
-                options: ["name", "required"],
+                // `disabled` is claimed here so the host never gets a no-op `disabled` on the div.
+                options: ["name", "required", "disabled"],
                 itemOptions: ["value", "disabled"],
                 selectedBy: { option: "value", attr: "checked" },
               },

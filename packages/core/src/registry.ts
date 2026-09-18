@@ -42,6 +42,7 @@ import { meterContract } from "./meter.js";
 import { dataGridContract } from "./data-grid.js";
 import { feedContract } from "./feed.js";
 import { commentThreadContract } from "./comment-thread.js";
+import { questionnaireContract } from "./questionnaire.js";
 import { comboboxContract } from "./combobox.js";
 import { calendarContract } from "./calendar.js";
 import { datePickerContract } from "./date-picker.js";
@@ -166,6 +167,7 @@ export const contracts = fromContracts(
   dataGridContract,
   feedContract,
   commentThreadContract,
+  questionnaireContract,
   comboboxContract,
   calendarContract,
   datePickerContract,

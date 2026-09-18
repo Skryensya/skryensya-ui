@@ -27,8 +27,6 @@ export const menuParts = {
   itemLabel: "sk-menu__item-label",
   itemIndicator: "sk-menu__item-indicator",
   separator: "sk-menu__separator",
-  group: "sk-menu__group",
-  groupLabel: "sk-menu__group-label",
   /*
    * Not template parts: the compiler never emits these, they are created imperatively. `safeArea`
    * exists while a submenu is open and the pointer is near its trigger (`menu-safe-area.ts`, and it
@@ -53,8 +51,6 @@ export const menuAttrs = {
   /** On the TRIGGER while its safe area is mounted; menu.css raises the trigger for exactly that long. */
   safeArea: "data-sk-menu-safe-area",
   separator: "data-sk-menu-separator",
-  group: "data-sk-menu-group",
-  groupLabel: "data-sk-menu-group-label",
   debugSafetyTriangle: "data-sk-menu-debug-intent",
 } as const;
 
@@ -123,13 +119,8 @@ export const menuItemShape: NonNullable<ContractSlot["item"]> = {
     kind: { type: "enum", values: ["checkbox", "radio", "separator"], attr: "data-type" },
     /*
      * Which radio SET this item belongs to, so two independent groups of `menuitemradio` can sit in
-     * one menu without one clearing the other. Both bindings already read it, and Core's own
-     * `MenuItem` type already declares it; only this list did not, so a composition the bindings
-     * handle correctly was rejected by `validateUsageTree` as an unknown item option. Declaring it
-     * aligns the contract with what already ships rather than adding behaviour.
-     *
-     * Named for the SET and not for the ARIA container: the APG wants a `role="group"` around such
-     * a set, which is the `group` PART below; this is the value that says which one.
+     * one menu without one clearing the other. Both bindings already read it; this is the value that
+     * says which set, written as `data-group` on the item (no separate `role="group"` wrapper).
      */
     group: { type: "string", attr: "data-group" },
     /**
@@ -193,7 +184,7 @@ export const menuPopupTemplate: ContractTemplate = {
                   part: "item",
                   also: ["sk-interactive"],
                   mount: menuAttrs.item,
-                  itemOptions: ["value", "disabled", "kind", "tone"],
+                  itemOptions: ["value", "disabled", "kind", "tone", "group"],
                   whenItemSlotMissing: "children",
                   whenItemNotEquals: { option: "kind", equals: "separator" },
                   whenItemMissing: "href",
@@ -213,7 +204,7 @@ export const menuPopupTemplate: ContractTemplate = {
                   part: "item",
                   also: ["sk-interactive"],
                   mount: menuAttrs.item,
-                  itemOptions: ["value", "disabled", "kind", "tone", "href"],
+                  itemOptions: ["value", "disabled", "kind", "tone", "group", "href"],
                   whenItemSlotMissing: "children",
                   whenItemNotEquals: { option: "kind", equals: "separator" },
                   whenItemGiven: "href",
@@ -314,11 +305,37 @@ function withResolvedParts(node: ContractTemplate): ContractTemplate {
 
 export const menuPopupTemplatePortable: ContractTemplate = withResolvedParts(menuPopupTemplate);
 
+/** The DOM events this family dispatches on its root, `sk:<family><event>` like every other. */
+export const menuEvents = {
+  /** Detail: `{ open: boolean }`. */
+  openChange: "sk:menuopenchange",
+  /** Detail: `{ value: string, checked: boolean }`, a checkbox or radio item. */
+  checkedChange: "sk:menucheckedchange",
+  /** Detail: `{ value: string }`, a command item was chosen. */
+  select: "sk:menuselect",
+} as const;
+
 export const menuContract = {
   id: "menu",
+  category: "actions",
   css: "@skryensya/core/components/menu.css",
   parts: menuParts,
+  events: menuEvents,
+  eventDetails: {
+    openChange: { detail: { open: "boolean" }, reactProp: "onOpenChange", source: "root", trigger: "trigger" },
+    checkedChange: { detail: { value: "string", checked: "boolean" }, reactProp: "onCheckedChange", source: "root", trigger: "item" },
+    select: { detail: { value: "string" }, reactProp: "onSelect", source: "root", trigger: "item" },
+  },
   hooks: [
+    "--sk-anchored-align",
+    "--sk-anchored-arrow-edge",
+    "--sk-anchored-arrow-near",
+    "--sk-anchored-justify",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-anchored-size",
+    "--sk-anchored-z",
     "--sk-menu-bg",
     "--sk-menu-border-color",
     "--sk-menu-fg",
@@ -330,6 +347,12 @@ export const menuContract = {
     "--sk-menu-shadow",
     "--sk-menu-wash",
   ],
+  /*
+   * Trigger/positioner carry `sk-anchor`/`sk-anchored`. Those classes have no unique owner in any
+   * contract's `parts`, so `sheetsForTree` cannot discover `anchored.css` from `also` alone. Hooks
+   * from that sheet are listed above so the hook gate stays closed (same shape as Tooltip/Popover).
+   */
+  hookSheets: ["@skryensya/core/patterns/anchored.css"],
 
   options: {
     /** The menu's accessible name: the root's own. An item's name is its label. */
@@ -372,10 +395,10 @@ export const menuContract = {
      * `Button` itself would recognize, the same way `SplitButton`'s own `variant`/`size` options
      * already validate against Button's real enum before handing it down here.
      */
-    triggerVariant: { type: "string", attr: "data-variant" },
+    triggerVariant: { type: "string", attr: "data-variant", valuesFrom: { contract: "button", option: "variant" } },
     /** Button's other appearance axis, forwarded the same way and for the same reason as `triggerVariant`. */
-    triggerTone: { type: "string", attr: "data-tone" },
-    triggerSize: { type: "string", attr: "data-size" },
+    triggerTone: { type: "string", attr: "data-tone", valuesFrom: { contract: "button", option: "tone" } },
+    triggerSize: { type: "string", attr: "data-size", valuesFrom: { contract: "button", option: "size" } },
     /**
      * The SAME attribute `Button`'s own `iconOnly` option writes (`data-icon-only`). A trigger
      * with no visible `trigger` content (paired with `triggerLabel` for its accessible name) is
@@ -437,7 +460,14 @@ export const menuContract = {
         "density",
         "debugSafetyTriangle",
       ],
-      portals: true,
+      requires: ["label"],
+      /** Host id / a11y names on the menu root. */
+      forward: ["id", "aria-*"],
+      portals: { container: true },
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+      ],
       slots: {
         /**
          * What opens it. Text, or a composed control, or nothing at all: an icon-only trigger (the
@@ -490,4 +520,13 @@ export const menuContract = {
       react: { from: "@skryensya/react/menu", name: "Menu" },
     },
   },
+
+  a11y: [
+    {
+      when: { triggerIconOnly: true },
+      requiresOneOf: ["triggerLabel"],
+      because:
+        "An icon-only trigger shows no text, so the trigger button owns the accessible name; the chevron is decorative.",
+    },
+  ],
 } as const satisfies ComponentContract;

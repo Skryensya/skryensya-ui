@@ -2,10 +2,11 @@
 
 Vaul:
   useWhen:
-    - "un panel llega desde un borde y se va arrastrándolo: navegación en móvil, un filtro, una hoja"
-    - "conviene que ocupe el borde entero y no una caja centrada"
+    - "un panel modal llega desde un borde y se puede cerrar arrastrándolo: un filtro, una hoja de acciones, compartir"
+    - "en móvil conviene que la tarea se apoye en un borde y no en una caja centrada"
   avoidWhen:
-    - "es una decisión corta que hay que confirmar: eso es Dialog, centrado y sin borde"
+    - "es una decisión corta que hay que confirmar: eso es Dialog, centrado y con título propio"
+    - "es un Dialog que solo en móvil debe volverse hoja inferior: eso es Dialog con vaul, que conserva su header y su título"
     - "no bloquea el resto de la pantalla: eso es Popover"
   alternatives:
     - Dialog
@@ -13,9 +14,27 @@ Vaul:
 
 Vaul.drawer:
   useWhen:
-    - "el panel ocupa su borde entero: la navegación de un móvil, un panel lateral persistente"
+    - "el panel modal ocupa su borde entero: la navegación de un móvil, un panel lateral de filtros"
     - "el contenido es una lista larga que necesita todo el alto"
   avoidWhen:
     - "alcanza con una hoja que se apoya en el borde: eso es Vaul"
+    - "la navegación debe quedar visible junto al contenido: un drawer es modal y bloquea la página; eso es Sidebar"
   alternatives:
     - Vaul
+    - Sidebar
+
+Vaul.Trigger:
+  useWhen:
+    - "un botón de la página abre un Vaul: opens es el panelId del panel, y los dos van en el mismo árbol"
+  avoidWhen:
+    - "el panel se abre desde script, no desde un botón; entonces no hace falta trigger"
+    - "abre un popover o un menú anclado al botón; eso es Popover o Menu, que traen su propio trigger"
+  alternatives:
+    - Popover
+    - Menu
+
+Vaul.Close:
+  useWhen:
+    - "el panel necesita un botón propio para cerrarse (un Listo, una X): va dentro del Vaul"
+  avoidWhen:
+    - "el botón confirma una acción además de cerrar; ahí conviene un Button que haga la acción y cierre desde su propio handler"

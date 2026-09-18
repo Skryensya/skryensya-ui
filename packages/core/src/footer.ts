@@ -54,6 +54,7 @@ export const footerParts = {
 
 export const footerContract = {
   id: "footer",
+  category: "layout",
   css: "@skryensya/core/patterns/footer.css",
   parts: footerParts,
   hooks: [
@@ -80,8 +81,20 @@ export const footerContract = {
       attr: "data-surface",
     },
     /** The hairline `border-block-start`. Structure, on by default; the one thing that most reads
-     *  as "the page ends here". */
-    divider: { type: "boolean", default: true, attr: "data-divider", trueValue: "" },
+     *  as "the page ends here". `falseValue` is required: the stylesheet paints the rule unless
+     *  `data-divider="false"` is present, so omitting the attribute on false would leave the line. */
+    divider: {
+      type: "boolean",
+      default: true,
+      attr: "data-divider",
+      trueValue: "",
+      falseValue: "false",
+    },
+    /**
+     * `footer` is the `contentinfo` landmark at page level. `div` is the one case that must NOT be:
+     * a footer block nested inside an article or a card. React's `as`.
+     */
+    footerElement: { type: "enum", values: ["footer", "div"], default: "footer", element: true, prop: "as" },
   },
 
   signatures: {
@@ -94,7 +107,7 @@ export const footerContract = {
         "footer-navigation-block",
       ],
       host: { element: "footer" },
-      options: ["padding", "surface", "divider"],
+      options: ["padding", "surface", "divider", "footerElement"],
       slots: { children: { accepts: "node", required: true } },
       template: {
         element: "footer",

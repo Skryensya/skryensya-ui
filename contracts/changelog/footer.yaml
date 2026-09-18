@@ -3,8 +3,22 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "43c0120c34c99d06"
+surface: "940e23ff6194c771"
 entries:
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: Footer escribe data-divider="false" al apagar el borde
+      body: >-
+        <code>divider</code> ahora declara <code>falseValue: "false"</code>, igual que React ya
+        escribía. Sin eso, el emit omitía el atributo al optar por no, y la hoja seguía pintando
+        la raya superior.
+    en:
+      title: Footer writes data-divider="false" when the hairline is off
+      body: >-
+        <code>divider</code> now declares <code>falseValue: "false"</code>, matching what React
+        already wrote. Without it, emit omitted the attribute on opt-out and the stylesheet kept
+        painting the top rule.
   - date: 2026-09-12
     kind: feature
     es:
@@ -25,3 +39,13 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Footer elige su elemento desde el árbol
+      body: >-
+        <code>footerElement</code> acepta <code>footer</code> o <code>div</code>, lo mismo que React ya permitía con <code>as</code>.
+    en:
+      title: Footer chooses its element from the tree
+      body: >-
+        <code>footerElement</code> takes <code>footer</code> or <code>div</code>, what React already allowed through <code>as</code>.

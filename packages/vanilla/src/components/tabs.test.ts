@@ -48,7 +48,7 @@ describe("Tabs Vanilla contracts", () => {
   it("selects a tab on click, toggling panels and emitting the value", () => {
     const root = mount(markup);
     const handler = vi.fn();
-    root.addEventListener("sk-value-change", handler);
+    root.addEventListener("sk:tabsvaluechange", handler);
     mountTabs(root);
     const security = root.querySelector('[data-sk-tabs-trigger][data-value="security"]') as HTMLButtonElement;
     const generalPanel = root.querySelector('[data-sk-tabs-content][data-value="general"]') as HTMLElement;

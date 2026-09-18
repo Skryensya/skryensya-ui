@@ -1,5 +1,6 @@
 import { fireEvent, render, waitFor } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { comboboxEvents } from "@skryensya/core/combobox";
 import { Combobox } from "./combobox.js";
 
 const items = [
@@ -146,5 +147,34 @@ describe("Combobox", () => {
         ui.getByRole("option", { name: "Argelia" }).getAttribute("aria-selected"),
       ).toBe("true"),
     );
+  });
+
+  it("dispatches sk:comboboxvaluechange and sk:comboboxinputvaluechange for DOM parity with vanilla", async () => {
+    const onValue = vi.fn();
+    const onInput = vi.fn();
+    const onDomValue = vi.fn();
+    const onDomInput = vi.fn();
+    const { ui, input } = setup({
+      onValueChange: onValue,
+      onInputValueChange: onInput,
+    });
+    const root = ui.container.querySelector(".sk-combobox")!;
+    expect(root.hasAttribute("data-sk-combobox")).toBe(true);
+    root.addEventListener("sk:comboboxvaluechange", onDomValue);
+    root.addEventListener("sk:comboboxinputvaluechange", onDomInput);
+
+    fireEvent.click(input);
+    fireEvent.change(input, { target: { value: "arg" } });
+    await waitFor(() => expect(onDomInput).toHaveBeenCalled());
+    expect((onDomInput.mock.calls.at(-1)![0] as CustomEvent).detail).toEqual({
+      inputValue: "arg",
+    });
+
+    fireEvent.click(await ui.findByRole("option", { name: "Argentina" }));
+    await waitFor(() => expect(onDomValue).toHaveBeenCalled());
+    expect((onDomValue.mock.calls[0]![0] as CustomEvent).detail).toEqual({
+      value: ["argentina"],
+    });
+    expect(onValue).toHaveBeenCalledWith({ value: ["argentina"] });
   });
 });

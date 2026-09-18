@@ -33,6 +33,7 @@ describe("TreeView (React)", () => {
     render(<TreeView label="Archivos" nodes={nodes} />);
 
     const tree = document.querySelector("ul[role='tree']")!;
+    expect(document.querySelector("[data-sk-tree-view]")).not.toBeNull();
     expect(tree.getAttribute("aria-label")).toBe("Archivos");
     expect(node("src").getAttribute("role")).toBe("treeitem");
     expect(node("README.md").getAttribute("role")).toBe("treeitem");
@@ -47,6 +48,21 @@ describe("TreeView (React)", () => {
 
     await waitFor(() => expect(node("src").getAttribute("aria-expanded")).toBe("true"));
     expect(onExpandedChange).toHaveBeenCalledWith({ expandedValue: ["src"] });
+  });
+
+  it("dispatches the contract's DOM events on the root, as the Vanilla enhancer does", async () => {
+    const expanded = vi.fn();
+    const selected = vi.fn();
+    render(<TreeView label="Archivos" nodes={nodes} />);
+    const root = document.querySelector<HTMLElement>(".sk-tree-view")!;
+    root.addEventListener("sk:treeviewexpandedchange", (event) => expanded((event as CustomEvent).detail));
+    root.addEventListener("sk:treeviewselectionchange", (event) => selected((event as CustomEvent).detail));
+
+    fireEvent.click(control("src"));
+    await waitFor(() => expect(expanded).toHaveBeenCalledWith({ expandedValue: ["src"] }));
+
+    fireEvent.click(node("README.md"));
+    await waitFor(() => expect(selected).toHaveBeenCalledWith({ selectedValue: ["README.md"] }));
   });
 
   it("seeds the open branches from defaultExpandedValue", () => {

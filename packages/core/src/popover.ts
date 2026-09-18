@@ -34,6 +34,9 @@ export const popoverAttrs = {
  * which is what `optionAttrs` exists for: two options for one fact would let an author set them to
  * different values and the popover would simply not open.
  *
+ * NO PORTALS. Native `popover="auto"` puts the panel on the top layer in place; React does not
+ * portal it and there is no `container` ref. `portals` stays absent (false) on both signatures.
+ *
  * The anchor NAME is not here, and that took a while to see. Every other anchored component has a
  * binding that writes a unique name inline; this one has no binding to write it and a template
  * cannot, since the name must be unique per instance and a template is the same text every time.
@@ -43,9 +46,19 @@ export const popoverAttrs = {
  */
 export const popoverContract = {
   id: "popover",
+  category: "overlays",
   css: "@skryensya/core/components/popover.css",
   parts: popoverParts,
   hooks: [
+    "--sk-anchored-align",
+    "--sk-anchored-arrow-edge",
+    "--sk-anchored-arrow-near",
+    "--sk-anchored-justify",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-anchored-size",
+    "--sk-anchored-z",
     "--sk-popover-bg",
     "--sk-popover-border-color",
     "--sk-popover-fg",
@@ -54,6 +67,12 @@ export const popoverContract = {
     "--sk-popover-shadow",
     "--sk-popover-wash",
   ],
+  /*
+   * Placement geometry lives in `patterns/anchored.css` (`sk-anchor` / `sk-anchored` / arrow).
+   * Those classes have no unique contract owner, so `sheetsForTree` cannot discover the sheet
+   * from `also` alone, name it here.
+   */
+  hookSheets: ["@skryensya/core/patterns/anchored.css"],
 
   options: {
     /** The id that ties the trigger to the panel. Authored, because the platform needs a real id. */
@@ -71,11 +90,19 @@ export const popoverContract = {
       attr: "data-sk-placement",
     },
     /** Draw the small arrow pointing at the trigger. Decorative, never announced. */
-    arrow: { type: "boolean", default: false, attr: "data-arrow", trueValue: "", machineInput: true },
+    arrow: { type: "boolean", default: false, attr: "data-arrow", trueValue: "" },
     /** The bare surface: no title, no description, no close control. */
-    bare: { type: "boolean", default: false, attr: "data-bare", trueValue: "", machineInput: true },
-    /** What the closing control says. */
-    closeLabel: { type: "string", default: "Cerrar", attr: "data-close-label", machineInput: true },
+    bare: { type: "boolean", default: false, attr: "data-bare", trueValue: "" },
+    /**
+     * Visible text of the closing control. The label IS the text content (`textFromOption`), not an
+     * attribute, same shape as a named Button, unlike Dialog's icon-only close (`aria-label`).
+     */
+    closeLabel: { type: "string", default: "Close" },
+    /**
+     * Accessible name for an icon-only trigger. Same channel Menu publishes (`aria-label` on the
+     * trigger button). Pair with `triggerIconOnly`.
+     */
+    triggerLabel: { type: "string", attr: "aria-label" },
     /**
      * Passed straight to the trigger's own `data-variant`/`data-size`, the SAME three options
      * `Menu` already publishes for its own trigger (`triggerVariant`/`triggerSize`/
@@ -88,8 +115,10 @@ export const popoverContract = {
      * (the Editor toolbar's link button being the motivating case) drew a default-variant,
      * default-size trigger next to a row of small ghost icon buttons and read as a stray box.
      */
-    triggerVariant: { type: "string", attr: "data-variant" },
-    triggerSize: { type: "string", attr: "data-size" },
+    triggerVariant: { type: "string", attr: "data-variant", valuesFrom: { contract: "button", option: "variant" } },
+    /** Button's meaning axis, the same forward Menu's `triggerTone` makes. */
+    triggerTone: { type: "string", attr: "data-tone", valuesFrom: { contract: "button", option: "tone" } },
+    triggerSize: { type: "string", attr: "data-size", valuesFrom: { contract: "button", option: "size" } },
     /** The icon-only SHAPE: a control-sized square holding one glyph, zero inline padding. Pair it
      *  with a `triggerLabel`, since a trigger with no visible content announces nothing. */
     triggerIconOnly: { type: "boolean", default: false, attr: "data-icon-only", trueValue: "" },
@@ -99,9 +128,26 @@ export const popoverContract = {
     Popover: {
       intent: ["popover", "rich-panel-on-a-trigger", "light-dismiss-panel"],
       host: { element: "div" },
-      options: ["panelId", "placement", "arrow", "closeLabel", "triggerVariant", "triggerSize", "triggerIconOnly"],
+      options: [
+        "panelId",
+        "placement",
+        "arrow",
+        "closeLabel",
+        "triggerLabel",
+        "triggerVariant",
+        "triggerTone",
+        "triggerSize",
+        "triggerIconOnly",
+      ],
+      requires: ["panelId"],
+      /** Extra a11y on the wrapper; panel id is the panelId option (not forwarded). */
+      forward: ["aria-*"],
+      /* Trigger + close are Button chrome via `also`; sheets already resolve. */
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+      ],
       slots: {
-        /** What opens it. Carries its own accessible name. */
+        /** What opens it. Carries its own accessible name (or use `triggerLabel` when icon-only). */
         trigger: { accepts: "node", required: true },
         /** The panel's body. */
         children: { accepts: "node", required: true },
@@ -135,7 +181,7 @@ export const popoverContract = {
             // Claims the `trigger*` options for ITSELF (each one's own `attr` already says where,
             // so only `panelId` needs the rename below), the same "one option, one element" split
             // `Menu`'s own trigger keeps.
-            options: ["panelId", "triggerVariant", "triggerSize", "triggerIconOnly"],
+            options: ["panelId", "triggerLabel", "triggerVariant", "triggerTone", "triggerSize", "triggerIconOnly"],
             optionAttrs: { panelId: "popovertarget" },
             slot: "trigger",
           },
@@ -163,7 +209,7 @@ export const popoverContract = {
                 also: ["sk-button", "sk-interactive"],
                 attrs: { type: "button", popovertargetaction: "hide" },
                 options: ["panelId", "closeLabel"],
-                optionAttrs: { panelId: "popovertarget", closeLabel: "data-close-label" },
+                optionAttrs: { panelId: "popovertarget" },
                 textFromOption: "closeLabel",
               },
             ],
@@ -187,9 +233,25 @@ export const popoverContract = {
     "Popover.bare": {
       intent: ["bare-floating-surface", "anchored-panel-without-chrome", "popup"],
       host: { element: "div" },
-      options: ["panelId", "placement", "bare", "arrow", "triggerVariant", "triggerSize", "triggerIconOnly"],
+      options: [
+        "panelId",
+        "placement",
+        "bare",
+        "arrow",
+        "triggerLabel",
+        "triggerVariant",
+        "triggerTone",
+        "triggerSize",
+        "triggerIconOnly",
+      ],
+      requires: ["panelId"],
+      /** Extra a11y on the wrapper; panel id is the panelId option (not forwarded). */
+      forward: ["aria-*"],
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+      ],
       slots: {
-        /** What opens it. Carries its own accessible name. */
+        /** What opens it. Carries its own accessible name (or use `triggerLabel` when icon-only). */
         trigger: { accepts: "node", required: true },
         /** Whatever the surface holds. Its own semantics are the composition's business. */
         children: { accepts: "node", required: true },
@@ -207,7 +269,7 @@ export const popoverContract = {
             // Claims the `trigger*` options for ITSELF (each one's own `attr` already says where,
             // so only `panelId` needs the rename below), the same "one option, one element" split
             // `Menu`'s own trigger keeps.
-            options: ["panelId", "triggerVariant", "triggerSize", "triggerIconOnly"],
+            options: ["panelId", "triggerLabel", "triggerVariant", "triggerTone", "triggerSize", "triggerIconOnly"],
             optionAttrs: { panelId: "popovertarget" },
             slot: "trigger",
           },
@@ -232,4 +294,13 @@ export const popoverContract = {
       react: { from: "@skryensya/react/popover", name: "Popover" },
     },
   },
+
+  a11y: [
+    {
+      when: { triggerIconOnly: true },
+      requiresOneOf: ["triggerLabel"],
+      because:
+        "An icon-only trigger shows no text, so the trigger button owns the accessible name; the glyph is decorative.",
+    },
+  ],
 } as const satisfies ComponentContract;

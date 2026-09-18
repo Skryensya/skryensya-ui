@@ -51,6 +51,7 @@ describe("CodePreview", () => {
     expect(toggle.getAttribute("aria-expanded")).toBe("false");
     expect(toggle.getAttribute("data-size")).toBe("sm");
     expect(toggle.getAttribute("data-variant")).toBe("ghost");
+    expect(toggle.getAttribute("data-sk-code-preview-expanded-label")).toBe("Ver menos");
 
     fireEvent.click(toggle);
 
@@ -116,7 +117,7 @@ describe("CodePreviewDensity", () => {
     );
 
     // The ends are labels BESIDE the switch, so the name still says what flipping it does.
-    const control = ui.getByRole("switch", { name: "Mostrar la versión completa" });
+    const control = ui.getByRole("switch", { name: "Show the full version" });
     expect(control.getAttribute("data-sk-code-preview-density-input")).toBe("");
     expect(control.getAttribute("type")).toBe("checkbox");
 

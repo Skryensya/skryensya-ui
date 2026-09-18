@@ -44,7 +44,7 @@ export const settingsRowWithSwitchSnippet: Snippet = {
       {
         contract: "switch",
         signature: "Switch",
-        options: { checked: true },
+        options: { defaultChecked: true },
         attrs: { "aria-label": "Dark mode" },
       },
     ],

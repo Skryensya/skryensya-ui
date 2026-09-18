@@ -109,8 +109,11 @@ export function commandPaletteOptionContext(entry: CommandPaletteEntry): string 
  */
 export const commandPaletteContract = {
   id: "command-palette",
+  category: "actions",
   css: "@skryensya/core/components/command-palette.css",
   parts: commandPaletteParts,
+  /* Result rows are binding-filled on open; emit list stays empty. */
+  systemOwned: ["option", "optionLabel", "optionContext"],
   hooks: [
     "--sk-command-palette-border-color",
     "--sk-command-palette-footer-bg",
@@ -120,6 +123,12 @@ export const commandPaletteContract = {
     "--sk-command-palette-list-min-block-size",
     "--sk-command-palette-option-bg-selected",
   ],
+  /*
+   * Default-ON Vaul lives in `patterns/dialog-vaul.css`. Naming it here is what lets
+   * `sheetsForTree` load the sheet, `also: sk-dialog` discovers dialog.css, not the Vaul pattern
+   * (same shape as Dialog's own hookSheets).
+   */
+  hookSheets: ["@skryensya/core/patterns/dialog-vaul.css"],
 
   options: {
     /** Names the dialog for anyone who cannot see it. An option, not a slot: both bindings put it
@@ -127,12 +136,26 @@ export const commandPaletteContract = {
     label: { type: "string", attr: "aria-label" },
     /** The dialog's own id: the trigger points at it and the index is keyed to it. */
     paletteId: { type: "string", attr: "id", prop: "id" },
+    /** What the closing control announces. Lives on the close button as `aria-label`, same as Dialog. */
+    closeLabel: { type: "string", default: "Close", attr: "aria-label" },
     /** Shown in the search field while it is empty. */
-    placeholder: { type: "string", default: "Buscar…", attr: "placeholder" },
+    placeholder: { type: "string", default: "Search…", attr: "placeholder" },
     /** What the empty state says once a filter matches nothing. */
-    emptyLabel: { type: "string", default: "Sin resultados.", attr: "data-empty-label", machineInput: true },
+    emptyLabel: { type: "string", default: "No results.", attr: "data-empty-label", machineInput: true },
     /** Rendered already open, non-modally: the platform's attribute, same as `Dialog.open`. */
     open: { type: "boolean", default: false, attr: "open", trueValue: "" },
+    /**
+     * A block-end sheet below the desktop breakpoint, and ON BY DEFAULT: the same `<dialog>` opted
+     * into Dialog Vaul (`patterns/dialog-vaul.css`), with drag-to-dismiss from the handle.
+     *
+     * Default ON because a palette is the one dialog a phone opens with a thumb from the bottom of the
+     * screen, and a centred box there puts the search field under the keyboard and the results off the
+     * top. It was already what the documentation shipped, by writing the attribute by hand in its own
+     * markup - which is how a behaviour ends up true of one site and false of the component. Same
+     * attribute as `Dialog.vaul`, so the sheet, the enhancer's mount point and the drag are one
+     * mechanism, not a palette-shaped copy. `false` keeps the centred box at every width.
+     */
+    vaul: { type: "boolean", default: true, attr: "data-sk-dialog-vaul", trueValue: "" },
     /**
      * The index, JSON-encoded: a demo's ONLY way to seed one, since a usage tree names contracts
      * and signatures and has no channel for a literal `<script>`. No `attr`: it never lands on an
@@ -147,8 +170,28 @@ export const commandPaletteContract = {
       intent: ["command-palette", "search-everything", "keyboard-first-navigation"],
       host: { element: "dialog" },
       mount: commandPaletteAttrs.root,
-      options: ["label", "paletteId", "placeholder", "emptyLabel", "open", "entries"],
-      slots: {},
+      options: [
+        "label",
+        "paletteId",
+        "closeLabel",
+        "placeholder",
+        "emptyLabel",
+        "open",
+        "vaul",
+        "entries",
+      ],
+      requires: ["label", "paletteId"],
+      /** Extra a11y; palette id is the paletteId option (not forwarded). */
+      forward: ["aria-*"],
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "dialog", sheets: ["@skryensya/core/components/dialog.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+      ],
+      slots: {
+        /** Keyboard-hint strip under the list. Optional: demos and React pass it; Vanilla authors it. */
+        footer: { accepts: "node" },
+      },
       template: {
         element: "dialog",
         part: "root",
@@ -160,8 +203,17 @@ export const commandPaletteContract = {
             given: true,
             attrs: { [commandPaletteAttrs.index]: "sk-command-palette-index" },
           },
+          { option: "vaul", given: true, attrs: { "data-edge": "block-end" } },
         ],
         children: [
+          /*
+           * The grab handle Dialog Vaul drags from (`[data-part="handle"]`, a DIRECT child: the
+           * enhancer looks for `:scope > [data-part="handle"]` so a nested component's own handle can
+           * never take the gesture). Always in the markup rather than gated on `vaul`, because a
+           * default-ON option is exactly the one `whenGiven` cannot see; `command-palette.css` hides
+           * it on a palette that opted out, and `dialog-vaul.css` hides it above the breakpoint.
+           */
+          { element: "div", attrs: { "aria-hidden": "true", "data-part": "handle" } },
           {
             element: "div",
             part: "search",
@@ -192,10 +244,10 @@ export const commandPaletteContract = {
                     element: "button",
                     part: "close",
                     also: ["sk-button", "sk-dialog__close", "sk-interactive"],
+                    options: ["closeLabel"],
                     attrs: {
                       type: "submit",
                       value: "cancel",
-                      "aria-label": "Cerrar",
                       "data-icon-only": "",
                       "data-size": "sm",
                       "data-variant": "ghost",
@@ -223,6 +275,12 @@ export const commandPaletteContract = {
             options: ["emptyLabel"],
             attrs: { hidden: "" },
             textFromOption: "emptyLabel",
+          },
+          {
+            element: "footer",
+            part: "footer",
+            slot: "footer",
+            whenGiven: "footer",
           },
           /*
            * A demo's index, authored the only way a usage tree can: as this signature's own JSON

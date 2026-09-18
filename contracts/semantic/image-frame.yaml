@@ -9,5 +9,8 @@ ImageFrame:
     - es la identidad circular de una persona: eso es un Avatar
     - no hay medio que mostrar, ni src ni contenido autoreado; el marco vacío es una caja vacía,
       no un placeholder
+    - el contenido aún no cargó y hace falta una silueta: eso es Placeholder, no un ImageFrame sin src
   alternatives:
+    - Avatar.image
     - Avatar.initials
+    - Placeholder

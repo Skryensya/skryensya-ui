@@ -36,6 +36,64 @@ export type ContractOption = {
   readonly prop?: string;
   /** CSS custom property written on the host instead of a DOM attribute. */
   readonly styleProperty?: `--${string}`;
+  /**
+   * The value IS the host's element: an enum of tag names, written as the element rather than as an
+   * attribute (so it takes no `attr`). A heading's level is document structure, and a structure no
+   * tree could state meant every emitted Heading was an `h2`. React receives it under `prop`, which
+   * for a polymorphic component is `as`. The default must be the template's own host element.
+   */
+  readonly element?: true;
+  /**
+   * The value names ENTRIES of this signature's own keyed collection: which tab starts active,
+   * which branches start open. Without it a tree could seed `defaultExpandedValue="scr"` against a
+   * node called `src`, validate, and render a tree where nothing is open and nothing says why.
+   * `many` means a space- or comma-separated list. In a recursive collection a key is looked up at
+   * every depth.
+   */
+  readonly keyOf?: { readonly slot: string; readonly many?: true };
+  /**
+   * The value is ANOTHER node's option in the same tree: a trigger naming the panel it opens by
+   * that panel's id. The two sit apart (a Vaul's trigger lives outside the `<dialog>`), so no
+   * template can pair them; the validator checks that some node of `contract` in the tree states
+   * `option` with this exact value.
+   */
+  readonly refersTo?: { readonly contract: string; readonly option: string };
+  /**
+   * Values kept for existing markup, each with the value to use instead. Still valid; the validator
+   * says so as an advisory, so a new composition stops reaching for them.
+   */
+  readonly deprecatedValues?: Readonly<Record<string, string>>;
+  /**
+   * A `string` option that is really a list, written into one attribute: `columnWeights="2,1,1"`.
+   * `item` is what each entry must be. `countFrom` names a row signature whose direct children the
+   * list must match one-for-one, looked up as the first such node under this one: a Table's weights
+   * are per column, and a list one short is silently thrown away by the binding.
+   */
+  readonly list?: { readonly separator: string; readonly item: "positive-number"; readonly countFrom?: string };
+  /**
+   * A `string` option with a fixed format: the regular expression it must match (anchored by the
+   * author) and one valid example for the diagnostic. A time field seeded with `"9.30"` parses to
+   * nothing and starts blank, which is a typo the validator can name.
+   */
+  readonly pattern?: { readonly source: string; readonly example: string };
+  /**
+   * A `number` bounded by OTHER options of the same node, inclusive: a slider's value between its own
+   * min and max, a range's low end at most its high end. Each side names an option; its value comes
+   * from the tree or, when omitted, from that option's default.
+   */
+  readonly between?: { readonly min?: string; readonly max?: string };
+  /**
+   * A `string` option whose vocabulary belongs to ANOTHER contract: a Menu trigger forwards Button's
+   * `variant`. Untyped, those drifted when Button split variant from tone, and a trigger kept writing
+   * `data-variant="accent"`, which no rule in button.css paints. The validator checks the value against
+   * the named option's `values`.
+   */
+  readonly valuesFrom?: { readonly contract: string; readonly option: string };
+  /** Bounds for a `number` option, inclusive. A heading level of 7 or a threshold of 4 is not a value, it is a typo. */
+  readonly min?: number;
+  readonly max?: number;
+  /** A `number` option that only takes whole numbers: a level, a position, a count. */
+  readonly integer?: true;
   /** For a boolean option, what the attribute holds when true. `""` means presence-only. */
   readonly trueValue?: string;
   /**
@@ -97,15 +155,65 @@ export type ContractSlot = {
    */
   readonly restrictOptions?: Readonly<Record<string, readonly string[]>>;
   /**
+   * Attributes a DIRECT child of this slot may carry on its own host, outside the child's contract.
+   *
+   * LayoutGrid's `data-width` is the case: the span belongs to the child element (a heading, figure
+   * or section owns its semantics) rather than to an option of Box/Stack/…. Authored on the child
+   * via UsageTree `attrs` (the attr name in each option's `attr`); the validator checks values
+   * against this vocabulary. Declaring them here also puts the names in the manifest.
+   */
+  readonly childAttrs?: Readonly<Record<string, ContractOption>>;
+  /**
    * The order in `of` is REQUIRED, not merely a list. A table caption after its rows is markup the
    * parser moves and a screen reader announces out of sequence; nothing else in the model can say so.
    */
   readonly ordered?: true;
   /**
+   * The children are a HIERARCHY WRITTEN FLAT: rows in document order whose depth and position are
+   * options rather than nesting (a treegrid, where a `<tr>` cannot hold a `<tr>`). Each field names
+   * the child option carrying that fact. The validator then holds the rows to what `aria-level`,
+   * `aria-posinset` and `aria-setsize` promise a screen reader: depth grows one level at a time,
+   * siblings agree on their set size and are numbered 1..n, a branch (`expanded` given) is followed
+   * by its children and a leaf is not, and `key` is unique across the rows.
+   */
+  readonly flatHierarchy?: {
+    readonly level: string;
+    readonly setSize: string;
+    readonly posInset: string;
+    readonly expanded: string;
+    readonly key?: string;
+  };
+  /**
    * How many of each signature may appear. Absent means any number; the common case. A table has at
    * most one caption and needs exactly one body, and neither is expressible as a presence check.
    */
   readonly cardinality?: Readonly<Record<string, "one" | "optional" | "many">>;
+  /**
+   * Cardinality over a GROUP of signatures counted together: a badge holder takes exactly one
+   * anchor, whichever of Button, IconStateButton or Avatar it is. Per-signature `cardinality` can
+   * only say "at most one of each", which lets two different anchors through.
+   */
+  readonly groupCardinality?: readonly { readonly of: readonly string[]; readonly count: "one" | "optional" | "many" }[];
+  /** How many entries (a collection) or composed children (a signature slot) the slot takes. */
+  readonly minItems?: number;
+  readonly maxItems?: number;
+  /**
+   * When `accepts` is `"signature"`, every composed child in this slot must carry a distinct value
+   * for this option on its signature (QuestionnaireItem `name` among siblings).
+   */
+  readonly uniqueChildOption?: string;
+  /**
+   * How many entries of this collection may have `option` equal to `equals` (a boolean compares as
+   * "true"/"false", an omitted option reads as its default): at most one current step, since a
+   * finished checkout has none.
+   */
+  readonly countWhere?: { readonly option: string; readonly equals: string; readonly count: "one" | "optional" };
+  /**
+   * The children are positioned siblings (`aria-posinset` / `aria-setsize`): every one states the
+   * same set size, positions are unique and within it. A set size of -1 (unknown, WAI's own value)
+   * skips the range check.
+   */
+  readonly positions?: { readonly posInset: string; readonly setSize: string };
   /**
    * Entries of this slot have the shape of the entry that CONTAINS it. A folder holds folders, and
    * declaring that by writing the shape again would be writing it forever.
@@ -137,6 +245,8 @@ export type ContractSlot = {
      * validator then rejected for every tree that used them.
      */
     readonly key?: string;
+    /** Entry options or slots every entry must give: a chart point with no value is not a point. */
+    readonly requires?: readonly string[];
   };
 };
 
@@ -267,6 +377,10 @@ export type ContractTemplate = {
    * element's `id` and the trigger's `popovertarget`; neither spelling is more true than
    * the other. Without this the contract would need two options for one fact, which an author could
    * set to two different values, and the popover would simply not open.
+   *
+   * An empty-string value means OMIT: this node does not write that option's attribute at all
+   * (`Select.native` suppresses host `data-value` because `selectedBy` is the channel). Renaming
+   * and omitting share one map so a template never needs a second vocabulary for "not here".
    */
   readonly optionAttrs?: Readonly<Record<string, string>>;
 
@@ -492,8 +606,48 @@ export type ContractSignature = {
    * static check calls fine.
    */
   readonly exactlyOneOf?: readonly (readonly string[])[];
+  /**
+   * At least one member of each group must count as supplied: an option set to something other than
+   * its default, a filled slot, or a boolean option set to `true`.
+   *
+   * For a signature whose whole reason to exist is what those options paint: a Box with no padding,
+   * no surface and no border draws nothing. Unlike `exactlyOneOf`, any number of them may be set
+   * together, and slot names may appear in the group (QuestionnaireItem needs choices and/or text).
+   */
+  readonly atLeastOneOf?: readonly (readonly string[])[];
   /** Signature ids this one may sit inside. Empty means top level. */
   readonly parents?: readonly string[];
+  /**
+   * The negative of `parents`, at ANY depth: signature ids this one must never sit inside. A
+   * Wrapper inside a Wrapper adds a second set of gutters and the outer ceiling wins anyway.
+   */
+  readonly notInside?: readonly string[];
+  /**
+   * When the key option is given, the listed options must not be: one decision spelled once. A
+   * Text `textRole` sets size, tone and weight together, so also setting `size` states the same
+   * thing twice and the role silently wins.
+   */
+  readonly excludes?: Readonly<Record<string, readonly string[]>>;
+  /**
+   * The other half of `excludes`: when the key option is given (a boolean counts only when true),
+   * each listed option or slot must be given too. A count-up with no number to count to is not a
+   * quieter stat, it is an enhancer that throws.
+   */
+  readonly implies?: Readonly<Record<string, readonly string[]>>;
+  /*
+   * Keys of `implies` and `excludes` (and the names they list) may also be a SLOT, given when
+   * filled, or `option=value`, given when the option holds exactly that value: a fade's colour is
+   * meaningless unless its mode is `color`, and a QR logo is a zero-size cover without a ratio.
+   */
+  /**
+   * The same value on both sides of a composition: a split button's action and menu trigger share
+   * one variant and size, or the welded halves stop reading as one control. Each side is a slot and
+   * the option on the signature composed into it; a missing value reads as that option's default.
+   */
+  readonly pairs?: readonly {
+    readonly a: { readonly slot: string; readonly option: string };
+    readonly b: { readonly slot: string; readonly option: string };
+  }[];
   readonly slots: Readonly<Record<string, ContractSlot>>;
   /** The id relationships this signature owes, and the only place ids are decided. */
   readonly wiring?: readonly ContractWiring[];
@@ -509,16 +663,65 @@ export type ContractSignature = {
    * The floating content leaves the subtree: React portals it (to `document.body` by default) while
    * authored markup keeps it in place, positioned by CSS anchoring (decision 25).
    *
-   * Declared because two different things need to know. The binding takes a `container` so a consumer
-   * can scope the portal (a preview frame, a dialog); the symmetry gate uses that to measure one
-   * subtree instead of two loose regions.
+   * `true` means it portals. `{ container: true }` means React also accepts a `container` ref so a
+   * consumer can scope the portal (a preview frame, a dialog); the symmetry gate uses that to
+   * measure one subtree instead of two loose regions. Markup has no container channel.
    */
-  readonly portals?: true;
+  readonly portals?: true | { readonly container?: true };
+  /**
+   * How pointer hit-testing works for this signature. CSS usually realizes it; declaring it here
+   * puts the promise in the manifest so a tool does not have to read the stylesheet to learn that
+   * an anchored badge never steals clicks from its control.
+   *
+   * `childrenNone` names signatures allowed in a slot of this host: those direct children get
+   * `pointer-events: none` under this host. `host: "none"` means the host itself does not receive
+   * pointer events (decorative overlays).
+   */
+  readonly hitTesting?: {
+    readonly host?: "none";
+    readonly childrenNone?: readonly string[];
+  };
+  /**
+   * Host attributes this signature intentionally accepts via UsageTree `attrs`.
+   *
+   * Options already map the attributes the contract owns (`type`, `href`, `disabled`). Everything
+   * else an author still needs on the host (`name`, `form`, `target`, `readonly`, `value`,
+   * `aria-*`) used to live only as an open `attrs` bag. Declaring the allowlist here is what an
+   * agent reads, and what the validator enforces: when `forward` is set, any other authored attr is
+   * `unknown-attr` (except `class` / `style`, and attrs a parent slot publishes via `childAttrs`).
+   * A trailing `*` is a prefix: `"aria-*"` allows every `aria-` attribute. Absent means attrs stay
+   * open - the catalogue default until a signature opts in.
+   */
+  readonly forward?: readonly string[];
+  /**
+   * Families this signature composes (via template `also`, baked chrome, or binding-injected UI)
+   * without rewriting every template node into a nested UsageTree.
+   *
+   * `also: ["sk-button"]` alone is a CSS class list; `compose` is what an agent reads: which
+   * contract is borrowed, which sheets that borrow needs, and whether the composed markup is
+   * system-owned (emitted/injected) rather than authored as a child. Validated: `of` must name a
+   * catalogue contract; each `sheets` entry must exist in the CSS corpus.
+   */
+  readonly compose?: readonly {
+    /** Contract id of the composed family. */
+    readonly of: string;
+    /** Stylesheets this composition needs beyond what parts/`also` already discover. */
+    readonly sheets?: readonly string[];
+    /** True when the composed markup is binding/system-injected, not an authored UsageTree child. */
+    readonly systemOwned?: boolean;
+  }[];
   readonly deprecated?: { readonly replacement: string };
 };
 
+/**
+ * Where a component sits by the job it does, the eight groups design systems usually use and the docs
+ * catalogue already follows. Identity, not a promise: it is indexed, and left out of the surface hash.
+ */
+export type ContractCategory = "actions" | "forms" | "navigation" | "overlays" | "feedback" | "data" | "content" | "layout";
+
 export type ComponentContract = {
   readonly id: string;
+  readonly category?: ContractCategory;
   /** The stylesheet a consumer must import. Resolved from the package export map, never typed by hand. */
   readonly css: string;
   readonly parts: Readonly<Record<string, string>>;
@@ -545,6 +748,24 @@ export type ComponentContract = {
    */
   readonly hooks?: readonly string[];
   /**
+   * The subset of `hooks` a binding WRITES at runtime (a drag offset, a measured size). Published so
+   * a stylesheet can read them; overriding one does nothing, because the next frame writes over it.
+   */
+  readonly outputHooks?: readonly string[];
+  /**
+   * Kit-namespaced attributes (`data-sk-*`) this family publishes for an AUTHOR to write on a host
+   * that belongs to a DIFFERENT family.
+   *
+   * `data-*` is the author's namespace by HTML's own rule, so the validator leaves every plain
+   * `data-` attribute alone; `data-sk-*` is the kit's, and an undeclared one is a typo against an
+   * enhancer that will never fire. A few are genuinely meant to be authored across a seam anyway:
+   * a Button carrying `data-sk-vaul-close` closes the drawer around it, a NavListLink carrying
+   * `data-sk-megamenu-preview` swaps the megamenu's image. Declaring them HERE rather than in the
+   * receiving signature's `forward` is what keeps the direction of knowledge right - Button has no
+   * business knowing Vaul exists, and Vaul is where someone reading about drawers will look.
+   */
+  readonly authoredAttrs?: readonly string[];
+  /**
    * The OTHER stylesheets whose hooks this contract also publishes, when its styling does not fit
    * in the one sheet `css` names.
    *
@@ -566,6 +787,15 @@ export type ComponentContract = {
    */
   readonly hookSheets?: readonly string[];
   /**
+   * Keys of `parts` that bindings or enhancers emit but authors never write in a UsageTree.
+   *
+   * Calendar's grid cells, Carousel's prev/next/dots: the contract still owns the class names (CSS
+   * and unique-sheet ownership), yet the template only authors the host shell. Listing them here is
+   * what makes "binding fills the body" machine-readable. Validated: every name must be a key of
+   * `parts`.
+   */
+  readonly systemOwned?: readonly string[];
+  /**
    * The DOM events the component dispatches, by the name the code calls them: `valueChange` →
    * `sk:accordionvaluechange`.
    *
@@ -576,6 +806,43 @@ export type ComponentContract = {
    * of a person finding it in prose.
    */
   readonly events?: Readonly<Record<string, string>>;
+  /**
+   * What each event in `events` carries, keyed the same way: the fields of `event.detail` with their
+   * TypeScript type, whether the component dispatches it (`out`, the default) or listens for it as a
+   * command (`in`), and how React exposes the same channel. The name map alone told a consumer what
+   * to listen for and nothing about what would arrive or which prop to pass.
+   */
+  readonly eventDetails?: Readonly<
+    Record<
+      string,
+      {
+        readonly detail: Readonly<Record<string, string>>;
+        readonly direction?: "in";
+        /**
+         * React callback prop (`onValueChange`). `false` when React has no dedicated prop: listen on
+         * the DOM, use a handle method, or the event is site/enhancer-only. Outbound events declare
+         * one or the other; inbound (`direction: "in"`) may omit it.
+         */
+        readonly reactProp?: string | false;
+        /**
+         * React callback argument when it is NOT the `detail` object: a TypeScript type string
+         * (`"string"`, `"number"`, `"void"`, `"{ low: number; high: number }"`).
+         */
+        readonly reactDetail?: string;
+        /**
+         * Key of `parts` that dispatches (or listens for, when `direction: "in"`) the CustomEvent.
+         * Almost always `root`. What an agent reads to know where to attach a listener.
+         */
+        readonly source?: string;
+        /**
+         * Key of `parts` the user activates to cause the event (trigger button, thumb, remove
+         * control). Omit when several parts can fire it, when it is lifecycle/timeout-driven, or
+         * when `direction: "in"` (the consumer dispatches).
+         */
+        readonly trigger?: string;
+      }
+    >
+  >;
 };
 
 /* ---------------------------------------------------------------------------------------------- *

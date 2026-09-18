@@ -20,6 +20,7 @@ export type NavbarPartClass = (typeof navbarParts)[NavbarPart];
  */
 export const navbarContract = {
   id: "navbar",
+  category: "navigation",
   css: "@skryensya/core/components/navbar.css",
   parts: navbarParts,
   hooks: [

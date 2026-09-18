@@ -1,9 +1,15 @@
-import { commandPaletteParts, commandPaletteOptionContext, filterCommandPaletteEntries, type CommandPaletteEntry, commandPaletteContract } from "@skryensya/core/command-palette";
+import { commandPaletteAttrs, commandPaletteParts, commandPaletteOptionContext, filterCommandPaletteEntries, type CommandPaletteEntry, commandPaletteContract } from "@skryensya/core/command-palette";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Icon } from "./icon.js";
+import { useVaulDrag } from "./vaul-drag.js";
 
 /* Derived, never restated: the default lives in the contract. */
-const { emptyLabel: emptyLabelOption, open: openOption, placeholder: placeholderOption } = commandPaletteContract.options;
+const {
+  emptyLabel: emptyLabelOption,
+  open: openOption,
+  placeholder: placeholderOption,
+  vaul: vaulOption,
+} = commandPaletteContract.options;
 
 /*
  * COMMAND PALETTE: the React half, which did not exist.
@@ -34,6 +40,12 @@ export type CommandPaletteProps = {
   emptyLabel?: string;
   closeLabel?: string;
   open?: boolean;
+  /**
+   * A bottom sheet below the desktop breakpoint, with drag-to-dismiss from its handle. ON by default
+   * (the contract's `vaul`); `false` keeps the centred box at every width. The sheet itself is
+   * `patterns/dialog-vaul.css`, which the consumer imports beside this component's own sheet.
+   */
+  vaul?: boolean;
   footer?: ReactNode;
   /**
    * What activating a result means, when it is not "go to its address".
@@ -48,7 +60,7 @@ export type CommandPaletteProps = {
 };
 
 export function CommandPalette({
-  closeLabel = "Cerrar",
+  closeLabel = commandPaletteContract.options.closeLabel.default,
   emptyLabel = emptyLabelOption.default,
   footer,
   id,
@@ -57,8 +69,12 @@ export function CommandPalette({
   onSelect,
   open = openOption.default,
   placeholder = placeholderOption.default,
+  vaul = vaulOption.default,
 }: CommandPaletteProps) {
   const dialog = useRef<HTMLDialogElement>(null);
+  /* The drag half of Dialog Vaul, which the Vanilla enhancer gets from `connectVaul`. A sheet only
+     ever slides from block-end, so the edge is not a choice here. */
+  useVaulDrag(dialog, { enabled: vaul, edge: "block-end" });
   const input = useRef<HTMLInputElement>(null);
   const list = useRef<HTMLUListElement>(null);
   const items = useMemo(
@@ -173,10 +189,15 @@ export function CommandPalette({
     <dialog
       aria-label={label}
       className={`sk-dialog ${commandPaletteParts.root}`}
+      data-sk-dialog-vaul={vaul ? vaulOption.trueValue : undefined}
       id={id}
       open={open}
       ref={dialog}
+      {...{ [commandPaletteAttrs.root]: "" }}
     >
+      {/* The grab handle, always in the markup, same as the contract template: `command-palette.css`
+          hides it when `vaul` is off and `dialog-vaul.css` hides it above the breakpoint. */}
+      <div aria-hidden="true" data-part="handle" />
       <div className={commandPaletteParts.search}>
         <Icon name="search" />
         <input

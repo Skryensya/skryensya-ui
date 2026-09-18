@@ -242,6 +242,7 @@ export function Folder({
       {...props}
       className={cx(folderParts.root, className)}
       ref={rootRef}
+      {...{ [folderAttrs.root]: "" }}
       {...{ [activeOption.attr]: active ? activeOption.trueValue : undefined }}
     >
       <FolderShape label={label} pathRef={pathRef} previews={previews} shapeRef={shapeRef} tabRef={tabRef}>
@@ -275,6 +276,7 @@ export function FolderLink({
       {...props}
       className={cx(folderParts.root, "sk-interactive", className)}
       ref={rootRef}
+      {...{ [folderAttrs.root]: "" }}
       {...{ [activeOption.attr]: active ? activeOption.trueValue : undefined }}
     >
       <FolderShape label={label} pathRef={pathRef} previews={previews} shapeRef={shapeRef} tabRef={tabRef}>

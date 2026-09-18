@@ -31,10 +31,21 @@ export type TabsPartClass = (typeof tabsParts)[TabsPart];
  * absent here: parts are ours and state is the machine's. The contract describes what a consumer
  * authors, and the machine takes it from there.
  */
+/** The DOM events this family dispatches on its root, `sk:<family><event>` like every other. */
+export const tabsEvents = {
+  /** Detail: `{ value: string }`, the newly selected tab. */
+  valueChange: "sk:tabsvaluechange",
+} as const;
+
 export const tabsContract = {
   id: "tabs",
+  category: "navigation",
   css: "@skryensya/core/components/tabs.css",
   parts: tabsParts,
+  events: tabsEvents,
+  eventDetails: {
+    valueChange: { detail: { value: "string" }, reactProp: "onValueChange", source: "root", trigger: "trigger" },
+  },
   hooks: [
     "--sk-tabs-gap",
     "--sk-tabs-indicator-bg",
@@ -73,7 +84,7 @@ export const tabsContract = {
      * Markup: `data-value`. React: `defaultValue`. React's `value` is controlled, and a usage
      * tree has no change handler to feed it (same rename Slider and TimeField make).
      */
-    value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
+    value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true, keyOf: { slot: "items" } },
     /**
      * Paint size for the trigger row: height, inline padding, label size. CSS-only, the same
      * axis Button's `size` is: not a machine input, the roving tabindex and selection behave
@@ -106,6 +117,8 @@ export const tabsContract = {
       intent: ["tabs", "switch-between-panels", "sections-in-one-region"],
       host: { element: "div" },
       options: ["orientation", "activationMode", "value", "size", "variant"],
+      /** Host id / a11y names on the tabs root. */
+      forward: ["id", "aria-*"],
       slots: {
         items: {
           accepts: "items",
@@ -165,7 +178,9 @@ export const tabsContract = {
 
   a11y: [
     {
-      when: { orientation: "present" },
+      /* Unconditional. It used to be keyed on `orientation: "present"`, and `orientation` has a
+         default nobody writes, so the rule fired for almost no tree and an unnamed tablist passed. */
+      when: {},
       requiresOneOf: ["aria-label", "aria-labelledby"],
       because: "The tab list is a named region; a page with two of them needs to tell them apart.",
     },

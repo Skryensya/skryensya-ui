@@ -59,7 +59,7 @@ describe("Carousel", () => {
 
     const root = ui.container.querySelector(".sk-carousel")!;
     const onGoto = vi.fn();
-    root.addEventListener("sk-carousel-goto", onGoto as EventListener);
+    root.addEventListener("sk:carouselgoto", onGoto as EventListener);
 
     ref.current?.snapTo(1);
 

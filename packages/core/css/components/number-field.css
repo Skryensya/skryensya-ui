@@ -19,6 +19,7 @@
     --sk-number-field-step-radius: var(--radius-control);
     --sk-number-field-step-inset: calc((var(--size-touch-target) - var(--size-control-sm)) * 0.5);
     --sk-number-field-hint-color: var(--color-text-secondary);
+    --sk-number-field-invalid-border-color: var(--color-border-danger);
 
     display: grid;
     gap: var(--sk-number-field-gap);
@@ -41,6 +42,9 @@
   .sk-number-field__control:focus-within {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
     outline-offset: var(--focus-ring-offset);
+  }
+  .sk-number-field[data-invalid] .sk-number-field__control {
+    border-color: var(--sk-number-field-invalid-border-color);
   }
   .sk-number-field__input {
     box-sizing: border-box;

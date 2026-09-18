@@ -9,12 +9,65 @@ import type { ComponentContract } from "./contract.js";
  * Size, variant, and speed are orthogonal axes: any motion design can be small and slow.
  */
 export type LoaderSize = "sm" | "md" | "lg";
-export type LoaderVariant = "ring" | "sweep" | "bars" | "dots";
+/*
+ * Motion designs, in two families that differ in ANATOMY rather than in taste.
+ *
+ * The first six draw themselves out of the root's two pseudo-elements and have no children at all.
+ * The last four are a ring of marks that fade in sequence, which two pseudo-elements cannot be: a
+ * stagger needs one real element per mark. `loaderTicks` is what says how many.
+ */
+export type LoaderVariant =
+  | "ring"
+  | "sweep"
+  | "bars"
+  | "dots"
+  | "arc"
+  | "comet"
+  | "orbit"
+  | "clock"
+  | "spokes"
+  | "ticks"
+  | "compass"
+  | "beads";
 export type LoaderSpeed = "fast" | "normal" | "slow";
 
 export const loaderParts = {
   root: "sk-loader",
+  tick: "sk-loader__tick",
 } as const;
+
+/**
+ * The enhancer's attachment point.
+ *
+ * Bookkeeping, not content: React writes the marks itself and never writes this, which is exactly
+ * what the symmetry gate reads `ContractSignature.mount` to know.
+ */
+export const loaderAttrs = {
+  root: "data-sk-loader",
+} as const;
+
+/**
+ * How many marks a staggered variant draws. Zero for the ones the pseudo-elements already cover.
+ *
+ * Pure and shared, for the reason `placeholderLines` is: React builds this many elements and the
+ * emitter expands this many entries (`loader-ticks`, a `repeatComputed` window), so the two bindings
+ * cannot disagree about how many marks a `spokes` is. An author never types this number, because it
+ * is not a choice: twelve is what makes a `spokes` read as a spokes.
+ *
+ * WHICH mark each one is stays out of here, exactly as a placeholder line's width does. The angle
+ * and the delay are PAINT, so `loader.css` derives both from `:nth-child()` and neither binding
+ * computes anything.
+ */
+export const LOADER_TICKS: Readonly<Partial<Record<LoaderVariant, number>>> = {
+  spokes: 12,
+  ticks: 8,
+  compass: 4,
+  beads: 8,
+};
+
+export function loaderTicks(variant: string): number {
+  return LOADER_TICKS[variant as LoaderVariant] ?? 0;
+}
 
 export type LoaderPart = keyof typeof loaderParts;
 export type LoaderPartClass = (typeof loaderParts)[LoaderPart];
@@ -28,23 +81,49 @@ export type LoaderPartClass = (typeof loaderParts)[LoaderPart];
  */
 export const loaderContract = {
   id: "loader",
+  category: "feedback",
   css: "@skryensya/core/components/loader.css",
   parts: loaderParts,
+  /* Staggered tick children are enhancer/React-injected; emit has none. */
+  systemOwned: ["tick"],
   hooks: [
+    "--sk-loader-cycle",
     "--sk-loader-duration",
     "--sk-loader-easing",
     "--sk-loader-oscillation-easing",
     "--sk-loader-size",
+    "--sk-loader-step",
     "--sk-loader-stroke-width",
+    "--sk-loader-tempo",
+    "--sk-loader-tick-angle",
+    "--sk-loader-tick-count",
     "--sk-loader-track-color",
   ],
+  /*
+   * Loader.status paints with `sk-visually-hidden`. That class has no unique contract owner, so
+   * `sheetsForTree` cannot discover the sheet from `also` alone, name it here.
+   */
+  hookSheets: ["@skryensya/core/patterns/visually-hidden.css"],
 
   options: {
     size: { type: "enum", values: ["sm", "md", "lg"], default: "md", attr: "data-size" },
     /** Motion design. Orthogonal to size and speed. */
     variant: {
       type: "enum",
-      values: ["ring", "sweep", "bars", "dots"],
+      values: [
+        "ring",
+        "sweep",
+        "bars",
+        "dots",
+        "arc",
+        "comet",
+        "orbit",
+        "clock",
+        "spokes",
+        "ticks",
+        "compass",
+        "beads",
+      ],
       default: "ring",
       attr: "data-variant",
     },
@@ -72,6 +151,21 @@ export const loaderContract = {
         ],
       },
       react: { from: "@skryensya/react/loader", name: "Loader" },
+      /*
+       * THE MARKS ARE INJECTED, not authored.
+       *
+       * A staggered variant needs one real element per mark, and twelve of them is exactly the kind
+       * of markup a person miscounts: eleven `sk-loader__tick` spans is not an error anything
+       * catches, it is a spinner with a gap. So authored markup names the design and nothing else,
+       * and `mountLoader` builds the marks `loaderTicks` asks for. The eight pseudo-element variants
+       * need none, and the enhancer leaves them exactly as written.
+       *
+       * The wait still paints with no JavaScript at all: `loader.css` suppresses the default ring
+       * only on a root that HAS marks (`:has(.sk-loader__tick)`), so an un-enhanced staggered
+       * variant is a plain ring rather than an empty box. That fallback is why a loading indicator
+       * is allowed to depend on an enhancer here.
+       */
+      mount: loaderAttrs.root,
     },
 
     /*

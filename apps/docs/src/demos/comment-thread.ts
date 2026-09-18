@@ -38,25 +38,25 @@ const person = (t: Translate, key: UIKey, hue: string): { avatar: UsageTree; aut
   };
 };
 
-const vote = (voted: "up" | "down" | "none", count: string): UsageTree => ({
+const vote = (t: Translate, voted: "up" | "down" | "none", count: string): UsageTree => ({
   contract: "comment-thread",
   signature: "CommentVote",
-  options: { voted },
+  options: { voted, voteUpLabel: t("kit.upvote"), voteDownLabel: t("kit.downvote") },
   slots: { count },
 });
 
-const actions = (voted: "up" | "down" | "none", count: string, extra: Record<string, boolean> = {}): UsageTree => ({
+const actions = (t: Translate, voted: "up" | "down" | "none", count: string, extra: Record<string, boolean> = {}): UsageTree => ({
   contract: "comment-thread",
   signature: "CommentActions",
-  options: { reply: true, ...extra },
-  slots: { children: vote(voted, count) },
+  options: { reply: true, ...extra, replyLabel: t("kit.reply"), deleteLabel: t("kit.delete") },
+  slots: { children: vote(t, voted, count) },
 });
 
 /** The box the Reply trigger opens. It ships no control, so the demo passes one. */
 const replyComposer = (t: Translate): UsageTree => ({
   contract: "comment-thread",
   signature: "CommentComposer",
-  options: { submitLabel: t("demo.commentThread.send"), cancellable: true },
+  options: { submitLabel: t("demo.commentThread.send"), cancellable: true, cancelLabel: t("kit.cancel") },
   children: {
     contract: "form-field",
     signature: "FormField",
@@ -128,7 +128,7 @@ const commentSkeletonRow = (): UsageTree => ({
 const confirmDialog = (t: Translate): UsageTree => ({
   contract: "dialog",
   signature: "Dialog",
-  options: { alert: true },
+  options: { alert: true, closeLabel: t("kit.close") },
   attrs: { id: "comment-demo-confirm" },
   slots: {
     title: t("demo.commentThread.deleteTitle"),
@@ -137,15 +137,15 @@ const confirmDialog = (t: Translate): UsageTree => ({
       {
         contract: "button",
         signature: "Button.action",
-        options: { variant: "ghost" },
-        attrs: { type: "submit", value: "cancel", autofocus: "" },
+        options: { variant: "ghost", type: "submit" },
+        attrs: { value: "cancel", autofocus: "" },
         children: t("demo.commentThread.deleteCancel"),
       },
       {
         contract: "button",
         signature: "Button.action",
-        options: { tone: "danger" },
-        attrs: { type: "submit", value: "confirm" },
+        options: { tone: "danger", type: "submit" },
+        attrs: { value: "confirm" },
         children: t("demo.commentThread.deleteConfirm"),
       },
     ],
@@ -161,7 +161,7 @@ const confirmDialog = (t: Translate): UsageTree => ({
 const discardDialog = (t: Translate): UsageTree => ({
   contract: "dialog",
   signature: "Dialog",
-  options: { alert: true },
+  options: { alert: true, closeLabel: t("kit.close") },
   attrs: { id: "comment-demo-discard" },
   slots: {
     title: t("demo.commentThread.discardTitle"),
@@ -170,15 +170,15 @@ const discardDialog = (t: Translate): UsageTree => ({
       {
         contract: "button",
         signature: "Button.action",
-        options: { variant: "ghost" },
-        attrs: { type: "submit", value: "cancel", autofocus: "" },
+        options: { variant: "ghost", type: "submit" },
+        attrs: { value: "cancel", autofocus: "" },
         children: t("demo.commentThread.discardKeep"),
       },
       {
         contract: "button",
         signature: "Button.action",
-        options: { tone: "danger" },
-        attrs: { type: "submit", value: "confirm" },
+        options: { tone: "danger", type: "submit" },
+        attrs: { value: "confirm" },
         children: t("demo.commentThread.discardConfirm"),
       },
     ],
@@ -215,8 +215,8 @@ const commentTemplate = (t: Translate): UsageTree => ({
       actions: {
         contract: "comment-thread",
         signature: "CommentActions",
-        options: { reply: true, deletable: true },
-        slots: { children: vote("none", "0") },
+        options: { reply: true, deletable: true, replyLabel: t("kit.reply"), deleteLabel: t("kit.delete") },
+        slots: { children: vote(t, "none", "0") },
       },
       replyComposer: replyComposer(t),
     },
@@ -262,7 +262,7 @@ const comment = (t: Translate, node: CommentInput): UsageTree => ({
   signature: "Comment",
   options: {
     ...(node.id ? { commentId: node.id } : {}),
-    ...((node.collapsible ?? Boolean(node.replies)) ? { collapsible: true } : {}),
+    ...((node.collapsible ?? Boolean(node.replies)) ? { collapsible: true, collapseLabel: t("kit.hideReplies") } : {}),
   },
   slots: {
     ...person(t, node.who[0], node.who[1]),
@@ -280,7 +280,7 @@ const thread = (
 ): UsageTree => ({
   contract: "comment-thread",
   signature: "CommentThread",
-  options: { label: t("demo.commentThread.label") },
+  options: { label: t("demo.commentThread.label"), composerTriggerLabel: t("kit.writeComment") },
   slots: { children, ...(composer ? { composer: replyComposer(t) } : {}) },
 });
 
@@ -345,12 +345,12 @@ export const commentAnatomyTree = (t: Translate): UsageTree => ({
           who: ADA,
           time: "demo.commentThread.time1",
           body: "demo.commentThread.anatomyBody",
-          actions: actions("up", "4", { deletable: true }),
+          actions: actions(t, "up", "4", { deletable: true }),
           replies: comment(t, {
             who: GRACE,
             time: "demo.commentThread.time2",
             body: "demo.commentThread.anatomyReply",
-            actions: actions("none", "1"),
+            actions: actions(t, "none", "1"),
           }),
         }),
       ]),
@@ -381,7 +381,7 @@ export const commentActionsTree = (t: Translate): UsageTree =>
         who: ADA,
         time: "demo.commentThread.time1",
         body: "demo.commentThread.body1",
-        actions: actions("up", "4", { deletable: true }),
+        actions: actions(t, "up", "4", { deletable: true }),
       }),
     ]),
   ]);
@@ -402,13 +402,13 @@ export const commentThreadTree = (t: Translate): UsageTree =>
       who: ADA,
       time: "demo.commentThread.time1",
       body: "demo.commentThread.body1",
-      actions: actions("up", "4", { deletable: true }),
+      actions: actions(t, "up", "4", { deletable: true }),
       replies: comment(t, {
         id: "c1-r1",
         who: GRACE,
         time: "demo.commentThread.time2",
         body: "demo.commentThread.body2",
-        actions: actions("none", "1"),
+        actions: actions(t, "none", "1"),
       }),
     }),
     comment(t, {
@@ -416,7 +416,7 @@ export const commentThreadTree = (t: Translate): UsageTree =>
       who: LINUS,
       time: "demo.commentThread.time3",
       body: "demo.commentThread.body3",
-      actions: actions("none", "0"),
+      actions: actions(t, "none", "0"),
     }),
     /* No actions at all: a read-only comment drags no chrome it never renders. */
     comment(t, { id: "c3", who: MARGARET, time: "demo.commentThread.time4", body: "demo.commentThread.body4" }),
@@ -438,7 +438,7 @@ export const commentThreadFixedTree = (t: Translate): UsageTree =>
       who: ADA,
       time: "demo.commentThread.time1",
       body: "demo.commentThread.body1",
-      actions: actions("up", "12", { deletable: true }),
+      actions: actions(t, "up", "12", { deletable: true }),
       collapsible: false,
       replies: [
         comment(t, {
@@ -446,7 +446,7 @@ export const commentThreadFixedTree = (t: Translate): UsageTree =>
           who: GRACE,
           time: "demo.commentThread.time2",
           body: "demo.commentThread.body2",
-          actions: actions("none", "3"),
+          actions: actions(t, "none", "3"),
           collapsible: false,
           replies: [
             comment(t, {
@@ -454,14 +454,14 @@ export const commentThreadFixedTree = (t: Translate): UsageTree =>
               who: LINUS,
               time: "demo.commentThread.time3",
               body: "demo.commentThread.body3",
-              actions: actions("down", "1"),
+              actions: actions(t, "down", "1"),
               collapsible: false,
               replies: comment(t, {
                 id: "f1-1-1-1",
                 who: ALAN,
                 time: "demo.commentThread.time5",
                 body: "demo.commentThread.body5",
-                actions: actions("none", "0"),
+                actions: actions(t, "none", "0"),
               }),
             }),
             comment(t, {
@@ -469,7 +469,7 @@ export const commentThreadFixedTree = (t: Translate): UsageTree =>
               who: MARGARET,
               time: "demo.commentThread.time4",
               body: "demo.commentThread.body4",
-              actions: actions("none", "2"),
+              actions: actions(t, "none", "2"),
             }),
           ],
         }),
@@ -478,7 +478,7 @@ export const commentThreadFixedTree = (t: Translate): UsageTree =>
           who: BARBARA,
           time: "demo.commentThread.time6",
           body: "demo.commentThread.body6",
-          actions: actions("up", "5"),
+          actions: actions(t, "up", "5"),
         }),
       ],
     }),
@@ -487,14 +487,14 @@ export const commentThreadFixedTree = (t: Translate): UsageTree =>
       who: LINUS,
       time: "demo.commentThread.time3",
       body: "demo.commentThread.body7",
-      actions: actions("none", "0"),
+      actions: actions(t, "none", "0"),
       collapsible: false,
       replies: comment(t, {
         id: "f2-1",
         who: ADA,
         time: "demo.commentThread.time5",
         body: "demo.commentThread.body8",
-        actions: actions("none", "0", { deletable: true }),
+        actions: actions(t, "none", "0", { deletable: true }),
       }),
     }),
     ]),
@@ -604,27 +604,27 @@ export const commentDeepTree = (t: Translate): UsageTree =>
       who: ADA,
       time: "demo.commentThread.time1",
       body: "demo.commentThread.body1",
-      actions: actions("up", "12", { deletable: true }),
+      actions: actions(t, "up", "12", { deletable: true }),
       replies: [
         comment(t, {
           id: "d1-1",
           who: GRACE,
           time: "demo.commentThread.time2",
           body: "demo.commentThread.body2",
-          actions: actions("none", "3"),
+          actions: actions(t, "none", "3"),
           replies: [
             comment(t, {
               id: "d1-1-1",
               who: LINUS,
               time: "demo.commentThread.time3",
               body: "demo.commentThread.body3",
-              actions: actions("down", "1"),
+              actions: actions(t, "down", "1"),
               replies: comment(t, {
                 id: "d1-1-1-1",
                 who: ALAN,
                 time: "demo.commentThread.time5",
                 body: "demo.commentThread.body5",
-                actions: actions("none", "0"),
+                actions: actions(t, "none", "0"),
               }),
             }),
             comment(t, {
@@ -632,7 +632,7 @@ export const commentDeepTree = (t: Translate): UsageTree =>
               who: MARGARET,
               time: "demo.commentThread.time4",
               body: "demo.commentThread.body4",
-              actions: actions("none", "2"),
+              actions: actions(t, "none", "2"),
             }),
           ],
         }),
@@ -641,7 +641,7 @@ export const commentDeepTree = (t: Translate): UsageTree =>
           who: BARBARA,
           time: "demo.commentThread.time6",
           body: "demo.commentThread.body6",
-          actions: actions("up", "5"),
+          actions: actions(t, "up", "5"),
         }),
       ],
     }),
@@ -650,13 +650,13 @@ export const commentDeepTree = (t: Translate): UsageTree =>
       who: LINUS,
       time: "demo.commentThread.time3",
       body: "demo.commentThread.body7",
-      actions: actions("none", "0"),
+      actions: actions(t, "none", "0"),
       replies: comment(t, {
         id: "d2-1",
         who: ADA,
         time: "demo.commentThread.time5",
         body: "demo.commentThread.body8",
-        actions: actions("none", "0", { deletable: true }),
+        actions: actions(t, "none", "0", { deletable: true }),
       }),
     }),
     ]),

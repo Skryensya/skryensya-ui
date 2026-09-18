@@ -3,8 +3,48 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "595b59349e9cf496"
+surface: "d9e8d5b839eb8bbe"
 entries:
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: bugfix
+    target: currency
+    es:
+      title: format=currency implica un código ISO
+      body: >-
+        <code>implies</code> exige <code>currency</code> cuando <code>format</code> es
+        <code>currency</code>, y el código lleva <code>pattern</code> <code>^[A-Z]{3}$</code>.
+        Sin unidad, <code>Intl</code> no puede formatear la serie.
+    en:
+      title: format=currency implies an ISO code
+      body: >-
+        <code>implies</code> requires <code>currency</code> when <code>format</code> is
+        <code>currency</code>, and the code carries the <code>pattern</code>
+        <code>^[A-Z]{3}$</code>. Without a unit, <code>Intl</code> cannot format the series.
+  - date: 2026-09-17
+    kind: bugfix
+    target: Chart
+    es:
+      title: Chart declara mount en la signature
+      body: >-
+        <code>data-sk-chart</code> pasa de vivir solo en el template a
+        <code>signatures.Chart.mount</code>, el mismo lugar que el resto del catálogo usa para que
+        el enhancer de <code>line</code>/<code>area</code> encuentre el root.
+    en:
+      title: Chart declares mount on the signature
+      body: >-
+        <code>data-sk-chart</code> moves from the template alone onto
+        <code>signatures.Chart.mount</code>, the same place the rest of the catalogue uses so the
+        <code>line</code>/<code>area</code> enhancer can find the root.
   - date: 2026-08-26
     kind: feature
     target: Chart
@@ -105,3 +145,13 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Cada punto necesita value
+      body: >-
+        Un punto sin <code>value</code> validaba y no se podía dibujar; React ya lo exigía.
+    en:
+      title: Every point needs a value
+      body: >-
+        A point with no <code>value</code> validated and could not be plotted; React already required it.

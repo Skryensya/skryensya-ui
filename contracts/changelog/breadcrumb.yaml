@@ -3,8 +3,40 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "40329b5106c4a637"
+surface: "068affdb24a8dacf"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Breadcrumb declara compose del Menu de colapso
+      body: >-
+        <code>compose</code> nombra el <code>Menu</code> inyectado en sendas estrechas
+        (<code>systemOwned</code>) junto a las mismas hojas que ya cargaba
+        <code>hookSheets</code>.
+    en:
+      title: Breadcrumb declares compose of the collapse Menu
+      body: >-
+        <code>compose</code> names the injected collapse <code>Menu</code>
+        (<code>systemOwned</code>) alongside the same sheets <code>hookSheets</code> already
+        loaded.
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: Breadcrumb carga menu.css y anchored.css via hookSheets
+      body: >-
+        Una senda estrecha colapsa migas intermedias en un <code>Menu</code> real. Esas clases no
+        tienen dueño en las parts de Breadcrumb, así que <code>sheetsForTree</code> no descubría
+        las hojas. <code>hookSheets</code> nombra <code>components/menu.css</code> y
+        <code>patterns/anchored.css</code>, y el contrato publica también los hooks de esas hojas
+        (como Tooltip con anchored).
+    en:
+      title: Breadcrumb loads menu.css and anchored.css via hookSheets
+      body: >-
+        A narrow trail collapses middle crumbs into a real <code>Menu</code>. Those classes have no
+        owner on Breadcrumb's parts, so <code>sheetsForTree</code> could not discover the sheets.
+        <code>hookSheets</code> names <code>components/menu.css</code> and
+        <code>patterns/anchored.css</code>, and the contract also publishes those sheets' hooks
+        (same shape as Tooltip with anchored).
   - date: 2026-08-19
     kind: feature
     es:
@@ -66,3 +98,15 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Los textos por defecto pasan a inglés
+      body: >-
+        El kit es una librería en inglés y sus defaults estaban en español: <code>label</code> Breadcrumb, <code>collapsedLabel</code> Show hidden levels. Una interfaz en
+        otro idioma pasa sus propios textos, y el <code>locale</code> que corresponda.
+    en:
+      title: Default texts move to English
+      body: >-
+        The kit is an English library and its defaults were Spanish: <code>label</code> Breadcrumb, <code>collapsedLabel</code> Show hidden levels. An interface in another
+        language passes its own texts, and the <code>locale</code> it needs.

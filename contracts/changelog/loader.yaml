@@ -3,8 +3,34 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "91fe41211b7add91"
+surface: "fd83cd06fa93c85b"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Loader declara systemOwned para ticks
+      body: >-
+        <code>systemOwned</code> lista <code>tick</code>: marcas inyectadas por el enhancer/React.
+    en:
+      title: Loader declares systemOwned for ticks
+      body: >-
+        <code>systemOwned</code> lists <code>tick</code>: marks the enhancer/React inject.
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: Loader.status carga visually-hidden.css via hookSheets
+      body: >-
+        <code>Loader.status</code> pinta con <code>sk-visually-hidden</code>, pero esa clase no
+        tiene dueño de contrato propio, así que <code>sheetsForTree</code> no podía descubrir la
+        hoja solo por <code>also</code>. <code>hookSheets</code> nombra
+        <code>patterns/visually-hidden.css</code> para que las stages carguen el ocultamiento.
+    en:
+      title: Loader.status loads visually-hidden.css via hookSheets
+      body: >-
+        <code>Loader.status</code> paints with <code>sk-visually-hidden</code>, but that class has
+        no contract owner of its own, so <code>sheetsForTree</code> could not discover the sheet
+        from <code>also</code> alone. <code>hookSheets</code> names
+        <code>patterns/visually-hidden.css</code> so stages load the hiding.
   - date: 2026-08-11
     kind: feature
     es:
@@ -43,3 +69,59 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-16
+    kind: feature
+    es:
+      title: Ocho diseños de movimiento nuevos, y el primer Loader con hijos
+      body: >-
+        <code>variant</code> pasa de 4 a 12: se suman <code>arc</code>, <code>comet</code>,
+        <code>orbit</code>, <code>clock</code>, <code>spokes</code>, <code>ticks</code>,
+        <code>compass</code> y <code>beads</code>. Los cuatro últimos son marcas que se apagan en
+        secuencia, y eso no cabe en dos pseudo-elementos: llevan hijos
+        <code>.sk-loader__tick</code> que el contrato cuenta solo. No escribas ninguno a mano, y no
+        cambia nada de lo que ya tengas: las variantes viejas siguen sin hijos.
+    en:
+      title: Eight new motion designs, and the first Loader with children
+      body: >-
+        <code>variant</code> goes from 4 to 12, adding <code>arc</code>, <code>comet</code>,
+        <code>orbit</code>, <code>clock</code>, <code>spokes</code>, <code>ticks</code>,
+        <code>compass</code> and <code>beads</code>. The last four are marks that fade in sequence,
+        which two pseudo-elements cannot be, so they carry <code>.sk-loader__tick</code> children
+        the contract counts for you. Never write one by hand. Nothing you already wrote changes:
+        the older variants still have no children.
+  - date: 2026-09-16
+    kind: feature
+    es:
+      title: El ritmo de cada diseño es un múltiplo, no una duración
+      body: >-
+        Cada diseño necesita su propio ritmo, pero <code>speed</code> tiene que seguir siendo
+        independiente de <code>variant</code>. Por eso ninguno nombra milisegundos: nombran una
+        razón en <code>--sk-loader-tempo</code>, y <code>--sk-loader-cycle</code> es donde las dos
+        se encuentran. Un <code>compass</code> en <code>slow</code> sigue siendo más rápido que un
+        <code>spokes</code> en <code>slow</code>, que es justamente lo que se quiere.
+    en:
+      title: Each design's pace is a multiplier, not a duration
+      body: >-
+        Every design needs its own pace, but <code>speed</code> has to stay orthogonal to
+        <code>variant</code>, so no design names milliseconds. It names a ratio in
+        <code>--sk-loader-tempo</code>, and <code>--sk-loader-cycle</code> is where the two meet. A
+        <code>compass</code> on <code>slow</code> is still quicker than a <code>spokes</code> on
+        <code>slow</code>, which is the point.
+  - date: 2026-09-16
+    kind: feature
+    es:
+      title: Las marcas se inyectan; el markup escrito a mano vuelve a ser una línea
+      body: >-
+        Loader estrena enhancer. Escribe <code>&lt;span class="sk-loader" data-sk-loader
+        data-variant="spokes"&gt;&lt;/span&gt;</code> y <code>mountLoader</code> construye las doce
+        marcas; el DOM final es idéntico al de antes. Doce <code>span</code> escritos a mano eran
+        una cuenta, y once no daba error: daba una rueda con un hueco. Sin JavaScript, una variante
+        escalonada pinta el anillo por defecto en vez de una caja vacía.
+    en:
+      title: The marks are injected, so hand-written markup is one line again
+      body: >-
+        Loader gets an enhancer. Write <code>&lt;span class="sk-loader" data-sk-loader
+        data-variant="spokes"&gt;&lt;/span&gt;</code> and <code>mountLoader</code> builds the twelve
+        marks; the final DOM is identical to before. Twelve hand-written <code>span</code>s were a
+        count, and eleven of them raised no error: it rendered a wheel with a gap. With no
+        JavaScript, a staggered variant paints the default ring rather than an empty box.

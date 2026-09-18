@@ -137,7 +137,7 @@ const settingsRowTree = (translate: Translate): UsageTree => ({
         { contract: "typography", signature: "Text", options: { tone: "secondary", size: "sm" }, children: translate("demo.settingsRow.description") },
       ],
     },
-    { contract: "switch", signature: "Switch", options: { checked: true }, attrs: { "aria-label": translate("demo.settingsRow.title") } },
+    { contract: "switch", signature: "Switch", options: { defaultChecked: true }, attrs: { "aria-label": translate("demo.settingsRow.title") } },
   ],
 });
 

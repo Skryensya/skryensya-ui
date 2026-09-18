@@ -7,8 +7,34 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "f3879d3f395de42e"
+surface: "d0e99e7256f36229"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    target: ChangelogEntry
+    es:
+      title: ChangelogEntry declara compose de Badge
+      body: >-
+        <code>compose</code> documenta la pastilla de kind vía <code>also: sk-badge</code> (<code>systemOwned</code>).
+    en:
+      title: ChangelogEntry declares compose of Badge
+      body: >-
+        <code>compose</code> documents the kind pill via <code>also: sk-badge</code> (<code>systemOwned</code>).
+  - date: 2026-09-17
+    kind: bugfix
+    target: date
+    es:
+      title: date exige YYYY-MM-DD
+      body: >-
+        La opción <code>date</code> del release lleva <code>pattern</code>
+        <code>^\d{4}-\d{2}-\d{2}$</code>, el mismo formato que el tool de changelog en disco ya
+        rechazaba. Un <code>16 sep 2026</code> en la opción (no en el slot visible) deja de validar.
+    en:
+      title: date requires YYYY-MM-DD
+      body: >-
+        The release <code>date</code> option carries the <code>pattern</code>
+        <code>^\d{4}-\d{2}-\d{2}$</code>, the same format the on-disk changelog tool already
+        refused. A <code>16 sep 2026</code> in the option (not the visible slot) stops validating.
   - date: 2026-08-05
     kind: breaking
     target: kind

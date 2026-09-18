@@ -35,7 +35,7 @@ import {
  * The period selector's own tree lives here too (it is `bar`, no overlay needed) - only the part a
  * tree cannot express, a Segmented control swapping the chart's data at runtime, is authored by hand:
  * the React side keeps its own `useState` in `chart-integrations.tsx`, and the Vanilla side gets
- * `demos/scripts/chart-period.ts`, wired to the SAME `sk-value-change` event Segmented already
+ * `demos/scripts/chart-period.ts`, wired to the SAME `sk:segmentedvaluechange` event Segmented already
  * dispatches (see that script's own header).
  */
 
@@ -893,7 +893,8 @@ export const chartComparisonTree = (t: Translate): UsageTree => {
         {
           contract: "stat",
           signature: "Stat",
-          options: { trend: "up" },
+          // A trend paints the change text; with no change there is nothing for it to colour.
+          ...(change ? { options: { trend: "up" } } : {}),
           slots: {
             label: t("demo.charts.comparison.statLabel"),
             value,

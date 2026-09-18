@@ -26,6 +26,7 @@ import { docsVersionMessages } from "./messages/_chrome/docs-version";
 import { groupMessages } from "./messages/_chrome/group";
 import { hookPlaygroundMessages } from "./messages/_chrome/hook-playground";
 import { hooksMessages } from "./messages/_chrome/hooks";
+import { kitMessages } from "./messages/_chrome/kit";
 import { navMessages } from "./messages/_chrome/nav";
 import { prefsMessages } from "./messages/_chrome/prefs";
 import { previewMessages } from "./messages/_chrome/preview";
@@ -108,6 +109,7 @@ import { splitButtonMessages } from "./messages/components/split-button";
 import { stackMessages } from "./messages/components/stack";
 import { statMessages } from "./messages/components/stat";
 import { stepsMessages } from "./messages/components/steps";
+import { questionnaireMessages } from "./messages/components/questionnaire";
 import { switchMessages } from "./messages/components/switch";
 import { tableMessages } from "./messages/components/table";
 import { tabsMessages } from "./messages/components/tabs";
@@ -149,6 +151,7 @@ export const ui = {
     ...groupMessages.es,
     ...hookPlaygroundMessages.es,
     ...hooksMessages.es,
+    ...kitMessages.es,
     ...navMessages.es,
     ...prefsMessages.es,
     ...docsVersionMessages.es,
@@ -232,6 +235,7 @@ export const ui = {
     ...stackMessages.es,
     ...statMessages.es,
     ...stepsMessages.es,
+    ...questionnaireMessages.es,
     ...switchMessages.es,
     ...tableMessages.es,
     ...tabsMessages.es,
@@ -270,6 +274,7 @@ export const ui = {
     ...groupMessages.en,
     ...hookPlaygroundMessages.en,
     ...hooksMessages.en,
+    ...kitMessages.en,
     ...navMessages.en,
     ...prefsMessages.en,
     ...docsVersionMessages.en,
@@ -353,6 +358,7 @@ export const ui = {
     ...stackMessages.en,
     ...statMessages.en,
     ...stepsMessages.en,
+    ...questionnaireMessages.en,
     ...switchMessages.en,
     ...tableMessages.en,
     ...tabsMessages.en,
@@ -411,6 +417,7 @@ export const navLabel: Record<Locale, Partial<Record<string, string>>> = {
     "/gradients": "Gradients",
     "/transparency": "Transparency",
     "/icons": "Iconography",
+    "/typography": "Typography",
     "/storage": "Storage",
     "/anchoring": "Anchoring",
     "/effects": "Effects",

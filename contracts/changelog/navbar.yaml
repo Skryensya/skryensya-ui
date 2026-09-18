@@ -5,6 +5,24 @@
 # hash.
 surface: "bf4a35ce5fb86104"
 entries:
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: Auditoría de contrato. Navbar ya era sólido como shell
+      body: >-
+        Sin cambio de superficie: tres signatures (<code>Navbar</code>/<code>NavbarBrand</code>/
+        <code>NavbarActions</code>), invitados <code>NavList</code> y <code>Megamenu</code>,
+        <code>13</code> hooks propios, sin enhancer ni eventos. La semántica ahora apunta a
+        <code>Sidebar</code> y <code>Megamenu</code> como alternativas; el comentario de la hoja
+        aclara que el host es <code>&lt;header&gt;</code>, no un segundo <code>&lt;nav&gt;</code>.
+    en:
+      title: Contract audit. Navbar was already solid as a shell
+      body: >-
+        No surface change: three signatures (<code>Navbar</code>/<code>NavbarBrand</code>/
+        <code>NavbarActions</code>), <code>NavList</code> and <code>Megamenu</code> guests,
+        <code>13</code> own hooks, no enhancer or events. Semantics now point at
+        <code>Sidebar</code> and <code>Megamenu</code> as alternatives; the stylesheet comment
+        clarifies the host is <code>&lt;header&gt;</code>, not a second <code>&lt;nav&gt;</code>.
   - date: 2026-08-20
     kind: feature
     es:

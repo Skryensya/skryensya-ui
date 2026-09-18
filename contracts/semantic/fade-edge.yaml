@@ -8,5 +8,7 @@ FadeEdge:
     - "el contenido no está recortado; desvanecerlo sólo baja contraste"
     - "el gradiente protege texto sobre una foto; eso es MediaGradient dentro de MediaCaption"
     - "el desvanecido escondería un control o información necesaria en reposo"
+    - "el borde que se recorta es el viewport de un Marquee; Marquee ya tiene su propio fade interno, y un FadeEdge alrededor también lava el Play/Pause"
   alternatives:
     - MediaGradient
+    - Marquee

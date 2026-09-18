@@ -236,6 +236,7 @@ const autoplayToggle = {
 
 export const marqueeContract = {
   id: "marquee",
+  category: "content",
   css: "@skryensya/core/components/marquee.css",
   parts: marqueeParts,
   hooks: [
@@ -247,13 +248,27 @@ export const marqueeContract = {
     "--sk-marquee-gap",
     "--sk-marquee-gap-fill",
     "--sk-marquee-run-gap",
+    "--sk-marquee-vertical-size",
   ],
+  /*
+   * Duration and gap-fill are binding-written after measure. Listed here so a consumer cannot
+   * treat them as author overrides without knowing the enhancer will rewrite them.
+   */
+  outputHooks: ["--sk-marquee-duration", "--sk-marquee-gap-fill"],
+  /*
+   * Play/Pause labels use `sk-visually-hidden`. That class has no unique contract owner, so
+   * `sheetsForTree` cannot discover the sheet from `also` alone; name it here.
+   */
+  hookSheets: ["@skryensya/core/patterns/visually-hidden.css"],
   options: marqueeOptions,
   signatures: {
     Marquee: {
       intent: ["user-started-marquee", "requested-continuous-strip", "moving-brand-row"],
       host: { element: "div" },
       options: ["direction", "speed", "fade"],
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+      ],
       slots: manualSlots,
       template: {
         element: "div",
@@ -274,6 +289,11 @@ export const marqueeContract = {
       intent: ["autoplay-marquee", "ambient-continuous-strip", "automatic-moving-content"],
       host: { element: "div" },
       options: ["direction", "speed", "fade", "control"],
+      /* The control is an icon-only button; its two labels are its only names. */
+      implies: { control: ["playLabel", "pauseLabel"] },
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+      ],
       slots: autoplaySlots,
       template: {
         element: "div",

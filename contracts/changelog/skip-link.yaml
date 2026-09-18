@@ -3,8 +3,37 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "0847dbc3cc64420d"
+surface: "bc20e3b43199655d"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: href exige un ancla in-page
+      body: >-
+        <code>href</code> ahora lleva <code>pattern</code> <code>^#.+$</code>: un SkipLink es un
+        salto dentro de la página, no un Link disfrazado. Un path o una URL absoluta fallan la
+        validación. React tipa <code>children</code> como <code>string</code>, al mismo nivel que
+        el slot <code>text</code> del contrato.
+    en:
+      title: href requires an in-page hash
+      body: >-
+        <code>href</code> now carries the <code>pattern</code> <code>^#.+$</code>: a SkipLink is an
+        in-page jump, not a Link in disguise. A path or absolute URL fails validation. React types
+        <code>children</code> as <code>string</code>, matching the contract's <code>text</code> slot.
   - date: 2026-08-23
     kind: bugfix
     es:

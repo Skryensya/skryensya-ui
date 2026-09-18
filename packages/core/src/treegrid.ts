@@ -38,10 +38,23 @@ export type TreegridPart = keyof typeof treegridParts;
  * ties that key to moving between interactive widgets INSIDE a row, and this scope has none, so the
  * browser's native Tab already does the right thing (leaves the grid) with nothing to override.
  */
+export const treegridEvents = {
+  expandedChange: "sk:treegridexpandedchange",
+  activate: "sk:treegridactivate",
+} as const;
+
 export const treegridContract = {
   id: "treegrid",
+  category: "data",
   css: "@skryensya/core/components/treegrid.css",
   parts: treegridParts,
+  /* Both detail `{ value }` (plus `expanded` for the first): the row's `value`, which is why a row
+     must carry one. Dispatched on the table by both bindings. */
+  events: treegridEvents,
+  eventDetails: {
+    expandedChange: { detail: { value: "string", expanded: "boolean" }, reactProp: "onExpandedChange", source: "root", trigger: "disclosure" },
+    activate: { detail: { value: "string" }, reactProp: "onActivate", source: "root", trigger: "row" },
+  },
   hooks: [
     "--sk-treegrid-glyph-size",
     "--sk-treegrid-guide-color",
@@ -53,18 +66,22 @@ export const treegridContract = {
     /** The grid's accessible name. `role="treegrid"` carries no implicit one. */
     label: { type: "string", attr: "aria-label" },
     /** 1-based depth in the hierarchy. Static per row. Collapsing a sibling never changes it. */
-    level: { type: "number", attr: "aria-level" },
+    level: { type: "number", min: 1, integer: true, attr: "aria-level" },
     /** How many siblings (including this row) sit at this row's level, under the same parent. */
-    setSize: { type: "number", attr: "aria-setsize" },
+    setSize: { type: "number", min: 1, integer: true, attr: "aria-setsize" },
     /** This row's 1-based position among those siblings. */
-    posInset: { type: "number", attr: "aria-posinset" },
+    posInset: { type: "number", min: 1, integer: true, attr: "aria-posinset" },
     /**
      * Omitted entirely on a leaf row. That absence, not a boolean option, is what marks a row a
      * leaf. A branch row always states it explicitly, `true` or `false`; `falseValue` exists so the
      * collapsed case still writes the attribute instead of reading as "not a branch either".
      */
     expanded: { type: "boolean", attr: "aria-expanded", trueValue: "true", falseValue: "false" },
-    /** The row's identity, for the `sk-treegrid-expanded-change` / `sk-treegrid-activate` events. */
+    /**
+     * The row's identity, unique within the grid. Required: the React binding keys expanded and
+     * hidden state by it, and both events report it; a row without one used to validate and then
+     * announce `value: null` (Vanilla) or collide with every other unnamed row (React).
+     */
     value: { type: "string", attr: "data-value" },
     /**
      * Opt-in: a binding-inserted drag handle between each pair of column headers, WAI-ARIA APG's
@@ -90,7 +107,11 @@ export const treegridContract = {
      * carries per-level indentation, a disclosure button, and the row's own label, so it earns a
      * bigger default share than a flat metadata column next to it.
      */
-    columnWeights: { type: "string", attr: "data-column-weights" },
+    columnWeights: {
+      type: "string",
+      attr: "data-column-weights",
+      list: { separator: ",", item: "positive-number", countFrom: "TreegridHeadRow" },
+    },
   },
 
   a11y: [
@@ -122,6 +143,8 @@ export const treegridContract = {
       host: { element: "table" },
       options: ["label", "resizableColumns", "resizeLabel", "columnWeights"],
       requires: ["label"],
+      /** Host id / a11y; label stays the option. */
+      forward: ["id", "aria-*"],
       slots: {
         children: {
           accepts: "signature",
@@ -185,7 +208,14 @@ export const treegridContract = {
       host: { element: "tbody" },
       options: [],
       parents: ["Treegrid"],
-      slots: { children: { accepts: "signature", required: true, of: ["TreegridRow"] } },
+      slots: {
+        children: {
+          accepts: "signature",
+          required: true,
+          of: ["TreegridRow"],
+          flatHierarchy: { level: "level", setSize: "setSize", posInset: "posInset", expanded: "expanded", key: "value" },
+        },
+      },
       template: { element: "tbody", part: "body", also: ["sk-table__body"], host: true, slot: "children" },
       react: { from: "@skryensya/react/treegrid", name: "TreegridBody" },
     },
@@ -202,7 +232,7 @@ export const treegridContract = {
       intent: ["treegrid-row", "hierarchical-row"],
       host: { element: "tr" },
       options: ["level", "setSize", "posInset", "expanded", "value"],
-      requires: ["level", "setSize", "posInset"],
+      requires: ["level", "setSize", "posInset", "value"],
       parents: ["TreegridBody"],
       slots: { children: { accepts: "signature", required: true, of: ["TreegridCell"] } },
       template: {
@@ -230,7 +260,11 @@ export const treegridContract = {
       host: { element: "td" },
       options: [],
       parents: ["TreegridRow"],
-      slots: { children: { accepts: "node", required: true } },
+      /* Text, not node: the audited `treegrid-1` scope is text-only cells (no control inside a
+         gridcell), and the first cell of a branch already receives a binding-inserted disclosure. */
+      /** Cell id / a11y on the gridcell host. */
+      forward: ["id", "aria-*"],
+      slots: { children: { accepts: "text", required: true } },
       template: {
         element: "td",
         part: "cell",
@@ -243,11 +277,6 @@ export const treegridContract = {
     },
   },
 } as const satisfies ComponentContract;
-
-export const treegridEvents = {
-  expandedChange: "sk-treegrid-expanded-change",
-  activate: "sk-treegrid-activate",
-} as const;
 
 /* ------------------------------------------------------------------------------------------------ *
  * Shared behaviour. The pure matcher here, the imperative binding in `@skryensya/vanilla`, the

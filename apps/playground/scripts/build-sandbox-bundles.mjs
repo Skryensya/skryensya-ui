@@ -16,13 +16,12 @@
  * resolve them against. What is bundled here has no unresolved imports left except the ones the
  * sandbox really can install: React, and only for the React binding.
  *
- * ONE FILE FOR VANILLA, MANY FOR REACT, and the asymmetry is Babel's. Sandpack transpiles what it is
- * handed, in the browser, on every boot - and it walks the graph from the ENTRY, so a module nothing
- * imports is never touched. The Vanilla document loads its bundle with one `import`, so one file is
- * exactly what it pays for. The React package is reached through ~97 subpaths, and as a single
- * 1.16MB file every one of them pulled the whole kit through Babel: measured at 30-45s before a
- * three-button example appeared, with `[BABEL] the code generator has deoptimised … exceeds the max
- * of 500KB` in the sandbox console. Split per subpath, that same example transpiles 33KB.
+ * A MODULE GRAPH PER BINDING, and the reason is Babel's. Sandpack transpiles what it is handed, in
+ * the browser, on every boot - and it walks the graph from the ENTRY, so a module nothing imports is
+ * never touched. As a single 1.16MB file every React subpath pulled the whole kit through Babel:
+ * measured at 30-45s before a three-button example appeared, with `[BABEL] the code generator has
+ * deoptimised … exceeds the max of 500KB` in the sandbox console. Split per subpath, that same
+ * example transpiles 33KB.
  *
  * Run before `astro dev` and `astro build`; both scripts do it for you.
  */
@@ -51,7 +50,6 @@ mkdirSync(out, { recursive: true });
 
 const size = (file) => `${(statSync(join(out, file)).size / 1024).toFixed(0)}KB`;
 
-/** One entry, one file, no code splitting: the sandbox loads it with a single import. */
 /*
  * `import.meta` DOES NOT SURVIVE THE TRIP. Sandpack's bundler transpiles what it is handed to
  * CommonJS, where `import.meta` is a syntax error, and the whole preview dies with "Cannot use
@@ -87,60 +85,8 @@ const resolveImportMeta = {
  * It is left as it is because the alternatives are worse: `transform.define` does not reach it
  * (rolldown replaces the whole `import.meta` before a define could match `import.meta.env.DEV`),
  * and going back to ESM output re-breaks React's interop, which is the bug CJS exists to fix here.
- * The plugin above still does the job for the VANILLA bundle, which is ESM.
+ * The Vanilla graph is CJS too, so the same applies there.
  */
-
-async function bundle({ entry, file, external = [], plugins = [], format = "es" }) {
-  await build({
-    configFile: false,
-    logLevel: "warn",
-    plugins: [...plugins, resolveImportMeta],
-    // Not `false` by accident: `publicDir` defaults to `<root>/public`, which IS the directory
-    // being written into, so leaving it on copies the site's own assets in beside the bundles.
-    publicDir: false,
-    /*
-     * `import.meta` DOES NOT SURVIVE THE TRIP. Sandpack's bundler transpiles what it is given to
-     * CommonJS, where `import.meta` is a syntax error, and the whole preview dies with
-     * "Cannot use 'import.meta' outside a module" - not at the line that used it, at the module that
-     * contained it. The kit reads it in exactly one place: the dev-only guard behind Button's
-     * icon-only accessible-name warning.
-     *
-     * Resolved to DEV rather than defined away, because a playground is the one place that warning
-     * is most useful: someone deleting an `aria-label` to see what happens should be told what
-     * happened. A production consumer's own bundler still decides this for itself.
-     */
-    define: { "import.meta.env": JSON.stringify({ DEV: true }) },
-    build: {
-      emptyOutDir: false,
-      outDir: out,
-      lib: { entry, formats: [format], fileName: () => file },
-      rollupOptions: {
-        external,
-        /*
-         * Inside `rollupOptions` and not beside it: Vite 8 treats `rolldownOptions` as the same key,
-         * so a second object REPLACES this one - which silently dropped `inlineDynamicImports` and
-         * split the vanilla bundle back into sixty chunks. Cost twenty minutes; worth the line.
-         */
-        transform: {},
-        /*
-         * ONE FILE, and this is what makes it one. The vanilla registry loads each enhancer with a
-         * dynamic `import()` so a page pays only for the components it authored; a bundler honours
-         * that by splitting, which here would mean sixty sibling chunks the sandbox has no way to
-         * fetch. Inlining trades the site's lazy loading for the sandbox's single import, which is
-         * the right trade in a sandbox and the wrong one everywhere else.
-         *
-         * Vite prints a deprecation notice pointing at `codeSplitting: false`; this Rolldown does
-         * not accept that key yet, so the notice is ahead of the build it is printed by.
-         */
-        output: { inlineDynamicImports: true },
-      },
-      minify: true,
-      // The sandbox is a browser; nothing here is being published for a bundler to re-process.
-      target: "es2022",
-    },
-  });
-  console.log(`  ${file}  ${size(file)}`);
-}
 
 console.log("sandbox bundles:");
 
@@ -153,7 +99,7 @@ console.log("sandbox bundles:");
  * subpath but absent from the barrel is `undefined` at the point of use, which is what "Element type
  * is invalid" means and exactly what `@skryensya/react/tile`'s `TileContent` did.
  *
- * SPLIT, NOT INLINED, which is the opposite of the choice the vanilla bundle below makes. Rollup
+ * SPLIT, NOT INLINED, and the vanilla graph below makes the same choice. Rollup
  * gives each entry its own file and lifts what several of them share into common chunks, so the
  * sandbox's Babel only ever sees the closure of the subpaths an example actually imports: 33KB for
  * button + icon + layout, 369KB for the heaviest single component there is (the editor), against
@@ -235,18 +181,78 @@ console.log(
 );
 
 /*
- * Vanilla, self-contained: the enhancers, their Zag machines and the Svelte runtime that hosts the
- * machine-backed ones. Nothing is external because nothing here is the sandbox's to provide, and
- * `.svelte` is why this uses Vite rather than esbuild alone.
+ * VANILLA, AS INSTALLED: the same module-graph shape as React, for the same reason.
  *
- * The entry is the SITE's (`src/sandbox/entry.ts`), not the package's: it binds an icon set, and
- * which set is a consumer's decision the kit does not make for anyone.
+ * The Vanilla example is what a consumer writes (`index.html` plus a `main.js` importing
+ * `@skryensya/vanilla/auto` and `@skryensya/icons-lucide`), resolved by the sandbox's bundler through
+ * `node_modules` the way their Vite resolves it. It used to be one inlined file behind an import map
+ * in the visible document, which is not how the installation page tells anyone to consume the kit.
+ *
+ * Two packages in ONE build, so what they share (core) is lifted into chunks once rather than
+ * duplicated. Keys are paths under `/node_modules/@skryensya/`: `vanilla/auto.js`,
+ * `icons-lucide/index.js`, and chunks inside `vanilla/_chunks/`, reached by relative `require`.
+ * CJS for the reason the React build gives. Nothing is external: the Svelte runtime and the Zag
+ * machines are the kit's to provide, and `.svelte` is why this is Vite.
  */
-await bundle({
-  entry: join(playground, "src", "sandbox", "entry.ts"),
-  file: "skryensya-vanilla.js",
-  plugins: [svelte({ emitCss: false })],
+const packageEntries = (name, prefix) => {
+  const pkg = JSON.parse(readFileSync(join(repo, "packages", name, "package.json"), "utf8"));
+  return Object.entries(pkg.exports)
+    .filter(([subpath, target]) => typeof target === "object" && target.default?.endsWith(".ts"))
+    /* Published for the package's own tests, not for anyone's page. */
+    .filter(([subpath]) => subpath !== "./test-setup")
+    .map(([subpath, target]) => [
+      `${prefix}/${subpath === "." ? "index" : subpath.replace(/^\.\//, "")}`,
+      join(repo, "packages", name, target.default),
+    ]);
+};
+
+const vanillaModulesDir = join(out, ".vanilla-modules");
+
+await build({
+  configFile: false,
+  logLevel: "warn",
+  plugins: [svelte({ emitCss: false }), resolveImportMeta],
+  publicDir: false,
+  define: { "import.meta.env": JSON.stringify({ DEV: true }) },
+  build: {
+    emptyOutDir: false,
+    outDir: vanillaModulesDir,
+    minify: true,
+    /* Not es2022 like React: the Svelte runtime writes `??=`, and the Babel inside Sandpack's bundler
+       stops at "Unexpected token" on it, so the syntax is lowered here where it can be. */
+    target: "es2019",
+    lib: {
+      entry: Object.fromEntries([
+        ...packageEntries("vanilla", "vanilla"),
+        ...packageEntries("icons-lucide", "icons-lucide"),
+      ]),
+      formats: ["cjs"],
+    },
+    rollupOptions: {
+      transform: {},
+      output: {
+        entryFileNames: "[name].js",
+        chunkFileNames: "vanilla/_chunks/[name]-[hash].js",
+      },
+    },
+  },
 });
+
+const vanillaModules = {};
+const collectVanilla = (dir, prefix = "") => {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) collectVanilla(path, `${prefix}${entry.name}/`);
+    else if (entry.name.endsWith(".js")) vanillaModules[`${prefix}${entry.name}`] = readFileSync(path, "utf8");
+  }
+};
+collectVanilla(vanillaModulesDir);
+rmSync(vanillaModulesDir, { force: true, recursive: true });
+
+writeFileSync(join(out, "vanilla-modules.json"), JSON.stringify(vanillaModules));
+console.log(
+  `  vanilla-modules.json  ${Object.keys(vanillaModules).length} modules, ${size("vanilla-modules.json")}`,
+);
 
 /*
  * THE FOUNDATION, copied rather than rebuilt: `@skryensya/core` already publishes exactly this file

@@ -274,7 +274,7 @@ describe("expanded component inventory", () => {
       expect(element).toBeTruthy();
       return element!;
     });
-    expect(clear.getAttribute("aria-label")).toBe("Limpiar");
+    expect(clear.getAttribute("aria-label")).toBe("Clear");
     // A real icon, not the `×` glyph this asserted while React drew one and the enhancer mounted
     // the other: the two bindings were showing different marks on the same button.
     expect(clear.querySelector("svg")?.getAttribute("data-icon")).toBe("close");
@@ -341,8 +341,8 @@ describe("expanded component inventory", () => {
         onValueChange={onValueChange}
       />,
     );
-    const increment = ui.getByRole("button", { name: "Aumentar" });
-    const decrement = ui.getByRole("button", { name: "Disminuir" });
+    const increment = ui.getByRole("button", { name: "Increase" });
+    const decrement = ui.getByRole("button", { name: "Decrease" });
     for (const stepper of [decrement, increment]) {
       expect(stepper.classList.contains("sk-button")).toBe(true);
       expect(stepper.classList.contains("sk-interactive")).toBe(true);
@@ -376,7 +376,7 @@ describe("expanded component inventory", () => {
     // No `@zag-js/time-picker` machine exists, so TimeField is its own segmented
     // `role="group"` of `role="spinbutton"`s, not a real `type="time"` input.
     expect(ui.getByRole("group", { name: "Hora de reunión" })).toBeTruthy();
-    expect(ui.getByRole("spinbutton", { name: "Hora" })).toBeTruthy();
+    expect(ui.getByRole("spinbutton", { name: "Hour" })).toBeTruthy();
     expect(
       ui.getByRole("button", { name: "Filtros" }).hasAttribute("popovertarget"),
     ).toBe(true);

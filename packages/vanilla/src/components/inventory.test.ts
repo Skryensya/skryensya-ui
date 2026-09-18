@@ -24,7 +24,7 @@ describe("expanded Vanilla inventory", () => {
       </div>
     </div>`);
     const onSelect = vi.fn();
-    root.addEventListener("sk-select", onSelect);
+    root.addEventListener("sk:menuselect", onSelect);
 
     expect(mountMenu(root)).toBe(1);
     expect(mountMenu(root)).toBe(0);
@@ -205,7 +205,7 @@ describe("expanded Vanilla inventory", () => {
       </div>
     </div>`);
     const onChange = vi.fn();
-    root.addEventListener("sk-file-change", onChange);
+    root.addEventListener("sk:fileuploadchange", onChange);
     expect(mountFileUpload(root)).toBe(1);
     const input = root.querySelector<HTMLInputElement>(
       "[data-sk-file-upload-input]",
@@ -227,13 +227,13 @@ describe("expanded Vanilla inventory", () => {
     const root = mount(`<div data-sk-number-field>
       <label data-sk-number-field-label>Cantidad</label>
       <div data-sk-number-field-control>
-        <button data-sk-number-field-decrement aria-label="Disminuir">−</button>
+        <button data-sk-number-field-decrement aria-label="Decrease">−</button>
         <input data-sk-number-field-input value="2" />
-        <button data-sk-number-field-increment aria-label="Aumentar">+</button>
+        <button data-sk-number-field-increment aria-label="Increase">+</button>
       </div>
     </div>`);
     const onChange = vi.fn();
-    root.addEventListener("sk-value-change", onChange);
+    root.addEventListener("sk:numberfieldvaluechange", onChange);
     expect(mountNumberField(root)).toBe(1);
     const increment = root.querySelector<HTMLElement>(
       "[data-sk-number-field-increment]",

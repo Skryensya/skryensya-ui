@@ -53,6 +53,7 @@ export type TocAttrName = (typeof tocAttrs)[TocAttr];
 
 export const tocContract = {
   id: "toc",
+  category: "navigation",
   css: "@skryensya/core/components/toc.css",
   parts: tocParts,
   hooks: [
@@ -64,7 +65,11 @@ export const tocContract = {
   ],
 
   options: {
-    /** The caption above the list, and the accessible name of the `<nav>` beside it. */
+    /**
+     * The caption above the list, and the accessible name of the `<nav>` beside it. Required: the
+     * template always draws the `<h2>`, so a Toc without one was an empty heading in the outline and
+     * a navigation landmark with no name.
+     */
     title: { type: "string", attr: "aria-label" },
   },
 
@@ -74,11 +79,15 @@ export const tocContract = {
       host: { element: "aside" },
       mount: tocAttrs.root,
       options: ["title"],
+      requires: ["title"],
       slots: {
         items: {
           accepts: "items",
           required: true,
           item: {
+            /* An entry IS its destination: a row with no `href` is not a link, and two rows to the
+               same anchor light up together when the spy reaches it. */
+            key: "href",
             options: {
               href: { type: "string", attr: "href" },
               /** Heading depth: styling hook only; the emitter draws no anatomy from it. */

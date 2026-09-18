@@ -1,6 +1,6 @@
 <script lang="ts">
   import { treeView } from "@skryensya/core/machines";
-  import { treeViewAttrs } from "@skryensya/core/tree-view";
+  import { treeViewAttrs, treeViewEvents } from "@skryensya/core/tree-view";
   import type { TreeNode } from "@skryensya/core/tree-view";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
@@ -52,7 +52,7 @@
       const node: TreeNode = {
         id,
         label: element.dataset.valueText ?? text?.textContent?.trim() ?? id,
-        disabled: element.hasAttribute("disabled"),
+        disabled: element.hasAttribute("data-disabled"),
         children: children.length ? children.map((child) => child.node) : undefined,
       };
       return {
@@ -98,12 +98,12 @@
     translations: { treeLabel: root.getAttribute("aria-label") ?? "Árbol" },
     onSelectionChange(details: { selectedValue: string[] }) {
       root.dispatchEvent(
-        new CustomEvent("sk-selection-change", { bubbles: true, detail: { selectedValue: details.selectedValue } }),
+        new CustomEvent(treeViewEvents.selectionChange, { bubbles: true, detail: { selectedValue: details.selectedValue } }),
       );
     },
     onExpandedChange(details: { expandedValue: string[] }) {
       root.dispatchEvent(
-        new CustomEvent("sk-expanded-change", { bubbles: true, detail: { expandedValue: details.expandedValue } }),
+        new CustomEvent(treeViewEvents.expandedChange, { bubbles: true, detail: { expandedValue: details.expandedValue } }),
       );
     },
   }));

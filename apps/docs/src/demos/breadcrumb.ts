@@ -20,7 +20,7 @@ import {
 export const breadcrumbTwoTree = (t: Translate): UsageTree => ({
   contract: "breadcrumb",
   signature: "Breadcrumb",
-  options: { label: t("demo.breadcrumb.label") },
+  options: { label: t("demo.breadcrumb.label"), collapsedLabel: t("kit.showHiddenLevels") },
   slots: { items: breadcrumbTwoItems(t) },
 });
 
@@ -31,7 +31,7 @@ export const breadcrumbMultiTree = (
 ): UsageTree => ({
   contract: "breadcrumb",
   signature: "Breadcrumb",
-  options: { label: t("demo.breadcrumb.label") },
+  options: { label: t("demo.breadcrumb.label"), collapsedLabel: t("kit.showHiddenLevels") },
   slots: { items: breadcrumbMultiItems(t, hrefs) },
 });
 
@@ -39,7 +39,7 @@ export const breadcrumbMultiTree = (
 export const breadcrumbIconTree = (t: Translate, projectsHref: string): UsageTree => ({
   contract: "breadcrumb",
   signature: "Breadcrumb",
-  options: { label: t("demo.breadcrumb.label") },
+  options: { label: t("demo.breadcrumb.label"), collapsedLabel: t("kit.showHiddenLevels") },
   slots: {
     separator: { contract: "icon", signature: "Icon", options: { name: "chevron-right" } },
     items: breadcrumbIconItems(t, projectsHref),
@@ -52,7 +52,7 @@ export const breadcrumbIconTree = (t: Translate, projectsHref: string): UsageTre
 export const breadcrumbLongTree = (t: Translate, projectsHref: string): UsageTree => ({
   contract: "breadcrumb",
   signature: "Breadcrumb",
-  options: { label: t("demo.breadcrumb.label") },
+  options: { label: t("demo.breadcrumb.label"), collapsedLabel: t("kit.showHiddenLevels") },
   slots: { items: breadcrumbLongItems(t, projectsHref) },
 });
 

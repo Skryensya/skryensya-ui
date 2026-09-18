@@ -77,7 +77,7 @@ function saveStore(next: StorageStore): void {
 }
 
 /** Bubbles on `window` whenever any preference changes, in this tab or another one. */
-export const storageChangeEvent = "sk-storage-change";
+export const storageChangeEvent = "sk:storagechange";
 
 /** `detail.slot` is the slot that changed, or `null` when the whole entry was cleared elsewhere. */
 export type StorageChangeDetail = { slot: string | null };

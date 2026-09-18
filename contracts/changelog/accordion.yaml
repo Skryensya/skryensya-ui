@@ -7,8 +7,110 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "19678f3d8a0da8c1"
+surface: "35c2fec5c875b8b7"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: feature
+    target: Accordion.Item
+    es:
+      title: Accordion.Item declara compose de Tile
+      body: >-
+        <code>compose</code> documenta que cada sección es chrome de ExpandableTile (<code>systemOwned</code> + <code>tile.css</code> vía hookSheets).
+    en:
+      title: Accordion.Item declares compose of Tile
+      body: >-
+        <code>compose</code> documents each section as ExpandableTile chrome (<code>systemOwned</code> + <code>tile.css</code> via hookSheets).
+  - date: 2026-09-17
+    kind: bugfix
+    target: Accordion
+    es:
+      title: type=multiple excluye collapsible
+      body: >-
+        <code>Accordion</code> declara <code>excludes</code>: con <code>type="multiple"</code> no
+        se admite <code>collapsible</code> (cada sección ya puede cerrarse sola; los bindings ya
+        ignoraban la combinación).
+    en:
+      title: type=multiple excludes collapsible
+      body: >-
+        <code>Accordion</code> declares <code>excludes</code>: with <code>type="multiple"</code>,
+        <code>collapsible</code> is refused (every open section can close on its own; bindings
+        already ignored the combo).
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: React alinea defaultOpen, el evento valueChange y el host section
+      body: >-
+        <code>Accordion.Item</code> respeta <code>defaultOpen</code> cuando el root no trae
+        <code>defaultValue</code>/<code>value</code> (como vanilla con <code>data-default-open</code>).
+        Al cambiar el conjunto abierto, React despacha <code>sk:accordionvaluechange</code> en el
+        root además de <code>onValueChange</code>. El host del ítem queda fijo en
+        <code>section</code> (se quita <code>as</code>), <code>headingLevel</code> se acota a 1..6,
+        y <code>collapsible</code> sólo aplica en <code>type="single"</code>.
+    en:
+      title: React aligns defaultOpen, the valueChange event, and the section host
+      body: >-
+        <code>Accordion.Item</code> honours <code>defaultOpen</code> when the root has no
+        <code>defaultValue</code>/<code>value</code> (same as vanilla
+        <code>data-default-open</code>). On open-set changes, React dispatches
+        <code>sk:accordionvaluechange</code> on the root as well as <code>onValueChange</code>.
+        The item host is fixed to <code>section</code> (<code>as</code> removed),
+        <code>headingLevel</code> clamps to 1..6, and <code>collapsible</code> only applies when
+        <code>type="single"</code>.
+  - date: 2026-09-16
+    kind: feature
+    target: defaultValue
+    es:
+      title: El acordeón declara defaultValue en el contrato
+      body: >-
+        La opción <code>defaultValue</code> (<code>data-default-value</code>) pasa al contrato:
+        es el canal del root para el conjunto inicial abierto (en markup, valores separados por
+        coma si <code>type="multiple"</code>). React ya lo exponía; vanilla ya lo leía; ahora
+        <code>validate_ui</code> y el manifiesto lo conocen. El <code>value</code> controlado y
+        <code>onValueChange</code> siguen siendo wiring del binding, como en Tabs. Los intents
+        dejan de afirmar "solo una abierta".
+    en:
+      title: Accordion publishes defaultValue on the contract
+      body: >-
+        The <code>defaultValue</code> option (<code>data-default-value</code>) joins the contract:
+        it is the root channel for the initial open set (comma-separated in markup when
+        <code>type="multiple"</code>). React already exposed it; vanilla already read it; now
+        <code>validate_ui</code> and the manifest know it. Controlled <code>value</code> and
+        <code>onValueChange</code> stay binding wiring, as with Tabs. Intents no longer claim
+        "only one open".
   - date: 2026-09-11
     kind: bugfix
     es:
@@ -126,3 +228,13 @@ entries:
         sheet <code>css</code> names could be reconciled, so the hooks in the others were public
         surface nobody documented and nothing checked. No styling changes: what changes is that they
         are declared now, and the compiler checks them.
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: El contrato declara el rango de sus números
+      body: >-
+        <code>headingLevel</code> acepta enteros de 1 a 6. React ya lo recortaba; ahora un árbol con 7 no valida.
+    en:
+      title: The contract declares the range of its numbers
+      body: >-
+        <code>headingLevel</code> takes whole numbers from 1 to 6. React already clamped it; now a tree with 7 does not validate.

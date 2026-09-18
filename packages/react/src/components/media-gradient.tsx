@@ -44,7 +44,7 @@ export function MediaGradient<Element extends ElementType = "div">({
 export type MediaCaptionProps<Element extends ElementType = "div"> = PolymorphicProps<
   Element,
   {
-    children?: ReactNode;
+    children: ReactNode;
     className?: string;
     edge?: MediaGradientEdge;
     /** When set, renders a `MediaGradient` as the first child. */

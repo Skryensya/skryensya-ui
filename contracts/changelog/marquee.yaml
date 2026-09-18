@@ -1,6 +1,16 @@
 # What changed in marquee, in the words its users read. Only appended to, never rewritten.
-surface: "14201869a52ddb3b"
+surface: "7a936cd95e85f6a1"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Marquee declara compose de Button
+      body: >-
+        <code>compose</code> documenta el control play/pause vía <code>also: sk-button</code>.
+    en:
+      title: Marquee declares compose of Button
+      body: >-
+        <code>compose</code> documents the play/pause control via <code>also: sk-button</code>.
   - date: 2026-09-07
     kind: feature
     es:
@@ -180,3 +190,31 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: Marquee declara visually-hidden, vertical-size y hooks de salida
+      body: >-
+        El contrato carga <code>visually-hidden.css</code> vía <code>hookSheets</code> (las etiquetas
+        del control usan <code>sk-visually-hidden</code>), publica <code>--sk-marquee-vertical-size</code>
+        como hook con valor por defecto en la hoja, y marca
+        <code>--sk-marquee-duration</code> / <code>--sk-marquee-gap-fill</code> como
+        <code>outputHooks</code> porque los escribe el binding tras medir.
+    en:
+      title: Marquee declares visually-hidden, vertical-size, and output hooks
+      body: >-
+        The contract loads <code>visually-hidden.css</code> via <code>hookSheets</code> (control
+        labels use <code>sk-visually-hidden</code>), publishes <code>--sk-marquee-vertical-size</code>
+        as a hook with a stylesheet default, and marks
+        <code>--sk-marquee-duration</code> / <code>--sk-marquee-gap-fill</code> as
+        <code>outputHooks</code> because the binding writes them after measure.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: control exige sus dos etiquetas
+      body: >-
+        En <code>Marquee.autoplay</code>, <code>control</code> sin <code>playLabel</code> y <code>pauseLabel</code> validaba y dejaba un botón sin nombre.
+    en:
+      title: control requires both labels
+      body: >-
+        In <code>Marquee.autoplay</code>, <code>control</code> without <code>playLabel</code> and <code>pauseLabel</code> validated and left a nameless button.

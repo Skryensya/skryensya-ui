@@ -3,8 +3,42 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "f4e10cd1fd46fdc5"
+surface: "c81881cd8cf51eb5"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
   - date: 2026-08-06
     kind: rework
     es:
@@ -289,3 +323,61 @@ entries:
         its track. Measured in a 207px rail: 155px leaves against 114px branches, which is 40px of row
         that looks clickable and is not, with the state layer washing a stub instead of the row. The
         branch now takes the full available width: its label track grows and nothing else moves.
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: Los ids de TreeView son únicos en todo el árbol y los eventos quedan publicados
+      body: >-
+        El validador rechaza un <code>id</code> repetido en otra profundidad: la máquina direcciona
+        los nodos por id en todo el árbol, así que expandir uno abría el otro. El contrato publica
+        <code>sk-selection-change</code> y <code>sk-expanded-change</code>, y React ahora también
+        los despacha en la raíz. La guía de uso manda a Treegrid lo que tiene columnas.
+    en:
+      title: TreeView ids are unique across the whole tree, and the events are published
+      body: >-
+        The validator rejects an <code>id</code> reused at another depth: the machine addresses nodes
+        by id across the whole tree, so expanding one opened the other. The contract publishes
+        <code>sk-selection-change</code> and <code>sk-expanded-change</code>, and React now
+        dispatches them on the root too. Usage guidance sends hierarchies with columns to Treegrid.
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: El validador comprueba que los valores iniciales nombren una entrada que existe
+      body: >-
+        <code>defaultExpandedValue</code> y <code>defaultSelectedValue</code> ahora declara que nombra entradas de <code>items</code> por su
+        <code>id</code>. Un árbol que apunta a una entrada inexistente deja de validar
+        (<code>unknown-key</code>) en vez de renderizar sin nada seleccionado ni decir por qué. El
+        markup y los bindings no cambian.
+    en:
+      title: The validator checks that the initial values name entries that exist
+      body: >-
+        <code>defaultExpandedValue</code> and <code>defaultSelectedValue</code> now declares that it names entries of <code>items</code> by their
+        <code>id</code>. A tree pointing at an entry that does not exist stops validating
+        (<code>unknown-key</code>) instead of rendering with nothing selected and no reason given.
+        Markup and bindings are unchanged.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Cada evento lleva el nombre de su familia
+      body: >-
+        <code>sk-selection-change</code> → <code>sk:treeviewselectionchange</code>, <code>sk-expanded-change</code> → <code>sk:treeviewexpandedchange</code>. Un mismo nombre ya no lo despachan varias familias: un listener sobre una raíz deja
+        de recibir los eventos de un componente distinto anidado adentro.
+    en:
+      title: Every event carries its family in its name
+      body: >-
+        <code>sk-selection-change</code> → <code>sk:treeviewselectionchange</code>, <code>sk-expanded-change</code> → <code>sk:treeviewexpandedchange</code>. No two families dispatch the same name any more: a listener on a root stops receiving
+        the events of a different component nested inside it.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Un nodo deshabilitado se escribe data-disabled
+      body: >-
+        El markup compuesto a mano marca un nodo deshabilitado con <code>data-disabled</code> y no con
+        <code>disabled</code>, un atributo que HTML no define para un <code>&lt;li&gt;</code>. Es el
+        mismo atributo que Zag ya escribía y que la hoja ya seleccionaba; el enhancer ahora lee ése.
+    en:
+      title: A disabled node is written data-disabled
+      body: >-
+        Authored markup marks a disabled node with <code>data-disabled</code> rather than
+        <code>disabled</code>, an attribute HTML does not define for an <code>&lt;li&gt;</code>. It is
+        the attribute Zag already wrote and the stylesheet already selected; the enhancer now reads it.

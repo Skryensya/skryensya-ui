@@ -1,5 +1,5 @@
-import { tagParts, type TagTone, tagContract } from "@skryensya/core/tag";
-import { type AnchorHTMLAttributes, type HTMLAttributes, type ReactNode } from "react";
+import { tagEvents, tagParts, type TagTone, tagContract } from "@skryensya/core/tag";
+import { type AnchorHTMLAttributes, type HTMLAttributes } from "react";
 import { Button } from "./button.js";
 import { Icon } from "./icon.js";
 
@@ -9,19 +9,20 @@ const { tone: toneOption, removeLabel: removeLabelOption } = tagContract.options
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
 type TagOwnProps = {
-  children: ReactNode;
+  /** Plain chip text. Matches the contract slot (`accepts: "text"`). */
+  children: string;
   tone?: TagTone;
 };
 
 type StaticTagProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> &
   TagOwnProps & {
     href?: undefined;
-    /** Called when the remove control is used. */
-    onRemove?: () => void;
     /**
-     * Whether the remove control exists. Structure, which is the contract's; `onRemove` is behaviour,
-     * which is not. Defaults to whether a handler was given, so the common call site is unchanged.
+     * Called when the remove control is used. Structure is `removable`; this is behaviour only.
+     * Also dispatches `sk:tagremove` on the host so the contract event and the React prop agree.
      */
+    onRemove?: () => void;
+    /** Whether the remove control exists. Defaults to false; must be set explicitly. */
     removable?: boolean;
     /** Accessible name for the remove control. Defaults to "Remove". */
     removeLabel?: string;
@@ -47,24 +48,28 @@ export function Tag({ children, className, tone = toneOption.default, ...props }
     );
   }
 
-  const { onRemove, removable, removeLabel = removeLabelOption.default, ...spanProps } = props;
-  const hasRemove = removable ?? onRemove !== undefined;
+  const { onRemove, removable = false, removeLabel = removeLabelOption.default, ...spanProps } = props;
   return (
     <span
       {...spanProps}
       className={cx(tagParts.root, className)}
-      data-removable={hasRemove ? "" : undefined}
+      data-removable={removable ? "" : undefined}
       data-tone={tone}
     >
       <span className={tagParts.label}>{children}</span>
       {/* A real Button, not a chip-shaped lookalike: the state layer, the focus ring and the 44px hit
           target come with it. `close` is the system's icon for dismissing, never a literal "×". */}
-      {hasRemove ? (
+      {removable ? (
         <Button
           aria-label={removeLabel}
           className={tagParts.remove}
           iconOnly
-          onClick={onRemove}
+          onClick={(event) => {
+            onRemove?.();
+            event.currentTarget
+              .closest(`.${tagParts.root}`)
+              ?.dispatchEvent(new CustomEvent(tagEvents.remove, { bubbles: true }));
+          }}
           size="sm"
           variant="ghost"
         >

@@ -3,7 +3,7 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
-surface: "7a3a1136a6a287a7"
+surface: "401722902f36d6cc"
 entries:
   - date: 2026-09-09
     kind: feature
@@ -112,3 +112,39 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: El contrato declara el rango de sus números
+      body: >-
+        <code>quietZone</code> es un entero desde 0 y <code>logoRatio</code> va de 0 a 1. Un valor fuera de rango deja de validar en vez de llegar al binding.
+    en:
+      title: The contract declares the range of its numbers
+      body: >-
+        <code>quietZone</code> is a whole number from 0 and <code>logoRatio</code> goes from 0 to 1. A value out of range stops validating instead of reaching the binding.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: moduleShape llega al DOM y logoRatio topea en 0.5
+      body: >-
+        <code>moduleShape</code> deja de ser <code>computedInput</code>: la hoja lee
+        <code>data-module-shape</code> para el <code>shape-rendering</code>, así que el atributo tiene
+        que existir. <code>logoRatio</code> ahora valida hasta 0.5, el mismo tope que usa el encoder
+        al vaciar el agujero del logo.
+    en:
+      title: moduleShape reaches the DOM and logoRatio caps at 0.5
+      body: >-
+        <code>moduleShape</code> is no longer <code>computedInput</code>: the stylesheet reads
+        <code>data-module-shape</code> for <code>shape-rendering</code>, so the attribute has to exist.
+        <code>logoRatio</code> now validates up to 0.5, the same cap the encoder uses when clearing
+        the logo hole.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: Un logo necesita logoRatio
+      body: >-
+        Un logo sin <code>logoRatio</code> pintaba una cubierta de tamaño cero.
+    en:
+      title: A logo needs logoRatio
+      body: >-
+        A logo without <code>logoRatio</code> painted a zero-size cover.

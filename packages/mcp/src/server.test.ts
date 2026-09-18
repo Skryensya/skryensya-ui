@@ -1,5 +1,6 @@
 import { join } from "node:path";
 import { snippets } from "@skryensya/snippets";
+import { SCHEMA_VERSION } from "@skryensya/ai-compiler/artifact";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -93,7 +94,7 @@ describe("the surface", () => {
     const { payload } = await call("get_catalog");
 
     expect(payload.sourceHash).toMatch(/^[0-9a-f]{16}$/);
-    expect(payload.schemaVersion).toBe("2.0");
+    expect(payload.schemaVersion).toBe(SCHEMA_VERSION);
   });
 });
 
@@ -368,7 +369,7 @@ describe("the tool schema accepts everything the compiler's model does", () => {
     for (const tree of [
       { contract: "pagination", signature: "Pagination", options: { page: 4, total: 12 } },
       { contract: "progress", signature: "Progress", options: { value: 68, label: "Subida" } },
-      { contract: "slider", signature: "Slider", options: { value: 40, min: 0, max: 100 } },
+      { contract: "slider", signature: "Slider", options: { value: 40, min: 0, max: 100 }, attrs: { "aria-label": "Volumen" } },
       {
         contract: "number-field",
         signature: "NumberField",

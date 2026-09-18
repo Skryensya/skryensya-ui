@@ -3,8 +3,86 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "3b9d460b07e943cf"
+surface: "6995dbf5c2d6a064"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: authoredAttrs publica los ganchos de preview
+      body: >-
+        El contrato declara <code>authoredAttrs</code>: <code>data-sk-megamenu-preview</code> y
+        <code>data-sk-megamenu-preview-alt</code> se escriben a mano en un
+        <code>NavListLink</code> de una columna. Ya estaban documentados en prosa; ahora el validador
+        los acepta ahi en vez de reportar <code>unknown-attr</code>.
+    en:
+      title: authoredAttrs publishes the preview hooks
+      body: >-
+        The contract declares <code>authoredAttrs</code>: <code>data-sk-megamenu-preview</code> and
+        <code>data-sk-megamenu-preview-alt</code> are authored on a <code>NavListLink</code> inside a
+        column. They were already documented in prose; now the validator accepts them there instead
+        of reporting <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: portals declara container de React
+      body: >-
+        <code>portals: { container: true }</code> documenta el ref React-only que acota el portal (por defecto <code>document.body</code>). El markup sigue anclado en el subárbol.
+    en:
+      title: portals declares the React container
+      body: >-
+        <code>portals: { container: true }</code> documents the React-only ref that scopes the portal (default <code>document.body</code>). Markup stays in the subtree.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: openChange, anchored hookSheets y montaje declarado
+      body: >-
+        El contrato publica <code>events.openChange</code> (<code>sk:megamenuopenchange</code>) con
+        detalle <code>{ open, index }</code>; ambas bindings lo despachan. Se declara
+        <code>hookSheets</code> de <code>anchored.css</code> (y sus hooks) porque
+        <code>sk-anchor</code>/<code>sk-anchored</code> no tienen dueño único en
+        <code>parts</code>. React estampa <code>data-sk-megamenu</code> en la raíz.
+    en:
+      title: openChange, anchored hookSheets, and declared mount
+      body: >-
+        The contract publishes <code>events.openChange</code> (<code>sk:megamenuopenchange</code>)
+        with detail <code>{ open, index }</code>; both bindings dispatch it.
+        <code>hookSheets</code> names <code>anchored.css</code> (and its hooks) because
+        <code>sk-anchor</code>/<code>sk-anchored</code> have no unique owner in <code>parts</code>.
+        React stamps <code>data-sk-megamenu</code> on the root.
   - date: 2026-08-24
     kind: bugfix
     target: Megamenu
@@ -138,3 +216,13 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Entre dos y cuatro columnas
+      body: >-
+        La guía de 2 a 4 columnas por trigger pasa a regla: con una sola es un desplegable.
+    en:
+      title: Between two and four columns
+      body: >-
+        The 2 to 4 columns per trigger guideline becomes a rule: with one it is a dropdown.

@@ -70,9 +70,9 @@ export function initHeroTabsUrl(): void {
     }
   }
 
-  root.addEventListener("sk-value-change", (event) => {
+  root.addEventListener("sk:tabsvaluechange", (event) => {
     /*
-     * `sk-value-change` BUBBLES, and every ComponentPreview inside these panels is itself a
+     * `sk:tabsvaluechange` BUBBLES, and every ComponentPreview inside these panels is itself a
      * `[data-sk-tabs]` firing the same event with its own vocabulary (`html`, `js`). Without this
      * guard, switching a demo's source tab would write `?tab=js` onto the page's hero bar.
      */

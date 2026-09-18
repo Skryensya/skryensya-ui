@@ -3,8 +3,39 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "96d828666dbbc43e"
+surface: "17bc1036fc4eb51c"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: feature
+    target: Toast
+    es:
+      title: Toast declara compose de Button e Icon en dismiss
+      body: >-
+        <code>compose</code> documenta el dismiss vía <code>also</code> (<code>systemOwned</code>).
+    en:
+      title: Toast declares compose of Button and Icon on dismiss
+      body: >-
+        <code>compose</code> documents dismiss via <code>also</code> (<code>systemOwned</code>).
   - date: 2026-08-11
     kind: feature
     es:
@@ -64,3 +95,27 @@ entries:
         sheet <code>css</code> names could be reconciled, so the hooks in the others were public
         surface nobody documented and nothing checked. No styling changes: what changes is that they
         are declared now, and the compiler checks them.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Cada evento lleva el nombre de su familia
+      body: >-
+        <code>sk-dismiss</code> → <code>sk:toastdismiss</code>. Un mismo nombre ya no lo despachan varias familias: un listener sobre una raíz deja
+        de recibir los eventos de un componente distinto anidado adentro. El contrato ahora los declara en <code>events</code>, así que el compilador los publica.
+    en:
+      title: Every event carries its family in its name
+      body: >-
+        <code>sk-dismiss</code> → <code>sk:toastdismiss</code>. No two families dispatch the same name any more: a listener on a root stops receiving
+        the events of a different component nested inside it. The contract now declares them in <code>events</code>, so the compiler publishes them.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Toast exige nombre accesible al ser descartable y acota el timeout
+      body: >-
+        Con <code>dismissible</code>, el contrato exige <code>dismissLabel</code> (el control es solo ícono).
+        <code>timeout</code> pasa a ser un entero ≥ 1. React despacha <code>sk:toastdismiss</code> como Vanilla.
+    en:
+      title: Toast requires an accessible name when dismissible and bounds timeout
+      body: >-
+        With <code>dismissible</code>, the contract requires <code>dismissLabel</code> (the control is icon-only).
+        <code>timeout</code> is now an integer ≥ 1. React dispatches <code>sk:toastdismiss</code> like Vanilla.

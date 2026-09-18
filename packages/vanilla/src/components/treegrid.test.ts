@@ -152,7 +152,7 @@ describe("Treegrid vanilla enhancer", () => {
     expect(row("inbox").getAttribute("aria-expanded")).toBe("false");
 
     let activated: unknown;
-    root.addEventListener("sk-treegrid-activate", (event) => {
+    root.addEventListener("sk:treegridactivate", (event) => {
       activated = (event as CustomEvent).detail;
     });
     row("sent").focus();
@@ -169,7 +169,7 @@ describe("Treegrid vanilla enhancer", () => {
     expect(document.activeElement).toBe(row("drafts"));
 
     let detail: unknown;
-    root.addEventListener("sk-treegrid-expanded-change", (event) => {
+    root.addEventListener("sk:treegridexpandedchange", (event) => {
       detail = (event as CustomEvent).detail;
     });
     fireEvent.click(firstCell);

@@ -7,10 +7,12 @@ Megamenu:
     - "el desplegable es una lista de comandos de aplicación, no destinos; eso es Menu"
     - "la barra es de comandos de aplicación (Archivo/Editar/Ver), algunos con desplegable; eso es Menubar"
     - "son destinos simples sin panel de varias columnas; eso es NavList"
+    - "solo hace falta la barra de marca/acciones sin panel de categorías; eso es Navbar"
   alternatives:
     - Menu
     - Menubar
     - NavList
+    - Navbar
 
 MegamenuTrigger:
   useWhen:

@@ -13,7 +13,7 @@ function markup(root = 'data-locale="es-DO"', clear = true) {
     <label class="sk-date-picker__label">Llegada</label>
     <div class="sk-date-picker__control">
       <input class="sk-date-picker__input" placeholder="dd/mm/aaaa" type="text" />
-      ${clear ? '<button class="sk-date-picker__clear" aria-label="Limpiar" type="button">×</button>' : ""}
+      ${clear ? '<button class="sk-date-picker__clear" aria-label="Clear" type="button">×</button>' : ""}
       <button class="sk-date-picker__trigger" type="button">Abrir</button>
     </div>
   </div>`;
@@ -78,7 +78,7 @@ describe("DatePicker Vanilla contracts", () => {
   it("fills the field with the day the reader picked", async () => {
     const root = markup('data-locale="es-DO" data-value="2024-03-15"');
     const onChange = vi.fn();
-    root.addEventListener("sk-value-change", onChange);
+    root.addEventListener("sk:datepickervaluechange", onChange);
 
     expect(input().value).toBe("15/03/2024");
 
@@ -101,7 +101,7 @@ describe("DatePicker Vanilla contracts", () => {
     markup('data-locale="es-DO" data-value="2024-03-15"');
     expect(clearButton().hidden).toBe(false);
     // The authored label survives the patch, so the field keeps speaking the page's language.
-    expect(clearButton().getAttribute("aria-label")).toBe("Limpiar");
+    expect(clearButton().getAttribute("aria-label")).toBe("Clear");
 
     fireEvent.click(clearButton());
 

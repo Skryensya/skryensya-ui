@@ -7,7 +7,7 @@
     supportsAnchorPositioning,
   } from "@skryensya/core/anchored";
   import { colorPicker } from "@skryensya/core/machines";
-  import { colorPickerParts } from "@skryensya/core/color-picker";
+  import { colorPickerParts, colorPickerEvents } from "@skryensya/core/color-picker";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
   import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
@@ -55,7 +55,10 @@
     invalid: root.hasAttribute("data-invalid"),
     onValueChange(details: { valueAsString: string }) {
       root.dispatchEvent(
-        new CustomEvent("sk-value-change", { bubbles: true, detail: { value: details.valueAsString } }),
+        new CustomEvent(colorPickerEvents.valueChange, {
+          bubbles: true,
+          detail: { value: details.valueAsString },
+        }),
       );
     },
   }));

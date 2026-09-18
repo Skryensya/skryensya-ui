@@ -1,11 +1,5 @@
 import type { ComponentContract } from "./contract.js";
 
-export type FormFieldOptions = {
-  invalid?: boolean;
-  required?: boolean;
-  disabled?: boolean;
-};
-
 /*
  * The chrome around any control, label, hint, error. Deliberately independent of `input`: a form
  * field wraps a select, a group of checkboxes or a textarea just as readily, and naming it for the
@@ -39,6 +33,7 @@ export type FormFieldPartClass = (typeof formFieldParts)[FormFieldPart];
  */
 export const formFieldContract = {
   id: "form-field",
+  category: "forms",
   css: "@skryensya/core/components/form-field.css",
   parts: formFieldParts,
   hooks: [
@@ -82,6 +77,8 @@ export const formFieldContract = {
       host: { element: "div" },
       // Neither lands on the field box: both are the control's, delivered by the wiring below.
       options: ["required", "disabled", "labelHidden"],
+      /** Host id / a11y on the field wrapper. */
+      forward: ["id", "aria-*"],
       slots: {
         label: { accepts: "node", required: true },
         /** Guidance shown before the control. Pointed at by `aria-describedby`. */

@@ -7,6 +7,8 @@ CommandPalette:
   avoidWhen:
     - "las opciones son pocas y caben a la vista: eso es un Menu"
     - "es el único camino a algo: una paleta complementa la navegación, no la reemplaza"
+    - "hace falta un campo de formulario que filtre una lista conocida: eso es un Combobox"
   alternatives:
     - Menu
     - Combobox
+    - Dialog

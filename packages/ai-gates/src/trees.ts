@@ -225,7 +225,7 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "radio-group",
       signature: "RadioGroup",
-      options: { name: "plan", value: "mensual" },
+      options: { name: "plan", value: "mensual", label: "Plan" },
       slots: {
         items: [
           { options: { value: "mensual" }, slots: { label: "Mensual" } },
@@ -240,7 +240,7 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "switch",
       signature: "Switch",
-      options: { name: "dark-mode", checked: true },
+      options: { name: "dark-mode", defaultChecked: true },
       children: "Modo oscuro",
     },
   },
@@ -256,6 +256,7 @@ const signatureTrees: readonly Canonical[] = [
       contract: "table",
       signature: "Table",
       options: { resizableColumns: true, resizeLabel: "Redimensionar columna" },
+      attrs: { "aria-label": "Planes" },
       children: [
         {
           contract: "table",
@@ -519,7 +520,7 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "tag",
       signature: "Tag",
-      options: { tone: "accent", removable: true },
+      options: { tone: "accent", removable: true, removeLabel: "Quitar Diseño" },
       children: "Diseño",
     },
   },
@@ -669,7 +670,7 @@ const signatureTrees: readonly Canonical[] = [
       slots: {
         items: [
           { options: { status: "complete" }, slots: { marker: "✓", label: "Datos" } },
-          { options: { status: "current", current: true }, slots: { marker: "2", label: "Pago" } },
+          { options: { status: "current" }, slots: { marker: "2", label: "Pago" } },
           { options: { status: "upcoming" }, slots: { marker: "3", label: "Confirmación" } },
         ],
       },
@@ -792,6 +793,26 @@ const signatureTrees: readonly Canonical[] = [
           signature: "ListItemLink",
           options: { href: "/ajustes" },
           slots: { title: "Ajustes", trailing: "→" },
+        },
+      ],
+    },
+  },
+  {
+    // A row that ACTS rather than navigates: the button is the row, so the whole row takes the press.
+    name: "list/button-row",
+    enhanced: false,
+    tree: {
+      contract: "list",
+      signature: "List",
+      children: [
+        {
+          contract: "list",
+          signature: "ListItemButton",
+          slots: {
+            leading: { contract: "icon", signature: "Icon", options: { name: "download" } },
+            title: "Descargar informe",
+            description: "PDF, 2,1 MB",
+          },
         },
       ],
     },
@@ -1004,6 +1025,25 @@ const signatureTrees: readonly Canonical[] = [
       signature: "TablePager",
       options: { page: 2, pageSize: 10, siblings: 1 },
       children: [
+        /* Ninety body rows, so page two of nine is a fact the pager computes rather than a label. */
+        {
+          contract: "table",
+          signature: "TableScroll",
+          children: {
+            contract: "table",
+            signature: "Table",
+            attrs: { "aria-label": "Filas" },
+            children: {
+              contract: "table",
+              signature: "TableBody",
+              children: Array.from({ length: 90 }, (_, index) => ({
+                contract: "table",
+                signature: "TableRow",
+                children: { contract: "table", signature: "TableCell", children: `Fila ${index + 1}` },
+              })),
+            },
+          },
+        },
         {
           contract: "table-pager",
           signature: "TablePagerBar",
@@ -1162,7 +1202,7 @@ const signatureTrees: readonly Canonical[] = [
           options: {
             label: "Otras formas de guardar",
             triggerLabel: "Más",
-            triggerVariant: "accent",
+            triggerTone: "accent",
             triggerIconOnly: true,
             triggerWeldStart: true,
           },
@@ -1317,7 +1357,7 @@ const signatureTrees: readonly Canonical[] = [
     tree: {
       contract: "code-preview",
       signature: "CodePreview",
-      options: { collapsible: true, lines: "48", previewLines: "8" },
+      options: { collapsible: true, lines: 48, previewLines: 8 },
       slots: { label: "vite.config.ts", children: "export default defineConfig({})" },
     },
   },
@@ -1434,6 +1474,35 @@ const signatureTrees: readonly Canonical[] = [
       signature: "Vaul.drawer",
       options: { edge: "inline-start", open: true, label: "Navegación" },
       children: "Trabajo, Personal, Archivo",
+    },
+  },
+  /*
+   * The trigger outside the panel and the closer inside it, paired by `panelId`. Closed at rest, so
+   * what both bindings must agree on is the trigger's collapsed state and the pairing attributes.
+   */
+  {
+    name: "vaul/trigger-and-close",
+    enhanced: true,
+    tree: {
+      contract: "layout",
+      signature: "Stack",
+      children: [
+        {
+          contract: "vaul",
+          signature: "Vaul.Trigger",
+          options: { opens: "vaul-filtros", buttonVariant: "soft" },
+          children: "Filtrar",
+        },
+        {
+          contract: "vaul",
+          signature: "Vaul",
+          options: { panelId: "vaul-filtros", label: "Filtros" },
+          children: [
+            { contract: "typography", signature: "Text", children: "Sólo abiertas" },
+            { contract: "vaul", signature: "Vaul.Close", children: "Listo" },
+          ],
+        },
+      ],
     },
   },
   /** A description on one row and not the other, so the conditional second line is compared too. */
@@ -1605,7 +1674,7 @@ const signatureTrees: readonly Canonical[] = [
       children: {
         contract: "content",
         signature: "Toast",
-        options: { tone: "success", dismissible: true },
+        options: { tone: "success", dismissible: true, dismissLabel: "Cerrar aviso" },
         slots: { title: "Cambios guardados" },
         children: "La versión de julio quedó publicada.",
       },
@@ -2153,7 +2222,7 @@ const signatureTrees: readonly Canonical[] = [
       children: {
         contract: "content",
         signature: "Toast",
-        options: { tone: "neutral", dismissible: true },
+        options: { tone: "neutral", dismissible: true, dismissLabel: "Cerrar aviso" },
         slots: { title: "Nueva notificación" },
         children: "Contenido de ejemplo.",
       },
@@ -2544,6 +2613,17 @@ const signatureTrees: readonly Canonical[] = [
                   },
                 ],
               },
+              /* A megamenu earns its panel with two to four columns; one is a dropdown. */
+              {
+                contract: "nav-list",
+                signature: "NavListGroup",
+                options: { heading: true },
+                slots: { label: "Recursos" },
+                children: [
+                  { contract: "nav-list", signature: "NavListLink", options: { href: "/guias" }, children: "Guías" },
+                  { contract: "nav-list", signature: "NavListLink", options: { href: "/cambios" }, children: "Cambios" },
+                ],
+              },
             ],
           },
         },
@@ -2744,6 +2824,52 @@ const signatureTrees: readonly Canonical[] = [
           { options: { value: 52600 }, slots: { label: "Sem 6" } },
           { options: { value: 57300 }, slots: { label: "Sem 7" } },
           { options: { value: 61400 }, slots: { label: "Sem 8" } },
+        ],
+      },
+    },
+  },
+  /*
+   * The two shapes an item can take, in one form, because the questionnaire shows ONE item at a
+   * time: a required single choice and an optional free-text question. A tree with only the first
+   * would leave `text` and its label unreached, and those are the options the second binding has to
+   * agree about.
+   */
+  {
+    name: "questionnaire/survey",
+    enhanced: true,
+    tree: {
+      contract: "questionnaire",
+      signature: "Questionnaire",
+      options: { progress: "bar", shortcuts: "letters" },
+      attrs: { "aria-label": "Encuesta de satisfacción" },
+      slots: {
+        children: [
+          {
+            contract: "questionnaire",
+            signature: "QuestionnaireItem",
+            options: { name: "frecuencia", required: true, stepLabel: "Frecuencia" },
+            slots: {
+              title: "¿Con qué frecuencia usas el kit?",
+              description: "Elige la opción que más se acerque a tu semana habitual.",
+              choices: [
+                { options: { value: "diario" }, slots: { label: "A diario" } },
+                { options: { value: "semanal" }, slots: { label: "Algunas veces por semana", description: "Dos o tres días." } },
+                { options: { value: "nunca" }, slots: { label: "Todavía no" } },
+              ],
+            },
+          },
+          {
+            contract: "questionnaire",
+            signature: "QuestionnaireItem",
+            options: {
+              name: "comentario",
+              text: true,
+              textLabel: "Tu comentario",
+              textPlaceholder: "Lo que quieras contarnos",
+              stepLabel: "Comentario",
+            },
+            slots: { title: "¿Qué le falta al kit?" },
+          },
         ],
       },
     },

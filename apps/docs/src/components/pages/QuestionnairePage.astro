@@ -1,0 +1,122 @@
+---
+/*
+ * Questionnaire composes Tile, Checkbox, FormField, Input, Button, Kbd, Progress and Steps, so this
+ * page loads every one of their sheets: a preview frame only copies the styles THIS page loaded.
+ */
+import "@skryensya/core/components/questionnaire.css";
+import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/checkbox.css";
+import "@skryensya/core/components/form-field.css";
+import "@skryensya/core/components/input.css";
+import "@skryensya/core/components/radio-group.css";
+import "@skryensya/core/components/kbd.css";
+import "@skryensya/core/components/progress.css";
+import "@skryensya/core/components/steps.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  questionnaireBarTree,
+  questionnaireBranchingTree,
+  questionnaireChoicesOnlyTree,
+  questionnaireLikertTree,
+  questionnaireShortcutsTree,
+  questionnaireStepsTree,
+  questionnaireTree,
+} from "../../demos/questionnaire";
+import { getLocale, useTranslations } from "../../i18n";
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const t = useTranslations(getLocale(Astro.url));
+---
+
+<ComponentPageShell
+  title="Questionnaire"
+  badge="Beta"
+  description={t("questionnairePage.description")}
+  contractId="questionnaire"
+  testFiles={[
+    "packages/core/src/questionnaire.test.ts",
+    "packages/react/src/components/questionnaire.test.tsx",
+    "packages/vanilla/src/components/questionnaire.test.ts",
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("questionnairePage.lede")} />
+
+    <ComponentPreview
+      tree={questionnaireTree(t)}
+      label={t("questionnairePage.basicLabel")}
+      screenScope="local"
+      defaultScreen="free"
+    />
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("questionnairePage.stateTitle")}</h3>
+    <p set:html={t("questionnairePage.stateBody")} />
+
+    <h3>{t("questionnairePage.choicesOnlyTitle")}</h3>
+    <p set:html={t("questionnairePage.choicesOnlyBody")} />
+    <ComponentPreview
+      tree={questionnaireChoicesOnlyTree(t)}
+      label={t("questionnairePage.choicesOnlyLabel")}
+      screenScope="local"
+      defaultScreen="free"
+    />
+
+    <h3>{t("questionnairePage.likertTitle")}</h3>
+    <p set:html={t("questionnairePage.likertBody")} />
+    <ComponentPreview
+      tree={questionnaireLikertTree(t)}
+      label={t("questionnairePage.likertLabel")}
+      screenScope="local"
+      defaultScreen="free"
+    />
+
+    <h3>{t("questionnairePage.branchTitle")}</h3>
+    <p set:html={t("questionnairePage.branchBody")} />
+    <ComponentPreview
+      tree={questionnaireBranchingTree(t)}
+      label={t("questionnairePage.branchLabel")}
+      screenScope="local"
+      defaultScreen="free"
+    />
+
+    <h3>{t("questionnairePage.progressTitle")}</h3>
+    <p set:html={t("questionnairePage.progressBody")} />
+    <ComponentPreview
+      tree={questionnaireBarTree(t)}
+      label={t("questionnairePage.barLabel")}
+      screenScope="local"
+      defaultScreen="free"
+    />
+    <ComponentPreview
+      tree={questionnaireStepsTree(t)}
+      label={t("questionnairePage.stepsLabel")}
+      screenScope="local"
+      defaultScreen="free"
+    />
+
+    <h3>{t("questionnairePage.heightTitle")}</h3>
+    <p set:html={t("questionnairePage.heightBody")} />
+
+    <h3>{t("questionnairePage.keyboardTitle")}</h3>
+    <p set:html={t("questionnairePage.keyboardBody")} />
+    <ComponentPreview
+      tree={questionnaireShortcutsTree(t)}
+      label={t("questionnairePage.shortcutsLabel")}
+      screenScope="local"
+      defaultScreen="free"
+    />
+
+    <h3>{t("questionnairePage.skipTitle")}</h3>
+    <p set:html={t("questionnairePage.skipBody")} />
+
+    <h3>{t("questionnairePage.noScriptTitle")}</h3>
+    <p set:html={t("questionnairePage.noScriptBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

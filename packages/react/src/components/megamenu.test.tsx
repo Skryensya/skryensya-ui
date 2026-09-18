@@ -1,4 +1,4 @@
-import { act, fireEvent, render } from "@testing-library/react";
+import { act, fireEvent, render, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Megamenu, MegamenuTrigger } from "./megamenu.js";
 import { ImageFrame } from "./image-frame.js";
@@ -75,6 +75,23 @@ describe("Megamenu (React)", () => {
     expect(trigger(ui, "Products").getAttribute("aria-expanded")).toBe("true");
     expect(content().dataset.state).toBe("open");
     expect(visiblePanel().textContent).toContain("Overview");
+  });
+
+  it("dispatches sk:megamenuopenchange and stamps the mount attribute", async () => {
+    const onDom = vi.fn();
+    const ui = render(<Fixture />);
+    const root = ui.container.querySelector(".sk-megamenu")!;
+    expect(root.hasAttribute("data-sk-megamenu")).toBe(true);
+    root.addEventListener("sk:megamenuopenchange", onDom);
+
+    fireEvent.click(trigger(ui, "Products"));
+    await waitFor(() => expect(onDom).toHaveBeenCalled());
+    expect((onDom.mock.calls.at(-1)![0] as CustomEvent).detail).toEqual({ open: true, index: 0 });
+
+    fireEvent.click(trigger(ui, "Products"));
+    await waitFor(() =>
+      expect((onDom.mock.calls.at(-1)![0] as CustomEvent).detail).toEqual({ open: false, index: null }),
+    );
   });
 
   it("clicking the SAME trigger again closes it. A toggle", () => {

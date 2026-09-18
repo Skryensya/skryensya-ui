@@ -127,14 +127,14 @@ export const colorPickerAnatomyCss = `.sk-annotated {
 export const colorPickerTree = (t: Translate): UsageTree => ({
   contract: "color-picker",
   signature: "ColorPicker",
-  options: { name: "brand", value: "#3366ff" },
+  options: { triggerLabel: t("kit.chooseColor"), name: "brand", value: "#3366ff" },
   slots: { label: t("demo.colorPicker.label") },
 });
 
 export const compactColorPickerTree = (t: Translate): UsageTree => ({
   contract: "color-picker",
   signature: "ColorPicker.compact",
-  options: { name: "accent", value: "#22aabb" },
+  options: { triggerLabel: t("kit.chooseColor"), name: "accent", value: "#22aabb" },
   slots: { label: t("demo.colorPicker.compactLabel") },
 });
 
@@ -142,6 +142,7 @@ export const presetsColorPickerTree = (t: Translate): UsageTree => ({
   contract: "color-picker",
   signature: "ColorPicker",
   options: {
+    triggerLabel: t("kit.chooseColor"),
     name: "brand",
     value: "#3366ff",
     swatches: "#ef4444 #22c55e #3366ff #f59e0b #111111 #ffffff",
@@ -152,7 +153,7 @@ export const presetsColorPickerTree = (t: Translate): UsageTree => ({
 export const disabledColorPickerTree = (t: Translate): UsageTree => ({
   contract: "color-picker",
   signature: "ColorPicker",
-  options: { value: "#3366ff", disabled: true },
+  options: { triggerLabel: t("kit.chooseColor"), value: "#3366ff", disabled: true },
   slots: { label: t("demo.colorPicker.label") },
 });
 

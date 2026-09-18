@@ -1,4 +1,4 @@
-import type { VaulEdge } from "@skryensya/core/vaul";
+import type { VaulEdge } from "./vaul.js";
 
 /*
  * VAUL, the gesture logic, pure.
@@ -7,7 +7,8 @@ import type { VaulEdge } from "@skryensya/core/vaul";
  * answer is a pure function of the samples and a few numbers, no DOM, no pointer capture, no CSS reads
  * but it used to live inline inside the 305-line `connectVaul` closure, over mutable state, reachable
  * only through synthetic PointerEvents. Pulling it here gives it a test surface: feed samples, assert
- * the verdict (see vaul-gesture.test.ts). The DOM shell in vaul.ts keeps the plumbing and calls in.
+ * the verdict (see vaul-gesture.test.ts). The DOM shells - `@skryensya/vanilla`'s vaul.ts and the React
+ * port in `components/command-palette.tsx` - keep the plumbing and call in, so the verdict is one.
  *
  * Three things decide it, and each exists because leaving it out is what makes a sheet feel cheap:
  *   distance, dragged far enough that letting go can only have meant "go away".

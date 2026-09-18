@@ -51,7 +51,16 @@ export const vaulDataParts = {
 } as const;
 
 export const vaulEvents = {
-  openChange: "sk:openchange",
+  openChange: "sk:vaulopenchange",
+} as const;
+
+export const vaulAttrs = {
+  /**
+   * Authored on any control inside the drawer: clicking it closes the Vaul. Both the trigger the
+   * contract bakes and a Button an author drops in the body carry the same attribute, because the
+   * enhancer looks for THIS and not for a part class - a close control is a role, not a place.
+   */
+  close: "data-sk-vaul-close",
 } as const;
 
 /*
@@ -71,8 +80,17 @@ export const vaulEvents = {
  */
 export const vaulContract = {
   id: "vaul",
+  category: "overlays",
   css: "@skryensya/core/patterns/vaul.css",
   parts: vaulParts,
+  events: vaulEvents,
+  eventDetails: {
+    openChange: { detail: { open: "boolean" }, reactProp: "onOpenChange", source: "root" },
+  },
+  /* Written by both drag shells on every pointer move; read them, never set them. */
+  outputHooks: ["--sk-vaul-drag-offset", "--sk-vaul-drag-progress"],
+  /* Authored on any control inside the drawer - usually a Button - to make it a close trigger. */
+  authoredAttrs: [vaulAttrs.close],
   hooks: [
     "--sk-drawer-bg",
     "--sk-drawer-border-color",
@@ -121,15 +139,65 @@ export const vaulContract = {
      * required `label` already uses for a root with no title node either.
      */
     label: { type: "string", attr: "aria-label" },
+    /**
+     * The panel's id, which a `Vaul.Trigger` names in `opens`. Optional: a panel opened only from
+     * script needs none. Authored rather than generated because the trigger is a separate node.
+     */
+    panelId: { type: "string", attr: "id", prop: "id" },
+    /**
+     * The `panelId` of the Vaul this trigger opens. Written twice: `data-sk-vaul-open` is what the
+     * enhancer listens on, `aria-controls` is what assistive tech follows.
+     */
+    opens: {
+      type: "string",
+      attr: "data-sk-vaul-open",
+      alsoAttr: "aria-controls",
+      refersTo: { contract: "vaul", option: "panelId" },
+    },
+    /*
+     * The trigger and close buttons wear Button's look without being Buttons, the same untyped
+     * trio Popover and Menu publish for their own triggers: Vaul does not own that vocabulary.
+     */
+    buttonVariant: { type: "string", attr: "data-variant", prop: "variant", valuesFrom: { contract: "button", option: "variant" } },
+    buttonTone: { type: "string", attr: "data-tone", prop: "tone", valuesFrom: { contract: "button", option: "tone" } },
+    buttonSize: { type: "string", attr: "data-size", prop: "size", valuesFrom: { contract: "button", option: "size" } },
+    buttonIconOnly: { type: "boolean", default: false, attr: "data-icon-only", trueValue: "", prop: "iconOnly" },
+    /** The accessible name of an icon-only trigger or close button. */
+    buttonLabel: { type: "string", attr: "aria-label", prop: "aria-label" },
+    /*
+     * Whether the handle takes the drag. Written only as `data-draggable="false"`: the enhancer
+     * treats anything else as on, so true is saying nothing. React passes it as a prop to its own
+     * drag shell, which is why it is a machine input rather than markup both sides must mirror.
+     */
+    draggable: { type: "boolean", default: true, attr: "data-draggable", falseValue: "false", machineInput: true },
+    /** Fraction (0–1) of the panel's size a release must have travelled to dismiss it. */
+    dismissThreshold: { type: "number", default: 0.4, min: 0, max: 1, attr: "data-dismiss-threshold", machineInput: true },
   },
+
+  a11y: [
+    {
+      /* A heading inside the panel can name it instead, the way the docs' own drawer does. */
+      when: {},
+      requiresOneOf: ["label", "aria-labelledby"],
+      because: "showModal() gives the panel role=\"dialog\", and a dialog needs a name.",
+      signatures: ["Vaul", "Vaul.drawer"],
+    },
+    {
+      when: { buttonIconOnly: true },
+      requiresOneOf: ["buttonLabel"],
+      because: "An icon-only trigger or close button has no visible text, so nothing else names it.",
+      signatures: ["Vaul.Trigger", "Vaul.Close"],
+    },
+  ],
 
   signatures: {
     Vaul: {
       intent: ["edge-anchored-panel", "bottom-sheet", "drag-to-dismiss", "mobile-navigation"],
       host: { element: "dialog" },
       mount: "data-sk-vaul",
-      options: ["edge", "open", "label"],
-      requires: ["label"],
+      options: ["panelId", "edge", "open", "label", "draggable", "dismissThreshold"],
+      /** Extra a11y; panel id is the panelId option (not forwarded). */
+      forward: ["aria-*"],
       slots: {
         /** Whatever the panel holds. Its own semantics are the composition's business. */
         children: { accepts: "node", required: true },
@@ -167,8 +235,9 @@ export const vaulContract = {
       intent: ["navigation-drawer", "side-panel", "mobile-navigation"],
       host: { element: "dialog" },
       mount: "data-sk-vaul",
-      options: ["edge", "open", "label"],
-      requires: ["label"],
+      options: ["panelId", "edge", "open", "label", "draggable", "dismissThreshold"],
+      /** Extra a11y; panel id is the panelId option (not forwarded). */
+      forward: ["aria-*"],
       slots: { children: { accepts: "node", required: true } },
       template: {
         element: "dialog",
@@ -185,6 +254,48 @@ export const vaulContract = {
         ],
       },
       react: { from: "@skryensya/react/vaul", name: "Drawer" },
+    },
+
+    /*
+     * WHAT OPENS IT. A separate signature, not a slot, because the button lives wherever the page
+     * puts it (a navbar, a toolbar) and the `<dialog>` lives at the end of the body. `opens` pairs
+     * them by the panel's id, checked by `refersTo`. The expanded state is the enhancer's (Vanilla)
+     * or the component's (React) to keep in step with the dialog; at rest it is closed.
+     */
+    "Vaul.Trigger": {
+      intent: ["open-a-sheet", "open-a-drawer", "mobile-menu-button"],
+      host: { element: "button" },
+      options: ["opens", "buttonVariant", "buttonTone", "buttonSize", "buttonIconOnly", "buttonLabel"],
+      requires: ["opens"],
+      /** Form association and extra a11y; Button look stays the button* options. */
+      forward: ["id", "name", "form", "aria-*"],
+      slots: { children: { accepts: "node", required: true } },
+      template: {
+        element: "button",
+        also: ["sk-button", "sk-interactive"],
+        host: true,
+        attrs: { type: "button", "aria-haspopup": "dialog", "aria-expanded": "false" },
+        slot: "children",
+      },
+      react: { from: "@skryensya/react/vaul", name: "Vaul.Trigger" },
+    },
+
+    /** WHAT CLOSES IT from inside: any button in the panel carrying the closer attribute. */
+    "Vaul.Close": {
+      intent: ["close-a-sheet", "dismiss-a-drawer"],
+      host: { element: "button" },
+      options: ["buttonVariant", "buttonTone", "buttonSize", "buttonIconOnly", "buttonLabel"],
+      /** Form association and extra a11y; Button look stays the button* options. */
+      forward: ["id", "name", "form", "aria-*"],
+      slots: { children: { accepts: "node", required: true } },
+      template: {
+        element: "button",
+        also: ["sk-button", "sk-interactive"],
+        host: true,
+        attrs: { type: "button", [vaulAttrs.close]: "" },
+        slot: "children",
+      },
+      react: { from: "@skryensya/react/vaul", name: "Vaul.Close" },
     },
   },
 } as const satisfies ComponentContract;

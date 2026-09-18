@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { Heading, Link, Text } from "./typography.js";
+import { Code, Heading, Link, Output, Text } from "./typography.js";
 
 describe("typography components", () => {
   it("separates heading hierarchy from its visual size", () => {
@@ -49,5 +49,32 @@ describe("typography components", () => {
     expect(link.classList).toContain("sk-interactive");
     // The underline is not configurable, it is always on (WCAG 1.4.1), so there is no data-underline.
     expect(link.getAttribute("data-underline")).toBeNull();
+  });
+
+  it("writes a title-block role only when one is asked for", () => {
+    const ui = render(
+      <>
+        <Text textRole="eyebrow">Integración</Text>
+        <Text textRole="subtitle">Copia el CSS</Text>
+        <Text>Plain</Text>
+      </>,
+    );
+
+    expect(ui.getByText("Integración").getAttribute("data-role")).toBe("eyebrow");
+    expect(ui.getByText("Copia el CSS").getAttribute("data-role")).toBe("subtitle");
+    expect(ui.getByText("Plain").hasAttribute("data-role")).toBe(false);
+  });
+
+  it("ties an Output to the inputs it is calculated from", () => {
+    const ui = render(<Output htmlFor="qty price">42</Output>);
+
+    expect(ui.getByText("42").getAttribute("for")).toBe("qty price");
+  });
+
+  it("renders inline code with its part class", () => {
+    const ui = render(<Code>/status</Code>);
+
+    expect(ui.getByText("/status").tagName).toBe("CODE");
+    expect(ui.getByText("/status").classList).toContain("sk-code");
   });
 });

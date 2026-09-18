@@ -47,7 +47,7 @@ export function connectToast(root: HTMLElement, options: ToastOptions = {}): Cle
     };
 
     // toast.css answers `data-dismissing` with an opacity/scale/filter transition (`--motion-exit-*`),
-    // and the region's own removal contract is `event.target.remove()` on receipt of `sk-dismiss`
+    // and the region's own removal contract is `event.target.remove()` on receipt of `sk:toastdismiss`
     // (see toast-dismiss.ts), so the exit only has somewhere to play if the EVENT waits for it. The
     // attribute goes on first, then the event fires once that transition ends, never before. Nothing
     // to wait for (no stylesheet loaded, `transition-duration: 0s`) skips the promise tick entirely and

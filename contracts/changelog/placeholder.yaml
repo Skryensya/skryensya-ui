@@ -3,8 +3,21 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "bfc56b268036473c"
+surface: "ab4ee5be6ca684cc"
 entries:
+  - date: 2026-09-17
+    kind: bugfix
+    target: lines
+    es:
+      title: lines queda acotado al tope que ya aplicaban los bindings
+      body: >-
+        <code>lines</code> es un entero de 1 a 12 (<code>PLACEHOLDER_MAX_LINES</code>). Un valor fuera de rango deja de
+        validar en vez de llegar al binding y ser recortado en silencio.
+    en:
+      title: lines is capped at the ceiling the bindings already applied
+      body: >-
+        <code>lines</code> is a whole number from 1 to 12 (<code>PLACEHOLDER_MAX_LINES</code>). A value out of range stops
+        validating instead of reaching the binding and being clamped in silence.
   - date: 2026-09-12
     kind: feature
     target: shimmer
@@ -100,3 +113,13 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: El contrato declara el rango de sus números
+      body: >-
+        <code>lines</code> es un entero desde 1. Un valor fuera de rango deja de validar en vez de llegar al binding.
+    en:
+      title: The contract declares the range of its numbers
+      body: >-
+        <code>lines</code> is a whole number from 1. A value out of range stops validating instead of reaching the binding.

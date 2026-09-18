@@ -7,6 +7,13 @@ NavList:
   avoidWhen:
     - son acciones de una aplicación, no destinos: eso es un menú, con role="menu"
     - es una ruta jerárquica hasta la página actual: eso es un Breadcrumb
+    - es un índice de encabezados de la página actual: eso es un Toc
+    - la barra tiene desplegables de comandos o sub-destinos con menuitem: eso es Menubar
+  alternatives:
+    - Menu
+    - Breadcrumb
+    - Toc
+    - Menubar
 
 NavListGroup:
   useWhen:
@@ -16,6 +23,8 @@ NavListGroup:
   avoidWhen:
     - hay un solo destino y ningún rótulo: el grupo sigue siendo obligatorio, no es opcional
     - "collapsible sin label: el botón necesita el texto del rótulo para tener algo que mostrar"
+    - "heading sin label: un encabezado vacío es peor que ninguno"
+    - "collapsible y heading juntos: el collapsible ya es un botón; heading no aplica"
 
 NavListLink:
   useWhen:
@@ -30,4 +39,3 @@ NavListLink:
 # `nested` (NavListLink's slot) is the ONLY supported way to nest: a NavListGroup put directly into
 # another group's `children` is not valid HTML (a `<div>` is not a legal child of a `<ul>`, only `<li>`
 # is), which is why the slot lives on the LINK and not on the group.
-

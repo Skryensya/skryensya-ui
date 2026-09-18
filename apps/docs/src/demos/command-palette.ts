@@ -30,6 +30,9 @@ export const commandPaletteDemoTree = (t: Translate): UsageTree => ({
       contract: "command-palette",
       signature: "CommandPalette",
       options: {
+        closeLabel: t("kit.close"),
+        placeholder: t("kit.search"),
+        emptyLabel: t("kit.noResults"),
         label: t("demo.commandPalette.label"),
         paletteId: "demo-cmdk-tree",
         entries: JSON.stringify([
@@ -52,9 +55,9 @@ export { default as commandPaletteDemoScript } from "./scripts/command-palette-o
 /*
  * THE ANATOMY SPECIMEN: an open dialog with the parts a live palette only fills after `open()`.
  * Dialog's own anatomy can use `open: true` on a UsageTree; CommandPalette's list stays empty in
- * the template until the enhancer/React half renders options, and `footer` is a React-only slot.
- * Frozen HTML names search, input, close, list, option, empty and footer in one frame. No mount
- * attributes; the platform `open` attribute paints the dialog non-modally.
+ * the template until the enhancer/React half renders options. Footer is an optional slot on the
+ * contract (`whenGiven`). Frozen HTML names search, input, close, list, option, empty and footer
+ * in one frame. No mount attributes; the platform `open` attribute paints the dialog non-modally.
  */
 const commandPaletteAnatomySpecimen = (t: Translate): string => `<dialog
   class="sk-command-palette sk-dialog"

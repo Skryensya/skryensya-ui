@@ -29,6 +29,7 @@ describe("Toolbar React contracts", () => {
   it("sets role and aria-orientation", () => {
     const ui = render(<Fixture />);
     const toolbar = ui.getByRole("toolbar", { name: "Formato" });
+    expect(toolbar.hasAttribute("data-sk-toolbar")).toBe(true);
     expect(toolbar.getAttribute("aria-orientation")).toBe("horizontal");
   });
 
@@ -87,6 +88,23 @@ describe("Toolbar React contracts", () => {
     expect(document.activeElement).toBe(ui.getByText("←")); // the radiogroup's own tabindex=0 member
     fireEvent.keyDown(ui.getByRole("toolbar"), { key: "ArrowRight" });
     expect(document.activeElement).toBe(ui.getByText("U")); // skips ↔/→ entirely, unlike before the fix
+  });
+
+  it("leaves exactly one tab stop in the bar, and a composite's other members out of it", () => {
+    const ui = render(<Fixture />);
+    const toolbar = ui.getByRole("toolbar");
+    expect([...toolbar.querySelectorAll('[tabindex="0"]')].map((node) => node.textContent)).toEqual(["B"]);
+    expect(ui.getByText("↔").getAttribute("tabindex")).toBe("-1");
+  });
+
+  it("moves the tab stop with focus and keeps it across a re-render", () => {
+    const ui = render(<Fixture />);
+    ui.getByText("B").focus();
+    fireEvent.keyDown(ui.getByRole("toolbar"), { key: "ArrowRight" });
+    expect(ui.getByText("I").getAttribute("tabindex")).toBe("0");
+    ui.rerender(<Fixture />);
+    expect(ui.getByText("I").getAttribute("tabindex")).toBe("0");
+    expect(ui.getByText("B").getAttribute("tabindex")).toBe("-1");
   });
 
   it("defers to a composite child that already handled the key itself (defaultPrevented). The other half of the bug", () => {

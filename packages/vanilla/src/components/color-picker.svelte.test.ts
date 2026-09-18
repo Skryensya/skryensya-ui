@@ -13,7 +13,7 @@ function markup(root = "") {
     <label class="sk-color-picker__label">Color de marca</label>
     <input class="sk-color-picker__hidden-input" aria-hidden="true" tabindex="-1" />
     <div class="sk-color-picker__control">
-      <button class="sk-color-picker__trigger" type="button" aria-label="Elegir color">
+      <button class="sk-color-picker__trigger" type="button" aria-label="Choose color">
         <span class="sk-color-picker__swatch"></span>
       </button>
     </div>
@@ -67,7 +67,7 @@ describe("ColorPicker Vanilla contracts", () => {
   it("commits a typed hex value and only shows the selected channel format", async () => {
     const root = markup('data-value="#000000"');
     const onChange = vi.fn();
-    root.addEventListener("sk-value-change", onChange);
+    root.addEventListener("sk:colorpickervaluechange", onChange);
     fireEvent.click(trigger());
     await waitFor(() => expect(content().hidden).toBe(false));
 
@@ -142,9 +142,9 @@ describe("ColorPicker Vanilla contracts", () => {
 
   it("keeps the authored trigger label instead of Zag's own color-describing default", () => {
     markup('data-value="#3366ff"');
-    // The markup already names the trigger ("Elegir color"); the enhancer must not overwrite it
+    // The markup already names the trigger ("Choose color"); the enhancer must not overwrite it
     // with Zag's own `select color. current color is ...` default.
-    expect(trigger().getAttribute("aria-label")).toBe("Elegir color");
+    expect(trigger().getAttribute("aria-label")).toBe("Choose color");
     /*
      * `getTriggerProps()` also carries an `aria-labelledby` pointing at the field's own label,
      * and `aria-labelledby` outranks `aria-label` in the accessible-name algorithm: left alone,

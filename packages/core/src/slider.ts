@@ -66,10 +66,25 @@ export function clampSliderRange(low: number, high: number): { low: number; high
   return low <= high ? { low, high } : { low: high, high: low };
 }
 
+/** The DOM events this family dispatches on its root, `sk:<family><event>` like every other. */
+export const sliderEvents = {
+  /**
+   * Slider detail: `{ value: number }`. SliderRange detail: `{ low: number; high: number }`.
+   * Same shapes both bindings dispatch; React also exposes a convenience `onValueChange` callback
+   * (bare number / `{ low, high }`) beside the DOM channel.
+   */
+  valueChange: "sk:slidervaluechange",
+} as const;
+
 export const sliderContract = {
   id: "slider",
+  category: "forms",
   css: "@skryensya/core/components/slider.css",
   parts: sliderParts,
+  events: sliderEvents,
+  eventDetails: {
+    valueChange: { detail: { value: "number (Slider)", low: "number (SliderRange)", high: "number (SliderRange)" }, reactProp: "onValueChange", reactDetail: "number (Slider) | { low: number; high: number } (SliderRange)", source: "root" },
+  },
   hooks: [
     "--sk-slider-fill-color",
     "--sk-slider-thumb",
@@ -82,30 +97,55 @@ export const sliderContract = {
   ],
 
   options: {
-    value: { type: "number", default: 0, attr: "data-value", prop: "defaultValue", machineInput: true },
+    value: { type: "number", default: 0, between: { min: "min", max: "max" }, attr: "data-value", prop: "defaultValue", machineInput: true },
     min: { type: "number", default: 0, attr: "data-min", machineInput: true },
     max: { type: "number", default: 100, attr: "data-max", machineInput: true },
     step: { type: "number", attr: "data-step", machineInput: true },
     name: { type: "string", attr: "data-name", machineInput: true },
     disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "", machineInput: true },
 
-    lowValue: { type: "number", default: 0, attr: "data-low-value", prop: "defaultLowValue", machineInput: true },
-    highValue: { type: "number", default: 100, attr: "data-high-value", prop: "defaultHighValue", machineInput: true },
+    lowValue: {
+      type: "number",
+      default: 0,
+      between: { min: "min", max: "highValue" },
+      attr: "data-low-value",
+      prop: "defaultLowValue",
+      machineInput: true,
+    },
+    highValue: {
+      type: "number",
+      default: 100,
+      between: { min: "lowValue", max: "max" },
+      attr: "data-high-value",
+      prop: "defaultHighValue",
+      machineInput: true,
+    },
     lowLabel: { type: "string", attr: "aria-label", machineInput: true },
     highLabel: { type: "string", attr: "aria-label", machineInput: true },
   },
+
+  a11y: [
+    {
+      when: {},
+      requiresOneOf: ["aria-label", "aria-labelledby"],
+      because: "The thumb is a role=\"slider\" and both bindings name it from the root's aria-label or aria-labelledby; without one it is announced as a bare number.",
+      signatures: ["Slider"],
+    },
+  ],
 
   signatures: {
     Slider: {
       intent: ["value-in-a-range", "volume", "adjust-a-number-roughly"],
       host: { element: "div" },
+      mount: sliderAttrs.root,
       options: ["value", "min", "max", "step", "name", "disabled"],
+      /** Host id / a11y names; name is an owned option on the hidden input. */
+      forward: ["id", "aria-*"],
       slots: {},
       template: {
         element: "div",
         part: "root",
         host: true,
-        mount: sliderAttrs.root,
         children: [
           {
             element: "div",
@@ -142,14 +182,15 @@ export const sliderContract = {
     SliderRange: {
       intent: ["range-in-a-range", "min-max-filter", "price-range", "two-thumb-slider"],
       host: { element: "div" },
+      mount: sliderAttrs.rangeRoot,
       options: ["lowValue", "highValue", "lowLabel", "highLabel", "min", "max", "step", "disabled"],
       requires: ["lowLabel", "highLabel"],
+      forward: ["id", "aria-*"],
       slots: {},
       template: {
         element: "div",
         part: "rangeRoot",
         host: true,
-        mount: sliderAttrs.rangeRoot,
         children: [
           {
             element: "div",

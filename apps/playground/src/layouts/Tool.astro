@@ -56,10 +56,6 @@ const t = useTranslations(locale);
  */
 const playgroundPath = (target: Locale) => (target === defaultLocale ? "/" : `/${target}/`);
 
-/* Two locales, so the switch is a LINK to the other one rather than a menu. The docs' own
- * `LanguageMenu` is right for a site of hundreds of pages with uneven translation coverage; this app
- * is one page that exists in both, and a control with a single destination should be a link. */
-const otherLocale = locales.find((entry) => entry !== locale) ?? defaultLocale;
 
 /*
  * What the pre-paint script is allowed to know: the storage key and the slot names, taken from the
@@ -146,16 +142,19 @@ const PREPAINT = {
       <div class="playground-chrome__lead">
         <div class="playground-chrome__rail-toggle" data-playground-chrome-rail></div>
 
-          <a
+        {/*
+          THE WORDMARK IS THE WAY BACK, and it is the whole control now: the `arrow-left` that used to
+          sit in front of it is gone. Read at a width where the wordmark is hidden, that arrow was a
+          bare glyph pointing at the component's name, which says "back" about the heading beside it
+          rather than about the site this link leaves for. The word is the label and the link is the
+          way out; below `64rem` the whole thing stands down (`tool.css`) rather than leaving a
+          nameless arrow behind, and the preview's own "View the docs" is the way out from there.
+        */}
+        <a
           class="sk-link sk-interactive playground-chrome__brand"
           href={docsHref("/")}
           aria-label={t("playground.backToDocs")}
         >
-        {/* `arrow-left` and not `chevron-left`: the vocabulary's own split is that an arrow moves
-            and navigates while a chevron reveals and attaches (`core/src/icon.ts`), and this one
-            leaves the app. `sm` because everything else in this row is `sm`; a link is not a
-            control, so nothing sizes its icon for it. */}
-          <span data-sk-icon="arrow-left" data-sk-icon-size="sm" aria-hidden="true"></span>
           <span class="playground-chrome__brand-text">skryensya/ui</span>
         </a>
       {/*
@@ -178,25 +177,21 @@ const PREPAINT = {
           trigger is rendered there and portalled into this node - one control, in the chrome, with no
           second copy of the shortcut or of what it opens. Nothing draws until the island mounts.
         */}
+        {/*
+          LANGUAGE FIRST, THEN SEARCH, THEN THE THEME: the preference that changes what every word in
+          the app says, the way to another example, and the one that changes how it looks. The first
+          two are the island's (it knows the catalogue and now the translations too) and arrive
+          through these slots; the third is the layout's own, and the only control in this bar that
+          stays authored markup.
+
+          The language switch used to be an `<a>` straight to the other locale, rendered right here.
+          It is a Menu now - see `Playground.tsx` for what that buys and why it moved.
+        */}
+        <div class="playground-chrome__language" data-playground-chrome-language></div>
+
         <div class="playground-chrome__search" data-playground-chrome-search></div>
 
         <div class="playground-chrome__actions">
-          {/*
-            `hreflang` and `lang` per link: the destination is in that language and so is the label,
-            so a screen reader announces "Español" in Spanish. Same two attributes the docs' own
-            language menu writes on each of its rows, for the same reason.
-          */}
-          <a
-            class="sk-button sk-interactive"
-            data-variant="ghost"
-            data-size="md"
-            href={playgroundPath(otherLocale)}
-            hreflang={otherLocale}
-            lang={otherLocale}
-          >
-            <span data-sk-icon="language" aria-hidden="true"></span>
-            {localeNames[otherLocale]}
-          </a>
           <ThemeToggle size="md" />
         </div>
       </div>

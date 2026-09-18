@@ -22,7 +22,7 @@ await initComponents();
 for (const root of document.querySelectorAll(
   "[data-sk-tile-switch]",
 )) {
-  root.addEventListener("sk:checkedchange", (event) => {
+  root.addEventListener("sk:tilecheckedchange", (event) => {
     console.log(root.dataset.value, event.detail.checked);
   });
 }`;

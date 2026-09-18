@@ -93,6 +93,9 @@ export function sheetsForTree(tree: UsageTree): SheetsForTree {
     for (const hook of contract.hookSheets ?? []) sheets.add(hook);
 
     const signature = contract.signatures[node.signature];
+    for (const entry of signature?.compose ?? []) {
+      for (const sheet of entry.sheets ?? []) sheets.add(sheet);
+    }
     walkTemplate(signature?.template, (part) => {
       if (part.part) {
         const className = contract.parts[part.part];

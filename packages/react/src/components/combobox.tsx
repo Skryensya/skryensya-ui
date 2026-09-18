@@ -1,8 +1,12 @@
-import { comboboxParts, type ComboboxItem } from "@skryensya/core/combobox";
+import {
+  comboboxEvents,
+  comboboxParts,
+  type ComboboxItem,
+} from "@skryensya/core/combobox";
 import { formFieldParts } from "@skryensya/core/form-field";
 import { combobox } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
-import { useId, useMemo, useState, type ReactNode, type RefObject } from "react";
+import { useId, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
 import { useAnchored } from "./anchored.js";
 import { Icon } from "./icon.js";
 const cx = (...classes: Array<string | undefined>) =>
@@ -37,9 +41,10 @@ export type ComboboxProps = {
   container?: RefObject<HTMLElement>;
   id?: string;
   name?: string;
-  label: ReactNode;
-  hint?: ReactNode;
-  error?: ReactNode;
+  /** Field name. Contract slot `label` accepts text; keep this a string for emit parity. */
+  label: string;
+  hint?: string;
+  error?: string;
   items: readonly ComboboxItem[];
   placeholder?: string;
   disabled?: boolean;
@@ -59,7 +64,7 @@ export type ComboboxProps = {
   clearLabel?: string;
   selectedLabel?: string;
   removeLabel?: (item: ComboboxItem) => string;
-  emptyLabel?: ReactNode;
+  emptyLabel?: string;
   resultCountLabel?: (details: { count: number; inputValue: string }) => string;
   onValueChange?: (details: { value: string[] }) => void;
   onInputValueChange?: (details: { inputValue: string }) => void;
@@ -98,6 +103,7 @@ export function Combobox({
 }: ComboboxProps) {
   const generatedId = useId();
   const machineId = id ?? generatedId;
+  const rootRef = useRef<HTMLDivElement>(null);
   const hintId = `${machineId}-hint`;
   const errorId = `${machineId}-error`;
   const [query, setQuery] = useState(defaultInputValue);
@@ -171,16 +177,24 @@ export function Combobox({
       // select, "" after clear), and filtering on that would leave the list showing the single row
       // you just picked the next time it opens. Any non-typed write resets to the full set.
       setQuery(details.reason === "input-change" ? details.inputValue : "");
-      onInputValueChange?.({ inputValue: details.inputValue });
+      const next = { inputValue: details.inputValue };
+      onInputValueChange?.(next);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(comboboxEvents.inputValueChange, { bubbles: true, detail: next }),
+      );
     },
     onValueChange(details) {
-      onValueChange?.({ value: details.value });
+      const next = { value: details.value };
+      onValueChange?.(next);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(comboboxEvents.valueChange, { bubbles: true, detail: next }),
+      );
       // The other half of `selectionBehavior: "preserve"`. Single: the input shows what was chosen.
       // Multiple: the chip already shows it, so the query is spent; clear it so the next search
       // starts from the whole list instead of the one match that produced this chip.
       queueMicrotask(() => {
-        const next = multiple ? "" : (details.items.at(-1)?.label ?? "");
-        if (api.inputValue !== next) api.setInputValue(next, "script");
+        const label = multiple ? "" : (details.items.at(-1)?.label ?? "");
+        if (api.inputValue !== label) api.setInputValue(label, "script");
       });
     },
   });
@@ -207,6 +221,7 @@ export function Combobox({
       {...api.getRootProps()}
       className={cx(formFieldParts.root, comboboxParts.root)}
       data-disabled={disabled ? "" : undefined}
+      data-sk-combobox=""
       data-virtual-focus={
         highlightSource === "keyboard" && api.open && api.highlightedValue
           ? ""
@@ -216,6 +231,7 @@ export function Combobox({
         if (!navigationKeys.has(event.key)) return;
         setHighlightSource(keepHighlightSource("keyboard"));
       }}
+      ref={rootRef}
     >
       <label
         {...api.getLabelProps()}

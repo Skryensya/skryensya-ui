@@ -24,6 +24,13 @@ export type GridColumns = 1 | 2 | 3 | 4 | 5;
 export type LayoutGridWidth = "narrow" | "content" | "breakout" | "full-width" | "rail" | "rail-start";
 /** Page-column max measure on a size scale, see patterns/wrapper.css. */
 export type WrapperSize = "sm" | "md" | "lg" | "full";
+/*
+ * The elements a layout primitive may render as from a tree, the same freedom React's `as` gives,
+ * closed to the sectioning and landmark tags. A list (`ul`/`ol`) is left out on purpose: it brings a
+ * rule about its children (only `<li>`) that a primitive with node children cannot keep.
+ */
+const layoutElements = ["div", "section", "article", "aside", "header", "footer", "nav", "main"] as const;
+export type LayoutElement = (typeof layoutElements)[number];
 
 /*
  * Layout is a pattern: these exact primitives recur in page sections, controls and component
@@ -63,8 +70,11 @@ export type LayoutPartClass = (typeof layoutParts)[LayoutPart];
  */
 export const boxContract = {
   id: "box",
+  category: "layout",
   css: "@skryensya/core/patterns/box.css",
-  parts: layoutParts,
+  /* Only its own part. The shared `layoutParts` made Box claim `sk-stack`, `sk-wrapper`… and pulled
+     wrapper.css (and its hooks) into every tree that holds a Box, a sheet it never paints from. */
+  parts: { box: layoutParts.box },
   hooks: [
     "--sk-box-bg",
     "--sk-box-border-color",
@@ -73,25 +83,24 @@ export const boxContract = {
     "--sk-box-radius",
     "--sk-box-shadow",
     "--sk-box-wash",
-    "--sk-wrapper-max",
-    "--sk-wrapper-padding-inline",
-  ],
-  /* This component's styling does not fit in one stylesheet; see `hookSheets` on the contract. */
-  hookSheets: [
-    "@skryensya/core/patterns/wrapper.css",
   ],
 
   options: {
     padding: { type: "enum", values: ["none", "xs", "sm", "md", "lg", "xl"], default: "none", attr: "data-padding" },
     surface: { type: "enum", values: ["none", "sunken", "surface", "raised"], default: "none", attr: "data-surface" },
     border: { type: "enum", values: ["none", "subtle", "default"], default: "none", attr: "data-border" },
+    /** The element it renders as; React's `as`. A `section` or `nav` still wants an accessible name. */
+    boxElement: { type: "enum", values: layoutElements, default: "div", element: true, prop: "as" },
   },
 
   signatures: {
     Box: {
       intent: ["padded-region", "card-like-surface", "bordered-region"],
       host: { element: "div" },
-      options: ["padding", "surface", "border"],
+      options: ["padding", "surface", "border", "boxElement"],
+      /* A Box IS its visual style. With all three at `none` it paints nothing and is a bare `div`
+         standing in for a decision; grouping without paint is Stack, Inline or Grid. */
+      atLeastOneOf: [["padding", "surface", "border"]],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "div", part: "box", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "Box" },
@@ -102,16 +111,22 @@ export const boxContract = {
 /** The flow layouts. The choice between them is which axis the things sit along. */
 export const layoutContract = {
   id: "layout",
+  category: "layout",
   css: "@skryensya/core/patterns/layout.css",
-  parts: layoutGridParts,
+  /*
+   * Only the flow parts this family realizes. `layoutGridParts` still spreads box/wrapper for the
+   * shared class map React/vanilla read, but claiming those classes here made every Stack tree
+   * compete with Box and Wrapper for ownership of `sk-box` / `sk-wrapper` (and used to pull their
+   * hooks via hookSheets). layout.css @imports box/wrapper/image-frame as a CSS convenience bundle;
+   * that is not a contract claim.
+   */
+  parts: {
+    stack: layoutParts.stack,
+    inline: layoutParts.inline,
+    grid: layoutParts.grid,
+    layoutGrid: layoutGridParts.layoutGrid,
+  },
   hooks: [
-    "--sk-box-bg",
-    "--sk-box-border-color",
-    "--sk-box-border-width",
-    "--sk-box-padding",
-    "--sk-box-radius",
-    "--sk-box-shadow",
-    "--sk-box-wash",
     "--sk-grid-columns",
     "--sk-grid-gap",
     "--sk-inline-block-start",
@@ -126,13 +141,6 @@ export const layoutContract = {
     "--sk-layout-rail-inline-size",
     "--sk-layout-rail-row-span",
     "--sk-stack-gap",
-    "--sk-wrapper-max",
-    "--sk-wrapper-padding-inline",
-  ],
-  /* This component's styling does not fit in one stylesheet; see `hookSheets` on the contract. */
-  hookSheets: [
-    "@skryensya/core/patterns/box.css",
-    "@skryensya/core/patterns/wrapper.css",
   ],
 
   options: {
@@ -162,13 +170,21 @@ export const layoutContract = {
     columns: { type: "enum", values: ["1", "2", "3", "4", "5"], default: "1", attr: "data-columns" },
     multicol: { type: "boolean", default: false, attr: "data-multicol", trueValue: "" },
     responsive: { type: "boolean", default: false, attr: "data-responsive", trueValue: "" },
+    /*
+     * Equal resting floor for responsive columns (with `responsive`). Caller supplies the floor as
+     * `--sk-grid-fill` (and optionally `--sk-grid-template` for uneven tracks); those are style
+     * escape hatches, not published override hooks.
+     */
+    fill: { type: "boolean", default: false, attr: "data-fill", trueValue: "" },
+    /** The element it renders as; React's `as`. A `section` or `nav` still wants an accessible name. */
+    layoutElement: { type: "enum", values: layoutElements, default: "div", element: true, prop: "as" },
   },
 
   signatures: {
     Stack: {
       intent: ["vertical-rhythm", "things-one-above-another", "form-fields"],
       host: { element: "div" },
-      options: ["gap", "align"],
+      options: ["gap", "align", "layoutElement"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "div", part: "stack", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "Stack" },
@@ -177,7 +193,7 @@ export const layoutContract = {
     Inline: {
       intent: ["things-side-by-side", "button-row", "label-and-value"],
       host: { element: "div" },
-      options: ["gap", "inlineAlign", "justify", "wrap", "equal", "blockStart"],
+      options: ["gap", "inlineAlign", "justify", "wrap", "equal", "blockStart", "layoutElement"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "div", part: "inline", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "Inline" },
@@ -186,7 +202,7 @@ export const layoutContract = {
     Grid: {
       intent: ["columns", "card-grid", "equal-width-cells"],
       host: { element: "div" },
-      options: ["gap", "columns", "multicol", "responsive"],
+      options: ["gap", "columns", "multicol", "responsive", "fill", "layoutElement"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "div", part: "grid", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "Grid" },
@@ -199,8 +215,24 @@ export const layoutContract = {
     LayoutGrid: {
       intent: ["page-flow", "named-content-measures", "breakout-content", "full-bleed-section", "supporting-rail"],
       host: { element: "div" },
-      options: [],
-      slots: { children: { accepts: "node", required: true } },
+      options: ["layoutElement"],
+      slots: {
+        children: {
+          accepts: "node",
+          required: true,
+          /*
+           * Span lives on the child host (`data-width`), not as a LayoutGrid option. Authored on the
+           * child via UsageTree `attrs` (`data-width="narrow"`); the validator checks the enum.
+           */
+          childAttrs: {
+            width: {
+              type: "enum",
+              values: ["narrow", "content", "breakout", "full-width", "rail", "rail-start"],
+              attr: "data-width",
+            },
+          },
+        },
+      },
       template: { element: "div", part: "layoutGrid", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "LayoutGrid" },
     },
@@ -227,33 +259,28 @@ export const layoutContract = {
  */
 export const wrapperContract = {
   id: "wrapper",
+  category: "layout",
   css: "@skryensya/core/patterns/wrapper.css",
-  parts: layoutParts,
+  /* Only its own part. The shared `layoutParts` made Wrapper claim `sk-box`, `sk-stack`… and pulled
+     box.css (and its hooks) into every tree that holds a Wrapper, a sheet it never paints from. */
+  parts: { wrapper: layoutParts.wrapper },
   hooks: [
-    "--sk-box-bg",
-    "--sk-box-border-color",
-    "--sk-box-border-width",
-    "--sk-box-padding",
-    "--sk-box-radius",
-    "--sk-box-shadow",
-    "--sk-box-wash",
     "--sk-wrapper-max",
     "--sk-wrapper-padding-inline",
-  ],
-  /* This component's styling does not fit in one stylesheet; see `hookSheets` on the contract. */
-  hookSheets: [
-    "@skryensya/core/patterns/box.css",
   ],
 
   options: {
     wrapperSize: { type: "enum", values: ["sm", "md", "lg", "full"], default: "md", attr: "data-size", prop: "size" },
+    /** The element it renders as; React's `as`. A `section` or `nav` still wants an accessible name. */
+    wrapperElement: { type: "enum", values: layoutElements, default: "div", element: true, prop: "as" },
   },
 
   signatures: {
     Wrapper: {
       intent: ["page-column", "centred-measure", "content-width"],
       host: { element: "div" },
-      options: ["wrapperSize"],
+      options: ["wrapperSize", "wrapperElement"],
+      notInside: ["Wrapper"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "div", part: "wrapper", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "Wrapper" },

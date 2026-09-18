@@ -1,4 +1,4 @@
-import { segmentedParts, type SegmentedOption } from "@skryensya/core/segmented";
+import { segmentedEvents, segmentedParts, type SegmentedOption } from "@skryensya/core/segmented";
 import { useLayoutEffect, useRef, useState, type HTMLAttributes, type KeyboardEvent as ReactKeyboardEvent } from "react";
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
@@ -58,6 +58,9 @@ export function SegmentedControl({
     if (next === selected || options.find((option) => option.value === next)?.disabled) return;
     if (!controlled) setInternal(next);
     onValueChange?.(next);
+    rootRef.current?.dispatchEvent(
+      new CustomEvent(segmentedEvents.valueChange, { bubbles: true, detail: { value: next } }),
+    );
   };
 
   const onOptionKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>, current: string) => {
@@ -89,6 +92,7 @@ export function SegmentedControl({
       {...props}
       aria-label={label}
       className={cx(segmentedParts.root, className)}
+      data-sk-segmented=""
       data-value={selected}
       ref={rootRef}
       role="radiogroup"
@@ -98,6 +102,7 @@ export function SegmentedControl({
         <button
           aria-checked={option.value === selected}
           className={`${segmentedParts.option} sk-interactive`}
+          data-sk-segmented-option=""
           data-value={option.value}
           disabled={option.disabled}
           key={option.value}

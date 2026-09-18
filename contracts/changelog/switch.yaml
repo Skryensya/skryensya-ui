@@ -3,8 +3,29 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "a92de9dc838ed272"
+surface: "ba7899acb476c7e4"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    target: Switch
+    es:
+      title: Switch declara forward para form e id
+      body: >-
+        Publica <code>forward</code> con <code>id</code>/<code>form</code>/<code>aria-*</code> en el host nativo. Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Switch declares forward for form and id
+      body: >-
+        Publishes <code>forward</code> with <code>id</code>/<code>form</code>/<code>aria-*</code> on the native host. An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
   - date: 2026-08-11
     kind: feature
     es:
@@ -81,3 +102,23 @@ entries:
         sheet <code>css</code> names could be reconciled, so the hooks in the others were public
         surface nobody documented and nothing checked. No styling changes: what changes is that they
         are declared now, and the compiler checks them.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Switch publica sus propios hooks, pide nombre y arranca con defaultChecked
+      body: >-
+        El contrato publicaba dieciséis hooks de Radio y las hojas de checkbox y radio-group, y
+        ninguno de los <code>--sk-switch-*</code> que su hoja sí declara; ahora publica sólo sus
+        partes y sus hooks. <code>checked</code> pasa a <code>defaultChecked</code>: en React
+        <code>checked</code> es controlado y un árbol no tiene handler, así que un switch encendido
+        desde un árbol no se podía apagar. Un switch sin <code>children</code>,
+        <code>aria-label</code> ni <code>aria-labelledby</code> deja de validar.
+    en:
+      title: Switch publishes its own hooks, needs a name and starts with defaultChecked
+      body: >-
+        The contract published sixteen Radio hooks and the checkbox and radio-group sheets, and none
+        of the <code>--sk-switch-*</code> its own sheet declares; it now publishes only its own parts
+        and hooks. <code>checked</code> becomes <code>defaultChecked</code>: React's
+        <code>checked</code> is controlled and a tree has no handler, so a switch turned on from a tree
+        could not be turned off. A switch with no <code>children</code>, <code>aria-label</code> or
+        <code>aria-labelledby</code> stops validating.

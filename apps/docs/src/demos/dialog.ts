@@ -29,7 +29,7 @@ export const dialogAnatomyTree = (t: Translate): UsageTree => ({
     subject: {
       contract: "dialog",
       signature: "Dialog",
-      options: { open: true },
+      options: { open: true, closeLabel: t("kit.close") },
       slots: {
         title: t("demo.dialog.title"),
         children: t("demo.dialog.body"),
@@ -37,15 +37,15 @@ export const dialogAnatomyTree = (t: Translate): UsageTree => ({
           {
             contract: "button",
             signature: "Button.action",
-            options: { variant: "ghost" },
-            attrs: { type: "submit", value: "cancel" },
+            options: { variant: "ghost", type: "submit" },
+            attrs: { value: "cancel" },
             children: t("demo.dialog.cancel"),
           },
           {
             contract: "button",
             signature: "Button.action",
-            options: { tone: "danger" },
-            attrs: { type: "submit", value: "confirm" },
+            options: { tone: "danger", type: "submit" },
+            attrs: { value: "confirm" },
             children: t("demo.dialog.confirm"),
           },
         ],
@@ -77,6 +77,7 @@ export const dialogConfirmTree = (t: Translate): UsageTree => ({
     {
       contract: "dialog",
       signature: "Dialog",
+      options: { closeLabel: t("kit.close") },
       attrs: { id: "demo-confirm" },
       slots: {
         title: t("demo.dialog.title"),
@@ -85,15 +86,15 @@ export const dialogConfirmTree = (t: Translate): UsageTree => ({
           {
             contract: "button",
             signature: "Button.action",
-            options: { variant: "ghost" },
-            attrs: { type: "submit", value: "cancel", autofocus: "" },
+            options: { variant: "ghost", type: "submit" },
+            attrs: { value: "cancel", autofocus: "" },
             children: t("demo.dialog.cancel"),
           },
           {
             contract: "button",
             signature: "Button.action",
-            options: { tone: "danger" },
-            attrs: { type: "submit", value: "confirm" },
+            options: { tone: "danger", type: "submit" },
+            attrs: { value: "confirm" },
             children: t("demo.dialog.confirm"),
           },
         ],
@@ -135,7 +136,7 @@ export const dialogVaulTree = (t: Translate): UsageTree => ({
     {
       contract: "dialog",
       signature: "Dialog",
-      options: { vaul: true },
+      options: { vaul: true, closeLabel: t("kit.close") },
       attrs: { id: "demo-dialog-vaul" },
       slots: {
         title: t("demo.dialogVaul.title"),
@@ -185,14 +186,15 @@ export const dialogVaulTree = (t: Translate): UsageTree => ({
           {
             contract: "button",
             signature: "Button.action",
-            options: { variant: "ghost" },
-            attrs: { type: "submit", value: "cancel" },
+            options: { variant: "ghost", type: "submit" },
+            attrs: { value: "cancel" },
             children: t("demo.dialogVaul.later"),
           },
           {
             contract: "button",
             signature: "Button.action",
-            attrs: { type: "submit", value: "confirm" },
+            options: { type: "submit" },
+            attrs: { value: "confirm" },
             children: t("demo.dialogVaul.understood"),
           },
         ],

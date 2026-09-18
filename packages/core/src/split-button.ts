@@ -45,6 +45,7 @@ export const splitButtonParts = {
  */
 export const splitButtonContract = {
   id: "split-button",
+  category: "actions",
   css: "@skryensya/core/components/split-button.css",
   parts: splitButtonParts,
   hooks: [
@@ -63,13 +64,33 @@ export const splitButtonContract = {
       intent: ["primary-action-with-alternatives", "default-plus-more", "save-and-save-as"],
       host: { element: "div" },
       options: ["label"],
+      /* Welded halves read as one control only when they wear one look. */
+      pairs: [
+        { a: { slot: "action", option: "variant" }, b: { slot: "menu", option: "triggerVariant" } },
+        { a: { slot: "action", option: "tone" }, b: { slot: "menu", option: "triggerTone" } },
+        { a: { slot: "action", option: "size" }, b: { slot: "menu", option: "triggerSize" } },
+      ],
+      /** Host id / a11y; label stays the option. */
+      forward: ["id", "aria-*"],
       slots: {
         /** The default action, a real composed `Button.action`. The author sets `weldEnd` (and
          *  whatever `variant`/`size` this control's dominant action calls for) on it directly. */
-        action: { accepts: "signature", of: ["Button.action"], required: true },
+        action: {
+          accepts: "signature",
+          of: ["Button.action"],
+          required: true,
+          /* Welded on its trailing edge to the trigger, and nowhere else: the pairing used to be
+             the author's to remember, and a forgotten weld left a gap between the two halves. */
+          restrictOptions: { weldEnd: ["true"], weldStart: ["false"] },
+        },
         /** The alternatives, as a Menu. The author pairs `triggerVariant`/`triggerSize`/
          *  `triggerWeldStart`/`triggerIconOnly` with the action's own values by hand. */
-        menu: { accepts: "signature", of: ["Menu"], required: true },
+        menu: {
+          accepts: "signature",
+          of: ["Menu"],
+          required: true,
+          restrictOptions: { triggerWeldStart: ["true"], triggerWeldEnd: ["false"] },
+        },
       },
       template: {
         element: "div",

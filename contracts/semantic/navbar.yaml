@@ -5,11 +5,21 @@ Navbar:
     - "la app necesita una barra superior con marca y acciones"
   avoidWhen:
     - "la navegación va al costado; eso es un Sidebar"
+    - "hace falta un panel de categorías de varias columnas; eso es Megamenu"
+  alternatives:
+    - Sidebar
+    - Megamenu
 
 NavbarBrand:
   useWhen:
     - "el logo o el nombre del producto, normalmente enlazando al inicio"
+  avoidWhen:
+    - "es un destino de la lista de navegación; eso va en NavList"
+  alternatives: []
 
 NavbarActions:
   useWhen:
     - "las acciones del extremo: cuenta, notificaciones, tema"
+  avoidWhen:
+    - "son destinos de navegación del sitio; eso es NavList"
+  alternatives: []

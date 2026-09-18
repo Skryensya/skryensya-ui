@@ -3,8 +3,46 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "e0095a2e717e1d97"
+surface: "024941a5461bdfbb"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Folder declara compose, hitTesting en previews
+      body: >-
+        FolderPreview <code>compose</code> ImageFrame; Folder/FolderLink <code>hitTesting.childrenNone</code> para el fan.
+    en:
+      title: Folder declares compose and preview hitTesting
+      body: >-
+        FolderPreview <code>compose</code> ImageFrame; Folder/FolderLink <code>hitTesting.childrenNone</code> for the fan.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Clip y cola de la pila se publican como outputHooks
+      body: >-
+        <code>--sk-folder-clip</code> y <code>--sk-folder-tail</code> son salidas de medición que
+        escriben las dos bindings en cada dibujo. El contrato las nombra en <code>outputHooks</code>
+        (y en <code>hooks</code>) para que no se confundan con overrides de marca.
+    en:
+      title: Stack clip and tail are published as outputHooks
+      body: >-
+        <code>--sk-folder-clip</code> and <code>--sk-folder-tail</code> are measurement outputs both
+        bindings write on every draw. The contract names them in <code>outputHooks</code> (and in
+        <code>hooks</code>) so they are not mistaken for brand overrides.
   - date: 2026-09-09
     kind: bugfix
     es:
@@ -113,3 +151,13 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie cubre también las restricciones
+      body: >-
+        El hash de superficie ahora incluye las restricciones entre opciones (<code>implies</code>, <code>excludes</code>, <code>notInside</code>, <code>pairs</code>) y <code>outputHooks</code>. Este contrato no cambió; sólo cambió lo que el hash mide.
+    en:
+      title: The surface hash also covers constraints
+      body: >-
+        The surface hash now covers the constraints between options (<code>implies</code>, <code>excludes</code>, <code>notInside</code>, <code>pairs</code>) and <code>outputHooks</code>. This contract did not change; only what the hash measures did.

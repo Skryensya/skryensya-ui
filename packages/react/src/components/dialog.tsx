@@ -18,8 +18,9 @@ const { alert: alertOption, closeLabel: closeLabelOption, vaul: vaulOption } = d
  * cancel from a confirm.
  */
 export type DialogProps = DialogHTMLAttributes<HTMLDialogElement> & {
-  title: ReactNode;
-  children?: ReactNode;
+  /** Matches the contract slot: plain text that names the dialog. */
+  title: string;
+  children: ReactNode;
   footer?: ReactNode;
   closeLabel?: string;
   /**

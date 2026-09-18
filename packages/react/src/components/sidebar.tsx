@@ -1,4 +1,4 @@
-import { SIDEBAR_WIDTH_PROPERTY, sidebarParts, sidebarWidthPercent, sidebarWidthPreference, type SidebarOptions, type SidebarResizeChangeDetails, sidebarContract } from "@skryensya/core/sidebar";
+import { SIDEBAR_WIDTH_PROPERTY, sidebarEvents, sidebarParts, sidebarWidthPercent, sidebarWidthPreference, type SidebarOptions, type SidebarResizeChangeDetails, type SidebarCollapsedChangeDetails, sidebarContract } from "@skryensya/core/sidebar";
 import { hasCrossedDragThreshold, resolveSplitterKey, splitterDirectionSign } from "@skryensya/core/splitter";
 import {
   createContext,
@@ -99,7 +99,11 @@ export function Sidebar({
   const toggle = () => {
     const next = !collapsed;
     if (!isControlled) setUncontrolled(next);
-    onCollapsedChange?.({ collapsed: next });
+    const details: SidebarCollapsedChangeDetails = { collapsed: next };
+    onCollapsedChange?.(details);
+    rootRef.current?.dispatchEvent(
+      new CustomEvent(sidebarEvents.collapsedChange, { bubbles: true, detail: details }),
+    );
   };
 
   return (
@@ -110,7 +114,10 @@ export function Sidebar({
         {...props}
         aria-label={landmarkLabel}
         className={cx(sidebarParts.root, className)}
+        data-default-collapsed={defaultCollapsed ? "" : undefined}
+        data-sk-sidebar=""
         data-state={collapsed ? "collapsed" : "expanded"}
+        data-storage-key={storageKey || undefined}
         id={id}
         ref={rootRef}
         style={sidebarStyle}
@@ -138,7 +145,7 @@ export function SidebarContent({ children, className, ...props }: SidebarContent
   const { contentId } = useSidebar("SidebarContent");
 
   return (
-    <div {...props} className={cx(sidebarParts.content, className)} id={contentId}>
+    <div {...props} className={cx(sidebarParts.content, className)} data-sk-sidebar-content="" id={contentId}>
       {children}
     </div>
   );
@@ -244,8 +251,12 @@ export const SidebarResizeHandle = forwardRef<HTMLDivElement, SidebarResizeHandl
     );
 
     const announce = useCallback(() => {
-      onResizeChange?.({ inlineSize: settled() });
-    }, [onResizeChange, settled]);
+      const details: SidebarResizeChangeDetails = { inlineSize: settled() };
+      onResizeChange?.(details);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(sidebarEvents.resizeChange, { bubbles: true, detail: details }),
+      );
+    }, [onResizeChange, rootRef, settled]);
 
     /** The end of an adjustment: what was granted is what gets remembered, and then announced. */
     const commit = useCallback(() => {
@@ -315,6 +326,7 @@ export const SidebarResizeHandle = forwardRef<HTMLDivElement, SidebarResizeHandl
         aria-valuemin={0}
         aria-valuenow={percent}
         className={cx(`${sidebarParts.resizeHandle} sk-splitter`, className)}
+        data-sk-sidebar-resize=""
         onDoubleClick={reset}
         onKeyDown={(event: ReactKeyboardEvent<HTMLDivElement>) => {
           onKeyDown?.(event);
@@ -431,6 +443,7 @@ export const SidebarTrigger = forwardRef<HTMLButtonElement, SidebarTriggerProps>
       aria-label={label}
       className={cx(`${sidebarParts.trigger} sk-interactive`, className)}
       data-floating={floating ? "" : undefined}
+      data-sk-sidebar-trigger=""
       onClick={(event) => {
         onClick?.(event);
         if (!event.defaultPrevented) toggle();

@@ -9,7 +9,7 @@ import { mountToolbar } from "./toolbar.js";
  * this file and the React binding went unnoticed (see toolbar.test.tsx for the bug it caused there).
  */
 function markup({ loop = true }: { loop?: boolean } = {}) {
-  document.body.innerHTML = `<div class="sk-toolbar" data-sk-toolbar aria-label="Formato" role="toolbar" data-orientation="horizontal" ${loop ? 'data-loop-focus=""' : ""}>
+  document.body.innerHTML = `<div class="sk-toolbar" data-sk-toolbar aria-label="Formato" role="toolbar" data-orientation="horizontal" ${loop ? "" : 'data-loop-focus="false"'}>
     <button type="button" id="bold">B</button>
     <button type="button" id="italic">I</button>
     <button type="button" id="disabled-native" disabled>D</button>
@@ -52,14 +52,14 @@ describe("Toolbar vanilla enhancer", () => {
     expect(document.activeElement).toBe(byId("italic"));
   });
 
-  it("loops from the last control back to the first when data-loop-focus is set", () => {
+  it("loops from the last control back to the first by default, with no attribute at all", () => {
     const root = markup({ loop: true });
     byId("underline").focus();
     fireEvent.keyDown(root, { key: "ArrowRight" });
     expect(document.activeElement).toBe(byId("bold"));
   });
 
-  it("does not loop when data-loop-focus is absent", () => {
+  it("does not loop when data-loop-focus is \"false\"", () => {
     const root = markup({ loop: false });
     byId("underline").focus();
     fireEvent.keyDown(root, { key: "ArrowRight" });
@@ -88,6 +88,45 @@ describe("Toolbar vanilla enhancer", () => {
     expect(document.activeElement).toBe(byId("align-left")); // the radiogroup's own tabindex=0 member
     fireEvent.keyDown(root, { key: "ArrowRight" });
     expect(document.activeElement).toBe(byId("underline")); // skips align-center/align-right entirely
+  });
+
+  it("leaves exactly one tab stop in the bar, and a composite's other members out of it", () => {
+    markup();
+    const stops = [...document.querySelectorAll<HTMLElement>('[data-sk-toolbar] [tabindex="0"]')];
+    expect(stops.map((stop) => stop.id)).toEqual(["bold"]);
+    expect(byId("italic").getAttribute("tabindex")).toBe("-1");
+    expect(byId("align-left").getAttribute("tabindex")).toBe("-1");
+    expect(byId("align-center").getAttribute("tabindex")).toBe("-1");
+  });
+
+  it("moves the tab stop with the arrow keys, so Tab returns to where the user left off", () => {
+    const root = markup();
+    byId("bold").focus();
+    fireEvent.keyDown(root, { key: "ArrowRight" });
+    expect(byId("italic").getAttribute("tabindex")).toBe("0");
+    expect(byId("bold").getAttribute("tabindex")).toBe("-1");
+  });
+
+  it("comes back into a parked composite on its checked member", () => {
+    const root = markup();
+    byId("italic").focus();
+    fireEvent.keyDown(root, { key: "ArrowRight" });
+    expect(document.activeElement).toBe(byId("align-left"));
+    expect(byId("align-left").getAttribute("tabindex")).toBe("0");
+    fireEvent.keyDown(root, { key: "ArrowRight" });
+    expect(byId("align-left").getAttribute("tabindex")).toBe("-1");
+    fireEvent.keyDown(root, { key: "ArrowLeft" });
+    expect(document.activeElement).toBe(byId("align-left"));
+  });
+
+  it("takes in a control added after mount the first time focus enters the bar", () => {
+    const root = markup();
+    const late = document.createElement("button");
+    late.type = "button";
+    late.id = "late";
+    root.appendChild(late);
+    fireEvent.focusIn(byId("bold"));
+    expect(late.getAttribute("tabindex")).toBe("-1");
   });
 
   it("defers to a composite child that already handled the key itself (defaultPrevented)", () => {

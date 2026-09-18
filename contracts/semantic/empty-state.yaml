@@ -9,3 +9,5 @@ EmptyState:
     - "hubo un error; ahí el mensaje es un Callout, no un vacío"
   alternatives:
     - Callout
+    - Placeholder
+    - Loader

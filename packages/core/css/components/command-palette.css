@@ -209,6 +209,13 @@
     }
   }
 
+  /* The grab handle is in every palette's markup (the contract cannot gate a node on a default-ON
+   * option), so a palette that opted OUT of Dialog Vaul hides it here. On one that opted in,
+   * `dialog-vaul.css` owns it: drawn below `desktop`, hidden above. */
+  .sk-command-palette:not([data-sk-dialog-vaul]) > [data-part="handle"] {
+    display: none;
+  }
+
   /* Dialog Vaul turns this into a bottom sheet below `desktop` (`dialog-vaul.css`); the anatomy is
    * not just a resized version of the desktop layout. The search field moves to the sheet's own
    * foot, nearer the thumb that opened it and the software keyboard that is about to cover it, and

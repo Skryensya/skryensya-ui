@@ -1,4 +1,10 @@
-import { datePickerContract, datePickerParts, defaultContentLabel, defaultTriggerLabel } from "@skryensya/core/date-picker";
+import {
+  datePickerContract,
+  datePickerEvents,
+  datePickerParts,
+  defaultContentLabel,
+  defaultTriggerLabel,
+} from "@skryensya/core/date-picker";
 import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import {
   calendarParts,
@@ -11,7 +17,7 @@ import {
 import type { DateValue, DateView, DayTableCellState } from "@skryensya/core/calendar";
 import { datePicker } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
-import { useId, type ReactNode, type RefObject } from "react";
+import { useId, useRef, type ReactNode, type RefObject } from "react";
 import { useAnchored } from "./anchored.js";
 import { asDate, asDates, CalendarBody } from "./calendar.js";
 import { Icon } from "./icon.js";
@@ -28,7 +34,8 @@ export type DatePickerProps = Pick<
   container?: RefObject<HTMLElement>;
   id?: string;
   name?: string;
-  label?: ReactNode;
+  /** Names the field. Contract slot is text-only. */
+  label?: string;
   locale?: string;
   timeZone?: string;
   /* Dates as `DateValue` OR as the ISO strings authored markup carries: see `CalendarProps`. */
@@ -96,6 +103,7 @@ export function DatePicker({
   viewTriggerLabel,
 }: DatePickerProps) {
   const generatedId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
   const service = useMachine(datePicker.machine, {
     id: id ?? generatedId,
     name,
@@ -121,7 +129,11 @@ export function DatePicker({
       nextTrigger: nextTriggerLabel ?? defaultNextTriggerLabel(locale),
     },
     onValueChange(details) {
-      onValueChange?.({ value: details.valueAsString });
+      const next = { value: details.valueAsString };
+      onValueChange?.(next);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(datePickerEvents.valueChange, { bubbles: true, detail: next }),
+      );
     },
   });
   const api = datePicker.connect(service, normalizeProps);
@@ -136,6 +148,8 @@ export function DatePicker({
       {...api.getRootProps()}
       className={datePickerParts.root}
       data-selection-mode={selectionMode}
+      data-sk-date-picker=""
+      ref={rootRef}
     >
       {label ? (
         <label {...api.getLabelProps()} className={datePickerParts.label}>
@@ -196,10 +210,19 @@ export function DatePicker({
 }
 
 export type NativeDatePickerProps = {
-  label: ReactNode;
+  /** Names the field. Contract slot is text-only and required. */
+  label: string;
   name?: string;
   locale?: string;
   id?: string;
+  /** Starting date, ISO. Contract option; React also accepts controlled `value`. */
+  value?: string;
+  defaultValue?: string;
+  min?: string;
+  max?: string;
+  disabled?: boolean;
+  readOnly?: boolean;
+  required?: boolean;
 };
 
 /*
@@ -213,7 +236,19 @@ export type NativeDatePickerProps = {
  * choosing between them is choosing who owns the behaviour, and no flag should be able to stand in
  * for that decision.
  */
-export function NativeDatePicker({ id, label, locale, name }: NativeDatePickerProps) {
+export function NativeDatePicker({
+  defaultValue,
+  disabled,
+  id,
+  label,
+  locale,
+  max,
+  min,
+  name,
+  readOnly,
+  required,
+  value,
+}: NativeDatePickerProps) {
   const generatedId = useId();
   const inputId = id ?? generatedId;
 
@@ -228,9 +263,16 @@ export function NativeDatePicker({ id, label, locale, name }: NativeDatePickerPr
         <input
           aria-labelledby={`${inputId}-label`}
           className={datePickerParts.input}
+          defaultValue={value === undefined ? defaultValue : undefined}
+          disabled={disabled}
           lang={locale}
+          max={max}
+          min={min}
           name={name}
+          readOnly={readOnly}
+          required={required}
           type="date"
+          value={value}
         />
       </div>
     </div>

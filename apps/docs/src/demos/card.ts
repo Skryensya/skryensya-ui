@@ -11,12 +11,11 @@ import type { CardCopy } from "../examples/card-data";
  * tree is one authoring, and the compiler emits the markup, the React source and the live island
  * from it (`ComponentPreview`'s own `tree` prop).
  *
- * EVERY CARD EXAMPLE IS HERE NOW, including the six that reach for classes `examples/card.css`
- * owns and no contract publishes (`sk-card-body`, `sk-card-price`, `sk-card-eyebrow` and friends).
- * Those looked like a blocker  -  a usage tree chooses SIGNATURES, and a docs-local skin is not one  -
- * but `attrs.class` is emitted by both bindings like any other attribute (`class` in the markup,
- * `className` in the JSX), so the skin rides along on the signature it decorates. The composition
- * is authored once; only the page's own paint stays the page's.
+ * COMPOSITION ONLY, NO SKIN. Card has no contract and no stylesheet of its own, and these trees do
+ * not smuggle one in: there is no `attrs.class` here and no `examples/card.css`. Every inset, well,
+ * eyebrow, price and floor is a published option (Box padding and surface, Stack alignment, Text
+ * size and weight, Inline `blockStart="auto"`). That is also what lets the playground run them:
+ * it loads the kit's CSS and nothing else, so a docs-local class would render unstyled there.
  *
  * WHAT THAT COSTS, said plainly: `Box` hosts a `div`, so the three examples whose hand-written
  * markup opened with `<article>` now open with a `<div>`. The contract publishes no element
@@ -27,11 +26,14 @@ import type { CardCopy } from "../examples/card-data";
  * changes how a card is spelled, not where its words live.
  */
 
-/** Every example is the same three-up grid, named for assistive tech. */
-const grid = (label: string, children: UsageTree[]): UsageTree => ({
+/**
+ * Every example is the same three-up grid, named for assistive tech. `responsive` stacks it to one
+ * lane on narrow viewports (two at 36rem, three at 52rem) instead of squeezing three columns.
+ */
+const grid = (label: string, children: UsageTree[], responsive = false): UsageTree => ({
   contract: "layout",
   signature: "Grid",
-  options: { columns: "3", gap: "md" },
+  options: responsive ? { columns: "3", gap: "md", responsive: true } : { columns: "3", gap: "md" },
   attrs: { "aria-label": label },
   children,
 });
@@ -42,6 +44,14 @@ const surface = (children: UsageTree): UsageTree => ({
   signature: "Box",
   options: { surface: "surface", border: "subtle", padding: "lg" },
   children: [children],
+});
+
+/** A small label over a photo's caption: caption size at label weight, no skin of its own. */
+const eyebrow = (text: string): UsageTree => ({
+  contract: "typography",
+  signature: "Text",
+  options: { size: "caption", weight: "label" },
+  children: text,
 });
 
 /** Title over body, the pair every example in this file ends with. */
@@ -165,32 +175,29 @@ export const cardSelectTree = (c: CardCopy): UsageTree =>
         slots: { title: card.title, description: card.body },
       },
     })),
+    true,
   );
 
 /*
- * The icon well that opens the two interactive cards below. `Box` and not a bare element because a
- * tree names signatures, and Box IS the system's neutral surface: transparent, unpadded, no border
- * until asked. Everything visible about the well  -  its size, its radius, its sunken fill  -  is
- * `.sk-card-link-icon` in `examples/card.css`, which is where a consumer's own anatomy belongs.
+ * The icon well that opens the two interactive cards below: a sunken, lightly padded Box. It sits in
+ * an Inline, so it shrinks to the glyph instead of stretching across the card.
  */
 const iconWell = (name: string): UsageTree => ({
   contract: "box",
   signature: "Box",
-  attrs: { class: "sk-card-link-icon", "aria-hidden": "true" },
+  options: { surface: "sunken", padding: "sm" },
+  attrs: { "aria-hidden": "true" },
   children: [{ contract: "icon", signature: "Icon", options: { name } }],
 });
 
 /*
  * The head row both interactive cards share: the well, and (for the link) the chevron that says
- * where the surface goes. An `Inline` with `justify="between"`, so the row's LAYOUT comes from the
- * contract and `.sk-card-link-head` is left holding only what it is still needed for: the hook
- * `.sk-tile:has(…)` keys off to pin the card's rows to the top.
+ * where the surface goes. An `Inline` with `justify="between"` puts them at either end.
  */
 const linkHead = (name: string, chevron: boolean): UsageTree => ({
   contract: "layout",
   signature: "Inline",
   options: { gap: "sm", inlineAlign: "center", justify: "between" },
-  attrs: { class: "sk-card-link-head" },
   children: chevron
     ? [
         iconWell(name),
@@ -198,7 +205,7 @@ const linkHead = (name: string, chevron: boolean): UsageTree => ({
           contract: "icon",
           signature: "Icon",
           options: { name: "chevron-right", size: "sm" },
-          attrs: { class: "sk-card-link-chevron", "aria-hidden": "true" },
+          attrs: { "aria-hidden": "true" },
         },
       ]
     : [iconWell(name)],
@@ -225,6 +232,7 @@ export const cardLinkTree = (c: CardCopy): UsageTree =>
         },
       ],
     })),
+    true,
   );
 
 /** 7. The same geometry on a different platform element: this one DOES something, so it is a button. */
@@ -244,6 +252,7 @@ export const cardActionTree = (c: CardCopy): UsageTree =>
         },
       ],
     })),
+    true,
   );
 
 /*
@@ -251,8 +260,9 @@ export const cardActionTree = (c: CardCopy): UsageTree =>
  *
  * The outer Box carries NO padding on purpose: it already clips (`overflow: hidden`), so an
  * `ImageFrame` at `radius="none"` fills the top edge and inherits the corner. The inset the text
- * needs comes back from `.sk-card-body`, one level in; padding on the root would inset the photo
- * too, which is the exact mistake the two-box pattern exists to prevent.
+ * needs comes back from a second, padded Box one level in; padding on the root would inset the photo
+ * too, which is the exact mistake the two-box pattern exists to prevent. The text Stack aligns to
+ * `start` so the Badge keeps its own width instead of stretching across the card.
  */
 export const cardMediaTree = (c: CardCopy): UsageTree =>
   grid(
@@ -261,7 +271,6 @@ export const cardMediaTree = (c: CardCopy): UsageTree =>
       contract: "box",
       signature: "Box",
       options: { surface: "surface", border: "subtle" },
-      attrs: { class: "sk-card-media" },
       children: [
         {
           contract: "image-frame",
@@ -271,20 +280,22 @@ export const cardMediaTree = (c: CardCopy): UsageTree =>
         {
           contract: "box",
           signature: "Box",
-          attrs: { class: "sk-card-body" },
+          options: { padding: "lg" },
           children: [
-            { contract: "badge", signature: "Badge", options: { tone: "accent" }, children: card.badge },
             {
-              contract: "typography",
-              signature: "Heading",
-              options: { headingSize: "h4", flush: true },
-              children: card.title,
+              contract: "layout",
+              signature: "Stack",
+              options: { gap: "sm", align: "start" },
+              children: [
+                { contract: "badge", signature: "Badge", options: { tone: "accent" }, children: card.badge },
+                titleAndBody(card.title, card.body),
+              ],
             },
-            { contract: "typography", signature: "Text", options: { tone: "secondary" }, children: card.body },
           ],
         },
       ],
     })),
+    true,
   );
 
 /*
@@ -301,7 +312,6 @@ export const cardGradientTree = (c: CardCopy): UsageTree =>
       contract: "box",
       signature: "Box",
       options: { surface: "surface" },
-      attrs: { class: "sk-card-gradient" },
       children: [
         {
           contract: "image-frame",
@@ -314,13 +324,7 @@ export const cardGradientTree = (c: CardCopy): UsageTree =>
               options: { edge: "bottom" },
               children: [
                 { contract: "media-gradient", signature: "MediaGradient", options: { strength: card.strength } },
-                {
-                  contract: "typography",
-                  signature: "Text",
-                  options: { size: "caption" },
-                  attrs: { class: "sk-card-eyebrow" },
-                  children: card.eyebrow,
-                },
+                eyebrow(card.eyebrow),
                 {
                   contract: "typography",
                   signature: "Heading",
@@ -334,20 +338,24 @@ export const cardGradientTree = (c: CardCopy): UsageTree =>
         },
       ],
     })),
+    true,
   );
 
 /*
  * 10. Interactive AND media AND wash, all three at once.
  *
- * `padding="none"` so the photo reaches the edge; the copy and the footer each take their inset
- * back from `examples/card.css`. There is exactly one destination and therefore exactly one focus
- * stop: the title names the link from inside `TileContent`, and the "read" row is chrome, not a
- * second anchor.
+ * `padding="none"` so the photo reaches the edge; the copy and the "read" row take their inset back
+ * from one padded Box below it, the same two-box shape as the media card. There is exactly one
+ * destination and therefore exactly one focus stop: the "read" row is chrome, not a second anchor.
  *
- * `TileContent` sits DIRECTLY under the tile, not wrapped in a padded Box, because the contract
- * says so and the validator says so out loud: the hand-written version of this example spelled
- * `sk-tile__title` by hand inside a `<span class="sk-card-body">`, which is the same shape with the
- * rule quietly stepped around. The inset moved onto the parts instead.
+ * NOT `TileContent`: the contract places it directly under the tile, where nothing can pad it, and
+ * the old version only got its inset from a docs-local class. Heading and Text inside the padded Box
+ * say the same thing with published options.
+ *
+ * ONE child under the tile, a plain Box around the photo and the copy. The tile is a grid, and a card
+ * made taller by its neighbours splits the extra height across every row it has: with the photo and
+ * the copy as two rows, that opened a band of empty space under the photo. One row has nothing to
+ * split, the same block flow the media card above already uses.
  */
 export const cardMediaLinkTree = (c: CardCopy): UsageTree =>
   grid(
@@ -358,41 +366,50 @@ export const cardMediaLinkTree = (c: CardCopy): UsageTree =>
       options: { href: "#", padding: "none" },
       children: [
         {
-          contract: "image-frame",
-          signature: "ImageFrame",
-          options: { src: card.src, alt: card.alt, aspect: "16/9", radius: "none", fit: "cover" },
-          slots: {
-            caption: {
-              contract: "media-gradient",
-              signature: "MediaCaption",
-              options: { edge: "bottom" },
+          contract: "layout",
+          signature: "Stack",
+          options: { gap: "none" },
+          children: [
+            {
+              contract: "image-frame",
+              signature: "ImageFrame",
+              options: { src: card.src, alt: card.alt, aspect: "16/9", radius: "none", fit: "cover" },
+              slots: {
+                caption: {
+                  contract: "media-gradient",
+                  signature: "MediaCaption",
+                  options: { edge: "bottom" },
+                  children: [
+                    { contract: "media-gradient", signature: "MediaGradient", options: { strength: "lg" } },
+                    eyebrow(card.eyebrow),
+                  ],
+                },
+              },
+            },
+            {
+              contract: "box",
+              signature: "Box",
+              options: { padding: "lg" },
               children: [
-                { contract: "media-gradient", signature: "MediaGradient", options: { strength: "lg" } },
                 {
-                  contract: "typography",
-                  signature: "Text",
-                  options: { size: "caption" },
-                  attrs: { class: "sk-card-eyebrow" },
-                  children: card.eyebrow,
+                  contract: "layout",
+                  signature: "Stack",
+                  options: { gap: "md" },
+                  children: [
+                    titleAndBody(card.title, card.body),
+                    {
+                      contract: "layout",
+                      signature: "Inline",
+                      options: { gap: "xs", inlineAlign: "center" },
+                      children: [
+                        c.cta.read,
+                        { contract: "icon", signature: "Icon", options: { name: "arrow-right", size: "sm" } },
+                      ],
+                    },
+                  ],
                 },
               ],
             },
-          },
-        },
-        {
-          contract: "tile",
-          signature: "TileContent",
-          attrs: { class: "sk-card-body" },
-          slots: { title: card.title, description: card.body },
-        },
-        {
-          contract: "layout",
-          signature: "Inline",
-          options: { gap: "xs", inlineAlign: "center" },
-          attrs: { class: "sk-card-cta" },
-          children: [
-            c.cta.read,
-            { contract: "icon", signature: "Icon", options: { name: "arrow-right", size: "sm" } },
           ],
         },
       ],
@@ -404,8 +421,10 @@ export const cardMediaLinkTree = (c: CardCopy): UsageTree =>
  *
  * "See details" and "Add" go to different places, so the root cannot be a Tile: a link and a button
  * nested inside an anchor is invalid HTML, and a whole-surface click could only ever mean one of
- * the two. The price row is an `Inline` on the baseline; `.sk-card-plan` is what pushes it down so
- * three plans of different body lengths still line their footers up.
+ * the two. The price row is an `Inline` on the baseline, right under the copy. The actions row is
+ * the Stack's last child at `blockStart="auto"`, the kit's card floor (layout.css): the Box becomes a
+ * column that fills its grid cell, so three plans of different body lengths still line their footers
+ * up.
  */
 export const cardProductTree = (c: CardCopy): UsageTree =>
   grid(
@@ -414,7 +433,6 @@ export const cardProductTree = (c: CardCopy): UsageTree =>
       contract: "box",
       signature: "Box",
       options: { surface: "surface", border: "subtle", padding: "lg" },
-      attrs: { class: "sk-card-plan" },
       children: [
         {
           contract: "layout",
@@ -424,7 +442,7 @@ export const cardProductTree = (c: CardCopy): UsageTree =>
             {
               contract: "layout",
               signature: "Stack",
-              options: { gap: "xs" },
+              options: { gap: "xs", align: "start" },
               children: [
                 { contract: "badge", signature: "Badge", options: { tone: card.tone }, children: card.badge },
                 {
@@ -440,19 +458,17 @@ export const cardProductTree = (c: CardCopy): UsageTree =>
               contract: "layout",
               signature: "Inline",
               options: { gap: "xs", inlineAlign: "baseline" },
-              attrs: { class: "sk-card-price" },
               children: [
                 {
                   contract: "typography",
                   signature: "Text",
-                  attrs: { class: "sk-card-price__value" },
+                  options: { size: "lg", weight: "label" },
                   children: card.price,
                 },
                 {
                   contract: "typography",
                   signature: "Text",
                   options: { tone: "tertiary", size: "caption" },
-                  attrs: { class: "sk-card-price__period" },
                   children: card.period,
                 },
               ],
@@ -460,7 +476,7 @@ export const cardProductTree = (c: CardCopy): UsageTree =>
             {
               contract: "layout",
               signature: "Inline",
-              options: { gap: "sm", justify: "between", inlineAlign: "center" },
+              options: { gap: "sm", justify: "between", inlineAlign: "center", blockStart: "auto" },
               children: [
                 { contract: "typography", signature: "Link", options: { href: "#" }, children: c.cta.details },
                 {
@@ -475,4 +491,5 @@ export const cardProductTree = (c: CardCopy): UsageTree =>
         },
       ],
     })),
+    true,
   );

@@ -6,15 +6,25 @@ Select.native:
     - "el teclado, el envío y la accesibilidad deben pertenecer al navegador"
   avoidWhen:
     - "cada opción necesita markup propio: icono, descripción, dos líneas"
-    - "hace falta el evento sk-value-change o una colección controlada"
+    - "hace falta el evento sk:selectvaluechange o una colección controlada"
+    - "la persona escribe para filtrar una lista larga; eso es Combobox"
+    - "hay pocas opciones fijas y caben a la vista; eso es Segmented o RadioGroup"
   alternatives:
     - Select
+    - Combobox
+    - Segmented
+    - RadioGroup
 
 Select:
   useWhen:
     - "las opciones necesitan markup, no sólo texto"
-    - "hace falta una colección controlada, posicionamiento propio o el evento sk-value-change"
+    - "hace falta una colección controlada, posicionamiento propio o el evento sk:selectvaluechange"
   avoidWhen:
     - "alcanza con una elección estándar: la apariencia dejó de ser razón para reemplazar el control nativo"
+    - "la persona escribe para filtrar; eso es Combobox"
+    - "hay pocas opciones fijas a la vista; eso es Segmented o RadioGroup"
   alternatives:
     - Select.native
+    - Combobox
+    - Segmented
+    - RadioGroup

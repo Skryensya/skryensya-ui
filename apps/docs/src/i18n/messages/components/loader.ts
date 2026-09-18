@@ -21,12 +21,37 @@ export const loaderMessages = {
     "demo.loader.card.body": "Carga contenido dentro de una superficie.",
     "demo.loader.control.title": "Control",
     "demo.loader.control.body": "Reserva espacio junto a una acción.",
+    "demo.loader.pseudoVariantsLabel": "Diseños sin hijos",
+    "demo.loader.staggeredVariantsLabel": "Diseños con marcas escalonadas",
+    "demo.loader.variant.ring": "Pista completa con un cuarto encendido.",
+    "demo.loader.variant.sweep": "Abanico cónico que se desvanece.",
+    "demo.loader.variant.bars": "Dos pares que alternan; nada gira.",
+    "demo.loader.variant.dots": "Un punto que avanza por tres posiciones.",
+    "demo.loader.variant.arc": "Un cuarto suelto, sin pista detrás.",
+    "demo.loader.variant.comet": "Una cola que se apaga tras la cabeza.",
+    "demo.loader.variant.orbit": "Un punto recorriendo una pista fina.",
+    "demo.loader.variant.clock": "Una aguja barriendo una esfera tenue.",
+    "demo.loader.variant.spokes": "Doce radios que se apagan en secuencia.",
+    "demo.loader.variant.ticks": "La misma secuencia con ocho marcas.",
+    "demo.loader.variant.compass": "Cuatro marcas que giran juntas un cuarto.",
+    "demo.loader.variant.beads": "Ocho puntos sobre el borde.",
 
     "loaderPage.description": "Loader: simulación de carga indeterminada, patrones de uso, tamaños y velocidad.",
     "loaderPage.lede":
-      "Loader comunica trabajo <strong>indeterminado</strong>: la operación está activa, pero no existe una fracción honesta que mostrar. El sistema ofrece dos diseños circulares y dos lineales con las mismas reglas semánticas para componer acciones, regiones y cargas iniciales.",
+      "Loader comunica trabajo <strong>indeterminado</strong>: la operación está activa, pero no existe una fracción honesta que mostrar. El sistema ofrece doce diseños de movimiento con las mismas reglas semánticas para componer acciones, regiones y cargas iniciales.",
     "loaderPage.calloutBody":
-      "El contrato contiene <code>ring</code>, <code>sweep</code>, <code>bars</code> y <code>dots</code>. Son diseños visuales del mismo Loader, no componentes distintos.",
+      "Los doce son diseños visuales del mismo Loader, no componentes distintos: comparten <code>size</code>, <code>speed</code> y la misma regla de accesibilidad. Elegir uno es una decisión de presencia visual, nunca de significado.",
+    "loaderPage.variantsTitle": "Diseños de movimiento",
+    "loaderPage.variantsBody":
+      "Ocho se dibujan con los dos pseudo-elementos de la raíz y nada más, así que su markup es un único <code>&lt;span&gt;</code> vacío.",
+    "loaderPage.pseudoVariantsLabel": "Diseños sin hijos",
+    "loaderPage.staggeredVariantsBody":
+      "Los otros cuatro son marcas que se apagan <strong>en secuencia</strong>, y eso no cabe en dos pseudo-elementos: un escalonamiento necesita un elemento real por marca. No se escriben a mano: el markup sólo nombra el diseño con <code>data-sk-loader</code>, y el enhancer inyecta las marcas que falten. Sin JavaScript, pinta el anillo por defecto. El retraso de cada marca es <strong>negativo</strong> por construcción, así que todas empiezan a mitad de ciclo en el primer fotograma; con un escalonamiento positivo, el anillo arrancaría a la vista una sola vez al montarse.",
+    "loaderPage.staggeredVariantsLabel": "Diseños con marcas escalonadas",
+    "loaderPage.staggeredVariantsNote": "Cada marca arranca a mitad de ciclo, nunca desde cero.",
+    "loaderPage.tempoTitle": "Ritmo",
+    "loaderPage.tempoBody":
+      "Cada diseño necesita su propio ritmo, pero <code>speed</code> tiene que seguir siendo independiente de <code>variant</code>. Por eso ninguno nombra milisegundos: nombran una razón en <code>--sk-loader-tempo</code>, y <code>--sk-loader-cycle</code> es donde las dos se encuentran.",
     "loaderPage.simTitle": "Simulación",
     "loaderPage.simBody":
       "Un único contenedor cambia de ocupado a listo. No necesita una pantalla, métricas ni una card exterior: sólo la marca, el texto que explica el trabajo y una acción para repetirlo.",
@@ -63,7 +88,7 @@ export const loaderMessages = {
       'Si conoces el avance, usa <a href="/es/componentes/progress">Progress</a>, no una velocidad distinta.',
     "loaderPage.reducedTitle": "Movimiento reducido",
     "loaderPage.reducedBody":
-      "Los cuatro diseños conservan una silueta reconocible y detienen todo movimiento con <code>prefers-reduced-motion: reduce</code>. El texto de estado permanece: reducir movimiento no puede convertir una operación pendiente en una señal invisible.",
+      "Los doce diseños conservan una silueta reconocible y detienen todo movimiento con <code>prefers-reduced-motion: reduce</code>. Las marcas escalonadas quedan además todas a la misma opacidad, no congeladas a mitad de secuencia: una marca brillante junto a otra casi apagada se lee como un fallo de dibujado, no como una espera. El texto de estado permanece: reducir movimiento no puede convertir una operación pendiente en una señal invisible.",
     "loaderPage.reactBody":
       "Props: <code>size</code>, <code>variant</code>, <code>speed</code> y <code>label</code>. Los valores por defecto son <code>md</code>, <code>ring</code> y <code>normal</code>.",
     "loaderPage.test1": "Expone el trabajo indeterminado con nombre como un status cortés (<code>polite</code>).",
@@ -92,12 +117,37 @@ export const loaderMessages = {
     "demo.loader.card.body": "Loading content inside a surface.",
     "demo.loader.control.title": "Control",
     "demo.loader.control.body": "Reserving space beside an action.",
+    "demo.loader.pseudoVariantsLabel": "Designs with no children",
+    "demo.loader.staggeredVariantsLabel": "Designs with staggered marks",
+    "demo.loader.variant.ring": "A full track with one quarter lit.",
+    "demo.loader.variant.sweep": "A conic fan trailing off.",
+    "demo.loader.variant.bars": "Two alternating pairs; nothing rotates.",
+    "demo.loader.variant.dots": "One dot stepping across three positions.",
+    "demo.loader.variant.arc": "A lone quarter, with no track behind it.",
+    "demo.loader.variant.comet": "A tail fading out behind the head.",
+    "demo.loader.variant.orbit": "A dot travelling a hairline track.",
+    "demo.loader.variant.clock": "A hand sweeping a faint face.",
+    "demo.loader.variant.spokes": "Twelve spokes fading in sequence.",
+    "demo.loader.variant.ticks": "The same sequence at eight marks.",
+    "demo.loader.variant.compass": "Four marks turning together, a quarter at a time.",
+    "demo.loader.variant.beads": "Eight dots around the rim.",
 
     "loaderPage.description": "Loader: indeterminate loading simulation, usage patterns, sizes, and speed.",
     "loaderPage.lede":
-      "Loader communicates <strong>indeterminate</strong> work: the operation is active, but there is no honest fraction to show. The system offers two circular designs and two linear ones, with the same semantic rules for composing actions, regions, and initial loads.",
+      "Loader communicates <strong>indeterminate</strong> work: the operation is active, but there is no honest fraction to show. The system offers twelve motion designs, with the same semantic rules for composing actions, regions, and initial loads.",
     "loaderPage.calloutBody":
-      "The contract carries <code>ring</code>, <code>sweep</code>, <code>bars</code>, and <code>dots</code>. They are visual designs of the same Loader, not separate components.",
+      "All twelve are visual designs of the same Loader, not separate components: they share <code>size</code>, <code>speed</code>, and the same accessibility rule. Choosing one is a decision about visual presence, never about meaning.",
+    "loaderPage.variantsTitle": "Motion designs",
+    "loaderPage.variantsBody":
+      "Eight draw themselves out of the root's two pseudo-elements and nothing else, so their markup is a single empty <code>&lt;span&gt;</code>.",
+    "loaderPage.pseudoVariantsLabel": "Designs with no children",
+    "loaderPage.staggeredVariantsBody":
+      "The other four are marks that fade <strong>in sequence</strong>, which two pseudo-elements cannot be: a stagger needs one real element per mark. They are never written by hand: the markup only names the design with <code>data-sk-loader</code>, and the enhancer injects whichever marks are missing. With no JavaScript, it paints the default ring. Each mark's delay is <strong>negative</strong> by construction, so every one of them is already mid-cycle on the first painted frame; with a positive stagger, the ring would visibly wind up once on mount.",
+    "loaderPage.staggeredVariantsLabel": "Designs with staggered marks",
+    "loaderPage.staggeredVariantsNote": "Every mark starts mid-cycle, never from zero.",
+    "loaderPage.tempoTitle": "Tempo",
+    "loaderPage.tempoBody":
+      "Every design needs its own pace, but <code>speed</code> has to stay orthogonal to <code>variant</code>, so no design names milliseconds. It names a ratio in <code>--sk-loader-tempo</code>, and <code>--sk-loader-cycle</code> is where the two meet.",
     "loaderPage.simTitle": "Simulation",
     "loaderPage.simBody":
       "A single container switches from busy to ready. It needs no screen, no metrics, no outer card: just the mark, the text explaining the work, and an action to run it again.",
@@ -134,7 +184,7 @@ export const loaderMessages = {
       'If you know the progress, use <a href="/components/progress">Progress</a>, not a different speed.',
     "loaderPage.reducedTitle": "Reduced motion",
     "loaderPage.reducedBody":
-      "All four designs keep a recognizable silhouette and stop all motion under <code>prefers-reduced-motion: reduce</code>. The status text stays: reducing motion cannot turn a pending operation into an invisible signal.",
+      "All twelve designs keep a recognizable silhouette and stop all motion under <code>prefers-reduced-motion: reduce</code>. Staggered marks also settle to one shared opacity rather than freezing mid-sequence: one bright mark beside a nearly invisible one reads as a rendering fault, not as a wait. The status text stays: reducing motion cannot turn a pending operation into an invisible signal.",
     "loaderPage.reactBody":
       "Props: <code>size</code>, <code>variant</code>, <code>speed</code>, and <code>label</code>. The defaults are <code>md</code>, <code>ring</code>, and <code>normal</code>.",
     "loaderPage.test1": "Exposes labelled indeterminate work as a polite status.",

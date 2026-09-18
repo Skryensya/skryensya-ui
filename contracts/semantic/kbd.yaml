@@ -4,4 +4,7 @@ Kbd:
   useWhen:
     - "se muestra una tecla o una combinación que el usuario puede presionar"
   avoidWhen:
-    - "es texto de código o un comando; eso va en un bloque de código"
+    - "es texto de código o un comando; eso va en un bloque Code / typography"
+    - "es un control accionable; eso es Button o IconStateButton"
+  alternatives:
+    - Code

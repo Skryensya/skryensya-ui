@@ -1,0 +1,220 @@
+---
+import Base from "../../layouts/Base.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import ComponentPreview from "../../components/ComponentPreview.astro";
+import Used from "../../components/Used.astro";
+import { headingDisplayTree, headingDocumentTree, textScaleTree, textTitleTree } from "../../demos/typography";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+
+/* One row per size role. The px and ratio columns are the primitive values, written once here;
+ * the resolved column is read live from the page. */
+const pairs = [
+  { role: "display-lg", size: "--font-size-display-lg", leading: "--font-line-height-display-lg", note: "Hero y portadas" },
+  { role: "display-md", size: "--font-size-display-md", leading: "--font-line-height-display-md", note: "Hero y portadas" },
+  { role: "display-sm", size: "--font-size-display-sm", leading: "--font-line-height-display-sm", note: "Título de una página de producto" },
+  { role: "h1", size: "--font-size-heading-h1", leading: "--font-line-height-heading-h1", note: "Título de documento" },
+  { role: "h2", size: "--font-size-heading-h2", leading: "--font-line-height-heading-h2", note: "Sección" },
+  { role: "h3", size: "--font-size-heading-h3", leading: "--font-line-height-heading-h3", note: "Subsección" },
+  { role: "h4 · h5 · h6", size: "--font-size-heading-h4", leading: "--font-line-height-heading-h4", note: "Piso: no baja de aquí" },
+  { role: "body-lg", size: "--font-size-body-lg", leading: "--font-line-height-body-lg", note: "Subtítulo bajo un encabezado" },
+  { role: "body", size: "--font-size-body", leading: "--font-line-height-body", note: "Texto de lectura, el valor por defecto" },
+  { role: "body-sm", size: "--font-size-body-sm", leading: "--font-line-height-body-sm", note: "Texto secundario, celdas densas" },
+  { role: "caption", size: "--font-size-caption", leading: "--font-line-height-caption", note: "Metadatos, leyendas, eyebrows" },
+];
+
+const weights = [
+  { token: "--font-weight-body", value: "400", note: "Texto de lectura" },
+  { token: "--font-weight-label", value: "500", note: "Etiquetas de controles y navegación" },
+  { token: "--font-weight-emphasis", value: "600", note: "<strong> dentro de un párrafo, eyebrows" },
+  { token: "--font-weight-heading", value: "700", note: "Encabezados y displays" },
+];
+
+const install = `/* Una vez, en la raíz de la app, antes de los tokens */
+@import "@skryensya/core/fonts/hanken-grotesk.css";
+@import "@skryensya/core/tokens.scss";`;
+
+const swap = `/* Otra familia: no importes hanken-grotesk.css y redefine el primitivo */
+:root {
+  --scale-font-family-sans: "Mi Familia", system-ui, sans-serif;
+}`;
+
+const usage = `<!-- Nivel del documento y tamaño visual van por separado -->
+<h2 class="sk-heading" data-size="h3">Regiones listas</h2>
+<p class="sk-text" data-tone="secondary">Tres de cuatro regiones respondieron.</p>
+
+<!-- Un componente tuyo consume roles, nunca píxeles -->
+<style>
+  .mi-card__title {
+    font-size: var(--font-size-heading-h4);
+    line-height: var(--font-line-height-heading-h4);
+    font-weight: var(--font-weight-heading);
+  }
+</style>`;
+---
+
+<Base
+  title="Tipografía"
+  documentLayout="grid"
+  description="La escala tipográfica del sistema: familias, pares de tamaño e interlineado, pesos por rol y cómo consumirlos."
+>
+  <h1>Tipografía</h1>
+  <p class="lede">
+    Una familia sans que viaja con el paquete, una mono para código, once roles de tamaño que traen
+    su propio interlineado y cuatro pesos con nombre. Ningún componente escribe un
+    <code>font-size</code> en píxeles: todos leen un token semántico de
+    <code>packages/core/css/semantic/_type.scss</code>, que a su vez apunta a la escala primitiva.
+  </p>
+
+  <h2>Familias</h2>
+  <p>
+    <strong>Hanken Grotesk</strong> es la sans del sistema y se publica dentro de
+    <code>@skryensya/core</code>: nada se descarga desde un CDN ajeno. Es variable (un eje de peso de
+    100 a 900), así que los cuatro pesos que usa el sistema están dibujados y nunca sintetizados, y
+    trae cifras tabulares reales para tablas, medidores y relojes. Se eligió midiendo las páginas de
+    este sitio: su altura de x aguanta a 12px, el tamaño del chrome más denso, y es la más contenida
+    de las candidatas a 60px.
+  </p>
+  <p>
+    <strong>JetBrains Mono</strong> es la familia de código. El paquete no la incluye: si no está
+    instalada, cae en la monoespaciada del sistema operativo.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Token</th>
+          <th class="sk-table__header">Primitivo</th>
+          <th class="sk-table__header">Valor resuelto</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell mono">--font-family-body</td>
+          <td class="sk-table__cell mono">--scale-font-family-sans</td>
+          <td class="sk-table__cell mono"><Used token="--font-family-body" /></td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell mono">--font-family-code</td>
+          <td class="sk-table__cell mono">--scale-font-family-mono</td>
+          <td class="sk-table__cell mono"><Used token="--font-family-code" /></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    La hoja de la fuente declara además un fallback con las métricas de Hanken Grotesk: la fuente
+    local del sistema, reescalada al ancho y a la altura de línea de la real. Con
+    <code>font-display: swap</code>, el primer pintado usa ese fallback, y el cambio a la fuente
+    definitiva cambia el dibujo de las letras sin mover el layout.
+  </p>
+  <CodeBlock code={install} label="CSS" />
+  <CodeBlock code={swap} label="CSS" note="cambiar de familia" />
+
+  <h2>La escala: tamaño e interlineado van en pares</h2>
+  <p>
+    Cada rol de tamaño tiene un interlineado emparejado, y el interlineado se cierra a medida que el
+    tamaño crece: 1.5 para leer, 1.35 para encabezados chicos, 1.2 para el h1 y 1.1 para displays. Un
+    display de 60px con el interlineado de un párrafo deja huecos enormes entre líneas. Por eso las
+    dos columnas se leen juntas: <code>--font-size-heading-h2</code> siempre va con
+    <code>--font-line-height-heading-h2</code>.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Rol</th>
+          <th class="sk-table__header">Tamaño</th>
+          <th class="sk-table__header">Interlineado</th>
+          <th class="sk-table__header">Cuándo</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        {
+          pairs.map((pair) => (
+            <tr class="sk-table__row">
+              <td class="sk-table__cell"><strong>{pair.role}</strong></td>
+              <td class="sk-table__cell mono">{pair.size}<br /><Used token={pair.size} /></td>
+              <td class="sk-table__cell mono">{pair.leading}<br /><Used token={pair.leading} /></td>
+              <td class="sk-table__cell">{pair.note}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Displays</h3>
+  <p>
+    Por encima de la escala del documento, para hero y portadas. No corresponden a ningún nivel de
+    encabezado: un display puede ser un <code>h1</code> o un <code>p</code>.
+  </p>
+  <ComponentPreview tree={headingDisplayTree(t)} label="Displays" />
+
+  <h3>Encabezados del documento</h3>
+  <p>
+    Del h1 al h4 cada peldaño es visible. h5 y h6 reutilizan el par del h4: por debajo de 18px un
+    título de sección deja de distinguirse del texto que encabeza.
+  </p>
+  <ComponentPreview tree={headingDocumentTree(t)} label="h1 a h6" />
+
+  <h3>Texto de lectura</h3>
+  <p>
+    Cuatro tamaños para el cuerpo, todos con interlineado 1.5. Para texto largo existe además
+    <code>--font-line-height-body-relaxed</code> (1.7), que se aplica a propósito y no por defecto.
+  </p>
+  <ComponentPreview tree={textScaleTree(t)} label="caption a lg" />
+
+  <h2>Pesos: uno por rol</h2>
+  <p>
+    Cuatro peldaños, ninguno repetido. Antes <code>emphasis</code> y <code>label</code> valían lo
+    mismo (500), y un <code>&lt;strong&gt;</code> en un párrafo se leía igual que la etiqueta de un
+    botón. Ahora cada rol tiene su propio peso y la escala completa de 400 a 700 está en uso.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Token</th>
+          <th class="sk-table__header">Peso</th>
+          <th class="sk-table__header">Cuándo</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        {
+          weights.map((weight) => (
+            <tr class="sk-table__row">
+              <td class="sk-table__cell mono">{weight.token}</td>
+              <td class="sk-table__cell"><span style={`font-weight: var(${weight.token})`}>{weight.value}</span></td>
+              <td class="sk-table__cell">{weight.note}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Roles compuestos</h2>
+  <p>
+    Algunos trabajos se repiten en cada bloque de título y combinan varios ejes a la vez.
+    <a href="/es/componentes/text">Text</a> los publica como roles: <code>eyebrow</code> (caption, peso
+    de énfasis, mayúsculas con tracking) sobre el título y <code>subtitle</code> (body-lg, interlineado
+    relajado, tono secundario) debajo. Cada hook que fija un rol sigue siendo sobreescribible.
+  </p>
+  <ComponentPreview tree={textTitleTree(t)} label="Eyebrow, título y subtítulo" />
+
+  <h2>Cómo se usa</h2>
+  <p>
+    Para texto, usa <a href="/es/componentes/heading">Heading</a>, <a href="/es/componentes/text">Text</a>
+    y <a href="/es/componentes/link">Link</a>: ya consumen los pares y exponen sus propios styling hooks
+    (<code>--sk-heading-font-size</code>, <code>--sk-text-font-size</code>, etc.). Un componente propio
+    lee los tokens semánticos del rol que necesita, siempre el tamaño junto con su interlineado, y
+    nunca los primitivos <code>--scale-font-*</code>.
+  </p>
+  <CodeBlock code={usage} label="HTML" />
+  <p>
+    Todos los tokens están en la <a href="/es/referencia">referencia de tokens</a>, con su valor
+    resuelto en vivo.
+  </p>
+</Base>

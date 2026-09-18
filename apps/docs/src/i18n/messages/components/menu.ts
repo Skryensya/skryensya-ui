@@ -79,7 +79,7 @@ export const menuMessages = {
     "menuPage.testVanilla5":
       'Un item deshabilitado nunca dispara <code class="sk-code">sk-select</code>; el menú se queda abierto.',
     "menuPage.testVanilla6":
-      'Un checkbox alterna <code class="sk-code">data-checked</code> y emite <code class="sk-code">sk-checked-change</code>.',
+      'Un checkbox alterna <code class="sk-code">data-checked</code> y emite <code class="sk-code">sk:menucheckedchange</code>.',
     "menuPage.testVanilla7":
       "Dos radios del mismo grupo son mutuamente excluyentes; elegir uno cierra el menú, como un comando.",
     "menuPage.testVanilla8":
@@ -192,7 +192,7 @@ export const menuMessages = {
     "menuPage.testVanilla5":
       'A disabled item never fires <code class="sk-code">sk-select</code>; the menu stays open.',
     "menuPage.testVanilla6":
-      'A checkbox toggles <code class="sk-code">data-checked</code> and emits <code class="sk-code">sk-checked-change</code>.',
+      'A checkbox toggles <code class="sk-code">data-checked</code> and emits <code class="sk-code">sk:menucheckedchange</code>.',
     "menuPage.testVanilla7":
       "Two radios in the same group are mutually exclusive; choosing one closes the menu, like a command.",
     "menuPage.testVanilla8":

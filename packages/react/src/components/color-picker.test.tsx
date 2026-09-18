@@ -18,9 +18,13 @@ describe("ColorPicker", () => {
 
   it("commits a typed hex value and updates the swatch", async () => {
     const onValueChange = vi.fn();
+    const onDom = vi.fn();
     const ui = render(
       <ColorPicker defaultValue="#000000" label="Color" onValueChange={onValueChange} />,
     );
+    const root = ui.container.querySelector(".sk-color-picker")!;
+    expect(root.hasAttribute("data-sk-color-picker")).toBe(true);
+    root.addEventListener("sk:colorpickervaluechange", onDom);
     fireEvent.click(ui.getByRole("button"));
     await waitFor(() => expect(ui.getByRole("dialog", { hidden: true })).toBeTruthy());
 
@@ -29,8 +33,12 @@ describe("ColorPicker", () => {
     fireEvent.blur(hex);
 
     await waitFor(() => expect(onValueChange).toHaveBeenCalled());
-    const root = ui.container.querySelector(".sk-color-picker")!;
     expect((root as HTMLElement).style.getPropertyValue("--value")).toBe("rgba(51, 102, 255, 1)");
+    expect(onDom).toHaveBeenCalled();
+    expect((onDom.mock.calls[0]![0] as CustomEvent).detail).toEqual({
+      value: "rgba(51, 102, 255, 1)",
+    });
+    expect(onValueChange).toHaveBeenCalledWith({ value: "rgba(51, 102, 255, 1)" });
   });
 
   it("selects a preset swatch and updates the current color", async () => {

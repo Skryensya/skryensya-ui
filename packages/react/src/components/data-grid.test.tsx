@@ -37,7 +37,16 @@ describe("DataGrid React contracts", () => {
     const ui = render(<Fixture />);
     const grid = ui.getByRole("grid", { name: "Destinatarios" });
     expect(grid.tagName).toBe("DIV");
+    expect(grid.getAttribute("data-sk-data-grid")).toBe("");
+    expect(grid.hasAttribute("data-wrap-cols")).toBe(false);
     expect(ui.getAllByRole("row")).toHaveLength(2);
+  });
+
+  it("writes wrap attrs when wrapCols/wrapRows are set", () => {
+    const ui = render(<Fixture wrapCols wrapRows />);
+    const grid = ui.getByRole("grid", { name: "Destinatarios" });
+    expect(grid.getAttribute("data-wrap-cols")).toBe("");
+    expect(grid.getAttribute("data-wrap-rows")).toBe("");
   });
 
   it("hands the roving stop to a cell's OWN interactive descendant, not the cell div", () => {

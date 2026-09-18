@@ -1,5 +1,6 @@
 import { fireEvent, render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { tagEvents } from "@skryensya/core/tag";
 import { Tag } from "./tag.js";
 
 describe("Tag", () => {
@@ -9,14 +10,34 @@ describe("Tag", () => {
     expect(tag?.getAttribute("data-tone")).toBe("accent");
   });
 
-  it("exposes a named remove control only when onRemove is given", () => {
+  it("exposes a named remove control only when removable is set", () => {
     const onRemove = vi.fn();
-    const ui = render(<Tag onRemove={onRemove} removeLabel="Remove tokens">tokens</Tag>);
+    const ui = render(
+      <Tag onRemove={onRemove} removable removeLabel="Remove tokens">
+        tokens
+      </Tag>,
+    );
     fireEvent.click(ui.getByLabelText("Remove tokens"));
     expect(onRemove).toHaveBeenCalledOnce();
 
     const plain = render(<Tag>tokens</Tag>);
     expect(plain.container.querySelector("button")).toBeNull();
+
+    const handlerOnly = render(<Tag onRemove={() => {}}>tokens</Tag>);
+    expect(handlerOnly.container.querySelector("button")).toBeNull();
+  });
+
+  it("dispatches the contract remove event on the host when the control is used", () => {
+    const onEvent = vi.fn();
+    const ui = render(
+      <Tag removable removeLabel="Remove tokens">
+        tokens
+      </Tag>,
+    );
+    const host = ui.getByText("tokens").closest(".sk-tag");
+    host?.addEventListener(tagEvents.remove, onEvent);
+    fireEvent.click(ui.getByLabelText("Remove tokens"));
+    expect(onEvent).toHaveBeenCalledOnce();
   });
 
   it("renders a navigable tag as a link and never as dismissible", () => {
@@ -35,7 +56,11 @@ describe("Tag", () => {
   });
 
   it("removes with a real small icon-only button, not a lookalike", () => {
-    const ui = render(<Tag onRemove={() => {}} removeLabel="Remove tokens">tokens</Tag>);
+    const ui = render(
+      <Tag removable removeLabel="Remove tokens">
+        tokens
+      </Tag>,
+    );
     const remove = ui.getByLabelText("Remove tokens");
     // The whole point of the composition: hover/press/focus and the 44px hit area are the button's.
     expect(remove.className).toContain("sk-button");

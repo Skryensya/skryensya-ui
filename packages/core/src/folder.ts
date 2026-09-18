@@ -400,9 +400,13 @@ export const folderAttrs = {
  */
 export const folderContract = {
   id: "folder",
+  category: "content",
   css: "@skryensya/core/components/folder.css",
   parts: folderParts,
+  /* Written by both silhouette drawers on every measure; read them, never set them as overrides. */
+  outputHooks: ["--sk-folder-clip", "--sk-folder-tail"],
   hooks: [
+    "--sk-folder-clip",
     "--sk-folder-content-gap",
     "--sk-folder-fg",
     "--sk-folder-fill",
@@ -438,6 +442,7 @@ export const folderContract = {
     "--sk-folder-tab-height",
     "--sk-folder-tab-min",
     "--sk-folder-tab-radius",
+    "--sk-folder-tail",
     "--sk-folder-tilt",
     "--sk-folder-top-radius",
   ],
@@ -493,6 +498,8 @@ export const folderContract = {
          */
         previews: { accepts: "signature", of: ["FolderPreview"] },
       },
+      /* Preview fan + silhouette stay out of the pointer path (`pointer-events: none` in CSS). */
+      hitTesting: { childrenNone: ["FolderPreview"] },
       template: {
         element: "div",
         part: "root",
@@ -533,12 +540,15 @@ export const folderContract = {
       mount: folderAttrs.root,
       options: ["active", "href"],
       requires: ["href"],
+      /** Link host attrs beyond href/active (Button.navigation peer). */
+      forward: ["id", "target", "rel", "download", "aria-*"],
       slots: {
         label: { accepts: "node", required: true },
         children: { accepts: "node", required: true },
         /** See `Folder`'s own `previews` doc. */
         previews: { accepts: "signature", of: ["FolderPreview"] },
       },
+      hitTesting: { childrenNone: ["FolderPreview"] },
       template: {
         element: "a",
         part: "root",
@@ -590,6 +600,10 @@ export const folderContract = {
       host: { element: "div" },
       options: [],
       parents: ["Folder", "FolderLink"],
+      /* Typical preview content is ImageFrame; children stay node. */
+      compose: [
+        { of: "image-frame", sheets: ["@skryensya/core/patterns/image-frame.css"] },
+      ],
       slots: {
         /** The picture. An `ImageFrame`, usually; anything that draws is allowed. */
         children: { accepts: "node", required: true },

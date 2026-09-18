@@ -52,6 +52,7 @@ describe("Marquee", () => {
     const copies = root.querySelectorAll(".sk-marquee__content");
     const button = ui.getByRole("button", { name: "Play motion" });
 
+    expect(root.hasAttribute("data-sk-marquee")).toBe(true);
     expect(copies).toHaveLength(2);
     expect(copies[0].hasAttribute("aria-hidden")).toBe(false);
     expect(copies[1].getAttribute("aria-hidden")).toBe("true");

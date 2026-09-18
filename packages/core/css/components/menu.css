@@ -377,12 +377,6 @@
     margin: var(--sk-menu-separator-margin) 0;
     background: var(--sk-menu-separator-color);
   }
-  .sk-menu__group-label {
-    padding: var(--space-inset-xs) var(--space-inset-sm);
-    color: var(--color-text-tertiary);
-    font-size: var(--font-size-caption);
-    font-weight: var(--font-weight-label);
-  }
 
   @media (forced-colors: active) {
     .sk-menu__content {

@@ -15,7 +15,8 @@ export type CalloutProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   children: ReactNode;
   /** Optional decorative leading glyph. It is marked aria-hidden, meaning lives in the text. */
   icon?: ReactNode;
-  title?: ReactNode;
+  /** Plain text title. Matches the contract slot. */
+  title?: string;
   tone?: CalloutTone;
 };
 

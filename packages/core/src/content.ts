@@ -23,7 +23,7 @@ export const toastLiveRegions = {
 } as const;
 
 export const toastEvents = {
-  dismiss: "sk-dismiss",
+  dismiss: "sk:toastdismiss",
 } as const;
 
 export function getToastLiveRegion(tone: ToastTone): ToastLiveRegion {
@@ -71,8 +71,13 @@ export type ContentPartClass = (typeof contentParts)[ContentPart];
  */
 export const contentContract = {
   id: "content",
+  category: "feedback",
   css: "@skryensya/core/components/toast.css",
   parts: contentParts,
+  events: toastEvents,
+  eventDetails: {
+    dismiss: { detail: { reason: "\"dismiss\" | \"timeout\"" }, reactProp: "onDismiss", source: "toast", trigger: "toastDismiss" },
+  },
   hooks: [
     "--sk-callout-accent",
     "--sk-callout-bg",
@@ -88,6 +93,15 @@ export const contentContract = {
   hookSheets: [
     "@skryensya/core/components/callout.css",
   ],
+  a11y: [
+    {
+      when: { dismissible: true },
+      requiresOneOf: ["dismissLabel"],
+      because:
+        "The dismiss control is icon-only; every dismissible toast needs an accessible name for the notification it clears.",
+      signatures: ["Toast"],
+    },
+  ],
 
   options: {
     tone: {
@@ -101,7 +115,7 @@ export const contentContract = {
     /** The dismiss control's accessible name. It is icon-only, so it has no other. */
     dismissLabel: { type: "string", default: "Dismiss notification", attr: "aria-label" },
     /** Milliseconds before the enhancer requests dismissal. Omit to keep the toast visible. */
-    timeout: { type: "number", attr: "data-timeout", machineInput: true },
+    timeout: { type: "number", attr: "data-timeout", machineInput: true, min: 1, integer: true },
   },
 
   signatures: {
@@ -140,6 +154,10 @@ export const contentContract = {
       parents: ["ToastRegion", "ToastTemplate"],
       options: ["tone", "dismissible", "dismissLabel", "timeout"],
       mount: "data-sk-toast",
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+      ],
       slots: {
         icon: { accepts: "signature", of: ["Icon"] },
         title: { accepts: "text" },

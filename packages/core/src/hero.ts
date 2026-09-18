@@ -67,6 +67,7 @@ export type HeroAlign = "start" | "center";
 
 export const heroContract = {
   id: "hero",
+  category: "layout",
   css: "@skryensya/core/patterns/hero.css",
   parts: heroParts,
   hooks: [
@@ -82,13 +83,15 @@ export const heroContract = {
     padding: { type: "enum", values: ["none", "xs", "sm", "md", "lg", "xl"], default: "xl", attr: "data-padding" },
     surface: { type: "enum", values: ["none", "sunken", "surface", "raised"], default: "surface", attr: "data-surface" },
     align: { type: "enum", values: ["start", "center"], default: "start", attr: "data-align" },
+    /** `section` or `header` when the opener is a region of its own. React's `as`. */
+    heroElement: { type: "enum", values: ["div", "section", "header"], default: "div", element: true, prop: "as" },
   },
 
   signatures: {
     Hero: {
       intent: ["page-intro", "banner", "landing-page-opener", "primary-call-to-action-block"],
       host: { element: "div" },
-      options: ["padding", "surface", "align"],
+      options: ["padding", "surface", "align", "heroElement"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "div", part: "hero", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "Hero" },

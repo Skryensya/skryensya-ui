@@ -32,6 +32,10 @@ const foundationDescriptions = {
     es: "Ofrece cinco niveles de sombra nombrados para profundidad sin escribir box-shadow a mano.",
     en: "Offers five named shadow levels for depth without hand-written box-shadow.",
   },
+  "/typography": {
+    es: "Empareja cada tamaño con su interlineado y nombra un peso por rol, sobre una familia que viaja con el paquete.",
+    en: "Pairs every size with its line-height and names one weight per role, on a family that ships with the package.",
+  },
   "/icons": {
     es: "Nombra roles de icono estables mientras un set elige la geometría de marca de cada rol.",
     en: "Names stable icon roles while a set chooses the brand geometry for each role.",

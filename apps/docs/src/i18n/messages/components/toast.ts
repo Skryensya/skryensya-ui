@@ -59,7 +59,7 @@ export const toastMessages = {
     "toastPage.stackLabel": "Pila de toasts",
     "toastPage.stackNote": "Pasa el puntero para abrirla",
     "toastPage.stackBody6":
-      "El JavaScript es el mismo del primer ejemplo, y el HTML también: clonar, insertar, montar y remover en <code>sk-dismiss</code>. No hay nada que agregar para apilar. Los hooks son de la región: <code>--sk-toast-peek</code> (cuánto asoma cada uno), <code>--sk-toast-shrink</code> (cuánto encoge cada paso hacia atrás) y <code>--sk-toast-cascade</code> (cuánto se separan en el tiempo al abrir). Ningún toast sabe que está en una pila.",
+      "El JavaScript es el mismo del primer ejemplo, y el HTML también: clonar, insertar, montar y remover en <code>sk:toastdismiss</code>. No hay nada que agregar para apilar. Los hooks son de la región: <code>--sk-toast-peek</code> (cuánto asoma cada uno), <code>--sk-toast-shrink</code> (cuánto encoge cada paso hacia atrás) y <code>--sk-toast-cascade</code> (cuánto se separan en el tiempo al abrir). Ningún toast sabe que está en una pila.",
     "toastPage.closeTitle": "El cierre es un Button",
     "toastPage.closeBody1":
       'El ✕ se construye como <a href="/es/componentes/button">Button</a> icon-only en tamaño <code>sm</code> (<code>data-size="sm" data-icon-only data-variant="ghost"</code>), no como un control ad hoc. Con eso hereda lo que ya resuelve Button: la cara de 32px, el hit target de 44px que <code>::after</code> expande más allá de esa cara, el state layer de hover y presión, y el foco. Sin texto visible, <code>aria-label</code> es obligatorio.',
@@ -69,7 +69,7 @@ export const toastMessages = {
     "toastPage.lifecycleBody1":
       'Toast no gestiona colas ni persistencia: esos ciclos pertenecen a la aplicación. El componente aporta la región, reutiliza la anatomía de <a href="/es/componentes/callout">Callout</a>; icono, título, descripción, acciones; más su propio dismiss, anuncia el tono y avisa cuándo se quiere ir.',
     "toastPage.lifecycleBody2":
-      'En Vanilla, <code>data-sk-toast</code> sobre un <code>sk-callout</code> registra el dismiss nativo y anuncia el tono. <code>data-timeout</code> es opcional; al vencer emite <code>sk-dismiss</code> (igual que el ✕) con <code>detail.reason</code>, <code>"timeout"</code> o <code>"dismiss"</code>, por si la app distingue “se fue solo” de “lo cerraron”. El componente nunca retira el nodo: eso lo hace quien lo puso.',
+      'En Vanilla, <code>data-sk-toast</code> sobre un <code>sk-callout</code> registra el dismiss nativo y anuncia el tono. <code>data-timeout</code> es opcional; al vencer emite <code>sk:toastdismiss</code> (igual que el ✕) con <code>detail.reason</code>, <code>"timeout"</code> o <code>"dismiss"</code>, por si la app distingue “se fue solo” de “lo cerraron”. El componente nunca retira el nodo: eso lo hace quien lo puso.',
     "toastPage.reactBody":
       'El código está en la pestaña <strong>React</strong> de cada preview. La API refleja Callout (<code>title</code>, <code>icon</code>, <code>actions</code>, <code>tone</code>) más <code>timeout</code> y <code>onDismiss</code> con razón. Sin <code>tone</code>, es neutral.',
     "toastPage.vanillaComment": "Los iconos se escriben como placeholders <span data-sk-icon>;\nmountIcons los reemplaza por el <svg> del set enlazado.",
@@ -137,7 +137,7 @@ export const toastMessages = {
     "toastPage.stackLabel": "Toast stack",
     "toastPage.stackNote": "Hover to open it",
     "toastPage.stackBody6":
-      "The JavaScript is the same as the first example, and so is the HTML: clone, insert, mount, and remove on <code>sk-dismiss</code>. There is nothing extra to add for stacking. The hooks belong to the region: <code>--sk-toast-peek</code> (how much each one peeks out), <code>--sk-toast-shrink</code> (how much each step back shrinks), and <code>--sk-toast-cascade</code> (how far apart they open in time). No toast knows it is in a stack.",
+      "The JavaScript is the same as the first example, and so is the HTML: clone, insert, mount, and remove on <code>sk:toastdismiss</code>. There is nothing extra to add for stacking. The hooks belong to the region: <code>--sk-toast-peek</code> (how much each one peeks out), <code>--sk-toast-shrink</code> (how much each step back shrinks), and <code>--sk-toast-cascade</code> (how far apart they open in time). No toast knows it is in a stack.",
     "toastPage.closeTitle": "The close control is a Button",
     "toastPage.closeBody1":
       'The ✕ is built as an icon-only <a href="/components/button">Button</a> at <code>sm</code> size (<code>data-size="sm" data-icon-only data-variant="ghost"</code>), not an ad hoc control. That way it inherits what Button already solved: the 32px face, the 44px hit target <code>::after</code> expands past that face, the hover/press state layer, and focus. With no visible text, <code>aria-label</code> is mandatory.',
@@ -147,7 +147,7 @@ export const toastMessages = {
     "toastPage.lifecycleBody1":
       'Toast manages no queues and no persistence: those lifecycles belong to the application. The component supplies the region, reuses <a href="/components/callout">Callout</a>\'s anatomy. Icon, title, description, actions. Plus its own dismiss, announces the tone, and signals when it wants to leave.',
     "toastPage.lifecycleBody2":
-      '\nIn Vanilla, <code>data-sk-toast</code> on a <code>sk-callout</code> registers the native dismiss and announces the tone. <code>data-timeout</code> is optional; on expiry it fires <code>sk-dismiss</code> (same as the ✕) with <code>detail.reason</code>, <code>"timeout"</code> or <code>"dismiss"</code>, in case the app distinguishes "it left on its own" from "someone closed it." The component never removes the node: whoever placed it does that.',
+      '\nIn Vanilla, <code>data-sk-toast</code> on a <code>sk-callout</code> registers the native dismiss and announces the tone. <code>data-timeout</code> is optional; on expiry it fires <code>sk:toastdismiss</code> (same as the ✕) with <code>detail.reason</code>, <code>"timeout"</code> or <code>"dismiss"</code>, in case the app distinguishes "it left on its own" from "someone closed it." The component never removes the node: whoever placed it does that.',
     "toastPage.reactBody":
       'The code is in each preview\'s <strong>React</strong> tab. The API mirrors Callout\'s (<code>title</code>, <code>icon</code>, <code>actions</code>, <code>tone</code>) plus <code>timeout</code> and <code>onDismiss</code> with a reason. With no <code>tone</code>, it is neutral.',
     "toastPage.vanillaComment": "Icons are written as <span data-sk-icon> placeholders;\nmountIcons replaces them with the <svg> of the linked set.",

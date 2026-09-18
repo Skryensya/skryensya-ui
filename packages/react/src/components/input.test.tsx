@@ -55,4 +55,23 @@ describe("Input contract", () => {
 
     expect(input.className.split(" ")).toEqual(expect.arrayContaining(["sk-input", "custom"]));
   });
+
+  it("inherits FormField wiring the same way Input does", () => {
+    const ui = render(
+      <FormField label="Salida" hint="Hora local." error="Falta.">
+        <NativeInput name="inicio" type="time" />
+      </FormField>,
+    );
+    const input = controlIn(ui).getByLabelText("Salida") as HTMLInputElement;
+
+    expect(input.id).toBeTruthy();
+    expect(input.getAttribute("aria-invalid")).toBe("true");
+    expect(input.getAttribute("aria-describedby")).toMatch(/hint/);
+    expect(input.getAttribute("aria-describedby")).toMatch(/error/);
+  });
+
+  it("writes controlSize on NativeInput as data-size", () => {
+    const ui = render(<NativeInput aria-label="Salida" controlSize="sm" name="inicio" type="time" />);
+    expect(controlIn(ui).getByLabelText("Salida").getAttribute("data-size")).toBe("sm");
+  });
 });

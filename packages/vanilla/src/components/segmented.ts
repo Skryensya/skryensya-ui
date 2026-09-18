@@ -1,4 +1,4 @@
-import { segmentedParts } from "@skryensya/core/segmented";
+import { segmentedEvents, segmentedParts } from "@skryensya/core/segmented";
 import { applyAttrs, bindEvents } from "../runtime/apply.js";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
@@ -49,7 +49,7 @@ export function connectSegmented(root: HTMLElement): Cleanup {
 
     value = next;
     render();
-    root.dispatchEvent(new CustomEvent("sk-value-change", { bubbles: true, detail: { value } }));
+    root.dispatchEvent(new CustomEvent(segmentedEvents.valueChange, { bubbles: true, detail: { value } }));
   };
 
   const cleanups = options.map((option) => bindEvents(option, {

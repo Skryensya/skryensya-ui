@@ -31,7 +31,7 @@ export const sidebarMessages = {
     "sidebarPage.widthBody3":
       "Para una barra sola, <code>minInlineSize</code> y <code>maxInlineSize</code> escriben esos dos hooks desde el markup o desde las props, con cualquier largo de CSS (<code>18rem</code>, <code>30%</code>, <code>min(24rem, 40vw)</code>). Son azúcar sobre los hooks, no un segundo mecanismo: quien tenga cincuenta barras iguales sigue poniendo el hook una vez en su hoja de estilos. Los extremos son de la instancia y el ancho expandido no, y la división no es caprichosa: el ancho expandido es el tamaño para el que la barra fue diseñada, y eso es una decisión del sistema; el recorrido depende de la pantalla y del contenido de quien lee.",
     "sidebarPage.widthBody4":
-      "Redimensiona con el clic <strong>mantenido</strong>: la presión sola no hace nada, el gesto arranca solo cuando el puntero viajó cuatro píxeles. Un clic suelto en el borde del panel no mueve el ancho, no dispara <code>sk-resize-change</code> y no escribe nada en el almacenamiento, que es lo que antes congelaba en el navegador de quien lee un ancho que nunca eligió.",
+      "Redimensiona con el clic <strong>mantenido</strong>: la presión sola no hace nada, el gesto arranca solo cuando el puntero viajó cuatro píxeles. Un clic suelto en el borde del panel no mueve el ancho, no dispara <code>sk:sidebarresizechange</code> y no escribe nada en el almacenamiento, que es lo que antes congelaba en el navegador de quien lee un ancho que nunca eligió.",
     "sidebarPage.widthBody5":
       "Es un splitter completo, no sólo un arrastre: las flechas lo mueven de a poco (con <kbd class=\"sk-kbd\">Shift</kbd>, más rápido), <kbd class=\"sk-kbd\">Home</kbd> y <kbd class=\"sk-kbd\">End</kbd> van a los extremos, y doble clic o <kbd class=\"sk-kbd\">Enter</kbd> devuelven el ancho por defecto. Con <code>storageKey</code> el ancho sobrevive a la recarga; sin él, dura la sesión, que es el caso de este preview.",
     "sidebarPage.widthBody6":
@@ -63,7 +63,7 @@ export const sidebarMessages = {
       'En ese markup, el <code>.app-shell</code> que envuelve al <code>&lt;aside&gt;</code> y el <code>.app-shell__main</code> de al lado <strong>no son del sidebar</strong>: son la app que lo consume, puesta ahí porque un riel sin nada al lado no se lee. Lo que copias es el <code>&lt;aside class="sk-sidebar"&gt;</code>; el resto lo pone tu layout.',
     "sidebarPage.vanillaInitTitle": "Inicializar vanilla",
     "sidebarPage.reactBody":
-      "Controlado (<code>collapsed</code>) o no controlado (<code>defaultCollapsed</code>), con <code>onCollapsedChange</code> para persistir la preferencia. El evento equivalente en vanilla es <code>sk-collapsed-change</code>. Persistir es del consumidor: con qué clave y por usuario o por dispositivo no lo decide un design system. El código está en la pestaña <strong>React</strong> del preview.",
+      "Controlado (<code>collapsed</code>) o no controlado (<code>defaultCollapsed</code>), con <code>onCollapsedChange</code> para persistir la preferencia. El evento equivalente en vanilla es <code>sk:sidebarcollapsedchange</code>. Persistir es del consumidor: con qué clave y por usuario o por dispositivo no lo decide un design system. El código está en la pestaña <strong>React</strong> del preview.",
     "sidebarPage.iconsComment": "Los iconos se autoran como placeholders <span data-sk-icon>;\nmountIcons los reemplaza por el <svg> del set enlazado.",
     "sidebarPage.test1": "Colapsa en modo no controlado y reporta el cambio.",
     "sidebarPage.test2": "El trigger apunta al contenido que controla.",
@@ -104,7 +104,7 @@ export const sidebarMessages = {
     "sidebarPage.widthBody3":
       "For a single bar, <code>minInlineSize</code> and <code>maxInlineSize</code> write those two hooks from the markup or from props, with any CSS length (<code>18rem</code>, <code>30%</code>, <code>min(24rem, 40vw)</code>). They are sugar over the hooks, not a second mechanism: whoever has fifty identical bars still sets the hook once in their stylesheet. The extremes belong to the instance and the expanded width does not, and the split is not arbitrary: the expanded width is the size the bar was designed for, a system decision; the travel depends on the reader's own screen and content.",
     "sidebarPage.widthBody4":
-      "It resizes on a <strong>held</strong> click: pressure alone does nothing, the gesture only starts once the pointer has traveled four pixels. A loose click on the panel's edge does not move the width, does not fire <code>sk-resize-change</code>, and writes nothing to storage: which is what used to freeze a width nobody chose into a reader's browser.",
+      "It resizes on a <strong>held</strong> click: pressure alone does nothing, the gesture only starts once the pointer has traveled four pixels. A loose click on the panel's edge does not move the width, does not fire <code>sk:sidebarresizechange</code>, and writes nothing to storage: which is what used to freeze a width nobody chose into a reader's browser.",
     "sidebarPage.widthBody5":
       "It is a full splitter, not just a drag: the arrows move it in small steps (faster with <kbd class=\"sk-kbd\">Shift</kbd>), <kbd class=\"sk-kbd\">Home</kbd> and <kbd class=\"sk-kbd\">End</kbd> jump to the extremes, and a double-click or <kbd class=\"sk-kbd\">Enter</kbd> return the default width. With <code>storageKey</code> the width survives a reload; without it, it lasts the session, which is this preview's case.",
     "sidebarPage.widthBody6":
@@ -136,7 +136,7 @@ export const sidebarMessages = {
       'In that markup, the <code>.app-shell</code> wrapping the <code>&lt;aside&gt;</code> and the <code>.app-shell__main</code> beside it <strong>do not belong to the sidebar</strong>: they are the app consuming it, put there because a rail with nothing beside it does not read. What you copy is the <code>&lt;aside class="sk-sidebar"&gt;</code>; your layout supplies the rest.',
     "sidebarPage.vanillaInitTitle": "Initializing vanilla",
     "sidebarPage.reactBody":
-      "Controlled (<code>collapsed</code>) or uncontrolled (<code>defaultCollapsed</code>), with <code>onCollapsedChange</code> to persist the preference. The equivalent vanilla event is <code>sk-collapsed-change</code>. Persisting belongs to the consumer: which key, and per-user or per-device, is not a design system's decision. The code is in the preview's <strong>React</strong> tab.",
+      "Controlled (<code>collapsed</code>) or uncontrolled (<code>defaultCollapsed</code>), with <code>onCollapsedChange</code> to persist the preference. The equivalent vanilla event is <code>sk:sidebarcollapsedchange</code>. Persisting belongs to the consumer: which key, and per-user or per-device, is not a design system's decision. The code is in the preview's <strong>React</strong> tab.",
     "sidebarPage.iconsComment": "Icons are authored as <span data-sk-icon> placeholders;\nmountIcons replaces them with the <svg> of the linked set.",
     "sidebarPage.test1": "Collapses uncontrolled and reports the change.",
     "sidebarPage.test2": "Points the trigger at the content it controls.",

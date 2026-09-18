@@ -86,7 +86,7 @@ export const codePreviewAnatomyCss = `.sk-annotated {
 export const codePreviewTree = (t: Translate): UsageTree => ({
   contract: "code-preview",
   signature: "CodePreview",
-  options: { collapsible: true, lines: "6", previewLines: "3" },
+  options: { collapsible: true, lines: 6, previewLines: 3, moreLabel: t("kit.expand"), lessLabel: t("kit.collapse") },
   slots: {
     label: t("demo.codePreview.label"),
     note: t("demo.codePreview.note"),

@@ -64,6 +64,7 @@
     padding: 3px;
   }
   .sk-color-picker__trigger[type="color"] {
+    box-sizing: border-box;
     inline-size: calc(var(--sk-color-picker-trigger-size) * 1.25);
     block-size: var(--sk-color-picker-trigger-size);
     padding: 4px;
@@ -165,6 +166,7 @@
   /* ── THE AREA: 2D saturation/value plane. Zag inlines its own gradient + the thumb's position
    * (with centering translate already applied); this sheet only sizes the box and the dot. ── */
   .sk-color-picker__area {
+    box-sizing: border-box;
     block-size: var(--sk-color-picker-area-block-size);
     border-radius: var(--sk-color-picker-area-radius);
     overflow: hidden;
@@ -184,6 +186,7 @@
     border-radius: inherit;
   }
   .sk-color-picker__area-thumb {
+    box-sizing: border-box;
     inline-size: var(--sk-color-picker-area-thumb-size);
     block-size: var(--sk-color-picker-area-thumb-size);
     border-radius: var(--radius-pill);
@@ -222,6 +225,7 @@
     border-radius: var(--sk-color-picker-rail-radius);
   }
   :is(.sk-color-picker__hue-thumb, .sk-color-picker__alpha-thumb) {
+    box-sizing: border-box;
     inline-size: var(--sk-color-picker-rail-thumb-size);
     block-size: var(--sk-color-picker-rail-thumb-size);
     border-radius: var(--radius-pill);

@@ -41,4 +41,11 @@ describe("Meter React contracts", () => {
     expect(ui.getByText("Batería")).toBeTruthy();
     expect(ui.queryByText("50%")).toBeNull();
   });
+
+  it("stamps the meter mount attribute on the track host", () => {
+    const ui = render(<Meter label="Uso" value={40} />);
+    const meter = ui.getByRole("meter", { name: "Uso" });
+    expect(meter.hasAttribute("data-sk-meter")).toBe(true);
+    expect(meter.className).toContain("sk-meter");
+  });
 });

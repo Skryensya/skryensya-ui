@@ -17,15 +17,25 @@ import { IconStateButton } from "@skryensya/react/icon-state-button";
 import { Kbd } from "@skryensya/react/kbd";
 import { Tooltip } from "@skryensya/react/tooltip";
 import { Loader } from "@skryensya/react/loader";
+import { Menu } from "@skryensya/react/menu";
 import { SegmentedControl } from "@skryensya/react/segmented";
 import { Tabs } from "@skryensya/react/tabs";
-import { Sidebar, SidebarContent, SidebarResizeHandle } from "@skryensya/react/sidebar";
+import { Sidebar, SidebarContent, SidebarHeader, SidebarResizeHandle } from "@skryensya/react/sidebar";
 import { useStoredPreference } from "@skryensya/react/storage";
 import { TreeView } from "@skryensya/react/tree-view";
 import type { CommandPaletteEntry } from "@skryensya/core/command-palette";
 import { writeClipboard } from "@skryensya/core/copy-button";
 import { detectMac, formatHotkey } from "@skryensya/core/hotkey";
 import { definePreference, oneOf } from "@skryensya/core/storage";
+/*
+ * The kit's scrollbar pattern, as TEXT, to go into the sandbox's own stylesheet.
+ *
+ * The preview runs as a document on another origin, so it cannot share this page's sheets: what it
+ * paints with is `previewCss` and nothing else, and `foundation.css` (which the sandbox bundle ships)
+ * does not carry this pattern. `?raw` hands over the published file verbatim rather than a
+ * hand-copied set of declarations, so the demo's scrollbar is the kit's, kept in one place.
+ */
+import scrollbarCss from "@skryensya/core/patterns/scrollbar.css?raw";
 import { PaneSplitter } from "./PaneSplitter";
 import { reloadIcon, splitHorizontalIcon, splitVerticalIcon, toolIcons } from "../../icons";
 import { vanillaScriptPath, vanillaScriptSource } from "../../lib/vanilla-script";
@@ -36,10 +46,49 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type ReactNode,
   type RefObject,
   type SyntheticEvent,
 } from "react";
+
+/*
+ * THE TWO WIDTHS THIS TOOL BREAKS AT, and both come from the content rather than from a device.
+ *
+ * `60rem` is where the rail stops being affordable IN FLOW: it is a fixed 208px, so at 390px it left
+ * the stage 182px - narrower than a line of the JSX it is meant to be showing. Below it the rail
+ * overlays the stage instead (`pages/index.astro`) and closes on a pick, the way a drawer does.
+ *
+ * `48rem` is Sandpack's own number (its stylesheet stops putting the panes side by side there) and
+ * also where stacking them stops working: at 390x844 the two panes measured 359px and 349px, and
+ * 41px of the second is the bar above the preview. Below it the tool shows ONE pane, and each pane's
+ * own header carries the control that opens the other.
+ */
+const RAIL_OVERLAY_QUERY = "(width < 60rem)";
+const SINGLE_PANE_QUERY = "(width <= 48rem)";
+
+/*
+ * A media query as state. `useSyncExternalStore` rather than an effect, because the answer is needed
+ * during the FIRST render (which pane to show) and an effect only ever corrects it a paint later.
+ * The server snapshot is `false`: this island is `client:only`, so it never runs, and false is the
+ * layout with the most room rather than the one that hides a pane.
+ */
+function useMediaQuery(query: string): boolean {
+  const subscribe = useCallback(
+    (notify: () => void) => {
+      const list = window.matchMedia(query);
+      list.addEventListener("change", notify);
+      return () => list.removeEventListener("change", notify);
+    },
+    [query],
+  );
+
+  return useSyncExternalStore(
+    subscribe,
+    () => window.matchMedia(query).matches,
+    () => false,
+  );
+}
 
 /*
  * THE PLAYGROUND, and the one thing it exists to prove: this code runs.
@@ -114,6 +163,7 @@ export type PlaygroundStrings = {
   readonly search: string;
   readonly searchPlaceholder: string;
   readonly searchEmpty: string;
+  readonly searchClose: string;
   readonly searchHintNavigate: string;
   readonly searchHintOpen: string;
   readonly searchHintClose: string;
@@ -122,11 +172,24 @@ export type PlaygroundStrings = {
   readonly copied: string;
   readonly layoutSideBySide: string;
   readonly layoutStacked: string;
+  readonly showCode: string;
+  readonly showPreview: string;
+  readonly language: string;
+};
+
+/** One translation of this page: a row in the language menu, and a real address. */
+export type PlaygroundLanguage = {
+  readonly value: string;
+  readonly label: string;
+  readonly href: string;
+  readonly current: boolean;
 };
 
 type Props = {
   /** URL of the built catalogue INDEX for this locale. Fetched, not inlined: see the endpoint for why. */
   readonly catalogue: string;
+  /** Every translation of this page, newest-to-oldest irrelevant: one row per locale (`index.astro`). */
+  readonly languages: readonly PlaygroundLanguage[];
   readonly strings: PlaygroundStrings;
 };
 
@@ -314,7 +377,9 @@ const BUNDLES = {
    * Sandpack transpiles only what the example's own imports reach. See the build script for the
    * measurement that made this a graph instead of a single file. */
   react: "/sandbox/react-modules.json",
-  vanilla: "/sandbox/skryensya-vanilla.js",
+  /** Same shape for Vanilla: `@skryensya/vanilla` and `@skryensya/icons-lucide`, keyed by their path
+   * under `/node_modules/@skryensya/`. */
+  vanilla: "/sandbox/vanilla-modules.json",
   /** `{ base, parts }`: the sheets every example needs, and part class name → the files that part
    * needs (the sheet its contract declares, plus that sheet's own `@import` closure), both resolved
    * at build time so the client never has to parse CSS to find out. See `useComponentCss`. */
@@ -566,6 +631,30 @@ function reactPackageFiles(modules: Readonly<Record<string, string>>) {
 }
 
 /*
+ * THE SAME MOUNT FOR VANILLA: `@skryensya/vanilla` and `@skryensya/icons-lucide` as the graph the
+ * build emits (keys already carry the package folder), plus `@skryensya/core/skryensya.css`, the file
+ * `main.js` imports. That stylesheet holds only what this example's parts need (see
+ * `useComponentCss`) rather than the whole published bundle, which paints the same example.
+ */
+function vanillaPackageFiles(modules: Readonly<Record<string, string>>, css: string) {
+  const scope = "/node_modules/@skryensya";
+  const manifest = (name: string, main?: string) => ({
+    code: JSON.stringify({ name: `@skryensya/${name}`, ...(main ? { main } : {}) }, null, 2),
+    hidden: true,
+  });
+
+  return {
+    [`${scope}/vanilla/package.json`]: manifest("vanilla", "./index.js"),
+    [`${scope}/icons-lucide/package.json`]: manifest("icons-lucide", "./index.js"),
+    [`${scope}/core/package.json`]: manifest("core"),
+    [`${scope}/core/skryensya.css`]: { code: css, hidden: true },
+    ...Object.fromEntries(
+      Object.entries(modules).map(([file, code]) => [`${scope}/${file}`, { code, hidden: true }]),
+    ),
+  };
+}
+
+/*
  * WHERE THE SANDBOX ACTUALLY RUNS, and the one dependency this page has that the rest of the site
  * does not: Sandpack compiles and executes inside an iframe served by CodeSandbox. Everything else
  * here is static and local; this is not.
@@ -591,7 +680,7 @@ type CssManifest = {
 type Bundles = {
   readonly foundation: string;
   readonly react: Readonly<Record<string, string>>;
-  readonly vanilla: string;
+  readonly vanilla: Readonly<Record<string, string>>;
   readonly cssManifest: CssManifest;
   readonly components: readonly PlaygroundIndexComponent[];
 };
@@ -639,7 +728,7 @@ function useBundles(catalogue: string): { bundles: Bundles | null; blocked: Bloc
           setBundles({
             foundation,
             react: JSON.parse(react) as Record<string, string>,
-            vanilla,
+            vanilla: JSON.parse(vanilla) as Record<string, string>,
             cssManifest: JSON.parse(cssManifest) as CssManifest,
             components: JSON.parse(components) as PlaygroundIndexComponent[],
           });
@@ -744,7 +833,10 @@ function useComponentDetail(
  * the two previews cannot disagree about what to paint. Same reason the emitted sources are built
  * from one tree rather than authored twice.
  */
-const SK_NAME_RE = /\bsk-([a-z0-9]+(?:-[a-z0-9]+)*)\b/g;
+/* Stops at a BEM `__element` or `--modifier` rather than at `\b`: `_` is a word character, so `\b`
+   never fell between `switch` and `__control` and every element class matched nothing. TileSwitch
+   reaches Switch's sheet ONLY through `sk-switch__control`, and its track painted at 0x0. */
+const SK_NAME_RE = /\bsk-([a-z0-9]+(?:-[a-z0-9]+)*)(?=__|--|[^a-z0-9_-]|$)/g;
 
 function detectPartNames(markup: string): readonly string[] {
   if (!markup) return [];
@@ -946,10 +1038,13 @@ function ChromeSlot({ name, children }: { readonly name: string; readonly childr
 function EditorFiles({
   files,
   label,
+  onShowPreview,
   strings,
 }: {
   readonly files: readonly string[];
   readonly label: string;
+  /** Present only while the tool shows one pane at a time; see the strip's own comment below. */
+  readonly onShowPreview?: () => void;
   readonly strings: PlaygroundStrings;
 }) {
   const { sandpack } = useSandpack();
@@ -985,7 +1080,16 @@ function EditorFiles({
     const pane = paneRef.current;
     if (!pane) return;
     const dress = () => {
-      for (const scroller of pane.querySelectorAll(".cm-scroller:not(.sk-scrollbar)")) {
+      /*
+       * The tab strip is the second scroller in this pane, and it used to hide its scrollbar
+       * outright: an example with more files than fit said nothing about the ones past the edge, and
+       * on a phone that is one tab of two or three. Dressed with the same pattern as the code
+       * scroller below it, which is this app's established answer for "this scrolls" - and one that
+       * mirrors in RTL on its own, unlike a fade painted on a named side.
+       */
+      for (const scroller of pane.querySelectorAll(
+        ".cm-scroller:not(.sk-scrollbar), .sk-tabs__list:not(.sk-scrollbar)",
+      )) {
         scroller.classList.add("sk-scrollbar", "sk-scrollbar--reveal");
       }
     };
@@ -1018,6 +1122,25 @@ function EditorFiles({
         is the only thing that picks another, and there is no second way to say which file.
       */}
       <div className="playground__file-actions">
+        {/*
+          THE WAY BACK TO THE PREVIEW, and only where the preview is not on screen at all: at
+          `SINGLE_PANE_QUERY` the tool draws one pane, so this strip is the code pane's own header and
+          the mirror of the `code` button in the preview's bar. `visibility` is the vocabulary's "see
+          this" role, which is what the control does; it says nothing about what the demo looks like.
+        */}
+        {onShowPreview ? (
+          <Tooltip content={strings.showPreview} placement="block-end">
+            <Button
+              aria-label={strings.showPreview}
+              iconOnly
+              onClick={onShowPreview}
+              size="sm"
+              variant="ghost"
+            >
+              <Icon name="visibility" size="sm" />
+            </Button>
+          </Tooltip>
+        ) : null}
         {/*
           A KIT BUTTON, in the same three attributes every other icon control on this screen wears:
           ghost, `sm`, icon-only. `IconStateButton` is the composition the kit prescribes for a
@@ -1137,7 +1260,7 @@ export default function Playground(props: Props) {
   );
 }
 
-function PlaygroundTool({ catalogue, strings }: Props) {
+function PlaygroundTool({ catalogue, languages, strings }: Props) {
   /*
    * Empty until the catalogue lands, and the ids are held rather than the objects: the selection is
    * the reader's and must survive the fetch resolving, which replaces every object it points at.
@@ -1172,8 +1295,23 @@ function PlaygroundTool({ catalogue, strings }: Props) {
    * on it is the reader's toggle, and a window resize is not a request to reopen a rail they closed.
    */
   const [railHidden, setRailHidden] = useState(
-    () => typeof window !== "undefined" && window.matchMedia("(width < 60rem)").matches,
+    () => typeof window !== "undefined" && window.matchMedia(RAIL_OVERLAY_QUERY).matches,
   );
+  /*
+   * THE RAIL OVER THE STAGE, NOT BESIDE IT, below `60rem`. Live (not read-once like the initial
+   * collapsed state above): this decides how an OPEN rail is drawn, so a window that narrows while it
+   * is open has to move it out of flow rather than let it eat the editor it is sitting next to.
+   */
+  const railOverlays = useMediaQuery(RAIL_OVERLAY_QUERY);
+  const singlePane = useMediaQuery(SINGLE_PANE_QUERY);
+  /*
+   * WHICH PANE, and it opens on the PREVIEW. A reader arriving from a docs preview on a phone came to
+   * see the component run; editing is the deliberate second step, and the code is one tap away in the
+   * preview's own bar. Not a stored preference: it only exists at widths where both panes cannot be
+   * shown at once, and `paneLayout` beside it already remembers the arrangement for the widths where
+   * they can.
+   */
+  const [mobilePane, setMobilePane] = useState<"code" | "preview">("preview");
   const [paneLayout, setPaneLayout] = useStoredPreference(paneLayoutPreference);
   const stacked = paneLayout === "stacked";
   const { bundles, blocked } = useBundles(catalogue);
@@ -1194,7 +1332,6 @@ function PlaygroundTool({ catalogue, strings }: Props) {
   const { sandpack: sandpackTheme, colorScheme } = useThemeState();
 
   const component = components.find((entry) => entry.id === componentId) ?? components[0];
-  const isHandoff = component?.id === handoffComponentId;
   const example = component?.examples.find((entry) => entry.id === exampleId) ?? component?.examples[0];
 
   /*
@@ -1284,6 +1421,9 @@ function PlaygroundTool({ catalogue, strings }: Props) {
     if (componentPart !== handoffComponentId) setHandoff(null);
     setComponentId(componentPart);
     setExampleId(examplePart);
+    /* A rail drawn OVER the stage is covering the thing it just changed, so picking closes it. Beside
+       the stage it covers nothing, and closing it there would undo a choice the reader never made. */
+    if (railOverlays) setRailHidden(true);
   };
 
   /**
@@ -1336,6 +1476,67 @@ function PlaygroundTool({ catalogue, strings }: Props) {
           })),
         ),
     [components],
+  );
+
+  /*
+   * ESCAPE CLOSES THE OVERLAID RAIL, which is what anything drawn over the page owes a keyboard. Only
+   * while it IS overlaid: beside the stage the rail is ordinary layout, and Escape there would close a
+   * panel the reader parked open on purpose. The palette and the discard prompt are real `<dialog>`s
+   * and take Escape themselves before it reaches the document, so this cannot steal theirs.
+   */
+  useEffect(() => {
+    if (!railOverlays || railHidden) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setRailHidden(true);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [railOverlays, railHidden]);
+
+  /*
+   * THE RAIL'S SWITCH, in the one place that is still there when the rail is not. Authored here
+   * rather than inline so the waiting shell above can portal the SAME control: the bar is the tool's
+   * furniture, and furniture that arrives one control at a time reads as a page still loading long
+   * after the tool is usable.
+   */
+  const railToggle = (
+    <button
+      aria-expanded={!railHidden}
+      aria-label={railHidden ? strings.showRail : strings.hideRail}
+      className="sk-button sk-interactive"
+      data-icon-only=""
+      /* `md`, like every other control in this row. At `sm` it was a 32px button sitting beside three
+         44px ones - the first thing in the bar, and the one that looked left out of it. */
+      data-size="md"
+      data-variant="ghost"
+      onClick={() => setRailHidden((hidden) => !hidden)}
+      type="button"
+    >
+      {/* The kit's own answer for this control: `SidebarTrigger`'s demo and the site's drawer trigger
+          both draw it with `menu`. A shape drawn by hand here would be a second icon vocabulary. */}
+      <Icon name="menu" />
+    </button>
+  );
+
+  /*
+   * WHICH BINDING, authored once and rendered in one of two places: the chrome's centre column where
+   * the row has the width for it, the rail's own header where it does not (below `60rem`). Same
+   * element, same state, one home per width - never two copies to keep in step.
+   */
+  const bindingSwitch = (
+    <SegmentedControl
+      label={strings.bindingLabel}
+      onValueChange={(next) => setBinding(next as "react" | "vanilla")}
+      options={
+        component && component.id !== handoffComponentId
+          ? [
+              { label: strings.react, value: "react" },
+              { label: strings.vanilla, value: "vanilla" },
+            ]
+          : [{ label: strings.vanilla, value: "vanilla" }]
+      }
+      value={binding}
+    />
   );
 
   /** The palette is a `<dialog>` like the discard confirmation beside it, and it is opened the way
@@ -1418,7 +1619,7 @@ function PlaygroundTool({ catalogue, strings }: Props) {
   const editorFiles =
     binding === "react"
       ? [entryPath, ...(sourceExample?.reactData ? [sourceExample.reactData.path] : [])]
-      : [entryPath, ...(isHandoff ? [] : [vanillaScriptPath])];
+      : [entryPath, vanillaScriptPath];
 
   /* The VANILLA source for both bindings, deliberately: see `detectPartNames`. It is the same tree
      either way, and reading one of them is what keeps the two previews painted by the same sheets. */
@@ -1427,7 +1628,8 @@ function PlaygroundTool({ catalogue, strings }: Props) {
 
   const files = useMemo(() => {
     if (!bundles || !sourceExample || !cssReady) return null;
-    const previewCss = `${bundles.foundation}\n\n${componentCss}` + previewBodyCss(colorScheme);
+    const previewCss =
+      `${bundles.foundation}\n\n${componentCss}\n\n${scrollbarCss}` + previewBodyCss(colorScheme);
 
     return binding === "react"
       ? {
@@ -1446,6 +1648,10 @@ import { createRoot } from "react-dom/client";
 import "./styles.css";
 import App from "./App";
 
+// Same line the Vanilla entry writes (\`lib/vanilla-script.ts\`): the kit's scrollbar is opt-in by
+// class on the scrolling element, and this document has no shell to write it for it.
+document.documentElement.classList.add("sk-scrollbar");
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <App />
@@ -1457,13 +1663,12 @@ createRoot(document.getElementById("root")).render(
         }
       : {
           "/index.html": { code: sourceExample.vanilla },
-          // Its own file, so the markup and the script sit in two tabs. A handoff from a docs
-          // preview is a finished document with its script inline, and gets no file it never loads.
-          ...(isHandoff ? {} : { [vanillaScriptPath]: { code: vanillaScriptSource } }),
-          "/skryensya-vanilla.js": { code: bundles.vanilla, hidden: true },
-          "/skryensya.css": { code: previewCss, hidden: true },
+          // Its own file, so the markup and the script sit in two tabs. It is also the bundler's
+          // entry (`customSetup` below), so a handoff from a docs preview gets it too.
+          [vanillaScriptPath]: { code: vanillaScriptSource },
+          ...vanillaPackageFiles(bundles.vanilla, previewCss),
         };
-  }, [bundles, binding, sourceExample, colorScheme, componentCss, cssReady, isHandoff]);
+  }, [bundles, binding, sourceExample, colorScheme, componentCss, cssReady]);
 
   /*
    * "Has the reader typed anything since this sandbox mounted", tracked coarsely rather than by
@@ -1529,7 +1734,33 @@ createRoot(document.getElementById("root")).render(
    */
   if (!component || !example) {
     return (
+      /*
+       * THE SAME SHELL, WAITING. This branch used to render the stage alone, so the rail did not
+       * exist for the ~600ms between the island mounting and the catalogue landing (measured on a
+       * cold load: the stage was up at 1323ms, the rail arrived at 1926ms) and then appeared, moving
+       * everything beside it. A panel that is loading should be a panel that is loading - same box,
+       * same width, same full height - not a hole that fills in.
+       *
+       * Its content is what is genuinely unknown: no tree yet, and no binding switch either when
+       * that switch lives in here, because both are read off a catalogue that has not arrived.
+       */
       <div className="playground">
+        <Sidebar
+          className="playground__rail"
+          collapsed={railHidden}
+          maxInlineSize="24rem"
+          minInlineSize="8rem"
+          onCollapsedChange={(details) => setRailHidden(details.collapsed)}
+          storageKey="playground-rail"
+        >
+          <SidebarContent className="sk-scrollbar sk-scrollbar--reveal">
+            <span className="playground__rail-waiting" />
+          </SidebarContent>
+          <SidebarResizeHandle label={strings.resizeRail} />
+        </Sidebar>
+
+        <ChromeSlot name="rail">{railToggle}</ChromeSlot>
+
         <div className="playground__stage">
           <p className="playground__state" role="status">
             {blocked === "bundler" ? strings.offline : blocked ? strings.failed : strings.loading}
@@ -1574,6 +1805,16 @@ createRoot(document.getElementById("root")).render(
           thing this rail is for. At 1 a row is 32px with 8px between rows, which is the same rhythm
           as every other rail in the kit.
         */}
+        {/*
+          THE BINDING SWITCH, IN THE RAIL, at the widths where the rail is a drawer. It belongs to the
+          same question the tree answers - which example, in which language - and putting it in this
+          panel's own header is what let the chrome go back to a single row on a phone. Above `60rem`
+          it is in the bar instead and this header does not exist: the rail is a column beside the
+          editor there, and a control parked in it would be one the reader can collapse away.
+        */}
+        {railOverlays ? (
+          <SidebarHeader className="playground__rail-binding">{bindingSwitch}</SidebarHeader>
+        ) : null}
         <SidebarContent className="sk-scrollbar sk-scrollbar--reveal">
           {/*
             A TREE, not a list of links, because the shape of this catalogue IS a tree: a component
@@ -1611,25 +1852,26 @@ createRoot(document.getElementById("root")).render(
         <SidebarResizeHandle label={strings.resizeRail} />
       </Sidebar>
 
-      <div className="playground__stage" data-pane-layout={paneLayout}>
-        <ChromeSlot name="rail">
-            {/* The rail's switch, in the one place that is still there when the rail is not. */}
-            <button
-              aria-expanded={!railHidden}
-              aria-label={railHidden ? strings.showRail : strings.hideRail}
-              className="sk-button sk-interactive"
-              data-icon-only=""
-              data-size="sm"
-              data-variant="ghost"
-              onClick={() => setRailHidden((hidden) => !hidden)}
-              type="button"
-            >
-              {/* The kit's own answer for this control: `SidebarTrigger`'s demo and the site's
-                  drawer trigger both draw it with `menu`. A shape drawn by hand here would be a
-                  second icon vocabulary for one button. */}
-            <Icon name="menu" />
-          </button>
-        </ChromeSlot>
+      {/*
+        THE SCRIM UNDER AN OVERLAID RAIL: the tap target that closes it, and the dimming that says the
+        stage behind is out of reach for the moment. A real `<button>` rather than a div with a
+        handler, so it is one Tab stop with a name and closes on Enter like any other control.
+      */}
+      {railOverlays && !railHidden ? (
+        <button
+          aria-label={strings.hideRail}
+          className="playground__rail-scrim"
+          onClick={() => setRailHidden(true)}
+          type="button"
+        />
+      ) : null}
+
+      <div
+        className="playground__stage"
+        data-mobile-pane={singlePane ? mobilePane : undefined}
+        data-pane-layout={paneLayout}
+      >
+        <ChromeSlot name="rail">{railToggle}</ChromeSlot>
 
         <ChromeSlot name="context">
           <div className="playground__heading">
@@ -1651,24 +1893,74 @@ createRoot(document.getElementById("root")).render(
           am I looking at") rather than doing something to the preview, and it is the only control in
           the bar that changes the example itself - so it gets the one position a row has that is not
           an end: the middle (`playground-chrome__binding`, sized by the grid in `tool.css`).
+
+          EXCEPT BELOW `60rem`, where it is rendered in the rail instead (see the Sidebar above) and
+          this slot draws nothing. It is 124px wide, which a phone's row cannot spare: with it in the
+          bar the row wrapped, and the rail is where the OTHER "which example am I looking at" control
+          already lives. One control either way, moved rather than duplicated.
         */}
-        <ChromeSlot name="binding">
-          <SegmentedControl
-            label={strings.bindingLabel}
-            onValueChange={(next) => setBinding(next as "react" | "vanilla")}
-            options={
-              component.id !== handoffComponentId
-                ? [
-                    { label: strings.react, value: "react" },
-                    { label: strings.vanilla, value: "vanilla" },
-                  ]
-                : [{ label: strings.vanilla, value: "vanilla" }]
-            }
-            value={binding}
+        <ChromeSlot name="binding">{railOverlays ? null : bindingSwitch}</ChromeSlot>
+
+        {/*
+          THE LANGUAGE SWITCH, AS A MENU, and first in the row's trailing group.
+
+          It used to be a link straight to the other translation, which works exactly while there are
+          two and says nothing about which one you are reading. A Menu names them, marks the current
+          one (`kind: "radio"` + `checked`, so a screen reader hears the state rather than seeing a
+          tick), and a third locale becomes one more row instead of a rewrite. Every row is a real
+          `<a href>`; Zag activates it as a link. The same shape as the documentation's own
+          `LanguageMenu`, rendered here from the island because that is where this bar's controls live.
+        */}
+        <ChromeSlot name="language">
+          <Menu
+            label={strings.language}
+            items={languages.map((entry) => ({
+              value: entry.value,
+              label: entry.label,
+              href: entry.href,
+              kind: "radio" as const,
+              checked: entry.current,
+            }))}
+            /* The trigger is the glyph and nothing else. `indicator={null}` is the contract's own
+               opt-out (menu.tsx: the chevron is the default, not an opt-in), and it is right here: a
+               chevron earns its place on a trigger whose LABEL needs the hint that more is behind it,
+               while this one is a 44px square in a row of 44px squares - a second glyph inside it
+               reads as two icons, not as one control. */
+            indicator={null}
+            trigger={<Icon name="language" />}
+            triggerIconOnly
+            triggerLabel={`${strings.language}: ${
+              languages.find((entry) => entry.current)?.label ?? ""
+            }`}
+            triggerVariant="ghost"
           />
         </ChromeSlot>
 
         <ChromeSlot name="search">
+          {singlePane ? (
+            /*
+              SEARCH, AS A BUTTON, below `48rem`, and this is the same swap the documentation makes in
+              its own header at its own narrow width. A field earns an input's mobile quirks (a
+              keyboard that may open, a caret, autofill's attention) only while it is SHOWING the two
+              things that make it a field: a placeholder and the ⌘K hint. Collapsed to its icon it is
+              showing neither, so what is left is a button that opens a dialog - and a button is what
+              it should be built as, with the kit's own control rather than an input dressed down.
+
+              No ⌘K badge here either: a phone has no ⌘, and the shortcut stays advertised through
+              `aria-keyshortcuts` for the keyboards that do.
+            */
+            <Button
+              aria-controls={searchDialogId}
+              aria-keyshortcuts="Meta+K Control+K"
+              aria-label={strings.search}
+              iconOnly
+              onClick={openSearch}
+              variant="ghost"
+            >
+              <Icon name="search" />
+            </Button>
+          ) : (
+            <>
             {/*
               SEARCH, AS A FIELD, which is the same control the documentation's own header carries
               (`Base.astro` + `.dimensions__search-trigger`) and for the same reasons written out in
@@ -1715,6 +2007,8 @@ createRoot(document.getElementById("root")).render(
                   it a second time in a vocabulary screen readers pronounce badly. */}
               <Kbd aria-hidden="true">{hotkeyLabel}</Kbd>
             </div>
+            </>
+          )}
         </ChromeSlot>
 
         {blocked ? (
@@ -1746,7 +2040,11 @@ createRoot(document.getElementById("root")).render(
                * `.js` file dies with "Unexpected token" before anything renders. The snippet a
                * component page shows is TSX; the sandbox that runs it has to be too.
                */
-              template={binding === "react" ? "react-ts" : "static"}
+              template={binding === "react" ? "react-ts" : "vanilla"}
+              /* `vanilla` is the bundled template (Sandpack's own bundler, like `react-ts`), so
+                 `main.js` resolves the kit through `node_modules` as a consumer's Vite would. Its
+                 default entry is `/index.js`; the example names its script `main.js`. */
+              customSetup={binding === "react" ? undefined : { entry: vanillaScriptPath }}
               theme={sandpackTheme}
             >
               <FileSync
@@ -1757,7 +2055,12 @@ createRoot(document.getElementById("root")).render(
               {/* Renders nothing; it is how the bar's reload button reaches the running client. */}
               <PreviewControls actionsRef={previewActionsRef} />
               <SandpackLayout>
-                <EditorFiles files={editorFiles} label={strings.filesLabel} strings={strings} />
+                <EditorFiles
+                  files={editorFiles}
+                  label={strings.filesLabel}
+                  onShowPreview={singlePane ? () => setMobilePane("preview") : undefined}
+                  strings={strings}
+                />
                 {/*
                   Between the two panes, and it resizes the one before it. See `PaneSplitter`.
 
@@ -1819,18 +2122,45 @@ createRoot(document.getElementById("root")).render(
                           <Icon data={reloadIcon} size="sm" />
                         </Button>
                       </Tooltip>
+                      {/*
+                        ONE SLOT, TWO QUESTIONS, decided by whether both panes fit at once. Wide, the
+                        question is WHERE the preview sits and this flips the arrangement. Narrow,
+                        only one pane is drawn at a time (`SINGLE_PANE_QUERY`), so "beside or below"
+                        has no answer and the useful control in its place is the way to the other
+                        pane. Same position either way: the pane's own bar, acting on the pane.
+                      */}
                       <Tooltip
-                        content={stacked ? strings.layoutSideBySide : strings.layoutStacked}
+                        content={
+                          singlePane
+                            ? strings.showCode
+                            : stacked
+                              ? strings.layoutSideBySide
+                              : strings.layoutStacked
+                        }
                         placement="block-end"
                       >
                         <Button
-                          aria-label={stacked ? strings.layoutSideBySide : strings.layoutStacked}
+                          aria-label={
+                            singlePane
+                              ? strings.showCode
+                              : stacked
+                                ? strings.layoutSideBySide
+                                : strings.layoutStacked
+                          }
                           iconOnly
-                          onClick={() => setPaneLayout(stacked ? "side-by-side" : "stacked")}
+                          onClick={() =>
+                            singlePane
+                              ? setMobilePane("code")
+                              : setPaneLayout(stacked ? "side-by-side" : "stacked")
+                          }
                           size="sm"
                           variant="soft"
                         >
-                          <Icon data={stacked ? splitVerticalIcon : splitHorizontalIcon} size="sm" />
+                          {singlePane ? (
+                            <Icon name="code" size="sm" />
+                          ) : (
+                            <Icon data={stacked ? splitVerticalIcon : splitHorizontalIcon} size="sm" />
+                          )}
                         </Button>
                       </Tooltip>
                     </div>
@@ -1897,6 +2227,7 @@ createRoot(document.getElementById("root")).render(
         that exists for exactly this.
       */}
       <CommandPalette
+        closeLabel={strings.searchClose}
         emptyLabel={strings.searchEmpty}
         footer={
           <>

@@ -172,4 +172,37 @@ describe("Menubar React contracts, dropdowns as real Menu instances", () => {
     expect(docs.tagName).toBe("A");
     expect(docs.getAttribute("href")).toBe("/docs");
   });
+
+  it("stamps menubar/menu mount attrs and dispatches Menu DOM events from the item wrapper", async () => {
+    const onSelect = vi.fn();
+    const onOpen = vi.fn();
+    const ui = render(
+      <Menubar label="Editor">
+        <MenubarItem items={[{ value: "new", label: "Nuevo" }]} onSelect={(d) => onSelect(d.value)}>
+          Archivo
+        </MenubarItem>
+      </Menubar>,
+    );
+    const root = ui.container.querySelector(".sk-menubar")!;
+    expect(root.hasAttribute("data-sk-menubar")).toBe(true);
+    const wrapper = ui.container.querySelector(".sk-menubar__item-wrapper")!;
+    expect(wrapper.hasAttribute("data-sk-menu")).toBe(true);
+    const [archivo] = triggers(ui);
+    expect(archivo!.hasAttribute("data-sk-menubar-item")).toBe(true);
+    expect(archivo!.hasAttribute("data-sk-menu-trigger")).toBe(true);
+
+    wrapper.addEventListener("sk:menuopenchange", onOpen);
+    fireEvent.click(archivo!);
+    await tick();
+    expect(onOpen).toHaveBeenCalled();
+    expect((onOpen.mock.calls.at(-1)![0] as CustomEvent).detail).toEqual({ open: true });
+
+    const onDomSelect = vi.fn();
+    wrapper.addEventListener("sk:menuselect", onDomSelect);
+    fireEvent.click(ui.getByRole("menuitem", { name: "Nuevo" }));
+    await tick();
+    expect(onSelect).toHaveBeenCalledWith("new");
+    expect(onDomSelect).toHaveBeenCalled();
+    expect((onDomSelect.mock.calls.at(-1)![0] as CustomEvent).detail).toEqual({ value: "new" });
+  });
 });

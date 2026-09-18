@@ -1,7 +1,7 @@
 import { slider } from "@skryensya/core/machines";
-import { clampSliderRange, sliderParts, sliderContract } from "@skryensya/core/slider";
+import { clampSliderRange, sliderEvents, sliderParts, sliderContract } from "@skryensya/core/slider";
 import { normalizeProps, useMachine } from "@zag-js/react";
-import { useId, type CSSProperties, type HTMLAttributes } from "react";
+import { useId, useRef, type CSSProperties, type HTMLAttributes } from "react";
 
 /* Derived, never restated: the default lives in the contract. */
 const { max: maxOption, min: minOption } = sliderContract.options;
@@ -41,6 +41,7 @@ export function Slider({
   ...props
 }: SliderProps) {
   const generatedId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
   const lo = toNumber(min, 0);
   const hi = toNumber(max, 100);
   const controlled = value !== undefined;
@@ -54,7 +55,11 @@ export function Slider({
     min: lo,
     name,
     onValueChange(details) {
-      onValueChange?.(details.value[0] ?? lo);
+      const next = details.value[0] ?? lo;
+      onValueChange?.(next);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(sliderEvents.valueChange, { bubbles: true, detail: { value: next } }),
+      );
     },
     step,
     thumbAlignment: "center",
@@ -73,6 +78,8 @@ export function Slider({
       {...props}
       {...rootProps}
       className={cx(sliderParts.root, className)}
+      data-sk-slider=""
+      ref={rootRef}
       style={{ ...(rootProps.style as CSSProperties), ...style }}
     >
       <div {...controlProps} className={sliderParts.control} data-sk-slider-control="">
@@ -119,6 +126,7 @@ export function SliderRange({
   step,
 }: SliderRangeProps) {
   const generatedId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
   const { low, high } = clampSliderRange(defaultLowValue ?? min, defaultHighValue ?? max);
   const service = useMachine(slider.machine, {
     id: id ?? generatedId,
@@ -128,7 +136,11 @@ export function SliderRange({
     max,
     min,
     onValueChange(details) {
-      onValueChange?.({ low: details.value[0] ?? min, high: details.value[1] ?? max });
+      const next = { low: details.value[0] ?? min, high: details.value[1] ?? max };
+      onValueChange?.(next);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(sliderEvents.valueChange, { bubbles: true, detail: next }),
+      );
     },
     step,
     thumbAlignment: "center",
@@ -146,6 +158,8 @@ export function SliderRange({
     <div
       {...rootProps}
       className={cx(sliderParts.rangeRoot, className)}
+      data-sk-slider-range=""
+      ref={rootRef}
       style={rootProps.style as CSSProperties}
     >
       <div {...controlProps} className={sliderParts.rangeControl} data-sk-slider-range-control="">

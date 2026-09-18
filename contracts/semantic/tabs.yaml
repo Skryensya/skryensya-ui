@@ -5,6 +5,7 @@ Tabs:
     - varias secciones comparten una región y sólo una se ve a la vez
     - el contenido es hermano, no una jerarquía: todas las pestañas están al mismo nivel
     - el usuario alterna entre vistas del mismo objeto (resumen, actividad, ajustes)
+    - la lista siempre lleva nombre (aria-label o aria-labelledby a un título visible)
   avoidWhen:
     - "el contenido de cada sección es largo y el usuario querría verlo todo junto: eso es un
       Accordion o una página con secciones"

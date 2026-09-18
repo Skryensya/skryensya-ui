@@ -3,8 +3,84 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "bd7a03209da49a62"
+surface: "d53481185ba7d285"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Calendar declara systemOwned para la grilla derivada
+      body: >-
+        <code>systemOwned</code> lista header/nav/celdas/grids que el binding rellena; el template
+        sólo autentica root + label.
+    en:
+      title: Calendar declares systemOwned for the derived grid
+      body: >-
+        <code>systemOwned</code> lists header/nav/cells/grids the binding fills; the template only
+        authors root + label.
+  - date: 2026-09-17
+    kind: bugfix
+    target: value
+    es:
+      title: value, min y max exigen ISO YYYY-MM-DD
+      body: >-
+        Las tres opciones llevan <code>pattern</code> (un día, o dos separados por espacio en un
+        rango). Un <code>16/09/2026</code> deja de validar en vez de llegar al enhancer y fallar al
+        montar.
+    en:
+      title: value, min, and max require ISO YYYY-MM-DD
+      body: >-
+        All three options carry a <code>pattern</code> (one day, or two space-separated for a
+        range). A <code>16/09/2026</code> stops validating instead of reaching the enhancer and
+        throwing at mount.
+  - date: 2026-09-16
+    kind: bugfix
+    target: label
+    es:
+      title: Calendar exige label y publica valueChange
+      body: >-
+        El slot <code>label</code> pasa a ser obligatorio: sin nombre la grilla es una tabla de
+        números. El contrato declara <code>events.valueChange</code> (<code>sk-value-change</code>)
+        y React despacha el mismo evento DOM que Vanilla.
+    en:
+      title: Calendar requires label and publishes valueChange
+      body: >-
+        The <code>label</code> slot is now required: without a name the grid is a table of numbers.
+        The contract declares <code>events.valueChange</code> (<code>sk-value-change</code>) and
+        React dispatches the same DOM event Vanilla already emits.
   - date: 2026-08-11
     kind: feature
     es:
@@ -47,3 +123,27 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Cada evento lleva el nombre de su familia
+      body: >-
+        <code>sk-value-change</code> → <code>sk:calendarvaluechange</code>. Un mismo nombre ya no lo despachan varias familias: un listener sobre una raíz deja
+        de recibir los eventos de un componente distinto anidado adentro.
+    en:
+      title: Every event carries its family in its name
+      body: >-
+        <code>sk-value-change</code> → <code>sk:calendarvaluechange</code>. No two families dispatch the same name any more: a listener on a root stops receiving
+        the events of a different component nested inside it.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Los textos por defecto pasan a inglés
+      body: >-
+        El kit es una librería en inglés y sus defaults estaban en español: <code>locale</code> en. Una interfaz en
+        otro idioma pasa sus propios textos, y el <code>locale</code> que corresponda.
+    en:
+      title: Default texts move to English
+      body: >-
+        The kit is an English library and its defaults were Spanish: <code>locale</code> en. An interface in another
+        language passes its own texts, and the <code>locale</code> it needs.

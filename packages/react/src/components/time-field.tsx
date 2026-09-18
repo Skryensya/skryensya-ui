@@ -9,7 +9,6 @@ import {
   useRef,
   useState,
   type KeyboardEvent,
-  type ReactNode,
   type RefObject,
 } from "react";
 import { useAnchored } from "./anchored.js";
@@ -73,12 +72,14 @@ export type TimeFieldProps = {
   container?: RefObject<HTMLElement>;
   defaultValue?: string;
   disabled?: boolean;
-  hint?: ReactNode;
+  /** Optional supporting text under the control. Matches the contract slot (`accepts: "text"`). */
+  hint?: string;
   hourCycle?: HourCycle;
   hourLabel?: string;
   id?: string;
   invalid?: boolean;
-  label: ReactNode;
+  /** Names the field. Matches the contract slot (`accepts: "text"`). */
+  label: string;
   locale?: string;
   minuteLabel?: string;
   minuteStep?: number;
@@ -348,7 +349,7 @@ export function TimeField({
   };
 
   return (
-    <div className={timeFieldParts.root} data-invalid={invalid ? "" : undefined}>
+    <div className={timeFieldParts.root} data-invalid={invalid ? "" : undefined} data-sk-time-field="">
       <span className={timeFieldParts.label} id={labelId}>
         {label}
       </span>
@@ -376,7 +377,9 @@ export function TimeField({
             </span>
           ) : (
             <div
+              aria-invalid={invalid ? "true" : undefined}
               aria-label={segmentLabels[token.type]}
+              aria-readonly={readOnly ? "true" : undefined}
               aria-required={required ? "true" : undefined}
               aria-valuemax={segmentBounds(token.type, cycle).max}
               aria-valuemin={segmentBounds(token.type, cycle).min}

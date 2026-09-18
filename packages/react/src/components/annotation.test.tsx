@@ -96,6 +96,7 @@ describe("Annotated", () => {
     );
 
     const root = container.querySelector(`.${annotationParts.root}`)!;
+    expect(root.hasAttribute("data-sk-annotated")).toBe(true);
     expect(root.getAttribute("role")).toBe("group");
     expect(root.getAttribute("aria-label")).toBe("Anatomy");
     expect(container.querySelector(".part-a")).not.toBeNull();

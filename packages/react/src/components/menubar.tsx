@@ -1,5 +1,5 @@
-import { menubarParts, resolveMenubarKey, type MenubarFocus } from "@skryensya/core/menubar";
-import { menuParts, type MenuApi, type MenuItem } from "@skryensya/core/menu";
+import { menubarAttrs, menubarParts, resolveMenubarKey, type MenubarFocus } from "@skryensya/core/menubar";
+import { menuAttrs, menuEvents, menuParts, type MenuApi, type MenuItem } from "@skryensya/core/menu";
 import {
   Children,
   cloneElement,
@@ -167,6 +167,7 @@ export function Menubar({ children, className, label, ...props }: MenubarProps) 
     <MenubarContext.Provider value={context}>
       <div
         {...props}
+        {...{ [menubarAttrs.root]: "" }}
         aria-label={label}
         className={cx(menubarParts.root, className)}
         onFocus={() => applyTabindex(currentFocus())}
@@ -180,8 +181,8 @@ export function Menubar({ children, className, label, ...props }: MenubarProps) 
 }
 
 export type MenubarItemProps = {
-  /** The command's own name. The contract's `children` slot. */
-  children: ReactNode;
+  /** The command's own name. The contract's `children` slot (`text`). */
+  children: string;
   /** The dropdown this item opens, if it is a trigger rather than a plain command: `Menu`'s own
    *  item shape, verbatim (the same `MenuItem[]` its own `items` prop takes). */
   items?: readonly MenuItem[];
@@ -190,6 +191,8 @@ export type MenubarItemProps = {
   /** Fires when a command inside this item's dropdown is chosen: `Menu`'s own `onSelect`, threaded
    *  straight through since the popup here IS `Menu`'s own. */
   onSelect?: (details: { value: string }) => void;
+  /** Fires when a checkbox/radio inside this item's dropdown toggles: `Menu`'s own `onCheckedChange`. */
+  onCheckedChange?: (details: { value: string; checked: boolean }) => void;
   /** Where the dropdown portals: `Menu`'s own `container`, see its identical doc. */
   container?: RefObject<HTMLElement>;
   /** Styles the trigger as `nav-list`'s own link instead of a Button; see `menubar.ts`'s own doc
@@ -210,12 +213,21 @@ function initialCheckedState(items: readonly MenuItem[]): CheckedState {
 }
 
 export function MenubarItem(publicProps: MenubarItemProps) {
-  const { children, container, items, nav, onActivate, onSelect, topIndex } =
+  const { children, container, items, nav, onActivate, onCheckedChange, onSelect, topIndex } =
     publicProps as InjectedMenubarItemProps;
   const context = useMenubarContext("Item");
   const hasMenu = Boolean(items?.length);
   const id = useId();
-  const { service, api } = useMenuMachine({ id, defaultOpen: false });
+  const eventRootRef = useRef<HTMLDivElement | null>(null);
+  const { service, api } = useMenuMachine({
+    id,
+    defaultOpen: false,
+    onOpenChange(details) {
+      eventRootRef.current?.dispatchEvent(
+        new CustomEvent(menuEvents.openChange, { bubbles: true, detail: details }),
+      );
+    },
+  });
   const anchor = useAnchored(id);
   const [checkedState, setChecked] = useState<CheckedState>(() => initialCheckedState(items ?? []));
 
@@ -246,7 +258,12 @@ export function MenubarItem(publicProps: MenubarItemProps) {
   const ref = (element: HTMLElement | null) => context.registerTrigger(topIndex, element);
 
   return (
-    <div className={cx(menubarParts.itemWrapper, menuParts.root)}>
+    <div
+      ref={eventRootRef}
+      className={cx(menubarParts.itemWrapper, menuParts.root)}
+      {...{ [menuAttrs.root]: "" }}
+      {...(nav ? { "data-nav": "" } : {})}
+    >
       {hasMenu ? (
         <button
           {...api.getTriggerProps()}
@@ -254,6 +271,7 @@ export function MenubarItem(publicProps: MenubarItemProps) {
             cx(menubarParts.item, nav ? "sk-nav-list__link sk-interactive" : "sk-button sk-interactive"),
           )}
           {...(nav ? {} : { "data-size": "sm", "data-variant": "ghost" })}
+          {...{ [menubarAttrs.item]: "", [menuAttrs.trigger]: "" }}
           ref={ref}
           onClickCapture={() => context.closeSiblings(topIndex)}
           role="menuitem"
@@ -285,6 +303,7 @@ export function MenubarItem(publicProps: MenubarItemProps) {
             nav ? "sk-nav-list__link sk-interactive sk-anchor" : "sk-button sk-interactive sk-anchor",
           )}
           {...(nav ? {} : { "data-size": "sm", "data-variant": "ghost" })}
+          {...{ [menubarAttrs.item]: "" }}
           onClick={() => onActivate?.()}
           ref={ref}
           role="menuitem"
@@ -299,7 +318,9 @@ export function MenubarItem(publicProps: MenubarItemProps) {
           api={api}
           checkedState={checkedState}
           container={container}
+          eventRootRef={eventRootRef}
           items={items!}
+          onCheckedChange={onCheckedChange}
           onSelect={onSelect}
           positionerProps={anchor.positioner(api.getPositionerProps(), menuParts.positioner)}
           service={service}

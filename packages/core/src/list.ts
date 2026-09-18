@@ -22,6 +22,7 @@ export const listParts = {
   root: "sk-list",
   item: "sk-list__item",
   action: "sk-list__action",
+  /** Shared state-layer class; composed via `also`, not owned as a list part. */
   interactive: "sk-interactive",
   leading: "sk-list__leading",
   content: "sk-list__content",
@@ -42,8 +43,20 @@ export type ListPartClass = (typeof listParts)[ListPart];
  */
 export const listContract = {
   id: "list",
+  category: "data",
   css: "@skryensya/core/components/list.css",
-  parts: listParts,
+  /* Own anatomy only. `sk-interactive` is composed via `also` (and lives in the base bundle); claiming
+     it as a part would make list.css the unique owner the moment Button stopped claiming it too. */
+  parts: {
+    root: listParts.root,
+    item: listParts.item,
+    action: listParts.action,
+    leading: listParts.leading,
+    content: listParts.content,
+    title: listParts.title,
+    description: listParts.description,
+    trailing: listParts.trailing,
+  },
   hooks: [
     "--sk-list-description-fg",
     "--sk-list-description-font-size",
@@ -93,7 +106,13 @@ export const listContract = {
        * the signature just stops hiding what the contract already says.
        */
       options: ["density", "dividers"],
-      slots: { children: { accepts: "signature", required: true, of: ["ListItemPlain", "ListItem", "ListItemLink"] } },
+      slots: {
+        children: {
+          accepts: "signature",
+          required: true,
+          of: ["ListItemPlain", "ListItem", "ListItemLink", "ListItemButton"],
+        },
+      },
       /*
        * `role="list"` compensates for `list-style: none` (list.css): WebKit drops the implicit
        * `list`/`listitem` role from VoiceOver the moment list-style is removed, a real, documented
@@ -108,7 +127,13 @@ export const listContract = {
       intent: ["ordered-rows", "steps-with-rich-row-anatomy", "ranked-records"],
       host: { element: "ol" },
       options: ["density", "dividers"],
-      slots: { children: { accepts: "signature", required: true, of: ["ListItemPlain", "ListItem", "ListItemLink"] } },
+      slots: {
+        children: {
+          accepts: "signature",
+          required: true,
+          of: ["ListItemPlain", "ListItem", "ListItemLink", "ListItemButton"],
+        },
+      },
       template: { element: "ol", part: "root", host: true, attrs: { role: "list" }, slot: "children" },
       react: { from: "@skryensya/react/list", name: "OrderedList" },
     },
@@ -159,6 +184,8 @@ export const listContract = {
       host: { element: "a" },
       options: ["href"],
       requires: ["href"],
+      /** Link host attrs the row does not own as options (Button.navigation peer). */
+      forward: ["id", "target", "rel", "download", "aria-*"],
       parents: ["List", "OrderedList"],
       slots: {
         leading: { accepts: "signature", of: ["Icon", "Avatar.initials"] },
@@ -191,6 +218,54 @@ export const listContract = {
         ],
       },
       react: { from: "@skryensya/react/list", name: "ListItemLink" },
+    },
+
+    ListItemButton: {
+      intent: ["row-that-acts", "tappable-action-row"],
+      host: { element: "button" },
+      /*
+       * Same `disabled` option as inert rows, remapped on the button host to the native attribute
+       * (and `aria-disabled` for the stylesheet). Inert `ListItem` / `ListItemPlain` keep
+       * `data-disabled` on the `<li>`; a real `<button>` needs the platform spelling.
+       */
+      options: ["disabled"],
+      /* Form association and a11y names the row button does not own as options (Button.action peer). */
+      forward: ["id", "name", "form", "aria-*"],
+      parents: ["List", "OrderedList"],
+      slots: {
+        leading: { accepts: "signature", of: ["Icon", "Avatar.initials"] },
+        title: { accepts: "text", required: true },
+        description: { accepts: "text" },
+        trailing: { accepts: "node" },
+      },
+      template: {
+        element: "li",
+        part: "item",
+        children: [
+          {
+            element: "button",
+            part: "action",
+            also: ["sk-interactive"],
+            host: true,
+            attrs: { type: "button" },
+            optionAttrs: { disabled: "disabled" },
+            attrsWhen: [{ option: "disabled", equals: "true", attrs: { "aria-disabled": "true" } }],
+            children: [
+              { element: "span", part: "leading", whenGiven: "leading", slot: "leading" },
+              {
+                element: "span",
+                part: "content",
+                children: [
+                  { element: "span", part: "title", slot: "title" },
+                  { element: "span", part: "description", whenGiven: "description", slot: "description" },
+                ],
+              },
+              { element: "span", part: "trailing", whenGiven: "trailing", slot: "trailing" },
+            ],
+          },
+        ],
+      },
+      react: { from: "@skryensya/react/list", name: "ListItemButton" },
     },
   },
 } as const satisfies ComponentContract;

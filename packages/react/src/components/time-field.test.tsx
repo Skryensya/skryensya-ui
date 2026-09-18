@@ -2,8 +2,8 @@ import { fireEvent, render, waitFor, type RenderResult } from "@testing-library/
 import { describe, expect, it, vi } from "vitest";
 import { TimeField } from "./time-field.js";
 
-// Distinct from the default `hourLabel` ("Hora"): the field label and the hour segment's own
-// label would otherwise both read "Hora", and role queries couldn't tell which is meant.
+// Distinct from the default `hourLabel` ("Hour"): the field label and the hour segment's own
+// label would otherwise both read "Hour", and role queries couldn't tell which is meant.
 const setup = (props: Partial<Parameters<typeof TimeField>[0]> = {}) => {
   const onValueChange = vi.fn();
   const ui = render(<TimeField label="Hora de inicio" onValueChange={onValueChange} {...props} />);
@@ -178,9 +178,9 @@ describe("TimeField", () => {
     const trailingWrapper = children.at(-1) as HTMLElement;
 
     expect(trailingWrapper.className).toBe("sk-time-field__trailing");
-    expect(control.contains(ui.getByRole("combobox", { name: "Elegir de la lista" }))).toBe(true);
+    expect(control.contains(ui.getByRole("combobox", { name: "Choose from list" }))).toBe(true);
     // The clear button (present, since a value is set) sits right before it, not after.
-    expect(children.at(-2)).toBe(ui.getByRole("button", { name: "Limpiar hora" }));
+    expect(children.at(-2)).toBe(ui.getByRole("button", { name: "Clear time" }));
   });
 
   it("anchors the picker's own listbox to the CONTROL, not the trigger, so it opens the field's own width, not the icon's", () => {
@@ -189,7 +189,7 @@ describe("TimeField", () => {
     // unreadable. The control is the field's own full width.
     const { ui } = setup({ locale: "en-US" });
     const control = ui.container.querySelector(".sk-time-field__control") as HTMLElement;
-    const trigger = ui.getByRole("combobox", { name: "Elegir de la lista" });
+    const trigger = ui.getByRole("combobox", { name: "Choose from list" });
 
     expect(control.classList.contains("sk-anchor")).toBe(true);
     expect(trigger.classList.contains("sk-anchor")).toBe(false);
@@ -198,7 +198,7 @@ describe("TimeField", () => {
   it("opens the picker with Alt+ArrowDown from any segment, leaving plain ArrowDown alone", async () => {
     const { ui } = setup({ hourLabel: "Hour", locale: "en-US", minuteLabel: "Minute" });
     const hour = segment(ui, "Hour");
-    const trigger = ui.getByRole("combobox", { name: "Elegir de la lista" });
+    const trigger = ui.getByRole("combobox", { name: "Choose from list" });
 
     fireEvent.keyDown(hour, { key: "ArrowDown", altKey: true });
 
@@ -210,7 +210,7 @@ describe("TimeField", () => {
   it("leaves the picker closed on a plain ArrowDown. That key is the segment's own", () => {
     const { ui } = setup({ hourLabel: "Hour", locale: "en-US" });
     const hour = segment(ui, "Hour");
-    const trigger = ui.getByRole("combobox", { name: "Elegir de la lista" });
+    const trigger = ui.getByRole("combobox", { name: "Choose from list" });
 
     fireEvent.keyDown(hour, { key: "ArrowDown" });
 
@@ -235,7 +235,7 @@ describe("TimeField", () => {
 
     expect(hour.getAttribute("aria-valuenow")).toBeNull();
     expect(hour.getAttribute("aria-valuetext")).toBe("hh");
-    expect(segment(ui, "Minuto").getAttribute("aria-valuetext")).toBe("30");
+    expect(segment(ui, "Minute").getAttribute("aria-valuetext")).toBe("30");
     expect(hiddenValue(ui)).toBe("");
   });
 
@@ -296,7 +296,7 @@ describe("TimeField picker", () => {
   // machine. Waiting for the listbox to actually hold focus, not just for the trigger to have lost
   // it, avoids the race that file's own comment documents (the trigger blurs to `document.body`
   // one tick before the deferred focus actually lands).
-  const openPicker = async (ui: RenderResult, name = "Elegir de la lista") => {
+  const openPicker = async (ui: RenderResult, name = "Choose from list") => {
     fireEvent.click(ui.getByRole("combobox", { name }));
     await waitFor(() => expect(document.activeElement?.getAttribute("role")).toBe("listbox"));
   };
@@ -304,7 +304,7 @@ describe("TimeField picker", () => {
   it("carries its own accessible name, distinct from the field's label", () => {
     const { ui } = setup({ defaultValue: "09:30", locale: "en-US" });
 
-    expect(ui.getByRole("combobox", { name: "Elegir de la lista" })).toBeTruthy();
+    expect(ui.getByRole("combobox", { name: "Choose from list" })).toBeTruthy();
     // The field's own label stays the group's name. The trigger did not steal it.
     expect(ui.getByRole("group", { name: "Hora de inicio" })).toBeTruthy();
   });
@@ -369,14 +369,25 @@ describe("TimeField picker", () => {
 
   it("omits the trigger entirely while disabled or read-only: nothing to browse to", () => {
     const { ui } = setup({ disabled: true, locale: "en-US" });
-    expect(ui.queryByRole("combobox", { name: "Elegir de la lista" })).toBeNull();
+    expect(ui.queryByRole("combobox", { name: "Choose from list" })).toBeNull();
 
     const { ui: readOnlyUi } = setup({ locale: "en-US", readOnly: true });
-    expect(readOnlyUi.queryByRole("combobox", { name: "Elegir de la lista" })).toBeNull();
+    expect(readOnlyUi.queryByRole("combobox", { name: "Choose from list" })).toBeNull();
   });
 
   it("carries a distinct `optionsLabel` when given one", () => {
     const { ui } = setup({ locale: "en-US", optionsLabel: "Choose from the list" });
     expect(ui.getByRole("combobox", { name: "Choose from the list" })).toBeTruthy();
+  });
+
+  it("announces an invalid or read-only field on every segment, not only in the paint", () => {
+    const { ui } = setup({ defaultValue: "09:30", invalid: true, readOnly: true, locale: "es" });
+
+    expect(ui.container.querySelector(".sk-time-field")?.hasAttribute("data-invalid")).toBe(true);
+    expect(ui.container.querySelector(".sk-time-field")?.hasAttribute("data-sk-time-field")).toBe(true);
+    for (const node of ui.getAllByRole("spinbutton")) {
+      expect(node.getAttribute("aria-invalid")).toBe("true");
+      expect(node.getAttribute("aria-readonly")).toBe("true");
+    }
   });
 });

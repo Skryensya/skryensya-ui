@@ -15,7 +15,7 @@
  */
 import Tool from "../layouts/Tool.astro";
 import Playground from "../components/react-demos/Playground.tsx";
-import { getLocale, useTranslations } from "../i18n";
+import { defaultLocale, getLocale, localeNames, locales, useTranslations } from "../i18n";
 
 /* The kit's own paint for the tool itself: the rail, the binding switch and the discard
  * confirmation are components, not one-off markup. Everything the CHROME around them needs - the
@@ -29,6 +29,10 @@ import "@skryensya/core/components/dialog.css";
 /* The search palette over this tool's own catalogue, and the keycaps its footer and its trigger
  * badge are drawn with. Both are the kit's, composed here rather than restated. */
 import "@skryensya/core/components/command-palette.css";
+/* The palette is a Dialog Vaul by default now (the contract's `vaul`): below `desktop` it is a bottom
+   sheet with a grab handle. The sheet is this opt-in pattern, so the page that renders a palette
+   imports it, the same way the documentation's own shell does. */
+import "@skryensya/core/patterns/dialog-vaul.css";
 import "@skryensya/core/components/kbd.css";
 /* The two icon-only controls in the bar say what they are on hover and on focus, the way the
  * documentation's own header controls do. Tooltip is an anchored box, so the pattern comes with it. */
@@ -44,6 +48,9 @@ import "@skryensya/core/patterns/anchored.css";
  * that component and not a promise to this page. */
 import "@skryensya/core/patterns/splitter.css";
 import "@skryensya/core/components/loader.css";
+/* The language switch is a Menu now (one row per translation, each a real link), so the bar needs
+   the component's own sheet. `anchored.css` above already covers where the panel lands. */
+import "@skryensya/core/components/menu.css";
 
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
@@ -74,6 +81,7 @@ const strings = {
    * palette: "navigate", "open", "close" and "no results" say the same thing in either app, and a
    * second copy here would be a second thing to keep translated. */
   searchEmpty: t("search.empty"),
+  searchClose: t("action.close"),
   searchHintNavigate: t("search.hintNavigate"),
   searchHintOpen: t("search.hintOpen"),
   searchHintClose: t("search.hintClose"),
@@ -82,7 +90,25 @@ const strings = {
   copied: t("playground.copied"),
   layoutSideBySide: t("playground.layoutSideBySide"),
   layoutStacked: t("playground.layoutStacked"),
+  showCode: t("playground.showCode"),
+  showPreview: t("playground.showPreview"),
+  language: t("prefs.language"),
 };
+
+/*
+ * THE TRANSLATIONS OF THIS PAGE, as data for the island's language menu.
+ *
+ * The menu is rendered by the island (it portals every other control in this bar too), but WHICH
+ * addresses exist is this route's knowledge, not the browser's: `/` in the default locale and
+ * `/<locale>/` in every other, the same mapping the layout used for its old two-locale link. Passing
+ * rows rather than letting the island compute paths keeps that rule in one place.
+ */
+const languages = locales.map((value) => ({
+  value,
+  label: localeNames[value],
+  href: value === defaultLocale ? "/" : `/${value}/`,
+  current: value === locale,
+}));
 ---
 
 <Tool title={t("playground.title")} description={t("playground.description")}>
@@ -92,7 +118,12 @@ const strings = {
     makes the build import a browser-only dependency graph for markup that would be thrown away on
     hydration anyway.
   */}
-  <Playground client:only="react" catalogue={`/playground-catalogue-${locale}.json`} strings={strings} />
+  <Playground
+    client:only="react"
+    catalogue={`/playground-catalogue-${locale}.json`}
+    languages={languages}
+    strings={strings}
+  />
 </Tool>
 
 <style is:global>
@@ -125,6 +156,59 @@ const strings = {
     flex: 1;
     min-inline-size: 0;
     min-block-size: 0;
+    /* The containing block for the rail when it stops being a column and starts being a drawer over
+       the stage (below 60rem, further down). Nothing else reads it. */
+    position: relative;
+  }
+
+  /*
+   * THE RAIL AS A DRAWER, below `60rem`.
+   *
+   * The rail is a fixed 208px, and in flow that is affordable only while the stage keeps a usable
+   * width: measured at 390px, an open rail left the stage 182px, narrower than a single line of the
+   * JSX it exists to show. So below that width the same panel (same component, same state, same
+   * toggle) comes out of flow and is drawn OVER the stage, which is the arrangement a phone has for
+   * an index: it covers the work while you pick, and it is gone once you have.
+   *
+   * `100%` of the block axis and an `inline-size` of its own, because out of flow it no longer
+   * inherits the row's height or the flex basis the drag handle writes.
+   */
+  @media (width < 60rem) {
+    .playground__rail {
+      position: absolute;
+      z-index: 2;
+      inset-block: 0;
+      inset-inline-start: 0;
+      box-shadow: var(--elevation-overlay);
+    }
+
+    /*
+     * THE SCRIM, which is both the dimming and the target that closes the drawer. A real `<button>`
+     * (see `Playground.tsx`), so it is one Tab stop with a name rather than a div with a handler;
+     * everything below is undoing what the button component's own reset would otherwise draw.
+     */
+    .playground__rail-scrim {
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      padding: 0;
+      border: 0;
+      /* The same veil `dialog.css` mixes for its own `::backdrop`, written from the same tokens: the
+         kit publishes no standalone scrim token, and a hand-picked rgba here would be a second answer
+         to "what does covered content look like" in one product. */
+      background: light-dark(
+        color-mix(in oklch, var(--color-text-primary) 40%, transparent),
+        color-mix(in oklch, var(--color-bg-canvas) 80%, transparent)
+      );
+      cursor: pointer;
+    }
+  }
+
+  @media (width >= 60rem) {
+    /* The drawer's own furniture never exists at the widths where the rail is a column. */
+    .playground__rail-scrim {
+      display: none;
+    }
   }
 
   .playground__rail {
@@ -161,6 +245,32 @@ const strings = {
     --sk-tree-row-gap: var(--space-stack-xs);
 
     border-inline-end: 1px solid var(--color-border-subtle);
+  }
+
+  /*
+   * THE BINDING SWITCH IN THE RAIL'S HEADER (below 60rem only; `Playground.tsx` decides).
+   *
+   * Full width of the panel rather than its own 124px: in a 208px drawer a control that stops short
+   * of the edge reads as a stray box, while a segmented spanning the header reads as the panel's
+   * own top row - which is what it is. The component's `.sk-sidebar__header > *` truncation rule is
+   * meant for a brand or a title; a segmented has two labelled halves to keep, so it gets `visible`
+   * back and shrinks by its own rules instead.
+   */
+  .playground__rail-binding > * {
+    /* `flex`, not the component's own `inline-flex`: an inline-level track sizes to its content even
+       when told to be 100% wide, so the two halves sat packed at the start edge with the rest of the
+       header empty beside them. */
+    display: flex;
+    inline-size: 100%;
+    overflow: visible;
+  }
+
+  /* EQUAL HALVES. The options size to their labels by default ("Vanilla" is wider than "React"), which
+     reads as a control that could not decide where its middle is; in a panel this narrow the split
+     should be the panel's, not the words'. */
+  .playground__rail-binding .sk-segmented__option {
+    flex: 1 1 0;
+    min-inline-size: 0;
   }
 
   /*
@@ -255,6 +365,7 @@ const strings = {
     white-space: nowrap;
   }
 
+
   /*
    * THE PREVIEW PANE AND ITS OWN BAR.
    *
@@ -286,7 +397,10 @@ const strings = {
     align-items: center;
     justify-content: space-between;
     min-block-size: calc(var(--size-control-md) + 1px);
-    padding-inline: var(--space-inset-md);
+    /* Same treatment as the chrome above (`tool.css`): with one pane filling the window, this bar's
+       two ends ARE the window's, and a landscape phone puts its notch on one of them. */
+    padding-inline-start: max(var(--space-inset-md), env(safe-area-inset-left));
+    padding-inline-end: max(var(--space-inset-md), env(safe-area-inset-right));
     border-block-end: 1px solid var(--color-border-subtle);
     background: var(--color-bg-canvas);
   }
@@ -447,6 +561,36 @@ const strings = {
   }
 
   /*
+   * ONE PANE AT A TIME, at the same `48rem` where Sandpack itself stops putting them side by side.
+   *
+   * Stacking two panes is the right answer while each half is still a pane. On a phone it is not:
+   * measured at 390x844, the editor got 359px (about eleven lines, with the code scrolling sideways)
+   * and the preview 349px, of which its own bar takes 41. Two unusable halves, and the reader came
+   * for one of them. So below this width the stage draws the pane named by `data-mobile-pane` and
+   * nothing else, and each pane's header carries the control that opens the other (`Playground.tsx`).
+   *
+   * The attribute is only ever present at these widths (React reads the same query), so a wider
+   * window needs no rule to undo this: there is nothing to undo.
+   */
+  @media (width <= 48rem) {
+    .playground__stage[data-mobile-pane="preview"] .sp-layout > .playground__files,
+    .playground__stage[data-mobile-pane="code"] .sp-layout > .playground__preview {
+      display: none;
+    }
+
+    /* Nothing left to divide. The handle is also an 8px target, which is not one a finger can hit. */
+    .playground__stage[data-mobile-pane] .playground__splitter {
+      display: none;
+    }
+
+    /* The one visible pane takes the whole column, instead of the half the splitter's clamp wrote for
+       an arrangement that no longer exists here. */
+    .playground__stage[data-mobile-pane] .sp-layout > .playground__files {
+      flex: 1 1 auto;
+    }
+  }
+
+  /*
    * THE FILE TABS (`EditorFiles`): the kit's Tabs, laid out as a pane. The strip takes its own
    * height, the open panel takes the rest, and Sandpack's editor fills that panel. The only
    * departures from the component's defaults are spatial: no gap or panel padding, since the editor
@@ -506,7 +650,9 @@ const strings = {
     min-inline-size: 0;
     padding-inline-start: var(--space-inset-md);
     overflow-x: auto;
-    scrollbar-width: none;
+    /* NO `scrollbar-width: none` here. The strip scrolls whenever an example has more files than fit,
+       and hiding the bar hid the only sign that it does. `EditorFiles` dresses it with the kit's
+       reveal scrollbar, the same pattern the code scroller under it wears. */
   }
 
   /*

@@ -61,7 +61,7 @@ export const tabsMessages = {
     "tabsPage.contractItem3": "<code>data-disabled</code> retira una opción de la interacción.",
     "tabsPage.contractItem4": "<code>data-orientation=\"vertical\"</code> cambia el eje de navegación y del indicador.",
     "tabsPage.contractItem5": "<code>data-activation-mode=\"manual\"</code> separa foco y selección.",
-    "tabsPage.contractItem6": "Vanilla emite <code>sk-value-change</code>; React expone <code>onValueChange</code>.",
+    "tabsPage.contractItem6": "Vanilla emite <code>sk:tabsvaluechange</code>; React expone <code>onValueChange</code>.",
     "tabsPage.reactBody": "El componente renderiza la misma anatomía desde <code>items</code>. Usa <code>value</code> y <code>onValueChange</code> cuando otro estado de la aplicación dependa de la pestaña activa.",
     "tabsPage.test1": "Conecta la pestaña seleccionada con su panel nombrado.",
     "tabsPage.test2": "Refleja la selección en el atributo <code>data-*</code> de la raíz.",
@@ -133,7 +133,7 @@ export const tabsMessages = {
     "tabsPage.contractItem3": "<code>data-disabled</code> removes an option from interaction.",
     "tabsPage.contractItem4": '<code>data-orientation="vertical"</code> changes the navigation and indicator axis.',
     "tabsPage.contractItem5": '<code>data-activation-mode="manual"</code> separates focus from selection.',
-    "tabsPage.contractItem6": "Vanilla emits <code>sk-value-change</code>; React exposes <code>onValueChange</code>.",
+    "tabsPage.contractItem6": "Vanilla emits <code>sk:tabsvaluechange</code>; React exposes <code>onValueChange</code>.",
     "tabsPage.reactBody":
       "The component renders the same anatomy from <code>items</code>. Use <code>value</code> and <code>onValueChange</code> when another piece of application state depends on the active tab.",
     "tabsPage.test1": "Connects the selected tab with its labelled panel.",

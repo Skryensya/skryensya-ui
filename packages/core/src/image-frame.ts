@@ -29,6 +29,7 @@ export type ImageFramePartClass = (typeof imageFrameParts)[ImageFramePart];
  */
 export const imageFrameContract = {
   id: "image-frame",
+  category: "content",
   css: "@skryensya/core/patterns/image-frame.css",
   parts: imageFrameParts,
   hooks: [
@@ -93,13 +94,18 @@ export const imageFrameContract = {
     /** The convenience source. Renders the `<img>` part; authored children are the other way in. */
     src: { type: "string", attr: "src" },
     alt: { type: "string", attr: "alt" },
+    /**
+     * The frame's element; React's `as`. `figure` when a caption names the media, so the pair is one
+     * unit to assistive tech rather than an image and a stray line of text.
+     */
+    frameElement: { type: "enum", values: ["div", "figure"], default: "div", element: true, prop: "as" },
   },
 
   signatures: {
     ImageFrame: {
       intent: ["media", "clipped-media", "aspect-ratio-box", "thumbnail", "cover-image"],
       host: { element: "div" },
-      options: ["aspect", "fit", "position", "radius", "border", "src", "alt"],
+      options: ["aspect", "fit", "position", "radius", "border", "src", "alt", "frameElement"],
       exactlyOneOf: [["src", "children"]],
       slots: {
         /** Authored media: `picture`, `video`, anything the `src` convenience cannot express. */
@@ -110,6 +116,9 @@ export const imageFrameContract = {
          */
         caption: { accepts: "signature", of: ["MediaCaption"] },
       },
+      compose: [
+        { of: "media-gradient", sheets: ["@skryensya/core/patterns/media-gradient.css"] },
+      ],
       template: {
         element: "div",
         part: "root",

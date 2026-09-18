@@ -23,6 +23,7 @@ export type KbdTone = "neutral" | "accent";
  */
 export const kbdContract = {
   id: "kbd",
+  category: "content",
   css: "@skryensya/core/components/kbd.css",
   parts: kbdParts,
   hooks: [

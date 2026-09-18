@@ -1,6 +1,7 @@
 <script lang="ts">
   import { anchorNameFor, bindAnchor, stripPositioningStyle, supportsAnchorPositioning } from "@skryensya/core/anchored";
   import { select } from "@skryensya/core/machines";
+  import { timeFieldContract, timeFieldEvents } from "@skryensya/core/time-field";
   import { selectParts } from "@skryensya/core/select";
   import {
     formatTimeValue,
@@ -56,19 +57,20 @@
   // A base for the label and hint ids, NOT an id on the root: nothing points at the root, and
   // stamping one there is a difference React has no reason to match.
   const idBase = root.id || uniqueId("sk-time-field");
-  const locale = root.dataset.locale || "es";
+  const locale = root.dataset.locale || timeFieldContract.options.locale.default;
   const hourCycleOverride = root.dataset.hourCycle as HourCycle | undefined;
   const minuteStep = Number(root.dataset.minuteStep) || 1;
   const disabled = root.hasAttribute("data-disabled");
   const readOnly = root.hasAttribute("data-readonly");
   const required = root.hasAttribute("data-required");
+  const invalid = root.hasAttribute("data-invalid");
   const name = root.dataset.name || undefined;
-  const hourLabel = root.dataset.hourLabel || "Hora";
-  const minuteLabel = root.dataset.minuteLabel || "Minuto";
-  const periodLabel = root.dataset.periodLabel || "Periodo";
-  const clearLabel = root.dataset.clearLabel || "Limpiar hora";
+  const hourLabel = root.dataset.hourLabel || timeFieldContract.options.hourLabel.default;
+  const minuteLabel = root.dataset.minuteLabel || timeFieldContract.options.minuteLabel.default;
+  const periodLabel = root.dataset.periodLabel || timeFieldContract.options.periodLabel.default;
+  const clearLabel = root.dataset.clearLabel || timeFieldContract.options.clearLabel.default;
   const optionsStep = Number(root.dataset.optionsStep) || 30;
-  const optionsLabel = root.dataset.optionsLabel || "Elegir de la lista";
+  const optionsLabel = root.dataset.optionsLabel || timeFieldContract.options.optionsLabel.default;
 
   const labelId = label ? (label.id ||= `${idBase}-label`) : undefined;
   const hintId = hint ? (hint.id ||= `${idBase}-hint`) : undefined;
@@ -144,7 +146,7 @@
   function commit(next: SegmentValues) {
     segments = next;
     const formatted = canonical ? formatTimeValue(canonical) : "";
-    root.dispatchEvent(new CustomEvent("sk-value-change", { bubbles: true, detail: { value: formatted } }));
+    root.dispatchEvent(new CustomEvent(timeFieldEvents.valueChange, { bubbles: true, detail: { value: formatted } }));
   }
 
   /*
@@ -424,7 +426,9 @@
       <span aria-hidden="true" class={timeFieldParts.literal}>{token.value}</span>
     {:else}
       <div
+        aria-invalid={invalid ? "true" : undefined}
         aria-label={segmentLabels[token.type]}
+        aria-readonly={readOnly ? "true" : undefined}
         aria-required={required ? "true" : undefined}
         aria-valuemax={segmentBounds(token.type, cycle).max}
         aria-valuemin={segmentBounds(token.type, cycle).min}

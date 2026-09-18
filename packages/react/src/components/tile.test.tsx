@@ -9,6 +9,7 @@ import {
   type TileSharedAccessibilityBehavior,
   type TileSharedStateBehavior,
 } from "@skryensya/core/tile-contracts";
+import { tileEvents } from "@skryensya/core/tile";
 import { ExpandableTile, TileButton, TileCheckbox, TileContent, TileLink, TileRadioGroup, TileSwitch } from "./tile.js";
 
 describe("Tile React contracts", () => {
@@ -17,6 +18,7 @@ describe("Tile React contracts", () => {
       const ui = render(<TileCheckbox defaultChecked={false}>Alerts</TileCheckbox>);
       const input = ui.getByRole("checkbox") as HTMLInputElement;
       const root = input.closest<HTMLElement>("[data-scope=tile]");
+      expect(root?.hasAttribute("data-sk-tile-checkbox")).toBe(true);
       expect(root?.querySelector(".sk-checkbox__control")?.classList.contains("sk-interactive")).toBe(true);
       expect(root?.querySelectorAll(".sk-checkbox__indicator .sk-icon")).toHaveLength(2);
       expect(root?.querySelector(".sk-tile__selection-indicator")).toBeNull();
@@ -33,6 +35,7 @@ describe("Tile React contracts", () => {
       const ui = render(<TileSwitch defaultChecked={false}>Auto-deploy</TileSwitch>);
       const input = ui.getByRole("switch") as HTMLInputElement;
       const root = input.closest<HTMLElement>("[data-scope=tile]");
+      expect(root?.hasAttribute("data-sk-tile-switch")).toBe(true);
       expect(root?.querySelector(".sk-switch__control")).not.toBeNull();
       expect(root?.querySelector(".sk-checkbox__control")).toBeNull();
       expect(root?.dataset.state).toBe(tileSharedStateContract.switch.initial.dataState);
@@ -52,6 +55,7 @@ describe("Tile React contracts", () => {
       const pro = ui.getByRole("radio", { name: "Pro" }) as HTMLInputElement;
       const basicItem = basic.closest<HTMLElement>("[data-part=item]");
       const proItem = pro.closest<HTMLElement>("[data-part=item]");
+      expect(ui.container.querySelector("[data-sk-tile-radio-group]")).not.toBeNull();
       expect(basic.value).toBe(tileSharedStateContract.radioGroup.initial.selectedValue);
       expect(basicItem?.dataset.state).toBe(tileSharedStateContract.radioGroup.initial.selectedState);
       expect(proItem?.dataset.state).toBe(tileSharedStateContract.radioGroup.initial.unselectedState);
@@ -73,6 +77,7 @@ describe("Tile React contracts", () => {
       const trigger = ui.getByRole("button", { name: "Summary" });
       const content = ui.getByText("Details");
       const root = trigger.closest<HTMLElement>("[data-scope=tile]");
+      expect(ui.container.querySelector("[data-sk-expandable-tile]")).not.toBeNull();
       expect(root?.dataset.state).toBe(tileSharedStateContract.expandable.initial.dataState);
       expect(trigger.getAttribute("aria-expanded")).toBe(tileSharedStateContract.expandable.initial.expanded);
       expect(content.hidden).toBe(tileSharedStateContract.expandable.initial.contentHidden);
@@ -216,6 +221,31 @@ describe("Tile React contracts", () => {
     );
     fireEvent.click(ui.getByRole("button", { name: "Summary" }));
     await waitFor(() => expect(onOpenChange).toHaveBeenCalledWith({ open: true }));
+  });
+
+  it("dispatches contract DOM events alongside React callbacks", async () => {
+    const onCheck = vi.fn();
+    const onCheckedEvent = vi.fn();
+    const onOpenEvent = vi.fn();
+
+    const checkboxUi = render(<TileCheckbox defaultChecked={false} onCheck={onCheck}>Alerts</TileCheckbox>);
+    const checkboxRoot = checkboxUi.getByRole("checkbox").closest("[data-scope=tile]");
+    checkboxRoot?.addEventListener(tileEvents.checkedChange, onCheckedEvent);
+    fireEvent.click(checkboxUi.getByText("Alerts"));
+    await waitFor(() => {
+      expect(onCheck).toHaveBeenCalledWith({ checked: true });
+      expect(onCheckedEvent).toHaveBeenCalledOnce();
+    });
+
+    const expandUi = render(
+      <ExpandableTile defaultOpen={false}>
+        <ExpandableTile.Trigger>Summary</ExpandableTile.Trigger>
+        <ExpandableTile.Content>Details</ExpandableTile.Content>
+      </ExpandableTile>,
+    );
+    expandUi.container.querySelector("[data-scope=tile]")?.addEventListener(tileEvents.openChange, onOpenEvent);
+    fireEvent.click(expandUi.getByRole("button", { name: "Summary" }));
+    await waitFor(() => expect(onOpenEvent).toHaveBeenCalledOnce());
   });
 
   it("puts the disclosure state layer on the trigger, not the Tile surface", () => {

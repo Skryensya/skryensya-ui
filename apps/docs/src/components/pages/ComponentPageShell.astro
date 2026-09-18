@@ -32,6 +32,7 @@ import StylingHooks, { type HookGroup } from "../StylingHooks.astro";
 import { getContract } from "@skryensya/core/registry";
 import TestCoverage, { type TestGroup } from "../TestCoverage.astro";
 import { changelogFor } from "../../lib/contract-reference";
+import { findComponentIconMarkup } from "../../lib/component-icons";
 import { getLocale, useTranslations } from "../../i18n";
 
 interface Props {
@@ -94,6 +95,18 @@ const derivedStyleGroups: readonly HookGroup[] = (() => {
 const hasStyle = derivedStyleGroups.length > 0 || Astro.slots.has("style");
 const hasA11y = Astro.slots.has("a11y");
 const hasTests = tests.length > 0 || (testFiles?.length ?? 0) > 0;
+
+/*
+ * THE SAME GLYPH THE READER CLICKED TO GET HERE. The sidebar row, the drawer row and the catalogue
+ * card already carry it; repeating it in the masthead is what closes that trail, so arriving on the
+ * page confirms the row rather than starting over at a bare title.
+ *
+ * Nullable on purpose, via `findComponentIconMarkup` rather than the throwing `componentIconMarkup`:
+ * a handful of pages under this shell are not one component (Primitivas surveys six, Card documents
+ * a composition), and those have no glyph to be right about. The catalogue is where a missing entry
+ * is a build error; here it is simply a title with no mark.
+ */
+const markMarkup = findComponentIconMarkup(Astro.url.pathname, { className: "docs-component-hero__mark" });
 ---
 
 <Base title={title} description={description} documentLayout="grid" hideVanillaMount={hideVanillaMount}>
@@ -135,6 +148,15 @@ const hasTests = tests.length > 0 || (testFiles?.length ?? 0) > 0;
        * same accent-tinted band the header paints.
        */}
       <div class="docs-component-hero__spacer sk-fx-collapse-header__spacer"></div>
+
+      {/*
+       * The component's mark, in the band's top corner. A SIBLING of the hero, not a child of it:
+       * `.docs-component-head` is `display: contents`, so this lands directly inside
+       * `.docs-component-shell`, which is the box whose top edge is the band's top (the hero itself
+       * is only ever the collapsed bar). Decorative, and out of the flow, so it can never be what
+       * sets the band's height; see `.docs-component-hero__mark`.
+       */}
+      {markMarkup && <Fragment set:html={markMarkup} />}
 
       {/*
        * THE HERO'S OWN BACKING PLATE, a real sibling rather than a pseudo-element INSIDE the hero:

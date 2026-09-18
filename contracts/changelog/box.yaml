@@ -3,8 +3,22 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "b27e4b565bc07b5a"
+surface: "7124f7eeae8b7a9c"
 entries:
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: Box publica solo sk-box y deja de cargar wrapper.css
+      body: >-
+        El contrato deja de compartir <code>layoutParts</code> y de reclamar los hooks de
+        <code>wrapper.css</code>. Un árbol con <code>Box</code> carga sólo
+        <code>patterns/box.css</code>; la medida de columna sigue siendo de Wrapper.
+    en:
+      title: Box publishes only sk-box and stops loading wrapper.css
+      body: >-
+        The contract no longer shares <code>layoutParts</code> or claims
+        <code>wrapper.css</code> hooks. A tree with <code>Box</code> loads only
+        <code>patterns/box.css</code>; page-column measure stays Wrapper's.
   - date: 2026-08-11
     kind: feature
     es:
@@ -61,3 +75,43 @@ entries:
         sheet <code>css</code> names could be reconciled, so the hooks in the others were public
         surface nobody documented and nothing checked. No styling changes: what changes is that they
         are declared now, and the compiler checks them.
+  - date: 2026-09-16
+    kind: breaking
+    es:
+      title: Un Box sin padding, surface ni border ya no valida
+      body: >-
+        Box es su estilo visual: con las tres opciones en <code>none</code> no pinta nada y queda un
+        <code>div</code> haciendose pasar por una decision. El contrato ahora exige al menos una de
+        <code>padding</code>, <code>surface</code> o <code>border</code> con un valor distinto del
+        default, y escribir <code>padding="none"</code> no cuenta: esta presente y sigue sin pintar.
+        Para agrupar sin pintar estan <code>Stack</code>, <code>Inline</code> y <code>Grid</code>, que
+        es a lo que se migraron los 18 arboles que hacian esto en este repo. La regla es una
+        constraint nueva del contrato, <code>atLeastOneOf</code>, que el validador reporta como
+        <code>missing-at-least-one</code>.
+    en:
+      title: A Box with no padding, surface or border no longer validates
+      body: >-
+        A Box IS its visual style: with all three options at <code>none</code> it paints nothing and
+        is a bare <code>div</code> standing in for a decision. The contract now demands at least one
+        of <code>padding</code>, <code>surface</code> or <code>border</code> set to something other
+        than its default, and writing <code>padding="none"</code> does not count: it is present and
+        still invisible. Grouping without paint is <code>Stack</code>, <code>Inline</code> and
+        <code>Grid</code>, which is where the 18 trees in this repo that did it have moved. The rule
+        is a new contract constraint, <code>atLeastOneOf</code>, reported by the validator as
+        <code>missing-at-least-one</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Box elige su elemento desde el árbol
+      body: >-
+        <code>boxElement</code> acepta <code>div</code>, <code>section</code>, <code>article</code>,
+        <code>aside</code>, <code>header</code>, <code>footer</code>, <code>nav</code> y
+        <code>main</code>. React ya lo permitía con <code>as</code>, pero un árbol sólo podía emitir
+        un <code>div</code>, así que una región o un landmark no tenía forma de escribirse.
+    en:
+      title: Box choose their element from the tree
+      body: >-
+        <code>boxElement</code> takes <code>div</code>, <code>section</code>, <code>article</code>,
+        <code>aside</code>, <code>header</code>, <code>footer</code>, <code>nav</code> and
+        <code>main</code>. React already allowed it through <code>as</code>, but a tree could only
+        emit a <code>div</code>, so a region or a landmark had no way to be written.

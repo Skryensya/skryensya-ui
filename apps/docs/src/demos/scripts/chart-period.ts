@@ -5,7 +5,7 @@
  * chart's own series list from JSON that was already there, the same list `chart.ts`'s own template
  * repeats for every kind.
  *
- * Listens for `sk-value-change`, the event Segmented's own enhancer already dispatches on itself
+ * Listens for `sk:segmentedvaluechange`, the event Segmented's own enhancer already dispatches on itself
  * (`packages/vanilla/src/components/segmented.ts`) - no bespoke wiring, the same event
  * `ComponentPreview`'s own binding toggle listens for.
  */
@@ -59,7 +59,7 @@ if (chart && control) {
     if (caption) caption.textContent = name;
   };
 
-  control.addEventListener("sk-value-change", (event) => {
+  control.addEventListener("sk:segmentedvaluechange", (event) => {
     const value = (event as CustomEvent<{ value?: string }>).detail?.value;
     if (value) render(value);
   });

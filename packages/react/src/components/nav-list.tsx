@@ -50,7 +50,9 @@ export type NavListGroupProps = Omit<HTMLAttributes<HTMLDivElement>, "children">
    */
   collapsible?: boolean;
   /** Starts expanded. Hiding navigation by default is the wrong default. Uncontrolled: read once,
-   *  then this component owns it, the same as `Accordion`'s own `defaultOpen`. */
+   *  then this component owns it, the same as `Accordion`'s own `defaultOpen`. Absence and
+   *  `true` both mean open (contract has no default, so emit only writes `data-default-open`
+   *  when the author spelled `true`). */
   defaultOpen?: boolean;
   /**
    * Renders a static label (`collapsible` absent) as a real `<h3>` instead of a plain `<div>` -
@@ -71,21 +73,24 @@ export function NavListGroup({
   children,
   className,
   collapsible = collapsibleOption.default,
-  defaultOpen = true,
+  defaultOpen,
   heading = headingOption.default,
   label,
   ...props
 }: NavListGroupProps) {
   const labelId = useId();
   const listId = useId();
-  const [open, setOpen] = useState(defaultOpen);
+  /* Absence = open, matching the contract's missing-default and the vanilla enhancer. */
+  const [open, setOpen] = useState(defaultOpen !== false);
   const expanded = collapsible ? open : true;
 
   return (
     <div
       {...props}
       className={cx(navListParts.group, className)}
-      data-heading={heading ? "" : undefined}
+      {...{ [collapsibleOption.attr]: collapsible ? "" : undefined }}
+      {...{ [navListContract.options.defaultOpen.attr]: collapsible && defaultOpen === true ? "" : undefined }}
+      {...{ [headingOption.attr]: heading && !collapsible ? "" : undefined }}
       onKeyDown={(event) => {
         props.onKeyDown?.(event);
         // The one keyboard requirement WAI's Disclosure (Navigation) pattern does NOT mark
@@ -103,6 +108,7 @@ export function NavListGroup({
           aria-controls={listId}
           aria-expanded={expanded}
           className={`${navListParts.groupLabel} sk-interactive`}
+          data-sk-nav-list-group-trigger=""
           onClick={() => setOpen((previous) => !previous)}
           type="button"
         >
@@ -120,6 +126,7 @@ export function NavListGroup({
       <ul
         aria-labelledby={label ? (collapsible ? undefined : labelId) : undefined}
         className={navListParts.list}
+        data-sk-nav-list-group-list={collapsible ? "" : undefined}
         hidden={collapsible && !expanded}
         id={collapsible ? listId : undefined}
         role="list"
@@ -133,7 +140,8 @@ export function NavListGroup({
 /** `href` is required: the signature requires it, and a destination with no destination is not one. */
 export type NavListLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> &
   SignatureOptionsOf<typeof navListContract, "NavListLink"> & {
-    children: ReactNode;
+    /** Slot `text`: the accessible name of the destination. */
+    children: string;
     href: string;
     /**
      * Decorative: the label names the link, so pass an `<Icon>` with no label of its own. It keeps

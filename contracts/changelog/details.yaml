@@ -3,8 +3,37 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "eb8ca0fe2194e30e"
+surface: "b0026c8e1941baf8"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    target: Details.Summary
+    es:
+      title: Details.Summary declara compose del chevron Icon
+      body: >-
+        El indicador chevron-down/up queda documentado como <code>compose</code> de
+        <code>icon</code> con <code>systemOwned</code> (ya estaba horneado vía
+        <code>data-sk-icon</code>).
+    en:
+      title: Details.Summary declares compose of the chevron Icon
+      body: >-
+        The chevron-down/up indicator is documented as <code>compose</code> of
+        <code>icon</code> with <code>systemOwned</code> (already baked via
+        <code>data-sk-icon</code>).
   - date: 2026-08-11
     kind: feature
     es:
@@ -45,3 +74,34 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: Details ya no exige vivir dentro de DetailsGroup
+      body: >-
+        Un disclosure suelto es el caso común; el grupo sólo coordina exclusividad vía
+        <code>name</code>. El contrato dejaba de validar un <code>Details</code> en la raíz, aunque
+        React y el HTML nativo sí lo permiten.
+    en:
+      title: Details no longer requires a DetailsGroup ancestor
+      body: >-
+        A lone disclosure is the common case; the group only coordinates exclusivity via
+        <code>name</code>. The contract rejected a top-level <code>Details</code> even though React
+        and native HTML allow it.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Se van las clases de título que ningún árbol usaba
+      body: >-
+        <code>sk-details__heading</code>, <code>sk-details__title</code> y
+        <code>sk-details__description</code> tenían estilo pero no eran partes del contrato ni las usaba
+        nadie: un título dentro del summary se compone con Typography. Salen con los hooks que sólo
+        ellas leían, <code>--sk-details-title-font-size</code> y
+        <code>--sk-details-description-font-size</code>.
+    en:
+      title: The title classes no tree used are gone
+      body: >-
+        <code>sk-details__heading</code>, <code>sk-details__title</code> and
+        <code>sk-details__description</code> were styled but were not contract parts and nothing used
+        them: a title inside the summary is composed with Typography. They go with the hooks only they
+        read, <code>--sk-details-title-font-size</code> and <code>--sk-details-description-font-size</code>.

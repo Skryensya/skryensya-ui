@@ -128,6 +128,7 @@
     display: inline-flex;
   }
 
+  /* Hit-testing: contract `BadgeHolder.hitTesting.childrenNone` (Badge, BadgeDot). */
   .sk-badge-holder > .sk-badge {
     position: absolute;
     inset-block-start: 0;

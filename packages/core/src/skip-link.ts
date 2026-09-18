@@ -53,6 +53,7 @@ export const SKIP_LINK_TARGET_TABINDEX = "-1";
 
 export const skipLinkContract = {
   id: "skip-link",
+  category: "navigation",
   css: "@skryensya/core/components/skip-link.css",
   parts: skipLinkParts,
   hooks: [
@@ -73,9 +74,14 @@ export const skipLinkContract = {
   options: {
     /**
      * Where it jumps. In-page and therefore an id (`#main-nav`), which is what makes this the
-     * platform's own navigation rather than a scripted one.
+     * platform's own navigation rather than a scripted one. The pattern is the whole of that rule:
+     * a bare path or an absolute URL would turn this into a Link that happens to be clipped.
      */
-    href: { type: "string", attr: "href" },
+    href: {
+      type: "string",
+      attr: "href",
+      pattern: { source: "^#.+$", example: "#main-nav" },
+    },
   },
 
   /*
@@ -92,6 +98,8 @@ export const skipLinkContract = {
       host: { element: "a" },
       options: ["href"],
       requires: ["href"],
+      /** In-page link host attrs the contract does not map. */
+      forward: ["id", "aria-*"],
       slots: { children: { accepts: "text", required: true } },
       template: {
         element: "a",

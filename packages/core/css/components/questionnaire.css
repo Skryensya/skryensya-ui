@@ -1,0 +1,348 @@
+/*
+ * TIER 3, QUESTIONNAIRE
+ *
+ * The arrangement, and nothing a reused piece already paints. The choices are Tile, the free text is
+ * FormField + Input, the buttons are Button, the progress is Progress or Steps and the shortcut hint is
+ * Kbd: each brings its own stylesheet. What lives here is the stack a question needs, the actions row,
+ * and where the shortcut key sits.
+ *
+ * Every hook resolves to a TIER-2 token, never a palette or raw color, scripts/lint.ts enforces it.
+ */
+@layer components {
+  .sk-questionnaire {
+    /*
+     * THE WHOLE FORM READS AT ONE STEP OF THE STACK, `md` between its three bands (progress, the
+     * question, the actions) and `md` inside the question. A wider outer gap made the actions read as
+     * a separate block from the question they belong to.
+     */
+    --sk-questionnaire-gap: var(--space-stack-md);
+    --sk-questionnaire-item-gap: var(--space-stack-md);
+    /*
+     * A FORM IS READ, SO IT TAKES A MEASURE, and a narrower one than prose: one question at a time is
+     * a column of short rows, and a row that runs the width of a page puts its answer a long way from
+     * the question that asked it. `ch`, so the cap tracks the type rather than a guess in pixels.
+     */
+    --sk-questionnaire-measure: 56ch;
+    --sk-questionnaire-shortcut-fg: var(--color-text-tertiary);
+
+    /*
+     * ONE ROW FOR EVERY QUESTION, so the box never changes height as the reader moves through it.
+     * The questions are stacked in the SAME grid row (row 2 below), which makes that row as tall as
+     * the tallest question; progress sits above it and the actions below, both at their own height.
+     * A questionnaire that grew and shrank per question moved the buttons under the reader's cursor
+     * and reflowed the page around it on every step.
+     */
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sk-questionnaire-gap);
+    /*
+     * Readable measure: one column of questions, centered when the host is wider, and the full width
+     * below the cap so a narrow viewport loses nothing.
+     *
+     * STATED AS A SIZE, not as a ceiling: a `max-inline-size` is exactly what a host that stretches
+     * its children overrides (the docs' own preview stage caps every specimen at `100%`), and the
+     * questionnaire would then run the width of whatever holds it. `min()` says the same thing where
+     * nothing is arguing, and survives where something is.
+     */
+    inline-size: min(100%, var(--sk-questionnaire-measure));
+    margin-inline: auto;
+    min-inline-size: 0;
+  }
+
+  /*
+   * The stacking is the MOUNTED questionnaire's, not the markup's: with no script every question is
+   * visible and answerable, and three questions sharing one row would draw on top of each other.
+   * Unmounted, they stay an ordinary column.
+   */
+  .sk-questionnaire[data-sk-ready] .sk-questionnaire__progress {
+    grid-row: 1;
+  }
+
+  .sk-questionnaire[data-sk-ready] .sk-questionnaire__item {
+    grid-row: 2;
+    grid-column: 1;
+  }
+
+  .sk-questionnaire[data-sk-ready] .sk-questionnaire__actions {
+    grid-row: 3;
+  }
+
+  /*
+   * HIDDEN, BUT STILL HOLDING THE ROW. `hidden` (or any `display: none`) would take the question out
+   * of layout and the height would collapse to whichever question is showing, which is the whole
+   * thing this row exists to prevent. `visibility: hidden` keeps the box and still takes the question
+   * out of the tab order and out of the accessibility tree; the bindings add `inert` on top.
+   *
+   * Gated on the questionnaire being mounted: with no script every question is visible and answerable
+   * (the emitted markup is a plain long form), and hiding them by default would leave a form nobody
+   * can fill.
+   */
+  .sk-questionnaire[data-sk-ready] .sk-questionnaire__item:not([data-active]) {
+    visibility: hidden;
+  }
+
+  /* `display` on a part beats the UA's `[hidden]` rule, so every part the binding hides says it again. */
+  .sk-questionnaire [hidden] {
+    display: none;
+  }
+
+  .sk-questionnaire__progress {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-xs);
+    min-inline-size: 0;
+  }
+
+  .sk-questionnaire__position {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-label);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* A fieldset with its UA frame taken off: the legend is the question, not a caption on a border. */
+  .sk-questionnaire__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-questionnaire-item-gap);
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  /* Focus lands here programmatically when a question becomes active, so a screen reader announces
+     the legend. It is not a control, so it draws no ring. */
+  .sk-questionnaire__item:focus {
+    outline: none;
+  }
+
+  /*
+   * THE QUESTION IS A LABEL, NOT A PAGE HEADING. One step above body keeps it the largest thing
+   * inside the form without competing with page-level headings.
+   */
+  .sk-questionnaire__title {
+    padding: 0;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-body-lg);
+    font-weight: var(--font-weight-label);
+    line-height: var(--line-height-heading);
+    text-wrap: pretty;
+  }
+
+  /* The legend is the first child and the gap would open under it; a description right below it reads
+     as part of the question, so it sits closer. */
+  .sk-questionnaire__title + .sk-questionnaire__description {
+    margin-block-start: calc(var(--sk-questionnaire-item-gap) * -1 + var(--space-stack-xs));
+  }
+
+  .sk-questionnaire__description {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body);
+    text-wrap: pretty;
+  }
+
+  /*
+   * Steps progress spans the questionnaire measure: equal columns, labels wrap inside each column.
+   * Bindings pin `data-orientation="horizontal"` so the default vertical rail below 40rem does not
+   * collapse the journey into unequal rows.
+   */
+  .sk-questionnaire__progress > .sk-steps {
+    inline-size: 100%;
+  }
+
+  /* Items live on the `<ol.sk-steps>`, not directly under progress. */
+  .sk-questionnaire__progress > .sk-steps > .sk-steps__item {
+    flex: 1 1 0;
+    min-inline-size: 0;
+  }
+
+  .sk-questionnaire__progress .sk-steps__label {
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+  }
+
+  .sk-questionnaire__answers {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-sm);
+    min-inline-size: 0;
+  }
+
+  .sk-questionnaire__choices {
+    display: grid;
+    gap: var(--space-stack-xs);
+    min-inline-size: 0;
+  }
+
+  /* ── the Likert scale ─────────────────────────────────────────────────────
+   * NATIVE RADIOS IN A BOX. The scale is `radio-group.css`'s own row inside a Box, so the browser
+   * owns selection and keyboard and this file owns only the arrangement: every point the same width,
+   * its radio over its label, and the ends named underneath. Below `30rem` the columns would be
+   * narrower than a finger, so the group falls back to the vertical list it already knows how to be.
+   */
+  .sk-questionnaire__choices[data-likert] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-xs);
+  }
+
+  /* The equal columns are the group's own `spread` option (radio-group.css); what is left here is how
+     a POINT is drawn: its control over its label, centred in the column. */
+  .sk-questionnaire__choices[data-likert] .sk-questionnaire__scale {
+    --sk-radio-gap: var(--space-stack-xs);
+
+    justify-items: center;
+  }
+
+  /* The point: control over label, both centred, and the whole column is the hit area. */
+  .sk-questionnaire__choices[data-likert] .sk-radio {
+    flex-direction: column;
+    align-items: center;
+    inline-size: 100%;
+    padding-block: var(--space-inset-xs);
+    text-align: center;
+  }
+
+  @media (width < 30rem) {
+    .sk-questionnaire__choices[data-likert] .sk-questionnaire__scale {
+      grid-auto-flow: row;
+      justify-items: stretch;
+    }
+
+    .sk-questionnaire__choices[data-likert] .sk-radio {
+      flex-direction: row;
+      align-items: center;
+      text-align: start;
+    }
+  }
+
+  /* The ends of the scale, said in words: the lowest point on the left, the highest on the right. */
+  .sk-questionnaire__anchors {
+    display: flex;
+    gap: var(--space-inline-md);
+    justify-content: space-between;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+  }
+
+  .sk-questionnaire__anchor {
+    flex: 1 1 0;
+    min-inline-size: 0;
+    text-wrap: balance;
+  }
+
+  .sk-questionnaire__anchor:last-child {
+    text-align: end;
+  }
+
+  /*
+   * A CHOICE IS A ROW, NOT A CARD. Tile publishes its type and its corner as hooks, and a
+   * questionnaire is a column of them: at Tile's own `heading-sm` every option shouted as loudly as
+   * the question above it. Re-declared ON the tile, because Tile declares its own defaults there and
+   * a value set on an ancestor would lose to them. The corner follows the control radius, the way a
+   * row of choices does, not the surface radius a standalone card takes.
+   */
+  .sk-questionnaire__choices .sk-tile {
+    --sk-font-heading-sm: var(--font-size-body-sm);
+    --sk-font-body-sm: var(--font-size-body-sm);
+    --sk-tile-radius: var(--radius-control);
+    /*
+     * Stated, not inherited: a Tile rendered as a `<label>` (which is what TileCheckbox and every
+     * TileRadioGroup option is) does not pick up Tile's own `font-size` in the browser, so the
+     * description fell back to the document's 16px while the title obeyed the hook above. Measured on
+     * the real page: the same markup as a `<div>` computes 14px, as a `<label>` 16px. Worth fixing in
+     * Tile; until then the choice says its own size, and both bindings agree either way.
+     */
+    font-size: var(--font-size-body-sm);
+    /*
+     * Title and description are ONE answer, so they sit as one block: `--sk-space-2` is the gap Tile
+     * puts between them (`sk-tile__content`), and at this size its default opened a gap wide enough
+     * to read as two lines of unrelated text. `--sk-space-3` stays as Tile set it: that is the gap
+     * between the answer and its indicator, which is a different distance and still right.
+     */
+    --sk-space-2: var(--space-inline-xs);
+  }
+
+  /*
+   * The error's line is RESERVED, not conjured: a message that appears on a failed attempt would
+   * otherwise push everything under it down by a line at the worst possible moment. Empty at rest,
+   * one line tall either way.
+   */
+  .sk-questionnaire__error {
+    min-block-size: 1lh;
+    margin: 0;
+    color: var(--color-text-danger);
+    font-size: var(--font-size-body-sm);
+  }
+
+  /* ── actions ─────────────────────────────────────────────────────────────
+   * Three fixed columns, so a button appearing or leaving never moves the others: Previous holds the
+   * start edge, Skip and Next/Submit the end. Next and Submit share a column; only one is ever shown. */
+  .sk-questionnaire__actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: var(--space-inline-sm);
+    align-items: center;
+  }
+
+  .sk-questionnaire__previous {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+  }
+
+  .sk-questionnaire__skip {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .sk-questionnaire__next,
+  .sk-questionnaire__submit {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  /* ── shortcut hints ───────────────────────────────────────────────────────
+   * The key is a real Kbd in every choice, and its TEXT is written by the binding from core's own
+   * `questionnaireShortcuts`: one map for the key that shows and the key that works. A CSS counter
+   * drew it here once, and it was a second count that could disagree with the first (it numbered a
+   * tenth choice in `numbers` mode, which only reaches nine). So the stylesheet only places it, and
+   * an empty key is no key at all. */
+  .sk-kbd.sk-questionnaire__shortcut:empty {
+    display: none;
+  }
+
+  .sk-questionnaire__choices:has(.sk-questionnaire__shortcut:not(:empty)) .sk-tile__content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--space-inline-sm);
+    align-items: center;
+  }
+
+  .sk-questionnaire__shortcut {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    color: var(--sk-questionnaire-shortcut-fg);
+  }
+
+  /* ── motion ───────────────────────────────────────────────────────────────
+   * The question that just became active enters; progress and actions stay still. Longhands only: the
+   * minifier folds a shorthand with custom properties into something invalid. */
+  @media (prefers-reduced-motion: no-preference) {
+    .sk-questionnaire__item[data-active] {
+      animation-name: sk-questionnaire-enter;
+      animation-duration: var(--motion-enter-duration);
+      animation-timing-function: var(--motion-enter-easing);
+    }
+  }
+
+  @keyframes sk-questionnaire-enter {
+    from {
+      opacity: 0;
+      translate: 0 var(--motion-enter-distance);
+    }
+  }
+}

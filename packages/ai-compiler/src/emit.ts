@@ -440,14 +440,15 @@ function renderTemplate(
 
   const pad = "  ".repeat(depth);
   const attrs = attributesFor(node, ctx);
-  const openLines = htmlOpening(node.element, attrs, pad);
+  const element = hostElement(node, ctx);
+  const openLines = htmlOpening(element, attrs, pad);
 
   /*
    * A node's content, in order: its own literal text, then its slot, then its child nodes. A label
    * needs two of these at once (the author's text and the required mark after it), so these are
    * additive rather than a chain of alternatives.
    */
-  const raw = RAW_TEXT_ELEMENTS.has(node.element);
+  const raw = RAW_TEXT_ELEMENTS.has(element);
   /*
    * Whitespace this node's CSS renders is the AUTHOR's, so the printer stops editing it: text goes
    * out at depth 0 with no indentation and no re-wrapping, and the tags close tight around it
@@ -487,11 +488,11 @@ function renderTemplate(
 
   if (children.length === 0) {
     // A void element closes itself; writing </input> is markup no browser accepts as written.
-    if (VOID_ELEMENTS.has(node.element)) return openLines;
+    if (VOID_ELEMENTS.has(element)) return openLines;
     const last = openLines.length - 1;
     return [
       ...openLines.slice(0, last),
-      `${openLines[last]}</${node.element}>`,
+      `${openLines[last]}</${element}>`,
     ];
   }
 
@@ -504,7 +505,7 @@ function renderTemplate(
     const last = openLines.length - 1;
     return [
       ...openLines.slice(0, last),
-      `${openLines[last]}${children.join("\n")}</${node.element}>`,
+      `${openLines[last]}${children.join("\n")}</${element}>`,
     ];
   }
 
@@ -517,7 +518,7 @@ function renderTemplate(
     !children[0]!.trimStart().startsWith("<")
   ) {
     const text = children[0]!.trim();
-    const inline = `${openLines[0]}${text}</${node.element}>`;
+    const inline = `${openLines[0]}${text}</${element}>`;
     /*
      * STAYING INLINE is still the tag's question, and the prose measure is the wrong one to ask it
      * with: a separator holding a single `/` inside a two-attribute span is a 66-column line whose
@@ -526,10 +527,10 @@ function renderTemplate(
      * prose (`wrapText`'s own default, below).
      */
     if (inline.length <= PRINT_WIDTH) return [inline];
-    return [openLines[0]!, ...wrapText(text, depth + 1), `${pad}</${node.element}>`];
+    return [openLines[0]!, ...wrapText(text, depth + 1), `${pad}</${element}>`];
   }
 
-  return [...openLines, ...children, `${pad}</${node.element}>`];
+  return [...openLines, ...children, `${pad}</${element}>`];
 }
 
 /**
@@ -541,6 +542,21 @@ function renderTemplate(
  * only line, an empty element's line to append `</tag>` to, and a parent element's line to follow
  * with children are the same three shapes either way, wrapped or not.
  */
+/**
+ * The element a node renders as: its template's, unless it is the host and an `element` option was
+ * given, in which case the option's value IS the tag (a Heading authored at level `h1`).
+ */
+function hostElement(node: ContractTemplate, ctx: NodeContext): string {
+  const fixed = node.element!;
+  if (!node.host) return fixed;
+  for (const [name, option] of signatureOptions(ctx.contract, ctx.signature)) {
+    if (!option.element) continue;
+    const value = ctx.tree.options?.[name];
+    if (typeof value === "string" && option.values?.includes(value)) return value;
+  }
+  return fixed;
+}
+
 function htmlOpening(
   element: string,
   attrs: readonly string[],

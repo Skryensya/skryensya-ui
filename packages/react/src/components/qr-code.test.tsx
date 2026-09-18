@@ -73,4 +73,9 @@ describe("QRCode", () => {
     const ui = render(<QRCode label="Open" size="lg" value="https://ui.skryensya.dev" />);
     expect(ui.getByRole("img", { name: "Open" }).getAttribute("data-size")).toBe("lg");
   });
+
+  it("serializes module shape for the stylesheet's shape-rendering switch", () => {
+    const ui = render(<QRCode label="Open" shape="dot" value="https://ui.skryensya.dev" />);
+    expect(ui.getByRole("img", { name: "Open" }).getAttribute("data-module-shape")).toBe("dot");
+  });
 });

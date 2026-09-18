@@ -152,10 +152,10 @@ export type ComponentPreviewAttr = keyof typeof componentPreviewAttrs;
 export type ComponentPreviewAttrName = (typeof componentPreviewAttrs)[ComponentPreviewAttr];
 
 /** Bubbles on `document` when the shared binding preference changes. */
-export const componentPreviewBindingChangeEvent = "sk-component-preview-binding-change";
+export const componentPreviewBindingChangeEvent = "sk:componentpreviewbindingchange";
 
 /** Bubbles on `document` when the shared screen preset changes. */
-export const componentPreviewScreenChangeEvent = "sk-component-preview-screen-change";
+export const componentPreviewScreenChangeEvent = "sk:componentpreviewscreenchange";
 
 /**
  * The two shared preferences, declared where their types live.
@@ -198,6 +198,7 @@ export const componentPreviewScreenPreference = definePreference<ComponentPrevie
  */
 export const componentPreviewContract = {
   id: "component-preview",
+  category: "content",
   css: "@skryensya/core/components/component-preview.css",
   parts: componentPreviewParts,
   hooks: [
@@ -224,6 +225,19 @@ export const componentPreviewContract = {
     "--sk-component-preview-stage-padding",
     "--sk-component-preview-title-fg",
   ],
+  /*
+   * Document-level preferences the full (site) enhancer publishes when the shared Vanilla|React or
+   * screen preset changes. `.bare` does not fire them; they still belong on the family so a tool
+   * reading only this contract knows the DOM channel.
+   */
+  events: {
+    bindingChange: componentPreviewBindingChangeEvent,
+    screenChange: componentPreviewScreenChangeEvent,
+  },
+  eventDetails: {
+    bindingChange: { detail: { value: "string" }, reactProp: false, source: "root", trigger: "bindingTabs" },
+    screenChange: { detail: { value: "string" }, reactProp: false, source: "root", trigger: "screenTabs" },
+  },
 
   options: {},
 

@@ -45,7 +45,9 @@ export type UsageTree = {
   readonly options?: Readonly<Record<string, OptionInput>>;
   /**
    * What the author passes straight to the host: `aria-label`, `id`, `rel`, `target`. Deliberately
-   * separate from options; an option is something the contract maps, and these are not.
+   * separate from options; an option is something the contract maps, and these are not. When the
+   * signature declares `forward`, only those names (plus `class`/`style` and a parent slot's
+   * `childAttrs`) are accepted.
    */
   readonly attrs?: Readonly<Record<string, string>>;
   readonly slots?: Readonly<Record<string, SlotContent>>;

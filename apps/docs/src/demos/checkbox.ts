@@ -70,3 +70,51 @@ export const tileCheckboxTree = (t: Translate): UsageTree => ({
     },
   ],
 });
+
+/*
+ * THE SCALE'S MULTI-SELECT TWIN. A Likert asks for one point on a range (`radio-group`'s own
+ * composition); the same box and the same ends hold checkboxes when the question is "all that
+ * apply" rather than "how much". Nothing new is drawn: Box, Inline, Checkbox, Text.
+ */
+export const checkboxScaleTree = (t: Translate): UsageTree => ({
+  /* A Wrapper, so the row has a width to spread across: the preview stage sizes a demo to its content. */
+  contract: "wrapper",
+  signature: "Wrapper",
+  options: { wrapperSize: "sm" },
+  children: [
+    {
+      contract: "box",
+      signature: "Box",
+      options: { border: "subtle", padding: "sm" },
+      children: [
+        {
+          contract: "layout",
+          signature: "Stack",
+          options: { gap: "xs" },
+          children: [
+            {
+              contract: "layout",
+              signature: "Inline",
+              options: { gap: "md", equal: true },
+              children: [
+                { contract: "checkbox", signature: "Checkbox", options: { name: "days", value: "mon" }, children: t("demo.checkboxScale.mon") },
+                { contract: "checkbox", signature: "Checkbox", options: { name: "days", value: "tue" }, children: t("demo.checkboxScale.tue") },
+                { contract: "checkbox", signature: "Checkbox", options: { name: "days", value: "wed" }, children: t("demo.checkboxScale.wed") },
+                { contract: "checkbox", signature: "Checkbox", options: { name: "days", value: "thu" }, children: t("demo.checkboxScale.thu") },
+              ],
+            },
+            {
+              contract: "layout",
+              signature: "Inline",
+              options: { justify: "between", gap: "md" },
+              children: [
+                { contract: "typography", signature: "Text", options: { size: "caption", tone: "secondary" }, children: t("demo.checkboxScale.min") },
+                { contract: "typography", signature: "Text", options: { size: "caption", tone: "secondary" }, children: t("demo.checkboxScale.max") },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+});

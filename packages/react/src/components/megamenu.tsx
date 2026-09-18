@@ -1,5 +1,5 @@
 import { imageFrameParts } from "@skryensya/core/image-frame";
-import { megamenuAttrs, megamenuParts } from "@skryensya/core/megamenu";
+import { megamenuAttrs, megamenuEvents, megamenuParts } from "@skryensya/core/megamenu";
 import { resolveMegamenuEvent, type MegamenuEvent, type MegamenuState } from "@skryensya/core/megamenu";
 import {
   cloneElement,
@@ -97,9 +97,10 @@ export type MegamenuProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   children: ReactNode;
   /** Where the panel portals: `Menu`'s own `container`, see its identical doc. */
   container?: RefObject<HTMLElement>;
+  onOpenChange?: (details: { open: boolean; index: number | null }) => void;
 };
 
-export function Megamenu({ children, className, container, label, ...props }: MegamenuProps) {
+export function Megamenu({ children, className, container, label, onOpenChange, ...props }: MegamenuProps) {
   const id = useId();
   const anchored = useAnchored(id);
   const [state, setState] = useState<MegamenuState>({ openIndex: null });
@@ -111,6 +112,8 @@ export function Megamenu({ children, className, container, label, ...props }: Me
   const triggers = useRef(new Map<number, HTMLElement>());
   const openTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const onOpenChangeRef = useRef(onOpenChange);
+  onOpenChangeRef.current = onOpenChange;
 
   const clearTimers = () => {
     clearTimeout(openTimer.current);
@@ -134,6 +137,17 @@ export function Megamenu({ children, className, container, label, ...props }: Me
   }, []);
 
   const dispatch = (event: MegamenuEvent) => setState((current) => resolveMegamenuEvent(current, event));
+
+  const prevOpenIndex = useRef<number | null>(null);
+  useEffect(() => {
+    if (prevOpenIndex.current === state.openIndex) return;
+    prevOpenIndex.current = state.openIndex;
+    const detail = { open: state.openIndex !== null, index: state.openIndex };
+    onOpenChangeRef.current?.(detail);
+    rootRef.current?.dispatchEvent(
+      new CustomEvent(megamenuEvents.openChange, { bubbles: true, detail }),
+    );
+  }, [state.openIndex]);
 
   // Content only ever changes on OPEN of a (possibly different) index; closing leaves it alone so
   // the exit transition fades out the content that was actually showing. A layout effect, not a
@@ -180,7 +194,9 @@ export function Megamenu({ children, className, container, label, ...props }: Me
     clearTimeout(closeTimer.current);
     closeTimer.current = setTimeout(() => {
       setState((current) =>
-        current.openIndex === null ? current : resolveMegamenuEvent(current, { kind: "hoverIntentClose", index: current.openIndex }),
+        current.openIndex === null
+          ? current
+          : resolveMegamenuEvent(current, { kind: "hoverIntentClose", index: current.openIndex }),
       );
     }, CLOSE_DELAY_MS);
   };
@@ -370,6 +386,7 @@ export function Megamenu({ children, className, container, label, ...props }: Me
       <nav
         {...props}
         {...anchored.anchor(cx(megamenuParts.root, className))}
+        {...{ [megamenuAttrs.root]: "" }}
         aria-label={label}
         onBlurCapture={onBlur}
         onKeyDown={onKeyDown}

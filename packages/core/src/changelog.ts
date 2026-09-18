@@ -133,6 +133,7 @@ export type ChangelogPartClass = (typeof changelogParts)[ChangelogPart];
  */
 export const changelogContract = {
   id: "changelog",
+  category: "content",
   css: "@skryensya/core/components/changelog.css",
   parts: changelogParts,
   hooks: [
@@ -160,10 +161,13 @@ export const changelogContract = {
   options: {
     /**
      * The day a release shipped, `YYYY-MM-DD`, written to `<time datetime>`. Omitted on a version
-     * that has not shipped. Not validated here: a contract option has no format vocabulary, and the
-     * tool that reads changelogs off disk already refuses anything else.
+     * that has not shipped. Same pattern the disk-side changelog tool already refuses anything but.
      */
-    date: { type: "string", attr: "datetime" },
+    date: {
+      type: "string",
+      attr: "datetime",
+      pattern: { source: String.raw`^\d{4}-\d{2}-\d{2}$`, example: "2026-09-16" },
+    },
     /**
      * What kind of change it was. The word itself is the `kind` slot.
      *
@@ -302,6 +306,10 @@ export const changelogContract = {
         /** Why it changed and what it means, in the words a consumer reads. */
         children: { accepts: "node", required: true },
       },
+      /* Kind pill is Badge chrome via `also`; sheets already resolve. */
+      compose: [
+        { of: "badge", sheets: ["@skryensya/core/components/badge.css"], systemOwned: true },
+      ],
       template: {
         element: "li",
         part: "entry",

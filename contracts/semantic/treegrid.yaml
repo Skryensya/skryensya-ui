@@ -37,6 +37,7 @@ TreegridRow:
   useWhen:
     - "un registro de la grilla, en el mismo orden que un lector de pantalla lo recorre: nunca anidado dentro de otro TreegridRow, un <tr> no puede contener otro <tr>"
     - "la fila tiene descendientes: pasa `expanded` (true o false) y escríbelos a continuación, en orden, con un `level` mayor"
+    - "toda fila lleva un `value` único en la grilla: es lo que reportan los eventos de expandir y activar"
   avoidWhen:
     - "la fila es una hoja sin hijos; ahí no se pasa `expanded` en absoluto. Su ausencia es lo que la marca hoja, no un valor `false`"
 

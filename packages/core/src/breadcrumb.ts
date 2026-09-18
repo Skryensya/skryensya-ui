@@ -55,27 +55,57 @@ export function collapsibleBreadcrumbRange(
  */
 export const breadcrumbContract = {
   id: "breadcrumb",
+  category: "navigation",
   css: "@skryensya/core/components/breadcrumb.css",
   parts: breadcrumbParts,
   hooks: [
+    "--sk-anchored-align",
+    "--sk-anchored-arrow-edge",
+    "--sk-anchored-arrow-near",
+    "--sk-anchored-justify",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-anchored-size",
+    "--sk-anchored-z",
     "--sk-breadcrumb-current-color",
     "--sk-breadcrumb-current-weight",
     "--sk-breadcrumb-gap",
     "--sk-breadcrumb-link-color",
     "--sk-breadcrumb-link-max",
     "--sk-breadcrumb-separator-color",
+    "--sk-menu-bg",
+    "--sk-menu-border-color",
+    "--sk-menu-fg",
+    "--sk-menu-item-gap",
+    "--sk-menu-item-min-height",
+    "--sk-menu-radius",
+    "--sk-menu-separator-color",
+    "--sk-menu-separator-margin",
+    "--sk-menu-shadow",
+    "--sk-menu-wash",
+  ],
+  /*
+   * A narrow trail collapses middle crumbs into a real Menu (vanilla enhancer + React). Those
+   * classes have no unique owner on this contract's parts, so `sheetsForTree` cannot discover the
+   * sheets from `also` alone, name them here. Hooks from those sheets are listed above so the
+   * hook gate stays closed (same shape as Tooltip/Popover + anchored).
+   */
+  hookSheets: [
+    "@skryensya/core/components/menu.css",
+    "@skryensya/core/patterns/anchored.css",
   ],
 
   options: {
     /** Names the landmark. A page with a second nav needs each one told apart. */
-    label: { type: "string", default: "Migas de pan", attr: "aria-label" },
+    label: { type: "string", default: "Breadcrumb", attr: "aria-label" },
     /**
      * What the "…" disclosure trigger is called, for the trail whose enhancer collapses ancestor
      * levels to fit. Unused (never rendered) on a trail short enough that nothing ever collapses.
      */
     collapsedLabel: {
       type: "string",
-      default: "Mostrar niveles ocultos",
+      default: "Show hidden levels",
       attr: "data-collapsed-label",
     },
   },
@@ -85,6 +115,20 @@ export const breadcrumbContract = {
       intent: ["where-am-i", "path-back-up", "hierarchy-trail"],
       host: { element: "nav" },
       options: ["label", "collapsedLabel"],
+      /*
+       * Narrow trails inject a real Menu for collapsed crumbs (enhancer/React). hookSheets already
+       * load the sheets; compose records the Menu ownership for agents.
+       */
+      compose: [
+        {
+          of: "menu",
+          sheets: [
+            "@skryensya/core/components/menu.css",
+            "@skryensya/core/patterns/anchored.css",
+          ],
+          systemOwned: true,
+        },
+      ],
       slots: {
         /*
          * What sits between the crumbs, as CONTENT rather than as a string option.

@@ -130,7 +130,7 @@ describe("Carousel Vanilla contracts", () => {
   it("snaps to a dot and reports the page on the change event", () => {
     const root = mount(4);
     const handler = vi.fn();
-    root.addEventListener("sk-carousel-change", handler);
+    root.addEventListener("sk:carouselchange", handler);
     mountCarousel(root);
     flushSync();
 
@@ -142,12 +142,12 @@ describe("Carousel Vanilla contracts", () => {
     expect((handler.mock.calls[0][0] as CustomEvent).detail).toEqual({ index: 2, count: 3 });
   });
 
-  it("accepts sk-carousel-goto as the snap command", () => {
+  it("accepts sk:carouselgoto as the snap command", () => {
     const root = mount(4);
     mountCarousel(root);
     flushSync();
 
-    root.dispatchEvent(new CustomEvent("sk-carousel-goto", { detail: { index: 1 } }));
+    root.dispatchEvent(new CustomEvent("sk:carouselgoto", { detail: { index: 1 } }));
     flushSync();
 
     expect(dots(root)[1].getAttribute("aria-current")).toBe("true");
@@ -336,7 +336,7 @@ describe("Carousel Vanilla contracts", () => {
     // And it is still driveable programmatically: controls were the chrome, not the behaviour.
     // Zag defers the scroll into a microtask, so the assertion waits rather than reading too early.
     const track = root.querySelector<HTMLElement>(".sk-carousel__track")!;
-    root.dispatchEvent(new CustomEvent("sk-carousel-goto", { detail: { index: 1 } }));
+    root.dispatchEvent(new CustomEvent("sk:carouselgoto", { detail: { index: 1 } }));
     flushSync();
     await vi.waitFor(() => expect(track.scrollTo).toHaveBeenCalled());
   });

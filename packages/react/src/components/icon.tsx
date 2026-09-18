@@ -45,6 +45,11 @@ export type IconSetProviderProps = {
   children: ReactNode;
 };
 
+/** The bound set, for a component that draws an icon outside JSX (into DOM a shared helper builds). */
+export function useIconSet(): IconSet {
+  return useContext(IconSetContext);
+}
+
 export function IconSetProvider({ set, children }: IconSetProviderProps) {
   return <IconSetContext.Provider value={set}>{children}</IconSetContext.Provider>;
 }

@@ -32,7 +32,7 @@ import { useCallback, useSyncExternalStore } from "react";
  */
 
 /** Bubbles on `window` whenever any preference changes. Same name the vanilla binding dispatches. */
-const storageChangeEvent = "sk-storage-change";
+const storageChangeEvent = "sk:storagechange";
 
 function safeRead(): string | null {
   try {

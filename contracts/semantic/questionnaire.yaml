@@ -1,0 +1,25 @@
+# The structure lives in packages/core/src/questionnaire.ts. Here, only why it is chosen.
+
+Questionnaire:
+  useWhen:
+    - "varias preguntas se responden de a una, con progreso visible y validación antes de avanzar"
+    - "una encuesta, un onboarding o un intake donde cada pregunta merece la pantalla entera"
+  avoidWhen:
+    - "todas las preguntas caben y se leen juntas; eso es un formulario de FormField"
+    - "las etapas son pantallas con contenido propio, no preguntas; eso es Steps sobre tu propia navegación"
+    - "solo necesitas mostrar avance (barra o etapas) sin preguntar nada; eso es Progress o Steps"
+  alternatives:
+    - FormField
+    - Steps
+    - Progress
+
+QuestionnaireItem:
+  useWhen:
+    - "una pregunta de elección única, múltiple o de texto libre dentro de un Questionnaire"
+    - "una pregunta con opciones y, además, la posibilidad de escribir otra respuesta"
+  avoidWhen:
+    - "la elección no es parte de una secuencia de preguntas; eso es un TileRadioGroup o un TileCheckbox sueltos"
+  alternatives:
+    - TileRadioGroup
+    - TileCheckbox
+    - FormField

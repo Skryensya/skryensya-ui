@@ -83,6 +83,7 @@ export type CodePreviewAttrName = (typeof codePreviewAttrs)[CodePreviewAttr];
  */
 export const codePreviewContract = {
   id: "code-preview",
+  category: "content",
   css: "@skryensya/core/components/code-preview.css",
   parts: codePreviewParts,
   hooks: [
@@ -99,13 +100,19 @@ export const codePreviewContract = {
     "--sk-code-preview-label-fg",
     "--sk-code-preview-window",
   ],
+  /*
+   * Density composes a real `sk-switch` (`also`). That class is claimed by checkbox/switch/radio
+   * parts maps, so `sheetsForTree` cannot discover `switch.css` from `also` alone, name it here
+   * (same shape as TileCheckbox/TileSwitch).
+   */
+  hookSheets: ["@skryensya/core/components/switch.css"],
 
   options: {
     /** The panel is taller than its window, so it gets a disclosure control. */
     collapsible: { type: "boolean", default: false, attr: codePreviewAttrs.collapsible, trueValue: "", machineInput: true },
     /** Total lines, and how many the collapsed window shows. Counted where the code is made. */
-    lines: { type: "string", attr: codePreviewAttrs.lines, machineInput: true },
-    previewLines: { type: "string", attr: codePreviewAttrs.previewLines, machineInput: true },
+    lines: { type: "number", attr: codePreviewAttrs.lines, machineInput: true },
+    previewLines: { type: "number", attr: codePreviewAttrs.previewLines, machineInput: true },
     /**
      * What the disclosure says while collapsed, and once open.
      *
@@ -113,15 +120,19 @@ export const codePreviewContract = {
      * components/code-preview.css), so every line is already reachable either way. What the control
      * changes is how much room the block takes on the page, and the words have to say that much and
      * no more, or they promise content that was never withheld.
+     *
+     * Collapsed copy is visible text (`textFromOption` on the toggle label), not a host data
+     * attribute, same shape as Popover's `closeLabel`.
      */
-    moreLabel: { type: "string", default: "Expandir", attr: "data-more-label", machineInput: true },
-    lessLabel: { type: "string", default: "Contraer", attr: codePreviewAttrs.expandedLabel, machineInput: true },
+    moreLabel: { type: "string", default: "Expand" },
+    /** Expanded copy: the enhancer reads it off the toggle (`data-sk-code-preview-expanded-label`). */
+    lessLabel: { type: "string", default: "Collapse", attr: codePreviewAttrs.expandedLabel, machineInput: true },
     /**
      * What the density switch announces. An option, not a slot: it lands on `aria-label`, and a
      * slot would need a way to copy its text onto an attribute of a node it does not render.
      * It says what the switch DOES, because the words at each end are out of a screen reader's reach.
      */
-    switchLabel: { type: "string", default: "Mostrar la versión completa", attr: "aria-label" },
+    switchLabel: { type: "string", default: "Show the full version", attr: "aria-label" },
   },
 
   signatures: {
@@ -130,6 +141,10 @@ export const codePreviewContract = {
       host: { element: "div" },
       mount: codePreviewAttrs.root,
       options: ["collapsible", "lines", "previewLines", "moreLabel", "lessLabel"],
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+      ],
       slots: {
         /** The code itself, already highlighted. */
         children: { accepts: "node", required: true },
@@ -178,6 +193,7 @@ export const codePreviewContract = {
                 part: "toggle",
                 also: ["sk-button", "sk-interactive"],
                 mount: codePreviewAttrs.toggle,
+                options: ["lessLabel"],
                 attrs: {
                   type: "button",
                   "aria-expanded": "false",
@@ -221,6 +237,11 @@ export const codePreviewContract = {
       host: { element: "div" },
       mount: codePreviewAttrs.root,
       options: ["collapsible", "lines", "previewLines", "moreLabel", "lessLabel", "switchLabel"],
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+        { of: "switch", sheets: ["@skryensya/core/components/switch.css"], systemOwned: true },
+      ],
       slots: {
         /** The short version, shown first. */
         condensed: { accepts: "node", required: true },
@@ -302,6 +323,38 @@ export const codePreviewContract = {
                 attrs: { "data-sk-code-preview-density-panel": "full" },
                 slot: "full",
                 preserveWhitespace: true,
+              },
+            ],
+          },
+          {
+            element: "div",
+            part: "more",
+            mount: codePreviewAttrs.more,
+            whenGiven: "collapsible",
+            children: [
+              {
+                element: "button",
+                part: "toggle",
+                also: ["sk-button", "sk-interactive"],
+                mount: codePreviewAttrs.toggle,
+                options: ["lessLabel"],
+                attrs: {
+                  type: "button",
+                  "aria-expanded": "false",
+                  "data-size": "sm",
+                  "data-variant": "ghost",
+                },
+                children: [
+                  { element: "span", mount: codePreviewAttrs.toggleLabel, textFromOption: "moreLabel" },
+                  { element: "span", part: "toggleCount" },
+                  {
+                    element: "span",
+                    part: "toggleIcon",
+                    children: [
+                      { element: "span", attrs: { "data-sk-icon": "chevron-down", "data-sk-icon-size": "sm" } },
+                    ],
+                  },
+                ],
               },
             ],
           },

@@ -21,14 +21,15 @@ export type TocItem = {
   level?: "h2" | "h3";
   /** Seeds the initial `aria-current`, before the spy has anything to report. */
   current?: boolean;
-  children: ReactNode;
+  /** Destination label. Matches the contract item slot (`accepts: "text"`). */
+  children: string;
   /** Decorative: the label already names the destination. */
   icon?: ReactNode;
 };
 
 export type TocProps = Omit<HTMLAttributes<HTMLElement>, "title"> & {
   /** The caption above the list, and the accessible name of the nav beside it. */
-  title?: string;
+  title: string;
   items: readonly TocItem[];
 };
 

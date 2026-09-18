@@ -64,6 +64,8 @@ describe("Treegrid React contracts", () => {
     const ui = render(<Fixture />);
     const grid = ui.getByRole("treegrid", { name: "Mensajes" });
     expect(grid.tagName).toBe("TABLE");
+    expect(grid.hasAttribute("data-sk-treegrid")).toBe(true);
+    expect(row(ui, "alice").hasAttribute("data-sk-treegrid-row")).toBe(true);
     expect(row(ui, "alice").getAttribute("aria-level")).toBe("2");
     expect(row(ui, "alice").getAttribute("aria-setsize")).toBe("2");
     expect(row(ui, "alice").getAttribute("aria-posinset")).toBe("1");
@@ -130,6 +132,24 @@ describe("Treegrid React contracts", () => {
     await waitFor(() => {
       expect(row(ui, "drafts").getAttribute("aria-expanded")).toBe("true");
       expect(onExpandedChange).toHaveBeenCalledWith({ value: "drafts", expanded: true });
+    });
+  });
+
+  it("dispatches the contract's DOM events on the table, as the Vanilla enhancer does", async () => {
+    const expanded = vi.fn();
+    const activated = vi.fn();
+    const ui = render(<Fixture />);
+    const table = ui.getByRole("treegrid");
+    table.addEventListener("sk:treegridexpandedchange", (event) => expanded((event as CustomEvent).detail));
+    table.addEventListener("sk:treegridactivate", (event) => activated((event as CustomEvent).detail));
+
+    fireEvent.click(row(ui, "drafts").querySelectorAll("td")[0]!);
+    row(ui, "sent").focus();
+    fireEvent.keyDown(row(ui, "sent"), { key: "Enter" });
+
+    await waitFor(() => {
+      expect(expanded).toHaveBeenCalledWith({ value: "drafts", expanded: true });
+      expect(activated).toHaveBeenCalledWith({ value: "sent" });
     });
   });
 

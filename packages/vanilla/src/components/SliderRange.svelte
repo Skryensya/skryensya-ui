@@ -1,6 +1,6 @@
 <script lang="ts">
   import { slider } from "@skryensya/core/machines";
-  import { clampSliderRange } from "@skryensya/core/slider";
+  import { clampSliderRange, sliderEvents } from "@skryensya/core/slider";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
@@ -58,7 +58,7 @@
       root.setAttribute("data-low-value", String(details.value[0] ?? min));
       root.setAttribute("data-high-value", String(details.value[1] ?? max));
       root.dispatchEvent(
-        new CustomEvent("sk-value-change", {
+        new CustomEvent(sliderEvents.valueChange, {
           bubbles: true,
           detail: { low: details.value[0] ?? min, high: details.value[1] ?? max },
         }),

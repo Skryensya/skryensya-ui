@@ -3,6 +3,7 @@ import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import {
   menuAttrs,
   menuContract,
+  menuEvents,
   menuParts,
   type MenuApi,
   type MenuItem,
@@ -42,7 +43,7 @@ export type MenuProps = Pick<
   triggerClassName?: string;
   contextTarget?: ReactNode;
   items: readonly MenuItem[];
-  label?: string;
+  label: string;
   /** The TRIGGER button's own accessible name; see `menu.ts`'s identical option doc. For an
    *  icon-only trigger (leave `trigger` unset): the chevron below is painted either way, and this
    *  is what makes the button announce something instead of nothing. */
@@ -92,6 +93,8 @@ type MenuListProps = {
   debugSafetyTriangle?: MenuProps["debugSafetyTriangle"];
   /** The one readout for the whole menu, threaded down the same way `debugSafetyTriangle` is. */
   readout?: IntentReadoutHandle | null;
+  /** Root that owns DOM events for this list level (top-level Menu or a Submenu wrapper). */
+  eventRootRef: RefObject<HTMLElement | null>;
   service: MenuService;
   items: readonly MenuItem[];
   itemIndicator?: ReactNode;
@@ -136,6 +139,7 @@ export function MenuPopup({
   container,
   debugSafetyTriangle,
   density,
+  eventRootRef,
   items,
   itemIndicator,
   onCheckedChange,
@@ -151,6 +155,7 @@ export function MenuPopup({
   container?: RefObject<HTMLElement>;
   debugSafetyTriangle?: boolean;
   density?: MenuProps["density"];
+  eventRootRef: RefObject<HTMLElement | null>;
   items: readonly MenuItem[];
   itemIndicator?: ReactNode;
   onCheckedChange?: MenuProps["onCheckedChange"];
@@ -173,6 +178,7 @@ export function MenuPopup({
             checkedState={checkedState}
             density={density}
             debugSafetyTriangle={debugSafetyTriangle}
+            eventRootRef={eventRootRef}
             itemIndicator={itemIndicator}
             items={items}
             onCheckedChange={onCheckedChange}
@@ -207,6 +213,7 @@ function MenuList({
   checkedState,
   density,
   debugSafetyTriangle,
+  eventRootRef,
   itemIndicator,
   items,
   onCheckedChange,
@@ -256,7 +263,11 @@ function MenuList({
             checked,
             onCheckedChange: (next) => {
               setCheckedState(item, next);
-              onCheckedChange?.({ value: item.value, checked: next });
+              const detail = { value: item.value, checked: next };
+              onCheckedChange?.(detail);
+              eventRootRef.current?.dispatchEvent(
+                new CustomEvent(menuEvents.checkedChange, { bubbles: true, detail }),
+              );
             },
           });
 
@@ -272,12 +283,18 @@ function MenuList({
         {...machineProps}
         href={item.href}
         className={cx(menuParts.item, "sk-interactive")}
+        data-group={item.group}
         data-tone={item.tone}
         key={item.value}
         onClick={(event) => {
           machineProps.onClick?.(event);
-          if (kind === "item" && !item.disabled)
-            onSelect?.({ value: item.value });
+          if (kind === "item" && !item.disabled) {
+            const detail = { value: item.value };
+            onSelect?.(detail);
+            eventRootRef.current?.dispatchEvent(
+              new CustomEvent(menuEvents.select, { bubbles: true, detail }),
+            );
+          }
         }}
       >
         {/*
@@ -343,6 +360,7 @@ function Submenu({
   const [checkedState, setChecked] = useState<CheckedState>(() =>
     initialCheckedState(children),
   );
+  const eventRootRef = useRef<HTMLDivElement | null>(null);
   const service = useMachine(menu.machine, {
     id,
     "aria-label": item.label,
@@ -356,6 +374,11 @@ function Submenu({
      * choosing `fixed` over `absolute` to avoid for the browser-placed case.
      */
     positioning: { placement: "right-start", gutter: 4, strategy: "fixed" },
+    onOpenChange(details: { open: boolean }) {
+      eventRootRef.current?.dispatchEvent(
+        new CustomEvent(menuEvents.openChange, { bubbles: true, detail: { open: details.open } }),
+      );
+    },
   });
   const api = menu.connect(service, normalizeProps);
   /*
@@ -445,7 +468,11 @@ function Submenu({
      * and its positioner reaches `document.body` afterward, so trigger already precedes positioner
      * there and the ordering bug never applied to it.
      */
-    <div className={menuParts.root}>
+    <div
+      className={menuParts.root}
+      ref={eventRootRef}
+      {...{ [menuAttrs.root]: "" }}
+    >
       {/*
         * A BUTTON, like the markup emits. The contract describes one shape; two elements for one
         * node is the divergence this whole arrangement exists to prevent, and a submenu trigger is
@@ -500,6 +527,7 @@ function Submenu({
             checkedState={checkedState}
             density={density}
             debugSafetyTriangle={debugSafetyTriangle}
+            eventRootRef={eventRootRef}
             itemIndicator={itemIndicator}
             items={children}
             onCheckedChange={onCheckedChange}
@@ -546,12 +574,20 @@ export function Menu({
   const [checkedState, setChecked] = useState<CheckedState>(() =>
     initialCheckedState(items),
   );
+  const [rootEl, setRootEl] = useState<HTMLDivElement | null>(null);
+  const eventRootRef = useRef<HTMLDivElement | null>(null);
+  const [readout, setReadout] = useState<IntentReadoutHandle | null>(null);
   const { service, api } = useMenuMachine({
     id: id ?? generatedId,
     ariaLabel: label,
     defaultOpen,
     open,
-    onOpenChange,
+    onOpenChange(details) {
+      onOpenChange?.(details);
+      eventRootRef.current?.dispatchEvent(
+        new CustomEvent(menuEvents.openChange, { bubbles: true, detail: details }),
+      );
+    },
   });
   /*
    * `!hasSubmenu(items)`: withheld from the WHOLE tree the moment any level of it has a submenu, not
@@ -603,8 +639,6 @@ export function Menu({
    * the same fixed coordinates. It mounts into this root, in flow (menu-intent-readout.ts), so a
    * `useState` holding the element is what makes the effect run once the root actually exists.
    */
-  const [rootEl, setRootEl] = useState<HTMLDivElement | null>(null);
-  const [readout, setReadout] = useState<IntentReadoutHandle | null>(null);
   useEffect(() => {
     if (!debugSafetyTriangle || !rootEl) {
       setReadout(null);
@@ -637,8 +671,12 @@ export function Menu({
     <div
       className={menuParts.root}
       data-density={density}
+      {...{ [menuAttrs.root]: "" }}
       {...(debugSafetyTriangle ? { [menuAttrs.debugSafetyTriangle]: "" } : {})}
-      ref={setRootEl}
+      ref={(element) => {
+        eventRootRef.current = element;
+        setRootEl(element);
+      }}
     >
       {contextTarget ? (
         <div {...api.getContextTriggerProps()}>{contextTarget}</div>
@@ -666,10 +704,15 @@ export function Menu({
             * menu trigger, so authored markup always had it and React only rendered one when the
             * caller remembered to pass `indicator`: the same tree came out 28px narrower here
             * than in Vanilla. Pass `indicator={null}` to suppress it deliberately.
+            *
+            * Suppressed means NO span, not an empty one: `.sk-button` is a flex row with a gap, so
+            * an empty item still takes that gap and pushes an icon-only trigger's glyph off centre.
             */}
-          <span aria-hidden="true">
-            {indicator === undefined ? <Icon name="chevron-down" /> : indicator}
-          </span>
+          {indicator === null ? null : (
+            <span aria-hidden="true">
+              {indicator === undefined ? <Icon name="chevron-down" /> : indicator}
+            </span>
+          )}
         </button>
       )}
       <MenuPopup
@@ -678,6 +721,7 @@ export function Menu({
         container={container}
         debugSafetyTriangle={debugSafetyTriangle}
         density={density}
+        eventRootRef={eventRootRef}
         items={items}
         itemIndicator={itemIndicator}
         onCheckedChange={onCheckedChange}

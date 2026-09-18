@@ -2,6 +2,7 @@ import { calendarContract } from "@skryensya/core/calendar";
 import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import {
   calendarParts,
+  calendarEvents,
   defaultDayLabel,
   defaultNextTriggerLabel,
   defaultPrevTriggerLabel,
@@ -15,7 +16,7 @@ import {
 } from "@skryensya/core/calendar";
 import { datePicker } from "@skryensya/core/machines";
 import { normalizeProps, useMachine, type PropTypes } from "@zag-js/react";
-import { useId, type MouseEvent, type ReactNode } from "react";
+import { useId, useRef, type MouseEvent, type ReactNode } from "react";
 import { Button } from "./button.js";
 import { Icon } from "./icon.js";
 
@@ -258,7 +259,8 @@ export type CalendarProps = Pick<
   "selectionMode"
 > & {
   id?: string;
-  label?: ReactNode;
+  /** Names the grid. Matches the contract slot: plain text. */
+  label: string;
   locale?: string;
   timeZone?: string;
   /*
@@ -320,6 +322,7 @@ export function Calendar({
   viewTriggerLabel,
 }: CalendarProps) {
   const generatedId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
   const service = useMachine(datePicker.machine, {
     id: id ?? generatedId,
     locale,
@@ -346,7 +349,11 @@ export function Calendar({
     inline: true,
     fixedWeeks: true,
     onValueChange(details) {
-      onValueChange?.({ value: details.valueAsString });
+      const next = { value: details.valueAsString };
+      onValueChange?.(next);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(calendarEvents.valueChange, { bubbles: true, detail: next }),
+      );
     },
   });
   const api = datePicker.connect(service, normalizeProps);
@@ -355,14 +362,14 @@ export function Calendar({
   return (
     <div
       {...api.getRootProps()}
-      aria-labelledby={label ? labelId : undefined}
+      aria-labelledby={labelId}
       className={calendarParts.root}
+      data-sk-calendar=""
+      ref={rootRef}
     >
-      {label ? (
-        <p className={calendarParts.label} id={labelId}>
-          {label}
-        </p>
-      ) : null}
+      <p className={calendarParts.label} id={labelId}>
+        {label}
+      </p>
       <CalendarBody
         api={api}
         locale={locale}

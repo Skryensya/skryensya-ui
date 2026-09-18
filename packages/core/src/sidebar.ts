@@ -45,8 +45,8 @@ export type SidebarOptions = {
 };
 
 export const sidebarEvents = {
-  collapsedChange: "sk-collapsed-change",
-  resizeChange: "sk-resize-change",
+  collapsedChange: "sk:sidebarcollapsedchange",
+  resizeChange: "sk:sidebarresizechange",
 } as const;
 
 /*
@@ -130,8 +130,14 @@ export type SidebarPartClass = (typeof sidebarParts)[SidebarPart];
  */
 export const sidebarContract = {
   id: "sidebar",
+  category: "navigation",
   css: "@skryensya/core/components/sidebar.css",
   parts: sidebarParts,
+  events: sidebarEvents,
+  eventDetails: {
+    collapsedChange: { detail: { collapsed: "boolean" }, reactProp: "onCollapsedChange", source: "root", trigger: "trigger" },
+    resizeChange: { detail: { inlineSize: "number" }, reactProp: "onResizeChange", source: "root", trigger: "resizeHandle" },
+  },
   hooks: [
     "--sk-sidebar-bg",
     "--sk-sidebar-border-color",
@@ -164,7 +170,19 @@ export const sidebarContract = {
     "--sk-sidebar-trigger-shadow",
     "--sk-sidebar-trigger-size",
     "--sk-sidebar-trigger-wash",
+    "--sk-splitter-active-color",
+    "--sk-splitter-color",
+    "--sk-splitter-hit",
+    "--sk-splitter-line",
+    "--sk-splitter-rest-color",
   ],
+  /*
+   * The resize handle composes `sk-splitter` (`also`). That class has no unique contract owner, so
+   * `sheetsForTree` cannot discover `splitter.css` from `also` alone (sidebar.css `@import`s it for
+   * the bundled sheet path; hookSheets makes the same sheet explicit for the tree gate). Splitter
+   * hooks are listed above so the hook gate stays closed.
+   */
+  hookSheets: ["@skryensya/core/patterns/splitter.css"],
 
   options: {
     /** Starts narrowed. Read once as the initial state; after that the interaction owns it. */
@@ -307,6 +325,8 @@ export const sidebarContract = {
       parents: ["Sidebar", "SidebarHeader", "SidebarFooter"],
       options: ["label", "floating"],
       requires: ["label"],
+      /** Host id / extra a11y; `label` stays the required option (aria-label). */
+      forward: ["id", "aria-*"],
       slots: { icon: { accepts: "signature", of: ["Icon"] } },
       mount: "data-sk-sidebar-trigger",
       template: {

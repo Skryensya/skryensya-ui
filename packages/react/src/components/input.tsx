@@ -35,13 +35,36 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   );
 });
 
-export type NativeInputProps = InputHTMLAttributes<HTMLInputElement>;
+export type NativeInputProps = InputHTMLAttributes<HTMLInputElement> & {
+  size?: never;
+  /** Control height. Named `controlSize` because `size` is already a native input attribute. */
+  controlSize?: InputSize;
+};
 
+/*
+ * Same appearance and FormField wiring as Input: "native" names the CONTROL (time/color/range…),
+ * not a refusal of the field chrome. Outside a FormField it stays a valid control with its own
+ * aria-label; inside one it inherits id / describedBy / invalid / required / disabled.
+ */
 export const NativeInput = forwardRef<HTMLInputElement, NativeInputProps>(function NativeInput(
-  { className, ...props },
+  { className, controlSize, ...props },
   ref,
 ) {
-  return <input {...props} className={cx(inputParts.root, className)} ref={ref} />;
+  const control = useFormFieldControl(props);
+
+  return (
+    <input
+      {...props}
+      aria-describedby={control.describedBy}
+      aria-invalid={control.invalid ? "true" : undefined}
+      className={cx(inputParts.root, className)}
+      data-size={controlSize}
+      disabled={control.disabled}
+      id={control.id}
+      ref={ref}
+      required={control.required}
+    />
+  );
 });
 
 export type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {

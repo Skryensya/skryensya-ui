@@ -24,7 +24,6 @@ export type PaginationPartClass = (typeof paginationParts)[PaginationPart];
 /** Data attributes the vanilla table-pager enhancer binds to. */
 export const tablePagerAttrs = {
   root: "data-sk-table-pager",
-  row: "data-sk-table-pager-row",
   nav: "data-sk-table-pager-nav",
   status: "data-sk-table-pager-status",
 } as const;
@@ -83,10 +82,21 @@ export function paginationRange(page: number, total: number, siblings = 1): Pagi
  * A gap is an entry with no page. That is what tells the two shapes apart in the template, the same
  * way a breadcrumb tells a link from the page you are already on.
  */
+/** The DOM events this family dispatches on its root, `sk:<family><event>` like every other. */
+export const paginationEvents = {
+  /** Detail: `{ page: number }`. */
+  pageChange: "sk:paginationpagechange",
+} as const;
+
 export const paginationContract = {
   id: "pagination",
+  category: "navigation",
   css: "@skryensya/core/components/pagination.css",
   parts: paginationParts,
+  events: paginationEvents,
+  eventDetails: {
+    pageChange: { detail: { page: "number" }, reactProp: "onPageChange", reactDetail: "number", source: "root", trigger: "item" },
+  },
   hooks: [
     "--sk-pagination-current-bg",
     "--sk-pagination-current-border-color",
@@ -116,10 +126,10 @@ export const paginationContract = {
 
   options: {
     /** The page being shown. One-based, because that is what the numbers on screen say. */
-    page: { type: "number", default: 1, attr: "data-page", computedInput: true },
-    total: { type: "number", default: 1, attr: "data-total", computedInput: true },
+    page: { type: "number", default: 1, min: 1, integer: true, between: { max: "total" }, attr: "data-page", computedInput: true },
+    total: { type: "number", default: 1, min: 1, integer: true, attr: "data-total", computedInput: true },
     /** How many pages stay visible on each side of the current one. */
-    siblings: { type: "number", default: 1, attr: "data-siblings", computedInput: true },
+    siblings: { type: "number", default: 1, min: 0, integer: true, attr: "data-siblings", computedInput: true },
     /** The landmark's accessible name. A page can hold more than one nav, so it needs one. */
     label: { type: "string", default: "Pagination", attr: "aria-label" },
     /* The two arrows are icon-only, so these ARE their accessible names: each lands on its own
@@ -133,6 +143,8 @@ export const paginationContract = {
       intent: ["pagination", "pager", "page-numbers", "next-previous"],
       host: { element: "nav" },
       options: ["page", "total", "siblings", "label", "previousLabel", "nextLabel"],
+      /** Host id / a11y; nav labels stay options. */
+      forward: ["id", "aria-*"],
       slots: {},
       template: {
         element: "nav",
@@ -200,10 +212,21 @@ export const paginationContract = {
  * The authored table + page-size control + generated pagination bar. The table remains the Table
  * contract; this family owns only the composition and the enhancer attachment points.
  */
+/** The DOM events this family dispatches on its root, `sk:<family><event>` like every other. */
+export const tablePagerEvents = {
+  /** Detail: `{ page, pageSize, pageCount, start, end }`. */
+  change: "sk:tablepagerchange",
+} as const;
+
 export const tablePagerContract = {
   id: "table-pager",
+  category: "data",
   css: "@skryensya/core/patterns/table-pager.css",
   parts: tablePagerParts,
+  events: tablePagerEvents,
+  eventDetails: {
+    change: { detail: { page: "number", pageSize: "number", pageCount: "number", total: "number", start: "number", end: "number" }, reactProp: false, source: "root", trigger: "size" },
+  },
   hooks: [
     "--sk-pagination-current-bg",
     "--sk-pagination-current-border-color",
@@ -243,9 +266,9 @@ export const tablePagerContract = {
   ],
 
   options: {
-    pageSize: { type: "number", default: 10, attr: "data-page-size", machineInput: true },
-    page: { type: "number", default: 1, attr: "data-page", machineInput: true },
-    siblings: { type: "number", default: 1, attr: "data-siblings", machineInput: true },
+    pageSize: { type: "number", default: 10, min: 1, integer: true, attr: "data-page-size", machineInput: true },
+    page: { type: "number", default: 1, min: 1, integer: true, attr: "data-page", machineInput: true },
+    siblings: { type: "number", default: 1, min: 0, integer: true, attr: "data-siblings", machineInput: true },
     statusTemplate: {
       type: "string",
       default: "{start}–{end} of {total}",
@@ -270,7 +293,7 @@ export const tablePagerContract = {
       attr: "data-page-label",
       machineInput: true,
     },
-    navLabel: { type: "string", default: "Pagination", attr: "aria-label" },
+    navLabel: { type: "string", default: "Pagination", attr: "aria-label", prop: "label" },
   },
 
   signatures: {
@@ -287,10 +310,14 @@ export const tablePagerContract = {
         "pageLabel",
       ],
       slots: {
+        /* The table first, then its controls: exactly one of each, or the pager pages nothing or
+           cannot be moved. */
         children: {
           accepts: "signature",
           of: ["TableScroll", "TablePagerBar"],
           required: true,
+          ordered: true,
+          cardinality: { TableScroll: "one", TablePagerBar: "one" },
         },
       },
       mount: tablePagerAttrs.root,
@@ -313,6 +340,8 @@ export const tablePagerContract = {
           accepts: "signature",
           of: ["TablePagerSize", "TablePagerEnd"],
           required: true,
+          ordered: true,
+          cardinality: { TablePagerSize: "optional", TablePagerEnd: "one" },
         },
       },
       template: { element: "div", part: "bar", host: true, slot: "children" },
@@ -339,6 +368,8 @@ export const tablePagerContract = {
           accepts: "signature",
           of: ["TablePagerStatus", "TablePagerNav"],
           required: true,
+          ordered: true,
+          cardinality: { TablePagerStatus: "optional", TablePagerNav: "one" },
         },
       },
       template: { element: "div", part: "end", host: true, slot: "children" },

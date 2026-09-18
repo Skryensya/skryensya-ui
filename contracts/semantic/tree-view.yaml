@@ -4,11 +4,14 @@ TreeView:
   useWhen:
     - "los datos anidan de verdad y la jerarquía es parte de lo que hay que entender"
     - "hace falta abrir y cerrar ramas sin perder de vista dónde se está"
-    - "un explorador de archivos, un organigrama, un índice de contenidos"
+    - "un explorador de archivos, un organigrama, categorías que se eligen"
   avoidWhen:
     - "hay un solo nivel; eso es una List o una NavList"
     - "son dos niveles fijos y conocidos; una NavList con grupos se lee mejor"
-    - "la jerarquía es una vista de tabla con filas que se expanden; eso es una Table"
+    - "cada fila jerárquica tiene además columnas (tamaño, fecha, dueño); eso es un Treegrid"
+    - "son enlaces para navegar el sitio o la página; un role=tree no es navegación: eso es NavList o Toc"
   alternatives:
     - NavList
     - List
+    - Treegrid
+    - Toc

@@ -1,5 +1,5 @@
 import { anchoredParts } from "@skryensya/core/anchored";
-import { breadcrumbParts, collapsibleBreadcrumbRange } from "@skryensya/core/breadcrumb";
+import { breadcrumbContract, breadcrumbParts, collapsibleBreadcrumbRange } from "@skryensya/core/breadcrumb";
 import { menuAttrs, menuParts } from "@skryensya/core/menu";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
 import { mountMenu } from "./menu.js";
@@ -60,7 +60,7 @@ export function connectBreadcrumb(root: HTMLElement): Cleanup {
   shadow.style.pointerEvents = "none";
   root.append(shadow);
 
-  const collapsedLabel = root.getAttribute("data-collapsed-label") ?? "Mostrar niveles ocultos";
+  const collapsedLabel = root.getAttribute("data-collapsed-label") ?? breadcrumbContract.options.collapsedLabel.default;
 
   // Also `data-sk-menu`/`sk-menu`: this `<li>` doubles as the Menu's own root, the same move
   // `MenubarItem`'s wrapper makes (`menubar.ts`). One element, not an extra wrapper, carrying both

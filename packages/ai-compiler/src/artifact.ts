@@ -32,12 +32,15 @@ import type { Release, ReleaseLedger } from "./changelog.js";
  * `ContractSemantics` and the changelog types live in the modules that read their YAML; nothing else
  * in those modules is a consumer's business, so `./artifact` is the door and they come through it.
  */
+import type { vocabulary } from "./vocabulary.js";
+import type { HookDetail, SignatureBindings } from "./contract-details.js";
+import type { ContractCategory } from "@skryensya/core/contract";
 export type { ContractSemantics } from "./overlay.js";
 export type { ChangeEntry, ChangeText, Release, ReleaseLedger } from "./changelog.js";
 export type { ChangeKind } from "@skryensya/core/changelog";
 
 /** Bumped when the artifact's shape changes in a way a reader must notice. */
-export const SCHEMA_VERSION = "2.0";
+export const SCHEMA_VERSION = "2.3";
 
 /**
  * One family as the manifest publishes it.
@@ -48,6 +51,10 @@ export const SCHEMA_VERSION = "2.0";
  */
 export type CompiledContract = ComponentContract & {
   readonly semantics: ContractSemantics;
+  /** Derived (2.1): per signature, which bindings realize it and how. */
+  readonly bindings: Readonly<Record<string, SignatureBindings>>;
+  /** Derived (2.1): each hook's default, declaring sheet and part, and whether a binding writes it. */
+  readonly hookDetails: Readonly<Record<string, HookDetail>>;
 };
 
 /** One signature, as the index publishes it: enough to choose with, never enough to build with. */
@@ -65,6 +72,7 @@ export type CompiledIndexSignature = {
 
 export type CompiledIndexEntry = {
   readonly id: string;
+  readonly category?: ContractCategory;
   readonly css: string;
   readonly signatures: readonly CompiledIndexSignature[];
 };
@@ -87,6 +95,8 @@ export type CompiledManifest = {
    */
   readonly changelogs: Readonly<Record<string, readonly Release[]>>;
   readonly releases: ReleaseLedger;
+  /** What the rule operators in the contracts mean (2.1). */
+  readonly vocabulary: typeof vocabulary;
 };
 
 /** The two files. They are one artifact and are never valid apart. */
@@ -98,7 +108,7 @@ export type CompiledPair = {
 export class ArtifactError extends Error {}
 
 const INDEX_KEYS = ["schemaVersion", "sourceHash", "contracts"] as const;
-const MANIFEST_KEYS = ["schemaVersion", "sourceHash", "contracts", "changelogs", "releases"] as const;
+const MANIFEST_KEYS = ["schemaVersion", "sourceHash", "contracts", "changelogs", "releases", "vocabulary"] as const;
 
 function missingKeys(value: unknown, keys: readonly string[]): readonly string[] {
   if (typeof value !== "object" || value === null) return [...keys];

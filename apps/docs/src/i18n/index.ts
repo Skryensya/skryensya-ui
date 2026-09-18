@@ -134,6 +134,7 @@ const routeSegments: Record<string, Partial<Record<Locale, string>>> = {
   "first-component": { es: "primer-componente" },
   "automatic-mounting": { es: "montaje-automatico" },
   transparency: { es: "transparencias" },
+  typography: { es: "tipografia" },
 };
 
 /** The reverse table, built once, so a Spanish path can be read back to its English identity. */

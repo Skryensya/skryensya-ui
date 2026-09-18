@@ -3,8 +3,30 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "f9fa7a5592cfb4bd"
+surface: "f0a11f0e56139cc3"
 entries:
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: React tipa label y value como texto
+      body: >-
+        <code>label</code> es <code>string</code> y <code>value</code> es
+        <code>string | number</code> (el path animado), igual que los slots de texto del contrato.
+    en:
+      title: React types label and value as text
+      body: >-
+        <code>label</code> is <code>string</code> and <code>value</code> is
+        <code>string | number</code> (the animated path), matching the contract text slots.
   - date: 2026-08-11
     kind: feature
     es:
@@ -45,3 +67,39 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: El contrato declara el rango de sus números
+      body: >-
+        <code>fractionDigits</code> es un entero de 0 a 100, el rango de <code>Intl.NumberFormat</code>. Un valor fuera de rango deja de validar en vez de llegar al binding.
+    en:
+      title: The contract declares the range of its numbers
+      body: >-
+        <code>fractionDigits</code> is a whole number from 0 to 100, the range of <code>Intl.NumberFormat</code>. A value out of range stops validating instead of reaching the binding.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: Un count-up necesita count y una tendencia necesita change
+      body: >-
+        <code>animate</code> sin <code>count</code> validaba y el enhancer lanzaba un error al montar;
+        <code>trend</code> sin el slot <code>change</code> no tenía dónde pintarse. Los dos dejan de
+        validar (nueva regla <code>implies</code>). <code>trend</code> toma el default
+        <code>neutral</code> que React ya escribía.
+    en:
+      title: A count-up needs count and a trend needs change
+      body: >-
+        <code>animate</code> without <code>count</code> validated and the enhancer threw on mount;
+        <code>trend</code> without the <code>change</code> slot had nowhere to paint. Both stop
+        validating (new <code>implies</code> rule). <code>trend</code> takes the <code>neutral</code>
+        default React already wrote.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie cubre también las restricciones
+      body: >-
+        El hash de superficie ahora incluye las restricciones entre opciones (<code>implies</code>, <code>excludes</code>, <code>notInside</code>, <code>pairs</code>) y <code>outputHooks</code>. Este contrato no cambió; sólo cambió lo que el hash mide.
+    en:
+      title: The surface hash also covers constraints
+      body: >-
+        The surface hash now covers the constraints between options (<code>implies</code>, <code>excludes</code>, <code>notInside</code>, <code>pairs</code>) and <code>outputHooks</code>. This contract did not change; only what the hash measures did.

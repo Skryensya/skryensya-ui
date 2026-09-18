@@ -82,7 +82,28 @@ body {
      pixel is this row's own hairline: over there the sticky bar draws its border UNDER a content row
      already that tall, so the same bar measures one pixel more than the token that names it. */
   min-block-size: calc(var(--playground-chrome-block-size) + 1px);
-  padding-inline: var(--space-inset-md);
+  /*
+   * THE INSET, PLUS WHATEVER THE DEVICE EATS. `env(safe-area-inset-*)` is 0 everywhere that has no
+   * notch, rounded corner or gesture bar, so this is the same 16px on a desktop and the reason the
+   * controls at both ends stay reachable on a phone held sideways. Physical `left`/`right` on
+   * purpose: a safe area is the hardware's geometry and does not mirror with the text.
+   *
+   * Named, because two other rules need the SAME number: the optical pull that lines the first and
+   * last glyph up with this edge, and the second row's band, which bleeds to the bar's true edges and
+   * then puts its own text back on this one.
+   */
+  --playground-chrome-gutter-start: max(var(--space-inset-md), env(safe-area-inset-left));
+  --playground-chrome-gutter-end: max(var(--space-inset-md), env(safe-area-inset-right));
+  /* How far a `md` icon-only button's own box extends past its glyph: the box is as wide as it is
+     tall (`--sk-button-width: --sk-button-height`, button.css) and the glyph is centred in it. The
+     glyph is `--size-icon-LG`, not `-md`: that is what `.sk-button[data-size="md"] .sk-icon` sets
+     (button.css), and reading the wrong one here put the pull 2px out. */
+  --playground-chrome-optical: calc(
+    (max(var(--size-control-md), var(--size-touch-target)) - var(--size-icon-lg)) / 2
+  );
+
+  padding-inline-start: var(--playground-chrome-gutter-start);
+  padding-inline-end: var(--playground-chrome-gutter-end);
   padding-block: var(--space-inset-xs);
   border-block-end: 1px solid var(--color-border-subtle);
   background: var(--color-bg-surface);
@@ -252,12 +273,24 @@ body {
   align-items: center;
 }
 
+/* The language Menu's own box in the row (the island fills it). `flex: none` so the trigger keeps
+   its square regardless of what the heading beside it is doing. */
+.playground-chrome__language {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+
 /*
  * THE SAME HEIGHT AS THE FIELD BESIDE THEM. The search well already floors at
  * `max(--size-control-md, --size-touch-target)`, and at `sm` these two sat 12px shorter inside the
  * same row: three controls on one line, at two heights, with nothing in the row explaining why. The
  * floor is written the same way rather than as a number, so a density change moves all three
  * together.
+ *
+ * The search button that replaces the field below `48rem` is a Button and already floors itself
+ * there, so this keeps saying what it always said: the two preferences match whatever sits beside
+ * them.
  */
 .playground-chrome__actions .sk-button,
 .playground-chrome__actions .sk-theme-toggle {
@@ -268,7 +301,8 @@ body {
    inside it. */
 @media (width >= 64rem) {
   .playground-chrome {
-    padding-inline: var(--space-inset-lg);
+    --playground-chrome-gutter-start: max(var(--space-inset-lg), env(safe-area-inset-left));
+    --playground-chrome-gutter-end: max(var(--space-inset-lg), env(safe-area-inset-right));
   }
 }
 
@@ -278,7 +312,103 @@ body {
  * "out of here" on its own, and the room goes to the component's own name.
  */
 @media (width < 64rem) {
-  .playground-chrome__brand-text {
+  /* The whole link, not just its word: with the arrow gone (see `Tool.astro`) a hidden wordmark
+     would leave an empty 16px link in the row - a tab stop with a name and nothing to see. */
+  .playground-chrome__brand {
+    display: none;
+  }
+}
+
+/*
+ * THE PHONE'S ROW: ONE LINE, AT THE ROW'S OWN SIZE.
+ *
+ * Everything in it stays `md` - the same 44px control the bar wears at every other width, and the
+ * same one the documentation's header is built from. What makes a single line fit at 390px is not
+ * shrinking the controls, it is having fewer of them: the binding switch moved to the rail's header
+ * below `60rem`, the language label collapses to its glyph here, the example's name leaves the
+ * heading (`pages/index.astro`), and the search is a button rather than a field (`Playground.tsx`).
+ *
+ * An earlier pass DID step this row down to `sm`, and it was wrong twice over: 32px targets in the
+ * one place a thumb reaches for chrome, and a row that no longer matched the same bar one tap away.
+ */
+@media (width <= 48rem) {
+  /*
+   * TWO LINES IN THE BAR, AND THE HEADING OWNS THE SECOND.
+   *
+   * Sharing one line, the component's name and the example's had ~150px between them and both ended
+   * as three letters and an ellipsis ("Accor…", "Details gr…"), which names neither. A phone has
+   * width for one of those things or height for both, and height is the cheaper of the two: the
+   * controls keep the first line at their own 44px, the heading gets a line to itself and reads in
+   * full, and the preview's bar simply starts one row lower.
+   *
+   * `display: contents` on the lead group is what makes that possible without moving the markup: its
+   * three children become items of the bar's own flex row, so the heading can take a line of its own
+   * while the rail's switch stays up with the controls. (The `1fr auto 1fr` grid at `64rem` reads the
+   * same three boxes and is untouched by this.)
+   */
+  .playground-chrome__lead {
+    display: contents;
+  }
+
+  /*
+   * OPTICALLY ALIGNED, which is the difference between the BOX starting at the gutter and the GLYPH
+   * starting there. An icon-only button is a 44px square around a 24px icon, so aligning its box put
+   * the first thing the eye actually sees 10px inside the heading's edge one line below - and the
+   * same 10px inside the reload button in the pane's bar under that, which is `soft` and DOES paint
+   * its box, so that one aligns by its border. Pulling the two ghost ends out by exactly that
+   * overhang lines the glyphs up with both.
+   */
+  .playground-chrome__rail-toggle {
+    order: 1;
+    margin-inline-start: calc(var(--playground-chrome-optical) * -1);
+  }
+
+  /* Pushed to the end edge by the space itself, so the first line reads switch / everything else. */
+  .playground-chrome__trail {
+    flex: 0 0 auto;
+    order: 2;
+    margin-inline-start: auto;
+    margin-inline-end: calc(var(--playground-chrome-optical) * -1);
+  }
+
+  /*
+   * THE SECOND ROW IS A BAND, not more bar.
+   *
+   * Sharing one surface with the controls above it, the heading read as a label that had fallen off
+   * the row rather than as its own thing. It gets the sunken surface, a hairline above it and the
+   * bar's full width - the same three moves the pane bars under it already make, so the three rows
+   * read as three rows of one piece of furniture.
+   *
+   * It bleeds to the bar's true edges (hence the negative gutters) and then puts its own text back on
+   * the gutter, so the band spans edge to edge while "Accordion" stays on the same vertical line as
+   * the glyph above it and the buttons below.
+   */
+  .playground-chrome__context {
+    /* A line of its own: `100%` basis is what breaks the row, and `flex-grow` lets the heading use
+       all of it. Both names fit here, so neither is truncated to nothing. */
+    flex: 1 0 100%;
+    order: 3;
+    min-inline-size: 0;
+    margin-block-end: calc(var(--space-inset-xs) * -1);
+    margin-inline-start: calc(var(--playground-chrome-gutter-start) * -1);
+    margin-inline-end: calc(var(--playground-chrome-gutter-end) * -1);
+    padding-block: var(--space-inset-xs);
+    padding-inline-start: var(--playground-chrome-gutter-start);
+    padding-inline-end: var(--playground-chrome-gutter-end);
+    border-block-start: 1px solid var(--color-border-subtle);
+    background: var(--color-bg-surface-sunken);
+  }
+
+  /* Flush under the controls: the row gap would otherwise show a strip of the bar's own surface
+     above the band, which reads as a seam rather than as a boundary. */
+  .playground-chrome {
+    row-gap: 0;
+  }
+
+  /* The binding switch is in the rail at this width, so its slot in the bar is an EMPTY box - and an
+     empty flex item still takes a gap. At `order: 0` it sat before everything and pushed the rail's
+     switch 16px off the gutter, which is what made the first row look indented by nothing. */
+  .playground-chrome__binding {
     display: none;
   }
 }
@@ -292,35 +422,18 @@ body {
   }
 }
 
-@media (width < 40rem) {
-  /*
-   * The field collapses to its icon rather than to a second control. The documentation swaps in a
-   * real `<button>` at this width, and its own comment says why: the field shape only earns an
-   * input's mobile quirks while it is SHOWING a placeholder and a hint. Here the same swap would
-   * mean a second trigger, in another language, portalled from another place, for a tool whose
-   * narrow-width story is one column of editor; hiding the two parts that need the room is the
-   * cheaper half of that trade, and the input keeps its own accessible name.
-   */
-  /* The wrapper gives up its basis too, or the field collapses to an icon inside a box still holding
-     12rem of the row. */
+/*
+ * NO FIELD DOWN HERE AT ALL, so nothing to collapse.
+ *
+ * This used to squeeze the well to its icon: hide the placeholder, hide the keycap, zero the input.
+ * A field showing neither of the two things that make it a field had stopped being one, and the
+ * honest version of that is the control the documentation's own header swaps to at its narrow width:
+ * a Button that opens the palette. `Playground.tsx` renders it below `48rem`, so the wrapper only
+ * ever holds one control here and takes its size from it.
+ */
+@media (width <= 48rem) {
   .playground-chrome__search {
     flex-basis: auto;
-  }
-
-  .playground-chrome__search-field {
-    min-inline-size: 0;
-    padding-inline: var(--space-inset-sm);
-  }
-
-  .playground-chrome__search-field .sk-kbd,
-  .playground-chrome__search-input::placeholder {
-    display: none;
-    opacity: 0;
-  }
-
-  .playground-chrome__search-input {
-    flex: 0 1 auto;
-    inline-size: 0;
   }
 }
 

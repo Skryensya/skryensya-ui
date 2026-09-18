@@ -85,6 +85,10 @@
   }
 
   .sk-switch__control {
+    /* The sizes above are the OUTER track, and the thumb's calc subtracts padding and border from
+     * them. Declared here, not inherited from a page reset: without one the track grew to 52px and
+     * the thumb sat off-centre. */
+    box-sizing: border-box;
     display: flex;
     inline-size: var(--sk-switch-inline-size);
     block-size: var(--sk-switch-block-size);

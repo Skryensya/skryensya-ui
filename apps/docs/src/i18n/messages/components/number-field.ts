@@ -15,12 +15,12 @@ export const numberFieldMessages = {
     "numberFieldPage.testVanilla1":
       'Los triggers montan con el <code class="sk-code">aria-label</code> escrito a mano en el markup.',
     "numberFieldPage.testVanilla2":
-      'Cada trigger suma o resta un <code class="sk-code">step</code> y emite <code class="sk-code">sk-value-change</code>.',
+      'Cada trigger suma o resta un <code class="sk-code">step</code> y emite <code class="sk-code">sk:numberfieldvaluechange</code>.',
     "numberFieldPage.testVanilla3":
       "El trigger de incrementar se deshabilita en el máximo, el de disminuir en el mínimo.",
     "numberFieldPage.testVanilla4": "Presionar un trigger deshabilitado en el límite no hace nada.",
     "numberFieldPage.testVanilla5":
-      'Escribir un valor y salir del campo lo confirma y emite <code class="sk-code">sk-value-change</code>.',
+      'Escribir un valor y salir del campo lo confirma y emite <code class="sk-code">sk:numberfieldvaluechange</code>.',
     "numberFieldPage.testVanilla6":
       "Un valor tipeado por encima del máximo se recorta al límite al salir del campo.",
     "numberFieldPage.testVanilla7":
@@ -63,12 +63,12 @@ export const numberFieldMessages = {
     "numberFieldPage.testVanilla1":
       'The triggers mount with the authored <code class="sk-code">aria-label</code> from the markup.',
     "numberFieldPage.testVanilla2":
-      'Each trigger adds or subtracts one <code class="sk-code">step</code> and emits <code class="sk-code">sk-value-change</code>.',
+      'Each trigger adds or subtracts one <code class="sk-code">step</code> and emits <code class="sk-code">sk:numberfieldvaluechange</code>.',
     "numberFieldPage.testVanilla3":
       "The increment trigger disables at the max, the decrement trigger disables at the min.",
     "numberFieldPage.testVanilla4": "Pressing a disabled trigger at the bound does nothing.",
     "numberFieldPage.testVanilla5":
-      'Typing a value and leaving the field commits it and emits <code class="sk-code">sk-value-change</code>.',
+      'Typing a value and leaving the field commits it and emits <code class="sk-code">sk:numberfieldvaluechange</code>.',
     "numberFieldPage.testVanilla6":
       "A typed value past the max clamps down to the bound when the field is left.",
     "numberFieldPage.testVanilla7":

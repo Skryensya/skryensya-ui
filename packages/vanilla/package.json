@@ -89,6 +89,10 @@
       "types": "./src/components/carousel.ts",
       "default": "./src/components/carousel.ts"
     },
+    "./loader": {
+      "types": "./src/components/loader.ts",
+      "default": "./src/components/loader.ts"
+    },
     "./marquee": {
       "types": "./src/components/marquee.ts",
       "default": "./src/components/marquee.ts"
@@ -124,6 +128,10 @@
     "./comment-thread": {
       "types": "./src/components/comment-thread.ts",
       "default": "./src/components/comment-thread.ts"
+    },
+    "./questionnaire": {
+      "types": "./src/components/questionnaire.ts",
+      "default": "./src/components/questionnaire.ts"
     },
     "./tile-checkbox": {
       "types": "./src/components/tile-checkbox.ts",

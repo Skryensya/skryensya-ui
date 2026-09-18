@@ -67,7 +67,7 @@ export const cardMessages = {
     "cardPage.selectNote": "TileCheckbox",
     "cardPage.mediaTitle": "Card con imagen",
     "cardPage.mediaBody":
-      'Entra el medio. El Box no lleva padding: ya recorta por <code>overflow</code>, así que un <a href="/es/componentes/image-frame">ImageFrame</a> con <code>data-radius="none"</code> llega al borde y hereda la esquina redondeada. El inset del texto lo repone <code>.sk-card-body</code>, porque un padding en la raíz también habría metido para adentro a la foto.',
+      'Entra el medio. El Box no lleva padding: ya recorta por <code>overflow</code>, así que un <a href="/es/componentes/image-frame">ImageFrame</a> con <code>data-radius="none"</code> llega al borde y hereda la esquina redondeada. El inset del texto lo repone un segundo Box con <code>padding="lg"</code>, un nivel más adentro, porque un padding en la raíz también habría metido para adentro a la foto.',
     "cardPage.mediaNote": "Box + ImageFrame + Badge",
     "cardPage.gradientTitle": "Card con gradiente",
     "cardPage.gradientBody":
@@ -75,7 +75,7 @@ export const cardMessages = {
     "cardPage.gradientNote": "ImageFrame + MediaCaption + MediaGradient (sm · md · lg)",
     "cardPage.mediaLinkTitle": "Card con imagen que navega",
     "cardPage.mediaLinkBody":
-      'Los tres a la vez: medio, gradiente y navegación. Es un TileLink con <code>data-padding="none"</code> para que la foto llegue al borde, y todo lo de adentro es un <code>span</code>, porque un <code>a</code> no puede contener contenido interactivo de bloque.',
+      'Los tres a la vez: medio, gradiente y navegación. Es un TileLink con <code>data-padding="none"</code> para que la foto llegue al borde; el texto y la fila «leer» recuperan su inset con el mismo Box con padding de la card con imagen. Hay un solo destino y por eso un solo foco: adentro no hay ningún otro enlace ni botón.',
     "cardPage.mediaLinkNote": "TileLink + ImageFrame + MediaGradient",
     "cardPage.productTitle": "Card de producto",
     "cardPage.productBody":
@@ -191,7 +191,7 @@ export const cardMessages = {
     "cardPage.selectNote": "TileCheckbox",
     "cardPage.mediaTitle": "Card with an image",
     "cardPage.mediaBody":
-      'Media arrives. The Box carries no padding: it already clips through <code>overflow</code>, so an <a href="/components/image-frame">ImageFrame</a> at <code>data-radius="none"</code> reaches the edge and inherits the rounded corner. The text inset gets restored by <code>.sk-card-body</code>, because padding on the root would have inset the photo too.',
+      'Media arrives. The Box carries no padding: it already clips through <code>overflow</code>, so an <a href="/components/image-frame">ImageFrame</a> at <code>data-radius="none"</code> reaches the edge and inherits the rounded corner. The text inset comes back from a second Box at <code>padding="lg"</code>, one level in, because padding on the root would have inset the photo too.',
     "cardPage.mediaNote": "Box + ImageFrame + Badge",
     "cardPage.gradientTitle": "Card with a gradient",
     "cardPage.gradientBody":
@@ -199,7 +199,7 @@ export const cardMessages = {
     "cardPage.gradientNote": "ImageFrame + MediaCaption + MediaGradient (sm · md · lg)",
     "cardPage.mediaLinkTitle": "Card with a navigating image",
     "cardPage.mediaLinkBody":
-      'All three at once: media, gradient, and navigation. It is a TileLink at <code>data-padding="none"</code> so the photo reaches the edge, and everything inside is a <code>span</code>, because an <code>a</code> cannot hold block-level interactive content.',
+      'All three at once: media, gradient, and navigation. It is a TileLink at <code>data-padding="none"</code> so the photo reaches the edge; the copy and the "read" row take their inset back from the same padded Box the media card uses. There is one destination and so one focus stop: nothing inside is another link or button.',
     "cardPage.mediaLinkNote": "TileLink + ImageFrame + MediaGradient",
     "cardPage.productTitle": "Product card",
     "cardPage.productBody":

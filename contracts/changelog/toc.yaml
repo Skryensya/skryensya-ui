@@ -3,8 +3,30 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "e8a3a75d06840ad1"
+surface: "871dc0d9e028d1b7"
 entries:
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: React tipa el label de cada ítem como texto
+      body: >-
+        <code>TocItem.children</code> es <code>string</code>, igual que el slot de ítem del
+        contrato (<code>accepts: "text"</code>).
+    en:
+      title: React types each item label as text
+      body: >-
+        <code>TocItem.children</code> is <code>string</code>, matching the contract item slot
+        (<code>accepts: "text"</code>).
   - date: 2026-08-23
     kind: breaking
     es:
@@ -94,3 +116,19 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: title es obligatorio y cada entrada se identifica por su href
+      body: >-
+        <code>title</code> pasa a ser obligatorio, también en React: el template siempre dibuja el
+        <code>&lt;h2&gt;</code> y nombra el <code>&lt;nav&gt;</code> con él, así que sin título había
+        un encabezado vacío y un landmark sin nombre. <code>href</code> es la key de las entradas:
+        una sin destino, o dos al mismo ancla, dejan de validar.
+    en:
+      title: title is required and every entry is keyed by its href
+      body: >-
+        <code>title</code> is now required, React included: the template always draws the
+        <code>&lt;h2&gt;</code> and names the <code>&lt;nav&gt;</code> with it, so without one there was
+        an empty heading and an unnamed landmark. <code>href</code> keys the entries: one with no
+        destination, or two to the same anchor, stop validating.

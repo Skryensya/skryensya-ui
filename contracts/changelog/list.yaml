@@ -3,8 +3,74 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "d13fb015e68f07e2"
+surface: "eba257019376cb6c"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    target: ListItemButton
+    es:
+      title: ListItemButton declara forward para attrs de formulario
+      body: >-
+        Publica <code>forward</code> con <code>id</code>/<code>name</code>/<code>form</code> y
+        <code>aria-*</code> (par de <code>Button.action</code>). <code>disabled</code> sigue
+        siendo opción.
+    en:
+      title: ListItemButton declares forward for form attrs
+      body: >-
+        Publishes <code>forward</code> with <code>id</code>/<code>name</code>/<code>form</code>
+        and <code>aria-*</code> (Button.action peer). <code>disabled</code> remains an option.
+  - date: 2026-09-17
+    kind: feature
+    target: ListItemButton
+    es:
+      title: ListItemButton expone disabled nativo en el árbol
+      body: >-
+        La misma opción <code>disabled</code> de las filas inertes se remapea en el host
+        <code>&lt;button&gt;</code> a <code>disabled</code> + <code>aria-disabled</code> (la hoja ya
+        estilizaba <code>:disabled</code>). Las filas <code>ListItem</code> /
+        <code>ListItemPlain</code> siguen con <code>data-disabled</code> en el <code>&lt;li&gt;</code>.
+    en:
+      title: ListItemButton exposes native disabled in the tree
+      body: >-
+        The same <code>disabled</code> option inert rows use is remapped on the
+        <code>&lt;button&gt;</code> host to <code>disabled</code> + <code>aria-disabled</code>
+        (the stylesheet already styled <code>:disabled</code>). <code>ListItem</code> /
+        <code>ListItemPlain</code> rows keep <code>data-disabled</code> on the <code>&lt;li&gt;</code>.
+  - date: 2026-09-17
+    kind: feature
+    target: ListItemButton
+    es:
+      title: List publica ListItemButton y deja de reclamar sk-interactive
+      body: >-
+        <code>ListItemButton</code> entra al contrato (ya existía en React): la fila entera es un
+        <code>&lt;button type="button"&gt;</code> con <code>sk-interactive</code>, el par de
+        <code>ListItemLink</code> para acciones sin URL. <code>List</code> y
+        <code>OrderedList</code> lo aceptan en <code>children</code>. La parte
+        <code>interactive</code> deja de publicarse: <code>sk-interactive</code> se compone vía
+        <code>also</code>, no es anatomía de list.
+    en:
+      title: List publishes ListItemButton and stops claiming sk-interactive
+      body: >-
+        <code>ListItemButton</code> joins the contract (it already existed in React): the whole row
+        is a <code>&lt;button type="button"&gt;</code> with <code>sk-interactive</code>, the
+        <code>ListItemLink</code> peer for actions without a URL. <code>List</code> and
+        <code>OrderedList</code> accept it in <code>children</code>. The <code>interactive</code>
+        part is no longer published: <code>sk-interactive</code> is composed via <code>also</code>,
+        not list anatomy.
   - date: 2026-08-11
     kind: feature
     es:

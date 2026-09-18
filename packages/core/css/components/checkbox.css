@@ -68,6 +68,7 @@
    * forwards hover/focus/press because the input is a sibling, not a child of the control.
    */
   .sk-checkbox__control {
+    box-sizing: border-box;
     display: inline-grid;
     place-items: center;
     inline-size: var(--sk-checkbox-control-size);

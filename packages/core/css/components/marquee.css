@@ -77,8 +77,12 @@
     overflow: hidden;
   }
 
+  .sk-marquee:is([data-direction="up"], [data-direction="down"]) {
+    --sk-marquee-vertical-size: 16rem;
+  }
+
   .sk-marquee:is([data-direction="up"], [data-direction="down"]) .sk-marquee__viewport {
-    block-size: var(--sk-marquee-vertical-size, 16rem);
+    block-size: var(--sk-marquee-vertical-size);
     min-block-size: 0;
   }
 

@@ -60,7 +60,7 @@ describe("Tooltip Vanilla contracts", () => {
   it("announces its open state to whatever is listening", async () => {
     const root = markup();
     const onOpenChange = vi.fn();
-    root.addEventListener("sk-open-change", onOpenChange);
+    root.addEventListener("sk:tooltipopenchange", onOpenChange);
 
     fireEvent.pointerMove(trigger(), { pointerType: "mouse" });
 

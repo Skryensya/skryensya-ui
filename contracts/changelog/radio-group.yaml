@@ -3,8 +3,103 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "4c4758937805345c"
+surface: "49a2696cfa73c4b2"
 entries:
+  - date: 2026-09-18
+    kind: feature
+    target: Radio
+    es:
+      title: Radio, uno solo, para matrices
+      body: >-
+        <code>Radio</code> publica un radio suelto. <code>RadioGroup</code> sigue siendo la respuesta
+        para una lista de opciones; esto es el caso que no puede servir: una <strong>matriz</strong>,
+        donde cada fila es una pregunta y cada columna un punto, así que cada celda lleva un radio. Los
+        radios que comparten <code>name</code> son un mismo grupo para el navegador estén donde estén,
+        y eso es lo que hace que una tabla de radios funcione. La etiqueta visible es opcional: en una
+        matriz la nombran los encabezados de fila y de columna, y para el resto está
+        <code>aria-label</code>.
+    en:
+      title: Radio, a single one, for matrices
+      body: >-
+        <code>Radio</code> publishes one radio on its own. <code>RadioGroup</code> is still the answer
+        for a list of options; this is the case it cannot serve: a <strong>matrix</strong>, where every
+        row is a question and every column a point, so each cell holds a radio. Radios sharing a
+        <code>name</code> are one group to the browser wherever they sit, and that is what makes a
+        table of radios work. The visible label is optional: in a matrix the row and column headers
+        name it, and <code>aria-label</code> covers the rest.
+  - date: 2026-09-18
+    kind: feature
+    target: RadioGroup
+    es:
+      title: spread, para escalas
+      body: >-
+        <code>spread</code> reparte las opciones en columnas iguales a lo ancho del grupo. Un grupo
+        horizontal se dimensiona a su contenido, que está bien para dos o tres palabras y mal para una
+        <strong>escala</strong>: un Likert se lee como pasos iguales, así que los puntos tienen que
+        estar igualmente espaciados sin importar cuánto pese cada etiqueta. Es layout: el grupo sigue
+        siendo un grupo y el navegador sigue a cargo de la elección.
+    en:
+      title: spread, for scales
+      body: >-
+        <code>spread</code> lays the options out as equal columns across the group. A horizontal group
+        sizes itself to its content, which is right for two or three words and wrong for a
+        <strong>scale</strong>: a Likert is read as equal steps, so the points have to be equally
+        spaced whatever their labels weigh. Layout only: the group is still a group and the browser
+        still owns the choice.
+  - date: 2026-09-17
+    kind: feature
+    target: RadioGroup
+    es:
+      title: RadioGroup declara forward para id y aria-*
+      body: >-
+        Publica <code>forward</code> con <code>id</code>/<code>aria-*</code> en el host del radiogroup. Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: RadioGroup declares forward for id and aria-*
+      body: >-
+        Publishes <code>forward</code> with <code>id</code>/<code>aria-*</code> on the radiogroup host. An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: breaking
+    target: label
+    es:
+      title: El radiogroup necesita un nombre accesible
+      body: >-
+        WAI espera que <code>role="radiogroup"</code> tenga nombre. Ahora <code>label</code> es una
+        opción real (<code>aria-label</code>), y el validador exige <code>label</code>,
+        <code>aria-label</code> o <code>aria-labelledby</code>. Las demos dejan de pasar el nombre
+        por fuera del contrato.
+    en:
+      title: The radiogroup needs an accessible name
+      body: >-
+        WAI expects <code>role="radiogroup"</code> to carry a name. <code>label</code> is now a real
+        option (<code>aria-label</code>), and the validator requires <code>label</code>,
+        <code>aria-label</code>, or <code>aria-labelledby</code>. Demos stop passing the name outside
+        the contract.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: RadioGroup publica solo su propia superficie
+      body: >-
+        Deja de publicar las partes y hooks de checkbox/switch y las <code>hookSheets</code> ajenas.
+        Quedan las seis partes <code>sk-radio*</code> y los catorce hooks <code>--sk-radio-*</code>.
+        <code>disabled</code> del grupo se escribe en cada input, no en el <code>div</code> (donde no
+        hacía nada).
+    en:
+      title: RadioGroup publishes only its own surface
+      body: >-
+        It no longer publishes checkbox/switch parts and hooks or foreign <code>hookSheets</code>.
+        What remains are the six <code>sk-radio*</code> parts and fourteen <code>--sk-radio-*</code>
+        hooks. Group <code>disabled</code> is written on each input, not on the <code>div</code>
+        (where it did nothing).
   - date: 2026-08-11
     kind: feature
     es:
@@ -62,3 +157,19 @@ entries:
         sheet <code>css</code> names could be reconciled, so the hooks in the others were public
         surface nobody documented and nothing checked. No styling changes: what changes is that they
         are declared now, and the compiler checks them.
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: El validador comprueba que el valor inicial nombre una entrada que existe
+      body: >-
+        <code>value</code> ahora declara que nombra entradas de <code>items</code> por su
+        <code>value</code>. Un árbol que apunta a una entrada inexistente deja de validar
+        (<code>unknown-key</code>) en vez de renderizar sin nada seleccionado ni decir por qué. El
+        markup y los bindings no cambian.
+    en:
+      title: The validator checks that the initial value names an entry that exist
+      body: >-
+        <code>value</code> now declares that it names entries of <code>items</code> by their
+        <code>value</code>. A tree pointing at an entry that does not exist stops validating
+        (<code>unknown-key</code>) instead of rendering with nothing selected and no reason given.
+        Markup and bindings are unchanged.

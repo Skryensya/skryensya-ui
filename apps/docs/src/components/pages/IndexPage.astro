@@ -1,16 +1,18 @@
 ---
 /*
- * The component CATALOG, not a component's own page: a directory of cards linking out to every
+ * The component CATALOG, not a component's own page: one List per component type, linking out to every
  * migrated page, so `ComponentPageShell`'s tabs (Uso/Instalación/Referencia…) do not apply. There
  * is no single "usage" to tab into. What carries over for visual consistency with the pages this
  * links to is only the hero header block itself (eyebrow + h1), used here directly rather than
  * through the shell, with no tab strip underneath it.
  */
+import "@skryensya/core/components/list.css";
 import Base from "../../layouts/Base.astro";
 import CommandPalette from "../CommandPalette.astro";
 import { getLocale, useTranslations } from "../../i18n";
 import { iconMarkup } from "../../icons";
 import { getComponentDescription } from "../../lib/component-catalog";
+import { componentIconMarkup } from "../../lib/component-icons";
 import { getNavigation } from "../../lib/navigation";
 
 const locale = getLocale(Astro.url);
@@ -24,7 +26,7 @@ const t = useTranslations(locale);
  * THIS PAGE'S SEARCH IS THE CATALOGUE'S, not the site's. The chrome's ⌘K palette still indexes every
  * documentation destination and is a keystroke away; a reader who came here and typed into the box
  * labelled "Buscar componentes" is asking about components, so the palette behind it indexes exactly
- * what the cards below list. The components navigation section, and nothing from guides or ADRs.
+ * what the lists below hold. The components navigation section, and nothing from guides or ADRs.
  * `!todo` mirrors the site index: an entry with no page behind it is not a destination.
  */
 const componentSearchIndex = componentSection.groups.flatMap((group) =>
@@ -40,25 +42,6 @@ const componentSearchIndex = componentSection.groups.flatMap((group) =>
     })),
 );
 
-/*
- * dummyimage SCALES ITS TEXT TO FIT the requested box, so the same placeholder renders "Kbd" huge
- * and "Component preview" small. Three letters and seventeen both stretched to the same 400px.
- * Side by side in a grid that reads as inconsistent artwork, not as one placeholder repeated.
- * Padding every label to the SAME character count (centred, so the word stays in the middle of the
- * frame) makes the string the service measures the same width for every card, so every card comes
- * back at the same type size. Verified against the live endpoint: the spaces are honoured, not
- * trimmed the way some text-to-image renderers do.
- */
-const placeholderChars = Math.max(
-  ...componentSection.groups.flatMap((group) => group.items.map((item) => item.label.length)),
-);
-
-const placeholderSrc = (label: string) => {
-  const pad = Math.max(0, placeholderChars - label.length);
-  const left = Math.floor(pad / 2);
-  const text = `${" ".repeat(left)}${label}${" ".repeat(pad - left)}`;
-  return `https://dummyimage.com/400x240/667eea/ffffff?text=${encodeURIComponent(text)}`;
-};
 ---
 
 <Base title={t("indexPage.title")} description={t("indexPage.description")} documentLayout="grid">
@@ -94,59 +77,42 @@ const placeholderSrc = (label: string) => {
     placeholder={t("search.componentsPlaceholder")}
   />
 
-  {
-    /*
-     * FLAT ON PURPOSE. `indexDocument()` (the build-time TOC scan) only counts `h2`/`h3` sitting at
-     * the top level of `<main>`. A heading buried inside a wrapping `<section><header><div>` reads
-     * as content being demonstrated, the same rule that keeps a demo's own headings out of the TOC.
-     * That used to leave this page's own group titles unindexed and the rail empty. So the heading
-     * (and its count, folded INTO it rather than beside it in a sibling wrapper) sits bare at the
-     * top level; only the `<ul>` of cards is still wrapped, in a `<section aria-labelledby>` that
-     * points at the heading by id rather than containing it: `aria-labelledby` never required
-     * containment, just the reference.
-     */
-    componentSection.groups.map((group, groupIndex) => {
-      const headingId = `catalog-group-${groupIndex}`;
+  {/*
+    ONE BOX PER GROUP, flowing as two columns (`.docs-catalog-groups`, site.css). The boxes are
+    layout, not content, so both carry `data-toc-transparent`: `indexDocument()` reads a heading
+    inside them as a section of the page and the rail keeps every group.
+  */}
+  <div class="docs-catalog-groups" data-toc-transparent>
+    {
+      componentSection.groups.map((group, groupIndex) => {
+        const headingId = `catalog-group-${groupIndex}`;
 
-      return (
-        <Fragment>
-          <h2 class="docs-catalog-section__title" id={headingId} data-flush>
-            <span class="docs-catalog-section__title-text">{group.group}</span>
-            <span class="docs-catalog-section__count" data-toc-ignore>
-              {group.items.length} {t("indexPage.countSuffix")}
-            </span>
-          </h2>
-          {group.blurb && <p class="docs-catalog-section__blurb">{group.blurb}</p>}
+        return (
+          <section class="docs-catalog-section" aria-labelledby={headingId} data-toc-transparent>
+            <h2 class="docs-catalog-section__title" id={headingId} data-flush>{group.group}</h2>
+            {group.blurb && <p class="docs-catalog-section__blurb">{group.blurb}</p>}
 
-          <section class="docs-catalog-section" aria-labelledby={headingId}>
-            <ul class="docs-catalog">
+            <ul class="sk-list" role="list">
               {group.items.map((item) => (
-                <li class="docs-catalog__item">
-                  <a href={item.href} class="docs-catalog__card sk-interactive">
-                    <img
-                      class="docs-catalog__image"
-                      src={placeholderSrc(item.label)}
-                      alt=""
-                      loading="lazy"
-                    />
-                    <div class="docs-catalog__content">
-                      <h3 class="docs-catalog__title">
-                        <span class="docs-catalog__name">{item.label}</span>
-                        {item.trailing && (
-                          <span class="sk-badge" data-size="sm" data-tone="warning">{item.trailing}</span>
-                        )}
-                      </h3>
-                      <p class="docs-catalog__description">
-                        {getComponentDescription(item.href, locale)}
-                      </p>
-                    </div>
+                <li class="sk-list__item">
+                  <a href={item.href} class="sk-list__action sk-interactive">
+                    <span class="sk-list__leading" set:html={componentIconMarkup(item.href)} />
+                    <span class="sk-list__content">
+                      <span class="sk-list__title">{item.label}</span>
+                      <span class="sk-list__description">{getComponentDescription(item.href, locale)}</span>
+                    </span>
+                    {item.trailing && (
+                      <span class="sk-list__trailing">
+                        <span class="sk-badge" data-size="sm" data-tone="warning">{item.trailing}</span>
+                      </span>
+                    )}
                   </a>
                 </li>
               ))}
             </ul>
           </section>
-        </Fragment>
-      );
-    })
-  }
+        );
+      })
+    }
+  </div>
 </Base>

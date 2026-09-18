@@ -27,7 +27,7 @@ await initComponents();`;
 
 const listen = `document
   .getElementById("plan")
-  .addEventListener("sk-value-change", (event) => {
+  .addEventListener("sk:selectvaluechange", (event) => {
     console.log(event.detail.value); // ["pro"]
   });`;
 

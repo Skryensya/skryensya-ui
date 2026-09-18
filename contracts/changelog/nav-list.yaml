@@ -3,8 +3,53 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "7b7237de6494db86"
+surface: "b6441fc4ac357d0c"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: bugfix
+    target: NavListGroup
+    es:
+      title: collapsible y heading exigen label; no se combinan
+      body: >-
+        <code>NavListGroup</code> ahora declara <code>implies</code> (<code>collapsible</code> y
+        <code>heading</code> necesitan <code>label</code>) y <code>excludes</code>
+        (<code>collapsible</code> descarta <code>heading</code>: el botón de disclosure ya es el
+        landmark). React escribe <code>data-collapsible</code>/<code>data-default-open</code> y los
+        mounts del enhancer (<code>data-sk-nav-list-group-trigger</code>/<code>data-sk-nav-list-group-list</code>),
+        y tipa el texto del link como <code>string</code>.
+    en:
+      title: collapsible and heading require label; they do not combine
+      body: >-
+        <code>NavListGroup</code> now declares <code>implies</code> (<code>collapsible</code> and
+        <code>heading</code> need <code>label</code>) and <code>excludes</code>
+        (<code>collapsible</code> drops <code>heading</code>: the disclosure button is already the
+        landmark). React writes <code>data-collapsible</code>/<code>data-default-open</code> and the
+        enhancer mounts (<code>data-sk-nav-list-group-trigger</code>/<code>data-sk-nav-list-group-list</code>),
+        and types the link label as <code>string</code>.
   - date: 2026-09-01
     kind: bugfix
     target: collapsible
@@ -173,3 +218,13 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie cubre también las restricciones
+      body: >-
+        El hash de superficie ahora incluye las restricciones entre opciones (<code>implies</code>, <code>excludes</code>, <code>notInside</code>, <code>pairs</code>) y <code>outputHooks</code>. Este contrato no cambió; sólo cambió lo que el hash mide.
+    en:
+      title: The surface hash also covers constraints
+      body: >-
+        The surface hash now covers the constraints between options (<code>implies</code>, <code>excludes</code>, <code>notInside</code>, <code>pairs</code>) and <code>outputHooks</code>. This contract did not change; only what the hash measures did.

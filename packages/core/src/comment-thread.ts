@@ -229,6 +229,7 @@ const sheetHandle = {
 
 export const commentThreadContract = {
   id: "comment-thread",
+  category: "content",
   css: "@skryensya/core/components/comment-thread.css",
   parts: commentThreadParts,
   hooks: [
@@ -256,6 +257,23 @@ export const commentThreadContract = {
     "--sk-comment-sib-gap",
     "--sk-comment-thread-gap",
   ],
+  /*
+   * Vote labels and the fold control use `sk-visually-hidden`. That class has no unique contract
+   * owner, so `sheetsForTree` cannot discover `visually-hidden.css` from `also` alone.
+   */
+  hookSheets: ["@skryensya/core/patterns/visually-hidden.css"],
+  /*
+   * Vanilla re-announces every action on the thread root; React dispatches the same names (bubbling,
+   * cancelable) so a plain-DOM listener works against either binding. `reply` is cancelable so a
+   * failed POST can keep the draft (`preventDefault`); vote/delete change nothing on their own.
+   */
+  events: commentThreadEvents,
+  eventDetails: {
+    vote: { detail: { id: "string | null", direction: "\"up\" | \"down\"" }, reactProp: "onVote", reactDetail: "\"up\" | \"down\"", source: "root", trigger: "vote" },
+    reply: { detail: { parentId: "string | null", body: "string" }, reactProp: "onSubmit", reactDetail: "string", source: "root", trigger: "composerSubmit" },
+    delete: { detail: { id: "string | null" }, reactProp: "onDelete", reactDetail: "void", source: "root", trigger: "actionsDelete" },
+    discard: { detail: { parentId: "string | null", body: "string" }, reactProp: "onCancel", reactDetail: "string", source: "root", trigger: "composerCancel" },
+  },
 
   options: {
     /** The thread's accessible name. A thread with no name is a stack of text with no subject. */
@@ -270,22 +288,22 @@ export const commentThreadContract = {
      * shape `NavListGroup.collapsible` already takes for its own disclosure.
      */
     collapsible: { type: "boolean", default: false, attr: "data-collapsible", trueValue: "" },
-    collapseLabel: { type: "string", default: "Ocultar respuestas", attr: "data-collapse-label" },
+    collapseLabel: { type: "string", default: "Hide replies", attr: "data-collapse-label" },
     /** The viewer's own past vote. Painted from the group, never inferred from the count. */
     voted: { type: "enum", values: ["up", "down", "none"], default: "none", attr: "data-voted" },
-    voteUpLabel: { type: "string", default: "Votar a favor", attr: "data-vote-up-label" },
-    voteDownLabel: { type: "string", default: "Votar en contra", attr: "data-vote-down-label" },
+    voteUpLabel: { type: "string", default: "Upvote", attr: "data-vote-up-label" },
+    voteDownLabel: { type: "string", default: "Downvote", attr: "data-vote-down-label" },
     /** Renders the reply trigger. Absent, the row simply has no reply control. */
     reply: { type: "boolean", default: false, attr: "data-reply", trueValue: "" },
-    replyLabel: { type: "string", default: "Responder", attr: "data-reply-label" },
+    replyLabel: { type: "string", default: "Reply", attr: "data-reply-label" },
     /** Renders the delete trigger. Ownership is the consumer's to decide, not this contract's. */
     deletable: { type: "boolean", default: false, attr: "data-deletable", trueValue: "" },
-    deleteLabel: { type: "string", default: "Eliminar", attr: "data-delete-label" },
-    submitLabel: { type: "string", default: "Publicar", attr: "data-submit-label" },
+    deleteLabel: { type: "string", default: "Delete", attr: "data-delete-label" },
+    submitLabel: { type: "string", default: "Post", attr: "data-submit-label" },
     /** Renders the composer's cancel control. A thread's own always-open composer has nothing to
      *  cancel back to, so this is opt-in rather than always there. */
     cancellable: { type: "boolean", default: false, attr: "data-cancellable", trueValue: "" },
-    cancelLabel: { type: "string", default: "Cancelar", attr: "data-cancel-label" },
+    cancelLabel: { type: "string", default: "Cancel", attr: "data-cancel-label" },
     /**
      * What the mobile trigger says. Visible text on a control this contract renders itself, so it is
      * a label with a default like every other one here rather than a slot: the trigger only ever
@@ -294,7 +312,7 @@ export const commentThreadContract = {
      */
     composerTriggerLabel: {
       type: "string",
-      default: "Escribir un comentario",
+      default: "Write a comment",
       attr: "data-composer-trigger-label",
     },
   },
@@ -309,6 +327,10 @@ export const commentThreadContract = {
       options: ["label", "composerTriggerLabel"],
       requires: ["label"],
       mount: commentThreadAttrs.root,
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+      ],
       slots: {
         /** The "post a new top-level comment" box. Absent when the viewer cannot post. */
         composer: { accepts: "signature", of: ["CommentComposer"] },
@@ -361,6 +383,10 @@ export const commentThreadContract = {
       host: { element: "article" },
       options: ["commentId", "profileHref", "collapsible", "collapseLabel"],
       parents: ["CommentThread", "Comment", "CommentTemplate"],
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+      ],
       slots: {
         /**
          * The person, in the gutter. Its OWN slot rather than something composed into `author`,
@@ -566,6 +592,10 @@ export const commentThreadContract = {
       intent: ["comment-actions", "vote-reply-delete", "action-row"],
       host: { element: "div" },
       options: ["reply", "replyLabel", "deletable", "deleteLabel"],
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+      ],
       slots: {
         /** Whatever leads the row. A `CommentVote`, a Badge, a timestamp. */
         children: { accepts: "node" },
@@ -630,6 +660,10 @@ export const commentThreadContract = {
       intent: ["vote", "upvote-downvote", "score"],
       host: { element: "div" },
       options: ["voted", "voteUpLabel", "voteDownLabel"],
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+      ],
       slots: {
         /** The tally, pre-formatted. Visible text, so a slot: an option only ever becomes an attribute. */
         count: { accepts: "text", required: true },
@@ -704,6 +738,10 @@ export const commentThreadContract = {
       intent: ["comment-composer", "reply-box", "new-comment-form"],
       host: { element: "form" },
       options: ["submitLabel", "cancellable", "cancelLabel"],
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+        { of: "icon", systemOwned: true },
+      ],
       slots: {
         /** Any control at all. No `of`, on purpose. */
         children: { accepts: "signature", required: true },

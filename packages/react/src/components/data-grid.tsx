@@ -130,6 +130,9 @@ export function DataGrid({ children, className, label, wrapCols = wrapColsOption
         {...props}
         aria-label={label}
         className={cx(dataGridParts.root, className)}
+        data-sk-data-grid=""
+        data-wrap-cols={wrapCols ? "" : undefined}
+        data-wrap-rows={wrapRows ? "" : undefined}
         onKeyDown={onKeyDown}
         role="grid"
       >

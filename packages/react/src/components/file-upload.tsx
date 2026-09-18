@@ -1,7 +1,12 @@
-import { fileUploadErrorMessage, fileUploadParts, fileUploadContract } from "@skryensya/core/file-upload";
+import {
+  fileUploadErrorMessage,
+  fileUploadEvents,
+  fileUploadParts,
+  fileUploadContract,
+} from "@skryensya/core/file-upload";
 import { fileUpload } from "@skryensya/core/machines";
 import { normalizeProps, useMachine } from "@zag-js/react";
-import { useId, useState, type ReactNode } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 
 /* Derived, never restated: the default lives in the contract. */
 const { multiple: multipleOption } = fileUploadContract.options;
@@ -9,9 +14,9 @@ const { multiple: multipleOption } = fileUploadContract.options;
 export type FileUploadProps = {
   id?: string;
   name?: string;
-  label: ReactNode;
-  dropzoneLabel?: ReactNode;
-  triggerLabel?: ReactNode;
+  label: string;
+  dropzoneLabel?: string;
+  triggerLabel?: string;
   accept?: Record<string, string[]>;
   maxFiles?: number;
   maxFileSize?: number;
@@ -24,6 +29,7 @@ export type FileUploadProps = {
   acceptedFiles?: File[];
   defaultAcceptedFiles?: File[];
   deleteIcon?: ReactNode;
+  /** Opt-in: absent means no clear-all control (matches contract `whenGiven: "clearLabel"`). */
   clearLabel?: string;
   onFileChange?: (details: {
     acceptedFiles: File[];
@@ -35,7 +41,7 @@ export function FileUpload({
   accept,
   acceptedFiles,
   allowDrop,
-  clearLabel = "Quitar todos",
+  clearLabel,
   defaultAcceptedFiles,
   deleteIcon,
   directory,
@@ -53,6 +59,7 @@ export function FileUpload({
   triggerLabel = "Elegir archivos",
 }: FileUploadProps) {
   const generatedId = useId();
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const [rejected, setRejected] = useState<Array<{ file: File; errors: string[] }>>([]);
   const service = useMachine(fileUpload.machine, {
     id: id ?? generatedId,
@@ -75,12 +82,16 @@ export function FileUpload({
       // Selecting a valid batch after a rejected one clears the old message: it is feedback about
       // the LAST selection, never a running log of every attempt this session.
       setRejected(rejectedFiles);
-      onFileChange?.({ acceptedFiles: details.acceptedFiles, rejectedFiles });
+      const next = { acceptedFiles: details.acceptedFiles, rejectedFiles };
+      onFileChange?.(next);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(fileUploadEvents.change, { bubbles: true, detail: next }),
+      );
     },
   });
   const api = fileUpload.connect(service, normalizeProps);
   return (
-    <div {...api.getRootProps()} className={fileUploadParts.root}>
+    <div {...api.getRootProps()} className={fileUploadParts.root} data-sk-file-upload="" ref={rootRef}>
       <label {...api.getLabelProps()} className={fileUploadParts.label}>
         {label}
       </label>
@@ -116,26 +127,17 @@ export function FileUpload({
       ) : null}
       {api.acceptedFiles.length ? (
         <>
-          <ul
-            {...api.getItemGroupProps()}
-            className={fileUploadParts.itemGroup}
-          >
+          <ul {...api.getItemGroupProps()} className={fileUploadParts.itemGroup}>
             {api.acceptedFiles.map((file) => (
               <li
                 {...api.getItemProps({ file })}
                 className={fileUploadParts.item}
                 key={`${file.name}-${file.lastModified}`}
               >
-                <span
-                  {...api.getItemNameProps({ file })}
-                  className={fileUploadParts.itemName}
-                >
+                <span {...api.getItemNameProps({ file })} className={fileUploadParts.itemName}>
                   {file.name}
                 </span>
-                <span
-                  {...api.getItemSizeTextProps({ file })}
-                  className={fileUploadParts.itemSize}
-                >
+                <span {...api.getItemSizeTextProps({ file })} className={fileUploadParts.itemSize}>
                   {api.getFileSize(file)}
                 </span>
                 <button
@@ -149,14 +151,16 @@ export function FileUpload({
               </li>
             ))}
           </ul>
-          <button
-            {...api.getClearTriggerProps()}
-            className="sk-button sk-interactive"
-            data-variant="ghost"
-            type="button"
-          >
-            {clearLabel}
-          </button>
+          {clearLabel ? (
+            <button
+              {...api.getClearTriggerProps()}
+              className="sk-button sk-interactive"
+              data-variant="ghost"
+              type="button"
+            >
+              {clearLabel}
+            </button>
+          ) : null}
         </>
       ) : null}
     </div>

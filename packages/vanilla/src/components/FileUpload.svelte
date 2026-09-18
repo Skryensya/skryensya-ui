@@ -1,5 +1,6 @@
 <script lang="ts">
   import { fileUpload } from "@skryensya/core/machines";
+  import { fileUploadEvents } from "@skryensya/core/file-upload";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onMount } from "svelte";
   import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
@@ -42,7 +43,7 @@
     directory: input?.hasAttribute("webkitdirectory"),
     onFileChange(details: { acceptedFiles: File[]; rejectedFiles: unknown[] }) {
       root.dispatchEvent(
-        new CustomEvent("sk-file-change", {
+        new CustomEvent(fileUploadEvents.change, {
           bubbles: true,
           detail: {
             acceptedFiles: details.acceptedFiles,

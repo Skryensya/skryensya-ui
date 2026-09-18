@@ -264,6 +264,7 @@ export function renderIconBox({ icon, dataIcon, size, label, className }: Render
  */
 export const iconContract = {
   id: "icon",
+  category: "content",
   css: "@skryensya/core/patterns/icon.css",
   parts: { root: "sk-icon" },
   hooks: [

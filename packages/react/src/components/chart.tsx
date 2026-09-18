@@ -98,6 +98,7 @@ export const Chart = forwardRef<HTMLElement, ChartProps>(function Chart(
       data-values={values ? "" : undefined}
       ref={ref}
       style={{ ...props.style, [chartAttrs.max]: max } as CSSProperties}
+      {...{ [chartAttrs.root]: "" }}
     >
       {/* First in the markup, hidden by default: what the numbers measure has to be announced
           before the numbers. `chart.css` explains when a composition shows it. */}

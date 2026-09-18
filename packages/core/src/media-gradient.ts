@@ -27,18 +27,38 @@ export type MediaGradientStrength = "sm" | "md" | "lg";
  */
 export const mediaGradientContract = {
   id: "media-gradient",
+  category: "content",
   css: "@skryensya/core/patterns/media-gradient.css",
   parts: mediaGradientParts,
+  /*
+   * Caption measure hooks plus the wash's author-facing and derived paints. The wash vars live on
+   * a rule that also mentions `.sk-media-caption`, so the publisher's "own family only" rule skips
+   * them; they are still declared in the sheet and are the real override surface.
+   */
   hooks: [
     "--sk-media-caption-fg",
     "--sk-media-caption-gap",
     "--sk-media-caption-padding",
+    "--sk-media-gradient-base",
+    "--sk-media-gradient-direction",
+    "--sk-media-gradient-ink",
+    "--sk-media-gradient-ink-mid",
+    "--sk-media-gradient-mix",
+    "--sk-media-gradient-opacity",
+    "--sk-media-gradient-tint",
+    "--sk-media-gradient-tint-edge",
+    "--sk-media-gradient-tint-mid",
   ],
 
   options: {
     /** Which edge of the media the caption sits on. The wash fades toward the photo from there. */
     edge: { type: "enum", values: ["top", "bottom", "start", "end"], default: "bottom", attr: "data-edge" },
     strength: { type: "enum", values: ["sm", "md", "lg"], default: "md", attr: "data-strength" },
+    /**
+     * `figcaption` when the frame is a `<figure>` (`ImageFrame.frameElement`); otherwise `div`.
+     * React's `as`.
+     */
+    captionElement: { type: "enum", values: ["div", "figcaption"], default: "div", element: true, prop: "as" },
   },
 
   signatures: {
@@ -50,8 +70,10 @@ export const mediaGradientContract = {
     MediaCaption: {
       intent: ["caption-over-a-photo", "text-on-media", "overlay-title"],
       host: { element: "div" },
-      options: ["edge"],
+      options: ["edge", "captionElement"],
       parents: ["ImageFrame"],
+      /* React `strength` injects MediaGradient; trees may also nest it as a child. */
+      compose: [{ of: "media-gradient", systemOwned: true }],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "div", part: "caption", host: true, slot: "children" },
       react: { from: "@skryensya/react/media-gradient", name: "MediaCaption" },

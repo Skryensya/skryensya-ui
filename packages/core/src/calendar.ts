@@ -115,6 +115,22 @@ export function parseCalendarDate(value: string | null | undefined) {
   return value ? parseDate(value) : undefined;
 }
 
+/*
+ * Authored dates are ISO calendar days. Same string `<input type="date">` and `<time datetime>`
+ * carry, and the same shape `parseDate` accepts. A typo like `16/09/2026` used to reach the
+ * enhancer and throw at mount; the pattern stops it in the tree.
+ */
+export const ISO_DATE_PATTERN = {
+  source: String.raw`^\d{4}-\d{2}-\d{2}$`,
+  example: "2026-09-16",
+} as const;
+
+/** One day, or both ends of a range as a space-separated pair (selectionMode="range"). */
+export const ISO_DATE_OR_RANGE_PATTERN = {
+  source: String.raw`^\d{4}-\d{2}-\d{2}( \d{4}-\d{2}-\d{2})?$`,
+  example: "2026-09-16",
+} as const;
+
 export function getTwoLetterWeekdayLabel(
   day: Readonly<{ long: string; short: string }>,
   locale: string,
@@ -170,10 +186,34 @@ export const calendarParts = {
  * all, so authored markup could not express a preselected day: a calendar could only ever open on
  * today, while the React binding accepted a value the other half quietly dropped.
  */
+export const calendarEvents = {
+  /** Detail: `{ value: string[] }`, ISO dates; space-separated range ends match authored markup. */
+  valueChange: "sk:calendarvaluechange",
+} as const;
+
 export const calendarContract = {
   id: "calendar",
+  category: "forms",
   css: "@skryensya/core/components/calendar.css",
   parts: calendarParts,
+  /*
+   * Template authors only the root + label. Header, nav, and every grid cell are binding-filled
+   * (CalendarView / CalendarBody); the class names stay owned here for CSS.
+   */
+  systemOwned: [
+    "header",
+    "heading",
+    "viewTrigger",
+    "previous",
+    "next",
+    "table",
+    "tableHeader",
+    "tableBody",
+    "cell",
+    "cellTrigger",
+    "monthGrid",
+    "yearGrid",
+  ],
   hooks: [
     "--sk-calendar-affordance-color",
     "--sk-calendar-cell-radius",
@@ -186,17 +226,27 @@ export const calendarContract = {
     "--sk-calendar-selected-bg",
     "--sk-calendar-selected-fg",
   ],
+  events: calendarEvents,
+  eventDetails: {
+    valueChange: { detail: { value: "string[]" }, reactProp: "onValueChange", source: "root", trigger: "cellTrigger" },
+  },
 
   options: {
     /**
      * The selected date, ISO. Space-separated names both ends of a range. React spells it
      * `defaultValue`: `value` there is the CONTROLLED prop, and emitting it freezes the grid.
      */
-    value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
+    value: {
+      type: "string",
+      attr: "data-value",
+      prop: "defaultValue",
+      machineInput: true,
+      pattern: ISO_DATE_OR_RANGE_PATTERN,
+    },
     /** Earliest selectable date, ISO. Everything before it renders unavailable. */
-    min: { type: "string", attr: "data-min", machineInput: true },
+    min: { type: "string", attr: "data-min", machineInput: true, pattern: ISO_DATE_PATTERN },
     /** Latest selectable date, ISO. */
-    max: { type: "string", attr: "data-max", machineInput: true },
+    max: { type: "string", attr: "data-max", machineInput: true, pattern: ISO_DATE_PATTERN },
     /** One day, or a start and an end. */
     selectionMode: {
       type: "enum",
@@ -206,7 +256,7 @@ export const calendarContract = {
       machineInput: true,
     },
     /** Which language names the months and weekdays. */
-    locale: { type: "string", default: "es", attr: "data-locale", machineInput: true },
+    locale: { type: "string", default: "en", attr: "data-locale", machineInput: true },
     timeZone: { type: "string", default: "UTC", attr: "data-time-zone", machineInput: true },
     disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "", machineInput: true },
     readOnly: { type: "boolean", default: false, attr: "data-readonly", trueValue: "", machineInput: true },
@@ -218,9 +268,11 @@ export const calendarContract = {
       host: { element: "div" },
       mount: "data-sk-calendar",
       options: ["value", "min", "max", "selectionMode", "locale", "timeZone", "disabled", "readOnly"],
+      /** Host id / a11y; value bounds stay options. */
+      forward: ["id", "aria-*"],
       slots: {
         /** Names the grid. Without it the calendar is a table of numbers with nothing saying what for. */
-        label: { accepts: "text" },
+        label: { accepts: "text", required: true },
       },
       template: {
         element: "div",
@@ -229,7 +281,7 @@ export const calendarContract = {
         labelledBySlot: "label",
         children: [
           /* The only authored content. Everything below it is appended by the binding. */
-          { element: "p", part: "label", slot: "label", whenGiven: "label" },
+          { element: "p", part: "label", slot: "label" },
         ],
       },
       react: { from: "@skryensya/react/calendar", name: "Calendar" },

@@ -1,0 +1,194 @@
+# What changed in questionnaire, in the words its users read. Only appended to, never rewritten.
+#
+# `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
+# does not match, something a consumer depends on has moved: write the entry and paste in the new
+# hash.
+surface: "6eeab1b87c826720"
+entries:
+  - date: 2026-09-18
+    kind: feature
+    target: QuestionnaireItem
+    es:
+      title: La escala son radios nativos dentro de una Box
+      body: >-
+        El Likert deja de componerse con tiles: cada punto es un radio de <code>radio-group</code>, en
+        horizontal dentro de un <code>Box</code>, con su etiqueta debajo del control y las anclas al
+        pie de la misma caja. El navegador vuelve a manejar selección y teclado (no hay máquina ni
+        enhancer), y el contrato declara lo que compone (<code>radio-group.css</code>,
+        <code>layout.css</code>). Una escala de cuatro puntos es el ejemplo por defecto, para no tener
+        un centro donde estacionarse; sirve cualquier cantidad.
+    en:
+      title: The scale is native radios inside a Box
+      body: >-
+        Likert stops composing tiles: each point is a <code>radio-group</code> radio, laid out across a
+        <code>Box</code> with its label under the control and the anchors at the foot of the same box.
+        The browser owns selection and keyboard again (no machine, no enhancer), and the contract
+        declares what it composes (<code>radio-group.css</code>, <code>layout.css</code>). A four-point
+        scale is the default example, so there is no middle to park on; any count works.
+  - date: 2026-09-18
+    kind: feature
+    target: QuestionnaireItem
+    es:
+      title: La escala Likert es una composición de radios
+      body: >-
+        <code>likert</code> ya no dibuja otro control: es la misma pregunta de elección única, el mismo
+        <code>TileRadioGroup</code> y la misma máquina, puestos de lado (<code>data-likert</code> sobre
+        las opciones). <code>likertMinLabel</code> / <code>likertMaxLabel</code> pasan a ser partes del
+        cuestionario (<code>sk-questionnaire__anchors</code>). El contrato deja de componer la familia
+        Likert y de pedir su hoja. El formulario además toma una medida de lectura
+        (<code>--sk-questionnaire-measure</code>, 56ch) declarada como tamaño, no como techo, para que
+        un contenedor que estira a sus hijos no la anule.
+    en:
+      title: The Likert scale is a composition of radios
+      body: >-
+        <code>likert</code> no longer draws a second control: it is the same single-choice question,
+        the same <code>TileRadioGroup</code> and the same machine, turned sideways
+        (<code>data-likert</code> on the choices). <code>likertMinLabel</code> /
+        <code>likertMaxLabel</code> become questionnaire parts
+        (<code>sk-questionnaire__anchors</code>). The contract stops composing the Likert family and
+        stops asking for its stylesheet. The form also takes a reading measure
+        (<code>--sk-questionnaire-measure</code>, 56ch), stated as a size rather than a ceiling so a
+        host that stretches its children cannot cancel it.
+  - date: 2026-09-18
+    kind: feature
+    target: Questionnaire
+    es:
+      title: Ramificación con all/none y avance automático
+      body: >-
+        <code>showWhenAll</code> / <code>showWhenNone</code>, comparación con texto libre, poda de
+        respuestas al cambiar la puerta, y avance a la rama recién visible tras elección única.
+    en:
+      title: Branching with all/none and auto-advance
+      body: >-
+        <code>showWhenAll</code> / <code>showWhenNone</code>, free-text matching, answer pruning
+        when the gate changes, and auto-advance into a newly visible branch after a single choice.
+  - date: 2026-09-18
+    kind: feature
+    target: Questionnaire
+    es:
+      title: Likert, ramificación y opciones sin texto libre
+      body: >-
+        <code>data-likert</code> compone la familia Likert; <code>data-show-when-item</code> +
+        <code>data-show-when-any</code> ocultan preguntas hasta que una respuesta previa coincide.
+        Elección múltiple y solo opciones (sin <code>data-text</code>) siguen igual.
+    en:
+      title: Likert, branching, and choices-only items
+      body: >-
+        <code>data-likert</code> composes the Likert family; <code>data-show-when-item</code> +
+        <code>data-show-when-any</code> hide follow-ups until a prior answer matches. Multiple
+        choice and choices-only (no <code>data-text</code>) behave as before.
+  - date: 2026-09-18
+    kind: feature
+    target: Questionnaire
+    es:
+      title: Medida 65ch, preguntas más grandes, pasos en columnas iguales
+      body: >-
+        CSS: <code>--sk-questionnaire-measure</code> (65ch), título en
+        <code>body-lg</code>; progreso con pasos horizontal y columnas flex iguales.
+    en:
+      title: 65ch measure, larger questions, equal-width steps
+      body: >-
+        CSS: <code>--sk-questionnaire-measure</code> (65ch), title at
+        <code>body-lg</code>; steps progress pinned horizontal with equal flex columns.
+  - date: 2026-09-17
+    kind: feature
+    target: Questionnaire
+    es:
+      title: La escala baja al tamaño de un formulario
+      body: >-
+        La pregunta pasa de <code>heading-sm</code> a tamaño de cuerpo con peso de etiqueta: es la
+        pieza más grande dentro del formulario, no un encabezado de página. Cada opción lee a
+        <code>body-sm</code> (título y descripción), con el radio de control y el par título más
+        descripción junto. Entre las tres bandas del formulario hay un solo paso de la escala
+        (<code>stack-md</code>). Los indicadores de checkbox se emiten en sus dos estados, como los
+        dibuja <code>TileCheckbox</code>.
+    en:
+      title: The scale drops to a form's size
+      body: >-
+        The question goes from <code>heading-sm</code> to body size at label weight: it is the largest
+        thing inside the form, not a page heading. Each choice reads at <code>body-sm</code> (title and
+        description), takes the control radius, and keeps its title and description as one block. The
+        form's three bands sit one step of the stack apart (<code>stack-md</code>). The checkbox
+        indicators are emitted in both states, the way <code>TileCheckbox</code> draws them.
+  - date: 2026-09-17
+    kind: feature
+    target: Questionnaire
+    es:
+      title: Alto estable y chrome compacto
+      body: >-
+        Las preguntas comparten una fila de la grilla, así el alto lo fija la más alta y no cambia al
+        avanzar; la inactiva se oculta con <code>visibility</code> (fuera del foco y del árbol de
+        accesibilidad) en vez de <code>hidden</code>, que la sacaba del layout. La línea del error
+        queda reservada. El chrome compuesto baja a <code>sm</code>: tiles, Button e Input. Sin
+        script, las preguntas siguen siendo una columna normal.
+    en:
+      title: Steady height and compact chrome
+      body: >-
+        The questions share one grid row, so the tallest sets the height and it no longer changes as
+        the reader moves on; the inactive one is hidden with <code>visibility</code> (out of focus and
+        out of the accessibility tree) instead of <code>hidden</code>, which took it out of layout.
+        The error keeps its line. The composed chrome drops to <code>sm</code>: tiles, Button and
+        Input. With no script the questions stay an ordinary column.
+  - date: 2026-09-17
+    kind: feature
+    target: Questionnaire
+    es:
+      title: Segunda pasada - choices|text, nombres únicos, compose
+      body: >-
+        <code>atLeastOneOf</code> exige choices y/o text; <code>uniqueChildOption</code> en
+        <code>name</code>; <code>compose</code> de button/progress/steps y tile/form-field/kbd/icon.
+    en:
+      title: Second pass - choices|text, unique names, compose
+      body: >-
+        <code>atLeastOneOf</code> requires choices and/or text; <code>uniqueChildOption</code> on
+        <code>name</code>; <code>compose</code> for button/progress/steps and tile/form-field/kbd/icon.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: bugfix
+    target: Questionnaire
+    es:
+      title: Auditoría, montajes React, hookSheets y defaultItem
+      body: >-
+        La auditoría cierra montajes React (<code>data-sk-questionnaire*</code>),
+        <code>hookSheets</code> de checkbox/progress/steps (barra y etapas se componen en runtime;
+        checkbox no tiene dueño único vía <code>also</code>), <code>defaultItem</code> /
+        <code>data-default-item</code> en ambos bindings, e <code>implies</code> de
+        <code>text→textLabel</code> y <code>multiple→choices</code>.
+    en:
+      title: Audit mounts, hookSheets, and defaultItem
+      body: >-
+        The audit locks React mount stamps (<code>data-sk-questionnaire*</code>),
+        <code>hookSheets</code> for checkbox/progress/steps (bar and steps are runtime-composed;
+        checkbox has no unique <code>also</code> owner), <code>defaultItem</code> /
+        <code>data-default-item</code> in both bindings, and <code>implies</code> for
+        <code>text→textLabel</code> and <code>multiple→choices</code>.
+  - date: 2026-09-17
+    kind: feature
+    target: Questionnaire
+    es:
+      title: Questionnaire, preguntas de a una con estado propio
+      body: >-
+        <code>Questionnaire</code> y <code>QuestionnaireItem</code> entran al catálogo. La máquina vive
+        en core (<code>createQuestionnaireStore</code>): respuestas, pregunta activa, omitidas y
+        errores cambian sólo por eventos, y ninguna implementación los lee del DOM. Reusa
+        <code>TileRadioGroup</code>, <code>TileCheckbox</code>, <code>FormField</code> +
+        <code>Input</code>, <code>Button</code>, <code>Kbd</code>, <code>Progress</code> y
+        <code>Steps</code>. Progreso en texto, barra o pasos; atajos de letras o números opcionales.
+    en:
+      title: Questionnaire, one question at a time with its own state
+      body: >-
+        <code>Questionnaire</code> and <code>QuestionnaireItem</code> join the catalogue. The machine
+        lives in core (<code>createQuestionnaireStore</code>): answers, the active question, skips and
+        errors change only through events, and neither binding reads them from the DOM. It reuses
+        <code>TileRadioGroup</code>, <code>TileCheckbox</code>, <code>FormField</code> +
+        <code>Input</code>, <code>Button</code>, <code>Kbd</code>, <code>Progress</code> and
+        <code>Steps</code>. Text, bar or steps progress; optional letter or number shortcuts.

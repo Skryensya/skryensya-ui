@@ -23,7 +23,7 @@ export type SelectOptions = {
 };
 
 export const selectEvents = {
-  valueChange: "sk-value-change",
+  valueChange: "sk:selectvaluechange",
 } as const;
 
 /*
@@ -116,7 +116,7 @@ export const selectableItemShape: NonNullable<ContractSlot["item"]> = {
  *
  * `Select.native` is a real `<select>`: the browser owns selection, keyboard, form submission and
  * accessibility, and the system contributes one class. `Select` is the enhanced one, which exists
- * only when you need a controlled collection, item markup, positioning or the `sk-value-change`
+ * only when you need a controlled collection, item markup, positioning or the `sk:selectvaluechange`
  * event. Appearance stopped being a reason to replace the native control.
  *
  * Writing this contract turned up a divergence the docs had been carrying quietly: React renders a
@@ -129,9 +129,23 @@ export const selectableItemShape: NonNullable<ContractSlot["item"]> = {
  */
 export const selectContract = {
   id: "select",
+  category: "forms",
   css: "@skryensya/core/components/select.css",
   parts: selectParts,
+  events: selectEvents,
+  eventDetails: {
+    valueChange: { detail: { value: "string[]" }, reactProp: "onValueChange", source: "root", trigger: "item" },
+  },
   hooks: [
+    "--sk-anchored-align",
+    "--sk-anchored-arrow-edge",
+    "--sk-anchored-arrow-near",
+    "--sk-anchored-justify",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-anchored-size",
+    "--sk-anchored-z",
     "--sk-select-bg",
     "--sk-select-border-color",
     "--sk-select-border-width",
@@ -157,6 +171,12 @@ export const selectContract = {
     "--sk-select-state-opacity",
     "--sk-select-wash",
   ],
+  /*
+   * The listbox is placed with `sk-anchor` / `sk-anchored` (`also`). Those classes have no unique
+   * contract owner, so `sheetsForTree` cannot discover `anchored.css` from `also` alone. Anchored
+   * hooks are listed above so the hook gate stays closed (same shape as Combobox/Menu).
+   */
+  hookSheets: ["@skryensya/core/patterns/anchored.css"],
 
   options: {
     /** Submitted under this name, and what makes the hidden native control worth rendering. */
@@ -165,8 +185,11 @@ export const selectContract = {
      * The selected value. React spells it `defaultValue`: `value` there is the CONTROLLED prop, and
      * emitting it freezes the control. Same line Slider, Tabs, RadioGroup, TimeField and Segmented
      * carry: Segmented's absence was measured as a demo nobody could click.
+     *
+     * On `Select.native` the attr is the real HTML `value` on `<select>` (and `selected` on the
+     * matching `<option>` via `selectedBy` below). On `Select` it is `data-value` for the enhancer.
      */
-    value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true },
+    value: { type: "string", attr: "data-value", prop: "defaultValue", machineInput: true, keyOf: { slot: "items" } },
     /** Shown in the trigger while nothing is selected. Empty until the author names one. */
     placeholder: { type: "string", default: "", attr: "data-placeholder", machineInput: true },
     disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "", machineInput: true },
@@ -177,7 +200,12 @@ export const selectContract = {
     "Select.native": {
       intent: ["a-standard-choice", "one-of-a-known-list", "form-field"],
       host: { element: "select" },
-      options: ["name", "disabled", "required"],
+      options: ["name", "value", "disabled", "required"],
+      /*
+       * `name` / `value` / `disabled` / `required` are options (with native attrs via optionAttrs).
+       * Remaining platform attrs an author still needs on a bare `<select>`.
+       */
+      forward: ["id", "form", "autocomplete", "aria-*"],
       slots: {
         /** The choices. A native `<option>` each, no item markup, which is the tradeoff. */
         items: {
@@ -201,11 +229,19 @@ export const selectContract = {
         element: "select",
         part: "native",
         host: true,
+        /*
+         * Shared option attrs are the enhanced signature's `data-*` machine channel. A real
+         * `<select>` needs the platform spellings; `value` is suppressed here because the matching
+         * `<option selected>` (via `selectedBy`) is what static HTML actually uses.
+         */
+        optionAttrs: { disabled: "disabled", required: "required", value: "" },
         children: [
           {
             element: "option",
             repeat: "items",
             itemOptions: ["value", "disabled"],
+            /* The option the browser shows as chosen, marked the way the platform marks it. */
+            selectedBy: { attr: "selected", option: "value" },
             itemSlot: "label",
           },
         ],
@@ -218,7 +254,9 @@ export const selectContract = {
       host: { element: "div" },
       mount: selectAttrs.root,
       options: ["name", "value", "placeholder", "disabled", "required"],
-      portals: true,
+      portals: { container: true },
+      /** Host id / a11y names; form association stays on the hidden native input. */
+      forward: ["id", "aria-*"],
       slots: {
         /** Names the control. Absent means something else nearby names it. */
         label: { accepts: "text" },

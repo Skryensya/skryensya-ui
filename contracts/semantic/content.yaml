@@ -20,6 +20,8 @@ Toast:
     - "es un error de un campo; eso va en el FormField, pegado al control"
   alternatives:
     - Callout
+    - Dialog
+    - FormField
 ToastTemplate:
   useWhen:
     - "un script va a clonar la misma anatomía de Toast para mensajes dinámicos"

@@ -3,9 +3,12 @@ import type { ComponentContract } from "./contract.js";
 export type TextTone = "primary" | "secondary" | "tertiary" | "danger";
 export type TextSize = "caption" | "sm" | "body" | "lg";
 export type TextWeight = "body" | "emphasis" | "label";
+export type TextRole = "eyebrow" | "subtitle";
 /**
  * Visual size for Heading. Document rungs mirror h1–h6; h5/h6 share the h4 floor.
- * `sm` / `md` / `lg` / `display` remain as aliases of h3 / h2 / h1 / display-sm.
+ * `sm` / `md` / `lg` / `display` remain as aliases of h3 / h2 / h1 / display-sm. They are kept for
+ * existing markup only: new compositions use the rungs, which say the same thing without the
+ * inversion (`sm` is an h3, not the smallest heading).
  */
 export type HeadingSize =
   | "display-lg"
@@ -47,6 +50,7 @@ export type TypographyPartClass = (typeof typographyParts)[TypographyPart];
  */
 export const typographyContract = {
   id: "typography",
+  category: "content",
   css: "@skryensya/core/components/typography.css",
   parts: typographyParts,
   hooks: [
@@ -70,16 +74,41 @@ export const typographyContract = {
     },
     size: { type: "enum", values: ["caption", "sm", "body", "lg"], default: "body", attr: "data-size" },
     weight: { type: "enum", values: ["body", "emphasis", "label"], default: "body", attr: "data-weight" },
+    /*
+     * A preset for a recurring job in a title block: `eyebrow` is the kicker above a heading,
+     * `subtitle` the deck under it. The stylesheet had both for a long time and the contract did
+     * not, so a tree could only reach them through a raw `data-role` attribute nothing validated.
+     * A role sets size, weight and tone together and wins over those three, so combining them is
+     * spelling a decision twice. Not `role`: that name is ARIA's.
+     */
+    textRole: { type: "enum", values: ["eyebrow", "subtitle"], attr: "data-role" },
     headingSize: {
       type: "enum",
       values: ["display-lg", "display-md", "display-sm", "h1", "h2", "h3", "h4", "h5", "h6", "sm", "md", "lg", "display"],
+      deprecatedValues: { sm: "h3", md: "h2", lg: "h1", display: "display-sm" },
       default: "h2",
       attr: "data-size",
       prop: "size",
     },
+    /*
+     * The heading's LEVEL, as its element. Separate from `headingSize` on purpose: the level is the
+     * document's outline and the size is appearance, so an h3 can look like an h2 without lying to
+     * a screen reader's heading list.
+     */
+    headingElement: {
+      type: "enum",
+      values: ["h1", "h2", "h3", "h4", "h5", "h6"],
+      default: "h2",
+      element: true,
+      prop: "as",
+    },
+    /** Text's element: `span` inside a line (a label, a button, another Text), `div` for a block with blocks in it. */
+    textElement: { type: "enum", values: ["p", "div", "span"], default: "p", element: true, prop: "as" },
     /** No block-start margin. For a heading that opens a box, where the box already spaces it. */
     flush: { type: "boolean", default: false, attr: "data-flush", trueValue: "" },
     href: { type: "string", attr: "href" },
+    /** Space-separated ids of the inputs an Output's result is calculated from. `htmlFor` in React. */
+    outputFor: { type: "string", attr: "for", prop: "htmlFor" },
     /**
      * Link's accent. Spelled `linkTone` here because Text already owns `tone` over a wider enum;
      * the binding still calls it `tone` / `data-tone`. Only `accent`; a link is either the
@@ -97,7 +126,8 @@ export const typographyContract = {
     Text: {
       intent: ["paragraph", "body-copy", "caption", "secondary-text"],
       host: { element: "p" },
-      options: ["tone", "size", "weight"],
+      options: ["tone", "size", "weight", "textRole", "textElement"],
+      excludes: { textRole: ["size", "tone", "weight"] },
       slots: { children: { accepts: "node", required: true } },
       template: { element: "p", part: "text", host: true, slot: "children" },
       react: { from: "@skryensya/react/typography", name: "Text" },
@@ -115,7 +145,7 @@ export const typographyContract = {
     Output: {
       intent: ["calculated-result", "inline-live-result"],
       host: { element: "output" },
-      options: [],
+      options: ["outputFor"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "output", host: true, slot: "children" },
       react: { from: "@skryensya/react/typography", name: "Output" },
@@ -144,7 +174,7 @@ export const typographyContract = {
     Heading: {
       intent: ["section-title", "page-title", "heading"],
       host: { element: "h2" },
-      options: ["headingSize", "flush"],
+      options: ["headingSize", "headingElement", "flush"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "h2", part: "heading", host: true, slot: "children" },
       react: { from: "@skryensya/react/typography", name: "Heading" },
@@ -155,6 +185,8 @@ export const typographyContract = {
       host: { element: "a" },
       options: ["href", "linkTone"],
       requires: ["href"],
+      /** Link host attrs beyond href/tone (Button.navigation peer). */
+      forward: ["id", "target", "rel", "download", "aria-*"],
       slots: { children: { accepts: "node", required: true } },
       template: { element: "a", part: "link", also: ["sk-interactive"], host: true, slot: "children" },
       react: { from: "@skryensya/react/typography", name: "Link" },

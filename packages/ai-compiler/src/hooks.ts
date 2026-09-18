@@ -128,6 +128,14 @@ export function checkStylingHooks(): HookProblem[] {
       for (const d of declarations) if (d.name.startsWith("--sk-")) declaredAnywhere.add(d.name);
     }
     const promised = new Set(contract.hooks);
+    for (const name of contract.outputHooks ?? []) {
+      if (promised.has(name)) continue;
+      problems.push({
+        sheet: rel,
+        rule: "hook-broken",
+        message: `"${contract.id}".outputHooks names ${name}, which is not one of its hooks`,
+      });
+    }
 
     /*
      * The two directions are not symmetric. An undeclared hook works but is undiscoverable. A

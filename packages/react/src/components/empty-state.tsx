@@ -2,7 +2,8 @@ import { emptyStateParts } from "@skryensya/core/empty-state";
 import type { ReactNode } from "react";
 
 export type EmptyStateProps = {
-  title: ReactNode;
+  /** Plain text title. Matches the contract slot (`accepts: "text"`). */
+  title: string;
   description?: ReactNode;
   icon?: ReactNode;
   actions?: ReactNode;

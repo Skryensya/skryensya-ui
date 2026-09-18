@@ -72,7 +72,7 @@ describe("Calendar Vanilla contracts", () => {
   it("reports a picked day as the locale's own string", async () => {
     const root = markup('data-locale="es-DO" data-value="2024-03-15"');
     const onChange = vi.fn();
-    root.addEventListener("sk-value-change", onChange);
+    root.addEventListener("sk:calendarvaluechange", onChange);
 
     fireEvent.click(dayLabelled("20 de marzo de 2024"));
 
@@ -110,7 +110,7 @@ describe("Calendar Vanilla contracts", () => {
   it("collects both ends of a range", async () => {
     const root = markup('data-locale="es-DO" data-selection-mode="range" data-value="2024-03-10 2024-03-14"');
     const onChange = vi.fn();
-    root.addEventListener("sk-value-change", onChange);
+    root.addEventListener("sk:calendarvaluechange", onChange);
 
     fireEvent.click(dayLabelled("20 de marzo de 2024"));
     fireEvent.click(dayLabelled("25 de marzo de 2024"));

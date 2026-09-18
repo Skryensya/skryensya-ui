@@ -62,7 +62,7 @@ export const carouselMessages = {
     "carousel.bareBody1":
       "<code>data-controls=\"none\"</code> apaga las <strong>dos</strong> capas: ni botones y dots del enhancer, ni <code>::scroll-button</code> y <code>::scroll-marker</code> nativos. Queda la pista desnuda, que sigue siendo un scroller con snap: cada slide es una parada (<code>scroll-snap-stop: always</code>), así que deslizar nunca se salta una card.",
     "carousel.bareBody2":
-      "Lo que no cambia es el comportamiento: los controles eran el chrome. El teclado sigue andando con el foco en la pista, y <code>sk-carousel-goto</code> / <code>sk-carousel-change</code> siguen siendo el mismo par de eventos.",
+      "Lo que no cambia es el comportamiento: los controles eran el chrome. El teclado sigue andando con el foco en la pista, y <code>sk:carouselgoto</code> / <code>sk:carouselchange</code> siguen siendo el mismo par de eventos.",
     "carousel.bareBody3":
       "Y aquí se ve por qué el <strong>arrastre con mouse viene activado</strong>: una rueda vertical scrollea la <em>página</em>, no la pista horizontal que tienes debajo del cursor. Sin arrastre, un puntero de escritorio no tendría ninguna forma de recorrer esto. El cursor <code>grab</code> es todo el aviso, y sólo aparece donde el arrastre de verdad funciona. Desactívalo con <code>data-mouse-drag=\"off\"</code> cuando el texto de los slides esté para seleccionarse: el arrastre suprime la selección.",
     "carousel.bareLabel": "Sin controles",
@@ -75,7 +75,7 @@ export const carouselMessages = {
     "carousel.nativeCssLabel": "la base sin JS",
     "carousel.apiTitle": "Snap-to-index y eventos",
     "carousel.apiBody":
-      "El control programático es un par de eventos en la raíz: envía <code>sk-carousel-goto</code> para anclar a una página y escucha <code>sk-carousel-change</code> para saber cuál está activa. En React, el <code>ref</code> del <code>&lt;Carousel&gt;</code> expone <code>snapTo(index)</code>, que envía ese mismo evento.",
+      "El control programático es un par de eventos en la raíz: envía <code>sk:carouselgoto</code> para anclar a una página y escucha <code>sk:carouselchange</code> para saber cuál está activa. En React, el <code>ref</code> del <code>&lt;Carousel&gt;</code> expone <code>snapTo(index)</code>, que envía ese mismo evento.",
     "carousel.contractItem1":
       'Raíz: <code>&lt;section class="sk-carousel" data-sk-carousel&gt;</code> con una pista <code>&lt;div class="sk-carousel__track"&gt;</code> de <code>&lt;div class="sk-carousel__slide"&gt;</code>. No es una lista: la máquina le da <code>role="group"</code> a cada slide, lo que la saca de la lista y dejaría una lista sin ítems.',
     "carousel.contractItem2":
@@ -91,7 +91,7 @@ export const carouselMessages = {
     "carousel.contractItem7":
       "Teclado: con el foco en la pista, <kbd class=\"sk-kbd\">←</kbd>/<kbd class=\"sk-kbd\">→</kbd> mueven una página y <kbd class=\"sk-kbd\">Inicio</kbd>/<kbd class=\"sk-kbd\">Fin</kbd> saltan a los extremos; las mismas teclas funcionan con el foco en los dots.",
     "carousel.contractItem8":
-      'API: <code>sk-carousel-goto</code> (comando) y <code>sk-carousel-change</code> (salida, con <code>{"{ index, count }"}</code>); en React, <code>ref.snapTo(index)</code>.',
+      'API: <code>sk:carouselgoto</code> (comando) y <code>sk:carouselchange</code> (salida, con <code>{"{ index, count }"}</code>); en React, <code>ref.snapTo(index)</code>.',
     "carousel.contractItem9": "Movimiento reducido: el desplazamiento suave se apaga con <code>prefers-reduced-motion</code>.",
     "carousel.nativeCssComment1": "cero JS: la plataforma dibuja los controles",
     "carousel.nativeCssComment2": "Anterior",
@@ -173,7 +173,7 @@ export const carouselMessages = {
     "carousel.bareBody1":
       "<code>data-controls=\"none\"</code> turns off <strong>both</strong> layers: neither the enhancer's buttons and dots, nor the native <code>::scroll-button</code> and <code>::scroll-marker</code>. What is left is the bare track, still a scroller with snap: every slide is a stop (<code>scroll-snap-stop: always</code>), so swiping never skips a card.",
     "carousel.bareBody2":
-      "What does not change is the behavior: the controls were only the chrome. The keyboard still works with focus on the track, and <code>sk-carousel-goto</code> / <code>sk-carousel-change</code> are still the same pair of events.",
+      "What does not change is the behavior: the controls were only the chrome. The keyboard still works with focus on the track, and <code>sk:carouselgoto</code> / <code>sk:carouselchange</code> are still the same pair of events.",
     "carousel.bareBody3":
       "And here you can see why <strong>mouse drag ships on</strong>: a vertical wheel scrolls the <em>page</em>, not the horizontal track sitting under the cursor. Without drag, a desktop pointer would have no way to move through this at all. The <code>grab</code> cursor is the entire hint, and it only shows up where drag actually works. Turn it off with <code>data-mouse-drag=\"off\"</code> when the slide text needs to stay selectable: drag suppresses selection.",
     "carousel.bareLabel": "No controls",
@@ -186,7 +186,7 @@ export const carouselMessages = {
     "carousel.nativeCssLabel": "the JS-free base",
     "carousel.apiTitle": "Snap-to-index and events",
     "carousel.apiBody":
-      "Programmatic control is a pair of events on the root: send <code>sk-carousel-goto</code> to pin to a page, and listen for <code>sk-carousel-change</code> to know which one is active. In React, the <code>&lt;Carousel&gt;</code>'s <code>ref</code> exposes <code>snapTo(index)</code>, which sends that same event.",
+      "Programmatic control is a pair of events on the root: send <code>sk:carouselgoto</code> to pin to a page, and listen for <code>sk:carouselchange</code> to know which one is active. In React, the <code>&lt;Carousel&gt;</code>'s <code>ref</code> exposes <code>snapTo(index)</code>, which sends that same event.",
     "carousel.contractItem1":
       'Root: <code>&lt;section class="sk-carousel" data-sk-carousel&gt;</code> with a track <code>&lt;div class="sk-carousel__track"&gt;</code> of <code>&lt;div class="sk-carousel__slide"&gt;</code>. Not a list: the machine gives every slide <code>role="group"</code>, which takes it out of listhood and would otherwise leave a list with no list items.',
     "carousel.contractItem2":
@@ -202,7 +202,7 @@ export const carouselMessages = {
     "carousel.contractItem7":
       "Keyboard: with focus on the track, <kbd class=\"sk-kbd\">←</kbd>/<kbd class=\"sk-kbd\">→</kbd> move one page and <kbd class=\"sk-kbd\">Home</kbd>/<kbd class=\"sk-kbd\">End</kbd> jump to the ends; the same keys work with focus on the dots.",
     "carousel.contractItem8":
-      'API: <code>sk-carousel-goto</code> (command) and <code>sk-carousel-change</code> (output, with <code>{"{ index, count }"}</code>); in React, <code>ref.snapTo(index)</code>.',
+      'API: <code>sk:carouselgoto</code> (command) and <code>sk:carouselchange</code> (output, with <code>{"{ index, count }"}</code>); in React, <code>ref.snapTo(index)</code>.',
     "carousel.contractItem9": "Reduced motion: smooth scrolling turns off with <code>prefers-reduced-motion</code>.",
     "carousel.nativeCssComment1": "zero JS: the platform draws the controls",
     "carousel.nativeCssComment2": "Previous",

@@ -190,7 +190,9 @@
     display: none;
   }
 
-  .docs-document-pair > main {
+  /* Fixed-template pairs only. A grid pair's main is a subgrid spanning `full-width` (site.css), and
+     this rule, loaded later at equal specificity, pinned it to the 16px gutter track instead. */
+  .docs-document-pair:not([data-document-layout="grid"]) > main {
     grid-column: 1;
     grid-row: 1;
   }

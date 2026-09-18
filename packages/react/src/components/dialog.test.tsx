@@ -17,7 +17,7 @@ describe("Dialog", () => {
       </Dialog>,
     );
 
-    const close = ui.getByRole("button", { name: "Cerrar" });
+    const close = ui.getByRole("button", { name: "Close" });
     expect(close.getAttribute("type")).toBe("submit");
     expect(close.getAttribute("value")).toBe("cancel");
     expect(close.closest("form")?.getAttribute("method")).toBe("dialog");
@@ -67,12 +67,16 @@ describe("Dialog", () => {
   });
 
   it("omits the footer form when there is nothing to put in it", () => {
-    const ui = render(<Dialog title="Confirmar" />);
+    const ui = render(<Dialog title="Confirmar">Contenido</Dialog>);
     expect(ui.container.querySelector(".sk-dialog__footer")).toBeNull();
   });
 
   it("opts into Dialog Vaul with the enhancer's own mount point", () => {
-    const ui = render(<Dialog title="Filtros" vaul />);
+    const ui = render(
+      <Dialog title="Filtros" vaul>
+        Contenido
+      </Dialog>,
+    );
     const dialog = ui.container.querySelector("dialog")!;
 
     expect(dialog.getAttribute("data-sk-dialog-vaul")).toBe("");
@@ -82,7 +86,7 @@ describe("Dialog", () => {
   });
 
   it("keeps a plain dialog free of the sheet's attributes", () => {
-    const ui = render(<Dialog title="Confirmar" />);
+    const ui = render(<Dialog title="Confirmar">Contenido</Dialog>);
     const dialog = ui.container.querySelector("dialog")!;
 
     expect(dialog.hasAttribute("data-sk-dialog-vaul")).toBe(false);

@@ -3,8 +3,28 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "32eb12b2b4bc5bbe"
+surface: "1df30b10f8fdd075"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
   - date: 2026-08-11
     kind: feature
     es:
@@ -69,3 +89,48 @@ entries:
         sheet <code>css</code> names could be reconciled, so the hooks in the others were public
         surface nobody documented and nothing checked. No styling changes: what changes is that they
         are declared now, and the compiler checks them.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Cada evento lleva el nombre de su familia
+      body: >-
+        <code>sk-table-pager-change</code> → <code>sk:tablepagerchange</code>. Un mismo nombre ya no lo despachan varias familias: un listener sobre una raíz deja
+        de recibir los eventos de un componente distinto anidado adentro. El contrato ahora los declara en <code>events</code>, así que el compilador los publica.
+    en:
+      title: Every event carries its family in its name
+      body: >-
+        <code>sk-table-pager-change</code> → <code>sk:tablepagerchange</code>. No two families dispatch the same name any more: a listener on a root stops receiving
+        the events of a different component nested inside it. The contract now declares them in <code>events</code>, so the compiler publishes them.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: El contrato declara el rango de sus números
+      body: >-
+        <code>pageSize</code> y <code>page</code> son enteros desde 1 y <code>siblings</code> desde 0. Un valor fuera de rango deja de validar en vez de llegar al binding.
+    en:
+      title: The contract declares the range of its numbers
+      body: >-
+        <code>pageSize</code> and <code>page</code> are whole numbers from 1 and <code>siblings</code> from 0. A value out of range stops validating instead of reaching the binding.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: El pager pagina las filas del cuerpo, también en React
+      body: >-
+        Las filas que se paginan son las de <code>table &gt; tbody</code>: ya no hace falta marcarlas
+        con <code>data-sk-table-pager-row</code>, un atributo que el contrato nunca nombró, así que una
+        tabla compuesta desde un árbol no paginaba nada. La lógica pasa a
+        <code>@skryensya/core/table-pager-dom</code> y la corren los dos bindings: el TablePager de
+        React sólo dibujaba la carcasa. El tamaño de página escucha el <code>change</code> de cualquier
+        select en <code>TablePagerSize</code>, así que <code>Select.native</code> también funciona. Los
+        slots fijan orden y cantidad: una tabla, después una barra, con navegación.
+        <code>navLabel</code> llega a React como <code>label</code>.
+    en:
+      title: The pager pages the body rows, in React too
+      body: >-
+        The rows it pages are those of <code>table &gt; tbody</code>: they no longer need
+        <code>data-sk-table-pager-row</code>, an attribute the contract never named, so a table composed
+        from a tree paged nothing. The logic moves to <code>@skryensya/core/table-pager-dom</code> and
+        both bindings run it: React's TablePager only drew the shell. Page size listens for
+        <code>change</code> on any select in <code>TablePagerSize</code>, so <code>Select.native</code>
+        works too. The slots fix order and count: one table, then one bar, with a nav.
+        <code>navLabel</code> reaches React as <code>label</code>.

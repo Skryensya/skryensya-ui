@@ -11,32 +11,29 @@ const cx = (base: string, className: string | undefined) => (className ? `${base
 export type AvatarProps = Omit<HTMLAttributes<HTMLSpanElement>, "children"> & {
   /** Image URL. When absent, the fallback (initials) shows. */
   src?: string;
-  /** Accessible name and alt text for the image. */
-  name?: string;
+  /** Accessible name (initials) or alt text (image). Required either way. */
+  name: string;
   size?: AvatarSize;
   /** Fallback content, usually initials. Defaults to the first two letters of `name`. */
   children?: ReactNode;
 } & Pick<ImgHTMLAttributes<HTMLImageElement>, "loading">;
 
 export function Avatar({ children, className, loading, name, size = sizeOption.default, src, ...props }: AvatarProps) {
-  const fallback = children ?? (name ? avatarInitials(name) : null);
+  const fallback = children ?? avatarInitials(name);
 
   // With an image, ImageFrame clips the media and <img alt> carries the semantics. Without one,
   // the wrapper becomes the img role and the initials go decorative, so there is exactly one node.
   return src ? (
     <span {...props} className={cx(avatarParts.root, className)} data-size={size}>
       <ImageFrame as="span" aspect="1/1" fit="cover" radius="pill">
-        <img
-          alt={name ?? ""}
-          className={imageFrameParts.media}
-          loading={loading}
-          src={src}
-        />
+        <img alt={name} className={imageFrameParts.media} loading={loading} src={src} />
       </ImageFrame>
     </span>
   ) : (
     <span {...props} aria-label={name} className={cx(avatarParts.root, className)} data-size={size} role="img">
-      <span aria-hidden="true" className={avatarParts.fallback}>{fallback}</span>
+      <span aria-hidden="true" className={avatarParts.fallback}>
+        {fallback}
+      </span>
     </span>
   );
 }

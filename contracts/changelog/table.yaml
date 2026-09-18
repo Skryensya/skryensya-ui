@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "228ba799b93d1ec7"
+surface: "cf6a3e82cfca9eb8"
 entries:
   - date: 2026-08-25
     kind: bugfix
@@ -130,3 +130,54 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: columnWeights se valida como lista, una entrada por columna
+      body: >-
+        <code>columnWeights</code> declara que es una lista de números positivos separados por coma
+        y cuántas entradas debe tener: una por columna de la primera fila. Antes una lista con un 0 o
+        con una entrada de más validaba, y el binding la descartaba en silencio para usar su reparto
+        por defecto.
+    en:
+      title: columnWeights is validated as a list, one entry per column
+      body: >-
+        <code>columnWeights</code> declares that it is a comma-separated list of positive numbers and
+        how many entries it takes: one per column of the first row. A list with a 0 or one entry too
+        many used to validate, and the binding silently dropped it for its default split.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: El contrato declara el rango de sus números
+      body: >-
+        <code>colspan</code> es un entero de 1 a 1000, lo que HTML acepta. Un valor fuera de rango deja de validar en vez de llegar al binding.
+    en:
+      title: The contract declares the range of its numbers
+      body: >-
+        <code>colspan</code> is a whole number from 1 to 1000, what HTML accepts. A value out of range stops validating instead of reaching the binding.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Los encabezados y las celdas abarcan filas y columnas
+      body: >-
+        <code>TableHeader</code> acepta <code>colspan</code> y <code>rowspan</code>, y
+        <code>TableCell</code> suma <code>rowspan</code>: un encabezado agrupado sobre sus
+        subcolumnas no se podía escribir desde un árbol. <code>density</code> y
+        <code>densityFactor</code> no bajan de 0.
+    en:
+      title: Headers and cells span rows and columns
+      body: >-
+        <code>TableHeader</code> takes <code>colspan</code> and <code>rowspan</code>, and
+        <code>TableCell</code> gains <code>rowspan</code>: a grouped header over its subcolumns could
+        not be written from a tree. <code>density</code> and <code>densityFactor</code> do not go
+        below 0.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Una tabla necesita nombre
+      body: >-
+        Un <code>Table</code> sin <code>TableCaption</code>, <code>aria-label</code> ni <code>aria-labelledby</code> deja de validar: se anunciaba sólo como tabla.
+    en:
+      title: A table needs a name
+      body: >-
+        A <code>Table</code> with no <code>TableCaption</code>, <code>aria-label</code> or <code>aria-labelledby</code> stops validating: it was announced as just a table.

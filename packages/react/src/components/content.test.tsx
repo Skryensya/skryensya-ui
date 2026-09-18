@@ -1,5 +1,6 @@
 import { fireEvent, render, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { toastEvents } from "@skryensya/core/content";
 import { Toast, ToastRegion } from "./content.js";
 
 describe("content component contracts", () => {
@@ -23,11 +24,31 @@ describe("content component contracts", () => {
     expect(toast.classList.contains("sk-callout")).toBe(true);
     expect(toast.getAttribute("aria-live")).toBe("assertive");
     expect(toast.getAttribute("data-tone")).toBe("danger");
+    expect(toast.getAttribute("data-sk-toast")).toBe("");
     expect(toast.querySelector(".sk-callout__description")?.textContent).toBe("Deployment failed.");
 
     expect(screen.getByRole("button", { name: "Dismiss notification" }).getAttribute("type")).toBe("button");
     fireEvent.click(screen.getByRole("button", { name: "Dismiss notification" }));
     expect(onDismiss).toHaveBeenCalledWith({ reason: "dismiss" });
+  });
+
+  it("dispatches sk:toastdismiss on the host for Vanilla DOM parity", () => {
+    const onDismiss = vi.fn();
+    const onDom = vi.fn();
+    const ui = render(
+      <Toast onDismiss={onDismiss} title="Saved">
+        Draft stored.
+      </Toast>,
+    );
+    const toast = within(ui.container).getByRole("status");
+    toast.addEventListener(toastEvents.dismiss, onDom as EventListener);
+
+    fireEvent.click(within(ui.container).getByRole("button", { name: "Dismiss notification" }));
+
+    expect(onDismiss).toHaveBeenCalledWith({ reason: "dismiss" });
+    expect(onDom).toHaveBeenCalledTimes(1);
+    expect((onDom.mock.calls[0]![0] as CustomEvent).detail).toEqual({ reason: "dismiss" });
+    expect(toast.hasAttribute("data-dismissing")).toBe(true);
   });
 
   it("renders callout anatomy for title, icon and actions", () => {
@@ -41,6 +62,26 @@ describe("content component contracts", () => {
     expect(toast.querySelector(".sk-callout__icon")).not.toBeNull();
     expect(toast.querySelector(".sk-callout__title")?.textContent).toBe("Deploy failed");
     expect(toast.querySelector(".sk-callout__actions")?.textContent).toContain("View logs");
+  });
+
+  it("writes data-timeout and fires timeout dismiss without requiring onDismiss", () => {
+    vi.useFakeTimers();
+    const onDom = vi.fn();
+    const timed = render(
+      <Toast timeout={1_000}>
+        Saved.
+      </Toast>,
+    );
+    const toast = within(timed.container).getByRole("status");
+    expect(toast.getAttribute("data-timeout")).toBe("1000");
+    toast.addEventListener(toastEvents.dismiss, onDom as EventListener);
+
+    vi.advanceTimersByTime(1_000);
+    expect(onDom).toHaveBeenCalledTimes(1);
+    expect((onDom.mock.calls[0]![0] as CustomEvent).detail).toEqual({ reason: "timeout" });
+
+    timed.unmount();
+    vi.useRealTimers();
   });
 
   it("requests timeout dismissal only when configured and clears it on unmount", () => {

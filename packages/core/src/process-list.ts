@@ -24,6 +24,7 @@ export type ProcessListPartClass = (typeof processListParts)[ProcessListPart];
  */
 export const processListContract = {
   id: "process-list",
+  category: "content",
   css: "@skryensya/core/components/process-list.css",
   parts: processListParts,
   hooks: [

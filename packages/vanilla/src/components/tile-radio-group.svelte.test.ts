@@ -18,7 +18,7 @@ describe("TileRadioGroup (@zag-js/radio-group) contracts", () => {
   it("is a radiogroup, honours the default, and keeps values mutually exclusive + emits", () => {
     const root = mount();
     const handler = vi.fn();
-    root.addEventListener("sk:valuechange", handler);
+    root.addEventListener("sk:tilevaluechange", handler);
     const radios = root.querySelectorAll<HTMLInputElement>('input[type="radio"]');
 
     expect(root.getAttribute("role")).toBe("radiogroup");
@@ -31,6 +31,23 @@ describe("TileRadioGroup (@zag-js/radio-group) contracts", () => {
     expect(radios[0].checked).toBe(false);
     expect(radios[1].checked).toBe(true);
     expect(handler).toHaveBeenCalledWith(expect.objectContaining({ detail: { value: "pro" } }));
+  });
+
+  it("sets its value from sk:tilesetvalue, reports it back, and clears on null", () => {
+    const root = mount();
+    const handler = vi.fn();
+    root.addEventListener("sk:tilevaluechange", handler);
+    const radios = root.querySelectorAll<HTMLInputElement>('input[type="radio"]');
+
+    root.dispatchEvent(new CustomEvent("sk:tilesetvalue", { detail: { value: "pro" } }));
+    flushSync();
+    expect(radios[1].checked).toBe(true);
+    expect(handler).toHaveBeenCalledWith(expect.objectContaining({ detail: { value: "pro" } }));
+
+    root.dispatchEvent(new CustomEvent("sk:tilesetvalue", { detail: { value: null } }));
+    flushSync();
+    expect(radios[0].checked).toBe(false);
+    expect(radios[1].checked).toBe(false);
   });
 
   it("marks the selected item's data-state", () => {

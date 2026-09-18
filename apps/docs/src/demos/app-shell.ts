@@ -42,8 +42,9 @@ export const appShellTree = (t: Translate): UsageTree => ({
       children: { contract: "navbar", signature: "NavbarBrand", children: "Northstar" },
     },
     {
-      contract: "box",
-      signature: "Box",
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "none" },
       attrs: { class: "app-shell" },
       children: [
         {
@@ -172,8 +173,9 @@ export const appShellExplorerTree = (t: Translate): UsageTree => ({
       children: { contract: "navbar", signature: "NavbarBrand", children: "Northstar" },
     },
     {
-      contract: "box",
-      signature: "Box",
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "none" },
       attrs: { class: "app-shell" },
       children: [
         {

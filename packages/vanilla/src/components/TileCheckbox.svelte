@@ -1,6 +1,6 @@
 <script lang="ts">
   import { checkbox } from "@skryensya/core/machines";
-  import { tileEvents } from "@skryensya/core/tile";
+  import { tileCommands, tileEvents } from "@skryensya/core/tile";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
@@ -70,4 +70,15 @@
   ];
 
   bindParts(bindings);
+
+  /* A composition that owns the value sets it here; the machine reports it back as `checkedChange`. */
+  $effect(() => {
+    const onSetChecked = (event: Event) => {
+      const checked = (event as CustomEvent<{ checked: boolean }>).detail?.checked === true;
+      if (checked === api.checked) return;
+      api.setChecked(checked);
+    };
+    root.addEventListener(tileCommands.setChecked, onSetChecked);
+    return () => root.removeEventListener(tileCommands.setChecked, onSetChecked);
+  });
 </script>

@@ -65,9 +65,9 @@ export type CarouselPartClass = (typeof carouselParts)[CarouselPart];
 
 /** Fired on the root whenever the active page changes (scroll, control, keyboard, drag, or a goto). */
 export const carouselEvents = {
-  change: "sk-carousel-change",
-  /** Dispatch this on the root to command a snap: `new CustomEvent("sk-carousel-goto", { detail: { index } })`. */
-  goto: "sk-carousel-goto",
+  change: "sk:carouselchange",
+  /** Dispatch this on the root to command a snap: `new CustomEvent("sk:carouselgoto", { detail: { index } })`. */
+  goto: "sk:carouselgoto",
 } as const;
 
 export type CarouselChangeDetail = {
@@ -93,8 +93,14 @@ export type CarouselGotoDetail = {
  */
 export const carouselContract = {
   id: "carousel",
+  category: "content",
   css: "@skryensya/core/components/carousel.css",
   parts: carouselParts,
+  /*
+   * Template authors root + track + slides. Prev/next, dots, and autoplay pause are enhancer-
+   * injected (or native pseudo-elements until ready); class names stay owned here for CSS.
+   */
+  systemOwned: ["controls", "button", "autoplay", "dots", "dot"],
   hooks: [
     "--sk-carousel-control-bg",
     "--sk-carousel-control-border",
@@ -114,6 +120,11 @@ export const carouselContract = {
     "--sk-carousel-native-previous-icon",
     "--sk-carousel-slide-size",
   ],
+  events: carouselEvents,
+  eventDetails: {
+    change: { detail: { index: "number", count: "number" }, reactProp: false, source: "root" },
+    goto: { detail: { index: "number" }, direction: "in", source: "root" },
+  },
 
   options: {
     /** Wrap around past either end. */
@@ -121,7 +132,7 @@ export const carouselContract = {
     /** Advance on a timer, and draw the pause control that WCAG 2.2.2 requires along with it. */
     autoplay: { type: "boolean", default: false, attr: "data-autoplay", trueValue: "" },
     /** Explicit delay in milliseconds. Same behavior as autoplay, with authored timing. */
-    autoplayDelay: { type: "number", attr: "data-autoplay", prop: "autoplay" },
+    autoplayDelay: { type: "number", min: 1, attr: "data-autoplay", prop: "autoplay" },
     /** Leave false to demonstrate the native CSS-only scroll-snap baseline. */
     mounted: { type: "boolean", default: true, attr: "data-sk-carousel", trueValue: "" },
     /** The one authored size knob, kept as a custom property on the root. */

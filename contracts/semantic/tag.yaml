@@ -2,9 +2,10 @@
 
 Tag:
   useWhen:
-    - "una etiqueta que el usuario puede quitar: un filtro aplicado, una palabra clave"
+    - "una etiqueta que clasifica contenido: filtro aplicado, faceta, palabra clave"
+    - "el usuario puede quitarla (removable) o sólo nombra un tema en una lista"
   avoidWhen:
-    - "es sólo un conteo o un estado que nadie puede tocar; eso es un Badge"
+    - "es sólo un conteo o un estado del sistema que nadie puede tocar; eso es un Badge"
   alternatives:
     - Badge
 

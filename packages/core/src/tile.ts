@@ -99,9 +99,24 @@ export const tileDataParts = {
 } as const;
 
 export const tileEvents = {
-  checkedChange: "sk:checkedchange",
-  valueChange: "sk:valuechange",
-  openChange: "sk:openchange",
+  /** Detail: `{ checked: boolean | "indeterminate" }` (checkbox) or `{ checked: boolean }` (switch). */
+  checkedChange: "sk:tilecheckedchange",
+  /** Detail: `{ value: string | null }`, TileRadioGroup. */
+  valueChange: "sk:tilevaluechange",
+  /** Detail: `{ open: boolean }`, ExpandableTile. */
+  openChange: "sk:tileopenchange",
+} as const;
+
+/**
+ * The other direction of `tileEvents`: commands a mounted tile LISTENS for, so a composition that owns
+ * the value (Questionnaire) can set it without reaching into the machine. The machine then reports the
+ * change through `tileEvents` as usual, which is what keeps one path for every change.
+ */
+export const tileCommands = {
+  /** Detail: `{ value: string | null }`, TileRadioGroup. `null` clears the selection. */
+  setValue: "sk:tilesetvalue",
+  /** Detail: `{ checked: boolean }`, TileCheckbox. */
+  setChecked: "sk:tilesetchecked",
 } as const;
 
 /**
@@ -117,9 +132,12 @@ export const tileEvents = {
  */
 export const tileContract = {
   id: "tile",
+  category: "content",
   css: "@skryensya/core/components/tile.css",
   parts: tileParts,
   hooks: [
+    "--sk-checkbox-group-gap",
+    "--sk-checkbox-group-indent",
     "--sk-color-border-selected",
     "--sk-color-border-strong",
     "--sk-color-border-subtle",
@@ -138,6 +156,21 @@ export const tileContract = {
     "--sk-tile-radius",
     "--sk-tile-shadow",
   ],
+  /*
+   * TileCheckbox / TileSwitch paint with checkbox/switch controls (`also` classes). Those sheets
+   * are not unique owners of the classes (selection contracts share the parts map), so
+   * `sheetsForTree` cannot discover them from `also` alone, name them here.
+   */
+  hookSheets: [
+    "@skryensya/core/components/checkbox.css",
+    "@skryensya/core/components/switch.css",
+  ],
+  events: tileEvents,
+  eventDetails: {
+    checkedChange: { detail: { checked: "boolean | \"indeterminate\"" }, reactProp: "onCheckedChange", source: "root", trigger: "selectionIndicator" },
+    valueChange: { detail: { value: "string | null" }, reactProp: "onValueChange", source: "root", trigger: "selectionIndicator" },
+    openChange: { detail: { open: "boolean" }, reactProp: "onOpenChange", source: "root", trigger: "trigger" },
+  },
 
   options: {
     /** Inner spacing, on the same scale Box uses. Absent means the stylesheet's own. */
@@ -149,7 +182,7 @@ export const tileContract = {
     value: { type: "string", attr: "data-value", machineInput: true },
     defaultChecked: { type: "boolean", default: false, attr: "data-default-checked", machineInput: true },
     required: { type: "boolean", default: false, attr: "data-required", trueValue: "", machineInput: true },
-    defaultValue: { type: "string", attr: "data-default-value", machineInput: true },
+    defaultValue: { type: "string", attr: "data-default-value", machineInput: true, keyOf: { slot: "items" } },
     orientation: { type: "enum", values: ["horizontal", "vertical"], attr: "data-orientation", machineInput: true },
     disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "" },
     /** Starts expanded. Read once as the initial state; after that the machine owns it. */
@@ -162,6 +195,8 @@ export const tileContract = {
       host: { element: "a" },
       options: ["href", "padding"],
       requires: ["href"],
+      /** Link host attrs beyond href (Button.navigation peer). */
+      forward: ["id", "target", "rel", "download", "aria-*"],
       slots: { children: { accepts: "node", required: true } },
       template: {
         element: "a",
@@ -175,9 +210,11 @@ export const tileContract = {
     },
 
     TileButton: {
-      intent: ["actionable-card", "selectable-surface", "card-that-does-something"],
+      intent: ["actionable-card", "card-that-does-something", "full-surface-action"],
       host: { element: "button" },
       options: ["disabled", "padding"],
+      /** Form association and a11y names (Button.action peer); `disabled` stays an option. */
+      forward: ["id", "name", "form", "formaction", "formmethod", "formenctype", "formnovalidate", "formtarget", "aria-*"],
       slots: { children: { accepts: "node", required: true } },
       template: {
         element: "button",
@@ -288,8 +325,13 @@ export const tileContract = {
       intent: ["selectable-card", "multi-select-tile", "card-with-a-checkbox", "pick-several"],
       host: { element: "label" },
       options: ["name", "value", "defaultChecked", "disabled", "required", "padding"],
+      /** Host id / form / a11y; control name stays the `name` option (`data-name`). */
+      forward: ["id", "form", "aria-*"],
       slots: { children: { accepts: "node", required: true } },
       mount: "data-sk-tile-checkbox",
+      compose: [
+        { of: "checkbox", sheets: ["@skryensya/core/components/checkbox.css"], systemOwned: true },
+      ],
       template: {
         element: "label",
         part: "root",
@@ -327,8 +369,13 @@ export const tileContract = {
       intent: ["toggle-card", "setting-tile", "card-with-a-switch", "turn-on-or-off"],
       host: { element: "label" },
       options: ["name", "value", "defaultChecked", "disabled", "required", "padding"],
+      /** Host id / form / a11y; control name stays the `name` option (`data-name`). */
+      forward: ["id", "form", "aria-*"],
       slots: { children: { accepts: "node", required: true } },
       mount: "data-sk-tile-switch",
+      compose: [
+        { of: "switch", sheets: ["@skryensya/core/components/switch.css"], systemOwned: true },
+      ],
       template: {
         element: "label",
         part: "root",
@@ -430,6 +477,9 @@ export const tileContract = {
        * `sk-tile--interactive`) blocked selecting that same text. `sk-tile--expandable` alone is
        * enough for the box, selection-border and disabled selectors below, all of which already
        * key off `:where(.sk-tile--interactive, .sk-tile--expandable)`.
+       *
+       * Host is `section` only (same as Accordion.Item): a lone expandable surface that needs
+       * coordination with siblings is an Accordion, not a different host on this signature.
        */
       mount: "data-sk-expandable-tile",
       template: {
@@ -448,6 +498,8 @@ export const tileContract = {
       host: { element: "button" },
       parents: ["ExpandableTile"],
       options: [],
+      /** Host id / a11y names on the disclosure button. */
+      forward: ["id", "aria-*"],
       slots: { children: { accepts: "node", required: true } },
       template: {
         element: "button",

@@ -3,6 +3,7 @@
 TablePager:
   useWhen:
     - "una tabla escrita a mano necesita paginar filas en el cliente y cambiar cuántas se ven"
+    - "va la tabla (TableScroll) y después un TablePagerBar con su TablePagerNav; se paginan las filas del tbody"
   avoidWhen:
     - "los datos vienen paginados del servidor; la aplicación debe controlar esa consulta"
   alternatives:

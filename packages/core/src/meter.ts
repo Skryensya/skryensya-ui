@@ -53,6 +53,7 @@ export function meterFraction(value: number, min: number, max: number): number {
 
 export const meterContract = {
   id: "meter",
+  category: "data",
   css: "@skryensya/core/components/meter.css",
   parts: meterParts,
   hooks: [
@@ -61,7 +62,7 @@ export const meterContract = {
   ],
 
   options: {
-    value: { type: "number", default: 0, attr: "aria-valuenow" },
+    value: { type: "number", default: 0, between: { min: "min", max: "max" }, attr: "aria-valuenow" },
     min: { type: "number", default: 0, attr: "aria-valuemin" },
     max: { type: "number", default: 100, attr: "aria-valuemax" },
     /** For when the raw number alone is not user-friendly: "50% (6 hours) remaining". Optional -
@@ -83,6 +84,8 @@ export const meterContract = {
       host: { element: "div" },
       options: ["value", "min", "max", "valueText", "tone", "label"],
       requires: ["label"],
+      /** Host id / a11y; label/valueText stay options. */
+      forward: ["id", "aria-*"],
       slots: {},
       template: {
         element: "div",

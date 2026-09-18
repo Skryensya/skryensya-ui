@@ -1,7 +1,6 @@
 export const buttonMessages = {
   es: {
     "demo.button.action": "Acción",
-    "demo.button.bold": "Negrita",
     "demo.button.save": "Guardar",
     "demo.button.cancel": "Cancelar",
     "demo.button.delete": "Borrar",
@@ -13,7 +12,7 @@ export const buttonMessages = {
     "demo.button.add": "Añadir",
     "demo.button.copy": "Copiar",
     "demo.button.moreActions": "Más acciones",
-    "demo.button.goFirstComponent": "Ir a primer componente",
+    "demo.button.readNews": "Ver noticia",
     "demo.button.small": "Chico",
     "demo.button.large": "Grande",
     "demo.button.withIcon": "Con icono",
@@ -23,41 +22,32 @@ export const buttonMessages = {
     "button.description": "Button: hooks de estilo, enhancer vanilla mínimo y componente React.",
     "button.lede": 'Styling hooks sobre el <code>&lt;button&gt;</code> nativo, un enhancer vanilla y un componente React.',
     "button.anatomyBody":
-      "Un botón es una sola caja con lugares reservados: <code>sk-button__pre</code> antes del label y <code>sk-button__post</code> después. El icono es un solo <code>sk-icon</code> (el mismo en cualquiera de los dos slots). El espécimen llena ambos para nombrarlos; los botones vivos empiezan en la matriz de abajo.",
+      "Un botón es una sola caja con lugares reservados: <code>sk-button__pre</code> antes del label y <code>sk-button__post</code> después. El icono es un solo <code>sk-icon</code> (el mismo en cualquiera de los dos slots). El espécimen llena ambos para nombrarlos; los ejemplos vivos empiezan con el botón base.",
     "button.anatomyLabel": "Anatomía de Button",
     "button.anatomyPreviewLabel": "Button, parte por parte",
-    "button.variantsTitle": "Dos ejes: énfasis y tono",
+    "button.defaultTitle": "El botón base",
+    "button.defaultBody":
+      "Empieza sin opciones: <code>solid</code>, <code>neutral</code> y <code>md</code> son los valores por defecto. Agrega una opción sólo cuando el contexto necesita cambiar esa decisión.",
+    "button.defaultLabel": "Button con valores por defecto",
+    "button.variantsTitle": "Énfasis y tono",
     "button.variantsBody":
-      "Un botón responde dos preguntas independientes, y por eso son dos opciones. <code>variant</code> dice <strong>qué tan fuerte</strong> es: <code>solid</code>, <code>soft</code>, <code>ghost</code>, <code>translucent</code>. <code>tone</code> dice <strong>qué significa</strong>: <code>neutral</code>, <code>accent</code>, <code>danger</code>. Elegir uno no elige el otro; abajo cada fila es un énfasis y cada columna un tono.",
-    "button.variantsLabel": "La matriz completa: 4 énfasis x 3 tonos",
-    "button.matrixIconBody":
-      "Los mismos doce en <code>sm</code> e icon-only, que es donde un tono discreto se usa de verdad: una fila de acciones no tiene lugar para un botón de tamaño completo, y es el tamaño en el que la tinta de un <code>ghost</code> es lo único que carga el significado.",
-    "button.matrixIconLabel": "La misma matriz, sm e icon-only",
-    "button.toneCountBody":
-      "Tres tonos, no los cinco de Badge. Un badge <em>reporta</em> un estado, así que <code>success</code> y <code>warning</code> son cosas que puede decir con verdad; un botón <em>ejecuta</em> una acción, y no existe una acción de advertencia ni una de éxito. La más cercana es la destructiva, que es <code>danger</code>.",
-    "button.pressedTitle": "Toggles: un botón que se queda encendido",
-    "button.pressedBody":
-      "<code>pressed</code> escribe <code>aria-pressed</code> y además lo pinta. Tiene tres estados, no dos: ausente significa <em>no es un toggle</em> y es lo correcto para casi cualquier botón; <code>false</code> significa <em>es un toggle y está apagado</em>, que un lector de pantalla anuncia. El indicio es el relleno y no la capa de estado compartida, a propósito: el hover reasigna esa capa, así que un toggle que dependiera sólo de ella se vería apagado justo mientras el puntero está encima.",
-    "button.pressedLabel": "Apagado y encendido, por énfasis",
-    "button.destructiveTitle": "El par que motivó la separación",
+      "<code>variant</code> dice <strong>qué tan fuerte</strong> es el botón: <code>solid</code>, <code>soft</code>, <code>ghost</code> o <code>translucent</code>. <code>tone</code> dice <strong>qué significa</strong>: <code>neutral</code>, <code>accent</code> o <code>danger</code>. Son dos decisiones independientes, así que se combinan todas: filas por énfasis, columnas por tono. Un botón ejecuta una acción, por eso no tiene los tonos <code>success</code> ni <code>warning</code> de Badge.",
+    "button.variantsLabel": "Todos los énfasis por todos los tonos",
+    "button.destructiveTitle": "La excepción que se compara",
     "button.destructiveBody":
-      "Mismo tono, distinto énfasis, y esa diferencia es todo el mensaje: el <code>ghost</code> se lee destructivo sin convertirse en el botón de confirmar, así que puede vivir en una fila de acciones al lado de Responder. El <code>solid</code> es el confirmar que ese eliminar abre. Con un solo eje, la primera de las dos era imposible de escribir.",
-    "button.destructiveLabel": "ghost + danger, y solid + danger",
-    "button.translucentBody":
-      "<code>translucent</code> tiene un fondo semi-transparente que se mezcla con fondos coloreados. Úsalo en callouts, cards coloreadas, o cualquier contexto donde el botón necesita integrarse visualmente con su contenedor sin competir con él.",
+      "Estos dos botones se muestran juntos porque el contraste es el concepto: <code>ghost</code> + <code>danger</code> es el disparador que puede vivir en una fila de acciones; <code>solid</code> + <code>danger</code> confirma el borrado.",
+    "button.destructiveLabel": "Disparador y confirmación destructivos",
     "button.sizesTitle": "Tamaños",
     "button.sizesLabel": "Button · xs / sm / md / lg",
-    "button.sizeHitNote": "ya incluido: la cara xs pinta a 24px, el hit sigue en 44px",
     "button.iconTitle": "Con icono",
     "button.iconBody":
-      "El icono va en el slot <code>pre</code> (antes del label) o en <code>post</code> (después), según lo que necesite decir primero: adelante para anticipar el tipo de acción, atrás para señalar hacia dónde lleva. El mismo <code>gap</code> entre slot y texto en los dos casos; un slot vacío no se renderiza.",
-    "button.iconLabel": "Button con icono",
+      "Cuando el icono anticipa el tipo de acción, va en el slot <code>pre</code>, antes del label. El mismo <code>gap</code> separa el slot y el texto; un slot vacío no se renderiza.",
+    "button.iconLabel": "Button con icono inicial",
     "button.iconOnlyTitle": "Solo icono",
-    "button.iconOnlyLabel": "Solo icono",
-    "button.iconOnlySmLabel": "Solo icono · sm",
+    "button.iconOnlyLabel": "Button solo icono con nombre accesible",
     "button.linkTitle": "Como enlace",
     "button.linkBody":
-      'Cualquier forma de arriba (variante, tamaño, icono, solo icono) también renderiza como enlace: mismas clases, mismos atributos <code>data-*</code>, solo cambia el tag (<code>&lt;a href&gt;</code> en vez de <code>&lt;button&gt;</code>). En React, pasarle <code>href</code> a <code>Button</code> hace el cambio. Un enlace no puede ser <code>disabled</code>: renderiza contenido no enlazado en su lugar.',
+      'Cuando el destino es una URL, el mismo componente renderiza un <code>&lt;a href&gt;</code> en lugar de un <code>&lt;button&gt;</code>. En React, <code>href</code> hace el cambio. Un enlace no puede ser <code>disabled</code>: renderiza contenido no enlazado en su lugar.',
     "button.linkLabel": "Button como enlace",
     "button.tileTitle": "TileButton",
     "button.tileBody": "Cuando toda la superficie es una acción, no solo una etiqueta adentro.",
@@ -65,8 +55,6 @@ export const buttonMessages = {
     "button.vanillaInitTitle": "Inicializar vanilla",
     "button.iconsComment":
       "Los iconos se autoran como placeholders <span data-sk-icon>;\nmountIcons los reemplaza por el <svg> del set enlazado.",
-    "button.sizeHitComment":
-      "Ya viene en components/button.css. No hay que\n   escribirlo: está aquí porque es la parte del componente\n   que más sorprende, y conviene saber que existe.\n\n   El positioning NO se declara aquí a propósito: lo pone\n   .sk-interactive (state layer). Un position propio haría\n   de cualquier botón el bloque contenedor de lo que tenga\n   dentro en absoluto.",
     "button.test1": "Es un <code>&lt;button&gt;</code> nativo que no envía formularios por defecto.",
     "button.test2": "El estado deshabilitado llega al control nativo y a la tecnología de asistencia.",
     "button.test3": "Como enlace, renderiza con la apariencia de Button y los atributos del ancla.",
@@ -80,7 +68,6 @@ export const buttonMessages = {
   },
   en: {
     "demo.button.action": "Action",
-    "demo.button.bold": "Bold",
     "demo.button.save": "Save",
     "demo.button.cancel": "Cancel",
     "demo.button.delete": "Delete",
@@ -92,7 +79,7 @@ export const buttonMessages = {
     "demo.button.add": "Add",
     "demo.button.copy": "Copy",
     "demo.button.moreActions": "More actions",
-    "demo.button.goFirstComponent": "Go to first component",
+    "demo.button.readNews": "Read the story",
     "demo.button.small": "Small",
     "demo.button.large": "Large",
     "demo.button.withIcon": "With icon",
@@ -102,41 +89,32 @@ export const buttonMessages = {
     "button.description": "Button: style hooks, a minimal vanilla enhancer and a React component.",
     "button.lede": 'Styling hooks over the native <code>&lt;button&gt;</code>, a vanilla enhancer, and a React component.',
     "button.anatomyBody":
-      "A button is a single box with reserved places: <code>sk-button__pre</code> before the label and <code>sk-button__post</code> after. The icon is one <code>sk-icon</code> (the same part in either slot). The specimen fills both so they can be named; the live buttons start with the matrix below.",
+      "A button is a single box with reserved places: <code>sk-button__pre</code> before the label and <code>sk-button__post</code> after. The icon is one <code>sk-icon</code> (the same part in either slot). The specimen fills both so they can be named; the live examples start with the base button.",
     "button.anatomyLabel": "Button anatomy",
     "button.anatomyPreviewLabel": "Button, part by part",
-    "button.variantsTitle": "Two axes: emphasis and tone",
+    "button.defaultTitle": "The base button",
+    "button.defaultBody":
+      "Start without options: <code>solid</code>, <code>neutral</code>, and <code>md</code> are the defaults. Add an option only when the context needs to change that decision.",
+    "button.defaultLabel": "Button with default values",
+    "button.variantsTitle": "Emphasis and tone",
     "button.variantsBody":
-      "A button answers two independent questions, which is why there are two options. <code>variant</code> says <strong>how loud</strong> it is: <code>solid</code>, <code>soft</code>, <code>ghost</code>, <code>translucent</code>. <code>tone</code> says <strong>what it means</strong>: <code>neutral</code>, <code>accent</code>, <code>danger</code>. Choosing one does not choose the other; below, each row is an emphasis and each column a tone.",
-    "button.variantsLabel": "The full matrix: 4 emphases x 3 tones",
-    "button.matrixIconBody":
-      "The same twelve at <code>sm</code> and icon-only, which is where a quiet tone actually gets used: an action row has no room for a full-size button, and it is the size at which a <code>ghost</code>'s ink is the only thing carrying the meaning.",
-    "button.matrixIconLabel": "The same matrix, sm and icon-only",
-    "button.toneCountBody":
-      "Three tones, not Badge's five. A badge <em>reports</em> a state, so <code>success</code> and <code>warning</code> are things it can truthfully say; a button <em>performs</em> an action, and there is no warning action and no success action. The nearest real one is destructive, which is <code>danger</code>.",
-    "button.pressedTitle": "Toggles: a button that stays on",
-    "button.pressedBody":
-      "<code>pressed</code> writes <code>aria-pressed</code> and paints it too. Three states, not two: absent means <em>not a toggle</em> and is right for almost every button; <code>false</code> means <em>a toggle, currently off</em>, which a screen reader announces. The cue is the fill rather than the shared state layer, deliberately: hover reassigns that layer, so a toggle relying on it alone would read as off exactly while the pointer sits on it.",
-    "button.pressedLabel": "Off and on, per emphasis",
-    "button.destructiveTitle": "The pair that motivated the split",
+      "<code>variant</code> says <strong>how loud</strong> the button is: <code>solid</code>, <code>soft</code>, <code>ghost</code>, or <code>translucent</code>. <code>tone</code> says <strong>what it means</strong>: <code>neutral</code>, <code>accent</code>, or <code>danger</code>. They are independent decisions, so every pairing is shown: rows by emphasis, columns by tone. A button performs an action, so it does not have Badge's <code>success</code> or <code>warning</code> tones.",
+    "button.variantsLabel": "Every emphasis by every tone",
+    "button.destructiveTitle": "The exception worth comparing",
     "button.destructiveBody":
-      "Same tone, different emphasis, and that difference is the whole message: the <code>ghost</code> reads destructive without becoming the confirm button, so it can live in an action row next to Reply. The <code>solid</code> is the confirm that delete opens. With one axis, the first of the two was unwritable.",
-    "button.destructiveLabel": "ghost + danger, and solid + danger",
-    "button.translucentBody":
-      "<code>translucent</code> has a semi-transparent background that blends with colored backgrounds. Use it in callouts, colored cards, or any context where the button needs to visually integrate with its container instead of competing with it.",
+      "These two buttons appear together because their contrast is the concept: <code>ghost</code> + <code>danger</code> is the trigger that can live in an action row; <code>solid</code> + <code>danger</code> confirms deletion.",
+    "button.destructiveLabel": "Destructive trigger and confirmation",
     "button.sizesTitle": "Sizes",
     "button.sizesLabel": "Button · xs / sm / md / lg",
-    "button.sizeHitNote": "ships already: the xs face paints at 24px, the hit stays 44px",
-    "button.iconTitle": "With icon",
+    "button.iconTitle": "With an icon",
     "button.iconBody":
-      "The icon goes in the <code>pre</code> slot (before the label) or the <code>post</code> slot (after), depending on what needs saying first: leading to signal the kind of action, trailing to point where it goes. The same <code>gap</code> between slot and text either way; an empty slot is not rendered.",
-    "button.iconLabel": "Button with icon",
+      "When an icon signals the type of action, it belongs in the <code>pre</code> slot, before the label. The same <code>gap</code> separates the slot and text; an empty slot is not rendered.",
+    "button.iconLabel": "Button with leading icon",
     "button.iconOnlyTitle": "Icon only",
-    "button.iconOnlyLabel": "Icon only",
-    "button.iconOnlySmLabel": "Icon only · sm",
+    "button.iconOnlyLabel": "Icon-only Button with accessible name",
     "button.linkTitle": "As a link",
     "button.linkBody":
-      'Any shape above (variant, size, icon, icon-only) also renders as a link: same classes, same <code>data-*</code> attributes, only the tag changes (<code>&lt;a href&gt;</code> instead of <code>&lt;button&gt;</code>). In React, passing <code>href</code> to <code>Button</code> makes the switch. A link cannot be <code>disabled</code>: it renders unlinked content instead.',
+      'When the destination is a URL, the same component renders an <code>&lt;a href&gt;</code> instead of a <code>&lt;button&gt;</code>. In React, <code>href</code> makes the switch. A link cannot be <code>disabled</code>: it renders unlinked content instead.',
     "button.linkLabel": "Button as a link",
     "button.tileTitle": "TileButton",
     "button.tileBody": "When the whole surface is one action, not just a label inside it.",
@@ -144,8 +122,6 @@ export const buttonMessages = {
     "button.vanillaInitTitle": "Initialize vanilla",
     "button.iconsComment":
       "Icons are authored as <span data-sk-icon> placeholders;\nmountIcons replaces them with the <svg> of the linked set.",
-    "button.sizeHitComment":
-      "Already ships in components/button.css. No need\n   to write it: it's here because it's the part of the\n   component that surprises most, and it's worth knowing\n   it exists.\n\n   Positioning is NOT declared here on purpose: it's set\n   by .sk-interactive (state layer). A position of its own\n   would turn any button into the containing block for\n   whatever it holds in absolute.",
     "button.test1": "Is a native <code>&lt;button&gt;</code> that does not submit forms by default.",
     "button.test2": "Disabled state reaches both the native control and assistive technology.",
     "button.test3": "As a link, renders with Button's appearance and the anchor's attributes.",

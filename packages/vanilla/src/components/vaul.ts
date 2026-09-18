@@ -1,7 +1,7 @@
-import { vaulEvents, type VaulEdge, type VaulOptions } from "@skryensya/core/vaul";
+import { vaulContract, vaulEvents, type VaulEdge, type VaulOptions } from "@skryensya/core/vaul";
 import { applyAttrs } from "../runtime/apply.js";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
-import { axisOf, decideDismiss, resist, VELOCITY_WINDOW, type Sample } from "./vaul-gesture.js";
+import { axisOf, decideDismiss, resist, VELOCITY_WINDOW, type Sample } from "@skryensya/core/vaul-gesture";
 
 /*
  * VAUL, drag-to-dismiss.
@@ -16,7 +16,7 @@ import { axisOf, decideDismiss, resist, VELOCITY_WINDOW, type Sample } from "./v
  *
  * This file is now the DOM SHELL: pointer capture, window listeners, CSS-token reads, offset writes.
  * The question it exists to answer, "was that a dismissal?", and the geometry (`axisOf`, `resist`)
- * are pure, and live in ./vaul-gesture.ts where they can be tested without a DOM. The shell measures,
+ * are pure, and live in `@skryensya/core/vaul-gesture` (shared with the React port) where they can be tested without a DOM. The shell measures,
  * the pure module decides, `root.close()` acts.
  *
  * Everything else is the CSS's: the enhancer writes numbers, and the release curve (decision 10's
@@ -31,8 +31,10 @@ export function connectVaul(root: HTMLElement, options: VaulOptions = {}): Clean
     throw new Error("Vaul requires a native <dialog>: the modality is the platform's, not ours.");
   }
 
-  const edge = options.edge ?? (root.dataset.edge as VaulEdge | undefined) ?? "inline-start";
-  const threshold = options.dismissThreshold ?? 0.4;
+  /* The contract's default, not a second one: this used to fall back to `inline-start` while the
+   * contract, the emitter and React all said `block-end`, so unmarked markup dragged sideways. */
+  const edge = options.edge ?? (root.dataset.edge as VaulEdge | undefined) ?? vaulContract.options.edge.default;
+  const threshold = options.dismissThreshold ?? vaulContract.options.dismissThreshold.default;
   const velocity = options.dismissVelocity ?? 0.5;
   const draggable = options.draggable ?? true;
 
@@ -198,7 +200,7 @@ export function connectVaul(root: HTMLElement, options: VaulOptions = {}): Clean
     if (handle.hasPointerCapture(event.pointerId)) handle.releasePointerCapture(event.pointerId);
 
     /* Was that a dismissal? The verdict is pure, samples and numbers in, boolean out, and lives in
-     * vaul-gesture.ts. This shell only measured the inputs. */
+     * `@skryensya/core/vaul-gesture`. This shell only measured the inputs. */
     const dismiss = decideDismiss(samples, { travelled, size: sizeOf(), threshold, velocity });
 
     /* The offset is dropped either way, and the release curve carries the panel from wherever the

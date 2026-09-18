@@ -3,6 +3,7 @@ import type {
   ContractOption,
   ContractSignature,
   ContractSlot,
+  ContractTemplate,
 } from "@skryensya/core/contract";
 import { getContract, getSignature, contractIds } from "@skryensya/core/registry";
 import {
@@ -39,6 +40,7 @@ export type ValidationResult = {
 export function validateUsageTree(tree: UsageTree): ValidationResult {
   const problems: Problem[] = [];
   walk(tree, undefined, [], problems);
+  checkReferences(tree, problems);
   return { valid: problems.every((p) => p.severity !== "error"), problems };
 }
 
@@ -47,6 +49,7 @@ function walk(
   parent: { contract: ComponentContract; signature: ContractSignature; id: string } | undefined,
   trail: readonly string[],
   problems: Problem[],
+  parentChildAttrs?: Readonly<Record<string, ContractOption>>,
 ): void {
   const here = [...trail, tree.signature];
   const path = here.join(" > ");
@@ -74,10 +77,592 @@ function walk(
   }
 
   checkParent(signature, parent, path, problems);
+  checkNotInside(signature, trail, path, problems);
   checkOptions(contract, signature, tree, path, problems);
+  checkShadowedAttrs(contract, signature, tree, path, problems);
+  checkForwardAttrs(signature, tree, path, problems, parentChildAttrs);
+  checkChildAttrs(tree, path, problems, parentChildAttrs);
+  checkExcludes(signature, tree, path, problems);
+  checkImplies(signature, tree, path, problems);
+  checkPairs(signature, tree, path, problems);
+  checkBetween(contract, signature, tree, path, problems);
+  checkDeprecatedValues(contract, signature, tree, path, problems);
   checkRequiresForbids(signature, tree, path, problems);
+  checkAtLeastOne(contract, signature, tree, path, problems);
   checkAccessibility(contract, signature, tree, path, problems);
   checkSlots(contract, signature, tree, here, problems);
+  checkKeyReferences(contract, signature, tree, path, problems);
+  checkListOptions(contract, signature, tree, path, problems);
+}
+
+function checkListOptions(
+  contract: ComponentContract,
+  signature: ContractSignature,
+  tree: UsageTree,
+  path: string,
+  problems: Problem[],
+): void {
+  for (const name of signature.options) {
+    const list = contract.options[name]?.list;
+    const value = tree.options?.[name];
+    if (!list || typeof value !== "string") continue;
+
+    const entries = value.split(list.separator).map((part) => part.trim());
+    const bad = entries.filter((entry) => !(Number.isFinite(Number(entry)) && entry !== "" && Number(entry) > 0));
+    if (bad.length > 0) {
+      problems.push({
+        path,
+        rule: "invalid-option-value",
+        severity: "error",
+        message: `"${name}" is a "${list.separator}"-separated list of positive numbers; ${bad.map((b) => JSON.stringify(b)).join(", ")} is not one.`,
+      });
+      continue;
+    }
+
+    if (!list.countFrom) continue;
+    const row = everyNode(tree).find(({ node }) => node !== tree && node.signature === list.countFrom)?.node;
+    if (!row) continue;
+    const count = slotItems(slotsOf(row).children).filter(isUsageTree).length;
+    if (count > 0 && entries.length !== count) {
+      problems.push({
+        path,
+        rule: "invalid-option-value",
+        severity: "error",
+        message: `"${name}" has ${entries.length} entries and the first ${list.countFrom} has ${count} columns; the binding ignores a list that does not match.`,
+      });
+    }
+  }
+}
+
+/*
+ * HTML content models. Two strengths, because the parser treats them differently:
+ *
+ * - A block inside a `<p>` is MOVED. The parser closes the paragraph before the block, so the DOM
+ *   is not the markup that was written and the text after it falls outside the Text. An error.
+ * - A block inside a `<span>`, a heading or a `<button>` is invalid HTML, but the parser keeps it
+ *   where it was written. Validators and some assistive tech still stumble on it. An advisory.
+ */
+const PHRASING_ONLY = new Set([
+  "p", "span", "h1", "h2", "h3", "h4", "h5", "h6", "button", "strong", "em", "b", "i", "small",
+  "code", "output", "label", "q", "s", "sub", "sup", "u", "var", "kbd", "samp", "cite", "dfn",
+  "abbr", "mark", "time", "data", "pre",
+]);
+/* Not derived from the set above: a `<p>`, a heading and a `<pre>` hold only inline content but are blocks themselves. */
+const PHRASING = new Set([
+  "span", "button", "strong", "em", "b", "i", "small", "code", "output", "label", "q", "s", "sub",
+  "sup", "u", "var", "kbd", "samp", "cite", "dfn", "abbr", "mark", "time", "data", "a", "br",
+  "wbr", "img", "svg", "input", "select", "textarea", "meter", "progress", "picture", "audio",
+  "video", "canvas", "iframe", "del", "ins", "map", "math", "object", "noscript", "template",
+  "slot", "embed",
+]);
+/* The start tags that close an open `<p>` (HTML parsing, "in body" insertion mode). */
+const CLOSES_P = new Set([
+  "address", "article", "aside", "blockquote", "details", "dialog", "div", "dl", "fieldset",
+  "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "header", "hgroup",
+  "hr", "main", "menu", "nav", "ol", "p", "pre", "search", "section", "table", "ul",
+]);
+
+/** The element a signature renders as for THIS tree: its template's, or an `element` option's value. */
+function renderedElement(contract: ComponentContract, signature: ContractSignature, tree: UsageTree): string | undefined {
+  for (const name of signature.options) {
+    const option = contract.options[name];
+    const value = tree.options?.[name];
+    if (option?.element && typeof value === "string" && option.values?.includes(value)) return value;
+  }
+  return signature.template.element;
+}
+
+/** The nearest element that holds a slot's content: the slot's own node, or its closest ancestor with one. */
+function slotContainer(node: ContractTemplate, slot: string, nearest: ContractTemplate | undefined): ContractTemplate | undefined {
+  const here = node.element ? node : nearest;
+  if (node.slot === slot) return here;
+  for (const child of node.children ?? []) {
+    const found = slotContainer(child, slot, here);
+    if (found) return found;
+  }
+  return undefined;
+}
+
+function checkContentModel(
+  contract: ComponentContract,
+  signature: ContractSignature,
+  tree: UsageTree,
+  slot: string,
+  item: UsageTree,
+  path: string,
+  problems: Problem[],
+): void {
+  const container = slotContainer(signature.template, slot, undefined);
+  if (!container) return;
+  const parentElement = container.host ? renderedElement(contract, signature, tree) : container.element;
+  if (!parentElement || !PHRASING_ONLY.has(parentElement)) return;
+
+  const childContract = getContract(item.contract);
+  const child = childContract ? getSignature(childContract, item.signature) : undefined;
+  if (!child || !childContract) return;
+  const childElement = renderedElement(childContract, child, item);
+  if (!childElement || PHRASING.has(childElement)) return;
+
+  const moved = parentElement === "p" && CLOSES_P.has(childElement);
+  const hint = childContract.id === "typography" && item.signature === "Text" ? ' Use textElement: "span".' : "";
+  problems.push({
+    path: `${path} > ${item.signature}`,
+    rule: "content-model",
+    severity: moved ? "error" : "advisory",
+    message: moved
+      ? `${item.signature} renders a <${childElement}> inside a <p>. The parser closes the paragraph before it, so the DOM is not this tree.${hint}`
+      : `${item.signature} renders a <${childElement}>, and "${slot}" lands inside a <${parentElement}>, which only holds inline content. Invalid HTML, though the parser keeps it in place.${hint}`,
+  });
+}
+
+/** Positioned siblings: one shared set size, unique positions inside it. */
+function checkPositions(
+  shape: NonNullable<ContractSlot["positions"]>,
+  items: readonly (string | UsageTree)[],
+  path: string,
+  problems: Problem[],
+): void {
+  const rows = items.filter(isUsageTree);
+  const sizes = new Set(rows.map((row) => row.options?.[shape.setSize]).filter((v) => typeof v === "number"));
+  if (sizes.size > 1)
+    problems.push({ path, rule: "invalid-hierarchy", severity: "error", message: `Siblings disagree on ${shape.setSize}: ${[...sizes].join(", ")}.` });
+  const seen = new Set<number>();
+  for (const row of rows) {
+    const position = row.options?.[shape.posInset];
+    const size = row.options?.[shape.setSize];
+    if (typeof position !== "number") continue;
+    if (seen.has(position))
+      problems.push({ path, rule: "invalid-hierarchy", severity: "error", message: `${shape.posInset} ${position} is used twice.` });
+    seen.add(position);
+    if (typeof size === "number" && size !== -1 && position > size)
+      problems.push({ path, rule: "invalid-hierarchy", severity: "error", message: `${shape.posInset} ${position} is past ${shape.setSize} ${size}.` });
+  }
+}
+
+/**
+ * A hierarchy written as flat rows (`flatHierarchy`): the numbers each row states are exactly what
+ * assistive tech announces, so a row that says "2 of 3" while its level holds two rows is a lie
+ * the markup tells, however well it renders.
+ */
+function checkFlatHierarchy(
+  shape: NonNullable<ContractSlot["flatHierarchy"]>,
+  items: readonly (string | UsageTree)[],
+  path: string,
+  problems: Problem[],
+): void {
+  const rows = items.filter(isUsageTree).map((row, index) => {
+    const options = row.options ?? {};
+    const int = (name: string) => (typeof options[name] === "number" ? (options[name] as number) : Number.NaN);
+    return {
+      where: `${path} > ${row.signature}[${index}]`,
+      level: int(shape.level),
+      setSize: int(shape.setSize),
+      posInset: int(shape.posInset),
+      branch: options[shape.expanded] !== undefined,
+      key: shape.key !== undefined ? options[shape.key] : undefined,
+    };
+  });
+  const report = (where: string, message: string) =>
+    problems.push({ path: where, rule: "invalid-hierarchy", severity: "error", message });
+
+  const seenKeys = new Set<unknown>();
+  /* Open sibling sets, one per level on the current path: the rows seen so far under one parent. */
+  const open: { setSize: number; count: number; where: string }[] = [];
+  const close = (fromLevel: number) => {
+    while (open.length >= fromLevel) {
+      const set = open.pop()!;
+      if (set.count !== set.setSize)
+        report(set.where, `this row's ${shape.setSize} is ${set.setSize}, but its level holds ${set.count} row(s) under the same parent.`);
+    }
+  };
+
+  rows.forEach((row, index) => {
+    if (row.key !== undefined) {
+      if (seenKeys.has(row.key)) report(row.where, `${shape.key}="${String(row.key)}" is used by an earlier row; each row needs its own.`);
+      seenKeys.add(row.key);
+    }
+    if (![row.level, row.setSize, row.posInset].every(Number.isInteger)) return; // missing-required speaks for it
+
+    const previous = index > 0 ? rows[index - 1]! : undefined;
+    const maxLevel = previous && Number.isInteger(previous.level) ? previous.level + 1 : 1;
+    if (row.level < 1 || row.level > maxLevel) {
+      report(row.where, `${shape.level} ${row.level} cannot follow ${previous ? `a row at ${shape.level} ${previous.level}` : "the start"}; depth grows one level at a time, starting at 1.`);
+      return;
+    }
+    if (row.posInset < 1 || row.posInset > row.setSize)
+      report(row.where, `${shape.posInset} ${row.posInset} is outside 1..${row.setSize} (${shape.setSize}).`);
+
+    /* A branch owns the rows after it that sit deeper; a leaf owns none. */
+    const next = rows[index + 1];
+    const hasChildren = next !== undefined && Number.isInteger(next.level) && next.level > row.level;
+    /* Advisory, not an error: an empty folder is a real branch with nothing in it yet. */
+    if (row.branch && !hasChildren)
+      problems.push({
+        path: row.where,
+        rule: "empty-branch",
+        severity: "advisory",
+        message: `this row states ${shape.expanded}, which makes it a branch, but no deeper row follows it. Right for an empty folder; otherwise drop ${shape.expanded} to make it a leaf.`,
+      });
+    if (!row.branch && hasChildren)
+      report(row.where, `deeper rows follow this one, so it is a branch and must state ${shape.expanded} (true or false).`);
+
+    close(row.level + 1);
+    const set = open[row.level - 1];
+    if (!set) {
+      open[row.level - 1] = { setSize: row.setSize, count: 1, where: row.where };
+      if (row.posInset !== 1) report(row.where, `the first row of its set must be ${shape.posInset} 1, not ${row.posInset}.`);
+    } else {
+      set.count += 1;
+      if (row.setSize !== set.setSize)
+        report(row.where, `${shape.setSize} ${row.setSize} disagrees with ${set.setSize} on an earlier sibling.`);
+      if (row.posInset !== set.count)
+        report(row.where, `${shape.posInset} ${row.posInset} should be ${set.count}: siblings are numbered in order.`);
+    }
+  });
+  close(1);
+}
+
+/** Every composed node in a tree, depth-first, with its path: slots, and slots inside collection entries. */
+function everyNode(tree: UsageTree, trail: readonly string[] = []): { node: UsageTree; path: string }[] {
+  const here = [...trail, tree.signature];
+  const out = [{ node: tree, path: here.join(" > ") }];
+  const visit = (content: unknown) => {
+    for (const item of slotItems(content as never)) if (item != null && isUsageTree(item)) out.push(...everyNode(item, here));
+    for (const entry of collectionItems(content as never)) for (const nested of Object.values(entry.slots ?? {})) visit(nested);
+  };
+  for (const content of Object.values(slotsOf(tree))) visit(content);
+  return out;
+}
+
+/**
+ * `refersTo`: a value that must match another node's option somewhere in the same tree. A trigger
+ * naming a panel that is not there renders a button that does nothing, and says nothing about it.
+ */
+function checkReferences(tree: UsageTree, problems: Problem[]): void {
+  const nodes = everyNode(tree);
+  for (const { node, path } of nodes) {
+    const contract = getContract(node.contract);
+    const signature = contract ? getSignature(contract, node.signature) : undefined;
+    if (!contract || !signature) continue;
+    for (const name of signature.options) {
+      const target = contract.options[name]?.refersTo;
+      const value = node.options?.[name];
+      if (!target || typeof value !== "string" || value === "") continue;
+      const found = nodes.some(({ node: other }) => other.contract === target.contract && other.options?.[target.option] === value);
+      if (found) continue;
+      problems.push({
+        path,
+        rule: "unknown-reference",
+        severity: "error",
+        message: `"${name}" names "${value}", and no ${target.contract} in this tree has ${target.option}="${value}".`,
+      });
+    }
+  }
+}
+
+/**
+ * An option that names entries of the signature's own collection (`keyOf`) must name ones that
+ * exist. Skipped when the signature has no such keyed slot (a shared option on a sibling signature)
+ * or the slot is empty (`missing-required-slot` already speaks for that).
+ */
+function checkKeyReferences(
+  contract: ComponentContract,
+  signature: ContractSignature,
+  tree: UsageTree,
+  path: string,
+  problems: Problem[],
+): void {
+  for (const name of signature.options) {
+    const option = contract.options[name];
+    const value = tree.options?.[name];
+    if (!option?.keyOf || typeof value !== "string" || value === "") continue;
+
+    const slot = signature.slots[option.keyOf.slot];
+    const key = slot?.item?.key;
+    if (!slot || !key) continue;
+
+    const known = new Set<string>();
+    const collect = (entries: readonly ItemInput[]): void => {
+      for (const entry of entries) {
+        const id = entry.options?.[key];
+        if (typeof id === "string") known.add(id);
+        for (const [slotName, itemSlot] of Object.entries(slot.item!.slots)) {
+          if (itemSlot.recursive) collect(collectionItems(entry.slots[slotName]));
+        }
+      }
+    };
+    collect(collectionItems(slotsOf(tree)[option.keyOf.slot]));
+    if (known.size === 0) continue;
+
+    const wanted = option.keyOf.many ? value.split(/[\s,]+/).filter(Boolean) : [value];
+    for (const each of wanted) {
+      if (known.has(each)) continue;
+      problems.push({
+        path,
+        rule: "unknown-key",
+        severity: "error",
+        message: `"${name}" names "${each}", and no entry of "${option.keyOf.slot}" has ${key}="${each}". It accepts: ${[...known].join(", ")}.`,
+      });
+    }
+  }
+}
+
+/**
+ * A raw attribute the host already writes from an option. Both land on the element, the parser
+ * keeps the first, and the author's value is silently dropped: a dialog's `type="submit"` passed as
+ * an attr lost to Button's own `type="button"`.
+ */
+function checkShadowedAttrs(
+  contract: ComponentContract,
+  signature: ContractSignature,
+  tree: UsageTree,
+  path: string,
+  problems: Problem[],
+): void {
+  for (const attr of Object.keys(tree.attrs ?? {})) {
+    const owner = signature.options.find((name) => contract.options[name]?.attr === attr);
+    if (!owner) continue;
+    problems.push({
+      path,
+      rule: "shadowed-attr",
+      severity: "error",
+      message: `"${attr}" is written by the "${owner}" option; pass it as options.${owner}, not as an attribute.`,
+    });
+  }
+}
+
+/** `class` and `style` are universal authoring hooks; emit merges them specially. */
+const FREE_ATTRS = new Set(["class", "style"]);
+
+/** The kit's slice of the author's `data-` namespace. Everything outside it belongs to the page. */
+const KIT_ATTR_PREFIX = "data-sk-";
+
+/**
+ * Every `data-sk-*` some contract publishes for an author to write on ANOTHER family's host.
+ *
+ * Read from the catalogue rather than from the signature being checked, because that is where the
+ * knowledge honestly lives: `data-sk-vaul-close` on a Button is Vaul's promise, not Button's, and
+ * putting it in Button's `forward` would make every family that can host a foreign hook grow a list
+ * of the families that might hook it.
+ */
+function authoredKitAttrs(): ReadonlySet<string> {
+  const names = new Set<string>();
+  for (const id of contractIds()) {
+    for (const attr of getContract(id)?.authoredAttrs ?? []) names.add(attr);
+  }
+  return names;
+}
+
+/**
+ * `data-*` is the AUTHOR's namespace by HTML's own rule: a demo hanging `data-emit-toast` on a
+ * Button to find it from a script is using the platform as intended, and a contract has no standing
+ * to refuse it. `data-sk-*` is the one slice the kit reserves, and there an undeclared attribute is
+ * worth failing over: it reads like a hook and no enhancer will ever answer it.
+ */
+function isFreeAttr(name: string): boolean {
+  if (FREE_ATTRS.has(name)) return true;
+  if (!name.startsWith("data-")) return false;
+  return !name.startsWith(KIT_ATTR_PREFIX);
+}
+
+function forwardAllows(forward: readonly string[], name: string): boolean {
+  return forward.some((entry) => (entry.endsWith("*") ? name.startsWith(entry.slice(0, -1)) : entry === name));
+}
+
+function childAttrByName(
+  childAttrs: Readonly<Record<string, ContractOption>> | undefined,
+  name: string,
+): ContractOption | undefined {
+  if (!childAttrs) return undefined;
+  return Object.values(childAttrs).find((option) => option.attr === name);
+}
+
+/**
+ * When a signature declares `forward`, every authored attr must be on that list (or free, or a
+ * parent slot's `childAttrs`). Absent `forward` keeps the open bag the catalogue used before.
+ */
+function checkForwardAttrs(
+  signature: ContractSignature,
+  tree: UsageTree,
+  path: string,
+  problems: Problem[],
+  parentChildAttrs?: Readonly<Record<string, ContractOption>>,
+): void {
+  const forward = signature.forward;
+  if (!forward) return;
+
+  const authored = authoredKitAttrs();
+
+  for (const name of Object.keys(tree.attrs ?? {})) {
+    if (isFreeAttr(name)) continue;
+    if (authored.has(name)) continue;
+    if (forwardAllows(forward, name)) continue;
+    if (childAttrByName(parentChildAttrs, name)) continue;
+    problems.push({
+      path,
+      rule: "unknown-attr",
+      severity: "error",
+      message: name.startsWith(KIT_ATTR_PREFIX)
+        ? `"${name}" is not a hook any contract publishes, and ${tree.signature} does not forward ` +
+          `it. The kit owns "${KIT_ATTR_PREFIX}*"; a page's own hook belongs outside that prefix.`
+        : `"${name}" is not a forwarded attribute of ${tree.signature}. It forwards: ${forward.join(", ")}.`,
+    });
+  }
+}
+
+/**
+ * Values for a parent slot's `childAttrs` (LayoutGrid `data-width`): typed like options.
+ */
+function checkChildAttrs(
+  tree: UsageTree,
+  path: string,
+  problems: Problem[],
+  parentChildAttrs?: Readonly<Record<string, ContractOption>>,
+): void {
+  if (!parentChildAttrs) return;
+  for (const [name, value] of Object.entries(tree.attrs ?? {})) {
+    const option = childAttrByName(parentChildAttrs, name);
+    if (!option) continue;
+    const key = Object.entries(parentChildAttrs).find(([, opt]) => opt === option)?.[0] ?? name;
+    const problem = optionValueProblem(option, key, value);
+    if (problem) problems.push({ path, rule: "invalid-attr-value", severity: "error", message: problem });
+  }
+}
+
+function checkNotInside(
+  signature: ContractSignature,
+  trail: readonly string[],
+  path: string,
+  problems: Problem[],
+): void {
+  for (const ancestor of signature.notInside ?? []) {
+    if (!trail.includes(ancestor)) continue;
+    problems.push({
+      path,
+      rule: "invalid-ancestor",
+      severity: "error",
+      message: `This signature must not sit inside ${ancestor}, at any depth.`,
+    });
+  }
+}
+
+function checkExcludes(signature: ContractSignature, tree: UsageTree, path: string, problems: Problem[]): void {
+  for (const [key, excluded] of Object.entries(signature.excludes ?? {})) {
+    if (!keyHolds(signature, tree, key)) continue;
+    const clash = excluded.filter((name) => keyHolds(signature, tree, name));
+    if (clash.length === 0) continue;
+    problems.push({
+      path,
+      rule: "excluded-option",
+      severity: "error",
+      message: `"${key}" already decides ${excluded.join(", ")}; drop ${clash.join(", ")}.`,
+    });
+  }
+}
+
+function checkBetween(
+  contract: ComponentContract,
+  signature: ContractSignature,
+  tree: UsageTree,
+  path: string,
+  problems: Problem[],
+): void {
+  const read = (name: string) => {
+    const value = tree.options?.[name] ?? contract.options[name]?.default;
+    return typeof value === "number" ? value : undefined;
+  };
+  for (const name of signature.options) {
+    const bounds = contract.options[name]?.between;
+    const value = tree.options?.[name];
+    if (!bounds || typeof value !== "number") continue;
+    const low = bounds.min !== undefined && signature.options.includes(bounds.min) ? read(bounds.min) : undefined;
+    const high = bounds.max !== undefined && signature.options.includes(bounds.max) ? read(bounds.max) : undefined;
+    if (low !== undefined && value < low)
+      problems.push({ path, rule: "out-of-range", severity: "error", message: `"${name}" is ${value}, below "${bounds.min}" (${low}).` });
+    if (high !== undefined && value > high)
+      problems.push({ path, rule: "out-of-range", severity: "error", message: `"${name}" is ${value}, above "${bounds.max}" (${high}).` });
+  }
+}
+
+/**
+ * Whether a constraint key holds on this tree: an option given (a boolean only when true), a slot
+ * filled, or `option=value` holding exactly that value.
+ */
+function keyHolds(signature: ContractSignature, tree: UsageTree, key: string): boolean {
+  const eq = key.indexOf("=");
+  if (eq > 0) {
+    const option = key.slice(0, eq);
+    const value = tree.options?.[option] ?? getContract(tree.contract)?.options[option]?.default;
+    return value !== undefined && String(value) === key.slice(eq + 1);
+  }
+  const value = tree.options?.[key];
+  if (value !== undefined && value !== false) return true;
+  if (signature.slots[key] === undefined) return false;
+  const filled = slotsOf(tree)[key];
+  return (
+    slotItems(filled).some((item) => item != null && (typeof item !== "string" || item.trim() !== "")) ||
+    collectionItems(filled).length > 0
+  );
+}
+
+function checkImplies(signature: ContractSignature, tree: UsageTree, path: string, problems: Problem[]): void {
+  for (const [key, needed] of Object.entries(signature.implies ?? {})) {
+    if (!keyHolds(signature, tree, key)) continue;
+    const missing = needed.filter((name) => !keyHolds(signature, tree, name));
+    if (missing.length === 0) continue;
+    problems.push({
+      path,
+      rule: "missing-implied",
+      severity: "error",
+      message: `"${key}" needs ${missing.join(", ")} as well; without it the component has nothing to act on.`,
+    });
+  }
+}
+
+function checkPairs(signature: ContractSignature, tree: UsageTree, path: string, problems: Problem[]): void {
+  const side = (ref: { slot: string; option: string }) => {
+    const child = slotItems(slotsOf(tree)[ref.slot]).find(isUsageTree);
+    if (!child) return undefined;
+    return { explicit: child.options?.[ref.option], fallback: getContract(child.contract)?.options[ref.option]?.default };
+  };
+  for (const pair of signature.pairs ?? []) {
+    const a = side(pair.a);
+    const b = side(pair.b);
+    if (!a || !b) continue;
+    /*
+     * A side with neither a value nor a default of its own (a Menu trigger's untyped `triggerVariant`)
+     * renders the other side's default, so it matches the other side exactly when that side is also
+     * at its default.
+     */
+    const resolve = (own: typeof a, other: typeof a) => own.explicit ?? own.fallback ?? other.fallback;
+    if (String(resolve(a, b)) === String(resolve(b, a))) continue;
+    problems.push({
+      path,
+      rule: "unpaired-options",
+      severity: "error",
+      message: `${pair.a.slot} ${pair.a.option} (${String(resolve(a, b))}) and ${pair.b.slot} ${pair.b.option} (${String(resolve(b, a))}) must match.`,
+    });
+  }
+}
+
+function checkDeprecatedValues(
+  contract: ComponentContract,
+  signature: ContractSignature,
+  tree: UsageTree,
+  path: string,
+  problems: Problem[],
+): void {
+  for (const name of signature.options) {
+    const replacement = contract.options[name]?.deprecatedValues;
+    const value = tree.options?.[name];
+    if (!replacement || typeof value !== "string" || replacement[value] === undefined) continue;
+    problems.push({
+      path,
+      rule: "deprecated-value",
+      severity: "advisory",
+      message: `"${name}": "${value}" is kept for existing markup; use "${replacement[value]}".`,
+    });
+  }
 }
 
 function checkParent(
@@ -164,6 +749,36 @@ function optionValueProblem(option: ContractOption, name: string, value: unknown
     return `"${name}" is a number; got ${JSON.stringify(value)}.`;
   }
 
+  /*
+   * A name is never empty. An option written to `aria-label`/`aria-labelledby` given as "" is not
+   * "no name", it is a name that says nothing, and it still flips whatever the contract keys on the
+   * option being given: an optional Loader label turned the spinner into a `role="status"` with an
+   * empty name instead of leaving it decorative.
+   */
+  if (
+    typeof value === "string" &&
+    value.trim() === "" &&
+    (option.attr === "aria-label" || option.attr === "aria-labelledby")
+  ) {
+    return `"${name}" is an accessible name and cannot be empty; omit it instead.`;
+  }
+
+  if (option.pattern && typeof value === "string" && !new RegExp(option.pattern.source).test(value)) {
+    return `"${name}" must look like "${option.pattern.example}"; got ${JSON.stringify(value)}.`;
+  }
+
+  if (option.valuesFrom && typeof value === "string") {
+    const values = getContract(option.valuesFrom.contract)?.options[option.valuesFrom.option]?.values;
+    if (values && !values.includes(value))
+      return `"${name}" takes ${option.valuesFrom.contract}'s ${option.valuesFrom.option}: one of ${values.join(", ")}; got "${value}".`;
+  }
+
+  if (option.type === "number" && typeof value === "number") {
+    if (option.integer && !Number.isInteger(value)) return `"${name}" is a whole number; got ${value}.`;
+    if (option.min !== undefined && value < option.min) return `"${name}" is at least ${option.min}; got ${value}.`;
+    if (option.max !== undefined && value > option.max) return `"${name}" is at most ${option.max}; got ${value}.`;
+  }
+
   return undefined;
 }
 
@@ -182,6 +797,21 @@ function checkRequiresForbids(
         rule: "missing-required",
         severity: "error",
         message: `${tree.signature} requires "${name}".`,
+      });
+      continue;
+    }
+    /*
+     * Present is not the same as supplied. Every required string in the catalogue is a name, an
+     * href, an id or a key, and an empty one is the absence the requirement exists to refuse: a
+     * `label: ""` on Vaul validated and emitted a bare `aria-label`, an unnamed modal.
+     */
+    const value = tree.options?.[name];
+    if (typeof value === "string" && value.trim() === "") {
+      problems.push({
+        path,
+        rule: "empty-required",
+        severity: "error",
+        message: `${tree.signature} requires "${name}", and it was given as an empty string.`,
       });
     }
   }
@@ -222,6 +852,48 @@ function checkRequiresForbids(
   }
 }
 
+/**
+ * An option counts only when it is set to something other than its default: `padding: "none"` on a
+ * Box is written down and still paints nothing, which is exactly the case this rule exists to refuse.
+ */
+function slotSupplied(signature: ContractSignature, tree: UsageTree, name: string): boolean {
+  const slot = signature.slots[name];
+  if (!slot) return false;
+  if (slot.accepts === "items") return collectionItems(slotsOf(tree)[name]).length > 0;
+  return slotItems(slotsOf(tree)[name]).some((item) => typeof item !== "string" || item.trim() !== "");
+}
+
+function checkAtLeastOne(
+  contract: ComponentContract,
+  signature: ContractSignature,
+  tree: UsageTree,
+  path: string,
+  problems: Problem[],
+): void {
+  const options = tree.options ?? {};
+
+  for (const group of signature.atLeastOneOf ?? []) {
+    const effective = group.filter((name) => {
+      if (signature.slots[name] && slotSupplied(signature, tree, name)) return true;
+      const declared = contract.options[name];
+      if (!declared) return false;
+      const value = options[name];
+      if (value === undefined) return false;
+      if (declared.type === "boolean") return value === true;
+      return value !== declared.default;
+    });
+
+    if (effective.length === 0) {
+      problems.push({
+        path,
+        rule: "missing-at-least-one",
+        severity: "error",
+        message: `${tree.signature} needs at least one of ${group.join(", ")}: a filled slot, a boolean set to true, or an option other than its default.`,
+      });
+    }
+  }
+}
+
 function checkAccessibility(
   contract: ComponentContract,
   signature: ContractSignature,
@@ -250,7 +922,7 @@ function checkAccessibility(
       // Silent when the author already did it. An advisory that fires at someone who satisfied it
       // is noise, and noise is what teaches an agent to skip advisories.
       const satisfied = rule.requiresOneOf.some(
-        (name) => attrs[name] !== undefined || options[name] !== undefined,
+        (name) => attrs[name] !== undefined || options[name] !== undefined || slotsOf(tree)[name] !== undefined,
       );
       if (satisfied) continue;
 
@@ -270,9 +942,21 @@ function checkAccessibility(
     });
     if (!applies) continue;
 
-    // The name may arrive as an option the contract maps (`alt`) or as a raw attribute the author
-    // passes through (`aria-label`). Both are the author supplying it.
-    if (!rule.requiresOneOf.some((name) => attrs[name] !== undefined || options[name] !== undefined)) {
+    // The name may arrive as an option the contract maps (`alt`), as a raw attribute the author
+    // passes through (`aria-label`), or as a filled slot the template renders as the label (a
+    // switch's `children`). All three are the author supplying it.
+    const filled = slotsOf(tree);
+    const childSignature = (name: string) =>
+      Object.values(filled).some((content) => slotItems(content).some((item) => isUsageTree(item) && item.signature === name));
+    const slotGiven = (name: string) =>
+      signature.slots[name] !== undefined &&
+      (slotItems(filled[name]).some((item) => typeof item !== "string" || item.trim() !== "") ||
+        collectionItems(filled[name]).length > 0);
+    if (
+      !rule.requiresOneOf.some(
+        (name) => attrs[name] !== undefined || options[name] !== undefined || slotGiven(name) || childSignature(name),
+      )
+    ) {
       problems.push({
         path,
         rule: "missing-accessible-name",
@@ -312,8 +996,33 @@ function checkSlots(
       continue;
     }
 
-    const items = slotItems(filled[name]);
+    const raw = slotItems(filled[name]) as readonly (string | UsageTree | null | undefined)[];
+    if (raw.some((item) => item === null || item === undefined)) {
+      problems.push({ path, rule: "invalid-child", severity: "error", message: `Slot "${name}" holds a null entry; remove it.` });
+    }
+    const items = raw.filter((item): item is string | UsageTree => item !== null && item !== undefined);
     checkOrderAndCardinality(name, slot, items, path, problems);
+    if (slot.flatHierarchy) checkFlatHierarchy(slot.flatHierarchy, items, path, problems);
+    if (slot.positions) checkPositions(slot.positions, items, path, problems);
+
+    if (slot.uniqueChildOption && slot.accepts === "signature") {
+      const seen = new Set<string>();
+      for (const item of items) {
+        if (!isUsageTree(item)) continue;
+        const key = item.options?.[slot.uniqueChildOption];
+        if (typeof key !== "string" || key.trim() === "") continue;
+        if (seen.has(key)) {
+          problems.push({
+            path,
+            rule: "duplicate-child-option",
+            severity: "error",
+            message: `Two children of "${name}" share ${slot.uniqueChildOption}="${key}". Answer keys must be unique among siblings.`,
+          });
+        } else {
+          seen.add(key);
+        }
+      }
+    }
 
     if (slot.required && items.length === 0) {
       problems.push({
@@ -323,6 +1032,18 @@ function checkSlots(
         message: `${tree.signature} requires its "${name}" slot to be filled.`,
       });
       continue;
+    }
+    /*
+     * Present but blank. Advisory, not an error: a template body a clone fills in, or a live readout
+     * a script writes, is authored empty on purpose. Anywhere else it is a label that says nothing.
+     */
+    if (slot.required && !items.some((item) => typeof item !== "string" || item.trim() !== "")) {
+      problems.push({
+        path,
+        rule: "blank-required-slot",
+        severity: "advisory",
+        message: `${tree.signature}'s "${name}" slot is filled with blank text; fine for a placeholder a script fills, otherwise it names nothing.`,
+      });
     }
 
     for (const item of items) {
@@ -361,7 +1082,9 @@ function checkSlots(
         checkRestrictedOptions(name, slot.restrictOptions, item, `${path} > ${item.signature}`, problems);
       }
 
-      walk(item, { contract, signature, id: tree.signature }, trail, problems);
+      checkContentModel(contract, signature, tree, name, item, path, problems);
+
+      walk(item, { contract, signature, id: tree.signature }, trail, problems, slot.childAttrs);
     }
   }
 }
@@ -391,7 +1114,9 @@ function checkRestrictedOptions(
     if (!itemSignature.options.includes(optionName)) continue;
 
     const declared = itemContract.options[optionName];
-    const value = (item.options ?? {})[optionName] ?? declared?.default;
+    const raw = (item.options ?? {})[optionName] ?? declared?.default;
+    // A boolean is narrowed by its spelling: `["true"]` means "must be on".
+    const value = typeof raw === "boolean" ? String(raw) : raw;
 
     if (typeof value === "string" && !allowed.includes(value)) {
       problems.push({
@@ -417,6 +1142,13 @@ function checkCollection(
   tree: UsageTree,
   path: string,
   problems: Problem[],
+  /*
+   * Shared down a RECURSIVE slot, not reset per level. A tree's node ids are what selection and
+   * expansion are written in (`defaultExpandedValue="src"`), and the machine addresses a node by
+   * that value across the whole hierarchy: a folder and a file two levels down both called `src`
+   * validated, and then expanding one opened the other.
+   */
+  seen: Set<string> = new Set(),
 ): void {
   if (slot.required && entries.length === 0) {
     problems.push({
@@ -428,10 +1160,27 @@ function checkCollection(
     return;
   }
 
+  if (slot.minItems !== undefined && entries.length > 0 && entries.length < slot.minItems)
+    problems.push({ path, rule: "wrong-cardinality", severity: "error", message: `"${name}" takes at least ${slot.minItems} entries; got ${entries.length}.` });
+  if (slot.maxItems !== undefined && entries.length > slot.maxItems)
+    problems.push({ path, rule: "wrong-cardinality", severity: "error", message: `"${name}" takes at most ${slot.maxItems} entries; got ${entries.length}.` });
+  if (slot.countWhere && entries.length > 0) {
+    const { option, equals, count: allowed } = slot.countWhere;
+    const count = entries.filter((entry) => {
+      const value = entry.options?.[option] ?? slot.item?.options[option]?.default;
+      return value !== undefined && String(value) === equals;
+    }).length;
+    if ((allowed === "one" && count !== 1) || (allowed === "optional" && count > 1))
+      problems.push({
+        path,
+        rule: "wrong-cardinality",
+        severity: "error",
+        message: `${allowed === "one" ? "Exactly" : "At most"} one entry of "${name}" has ${option}="${equals}"; got ${count}.`,
+      });
+  }
+
   const shape = slot.item;
   if (!shape) return;
-
-  const seen = new Set<string>();
 
   entries.forEach((entry, index) => {
     const where = `${path} > ${name}[${index}]`;
@@ -475,8 +1224,15 @@ function checkCollection(
       }
     }
 
+    for (const required of shape.requires ?? []) {
+      const option = entry.options?.[required];
+      const slotted = slotItems(entry.slots?.[required]).some((item) => typeof item !== "string" || item.trim() !== "");
+      if ((option === undefined || option === "") && !slotted)
+        problems.push({ path: where, rule: "missing-required", severity: "error", message: `Every entry of "${name}" needs "${required}".` });
+    }
+
     for (const [slotName, itemSlot] of Object.entries(shape.slots)) {
-      if (itemSlot.required && slotItems(entry.slots[slotName]).length === 0) {
+      if (itemSlot.required && !slotItems(entry.slots[slotName]).some((item) => typeof item !== "string" || item.trim() !== "")) {
         problems.push({
           path: where,
           rule: "missing-required-slot",
@@ -492,7 +1248,7 @@ function checkCollection(
        */
       if (itemSlot.recursive) {
         const nested = collectionItems(entry.slots[slotName]);
-        if (nested.length > 0) checkCollection(slotName, { ...itemSlot, item: shape }, nested, tree, where, problems);
+        if (nested.length > 0) checkCollection(slotName, { ...itemSlot, item: shape }, nested, tree, where, problems, seen);
       }
     }
 
@@ -524,6 +1280,20 @@ function checkOrderAndCardinality(
   problems: Problem[],
 ): void {
   const composed = items.filter(isUsageTree);
+  if (slot.minItems !== undefined && composed.length > 0 && composed.length < slot.minItems)
+    problems.push({ path, rule: "wrong-cardinality", severity: "error", message: `"${name}" takes at least ${slot.minItems}; got ${composed.length}.` });
+  if (slot.maxItems !== undefined && composed.length > slot.maxItems)
+    problems.push({ path, rule: "wrong-cardinality", severity: "error", message: `"${name}" takes at most ${slot.maxItems}; got ${composed.length}.` });
+  for (const group of slot.groupCardinality ?? []) {
+    const count = composed.filter((item) => group.of.includes(item.signature)).length;
+    if ((group.count === "one" && count !== 1) || (group.count === "optional" && count > 1))
+      problems.push({
+        path,
+        rule: "wrong-cardinality",
+        severity: "error",
+        message: `"${name}" takes ${group.count === "one" ? "exactly one" : "at most one"} of ${group.of.join(", ")}, counted together; got ${count}.`,
+      });
+  }
   if (composed.length === 0) return;
 
   if (slot.ordered && slot.of) {

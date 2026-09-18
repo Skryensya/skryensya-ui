@@ -128,10 +128,10 @@ describe("Menu vanilla enhancer", () => {
     expect(isOpen(root)).toBe(false);
   });
 
-  it("selecting a plain item emits sk-select with its value and closes the menu", () => {
+  it("selecting a plain item emits sk:menuselect with its value and closes the menu", () => {
     const root = markup();
     const handler = vi.fn();
-    root.addEventListener("sk-select", handler);
+    root.addEventListener("sk:menuselect", handler);
     fireEvent.click(trigger(root));
     flushSync();
 
@@ -142,10 +142,10 @@ describe("Menu vanilla enhancer", () => {
     expect(isOpen(root)).toBe(false);
   });
 
-  it("never fires sk-select for a disabled item, and the menu stays open", () => {
+  it("never fires sk:menuselect for a disabled item, and the menu stays open", () => {
     const root = markup();
     const handler = vi.fn();
-    root.addEventListener("sk-select", handler);
+    root.addEventListener("sk:menuselect", handler);
     fireEvent.click(trigger(root));
     flushSync();
 
@@ -155,10 +155,10 @@ describe("Menu vanilla enhancer", () => {
     expect(handler).not.toHaveBeenCalled();
   });
 
-  it("toggles a checkbox item's data-checked and emits sk-checked-change", () => {
+  it("toggles a checkbox item's data-checked and emits sk:menucheckedchange", () => {
     const root = markup();
     const handler = vi.fn();
-    root.addEventListener("sk-checked-change", handler);
+    root.addEventListener("sk:menucheckedchange", handler);
     const wrap = itemByValue(root, "wrap");
     fireEvent.click(trigger(root));
     flushSync();

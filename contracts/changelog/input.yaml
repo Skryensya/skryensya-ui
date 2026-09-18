@@ -3,8 +3,41 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "466179d25b9478ba"
+surface: "eefc4307a3778b63"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Input declara forward para readonly y value
+      body: >-
+        Input, NativeInput y Textarea publican <code>forward</code>: <code>readonly</code>,
+        <code>value</code>, cotas nativas, <code>id</code> y <code>aria-*</code>. Un attr fuera
+        de la lista es <code>unknown-attr</code>; <code>class</code>/<code>style</code> siguen
+        libres.
+    en:
+      title: Input declares forward for readonly and value
+      body: >-
+        Input, NativeInput and Textarea publish <code>forward</code>: <code>readonly</code>,
+        <code>value</code>, native bounds, <code>id</code> and <code>aria-*</code>. An attr
+        outside the list is <code>unknown-attr</code>; <code>class</code>/<code>style</code>
+        stay free.
+  - date: 2026-09-17
+    kind: breaking
+    target: NativeInput
+    es:
+      title: NativeInput exige type y acepta controlSize
+      body: >-
+        <code>type</code> pasa a ser obligatorio: sin él NativeInput era un Input que se saltaba
+        FormField. <code>controlSize</code> entra en la signature (el mismo <code>data-size</code>
+        que Input/Textarea). En React, NativeInput hereda el cableado de FormField
+        (id/describedBy/invalid) cuando vive dentro de uno.
+    en:
+      title: NativeInput requires type and accepts controlSize
+      body: >-
+        <code>type</code> is now required: without it NativeInput was just Input that skipped
+        FormField. <code>controlSize</code> joins the signature (the same <code>data-size</code>
+        Input/Textarea use). In React, NativeInput inherits FormField wiring
+        (id/describedBy/invalid) when nested under one.
   - date: 2026-08-18
     kind: bugfix
     target: NativeInput

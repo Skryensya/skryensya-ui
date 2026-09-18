@@ -63,7 +63,7 @@ function normalize(markup: string): string {
 describe("emitMarkup", () => {
   it("writes the action signature onto its native host", () => {
     expect(normalize(emitMarkup(saveButton))).toBe(
-      '<button class="sk-button sk-interactive" data-sk-button data-variant="solid" data-tone="accent" data-size="md">Guardar</button>',
+      '<button class="sk-button sk-interactive" data-sk-button data-variant="solid" data-tone="accent" data-size="md" type="button">Guardar</button>',
     );
   });
 
@@ -77,6 +77,8 @@ describe("emitMarkup", () => {
     const tree: UsageTree = {
       contract: "box",
       signature: "Box",
+      /* A real Box: its visual options are what it is for, and the contract refuses one with none. */
+      options: { padding: "md" },
       attrs: { class: "consumer-shell" },
       children: "Content",
     };

@@ -15,6 +15,7 @@ export type FadeEdgeDirection = "to-bottom" | "to-top" | "to-right" | "to-left";
 
 export const fadeEdgeContract = {
   id: "fade-edge",
+  category: "layout",
   css: "@skryensya/core/components/fade-edge.css",
   parts: fadeEdgeParts,
   hooks: [
@@ -44,6 +45,8 @@ export const fadeEdgeContract = {
       intent: ["soften-a-clipped-edge", "overflow-fade", "paint-only-wrapper"],
       host: { element: "div" },
       options: ["mode", "direction", "size", "color"],
+      /* The colour only paints in `color` mode; with the default transparent fade it is set and unused. */
+      excludes: { "mode=transparent": ["color"] },
       slots: { children: { accepts: "node", required: true } },
       template: { element: "div", part: "root", host: true, slot: "children" },
       react: { from: "@skryensya/react/fade-edge", name: "FadeEdge" },

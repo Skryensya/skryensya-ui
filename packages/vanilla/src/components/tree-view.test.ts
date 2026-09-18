@@ -62,7 +62,7 @@ describe("TreeView Vanilla contracts", () => {
   it("expands a branch from its control and says so", async () => {
     const root = markup();
     const onExpanded = vi.fn();
-    root.addEventListener("sk-expanded-change", onExpanded);
+    root.addEventListener("sk:treeviewexpandedchange", onExpanded);
 
     fireEvent.click(control("src"));
 
@@ -81,7 +81,7 @@ describe("TreeView Vanilla contracts", () => {
   it("selects a leaf and reports the value the composition wrote", async () => {
     const root = markup();
     const onSelection = vi.fn();
-    root.addEventListener("sk-selection-change", onSelection);
+    root.addEventListener("sk:treeviewselectionchange", onSelection);
 
     fireEvent.click(node("README.md"));
 
@@ -114,9 +114,9 @@ describe("TreeView Vanilla contracts", () => {
   });
 
   it("leaves a disabled node out of the selection", async () => {
-    const root = markup({ tree: "disabled" });
+    const root = markup({ tree: "data-disabled" });
     const onSelection = vi.fn();
-    root.addEventListener("sk-selection-change", onSelection);
+    root.addEventListener("sk:treeviewselectionchange", onSelection);
 
     expect(node("src").getAttribute("data-disabled")).toBe("");
     fireEvent.click(control("src"));
@@ -134,7 +134,7 @@ describe("TreeView Vanilla contracts", () => {
   it("stops the machine when the mount is destroyed", async () => {
     const root = markup();
     const onSelection = vi.fn();
-    root.addEventListener("sk-selection-change", onSelection);
+    root.addEventListener("sk:treeviewselectionchange", onSelection);
 
     destroyMount(root);
     fireEvent.click(node("README.md"));

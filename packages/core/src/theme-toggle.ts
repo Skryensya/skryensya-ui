@@ -33,7 +33,7 @@ export const colorModePreference = definePreference<ColorMode>({
 
 export const themeToggleEvents = {
   /** Bubbles from the button after a cycle. `detail.value` is the new ColorMode. */
-  change: "sk-theme-toggle-change",
+  change: "sk:themetogglechange",
 } as const;
 
 /** Default English accessible names; apps override via label attrs or the `labels` React prop. */

@@ -54,6 +54,18 @@ describe("layout primitives", () => {
     expect(grid?.querySelector("[data-span='2']")?.textContent).toBe("Featured");
   });
 
+  it("writes data-fill when Grid asks for an equal resting floor", () => {
+    const ui = render(
+      <Grid columns={5} responsive fill>
+        <div>A</div>
+      </Grid>,
+    );
+
+    const grid = ui.container.querySelector(".sk-grid");
+    expect(grid?.hasAttribute("data-responsive")).toBe(true);
+    expect(grid?.hasAttribute("data-fill")).toBe(true);
+  });
+
   it("renders LayoutGrid while leaving width on its semantic children", () => {
     const ui = render(
       <LayoutGrid as="main" className="document">
@@ -87,6 +99,13 @@ describe("layout primitives", () => {
 
     const wrapper = ui.container.querySelector("main.sk-wrapper");
     expect(wrapper?.getAttribute("data-size")).toBe("lg");
+  });
+
+  it("writes Wrapper's default md size and keeps the caller's class", () => {
+    const ui = render(<Wrapper className="page">Document</Wrapper>);
+
+    const wrapper = ui.container.querySelector("div.sk-wrapper.page");
+    expect(wrapper?.getAttribute("data-size")).toBe("md");
   });
 
   it("renders Footer as a contentinfo landmark with its documented defaults", () => {

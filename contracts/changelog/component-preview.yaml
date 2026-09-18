@@ -3,8 +3,46 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "b79ae1a1be8e1a05"
+surface: "c59625b95eb27f1b"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: El contrato declara los eventos de preferencia del documento
+      body: >-
+        <code>events.bindingChange</code> y <code>events.screenChange</code> documentan los
+        CustomEvent que el enhancer completo publica en <code>document</code> cuando cambia Vanilla|
+        React o el preset de pantalla. <code>ComponentPreview.bare</code> no los dispara; siguen
+        siendo el canal DOM de la familia. React tipa <code>title</code>/<code>note</code> como
+        string, alineado con los slots de texto.
+    en:
+      title: The contract declares the document preference events
+      body: >-
+        <code>events.bindingChange</code> and <code>events.screenChange</code> document the
+        CustomEvents the full enhancer publishes on <code>document</code> when Vanilla|React or the
+        screen preset changes. <code>ComponentPreview.bare</code> does not fire them; they remain
+        the family's DOM channel. React types <code>title</code>/<code>note</code> as string, matching
+        the text slots.
   - date: 2026-08-11
     kind: feature
     es:

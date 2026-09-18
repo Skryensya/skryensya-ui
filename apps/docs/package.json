@@ -13,7 +13,8 @@
     "dev:logs:follow": "astro dev logs --follow",
     "dev:restart": "astro dev stop ; astro dev --background --port 4173",
     "dev:clean": "astro dev stop ; rm -rf node_modules/.vite .astro ; astro dev --background --port 4173 --force",
-    "check": "astro check && vitest run",
+    "check": "node scripts/generate-component-icons.ts --check && astro check && vitest run",
+    "icons:components": "node scripts/generate-component-icons.ts",
     "build": "astro build",
     "preview": "astro preview"
   },

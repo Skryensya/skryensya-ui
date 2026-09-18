@@ -2,9 +2,31 @@
  * TIER 3, LOADER
  *
  * Indeterminate work, distinct from Progress: there is no value to report. The mark follows
- * currentColor so it works inside controls and status surfaces without a tone matrix. Variants are
- * motion designs on one empty root (pseudos only). Speed redeclares the duration styling hook from
- * motion-loading intents. Reduced motion keeps every pending shape but freezes continuous motion.
+ * currentColor so it works inside controls and status surfaces without a tone matrix. Speed
+ * redeclares the duration styling hook from motion-loading intents. Reduced motion keeps every
+ * pending shape but freezes continuous motion.
+ *
+ * TWO ANATOMIES, and the variant decides which.
+ *
+ *   - Six designs draw themselves out of the root's two pseudo-elements and have no children at all
+ *     (ring, sweep, bars, dots, arc, comet, orbit, clock; the last four share ::before as a band and
+ *     ::after as the thing travelling on it).
+ *   - Four are a ring of marks that fade in SEQUENCE (spokes, ticks, beads, compass). A stagger
+ *     needs one real element per mark, so these carry `.sk-loader__tick` children. How many is
+ *     `loaderTicks` in core, shared by React and the emitter so the two cannot disagree.
+ *
+ * A TICK IS A FULL-SIZE LAYER, not the mark. The mark is the tick's own ::before, pinned at 12
+ * o'clock; the tick fills the root, so rotating it about its own centre orbits the mark about the
+ * LOADER's centre. That is what lets compass animate the independent `rotate` property while
+ * `transform` holds each mark's resting angle: two rotations, one origin, no wrapper element.
+ *
+ * TEMPO IS A MULTIPLIER, NOT A DURATION. Each design needs its own pace to read right - a
+ * twelve-spoke chase wants longer than a four-tick compass - but `speed` has to stay orthogonal to
+ * `variant`, so a design may not name milliseconds. It names a ratio instead, and
+ * `--sk-loader-cycle` is where the two meet.
+ *
+ * ANIMATION LONGHANDS ONLY, never the `animation` shorthand: the minifier folds longhands into it
+ * and has been observed emitting an invalid declaration when it does.
  */
 @layer components {
   .sk-loader {
@@ -12,6 +34,10 @@
     --sk-loader-stroke-width: var(--size-focus-ring);
     --sk-loader-track-color: color-mix(in oklab, currentColor 22%, transparent);
     --sk-loader-duration: var(--motion-loading-duration);
+    /* Per-design pace, as a ratio of the authored duration. See TEMPO above. */
+    --sk-loader-tempo: 1;
+    /* What every animation in this sheet actually runs at. Derived: override duration or tempo. */
+    --sk-loader-cycle: calc(var(--sk-loader-duration) * var(--sk-loader-tempo));
     --sk-loader-easing: var(--motion-loading-easing);
     --sk-loader-oscillation-easing: var(--motion-loading-oscillation-easing);
 
@@ -46,13 +72,20 @@
     block-size: 100%;
   }
 
+  /*
+   * The band every rotating variant re-purposes, and on its own the default ring: a full faint
+   * track with the leading quarter in currentColor.
+   */
   .sk-loader::before {
     content: "";
     display: block;
     border: var(--sk-loader-stroke-width) solid var(--sk-loader-track-color);
     border-block-start-color: currentColor;
     border-radius: 50%;
-    animation: sk-loader-spin var(--sk-loader-duration) var(--sk-loader-easing) infinite;
+    animation-name: sk-loader-spin;
+    animation-duration: var(--sk-loader-cycle);
+    animation-timing-function: var(--sk-loader-easing);
+    animation-iteration-count: infinite;
   }
 
   /* bars: two alternating pairs scale on the block axis; nothing rotates. */
@@ -68,16 +101,19 @@
     background: currentColor;
     box-shadow: calc(var(--sk-loader-size) * 0.5) 0 0 currentColor;
     transform-origin: center;
+    animation-duration: var(--sk-loader-cycle);
+    animation-timing-function: var(--sk-loader-oscillation-easing);
+    animation-iteration-count: infinite;
   }
 
   .sk-loader[data-variant="bars"]::before {
     inset-inline-start: 7%;
-    animation: sk-loader-bars-up var(--sk-loader-duration) var(--sk-loader-oscillation-easing) infinite;
+    animation-name: sk-loader-bars-up;
   }
 
   .sk-loader[data-variant="bars"]::after {
     inset-inline-start: 32%;
-    animation: sk-loader-bars-down var(--sk-loader-duration) var(--sk-loader-oscillation-easing) infinite;
+    animation-name: sk-loader-bars-down;
   }
 
   /* dots: a single active dot steps across a static three-dot track; no circular path. */
@@ -98,12 +134,15 @@
     box-shadow:
       calc(var(--sk-loader-size) * 0.32) 0 0 var(--sk-loader-track-color),
       calc(var(--sk-loader-size) * 0.64) 0 0 var(--sk-loader-track-color);
-    animation: none;
+    animation-name: none;
   }
 
   .sk-loader[data-variant="dots"]::after {
     background: currentColor;
-    animation: sk-loader-dots var(--sk-loader-duration) steps(1, end) infinite;
+    animation-name: sk-loader-dots;
+    animation-duration: var(--sk-loader-cycle);
+    animation-timing-function: steps(1, end);
+    animation-iteration-count: infinite;
   }
 
   /* sweep: soft conic fan behind a doughnut mask. */
@@ -121,6 +160,282 @@
       transparent calc(100% - var(--sk-loader-stroke-width) - 0.5px),
       #000 calc(100% - var(--sk-loader-stroke-width) + 0.5px)
     );
+  }
+
+  /*
+   * arc and ring: a quarter of the circle in currentColor, with ROUND caps.
+   *
+   * One conic gradient paints both the sweep and the track, because the mask that turns a disc into
+   * a band applies to the whole layer and cannot be given two of them. The caps are the reason
+   * ::after exists here: a border-drawn arc mitres its ends into a wedge, and a mask can round a
+   * silhouette but never add paint. So ::after is a FULL-SIZE layer carrying two stroke-sized
+   * radial gradients, one flush to the top and one flush to the right - which is exactly a quarter
+   * apart, so no trigonometry is needed and the two layers rotate as one.
+   */
+  .sk-loader[data-variant="arc"]::before,
+  .sk-loader[data-variant="ring"]::before {
+    border: 0;
+    border-radius: 50%;
+    mask: radial-gradient(
+      farthest-side,
+      transparent calc(100% - var(--sk-loader-stroke-width) - 0.5px),
+      #000 calc(100% - var(--sk-loader-stroke-width) + 0.5px)
+    );
+  }
+
+  .sk-loader[data-variant="arc"]::before {
+    background: conic-gradient(from 0deg, currentColor 0 25%, transparent 25%);
+  }
+
+  .sk-loader[data-variant="ring"]::before {
+    background: conic-gradient(
+      from 0deg,
+      currentColor 0 25%,
+      var(--sk-loader-track-color) 25%
+    );
+  }
+
+  .sk-loader[data-variant="arc"]::after,
+  .sk-loader[data-variant="ring"]::after,
+  .sk-loader[data-variant="comet"]::after,
+  .sk-loader[data-variant="orbit"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-repeat: no-repeat;
+    background-size: var(--sk-loader-stroke-width) var(--sk-loader-stroke-width);
+    animation-name: sk-loader-spin;
+    animation-duration: var(--sk-loader-cycle);
+    animation-timing-function: var(--sk-loader-easing);
+    animation-iteration-count: infinite;
+  }
+
+  .sk-loader[data-variant="arc"]::after,
+  .sk-loader[data-variant="ring"]::after {
+    background-image:
+      radial-gradient(closest-side, currentColor 100%, transparent),
+      radial-gradient(closest-side, currentColor 100%, transparent);
+    background-position: 50% 0, 100% 50%;
+  }
+
+  /* comet: the band fades from nothing to full, with a solid head running ahead of it. */
+  .sk-loader[data-variant="comet"] {
+    --sk-loader-tempo: 0.75;
+  }
+
+  .sk-loader[data-variant="comet"]::before {
+    border: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent, currentColor);
+    mask: radial-gradient(
+      farthest-side,
+      transparent calc(100% - var(--sk-loader-stroke-width) - 0.5px),
+      #000 calc(100% - var(--sk-loader-stroke-width) + 0.5px)
+    );
+  }
+
+  .sk-loader[data-variant="comet"]::after {
+    background-image: radial-gradient(closest-side, currentColor 100%, transparent);
+    background-position: 50% 0;
+  }
+
+  /* orbit: one dot travelling a hairline track it never leaves. */
+  .sk-loader[data-variant="orbit"] {
+    --sk-loader-tempo: 0.85;
+  }
+
+  .sk-loader[data-variant="orbit"]::before {
+    border-width: max(1px, calc(var(--sk-loader-stroke-width) / 2));
+    border-color: var(--sk-loader-track-color);
+    animation-name: none;
+  }
+
+  .sk-loader[data-variant="orbit"]::after {
+    background-image: radial-gradient(closest-side, currentColor 100%, transparent);
+    background-position: 50% 0;
+  }
+
+  /* clock: a hand sweeping a faint face. */
+  .sk-loader[data-variant="clock"] {
+    --sk-loader-tempo: 1.25;
+  }
+
+  .sk-loader[data-variant="clock"]::before {
+    border: 0;
+    border-radius: 50%;
+    background: var(--sk-loader-track-color);
+    animation-name: none;
+  }
+
+  /*
+   * `inline-size`/`block-size` back to auto FIRST, or the hand loses the face's centre.
+   *
+   * Every `.sk-loader` pseudo inherits an explicit `100%` box from the base rule above. An explicit
+   * size beats the second inset of each axis, so `inset: 12%` alone does not inset anything: the
+   * layer stays full-size and is merely pushed 12% down and right, which reads as a hand orbiting a
+   * point that is not the middle of its own face. Only with `auto` do the four insets decide the box.
+   */
+  .sk-loader[data-variant="clock"]::after {
+    content: "";
+    position: absolute;
+    inline-size: auto;
+    block-size: auto;
+    inset: 12%;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, currentColor 0 25%, transparent 25%);
+    animation-name: sk-loader-spin;
+    animation-duration: var(--sk-loader-cycle);
+    animation-timing-function: var(--sk-loader-easing);
+    animation-iteration-count: infinite;
+  }
+
+  /*
+   * THE STAGGERED FAMILY. ::before would draw a ring behind the marks, so it draws nothing.
+   *
+   * Gated on the marks BEING THERE, which is what makes the enhancer safe to depend on. These
+   * variants are authored as an empty root and `mountLoader` injects the marks, so between parse
+   * and enhancement (or forever, if scripts never run) the root has no marks at all. Without the
+   * `:has()` the suppression would still apply and a reader would get an empty box where the wait
+   * should be. With it, an un-enhanced staggered variant simply paints the default ring: not the
+   * design that was asked for, but honestly a spinner.
+   */
+  .sk-loader[data-variant="spokes"]:has(.sk-loader__tick)::before,
+  .sk-loader[data-variant="ticks"]:has(.sk-loader__tick)::before,
+  .sk-loader[data-variant="beads"]:has(.sk-loader__tick)::before,
+  .sk-loader[data-variant="compass"]:has(.sk-loader__tick)::before {
+    content: none;
+  }
+
+  .sk-loader__tick {
+    position: absolute;
+    inset: 0;
+    /* The resting angle. `rotate` is left free so compass can turn the whole set on top of it. */
+    transform: rotate(calc(var(--sk-loader-step, 0) * var(--sk-loader-tick-angle, 0deg)));
+  }
+
+  .sk-loader__tick::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    background: currentColor;
+  }
+
+  /*
+   * WHICH mark a tick is, said once for every staggered variant.
+   *
+   * A variant with eight marks has eight children, so the rules past its count simply never match.
+   * This is the half loading.dev writes as an inline `--ld-step` on every element; here it is paint,
+   * so it stays in the stylesheet and neither binding computes anything.
+   */
+  .sk-loader__tick:nth-child(1) { --sk-loader-step: 0; }
+  .sk-loader__tick:nth-child(2) { --sk-loader-step: 1; }
+  .sk-loader__tick:nth-child(3) { --sk-loader-step: 2; }
+  .sk-loader__tick:nth-child(4) { --sk-loader-step: 3; }
+  .sk-loader__tick:nth-child(5) { --sk-loader-step: 4; }
+  .sk-loader__tick:nth-child(6) { --sk-loader-step: 5; }
+  .sk-loader__tick:nth-child(7) { --sk-loader-step: 6; }
+  .sk-loader__tick:nth-child(8) { --sk-loader-step: 7; }
+  .sk-loader__tick:nth-child(9) { --sk-loader-step: 8; }
+  .sk-loader__tick:nth-child(10) { --sk-loader-step: 9; }
+  .sk-loader__tick:nth-child(11) { --sk-loader-step: 10; }
+  .sk-loader__tick:nth-child(12) { --sk-loader-step: 11; }
+
+  /*
+   * The three fading variants share one rule and differ only in geometry and resting opacity.
+   *
+   * The delay is NEGATIVE by construction - `(step - count) / count` is never positive - so every
+   * mark is already mid-cycle on the first painted frame. A positive stagger would make the ring
+   * visibly wind up once on mount, which is the tell of a hand-rolled spinner.
+   */
+  .sk-loader[data-variant="spokes"] .sk-loader__tick,
+  .sk-loader[data-variant="ticks"] .sk-loader__tick,
+  .sk-loader[data-variant="beads"] .sk-loader__tick {
+    animation-duration: var(--sk-loader-cycle);
+    animation-timing-function: var(--sk-loader-easing);
+    animation-iteration-count: infinite;
+    animation-delay: calc(
+      var(--sk-loader-cycle) * (var(--sk-loader-step, 0) - var(--sk-loader-tick-count, 1)) /
+        var(--sk-loader-tick-count, 1)
+    );
+  }
+
+  /* spokes: twelve tapered bars, the chase everybody recognises. */
+  .sk-loader[data-variant="spokes"] {
+    --sk-loader-tempo: 1.25;
+    --sk-loader-tick-angle: 30deg;
+    --sk-loader-tick-count: 12;
+  }
+
+  .sk-loader[data-variant="spokes"] .sk-loader__tick {
+    animation-name: sk-loader-spokes-fade;
+  }
+
+  .sk-loader[data-variant="spokes"] .sk-loader__tick::before {
+    inline-size: var(--sk-loader-stroke-width);
+    block-size: 30%;
+    border-radius: var(--radius-pill);
+  }
+
+  /* ticks: the same chase at eight marks, which reads calmer at small sizes. */
+  .sk-loader[data-variant="ticks"] {
+    --sk-loader-tempo: 0.85;
+    --sk-loader-tick-angle: 45deg;
+    --sk-loader-tick-count: 8;
+  }
+
+  .sk-loader[data-variant="ticks"] .sk-loader__tick {
+    animation-name: sk-loader-ticks-fade;
+  }
+
+  .sk-loader[data-variant="ticks"] .sk-loader__tick::before {
+    inline-size: var(--sk-loader-stroke-width);
+    block-size: 26%;
+    border-radius: var(--radius-pill);
+  }
+
+  /* beads: eight dots on the rim rather than eight bars across it. */
+  .sk-loader[data-variant="beads"] {
+    --sk-loader-tempo: 0.85;
+    --sk-loader-tick-angle: 45deg;
+    --sk-loader-tick-count: 8;
+  }
+
+  .sk-loader[data-variant="beads"] .sk-loader__tick {
+    animation-name: sk-loader-beads-fade;
+  }
+
+  .sk-loader[data-variant="beads"] .sk-loader__tick::before {
+    inline-size: 20%;
+    block-size: 20%;
+    border-radius: 50%;
+  }
+
+  /*
+   * compass: four marks that TURN TOGETHER a quarter at a time, with no stagger at all.
+   *
+   * The only one here whose marks do not fade, so it needs the set to rotate about the loader's
+   * centre. `transform` is already spent on the resting angle, so the turn animates the independent
+   * `rotate` property: a separate property, composed by the browser, sharing the same origin.
+   */
+  .sk-loader[data-variant="compass"] {
+    --sk-loader-tempo: 0.5;
+    --sk-loader-tick-angle: 90deg;
+    --sk-loader-tick-count: 4;
+  }
+
+  .sk-loader[data-variant="compass"] .sk-loader__tick {
+    animation-name: sk-loader-compass-turn;
+    animation-duration: var(--sk-loader-cycle);
+    animation-timing-function: var(--sk-loader-oscillation-easing);
+    animation-iteration-count: infinite;
+  }
+
+  .sk-loader[data-variant="compass"] .sk-loader__tick::before {
+    inline-size: var(--sk-loader-stroke-width);
+    block-size: 28%;
+    border-radius: var(--radius-pill);
   }
 
   @keyframes sk-loader-spin {
@@ -143,12 +458,40 @@
     66%, 99% { transform: translateX(calc(var(--sk-loader-size) * 0.64)); }
   }
 
+  @keyframes sk-loader-spokes-fade {
+    from { opacity: 1; }
+    to { opacity: 0.15; }
+  }
+
+  @keyframes sk-loader-ticks-fade {
+    from { opacity: 1; }
+    to { opacity: 0.4; }
+  }
+
+  @keyframes sk-loader-beads-fade {
+    from { opacity: 1; }
+    to { opacity: 0.2; }
+  }
+
+  @keyframes sk-loader-compass-turn {
+    to { rotate: 90deg; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .sk-loader::before,
     .sk-loader::after,
     .sk-loader[data-variant]::before,
-    .sk-loader[data-variant]::after {
-      animation: none;
+    .sk-loader[data-variant]::after,
+    .sk-loader__tick {
+      animation-name: none;
+    }
+
+    /*
+     * Every mark at one opacity, rather than frozen mid-stagger: a stopped chase leaves one mark
+     * bright and its neighbour nearly gone, which reads as a rendering fault rather than as a wait.
+     */
+    .sk-loader__tick {
+      opacity: 0.6;
     }
   }
 
@@ -180,6 +523,45 @@
 
     .sk-loader[data-variant="sweep"]::before {
       background: conic-gradient(from 0deg, transparent 0 40%, CanvasText 100%);
+    }
+
+    /*
+     * A conic gradient is a background image, which forced colors leaves untouched: the band would
+     * survive a high-contrast theme in whatever hue it already had. These redraw it in system
+     * colors instead.
+     */
+    .sk-loader[data-variant="arc"]::before {
+      background: conic-gradient(from 0deg, CanvasText 0 25%, transparent 25%);
+    }
+
+    .sk-loader[data-variant="ring"]::before {
+      background: conic-gradient(from 0deg, CanvasText 0 25%, GrayText 25%);
+    }
+
+    .sk-loader[data-variant="comet"]::before {
+      background: conic-gradient(from 0deg, GrayText, CanvasText);
+    }
+
+    .sk-loader[data-variant="clock"]::before {
+      background: GrayText;
+    }
+
+    .sk-loader[data-variant="clock"]::after {
+      background: conic-gradient(from 0deg, CanvasText 0 25%, transparent 25%);
+    }
+
+    .sk-loader[data-variant="arc"]::after,
+    .sk-loader[data-variant="ring"]::after,
+    .sk-loader[data-variant="comet"]::after,
+    .sk-loader[data-variant="orbit"]::after {
+      background-image:
+        radial-gradient(closest-side, CanvasText 100%, transparent),
+        radial-gradient(closest-side, CanvasText 100%, transparent);
+    }
+
+    .sk-loader__tick::before {
+      forced-color-adjust: none;
+      background: CanvasText;
     }
   }
 }

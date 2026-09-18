@@ -202,7 +202,7 @@ El modelo es `tabs.astro`, con tres ejemplos numerados:
   solicitud". El prop nuevo tiene una razón de producto, no solo una razón de API.
 - **`3. Orientación y estado`**: agrega orientación vertical y activación manual, otra vez atado a un
   escenario real (ajustes de un workspace) donde mover el foco con flechas no debe disparar el cambio de
-  panel pesado; Enter o Espacio confirma. El ejemplo también conecta `sk-value-change` a una región viva
+  panel pesado; Enter o Espacio confirma. El ejemplo también conecta `sk:tabsvaluechange` a una región viva
   visible, mostrando el evento en uso, no solo declarado.
 
 **La prueba antes de agregar un ejemplo más complejo**: si no se puede nombrar, en una oración, qué

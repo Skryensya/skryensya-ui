@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "d77e59b0cc63536f"
+surface: "7bcad44afb91f05a"
 entries:
   - date: 2026-08-11
     kind: feature
@@ -42,3 +42,31 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: status decide el paso actual, y orientation entra al contrato
+      body: >-
+        Una entrada ya no lleva <code>current</code>: el paso con <code>status: "current"</code>
+        recibe <code>aria-current="step"</code>. Antes eran dos datos sueltos, así que un árbol podía
+        marcar un paso como actual sin anunciarlo, y React (que lo derivaba del estado) contestaba
+        distinto que el markup. <code>orientation</code> fija la dirección del riel, lo que React ya
+        aceptaba como <code>data-orientation</code>.
+    en:
+      title: status decides the current stage, and orientation joins the contract
+      body: >-
+        An entry no longer takes <code>current</code>: the stage with <code>status: "current"</code>
+        gets <code>aria-current="step"</code>. They used to be two loose facts, so a tree could mark a
+        stage current without announcing it, and React (which derived it from status) answered
+        differently from the markup. <code>orientation</code> pins the rail's direction, what React
+        already took as <code>data-orientation</code>.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: A lo sumo un paso actual
+      body: >-
+        Dos pasos con <code>status: "current"</code> dejan de validar. Ninguno sigue siendo válido: un proceso terminado no tiene paso actual.
+    en:
+      title: At most one current stage
+      body: >-
+        Two stages with <code>status: "current"</code> stop validating. None is still valid: a finished process has no current stage.

@@ -201,8 +201,9 @@ const publicationContent = (t: Translate): UsageTree => ({
 
 /** Always-pending geometry: the status remains outside the decorative placeholder subtree. */
 export const publicationPlaceholderTree = (t: Translate): UsageTree => ({
-  contract: "box",
-  signature: "Box",
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "none" },
   attrs: { "aria-busy": "true", class: "placeholder-example" },
   children: [
     {
@@ -218,8 +219,9 @@ export const publicationPlaceholderTree = (t: Translate): UsageTree => ({
 
 /** Both states occupy one grid area; the frame script changes only state and accessibility attrs. */
 export const publicationSwapTree = (t: Translate): UsageTree => ({
-  contract: "box",
-  signature: "Box",
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "none" },
   attrs: { "aria-busy": "true", class: "placeholder-example" },
   children: [
     {
@@ -240,19 +242,22 @@ export const publicationSwapTree = (t: Translate): UsageTree => ({
       children: t("demo.placeholder.loading"),
     },
     {
-      contract: "box",
-      signature: "Box",
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "none" },
       attrs: { class: "placeholder-example__swap", "data-state": "loading" },
       children: [
         {
-          contract: "box",
-          signature: "Box",
+          contract: "layout",
+          signature: "Stack",
+          options: { gap: "none" },
           attrs: { "aria-hidden": "false", "data-placeholder-loading": "" },
           children: publicationPlaceholder(),
         },
         {
-          contract: "box",
-          signature: "Box",
+          contract: "layout",
+          signature: "Stack",
+          options: { gap: "none" },
           attrs: { "aria-hidden": "true", "data-placeholder-content": "" },
           children: publicationContent(t),
         },

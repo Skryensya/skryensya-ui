@@ -3,8 +3,58 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "4a8ef974a44ab027"
+surface: "34525d1f6e8fc93e"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Comment-thread declara compose de Button e Icon
+      body: >-
+        <code>compose</code> documenta controles vía <code>also: sk-button</code> en thread/comment/actions/vote/composer.
+    en:
+      title: Comment-thread declares compose of Button and Icon
+      body: >-
+        <code>compose</code> documents controls via <code>also: sk-button</code> on thread/comment/actions/vote/composer.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Los eventos del hilo quedan en el contrato, y React los despacha
+      body: >-
+        El contrato declara <code>events</code> (<code>sk:commentvote</code>,
+        <code>sk:commentreply</code>, <code>sk:commentdelete</code>,
+        <code>sk:commentdiscard</code>) y carga <code>visually-hidden.css</code> por
+        <code>hookSheets</code>. React despacha los mismos CustomEvent cancelables que Vanilla, así
+        un listener en el DOM sirve en ambos bindings. <code>preventDefault</code> sobre
+        <code>reply</code> conserva el borrador, igual que en el enhancer.
+    en:
+      title: Thread events land on the contract, and React dispatches them
+      body: >-
+        The contract now declares <code>events</code> (<code>sk:commentvote</code>,
+        <code>sk:commentreply</code>, <code>sk:commentdelete</code>,
+        <code>sk:commentdiscard</code>) and loads <code>visually-hidden.css</code> via
+        <code>hookSheets</code>. React dispatches the same cancelable CustomEvents Vanilla does, so
+        a plain-DOM listener works against either binding. <code>preventDefault</code> on
+        <code>reply</code> keeps the draft, matching the enhancer.
   - date: 2026-09-07
     kind: bugfix
     es:
@@ -263,3 +313,15 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Los textos por defecto pasan a inglés
+      body: >-
+        El kit es una librería en inglés y sus defaults estaban en español: <code>collapseLabel</code> Hide replies, <code>voteUpLabel</code> Upvote, <code>voteDownLabel</code> Downvote, <code>replyLabel</code> Reply, <code>deleteLabel</code> Delete, <code>submitLabel</code> Post, <code>cancelLabel</code> Cancel, <code>composerTriggerLabel</code> Write a comment. Una interfaz en
+        otro idioma pasa sus propios textos, y el <code>locale</code> que corresponda.
+    en:
+      title: Default texts move to English
+      body: >-
+        The kit is an English library and its defaults were Spanish: <code>collapseLabel</code> Hide replies, <code>voteUpLabel</code> Upvote, <code>voteDownLabel</code> Downvote, <code>replyLabel</code> Reply, <code>deleteLabel</code> Delete, <code>submitLabel</code> Post, <code>cancelLabel</code> Cancel, <code>composerTriggerLabel</code> Write a comment. An interface in another
+        language passes its own texts, and the <code>locale</code> it needs.

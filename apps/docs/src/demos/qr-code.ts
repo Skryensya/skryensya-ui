@@ -289,7 +289,7 @@ export const qrCodePopoverTree = (locale: Locale): UsageTree => {
   return {
     contract: "popover",
     signature: "Popover",
-    options: { panelId: "qr-handoff", placement: "block-end", triggerVariant: "outline" },
+    options: { panelId: "qr-handoff", placement: "block-end", triggerVariant: "soft", closeLabel: locale === "es" ? "Cerrar" : "Close" },
     slots: {
       trigger: locale === "es" ? "Abrir en el teléfono" : "Open on my phone",
       title: c.scanToOpen,

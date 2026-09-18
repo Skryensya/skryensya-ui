@@ -7,9 +7,11 @@ Placeholder:
   avoidWhen:
     - "no se sabe qué va a aparecer; ahí un Loader dice más"
     - "el texto es un párrafo; ahí varias líneas sueltas son Placeholder.paragraph, que ya sabe cómo termina un párrafo"
+    - "la región está vacía de propósito (sin resultados, primera visita); eso es EmptyState, no un skeleton"
   alternatives:
     - Placeholder.paragraph
     - Loader
+    - EmptyState
 
 Placeholder.paragraph:
   useWhen:
@@ -20,6 +22,7 @@ Placeholder.paragraph:
     - "las líneas tienen anchos que significan algo distinto entre sí (un nombre, una fecha); eso son Placeholder sueltos con su propio width"
   alternatives:
     - Placeholder
+    - Loader
 
 Placeholder.block:
   useWhen:
@@ -27,8 +30,10 @@ Placeholder.block:
     - "el bloque va dentro de un contenedor recortado (ImageFrame, Box con overflow) y tiene que tomar su caja y su esquina: eso es `fill`"
   avoidWhen:
     - "lo que falta es texto; un rectángulo del alto de un párrafo no anticipa líneas, anticipa una imagen"
+    - "el marco ya existe y solo falta el src; eso es ImageFrame con Placeholder.block fill adentro, no un bloque suelto fingiendo el marco"
   alternatives:
     - Placeholder.paragraph
+    - ImageFrame
     - Loader
 
 Placeholder.circle:
@@ -38,3 +43,4 @@ Placeholder.circle:
     - "la forma final no es circular; el skeleton no debe prometer una silueta que el contenido no tiene"
   alternatives:
     - Placeholder.block
+    - Avatar.initials

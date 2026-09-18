@@ -3,8 +3,57 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "0df1e5844b403bb4"
+surface: "386595a3dec56d63"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: authoredAttrs publica data-sk-vaul-close
+      body: >-
+        El contrato declara <code>authoredAttrs</code>: <code>data-sk-vaul-close</code> se escribe a
+        mano en cualquier control dentro del panel (normalmente un Button) y lo cierra. Antes el
+        gancho solo existia dentro del template, asi que un Button que lo llevaba fallaba con
+        <code>unknown-attr</code>.
+    en:
+      title: authoredAttrs publishes data-sk-vaul-close
+      body: >-
+        The contract declares <code>authoredAttrs</code>: <code>data-sk-vaul-close</code> is authored
+        on any control inside the panel (usually a Button) and closes it. The hook used to live only
+        inside the template, so a Button carrying it failed with <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
   - date: 2026-08-17
     kind: breaking
     target: label
@@ -82,3 +131,83 @@ entries:
         both sheets, Vaul's is now enough; if you imported only drawer's, you were already missing
         Vaul's (that sheet always said so). The 7 <code>--sk-drawer-*</code> hooks are now declared
         by the Vaul contract, so the compiler checks them for the first time.
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: El arrastre de Vaul se puede componer y funciona igual en los dos bindings
+      body: >-
+        El contrato publica <code>draggable</code>, <code>dismissThreshold</code> y el evento
+        <code>openChange</code> (<code>sk:openchange</code>). En React, Vaul ahora arrastra desde el
+        handle, cierra al tocar el fondo, anuncia cada cierre con <code>onOpenChange</code> y acepta
+        <code>ref</code> para llamar a <code>showModal()</code>. En Vanilla, el borde por defecto pasa
+        de <code>inline-start</code> a <code>block-end</code>, el mismo del contrato.
+    en:
+      title: Vaul's drag is composable and behaves the same in both bindings
+      body: >-
+        The contract publishes <code>draggable</code>, <code>dismissThreshold</code> and the
+        <code>openChange</code> event (<code>sk:openchange</code>). In React, Vaul now drags from the
+        handle, closes on a backdrop tap, announces every close through <code>onOpenChange</code> and
+        takes a <code>ref</code> to call <code>showModal()</code>. In Vanilla, the default edge moves
+        from <code>inline-start</code> to <code>block-end</code>, the contract's own.
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: El contrato declara el rango de sus números
+      body: >-
+        <code>dismissThreshold</code> va de 0 a 1. Es una fracción del tamaño del panel; un 40 dejaba el panel imposible de cerrar arrastrando.
+    en:
+      title: The contract declares the range of its numbers
+      body: >-
+        <code>dismissThreshold</code> goes from 0 to 1. It is a fraction of the panel's size; a 40 made the panel impossible to drag closed.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Un árbol ya puede abrir y cerrar un Vaul
+      body: >-
+        Entran <code>Vaul.Trigger</code> y <code>Vaul.Close</code>. El trigger nombra el
+        <code>panelId</code> del panel en <code>opens</code> (escrito como
+        <code>data-sk-vaul-open</code> y <code>aria-controls</code>), y el validador rechaza uno que
+        apunta a un panel que no está en el árbol. Antes esa conexión vivía sólo en atributos del
+        enhancer, fuera del contrato, y en React no existía. Los dos botones toman el aspecto de
+        Button con <code>buttonVariant</code>, <code>buttonSize</code> y <code>buttonIconOnly</code>.
+    en:
+      title: A tree can now open and close a Vaul
+      body: >-
+        <code>Vaul.Trigger</code> and <code>Vaul.Close</code> join the contract. The trigger names
+        the panel's <code>panelId</code> in <code>opens</code> (written as
+        <code>data-sk-vaul-open</code> and <code>aria-controls</code>), and the validator rejects one
+        that points at a panel the tree does not have. That pairing used to live only in enhancer
+        attributes outside the contract, and did not exist in React. Both buttons take Button's look
+        through <code>buttonVariant</code>, <code>buttonSize</code> and <code>buttonIconOnly</code>.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: Los hooks del arrastre quedan marcados como de sólo lectura
+      body: >-
+        <code>--sk-vaul-drag-offset</code> y <code>--sk-vaul-drag-progress</code> se declaran en <code>outputHooks</code>: los escriben los bindings en cada movimiento, así que se leen desde la hoja pero sobrescribirlos no tiene efecto.
+    en:
+      title: The drag hooks are marked read-only
+      body: >-
+        <code>--sk-vaul-drag-offset</code> and <code>--sk-vaul-drag-progress</code> are declared in <code>outputHooks</code>: the bindings write them on every move, so a stylesheet reads them but overriding them has no effect.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Cada evento lleva el nombre de su familia
+      body: >-
+        <code>sk:openchange</code> → <code>sk:vaulopenchange</code>. Un mismo nombre ya no lo despachan varias familias: un listener sobre una raíz deja
+        de recibir los eventos de un componente distinto anidado adentro.
+    en:
+      title: Every event carries its family in its name
+      body: >-
+        <code>sk:openchange</code> → <code>sk:vaulopenchange</code>. No two families dispatch the same name any more: a listener on a root stops receiving
+        the events of a different component nested inside it.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: El nombre puede venir de aria-labelledby, y los botones suman buttonTone
+      body: >-
+        <code>label</code> deja de ser obligatorio si <code>aria-labelledby</code> apunta a un título dentro del panel. <code>buttonVariant</code>, <code>buttonTone</code> y <code>buttonSize</code> se validan contra Button.
+    en:
+      title: The name can come from aria-labelledby, and the buttons gain buttonTone
+      body: >-
+        <code>label</code> is no longer required when <code>aria-labelledby</code> points at a heading inside the panel. <code>buttonVariant</code>, <code>buttonTone</code> and <code>buttonSize</code> are validated against Button.

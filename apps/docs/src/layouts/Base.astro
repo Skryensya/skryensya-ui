@@ -7,6 +7,9 @@
 /* The system's own face, before the tokens that name it: the sheet only declares @font-face, so it
    has to be parsed by the time the first rule reads --scale-font-family-sans. */
 import "@skryensya/core/fonts/hanken-grotesk.css";
+/* The same file the sheet's latin `@font-face` points at, so the preload below and the face resolve to
+   one hashed URL and the browser reuses the preloaded bytes instead of fetching twice. */
+import hankenLatinUrl from "@skryensya/core/fonts/files/hanken-grotesk-latin-wght-normal.woff2?url";
 import "@skryensya/core/tokens.scss"; // trae el state layer en base, no es un import aparte
 import "@skryensya/core/modes/hc.scss";
 import "@skryensya/core/dimensions/radius.scss";
@@ -448,6 +451,13 @@ const PALETTE_PRESETS = palettePresets(locale);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {/*
+      FONT PRELOAD. Without it the face is discovered only once the CSS is parsed and a text node
+      asks for it, so it lands after first paint and the swap reflows every line set in the
+      fallback. Only the upright latin file: italic and latin-ext stay on demand. `crossorigin` is
+      required for fonts even same-origin, or the preload is fetched twice.
+    */}
+    <link rel="preload" href={hankenLatinUrl} as="font" type="font/woff2" crossorigin />
 
     {/*
       LANGUAGE, RESOLVED BEFORE ANYTHING PAINTS.
@@ -1097,7 +1107,7 @@ const PALETTE_PRESETS = palettePresets(locale);
       `showModal()`'s own focus lands on the close button at the top, so a screen-reader user starts
       Tabbing from a different place than the sighted view is scrolled to. Focusing the current link
       makes the two agree and puts the reader one keystroke from browsing. The `<dialog>`'s own
-      `toggle` event fires for `showModal()` too (Vaul's `sk:openchange` only announces CLOSE); double
+      `toggle` event fires for `showModal()` too (Vaul's `sk:vaulopenchange` only announces CLOSE); double
       rAF so the just-shown list has been laid out first.
     */}
     <script is:inline>
@@ -1338,16 +1348,28 @@ const PALETTE_PRESETS = palettePresets(locale);
           currentNavIndex >= 0 && (
             <nav class="docs-page-nav" aria-label={t("nav.between")}>
               {previousNavItem && (
-                <a class="sk-button sk-interactive docs-page-nav__link" data-variant="soft" href={previousNavItem.href} rel="prev">
-                  <Fragment set:html={previousIcon} />
-                  <span>{previousNavItem.label}</span>
-                </a>
+                <div class="docs-page-nav__item">
+                  {/*
+                    ABOVE the button, never inside it. A Button's label is one line (button.css); a
+                    second line stacked in its box breaks its height and its hit area, which
+                    `button-single-line.test.ts` guards. `aria-describedby` keeps the direction in
+                    what a screen reader hears, the name stays the destination.
+                  */}
+                  <span class="docs-page-nav__direction" id="docs-page-nav-previous">{t("nav.previous")}</span>
+                  <a class="sk-button sk-interactive docs-page-nav__link" data-variant="ghost" href={previousNavItem.href} rel="prev" aria-describedby="docs-page-nav-previous">
+                    <Fragment set:html={previousIcon} />
+                    <span>{previousNavItem.label}</span>
+                  </a>
+                </div>
               )}
               {nextNavItem && (
-                <a class="sk-button sk-interactive docs-page-nav__link docs-page-nav__link--next" data-variant="soft" href={nextNavItem.href} rel="next">
-                  <span>{nextNavItem.label}</span>
-                  <Fragment set:html={nextIcon} />
-                </a>
+                <div class="docs-page-nav__item docs-page-nav__item--next">
+                  <span class="docs-page-nav__direction" id="docs-page-nav-next">{t("nav.next")}</span>
+                  <a class="sk-button sk-interactive docs-page-nav__link" data-variant="ghost" href={nextNavItem.href} rel="next" aria-describedby="docs-page-nav-next">
+                    <span>{nextNavItem.label}</span>
+                    <Fragment set:html={nextIcon} />
+                  </a>
+                </div>
               )}
             </nav>
           )
@@ -1616,6 +1638,27 @@ const PALETTE_PRESETS = palettePresets(locale);
           root.style.setProperty("--docs-navbar-h", Math.ceil(nav.getBoundingClientRect().height) + "px");
           if (tabs) {
             root.style.setProperty("--docs-hero-tabs-h", Math.ceil(tabs.getBoundingClientRect().height) + "px");
+            /* Where the rail pins: its title level with the tab strip once both are stuck. The strip's
+               own `top` resolves the collapse-bar and navbar terms the rail cannot read (they live on
+               the component shell, which the Toc is not inside). Aligned on the CENTRES of the title
+               and the first tab's label, not on box edges: the strip carries its own top inset and
+               the two texts differ in size, so matching edges read as the title riding high. */
+            var toc = document.querySelector(".docs-document-pair > .sk-toc");
+            var tocTitle = toc && toc.querySelector(".sk-toc__title");
+            var trigger = tabs.querySelector(".sk-tabs__trigger");
+            var tabsTop = parseFloat(getComputedStyle(tabs).top);
+            if (tocTitle && trigger && !isNaN(tabsTop)) {
+              var tabsRect = tabs.getBoundingClientRect();
+              var triggerRect = trigger.getBoundingClientRect();
+              var tocRect = toc.getBoundingClientRect();
+              var titleRect = tocTitle.getBoundingClientRect();
+              var labelCentre = triggerRect.top + triggerRect.height / 2 - tabsRect.top;
+              var titleCentre = titleRect.top + titleRect.height / 2 - tocRect.top;
+              root.style.setProperty(
+                "--docs-toc-sticky-top",
+                Math.max(0, Math.round(tabsTop + labelCentre - titleCentre)) + "px",
+              );
+            }
           }
         };
         sync();

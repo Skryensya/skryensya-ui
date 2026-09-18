@@ -65,7 +65,7 @@ describe("Comment", () => {
 
   it("renders no fold control unless it is collapsible AND has replies to fold", () => {
     const ui = render(<Comment author="Ada">Hola</Comment>);
-    expect(ui.queryByRole("button", { name: "Ocultar respuestas" })).toBeNull();
+    expect(ui.queryByRole("button", { name: "Hide replies" })).toBeNull();
 
     // Collapsible but childless: there is nothing to fold, so still no control.
     ui.rerender(
@@ -73,14 +73,14 @@ describe("Comment", () => {
         Hola
       </Comment>,
     );
-    expect(ui.queryByRole("button", { name: "Ocultar respuestas" })).toBeNull();
+    expect(ui.queryByRole("button", { name: "Hide replies" })).toBeNull();
 
     ui.rerender(
       <Comment author="Ada" collapsible replies={<Comment author="Grace">Una respuesta</Comment>}>
         Hola
       </Comment>,
     );
-    expect(ui.getByRole("button", { name: "Ocultar respuestas" })).toBeTruthy();
+    expect(ui.getByRole("button", { name: "Hide replies" })).toBeTruthy();
   });
 
   /* The fold node is a real Button at the scale's smallest published size, NOT a face this
@@ -93,7 +93,7 @@ describe("Comment", () => {
       </Comment>,
     );
 
-    const fold = ui.getByRole("button", { name: "Ocultar respuestas" });
+    const fold = ui.getByRole("button", { name: "Hide replies" });
     expect(fold.getAttribute("data-size")).toBe("xs");
     expect(fold.hasAttribute("data-icon-only")).toBe(true);
     expect(fold.classList.contains("sk-button")).toBe(true);
@@ -112,7 +112,7 @@ describe("Comment", () => {
       </Comment>,
     );
 
-    const fold = ui.getByRole("button", { name: "Ocultar respuestas" });
+    const fold = ui.getByRole("button", { name: "Hide replies" });
     fireEvent.click(fold);
 
     expect(fold.getAttribute("aria-expanded")).toBe("false");
@@ -120,7 +120,7 @@ describe("Comment", () => {
     // What the comment SAYS stays put: a thread gets long because of what hangs off a comment, not
     // because of the comment, so folding must not take the thing being read away.
     expect(ui.container.querySelector<HTMLElement>(".sk-comment__body")!.hidden).toBe(false);
-    expect(ui.getByRole("button", { name: "Responder" })).toBeTruthy();
+    expect(ui.getByRole("button", { name: "Reply" })).toBeTruthy();
   });
 
   it("nests replies as Comments of the same shape, at any depth", () => {
@@ -147,14 +147,27 @@ describe("CommentVote", () => {
     const onVote = vi.fn();
     const ui = render(<CommentVote count="4" onVote={onVote} voted="up" />);
 
-    expect(ui.getByRole("button", { name: "Votar a favor" }).getAttribute("aria-pressed")).toBe("true");
-    expect(ui.getByRole("button", { name: "Votar en contra" }).getAttribute("aria-pressed")).toBe("false");
+    expect(ui.getByRole("button", { name: "Upvote" }).getAttribute("aria-pressed")).toBe("true");
+    expect(ui.getByRole("button", { name: "Downvote" }).getAttribute("aria-pressed")).toBe("false");
     // The paint reads the group, so authored markup and React agree on one attribute.
     expect(ui.container.querySelector(".sk-comment-vote")?.getAttribute("data-voted")).toBe("up");
     expect(ui.getByText("4").className).toContain("sk-comment-vote__count");
 
-    fireEvent.click(ui.getByRole("button", { name: "Votar en contra" }));
+    fireEvent.click(ui.getByRole("button", { name: "Downvote" }));
     expect(onVote).toHaveBeenCalledWith("down");
+  });
+
+  it("dispatches sk:commentvote on the vote group, matching Vanilla", () => {
+    const onDom = vi.fn();
+    const ui = render(
+      <Comment id="c1" author="Ada" actions={<CommentVote count="1" />}>
+        Hola
+      </Comment>,
+    );
+    ui.container.addEventListener("sk:commentvote", onDom as EventListener);
+    fireEvent.click(ui.getByRole("button", { name: "Upvote" }));
+    expect(onDom).toHaveBeenCalledTimes(1);
+    expect((onDom.mock.calls[0]![0] as CustomEvent).detail).toEqual({ direction: "up", id: "c1" });
   });
 });
 
@@ -166,11 +179,23 @@ describe("CommentActions", () => {
     expect(ui.container.querySelectorAll("button")).toHaveLength(0);
 
     ui.rerender(<CommentActions deletable onDelete={onDelete} onReply={onReply} reply />);
-    fireEvent.click(ui.getByRole("button", { name: "Responder" }));
-    fireEvent.click(ui.getByRole("button", { name: "Eliminar" }));
+    fireEvent.click(ui.getByRole("button", { name: "Reply" }));
+    fireEvent.click(ui.getByRole("button", { name: "Delete" }));
 
     expect(onReply).toHaveBeenCalledTimes(1);
     expect(onDelete).toHaveBeenCalledTimes(1);
+  });
+
+  it("dispatches sk:commentdelete when delete is pressed", () => {
+    const onDom = vi.fn();
+    const ui = render(
+      <Comment id="c9" author="Ada" actions={<CommentActions deletable />}>
+        Hola
+      </Comment>,
+    );
+    ui.container.addEventListener("sk:commentdelete", onDom as EventListener);
+    fireEvent.click(ui.getByRole("button", { name: "Delete" }));
+    expect((onDom.mock.calls[0]![0] as CustomEvent).detail).toEqual({ id: "c9" });
   });
 });
 
@@ -191,6 +216,49 @@ describe("CommentComposer", () => {
 
     expect(onSubmit).toHaveBeenCalledWith("una respuesta");
     expect(textarea.value).toBe("");
+  });
+
+  it("dispatches sk:commentreply and keeps the draft when preventDefault runs", () => {
+    const onSubmit = vi.fn();
+    const ui = render(
+      <Comment id="parent" author="Ada" replyComposer={
+        <CommentComposer onSubmit={onSubmit} cancellable>
+          <FormField label="Comentario">
+            <Textarea />
+          </FormField>
+        </CommentComposer>
+      } replyOpen>
+        Hola
+      </Comment>,
+    );
+    const form = ui.container.querySelector("form")!;
+    form.addEventListener("sk:commentreply", (event) => {
+      event.preventDefault();
+    });
+    const textarea = ui.getByLabelText("Comentario") as HTMLTextAreaElement;
+    fireEvent.change(textarea, { target: { value: "borrador" } });
+    fireEvent.submit(form);
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(textarea.value).toBe("borrador");
+  });
+
+  it("dispatches sk:commentdiscard when cancel leaves a draft", () => {
+    const onDom = vi.fn();
+    const ui = render(
+      <CommentComposer cancellable>
+        <FormField label="Comentario">
+          <Textarea />
+        </FormField>
+      </CommentComposer>,
+    );
+    ui.container.addEventListener("sk:commentdiscard", onDom as EventListener);
+    const textarea = ui.getByLabelText("Comentario") as HTMLTextAreaElement;
+    fireEvent.change(textarea, { target: { value: "borrador" } });
+    fireEvent.click(ui.getByRole("button", { name: "Cancel" }));
+    expect((onDom.mock.calls[0]![0] as CustomEvent).detail).toEqual({
+      body: "borrador",
+      parentId: null,
+    });
   });
 
   it("reads a single-line Input just as readily as a Textarea, since it ships neither", () => {
@@ -244,7 +312,7 @@ describe("CommentThread", () => {
 
     expect(ui.getByLabelText("Comentarios").className).toContain("sk-comment-thread");
     expect(ui.container.querySelectorAll("article.sk-comment")).toHaveLength(2);
-    expect(ui.getByRole("button", { name: "Publicar" })).toBeTruthy();
+    expect(ui.getByRole("button", { name: "Post" })).toBeTruthy();
   });
 });
 
@@ -289,7 +357,7 @@ describe("CommentThread on a narrow viewport", () => {
     expect(box.open).toBe(false);
     expect(box.className).toContain("sk-vaul");
 
-    fireEvent.click(ui.getByRole("button", { name: "Escribir un comentario" }));
+    fireEvent.click(ui.getByRole("button", { name: "Write a comment" }));
     expect(box.open).toBe(true);
   });
 
@@ -315,7 +383,7 @@ describe("CommentThread on a narrow viewport", () => {
      * the trigger at every width, and gating the React one on a JS-measured viewport made them
      * disagree at the same width.
      */
-    expect(ui.getByRole("button", { name: "Escribir un comentario" })).toBeTruthy();
+    expect(ui.getByRole("button", { name: "Write a comment" })).toBeTruthy();
   });
 
   it("opens a reply box as a sheet, and says so on the trigger", () => {
@@ -332,7 +400,7 @@ describe("CommentThread on a narrow viewport", () => {
   });
 
   it("says a reply trigger opens a dialog, in both presentations", () => {
-    const ui = render(<CommentActions reply replyLabel="Responder" />);
-    expect(ui.getByRole("button", { name: "Responder" }).getAttribute("aria-haspopup")).toBe("dialog");
+    const ui = render(<CommentActions reply replyLabel="Reply" />);
+    expect(ui.getByRole("button", { name: "Reply" }).getAttribute("aria-haspopup")).toBe("dialog");
   });
 });

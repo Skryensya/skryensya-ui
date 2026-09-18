@@ -103,6 +103,40 @@ export const loaderSpeedsTree = (t: Translate): UsageTree => ({
   ],
 });
 
+/**
+ * The motion designs, in the two families that differ in ANATOMY rather than in taste.
+ *
+ * Split into two grids rather than shown as one wall of twelve because the split is the thing worth
+ * teaching: the first eight are the root's two pseudo-elements and nothing else, the last four carry
+ * one real element per mark because a stagger cannot live on a pseudo. Every specimen is unlabelled
+ * on purpose - twelve live regions announcing "loading" at once is what a gallery of loaders would
+ * otherwise be - and the grid's own `role="group"` carries the name.
+ */
+const variantSpecimen = (t: Translate, variant: string): UsageTree =>
+  specimen(
+    { contract: "loader", signature: "Loader", options: { size: "lg", variant } },
+    variant,
+    t(`demo.loader.variant.${variant}` as Parameters<Translate>[0]),
+  );
+
+export const loaderPseudoVariantsTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Grid",
+  options: { columns: "4", gap: "md", responsive: true },
+  attrs: { role: "group", "aria-label": t("demo.loader.pseudoVariantsLabel") },
+  children: ["ring", "sweep", "bars", "dots", "arc", "comet", "orbit", "clock"].map((variant) =>
+    variantSpecimen(t, variant),
+  ),
+});
+
+export const loaderStaggeredVariantsTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Grid",
+  options: { columns: "4", gap: "md", responsive: true },
+  attrs: { role: "group", "aria-label": t("demo.loader.staggeredVariantsLabel") },
+  children: ["spokes", "ticks", "compass", "beads"].map((variant) => variantSpecimen(t, variant)),
+});
+
 export const loaderSimulationTree = (t: Translate): UsageTree => ({
   contract: "layout",
   signature: "Stack",

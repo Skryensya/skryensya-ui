@@ -4,6 +4,14 @@ Stack:
   useWhen:
     - "las cosas van una debajo de otra con un ritmo constante"
     - "es la disposición por defecto de un formulario"
+  avoidWhen:
+    - "van una al lado de otra; eso es Inline"
+    - "necesitan columnas de igual ancho; eso es Grid"
+    - "necesitan una superficie (padding/borde/fondo); eso es Box alrededor, no Stack"
+  alternatives:
+    - Inline
+    - Grid
+    - Box
 
 Inline:
   useWhen:
@@ -14,14 +22,18 @@ Inline:
     - "el empty state, el dialog o el toolbar ya tienen su propia parte de acciones; no sustituyas esa anatomía por un Inline"
   alternatives:
     - Grid
+    - Stack
 
 Grid:
   useWhen:
     - "columnas de igual ancho: una grilla de tarjetas"
+    - "una grilla responsive cuyo techo de columnas es columns, y opcionalmente fill para igualar la altura de reposo de las columnas"
   avoidWhen:
     - "los anchos son distintos entre sí; eso es un Inline"
+    - "la página necesita medidas nombradas (narrow/content/breakout/rail); eso es LayoutGrid"
   alternatives:
     - Inline
+    - LayoutGrid
 
 LayoutGrid:
   useWhen:
@@ -34,8 +46,13 @@ LayoutGrid:
   alternatives:
     - Wrapper
     - Grid
+
 Main:
   useWhen:
     - "la región es el landmark <main> de la página: el área de trabajo de una aplicación o de una plantilla"
   avoidWhen:
     - "es una sección dentro de la página, no el landmark principal; usa Box, Stack o LayoutGrid según corresponda"
+  alternatives:
+    - Box
+    - Stack
+    - LayoutGrid

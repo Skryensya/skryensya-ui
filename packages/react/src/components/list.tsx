@@ -84,8 +84,8 @@ export function ListItemPlain({
 type RowSlots = {
   /** Decorative leading media: an Icon, an Avatar, a number. Names nothing on its own. */
   leading?: ReactNode;
-  title?: ReactNode;
-  description?: ReactNode;
+  title?: string;
+  description?: string;
   /** Trailing meta or action: a Badge, a count, a chevron. Pinned to the end. */
   trailing?: ReactNode;
 };
@@ -164,14 +164,16 @@ export type ListItemButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 
 
 /** A functional row that fires an action: the whole row is a real button (defaults to type="button"). */
 export const ListItemButton = forwardRef<HTMLButtonElement, ListItemButtonProps>(function ListItemButton(
-  { children, className, description, leading, title, trailing, type, ...props },
+  { children, className, description, disabled, leading, title, trailing, type, ...props },
   ref,
 ) {
   return (
     <li className={listParts.item}>
       <button
         {...props}
+        aria-disabled={disabled ? true : undefined}
         className={cx(action, className)}
+        disabled={disabled}
         ref={ref}
         type={type ?? "button"}
       >

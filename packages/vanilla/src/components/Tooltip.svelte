@@ -79,7 +79,7 @@
     disabled: root.hasAttribute("data-disabled"),
     onOpenChange(details: { open: boolean }) {
       root.dispatchEvent(
-        new CustomEvent("sk-open-change", { bubbles: true, detail: { open: details.open } }),
+        new CustomEvent("sk:tooltipopenchange", { bubbles: true, detail: { open: details.open } }),
       );
     },
   }));

@@ -79,7 +79,7 @@ describe("Popover (React)", () => {
 
   it("renders a close button in the full anatomy, wired to popoverTargetAction=hide", () => {
     const ui = render(<Popover trigger="Open">Content</Popover>);
-    const close = ui.getByRole("button", { name: "Cerrar", hidden: true });
+    const close = ui.getByRole("button", { name: "Close", hidden: true });
     expect(close.getAttribute("popovertargetaction")).toBe("hide");
   });
 
@@ -91,7 +91,7 @@ describe("Popover (React)", () => {
     );
     expect(ui.queryByRole("heading", { name: "Filtros", hidden: true })).toBeNull();
     expect(ui.queryByText("Elige una categoría.")).toBeNull();
-    expect(ui.queryByRole("button", { name: "Cerrar", hidden: true })).toBeNull();
+    expect(ui.queryByRole("button", { name: "Close", hidden: true })).toBeNull();
   });
 
   it("renders no arrow by default, and one only when asked", () => {
@@ -164,5 +164,22 @@ describe("Popover (React)", () => {
     expect(trigger.hasAttribute("data-variant")).toBe(false);
     expect(trigger.hasAttribute("data-size")).toBe(false);
     expect(trigger.hasAttribute("data-icon-only")).toBe(false);
+  });
+
+  it("marks bare and arrow on the root the way the contract emits them", () => {
+    const bare = render(
+      <Popover trigger="Open" bare>
+        Content
+      </Popover>,
+    );
+    expect(bare.container.querySelector(".sk-popover")?.getAttribute("data-bare")).toBe("");
+    expect(bare.container.querySelector(".sk-popover")?.hasAttribute("data-arrow")).toBe(false);
+
+    const withArrow = render(
+      <Popover trigger="Open" arrow>
+        Content
+      </Popover>,
+    );
+    expect(withArrow.container.querySelector(".sk-popover")?.getAttribute("data-arrow")).toBe("");
   });
 });

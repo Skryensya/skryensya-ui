@@ -77,11 +77,50 @@ export const colorPickerPanelParts = {
 
 export type ColorPickerValueChangeDetails = { value: string };
 
+/** The DOM event ColorPicker dispatches when the value commits (vanilla + React). */
+export const colorPickerEvents = {
+  valueChange: "sk:colorpickervaluechange",
+} as const;
+
 export const colorPickerContract = {
   id: "color-picker",
+  category: "forms",
   css: "@skryensya/core/components/color-picker.css",
-  parts: colorPickerParts,
+  parts: { ...colorPickerParts, ...colorPickerPanelParts },
+  /*
+   * Panel anatomy is binding-generated (Zag), not in the UsageTree template - same Calendar split.
+   */
+  systemOwned: [
+    "area",
+    "areaBackground",
+    "areaThumb",
+    "hueSlider",
+    "hueTrack",
+    "hueThumb",
+    "alphaSlider",
+    "alphaTrack",
+    "alphaThumb",
+    "formatSwitch",
+    "formatOption",
+    "channels",
+    "channelRow",
+    "channelLabel",
+    "channelInput",
+    "swatchGroup",
+    "swatchTrigger",
+    "swatchSwatch",
+    "eyedropper",
+  ],
   hooks: [
+    "--sk-anchored-align",
+    "--sk-anchored-arrow-edge",
+    "--sk-anchored-arrow-near",
+    "--sk-anchored-justify",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-anchored-size",
+    "--sk-anchored-z",
     "--sk-color-picker-area-block-size",
     "--sk-color-picker-area-radius",
     "--sk-color-picker-area-thumb-size",
@@ -106,7 +145,16 @@ export const colorPickerContract = {
     "--sk-color-picker-thumb-shadow",
     "--sk-color-picker-trigger-size",
   ],
-
+  /*
+   * Full/compact place the panel with `sk-anchor` / positioner (`also`). Those classes have no
+   * unique contract owner, so `sheetsForTree` cannot discover `anchored.css` from `also` alone, 
+   * name it here. Hooks from that sheet are listed above (same shape as Tooltip/Popover).
+   */
+  hookSheets: ["@skryensya/core/patterns/anchored.css"],
+  events: colorPickerEvents,
+  eventDetails: {
+    valueChange: { detail: { value: "string" }, reactProp: "onValueChange", source: "root", trigger: "trigger" },
+  },
   options: {
     /** Submitted under this name. */
     name: { type: "string", attr: "data-name", machineInput: true },
@@ -119,10 +167,10 @@ export const colorPickerContract = {
     /**
      * Names the swatch button. Required in practice, not in the type: the trigger is icon-only
      * (a color swatch, no text), so it is the one control on this component that a screen reader
-     * cannot otherwise name. The default is generic on purpose ("Elegir color"/"Choose color");
+     * cannot otherwise name. The default is generic on purpose ("Choose color");
      * a consumer editing a specific field ("Color de marca") should say what the color is FOR.
      */
-    triggerLabel: { type: "string", default: "Elegir color", attr: "aria-label" },
+    triggerLabel: { type: "string", default: "Choose color", attr: "aria-label" },
     /**
      * Preset swatches for the panel's own presets row, any CSS color string each, space-separated
      *  -  the same "one plain-string attribute, split downstream" shape `DatePicker`'s own `value`
@@ -155,7 +203,12 @@ export const colorPickerContract = {
        * `document.body`, and the gate cannot tell which instance's floating content belongs to
        * which case. `ColorPicker.native` (below) has no popover and correctly has none of this.
        */
-      portals: true,
+      /** Host id / a11y; control state stays options. */
+      forward: ["id", "aria-*"],
+      portals: { container: true },
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+      ],
       slots: {
         /** Names the field. */
         label: { accepts: "text" },
@@ -229,7 +282,12 @@ export const colorPickerContract = {
        * `document.body`, and the gate cannot tell which instance's floating content belongs to
        * which case. `ColorPicker.native` (below) has no popover and correctly has none of this.
        */
-      portals: true,
+      /** Host id / a11y; control state stays options. */
+      forward: ["id", "aria-*"],
+      portals: { container: true },
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+      ],
       slots: {
         label: { accepts: "text" },
       },
@@ -290,6 +348,8 @@ export const colorPickerContract = {
       intent: ["a-standard-color-field", "form-field", "no-javascript"],
       host: { element: "div" },
       options: ["name", "value"],
+      /** Host id / a11y; control state stays options. */
+      forward: ["id", "aria-*"],
       slots: {
         /** Names the field. Required: a bare color input announces only its swatch. */
         label: { accepts: "text", required: true },

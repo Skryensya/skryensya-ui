@@ -6,7 +6,7 @@
     supportsAnchorPositioning,
   } from "@skryensya/core/anchored";
   import { combobox } from "@skryensya/core/machines";
-  import { comboboxAttrs, comboboxParts, type ComboboxItem } from "@skryensya/core/combobox";
+  import { comboboxAttrs, comboboxEvents, comboboxParts, type ComboboxItem } from "@skryensya/core/combobox";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
   import { applyZagProps, bindZagEvents, type DomProps } from "../runtime/apply";
@@ -205,10 +205,10 @@
       // Only what the user TYPED is a filter; any non-typed write (a selection's label, the empty
       // string after clear) resets to the full set.
       filterAuthoredItems(details.reason === "input-change" ? details.inputValue : "");
-      root.dispatchEvent(new CustomEvent("sk-input-value-change", { bubbles: true, detail: { inputValue: details.inputValue } }));
+      root.dispatchEvent(new CustomEvent(comboboxEvents.inputValueChange, { bubbles: true, detail: { inputValue: details.inputValue } }));
     },
     onValueChange(details: { value: string[]; items: ComboboxItem[] }) {
-      root.dispatchEvent(new CustomEvent("sk-value-change", { bubbles: true, detail: { value: details.value } }));
+      root.dispatchEvent(new CustomEvent(comboboxEvents.valueChange, { bubbles: true, detail: { value: details.value } }));
       // The other half of `selectionBehavior: "preserve"`. Single: the input shows what was chosen.
       // Multiple: the chip already shows it, so the query is spent.
       queueMicrotask(() => {

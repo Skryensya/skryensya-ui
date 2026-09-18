@@ -33,6 +33,7 @@ export type DetailsPartClass = (typeof detailsParts)[DetailsPart];
 
 export const detailsContract = {
   id: "details",
+  category: "content",
   css: "@skryensya/core/components/details.css",
   parts: detailsParts,
   hooks: [
@@ -43,13 +44,11 @@ export const detailsContract = {
     "--sk-details-border-color",
     "--sk-details-content-bg",
     "--sk-details-content-fg",
-    "--sk-details-description-font-size",
     "--sk-details-fg",
     "--sk-details-gap",
     "--sk-details-heading-gap",
     "--sk-details-indicator-fg",
     "--sk-details-padding",
-    "--sk-details-title-font-size",
     "--sk-font-body-sm",
     "--sk-font-heading-sm",
     "--sk-space-2",
@@ -89,7 +88,11 @@ export const detailsContract = {
     Details: {
       intent: ["one-disclosure", "expandable-section", "no-javascript"],
       host: { element: "details" },
-      parents: ["DetailsGroup"],
+      /*
+       * NOT `parents: ["DetailsGroup"]`: a lone disclosure is the common case (FAQ item without
+       * exclusivity, docs aside). The group is optional coordination via shared `name`, not a
+       * required ancestor, same split Accordion vs a single ExpandableTile.
+       */
       options: ["name", "open"],
       slots: {
         children: {
@@ -109,6 +112,10 @@ export const detailsContract = {
       host: { element: "summary" },
       parents: ["Details"],
       options: [],
+      /** Host id / a11y names on the disclosure summary. */
+      forward: ["id", "aria-*"],
+      /* Baked chevron-down/up via `data-sk-icon`; not an authored Icon child (BackToTop same). */
+      compose: [{ of: "icon", systemOwned: true }],
       slots: { children: { accepts: "node", required: true } },
       template: {
         element: "summary",

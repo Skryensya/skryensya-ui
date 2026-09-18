@@ -15,7 +15,7 @@
     parseCalendarDate,
     unusedIntlTranslations,
   } from "@skryensya/core/calendar";
-  import { datePickerParts, defaultContentLabel, defaultTriggerLabel } from "@skryensya/core/date-picker";
+  import { datePickerContract, datePickerEvents, datePickerParts, defaultContentLabel, defaultTriggerLabel } from "@skryensya/core/date-picker";
   import { calendarParts } from "@skryensya/core/calendar";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { onDestroy, onMount } from "svelte";
@@ -51,7 +51,7 @@
   if (!trigger) throw new Error(`[data-sk-date-picker] necesita un .${datePickerParts.trigger}.`);
 
   if (!root.id) root.id = uniqueId("sk-date-picker");
-  const locale = root.dataset.locale || "es";
+  const locale = root.dataset.locale || datePickerContract.options.locale.default;
 
   /* The positioner is rendered by this component (it is derived chrome), so the reference comes from the
    * template below and not from a query over authored markup, like the control does. */
@@ -72,6 +72,7 @@
     disabled: root.hasAttribute("data-disabled"),
     readOnly: root.hasAttribute("data-readonly"),
     required: root.hasAttribute("data-required"),
+    invalid: root.hasAttribute("data-invalid"),
     // Stable calendar height across months: always six rows, so opening does not reflow the page.
     fixedWeeks: true,
     /*
@@ -89,7 +90,7 @@
     },
     onValueChange(details: { valueAsString: string[] }) {
       root.dispatchEvent(
-        new CustomEvent("sk-value-change", { bubbles: true, detail: { value: details.valueAsString } }),
+        new CustomEvent(datePickerEvents.valueChange, { bubbles: true, detail: { value: details.valueAsString } }),
       );
     },
   }));

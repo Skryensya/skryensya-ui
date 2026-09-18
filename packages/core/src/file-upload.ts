@@ -8,8 +8,8 @@ export type FileUploadChangeDetails = {
 /**
  * A rejected file's own reason, in prose, keyed by Zag's own error codes (`@zag-js/file-utils`'
  * `FileError`). Shared here so neither binding invents its own wording, and so a vanilla consumer
- *. The one binding that never renders this contract's markup itself (see the KNOWN GAP note above)
- *. Can still turn `sk-file-change`'s `rejectedFiles` into a real sentence without guessing Zag's
+ * (the binding that never renders this contract's markup itself; see the KNOWN GAP note below) can
+ * still turn `sk:fileuploadchange`'s `rejectedFiles` into a real sentence without guessing Zag's
  * vocabulary.
  */
 export function fileUploadErrorMessage(error: string): string {
@@ -69,10 +69,21 @@ export const fileUploadAttrs = {
  * consumer draws that list. What is published here is the shell, which is what both bindings agree
  * on and all an author writes.
  */
+/** The DOM events this family dispatches on its root, `sk:<family><event>` like every other. */
+export const fileUploadEvents = {
+  /** Detail: `{ acceptedFiles, rejectedFiles }`. */
+  change: "sk:fileuploadchange",
+} as const;
+
 export const fileUploadContract = {
   id: "file-upload",
+  category: "forms",
   css: "@skryensya/core/components/file-upload.css",
   parts: fileUploadParts,
+  events: fileUploadEvents,
+  eventDetails: {
+    change: { detail: { acceptedFiles: "File[]", rejectedFiles: "FileRejection[]" }, reactProp: "onFileChange", source: "root", trigger: "input" },
+  },
   hooks: [
     "--sk-file-upload-dropzone-accent",
     "--sk-file-upload-dropzone-bg",
@@ -95,9 +106,9 @@ export const fileUploadContract = {
     disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "", machineInput: true },
     required: { type: "boolean", default: false, attr: "required", trueValue: "", machineInput: true },
     /** Maximum accepted file count. The enhancer reads the shell; React receives the same value. */
-    maxFiles: { type: "number", attr: "data-max-files", machineInput: true },
+    maxFiles: { type: "number", min: 1, integer: true, attr: "data-max-files", machineInput: true },
     /** Maximum accepted file size in bytes. */
-    maxFileSize: { type: "number", attr: "data-max-file-size", machineInput: true },
+    maxFileSize: { type: "number", min: 1, integer: true, attr: "data-max-file-size", machineInput: true },
   },
 
   signatures: {
@@ -105,12 +116,20 @@ export const fileUploadContract = {
       intent: ["file-upload", "attach-a-file", "dropzone", "choose-files", "browse"],
       host: { element: "div" },
       options: ["name", "multiple", "accept", "disabled", "required", "maxFiles", "maxFileSize"],
+      /** Host id / a11y names beyond owned labels. */
+      forward: ["id", "aria-*"],
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+      ],
       slots: {
         label: { accepts: "text", required: true },
         /** What the dropzone says. It is an instruction, so it is content, not a placeholder. */
-        dropzoneLabel: { accepts: "text" },
-        triggerLabel: { accepts: "text" },
-        /** The "remove everything" button's own label. Absent means the binding's default. */
+        dropzoneLabel: { accepts: "text", required: true },
+        triggerLabel: { accepts: "text", required: true },
+        /**
+         * The "remove everything" button's own label. OPT-IN: absent means no clear button in the
+         * emitted tree (and React only renders one when this prop is passed).
+         */
         clearLabel: { accepts: "text" },
       },
       mount: "data-sk-file-upload",

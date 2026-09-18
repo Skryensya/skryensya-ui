@@ -19,7 +19,7 @@ export type ImageFrameProps<Element extends ElementType = "div"> = PolymorphicPr
     caption?: ReactNode;
     children?: ReactNode;
     className?: string;
-  } & OptionsOf<typeof imageFrameContract>
+  } & Omit<OptionsOf<typeof imageFrameContract>, "frameElement">
 >;
 
 /**

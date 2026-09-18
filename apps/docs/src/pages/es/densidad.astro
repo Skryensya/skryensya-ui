@@ -77,7 +77,7 @@ const densityLabScript = `document.querySelectorAll("[data-density-lab]").forEac
     buttonOutput.textContent = \`\${Math.round(button.getBoundingClientRect().height)}px\`;
   };
 
-  slider.addEventListener("sk-value-change", render);
+  slider.addEventListener("sk:slidervaluechange", render);
   render();
 });`;
 

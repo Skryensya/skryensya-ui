@@ -25,6 +25,7 @@
  * link here can 404 on a locale that has the page.
  */
 import { getLocale, useTranslations } from "../i18n";
+import { findComponentIconMarkup } from "../lib/component-icons";
 import type { NavigationItem, NavigationSection } from "../lib/navigation";
 
 /** A `NavigationSection`, or a synthetic one the layout builds for Templates / Presets. */
@@ -153,6 +154,8 @@ const itemsFor = (section: DrawerSection): readonly NavigationItem[] => {
                   title={item.todo ? t("nav.notWritten") : undefined}
                   data-sk-vaul-close={item.href.includes("#") ? "" : undefined}
                 >
+                  {/* NavListLink's own `icon` slot: a component page gets its catalogue glyph, anything else none. */}
+                  <Fragment set:html={findComponentIconMarkup(item.href, { size: "sm", className: "docs-nav-icon" }) ?? ""} />
                   <span class="sk-nav-list__label">{item.label}</span>
                   {item.trailing && (
                     <span class="sk-nav-list__trailing">

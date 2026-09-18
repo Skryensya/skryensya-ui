@@ -12,6 +12,7 @@ export {
 export { buildManifest, canonical, SCHEMA_VERSION, type ManifestBuild } from "./manifest.js";
 export { readOverlays, type ContractSemantics, type SignatureSemantics } from "./overlay.js";
 export { checkBindingConformance, type ConformanceProblem } from "./conformance.js";
+export { checkCompose, type ComposeProblem } from "./compose.js";
 export {
   contractIds,
   contracts,

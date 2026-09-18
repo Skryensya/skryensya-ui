@@ -19,8 +19,8 @@ const { collapsible: collapsibleOption, lessLabel: lessLabelOption, moreLabel: m
  */
 export type CodePreviewProps = {
   children: ReactNode;
-  label?: ReactNode;
-  note?: ReactNode;
+  label?: string;
+  note?: string;
   /** The panel is taller than the preview window, so it gets a disclosure control. */
   collapsible?: boolean;
   /** Total lines, and how many the collapsed window shows; both counted where the code is made. */
@@ -98,7 +98,10 @@ export function CodePreview({
             data-variant="ghost"
             onClick={() => setExpanded((was) => !was)}
             type="button"
-            {...{ [codePreviewAttrs.toggle]: "" }}
+            {...{
+              [codePreviewAttrs.toggle]: "",
+              [codePreviewAttrs.expandedLabel]: lessLabel,
+            }}
           >
             <span {...{ [codePreviewAttrs.toggleLabel]: "" }}>{expanded ? lessLabel : moreLabel}</span>
             {/* Empty at rest in both bindings: the count is computed from the rendered height, which

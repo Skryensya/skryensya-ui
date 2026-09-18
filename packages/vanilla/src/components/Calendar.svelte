@@ -1,6 +1,8 @@
 <script lang="ts">
   import { datePicker } from "@skryensya/core/machines";
   import {
+    calendarContract,
+    calendarEvents,
     calendarParts,
     defaultDayLabel,
     defaultNextTriggerLabel,
@@ -23,7 +25,7 @@
    */
   const root = getRoot();
   if (!root.id) root.id = uniqueId("sk-calendar");
-  const locale = root.dataset.locale || "es";
+  const locale = root.dataset.locale || calendarContract.options.locale.default;
 
   const service = useMachine(datePicker.machine, () => ({
     id: root.id,
@@ -62,7 +64,7 @@
     },
     onValueChange(details: { valueAsString: string[] }) {
       root.dispatchEvent(
-        new CustomEvent("sk-value-change", { bubbles: true, detail: { value: details.valueAsString } }),
+        new CustomEvent(calendarEvents.valueChange, { bubbles: true, detail: { value: details.valueAsString } }),
       );
     },
   }));

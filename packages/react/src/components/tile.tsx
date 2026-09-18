@@ -1,4 +1,5 @@
 import {
+  tileEvents,
   tileParts,
   type ExpandableTileOptions,
   type TileCheckboxOptions,
@@ -16,10 +17,9 @@ import {
   forwardRef,
   useContext,
   useId,
+  useRef,
   type AnchorHTMLAttributes,
   type ButtonHTMLAttributes,
-  type ComponentPropsWithoutRef,
-  type ElementType,
   type ForwardRefExoticComponent,
   type HTMLAttributes,
   type InputHTMLAttributes,
@@ -137,6 +137,7 @@ export const TileCheckbox = forwardRef<HTMLLabelElement, TileCheckboxProps>(func
   ref,
 ) {
   const generatedId = useId();
+  const rootRef = useRef<HTMLLabelElement | null>(null);
   const checked = options.checked ?? (indeterminate ? "indeterminate" : undefined);
   const defaultChecked = options.defaultChecked ?? (indeterminate ? "indeterminate" : undefined);
   const service = useMachine(checkbox.machine, {
@@ -147,13 +148,24 @@ export const TileCheckbox = forwardRef<HTMLLabelElement, TileCheckboxProps>(func
     value: options.value,
     disabled: options.disabled,
     required: options.required,
-    onCheckedChange: onCheck,
+    onCheckedChange: (details) => {
+      onCheck?.(details);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(tileEvents.checkedChange, { bubbles: true, detail: { checked: details.checked } }),
+      );
+    },
   });
   const api = checkbox.connect(service, normalizeProps);
   const classes = tileRootClasses(className, tileParts.interactive, "sk-interactive");
 
+  const setRefs = (node: HTMLLabelElement | null) => {
+    rootRef.current = node;
+    if (typeof ref === "function") ref(node);
+    else if (ref) ref.current = node;
+  };
+
   return (
-    <label {...api.getRootProps()} className={classes} data-padding={padding} data-scope="tile" ref={ref}>
+    <label {...api.getRootProps()} className={classes} data-padding={padding} data-scope="tile" data-sk-tile-checkbox="" ref={setRefs}>
       <input {...api.getHiddenInputProps()} {...inputProps} data-part="input" />
       <span className={tileParts.content} data-part="content">
         {children}
@@ -179,6 +191,7 @@ export const TileSwitch = forwardRef<HTMLLabelElement, TileSwitchProps>(function
   ref,
 ) {
   const generatedId = useId();
+  const rootRef = useRef<HTMLLabelElement | null>(null);
   const service = useMachine(checkbox.machine, {
     id: id ?? generatedId,
     checked: options.checked,
@@ -187,13 +200,25 @@ export const TileSwitch = forwardRef<HTMLLabelElement, TileSwitchProps>(function
     value: options.value,
     disabled: options.disabled,
     required: options.required,
-    onCheckedChange: (details) => onCheck?.({ checked: details.checked === true }),
+    onCheckedChange: (details) => {
+      const checked = details.checked === true;
+      onCheck?.({ checked });
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(tileEvents.checkedChange, { bubbles: true, detail: { checked } }),
+      );
+    },
   });
   const api = checkbox.connect(service, normalizeProps);
   const classes = tileRootClasses(className, tileParts.interactive, "sk-interactive");
 
+  const setRefs = (node: HTMLLabelElement | null) => {
+    rootRef.current = node;
+    if (typeof ref === "function") ref(node);
+    else if (ref) ref.current = node;
+  };
+
   return (
-    <label {...api.getRootProps()} className={classes} data-padding={padding} data-scope="tile" ref={ref}>
+    <label {...api.getRootProps()} className={classes} data-padding={padding} data-scope="tile" data-sk-tile-switch="" ref={setRefs}>
       <input {...api.getHiddenInputProps()} {...inputProps} data-part="input" role="switch" />
       <span className={tileParts.content} data-part="content">
         {children}
@@ -221,6 +246,7 @@ export const TileRadioGroup = forwardRef<HTMLDivElement, TileRadioGroupProps>(fu
   ref,
 ) {
   const generatedId = useId();
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const service = useMachine(radio.machine, {
     id: id ?? generatedId,
     name,
@@ -229,28 +255,39 @@ export const TileRadioGroup = forwardRef<HTMLDivElement, TileRadioGroupProps>(fu
     disabled,
     required,
     orientation,
-    onValueChange,
+    onValueChange: (details) => {
+      onValueChange?.(details);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(tileEvents.valueChange, { bubbles: true, detail: { value: details.value } }),
+      );
+    },
   });
   const api = radio.connect(service, normalizeProps);
 
+  const setRefs = (node: HTMLDivElement | null) => {
+    rootRef.current = node;
+    if (typeof ref === "function") ref(node);
+    else if (ref) ref.current = node;
+  };
+
   return (
-    <div {...api.getRootProps()} {...props} className={className} data-scope="tile" ref={ref}>
+    <div {...api.getRootProps()} {...props} className={className} data-scope="tile" data-sk-tile-radio-group="" ref={setRefs}>
       {items.map((item) => {
-        const props = { value: item.value, disabled: item.disabled };
+        const itemProps = { value: item.value, disabled: item.disabled };
         return (
           <label
-            {...api.getItemProps(props)}
+            {...api.getItemProps(itemProps)}
             className={tileRootClasses(undefined, tileParts.interactive, "sk-interactive")}
             data-part="item"
             data-padding={padding}
             data-scope="tile"
             key={item.value}
           >
-            <input {...api.getItemHiddenInputProps(props)} data-part="input" />
-            <span {...api.getItemTextProps(props)} className={tileParts.content} data-part="content">
+            <input {...api.getItemHiddenInputProps(itemProps)} data-part="input" />
+            <span {...api.getItemTextProps(itemProps)} className={tileParts.content} data-part="content">
               {item.children}
             </span>
-            <span {...api.getItemControlProps(props)} aria-hidden="true" className={tileParts.selectionIndicator} data-part="indicator" />
+            <span {...api.getItemControlProps(itemProps)} aria-hidden="true" className={tileParts.selectionIndicator} data-part="indicator" />
           </label>
         );
       })}
@@ -263,7 +300,6 @@ const ExpandableTileContext = createContext<ExpandableTileContextValue | null>(n
 
 export type ExpandableTileProps = Omit<HTMLAttributes<HTMLElement>, "onChange"> &
   ExpandableTileOptions & {
-    as?: "section" | "article" | "div";
     children?: ReactNode;
   };
 
@@ -273,21 +309,36 @@ type ExpandableTileComponent = ForwardRefExoticComponent<ExpandableTileProps & {
 };
 
 const ExpandableTileRoot = forwardRef<HTMLElement, ExpandableTileProps>(function ExpandableTile(
-  { id, as, className, children, open, defaultOpen, disabled, padding, onOpenChange, ...props },
+  { id, className, children, open, defaultOpen, disabled, padding, onOpenChange, ...props },
   ref,
 ) {
   const generatedId = useId();
-  const service = useMachine(collapsible.machine, { id: id ?? generatedId, open, defaultOpen, disabled, onOpenChange });
+  const rootRef = useRef<HTMLElement | null>(null);
+  const service = useMachine(collapsible.machine, {
+    id: id ?? generatedId,
+    open,
+    defaultOpen,
+    disabled,
+    onOpenChange: (details) => {
+      onOpenChange?.(details);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(tileEvents.openChange, { bubbles: true, detail: { open: details.open } }),
+      );
+    },
+  });
   const api = collapsible.connect(service, normalizeProps);
-  const Component = (as ?? "section") as ElementType;
-  // `sk-interactive` lives on the trigger (below), not the section: the section is a container,
-  // not the control, and painting the state layer behind it made hovering the revealed content
-  // tint too (see the contract note in `@skryensya/core/tile`).
+  // Contract host is `section`; no binding escape hatch (same rule as Accordion.Item).
   const classes = tileRootClasses(className, tileParts.expandable);
+
+  const setRefs = (node: HTMLElement | null) => {
+    rootRef.current = node;
+    if (typeof ref === "function") ref(node);
+    else if (ref) ref.current = node;
+  };
 
   return (
     <ExpandableTileContext.Provider value={api}>
-      <Component
+      <section
         {...api.getRootProps()}
         {...props}
         className={classes}
@@ -300,11 +351,12 @@ const ExpandableTileRoot = forwardRef<HTMLElement, ExpandableTileProps>(function
         // its first paint, so it never needs the shim itself; this exists purely so both bindings'
         // settled DOM match, the same reason `data-scope`/`data-padding` are written unconditionally
         // above rather than only under some binding-specific condition.
+        data-sk-expandable-tile=""
         data-sk-tile-ready=""
-        ref={ref}
+        ref={setRefs}
       >
         {children}
-      </Component>
+      </section>
     </ExpandableTileContext.Provider>
   );
 });

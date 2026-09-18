@@ -491,11 +491,11 @@ export function FiltersSheet() {
       file: "packages/react/src/components/vaul.test.tsx",
       tests: [
         { name: "carries the enhancer's scope markers at rest", description: t("vaulPage.test1") },
-        { name: "draws the handle as decoration, always", description: t("vaulPage.test2") },
+        { name: "draws the handle hidden from assistive tech, always", description: t("vaulPage.test2") },
       ],
     },
     {
-      file: "packages/vanilla/src/components/vaul-gesture.test.ts",
+      file: "packages/core/src/vaul-gesture.test.ts",
       tests: [
         {
           name: "dismisses a far-enough slow drag (distance alone)",

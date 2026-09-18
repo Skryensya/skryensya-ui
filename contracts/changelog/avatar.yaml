@@ -3,8 +3,34 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "33891e40d49bbc17"
+surface: "7062e2983ee5da11"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    target: Avatar.image
+    es:
+      title: Avatar.image declara compose de ImageFrame
+      body: >-
+        <code>compose</code> documenta el marco vía <code>also</code> (<code>systemOwned</code>); las hojas ya se resolvían.
+    en:
+      title: Avatar.image declares compose of ImageFrame
+      body: >-
+        <code>compose</code> documents the frame via <code>also</code> (<code>systemOwned</code>); sheets already resolved.
+  - date: 2026-09-16
+    kind: bugfix
+    target: name
+    es:
+      title: React exige name en Avatar, como el contrato
+      body: >-
+        <code>name</code> es obligatorio en el binding React (iniciales y foto): el contrato ya
+        lo pedía vía <code>name</code>/<code>imageName</code>, y sin él el <code>alt</code> vacío
+        o un disco sin nombre accesible pasaban TypeScript.
+    en:
+      title: React requires Avatar name, matching the contract
+      body: >-
+        <code>name</code> is required on the React binding (initials and photo): the contract
+        already required it via <code>name</code>/<code>imageName</code>, and without it an empty
+        <code>alt</code> or an unnamed disc still type-checked.
   - date: 2026-09-08
     kind: feature
     target: size

@@ -1,4 +1,4 @@
-import type { ComponentContract } from "./contract.js";
+import type { ComponentContract, ContractTemplate } from "./contract.js";
 
 /*
  * STEPS, a linear progress indicator across an ordered sequence of stages.
@@ -13,8 +13,6 @@ export type Step = {
   description?: string;
   /** Visible marker override. Complete stages commonly use a tick instead of their position. */
   marker?: string;
-  /** Mirrors the authored `aria-current` cue when a usage tree supplies explicit statuses. */
-  current?: boolean;
   status?: StepStatus;
 };
 
@@ -35,8 +33,25 @@ export type StepsPartClass = (typeof stepsParts)[StepsPart];
  *
  * The marker shows a tick when complete and a number otherwise, so the state is never colour alone.
  */
+/** What every stage holds, whichever of its two shapes renders (see the template below). */
+const stepItemBody: readonly ContractTemplate[] = [
+  { element: "span", part: "marker", itemSlot: "marker" },
+  {
+    element: "span",
+    children: [
+      { element: "span", part: "label", itemSlot: "label" },
+      // `whenItemSlotGiven`, not `whenItemGiven`: the first asks whether the entry filled a SLOT,
+      // the second whether it set an OPTION. `description` is a slot, so the option lookup was
+      // permanently undefined and this span never emitted: the tree validated, React rendered the
+      // descriptions from `steps={[…]}`, and the markup silently dropped them.
+      { element: "span", part: "description", whenItemSlotGiven: "description", itemSlot: "description" },
+    ],
+  },
+];
+
 export const stepsContract = {
   id: "steps",
+  category: "navigation",
   css: "@skryensya/core/components/steps.css",
   parts: stepsParts,
   hooks: [
@@ -45,17 +60,25 @@ export const stepsContract = {
     "--sk-steps-marker-size",
   ],
 
-  options: {},
+  options: {
+    /**
+     * The rail's direction. Absent, it is horizontal and turns vertical below 40rem (steps.css); set
+     * either value to pin it. React has always taken this as `data-orientation`.
+     */
+    orientation: { type: "enum", values: ["horizontal", "vertical"], attr: "data-orientation", prop: "data-orientation" },
+  },
 
   signatures: {
     Steps: {
       intent: ["progress-through-stages", "checkout-progress", "wizard-position"],
       host: { element: "ol" },
-      options: [],
+      options: ["orientation"],
       slots: {
         items: {
           accepts: "items",
           required: true,
+          /* At most one stage is where you are; a finished process has none. */
+          countWhere: { option: "status", equals: "current", count: "optional" },
           // React calls it `steps`; the contract keys every collection `items`.
           prop: "steps",
           item: {
@@ -66,8 +89,6 @@ export const stepsContract = {
                 default: "upcoming",
                 attr: "data-status",
               },
-              /** Announced as the current step. Only one stage is where you are. */
-              current: { type: "boolean", default: false, attr: "aria-current", trueValue: "step" },
 
             },
             slots: {
@@ -88,24 +109,29 @@ export const stepsContract = {
         host: true,
         attrs: { role: "list" },
         children: [
+          /*
+           * One entry, two shapes, and `status` alone decides: the current stage is the one
+           * `aria-current="step"` lands on. It used to be a separate `current` option, so a tree
+           * could mark a stage "current" and never announce it (React derived it from status and
+           * disagreed), or announce a stage already complete.
+           */
           {
-            element: "li",
-            part: "item",
             repeat: "items",
-            itemOptions: ["status", "current"],
             children: [
-              { element: "span", part: "marker", itemSlot: "marker" },
               {
-                element: "span",
-                children: [
-                  { element: "span", part: "label", itemSlot: "label" },
-                  // `whenItemSlotGiven`, not `whenItemGiven`: the first asks whether the entry
-                  // filled a SLOT, the second whether it set an OPTION. `description` is a slot, so
-                  // the option lookup was permanently undefined and this span never emitted: the
-                  // tree validated, React rendered the descriptions from `steps={[…]}`, and the
-                  // markup silently dropped them. Two bindings, one tree, different answers.
-                  { element: "span", part: "description", whenItemSlotGiven: "description", itemSlot: "description" },
-                ],
+                element: "li",
+                part: "item",
+                whenItemEquals: { option: "status", equals: "current" },
+                itemOptions: ["status"],
+                attrs: { "aria-current": "step" },
+                children: stepItemBody,
+              },
+              {
+                element: "li",
+                part: "item",
+                whenItemNotEquals: { option: "status", equals: "current" },
+                itemOptions: ["status"],
+                children: stepItemBody,
               },
             ],
           },

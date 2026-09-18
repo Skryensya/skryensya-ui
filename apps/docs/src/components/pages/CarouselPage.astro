@@ -58,10 +58,10 @@ const nativeCss = `@import "@skryensya/icons-lucide/carousel.css";
 const api = `const carousel = document.querySelector("[data-sk-carousel]");
 
 // ${t("carousel.apiComment1")}
-carousel.dispatchEvent(new CustomEvent("sk-carousel-goto", { detail: { index: 2 } }));
+carousel.dispatchEvent(new CustomEvent("sk:carouselgoto", { detail: { index: 2 } }));
 
 // ${t("carousel.apiComment2")}
-carousel.addEventListener("sk-carousel-change", (event) => {
+carousel.addEventListener("sk:carouselchange", (event) => {
   console.log(event.detail); // ${t("carousel.apiComment3")}
 });`;
 ---

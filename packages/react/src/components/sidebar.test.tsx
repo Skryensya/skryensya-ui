@@ -46,13 +46,27 @@ function renderSidebar(props: Omit<SidebarProps, "children"> = {}) {
 describe("Sidebar React contracts", () => {
   it("collapses uncontrolled and reports the change", () => {
     const onCollapsedChange = vi.fn();
+    const onDom = vi.fn();
     const ui = renderSidebar({ onCollapsedChange });
+    const root = ui.container.querySelector("[data-sk-sidebar]")!;
+    root.addEventListener("sk:sidebarcollapsedchange", onDom);
 
     expect(ui.state()).toBe("expanded");
     fireEvent.click(ui.trigger());
 
     expect(onCollapsedChange).toHaveBeenCalledWith({ collapsed: true });
+    expect((onDom.mock.calls[0]![0] as CustomEvent).detail).toEqual({ collapsed: true });
     expect(ui.state()).toBe("collapsed");
+  });
+
+  it("stamps mount attrs the vanilla enhancer scans for", () => {
+    const ui = renderSidebar({ defaultCollapsed: true, storageKey: "docs" });
+    const root = ui.container.querySelector(".sk-sidebar");
+    expect(root?.getAttribute("data-sk-sidebar")).toBe("");
+    expect(root?.getAttribute("data-default-collapsed")).toBe("");
+    expect(root?.getAttribute("data-storage-key")).toBe("docs");
+    expect(ui.container.querySelector("[data-sk-sidebar-content]")).toBeTruthy();
+    expect(ui.container.querySelector("[data-sk-sidebar-trigger]")).toBeTruthy();
   });
 
   it("names the complementary landmark when a consumer supplies one", () => {

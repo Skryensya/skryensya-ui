@@ -116,7 +116,7 @@ export function createServer(): McpServer {
       title: "Read one family's compiled contract",
       description:
         "The full contract for one family: every signature, the options it takes and the attribute " +
-        "each maps to, its part template, slots, constraints (requires / forbids / exactlyOneOf), the " +
+        "each maps to, its part template, slots, constraints (requires / forbids / exactlyOneOf / atLeastOneOf), the " +
         "accessibility it owes, and the CSS a consumer must import. This is the authority for how a " +
         "component is configured and composed; do not infer an option, a class or an import path " +
         "beyond what it returns.",
@@ -194,7 +194,7 @@ export function createServer(): McpServer {
       title: "Validate a composition and, if it holds, return its code",
       description:
         "Checks a usage tree against its contracts; signatures, option values, requires / forbids / " +
-        "exactlyOneOf, valid parents, slots and declared accessibility; when it is valid, returns " +
+        "exactlyOneOf / atLeastOneOf, valid parents, slots and declared accessibility; when it is valid, returns " +
         "the emitted markup AND the emitted TSX, which is `react` plus, when the composition carries " +
         "a collection, `reactData`: a second file the component imports, to be written beside it. " +
         "Use the returned code; it is the only way what you " +

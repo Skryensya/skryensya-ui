@@ -1,6 +1,6 @@
 <script lang="ts">
   import { radioGroup as radio } from "@skryensya/core/machines";
-  import { tileEvents, type TileRadioOrientation } from "@skryensya/core/tile";
+  import { tileCommands, tileEvents, type TileRadioOrientation } from "@skryensya/core/tile";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
@@ -109,4 +109,16 @@
   ];
 
   bindParts(bindings);
+
+  /* A composition that owns the value sets it here; the machine reports it back as `valueChange`. */
+  $effect(() => {
+    const onSetValue = (event: Event) => {
+      const value = (event as CustomEvent<{ value: string | null }>).detail?.value ?? null;
+      if (value === api.value) return;
+      if (value === null) api.clearValue();
+      else api.setValue(value);
+    };
+    root.addEventListener(tileCommands.setValue, onSetValue);
+    return () => root.removeEventListener(tileCommands.setValue, onSetValue);
+  });
 </script>

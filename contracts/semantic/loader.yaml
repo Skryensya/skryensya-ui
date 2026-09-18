@@ -9,6 +9,8 @@ Loader:
     - "el contenido tiene forma y se puede prefigurar; eso es un Placeholder"
   alternatives:
     - Placeholder
+    - Progress
+    - Loader.status
 
 Loader.status:
   useWhen:
@@ -20,3 +22,4 @@ Loader.status:
   alternatives:
     - Loader
     - Progress
+    - Placeholder

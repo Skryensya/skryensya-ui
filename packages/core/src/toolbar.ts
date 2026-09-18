@@ -23,6 +23,7 @@ export const toolbarAttrs = {
  */
 export const toolbarContract = {
   id: "toolbar",
+  category: "actions",
   css: "@skryensya/core/components/toolbar.css",
   parts: toolbarParts,
   hooks: [
@@ -50,9 +51,13 @@ export const toolbarContract = {
       type: "boolean",
       default: true,
       attr: "data-loop-focus",
-      trueValue: "",
+      /* Written only when off: absent means the default, the same as in React. It used to be a
+         presence attribute, so hand-authored markup without it silently stopped wrapping. */
+      falseValue: "false",
       machineInput: true,
     },
+    /** Names a ToolbarGroup, when the bar holds more than one kind of control. */
+    groupLabel: { type: "string", attr: "aria-label", prop: "label" },
   },
 
   signatures: {
@@ -61,6 +66,8 @@ export const toolbarContract = {
       host: { element: "div" },
       options: ["orientation", "label", "loopFocus"],
       requires: ["label"],
+      /** Host id / a11y; label stays the option. */
+      forward: ["id", "aria-*"],
       slots: { children: { accepts: "node", required: true } },
       template: {
         element: "div",
@@ -76,7 +83,7 @@ export const toolbarContract = {
     ToolbarGroup: {
       intent: ["related-controls-together"],
       host: { element: "div" },
-      options: [],
+      options: ["groupLabel"],
       parents: ["Toolbar"],
       slots: { children: { accepts: "node", required: true } },
       // A named grouping the toolbar's roving focus treats as one region.

@@ -1,12 +1,16 @@
 ---
 import "@skryensya/core/components/tile.css";
 import "@skryensya/core/components/checkbox.css";
+/* The scale composition below is checkboxes in a Box with Text under them. */
+import "@skryensya/core/patterns/layout.css";
+import "@skryensya/core/components/typography.css";
+import "@skryensya/core/patterns/wrapper.css";
 /* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
 import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { checkboxAnatomyTree, checkboxGroupTree, checkboxTree, tileCheckboxTree } from "../../demos/checkbox";
+import { checkboxAnatomyTree, checkboxGroupTree, checkboxScaleTree, checkboxTree, tileCheckboxTree } from "../../demos/checkbox";
 import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
 
@@ -27,7 +31,7 @@ await initComponents();
 for (const root of document.querySelectorAll(
   "[data-sk-tile-checkbox]",
 )) {
-  root.addEventListener("sk:checkedchange", (event) => {
+  root.addEventListener("sk:tilecheckedchange", (event) => {
     console.log(root.dataset.value, event.detail.checked);
   });
 }`;
@@ -69,6 +73,10 @@ for (const root of document.querySelectorAll(
     <h3>{t("checkbox.tileTitle")}</h3>
     <p set:html={t("checkbox.tileBody1")} />
     <ComponentPreview tree={tileCheckboxTree(t)} label="TileCheckbox" />
+
+    <h3>{t("checkboxPage.scaleTitle")}</h3>
+    <p set:html={t("checkboxPage.scaleBody")} />
+    <ComponentPreview tree={checkboxScaleTree(t)} label={t("checkboxPage.scaleLabel")} />
     <p set:html={t("checkbox.tileBody2")} />
     <CodeBlock code={tileCheckboxVanilla} label="JavaScript" />
 

@@ -1,12 +1,21 @@
-import { selectParts, selectPositioning, type SelectOption, type SelectOptions } from "@skryensya/core/select";
+import {
+  selectAttrs,
+  selectEvents,
+  selectParts,
+  selectPositioning,
+  type SelectOption,
+  type SelectOptions,
+  type SelectValueChangeDetails,
+} from "@skryensya/core/select";
 import { select } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
-import { useMemo, useId, type ReactNode, type RefObject } from "react";
+import { useMemo, useId, useRef, type ReactNode, type RefObject } from "react";
 import { useAnchored } from "./anchored.js";
 import { Icon } from "./icon.js";
 
 export type SelectProps = Omit<SelectOptions, "options"> & {
-  label?: ReactNode;
+  /** Visible field label. Slot `text` in the contract; keep it a string here. */
+  label?: string;
   /** Decorative closed-state geometry supplied by the consumer's bound icon set. */
   indicator?: ReactNode;
   /** Decorative open-state geometry supplied by the consumer's bound icon set. */
@@ -43,6 +52,7 @@ export function Select({
   onValueChange,
 }: SelectProps) {
   const generatedId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
   const collection = useMemo(
     () =>
       select.collection<SelectOption>({
@@ -70,7 +80,13 @@ export function Select({
     required,
     value: asValues(value),
     defaultValue: asValues(defaultValue),
-    onValueChange,
+    onValueChange(details: { value: string[] }) {
+      const change: SelectValueChangeDetails = { value: details.value };
+      onValueChange?.(change);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(selectEvents.valueChange, { bubbles: true, detail: change }),
+      );
+    },
     positioning: selectPositioning,
   });
   const api = select.connect(service, normalizeProps);
@@ -78,29 +94,35 @@ export function Select({
   const anchor = useAnchored(id ?? generatedId);
 
   return (
-    <div {...api.getRootProps()} className={selectParts.root}>
-      <select {...api.getHiddenSelectProps()}>
+    <div {...api.getRootProps()} className={selectParts.root} data-sk-select="" ref={rootRef}>
+      <select {...api.getHiddenSelectProps()} {...{ [selectAttrs.hidden]: "" }}>
         {options.map((option) => (
           <option disabled={option.disabled} key={option.value} value={option.value}>
             {option.label}
           </option>
         ))}
       </select>
-      <div {...api.getControlProps()} className={selectParts.control}>
+      <div {...api.getControlProps()} className={selectParts.control} {...{ [selectAttrs.control]: "" }}>
         {label ? (
-          <label {...api.getLabelProps()} className={selectParts.label}>
+          <label {...api.getLabelProps()} className={selectParts.label} {...{ [selectAttrs.label]: "" }}>
             {label}
           </label>
         ) : null}
         <button
           {...api.getTriggerProps()}
           {...anchor.anchor(`${selectParts.trigger} sk-interactive`)}
+          {...{ [selectAttrs.trigger]: "" }}
           type="button"
         >
-          <span {...api.getValueTextProps()} className={selectParts.value}>
+          <span {...api.getValueTextProps()} className={selectParts.value} {...{ [selectAttrs.value]: "" }}>
             {api.valueAsString || placeholder}
           </span>
-          <span {...api.getIndicatorProps()} aria-hidden="true" className={selectParts.indicator}>
+          <span
+            {...api.getIndicatorProps()}
+            aria-hidden="true"
+            className={selectParts.indicator}
+            {...{ [selectAttrs.indicator]: "" }}
+          >
             {/*
               * The template paints all three of these, so authored markup always had them and React
               * only did when a caller remembered to pass one. Defaults, not opt-ins: pass null to
@@ -112,8 +134,11 @@ export function Select({
         </button>
       </div>
       <Portal container={container}>
-        <div {...anchor.positioner(api.getPositionerProps(), selectParts.positioner)}>
-          <ul {...api.getContentProps()} className={selectParts.content}>
+        <div
+          {...anchor.positioner(api.getPositionerProps(), selectParts.positioner)}
+          {...{ [selectAttrs.positioner]: "" }}
+        >
+          <ul {...api.getContentProps()} className={selectParts.content} {...{ [selectAttrs.content]: "" }}>
             {options.map((option) => (
               <li
                 {...api.getItemProps({ item: option })}
@@ -132,11 +157,20 @@ export function Select({
                 aria-selected={option.value === api.highlightedValue ? "true" : undefined}
                 className={`${selectParts.item} sk-interactive`}
                 key={option.value}
+                {...{ [selectAttrs.item]: "" }}
               >
-                <span {...api.getItemTextProps({ item: option })} className={selectParts.itemText}>
+                <span
+                  {...api.getItemTextProps({ item: option })}
+                  className={selectParts.itemText}
+                  {...{ [selectAttrs.itemText]: "" }}
+                >
                   {option.label}
                 </span>
-                <span {...api.getItemIndicatorProps({ item: option })} className={selectParts.itemIndicator}>
+                <span
+                  {...api.getItemIndicatorProps({ item: option })}
+                  className={selectParts.itemIndicator}
+                  {...{ [selectAttrs.itemIndicator]: "" }}
+                >
                   {itemIndicator ?? <Icon name="check" />}
                 </span>
               </li>

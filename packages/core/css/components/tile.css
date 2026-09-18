@@ -112,10 +112,19 @@
 
 
 
-  /* Selection paints the border; disclosure open does not, open is a reveal, not a choice. */
+  /*
+   * Selection paints the border; disclosure open does not, open is a reveal, not a choice.
+   *
+   * `input[type="checkbox"]:indeterminate`, NEVER a bare `input:indeterminate`: a RADIO matches
+   * `:indeterminate` while NO radio in its group is checked, which is the normal resting state of
+   * every radio group. Unqualified, this rule painted every option of an untouched TileRadioGroup as
+   * if it were the chosen one, and they only turned grey once the reader picked one: the unselected
+   * state looked wrong until it was too late to matter. A checkbox's indeterminate is a real third
+   * state and still belongs here.
+   */
   .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):where([data-state="checked"], [data-state="selected"]),
   .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):has(> input:checked),
-  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):has(> input:indeterminate) {
+  .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):has(> input[type="checkbox"]:indeterminate) {
     --sk-tile-border-color: var(--sk-color-border-selected);
   }
 
@@ -147,6 +156,7 @@
 
 
   .sk-tile__selection-indicator {
+    box-sizing: border-box;
     display: inline-grid;
     place-items: center;
     inline-size: 1.25rem;
@@ -405,7 +415,7 @@
 
     .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):where([data-state="checked"], [data-state="selected"]),
     .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):has(> input:checked),
-    .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):has(> input:indeterminate) {
+    .sk-tile:where(.sk-tile--interactive, .sk-tile--expandable):has(> input[type="checkbox"]:indeterminate) {
       --sk-tile-border-color: Highlight;
     }
 

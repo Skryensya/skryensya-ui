@@ -16,12 +16,13 @@ export type StatAnimateOptions = {
 };
 
 export type StatProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
-  label: ReactNode;
+  /** Plain caption above the metric. Matches the contract slot (`accepts: "text"`). */
+  label: string;
   /**
-   * The metric. Pass a `number` together with `animate` to count up; otherwise any node renders
-   * as-is (the default, static path).
+   * The metric. Pass a `number` together with `animate` to count up; otherwise plain text
+   * (the default, static path). Matches the contract slot (`accepts: "text"`).
    */
-  value: ReactNode;
+  value: string | number;
   /** Machine-readable metric used by usage-tree markup while `value` remains the final fallback text. */
   count?: number;
   locale?: string;

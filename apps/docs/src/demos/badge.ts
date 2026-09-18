@@ -154,5 +154,24 @@ export const badgeHoldersTree = (t: Translate): UsageTree => ({
         },
       ],
     },
+    {
+      contract: "badge",
+      signature: "BadgeHolder",
+      children: [
+        {
+          contract: "button",
+          signature: "Button.action",
+          options: { iconOnly: true, variant: "ghost" },
+          attrs: { "aria-label": t("demo.badge.settings") },
+          children: { contract: "icon", signature: "Icon", options: { name: "menu" } },
+        },
+        {
+          contract: "badge",
+          signature: "Badge",
+          options: { tone: "danger", size: "sm" },
+          children: "9",
+        },
+      ],
+    },
   ],
 });

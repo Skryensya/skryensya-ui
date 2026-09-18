@@ -1,6 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { checkBindingConformance } from "./conformance.js";
+import { checkCompose } from "./compose.js";
 import { checkStylingHooks } from "./hooks.js";
 import { buildManifest, canonical } from "./manifest.js";
 import { checkSnippets } from "./snippets.js";
@@ -40,6 +41,17 @@ if (badHooks.length > 0) {
   console.error("\n  HOOK_MISMATCH: nothing emitted\n");
   for (const problem of badHooks) {
     console.error(`    ${problem.sheet}  [${problem.rule}]`);
+    console.error(`      ${problem.message}\n`);
+  }
+  process.exit(1);
+}
+
+const badCompose = checkCompose();
+
+if (badCompose.length > 0) {
+  console.error("\n  COMPOSE_MISMATCH: nothing emitted\n");
+  for (const problem of badCompose) {
+    console.error(`    ${problem.contract}  [${problem.rule}]`);
     console.error(`      ${problem.message}\n`);
   }
   process.exit(1);

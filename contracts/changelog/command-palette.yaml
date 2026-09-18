@@ -3,8 +3,77 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "4b1618946d306707"
+surface: "83a7e74756377251"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: CommandPalette declara compose y filas systemOwned
+      body: >-
+        <code>compose</code> Button/Dialog/Icon; <code>systemOwned</code> lista option rows rellenadas al abrir.
+    en:
+      title: CommandPalette declares compose and row systemOwned
+      body: >-
+        <code>compose</code> Button/Dialog/Icon; <code>systemOwned</code> lists option rows filled on open.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: Command palette exige label e id, cierra con closeLabel y declara Vaul
+      body: >-
+        <code>requires</code> pide <code>label</code> y <code>paletteId</code> (como React).
+        <code>closeLabel</code> entra al contrato; el slot <code>footer</code> deja de ser
+        React-only. <code>hookSheets</code> nombra <code>dialog-vaul.css</code> porque el Vaul
+        por defecto no se descubre desde <code>also: sk-dialog</code>.
+    en:
+      title: Command palette requires label/id, closeLabel, and names Vaul sheet
+      body: >-
+        <code>requires</code> asks for <code>label</code> and <code>paletteId</code> (as React
+        already did). <code>closeLabel</code> joins the contract; the <code>footer</code> slot is
+        no longer React-only. <code>hookSheets</code> names <code>dialog-vaul.css</code> because
+        default-ON Vaul is not discoverable from <code>also: sk-dialog</code>.
+  - date: 2026-09-16
+    kind: feature
+    target: vaul
+    es:
+      title: Command palette usa Vaul por defecto en móvil
+      body: >-
+        La opción <code>vaul</code> (default <code>true</code>, atributo
+        <code>data-sk-dialog-vaul</code>) entra al contrato: en viewports estrechos la paleta es
+        una hoja inferior con asa de arrastre, el mismo mecanismo que <code>Dialog.vaul</code>.
+        <code>vaul={false}</code> conserva el diálogo centrado a todo ancho. El template incluye
+        siempre el handle; el CSS lo oculta cuando no aplica.
+    en:
+      title: Command palette defaults to Vaul on small screens
+      body: >-
+        The <code>vaul</code> option (default <code>true</code>, attribute
+        <code>data-sk-dialog-vaul</code>) joins the contract: on narrow viewports the palette is a
+        bottom sheet with a drag handle, the same mechanism as <code>Dialog.vaul</code>.
+        <code>vaul={false}</code> keeps the centred dialog at every width. The template always
+        includes the handle; CSS hides it when it does not apply.
   - date: 2026-09-01
     kind: bugfix
     es:
@@ -155,3 +224,15 @@ entries:
         as Vanilla's <code>open()</code>. New <code>onSelect</code>: without it, activating a row
         navigates to its <code>href</code> as before; with it, the host decides (the playground
         selects an example without reloading the sandbox).
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Los textos por defecto pasan a inglés
+      body: >-
+        El kit es una librería en inglés y sus defaults estaban en español: <code>closeLabel</code> Close, <code>placeholder</code> Search…, <code>emptyLabel</code> No results.. Una interfaz en
+        otro idioma pasa sus propios textos, y el <code>locale</code> que corresponda.
+    en:
+      title: Default texts move to English
+      body: >-
+        The kit is an English library and its defaults were Spanish: <code>closeLabel</code> Close, <code>placeholder</code> Search…, <code>emptyLabel</code> No results.. An interface in another
+        language passes its own texts, and the <code>locale</code> it needs.

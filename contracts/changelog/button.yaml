@@ -3,8 +3,82 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "51ea2207a5ae7098"
+surface: "5e435662b22be94d"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Button.action reenvia value y autofocus
+      body: >-
+        <code>forward</code> suma <code>value</code> y <code>autofocus</code>. Un boton de envio que
+        declara <code>name</code> ya puede decir que envia, y el foco inicial es el del navegador en
+        cualquier host enfocable.
+    en:
+      title: Button.action forwards value and autofocus
+      body: >-
+        <code>forward</code> gains <code>value</code> and <code>autofocus</code>. A submit button that
+        names a field can now say what it submits, and initial focus is the platform's on any
+        focusable host.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Icon hijo no recibe clics (hitTesting)
+      body: >-
+        <code>compose</code> icon + <code>hitTesting.childrenNone: ["Icon"]</code> en ambas firmas.
+    en:
+      title: Child Icon does not receive clicks (hitTesting)
+      body: >-
+        <code>compose</code> icon + <code>hitTesting.childrenNone: ["Icon"]</code> on both signatures.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Button declara forward para attrs del host
+      body: >-
+        <code>Button.action</code> publica <code>forward</code> (<code>name</code>/<code>form</code>/…
+        y <code>aria-*</code>); <code>Button.navigation</code> publica <code>target</code>/<code>rel</code>/
+        <code>download</code>. Un attr fuera de la lista es <code>unknown-attr</code>.
+        <code>type</code> sigue siendo opción (no forward).
+    en:
+      title: Button declares forward for host attrs
+      body: >-
+        <code>Button.action</code> publishes <code>forward</code> (<code>name</code>/<code>form</code>/…
+        and <code>aria-*</code>); <code>Button.navigation</code> publishes <code>target</code>/<code>rel</code>/
+        <code>download</code>. An attr outside the list is <code>unknown-attr</code>.
+        <code>type</code> remains an option (not forward).
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Button deja de reclamar sk-interactive como parte
+      body: >-
+        La clase compartida del state layer se compone vía <code>also</code> y vive en el bundle
+        base; ya no figura en <code>parts</code>. Antes, al dejar List de reclamarla también,
+        <code>button.css</code> quedaba como dueño único y árboles de Toc/List tiraban de ella
+        sin razón.
+    en:
+      title: Button stops claiming sk-interactive as a part
+      body: >-
+        The shared state-layer class is composed via <code>also</code> and lives in the base
+        bundle; it is no longer listed in <code>parts</code>. Once List stopped claiming it too,
+        <code>button.css</code> became the unique owner and Toc/List trees pulled it for no reason.
+  - date: 2026-09-16
+    kind: bugfix
+    target: pressed
+    es:
+      title: Button.navigation ya no acepta pressed ni disabled
+      body: >-
+        El contrato ya los prohibía; React igual escribía <code>aria-pressed</code> y
+        <code>disabled</code> en el <code>&lt;a&gt;</code> si se pasaban. El binding tipa
+        aparte <code>Button.action</code> y <code>Button.navigation</code>, y en runtime
+        omite ambos en el host de enlace. La semántica apunta a <code>Link</code> como
+        alternativa en texto.
+    en:
+      title: Button.navigation no longer accepts pressed or disabled
+      body: >-
+        The contract already forbade them; React still wrote <code>aria-pressed</code> and
+        <code>disabled</code> on the <code>&lt;a&gt;</code> when passed. The binding now types
+        <code>Button.action</code> and <code>Button.navigation</code> separately, and at runtime
+        strips both from the link host. Semantics name <code>Link</code> as the in-text
+        alternative.
   - date: 2026-09-14
     kind: bugfix
     es:
@@ -359,3 +433,13 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Button.action escribe type, button por defecto
+      body: >-
+        Nueva opción <code>type</code> (<code>button</code>, <code>submit</code>, <code>reset</code>) que siempre se escribe. Sin ella el markup emitido era un botón que enviaba el formulario donde estuviera, mientras React (que usa <code>button</code> por defecto) no. Un <code>type</code> pasado como atributo deja de validar: quedaba duplicado y perdía contra el de la opción.
+    en:
+      title: Button.action writes type, button by default
+      body: >-
+        New <code>type</code> option (<code>button</code>, <code>submit</code>, <code>reset</code>), always written. Without it the emitted markup was a button that submitted whatever form it sat in, while React (which defaults to <code>button</code>) did not. A <code>type</code> passed as an attribute stops validating: it was duplicated and lost to the option.

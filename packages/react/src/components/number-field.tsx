@@ -1,16 +1,27 @@
-import { numberFieldParts, numberFieldContract } from "@skryensya/core/number-field";
+import {
+  numberFieldEvents,
+  numberFieldParts,
+  numberFieldContract,
+} from "@skryensya/core/number-field";
 import { numberInput } from "@skryensya/core/machines";
 import { normalizeProps, useMachine } from "@zag-js/react";
-import { useId, type ReactNode } from "react";
+import { useId, useRef, type ReactNode } from "react";
 import { Icon } from "./icon.js";
 
-/* Derived, never restated: the default lives in the contract. */
-const { decrementLabel: decrementLabelOption, incrementLabel: incrementLabelOption } = numberFieldContract.options;
+/* Derived, never restated: the defaults live in the contract. */
+const {
+  decrementLabel: decrementLabelOption,
+  incrementLabel: incrementLabelOption,
+  locale: localeOption,
+} = numberFieldContract.options;
 
 export type NumberFieldProps = {
   id?: string;
   name?: string;
-  label: ReactNode;
+  /** Names the field. Contract slot is text-only. */
+  label: string;
+  /** Optional supporting text under the control. Contract slot is text-only. */
+  hint?: string;
   value?: string;
   defaultValue?: string;
   min?: number;
@@ -35,12 +46,13 @@ export function NumberField({
   defaultValue,
   disabled,
   formatOptions,
+  hint,
   id,
   incrementIcon,
   incrementLabel = incrementLabelOption.default,
   invalid,
   label,
-  locale = "es",
+  locale = localeOption.default,
   max,
   min,
   name,
@@ -51,8 +63,11 @@ export function NumberField({
   value,
 }: NumberFieldProps) {
   const generatedId = useId();
+  const resolvedId = id ?? generatedId;
+  const rootRef = useRef<HTMLDivElement>(null);
+  const hintId = hint ? `${resolvedId}-hint` : undefined;
   const service = useMachine(numberInput.machine, {
-    id: id ?? generatedId,
+    id: resolvedId,
     name,
     locale,
     value,
@@ -66,11 +81,27 @@ export function NumberField({
     invalid,
     formatOptions,
     translations: { decrementLabel, incrementLabel },
-    onValueChange,
+    onValueChange(details) {
+      onValueChange?.(details);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(numberFieldEvents.valueChange, {
+          bubbles: true,
+          detail: { value: details.value, valueAsNumber: details.valueAsNumber },
+        }),
+      );
+    },
   });
   const api = numberInput.connect(service, normalizeProps);
+  const inputProps = api.getInputProps();
+  const describedBy = [inputProps["aria-describedby"], hintId].filter(Boolean).join(" ") || undefined;
   return (
-    <div {...api.getRootProps()} className={numberFieldParts.root}>
+    <div
+      {...api.getRootProps()}
+      className={numberFieldParts.root}
+      data-invalid={invalid || undefined}
+      data-sk-number-field=""
+      ref={rootRef}
+    >
       <label {...api.getLabelProps()} className={numberFieldParts.label}>
         {label}
       </label>
@@ -87,7 +118,7 @@ export function NumberField({
         >
           {decrementIcon ?? <Icon name="remove" size="sm" />}
         </button>
-        <input {...api.getInputProps()} className={numberFieldParts.input} />
+        <input {...inputProps} aria-describedby={describedBy} className={numberFieldParts.input} />
         <button
           {...api.getIncrementTriggerProps()}
           className={`sk-button sk-interactive ${numberFieldParts.increment}`}
@@ -99,6 +130,11 @@ export function NumberField({
           {incrementIcon ?? <Icon name="add" size="sm" />}
         </button>
       </div>
+      {hint ? (
+        <span className={numberFieldParts.hint} id={hintId}>
+          {hint}
+        </span>
+      ) : null}
     </div>
   );
 }

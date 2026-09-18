@@ -29,7 +29,7 @@ function markup({ html = "<p>Hello world</p>", attrs = "" }: { html?: string; at
   </div>`;
   const root = document.querySelector<HTMLElement>("[data-sk-editor]")!;
   let view: import("@skryensya/editor/view").EditorView | undefined;
-  root.addEventListener("sk-editor-ready", (event) => {
+  root.addEventListener("sk:editorready", (event) => {
     view = (event as CustomEvent).detail.view;
   });
   expect(mountEditor(document)).toBe(1);
@@ -79,10 +79,10 @@ describe("Editor vanilla enhancer", () => {
     expect(hidden.value).toBe("<p><strong>Hello</strong> world</p>");
   });
 
-  it("dispatches sk-editor-change with html/markdown/doc on every doc-changing transaction", () => {
+  it("dispatches sk:editorchange with html/markdown/doc on every doc-changing transaction", () => {
     const { root, view } = markup();
     let detail: { html: string; markdown: string } | undefined;
-    root.addEventListener("sk-editor-change", (event) => {
+    root.addEventListener("sk:editorchange", (event) => {
       detail = (event as CustomEvent).detail;
     });
     selectWord(view, "Hello");

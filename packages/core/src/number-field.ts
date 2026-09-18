@@ -12,7 +12,6 @@ export const numberFieldParts = {
   input: "sk-number-field__input",
   increment: "sk-number-field__increment",
   decrement: "sk-number-field__decrement",
-  scrubber: "sk-number-field__scrubber",
   hint: "sk-number-field__hint",
 } as const;
 
@@ -23,7 +22,6 @@ export const numberFieldAttrs = {
   input: "data-sk-number-field-input",
   increment: "data-sk-number-field-increment",
   decrement: "data-sk-number-field-decrement",
-  scrubber: "data-sk-number-field-scrubber",
 } as const;
 
 /**
@@ -38,10 +36,21 @@ export const numberFieldAttrs = {
  * Its label is a slot rather than a FormField, because the machine has to own the `for`/`id` pair to
  * keep the announced value in sync with the formatted one.
  */
+/** The DOM events this family dispatches on its root, `sk:<family><event>` like every other. */
+export const numberFieldEvents = {
+  /** Detail: `{ value: string, valueAsNumber: number }`. */
+  valueChange: "sk:numberfieldvaluechange",
+} as const;
+
 export const numberFieldContract = {
   id: "number-field",
+  category: "forms",
   css: "@skryensya/core/components/number-field.css",
   parts: numberFieldParts,
+  events: numberFieldEvents,
+  eventDetails: {
+    valueChange: { detail: { value: "string", valueAsNumber: "number" }, reactProp: "onValueChange", source: "root", trigger: "input" },
+  },
   hooks: [
     "--sk-number-field-bg",
     "--sk-number-field-border-color",
@@ -49,6 +58,7 @@ export const numberFieldContract = {
     "--sk-number-field-fg",
     "--sk-number-field-gap",
     "--sk-number-field-hint-color",
+    "--sk-number-field-invalid-border-color",
     "--sk-number-field-label-color",
     "--sk-number-field-min-inline-size",
     "--sk-number-field-radius",
@@ -65,19 +75,26 @@ export const numberFieldContract = {
     /** Initial uncontrolled value. Authored markup puts it on the input; React names the prop. */
     defaultValue: { type: "string", attr: "value", prop: "defaultValue", machineInput: true },
     /** Locale used by the formatter. The vanilla enhancer inherits it from the root's `lang`. */
-    locale: { type: "string", attr: "lang", machineInput: true },
-    min: { type: "number", attr: "min", machineInput: true },
-    max: { type: "number", attr: "max", machineInput: true },
+    locale: { type: "string", default: "en", attr: "lang", machineInput: true },
+    /** Inclusive floor. When both ends are authored, must sit at or below `max`. */
+    min: { type: "number", attr: "min", machineInput: true, between: { max: "max" } },
+    /** Inclusive ceiling. When both ends are authored, must sit at or above `min`. */
+    max: { type: "number", attr: "max", machineInput: true, between: { min: "min" } },
     step: { type: "number", attr: "step", machineInput: true },
     disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "", machineInput: true },
     readOnly: { type: "boolean", default: false, attr: "readonly", trueValue: "", machineInput: true },
     required: { type: "boolean", default: false, attr: "required", trueValue: "", machineInput: true },
+    /**
+     * The field failed validation. Paints the control (`[data-invalid]`) AND feeds Zag so the
+     * spinbutton is `aria-invalid`. React already had the prop; authored markup had neither.
+     */
+    invalid: { type: "boolean", default: false, attr: "data-invalid", trueValue: "", machineInput: true },
     /*
      * The triggers are icon-only, so these ARE their accessible names. Authored markup carries them
      * as `aria-label`; React passes them as `translations` and Zag writes the same attribute back.
      */
-    decrementLabel: { type: "string", default: "Disminuir", attr: "aria-label", machineInput: true },
-    incrementLabel: { type: "string", default: "Aumentar", attr: "aria-label", machineInput: true },
+    decrementLabel: { type: "string", default: "Decrease", attr: "aria-label", machineInput: true },
+    incrementLabel: { type: "string", default: "Increase", attr: "aria-label", machineInput: true },
   },
 
   signatures: {
@@ -94,11 +111,20 @@ export const numberFieldContract = {
         "disabled",
         "readOnly",
         "required",
+        "invalid",
         "decrementLabel",
         "incrementLabel",
       ],
-      slots: { label: { accepts: "text", required: true } },
+      /** Host id / a11y names beyond owned label and machine name. */
+      forward: ["id", "aria-*"],
+      slots: {
+        label: { accepts: "text", required: true },
+        hint: { accepts: "text" },
+      },
       mount: "data-sk-number-field",
+      compose: [
+        { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
+      ],
       template: {
         element: "div",
         part: "root",
@@ -137,6 +163,7 @@ export const numberFieldContract = {
               },
             ],
           },
+          { element: "span", part: "hint", whenGiven: "hint", slot: "hint" },
         ],
       },
       react: { from: "@skryensya/react/number-field", name: "NumberField" },

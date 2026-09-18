@@ -3,8 +3,65 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "e729b1c3e7f8900d"
+surface: "2da64c679c4f4216"
 entries:
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Popover quita el prop container muerto
+      body: >-
+        La API nativa <code>popover</code> no porta; React ya no acepta <code>container</code>.
+        El contrato documenta <code>portals</code> ausente (false).
+    en:
+      title: Popover drops the dead container prop
+      body: >-
+        The native <code>popover</code> API does not portal; React no longer accepts <code>container</code>.
+        The contract documents absent <code>portals</code> (false).
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Popover declara compose de Button
+      body: >-
+        <code>compose</code> documenta trigger/close vía <code>also: sk-button</code> (<code>systemOwned</code>).
+    en:
+      title: Popover declares compose of Button
+      body: >-
+        <code>compose</code> documents trigger/close via <code>also: sk-button</code> (<code>systemOwned</code>).
+  - date: 2026-09-16
+    kind: bugfix
+    target: panelId
+    es:
+      title: Popover exige panelId, triggerLabel y la hoja de anclaje
+      body: >-
+        <code>panelId</code> pasa a ser obligatorio: sin él el markup emitido no enlaza
+        trigger y panel. <code>triggerLabel</code> entra al contrato (como en Menu) y
+        <code>a11y</code> lo exige con <code>triggerIconOnly</code>. <code>closeLabel</code>
+        es sólo texto visible (sin <code>data-close-label</code>). <code>hookSheets</code>
+        nombra <code>anchored.css</code> y publica sus hooks. React escribe
+        <code>data-bare</code>/<code>data-arrow</code> y tipa title/description como texto.
+    en:
+      title: Popover requires panelId, triggerLabel, and the anchoring sheet
+      body: >-
+        <code>panelId</code> is required: without it emitted markup cannot link trigger and
+        panel. <code>triggerLabel</code> joins the contract (as on Menu) and <code>a11y</code>
+        requires it with <code>triggerIconOnly</code>. <code>closeLabel</code> is visible text
+        only (no <code>data-close-label</code>). <code>hookSheets</code> names
+        <code>anchored.css</code> and publishes its hooks. React writes
+        <code>data-bare</code>/<code>data-arrow</code> and types title/description as text.
   - date: 2026-08-11
     kind: feature
     es:
@@ -68,3 +125,25 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: El trigger usa el vocabulario de Button y suma triggerTone
+      body: >-
+        <code>triggerVariant</code> y <code>triggerSize</code> se validan contra Button, y <code>triggerTone</code> completa el eje de significado que Menu ya tenía.
+    en:
+      title: The trigger uses the Button vocabulary and gains triggerTone
+      body: >-
+        <code>triggerVariant</code> and <code>triggerSize</code> are validated against Button, and <code>triggerTone</code> completes the meaning axis Menu already had.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Los textos por defecto pasan a inglés
+      body: >-
+        El kit es una librería en inglés y sus defaults estaban en español: <code>closeLabel</code> Close. Una interfaz en
+        otro idioma pasa sus propios textos, y el <code>locale</code> que corresponda.
+    en:
+      title: Default texts move to English
+      body: >-
+        The kit is an English library and its defaults were Spanish: <code>closeLabel</code> Close. An interface in another
+        language passes its own texts, and the <code>locale</code> it needs.

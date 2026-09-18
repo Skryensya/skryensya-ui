@@ -5,5 +5,7 @@ Progress:
     - "se conoce cuánto falta: una subida, un formulario por pasos, una descarga"
   avoidWhen:
     - "la espera es de duración desconocida; eso es un Loader"
+    - "es una MEDICIÓN dentro de un rango (disco, batería, rating); eso es Meter"
   alternatives:
     - Loader
+    - Meter

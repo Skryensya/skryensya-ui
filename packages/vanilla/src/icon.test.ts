@@ -59,9 +59,9 @@ describe("mountIcons", () => {
   });
 
   it("a label makes it content: role=img + aria-label, no aria-hidden", () => {
-    const { icon } = mount(`<span data-sk-icon="close" data-sk-icon-label="Cerrar"></span>`);
+    const { icon } = mount(`<span data-sk-icon="close" data-sk-icon-label="Close"></span>`);
     expect(icon!.getAttribute("role")).toBe("img");
-    expect(icon!.getAttribute("aria-label")).toBe("Cerrar");
+    expect(icon!.getAttribute("aria-label")).toBe("Close");
     expect(icon!.hasAttribute("aria-hidden")).toBe(false);
   });
 

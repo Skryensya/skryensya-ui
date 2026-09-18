@@ -11,9 +11,21 @@ import {
   type Space,
   type WrapperSize,
 } from "@skryensya/core/layout";
-import { heroParts, type HeroAlign, type HeroPadding, type HeroSurface } from "@skryensya/core/hero";
-import { footerParts, type FooterPadding, type FooterSurface } from "@skryensya/core/footer";
+import { heroContract, heroParts, type HeroAlign, type HeroPadding, type HeroSurface } from "@skryensya/core/hero";
+import { footerContract, footerParts, type FooterPadding, type FooterSurface } from "@skryensya/core/footer";
 import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
+
+const {
+  align: heroAlignOption,
+  padding: heroPaddingOption,
+  surface: heroSurfaceOption,
+} = heroContract.options;
+
+const {
+  divider: dividerOption,
+  padding: footerPaddingOption,
+  surface: footerSurfaceOption,
+} = footerContract.options;
 
 type PolymorphicProps<Element extends ElementType, OwnProps> = OwnProps & {
   as?: Element;
@@ -48,11 +60,11 @@ export type HeroProps<Element extends ElementType = "div"> = PolymorphicProps<
 >;
 
 export function Hero<Element extends ElementType = "div">({
-  align = "start",
+  align = heroAlignOption.default,
   as,
   className,
-  padding = "xl",
-  surface = "surface",
+  padding = heroPaddingOption.default,
+  surface = heroSurfaceOption.default,
   ...props
 }: HeroProps<Element>) {
   const Component = as ?? "div";
@@ -81,9 +93,9 @@ export type FooterProps<Element extends ElementType = "footer"> = PolymorphicPro
 export function Footer<Element extends ElementType = "footer">({
   as,
   className,
-  divider = true,
-  padding = "lg",
-  surface = "sunken",
+  divider = dividerOption.default,
+  padding = footerPaddingOption.default,
+  surface = footerSurfaceOption.default,
   ...props
 }: FooterProps<Element>) {
   const Component = as ?? "footer";
@@ -150,6 +162,7 @@ export type GridProps<Element extends ElementType = "div"> = PolymorphicProps<
   Element,
   LayoutChildren & {
     columns?: GridColumns;
+    fill?: boolean;
     gap?: Space;
     multicol?: boolean;
     responsive?: boolean;
@@ -162,6 +175,7 @@ export function Grid<Element extends ElementType = "div">({
   as,
   className,
   columns = 1,
+  fill = false,
   gap = "md",
   multicol,
   responsive,
@@ -175,6 +189,7 @@ export function Grid<Element extends ElementType = "div">({
       {...props}
       className={classes(layoutParts.grid, className)}
       data-columns={columns}
+      data-fill={fill ? "" : undefined}
       data-gap={gap}
       data-multicol={multicol === true ? "" : multicol === false ? undefined : rawMulticol}
       data-responsive={responsive === true ? "" : responsive === false ? undefined : rawResponsive}

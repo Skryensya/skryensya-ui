@@ -6,7 +6,7 @@
     supportsAnchorPositioning,
   } from "@skryensya/core/anchored";
   import { menu } from "@skryensya/core/machines";
-  import { menuAttrs, menuParts, type MenuItemKind } from "@skryensya/core/menu";
+  import { menuAttrs, menuEvents, menuParts, type MenuItemKind } from "@skryensya/core/menu";
   import { selectorsFor } from "@skryensya/core/selectors";
   import { getIntentReadout, type IntentReadoutHandle } from "@skryensya/core/menu-intent-readout";
   import { createMenuSafeArea, type MenuSafeAreaHandle } from "@skryensya/core/menu-safe-area";
@@ -115,7 +115,7 @@
      */
     positioning: { placement: "bottom-start" as const, strategy: "fixed" as const },
     onOpenChange(details: { open: boolean }) {
-      root.dispatchEvent(new CustomEvent("sk-open-change", { bubbles: true, detail: { open: details.open } }));
+      root.dispatchEvent(new CustomEvent(menuEvents.openChange, { bubbles: true, detail: { open: details.open } }));
     },
   }));
 
@@ -185,7 +185,7 @@
               }
               item.node.toggleAttribute("data-checked", checked);
               root.dispatchEvent(
-                new CustomEvent("sk-checked-change", { bubbles: true, detail: { value: item.value, checked } }),
+                new CustomEvent(menuEvents.checkedChange, { bubbles: true, detail: { value: item.value, checked } }),
               );
             },
           });
@@ -242,7 +242,7 @@
 
   /*
    * THE LISTENERS THE MACHINE NEVER DECLARED, which keep their own array. Three families: the aiming
-   * `pointermove`, a submenu's arrow-key open, and the per-item `sk-select` dispatch. None of them are
+   * `pointermove`, a submenu's arrow-key open, and the per-item `sk:menuselect` dispatch. None of them are
    * in Zag's props - they only ADD behaviour beside the machine's - so `bindParts` has nothing to say
    * about them and does not pretend to.
    */
@@ -291,7 +291,7 @@
       if (item.kind !== "item") continue;
       const onClick = () => {
         if (!boolAttr(item.node, "disabled"))
-          root.dispatchEvent(new CustomEvent("sk-select", { bubbles: true, detail: { value: item.value } }));
+          root.dispatchEvent(new CustomEvent(menuEvents.select, { bubbles: true, detail: { value: item.value } }));
       };
       item.node.addEventListener("click", onClick);
       cleanups.push(() => item.node.removeEventListener("click", onClick));

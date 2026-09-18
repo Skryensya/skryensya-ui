@@ -35,6 +35,6 @@ export const stepsTree = (t: Translate): UsageTree => ({
 export const stepsVerticalTree = (t: Translate): UsageTree => ({
   contract: "steps",
   signature: "Steps",
-  attrs: { "data-orientation": "vertical" },
+  options: { orientation: "vertical" },
   slots: { items: stepsVerticalItems(t) },
 });

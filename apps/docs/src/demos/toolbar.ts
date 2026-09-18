@@ -119,7 +119,7 @@ export const nestedToolbarTree = (t: Translate): UsageTree => ({
     {
       contract: "toolbar",
       signature: "ToolbarGroup",
-      attrs: { "aria-label": t("demo.toolbar.screenSize") },
+      options: { groupLabel: t("demo.toolbar.screenSize") },
       children: {
         contract: "segmented",
         signature: "Segmented",
@@ -131,7 +131,7 @@ export const nestedToolbarTree = (t: Translate): UsageTree => ({
     {
       contract: "toolbar",
       signature: "ToolbarGroup",
-      attrs: { "aria-label": t("demo.toolbar.binding") },
+      options: { groupLabel: t("demo.toolbar.binding") },
       children: {
         contract: "segmented",
         signature: "Segmented",

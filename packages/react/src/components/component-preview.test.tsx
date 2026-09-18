@@ -15,6 +15,7 @@ describe("ComponentPreviewBare (React)", () => {
     expect(ui.getByText("Button")).toBeTruthy();
     expect(ui.getByRole("button", { name: "Click me" })).toBeTruthy();
     expect(ui.getByText("const x = 1;")).toBeTruthy();
+    expect(ui.container.querySelector("[data-sk-component-preview]")).toBeTruthy();
   });
 
   it("renders a note beside the title when given", () => {
@@ -24,16 +25,11 @@ describe("ComponentPreviewBare (React)", () => {
     expect(ui.getByText("disabled")).toBeTruthy();
   });
 
-  it("omits the header entirely when there is neither a title nor a note", () => {
-    const ui = render(<ComponentPreviewBare title={undefined} stage={<span />} code={<span />} />);
-    expect(ui.container.querySelector(".sk-component-preview__header")).toBeNull();
-  });
-
-  it("keeps the header when only a note is given, with no title text", () => {
+  it("keeps the header when title is present without a note", () => {
     const ui = render(
-      <ComponentPreviewBare title={undefined} note="Beta" stage={<span />} code={<span />} />,
+      <ComponentPreviewBare title="Button" stage={<span />} code={<span />} />,
     );
     expect(ui.container.querySelector(".sk-component-preview__header")).not.toBeNull();
-    expect(ui.getByText("Beta")).toBeTruthy();
+    expect(ui.getByText("Button")).toBeTruthy();
   });
 });

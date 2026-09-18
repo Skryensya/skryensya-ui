@@ -64,8 +64,9 @@ export const checkoutTree = (t: Translate, locale: "es" | "en"): UsageTree => {
         ],
       },
       {
-        contract: "box",
-        signature: "Box",
+        contract: "layout",
+        signature: "Stack",
+        options: { gap: "none" },
         attrs: { class: "page-shell" },
         children: {
           contract: "layout",
@@ -95,7 +96,7 @@ export const checkoutTree = (t: Translate, locale: "es" | "en"): UsageTree => {
                         },
                       },
                       {
-                        options: { status: "current", current: true },
+                        options: { status: "current" },
                         slots: {
                           marker: "2",
                           label: t("demo.checkout.step2"),

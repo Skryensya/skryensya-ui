@@ -4,6 +4,7 @@ Steps:
   useWhen:
     - "hay que mostrar en qué etapa está el usuario de un proceso de varias"
     - "importa qué está hecho, qué falta y dónde está parado"
+    - "cada paso lleva status (complete, current o upcoming); exactamente uno es current"
   avoidWhen:
     - "son instrucciones para leer y hacer; eso es un ProcessList"
   alternatives:

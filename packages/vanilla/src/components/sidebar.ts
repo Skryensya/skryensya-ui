@@ -233,7 +233,7 @@ function connectResize(root: HTMLElement, handle: HTMLElement, options: SidebarO
    * untouched, `data-resizing` is not on the root, and releasing does nothing at all.
    *
    * This is not polish. A press that never moved used to run the whole ending: it committed, which
-   * FIRED `sk-resize-change` and, on a sidebar with a `storageKey`, WROTE the current width to
+   * FIRED `sk:sidebarresizechange` and, on a sidebar with a `storageKey`, WROTE the current width to
    * storage. So a stray click on the panel edge froze whatever width happened to be on screen into
    * the reader's browser, and a product that later changed its default could never reach them
    * again. It also ran twice on the way to a double-click, storing a width the reader was in the

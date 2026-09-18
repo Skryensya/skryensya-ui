@@ -1,14 +1,18 @@
 import {
+  tooltipContract,
   tooltipDefaultPlacement,
+  tooltipEvents,
   tooltipParts,
   tooltipPlacementToZag,
   type TooltipOptions,
 } from "@skryensya/core/tooltip";
 import { tooltip } from "@skryensya/core/machines";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
-import { useId, type ReactNode, type RefObject } from "react";
+import { useId, useRef, type ReactNode, type RefObject } from "react";
 import { anchoredParts } from "@skryensya/core/anchored";
 import { useAnchored } from "./anchored.js";
+
+const { interactive: interactiveOption } = tooltipContract.options;
 
 export type TooltipProps = TooltipOptions & {
   /**
@@ -16,8 +20,8 @@ export type TooltipProps = TooltipOptions & {
    * as `aria-describedby`, never as the label. See the contract in `@skryensya/core/tooltip`.
    */
   children: ReactNode;
-  /** The description itself. Short: it is a hint, not a panel. */
-  content: ReactNode;
+  /** The description itself. Short: it is a hint, not a panel. Matches the contract slot. */
+  content: string;
   /** Draw a small arrow pointing at the trigger. Off by default; decorative, never announced. */
   arrow?: boolean;
   /**
@@ -37,7 +41,7 @@ export function Tooltip({
   openDelay,
   closeDelay,
   // On by default: it is what satisfies WCAG 1.4.13 "hoverable" (see @skryensya/core/tooltip).
-  interactive = true,
+  interactive = interactiveOption.default,
   placement,
   disabled,
   open,
@@ -45,6 +49,9 @@ export function Tooltip({
   onOpenChange,
 }: TooltipProps) {
   const generatedId = useId();
+  const rootRef = useRef<HTMLSpanElement>(null);
+  const onOpenChangeRef = useRef(onOpenChange);
+  onOpenChangeRef.current = onOpenChange;
   /*
    * The default is RESOLVED rather than left absent. The box copes without it, the arrow does not:
    * it is an anchored box of its own and the pattern's default side is block-end, while a tooltip's
@@ -62,7 +69,12 @@ export function Tooltip({
     disabled,
     open,
     defaultOpen,
-    onOpenChange,
+    onOpenChange: (details) => {
+      onOpenChangeRef.current?.(details);
+      rootRef.current?.dispatchEvent(
+        new CustomEvent(tooltipEvents.openChange, { bubbles: true, detail: { open: details.open } }),
+      );
+    },
   });
   const api = tooltip.connect(service, normalizeProps);
 
@@ -105,7 +117,7 @@ export function Tooltip({
      * it from the trigger, so without it that attribute referenced an element this binding never
      * rendered. A dangling reference, identical in shape to a mistyped `aria-describedby`.
      */
-    <span className={tooltipParts.root} id={id ?? generatedId}>
+    <span className={tooltipParts.root} data-sk-anchor="" id={id ?? generatedId} ref={rootRef}>
       {/*
        * `getTriggerProps` returns button props, so the trigger is a real span-wrapper around whatever
        * the consumer passed rather than a nested <button>: wrapping their control in our own button

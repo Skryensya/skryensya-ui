@@ -1,5 +1,5 @@
 # What changed in fade-edge, in the words its users read. Only appended to, never rewritten.
-surface: "4688ab635a697db7"
+surface: "618182a92df28dba"
 entries:
   - date: 2026-09-07
     kind: feature
@@ -37,3 +37,13 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: color sólo va con mode color
+      body: >-
+        Con el modo transparente por defecto, <code>color</code> se escribía y no pintaba nada. Ahora esa combinación deja de validar.
+    en:
+      title: color only goes with mode color
+      body: >-
+        With the default transparent mode, <code>color</code> was written and painted nothing. That combination stops validating.

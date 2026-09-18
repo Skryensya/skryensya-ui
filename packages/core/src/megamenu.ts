@@ -81,11 +81,33 @@ export const megamenuAttrs = {
 
 export type MegamenuOpenChangeDetails = { readonly open: boolean; readonly index: number | null };
 
+/** The DOM events this family dispatches on its root, `sk:<family><event>` like every other. */
+export const megamenuEvents = {
+  /** Detail: `{ open: boolean, index: number | null }`. */
+  openChange: "sk:megamenuopenchange",
+} as const;
+
 export const megamenuContract = {
   id: "megamenu",
+  category: "navigation",
   css: "@skryensya/core/components/megamenu.css",
   parts: megamenuParts,
+  events: megamenuEvents,
+  eventDetails: {
+    openChange: { detail: { open: "boolean", index: "number | null" }, reactProp: "onOpenChange", source: "root", trigger: "trigger" },
+  },
+  /* Authored on a NavListLink inside a trigger column to swap this megamenu's preview image. */
+  authoredAttrs: [megamenuAttrs.preview, megamenuAttrs.previewAlt],
   hooks: [
+    "--sk-anchored-align",
+    "--sk-anchored-arrow-edge",
+    "--sk-anchored-arrow-near",
+    "--sk-anchored-justify",
+    "--sk-anchored-offset",
+    "--sk-anchored-position-area",
+    "--sk-anchored-position-try",
+    "--sk-anchored-size",
+    "--sk-anchored-z",
     "--sk-megamenu-bg",
     "--sk-megamenu-border-color",
     "--sk-megamenu-fg",
@@ -94,6 +116,13 @@ export const megamenuContract = {
     "--sk-megamenu-shadow",
     "--sk-megamenu-wash",
   ],
+  /*
+   * Every trigger's panel carries `sk-anchored` / the root carries `sk-anchor`. Those classes have
+   * no unique owner in any contract's `parts`, so `sheetsForTree` cannot discover `anchored.css`
+   * from `also` alone. Hooks from that sheet are listed above so the hook gate stays closed (same
+   * shape as Tooltip/Popover/Menu).
+   */
+  hookSheets: ["@skryensya/core/patterns/anchored.css"],
 
   options: {
     /** The bar's accessible name. Required, the same reason `Menubar`'s own `label` is: a `<nav>`
@@ -124,7 +153,9 @@ export const megamenuContract = {
        * anything scoped to where the tree was composed. First caught by `megamenu/product`, the first
        * canonical tree to render this contract at all.
        */
-      portals: true,
+      /** Host id / a11y; label stays the option. */
+      forward: ["id", "aria-*"],
+      portals: { container: true },
       slots: {
         children: { accepts: "signature", required: true, of: ["MegamenuTrigger"] },
       },
@@ -162,12 +193,10 @@ export const megamenuContract = {
          * 2-4 columns (`nav-list.ts`'s `NavListGroup`, or `image-frame.ts`'s `ImageFrame` for a
          * media column), reused verbatim rather than described a second time: a links column IS a
          * group. An optional heading plus a list of `NavListLink`s, and an image column IS an
-         * `ImageFrame`, nothing megamenu-specific about either. The 2-4 range is a documented usage
-         * guideline, not a compiler-enforced cardinality: this contract's `ContractSlot` has no
-         * numeric-range primitive (only per-signature `"one"|"optional"|"many"`), and inventing one
-         * was out of scope for this change.
+         * `ImageFrame`, nothing megamenu-specific about either. One column is a dropdown; five is a
+         * grid the panel was never sized for. `minItems` / `maxItems` make that a rule, not a tip.
          */
-        columns: { accepts: "signature", required: true, of: ["NavListGroup", "ImageFrame"] },
+        columns: { accepts: "signature", required: true, of: ["NavListGroup", "ImageFrame"], minItems: 2, maxItems: 4 },
       },
       template: {
         element: "li",

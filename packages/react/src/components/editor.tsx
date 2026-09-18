@@ -1,4 +1,4 @@
-import { editorContract, editorParts, type EditorCommandName } from "@skryensya/core/editor";
+import { editorContract, editorEvents, editorParts, type EditorCommandName } from "@skryensya/core/editor";
 import { editorIcons, type EditorIconName } from "@skryensya/core/editor-icons";
 import { suppressPointerFocusRing } from "@skryensya/editor/focus-modality";
 import {
@@ -101,6 +101,7 @@ function useProseMirrorEditor(options: {
   disabled?: boolean;
   autoFocus?: boolean;
   onChange?: (value: EditorValue) => void;
+  rootRef: RefObject<HTMLElement | null>;
 }) {
   const contentRef = useRef<HTMLDivElement | null>(null);
   const hiddenInputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -128,14 +129,38 @@ function useProseMirrorEditor(options: {
         toolbarStateRef.current = next;
         setToolbarState(next);
         if (!tr || tr.docChanged) {
-          const html = docToHTML(state.doc, document);
-          if (hiddenInputRef.current) hiddenInputRef.current.value = html;
-          latest.current.onChange?.({ html, markdown: docToMarkdown(state.doc), doc: state.doc });
+          const value: EditorValue = {
+            html: docToHTML(state.doc, document),
+            markdown: docToMarkdown(state.doc),
+            doc: state.doc,
+          };
+          if (hiddenInputRef.current) hiddenInputRef.current.value = value.html;
+          latest.current.onChange?.(value);
+          /* Same DOM channel as Vanilla (`editorEvents.change`); React's `onChange` alone is not enough. */
+          latest.current.rootRef.current?.dispatchEvent(
+            new CustomEvent(editorEvents.change, { bubbles: true, detail: value }),
+          );
         }
       },
     });
 
     viewRef.current = view;
+    /*
+     * Vanilla's escape hatch for the live view is `sk:editorready` (no ref). Dispatch the same
+     * detail shape so a listener on the root works for either binding.
+     */
+    latest.current.rootRef.current?.dispatchEvent(
+      new CustomEvent(editorEvents.ready, {
+        bubbles: true,
+        detail: {
+          view,
+          getHTML: () => docToHTML(view.state.doc, document),
+          getMarkdown: () => docToMarkdown(view.state.doc),
+          getJSON: () => view.state.doc,
+          setContent: (html: string) => setEditorContent(view, html, document),
+        },
+      }),
+    );
     const stopSuppressingPointerFocusRing = suppressPointerFocusRing(mount, `.${editorParts.content}`);
     return () => {
       stopSuppressingPointerFocusRing();
@@ -346,6 +371,7 @@ export const Editor = forwardRef<EditorHandle, EditorWithToolbarProps>(function 
   },
   ref,
 ) {
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const { contentRef, hiddenInputRef, viewRef, toolbarState, runCommand } = useProseMirrorEditor({
     autoFocus,
     defaultValue,
@@ -353,12 +379,18 @@ export const Editor = forwardRef<EditorHandle, EditorWithToolbarProps>(function 
     onChange,
     placeholder,
     readOnly,
+    rootRef,
   });
   useImperativeEditorHandle(ref, viewRef);
   const control = useFormFieldControl({ id, disabled });
 
   return (
-    <div className={cx(editorParts.root, className)} data-sk-editor="" data-toolbar-compact={compact ? "" : undefined}>
+    <div
+      className={cx(editorParts.root, className)}
+      data-sk-editor=""
+      data-toolbar-compact={compact ? "" : undefined}
+      ref={rootRef}
+    >
       <Toolbar label={toolbarLabel}>
         {GROUPS.map((group, index) => (
           <Fragment key={group.label}>

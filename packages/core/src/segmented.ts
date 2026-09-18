@@ -29,10 +29,21 @@ export type SegmentedPartClass = (typeof segmentedParts)[SegmentedPart];
  * ONE tab stop: only the selected option is reachable, the arrows move between them. That roving
  * tabindex is why a Toolbar counts a Segmented as one stop and not N (decision 27).
  */
+/** The DOM events this family dispatches on its root, `sk:<family><event>` like every other. */
+export const segmentedEvents = {
+  /** Detail: `{ value: string }`. */
+  valueChange: "sk:segmentedvaluechange",
+} as const;
+
 export const segmentedContract = {
   id: "segmented",
+  category: "forms",
   css: "@skryensya/core/components/segmented.css",
   parts: segmentedParts,
+  events: segmentedEvents,
+  eventDetails: {
+    valueChange: { detail: { value: "string" }, reactProp: "onValueChange", reactDetail: "string", source: "root", trigger: "option" },
+  },
   hooks: [
     "--sk-segmented-bg",
     "--sk-segmented-border-color",
@@ -60,7 +71,7 @@ export const segmentedContract = {
      * `data-value` is a starting point the machine then owns: that is what `defaultValue` means.
      * Slider, Tabs, RadioGroup and TimeField all carry this line; Segmented never got it.
      */
-    value: { type: "string", attr: "data-value", prop: "defaultValue" },
+    value: { type: "string", attr: "data-value", prop: "defaultValue", keyOf: { slot: "items" } },
     /** The group's own accessible name. WAI's Radio Group pattern expects one; this `role="radiogroup"`
      *  had no way to carry it at all before this option existed. Every real usage passed `aria-label`
      *  by hand, outside the contract. */
@@ -73,6 +84,8 @@ export const segmentedContract = {
       host: { element: "div" },
       options: ["value", "label"],
       requires: ["value", "label"],
+      /** Host id / a11y; label stays the option. */
+      forward: ["id", "aria-*"],
       slots: {
         items: {
           accepts: "items",

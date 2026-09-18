@@ -225,3 +225,44 @@ describe("CommandPalette Vanilla contracts", () => {
     expect(root.open).toBe(false);
   });
 });
+
+/*
+ * DIALOG VAUL. The contract now writes `data-sk-dialog-vaul` on every palette by default, and a
+ * palette emitted from the contract carries NO `data-edge`: before the enhancer passed the edge,
+ * `connectVaul` fell back to its inline-start default and a thumb pulling the sheet DOWN moved
+ * nothing. The React binding's own shell is tested in react/src/components/command-palette.test.tsx.
+ */
+describe("CommandPalette as Dialog Vaul", () => {
+  beforeEach(() => {
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      media: query,
+      matches: true,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("drags from block-end even when the markup names no edge", () => {
+    document.body.innerHTML = "";
+    const root = markup({ root: "data-sk-dialog-vaul" });
+    root.insertAdjacentHTML("afterbegin", '<div aria-hidden="true" data-part="handle"></div>');
+    root.getBoundingClientRect = () =>
+      ({ bottom: 400, height: 400, left: 0, right: 400, top: 0, width: 400 }) as DOMRect;
+    connectCommandPalette(root);
+    root.showModal();
+
+    const handle = root.querySelector<HTMLElement>(":scope > [data-part='handle']")!;
+    fireEvent.pointerDown(handle, { buttons: 1, clientX: 0, clientY: 0, isPrimary: true, pointerId: 1 });
+    fireEvent.pointerMove(window, { buttons: 1, clientX: 0, clientY: 200, pointerId: 1 });
+
+    expect(root.dataset.edge).toBe("block-end");
+    expect(root.style.getPropertyValue("--sk-vaul-drag-offset")).toBe("200px");
+
+    fireEvent.pointerUp(window, { buttons: 0, clientX: 0, clientY: 200, pointerId: 1 });
+    expect(root.open).toBe(false);
+  });
+});

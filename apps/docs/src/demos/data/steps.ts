@@ -24,7 +24,7 @@ export const stepsItems = (t: Translate): readonly ItemInput[] => [
     },
   },
   {
-    options: { status: "current", current: true },
+    options: { status: "current" },
     slots: {
       marker: "2",
       label: t("demo.steps.ramps.label"),
@@ -60,7 +60,7 @@ export const stepsVerticalItems = (t: Translate): readonly ItemInput[] => [
     },
   },
   {
-    options: { status: "current", current: true },
+    options: { status: "current" },
     slots: {
       marker: "2",
       label: t("demo.steps.shipping.label"),

@@ -27,7 +27,7 @@ export const selectMessages = {
     "selectPage.nativeLede":
       'Es un <code>&lt;select&gt;</code> real: la selección, el teclado, el envío de formularios y la accesibilidad siguen perteneciendo al navegador. skryensya/ui aplica <code>sk-select-native</code>; no hay <code>data-sk-*</code>, máquina ni paquete <code>@skryensya/vanilla</code>.',
     "selectPage.nativeBody":
-      "Úsalo para una elección estándar. Elige el Select enhanced sólo cuando necesites su colección controlada, markup de items, posicionamiento o evento <code>sk-value-change</code>; la apariencia ya no es motivo para reemplazar el control nativo.",
+      "Úsalo para una elección estándar. Elige el Select enhanced sólo cuando necesites su colección controlada, markup de items, posicionamiento o evento <code>sk:selectvaluechange</code>; la apariencia ya no es motivo para reemplazar el control nativo.",
     "selectPage.nativeLabel": "Select nativo",
     "selectPage.progressiveTitle": "Mejora progresiva",
     "selectPage.progressiveBody":
@@ -42,7 +42,7 @@ export const selectMessages = {
     "selectPage.formsComment": "Opcional: hace que el Select se envíe en un form, y es lo\n     que queda sin JS. Sus <option> tienen que coincidir con\n     los items, o el enhancer tira.",
     "selectPage.test1": "Usa la máquina de Zag select para la selección del popup y el valor del form.",
     "selectPage.test2": "Conduce la máquina sobre el markup escrito a mano: ARIA, selección y el texto del valor.",
-    "selectPage.test3": "Emite <code>sk-value-change</code>, y el cleanup detiene la máquina.",
+    "selectPage.test3": "Emite <code>sk:selectvaluechange</code>, y el cleanup detiene la máquina.",
   },
   en: {
     "demo.select.label": "Plan",
@@ -72,7 +72,7 @@ export const selectMessages = {
     "selectPage.nativeLede":
       "A real <code>&lt;select&gt;</code>: selection, keyboard, form submission, and accessibility all still belong to the browser. skryensya/ui applies <code>sk-select-native</code>; there is no <code>data-sk-*</code>, no machine, and no <code>@skryensya/vanilla</code> package.",
     "selectPage.nativeBody":
-      "Use it for a standard choice. Pick the enhanced Select only when you need its controlled collection, item markup, positioning, or the <code>sk-value-change</code> event; appearance is no longer a reason to replace the native control.",
+      "Use it for a standard choice. Pick the enhanced Select only when you need its controlled collection, item markup, positioning, or the <code>sk:selectvaluechange</code> event; appearance is no longer a reason to replace the native control.",
     "selectPage.nativeLabel": "Native Select",
     "selectPage.progressiveTitle": "Progressive enhancement",
     "selectPage.progressiveBody":
@@ -87,6 +87,6 @@ export const selectMessages = {
     "selectPage.formsComment": "Optional: makes the Select submit inside a form, and it is\n     what remains with no JS. Its <option>s have to match\n     the items, or the enhancer throws.",
     "selectPage.test1": "Uses the Zag select machine for popup selection and form value.",
     "selectPage.test2": "Drives the machine over authored markup: ARIA, selection and the value text.",
-    "selectPage.test3": "Emits <code>sk-value-change</code>, and cleanup stops the machine.",
+    "selectPage.test3": "Emits <code>sk:selectvaluechange</code>, and cleanup stops the machine.",
   },
 } as const;

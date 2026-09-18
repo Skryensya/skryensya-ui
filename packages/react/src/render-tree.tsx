@@ -69,6 +69,7 @@ import * as dataGridModule from "./components/data-grid.js";
 import * as feedModule from "./components/feed.js";
 import * as folderModule from "./components/folder.js";
 import * as commentThreadModule from "./components/comment-thread.js";
+import * as questionnaireModule from "./components/questionnaire.js";
 import * as menubarModule from "./components/menubar.js";
 import * as megamenuModule from "./components/megamenu.js";
 import * as tabsModule from "./components/tabs.js";
@@ -168,6 +169,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/data-grid": dataGridModule,
   "@skryensya/react/feed": feedModule,
   "@skryensya/react/comment-thread": commentThreadModule,
+  "@skryensya/react/questionnaire": questionnaireModule,
   "@skryensya/react/menubar": menubarModule,
   "@skryensya/react/megamenu": megamenuModule,
   "@skryensya/react/tabs": tabsModule,

@@ -3,8 +3,67 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "b9c671efde43e07f"
+surface: "0ab65cf38f724110"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: portals declara container de React
+      body: >-
+        <code>portals: { container: true }</code> documenta el ref React-only que acota el portal (por defecto <code>document.body</code>). El markup sigue anclado en el subárbol.
+    en:
+      title: portals declares the React container
+      body: >-
+        <code>portals: { container: true }</code> documents the React-only ref that scopes the portal (default <code>document.body</code>). Markup stays in the subtree.
+  - date: 2026-09-17
+    kind: feature
+    target: MenubarItem
+    es:
+      title: MenubarItem declara compose de Menu, Button y NavList
+      body: >-
+        <code>compose</code> documenta popup Menu (<code>systemOwned</code>), trigger Button y estilo nav-list.
+    en:
+      title: MenubarItem declares compose of Menu, Button, and NavList
+      body: >-
+        <code>compose</code> documents Menu popup (<code>systemOwned</code>), Button trigger, and nav-list styling.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: Menubar declara anchored.css y sus hooks para los desplegables Menu
+      body: >-
+        Cada <code>MenubarItem</code> con <code>items</code> embebe el popup portable de
+        <code>Menu</code> (<code>sk-anchor</code>/<code>sk-anchored</code>). Esas clases no tienen
+        dueño único en <code>parts</code>, así que el contrato ahora publica
+        <code>hookSheets</code> hacia <code>anchored.css</code> y los <code>9</code> hooks
+        <code>--sk-anchored-*</code> junto a <code>--sk-menubar-gap</code>, el mismo patrón que
+        <code>Menu</code>/<code>Megamenu</code>. React estampa los mounts
+        (<code>data-sk-menubar</code>/<code>data-sk-menubar-item</code>/<code>data-sk-menu</code>)
+        y reenvía los eventos DOM de Menu desde el wrapper del ítem.
+    en:
+      title: Menubar declares anchored.css and its hooks for Menu dropdowns
+      body: >-
+        Every <code>MenubarItem</code> with <code>items</code> embeds <code>Menu</code>'s portable
+        popup (<code>sk-anchor</code>/<code>sk-anchored</code>). Those classes have no unique owner
+        in <code>parts</code>, so the contract now publishes <code>hookSheets</code> for
+        <code>anchored.css</code> and the <code>9</code> <code>--sk-anchored-*</code> hooks beside
+        <code>--sk-menubar-gap</code>, the same shape as <code>Menu</code>/<code>Megamenu</code>.
+        React stamps the mounts
+        (<code>data-sk-menubar</code>/<code>data-sk-menubar-item</code>/<code>data-sk-menu</code>)
+        and forwards Menu's DOM events from the item wrapper.
   - date: 2026-08-19
     kind: feature
     target: nav

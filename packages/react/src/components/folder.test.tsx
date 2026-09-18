@@ -75,6 +75,7 @@ describe("Folder (React)", () => {
     );
 
     const root = ui.container.querySelector(".sk-folder")!;
+    expect(root.hasAttribute("data-sk-folder")).toBe(true);
     expect(ui.getByRole("heading", { name: "Radio" }).closest(".sk-folder__tab")).not.toBeNull();
     expect(ui.getByText("Una radio personal.").closest(".sk-folder__content")).not.toBeNull();
 
@@ -249,6 +250,16 @@ describe("FolderLink (React)", () => {
     // Hover/press colour comes from the shared state-layer pattern, never from this component.
     expect(link.classList.contains("sk-interactive")).toBe(true);
     expect(link.querySelector(".sk-folder__shape-path")!.getAttribute("d")).toBe(expectedPath(600, 320, 180));
+  });
+
+  it("writes data-active when reached for outside pointer/keyboard", () => {
+    stubLayout();
+    const ui = render(
+      <Folder active label="Radio">
+        Body
+      </Folder>,
+    );
+    expect(ui.container.querySelector(".sk-folder")!.hasAttribute("data-active")).toBe(true);
   });
 });
 

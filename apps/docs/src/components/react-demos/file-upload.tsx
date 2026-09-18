@@ -9,5 +9,13 @@ import { framedIn } from "./framed";
 const framed = framedIn("file-upload");
 
 export const FileUploadBasicDemo = framed(function FileUploadBasicDemo() {
-  return <FileUpload label="Adjuntos" maxFiles={3} maxFileSize={10_000_000} name="attachments" />;
+  return (
+    <FileUpload
+      clearLabel="Quitar todos"
+      label="Adjuntos"
+      maxFiles={3}
+      maxFileSize={10_000_000}
+      name="attachments"
+    />
+  );
 });

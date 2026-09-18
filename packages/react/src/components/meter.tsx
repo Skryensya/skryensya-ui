@@ -51,6 +51,7 @@ export function Meter({
         aria-valuenow={value}
         aria-valuetext={valueText}
         className={meterParts.track}
+        data-sk-meter=""
         data-tone={tone}
         role="meter"
         style={style}

@@ -1,6 +1,7 @@
 {
   "contracts": [
     {
+      "category": "content",
       "css": "@skryensya/core/components/accordion.css",
       "id": "accordion",
       "signatures": [
@@ -12,7 +13,8 @@
           "avoidWhen": [
             "son pocas secciones cortas; mostrarlas todas se lee más rápido que plegarlas",
             "el contenido se compara entre secciones; plegar obliga a recordar en vez de mirar",
-            "las secciones son vistas alternativas del mismo espacio; eso es Tabs"
+            "las secciones son vistas alternativas del mismo espacio; eso es Tabs",
+            "es una sola superficie plegable, sin coordinación entre hermanas; eso es ExpandableTile"
           ],
           "host": "div",
           "id": "Accordion",
@@ -20,12 +22,13 @@
             "accordion",
             "faq",
             "collapsible-sections",
-            "one-open-at-a-time"
+            "coordinated-expandables"
           ],
           "parents": [],
           "useWhen": [
-            "hay varias secciones largas y sólo una importa a la vez: preguntas frecuentes, términos",
-            "conviene que abrir una cierre la anterior para que la página no crezca sin fin"
+            "hay varias secciones largas y conviene coordinar cuáles quedan abiertas: FAQ, términos",
+            "type=single: abrir una cierra la anterior para que la página no crezca sin fin",
+            "type=multiple: varias pueden quedar abiertas a la vez, pero siguen siendo un solo acordeón"
           ]
         },
         {
@@ -87,6 +90,7 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/annotation.css",
       "id": "annotation",
       "signatures": [
@@ -125,6 +129,7 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/avatar.css",
       "id": "avatar",
       "signatures": [
@@ -192,6 +197,7 @@
       ]
     },
     {
+      "category": "navigation",
       "css": "@skryensya/core/components/back-to-top.css",
       "id": "back-to-top",
       "signatures": [
@@ -227,24 +233,27 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/badge.css",
       "id": "badge",
       "signatures": [
         {
           "alternatives": [
-            "Tag"
+            "Tag",
+            "BadgeDot"
           ],
           "avoidWhen": [
             "el usuario puede quitarlo o actuar sobre él; eso es un Tag",
-            "es texto de párrafo con color; un badge es una cápsula, no énfasis"
+            "es texto de párrafo con color; un badge es una cápsula, no énfasis",
+            "no hay texto visible, sólo un punto; eso es BadgeDot"
           ],
           "host": "span",
           "id": "Badge",
           "intent": [
             "count",
             "status",
-            "label-on-something",
-            "unread-indicator"
+            "status-pill",
+            "count-label"
           ],
           "parents": [],
           "useWhen": [
@@ -273,7 +282,8 @@
         },
         {
           "alternatives": [
-            "Badge"
+            "Badge",
+            "BadgeDot"
           ],
           "avoidWhen": [
             "el badge participa del flujo normal; no necesita un ancla"
@@ -283,23 +293,31 @@
           "intent": [
             "badge-anchored-to-control",
             "presence-on-avatar",
-            "unread-on-button"
+            "unread-on-button",
+            "count-on-control"
           ],
           "parents": [],
           "useWhen": [
-            "un BadgeDot se ancla a la esquina de un botón o avatar"
+            "un Badge o BadgeDot se ancla a la esquina de un botón o avatar"
           ]
         }
       ]
     },
     {
+      "category": "layout",
       "css": "@skryensya/core/patterns/box.css",
       "id": "box",
       "signatures": [
         {
-          "alternatives": [],
+          "alternatives": [
+            "Stack",
+            "Inline",
+            "Grid",
+            "Wrapper"
+          ],
           "avoidWhen": [
-            "sólo hace falta separar cosas; eso es un Stack sin caja"
+            "sólo hace falta separar cosas; eso es un Stack, Inline o Grid sin caja",
+            "hace falta centrar una columna de página; eso es Wrapper"
           ],
           "host": "div",
           "id": "Box",
@@ -316,12 +334,14 @@
       ]
     },
     {
+      "category": "navigation",
       "css": "@skryensya/core/components/breadcrumb.css",
       "id": "breadcrumb",
       "signatures": [
         {
           "alternatives": [
-            "NavList"
+            "NavList",
+            "Steps"
           ],
           "avoidWhen": [
             "la navegación es plana; eso es un NavList",
@@ -342,12 +362,14 @@
       ]
     },
     {
+      "category": "actions",
       "css": "@skryensya/core/components/button.css",
       "id": "button",
       "signatures": [
         {
           "alternatives": [
-            "Button.navigation"
+            "Button.navigation",
+            "Link"
           ],
           "avoidWhen": [
             {
@@ -385,7 +407,8 @@
         },
         {
           "alternatives": [
-            "Button.action"
+            "Button.action",
+            "Link"
           ],
           "avoidWhen": [
             {
@@ -412,6 +435,7 @@
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/calendar.css",
       "id": "calendar",
       "signatures": [
@@ -440,11 +464,13 @@
       ]
     },
     {
+      "category": "feedback",
       "css": "@skryensya/core/components/callout.css",
       "id": "callout",
       "signatures": [
         {
           "alternatives": [
+            "Toast",
             "EmptyState"
           ],
           "avoidWhen": [
@@ -469,6 +495,7 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/carousel.css",
       "id": "carousel",
       "signatures": [
@@ -517,6 +544,7 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/changelog.css",
       "id": "changelog",
       "signatures": [
@@ -587,6 +615,7 @@
       ]
     },
     {
+      "category": "data",
       "css": "@skryensya/core/components/chart.css",
       "id": "chart",
       "signatures": [
@@ -621,6 +650,7 @@
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/checkbox.css",
       "id": "checkbox",
       "signatures": [
@@ -676,6 +706,7 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/code-preview.css",
       "id": "code-preview",
       "signatures": [
@@ -724,6 +755,7 @@
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/color-picker.css",
       "id": "color-picker",
       "signatures": [
@@ -793,6 +825,7 @@
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/combobox.css",
       "id": "combobox",
       "signatures": [
@@ -823,17 +856,20 @@
       ]
     },
     {
+      "category": "actions",
       "css": "@skryensya/core/components/command-palette.css",
       "id": "command-palette",
       "signatures": [
         {
           "alternatives": [
             "Menu",
-            "Combobox"
+            "Combobox",
+            "Dialog"
           ],
           "avoidWhen": [
             "las opciones son pocas y caben a la vista: eso es un Menu",
-            "es el único camino a algo: una paleta complementa la navegación, no la reemplaza"
+            "es el único camino a algo: una paleta complementa la navegación, no la reemplaza",
+            "hace falta un campo de formulario que filtre una lista conocida: eso es un Combobox"
           ],
           "host": "dialog",
           "id": "CommandPalette",
@@ -851,6 +887,7 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/comment-thread.css",
       "id": "comment-thread",
       "signatures": [
@@ -983,6 +1020,7 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/component-preview.css",
       "id": "component-preview",
       "signatures": [
@@ -1014,6 +1052,7 @@
       ]
     },
     {
+      "category": "feedback",
       "css": "@skryensya/core/components/toast.css",
       "id": "content",
       "signatures": [
@@ -1057,7 +1096,9 @@
         },
         {
           "alternatives": [
-            "Callout"
+            "Callout",
+            "Dialog",
+            "FormField"
           ],
           "avoidWhen": [
             "el mensaje es parte del contenido y tiene que quedarse; eso es un Callout",
@@ -1085,6 +1126,7 @@
       ]
     },
     {
+      "category": "data",
       "css": "@skryensya/core/components/data-grid.css",
       "id": "data-grid",
       "signatures": [
@@ -1147,6 +1189,7 @@
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/date-picker.css",
       "id": "date-picker",
       "signatures": [
@@ -1177,7 +1220,7 @@
             "Calendar"
           ],
           "avoidWhen": [
-            "hace falta un rango, un mínimo o un máximo: eso es DatePicker",
+            "hace falta un rango (inicio y fin): eso es DatePicker con selectionMode range",
             "el calendario tiene que verse siempre: eso es Calendar"
           ],
           "host": "div",
@@ -1189,13 +1232,14 @@
           ],
           "parents": [],
           "useWhen": [
-            "una fecha común dentro de un formulario, sin rango ni reglas propias",
+            "una fecha común dentro de un formulario, sin selección de rango",
             "el teclado, el formato local y el envío deben pertenecer al navegador"
           ]
         }
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/details.css",
       "id": "details",
       "signatures": [
@@ -1233,9 +1277,7 @@
             "expandable-section",
             "no-javascript"
           ],
-          "parents": [
-            "DetailsGroup"
-          ],
+          "parents": [],
           "useWhen": [
             "una sección que se despliega y no necesita nada de JavaScript",
             "importa que funcione antes de que cargue cualquier script"
@@ -1280,18 +1322,22 @@
       ]
     },
     {
+      "category": "overlays",
       "css": "@skryensya/core/components/dialog.css",
       "id": "dialog",
       "signatures": [
         {
           "alternatives": [
             "Popover",
-            "Tooltip"
+            "Tooltip",
+            "Menu",
+            "Vaul.drawer"
           ],
           "avoidWhen": [
             "es información auxiliar que no bloquea; eso es un Tooltip o un Popover",
             "es una lista de acciones colgada de un botón; eso es un Menu",
-            "el contenido es largo o navegable: eso pide una página, no una caja modal"
+            "el contenido es largo o navegable: eso pide una página, no una caja modal",
+            "el panel debe ocupar un borde entero a todo alto: eso es Vaul.drawer"
           ],
           "host": "dialog",
           "id": "Dialog",
@@ -1303,12 +1349,15 @@
           "parents": [],
           "useWhen": [
             "hay que decidir algo antes de seguir: confirmar un borrado, completar un paso corto",
-            "conviene que el resto de la página quede inerte mientras tanto"
+            "conviene que el resto de la página quede inerte mientras tanto",
+            "en móvil el mismo dialog puede pedirse como hoja desde abajo (opción vaul)",
+            "confirmación destructiva o error bloqueante que necesita atención inmediata (opción alert)"
           ]
         }
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/editor.css",
       "id": "editor",
       "signatures": [
@@ -1336,12 +1385,15 @@
       ]
     },
     {
+      "category": "feedback",
       "css": "@skryensya/core/components/empty-state.css",
       "id": "empty-state",
       "signatures": [
         {
           "alternatives": [
-            "Callout"
+            "Callout",
+            "Placeholder",
+            "Loader"
           ],
           "avoidWhen": [
             "los datos están cargando; eso es un Loader o Placeholder",
@@ -1364,17 +1416,20 @@
       ]
     },
     {
+      "category": "layout",
       "css": "@skryensya/core/components/fade-edge.css",
       "id": "fade-edge",
       "signatures": [
         {
           "alternatives": [
-            "MediaGradient"
+            "MediaGradient",
+            "Marquee"
           ],
           "avoidWhen": [
             "el contenido no está recortado; desvanecerlo sólo baja contraste",
             "el gradiente protege texto sobre una foto; eso es MediaGradient dentro de MediaCaption",
-            "el desvanecido escondería un control o información necesaria en reposo"
+            "el desvanecido escondería un control o información necesaria en reposo",
+            "el borde que se recorta es el viewport de un Marquee; Marquee ya tiene su propio fade interno, y un FadeEdge alrededor también lava el Play/Pause"
           ],
           "host": "div",
           "id": "FadeEdge",
@@ -1392,16 +1447,21 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/feed.css",
       "id": "feed",
       "signatures": [
         {
           "alternatives": [
-            "List"
+            "List",
+            "CommentThread",
+            "EmptyState"
           ],
           "avoidWhen": [
             "es una lista de opciones para elegir; eso es un Listbox o un List",
-            "el orden importa por posición fija, no por publicación; eso es una Table o un List simple"
+            "el orden importa por posición fija, no por publicación; eso es una Table o un List simple",
+            "la conversación tiene respuestas anidadas y acciones (votar, responder); eso es un CommentThread",
+            "aún no hay posts y el mensaje es la ausencia misma; eso es un EmptyState"
           ],
           "host": "div",
           "id": "Feed",
@@ -1417,8 +1477,12 @@
           ]
         },
         {
-          "alternatives": [],
-          "avoidWhen": [],
+          "alternatives": [
+            "Comment"
+          ],
+          "avoidWhen": [
+            "el comentario admite respuestas anidadas o acciones; eso es un Comment dentro de un CommentThread"
+          ],
           "host": "article",
           "id": "FeedArticle",
           "intent": [
@@ -1436,16 +1500,19 @@
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/file-upload.css",
       "id": "file-upload",
       "signatures": [
         {
           "alternatives": [
-            "Input"
+            "Input",
+            "FormField"
           ],
           "avoidWhen": [
             "es una foto de perfil sola y se recorta ahí mismo; eso pide su propio flujo",
-            "el dato es texto, aunque venga de un archivo; eso es un Input o un Textarea"
+            "el dato es texto, aunque venga de un archivo; eso es un Input o un Textarea",
+            "hace falta envolver el control con pista y error propios del formulario; eso es FormField alrededor"
           ],
           "host": "div",
           "id": "FileUpload",
@@ -1465,6 +1532,7 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/folder.css",
       "id": "folder",
       "signatures": [
@@ -1565,11 +1633,15 @@
       ]
     },
     {
+      "category": "layout",
       "css": "@skryensya/core/patterns/footer.css",
       "id": "footer",
       "signatures": [
         {
-          "alternatives": [],
+          "alternatives": [
+            "Box",
+            "Hero"
+          ],
           "avoidWhen": [
             "sólo hace falta separar una sección del resto con relleno o borde en medio de la página; eso es un Box",
             "es una barra de acciones pegada abajo de un panel o un diálogo (una fila de botones de confirmación); eso se compone con layout.Inline dentro del contenedor, no con Footer",
@@ -1597,13 +1669,17 @@
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/form-field.css",
       "id": "form-field",
       "signatures": [
         {
-          "alternatives": [],
+          "alternatives": [
+            "Callout",
+            "Input"
+          ],
           "avoidWhen": [
-            "el control no lleva rótulo visible; entonces el control mismo lleva aria-label y no hay FormField",
+            "el control no lleva rótulo en absoluto; entonces el control mismo lleva aria-label y no hay FormField (labelHidden NO es esto: el slot sigue siendo obligatorio)",
             "se quiere marcar inválido sin decir por qué; la presencia del error es lo que invalida, el color nunca es la única señal",
             "el control ya trae su propio rótulo cableado por su máquina, como NumberField o Combobox; envolverlo agregaría un segundo `for` que compite con el primero"
           ],
@@ -1619,22 +1695,29 @@
           "useWhen": [
             "un control necesita rótulo, y casi siempre lo necesita",
             "hay que mostrar un mensaje de validación junto al control",
-            "hace falta una ayuda breve antes de que el usuario escriba"
+            "hace falta una ayuda breve antes de que el usuario escriba",
+            "el rótulo debe existir para el lector de pantalla pero la composición ya lo dijo a la vista: labelHidden lo recorta sin soltar el for"
           ]
         }
       ]
     },
     {
+      "category": "layout",
       "css": "@skryensya/core/patterns/hero.css",
       "id": "hero",
       "signatures": [
         {
-          "alternatives": [],
+          "alternatives": [
+            "Box",
+            "Footer",
+            "Stack"
+          ],
           "avoidWhen": [
             "es una sección más de la página, no la de apertura; eso es un Box o directamente un Stack",
             "sólo hace falta separar contenido con relleno o borde; eso es un Box",
             "el mensaje necesita más de dos acciones o más de un titular compitiendo; separa el resto en su propia sección",
-            "una imagen adentro reemplaza al titular en vez de acompañarlo; el titular sigue siendo un Heading real, la imagen lleva su propio alt"
+            "una imagen adentro reemplaza al titular en vez de acompañarlo; el titular sigue siendo un Heading real, la imagen lleva su propio alt",
+            "es el cierre de la página (navegación secundaria, aviso legal, crédito); eso es Footer"
           ],
           "host": "div",
           "id": "Hero",
@@ -1656,14 +1739,19 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/patterns/icon.css",
       "id": "icon",
       "signatures": [
         {
-          "alternatives": [],
+          "alternatives": [
+            "Button.action",
+            "IconStateButton"
+          ],
           "avoidWhen": [
-            "es un concepto de producto (una factura, un avión): eso se pasa como icon data, no como nombre estable",
-            "se le pondría label dentro de un botón que ya tiene texto; el nombre accesible quedaría duplicado"
+            "es un concepto de producto (una factura, un avión): eso se pasa como icon data en el binding React, no como nombre estable",
+            "se le pondría label dentro de un botón que ya tiene texto; el nombre accesible quedaría duplicado",
+            "hace falta un control con forma de botón: eso es Button (iconOnly) o IconStateButton, no un Icon solo"
           ],
           "host": "span",
           "id": "Icon",
@@ -1683,18 +1771,21 @@
       ]
     },
     {
+      "category": "actions",
       "css": "@skryensya/core/components/icon-state-button.css",
       "id": "icon-state-button",
       "signatures": [
         {
           "alternatives": [
             "Switch",
-            "Icon"
+            "Icon",
+            "Button.action"
           ],
           "avoidWhen": [
             "el comportamiento ya existe hecho: un ciclo de modo de color usa las funciones de @skryensya/core/theme-toggle, un copy-to-clipboard usa writeClipboard de @skryensya/core/copy-button, sobre este mismo primitivo: no hay que reinventar esa parte",
             "hay un solo estado, o dos que se leen como on/off: eso es un Switch o un Toggle simple, no vale la pena declarar una colección de caras para dos valores",
-            "el ícono es puramente decorativo y no cambia: eso es Icon, sin la anatomía de estados"
+            "el ícono es puramente decorativo y no cambia: eso es Icon, sin la anatomía de estados",
+            "hace falta un botón con etiqueta visible además del ícono: eso es Button.action, no esta anatomía de caras apiladas"
           ],
           "host": "button",
           "id": "IconStateButton",
@@ -1705,24 +1796,32 @@
           "parents": [],
           "useWhen": [
             "el control necesita mostrar uno de N estados con nombre, cada uno con su propio ícono, y quien lo usa va a escribir el comportamiento que decide cuál está activo (copiar, ciclar un modo, lo que sea)",
-            "los estados varían según el uso: no hay un set fijo que un contrato pueda declarar de antemano"
+            "los estados varían según el uso: no hay un set fijo que un contrato pueda declarar de antemano",
+            "es siempre icon-only: las caras son glifos, el host lleva data-icon-only de fábrica, y el nombre accesible es aria-label o aria-labelledby en el botón (nunca texto visible)",
+            "variant y size son los de Button (data-variant / data-size), no opciones de este contrato: ghost + sm es la forma de toolbar más común"
           ]
         }
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/patterns/image-frame.css",
       "id": "image-frame",
       "signatures": [
         {
           "alternatives": [
-            "Avatar.initials"
+            "Avatar.image",
+            "Avatar.initials",
+            "Placeholder"
           ],
           "avoidWhen": [
             {
               "es la identidad circular de una persona": "eso es un Avatar"
             },
-            "no hay medio que mostrar, ni src ni contenido autoreado; el marco vacío es una caja vacía, no un placeholder"
+            "no hay medio que mostrar, ni src ni contenido autoreado; el marco vacío es una caja vacía, no un placeholder",
+            {
+              "el contenido aún no cargó y hace falta una silueta": "eso es Placeholder, no un ImageFrame sin src"
+            }
           ],
           "host": "div",
           "id": "ImageFrame",
@@ -1743,16 +1842,22 @@
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/input.css",
       "id": "input",
       "signatures": [
         {
           "alternatives": [
-            "Textarea"
+            "Textarea",
+            "Select",
+            "NumberField",
+            "NativeInput"
           ],
           "avoidWhen": [
             "el texto es largo o multilínea; eso es Textarea",
-            "se elige de un conjunto cerrado de opciones; eso es un Select"
+            "se elige de un conjunto cerrado de opciones; eso es un Select",
+            "el valor es un número con paso y límites; eso es NumberField",
+            "la plataforma debe gobernar time/color/range y se quiere su control nativo; eso es NativeInput"
           ],
           "host": "input",
           "id": "Input",
@@ -1773,10 +1878,12 @@
         },
         {
           "alternatives": [
-            "Input"
+            "Input",
+            "TimeField"
           ],
           "avoidWhen": [
-            "es entrada de texto con la apariencia del sistema; eso es Input dentro de FormField"
+            "es entrada de texto de una línea con teclado/validación nativa; eso es Input dentro de FormField",
+            "hace falta un time segmentado del sistema; eso es TimeField"
           ],
           "host": "input",
           "id": "NativeInput",
@@ -1787,7 +1894,7 @@
           ],
           "parents": [],
           "useWhen": [
-            "la plataforma ya ofrece el control correcto y se quiere enseñar su comportamiento nativo sin la apariencia de Input"
+            "la plataforma ya ofrece el control correcto (time, color, range, …) y se quiere ese comportamiento nativo con la apariencia compartida de sk-input"
           ]
         },
         {
@@ -1815,13 +1922,17 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/kbd.css",
       "id": "kbd",
       "signatures": [
         {
-          "alternatives": [],
+          "alternatives": [
+            "Code"
+          ],
           "avoidWhen": [
-            "es texto de código o un comando; eso va en un bloque de código"
+            "es texto de código o un comando; eso va en un bloque Code / typography",
+            "es un control accionable; eso es Button o IconStateButton"
           ],
           "host": "kbd",
           "id": "Kbd",
@@ -1838,12 +1949,21 @@
       ]
     },
     {
+      "category": "layout",
       "css": "@skryensya/core/patterns/layout.css",
       "id": "layout",
       "signatures": [
         {
-          "alternatives": [],
-          "avoidWhen": [],
+          "alternatives": [
+            "Inline",
+            "Grid",
+            "Box"
+          ],
+          "avoidWhen": [
+            "van una al lado de otra; eso es Inline",
+            "necesitan columnas de igual ancho; eso es Grid",
+            "necesitan una superficie (padding/borde/fondo); eso es Box alrededor, no Stack"
+          ],
           "host": "div",
           "id": "Stack",
           "intent": [
@@ -1859,7 +1979,8 @@
         },
         {
           "alternatives": [
-            "Grid"
+            "Grid",
+            "Stack"
           ],
           "avoidWhen": [
             "son columnas de igual ancho; eso es un Grid",
@@ -1880,10 +2001,12 @@
         },
         {
           "alternatives": [
-            "Inline"
+            "Inline",
+            "LayoutGrid"
           ],
           "avoidWhen": [
-            "los anchos son distintos entre sí; eso es un Inline"
+            "los anchos son distintos entre sí; eso es un Inline",
+            "la página necesita medidas nombradas (narrow/content/breakout/rail); eso es LayoutGrid"
           ],
           "host": "div",
           "id": "Grid",
@@ -1894,7 +2017,8 @@
           ],
           "parents": [],
           "useWhen": [
-            "columnas de igual ancho: una grilla de tarjetas"
+            "columnas de igual ancho: una grilla de tarjetas",
+            "una grilla responsive cuyo techo de columnas es columns, y opcionalmente fill para igualar la altura de reposo de las columnas"
           ]
         },
         {
@@ -1923,7 +2047,11 @@
           ]
         },
         {
-          "alternatives": [],
+          "alternatives": [
+            "Box",
+            "Stack",
+            "LayoutGrid"
+          ],
           "avoidWhen": [
             "es una sección dentro de la página, no el landmark principal; usa Box, Stack o LayoutGrid según corresponda"
           ],
@@ -1942,15 +2070,20 @@
       ]
     },
     {
+      "category": "data",
       "css": "@skryensya/core/components/list.css",
       "id": "list",
       "signatures": [
         {
           "alternatives": [
-            "Table"
+            "Table",
+            "NavList",
+            "ProcessList"
           ],
           "avoidWhen": [
-            "las filas tienen columnas comparables entre sí; eso es una Table"
+            "las filas tienen columnas comparables entre sí; eso es una Table",
+            "son destinos de navegación del sitio o de la página; eso es NavList",
+            "son instrucciones para leer y hacer, en orden; eso es ProcessList"
           ],
           "host": "ul",
           "id": "List",
@@ -1967,10 +2100,12 @@
         },
         {
           "alternatives": [
-            "List"
+            "List",
+            "ProcessList"
           ],
           "avoidWhen": [
-            "reordenar las filas no cambia su significado; eso es List"
+            "reordenar las filas no cambia su significado; eso es List",
+            "son pasos de un proceso con cuerpo rico por ítem; eso es ProcessList"
           ],
           "host": "ol",
           "id": "OrderedList",
@@ -2019,9 +2154,12 @@
           ]
         },
         {
-          "alternatives": [],
+          "alternatives": [
+            "ListItemButton"
+          ],
           "avoidWhen": [
-            "sólo una parte de la fila es enlace; ahí el enlace va adentro, no envolviendo"
+            "sólo una parte de la fila es enlace; ahí el enlace va adentro, no envolviendo",
+            "la fila dispara una acción sin cambiar de URL; eso es ListItemButton"
           ],
           "host": "a",
           "id": "ListItemLink",
@@ -2036,16 +2174,41 @@
           "useWhen": [
             "la fila entera navega, y el objetivo de foco y de clic es la fila"
           ]
+        },
+        {
+          "alternatives": [
+            "ListItemLink"
+          ],
+          "avoidWhen": [
+            "la fila navega a otra URL; eso es ListItemLink",
+            "sólo un control dentro de la fila es el botón; ahí el botón va adentro, no envolviendo"
+          ],
+          "host": "button",
+          "id": "ListItemButton",
+          "intent": [
+            "row-that-acts",
+            "tappable-action-row"
+          ],
+          "parents": [
+            "List",
+            "OrderedList"
+          ],
+          "useWhen": [
+            "la fila entera dispara una acción (enviar, cerrar sesión, abrir un diálogo), y el objetivo de foco y de clic es la fila"
+          ]
         }
       ]
     },
     {
+      "category": "feedback",
       "css": "@skryensya/core/components/loader.css",
       "id": "loader",
       "signatures": [
         {
           "alternatives": [
-            "Placeholder"
+            "Placeholder",
+            "Progress",
+            "Loader.status"
           ],
           "avoidWhen": [
             "se conoce el progreso; eso es un Progress con su valor",
@@ -2067,7 +2230,8 @@
         {
           "alternatives": [
             "Loader",
-            "Progress"
+            "Progress",
+            "Placeholder"
           ],
           "avoidWhen": [
             "no hay nada más que indique la espera; entonces se necesita un Loader visible",
@@ -2089,6 +2253,7 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/marquee.css",
       "id": "marquee",
       "signatures": [
@@ -2149,6 +2314,7 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/patterns/media-gradient.css",
       "id": "media-gradient",
       "signatures": [
@@ -2177,11 +2343,12 @@
         },
         {
           "alternatives": [
-            "MediaCaption"
+            "Dialog",
+            "FadeEdge"
           ],
           "avoidWhen": [
             "está fuera de un MediaCaption; no tiene caja que llenar y no pinta nada",
-            "oscurece un diálogo sobre la página; eso es un Backdrop"
+            "oscurece un diálogo sobre la página; eso es el ::backdrop de Dialog, no este lavado"
           ],
           "host": "div",
           "id": "MediaGradient",
@@ -2199,6 +2366,7 @@
       ]
     },
     {
+      "category": "navigation",
       "css": "@skryensya/core/components/megamenu.css",
       "id": "megamenu",
       "signatures": [
@@ -2206,12 +2374,14 @@
           "alternatives": [
             "Menu",
             "Menubar",
-            "NavList"
+            "NavList",
+            "Navbar"
           ],
           "avoidWhen": [
             "el desplegable es una lista de comandos de aplicación, no destinos; eso es Menu",
             "la barra es de comandos de aplicación (Archivo/Editar/Ver), algunos con desplegable; eso es Menubar",
-            "son destinos simples sin panel de varias columnas; eso es NavList"
+            "son destinos simples sin panel de varias columnas; eso es NavList",
+            "solo hace falta la barra de marca/acciones sin panel de categorías; eso es Navbar"
           ],
           "host": "nav",
           "id": "Megamenu",
@@ -2244,17 +2414,22 @@
       ]
     },
     {
+      "category": "actions",
       "css": "@skryensya/core/components/menu.css",
       "id": "menu",
       "signatures": [
         {
           "alternatives": [
             "Select",
-            "Popover"
+            "Popover",
+            "Menubar",
+            "Megamenu"
           ],
           "avoidWhen": [
             "es una elección de un valor dentro de un formulario; eso es Select",
-            "el contenido es una descripción y no una lista de acciones; eso es Tooltip o Popover"
+            "el contenido es una descripción y no una lista de acciones; eso es Tooltip o Popover",
+            "la barra es de comandos de aplicación (Archivo/Editar/Ver); eso es Menubar",
+            "navegación de sitio con panel de varias columnas; eso es Megamenu"
           ],
           "host": "div",
           "id": "Menu",
@@ -2273,13 +2448,16 @@
       ]
     },
     {
+      "category": "actions",
       "css": "@skryensya/core/components/menubar.css",
       "id": "menubar",
       "signatures": [
         {
           "alternatives": [
             "Menu",
-            "NavList"
+            "NavList",
+            "Megamenu",
+            "Toolbar"
           ],
           "avoidWhen": [
             "es un solo botón que abre un menú de comandos; eso es Menu",
@@ -2317,17 +2495,20 @@
       ]
     },
     {
+      "category": "data",
       "css": "@skryensya/core/components/meter.css",
       "id": "meter",
       "signatures": [
         {
           "alternatives": [
             "Progress",
-            "Loader"
+            "Loader",
+            "Stat"
           ],
           "avoidWhen": [
             "es el avance de una tarea que empieza en 0 y termina en un 100% conocido; eso es Progress",
-            "el avance no tiene un largo conocido; eso es un Loader indeterminado"
+            "el avance no tiene un largo conocido; eso es un Loader indeterminado",
+            "hay que mostrar un número sin barra; eso es Stat o tipografía"
           ],
           "host": "div",
           "id": "Meter",
@@ -2345,17 +2526,29 @@
       ]
     },
     {
+      "category": "navigation",
       "css": "@skryensya/core/patterns/nav-list.css",
       "id": "nav-list",
       "signatures": [
         {
-          "alternatives": [],
+          "alternatives": [
+            "Menu",
+            "Breadcrumb",
+            "Toc",
+            "Menubar"
+          ],
           "avoidWhen": [
             {
               "son acciones de una aplicación, no destinos": "eso es un menú, con role=\"menu\""
             },
             {
               "es una ruta jerárquica hasta la página actual": "eso es un Breadcrumb"
+            },
+            {
+              "es un índice de encabezados de la página actual": "eso es un Toc"
+            },
+            {
+              "la barra tiene desplegables de comandos o sub-destinos con menuitem": "eso es Menubar"
             }
           ],
           "host": "nav",
@@ -2378,7 +2571,9 @@
             {
               "hay un solo destino y ningún rótulo": "el grupo sigue siendo obligatorio, no es opcional"
             },
-            "collapsible sin label: el botón necesita el texto del rótulo para tener algo que mostrar"
+            "collapsible sin label: el botón necesita el texto del rótulo para tener algo que mostrar",
+            "heading sin label: un encabezado vacío es peor que ninguno",
+            "collapsible y heading juntos: el collapsible ya es un botón; heading no aplica"
           ],
           "host": "div",
           "id": "NavListGroup",
@@ -2426,13 +2621,18 @@
       ]
     },
     {
+      "category": "navigation",
       "css": "@skryensya/core/components/navbar.css",
       "id": "navbar",
       "signatures": [
         {
-          "alternatives": [],
+          "alternatives": [
+            "Sidebar",
+            "Megamenu"
+          ],
           "avoidWhen": [
-            "la navegación va al costado; eso es un Sidebar"
+            "la navegación va al costado; eso es un Sidebar",
+            "hace falta un panel de categorías de varias columnas; eso es Megamenu"
           ],
           "host": "header",
           "id": "Navbar",
@@ -2448,7 +2648,9 @@
         },
         {
           "alternatives": [],
-          "avoidWhen": [],
+          "avoidWhen": [
+            "es un destino de la lista de navegación; eso va en NavList"
+          ],
           "host": "div",
           "id": "NavbarBrand",
           "intent": [
@@ -2465,7 +2667,9 @@
         },
         {
           "alternatives": [],
-          "avoidWhen": [],
+          "avoidWhen": [
+            "son destinos de navegación del sitio; eso es NavList"
+          ],
           "host": "div",
           "id": "NavbarActions",
           "intent": [
@@ -2482,12 +2686,15 @@
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/number-field.css",
       "id": "number-field",
       "signatures": [
         {
           "alternatives": [
             "Slider",
+            "Segmented",
+            "RadioGroup",
             "Input"
           ],
           "avoidWhen": [
@@ -2514,16 +2721,19 @@
       ]
     },
     {
+      "category": "navigation",
       "css": "@skryensya/core/components/pagination.css",
       "id": "pagination",
       "signatures": [
         {
           "alternatives": [
-            "Table"
+            "TablePager",
+            "Feed"
           ],
           "avoidWhen": [
             "la lista es corta y entra entera; paginar agrega un paso que no compra nada",
-            "el orden es cronológico y se explora hacia abajo; ahí conviene cargar más al llegar al final"
+            "el orden es cronológico y se explora hacia abajo; ahí conviene cargar más al llegar al final",
+            "la tabla ya trae tamaño de página y estado de filas; eso es TablePager"
           ],
           "host": "nav",
           "id": "Pagination",
@@ -2542,17 +2752,20 @@
       ]
     },
     {
+      "category": "feedback",
       "css": "@skryensya/core/components/placeholder.css",
       "id": "placeholder",
       "signatures": [
         {
           "alternatives": [
             "Placeholder.paragraph",
-            "Loader"
+            "Loader",
+            "EmptyState"
           ],
           "avoidWhen": [
             "no se sabe qué va a aparecer; ahí un Loader dice más",
-            "el texto es un párrafo; ahí varias líneas sueltas son Placeholder.paragraph, que ya sabe cómo termina un párrafo"
+            "el texto es un párrafo; ahí varias líneas sueltas son Placeholder.paragraph, que ya sabe cómo termina un párrafo",
+            "la región está vacía de propósito (sin resultados, primera visita); eso es EmptyState, no un skeleton"
           ],
           "host": "span",
           "id": "Placeholder",
@@ -2570,7 +2783,8 @@
         },
         {
           "alternatives": [
-            "Placeholder"
+            "Placeholder",
+            "Loader"
           ],
           "avoidWhen": [
             "es una sola línea; ahí es Placeholder y conserva la medida completa",
@@ -2592,10 +2806,12 @@
         {
           "alternatives": [
             "Placeholder.paragraph",
+            "ImageFrame",
             "Loader"
           ],
           "avoidWhen": [
-            "lo que falta es texto; un rectángulo del alto de un párrafo no anticipa líneas, anticipa una imagen"
+            "lo que falta es texto; un rectángulo del alto de un párrafo no anticipa líneas, anticipa una imagen",
+            "el marco ya existe y solo falta el src; eso es ImageFrame con Placeholder.block fill adentro, no un bloque suelto fingiendo el marco"
           ],
           "host": "span",
           "id": "Placeholder.block",
@@ -2612,7 +2828,8 @@
         },
         {
           "alternatives": [
-            "Placeholder.block"
+            "Placeholder.block",
+            "Avatar.initials"
           ],
           "avoidWhen": [
             "la forma final no es circular; el skeleton no debe prometer una silueta que el contenido no tiene"
@@ -2632,6 +2849,7 @@
       ]
     },
     {
+      "category": "overlays",
       "css": "@skryensya/core/components/popover.css",
       "id": "popover",
       "signatures": [
@@ -2684,15 +2902,18 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/process-list.css",
       "id": "process-list",
       "signatures": [
         {
           "alternatives": [
-            "Steps"
+            "Steps",
+            "List"
           ],
           "avoidWhen": [
-            "lo que importa es en qué paso está el usuario; eso es Steps"
+            "lo que importa es en qué paso está el usuario; eso es Steps",
+            "son filas de una lista (enlaces, acciones, metadatos) sin cuerpo de instrucción; eso es List"
           ],
           "host": "ol",
           "id": "ProcessList",
@@ -2707,8 +2928,12 @@
           ]
         },
         {
-          "alternatives": [],
-          "avoidWhen": [],
+          "alternatives": [
+            "Steps"
+          ],
+          "avoidWhen": [
+            "el ítem reporta complete/current/upcoming; eso es un step de Steps, no una instrucción"
+          ],
           "host": "li",
           "id": "ProcessListItem",
           "intent": [
@@ -2725,15 +2950,18 @@
       ]
     },
     {
+      "category": "feedback",
       "css": "@skryensya/core/components/progress.css",
       "id": "progress",
       "signatures": [
         {
           "alternatives": [
-            "Loader"
+            "Loader",
+            "Meter"
           ],
           "avoidWhen": [
-            "la espera es de duración desconocida; eso es un Loader"
+            "la espera es de duración desconocida; eso es un Loader",
+            "es una MEDICIÓN dentro de un rango (disco, batería, rating); eso es Meter"
           ],
           "host": "div",
           "id": "Progress",
@@ -2750,6 +2978,7 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/qr-code.css",
       "id": "qr-code",
       "signatures": [
@@ -2785,15 +3014,103 @@
       ]
     },
     {
+      "category": "forms",
+      "css": "@skryensya/core/components/questionnaire.css",
+      "id": "questionnaire",
+      "signatures": [
+        {
+          "alternatives": [
+            "FormField",
+            "Steps",
+            "Progress"
+          ],
+          "avoidWhen": [
+            "todas las preguntas caben y se leen juntas; eso es un formulario de FormField",
+            "las etapas son pantallas con contenido propio, no preguntas; eso es Steps sobre tu propia navegación",
+            "solo necesitas mostrar avance (barra o etapas) sin preguntar nada; eso es Progress o Steps"
+          ],
+          "host": "form",
+          "id": "Questionnaire",
+          "intent": [
+            "questionnaire",
+            "survey",
+            "one-question-at-a-time",
+            "onboarding-questions",
+            "multi-step-form"
+          ],
+          "parents": [],
+          "useWhen": [
+            "varias preguntas se responden de a una, con progreso visible y validación antes de avanzar",
+            "una encuesta, un onboarding o un intake donde cada pregunta merece la pantalla entera"
+          ]
+        },
+        {
+          "alternatives": [
+            "TileRadioGroup",
+            "TileCheckbox",
+            "FormField"
+          ],
+          "avoidWhen": [
+            "la elección no es parte de una secuencia de preguntas; eso es un TileRadioGroup o un TileCheckbox sueltos"
+          ],
+          "host": "fieldset",
+          "id": "QuestionnaireItem",
+          "intent": [
+            "question",
+            "survey-question",
+            "single-choice-question",
+            "multiple-choice-question",
+            "free-text-question",
+            "likert-question",
+            "branching-question"
+          ],
+          "parents": [
+            "Questionnaire"
+          ],
+          "useWhen": [
+            "una pregunta de elección única, múltiple o de texto libre dentro de un Questionnaire",
+            "una pregunta con opciones y, además, la posibilidad de escribir otra respuesta"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "forms",
       "css": "@skryensya/core/components/radio-group.css",
       "id": "radio-group",
       "signatures": [
         {
           "alternatives": [
+            "RadioGroup",
             "Checkbox"
           ],
           "avoidWhen": [
+            "es una lista de opciones una debajo de otra; eso es RadioGroup, que además anuncia el grupo",
+            "las opciones no son excluyentes; eso es Checkbox"
+          ],
+          "host": "input",
+          "id": "Radio",
+          "intent": [
+            "one-radio",
+            "matrix-cell",
+            "radio-in-a-table",
+            "grid-of-choices"
+          ],
+          "parents": [],
+          "useWhen": [
+            "una matriz: cada fila es una pregunta y cada celda lleva un radio de esa fila",
+            "un radio suelto cuyo grupo lo forma el `name` compartido, no un contenedor"
+          ]
+        },
+        {
+          "alternatives": [
+            "Checkbox",
+            "Segmented",
+            "Select"
+          ],
+          "avoidWhen": [
             "las opciones son más de siete u ocho; ahí conviene un Select",
+            "son dos o tres y cambian una vista, no un dato; eso es un Segmented",
             "se pueden marcar varias a la vez; eso son Checkbox independientes",
             "hay una sola opción; una elección de uno no es una elección"
           ],
@@ -2807,22 +3124,27 @@
           "parents": [],
           "useWhen": [
             "se elige UNA opción de un conjunto pequeño y todas las opciones valen la pena mostrarlas",
-            "las opciones son excluyentes entre sí"
+            "las opciones son excluyentes entre sí",
+            "el valor se envía con el formulario (name compartido en cada input)"
           ]
         }
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/segmented.css",
       "id": "segmented",
       "signatures": [
         {
           "alternatives": [
-            "RadioGroup"
+            "RadioGroup",
+            "Select",
+            "Tabs"
           ],
           "avoidWhen": [
             "son más de tres o cuatro; ahí conviene un RadioGroup o un Select",
-            "el valor se envía con el formulario; eso es un RadioGroup"
+            "el valor se envía con el formulario; eso es un RadioGroup",
+            "hace falta un panel asociado a cada opción; eso son Tabs"
           ],
           "host": "div",
           "id": "Segmented",
@@ -2840,16 +3162,22 @@
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/select.css",
       "id": "select",
       "signatures": [
         {
           "alternatives": [
-            "Select"
+            "Select",
+            "Combobox",
+            "Segmented",
+            "RadioGroup"
           ],
           "avoidWhen": [
             "cada opción necesita markup propio: icono, descripción, dos líneas",
-            "hace falta el evento sk-value-change o una colección controlada"
+            "hace falta el evento sk:selectvaluechange o una colección controlada",
+            "la persona escribe para filtrar una lista larga; eso es Combobox",
+            "hay pocas opciones fijas y caben a la vista; eso es Segmented o RadioGroup"
           ],
           "host": "select",
           "id": "Select.native",
@@ -2866,10 +3194,15 @@
         },
         {
           "alternatives": [
-            "Select.native"
+            "Select.native",
+            "Combobox",
+            "Segmented",
+            "RadioGroup"
           ],
           "avoidWhen": [
-            "alcanza con una elección estándar: la apariencia dejó de ser razón para reemplazar el control nativo"
+            "alcanza con una elección estándar: la apariencia dejó de ser razón para reemplazar el control nativo",
+            "la persona escribe para filtrar; eso es Combobox",
+            "hay pocas opciones fijas a la vista; eso es Segmented o RadioGroup"
           ],
           "host": "div",
           "id": "Select",
@@ -2882,22 +3215,24 @@
           "parents": [],
           "useWhen": [
             "las opciones necesitan markup, no sólo texto",
-            "hace falta una colección controlada, posicionamiento propio o el evento sk-value-change"
+            "hace falta una colección controlada, posicionamiento propio o el evento sk:selectvaluechange"
           ]
         }
       ]
     },
     {
+      "category": "navigation",
       "css": "@skryensya/core/components/sidebar.css",
       "id": "sidebar",
       "signatures": [
         {
           "alternatives": [
-            "Navbar"
+            "Navbar",
+            "Vaul"
           ],
           "avoidWhen": [
             "es un sitio de contenido con pocas secciones; eso es un Navbar",
-            "aparece sobre el contenido y se cierra al elegir; eso es un Drawer"
+            "aparece sobre el contenido y se cierra al elegir; eso es un Drawer / Vaul"
           ],
           "host": "aside",
           "id": "Sidebar",
@@ -3042,6 +3377,7 @@
       ]
     },
     {
+      "category": "navigation",
       "css": "@skryensya/core/components/skip-link.css",
       "id": "skip-link",
       "signatures": [
@@ -3076,16 +3412,18 @@
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/slider.css",
       "id": "slider",
       "signatures": [
         {
           "alternatives": [
+            "NumberField",
             "Segmented",
             "SliderRange"
           ],
           "avoidWhen": [
-            "hace falta precisión; ahí un campo numérico se escribe más rápido",
+            "hace falta precisión; ahí un NumberField se escribe más rápido",
             "son opciones discretas y pocas; eso es un RadioGroup o un Segmented",
             "el usuario elige DOS valores, un mínimo y un máximo; eso es SliderRange"
           ],
@@ -3098,16 +3436,18 @@
           ],
           "parents": [],
           "useWhen": [
-            "el valor es aproximado y verlo moverse ayuda: volumen, brillo, un rango de precio"
+            "el valor es aproximado y verlo moverse ayuda: volumen, brillo, un rango de precio",
+            "lleva nombre con aria-label o aria-labelledby, y value dentro de min y max"
           ]
         },
         {
           "alternatives": [
+            "NumberField",
             "Slider"
           ],
           "avoidWhen": [
             "es un solo valor; eso es Slider",
-            "hace falta precisión exacta en cada extremo; ahí dos campos numéricos (uno de mínimo, uno de máximo) se escriben más rápido"
+            "hace falta precisión exacta en cada extremo; ahí dos NumberField (mínimo y máximo) se escriben más rápido"
           ],
           "host": "div",
           "id": "SliderRange",
@@ -3125,6 +3465,7 @@
       ]
     },
     {
+      "category": "actions",
       "css": "@skryensya/core/components/split-button.css",
       "id": "split-button",
       "signatures": [
@@ -3147,12 +3488,14 @@
           "parents": [],
           "useWhen": [
             "hay una acción que casi todos quieren y unas pocas variantes de la misma acción",
-            "conviene que la principal esté a un clic y las otras no ocupen lugar"
+            "conviene que la principal esté a un clic y las otras no ocupen lugar",
+            "la acción lleva weldEnd y el trigger del menú triggerWeldStart, con la misma variant y size en las dos mitades"
           ]
         }
       ]
     },
     {
+      "category": "data",
       "css": "@skryensya/core/components/stat.css",
       "id": "stat",
       "signatures": [
@@ -3180,6 +3523,7 @@
       ]
     },
     {
+      "category": "navigation",
       "css": "@skryensya/core/components/steps.css",
       "id": "steps",
       "signatures": [
@@ -3200,12 +3544,14 @@
           "parents": [],
           "useWhen": [
             "hay que mostrar en qué etapa está el usuario de un proceso de varias",
-            "importa qué está hecho, qué falta y dónde está parado"
+            "importa qué está hecho, qué falta y dónde está parado",
+            "cada paso lleva status (complete, current o upcoming); exactamente uno es current"
           ]
         }
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/switch.css",
       "id": "switch",
       "signatures": [
@@ -3227,12 +3573,14 @@
           "parents": [],
           "useWhen": [
             "el cambio surte efecto en el momento: modo oscuro, notificaciones, una función que se enciende",
-            "no hay botón de guardar de por medio"
+            "no hay botón de guardar de por medio",
+            "lleva nombre: el texto como children, o aria-label si el rótulo visible está al lado; defaultChecked si arranca encendido"
           ]
         }
       ]
     },
     {
+      "category": "data",
       "css": "@skryensya/core/components/table.css",
       "id": "table",
       "signatures": [
@@ -3274,6 +3622,7 @@
           "parents": [],
           "useWhen": [
             "los datos tienen filas y columnas, y una celda significa algo por su cruce",
+            "lleva nombre: un TableCaption, o aria-labelledby hacia un título visible",
             "el usuario va a comparar valores entre filas"
           ]
         },
@@ -3371,13 +3720,15 @@
           "id": "TableHeader",
           "intent": [
             "column-header",
-            "row-header"
+            "row-header",
+            "grouped-header"
           ],
           "parents": [
             "TableRow"
           ],
           "useWhen": [
-            "la celda nombra su columna, o nombra su fila con scope row"
+            "la celda nombra su columna, o nombra su fila con scope row",
+            "un encabezado agrupa varias columnas (colspan) o varias filas de encabezado (rowspan)"
           ]
         },
         {
@@ -3399,6 +3750,7 @@
       ]
     },
     {
+      "category": "data",
       "css": "@skryensya/core/patterns/table-pager.css",
       "id": "table-pager",
       "signatures": [
@@ -3418,7 +3770,8 @@
           ],
           "parents": [],
           "useWhen": [
-            "una tabla escrita a mano necesita paginar filas en el cliente y cambiar cuántas se ven"
+            "una tabla escrita a mano necesita paginar filas en el cliente y cambiar cuántas se ven",
+            "va la tabla (TableScroll) y después un TablePagerBar con su TablePagerNav; se paginan las filas del tbody"
           ]
         },
         {
@@ -3516,6 +3869,7 @@
       ]
     },
     {
+      "category": "navigation",
       "css": "@skryensya/core/components/tabs.css",
       "id": "tabs",
       "signatures": [
@@ -3543,12 +3897,14 @@
             {
               "el contenido es hermano, no una jerarquía": "todas las pestañas están al mismo nivel"
             },
-            "el usuario alterna entre vistas del mismo objeto (resumen, actividad, ajustes)"
+            "el usuario alterna entre vistas del mismo objeto (resumen, actividad, ajustes)",
+            "la lista siempre lleva nombre (aria-label o aria-labelledby a un título visible)"
           ]
         }
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/tag.css",
       "id": "tag",
       "signatures": [
@@ -3557,7 +3913,7 @@
             "Badge"
           ],
           "avoidWhen": [
-            "es sólo un conteo o un estado que nadie puede tocar; eso es un Badge"
+            "es sólo un conteo o un estado del sistema que nadie puede tocar; eso es un Badge"
           ],
           "host": "span",
           "id": "Tag",
@@ -3569,7 +3925,8 @@
           ],
           "parents": [],
           "useWhen": [
-            "una etiqueta que el usuario puede quitar: un filtro aplicado, una palabra clave"
+            "una etiqueta que clasifica contenido: filtro aplicado, faceta, palabra clave",
+            "el usuario puede quitarla (removable) o sólo nombra un tema en una lista"
           ]
         },
         {
@@ -3596,6 +3953,7 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/tile.css",
       "id": "tile",
       "signatures": [
@@ -3634,8 +3992,8 @@
           "id": "TileButton",
           "intent": [
             "actionable-card",
-            "selectable-surface",
-            "card-that-does-something"
+            "card-that-does-something",
+            "full-surface-action"
           ],
           "parents": [],
           "useWhen": [
@@ -3817,6 +4175,7 @@
       ]
     },
     {
+      "category": "forms",
       "css": "@skryensya/core/components/time-field.css",
       "id": "time-field",
       "signatures": [
@@ -3846,6 +4205,7 @@
       ]
     },
     {
+      "category": "navigation",
       "css": "@skryensya/core/components/toc.css",
       "id": "toc",
       "signatures": [
@@ -3873,21 +4233,25 @@
             "un documento largo tiene varias secciones (h2/h3) y el lector necesita saltar entre ellas",
             {
               "hace falta ver, mientras se lee, en qué sección se está": "el \"current\" lo mueve el scroll-spy"
-            }
+            },
+            "el title nombra el nav y encabeza la lista, así que siempre va (\"En esta página\")"
           ]
         }
       ]
     },
     {
+      "category": "actions",
       "css": "@skryensya/core/components/toolbar.css",
       "id": "toolbar",
       "signatures": [
         {
           "alternatives": [
-            "Inline"
+            "Inline",
+            "NavList"
           ],
           "avoidWhen": [
-            "son dos o tres botones sueltos; ahí un Inline alcanza"
+            "son dos o tres botones sueltos; ahí un Inline alcanza",
+            "los controles son links de navegación del sitio; eso es NavList o Navbar, no una barra de herramientas"
           ],
           "host": "div",
           "id": "Toolbar",
@@ -3898,7 +4262,8 @@
           ],
           "parents": [],
           "useWhen": [
-            "hay muchos controles juntos y el teclado no debería pagar una parada por cada uno"
+            "hay muchos controles juntos y el teclado no debería pagar una parada por cada uno",
+            "adentro puede ir un Segmented o unas Tabs: la barra los cuenta como una sola parada"
           ]
         },
         {
@@ -3913,7 +4278,7 @@
             "Toolbar"
           ],
           "useWhen": [
-            "un subconjunto de controles que van juntos"
+            "un subconjunto de controles que van juntos; con groupLabel si la barra tiene más de un tipo de grupo"
           ]
         },
         {
@@ -3934,16 +4299,19 @@
       ]
     },
     {
+      "category": "overlays",
       "css": "@skryensya/core/components/tooltip.css",
       "id": "tooltip",
       "signatures": [
         {
           "alternatives": [
-            "Popover"
+            "Popover",
+            "Menu"
           ],
           "avoidWhen": [
             "el texto es el único nombre o la única información disponible; debe vivir fuera del tooltip",
-            "el contenido necesita acciones, formato o varias líneas; usa Popover"
+            "el contenido necesita acciones, formato o varias líneas; usa Popover",
+            "es una lista de acciones; eso es un Menu"
           ],
           "host": "span",
           "id": "Tooltip",
@@ -3961,18 +4329,22 @@
       ]
     },
     {
+      "category": "navigation",
       "css": "@skryensya/core/components/tree-view.css",
       "id": "tree-view",
       "signatures": [
         {
           "alternatives": [
             "NavList",
-            "List"
+            "List",
+            "Treegrid",
+            "Toc"
           ],
           "avoidWhen": [
             "hay un solo nivel; eso es una List o una NavList",
             "son dos niveles fijos y conocidos; una NavList con grupos se lee mejor",
-            "la jerarquía es una vista de tabla con filas que se expanden; eso es una Table"
+            "cada fila jerárquica tiene además columnas (tamaño, fecha, dueño); eso es un Treegrid",
+            "son enlaces para navegar el sitio o la página; un role=tree no es navegación: eso es NavList o Toc"
           ],
           "host": "div",
           "id": "TreeView",
@@ -3987,12 +4359,13 @@
           "useWhen": [
             "los datos anidan de verdad y la jerarquía es parte de lo que hay que entender",
             "hace falta abrir y cerrar ramas sin perder de vista dónde se está",
-            "un explorador de archivos, un organigrama, un índice de contenidos"
+            "un explorador de archivos, un organigrama, categorías que se eligen"
           ]
         }
       ]
     },
     {
+      "category": "data",
       "css": "@skryensya/core/components/treegrid.css",
       "id": "treegrid",
       "signatures": [
@@ -4110,7 +4483,8 @@
           ],
           "useWhen": [
             "un registro de la grilla, en el mismo orden que un lector de pantalla lo recorre: nunca anidado dentro de otro TreegridRow, un <tr> no puede contener otro <tr>",
-            "la fila tiene descendientes: pasa `expanded` (true o false) y escríbelos a continuación, en orden, con un `level` mayor"
+            "la fila tiene descendientes: pasa `expanded` (true o false) y escríbelos a continuación, en orden, con un `level` mayor",
+            "toda fila lleva un `value` único en la grilla: es lo que reportan los eventos de expandir y activar"
           ]
         },
         {
@@ -4133,13 +4507,15 @@
       ]
     },
     {
+      "category": "content",
       "css": "@skryensya/core/components/typography.css",
       "id": "typography",
       "signatures": [
         {
           "alternatives": [],
           "avoidWhen": [
-            "titula una sección; eso es un Heading, aunque se vea chico"
+            "titula una sección; eso es un Heading, aunque se vea chico",
+            "va dentro de otra línea de texto, un botón o un label como <p>: ahí es textElement span"
           ],
           "host": "p",
           "id": "Text",
@@ -4152,7 +4528,8 @@
           "parents": [],
           "useWhen": [
             "un párrafo, una bajada, una nota al pie",
-            "el tono dice jerarquía: secondary para lo accesorio, danger para un error en prosa"
+            "el tono dice jerarquía: secondary para lo accesorio, danger para un error en prosa (acompañado de texto que lo diga, no sólo del color)",
+            "la línea chica sobre un título es textRole eyebrow; la bajada bajo el título es textRole subtitle"
           ]
         },
         {
@@ -4160,7 +4537,8 @@
             "Heading"
           ],
           "avoidWhen": [
-            "titula una sección; eso es un Heading"
+            "titula una sección; eso es un Heading",
+            "sólo se quiere un peso distinto para toda la línea sin decir que importa más; eso es Text con weight"
           ],
           "host": "strong",
           "id": "Strong",
@@ -4188,7 +4566,7 @@
           ],
           "parents": [],
           "useWhen": [
-            "muestra el resultado calculado de una entrada o interacción"
+            "muestra el resultado calculado de una entrada o interacción; outputFor nombra los ids de esas entradas"
           ]
         },
         {
@@ -4217,7 +4595,8 @@
             "Text"
           ],
           "avoidWhen": [
-            "sólo se busca texto grande; el nivel es estructura, no tamaño"
+            "sólo se busca texto grande; el nivel es estructura, no tamaño",
+            "el título es la etiqueta chica de un grupo (un kicker); eso es Text con textRole eyebrow"
           ],
           "host": "h2",
           "id": "Heading",
@@ -4228,7 +4607,8 @@
           ],
           "parents": [],
           "useWhen": [
-            "abre una sección y hay que decir a qué nivel del documento pertenece"
+            "abre una sección y hay que decir a qué nivel del documento pertenece: headingElement (h1–h6) es el nivel, headingSize sólo el aspecto",
+            "el tamaño se elige por escalón (h1–h6, display-sm/md/lg); sm, md, lg y display son alias heredados"
           ]
         },
         {
@@ -4252,6 +4632,7 @@
       ]
     },
     {
+      "category": "overlays",
       "css": "@skryensya/core/patterns/vaul.css",
       "id": "vaul",
       "signatures": [
@@ -4261,7 +4642,8 @@
             "Popover"
           ],
           "avoidWhen": [
-            "es una decisión corta que hay que confirmar: eso es Dialog, centrado y sin borde",
+            "es una decisión corta que hay que confirmar: eso es Dialog, centrado y con título propio",
+            "es un Dialog que solo en móvil debe volverse hoja inferior: eso es Dialog con vaul, que conserva su header y su título",
             "no bloquea el resto de la pantalla: eso es Popover"
           ],
           "host": "dialog",
@@ -4274,16 +4656,18 @@
           ],
           "parents": [],
           "useWhen": [
-            "un panel llega desde un borde y se va arrastrándolo: navegación en móvil, un filtro, una hoja",
-            "conviene que ocupe el borde entero y no una caja centrada"
+            "un panel modal llega desde un borde y se puede cerrar arrastrándolo: un filtro, una hoja de acciones, compartir",
+            "en móvil conviene que la tarea se apoye en un borde y no en una caja centrada"
           ]
         },
         {
           "alternatives": [
-            "Vaul"
+            "Vaul",
+            "Sidebar"
           ],
           "avoidWhen": [
-            "alcanza con una hoja que se apoya en el borde: eso es Vaul"
+            "alcanza con una hoja que se apoya en el borde: eso es Vaul",
+            "la navegación debe quedar visible junto al contenido: un drawer es modal y bloquea la página; eso es Sidebar"
           ],
           "host": "dialog",
           "id": "Vaul.drawer",
@@ -4294,20 +4678,64 @@
           ],
           "parents": [],
           "useWhen": [
-            "el panel ocupa su borde entero: la navegación de un móvil, un panel lateral persistente",
+            "el panel modal ocupa su borde entero: la navegación de un móvil, un panel lateral de filtros",
             "el contenido es una lista larga que necesita todo el alto"
+          ]
+        },
+        {
+          "alternatives": [
+            "Popover",
+            "Menu"
+          ],
+          "avoidWhen": [
+            "el panel se abre desde script, no desde un botón; entonces no hace falta trigger",
+            "abre un popover o un menú anclado al botón; eso es Popover o Menu, que traen su propio trigger"
+          ],
+          "host": "button",
+          "id": "Vaul.Trigger",
+          "intent": [
+            "open-a-sheet",
+            "open-a-drawer",
+            "mobile-menu-button"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un botón de la página abre un Vaul: opens es el panelId del panel, y los dos van en el mismo árbol"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "el botón confirma una acción además de cerrar; ahí conviene un Button que haga la acción y cierre desde su propio handler"
+          ],
+          "host": "button",
+          "id": "Vaul.Close",
+          "intent": [
+            "close-a-sheet",
+            "dismiss-a-drawer"
+          ],
+          "parents": [],
+          "useWhen": [
+            "el panel necesita un botón propio para cerrarse (un Listo, una X): va dentro del Vaul"
           ]
         }
       ]
     },
     {
+      "category": "layout",
       "css": "@skryensya/core/patterns/wrapper.css",
       "id": "wrapper",
       "signatures": [
         {
-          "alternatives": [],
+          "alternatives": [
+            "LayoutGrid",
+            "Box"
+          ],
           "avoidWhen": [
-            "el contenido debe ocupar todo el ancho; ahí se elige full o no hay wrapper"
+            "el contenido debe tocar los bordes (una imagen o una banda a sangre); full igual deja gutters, así que ahí no hay wrapper, o se usa LayoutGrid con data-width=\"full-width\"",
+            "algunos hijos deben ser más angostos o abrirse más que el resto; eso es LayoutGrid, no Wrappers anidados",
+            "ya está dentro de otro Wrapper; anidarlos suma los dos padding inline y el techo de afuera manda igual",
+            "la región necesita fondo, borde o padding propio; Wrapper solo mide y centra, eso es un Box (adentro o afuera del Wrapper)"
           ],
           "host": "div",
           "id": "Wrapper",
@@ -4318,12 +4746,14 @@
           ],
           "parents": [],
           "useWhen": [
-            "la página necesita una medida centrada para que el texto no se estire de borde a borde"
+            "la página necesita una medida centrada para que el texto no se estire de borde a borde",
+            "un header, un cuerpo y un footer deben compartir el mismo techo de ancho: los tres usan el mismo wrapperSize",
+            "el contenido necesita gutters laterales pero ningún techo; eso es wrapperSize full, que conserva el padding inline y solo quita el máximo"
           ]
         }
       ]
     }
   ],
-  "schemaVersion": "2.0",
-  "sourceHash": "94767abca7fedff2"
+  "schemaVersion": "2.3",
+  "sourceHash": "c0b063cdc880100c"
 }

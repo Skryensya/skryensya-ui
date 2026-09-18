@@ -18,7 +18,8 @@ export function ProcessList({ children, className, ...props }: ProcessListProps)
 
 export type ProcessListItemProps = Omit<LiHTMLAttributes<HTMLLIElement>, "title"> & {
   children?: ReactNode;
-  title: ReactNode;
+  /** Plain instruction title. Matches the contract slot (`accepts: "text"`). */
+  title: string;
 };
 
 /** One instruction and its arbitrary flow content. */

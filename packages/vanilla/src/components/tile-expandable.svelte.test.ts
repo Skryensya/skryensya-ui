@@ -27,10 +27,10 @@ describe("ExpandableTile (collapsible) contracts", () => {
     expect(root.getAttribute("data-scope")).toBe("tile");
   });
 
-  it("opens on click, toggling state and emitting sk:openchange", () => {
+  it("opens on click, toggling state and emitting sk:tileopenchange", () => {
     const root = mount(markup);
     const handler = vi.fn();
-    root.addEventListener("sk:openchange", handler);
+    root.addEventListener("sk:tileopenchange", handler);
     const trigger = getByRole(root, "button", { name: "Summary" });
     const content = root.querySelector<HTMLElement>("[data-part=content]")!;
 

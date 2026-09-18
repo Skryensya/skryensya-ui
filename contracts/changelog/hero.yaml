@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "4e21635b89629881"
+surface: "b1c5679b95249463"
 entries:
   - date: 2026-08-25
     kind: rework
@@ -248,3 +248,13 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Hero elige su elemento desde el árbol
+      body: >-
+        <code>heroElement</code> acepta <code>div</code>, <code>section</code> o <code>header</code>, lo mismo que React ya permitía con <code>as</code>.
+    en:
+      title: Hero chooses its element from the tree
+      body: >-
+        <code>heroElement</code> takes <code>div</code>, <code>section</code> or <code>header</code>, what React already allowed through <code>as</code>.

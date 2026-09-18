@@ -1,0 +1,217 @@
+---
+import Base from "../layouts/Base.astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import ComponentPreview from "../components/ComponentPreview.astro";
+import Used from "../components/Used.astro";
+import { headingDisplayTree, headingDocumentTree, textScaleTree, textTitleTree } from "../demos/typography";
+import { getLocale, useTranslations } from "../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+
+/* One row per size role. The resolved values are read live from the page. */
+const pairs = [
+  { role: "display-lg", size: "--font-size-display-lg", leading: "--font-line-height-display-lg", note: "Heroes and covers" },
+  { role: "display-md", size: "--font-size-display-md", leading: "--font-line-height-display-md", note: "Heroes and covers" },
+  { role: "display-sm", size: "--font-size-display-sm", leading: "--font-line-height-display-sm", note: "A product page title" },
+  { role: "h1", size: "--font-size-heading-h1", leading: "--font-line-height-heading-h1", note: "Document title" },
+  { role: "h2", size: "--font-size-heading-h2", leading: "--font-line-height-heading-h2", note: "Section" },
+  { role: "h3", size: "--font-size-heading-h3", leading: "--font-line-height-heading-h3", note: "Subsection" },
+  { role: "h4 · h5 · h6", size: "--font-size-heading-h4", leading: "--font-line-height-heading-h4", note: "Floor: it stops shrinking here" },
+  { role: "body-lg", size: "--font-size-body-lg", leading: "--font-line-height-body-lg", note: "Subtitle under a heading" },
+  { role: "body", size: "--font-size-body", leading: "--font-line-height-body", note: "Reading text, the default" },
+  { role: "body-sm", size: "--font-size-body-sm", leading: "--font-line-height-body-sm", note: "Secondary text, dense cells" },
+  { role: "caption", size: "--font-size-caption", leading: "--font-line-height-caption", note: "Metadata, captions, eyebrows" },
+];
+
+const weights = [
+  { token: "--font-weight-body", value: "400", note: "Reading text" },
+  { token: "--font-weight-label", value: "500", note: "Control and navigation labels" },
+  { token: "--font-weight-emphasis", value: "600", note: "<strong> inside a paragraph, eyebrows" },
+  { token: "--font-weight-heading", value: "700", note: "Headings and displays" },
+];
+
+const install = `/* Once, at the app root, before the tokens */
+@import "@skryensya/core/fonts/hanken-grotesk.css";
+@import "@skryensya/core/tokens.scss";`;
+
+const swap = `/* Another family: skip hanken-grotesk.css and redefine the primitive */
+:root {
+  --scale-font-family-sans: "My Family", system-ui, sans-serif;
+}`;
+
+const usage = `<!-- Document level and visual size are separate -->
+<h2 class="sk-heading" data-size="h3">Regions ready</h2>
+<p class="sk-text" data-tone="secondary">Three of four regions responded.</p>
+
+<!-- Your own component reads roles, never pixels -->
+<style>
+  .my-card__title {
+    font-size: var(--font-size-heading-h4);
+    line-height: var(--font-line-height-heading-h4);
+    font-weight: var(--font-weight-heading);
+  }
+</style>`;
+---
+
+<Base
+  title="Typography"
+  documentLayout="grid"
+  description="The system's type scale: families, size and line-height pairs, one weight per role, and how to consume them."
+>
+  <h1>Typography</h1>
+  <p class="lede">
+    A sans family that ships with the package, a mono for code, eleven size roles that carry their
+    own line-height, and four named weights. No component writes a <code>font-size</code> in pixels:
+    each reads a semantic token from <code>packages/core/css/semantic/_type.scss</code>, which in turn
+    points at the primitive scale.
+  </p>
+
+  <h2>Families</h2>
+  <p>
+    <strong>Hanken Grotesk</strong> is the system's sans, and it ships inside
+    <code>@skryensya/core</code>: nothing is fetched from someone else's CDN. It is variable (one weight
+    axis from 100 to 900), so the four weights the system uses are drawn, never synthesised, and it has
+    real tabular figures for tables, meters and clocks. It was picked by measuring this site's own
+    pages: its x-height holds at 12px, the size of the densest chrome, and it is the most contained of
+    the candidates at 60px.
+  </p>
+  <p>
+    <strong>JetBrains Mono</strong> is the code family. The package does not include it: when it is not
+    installed, the operating system's monospace takes over.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Token</th>
+          <th class="sk-table__header">Primitive</th>
+          <th class="sk-table__header">Resolved value</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row">
+          <td class="sk-table__cell mono">--font-family-body</td>
+          <td class="sk-table__cell mono">--scale-font-family-sans</td>
+          <td class="sk-table__cell mono"><Used token="--font-family-body" /></td>
+        </tr>
+        <tr class="sk-table__row">
+          <td class="sk-table__cell mono">--font-family-code</td>
+          <td class="sk-table__cell mono">--scale-font-family-mono</td>
+          <td class="sk-table__cell mono"><Used token="--font-family-code" /></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    The font sheet also declares a fallback with Hanken Grotesk's metrics: the reader's local system
+    font, rescaled to the real face's width and line box. With <code>font-display: swap</code> the first
+    paint uses that fallback, and the swap to the real font changes the drawing of the letters without
+    moving the layout.
+  </p>
+  <CodeBlock code={install} label="CSS" />
+  <CodeBlock code={swap} label="CSS" note="swapping the family" />
+
+  <h2>The scale: size and line-height come in pairs</h2>
+  <p>
+    Every size role has a paired line-height, and the leading tightens as the size grows: 1.5 for
+    reading, 1.35 for small headings, 1.2 for h1 and 1.1 for displays. A 60px display with a
+    paragraph's leading leaves wide gaps between lines. That is why the two columns are read together:
+    <code>--font-size-heading-h2</code> always goes with <code>--font-line-height-heading-h2</code>.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Role</th>
+          <th class="sk-table__header">Size</th>
+          <th class="sk-table__header">Line-height</th>
+          <th class="sk-table__header">When</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        {
+          pairs.map((pair) => (
+            <tr class="sk-table__row">
+              <td class="sk-table__cell"><strong>{pair.role}</strong></td>
+              <td class="sk-table__cell mono">{pair.size}<br /><Used token={pair.size} /></td>
+              <td class="sk-table__cell mono">{pair.leading}<br /><Used token={pair.leading} /></td>
+              <td class="sk-table__cell">{pair.note}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Displays</h3>
+  <p>
+    Above the document scale, for heroes and covers. They map to no heading level: a display can be an
+    <code>h1</code> or a <code>p</code>.
+  </p>
+  <ComponentPreview tree={headingDisplayTree(t)} label="Displays" />
+
+  <h3>Document headings</h3>
+  <p>
+    Each rung from h1 to h4 is visible. h5 and h6 reuse the h4 pair: below 18px a section title stops
+    standing out from the text it introduces.
+  </p>
+  <ComponentPreview tree={headingDocumentTree(t)} label="h1 to h6" />
+
+  <h3>Reading text</h3>
+  <p>
+    Four body sizes, all at 1.5 leading. Long-form text can also use
+    <code>--font-line-height-body-relaxed</code> (1.7), applied on purpose, not by default.
+  </p>
+  <ComponentPreview tree={textScaleTree(t)} label="caption to lg" />
+
+  <h2>Weights: one per role</h2>
+  <p>
+    Four rungs, none repeated. <code>emphasis</code> and <code>label</code> used to share a value (500),
+    so a <code>&lt;strong&gt;</code> in a paragraph read exactly like a button label. Now each role has
+    its own weight and the whole 400 to 700 ladder is in use.
+  </p>
+  <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">Token</th>
+          <th class="sk-table__header">Weight</th>
+          <th class="sk-table__header">When</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        {
+          weights.map((weight) => (
+            <tr class="sk-table__row">
+              <td class="sk-table__cell mono">{weight.token}</td>
+              <td class="sk-table__cell"><span style={`font-weight: var(${weight.token})`}>{weight.value}</span></td>
+              <td class="sk-table__cell">{weight.note}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Composed roles</h2>
+  <p>
+    Some jobs repeat in every title block and combine several axes at once.
+    <a href="/components/text">Text</a> publishes them as roles: <code>eyebrow</code> (caption, emphasis
+    weight, tracked uppercase) above the title, and <code>subtitle</code> (body-lg, relaxed leading,
+    secondary tone) below it. Every hook a role sets can still be overridden.
+  </p>
+  <ComponentPreview tree={textTitleTree(t)} label="Eyebrow, title and subtitle" />
+
+  <h2>Usage</h2>
+  <p>
+    For text, use <a href="/components/heading">Heading</a>, <a href="/components/text">Text</a> and
+    <a href="/components/link">Link</a>: they already consume the pairs and expose their own styling hooks
+    (<code>--sk-heading-font-size</code>, <code>--sk-text-font-size</code>, and so on). Your own
+    component reads the semantic tokens for the role it needs, always the size together with its
+    line-height, and never the <code>--scale-font-*</code> primitives.
+  </p>
+  <CodeBlock code={usage} label="HTML" />
+  <p>
+    Every token is in the <a href="/reference">token reference</a>, with its live resolved value.
+  </p>
+</Base>

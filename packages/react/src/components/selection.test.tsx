@@ -1,6 +1,6 @@
 import { fireEvent, render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { Checkbox, CheckboxGroup, RadioGroup, Switch } from "./selection.js";
+import { Checkbox, CheckboxGroup, Radio, RadioGroup, Switch } from "./selection.js";
 
 const permissions = [
   { value: "read", label: "Read", defaultChecked: true },
@@ -46,13 +46,21 @@ describe("selection controls", () => {
 
   it("checks and unchecks every child from the parent, reporting values in the items' order", () => {
     const onValueChange = vi.fn();
+    const onDom = vi.fn();
     const ui = render(
       <CheckboxGroup items={permissions} label="Permissions" name="permissions" onValueChange={onValueChange} />,
     );
+    const root = ui.container.querySelector(".sk-checkbox-group")!;
+    root.addEventListener("sk:checkboxgroupvaluechange", onDom);
     const parent = ui.getByRole("checkbox", { name: "Permissions" }) as HTMLInputElement;
 
     fireEvent.click(parent);
     expect(onValueChange).toHaveBeenLastCalledWith({ checked: true, value: ["read", "write", "admin"] });
+    expect(onDom).toHaveBeenCalled();
+    expect((onDom.mock.calls[0]![0] as CustomEvent).detail).toEqual({
+      checked: true,
+      value: ["read", "write", "admin"],
+    });
 
     fireEvent.click(parent);
     expect(onValueChange).toHaveBeenLastCalledWith({ checked: false, value: [] });
@@ -117,15 +125,35 @@ describe("selection controls", () => {
   it("lets the browser own uncontrolled RadioGroup selection and reports it", () => {
     const onValueChange = vi.fn();
     const ui = render(
-      <RadioGroup defaultValue="pro" items={[{ value: "basic", label: "Basic" }, { value: "pro", label: "Pro" }]} name="plan" onValueChange={onValueChange} />,
+      <RadioGroup
+        defaultValue="pro"
+        items={[{ value: "basic", label: "Basic" }, { value: "pro", label: "Pro" }]}
+        label="Plan"
+        name="plan"
+        onValueChange={onValueChange}
+      />,
     );
     const pro = ui.getByRole("radio", { name: "Pro" }) as HTMLInputElement;
     const basic = ui.getByRole("radio", { name: "Basic" }) as HTMLInputElement;
 
+    expect(ui.getByRole("radiogroup", { name: "Plan" })).toBeTruthy();
     expect(pro.checked).toBe(true);
     fireEvent.click(basic);
     expect(onValueChange).toHaveBeenCalledWith({ value: "basic" });
     expect(basic.checked).toBe(true);
+  });
+
+  it("disables every radio when the group is disabled", () => {
+    const ui = render(
+      <RadioGroup
+        disabled
+        items={[{ value: "basic", label: "Basic" }, { value: "pro", label: "Pro", disabled: true }]}
+        label="Plan"
+        name="plan"
+      />,
+    );
+    expect((ui.getByRole("radio", { name: "Basic" }) as HTMLInputElement).disabled).toBe(true);
+    expect((ui.getByRole("radio", { name: "Pro" }) as HTMLInputElement).disabled).toBe(true);
   });
 
   it("renders Switch as a native checkbox with switch semantics", () => {
@@ -136,5 +164,34 @@ describe("selection controls", () => {
     expect(control.checked).toBe(true);
     fireEvent.click(control);
     expect(onCheckedChange).toHaveBeenCalledWith({ checked: false });
+  });
+});
+
+describe("Radio (one on its own)", () => {
+  it("is a radio whose group is its name, and takes a label only when given one", () => {
+    const ui = render(
+      <table>
+        <tbody>
+          <tr>
+            <td><Radio aria-label="Easy to use: 1" name="easy" value="1" /></td>
+            <td><Radio aria-label="Easy to use: 2" name="easy" value="2" /></td>
+            <td><Radio name="fast" value="1">Fast</Radio></td>
+          </tr>
+        </tbody>
+      </table>,
+    );
+    const [one, two, fast] = ui.getAllByRole("radio") as HTMLInputElement[];
+    expect(one.name).toBe("easy");
+    // No label element when none was given: in a matrix the row and column headers name the cell.
+    expect(one.closest("label")!.querySelector(".sk-radio__label")).toBeNull();
+    expect(fast.closest("label")!.querySelector(".sk-radio__label")!.textContent).toBe("Fast");
+
+    // One answer per row, which is the browser's own doing: same name, one group.
+    fireEvent.click(one);
+    fireEvent.click(two);
+    expect(one.checked).toBe(false);
+    expect(two.checked).toBe(true);
+    fireEvent.click(fast);
+    expect(two.checked).toBe(true);
   });
 });

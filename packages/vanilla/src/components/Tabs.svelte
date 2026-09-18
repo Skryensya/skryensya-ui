@@ -1,5 +1,6 @@
 <script lang="ts">
   import { tabs } from "@skryensya/core/machines";
+  import { tabsEvents } from "@skryensya/core/tabs";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
@@ -9,7 +10,7 @@
    * @skryensya/core/machines). It renders no structure: it scans its authored markup
    * (`[data-sk-tabs-list]` / `[data-sk-tabs-trigger]` / `[data-sk-tabs-content]`, each with
    * `data-value`) and patches the attributes `connect` returns onto those nodes. It preserves the old
-   * contract: it mirrors `api.value` in the root's `data-value` and emits `sk-value-change`.
+   * contract: it mirrors `api.value` in the root's `data-value` and emits `sk:tabsvaluechange`.
    *
    * THE FIRST ENHANCER ON `bindParts`, and it was chosen because at 100 lines it exercises the whole
    * interface: a required part (root), an optional one (list, absent from valid markup), a collection
@@ -59,7 +60,7 @@
     activationMode,
     defaultValue,
     onValueChange(details: { value: string }) {
-      root.dispatchEvent(new CustomEvent("sk-value-change", { bubbles: true, detail: { value: details.value } }));
+      root.dispatchEvent(new CustomEvent(tabsEvents.valueChange, { bubbles: true, detail: { value: details.value } }));
     },
   }));
 

@@ -17,3 +17,8 @@ Hero:
     - "sólo hace falta separar contenido con relleno o borde; eso es un Box"
     - "el mensaje necesita más de dos acciones o más de un titular compitiendo; separa el resto en su propia sección"
     - "una imagen adentro reemplaza al titular en vez de acompañarlo; el titular sigue siendo un Heading real, la imagen lleva su propio alt"
+    - "es el cierre de la página (navegación secundaria, aviso legal, crédito); eso es Footer"
+  alternatives:
+    - Box
+    - Footer
+    - Stack

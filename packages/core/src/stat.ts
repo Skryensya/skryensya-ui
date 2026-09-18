@@ -159,6 +159,7 @@ function parseCssDuration(raw: string): number | undefined {
  */
 export const statContract = {
   id: "stat",
+  category: "data",
   css: "@skryensya/core/components/stat.css",
   parts: statParts,
   hooks: [
@@ -168,12 +169,12 @@ export const statContract = {
 
   options: {
     /** Which way the change points. Paired with the change text, never the only cue. */
-    trend: { type: "enum", values: ["up", "down", "neutral"], attr: "data-trend" },
+    trend: { type: "enum", values: ["up", "down", "neutral"], default: "neutral", attr: "data-trend" },
     animate: { type: "boolean", default: false, attr: "data-animate", trueValue: "", machineInput: true },
     count: { type: "number", attr: "data-count", machineInput: true },
     locale: { type: "string", attr: "data-locale", machineInput: true },
     suffix: { type: "string", attr: "data-suffix", machineInput: true },
-    fractionDigits: { type: "number", attr: "data-fraction-digits", machineInput: true },
+    fractionDigits: { type: "number", min: 0, max: 100, integer: true, attr: "data-fraction-digits", machineInput: true },
   },
 
   signatures: {
@@ -181,6 +182,9 @@ export const statContract = {
       intent: ["metric", "kpi", "one-number-with-a-name", "dashboard-figure"],
       host: { element: "div" },
       options: ["trend", "animate", "count", "locale", "suffix", "fractionDigits"],
+      /* The enhancer throws on a count-up with no `count`, and a trend with no change text has no
+         element to land on. */
+      implies: { animate: ["count"], trend: ["change"] },
       mount: "data-sk-stat",
       slots: {
         label: { accepts: "text", required: true },

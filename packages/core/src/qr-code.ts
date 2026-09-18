@@ -329,6 +329,7 @@ export function qrLogoAdvice(logoRatio: number, level: QrLevel): string | undefi
 
 export const qrCodeContract = {
   id: "qr-code",
+  category: "content",
   css: "@skryensya/core/components/qr-code.css",
   parts: qrCodeParts,
   hooks: [
@@ -366,13 +367,18 @@ export const qrCodeContract = {
       attr: "data-level",
       computedInput: true,
     },
+    /*
+     * NOT `computedInput`, even though it feeds the encoder: the stylesheet reads
+     * `data-module-shape` to switch `shape-rendering` (crispEdges for square, geometricPrecision for
+     * curve shapes). Declaring it computed wrote the attr nowhere, so dot/rounded always painted
+     * with the square antialiasing rule.
+     */
     moduleShape: {
       type: "enum",
       values: [...qrModuleShapes],
       default: "square",
       attr: "data-module-shape",
       prop: "shape",
-      computedInput: true,
     },
     /* An encoder input like `level`: once the symbol exists there is nothing left for it to be an
        attribute of, so it is `computedInput` and never reaches the DOM. */
@@ -383,7 +389,7 @@ export const qrCodeContract = {
       attr: "data-mask",
       computedInput: true,
     },
-    quietZone: { type: "number", default: 4, attr: "data-quiet-zone", computedInput: true },
+    quietZone: { type: "number", default: 4, min: 0, integer: true, attr: "data-quiet-zone", computedInput: true },
     /*
      * `styleProperty` rather than `computedInput`, unlike every other encoder input here, and the
      * difference is that this one has a SECOND job. It feeds the geometry (which modules to clear)
@@ -392,9 +398,10 @@ export const qrCodeContract = {
      * the logo box computed to `calc(0 * 100% - 2px)`: present in the DOM, negative, invisible.
      *
      * The computation still reads the authored value straight off the tree, so nothing about the
-     * cleared modules depends on how it is serialized.
+     * cleared modules depends on how it is serialized. Cap is 0.5, matching `qrGeometry`'s clamp: a
+     * larger ratio would size the CSS cover past the cleared hole and sit the logo on live modules.
      */
-    logoRatio: { type: "number", default: 0, styleProperty: "--sk-qr-code-logo-ratio" },
+    logoRatio: { type: "number", default: 0, min: 0, max: 0.5, styleProperty: "--sk-qr-code-logo-ratio" },
     /** Module colour. Read by the stylesheet, never by the encoder: a tint changes no bit. */
     tone: {
       type: "enum",
@@ -452,6 +459,8 @@ export const qrCodeContract = {
         "label",
       ],
       requires: ["value", "label"],
+      /* A logo with no ratio paints a zero-size cover over nothing. */
+      implies: { logo: ["logoRatio"] },
       slots: {
         /*
          * A node, not a URL, so the middle can hold anything the kit already publishes: an

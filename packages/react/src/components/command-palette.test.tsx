@@ -1,5 +1,5 @@
 import { fireEvent, render } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CommandPalette } from "./command-palette.js";
 
 const items = [
@@ -156,14 +156,109 @@ describe("CommandPalette", () => {
 
     const dialog = ui.container.querySelector("dialog")!;
     expect(dialog.getAttribute("aria-label")).toBe("Buscar en la documentación");
+    expect(dialog.hasAttribute("data-sk-command-palette")).toBe(true);
     expect(dialog.classList.contains("sk-dialog")).toBe(true);
     expect(dialog.classList.contains("sk-command-palette")).toBe(true);
 
     const close = dialog.querySelector<HTMLButtonElement>(".sk-command-palette__close")!;
-    expect(close.getAttribute("aria-label")).toBe("Cerrar");
+    expect(close.getAttribute("aria-label")).toBe("Close");
     expect(close.closest("form")?.getAttribute("method")).toBe("dialog");
     expect(close.getAttribute("value")).toBe("cancel");
 
     expect(dialog.querySelector(".sk-command-palette__footer")?.textContent).toBe("↵ para abrir");
+  });
+});
+
+/*
+ * DIALOG VAUL, the contract's `vaul` option, ON by default in both bindings.
+ *
+ * The sheet is CSS (`dialog-vaul.css`) and cannot be seen from jsdom; what is tested is the markup
+ * the stylesheet keys on and the drag this binding now owns. The verdict itself ("was that a
+ * dismissal?") is `@skryensya/core/vaul-gesture`'s, covered there; these only prove the React shell
+ * measures, flags and closes the way the Vanilla one does (vanilla/src/components/vaul.test.ts).
+ */
+describe("CommandPalette as Dialog Vaul", () => {
+  let belowDesktop = true;
+
+  beforeEach(() => {
+    belowDesktop = true;
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      media: query,
+      get matches() {
+        return belowDesktop;
+      },
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  const sheet = (ui: ReturnType<typeof render>) => {
+    const dialog = ui.container.querySelector("dialog")!;
+    // jsdom measures everything as 0; a 400px sheet makes the distances below mean something.
+    dialog.getBoundingClientRect = () =>
+      ({ bottom: 400, height: 400, left: 0, right: 400, top: 0, width: 400 }) as DOMRect;
+    return dialog;
+  };
+  const handleOf = (dialog: HTMLElement) =>
+    dialog.querySelector<HTMLElement>(":scope > [data-part='handle']")!;
+
+  it("is a sheet by default, with a grab handle as a direct child", () => {
+    const dialog = sheet(render(<CommandPalette id="cmd" items={items} label="Buscar" open />));
+
+    expect(dialog.hasAttribute("data-sk-dialog-vaul")).toBe(true);
+    expect(handleOf(dialog)?.getAttribute("aria-hidden")).toBe("true");
+  });
+
+  it("stays a centred box when the author opts out", () => {
+    const dialog = sheet(render(<CommandPalette id="cmd" items={items} label="Buscar" open vaul={false} />));
+
+    expect(dialog.hasAttribute("data-sk-dialog-vaul")).toBe(false);
+    // Still in the markup, the same as the contract template: command-palette.css hides it here.
+    expect(handleOf(dialog)).not.toBeNull();
+  });
+
+  it("follows the finger and closes past the threshold", () => {
+    const dialog = sheet(render(<CommandPalette id="cmd" items={items} label="Buscar" open />));
+    const handle = handleOf(dialog);
+
+    fireEvent.pointerDown(handle, { buttons: 1, clientY: 0, isPrimary: true, pointerId: 1 });
+    fireEvent.pointerMove(window, { buttons: 1, clientY: 200, pointerId: 1 });
+
+    expect(dialog.dataset.dragging).toBe("");
+    expect(dialog.style.getPropertyValue("--sk-vaul-drag-offset")).toBe("200px");
+    expect(dialog.style.getPropertyValue("--sk-vaul-drag-progress")).toBe("0.5");
+
+    fireEvent.pointerUp(window, { buttons: 0, clientY: 200, pointerId: 1 });
+
+    expect(dialog.open).toBe(false);
+    expect(dialog.dataset.dragging).toBeUndefined();
+    expect(dialog.style.getPropertyValue("--sk-vaul-drag-offset")).toBe("");
+    expect(dialog.dataset.releasing).toBe("");
+  });
+
+  it("does not wire the grab above the desktop breakpoint", () => {
+    belowDesktop = false;
+    const dialog = sheet(render(<CommandPalette id="cmd" items={items} label="Buscar" open />));
+
+    fireEvent.pointerDown(handleOf(dialog), { buttons: 1, clientY: 0, isPrimary: true, pointerId: 1 });
+    fireEvent.pointerMove(window, { buttons: 1, clientY: 300, pointerId: 1 });
+    fireEvent.pointerUp(window, { buttons: 0, clientY: 300, pointerId: 1 });
+
+    expect(dialog.open).toBe(true);
+    expect(dialog.dataset.dragging).toBeUndefined();
+  });
+
+  it("does not drag at all when the author opts out", () => {
+    const dialog = sheet(render(<CommandPalette id="cmd" items={items} label="Buscar" open vaul={false} />));
+
+    fireEvent.pointerDown(handleOf(dialog), { buttons: 1, clientY: 0, isPrimary: true, pointerId: 1 });
+    fireEvent.pointerMove(window, { buttons: 1, clientY: 300, pointerId: 1 });
+    fireEvent.pointerUp(window, { buttons: 0, clientY: 300, pointerId: 1 });
+
+    expect(dialog.open).toBe(true);
   });
 });

@@ -76,6 +76,43 @@ describe("Editor: onChange", () => {
     expect(value.doc.textContent).toBe("Hola!");
   });
 
+  it("dispatches sk:editorchange on the root for DOM parity with vanilla", () => {
+    const onChange = vi.fn<(value: EditorValue) => void>();
+    const ref = createRef<EditorHandle>();
+    const { container } = render(<Editor defaultValue="<p>Hola</p>" onChange={onChange} ref={ref} />);
+    const root = container.querySelector(".sk-editor")!;
+    const onDom = vi.fn();
+    root.addEventListener("sk:editorchange", onDom);
+    onChange.mockClear();
+
+    act(() => {
+      const view = ref.current!.view!;
+      view.dispatch(view.state.tr.insertText("!", view.state.doc.content.size - 1));
+    });
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onDom).toHaveBeenCalledTimes(1);
+    expect((onDom.mock.calls[0]![0] as CustomEvent).detail.html).toBe("<p>Hola!</p>");
+  });
+
+  it("dispatches sk:editorready once on mount with the live view handle", () => {
+    const onReady = vi.fn();
+    const { container } = render(<Editor defaultValue="<p>Hola</p>" />);
+    /* ready fires during the mount effect, before we can attach a listener - re-render a fresh
+     * instance with the listener already on an ancestor that catches the bubbled event. */
+    container.remove();
+    const host = document.createElement("div");
+    document.body.appendChild(host);
+    host.addEventListener("sk:editorready", onReady);
+    const ui = render(<Editor defaultValue="<p>Hola</p>" />, { container: host });
+    expect(onReady).toHaveBeenCalledTimes(1);
+    const detail = (onReady.mock.calls[0]![0] as CustomEvent).detail;
+    expect(detail.view).toBeTruthy();
+    expect(detail.getHTML()).toBe("<p>Hola</p>");
+    ui.unmount();
+    host.remove();
+  });
+
   it("keeps the hidden textarea's value in sync with the current HTML, for native form submit", () => {
     const ref = createRef<EditorHandle>();
     const { container } = render(<Editor defaultValue="<p>Hola</p>" name="body" ref={ref} />);

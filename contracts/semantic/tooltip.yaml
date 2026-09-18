@@ -7,5 +7,7 @@ Tooltip:
   avoidWhen:
     - "el texto es el único nombre o la única información disponible; debe vivir fuera del tooltip"
     - "el contenido necesita acciones, formato o varias líneas; usa Popover"
+    - "es una lista de acciones; eso es un Menu"
   alternatives:
     - Popover
+    - Menu

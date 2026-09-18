@@ -51,6 +51,7 @@ export type CalloutPartClass = (typeof calloutParts)[CalloutPart];
  */
 export const calloutContract = {
   id: "callout",
+  category: "feedback",
   css: "@skryensya/core/components/callout.css",
   parts: calloutParts,
   hooks: [

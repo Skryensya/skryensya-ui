@@ -3,8 +3,22 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "f6ded365078aa20b"
+surface: "98aba7c461e7f5ba"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
   - date: 2026-08-24
     kind: breaking
     target: SplitButton
@@ -204,3 +218,27 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Las dos mitades tienen que ir soldadas
+      body: >-
+        La acción exige <code>weldEnd</code> y el trigger del menú <code>triggerWeldStart</code>.
+        Antes dependía de que el autor se acordara, y una soldadura olvidada dejaba un hueco entre las
+        dos mitades. <code>restrictOptions</code> ahora también acota booleanos.
+    en:
+      title: The two halves have to be welded
+      body: >-
+        The action requires <code>weldEnd</code> and the menu trigger <code>triggerWeldStart</code>.
+        It used to depend on the author remembering, and a forgotten weld left a gap between the two
+        halves. <code>restrictOptions</code> now narrows booleans too.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Las dos mitades comparten variante, tono y tamaño
+      body: >-
+        La acción y el trigger del menú tienen que coincidir en <code>variant</code>, <code>tone</code> y <code>size</code> (regla <code>pairs</code>); si no, las mitades soldadas dejan de leerse como un solo control.
+    en:
+      title: Both halves share variant, tone and size
+      body: >-
+        The action and the menu trigger must agree on <code>variant</code>, <code>tone</code> and <code>size</code> (<code>pairs</code> rule); otherwise the welded halves stop reading as one control.

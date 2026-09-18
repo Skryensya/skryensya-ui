@@ -95,6 +95,19 @@ describe("Megamenu vanilla enhancer", () => {
     expect(visiblePanel(root).textContent).toContain("Overview");
   });
 
+  it("dispatches sk:megamenuopenchange when a panel opens or closes", () => {
+    const root = markup();
+    const onDom = vi.fn();
+    root.addEventListener("sk:megamenuopenchange", onDom);
+
+    fireEvent.click(triggers(root)[0]!);
+    expect(onDom).toHaveBeenCalled();
+    expect((onDom.mock.calls.at(-1)![0] as CustomEvent).detail).toEqual({ open: true, index: 0 });
+
+    fireEvent.click(triggers(root)[0]!);
+    expect((onDom.mock.calls.at(-1)![0] as CustomEvent).detail).toEqual({ open: false, index: null });
+  });
+
   it("clicking the SAME trigger again closes it. A toggle", () => {
     const root = markup();
     fireEvent.click(triggers(root)[0]!);

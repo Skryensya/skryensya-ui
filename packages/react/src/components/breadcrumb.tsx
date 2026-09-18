@@ -183,6 +183,9 @@ export function Breadcrumb({
             <MenuPopup
               api={menuApi}
               checkedState={{}}
+              /* The collapsed crumbs are links, not commands; the Menu's DOM events still need a
+                 root to bubble from, and the breadcrumb's own nav is it. */
+              eventRootRef={navRef}
               items={middle.map(
                 (item): MenuItem => ({
                   value: `${item.href ?? "current"}-${item.label}`,

@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "7a2b1120d45afaba"
+surface: "f2c542700d7ca0c3"
 entries:
   - date: 2026-08-18
     kind: bugfix
@@ -45,3 +45,38 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: El contrato declara el rango de sus números
+      body: >-
+        <code>posInset</code> es un entero desde 1 y <code>setSize</code> un entero desde -1, el valor que WAI reserva para un total desconocido. Un valor fuera de rango deja de validar en vez de llegar al binding.
+    en:
+      title: The contract declares the range of its numbers
+      body: >-
+        <code>posInset</code> is a whole number from 1 and <code>setSize</code> a whole number from -1, the value WAI reserves for an unknown total. A value out of range stops validating instead of reaching the binding.
+  - date: 2026-09-17
+    kind: feature
+    target: Feed
+    es:
+      title: Feed declara a11y para su nombre accesible
+      body: >-
+        <code>role="feed"</code> no trae nombre implícito. El contrato ahora publica la regla de
+        <code>a11y</code> que exige <code>label</code>, con el mismo <code>because</code> que ya
+        tenía <code>requires</code>, para que un agente lea el porqué y no sólo el rechazo.
+    en:
+      title: Feed declares a11y for its accessible name
+      body: >-
+        <code>role="feed"</code> carries no implicit name. The contract now publishes the
+        <code>a11y</code> rule that requires <code>label</code>, with the same <code>because</code>
+        <code>requires</code> already enforced, so an agent reads the why and not only the rejection.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: Los artículos concuerdan en su posición
+      body: >-
+        Todos los <code>FeedArticle</code> declaran el mismo <code>setSize</code> y ningún <code>posInset</code> se repite ni lo supera (salvo <code>-1</code>, total desconocido).
+    en:
+      title: Articles agree on their position
+      body: >-
+        Every <code>FeedArticle</code> states the same <code>setSize</code>, and no <code>posInset</code> repeats or passes it (except <code>-1</code>, unknown total).

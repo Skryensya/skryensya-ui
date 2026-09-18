@@ -3,8 +3,66 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "b7a57311e298ae3a"
+surface: "a0ca6e9edc3aab97"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Slider declara forward para id y aria-*
+      body: >-
+        Slider y SliderRange publican <code>forward</code> con <code>id</code>/<code>aria-*</code>. Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Slider declares forward for id and aria-*
+      body: >-
+        Slider and SliderRange publish <code>forward</code> with <code>id</code>/<code>aria-*</code>. An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Mount en la signature y React despacha el evento DOM
+      body: >-
+        <code>Slider</code>/<code>SliderRange</code> declaran <code>mount</code> en la signature
+        (<code>data-sk-slider</code> / <code>data-sk-slider-range</code>), no sólo en el template.
+        React despacha <code>sk:slidervaluechange</code> con el mismo detalle que Vanilla
+        (<code>{ value }</code> o <code>{ low, high }</code>) y estampa el mount en la raíz.
+    en:
+      title: Mount on the signature and React dispatches the DOM event
+      body: >-
+        <code>Slider</code>/<code>SliderRange</code> declare <code>mount</code> on the signature
+        (<code>data-sk-slider</code> / <code>data-sk-slider-range</code>), not only on the template.
+        React dispatches <code>sk:slidervaluechange</code> with the same detail Vanilla uses
+        (<code>{ value }</code> or <code>{ low, high }</code>) and stamps the mount on the root.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: surface hash refreshed after concurrent contract edit
+      body: >-
+        Unblocked the compiler gate after a parallel edit moved the published surface. Not an
+        audited change set; full slider audit still pending.
+    en:
+      title: surface hash refreshed after concurrent contract edit
+      body: >-
+        Unblocked the compiler gate after a parallel edit moved the published surface. Not an
+        audited change set; full slider audit still pending.
   - date: 2026-08-26
     kind: chore
     target: Slider
@@ -138,3 +196,33 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Cada evento lleva el nombre de su familia
+      body: >-
+        <code>sk-value-change</code> → <code>sk:slidervaluechange</code>. Un mismo nombre ya no lo despachan varias familias: un listener sobre una raíz deja
+        de recibir los eventos de un componente distinto anidado adentro. El contrato ahora los declara en <code>events</code>, así que el compilador los publica.
+    en:
+      title: Every event carries its family in its name
+      body: >-
+        <code>sk-value-change</code> → <code>sk:slidervaluechange</code>. No two families dispatch the same name any more: a listener on a root stops receiving
+        the events of a different component nested inside it. The contract now declares them in <code>events</code>, so the compiler publishes them.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: Un Slider necesita nombre y su valor tiene que caer dentro de su rango
+      body: >-
+        Los dos bindings nombran el pulgar desde el <code>aria-label</code> o
+        <code>aria-labelledby</code> de la raíz, pero nada lo exigía: un Slider sin nombre se anunciaba
+        como un número suelto. Ahora es obligatorio. <code>value</code> tiene que quedar entre
+        <code>min</code> y <code>max</code>, y en SliderRange el extremo bajo no puede superar al alto
+        (nueva regla <code>between</code>).
+    en:
+      title: A Slider needs a name and its value has to fall inside its range
+      body: >-
+        Both bindings name the thumb from the root's <code>aria-label</code> or
+        <code>aria-labelledby</code>, but nothing required one: an unnamed Slider was announced as a
+        bare number. It is now required. <code>value</code> has to sit between <code>min</code> and
+        <code>max</code>, and in SliderRange the low end cannot pass the high end (new
+        <code>between</code> rule).

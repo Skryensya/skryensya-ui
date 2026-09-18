@@ -11,4 +11,6 @@ NumberField:
     - "es texto que sólo parece número (un RUT, un teléfono, un código); eso es un Input"
   alternatives:
     - Slider
+    - Segmented
+    - RadioGroup
     - Input

@@ -38,6 +38,11 @@ export const playgroundMessages = {
        apretarlo, no dónde ya estamos. */
     "playground.layoutSideBySide": "Poner el código y la vista previa lado a lado",
     "playground.layoutStacked": "Poner la vista previa debajo del código",
+    /* En pantallas angostas los dos paneles no caben juntos, así que se muestra uno a la vez y cada
+       panel lleva el control que abre el otro. Mismo criterio que los dos nombres de arriba: la
+       etiqueta dice adónde lleva apretar, no dónde estamos. */
+    "playground.showCode": "Ver el código",
+    "playground.showPreview": "Ver la vista previa",
     "playground.hideRail": "Ocultar la lista de componentes",
     "playground.showRail": "Mostrar la lista de componentes",
     "playground.resizeRail": "Cambiar el ancho de la lista",
@@ -72,6 +77,8 @@ export const playgroundMessages = {
     "playground.copied": "Copied",
     "playground.layoutSideBySide": "Put the code and the preview side by side",
     "playground.layoutStacked": "Put the preview below the code",
+    "playground.showCode": "Show the code",
+    "playground.showPreview": "Show the preview",
     "playground.hideRail": "Hide the component list",
     "playground.showRail": "Show the component list",
     "playground.resizeRail": "Resize the component list",

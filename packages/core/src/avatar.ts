@@ -47,6 +47,7 @@ export function avatarInitials(name: string): string {
  */
 export const avatarContract = {
   id: "avatar",
+  category: "content",
   css: "@skryensya/core/components/avatar.css",
   parts: avatarParts,
   hooks: [
@@ -95,6 +96,14 @@ export const avatarContract = {
       options: ["size", "imageName", "src"],
       requires: ["imageName", "src"],
       slots: {},
+      /* ImageFrame chrome via `also`; sheets already resolve. */
+      compose: [
+        {
+          of: "image-frame",
+          sheets: ["@skryensya/core/patterns/image-frame.css"],
+          systemOwned: true,
+        },
+      ],
       template: {
         element: "span",
         part: "root",

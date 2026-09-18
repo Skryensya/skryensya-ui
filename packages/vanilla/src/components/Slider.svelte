@@ -1,6 +1,6 @@
 <script lang="ts">
   import { slider } from "@skryensya/core/machines";
-  import { sliderAttrs } from "@skryensya/core/slider";
+  import { sliderAttrs, sliderEvents } from "@skryensya/core/slider";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
@@ -49,7 +49,7 @@
     name,
     onValueChange(details: { value: number[] }) {
       root.setAttribute("data-value", String(details.value[0] ?? min));
-      root.dispatchEvent(new CustomEvent("sk-value-change", { bubbles: true, detail: { value: details.value[0] ?? min } }));
+      root.dispatchEvent(new CustomEvent(sliderEvents.valueChange, { bubbles: true, detail: { value: details.value[0] ?? min } }));
     },
     step,
     thumbAlignment: "center" as const,

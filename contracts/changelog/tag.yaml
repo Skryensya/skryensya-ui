@@ -3,8 +3,79 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "14222c149a2ba307"
+surface: "bd4001aee09e2b89"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Tag.compose declara button e icon
+      body: >-
+        El control remove es Button+Icon de sistema; <code>compose</code> lo declara
+        (<code>systemOwned</code>), igual que Dialog close.
+    en:
+      title: Tag.compose declares button and icon
+      body: >-
+        The remove control is system-owned Button+Icon; <code>compose</code> declares it
+        (<code>systemOwned</code>), same as Dialog close.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Tag declara forward para id, enlace y aria-*
+      body: >-
+        <code>Tag</code> publica <code>id</code>/<code>aria-*</code>; <code>Tag.link</code> añade <code>target</code>/<code>rel</code>/<code>download</code>. Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Tag declares forward for id, link, and aria-*
+      body: >-
+        <code>Tag</code> publishes <code>id</code>/<code>aria-*</code>; <code>Tag.link</code> adds <code>target</code>/<code>rel</code>/<code>download</code>. An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: React tipa children como texto
+      body: >-
+        El binding React declara <code>children: string</code>, igual que el slot del contrato
+        (<code>accepts: "text"</code>).
+    en:
+      title: React types children as text
+      body: >-
+        The React binding declares <code>children: string</code>, matching the contract slot
+        (<code>accepts: "text"</code>).
+  - date: 2026-09-16
+    kind: breaking
+    target: removable
+    es:
+      title: removable es la única puerta del control de quitar
+      body: >-
+        <code>removable</code> decide si existe el botón; <code>onRemove</code> ya no lo implica.
+        El contrato publica el evento <code>remove</code> (<code>sk:tagremove</code>), exige
+        <code>removeLabel</code> cuando el tag es removible, y el slot de children acepta sólo
+        texto. En React hay que pasar <code>removable</code> explícitamente.
+    en:
+      title: removable is the only gate for the dismiss control
+      body: >-
+        <code>removable</code> decides whether the button exists; <code>onRemove</code> no longer
+        implies it. The contract publishes the <code>remove</code> event
+        (<code>sk:tagremove</code>), requires <code>removeLabel</code> when the tag is removable,
+        and the children slot accepts text only. In React, pass <code>removable</code> explicitly.
   - date: 2026-08-24
     kind: feature
     target: Tag.link
@@ -49,7 +120,7 @@ entries:
     es:
       title: Los styling hooks de tag quedan declarados en el contrato
       body: >-
-        El contrato ahora publica los <code>11</code> styling hooks de este componente. Nada
+        El contrato ahora publica los <code>6</code> styling hooks de este componente. Nada
         de lo que hayas escrito cambia: son los mismos hooks, con los mismos nombres, y la hoja de
         estilos no se tocó. Lo nuevo es que el contrato los declara, así que el compilador falla si
         la hoja declara uno que el contrato no publica, o si el contrato promete uno que la hoja no
@@ -58,7 +129,7 @@ entries:
     en:
       title: tag's styling hooks are now declared in the contract
       body: >-
-        The contract now publishes this component's <code>11</code> styling hooks. Nothing you
+        The contract now publishes this component's <code>6</code> styling hooks. Nothing you
         wrote changes: the same hooks, under the same names, and the stylesheet was not touched.
         What is new is that the contract declares them, so the compiler fails when the stylesheet
         declares one the contract does not publish, or the contract promises one the stylesheet

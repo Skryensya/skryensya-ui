@@ -2,12 +2,14 @@
 
 Accordion:
   useWhen:
-    - "hay varias secciones largas y sólo una importa a la vez: preguntas frecuentes, términos"
-    - "conviene que abrir una cierre la anterior para que la página no crezca sin fin"
+    - "hay varias secciones largas y conviene coordinar cuáles quedan abiertas: FAQ, términos"
+    - "type=single: abrir una cierra la anterior para que la página no crezca sin fin"
+    - "type=multiple: varias pueden quedar abiertas a la vez, pero siguen siendo un solo acordeón"
   avoidWhen:
     - "son pocas secciones cortas; mostrarlas todas se lee más rápido que plegarlas"
     - "el contenido se compara entre secciones; plegar obliga a recordar en vez de mirar"
     - "las secciones son vistas alternativas del mismo espacio; eso es Tabs"
+    - "es una sola superficie plegable, sin coordinación entre hermanas; eso es ExpandableTile"
   alternatives:
     - Tabs
     - ExpandableTile

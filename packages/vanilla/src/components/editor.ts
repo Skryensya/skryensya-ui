@@ -1,9 +1,9 @@
-import { editorParts, editorAttrs, type EditorCommandName } from "@skryensya/core/editor";
+import { editorParts, editorAttrs, editorEvents, type EditorCommandName } from "@skryensya/core/editor";
 import { rootSelectorFor } from "@skryensya/core/selectors";
 import { editorIcons, type EditorIconName } from "@skryensya/core/editor-icons";
 import { renderIconBox } from "@skryensya/core/icon";
 import { toolbarParts } from "@skryensya/core/toolbar";
-import { popoverParts } from "@skryensya/core/popover";
+import { popoverContract, popoverParts } from "@skryensya/core/popover";
 import { anchoredParts } from "@skryensya/core/anchored";
 import { createEditorView, setEditorContent, type EditorView, type EditorState } from "@skryensya/editor/view";
 import { suppressPointerFocusRing } from "@skryensya/editor/focus-modality";
@@ -258,7 +258,7 @@ function connect(root: HTMLElement): () => void {
     close.className = `sk-button sk-interactive ${popoverParts.close}`;
     close.setAttribute("popovertarget", contentId);
     close.setAttribute("popovertargetaction", "hide");
-    close.textContent = "Cerrar";
+    close.textContent = popoverContract.options.closeLabel.default;
 
     positioner.append(form, close);
     wrapper.append(trigger, positioner);
@@ -322,7 +322,7 @@ function connect(root: HTMLElement): () => void {
         const html = docToHTML(state.doc, document);
         if (hiddenInput) hiddenInput.value = html;
         root.dispatchEvent(
-          new CustomEvent("sk-editor-change", {
+          new CustomEvent(editorEvents.change, {
             bubbles: true,
             detail: { html, markdown: docToMarkdown(state.doc), doc: state.doc },
           }),
@@ -337,7 +337,7 @@ function connect(root: HTMLElement): () => void {
    * as this one event's `detail` instead - dispatched once, right after mount.
    */
   root.dispatchEvent(
-    new CustomEvent("sk-editor-ready", {
+    new CustomEvent(editorEvents.ready, {
       bubbles: true,
       detail: {
         view,

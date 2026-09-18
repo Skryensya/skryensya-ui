@@ -12,7 +12,7 @@ export const fileUploadMessages = {
       "La dropzone, el hint y la lista de archivos elegidos. El espécimen trae un ítem ya aceptado para poder nombrar <code>item-group</code> e <code>item</code>; está congelado.",
     "fileUploadPage.anatomyLabel": "Anatomía de FileUpload",
     "fileUploadPage.anatomyPreviewLabel": "FileUpload, parte por parte",
-    "fileUploadPage.contractBody": "Vanilla emite sk-file-change y nunca inventa una carga remota. React expone archivos aceptados y rechazados.",
+    "fileUploadPage.contractBody": "Vanilla emite sk:fileuploadchange y nunca inventa una carga remota. React expone archivos aceptados y rechazados.",
     "fileUploadPage.a11yBody": "El input real permanece disponible para formularios y tecnología asistiva; la dropzone no lo sustituye.",
 
     "fileUploadPage.testVanilla1":
@@ -20,9 +20,9 @@ export const fileUploadMessages = {
     "fileUploadPage.testVanilla8":
       "Enter o Espacio sobre la dropzone abren el selector de archivos, no solo un click de mouse.",
     "fileUploadPage.testVanilla2":
-      'Elegir un archivo válido emite <code class="sk-code">sk-file-change</code> con el archivo aceptado.',
+      'Elegir un archivo válido emite <code class="sk-code">sk:fileuploadchange</code> con el archivo aceptado.',
     "fileUploadPage.testVanilla3":
-      'Un archivo que excede el tamaño emite <code class="sk-code">sk-file-change</code> con el archivo rechazado en vez de aceptado.',
+      'Un archivo que excede el tamaño emite <code class="sk-code">sk:fileuploadchange</code> con el archivo rechazado en vez de aceptado.',
     "fileUploadPage.testVanilla4":
       "El botón de quitar se queda oculto hasta que se acepta un archivo, y aparece cuando eso pasa.",
     "fileUploadPage.testVanilla5":
@@ -46,7 +46,7 @@ export const fileUploadMessages = {
       "The dropzone, the hint, and the chosen-file list. The specimen already holds an accepted item so <code>item-group</code> and <code>item</code> can be named; it is frozen.",
     "fileUploadPage.anatomyLabel": "FileUpload anatomy",
     "fileUploadPage.anatomyPreviewLabel": "FileUpload, part by part",
-    "fileUploadPage.contractBody": "Vanilla emits sk-file-change and never invents a remote upload. React exposes accepted and rejected files.",
+    "fileUploadPage.contractBody": "Vanilla emits sk:fileuploadchange and never invents a remote upload. React exposes accepted and rejected files.",
     "fileUploadPage.a11yBody": "The real input stays available to forms and assistive technology; the dropzone does not replace it.",
 
     "fileUploadPage.testVanilla1":
@@ -54,9 +54,9 @@ export const fileUploadMessages = {
     "fileUploadPage.testVanilla8":
       "Enter or Space on the dropzone opens the file picker, not just a pointer click.",
     "fileUploadPage.testVanilla2":
-      'Choosing a valid file emits <code class="sk-code">sk-file-change</code> with it accepted.',
+      'Choosing a valid file emits <code class="sk-code">sk:fileuploadchange</code> with it accepted.',
     "fileUploadPage.testVanilla3":
-      'An oversized file emits <code class="sk-code">sk-file-change</code> with it rejected instead of accepted.',
+      'An oversized file emits <code class="sk-code">sk:fileuploadchange</code> with it rejected instead of accepted.',
     "fileUploadPage.testVanilla4":
       "The clear trigger stays hidden until a file is accepted, and shows once one is.",
     "fileUploadPage.testVanilla5":

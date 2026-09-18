@@ -47,6 +47,14 @@ describe("Menu (React)", () => {
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
   });
 
+  it("renders no indicator slot at all when indicator is null", () => {
+    const ui = render(
+      <Menu indicator={null} items={items} label="File actions" trigger="Actions" />,
+    );
+    const trigger = ui.getByRole("button", { name: "Actions" });
+    expect(trigger.querySelector("span[aria-hidden]")).toBeNull();
+  });
+
   it("opens on trigger click and closes on Escape, returning focus to the trigger", async () => {
     const ui = render(<Menu items={items} label="File actions" trigger="Actions" />);
     const trigger = ui.getByRole("button", { name: "Actions" });
@@ -84,15 +92,19 @@ describe("Menu (React)", () => {
 
   it("selecting a plain item calls onSelect with its value and closes the menu", async () => {
     const onSelect = vi.fn();
+    const onDom = vi.fn();
     const ui = render(
       <Menu items={items} label="File actions" onSelect={onSelect} trigger="Actions" />,
     );
+    ui.container.querySelector(".sk-menu")!.addEventListener("sk:menuselect", onDom);
     const trigger = ui.getByRole("button", { name: "Actions" });
     fireEvent.click(trigger);
 
     fireEvent.click(await ui.findByRole("menuitem", { name: "New file" }));
 
     await waitFor(() => expect(onSelect).toHaveBeenCalledWith({ value: "new" }));
+    await waitFor(() => expect(onDom).toHaveBeenCalled());
+    expect((onDom.mock.calls[0]![0] as CustomEvent).detail).toEqual({ value: "new" });
     await waitFor(() => expect(trigger.getAttribute("aria-expanded")).toBe("false"));
   });
 
@@ -112,9 +124,11 @@ describe("Menu (React)", () => {
 
   it("toggles a checkbox item and calls onCheckedChange", async () => {
     const onCheckedChange = vi.fn();
+    const onDom = vi.fn();
     const ui = render(
       <Menu items={items} label="File actions" onCheckedChange={onCheckedChange} trigger="Actions" />,
     );
+    ui.container.querySelector(".sk-menu")!.addEventListener("sk:menucheckedchange", onDom);
     fireEvent.click(ui.getByRole("button", { name: "Actions" }));
 
     const wrap = await ui.findByRole("menuitemcheckbox", { name: "Word wrap" });
@@ -123,6 +137,30 @@ describe("Menu (React)", () => {
 
     await waitFor(() => expect(wrap.getAttribute("aria-checked")).toBe("true"));
     expect(onCheckedChange).toHaveBeenCalledWith({ value: "wrap", checked: true });
+    expect((onDom.mock.calls[0]![0] as CustomEvent).detail).toEqual({ value: "wrap", checked: true });
+  });
+
+  it("dispatches sk:menuopenchange when the menu opens and closes", async () => {
+    const onDom = vi.fn();
+    const ui = render(<Menu items={items} label="File actions" trigger="Actions" />);
+    ui.container.querySelector(".sk-menu")!.addEventListener("sk:menuopenchange", onDom);
+    const trigger = ui.getByRole("button", { name: "Actions" });
+
+    fireEvent.click(trigger);
+    await waitFor(() => expect(trigger.getAttribute("aria-expanded")).toBe("true"));
+    expect(onDom).toHaveBeenCalled();
+    expect((onDom.mock.calls.at(-1)![0] as CustomEvent).detail).toEqual({ open: true });
+
+    await raf();
+    await raf();
+    fireEvent.keyDown(await ui.findByRole("menu"), { key: "Escape" });
+    await waitFor(() => expect(trigger.getAttribute("aria-expanded")).toBe("false"));
+    expect((onDom.mock.calls.at(-1)![0] as CustomEvent).detail).toEqual({ open: false });
+  });
+
+  it("stamps the contract mount attribute on the root", () => {
+    const ui = render(<Menu items={items} label="File actions" trigger="Actions" />);
+    expect(ui.container.querySelector(".sk-menu")!.hasAttribute("data-sk-menu")).toBe(true);
   });
 
   it("keeps a radio group mutually exclusive within the same group", async () => {

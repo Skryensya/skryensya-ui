@@ -107,8 +107,9 @@ export const marketingTree = (t: Translate): UsageTree => ({
       ],
     },
     {
-      contract: "box",
-      signature: "Box",
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "none" },
       attrs: { class: "page-shell" },
       children: {
         contract: "layout",

@@ -33,6 +33,12 @@ export const treeViewAttrs = {
   branchContent: "data-sk-tree-view-branch-content",
 } as const;
 
+/** Dispatched on the root by both bindings, with `TreeViewSelectionDetails` / `TreeViewExpandedDetails`. */
+export const treeViewEvents = {
+  selectionChange: "sk:treeviewselectionchange",
+  expandedChange: "sk:treeviewexpandedchange",
+} as const;
+
 export type TreeViewSelectionDetails = { selectedValue: string[] };
 export type TreeViewExpandedDetails = { expandedValue: string[] };
 
@@ -53,8 +59,14 @@ export type TreeViewExpandedDetails = { expandedValue: string[] };
  */
 export const treeViewContract = {
   id: "tree-view",
+  category: "navigation",
   css: "@skryensya/core/components/tree-view.css",
   parts: treeViewParts,
+  events: treeViewEvents,
+  eventDetails: {
+    selectionChange: { detail: { selectedValue: "string[]" }, reactProp: "onSelectionChange", source: "root", trigger: "item" },
+    expandedChange: { detail: { expandedValue: "string[]" }, reactProp: "onExpandedChange", source: "root", trigger: "branchControl" },
+  },
   hooks: [
     "--sk-tree-branch-icon-color",
     "--sk-tree-guide-color",
@@ -80,8 +92,8 @@ export const treeViewContract = {
       attr: "data-selection-mode",
       machineInput: true,
     },
-    defaultExpandedValue: { type: "string", attr: "data-expanded-value", machineInput: true },
-    defaultSelectedValue: { type: "string", attr: "data-selected-value", machineInput: true },
+    defaultExpandedValue: { type: "string", attr: "data-expanded-value", machineInput: true, keyOf: { slot: "items", many: true } },
+    defaultSelectedValue: { type: "string", attr: "data-selected-value", machineInput: true, keyOf: { slot: "items", many: true } },
   },
 
   signatures: {
@@ -90,6 +102,8 @@ export const treeViewContract = {
       host: { element: "div" },
       options: ["label", "selectionMode", "defaultExpandedValue", "defaultSelectedValue"],
       requires: ["label"],
+      /** Host id / a11y; label stays the option. */
+      forward: ["id", "aria-*"],
       slots: {
         branchIndicator: { accepts: "node" },
         branchIcon: { accepts: "node" },
@@ -100,9 +114,15 @@ export const treeViewContract = {
           required: true,
           item: {
             options: {
-              /** The node's identity. It is what selection and expansion are expressed in. */
+              /**
+               * The node's identity, unique across the WHOLE tree rather than among siblings: the
+               * machine addresses nodes by it at any depth, and selection and expansion are
+               * expressed in it.
+               */
               id: { type: "string", attr: "data-value" },
-              disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "" },
+              /* `data-disabled`, not `disabled`: HTML gives an `<li>` no such attribute, and this is the
+                 spelling Zag writes on the node and the stylesheet already selects. */
+              disabled: { type: "boolean", default: false, attr: "data-disabled", trueValue: "" },
             },
             slots: {
               label: { accepts: "text", required: true },

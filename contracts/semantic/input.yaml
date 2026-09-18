@@ -7,8 +7,13 @@ Input:
   avoidWhen:
     - "el texto es largo o multilínea; eso es Textarea"
     - "se elige de un conjunto cerrado de opciones; eso es un Select"
+    - "el valor es un número con paso y límites; eso es NumberField"
+    - "la plataforma debe gobernar time/color/range y se quiere su control nativo; eso es NativeInput"
   alternatives:
     - Textarea
+    - Select
+    - NumberField
+    - NativeInput
 
 Textarea:
   useWhen:
@@ -17,10 +22,13 @@ Textarea:
     - "una sola línea alcanza; un Textarea invita a escribir de más"
   alternatives:
     - Input
+
 NativeInput:
   useWhen:
-    - "la plataforma ya ofrece el control correcto y se quiere enseñar su comportamiento nativo sin la apariencia de Input"
+    - "la plataforma ya ofrece el control correcto (time, color, range, …) y se quiere ese comportamiento nativo con la apariencia compartida de sk-input"
   avoidWhen:
-    - "es entrada de texto con la apariencia del sistema; eso es Input dentro de FormField"
+    - "es entrada de texto de una línea con teclado/validación nativa; eso es Input dentro de FormField"
+    - "hace falta un time segmentado del sistema; eso es TimeField"
   alternatives:
     - Input
+    - TimeField

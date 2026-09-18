@@ -43,12 +43,23 @@ describe("SegmentedControl", () => {
 
   it("reports the selected value when uncontrolled", () => {
     const onValueChange = vi.fn();
+    const onDom = vi.fn();
     const ui = render(
       <SegmentedControl defaultValue="day" label="Range" onValueChange={onValueChange} options={options} />,
     );
+    ui.container.firstElementChild?.addEventListener("sk:segmentedvaluechange", onDom);
     fireEvent.click(ui.getByText("Month"));
     expect(onValueChange).toHaveBeenCalledWith("month");
     expect(ui.getByRole("radio", { checked: true }).textContent).toBe("Month");
+    expect(onDom).toHaveBeenCalledTimes(1);
+    expect((onDom.mock.calls[0]![0] as CustomEvent).detail).toEqual({ value: "month" });
+  });
+
+  it("stamps the contract mount marks on root and options", () => {
+    const ui = render(<SegmentedControl defaultValue="week" label="Range" options={options} />);
+    const root = ui.getByRole("radiogroup");
+    expect(root.hasAttribute("data-sk-segmented")).toBe(true);
+    expect(ui.container.querySelectorAll("[data-sk-segmented-option]")).toHaveLength(3);
   });
 
   it("selects the next enabled option with an arrow key", () => {

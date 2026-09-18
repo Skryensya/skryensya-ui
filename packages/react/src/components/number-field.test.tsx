@@ -16,10 +16,10 @@ const press = (trigger: HTMLElement) => {
 describe("NumberField (React)", () => {
   it("wires the accessible names from decrementLabel/incrementLabel onto the triggers", () => {
     const ui = render(
-      <NumberField label="Quantity" defaultValue="5" decrementLabel="Disminuir" incrementLabel="Aumentar" />,
+      <NumberField label="Quantity" defaultValue="5" decrementLabel="Decrease" incrementLabel="Increase" />,
     );
-    expect(ui.getByRole("button", { name: "Disminuir" })).toBeTruthy();
-    expect(ui.getByRole("button", { name: "Aumentar" })).toBeTruthy();
+    expect(ui.getByRole("button", { name: "Decrease" })).toBeTruthy();
+    expect(ui.getByRole("button", { name: "Increase" })).toBeTruthy();
   });
 
   it("increments and decrements by step, calling onValueChange", async () => {
@@ -28,8 +28,8 @@ describe("NumberField (React)", () => {
       <NumberField label="Quantity" defaultValue="5" step={1} onValueChange={onValueChange} />,
     );
     const input = ui.getByRole("spinbutton") as HTMLInputElement;
-    const increment = ui.getByRole("button", { name: "Aumentar" });
-    const decrement = ui.getByRole("button", { name: "Disminuir" });
+    const increment = ui.getByRole("button", { name: "Increase" });
+    const decrement = ui.getByRole("button", { name: "Decrease" });
 
     press(increment);
     await waitFor(() => expect(input.value).toBe("6"));
@@ -42,8 +42,8 @@ describe("NumberField (React)", () => {
 
   it("disables the increment trigger at max and the decrement trigger at min", async () => {
     const ui = render(<NumberField label="Quantity" defaultValue="10" min={0} max={10} step={1} />);
-    const increment = ui.getByRole("button", { name: "Aumentar" }) as HTMLButtonElement;
-    const decrement = ui.getByRole("button", { name: "Disminuir" }) as HTMLButtonElement;
+    const increment = ui.getByRole("button", { name: "Increase" }) as HTMLButtonElement;
+    const decrement = ui.getByRole("button", { name: "Decrease" }) as HTMLButtonElement;
     expect(increment.disabled).toBe(true);
     expect(decrement.disabled).toBe(false);
 
@@ -56,9 +56,29 @@ describe("NumberField (React)", () => {
   it("pressing a disabled trigger at the bound is a no-op", () => {
     const ui = render(<NumberField label="Quantity" defaultValue="10" min={0} max={10} />);
     const input = ui.getByRole("spinbutton") as HTMLInputElement;
-    const increment = ui.getByRole("button", { name: "Aumentar" });
+    const increment = ui.getByRole("button", { name: "Increase" });
     press(increment); // disabled: a real DOM button, the press never fires the handler
     expect(input.value).toBe("10");
+  });
+
+  it("dispatches sk:numberfieldvaluechange on the root for DOM parity with vanilla", async () => {
+    const onDom = vi.fn();
+    const ui = render(<NumberField label="Quantity" defaultValue="5" step={1} />);
+    const root = ui.container.querySelector("[data-sk-number-field]")!;
+    root.addEventListener("sk:numberfieldvaluechange", onDom);
+
+    press(ui.getByRole("button", { name: "Increase" }));
+    await waitFor(() => expect(onDom).toHaveBeenCalled());
+    expect((onDom.mock.calls[0]![0] as CustomEvent).detail).toEqual({ value: "6", valueAsNumber: 6 });
+  });
+
+  it("stamps data-invalid and describes an optional hint", () => {
+    const ui = render(<NumberField label="Quantity" defaultValue="5" invalid hint="Enter a whole number" />);
+    const root = ui.container.querySelector("[data-sk-number-field]")!;
+    expect(root.hasAttribute("data-invalid")).toBe(true);
+    const input = ui.getByRole("spinbutton");
+    const hint = ui.getByText("Enter a whole number");
+    expect(input.getAttribute("aria-describedby")).toBe(hint.id);
   });
 
   it("commits a typed value on blur and calls onValueChange", async () => {
@@ -94,8 +114,8 @@ describe("NumberField (React)", () => {
     const ui = render(<NumberField label="Quantity" defaultValue="5" disabled />);
     const input = ui.getByRole("spinbutton") as HTMLInputElement;
     expect(input.disabled).toBe(true);
-    expect((ui.getByRole("button", { name: "Disminuir" }) as HTMLButtonElement).disabled).toBe(true);
-    expect((ui.getByRole("button", { name: "Aumentar" }) as HTMLButtonElement).disabled).toBe(true);
+    expect((ui.getByRole("button", { name: "Decrease" }) as HTMLButtonElement).disabled).toBe(true);
+    expect((ui.getByRole("button", { name: "Increase" }) as HTMLButtonElement).disabled).toBe(true);
   });
 
   /*

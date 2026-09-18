@@ -54,6 +54,18 @@ describe("FormField contract", () => {
     expect(input.disabled).toBe(true);
   });
 
+  it("clips the label with labelHidden without dropping the accessible name", () => {
+    const ui = render(
+      <FormField label="Reply" labelHidden>
+        <Input name="reply" />
+      </FormField>,
+    );
+
+    const root = ui.container.querySelector(".sk-form-field");
+    expect(root?.getAttribute("data-label-hidden")).toBe("");
+    expect(fieldIn(ui).getByRole("textbox", { name: /Reply/ })).toBeTruthy();
+  });
+
   /* The reason the contract is not named after Input: the wiring never asks what it wrapped, so a
    * different control in the same slot has to come out wired the same way. */
   it("wires a textarea exactly as it wires an input", () => {

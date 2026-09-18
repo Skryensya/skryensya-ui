@@ -15,6 +15,7 @@ export const emptyStateParts = {
  */
 export const emptyStateContract = {
   id: "empty-state",
+  category: "feedback",
   css: "@skryensya/core/components/empty-state.css",
   parts: emptyStateParts,
   hooks: [

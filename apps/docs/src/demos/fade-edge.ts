@@ -75,7 +75,8 @@ const activityList = (label: string): UsageTree => ({
       trailing: {
         contract: "typography",
         signature: "Text",
-        options: { tone: "tertiary", size: "sm" },
+        // A span: ListItem's trailing slot is a <span>, and a <p> inside it is invalid HTML.
+        options: { tone: "tertiary", size: "sm", textElement: "span" },
         children: row.time,
       },
     },
@@ -254,10 +255,9 @@ export const fadeIntensityTree: UsageTree = {
          * otherwise reach for.
          *
          * The stage runs ONE script for both bindings, and it drives the control through the DOM.
-         * Vanilla's Slider dispatches `sk-value-change`; React's takes an `onValueChange` callback
-         * and dispatches nothing, so a Slider here would be live in one binding and inert in the
-         * other  -  the exact asymmetry this page's own card is supposed to disprove. A native range
-         * input fires `input` in both, because in both it is the same element.
+         * Both bindings now dispatch `sk:slidervaluechange`, but a native range input still fires
+         * `input` in both without needing the kit's machine, which keeps this demo's shared script
+         * trivial.
          */
         {
           contract: "input",

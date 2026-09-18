@@ -50,7 +50,7 @@ export const treeViewMessages = {
       "<code>data-value</code> identifica el nodo: es lo que aparece en los eventos y en <code>data-expanded-value</code> / <code>data-selected-value</code>. Es único en todo el árbol; sin él, el enhancer deriva un id de la posición, que se rompe al reordenar el markup.",
     "treeViewPage.contractItem5": "Cada fila clicable lleva <code>sk-interactive</code>: de ahí salen hover, foco, pressed, selección y el anillo de foco. El componente no pinta estados por su cuenta.",
     "treeViewPage.contractItem6":
-      "Eventos sobre la raíz: <code>sk-selection-change</code> con <code>detail.selectedValue</code> y <code>sk-expanded-change</code> con <code>detail.expandedValue</code>, ambos arrays de <code>data-value</code>.",
+      "Eventos sobre la raíz: <code>sk:treeviewselectionchange</code> con <code>detail.selectedValue</code> y <code>sk:treeviewexpandedchange</code> con <code>detail.expandedValue</code>, ambos arrays de <code>data-value</code>.",
     "treeViewPage.hooksBody":
       "La sangría, el inset de la fila y la guía vertical son hooks: el árbol viene angosto a propósito, porque la sangría se paga una vez por nivel. Ensancha el paso, dale aire a las filas o apaga la guía sin tocar el resto.",
     "treeViewPage.a11yBody":
@@ -121,7 +121,7 @@ export const treeViewMessages = {
       "<code>data-value</code> identifies the node: it is what shows up in events and in <code>data-expanded-value</code> / <code>data-selected-value</code>. It is unique across the whole tree; without it, the enhancer derives an id from position, which breaks when the markup gets reordered.",
     "treeViewPage.contractItem5": "Every clickable row carries <code>sk-interactive</code>: that is where hover, focus, pressed, selection, and the focus ring come from. The component paints no states on its own.",
     "treeViewPage.contractItem6":
-      "Events on the root: <code>sk-selection-change</code> with <code>detail.selectedValue</code>, and <code>sk-expanded-change</code> with <code>detail.expandedValue</code>, both arrays of <code>data-value</code>.",
+      "Events on the root: <code>sk:treeviewselectionchange</code> with <code>detail.selectedValue</code>, and <code>sk:treeviewexpandedchange</code> with <code>detail.expandedValue</code>, both arrays of <code>data-value</code>.",
     "treeViewPage.hooksBody":
       "Indent, row inset, and the vertical guide are hooks: the tree ships narrow on purpose, because the indent gets paid once per level. Widen the step, give the rows more air, or turn off the guide without touching the rest.",
     "treeViewPage.a11yBody":

@@ -38,7 +38,7 @@ describe("SegmentedControl Vanilla contracts", () => {
   it("selects on click and arrow navigation, skipping disabled options", () => {
     const root = mount(markup);
     const handler = vi.fn();
-    root.addEventListener("sk-value-change", handler);
+    root.addEventListener("sk:segmentedvaluechange", handler);
     mountSegmented(root);
 
     const day = root.querySelector<HTMLButtonElement>('[data-value="day"]');

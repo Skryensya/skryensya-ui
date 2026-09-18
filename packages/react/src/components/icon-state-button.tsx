@@ -29,6 +29,7 @@ export const IconStateButton = forwardRef<HTMLButtonElement, IconStateButtonProp
     <button
       {...props}
       className={classes(iconStateButtonParts.root, iconToggleParts.root, "sk-button", "sk-interactive", className)}
+      data-icon-only=""
       ref={ref}
       type="button"
       {...{ [iconStateButtonAttrs.current]: current }}

@@ -11,12 +11,12 @@ function mount(html: string): HTMLElement {
 }
 
 describe("TileSwitch (@zag-js/checkbox) contracts", () => {
-  it("toggles checked state and root data-state on click, emitting sk:checkedchange", () => {
+  it("toggles checked state and root data-state on click, emitting sk:tilecheckedchange", () => {
     const root = mount(
       `<label class="sk-tile sk-tile--interactive" data-sk-tile-switch data-part="root"><input type="checkbox" data-part="input" /><span class="sk-tile__content" data-part="content">Auto-deploy</span><span data-part="indicator" aria-hidden="true"></span></label>`,
     );
     const handler = vi.fn();
-    root.addEventListener("sk:checkedchange", handler);
+    root.addEventListener("sk:tilecheckedchange", handler);
     const input = getByRole(root, "switch") as HTMLInputElement;
 
     expect(root.dataset.state).toBe("unchecked");

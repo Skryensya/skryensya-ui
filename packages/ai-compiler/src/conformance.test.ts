@@ -26,12 +26,13 @@ describe("G1: the bindings realize their contracts", () => {
   it("catches an option whose values are written out again", () => {
     // Exactly the shape button.tsx had before decision 28, and exactly what goes stale when a fifth
     // variant is added to the contract.
-    const root = repoWith((source) =>
-      source.replace(
-        "type ButtonAppearanceProps = SignatureOptionsOf<typeof buttonContract, \"Button.action\"> & {",
-        'type ButtonAppearanceProps = { variant?: "neutral" | "accent" | "danger" | "ghost" } & {',
-      ),
-    );
+    const anchor = 'type ButtonActionAppearance = SignatureOptionsOf<typeof buttonContract, "Button.action"> & {';
+    const root = repoWith((source) => {
+      // Fail loudly if button.tsx moves on: a replacement that matches nothing makes this case pass
+      // for no reason, which is how it went stale once already.
+      expect(source, "button.tsx no longer has the line this case rewrites").toContain(anchor);
+      return source.replace(anchor, 'type ButtonActionAppearance = { variant?: "neutral" | "accent" | "danger" | "ghost" } & {');
+    });
 
     // Scoped to the file this case rewrote, so an unrelated binding cannot make it pass or fail.
     const problems = checkBindingConformance(root).filter((p) => p.contract === "button");

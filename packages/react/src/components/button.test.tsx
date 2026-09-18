@@ -30,6 +30,7 @@ describe("Button", () => {
     for (const name of ["Implicit defaults", "Explicit defaults"]) {
       const button = ui.getByRole("button", { name });
       expect(button.classList.contains("sk-interactive")).toBe(true);
+      expect(button.hasAttribute("data-sk-button")).toBe(true);
       expect(button.getAttribute("data-size")).toBe("md");
       // Both appearance axes are always serialized, defaults included: the emitter writes them for
       // authored markup, so a React button that left one off would diverge at G2.
@@ -84,11 +85,11 @@ describe("Button", () => {
 
   it("renders an icon-only button as a named square", () => {
     const ui = render(
-      <Button iconOnly aria-label="Cerrar">
+      <Button iconOnly aria-label="Close">
         <svg className="sk-icon" data-icon="close" aria-hidden="true" />
       </Button>,
     );
-    const button = ui.getByRole("button", { name: "Cerrar" });
+    const button = ui.getByRole("button", { name: "Close" });
 
     expect(button.getAttribute("data-icon-only")).toBe("");
     expect(button.textContent).toBe(""); // the name is the label, not visible text
@@ -178,5 +179,35 @@ describe("Button.navigation", () => {
     expect(link.getAttribute("data-size")).toBe("md");
     expect(link.classList.contains("sk-button")).toBe(true);
     expect(link.classList.contains("sk-interactive")).toBe(true);
+  });
+
+  it("does not write aria-pressed or disabled on a navigation host", () => {
+    // Loose call site: the contract forbids both; React used to spread them onto the anchor.
+    const ui = render(
+      // @ts-expect-error pressed is action-only
+      <Button href="/docs" pressed disabled>
+        Documentation
+      </Button>,
+    );
+    const link = ui.getByRole("link", { name: "Documentation" });
+
+    expect(link.hasAttribute("aria-pressed")).toBe(false);
+    expect(link.hasAttribute("disabled")).toBe(false);
+  });
+});
+
+describe("Button.action pressed", () => {
+  it("writes aria-pressed only when pressed is given", () => {
+    const ui = render(
+      <>
+        <Button>Plain</Button>
+        <Button pressed={false}>Off</Button>
+        <Button pressed>On</Button>
+      </>,
+    );
+
+    expect(ui.getByRole("button", { name: "Plain" }).hasAttribute("aria-pressed")).toBe(false);
+    expect(ui.getByRole("button", { name: "Off" }).getAttribute("aria-pressed")).toBe("false");
+    expect(ui.getByRole("button", { name: "On" }).getAttribute("aria-pressed")).toBe("true");
   });
 });

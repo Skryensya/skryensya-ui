@@ -4,6 +4,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import { componentNavigation } from "./navigation";
 import { docsHref } from "./docs-origin";
 import { treeAnchorId } from "../../../docs/src/lib/tree-anchor";
+import { cardCopy } from "../../../docs/src/examples/card-data";
 import { localizePath, type Locale, type Translate } from "../i18n";
 
 /*
@@ -85,10 +86,22 @@ const EXTRA_ARGUMENTS: Record<string, unknown> = {
   timeFieldNativeTree: { locale: "es-DO", name: "hora" },
 };
 
+/*
+ * The modules whose factories take something other than `t` FIRST.
+ *
+ * `demos/card.ts` builds from `CardCopy`, the per-locale card data the Card page hands in, not from
+ * the dictionary: its words live in `examples/card-data.ts`. Called with `t` like every other module
+ * it produced no tree at all, so Card, which has no component of its own, never reached the rail.
+ * Keyed by module and resolved per locale, so the Spanish playground shows the Spanish cards.
+ */
+const MODULE_ARGUMENTS: Record<string, (locale: Locale) => readonly unknown[]> = {
+  card: (locale) => [cardCopy[locale]],
+};
+
 /** `../demos/image-frame.ts` → `image-frame`. */
 const moduleId = (path: string) => path.split("/").pop()!.replace(/\.ts$/, "");
 
-/** `buttonIconOnlySmTree` in `button` → `Icon only sm`. The export name is the only name there is. */
+/** `buttonIconOnlyTree` in `button` → `Icon only`. The export name is the only name there is. */
 function humanise(exportName: string, componentId: string): string {
   const camel = componentId.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
   const stripped = exportName
@@ -102,7 +115,7 @@ function humanise(exportName: string, componentId: string): string {
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
-/** `buttonIconOnlySmTree` → `icon-only-sm`, for the tree's node id and the URL. */
+/** `buttonIconOnlyTree` → `icon-only`, for the tree's node id and the URL. */
 const slugify = (label: string) =>
   label
     .toLowerCase()
@@ -190,6 +203,7 @@ export function playgroundCatalogue(t: Translate, locale: Locale): readonly Play
     const examples: PlaygroundExample[] = [];
     /** Slugs already taken inside THIS component, so a second one cannot reuse an id. */
     const claimed = new Set<string>();
+    const moduleArguments = MODULE_ARGUMENTS[id]?.(locale);
 
     for (const [exportName, value] of Object.entries(module)) {
       const extra = EXTRA_ARGUMENTS[exportName];
@@ -197,7 +211,11 @@ export function playgroundCatalogue(t: Translate, locale: Locale): readonly Play
 
       if (typeof value === "function") {
         try {
-          tree = extra === undefined ? value(t) : value(t, extra);
+          tree = moduleArguments
+            ? value(...moduleArguments)
+            : extra === undefined
+              ? value(t)
+              : value(t, extra);
         } catch {
           // Not a tree factory (a helper, a formatter): it simply is not a preset.
           continue;

@@ -244,6 +244,10 @@ const componentDescriptions = {
     es: "Muestra cuánto avanzó una tarea con duración conocida.",
     en: "Shows how much of a task with known duration is complete.",
   },
+  "/components/questionnaire": {
+    es: "Pregunta de a una, valida antes de avanzar y muestra el progreso.",
+    en: "Asks one question at a time, validates before moving on and shows progress.",
+  },
   "/components/qr-code": {
     es: "Convierte un texto corto en un símbolo escaneable, dibujado como un solo path SVG.",
     en: "Turns a short string into a scannable symbol, drawn as a single SVG path.",

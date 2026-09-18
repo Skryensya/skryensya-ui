@@ -67,8 +67,9 @@ export const docsSiteTree = (t: Translate): UsageTree => ({
       ],
     },
     {
-      contract: "box",
-      signature: "Box",
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "none" },
       attrs: { class: "app-shell" },
       children: [
         {
@@ -120,7 +121,7 @@ export const docsSiteTree = (t: Translate): UsageTree => ({
               {
                 contract: "breadcrumb",
                 signature: "Breadcrumb",
-                options: { label: t("demo.docsSite.breadcrumbLabel") },
+                options: { label: t("demo.docsSite.breadcrumbLabel"), collapsedLabel: t("kit.showHiddenLevels") },
                 slots: {
                   items: [
                     { options: { href: "#docs" }, slots: { label: t("demo.docsSite.crumbDocs") } },

@@ -12,11 +12,11 @@ export const themeToggleMessages = {
     "themeTogglePage.previewNote": "md · sm",
     "themeTogglePage.contractItem1":
       "Las caras usan los roles estables <code>mode-system</code>, <code>mode-light</code> y <code>mode-dark</code>, marcadas con <code>data-sk-theme-toggle-icon</code>.",
-    "themeTogglePage.contractItem2": "El enhancer aplica el modo en <code>document.documentElement</code> y dispara <code>sk-theme-toggle-change</code> con <code>detail.value</code>.",
+    "themeTogglePage.contractItem2": "El enhancer aplica el modo en <code>document.documentElement</code> y dispara <code>sk:themetogglechange</code> con <code>detail.value</code>.",
     "themeTogglePage.contractItem3":
       'Un script FOUC en el <code>&lt;head&gt;</code> debe leer la preferencia guardada y pintar <code>data-scheme</code> / <code>color-scheme</code> antes del primer paint (ver <a href="/es/primer-componente">Primer componente</a>).',
     "themeTogglePage.test1": "Monta una sola vez y recorre sistema → claro → oscuro al hacer click.",
-    "themeTogglePage.test2": "Dispara <code>sk-theme-toggle-change</code> con el nuevo modo.",
+    "themeTogglePage.test2": "Dispara <code>sk:themetogglechange</code> con el nuevo modo.",
     "themeTogglePage.test3": "Mantiene sincronizados todos los ThemeToggle cuando uno cambia.",
   },
   en: {
@@ -27,11 +27,11 @@ export const themeToggleMessages = {
     "themeTogglePage.previewNote": "md · sm",
     "themeTogglePage.contractItem1":
       "The faces use the stable <code>mode-system</code>, <code>mode-light</code>, and <code>mode-dark</code> roles, marked with <code>data-sk-theme-toggle-icon</code>.",
-    "themeTogglePage.contractItem2": "The enhancer applies the mode on <code>document.documentElement</code> and fires <code>sk-theme-toggle-change</code> with <code>detail.value</code>.",
+    "themeTogglePage.contractItem2": "The enhancer applies the mode on <code>document.documentElement</code> and fires <code>sk:themetogglechange</code> with <code>detail.value</code>.",
     "themeTogglePage.contractItem3":
       'A FOUC script in the <code>&lt;head&gt;</code> must read the stored preference and paint <code>data-scheme</code> / <code>color-scheme</code> before the first paint (see <a href="/first-component">First component</a>).',
     "themeTogglePage.test1": "Mounts once and cycles system → light → dark on click.",
-    "themeTogglePage.test2": "Dispatches sk-theme-toggle-change with the new mode.",
+    "themeTogglePage.test2": "Dispatches sk:themetogglechange with the new mode.",
     "themeTogglePage.test3": "Keeps every ThemeToggle in sync when one cycles.",
   },
 } as const;

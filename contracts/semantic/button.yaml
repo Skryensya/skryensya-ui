@@ -28,6 +28,7 @@ Button.action:
     - "`pressed` para marcar el ítem elegido de un grupo exclusivo: eso es Segmented o RadioGroup, que además dan las flechas del teclado"
   alternatives:
     - Button.navigation
+    - Link
 
 Button.navigation:
   useWhen:
@@ -40,3 +41,4 @@ Button.navigation:
     - "`tone: danger` en un enlace: navegar no destruye nada; lo destructivo es la acción que la página de destino ofrece"
   alternatives:
     - Button.action
+    - Link

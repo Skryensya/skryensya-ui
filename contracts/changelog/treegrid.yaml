@@ -3,8 +3,42 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "35ecf118ec85f5f2"
+surface: "3b0f0353626c7981"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: eventDetails nombra source y trigger
+      body: >-
+        <code>eventDetails</code> declara <code>source</code> (parte que despacha el CustomEvent) y, cuando es claro, <code>trigger</code> (parte que el usuario activa). Un agente sabe dónde escuchar y qué control provoca el evento.
+    en:
+      title: eventDetails names source and trigger
+      body: >-
+        <code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.
+  - date: 2026-09-17
+    kind: chore
+    es:
+      title: El hash de superficie mide la promesa pública
+      body: >-
+        El hash de superficie ahora proyecta opciones por lista blanca (sin <code>machineInput</code>), incluye <code>eventDetails</code>, y sigue excluyendo la plantilla (<code>also</code>, attrs efímeros). Este contrato no cambió su API; sólo cambió lo que el hash mide.
+    en:
+      title: Surface hash measures the public promise
+      body: >-
+        The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.
   - date: 2026-08-25
     kind: bugfix
     target: Treegrid
@@ -142,3 +176,77 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-16
+    kind: breaking
+    target: TreegridRow
+    es:
+      title: TreegridRow exige value, las celdas son sólo texto y los eventos quedan publicados
+      body: >-
+        <code>value</code> pasa a ser obligatorio en cada fila: React ya lo exigía para guardar el
+        estado, y los dos eventos lo reportan (Vanilla anunciaba <code>null</code> sin él).
+        <code>TreegridCell</code> acepta sólo texto, el alcance auditado de <code>treegrid-1</code>.
+        El contrato publica <code>sk-treegrid-expanded-change</code> y
+        <code>sk-treegrid-activate</code>, y React ahora también los despacha en la tabla.
+    en:
+      title: TreegridRow requires value, cells are text only, and the events are published
+      body: >-
+        <code>value</code> is now required on every row: React already required it to hold state,
+        and both events report it (Vanilla announced <code>null</code> without one).
+        <code>TreegridCell</code> accepts text only, the audited <code>treegrid-1</code> scope. The
+        contract publishes <code>sk-treegrid-expanded-change</code> and
+        <code>sk-treegrid-activate</code>, and React now dispatches them on the table too.
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: Las filas de un Treegrid tienen que decir la verdad sobre su jerarquía
+      body: >-
+        El validador ahora comprueba lo que <code>aria-level</code>, <code>aria-posinset</code> y
+        <code>aria-setsize</code> le prometen a un lector de pantalla: la profundidad crece de a un
+        nivel, los hermanos comparten <code>setSize</code> y se numeran de 1 a n, una fila con filas
+        más profundas debajo declara <code>expanded</code>, y ningún <code>value</code> se repite.
+        Una rama sin hijos sólo genera un aviso, porque una carpeta vacía es real.
+    en:
+      title: Treegrid rows have to tell the truth about their hierarchy
+      body: >-
+        The validator now checks what <code>aria-level</code>, <code>aria-posinset</code> and
+        <code>aria-setsize</code> promise a screen reader: depth grows one level at a time, siblings
+        share <code>setSize</code> and are numbered 1 to n, a row with deeper rows under it states
+        <code>expanded</code>, and no <code>value</code> repeats. A branch with no children only
+        draws an advisory, because an empty folder is real.
+  - date: 2026-09-16
+    kind: bugfix
+    es:
+      title: El contrato declara el rango de sus números
+      body: >-
+        <code>level</code>, <code>setSize</code> y <code>posInset</code> son enteros desde 1. Un 0 o un 1.5 dejan de validar en vez de anunciarse tal cual.
+    en:
+      title: The contract declares the range of its numbers
+      body: >-
+        <code>level</code>, <code>setSize</code> and <code>posInset</code> are whole numbers from 1. A 0 or a 1.5 stops validating instead of being announced as written.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Cada evento lleva el nombre de su familia
+      body: >-
+        <code>sk-treegrid-expanded-change</code> → <code>sk:treegridexpandedchange</code>, <code>sk-treegrid-activate</code> → <code>sk:treegridactivate</code>. Un mismo nombre ya no lo despachan varias familias: un listener sobre una raíz deja
+        de recibir los eventos de un componente distinto anidado adentro.
+    en:
+      title: Every event carries its family in its name
+      body: >-
+        <code>sk-treegrid-expanded-change</code> → <code>sk:treegridexpandedchange</code>, <code>sk-treegrid-activate</code> → <code>sk:treegridactivate</code>. No two families dispatch the same name any more: a listener on a root stops receiving
+        the events of a different component nested inside it.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: columnWeights se valida como lista, una entrada por columna
+      body: >-
+        <code>columnWeights</code> declara que es una lista de números positivos separados por coma
+        y cuántas entradas debe tener: una por columna de la primera fila. Antes una lista con un 0 o
+        con una entrada de más validaba, y el binding la descartaba en silencio para usar su reparto
+        por defecto.
+    en:
+      title: columnWeights is validated as a list, one entry per column
+      body: >-
+        <code>columnWeights</code> declares that it is a comma-separated list of positive numbers and
+        how many entries it takes: one per column of the first row. A list with a 0 or one entry too
+        many used to validate, and the binding silently dropped it for its default split.

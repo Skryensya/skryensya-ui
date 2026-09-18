@@ -32,8 +32,8 @@ type MarqueeBaseProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
  */
 export type MarqueeProps = MarqueeBaseProps & {
   /** Accessible action labels, kept separate so only the available action is announced. */
-  playLabel: ReactNode;
-  pauseLabel: ReactNode;
+  playLabel: string;
+  pauseLabel: string;
 };
 
 export type AutoplayMarqueeProps = MarqueeBaseProps & {
@@ -43,14 +43,14 @@ export type AutoplayMarqueeProps = MarqueeBaseProps & {
    * an explicit control on motion that starts by itself and runs past five seconds.
    */
   control?: boolean;
-  playLabel?: ReactNode;
-  pauseLabel?: ReactNode;
+  playLabel?: string;
+  pauseLabel?: string;
 };
 
 type MarqueeRootProps = MarqueeBaseProps & {
   control: boolean;
-  playLabel?: ReactNode;
-  pauseLabel?: ReactNode;
+  playLabel?: string;
+  pauseLabel?: string;
   start: MarqueeStart;
 };
 
@@ -134,6 +134,7 @@ function MarqueeRoot({
       data-control={start === "auto" && control ? "" : undefined}
       data-direction={direction}
       data-fade={fade}
+      data-sk-marquee=""
       data-speed={speed}
       data-start={start}
       data-state={playing ? "playing" : "paused"}

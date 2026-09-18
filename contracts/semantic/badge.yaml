@@ -7,8 +7,10 @@ Badge:
   avoidWhen:
     - "el usuario puede quitarlo o actuar sobre él; eso es un Tag"
     - "es texto de párrafo con color; un badge es una cápsula, no énfasis"
+    - "no hay texto visible, sólo un punto; eso es BadgeDot"
   alternatives:
     - Tag
+    - BadgeDot
 BadgeDot:
   useWhen:
     - "un punto compacto comunica presencia, novedad o estado junto a otro control"
@@ -18,8 +20,9 @@ BadgeDot:
     - Badge
 BadgeHolder:
   useWhen:
-    - "un BadgeDot se ancla a la esquina de un botón o avatar"
+    - "un Badge o BadgeDot se ancla a la esquina de un botón o avatar"
   avoidWhen:
     - "el badge participa del flujo normal; no necesita un ancla"
   alternatives:
     - Badge
+    - BadgeDot

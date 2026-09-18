@@ -1,5 +1,5 @@
 import { skipLinkParts } from "@skryensya/core/skip-link";
-import type { AnchorHTMLAttributes, ReactNode } from "react";
+import type { AnchorHTMLAttributes } from "react";
 
 /*
  * SKIP LINK: markup and nothing else, because the behaviour is the platform's.
@@ -15,8 +15,8 @@ import type { AnchorHTMLAttributes, ReactNode } from "react";
 export type SkipLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "children"> & {
   /** In-page, so an id: `#main-nav`. What makes the jump the browser's rather than a script's. */
   href: string;
-  /** What it says when it appears. A destination, not an instruction: "Go to navigation". */
-  children: ReactNode;
+  /** What it says when it appears. A destination, not an instruction: "Go to navigation". Text only: the contract slot is `text`. */
+  children: string;
 };
 
 export function SkipLink({ children, className, href, ...props }: SkipLinkProps) {

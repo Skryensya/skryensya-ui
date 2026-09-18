@@ -3,15 +3,19 @@
 Text:
   useWhen:
     - "un párrafo, una bajada, una nota al pie"
-    - "el tono dice jerarquía: secondary para lo accesorio, danger para un error en prosa"
+    - "el tono dice jerarquía: secondary para lo accesorio, danger para un error en prosa (acompañado de texto que lo diga, no sólo del color)"
+    - "la línea chica sobre un título es textRole eyebrow; la bajada bajo el título es textRole subtitle"
   avoidWhen:
     - "titula una sección; eso es un Heading, aunque se vea chico"
+    - "va dentro de otra línea de texto, un botón o un label como <p>: ahí es textElement span"
 
 Heading:
   useWhen:
-    - "abre una sección y hay que decir a qué nivel del documento pertenece"
+    - "abre una sección y hay que decir a qué nivel del documento pertenece: headingElement (h1–h6) es el nivel, headingSize sólo el aspecto"
+    - "el tamaño se elige por escalón (h1–h6, display-sm/md/lg); sm, md, lg y display son alias heredados"
   avoidWhen:
     - "sólo se busca texto grande; el nivel es estructura, no tamaño"
+    - "el título es la etiqueta chica de un grupo (un kicker); eso es Text con textRole eyebrow"
   alternatives:
     - Text
 
@@ -27,12 +31,13 @@ Strong:
     - "una frase dentro de texto tiene importancia fuerte, no sólo un peso visual distinto"
   avoidWhen:
     - "titula una sección; eso es un Heading"
+    - "sólo se quiere un peso distinto para toda la línea sin decir que importa más; eso es Text con weight"
   alternatives:
     - Heading
 
 Output:
   useWhen:
-    - "muestra el resultado calculado de una entrada o interacción"
+    - "muestra el resultado calculado de una entrada o interacción; outputFor nombra los ids de esas entradas"
   avoidWhen:
     - "es texto estático sin relación con un cálculo; eso es Text"
   alternatives:

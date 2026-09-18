@@ -34,6 +34,20 @@ describe("Select", () => {
     expect((ui.container.querySelector('select[name="brand"]') as HTMLSelectElement).value).toBe("ember");
   });
 
+  it("dispatches sk:selectvaluechange on the root for DOM parity with vanilla", async () => {
+    const onDom = vi.fn();
+    const ui = render(<Select label="Brand" name="brand" options={options} />);
+    const root = ui.container.querySelector("[data-sk-select]")!;
+    expect(root).toBeTruthy();
+    root.addEventListener("sk:selectvaluechange", onDom);
+
+    fireEvent.click(ui.getByRole("combobox", { name: "Brand" }));
+    fireEvent.click(await ui.findByRole("option", { name: "Ember" }));
+
+    await waitFor(() => expect(onDom).toHaveBeenCalled());
+    expect((onDom.mock.calls[0]![0] as CustomEvent).detail).toEqual({ value: ["ember"] });
+  });
+
   it("moves aria-selected onto the highlighted option before Enter commits anything", async () => {
     const ui = render(<Select label="Brand" name="brand" options={options} />);
     const trigger = ui.getByRole("combobox", { name: "Brand" });

@@ -1,10 +1,10 @@
 import { fireEvent, render, waitFor } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
-import { DatePicker } from "./date-picker.js";
+import { describe, expect, it, vi } from "vitest";
+import { DatePicker, NativeDatePicker } from "./date-picker.js";
 
 describe("DatePicker", () => {
-  it("defaults every accessible name to Spanish, locale-aware from `locale`", async () => {
-    const ui = render(<DatePicker label="Fecha" />);
+  it("names every control in the language `locale` names, Spanish here", async () => {
+    const ui = render(<DatePicker locale="es" label="Fecha" />);
     const trigger = ui.getByRole("button", { name: "Abrir calendario" });
 
     fireEvent.click(trigger);
@@ -30,8 +30,52 @@ describe("DatePicker", () => {
   });
 
   it("lets a consumer override a single label without losing the locale-aware defaults for the rest", async () => {
-    const ui = render(<DatePicker label="Fecha" triggerLabel={(open) => (open ? "Cerrar" : "Ver fechas")} />);
+    const ui = render(<DatePicker locale="es" label="Fecha" triggerLabel={(open) => (open ? "Close" : "Ver fechas")} />);
 
     expect(ui.getByRole("button", { name: "Ver fechas" })).toBeTruthy();
+  });
+
+  it("dispatches sk:datepickervaluechange on the root for DOM parity with vanilla", async () => {
+    const onValueChange = vi.fn();
+    const ui = render(
+      <DatePicker locale="es" defaultValue="2026-09-16" label="Fecha" onValueChange={onValueChange} />,
+    );
+    const root = ui.container.querySelector(".sk-date-picker")!;
+    expect(root.hasAttribute("data-sk-date-picker")).toBe(true);
+    const onDom = vi.fn();
+    root.addEventListener("sk:datepickervaluechange", onDom);
+
+    fireEvent.click(ui.getByRole("button", { name: "Abrir calendario" }));
+
+    const other = await waitFor(() => {
+      const day = ui
+        .getAllByRole("button", { name: /^Elegir /i })
+        .find(
+          (button) =>
+            !button.hasAttribute("data-selected") &&
+            button.getAttribute("aria-disabled") !== "true" &&
+            !button.hasAttribute("disabled"),
+        );
+      expect(day).toBeTruthy();
+      return day!;
+    });
+    fireEvent.click(other);
+
+    await waitFor(() => expect(onValueChange).toHaveBeenCalled());
+    expect(onDom).toHaveBeenCalled();
+  });
+});
+
+describe("NativeDatePicker", () => {
+  it("renders a labelled type=date input with real HTML bounds", () => {
+    const ui = render(
+      <NativeDatePicker defaultValue="2026-09-16" label="Llegada" max="2026-12-31" min="2026-01-01" name="arrival" />,
+    );
+    const input = ui.getByLabelText("Llegada") as HTMLInputElement;
+    expect(input.type).toBe("date");
+    expect(input.name).toBe("arrival");
+    expect(input.min).toBe("2026-01-01");
+    expect(input.max).toBe("2026-12-31");
+    expect(input.defaultValue).toBe("2026-09-16");
   });
 });

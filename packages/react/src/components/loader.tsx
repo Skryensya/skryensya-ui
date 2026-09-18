@@ -1,4 +1,4 @@
-import { loaderParts, type LoaderSize, type LoaderSpeed, type LoaderVariant, loaderContract } from "@skryensya/core/loader";
+import { loaderAttrs, loaderParts, loaderTicks, type LoaderSize, type LoaderSpeed, type LoaderVariant, loaderContract } from "@skryensya/core/loader";
 import { type HTMLAttributes } from "react";
 
 /* Derived, never restated: the default lives in the contract. */
@@ -29,6 +29,12 @@ export function Loader({
 }: LoaderProps) {
   const decorative = label === undefined;
 
+  /*
+   * The COUNT comes from core and the ANGLE comes from the stylesheet, which is why the staggered
+   * variants render nothing but empty spans. The six pseudo-element variants return zero and render
+   * no children at all, so their markup is unchanged. Both halves are shared with authored markup,
+   * so a spokes has one stagger rather than one per binding.
+   */
   return (
     <span
       {...props}
@@ -40,7 +46,12 @@ export function Loader({
       data-speed={speed}
       data-variant={variant}
       role={decorative ? undefined : "status"}
-    />
+      {...{ [loaderAttrs.root]: "" }}
+    >
+      {Array.from({ length: loaderTicks(variant) }, (_, index) => (
+        <span className={loaderParts.tick} key={index} />
+      ))}
+    </span>
   );
 }
 

@@ -3,8 +3,55 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "482dae13ff54b1b3"
+surface: "94613cc44aad7936"
 entries:
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Dialog declara compose de Button e Icon en el cierre
+      body: >-
+        <code>compose</code> documenta el botón de cierre como Button + Icon
+        <code>systemOwned</code> (antes sólo <code>also: sk-button</code>). Las hojas de Button
+        siguen resolviéndose por <code>also</code>.
+    en:
+      title: Dialog declares compose of Button and Icon on close
+      body: >-
+        <code>compose</code> documents the close control as Button + Icon
+        <code>systemOwned</code> (previously only <code>also: sk-button</code>). Button sheets
+        still resolve via <code>also</code>.
+  - date: 2026-09-16
+    kind: bugfix
+    target: closeLabel
+    es:
+      title: Dialog declara dialog-vaul.css y closeLabel como aria-label
+      body: >-
+        <code>hookSheets</code> nombra <code>patterns/dialog-vaul.css</code> para que las stages
+        carguen la composición cuando un árbol usa <code>vaul</code>. <code>closeLabel</code>
+        publica <code>aria-label</code> en el botón de cierre (como <code>Tag.removeLabel</code>),
+        sin <code>data-close-label</code> ni <code>machineInput</code>. React exige
+        <code>title</code> string y <code>children</code> como el contrato.
+    en:
+      title: Dialog names dialog-vaul.css and closeLabel as aria-label
+      body: >-
+        <code>hookSheets</code> names <code>patterns/dialog-vaul.css</code> so stages load the
+        composition when a tree opts into <code>vaul</code>. <code>closeLabel</code> publishes
+        <code>aria-label</code> on the close button (like <code>Tag.removeLabel</code>), without
+        <code>data-close-label</code> or <code>machineInput</code>. React requires a string
+        <code>title</code> and <code>children</code> to match the contract.
   - date: 2026-08-22
     kind: bugfix
     es:
@@ -91,3 +138,15 @@ entries:
         declares one the contract does not publish, or the contract promises one the stylesheet
         never declares. That second half is the one that matters: until now, re-declaring a hook
         that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Los textos por defecto pasan a inglés
+      body: >-
+        El kit es una librería en inglés y sus defaults estaban en español: <code>closeLabel</code> Close. Una interfaz en
+        otro idioma pasa sus propios textos, y el <code>locale</code> que corresponda.
+    en:
+      title: Default texts move to English
+      body: >-
+        The kit is an English library and its defaults were Spanish: <code>closeLabel</code> Close. An interface in another
+        language passes its own texts, and the <code>locale</code> it needs.

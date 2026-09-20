@@ -3,10 +3,22 @@ import "@skryensya/core/components/popover.css";
 import "@skryensya/core/patterns/box.css";
 /* Structure diagram: the Annotated specimen is drawn by Annotation's own sheet. */
 import "@skryensya/core/components/annotation.css";
+/* The bare specimen's filler is an authored Checkbox rather than one mounted from a tree, so its
+   sheet has to come from here. */
+import "@skryensya/core/components/checkbox.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { popoverAnatomyCss, popoverAnatomyHtml, popoverTree, popoverStructuredTree, popoverPlacementTree } from "../../demos/popover";
+import {
+  popoverAnatomyCss,
+  popoverAnatomyHtml,
+  popoverTree,
+  popoverStructuredTree,
+  popoverPlacementTree,
+  popupTree,
+  popupAnatomyHtml,
+  popupAnatomyCss,
+} from "../../demos/popover";
 import { getLocale, useTranslations } from "../../i18n";
 
 const t = useTranslations(getLocale(Astro.url));
@@ -27,7 +39,7 @@ mountIcons(document, lucideIcons);`;
     { file: "components/popover.css", probe: "sk-popover", title: "Popover" },
     { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
   ]}
-  testFiles={["packages/react/src/components/popover.test.tsx"]}}
+  testFiles={["packages/react/src/components/popover.test.tsx"]}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("popoverPage.description")} />
@@ -52,6 +64,32 @@ mountIcons(document, lucideIcons);`;
     <p set:html={t("popoverPage.placementBody")} />
     <ComponentPreview tree={popoverPlacementTree(t)} js={js} label={t("popoverPage.placementLabel")} viewport="overlay" />
 
+    {/*
+      * POPUP IS THIS FAMILY'S BARE SIGNATURE, not a component of its own, and this section is where
+      * that stopped being two pages. `/components/popup` documented `Popover.bare` under a second
+      * name: same contract, same stylesheet, same anchoring pattern, one signature down. The two
+      * pages made a reader pick between them before knowing they were the same thing, and the
+      * catalogue counted one family twice. The route is a 301 onto this heading now.
+      *
+      * The id is `popup` in both locales, deliberately: the word does not translate, and the two
+      * redirects (`pages/components/popup.astro` and `pages/es/componentes/popup.astro`) both
+      * point at it. A per-locale id would need a per-locale fragment in each of them.
+      */}
+    <h3 id="popup">{t("popoverPage.popupTitle")}</h3>
+    <p set:html={t("popoverPage.popupBody")} />
+    <ComponentPreview tree={popupTree(t)} js={js} label="Popup" viewport="menu" />
+
+    <p set:html={t("popoverPage.popupAnatomyBody")} />
+    <ComponentPreview
+      html={popupAnatomyHtml(t)}
+      css={popupAnatomyCss}
+      label={t("popoverPage.popupAnatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+    <p set:html={t("popoverPage.popupContractBody")} />
+
     <h3>{t("component.contractNotesTitle")}</h3>
     <p set:html={t("popoverPage.contractBody")} />
   </Fragment>
@@ -62,5 +100,6 @@ mountIcons(document, lucideIcons);`;
 
   <Fragment slot="a11y">
     <p set:html={t("popoverPage.a11yBody")} />
+    <p set:html={t("popoverPage.popupA11yBody")} />
   </Fragment>
 </ComponentPageShell>

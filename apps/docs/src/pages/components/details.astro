@@ -1,3 +1,5 @@
 ---
-return Astro.redirect("/components/accordion#native-details", 301);
+/* Accordion's page carries the heading, under a single id for both locales (`details-nativo` in
+   `AccordionPage.astro`). This used to point at `#native-details`, a fragment no element has. */
+return Astro.redirect("/components/accordion#details-nativo", 301);
 ---

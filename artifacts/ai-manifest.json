@@ -5,6 +5,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-18",
+            "en": {
+              "body": "Accordion paints with <code>tile.css</code>, so <code>--sk-tile-title-weight</code> is retunable from here too. The default is unchanged.",
+              "title": "Tile's title weight hook reaches here"
+            },
+            "es": {
+              "body": "Accordion pinta con <code>tile.css</code>, así que <code>--sk-tile-title-weight</code> también se retunea desde aquí. El valor por defecto no cambia.",
+              "title": "Llega el hook de peso del título de Tile"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-09-17",
             "en": {
               "body": "Interactive or form host signatures publish <code>forward</code> (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant). An attr outside the list is <code>unknown-attr</code>.",
@@ -210,6 +222,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "A <code>key</code> slot and a <code>sk-annotated__key</code> part: one line in the bottom-left about the drawing as a whole, usually what a shorthand in the labels stands for (\"* = sk-file-upload\"). It exists because a part name is a block plus an element, and a diagram of ten parts repeats that block ten times in its margins, where every repetition is charged to the subject's width: measured on FileUpload, the repeated prefix alone squeezed the specimen from 480px to 292px. Labels go to the four edge midpoints, so all four corners are free by construction and a key cannot collide with one.",
+              "title": "A key for the diagram, in the corner nothing else uses"
+            },
+            "es": {
+              "body": "Slot <code>key</code> y parte <code>sk-annotated__key</code>: una línea abajo a la izquierda sobre el dibujo entero, típicamente qué significa una abreviatura de las etiquetas (\"* = sk-file-upload\"). Existe porque un nombre de parte es bloque más elemento, y un diagrama de diez partes repite el bloque diez veces en sus márgenes, donde cada repetición se le cobra al ancho del sujeto: medido en FileUpload, solo el prefijo repetido apretaba el espécimen de 480px a 292px. Las cuatro etiquetas van a los puntos medios de los bordes, así que las cuatro esquinas están libres por construcción y la leyenda no puede chocar con ninguna.",
+              "title": "Un pie de leyenda para el diagrama, en la esquina que nunca se usa"
+            },
+            "kind": "feature",
+            "target": "Annotated"
+          },
           {
             "date": "2026-09-17",
             "en": {
@@ -2491,6 +2516,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-19",
+            "en": {
+              "body": "A click used to change the preset for every preview on the page at once. Changing the preset is usually a question asked of ONE demo, and answering it by moving the rest throws away wherever the reader had left them, so a plain click now moves that stage alone and never touches the saved preference. <code>Shift</code> + click is the broadcast: everything follows, the choice is saved, and it reaches previews that had already been nudged by hand, which is how the page is put back in step. The shared preference still exists and is what seeds every preview on load. A preview that owns its preset outright is unchanged: it neither reads the shared preference nor follows a broadcast.",
+              "title": "The screen preset becomes each preview's, and Shift broadcasts it"
+            },
+            "es": {
+              "body": "Antes un click cambiaba el preset de todos los previews de la página a la vez. Cambiar el preset suele ser una pregunta sobre UNA demo, y responderla moviendo el resto tira donde el lector los había dejado, así que ahora un click normal mueve sólo ese stage y no toca la preferencia guardada. <code>Shift</code> + click es la difusión: cambian todos, se guarda, y alcanza también a los previews que ya se habían movido a mano, que es la forma de volver a poner la página en fila. La preferencia compartida sigue existiendo y es la que siembra a todos al cargar. El preview que declara su preset por cuenta propia no cambia: no lee la preferencia compartida ni sigue una difusión.",
+              "title": "El preset de pantalla pasa a ser de cada preview, y Shift lo difunde"
+            },
+            "kind": "rework"
+          },
+          {
             "date": "2026-09-17",
             "en": {
               "body": "<code>eventDetails</code> declares <code>source</code> (part that dispatches the CustomEvent) and, when clear, <code>trigger</code> (part the user activates). An agent knows where to listen and which control causes the event.",
@@ -3289,6 +3326,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-19",
+            "en": {
+              "body": "With <code>keyboard</code>, every article joins the Tab sequence (<code>tabindex=\"0\"</code> on each, as WAI's example does, not a roving 0/-1), Page Down and Page Up step article to article, and Ctrl+Home and Ctrl+End LEAVE the feed for the first focusable element before or after it: they do not go to the first or last article, which is what the pattern says and what we had written down backwards. It ships off, so nothing written before today changes by a byte. At either end the key is not consumed, so Page Down on the last article still scrolls.",
+              "title": "Feed gains the keyboard model the pattern recommends, opt-in"
+            },
+            "es": {
+              "body": "Con <code>keyboard</code>, cada artículo entra en la secuencia de Tab (<code>tabindex=\"0\"</code> en todos, como en el ejemplo de WAI, no un foco móvil 0/-1), Page Down y Page Up se mueven de artículo en artículo, y Ctrl+Inicio y Ctrl+Fin SALEN del feed al primer enfocable antes o después: no van al primer o último artículo, que es lo que dice el patrón y lo que este equipo había anotado al revés. Viene apagado, así que nada de lo escrito hasta hoy cambia un byte. En los extremos la tecla no se consume, para que Page Down en el último artículo siga haciendo scroll.",
+              "title": "Feed suma el modelo de teclado que el patrón recomienda, opcional"
+            },
+            "kind": "feature",
+            "target": "Feed"
+          },
+          {
             "date": "2026-09-17",
             "en": {
               "body": "<code>posInset</code> is a whole number from 1 and <code>setSize</code> a whole number from -1, the value WAI reserves for an unknown total. A value out of range stops validating instead of reaching the binding.",
@@ -3358,6 +3408,240 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "<code>dropScope</code> picks where a drop counts: <code>zone</code> (the dashed box, as before), <code>element</code> plus <code>dropTarget</code> (a CSS selector for another element on the page), or <code>page</code> (the whole document). The last two carry <code>overlayLabel</code>, the sheet that appears while a file is dragged over them: a drop target nobody can see is a feature only its author knows about. The dashed box stays in all three, because the keyboard and the file picker still need somewhere to be.",
+              "title": "A file can be dropped outside the dashed box"
+            },
+            "es": {
+              "body": "<code>dropScope</code> elige dónde vale soltar: <code>zone</code> (la caja punteada, como siempre), <code>element</code> más <code>dropTarget</code> (un selector CSS a otro elemento de la página) o <code>page</code> (todo el documento). Los dos últimos traen <code>overlayLabel</code>, el cartel que aparece mientras se arrastra un archivo encima: un destino que no se ve es una función que solo conoce quien la programó. La caja punteada sigue ahí en los tres casos, porque el teclado y el selector de archivos necesitan seguir teniendo dónde estar.",
+              "title": "Se puede soltar un archivo fuera de la zona punteada"
+            },
+            "kind": "feature",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "<code>hintLabel</code> publishes <code>sk-file-upload__hint</code>, which had been in the stylesheet since the first version with no node in the template: it is where the limits go (\"PNG or JPG, up to 5 MB\") before a file breaks them. <code>dropzoneIcon</code> takes an Icon above the instruction.",
+              "title": "The hint and the dropzone glyph can finally be written"
+            },
+            "es": {
+              "body": "<code>hintLabel</code> publica <code>sk-file-upload__hint</code>, que existía en la hoja de estilos desde la primera versión y no tenía nodo en la plantilla: es donde van los límites (\"PNG o JPG, hasta 5 MB\") antes de que un archivo los rompa. <code>dropzoneIcon</code> acepta un Icon sobre la instrucción.",
+              "title": "La pista y el glifo de la zona por fin se pueden escribir"
+            },
+            "kind": "feature",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "Only React drew the list before: the vanilla enhancer rendered nothing, so checking what you chose before sending it depended on the binding. Both now draw the same row from the same classes (<code>item-preview</code>, <code>item-kind</code>), an image showing itself and everything else its extension. \"The enhancer renders nothing\" is about authored markup; a list of files is state, like Calendar's grid.",
+              "title": "Both bindings show the chosen files, with a thumbnail and a remove button"
+            },
+            "es": {
+              "body": "Antes solo React dibujaba la lista: el enhancer vanilla no renderizaba nada, así que revisar lo elegido antes de mandarlo dependía del binding. Ahora las dos dibujan la misma fila desde las mismas clases (<code>item-preview</code>, <code>item-kind</code>), con la imagen mostrándose a sí misma y el resto con su extensión. La regla de \"el enhancer no renderiza\" es sobre marcado escrito a mano; una lista de archivos es estado, como la grilla de Calendar.",
+              "title": "Las dos capas muestran los archivos elegidos, con miniatura y botón de quitar"
+            },
+            "kind": "feature",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "The machine wrote its own translations into <code>aria-label</code>, which beats content: the dropzone announced itself as \"dropzone\" rather than the instruction written on it (a label-in-name failure on top of a language one), and the remove button said \"delete file x\" while carrying hidden text nothing could read. Both bindings now pass their own translations.",
+              "title": "The accessible names are the component's again"
+            },
+            "es": {
+              "body": "La máquina escribía sus propias traducciones en <code>aria-label</code>, que gana sobre el contenido: la dropzone se anunciaba como \"dropzone\" en vez de la instrucción escrita encima (falla de label-in-name además de idioma) y el botón de quitar decía \"delete file x\" mientras cargaba un texto oculto que nadie podía leer. Las dos capas pasan ahora sus propias traducciones.",
+              "title": "Los nombres accesibles vuelven a ser los del componente"
+            },
+            "kind": "bugfix",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "With files chosen the dropzone hides and the list takes its place: the control shows how to choose while there is nothing, and what there is as soon as there is something. <code>hintLabel</code> moved INSIDE the box (it is the empty state's description) and leaves with it. The picker button never leaves. With the box off screen the drop surface moves to the control itself, which highlights as a whole.",
+              "title": "The dashed box is the empty state, and the list replaces it"
+            },
+            "es": {
+              "body": "Con archivos elegidos, la dropzone se oculta y la lista ocupa su lugar: el control muestra cómo elegir mientras no hay nada, y qué hay en cuanto hay algo. <code>hintLabel</code> pasó a estar DENTRO de la caja (es la descripción del estado vacío) y se va con ella. El botón de elegir no se va nunca. Sin la caja en pantalla, la superficie de drop pasa al propio control y este se resalta entero.",
+              "title": "La caja punteada es el estado vacío, y la lista la reemplaza"
+            },
+            "kind": "breaking",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "A drop outside the dropzone went through <code>setFiles</code>, the machine's only public setter, which REPLACES the accepted list. The appending path is only reachable through an event the machine accepts in its <code>dragging</code> state alone, so the union is built first (<code>filesAfterDrop</code>) and the machine re-validates the whole set.",
+              "title": "Dropping a second file no longer erases the first"
+            },
+            "es": {
+              "body": "Soltar fuera de la dropzone pasaba por <code>setFiles</code>, el único setter público de la máquina, que REEMPLAZA la lista aceptada. La ruta que agrega solo es alcanzable con un evento que la máquina acepta únicamente en su estado <code>dragging</code>, así que la unión se arma antes (<code>filesAfterDrop</code>) y la máquina revalida el conjunto entero.",
+              "title": "Soltar un segundo archivo ya no borra el primero"
+            },
+            "kind": "bugfix",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "<code>dropScope: \"element\"</code> and <code>dropTarget</code> pointed the drop at another element by CSS selector. No documented version of this pattern has it, and the reason shows as soon as you write the sentence a reader would need: a surface elsewhere on the page that secretly belongs to a control over here is not discoverable. The dashed box and the whole page remain.",
+              "title": "dropScope element is gone; zone and page remain"
+            },
+            "es": {
+              "body": "<code>dropScope: \"element\"</code> y <code>dropTarget</code> apuntaban el drop a otro elemento de la página por selector CSS. Ninguna versión documentada del patrón lo tiene, y el motivo se ve al intentar escribir la frase que un lector necesitaría: una superficie en otra parte que en secreto pertenece a un control de acá no se descubre. Quedan la caja punteada y toda la página.",
+              "title": "Se va dropScope element, quedan zone y page"
+            },
+            "kind": "breaking",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "This reverses the change earlier today that hid the box when the first file was accepted. That broke the thing people do most with this control: dropping a second file where they dropped the first. The list goes UNDER the box, as in every documented version of the pattern, and the box hides for one reason only, eBay's: <code>maxFiles</code> reached, where it could only invite a drop that will be rejected.",
+              "title": "The dropzone stays; the list goes under it"
+            },
+            "es": {
+              "body": "Revierte el cambio de más arriba de hoy mismo, que ocultaba la caja al aceptar el primer archivo. Eso rompía lo que más se hace con este control: soltar un segundo archivo donde se soltó el primero. La lista va DEBAJO de la caja, como en toda versión documentada del patrón, y la caja se oculta por un solo motivo, el de eBay: <code>maxFiles</code> alcanzado, porque ahí solo podría invitar a un drop que será rechazado.",
+              "title": "La dropzone se queda; la lista va debajo"
+            },
+            "kind": "breaking",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "The thumbnail no longer sits in a bordered frame (a photo is already a picture with an edge, and a glyph in a square reads as a button you cannot press): the image carries a 1px hairline and everything else a bare glyph. The file kind moved to the metadata line beside the size. The remove control is one of the kit's own ghost icon buttons with a full touch target, not a default bordered button. The list is announced with <code>aria-live=\"polite\"</code> and focus moves to the next row when one is removed.",
+              "title": "The file row stops being boxes inside boxes"
+            },
+            "es": {
+              "body": "La miniatura ya no vive en un recuadro con borde (una foto ya es una imagen con borde, y un glifo dentro de un cuadro se lee como un botón que no se puede apretar): la imagen lleva un hairline de 1px y el resto un glifo suelto. El tipo de archivo pasó a la línea de metadatos junto al peso. El botón de quitar es un icon button ghost del kit con área de toque completa, no un botón por defecto con borde. La lista se anuncia con <code>aria-live=\"polite\"</code> y el foco pasa a la fila siguiente al quitar una.",
+              "title": "La fila de archivo deja de ser cajas dentro de cajas"
+            },
+            "kind": "feature",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "<code>minFileSize</code> had always been a React prop the contract did not publish, so authored markup could not say it and the two bindings enforced different rules from one tree. <code>maxTotalSize</code> is new and the machine has no such rule: it is added through its own <code>validate</code> hook, counting the earlier files of the same batch too. And the line under the instruction is no longer hand-written: it is built from the same numbers that do the rejecting, so it cannot promise what the validator will not honour. <code>hintLabel</code> is still there to override it.",
+              "title": "minFileSize and maxTotalSize, and the limits state themselves"
+            },
+            "es": {
+              "body": "<code>minFileSize</code> existía en React desde siempre y el contrato no lo publicaba, así que el marcado escrito a mano no podía decirlo y las dos capas aplicaban reglas distintas desde el mismo árbol. <code>maxTotalSize</code> es nuevo y la máquina no lo trae: se agrega por su propio <code>validate</code>, contando también los archivos anteriores del mismo lote. Y la línea bajo la instrucción ya no se escribe a mano: sale de los mismos números que rechazan, así que no puede prometer lo que el validador no cumple. <code>hintLabel</code> sigue estando para pisarla.",
+              "title": "minFileSize y maxTotalSize, y los límites se dicen solos"
+            },
+            "kind": "feature",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "<code>fileUploadErrorMessage</code> takes the limits and names them: \"pesa demasiado (máximo 5 MB)\" instead of \"pesa demasiado\". While anything stands refused the root carries <code>data-invalid</code> and the dashed box takes the error tone, so the control that refused something can be found in a long form. <code>accept</code> can also be passed as a string in React, which is how the contract spells it.",
+              "title": "A refusal names the limit, and the control is marked"
+            },
+            "es": {
+              "body": "<code>fileUploadErrorMessage</code> toma los límites y los nombra: \"pesa demasiado (máximo 5 MB)\" en vez de \"pesa demasiado\". Mientras haya algo rechazado, la raíz lleva <code>data-invalid</code> y la caja punteada se pinta en tono de error, para que en un formulario largo se encuentre cuál control falló. <code>accept</code> además se puede pasar como string en React, que es como lo escribe el contrato.",
+              "title": "El rechazo dice cuál era el límite, y el control queda marcado"
+            },
+            "kind": "feature",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "It had 4px of inset around a 28px thumbnail and a 44px button: content pressed against its own border. It is 8px now (<code>--sk-file-upload-item-padding</code>, a new hook, which the thumbnail's concentric radius also reads), a 40px thumbnail so the preview reads as a picture rather than a favicon, and the remove control is 32px visible with its 44px touch target on a pseudo-element. The row goes from 54px to 58px, and those 4px are where they were missing: around the content, not under an oversized button.",
+              "title": "The file row stops being cramped"
+            },
+            "es": {
+              "body": "Tenía 4px de inset alrededor de una miniatura de 28px y un botón de 44px: el contenido contra su propio borde. Ahora son 8px de inset (<code>--sk-file-upload-item-padding</code>, nuevo hook, del que sale también el radio concéntrico de la miniatura), miniatura de 40px para que se lea como imagen y no como favicon, y el botón de quitar pasa a 32px visibles con el área de toque de 44px en un pseudo-elemento. La fila queda en 56px, más baja que los 60px que forzaba el botón antes.",
+              "title": "La fila de archivo deja de estar apretada"
+            },
+            "kind": "bugfix",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "The row goes from four columns to three: thumbnail, the name with its kind and size UNDER it (<code>sk-file-upload__item-body</code>, a new part), and the remove control. The name is the one thing anyone reads in a row and the one thing that can run 80 characters, so it takes the width; it used to compete with a size that never needed it. It is cut to one line with <code>…</code> and the whole name stays in <code>title</code>; the extension remains visible on the line below even when the tail is what was cut.",
+              "title": "The name owns the row, and is cut with an ellipsis"
+            },
+            "es": {
+              "body": "La fila pasa de cuatro columnas a tres: miniatura, el nombre con el tipo y el peso DEBAJO (<code>sk-file-upload__item-body</code>, parte nueva), y el botón de quitar. El nombre es lo único que alguien lee en una fila y lo único que puede medir 80 caracteres, así que se lleva el ancho; antes competía con un peso que no lo necesitaba. Se corta en una línea con <code>…</code> y el nombre completo queda en <code>title</code>; la extensión sigue visible en la línea de abajo aunque lo cortado sea el final.",
+              "title": "El nombre manda en la fila, y se corta con puntos suspensivos"
+            },
+            "kind": "feature",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "Measured in the browser rather than reasoned about: a row with an image started its text 20px to the right of a row with a document, because the glyph WORE the thumbnail's class and came in at its own 20px instead of the 40px box. The thumbnail is a box now and the picture or the glyph sits inside it. The row also measured 68px (two lines of text taller than the 40px thumbnail): the name drops to body-sm, the second line to caption, and the row settles at 58px, the height of what it shows. The <code>--sk-file-upload-remove-size</code> hook is gone: the remove control is <code>Button</code> at <code>sm</code> icon-only, which already paints at 32px and already carries its own 44px target.",
+              "title": "File rows line up with each other, and the row is the height of what it shows"
+            },
+            "es": {
+              "body": "Medido en el navegador, no deducido: una fila con imagen empezaba su texto 20px a la derecha de una con documento, porque el glifo LLEVABA la clase de la miniatura y entraba con sus propios 20px en vez del box de 40. Ahora la miniatura es un box y la imagen o el glifo van adentro. Además la fila medía 68px (dos líneas de texto más altas que la miniatura de 40px): el nombre baja a body-sm, el segundo renglón a caption y la fila queda en 58px, la altura de lo que muestra. Se va el hook <code>--sk-file-upload-remove-size</code>: el botón de quitar es <code>Button</code> en <code>sm</code> icon-only, que ya pinta a 32px y ya lleva su propio target de 44px.",
+              "title": "Las filas de archivo alinean entre sí, y la fila mide lo que muestra"
+            },
+            "kind": "bugfix",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "The row used the machine's <code>getFileSize</code>, which renders \"70 byte\" in this locale, while the limits line above it said \"5 MB\". One control cannot measure files two ways: both use <code>formatFileSize</code>.",
+              "title": "A file's size is said the same way above and below"
+            },
+            "es": {
+              "body": "La fila usaba <code>getFileSize</code> de la máquina, que en este locale escribe \"70 byte\", mientras la línea de límites arriba decía \"5 MB\". Un mismo control no puede medir archivos de dos maneras: las dos usan <code>formatFileSize</code>.",
+              "title": "El peso del archivo se dice igual arriba que abajo"
+            },
+            "kind": "bugfix",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "The line over the picker stated all four limits at once: \"imágenes o PDF · hasta 5 MB · 10 MB en total · máximo 3 archivos\". Nothing told the per-file size from the total, the middle dots made four facts equally important, and half of it cannot be acted on before choosing. That line now says only what is accepted, as a sentence (\"Imágenes o PDF, hasta 5 MB cada uno\"), and the count and the weight move to a tally over the list (<code>sk-file-upload__tally</code>, a new part) that appears once there is something to count: \"2 de 3 archivos · 3,4 de 10 MB\". That answers the question the fixed version could not, which is how much is left.",
+              "title": "The limits are said in two places, by whether they help before or during"
+            },
+            "es": {
+              "body": "La línea sobre el selector decía los cuatro límites de una: \"imágenes o PDF · hasta 5 MB · 10 MB en total · máximo 3 archivos\". Nada distinguía el peso por archivo del peso total, el punto medio le daba el mismo peso a todo, y la mitad no se puede accionar antes de elegir. Ahora esa línea dice solo qué se acepta, como frase (\"Imágenes o PDF, hasta 5 MB cada uno\"), y la cuenta y el peso pasan a un contador sobre la lista (<code>sk-file-upload__tally</code>, parte nueva) que aparece recién cuando hay algo que contar: \"2 de 3 archivos · 3,4 de 10 MB\". Eso contesta la pregunta que la versión fija no contestaba, que es cuánto queda.",
+              "title": "Los límites se dicen en dos lugares, según sirvan antes o durante"
+            },
+            "kind": "breaking",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "The system has published the <code>upload</code> role since the icon sets were written, all three draw it, and the one component named after uploading did not use it: the glyph was a slot nobody filled, so the empty state shipped without a mark while the stylesheet kept drawing the circle meant to hold one. It is there by default now and <code>dropzoneIcon</code> replaces it. Two template nodes for one part, because the emitter renders a node's <code>slot</code> or its <code>children</code>, never one as a fallback for the other.",
+              "title": "The dropzone draws the upload role, without being asked"
+            },
+            "es": {
+              "body": "El sistema publica el rol <code>upload</code> desde que se escribieron los sets de iconos, los tres lo dibujan, y el único componente que se llama así no lo usaba: el glifo era un slot que nadie llenaba, así que el estado vacío salía sin marca mientras la hoja de estilos seguía dibujando el círculo que iba a sostenerla. Ahora viene por defecto y <code>dropzoneIcon</code> lo reemplaza. Son dos nodos de plantilla para una misma parte, porque el emisor renderiza el <code>slot</code> de un nodo o sus <code>children</code>, nunca uno como respaldo del otro.",
+              "title": "La dropzone dibuja el rol upload, sin que nadie lo pida"
+            },
+            "kind": "feature",
+            "target": "FileUpload"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "<code>sk-file-upload__instruction</code>. The glyph above it and the hint below it had always been parts, and the sentence between them, the one thing every reader of this control actually reads, was a bare <code>&lt;span&gt;</code>: nothing could style it and the anatomy could not name it. Found by auditing all 19 parts against the ones the diagram labels.",
+              "title": "The dropzone's instruction is a part"
+            },
+            "es": {
+              "body": "<code>sk-file-upload__instruction</code>. El glifo de arriba y el hint de abajo eran partes desde siempre, y la frase del medio, que es lo único que todo lector de este control lee, era un <code>&lt;span&gt;</code> pelado: nada podía estilarla y la anatomía no podía nombrarla. Sale de una auditoría de las 19 partes contra las que el diagrama etiqueta.",
+              "title": "La instrucción de la dropzone es una parte"
+            },
+            "kind": "feature",
+            "target": "FileUpload"
+          },
           {
             "date": "2026-09-17",
             "en": {
@@ -4118,6 +4402,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "<code>format</code> adds the validation the platform has none for. <code>\"rut\"</code> (modulo 11 check digit), <code>\"url\"</code> and <code>\"email\"</code> ship in core; <code>\"phone\"</code> covers every country through <code>country</code> and is implemented by the optional <code>@skryensya/phone</code>. The control writes the message into FormField's error slot and <code>setCustomValidity</code> blocks native submit.",
+              "title": "Input validates RUT, URL, email and phone through format"
+            },
+            "es": {
+              "body": "<code>format</code> agrega la validacion que la plataforma no trae. <code>\"rut\"</code> (digito verificador modulo 11), <code>\"url\"</code> y <code>\"email\"</code> vienen en core; <code>\"phone\"</code> cubre todos los paises con <code>country</code> e implementa <code>@skryensya/phone</code>, opcional. El control escribe el mensaje en el slot de error del FormField y <code>setCustomValidity</code> bloquea el submit nativo.",
+              "title": "Input valida RUT, URL, email y telefono con format"
+            },
+            "kind": "feature",
+            "target": "Input"
+          },
           {
             "date": "2026-09-17",
             "en": {
@@ -6402,6 +6699,122 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-19",
+            "en": {
+              "body": "The hanging Kbd on a shortcut is a keyboard affordance, and on a touch device it advertised a shortcut nobody can press while taking about 30px of a 390px screen. Worse, the gutter is <code>padding-inline-start</code> on the form, so it also shifted the question and its description. On a device with no hover the key is not drawn and the gutter is not reserved. <code>any-hover: none</code> is the same question the state layer asks to decide whether hover feedback is worth keeping, and it is the honest one available: there is no media query for \"has a keyboard\", so a tablet with one keeps its keys.",
+              "title": "No keyboard, no gutter for the key"
+            },
+            "es": {
+              "body": "El Kbd colgante de los atajos es una ayuda de teclado, y en un dispositivo táctil anunciaba un atajo que nadie puede apretar mientras se llevaba unos 30px de una pantalla de 390. Peor: el canal es <code>padding-inline-start</code> sobre el formulario, así que además corría el título y la descripción. En un dispositivo sin hover la tecla no se dibuja y el canal no se reserva. <code>any-hover: none</code> es la misma pregunta que hace la capa de estado para decidir si el feedback de hover vale la pena, y es la honesta disponible: no hay media query de «tiene teclado», así que un tablet con teclado conserva sus teclas.",
+              "title": "Sin teclado no hay canal para la tecla"
+            },
+            "kind": "rework",
+            "target": "Questionnaire"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "<code>progress=\"segments\"</code> draws the journey as bars, one per question, read at a glance. It is not a fourth thing this component draws: it is <code>Steps</code>' own appearance, so the statuses and the windowing are the ones it already had. <code>progressOrientation=\"vertical\"</code> moves the rail beside the question, which is what a long journey needs: eight stages across a reading measure give each one nothing. The question keeps its measure and the form widens instead, because a rail taking its room out of the reading column would trade a cramped rail for cramped prose; the rail costs <code>--sk-questionnaire-rail</code>, published in case the stage names are long. And the measure goes from 52ch to 60ch: with the steps fighting for width above it, 52ch was short.",
+              "title": "Segmented progress, the rail beside, and a wider measure"
+            },
+            "es": {
+              "body": "<code>progress=\"segments\"</code> dibuja el recorrido como barras, una por pregunta, leído de reojo. No es un cuarto dibujo de este componente: es la apariencia propia de <code>Steps</code>, así que los estados y el ventaneo son los mismos que ya tenía. <code>progressOrientation=\"vertical\"</code> pasa el rail al costado, que es lo que pide un recorrido largo: ocho etapas cruzadas en una medida de lectura no le dan nada a ninguna. La pregunta conserva su medida y el formulario se ensancha, porque un rail que sacara su espacio de la columna de lectura cambiaría un rail apretado por prosa apretada; el rail cuesta <code>--sk-questionnaire-rail</code>, publicado por si los nombres de etapa son largos. Y la medida sube de 52ch a 60ch: con los pasos peleando por ancho arriba, 52ch quedaba corta.",
+              "title": "Progreso segmentado, el rail al costado, y una medida más ancha"
+            },
+            "kind": "feature",
+            "target": "Questionnaire"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "The <code>control</code> slot takes a control this contract has never heard of: a <code>FileUpload</code>, a <code>Select</code> for a list too long to be tiles, a <code>NumberField</code>, a <code>DatePicker</code>. The alternative was an option per control, each one mirroring another component's anatomy into this file and drifting the day that component moved. The control owns itself - its state, its keyboard, its accessibility - and the questionnaire keeps what it is for: one question at a time, progress, required, branching. It learns the answer from the control's <strong>native form state</strong>, which is the one interface all of them share: measured across the kit, <code>Select</code> ends in a <code>&lt;select&gt;</code>, and <code>FileUpload</code>, <code>NumberField</code>, <code>Combobox</code> and <code>DatePicker</code> each end in an <code>&lt;input&gt;</code>. A file input answers with the names of its files; the files travel with the form, which is where they were always going.",
+              "title": "A question can be answered with any control in the kit"
+            },
+            "es": {
+              "body": "El slot <code>control</code> recibe un control que este contrato no conoce: un <code>FileUpload</code>, un <code>Select</code> para una lista demasiado larga para ser tiles, un <code>NumberField</code>, un <code>DatePicker</code>. La alternativa era una opción por control, cada una espejando la anatomía de otro componente dentro de este archivo y derivando el día que ese componente se moviera. El control se posee a sí mismo (su estado, su teclado, su accesibilidad) y el cuestionario se queda con lo suyo: una pregunta a la vez, progreso, obligatoriedad y ramificación. Aprende la respuesta del <strong>estado de formulario nativo</strong> del control, que es la única interfaz que todos comparten: medido en el kit, <code>Select</code> termina en un <code>&lt;select&gt;</code>, y <code>FileUpload</code>, <code>NumberField</code>, <code>Combobox</code> y <code>DatePicker</code> terminan cada uno en un <code>&lt;input&gt;</code>. Un input de archivo responde con los nombres de sus archivos; los archivos viajan con el formulario, que es a donde iban de todos modos.",
+              "title": "Una pregunta puede responderse con cualquier control del kit"
+            },
+            "kind": "feature",
+            "target": "QuestionnaireItem"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "<code>text</code> always gave a one-line text input, which covers about half the open questions anyone wants to write. <code>textType</code> now picks the kind of answer (<code>text</code>, <code>email</code>, <code>tel</code>, <code>url</code>, <code>number</code>, <code>date</code>) and is written onto the control as its <code>type</code>, so each brings the browser's own keyboard, control and validation: email is checked before submit, tel brings the numeric keypad, and date brings the platform's own picker, including on the phone. <code>textLines</code> turns the answer into a <code>textarea</code> that tall, because a long answer needs a height and only the author knows how long an answer they are inviting. <code>textMin</code>, <code>textMax</code> and <code>textStep</code> pass the numeric bounds through.",
+              "title": "The written answer can be long, typed or numeric"
+            },
+            "es": {
+              "body": "<code>text</code> daba siempre un input de una línea de tipo texto, que es la mitad de las preguntas abiertas que alguien quiere escribir. Ahora <code>textType</code> elige la clase de respuesta (<code>text</code>, <code>email</code>, <code>tel</code>, <code>url</code>, <code>number</code>, <code>date</code>) y se escribe como el <code>type</code> del control, así que cada una trae el teclado, el control y la validación propios del navegador: el correo se revisa antes de enviar, el teléfono abre el teclado numérico y la fecha abre el selector de la plataforma, incluso en el celular. <code>textLines</code> convierte la respuesta en un <code>textarea</code> de esa altura, porque una respuesta larga necesita alto y sólo quien escribe la pregunta sabe cuánto está invitando. <code>textMin</code>, <code>textMax</code> y <code>textStep</code> pasan los límites numéricos al control.",
+              "title": "La respuesta escrita puede ser larga, tipada o numérica"
+            },
+            "kind": "feature",
+            "target": "QuestionnaireItem"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "<code>likert</code> used to draw a row of equal columns, each radio over its label, with the ends named underneath and a fallback to a vertical list below <code>30rem</code>. The row is gone and the list is now the only shape: one point per line, read top to bottom. A horizontal scale earns its keep in a <em>battery</em> - many statements sharing one header of anchors - and this questionnaire shows one question per screen by construction, so the row was paying the cost of a ruler without the arrangement that makes a ruler worth reading. The anchors move to where a list's ends actually are: the lowest point's name above the first row, the highest below the last. And since every point now gets the full measure, it can carry its own words instead of a digit.",
+              "title": "The Likert scale is a vertical list"
+            },
+            "es": {
+              "body": "<code>likert</code> dibujaba una fila de columnas iguales, cada radio sobre su etiqueta, con las anclas nombradas debajo y una caída a lista vertical abajo de <code>30rem</code>. La fila se fue y la lista es ahora la única forma: un punto por línea, de arriba hacia abajo. Una escala horizontal se gana el sueldo en una <em>batería</em> (muchas afirmaciones compartiendo un solo encabezado de anclas), y este cuestionario muestra una pregunta por pantalla por construcción, así que la fila pagaba el costo de una regla sin el arreglo que hace que una regla valga la pena leer. Las anclas se mudan a donde están los extremos de una lista: la del punto más bajo arriba de la primera fila, la del más alto debajo de la última. Y como cada punto pasa a tener toda la medida, puede llevar sus propias palabras en vez de un dígito.",
+              "title": "La escala Likert es una lista vertical"
+            },
+            "kind": "rework",
+            "target": "QuestionnaireItem"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "Two things the contract knew and did not declare. <code>likert</code> now requires <code>likertMinLabel</code> or <code>likertMaxLabel</code>: a scale renders its points as bare numbers, so with no anchors nothing on the page or in the accessibility tree says what 1 and 5 mean. Composing one without them now fails validation instead of passing and being ambiguous. And <code>position</code> is declared <code>systemOwned</code>: the contract owns its class name and its CSS, but the enhancer is what draws it, because what goes inside is the reader's place in a run the machine owns.",
+              "title": "A scale has to name its ends, and the contract says what the binding draws"
+            },
+            "es": {
+              "body": "Dos cosas que el contrato sabía y no declaraba. <code>likert</code> ahora exige <code>likertMinLabel</code> o <code>likertMaxLabel</code>: una escala dibuja sus puntos como números pelados, así que sin anclas nada en la página ni en el árbol de accesibilidad dice qué significan 1 y 5. Componer una sin ellas ahora falla la validación en vez de pasar y quedar ambigua. Y <code>position</code> se declara <code>systemOwned</code>: el contrato es dueño de su clase y su CSS, pero quien la dibuja es el enhancer, porque lo que va adentro es el lugar del lector en un recorrido que maneja la máquina.",
+              "title": "Una escala tiene que nombrar sus extremos, y el contrato dice qué dibuja el binding"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "The state layer (<code>state-layer.css</code>) already painted a persistent tint on whatever is selected, but it tints with <code>currentColor</code>, which on a tile is the reading text: the answer you picked and the three you passed over were separated by a grey wash and a border. In a form whose entire job is \"which one did you pick\", that is the state worth spending the accent on, so <code>--state-layer-color</code> becomes <code>--color-action-accent</code> on the chosen option. The opacity ladder is untouched: the <code>selected</code> rung is the lowest on purpose and hover and press replace it, which only stays honest while selection is also carried by something the wash cannot hide. Here two things carry it, both already accent from Tile's own hooks: the card's border and the radio's fill.",
+              "title": "The chosen answer is painted in the accent"
+            },
+            "es": {
+              "body": "La capa de estado (<code>state-layer.css</code>) ya pintaba un tinte persistente sobre lo elegido, pero tiñe con <code>currentColor</code>, que en un tile es el texto de lectura: la respuesta elegida y las tres que descartaste quedaban separadas por un wash gris y un borde. En un formulario cuyo trabajo entero es «cuál elegiste», ese es el estado que vale la pena gastar en el acento, así que <code>--state-layer-color</code> pasa a <code>--color-action-accent</code> sobre la opción marcada. La escalera de opacidades queda igual: el peldaño <code>selected</code> es el más bajo a propósito y hover y press lo reemplazan, algo que sólo se sostiene mientras la selección también la lleve algo que el wash no pueda tapar. Acá la llevan dos, ambos ya del acento por los hooks de Tile: el borde de la tarjeta y el relleno del radio.",
+              "title": "La opción elegida se pinta con el acento"
+            },
+            "kind": "rework",
+            "target": "QuestionnaireItem"
+          },
+          {
+            "date": "2026-09-18",
+            "en": {
+              "body": "The question is a <code>&lt;legend&gt;</code>, and a rendered legend is not a flex item: the item's <code>gap</code> never opened beneath it, so the description sat on the question's baseline and, with no description, the Likert scale's box began right on top of the question. That distance is now the legend's own margin. It also asked for <code>--line-height-heading</code>, which is not a token (the semantic name is <code>--font-line-height-heading</code>), so the title had been rendering at the inherited body leading all along.",
+              "title": "The question gets air under it again, and its own leading"
+            },
+            "es": {
+              "body": "La pregunta es un <code>&lt;legend&gt;</code>, y un legend renderizado no es un ítem flex: el <code>gap</code> del ítem nunca se abría debajo de ella, así que la descripción quedaba pegada a su línea base y, cuando no había descripción, la caja de la escala Likert empezaba justo sobre la pregunta. La distancia ahora es margen propio del legend. Además pedía <code>--line-height-heading</code>, que no es un token (el semántico es <code>--font-line-height-heading</code>), así que el título se venía dibujando con el interlineado de cuerpo heredado.",
+              "title": "La pregunta vuelve a tener aire debajo, y su propio interlineado"
+            },
+            "kind": "bugfix",
+            "target": "QuestionnaireItem"
+          },
+          {
+            "date": "2026-09-18",
+            "en": {
+              "body": "The form used a single step (<code>md</code>) both between its bands and inside the question, so nothing told a band from the thing within it. There are four rungs now: <code>lg</code> between bands, <code>md</code> from the question to its answers, <code>sm</code> between options and <code>xs</code> between the question and its description, with <code>--sk-questionnaire-head-gap</code> published for that last one. On type, the question takes the <code>heading-h4</code> size/leading pair at <code>emphasis</code> weight, the description drops to <code>body-sm</code> (it was the second-largest text in the form, above the answers it supports) and each option's title moves to <code>label</code> weight through Tile's new <code>--sk-tile-title-weight</code>. The Likert scale gains tabular figures and an <code>sm</code> inset per point. <code>--sk-questionnaire-shortcut-gap</code> and <code>--sk-questionnaire-shortcut-gutter</code> are published too.",
+              "title": "One spacing rung per level, and sizes in the order of importance"
+            },
+            "es": {
+              "body": "El formulario usaba un solo paso (<code>md</code>) para separar sus bandas y para el interior de la pregunta, y nada distinguía una banda de lo que va dentro. Ahora hay cuatro escalones: <code>lg</code> entre bandas, <code>md</code> entre la pregunta y sus respuestas, <code>sm</code> entre las opciones y <code>xs</code> entre la pregunta y su descripción, con <code>--sk-questionnaire-head-gap</code> publicado para ese último. En tipografía, la pregunta toma el par tamaño/interlineado <code>heading-h4</code> con peso <code>emphasis</code>, la descripción baja a <code>body-sm</code> (era el segundo texto más grande del formulario por encima de las respuestas a las que acompaña) y el título de cada opción pasa a peso <code>label</code>, vía el nuevo <code>--sk-tile-title-weight</code> de Tile. La escala Likert gana cifras tabulares y un punto con inset <code>sm</code>. Se publican también <code>--sk-questionnaire-shortcut-gap</code> y <code>--sk-questionnaire-shortcut-gutter</code>.",
+              "title": "Un escalón de espaciado por nivel, y los tamaños en el orden de la importancia"
+            },
+            "kind": "rework",
+            "target": "Questionnaire"
+          },
+          {
             "date": "2026-09-18",
             "en": {
               "body": "Likert stops composing tiles: each point is a <code>radio-group</code> radio, laid out across a <code>Box</code> with its label under the control and the anchors at the foot of the same box. The browser owns selection and keyboard again (no machine, no enhancer), and the contract declares what it composes (<code>radio-group.css</code>, <code>layout.css</code>). A four-point scale is the default example, so there is no middle to park on; any count works.",
@@ -6684,6 +7097,26 @@
             "es": {
               "body": "Entra al catálogo con <code>RadioGroup</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>name</code>, <code>value</code>, <code>orientation</code>, <code>disabled</code>, <code>required</code>. La hoja es <code>components/radio-group.css</code>.",
               "title": "RadioGroup se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
+    "rating": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-20",
+            "en": {
+              "body": "<code>Rating</code> is a radiogroup of whole steps, with keyboard support and an accessible name; <code>RatingDisplay</code> reports a fractional average and fills the exact fraction (4.3 of 5 stops at 86%). The symbol is a CSS mask behind <code>--sk-rating-symbol</code>, not an icon vocabulary role, so swapping it for a heart is one declaration. <code>Meter</code> hands over the rating intent.",
+              "title": "Rating, as an input and as a display"
+            },
+            "es": {
+              "body": "<code>Rating</code> es un radiogroup de pasos enteros, con teclado y nombre accesible; <code>RatingDisplay</code> reporta un promedio con decimales y rellena la fraccion exacta (4,3 de 5 corta al 86%). El simbolo es una mascara CSS detras de <code>--sk-rating-symbol</code>, no un rol del vocabulario de iconos, asi que cambiarlo por un corazon es una sola declaracion. <code>Meter</code> cede el intent de rating.",
+              "title": "Rating, como input y como display"
             },
             "kind": "feature"
           }
@@ -7668,6 +8101,30 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-19",
+            "en": {
+              "body": "A rail that says nothing about orientation already fell to the compact column on small screens. One that pins <code>orientation=\"horizontal\"</code> is opting out of that column, and until now that left it with no answer for a phone at all: three short labels survive 390px and a fourth, or one longer name, does not. Below <code>compact</code> that rail now draws as <code>appearance=\"segments\"</code>: the sequence is still countable, the done stages still obvious, and it costs no width per stage, so it holds at any number of them. The labels are not lost, only undrawn.",
+              "title": "A pinned horizontal rail draws as bars on a phone"
+            },
+            "es": {
+              "body": "Un rail que no dice nada sobre orientación ya caía a la columna compacta en pantallas chicas. El que fija <code>orientation=\"horizontal\"</code> está optando por salirse de esa columna, y hasta ahora eso lo dejaba sin ninguna respuesta para un teléfono: tres etiquetas cortas sobreviven 390px y una cuarta, o un nombre más largo, no. Abajo de <code>compact</code> ese rail pasa a dibujarse como <code>appearance=\"segments\"</code>: la secuencia se sigue contando, las etapas hechas se siguen viendo, y no cuesta ancho por etapa, así que aguanta cualquier cantidad. Las etiquetas no se pierden, sólo no se dibujan.",
+              "title": "Un rail horizontal fijado se dibuja como barras en un teléfono"
+            },
+            "kind": "rework"
+          },
+          {
+            "date": "2026-09-19",
+            "en": {
+              "body": "<code>appearance=\"segments\"</code> draws the same sequence as a row of bars, one per stage, and stops drawing the labels. It is the shape for a progress read in passing rather than studied: the stages are still countable and the done ones still obvious, but a name per stage would not fit and was never the point. The statuses, <code>aria-current</code> and the windowing are unchanged, which is why this is an appearance and not another component. The current stage is marked with a ring rather than filled: filling it would say it is done, which is the one thing it is not. The bars are the track, so they carry no connector. The thickness retunes with <code>--sk-steps-segment-size</code>, and the labels still exist for a screen reader.",
+              "title": "Steps can be drawn as bars"
+            },
+            "es": {
+              "body": "<code>appearance=\"segments\"</code> dibuja la misma secuencia como una fila de barras, una por etapa, y deja de dibujar las etiquetas. Es la forma para un progreso que se lee de reojo en vez de estudiarse: las etapas se siguen contando y las hechas se siguen viendo, pero un nombre por etapa no entraba y nunca era el punto. Los estados, el <code>aria-current</code> y el ventaneo no cambian, y por eso es una apariencia y no otro componente. La etapa actual va marcada con un aro, no llena: llenarla diría que está hecha, que es justo lo que no está. Las barras son la pista, así que no llevan conector. El grosor se retunea con <code>--sk-steps-segment-size</code>, y las etiquetas siguen existiendo para un lector de pantalla.",
+              "title": "Los pasos pueden dibujarse como barras"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-09-17",
             "en": {
               "body": "An entry no longer takes <code>current</code>: the stage with <code>status: \"current\"</code> gets <code>aria-current=\"step\"</code>. They used to be two loose facts, so a tree could mark a stage current without announcing it, and React (which derived it from status) answered differently from the markup. <code>orientation</code> pins the rail's direction, what React already took as <code>data-orientation</code>.",
@@ -8336,6 +8793,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-18",
+            "en": {
+              "body": "<code>--sk-tile-title-weight</code> is published beside <code>--sk-font-heading-sm</code>, which already let the size move. A caller shrinking a tile to row size (<code>Questionnaire</code>'s choices) got 14px at <code>heading</code> weight and an answer that shouted over the question asking it. The default is unchanged.",
+              "title": "The tile title's weight can be retuned"
+            },
+            "es": {
+              "body": "<code>--sk-tile-title-weight</code> se publica junto a <code>--sk-font-heading-sm</code>, que ya dejaba cambiar el tamaño. Quien encoge un tile a tamaño de fila (las opciones de <code>Questionnaire</code>) recibía 14px en peso <code>heading</code> y una respuesta que gritaba más fuerte que la pregunta. El valor por defecto no cambia.",
+              "title": "El peso del título del tile se puede retunear"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-09-17",
             "en": {
               "body": "The selected border was asked for with <code>:has(&gt; input:indeterminate)</code>, and a radio is <code>:indeterminate</code> while no radio in its group is checked: every option of an untouched <code>TileRadioGroup</code> started with the chosen border and only turned grey once the reader picked one. The rule now says <code>input[type=\"checkbox\"]:indeterminate</code>, the third state it meant to name.",
@@ -8665,6 +9134,26 @@
             "es": {
               "body": "Entra al catálogo con <code>TimeField</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-time-field</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>name</code>, <code>locale</code>, <code>value</code>, <code>minuteStep</code>, <code>disabled</code>, <code>readOnly</code>, <code>required</code>, <code>hourLabel</code>, <code>minuteLabel</code>, <code>periodLabel</code>, <code>clearLabel</code>. La hoja es <code>components/time-field.css</code>.",
               "title": "TimeField se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
+    "timeline": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-20",
+            "en": {
+              "body": "It joins the catalogue with <code>Timeline</code>, <code>TimelineItem</code>: events that already happened, read down a rail. The hierarchy is three rungs (time as a caption eyebrow, an h4 heading, body detail), which is the difference from Changelog, a dense document at 85ch. The time is two fields: <code>time</code> (ISO, written to <code>&lt;time datetime&gt;</code>) and the visible slot, which the React binding calls <code>timeLabel</code>. The dot takes the kit's <code>Icon</code> (not any node), the same way Callout's does. There is no enhancer: the markup is complete on its own. Its stylesheet is <code>components/timeline.css</code>.",
+              "title": "Timeline is published as a contract, with 2 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Timeline</code>, <code>TimelineItem</code>: eventos que ya ocurrieron, leídos por un riel. La jerarquía es de tres peldaños (tiempo como eyebrow en caption, heading en h4, detalle en body), que es la diferencia con Changelog, un documento denso a 85ch. El tiempo son dos campos: <code>time</code> (ISO, va a <code>&lt;time datetime&gt;</code>) y el slot visible, que en React se llama <code>timeLabel</code>. El punto acepta el <code>Icon</code> del kit (no un nodo cualquiera), igual que Callout. No tiene enhancer: el markup está completo por sí solo. La hoja es <code>components/timeline.css</code>.",
+              "title": "Timeline se publica como contrato, con 2 signatures"
             },
             "kind": "feature"
           }
@@ -9999,6 +10488,12 @@
           "output": false,
           "part": "item",
           "sheet": "@skryensya/core/components/tile.css"
+        },
+        "--sk-tile-title-weight": {
+          "default": "var(--font-weight-heading)",
+          "output": false,
+          "part": "item",
+          "sheet": "@skryensya/core/components/tile.css"
         }
       },
       "hooks": [
@@ -10023,7 +10518,8 @@
         "--sk-tile-border-color",
         "--sk-tile-padding",
         "--sk-tile-radius",
-        "--sk-tile-shadow"
+        "--sk-tile-shadow",
+        "--sk-tile-title-weight"
       ],
       "hookSheets": [
         "@skryensya/core/components/tile.css"
@@ -10361,6 +10857,12 @@
           "part": "root",
           "sheet": "@skryensya/core/components/annotation.css"
         },
+        "--sk-annotated-key-color": {
+          "default": "var(--color-text-tertiary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/annotation.css"
+        },
         "--sk-annotated-subject-filter": {
           "default": "grayscale(1)",
           "output": false,
@@ -10370,6 +10872,7 @@
       },
       "hooks": [
         "--sk-annotated-gap",
+        "--sk-annotated-key-color",
         "--sk-annotated-subject-filter"
       ],
       "id": "annotation",
@@ -10409,6 +10912,7 @@
         }
       },
       "parts": {
+        "key": "sk-annotated__key",
         "label": "sk-annotation",
         "leader": "sk-annotated__leader",
         "leaders": "sk-annotated__leaders",
@@ -10536,6 +11040,9 @@
               "prop": "annotations",
               "required": true
             },
+            "key": {
+              "accepts": "text"
+            },
             "subject": {
               "accepts": "node",
               "required": true
@@ -10559,6 +11066,12 @@
                 ],
                 "part": "subject",
                 "slot": "subject"
+              },
+              {
+                "element": "p",
+                "part": "key",
+                "slot": "key",
+                "whenGiven": "key"
               },
               {
                 "attrs": {
@@ -21105,7 +21618,7 @@
       ],
       "bindings": {
         "Feed": {
-          "enhancer": null,
+          "enhancer": "data-sk-feed",
           "markup": true,
           "portals": false,
           "react": "@skryensya/react/feed#Feed"
@@ -21150,6 +21663,12 @@
           "attr": "aria-busy",
           "default": false,
           "falseValue": "false",
+          "trueValue": "true",
+          "type": "boolean"
+        },
+        "keyboard": {
+          "attr": "data-keyboard",
+          "default": false,
           "trueValue": "true",
           "type": "boolean"
         },
@@ -21215,9 +21734,11 @@
             "activity-feed",
             "comment-stream"
           ],
+          "mount": "data-sk-feed",
           "options": [
             "label",
-            "busy"
+            "busy",
+            "keyboard"
           ],
           "react": {
             "from": "@skryensya/react/feed",
@@ -21361,8 +21882,32 @@
           "part": "root",
           "sheet": "@skryensya/core/components/file-upload.css"
         },
+        "--sk-file-upload-dropzone-title-size": {
+          "default": "var(--font-size-heading-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/file-upload.css"
+        },
         "--sk-file-upload-gap": {
           "default": "var(--space-stack-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/file-upload.css"
+        },
+        "--sk-file-upload-icon-bg": {
+          "default": "var(--color-bg-surface-sunken)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/file-upload.css"
+        },
+        "--sk-file-upload-icon-color": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/file-upload.css"
+        },
+        "--sk-file-upload-icon-size": {
+          "default": "calc(var(--size-icon-lg) * 2)",
           "output": false,
           "part": "root",
           "sheet": "@skryensya/core/components/file-upload.css"
@@ -21379,6 +21924,24 @@
           "part": "root",
           "sheet": "@skryensya/core/components/file-upload.css"
         },
+        "--sk-file-upload-item-gap": {
+          "default": "var(--space-inline-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/file-upload.css"
+        },
+        "--sk-file-upload-item-padding": {
+          "default": "var(--space-inset-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/file-upload.css"
+        },
+        "--sk-file-upload-item-preview-size": {
+          "default": "2.5rem",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/file-upload.css"
+        },
         "--sk-file-upload-item-radius": {
           "default": "var(--radius-control)",
           "output": false,
@@ -21387,6 +21950,24 @@
         },
         "--sk-file-upload-label-color": {
           "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/file-upload.css"
+        },
+        "--sk-file-upload-overlay-bg": {
+          "default": "var(--color-bg-surface-overlay)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/file-upload.css"
+        },
+        "--sk-file-upload-overlay-border-color": {
+          "default": "var(--color-border-accent)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/file-upload.css"
+        },
+        "--sk-file-upload-overlay-radius": {
+          "default": "var(--radius-surface)",
           "output": false,
           "part": "root",
           "sheet": "@skryensya/core/components/file-upload.css"
@@ -21401,8 +21982,18 @@
         "--sk-file-upload-gap",
         "--sk-file-upload-item-bg",
         "--sk-file-upload-item-border-color",
+        "--sk-file-upload-item-gap",
+        "--sk-file-upload-item-padding",
+        "--sk-file-upload-item-preview-size",
         "--sk-file-upload-item-radius",
-        "--sk-file-upload-label-color"
+        "--sk-file-upload-dropzone-title-size",
+        "--sk-file-upload-icon-bg",
+        "--sk-file-upload-icon-color",
+        "--sk-file-upload-icon-size",
+        "--sk-file-upload-label-color",
+        "--sk-file-upload-overlay-bg",
+        "--sk-file-upload-overlay-border-color",
+        "--sk-file-upload-overlay-radius"
       ],
       "id": "file-upload",
       "options": {
@@ -21418,6 +22009,15 @@
           "trueValue": "",
           "type": "boolean"
         },
+        "dropScope": {
+          "attr": "data-drop-scope",
+          "default": "zone",
+          "type": "enum",
+          "values": [
+            "zone",
+            "page"
+          ]
+        },
         "maxFiles": {
           "attr": "data-max-files",
           "integer": true,
@@ -21427,6 +22027,20 @@
         },
         "maxFileSize": {
           "attr": "data-max-file-size",
+          "integer": true,
+          "machineInput": true,
+          "min": 1,
+          "type": "number"
+        },
+        "maxTotalSize": {
+          "attr": "data-max-total-size",
+          "integer": true,
+          "machineInput": true,
+          "min": 1,
+          "type": "number"
+        },
+        "minFileSize": {
+          "attr": "data-min-file-size",
           "integer": true,
           "machineInput": true,
           "min": 1,
@@ -21455,15 +22069,23 @@
       "parts": {
         "dropzone": "sk-file-upload__dropzone",
         "hint": "sk-file-upload__hint",
+        "icon": "sk-file-upload__icon",
         "input": "sk-file-upload__input",
+        "instruction": "sk-file-upload__instruction",
         "item": "sk-file-upload__item",
+        "itemBody": "sk-file-upload__item-body",
         "itemDelete": "sk-file-upload__item-delete",
         "itemGroup": "sk-file-upload__item-group",
+        "itemKind": "sk-file-upload__item-kind",
         "itemName": "sk-file-upload__item-name",
+        "itemPreview": "sk-file-upload__item-preview",
         "itemSize": "sk-file-upload__item-size",
         "label": "sk-file-upload__label",
+        "overlay": "sk-file-upload__overlay",
+        "overlayBody": "sk-file-upload__overlay-body",
         "rejection": "sk-file-upload__rejection",
         "root": "sk-file-upload",
+        "tally": "sk-file-upload__tally",
         "trigger": "sk-file-upload__trigger"
       },
       "semantics": {
@@ -21479,7 +22101,8 @@
           ],
           "useWhen": [
             "hay que adjuntar archivos: un CV, un comprobante, fotos",
-            "conviene aceptar arrastrar y soltar además del botón, sin obligar a nadie a arrastrar"
+            "conviene aceptar arrastrar y soltar además del botón, sin obligar a nadie a arrastrar",
+            "se espera poder soltar el archivo sobre un panel entero o sobre toda la página, no solo sobre la caja punteada; eso es dropScope element o page, con overlayLabel para que el destino se vea"
           ]
         }
       },
@@ -21516,7 +22139,10 @@
             "disabled",
             "required",
             "maxFiles",
-            "maxFileSize"
+            "maxFileSize",
+            "minFileSize",
+            "maxTotalSize",
+            "dropScope"
           ],
           "react": {
             "from": "@skryensya/react/file-upload",
@@ -21526,13 +22152,25 @@
             "clearLabel": {
               "accepts": "text"
             },
+            "dropzoneIcon": {
+              "accepts": "signature",
+              "of": [
+                "Icon"
+              ]
+            },
             "dropzoneLabel": {
               "accepts": "text",
               "required": true
             },
+            "hintLabel": {
+              "accepts": "text"
+            },
             "label": {
               "accepts": "text",
               "required": true
+            },
+            "overlayLabel": {
+              "accepts": "text"
             },
             "triggerLabel": {
               "accepts": "text",
@@ -21550,8 +22188,41 @@
               {
                 "children": [
                   {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
                     "element": "span",
+                    "part": "icon",
+                    "slot": "dropzoneIcon",
+                    "whenGiven": "dropzoneIcon"
+                  },
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "upload",
+                          "data-sk-icon-size": "lg"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span",
+                    "part": "icon",
+                    "whenMissing": "dropzoneIcon"
+                  },
+                  {
+                    "element": "span",
+                    "part": "instruction",
                     "slot": "dropzoneLabel"
+                  },
+                  {
+                    "element": "p",
+                    "part": "hint",
+                    "slot": "hintLabel",
+                    "whenGiven": "hintLabel"
                   }
                 ],
                 "element": "div",
@@ -21583,6 +22254,7 @@
                 },
                 "element": "button",
                 "mount": "data-sk-file-upload-trigger",
+                "part": "trigger",
                 "slot": "triggerLabel"
               },
               {
@@ -21599,6 +22271,23 @@
                 "mount": "data-sk-file-upload-clear",
                 "slot": "clearLabel",
                 "whenGiven": "clearLabel"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "hidden": ""
+                },
+                "children": [
+                  {
+                    "element": "div",
+                    "part": "overlayBody",
+                    "slot": "overlayLabel"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-file-upload-overlay",
+                "part": "overlay",
+                "whenGiven": "overlayLabel"
               }
             ],
             "element": "div",
@@ -23538,6 +24227,20 @@
       },
       "category": "forms",
       "css": "@skryensya/core/components/input.css",
+      "eventDetails": {
+        "validate": {
+          "detail": {
+            "normalized": "string | undefined",
+            "ok": "boolean",
+            "reason": "InputFormatReason | undefined"
+          },
+          "reactProp": "onValidate",
+          "source": "root"
+        }
+      },
+      "events": {
+        "validate": "sk:inputvalidate"
+      },
       "hookDetails": {
         "--sk-input-bg": {
           "default": "var(--color-bg-surface-sunken)",
@@ -23700,11 +24403,33 @@
             "lg"
           ]
         },
+        "country": {
+          "attr": "data-country",
+          "pattern": {
+            "example": "CL",
+            "source": "^[A-Z]{2}$"
+          },
+          "type": "string"
+        },
         "disabled": {
           "attr": "disabled",
           "default": false,
           "trueValue": "",
           "type": "boolean"
+        },
+        "errorLabel": {
+          "attr": "data-error-label",
+          "type": "string"
+        },
+        "format": {
+          "attr": "data-format",
+          "type": "enum",
+          "values": [
+            "rut",
+            "phone",
+            "url",
+            "email"
+          ]
         },
         "name": {
           "attr": "name",
@@ -23733,13 +24458,17 @@
           ],
           "avoidWhen": [
             "el texto es largo o multilínea; eso es Textarea",
+            "la validez depende del servidor (un RUT que ya está registrado); eso es el slot `error` del FormField, escrito por quien compone, y le gana al mensaje de `format`",
+            "se quiere validar un teléfono sin agregar dependencias: no hay camino; el plan de numeración son datos y el kit prefiere no validar antes que validar mal",
             "se elige de un conjunto cerrado de opciones; eso es un Select",
             "el valor es un número con paso y límites; eso es NumberField",
             "la plataforma debe gobernar time/color/range y se quiere su control nativo; eso es NativeInput"
           ],
           "useWhen": [
             "el usuario escribe una línea de texto: email, nombre, búsqueda",
-            "el tipo nativo aporta teclado y validación del navegador (email, tel, url)"
+            "el tipo nativo aporta teclado y validación del navegador (email, tel, url)",
+            "el valor tiene una validez que el navegador no sabe comprobar: un RUT con su dígito verificador, una URL que se pueda abrir; eso es `format`",
+            "es un teléfono de cualquier país: `format=\"phone\"` más `country`, que requiere instalar `@skryensya/phone` y registrarlo al arranque"
           ]
         },
         "NativeInput": {
@@ -23798,7 +24527,10 @@
             "type",
             "name",
             "placeholder",
-            "disabled"
+            "disabled",
+            "format",
+            "country",
+            "errorLabel"
           ],
           "parents": [
             "FormField"
@@ -27844,8 +28576,7 @@
           "intent": [
             "measurement-in-a-range",
             "disk-usage",
-            "battery-level",
-            "rating-out-of-a-scale"
+            "battery-level"
           ],
           "mount": "data-sk-meter",
           "options": [
@@ -31131,6 +31862,21 @@
       }
     },
     "questionnaire": {
+      "a11y": [
+        {
+          "because": "A scale renders its points as bare numbers, so nothing on the page or in the accessibility tree says what 1 and 5 mean. Naming the ends is what turns a row of radios into a question with a direction; the anchors are read as part of the group, not as decoration.",
+          "requiresOneOf": [
+            "likertMinLabel",
+            "likertMaxLabel"
+          ],
+          "signatures": [
+            "QuestionnaireItem"
+          ],
+          "when": {
+            "likert": true
+          }
+        }
+      ],
       "bindings": {
         "Questionnaire": {
           "enhancer": "data-sk-questionnaire",
@@ -31189,7 +31935,13 @@
           "sheet": "@skryensya/core/components/progress.css"
         },
         "--sk-questionnaire-gap": {
-          "default": "var(--space-stack-md)",
+          "default": "var(--space-stack-lg)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/questionnaire.css"
+        },
+        "--sk-questionnaire-head-gap": {
+          "default": "var(--space-inline-xs)",
           "output": false,
           "part": "root",
           "sheet": "@skryensya/core/components/questionnaire.css"
@@ -31201,13 +31953,31 @@
           "sheet": "@skryensya/core/components/questionnaire.css"
         },
         "--sk-questionnaire-measure": {
-          "default": "56ch",
+          "default": "60ch",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/questionnaire.css"
+        },
+        "--sk-questionnaire-rail": {
+          "default": "12rem",
           "output": false,
           "part": "root",
           "sheet": "@skryensya/core/components/questionnaire.css"
         },
         "--sk-questionnaire-shortcut-fg": {
           "default": "var(--color-text-tertiary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/questionnaire.css"
+        },
+        "--sk-questionnaire-shortcut-gap": {
+          "default": "var(--space-inline-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/questionnaire.css"
+        },
+        "--sk-questionnaire-shortcut-gutter": {
+          "default": "calc(\n      1.6 * var(--font-size-body-sm) + var(--sk-questionnaire-shortcut-gap)\n    )",
           "output": false,
           "part": "root",
           "sheet": "@skryensya/core/components/questionnaire.css"
@@ -31229,20 +31999,31 @@
           "output": false,
           "part": null,
           "sheet": "@skryensya/core/components/steps.css"
+        },
+        "--sk-steps-segment-size": {
+          "default": "var(--space-inset-sm)",
+          "output": false,
+          "part": null,
+          "sheet": "@skryensya/core/components/steps.css"
         }
       },
       "hooks": [
         "--sk-questionnaire-gap",
+        "--sk-questionnaire-head-gap",
         "--sk-questionnaire-item-gap",
         "--sk-questionnaire-measure",
+        "--sk-questionnaire-rail",
         "--sk-questionnaire-shortcut-fg",
+        "--sk-questionnaire-shortcut-gap",
+        "--sk-questionnaire-shortcut-gutter",
         "--sk-checkbox-group-gap",
         "--sk-checkbox-group-indent",
         "--sk-progress-color",
         "--sk-progress-fill",
         "--sk-steps-connector-size",
         "--sk-steps-item-padding",
-        "--sk-steps-marker-size"
+        "--sk-steps-marker-size",
+        "--sk-steps-segment-size"
       ],
       "hookSheets": [
         "@skryensya/core/components/checkbox.css",
@@ -31317,7 +32098,8 @@
           "values": [
             "text",
             "bar",
-            "steps"
+            "steps",
+            "segments"
           ]
         },
         "progressLabel": {
@@ -31325,6 +32107,16 @@
           "default": "Questionnaire progress",
           "machineInput": true,
           "type": "string"
+        },
+        "progressOrientation": {
+          "attr": "data-progress-orientation",
+          "default": "horizontal",
+          "machineInput": true,
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ]
         },
         "required": {
           "attr": "data-required",
@@ -31393,9 +32185,41 @@
         "textLabel": {
           "type": "string"
         },
+        "textLines": {
+          "attr": "rows",
+          "integer": true,
+          "max": 20,
+          "min": 2,
+          "type": "number"
+        },
+        "textMax": {
+          "attr": "max",
+          "type": "number"
+        },
+        "textMin": {
+          "attr": "min",
+          "type": "number"
+        },
         "textPlaceholder": {
           "attr": "placeholder",
           "type": "string"
+        },
+        "textStep": {
+          "attr": "step",
+          "type": "number"
+        },
+        "textType": {
+          "attr": "type",
+          "default": "text",
+          "type": "enum",
+          "values": [
+            "text",
+            "email",
+            "tel",
+            "url",
+            "number",
+            "date"
+          ]
         }
       },
       "parts": {
@@ -31404,6 +32228,7 @@
         "anchors": "sk-questionnaire__anchors",
         "answers": "sk-questionnaire__answers",
         "choices": "sk-questionnaire__choices",
+        "control": "sk-questionnaire__control",
         "description": "sk-questionnaire__description",
         "error": "sk-questionnaire__error",
         "item": "sk-questionnaire__item",
@@ -31493,6 +32318,7 @@
           "mount": "data-sk-questionnaire",
           "options": [
             "progress",
+            "progressOrientation",
             "shortcuts",
             "defaultItem",
             "previousLabel",
@@ -31618,7 +32444,8 @@
           "atLeastOneOf": [
             [
               "choices",
-              "text"
+              "text",
+              "control"
             ]
           ],
           "compose": [
@@ -31680,6 +32507,21 @@
             ],
             "text": [
               "textLabel"
+            ],
+            "textLines": [
+              "text"
+            ],
+            "textMax": [
+              "text"
+            ],
+            "textMin": [
+              "text"
+            ],
+            "textStep": [
+              "text"
+            ],
+            "textType": [
+              "text"
             ]
           },
           "intent": [
@@ -31700,6 +32542,11 @@
             "text",
             "textLabel",
             "textPlaceholder",
+            "textType",
+            "textLines",
+            "textMin",
+            "textMax",
+            "textStep",
             "stepLabel",
             "likert",
             "likertMinLabel",
@@ -31747,6 +32594,9 @@
                 }
               }
             },
+            "control": {
+              "accepts": "node"
+            },
             "description": {
               "accepts": "text"
             },
@@ -31787,9 +32637,8 @@
                           "sk-radio-group"
                         ],
                         "attrs": {
-                          "aria-orientation": "horizontal",
-                          "data-orientation": "horizontal",
-                          "data-spread": "",
+                          "aria-orientation": "vertical",
+                          "data-orientation": "vertical",
                           "role": "radiogroup"
                         },
                         "children": [
@@ -31893,7 +32742,7 @@
                           "sk-interactive"
                         ],
                         "attrs": {
-                          "data-padding": "sm",
+                          "data-padding": "md",
                           "data-part": "item",
                           "data-scope": "tile"
                         },
@@ -31934,20 +32783,20 @@
                                 "element": "span",
                                 "itemSlot": "description",
                                 "whenItemSlotGiven": "description"
-                              },
-                              {
-                                "also": [
-                                  "sk-kbd"
-                                ],
-                                "attrs": {
-                                  "aria-hidden": "true",
-                                  "data-tone": "neutral"
-                                },
-                                "element": "kbd",
-                                "part": "shortcut"
                               }
                             ],
                             "element": "span"
+                          },
+                          {
+                            "also": [
+                              "sk-kbd"
+                            ],
+                            "attrs": {
+                              "aria-hidden": "true",
+                              "data-tone": "neutral"
+                            },
+                            "element": "kbd",
+                            "part": "shortcut"
                           },
                           {
                             "also": [
@@ -31985,7 +32834,7 @@
                           "sk-interactive"
                         ],
                         "attrs": {
-                          "data-padding": "sm",
+                          "data-padding": "md",
                           "data-scope": "tile"
                         },
                         "children": [
@@ -32018,20 +32867,20 @@
                                 "element": "span",
                                 "itemSlot": "description",
                                 "whenItemSlotGiven": "description"
-                              },
-                              {
-                                "also": [
-                                  "sk-kbd"
-                                ],
-                                "attrs": {
-                                  "aria-hidden": "true",
-                                  "data-tone": "neutral"
-                                },
-                                "element": "kbd",
-                                "part": "shortcut"
                               }
                             ],
                             "element": "span"
+                          },
+                          {
+                            "also": [
+                              "sk-kbd"
+                            ],
+                            "attrs": {
+                              "aria-hidden": "true",
+                              "data-tone": "neutral"
+                            },
+                            "element": "kbd",
+                            "part": "shortcut"
                           },
                           {
                             "also": [
@@ -32103,6 +32952,12 @@
                     "whenGiven": "multiple"
                   },
                   {
+                    "element": "div",
+                    "part": "control",
+                    "slot": "control",
+                    "whenGiven": "control"
+                  },
+                  {
                     "also": [
                       "sk-form-field"
                     ],
@@ -32120,8 +32975,7 @@
                           "sk-input"
                         ],
                         "attrs": {
-                          "data-size": "sm",
-                          "type": "text"
+                          "data-size": "sm"
                         },
                         "element": "input",
                         "name": "text",
@@ -32130,8 +32984,33 @@
                         },
                         "options": [
                           "name",
-                          "textPlaceholder"
-                        ]
+                          "textPlaceholder",
+                          "textType",
+                          "textMin",
+                          "textMax",
+                          "textStep"
+                        ],
+                        "whenMissing": "textLines"
+                      },
+                      {
+                        "also": [
+                          "sk-input",
+                          "sk-input--textarea"
+                        ],
+                        "attrs": {
+                          "data-size": "sm"
+                        },
+                        "element": "textarea",
+                        "name": "text",
+                        "optionAttrs": {
+                          "name": "name"
+                        },
+                        "options": [
+                          "name",
+                          "textPlaceholder",
+                          "textLines"
+                        ],
+                        "whenGiven": "textLines"
                       }
                     ],
                     "element": "div",
@@ -32176,7 +33055,10 @@
             }
           ]
         }
-      }
+      },
+      "systemOwned": [
+        "position"
+      ]
     },
     "radio-group": {
       "a11y": [
@@ -32587,6 +33469,380 @@
             "element": "div",
             "host": true,
             "part": "radioGroup"
+          }
+        }
+      }
+    },
+    "rating": {
+      "bindings": {
+        "Rating": {
+          "enhancer": "data-sk-rating",
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/rating#Rating"
+        },
+        "RatingDisplay": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/rating#RatingDisplay"
+        }
+      },
+      "category": "forms",
+      "css": "@skryensya/core/components/rating.css",
+      "eventDetails": {
+        "valueChange": {
+          "detail": {
+            "value": "number"
+          },
+          "reactProp": "onValueChange",
+          "source": "root",
+          "trigger": "item"
+        }
+      },
+      "events": {
+        "valueChange": "sk:ratingvaluechange"
+      },
+      "hookDetails": {
+        "--sk-rating-fill": {
+          "default": "0%",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/rating.css"
+        },
+        "--sk-rating-gap": {
+          "default": "var(--space-inline-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/rating.css"
+        },
+        "--sk-rating-max": {
+          "default": "5",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/rating.css"
+        },
+        "--sk-rating-off-color": {
+          "default": "var(--color-border-default)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/rating.css"
+        },
+        "--sk-rating-on-color": {
+          "default": "var(--color-text-warning)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/rating.css"
+        },
+        "--sk-rating-size": {
+          "default": "var(--size-icon-md)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/rating.css"
+        },
+        "--sk-rating-symbol": {
+          "default": "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M11.5 2.3a.6.6 0 0 1 1 0l2.6 5.3 5.8.8a.6.6 0 0 1 .3 1l-4.2 4.1 1 5.8a.6.6 0 0 1-.9.6L12 17.2l-5.2 2.7a.6.6 0 0 1-.9-.6l1-5.8-4.2-4.1a.6.6 0 0 1 .3-1l5.8-.8z'/%3E%3C/svg%3E\")",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/rating.css"
+        },
+        "--sk-rating-tile": {
+          "default": "calc(var(--sk-rating-size) + var(--sk-rating-gap))",
+          "output": false,
+          "part": "symbols",
+          "sheet": "@skryensya/core/components/rating.css"
+        }
+      },
+      "hooks": [
+        "--sk-rating-fill",
+        "--sk-rating-gap",
+        "--sk-rating-max",
+        "--sk-rating-off-color",
+        "--sk-rating-on-color",
+        "--sk-rating-size",
+        "--sk-rating-symbol",
+        "--sk-rating-tile"
+      ],
+      "id": "rating",
+      "options": {
+        "defaultValue": {
+          "attr": "data-default-value",
+          "between": {
+            "max": "max"
+          },
+          "default": 0,
+          "integer": true,
+          "machineInput": true,
+          "type": "number"
+        },
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "itemLabel": {
+          "attr": "data-item-label",
+          "default": "{value}",
+          "machineInput": true,
+          "type": "string"
+        },
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "max": {
+          "default": 5,
+          "integer": true,
+          "min": 1,
+          "styleProperty": "--sk-rating-max",
+          "type": "number"
+        },
+        "name": {
+          "attr": "data-name",
+          "machineInput": true,
+          "type": "string"
+        },
+        "readOnly": {
+          "attr": "data-readonly",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "symbolSize": {
+          "attr": "data-size",
+          "default": "md",
+          "type": "enum",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        "value": {
+          "between": {
+            "max": "max"
+          },
+          "default": 0,
+          "styleProperty": "--sk-rating-value",
+          "type": "number"
+        }
+      },
+      "parts": {
+        "control": "sk-rating__control",
+        "count": "sk-rating__count",
+        "input": "sk-rating__input",
+        "item": "sk-rating__item",
+        "root": "sk-rating",
+        "symbol": "sk-rating__symbol",
+        "symbols": "sk-rating__symbols",
+        "value": "sk-rating__value"
+      },
+      "semantics": {
+        "Rating": {
+          "alternatives": [
+            "RatingDisplay",
+            "Slider",
+            "Meter"
+          ],
+          "avoidWhen": [
+            "el valor solo se muestra y nadie lo cambia; eso es RatingDisplay",
+            "la escala es continua o larga (0 a 100); eso es un Slider",
+            "es una medición que se dibuja como barra, no como símbolos: uso de disco, batería; eso es Meter",
+            "son dos opciones opuestas (me gusta / no me gusta); eso son dos Button o un IconToggle"
+          ],
+          "useWhen": [
+            "la persona elige una puntuación en una escala corta y ordenada: cuántas estrellas le pone a algo",
+            "hace falta que el valor viaje en un formulario y se pueda recorrer con el teclado como un grupo de radios"
+          ]
+        },
+        "RatingDisplay": {
+          "alternatives": [
+            "Rating",
+            "Meter",
+            "Stat"
+          ],
+          "avoidWhen": [
+            "la persona tiene que poder cambiarlo; eso es Rating",
+            "la medición se lee mejor como barra con su rótulo y su número; eso es Meter",
+            "no hay escala, es un número suelto; eso es Stat"
+          ],
+          "useWhen": [
+            "se reporta un promedio ya calculado: la nota de un producto, de una reseña, de un curso",
+            "el valor tiene decimales y hay que ser fiel a ellos; la tira se rellena en la fracción exacta"
+          ]
+        }
+      },
+      "signatures": {
+        "Rating": {
+          "forward": [
+            "id",
+            "aria-*"
+          ],
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "rating-input",
+            "star-rating",
+            "rate-this",
+            "review-score-input"
+          ],
+          "mount": "data-sk-rating",
+          "options": [
+            "defaultValue",
+            "max",
+            "label",
+            "name",
+            "disabled",
+            "readOnly",
+            "symbolSize",
+            "itemLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/rating",
+            "name": "Rating"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {},
+          "template": {
+            "children": [
+              {
+                "attrs": {
+                  "role": "radiogroup"
+                },
+                "children": [
+                  {
+                    "also": [
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "role": "radio"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "aria-hidden": "true"
+                        },
+                        "element": "span",
+                        "part": "symbol"
+                      }
+                    ],
+                    "element": "span",
+                    "mount": "data-sk-rating-item",
+                    "part": "item",
+                    "repeatComputed": {
+                      "from": [
+                        "max"
+                      ],
+                      "key": "value",
+                      "window": "rating-symbols"
+                    },
+                    "selectedBy": {
+                      "attr": "aria-checked",
+                      "option": "defaultValue",
+                      "value": "true"
+                    }
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-rating-control",
+                "options": [
+                  "label"
+                ],
+                "part": "control"
+              },
+              {
+                "attrs": {
+                  "hidden": "",
+                  "type": "text"
+                },
+                "element": "input",
+                "mount": "data-sk-rating-input",
+                "part": "input"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "RatingDisplay": {
+          "forward": [
+            "id",
+            "aria-*"
+          ],
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "rating-display",
+            "average-score",
+            "review-score",
+            "stars-out-of-five"
+          ],
+          "options": [
+            "value",
+            "max",
+            "label",
+            "symbolSize"
+          ],
+          "react": {
+            "from": "@skryensya/react/rating",
+            "name": "RatingDisplay"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {
+            "count": {
+              "accepts": "node"
+            },
+            "valueText": {
+              "accepts": "node"
+            }
+          },
+          "template": {
+            "attrs": {
+              "role": "img"
+            },
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "span",
+                "part": "symbols",
+                "style": [
+                  {
+                    "percentOf": [
+                      "value",
+                      "max"
+                    ],
+                    "property": "--sk-rating-fill"
+                  }
+                ]
+              },
+              {
+                "element": "span",
+                "name": "valueText",
+                "part": "value",
+                "slot": "valueText",
+                "whenGiven": "valueText"
+              },
+              {
+                "element": "span",
+                "name": "count",
+                "part": "count",
+                "slot": "count",
+                "whenGiven": "count"
+              }
+            ],
+            "element": "span",
+            "host": true,
+            "part": "root"
           }
         }
       }
@@ -35163,15 +36419,31 @@
           "output": false,
           "part": "root",
           "sheet": "@skryensya/core/components/steps.css"
+        },
+        "--sk-steps-segment-size": {
+          "default": "var(--space-inset-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/steps.css"
         }
       },
       "hooks": [
         "--sk-steps-connector-size",
+        "--sk-steps-segment-size",
         "--sk-steps-item-padding",
         "--sk-steps-marker-size"
       ],
       "id": "steps",
       "options": {
+        "appearance": {
+          "attr": "data-appearance",
+          "default": "markers",
+          "type": "enum",
+          "values": [
+            "markers",
+            "segments"
+          ]
+        },
         "orientation": {
           "attr": "data-orientation",
           "prop": "data-orientation",
@@ -35215,7 +36487,8 @@
             "wizard-position"
           ],
           "options": [
-            "orientation"
+            "orientation",
+            "appearance"
           ],
           "react": {
             "from": "@skryensya/react/steps",
@@ -37775,6 +39048,12 @@
           "output": false,
           "part": "interactive",
           "sheet": "@skryensya/core/components/tile.css"
+        },
+        "--sk-tile-title-weight": {
+          "default": "var(--font-weight-heading)",
+          "output": false,
+          "part": "interactive",
+          "sheet": "@skryensya/core/components/tile.css"
         }
       },
       "hooks": [
@@ -37796,7 +39075,8 @@
         "--sk-tile-border-color",
         "--sk-tile-padding",
         "--sk-tile-radius",
-        "--sk-tile-shadow"
+        "--sk-tile-shadow",
+        "--sk-tile-title-weight"
       ],
       "hookSheets": [
         "@skryensya/core/components/checkbox.css",
@@ -39247,6 +40527,291 @@
             "element": "div",
             "host": true,
             "part": "root"
+          }
+        }
+      }
+    },
+    "timeline": {
+      "bindings": {
+        "Timeline": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/timeline#Timeline"
+        },
+        "TimelineItem": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/timeline#TimelineItem"
+        }
+      },
+      "category": "content",
+      "css": "@skryensya/core/components/timeline.css",
+      "hookDetails": {
+        "--sk-timeline-body-fg": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/timeline.css"
+        },
+        "--sk-timeline-connector-color": {
+          "default": "var(--color-border-subtle)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/timeline.css"
+        },
+        "--sk-timeline-connector-size": {
+          "default": "2px",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/timeline.css"
+        },
+        "--sk-timeline-content-gap": {
+          "default": "var(--space-stack-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/timeline.css"
+        },
+        "--sk-timeline-first-line": {
+          "default": "calc(var(--font-size-caption) * var(--font-line-height-body) / 2)",
+          "output": false,
+          "part": "item",
+          "sheet": "@skryensya/core/components/timeline.css"
+        },
+        "--sk-timeline-heading-fg": {
+          "default": "var(--color-text-primary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/timeline.css"
+        },
+        "--sk-timeline-heading-font-size": {
+          "default": "var(--font-size-heading-h4)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/timeline.css"
+        },
+        "--sk-timeline-item-gap": {
+          "default": "var(--space-stack-lg)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/timeline.css"
+        },
+        "--sk-timeline-marker-color": {
+          "default": "var(--color-border-strong)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/timeline.css"
+        },
+        "--sk-timeline-marker-size": {
+          "default": "0.75rem",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/timeline.css"
+        },
+        "--sk-timeline-measure": {
+          "default": "65ch",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/timeline.css"
+        },
+        "--sk-timeline-rail": {
+          "default": "2.5rem",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/timeline.css"
+        },
+        "--sk-timeline-time-fg": {
+          "default": "var(--color-text-tertiary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/timeline.css"
+        }
+      },
+      "hooks": [
+        "--sk-timeline-body-fg",
+        "--sk-timeline-connector-color",
+        "--sk-timeline-connector-size",
+        "--sk-timeline-content-gap",
+        "--sk-timeline-first-line",
+        "--sk-timeline-heading-fg",
+        "--sk-timeline-heading-font-size",
+        "--sk-timeline-item-gap",
+        "--sk-timeline-marker-color",
+        "--sk-timeline-marker-size",
+        "--sk-timeline-measure",
+        "--sk-timeline-rail",
+        "--sk-timeline-time-fg"
+      ],
+      "id": "timeline",
+      "options": {
+        "time": {
+          "attr": "datetime",
+          "type": "string"
+        },
+        "tone": {
+          "attr": "data-tone",
+          "default": "neutral",
+          "type": "enum",
+          "values": [
+            "neutral",
+            "accent",
+            "success",
+            "warning",
+            "danger"
+          ]
+        }
+      },
+      "parts": {
+        "body": "sk-timeline__body",
+        "heading": "sk-timeline__heading",
+        "item": "sk-timeline__item",
+        "marker": "sk-timeline__marker",
+        "root": "sk-timeline",
+        "time": "sk-timeline__time"
+      },
+      "semantics": {
+        "Timeline": {
+          "alternatives": [
+            "Steps",
+            "ProcessList",
+            "Changelog"
+          ],
+          "avoidWhen": [
+            "the reader is inside the process and has to be told which stage they are at; that is Steps",
+            "they are instructions to follow, with no time at all; that is a ProcessList",
+            "they are shipped releases; that is Changelog, which has its own vocabulary and scale"
+          ],
+          "useWhen": [
+            "events that already happened have to be shown, in the order they happened",
+            "the when matters as much as the what: a history, order tracking, an activity log",
+            "the author sets the direction by writing the entries in it; there is no order option"
+          ]
+        },
+        "TimelineItem": {
+          "alternatives": [
+            "Steps"
+          ],
+          "avoidWhen": [
+            "the event carries complete / current / upcoming; that is a step of Steps"
+          ],
+          "useWhen": [
+            "one event on the rail: a required heading, and optionally a time, an icon and a detail",
+            "the time is two fields: time (ISO, for the machine) and timeLabel (the visible copy)",
+            "tone marks the dot a scanning eye should stop at; it is never the only thing saying so"
+          ]
+        }
+      },
+      "signatures": {
+        "Timeline": {
+          "host": {
+            "element": "ol"
+          },
+          "intent": [
+            "event-history",
+            "activity-log",
+            "what-happened-when",
+            "order-tracking"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/timeline",
+            "name": "Timeline"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "TimelineItem"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "role": "list"
+            },
+            "element": "ol",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        },
+        "TimelineItem": {
+          "host": {
+            "element": "li"
+          },
+          "intent": [
+            "one-event",
+            "one-entry-of-a-history"
+          ],
+          "options": [
+            "time",
+            "tone"
+          ],
+          "parents": [
+            "Timeline"
+          ],
+          "react": {
+            "from": "@skryensya/react/timeline",
+            "name": "TimelineItem"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node"
+            },
+            "heading": {
+              "accepts": "text",
+              "required": true
+            },
+            "icon": {
+              "accepts": "signature",
+              "of": [
+                "Icon"
+              ]
+            },
+            "time": {
+              "accepts": "text",
+              "prop": "timeLabel"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "span",
+                "part": "marker",
+                "slot": "icon"
+              },
+              {
+                "element": "time",
+                "options": [
+                  "time"
+                ],
+                "part": "time",
+                "slot": "time",
+                "whenGiven": "time"
+              },
+              {
+                "element": "span",
+                "part": "heading",
+                "slot": "heading"
+              },
+              {
+                "element": "div",
+                "part": "body",
+                "slot": "children",
+                "whenGiven": "children"
+              }
+            ],
+            "element": "li",
+            "host": true,
+            "options": [
+              "tone"
+            ],
+            "part": "item"
           }
         }
       }
@@ -42230,7 +43795,7 @@
     "working": "0.0.1"
   },
   "schemaVersion": "2.3",
-  "sourceHash": "c0b063cdc880100c",
+  "sourceHash": "53fea38af7380336",
   "vocabulary": {
     "a11y": "When `when` holds, one of `requiresOneOf` must be given: an option, a raw attribute, a filled slot, or a child signature by name.",
     "atLeastOneOf": "At least one member of each group counts: a filled slot, a boolean option set to true, or an option other than its default.",

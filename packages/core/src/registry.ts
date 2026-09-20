@@ -9,6 +9,7 @@ import { statContract } from "./stat.js";
 import { calloutContract } from "./callout.js";
 import { processListContract } from "./process-list.js";
 import { changelogContract } from "./changelog.js";
+import { timelineContract } from "./timeline.js";
 import { chartContract } from "./chart.js";
 import { stepsContract } from "./steps.js";
 import { listContract } from "./list.js";
@@ -39,6 +40,7 @@ import { menuContract } from "./menu.js";
 import { menubarContract } from "./menubar.js";
 import { megamenuContract } from "./megamenu.js";
 import { meterContract } from "./meter.js";
+import { ratingContract } from "./rating.js";
 import { dataGridContract } from "./data-grid.js";
 import { feedContract } from "./feed.js";
 import { commentThreadContract } from "./comment-thread.js";
@@ -146,6 +148,7 @@ export const contracts = fromContracts(
   placeholderContract,
   processListContract,
   changelogContract,
+  timelineContract,
   progressContract,
   radioGroupContract,
   segmentedContract,
@@ -164,6 +167,7 @@ export const contracts = fromContracts(
   menubarContract,
   megamenuContract,
   meterContract,
+  ratingContract,
   dataGridContract,
   feedContract,
   commentThreadContract,

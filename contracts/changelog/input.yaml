@@ -3,8 +3,27 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "eefc4307a3778b63"
+surface: "c4c72de8d9634cbe"
 entries:
+  - date: 2026-09-19
+    kind: feature
+    target: Input
+    es:
+      title: Input valida RUT, URL, email y telefono con format
+      body: >-
+        <code>format</code> agrega la validacion que la plataforma no trae. <code>"rut"</code>
+        (digito verificador modulo 11), <code>"url"</code> y <code>"email"</code> vienen en core;
+        <code>"phone"</code> cubre todos los paises con <code>country</code> e implementa
+        <code>@skryensya/phone</code>, opcional. El control escribe el mensaje en el slot de error
+        del FormField y <code>setCustomValidity</code> bloquea el submit nativo.
+    en:
+      title: Input validates RUT, URL, email and phone through format
+      body: >-
+        <code>format</code> adds the validation the platform has none for. <code>"rut"</code>
+        (modulo 11 check digit), <code>"url"</code> and <code>"email"</code> ship in core;
+        <code>"phone"</code> covers every country through <code>country</code> and is implemented by
+        the optional <code>@skryensya/phone</code>. The control writes the message into FormField's
+        error slot and <code>setCustomValidity</code> blocks native submit.
   - date: 2026-09-17
     kind: feature
     es:

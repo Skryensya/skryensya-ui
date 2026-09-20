@@ -3,8 +3,31 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "f2c542700d7ca0c3"
+surface: "9feef9ad2f528233"
 entries:
+  - date: 2026-09-19
+    kind: feature
+    target: Feed
+    es:
+      title: Feed suma el modelo de teclado que el patrón recomienda, opcional
+      body: >-
+        Con <code>keyboard</code>, cada artículo entra en la secuencia de Tab
+        (<code>tabindex="0"</code> en todos, como en el ejemplo de WAI, no un foco móvil 0/-1),
+        Page Down y Page Up se mueven de artículo en artículo, y Ctrl+Inicio y Ctrl+Fin SALEN del
+        feed al primer enfocable antes o después: no van al primer o último artículo, que es lo
+        que dice el patrón y lo que este equipo había anotado al revés. Viene apagado, así que
+        nada de lo escrito hasta hoy cambia un byte. En los extremos la tecla no se consume, para
+        que Page Down en el último artículo siga haciendo scroll.
+    en:
+      title: Feed gains the keyboard model the pattern recommends, opt-in
+      body: >-
+        With <code>keyboard</code>, every article joins the Tab sequence
+        (<code>tabindex="0"</code> on each, as WAI's example does, not a roving 0/-1), Page Down
+        and Page Up step article to article, and Ctrl+Home and Ctrl+End LEAVE the feed for the
+        first focusable element before or after it: they do not go to the first or last article,
+        which is what the pattern says and what we had written down backwards. It ships off, so
+        nothing written before today changes by a byte. At either end the key is not consumed, so
+        Page Down on the last article still scrolls.
   - date: 2026-08-18
     kind: bugfix
     target: Feed

@@ -30,8 +30,25 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/button.js")).mountButton,
   },
   {
+    /*
+     * ONLY the fields that declare a `format`. A text input without one has no state to enhance,
+     * so gating the LOAD here is what keeps a page of ordinary fields from downloading a validator
+     * it will never call. `format` is authored, not toggled at runtime, so there is no case (unlike
+     * Feed's `data-keyboard`) of an input growing one after mount.
+     *
+     * QUALIFIED BY ELEMENT, and that part is load-bearing: `chart` writes a `data-format` of its
+     * own for currency formatting, and a bare attribute selector would claim its roots too.
+     */
+    selector: "input[data-format]",
+    load: async () => (await import("../components/input.js")).mountInput,
+  },
+  {
     selector: "[data-sk-back-to-top]",
     load: async () => (await import("../components/back-to-top.js")).mountBackToTop,
+  },
+  {
+    selector: "[data-sk-rating]",
+    load: async () => (await import("../components/rating.js")).mountRating,
   },
   {
     selector: "[data-sk-select]",
@@ -113,6 +130,14 @@ const registrations: readonly Registration[] = [
   {
     selector: "[data-sk-loader]",
     load: async () => (await import("../components/loader.js")).mountLoader,
+  },
+  {
+    /* Every feed, not only `[data-keyboard]`: the enhancer's first act is to check that attribute
+     * and wire nothing without it. Gating the load here instead would mean a feed that turns the
+     * option on after mount (a preview frame re-rendering one, a consumer toggling it) never
+     * loads the module at all, and the selector would be a second place the option's name lives. */
+    selector: "[data-sk-feed]",
+    load: async () => (await import("../components/feed.js")).mountFeed,
   },
   {
     /* The questionnaire listens to the tiles inside it, so it mounts on its own root and never on theirs. */

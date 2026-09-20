@@ -11,6 +11,8 @@
   .sk-steps {
     --sk-steps-marker-size: var(--size-control-sm);
     --sk-steps-connector-size: 2px;
+    /* The thickness of a bar in `appearance="segments"`. */
+    --sk-steps-segment-size: var(--space-inset-sm);
     --sk-steps-item-padding: var(--space-inset-xs);
 
     display: flex;
@@ -18,6 +20,49 @@
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  /*
+   * A compact questionnaire shows the three stages nearest the current question. The root keeps its
+   * full measure; these edge affordances reserve a small lane and make omitted stages explicit
+   * instead of suggesting that the visible trio is the whole journey.
+   */
+  .sk-steps[data-window-before],
+  .sk-steps[data-window-after] {
+    position: relative;
+  }
+
+  .sk-steps[data-window-before] {
+    padding-inline-start: calc(var(--sk-steps-marker-size) + var(--space-inset-xs));
+  }
+
+  .sk-steps[data-window-after] {
+    padding-inline-end: calc(var(--sk-steps-marker-size) + var(--space-inset-xs));
+  }
+
+  .sk-steps[data-window-before]::before,
+  .sk-steps[data-window-after]::after {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: calc(var(--sk-steps-marker-size) / 2 - var(--sk-steps-connector-size) / 2);
+    display: grid;
+    place-items: center;
+    inline-size: calc(var(--sk-steps-marker-size) + var(--space-inset-xs));
+    block-size: var(--sk-steps-connector-size);
+    background: var(--color-bg-surface);
+    color: var(--color-text-tertiary);
+    content: "…";
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+    line-height: 1;
+  }
+
+  .sk-steps[data-window-before]::before {
+    inset-inline-start: 0;
+  }
+
+  .sk-steps[data-window-after]::after {
+    inset-inline-end: 0;
   }
 
   .sk-steps__item {
@@ -219,6 +264,144 @@
 
     .sk-steps__item[data-status="current"] .sk-steps__label {
       color: CanvasText;
+    }
+  }
+
+  /* ── segments ─────────────────────────────────────────────────────────────
+   * THE SAME SEQUENCE, READ AT A GLANCE. One bar per stage on a single axis, and no labels: this is
+   * the shape for a progress you check in passing rather than study. Everything that decides what a
+   * stage IS stays where it was (statuses, `aria-current`, the windowing); what changes is how a
+   * marker is drawn, so a bar is the marker stretched to fill its stage.
+   *
+   * No connector, because the bars ARE the connector: laid end to end with a gap between them, a row
+   * of them already reads as one track, and a line joining them would draw the same distance twice.
+   */
+  .sk-steps[data-appearance="segments"] {
+    gap: var(--space-inline-xs);
+  }
+
+  .sk-steps[data-appearance="segments"] .sk-steps__item {
+    grid-template-rows: auto;
+    padding: 0;
+  }
+
+  /* The bars are the track: nothing to join. */
+  .sk-steps[data-appearance="segments"] .sk-steps__item::after {
+    content: none;
+  }
+
+  /* Labels and descriptions still exist for a screen reader; they are just not drawn. */
+  .sk-steps[data-appearance="segments"] :is(.sk-steps__label, .sk-steps__description) {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .sk-steps[data-appearance="segments"] .sk-steps__marker {
+    inline-size: 100%;
+    block-size: var(--sk-steps-segment-size);
+    border: 0;
+    border-radius: var(--radius-pill);
+    /* PENDING IS THE QUIETEST RUNG. `border-default` read as a filled bar next to the accent one,
+       so the three states said "done, done, here" instead of "done, here, not yet". */
+    background: var(--color-border-subtle);
+    box-shadow: none;
+    /* The number inside the disc has no room in a bar, and the bar's fill already says the same. */
+    color: transparent;
+    font-size: 0;
+  }
+
+  .sk-steps[data-appearance="segments"] .sk-steps__item[data-status="complete"] .sk-steps__marker {
+    background: var(--color-action-accent);
+  }
+
+  /*
+   * THE CURRENT STAGE IS MARKED, NOT FILLED. Filling it would say the question is answered, which is
+   * the one thing it is not: it is the one being asked. A ring in the accent names it as the place
+   * the reader is without claiming it is behind them.
+   */
+  .sk-steps[data-appearance="segments"] .sk-steps__item[data-status="current"] .sk-steps__marker {
+    background: var(--color-bg-surface-sunken);
+    box-shadow: inset 0 0 0 var(--sk-steps-connector-size) var(--color-border-accent);
+  }
+
+  .sk-steps[data-appearance="segments"][data-orientation="vertical"] .sk-steps__marker {
+    inline-size: var(--sk-steps-segment-size);
+    block-size: 100%;
+    min-block-size: var(--size-control-sm);
+  }
+
+  /*
+   * A PINNED HORIZONTAL RAIL ON A PHONE DRAWS AS SEGMENTS.
+   *
+   * This does not contradict the vertical fallback above; it completes it. A rail that said nothing
+   * about orientation already becomes the compact column below `compact`. This is for the rail that
+   * pinned `horizontal`, which is an explicit opt OUT of that column - Questionnaire does it so a
+   * journey is not collapsed into unequal rows - and which therefore had no answer for a phone at
+   * all: three short labels survive 390px and a fourth, or one longer name, does not.
+   *
+   * Bars are that answer. The sequence is still countable, the done stages still obvious, and it
+   * costs no width per stage, so it holds at any number of them. The labels are not lost, only
+   * undrawn, exactly as in the appearance itself.
+   *
+   * The declarations below are the same ones `appearance="segments"` sets, written a second time
+   * because a selector and a media query cannot be joined into one rule. Both ways around that
+   * were measured and cost more than the duplication: `@container style()` on a flag property does
+   * join them and survives the minifier, but it adds no specificity and these rules have to beat
+   * `(0,3,0)`, so every selector inside would need inflating past its meaning; routing the look
+   * through custom properties instead grows a `var()` on fifteen base declarations to serve one
+   * appearance. So the copies stay, adjacent, and `css-guards.test.ts` fails if they ever differ.
+   */
+  @media (width < 36rem) {
+    .sk-steps[data-orientation="horizontal"] {
+      gap: var(--space-inline-xs);
+    }
+
+    .sk-steps[data-orientation="horizontal"] .sk-steps__item {
+      grid-template-rows: auto;
+      padding: 0;
+    }
+
+    .sk-steps[data-orientation="horizontal"] .sk-steps__item::after {
+      content: none;
+    }
+
+    .sk-steps[data-orientation="horizontal"] :is(.sk-steps__label, .sk-steps__description) {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      margin: -1px;
+      padding: 0;
+      border: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .sk-steps[data-orientation="horizontal"] .sk-steps__marker {
+      inline-size: 100%;
+      block-size: var(--sk-steps-segment-size);
+      border: 0;
+      border-radius: var(--radius-pill);
+      background: var(--color-border-subtle);
+      box-shadow: none;
+      color: transparent;
+      font-size: 0;
+    }
+
+    .sk-steps[data-orientation="horizontal"] .sk-steps__item[data-status="complete"] .sk-steps__marker {
+      background: var(--color-action-accent);
+    }
+
+    .sk-steps[data-orientation="horizontal"] .sk-steps__item[data-status="current"] .sk-steps__marker {
+      background: var(--color-bg-surface-sunken);
+      box-shadow: inset 0 0 0 var(--sk-steps-connector-size) var(--color-border-accent);
     }
   }
 }

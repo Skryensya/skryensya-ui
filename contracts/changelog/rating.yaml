@@ -1,0 +1,25 @@
+# Qué cambió en rating, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
+# hash nuevo.
+surface: "da8f4a0f6e4c17f2"
+entries:
+  - date: 2026-09-20
+    kind: feature
+    es:
+      title: Rating, como input y como display
+      body: >-
+        <code>Rating</code> es un radiogroup de pasos enteros, con teclado y nombre accesible;
+        <code>RatingDisplay</code> reporta un promedio con decimales y rellena la fraccion exacta
+        (4,3 de 5 corta al 86%). El simbolo es una mascara CSS detras de
+        <code>--sk-rating-symbol</code>, no un rol del vocabulario de iconos, asi que cambiarlo por
+        un corazon es una sola declaracion. <code>Meter</code> cede el intent de rating.
+    en:
+      title: Rating, as an input and as a display
+      body: >-
+        <code>Rating</code> is a radiogroup of whole steps, with keyboard support and an accessible
+        name; <code>RatingDisplay</code> reports a fractional average and fills the exact fraction
+        (4.3 of 5 stops at 86%). The symbol is a CSS mask behind <code>--sk-rating-symbol</code>,
+        not an icon vocabulary role, so swapping it for a heart is one declaration.
+        <code>Meter</code> hands over the rating intent.

@@ -8,6 +8,7 @@ import { mountComponentsWithIcons } from "@skryensya/vanilla/auto";
 import { mountCodePreview } from "@skryensya/vanilla/code-preview";
 import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
 import { mountIcons } from "@skryensya/vanilla/icon";
+import { registerPhoneFormat } from "@skryensya/phone";
 
 /*
  * Root cause (do not regress): `window.frameElement instanceof HTMLIFrameElement` is FALSE inside
@@ -107,29 +108,30 @@ function readerSized(): boolean {
 
 
 /*
- * A width preset must not move the page. Tablet and Mobile only narrow the stage, but a narrower frame
- * reflows its content (a three-up grid stacks to one lane) and auto-fit used to follow it, so every
- * switch shifted everything below the preview by hundreds of px. While one of those presets is on, the
- * frame keeps the height it had at full width and scrolls inside it, like the device it stands for.
+ * THE WIDTH HAS NOTHING TO DO WITH THE HEIGHT. A preset narrows the stage; the height is whatever
+ * the content needs at that width, always, and the frame fits it.
  *
- * NOT when the parent itself is phone-sized: `connectScreenTabs` forces `mobile` there, the stage is
- * as wide as it would be anyway, and a nested scroll area on a touch screen is a trap, not a preview.
- * `xl` is left out too: its CSS `zoom` changes the visual height on its own terms.
+ * This used to be the opposite. Tablet and Mobile were "height locked": the frame kept the height it
+ * had at FULL width and scrolled inside it, "like the device it stands for", so that switching
+ * preset could not move the page below the preview. The reasoning was about the switch, and it held
+ * only while a preset was something a reader turned on for a moment.
+ *
+ * It stopped holding the day a page could DEFAULT to one. A preview that opens in Tablet never had a
+ * full-width height to keep, so it kept the reserved one instead - a number measured at a width it
+ * is not rendering at - and the difference became the two things this file exists to prevent: a
+ * frame that scrolls inside itself, and a stage that settles somewhere other than where it reserved.
+ * Measured on Questionnaire's seven previews at Tablet: content needing 572px inside a stage holding
+ * 559, every one of them short, and a re-measure that could not converge because the number it reads
+ * back is the locked one it already had.
+ *
+ * So the lock is gone, along with the release timer that existed to unwind it. A preset change now
+ * re-fits like any other reflow, and the stage's own `inline-size` / `block-size` transition
+ * (component-preview.css) is what keeps that from reading as a jump.
  */
-const heightLockedScreens = new Set(["tablet", "mobile"]);
 const forcedMobileScreenQuery = "(max-width: 52rem)";
-/* On the element in the PARENT document, so it survives `releaseStage` swapping this document out. */
-const freeHeightAttribute = "data-sk-component-preview-free-height";
-
-function screenHeightLocked(): boolean {
-  if (!frame) return false;
-  const screen = frame.getAttribute("data-sk-component-preview-screen");
-  if (!screen || !heightLockedScreens.has(screen)) return false;
-  return !window.parent.matchMedia(forcedMobileScreenQuery).matches;
-}
 
 function scrolls(): boolean {
-  return allowScroll || readerSized() || screenHeightLocked();
+  return allowScroll || readerSized();
 }
 
 function applyOverflow(): void {
@@ -640,62 +642,42 @@ const viewportFloorPx: Record<string, number> = {
 };
 
 /*
- * Leaving a locked preset is not over when the attribute goes: the stage WIDENS back over its
- * `inline-size` transition, and every step of it is a narrower viewport whose content is taller.
- * Measured on Card, Mobile → Desktop fitted 342 → 622 → 342 in under a second. So the held height
- * stays until the stage has reached the width it is growing into, with a cap so a stage that never
- * quite gets there still re-fits.
+ * THE SEAM IS PART OF THE FRAME, NOT PART OF THE ROOM. The stage draws the card's bottom seam as
+ * its own `border-block-end` and is `box-sizing: border-box` (component-preview.css), so a height
+ * written straight from the content measurement hands the document one pixel LESS than it just
+ * asked for. Measured on every anatomy frame in the docs, at every viewport: `scrollHeight` exactly
+ * one over `clientHeight`, permanently, with `overflow: hidden` quietly clipping the last pixel of
+ * whatever sat at the bottom of the diagram.
+ *
+ * Read from the live element rather than hard-coded, because the seam is a themeable border and a
+ * reader on a zoomed page can make it land on a different device pixel.
  */
-const LOCK_RELEASE_CAP_MS = 1000;
-let releasingLock = false;
-let releaseTimer: ReturnType<typeof setTimeout> | undefined;
-
-function stillWidening(): boolean {
-  if (!frame || !releasingLock) return false;
-  /* The card, not `parentElement`: the React stage's parent is its `display: contents` mount host,
-     whose width reads 0. */
-  const target = (frame.closest(".sk-component-preview") ?? frame.parentElement)?.clientWidth ?? 0;
-  if (frame.getBoundingClientRect().width < target - 1) {
-    releaseTimer ??= setTimeout(() => {
-      releasingLock = false;
-      releaseTimer = undefined;
-      fitFrame();
-    }, LOCK_RELEASE_CAP_MS);
-    return true;
-  }
-  releasingLock = false;
-  clearTimeout(releaseTimer);
-  releaseTimer = undefined;
-  return false;
+function frameBlockBorders(): number {
+  if (!frame) return 0;
+  const style = getComputedStyle(frame);
+  const start = Number.parseFloat(style.borderBlockStartWidth) || 0;
+  const end = Number.parseFloat(style.borderBlockEndWidth) || 0;
+  return start + end;
 }
 
 function fitFrame(): void {
   if (!frame || allowScroll || readerSized() || frameCollapsed()) return;
   const floor = viewportFloorPx[frame.dataset.skComponentPreviewViewport ?? ""] ?? 0;
-  if (screenHeightLocked()) {
-    releasingLock = true;
-    /*
-     * Keep the full-width height already on the frame. With none (a persisted preset the page loaded
-     * straight into, or a released stage coming back) take the last full-width fit, then the
-     * measured reservation, and only then this narrow width's own content.
-     */
-    if (frame.style.height) return;
-    const reserved = getComputedStyle(frame)
-      .getPropertyValue("--sk-component-preview-stage-reserved-block-size")
-      .trim();
-    frame.style.height =
-      frame.getAttribute(freeHeightAttribute) ||
-      reserved ||
-      `${Math.max(measureContentHeight(), floor)}px`;
-    return;
-  }
-  if (stillWidening()) return;
-  const next = `${Math.max(measureContentHeight(), floor)}px`;
+  const next = `${Math.max(measureContentHeight(), floor) + frameBlockBorders()}px`;
   if (frame.style.height !== next) frame.style.height = next;
-  frame.setAttribute(freeHeightAttribute, next);
 }
 
 async function boot(): Promise<void> {
+  /*
+   * ONE CALL FOR BOTH BINDINGS, which is the neatest demonstration of what the optional package is.
+   * `format="phone"` has no validator in Core; this frame is the realm the Vanilla enhancer and the
+   * React demo both render into, so registering it once here makes the phone field on Input's page
+   * validate on either side. Take this line out and that field keeps rendering and simply stops
+   * checking, with one warning in the console: exactly what a consumer who never installs
+   * `@skryensya/phone` sees.
+   */
+  registerPhoneFormat();
+
   syncRootState();
   const rootObserver = new MutationObserver(syncRootState);
   rootObserver.observe(parentRoot, { attributes: true });

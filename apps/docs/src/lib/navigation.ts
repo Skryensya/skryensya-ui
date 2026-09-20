@@ -1,3 +1,4 @@
+import { isPausedRoute } from "@skryensya/core/paused";
 import { hasTranslation, localizePath, navLabel, useTranslations, type Locale } from "../i18n";
 
 /** Maturity of a component's contract. Only meaningful within `componentItems`. */
@@ -258,9 +259,6 @@ const componentItems = [
       "notas de versión",
       "notas de version",
       "novedades",
-      "timeline",
-      "línea de tiempo",
-      "linea de tiempo",
     ],
   },
   {
@@ -426,6 +424,11 @@ const componentItems = [
     aliases: ["medidor", "medición", "medicion", "batería", "bateria", "uso de disco"],
   },
   {
+    href: "/components/rating",
+    label: "Rating",
+    aliases: ["puntuación", "puntuacion", "estrellas", "valoración", "valoracion", "reseña", "resena", "calificación", "calificacion"],
+  },
+  {
     href: "/nav-list",
     label: "Nav list",
     aliases: ["lista de navegación", "lista de navegacion"],
@@ -442,6 +445,22 @@ const componentItems = [
     label: "Questionnaire",
     trailing: "Beta",
     aliases: ["cuestionario", "encuesta", "survey", "formulario por pasos", "wizard", "preguntas"],
+  },
+  {
+    href: "/components/timeline",
+    label: "Timeline",
+    trailing: "Beta",
+    aliases: [
+      "timeline",
+      "línea de tiempo",
+      "linea de tiempo",
+      "seguimiento",
+      "actividad",
+      "activity",
+      "event history",
+      "cronología",
+      "cronologia",
+    ],
   },
   {
     href: "/components/process-list",
@@ -653,15 +672,24 @@ const componentItems = [
     aliases: ["campo numérico", "campo numerico", "stepper"],
   },
   {
+    /*
+     * POPUP'S SEARCH WORDS LIVE HERE. Popup was a second page for `Popover.bare`, and merging it
+     * into this one would have made the word "popup" stop finding anything: the rail is also the
+     * search index. As aliases they still land the reader on the section, which is where the
+     * content went. The route itself 301s onto the same heading.
+     */
     href: "/components/popover",
     label: "Popover",
-    aliases: ["contenido flotante", "ayuda rica", "top layer"],
-  },
-  {
-    href: "/components/popup",
-    label: "Popup",
-    trailing: "Beta",
-    aliases: ["superficie flotante", "popup primitivo"],
+    aliases: [
+      "contenido flotante",
+      "ayuda rica",
+      "top layer",
+      "popup",
+      "popup primitivo",
+      "superficie flotante",
+      "popover bare",
+      "bare",
+    ],
   },
   {
     href: "/components/split-button",
@@ -715,8 +743,13 @@ const componentGroupItems = (...hrefs: readonly ComponentHref[]): readonly Navig
  * word they already use for it. A twelve-group pass split things finer ("Selección" vs "Campos de
  * formulario", "Superficies", "Documentación y conversación") and read as invented vocabulary.
  * Every entry still belongs to exactly one group; the check below enforces it.
+ *
+ * AUTHORED IN FULL, PUBLISHED FILTERED. This table is the whole inventory, paused entries included,
+ * because the invariant below is about authorship: every entry belongs to exactly one group, and a
+ * table that quietly dropped some could not say that. `componentNavigation` under it is what the
+ * site actually renders.
  */
-export const componentNavigation = [
+const allComponentNavigation = [
   {
     group: "group.componentActions",
     blurb: "group.componentActions.blurb",
@@ -779,7 +812,6 @@ export const componentNavigation = [
       "/components/dialog",
       "/components/drawer",
       "/components/popover",
-      "/components/popup",
       "/components/tooltip",
       "/vaul",
     ),
@@ -807,6 +839,7 @@ export const componentNavigation = [
       "/components/charts",
       "/components/stat",
       "/components/meter",
+      "/components/rating",
     ),
   },
   {
@@ -835,6 +868,7 @@ export const componentNavigation = [
       "/components/comment-thread",
       "/components/feed",
       "/components/process-list",
+      "/components/timeline",
     ),
   },
   {
@@ -855,7 +889,7 @@ export const componentNavigation = [
   },
 ] satisfies readonly NavigationGroup[];
 
-const categorizedComponentHrefs = componentNavigation.flatMap((group) =>
+const categorizedComponentHrefs = allComponentNavigation.flatMap((group) =>
   group.items.map((item) => item.href),
 );
 if (
@@ -864,6 +898,31 @@ if (
 ) {
   throw new Error("Every component catalog entry must belong to exactly one usage group");
 }
+
+/*
+ * THE CATALOGUE AS THE SITE OFFERS IT: the table above minus whatever is paused.
+ *
+ * ONE FILTER REACHES EVERY SURFACE, which is the reason it lives here and not in each renderer.
+ * `getNavigation` builds the sidebar, the component index, the landing page and the search index
+ * from this list, and the playground imports this very export to name and link its presets. A
+ * paused component leaves all of them together, which is what "hidden" has to mean: a sidebar that
+ * dropped it while search still found it would be worse than not hiding it at all.
+ *
+ * WHAT DOES NOT CHANGE: the page itself. `/components/data-grid` still builds, still renders its
+ * demos, still runs its gates, and still answers to anyone holding the link. Pausing removes the
+ * places that OFFER a component, never the component. The list is `@skryensya/core/paused`, and
+ * deleting an entry there puts the page back in every rail at once.
+ *
+ * An emptied group disappears rather than rendering as a heading over nothing.
+ */
+const visibleGroup = (group: NavigationGroup): NavigationGroup => ({
+  ...group,
+  items: group.items.filter((item) => !isPausedRoute(item.href)),
+});
+
+export const componentNavigation = allComponentNavigation
+  .map(visibleGroup)
+  .filter((group) => group.items.length > 0) satisfies readonly NavigationGroup[];
 
 /*
  * The authored table below carries UI KEYS in `section`, `blurb` and `group`, not Spanish prose:

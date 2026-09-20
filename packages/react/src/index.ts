@@ -19,8 +19,15 @@ export { Meter } from "./components/meter.js";
 export type { MeterProps } from "./components/meter.js";
 export { Chart } from "./components/chart.js";
 export type { ChartProps } from "./components/chart.js";
-export { DataGrid, DataGridRow, DataGridCell } from "./components/data-grid.js";
-export type { DataGridProps, DataGridRowProps, DataGridCellProps } from "./components/data-grid.js";
+/*
+ * PAUSED: Data Grid is not re-exported here while it sits in `@skryensya/core/paused`. The subpath
+ * still resolves (`@skryensya/react/data-grid`), which is what keeps its docs page and its previews
+ * rendering: the barrel is the recommendation, the subpath is the escape hatch. Unpausing restores
+ * these two lines and deletes the entry in that list.
+ *
+ * export { DataGrid, DataGridRow, DataGridCell } from "./components/data-grid.js";
+ * export type { DataGridProps, DataGridRowProps, DataGridCellProps } from "./components/data-grid.js";
+ */
 export { Feed, FeedArticle } from "./components/feed.js";
 export type { FeedProps, FeedArticleProps } from "./components/feed.js";
 export { Menubar, MenubarItem } from "./components/menubar.js";
@@ -61,6 +68,8 @@ export type {
   ListProps,
 } from "./components/list.js";
 export { ProcessList, ProcessListItem } from "./components/process-list.js";
+export { Timeline, TimelineItem } from "./components/timeline.js";
+export type { TimelineItemProps, TimelineProps } from "./components/timeline.js";
 export type {
   ProcessListItemProps,
   ProcessListProps,

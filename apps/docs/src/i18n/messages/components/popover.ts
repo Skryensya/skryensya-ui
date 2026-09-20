@@ -30,6 +30,19 @@ export const popoverMessages = {
     "popoverPage.contractBody": "Popover describe contenido auxiliar rico. Menu contiene acciones; Tooltip solo una descripción corta.",
     "popoverPage.a11yBody": "La plataforma posee top layer, Escape y light-dismiss mediante popover=auto.",
 
+    "popoverPage.popupTitle": "Popup: la superficie desnuda",
+    "popoverPage.popupBody":
+      "<code>Popover.bare</code> es la misma familia sin el chrome: ancla y superficie, nada más. Esta sección se llamaba <strong>Popup</strong> y tenía página propia; era un nombre distinto para una signature que ya existía acá, así que vive donde vive el contrato.",
+    "popoverPage.popupAnatomyBody":
+      "Un Popup es un ancla y una superficie, y el dibujo lo muestra literal: el disparador lleva <code>sk-anchor</code>, y el panel es <strong>un solo nodo</strong> que usa dos clases a la vez, <code>sk-popover__content</code> (lo que pinta la superficie) y <code>sk-anchored</code> (el patrón que la ubica). Por eso hay dos anillos concéntricos sobre la misma caja. Adentro no se nombra nada: qué va ahí es asunto de la composición, que es justamente para lo que existe la signature bare. El espécimen está congelado y abierto a la fuerza; el vivo está arriba.",
+    "popoverPage.popupAnatomyLabel": "Anatomía de Popup",
+    "popoverPage.popupAnatomyPreviewLabel": "Popup, parte por parte",
+    "popoverPage.popupContractBody": "Popup aporta ancla y superficie, no semántica interna. Si el patrón tiene título y acciones de cierre, usa Popover completo.",
+    "popoverPage.popupA11yBody": "En modo bare el contenido debe aportar su propia semántica: la signature no inventa roles dialog ni menu.",
+
+    "demo.popup.trigger": "Filtros",
+    "demo.popup.onlyActive": "Solo activos",
+
     "popoverPage.testReact1":
       'Liga el trigger a su contenido vía <code class="sk-code">popovertarget</code>/id, con <code class="sk-code">popover=auto</code>.',
     "popoverPage.testReact2": "Renderiza un título y una descripción en la anatomía completa (no bare).",
@@ -81,6 +94,19 @@ export const popoverMessages = {
     "popoverPage.placementLabel": "Popover in all four placements",
     "popoverPage.contractBody": "Popover describes rich auxiliary content. Menu holds actions; Tooltip holds only a short description.",
     "popoverPage.a11yBody": "The platform owns the top layer, Escape, and light-dismiss through popover=auto.",
+
+    "popoverPage.popupTitle": "Popup: the bare surface",
+    "popoverPage.popupBody":
+      "<code>Popover.bare</code> is the same family without the chrome: an anchor and a surface, nothing else. This section used to be a page of its own called <strong>Popup</strong>, which was a second name for a signature that already lived here, so it now lives where the contract lives.",
+    "popoverPage.popupAnatomyBody":
+      "A Popup is an anchor and a surface, and the drawing shows exactly that: the trigger carries <code>sk-anchor</code>, and the panel is <strong>one node</strong> wearing two classes at once, <code>sk-popover__content</code> (which paints the surface) and <code>sk-anchored</code> (the pattern that places it). Hence the two concentric rings on one box. Nothing inside is named: what goes there is the composition's business, which is what the bare signature exists for. The specimen is frozen and forced open; the live one is above.",
+    "popoverPage.popupAnatomyLabel": "Popup anatomy",
+    "popoverPage.popupAnatomyPreviewLabel": "Popup, part by part",
+    "popoverPage.popupContractBody": "Popup provides an anchor and a surface, not internal semantics. If the pattern has a title and closing actions, use the full Popover.",
+    "popoverPage.popupA11yBody": "In bare mode the content must provide its own semantics: the signature invents no dialog or menu roles.",
+
+    "demo.popup.trigger": "Filters",
+    "demo.popup.onlyActive": "Active only",
 
     "popoverPage.testReact1":
       'Links the trigger to its content via <code class="sk-code">popovertarget</code>/id, with <code class="sk-code">popover=auto</code>.',

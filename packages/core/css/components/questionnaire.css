@@ -11,18 +11,34 @@
 @layer components {
   .sk-questionnaire {
     /*
-     * THE WHOLE FORM READS AT ONE STEP OF THE STACK, `md` between its three bands (progress, the
-     * question, the actions) and `md` inside the question. A wider outer gap made the actions read as
-     * a separate block from the question they belong to.
+     * ONE LADDER, FOUR RUNGS, AND EACH RUNG MEANS SOMETHING. Read from the outside in:
+     *
+     *   `gap`       lg  between the three BANDS (progress, the question, the actions)
+     *   `item-gap`  md  inside the question, between its head and its answers
+     *   answers     sm  between the choice list, the free text and the error line
+     *   `head-gap`  xs  between the question and the description that belongs to it
+     *
+     * It used to be one step (`md`) for the outer bands AND for the inside of the question, which
+     * left nothing to tell a band from the thing inside it: the form read as one undifferentiated
+     * column that was cramped where it mattered. Distinct rungs are what make the bands legible
+     * without the form growing, and `lg` outside is the smallest step that reads as a band break.
      */
-    --sk-questionnaire-gap: var(--space-stack-md);
+    --sk-questionnaire-gap: var(--space-stack-lg);
     --sk-questionnaire-item-gap: var(--space-stack-md);
+    /*
+     * The tightest rung, and deliberately below the stack scale's own floor (`stack-xs` is 8px): a
+     * question and its description are ONE utterance, and the same 4px the choice tiles put between
+     * their own title and description (`--sk-space-2` far below). The same relationship gets the
+     * same distance at both levels of the form.
+     */
+    --sk-questionnaire-head-gap: var(--space-inline-xs);
     /*
      * A FORM IS READ, SO IT TAKES A MEASURE, and a narrower one than prose: one question at a time is
      * a column of short rows, and a row that runs the width of a page puts its answer a long way from
-     * the question that asked it. `ch`, so the cap tracks the type rather than a guess in pixels.
+     * the question that asked it. `52ch` keeps the prompt, choice labels, and actions as one balanced
+     * unit while still leaving enough measure for a short supporting description.
      */
-    --sk-questionnaire-measure: 56ch;
+    --sk-questionnaire-measure: 60ch;
     --sk-questionnaire-shortcut-fg: var(--color-text-tertiary);
 
     /*
@@ -91,13 +107,15 @@
     flex-direction: column;
     gap: var(--space-stack-xs);
     min-inline-size: 0;
+    inline-size: 100%;
   }
 
   .sk-questionnaire__position {
-    margin: 0;
+    margin-block: 0;
     color: var(--color-text-secondary);
     font-size: var(--font-size-caption);
     font-weight: var(--font-weight-label);
+    line-height: var(--font-line-height-caption);
     font-variant-numeric: tabular-nums;
   }
 
@@ -119,28 +137,50 @@
   }
 
   /*
-   * THE QUESTION IS A LABEL, NOT A PAGE HEADING. One step above body keeps it the largest thing
-   * inside the form without competing with page-level headings.
+   * THE QUESTION IS A LABEL, NOT A PAGE HEADING. `heading-h4` is the floor of the document scale and
+   * the same 18px this was already asking for, but taken as the SIZE AND LEADING PAIR the type scale
+   * publishes instead of a body size with a heading leading bolted onto it. The old rule said
+   * `--line-height-heading`, which is not a token (the semantic name is `--font-line-height-heading`),
+   * so the question had been rendering at the inherited body leading all along.
+   *
+   * THE STEP IS IN THE WEIGHT, NOT ONLY THE SIZE. `emphasis` puts the question above every label in
+   * the form and still below a page heading, which lets the form stay at 18px rather than growing to
+   * out-shout its own answers.
    */
   .sk-questionnaire__title {
+    /*
+     * THE LEGEND IS NOT A FLEX ITEM. A rendered `<legend>` is laid out by the fieldset above its
+     * anonymous content box, so the item's `gap` never opens under it: the question sat flush
+     * against its description, and flush against its ANSWERS when it had none (the Likert scale's
+     * box began on the question's baseline). The distance under the question is therefore its own
+     * margin, and the negative margin that used to fake it is gone with the gap it was correcting.
+     */
+    margin-block-end: var(--sk-questionnaire-item-gap);
     padding: 0;
     color: var(--color-text-primary);
-    font-size: var(--font-size-body-lg);
-    font-weight: var(--font-weight-label);
-    line-height: var(--line-height-heading);
+    font-size: var(--font-size-heading-h4);
+    font-weight: var(--font-weight-emphasis);
+    line-height: var(--font-line-height-heading-h4);
     text-wrap: pretty;
   }
 
-  /* The legend is the first child and the gap would open under it; a description right below it reads
-     as part of the question, so it sits closer. */
-  .sk-questionnaire__title + .sk-questionnaire__description {
-    margin-block-start: calc(var(--sk-questionnaire-item-gap) * -1 + var(--space-stack-xs));
+  /* A description right below the question reads as part of it, so it takes the tight rung and the
+     item's own gap carries the distance from the pair down to the answers. */
+  .sk-questionnaire__title:has(+ .sk-questionnaire__description) {
+    margin-block-end: var(--sk-questionnaire-head-gap);
   }
 
+  /*
+   * THE DESCRIPTION SITS WITH THE ANSWERS, NOT WITH THE QUESTION. At `body` it was the second-largest
+   * text in the form while the answers it supports were `body-sm`, which put the sizes in the
+   * opposite order to the importance. Every control here is already `body-sm` (button, input, form
+   * label, choice tile), so the supporting line joins them and the question keeps 18px to itself.
+   */
   .sk-questionnaire__description {
-    margin: 0;
+    margin-block: 0;
     color: var(--color-text-secondary);
-    font-size: var(--font-size-body);
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-body-sm);
     text-wrap: pretty;
   }
 
@@ -171,71 +211,84 @@
     min-inline-size: 0;
   }
 
+  /*
+   * A ROW-SIZED GAP BETWEEN ROW-SIZED CHOICES. The tiles keep their own tight inset (`sm`, a choice
+   * is a row and not a card, see far below); the room a reader needs to tell one option from the next
+   * goes BETWEEN them instead. At `xs` the list read as one ruled block.
+   */
   .sk-questionnaire__choices {
     display: grid;
-    gap: var(--space-stack-xs);
+    gap: var(--space-stack-sm);
     min-inline-size: 0;
   }
 
   /* ── the Likert scale ─────────────────────────────────────────────────────
-   * NATIVE RADIOS IN A BOX. The scale is `radio-group.css`'s own row inside a Box, so the browser
-   * owns selection and keyboard and this file owns only the arrangement: every point the same width,
-   * its radio over its label, and the ends named underneath. Below `30rem` the columns would be
-   * narrower than a finger, so the group falls back to the vertical list it already knows how to be.
+   * NATIVE RADIOS IN A BOX, AS A LIST. One point per line, read top to bottom, the browser owning
+   * selection and keyboard and this file owning only the arrangement.
+   *
+   * It used to be a ROW of equal columns, each radio over its label, with the ends named underneath
+   * and a fallback to this same list below `30rem`. The row is gone and the list is now the only
+   * shape: a horizontal scale earns its keep in a BATTERY, many statements sharing one header of
+   * anchors, and this questionnaire shows one question per screen by construction, so the row was
+   * paying the cost of a ruler - bare numbered points, meaning only at the ends - without the
+   * arrangement that makes a ruler worth reading.
+   *
+   * A list also gives every point the full measure, so a point can carry its own words instead of a
+   * digit, which is the thing that makes a scale legible: whatever a reader thinks "3" means, they
+   * cannot misread "Bastante de acuerdo".
    */
   .sk-questionnaire__choices[data-likert] {
     display: flex;
     flex-direction: column;
-    gap: var(--space-stack-xs);
+    gap: var(--space-stack-sm);
   }
 
-  /* The equal columns are the group's own `spread` option (radio-group.css); what is left here is how
-     a POINT is drawn: its control over its label, centred in the column. */
   .sk-questionnaire__choices[data-likert] .sk-questionnaire__scale {
-    --sk-radio-gap: var(--space-stack-xs);
+    --sk-radio-gap: var(--space-inline-sm);
 
-    justify-items: center;
+    grid-auto-flow: row;
+    justify-items: stretch;
   }
 
-  /* The point: control over label, both centred, and the whole column is the hit area. */
+  /*
+   * The point: control beside its label, the whole row the hit area. `sm` inset keeps the rows apart
+   * enough to press one without meaning the next.
+   */
   .sk-questionnaire__choices[data-likert] .sk-radio {
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     inline-size: 100%;
-    padding-block: var(--space-inset-xs);
-    text-align: center;
+    padding-block: var(--space-inset-sm);
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-body-sm);
+    text-align: start;
   }
 
-  @media (width < 30rem) {
-    .sk-questionnaire__choices[data-likert] .sk-questionnaire__scale {
-      grid-auto-flow: row;
-      justify-items: stretch;
-    }
-
-    .sk-questionnaire__choices[data-likert] .sk-radio {
-      flex-direction: row;
-      align-items: center;
-      text-align: start;
-    }
-  }
-
-  /* The ends of the scale, said in words: the lowest point on the left, the highest on the right. */
+  /*
+   * THE ENDS, NAMED WHERE THE ENDS ARE. Across a row they sat left and right under the scale, which
+   * is the only place they could go. Down a list the ends are the TOP and the BOTTOM, so the lowest
+   * point's name goes above the first row and the highest below the last, and the scale reads as one
+   * continuum from one to the other.
+   *
+   * `display: contents` is what lets that happen without moving the markup: the wrapper stops
+   * generating a box, its two children become items of the column above, and `order` puts one on
+   * each side of the scale. The emitted tree still reads scale-then-anchors, which is the order a
+   * screen reader should hear them in.
+   */
   .sk-questionnaire__anchors {
-    display: flex;
-    gap: var(--space-inline-md);
-    justify-content: space-between;
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-caption);
+    display: contents;
   }
 
   .sk-questionnaire__anchor {
-    flex: 1 1 0;
     min-inline-size: 0;
-    text-wrap: balance;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption);
+    text-wrap: pretty;
   }
 
-  .sk-questionnaire__anchor:last-child {
-    text-align: end;
+  .sk-questionnaire__anchor:first-child {
+    order: -1;
   }
 
   /*
@@ -248,6 +301,12 @@
   .sk-questionnaire__choices .sk-tile {
     --sk-font-heading-sm: var(--font-size-body-sm);
     --sk-font-body-sm: var(--font-size-body-sm);
+    /*
+     * AN OPTION IS A CONTROL LABEL, NOT A HEADING. Tile's own title weight is `heading` (700), which
+     * at this size made every answer read louder than the `emphasis` question above it. `label` puts
+     * the three back in order: question 600, option label 500, option description 400.
+     */
+    --sk-tile-title-weight: var(--font-weight-label);
     --sk-tile-radius: var(--radius-control);
     /*
      * Stated, not inherited: a Tile rendered as a `<label>` (which is what TileCheckbox and every
@@ -267,15 +326,40 @@
   }
 
   /*
+   * THE CHOSEN ANSWER READS AS THE ACCENT, through the state layer rather than a background of its
+   * own. `state-layer.css` already paints a persistent tint on anything selected; what it tints
+   * with is `currentColor`, which on a tile is the reading text, so the chosen answer and the three
+   * it was chosen over were separated by a grey wash and a border. In a form whose entire job is
+   * "which one did you pick", that is the one piece of state worth spending the accent on.
+   *
+   * Repointing the COLOR and leaving the opacity ladder alone is deliberate. The `selected` rung is
+   * the lowest on purpose (see `state-layer.css`): hover and press REPLACE it, which only stays
+   * honest while selection is also carried by something the wash cannot hide. Here it is carried by
+   * two such things, both already accent from Tile's own hooks: the card's border
+   * (`--sk-color-border-selected`) and the radio's fill (`--sk-color-selection-selected`). So the
+   * layer is free to be the quietest of the three.
+   *
+   * Both shapes, because the bindings do not agree on one: the vanilla enhancer leaves the native
+   * `:checked` on the input, React's TileRadioGroup writes `data-state`. Tile's own sheet matches
+   * on both for the same reason, and a rule that named only one would tint a chosen answer in one
+   * binding and not the other.
+   */
+  .sk-questionnaire__choices .sk-tile[data-state="checked"],
+  .sk-questionnaire__choices .sk-tile:has(> input:checked) {
+    --state-layer-color: var(--color-action-accent);
+  }
+
+  /*
    * The error's line is RESERVED, not conjured: a message that appears on a failed attempt would
    * otherwise push everything under it down by a line at the worst possible moment. Empty at rest,
    * one line tall either way.
    */
   .sk-questionnaire__error {
     min-block-size: 1lh;
-    margin: 0;
+    margin-block: 0;
     color: var(--color-text-danger);
     font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-body-sm);
   }
 
   /* ── actions ─────────────────────────────────────────────────────────────
@@ -315,16 +399,36 @@
     display: none;
   }
 
-  .sk-questionnaire__choices:has(.sk-questionnaire__shortcut:not(:empty)) .sk-tile__content {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    column-gap: var(--space-inline-sm);
-    align-items: center;
+  /*
+   * THE KEY HANGS OUTSIDE THE TILE. It is absolute presentation, never part of either the card's
+   * width or its content column. The form reserves the key's visual lane from its known shortcut
+   * mode, before the binding writes a letter. That keeps the tile, title, and free-text answer
+   * aligned with each other and keeps the hanging key inside a narrow preview's viewport.
+   *
+   * The Kbd is a tile sibling in emitted markup. React's TileRadioGroup owns its content wrapper, so
+   * its Kbd remains there, but the same tile-level rules place either shape outside the tile.
+   */
+  .sk-questionnaire[data-shortcuts="letters"],
+  .sk-questionnaire[data-shortcuts="numbers"] {
+    --sk-questionnaire-shortcut-gap: var(--space-inline-sm);
+    --sk-questionnaire-shortcut-gutter: calc(
+      1.6 * var(--font-size-body-sm) + var(--sk-questionnaire-shortcut-gap)
+    );
+
+    padding-inline-start: var(--sk-questionnaire-shortcut-gutter);
+  }
+
+  .sk-questionnaire[data-shortcuts="letters"] .sk-tile,
+  .sk-questionnaire[data-shortcuts="numbers"] .sk-tile {
+    position: relative;
+    overflow: visible;
   }
 
   .sk-questionnaire__shortcut {
-    grid-column: 2;
-    grid-row: 1 / span 2;
+    position: absolute;
+    inset-inline-start: calc(-1 * var(--sk-questionnaire-shortcut-gutter));
+    inset-block-start: 50%;
+    translate: 0 -50%;
     color: var(--sk-questionnaire-shortcut-fg);
   }
 
@@ -343,6 +447,110 @@
     from {
       opacity: 0;
       translate: 0 var(--motion-enter-distance);
+    }
+  }
+
+  /* ── the rail beside the question ─────────────────────────────────────────
+   * `progressOrientation="vertical"` turns the form's three bands into two columns: the rail down
+   * the left, everything else on the right. It is what a long journey needs - eight stages across a
+   * reading measure give each one nothing, and the same eight down a column give each one a line.
+   *
+   * THE QUESTION KEEPS ITS MEASURE, which is why the form widens rather than the question narrowing.
+   * A rail taking its room out of the reading column would trade a cramped rail for cramped prose.
+   * `--sk-questionnaire-rail` is the column it costs, published so a consumer with longer stage
+   * names can pay more.
+   *
+   * The rail spans both content rows (the question and the actions) so it reads against the whole
+   * form rather than sitting above a question it is not part of.
+   */
+  .sk-questionnaire[data-progress-orientation="vertical"] {
+    --sk-questionnaire-rail: 12rem;
+
+    grid-template-columns: var(--sk-questionnaire-rail) minmax(0, 1fr);
+    column-gap: var(--space-inline-lg);
+    inline-size: min(
+      100%,
+      calc(var(--sk-questionnaire-measure) + var(--sk-questionnaire-rail) + var(--space-inline-lg))
+    );
+  }
+
+  .sk-questionnaire[data-progress-orientation="vertical"] .sk-questionnaire__progress {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .sk-questionnaire[data-progress-orientation="vertical"][data-sk-ready] .sk-questionnaire__item,
+  .sk-questionnaire[data-progress-orientation="vertical"] .sk-questionnaire__actions {
+    grid-column: 2;
+  }
+
+  .sk-questionnaire[data-progress-orientation="vertical"][data-sk-ready] .sk-questionnaire__item {
+    grid-row: 1;
+  }
+
+  .sk-questionnaire[data-progress-orientation="vertical"] .sk-questionnaire__actions {
+    grid-row: 2;
+  }
+
+  /*
+   * TWO COLUMNS ONLY WHERE TWO COLUMNS FIT. The layout needs the rail plus the gap plus the reading
+   * measure: 12rem + 1rem + 60ch, and `60ch` MEASURED is 538px, not the ~930 an arithmetic guess
+   * gives you by reading `ch` as half an em. So the requirement is 746px, and `desktop` (52rem,
+   * 832px) is the first named step that clears it, with room to spare.
+   *
+   * The number is measured rather than derived on purpose: a first pass at this moved the break to
+   * `wide` (72rem) on the strength of that guess, which would have withheld the two columns from
+   * every viewport between 832 and 1152 that fits them comfortably.
+   *
+   * Below it the form goes back to one column with the rail on top; Steps' own vertical layout still
+   * applies, which is the compact rail it falls back to anyway.
+   */
+  @media (width < 52rem) {
+    .sk-questionnaire[data-progress-orientation="vertical"] {
+      grid-template-columns: minmax(0, 1fr);
+      inline-size: min(100%, var(--sk-questionnaire-measure));
+    }
+
+    .sk-questionnaire[data-progress-orientation="vertical"] .sk-questionnaire__progress,
+    .sk-questionnaire[data-progress-orientation="vertical"][data-sk-ready] .sk-questionnaire__item,
+    .sk-questionnaire[data-progress-orientation="vertical"] .sk-questionnaire__actions {
+      grid-column: 1;
+    }
+
+    .sk-questionnaire[data-progress-orientation="vertical"] .sk-questionnaire__progress {
+      grid-row: 1;
+    }
+
+    .sk-questionnaire[data-progress-orientation="vertical"][data-sk-ready] .sk-questionnaire__item {
+      grid-row: 2;
+    }
+
+    .sk-questionnaire[data-progress-orientation="vertical"] .sk-questionnaire__actions {
+      grid-row: 3;
+    }
+  }
+
+  /*
+   * NO KEY, NO GUTTER. The hanging Kbd is a keyboard affordance, and on a touch-only device it
+   * advertises a shortcut the reader has no way to press while charging ~30px of a 390px screen for
+   * the privilege. Worse, the gutter is `padding-inline-start` on the FORM, so it indents the
+   * question and its description too: the whole form shifts to make room for three letters nobody
+   * can type.
+   *
+   * `any-hover: none` is the same question `state-layer.css` asks to decide whether hover feedback
+   * is worth keeping, and it is the honest one available: there is no media query for "has a
+   * keyboard". A tablet with a keyboard attached reports `hover`, so it keeps its keys.
+   */
+  @media (any-hover: none) {
+    .sk-questionnaire[data-shortcuts="letters"],
+    .sk-questionnaire[data-shortcuts="numbers"] {
+      padding-inline-start: 0;
+    }
+
+    /* `.sk-kbd` sets its own `display` at the same specificity and wins on order, which is why this
+       says both classes, exactly as the `:empty` rule further up already had to. */
+    .sk-kbd.sk-questionnaire__shortcut {
+      display: none;
     }
   }
 }

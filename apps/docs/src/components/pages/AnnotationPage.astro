@@ -122,6 +122,9 @@ const hooks = `.mi-diagrama {
       label={t("annotation.sidesPreviewLabel")}
     />
 
+    <h3 id="key">{t("annotation.keyTitle")}</h3>
+    <p set:html={t("annotation.keyBody")} />
+
     <h3>{t("annotation.pluralTitle")}</h3>
     <p set:html={t("annotation.pluralBody")} />
     <ComponentPreview

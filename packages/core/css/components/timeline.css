@@ -1,0 +1,233 @@
+/*
+ * TIER 3, TIMELINE
+ *
+ * Events that already happened, read down a rail. The scale is the point of this component and the
+ * whole difference from Changelog, which is a dense document at 85ch whose three text levels sit
+ * within one size of each other. Here the entry has three rungs a reader can tell apart at a
+ * glance, in reading order:
+ *
+ *   time     caption, tertiary   - the eyebrow. Quiet, and ABOVE the heading.
+ *   heading  h4, primary         - the loudest line. The event itself.
+ *   body     body, secondary     - the detail, only when there is one.
+ *
+ * The dot is correspondingly a real disc rather than Changelog's 7px bead, because it can hold an
+ * icon and because a rail at this scale needs a mark with weight to anchor it.
+ */
+@layer components {
+  .sk-timeline {
+    /*
+     * Weightier than Changelog's 7px bead, but still subordinate to the heading it marks. A dot the
+     * size of a control (32px) was tried and read as a bullet competing with the text.
+     */
+    --sk-timeline-marker-size: 0.75rem;
+    --sk-timeline-marker-color: var(--color-border-strong);
+    --sk-timeline-connector-size: 2px;
+    --sk-timeline-connector-color: var(--color-border-subtle);
+    /* The marker column. Wide enough that the dot has air on both sides of the connector. */
+    --sk-timeline-rail: 2.5rem;
+    --sk-timeline-item-gap: var(--space-stack-lg);
+    --sk-timeline-content-gap: var(--space-stack-xs);
+    --sk-timeline-time-fg: var(--color-text-tertiary);
+    --sk-timeline-heading-fg: var(--color-text-primary);
+    --sk-timeline-heading-font-size: var(--font-size-heading-h4);
+    --sk-timeline-body-fg: var(--color-text-secondary);
+    /*
+     * Narrower than Changelog's 85ch on purpose. That one is a document to read through; this is a
+     * column of events to scan down, and a long measure makes a reader lose the rail on the return
+     * sweep.
+     */
+    --sk-timeline-measure: 65ch;
+
+    box-sizing: border-box;
+    display: grid;
+    row-gap: var(--sk-timeline-item-gap);
+    max-inline-size: var(--sk-timeline-measure);
+    min-inline-size: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sk-timeline,
+  .sk-timeline *,
+  .sk-timeline *::before,
+  .sk-timeline *::after {
+    box-sizing: border-box;
+  }
+
+  .sk-timeline__item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-timeline-content-gap);
+    padding-inline-start: var(--sk-timeline-rail);
+    min-inline-size: 0;
+
+    /*
+     * HALF THE FIRST LINE, WHICH IS WHERE THE DOT AND THE CONNECTOR BOTH BEGIN. One formula with
+     * two consumers, so they cannot drift apart: whatever this resolves to, the dot centres on it
+     * and the line starts from it.
+     *
+     * Row one is the eyebrow, and its box is the caption size at the body's line height (see
+     * `__time`). It is spelled out rather than read as `0.5lh` because `lh` here would resolve
+     * against the ITEM's font size, which is the body's and one step larger.
+     */
+    --sk-timeline-first-line: calc(var(--font-size-caption) * var(--font-line-height-body) / 2);
+  }
+
+  /*
+   * A DOT WITH SOMETHING IN IT NEEDS ROOM FOR IT. The bare dot is deliberately small, which leaves
+   * no space for the icon the `marker` slot accepts, so the size follows the content instead of
+   * asking the author to remember a hook. The alignment does not care: the dot is out of flow and
+   * positioned from its own centre, so it holds at either size.
+   */
+  .sk-timeline__item:has(> .sk-timeline__marker:not(:empty)) {
+    --sk-timeline-marker-size: 1.5rem;
+  }
+
+  /* With no eyebrow the heading owns the first line instead, and its box is taller. */
+  .sk-timeline__item:not(:has(> .sk-timeline__time)) {
+    --sk-timeline-first-line: calc(
+      var(--sk-timeline-heading-font-size) * var(--font-line-height-heading-h4) / 2
+    );
+  }
+
+  /*
+   * THE DOT SITS IN ROW 1 AND CENTRES ITSELF IN IT, which is what keeps it aligned with no magic
+   * number: row 1 is the eyebrow when there is one and the heading when there is not, and
+   * `align-self: center` resolves against whichever it turned out to be.
+   */
+  .sk-timeline__marker {
+    /*
+     * OUT OF FLOW ON PURPOSE. In the flow the dot is a box in the first row, so a dot taller than
+     * the eyebrow silently grew that row and pushed the text off the dot's centre (measured: 7px
+     * at a 32px dot). Absolute, it costs the row nothing and the alignment holds at any size.
+     */
+    position: absolute;
+    z-index: 1;
+    inset-inline-start: calc((var(--sk-timeline-rail) - var(--sk-timeline-marker-size)) / 2);
+    inset-block-start: calc(var(--sk-timeline-first-line) - var(--sk-timeline-marker-size) / 2);
+    display: grid;
+    place-items: center;
+    inline-size: var(--sk-timeline-marker-size);
+    block-size: var(--sk-timeline-marker-size);
+    border-radius: var(--radius-pill);
+    background: var(--sk-timeline-marker-color);
+    /*
+     * The dot is the box an Icon lands in, so it sets the size the icon reads rather than leaving
+     * it at the icon's own `md`: 16px inside a 24px disc leaves it 4px of air on every side.
+     * `currentColor` is what the set draws with, so the contrast is set here, once.
+     */
+    --sk-icon-size: var(--size-icon-sm);
+    color: var(--color-text-on-accent);
+  }
+
+  /*
+   * THE DOT SIZES THE ICON, whatever the author asked the Icon for.
+   *
+   * Both of the icon's shapes are named because they are sized differently: `.sk-icon` (React, and
+   * the enhanced placeholder) reads `--sk-icon-size`, while the emitted `[data-sk-icon]` placeholder
+   * takes `--size-icon-*` straight, so setting only the hook left the vanilla binding at `md` and
+   * the two sides disagreed. `.sk-timeline` leads both so this outranks
+   * `[data-sk-icon][data-sk-icon-size="lg"]` whatever order a consumer imports the sheets in.
+   *
+   * Overriding the author's `size` is deliberate: the dot is a fixed container, and an `lg` icon in
+   * it would not be a bigger glyph, it would be a broken one.
+   */
+  .sk-timeline .sk-timeline__marker :is(.sk-icon, [data-sk-icon]) {
+    --sk-icon-size: var(--size-icon-sm);
+    inline-size: var(--size-icon-sm);
+    block-size: var(--size-icon-sm);
+  }
+
+  /*
+   * THE CONNECTOR RUNS FROM THIS DOT TO THE NEXT ONE, so the last entry has none: a line hanging
+   * past the final event would promise a continuation that is not there.
+   *
+   * It is drawn behind the dot rather than butted against it, which is why `z-index` orders them:
+   * a line that stops short leaves a seam at every entry once the dot picks up a tone.
+   */
+  .sk-timeline__item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    inset-inline-start: calc(var(--sk-timeline-rail) / 2);
+    translate: -50% 0;
+    /* Starts at the dot's centre, from the same property the dot positions itself with. */
+    inset-block-start: var(--sk-timeline-first-line);
+    inset-block-end: calc(-1 * var(--sk-timeline-item-gap));
+    inline-size: var(--sk-timeline-connector-size);
+    border-radius: var(--radius-pill);
+    background: var(--sk-timeline-connector-color);
+  }
+
+  .sk-timeline__time {
+    color: var(--sk-timeline-time-fg);
+    font-size: var(--font-size-caption);
+    /*
+     * The body's line height on the caption's size, and load-bearing: this is the box
+     * `--sk-timeline-first-line` is computed from, so the dot and the connector both find their
+     * start here. Changing it moves them.
+     */
+    line-height: var(--font-line-height-body);
+    /* A column of dates only lines up if the digits are one width. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sk-timeline__heading {
+    display: block;
+    color: var(--sk-timeline-heading-fg);
+    font-size: var(--sk-timeline-heading-font-size);
+    font-weight: var(--font-weight-emphasis);
+    line-height: var(--font-line-height-heading-h4);
+    text-wrap: balance;
+  }
+
+  .sk-timeline__body {
+    color: var(--sk-timeline-body-fg);
+    font-size: var(--font-size-body);
+    line-height: var(--font-line-height-body);
+  }
+
+  /*
+   * TONE IS EMPHASIS ON THE DOT, never the only thing saying so: the dot is `aria-hidden` and the
+   * heading beside it carries the meaning in words. These paint the mark a reader's eye stops at
+   * while scanning, and nothing else.
+   */
+  .sk-timeline__item[data-tone="accent"] {
+    --sk-timeline-marker-color: var(--color-border-accent);
+  }
+
+  .sk-timeline__item[data-tone="success"] {
+    --sk-timeline-marker-color: var(--color-border-success);
+  }
+
+  .sk-timeline__item[data-tone="warning"] {
+    --sk-timeline-marker-color: var(--color-border-warning);
+  }
+
+  .sk-timeline__item[data-tone="danger"] {
+    --sk-timeline-marker-color: var(--color-border-danger);
+  }
+
+  /*
+   * A phone has no room for a 2.5rem gutter beside a 65ch column. The rail narrows rather than
+   * collapsing, because the rail IS the component: an event list with no line down it is a List.
+   */
+  @media (width < 30rem) {
+    .sk-timeline {
+      --sk-timeline-rail: 1.75rem;
+      --sk-timeline-item-gap: var(--space-stack-md);
+      --sk-timeline-heading-font-size: var(--font-size-body-lg);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .sk-timeline__marker {
+      background: CanvasText;
+    }
+
+    .sk-timeline__item:not(:last-child)::after {
+      background: CanvasText;
+    }
+  }
+}

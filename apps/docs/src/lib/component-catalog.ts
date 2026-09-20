@@ -208,6 +208,10 @@ const componentDescriptions = {
     es: "Muestra una medición dentro de un rango conocido, no el avance de una tarea.",
     en: "Shows a measurement within a known range, not a task's progress.",
   },
+  "/components/rating": {
+    es: "Una puntuación en una escala corta: el control con que se elige y la lectura del promedio.",
+    en: "A score on a short scale: the control that sets one and the reading of the average.",
+  },
   "/components/navbar": {
     es: "Reúne marca, navegación y acciones globales en la cabecera.",
     en: "Collects brand, global navigation, and actions in the header.",
@@ -225,12 +229,8 @@ const componentDescriptions = {
     en: "Preserves layout while content finishes loading.",
   },
   "/components/popover": {
-    es: "Muestra contenido contextual rico sin bloquear la página.",
-    en: "Shows rich contextual content without blocking the page.",
-  },
-  "/components/popup": {
-    es: "Proporciona la superficie flotante base para contenido anclado.",
-    en: "Provides the base floating surface for anchored content.",
+    es: "Muestra contenido contextual rico sin bloquear la página, con o sin chrome (la superficie desnuda es Popup).",
+    en: "Shows rich contextual content without blocking the page, with or without chrome (the bare surface is Popup).",
   },
   "/components/changelog": {
     es: "Cuenta qué cambió y cuándo, en un riel fechado.",
@@ -239,6 +239,10 @@ const componentDescriptions = {
   "/components/process-list": {
     es: "Explica procedimientos ordenados con pasos y detalles.",
     en: "Explains ordered procedures with steps and supporting details.",
+  },
+  "/components/timeline": {
+    es: "Muestra eventos que ya ocurrieron en un riel fechado.",
+    en: "Shows events that already happened on a dated rail.",
   },
   "/components/progress": {
     es: "Muestra cuánto avanzó una tarea con duración conocida.",

@@ -7,8 +7,20 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "35c2fec5c875b8b7"
+surface: "d2bb469d739b6c5c"
 entries:
+  - date: 2026-09-18
+    kind: feature
+    es:
+      title: Llega el hook de peso del título de Tile
+      body: >-
+        Accordion pinta con <code>tile.css</code>, así que <code>--sk-tile-title-weight</code> también
+        se retunea desde aquí. El valor por defecto no cambia.
+    en:
+      title: Tile's title weight hook reaches here
+      body: >-
+        Accordion paints with <code>tile.css</code>, so <code>--sk-tile-title-weight</code> is
+        retunable from here too. The default is unchanged.
   - date: 2026-09-17
     kind: feature
     es:

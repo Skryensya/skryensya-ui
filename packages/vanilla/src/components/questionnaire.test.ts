@@ -1,15 +1,16 @@
-import { fireEvent, getByText } from "@testing-library/dom";
+import { fireEvent, getByText, waitFor } from "@testing-library/dom";
 import { flushSync } from "svelte";
 import { describe, expect, it, vi } from "vitest";
 import { mountQuestionnaire } from "./questionnaire.js";
 import { mountTileCheckbox } from "./tile-checkbox.js";
+import { mountSelect } from "./select.js";
 import { mountTileRadioGroup } from "./tile-radio-group.js";
 
 /* The markup the contract emits (trimmed of whitespace), so the test drives what a page really ships. */
 const choice = (value: string, label: string) =>
-  `<label class="sk-tile sk-tile--interactive sk-interactive" data-scope="tile" data-part="item"><input value="${value}" type="radio" data-part="input"><span class="sk-tile__content" data-part="content"><span class="sk-tile__title">${label}</span><kbd class="sk-questionnaire__shortcut sk-kbd" aria-hidden="true" data-tone="neutral"></kbd></span><span class="sk-tile__selection-indicator" aria-hidden="true" data-part="indicator"></span></label>`;
+  `<label class="sk-tile sk-tile--interactive sk-interactive" data-scope="tile" data-part="item"><input value="${value}" type="radio" data-part="input"><span class="sk-tile__content" data-part="content"><span class="sk-tile__title">${label}</span></span><kbd class="sk-questionnaire__shortcut sk-kbd" aria-hidden="true" data-tone="neutral"></kbd><span class="sk-tile__selection-indicator" aria-hidden="true" data-part="indicator"></span></label>`;
 const box = (value: string, label: string, disabled = false) =>
-  `<label class="sk-tile sk-tile--interactive sk-interactive" data-sk-tile-checkbox data-name="channels" data-value="${value}"${disabled ? " data-disabled" : ""} data-scope="tile"><input type="checkbox" data-part="input"><span class="sk-tile__content" data-part="content"><span class="sk-tile__title">${label}</span><kbd class="sk-questionnaire__shortcut sk-kbd" aria-hidden="true" data-tone="neutral"></kbd></span><span class="sk-checkbox__control sk-interactive" aria-hidden="true" data-part="indicator"><span class="sk-checkbox__indicator" data-state="checked"></span><span class="sk-checkbox__indicator" data-state="indeterminate"></span></span></label>`;
+  `<label class="sk-tile sk-tile--interactive sk-interactive" data-sk-tile-checkbox data-name="channels" data-value="${value}"${disabled ? " data-disabled" : ""} data-scope="tile"><input type="checkbox" data-part="input"><span class="sk-tile__content" data-part="content"><span class="sk-tile__title">${label}</span></span><kbd class="sk-questionnaire__shortcut sk-kbd" aria-hidden="true" data-tone="neutral"></kbd><span class="sk-checkbox__control sk-interactive" aria-hidden="true" data-part="indicator"><span class="sk-checkbox__indicator" data-state="checked"></span><span class="sk-checkbox__indicator" data-state="indeterminate"></span></span></label>`;
 
 const markup = (progress = "text", shortcuts = "none") => `
 <form class="sk-questionnaire" data-sk-questionnaire data-progress="${progress}" data-shortcuts="${shortcuts}" aria-label="Survey" novalidate>
@@ -271,4 +272,143 @@ describe("Questionnaire (Vanilla)", () => {
     expect(shown(fieldset("Anything else?"))).toBe(true);
     expect(shown(fieldset("What should we prototype next?"))).toBe(false);
   });
+
+describe("a slotted control", () => {
+  /* The `control` slot's whole point is that this enhancer has never heard of what is inside it, so
+     the markup below is deliberately NOT a kit component: a bare select and a file input stand in for
+     whatever the author composed, and what is under test is that native form state is enough. */
+  const slotted = (inner: string) => `
+<form class="sk-questionnaire" data-sk-questionnaire data-progress="text" data-shortcuts="none" aria-label="Slotted" novalidate>
+  <div class="sk-questionnaire__progress" data-sk-questionnaire-progress hidden></div>
+  <fieldset class="sk-questionnaire__item" data-sk-questionnaire-item data-required>
+    <legend class="sk-questionnaire__title">Where do you live?</legend>
+    <div class="sk-questionnaire__answers" data-name="country">
+      <div class="sk-questionnaire__control">${inner}</div>
+    </div>
+    <p class="sk-questionnaire__error" data-sk-questionnaire-error hidden></p>
+  </fieldset>
+  <div class="sk-questionnaire__actions">
+    <button class="sk-questionnaire__submit" data-sk-questionnaire-submit type="submit">Submit</button>
+  </div>
+</form>`;
+
+  const mount = (inner: string) => {
+    document.body.innerHTML = slotted(inner);
+    const form = document.querySelector<HTMLFormElement>("[data-sk-questionnaire]")!;
+    mountQuestionnaire(form);
+    flushSync();
+    return form;
+  };
+
+  it("reads the answer off the control's native form state, and counts the question answered", () => {
+    const form = mount(
+      `<select name="country"><option value="">-</option><option value="cl">Chile</option></select>`,
+    );
+    const select = form.querySelector<HTMLSelectElement>("select")!;
+    const error = form.querySelector<HTMLElement>("[data-sk-questionnaire-error]")!;
+
+    /* Required and untouched: submitting has to be refused, and the message says so. */
+    fireEvent.submit(form);
+    flushSync();
+    expect(error.textContent?.trim()).not.toBe("");
+
+    select.value = "cl";
+    fireEvent.change(select);
+    flushSync();
+
+    fireEvent.submit(form);
+    flushSync();
+    expect(error.textContent?.trim()).toBe("");
+  });
+
+  it("empties the answer when the control is cleared, rather than remembering the last report", () => {
+    const form = mount(
+      `<select name="country"><option value="">-</option><option value="cl">Chile</option></select>`,
+    );
+    const select = form.querySelector<HTMLSelectElement>("select")!;
+    const error = form.querySelector<HTMLElement>("[data-sk-questionnaire-error]")!;
+
+    select.value = "cl";
+    fireEvent.change(select);
+    flushSync();
+    select.value = "";
+    fireEvent.change(select);
+    flushSync();
+
+    fireEvent.submit(form);
+    flushSync();
+    expect(error.textContent?.trim()).not.toBe("");
+  });
+
+  it("ignores a control that has nothing chosen, so an empty field is not an answer", () => {
+    const form = mount(`<input type="text" name="country" value="">`);
+    const error = form.querySelector<HTMLElement>("[data-sk-questionnaire-error]")!;
+
+    fireEvent.submit(form);
+    flushSync();
+    expect(error.textContent?.trim()).not.toBe("");
+
+    const input = form.querySelector<HTMLInputElement>("input")!;
+    input.value = "Chile";
+    fireEvent.input(input);
+    flushSync();
+
+    fireEvent.submit(form);
+    flushSync();
+    expect(error.textContent?.trim()).toBe("");
+  });
+
+  /*
+   * THE INTEGRATION, WITH A REAL KIT CONTROL RATHER THAN A STAND-IN. The tests above prove the
+   * enhancer reads native form state; this one proves the claim the slot is actually built on: that
+   * a machine-driven component of the kit, driven through its OWN interface, ends up reporting
+   * through that same native state. The reader never hears from Zag, only from the hidden `<select>`
+   * Select keeps in step with itself.
+   */
+  it("hears a real Select driven through its own trigger", async () => {
+    const items = [
+      { value: "cl", label: "Chile" },
+      { value: "ar", label: "Argentina" },
+    ];
+    const select = `<div class="sk-select" data-sk-select id="country" data-name="country">
+      <select data-sk-select-hidden name="country">${items.map((i) => `<option value="${i.value}">${i.label}</option>`).join("")}</select>
+      <div class="sk-select__control" data-sk-select-control>
+        <label class="sk-select__label" data-sk-select-label>País</label>
+        <button class="sk-select__trigger sk-interactive" data-sk-select-trigger>
+          <span class="sk-select__value" data-sk-select-value></span>
+        </button>
+      </div>
+      <div class="sk-select__positioner" data-sk-select-positioner>
+        <ul class="sk-select__content" data-sk-select-content>
+          ${items.map((i) => `<li class="sk-select__item sk-interactive" data-sk-select-item data-value="${i.value}"><span class="sk-select__item-text" data-sk-select-item-text>${i.label}</span></li>`).join("")}
+        </ul>
+      </div>
+    </div>`;
+
+    document.body.innerHTML = slotted(select);
+    const form = document.querySelector<HTMLFormElement>("[data-sk-questionnaire]")!;
+    mountSelect(form.querySelector<HTMLElement>("[data-sk-select]")!);
+    mountQuestionnaire(form);
+    flushSync();
+
+    const error = form.querySelector<HTMLElement>("[data-sk-questionnaire-error]")!;
+    fireEvent.submit(form);
+    flushSync();
+    expect(error.textContent?.trim()).not.toBe("");
+
+    /* Driven the way a reader drives it: open the list, press an option. Zag writes the hidden
+       `<select>`, the `change` bubbles, and the questionnaire learns the answer from it. */
+    fireEvent.click(form.querySelector<HTMLElement>("[data-sk-select-trigger]")!);
+    await waitFor(() => expect(form.querySelector("[data-sk-select-item]")).toBeTruthy());
+    fireEvent.click(form.querySelector<HTMLElement>('[data-sk-select-item][data-value="ar"]')!);
+    await waitFor(() =>
+      expect(form.querySelector<HTMLSelectElement>("[data-sk-select-hidden]")!.value).toBe("ar"),
+    );
+    flushSync();
+
+    fireEvent.submit(form);
+    flushSync();
+    expect(error.textContent?.trim()).toBe("");
+  });
+});
 });

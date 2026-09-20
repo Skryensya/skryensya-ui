@@ -143,8 +143,21 @@ agente tiene el checklist completo), y correr `turbo check`.
   rato. Es lo opuesto a experimental; marcarlo Beta sería incorrecto. Sí sigue faltándole:
   aparece en `componentItems` (buscador) pero ruteado en `/nav-list`, no bajo `/componentes/` -
   eso es a propósito (vive bajo "patrones compartidos" en el sidebar), no un bug.
-- [ ] **Popup** (`/componentes/popup`) - reusa el contrato de `popover`; la suite tiene que probar
-  la composición propia (ancla + superficie sin chrome), no repetir la de Popover.
+- [x] **Popup** (`/componentes/popup`) - hecho ✅ (2026-09-19), pero no escribiendo la suite: el
+  ítem se disolvio. La premisa ("reusa el contrato de `popover`") era en realidad el problema, no un
+  detalle: Popup no era un componente, era `Popover.bare`, la misma familia una signature mas abajo,
+  con pagina propia. Dos paginas para un contrato obligaban al lector a elegir entre las dos antes
+  de saber que eran lo mismo, y el catalogo contaba la familia dos veces. La seccion se fusiono
+  dentro de la pagina de Popover bajo `<h3 id="popup">` (demo vivo + diagrama de anatomia + su nota
+  de a11y), `/componentes/popup` y `/components/popup` quedaron como 301 a esa ancla (mismo patron
+  que `components/details.astro`), las palabras de busqueda de Popup pasaron a los `aliases` de
+  Popover para que el nombre siga encontrando la pagina, y los demos viven en `demos/popover.ts`.
+  La cobertura que el item pedia ya existia: `popover.test.tsx` tiene 12 tests y cuatro de ellos son
+  especificamente del modo bare (`testReact4`, `testReact10`, y los de placement/arrow que usan la
+  signature). Con eso Popup deja de ser un item del Nivel 2: no hay componente que despejar.
+  Al pasar: los dos redirects de `details` apuntaban mal (el ingles a `#native-details`, un fragmento
+  que ningun elemento tiene, y el español a `/componentes/...` sin el prefijo `/es` que ADR-0021
+  dejo). Corregidos los dos.
 - [ ] **Toolbar** (`/componentes/toolbar`) - roving tabindex real, la más involucrada del lote:
   navegación por flechas, wrap, orientación.
 

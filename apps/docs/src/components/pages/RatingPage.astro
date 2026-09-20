@@ -1,0 +1,80 @@
+---
+import "@skryensya/core/components/rating.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  ratingAnatomyTree,
+  ratingDisplayTree,
+  ratingFractionsTree,
+  ratingInputTree,
+  ratingSizesTree,
+} from "../../demos/rating";
+import { annotationDemoCss } from "../../demos/annotation";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+
+const symbolSwap = `/* The symbol is a mask, so a heart is one declaration. */
+.reviews {
+  --sk-rating-symbol: url("data:image/svg+xml,%3Csvg …heart… %3E");
+}`;
+---
+
+<ComponentPageShell
+  title="Rating"
+  description={t("ratingPage.description")}
+  contractId="rating"
+  styleGroups={[{ file: "components/rating.css", probe: "sk-rating" }]}
+  testFiles={[
+    "packages/core/src/rating.test.ts",
+    "packages/react/src/components/rating.test.tsx",
+    "packages/vanilla/src/components/rating.test.ts",
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("ratingPage.lede")} />
+    <ComponentPreview tree={ratingDisplayTree(t)} label="RatingDisplay" />
+
+    <h3>{t("ratingPage.inputTitle")}</h3>
+    <p set:html={t("ratingPage.inputBody")} />
+    <ComponentPreview tree={ratingInputTree(t)} label="Rating" />
+
+    <h3>{t("ratingPage.fractionTitle")}</h3>
+    <p set:html={t("ratingPage.fractionBody")} />
+    <ComponentPreview tree={ratingFractionsTree(t)} label={t("ratingPage.fractionPreviewLabel")} />
+    <p set:html={t("ratingPage.asymmetryBody")} />
+
+    <p set:html={t("ratingPage.anatomyBody")} />
+    <ComponentPreview
+      tree={ratingAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("ratingPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
+    <h3>{t("ratingPage.symbolTitle")}</h3>
+    <p set:html={t("ratingPage.symbolBody")} />
+    <CodeBlock code={symbolSwap} label="CSS" />
+
+    <h3>{t("ratingPage.sizeTitle")}</h3>
+    <p set:html={t("ratingPage.sizeBody")} />
+    <ComponentPreview tree={ratingSizesTree(t)} label={t("ratingPage.sizePreviewLabel")} />
+
+    <p set:html={t("component.reactNote")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("ratingPage.a11yBody")} />
+    <p set:html={t("ratingPage.a11yLabelBody")} />
+  </Fragment>
+</ComponentPageShell>

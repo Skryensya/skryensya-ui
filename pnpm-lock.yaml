@@ -54,6 +54,9 @@ importers:
       '@skryensya/icons-phosphor':
         specifier: workspace:*
         version: link:../../packages/icons-phosphor
+      '@skryensya/phone':
+        specifier: workspace:*
+        version: link:../../packages/phone
       '@skryensya/react':
         specifier: workspace:*
         version: link:../../packages/react
@@ -421,6 +424,9 @@ importers:
       '@zag-js/radio-group':
         specifier: ^1.43.3
         version: 1.43.3
+      '@zag-js/rating-group':
+        specifier: ^1.43.3
+        version: 1.43.3
       '@zag-js/select':
         specifier: ^1.43.3
         version: 1.43.3
@@ -593,6 +599,22 @@ importers:
       tsx:
         specifier: ^4.19.2
         version: 4.23.1
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^4.1.11
+        version: 4.1.11(@types/node@24.13.3)(jsdom@29.1.1)(vite@8.1.5(@types/node@24.13.3)(esbuild@0.28.1)(sass@1.101.0)(tsx@4.23.1)(yaml@2.9.0))
+
+  packages/phone:
+    dependencies:
+      '@skryensya/core':
+        specifier: workspace:*
+        version: link:../core
+      libphonenumber-js:
+        specifier: ^1.13.11
+        version: 1.13.11
+    devDependencies:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -962,6 +984,11 @@ packages:
     cpu: [x64]
     os: [linux]
     libc: [musl]
+
+  '@bruits/satteri-wasm32-wasi@0.10.5':
+    resolution: {integrity: sha512-ypz8c/Zmipxp4IoeDa228Gstv6TLzVmNs3yC6wKCoNSOjx1iwpgzu87Y3hTkXFdwChVGU85qeUDuOIarGUZQLw==}
+    engines: {node: '>=14.0.0'}
+    cpu: [wasm32]
 
   '@bruits/satteri-win32-arm64-msvc@0.10.5':
     resolution: {integrity: sha512-siTV88nb0LRqNpkL2gXboqCwVdq95sLtzMHS1/3eONV2gLbB3NAK46wmSMvCO/yquBvI2lvaFIfd8P12ecsxBw==}
@@ -1984,6 +2011,9 @@ packages:
   '@zag-js/radio-group@1.43.3':
     resolution: {integrity: sha512-1QM1rNnK6mQ36aYEshFVlboBDMQTth2wxHuh5V+ALIXf4Dl1Eexy0dyLVFkYV7R3E90e6b8d+xZZ3tziTvnRDg==}
 
+  '@zag-js/rating-group@1.43.3':
+    resolution: {integrity: sha512-BiKcyo3z7q4UBMsGuOs8w6u827pQ50eOuRCh1oqVpKqBoyRL0z9aFQYg9YeYnxXn8eyoEBMiVv01MTogJ2JBQA==}
+
   '@zag-js/react@1.43.3':
     resolution: {integrity: sha512-PVfq738OhicFsGOZNqrsBmdOHuh54XnIhkyJ9HSWDpzQcGHq4fuFWIvfmqW/5o/Xkj+JwFQLoIDVX/KHaUjcXA==}
     peerDependencies:
@@ -2871,6 +2901,9 @@ packages:
   kleur@4.1.5:
     resolution: {integrity: sha512-o+NO+8WrRiQEE4/7nwRJhN1HWpVmJm511pBHUxPLtp0BUISzlBplORYSmTclCnJvQq2tKu/sgl3xVpkc7ZWuQQ==}
     engines: {node: '>=6'}
+
+  libphonenumber-js@1.13.11:
+    resolution: {integrity: sha512-ETER2kMaIFTI/Nh1a8Gk03dUF/SL0VZqtI+CcVHZxp5WIHYwNS7S+uiYZDYCvLy3lOR4/DAD5jf0h5WkePPpqg==}
 
   lightningcss-android-arm64@1.33.0:
     resolution: {integrity: sha512-gEpRTalKdosp4Bb8qWtc2iOgE5SeIHlpS1up9bFq2wAyYhl1UdTObYiHe98zEM9SQvSoqQZ1IQD0JNpg3Ml5pg==}
@@ -4381,6 +4414,13 @@ snapshots:
   '@bruits/satteri-linux-x64-musl@0.10.5':
     optional: true
 
+  '@bruits/satteri-wasm32-wasi@0.10.5':
+    dependencies:
+      '@emnapi/core': 1.11.1
+      '@emnapi/runtime': 1.11.1
+      '@napi-rs/wasm-runtime': 1.2.3(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)
+    optional: true
+
   '@bruits/satteri-win32-arm64-msvc@0.10.5':
     optional: true
 
@@ -5480,6 +5520,14 @@ snapshots:
       '@zag-js/types': 1.43.3
       '@zag-js/utils': 1.43.3
 
+  '@zag-js/rating-group@1.43.3':
+    dependencies:
+      '@zag-js/anatomy': 1.43.3
+      '@zag-js/core': 1.43.3
+      '@zag-js/dom-query': 1.43.3
+      '@zag-js/types': 1.43.3
+      '@zag-js/utils': 1.43.3
+
   '@zag-js/react@1.43.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@zag-js/core': 1.43.3
@@ -6481,6 +6529,8 @@ snapshots:
 
   kleur@4.1.5: {}
 
+  libphonenumber-js@1.13.11: {}
+
   lightningcss-android-arm64@1.33.0:
     optional: true
 
@@ -6970,6 +7020,7 @@ snapshots:
       '@bruits/satteri-linux-arm64-musl': 0.10.5
       '@bruits/satteri-linux-x64-gnu': 0.10.5
       '@bruits/satteri-linux-x64-musl': 0.10.5
+      '@bruits/satteri-wasm32-wasi': 0.10.5
       '@bruits/satteri-win32-arm64-msvc': 0.10.5
       '@bruits/satteri-win32-x64-msvc': 0.10.5
 

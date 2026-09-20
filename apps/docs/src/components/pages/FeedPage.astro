@@ -2,22 +2,61 @@
 import "@skryensya/core/components/feed.css";
 /* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
 import "@skryensya/core/components/annotation.css";
+/* The activity demo composes a real Tag and the loading one a Placeholder; neither sheet is
+   global. A preview frame only copies the sheets this page imported, so a missing one here is an
+   unstyled demo there rather than a build error. Avatar, Button, Table, Kbd and Typography come
+   from `Base.astro` already and are deliberately not repeated. */
+import "@skryensya/core/components/tag.css";
+import "@skryensya/core/components/placeholder.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { feedAnatomyTree, feedTree } from "../../demos/feed";
+import {
+  feedActivityTree,
+  feedAnatomyTree,
+  feedBusyTree,
+  feedCommentsTree,
+  feedInfiniteTree,
+  feedTree,
+} from "../../demos/feed";
 import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
+import loadMoreScript from "../../demos/scripts/feed-load-more.ts?raw";
 
 const t = useTranslations(getLocale(Astro.url));
 const install = `pnpm add @skryensya/core @skryensya/react`;
+
+/* The keyboard model is the one part of this component that is not markup, so it gets the one
+   code sample: the same option in both bindings, side by side. */
+const keyboardSample = `<!-- Authored markup: the enhancer reads the attribute off the DOM. -->
+<div class="sk-feed" data-sk-feed data-keyboard="true" role="feed" aria-label="Actividad reciente">
+  <article class="sk-feed__article" role="article" aria-posinset="1" aria-setsize="-1"
+           aria-labelledby="post-1-label">
+    <div class="sk-feed__article-label" id="post-1-label">María. Hace 2 horas</div>
+    <p>Publicó el resumen del sprint.</p>
+  </article>
+</div>`;
+
+const keyboardReact = `import { Feed, FeedArticle } from "@skryensya/react/feed";
+
+// \`keyboard\` is off by default: a five-post panel does not need Page Down, and the pattern
+// does not require it. Turn it on for a stream long enough that scrolling is the alternative.
+<Feed keyboard label="Actividad reciente">
+  <FeedArticle label="María. Hace 2 horas" posInset={1} setSize={-1}>
+    Publicó el resumen del sprint.
+  </FeedArticle>
+</Feed>`;
 ---
 
 <ComponentPageShell
   title="Feed"
   description={t("feedPage.description")}
   contractId="feed"
-  testFiles={["packages/react/src/components/feed.test.tsx"]}}
+  testFiles={[
+    "packages/core/src/feed.test.ts",
+    "packages/react/src/components/feed.test.tsx",
+    "packages/vanilla/src/components/feed.test.ts",
+  ]}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("feedPage.lede")} />
@@ -32,8 +71,70 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
       chrome={false}
     />
 
+    {/* The ladder, simplest first: plain text posts, then the composition a real feed is, then
+        the two states the contract always had and the page never showed. */}
+    <h3>{t("feedPage.demoTitle")}</h3>
+    <p set:html={t("feedPage.demoBody")} />
     <ComponentPreview tree={feedTree(t)} label="Feed" />
     <p set:html={t("feedPage.body")} />
+
+    <h4>{t("feedPage.demoActivityTitle")}</h4>
+    <p set:html={t("feedPage.demoActivityBody")} />
+    <ComponentPreview tree={feedActivityTree(t)} label={t("feedPage.demoActivityLabel")} />
+
+    <h4>{t("feedPage.demoBusyTitle")}</h4>
+    <p set:html={t("feedPage.demoBusyBody")} />
+    <ComponentPreview tree={feedBusyTree(t)} label={t("feedPage.demoBusyLabel")} />
+
+    <h4>{t("feedPage.demoInfiniteTitle")}</h4>
+    <p set:html={t("feedPage.demoInfiniteBody")} />
+    <ComponentPreview
+      js={loadMoreScript}
+      previewScript={loadMoreScript}
+      tree={feedInfiniteTree(t)}
+      label={t("feedPage.demoInfiniteLabel")}
+    />
+
+    <h4>{t("feedPage.demoCommentsTitle")}</h4>
+    <p set:html={t("feedPage.demoCommentsBody")} />
+    <ComponentPreview tree={feedCommentsTree(t)} label={t("feedPage.demoCommentsLabel")} />
+
+    <h3>{t("feedPage.keyboardTitle")}</h3>
+    <p set:html={t("feedPage.keyboardBody1")} />
+    <p set:html={t("feedPage.keyboardBody2")} />
+    <p set:html={t("feedPage.keyboardBody3")} />
+
+    <table class="sk-table">
+      <caption>{t("feedPage.keyboardTableCaption")}</caption>
+      <thead>
+        <tr>
+          <th scope="col">{t("feedPage.keyboardKey")}</th>
+          <th scope="col">{t("feedPage.keyboardDoes")}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row"><kbd class="sk-kbd">Page Down</kbd></th>
+          <td>{t("feedPage.keyboardPageDown")}</td>
+        </tr>
+        <tr>
+          <th scope="row"><kbd class="sk-kbd">Page Up</kbd></th>
+          <td>{t("feedPage.keyboardPageUp")}</td>
+        </tr>
+        <tr>
+          <th scope="row"><kbd class="sk-kbd">Ctrl</kbd> + <kbd class="sk-kbd">End</kbd></th>
+          <td>{t("feedPage.keyboardCtrlEnd")}</td>
+        </tr>
+        <tr>
+          <th scope="row"><kbd class="sk-kbd">Ctrl</kbd> + <kbd class="sk-kbd">Home</kbd></th>
+          <td>{t("feedPage.keyboardCtrlHome")}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <CodeBlock code={keyboardSample} label="HTML" lang="html" />
+    <CodeBlock code={keyboardReact} label="React" lang="tsx" />
+
     <p set:html={t("component.reactNote")} />
   </Fragment>
 

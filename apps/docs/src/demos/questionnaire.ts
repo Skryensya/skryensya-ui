@@ -8,7 +8,8 @@ import type { Translate } from "../i18n";
  */
 
 type QuestionnaireOptions = {
-  progress?: "text" | "bar" | "steps";
+  progress?: "text" | "bar" | "steps" | "segments";
+  progressOrientation?: "horizontal" | "vertical";
   shortcuts?: "none" | "letters" | "numbers";
 };
 
@@ -102,6 +103,7 @@ export const questionnaireChoicesOnlyTree = (t: Translate): UsageTree => ({
   options: {
     previousLabel: t("demo.questionnaire.previous"),
     nextLabel: t("demo.questionnaire.next"),
+    skipLabel: t("demo.questionnaire.skip"),
     submitLabel: t("demo.questionnaire.submit"),
     positionLabel: t("demo.questionnaire.position"),
     progressLabel: t("demo.questionnaire.progress"),
@@ -132,6 +134,7 @@ export const questionnaireLikertTree = (t: Translate): UsageTree => ({
   options: {
     previousLabel: t("demo.questionnaire.previous"),
     nextLabel: t("demo.questionnaire.next"),
+    skipLabel: t("demo.questionnaire.skip"),
     submitLabel: t("demo.questionnaire.submit"),
     positionLabel: t("demo.questionnaire.position"),
     errorLabel: t("demo.questionnaire.error"),
@@ -167,6 +170,158 @@ export const questionnaireLikertTree = (t: Translate): UsageTree => ({
 });
 
 /** Branching: a follow-up appears only when “Yes” is chosen on the first question. */
+/*
+ * A FOLLOW-UP, WHICH IS NOT A BRANCH. Both are spelled with `showWhen*`, and that is exactly why
+ * they are worth separating: the mechanism is one thing, the shape it makes is another.
+ *
+ * `questionnaireBranchingTree` FORKS. Two questions are mutually exclusive, the answer to the gate
+ * decides which of them the reader ever sees, and the step in the middle of the rail changes
+ * IDENTITY between `Channels` and `Reason`.
+ *
+ * This one does not fork. The form is the same finite form for everybody and one answer ADDS a
+ * question to it: living alone is a complete answer and the form is two questions long; living with
+ * other people raises a question that only then has a subject, and the form is three. Nothing is
+ * taken away and no path is closed, which is what makes it read as a sub-question of the one above
+ * rather than a different route.
+ *
+ * The follow-up sits immediately after the question that raises it, because the count is what the
+ * reader is watching: `bar` fills against a total that just grew, and a follow-up appearing two
+ * questions later would read as an unrelated question that happens to be new.
+ */
+export const questionnaireFollowUpTree = (t: Translate): UsageTree => ({
+  contract: "questionnaire",
+  signature: "Questionnaire",
+  options: {
+    progress: "bar",
+    previousLabel: t("demo.questionnaire.previous"),
+    nextLabel: t("demo.questionnaire.next"),
+    skipLabel: t("demo.questionnaire.skip"),
+    submitLabel: t("demo.questionnaire.submit"),
+    positionLabel: t("demo.questionnaire.position"),
+    progressLabel: t("demo.questionnaire.progress"),
+    errorLabel: t("demo.questionnaire.error"),
+  },
+  attrs: { "aria-label": t("demo.questionnaire.followUp.label") },
+  children: [
+    {
+      contract: "questionnaire",
+      signature: "QuestionnaireItem",
+      options: { name: "household", required: true },
+      slots: {
+        title: t("demo.questionnaire.followUp.aloneTitle"),
+        choices: [
+          choice("shared", t("demo.questionnaire.followUp.shared")),
+          choice("alone", t("demo.questionnaire.followUp.alone")),
+        ],
+      },
+    },
+    {
+      contract: "questionnaire",
+      signature: "QuestionnaireItem",
+      options: {
+        name: "household-size",
+        required: true,
+        showWhenItem: "household",
+        showWhenAny: "shared",
+      },
+      slots: {
+        title: t("demo.questionnaire.followUp.sizeTitle"),
+        description: t("demo.questionnaire.followUp.sizeBody"),
+        choices: [
+          choice("2", "2"),
+          choice("3", "3"),
+          choice("4", "4"),
+          choice("5+", t("demo.questionnaire.followUp.sizeMany")),
+        ],
+      },
+    },
+    {
+      contract: "questionnaire",
+      signature: "QuestionnaireItem",
+      options: { name: "tenure", required: true },
+      slots: {
+        title: t("demo.questionnaire.followUp.tenureTitle"),
+        choices: [
+          choice("under-1", t("demo.questionnaire.followUp.tenureShort")),
+          choice("1-5", t("demo.questionnaire.followUp.tenureMid")),
+          choice("over-5", t("demo.questionnaire.followUp.tenureLong")),
+        ],
+      },
+    },
+  ],
+});
+
+/*
+ * THE SLOTTED CONTROL, with the two cases it exists for: a list too long to be tiles, and files.
+ * Neither is a question type this contract knows; both are controls the kit already ships, and the
+ * questionnaire learns the answer from their native form state.
+ */
+export const questionnaireControlTree = (t: Translate): UsageTree => ({
+  contract: "questionnaire",
+  signature: "Questionnaire",
+  options: {
+    progress: "text",
+    previousLabel: t("demo.questionnaire.previous"),
+    nextLabel: t("demo.questionnaire.next"),
+    skipLabel: t("demo.questionnaire.skip"),
+    submitLabel: t("demo.questionnaire.submit"),
+    positionLabel: t("demo.questionnaire.position"),
+    progressLabel: t("demo.questionnaire.progress"),
+    errorLabel: t("demo.questionnaire.error"),
+  },
+  attrs: { "aria-label": t("demo.questionnaire.control.label") },
+  children: [
+    {
+      contract: "questionnaire",
+      signature: "QuestionnaireItem",
+      options: { name: "country", required: true },
+      slots: {
+        title: t("demo.questionnaire.control.countryTitle"),
+        control: {
+          contract: "select",
+          signature: "Select",
+          options: { name: "country" },
+          slots: {
+            label: t("demo.questionnaire.control.countryLabel"),
+            items: [
+              { options: { value: "cl" }, slots: { label: "Chile" } },
+              { options: { value: "ar" }, slots: { label: "Argentina" } },
+              { options: { value: "uy" }, slots: { label: "Uruguay" } },
+              { options: { value: "pe" }, slots: { label: "Perú" } },
+            ],
+          },
+        },
+      },
+    },
+    {
+      contract: "questionnaire",
+      signature: "QuestionnaireItem",
+      options: { name: "cv" },
+      slots: {
+        title: t("demo.questionnaire.control.fileTitle"),
+        control: {
+          contract: "file-upload",
+          signature: "FileUpload",
+          options: { name: "cv", accept: ".pdf,.doc,.docx" },
+          slots: {
+            label: t("demo.questionnaire.control.fileLabel"),
+            dropzoneLabel: t("demo.questionnaire.control.fileDropzone"),
+            triggerLabel: t("demo.questionnaire.control.fileTrigger"),
+          },
+        },
+      },
+    },
+  ],
+});
+
+/* The same journey as `questionnaireStepsTree`, drawn as bars: one per question, read at a glance. */
+export const questionnaireSegmentsTree = (t: Translate): UsageTree =>
+  questionnaire(t, { progress: "segments" });
+
+/* The rail beside the question instead of above it, which is what a longer journey wants. */
+export const questionnaireRailTree = (t: Translate): UsageTree =>
+  questionnaire(t, { progress: "steps", progressOrientation: "vertical" });
+
 export const questionnaireBranchingTree = (t: Translate): UsageTree => ({
   contract: "questionnaire",
   signature: "Questionnaire",
@@ -174,6 +329,7 @@ export const questionnaireBranchingTree = (t: Translate): UsageTree => ({
     progress: "steps",
     previousLabel: t("demo.questionnaire.previous"),
     nextLabel: t("demo.questionnaire.next"),
+    skipLabel: t("demo.questionnaire.skip"),
     submitLabel: t("demo.questionnaire.submit"),
     positionLabel: t("demo.questionnaire.position"),
     progressLabel: t("demo.questionnaire.progress"),
@@ -224,6 +380,31 @@ export const questionnaireBranchingTree = (t: Translate): UsageTree => ({
           choice("need", t("demo.questionnaire.branch.whyNotNeed")),
         ],
       },
+    },
+    /*
+     * THE SPINE THE BRANCH HANGS OFF. Both branches above are gated, so with the gate unanswered the
+     * form used to have exactly ONE enabled question: it opened saying "Question 1 of 1", drew a
+     * single lonely circle where the step rail should be, and offered Submit on the first screen. A
+     * branching example that looks like a one-question form on arrival teaches nothing about
+     * branching.
+     *
+     * A closing question every path reaches fixes all three at once and is what a real gated flow
+     * looks like anyway. The form opens at 2 of 2, and answering the gate INSERTS the branch in the
+     * middle: the rail grows to three and its middle step is `Channels` or `Reason` depending on the
+     * answer, which is the thing worth seeing.
+     */
+    {
+      contract: "questionnaire",
+      signature: "QuestionnaireItem",
+      options: {
+        name: "email",
+        required: true,
+        text: true,
+        textLabel: t("demo.questionnaire.branch.closingLabel"),
+        textPlaceholder: t("demo.questionnaire.branch.closingPlaceholder"),
+        stepLabel: t("demo.questionnaire.branch.closingStep"),
+      },
+      slots: { title: t("demo.questionnaire.branch.closingTitle") },
     },
   ],
 });

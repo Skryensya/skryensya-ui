@@ -1,6 +1,8 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { pausedComponents } from "@skryensya/core/paused";
+import { componentNavigation } from "./navigation";
 
 /*
  * A COMPONENT PAGE IS REACHABLE, AND DESCRIBED.
@@ -29,8 +31,14 @@ const catalogue = hrefs("component-catalog.ts", /"(\/components\/[a-z0-9-]+)":/g
  * point: a future reader sees that the absence was decided, not forgotten.
  *   - `details` is a 301 redirect to Accordion's native-details section, not a page.
  *   - `primitives` documents tier-1 tokens, which is a foundation and not a component.
+ *   - `popup` is a 301 into Popover's `#popup` section: it documented `Popover.bare` under a second
+ *     name, so it was one family with two pages rather than two components.
  */
-const NOT_COMPONENTS = new Set(["/components/details", "/components/primitives"]);
+const NOT_COMPONENTS = new Set([
+  "/components/details",
+  "/components/primitives",
+  "/components/popup",
+]);
 
 const routes = readdirSync(pagesDir)
   .filter((f) => f.endsWith(".astro") && f !== "index.astro")
@@ -54,5 +62,35 @@ describe("the component registries", () => {
     const all = new Set([...routes, ...NOT_COMPONENTS]);
     expect([...navigation].filter((h) => !all.has(h))).toEqual([]);
     expect([...catalogue].filter((h) => !all.has(h))).toEqual([]);
+  });
+});
+
+/*
+ * A PAUSED COMPONENT LEAVES EVERY RAIL AT ONCE.
+ *
+ * Pausing is one filter in `navigation.ts` feeding four renderers, and the reason it is one filter
+ * is that a component hidden from the sidebar but still listed in the component index, or still
+ * reachable through search, is not hidden: it is inconsistent, which reads as a bug rather than as
+ * a decision. `componentNavigation` is the list all four build from, so asserting on it asserts on
+ * all four.
+ *
+ * The route is checked to still EXIST in the same breath. That is the whole difference between
+ * pausing and deleting: the page is built, its demos run, and the link still opens. A paused entry
+ * whose page had quietly gone away would make this list a graveyard instead of a pause.
+ */
+describe("a paused component", () => {
+  const advertised = new Set(componentNavigation.flatMap((group) => group.items.map((i) => i.href)));
+
+  it.each(pausedComponents.map((component) => component.docs))("%s is not in the navigation", (docs) => {
+    expect(advertised.has(docs)).toBe(false);
+  });
+
+  it.each(pausedComponents.map((component) => component.docs))("%s still has its page", (docs) => {
+    expect(routes.includes(docs) || NOT_COMPONENTS.has(docs)).toBe(true);
+  });
+
+  it("does not hide anything the catalogue has not decided to hide", () => {
+    const paused = new Set(pausedComponents.map((component) => component.docs));
+    expect(routes.filter((href) => !advertised.has(href) && !paused.has(href))).toEqual([]);
   });
 });

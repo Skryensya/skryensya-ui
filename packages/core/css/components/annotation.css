@@ -35,6 +35,7 @@
     /* The clearance between the specimen and its margins. It is the grid's `gap`, so it is also the
        shortest a leader can ever be. */
     --sk-annotated-gap: var(--space-inline-lg);
+    --sk-annotated-key-color: var(--color-text-tertiary);
     /*
      * THE SPECIMEN IS DESATURATED, so that colour in a diagram means exactly one thing: annotation.
      *
@@ -212,6 +213,23 @@
    * place would depend on its own size and on its neighbours', and the offset the binding computes
    * would be measuring one thing and correcting another.
    */
+  /*
+   * THE KEY sits in the bottom-start corner, which the grid never fills: labels take the four edge
+   * midpoints, so all four corners are free whatever a diagram labels. Quieter than a label and
+   * without its pill, because it is a footnote about the drawing rather than a name in it.
+   */
+  .sk-annotated__key {
+    grid-area: 3 / 1;
+    justify-self: start;
+    align-self: end;
+    margin: 0;
+    color: var(--sk-annotated-key-color);
+    font-family: var(--sk-annotation-font-family);
+    font-size: var(--sk-annotation-font-size);
+    line-height: var(--sk-annotation-line-height);
+    white-space: nowrap;
+  }
+
   .sk-annotation {
     grid-area: 2 / 1;
     justify-self: end;

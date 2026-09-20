@@ -72,6 +72,10 @@
       "types": "./src/progress.ts",
       "default": "./src/progress.ts"
     },
+    "./rating": {
+      "types": "./src/rating.ts",
+      "default": "./src/rating.ts"
+    },
     "./loader": {
       "types": "./src/loader.ts",
       "default": "./src/loader.ts"
@@ -99,6 +103,10 @@
     "./pagination": {
       "types": "./src/pagination.ts",
       "default": "./src/pagination.ts"
+    },
+    "./paused": {
+      "types": "./src/paused.ts",
+      "default": "./src/paused.ts"
     },
     "./stat": {
       "types": "./src/stat.ts",
@@ -172,6 +180,10 @@
     "./input": {
       "types": "./src/input.ts",
       "default": "./src/input.ts"
+    },
+    "./input-format": {
+      "types": "./src/input-format.ts",
+      "default": "./src/input-format.ts"
     },
     "./layout": {
       "types": "./src/layout.ts",
@@ -429,6 +441,10 @@
       "types": "./src/feed.ts",
       "default": "./src/feed.ts"
     },
+    "./feed-dom": {
+      "types": "./src/feed-dom.ts",
+      "default": "./src/feed-dom.ts"
+    },
     "./number-field": {
       "types": "./src/number-field.ts",
       "default": "./src/number-field.ts"
@@ -440,6 +456,10 @@
     "./split-button": {
       "types": "./src/split-button.ts",
       "default": "./src/split-button.ts"
+    },
+    "./timeline": {
+      "types": "./src/timeline.ts",
+      "default": "./src/timeline.ts"
     },
     "./time-field": {
       "types": "./src/time-field.ts",
@@ -535,6 +555,7 @@
     "@zag-js/menu": "^1.43.3",
     "@zag-js/number-input": "^1.43.3",
     "@zag-js/radio-group": "^1.43.3",
+    "@zag-js/rating-group": "^1.43.3",
     "@zag-js/select": "^1.43.3",
     "@zag-js/slider": "^1.43.3",
     "@zag-js/splitter": "1.43.3",

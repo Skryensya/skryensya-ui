@@ -19,6 +19,10 @@ import {
   questionnaireBarTree,
   questionnaireBranchingTree,
   questionnaireChoicesOnlyTree,
+  questionnaireControlTree,
+  questionnaireRailTree,
+  questionnaireSegmentsTree,
+  questionnaireFollowUpTree,
   questionnaireLikertTree,
   questionnaireShortcutsTree,
   questionnaireStepsTree,
@@ -47,8 +51,7 @@ const t = useTranslations(getLocale(Astro.url));
     <ComponentPreview
       tree={questionnaireTree(t)}
       label={t("questionnairePage.basicLabel")}
-      screenScope="local"
-      defaultScreen="free"
+      defaultScreen="tablet"
     />
     <p set:html={t("component.reactNote")} />
 
@@ -60,8 +63,7 @@ const t = useTranslations(getLocale(Astro.url));
     <ComponentPreview
       tree={questionnaireChoicesOnlyTree(t)}
       label={t("questionnairePage.choicesOnlyLabel")}
-      screenScope="local"
-      defaultScreen="free"
+      defaultScreen="tablet"
     />
 
     <h3>{t("questionnairePage.likertTitle")}</h3>
@@ -69,8 +71,7 @@ const t = useTranslations(getLocale(Astro.url));
     <ComponentPreview
       tree={questionnaireLikertTree(t)}
       label={t("questionnairePage.likertLabel")}
-      screenScope="local"
-      defaultScreen="free"
+      defaultScreen="tablet"
     />
 
     <h3>{t("questionnairePage.branchTitle")}</h3>
@@ -78,8 +79,23 @@ const t = useTranslations(getLocale(Astro.url));
     <ComponentPreview
       tree={questionnaireBranchingTree(t)}
       label={t("questionnairePage.branchLabel")}
-      screenScope="local"
-      defaultScreen="free"
+      defaultScreen="tablet"
+    />
+
+    <h3>{t("questionnairePage.followUpTitle")}</h3>
+    <p set:html={t("questionnairePage.followUpBody")} />
+    <ComponentPreview
+      tree={questionnaireFollowUpTree(t)}
+      label={t("questionnairePage.followUpLabel")}
+      defaultScreen="tablet"
+    />
+
+    <h3>{t("questionnairePage.controlTitle")}</h3>
+    <p set:html={t("questionnairePage.controlBody")} />
+    <ComponentPreview
+      tree={questionnaireControlTree(t)}
+      label={t("questionnairePage.controlLabel")}
+      defaultScreen="tablet"
     />
 
     <h3>{t("questionnairePage.progressTitle")}</h3>
@@ -87,12 +103,30 @@ const t = useTranslations(getLocale(Astro.url));
     <ComponentPreview
       tree={questionnaireBarTree(t)}
       label={t("questionnairePage.barLabel")}
-      screenScope="local"
-      defaultScreen="free"
+      defaultScreen="tablet"
     />
     <ComponentPreview
       tree={questionnaireStepsTree(t)}
       label={t("questionnairePage.stepsLabel")}
+      defaultScreen="tablet"
+    />
+    <ComponentPreview
+      tree={questionnaireSegmentsTree(t)}
+      label={t("questionnairePage.segmentsLabel")}
+      defaultScreen="tablet"
+    />
+
+    <h3>{t("questionnairePage.railTitle")}</h3>
+    <p set:html={t("questionnairePage.railBody")} />
+    <!--
+      PINNED TO A FRAME WIDE ENOUGH TO SHOW ITS OWN SUBJECT. The two columns need 746px and the page
+      default is Tablet, whose frame is 805px but whose questionnaire falls back below `desktop`
+      (832px). A Free frame is ~974px and clears it, so the section documenting the side rail shows
+      the side rail rather than its fallback. Same reason Vaul pins Mobile, at the other end.
+    -->
+    <ComponentPreview
+      tree={questionnaireRailTree(t)}
+      label={t("questionnairePage.railLabel")}
       screenScope="local"
       defaultScreen="free"
     />
@@ -105,8 +139,7 @@ const t = useTranslations(getLocale(Astro.url));
     <ComponentPreview
       tree={questionnaireShortcutsTree(t)}
       label={t("questionnairePage.shortcutsLabel")}
-      screenScope="local"
-      defaultScreen="free"
+      defaultScreen="tablet"
     />
 
     <h3>{t("questionnairePage.skipTitle")}</h3>

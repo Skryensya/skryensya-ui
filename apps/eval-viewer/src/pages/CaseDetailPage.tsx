@@ -125,7 +125,10 @@ export function CaseDetailPage({ caseId }: { caseId: string }) {
 
       {executions.length === 0 ? (
         <Text tone="secondary">
-          No runs yet. Run <Code>pnpm --filter @skryensya/evals agent --case {group.caseId}</Code>.
+          No runs yet. Run{" "}
+          {/* One template literal, not an interpolation inside the element: `Code` takes plain
+              text by contract (`accepts: "text"`), and JSX would hand it a two-item array. */}
+          <Code>{`pnpm --filter @skryensya/evals agent --case ${group.caseId}`}</Code>.
         </Text>
       ) : (
         <Stack gap="md">

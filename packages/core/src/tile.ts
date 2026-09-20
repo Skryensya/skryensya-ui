@@ -155,6 +155,7 @@ export const tileContract = {
     "--sk-tile-padding",
     "--sk-tile-radius",
     "--sk-tile-shadow",
+    "--sk-tile-title-weight",
   ],
   /*
    * TileCheckbox / TileSwitch paint with checkbox/switch controls (`also` classes). Those sheets

@@ -9,6 +9,7 @@ import * as emptyStateModule from "./components/empty-state.js";
 import * as statModule from "./components/stat.js";
 import * as calloutModule from "./components/callout.js";
 import * as processListModule from "./components/process-list.js";
+import * as timelineModule from "./components/timeline.js";
 import * as changelogModule from "./components/changelog.js";
 import * as stepsModule from "./components/steps.js";
 import * as listModule from "./components/list.js";
@@ -125,6 +126,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/stat": statModule,
   "@skryensya/react/callout": calloutModule,
   "@skryensya/react/process-list": processListModule,
+  "@skryensya/react/timeline": timelineModule,
   "@skryensya/react/changelog": changelogModule,
   "@skryensya/react/steps": stepsModule,
   "@skryensya/react/list": listModule,

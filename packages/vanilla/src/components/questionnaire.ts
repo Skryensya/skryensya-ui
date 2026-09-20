@@ -7,11 +7,13 @@ import {
   questionnaireAnswer,
   questionnaireAnswerStep,
   questionnaireAttrs,
+  questionnaireControlValues,
   questionnaireDefaultLabels,
   questionnaireEvents,
   questionnaireNavigation,
   questionnaireParts,
   questionnaireProgress,
+  questionnaireStepsWindow,
   questionnaireShortcuts,
   resolveQuestionnaireKey,
   type QuestionnaireEffect,
@@ -58,7 +60,9 @@ type ItemView = {
   /** The Likert scale's own root, when the question is one. Native radios, no machine. */
   scale: HTMLElement | null;
   choices: ChoiceView[];
-  textInput: HTMLInputElement | null;
+  textInput: HTMLInputElement | HTMLTextAreaElement | null;
+  /** The box holding a control this enhancer does not know; listened on, never written to. */
+  control: HTMLElement | null;
   description: HTMLElement | null;
   error: HTMLElement;
   /** What the authored markup starts with, read once so the state and the controls begin in step. */
@@ -139,7 +143,10 @@ function readItem(fieldset: HTMLFieldSetElement): ItemView | null {
     choices: multiple
       ? choices.filter((choice) => defaultChecked(choice.element)).map((choice) => choice.value)
       : [radioGroup?.dataset.defaultValue].filter((value): value is string => !!value),
-    text: fieldset.querySelector<HTMLInputElement>(`.${questionnaireParts.text} input`)?.getAttribute("value") ?? "",
+    text:
+      fieldset
+        .querySelector<HTMLInputElement | HTMLTextAreaElement>(`.${questionnaireParts.text} :is(input, textarea)`)
+        ?.getAttribute("value") ?? "",
   };
 
   return {
@@ -150,6 +157,7 @@ function readItem(fieldset: HTMLFieldSetElement): ItemView | null {
       multiple,
       likert,
       text: fieldset.hasAttribute("data-text"),
+      control: Boolean(fieldset.querySelector(`.${questionnaireParts.control}`)),
       choices: choices.map(({ value, disabled }) => ({ value, disabled })),
       showWhen: parseQuestionnaireShowWhen(
         fieldset.dataset.showWhenItem,
@@ -164,7 +172,10 @@ function readItem(fieldset: HTMLFieldSetElement): ItemView | null {
     radioGroup,
     scale,
     choices,
-    textInput: fieldset.querySelector<HTMLInputElement>(`.${questionnaireParts.text} input`),
+    textInput: fieldset.querySelector<HTMLInputElement | HTMLTextAreaElement>(
+      `.${questionnaireParts.text} :is(input, textarea)`,
+    ),
+    control: fieldset.querySelector<HTMLElement>(`.${questionnaireParts.control}`),
     description: fieldset.querySelector<HTMLElement>(`.${questionnaireParts.description}`),
     error,
     defaultAnswer,
@@ -186,6 +197,7 @@ function connect(root: HTMLElement): () => void {
 
   const shortcuts = (form.dataset.shortcuts ?? "none") as QuestionnaireShortcutMode;
   const progressMode = form.dataset.progress ?? "text";
+  const railOrientation = form.dataset.progressOrientation === "vertical" ? "vertical" : "horizontal";
   const labels = {
     position: labelOf(form, "data-position-label", questionnaireDefaultLabels.positionLabel),
     progress: labelOf(form, "data-progress-label", questionnaireDefaultLabels.progressLabel),
@@ -205,7 +217,7 @@ function connect(root: HTMLElement): () => void {
   position.className = questionnaireParts.position;
   ensureId(position, "sk-questionnaire-position");
   let bar: HTMLElement | null = null;
-  const stepByName = new Map<string, { item: HTMLLIElement; marker: HTMLElement }>();
+  let steps: HTMLOListElement | null = null;
   if (progress) {
     progress.replaceChildren(position);
     if (progressMode === "bar") {
@@ -219,27 +231,16 @@ function connect(root: HTMLElement): () => void {
       fill.className = progressParts.bar;
       bar.append(fill);
       progress.append(bar);
-    } else if (progressMode === "steps") {
-      const list = document.createElement("ol");
-      list.className = stepsParts.root;
-      list.setAttribute("role", "list");
-      list.setAttribute("data-orientation", "horizontal");
-      list.setAttribute("aria-label", labels.progress);
-      for (const view of views.filter((entry) => !entry.definition.disabled)) {
-        const item = document.createElement("li");
-        item.className = stepsParts.item;
-        const marker = document.createElement("span");
-        marker.className = stepsParts.marker;
-        const text = document.createElement("span");
-        const label = document.createElement("span");
-        label.className = stepsParts.label;
-        label.textContent = view.stepLabel;
-        text.append(label);
-        item.append(marker, text);
-        list.append(item);
-        stepByName.set(view.definition.name, { item, marker });
-      }
-      progress.append(list);
+    } else if (progressMode === "steps" || progressMode === "segments") {
+      /* Both modes ARE the rail; they differ only in how Steps draws a stage, which is its own
+         `appearance`. The orientation is the author's and applies to either. */
+      steps = document.createElement("ol");
+      steps.className = stepsParts.root;
+      steps.setAttribute("role", "list");
+      steps.setAttribute("data-orientation", railOrientation);
+      if (progressMode === "segments") steps.setAttribute("data-appearance", "segments");
+      steps.setAttribute("aria-label", labels.progress);
+      progress.append(steps);
     }
     progress.hidden = false;
   }
@@ -339,19 +340,31 @@ function connect(root: HTMLElement): () => void {
       bar.setAttribute("aria-valuenow", String(summary.settled));
       bar.style.setProperty("--sk-progress-fill", `${(summary.settled / max) * 100}%`);
     }
-    for (const view of views) {
-      const ui = stepByName.get(view.definition.name);
-      if (!ui) continue;
-      ui.item.hidden = !isQuestionnaireItemVisible(state, view.definition);
+    if (steps) {
+      const window = questionnaireStepsWindow(state);
+      steps.toggleAttribute("data-window-before", window.hasBefore);
+      steps.toggleAttribute("data-window-after", window.hasAfter);
+      steps.replaceChildren(
+        ...window.steps.map((step) => {
+          const item = document.createElement("li");
+          item.className = stepsParts.item;
+          item.dataset.status = step.status;
+          if (step.status === "current") item.setAttribute("aria-current", "step");
+
+          const marker = document.createElement("span");
+          marker.className = stepsParts.marker;
+          marker.textContent = step.status === "complete" ? "✓" : String(step.index + 1);
+
+          const text = document.createElement("span");
+          const label = document.createElement("span");
+          label.className = stepsParts.label;
+          label.textContent = views.find((view) => view.definition.name === step.name)?.stepLabel ?? step.name;
+          text.append(label);
+          item.append(marker, text);
+          return item;
+        }),
+      );
     }
-    summary.steps.forEach((step, index) => {
-      const ui = stepByName.get(step.name);
-      if (!ui) return;
-      ui.item.dataset.status = step.status;
-      if (step.status === "current") ui.item.setAttribute("aria-current", "step");
-      else ui.item.removeAttribute("aria-current");
-      ui.marker.textContent = step.status === "complete" ? "✓" : String(index + 1);
-    });
   }
 
   function run(effects: readonly QuestionnaireEffect[]) {
@@ -396,8 +409,28 @@ function connect(root: HTMLElement): () => void {
     send({ type: "select", name: view.definition.name, value: choice.value, selected: checked });
   };
 
+  /*
+   * A SLOTTED CONTROL REPORTS THROUGH THE PLATFORM. There is no machine to ask and no `sk:` event to
+   * name, so what is listened for is the `input` / `change` every native form control fires, and the
+   * whole slot is re-read on each one rather than the single element that fired: a control can move
+   * more than one of its own inputs in a single interaction (a file upload replacing its list, a
+   * multi-select) and the answer is the slot's state, not that element's.
+   */
+  const reportControl = (target: EventTarget | null): boolean => {
+    if (!(target instanceof Element)) return false;
+    const view = viewOf(target);
+    if (!view?.control || !view.control.contains(target)) return false;
+    send({
+      type: "control",
+      name: view.definition.name,
+      values: questionnaireControlValues(view.control),
+    });
+    return true;
+  };
+
   const onChange = (event: Event) => {
     const target = event.target;
+    if (reportControl(target)) return;
     if (!(target instanceof HTMLInputElement) || target.type !== "radio" || !target.checked) return;
     const view = viewOf(target);
     // Only the scale's own radios: a tile group reports through its machine's event instead.
@@ -407,6 +440,7 @@ function connect(root: HTMLElement): () => void {
 
   const onInput = (event: Event) => {
     const target = event.target;
+    if (reportControl(target)) return;
     if (!(target instanceof HTMLInputElement)) return;
     const view = viewOf(target);
     if (!view) return;

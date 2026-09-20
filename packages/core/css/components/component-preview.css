@@ -746,11 +746,18 @@
    * Two selectors for the same reason the Progress rule needs two: React mounts one level deeper,
    * under its own `display: contents` root.
    */
+  /*
+   * CENTRED, because a capped specimen is not a left-aligned one. `measure` says "this demo has a
+   * natural width"; leaving it hugging the inline-start edge of a stage twice as wide reads as a
+   * layout bug in the component rather than as a deliberate cap, and it is the same box in every
+   * preview that opts in. The cap still never reaches the copied snippet.
+   */
   .sk-component-preview__frame-body[data-sk-component-preview-measure] > *,
   .sk-component-preview__frame-body[data-sk-component-preview-measure]
     > [data-sk-react-demo-root]
     > * {
     inline-size: min(100%, var(--sk-component-preview-measure));
+    margin-inline: auto;
   }
 
   /*

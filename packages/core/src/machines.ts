@@ -31,6 +31,7 @@ export * as collapsible from "@zag-js/collapsible";
 export * as checkbox from "@zag-js/checkbox";
 export * as colorPicker from "@zag-js/color-picker";
 export * as radioGroup from "@zag-js/radio-group";
+export * as ratingGroup from "@zag-js/rating-group";
 export * as select from "@zag-js/select";
 export * as tooltip from "@zag-js/tooltip";
 export * as combobox from "@zag-js/combobox";

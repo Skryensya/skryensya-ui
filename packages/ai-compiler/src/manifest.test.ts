@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { buildManifest, canonical } from "./manifest.js";
 import { contractIds } from "@skryensya/core/registry";
+import { pausedComponents } from "@skryensya/core/paused";
 
 /*
  * What makes the compiled artifact trustworthy: it is reproducible, and it refuses to emit when two
@@ -173,5 +174,44 @@ describe("a conditional names something that exists", () => {
     }
 
     expect(problems).toEqual([]);
+  });
+});
+
+/*
+ * PAUSING IS ABOUT PUBLICATION, NOT ABOUT EXISTENCE.
+ *
+ * A family in `@skryensya/core/paused` is still a contract: it is in the registry, conformance still
+ * holds both bindings to it, and `validateUsageTree` still accepts a tree rooted in it, which is
+ * what lets its docs page keep rendering while it waits. What it loses is the catalogue, and it has
+ * to lose BOTH halves of it together: an id in the index but not in the manifest is a `get_catalog`
+ * that offers an agent a family `get_contract` will then refuse to describe.
+ */
+describe("a paused family", () => {
+  const paused = pausedComponents.map((component) => component.family);
+  const built = buildManifest(OVERLAYS);
+
+  it("names a family that really exists, so a typo cannot pause nothing", () => {
+    expect(paused.filter((family) => !contractIds().includes(family))).toEqual([]);
+  });
+
+  /*
+   * OUT OF THE CATALOGUE, STILL IN THE MANIFEST. The first shape of this dropped a paused family
+   * from both, and the component's own docs page, which reads its contract from the manifest by id,
+   * stopped rendering at build time: pausing had deleted the one thing it promised to keep.
+   */
+  it("is out of the catalogue an agent reads to choose", () => {
+    const indexed = built.index.contracts.map((entry) => entry.id);
+    expect(paused.filter((family) => indexed.includes(family))).toEqual([]);
+  });
+
+  it("is still described for anyone who already has its id", () => {
+    expect(paused.filter((family) => !(family in built.manifest.contracts))).toEqual([]);
+    expect(paused.filter((family) => !(family in built.manifest.changelogs))).toEqual([]);
+  });
+
+  it("is the only thing missing from the catalogue", () => {
+    const indexed = new Set(built.index.contracts.map((entry) => entry.id));
+    const pausedSet = new Set(paused);
+    expect(contractIds().filter((id) => !indexed.has(id) && !pausedSet.has(id))).toEqual([]);
   });
 });

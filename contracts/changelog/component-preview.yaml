@@ -5,6 +5,30 @@
 # hash.
 surface: "c59625b95eb27f1b"
 entries:
+  - date: 2026-09-19
+    kind: rework
+    es:
+      title: El preset de pantalla pasa a ser de cada preview, y Shift lo difunde
+      body: >-
+        Antes un click cambiaba el preset de todos los previews de la página a la vez. Cambiar el
+        preset suele ser una pregunta sobre UNA demo, y responderla moviendo el resto tira donde el
+        lector los había dejado, así que ahora un click normal mueve sólo ese stage y no toca la
+        preferencia guardada. <code>Shift</code> + click es la difusión: cambian todos, se guarda, y
+        alcanza también a los previews que ya se habían movido a mano, que es la forma de volver a
+        poner la página en fila. La preferencia compartida sigue existiendo y es la que siembra a
+        todos al cargar. El preview que declara su preset por cuenta propia no cambia: no lee la
+        preferencia compartida ni sigue una difusión.
+    en:
+      title: The screen preset becomes each preview's, and Shift broadcasts it
+      body: >-
+        A click used to change the preset for every preview on the page at once. Changing the preset
+        is usually a question asked of ONE demo, and answering it by moving the rest throws away
+        wherever the reader had left them, so a plain click now moves that stage alone and never
+        touches the saved preference. <code>Shift</code> + click is the broadcast: everything follows,
+        the choice is saved, and it reaches previews that had already been nudged by hand, which is
+        how the page is put back in step. The shared preference still exists and is what seeds every
+        preview on load. A preview that owns its preset outright is unchanged: it neither reads the
+        shared preference nor follows a broadcast.
   - date: 2026-09-17
     kind: feature
     es:

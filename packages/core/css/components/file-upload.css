@@ -11,6 +11,27 @@
     --sk-file-upload-item-border-color: var(--color-border-subtle);
     --sk-file-upload-item-radius: var(--radius-control);
     --sk-file-upload-item-bg: var(--color-bg-surface);
+    /*
+     * THE ROW'S OWN MEASUREMENTS, named because three rules have to agree on them: the padding, the
+     * thumbnail that sits inside it and the radius that has to stay concentric with both.
+     *
+     * 4px of inset around a 28px thumbnail and a 44px button was the whole row: content pressed
+     * against its own border with the button practically touching it. 8px of inset and a 40px
+     * thumbnail give the preview enough area to be read as a picture instead of a favicon, and the
+     * row settles at 56px, which is shorter than what the 44px button was forcing before.
+     */
+    --sk-file-upload-item-padding: var(--space-inset-sm);
+    --sk-file-upload-item-gap: var(--space-inline-sm);
+    --sk-file-upload-item-preview-size: 2.5rem;
+    --sk-file-upload-icon-color: var(--color-text-secondary);
+    --sk-file-upload-icon-bg: var(--color-bg-surface-sunken);
+    /* EmptyState's own glyph proportions (`empty-state.css`), because this box IS this control's
+       empty state and two different circle sizes for one idea is how a system stops looking like one. */
+    --sk-file-upload-icon-size: calc(var(--size-icon-lg) * 2);
+    --sk-file-upload-dropzone-title-size: var(--font-size-heading-sm);
+    --sk-file-upload-overlay-bg: var(--color-bg-surface-overlay);
+    --sk-file-upload-overlay-border-color: var(--color-border-accent);
+    --sk-file-upload-overlay-radius: var(--radius-surface);
 
     display: grid;
     gap: var(--sk-file-upload-gap);
@@ -20,24 +41,132 @@
     font-size: var(--font-size-body-sm);
     font-weight: var(--font-weight-label);
   }
+  /*
+   * THE DROPZONE READS AS A TARGET, which is the whole job of this box: dashed edge, room to aim at,
+   * and a cursor that says it can be clicked. It is `role="button"` and it opens the file picker, so
+   * a default cursor on it was the control quietly denying what it does. The dashed edge is the
+   * convention every study of this pattern reports people already recognise.
+   */
   .sk-file-upload__dropzone {
     display: grid;
     justify-items: center;
     gap: var(--space-stack-sm);
+    font-size: var(--sk-file-upload-dropzone-title-size);
+    line-height: var(--font-line-height-heading);
+    text-wrap: balance;
     padding: var(--sk-file-upload-dropzone-padding);
     border: 1px dashed var(--sk-file-upload-dropzone-border-color);
     border-radius: var(--sk-file-upload-dropzone-radius);
     background: var(--sk-file-upload-dropzone-bg);
     text-align: center;
+    cursor: pointer;
     outline: none;
+    transition:
+      border-color var(--motion-state-change-duration) var(--motion-state-change-easing),
+      background-color var(--motion-state-change-duration) var(--motion-state-change-easing),
+      scale var(--motion-state-change-duration) var(--motion-state-change-easing);
   }
+  .sk-file-upload__dropzone:hover {
+    border-color: var(--sk-file-upload-dropzone-accent);
+  }
+  /*
+   * DRAGGING IS THE LOUDEST STATE THIS COMPONENT HAS, and deliberately louder than hover: a person
+   * holding a file over the window is mid-gesture and needs to know, without looking for it, that
+   * letting go here will work. Solid edge (the dashes say "aim here", the solid line says "caught"),
+   * accent fill, and a hair of scale so the box reacts rather than merely recolours.
+   */
   .sk-file-upload__dropzone[data-dragging] {
+    border-style: solid;
     border-color: var(--sk-file-upload-dropzone-accent);
     background: var(--color-bg-accent-subtle);
+    scale: 1.01;
+  }
+  .sk-file-upload__dropzone[data-dragging] .sk-file-upload__icon {
+    color: var(--color-text-accent);
   }
   .sk-file-upload__dropzone:focus-visible {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
     outline-offset: var(--focus-ring-offset);
+  }
+  .sk-file-upload__icon {
+    display: inline-grid;
+    place-items: center;
+    inline-size: var(--sk-file-upload-icon-size);
+    block-size: var(--sk-file-upload-icon-size);
+    border-radius: var(--radius-pill);
+    background: var(--sk-file-upload-icon-bg);
+    color: var(--sk-file-upload-icon-color);
+    transition:
+      color var(--motion-state-change-duration) var(--motion-state-change-easing),
+      background-color var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+  /* The hint is the empty state's description: inside the box, under the instruction, quieter. */
+  .sk-file-upload__dropzone .sk-file-upload__hint {
+    margin: 0;
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-body);
+    text-wrap: pretty;
+  }
+  /*
+   * ONE CONTROL, TWO THINGS TO SAY, never both at once: how to choose files while there are none,
+   * and which files are chosen once there are. `hidden` is what swaps them, written by both
+   * bindings onto this same node, so a page whose script never runs keeps the box that explains
+   * how to choose rather than an empty list.
+   */
+  .sk-file-upload__dropzone[hidden] {
+    display: none;
+  }
+  /*
+   * THE WHOLE CONTROL LIGHTS UP once the dashed box has stepped aside: with the list showing, there
+   * is no other element left to say "let go and this lands here". Same accent, same reading as the
+   * dropzone's own dragging state, drawn as an outline so it costs no layout.
+   */
+  .sk-file-upload[data-dragging] {
+    outline: 2px dashed var(--sk-file-upload-dropzone-accent);
+    outline-offset: var(--space-inset-xs);
+  }
+  /*
+   * THE DROP OVERLAY: what a surface outside this component says while a file is over it.
+   *
+   * `hidden` is the whole state machine. Both bindings toggle that one attribute, so a page with no
+   * script running shows nothing at all rather than a sheet over its own content. `pointer-events:
+   * none` matters more than it looks: the overlay appears UNDER the pointer that is mid-drag, and an
+   * element that swallows the drag events is an element that makes the drop it advertises fail.
+   */
+  .sk-file-upload__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    display: grid;
+    pointer-events: none;
+  }
+  .sk-file-upload__overlay[hidden] {
+    display: none;
+  }
+  /*
+   * EDGE TO EDGE, and the inner padding is for the TEXT, not for the sheet. The surface being
+   * dropped onto is the whole container: a panel that accepts files is highlighted in full, the way
+   * the dashed box is, and a floating card inset from its own edges says the wrong thing twice (it
+   * looks like a separate thing you might miss, and it leaves a live-looking margin that is not a
+   * drop target). The dashed border rides the container's own edge.
+   */
+  .sk-file-upload__overlay-body {
+    display: grid;
+    place-items: center;
+    inline-size: 100%;
+    block-size: 100%;
+    padding: var(--space-inset-md);
+    border: 2px dashed var(--sk-file-upload-overlay-border-color);
+    border-radius: var(--sk-file-upload-overlay-radius);
+    background: var(--sk-file-upload-overlay-bg);
+    box-shadow: var(--elevation-overlay);
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-label);
+    text-align: center;
+  }
+  /* A page-wide surface has no box of its own to trace, so it squares off against the viewport. */
+  .sk-file-upload[data-drop-scope="page"] .sk-file-upload__overlay-body {
+    border-radius: 0;
   }
   .sk-file-upload__input {
     position: absolute;
@@ -51,43 +180,185 @@
     color: var(--color-text-secondary);
     font-size: var(--font-size-body-sm);
   }
+  /* Quiet, and the same size as the second line of a row: it is about the list, not a heading over it. */
+  .sk-file-upload__tally {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+    font-variant-numeric: tabular-nums;
+  }
   .sk-file-upload__item-group {
     display: grid;
-    gap: var(--space-stack-xs);
+    gap: var(--space-stack-sm);
     margin: 0;
     padding: 0;
     list-style: none;
   }
+  /*
+   * THREE COLUMNS, NOT FOUR: what the file is, what it is called, and the way to take it out. The
+   * size used to be a fourth column beside the name, which is backwards: a filename is the one thing
+   * in the row worth reading and the one thing that can run 80 characters, so it takes the width and
+   * everything else sits under it.
+   */
   .sk-file-upload__item {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
-    gap: var(--space-inline-sm);
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: var(--sk-file-upload-item-gap);
     align-items: center;
     min-block-size: var(--size-touch-target);
-    padding: var(--space-inset-xs) var(--space-inset-sm);
+    padding: var(--sk-file-upload-item-padding);
+    animation-name: sk-file-upload-row-in;
+    animation-duration: var(--motion-enter-duration);
+    animation-timing-function: var(--motion-enter-easing);
     border: 1px solid var(--sk-file-upload-item-border-color);
     border-radius: var(--sk-file-upload-item-radius);
     background: var(--sk-file-upload-item-bg);
   }
+  /*
+   * WHAT THE FILE IS. An image shows itself, anything else shows a glyph, and NEITHER sits in a
+   * bordered box: what an image needs is the hairline that keeps a white photo from bleeding into a
+   * white row, which is an outline, so it costs no layout and no second radius to keep concentric.
+   *
+   * THE FRAME IS A BOX THE CONTENT SITS IN, not the content itself. It was the content: the glyph
+   * carried this class directly, so the `<svg>` that replaced it came in at its own 20px and every
+   * row with a document in it started its text 20px to the left of every row with a photo. Measured
+   * on the page. A picture and a glyph are different sizes by nature; the column they share is not.
+   */
+  .sk-file-upload__item-preview {
+    display: grid;
+    place-items: center;
+    flex: none;
+    inline-size: var(--sk-file-upload-item-preview-size);
+    block-size: var(--sk-file-upload-item-preview-size);
+    color: var(--color-text-tertiary);
+  }
+  .sk-file-upload__item-preview img {
+    inline-size: 100%;
+    block-size: 100%;
+    /* Concentric: the row's radius minus the padding between its edge and this one, from the same
+       variable the padding itself reads, so the two cannot drift apart. */
+    border-radius: calc(var(--sk-file-upload-item-radius) - var(--sk-file-upload-item-padding));
+    object-fit: cover;
+    outline: 1px solid color-mix(in oklab, var(--color-text-primary) 12%, transparent);
+    outline-offset: -1px;
+  }
+  /* The kind rides with the size: two quiet facts about one file, on one line, neither of them its
+     name. */
+  .sk-file-upload__item-kind {
+    font-weight: var(--font-weight-label);
+    letter-spacing: 0.02em;
+  }
+  /*
+   * THE REMOVE CONTROL IS A GHOST ICON BUTTON, not a default one: a bordered box beside a filename
+   * outweighs the file it removes, and every row would carry one. The kit's own Button does the
+   * press feel and the focus ring; this only guarantees the touch target, since the glyph inside is
+   * `sm` and a 16px hit area is not one.
+   */
+  /*
+   * THE GLYPH IS SIZED BY CONTEXT, through the hook `icon.css` publishes for exactly this
+   * (`--sk-icon-size`). Measured at 20px inside a 32px button, which fills nearly two thirds of it:
+   * the mounted `<svg>` reads `data-size`, and the `data-sk-icon-size` written on the placeholder
+   * does not always survive into it. Saying it here works for both bindings at once and does not
+   * depend on that hand-off.
+   */
+  .sk-file-upload__item-delete .sk-icon {
+    /* The hook AND the box. Setting the hook alone left the glyph at 20px in the preview frame,
+       measured: whatever `.sk-icon`'s own `[data-size]` rule resolves to there, this rule is the one
+       that has to win, and a custom property that something else already computed will not. */
+    --sk-icon-size: var(--size-icon-sm);
+    inline-size: var(--size-icon-sm);
+    block-size: var(--size-icon-sm);
+  }
+
+  /*
+   * THE REMOVE CONTROL IS `Button` AT `sm`, ICON-ONLY, AND NOTHING ELSE HERE.
+   *
+   * This rule used to set a 32px box and hang a 44px hit area off a pseudo-element, which is exactly
+   * what `button.css` already does for `[data-size="sm"]`: it paints at `--size-control-sm` and
+   * keeps the HIG target on its own `::after`. Two implementations of one idea, and the hand-rolled
+   * one measured 32 wide by 44 tall, because the kit's `min-block-size` outlived the override. The
+   * component asks for the size and stops describing the box.
+   */
+  /*
+   * THE STACK FITS INSIDE THE THUMBNAIL'S HEIGHT, which is what keeps the row at the size of the
+   * thing it is showing. Measured: with body-size type and a 4px gap the two lines came to 50px and
+   * the row to 68px, taller than the 40px picture beside them and reading as a card rather than a
+   * row in a list. The name drops to the small size the rest of a form label uses, the second line
+   * to caption, and the gap goes: two lines of different sizes separate themselves.
+   */
+  .sk-file-upload__item-body {
+    display: grid;
+    gap: 0;
+    /* Without this the name's `1fr` track refuses to shrink and the ellipsis never appears: a grid
+       item's automatic minimum size is its content, and a 90-character filename is a wide content. */
+    min-inline-size: 0;
+  }
+  /*
+   * ONE LINE, CUT WITH AN ELLIPSIS. A name is allowed to be long and the row is not allowed to grow
+   * for it: two filenames of different lengths would give two rows of different heights, and a list
+   * of those reads as broken. `title` carries the whole thing for a pointer, and the kind under it
+   * keeps the extension visible even when the tail is the part that was cut.
+   */
   .sk-file-upload__item-name {
     min-inline-size: 0;
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-body);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  /* The second line: what kind of file, how big. Quieter than the name above it by a step of size
+     and a step of colour, and tabular so the numbers do not shift as a list is edited. */
   .sk-file-upload__item-size {
     color: var(--color-text-tertiary);
     font-size: var(--font-size-caption);
     font-variant-numeric: tabular-nums;
   }
+  /*
+   * A REFUSAL IS A STATE OF THE CONTROL, not just a line of text under it. The message says which
+   * file and why; the border says "this is the thing that did not take it", which is what somebody
+   * scanning a long form needs to find it again.
+   */
   .sk-file-upload__rejection {
     color: var(--color-text-danger);
     font-size: var(--font-size-body-sm);
   }
+  .sk-file-upload[data-invalid] .sk-file-upload__dropzone {
+    border-color: var(--color-border-danger);
+  }
+  /* The scale and the colour fades are decoration; the state itself is carried by border-style and
+     colour, which stay. */
+  /* A row arrives from where the list grows, barely: this is confirmation, not an entrance. */
+  @keyframes sk-file-upload-row-in {
+    from {
+      opacity: 0;
+      translate: 0 var(--space-inset-xs);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sk-file-upload__item {
+      animation-name: none;
+    }
+    .sk-file-upload__dropzone,
+    .sk-file-upload__icon {
+      transition: none;
+    }
+    .sk-file-upload__dropzone[data-dragging] {
+      scale: 1;
+    }
+  }
   @media (forced-colors: active) {
     .sk-file-upload__dropzone,
-    .sk-file-upload__item {
+    .sk-file-upload__item,
+    .sk-file-upload__overlay-body {
       border-color: CanvasText;
+    }
+    /* Forced colours flatten the accent fill, so the only thing left to say "caught" is the edge. */
+    .sk-file-upload__dropzone[data-dragging] {
+      border-width: 2px;
+    }
+    .sk-file-upload[data-dragging] {
+      outline-color: CanvasText;
     }
   }
 }

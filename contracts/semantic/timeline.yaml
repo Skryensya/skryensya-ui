@@ -1,0 +1,25 @@
+# The structure lives in packages/core/src/timeline.ts. Here, only why it is chosen.
+
+Timeline:
+  useWhen:
+    - "events that already happened have to be shown, in the order they happened"
+    - "the when matters as much as the what: a history, order tracking, an activity log"
+    - "the author sets the direction by writing the entries in it; there is no order option"
+  avoidWhen:
+    - "the reader is inside the process and has to be told which stage they are at; that is Steps"
+    - "they are instructions to follow, with no time at all; that is a ProcessList"
+    - "they are shipped releases; that is Changelog, which has its own vocabulary and scale"
+  alternatives:
+    - Steps
+    - ProcessList
+    - Changelog
+
+TimelineItem:
+  useWhen:
+    - "one event on the rail: a required heading, and optionally a time, an icon and a detail"
+    - "the time is two fields: time (ISO, for the machine) and timeLabel (the visible copy)"
+    - "tone marks the dot a scanning eye should stop at; it is never the only thing saying so"
+  avoidWhen:
+    - "the event carries complete / current / upcoming; that is a step of Steps"
+  alternatives:
+    - Steps

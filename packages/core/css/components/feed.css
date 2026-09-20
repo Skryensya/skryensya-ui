@@ -1,9 +1,9 @@
 /*
  * TIER 3, FEED
  *
- * A vertical stream of independent content units. No interaction model of its own (see feed.ts's
- * own banner). This file is purely the stack + the article boundary, with hooks for a consumer's
- * own density.
+ * A vertical stream of independent content units. Mostly the stack + the article boundary, with
+ * hooks for a consumer's own density; the one piece of state is the focus ring, which exists
+ * because the OPT-IN keyboard model (`keyboard` in feed.ts) makes each article focusable.
  */
 @layer components {
   .sk-feed {
@@ -21,6 +21,22 @@
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-surface);
     background: var(--color-bg-surface);
+  }
+
+  /*
+   * A whole article takes focus once `keyboard` is on, so it needs the same ring a Treegrid row
+   * gets for the same reason: the focused thing is a BLOCK, not a control, and without an outline
+   * there is nothing on screen saying where Page Down just landed.
+   *
+   * Tier-2 focus tokens, not `--sk-feed-*` hooks of its own: the ring is the page's, and a feed
+   * whose focus indicator could be restyled away from every other one in the product is a hook
+   * nobody should want. Unscoped from `[data-keyboard]` on purpose - an article can also be
+   * focused programmatically by a consumer's own "jump to the new post" - and harmless when the
+   * option is off, because an article with no tabindex never matches `:focus-visible`.
+   */
+  .sk-feed__article:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
   }
 
   .sk-feed__article-label {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-15T13:00:17.095Z",
+  "generatedAt": "2026-09-20T03:22:13.459Z",
   "viewport": {
     "width": 1920,
     "height": 1000
@@ -173,7 +173,9 @@
       "feed": 348
     },
     "/components/file-upload": {
-      "fileupload": 227
+      "dropping-anywhere-in-the-document": 496,
+      "fileupload": 496,
+      "fileupload-part-by-part": 515
     },
     "/components/folder": {
       "folderstack": 724,
@@ -625,7 +627,9 @@
       "feed": 348
     },
     "/es/componentes/file-upload": {
-      "fileupload": 227
+      "fileupload": 496,
+      "fileupload-parte-por-parte": 515,
+      "soltar-en-cualquier-parte-del-documento": 496
     },
     "/es/componentes/folder": {
       "folderstack": 724,
@@ -1017,6 +1021,46 @@
       "cuatro-guias-que-tienen-que-doblar": 384,
       "migas-visibles-y-niveles-colapsados": 236,
       "una-etiqueta-por-margen": 240
+    },
+    "/components/questionnaire": {
+      "bar-progress": 590,
+      "branching": 424,
+      "choices-only": 414,
+      "follow-up-question": 430,
+      "letter-shortcuts": 574,
+      "likert-in-questionnaire": 487,
+      "progress-segments": 598,
+      "questionnaire": 574,
+      "rail-beside": 532,
+      "slotted-control": 378,
+      "steps-progress": 651
+    },
+    "/es/componentes/questionnaire": {
+      "atajos-con-letras": 574,
+      "control-slotteado": 378,
+      "likert-en-el-cuestionario": 487,
+      "pregunta-de-seguimiento": 430,
+      "progreso-con-barra": 590,
+      "progreso-con-pasos": 651,
+      "progreso-segmentos": 598,
+      "questionnaire": 574,
+      "rail-al-costado": 532,
+      "ramificacion": 424,
+      "solo-opciones": 414
+    },
+    "/components/rating": {
+      "3-8-and-4-3-do-not-draw-the-same": 145,
+      "one-symbol-two-directions": 189,
+      "rating": 69,
+      "ratingdisplay": 73,
+      "sm-md-and-lg": 133
+    },
+    "/es/componentes/rating": {
+      "3-8-y-4-3-no-se-dibujan-igual": 145,
+      "rating": 69,
+      "ratingdisplay": 73,
+      "sm-md-y-lg": 133,
+      "un-simbolo-dos-direcciones": 189
     }
   }
 }

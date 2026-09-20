@@ -3,8 +3,56 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "7bcad44afb91f05a"
+surface: "dbb5f4bc94783f48"
 entries:
+  - date: 2026-09-19
+    kind: rework
+    es:
+      title: Un rail horizontal fijado se dibuja como barras en un teléfono
+      body: >-
+        Un rail que no dice nada sobre orientación ya caía a la columna compacta en pantallas chicas.
+        El que fija <code>orientation="horizontal"</code> está optando por salirse de esa columna, y
+        hasta ahora eso lo dejaba sin ninguna respuesta para un teléfono: tres etiquetas cortas
+        sobreviven 390px y una cuarta, o un nombre más largo, no. Abajo de <code>compact</code> ese
+        rail pasa a dibujarse como <code>appearance="segments"</code>: la secuencia se sigue contando,
+        las etapas hechas se siguen viendo, y no cuesta ancho por etapa, así que aguanta cualquier
+        cantidad. Las etiquetas no se pierden, sólo no se dibujan.
+    en:
+      title: A pinned horizontal rail draws as bars on a phone
+      body: >-
+        A rail that says nothing about orientation already fell to the compact column on small
+        screens. One that pins <code>orientation="horizontal"</code> is opting out of that column,
+        and until now that left it with no answer for a phone at all: three short labels survive
+        390px and a fourth, or one longer name, does not. Below <code>compact</code> that rail now
+        draws as <code>appearance="segments"</code>: the sequence is still countable, the done stages
+        still obvious, and it costs no width per stage, so it holds at any number of them. The labels
+        are not lost, only undrawn.
+  - date: 2026-09-19
+    kind: feature
+    es:
+      title: Los pasos pueden dibujarse como barras
+      body: >-
+        <code>appearance="segments"</code> dibuja la misma secuencia como una fila de barras, una por
+        etapa, y deja de dibujar las etiquetas. Es la forma para un progreso que se lee de reojo en
+        vez de estudiarse: las etapas se siguen contando y las hechas se siguen viendo, pero un
+        nombre por etapa no entraba y nunca era el punto. Los estados, el <code>aria-current</code> y
+        el ventaneo no cambian, y por eso es una apariencia y no otro componente. La etapa actual va
+        marcada con un aro, no llena: llenarla diría que está hecha, que es justo lo que no está. Las
+        barras son la pista, así que no llevan conector. El grosor se retunea con
+        <code>--sk-steps-segment-size</code>, y las etiquetas siguen existiendo para un lector de
+        pantalla.
+    en:
+      title: Steps can be drawn as bars
+      body: >-
+        <code>appearance="segments"</code> draws the same sequence as a row of bars, one per stage,
+        and stops drawing the labels. It is the shape for a progress read in passing rather than
+        studied: the stages are still countable and the done ones still obvious, but a name per stage
+        would not fit and was never the point. The statuses, <code>aria-current</code> and the
+        windowing are unchanged, which is why this is an appearance and not another component. The
+        current stage is marked with a ring rather than filled: filling it would say it is done,
+        which is the one thing it is not. The bars are the track, so they carry no connector. The
+        thickness retunes with <code>--sk-steps-segment-size</code>, and the labels still exist for a
+        screen reader.
   - date: 2026-08-11
     kind: feature
     es:

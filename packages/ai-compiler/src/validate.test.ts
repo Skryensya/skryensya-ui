@@ -3598,7 +3598,6 @@ describe("questionnaire: one question at a time with its own machine", () => {
     expect(contract.signatures.QuestionnaireItem.mount).toBe("data-sk-questionnaire-item");
     expect(contract.hookSheets).toEqual([
       "@skryensya/core/components/checkbox.css",
-      "@skryensya/core/components/likert.css",
       "@skryensya/core/components/progress.css",
       "@skryensya/core/components/steps.css",
     ]);

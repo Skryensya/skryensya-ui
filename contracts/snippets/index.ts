@@ -2,6 +2,7 @@ import { actionRowInCardsSnippet } from "./action-row-in-cards.js";
 import { calloutErrorWithRetrySnippet } from "./callout-error-with-retry.js";
 import { footerCreditLineSnippet } from "./footer-credit-line.js";
 import { formFieldHintAndErrorSnippet } from "./form-field-hint-and-error.js";
+import { formFieldValidatedIdentifierSnippet } from "./form-field-validated-identifier.js";
 import { heroCenteredMinimalSnippet } from "./hero-centered-minimal.js";
 import { heroSplitWithMediaSnippet } from "./hero-split-with-media.js";
 import { heroWithActionsSnippet } from "./hero-with-actions.js";
@@ -18,6 +19,7 @@ import { heroWithVideoDemoSnippet } from "./hero-with-video-demo.js";
 import { iconButtonToolbarWithTooltipsSnippet } from "./icon-button-toolbar-with-tooltips.js";
 import { iconOnlyButtonTooltipSnippet } from "./icon-only-button-tooltip.js";
 import { paginationStandaloneSnippet } from "./pagination-standalone.js";
+import { questionnaireBranchingSurveySnippet } from "./questionnaire-branching-survey.js";
 import { productCardInGridSnippet } from "./product-card-in-grid.js";
 import { settingsRowWithSwitchSnippet } from "./settings-row-with-switch.js";
 import { tableWithPaginationSnippet } from "./table-with-pagination.js";
@@ -33,11 +35,13 @@ export const snippets: readonly Snippet[] = [
   calloutErrorWithRetrySnippet,
   iconOnlyButtonTooltipSnippet,
   formFieldHintAndErrorSnippet,
+  formFieldValidatedIdentifierSnippet,
   heroWithActionsSnippet,
   heroCenteredMinimalSnippet,
   heroWithEyebrowSnippet,
   footerCreditLineSnippet,
   paginationStandaloneSnippet,
+  questionnaireBranchingSurveySnippet,
   settingsRowWithSwitchSnippet,
   actionRowInCardsSnippet,
   productCardInGridSnippet,

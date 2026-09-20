@@ -1,0 +1,31 @@
+# What changed in timeline, in the words its users read. Only appended to, never rewritten.
+#
+# `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
+# does not match, something a consumer depends on has moved: write the entry and paste in the new
+# hash.
+surface: "2271a4ca64053fda"
+entries:
+  - date: 2026-09-20
+    kind: feature
+    es:
+      title: Timeline se publica como contrato, con 2 signatures
+      body: >-
+        Entra al catálogo con <code>Timeline</code>, <code>TimelineItem</code>: eventos que ya
+        ocurrieron, leídos por un riel. La jerarquía es de tres peldaños (tiempo como eyebrow en
+        caption, heading en h4, detalle en body), que es la diferencia con Changelog, un documento
+        denso a 85ch. El tiempo son dos campos: <code>time</code> (ISO, va a
+        <code>&lt;time datetime&gt;</code>) y el slot visible, que en React se llama
+        <code>timeLabel</code>. El punto acepta el <code>Icon</code> del kit (no un nodo cualquiera),
+        igual que Callout. No tiene enhancer: el markup está completo por sí solo. La hoja es
+        <code>components/timeline.css</code>.
+    en:
+      title: Timeline is published as a contract, with 2 signatures
+      body: >-
+        It joins the catalogue with <code>Timeline</code>, <code>TimelineItem</code>: events that
+        already happened, read down a rail. The hierarchy is three rungs (time as a caption
+        eyebrow, an h4 heading, body detail), which is the difference from Changelog, a dense
+        document at 85ch. The time is two fields: <code>time</code> (ISO, written to
+        <code>&lt;time datetime&gt;</code>) and the visible slot, which the React binding calls
+        <code>timeLabel</code>. The dot takes the kit's <code>Icon</code> (not any node), the same
+        way Callout's does. There is no enhancer: the markup is complete on its own. Its
+        stylesheet is <code>components/timeline.css</code>.

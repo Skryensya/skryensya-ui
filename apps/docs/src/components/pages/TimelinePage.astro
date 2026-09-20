@@ -1,0 +1,68 @@
+---
+import "@skryensya/core/components/timeline.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
+/* The dots carry the kit's Icon, and a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/patterns/icon.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { timelineAnatomyTree, timelineTonesTree, timelineTree } from "../../demos/timeline";
+import { annotationDemoCss } from "../../demos/annotation";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/timeline.css";
+@import "@skryensya/core/patterns/icon.css";`;
+---
+
+<ComponentPageShell
+  title="Timeline"
+  description={t("timelinePage.description")}
+  contractId="timeline"
+  testFiles={["packages/react/src/components/timeline.test.tsx"]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("timelinePage.lede")} />
+
+    <p set:html={t("timelinePage.anatomyBody")} />
+    <ComponentPreview
+      tree={timelineAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("timelinePage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+
+    <ComponentPreview tree={timelineTree(t)} label="Timeline" />
+
+    <h3>{t("timelinePage.tonesTitle")}</h3>
+    <p set:html={t("timelinePage.tonesBody")} />
+    <ComponentPreview tree={timelineTonesTree(t)} label={t("timelinePage.tonesPreviewLabel")} />
+
+    <h3>{t("timelinePage.whenTitle")}</h3>
+    <ul>
+      <li set:html={t("timelinePage.whenItem1")} />
+      <li set:html={t("timelinePage.whenItem2")} />
+      <li set:html={t("timelinePage.whenItem3")} />
+      <li set:html={t("timelinePage.whenItem4")} />
+    </ul>
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("timelinePage.contractItem1")} />
+      <li set:html={t("timelinePage.contractItem2")} />
+      <li set:html={t("timelinePage.contractItem3")} />
+      <li set:html={t("timelinePage.contractItem4")} />
+      <li set:html={t("timelinePage.contractItem5")} />
+      <li set:html={t("timelinePage.contractItem6")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" />
+  </Fragment>
+</ComponentPageShell>

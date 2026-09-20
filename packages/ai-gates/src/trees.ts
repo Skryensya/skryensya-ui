@@ -235,6 +235,26 @@ const signatureTrees: readonly Canonical[] = [
     },
   },
   {
+    /*
+     * THE STANDALONE RADIO, which is a separate signature and not a piece of the group above.
+     * Its own intent is "matrix-cell" / "radio-in-a-table": one cell in a grid of choices, where
+     * exclusivity comes from a `name` shared across rows no single group owns, so `RadioGroup`'s
+     * `items` collection has nothing to offer it.
+     *
+     * It is here because the corpus reached it through nothing. `RadioGroup` expands its options
+     * from a collection, so walking that tree records `radio-group.RadioGroup` and never this,
+     * and a published signature with no canonical tree is compared by no gate at all.
+     */
+    name: "radio/standalone",
+    enhanced: false,
+    tree: {
+      contract: "radio-group",
+      signature: "Radio",
+      options: { name: "plan", value: "mensual" },
+      children: "Mensual",
+    },
+  },
+  {
     name: "switch/labelled",
     enhanced: false,
     tree: {
@@ -695,6 +715,47 @@ const signatureTrees: readonly Canonical[] = [
           signature: "ProcessListItem",
           slots: { title: "Importar los tokens" },
           children: "Una vez, en el entry de la app.",
+        },
+      ],
+    },
+  },
+  {
+    /*
+     * EVENTS THAT ALREADY HAPPENED, where the risk the two bindings disagree is concentrated in
+     * two places. The time is one fact in two fields, so an entry carries both its machine
+     * `datetime` and the words a reader sees, and the last entry carries neither, which is where a
+     * binding that emitted an empty `<time>` would show up. The tone is the other: its default is
+     * filled by the emitter, so an entry that sets nothing still has to arrive as
+     * `data-tone="neutral"` on both sides.
+     */
+    name: "timeline/order-history",
+    enhanced: false,
+    tree: {
+      contract: "timeline",
+      signature: "Timeline",
+      attrs: { "aria-label": "Historial del pedido" },
+      children: [
+        {
+          contract: "timeline",
+          signature: "TimelineItem",
+          options: { time: "2026-03-14T14:20", tone: "success" },
+          slots: {
+            icon: { contract: "icon", signature: "Icon", options: { name: "success" } },
+            time: "14 mar 2026, 14:20",
+            heading: "Pedido entregado",
+          },
+          children: "Firmado por L. Ortiz.",
+        },
+        {
+          contract: "timeline",
+          signature: "TimelineItem",
+          options: { time: "2026-03-11" },
+          slots: { time: "11 mar 2026", heading: "Retrasado por el temporal" },
+        },
+        {
+          contract: "timeline",
+          signature: "TimelineItem",
+          slots: { heading: "Un evento sin fecha ni tono" },
         },
       ],
     },
@@ -1950,6 +2011,60 @@ const signatureTrees: readonly Canonical[] = [
      * the point: the field derives its ids from whatever signature is slotted into it, and never
      * asks what that is.
      */
+    /*
+     * THE ONE INPUT WITH AN ENHANCER BEHIND IT. Every other field in this corpus is markup the
+     * platform runs on its own; `format` is the case where it cannot, because a RUT's check digit
+     * is arithmetic no browser has ever been taught. The enhancer reads `data-format`, so this
+     * tree is also what keeps `input[data-format]` from being a selector nothing is evidence for.
+     *
+     * `rut` rather than `phone` deliberately: `phone` is implemented by the optional
+     * `@skryensya/phone`, and a gate that needed it installed would be asserting a consumer's
+     * dependency rather than this layer's own contract.
+     */
+    /*
+     * THE RATING INPUT, and the one root in this corpus whose enhancer is `@zag-js/rating-group`.
+     * Five radios in a group, which is what keeps `[data-sk-rating]` from being a selector nothing
+     * is evidence for.
+     */
+    name: "rating/input",
+    enhanced: true,
+    tree: {
+      contract: "rating",
+      signature: "Rating",
+      options: { label: "Tu puntuación", name: "score", defaultValue: 3 },
+    },
+  },
+  {
+    /*
+     * The same contract with no machine at all. A display is one element carrying one percentage,
+     * so `enhanced: false` is the claim: there is nothing here for an enhancer to do, and the
+     * selector above must not match it.
+     */
+    name: "rating/display",
+    enhanced: false,
+    tree: {
+      contract: "rating",
+      signature: "RatingDisplay",
+      options: { value: 4.3, label: "4,3 de 5" },
+      slots: { valueText: "4,3", count: "128 reseñas" },
+    },
+  },
+  {
+    name: "input/validated-format",
+    enhanced: true,
+    tree: {
+      contract: "form-field",
+      signature: "FormField",
+      options: { required: true },
+      slots: { label: "RUT", hint: "Con puntos o sin ellos, da lo mismo." },
+      children: {
+        contract: "input",
+        signature: "Input",
+        options: { format: "rut", name: "rut", placeholder: "12.345.678-5" },
+      },
+    },
+  },
+  {
     name: "input/textarea-in-a-form-field",
     enhanced: false,
     tree: {

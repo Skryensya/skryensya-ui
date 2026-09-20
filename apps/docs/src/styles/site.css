@@ -1560,15 +1560,180 @@ main > :where(h2, h3) {
   );
 }
 
-/* Tab prose uses the reading measure on desktop. A preview inherits that measure by
- * default; its existing `width="breakout"` prop remains the explicit escape hatch
- * for controls or source that need the panel's wider canvas. */
+/* Tab prose uses the reading measure on desktop, and so does every other box in the panel: the
+ * hero, the tab strip and the prose all share this one edge, and the page reads as one column.
+ * The ONE exception is the demo itself, placed on the wider track just below. */
+/* The panel's reading measure as a LENGTH, resolved once here. `90ch` left as a token resolves
+ * against whatever font the element using it has, and the preview's header title is mono, so the
+ * same token would have anchored the chrome to a different width than the prose it lines up with.
+ * Same reason, and the same fix, as `--docs-catalog-measure-ch` further down. */
+@property --docs-preview-chrome-measure {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid {
   --sk-layout-content: 90ch;
+  --docs-preview-chrome-measure: 90ch;
   --sk-layout-breakout: min(
     var(--size-wrapper-lg),
     calc(var(--size-wrapper-md) + var(--space-inset-md) * 2)
   );
+}
+
+/*
+ * A DEMO IS LOOKED AT, NOT READ, so on desktop it is the only child of the panel that leaves the
+ * reading measure. It takes the grid's own `breakout` track, which widens it symmetrically about
+ * the same centre line the prose uses, so the page keeps one axis and only this box is wider.
+ *
+ * Everything else, including the hero and the tab strip above it, stays on `content`. An earlier
+ * pass at this raised `--sk-layout-content` for the whole panel instead, which did widen the demo
+ * but dragged every heading, paragraph and code block off the header's edge with it (measured at
+ * 1600px: content moved from 397px to 328px). The track is the wrong lever; the placement is the
+ * right one.
+ *
+ * Below `desktop` there is no spare room for a breakout track to claim, so the rule stays out of
+ * the way rather than asserting a placement that resolves to the same box.
+ *
+ * ASKED OF THE TAB STRIP, NOT OF THE STAGE, and that distinction is the whole rule. On the stage,
+ * `free` is the ABSENCE of the preset attribute, and so is "this preview has no presets at all" -
+ * the two are indistinguishable from CSS. Anatomy diagrams are the second kind (they render no
+ * screen toggles, so there is nothing for them to answer to), and reading the stage swept them into
+ * the wide track along with every genuinely free specimen: a structure diagram drawn 976px wide
+ * beside 806px of prose that explains it.
+ *
+ * The screen toggle carries its current preset in `data-value` and only exists on a preview that
+ * has presets, so one selector settles all three cases: no toggle, no widening; toggle on Tablet or
+ * Mobile, no widening; toggle on anything else, widen.
+ */
+/*
+ * THE PANEL IS A QUERY CONTAINER so the three widths below can be solved from something that does
+ * NOT move while a card is animating. `100%` inside the card resolves against the card, and the
+ * card is the thing in motion: every value derived from it drifts through the transition and lands
+ * right only at the end, which is how the preview's name ends up sliding 34px on its way to the
+ * position it is supposed to never leave. `cqi` is the panel's width, and the panel does not care
+ * which preset a card is on.
+ *
+ * `--docs-preview-chrome-measure` is the frozen `90ch`, registered as a `<length>` so it computes
+ * here, in the panel's font, rather than at whatever reads it: the preview's title is mono, and a
+ * bare `ch` down there would have solved a different column than the prose lines up with.
+ *
+ * `--docs-reading-column` is the grid's own arithmetic, `narrow + min(measure - narrow, leftover
+ * / 2)`, evaluated against the breakout area. It is the column the prose occupies, to the pixel, at
+ * every width, and it is what the card falls back to and what the chrome stays anchored on.
+ */
+main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid {
+  container-type: inline-size;
+
+  --docs-breakout-room: calc(100cqi - var(--space-inset-lg) * 2);
+  --docs-breakout-narrow: min(var(--docs-breakout-room), var(--size-wrapper-sm));
+  --docs-reading-column: calc(
+    var(--docs-breakout-narrow) +
+      min(
+        var(--docs-preview-chrome-measure) - var(--size-wrapper-sm),
+        (var(--docs-breakout-room) - var(--docs-breakout-narrow)) / 2
+      )
+  );
+}
+
+@media (min-width: 52rem) {
+  /*
+   * THE CARD STAYS ON THE WIDE TRACK AND CHANGES ITS WIDTH, which is the only shape of this that
+   * can be animated: it used to move between `content` and `breakout`, and grid placement is
+   * discrete, so switching a preset snapped the card, its bar and the stage to the new width in one
+   * frame. Spanning `breakout` always and falling back to `--docs-reading-column` puts the same two
+   * numbers on a property that interpolates. Centred, because the reading column sits centred inside
+   * the breakout area and the page keeps one axis.
+   */
+  main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid > .sk-component-preview {
+    grid-column: breakout-start / breakout-end;
+    justify-self: center;
+    inline-size: var(--docs-reading-column);
+    transition-property: inline-size;
+    transition-duration: var(--motion-state-change-duration);
+    transition-timing-function: var(--motion-state-change-easing);
+  }
+
+  main[data-document-layout="grid"]
+    .sk-tabs__content.sk-layout-grid
+    > .sk-component-preview:has(
+      [data-sk-component-preview-screen-tabs]:not([data-value="tablet"]):not([data-value="mobile"])
+    ) {
+    inline-size: var(--docs-breakout-room);
+  }
+
+  /* The stage already transitions its own width for the presets (component-preview.css); the card
+     moving under it at the same duration and easing keeps the two as one motion rather than two. */
+  @media (prefers-reduced-motion: reduce) {
+    main[data-document-layout="grid"] .sk-tabs__content.sk-layout-grid > .sk-component-preview {
+      transition-property: none;
+    }
+  }
+
+  /*
+   * THE FRAME GETS THE ROOM, THE CHROME KEEPS THE PAGE'S EDGES. The header BAR spans the whole
+   * card (its background and its bottom rule are what separate the chrome from the stage, and a
+   * bar stopping short of the corners would read as a floating strip), but the title and the
+   * controls inside it stay where they sit on every other row of the page. Otherwise widening the
+   * card walks the binding toggle and the screen-size buttons ~85px outward, and the reader has to
+   * find them again on every page whose demo happens to be wider.
+   *
+   * Spent as padding rather than an inner wrapper, because the header's children are its direct
+   * flex items and `justify-content: space-between` is what puts the title and the controls at
+   * opposite ends: a box between them would have to re-earn that. `max()` keeps the component's
+   * own inset as the floor, so this can only ever add.
+   *
+   * THE TARGET IS WHERE THE CHROME ALREADY SITS, NOT THE TEXT EDGE. The name and the controls are
+   * inset from the reading column by the header's own padding, and that is the position to hold: an
+   * earlier pass aligned them with the text itself, which meant switching a preview between Tablet
+   * and Free walked the name 17px and the controls with it. Nothing about changing a demo's width
+   * should shift the label of the demo, so the inset is added back on top of the overhang.
+   *
+   * THE COLUMN IS SOLVED HERE, NOT ASSUMED. Using the nominal `90ch` was exact only once the layout
+   * had settled (1536px and up) and drifted by as much as 36px below that, because the panel is
+   * narrower than the measure there and the real column is narrower still. The grid resolves that
+   * column with `narrow + min(measure - narrow, leftover / 2)`, and this is that same arithmetic
+   * evaluated against the card: `room` is the card's border box (the `+ 2px` is its own 1px border
+   * on each side, which the percentage containing block excludes but the column does not), so the
+   * result is the reading column to the pixel at every width.
+   *
+   * `--docs-preview-chrome-measure` is the frozen `90ch`, registered as a `<length>` and resolved
+   * up on the panel. It has to be: `ch` here would resolve against the header's own font, and the
+   * title is mono.
+   *
+   * SCOPED TO THE CARDS THAT ACTUALLY TOOK THE WIDE TRACK, the same condition as the placement
+   * above, because `room` is only the card's own border box while the two coincide. A card left on
+   * the reading column is narrower than the panel, so solving from it produced a column narrower
+   * than the real one and pushed the name INWARD, 33px at 1600 - the same shift, in the other
+   * direction. A card at the reading column needs no correction anyway: the component's own inset is
+   * already the reference position this rule exists to preserve.
+   */
+  main[data-document-layout="grid"]
+    .sk-tabs__content.sk-layout-grid
+    > .sk-component-preview
+    > .sk-component-preview__header {
+    padding-inline: max(
+      var(--space-inset-md),
+      (100% + 2px - var(--docs-reading-column)) / 2 + var(--space-inset-md)
+    );
+  }
+}
+/*
+ * TABLET FILLS THE COLUMN INSTEAD OF SITTING INSIDE IT. The kit picks 768px for this preset because
+ * it lands between `compact` (36rem) and `desktop` (52rem), the band nothing else makes easy to
+ * see. That reasoning is about which media queries fire inside the frame, not about the number, and
+ * in this column 768px left a 19px mat down each side of a stage that is otherwise flush.
+ *
+ * Retuned to the panel's own reading measure, which is still inside that band, so the preset keeps
+ * meaning what it meant. The stage already resolves `min(<this>, 100%)`, so where the column is
+ * narrower than the measure the stage simply takes the column: flush at every width, never wider
+ * than the card.
+ */
+main[data-document-layout="grid"]
+  .sk-tabs__content.sk-layout-grid
+  .sk-component-preview__stage[data-sk-component-preview-screen="tablet"] {
+  --sk-component-preview-screen-inline-size: var(--docs-preview-chrome-measure);
 }
 
 /* The chrome around that prose reads at the SAME measure: the hero, the tab strip, and the tail of
@@ -1599,6 +1764,51 @@ main[data-document-layout="grid"]:has(> .docs-component-shell) :is(.docs-compone
 main[data-document-layout="grid"]:has(> .docs-component-shell) > :is(.docs-report-issue, .docs-page-nav, .docs-footer) {
   inline-size: var(--docs-measure-solved);
   margin-inline: auto;
+}
+/*
+ * THE STICKY BAR HAS TO BE AS WIDE AS WHAT SCROLLS UNDER IT. This strip is `position: sticky` with
+ * an opaque background precisely so the panels pass beneath it, and on desktop the ComponentPreview
+ * is wider than the reading measure: at the strip's old width the demo's two edges slid out past
+ * the bar and stayed visible while the rest of it was covered.
+ *
+ * THE WIDTH IS DERIVED, NOT COPIED. The tab panel IS this main's content column, and the preview
+ * card is that column less the panel grid's own two gutters, so the card's width written from here
+ * is just `100% - gutter * 2`. No rail arithmetic, no second copy of the layout's track maths (the
+ * hand-written `grid-template-columns` rewrite that used to live in this file was removed for
+ * exactly that reason), and it stays exact at every width because both boxes are solved from the
+ * same column: measured at 1280 / 1440 / 1600 / 1920, strip and card share both edges.
+ *
+ * THE TABS THEMSELVES DO NOT MOVE. The box grows, and the same growth is handed straight back as
+ * padding, so every trigger keeps the position it had on the reading measure. Percentage padding
+ * resolves against the containing block, not against the element's new width, which is why this
+ * subtracts the gutters again rather than halving `100%`. `max()` floors it at 0 so a strip narrow
+ * enough to scroll horizontally is left alone.
+ *
+ * ONLY WHERE THERE IS SOMETHING WIDE TO COVER. The bar carries the rule that closes it
+ * (`.sk-tabs__list`'s `border-block-end`), so widening it always widens that line too. On a page
+ * whose demos are all at Tablet or Mobile the card never leaves the reading measure, and the line
+ * would just run 85px past everything on the page underlining nothing. The `:has()` asks the only
+ * question that matters, "does this page carry a screen toggle that is not on a narrow preset",
+ * which is the same condition the
+ * breakout placement above uses, so the bar and the card can never disagree about it. It is live:
+ * switch the preset and the bar follows, because the tabs sit at the reading measure either way.
+ */
+@media (min-width: 52rem) {
+  main[data-document-layout="grid"]:has(> .docs-component-shell):has(
+      [data-sk-component-preview-screen-tabs]:not([data-value="tablet"]):not([data-value="mobile"])
+    )
+    .docs-component-hero-tabs {
+    inline-size: calc(100% - var(--space-inset-lg) * 2);
+    padding-inline: max(
+      0px,
+      (100% - var(--space-inset-lg) * 2 - var(--docs-measure-solved)) / 2
+    );
+    /* Same duration and easing as the card it is covering, so the bar and the demo under it read as
+       one motion rather than two that happen to start together. */
+    transition-property: inline-size, padding-inline;
+    transition-duration: var(--motion-state-change-duration);
+    transition-timing-function: var(--motion-state-change-easing);
+  }
 }
 
 /* THE CATALOGS (components, foundations) READ AT THAT SAME MEASURE, so leaving a component page
@@ -1656,6 +1866,29 @@ main[data-document-layout="grid"]:has(> .docs-catalog-groups) > * {
 
 /* Keep tab content on the panel's reading measure. Individual specimens opt into
  * the wider breakout span through ComponentPreview's `width` prop. */
+
+/*
+ * AND THE OPT-IN HAS TO STRETCH TO BE WORTH ANYTHING.
+ *
+ * Every preview in a panel is already PLACED on the breakout track by the rule above, and every one
+ * of them is `justify-self: center`, so it shrinks to its content and leaves the extra track empty.
+ * Measured on `/components/card`, whose three `width="breakout"` previews came out at 806px, exactly
+ * the same as the five that ask for nothing: the prop is documented, used, and until now did nothing
+ * anywhere on the site.
+ *
+ * Only the ones that ASK stretch. Centring is right for the rest: a demo narrower than its track
+ * reads as a specimen, not as a band.
+ */
+main[data-document-layout="grid"]
+  .sk-tabs__content.sk-layout-grid
+  > .sk-component-preview[data-width="breakout"] {
+  justify-self: stretch;
+  /* The base rule above pins every preview to `--docs-reading-column` and only PLACES it on the
+     breakout track, so the track's extra width sat unused behind an explicit size. Taking the whole
+     track is the entire meaning of the opt-in; `inline-size` stays the animated property, so the
+     screen-preset transition it was written for still runs. */
+  inline-size: 100%;
+}
 
 /* That breakout is room for the DESKTOP preset only. On Tablet or Mobile the stage is capped at 768px
  * or 390px anyway, so the preview returns to the text's measure instead of sitting wider than the
@@ -1798,14 +2031,19 @@ h4:not([data-flush], .sk-heading) {
 }
 
 /* Same unlayered-beats-`@layer components` fact as the headings above, and the same fix: this is
- * for the docs' own prose paragraphs, not for a composed `Text` (`.sk-text`, `margin: 0` in
- * typography.css) sitting inside a demo. Without the guard, every `Text` used to build a header or
- * footer row inside a ComponentPreview (the preview iframe copies this stylesheet wholesale) picks
- * up an extra `--space-stack-sm` under itself: on TOP of a Stack's own `gap`, that reads as far too
- * much space under a name, and inflates the Stack's own measured height enough to throw off
- * `align-items: center` against a sibling avatar. `Text` has no `flush` option the way `Heading`
- * does. A bare class exclusion is the whole fix it needs. */
-p:not(.sk-text) {
+ * for the docs' own prose paragraphs, not for anything the KIT drew inside a demo. The preview
+ * iframe copies this stylesheet wholesale, and an unlayered rule beats every `margin: 0` a
+ * component declares in `@layer components`, so a bottom margin the docs meant for their own prose
+ * landed under kit parts too: a `Text` (`.sk-text`) used to build a header row picked up an extra
+ * step on TOP of its Stack's `gap` (enough to throw `align-items: center` off against a sibling
+ * avatar), and Questionnaire's description, position and error lines each grew a phantom
+ * `--space-stack-md` that no rule in its own sheet could take back.
+ *
+ * The guard used to name `.sk-text` alone and was re-earned every time another component turned out
+ * to have a `<p>` part. Every kit class is `sk-`-prefixed and every kit `<p>` sets its own margin,
+ * so the prefix IS the rule: docs prose keeps the margin, anything the kit drew keeps what its own
+ * sheet said. Docs-local classes (`docs-`, `site-`, `ev-`) are unaffected. */
+p:not([class*="sk-"]) {
   margin: 0 0 var(--space-stack-md);
 }
 

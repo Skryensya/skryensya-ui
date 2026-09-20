@@ -33,6 +33,10 @@
       "types": "./src/icon.ts",
       "default": "./src/icon.ts"
     },
+    "./input": {
+      "types": "./src/components/input.ts",
+      "default": "./src/components/input.ts"
+    },
     "./annotation": {
       "types": "./src/components/annotation.ts",
       "default": "./src/components/annotation.ts"
@@ -56,6 +60,10 @@
     "./accordion": {
       "types": "./src/components/accordion.ts",
       "default": "./src/components/accordion.ts"
+    },
+    "./rating": {
+      "types": "./src/components/rating.ts",
+      "default": "./src/components/rating.ts"
     },
     "./select": {
       "types": "./src/components/select.ts",
@@ -216,6 +224,10 @@
     "./folder": {
       "types": "./src/components/folder.ts",
       "default": "./src/components/folder.ts"
+    },
+    "./feed": {
+      "types": "./src/components/feed.ts",
+      "default": "./src/components/feed.ts"
     },
     "./toolbar": {
       "types": "./src/components/toolbar.ts",

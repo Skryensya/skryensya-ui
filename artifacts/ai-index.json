@@ -1126,69 +1126,6 @@
       ]
     },
     {
-      "category": "data",
-      "css": "@skryensya/core/components/data-grid.css",
-      "id": "data-grid",
-      "signatures": [
-        {
-          "alternatives": [
-            "Table",
-            "Treegrid"
-          ],
-          "avoidWhen": [
-            "los datos son tabulares pero ESTÁTICOS, sin necesidad de navegar con flechas; eso es Table",
-            "hay jerarquía además de columnas; eso es Treegrid",
-            "es una cuadrícula puramente visual (CSS Grid) sin navegación por teclado; eso es Grid/LayoutGrid en layout.ts"
-          ],
-          "host": "div",
-          "id": "DataGrid",
-          "intent": [
-            "2d-keyboard-navigable-grid",
-            "data-grid",
-            "layout-grid",
-            "widget-grouping"
-          ],
-          "parents": [],
-          "useWhen": [
-            "un conjunto de celdas necesita navegación 2D por teclado. Flechas se mueven entre filas y columnas",
-            "es una grilla de widgets (chips, tarjetas, enlaces) y se quiere UNA sola parada de tabulación en vez de una por widget. El caso 'layout grid' de WAI",
-            "es una grilla de datos interactiva (editable, con celdas que reciben foco). El caso 'data grid' de WAI"
-          ]
-        },
-        {
-          "alternatives": [],
-          "avoidWhen": [],
-          "host": "div",
-          "id": "DataGridRow",
-          "intent": [
-            "grid-row",
-            "logical-row"
-          ],
-          "parents": [
-            "DataGrid"
-          ],
-          "useWhen": [
-            "una fila lógica de celdas: no necesariamente una fila visual; puede envolver varias líneas físicas"
-          ]
-        },
-        {
-          "alternatives": [],
-          "avoidWhen": [],
-          "host": "div",
-          "id": "DataGridCell",
-          "intent": [
-            "grid-cell"
-          ],
-          "parents": [
-            "DataGridRow"
-          ],
-          "useWhen": [
-            "un valor o un widget dentro de una fila de la grilla; el rol interactivo del contenido (botón, enlace) se preserva, nunca se reinterpreta"
-          ]
-        }
-      ]
-    },
-    {
       "category": "forms",
       "css": "@skryensya/core/components/date-picker.css",
       "id": "date-picker",
@@ -1526,7 +1463,8 @@
           "parents": [],
           "useWhen": [
             "hay que adjuntar archivos: un CV, un comprobante, fotos",
-            "conviene aceptar arrastrar y soltar además del botón, sin obligar a nadie a arrastrar"
+            "conviene aceptar arrastrar y soltar además del botón, sin obligar a nadie a arrastrar",
+            "se espera poder soltar el archivo sobre un panel entero o sobre toda la página, no solo sobre la caja punteada; eso es dropScope element o page, con overlayLabel para que el destino se vea"
           ]
         }
       ]
@@ -1855,6 +1793,8 @@
           ],
           "avoidWhen": [
             "el texto es largo o multilínea; eso es Textarea",
+            "la validez depende del servidor (un RUT que ya está registrado); eso es el slot `error` del FormField, escrito por quien compone, y le gana al mensaje de `format`",
+            "se quiere validar un teléfono sin agregar dependencias: no hay camino; el plan de numeración son datos y el kit prefiere no validar antes que validar mal",
             "se elige de un conjunto cerrado de opciones; eso es un Select",
             "el valor es un número con paso y límites; eso es NumberField",
             "la plataforma debe gobernar time/color/range y se quiere su control nativo; eso es NativeInput"
@@ -1873,7 +1813,9 @@
           ],
           "useWhen": [
             "el usuario escribe una línea de texto: email, nombre, búsqueda",
-            "el tipo nativo aporta teclado y validación del navegador (email, tel, url)"
+            "el tipo nativo aporta teclado y validación del navegador (email, tel, url)",
+            "el valor tiene una validez que el navegador no sabe comprobar: un RUT con su dígito verificador, una URL que se pueda abrir; eso es `format`",
+            "es un teléfono de cualquier país: `format=\"phone\"` más `country`, que requiere instalar `@skryensya/phone` y registrarlo al arranque"
           ]
         },
         {
@@ -2515,8 +2457,7 @@
           "intent": [
             "measurement-in-a-range",
             "disk-usage",
-            "battery-level",
-            "rating-out-of-a-scale"
+            "battery-level"
           ],
           "parents": [],
           "useWhen": [
@@ -3126,6 +3067,64 @@
             "se elige UNA opción de un conjunto pequeño y todas las opciones valen la pena mostrarlas",
             "las opciones son excluyentes entre sí",
             "el valor se envía con el formulario (name compartido en cada input)"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "forms",
+      "css": "@skryensya/core/components/rating.css",
+      "id": "rating",
+      "signatures": [
+        {
+          "alternatives": [
+            "RatingDisplay",
+            "Slider",
+            "Meter"
+          ],
+          "avoidWhen": [
+            "el valor solo se muestra y nadie lo cambia; eso es RatingDisplay",
+            "la escala es continua o larga (0 a 100); eso es un Slider",
+            "es una medición que se dibuja como barra, no como símbolos: uso de disco, batería; eso es Meter",
+            "son dos opciones opuestas (me gusta / no me gusta); eso son dos Button o un IconToggle"
+          ],
+          "host": "div",
+          "id": "Rating",
+          "intent": [
+            "rating-input",
+            "star-rating",
+            "rate-this",
+            "review-score-input"
+          ],
+          "parents": [],
+          "useWhen": [
+            "la persona elige una puntuación en una escala corta y ordenada: cuántas estrellas le pone a algo",
+            "hace falta que el valor viaje en un formulario y se pueda recorrer con el teclado como un grupo de radios"
+          ]
+        },
+        {
+          "alternatives": [
+            "Rating",
+            "Meter",
+            "Stat"
+          ],
+          "avoidWhen": [
+            "la persona tiene que poder cambiarlo; eso es Rating",
+            "la medición se lee mejor como barra con su rótulo y su número; eso es Meter",
+            "no hay escala, es un número suelto; eso es Stat"
+          ],
+          "host": "span",
+          "id": "RatingDisplay",
+          "intent": [
+            "rating-display",
+            "average-score",
+            "review-score",
+            "stars-out-of-five"
+          ],
+          "parents": [],
+          "useWhen": [
+            "se reporta un promedio ya calculado: la nota de un producto, de una reseña, de un curso",
+            "el valor tiene decimales y hay que ser fiel a ellos; la tira se rellena en la fracción exacta"
           ]
         }
       ]
@@ -4205,6 +4204,61 @@
       ]
     },
     {
+      "category": "content",
+      "css": "@skryensya/core/components/timeline.css",
+      "id": "timeline",
+      "signatures": [
+        {
+          "alternatives": [
+            "Steps",
+            "ProcessList",
+            "Changelog"
+          ],
+          "avoidWhen": [
+            "the reader is inside the process and has to be told which stage they are at; that is Steps",
+            "they are instructions to follow, with no time at all; that is a ProcessList",
+            "they are shipped releases; that is Changelog, which has its own vocabulary and scale"
+          ],
+          "host": "ol",
+          "id": "Timeline",
+          "intent": [
+            "event-history",
+            "activity-log",
+            "what-happened-when",
+            "order-tracking"
+          ],
+          "parents": [],
+          "useWhen": [
+            "events that already happened have to be shown, in the order they happened",
+            "the when matters as much as the what: a history, order tracking, an activity log",
+            "the author sets the direction by writing the entries in it; there is no order option"
+          ]
+        },
+        {
+          "alternatives": [
+            "Steps"
+          ],
+          "avoidWhen": [
+            "the event carries complete / current / upcoming; that is a step of Steps"
+          ],
+          "host": "li",
+          "id": "TimelineItem",
+          "intent": [
+            "one-event",
+            "one-entry-of-a-history"
+          ],
+          "parents": [
+            "Timeline"
+          ],
+          "useWhen": [
+            "one event on the rail: a required heading, and optionally a time, an icon and a detail",
+            "the time is two fields: time (ISO, for the machine) and timeLabel (the visible copy)",
+            "tone marks the dot a scanning eye should stop at; it is never the only thing saying so"
+          ]
+        }
+      ]
+    },
+    {
       "category": "navigation",
       "css": "@skryensya/core/components/toc.css",
       "id": "toc",
@@ -4755,5 +4809,5 @@
     }
   ],
   "schemaVersion": "2.3",
-  "sourceHash": "c0b063cdc880100c"
+  "sourceHash": "53fea38af7380336"
 }

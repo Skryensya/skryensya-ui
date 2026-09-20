@@ -1,0 +1,29 @@
+{
+  "name": "@skryensya/phone",
+  "version": "0.0.1-dev",
+  "private": true,
+  "type": "module",
+  "description": "The numbering plans behind Input's phone format: libphonenumber-js wrapped as a registrable @skryensya/core input format. Optional by design, because its metadata is larger than the rest of the kit's validation put together.",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check": "tsc -p tsconfig.json --noEmit && vitest run"
+  },
+  "dependencies": {
+    "@skryensya/core": "workspace:*",
+    "libphonenumber-js": "^1.13.11"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  }
+}

@@ -34,6 +34,10 @@ export const annotationMessages = {
     "annotation.sidesBody":
       "<code>side</code> es lógico, como todo el resto del sistema: <code>inline-start</code>, <code>inline-end</code>, <code>block-start</code> y <code>block-end</code>, así que los dos primeros se dan vuelta solos en RTL. Es un <strong>pedido</strong>, no una garantía: la hoja coloca la etiqueta y el binding lee dónde cayó, y lo escribe de vuelta en <code>data-sk-side</code>.",
     "annotation.sidesLabel": "Anatomía de Stat",
+    "annotation.keyMeaning": "el bloque que nombran las etiquetas",
+    "annotation.keyTitle": "La leyenda",
+    "annotation.keyBody":
+      "El slot <code>key</code> deja una línea abajo a la izquierda sobre el dibujo entero, no sobre una parte: normalmente qué significa una abreviatura que usan las etiquetas. Existe por una razón medible: un nombre de parte es bloque más elemento, y un diagrama de diez partes repite el bloque diez veces en sus márgenes, donde cada repetición se le cobra al ancho del sujeto. En FileUpload, escribir <code>*__item-preview</code> en vez del nombre completo y explicar el <code>*</code> acá abajo devolvió al espécimen de 292px a 480px. Las etiquetas van a los puntos medios de los cuatro bordes, así que las esquinas quedan libres por construcción: la leyenda no puede chocar con ninguna, tenga el diagrama las etiquetas que tenga. El demo de arriba la usa.",
     "annotation.sidesPreviewLabel": "Una etiqueta por margen",
     "annotation.statLabel": "Ingresos",
     "annotation.statChange": "12%",
@@ -220,6 +224,10 @@ export const annotationMessages = {
     "annotation.sidesBody":
       "<code>side</code> is logical, like everything else in the system: <code>inline-start</code>, <code>inline-end</code>, <code>block-start</code> and <code>block-end</code>, so the first two swap themselves in RTL. It is a <strong>request</strong>, not a guarantee: the stylesheet places the label and the binding reads back where it landed, into <code>data-sk-side</code>.",
     "annotation.sidesLabel": "Stat anatomy",
+    "annotation.keyMeaning": "the block the labels name",
+    "annotation.keyTitle": "The key",
+    "annotation.keyBody":
+      "The <code>key</code> slot leaves one line in the bottom-left about the whole drawing rather than about a part: usually what a shorthand the labels use stands for. It exists for a measurable reason: a part name is a block plus an element, and a diagram of ten parts repeats that block ten times in its margins, where every repetition is charged to the subject's width. On FileUpload, writing <code>*__item-preview</code> instead of the full name and explaining the <code>*</code> down here took the specimen from 292px back to 480px. Labels go to the midpoints of the four edges, so the corners are free by construction: a key cannot collide with one, however many labels a diagram has. The demo above uses it.",
     "annotation.sidesPreviewLabel": "One label per margin",
     "annotation.statLabel": "Revenue",
     "annotation.statChange": "12%",

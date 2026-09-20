@@ -1,4 +1,5 @@
 import { validateUsageTree } from "@skryensya/ai-compiler/validate";
+import { isPausedSlug } from "@skryensya/core/paused";
 import { snippets } from "@skryensya/snippets";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import { componentNavigation } from "./navigation";
@@ -200,6 +201,13 @@ export function playgroundCatalogue(t: Translate, locale: Locale): readonly Play
 
   for (const [path, module] of Object.entries(modules).sort(([a], [b]) => a.localeCompare(b))) {
     const id = moduleId(path);
+    /*
+     * A PAUSED COMPONENT IS NOT A PRESET. The glob is what makes this catalogue self-maintaining, and
+     * that cuts both ways: a demo module keeps producing presets long after the kit stopped offering
+     * the component, because nothing here reads the rail to decide WHETHER to include one, only to
+     * label and link it. So the skip is explicit. `@skryensya/core/paused` holds the list.
+     */
+    if (isPausedSlug(id)) continue;
     const examples: PlaygroundExample[] = [];
     /** Slugs already taken inside THIS component, so a second one cannot reuse an id. */
     const claimed = new Set<string>();

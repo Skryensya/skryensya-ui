@@ -56,6 +56,7 @@ export const stepsContract = {
   parts: stepsParts,
   hooks: [
     "--sk-steps-connector-size",
+    "--sk-steps-segment-size",
     "--sk-steps-item-padding",
     "--sk-steps-marker-size",
   ],
@@ -66,13 +67,24 @@ export const stepsContract = {
      * either value to pin it. React has always taken this as `data-orientation`.
      */
     orientation: { type: "enum", values: ["horizontal", "vertical"], attr: "data-orientation", prop: "data-orientation" },
+    /*
+     * HOW A STEP IS DRAWN. `markers` is the rail this component has always been: a numbered disc per
+     * stage, its label under it, a connector between them.
+     *
+     * `segments` draws the same sequence as a row of BARS, one per stage, and drops the labels. It
+     * is the shape for a progress that has to be read at a glance rather than studied: the stages
+     * are still countable and the done ones still obvious, but a name per stage would not fit and
+     * was never the point. The statuses, the connector logic, `aria-current` and the windowing are
+     * unchanged, which is the reason this is an appearance and not another component.
+     */
+    appearance: { type: "enum", values: ["markers", "segments"], default: "markers", attr: "data-appearance" },
   },
 
   signatures: {
     Steps: {
       intent: ["progress-through-stages", "checkout-progress", "wizard-position"],
       host: { element: "ol" },
-      options: ["orientation"],
+      options: ["orientation", "appearance"],
       slots: {
         items: {
           accepts: "items",

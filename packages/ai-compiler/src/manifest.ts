@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import type { ComponentContract } from "@skryensya/core/contract";
 import { contracts } from "@skryensya/core/registry";
+import { isPausedFamily } from "@skryensya/core/paused";
 import { SCHEMA_VERSION, type CompiledIndex, type CompiledManifest } from "./artifact.js";
 import { readOverlays, type ContractSemantics } from "./overlay.js";
 import { readChangelogs, type ContractChangelog, type ReleaseLedger } from "./changelog.js";
@@ -44,11 +45,30 @@ export function buildManifest(overlayDir: string, changelogDir?: string): Manife
         conflicts: [],
       };
 
+  /*
+   * A PAUSED FAMILY LEAVES THE CATALOGUE, NOT THE MANIFEST, and the direction of that asymmetry is
+   * the whole point.
+   *
+   * `ai-index.json` is DISCOVERY: it is the kit recommending families to an agent that is choosing
+   * what to build with, and a family the kit has set aside should not be recommended while it is.
+   * `ai-manifest.json` is REFERENCE: what this family is, for someone who already has its id.
+   * Dropping it from both broke the one thing pausing promised to keep, because the component's own
+   * docs page reads its contract from the manifest by id: `/components/data-grid` stopped rendering
+   * at build time, on a page that was supposed to stay exactly where it was. Found by the first
+   * `astro build` after the pause, not by `astro check`, which does not render pages.
+   *
+   * INDEX WITHOUT MANIFEST WOULD BE THE BROKEN ORDER: the catalogue would offer an id that
+   * `get_contract` then refuses. Manifest without index is a family nothing advertises and anyone
+   * holding its name can still read, which is what "set aside" means.
+   */
+  const published = Object.entries(contracts)
+    .filter(([id]) => !isPausedFamily(id))
+    .sort(([a], [b]) => a.localeCompare(b));
+  const described = Object.entries(contracts).sort(([a], [b]) => a.localeCompare(b));
+
   const index = {
     schemaVersion: SCHEMA_VERSION,
-    contracts: Object.entries(contracts)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([id, contract]) => indexEntry(id, contract, semantics[id] ?? {})),
+    contracts: published.map(([id, contract]) => indexEntry(id, contract, semantics[id] ?? {})),
   };
 
   /*
@@ -71,15 +91,9 @@ export function buildManifest(overlayDir: string, changelogDir?: string): Manife
     releases: changes.ledger,
     vocabulary,
     contracts: Object.fromEntries(
-      Object.entries(contracts)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([id, contract]) => [id, manifestEntry(contract, semantics[id] ?? {})]),
+      described.map(([id, contract]) => [id, manifestEntry(contract, semantics[id] ?? {})]),
     ),
-    changelogs: Object.fromEntries(
-      Object.entries(contracts)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([id]) => [id, changes.changelog[id]?.releases ?? []]),
-    ),
+    changelogs: Object.fromEntries(described.map(([id]) => [id, changes.changelog[id]?.releases ?? []])),
   };
 
   /*

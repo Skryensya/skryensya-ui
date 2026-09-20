@@ -20,7 +20,9 @@ import { mountDatePicker } from "@skryensya/vanilla/date-picker";
 import { mountEditor } from "@skryensya/vanilla/editor";
 import { mountExpandableTile } from "@skryensya/vanilla/expandable-tile";
 import { mountFileUpload } from "@skryensya/vanilla/file-upload";
+import { mountFeed } from "@skryensya/vanilla/feed";
 import { mountFolder } from "@skryensya/vanilla/folder";
+import { mountInput } from "@skryensya/vanilla/input";
 import { mountLoader } from "@skryensya/vanilla/loader";
 import { mountMarquee } from "@skryensya/vanilla/marquee";
 import { mountMegamenu } from "@skryensya/vanilla/megamenu";
@@ -29,6 +31,7 @@ import { mountMenubar } from "@skryensya/vanilla/menubar";
 import { mountMeter } from "@skryensya/vanilla/meter";
 import { mountNavListGroup } from "@skryensya/vanilla/nav-list";
 import { mountNumberField } from "@skryensya/vanilla/number-field";
+import { mountRating } from "@skryensya/vanilla/rating";
 import { mountSelect } from "@skryensya/vanilla/select";
 import { mountSegmented } from "@skryensya/vanilla/segmented";
 import { mountStat } from "@skryensya/vanilla/stat";
@@ -82,8 +85,10 @@ const mounts = [
   mountDataGrid,
   mountDatePicker,
   mountExpandableTile,
+  mountFeed,
   mountFileUpload,
   mountFolder,
+  mountInput,
   mountLoader,
   mountMarquee,
   mountMegamenu,
@@ -92,6 +97,7 @@ const mounts = [
   mountMeter,
   mountNavListGroup,
   mountNumberField,
+  mountRating,
   mountSegmented,
   mountSelect,
   mountSidebar,
@@ -117,7 +123,7 @@ const mounts = [
 describe("Vanilla public entry points", () => {
   it("publishes the lazy auto-loader and one mount for every regular enhanced module", () => {
     expect(initComponents).toBeTypeOf("function");
-    expect(mounts).toHaveLength(47);
+    expect(mounts).toHaveLength(50);
     expect(mounts.every((mount) => typeof mount === "function")).toBe(true);
   });
 
@@ -174,8 +180,10 @@ describe("Vanilla public entry points", () => {
         mountDataGrid,
         mountDatePicker,
         mountExpandableTile,
+        mountFeed,
         mountFileUpload,
         mountFolder,
+        mountInput,
         mountLoader,
         mountMarquee,
         mountMegamenu,
@@ -184,6 +192,7 @@ describe("Vanilla public entry points", () => {
         mountMeter,
         mountNavListGroup,
         mountNumberField,
+        mountRating,
         mountSegmented,
         mountSelect,
         mountSidebar,

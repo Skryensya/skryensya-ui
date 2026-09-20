@@ -1,0 +1,28 @@
+# The structure lives in packages/core/src/rating.ts. Here, only why it is chosen.
+
+Rating:
+  useWhen:
+    - "la persona elige una puntuación en una escala corta y ordenada: cuántas estrellas le pone a algo"
+    - "hace falta que el valor viaje en un formulario y se pueda recorrer con el teclado como un grupo de radios"
+  avoidWhen:
+    - "el valor solo se muestra y nadie lo cambia; eso es RatingDisplay"
+    - "la escala es continua o larga (0 a 100); eso es un Slider"
+    - "es una medición que se dibuja como barra, no como símbolos: uso de disco, batería; eso es Meter"
+    - "son dos opciones opuestas (me gusta / no me gusta); eso son dos Button o un IconToggle"
+  alternatives:
+    - RatingDisplay
+    - Slider
+    - Meter
+
+RatingDisplay:
+  useWhen:
+    - "se reporta un promedio ya calculado: la nota de un producto, de una reseña, de un curso"
+    - "el valor tiene decimales y hay que ser fiel a ellos; la tira se rellena en la fracción exacta"
+  avoidWhen:
+    - "la persona tiene que poder cambiarlo; eso es Rating"
+    - "la medición se lee mejor como barra con su rótulo y su número; eso es Meter"
+    - "no hay escala, es un número suelto; eso es Stat"
+  alternatives:
+    - Rating
+    - Meter
+    - Stat

@@ -90,14 +90,15 @@ import { megamenuMessages } from "./messages/components/megamenu";
 import { menuMessages } from "./messages/components/menu";
 import { menubarMessages } from "./messages/components/menubar";
 import { meterMessages } from "./messages/components/meter";
+import { ratingMessages } from "./messages/components/rating";
 import { navbarMessages } from "./messages/components/navbar";
 import { numberFieldMessages } from "./messages/components/number-field";
 import { paginationMessages } from "./messages/components/pagination";
 import { placeholderMessages } from "./messages/components/placeholder";
 import { popoverMessages } from "./messages/components/popover";
-import { popupMessages } from "./messages/components/popup";
 import { primitivesMessages } from "./messages/components/primitives";
 import { processListMessages } from "./messages/components/process-list";
+import { timelineMessages } from "./messages/components/timeline";
 import { progressMessages } from "./messages/components/progress";
 import { radioGroupMessages } from "./messages/components/radio-group";
 import { segmentedMessages } from "./messages/components/segmented";
@@ -216,14 +217,15 @@ export const ui = {
     ...menuMessages.es,
     ...menubarMessages.es,
     ...meterMessages.es,
+    ...ratingMessages.es,
     ...navbarMessages.es,
     ...numberFieldMessages.es,
     ...paginationMessages.es,
     ...placeholderMessages.es,
     ...popoverMessages.es,
-    ...popupMessages.es,
     ...primitivesMessages.es,
     ...processListMessages.es,
+    ...timelineMessages.es,
     ...progressMessages.es,
     ...radioGroupMessages.es,
     ...segmentedMessages.es,
@@ -339,14 +341,15 @@ export const ui = {
     ...menuMessages.en,
     ...menubarMessages.en,
     ...meterMessages.en,
+    ...ratingMessages.en,
     ...navbarMessages.en,
     ...numberFieldMessages.en,
     ...paginationMessages.en,
     ...placeholderMessages.en,
     ...popoverMessages.en,
-    ...popupMessages.en,
     ...primitivesMessages.en,
     ...processListMessages.en,
+    ...timelineMessages.en,
     ...progressMessages.en,
     ...radioGroupMessages.en,
     ...segmentedMessages.en,

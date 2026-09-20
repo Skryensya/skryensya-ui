@@ -8,7 +8,7 @@ import { barTones, type BarTone } from "./progress.js";
  * The distinction from `Progress` is the whole reason this is a separate contract rather than an
  * option on that one: a progress bar reports how much of a KNOWN-LENGTH TASK has finished (uploads,
  * installs. Always starting at 0, sometimes indeterminate), a meter reports a MEASUREMENT that
- * already has a value right now (disk usage, battery level, a rating out of five) and is never
+ * already has a value right now (disk usage, battery level) and is never
  * indeterminate. WAI-ARIA gives them different roles (`meter` vs `progressbar`) for exactly this
  * reason, and conflating them under one component would make "0%" ambiguous between "just started"
  * and "measured as empty".
@@ -80,7 +80,7 @@ export const meterContract = {
 
   signatures: {
     Meter: {
-      intent: ["measurement-in-a-range", "disk-usage", "battery-level", "rating-out-of-a-scale"],
+      intent: ["measurement-in-a-range", "disk-usage", "battery-level"],
       host: { element: "div" },
       options: ["value", "min", "max", "valueText", "tone", "label"],
       requires: ["label"],

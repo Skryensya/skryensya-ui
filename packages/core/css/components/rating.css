@@ -1,0 +1,180 @@
+/*
+ * TIER 3, RATING
+ *
+ * ONE GLYPH, DRAWN TWO WAYS, and neither is an Icon. `rating.ts`'s own banner has the reasoning:
+ * the icon vocabulary names roles a set draws its own way, and "the unit of a scale" is not one of
+ * those. So the symbol is a mask behind `--sk-rating-symbol`, which means it looks identical
+ * whichever icon set the consumer installed, and swapping stars for hearts is one declaration:
+ *
+ *   .reviews { --sk-rating-symbol: url("data:image/svg+xml,...heart..."); }
+ *
+ * A MASK AND NOT A BACKGROUND IMAGE, for the same reason `input.css` masks the time picker's
+ * indicator: a mask paints through `background-color`, so the symbol recolors with a real token in
+ * both themes instead of baking one fill into the data URI.
+ *
+ * THE DISPLAY IS ONE ELEMENT, and that is what makes a fractional average exact. The strip repeats
+ * the mask `--sk-rating-max` times and paints underneath it with a hard colour stop at
+ * `--sk-rating-fill`, so 4.3 of 5 stops 86% across: four whole symbols and three tenths of the
+ * fifth, with nothing rounded and no element per symbol. The alternative, one box per symbol each
+ * clipped to its own percentage, needs the emitter to compute a value per step and gets the same
+ * picture for more markup.
+ *
+ * THE INPUT IS N ELEMENTS, because each one is a real radio a person can point at. There the fill
+ * is binary, so it needs no arithmetic at all: a step is "on" when it IS the checked one or when a
+ * checked one comes after it, which `:has(~ ...)` states directly. That is why no step carries a
+ * state attribute of its own; the machine sets `aria-checked` and the paint follows from it.
+ */
+@layer components {
+  .sk-rating {
+    /* Lucide's own `star` outline, filled: the kit's default face for a rating. Not read from
+     * `@skryensya/icons-lucide`, because a CSS `url()` cannot import a JS module. A consumer who
+     * changes icon set keeps this glyph, deliberately: it is a scale unit, not a role. */
+    --sk-rating-symbol: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M11.5 2.3a.6.6 0 0 1 1 0l2.6 5.3 5.8.8a.6.6 0 0 1 .3 1l-4.2 4.1 1 5.8a.6.6 0 0 1-.9.6L12 17.2l-5.2 2.7a.6.6 0 0 1-.9-.6l1-5.8-4.2-4.1a.6.6 0 0 1 .3-1l5.8-.8z'/%3E%3C/svg%3E");
+    --sk-rating-size: var(--size-icon-md);
+    --sk-rating-gap: var(--space-inline-xs);
+    --sk-rating-on-color: var(--color-text-warning);
+    --sk-rating-off-color: var(--color-border-default);
+    --sk-rating-max: 5;
+    --sk-rating-fill: 0%;
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-inline-xs);
+  }
+
+  .sk-rating[data-size="sm"] {
+    --sk-rating-size: var(--size-icon-sm);
+  }
+
+  .sk-rating[data-size="lg"] {
+    --sk-rating-size: var(--size-icon-lg);
+  }
+
+  /* The group. `display: contents` so the radiogroup adds no box of its own: the root is the flex
+   * container, and this element exists because the machine puts the role on it. */
+  .sk-rating__control {
+    display: contents;
+  }
+
+  /*
+   * THE DISPLAY STRIP. One tile is the symbol plus its trailing gap, so `repeat-x` produces evenly
+   * spaced symbols without a gap property; the strip is exactly `max` tiles wide, minus the last
+   * gap, which is what keeps the hard colour stop landing where the arithmetic says it should.
+   */
+  .sk-rating__symbols {
+    --sk-rating-tile: calc(var(--sk-rating-size) + var(--sk-rating-gap));
+
+    inline-size: calc(var(--sk-rating-max) * var(--sk-rating-tile) - var(--sk-rating-gap));
+    block-size: var(--sk-rating-size);
+    background: linear-gradient(
+      to right,
+      var(--sk-rating-on-color) 0 var(--sk-rating-fill),
+      var(--sk-rating-off-color) var(--sk-rating-fill) 100%
+    );
+    -webkit-mask-image: var(--sk-rating-symbol);
+    mask-image: var(--sk-rating-symbol);
+    -webkit-mask-size: var(--sk-rating-size) 100%;
+    mask-size: var(--sk-rating-size) 100%;
+    -webkit-mask-repeat: repeat-x;
+    mask-repeat: repeat-x;
+    /* The tile is wider than the glyph, so the repeat interval has to be the TILE. `space` would
+       distribute the remainder instead of honouring the gap the strip was sized for. */
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+
+  /* One symbol, for the input's steps. Same mask, no repeat. */
+  .sk-rating__symbol {
+    display: block;
+    inline-size: var(--sk-rating-size);
+    block-size: var(--sk-rating-size);
+    background: var(--sk-rating-off-color);
+    -webkit-mask-image: var(--sk-rating-symbol);
+    mask-image: var(--sk-rating-symbol);
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+  }
+
+  .sk-rating__item {
+    display: inline-flex;
+    /* The visible symbol is icon-sized; the TARGET is not. Same floor every other control in the
+     * kit keeps, and it matters more here than most: five of these sit side by side. */
+    min-inline-size: var(--sk-rating-size);
+    min-block-size: var(--sk-rating-size);
+    align-items: center;
+    justify-content: center;
+    margin-inline-end: var(--sk-rating-gap);
+    cursor: pointer;
+  }
+
+  .sk-rating__item:last-of-type {
+    margin-inline-end: 0;
+  }
+
+  /*
+   * ON is "I am the checked one, or a checked one comes after me". Written with `:has` rather than
+   * with a state attribute per step so that the machine has exactly one thing to set.
+   */
+  .sk-rating__item[aria-checked="true"] .sk-rating__symbol,
+  .sk-rating__item:has(~ .sk-rating__item[aria-checked="true"]) .sk-rating__symbol {
+    background: var(--sk-rating-on-color);
+  }
+
+  /*
+   * HOVER PREVIEWS THE WHOLE RUN, not the one symbol under the pointer: pointing at the fourth star
+   * means "four", so four light up. Same sibling logic, read from the hovered item backwards.
+   */
+  .sk-rating:not([data-readonly]):not([data-disabled]) .sk-rating__item:hover .sk-rating__symbol,
+  .sk-rating:not([data-readonly]):not([data-disabled]) .sk-rating__item:has(~ .sk-rating__item:hover) .sk-rating__symbol {
+    background: var(--sk-rating-on-color);
+  }
+
+  .sk-rating__item:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+    border-radius: var(--radius-control);
+  }
+
+  .sk-rating[data-readonly] .sk-rating__item,
+  .sk-rating[data-disabled] .sk-rating__item {
+    cursor: default;
+  }
+
+  .sk-rating[data-disabled] {
+    --sk-rating-on-color: var(--color-text-disabled);
+    --sk-rating-off-color: var(--color-border-subtle);
+  }
+
+  .sk-rating__value {
+    font-weight: var(--font-weight-label);
+    color: var(--color-text-primary);
+    /* The number sits beside a fixed-width strip; tabular digits keep 4,3 and 3,8 the same width. */
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sk-rating__count {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-body-sm);
+  }
+
+  /*
+   * A mask has no colour of its own, so a forced-colours mode paints nothing at all: the whole strip
+   * disappears rather than degrading. `forced-color-adjust: none` keeps the two system colours the
+   * rule below assigns, which is the one case where opting out is what preserves the information.
+   */
+  @media (forced-colors: active) {
+    .sk-rating__symbols,
+    .sk-rating__symbol {
+      forced-color-adjust: none;
+    }
+
+    .sk-rating {
+      --sk-rating-on-color: Highlight;
+      --sk-rating-off-color: GrayText;
+    }
+  }
+}

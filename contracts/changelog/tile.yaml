@@ -3,8 +3,24 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "86a1aa26197861c6"
+surface: "00533a54468128d6"
 entries:
+  - date: 2026-09-18
+    kind: feature
+    es:
+      title: El peso del título del tile se puede retunear
+      body: >-
+        <code>--sk-tile-title-weight</code> se publica junto a <code>--sk-font-heading-sm</code>, que ya
+        dejaba cambiar el tamaño. Quien encoge un tile a tamaño de fila (las opciones de
+        <code>Questionnaire</code>) recibía 14px en peso <code>heading</code> y una respuesta que
+        gritaba más fuerte que la pregunta. El valor por defecto no cambia.
+    en:
+      title: The tile title's weight can be retuned
+      body: >-
+        <code>--sk-tile-title-weight</code> is published beside <code>--sk-font-heading-sm</code>, which
+        already let the size move. A caller shrinking a tile to row size (<code>Questionnaire</code>'s
+        choices) got 14px at <code>heading</code> weight and an answer that shouted over the question
+        asking it. The default is unchanged.
   - date: 2026-09-17
     kind: bugfix
     es:

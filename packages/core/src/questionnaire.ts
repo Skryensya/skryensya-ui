@@ -25,12 +25,12 @@
  * means from plain data; the binding decides what the target element is.
  */
 
-import type { ComponentContract } from "./contract.js";
+import type { ComponentContract, OptionValue } from "./contract.js";
 
 /* ── definitions ──────────────────────────────────────────────────────────── */
 
 export type QuestionnaireShortcutMode = "none" | "letters" | "numbers";
-export type QuestionnaireProgressMode = "text" | "bar" | "steps";
+export type QuestionnaireProgressMode = "text" | "bar" | "steps" | "segments";
 export type QuestionnaireItemStatus = "unanswered" | "answered" | "skipped";
 
 export type QuestionnaireChoiceDefinition = {
@@ -62,6 +62,8 @@ export type QuestionnaireItemDefinition = {
   readonly choices?: readonly QuestionnaireChoiceDefinition[];
   /** Whether the question takes free text, alone or beside its choices. */
   readonly text?: boolean;
+  /** Whether the question answers through a control slotted by the author, which owns itself. */
+  readonly control?: boolean;
   readonly showWhen?: QuestionnaireShowWhen;
 };
 
@@ -102,6 +104,53 @@ export function questionnaireAnswerValues(answer: QuestionnaireAnswer): readonly
   return values;
 }
 
+/*
+ * THE VALUES OF A SLOTTED CONTROL, READ FROM ITS NATIVE FORM STATE.
+ *
+ * A `control` slot takes a control this questionnaire has never heard of, so there is no option to
+ * read and no event of its own to listen for. What there IS, in every one of them, is a native form
+ * control: measured across the kit, `Select` ends in a `<select>`, `FileUpload` and `NumberField` and
+ * `Combobox` and `DatePicker` each end in an `<input>`, and the selection family is native to begin
+ * with. That is the one interface all of them share, and it is the platform's, not an invention here.
+ *
+ * SO THE QUESTIONNAIRE OBSERVES RATHER THAN OWNS. For its own controls the state is authoritative and
+ * nothing is read back from the DOM, which is the claim the rest of this file exists to keep. A
+ * slotted control is not its own: it owns itself, reports through the `input` / `change` every form
+ * control fires, and what is read here is recorded INTO the state exactly like a tile's own event is.
+ * The direction is unchanged; only the shape of the report is native instead of a `sk:` CustomEvent.
+ *
+ * A file input answers with the names of its files. The files themselves travel with the form, which
+ * is where they were always going; what the questionnaire needs is whether the question is answered
+ * and something for `showWhen` to match on, and a name is both.
+ */
+export function questionnaireControlValues(root: ParentNode): string[] {
+  const values: string[] = [];
+  for (const el of Array.from(root.querySelectorAll<HTMLElement>("input, select, textarea"))) {
+    if ("disabled" in el && (el as HTMLInputElement).disabled) continue;
+    if (el instanceof HTMLSelectElement) {
+      for (const option of Array.from(el.selectedOptions)) if (option.value) values.push(option.value);
+      continue;
+    }
+    if (el instanceof HTMLTextAreaElement) {
+      const text = el.value.trim();
+      if (text) values.push(text);
+      continue;
+    }
+    if (!(el instanceof HTMLInputElement)) continue;
+    if (el.type === "radio" || el.type === "checkbox") {
+      if (el.checked && el.value) values.push(el.value);
+      continue;
+    }
+    if (el.type === "file") {
+      for (const file of Array.from(el.files ?? [])) values.push(file.name);
+      continue;
+    }
+    const text = el.value.trim();
+    if (text) values.push(text);
+  }
+  return values;
+}
+
 /** Whether `showWhen` is satisfied by the current answers (pure; no item lookup). */
 export function questionnaireShowWhenMatches(
   state: Pick<QuestionnaireState, "answers" | "skipped">,
@@ -138,6 +187,12 @@ export type QuestionnaireEvent =
   /** Replaces a single-choice question's selection outright (`null` clears it). */
   | { readonly type: "choose"; readonly name: string; readonly value: string | null }
   | { readonly type: "text"; readonly name: string; readonly text: string }
+  /*
+   * A slotted control reported its native form state. The values are whatever
+   * `questionnaireControlValues` read off it, so a multi-select or a multi-file input answers with
+   * several, and the question is answered when there is at least one.
+   */
+  | { readonly type: "control"; readonly name: string; readonly values: readonly string[] }
   | { readonly type: "next" }
   | { readonly type: "previous" }
   | { readonly type: "skip" }
@@ -278,6 +333,30 @@ export function questionnaireProgress(state: QuestionnaireState): QuestionnaireP
     return { name: item.name, status: step };
   });
   return { current, total, settled, steps };
+}
+
+/**
+ * The three nearby stages a compact questionnaire rail shows.
+ *
+ * The full position remains in the textual progress label; this window keeps a long path legible
+ * without shrinking every marker and label into an unreadable column. At an edge, the window uses
+ * the available steps; in the middle, it keeps the current step centred.
+ */
+export function questionnaireStepsWindow(state: QuestionnaireState, size = 3) {
+  const steps = questionnaireProgress(state).steps;
+  const visible = Math.max(1, Math.floor(size));
+  if (steps.length <= visible) {
+    return { steps: steps.map((step, index) => ({ ...step, index })), hasBefore: false, hasAfter: false };
+  }
+
+  const current = Math.max(steps.findIndex((step) => step.status === "current"), 0);
+  const start = Math.min(Math.max(current - Math.floor(visible / 2), 0), steps.length - visible);
+  const end = start + visible;
+  return {
+    steps: steps.slice(start, end).map((step, index) => ({ ...step, index: start + index })),
+    hasBefore: start > 0,
+    hasAfter: end < steps.length,
+  };
 }
 
 /**
@@ -648,6 +727,14 @@ export function transitionQuestionnaire(state: QuestionnaireState, event: Questi
       return afterAnswer(state, item.name, { choices: clearsChoice ? [] : current.choices, text: event.text });
     }
 
+    case "control": {
+      const item = findItem(state, event.name);
+      if (!item || item.disabled || !item.control) return unchanged(state);
+      /* The control owns itself, so its report REPLACES what was there rather than merging into it:
+         a file removed or a selection cleared has to be able to empty the answer. */
+      return afterAnswer(state, item.name, { choices: [...event.values], text: "" });
+    }
+
     case "previous": {
       const enabled = flowQuestionnaireItems(state);
       const index = enabled.findIndex((item) => item.name === state.active);
@@ -756,6 +843,7 @@ export const questionnaireParts = {
   answers: "sk-questionnaire__answers",
   choices: "sk-questionnaire__choices",
   text: "sk-questionnaire__text",
+  control: "sk-questionnaire__control",
   scale: "sk-questionnaire__scale",
   anchors: "sk-questionnaire__anchors",
   anchor: "sk-questionnaire__anchor",
@@ -831,9 +919,13 @@ export const questionnaireContract = {
   hooks: [
     /* Own sheet. */
     "--sk-questionnaire-gap",
+    "--sk-questionnaire-head-gap",
     "--sk-questionnaire-item-gap",
     "--sk-questionnaire-measure",
+    "--sk-questionnaire-rail",
     "--sk-questionnaire-shortcut-fg",
+    "--sk-questionnaire-shortcut-gap",
+    "--sk-questionnaire-shortcut-gutter",
     /*
      * From hookSheets below. Multiple-choice tiles reuse checkbox controls (`also`); progress bar
      * and Steps are binding-filled (not in the emitted tree), so sheetsForTree cannot discover them
@@ -846,6 +938,7 @@ export const questionnaireContract = {
     "--sk-steps-connector-size",
     "--sk-steps-item-padding",
     "--sk-steps-marker-size",
+    "--sk-steps-segment-size",
   ],
   /*
    * Checkbox classes are multi-owned (selection + tile), so `also` alone leaves them unplaced.
@@ -856,6 +949,55 @@ export const questionnaireContract = {
     "@skryensya/core/components/progress.css",
     "@skryensya/core/components/steps.css",
   ],
+  /*
+   * `position` is drawn by the binding, not by the template. The progress band is emitted as an
+   * empty host and the enhancer fills it (`document.createElement("p")` + `questionnaireParts
+   * .position`), because what goes in it is the reader's place in a run the machine owns, which
+   * nothing authored can know. The contract still owns the class name and its CSS, so it says so
+   * here rather than leaving "the binding fills the body" to be discovered by diffing an emit
+   * against this file. Same shape as Calendar's grid cells and Carousel's controls.
+   */
+  systemOwned: ["position"],
+
+  /*
+   * ── THE A11Y THIS SIGNATURE OWES AT RUNTIME, AND WHY IT IS NOT IN `wiring` ────────────────
+   *
+   * Both bindings do all of this, identically, and it is deliberately NOT declared below:
+   *
+   *   fieldset  aria-invalid="true"           while the question is invalid
+   *   fieldset  aria-describedby              description + position + error, the last only while invalid
+   *   error     role="alert"                  while invalid, so the message is announced when it lands
+   *
+   * `wiring` is resolved at EMIT time: `present()` reads the authored tree, so a rule can only ask
+   * "did the author supply this slot or option". FormField declares exactly these two attributes
+   * (`aria-describedby` referencing `error`, `aria-invalid` with `whenGiven: "error"`) and is right
+   * to, because there `error` IS an authored slot, filled by whoever composed the field.
+   *
+   * Here it is not. There is no error slot and there never should be: the message is the machine's,
+   * written from `errorLabel` / `skippableErrorLabel` the moment a question is left unanswered, and
+   * "is this question invalid" is state no tree can carry. A `whenGiven: "error"` would resolve
+   * false at emit and describe nothing, and an unconditional reference would point every question at
+   * a blank line it is not describing.
+   *
+   * SO IT IS GATED INSTEAD OF DECLARED, which is the stronger of the two anyway: a declaration says
+   * what is owed, a gate fails when it is not paid. `ai-gates/src/questionnaire-invalid.spec.ts`
+   * drives both bindings into the failing question and asserts all three, and compares the two
+   * sides against each other. G2 would have caught a divergence for free, except it compares the
+   * stage as mounted and nothing on it ever drives a questionnaire into failing, which is how three
+   * relationships both bindings implement went unlooked-at.
+   */
+  a11y: [
+    {
+      when: { likert: true },
+      requiresOneOf: ["likertMinLabel", "likertMaxLabel"],
+      because:
+        "A scale renders its points as bare numbers, so nothing on the page or in the accessibility " +
+        "tree says what 1 and 5 mean. Naming the ends is what turns a row of radios into a question " +
+        "with a direction; the anchors are read as part of the group, not as decoration.",
+      signatures: ["QuestionnaireItem"],
+    },
+  ],
+
   events: questionnaireEvents,
   eventDetails: {
     itemChange: { detail: { item: "string" } },
@@ -865,9 +1007,28 @@ export const questionnaireContract = {
   options: {
     progress: {
       type: "enum",
-      values: ["text", "bar", "steps"],
+      /*
+       * `segments` is the steps rail drawn as one bar per question instead of a numbered disc: the
+       * same sequence and the same statuses, read at a glance rather than studied. It is Steps own
+       * `appearance`, not a fourth thing this component draws.
+       */
+      values: ["text", "bar", "steps", "segments"],
       default: "text",
       attr: "data-progress",
+      machineInput: true,
+    },
+    /*
+     * WHERE THE RAIL GOES. Horizontal sits above the question and is the default; vertical puts it
+     * beside, which is what a long journey needs: eight stages across a reading measure give each
+     * one nothing, and the same eight down a column give each one a line.
+     *
+     * Only `steps` and `segments` have a rail to orient; the other two ignore it.
+     */
+    progressOrientation: {
+      type: "enum",
+      values: ["horizontal", "vertical"],
+      default: "horizontal",
+      attr: "data-progress-orientation",
       machineInput: true,
     },
     shortcuts: {
@@ -920,6 +1081,37 @@ export const questionnaireContract = {
     text: { type: "boolean", default: false, attr: "data-text", trueValue: "", machineInput: true },
     textLabel: { type: "string" },
     textPlaceholder: { type: "string", attr: "placeholder" },
+    /*
+     * THE KIND OF TYPED ANSWER, written straight onto the control as its `type`. Every value here is
+     * the same element with a different keyboard, a different on-screen control and the browser's own
+     * validation: `email` and `url` are checked before submit, `tel` brings the phone keypad, `number`
+     * brings steppers and a numeric pad, `date` brings the platform's date picker, including on the
+     * phone where that is a native wheel and not a popover this form would have to own.
+     *
+     * NOT a swap to NumberField or DatePicker, which the kit also has. Those exist for a form that
+     * wants the styled, machine-driven version of the control; a questionnaire asks one short
+     * question at a time and the native one is smaller, faster and already accessible. Reach for
+     * those by composing them yourself when the question needs what they add.
+     */
+    textType: {
+      type: "enum",
+      values: ["text", "email", "tel", "url", "number", "date"],
+      default: "text",
+      attr: "type",
+    },
+    /*
+     * ROWS, AND THE REASON THE ANSWER IS A TEXTAREA AT ALL. `whenGiven` tests whether an option was
+     * supplied, never what it equals, so "is this multiline" cannot be a value of `textType`: it is
+     * this option's presence. That turns out to be the better shape anyway, because a long answer
+     * needs a HEIGHT and the author is the only one who knows how long an answer they are inviting.
+     * Two lines asks for a sentence, eight asks for a story.
+     */
+    textLines: { type: "number", min: 2, max: 20, integer: true, attr: "rows" },
+    /* The numeric bounds, straight through to the control. Meaningless on any other `textType`, and
+     * the browser ignores them there. */
+    textMin: { type: "number", attr: "min" },
+    textMax: { type: "number", attr: "max" },
+    textStep: { type: "number", attr: "step" },
     /** Short name for the question in Steps progress. Falls back to the title. */
     stepLabel: { type: "string", attr: "data-step-label", machineInput: true },
     /** Render choices as a Likert scale instead of tiles. */
@@ -939,6 +1131,7 @@ export const questionnaireContract = {
       host: { element: "form" },
       options: [
         "progress",
+        "progressOrientation",
         "shortcuts",
         "defaultItem",
         "previousLabel",
@@ -1037,6 +1230,11 @@ export const questionnaireContract = {
         "text",
         "textLabel",
         "textPlaceholder",
+        "textType",
+        "textLines",
+        "textMin",
+        "textMax",
+        "textStep",
         "stepLabel",
         "likert",
         "likertMinLabel",
@@ -1047,13 +1245,20 @@ export const questionnaireContract = {
         "showWhenNone",
       ],
       requires: ["name"],
-      atLeastOneOf: [["choices", "text"]],
+      /* A question has to ASK something: tiles, a typed field, or a control the author slotted. */
+      atLeastOneOf: [["choices", "text", "control"]],
       /*
        * Free text without a label is an unnamed input; multiple without choices is an empty
        * checkbox list. Choices alone (single) or text alone remain valid; both may coexist.
        */
       implies: {
         text: ["textLabel"],
+        /* Every one of these shapes the typed answer, and there is no typed answer without `text`. */
+        textType: ["text"],
+        textLines: ["text"],
+        textMin: ["text"],
+        textMax: ["text"],
+        textStep: ["text"],
         multiple: ["choices"],
         likert: ["choices"],
         showWhenAny: ["showWhenItem"],
@@ -1074,6 +1279,24 @@ export const questionnaireContract = {
         /** The question. Rendered as the fieldset's `<legend>`, so it names every answer inside. */
         title: { accepts: "text", required: true },
         description: { accepts: "text" },
+        /*
+         * A CONTROL THIS CONTRACT DOES NOT KNOW. Every other answer shape here is one the
+         * questionnaire owns outright: it writes the tiles, it writes the input, it decides what they
+         * hold. This slot is the opposite, and it exists because the alternative was an option per
+         * control - one for a file upload, one for a long list, one for a date with a calendar - each
+         * one mirroring another component's anatomy into this file and drifting the day that
+         * component moved.
+         *
+         * Slot a `FileUpload`, a `Select` for a list too long to be tiles, a `NumberField`, whatever
+         * the question needs. The control owns its own state, its own keyboard and its own
+         * accessibility; the questionnaire keeps what it is actually for - one question at a time,
+         * progress, required, branching - and learns the answer from the control's native form state
+         * (`questionnaireControlValues`), which is the one interface all of them share.
+         *
+         * The author owes it a name: `showWhen` matches on values, and a control with nothing to
+         * report answers nothing.
+         */
+        control: { accepts: "node" },
         choices: {
           accepts: "items",
           item: {
@@ -1134,10 +1357,13 @@ export const questionnaireContract = {
                     also: ["sk-radio-group"],
                     attrs: {
                       role: "radiogroup",
-                      "data-orientation": "horizontal",
-                      "aria-orientation": "horizontal",
-                      /* `radio-group`'s own option: equal steps across the box. */
-                      "data-spread": "",
+                      /*
+                       * VERTICAL, and no `data-spread`. The scale used to be a row of equal columns
+                       * with the ends named underneath; it is a list now, one point per line, read
+                       * top to bottom. `spread` only means something across a row, so it goes with it.
+                       */
+                      "data-orientation": "vertical",
+                      "aria-orientation": "vertical",
                     },
                     children: [
                       {
@@ -1200,7 +1426,15 @@ export const questionnaireContract = {
                   {
                     element: "label",
                     also: ["sk-tile", "sk-tile--interactive", "sk-interactive"],
-                    attrs: { "data-scope": "tile", "data-part": "item", "data-padding": "sm" },
+                    /*
+                     * `md`, NOT `sm`. A choice is a row, but Tile also floors every interactive
+                     * surface at `--size-control-lg` (48px) and pins its content to the top: at `sm`
+                     * a one-line option did not fill that floor, so its label sat high in a box with
+                     * 23px of dead space under it while a two-line option filled the same box. `md`
+                     * is the inset that makes a single line fill its own minimum, and the column of
+                     * options reads level whatever each label is worth.
+                     */
+                    attrs: { "data-scope": "tile", "data-part": "item", "data-padding": "md" },
                     repeat: "choices",
                     children: [
                       {
@@ -1216,10 +1450,10 @@ export const questionnaireContract = {
                         children: [
                           { element: "span", also: ["sk-tile__title"], itemSlot: "label" },
                           { element: "span", also: ["sk-tile__description"], whenItemSlotGiven: "description", itemSlot: "description" },
-                          /* Kbd, whose key the stylesheet counts: shown only when the questionnaire has shortcuts on. */
-                          { element: "kbd", part: "shortcut", also: ["sk-kbd"], attrs: { "aria-hidden": "true", "data-tone": "neutral" } },
                         ],
                       },
+                      /* The shortcut is a tile sibling: it is positioned in the left gutter, never read as answer content. */
+                      { element: "kbd", part: "shortcut", also: ["sk-kbd"], attrs: { "aria-hidden": "true", "data-tone": "neutral" } },
                       {
                         element: "span",
                         also: ["sk-tile__selection-indicator"],
@@ -1240,7 +1474,8 @@ export const questionnaireContract = {
                     also: ["sk-tile", "sk-tile--interactive", "sk-interactive"],
                     mount: "data-sk-tile-checkbox",
                     options: ["name"],
-                    attrs: { "data-scope": "tile", "data-padding": "sm" },
+                    /* Same inset as the single-answer tile above, and for the same reason. */
+                    attrs: { "data-scope": "tile", "data-padding": "md" },
                     repeat: "choices",
                     itemOptions: ["value", "disabled"],
                     itemOptionAttrs: { disabled: "data-disabled" },
@@ -1253,10 +1488,10 @@ export const questionnaireContract = {
                         children: [
                           { element: "span", also: ["sk-tile__title"], itemSlot: "label" },
                           { element: "span", also: ["sk-tile__description"], whenItemSlotGiven: "description", itemSlot: "description" },
-                          /* Kbd, whose key the stylesheet counts: shown only when the questionnaire has shortcuts on. */
-                          { element: "kbd", part: "shortcut", also: ["sk-kbd"], attrs: { "aria-hidden": "true", "data-tone": "neutral" } },
                         ],
                       },
+                      /* The shortcut is a tile sibling: it is positioned in the left gutter, never read as answer content. */
+                      { element: "kbd", part: "shortcut", also: ["sk-kbd"], attrs: { "aria-hidden": "true", "data-tone": "neutral" } },
                       /* Both states, exactly as `TileCheckbox`'s own template writes them: React renders
                          the real component, so a single-state indicator here would be a divergence
                          between the two bindings rather than a smaller checkbox. */
@@ -1283,7 +1518,26 @@ export const questionnaireContract = {
                   },
                 ],
               },
-              /* FREE TEXT: FormField + Input. */
+              /*
+               * THE SLOTTED CONTROL, wrapped in a part of our own and nothing else. No `also`, no
+               * mount attribute, no attributes forwarded onto whatever the author put here: this box
+               * exists to be findable and to be listened on, and everything below it belongs to the
+               * control. The enhancer reads its native form state through the bubbling `input` /
+               * `change` every form control fires.
+               */
+              {
+                element: "div",
+                part: "control",
+                whenGiven: "control",
+                slot: "control",
+              },
+              /*
+               * A TYPED ANSWER: FormField + one control. Which control is decided by presence, not by
+               * a value, because that is the only question `whenGiven` can answer: `textLines` given
+               * means a `<textarea>` that tall, absent means an `<input>` of whatever `textType` says.
+               * The two are mutually exclusive by construction (each carries the other's condition
+               * inverted), so exactly one is ever emitted and both write the same `answer.text`.
+               */
               {
                 element: "div",
                 part: "text",
@@ -1295,9 +1549,19 @@ export const questionnaireContract = {
                     element: "input",
                     also: ["sk-input"],
                     name: "text",
-                    options: ["name", "textPlaceholder"],
+                    whenMissing: "textLines",
+                    options: ["name", "textPlaceholder", "textType", "textMin", "textMax", "textStep"],
                     optionAttrs: { name: "name" },
-                    attrs: { type: "text", "data-size": "sm" },
+                    attrs: { "data-size": "sm" },
+                  },
+                  {
+                    element: "textarea",
+                    also: ["sk-input", "sk-input--textarea"],
+                    name: "text",
+                    whenGiven: "textLines",
+                    options: ["name", "textPlaceholder", "textLines"],
+                    optionAttrs: { name: "name" },
+                    attrs: { "data-size": "sm" },
                   },
                 ],
               },
@@ -1310,3 +1574,14 @@ export const questionnaireContract = {
     },
   },
 } as const satisfies ComponentContract;
+
+/*
+ * The typed answer's kind, DERIVED from the option rather than written out beside it: the contract
+ * is the only place those values exist, and G1 fails a second copy of them anywhere else.
+ */
+export type QuestionnaireTextType = OptionValue<typeof questionnaireContract.options.textType>;
+
+/** Where the progress rail sits, derived from the option for the same reason as above. */
+export type QuestionnaireProgressOrientation = OptionValue<
+  typeof questionnaireContract.options.progressOrientation
+>;

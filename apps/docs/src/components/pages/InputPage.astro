@@ -5,11 +5,17 @@ import { annotationDemoCss } from "../../demos/annotation";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { inputAnatomyTree, inputTree, textareaTree } from "../../demos/input";
+import { inputAnatomyTree, inputFormatTree, inputTree, textareaTree } from "../../demos/input";
 import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
+
+const phoneSetup = `pnpm add @skryensya/phone
+
+// once, at application startup
+import { registerPhoneFormat } from "@skryensya/phone";
+registerPhoneFormat();`;
 
 const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/components/input.css";
@@ -20,7 +26,14 @@ const css = `@import "@skryensya/core/tokens.scss";
   title={t("inputPage.title")}
   description={t("inputPage.description")}
   contractId="input"
-  testFiles={["packages/react/src/components/input.test.tsx"]}}
+  testFiles={[
+    /* The arithmetic first: the page claims these formats are checked for real, and this is the
+       suite that proves it. The two bindings below prove they both ask it the same question. */
+    "packages/core/src/input-format.test.ts",
+    "packages/phone/src/index.test.ts",
+    "packages/react/src/components/input.test.tsx",
+    "packages/vanilla/src/components/input.test.ts",
+  ]}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("inputPage.lede")} />
@@ -43,6 +56,19 @@ const css = `@import "@skryensya/core/tokens.scss";
 
     <h3>{t("inputPage.formFieldTitle")}</h3>
     <p set:html={t("inputPage.formFieldBody")} />
+
+    <h3>{t("inputPage.formatTitle")}</h3>
+    <p set:html={t("inputPage.formatBody")} />
+    <ComponentPreview tree={inputFormatTree(t)} label={t("inputPage.formatPreviewLabel")} />
+    <p set:html={t("inputPage.formatCheckBody")} />
+    <p set:html={t("inputPage.formatMessageBody")} />
+
+    <h4>{t("inputPage.formatPhoneTitle")}</h4>
+    <p set:html={t("inputPage.formatPhoneBody")} />
+    <p set:html={t("inputPage.formatPhoneUsage")} />
+    <CodeBlock code={phoneSetup} label="TypeScript" />
+    <p set:html={t("inputPage.formatPhoneMissing")} />
+    <p set:html={t("inputPage.formatPhoneEvidence")} />
 
     <h3>{t("inputPage.nativeTitle")}</h3>
     <p set:html={t("inputPage.nativeBody")} />

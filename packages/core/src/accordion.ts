@@ -101,6 +101,7 @@ export const accordionContract = {
     "--sk-tile-padding",
     "--sk-tile-radius",
     "--sk-tile-shadow",
+    "--sk-tile-title-weight",
   ],
   /* This component's styling does not fit in one stylesheet; see `hookSheets` on the contract. */
   hookSheets: ["@skryensya/core/components/tile.css"],

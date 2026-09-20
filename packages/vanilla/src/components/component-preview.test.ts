@@ -528,47 +528,64 @@ describe("ComponentPreview opt-in enhancer", () => {
       expect(mountComponentPreview(document)).toBe(1);
     });
 
-    it("shares one preset across every preview on the page", () => {
+    /* Shift is read off the interaction that produces the value change, not off the CustomEvent
+       Segmented dispatches, so a shift-click has to be spelled out: the modifier rides on the
+       pointerdown the enhancer captures, and the click is what Segmented turns into a value. */
+    function shiftClick(option: HTMLElement): void {
+      option.dispatchEvent(new MouseEvent("pointerdown", { bubbles: true, shiftKey: true }));
+      option.dispatchEvent(new MouseEvent("click", { bubbles: true, shiftKey: true }));
+    }
+
+    it("keeps a plain click to its own preview, and lets shift move the whole page", () => {
       resetBindingState();
       document.body.innerHTML = `${screenMarkupFor("a")}${screenMarkupFor("b")}`;
       const roots = [...document.querySelectorAll<HTMLElement>("[data-sk-component-preview]")];
       const stages = roots.map((r) => r.querySelector<HTMLElement>(".sk-component-preview__stage")!);
-      const mobileOptionB = roots[1].querySelector<HTMLElement>(
-        '[data-sk-component-preview-screen-option][data-value="mobile"]',
-      )!;
+      const screens = () => stages.map((s) => s.getAttribute("data-sk-component-preview-screen"));
+      const optionIn = (index: number, value: string) =>
+        roots[index].querySelector<HTMLElement>(
+          `[data-sk-component-preview-screen-option][data-value="${value}"]`,
+        )!;
 
       expect(mountAll()).toBe(2);
 
-      // clicking the SECOND preview's button moves the first one too
-      mobileOptionB.click();
-      expect(stages.map((s) => s.getAttribute("data-sk-component-preview-screen"))).toEqual([
-        "mobile",
-        "mobile",
-      ]);
-      // and the other preview's own Segmented follows, so the two controls never disagree
-      const tabsA = roots[0].querySelector<HTMLElement>("[data-sk-component-preview-screen-tabs]")!;
-      expect(tabsA.getAttribute("data-value")).toBe("mobile");
+      // A plain click is that preview's own business: the second moves, the first does not.
+      optionIn(1, "mobile").click();
+      expect(screens()).toEqual([null, "mobile"]);
 
-      const freeOptionB = roots[1].querySelector<HTMLElement>(
-        '[data-sk-component-preview-screen-option][data-value="free"]',
-      )!;
-      freeOptionB.click();
-      expect(stages.every((s) => !s.hasAttribute("data-sk-component-preview-screen"))).toBe(true);
+      // Shift broadcasts, and it reaches the preview that was already moved by hand: that is what
+      // makes it the gesture for putting the page back in step.
+      shiftClick(optionIn(0, "tablet"));
+      expect(screens()).toEqual(["tablet", "tablet"]);
+
+      // The other preview's own Segmented follows the broadcast, so the two controls never disagree.
+      const tabsB = roots[1].querySelector<HTMLElement>("[data-sk-component-preview-screen-tabs]")!;
+      expect(tabsB.getAttribute("data-value")).toBe("tablet");
+
+      // `free` broadcasts as the absence of the attribute, exactly like any other value.
+      shiftClick(optionIn(0, "free"));
+      expect(screens()).toEqual([null, null]);
     });
 
-    it("records the shared preset on the document element, free as an absence", () => {
+    it("records the shared preset on the document element only when shift asks, free as an absence", () => {
       resetBindingState();
       screenMarkup();
-      const { tabletOption, freeOption } = parts();
+      const { tabletOption, freeOption, mobileOption, stage } = parts();
       mountAll();
       const pref = () => document.documentElement.getAttribute("data-sk-component-preview-screen-pref");
 
       expect(pref()).toBeNull();
 
-      tabletOption.click();
+      // A plain click moves this stage and leaves the persisted preference alone: nothing about one
+      // preview's width should follow the reader onto the next page.
+      mobileOption.click();
+      expect(stage.getAttribute("data-sk-component-preview-screen")).toBe("mobile");
+      expect(pref()).toBeNull();
+
+      shiftClick(tabletOption);
       expect(pref()).toBe("tablet");
 
-      freeOption.click();
+      shiftClick(freeOption);
       expect(pref()).toBeNull();
     });
 

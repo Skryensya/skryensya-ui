@@ -37,6 +37,10 @@
       "types": "./src/components/progress.tsx",
       "default": "./src/components/progress.tsx"
     },
+    "./rating": {
+      "types": "./src/components/rating.tsx",
+      "default": "./src/components/rating.tsx"
+    },
     "./loader": {
       "types": "./src/components/loader.tsx",
       "default": "./src/components/loader.tsx"
@@ -368,6 +372,10 @@
     "./split-button": {
       "types": "./src/components/split-button.tsx",
       "default": "./src/components/split-button.tsx"
+    },
+    "./timeline": {
+      "types": "./src/components/timeline.tsx",
+      "default": "./src/components/timeline.tsx"
     },
     "./time-field": {
       "types": "./src/components/time-field.tsx",

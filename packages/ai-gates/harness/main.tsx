@@ -130,8 +130,24 @@ async function stage(): Promise<void> {
    * finishes its DOM commit after `initComponents()`'s own await resolves used to be a race the docs
    * frame defended against and this gate could not see at all; sharing the sequence is what makes a
    * regression in that race show up here too.
+   *
+   * SCOPED TO THE VANILLA HALVES, for the same reason the Editor mount below is, and it is not a
+   * refinement: a document-wide pass took the whole stage down. Both halves carry the SAME mount
+   * attributes by construction  -  that is what makes them comparable  -  so `initComponents` finds
+   * React's roots too and enhances markup it does not own. Select is where it showed: Zag renders
+   * the listbox only once it opens, so React's `[data-sk-select]` has a trigger and no
+   * `[data-sk-select-content]`, and the Svelte enhancer threw on markup that was never authored for
+   * it. One thrown error in global setup is every gate in this package, not one.
+   *
+   * The SEQUENCE is still `mountComponentsWithIcons`'s, not a second copy of it (icons, mount, wait
+   * a frame, icons again): what changed is the root it runs against, once per vanilla half instead
+   * of once over the document. The race it defends against is per-root anyway, so scoping keeps it.
    */
-  await mountComponentsWithIcons(document, lucideIcons);
+  await Promise.all(
+    [...document.querySelectorAll<HTMLElement>('[data-binding="vanilla"]')].map((host) =>
+      mountComponentsWithIcons(host, lucideIcons),
+    ),
+  );
 
   // Another opt-in mount `initComponents` deliberately excludes (`code-preview.ts`'s own doc):
   // without this, the vanilla side of every code-preview canonical tree never enhances at all, so

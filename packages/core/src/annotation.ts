@@ -80,6 +80,24 @@ export const annotationParts = {
   ring: "sk-annotated__ring",
   /** One label. */
   label: "sk-annotation",
+  /**
+   * THE KEY: one line in the bottom-left corner saying something about the drawing as a whole.
+   *
+   * It exists for the shorthand a long diagram cannot avoid. A part name is a block name plus an
+   * element name, and a diagram of ten parts repeats that block name ten times in its margins,
+   * where each repetition is charged to the subject's own width: measured on FileUpload, the
+   * repeated prefix alone was reserving enough margin to squeeze the specimen from 480px to 292px.
+   * Labels that elide it (`*__item-preview`) buy that width back, and this is where the elision is
+   * explained, once, instead of in prose somewhere below the figure.
+   *
+   * A CORNER THE DIAGRAM DOES NOT USE. The four labelled cells are the edge midpoints (`2/1`, `2/3`,
+   * `1/2`, `3/2`); the corners are empty by construction, so a key placed in one cannot collide
+   * with a label however many the diagram has.
+   *
+   * NOT A LABEL: it names nothing and no leader points at it, which is why it is its own part
+   * rather than an `.sk-annotation` in a corner.
+   */
+  key: "sk-annotated__key",
 } as const;
 
 export type AnnotationPart = keyof typeof annotationParts;
@@ -1022,6 +1040,7 @@ export const annotationContract = {
   systemOwned: ["mark", "leader", "ring"],
   hooks: [
     "--sk-annotated-gap",
+    "--sk-annotated-key-color",
     "--sk-annotated-subject-filter",
   ],
 
@@ -1100,6 +1119,13 @@ export const annotationContract = {
       slots: {
         /** What is being diagrammed. Any composition at all; the frame never looks inside it. */
         subject: { accepts: "node", required: true },
+        /**
+         * One line in the bottom-left corner about the drawing as a whole, usually what a shorthand
+         * in the labels stands for ("* = sk-file-upload"). OPT-IN, and worth reaching for as soon as
+         * a diagram has enough labels that repeating a block name in every margin starts costing the
+         * subject its width. See `annotationParts.key`.
+         */
+        key: { accepts: "text" },
         /**
          * The labels, as DATA rather than as children, for the reason every collection is data here:
          * one entry becomes two things in two different places (a label in a gutter and a path in
@@ -1196,6 +1222,8 @@ export const annotationContract = {
                an inert frame would take them out of the accessibility tree along with it. */
             options: ["inert"],
           },
+          /* A corner the labels never reach, so it needs no placement of its own beyond its part. */
+          { element: "p", part: "key", whenGiven: "key", slot: "key" },
           /*
            * FOCUSABLE, and this is the price of showing one mark at a time rather than all of them.
            *

@@ -9,6 +9,7 @@ import {
   questionnaireItemStatus,
   questionnaireNavigation,
   questionnaireProgress,
+  questionnaireStepsWindow,
   questionnaireShortcuts,
   questionnaireValues,
   resolveQuestionnaireKey,
@@ -339,6 +340,24 @@ describe("progress", () => {
         { name: "direction", status: "complete" },
         { name: "channels", status: "complete" },
         { name: "notes", status: "current" },
+      ],
+    });
+  });
+
+  it("keeps three nearby stages and reports omitted stages at both edges", () => {
+    const items = Array.from({ length: 5 }, (_, index) => ({
+      name: `step-${index + 1}`,
+      choices: [{ value: "continue" }],
+    }));
+    const { state } = run(createQuestionnaireState({ items }), [{ type: "next" }, { type: "next" }]);
+
+    expect(questionnaireStepsWindow(state)).toEqual({
+      hasBefore: true,
+      hasAfter: true,
+      steps: [
+        { name: "step-2", status: "upcoming", index: 1 },
+        { name: "step-3", status: "current", index: 2 },
+        { name: "step-4", status: "upcoming", index: 3 },
       ],
     });
   });

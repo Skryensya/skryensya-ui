@@ -894,4 +894,24 @@ Sin patrón WAI dedicado, pero `<nav aria-label>` con `aria-current="page"` en e
 
 No es un contrato propio. La página compone primitivos ya auditados (`Box`, `Stack`, `Inline`, `Grid` de layout; `TileLink`/`TileButton`/`TileCheckbox` de la familia Tile, que se revisa aparte más abajo). Releídos los 12 demos de `apps/docs/src/components/react-demos/card.tsx` con ojo de auditoría: cada rung interactivo usa el elemento de plataforma correcto (`TileLink` para navegación, `TileButton` para acción, `TileCheckbox` para preferencia. Comentario propio: "this one DOES something, so it is a button"), nunca un `onClick` sobre un `<div>`; el rung 12 evita deliberadamente envolver dos controles independientes (link + botón) en un solo elemento interactivo porque sería HTML inválido. Sin gaps. El ejemplo ya modela las decisiones correctas en vez de solo evitarlas por accidente.
 
+### Questionnaire. Revisado ⚠️ (2026-09-19)
+
+No es un patrón de la APG: es una composición de tres que sí lo son (Radio Group para elección única y para la escala, Checkbox para la múltiple, y el `<fieldset>`/`<legend>` nativo como agrupación), más un recorrido de una pregunta a la vez que la APG no cubre. Revisado leyendo `packages/vanilla/src/components/questionnaire.ts` y `packages/react/src/components/questionnaire.tsx` en paralelo, y verificando los atributos emitidos contra el DOM real de `/components/questionnaire`.
+
+**Sin gaps encontrados.** Lo que hay, y que los dos bindings hacen idéntico:
+
+- La pregunta es un `<fieldset>` con `<legend>`: la agrupación y su nombre son de plataforma, no `role="group"` + `aria-label`.
+- La pregunta inactiva sale de la vista con `visibility: hidden` **y** `inert`. Cinturón y tirantes a propósito: `visibility` ya la saca del orden de tabulación y del árbol de accesibilidad, `inert` lo dice otra vez. Nunca `display: none`, porque la fila de la grilla existe justamente para que el alto no cambie entre preguntas.
+- Al activarse una pregunta, el foco va a su `<fieldset>` (`tabIndex = -1` + `.focus()`), así que el lector de pantalla anuncia la legend. Cuando el efecto pide enfocar la respuesta, va al primer control, no al grupo.
+- `aria-describedby` en el fieldset compone tres ids: descripción, posición en el recorrido, y el error mientras la pregunta esté inválida.
+- `aria-invalid="true"` en el fieldset y `role="alert"` en el mensaje, ambos sólo mientras está inválida, así que el mensaje se anuncia cuando aparece y no antes.
+- La línea del error está reservada en CSS (`min-block-size: 1lh`), así que aparecer no empuja nada.
+- Los atajos usan `aria-keyshortcuts` en el input de cada opción, con la misma tecla que resuelve el teclado (un solo mapa en `core/questionnaire.ts`), no un texto decorativo al lado.
+- El progreso en barra lleva `aria-valuemin` / `aria-valuemax` / `aria-valuenow` y nombre propio; en pasos, el actual lleva `aria-current="step"`.
+- La posición (`Question 3 of 7`) es `font-variant-numeric: tabular-nums` y está en el `aria-describedby`, así que el lugar en el recorrido se anuncia con la pregunta en vez de quedar como texto suelto arriba.
+
+**Corregido en esta pasada:** `likert` no exigía sus anclas. Una escala dibuja sus puntos como números pelados, así que sin `likertMinLabel` / `likertMaxLabel` ni la página ni el árbol de accesibilidad decían qué significan 1 y 5. Ahora es una regla `a11y` del contrato (`requiresOneOf`), o sea que componer una escala sin nombrar sus extremos falla la validación en vez de pasar y quedar ambigua.
+
+**Queda pendiente**, y por eso ⚠️ y no ✅: falta la pasada manual con lector de pantalla. Todo lo de arriba es verificación de atributos y de código, que alcanza para afirmar que las relaciones existen y que los dos bindings las escriben igual, pero no para afirmar cómo se **anuncian** en secuencia. En particular hay dos cosas que sólo un lector de pantalla real resuelve: si mover el foco al `<fieldset>` en cada cambio de pregunta produce una lectura completa o una interrupción, y si el `role="alert"` del error compite con esa misma lectura cuando ambos ocurren en el mismo gesto (intentar avanzar sin responder).
+
 Progreso registrado por componente abajo a medida que se completa cada uno.

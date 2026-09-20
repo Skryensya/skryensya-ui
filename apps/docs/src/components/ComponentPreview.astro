@@ -139,7 +139,14 @@ interface Props {
    * reads or writes the persisted/shared preference to do it.
    */
   screenScope?: "local";
-  /** This preview's own starting preset when `screenScope="local"`. Ignored otherwise. */
+  /**
+   * This preview's starting preset, before the reader has chosen one.
+   *
+   * With `screenScope="local"` it is this preview's preset for good. Without it, it only SEEDS: a
+   * stored or already-shared preference wins, and from then on the reader owns it (a plain click
+   * moves this preview alone, Shift + click moves the page). Seeding does not publish, so landing
+   * here cannot write this page's opinion into another one's.
+   */
   defaultScreen?: "free" | "tablet" | "mobile";
   /**
    * Skip the source panels under the stage. Marketing surfaces (the landing page) want the live
@@ -540,7 +547,7 @@ const stageStyle =
             class="sk-segmented"
             data-sk-segmented
             data-sk-component-preview-screen-tabs
-            data-value={screenScope === "local" ? defaultScreen : "free"}
+            data-value={defaultScreen ?? "free"}
             role="radiogroup"
             aria-label={t("preview.screenGroup", { name: label })}
           >
@@ -1097,7 +1104,8 @@ const stageStyle =
             // point (see the `screenScope` doc on ComponentPreview.astro), not the page's.
             screen = defaultScreen || "mobile";
           } else {
-            screen = d.getAttribute("data-sk-component-preview-screen-pref");
+            // Stored preference first, then this preview's own seed, then free.
+            screen = d.getAttribute("data-sk-component-preview-screen-pref") || defaultScreen || "free";
             if (screen === "xl" && !zoomedDesktop) screen = "free";
             if (screen !== "xl" && screen !== "tablet" && screen !== "mobile") screen = "free";
           }

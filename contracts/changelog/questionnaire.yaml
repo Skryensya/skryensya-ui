@@ -3,8 +3,252 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "6eeab1b87c826720"
+surface: "4b8688cec4b5d24a"
 entries:
+  - date: 2026-09-19
+    kind: rework
+    target: Questionnaire
+    es:
+      title: Sin teclado no hay canal para la tecla
+      body: >-
+        El Kbd colgante de los atajos es una ayuda de teclado, y en un dispositivo táctil anunciaba
+        un atajo que nadie puede apretar mientras se llevaba unos 30px de una pantalla de 390. Peor:
+        el canal es <code>padding-inline-start</code> sobre el formulario, así que además corría el
+        título y la descripción. En un dispositivo sin hover la tecla no se dibuja y el canal no se
+        reserva. <code>any-hover: none</code> es la misma pregunta que hace la capa de estado para
+        decidir si el feedback de hover vale la pena, y es la honesta disponible: no hay media query
+        de «tiene teclado», así que un tablet con teclado conserva sus teclas.
+    en:
+      title: No keyboard, no gutter for the key
+      body: >-
+        The hanging Kbd on a shortcut is a keyboard affordance, and on a touch device it advertised a
+        shortcut nobody can press while taking about 30px of a 390px screen. Worse, the gutter is
+        <code>padding-inline-start</code> on the form, so it also shifted the question and its
+        description. On a device with no hover the key is not drawn and the gutter is not reserved.
+        <code>any-hover: none</code> is the same question the state layer asks to decide whether hover
+        feedback is worth keeping, and it is the honest one available: there is no media query for
+        "has a keyboard", so a tablet with one keeps its keys.
+  - date: 2026-09-19
+    kind: feature
+    target: Questionnaire
+    es:
+      title: Progreso segmentado, el rail al costado, y una medida más ancha
+      body: >-
+        <code>progress="segments"</code> dibuja el recorrido como barras, una por pregunta, leído de
+        reojo. No es un cuarto dibujo de este componente: es la apariencia propia de <code>Steps</code>,
+        así que los estados y el ventaneo son los mismos que ya tenía.
+        <code>progressOrientation="vertical"</code> pasa el rail al costado, que es lo que pide un
+        recorrido largo: ocho etapas cruzadas en una medida de lectura no le dan nada a ninguna. La
+        pregunta conserva su medida y el formulario se ensancha, porque un rail que sacara su espacio
+        de la columna de lectura cambiaría un rail apretado por prosa apretada; el rail cuesta
+        <code>--sk-questionnaire-rail</code>, publicado por si los nombres de etapa son largos. Y la
+        medida sube de 52ch a 60ch: con los pasos peleando por ancho arriba, 52ch quedaba corta.
+    en:
+      title: Segmented progress, the rail beside, and a wider measure
+      body: >-
+        <code>progress="segments"</code> draws the journey as bars, one per question, read at a
+        glance. It is not a fourth thing this component draws: it is <code>Steps</code>' own
+        appearance, so the statuses and the windowing are the ones it already had.
+        <code>progressOrientation="vertical"</code> moves the rail beside the question, which is what
+        a long journey needs: eight stages across a reading measure give each one nothing. The
+        question keeps its measure and the form widens instead, because a rail taking its room out of
+        the reading column would trade a cramped rail for cramped prose; the rail costs
+        <code>--sk-questionnaire-rail</code>, published in case the stage names are long. And the
+        measure goes from 52ch to 60ch: with the steps fighting for width above it, 52ch was short.
+  - date: 2026-09-19
+    kind: feature
+    target: QuestionnaireItem
+    es:
+      title: Una pregunta puede responderse con cualquier control del kit
+      body: >-
+        El slot <code>control</code> recibe un control que este contrato no conoce: un
+        <code>FileUpload</code>, un <code>Select</code> para una lista demasiado larga para ser tiles,
+        un <code>NumberField</code>, un <code>DatePicker</code>. La alternativa era una opción por
+        control, cada una espejando la anatomía de otro componente dentro de este archivo y derivando
+        el día que ese componente se moviera. El control se posee a sí mismo (su estado, su teclado,
+        su accesibilidad) y el cuestionario se queda con lo suyo: una pregunta a la vez, progreso,
+        obligatoriedad y ramificación. Aprende la respuesta del <strong>estado de formulario nativo</strong>
+        del control, que es la única interfaz que todos comparten: medido en el kit,
+        <code>Select</code> termina en un <code>&lt;select&gt;</code>, y <code>FileUpload</code>,
+        <code>NumberField</code>, <code>Combobox</code> y <code>DatePicker</code> terminan cada uno en
+        un <code>&lt;input&gt;</code>. Un input de archivo responde con los nombres de sus archivos;
+        los archivos viajan con el formulario, que es a donde iban de todos modos.
+    en:
+      title: A question can be answered with any control in the kit
+      body: >-
+        The <code>control</code> slot takes a control this contract has never heard of: a
+        <code>FileUpload</code>, a <code>Select</code> for a list too long to be tiles, a
+        <code>NumberField</code>, a <code>DatePicker</code>. The alternative was an option per control,
+        each one mirroring another component's anatomy into this file and drifting the day that
+        component moved. The control owns itself - its state, its keyboard, its accessibility - and
+        the questionnaire keeps what it is for: one question at a time, progress, required, branching.
+        It learns the answer from the control's <strong>native form state</strong>, which is the one
+        interface all of them share: measured across the kit, <code>Select</code> ends in a
+        <code>&lt;select&gt;</code>, and <code>FileUpload</code>, <code>NumberField</code>,
+        <code>Combobox</code> and <code>DatePicker</code> each end in an <code>&lt;input&gt;</code>. A
+        file input answers with the names of its files; the files travel with the form, which is where
+        they were always going.
+  - date: 2026-09-19
+    kind: feature
+    target: QuestionnaireItem
+    es:
+      title: La respuesta escrita puede ser larga, tipada o numérica
+      body: >-
+        <code>text</code> daba siempre un input de una línea de tipo texto, que es la mitad de las
+        preguntas abiertas que alguien quiere escribir. Ahora <code>textType</code> elige la clase de
+        respuesta (<code>text</code>, <code>email</code>, <code>tel</code>, <code>url</code>,
+        <code>number</code>, <code>date</code>) y se escribe como el <code>type</code> del control, así
+        que cada una trae el teclado, el control y la validación propios del navegador: el correo se
+        revisa antes de enviar, el teléfono abre el teclado numérico y la fecha abre el selector de la
+        plataforma, incluso en el celular. <code>textLines</code> convierte la respuesta en un
+        <code>textarea</code> de esa altura, porque una respuesta larga necesita alto y sólo quien
+        escribe la pregunta sabe cuánto está invitando. <code>textMin</code>, <code>textMax</code> y
+        <code>textStep</code> pasan los límites numéricos al control.
+    en:
+      title: The written answer can be long, typed or numeric
+      body: >-
+        <code>text</code> always gave a one-line text input, which covers about half the open
+        questions anyone wants to write. <code>textType</code> now picks the kind of answer
+        (<code>text</code>, <code>email</code>, <code>tel</code>, <code>url</code>,
+        <code>number</code>, <code>date</code>) and is written onto the control as its
+        <code>type</code>, so each brings the browser's own keyboard, control and validation: email is
+        checked before submit, tel brings the numeric keypad, and date brings the platform's own
+        picker, including on the phone. <code>textLines</code> turns the answer into a
+        <code>textarea</code> that tall, because a long answer needs a height and only the author
+        knows how long an answer they are inviting. <code>textMin</code>, <code>textMax</code> and
+        <code>textStep</code> pass the numeric bounds through.
+  - date: 2026-09-19
+    kind: rework
+    target: QuestionnaireItem
+    es:
+      title: La escala Likert es una lista vertical
+      body: >-
+        <code>likert</code> dibujaba una fila de columnas iguales, cada radio sobre su etiqueta, con
+        las anclas nombradas debajo y una caída a lista vertical abajo de <code>30rem</code>. La fila
+        se fue y la lista es ahora la única forma: un punto por línea, de arriba hacia abajo. Una
+        escala horizontal se gana el sueldo en una <em>batería</em> (muchas afirmaciones compartiendo
+        un solo encabezado de anclas), y este cuestionario muestra una pregunta por pantalla por
+        construcción, así que la fila pagaba el costo de una regla sin el arreglo que hace que una
+        regla valga la pena leer. Las anclas se mudan a donde están los extremos de una lista: la del
+        punto más bajo arriba de la primera fila, la del más alto debajo de la última. Y como cada
+        punto pasa a tener toda la medida, puede llevar sus propias palabras en vez de un dígito.
+    en:
+      title: The Likert scale is a vertical list
+      body: >-
+        <code>likert</code> used to draw a row of equal columns, each radio over its label, with the
+        ends named underneath and a fallback to a vertical list below <code>30rem</code>. The row is
+        gone and the list is now the only shape: one point per line, read top to bottom. A horizontal
+        scale earns its keep in a <em>battery</em> - many statements sharing one header of anchors -
+        and this questionnaire shows one question per screen by construction, so the row was paying
+        the cost of a ruler without the arrangement that makes a ruler worth reading. The anchors move
+        to where a list's ends actually are: the lowest point's name above the first row, the highest
+        below the last. And since every point now gets the full measure, it can carry its own words
+        instead of a digit.
+  - date: 2026-09-19
+    kind: feature
+    es:
+      title: Una escala tiene que nombrar sus extremos, y el contrato dice qué dibuja el binding
+      body: >-
+        Dos cosas que el contrato sabía y no declaraba. <code>likert</code> ahora exige
+        <code>likertMinLabel</code> o <code>likertMaxLabel</code>: una escala dibuja sus puntos como
+        números pelados, así que sin anclas nada en la página ni en el árbol de accesibilidad dice
+        qué significan 1 y 5. Componer una sin ellas ahora falla la validación en vez de pasar y
+        quedar ambigua. Y <code>position</code> se declara <code>systemOwned</code>: el contrato es
+        dueño de su clase y su CSS, pero quien la dibuja es el enhancer, porque lo que va adentro es
+        el lugar del lector en un recorrido que maneja la máquina.
+    en:
+      title: A scale has to name its ends, and the contract says what the binding draws
+      body: >-
+        Two things the contract knew and did not declare. <code>likert</code> now requires
+        <code>likertMinLabel</code> or <code>likertMaxLabel</code>: a scale renders its points as
+        bare numbers, so with no anchors nothing on the page or in the accessibility tree says what 1
+        and 5 mean. Composing one without them now fails validation instead of passing and being
+        ambiguous. And <code>position</code> is declared <code>systemOwned</code>: the contract owns
+        its class name and its CSS, but the enhancer is what draws it, because what goes inside is
+        the reader's place in a run the machine owns.
+  - date: 2026-09-19
+    kind: rework
+    target: QuestionnaireItem
+    es:
+      title: La opción elegida se pinta con el acento
+      body: >-
+        La capa de estado (<code>state-layer.css</code>) ya pintaba un tinte persistente sobre lo
+        elegido, pero tiñe con <code>currentColor</code>, que en un tile es el texto de lectura: la
+        respuesta elegida y las tres que descartaste quedaban separadas por un wash gris y un borde.
+        En un formulario cuyo trabajo entero es «cuál elegiste», ese es el estado que vale la pena
+        gastar en el acento, así que <code>--state-layer-color</code> pasa a
+        <code>--color-action-accent</code> sobre la opción marcada. La escalera de opacidades queda
+        igual: el peldaño <code>selected</code> es el más bajo a propósito y hover y press lo
+        reemplazan, algo que sólo se sostiene mientras la selección también la lleve algo que el wash
+        no pueda tapar. Acá la llevan dos, ambos ya del acento por los hooks de Tile: el borde de la
+        tarjeta y el relleno del radio.
+    en:
+      title: The chosen answer is painted in the accent
+      body: >-
+        The state layer (<code>state-layer.css</code>) already painted a persistent tint on whatever
+        is selected, but it tints with <code>currentColor</code>, which on a tile is the reading
+        text: the answer you picked and the three you passed over were separated by a grey wash and
+        a border. In a form whose entire job is "which one did you pick", that is the state worth
+        spending the accent on, so <code>--state-layer-color</code> becomes
+        <code>--color-action-accent</code> on the chosen option. The opacity ladder is untouched: the
+        <code>selected</code> rung is the lowest on purpose and hover and press replace it, which
+        only stays honest while selection is also carried by something the wash cannot hide. Here two
+        things carry it, both already accent from Tile's own hooks: the card's border and the radio's
+        fill.
+  - date: 2026-09-18
+    kind: bugfix
+    target: QuestionnaireItem
+    es:
+      title: La pregunta vuelve a tener aire debajo, y su propio interlineado
+      body: >-
+        La pregunta es un <code>&lt;legend&gt;</code>, y un legend renderizado no es un ítem flex: el
+        <code>gap</code> del ítem nunca se abría debajo de ella, así que la descripción quedaba pegada a
+        su línea base y, cuando no había descripción, la caja de la escala Likert empezaba justo sobre
+        la pregunta. La distancia ahora es margen propio del legend. Además pedía
+        <code>--line-height-heading</code>, que no es un token (el semántico es
+        <code>--font-line-height-heading</code>), así que el título se venía dibujando con el
+        interlineado de cuerpo heredado.
+    en:
+      title: The question gets air under it again, and its own leading
+      body: >-
+        The question is a <code>&lt;legend&gt;</code>, and a rendered legend is not a flex item: the
+        item's <code>gap</code> never opened beneath it, so the description sat on the question's
+        baseline and, with no description, the Likert scale's box began right on top of the question.
+        That distance is now the legend's own margin. It also asked for
+        <code>--line-height-heading</code>, which is not a token (the semantic name is
+        <code>--font-line-height-heading</code>), so the title had been rendering at the inherited body
+        leading all along.
+  - date: 2026-09-18
+    kind: rework
+    target: Questionnaire
+    es:
+      title: Un escalón de espaciado por nivel, y los tamaños en el orden de la importancia
+      body: >-
+        El formulario usaba un solo paso (<code>md</code>) para separar sus bandas y para el interior de
+        la pregunta, y nada distinguía una banda de lo que va dentro. Ahora hay cuatro escalones:
+        <code>lg</code> entre bandas, <code>md</code> entre la pregunta y sus respuestas,
+        <code>sm</code> entre las opciones y <code>xs</code> entre la pregunta y su descripción, con
+        <code>--sk-questionnaire-head-gap</code> publicado para ese último. En tipografía, la pregunta
+        toma el par tamaño/interlineado <code>heading-h4</code> con peso <code>emphasis</code>, la
+        descripción baja a <code>body-sm</code> (era el segundo texto más grande del formulario por
+        encima de las respuestas a las que acompaña) y el título de cada opción pasa a peso
+        <code>label</code>, vía el nuevo <code>--sk-tile-title-weight</code> de Tile. La escala Likert
+        gana cifras tabulares y un punto con inset <code>sm</code>. Se publican también
+        <code>--sk-questionnaire-shortcut-gap</code> y <code>--sk-questionnaire-shortcut-gutter</code>.
+    en:
+      title: One spacing rung per level, and sizes in the order of importance
+      body: >-
+        The form used a single step (<code>md</code>) both between its bands and inside the question,
+        so nothing told a band from the thing within it. There are four rungs now: <code>lg</code>
+        between bands, <code>md</code> from the question to its answers, <code>sm</code> between
+        options and <code>xs</code> between the question and its description, with
+        <code>--sk-questionnaire-head-gap</code> published for that last one. On type, the question
+        takes the <code>heading-h4</code> size/leading pair at <code>emphasis</code> weight, the
+        description drops to <code>body-sm</code> (it was the second-largest text in the form, above
+        the answers it supports) and each option's title moves to <code>label</code> weight through
+        Tile's new <code>--sk-tile-title-weight</code>. The Likert scale gains tabular figures and an
+        <code>sm</code> inset per point. <code>--sk-questionnaire-shortcut-gap</code> and
+        <code>--sk-questionnaire-shortcut-gutter</code> are published too.
   - date: 2026-09-18
     kind: feature
     target: QuestionnaireItem

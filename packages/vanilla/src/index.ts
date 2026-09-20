@@ -37,12 +37,19 @@ export { mountMegamenu } from "./components/megamenu.js";
 export { mountNumberField } from "./components/number-field.js";
 export { mountFolder } from "./components/folder.js";
 export { mountToolbar } from "./components/toolbar.js";
+export { mountFeed } from "./components/feed.js";
 export { mountEditor } from "./components/editor.js";
 export { mountTreeView } from "./components/tree-view.js";
 export { mountTreegrid } from "./components/treegrid.js";
 export { mountTable } from "./components/table.js";
 export { mountSliderRange } from "./components/slider-range.js";
-export { mountDataGrid } from "./components/data-grid.js";
+/*
+ * PAUSED: see `@skryensya/core/paused`. `@skryensya/vanilla/data-grid` still resolves, and the
+ * enhancer stays registered in `runtime/registry.ts`, so `initComponents()` still upgrades a
+ * `data-sk-data-grid` on a page that has one. Only the barrel stops offering it.
+ *
+ * export { mountDataGrid } from "./components/data-grid.js";
+ */
 export { mountNavListGroup } from "./components/nav-list.js";
 export { mountMenubar } from "./components/menubar.js";
 export { mountBreadcrumb } from "./components/breadcrumb.js";

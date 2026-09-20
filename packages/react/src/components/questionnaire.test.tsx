@@ -210,6 +210,29 @@ describe("Questionnaire (React)", () => {
     expect(list.querySelector("[aria-current=step]")?.textContent).toContain("What should we prototype next?");
   });
 
+  it("shows a three-step window with continuation cues for a longer questionnaire", () => {
+    const ui = render(
+      <Questionnaire aria-label="Long survey" defaultItem="step-3" progress="steps">
+        {Array.from({ length: 5 }, (_, index) => (
+          <QuestionnaireItem
+            choices={[{ value: "continue", label: "Continue" }]}
+            key={index}
+            name={`step-${index + 1}`}
+            title={`Step ${index + 1}`}
+          />
+        ))}
+      </Questionnaire>,
+    );
+    const list = ui.getByRole("list", { name: "Questionnaire progress" });
+
+    expect(list.querySelectorAll("li")).toHaveLength(3);
+    expect(list.hasAttribute("data-window-before")).toBe(true);
+    expect(list.hasAttribute("data-window-after")).toBe(true);
+    expect(list.textContent).toContain("Step 2");
+    expect(list.querySelector("[aria-current=step]")?.textContent).toContain("Step 3");
+    expect(list.textContent).toContain("Step 4");
+  });
+
   it("dispatches sk:questionnaireitemchange on the form", async () => {
     const ui = render(<Survey defaultAnswers={{ direction: { text: "x" } }} />);
     const listener = vi.fn();

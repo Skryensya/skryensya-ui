@@ -31,6 +31,12 @@
     --sk-tile-radius: var(--radius-surface);
     --sk-font-heading-sm: var(--font-size-heading-sm);
     --sk-font-body-sm: var(--font-size-body-sm);
+    /*
+     * The title's SIZE was already retunable and its weight was not, so a caller shrinking a tile to
+     * row size (Questionnaire's choices) got 14px at 700 and an answer that shouted over the question
+     * asking it. Published beside the size, because the two only make sense together.
+     */
+    --sk-tile-title-weight: var(--font-weight-heading);
     --sk-tile-shadow: var(--elevation-flat);
 
     box-sizing: border-box;
@@ -76,7 +82,7 @@
     margin: 0;
     color: var(--sk-color-text-primary);
     font-size: var(--sk-font-heading-sm);
-    font-weight: var(--font-weight-heading);
+    font-weight: var(--sk-tile-title-weight);
     line-height: var(--line-height-heading);
   }
 

@@ -203,11 +203,16 @@ function writeDocumentScreen(screen: ComponentPreviewScreen): void {
   else document.documentElement.setAttribute(componentPreviewAttrs.documentScreen, screen);
 }
 
+/*
+ * ALWAYS DISPATCHES, even when the value has not moved. This used to return early on a repeat,
+ * which was free when every click published: the shared value and what the previews showed could
+ * not drift apart. Now a plain click changes one stage without publishing, so they can, and a
+ * repeat is exactly how a reader asks for the page to be put back in step ("everything to Tablet",
+ * after having nudged two of them by hand). Skipping it would make the broadcast a no-op precisely
+ * when it is most wanted. Nothing loops on it: the listeners below apply the value and never
+ * publish.
+ */
 function publishScreen(screen: ComponentPreviewScreen): void {
-  if (sharedScreen === screen) {
-    writeDocumentScreen(screen);
-    return;
-  }
   sharedScreen = screen;
   writeDocumentScreen(screen);
   document.dispatchEvent(
@@ -244,6 +249,57 @@ function connectScreenTabs(root: HTMLElement): Cleanup {
 
   /** This preview owns its preset outright: never reads or writes the shared/persisted one. */
   const localScreen = root.hasAttribute(componentPreviewAttrs.screenLocal);
+
+  /*
+   * A CLICK IS ABOUT THIS PREVIEW. SHIFT IS ABOUT THE PAGE. Changing the preset is usually a
+   * question asked of ONE demo, "does this table survive a phone", and answering it by moving every
+   * other preview on the page throws away wherever the reader had left them. So a plain click stays
+   * here: it moves this stage and nothing else, and it does not touch the persisted preference.
+   *
+   * Shift is the deliberate broadcast. It publishes, so every preview follows and the choice is
+   * saved the way the Vanilla | React preference is: it is the gesture for "the whole page, and the
+   * next page too", and it costs a modifier because it is the one that overwrites other people's
+   * boxes.
+   *
+   * A broadcast reaches previews the reader had already moved by hand. That is the point of asking
+   * for it: shift is how you put the page back in step, so a plain click cannot opt a preview out of
+   * one.
+   *
+   * `localScreen` is a different thing and stays absolute: it is an authoring decision (Vaul's demo
+   * only reads at phone width), so it neither reads the shared preset at mount nor follows a
+   * broadcast, with or without the modifier.
+   */
+
+  /*
+   * A BROADCAST IS DRIVEN BY THE CLICK, NOT BY SEGMENTED'S VALUE CHANGE, and the difference is not
+   * academic: Segmented reports a CHANGE, so pressing the option a preview is already showing emits
+   * nothing at all. That is precisely the case shift exists for. Half the previews were nudged by
+   * hand, the reader wants the page back on Tablet, and the preview under the pointer happens to be
+   * the one still on Tablet. Hanging the broadcast off `valueChange` made that click a no-op.
+   *
+   * So the capture-phase click reads the option's own `data-value` and publishes it outright. It
+   * runs before Segmented has turned the press into anything, and `shiftHeld` (set from the same
+   * interaction, since a CustomEvent carries no modifier state) is what stops the value change that
+   * MAY follow from publishing the same thing twice.
+   */
+  let shiftHeld = false;
+  const rememberModifier = (event: Event) => {
+    shiftHeld = Boolean((event as MouseEvent | KeyboardEvent).shiftKey);
+  };
+  const onShiftActivate = (event: Event) => {
+    if (localScreen) return;
+    if (!(event as MouseEvent).shiftKey) return;
+    const target = event.target as HTMLElement | null;
+    const option = target?.closest?.(selector(componentPreviewAttrs.screenOption));
+    const value = option?.getAttribute("data-value");
+    if (!isScreen(value)) return;
+    currentUnforcedScreen = value;
+    if (!viewport?.matches) publishScreen(value);
+    applyEffectiveScreen(value);
+  };
+  tabs?.addEventListener("pointerdown", rememberModifier, true);
+  tabs?.addEventListener("keydown", rememberModifier, true);
+  tabs?.addEventListener("click", onShiftActivate, true);
 
   const offersXl = Boolean(
     tabs?.querySelector(`${selector(componentPreviewAttrs.screenOption)}[data-value="xl"]`),
@@ -297,13 +353,16 @@ function connectScreenTabs(root: HTMLElement): Cleanup {
 
   const onValueChange = (event: Event) => {
     const value = (event as ValueChangeEvent).detail?.value;
+    const withShift = shiftHeld;
+    shiftHeld = false;
     if (!isScreen(value)) return;
     currentUnforcedScreen = value;
     if (localScreen) {
       applyEffectiveScreen(value);
       return;
     }
-    if (!viewport?.matches) publishScreen(value);
+    /* Shift already published and applied from the click above; a plain click keeps to itself. */
+    if (withShift) return;
     applyEffectiveScreen(value);
   };
 
@@ -352,6 +411,9 @@ function connectScreenTabs(root: HTMLElement): Cleanup {
   return () => {
     resizeObserver?.disconnect();
     viewport?.removeEventListener("change", onViewportChange);
+    tabs?.removeEventListener("pointerdown", rememberModifier, true);
+    tabs?.removeEventListener("keydown", rememberModifier, true);
+    tabs?.removeEventListener("click", onShiftActivate, true);
     tabs?.removeEventListener(segmentedEvents.valueChange, onValueChange);
     if (!localScreen) document.removeEventListener(componentPreviewScreenChangeEvent, onSharedScreen);
   };

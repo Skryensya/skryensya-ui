@@ -1,4 +1,8 @@
 ---
-import PopupPage from "@/components/pages/PopupPage.astro";
+/*
+ * Popup was never a component: it was `Popover.bare` under a second name, with its own page. The
+ * section merged into Popover's, so this route keeps working as a 301 onto that heading. Same
+ * treatment as `components/details.astro`, which redirects into Accordion.
+ */
+return Astro.redirect("/components/popover#popup", 301);
 ---
-<PopupPage />

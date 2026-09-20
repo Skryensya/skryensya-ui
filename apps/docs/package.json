@@ -25,6 +25,7 @@
     "@skryensya/icons-lucide": "workspace:*",
     "@skryensya/icons-material": "workspace:*",
     "@skryensya/icons-phosphor": "workspace:*",
+    "@skryensya/phone": "workspace:*",
     "@skryensya/react": "workspace:*",
     "@skryensya/vanilla": "workspace:*",
     "@tanstack/charts": "0.15.0",

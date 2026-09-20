@@ -3,7 +3,7 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
-surface: "cadac3ad34b6f319"
+surface: "c00312f000345eb0"
 entries:
   - date: 2026-09-17
     kind: chore
@@ -178,3 +178,21 @@ entries:
       title: The contract declares the range of its numbers
       body: >-
         <code>ringDistance</code> and <code>ringRadius</code> do not go below 0. A value out of range stops validating instead of reaching the binding.
+  - date: 2026-09-19
+    kind: feature
+    target: Annotated
+    es:
+      title: Un pie de leyenda para el diagrama, en la esquina que nunca se usa
+      body: >-
+        Slot <code>key</code> y parte <code>sk-annotated__key</code>: una línea abajo a la izquierda sobre el dibujo entero, típicamente qué significa una
+        abreviatura de las etiquetas ("* = sk-file-upload"). Existe porque un nombre de parte es bloque más elemento, y un diagrama de diez partes repite el
+        bloque diez veces en sus márgenes, donde cada repetición se le cobra al ancho del sujeto: medido en FileUpload, solo el prefijo repetido apretaba el
+        espécimen de 480px a 292px. Las cuatro etiquetas van a los puntos medios de los bordes, así que las cuatro esquinas están libres por construcción y
+        la leyenda no puede chocar con ninguna.
+    en:
+      title: A key for the diagram, in the corner nothing else uses
+      body: >-
+        A <code>key</code> slot and a <code>sk-annotated__key</code> part: one line in the bottom-left about the drawing as a whole, usually what a shorthand
+        in the labels stands for ("* = sk-file-upload"). It exists because a part name is a block plus an element, and a diagram of ten parts repeats that
+        block ten times in its margins, where every repetition is charged to the subject's width: measured on FileUpload, the repeated prefix alone squeezed
+        the specimen from 480px to 292px. Labels go to the four edge midpoints, so all four corners are free by construction and a key cannot collide with one.

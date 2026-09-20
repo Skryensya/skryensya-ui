@@ -1,4 +1,5 @@
 import type { ComponentContract, OptionValue } from "./contract.js";
+import { inputFormatNames } from "./input-format.js";
 
 /*
  * One appearance contract for every native text control: `sk-input` goes on `<input>`,
@@ -21,11 +22,31 @@ export type InputPartClass = (typeof inputParts)[InputPart];
  * carried its own `aria-invalid` could disagree with the error message beside it, and an id the
  * author typed would not be the one the label points at.
  */
+/*
+ * The one channel authored markup has for hearing the result of a `format` check. React gets the
+ * same result through `onValidate`; both carry the identical detail, which is what keeps a consumer
+ * on either side able to write its own message instead of the default one.
+ */
+export const inputEvents = {
+  /** Detail: `{ ok: boolean, reason?: InputFormatReason, normalized?: string }`. */
+  validate: "sk:inputvalidate",
+} as const;
+
 export const inputContract = {
   id: "input",
   category: "forms",
   css: "@skryensya/core/components/input.css",
   parts: inputParts,
+  events: inputEvents,
+  eventDetails: {
+    validate: {
+      detail: { ok: "boolean", reason: "InputFormatReason | undefined", normalized: "string | undefined" },
+      reactProp: "onValidate",
+      source: "root",
+      /* No `trigger`: the root itself is what fires this, on typing and on leaving the field, and
+         one pass is the enhancer's own on mount. There is no separate part a person activates. */
+    },
+  },
   hooks: [
     "--sk-input-bg",
     "--sk-input-border-color",
@@ -61,13 +82,61 @@ export const inputContract = {
     name: { type: "string", attr: "name" },
     placeholder: { type: "string", attr: "placeholder" },
     disabled: { type: "boolean", default: false, attr: "disabled", trueValue: "" },
+    /**
+     * Validation the control owns, for the values the platform has no check for.
+     *
+     * NOT a `pattern`, and the difference is the whole reason this is an option rather than a
+     * regular expression on the markup: a RUT's check digit is arithmetic and a Chilean phone
+     * number is a numbering plan, neither of which a regular expression can express. Each value
+     * names a real validator in `@skryensya/core/input-format`, and what a format decides is "is
+     * this a real one", never "does this look like one".
+     *
+     * Composes with `type` rather than replacing it: `format="email"` on a `type="email"` input
+     * keeps the platform's own keyboard and its own check, and adds the one the platform omits.
+     *
+     * An EMPTY field never fails a format. Emptiness is `required`'s question, and FormField's
+     * wiring already delivers that one.
+     */
+    format: { type: "enum", values: inputFormatNames, attr: "data-format" },
+    /**
+     * Which country's numbering plan reads a national-format phone number, as an ISO 3166-1 alpha-2
+     * code ("CL", "AR", "US"). Only `format="phone"` uses it.
+     *
+     * Optional, and its absence is a supported composition rather than an oversight: a field that
+     * expects `+56 9 ...` needs no default, because the number says which plan it belongs to. What
+     * the option buys is letting someone type `912345678`, which is what a person in Chile filling
+     * in a Chilean form actually types. Without either, the value is reported as `country` rather
+     * than as malformed, because it is the FIELD that is underspecified and not the value.
+     *
+     * Not an enum: the list is ISO's, it has 249 entries, and restating it here would be a second
+     * copy of a standard going stale in a contract.
+     */
+    country: { type: "string", attr: "data-country", pattern: { source: "^[A-Z]{2}$", example: "CL" } },
+    /**
+     * Replaces the message a failed `format` would have written, for a field whose own wording is
+     * better than the default ("Check the RUT on your carnet" beats "That check digit does not
+     * match"). One sentence for the whole control: a consumer that wants a different message per
+     * reason listens for `sk:inputvalidate` / `onValidate` and reads `reason` off the detail.
+     */
+    errorLabel: { type: "string", attr: "data-error-label" },
   },
 
   signatures: {
     Input: {
       intent: ["text-entry", "single-line-input", "email", "password", "search-field"],
       host: { element: "input" },
-      options: ["controlSize", "type", "name", "placeholder", "disabled"],
+      options: ["controlSize", "type", "name", "placeholder", "disabled", "format", "country", "errorLabel"],
+      /*
+       * NO `mount` ATTRIBUTE, unlike most enhanced signatures, and it is worth saying why rather
+       * than reading as an omission. `format` already writes `data-format`, which is the only state
+       * there is to enhance, so a `data-sk-input` beside it would carry no information a selector
+       * cannot already get. It is not free either: it pushed every emitted Input past the emitter's
+       * print width, turning one-line markup into six in every code sample on the site, for an
+       * attribute that means nothing on the ordinary text fields that are most of them.
+       *
+       * `runtime/registry.ts` selects `input[data-format]`, qualified by ELEMENT because `chart`
+       * writes a `data-format` of its own for currency formatting and the two must not collide.
+       */
       /*
        * Native control state the CSS already paints (`:read-only`) and seed values. `id` /
        * `aria-invalid` normally arrive from FormField wiring; authored `id` is still accepted when

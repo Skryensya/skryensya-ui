@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "99eefe93e54d1cee"
+surface: "b2a6a6dabc080e94"
 entries:
   - date: 2026-09-17
     kind: feature
@@ -169,3 +169,293 @@ entries:
       title: The contract declares the range of its numbers
       body: >-
         <code>maxFiles</code> and <code>maxFileSize</code> are whole numbers from 1. A value out of range stops validating instead of reaching the binding.
+  - date: 2026-09-19
+    kind: feature
+    target: FileUpload
+    es:
+      title: Se puede soltar un archivo fuera de la zona punteada
+      body: >-
+        <code>dropScope</code> elige dónde vale soltar: <code>zone</code> (la caja punteada, como siempre), <code>element</code> más
+        <code>dropTarget</code> (un selector CSS a otro elemento de la página) o <code>page</code> (todo el documento). Los dos últimos traen
+        <code>overlayLabel</code>, el cartel que aparece mientras se arrastra un archivo encima: un destino que no se ve es una función que
+        solo conoce quien la programó. La caja punteada sigue ahí en los tres casos, porque el teclado y el selector de archivos necesitan
+        seguir teniendo dónde estar.
+    en:
+      title: A file can be dropped outside the dashed box
+      body: >-
+        <code>dropScope</code> picks where a drop counts: <code>zone</code> (the dashed box, as before), <code>element</code> plus
+        <code>dropTarget</code> (a CSS selector for another element on the page), or <code>page</code> (the whole document). The last two
+        carry <code>overlayLabel</code>, the sheet that appears while a file is dragged over them: a drop target nobody can see is a feature
+        only its author knows about. The dashed box stays in all three, because the keyboard and the file picker still need somewhere to be.
+  - date: 2026-09-19
+    kind: feature
+    target: FileUpload
+    es:
+      title: La pista y el glifo de la zona por fin se pueden escribir
+      body: >-
+        <code>hintLabel</code> publica <code>sk-file-upload__hint</code>, que existía en la hoja de estilos desde la primera versión y no tenía
+        nodo en la plantilla: es donde van los límites ("PNG o JPG, hasta 5 MB") antes de que un archivo los rompa. <code>dropzoneIcon</code>
+        acepta un Icon sobre la instrucción.
+    en:
+      title: The hint and the dropzone glyph can finally be written
+      body: >-
+        <code>hintLabel</code> publishes <code>sk-file-upload__hint</code>, which had been in the stylesheet since the first version with no node
+        in the template: it is where the limits go ("PNG or JPG, up to 5 MB") before a file breaks them. <code>dropzoneIcon</code> takes an Icon
+        above the instruction.
+  - date: 2026-09-19
+    kind: feature
+    target: FileUpload
+    es:
+      title: Las dos capas muestran los archivos elegidos, con miniatura y botón de quitar
+      body: >-
+        Antes solo React dibujaba la lista: el enhancer vanilla no renderizaba nada, así que revisar lo elegido antes de mandarlo dependía del binding.
+        Ahora las dos dibujan la misma fila desde las mismas clases (<code>item-preview</code>, <code>item-kind</code>), con la imagen mostrándose a sí
+        misma y el resto con su extensión. La regla de "el enhancer no renderiza" es sobre marcado escrito a mano; una lista de archivos es estado, como
+        la grilla de Calendar.
+    en:
+      title: Both bindings show the chosen files, with a thumbnail and a remove button
+      body: >-
+        Only React drew the list before: the vanilla enhancer rendered nothing, so checking what you chose before sending it depended on the binding.
+        Both now draw the same row from the same classes (<code>item-preview</code>, <code>item-kind</code>), an image showing itself and everything else
+        its extension. "The enhancer renders nothing" is about authored markup; a list of files is state, like Calendar's grid.
+  - date: 2026-09-19
+    kind: bugfix
+    target: FileUpload
+    es:
+      title: Los nombres accesibles vuelven a ser los del componente
+      body: >-
+        La máquina escribía sus propias traducciones en <code>aria-label</code>, que gana sobre el contenido: la dropzone se anunciaba como "dropzone" en
+        vez de la instrucción escrita encima (falla de label-in-name además de idioma) y el botón de quitar decía "delete file x" mientras cargaba un texto
+        oculto que nadie podía leer. Las dos capas pasan ahora sus propias traducciones.
+    en:
+      title: The accessible names are the component's again
+      body: >-
+        The machine wrote its own translations into <code>aria-label</code>, which beats content: the dropzone announced itself as "dropzone" rather than the
+        instruction written on it (a label-in-name failure on top of a language one), and the remove button said "delete file x" while carrying hidden text
+        nothing could read. Both bindings now pass their own translations.
+  - date: 2026-09-19
+    kind: breaking
+    target: FileUpload
+    es:
+      title: La caja punteada es el estado vacío, y la lista la reemplaza
+      body: >-
+        Con archivos elegidos, la dropzone se oculta y la lista ocupa su lugar: el control muestra cómo elegir mientras no hay nada, y qué hay en cuanto
+        hay algo. <code>hintLabel</code> pasó a estar DENTRO de la caja (es la descripción del estado vacío) y se va con ella. El botón de elegir no se va
+        nunca. Sin la caja en pantalla, la superficie de drop pasa al propio control y este se resalta entero.
+    en:
+      title: The dashed box is the empty state, and the list replaces it
+      body: >-
+        With files chosen the dropzone hides and the list takes its place: the control shows how to choose while there is nothing, and what there is as soon
+        as there is something. <code>hintLabel</code> moved INSIDE the box (it is the empty state's description) and leaves with it. The picker button never
+        leaves. With the box off screen the drop surface moves to the control itself, which highlights as a whole.
+  - date: 2026-09-19
+    kind: bugfix
+    target: FileUpload
+    es:
+      title: Soltar un segundo archivo ya no borra el primero
+      body: >-
+        Soltar fuera de la dropzone pasaba por <code>setFiles</code>, el único setter público de la máquina, que REEMPLAZA la lista aceptada. La ruta que
+        agrega solo es alcanzable con un evento que la máquina acepta únicamente en su estado <code>dragging</code>, así que la unión se arma antes
+        (<code>filesAfterDrop</code>) y la máquina revalida el conjunto entero.
+    en:
+      title: Dropping a second file no longer erases the first
+      body: >-
+        A drop outside the dropzone went through <code>setFiles</code>, the machine's only public setter, which REPLACES the accepted list. The appending
+        path is only reachable through an event the machine accepts in its <code>dragging</code> state alone, so the union is built first
+        (<code>filesAfterDrop</code>) and the machine re-validates the whole set.
+  - date: 2026-09-19
+    kind: breaking
+    target: FileUpload
+    es:
+      title: Se va dropScope element, quedan zone y page
+      body: >-
+        <code>dropScope: "element"</code> y <code>dropTarget</code> apuntaban el drop a otro elemento de la página por selector CSS. Ninguna versión
+        documentada del patrón lo tiene, y el motivo se ve al intentar escribir la frase que un lector necesitaría: una superficie en otra parte que en
+        secreto pertenece a un control de acá no se descubre. Quedan la caja punteada y toda la página.
+    en:
+      title: dropScope element is gone; zone and page remain
+      body: >-
+        <code>dropScope: "element"</code> and <code>dropTarget</code> pointed the drop at another element by CSS selector. No documented version of this
+        pattern has it, and the reason shows as soon as you write the sentence a reader would need: a surface elsewhere on the page that secretly belongs to
+        a control over here is not discoverable. The dashed box and the whole page remain.
+  - date: 2026-09-19
+    kind: breaking
+    target: FileUpload
+    es:
+      title: La dropzone se queda; la lista va debajo
+      body: >-
+        Revierte el cambio de más arriba de hoy mismo, que ocultaba la caja al aceptar el primer archivo. Eso rompía lo que más se hace con este control:
+        soltar un segundo archivo donde se soltó el primero. La lista va DEBAJO de la caja, como en toda versión documentada del patrón, y la caja se oculta
+        por un solo motivo, el de eBay: <code>maxFiles</code> alcanzado, porque ahí solo podría invitar a un drop que será rechazado.
+    en:
+      title: The dropzone stays; the list goes under it
+      body: >-
+        This reverses the change earlier today that hid the box when the first file was accepted. That broke the thing people do most with this control:
+        dropping a second file where they dropped the first. The list goes UNDER the box, as in every documented version of the pattern, and the box hides for
+        one reason only, eBay's: <code>maxFiles</code> reached, where it could only invite a drop that will be rejected.
+  - date: 2026-09-19
+    kind: feature
+    target: FileUpload
+    es:
+      title: La fila de archivo deja de ser cajas dentro de cajas
+      body: >-
+        La miniatura ya no vive en un recuadro con borde (una foto ya es una imagen con borde, y un glifo dentro de un cuadro se lee como un botón que no se
+        puede apretar): la imagen lleva un hairline de 1px y el resto un glifo suelto. El tipo de archivo pasó a la línea de metadatos junto al peso. El botón
+        de quitar es un icon button ghost del kit con área de toque completa, no un botón por defecto con borde. La lista se anuncia con
+        <code>aria-live="polite"</code> y el foco pasa a la fila siguiente al quitar una.
+    en:
+      title: The file row stops being boxes inside boxes
+      body: >-
+        The thumbnail no longer sits in a bordered frame (a photo is already a picture with an edge, and a glyph in a square reads as a button you cannot
+        press): the image carries a 1px hairline and everything else a bare glyph. The file kind moved to the metadata line beside the size. The remove control
+        is one of the kit's own ghost icon buttons with a full touch target, not a default bordered button. The list is announced with
+        <code>aria-live="polite"</code> and focus moves to the next row when one is removed.
+  - date: 2026-09-19
+    kind: feature
+    target: FileUpload
+    es:
+      title: minFileSize y maxTotalSize, y los límites se dicen solos
+      body: >-
+        <code>minFileSize</code> existía en React desde siempre y el contrato no lo publicaba, así que el marcado escrito a mano no podía decirlo y las dos
+        capas aplicaban reglas distintas desde el mismo árbol. <code>maxTotalSize</code> es nuevo y la máquina no lo trae: se agrega por su propio
+        <code>validate</code>, contando también los archivos anteriores del mismo lote. Y la línea bajo la instrucción ya no se escribe a mano: sale de los
+        mismos números que rechazan, así que no puede prometer lo que el validador no cumple. <code>hintLabel</code> sigue estando para pisarla.
+    en:
+      title: minFileSize and maxTotalSize, and the limits state themselves
+      body: >-
+        <code>minFileSize</code> had always been a React prop the contract did not publish, so authored markup could not say it and the two bindings enforced
+        different rules from one tree. <code>maxTotalSize</code> is new and the machine has no such rule: it is added through its own <code>validate</code>
+        hook, counting the earlier files of the same batch too. And the line under the instruction is no longer hand-written: it is built from the same numbers
+        that do the rejecting, so it cannot promise what the validator will not honour. <code>hintLabel</code> is still there to override it.
+  - date: 2026-09-19
+    kind: feature
+    target: FileUpload
+    es:
+      title: El rechazo dice cuál era el límite, y el control queda marcado
+      body: >-
+        <code>fileUploadErrorMessage</code> toma los límites y los nombra: "pesa demasiado (máximo 5 MB)" en vez de "pesa demasiado". Mientras haya algo
+        rechazado, la raíz lleva <code>data-invalid</code> y la caja punteada se pinta en tono de error, para que en un formulario largo se encuentre cuál
+        control falló. <code>accept</code> además se puede pasar como string en React, que es como lo escribe el contrato.
+    en:
+      title: A refusal names the limit, and the control is marked
+      body: >-
+        <code>fileUploadErrorMessage</code> takes the limits and names them: "pesa demasiado (máximo 5 MB)" instead of "pesa demasiado". While anything stands
+        refused the root carries <code>data-invalid</code> and the dashed box takes the error tone, so the control that refused something can be found in a
+        long form. <code>accept</code> can also be passed as a string in React, which is how the contract spells it.
+  - date: 2026-09-19
+    kind: bugfix
+    target: FileUpload
+    es:
+      title: La fila de archivo deja de estar apretada
+      body: >-
+        Tenía 4px de inset alrededor de una miniatura de 28px y un botón de 44px: el contenido contra su propio borde. Ahora son 8px de inset
+        (<code>--sk-file-upload-item-padding</code>, nuevo hook, del que sale también el radio concéntrico de la miniatura), miniatura de 40px para que se
+        lea como imagen y no como favicon, y el botón de quitar pasa a 32px visibles con el área de toque de 44px en un pseudo-elemento. La fila queda en
+        56px, más baja que los 60px que forzaba el botón antes.
+    en:
+      title: The file row stops being cramped
+      body: >-
+        It had 4px of inset around a 28px thumbnail and a 44px button: content pressed against its own border. It is 8px now
+        (<code>--sk-file-upload-item-padding</code>, a new hook, which the thumbnail's concentric radius also reads), a 40px thumbnail so the preview reads as
+        a picture rather than a favicon, and the remove control is 32px visible with its 44px touch target on a pseudo-element. The row goes from 54px to 58px,
+        and those 4px are where they were missing: around the content, not under an oversized button.
+  - date: 2026-09-19
+    kind: feature
+    target: FileUpload
+    es:
+      title: El nombre manda en la fila, y se corta con puntos suspensivos
+      body: >-
+        La fila pasa de cuatro columnas a tres: miniatura, el nombre con el tipo y el peso DEBAJO (<code>sk-file-upload__item-body</code>, parte nueva), y el
+        botón de quitar. El nombre es lo único que alguien lee en una fila y lo único que puede medir 80 caracteres, así que se lleva el ancho; antes competía
+        con un peso que no lo necesitaba. Se corta en una línea con <code>…</code> y el nombre completo queda en <code>title</code>; la extensión sigue
+        visible en la línea de abajo aunque lo cortado sea el final.
+    en:
+      title: The name owns the row, and is cut with an ellipsis
+      body: >-
+        The row goes from four columns to three: thumbnail, the name with its kind and size UNDER it (<code>sk-file-upload__item-body</code>, a new part), and
+        the remove control. The name is the one thing anyone reads in a row and the one thing that can run 80 characters, so it takes the width; it used to
+        compete with a size that never needed it. It is cut to one line with <code>…</code> and the whole name stays in <code>title</code>; the extension
+        remains visible on the line below even when the tail is what was cut.
+  - date: 2026-09-19
+    kind: bugfix
+    target: FileUpload
+    es:
+      title: Las filas de archivo alinean entre sí, y la fila mide lo que muestra
+      body: >-
+        Medido en el navegador, no deducido: una fila con imagen empezaba su texto 20px a la derecha de una con documento, porque el glifo LLEVABA la clase de
+        la miniatura y entraba con sus propios 20px en vez del box de 40. Ahora la miniatura es un box y la imagen o el glifo van adentro. Además la fila
+        medía 68px (dos líneas de texto más altas que la miniatura de 40px): el nombre baja a body-sm, el segundo renglón a caption y la fila queda en 58px,
+        la altura de lo que muestra. Se va el hook <code>--sk-file-upload-remove-size</code>: el botón de quitar es <code>Button</code> en
+        <code>sm</code> icon-only, que ya pinta a 32px y ya lleva su propio target de 44px.
+    en:
+      title: File rows line up with each other, and the row is the height of what it shows
+      body: >-
+        Measured in the browser rather than reasoned about: a row with an image started its text 20px to the right of a row with a document, because the glyph
+        WORE the thumbnail's class and came in at its own 20px instead of the 40px box. The thumbnail is a box now and the picture or the glyph sits inside it.
+        The row also measured 68px (two lines of text taller than the 40px thumbnail): the name drops to body-sm, the second line to caption, and the row
+        settles at 58px, the height of what it shows. The <code>--sk-file-upload-remove-size</code> hook is gone: the remove control is <code>Button</code> at
+        <code>sm</code> icon-only, which already paints at 32px and already carries its own 44px target.
+  - date: 2026-09-19
+    kind: bugfix
+    target: FileUpload
+    es:
+      title: El peso del archivo se dice igual arriba que abajo
+      body: >-
+        La fila usaba <code>getFileSize</code> de la máquina, que en este locale escribe "70 byte", mientras la línea de límites arriba decía "5 MB". Un mismo
+        control no puede medir archivos de dos maneras: las dos usan <code>formatFileSize</code>.
+    en:
+      title: A file's size is said the same way above and below
+      body: >-
+        The row used the machine's <code>getFileSize</code>, which renders "70 byte" in this locale, while the limits line above it said "5 MB". One control
+        cannot measure files two ways: both use <code>formatFileSize</code>.
+  - date: 2026-09-19
+    kind: breaking
+    target: FileUpload
+    es:
+      title: Los límites se dicen en dos lugares, según sirvan antes o durante
+      body: >-
+        La línea sobre el selector decía los cuatro límites de una: "imágenes o PDF · hasta 5 MB · 10 MB en total · máximo 3 archivos". Nada distinguía el
+        peso por archivo del peso total, el punto medio le daba el mismo peso a todo, y la mitad no se puede accionar antes de elegir. Ahora esa línea dice
+        solo qué se acepta, como frase ("Imágenes o PDF, hasta 5 MB cada uno"), y la cuenta y el peso pasan a un contador sobre la lista
+        (<code>sk-file-upload__tally</code>, parte nueva) que aparece recién cuando hay algo que contar: "2 de 3 archivos · 3,4 de 10 MB". Eso contesta la
+        pregunta que la versión fija no contestaba, que es cuánto queda.
+    en:
+      title: The limits are said in two places, by whether they help before or during
+      body: >-
+        The line over the picker stated all four limits at once: "imágenes o PDF · hasta 5 MB · 10 MB en total · máximo 3 archivos". Nothing told the per-file
+        size from the total, the middle dots made four facts equally important, and half of it cannot be acted on before choosing. That line now says only what
+        is accepted, as a sentence ("Imágenes o PDF, hasta 5 MB cada uno"), and the count and the weight move to a tally over the list
+        (<code>sk-file-upload__tally</code>, a new part) that appears once there is something to count: "2 de 3 archivos · 3,4 de 10 MB". That answers the
+        question the fixed version could not, which is how much is left.
+  - date: 2026-09-19
+    kind: feature
+    target: FileUpload
+    es:
+      title: La dropzone dibuja el rol upload, sin que nadie lo pida
+      body: >-
+        El sistema publica el rol <code>upload</code> desde que se escribieron los sets de iconos, los tres lo dibujan, y el único componente que se llama así
+        no lo usaba: el glifo era un slot que nadie llenaba, así que el estado vacío salía sin marca mientras la hoja de estilos seguía dibujando el círculo
+        que iba a sostenerla. Ahora viene por defecto y <code>dropzoneIcon</code> lo reemplaza. Son dos nodos de plantilla para una misma parte, porque el
+        emisor renderiza el <code>slot</code> de un nodo o sus <code>children</code>, nunca uno como respaldo del otro.
+    en:
+      title: The dropzone draws the upload role, without being asked
+      body: >-
+        The system has published the <code>upload</code> role since the icon sets were written, all three draw it, and the one component named after uploading
+        did not use it: the glyph was a slot nobody filled, so the empty state shipped without a mark while the stylesheet kept drawing the circle meant to
+        hold one. It is there by default now and <code>dropzoneIcon</code> replaces it. Two template nodes for one part, because the emitter renders a node's
+        <code>slot</code> or its <code>children</code>, never one as a fallback for the other.
+  - date: 2026-09-19
+    kind: feature
+    target: FileUpload
+    es:
+      title: La instrucción de la dropzone es una parte
+      body: >-
+        <code>sk-file-upload__instruction</code>. El glifo de arriba y el hint de abajo eran partes desde siempre, y la frase del medio, que es lo único que
+        todo lector de este control lee, era un <code>&lt;span&gt;</code> pelado: nada podía estilarla y la anatomía no podía nombrarla. Sale de una
+        auditoría de las 19 partes contra las que el diagrama etiqueta.
+    en:
+      title: The dropzone's instruction is a part
+      body: >-
+        <code>sk-file-upload__instruction</code>. The glyph above it and the hint below it had always been parts, and the sentence between them, the one
+        thing every reader of this control actually reads, was a bare <code>&lt;span&gt;</code>: nothing could style it and the anatomy could not name it.
+        Found by auditing all 19 parts against the ones the diagram labels.

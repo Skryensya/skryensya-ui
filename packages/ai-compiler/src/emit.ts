@@ -662,6 +662,21 @@ function computedWindow(
    * and how wide each line runs is the stylesheet's (`.sk-placeholder__line`'s nth-child cycle), so
    * an entry has no options and no slots to fill. React builds the same N from `placeholderLines`.
    */
+  /*
+   * A rating's steps: `max` entries, each carrying its own 1-based number so `selectedBy` can mark
+   * the one the value sits on. Nothing else per entry, and deliberately not a per-symbol fill: which
+   * symbols LOOK filled follows from which one is checked, and `rating.css` reads that off the DOM
+   * with `:has(~ [aria-checked="true"])` rather than having every step carry a state the machine
+   * would then have to keep in step with.
+   */
+  if (spec.window === "rating-symbols") {
+    const max = Math.max(1, Math.trunc(args[0] ?? 1));
+    return Array.from({ length: max }, (_, index): ItemInput => ({
+      options: { [spec.key]: index + 1 },
+      slots: {},
+    }));
+  }
+
   if (spec.window === "skeleton-lines") {
     return Array.from({ length: placeholderLines(args[0] ?? 1) }, (): ItemInput => ({ slots: {} }));
   }

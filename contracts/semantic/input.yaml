@@ -4,8 +4,12 @@ Input:
   useWhen:
     - "el usuario escribe una línea de texto: email, nombre, búsqueda"
     - "el tipo nativo aporta teclado y validación del navegador (email, tel, url)"
+    - "el valor tiene una validez que el navegador no sabe comprobar: un RUT con su dígito verificador, una URL que se pueda abrir; eso es `format`"
+    - "es un teléfono de cualquier país: `format=\"phone\"` más `country`, que requiere instalar `@skryensya/phone` y registrarlo al arranque"
   avoidWhen:
     - "el texto es largo o multilínea; eso es Textarea"
+    - "la validez depende del servidor (un RUT que ya está registrado); eso es el slot `error` del FormField, escrito por quien compone, y le gana al mensaje de `format`"
+    - "se quiere validar un teléfono sin agregar dependencias: no hay camino; el plan de numeración son datos y el kit prefiere no validar antes que validar mal"
     - "se elige de un conjunto cerrado de opciones; eso es un Select"
     - "el valor es un número con paso y límites; eso es NumberField"
     - "la plataforma debe gobernar time/color/range y se quiere su control nativo; eso es NativeInput"

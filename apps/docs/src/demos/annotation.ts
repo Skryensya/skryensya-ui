@@ -172,6 +172,9 @@ export const annotationSidesTree = (t: Translate): UsageTree => ({
     ringDistance: 4,
   },
   slots: {
+    /* The four sides demo is also where the key is shown, because it is the diagram on this page
+       with a label on every side: the corner it uses is visibly the one nothing else reaches. */
+    key: "sk-stat = " + t("annotation.keyMeaning"),
     subject: {
       contract: "stat",
       signature: "Stat",

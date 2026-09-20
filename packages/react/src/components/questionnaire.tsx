@@ -8,11 +8,15 @@ import {
   questionnaireAnswerStep,
   questionnaireAttrs,
   questionnaireContract,
+  questionnaireControlValues,
+  type QuestionnaireTextType,
+  type QuestionnaireProgressOrientation,
   questionnaireDefaultLabels,
   questionnaireEvents,
   questionnaireNavigation,
   questionnaireParts,
   questionnaireProgress,
+  questionnaireStepsWindow,
   questionnaireShortcuts,
   resolveQuestionnaireKey,
   type QuestionnaireAnswer,
@@ -48,7 +52,7 @@ import { Box } from "./layout.js";
 import { RadioGroup } from "./selection.js";
 import { Button } from "./button.js";
 import { FormField } from "./form-field.js";
-import { Input } from "./input.js";
+import { Input, Textarea } from "./input.js";
 import { Kbd } from "./kbd.js";
 import { Progress } from "./progress.js";
 import { Steps } from "./steps.js";
@@ -61,7 +65,11 @@ import { TileCheckbox, TileRadioGroup } from "./tile.js";
  * moving focus, and `requestSubmit()` on the form, both carried out as the effects a transition returns.
  */
 
-const { progress: progressOption, shortcuts: shortcutsOption } = questionnaireContract.options;
+const {
+  progress: progressOption,
+  progressOrientation: progressOrientationOption,
+  shortcuts: shortcutsOption,
+} = questionnaireContract.options;
 
 const cx = (...classes: (string | undefined | false)[]) => classes.filter(Boolean).join(" ") || undefined;
 
@@ -82,8 +90,26 @@ export type QuestionnaireItemProps = {
   choices?: readonly QuestionnaireChoice[];
   /** Free text, alone or beside the choices. Needs `textLabel`. */
   text?: boolean;
+  /**
+   * A control this component does not know: a FileUpload, a Select for a list too long to be tiles,
+   * a NumberField. It owns its own state; the questionnaire learns the answer from its native form
+   * state and keeps progress, required and branching.
+   */
+  control?: ReactNode;
   textLabel?: string;
   textPlaceholder?: string;
+  /**
+   * The kind of typed answer. Written onto the control as its `type`, so each value brings the
+   * browser's own keyboard, control and validation: `email` and `url` are checked before submit,
+   * `tel` brings the phone keypad, `number` brings steppers, `date` brings the platform's own picker.
+   */
+  textType?: QuestionnaireTextType;
+  /** Makes the answer a textarea, this many rows tall. Two rows asks for a sentence, eight a story. */
+  textLines?: number;
+  /** Bounds for `textType="number"`, straight through to the control. */
+  textMin?: number;
+  textMax?: number;
+  textStep?: number;
   /** Short name for this question in Steps progress. Defaults to `title`. */
   stepLabel?: string;
   /** Lays the single choice out as a Likert scale: the same radios, across instead of down. */
@@ -104,6 +130,8 @@ export type QuestionnaireProps = Omit<FormHTMLAttributes<HTMLFormElement>, "chil
   Partial<Labels> & {
     children: ReactNode;
     progress?: QuestionnaireProgressMode;
+    /** Where the rail goes: above the question, or beside it. Only `steps` and `segments` have one. */
+    progressOrientation?: QuestionnaireProgressOrientation;
     shortcuts?: QuestionnaireShortcutMode;
     /** The question to start on. */
     defaultItem?: string;
@@ -185,6 +213,7 @@ export function Questionnaire({
   onSubmit,
   onValuesSubmit,
   progress = progressOption.default,
+  progressOrientation = progressOrientationOption.default,
   shortcuts = shortcutsOption.default,
   previousLabel = questionnaireDefaultLabels.previousLabel,
   nextLabel = questionnaireDefaultLabels.nextLabel,
@@ -332,6 +361,8 @@ export function Questionnaire({
 
   const navigation = questionnaireNavigation(state);
   const progressState = questionnaireProgress(state);
+  /* Both rail modes need the same window; they differ only in how Steps draws a stage. */
+  const stepsWindow = progress === "steps" || progress === "segments" ? questionnaireStepsWindow(state) : null;
   const labels: Labels = {
     previousLabel,
     nextLabel,
@@ -365,6 +396,7 @@ export function Questionnaire({
         className={cx(questionnaireParts.root, className)}
         data-default-item={defaultItem}
         data-progress={progress}
+        data-progress-orientation={progressOrientation}
         data-shortcuts={shortcuts}
         {...mountAttrs}
         noValidate
@@ -380,11 +412,18 @@ export function Questionnaire({
           {progress === "bar" ? (
             <Progress label={progressLabel} max={Math.max(progressState.total, 1)} value={progressState.settled} />
           ) : null}
-          {progress === "steps" ? (
+          {stepsWindow ? (
             <Steps
               aria-label={progressLabel}
-              data-orientation="horizontal"
-              steps={progressState.steps.map((step) => ({ label: titles.get(step.name) ?? step.name, status: step.status }))}
+              data-appearance={progress === "segments" ? "segments" : undefined}
+              data-orientation={progressOrientation}
+              data-window-after={stepsWindow.hasAfter ? "" : undefined}
+              data-window-before={stepsWindow.hasBefore ? "" : undefined}
+              steps={stepsWindow.steps.map((step) => ({
+                label: titles.get(step.name) ?? step.name,
+                marker: step.status === "complete" ? undefined : String(step.index + 1),
+                status: step.status,
+              }))}
             />
           ) : null}
         </div>
@@ -490,7 +529,13 @@ export function QuestionnaireItem({
   stepLabel,
   text = false,
   textLabel,
+  control,
   textPlaceholder,
+  textType,
+  textLines,
+  textMin,
+  textMax,
+  textStep,
   title,
 }: QuestionnaireItemProps) {
   const { state, send, labels, shortcuts, positionId, register } = useQuestionnaire("QuestionnaireItem");
@@ -584,8 +629,7 @@ export function QuestionnaireItem({
               items={choices.map((choice) => ({ value: choice.value, label: choice.label, disabled: choice.disabled }))}
               name={name}
               onValueChange={(details) => send({ type: "choose", name, value: details.value })}
-              orientation="horizontal"
-              spread
+              orientation="vertical"
               value={answer.choices[0] ?? null}
             />
             {likertMinLabel || likertMaxLabel ? (
@@ -600,7 +644,7 @@ export function QuestionnaireItem({
           <TileRadioGroup
             className={questionnaireParts.choices}
             data-name={name}
-            padding="sm"
+            padding="md"
             items={choices.map((choice) => ({
               value: choice.value,
               disabled: choice.disabled,
@@ -617,7 +661,7 @@ export function QuestionnaireItem({
               <TileCheckbox
                 checked={answer.choices.includes(choice.value)}
                 disabled={choice.disabled}
-                padding="sm"
+                padding="md"
                 key={choice.value}
                 name={name}
                 onCheck={(details) => send({ type: "select", name, value: choice.value, selected: details.checked === true })}
@@ -628,15 +672,50 @@ export function QuestionnaireItem({
             ))}
           </div>
         ) : null}
+        {control ? (
+          /*
+           * THE SLOTTED CONTROL. React cannot control a child it did not render, and should not try:
+           * the control owns its own state. What it can do is hear the `change` / `input` every
+           * native form control fires - React's synthetic ones bubble, so one listener on the box
+           * covers whatever is inside it - and read the slot's form state with the SAME reader the
+           * Vanilla enhancer uses, out of Core, so the two cannot drift about what an answer is.
+           */
+          <div
+            className={questionnaireParts.control}
+            onChange={(event) =>
+              send({ type: "control", name, values: questionnaireControlValues(event.currentTarget) })
+            }
+            onInput={(event) =>
+              send({ type: "control", name, values: questionnaireControlValues(event.currentTarget) })
+            }
+          >
+            {control}
+          </div>
+        ) : null}
         {text ? (
           <FormField className={questionnaireParts.text} label={textLabel ?? title}>
-            <Input
-              controlSize="sm"
-              name={name}
-              onChange={(event) => send({ type: "text", name, text: event.target.value })}
-              placeholder={textPlaceholder}
-              value={answer.text}
-            />
+            {textLines === undefined ? (
+              <Input
+                controlSize="sm"
+                max={textMax}
+                min={textMin}
+                name={name}
+                onChange={(event) => send({ type: "text", name, text: event.target.value })}
+                placeholder={textPlaceholder}
+                step={textStep}
+                type={textType}
+                value={answer.text}
+              />
+            ) : (
+              <Textarea
+                controlSize="sm"
+                name={name}
+                onChange={(event) => send({ type: "text", name, text: event.target.value })}
+                placeholder={textPlaceholder}
+                rows={textLines}
+                value={answer.text}
+              />
+            )}
           </FormField>
         ) : null}
       </div>

@@ -96,3 +96,54 @@ export const textareaTree = (t: Translate): UsageTree => ({
     options: { name: "notes", placeholder: t("demo.input.notesPlaceholder") },
   },
 });
+
+/*
+ * THE VALIDATED FIELDS, and the demo is three of them rather than one on purpose: what `format`
+ * publishes is a SET of checks the platform does not have, and a single RUT box would read as a
+ * one-off rather than as the option it is.
+ *
+ * The phone field only validates because the docs site installs `@skryensya/phone` and registers it
+ * at startup. Left out, it would still render and simply not check, which is the point of the
+ * warning the console prints rather than an error the reader would see.
+ *
+ * Each one is a real `FormField`, because the message these controls write goes into the field's own
+ * error box: a lone Input would validate correctly and have nowhere to say so.
+ */
+export const inputFormatTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "md" },
+  attrs: { style: "inline-size: 20rem" },
+  children: [
+    {
+      contract: "form-field",
+      signature: "FormField",
+      slots: { label: "RUT", hint: t("demo.input.rutHint") },
+      children: {
+        contract: "input",
+        signature: "Input",
+        options: { format: "rut", name: "rut", placeholder: "12.345.678-5" },
+      },
+    },
+    {
+      contract: "form-field",
+      signature: "FormField",
+      slots: { label: t("demo.input.phoneLabel") },
+      children: {
+        contract: "input",
+        signature: "Input",
+        options: { format: "phone", country: "CL", type: "tel", name: "phone", placeholder: "+56 9 2345 6789" },
+      },
+    },
+    {
+      contract: "form-field",
+      signature: "FormField",
+      slots: { label: t("demo.input.siteLabel") },
+      children: {
+        contract: "input",
+        signature: "Input",
+        options: { format: "url", type: "url", name: "site", placeholder: "example.com" },
+      },
+    },
+  ],
+});

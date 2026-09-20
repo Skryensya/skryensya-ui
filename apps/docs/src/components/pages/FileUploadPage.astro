@@ -6,11 +6,14 @@ import ComponentPreview from "../ComponentPreview.astro";
 import {
   fileUploadAnatomyCss,
   fileUploadAnatomyHtml,
+  fileUploadPageDropTree,
   fileUploadTree,
 } from "../../demos/file-upload";
 import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/file-upload.css";
 import "@skryensya/core/components/button.css";
+/* The rows draw the kit's own ghost icon button and two icon glyphs. */
+import "@skryensya/core/patterns/icon.css";
 
 const t = useTranslations(getLocale(Astro.url));
 ---
@@ -19,12 +22,19 @@ const t = useTranslations(getLocale(Astro.url));
   title="FileUpload"
   description={t("fileUploadPage.description")}
   contractId="file-upload"
-  testFiles={["packages/vanilla/src/components/file-upload.test.ts", "packages/react/src/components/file-upload.test.tsx"]}}
+  testFiles={[
+    "packages/core/src/file-upload.test.ts",
+    "packages/vanilla/src/components/file-upload.test.ts",
+    "packages/react/src/components/file-upload.test.tsx",
+  ]}
 >
   <Fragment slot="usage">
     <p class="lede" set:html={t("fileUploadPage.description")} />
 
     <p set:html={t("fileUploadPage.anatomyBody")} />
+    {/* Ten labels need the whole track, and `breakout` is how a preview asks for it. It was a no-op
+        until the `justify-self` rule in site.css: the panel placed every preview on that track and
+        then centred it, so the room was there and nothing took it. */}
     <ComponentPreview
       html={fileUploadAnatomyHtml(t)}
       css={fileUploadAnatomyCss}
@@ -32,9 +42,42 @@ const t = useTranslations(getLocale(Astro.url));
       screens={false}
       hideSource
       chrome={false}
+      width="breakout"
     />
 
-    <ComponentPreview tree={fileUploadTree(t)} label="FileUpload" viewport="auto" />
+    {/*
+      * A FLOOR, NOT A MEASUREMENT. `preview-heights.json` reserves what a demo settles at, and this
+      * one settles EMPTY: the whole point of the control is that you add files to it, and each row
+      * pushed the page down under the reader's pointer. Measured on this demo at 1920px: 323px
+      * empty, 426 with one file, 496 with two (and 368 with three, where `maxFiles` is reached and
+      * the dropzone hides). 31rem is that 496, so the first two files land in room that is already
+      * there and nothing below the preview moves.
+      */}
+    <ComponentPreview
+      tree={fileUploadTree(t)}
+      label="FileUpload"
+      measure="28rem"
+      minHeight="31rem"
+      viewport="auto"
+    />
+
+    <h3 id="validation">{t("fileUploadPage.validationTitle")}</h3>
+    <p set:html={t("fileUploadPage.validationBody")} />
+
+    <h3 id="chosen-files">{t("fileUploadPage.chosenTitle")}</h3>
+    <p set:html={t("fileUploadPage.chosenBody")} />
+
+    <h3 id="drop-scope">{t("fileUploadPage.dropScopeTitle")}</h3>
+    <p set:html={t("fileUploadPage.dropScopeBody")} />
+    {/* Same floor as the demo above, and this one needs it more: with no `maxFiles` the dropzone
+        never steps aside, so every file added is height added. */}
+    <ComponentPreview
+      tree={fileUploadPageDropTree(t)}
+      label={t("fileUploadPage.pageDropLabel")}
+      measure="28rem"
+      minHeight="31rem"
+      viewport="auto"
+    />
 
     <h3>{t("component.contractNotesTitle")}</h3>
     <p set:html={t("fileUploadPage.contractBody")} />
@@ -42,5 +85,6 @@ const t = useTranslations(getLocale(Astro.url));
 
   <Fragment slot="a11y">
     <p set:html={t("fileUploadPage.a11yBody")} />
+    <p set:html={t("fileUploadPage.dropScopeA11yBody")} />
   </Fragment>
 </ComponentPageShell>

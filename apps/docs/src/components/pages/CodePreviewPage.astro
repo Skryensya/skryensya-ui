@@ -53,9 +53,7 @@ const example = `const registrations = [
   contractId="code-preview"
   testFiles={["packages/vanilla/src/components/code-preview.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("codePreview.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("codePreview.anatomyBody")} />
     <ComponentPreview
       html={codePreviewAnatomyHtml(t)}
@@ -65,7 +63,10 @@ const example = `const registrations = [
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("codePreview.lede")} />
     <CodeBlock code={example} label="TypeScript" lang="ts" />
     <p set:html={t("codePreview.exampleNote")} />
 

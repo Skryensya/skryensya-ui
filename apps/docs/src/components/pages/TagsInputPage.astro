@@ -1,0 +1,100 @@
+---
+import "@skryensya/core/components/tags-input.css";
+/* The chip IS a Tag, so its sheet is part of this component's paint, not a demo's extra. */
+import "@skryensya/core/components/tag.css";
+import "@skryensya/core/components/button.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
+/* The last demo puts the field inside a FormField, and a frame only copies what this page loaded. */
+import "@skryensya/core/components/form-field.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  tagsInputAnatomyTree,
+  tagsInputEmptyTree,
+  tagsInputFieldTree,
+  tagsInputMaxTree,
+  tagsInputReadOnlyTree,
+  tagsInputTree,
+} from "../../demos/tags-input";
+import { annotationDemoCss } from "../../demos/annotation";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/tags-input.css";
+/* The chip is a Tag, and its remove control is a Button. */
+@import "@skryensya/core/components/tag.css";
+@import "@skryensya/core/components/button.css";`;
+---
+
+<ComponentPageShell
+  title="TagsInput"
+  description={t("tagsInputPage.description")}
+  contractId="tags-input"
+  testFiles={[
+    "packages/react/src/components/tags-input.test.tsx",
+    "packages/vanilla/src/components/tags-input.test.ts",
+  ]}
+>
+  <Fragment slot="anatomy">
+    <p set:html={t("tagsInputPage.anatomyBody")} />
+    <ComponentPreview
+      tree={tagsInputAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("tagsInputPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("tagsInputPage.lede")} />
+    <ComponentPreview tree={tagsInputTree(t)} label="TagsInput" />
+
+    <h3>{t("tagsInputPage.composesTitle")}</h3>
+    <p set:html={t("tagsInputPage.composesBody")} />
+
+    <h3>{t("tagsInputPage.markupTitle")}</h3>
+    <p set:html={t("tagsInputPage.markupBody")} />
+
+    <h3>{t("tagsInputPage.emptyTitle")}</h3>
+    <p set:html={t("tagsInputPage.emptyBody")} />
+    <ComponentPreview tree={tagsInputEmptyTree(t)} label={t("tagsInputPage.emptyPreviewLabel")} />
+
+    <h3>{t("tagsInputPage.maxTitle")}</h3>
+    <p set:html={t("tagsInputPage.maxBody")} />
+    <ComponentPreview tree={tagsInputMaxTree(t)} label={t("tagsInputPage.maxPreviewLabel")} />
+
+    <h3>{t("tagsInputPage.readOnlyTitle")}</h3>
+    <p set:html={t("tagsInputPage.readOnlyBody")} />
+    <ComponentPreview tree={tagsInputReadOnlyTree(t)} label={t("tagsInputPage.readOnlyPreviewLabel")} />
+
+    <h3>{t("tagsInputPage.fieldTitle")}</h3>
+    <p set:html={t("tagsInputPage.fieldBody")} />
+    <ComponentPreview tree={tagsInputFieldTree(t)} label={t("tagsInputPage.fieldPreviewLabel")} />
+
+    <h3>{t("tagsInputPage.whenTitle")}</h3>
+    <ul>
+      <li set:html={t("tagsInputPage.whenItem1")} />
+      <li set:html={t("tagsInputPage.whenItem2")} />
+      <li set:html={t("tagsInputPage.whenItem3")} />
+      <li set:html={t("tagsInputPage.whenItem4")} />
+    </ul>
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("tagsInputPage.contractItem1")} />
+      <li set:html={t("tagsInputPage.contractItem2")} />
+      <li set:html={t("tagsInputPage.contractItem3")} />
+      <li set:html={t("tagsInputPage.contractItem4")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" />
+  </Fragment>
+</ComponentPageShell>

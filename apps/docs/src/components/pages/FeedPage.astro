@@ -58,9 +58,7 @@ const keyboardReact = `import { Feed, FeedArticle } from "@skryensya/react/feed"
     "packages/vanilla/src/components/feed.test.ts",
   ]}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("feedPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("feedPage.anatomyBody")} />
     <ComponentPreview
       tree={feedAnatomyTree(t)}
@@ -70,7 +68,10 @@ const keyboardReact = `import { Feed, FeedArticle } from "@skryensya/react/feed"
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("feedPage.lede")} />
     {/* The ladder, simplest first: plain text posts, then the composition a real feed is, then
         the two states the contract always had and the page never showed. */}
     <h3>{t("feedPage.demoTitle")}</h3>

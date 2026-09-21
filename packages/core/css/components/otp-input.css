@@ -1,0 +1,106 @@
+/*
+ * TIER 3, OTP INPUT
+ *
+ * N real `<input>`s in a row, each `sk-otp-input__segment`, the same "field" appearance `input.css`
+ * gives `<input>`/`<textarea>` (sunken, one border) but sized square and centered for a single
+ * character: a code segment reads as one unit of a whole, not as five separate text fields.
+ *
+ * `:has(:focus-within)` on the root paints the INVALID/focus state at the row level so a reader
+ * scanning the page sees one control, not five independently bordered boxes.
+ */
+@layer components {
+  .sk-otp-input {
+    --sk-otp-input-gap: var(--space-inline-xs);
+    --sk-otp-input-segment-size: var(--size-touch-target);
+    --sk-otp-input-label-color: var(--color-text-secondary);
+    --sk-otp-input-hint-color: var(--color-text-secondary);
+    --sk-otp-input-border-color: var(--color-border-default);
+    --sk-otp-input-invalid-border-color: var(--color-border-danger);
+    --sk-otp-input-bg: var(--color-bg-surface-sunken);
+    --sk-otp-input-fg: var(--color-text-primary);
+    --sk-otp-input-radius: var(--radius-control);
+
+    display: grid;
+    gap: var(--space-stack-xs);
+  }
+
+  .sk-otp-input__label {
+    color: var(--sk-otp-input-label-color);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+  }
+
+  .sk-otp-input__control {
+    display: flex;
+    gap: var(--sk-otp-input-gap);
+  }
+
+  .sk-otp-input__segment {
+    box-sizing: border-box;
+    inline-size: var(--sk-otp-input-segment-size);
+    block-size: var(--sk-otp-input-segment-size);
+    border: 1px solid var(--sk-otp-input-border-color);
+    border-radius: var(--sk-otp-input-radius);
+    background: var(--sk-otp-input-bg);
+    color: var(--sk-otp-input-fg);
+    font: inherit;
+    font-size: var(--font-size-heading-sm);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    /* A code is read, not composed: no cursor caret drawing over the single character. */
+    caret-color: transparent;
+  }
+
+  .sk-otp-input__segment:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .sk-otp-input[data-invalid] .sk-otp-input__segment {
+    border-color: var(--sk-otp-input-invalid-border-color);
+  }
+
+  .sk-otp-input[data-disabled] .sk-otp-input__segment {
+    background: var(--color-action-disabled);
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+  }
+
+  .sk-otp-input[data-readonly] .sk-otp-input__segment {
+    background: var(--color-bg-surface);
+    border-color: var(--color-border-subtle);
+  }
+
+  .sk-otp-input__hint {
+    color: var(--sk-otp-input-hint-color);
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-caption);
+  }
+
+  /* The form participant: never painted, never in the tab order. Same reasoning `rating.css` gives
+     its own `sk-rating__input`. */
+  .sk-otp-input__hidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (forced-colors: active) {
+    .sk-otp-input__segment {
+      border-color: CanvasText;
+      background: Canvas;
+      color: CanvasText;
+    }
+
+    .sk-otp-input[data-disabled] .sk-otp-input__segment {
+      border-color: GrayText;
+      color: GrayText;
+    }
+  }
+}

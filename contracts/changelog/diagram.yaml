@@ -1,0 +1,85 @@
+# Qué cambió en diagram, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
+# hash nuevo.
+surface: "5a9108f7bbf589d4"
+entries:
+  - date: 2026-09-21
+    kind: feature
+    es:
+      title: Un nodo puede llevar una marca, y la marca la trae quien compone
+      body: >-
+        El slot <code>logo</code> de un nodo acepta un árbol: un <code>ImageFrame</code> apuntando a
+        un SVG o un PNG, un <code>Icon</code> del set que esté instalado, o cualquier otra cosa que
+        el catálogo sepa dibujar. Lo único que pone el componente es la caja, del mismo tamaño para
+        todo el dibujo (<code>--sk-diagram-logo-size</code>): veinte nodos con veinte imágenes
+        dimensionadas a mano son veinte oportunidades de que una quede de otra altura. El kit no
+        trae marcas y no las va a traer.
+    en:
+      title: A node can carry a mark, and the mark is the author's to bring
+      body: >-
+        A node's <code>logo</code> slot takes a tree: an <code>ImageFrame</code> pointing at an SVG
+        or a PNG, an <code>Icon</code> from whichever set is installed, or anything else the
+        catalogue renders. All the component supplies is the box, one size for the whole drawing
+        (<code>--sk-diagram-logo-size</code>): twenty nodes with twenty hand-sized images are twenty
+        chances for one to be a different height. The kit ships no brand marks and never will.
+  - date: 2026-09-21
+    kind: feature
+    es:
+      title: Zonas, para dibujar un límite alrededor de los nodos que la nombran
+      body: >-
+        El slot <code>zones</code> dibuja una región con nombre alrededor de los nodos que la
+        nombran: una VPC con sus subredes, un cluster con sus servicios, una fase con sus pasos. Una
+        zona <strong>no acomoda nada</strong>, sólo traza el borde donde la grilla ya puso las
+        cajas, así que no pide ninguna coordenada. El nodo declara la zona <em>más interna</em>
+        (<code>zone</code>) y la zona declara dentro de cuál está (<code>within</code>), y el
+        anidamiento es lo que hace que el borde de afuera se dibuje más afuera.
+    en:
+      title: Zones, for drawing a boundary around the nodes that name it
+      body: >-
+        The <code>zones</code> slot draws a named region around the nodes that name it: a VPC with
+        its subnets, a cluster with its services, a phase with its steps. A zone <strong>lays
+        nothing out</strong>, it only traces a boundary where the grid already put the boxes, so it
+        asks for no coordinate at all. A node declares the <em>innermost</em> zone it is in
+        (<code>zone</code>) and a zone declares what it is inside (<code>within</code>), and that
+        nesting is what makes an outer boundary draw further out.
+  - date: 2026-09-21
+    kind: feature
+    es:
+      title: Un nodo puede tener filas con nombre, y una arista puede apuntar a una
+      body: >-
+        El slot <code>rows</code> convierte una caja en un registro: una raya bajo el título y una
+        línea por fila. Sirve para una clase con sus miembros o una tabla con sus columnas, y lo que
+        lo hace distinto de poner el texto adentro es que las filas tienen nombre:
+        <code>fromRow</code> y <code>toRow</code> anclan la arista a una, y el conector toca el
+        borde del nodo a la altura de esa fila. Una arista anclada entra siempre por el costado,
+        porque una fila tiene alto y no ancho.
+    en:
+      title: A node can have named rows, and an edge can point at one
+      body: >-
+        The <code>rows</code> slot turns a box into a record: a rule under the title and one line
+        per row. It is for a class with its members or a table with its columns, and what makes it
+        different from putting the text inside is that the rows are NAMED: <code>fromRow</code> and
+        <code>toRow</code> anchor an edge to one, and the connector touches the node's edge at that
+        row's own height. An anchored edge always comes in from the side, because a row has a height
+        and no width.
+  - date: 2026-09-21
+    kind: feature
+    es:
+      title: Diagram publica nodos y aristas, la otra mitad de lo que hace Annotation
+      body: >-
+        Un marco con dos colecciones: <code>nodes</code>, que son cajas de HTML normal en una grilla,
+        y <code>edges</code>, que son <code>from</code>/<code>to</code> y nada más. El runtime mide y
+        dibuja recorridos, codos y puntas de flecha; quien compone no escribe una coordenada. Tres
+        formas (<code>process</code>, <code>decision</code>, <code>terminal</code>), ciclos por el
+        margen, y una lista anunciada dentro de cada nodo que dice a dónde lleva.
+    en:
+      title: Diagram publishes nodes and edges, the other half of what Annotation does
+      body: >-
+        A frame with two collections: <code>nodes</code>, which are ordinary HTML boxes in a grid,
+        and <code>edges</code>, which are <code>from</code>/<code>to</code> and nothing else. The
+        runtime measures and draws the routes, the elbows and the arrowheads; an author writes no
+        coordinate. Three shapes (<code>process</code>, <code>decision</code>,
+        <code>terminal</code>), cycles routed through the margin, and an announced list inside each
+        node saying where it leads.

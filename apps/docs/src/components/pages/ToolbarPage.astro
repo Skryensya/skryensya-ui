@@ -30,9 +30,7 @@ initComponents();`;
   badge={t("toolbarPage.betaBadge")}
   contractId="toolbar"
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("toolbarPage.description")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("toolbarPage.anatomyBody")} />
     <ComponentPreview
       tree={toolbarAnatomyTree(t)}
@@ -42,7 +40,10 @@ initComponents();`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("toolbarPage.description")} />
     <ComponentPreview tree={toolbarTree(t)} js={js} label="Toolbar" viewport="auto" />
 
     <h3>{t("component.contractNotesTitle")}</h3>

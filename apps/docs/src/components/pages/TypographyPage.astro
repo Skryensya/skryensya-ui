@@ -1,0 +1,71 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  textTree,
+  textSecondaryTree,
+  headingTree,
+  linkTree,
+  strongTree,
+  codeTree,
+  outputTree,
+} from "../../demos/typography";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+---
+
+<ComponentPageShell
+  title="Typography"
+  description={t("typographyPage.description")}
+  contractId="typography"
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("typographyPage.lede")} />
+
+    <h3>{t("typographyPage.textTitle")}</h3>
+    <p set:html={t("typographyPage.textBody")} />
+    <ComponentPreview tree={textTree(t)} label="Text" />
+    <ComponentPreview tree={textSecondaryTree(t)} label="Text, secondary tone" />
+
+    <h3>{t("typographyPage.headingTitle")}</h3>
+    <p set:html={t("typographyPage.headingBody")} />
+    <ComponentPreview tree={headingTree(t)} label="Heading" />
+
+    <h3>{t("typographyPage.linkTitle")}</h3>
+    <p set:html={t("typographyPage.linkBody")} />
+    <ComponentPreview tree={linkTree(t)} label="Link within text" />
+
+    <h3>{t("typographyPage.strongTitle")}</h3>
+    <p set:html={t("typographyPage.strongBody")} />
+    <ComponentPreview tree={strongTree(t)} label="Strong emphasis" />
+
+    <h3>{t("typographyPage.codeTitle")}</h3>
+    <p set:html={t("typographyPage.codeBody")} />
+    <ComponentPreview tree={codeTree(t)} label="Code within text" />
+
+    <h3>{t("typographyPage.outputTitle")}</h3>
+    <p set:html={t("typographyPage.outputBody")} />
+    <ComponentPreview tree={outputTree(t)} label="Output element" />
+
+    <h3>{t("typographyPage.whenTitle")}</h3>
+    <ul>
+      <li set:html={t("typographyPage.whenItem1")} />
+      <li set:html={t("typographyPage.whenItem2")} />
+      <li set:html={t("typographyPage.whenItem3")} />
+    </ul>
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("typographyPage.contractItem1")} />
+      <li set:html={t("typographyPage.contractItem2")} />
+      <li set:html={t("typographyPage.contractItem3")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+  </Fragment>
+</ComponentPageShell>

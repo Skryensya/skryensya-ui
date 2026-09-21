@@ -42,9 +42,7 @@ const t = useTranslations(locale);
   ]}
   testFiles={["packages/vanilla/src/components/time-field.svelte.test.ts"]}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("timeFieldPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("timeFieldPage.anatomyBody")} />
     <ComponentPreview
       html={timeFieldAnatomyHtml(t)}
@@ -54,7 +52,10 @@ const t = useTranslations(locale);
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("timeFieldPage.lede")} />
     <ComponentPreview tree={timeFieldTree(t, { locale: "es-DO", name: "salida" })} label="TimeField" viewport="menu" />
 
     <h3>{t("component.contractNotesTitle")}</h3>

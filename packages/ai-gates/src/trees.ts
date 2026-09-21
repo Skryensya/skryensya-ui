@@ -1144,11 +1144,11 @@ const signatureTrees: readonly Canonical[] = [
    * own script now owns that, this only proves the anatomy both bindings agree on.
    */
   {
-    name: "icon-state-button/copy-idle",
+    name: "state-button/copy-idle",
     enhanced: false,
     tree: {
-      contract: "icon-state-button",
-      signature: "IconStateButton",
+      contract: "state-button",
+      signature: "StateButton",
       options: { current: "idle" },
       // The contract itself has no `label`/`aria-label` option (decision 33: genuinely no opinion
       // about behavior or naming, both are the consumer's). This is the consumer's own, the same
@@ -1164,11 +1164,11 @@ const signatureTrees: readonly Canonical[] = [
   },
   /** Three faces, so the same anatomy proves it is not hardcoded to two. */
   {
-    name: "icon-state-button/theme-light",
+    name: "state-button/theme-light",
     enhanced: false,
     tree: {
-      contract: "icon-state-button",
-      signature: "IconStateButton",
+      contract: "state-button",
+      signature: "StateButton",
       options: { current: "light" },
       attrs: { "aria-label": "Modo: claro" },
       slots: {
@@ -1182,11 +1182,11 @@ const signatureTrees: readonly Canonical[] = [
   },
   /** `current` absent: no face carries `data-active` at all. */
   {
-    name: "icon-state-button/no-current",
+    name: "state-button/no-current",
     enhanced: false,
     tree: {
-      contract: "icon-state-button",
-      signature: "IconStateButton",
+      contract: "state-button",
+      signature: "StateButton",
       attrs: { "aria-label": "Copiar" },
       slots: {
         faces: [
@@ -1487,29 +1487,29 @@ const signatureTrees: readonly Canonical[] = [
   },
   /* The browser's own accordion: siblings sharing a name keep one open, with no script. */
   {
-    name: "details/exclusive-group",
+    name: "accordion/details-exclusive-group",
     enhanced: false,
     tree: {
-      contract: "details",
+      contract: "accordion",
       signature: "DetailsGroup",
       attrs: { "aria-label": "Configuración de despliegue" },
       children: [
         {
-          contract: "details",
+          contract: "accordion",
           signature: "Details",
           options: { name: "deployment" },
           children: [
-            { contract: "details", signature: "Details.Summary", children: "Runtime" },
-            { contract: "details", signature: "Details.Content", children: "Node 24 sobre el pool compartido." },
+            { contract: "accordion", signature: "Details.Summary", children: "Runtime" },
+            { contract: "accordion", signature: "Details.Content", children: "Node 24 sobre el pool compartido." },
           ],
         },
         {
-          contract: "details",
+          contract: "accordion",
           signature: "Details",
           options: { name: "deployment" },
           children: [
-            { contract: "details", signature: "Details.Summary", children: "Rollout" },
-            { contract: "details", signature: "Details.Content", children: "Canary en tres tramos." },
+            { contract: "accordion", signature: "Details.Summary", children: "Rollout" },
+            { contract: "accordion", signature: "Details.Content", children: "Canary en tres tramos." },
           ],
         },
       ],
@@ -2021,6 +2021,120 @@ const signatureTrees: readonly Canonical[] = [
      * `@skryensya/phone`, and a gate that needed it installed would be asserting a consumer's
      * dependency rather than this layer's own contract.
      */
+    /*
+     * THE OTP INPUT, and the one root in this corpus whose enhancer is `@zag-js/pin-input`: N real
+     * inputs wired as one field, which is what keeps `[data-sk-otp-input]` from being a selector
+     * nothing is evidence for.
+     */
+    name: "otp-input/segments",
+    enhanced: true,
+    tree: {
+      contract: "otp-input",
+      signature: "OtpInput",
+      slots: { label: "Código de verificación" },
+      options: { name: "code", count: 6 },
+    },
+  },
+  {
+    /*
+     * QUOTE. The figure/blockquote/figcaption anatomy the platform asks for, with both halves of the
+     * caption filled: the person outside the `<cite>` and the work inside it, which is the one thing
+     * this contract exists to keep apart.
+     */
+    name: "quote/attributed",
+    enhanced: false,
+    tree: {
+      contract: "quote",
+      signature: "Quote",
+      options: { cite: "https://example.org/cuadernos/06" },
+      slots: {
+        children: "Escribir el componente es la parte facil.",
+        attribution: "Camila Rojas,",
+        source: "Cuadernos de un sistema de diseno",
+      },
+    },
+  },
+  {
+    /* The pull variant, which is a different job rather than the same one larger: no rule, display
+       type, and no caption to hang under it. */
+    name: "quote/pull",
+    enhanced: false,
+    tree: {
+      contract: "quote",
+      signature: "Quote",
+      options: { variant: "pull" },
+      slots: { children: "Un contrato existe para que dos implementaciones no discrepen en silencio." },
+    },
+  },
+  {
+    /*
+     * DESCRIPTION LIST, in the layout that has something to lay out: the pair side by side, with the
+     * `<div>` between `<dl>` and its `<dt>`/`<dd>` that the divider and the columns both hang off.
+     */
+    name: "description-list/columns",
+    enhanced: false,
+    tree: {
+      contract: "description-list",
+      signature: "DescriptionList",
+      options: { layout: "columns", dividers: true },
+      children: [
+        {
+          contract: "description-list",
+          signature: "DescriptionItem",
+          slots: { term: "Pedido", children: "#4821" },
+        },
+        {
+          contract: "description-list",
+          signature: "DescriptionItem",
+          slots: { term: "Fecha", children: "10 de marzo de 2026" },
+        },
+      ],
+    },
+  },
+  {
+    /* The stacked default, which is the shape that survives any width and any length of name. */
+    name: "description-list/stacked",
+    enhanced: false,
+    tree: {
+      contract: "description-list",
+      signature: "DescriptionList",
+      children: [
+        {
+          contract: "description-list",
+          signature: "DescriptionItem",
+          slots: { term: "Formato", children: "PDF/A-2b" },
+        },
+      ],
+    },
+  },
+  {
+    /* SEPARATOR, the bare rule: an `<hr>` that means something, which is this family's default. */
+    name: "separator/rule",
+    enhanced: false,
+    tree: { contract: "separator", signature: "Separator", options: { tone: "strong" } },
+  },
+  {
+    /* The one with a word in it, and the reason it is a `<div>`: an `<hr>` may hold no content. */
+    name: "separator/labelled",
+    enhanced: false,
+    tree: { contract: "separator", signature: "LabelledSeparator", children: "o" },
+  },
+  {
+    /*
+     * TAGS INPUT, with tags already in it: the authored list is what the enhancer takes over as its
+     * seed, so a fixture with an empty one would leave `[data-sk-tags-input]` a selector whose only
+     * evidence is an empty field.
+     */
+    name: "tags-input/tags",
+    enhanced: true,
+    tree: {
+      contract: "tags-input",
+      signature: "TagsInput",
+      options: { label: "Temas", placeholder: "Agrega un tema", removeLabel: "Quitar", name: "topics" },
+      slots: { items: [{ slots: { label: "react" } }, { slots: { label: "svelte" } }] },
+    },
+  },
+  {
     /*
      * THE RATING INPUT, and the one root in this corpus whose enhancer is `@zag-js/rating-group`.
      * Five radios in a group, which is what keeps `[data-sk-rating]` from being a selector nothing

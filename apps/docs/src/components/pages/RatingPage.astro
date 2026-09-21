@@ -35,6 +35,18 @@ const symbolSwap = `/* The symbol is a mask, so a heart is one declaration. */
     "packages/vanilla/src/components/rating.test.ts",
   ]}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("ratingPage.anatomyBody")} />
+    <ComponentPreview
+      tree={ratingAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("ratingPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("ratingPage.lede")} />
     <ComponentPreview tree={ratingDisplayTree(t)} label="RatingDisplay" />
@@ -47,17 +59,6 @@ const symbolSwap = `/* The symbol is a mask, so a heart is one declaration. */
     <p set:html={t("ratingPage.fractionBody")} />
     <ComponentPreview tree={ratingFractionsTree(t)} label={t("ratingPage.fractionPreviewLabel")} />
     <p set:html={t("ratingPage.asymmetryBody")} />
-
-    <p set:html={t("ratingPage.anatomyBody")} />
-    <ComponentPreview
-      tree={ratingAnatomyTree(t)}
-      css={annotationDemoCss}
-      label={t("ratingPage.anatomyPreviewLabel")}
-      screens={false}
-      hideSource
-      chrome={false}
-    />
-
     <h3>{t("ratingPage.symbolTitle")}</h3>
     <p set:html={t("ratingPage.symbolBody")} />
     <CodeBlock code={symbolSwap} label="CSS" />

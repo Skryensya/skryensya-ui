@@ -14,6 +14,19 @@ describe("Rating input", () => {
     expect(within(group).getAllByRole("radio")).toHaveLength(5);
   });
 
+  it("wears the kit's icon-only button on every step, exactly as the emitter writes it", () => {
+    /* The twin of the markup `packages/vanilla/src/components/rating.test.ts` mounts: the two
+       bindings have to land on the same classes and the same shape attributes, or the step is a
+       32px tile in one of them and a bare 20px box in the other. */
+    const ui = render(<Rating label="Tu puntuación" name="score" />);
+    const radio = inside(ui).getAllByRole("radio")[0];
+
+    expect(radio.className).toBe("sk-rating__item sk-button sk-interactive");
+    expect(radio.getAttribute("data-icon-only")).toBe("");
+    expect(radio.getAttribute("data-size")).toBe("sm");
+    expect(radio.getAttribute("data-variant")).toBe("ghost");
+  });
+
   it("takes the scale it is given", () => {
     const ui = render(<Rating label="Score" max={10} name="score" />);
     expect(inside(ui).getAllByRole("radio")).toHaveLength(10);
@@ -100,18 +113,18 @@ describe("RatingDisplay", () => {
     expect(within(image).queryAllByRole("img")).toHaveLength(0);
   });
 
-  it("fills the exact fraction rather than rounding to a whole symbol", () => {
+  it("hands the stylesheet the value itself, not a percentage of the strip", () => {
+    /* The stop is arithmetic in glyph space (whole symbols cost a tile, the fraction costs a
+       symbol), and only the stylesheet knows how wide a symbol is. A percentage of the strip is
+       what used to draw 3,8 and 4,3 alike: see `rating.css`. */
     const ui = render(<RatingDisplay label="4,3 de 5" value={4.3} />);
-    const strip = ui.container.querySelector<HTMLElement>(".sk-rating__symbols");
+    const root = ui.container.querySelector<HTMLElement>(".sk-rating");
 
-    expect(strip?.style.getPropertyValue("--sk-rating-fill")).toBe("86%");
-  });
-
-  it("paints the end of the scale instead of overflowing it", () => {
-    const ui = render(<RatingDisplay label="Perfecto" value={9} />);
+    expect(root?.style.getPropertyValue("--sk-rating-value")).toBe("4.3");
+    expect(root?.style.getPropertyValue("--sk-rating-max")).toBe("5");
     expect(
       ui.container.querySelector<HTMLElement>(".sk-rating__symbols")?.style.getPropertyValue("--sk-rating-fill"),
-    ).toBe("100%");
+    ).toBe("");
   });
 
   it("paints the number and the count only when they were written", () => {

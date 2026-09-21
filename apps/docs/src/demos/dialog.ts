@@ -44,7 +44,7 @@ export const dialogAnatomyTree = (t: Translate): UsageTree => ({
           {
             contract: "button",
             signature: "Button.action",
-            options: { tone: "danger", type: "submit" },
+            options: { variant: "solid", tone: "danger", type: "submit" },
             attrs: { value: "confirm" },
             children: t("demo.dialog.confirm"),
           },
@@ -62,6 +62,35 @@ export const dialogAnatomyTree = (t: Translate): UsageTree => ({
   },
 });
 
+/*
+ * A native `<dialog open>` still centres itself; for the diagram, keep it in the subject's flow so
+ * Annotated measures the whole panel. Narrower than the live modal so class-name gutters fit.
+ */
+export const dialogAnatomyCss = `.sk-annotated {
+  --sk-annotation-font-family: var(--font-family-code);
+}
+
+.sk-annotated__subject > .sk-dialog {
+  position: static;
+  inset: auto;
+  display: grid;
+  inline-size: min(100%, 22rem);
+  margin: 0;
+  max-inline-size: none;
+  opacity: 1;
+  scale: 1;
+  translate: none;
+  filter: blur(0);
+}
+
+.sk-annotated__subject > .sk-dialog::backdrop {
+  display: none;
+}
+
+.sk-annotated__subject {
+  text-align: center;
+}`;
+
 export const dialogConfirmTree = (t: Translate): UsageTree => ({
   contract: "layout",
   signature: "Stack",
@@ -70,7 +99,7 @@ export const dialogConfirmTree = (t: Translate): UsageTree => ({
     {
       contract: "button",
       signature: "Button.action",
-      options: { tone: "danger" },
+      options: { variant: "soft", tone: "danger" },
       attrs: { "data-dialog-demo-open": "" },
       children: t("demo.dialog.open"),
     },
@@ -93,7 +122,7 @@ export const dialogConfirmTree = (t: Translate): UsageTree => ({
           {
             contract: "button",
             signature: "Button.action",
-            options: { tone: "danger", type: "submit" },
+            options: { variant: "solid", tone: "danger", type: "submit" },
             attrs: { value: "confirm" },
             children: t("demo.dialog.confirm"),
           },

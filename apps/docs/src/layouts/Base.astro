@@ -27,6 +27,7 @@ import "@skryensya/core/components/avatar.css";
 import "@skryensya/core/components/loader.css";
 import "@skryensya/core/components/segmented.css";
 import "@skryensya/core/components/pagination.css";
+import "@skryensya/core/components/separator.css";
 import "@skryensya/core/components/input.css";
 /* The palette composes over `.sk-dialog` (decision 11), and its sheet says so on the first line: it
  * owns the search row, the list and the footer, not the modal frame. Without this sheet ⌘K came out
@@ -103,7 +104,7 @@ import "@skryensya/core/effects/collapse-header.css";
 
 /* kbd is in the global chrome (the ⌘K search badge, the palette footer), so its consumer skin loads
  * here rather than per-page, the same reason the button skin above does. */
-/* table skin: TokenTable, demos and playground all share one consumer CSS. */
+/* table skin: the token reference, demos and playground all share one consumer CSS. */
 /* pagination appears in /personalizar and the component page, one consumer skin. */
 /* switch: CodeBlock Condensed/Full density control, plus /personalizar and the component page. */
 import "../styles/site.css";
@@ -1269,6 +1270,13 @@ const PALETTE_PRESETS = palettePresets(locale);
       >
         <Fragment set:html={documentIndex!.html} />
         {!hideVanillaMount && vanillaMount && <VanillaMount {...vanillaMount} />}
+        <hr
+          class="sk-separator"
+          data-orientation="horizontal"
+          aria-orientation="horizontal"
+          data-tone="subtle"
+          data-spacing="lg"
+        >
         {/*
           ABOVE the prev/next nav, and above the site colophon in `.docs-footer` below it. Reading
           order is the argument: "something is wrong with THIS page" belongs while the reader is
@@ -1947,6 +1955,71 @@ const PALETTE_PRESETS = palettePresets(locale);
       * module still has to resolve to SOMETHING for the production graph to type-check against,
       * where a dynamic one inside a branch that provably never runs is simply gone.
       */}
+    {/*
+      * ONE BOOT PASS FOR EVERY ComponentPreview ON THE PAGE.
+      *
+      * This used to be a `<script is:inline>` rendered next to each preview, carrying its own copy
+      * of the function through `define:vars`. On a component page that is nine compiles of the same
+      * five kilobytes: 201ms of script evaluation in a CPU profile of `/components/comment-thread`,
+      * before any deferred enhancer could start. The per-preview facts now ride on each root as
+      * `data-sk-preview-*` and this reads them.
+      *
+      * STILL `is:inline`, AND STILL AT THE END OF THE BODY. It has to run before first paint (it
+      * decides which binding half is shown and which screen preset the stages wear, and doing that
+      * after paint is a visible flip), and it has to run after the previews are parsed. The end of
+      * the body is the one place that is both.
+      */}
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        var pref = d.getAttribute("data-sk-component-preview-pref") || "vanilla";
+        var sharedScreen = d.getAttribute("data-sk-component-preview-screen-pref");
+
+        document.querySelectorAll("[data-sk-preview-boot]").forEach(function (root) {
+          root.querySelectorAll("[data-sk-component-preview-binding]").forEach(function (panel) {
+            var name = panel.getAttribute("data-sk-component-preview-binding");
+            if (name === "vanilla" || name === "react") panel.hidden = name !== pref;
+          });
+
+          var screenTabs = root.querySelector("[data-sk-component-preview-screen-tabs]");
+          if (!screenTabs) return;
+
+          var seed = root.getAttribute("data-sk-preview-default-screen") || "";
+          var screen;
+          if (root.hasAttribute("data-sk-component-preview-screen-local")) {
+            /* This preview's opinion of its own starting point, never the page's: see `screenScope`
+               on ComponentPreview.astro. */
+            screen = seed || "mobile";
+          } else {
+            screen = sharedScreen || seed || "free";
+            if (screen === "xl" && !root.hasAttribute("data-sk-preview-zoomed")) screen = "free";
+            if (screen !== "xl" && screen !== "tablet" && screen !== "mobile") screen = "free";
+          }
+
+          screenTabs.setAttribute("data-value", screen);
+          screenTabs.querySelectorAll("[data-sk-component-preview-screen-option]").forEach(function (option) {
+            option.setAttribute("aria-checked", option.getAttribute("data-value") === screen ? "true" : "false");
+          });
+
+          /* `free` is the ABSENCE of the attribute, so nothing is written for it. */
+          if (screen !== "free") {
+            root.querySelectorAll(".sk-component-preview__stage").forEach(function (stage) {
+              stage.setAttribute("data-sk-component-preview-screen", screen);
+            });
+          }
+
+          /* XL's 1440px viewport only fits the docs column zoomed out (`syncXlZoom` in the vanilla
+             enhancer re-runs this later). Mirrored here so a stage never paints full-width-unzoomed
+             for a frame first. */
+          if (screen === "xl") {
+            var target =
+              parseFloat(getComputedStyle(root).getPropertyValue("--sk-component-preview-screen-xl")) || 1440;
+            root.style.setProperty("--sk-component-preview-xl-zoom", String(Math.min(1, root.clientWidth / target)));
+          }
+        });
+      })();
+    </script>
+
     <script>
       if (import.meta.env.DEV) {
         const { mountDebugPanel } = await import("@skryensya/devtools");

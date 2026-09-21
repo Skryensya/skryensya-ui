@@ -3,8 +3,23 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "a9ddab0cddc730b9"
+surface: "ab279d8654f1a54c"
 entries:
+  - date: 2026-09-21
+    kind: feature
+    es:
+      title: La fila de la etiqueta tiene su propio fondo
+      body: >-
+        <code>--sk-code-preview-label-bg</code> ya es un styling hook declarado: la etiqueta se pinta
+        como una región hundida aparte y el cuerpo del bloque queda sobre la superficie normal.
+        Antes ese valor existía en la hoja y ningún contrato lo nombraba, así que sobrescribirlo no
+        estaba documentado en ninguna parte.
+    en:
+      title: The label row has a ground of its own
+      body: >-
+        <code>--sk-code-preview-label-bg</code> is now a declared styling hook: the label paints as
+        its own sunken region while the body of the block sits on the ordinary surface. That value
+        existed in the stylesheet and no contract named it, so overriding it was documented nowhere.
   - date: 2026-09-17
     kind: chore
     es:

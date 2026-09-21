@@ -26,6 +26,7 @@ import { docsVersionMessages } from "./messages/_chrome/docs-version";
 import { groupMessages } from "./messages/_chrome/group";
 import { hookPlaygroundMessages } from "./messages/_chrome/hook-playground";
 import { hooksMessages } from "./messages/_chrome/hooks";
+import { installMessages } from "./messages/_chrome/install";
 import { kitMessages } from "./messages/_chrome/kit";
 import { navMessages } from "./messages/_chrome/nav";
 import { prefsMessages } from "./messages/_chrome/prefs";
@@ -43,6 +44,7 @@ import { avatarMessages } from "./messages/components/avatar";
 import { annotationMessages } from "./messages/components/annotation";
 import { backToTopMessages } from "./messages/components/back-to-top";
 import { badgeMessages } from "./messages/components/badge";
+import { diagramMessages } from "./messages/components/diagram";
 import { boxMessages } from "./messages/components/box";
 import { breadcrumbMessages } from "./messages/components/breadcrumb";
 import { buttonMessages } from "./messages/components/button";
@@ -100,6 +102,10 @@ import { primitivesMessages } from "./messages/components/primitives";
 import { processListMessages } from "./messages/components/process-list";
 import { timelineMessages } from "./messages/components/timeline";
 import { progressMessages } from "./messages/components/progress";
+import { descriptionListMessages } from "./messages/components/description-list";
+import { separatorMessages } from "./messages/components/separator";
+import { tagsInputMessages } from "./messages/components/tags-input";
+import { quoteMessages } from "./messages/components/quote";
 import { radioGroupMessages } from "./messages/components/radio-group";
 import { segmentedMessages } from "./messages/components/segmented";
 import { selectMessages } from "./messages/components/select";
@@ -130,14 +136,15 @@ import { foundationsMessages } from "./messages/foundations";
 import { gradientsMessages } from "./messages/gradients";
 import { indexMessages } from "./messages/index";
 import { navListMessages } from "./messages/nav-list";
-import { referenceMessages } from "./messages/reference";
 import { notFoundMessages } from "./messages/not-found";
 import { playgroundMessages } from "./messages/playground";
 import { densityMessages } from "./messages/density";
 import { releaseNotesMessages } from "./messages/release-notes";
 import { scrollbarMessages } from "./messages/scrollbar";
+import { stateButtonMessages } from "./messages/components/state-button";
 import { stateLayerMessages } from "./messages/state-layer";
 import { templatesMessages } from "./messages/templates";
+import { typographyMessages } from "./messages/components/typography";
 import { vaulMessages } from "./messages/vaul";
 
 export { defaultLocale, localeNames, locales, type Locale } from "./locales";
@@ -152,6 +159,7 @@ export const ui = {
     ...groupMessages.es,
     ...hookPlaygroundMessages.es,
     ...hooksMessages.es,
+    ...installMessages.es,
     ...kitMessages.es,
     ...navMessages.es,
     ...prefsMessages.es,
@@ -170,6 +178,7 @@ export const ui = {
     ...annotationMessages.es,
     ...backToTopMessages.es,
     ...badgeMessages.es,
+    ...diagramMessages.es,
     ...boxMessages.es,
     ...breadcrumbMessages.es,
     ...buttonMessages.es,
@@ -227,6 +236,10 @@ export const ui = {
     ...processListMessages.es,
     ...timelineMessages.es,
     ...progressMessages.es,
+    ...descriptionListMessages.es,
+    ...quoteMessages.es,
+    ...tagsInputMessages.es,
+    ...separatorMessages.es,
     ...radioGroupMessages.es,
     ...segmentedMessages.es,
     ...selectMessages.es,
@@ -235,6 +248,7 @@ export const ui = {
     ...sliderMessages.es,
     ...splitButtonMessages.es,
     ...stackMessages.es,
+    ...stateButtonMessages.es,
     ...statMessages.es,
     ...stepsMessages.es,
     ...questionnaireMessages.es,
@@ -244,6 +258,7 @@ export const ui = {
     ...tagMessages.es,
     ...textMessages.es,
     ...themeToggleMessages.es,
+    ...typographyMessages.es,
     ...tileMessages.es,
     ...timeFieldMessages.es,
     ...toastMessages.es,
@@ -257,7 +272,6 @@ export const ui = {
     ...gradientsMessages.es,
     ...indexMessages.es,
     ...navListMessages.es,
-    ...referenceMessages.es,
     ...notFoundMessages.es,
     ...playgroundMessages.es,
     ...densityMessages.es,
@@ -276,6 +290,7 @@ export const ui = {
     ...groupMessages.en,
     ...hookPlaygroundMessages.en,
     ...hooksMessages.en,
+    ...installMessages.en,
     ...kitMessages.en,
     ...navMessages.en,
     ...prefsMessages.en,
@@ -294,6 +309,7 @@ export const ui = {
     ...annotationMessages.en,
     ...backToTopMessages.en,
     ...badgeMessages.en,
+    ...diagramMessages.en,
     ...boxMessages.en,
     ...breadcrumbMessages.en,
     ...buttonMessages.en,
@@ -351,6 +367,10 @@ export const ui = {
     ...processListMessages.en,
     ...timelineMessages.en,
     ...progressMessages.en,
+    ...descriptionListMessages.en,
+    ...quoteMessages.en,
+    ...tagsInputMessages.en,
+    ...separatorMessages.en,
     ...radioGroupMessages.en,
     ...segmentedMessages.en,
     ...selectMessages.en,
@@ -359,6 +379,7 @@ export const ui = {
     ...sliderMessages.en,
     ...splitButtonMessages.en,
     ...stackMessages.en,
+    ...stateButtonMessages.en,
     ...statMessages.en,
     ...stepsMessages.en,
     ...questionnaireMessages.en,
@@ -368,6 +389,7 @@ export const ui = {
     ...tagMessages.en,
     ...textMessages.en,
     ...themeToggleMessages.en,
+    ...typographyMessages.en,
     ...tileMessages.en,
     ...timeFieldMessages.en,
     ...toastMessages.en,
@@ -381,7 +403,6 @@ export const ui = {
     ...gradientsMessages.en,
     ...indexMessages.en,
     ...navListMessages.en,
-    ...referenceMessages.en,
     ...notFoundMessages.en,
     ...playgroundMessages.en,
     ...densityMessages.en,

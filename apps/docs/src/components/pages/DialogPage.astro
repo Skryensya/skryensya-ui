@@ -18,13 +18,13 @@ import CodeBlock from "../CodeBlock.astro";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  dialogAnatomyCss,
   dialogAnatomyTree,
   dialogConfirmScript,
   dialogConfirmTree,
   dialogVaulScript,
   dialogVaulTree,
 } from "../../demos/dialog";
-import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
 
 const t = useTranslations(getLocale(Astro.url));
@@ -66,19 +66,20 @@ await initComponents();`;
   ]}
   testFiles={["packages/react/src/components/dialog.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("dialog.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("dialog.anatomyBody")} />
     <ComponentPreview
       tree={dialogAnatomyTree(t)}
-      css={annotationDemoCss}
+      css={dialogAnatomyCss}
       label={t("dialog.anatomyPreviewLabel")}
       screens={false}
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("dialog.lede")} />
     <h3>{t("dialog.confirmTitle")}</h3>
     <p set:html={t("dialog.confirmAnatomy")} />
     <ComponentPreview tree={dialogConfirmTree(t)} previewScript={dialogConfirmScript} label="Confirm" viewport="overlay" />
@@ -95,6 +96,7 @@ await initComponents();`;
       <li set:html={t("dialog.contractItem5")} />
       <li set:html={t("dialog.contractItem6")} />
       <li set:html={t("dialog.contractItem7")} />
+      <li set:html={t("dialog.contractItem8")} />
     </ul>
 
     <h3>{t("dialog.vaulTitle")}</h3>

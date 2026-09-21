@@ -11,9 +11,8 @@ type ShikiTheme = {
   type: "light" | "dark";
   /** The editor background. Shiki emits this as `--shiki-{light,dark}-bg`; without it, Shiki falls
    *  back to its OWN default (near-white/near-black) instead of leaving the variable unset, so
-   *  `code-preview.css`'s own `var(--shiki-light-bg, var(--color-bg-surface-sunken))` fallback never
-   *  actually fires  -  the block quietly painted Shiki's plain default instead of the system's sunken
-   *  tone, indistinguishable from the page around it. Set explicitly here instead. */
+   *  `code-preview.css`'s own `var(--shiki-light-bg, var(--color-bg-surface))` fallback never
+   *  actually fires. Set explicitly here instead. */
   bg: string;
   settings: Array<{
     scope: string[];
@@ -26,11 +25,9 @@ type ShikiTheme = {
  * browser to resolve `light-dark()` or CSS variables, so this file names the same palette families and
  * stops `_color.scss` uses for semantic text tokens.
  *
- * THE BACKGROUND MIRRORS `_color.scss` EXACTLY: `--color-bg-surface-sunken` is
- * `light-dark(var(--palette-stone-100), var(--palette-stone-950))`, so `bg` below reads the same
- * `stone` stops (darker `stone-200`/`-300` options were tried live and reverted  -  stays at the
- * token's own value). A code block is a well you read INTO, the same reasoning Input's own sunken
- * surface uses, not a card floating at the page's own canvas tone.
+ * THE BACKGROUND MIRRORS `_color.scss`'s `--color-bg-surface`: `white` in light mode and
+ * `stone-900` in dark. Code is a working surface, distinct from the page canvas (`stone-100` /
+ * `stone-950`) while keeping the same semantic surface treatment as the rest of the system.
  *
  * FOREGROUND MOSTLY MIRRORS IT TOO, with one deliberate exception: `keyword`/`definition` and `tag`
  * read `_color.scss`'s own `--color-text-accent`/`--color-text-danger` FAMILY and HUE (blue, red) but
@@ -68,9 +65,8 @@ const ROLE_STOPS: Record<SyntaxRole, { family: PaletteFamily; light: number; dar
 
 /**
  * Light-mode-only chroma override for the two roles that otherwise ran hotter than every other hue
- * here. Same lightness and hue as `blue-700`/`red-700` (so contrast against `--palette-stone-100`
- * and each role's own colour identity both hold), chroma pulled down to roughly `sky-700`/`emerald-
- * 700`'s own band (~0.12-0.14) instead of their own ~0.21-0.24.
+ * here. Same lightness and hue as `blue-700`/`red-700`, with chroma pulled down to roughly
+ * `sky-700`/`emerald-700`'s own band (~0.12–0.14).
  */
 const LIGHT_CHROMA: Partial<Record<SyntaxRole, string>> = {
   keyword: "oklch(48.8% 0.13 264.376)",
@@ -138,8 +134,8 @@ function buildTheme(name: string, mode: "light" | "dark"): ShikiTheme {
   return {
     name,
     type: mode,
-    // Mirrors `--color-bg-surface-sunken` (`_color.scss`): `stone-100` light, `stone-950` dark.
-    bg: mode === "light" ? palettes.stone[100] : palettes.stone[950],
+    // Mirrors `--color-bg-surface` (`_color.scss`): white light, stone-900 dark.
+    bg: mode === "light" ? "oklch(100% 0 0)" : palettes.stone[900],
     settings: (Object.keys(SCOPES) as SyntaxRole[]).map((role) => ({
       scope: SCOPES[role],
       settings: { foreground: colorFor(role, mode) },
@@ -151,4 +147,72 @@ function buildTheme(name: string, mode: "light" | "dark"): ShikiTheme {
 export const syntaxThemes = {
   light: buildTheme("skryensya-light", "light"),
   dark: buildTheme("skryensya-dark", "dark"),
+};
+
+/*
+ * THE SAME EIGHT COLOURS, AS EIGHT CLASSES, because a theme this small does not need to repeat
+ * itself a million times.
+ *
+ * Shiki writes each token's colour INLINE, as
+ * `style="--shiki-light:oklch(…);--shiki-dark:oklch(…)"`. That is ~92 bytes on every token, and this
+ * theme has exactly eight roles, so the built site shipped 1,135,042 spans carrying eight distinct
+ * values between them: 99.7 MB, 47.7% of every byte of HTML on the site, measured across 278 pages.
+ *
+ * `codeTokenTransformer` below swaps that inline style for one class per role, and the rules in
+ * `site.css` set the SAME two variables on the class. Nothing downstream changes, because
+ * `code-preview.css` already reads `--shiki-light`/`--shiki-dark` off each span rather than off the
+ * block: it cannot tell whether the variable arrived inline or from a class.
+ *
+ * `roleForColors` is keyed on the light value alone. The two are a pair by construction (one call to
+ * `colorFor` each, same role), and one of them is enough to identify the role.
+ */
+export const SYNTAX_ROLES = Object.keys(ROLE_STOPS) as SyntaxRole[];
+
+/** `keyword` -> `tk-keyword`. Exported so the stylesheet's own test can name the same classes. */
+export const syntaxRoleClass = (role: SyntaxRole): string => `tk-${role}`;
+
+/** Every role's pair, for the rules in `site.css` and the test that keeps the two in step. */
+export const syntaxRoleColors: Record<SyntaxRole, { light: string; dark: string }> = Object.fromEntries(
+  SYNTAX_ROLES.map((role) => [role, { light: colorFor(role, "light"), dark: colorFor(role, "dark") }]),
+) as Record<SyntaxRole, { light: string; dark: string }>;
+
+/*
+ * FIRST ROLE DECLARED WINS, because two of them are the same colour: `keyword` and `definition` both
+ * resolve to the blue `LIGHT_CHROMA` override, so a naive map would hand every keyword the
+ * `tk-definition` class and `tk-keyword` would never appear. The rules in `site.css` still carry all
+ * eight: the ROLES are the model here and their sharing a value today is incidental, so a future
+ * change that pulls them apart edits one colour rather than re-deriving which class exists.
+ */
+const roleForLightColor = new Map<string, SyntaxRole>();
+for (const role of SYNTAX_ROLES) {
+  const light = colorFor(role, "light");
+  if (!roleForLightColor.has(light)) roleForLightColor.set(light, role);
+}
+
+/*
+ * A Shiki transformer, typed structurally for the same reason `ShikiTheme` above is: `shiki` is
+ * Astro's dependency, not one this app installs.
+ *
+ * TOKENS THAT MATCH NO ROLE LOSE THE STYLE RATHER THAN KEEPING IT. Shiki paints an unscoped token
+ * with its own built-in default (`#333333` / `#BBBBBB`), a pair that belongs to no palette in this
+ * system and was never chosen. `code-preview.css` already falls back to `--color-text-primary` when
+ * the variables are absent, which IS the colour those tokens were meant to be; dropping the style
+ * lets that fallback fire instead of shipping Shiki's grey.
+ */
+type HastElement = { type: string; tagName?: string; properties?: Record<string, unknown> };
+
+export const codeTokenTransformer = {
+  name: "skryensya:token-classes",
+  span(node: HastElement) {
+    const style = node.properties?.style;
+    if (typeof style !== "string") return;
+    const light = /--shiki-light:\s*([^;]+)/.exec(style)?.[1]?.trim();
+    if (!light) return;
+    delete node.properties!.style;
+    const role = roleForLightColor.get(light);
+    if (!role) return;
+    const existing = node.properties!.class;
+    const className = syntaxRoleClass(role);
+    node.properties!.class = typeof existing === "string" && existing ? `${existing} ${className}` : className;
+  },
 };

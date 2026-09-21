@@ -23,9 +23,8 @@ entries:
       - component-preview
       - content
       - date-picker
-      - details
       - editor
-      - icon-state-button
+      - state-button
       - media-gradient
       - megamenu
       - menu

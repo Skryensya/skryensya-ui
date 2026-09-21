@@ -22,9 +22,7 @@ const href = (path: string) => localizePath(path, locale);
   contractId="tile"
   testFiles={["packages/react/src/components/tile.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("tilePage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("tilePage.anatomyBody")} />
     <ComponentPreview
       tree={tileAnatomyTree(t)}
@@ -34,7 +32,10 @@ const href = (path: string) => localizePath(path, locale);
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("tilePage.lede")} />
     <ComponentPreview tree={expandableTileTree(t)} label={t("tilePage.expandableLabel")} />
 
     <p set:html={t("tilePage.body1")} />

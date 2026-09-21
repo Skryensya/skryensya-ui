@@ -33,9 +33,7 @@ const styles = `@import "@skryensya/core/patterns/anchored.css";
   ]}
   testFiles={["packages/vanilla/src/components/date-picker.svelte.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("datePicker.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("datePicker.anatomyBody")} />
     <ComponentPreview
       html={datePickerAnatomyHtml(t)}
@@ -45,7 +43,10 @@ const styles = `@import "@skryensya/core/patterns/anchored.css";
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("datePicker.lede")} />
     <h3>{t("datePicker.nativeTitle")}</h3>
     <p set:html={t("datePicker.nativeBody")} />
     <ComponentPreview tree={nativeDatePickerTree(t)} label={t("datePicker.nativeLabel")} />

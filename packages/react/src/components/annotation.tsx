@@ -14,7 +14,7 @@ import {
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
-/* Matches annotation.css: mobile turns the four gutters into two stacked label groups. */
+/* Matches annotation.css: narrow screens turn the four gutters into two wrapping label clusters. */
 const stackedLabelsQuery = "(max-width: 40rem)";
 
 /** One label: what it says, what it points at, and which margin it asks for. */
@@ -23,7 +23,7 @@ export type AnnotationEntry = {
   for: string;
   /** The margin it asks for. A request; where it lands is what decides the leader. Default `inline-start`. */
   side?: AnnotationSide;
-  /** Cross-axis alignment after narrow screens stack labels above or below the specimen. */
+  /** Where the label lands in its row once narrow screens cluster labels above and below the specimen. */
   mobileAlign?: AnnotationMobileAlign;
   /** Whether the selector names the first match or every one. `all` for a genuinely plural name. */
   match?: AnnotationMatch;
@@ -185,7 +185,6 @@ export function Annotated({
       ringInset: annotationRingInset(ringPlacement, ringDistance),
       ringRadius,
       distribute: !stacked,
-      leaderRoute: stacked ? "right-elbow" : "direct",
     });
 
     setPlacements((current) => (samePlacements(current, next) ? current : next));

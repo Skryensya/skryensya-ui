@@ -33,9 +33,9 @@ CommentVote:
   useWhen:
     - "hay un puntaje que se sube o se baja, con el voto propio del lector reflejado"
   avoidWhen:
-    - "es una sola valoración sin dirección (me gusta); eso es un IconStateButton"
+    - "es una sola valoración sin dirección (me gusta); eso es un StateButton"
   alternatives:
-    - IconStateButton
+    - StateButton
 
 CommentComposer:
   useWhen:

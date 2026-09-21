@@ -1,0 +1,14 @@
+# The structure lives in packages/core/src/otp-input.ts. Here, only why it is chosen.
+
+OtpInput:
+  useWhen:
+    - "se pide un código de un solo uso enviado por SMS, email o una app de autenticación"
+    - "el código tiene un largo fijo conocido de antemano (4, 6 dígitos)"
+    - "conviene que el teléfono ofrezca autocompletar el código recibido por SMS"
+  avoidWhen:
+    - "el valor es texto libre de largo variable; eso es Input"
+    - "el valor es un número con paso y límites; eso es NumberField"
+    - "hace falta validar el código contra un servidor antes de aceptarlo; eso lo resuelve quien compone, escuchando sk:otpinputvaluecomplete y mostrando el error en su propio mensaje"
+  alternatives:
+    - Input
+    - NumberField

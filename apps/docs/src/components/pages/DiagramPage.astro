@@ -1,0 +1,246 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  diagramAwsCss,
+  diagramAwsTree,
+  diagramBranchTree,
+  diagramCycleCss,
+  diagramDemoCss,
+  diagramFlowTree,
+  diagramInfraTree,
+  diagramLogicTree,
+  diagramModelTree,
+  diagramProcessTree,
+  diagramStateTree,
+  diagramTreeTree,
+  diagramZonedCss,
+} from "../../demos/diagram";
+import { getLocale, useTranslations } from "../../i18n";
+/* The sheet itself, not only its source: the Style hooks table resolves each hook against a real
+   element, and a page that never loads this stylesheet shows every value blank. Nothing else is
+   needed here, and that is worth noticing: a diagram's nodes are whatever text the author wrote, so
+   unlike Annotation this page slots no other component into its demos. */
+import "@skryensya/core/components/diagram.css";
+/* The infrastructure demo puts a mark in each node's `logo` slot: an ImageFrame around an SVG for
+   the services, an Icon for the visitor. A preview only gets the CSS its page imported, and a
+   slotted child counts. */
+import "@skryensya/core/patterns/image-frame.css";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/diagram.css";`;
+
+const html = `<div
+  class="sk-diagram"
+  data-sk-diagram
+  role="group"
+  aria-label="Flujo de autenticación"
+  style="--sk-diagram-columns: 2"
+>
+  <!-- vacío a propósito: el enhancer dibuja acá, con números que sólo existen medidos -->
+  <svg class="sk-diagram__connectors" aria-hidden="true" focusable="false"></svg>
+
+  <ul class="sk-diagram__nodes">
+    <li class="sk-diagram__node" data-node="request" data-shape="terminal"
+        style="--sk-diagram-node-span: 2">Petición</li>
+    <li class="sk-diagram__node" data-node="session" data-shape="decision"
+        style="--sk-diagram-node-span: 2">¿Sesión válida?</li>
+    <li class="sk-diagram__node" data-node="app">Panel</li>
+    <li class="sk-diagram__node" data-node="login">Ingreso</li>
+  </ul>
+
+  <ul class="sk-diagram__edges">
+    <li class="sk-diagram__edge" data-from="request" data-to="session"></li>
+    <li class="sk-diagram__edge" data-from="session" data-to="app">sí</li>
+    <li class="sk-diagram__edge" data-from="session" data-to="login">no</li>
+    <li class="sk-diagram__edge" data-from="login" data-to="session">reintenta</li>
+  </ul>
+</div>`;
+
+const react = `import { Diagram } from "@skryensya/react/diagram";
+
+<Diagram
+  label="Flujo de autenticación"
+  columns={2}
+  nodes={[
+    { node: "request", shape: "terminal", span: 2, children: "Petición" },
+    { node: "session", shape: "decision", span: 2, children: "¿Sesión válida?" },
+    { node: "app", children: "Panel" },
+    { node: "login", children: "Ingreso" },
+  ]}
+  edges={[
+    { from: "request", to: "session" },
+    { from: "session", to: "app", children: "sí" },
+    { from: "session", to: "login", children: "no" },
+    { from: "login", to: "session", children: "reintenta" },
+  ]}
+/>`;
+
+/* The hooks a diagram actually retunes, and the one nobody guesses: the row gap, because it is the
+   vertical run of every connector and therefore the whole rhythm of the drawing. */
+const hooks = `.mi-diagrama {
+  /* la separacion entre filas ES el tramo vertical de cada conector:
+     con poco, el dibujo se lee como una pila y no como pasos */
+  --sk-diagram-row-gap: var(--space-stack-xl);
+  --sk-diagram-column-gap: var(--space-inline-lg);
+
+  /* el techo de un nodo: lo que impide que una traduccion larga
+     convierta tres columnas en seis filas */
+  --sk-diagram-node-max-inline-size: 11rem;
+  --sk-diagram-node-min-inline-size: 7rem;
+
+  /* el conector es cromo, no contenido: a dos pixeles de acento
+     pasa a ser lo mas ruidoso de un dibujo que es sobre las cajas */
+  --sk-diagram-connector-color: var(--color-border-strong);
+  --sk-diagram-connector-width: 1.5px;
+
+  /* la capsula de la etiqueta necesita fondo: la linea pasa por debajo */
+  --sk-diagram-edge-bg: var(--color-bg-canvas);
+  --sk-diagram-edge-color: var(--color-text-secondary);
+}`;
+---
+
+<ComponentPageShell
+  title="Diagram"
+  description={t("diagram.description")}
+  badge={t("diagram.betaBadge")}
+  contractId="diagram"
+  testFiles={["packages/core/src/diagram.test.ts", "packages/vanilla/src/components/diagram.test.ts", "packages/react/src/components/diagram.test.tsx"]}}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("diagram.lede")} />
+
+    <h3>{t("diagram.whenTitle")}</h3>
+    <p set:html={t("diagram.whenBody1")} />
+    <p set:html={t("diagram.whenBody2")} />
+
+    <h3>{t("diagram.modelTitle")}</h3>
+    <p set:html={t("diagram.modelBody")} />
+
+    <h3>{t("diagram.flowTitle")}</h3>
+    <p set:html={t("diagram.flowBody")} />
+    <ComponentPreview
+      tree={diagramFlowTree(t)}
+      css={diagramDemoCss}
+      label={t("diagram.flowPreviewLabel")}
+    />
+
+    <h3>{t("diagram.branchTitle")}</h3>
+    <p set:html={t("diagram.branchBody")} />
+    <ComponentPreview
+      tree={diagramBranchTree(t)}
+      css={diagramCycleCss}
+      label={t("diagram.branchPreviewLabel")}
+    />
+
+    <h3>{t("diagram.treeTitle")}</h3>
+    <p set:html={t("diagram.treeBody")} />
+    <ComponentPreview
+      tree={diagramTreeTree(t)}
+      css={diagramDemoCss}
+      label={t("diagram.treePreviewLabel")}
+    />
+
+    <h3>{t("diagram.stateTitle")}</h3>
+    <p set:html={t("diagram.stateBody")} />
+    <ComponentPreview
+      tree={diagramStateTree(t)}
+      css={diagramCycleCss}
+      label={t("diagram.statePreviewLabel")}
+    />
+
+    <h3>{t("diagram.processTitle")}</h3>
+    <p set:html={t("diagram.processBody")} />
+    <ComponentPreview
+      tree={diagramProcessTree(t)}
+      css={diagramDemoCss}
+      label={t("diagram.processPreviewLabel")}
+    />
+
+    <h3>{t("diagram.logicTitle")}</h3>
+    <p set:html={t("diagram.logicBody")} />
+    <ComponentPreview
+      tree={diagramLogicTree(t)}
+      css={diagramDemoCss}
+      label={t("diagram.logicPreviewLabel")}
+    />
+
+    <h3>{t("diagram.modelTitleDiagram")}</h3>
+    <p set:html={t("diagram.modelBodyDiagram")} />
+    <p set:html={t("diagram.modelBodyDiagram2")} />
+    <ComponentPreview
+      tree={diagramModelTree(t)}
+      css={diagramDemoCss}
+      label={t("diagram.modelPreviewLabel")}
+    />
+    <p set:html={t("diagram.modelWarn")} />
+
+    <h3>{t("diagram.infraTitle")}</h3>
+    <p set:html={t("diagram.infraBody")} />
+    <ComponentPreview
+      tree={diagramInfraTree(t)}
+      css={diagramZonedCss}
+      label={t("diagram.infraPreviewLabel")}
+    />
+    <p set:html={t("diagram.infraBody2")} />
+    <p set:html={t("diagram.infraBody3")} />
+    <p set:html={t("diagram.infraBody4")} />
+
+    <h3>{t("diagram.awsTitle")}</h3>
+    <p set:html={t("diagram.awsBody")} />
+    <ComponentPreview
+      tree={diagramAwsTree(t)}
+      css={diagramAwsCss}
+      label={t("diagram.awsPreviewLabel")}
+    />
+    <p set:html={t("diagram.awsBody2")} />
+
+    <h3>{t("diagram.layoutTitle")}</h3>
+    <p set:html={t("diagram.layoutBody")} />
+
+    <h3>{t("diagram.shapesTitle")}</h3>
+    <p set:html={t("diagram.shapesBody")} />
+
+    <h3>{t("diagram.routingTitle")}</h3>
+    <p set:html={t("diagram.routingBody")} />
+
+    <h3>{t("diagram.runtimeTitle")}</h3>
+    <p set:html={t("diagram.runtimeBody1")} />
+    <p set:html={t("diagram.runtimeBody2")} />
+
+    <h3>{t("diagram.progressiveTitle")}</h3>
+    <p set:html={t("diagram.progressiveBody")} />
+
+    <h3>{t("diagram.optionsTitle")}</h3>
+    <p set:html={t("diagram.optionsBody")} />
+
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("diagram.contractItem1")} />
+      <li set:html={t("diagram.contractItem2")} />
+      <li set:html={t("diagram.contractItem3")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+    <CodeBlock code={html} label="HTML" lang="html" />
+    <CodeBlock code={react} label="React" lang="tsx" />
+
+    <h4>{t("diagram.cssTitle")}</h4>
+    <p set:html={t("diagram.cssBody")} />
+    <CodeBlock code={hooks} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("diagram.a11yP1")} />
+    <p set:html={t("diagram.a11yP2")} />
+    <p set:html={t("diagram.a11yP3")} />
+  </Fragment>
+</ComponentPageShell>

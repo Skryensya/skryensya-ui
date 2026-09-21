@@ -1,0 +1,17 @@
+# The structure lives in packages/core/src/tags-input.ts. Here, only why it is chosen.
+
+TagsInput:
+  useWhen:
+    - "several values are typed into one field: keywords, recipients, labels, skills"
+    - "the vocabulary is the person's own, so whatever they type is a valid value"
+    - "the values are short enough to read as chips; a long phrase in a chip is a truncation"
+  avoidWhen:
+    - "the values must come from a known list; that is a Combobox, and choosing this instead means
+       accepting typos as data"
+    - "there is one value; that is an Input"
+    - "the chips are not a field at all but applied filters or keywords to display; that is Tag"
+    - "what is being added comes from the platform rather than the keyboard; that is FileUpload"
+  alternatives:
+    - Combobox
+    - Tag
+    - Input

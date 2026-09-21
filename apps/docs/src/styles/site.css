@@ -2983,7 +2983,10 @@ main a:not(
  * heading in the document above the tables it owns. Nothing here invents a row type or reaches into
  * the component: this file only spaces the blocks and sizes the columns, which is the page's job.
  */
-.token-tier {
+/* BETWEEN tiers, not above the first one. This used to be an unconditional top margin because a
+   filter row sat between the lede and the first tier and absorbed it; with the filters gone
+   (`pages/reference.astro`) the same rule opened a section-sized hole under the lede. */
+.token-tier + .token-tier {
   margin-block-start: var(--space-section);
 }
 
@@ -3030,7 +3033,7 @@ main a:not(
  * tables from stepping out of line with one another.
  */
 .token-group .sk-table__head th:nth-child(1) {
-  inline-size: 24%;
+  inline-size: 34%;
 }
 
 /* Wide enough for the longest badge word ("component") to keep its own track. */
@@ -3038,28 +3041,26 @@ main a:not(
   inline-size: 15%;
 }
 
+/* The rest, and it needs it: the value column carries whole `var()` chains and `round(calc(...))`
+   expressions. It took 33% while a fourth track held the browser-resolved value; that column is
+   gone (see `pages/reference.astro`) and this one inherited its width. */
 .token-group .sk-table__head th:nth-child(3) {
-  inline-size: 33%;
-}
-
-.token-group .sk-table__head th:nth-child(4) {
-  inline-size: 28%;
+  inline-size: 51%;
 }
 
 /*
  * ONE LINE PER VALUE. A token is one string; broken across three lines mid-identifier
  * (`--sk-anchored-arrow-` / `size`) it stops being one string on screen, and a column of them stops
  * being scannable at all, which is the whole job of a reference table. Anything longer than its
- * track ends in an ellipsis and keeps its full text in `title` (and in the copy button beside it,
- * which never copied the truncation).
+ * track ends in an ellipsis and keeps its full text in `title`.
  */
 .token-group .sk-table__cell,
 .token-group .sk-table__body .sk-table__header {
   white-space: nowrap;
-}
-
-.token-group .sk-table__cell > span,
-.token-group .sk-table__body .sk-table__header > span {
+  /* ON THE CELL, not on an inner span, which is where this used to live: the plain table puts the
+     text straight in the cell and has no wrapper left to hang it on. `data-layout="fixed"` on the
+     table is what makes this work  -  a cell in an auto-layout table sizes to its content and never
+     overflows, so there is nothing to clip. */
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -3067,74 +3068,127 @@ main a:not(
 /*
  * NINETY-SIX TABLES, AND THE READER LOOKS AT ONE. Each family is its own containment root, so
  * layout, style and paint stop at its edge: the browser skips the work for every table that is off
- * screen, and a keystroke in the filter only relayouts the tables in view instead of all of them.
- * The size estimate keeps the scrollbar honest while a table is skipped, and it is a per-row
- * estimate rather than a constant because a family holds anywhere from two rows to sixty.
+ * screen, and only the tables in view are ever laid out. The size estimate keeps the scrollbar
+ * honest while a table is skipped, and it is a per-row estimate rather than a constant because a
+ * family holds anywhere from two rows to sixty.
  */
 .token-group {
   content-visibility: auto;
   contain-intrinsic-size: auto var(--token-group-block-size, 20rem);
 }
 
+/* ── installation: one panel, two halves ──────────────────────────────────── */
 /*
- * COPYABLE TOKEN CELLS: the real CopyButton (components/CopyButton.astro), one per cell, sitting
- * beside the value it copies rather than swallowing the whole cell's click. `target` points at the
- * cell's own text, in an id'd <span> next to it, so the button copies only that text and never its
- * own (icon-only, sr-only label) or the row's other columns.
+ * The Installation tab shows the Vanilla half or the React half, never both, and WHICH is a pure
+ * function of the document preference every ComponentPreview binding toggle already writes
+ * (`Base.astro` seeds it before first paint, so this never flashes the wrong half).
  *
- * A ghost button is already invisible at rest, so this is what shows the cell is interactive
- * before anyone clicks: the button's own icon sits there from the start, the state layer on it
- * answers hover, nothing here has to fake that separately.
- *
- * THE CELL STAYS A CELL, and this is the bug this block used to BE. It declared `display: flex` on
- * the `<th>`/`<td>` itself, which does not make a table cell a flex row: it stops the element from
- * generating a table cell at all. The browser then wraps the run of non-cell boxes into ONE
- * anonymous cell, so on every row of this reference the definition and the resolved value shared a
- * single 321px box, stacked, while the fourth declared track sat empty at the end of the row. The
- * "wrapping" this table was accused of was two columns living inside one.
- *
- * So the layout is done WITHOUT taking the cell out of the table model: the text is a block that
- * reserves the button's width, and the button is absolutely positioned into that reserved strip.
- * `position: relative` on a table cell is what makes the strip its own containing block, and it
- * also costs nothing per row, which matters on a page that renders three thousand of these.
+ * `display: none` rather than the `hidden` attribute the previews use on their stages: there is no
+ * enhancer that owns these two boxes, the attribute is on `<html>` and always present, so the
+ * stylesheet can answer on its own with nothing to keep in step. Both halves stay in the document,
+ * which is what keeps the hidden one reachable by the browser's own find-in-page.
  */
-.sk-table__header--copy,
-.sk-table__cell--copy {
-  position: relative;
-  /* The strip the button sits in, measured the way the button is placed: the cell's own inline
-     padding (where the button's trailing edge lands), the button, and a gap before the text. */
-  padding-inline-end: calc(
-    var(--sk-table-cell-padding-x) + var(--size-control-sm) + var(--space-inline-sm)
-  );
+/* A half opens with a heading of its own, and that heading must not add a second gap under the
+   switch row: the panel grid already spaced them. */
+.docs-install__half > :first-child {
+  margin-block-start: 0;
 }
 
-.sk-table__header--copy > span,
-.sk-table__cell--copy > span {
-  display: block;
-  min-inline-size: 0;
+html[data-sk-component-preview-pref="react"] [data-sk-install-binding="vanilla"],
+html[data-sk-component-preview-pref="vanilla"] [data-sk-install-binding="react"] {
+  display: none;
 }
 
-.sk-table__header--copy .sk-copy-button,
-.sk-table__cell--copy .sk-copy-button {
+/*
+ * THE PAGE'S BINDING SWITCH, at the trailing edge of the masthead's title row.
+ *
+ * `margin-inline-start: auto` rather than `justify-content: space-between` on the row: the row also
+ * holds the optional Beta badge, which belongs NEXT TO the title and not pushed to the far edge with
+ * it. An auto margin moves one item and leaves the rest of the row packed where it was.
+ *
+ * It rides the collapse with the rest of the header (`sk-fx-collapse-header`), so it is still there
+ * once the band has closed to its bar, which is the point of putting it here: previews are scattered
+ * down a long page and the switch has to stay reachable from all of them.
+ */
+.docs-component-hero__binding {
+  /*
+   * HELD STILL WHILE THE BAND COLLAPSES. The header is `position: sticky`, so it is already the
+   * containing block; its box is a constant 66px tall at every scroll position (the height that goes
+   * away lives in `.docs-component-hero__spacer`, which simply scrolls off), so an absolute box
+   * centred in it cannot move. Laid out in the title row instead, it rode the heading's interpolated
+   * type down and across by 25px and 8px over the collapse.
+   */
   position: absolute;
-  inset-inline-end: var(--sk-table-cell-padding-x);
-  /* Centered on the block axis instead of pinned to the top padding: a wrapped, multi-line cell
-     (long `color-mix(...)` values, say) would otherwise leave the button stranded next to the
-     first line. `translate` (not `transform`) so it composes with `.sk-icon-toggle`'s own
-     `transform: scale(...)` on press instead of being replaced by it. */
+  /*
+   * A REAL INSET FROM THE BAND'S EDGE, in px rather than 0. The header's own padding is interpolated
+   * by the collapse, so anchoring to the padding box alone both sat the switch flush against the
+   * band's trailing edge and would have let it drift as that padding animates. An explicit length
+   * off the same edge is a constant the collapse cannot touch.
+   */
+  inset-inline-end: 24px;
   inset-block-start: 50%;
+  /* `translate`, not `transform`, so it composes with the pressed `scale()` the option carries. */
   translate: 0 -50%;
   flex-shrink: 0;
 }
 
 /*
- * Where the page's single copy button waits between cells (components/CopyCells.astro,
- * scripts/copy-cells.ts). The strip it lands in is reserved above whether or not it is there, so a
- * cell does not change width when the button arrives; this is only the parking spot, and it holds
- * nothing a reader should see.
+ * Below the reading width the heading needs the full line, so the switch stops being an overlay and
+ * takes a row of its own under the title. Static again: there is nothing beside it to collide with.
  */
-.docs-copy-cells {
-  display: none;
+@media (max-width: 40rem) {
+  .docs-component-hero__binding {
+    position: static;
+    translate: none;
+    margin-block-start: var(--space-stack-xs);
+  }
+}
+
+/* ── syntax token colours ───────────────────────────────────────────────── */
+/*
+ * ONE RULE PER SYNTAX ROLE, instead of the same eight colours inlined on every token Shiki emits.
+ *
+ * Measured before this existed: 1,135,042 token spans across the built site, each carrying
+ * `style="--shiki-light:…;--shiki-dark:…"`, for 99.7 MB  -  47.7% of all the HTML this site ships,
+ * to say one of eight things. `codeTokenTransformer` (lib/syntax-theme.ts) now writes a class and
+ * these rules carry the pair.
+ *
+ * THE SAME TWO VARIABLES, deliberately: `code-preview.css` reads `--shiki-light`/`--shiki-dark` off
+ * each span rather than off the block, so it cannot tell whether they arrived inline or from a
+ * class, and nothing downstream needed changing. The values are generated from `ROLE_STOPS`; the
+ * test in `syntax-theme.test.ts` fails if this block and that module ever disagree.
+ */
+.tk-comment {
+  --shiki-light: oklch(44.4% 0.011 73.639);
+  --shiki-dark: oklch(70.9% 0.01 56.259);
+}
+.tk-keyword {
+  --shiki-light: oklch(48.8% 0.13 264.376);
+  --shiki-dark: oklch(80.9% 0.105 251.813);
+}
+.tk-tag {
+  --shiki-light: oklch(50.5% 0.13 27.518);
+  --shiki-dark: oklch(80.8% 0.114 19.571);
+}
+.tk-punctuation {
+  --shiki-light: oklch(37.4% 0.01 67.558);
+  --shiki-dark: oklch(86.9% 0.005 56.366);
+}
+.tk-definition {
+  --shiki-light: oklch(48.8% 0.13 264.376);
+  --shiki-dark: oklch(80.9% 0.105 251.813);
+}
+.tk-property {
+  --shiki-light: oklch(50% 0.134 242.749);
+  --shiki-dark: oklch(82.8% 0.111 230.318);
+}
+.tk-static {
+  --shiki-light: oklch(47.3% 0.137 46.201);
+  --shiki-dark: oklch(87.9% 0.169 91.605);
+}
+.tk-string {
+  --shiki-light: oklch(50.8% 0.118 165.612);
+  --shiki-dark: oklch(84.5% 0.143 164.978);
 }
 
 /* ── hook playground ──────────────────────────────────────────────────────── */
@@ -3237,57 +3291,6 @@ main a:not(
   .sk-hook-playground__control-value {
     text-align: start;
   }
-}
-
-/* ── filter row ───────────────────────────────────────────────────────────── */
-/* The token filter is two sk-form-fields (search + tier) and a live count. `align-items: end` lines the
-   controls up along one baseline while their labels sit above, so the two fields read as one row even
-   though each owns its own label. The search grows, the tier holds a comfortable width, the count sits
-   at the trailing edge on the control line. */
-.filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  gap: var(--space-inline-md);
-  margin-block: var(--space-stack-md);
-}
-
-.filters__search {
-  flex: 1 1 16rem;
-}
-
-.filters__tier {
-  flex: 0 1 13rem;
-}
-
-.filters__group {
-  flex: 0 1 15rem;
-}
-
-/* The search and tier controls fill their own field column, so the field width drives them rather than
-   an intrinsic content width (a select otherwise shrinks to its longest option). */
-.filters__search .sk-input,
-.filters__tier .sk-select-native,
-.filters__group .sk-select-native {
-  inline-size: 100%;
-}
-
-/* A trailing status, not a field: no label, so it aligns to the control row by matching its height and
-   centring, that keeps it on the same line as the inputs instead of riding up to the labels. */
-.filters__count {
-  margin-inline-start: auto;
-  display: inline-flex;
-  align-items: center;
-  min-block-size: var(--sk-input-height);
-  font-size: var(--font-size-caption);
-  color: var(--color-text-tertiary);
-  font-variant-numeric: tabular-nums;
-}
-
-.count {
-  font-size: var(--font-size-caption);
-  color: var(--color-text-tertiary);
-  font-variant-numeric: tabular-nums;
 }
 
 .docs-footer {

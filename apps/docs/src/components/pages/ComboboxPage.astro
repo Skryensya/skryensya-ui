@@ -40,9 +40,7 @@ initComponents();`;
   ]}
   testFiles={["packages/react/src/components/combobox.test.tsx", "packages/vanilla/src/components/combobox.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("combobox.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("combobox.anatomyBody")} />
     <ComponentPreview
       html={comboboxAnatomyHtml(t)}
@@ -52,7 +50,10 @@ initComponents();`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("combobox.lede")} />
     <ComponentPreview tree={comboboxTree(t, locale)} js={js} label="Combobox" viewport="menu" />
 
     <h3>{t("component.contractNotesTitle")}</h3>

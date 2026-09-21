@@ -2,8 +2,15 @@
 /*
  * Questionnaire composes Tile, Checkbox, FormField, Input, Button, Kbd, Progress and Steps, so this
  * page loads every one of their sheets: a preview frame only copies the styles THIS page loaded.
+ *
+ * Select and FileUpload are NOT composed by the contract  -  they are what the `control` slot demo
+ * puts INTO it, and a slotted control brings its own stylesheet the same as a composed part. Without
+ * these two the demo rendered as bare markup: the trigger showed both chevrons at once and the label
+ * sat inline beside it, because none of `select.css` had ever reached the frame.
  */
 import "@skryensya/core/components/questionnaire.css";
+import "@skryensya/core/components/select.css";
+import "@skryensya/core/components/file-upload.css";
 import "@skryensya/core/components/tile.css";
 import "@skryensya/core/components/checkbox.css";
 import "@skryensya/core/components/form-field.css";

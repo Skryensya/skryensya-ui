@@ -265,6 +265,94 @@ cerrarla y reabrirla cuando el layout se asiente. Rehacer `position-try` es del 
 propiedad que lo pida. Lo unico que queda abierto, y es de la app y no del kit, es que la preview de
 React reserve su altura final antes de montar en vez de crecer despues.
 
+## Nivel 1 - what the catalogue is missing (inventory taken 2026-09-20)
+
+The catalogue is 84 published families (`artifacts/ai-manifest.json` -> `contracts`, 84 keys, one per
+file in `contracts/semantic/`). The WAI-ARIA APG side is closed: `docs/aria-apg-audit.md` is 31 of 31
+rows covered and reviewed, so **no gap below comes from the APG**. These come from the other two
+sources: machines we already pay for and never shipped, and markup the repo writes by hand because
+the kit has nothing to offer. Ascending effort, as this level requires.
+
+- [~] **`@zag-js/pin-input` is a paid-for dependency with zero importers.** IN PROGRESS elsewhere:
+  a concurrent session is building `otp-input` over that machine (its contract, sheet, binding and
+  canonical tree were in the working tree on 2026-09-20). Do not take this one; verify it is closed
+  when that work lands.
+
+  What it was, verifiable in one pass when this was written:
+  it is declared in `packages/core/package.json`, and the only file in `packages/` or `apps/` that
+  mentions the string is that same `package.json` - it is absent from `core/src/machines.ts`, where
+  the other 17 machines are re-exported. Every other Zag dependency has at least one binding behind
+  it. Two ways to close it and both are small: build the PIN / OTP field (the machine is already
+  installed and `form-field` + `input` already give it its label, hint and error), or drop the line
+  from `package.json`. Decide which, do not leave it declared and unused.
+- [x] **No publishable Separator** - hecho ✅ (2026-09-20). Published as the `separator` family with
+  two signatures: `Separator` (the `<hr>`) and `LabelledSeparator` (the one with a word in the
+  middle). The default MEANS something - an `<hr>` is a thematic break with the `separator` role -
+  and `decorative` is the opt-out that takes it out of the accessibility tree, which is the half the
+  private ones never had. `orientation` writes `data-orientation` and `aria-orientation` from one
+  option, so the paint and the announcement cannot drift. The labelled one takes its name from its
+  own label through `aria-labelledby`, because `separator` is not a name-from-content role: without
+  the wiring a screen reader says "separator", which is the word the visible label replaces. The
+  line is a `background`, not a `border`, so the hairline is not half the element and half the
+  browser's idea of a groove. 8 React tests, page at `/components/separator`, and the four private
+  separators (Toolbar, Sidebar, `menu.css`, `patterns/footer.css`) were LEFT ALONE: each is sized to
+  its own anatomy, and replacing them was not the gap.
+- [x] **Typography has no Quote and no DescriptionList** - hecho ✅ (2026-09-20), as two families
+  rather than as typography signatures: both have anatomy and hooks of their own, which `typography.css`
+  does not carry for anything.
+  **Quote** (`/components/quote`) puts the caption OUTSIDE the `<blockquote>`, which is HTML's own
+  rule and not a layout preference, so the root is a `<figure>`. Its two caption fields are the point:
+  `attribution` is who said it and `source` is the work, and only the second is the `<cite>` - a
+  person's name in a `<cite>` is the mistake the split makes hard to fall into. The caption is a flex
+  row for a measured reason: a bare text run next to a `<cite>` renders one collapsed space in the
+  emitted markup that React does not, and that divergence is written in whitespace. 7 React tests.
+  **DescriptionList** (`/components/description-list`) wraps each pair in the `<div>` HTML allows
+  inside `<dl>`, which is what makes a row addressable by a divider or a two-column layout. `columns`
+  is drawn per row rather than on one shared grid, so the name column is a length and not
+  `max-content`: a shared grid needs `display: contents` on each pair, which takes that same element
+  back out of the box tree. 6 React tests.
+- [ ] **No search field.** Deferred by the user on 2026-09-20, deliberately last of this group:
+  take it after the four above, which are done.
+  `input`'s `type` is a free string, so `type="search"` renders, but the
+  *pattern* - the leading icon, the clear button, the submit affordance, the suggestion list wiring -
+  has no contract. `combobox` is not it: an autocomplete that must resolve to one of its options is a
+  different control from a search box whose value is whatever was typed. This one has an external
+  vote: the team's production kit (`~/dev/sgd/kitdigital-gob-cl`) ships `searchbar` as its own
+  component with its own token map, and this POC has no answer for it.
+- [x] **No tags input** - hecho ✅ (2026-09-20). Published as `tags-input`, over
+  `@zag-js/tags-input` (installed for it; the estimate that it was the largest of the five held).
+  Both bindings, 11 tests each, mirrored assertion for assertion. Three things worth keeping:
+  **the chip IS a Tag** (`sk-tag` classes composed through the contract's `compose`, and the delete
+  control is the same `Button` Tag uses), so the field did not add a second chip drawing to the
+  system; **the tags are authored as markup**, one element each, so the field reads before its
+  JavaScript arrives, and the enhancer takes that list as its seed and swaps it whole for the live
+  one - the same exception FileUpload already carries, because the list is the VALUE and not
+  structure a person wrote; and **two behaviours are the machine's, not ours**, both now written
+  down in the contract and on the page: past `max` a tag is refused IN SILENCE with the text left in
+  the entry, and with `allowDuplicates` off a repeat is dropped without a word. The first draft of
+  the contract published a `valueInvalid` event for both of those. Measured against the machine, it
+  could not fire for either: `onValueInvalid` is Zag's channel for a `validate` predicate this kit
+  does not expose, so the event was deleted rather than shipped as a channel nothing dispatches.
+  Marked `Beta` in the catalogue, which is the honest label for a machine-backed family on its first
+  day.
+
+### And a decision, not a component: three primitives the catalogue cannot see
+
+`hotkey`, `splitter` and `anchored` each have code in all three layers and their own docs page
+(`/hotkey`, `/splitter`, `/anchoring`), and none of the three is one of the 84 families: no
+`contracts/semantic/*.yaml`, no changelog, so `get_catalog` / `get_contract` / `validate_ui` cannot
+reach them. An agent composing through the MCP cannot discover that this system has a keyboard-shortcut
+primitive at all.
+
+That may well be correct - they are behaviours, not markup, and `splitter.ts`'s own banner comment
+describes the three-way split as the shape a *primitive* takes here. The gap is that nothing records
+the decision. `copy-button` is the precedent for doing it right: its docstring says *"No contract
+lives here any more (decision 33, reversed)"*, so a future reader stops re-litigating it. The item is
+to write the same sentence into `hotkey.ts`, `splitter.ts` and `anchored.ts` - or, if the answer is
+the other one, to publish the three contracts. Not to leave it unsaid.
+
+---
+
 ## Nivel 2 - Beta sin bloqueador documentado
 
 Los 14 que **ya tienen** Tests tab pero siguen marcados Beta. Nadie dejó escrito por qué; el primer

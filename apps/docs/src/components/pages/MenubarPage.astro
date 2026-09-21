@@ -32,9 +32,7 @@ initComponents();`;
   ]}
   testFiles={["packages/core/src/menubar.test.ts", "packages/react/src/components/menubar.test.tsx", "packages/vanilla/src/components/menubar.svelte.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("menubarPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("menubarPage.anatomyBody")} />
     <ComponentPreview
       html={menubarAnatomyHtml(t)}
@@ -44,7 +42,10 @@ initComponents();`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("menubarPage.lede")} />
     <ComponentPreview tree={menubarTree(t)} js={js} label={t("menubarPage.label")} viewport="menu" />
 
     <h3>{t("component.contractNotesTitle")}</h3>

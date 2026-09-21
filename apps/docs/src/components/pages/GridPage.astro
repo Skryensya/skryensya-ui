@@ -94,10 +94,7 @@ const responsiveCss = `/* data-responsive: la misma progresión de carriles, per
     },
   ]}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("grid.lede")} />
-    <ComponentPreview tree={gridTree(t)} label="Grid" />
-
+  <Fragment slot="anatomy">
     <p set:html={t("grid.anatomyBody")} />
     <ComponentPreview
       tree={gridAnatomyTree(t)}
@@ -107,7 +104,11 @@ const responsiveCss = `/* data-responsive: la misma progresión de carriles, per
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("grid.lede")} />
+    <ComponentPreview tree={gridTree(t)} label="Grid" />
     <h3>{t("grid.multicolTitle")}</h3>
     <p set:html={t("grid.multicolBody1")} />
     <p set:html={t("grid.multicolBody2")} />

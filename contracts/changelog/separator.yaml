@@ -1,0 +1,38 @@
+# What changed in separator, in the words its users read. Only appended to, never rewritten.
+#
+# `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
+# does not match, something a consumer depends on has moved: write the entry and paste in the new
+# hash.
+surface: "f79deebf1cf837b3"
+entries:
+  - date: 2026-09-20
+    kind: feature
+    es:
+      title: Separator se publica como contrato, con 2 signatures
+      body: >-
+        Entra al catálogo con <code>Separator</code> (el <code>&lt;hr&gt;</code>) y
+        <code>LabelledSeparator</code> (el de la palabra al medio: «o», «desde 2019»). Existe porque
+        cuatro familias ya dibujaban el suyo en privado - Toolbar, Sidebar, <code>menu.css</code> y
+        <code>patterns/footer.css</code> - y afuera de ellas no había nada que usar. Por defecto la
+        línea <em>significa</em> algo: el <code>&lt;hr&gt;</code> es un quiebre temático con rol
+        <code>separator</code>. <code>decorative</code> es la salida para la que sólo pinta, y la
+        saca entera del árbol de accesibilidad. <code>orientation</code> escribe
+        <code>data-orientation</code> y <code>aria-orientation</code> desde una sola opción, así que
+        el CSS y el lector de pantalla no pueden discrepar. <strong>No es un splitter</strong>: un
+        separador que se arrastra es focusable y tiene teclado propio, y eso vive en
+        <code>@skryensya/core/splitter</code>. La hoja es <code>components/separator.css</code>.
+    en:
+      title: Separator is published as a contract, with 2 signatures
+      body: >-
+        It joins the catalogue with <code>Separator</code> (the <code>&lt;hr&gt;</code>) and
+        <code>LabelledSeparator</code> (the one with a word in the middle: “or”, “since 2019”). It
+        exists because four families were already drawing their own in private - Toolbar, Sidebar,
+        <code>menu.css</code> and <code>patterns/footer.css</code> - and outside them there was
+        nothing to reach for. By default the line <em>means</em> something: an <code>&lt;hr&gt;</code>
+        is a thematic break with the <code>separator</code> role. <code>decorative</code> is the way
+        out for one that only draws, and it leaves the accessibility tree entirely.
+        <code>orientation</code> writes <code>data-orientation</code> and
+        <code>aria-orientation</code> from one option, so the stylesheet and the screen reader cannot
+        drift apart. <strong>It is not a splitter</strong>: a separator that can be dragged is
+        focusable and has a keyboard contract of its own, and that lives in
+        <code>@skryensya/core/splitter</code>. Its stylesheet is <code>components/separator.css</code>.

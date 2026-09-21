@@ -41,6 +41,10 @@
       "types": "./src/components/annotation.ts",
       "default": "./src/components/annotation.ts"
     },
+    "./diagram": {
+      "types": "./src/components/diagram.ts",
+      "default": "./src/components/diagram.ts"
+    },
     "./back-to-top": {
       "types": "./src/components/back-to-top.ts",
       "default": "./src/components/back-to-top.ts"
@@ -60,6 +64,10 @@
     "./accordion": {
       "types": "./src/components/accordion.ts",
       "default": "./src/components/accordion.ts"
+    },
+    "./tags-input": {
+      "types": "./src/components/tags-input.ts",
+      "default": "./src/components/tags-input.ts"
     },
     "./rating": {
       "types": "./src/components/rating.ts",
@@ -216,6 +224,10 @@
     "./megamenu": {
       "types": "./src/components/megamenu.ts",
       "default": "./src/components/megamenu.ts"
+    },
+    "./otp-input": {
+      "types": "./src/components/otp-input.ts",
+      "default": "./src/components/otp-input.ts"
     },
     "./number-field": {
       "types": "./src/components/number-field.ts",

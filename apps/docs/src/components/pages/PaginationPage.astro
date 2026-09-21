@@ -24,9 +24,7 @@ paginationRange(5, 20);
   contractId="pagination"
   testFiles={["packages/react/src/components/pagination.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("paginationPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("paginationPage.anatomyBody")} />
     <ComponentPreview
       tree={paginationAnatomyTree(t)}
@@ -36,7 +34,10 @@ paginationRange(5, 20);
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("paginationPage.lede")} />
     <ComponentPreview tree={paginationTree(t)} label="Pagination" />
     <p set:html={t("paginationPage.body")} />
 

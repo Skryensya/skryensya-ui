@@ -73,9 +73,7 @@ carousel.addEventListener("sk:carouselchange", (event) => {
   contractId="carousel"
   testFiles={["packages/react/src/components/carousel.test.tsx", "packages/vanilla/src/components/carousel.svelte.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("carousel.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("carousel.anatomyBody")} />
     <ComponentPreview
       tree={carouselAnatomyTree(t)}
@@ -86,7 +84,10 @@ carousel.addEventListener("sk:carouselchange", (event) => {
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("carousel.lede")} />
     <h3>{t("carousel.cardsTitle")}</h3>
     <p set:html={t("carousel.cardsBody")} />
     <ComponentPreview

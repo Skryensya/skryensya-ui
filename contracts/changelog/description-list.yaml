@@ -1,0 +1,37 @@
+# What changed in description-list, in the words its users read. Only appended to, never rewritten.
+#
+# `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
+# does not match, something a consumer depends on has moved: write the entry and paste in the new
+# hash.
+surface: "1ad3b653a2947bc0"
+entries:
+  - date: 2026-09-20
+    kind: feature
+    es:
+      title: DescriptionList se publica como contrato, con 2 signatures
+      body: >-
+        Entra al catálogo con <code>DescriptionList</code> y <code>DescriptionItem</code>: pares de
+        nombre y valor sobre UN registro (el resumen de un pedido, los metadatos de un documento).
+        Si los mismos campos se muestran para varios registros, eso es una Table: una celda que
+        significa algo por su fila Y su columna es otra cosa. Cada par va envuelto en el
+        <code>&lt;div&gt;</code> que el propio HTML admite dentro de <code>&lt;dl&gt;</code>, y ese
+        elemento es lo que vuelve direccionable la fila: de ahí cuelgan el divisor y el layout de
+        dos columnas. <code>layout</code> tiene <code>stacked</code> (default) y
+        <code>columns</code>, que bajo 36rem vuelve solo a apilarse. La columna del nombre es un
+        largo (<code>--sk-description-list-term-size</code>) y no <code>max-content</code>, porque
+        las filas se dibujan una a una en vez de sobre una grilla compartida. No tiene enhancer. La
+        hoja es <code>components/description-list.css</code>.
+    en:
+      title: DescriptionList is published as a contract, with 2 signatures
+      body: >-
+        It joins the catalogue with <code>DescriptionList</code> and <code>DescriptionItem</code>:
+        name-and-value pairs about ONE record (an order's summary, a document's metadata). When the
+        same fields are shown for several records that is a Table instead: a cell that means
+        something because of its row AND its column is a different thing. Each pair is wrapped in
+        the <code>&lt;div&gt;</code> HTML itself allows inside <code>&lt;dl&gt;</code>, and that
+        element is what makes the row addressable: the divider and the two-column layout both hang
+        off it. <code>layout</code> takes <code>stacked</code> (the default) and
+        <code>columns</code>, which falls back to stacked on its own below 36rem. The name column is
+        a length (<code>--sk-description-list-term-size</code>) rather than <code>max-content</code>,
+        because the rows are drawn one by one instead of on one shared grid. There is no enhancer.
+        Its stylesheet is <code>components/description-list.css</code>.

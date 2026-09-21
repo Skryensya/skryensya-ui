@@ -40,9 +40,7 @@ const indentHook = `.sk-treegrid {
   ]}
   testFiles={["packages/vanilla/src/components/treegrid.test.ts", "packages/react/src/components/treegrid.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("treegridPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("treegridPage.anatomyBody")} />
     <ComponentPreview
       tree={treegridAnatomyTree(t)}
@@ -52,8 +50,10 @@ const indentHook = `.sk-treegrid {
       hideSource
       chrome={false}
     />
+  </Fragment>
 
-
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("treegridPage.lede")} />
     <h3>{t("treegridPage.minimalTitle")}</h3>
     <p set:html={t("treegridPage.minimalBody")} />
     <ComponentPreview tree={treegridInboxTree(t)} label={t("treegridPage.minimalLabel")} />

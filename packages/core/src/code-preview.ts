@@ -97,6 +97,7 @@ export const codePreviewContract = {
     "--sk-code-preview-font-size",
     "--sk-code-preview-footer-bg",
     "--sk-code-preview-label-active-fg",
+    "--sk-code-preview-label-bg",
     "--sk-code-preview-label-fg",
     "--sk-code-preview-window",
   ],

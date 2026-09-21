@@ -8,13 +8,15 @@
         {
           "alternatives": [
             "Tabs",
-            "ExpandableTile"
+            "ExpandableTile",
+            "DetailsGroup"
           ],
           "avoidWhen": [
             "son pocas secciones cortas; mostrarlas todas se lee más rápido que plegarlas",
             "el contenido se compara entre secciones; plegar obliga a recordar en vez de mirar",
             "las secciones son vistas alternativas del mismo espacio; eso es Tabs",
-            "es una sola superficie plegable, sin coordinación entre hermanas; eso es ExpandableTile"
+            "es una sola superficie plegable, sin coordinación entre hermanas; eso es ExpandableTile",
+            "nada necesita controlarse ni escucharse desde afuera: DetailsGroup lo hace sin JavaScript"
           ],
           "host": "div",
           "id": "Accordion",
@@ -85,6 +87,82 @@
           ],
           "useWhen": [
             "es el cuerpo que se pliega dentro de su sección"
+          ]
+        },
+        {
+          "alternatives": [
+            "Accordion"
+          ],
+          "avoidWhen": [
+            "hay que controlar desde afuera qué queda abierto, o escuchar cuándo cambia: eso pide Accordion"
+          ],
+          "host": "section",
+          "id": "DetailsGroup",
+          "intent": [
+            "faq-without-javascript",
+            "exclusive-disclosures",
+            "no-runtime-accordion"
+          ],
+          "parents": [],
+          "useWhen": [
+            "varias secciones se abren y cierran, y alcanza con que el navegador se encargue",
+            "conviene que sólo una quede abierta: los hermanos con el mismo name ya lo hacen solos"
+          ]
+        },
+        {
+          "alternatives": [
+            "Accordion.Item"
+          ],
+          "avoidWhen": [
+            "hay que saber desde afuera si está abierto, o poder deshabilitar la sección: eso es Accordion.Item"
+          ],
+          "host": "details",
+          "id": "Details",
+          "intent": [
+            "one-disclosure",
+            "expandable-section",
+            "no-javascript"
+          ],
+          "parents": [],
+          "useWhen": [
+            "una sección que se despliega y no necesita nada de JavaScript",
+            "importa que funcione antes de que cargue cualquier script"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Details; no tiene qué abrir"
+          ],
+          "host": "summary",
+          "id": "Details.Summary",
+          "intent": [
+            "disclosure-trigger",
+            "what-the-closed-state-shows"
+          ],
+          "parents": [
+            "Details"
+          ],
+          "useWhen": [
+            "es lo que el estado cerrado muestra y lo que abre la sección"
+          ]
+        },
+        {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Details; no tiene quién lo abra"
+          ],
+          "host": "div",
+          "id": "Details.Content",
+          "intent": [
+            "disclosure-body",
+            "what-opening-reveals"
+          ],
+          "parents": [
+            "Details"
+          ],
+          "useWhen": [
+            "es lo que la apertura revela"
           ]
         }
       ]
@@ -716,7 +794,7 @@
           ],
           "avoidWhen": [
             "es un literal dentro de una frase: eso es Code",
-            "lo que importa es copiarlo, no leerlo, no mostrarlo: eso es IconStateButton compuesto con el comportamiento de copiar, sin el bloque de código alrededor"
+            "lo que importa es copiarlo, no leerlo, no mostrarlo: eso es StateButton compuesto con el comportamiento de copiar, sin el bloque de código alrededor"
           ],
           "host": "div",
           "id": "CodePreview",
@@ -961,10 +1039,10 @@
         },
         {
           "alternatives": [
-            "IconStateButton"
+            "StateButton"
           ],
           "avoidWhen": [
-            "es una sola valoración sin dirección (me gusta); eso es un IconStateButton"
+            "es una sola valoración sin dirección (me gusta); eso es un StateButton"
           ],
           "host": "div",
           "id": "CommentVote",
@@ -1176,84 +1254,99 @@
       ]
     },
     {
-      "category": "content",
-      "css": "@skryensya/core/components/details.css",
-      "id": "details",
+      "category": "data",
+      "css": "@skryensya/core/components/description-list.css",
+      "id": "description-list",
       "signatures": [
         {
           "alternatives": [
-            "Accordion"
+            "Table",
+            "List",
+            "FormField"
           ],
           "avoidWhen": [
-            "hay que animar la apertura o controlarla desde afuera: eso pide Accordion"
+            "the same fields are shown for SEVERAL records; a cell that means something because of its row and its column is a Table",
+            "the pairs are form controls a person fills in; that is FormField",
+            "it is a list of things rather than of facts about one thing; that is List"
           ],
-          "host": "section",
-          "id": "DetailsGroup",
+          "host": "dl",
+          "id": "DescriptionList",
           "intent": [
-            "faq-without-javascript",
-            "exclusive-disclosures",
-            "no-runtime-accordion"
+            "name-value-pairs",
+            "metadata",
+            "summary-of-one-record",
+            "specs",
+            "key-facts"
           ],
           "parents": [],
           "useWhen": [
-            "varias secciones se abren y cierran, y alcanza con que el navegador se encargue",
-            "conviene que sólo una quede abierta: los hermanos con el mismo name ya lo hacen solos"
+            "the details of ONE record are shown as name and value: a summary, metadata, specs, key facts",
+            "each row is a complete statement on its own and nothing is compared across rows",
+            "the names are short and repeat the same shape: Status, Placed, Total, Tracking"
           ]
         },
         {
           "alternatives": [
-            "Accordion.Item"
+            "Table"
           ],
           "avoidWhen": [
-            "hay que animar el panel o saber desde afuera si está abierto: eso es Accordion.Item"
+            "the name needs markup of its own; a name that is a heading means this should be a section"
           ],
-          "host": "details",
-          "id": "Details",
+          "host": "div",
+          "id": "DescriptionItem",
           "intent": [
-            "one-disclosure",
-            "expandable-section",
-            "no-javascript"
+            "one-name-and-its-value",
+            "one-row-of-metadata"
+          ],
+          "parents": [
+            "DescriptionList"
+          ],
+          "useWhen": [
+            "one name and its value; the name is text, the value takes markup (a Tag, a link, a date)"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "content",
+      "css": "@skryensya/core/components/diagram.css",
+      "id": "diagram",
+      "signatures": [
+        {
+          "alternatives": [
+            "Annotated",
+            "ProcessList",
+            "Steps",
+            "TreeView"
+          ],
+          "avoidWhen": [
+            "lo que hay que nombrar son las partes de una sola cosa ya dibujada: eso es Annotation, que ancla cada etiqueta a un selector adentro del sujeto y no dibuja un grafo",
+            "el contenido es una secuencia sin ramas y sin ciclos: eso es ProcessList si son instrucciones, o Steps si lo primario es el progreso; un diagrama de una sola columna sin bifurcaciones es una lista con líneas de más",
+            "la jerarquía es de contención y no de flujo (carpetas, un árbol de archivos): eso es TreeView o Folder, donde lo que importa es qué está adentro de qué",
+            "el grafo es grande, viene de datos, o hay que explorarlo, hacer zoom o arrastrar nodos: esto no resuelve disposición, dibuja diagramas chicos escritos a mano",
+            "lo que se necesita es notación UML completa, swimlanes o tipos de caja por convención (cilindro, paralelogramo): son convenciones que hay que enseñarle a quien lee, y acá sólo viven las tres formas que se entienden sin leyenda"
+          ],
+          "host": "div",
+          "id": "Diagram",
+          "intent": [
+            "flowchart",
+            "decision-tree",
+            "state-diagram",
+            "state-machine",
+            "workflow-diagram",
+            "nodes-and-edges",
+            "boxes-and-arrows",
+            "branching-flow"
           ],
           "parents": [],
           "useWhen": [
-            "una sección que se despliega y no necesita nada de JavaScript",
-            "importa que funcione antes de que cargue cualquier script"
-          ]
-        },
-        {
-          "alternatives": [],
-          "avoidWhen": [
-            "está fuera de un Details; no tiene qué abrir"
-          ],
-          "host": "summary",
-          "id": "Details.Summary",
-          "intent": [
-            "disclosure-trigger",
-            "what-the-closed-state-shows"
-          ],
-          "parents": [
-            "Details"
-          ],
-          "useWhen": [
-            "es lo que el estado cerrado muestra y lo que abre la sección"
-          ]
-        },
-        {
-          "alternatives": [],
-          "avoidWhen": [
-            "está fuera de un Details; no tiene quién lo abra"
-          ],
-          "host": "div",
-          "id": "Details.Content",
-          "intent": [
-            "disclosure-body",
-            "what-opening-reveals"
-          ],
-          "parents": [
-            "Details"
-          ],
-          "useWhen": [
-            "es lo que la apertura revela"
+            "hay que explicar cómo se relacionan varias cosas: un flujo lineal, un if/else, un árbol de decisión, una máquina de estados con un ciclo. Los cuatro salen de las mismas dos piezas, no son cuatro modos",
+            "las cajas son contenido HTML normal y el dibujo es todo lo demás: el runtime mide y calcula los recorridos, los codos, las puntas de flecha y dónde cae cada etiqueta. Quien compone nunca escribe una coordenada",
+            "la disposición es una grilla CSS común: `columns` en el marco y `span` en un nodo cubren las formas habituales, y cualquier otra cosa es `grid-area` en la hoja de quien lo usa. Si una media query mueve un nodo, los conectores se vuelven a trazar solos",
+            "la relación tiene que llegarle a un lector de pantalla: el SVG es `aria-hidden` y el binding escribe adentro de cada nodo una lista anunciada de a dónde lleva, así que el dibujo se puede leer sin verlo",
+            "hace falta un ciclo: una arista hacia un nodo que está más arriba sale por el margen y vuelve, que es como se dibuja \"y vuelve a empezar\" desde siempre",
+            "las aristas no son una secuencia sino una relación entre cosas (un modelo, un esquema): `arrow: \"none\"` dibuja la línea sin punta y la etiqueta lleva la cardinalidad",
+            "un nodo tiene que decir más que una línea de texto: su slot acepta una composición, así que adentro entra cualquier árbol del catálogo"
           ]
         }
       ]
@@ -1286,6 +1379,7 @@
           "parents": [],
           "useWhen": [
             "hay que decidir algo antes de seguir: confirmar un borrado, completar un paso corto",
+            "la fila de acciones del footer debe quedar al inicio o al final del eje inline (`footerAlign`; por defecto al final)",
             "conviene que el resto de la página quede inerte mientras tanto",
             "en móvil el mismo dialog puede pedirse como hoja desde abajo (opción vaul)",
             "confirmación destructiva o error bloqueante que necesita atención inmediata (opción alert)"
@@ -1684,12 +1778,12 @@
         {
           "alternatives": [
             "Button.action",
-            "IconStateButton"
+            "StateButton"
           ],
           "avoidWhen": [
             "es un concepto de producto (una factura, un avión): eso se pasa como icon data en el binding React, no como nombre estable",
             "se le pondría label dentro de un botón que ya tiene texto; el nombre accesible quedaría duplicado",
-            "hace falta un control con forma de botón: eso es Button (iconOnly) o IconStateButton, no un Icon solo"
+            "hace falta un control con forma de botón: eso es Button (iconOnly) o StateButton, no un Icon solo"
           ],
           "host": "span",
           "id": "Icon",
@@ -1704,39 +1798,6 @@
             "refuerza una acción que ya tiene texto; sin label, decorativo",
             "es el único contenido de un control cuadrado, y entonces el CONTROL lleva el nombre accesible, no el icono",
             "el nombre es un rol que el sistema nombra: delete, visibility, chevron-down"
-          ]
-        }
-      ]
-    },
-    {
-      "category": "actions",
-      "css": "@skryensya/core/components/icon-state-button.css",
-      "id": "icon-state-button",
-      "signatures": [
-        {
-          "alternatives": [
-            "Switch",
-            "Icon",
-            "Button.action"
-          ],
-          "avoidWhen": [
-            "el comportamiento ya existe hecho: un ciclo de modo de color usa las funciones de @skryensya/core/theme-toggle, un copy-to-clipboard usa writeClipboard de @skryensya/core/copy-button, sobre este mismo primitivo: no hay que reinventar esa parte",
-            "hay un solo estado, o dos que se leen como on/off: eso es un Switch o un Toggle simple, no vale la pena declarar una colección de caras para dos valores",
-            "el ícono es puramente decorativo y no cambia: eso es Icon, sin la anatomía de estados",
-            "hace falta un botón con etiqueta visible además del ícono: eso es Button.action, no esta anatomía de caras apiladas"
-          ],
-          "host": "button",
-          "id": "IconStateButton",
-          "intent": [
-            "icon-button-with-states",
-            "multi-state-icon-button"
-          ],
-          "parents": [],
-          "useWhen": [
-            "el control necesita mostrar uno de N estados con nombre, cada uno con su propio ícono, y quien lo usa va a escribir el comportamiento que decide cuál está activo (copiar, ciclar un modo, lo que sea)",
-            "los estados varían según el uso: no hay un set fijo que un contrato pueda declarar de antemano",
-            "es siempre icon-only: las caras son glifos, el host lleva data-icon-only de fábrica, y el nombre accesible es aria-label o aria-labelledby en el botón (nunca texto visible)",
-            "variant y size son los de Button (data-variant / data-size), no opciones de este contrato: ghost + sm es la forma de toolbar más común"
           ]
         }
       ]
@@ -1874,7 +1935,7 @@
           ],
           "avoidWhen": [
             "es texto de código o un comando; eso va en un bloque Code / typography",
-            "es un control accionable; eso es Button o IconStateButton"
+            "es un control accionable; eso es Button o StateButton"
           ],
           "host": "kbd",
           "id": "Kbd",
@@ -2662,6 +2723,40 @@
       ]
     },
     {
+      "category": "forms",
+      "css": "@skryensya/core/components/otp-input.css",
+      "id": "otp-input",
+      "signatures": [
+        {
+          "alternatives": [
+            "Input",
+            "NumberField"
+          ],
+          "avoidWhen": [
+            "el valor es texto libre de largo variable; eso es Input",
+            "el valor es un número con paso y límites; eso es NumberField",
+            "hace falta validar el código contra un servidor antes de aceptarlo; eso lo resuelve quien compone, escuchando sk:otpinputvaluecomplete y mostrando el error en su propio mensaje"
+          ],
+          "host": "div",
+          "id": "OtpInput",
+          "intent": [
+            "one-time-code",
+            "otp",
+            "verification-code",
+            "sms-code",
+            "2fa-code",
+            "pin-code"
+          ],
+          "parents": [],
+          "useWhen": [
+            "se pide un código de un solo uso enviado por SMS, email o una app de autenticación",
+            "el código tiene un largo fijo conocido de antemano (4, 6 dígitos)",
+            "conviene que el teléfono ofrezca autocompletar el código recibido por SMS"
+          ]
+        }
+      ]
+    },
+    {
       "category": "navigation",
       "css": "@skryensya/core/components/pagination.css",
       "id": "pagination",
@@ -3016,6 +3111,40 @@
       ]
     },
     {
+      "category": "content",
+      "css": "@skryensya/core/components/quote.css",
+      "id": "quote",
+      "signatures": [
+        {
+          "alternatives": [
+            "Callout",
+            "Text"
+          ],
+          "avoidWhen": [
+            "the text is the page's own voice; a quotation mark around it claims an author it does not have",
+            "it is a short quoted phrase inside a sentence; that is the native <q>, inline, not a block",
+            "it is a highlighted aside the page is making itself, with a status; that is a Callout",
+            "it is code, a command or output; that is Code or a CodePreview"
+          ],
+          "host": "figure",
+          "id": "Quote",
+          "intent": [
+            "quotation",
+            "blockquote",
+            "testimonial",
+            "pull-quote",
+            "somebody-elses-words"
+          ],
+          "parents": [],
+          "useWhen": [
+            "words that are somebody else's are shown as theirs: a quotation, a testimonial, an excerpt",
+            "a passage is lifted out of the text to be read on its own; that is variant pull",
+            "there is a name to put beside the words, a work to name, or both"
+          ]
+        }
+      ]
+    },
+    {
       "category": "forms",
       "css": "@skryensya/core/components/radio-group.css",
       "id": "radio-group",
@@ -3215,6 +3344,59 @@
           "useWhen": [
             "las opciones necesitan markup, no sólo texto",
             "hace falta una colección controlada, posicionamiento propio o el evento sk:selectvaluechange"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "layout",
+      "css": "@skryensya/core/components/separator.css",
+      "id": "separator",
+      "signatures": [
+        {
+          "alternatives": [
+            "LabelledSeparator",
+            "Stack"
+          ],
+          "avoidWhen": [
+            "the rule can be dragged to resize what it divides; that is a Window Splitter, with a keyboard contract of its own (@skryensya/core/splitter)",
+            "the separation is between rows of a list, a menu or a toolbar; those families draw their own",
+            "what is wanted is space, not a line; that is the gap of whatever holds the two blocks"
+          ],
+          "host": "hr",
+          "id": "Separator",
+          "intent": [
+            "divider",
+            "thematic-break",
+            "rule-between-blocks",
+            "hairline"
+          ],
+          "parents": [],
+          "useWhen": [
+            "a rule divides two blocks that are about different things",
+            "a vertical hairline sits between two things placed side by side (it takes its height from whatever holds it)",
+            "the line is only paint - a card's internal edge - which is what decorative is for"
+          ]
+        },
+        {
+          "alternatives": [
+            "Separator",
+            "Heading"
+          ],
+          "avoidWhen": [
+            "the word is a heading for what follows; that is a Heading, and the rule is decoration on top",
+            "it runs vertically: a label in a vertical rule is rotated text, a different component"
+          ],
+          "host": "div",
+          "id": "LabelledSeparator",
+          "intent": [
+            "or-divider",
+            "labelled-divider",
+            "rule-with-a-word-in-it"
+          ],
+          "parents": [],
+          "useWhen": [
+            "there is a word between the two halves: or, since 2019, older"
           ]
         }
       ]
@@ -3517,6 +3699,39 @@
           "useWhen": [
             "un número con su nombre: usuarios activos, ingresos del mes",
             "hay un delta que muestra hacia dónde va"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "actions",
+      "css": "@skryensya/core/components/state-button.css",
+      "id": "state-button",
+      "signatures": [
+        {
+          "alternatives": [
+            "Switch",
+            "Icon",
+            "Button.action"
+          ],
+          "avoidWhen": [
+            "el comportamiento ya existe hecho: un ciclo de modo de color usa las funciones de @skryensya/core/theme-toggle, un copy-to-clipboard usa writeClipboard de @skryensya/core/copy-button, sobre este mismo primitivo: no hay que reinventar esa parte",
+            "hay un solo estado, o dos que se leen como on/off: eso es un Switch o un Toggle simple, no vale la pena declarar una colección de caras para dos valores",
+            "el ícono es puramente decorativo y no cambia: eso es Icon, sin la anatomía de estados",
+            "hace falta un botón con etiqueta visible además del ícono: eso es Button.action, no esta anatomía de caras apiladas"
+          ],
+          "host": "button",
+          "id": "StateButton",
+          "intent": [
+            "icon-button-with-states",
+            "multi-state-icon-button"
+          ],
+          "parents": [],
+          "useWhen": [
+            "el control necesita mostrar uno de N estados con nombre, cada uno con su propio ícono, y quien lo usa va a escribir el comportamiento que decide cuál está activo (copiar, ciclar un modo, lo que sea)",
+            "los estados varían según el uso: no hay un set fijo que un contrato pueda declarar de antemano",
+            "es siempre icon-only: las caras son glifos, el host lleva data-icon-only de fábrica, y el nombre accesible es aria-label o aria-labelledby en el botón (nunca texto visible)",
+            "variant y size son los de Button (data-variant / data-size), no opciones de este contrato: ghost + sm es la forma de toolbar más común"
           ]
         }
       ]
@@ -3947,6 +4162,42 @@
           "parents": [],
           "useWhen": [
             "una etiqueta que navega a una faceta, tema o palabra clave"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "forms",
+      "css": "@skryensya/core/components/tags-input.css",
+      "id": "tags-input",
+      "signatures": [
+        {
+          "alternatives": [
+            "Combobox",
+            "Tag",
+            "Input"
+          ],
+          "avoidWhen": [
+            "the values must come from a known list; that is a Combobox, and choosing this instead means accepting typos as data",
+            "there is one value; that is an Input",
+            "the chips are not a field at all but applied filters or keywords to display; that is Tag",
+            "what is being added comes from the platform rather than the keyboard; that is FileUpload"
+          ],
+          "host": "div",
+          "id": "TagsInput",
+          "intent": [
+            "tags-input",
+            "multi-value-entry",
+            "keywords",
+            "recipients",
+            "chips-input",
+            "token-input"
+          ],
+          "parents": [],
+          "useWhen": [
+            "several values are typed into one field: keywords, recipients, labels, skills",
+            "the vocabulary is the person's own, so whatever they type is a valid value",
+            "the values are short enough to read as chips; a long phrase in a chip is a truncation"
           ]
         }
       ]
@@ -4809,5 +5060,5 @@
     }
   ],
   "schemaVersion": "2.3",
-  "sourceHash": "53fea38af7380336"
+  "sourceHash": "88e2b71b4d06f74b"
 }

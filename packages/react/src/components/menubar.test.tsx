@@ -12,6 +12,9 @@ import { Menubar, MenubarItem } from "./menubar.js";
  */
 const tick = () => act(() => Promise.resolve());
 
+/** One animation frame, for the dismissable listeners Zag attaches behind one. */
+const raf = (): Promise<void> => new Promise((resolve) => requestAnimationFrame(() => resolve()));
+
 function Fixture(props: { onHelp?: () => void; onNew?: (value: string) => void }) {
   return (
     <Menubar label="Editor">
@@ -78,18 +81,24 @@ describe("Menubar React contracts, dropdowns as real Menu instances", () => {
     expect(archivo!.getAttribute("aria-expanded")).toBe("true");
 
     /*
-     * Zag attaches its dismissable listeners (Escape, outside press) behind raf + raf +
-     * setTimeout(0), so an Escape fired straight after the open lands before anything is listening
-     * and the dropdown stays open. `waitFor` RE-FIRES it on every poll instead of guessing at a
-     * fixed delay, which is what makes this deterministic rather than timing-lucky.
+     * ESCAPE IS FIRED EXACTLY ONCE, after two rafs of margin, and that is the whole fix for a flake
+     * this file shipped with (measured 2026-09-20: about one run in three, only when the file runs
+     * on its own, which is how `scripts/build-test-report.ts` runs it).
+     *
+     * Zag attaches its dismissable listeners behind a `requestAnimationFrame`, so an Escape fired
+     * straight after the open lands before anything is listening. Re-firing it on every `waitFor`
+     * poll fixes THAT and breaks the assertion below: once the close has begun, the extra Escape
+     * makes `@zag-js/dismissable` re-run its focus restore against the element that now holds focus
+     * (the menu), so focus lands back in the dropdown instead of on the trigger. `menu.test.tsx`
+     * carries the same note; see menu-test-suite-dismissable-timing.
      */
-    await waitFor(() => {
-      fireEvent.keyDown(document.activeElement ?? document.body, { key: "Escape" });
-      expect(archivo!.getAttribute("aria-expanded")).toBe("false");
-    });
+    await raf();
+    await raf();
+    fireEvent.keyDown(document.activeElement ?? document.body, { key: "Escape" });
+    await waitFor(() => expect(archivo!.getAttribute("aria-expanded")).toBe("false"));
 
     // The APG asks for the focus to come back to the trigger, not to be dropped on the body.
-    expect(document.activeElement).toBe(archivo);
+    await waitFor(() => expect(document.activeElement).toBe(archivo));
   });
 
   it("clicking a sibling trigger while one dropdown is open closes the first", async () => {

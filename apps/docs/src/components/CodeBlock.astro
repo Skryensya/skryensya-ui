@@ -5,7 +5,7 @@ import "@skryensya/core/components/code-preview.css";
 import CopyButton from "./CopyButton.astro";
 import { iconMarkup } from "../icons";
 import { getLocale, useTranslations } from "../i18n";
-import { syntaxThemes } from "../lib/syntax-theme";
+import { codeTokenTransformer, syntaxThemes } from "../lib/syntax-theme";
 
 export type CodeLanguage = "bash" | "css" | "html" | "json" | "svelte" | "ts" | "tsx" | "yaml";
 
@@ -213,7 +213,14 @@ const toggleIcon = iconMarkup("chevron-down", { size: "sm" });
   }
   <div class={codePreviewParts.preview}>
     <div class={codePreviewParts.viewport} id={condensedId} {...{ [codePreviewAttrs.densityPanel]: "condensed" }}>
-      <Code code={condensed} lang={language} themes={themes} defaultColor={false} {...scrollRegionAttrs(condensedScrolls)} />
+      <Code
+        code={condensed}
+        lang={language}
+        themes={themes}
+        defaultColor={false}
+        transformers={[codeTokenTransformer]}
+        {...scrollRegionAttrs(condensedScrolls)}
+      />
     </div>
     {
       complete && (

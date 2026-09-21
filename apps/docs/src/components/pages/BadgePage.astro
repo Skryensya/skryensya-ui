@@ -43,9 +43,7 @@ const tree = {
   contractId="badge"
   testFiles={["packages/react/src/components/badge.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("badge.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("badge.anatomyBody")} />
     <ComponentPreview
       tree={badgeAnatomyTree(t)}
@@ -55,7 +53,10 @@ const tree = {
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("badge.lede")} />
     <h3>{t("badge.tagTitle")}</h3>
     <p set:html={t("badge.tagBody")} />
     <ComponentPreview tree={tree} label={t("badge.tagLabel")} />

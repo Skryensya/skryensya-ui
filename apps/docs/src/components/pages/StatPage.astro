@@ -20,9 +20,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
   contractId="stat"
   testFiles={["packages/react/src/components/stat.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("statPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("statPage.anatomyBody")} />
     <ComponentPreview
       tree={statAnatomyTree(t)}
@@ -32,7 +30,10 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("statPage.lede")} />
     <h3>{t("statPage.cardTitle")}</h3>
     <p set:html={t("statPage.cardBody")} />
     <ComponentPreview tree={statCardsTree(t, locale)} label="Stat" />

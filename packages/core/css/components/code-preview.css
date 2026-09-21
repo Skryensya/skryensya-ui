@@ -7,7 +7,8 @@
  */
 @layer components {
   .sk-code-preview {
-    --sk-code-preview-bg: var(--color-bg-surface-sunken);
+    --sk-code-preview-bg: var(--color-bg-surface);
+    --sk-code-preview-label-bg: var(--color-bg-surface-sunken);
     --sk-code-preview-fg: var(--color-text-primary);
     --sk-code-preview-border-color: var(--color-border-subtle);
     --sk-code-preview-label-fg: var(--color-text-tertiary);
@@ -77,9 +78,17 @@
     gap: var(--space-inline-sm);
     padding: var(--space-inset-xs) var(--space-inset-md);
     border-block-end: 1px solid var(--sk-code-preview-border-color);
+    background: var(--sk-code-preview-label-bg);
     color: var(--sk-code-preview-label-fg);
     font-family: var(--font-family-code);
     font-size: var(--font-size-caption);
+  }
+
+  /* The label is a distinct inset region. Its corners must own the outer edge because the root
+     deliberately stays unclipped for the sticky copy control. */
+  .sk-code-preview__label:first-child {
+    border-start-start-radius: var(--radius-surface);
+    border-start-end-radius: var(--radius-surface);
   }
 
   .sk-code-preview__meta {
@@ -331,8 +340,8 @@
       var(--shiki-dark, var(--color-text-primary))
     ) !important;
     background-color: light-dark(
-      var(--shiki-light-bg, var(--color-bg-surface-sunken)),
-      var(--shiki-dark-bg, var(--color-bg-surface-sunken))
+      var(--shiki-light-bg, var(--color-bg-surface)),
+      var(--shiki-dark-bg, var(--color-bg-surface))
     ) !important;
   }
 

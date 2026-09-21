@@ -22,9 +22,7 @@ const styles = `@import "@skryensya/core/components/process-list.css";
   contractId="process-list"
   testFiles={["packages/react/src/components/process-list.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("processListPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("processListPage.anatomyBody")} />
     <ComponentPreview
       tree={processListAnatomyTree(t)}
@@ -34,7 +32,10 @@ const styles = `@import "@skryensya/core/components/process-list.css";
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("processListPage.lede")} />
     <ComponentPreview tree={processListTree(t)} label="ProcessList" />
 
     <h3>{t("processListPage.whenTitle")}</h3>

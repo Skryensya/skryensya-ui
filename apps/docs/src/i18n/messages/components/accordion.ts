@@ -26,8 +26,16 @@ export const accordionMessages = {
      */
     "accordion.description": "Una o varias divulgaciones Tile coordinadas en un solo marco.",
     "accordion.intro":
-      'Si el estado puede vivir en el HTML y te alcanza con un grupo exclusivo nativo, la opción más simple es {detailsLink}, al final de esta página. Elige Accordion cuando necesites valor controlado, <code>multiple</code> o escuchar los cambios de estado.',
+      'Un solo componente con dos mitades. Cuatro signatures corren una máquina (<code>Accordion</code>, <code>Accordion.Item</code>, <code>Accordion.Trigger</code>, <code>Accordion.Content</code>); las otras cuatro son el <code>&lt;details&gt;</code> del navegador ({detailsLink}), sin script. Las dos animan y las dos son accesibles: lo que decide es el control, no la capacidad.',
     "accordion.detailsNativoLabel": "Details nativo",
+    "accordion.choiceTitle": "Qué mitad usar",
+    "accordion.choiceBody":
+      'La máquina existe para lo que la plataforma no ofrece: un valor que se fija desde afuera, un evento que escuchar, varias secciones abiertas a la vez. Si nada de eso hace falta, el navegador ya lo resuelve. No es una versión menor: son dos dueños del mismo comportamiento.',
+    "accordion.installIntro":
+      "Empieza por quién controla el comportamiento: React y Vanilla usan la máquina controlada de Accordion; Details nativo deja la apertura y el cierre al navegador.",
+    "accordion.reactInstallTitle": "React",
+    "accordion.reactInstallBody":
+      "Instala el binding de React y carga los estilos del marco Accordion y de los items Tile. El binding monta la máquina por ti.",
     "accordion.iconsNote":
       'Los chevrons son placeholders (<code>&lt;span data-sk-icon="chevron-*"&gt;</code>): ningún componente monta un set de iconos por ti, así que hace falta esta línea además.',
     "accordion.oneItemTitle": "Accordion de un solo item",
@@ -48,26 +56,33 @@ export const accordionMessages = {
     "accordion.contractRest": "El resto del contrato (partes, opciones, valores por defecto y qué acepta cada slot) sale del contrato compilado y vive en {reference}.",
     "accordion.contractEvent":
       'El estado se escucha por evento sobre la raíz, no por callback: <code>sk:accordionvaluechange</code>, con el valor en <code>event.detail.value</code>.',
+    "accordion.nativeTitle": "El mismo grupo exclusivo, sin JavaScript",
+    "accordion.nativeAnatomyLabel": "Anatomía de Details nativo",
+    "accordion.nativeAnatomyBody":
+      'El otro juego de partes de este contrato. <code>&lt;details&gt;</code> no es un Accordion con otra piel: tiene su propia anatomía, y estas cinco clases son las que puedes estilar. Fíjate en que el resumen lleva título y descripción y ninguno de los dos tiene etiqueta: el contenido del <code>&lt;summary&gt;</code> lo compones tú, no es una parte que este contrato nombre. La primera sección está abierta porque <code>::details-content</code> no tiene caja mientras el disclosure está cerrado.',
+    "accordion.nativeAnatomyPreviewLabel": "Anatomía de DetailsGroup",
     "accordion.nativeLede":
-      '<code>&lt;details&gt;</code> y <code>&lt;summary&gt;</code> ya son una divulgación accesible de la plataforma. Comparte un atributo <code>name</code> entre siblings para que el navegador mantenga un único item abierto: un accordion nativo, sin máquina ni <code>@skryensya/vanilla</code>.',
+      '<code>&lt;details&gt;</code> y <code>&lt;summary&gt;</code> ya son una divulgación accesible de la plataforma. Comparte un atributo <code>name</code> entre siblings y el navegador mantiene un único item abierto: exactamente lo que hace <code>type="single"</code> arriba, sin máquina y sin <code>@skryensya/vanilla</code>.',
     "accordion.decisionHeadNeed": "Necesitas",
     "accordion.decisionHeadUse": "Usa",
     "accordion.decisionRow1Need": "Que funcione antes de que cargue cualquier script, o sin JavaScript",
-    "accordion.decisionRow1Use": "Details nativo",
+    "accordion.decisionRow1Use": "<code>DetailsGroup</code>",
     "accordion.decisionRow2Need": "Un grupo exclusivo simple: alcanza con compartir <code>name</code>",
-    "accordion.decisionRow2Use": "Details nativo",
-    "accordion.decisionRow3Need": "Mantener varias secciones abiertas a la vez",
-    "accordion.decisionRow3Use": "Accordion (<code>multiple</code>)",
+    "accordion.decisionRow2Use": "<code>DetailsGroup</code>",
+    "accordion.decisionRow3Need": 'Mantener varias secciones abiertas a la vez (<code>type="multiple"</code>)',
+    "accordion.decisionRow3Use": "<code>Accordion</code>",
     "accordion.decisionRow4Need": "Fijar o leer el valor abierto desde afuera: estado, props, otro componente",
-    "accordion.decisionRow4Use": "Accordion",
+    "accordion.decisionRow4Use": "<code>Accordion</code>",
     "accordion.decisionRow5Need": "Escuchar cuándo cambia, para sincronizar con el resto de la UI",
-    "accordion.decisionRow5Use": "Accordion",
-    "accordion.decisionRow6Need": "Garantizar la misma transición animada en cualquier navegador",
-    "accordion.decisionRow6Use": "Accordion",
+    "accordion.decisionRow5Use": "<code>Accordion</code>",
+    "accordion.decisionRow6Need": "Deshabilitar una sección sin sacarla del documento",
+    "accordion.decisionRow6Use": "<code>Accordion</code>",
     "accordion.nativeBody":
       'Comparte los mismos tokens que Tile (título, descripción, chevron), así el grupo se ve igual sin componer un Tile adentro.',
     "accordion.nativePreviewLabel": "Details con name compartido",
-    "accordion.nativeInstallTitle": "Instalar sólo Details",
+    "accordion.nativeInstallTitle": "Sin JavaScript: el mismo paquete, una hoja más",
+    "accordion.nativeInstallBody":
+      "Instala sólo Core e importa la hoja de Details. El navegador abre, cierra y coordina disclosures con el atributo <code>name</code>.",
     "accordion.nativeContractTitle": "Contrato nativo",
     "accordion.nativeContractItem1":
       'El primer hijo interactivo de cada <code>&lt;details&gt;</code> es su <code>&lt;summary&gt;</code>.',
@@ -80,12 +95,21 @@ export const accordionMessages = {
     "accordion.nativeContractItem5":
       'El chevron se pinta solo dentro de <code>&lt;summary&gt;</code>: reemplaza la marca nativa (<code>&lt;summary&gt;</code> apaga el triángulo del navegador) y alterna con CSS puro sobre <code>details[open]</code>, sin script propio.',
     "accordion.a11yTitle": "Accesibilidad",
-    "accordion.a11yP1":
-      'Cada trigger es un <code>&lt;button&gt;</code> nativo: Enter y Espacio lo activan sin script propio, y su <code>aria-expanded</code> (escrito por la máquina, nunca a mano) es lo único que anuncia el estado. El chevron es <code>aria-hidden="true"</code>: es la misma información dicha dos veces, y solo una debe llegar al lector de pantalla.',
-    "accordion.a11yP2":
-      "<kbd>Tab</kbd> y <kbd>Shift</kbd>+<kbd>Tab</kbd> mueven el foco entre triggers en el orden normal de la página: el patrón base que la APG de ARIA describe para un accordion no exige más que eso. Flechas, <kbd>Home</kbd> y <kbd>End</kbd> entre triggers son una mejora opcional que este componente no implementa hoy. Abrir un item no le quita el foco a su trigger ni se lo da al contenido: el recorrido con teclado sigue siendo el mismo, igual que con el mouse.",
-    "accordion.a11yP3":
-      '{detailsLink} no tiene nada de esto porque no lo necesita: un <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> es una divulgación accesible de la plataforma, con su propio manejo de foco y teclado ya resuelto por el navegador.',
+    "accordion.a11yIntro":
+      "El Accordion mejorado usa controles nativos y la máquina mantiene sus relaciones ARIA. Escribe el contenido del trigger como una etiqueta clara de la sección; no añadas ARIA que duplique esa semántica.",
+    "accordion.a11ySemanticsTitle": "Qué anuncia",
+    "accordion.a11ySemanticsItem1":
+      'Cada trigger es un <code>&lt;button&gt;</code> nativo. Dale un título visible y claro; si incluyes descripción, también forma parte de su nombre accesible. El chevron es <code>aria-hidden="true"</code> porque no añade información.',
+    "accordion.a11ySemanticsItem2":
+      'La máquina escribe <code>aria-expanded</code> y <code>aria-controls</code>. El primero anuncia si la sección está abierta; el segundo la relaciona con su contenido. No escribas ni alternes esos atributos a mano.',
+    "accordion.a11ySemanticsItem3":
+      'Cada trigger está dentro de un <code>role="heading"</code> con <code>aria-level</code> 3 por defecto (configurable de 1 a 6), para encontrar secciones desde la navegación por encabezados.',
+    "accordion.a11yKeyboardTitle": "Teclado y foco",
+    "accordion.a11yKeyboardBody":
+      '<kbd>Tab</kbd> y <kbd>Shift</kbd>+<kbd>Tab</kbd> recorren los triggers en el orden de la página; <kbd>Enter</kbd> y <kbd>Espacio</kbd> abren o cierran el que tiene foco. Al cambiar el estado, el foco sigue en el trigger y el contenido cerrado queda fuera del recorrido. Flechas, <kbd>Inicio</kbd> y <kbd>Fin</kbd> no están implementadas: son una mejora opcional del patrón de la APG.',
+    "accordion.a11yNativeTitle": "Details nativo",
+    "accordion.a11yNativeBody":
+      '<code>&lt;details&gt;</code> usa el comportamiento nativo del navegador. Conserva <code>&lt;summary&gt;</code> como primer hijo interactivo de cada <code>&lt;details&gt;</code>; el navegador aporta el foco, teclado y estado expandido sin una máquina ni ARIA adicional.',
 
     "accordion.testReact1":
       "En modo single, abrir un ítem cierra el anterior y dispara onValueChange con el nuevo valor.",
@@ -122,8 +146,16 @@ export const accordionMessages = {
 
     "accordion.description": "One or more Tile disclosures coordinated into a single frame.",
     "accordion.intro":
-      'If the state can live in HTML and a native exclusive group is enough, the simplest option is {detailsLink}, at the end of this page. Choose Accordion when you need a controlled value, <code>multiple</code>, or to listen for state changes.',
+      'One component with two halves. Four signatures run a machine (<code>Accordion</code>, <code>Accordion.Item</code>, <code>Accordion.Trigger</code>, <code>Accordion.Content</code>); the other four are the browser\'s own <code>&lt;details&gt;</code> ({detailsLink}), with no script. Both animate and both are accessible: what decides is control, not capability.',
     "accordion.detailsNativoLabel": "Native details",
+    "accordion.choiceTitle": "Which half to use",
+    "accordion.choiceBody":
+      'The machine exists for what the platform does not offer: a value set from outside, an event to listen to, several sections open at once. If none of that is needed, the browser already solves it. This is not a lesser version: they are two owners of the same behaviour.',
+    "accordion.installIntro":
+      "Start with the owner of the behaviour: React and Vanilla use the controlled Accordion machine; native Details leaves opening and closing to the browser.",
+    "accordion.reactInstallTitle": "React",
+    "accordion.reactInstallBody":
+      "Install the React binding, then load the Accordion frame and Tile item styles. The binding mounts the machine for you.",
     "accordion.iconsNote":
       'Chevrons are placeholders (<code>&lt;span data-sk-icon="chevron-*"&gt;</code>): no component mounts an icon set for you, so this line is needed too.',
     "accordion.oneItemTitle": "Accordion with a single item",
@@ -144,26 +176,33 @@ export const accordionMessages = {
     "accordion.contractRest": "The rest of the contract (parts, options, defaults, and what each slot accepts) comes from the compiled contract and lives in {reference}.",
     "accordion.contractEvent":
       'State is heard through an event on the root, not a callback: <code>sk:accordionvaluechange</code>, with the value on <code>event.detail.value</code>.',
+    "accordion.nativeTitle": "The same exclusive group, without JavaScript",
+    "accordion.nativeAnatomyLabel": "Native details anatomy",
+    "accordion.nativeAnatomyBody":
+      'This contract\'s other set of parts. <code>&lt;details&gt;</code> is not an Accordion wearing a different skin: it has an anatomy of its own, and these five classes are the ones you can style. Note that the summary carries a title and a description and neither is labelled: what goes inside <code>&lt;summary&gt;</code> is yours to compose, not a part this contract names. The first section is open because <code>::details-content</code> has no box at all while the disclosure is closed.',
+    "accordion.nativeAnatomyPreviewLabel": "DetailsGroup anatomy",
     "accordion.nativeLede":
-      '<code>&lt;details&gt;</code> and <code>&lt;summary&gt;</code> are already an accessible platform disclosure. Share a <code>name</code> attribute between siblings so the browser keeps a single item open: a native accordion, with no machine and no <code>@skryensya/vanilla</code>.',
+      '<code>&lt;details&gt;</code> and <code>&lt;summary&gt;</code> are already an accessible platform disclosure. Share a <code>name</code> attribute between siblings and the browser keeps a single item open: exactly what <code>type="single"</code> does above, with no machine and no <code>@skryensya/vanilla</code>.',
     "accordion.decisionHeadNeed": "You need",
     "accordion.decisionHeadUse": "Use",
     "accordion.decisionRow1Need": "It has to work before any script loads, or without JavaScript at all",
-    "accordion.decisionRow1Use": "Native details",
+    "accordion.decisionRow1Use": "<code>DetailsGroup</code>",
     "accordion.decisionRow2Need": "A simple exclusive group: sharing <code>name</code> is enough",
-    "accordion.decisionRow2Use": "Native details",
-    "accordion.decisionRow3Need": "Keep several sections open at once",
-    "accordion.decisionRow3Use": "Accordion (<code>multiple</code>)",
+    "accordion.decisionRow2Use": "<code>DetailsGroup</code>",
+    "accordion.decisionRow3Need": 'Keep several sections open at once (<code>type="multiple"</code>)',
+    "accordion.decisionRow3Use": "<code>Accordion</code>",
     "accordion.decisionRow4Need": "Set or read the open value from outside: state, props, another component",
-    "accordion.decisionRow4Use": "Accordion",
+    "accordion.decisionRow4Use": "<code>Accordion</code>",
     "accordion.decisionRow5Need": "Listen for when it changes, to sync with the rest of the UI",
-    "accordion.decisionRow5Use": "Accordion",
-    "accordion.decisionRow6Need": "Guarantee the same animated transition in every browser",
-    "accordion.decisionRow6Use": "Accordion",
+    "accordion.decisionRow5Use": "<code>Accordion</code>",
+    "accordion.decisionRow6Need": "Disable a section without taking it out of the document",
+    "accordion.decisionRow6Use": "<code>Accordion</code>",
     "accordion.nativeBody":
       'It shares the same tokens as Tile (title, description, chevron), so the group looks the same without composing a Tile inside it.',
     "accordion.nativePreviewLabel": "Details with a shared name",
-    "accordion.nativeInstallTitle": "Install only Details",
+    "accordion.nativeInstallTitle": "Without JavaScript: same package, one more stylesheet",
+    "accordion.nativeInstallBody":
+      "Install Core only and import the Details stylesheet. The browser opens, closes, and coordinates disclosures through the <code>name</code> attribute.",
     "accordion.nativeContractTitle": "Native contract",
     "accordion.nativeContractItem1":
       'The first interactive child of each <code>&lt;details&gt;</code> is its <code>&lt;summary&gt;</code>.',
@@ -176,12 +215,21 @@ export const accordionMessages = {
     "accordion.nativeContractItem5":
       "The chevron paints only inside <code>&lt;summary&gt;</code>: it replaces the native marker (<code>&lt;summary&gt;</code> turns off the browser's own triangle) and toggles with plain CSS keyed on <code>details[open]</code>, with no script of its own.",
     "accordion.a11yTitle": "Accessibility",
-    "accordion.a11yP1":
-      'Each trigger is a native <code>&lt;button&gt;</code>: Enter and Space activate it with no script of its own, and its <code>aria-expanded</code> (written by the machine, never by hand) is the only thing that announces the state. The chevron is <code>aria-hidden="true"</code>: it is the same information said twice, and only one should reach the screen reader.',
-    "accordion.a11yP2":
-      "<kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> move focus between triggers in the page's normal order: the base keyboard pattern the ARIA APG describes for an accordion asks for nothing more. Arrow keys, <kbd>Home</kbd> and <kbd>End</kbd> between triggers are an optional enhancement this component does not implement today. Opening an item does not take focus from its trigger or hand it to the content: keyboard traversal stays the same, same as with the mouse.",
-    "accordion.a11yP3":
-      '{detailsLink} has none of this because it does not need it: a <code>&lt;details&gt;</code>/<code>&lt;summary&gt;</code> is an accessible platform disclosure, with its own focus and keyboard handling already solved by the browser.',
+    "accordion.a11yIntro":
+      "The enhanced Accordion uses native controls and the machine maintains their ARIA relationships. Write the trigger content as a clear section label; do not add ARIA that repeats that semantics.",
+    "accordion.a11ySemanticsTitle": "What it announces",
+    "accordion.a11ySemanticsItem1":
+      'Each trigger is a native <code>&lt;button&gt;</code>. Give it a clear visible title; if you include a description, it also becomes part of the accessible name. The chevron is <code>aria-hidden="true"</code> because it adds no information.',
+    "accordion.a11ySemanticsItem2":
+      'The machine writes <code>aria-expanded</code> and <code>aria-controls</code>. The first announces whether the section is open; the second relates it to its content. Do not write or toggle either attribute by hand.',
+    "accordion.a11ySemanticsItem3":
+      'Each trigger sits inside a <code>role="heading"</code> with <code>aria-level</code> 3 by default (configurable from 1 to 6), so people can find sections through heading navigation.',
+    "accordion.a11yKeyboardTitle": "Keyboard and focus",
+    "accordion.a11yKeyboardBody":
+      '<kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd> move through triggers in page order; <kbd>Enter</kbd> and <kbd>Space</kbd> open or close the focused trigger. When state changes, focus stays on that trigger and closed content leaves the tab order. Arrow keys, <kbd>Home</kbd>, and <kbd>End</kbd> are not implemented: they are an optional APG pattern enhancement.',
+    "accordion.a11yNativeTitle": "Native details",
+    "accordion.a11yNativeBody":
+      '<code>&lt;details&gt;</code> uses the browser’s native behaviour. Keep <code>&lt;summary&gt;</code> as the first interactive child of each <code>&lt;details&gt;</code>; the browser supplies focus, keyboard operation, and expanded state without a machine or extra ARIA.',
 
     "accordion.testReact1":
       "In single mode, opening an item closes the previous one and fires onValueChange with the new value.",

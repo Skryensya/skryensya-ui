@@ -19,6 +19,7 @@
  * on its way into the frame: shown as written, run as JavaScript.
  */
 import CodeBlock from "./CodeBlock.astro";
+import DeferredCode from "./DeferredCode.astro";
 import { codePreviewAttrs, codePreviewParts } from "@skryensya/core/code-preview";
 import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
 import type { UsageTree } from "@skryensya/core/usage-tree";
@@ -276,7 +277,9 @@ const playgroundHandoff =
  */
 const reactSlotHtml = Astro.slots.has("react") ? await Astro.slots.render("react") : undefined;
 const hasReact = Boolean(tree) || Boolean(treeReact ?? react) || Boolean(reactSlotHtml);
-const hasBindingTabs = chrome && Boolean(vanillaCode && hasReact);
+/* This preview renders BOTH halves, so exactly one of them has to be hidden. Named for the
+   fact rather than for the control that used to sit beside it. */
+const hasBothBindings = chrome && Boolean(vanillaCode && hasReact);
 const hasSourceTabs = Boolean(vanillaCode && (js || css));
 const showReactStage = chrome && Boolean(tree || reactSlotHtml);
 const slotHtml = Astro.slots.has("default") ? await Astro.slots.render("default") : undefined;
@@ -464,6 +467,17 @@ const stageStyle =
   data-sk-component-preview
   data-width={width}
   data-sk-component-preview-screen-local={screenScope === "local" ? "" : undefined}
+  {...(chrome && screens
+    ? {
+        /* Read by the ONE boot pass in `Base.astro`. These used to travel through `define:vars` into
+           a `<script is:inline>` per preview: nine copies of the same five-kilobyte function on a
+           component page, which the CPU profile put at 201ms of script evaluation before anything
+           else could run. Attributes say the same thing once. */
+        "data-sk-preview-boot": "",
+        "data-sk-preview-default-screen": defaultScreen ?? "",
+        "data-sk-preview-zoomed": zoomedDesktop ? "" : undefined,
+      }
+    : { "data-sk-preview-boot": "" })}
   data-sk-component-preview-playground={playgroundHandoff}
   data-sk-preview-source={previewSource}
   data-sk-component-preview-chrome={chrome ? undefined : "false"}
@@ -494,47 +508,16 @@ const stageStyle =
       */}
     <div class="sk-component-preview__actions">
       {/*
-        * FIRST: which binding you are reading is the choice a reader reaches for before anything
-        * else here. `data-sk-component-preview-binding-tabs` and `data-sk-segmented` both live on
-        * the same element: one node is the component-preview's own mount hook AND the Segmented the
-        * site's global enhancer already knows how to run (indicator, aria-checked, keyboard). The
-        * opt-in ComponentPreview enhancer only listens for the `sk:segmentedvaluechange` Segmented dispatches
-        * on itself; it never re-paints the widget's own state.
+        * NO BINDING SWITCH HERE ANY MORE. Which binding you are reading is a question about the
+        * PAGE, not about one demo: a component page carries up to a dozen previews and the reader
+        * was being asked the same question by every one of them, then asked it again by the
+        * Installation tab. `ComponentPageShell` puts one switch in the masthead and it writes the
+        * same `data-sk-component-preview-pref` this preview already reads, so nothing here changed
+        * except that the control is gone: `connectComponentPreview` was written with `bindingTabs?.`
+        * throughout and takes its initial value from the document preference first, so a preview
+        * with no tabs of its own was always a supported shape. The CONTRACT still ships them (see
+        * `ComponentPreviewPage`, and the enhancer's own tests); this site simply stopped using them.
         */}
-      {
-        hasBindingTabs && (
-          <div
-            class="sk-segmented"
-            data-sk-segmented
-            data-sk-component-preview-binding-tabs
-            data-value="vanilla"
-            role="radiogroup"
-            aria-label={t("preview.bindingGroup", { name: label })}
-          >
-            <span class="sk-segmented__indicator" aria-hidden="true" />
-            <button
-              class="sk-segmented__option sk-interactive"
-              data-sk-segmented-option
-              data-sk-component-preview-binding-option
-              data-value="vanilla"
-              type="button"
-              role="radio"
-            >
-              Vanilla
-            </button>
-            <button
-              class="sk-segmented__option sk-interactive"
-              data-sk-segmented-option
-              data-sk-component-preview-binding-option
-              data-value="react"
-              type="button"
-              role="radio"
-            >
-              React
-            </button>
-          </div>
-        )
-      }
       {/*
         * Each option's accessible name carries the full hint text for its preset
         * (`screenToggleLabels`), so a page with several previews still names its own component, not
@@ -722,7 +705,7 @@ const stageStyle =
       <div
         class="sk-component-preview__react-stage"
         data-sk-component-preview-binding="react"
-        hidden={hasBindingTabs ? true : undefined}
+        hidden={hasBothBindings ? true : undefined}
       >
         {tree ? (
           <TreeDemo
@@ -932,7 +915,7 @@ const stageStyle =
       <div
         class="sk-component-preview__binding"
         data-sk-component-preview-binding="react"
-        hidden={hasBindingTabs ? true : undefined}
+        hidden={hasBothBindings ? true : undefined}
       >
         {
           reactData ? (
@@ -1056,88 +1039,29 @@ const stageStyle =
             <Fragment set:html={iconMarkup("close", { size: "sm" })} />
           </button>
         </div>
+        {/* Parked until the drawer opens: see `DeferredCode`. These were the largest block of
+            hidden DOM on a component page, 13,633 token spans on `/components/comment-thread`. */}
         <div class="sk-component-preview__contract-body sk-scrollbar">
           {/* `open`: the drawer IS the disclosure, so the code inside never gets a second one  -  no
             Expand control, no collapsed window ceiling, always the whole tree. */}
-          <CodeBlock code={treeJson} lang="json" open />
+          <DeferredCode>
+            <CodeBlock code={treeJson} lang="json" open />
+          </DeferredCode>
         </div>
       </dialog>
     )
   }
 </div>
-{
-  /*
-   * Sync tabs, panels and the screen preset to the document prefs before deferred enhancers mount.
-   * Head FOUC already wrote both attributes on <html>; this keeps the binding buttons from
-   * flipping pressed state Vanilla → React on load, and stops a persisted preset from painting
-   * full-width first and snapping to phone size once the enhancer arrives.
-   */
-  (hasBindingTabs || (chrome && screens)) && (
-    <script
-      is:inline
-      define:vars={{ previewId, hasBindingTabs, screens: chrome && screens, zoomedDesktop, screenScope, defaultScreen }}
-    >
-      (function () {
-        var d = document.documentElement;
-        var root = document.getElementById(previewId);
-        if (!root) return;
-
-        if (hasBindingTabs) {
-          var pref = d.getAttribute("data-sk-component-preview-pref") || "vanilla";
-          var tabs = root.querySelector("[data-sk-component-preview-binding-tabs]");
-          if (tabs) {
-            tabs.setAttribute("data-value", pref);
-            tabs.querySelectorAll("[data-sk-component-preview-binding-option]").forEach(function (option) {
-              option.setAttribute("aria-checked", option.getAttribute("data-value") === pref ? "true" : "false");
-            });
-          }
-          root.querySelectorAll("[data-sk-component-preview-binding]").forEach(function (panel) {
-            var name = panel.getAttribute("data-sk-component-preview-binding");
-            if (name === "vanilla" || name === "react") panel.hidden = name !== pref;
-          });
-        }
-
-        if (screens) {
-          var screen;
-          if (screenScope === "local") {
-            // Never reads the shared/persisted preset: this preview's opinion of its own starting
-            // point (see the `screenScope` doc on ComponentPreview.astro), not the page's.
-            screen = defaultScreen || "mobile";
-          } else {
-            // Stored preference first, then this preview's own seed, then free.
-            screen = d.getAttribute("data-sk-component-preview-screen-pref") || defaultScreen || "free";
-            if (screen === "xl" && !zoomedDesktop) screen = "free";
-            if (screen !== "xl" && screen !== "tablet" && screen !== "mobile") screen = "free";
-          }
-          var screenTabs = root.querySelector("[data-sk-component-preview-screen-tabs]");
-          if (screenTabs) {
-            screenTabs.setAttribute("data-value", screen);
-            screenTabs.querySelectorAll("[data-sk-component-preview-screen-option]").forEach(function (option) {
-              option.setAttribute("aria-checked", option.getAttribute("data-value") === screen ? "true" : "false");
-            });
-          }
-          // Both bindings are iframe stages, and the preset is one control above both of them.
-          // `free` is the absence of the attribute, so nothing is written for it.
-          if (screen !== "free") {
-            root.querySelectorAll(".sk-component-preview__stage").forEach(function (stage) {
-              stage.setAttribute("data-sk-component-preview-screen", screen);
-            });
-          }
-          // XL's 1440px viewport only fits the docs column zoomed out (packages/vanilla's
-          // `syncXlZoom`, run later by the deferred enhancer). Mirrored here so the stage never
-          // paints full-width-unzoomed before that enhancer mounts.
-          if (screen === "xl") {
-            var target =
-              parseFloat(getComputedStyle(root).getPropertyValue("--sk-component-preview-screen-xl")) ||
-              1440;
-            var zoom = Math.min(1, root.clientWidth / target);
-            root.style.setProperty("--sk-component-preview-xl-zoom", String(zoom));
-          }
-        }
-      })();
-    </script>
-  )
-}
+{/*
+  * NO PER-PREVIEW BOOT SCRIPT. Syncing this card to the document preferences used to be a
+  * `<script is:inline>` rendered beside every preview, so a page with nine of them evaluated the
+  * same function nine times: 201ms of script in a CPU profile of `/components/comment-thread`,
+  * ~45KB of duplicated inline source, all of it before the deferred enhancers could start.
+  *
+  * The data it needed now rides on the root as `data-sk-preview-*`, and ONE pass at the end of
+  * `Base.astro`'s body does every preview on the page. Same work, same timing (still before first
+  * paint, still ahead of the enhancers), one compile instead of nine.
+  */}
 
 <script>
   import { mountComponentPreview } from "@skryensya/vanilla/component-preview";

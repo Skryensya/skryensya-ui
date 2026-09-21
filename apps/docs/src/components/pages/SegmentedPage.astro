@@ -23,9 +23,7 @@ await initComponents();`;
   contractId="segmented"
   testFiles={["packages/vanilla/src/components/segmented.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("segmentedPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("segmentedPage.anatomyBody")} />
     <ComponentPreview
       tree={segmentedAnatomyTree(t)}
@@ -35,7 +33,10 @@ await initComponents();`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("segmentedPage.lede")} />
     <ComponentPreview tree={segmentedTree(t)} label="Segmented" />
     <p set:html={t("segmentedPage.body")} />
     <p set:html={t("component.reactNote")} />

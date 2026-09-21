@@ -25,9 +25,7 @@ const css = `@import "@skryensya/core/tokens.scss";
   contractId="navbar"
   testFiles={["packages/react/src/components/navbar.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("navbarPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("navbarPage.anatomyBody")} />
     <ComponentPreview
       tree={navbarAnatomyTree(t, {
@@ -42,8 +40,10 @@ const css = `@import "@skryensya/core/tokens.scss";
       hideSource
       chrome={false}
     />
+  </Fragment>
 
-
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("navbarPage.lede")} />
     <h3>{t("navbarPage.linksTitle")}</h3>
     <p set:html={t("navbarPage.linksBody")} />
     <ComponentPreview

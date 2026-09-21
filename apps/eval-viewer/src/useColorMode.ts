@@ -9,7 +9,7 @@ import { getPreference, setPreference, subscribePreference } from "@skryensya/va
 
 /*
  * The chrome's own color mode, wired to the SAME primitive `IconStateButton`'s own semantic overlay
- * names for exactly this job (`icon-state-button.yaml`'s `avoidWhen`: "a color mode cycle uses
+ * names for exactly this job (`state-button.yaml`'s `avoidWhen`: "a color mode cycle uses
  * the functions in @skryensya/core/theme-toggle... that part should not be reinvented"). This hook is
  * that wiring, nothing more: `applyColorMode`/`nextColorMode`/`colorModePreference` are the kit's own
  * pure functions, `getPreference`/`setPreference`/`subscribePreference` are `@skryensya/vanilla`'s

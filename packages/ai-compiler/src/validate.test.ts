@@ -1558,27 +1558,34 @@ describe("date-picker: field with derived calendar panel", () => {
   });
 });
 
-describe("details: platform disclosure without a machine", () => {
+/* The platform half of `accordion`. It was its own contract until the two merged; `contract:
+   "details"` is now an unknown contract, which the first assertion below pins. */
+describe("accordion: platform disclosure without a machine", () => {
   const details = (overrides: Partial<UsageTree> = {}): UsageTree =>
     ({
-      contract: "details",
+      contract: "accordion",
       signature: "Details",
       options: { name: "faq" },
       children: [
-        { contract: "details", signature: "Details.Summary", children: "Requisitos" },
-        { contract: "details", signature: "Details.Content", children: "Node 24" },
+        { contract: "accordion", signature: "Details.Summary", children: "Requisitos" },
+        { contract: "accordion", signature: "Details.Content", children: "Node 24" },
       ],
       ...overrides,
     }) as UsageTree;
 
+  it("no longer answers to a contract of its own", () => {
+    expect(rules({ contract: "details", signature: "Details" })).toContain("unknown-contract");
+    expect(getContract("details")).toBeUndefined();
+  });
+
   it("requires Summary then Content, and rejects a bare Details", () => {
-    expect(rules({ contract: "details", signature: "Details" })).toContain("missing-required-slot");
+    expect(rules({ contract: "accordion", signature: "Details" })).toContain("missing-required-slot");
     expect(validateUsageTree(details()).valid).toBe(true);
     expect(
       rules({
-        contract: "details",
+        contract: "accordion",
         signature: "Details",
-        children: [{ contract: "details", signature: "Details.Content", children: "Body" }],
+        children: [{ contract: "accordion", signature: "Details.Content", children: "Body" }],
       }),
     ).toContain("wrong-cardinality");
   });
@@ -1586,7 +1593,7 @@ describe("details: platform disclosure without a machine", () => {
   it("accepts an exclusive DetailsGroup of named siblings", () => {
     expect(
       validateUsageTree({
-        contract: "details",
+        contract: "accordion",
         signature: "DetailsGroup",
         children: [
           details({ options: { name: "deploy", open: true } }),
@@ -1594,11 +1601,16 @@ describe("details: platform disclosure without a machine", () => {
         ],
       }).valid,
     ).toBe(true);
-    expect(rules({ contract: "details", signature: "DetailsGroup" })).toContain("missing-required-slot");
+    expect(rules({ contract: "accordion", signature: "DetailsGroup" })).toContain("missing-required-slot");
   });
 
-  it("publishes its own stylesheet with no foreign hookSheets", () => {
-    expect(getContract("details")!.hookSheets ?? []).toEqual([]);
+  /* `details.css` is now one of `accordion`'s `hookSheets` rather than a contract's own `css`, and
+     this is what makes sure that rewiring still puts the sheet in front of a `<details>` tree: a
+     page that composes one and imports nothing else gets it, with nothing left unplaced. */
+  it("still reaches its stylesheet, now through accordion's hookSheets", () => {
+    expect(getContract("accordion")!.hookSheets ?? []).toContain(
+      "@skryensya/core/components/details.css",
+    );
     const { sheets, unplaced } = sheetsForTree(details());
     expect(sheets).toContain("@skryensya/core/components/details.css");
     expect(unplaced).toEqual([]);
@@ -2129,15 +2141,15 @@ describe("hero: page opening band", () => {
   });
 });
 
-describe("icon-state-button: multi-face icon control", () => {
+describe("state-button: multi-face icon control", () => {
   const faces = [
     { options: { name: "idle", icon: "copy" }, slots: {} },
     { options: { name: "copied", icon: "check" }, slots: {} },
   ];
   const button = (overrides: Partial<UsageTree> = {}): UsageTree =>
     ({
-      contract: "icon-state-button",
-      signature: "IconStateButton",
+      contract: "state-button",
+      signature: "StateButton",
       options: { current: "idle" },
       attrs: { "aria-label": "Copiar" },
       slots: { faces },
@@ -2145,7 +2157,7 @@ describe("icon-state-button: multi-face icon control", () => {
     }) as UsageTree;
 
   it("requires faces and an accessible name", () => {
-    expect(rules({ contract: "icon-state-button", signature: "IconStateButton" })).toEqual(
+    expect(rules({ contract: "state-button", signature: "StateButton" })).toEqual(
       expect.arrayContaining(["missing-required-slot", "missing-accessible-name"]),
     );
     expect(rules(button({ attrs: {} }))).toContain("missing-accessible-name");
@@ -2166,7 +2178,7 @@ describe("icon-state-button: multi-face icon control", () => {
 
   it("bakes data-icon-only and marks the current face active at emit", () => {
     const markup = emitMarkup(button());
-    expect(markup).toContain('class="sk-icon-state-button sk-button sk-interactive sk-icon-toggle"');
+    expect(markup).toContain('class="sk-state-button sk-button sk-interactive sk-icon-toggle"');
     expect(markup).toContain("data-icon-only");
     expect(markup).toContain('data-current="idle"');
     expect(markup).toMatch(/data-face="idle"[^>]*data-active|data-active[^>]*data-face="idle"/);
@@ -2194,9 +2206,9 @@ describe("icon-state-button: multi-face icon control", () => {
   });
 
   it("loads button.css via also and its own sheet, with no foreign hookSheets", () => {
-    expect(getContract("icon-state-button")!.hookSheets ?? []).toEqual([]);
+    expect(getContract("state-button")!.hookSheets ?? []).toEqual([]);
     const { sheets, unplaced } = sheetsForTree(button());
-    expect(sheets).toContain("@skryensya/core/components/icon-state-button.css");
+    expect(sheets).toContain("@skryensya/core/components/state-button.css");
     expect(sheets).toContain("@skryensya/core/components/button.css");
     expect(unplaced).toEqual([]);
   });
@@ -4464,6 +4476,11 @@ describe("dialog: required anatomy and Dialog Vaul sheet", () => {
     expect(contract.options.closeLabel.machineInput).toBeUndefined();
     expect(contract.hookSheets).toEqual(["@skryensya/core/patterns/dialog-vaul.css"]);
   });
+
+  it("emits data-footer-align on the host when footerAlign is start", () => {
+    expect(emitMarkup(dialog({ footerAlign: "start" }))).toMatch(/data-footer-align="start"/);
+    expect(emitMarkup(dialog())).not.toMatch(/data-footer-align/);
+  });
 });
 
 describe("vaul: an edge panel whose drag is authorable", () => {
@@ -4702,6 +4719,38 @@ describe("keyOf: an option that names entries must name real ones", () => {
     expect(messageFor(tree, "unknown-key")).toContain("general, billing");
   });
 
+  /*
+   * THE SAME QUESTION, ASKED OF AN ENTRY. A Diagram's edges name nodes of the SAME signature's
+   * other collection, which is the one authoring mistake that component really has: `from`/`to` are
+   * the only strings in the composition that have to match something else in it. The host-option
+   * half above simply happens to be the case that turned up first.
+   */
+  const diagram = (to: string): UsageTree => ({
+    contract: "diagram",
+    signature: "Diagram",
+    options: { label: "Flujo" },
+    slots: {
+      nodes: [
+        { options: { node: "start" }, slots: { children: "Empieza" } },
+        { options: { node: "end" }, slots: { children: "Termina" } },
+      ],
+      edges: [{ options: { from: "start", to }, slots: {} }],
+    },
+  });
+
+  it("accepts an edge whose ends both name nodes of the drawing", () => {
+    expect(rules(diagram("end"))).not.toContain("unknown-key");
+  });
+
+  it("rejects an edge pointing at a node the drawing does not have", () => {
+    const tree = diagram("finish");
+    expect(rules(tree)).toContain("unknown-key");
+    const message = messageFor(tree, "unknown-key");
+    /* Named by where it is, since an entry has no name of its own to quote. */
+    expect(message).toContain("edges[0].to");
+    expect(message).toContain("start, end");
+  });
+
   const treeView = (options: Readonly<Record<string, string>>): UsageTree => ({
     contract: "tree-view",
     signature: "TreeView",
@@ -4894,6 +4943,47 @@ describe("content model: what the HTML parser would move", () => {
   it("follows an element option on the parent: a div Text holds blocks", () => {
     const tree: UsageTree = { contract: "typography", signature: "Text", options: { textElement: "div" }, children: [stack] };
     expect(rules(tree)).not.toContain("content-model");
+  });
+
+  /*
+   * `<summary>` is the strict one. Everything above is either a parser fact (a block closes a `<p>`)
+   * or an advisory; this is the one place a merely-invalid nesting is refused outright, because the
+   * summary IS the disclosure's control and its content is the accessible name.
+   */
+  const summary = (child: UsageTree | string): UsageTree => ({
+    contract: "accordion",
+    signature: "Details",
+    children: [
+      { contract: "accordion", signature: "Details.Summary", children: child },
+      { contract: "accordion", signature: "Details.Content", children: "Body" },
+    ],
+  });
+
+  it("refuses a block inside a summary, as an error rather than an advisory", () => {
+    const tree = summary(stack);
+    expect(rules(tree)).toContain("content-model");
+    expect(validateUsageTree(tree).valid).toBe(false);
+    expect(messageFor(tree, "content-model")).toContain("<summary>");
+  });
+
+  it("points a Text in a summary at the span it should have been", () => {
+    expect(messageFor(summary({ contract: "typography", signature: "Text", children: "x" }), "content-model")).toContain(
+      'textElement: "span"',
+    );
+  });
+
+  /*
+   * HTML §4.11.2: "phrasing content, optionally intermixed with heading content". A heading is the
+   * ordinary way to title a disclosure, so it has to pass where the same child inside a `<span>` or
+   * a `<button>` would not.
+   */
+  it("allows a heading, which is the one thing summary takes that other phrasing parents do not", () => {
+    const heading: UsageTree = { contract: "typography", signature: "Heading", options: { headingSize: "h3" }, children: "Runtime" };
+    expect(rules(summary(heading))).not.toContain("content-model");
+    expect(rules(summary("Runtime"))).not.toContain("content-model");
+    expect(
+      rules(summary({ contract: "typography", signature: "Text", options: { textElement: "span" }, children: "x" })),
+    ).not.toContain("content-model");
   });
 });
 
@@ -5679,7 +5769,7 @@ describe("generic rules: groups, pairs, counts, positions, conditions, vocabular
 
   it("minItems and item requires", () => {
     const faces = (items: unknown[]): UsageTree =>
-      ({ contract: "icon-state-button", signature: "IconStateButton", attrs: { "aria-label": "Copiar" }, slots: { faces: items } }) as UsageTree;
+      ({ contract: "state-button", signature: "StateButton", attrs: { "aria-label": "Copiar" }, slots: { faces: items } }) as UsageTree;
     expect(rules(faces([{ options: { name: "idle", icon: "copy" }, slots: {} }]))).toContain("wrong-cardinality");
     expect(rules(faces([{ options: { name: "idle", icon: "copy" }, slots: {} }, { options: { name: "done" }, slots: {} }]))).toContain(
       "missing-required",
@@ -5765,14 +5855,14 @@ describe("schema 2.3: what the manifest derives and publishes", () => {
 });
 
 describe("forward: host attr allowlists", () => {
-  it("publishes Button, Input, IconStateButton, Select, ListItemButton, Tag, Checkbox, Switch, RadioGroup, and form peers", () => {
+  it("publishes Button, Input, StateButton, Select, ListItemButton, Tag, Checkbox, Switch, RadioGroup, and form peers", () => {
     expect(getContract("button")!.signatures["Button.action"].forward).toContain("name");
     expect(getContract("button")!.signatures["Button.action"].forward).toContain("form");
     expect(getContract("button")!.signatures["Button.navigation"].forward).toContain("target");
     expect(getContract("input")!.signatures.Input.forward).toContain("readonly");
     expect(getContract("input")!.signatures.Input.forward).toContain("value");
-    expect(getContract("icon-state-button")!.signatures.IconStateButton.forward).toContain("data-variant");
-    expect(getContract("icon-state-button")!.signatures.IconStateButton.forward).toContain("data-size");
+    expect(getContract("state-button")!.signatures.StateButton.forward).toContain("data-variant");
+    expect(getContract("state-button")!.signatures.StateButton.forward).toContain("data-size");
     expect(getContract("select")!.signatures["Select.native"].forward).toContain("form");
     expect(getContract("select")!.signatures["Select.native"].forward).toContain("autocomplete");
     expect(getContract("select")!.signatures.Select.forward).toContain("id");
@@ -5800,7 +5890,7 @@ describe("forward: host attr allowlists", () => {
     expect(getContract("tile")!.signatures.TileLink.forward).toContain("target");
     expect(getContract("tile")!.signatures.TileCheckbox.forward).toContain("form");
     expect(getContract("tile")!.signatures.ExpandableTileTrigger.forward).toContain("aria-*");
-    expect(getContract("details")!.signatures["Details.Summary"].forward).toContain("id");
+    expect(getContract("accordion")!.signatures["Details.Summary"].forward).toContain("id");
     expect(getContract("typography")!.signatures.Link.forward).toContain("download");
     expect(getContract("vaul")!.signatures["Vaul.Trigger"].forward).toContain("name");
     expect(getContract("vaul")!.signatures["Vaul.Close"].forward).toContain("form");
@@ -5857,11 +5947,11 @@ describe("forward: host attr allowlists", () => {
     expect(getContract("button")!.signatures["Button.action"]!.forward).toContain("autofocus");
   });
 
-  it("accepts IconStateButton Button look attrs and rejects unknowns", () => {
+  it("accepts StateButton Button look attrs and rejects unknowns", () => {
     expect(
       validateUsageTree({
-        contract: "icon-state-button",
-        signature: "IconStateButton",
+        contract: "state-button",
+        signature: "StateButton",
         attrs: { "aria-label": "Copy", "data-variant": "ghost", "data-size": "sm" },
         slots: {
           faces: [
@@ -5873,8 +5963,8 @@ describe("forward: host attr allowlists", () => {
     ).toBe(true);
     expect(
       rules({
-        contract: "icon-state-button",
-        signature: "IconStateButton",
+        contract: "state-button",
+        signature: "StateButton",
         attrs: { "aria-label": "Copy", title: "nope" },
         slots: {
           faces: [
@@ -5944,7 +6034,7 @@ describe("compose / systemOwned", () => {
       of: "menu",
       systemOwned: true,
     });
-    expect(getContract("details")!.signatures["Details.Summary"].compose).toEqual([
+    expect(getContract("accordion")!.signatures["Details.Summary"].compose).toEqual([
       { of: "icon", systemOwned: true },
     ]);
     expect(getContract("tag")!.signatures.Tag.compose?.map((c) => c.of)).toEqual(

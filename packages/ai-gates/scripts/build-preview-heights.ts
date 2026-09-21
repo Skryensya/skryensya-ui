@@ -237,6 +237,34 @@ async function measurePage(page: Page, url: string, origin: string) {
 
   for (const index of indices) {
     const stage = stages.nth(index);
+
+    /*
+     * A STAGE INSIDE A CLOSED PANEL HAS NO BOX, AND IS SKIPPED RATHER THAN WAITED FOR.
+     *
+     * `display: none` on an ancestor leaves the iframe with a 0x0 rect, and
+     * `scrollIntoViewIfNeeded` waits for a non-empty one: it spends its whole 30s budget and then
+     * fails the page. That used to be theoretical and stopped being so when the anatomy diagrams
+     * moved into the Reference tab, which is closed at load  -  every page carrying one failed
+     * outright, which is most component pages.
+     *
+     * Skipping is also the right ANSWER, not just the cheap one: a preview in a closed panel has no
+     * layout to measure until the reader opens that panel, and the 12rem floor it keeps is what it
+     * would get anyway. Recorded as unsettled so the run still reports it rather than passing over
+     * it in silence.
+     */
+    const box = await stage.boundingBox();
+    if (!box || box.width === 0 || box.height === 0) {
+      rows.push(
+        await stage.evaluate((el) => ({
+          id: el.closest<HTMLElement>(".sk-component-preview")?.id ?? "",
+          label: el.getAttribute("title") ?? "",
+          ready: false,
+          height: 0,
+        })),
+      );
+      continue;
+    }
+
     await stage.scrollIntoViewIfNeeded();
     try {
       await page.waitForFunction(

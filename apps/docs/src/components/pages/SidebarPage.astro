@@ -44,9 +44,7 @@ await initComponents();`;
   contractId="sidebar"
   testFiles={["packages/react/src/components/sidebar.test.tsx", "packages/vanilla/src/components/sidebar.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("sidebarPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("sidebarPage.anatomyBody")} />
     <ComponentPreview
       tree={sidebarAnatomyTree(t)}
@@ -56,7 +54,10 @@ await initComponents();`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("sidebarPage.lede")} />
     <h3>{t("sidebarPage.contentTitle")}</h3>
     <p set:html={t("sidebarPage.contentBody")} />
 

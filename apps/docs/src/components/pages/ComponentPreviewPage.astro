@@ -246,11 +246,7 @@ await initComponents(document);`;
   contractId="component-preview"
   testFiles={["packages/vanilla/src/components/component-preview.test.ts", "packages/react/src/components/component-preview.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("componentPreview.lede")} />
-
-    <ComponentPreview tree={componentPreviewButtonTree(t)} js={demoJs} label="Button" />
-
+  <Fragment slot="anatomy">
     <p set:html={t("componentPreview.anatomyBody")} />
     <ComponentPreview
       tree={componentPreviewAnatomyTree(t)}
@@ -260,7 +256,12 @@ await initComponents(document);`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("componentPreview.lede")} />
+
+    <ComponentPreview tree={componentPreviewButtonTree(t)} js={demoJs} label="Button" />
     <h3>{t("componentPreview.responsibilitiesTitle")}</h3>
     <ul>
       <li set:html={t("componentPreview.respItem1")} />

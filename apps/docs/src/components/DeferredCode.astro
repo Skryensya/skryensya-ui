@@ -1,0 +1,28 @@
+---
+/*
+ * CONTENT THAT STARTS HIDDEN, PARKED OUT OF THE DOCUMENT UNTIL ITS PANEL OPENS.
+ *
+ * Highlighted code is expensive in NODES rather than bytes. Measured on the built site, a component
+ * page carried thousands of token spans that no reader could see on load: the Reference tab's
+ * contract JSON (1,931 on `/components/button`, 5,376 on `/components/comment-thread`), the binding
+ * half nobody picked (6,211), a source tab behind another one (3,912). All of it resolved styles and
+ * took part in layout, and all of it is behind a click.
+ *
+ * A `<template>`'s content is an inert DocumentFragment: parsed, but not IN the document, so it
+ * costs no style resolution, no layout and nothing to walk. `scripts/deferred-code.ts` clones it in
+ * the moment the wrapper becomes visible, so the same markup arrives  -  unlike `CodeBlock`'s own
+ * `full` density, which ships text and gives up highlighting to save the same nodes.
+ *
+ * ONLY FOR CONTENT HIDDEN AT LOAD. Something already visible gains nothing here and pays a clone;
+ * the hydrator runs on first paint for anything visible, so wrapping a visible block is merely
+ * wasteful rather than broken.
+ *
+ * THE WRAPPER IS A REAL BOX, not `display: contents`: the panel's own layout should be the same
+ * whether the code has arrived yet or not, and a box that is empty for one frame is what makes the
+ * hydration invisible.
+ */
+---
+
+<div data-sk-deferred-code>
+  <template data-sk-deferred-source><slot /></template>
+</div>

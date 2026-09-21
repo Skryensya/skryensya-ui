@@ -32,9 +32,7 @@ const hotkeyHint = `<kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd>`
   contractId="command-palette"
   testFiles={["packages/react/src/components/command-palette.test.tsx", "packages/vanilla/src/components/command-palette.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("commandPalette.lede", { hotkey: hotkeyHint })} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("commandPalette.anatomyBody")} />
     <ComponentPreview
       html={commandPaletteAnatomyHtml(t)}
@@ -44,7 +42,10 @@ const hotkeyHint = `<kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd>`
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("commandPalette.lede", { hotkey: hotkeyHint })} />
     <ComponentPreview
       tree={commandPaletteDemoTree(t)}
       js={commandPaletteDemoScript}

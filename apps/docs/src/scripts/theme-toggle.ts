@@ -10,7 +10,7 @@
  * (`sk:dimensions-changed`) so Opciones / previews stay in sync. The slot, the JSON and the try/catch
  * are the storage primitive's, the declaration is in `lib/preferences`.
  */
-import { setIconState } from "@skryensya/core/icon-state-button";
+import { setIconState } from "@skryensya/core/state-button";
 import {
   applyColorMode,
   colorModeLabel,
@@ -41,7 +41,7 @@ function labelsFrom(root: HTMLElement): Partial<Record<ColorMode, string>> {
 
 /*
  * `data-scheme` is what `components/theme-toggle.css` still keys its `[data-face]` selection off
- * (this markup predates IconStateButton's `data-active` mechanism and was left as-is rather than
+ * (this markup predates StateButton's `data-active` mechanism and was left as-is rather than
  * migrated, since it already worked and this fix is scoped to restoring behavior, not re-authoring
  * the anatomy).
  */

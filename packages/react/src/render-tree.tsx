@@ -9,6 +9,10 @@ import * as emptyStateModule from "./components/empty-state.js";
 import * as statModule from "./components/stat.js";
 import * as calloutModule from "./components/callout.js";
 import * as processListModule from "./components/process-list.js";
+import * as descriptionListModule from "./components/description-list.js";
+import * as quoteModule from "./components/quote.js";
+import * as tagsInputModule from "./components/tags-input.js";
+import * as separatorModule from "./components/separator.js";
 import * as timelineModule from "./components/timeline.js";
 import * as changelogModule from "./components/changelog.js";
 import * as stepsModule from "./components/steps.js";
@@ -27,11 +31,12 @@ import * as treeViewModule from "./components/tree-view.js";
 import * as sidebarModule from "./components/sidebar.js";
 import * as backToTopModule from "./components/back-to-top.js";
 import * as annotationModule from "./components/annotation.js";
+import * as diagramModule from "./components/diagram.js";
 import * as skipLinkModule from "./components/skip-link.js";
 import * as accordionModule from "./components/accordion.js";
 import * as tileModule from "./components/tile.js";
 import * as paginationModule from "./components/pagination.js";
-import * as iconStateButtonModule from "./components/icon-state-button.js";
+import * as stateButtonModule from "./components/state-button.js";
 import * as contentModule from "./components/content.js";
 import * as numberFieldModule from "./components/number-field.js";
 import * as formFieldModule from "./components/form-field.js";
@@ -103,6 +108,7 @@ import {
  */
 const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/annotation": annotationModule,
+  "@skryensya/react/diagram": diagramModule,
   "@skryensya/react/select": selectModule,
   "@skryensya/react/menu": menuModule,
   "@skryensya/react/combobox": comboboxModule,
@@ -126,6 +132,10 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/stat": statModule,
   "@skryensya/react/callout": calloutModule,
   "@skryensya/react/process-list": processListModule,
+  "@skryensya/react/description-list": descriptionListModule,
+  "@skryensya/react/quote": quoteModule,
+  "@skryensya/react/tags-input": tagsInputModule,
+  "@skryensya/react/separator": separatorModule,
   "@skryensya/react/timeline": timelineModule,
   "@skryensya/react/changelog": changelogModule,
   "@skryensya/react/steps": stepsModule,
@@ -147,7 +157,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/time-field": timeFieldModule,
   "@skryensya/react/tree-view": treeViewModule,
   "@skryensya/react/tile": tileModule,
-  "@skryensya/react/icon-state-button": iconStateButtonModule,
+  "@skryensya/react/state-button": stateButtonModule,
   "@skryensya/react/number-field": numberFieldModule,
   "@skryensya/react/tooltip": tooltipModule,
   "@skryensya/react/badge": badgeModule,

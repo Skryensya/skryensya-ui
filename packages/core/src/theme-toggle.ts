@@ -2,7 +2,7 @@
  * COLOR MODE, the pure dimension: system → light → dark → system.
  *
  * No contract lives here any more (decision 33, reversed): `ThemeToggle` used to be a signature
- * built on these functions plus Icon Toggle faces; now a consumer composes `IconStateButton`
+ * built on these functions plus Icon Toggle faces; now a consumer composes `StateButton`
  * itself and calls into this module for the part that IS generic across any app that wants a
  * color-mode control. Reading/writing `data-scheme`, cycling the value, resolving `system`
  * against the OS. WHERE the choice persists is still the app's call (a cookie, a user record on a

@@ -46,15 +46,38 @@
   }
 
   /* Same grid as `.sk-tile__trigger`: text cluster + trailing chevron. */
+  /*
+   * TWO COLUMNS: everything the author wrote, then the indicator.
+   *
+   * AND THE TEXT COLUMN TAKES ANY NUMBER OF CHILDREN, which is the part worth stating. `<summary>`
+   * holds phrasing content and headings only (the validator enforces it), so there is no wrapper
+   * element available to group a title with a description the way `sk-tile__content` groups them
+   * inside a Tile's trigger: a `<div>` there is invalid and a `<span>` would be one more part to
+   * name for no gain. Pinning the indicator to the second column and sending everything else to the
+   * first means a summary can hold one line, or a heading over a description, or three spans, and
+   * the layout is the same rule each time.
+   *
+   * `grid-row: 1 / -1` on the indicator so it stays centred against the whole stack rather than
+   * riding the first row when the text runs to two.
+   */
   .sk-details__summary {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: var(--sk-details-gap);
+    gap: 0 var(--sk-details-gap);
     align-items: center;
     min-block-size: var(--size-control-lg);
     padding: var(--sk-details-padding);
     cursor: pointer;
     list-style: none;
+  }
+
+  .sk-details__summary > * {
+    grid-column: 1;
+  }
+
+  .sk-details__summary > .sk-details__indicator {
+    grid-column: 2;
+    grid-row: 1 / -1;
   }
 
   .sk-details__summary::-webkit-details-marker {

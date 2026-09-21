@@ -1,0 +1,126 @@
+/*
+ * TIER 3, QUOTE
+ *
+ * Somebody else's words, and who said them. Two shapes, and they are not one shape at two sizes:
+ *
+ *   block  the quotation inside a text. A rule down the inline-start edge, prose size, secondary
+ *          ink. It reads as an aside within the paragraph flow it interrupts.
+ *   pull   the quotation lifted OUT of the text to be read on its own. No rule (nothing to hang it
+ *          off - it is not inside anything any more), display type, primary ink.
+ *
+ * NEITHER SHAPE ADDS QUOTATION MARKS. The glyph belongs to the copy: whoever writes the quotation
+ * knows whether it is already punctuated, which language's marks it takes (« », „ ", “ ”) and
+ * whether the passage is a fragment. A `::before` here would guess all three, and would sit in
+ * front of the text for a screen reader in the one language it happens to be wrong for.
+ *
+ * Every hook resolves to a TIER-2 token, never a palette or raw color; scripts/lint.ts enforces it.
+ */
+@layer components {
+  .sk-quote {
+    --sk-quote-rule-width: 2px;
+    --sk-quote-rule-color: var(--color-border-strong);
+    --sk-quote-padding-inline: var(--space-inline-md);
+    /* The caption sits close to the words it names: nearer than paragraphs stand to each other. */
+    --sk-quote-gap: var(--space-stack-xs);
+    --sk-quote-fg: var(--color-text-secondary);
+    --sk-quote-font-size: var(--font-size-body);
+    --sk-quote-line-height: var(--font-line-height-body-relaxed);
+    /*
+     * NOT the font-style, an OVERRIDE POINT for it. The default is upright: italic at paragraph
+     * length is measurably slower to read, and the rule already says "this is quoted". A consumer
+     * whose brand quotes in italic re-declares this one hook instead of out-specifying the rule.
+     */
+    --sk-quote-font-style: normal;
+    /*
+     * Narrower than the prose around it, so a quotation breaks the column rather than continuing
+     * it: that difference is what makes it legible as a quotation before a word is read.
+     */
+    --sk-quote-measure: 60ch;
+    --sk-quote-attribution-fg: var(--color-text-tertiary);
+    /*
+     * THE SPACE BETWEEN THE NAME AND THE WORK IS CHROME; THE PUNCTUATION IS COPY. The caption is a
+     * flex row for one concrete reason: its two halves are a bare text run and a <cite>, and a flex
+     * container drops whitespace-only text nodes between items. Without it the emitted markup
+     * (which puts them on separate lines) renders one collapsed space that React, rendering them as
+     * adjacent nodes, does not - a divergence between the two bindings written in whitespace. With
+     * it both read identically and the gap supplies the space, so an author writes "Nombre," and
+     * not "Nombre, " with a trailing space they cannot see.
+     */
+    --sk-quote-attribution-gap: 0.25em;
+    --sk-quote-attribution-font-size: var(--font-size-body-sm);
+    --sk-quote-source-fg: var(--color-text-secondary);
+
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-quote-gap);
+    /* A figure's UA margin is inline as well as block, which would indent the rule off the column. */
+    margin: 0;
+    max-inline-size: var(--sk-quote-measure);
+    min-inline-size: 0;
+  }
+
+  .sk-quote,
+  .sk-quote *,
+  .sk-quote *::before,
+  .sk-quote *::after {
+    box-sizing: border-box;
+  }
+
+  .sk-quote__body {
+    /* The blockquote's own UA margin, which would push the text away from its rule. */
+    margin: 0;
+    padding-inline-start: var(--sk-quote-padding-inline);
+    border-inline-start: var(--sk-quote-rule-width) solid var(--sk-quote-rule-color);
+    color: var(--sk-quote-fg);
+    font-size: var(--sk-quote-font-size);
+    font-style: var(--sk-quote-font-style);
+    line-height: var(--sk-quote-line-height);
+  }
+
+  /*
+   * The caption is OUTSIDE the blockquote (the platform's rule, see quote.ts), so it needs the same
+   * indent written again to line up under the words it names. Reading it off the body's own padding
+   * keeps the two from drifting: change the hook and both move.
+   */
+  .sk-quote__attribution {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: var(--sk-quote-attribution-gap);
+    padding-inline-start: calc(var(--sk-quote-padding-inline) + var(--sk-quote-rule-width));
+    color: var(--sk-quote-attribution-fg);
+    font-size: var(--sk-quote-attribution-font-size);
+    line-height: var(--font-line-height-body-sm);
+  }
+
+  /*
+   * The title of the work. Upright, against the UA's italic: a title set in italic inside a caption
+   * that is already quiet reads as a second emphasis nobody asked for, and the `<cite>` element is
+   * what carries the meaning here, not the slant.
+   */
+  .sk-quote__source {
+    color: var(--sk-quote-source-fg);
+    font-style: normal;
+  }
+
+  /*
+   * PULL. Lifted out of the text, so the rule goes: there is nothing left for it to hang off, and a
+   * rule plus display type is two ways of shouting the same sentence. The indent goes with it, and
+   * the measure tightens, because display type at 60ch is a line a reader loses their place in.
+   */
+  .sk-quote[data-variant="pull"] {
+    --sk-quote-measure: 44ch;
+    --sk-quote-fg: var(--color-text-primary);
+    --sk-quote-font-size: var(--font-size-heading-h3);
+    --sk-quote-line-height: var(--font-line-height-heading-h3);
+    --sk-quote-padding-inline: 0px;
+    --sk-quote-rule-width: 0px;
+    --sk-quote-gap: var(--space-stack-sm);
+  }
+
+  .sk-quote[data-variant="pull"] .sk-quote__body {
+    border-inline-start: none;
+    font-weight: var(--font-weight-heading);
+  }
+}

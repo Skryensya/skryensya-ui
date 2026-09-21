@@ -112,10 +112,7 @@ const previewCss = `.sk-layout-grid {
     },
   ]}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("layoutGridPage.lede")} />
-    <ComponentPreview tree={layoutGridTree(t)} css={previewCss} label="Layout Grid" flush zoomedDesktop />
-
+  <Fragment slot="anatomy">
     <p set:html={t("layoutGridPage.anatomyBody")} />
     <ComponentPreview
       tree={layoutGridAnatomyTree(t)}
@@ -125,7 +122,11 @@ const previewCss = `.sk-layout-grid {
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("layoutGridPage.lede")} />
+    <ComponentPreview tree={layoutGridTree(t)} css={previewCss} label="Layout Grid" flush zoomedDesktop />
     <h3>{t("layoutGridPage.levelsTitle")}</h3>
     <p set:html={t("layoutGridPage.levelsBody")} />
     <ul>

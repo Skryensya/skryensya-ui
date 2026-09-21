@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T03:22:13.459Z",
+  "generatedAt": "2026-09-21T16:16:08.645Z",
   "viewport": {
     "width": 1920,
     "height": 1000
@@ -12,10 +12,10 @@
       "html": 368
     },
     "/components/accordion": {
-      "accordion-multiple": 325,
-      "accordion-of-one-item": 141,
-      "accordion-single": 325,
-      "details-with-a-shared-name": 406
+      "accordion-multiple": 326,
+      "accordion-of-one-item": 142,
+      "accordion-single": 326,
+      "details-with-a-shared-name": 494
     },
     "/components/avatar": {
       "colors": 112,
@@ -29,11 +29,11 @@
       "backtotop-on-scroll": 288
     },
     "/components/badge": {
-      "badge": 76,
-      "badge-dot": 56,
-      "badge-dot-in-the-corner": 92,
-      "badge-sm": 76,
-      "pulsing-badge-dot": 56
+      "badge": 77,
+      "badge-dot": 57,
+      "badge-dot-in-the-corner": 93,
+      "badge-sm": 77,
+      "pulsing-badge-dot": 57
     },
     "/components/box": {
       "box": 275,
@@ -48,16 +48,14 @@
       "two-level-breadcrumb": 72
     },
     "/components/button": {
-      "button-as-a-link": 96,
-      "button-with-icon": 92,
-      "button-xs-sm-md-lg": 96,
-      "ghost-danger-and-solid-danger": 92,
-      "icon-only": 92,
-      "icon-only-sm": 80,
-      "off-and-on-per-emphasis": 168,
-      "the-full-matrix-4-emphases-x-3-tones": 306,
-      "the-same-matrix-sm-and-icon-only": 258,
-      "tilebutton": 144
+      "button-as-a-link": 93,
+      "button-with-default-values": 93,
+      "button-with-leading-icon": 93,
+      "button-xs-sm-md-lg": 97,
+      "destructive-trigger-and-confirmation": 93,
+      "every-emphasis-by-every-tone": 307,
+      "icon-only-button-with-accessible-name": 93,
+      "tilebutton": 145
     },
     "/components/calendar": {
       "calendar": 367,
@@ -72,17 +70,17 @@
       "warning-callout": 179
     },
     "/components/card": {
-      "account-preferences": 184,
-      "business-summary": 186,
-      "case-studies": 342,
-      "featured-stories": 467,
-      "guides-with-cover": 422,
-      "latest-posts": 267,
-      "project-actions": 236,
-      "recent-articles": 442,
-      "shortcuts": 236,
-      "subscription-plans": 345,
-      "team-notes": 179,
+      "account-preferences": 465,
+      "business-summary": 187,
+      "case-studies": 393,
+      "featured-stories": 1441,
+      "guides-with-cover": 1163,
+      "latest-posts": 535,
+      "project-actions": 576,
+      "recent-articles": 706,
+      "shortcuts": 600,
+      "subscription-plans": 889,
+      "team-notes": 348,
       "visits-over-the-last-eight-weeks": 400
     },
     "/components/carousel": {
@@ -155,8 +153,8 @@
       "native-datepicker": 123
     },
     "/components/dialog": {
-      "confirm": 384,
-      "dialog-vaul": 384
+      "confirm": 385,
+      "dialog-vaul": 385
     },
     "/components/drawer": {
       "html": 384,
@@ -237,9 +235,9 @@
       "inline-part-by-part": 178
     },
     "/components/input": {
-      "input": 147,
-      "one-class-three-elements": 382,
-      "textarea": 235
+      "input": 148,
+      "textarea": 236,
+      "three-fields-that-validate-themselves": 326
     },
     "/components/kbd": {
       "kbd": 71,
@@ -283,16 +281,16 @@
       "megamenu": 384
     },
     "/components/menu": {
-      "as-a-context-menu": 336,
-      "compact-density": 288,
-      "menu": 288,
-      "nested-submenus": 288,
-      "pointer-intent-safety-triangle": 480
+      "as-a-context-menu": 337,
+      "compact-density": 289,
+      "menu": 289,
+      "nested-submenus": 289,
+      "pointer-intent-safety-triangle": 481
     },
     "/components/menubar": {
-      "as-nav-list": 288,
-      "dropdowns-with-a-submenu": 480,
-      "menu-bar": 288
+      "as-nav-list": 289,
+      "dropdowns-with-a-submenu": 481,
+      "menu-bar": 289
     },
     "/components/meter": {
       "meter": 191
@@ -338,8 +336,8 @@
       "segmented": 80
     },
     "/components/select": {
-      "enhanced-select": 288,
-      "native-select": 288
+      "enhanced-select": 289,
+      "native-select": 289
     },
     "/components/sidebar": {
       "resizable-sidebar": 352,
@@ -390,10 +388,11 @@
       "wide-table-1-2-system": 421
     },
     "/components/tabs": {
-      "basic-tabs": 161,
-      "sm-and-md-tabs": 282,
-      "tabs-with-states": 193,
-      "vertical-tabs-with-manual-control": 253
+      "basic-tabs": 162,
+      "hanging-tabs": 162,
+      "sm-and-md-tabs": 283,
+      "tabs-with-states": 194,
+      "vertical-tabs-with-manual-control": 254
     },
     "/components/tag": {
       "link-tags": 76,

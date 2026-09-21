@@ -48,9 +48,9 @@
       "types": "./src/icon-toggle.ts",
       "default": "./src/icon-toggle.ts"
     },
-    "./icon-state-button": {
-      "types": "./src/icon-state-button.ts",
-      "default": "./src/icon-state-button.ts"
+    "./state-button": {
+      "types": "./src/state-button.ts",
+      "default": "./src/state-button.ts"
     },
     "./badge": {
       "types": "./src/badge.ts",
@@ -67,6 +67,22 @@
     "./tag": {
       "types": "./src/tag.ts",
       "default": "./src/tag.ts"
+    },
+    "./description-list": {
+      "types": "./src/description-list.ts",
+      "default": "./src/description-list.ts"
+    },
+    "./separator": {
+      "types": "./src/separator.ts",
+      "default": "./src/separator.ts"
+    },
+    "./tags-input": {
+      "types": "./src/tags-input.ts",
+      "default": "./src/tags-input.ts"
+    },
+    "./quote": {
+      "types": "./src/quote.ts",
+      "default": "./src/quote.ts"
     },
     "./progress": {
       "types": "./src/progress.ts",
@@ -345,6 +361,10 @@
       "types": "./src/content.ts",
       "default": "./src/content.ts"
     },
+    "./diagram": {
+      "types": "./src/diagram.ts",
+      "default": "./src/diagram.ts"
+    },
     "./dialog": {
       "types": "./src/dialog.ts",
       "default": "./src/dialog.ts"
@@ -449,6 +469,10 @@
       "types": "./src/number-field.ts",
       "default": "./src/number-field.ts"
     },
+    "./otp-input": {
+      "types": "./src/otp-input.ts",
+      "default": "./src/otp-input.ts"
+    },
     "./popover": {
       "types": "./src/popover.ts",
       "default": "./src/popover.ts"
@@ -518,10 +542,6 @@
       "types": "./src/usage-tree.ts",
       "default": "./src/usage-tree.ts"
     },
-    "./details": {
-      "types": "./src/details.ts",
-      "default": "./src/details.ts"
-    },
     "./fraction": {
       "types": "./src/fraction.ts",
       "default": "./src/fraction.ts"
@@ -554,12 +574,14 @@
     "@zag-js/file-upload": "^1.43.3",
     "@zag-js/menu": "^1.43.3",
     "@zag-js/number-input": "^1.43.3",
+    "@zag-js/pin-input": "^1.43.3",
     "@zag-js/radio-group": "^1.43.3",
     "@zag-js/rating-group": "^1.43.3",
     "@zag-js/select": "^1.43.3",
     "@zag-js/slider": "^1.43.3",
     "@zag-js/splitter": "1.43.3",
     "@zag-js/tabs": "^1.43.3",
+    "@zag-js/tags-input": "^1.43.3",
     "@zag-js/tooltip": "1.43.3",
     "@zag-js/tree-view": "^1.43.3",
     "qrcode": "^1.5.4"

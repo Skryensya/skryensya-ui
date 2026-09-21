@@ -1,0 +1,26 @@
+# The structure lives in packages/core/src/separator.ts. Here, only why it is chosen.
+
+Separator:
+  useWhen:
+    - "a rule divides two blocks that are about different things"
+    - "a vertical hairline sits between two things placed side by side (it takes its height from
+       whatever holds it)"
+    - "the line is only paint - a card's internal edge - which is what decorative is for"
+  avoidWhen:
+    - "the rule can be dragged to resize what it divides; that is a Window Splitter, with a keyboard
+       contract of its own (@skryensya/core/splitter)"
+    - "the separation is between rows of a list, a menu or a toolbar; those families draw their own"
+    - "what is wanted is space, not a line; that is the gap of whatever holds the two blocks"
+  alternatives:
+    - LabelledSeparator
+    - Stack
+
+LabelledSeparator:
+  useWhen:
+    - "there is a word between the two halves: or, since 2019, older"
+  avoidWhen:
+    - "the word is a heading for what follows; that is a Heading, and the rule is decoration on top"
+    - "it runs vertically: a label in a vertical rule is rotated text, a different component"
+  alternatives:
+    - Separator
+    - Heading

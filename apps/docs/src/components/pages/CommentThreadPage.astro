@@ -181,9 +181,7 @@ thread.addEventListener(commentThreadEvents.reply, async (event) => {
   ]}
   testFiles={["packages/react/src/components/comment-thread.test.tsx", "packages/vanilla/src/components/comment-thread.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("commentThread.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("commentThread.anatomyBody")} />
     <ComponentPreview
       tree={commentAnatomyTree(t)}
@@ -193,7 +191,10 @@ thread.addEventListener(commentThreadEvents.reply, async (event) => {
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("commentThread.lede")} />
     <h3>{t("commentThread.whenTitle")}</h3>
     <p set:html={t("commentThread.whenBody1")} />
     <p set:html={t("commentThread.whenBody2")} />

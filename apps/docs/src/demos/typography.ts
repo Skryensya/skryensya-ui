@@ -1,106 +1,177 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
-/* Heading and Text demos shared by both locales. */
+export const textTree = (t: Translate): UsageTree => ({
+  contract: "typography",
+  signature: "Text",
+  slots: { children: t("demo.typography.text.body") },
+});
 
-type HeadingSize =
-  | "display-lg"
-  | "display-md"
-  | "display-sm"
-  | "h1"
-  | "h2"
-  | "h3"
-  | "h4"
-  | "h5"
-  | "h6";
+export const textSecondaryTree = (t: Translate): UsageTree => ({
+  contract: "typography",
+  signature: "Text",
+  options: { tone: "secondary" },
+  slots: { children: t("demo.typography.textSecondary.body") },
+});
 
-function sizeRow(label: string, size: HeadingSize, sample: string): UsageTree {
-  return {
-    contract: "layout",
-    signature: "Stack",
-    options: { gap: "none" },
-    children: [
-      {
-        contract: "typography",
-        signature: "Text",
-        options: { size: "caption", tone: "tertiary" },
-        children: label,
-      },
-      {
-        contract: "typography",
-        signature: "Heading",
-        options: { headingSize: size },
-        children: sample,
-      },
-    ],
-  };
-}
+export const headingTree = (t: Translate): UsageTree => ({
+  contract: "typography",
+  signature: "Heading",
+  options: { headingElement: "h2", headingSize: "lg" },
+  slots: { children: t("demo.typography.heading.text") },
+});
 
-/** Display-lg / md / sm with size captions. Token labels stay written. */
-export const headingDisplayTree = (t: Translate): UsageTree => {
-  const sample = t("demo.heading.sample");
-  return {
-    contract: "layout",
-    signature: "Stack",
-    options: { gap: "xs" },
-    children: [
-      sizeRow("display-lg · 60", "display-lg", sample),
-      sizeRow("display-md · 48", "display-md", sample),
-      sizeRow("display-sm · 36", "display-sm", sample),
-    ],
-  };
-};
+export const linkTree = (t: Translate): UsageTree => ({
+  contract: "typography",
+  signature: "Text",
+  slots: {
+    children: t("demo.typography.linkContext"),
+  },
+});
 
-/** Document scale h1–h6. Floor notes are the only translated captions. */
-export const headingDocumentTree = (t: Translate): UsageTree => {
-  const sample = t("demo.heading.sample");
-  return {
-    contract: "layout",
-    signature: "Stack",
-    options: { gap: "xs" },
-    children: [
-      sizeRow("h1 · 30", "h1", sample),
-      sizeRow("h2 · 24", "h2", sample),
-      sizeRow("h3 · 20", "h3", sample),
-      sizeRow(t("demo.heading.label.h4Floor"), "h4", sample),
-      sizeRow(t("demo.heading.label.h5Same"), "h5", sample),
-      sizeRow(t("demo.heading.label.h6Same"), "h6", sample),
-    ],
-  };
-};
+export const strongTree = (t: Translate): UsageTree => ({
+  contract: "typography",
+  signature: "Text",
+  slots: { children: t("demo.typography.strong.body") },
+});
 
-/** Reading sizes caption → lg, each under its size / line-height caption. */
-export const textScaleTree = (t: Translate): UsageTree => {
-  const sample = t("demo.heading.sample");
-  const row = (label: string, size: "caption" | "sm" | "body" | "lg"): UsageTree => ({
-    contract: "layout",
-    signature: "Stack",
-    options: { gap: "none" },
-    children: [
-      {
-        contract: "typography",
-        signature: "Text",
-        options: { size: "caption", tone: "tertiary" },
-        children: label,
-      },
-      { contract: "typography", signature: "Text", options: { size }, children: sample },
-    ],
-  });
-  return {
-    contract: "layout",
-    signature: "Stack",
-    options: { gap: "xs" },
-    children: [
-      row("lg · 18 / 1.5", "lg"),
-      row("body · 16 / 1.5", "body"),
-      row("sm · 14 / 1.5", "sm"),
-      row("caption · 12 / 1.5", "caption"),
-    ],
-  };
-};
+export const codeTree = (t: Translate): UsageTree => ({
+  contract: "typography",
+  signature: "Text",
+  slots: { children: t("demo.typography.code.body") },
+});
 
-/** Eyebrow + display title + lede: the page-open pattern. */
+export const outputTree = (t: Translate): UsageTree => ({
+  contract: "typography",
+  signature: "Output",
+  slots: { children: t("demo.typography.output.value") },
+});
+
+export const headingDisplayTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "sm" },
+  children: ["display-lg", "display-md", "display-sm"].map((headingSize) => ({
+    contract: "typography",
+    signature: "Heading",
+    options: { headingSize },
+    children: t("demo.heading.sample"),
+  })),
+});
+
+export const headingDocumentTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "sm" },
+  children: ["h1", "h2", "h3", "h4", "h5", "h6"].map((headingSize) => ({
+    contract: "typography",
+    signature: "Heading",
+    options: { headingElement: headingSize, headingSize },
+    children: t("demo.heading.sample"),
+  })),
+});
+
 export const headingPageTitleTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "md" },
+  children: [
+    {
+      contract: "typography",
+      signature: "Text",
+      options: { textRole: "eyebrow" },
+      children: t("demo.heading.page.eyebrow"),
+    },
+    {
+      contract: "typography",
+      signature: "Heading",
+      options: { headingElement: "h1", headingSize: "display-sm", flush: true },
+      children: t("demo.heading.page.title"),
+    },
+    {
+      contract: "typography",
+      signature: "Text",
+      options: { textRole: "subtitle" },
+      children: t("demo.heading.page.lede"),
+    },
+  ],
+});
+
+export const headingOutlineTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "sm" },
+  children: [
+    {
+      contract: "typography",
+      signature: "Heading",
+      options: { headingElement: "h2", headingSize: "h2" },
+      children: t("demo.heading.outline.title"),
+    },
+    {
+      contract: "typography",
+      signature: "Heading",
+      options: { headingElement: "h3", headingSize: "h3" },
+      children: t("demo.heading.outline.ready"),
+    },
+    {
+      contract: "typography",
+      signature: "Text",
+      children: t("demo.heading.outline.readyBody"),
+    },
+    {
+      contract: "typography",
+      signature: "Heading",
+      options: { headingElement: "h3", headingSize: "h3" },
+      children: t("demo.heading.outline.next"),
+    },
+    {
+      contract: "typography",
+      signature: "Text",
+      children: t("demo.heading.outline.nextBody"),
+    },
+  ],
+});
+
+export const headingCompactTree = (t: Translate): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "sm" },
+  children: [
+    {
+      contract: "typography",
+      signature: "Heading",
+      options: { headingElement: "h2", headingSize: "h4", flush: true },
+      children: t("demo.heading.compact.title"),
+    },
+    {
+      contract: "typography",
+      signature: "Text",
+      children: t("demo.heading.compact.body"),
+    },
+  ],
+});
+
+export const headingFlushTree = (t: Translate): UsageTree => ({
+  contract: "typography",
+  signature: "Heading",
+  options: { headingSize: "h2", flush: true },
+  children: t("demo.heading.flush"),
+});
+
+export const textScaleTree = (): UsageTree => ({
+  contract: "layout",
+  signature: "Stack",
+  options: { gap: "sm" },
+  children: ["caption", "sm", "body", "lg"].map((size) => ({
+    contract: "typography",
+    signature: "Text",
+    options: { size },
+    children: size,
+  })),
+});
+
+export const textTitleTree = (t: Translate): UsageTree => ({
   contract: "layout",
   signature: "Stack",
   options: { gap: "sm" },
@@ -108,126 +179,24 @@ export const headingPageTitleTree = (t: Translate): UsageTree => ({
     {
       contract: "typography",
       signature: "Text",
-      options: { size: "caption", tone: "tertiary", weight: "label" },
+      options: { textRole: "eyebrow" },
       children: t("demo.heading.page.eyebrow"),
     },
     {
       contract: "typography",
       signature: "Heading",
-      options: { headingSize: "display-md" },
-      children: t("demo.heading.page.title"),
-    },
-    {
-      contract: "typography",
-      signature: "Text",
-      options: { size: "lg", tone: "secondary" },
-      children: t("demo.heading.page.lede"),
-    },
-  ],
-});
-
-/** h2 with two h3 sections underneath. */
-export const headingOutlineTree = (t: Translate): UsageTree => ({
-  contract: "layout",
-  signature: "Stack",
-  options: { gap: "lg" },
-  children: [
-    {
-      contract: "typography",
-      signature: "Heading",
-      options: { headingSize: "h2" },
-      children: t("demo.heading.outline.title"),
-    },
-    {
-      contract: "layout",
-      signature: "Stack",
-      options: { gap: "sm" },
-      children: [
-        {
-          contract: "typography",
-          signature: "Heading",
-          options: { headingSize: "h3" },
-          children: t("demo.heading.outline.ready"),
-        },
-        {
-          contract: "typography",
-          signature: "Text",
-          options: { size: "sm", tone: "secondary" },
-          children: t("demo.heading.outline.readyBody"),
-        },
-      ],
-    },
-    {
-      contract: "layout",
-      signature: "Stack",
-      options: { gap: "sm" },
-      children: [
-        {
-          contract: "typography",
-          signature: "Heading",
-          options: { headingSize: "h3" },
-          children: t("demo.heading.outline.next"),
-        },
-        {
-          contract: "typography",
-          signature: "Text",
-          options: { size: "sm", tone: "secondary" },
-          children: t("demo.heading.outline.nextBody"),
-        },
-      ],
-    },
-  ],
-});
-
-/** Semantic h2 at the visual floor (h4). */
-export const headingCompactTree = (t: Translate): UsageTree => ({
-  contract: "layout",
-  signature: "Stack",
-  options: { gap: "xs" },
-  children: [
-    {
-      contract: "typography",
-      signature: "Heading",
-      options: { headingSize: "h4" },
-      children: t("demo.heading.compact.title"),
-    },
-    {
-      contract: "typography",
-      signature: "Text",
-      options: { size: "sm", tone: "secondary" },
-      children: t("demo.heading.compact.body"),
-    },
-  ],
-});
-
-/** Eyebrow + heading + subtitle as one unit (`textRole`). */
-export const textTitleTree = (t: Translate): UsageTree => ({
-  contract: "layout",
-  signature: "Stack",
-  options: { gap: "none" },
-  children: [
-    {
-      contract: "typography",
-      signature: "Text",
-      options: { textRole: "eyebrow" },
-      children: t("demo.text.title.eyebrow"),
-    },
-    {
-      contract: "typography",
-      signature: "Heading",
-      options: { headingSize: "h3" },
-      children: t("demo.text.title.heading"),
+      options: { headingElement: "h2", headingSize: "h2", flush: true },
+      children: t("demo.typography.heading.text"),
     },
     {
       contract: "typography",
       signature: "Text",
       options: { textRole: "subtitle" },
-      children: t("demo.text.title.subtitle"),
+      children: t("demo.heading.page.lede"),
     },
   ],
 });
 
-/** Metadata eyebrow over body + secondary note. */
 export const textReadingTree = (t: Translate): UsageTree => ({
   contract: "layout",
   signature: "Stack",
@@ -247,31 +216,10 @@ export const textReadingTree = (t: Translate): UsageTree => ({
     {
       contract: "typography",
       signature: "Text",
-      options: { size: "sm", tone: "secondary" },
+      options: { tone: "secondary", size: "sm" },
       children: t("demo.text.reading.note"),
     },
   ],
-});
-
-/** Validation message: tone paints, `role="alert"` is the live region. */
-export const textFeedbackTree = (t: Translate): UsageTree => ({
-  contract: "typography",
-  signature: "Text",
-  options: { size: "sm", tone: "danger" },
-  attrs: { role: "alert" },
-  children: t("demo.text.feedback"),
-});
-
-export const headingFlushTree = (t: Translate): UsageTree => ({
-  contract: "box",
-  signature: "Box",
-  options: { surface: "surface", border: "subtle", padding: "md" },
-  children: {
-    contract: "typography",
-    signature: "Heading",
-    options: { headingSize: "h3", flush: true },
-    children: t("demo.heading.flush"),
-  },
 });
 
 export const textInlineTree = (t: Translate): UsageTree => ({
@@ -279,11 +227,18 @@ export const textInlineTree = (t: Translate): UsageTree => ({
   signature: "Text",
   children: [
     t("demo.text.before"),
+    " ",
     {
       contract: "typography",
       signature: "Strong",
-      children: " Pro ",
+      children: t("demo.text.after"),
     },
-    t("demo.text.after"),
   ],
+});
+
+export const textFeedbackTree = (t: Translate): UsageTree => ({
+  contract: "typography",
+  signature: "Text",
+  options: { tone: "danger" },
+  children: t("demo.text.feedback"),
 });

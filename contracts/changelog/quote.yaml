@@ -1,0 +1,37 @@
+# What changed in quote, in the words its users read. Only appended to, never rewritten.
+#
+# `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
+# does not match, something a consumer depends on has moved: write the entry and paste in the new
+# hash.
+surface: "7176356eacc183cf"
+entries:
+  - date: 2026-09-20
+    kind: feature
+    es:
+      title: Quote se publica como contrato, con una signature
+      body: >-
+        Entra al catálogo con <code>Quote</code>: palabras de otro, y quién las dijo. La raíz es un
+        <code>&lt;figure&gt;</code> y la atribución va FUERA del <code>&lt;blockquote&gt;</code>,
+        que es la regla del propio HTML y no una preferencia de layout. Son dos campos distintos a
+        propósito: <code>attribution</code> es quién lo dijo (texto del caption) y
+        <code>source</code> es en qué obra apareció (ese sí es el <code>&lt;cite&gt;</code>);
+        escribir el nombre de una persona dentro de un <code>&lt;cite&gt;</code> es justo el error
+        que esta separación vuelve difícil de cometer. <code>cite</code> (el atributo) es la URL de
+        procedencia y no la pinta ningún navegador. <code>variant</code> tiene dos valores,
+        <code>block</code> (dentro del texto, con filete al inicio) y <code>pull</code> (levantada
+        del texto, tipografía de display y sin filete). No agrega comillas: el glifo es de la copia.
+        No tiene enhancer. La hoja es <code>components/quote.css</code>.
+    en:
+      title: Quote is published as a contract, with one signature
+      body: >-
+        It joins the catalogue with <code>Quote</code>: somebody else's words, and who said them.
+        The root is a <code>&lt;figure&gt;</code> and the attribution sits OUTSIDE the
+        <code>&lt;blockquote&gt;</code>, which is HTML's own rule rather than a layout preference.
+        They are two deliberately separate fields: <code>attribution</code> is who said it (plain
+        caption text) and <code>source</code> is the work it appeared in (that one IS the
+        <code>&lt;cite&gt;</code>); putting a person's name in a <code>&lt;cite&gt;</code> is
+        exactly the mistake the split makes hard to fall into. <code>cite</code> (the attribute) is
+        the provenance URL and no browser renders it. <code>variant</code> has two values,
+        <code>block</code> (inside the text, with a rule down its edge) and <code>pull</code>
+        (lifted out of it, display type, no rule). It adds no quotation marks: the glyph belongs to
+        the copy. There is no enhancer. Its stylesheet is <code>components/quote.css</code>.

@@ -135,18 +135,32 @@ function checkListOptions(
 }
 
 /*
- * HTML content models. Two strengths, because the parser treats them differently:
+ * HTML content models. Three strengths, because what goes wrong differs:
  *
  * - A block inside a `<p>` is MOVED. The parser closes the paragraph before the block, so the DOM
  *   is not the markup that was written and the text after it falls outside the Text. An error.
+ * - A block inside a `<summary>` is an ERROR TOO, and this one is a deliberate strictness bump
+ *   rather than a parser fact. `<summary>` is not decoration around a disclosure, it IS the
+ *   control: its text is the widget's accessible name and the whole of its hit area. A `<div>` of
+ *   headings and paragraphs in there is a label that is also a document, which is the shape the
+ *   platform's own element exists to avoid. Nothing downstream can warn about it either, since the
+ *   parser leaves it exactly where it was written.
  * - A block inside a `<span>`, a heading or a `<button>` is invalid HTML, but the parser keeps it
  *   where it was written. Validators and some assistive tech still stumble on it. An advisory.
  */
 const PHRASING_ONLY = new Set([
   "p", "span", "h1", "h2", "h3", "h4", "h5", "h6", "button", "strong", "em", "b", "i", "small",
   "code", "output", "label", "q", "s", "sub", "sup", "u", "var", "kbd", "samp", "cite", "dfn",
-  "abbr", "mark", "time", "data", "pre",
+  "abbr", "mark", "time", "data", "pre", "summary",
 ]);
+
+/*
+ * `<summary>` is the one element here whose model is "phrasing content, OPTIONALLY INTERMIXED WITH
+ * HEADING CONTENT" (HTML §4.11.2). A heading is the ordinary way to give a disclosure a title, so
+ * flagging one would be a false positive on the composition this contract most expects.
+ */
+const HEADING_ELEMENTS = new Set(["h1", "h2", "h3", "h4", "h5", "h6", "hgroup"]);
+const ALLOWS_HEADINGS = new Set(["summary"]);
 /* Not derived from the set above: a `<p>`, a heading and a `<pre>` hold only inline content but are blocks themselves. */
 const PHRASING = new Set([
   "span", "button", "strong", "em", "b", "i", "small", "code", "output", "label", "q", "s", "sub",
@@ -202,16 +216,20 @@ function checkContentModel(
   if (!child || !childContract) return;
   const childElement = renderedElement(childContract, child, item);
   if (!childElement || PHRASING.has(childElement)) return;
+  if (ALLOWS_HEADINGS.has(parentElement) && HEADING_ELEMENTS.has(childElement)) return;
 
   const moved = parentElement === "p" && CLOSES_P.has(childElement);
+  const forbidden = ALLOWS_HEADINGS.has(parentElement);
   const hint = childContract.id === "typography" && item.signature === "Text" ? ' Use textElement: "span".' : "";
   problems.push({
     path: `${path} > ${item.signature}`,
     rule: "content-model",
-    severity: moved ? "error" : "advisory",
+    severity: moved || forbidden ? "error" : "advisory",
     message: moved
       ? `${item.signature} renders a <${childElement}> inside a <p>. The parser closes the paragraph before it, so the DOM is not this tree.${hint}`
-      : `${item.signature} renders a <${childElement}>, and "${slot}" lands inside a <${parentElement}>, which only holds inline content. Invalid HTML, though the parser keeps it in place.${hint}`,
+      : forbidden
+        ? `${item.signature} renders a <${childElement}>, and "${slot}" lands inside a <${parentElement}>, which holds phrasing content and headings only. A <${parentElement}> is the control itself, so its content is the disclosure's accessible name: it cannot be a block.${hint}`
+        : `${item.signature} renders a <${childElement}>, and "${slot}" lands inside a <${parentElement}>, which only holds inline content. Invalid HTML, though the parser keeps it in place.${hint}`,
   });
 }
 
@@ -361,9 +379,41 @@ function checkReferences(tree: UsageTree, problems: Problem[]): void {
 }
 
 /**
+ * Every key an entry of the named collection declares, searched at every depth of a recursive one.
+ * Empty when the slot is not a keyed collection, or holds no entries at all.
+ */
+function collectionKeys(
+  signature: ContractSignature,
+  tree: UsageTree,
+  slotName: string,
+): ReadonlySet<string> {
+  const slot = signature.slots[slotName];
+  const key = slot?.item?.key;
+  const known = new Set<string>();
+  if (!slot || !key) return known;
+
+  const collect = (entries: readonly ItemInput[]): void => {
+    for (const entry of entries) {
+      const id = entry.options?.[key];
+      if (typeof id === "string") known.add(id);
+      for (const [name, itemSlot] of Object.entries(slot.item!.slots)) {
+        if (itemSlot.recursive) collect(collectionItems(entry.slots[name]));
+      }
+    }
+  };
+  collect(collectionItems(slotsOf(tree)[slotName]));
+  return known;
+}
+
+/**
  * An option that names entries of the signature's own collection (`keyOf`) must name ones that
  * exist. Skipped when the signature has no such keyed slot (a shared option on a sibling signature)
  * or the slot is empty (`missing-required-slot` already speaks for that).
+ *
+ * ASKED OF ENTRY OPTIONS TOO, not only of the composition's own, and Diagram is why: an edge's
+ * `from` and `to` name nodes of the SAME signature's other collection, which is the one authoring
+ * mistake that component really has. Checked identically, because the question is identical; the
+ * host half simply happens to be the case that turned up first.
  */
 function checkKeyReferences(
   contract: ComponentContract,
@@ -372,37 +422,43 @@ function checkKeyReferences(
   path: string,
   problems: Problem[],
 ): void {
-  for (const name of signature.options) {
-    const option = contract.options[name];
-    const value = tree.options?.[name];
-    if (!option?.keyOf || typeof value !== "string" || value === "") continue;
-
-    const slot = signature.slots[option.keyOf.slot];
-    const key = slot?.item?.key;
-    if (!slot || !key) continue;
-
-    const known = new Set<string>();
-    const collect = (entries: readonly ItemInput[]): void => {
-      for (const entry of entries) {
-        const id = entry.options?.[key];
-        if (typeof id === "string") known.add(id);
-        for (const [slotName, itemSlot] of Object.entries(slot.item!.slots)) {
-          if (itemSlot.recursive) collect(collectionItems(entry.slots[slotName]));
-        }
-      }
-    };
-    collect(collectionItems(slotsOf(tree)[option.keyOf.slot]));
-    if (known.size === 0) continue;
-
-    const wanted = option.keyOf.many ? value.split(/[\s,]+/).filter(Boolean) : [value];
+  const report = (
+    option: ContractOption,
+    label: string,
+    value: string,
+    known: ReadonlySet<string>,
+  ): void => {
+    const key = signature.slots[option.keyOf!.slot]?.item?.key;
+    if (!key || known.size === 0) return;
+    const wanted = option.keyOf!.many ? value.split(/[\s,]+/).filter(Boolean) : [value];
     for (const each of wanted) {
       if (known.has(each)) continue;
       problems.push({
         path,
         rule: "unknown-key",
         severity: "error",
-        message: `"${name}" names "${each}", and no entry of "${option.keyOf.slot}" has ${key}="${each}". It accepts: ${[...known].join(", ")}.`,
+        message: `"${label}" names "${each}", and no entry of "${option.keyOf!.slot}" has ${key}="${each}". It accepts: ${[...known].join(", ")}.`,
       });
+    }
+  };
+
+  for (const name of signature.options) {
+    const option = contract.options[name];
+    const value = tree.options?.[name];
+    if (!option?.keyOf || typeof value !== "string" || value === "") continue;
+    report(option, name, value, collectionKeys(signature, tree, option.keyOf.slot));
+  }
+
+  for (const [slotName, slot] of Object.entries(signature.slots)) {
+    if (slot.accepts !== "items" || !slot.item) continue;
+    for (const [name, option] of Object.entries(slot.item.options)) {
+      if (!option.keyOf) continue;
+      const known = collectionKeys(signature, tree, option.keyOf.slot);
+      for (const [at, entry] of collectionItems(slotsOf(tree)[slotName]).entries()) {
+        const value = entry.options?.[name];
+        if (typeof value !== "string" || value === "") continue;
+        report(option, `${slotName}[${at}].${name}`, value, known);
+      }
     }
   }
 }

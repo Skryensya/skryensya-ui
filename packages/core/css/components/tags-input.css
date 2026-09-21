@@ -1,0 +1,176 @@
+/*
+ * TIER 3, TAGS INPUT
+ *
+ * A field that holds several values. The box looks like an Input and behaves like one - it takes
+ * the focus ring for whatever is focused inside it - but it is a `<div>`, because the thing being
+ * focused is sometimes the entry and sometimes a tag.
+ *
+ * THE CHIP IS NOT DRAWN HERE. It is a Tag (`sk-tag`, composed by the contract), so `tag.css` paints
+ * it and this sheet only says where the chips sit and how the field around them behaves. A second
+ * chip drawing is how a system ends up with two chips that are almost the same.
+ *
+ * THE ENTRY GROWS INTO THE ROW IT IS ON, which is the whole layout problem of this component: it
+ * must be wide enough to type in, and it must not push a half-full row of tags onto a line of its
+ * own. `flex: 1` past a min width does both - it takes what is left of the current row, and wraps to
+ * the next only when what is left is less than that minimum.
+ *
+ * Every hook resolves to a TIER-2 token, never a palette or raw color; scripts/lint.ts enforces it.
+ */
+@layer components {
+  .sk-tags-input {
+    /* The field's own surface, the same sunken well Input is: you type INTO it. */
+    --sk-tags-input-bg: var(--color-bg-surface-sunken);
+    --sk-tags-input-shadow: var(--elevation-sunken);
+    --sk-tags-input-wash: var(--elevation-wash-sunken);
+    --sk-tags-input-border-color: var(--color-border-default);
+    --sk-tags-input-border-width: 1px;
+    --sk-tags-input-radius: var(--radius-control);
+    --sk-tags-input-padding-x: var(--space-inset-sm);
+    --sk-tags-input-padding-y: var(--space-inset-xs);
+    /* Between chips, and between the last chip and the entry: one gap, so the row reads evenly. */
+    --sk-tags-input-gap: var(--space-inline-xs);
+    /*
+     * How much room the entry needs before it will share a line. Below this it wraps to its own
+     * row, because a 3ch field is not something anyone can type into.
+     */
+    --sk-tags-input-input-min-size: 8ch;
+
+    --sk-tags-input-invalid-border-color: var(--color-border-danger);
+    --sk-tags-input-disabled-bg: var(--color-action-disabled);
+    --sk-tags-input-disabled-border-color: var(--color-border-subtle);
+    --sk-tags-input-readonly-bg: var(--color-bg-surface);
+    --sk-tags-input-readonly-border-color: var(--color-border-subtle);
+
+    box-sizing: border-box;
+    display: block;
+    inline-size: 100%;
+  }
+
+  .sk-tags-input,
+  .sk-tags-input *,
+  .sk-tags-input *::before,
+  .sk-tags-input *::after {
+    box-sizing: border-box;
+  }
+
+  .sk-tags-input__control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sk-tags-input-gap);
+    /* No fixed height: the field is as tall as the tags in it, and grows by whole rows. */
+    min-block-size: max(var(--size-control-md), var(--size-touch-target));
+    padding: var(--sk-tags-input-padding-y) var(--sk-tags-input-padding-x);
+    border: var(--sk-tags-input-border-width) solid var(--sk-tags-input-border-color);
+    border-radius: var(--sk-tags-input-radius);
+    background: var(--sk-tags-input-wash) var(--sk-tags-input-bg);
+    box-shadow: var(--sk-tags-input-shadow);
+    cursor: text;
+  }
+
+  /*
+   * THE RING IS ON THE BOX, NOT ON WHAT IS FOCUSED. The entry and every tag are focusable, and a
+   * ring drawn around each of them would flash a second outline inside the field on every keystroke
+   * of arrow navigation. `:focus-within` with the inner outlines suppressed puts one ring where a
+   * reader expects it: around the control.
+   */
+  .sk-tags-input__control:has(:focus-visible) {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .sk-tags-input__input:focus-visible {
+    outline: none;
+  }
+
+  /*
+   * NO BOX OF ITS OWN. The tags need a node that stands for the whole list - the enhancer swaps all
+   * of them at once when the value changes - and that node must not become a flex item between the
+   * control and its chips, or the wrapping this component is built around stops working.
+   */
+  .sk-tags-input__items {
+    display: contents;
+  }
+
+  .sk-tags-input__item {
+    display: inline-flex;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+
+  /*
+   * The highlighted tag, which is where the machine's arrow navigation is. It is not focus (the
+   * entry keeps that), so it cannot be a focus ring: an outline that is not a focus ring is how a
+   * reader learns to distrust focus rings.
+   */
+  .sk-tags-input__item[data-highlighted] .sk-tags-input__item-preview {
+    --sk-tag-bg: var(--color-bg-accent-subtle);
+    --sk-tag-fg: var(--color-text-accent);
+  }
+
+  /* Editing in place: the chip is replaced by a field the width of what is being typed. */
+  .sk-tags-input__item-input {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    padding-block: 0;
+    padding-inline: var(--space-inset-xs);
+    border: var(--sk-tags-input-border-width) solid var(--color-border-accent);
+    border-radius: var(--radius-control);
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-caption);
+    font-family: inherit;
+    line-height: var(--font-line-height-caption);
+  }
+
+  .sk-tags-input__input {
+    flex: 1 1 var(--sk-tags-input-input-min-size);
+    min-inline-size: var(--sk-tags-input-input-min-size);
+    /* The entry is a bare line inside the box: the box is the field, and draws the edge once. */
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-text-primary);
+    font-family: inherit;
+    font-size: var(--font-size-body);
+    line-height: var(--font-line-height-body);
+  }
+
+  .sk-tags-input__input::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  .sk-tags-input[data-invalid] .sk-tags-input__control {
+    --sk-tags-input-border-color: var(--sk-tags-input-invalid-border-color);
+  }
+
+  .sk-tags-input[data-disabled] .sk-tags-input__control {
+    --sk-tags-input-bg: var(--sk-tags-input-disabled-bg);
+    --sk-tags-input-border-color: var(--sk-tags-input-disabled-border-color);
+    --sk-tags-input-shadow: none;
+    --sk-tags-input-wash: none;
+    cursor: not-allowed;
+  }
+
+  .sk-tags-input[data-disabled] .sk-tags-input__input {
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+  }
+
+  /*
+   * READ-ONLY IS STILL READ. The field keeps its shape and loses the affordances: no text cursor
+   * over a box nothing can be typed into, and the delete controls go with the interaction, not with
+   * the reading.
+   */
+  .sk-tags-input[data-readonly] .sk-tags-input__control {
+    --sk-tags-input-bg: var(--sk-tags-input-readonly-bg);
+    --sk-tags-input-border-color: var(--sk-tags-input-readonly-border-color);
+    --sk-tags-input-shadow: none;
+    --sk-tags-input-wash: none;
+    cursor: default;
+  }
+
+  .sk-tags-input[data-readonly] .sk-tags-input__item-remove {
+    display: none;
+  }
+}

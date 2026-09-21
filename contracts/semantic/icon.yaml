@@ -8,7 +8,7 @@ Icon:
   avoidWhen:
     - "es un concepto de producto (una factura, un avión): eso se pasa como icon data en el binding React, no como nombre estable"
     - "se le pondría label dentro de un botón que ya tiene texto; el nombre accesible quedaría duplicado"
-    - "hace falta un control con forma de botón: eso es Button (iconOnly) o IconStateButton, no un Icon solo"
+    - "hace falta un control con forma de botón: eso es Button (iconOnly) o StateButton, no un Icon solo"
   alternatives:
     - Button.action
-    - IconStateButton
+    - StateButton

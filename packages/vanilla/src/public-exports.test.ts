@@ -17,6 +17,7 @@ import { mountQuestionnaire } from "@skryensya/vanilla/questionnaire";
 import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
 import { mountDataGrid } from "@skryensya/vanilla/data-grid";
 import { mountDatePicker } from "@skryensya/vanilla/date-picker";
+import { mountDiagram } from "@skryensya/vanilla/diagram";
 import { mountEditor } from "@skryensya/vanilla/editor";
 import { mountExpandableTile } from "@skryensya/vanilla/expandable-tile";
 import { mountFileUpload } from "@skryensya/vanilla/file-upload";
@@ -31,6 +32,7 @@ import { mountMenubar } from "@skryensya/vanilla/menubar";
 import { mountMeter } from "@skryensya/vanilla/meter";
 import { mountNavListGroup } from "@skryensya/vanilla/nav-list";
 import { mountNumberField } from "@skryensya/vanilla/number-field";
+import { mountOtpInput } from "@skryensya/vanilla/otp-input";
 import { mountRating } from "@skryensya/vanilla/rating";
 import { mountSelect } from "@skryensya/vanilla/select";
 import { mountSegmented } from "@skryensya/vanilla/segmented";
@@ -41,6 +43,7 @@ import { mountSliderRange } from "@skryensya/vanilla/slider-range";
 import { destroyMount } from "@skryensya/vanilla/runtime";
 import { mountTable } from "@skryensya/vanilla/table";
 import { mountTabs } from "@skryensya/vanilla/tabs";
+import { mountTagsInput } from "@skryensya/vanilla/tags-input";
 import { mountTablePager } from "@skryensya/vanilla/table-pager";
 import { mountTileCheckbox } from "@skryensya/vanilla/tile-checkbox";
 import { mountTileSwitch } from "@skryensya/vanilla/tile-switch";
@@ -84,6 +87,7 @@ const mounts = [
   mountQuestionnaire,
   mountDataGrid,
   mountDatePicker,
+  mountDiagram,
   mountExpandableTile,
   mountFeed,
   mountFileUpload,
@@ -97,6 +101,7 @@ const mounts = [
   mountMeter,
   mountNavListGroup,
   mountNumberField,
+  mountOtpInput,
   mountRating,
   mountSegmented,
   mountSelect,
@@ -107,6 +112,7 @@ const mounts = [
   mountTable,
   mountTablePager,
   mountTabs,
+  mountTagsInput,
   mountTileCheckbox,
   mountTileRadioGroup,
   mountTileSwitch,
@@ -123,7 +129,7 @@ const mounts = [
 describe("Vanilla public entry points", () => {
   it("publishes the lazy auto-loader and one mount for every regular enhanced module", () => {
     expect(initComponents).toBeTypeOf("function");
-    expect(mounts).toHaveLength(50);
+    expect(mounts).toHaveLength(53);
     expect(mounts.every((mount) => typeof mount === "function")).toBe(true);
   });
 
@@ -179,6 +185,7 @@ describe("Vanilla public entry points", () => {
         mountQuestionnaire,
         mountDataGrid,
         mountDatePicker,
+        mountDiagram,
         mountExpandableTile,
         mountFeed,
         mountFileUpload,
@@ -192,6 +199,7 @@ describe("Vanilla public entry points", () => {
         mountMeter,
         mountNavListGroup,
         mountNumberField,
+        mountOtpInput,
         mountRating,
         mountSegmented,
         mountSelect,
@@ -202,6 +210,7 @@ describe("Vanilla public entry points", () => {
         mountTable,
         mountTablePager,
         mountTabs,
+        mountTagsInput,
         mountTileCheckbox,
         mountTileRadioGroup,
         mountTileSwitch,

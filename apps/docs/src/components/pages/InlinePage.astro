@@ -33,10 +33,7 @@ const t = useTranslations(getLocale(Astro.url));
     },
   ]}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("inlinePage.lede")} />
-    <ComponentPreview tree={inlineTree(t)} label={t("inlinePage.previewLabel")} note={t("inlinePage.previewNote")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("inlinePage.anatomyBody")} />
     <ComponentPreview
       tree={inlineAnatomyTree(t)}
@@ -46,7 +43,11 @@ const t = useTranslations(getLocale(Astro.url));
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("inlinePage.lede")} />
+    <ComponentPreview tree={inlineTree(t)} label={t("inlinePage.previewLabel")} note={t("inlinePage.previewNote")} />
     <h3>{t("inlinePage.floorTitle")}</h3>
     <p set:html={t("inlinePage.floorBody")} />
     <ComponentPreview tree={inlineCardFloorTree(t)} label={t("inlinePage.floorPreviewLabel")} note={t("inlinePage.floorPreviewNote")} />

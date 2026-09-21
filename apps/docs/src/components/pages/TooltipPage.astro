@@ -23,9 +23,7 @@ const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
   contractId="tooltip"
   testFiles={["packages/react/src/components/tooltip.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("tooltipPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("tooltipPage.anatomyBody")} />
     <ComponentPreview
       html={tooltipAnatomyHtml(t)}
@@ -35,8 +33,10 @@ const install = `pnpm add @skryensya/core @skryensya/vanilla @skryensya/react`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
-
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("tooltipPage.lede")} />
     {/* `menu`: the tooltip paints out of flow, and in a stage sized to the content it would have
         nowhere to go, so the real placement would never be visible. */}
     <ComponentPreview tree={tooltipTree(t)} label="Tooltip" viewport="menu" />

@@ -10,9 +10,11 @@ Accordion:
     - "el contenido se compara entre secciones; plegar obliga a recordar en vez de mirar"
     - "las secciones son vistas alternativas del mismo espacio; eso es Tabs"
     - "es una sola superficie plegable, sin coordinación entre hermanas; eso es ExpandableTile"
+    - "nada necesita controlarse ni escucharse desde afuera: DetailsGroup lo hace sin JavaScript"
   alternatives:
     - Tabs
     - ExpandableTile
+    - DetailsGroup
 
 Accordion.Item:
   useWhen:
@@ -34,4 +36,36 @@ Accordion.Content:
     - "es el cuerpo que se pliega dentro de su sección"
   avoidWhen:
     - "está fuera de un Accordion.Item; no tiene quién lo abra"
+  alternatives: []
+
+DetailsGroup:
+  useWhen:
+    - "varias secciones se abren y cierran, y alcanza con que el navegador se encargue"
+    - "conviene que sólo una quede abierta: los hermanos con el mismo name ya lo hacen solos"
+  avoidWhen:
+    - "hay que controlar desde afuera qué queda abierto, o escuchar cuándo cambia: eso pide Accordion"
+  alternatives:
+    - Accordion
+
+Details:
+  useWhen:
+    - "una sección que se despliega y no necesita nada de JavaScript"
+    - "importa que funcione antes de que cargue cualquier script"
+  avoidWhen:
+    - "hay que saber desde afuera si está abierto, o poder deshabilitar la sección: eso es Accordion.Item"
+  alternatives:
+    - Accordion.Item
+
+Details.Summary:
+  useWhen:
+    - "es lo que el estado cerrado muestra y lo que abre la sección"
+  avoidWhen:
+    - "está fuera de un Details; no tiene qué abrir"
+  alternatives: []
+
+Details.Content:
+  useWhen:
+    - "es lo que la apertura revela"
+  avoidWhen:
+    - "está fuera de un Details; no tiene quién lo abra"
   alternatives: []

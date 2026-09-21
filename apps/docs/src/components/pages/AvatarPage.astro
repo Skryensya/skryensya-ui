@@ -105,9 +105,7 @@ window.addEventListener("pagehide", () => observer.disconnect(), { once: true })
   contractId="avatar"
   testFiles={["packages/react/src/components/avatar.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("avatar.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("avatar.anatomyBody")} />
     <ComponentPreview
       tree={avatarAnatomyTree(t)}
@@ -118,8 +116,10 @@ window.addEventListener("pagehide", () => observer.disconnect(), { once: true })
       hideSource
       chrome={false}
     />
+  </Fragment>
 
-
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("avatar.lede")} />
     <h3>{t("avatar.imagesTitle")}</h3>
     <p set:html={t("avatar.imagesBody")} />
     <ComponentPreview

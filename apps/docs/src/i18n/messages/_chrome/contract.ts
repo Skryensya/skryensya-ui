@@ -8,10 +8,12 @@ export const contractMessages = {
      */
     "contract.tab": "Referencia",
     "contract.title": "Referencia",
+    "contract.sourceLink": "Ver el contrato en GitHub",
   },
   en: {
 
     "contract.tab": "Reference",
     "contract.title": "Reference",
+    "contract.sourceLink": "View contract on GitHub",
   },
 } as const;

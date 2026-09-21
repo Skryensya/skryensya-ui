@@ -40,9 +40,7 @@ const t = useTranslations(getLocale(Astro.url));
   contractId="tabs"
   testFiles={["packages/react/src/components/tabs.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("tabsPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("tabsPage.anatomyBody")} />
     <ComponentPreview
       tree={tabsAnatomyTree(t)}
@@ -52,8 +50,10 @@ const t = useTranslations(getLocale(Astro.url));
       hideSource
       chrome={false}
     />
+  </Fragment>
 
-
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("tabsPage.lede")} />
     <h3>{t("tabsPage.basicTitle")}</h3>
     <p set:html={t("tabsPage.basicBody")} />
     <ComponentPreview tree={tabsBasicTree(t)} label={t("tabsPage.basicLabel")} />

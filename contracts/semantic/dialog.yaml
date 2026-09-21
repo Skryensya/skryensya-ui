@@ -3,6 +3,7 @@
 Dialog:
   useWhen:
     - "hay que decidir algo antes de seguir: confirmar un borrado, completar un paso corto"
+    - "la fila de acciones del footer debe quedar al inicio o al final del eje inline (`footerAlign`; por defecto al final)"
     - "conviene que el resto de la página quede inerte mientras tanto"
     - "en móvil el mismo dialog puede pedirse como hoja desde abajo (opción vaul)"
     - "confirmación destructiva o error bloqueante que necesita atención inmediata (opción alert)"

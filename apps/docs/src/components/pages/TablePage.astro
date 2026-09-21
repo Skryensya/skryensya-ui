@@ -29,9 +29,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
   contractId="table"
   testFiles={["packages/react/src/components/table.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("tablePage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("tablePage.anatomyBody")} />
     <ComponentPreview
       tree={tableAnatomyTree(t)}
@@ -41,7 +39,10 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("tablePage.lede")} />
     <ComponentPreview tree={tableTree(t)} label="Table" />
 
     <h3>{t("tablePage.scrollTitle")}</h3>

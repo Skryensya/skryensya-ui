@@ -1,16 +1,12 @@
 export const hooksMessages = {
   es: {
-
     "hooks.intro":
-      "El token sale del CSS publicado. El valor se resuelve en vivo contra el elemento real del componente y cambia con las dimensiones elegidas arriba.",
-    "hooks.definition": "Token",
-    "hooks.resolvedValue": "Valor",
+      "Las variables CSS que este componente publica para que las redefinas, con el valor que trae por defecto. Ambos salen del CSS publicado.",
+    "hooks.value": "Valor",
   },
   en: {
-
     "hooks.intro":
-      "Token comes from the published CSS. Value resolves live against the real component element and changes with the dimensions selected above.",
-    "hooks.definition": "Token",
-    "hooks.resolvedValue": "Value",
+      "The CSS variables this component publishes for you to override, with the value it ships. Both come from the published CSS.",
+    "hooks.value": "Value",
   },
 } as const;

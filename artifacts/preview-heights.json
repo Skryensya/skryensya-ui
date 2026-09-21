@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-21T18:00:45.846Z",
+  "generatedAt": "2026-09-21T18:02:53.498Z",
   "viewport": {
     "width": 1920,
     "height": 1000
@@ -570,16 +570,15 @@
       "breadcrumb-que-colapsa-para-entrar": 72
     },
     "/es/componentes/button": {
-      "apagado-y-encendido-por-enfasis": 168,
-      "button-como-enlace": 96,
-      "button-con-icono": 92,
-      "button-xs-sm-md-lg": 96,
-      "ghost-danger-y-solid-danger": 92,
-      "la-matriz-completa-4-enfasis-x-3-tonos": 306,
-      "la-misma-matriz-sm-e-icon-only": 258,
-      "solo-icono": 92,
-      "solo-icono-sm": 80,
-      "tilebutton": 144
+      "button-como-enlace": 93,
+      "button-con-icono-inicial": 93,
+      "button-con-valores-por-defecto": 93,
+      "button-parte-por-parte": 185,
+      "button-solo-icono-con-nombre-accesible": 93,
+      "button-xs-sm-md-lg": 153,
+      "disparador-y-confirmacion-destructivos": 93,
+      "tilebutton": 145,
+      "todos-los-enfasis-por-todos-los-tonos": 307
     },
     "/es/componentes/calendar": {
       "calendar": 384,
@@ -709,12 +708,12 @@
       "emptystate-parte-por-parte": 460
     },
     "/es/componentes/fade-edge": {
-      "fade-a-color": 242,
-      "fade-to-bottom": 258,
-      "fade-to-left": 110,
-      "fade-to-right": 110,
-      "fade-to-top": 258,
-      "intensidad-del-desvanecido": 351
+      "fundido-a-un-color": 243,
+      "fundido-hacia-abajo": 259,
+      "fundido-hacia-arriba": 259,
+      "fundido-hacia-la-derecha": 111,
+      "fundido-hacia-la-izquierda": 111,
+      "intensidad-del-desvanecido": 352
     },
     "/es/componentes/feed": {
       "feed": 349,
@@ -1050,8 +1049,8 @@
       "los-cinco-niveles": 144
     },
     "/es/gradientes": {
-      "card-con-media": 650,
-      "edges": 783
+      "card-media-gradient": 295,
+      "edges": 308
     },
     "/es/iconos": {
       "vocabulario-estable": 479

@@ -3025,6 +3025,39 @@ const signatureTrees: readonly Canonical[] = [
   },
 
   /*
+   * Diagram is Annotation's sibling, so it sits next to it: one drawing that presents all three
+   * shapes, a labelled branch and a rejoin pointing back UP. The edges matter more than the nodes
+   * here - the enhancer's whole job is to measure boxes and route between them, and a fixture with
+   * one edge would enhance without proving it routed anything.
+   */
+  {
+    name: "diagram/flow",
+    enhanced: true,
+    tree: {
+      contract: "diagram",
+      signature: "Diagram",
+      options: { label: "Request handling", columns: 2 },
+      slots: {
+        nodes: [
+          { options: { node: "start", shape: "terminal", span: 2 }, slots: { children: "Request" } },
+          {
+            options: { node: "valid", shape: "decision", span: 2 },
+            slots: { children: "Session valid?" },
+          },
+          { options: { node: "app" }, slots: { children: "Dashboard" } },
+          { options: { node: "login" }, slots: { children: "Sign in" } },
+        ],
+        edges: [
+          { options: { from: "start", to: "valid" }, slots: {} },
+          { options: { from: "valid", to: "app" }, slots: { children: "yes" } },
+          { options: { from: "valid", to: "login" }, slots: { children: "no" } },
+          { options: { from: "login", to: "valid" }, slots: { children: "retry" } },
+        ],
+      },
+    },
+  },
+
+  /*
    * CHART, as a series with an overlay. `line`/`area` are the only kinds that need an enhancer, and
    * it only paints the overlay: the bars underneath are CSS over the values, so the fixture is
    * `area` on purpose. The labels stay on, unlike a sparkline in a card, because this is the gate's

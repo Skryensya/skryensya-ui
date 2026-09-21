@@ -14,7 +14,7 @@ export const typographyMessages = {
     "demo.typography.output.value": "El resultado es 42",
 
     "typographyPage.description":
-      "Tipografía: los elementos de texto semántico —párrafos, títulos, enlaces, énfasis, código— con su rol y anatomía claros.",
+      "Tipografía: los elementos de texto semántico (párrafos, títulos, enlaces, énfasis, código) con su rol y anatomía claros.",
     "typographyPage.lede":
       "No existe un <code>Text</code> genérico. Cada línea de texto es un rol: un párrafo es una idea, un título es una sección, un código es un literal. Elegir bien qué es cada una permite que el layout, el color y la redacción trabajen juntos.",
     "typographyPage.textTitle": "Text: un párrafo, una bajada, una nota",
@@ -64,7 +64,7 @@ export const typographyMessages = {
     "demo.typography.output.value": "The result is 42",
 
     "typographyPage.description":
-      "Typography: semantic text elements—paragraphs, headings, links, emphasis, code—with clear role and anatomy.",
+      "Typography: semantic text elements (paragraphs, headings, links, emphasis, code) with clear role and anatomy.",
     "typographyPage.lede":
       "There is no generic <code>Text</code>. Every line of text is a role: a paragraph is an idea, a heading is a section, code is a literal. Choosing well what each one is lets layout, color, and writing work together.",
     "typographyPage.textTitle": "Text: a paragraph, a lead, a note",
